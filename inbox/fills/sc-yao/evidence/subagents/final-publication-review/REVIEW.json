@@ -1,0 +1,485 @@
+{
+  "scope": "Read-only static review; no Lean execution or proof edit",
+  "root_head": "6e7ef601ad9a05d5e26d09f32eadb9c17a4a6cbc",
+  "garbling": {
+    "before_path": "evidence/history/pre-final-publication/Garbling.lean",
+    "current_path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "before_sha256": "961999c7ef2fef6eabdc83979b62ef616d8b7bd2543d881963fc824860fff7b1",
+    "current_sha256": "a5157df6c4a76c15baff49542f00c98bdae983da7061f846b592194da4016bb9",
+    "before_lines": 398,
+    "current_lines": 402,
+    "declarations": 14,
+    "public": 13,
+    "private": 1,
+    "order_unchanged": true,
+    "all_full_declarations_byte_identical": true,
+    "lexer_headers_unchanged": true,
+    "all_non_doc_source_bytes_identical": true,
+    "normalized_noncomment_code_sha256": "4d1e894207f52a17fa56c505b5550f0cc78c08bb327752e42e807e4872fd607f",
+    "normalized_noncomment_code_identical": true,
+    "changed_docstring": "gateOut_small",
+    "insertions": 5,
+    "deletions": 1,
+    "sketch_accurate": true,
+    "sketch_mapping": [
+      {
+        "case": "zero arguments",
+        "proof": "cases args; nil; cases k; simp [gateOut_eq_eval, DAGGate.eval_eq]"
+      },
+      {
+        "case": "one argument",
+        "proof": "cons u then nil; cases k; public evaluation readers and List.range_succ"
+      },
+      {
+        "case": "two arguments",
+        "proof": "cons u then cons v then nil; cases k; same public equations"
+      },
+      {
+        "case": "three or more arguments",
+        "proof": "third cons makes length>=3; simp List.length_cons at hfan; omega"
+      }
+    ],
+    "proof_line_count_including_marker": 15,
+    "tactic_lines_after_marker": 14,
+    "lexer_cut_line": 210,
+    "actual_proof_marker_line": 213,
+    "parser_qualification": "The existing header lexer treats the || Boolean operator inside the theorem type as a match-arm delimiter. Therefore its 17-line proof-sketch candidate count includes type-continuation lines. Full-declaration byte equality and exact one-docstring replacement independently prove no header/body change."
+  },
+  "nestedDecTagged_eq": {
+    "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Decryption.lean",
+    "line": 219,
+    "actual_proof": "rfl",
+    "type_level_lets": 4,
+    "proof_term_lines": 1,
+    "lexer_cut_line": 221,
+    "actual_proof_marker_line": 236,
+    "full_corrected_header": "theorem nestedDecTagged_eq (E₁ E₂ : List Bool → List Bool) (z : List Bool) :\n    nestedDecTagged E₁ E₂ z =\n  let N := pairFstD z\n  let keys := pairFstD (pairSndD z)\n  let c := pairSndD (pairSndD z)\n  if keys = [] then checkFinTagged (pairEncode N (true :: c))\n  else if pairSndD keys = [] then\n    checkFinTagged (pairEncode N\n      (specialDecTagged E₁ (pairEncode N (pairEncode N (pairEncode (pairFstD keys) c)))))\n  else if pairSndD (pairSndD keys) = [] then\n    let outer := specialDecTagged E₂ (pairEncode N\n      (pairEncode (List.replicate (innerLen.eval N.length) true)\n        (pairEncode (pairFstD keys) c)))\n    if outer = [] then [] else\n      checkFinTagged (pairEncode N\n        (specialDecTagged E₁ (pairEncode N\n          (pairEncode N (pairEncode (pairFstD (pairSndD keys)) (outer.drop 1))))))\n  else []",
+    "classification": "False positive: multiline let expressions belong to the statement; the sole proof term is rfl."
+  },
+  "public_abbreviations": [
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner.lean",
+      "name": "Phase",
+      "line": 39,
+      "definition": "abbrev Phase := Bool × Bool × Bool",
+      "reader": "phase_eq",
+      "reader_line": 144,
+      "equation": "theorem phase_eq : Phase = (Bool × Bool × Bool) := rfl",
+      "reader_docstring": "/-- The three-bit phase type is the Boolean triple: `Phase = Bool × Bool × Bool`. -/",
+      "same_case": false
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean",
+      "name": "Blocks",
+      "line": 48,
+      "definition": "abbrev Blocks (S n : ℕ) :=\n  (Bool → Fin S → Fin n → Bool) ×\n    (Fin S → Fin 4 → Fin (2 * n) → Bool) × (Fin S → Fin 2 → Bool)",
+      "reader": "Blocks_eq",
+      "reader_line": 53,
+      "equation": "theorem Blocks_eq (S n : ℕ) :\n    Blocks S n = ((Bool → Fin S → Fin n → Bool) ×\n      (Fin S → Fin 4 → Fin (2 * n) → Bool) × (Fin S → Fin 2 → Bool)) := rfl",
+      "reader_docstring": "/-- `Blocks S n` is the product of its key, row and shift function types. -/",
+      "same_case": true
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean",
+      "name": "Index",
+      "line": 41,
+      "definition": "abbrev Index {m : ℕ} (C : DAGCircuit m) :=\n  Σ i : Fin C.gates.length, (Fin C.gates[i.val].args.length → Bool) × Bool",
+      "reader": "Index_eq",
+      "reader_line": 45,
+      "equation": "theorem Index_eq {m : ℕ} (C : DAGCircuit m) :\n    Index C = (Σ i : Fin C.gates.length, (Fin C.gates[i.val].args.length → Bool) × Bool) := rfl",
+      "reader_docstring": "/-- `Index C` is the dependent product of gate indices and assignment/half pairs. -/",
+      "same_case": true
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean",
+      "name": "Permutations",
+      "line": 39,
+      "definition": "abbrev Permutations {m : ℕ} (C : DAGCircuit m) :=\n  (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool)",
+      "reader": "Permutations_eq",
+      "reader_line": 43,
+      "equation": "theorem Permutations_eq {m : ℕ} (C : DAGCircuit m) :\n    Permutations C =\n      ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool)) := rfl",
+      "reader_docstring": "/-- `Permutations C` is the dependent family of per-gate assignment permutations. -/",
+      "same_case": true
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean",
+      "name": "Index",
+      "line": 48,
+      "definition": "abbrev Index {m : ℕ} (C : DAGCircuit m) :=\n  (Fin C.size × Bool) ⊕ NonceCoordinates.Index C",
+      "reader": "Index_eq",
+      "reader_line": 52,
+      "equation": "theorem Index_eq {m : ℕ} (C : DAGCircuit m) :\n    Index C = ((Fin C.size × Bool) ⊕ NonceCoordinates.Index C) := rfl",
+      "reader_docstring": "/-- `Index C` is the sum of key labels and row-nonce coordinates. -/",
+      "same_case": true
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean",
+      "name": "ChallengeIndex",
+      "line": 56,
+      "definition": "abbrev ChallengeIndex (q : ℕ) := Unit ⊕ Fin (q + 1)",
+      "reader": "ChallengeIndex_eq",
+      "reader_line": 59,
+      "equation": "theorem ChallengeIndex_eq (q : ℕ) : ChallengeIndex q = (Unit ⊕ Fin (q + 1)) := rfl",
+      "reader_docstring": "/-- `ChallengeIndex q = Unit ⊕ Fin (q+1)`. -/",
+      "same_case": true
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean",
+      "name": "Data",
+      "line": 62,
+      "definition": "abbrev Data {m : ℕ} (C : DAGCircuit m) (V : Type) :=\n  (Fin C.size → Bool → V) ×\n    ((i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → V × V)",
+      "reader": "Data_eq",
+      "reader_line": 67,
+      "equation": "theorem Data_eq {m : ℕ} (C : DAGCircuit m) (V : Type) :\n    Data C V = ((Fin C.size → Bool → V) ×\n      ((i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → V × V)) := rfl",
+      "reader_docstring": "/-- `Data C V` is the product of its key and nonce function tables. -/",
+      "same_case": true
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean",
+      "name": "Selection",
+      "line": 43,
+      "definition": "abbrev Selection {m : ℕ} (C : DAGCircuit m) :=\n  Σ i : Fin C.gates.length, Fin C.gates[i.val].args.length",
+      "reader": "Selection_eq",
+      "reader_line": 47,
+      "equation": "theorem Selection_eq {m : ℕ} (C : DAGCircuit m) :\n    Selection C = (Σ i : Fin C.gates.length, Fin C.gates[i.val].args.length) := rfl",
+      "reader_docstring": "/-- `Selection C` is the dependent pair of a gate index and a valid argument index. -/",
+      "same_case": true
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean",
+      "name": "Tape",
+      "line": 64,
+      "definition": "abbrev Tape (S : PolyExpr) (n : ℕ) := Fin (10 * S.eval n * n + 2 * S.eval n) → Bool",
+      "reader": "Tape_eq",
+      "reader_line": 67,
+      "equation": "theorem Tape_eq (S : PolyExpr) (n : ℕ) :\n    Tape S n = (Fin (10 * S.eval n * n + 2 * S.eval n) → Bool) := rfl",
+      "reader_docstring": "/-- `Tape S n` is the complete addressed key/nonce/shift bit-vector type. -/",
+      "same_case": true
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean",
+      "name": "Choice",
+      "line": 72,
+      "definition": "abbrev Choice (I : ℕ → Type) {inputs : ℕ → ℕ} (C : ∀ n, DAGCircuit (inputs n))\n    (S : PolyExpr) (n : ℕ) := Option (I n × Selection (C n)) × Tape S n",
+      "reader": "Choice_eq",
+      "reader_line": 76,
+      "equation": "theorem Choice_eq (I : ℕ → Type) {inputs : ℕ → ℕ} (C : ∀ n, DAGCircuit (inputs n))\n    (S : PolyExpr) (n : ℕ) :\n    Choice I C S n = (Option (I n × Selection (C n)) × Tape S n) := rfl",
+      "reader_docstring": "/-- `Choice I C S n` retains an optional input/argument pair and the full baseline tape. -/",
+      "same_case": true
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean",
+      "name": "Rest",
+      "line": 173,
+      "definition": "abbrev Rest {m : ℕ} (C : DAGCircuit m) (S n : ℕ)\n    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S) :=\n  (Fin S → Fin 2 → Bool) ×\n    ({x : Bool × Fin S // x ∉ Set.range (keyEmbedding C S hS)} → Fin n → Bool) ×\n    ({x : Fin S × Fin 4 // x ∉ Set.range (rowEmbedding C S hA hS)} → Fin (2 * n) → Bool)",
+      "reader": "Rest_eq",
+      "reader_line": 181,
+      "equation": "theorem Rest_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)\n    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S) :\n    Rest C S n hA hS = ((Fin S → Fin 2 → Bool) ×\n      ({x : Bool × Fin S // x ∉ Set.range (keyEmbedding C S hS)} → Fin n → Bool) ×\n      ({x : Fin S × Fin 4 // x ∉ Set.range (rowEmbedding C S hA hS)} →\n        Fin (2 * n) → Bool)) := rfl",
+      "reader_docstring": "/-- `Rest` is the product of the full shift table and the complementary padded\nkey and row block functions. -/",
+      "same_case": true
+    }
+  ],
+  "public_abbreviation_count": 11,
+  "all_abbreviations_have_public_rfl_equation_readers": true,
+  "simps_attributes": [
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean",
+      "declaration": "swap",
+      "line": 45,
+      "attribute": "@[simps (config := { isSimp := false })]",
+      "isSimp": false
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean",
+      "declaration": "equiv",
+      "line": 89,
+      "attribute": "@[simps (config := { isSimp := false }) apply symm_apply]",
+      "isSimp": false
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulator.lean",
+      "declaration": "Data.make",
+      "line": 144,
+      "attribute": "@[simps (config := { isSimp := false }) E₁ E₂ bound inputs inA inB outLen gen circuit output seed]",
+      "isSimp": false
+    }
+  ],
+  "simps_attribute_count": 3,
+  "all_simps_isSimp_false": true,
+  "explicit_simp_attributes": [],
+  "input_hashes": {
+    "evidence/history/pre-final-publication/Garbling.lean": {
+      "bytes": 20285,
+      "sha256": "961999c7ef2fef6eabdc83979b62ef616d8b7bd2543d881963fc824860fff7b1"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean": {
+      "bytes": 20534,
+      "sha256": "a5157df6c4a76c15baff49542f00c98bdae983da7061f846b592194da4016bb9"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram.lean": {
+      "bytes": 12790,
+      "sha256": "eeef6052b15077fa3f4bcb123de33db1772a8aff1f1df4a36aa703f7678a5a93"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceSimulator.lean": {
+      "bytes": 7788,
+      "sha256": "980db691bbc4bdf2f533fcc7d69a5e0f58b56dcbba2da6838ce29d2313706cb6"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceStatistical.lean": {
+      "bytes": 4588,
+      "sha256": "42ecca609383348f252a38997088f415e3fcf9749a47e5d3373889fa3cfe1de2"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.lean": {
+      "bytes": 11570,
+      "sha256": "58fd59d7378cba679340e634e64cbb69f8fb8711a7e4a94d012d7184a477896d"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO.lean": {
+      "bytes": 11632,
+      "sha256": "25a3dd37f0be259deb0d006fcd5a9256f557dfef4cb2534d15817f5bcefcba5d"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit.lean": {
+      "bytes": 9726,
+      "sha256": "ee99fbf1854871fd3975a76ca4df742d2ea2791800db18fd999988ca6ff9fc42"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobProgram.lean": {
+      "bytes": 7862,
+      "sha256": "d5eb1470ebc6c5751ad76056acce7023e3ad71f5a8fbdfe561d8c5a7925dac40"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobSimulator.lean": {
+      "bytes": 8037,
+      "sha256": "ce8395b8139ef141141eb95e1aa7bece66208783b46f61279368dbfa7b3bfbb1"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobStageZero.lean": {
+      "bytes": 7112,
+      "sha256": "f65964b4e9a074536f0903dd980bebaf70a4c31bda4749c1b9bfd5d62ae03a56"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobStatistical.lean": {
+      "bytes": 3628,
+      "sha256": "f8b8181ba91b5e5eede3819ea60e84e9c7438f0eb7032c8e61f557297031ba3f"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables.lean": {
+      "bytes": 5137,
+      "sha256": "2d115c5328ec813be4a7796006ab8d3647daf26c41cc8a8f9d05353132f64756"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobViewShape.lean": {
+      "bytes": 3545,
+      "sha256": "bf21ad1b125032b0d2a82589b073f7b7b199778e6de93a9977df20c50fab9eca"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations.lean": {
+      "bytes": 3334,
+      "sha256": "c1ae9b6f822f94ae47de342162e4eafc4022ccdd8675a0012d215f0823fb4921"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner.lean": {
+      "bytes": 12961,
+      "sha256": "34dd9f972483996683cd6b36c6d403fce83e3cd488c90c39480f1a209cbcdef5"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinGarbling.lean": {
+      "bytes": 5491,
+      "sha256": "91087f538ae38adba87cb378abb73a05405faa0458faf5adb8ed6caec106c976"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRead.lean": {
+      "bytes": 2340,
+      "sha256": "f07c9f5176a231ff0a49c19b7558f6c79bd8c28f42813581ba1905246f2965b9"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean": {
+      "bytes": 18094,
+      "sha256": "2a821f0059d748eb121b221eba713049ac53b3fbcdb4047a9377630835424c28"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean": {
+      "bytes": 20095,
+      "sha256": "3652c51d7f610f2d5abb671c9296357513a234e5f6685f93e99b3f3ce96084eb"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean": {
+      "bytes": 8426,
+      "sha256": "819c2e1c64ce3debb41b550064b9b95380e8afc3d2203fa63b09a401cb05045f"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Decryption.lean": {
+      "bytes": 16473,
+      "sha256": "2c723a383fa06b14979d08fa6f85bfa8fe09b5acc3782dee8a87669c003e9fd4"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder.lean": {
+      "bytes": 12234,
+      "sha256": "2a96ca38803704096273723ccfe16ad36151e4772dae411749b5885d65922678"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate.lean": {
+      "bytes": 15517,
+      "sha256": "060c5c026b4385dce088acd59e1cf9d51eb8de87583708db7158ea05f6e7c748"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeMessage.lean": {
+      "bytes": 2979,
+      "sha256": "c6798c1fb0178a601b5820e92e40ae8ad77ac274620e005d1bc6f378dd3946e9"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeObjects.lean": {
+      "bytes": 4214,
+      "sha256": "3dcbfce455fbe850a62b2519f433fbcaa2072997c0f722d246e1b9a01a951552"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram.lean": {
+      "bytes": 21891,
+      "sha256": "6a7580e8e8752005f8ca1faf99e1887f91a830fb91bd56f27e618db73a45f987"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulator.lean": {
+      "bytes": 22069,
+      "sha256": "2e66cba2ea50c51d52baa2418c06355665b9ed462c99824574513f61549517e1"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulatorFactory.lean": {
+      "bytes": 8556,
+      "sha256": "8efd5d3538951c233b5d29006681a10659af4be38b59d6776fbf725561124e91"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean": {
+      "bytes": 7590,
+      "sha256": "15f7deffbf021eef79ed284af028749cad53a9017008bd07b0b983c99a5950dd"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarbledRun.lean": {
+      "bytes": 7923,
+      "sha256": "18087a868d8c14eb2243c1c6d8168cae907ed96d529f28b71c641cdd96364c99"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram.lean": {
+      "bytes": 7589,
+      "sha256": "291d96ee61ae7a13ad943d839841e0d621c4f580a2fabeb613c9cc530638914e"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridChain.lean": {
+      "bytes": 4143,
+      "sha256": "86e67db507a4008c4d7e867fbf27875f12ef8dd8edaf124fab02df4832fb6054"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridMessage.lean": {
+      "bytes": 9647,
+      "sha256": "14fd4d24b6c22646f6f2d15e56db8b0a2f30a344344b061edc64a04e56c1bdc6"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridSecurity.lean": {
+      "bytes": 6838,
+      "sha256": "197cdfbe60aa5ee5fffb13f45f62c4d3eacb51cbf9fa00f78a3220c337ca5170"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean": {
+      "bytes": 17820,
+      "sha256": "0d7b093949a269e64401047aba3cedc99b6c2138e54a3552ca607f1ed798a02f"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences.lean": {
+      "bytes": 20703,
+      "sha256": "803017ef2ab9924310ef9b0e9383c78cbfbaea2228a2a685c8f01111f46645ee"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases.lean": {
+      "bytes": 4003,
+      "sha256": "23acd89364e1ecfa534ef6161758a4a15308f1e54118003aa89a5ab7ef7da8c5"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean": {
+      "bytes": 9756,
+      "sha256": "c5c754a86ac859f74677ef6ba3bd8f66b297ecd2129d2a0772afbf580edc8c90"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean": {
+      "bytes": 11265,
+      "sha256": "d96d2467014a15a4c09d867a91e8a0c3c57a28f192887ac31033c4368227fcde"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTAnswerWords.lean": {
+      "bytes": 4706,
+      "sha256": "610e66f6c8d1783c03969843e45bdc38eb8b57ebe15305b57c2fa40507d11523"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean": {
+      "bytes": 6374,
+      "sha256": "f17a06b9f2f60577480a39ec441f77cbf5d1ca3f8fab895bc99a111ccffa956b"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ProtocolEfficiency.lean": {
+      "bytes": 3505,
+      "sha256": "e331c2a223f1e4a324f9d0f8a1ebaef4ec5a2a569aad8a957ee89f85dec23033"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean": {
+      "bytes": 9929,
+      "sha256": "4db51c08880a7ffe5e5576310c35a84b47f860b7414762472bd3a73f4e64c3ae"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean": {
+      "bytes": 34135,
+      "sha256": "7311ed612c0541cebb144a39783ec410271f01aad3f660d9907a9e1351a1e3ab"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost.lean": {
+      "bytes": 10358,
+      "sha256": "1a57a5f2133a47f4f8c86f7319f88d109b41e0f2cbfa313182fa0575b000b804"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SamplerEndpoints.lean": {
+      "bytes": 12710,
+      "sha256": "2122afb4064a988247dedc217daf43dd91e06caee37f1cbbc8fac48891be041a"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean": {
+      "bytes": 16734,
+      "sha256": "3d65a1cda674b22ee76536c13fd84b558a28850ba2eef0e90bef8846be164a74"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean": {
+      "bytes": 19724,
+      "sha256": "601a01a332ea5907eb945bf21ff8eca32d620f428ab57b961147818d800ba6bc"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean": {
+      "bytes": 17131,
+      "sha256": "fcd76addbfcbbfd3e7aedcbf0e365050a5e65cdb4a6605602eaa5f71db6c20b2"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedLaw.lean": {
+      "bytes": 8086,
+      "sha256": "b4a2c41ee003507d7ece137dff3af8de10e3218e8885db7b6bf0da4304e3eb45"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean": {
+      "bytes": 14592,
+      "sha256": "8418a2cd98cd52795b6736c5874a7edfbd351da0d581721bb7c939e2ef10768c"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean": {
+      "bytes": 12297,
+      "sha256": "56a6fedb218c17f2a655ee9e14196e7c58602a19b283e4a9365c7f488eb40ce9"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean": {
+      "bytes": 21551,
+      "sha256": "e584fc4dd109df54cda72736806f03d310f85329e5623b6cccee9436eb877c5d"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean": {
+      "bytes": 8995,
+      "sha256": "05618ea4cf81c067400e2661f3b545cb5e34305e3891a5d950b0fdae604586e3"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStep.lean": {
+      "bytes": 11860,
+      "sha256": "6aed6ba596997e39eae312b9ee5842ef57184283000cff80d8487d37cec4b4d2"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean": {
+      "bytes": 16673,
+      "sha256": "a936525bdbe4b0877fb735c0ba645c59ca63f8897d3de305bd2cbf0a185f0529"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepSecurity.lean": {
+      "bytes": 12919,
+      "sha256": "618a94084a7697502e05b257888a22054eedc27136ce8967b3d97dc342bb120d"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables.lean": {
+      "bytes": 17424,
+      "sha256": "ee625d5616a36c83c31729b2f54611753d1e9b1ee5f4813d4c918560ccb67256"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SimulationBound.lean": {
+      "bytes": 6859,
+      "sha256": "e67691de21816836b721c4841bbef451e6f891ab0aed7356cf74df5a4684f676"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean": {
+      "bytes": 16073,
+      "sha256": "bcb34869f14595684e87e0b35e913c6d1bbeaa83d15363b0694c3f16fda2841b"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean": {
+      "bytes": 10449,
+      "sha256": "56df84343362f2d0ee50abf2f8bb79ee75f41c72d53858bedc972088b4dc24a6"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean": {
+      "bytes": 2873,
+      "sha256": "6605d73e504965a45990527eb01e28f5fd05b63b1b9b89db8dff77d1b34d2bf8"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies.lean": {
+      "bytes": 3282,
+      "sha256": "4965b46b6e173d4f2db0adef9c3c06cde773db72da04f0b124c301598044128c"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.lean": {
+      "bytes": 11331,
+      "sha256": "a1746b16c5037dd5686858d7ba4fdfe49730918de981f3d096e0378fd9ee7c71"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean": {
+      "bytes": 24884,
+      "sha256": "20b9acbfa25f4a07bf58861bbb7ec8e0a13dd0cf2c1fb4ed6662d373e803f658"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean": {
+      "bytes": 7764,
+      "sha256": "e39ee072d39bdbb89fdadcbdac6503dc506f23ca2b09ad036a4c01e9046af167"
+    },
+    "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists.lean": {
+      "bytes": 2867,
+      "sha256": "c4b0a08b327bf66c221a3a7ee2f973bcfce4cbdaf11e8cd414b3b2d622c8e36c"
+    }
+  },
+  "qualification": "Prepared pre-documentation seals are not claimed to be current-source seal runs by this review. The lead plans four current Garbling seals, a current 261-module sweep and final stored-constant trace."
+}

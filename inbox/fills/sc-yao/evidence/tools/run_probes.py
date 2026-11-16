@@ -2,6 +2,7 @@
 """Run one explicit probe at a time through the shared host slot wrapper."""
 import argparse
 import datetime
+import fcntl
 import hashlib
 import json
 import os
@@ -14,8 +15,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument('manifest')
 parser.add_argument('run')
 parser.add_argument('--output-root', help='Independent output-only tree; imports stay in this checkout')
+parser.add_argument('--read-only-import-lock', action='store_true',
+                    help='Hold a shared lock against root module writers for this entire run')
 args = parser.parse_args()
 root = Path.cwd()
+import_lock = None
+if args.read_only_import_lock:
+    import_lock = (root / '.lake/sc-yao-driver.lock').open('a+')
+    fcntl.flock(import_lock, fcntl.LOCK_SH | fcntl.LOCK_NB)
 rows = json.loads(Path(args.manifest).read_text())
 outdir = root / 'evidence/probe-runs' / args.run
 outdir.mkdir(parents=True, exist_ok=False)
@@ -59,6 +66,7 @@ with (outdir / 'results.jsonl').open('w') as results:
                       generic_errors=len(re.findall(r'^error[:(]', text, re.M)),
                       fresh_olean=output.is_file() and output.stat().st_size > 0,
                       import_tree=str(olean), output_tree=str(output_root),
+                      read_only_import_lock=args.read_only_import_lock,
                       source_sha256=hashlib.sha256(raw).hexdigest(), log=str(logpath.relative_to(root)))
         results.write(json.dumps(record) + '\n')
         results.flush()

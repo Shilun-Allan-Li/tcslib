@@ -9,7 +9,7 @@ import subprocess
 
 root = Path.cwd()
 lock = (root / '.lake/sc-yao-driver.lock').open('a+')
-fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+fcntl.flock(lock, fcntl.LOCK_SH | fcntl.LOCK_NB)
 manifest_path = Path('evidence/seals/complete-helper-files/final/manifest.json')
 manifest = json.loads(manifest_path.read_text())
 assert len(manifest) == 272
@@ -25,6 +25,10 @@ def fingerprints():
 before = fingerprints()
 assert len(before) >= 261
 (logdir / 'import-artifacts-before.json').write_text(json.dumps(before, indent=2) + '\n')
+expected_probe_hashes = {r['probe']: hashlib.sha256(Path(r['probe']).read_bytes()).hexdigest()
+                         for r in manifest}
+(logdir / 'expected-probe-hashes.json').write_text(
+    json.dumps(expected_probe_hashes, indent=2) + '\n')
 children = []
 records = []
 for i in range(3):
@@ -35,7 +39,8 @@ for i in range(3):
     assert json.loads(shard.read_text()) == manifest[i::3]
     stream = (logdir / ('shard-' + str(i) + '-stdout.log')).open('w')
     process = subprocess.Popen(['python3', '-I', 'evidence/tools/run_probes.py', str(shard),
-        run, '--output-root', output_root], stdout=stream, stderr=subprocess.STDOUT)
+        run, '--output-root', output_root, '--read-only-import-lock'],
+        stdout=stream, stderr=subprocess.STDOUT)
     children.append((process, stream))
     records.append(dict(shard=i, pid=process.pid, run=run, output_tree=output_root,
         import_tree=str(import_tree.parent), started=datetime.datetime.now(
@@ -59,11 +64,13 @@ for record in records:
 assert len(rows) == len(manifest)
 assert {r['probe'] for r in rows} == {r['probe'] for r in manifest}
 assert len({r['probe'] for r in rows}) == len(rows)
+assert all(r['source_sha256'] == expected_probe_hashes[r['probe']] for r in rows)
 failed = [r for r in rows if r['exit'] or r['errors'] or r['generic_errors']
           or not r['fresh_olean']]
 summary = dict(checks=len(rows), all_pass=not failed, failures=failed,
     files=len({r['file'] for r in rows}), independent_output_trees=3,
     read_only_import_artifacts=len(before), import_artifacts_unchanged=before == after,
+    probe_hashes_match_initial=True, shared_import_locks_in_parent_and_children=True,
     shared_slot_cap=3, runs=[r['run'] for r in records])
 Path('evidence/final-helper-seal-summary.json').write_text(json.dumps(summary, indent=2) + '\n')
 print(json.dumps(summary), flush=True)

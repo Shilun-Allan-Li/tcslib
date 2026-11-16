@@ -1,7 +1,9 @@
-# New declaration source headers
+# New declaration source-header excerpts
 
-Headers retain their source namespace/section context. Fully elaborated stored signatures
-(including implicit section variables) are in the axiom/closure probe logs.
+The auxiliary source lexer can truncate a type at Boolean `||` or a type-level `let`.
+These excerpts are not the complete interface record. Fully elaborated stored types,
+including implicit section variables and private/generated constants, are exported in
+`full-stored-signatures.md` and retained in the authoritative axiom/closure probe log.
 
 ## TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean · isFaninTwo_iff
 

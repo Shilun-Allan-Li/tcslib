@@ -1,0 +1,1985 @@
+{
+  "phase": "checkpoint4",
+  "reviewed": 17,
+  "foreign_definition_violations": 0,
+  "findings": [
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO.lean",
+      "line": 129,
+      "tactic": "simp",
+      "token": "h",
+      "hits": [
+        {
+          "name": "GrpCat.SurjectiveOfEpiAuxs.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Algebra/Category/Grp/EpiMono.lean",
+              "line": 193,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "RootPairing.GeckConstruction.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+              "line": 64,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "CategoryTheory.Sieve.ofArrows.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/CategoryTheory/Sites/Sieves.lean",
+              "line": 644,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "25a3dd37f0be259deb0d006fcd5a9256f557dfef4cb2534d15817f5bcefcba5d",
+      "context": [
+        {
+          "line": 112,
+          "text": "    simp only [key, PolyExpr.eval_var]"
+        },
+        {
+          "line": 113,
+          "text": "  let pair := fun z => BinArith.getW (pairEncode (pairSndD z) (pairs z))"
+        },
+        {
+          "line": 114,
+          "text": "  have hpair : PolyTimeComputable pair :="
+        },
+        {
+          "line": 115,
+          "text": "    BinArith.polyTimeComputable_getW.comp (polyTimeComputable_pairSndD.pairEncode hp)"
+        },
+        {
+          "line": 116,
+          "text": "  have heq0 : PolyTimeComputable fun z => [decide (key z = pairFstD (pair z))] :="
+        },
+        {
+          "line": 117,
+          "text": "    (polyTimeComputable_pairEq.comp"
+        },
+        {
+          "line": 118,
+          "text": "      (hk.pairEncode (polyTimeComputable_pairFstD.comp hpair))).congr fun z => by"
+        },
+        {
+          "line": 119,
+          "text": "        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]"
+        },
+        {
+          "line": 120,
+          "text": "  have heq1 : PolyTimeComputable fun z => [decide (key z = pairSndD (pair z))] :="
+        },
+        {
+          "line": 121,
+          "text": "    (polyTimeComputable_pairEq.comp"
+        },
+        {
+          "line": 122,
+          "text": "      (hk.pairEncode (polyTimeComputable_pairSndD.comp hpair))).congr fun z => by"
+        },
+        {
+          "line": 123,
+          "text": "        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]"
+        },
+        {
+          "line": 124,
+          "text": "  refine (polyTimeComputable_ite heq0 (polyTimeComputable_const [false]) heq1).congr"
+        },
+        {
+          "line": 125,
+          "text": "    (g := fun z => [outputBit z]) ?_"
+        },
+        {
+          "line": 126,
+          "text": "  intro z"
+        },
+        {
+          "line": 127,
+          "text": "  by_cases h : key z = pairFstD (pair z) <;>"
+        },
+        {
+          "line": 128,
+          "text": "    simp only [outputBit_eq, ctx, vals, pairs, outs, vertex, key, pair] at h \u22a2 <;>"
+        },
+        {
+          "line": 129,
+          "text": "    simp only [h, decide_true, decide_false, Bool.false_eq_true,"
+        },
+        {
+          "line": 130,
+          "text": "      if_true, if_false]"
+        },
+        {
+          "line": 131,
+          "text": ""
+        },
+        {
+          "line": 132,
+          "text": "/-- The decoded output word has exactly `p(|fst z|)` bits. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO.lean",
+      "line": 168,
+      "tactic": "simp",
+      "token": "h",
+      "hits": [
+        {
+          "name": "GrpCat.SurjectiveOfEpiAuxs.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Algebra/Category/Grp/EpiMono.lean",
+              "line": 193,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "RootPairing.GeckConstruction.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+              "line": 64,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "CategoryTheory.Sieve.ofArrows.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/CategoryTheory/Sites/Sieves.lean",
+              "line": 644,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "25a3dd37f0be259deb0d006fcd5a9256f557dfef4cb2534d15817f5bcefcba5d",
+      "context": [
+        {
+          "line": 151,
+          "text": "from its polynomial-time length and indexed-bit function. -/"
+        },
+        {
+          "line": 152,
+          "text": "theorem outputWord_poly (p : PolyExpr) : PolyTimeComputable (outputWord p) := by"
+        },
+        {
+          "line": 153,
+          "text": "  have hn : PolyTimeComputable fun w =>"
+        },
+        {
+          "line": 154,
+          "text": "      List.replicate (p.eval (pairFstD (pairSndD w)).length) true :="
+        },
+        {
+          "line": 155,
+          "text": "    (polyTimeComputable_unaryPoly p).comp"
+        },
+        {
+          "line": 156,
+          "text": "      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)"
+        },
+        {
+          "line": 157,
+          "text": "  have ht := EncodingMachines.ltTest_poly"
+        },
+        {
+          "line": 158,
+          "text": "    (EncodingMachines.unaryLength_poly polyTimeComputable_pairFstD) hn"
+        },
+        {
+          "line": 159,
+          "text": "  have hb : PolyTimeComputable fun w =>"
+        },
+        {
+          "line": 160,
+          "text": "      [outputBit (pairEncode (pairSndD w)"
+        },
+        {
+          "line": 161,
+          "text": "        (List.replicate (pairFstD w).length true))] :="
+        },
+        {
+          "line": 162,
+          "text": "    outputBit_poly.comp (polyTimeComputable_pairSndD.pairEncode"
+        },
+        {
+          "line": 163,
+          "text": "      (polyTimeComputable_unary.comp polyTimeComputable_pairFstD))"
+        },
+        {
+          "line": 164,
+          "text": "  refine EncodingMachines.polyTimeComputable_of_getD (F := outputWord p) ?_ ?_"
+        },
+        {
+          "line": 165,
+          "text": "  \u00b7 refine (polyTimeComputable_ite ht hb (polyTimeComputable_const [false])).congr ?_"
+        },
+        {
+          "line": 166,
+          "text": "    intro w"
+        },
+        {
+          "line": 167,
+          "text": "    by_cases h : (pairFstD w).length < p.eval (pairFstD (pairSndD w)).length <;>"
+        },
+        {
+          "line": 168,
+          "text": "      simp only [outputWord_getD, h, decide_true, decide_false,"
+        },
+        {
+          "line": 169,
+          "text": "        Bool.false_eq_true, if_true, if_false]"
+        },
+        {
+          "line": 170,
+          "text": "  \u00b7 exact ((polyTimeComputable_unaryPoly p).comp polyTimeComputable_pairFstD).congr"
+        },
+        {
+          "line": 171,
+          "text": "      fun z => by simp only [Function.comp_apply, length_outputWord]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean",
+      "line": 335,
+      "tactic": "rw",
+      "token": "hv",
+      "hits": [
+        {
+          "name": "Complexity.LogProg.ExpBFS.hv",
+          "homes": [
+            {
+              "path": "TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean",
+              "line": 358,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "2a821f0059d748eb121b221eba713049ac53b3fbcdb4047a9377630835424c28",
+      "context": [
+        {
+          "line": 318,
+          "text": "with `mask i t`, including when the key length is zero. -/"
+        },
+        {
+          "line": 319,
+          "text": "theorem relabel_shift_getD (S n : \u2115) (values : Fin S \u2192 Bool)"
+        },
+        {
+          "line": 320,
+          "text": "    (rows : Fin S \u2192 Equiv.Perm (Fin 4)) (mask : Fin S \u2192 Fin 2 \u2192 Bool)"
+        },
+        {
+          "line": 321,
+          "text": "    (r : Fin (10 * S * n + 2 * S) \u2192 Bool) (i : Fin S) (t : Fin 2) :"
+        },
+        {
+          "line": 322,
+          "text": "    (List.ofFn (relabel S n values rows mask r)).getD (10 * S * n + 2 * i + t) false ="
+        },
+        {
+          "line": 323,
+          "text": "      xor ((List.ofFn r).getD (10 * S * n + 2 * i + t) false) (mask i t) := by"
+        },
+        {
+          "line": 324,
+          "text": "  rw [\u2190 blocksEquiv_shift S n (relabel S n values rows mask r) i t,"
+        },
+        {
+          "line": 325,
+          "text": "    relabel_shift, blocksEquiv_shift]"
+        },
+        {
+          "line": 326,
+          "text": ""
+        },
+        {
+          "line": 327,
+          "text": "/-- A key block at a vertex whose value mask is `false` is unchanged by relabeling."
+        },
+        {
+          "line": 328,
+          "text": "This preserves unused key blocks when their value masks are set to `false`. -/"
+        },
+        {
+          "line": 329,
+          "text": "theorem relabel_key_fixed (S n : \u2115) (values : Fin S \u2192 Bool)"
+        },
+        {
+          "line": 330,
+          "text": "    (rows : Fin S \u2192 Equiv.Perm (Fin 4)) (mask : Fin S \u2192 Fin 2 \u2192 Bool)"
+        },
+        {
+          "line": 331,
+          "text": "    (r : Fin (10 * S * n + 2 * S) \u2192 Bool) (b : Bool) (v : Fin S) (t : Fin n)"
+        },
+        {
+          "line": 332,
+          "text": "    (hv : values v = false) :"
+        },
+        {
+          "line": 333,
+          "text": "    (List.ofFn (relabel S n values rows mask r)).getD ((b.toNat * S + v) * n + t) false ="
+        },
+        {
+          "line": 334,
+          "text": "      (List.ofFn r).getD ((b.toNat * S + v) * n + t) false := by"
+        },
+        {
+          "line": 335,
+          "text": "  rw [relabel_key_getD, hv, Bool.xor_false]"
+        },
+        {
+          "line": 336,
+          "text": ""
+        },
+        {
+          "line": 337,
+          "text": "/-- A row coordinate fixed by `rows i` keeps every nonce bit. In particular,"
+        },
+        {
+          "line": 338,
+          "text": "callers preserve unused assignment codes by fixing them in the supplied permutation. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean",
+      "line": 88,
+      "tactic": "rw",
+      "token": "h",
+      "hits": [
+        {
+          "name": "GrpCat.SurjectiveOfEpiAuxs.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Algebra/Category/Grp/EpiMono.lean",
+              "line": 193,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "RootPairing.GeckConstruction.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+              "line": 64,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "CategoryTheory.Sieve.ofArrows.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/CategoryTheory/Sites/Sieves.lean",
+              "line": 644,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "0d7b093949a269e64401047aba3cedc99b6c2138e54a3552ca607f1ed798a02f",
+      "context": [
+        {
+          "line": 71,
+          "text": "theorem tableWith_eq (M : MultiEnc K Cipher \u03c1) (C : DAGCircuit inputs)"
+        },
+        {
+          "line": 72,
+          "text": "    (s : GarbleSeed C K \u03c1)"
+        },
+        {
+          "line": 73,
+          "text": "    (bit : \u2200 i : Fin C.gates.length, (Fin (C.gates[i]).args.length \u2192 Bool) \u2192 Bool)"
+        },
+        {
+          "line": 74,
+          "text": "    (i : Fin C.gates.length) :"
+        },
+        {
+          "line": 75,
+          "text": "    tableWith M C s bit i ="
+        },
+        {
+          "line": 76,
+          "text": "      (Finset.univ : Finset (Fin (C.gates[i]).args.length \u2192 Bool)).toList.map"
+        },
+        {
+          "line": 77,
+          "text": "        fun a => rowWith M C s bit i (s.2.2 i a) := rfl"
+        },
+        {
+          "line": 78,
+          "text": ""
+        },
+        {
+          "line": 79,
+          "text": "/-- Equal output labels at every assignment of a gate give equal generic tables. -/"
+        },
+        {
+          "line": 80,
+          "text": "theorem tableWith_congr (M : MultiEnc K Cipher \u03c1) (C : DAGCircuit inputs)"
+        },
+        {
+          "line": 81,
+          "text": "    (s : GarbleSeed C K \u03c1)"
+        },
+        {
+          "line": 82,
+          "text": "    (bit bit' : \u2200 i : Fin C.gates.length, (Fin (C.gates[i]).args.length \u2192 Bool) \u2192 Bool)"
+        },
+        {
+          "line": 83,
+          "text": "    (i : Fin C.gates.length) (h : \u2200 a, bit i a = bit' i a) :"
+        },
+        {
+          "line": 84,
+          "text": "    tableWith M C s bit i = tableWith M C s bit' i := by"
+        },
+        {
+          "line": 85,
+          "text": "  rw [tableWith_eq, tableWith_eq]"
+        },
+        {
+          "line": 86,
+          "text": "  apply List.map_congr_left"
+        },
+        {
+          "line": 87,
+          "text": "  intro a _"
+        },
+        {
+          "line": 88,
+          "text": "  rw [rowWith_eq, rowWith_eq, h]"
+        },
+        {
+          "line": 89,
+          "text": ""
+        },
+        {
+          "line": 90,
+          "text": "/-- With the gate's ordinary truth function as labels, `rowWith` equals the"
+        },
+        {
+          "line": 91,
+          "text": "published real garbled row. This is a specialization, with no new row semantics. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean",
+      "line": 285,
+      "tactic": "simp",
+      "token": "hi",
+      "hits": [
+        {
+          "name": "Complexity.LogProg.OIS.hi",
+          "homes": [
+            {
+              "path": "TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean",
+              "line": 144,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "0d7b093949a269e64401047aba3cedc99b6c2138e54a3552ca607f1ed798a02f",
+      "context": [
+        {
+          "line": 268,
+          "text": "assignment. This reuses the published binary-fold injectivity lemma. -/"
+        },
+        {
+          "line": 269,
+          "text": "theorem assignment_zero_of_two {l : \u2115} (hl : l \u2264 2) (a : Fin l \u2192 Bool)"
+        },
+        {
+          "line": 270,
+          "text": "    (h\u2080 : (List.ofFn a).getD 0 false = false)"
+        },
+        {
+          "line": 271,
+          "text": "    (h\u2081 : (List.ofFn a).getD 1 false = false) : a = fun _ => false := by"
+        },
+        {
+          "line": 272,
+          "text": "  apply CoinSeedRelabel.assignmentFold_injective l hl"
+        },
+        {
+          "line": 273,
+          "text": "  dsimp only"
+        },
+        {
+          "line": 274,
+          "text": "  rw [RowFromCoins.assignmentFold_eq_two a hl,"
+        },
+        {
+          "line": 275,
+          "text": "    RowFromCoins.assignmentFold_eq_two (fun _ : Fin l => false) hl]"
+        },
+        {
+          "line": 276,
+          "text": "  simp only [h\u2080, h\u2081, List.ofFn_const, List.getD_eq_getElem?_getD,"
+        },
+        {
+          "line": 277,
+          "text": "    List.getElem?_getD_replicate_default_eq, Bool.toNat_false]"
+        },
+        {
+          "line": 278,
+          "text": ""
+        },
+        {
+          "line": 279,
+          "text": "/-- The first substep leaves every other gate and every first-bit-false row unchanged. -/"
+        },
+        {
+          "line": 280,
+          "text": "theorem outputBit_first_unchanged (C : DAGCircuit inputs) (v : \u2115 \u2192 Bool)"
+        },
+        {
+          "line": 281,
+          "text": "    (cutoff : \u2115) (i : Fin C.gates.length) (a : Fin (C.gates[i]).args.length \u2192 Bool)"
+        },
+        {
+          "line": 282,
+          "text": "    (h : (i : \u2115) \u2260 cutoff \u2228 (List.ofFn a).getD 0 false = false) :"
+        },
+        {
+          "line": 283,
+          "text": "    outputBit C v cutoff 0 i a = outputBit C v cutoff 1 i a := by"
+        },
+        {
+          "line": 284,
+          "text": "  rcases h with hi | ha"
+        },
+        {
+          "line": 285,
+          "text": "  \u00b7 simp only [outputBit_eq, hi, false_and, or_false]"
+        },
+        {
+          "line": 286,
+          "text": "  \u00b7 simp only [outputBit_eq, ha, Bool.false_eq_true, and_false, or_false]"
+        },
+        {
+          "line": 287,
+          "text": ""
+        },
+        {
+          "line": 288,
+          "text": "/-- Advancing the cutoff leaves every gate other than the current gate unchanged. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean",
+      "line": 100,
+      "tactic": "rw",
+      "token": "h",
+      "hits": [
+        {
+          "name": "GrpCat.SurjectiveOfEpiAuxs.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Algebra/Category/Grp/EpiMono.lean",
+              "line": 193,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "RootPairing.GeckConstruction.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+              "line": 64,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "CategoryTheory.Sieve.ofArrows.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/CategoryTheory/Sites/Sieves.lean",
+              "line": 644,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "d96d2467014a15a4c09d867a91e8a0c3c57a28f192887ac31033c4368227fcde",
+      "context": [
+        {
+          "line": 83,
+          "text": "    (rows : (i : Fin C.gates.length) \u2192 List (Fin C.gates[i.val].args.length \u2192 Bool))"
+        },
+        {
+          "line": 84,
+          "text": "    (perm : (i : Fin C.gates.length) \u2192 Equiv.Perm (Fin C.gates[i.val].args.length \u2192 Bool))"
+        },
+        {
+          "line": 85,
+          "text": "    (u q : \u2115) (j : Fin (q + 1)) :"
+        },
+        {
+          "line": 86,
+          "text": "    place C rows perm u q j ="
+        },
+        {
+          "line": 87,
+          "text": "      (GateOccurrences.padded q (GateOccurrences.occurrences C rows perm u) j).map (fun s =>"
+        },
+        {
+          "line": 88,
+          "text": "        \u27e8s.1, (perm s.1 ((rows s.1).getD s.2.1 (fun _ => false)), decide (s.2.2 \u2260 0))\u27e9) := rfl"
+        },
+        {
+          "line": 89,
+          "text": ""
+        },
+        {
+          "line": 90,
+          "text": "/-- A padded occurrence `(i,r,p)` is placed at actual assignment `perm i (rows[i][r])`"
+        },
+        {
+          "line": 91,
+          "text": "and nonce half `decide (p\u22600)`. -/"
+        },
+        {
+          "line": 92,
+          "text": "theorem place_of_padded {m : \u2115} (C : DAGCircuit m)"
+        },
+        {
+          "line": 93,
+          "text": "    (rows : (i : Fin C.gates.length) \u2192 List (Fin C.gates[i.val].args.length \u2192 Bool))"
+        },
+        {
+          "line": 94,
+          "text": "    (perm : (i : Fin C.gates.length) \u2192 Equiv.Perm (Fin C.gates[i.val].args.length \u2192 Bool))"
+        },
+        {
+          "line": 95,
+          "text": "    (u q : \u2115) (j : Fin (q + 1)) (i : Fin C.gates.length) (r p : \u2115)"
+        },
+        {
+          "line": 96,
+          "text": "    (h : GateOccurrences.padded q (GateOccurrences.occurrences C rows perm u) j ="
+        },
+        {
+          "line": 97,
+          "text": "      some (i, r, p)) :"
+        },
+        {
+          "line": 98,
+          "text": "    place C rows perm u q j ="
+        },
+        {
+          "line": 99,
+          "text": "      some \u27e8i, (perm i ((rows i).getD r (fun _ => false)), decide (p \u2260 0))\u27e9 := by"
+        },
+        {
+          "line": 100,
+          "text": "  rw [place_eq, h, Option.map_some]"
+        },
+        {
+          "line": 101,
+          "text": ""
+        },
+        {
+          "line": 102,
+          "text": "/-- Every picked challenge slot is placed back at the original nonce coordinate."
+        },
+        {
+          "line": 103,
+          "text": "Completeness of the assignment rows ensures the occurrence rank has the prescribed row."
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTAnswerWords.lean",
+      "line": 78,
+      "tactic": "rw",
+      "token": "hv",
+      "hits": [
+        {
+          "name": "Complexity.LogProg.ExpBFS.hv",
+          "homes": [
+            {
+              "path": "TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean",
+              "line": 358,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "610e66f6c8d1783c03969843e45bdc38eb8b57ebe15305b57c2fa40507d11523",
+      "context": [
+        {
+          "line": 61,
+          "text": "    (C : DAGCircuit m) (s : GarbleSeed C (Fin width \u2192 Bool) \u03c1) (first count : \u2115)"
+        },
+        {
+          "line": 62,
+          "text": "    (v : \u2115 \u2192 Bool) (hCalls : H.calls.eval n = count * width)"
+        },
+        {
+          "line": 63,
+          "text": "    (hv : \u2200 i : Fin count, v (first + i) = ys.getD i false)"
+        },
+        {
+          "line": 64,
+          "text": "    (hpoint : \u2200 (i : Fin count) (t : Fin width),"
+        },
+        {
+          "line": 65,
+          "text": "      (H.answersB n xs ys rA rB).getD (i * width + t) false ="
+        },
+        {
+          "line": 66,
+          "text": "        keyAt C s (first + i) (ys.getD i false) t) :"
+        },
+        {
+          "line": 67,
+          "text": "    H.answersB n xs ys rA rB ="
+        },
+        {
+          "line": 68,
+          "text": "      List.ofFn (FakeObjects.activeAnswers C (RelabelGarbling.relabelSeed C v s) first count) := by"
+        },
+        {
+          "line": 69,
+          "text": "  have hlen := (length_answersB H n xs ys rA rB).trans hCalls"
+        },
+        {
+          "line": 70,
+          "text": "  have hBit (j : Fin (count * width)) :"
+        },
+        {
+          "line": 71,
+          "text": "      (H.answersB n xs ys rA rB).getD j false ="
+        },
+        {
+          "line": 72,
+          "text": "        FakeObjects.activeAnswers C (RelabelGarbling.relabelSeed C v s) first count j := by"
+        },
+        {
+          "line": 73,
+          "text": "    obtain \u27e8\u27e8i, t\u27e9, rfl\u27e9 := (finProdFinEquiv (m := count) (n := width)).surjective j"
+        },
+        {
+          "line": 74,
+          "text": "    rw [GateHybridMessage.activeAnswers_relabel]"
+        },
+        {
+          "line": 75,
+          "text": "    change _ = keyAt C s (first + (finProdFinEquiv.symm (finProdFinEquiv (i, t))).1)"
+        },
+        {
+          "line": 76,
+          "text": "      (v (first + (finProdFinEquiv.symm (finProdFinEquiv (i, t))).1))"
+        },
+        {
+          "line": 77,
+          "text": "      (finProdFinEquiv.symm (finProdFinEquiv (i, t))).2"
+        },
+        {
+          "line": 78,
+          "text": "    rw [Equiv.symm_apply_apply, hv]"
+        },
+        {
+          "line": 79,
+          "text": "    have hi : i * width + t = (finProdFinEquiv (i, t) : \u2115) := by"
+        },
+        {
+          "line": 80,
+          "text": "      rw [finProdFinEquiv_apply_val]"
+        },
+        {
+          "line": 81,
+          "text": "      ring"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean",
+      "line": 200,
+      "tactic": "simp",
+      "token": "hv",
+      "hits": [
+        {
+          "name": "Complexity.LogProg.ExpBFS.hv",
+          "homes": [
+            {
+              "path": "TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean",
+              "line": 358,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "4db51c08880a7ffe5e5576310c35a84b47f860b7414762472bd3a73f4e64c3ae",
+      "context": [
+        {
+          "line": 183,
+          "text": "    (bits : Fin k \u2192 Bool) :"
+        },
+        {
+          "line": 184,
+          "text": "    (List.ofFn fun j => keyAt C s (wire j) (bits j)) ="
+        },
+        {
+          "line": 185,
+          "text": "      (List.ofFn fun j => keyAt C (relabelSeed C v s) (wire j)"
+        },
+        {
+          "line": 186,
+          "text": "        (xor (bits j) (v (wire j)))) := by"
+        },
+        {
+          "line": 187,
+          "text": "  apply congrArg List.ofFn"
+        },
+        {
+          "line": 188,
+          "text": "  funext j"
+        },
+        {
+          "line": 189,
+          "text": "  exact keyAt_original C v s (wire j) (bits j)"
+        },
+        {
+          "line": 190,
+          "text": ""
+        },
+        {
+          "line": 191,
+          "text": "/-- The original output-key pair at `w` is the relabeled pair with its two"
+        },
+        {
+          "line": 192,
+          "text": "entries swapped exactly when `v w = true`. This also holds for default keys"
+        },
+        {
+          "line": 193,
+          "text": "outside `C.size`. -/"
+        },
+        {
+          "line": 194,
+          "text": "theorem output_pair_relabel {m : \u2115} (C : DAGCircuit m) (v : \u2115 \u2192 Bool)"
+        },
+        {
+          "line": 195,
+          "text": "    {K \u03c1 : Type} [Inhabited K] (s : GarbleSeed C K \u03c1) (w : \u2115) :"
+        },
+        {
+          "line": 196,
+          "text": "    (keyAt C s w false, keyAt C s w true) ="
+        },
+        {
+          "line": 197,
+          "text": "      if v w then"
+        },
+        {
+          "line": 198,
+          "text": "        (keyAt C (relabelSeed C v s) w true, keyAt C (relabelSeed C v s) w false)"
+        },
+        {
+          "line": 199,
+          "text": "      else (keyAt C (relabelSeed C v s) w false, keyAt C (relabelSeed C v s) w true) := by"
+        },
+        {
+          "line": 200,
+          "text": "  cases hv : v w <;> simp [hv, keyAt_relabel]"
+        },
+        {
+          "line": 201,
+          "text": ""
+        },
+        {
+          "line": 202,
+          "text": "end TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean",
+      "line": 301,
+      "tactic": "simp",
+      "token": "h",
+      "hits": [
+        {
+          "name": "GrpCat.SurjectiveOfEpiAuxs.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Algebra/Category/Grp/EpiMono.lean",
+              "line": 193,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "RootPairing.GeckConstruction.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+              "line": 64,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "CategoryTheory.Sieve.ofArrows.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/CategoryTheory/Sites/Sieves.lean",
+              "line": 644,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "3d65a1cda674b22ee76536c13fd84b558a28850ba2eef0e90bef8846be164a74",
+      "context": [
+        {
+          "line": 284,
+          "text": "the picked challenge value or the retained old value. The challenge sum map reads the key"
+        },
+        {
+          "line": 285,
+          "text": "in its left summand and the nonce vector in its right summand. -/"
+        },
+        {
+          "line": 286,
+          "text": "theorem dataEquiv_fill {m : \u2115} (C : DAGCircuit m) (V : Type)"
+        },
+        {
+          "line": 287,
+          "text": "    (rows : (i : Fin C.gates.length) \u2192 List (Fin C.gates[i.val].args.length \u2192 Bool))"
+        },
+        {
+          "line": 288,
+          "text": "    (s : GarbleSeed C V (V \u00d7 V)) (u : Fin C.size) (q : \u2115) (k : V)"
+        },
+        {
+          "line": 289,
+          "text": "    (r : Fin (q + 1) \u2192 V) :"
+        },
+        {
+          "line": 290,
+          "text": "    dataEquiv C V ((SelectedSeed.fill C rows s u q k r).1,"
+        },
+        {
+          "line": 291,
+          "text": "      (SelectedSeed.fill C rows s u q k r).2.1) ="
+        },
+        {
+          "line": 292,
+          "text": "        fun x => (pick C rows s.2.2 u q x).elim (dataEquiv C V (s.1, s.2.1) x)"
+        },
+        {
+          "line": 293,
+          "text": "          (challengeEquiv q V (k, r)) := by"
+        },
+        {
+          "line": 294,
+          "text": "  funext x"
+        },
+        {
+          "line": 295,
+          "text": "  cases x with"
+        },
+        {
+          "line": 296,
+          "text": "  | inl label =>"
+        },
+        {
+          "line": 297,
+          "text": "    rcases label with \u27e8v, b\u27e9"
+        },
+        {
+          "line": 298,
+          "text": "    simp only [dataEquiv_eq, pick_eq, Sum.elim_inl, SelectedSeed.fill_key,"
+        },
+        {
+          "line": 299,
+          "text": "      challengeEquiv_eq, Prod.mk.injEq]"
+        },
+        {
+          "line": 300,
+          "text": "    by_cases h : v = u \u2227 b = true"
+        },
+        {
+          "line": 301,
+          "text": "    \u00b7 simp only [h, and_self, ite_true, Option.elim_some, Sum.elim_inl]"
+        },
+        {
+          "line": 302,
+          "text": "    \u00b7 simp only [h, ite_false, Option.elim_none]"
+        },
+        {
+          "line": 303,
+          "text": "  | inr coordinate =>"
+        },
+        {
+          "line": 304,
+          "text": "    rcases coordinate with \u27e8i, a, half\u27e9"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean",
+      "line": 302,
+      "tactic": "simp",
+      "token": "h",
+      "hits": [
+        {
+          "name": "GrpCat.SurjectiveOfEpiAuxs.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Algebra/Category/Grp/EpiMono.lean",
+              "line": 193,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "RootPairing.GeckConstruction.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+              "line": 64,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "CategoryTheory.Sieve.ofArrows.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/CategoryTheory/Sites/Sieves.lean",
+              "line": 644,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "3d65a1cda674b22ee76536c13fd84b558a28850ba2eef0e90bef8846be164a74",
+      "context": [
+        {
+          "line": 285,
+          "text": "in its left summand and the nonce vector in its right summand. -/"
+        },
+        {
+          "line": 286,
+          "text": "theorem dataEquiv_fill {m : \u2115} (C : DAGCircuit m) (V : Type)"
+        },
+        {
+          "line": 287,
+          "text": "    (rows : (i : Fin C.gates.length) \u2192 List (Fin C.gates[i.val].args.length \u2192 Bool))"
+        },
+        {
+          "line": 288,
+          "text": "    (s : GarbleSeed C V (V \u00d7 V)) (u : Fin C.size) (q : \u2115) (k : V)"
+        },
+        {
+          "line": 289,
+          "text": "    (r : Fin (q + 1) \u2192 V) :"
+        },
+        {
+          "line": 290,
+          "text": "    dataEquiv C V ((SelectedSeed.fill C rows s u q k r).1,"
+        },
+        {
+          "line": 291,
+          "text": "      (SelectedSeed.fill C rows s u q k r).2.1) ="
+        },
+        {
+          "line": 292,
+          "text": "        fun x => (pick C rows s.2.2 u q x).elim (dataEquiv C V (s.1, s.2.1) x)"
+        },
+        {
+          "line": 293,
+          "text": "          (challengeEquiv q V (k, r)) := by"
+        },
+        {
+          "line": 294,
+          "text": "  funext x"
+        },
+        {
+          "line": 295,
+          "text": "  cases x with"
+        },
+        {
+          "line": 296,
+          "text": "  | inl label =>"
+        },
+        {
+          "line": 297,
+          "text": "    rcases label with \u27e8v, b\u27e9"
+        },
+        {
+          "line": 298,
+          "text": "    simp only [dataEquiv_eq, pick_eq, Sum.elim_inl, SelectedSeed.fill_key,"
+        },
+        {
+          "line": 299,
+          "text": "      challengeEquiv_eq, Prod.mk.injEq]"
+        },
+        {
+          "line": 300,
+          "text": "    by_cases h : v = u \u2227 b = true"
+        },
+        {
+          "line": 301,
+          "text": "    \u00b7 simp only [h, and_self, ite_true, Option.elim_some, Sum.elim_inl]"
+        },
+        {
+          "line": 302,
+          "text": "    \u00b7 simp only [h, ite_false, Option.elim_none]"
+        },
+        {
+          "line": 303,
+          "text": "  | inr coordinate =>"
+        },
+        {
+          "line": 304,
+          "text": "    rcases coordinate with \u27e8i, a, half\u27e9"
+        },
+        {
+          "line": 305,
+          "text": "    simp only [dataEquiv_eq, Sum.elim_inr, SelectedSeed.fill_nonce]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean",
+      "line": 112,
+      "tactic": "rw",
+      "token": "length_eq",
+      "hits": [
+        {
+          "name": "Array.Perm.length_eq",
+          "homes": [
+            {
+              "path": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Array/Perm.lean",
+              "line": 87,
+              "kind": "abbrev"
+            }
+          ]
+        }
+      ],
+      "resolution": "Local theorem length_eq from the same SelectedRows namespace; source theorem declaration supplies this name, not any catalogued foreign definition.",
+      "source_sha256": "56a6fedb218c17f2a655ee9e14196e7c58602a19b283e4a9365c7f488eb40ce9",
+      "context": [
+        {
+          "line": 95,
+          "text": "/-- `descriptor` is a known-key wrapped record at the second position of a two-key row,"
+        },
+        {
+          "line": 96,
+          "text": "and a direct challenge record at all other selected positions. -/"
+        },
+        {
+          "line": 97,
+          "text": "theorem descriptor_eq (n : \u2115) (ks : List (Fin n \u2192 Bool))"
+        },
+        {
+          "line": 98,
+          "text": "    (nonce : (Fin n \u2192 Bool) \u00d7 (Fin n \u2192 Bool)) (p j : \u2115) :"
+        },
+        {
+          "line": 99,
+          "text": "    descriptor n ks nonce p j = if ks.length = 2 \u2227 p = 1 then"
+        },
+        {
+          "line": 100,
+          "text": "      SliceReconstruction.wrappedRecord j (List.ofFn (ks.getD 0 default)) (List.ofFn nonce.1)"
+        },
+        {
+          "line": 101,
+          "text": "    else SliceReconstruction.directRecord j := rfl"
+        },
+        {
+          "line": 102,
+          "text": ""
+        },
+        {
+          "line": 103,
+          "text": "/-- The deterministic precomputed word has exactly the selected slice's message length,"
+        },
+        {
+          "line": 104,
+          "text": "provided `E\u2081` evaluates its prescribed `2n`-bit pad family. -/"
+        },
+        {
+          "line": 105,
+          "text": "theorem word_length"
+        },
+        {
+          "line": 106,
+          "text": "    {G\u2081 : \u2200 n, (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 (Fin (n + n) \u2192 Bool)}"
+        },
+        {
+          "line": 107,
+          "text": "    {E\u2081 : List Bool \u2192 List Bool}"
+        },
+        {
+          "line": 108,
+          "text": "    (hGE\u2081 : \u2200 n (s x : Fin n \u2192 Bool), E\u2081 (pairEncode (List.ofFn s) (List.ofFn x)) ="
+        },
+        {
+          "line": 109,
+          "text": "      List.ofFn (G\u2081 n s x)) (n : \u2115) (ks : List (Fin n \u2192 Bool)) (o : Fin n \u2192 Bool)"
+        },
+        {
+          "line": 110,
+          "text": "    (nonce : (Fin n \u2192 Bool) \u00d7 (Fin n \u2192 Bool)) (p : \u2115) :"
+        },
+        {
+          "line": 111,
+          "text": "    (word E\u2081 n ks o nonce p).length = length n ks p := by"
+        },
+        {
+          "line": 112,
+          "text": "  rw [word_eq, length_eq]"
+        },
+        {
+          "line": 113,
+          "text": "  split_ifs"
+        },
+        {
+          "line": 114,
+          "text": "  \u00b7 exact SelectedSlices.innerCipher_length hGE\u2081 n _ o nonce.2"
+        },
+        {
+          "line": 115,
+          "text": "  \u00b7 exact List.length_ofFn"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean",
+      "line": 224,
+      "tactic": "rw",
+      "token": "length_eq",
+      "hits": [
+        {
+          "name": "Array.Perm.length_eq",
+          "homes": [
+            {
+              "path": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Array/Perm.lean",
+              "line": 87,
+              "kind": "abbrev"
+            }
+          ]
+        }
+      ],
+      "resolution": "Local theorem length_eq from the same SelectedRows namespace; source theorem declaration supplies this name, not any catalogued foreign definition.",
+      "source_sha256": "56a6fedb218c17f2a655ee9e14196e7c58602a19b283e4a9365c7f488eb40ce9",
+      "context": [
+        {
+          "line": 207,
+          "text": "/-- A selected-row reconstruction record using a slot index `j\u2264q` has at most"
+        },
+        {
+          "line": 208,
+          "text": "`2q+3n+8` bits, uniformly in the fixed keys and nonce values. -/"
+        },
+        {
+          "line": 209,
+          "text": "theorem descriptor_length_le (n q : \u2115) (ks : List (Fin n \u2192 Bool))"
+        },
+        {
+          "line": 210,
+          "text": "    (nonce : (Fin n \u2192 Bool) \u00d7 (Fin n \u2192 Bool)) (p j : \u2115) (hj : j \u2264 q) :"
+        },
+        {
+          "line": 211,
+          "text": "    (descriptor n ks nonce p j).length \u2264 2 * q + 3 * n + 8 := by"
+        },
+        {
+          "line": 212,
+          "text": "  rw [descriptor_eq]"
+        },
+        {
+          "line": 213,
+          "text": "  split_ifs"
+        },
+        {
+          "line": 214,
+          "text": "  \u00b7 rw [(SliceReconstruction.record_lengths [] j _ _).2.2, List.length_ofFn,"
+        },
+        {
+          "line": 215,
+          "text": "      List.length_ofFn]"
+        },
+        {
+          "line": 216,
+          "text": "    omega"
+        },
+        {
+          "line": 217,
+          "text": "  \u00b7 rw [(SliceReconstruction.record_lengths [] j [] []).2.1]"
+        },
+        {
+          "line": 218,
+          "text": "    omega"
+        },
+        {
+          "line": 219,
+          "text": ""
+        },
+        {
+          "line": 220,
+          "text": "/-- Every selected-row slice fits in the joint pad of length `2n+(n+(4n+2))`, regardless"
+        },
+        {
+          "line": 221,
+          "text": "of the row's fixed data. -/"
+        },
+        {
+          "line": 222,
+          "text": "theorem fits (n : \u2115) (ks : List (Fin n \u2192 Bool)) (p : \u2115) :"
+        },
+        {
+          "line": 223,
+          "text": "    offset n ks p + n + length n ks p \u2264 (n + n) + (n + (4 * n + 2)) := by"
+        },
+        {
+          "line": 224,
+          "text": "  rw [offset_eq, length_eq]"
+        },
+        {
+          "line": 225,
+          "text": "  split_ifs"
+        },
+        {
+          "line": 226,
+          "text": "  \u00b7 exact (SelectedSlices.slice_shapes_fit n).2"
+        },
+        {
+          "line": 227,
+          "text": "  \u00b7 exact (SelectedSlices.slice_shapes_fit n).1"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean",
+      "line": 147,
+      "tactic": "rw",
+      "token": "h",
+      "hits": [
+        {
+          "name": "GrpCat.SurjectiveOfEpiAuxs.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Algebra/Category/Grp/EpiMono.lean",
+              "line": 193,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "RootPairing.GeckConstruction.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+              "line": 64,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "CategoryTheory.Sieve.ofArrows.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/CategoryTheory/Sites/Sieves.lean",
+              "line": 644,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "e584fc4dd109df54cda72736806f03d310f85329e5623b6cccee9436eb877c5d",
+      "context": [
+        {
+          "line": 130,
+          "text": "      if p.val = 0 then (r \u27e8j, h\u27e9, (s.2.1 i a).2) else ((s.2.1 i a).1, r \u27e8j, h\u27e9)"
+        },
+        {
+          "line": 131,
+          "text": "    else s.2.1 i a"
+        },
+        {
+          "line": 132,
+          "text": ""
+        },
+        {
+          "line": 133,
+          "text": "/-- `nonce` changes exactly the selected argument's encryption-nonce half, reading the"
+        },
+        {
+          "line": 134,
+          "text": "independent nonce at its occurrence rank when that rank fits in `q+1` slots. -/"
+        },
+        {
+          "line": 135,
+          "text": "theorem nonce_eq (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length \u2192 Bool) :"
+        },
+        {
+          "line": 136,
+          "text": "    nonce C rows s u q r i a ="
+        },
+        {
+          "line": 137,
+          "text": "      (GateOccurrences.selectedPosition C.gates[i.val] a u).elim (s.2.1 i a) (fun p =>"
+        },
+        {
+          "line": 138,
+          "text": "        let j := slotIndex C rows s.2.2 u i a p"
+        },
+        {
+          "line": 139,
+          "text": "        if h : j < q + 1 then"
+        },
+        {
+          "line": 140,
+          "text": "          if p.val = 0 then (r \u27e8j, h\u27e9, (s.2.1 i a).2) else ((s.2.1 i a).1, r \u27e8j, h\u27e9)"
+        },
+        {
+          "line": 141,
+          "text": "        else s.2.1 i a) := rfl"
+        },
+        {
+          "line": 142,
+          "text": ""
+        },
+        {
+          "line": 143,
+          "text": "/-- A row with no selected inactive argument retains both fixed nonce halves. -/"
+        },
+        {
+          "line": 144,
+          "text": "theorem nonce_of_none (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length \u2192 Bool)"
+        },
+        {
+          "line": 145,
+          "text": "    (h : GateOccurrences.selectedPosition C.gates[i.val] a u = none) :"
+        },
+        {
+          "line": 146,
+          "text": "    nonce C rows s u q r i a = s.2.1 i a := by"
+        },
+        {
+          "line": 147,
+          "text": "  rw [nonce_eq, h, Option.elim_none]"
+        },
+        {
+          "line": 148,
+          "text": ""
+        },
+        {
+          "line": 149,
+          "text": "/-- A selected row whose occurrence rank fits the capacity receives exactly that independent"
+        },
+        {
+          "line": 150,
+          "text": "nonce in its selected encryption layer, retaining the opposite fixed nonce half. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean",
+      "line": 158,
+      "tactic": "rw",
+      "token": "h",
+      "hits": [
+        {
+          "name": "GrpCat.SurjectiveOfEpiAuxs.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Algebra/Category/Grp/EpiMono.lean",
+              "line": 193,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "RootPairing.GeckConstruction.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+              "line": 64,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "CategoryTheory.Sieve.ofArrows.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/CategoryTheory/Sites/Sieves.lean",
+              "line": 644,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "e584fc4dd109df54cda72736806f03d310f85329e5623b6cccee9436eb877c5d",
+      "context": [
+        {
+          "line": 141,
+          "text": "        else s.2.1 i a) := rfl"
+        },
+        {
+          "line": 142,
+          "text": ""
+        },
+        {
+          "line": 143,
+          "text": "/-- A row with no selected inactive argument retains both fixed nonce halves. -/"
+        },
+        {
+          "line": 144,
+          "text": "theorem nonce_of_none (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length \u2192 Bool)"
+        },
+        {
+          "line": 145,
+          "text": "    (h : GateOccurrences.selectedPosition C.gates[i.val] a u = none) :"
+        },
+        {
+          "line": 146,
+          "text": "    nonce C rows s u q r i a = s.2.1 i a := by"
+        },
+        {
+          "line": 147,
+          "text": "  rw [nonce_eq, h, Option.elim_none]"
+        },
+        {
+          "line": 148,
+          "text": ""
+        },
+        {
+          "line": 149,
+          "text": "/-- A selected row whose occurrence rank fits the capacity receives exactly that independent"
+        },
+        {
+          "line": 150,
+          "text": "nonce in its selected encryption layer, retaining the opposite fixed nonce half. -/"
+        },
+        {
+          "line": 151,
+          "text": "theorem nonce_of_some (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length \u2192 Bool)"
+        },
+        {
+          "line": 152,
+          "text": "    (p : Fin C.gates[i.val].args.length)"
+        },
+        {
+          "line": 153,
+          "text": "    (h : GateOccurrences.selectedPosition C.gates[i.val] a u = some p)"
+        },
+        {
+          "line": 154,
+          "text": "    (hslot : slotIndex C rows s.2.2 u i a p < q + 1) :"
+        },
+        {
+          "line": 155,
+          "text": "    nonce C rows s u q r i a ="
+        },
+        {
+          "line": 156,
+          "text": "      if p.val = 0 then (r \u27e8slotIndex C rows s.2.2 u i a p, hslot\u27e9, (s.2.1 i a).2)"
+        },
+        {
+          "line": 157,
+          "text": "      else ((s.2.1 i a).1, r \u27e8slotIndex C rows s.2.2 u i a p, hslot\u27e9) := by"
+        },
+        {
+          "line": 158,
+          "text": "  rw [nonce_eq, h, Option.elim_some]"
+        },
+        {
+          "line": 159,
+          "text": "  exact dif_pos hslot"
+        },
+        {
+          "line": 160,
+          "text": ""
+        },
+        {
+          "line": 161,
+          "text": "end Fill"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean",
+      "line": 321,
+      "tactic": "rw",
+      "token": "h",
+      "hits": [
+        {
+          "name": "GrpCat.SurjectiveOfEpiAuxs.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Algebra/Category/Grp/EpiMono.lean",
+              "line": 193,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "RootPairing.GeckConstruction.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+              "line": 64,
+              "kind": "def"
+            }
+          ]
+        },
+        {
+          "name": "CategoryTheory.Sieve.ofArrows.h",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/CategoryTheory/Sites/Sieves.lean",
+              "line": 644,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "e584fc4dd109df54cda72736806f03d310f85329e5623b6cccee9436eb877c5d",
+      "context": [
+        {
+          "line": 304,
+          "text": "to return that position, contrary to its `none` result. Thus every coordinate uses the"
+        },
+        {
+          "line": 305,
+          "text": "unchanged branch of the filled-key reader. -/"
+        },
+        {
+          "line": 306,
+          "text": "theorem fill_argKeys_none {m : \u2115} {K \u03c1 : Type} [Inhabited K] (C : DAGCircuit m)"
+        },
+        {
+          "line": 307,
+          "text": "    (rows : (i : Fin C.gates.length) \u2192 List (Fin C.gates[i.val].args.length \u2192 Bool))"
+        },
+        {
+          "line": 308,
+          "text": "    (s : GarbleSeed C K (\u03c1 \u00d7 \u03c1)) (u : Fin C.size) (q : \u2115) (k : K)"
+        },
+        {
+          "line": 309,
+          "text": "    (r : Fin (q + 1) \u2192 \u03c1) (i : Fin C.gates.length)"
+        },
+        {
+          "line": 310,
+          "text": "    (a : Fin C.gates[i.val].args.length \u2192 Bool) (hargs : C.gates[i.val].args.Nodup)"
+        },
+        {
+          "line": 311,
+          "text": "    (h : GateOccurrences.selectedPosition C.gates[i.val] a u.val = none) :"
+        },
+        {
+          "line": 312,
+          "text": "    argKeys C (fill C rows s u q k r) i a = argKeys C s i a := by"
+        },
+        {
+          "line": 313,
+          "text": "  rw [fill_argKeys, argKeys_eq]"
+        },
+        {
+          "line": 314,
+          "text": "  simp only [Fin.getElem_fin]"
+        },
+        {
+          "line": 315,
+          "text": "  apply congrArg List.ofFn"
+        },
+        {
+          "line": 316,
+          "text": "  funext t"
+        },
+        {
+          "line": 317,
+          "text": "  have hne : (C.gates[i.val].args[t.val], a t) \u2260 (u.val, true) := by"
+        },
+        {
+          "line": 318,
+          "text": "    intro hlabel"
+        },
+        {
+          "line": 319,
+          "text": "    have hs := (GateOccurrences.selectedPosition_eq_some_iff _ _ _ hargs t).mpr"
+        },
+        {
+          "line": 320,
+          "text": "      \u27e8congrArg Prod.fst hlabel, congrArg Prod.snd hlabel\u27e9"
+        },
+        {
+          "line": 321,
+          "text": "    rw [h] at hs"
+        },
+        {
+          "line": 322,
+          "text": "    contradiction"
+        },
+        {
+          "line": 323,
+          "text": "  exact if_neg hne"
+        },
+        {
+          "line": 324,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean",
+      "line": 63,
+      "tactic": "simp",
+      "token": "heq",
+      "hits": [
+        {
+          "name": "Mathlib.Tactic.TermCongr.CongrResult.heq",
+          "homes": [
+            {
+              "path": ".lake/packages/mathlib/Mathlib/Tactic/TermCongr.lean",
+              "line": 293,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "6605d73e504965a45990527eb01e28f5fd05b63b1b9b89db8dff77d1b34d2bf8",
+      "context": [
+        {
+          "line": 46,
+          "text": "theorem statClose_of_eq_off {\u03c3 \u03b3 : Type*} [Fintype \u03c3] (X Y : \u03c3 \u2192 \u03b3)"
+        },
+        {
+          "line": 47,
+          "text": "    (Bad : \u03c3 \u2192 Prop) (\u03b4 : \u211d) (hBad : uprob Bad \u2264 \u03b4)"
+        },
+        {
+          "line": 48,
+          "text": "    (heq : \u2200 r, \u00ac Bad r \u2192 X r = Y r) : StatClose X Y \u03b4 := by"
+        },
+        {
+          "line": 49,
+          "text": "  classical"
+        },
+        {
+          "line": 50,
+          "text": "  rw [statClose_iff]"
+        },
+        {
+          "line": 51,
+          "text": "  intro T"
+        },
+        {
+          "line": 52,
+          "text": "  rw [uprob_eq_uexp, uprob_eq_uexp]"
+        },
+        {
+          "line": 53,
+          "text": "  refine (MultiMsg.abs_uexp_sub_le_uprob"
+        },
+        {
+          "line": 54,
+          "text": "    (fun r => if T (X r) then (1 : \u211d) else 0)"
+        },
+        {
+          "line": 55,
+          "text": "    (fun r => if T (Y r) then (1 : \u211d) else 0) Bad ?_ ?_ ?_).trans hBad"
+        },
+        {
+          "line": 56,
+          "text": "  \u00b7 intro r"
+        },
+        {
+          "line": 57,
+          "text": "    dsimp only"
+        },
+        {
+          "line": 58,
+          "text": "    split_ifs <;> norm_num"
+        },
+        {
+          "line": 59,
+          "text": "  \u00b7 intro r"
+        },
+        {
+          "line": 60,
+          "text": "    dsimp only"
+        },
+        {
+          "line": 61,
+          "text": "    split_ifs <;> norm_num"
+        },
+        {
+          "line": 62,
+          "text": "  \u00b7 intro r hr"
+        },
+        {
+          "line": 63,
+          "text": "    simp only [heq r hr]"
+        },
+        {
+          "line": 64,
+          "text": ""
+        },
+        {
+          "line": 65,
+          "text": "/-- For same-coins samplers `X`, `Y` agreeing outside an event of probability at most"
+        },
+        {
+          "line": 66,
+          "text": "`\u03b4`, every randomized distinguisher `D` has `distAdv X Y D \u2264 \u03b4`."
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies.lean",
+      "line": 74,
+      "tactic": "rw",
+      "token": "hNext",
+      "hits": [
+        {
+          "name": "TCSlib.Cryptography.Games.EffFill.hNext",
+          "homes": [
+            {
+              "path": "TCSlib/Cryptography/Games/Efficiency/Handler.lean",
+              "line": 117,
+              "kind": "def"
+            }
+          ]
+        }
+      ],
+      "resolution": "Locally bound proof variable (the displayed source binder/case split), not the catalogued unrelated foreign definition.",
+      "source_sha256": "4965b46b6e173d4f2db0adef9c3c06cde773db72da04f0b124c301598044128c",
+      "context": [
+        {
+          "line": 57,
+          "text": "    simp only [GI.argM_ilayout, Strategy.encodeMsgs_nil, decide_true, if_true,"
+        },
+        {
+          "line": 58,
+          "text": "      GI.argX_ilayout, GI.argZ_ilayout, GI.inCoins_ilayout]"
+        },
+        {
+          "line": 59,
+          "text": "  | cons a hist =>"
+        },
+        {
+          "line": 60,
+          "text": "    rw [hCons]"
+        },
+        {
+          "line": 61,
+          "text": "    simp only [Function.comp_apply, GI.argM_ilayout, Strategy.encodeMsgs_cons, pairEncode_ne_nil,"
+        },
+        {
+          "line": 62,
+          "text": "      decide_false, Bool.false_eq_true, if_false, pairFstD_pairEncode]"
+        },
+        {
+          "line": 63,
+          "text": ""
+        },
+        {
+          "line": 64,
+          "text": "/-- A strategy whose next message is `reply x z (hist.headD [])` is efficient if"
+        },
+        {
+          "line": 65,
+          "text": "the corresponding interactive-layout map is polynomial-time. The contract includes"
+        },
+        {
+          "line": 66,
+          "text": "empty and malformed histories and arbitrary private words. [PS10, Definition 155.1] -/"
+        },
+        {
+          "line": 67,
+          "text": "theorem reply_efficient (S : Strategy)"
+        },
+        {
+          "line": 68,
+          "text": "    (reply : List Bool \u2192 List Bool \u2192 List Bool \u2192 List Bool)"
+        },
+        {
+          "line": 69,
+          "text": "    (hNext : \u2200 x z r hist, S.next x z r hist = reply x z (hist.headD []))"
+        },
+        {
+          "line": 70,
+          "text": "    (hReply : PolyTimeComputable fun w =>"
+        },
+        {
+          "line": 71,
+          "text": "      reply (GI.argX w) (GI.argZ w) (pairFstD (GI.argM w))) : S.Efficient := by"
+        },
+        {
+          "line": 72,
+          "text": "  refine GI.efficient_of_polyTime S hReply ?_"
+        },
+        {
+          "line": 73,
+          "text": "  intro x z r hist"
+        },
+        {
+          "line": 74,
+          "text": "  rw [hNext, GI.argX_ilayout, GI.argZ_ilayout, GI.argM_ilayout,"
+        },
+        {
+          "line": 75,
+          "text": "    Strategy.pairFstD_encodeMsgs]"
+        },
+        {
+          "line": 76,
+          "text": ""
+        },
+        {
+          "line": 77,
+          "text": "end TCSlib.Cryptography.SecureComputation.YaoHybridProof"
+        }
+      ]
+    }
+  ]
+}

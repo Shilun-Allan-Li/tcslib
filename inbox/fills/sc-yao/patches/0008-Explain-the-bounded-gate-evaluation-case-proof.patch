@@ -1,0 +1,26 @@
+From 6e7ef601ad9a05d5e26d09f32eadb9c17a4a6cbc Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Mon, 16 Nov 2026 00:05:02 -0800
+Subject: [PATCH 8/8] Explain the bounded gate evaluation case proof
+
+---
+ .../SecureComputation/Yao/HybridProof/Garbling.lean         | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean b/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean
+index 02abb3928..6b765d382 100644
+--- a/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean
+@@ -192,7 +192,11 @@ theorem fixedTable_poly {α : Type} (enum : List α) (row : α → List Bool →
+ 
+ /-- For at most two arguments, `gateOut g a` is the conjunction, disjunction, or negated
+ conjunction of the first zero, one, or two assignment bits, according to `g.kind`.
+-Empty conjunction and disjunction are `true` and `false`. [PS10, Protocol 162.6] -/
++Empty conjunction and disjunction are `true` and `false`. [PS10, Protocol 162.6]
++
++**Proof sketch.** Split the argument list into zero, one, two, or at least three entries.
++For each gate kind in the first three cases, the public evaluation equations give the
++displayed Boolean expression. The fan-in bound excludes the final case. -/
+ theorem gateOut_small (g : DAGGate) (a : Fin g.args.length → Bool)
+     (hfan : g.args.length ≤ 2) :
+     gateOut g a =

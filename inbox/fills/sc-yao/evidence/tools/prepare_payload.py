@@ -38,7 +38,12 @@ for path in files:
    headers.append('## '+path+' · '+d['name']+'\n\n```lean\n'+d['header'].strip()+'\n```\n')
 ev=out/'evidence/interfaces';ev.mkdir(parents=True)
 (ev/'source-inventory.json').write_text(json.dumps(inventory,indent=2)+'\n')
-(ev/'source-signatures.md').write_text('# New declaration source headers\n\nHeaders retain their source namespace/section context. Fully elaborated stored signatures\n(including implicit section variables) are in the axiom/closure probe logs.\n\n'+'\n'.join(headers))
+(ev/'source-signatures.md').write_text('# New declaration source-header excerpts\n\n'
+    'The auxiliary source lexer can truncate a type at Boolean `||` or a type-level `let`.\n'
+    'These excerpts are not the complete interface record. Fully elaborated stored types,\n'
+    'including implicit section variables and private/generated constants, are exported in\n'
+    '`full-stored-signatures.md` and retained in the authoritative axiom/closure probe log.\n\n'
+    +'\n'.join(headers))
 # A fresh shared clone reads only Git objects; no package/cache tree is copied.
 scratch=Path('/private/tmp')/(out.name+'-reproduce')
 assert not scratch.exists(),scratch

@@ -1,0 +1,56 @@
+{
+  "stored_constants": 1490,
+  "helper_stored_constants": 1110,
+  "helper_nonstandard_axioms_or_admissions": {},
+  "targets": {
+    "yaoHybrid_polyTime": {
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "sorry_closure": []
+    },
+    "yaoHybrid_simulators": {
+      "axioms": [
+        "propext",
+        "sorryAx",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "sorry_closure": [
+        "TCSlib.Cryptography.SecureComputation.sliceMultiMessageSecure_of_prfOut",
+        "TCSlib.Cryptography.SecureComputation.yaoSeed_good_whp"
+      ]
+    },
+    "yaoHybrid_hbcSecure": {
+      "axioms": [
+        "propext",
+        "sorryAx",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "sorry_closure": [
+        "TCSlib.Cryptography.SecureComputation.sliceMultiMessageSecure_of_prfOut",
+        "TCSlib.Cryptography.SecureComputation.yaoSeed_good_whp"
+      ]
+    },
+    "yaoProtocol_hbcSecure": {
+      "axioms": [
+        "propext",
+        "sorryAx",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "sorry_closure": [
+        "TCSlib.Cryptography.SecureComputation.otProtocol_polyTime",
+        "TCSlib.Cryptography.SecureComputation.otProtocol_simulators",
+        "TCSlib.Cryptography.SecureComputation.sliceMultiMessageSecure_of_prfOut",
+        "TCSlib.Cryptography.SecureComputation.yaoSeed_good_whp",
+        "TCSlib.Cryptography.SecureComputation.HybridProtocol.hbcSecure_compose"
+      ]
+    }
+  },
+  "log": "evidence/probe-runs/final-publication-all-stored-1/9fff4353dc8b__AllAxioms.log",
+  "simulators_proved": true
+}

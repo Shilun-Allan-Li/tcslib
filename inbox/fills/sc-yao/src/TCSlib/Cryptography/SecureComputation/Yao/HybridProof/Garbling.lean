@@ -192,7 +192,11 @@ theorem fixedTable_poly {α : Type} (enum : List α) (row : α → List Bool →
 
 /-- For at most two arguments, `gateOut g a` is the conjunction, disjunction, or negated
 conjunction of the first zero, one, or two assignment bits, according to `g.kind`.
-Empty conjunction and disjunction are `true` and `false`. [PS10, Protocol 162.6] -/
+Empty conjunction and disjunction are `true` and `false`. [PS10, Protocol 162.6]
+
+**Proof sketch.** Split the argument list into zero, one, two, or at least three entries.
+For each gate kind in the first three cases, the public evaluation equations give the
+displayed Boolean expression. The fan-in bound excludes the final case. -/
 theorem gateOut_small (g : DAGGate) (a : Fin g.args.length → Bool)
     (hfan : g.args.length ≤ 2) :
     gateOut g a =

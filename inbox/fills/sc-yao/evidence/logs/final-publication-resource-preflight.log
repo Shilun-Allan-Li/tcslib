@@ -1,0 +1,62 @@
+UTC 2026-11-16T08:46:48.115266+00:00
+COMMAND ['sysctl', '-n', 'hw.ncpu', 'hw.memsize']
+12
+19327352832
+
+EXIT 0
+COMMAND ['vm_stat']
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                     9000.
+Pages active:                                 339062.
+Pages inactive:                               335915.
+Pages speculative:                              2438.
+Pages throttled:                                   0.
+Pages wired down:                             241237.
+Pages purgeable:                               11226.
+"Translation faults":                    23759160689.
+Pages copy-on-write:                       594609103.
+Pages zero filled:                       15789787488.
+Pages reactivated:                        1286762705.
+Pages purged:                              131311309.
+File-backed pages:                            184620.
+Anonymous pages:                              492795.
+Pages stored in compressor:                   945965.
+Pages occupied by compressor:                 196101.
+Decompressions:                            682428636.
+Compressions:                              928625180.
+Pageins:                                   803222205.
+Pageouts:                                    3314159.
+Swapins:                                     1311271.
+Swapouts:                                    2188704.
+
+EXIT 0
+COMMAND ['memory_pressure', '-Q']
+The system has 19327352832 (1179648 pages with a page size of 16384).
+System-wide memory free percentage: 60%
+
+EXIT 0
+COMMAND ['df', '-k', '/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange', '/private/tmp', '/var/folders/gc/93nsn68n4g9fgyjj6sjjmy180000gn/T/', '/Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange', '/Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange', '/Users/seyoonr/.codex/worktrees/sc-yao-c/tcslib-exchange', '/Users/seyoonr/.codex/worktrees/sc-yao-delivery/tcslib-exchange']
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 790851580 151774672    84% 8008093 1517746720    1%   /System/Volumes/Data
+/dev/disk3s5   971350180 790851580 151774672    84% 8008093 1517746720    1%   /System/Volumes/Data
+/dev/disk3s5   971350180 790851580 151774672    84% 8008093 1517746720    1%   /System/Volumes/Data
+/dev/disk3s5   971350180 790851580 151774672    84% 8008093 1517746720    1%   /System/Volumes/Data
+/dev/disk3s5   971350180 790851580 151774672    84% 8008093 1517746720    1%   /System/Volumes/Data
+/dev/disk3s5   971350180 790851580 151774672    84% 8008093 1517746720    1%   /System/Volumes/Data
+/dev/disk3s5   971350180 790851580 151774672    84% 8008093 1517746720    1%   /System/Volumes/Data
+
+EXIT 0
+COMMAND ['mount']
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+
+EXIT 0
+{"page_size": 16384, "pages": {"Pages free": 9000, "Pages inactive": 335915, "Pages speculative": 2438, "Pages purgeable": 11226}, "headroom_bytes": 5874958336, "headroom_GiB": 5.4714813232421875, "memory_floor_GiB": 4, "disk_available_bytes": 155417264128, "disk_available_GiB": 144.7436065673828, "disk_floor_GiB": 12, "slot_directory_override": null, "slot_count_override": null}

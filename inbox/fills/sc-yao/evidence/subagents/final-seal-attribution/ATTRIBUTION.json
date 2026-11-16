@@ -1,0 +1,1632 @@
+{
+  "scope": "Final actual Yao full-file B seals; no Lean execution by this reviewer",
+  "current_source_sha256": "aa54fc5eb5cd4fb3aca8671c1aaba7bfbeb6b0ccabcd2b30ad12db64aad3ee84",
+  "current_lines": 1152,
+  "base_source_sha256": "22536d7f7849c39eeb90350c260f03eca65bc585d6c76ffbaaf0856b57269d65",
+  "canonical_A": [
+    {
+      "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "probe": "evidence/seals/final-frozen-files/final/Yao_A_strict.lean",
+      "variant": "A",
+      "coercions": "strict",
+      "original_insert_line": 10,
+      "inserted_lines": 42,
+      "start": "2026-11-16T06:05:25.858773+00:00",
+      "end": "2026-11-16T06:06:06.715537+00:00",
+      "seconds": 40.85721695795655,
+      "exit": 0,
+      "errors": 0,
+      "generic_errors": 0,
+      "fresh_olean": true,
+      "import_tree": "/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans",
+      "output_tree": "/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans",
+      "source_sha256": "2c9973291497c13f01f99593773e51195495f8a49fa1d674e7dda3e073f605fb",
+      "log": "evidence/probe-runs/final-frozen-files-1/036e8cb8464d__Yao_A_strict.log"
+    },
+    {
+      "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "probe": "evidence/seals/final-frozen-files/final/Yao_A_coe.lean",
+      "variant": "A",
+      "coercions": "coe",
+      "original_insert_line": 10,
+      "inserted_lines": 42,
+      "start": "2026-11-16T06:06:06.721924+00:00",
+      "end": "2026-11-16T06:06:37.414133+00:00",
+      "seconds": 30.69268275005743,
+      "exit": 0,
+      "errors": 0,
+      "generic_errors": 0,
+      "fresh_olean": true,
+      "import_tree": "/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans",
+      "output_tree": "/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans",
+      "source_sha256": "979f1c60d8c0521f58264f13b0b0b3ea010eb0891784b74fcc2dc22a423f67ae",
+      "log": "evidence/probe-runs/final-frozen-files-1/08036d28802f__Yao_A_coe.log"
+    }
+  ],
+  "strict_coe_diagnostic_difference": [],
+  "strict_coe_diagnostics_identical": true,
+  "variants": {
+    "strict": {
+      "row": {
+        "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+        "probe": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean",
+        "variant": "B",
+        "coercions": "strict",
+        "original_insert_line": 10,
+        "inserted_lines": 42,
+        "start": "2026-11-16T06:06:37.419535+00:00",
+        "end": "2026-11-16T06:07:08.696982+00:00",
+        "seconds": 31.27819374995306,
+        "exit": 1,
+        "errors": 24,
+        "generic_errors": 0,
+        "fresh_olean": false,
+        "import_tree": "/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans",
+        "output_tree": "/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans",
+        "source_sha256": "8bb088f12460c5fcc70e1d7d5233a9c23e9d59f19a4044d59bc57b1c07763901",
+        "log": "evidence/probe-runs/final-frozen-files-1/39e816f5398c__Yao_B_strict.log"
+      },
+      "errors": [
+        {
+          "index": 1,
+          "sealed_line": 325,
+          "column": 82,
+          "source_line": 283,
+          "declaration": "yaoCoins_eval",
+          "source_line_text": "    (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n := rfl",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:325:82: error: Type mismatch\n  rfl\nhas type\n  ?m.23 = ?m.23\nbut is expected to have type\n  (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n",
+          "normalized_message": "Type mismatch\n  rfl\nhas type\n  ?m.23 = ?m.23\nbut is expected to have type\n  (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n",
+          "category": "base polynomial evaluation",
+          "attribution": "The unchanged yaoCoins_eval rfl requires the polynomial coin expression to evaluate to 10*S(n)*n+2*S(n). B seals PolyExpr.eval and blocks that owner-local arithmetic reduction.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 1,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 322,
+              "source_line": 280,
+              "declaration": "yaoCoins_eval",
+              "normalized_message_identical": true,
+              "source_line_text": "    (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n := rfl",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:322:82: error: Type mismatch\n  rfl\nhas type\n  ?m.23 = ?m.23\nbut is expected to have type\n  (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "sealed_line": 633,
+          "column": 83,
+          "source_line": 591,
+          "declaration": "yaoHybrid",
+          "source_line_text": "  callA n _ r j c := keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:633:83: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "category": "base call-index polynomial multiplication",
+          "attribution": "The first yaoHybrid callA argument j has Fin ((Y.inB.mul var).eval n), whereas yaoCall expects Fin (Y.inB.eval n*n). Sealed polynomial evaluation blocks the definitional identification.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 2,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 630,
+              "source_line": 588,
+              "declaration": "yaoHybrid",
+              "normalized_message_identical": true,
+              "source_line_text": "  callA n _ r j c := keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:630:83: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "sealed_line": 634,
+          "column": 40,
+          "source_line": 592,
+          "declaration": "yaoHybrid",
+          "source_line_text": "    (decide ((c : ℕ) = 1)) (yaoCall Y n j).2",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:634:40: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "category": "base call-index polynomial multiplication",
+          "attribution": "The second yaoHybrid callA use of yaoCall has the same explicit mul-evaluation index mismatch; it is a separate diagnostic in the unchanged definition.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 3,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 631,
+              "source_line": 589,
+              "declaration": "yaoHybrid",
+              "normalized_message_identical": true,
+              "source_line_text": "    (decide ((c : ℕ) = 1)) (yaoCall Y n j).2",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:631:40: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "sealed_line": 635,
+          "column": 41,
+          "source_line": 593,
+          "declaration": "yaoHybrid",
+          "source_line_text": "  callB n y _ j _ := y.getD (yaoCall Y n j).1 false",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:635:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "category": "base call-index polynomial multiplication",
+          "attribution": "The yaoHybrid callB use of yaoCall has the same explicit mul-evaluation index mismatch in the unchanged definition.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 4,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 632,
+              "source_line": 590,
+              "declaration": "yaoHybrid",
+              "normalized_message_identical": true,
+              "source_line_text": "  callB n y _ j _ := y.getD (yaoCall Y n j).1 false",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:632:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "sealed_line": 641,
+          "column": 37,
+          "source_line": 599,
+          "declaration": "yaoHybrid_callA",
+          "source_line_text": "    (yaoHybrid Y E₁ E₂).callA n xs r j",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:641:37: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs r j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs r j",
+          "category": "base public callA reader index",
+          "attribution": "The unchanged yaoHybrid_callA reader passes product-index j into the protocol call domain ((yaoHybrid...).calls.eval n), which no longer reduces under the B eval seal.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 5,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 638,
+              "source_line": 596,
+              "declaration": "yaoHybrid_callA",
+              "normalized_message_identical": true,
+              "source_line_text": "    (yaoHybrid Y E₁ E₂).callA n xs r j",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:638:37: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs r j"
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "sealed_line": 649,
+          "column": 37,
+          "source_line": 607,
+          "declaration": "yaoHybrid_callB",
+          "source_line_text": "    (yaoHybrid Y E₁ E₂).callB n ys r j",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:649:37: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys r j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys r j",
+          "category": "base public callB reader index",
+          "attribution": "The unchanged yaoHybrid_callB reader has the corresponding product-index/protocol-call-domain mismatch.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 6,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 646,
+              "source_line": 604,
+              "declaration": "yaoHybrid_callB",
+              "normalized_message_identical": true,
+              "source_line_text": "    (yaoHybrid Y E₁ E₂).callB n ys r j",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:646:37: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys r j"
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "sealed_line": 760,
+          "column": 69,
+          "source_line": 718,
+          "declaration": "yaoHybrid_answersB_getD",
+          "source_line_text": "    fun j => (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:760:69: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j",
+          "category": "base answer reader callA index, first occurrence",
+          "attribution": "The unchanged answersB getD proof calls callA with product-index j; the protocol call-count evaluation is opaque in B.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 7,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 757,
+              "source_line": 715,
+              "declaration": "yaoHybrid_answersB_getD",
+              "normalized_message_identical": true,
+              "source_line_text": "    fun j => (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:757:69: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j"
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "sealed_line": 761,
+          "column": 41,
+          "source_line": 719,
+          "declaration": "yaoHybrid_answersB_getD",
+          "source_line_text": "      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:761:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j",
+          "category": "base answer reader callB index, first occurrence",
+          "attribution": "The same unchanged answer-reader expression calls callB with product-index j; this is its separate call-domain mismatch.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 8,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 758,
+              "source_line": 716,
+              "declaration": "yaoHybrid_answersB_getD",
+              "normalized_message_identical": true,
+              "source_line_text": "      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:758:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j"
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "sealed_line": 767,
+          "column": 71,
+          "source_line": 725,
+          "declaration": "yaoHybrid_answersB_getD",
+          "source_line_text": "    List.ofFn ((otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:767:71: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j",
+          "category": "base answer reader callA index, second occurrence",
+          "attribution": "The later ofFn expression in the unchanged answer-reader proof again calls callA with product-index j, with the opaque polynomial call domain.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 9,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 764,
+              "source_line": 722,
+              "declaration": "yaoHybrid_answersB_getD",
+              "normalized_message_identical": true,
+              "source_line_text": "    List.ofFn ((otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:764:71: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j"
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "sealed_line": 768,
+          "column": 41,
+          "source_line": 726,
+          "declaration": "yaoHybrid_answersB_getD",
+          "source_line_text": "      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2))).flatten.getD (i * n + t) false = _",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:768:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j",
+          "category": "base answer reader callB index, second occurrence",
+          "attribution": "The later ofFn expression separately calls callB with product-index j; the same eval multiplication reduction is blocked.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 10,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 765,
+              "source_line": 723,
+              "declaration": "yaoHybrid_answersB_getD",
+              "normalized_message_identical": true,
+              "source_line_text": "      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2))).flatten.getD (i * n + t) false = _",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:765:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j"
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "sealed_line": 859,
+          "column": 56,
+          "source_line": 817,
+          "declaration": "yaoSeed_good_whp",
+          "source_line_text": "theorem yaoSeed_good_whp (hG₁ : PRFOut (.add .var .var) G₁)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:859:56: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "normalized_message": "Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "category": "base good-seed PRF signature",
+          "attribution": "The frozen yaoSeed_good_whp signature supplies G1 with Fin(n+n) output, while PRFOut (.add var var) asks for Fin ((var.add var).eval n). This existing signature depends on exempt polynomial notation.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 11,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 856,
+              "source_line": 814,
+              "declaration": "yaoSeed_good_whp",
+              "normalized_message_identical": true,
+              "source_line_text": "theorem yaoSeed_good_whp (hG₁ : PRFOut (.add .var .var) G₁)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:856:56: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁"
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "sealed_line": 959,
+          "column": 4,
+          "source_line": 917,
+          "declaration": "yaoHybrid_polyTime",
+          "source_line_text": "    apply CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:959:4: error: Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x\n  r`\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 2 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 2),\n        call (finProdFinEquiv (i, t)) c =\n          r.getD (((decide (↑c = 1)).toNat * Y.sizeBound.eval n + Y.inA.eval n + ↑i) * n + ↑t) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputA Y.inA Y.sizeBound\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_1\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inA.eval n = 2\n⊢ OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)",
+          "normalized_message": "Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x\n  r`\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 2 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 2),\n        call (finProdFinEquiv (i, t)) c =\n          r.getD (((decide (↑c = 1)).toNat * Y.sizeBound.eval n + Y.inA.eval n + ↑i) * n + ↑t) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputA Y.inA Y.sizeBound\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_1\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inA.eval n = 2\n⊢ OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)",
+          "category": "existing efficiency-body callA index",
+          "attribution": "CallEquations.inputA_eq ranges over Fin (Y.inB.eval n*n), while the goal ranges over Fin ((yaoHybrid...).calls.eval n). Its ordinary/canonical-A application uses the authorized polynomial-evaluation notation; this exact failure already appears in the efficiency audit.",
+          "causal_classification": "direct diagnostic",
+          "origin": "efficiency",
+          "comparators": [
+            {
+              "kind": "efficiency",
+              "index": 12,
+              "log": "evidence/probe-runs/yao-efficiency-repair-1/41ca678f9889__Yao_B_strict.log",
+              "sealed_line": 957,
+              "source_line": 915,
+              "declaration": "yaoHybrid_polyTime",
+              "normalized_message_identical": true,
+              "source_line_text": "    apply CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r",
+              "full_excerpt": "evidence/seals/yao-efficiency-repair/final/Yao_B_strict.lean:957:4: error: Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x\n  r`\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 2 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 2),\n        call (finProdFinEquiv (i, t)) c =\n          r.getD (((decide (↑c = 1)).toNat * Y.sizeBound.eval n + Y.inA.eval n + ↑i) * n + ↑t) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputA Y.inA Y.sizeBound\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_1\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inA.eval n = 2\n⊢ OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)"
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "sealed_line": 971,
+          "column": 4,
+          "source_line": 929,
+          "declaration": "yaoHybrid_polyTime",
+          "source_line_text": "    apply CallEquations.inputB_eq n (Y.inB.eval n) x r",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:971:4: error: Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputB_eq n (Y.inB.eval n) x r`\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputB_eq n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 1 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 1), call (finProdFinEquiv (i, t)) c = x.getD (↑i) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputB\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_2\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inB.eval n = 1\n⊢ OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)",
+          "normalized_message": "Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputB_eq n (Y.inB.eval n) x r`\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputB_eq n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 1 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 1), call (finProdFinEquiv (i, t)) c = x.getD (↑i) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputB\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_2\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inB.eval n = 1\n⊢ OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)",
+          "category": "existing efficiency-body callB index",
+          "attribution": "CallEquations.inputB_eq has the same product-domain versus opaque calls.eval mismatch. This exact failure is the second efficiency-only diagnostic.",
+          "causal_classification": "direct diagnostic",
+          "origin": "efficiency",
+          "comparators": [
+            {
+              "kind": "efficiency",
+              "index": 13,
+              "log": "evidence/probe-runs/yao-efficiency-repair-1/41ca678f9889__Yao_B_strict.log",
+              "sealed_line": 969,
+              "source_line": 927,
+              "declaration": "yaoHybrid_polyTime",
+              "normalized_message_identical": true,
+              "source_line_text": "    apply CallEquations.inputB_eq n (Y.inB.eval n) x r",
+              "full_excerpt": "evidence/seals/yao-efficiency-repair/final/Yao_B_strict.lean:969:4: error: Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputB_eq n (Y.inB.eval n) x r`\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputB_eq n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 1 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 1), call (finProdFinEquiv (i, t)) c = x.getD (↑i) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputB\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_2\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inB.eval n = 1\n⊢ OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)"
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "sealed_line": 1037,
+          "column": 35,
+          "source_line": 995,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1037:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "normalized_message": "Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "category": "base simulator PRF signature",
+          "attribution": "The frozen simulator G1 hypothesis has the same Fin(n+n) versus Fin ((var.add var).eval n) mismatch as the baseline; it is also prototype diagnostic1.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 12,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 950,
+              "source_line": 908,
+              "declaration": "yaoHybrid_simulators",
+              "normalized_message_identical": true,
+              "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:950:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁"
+            },
+            {
+              "kind": "a12",
+              "index": 1,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log",
+              "sealed_line": 71,
+              "source_line": 28,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:71:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁"
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "sealed_line": 1039,
+          "column": 20,
+          "source_line": 997,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1039:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "normalized_message": "Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "category": "base simulator joint-PRF signature",
+          "attribution": "The frozen simulator concatenation Fin.append has output length n+n+(var.add innerLen).eval n, whereas joint PRFOut expects the opaque outer add evaluation; this is baseline and prototype diagnostic2.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 13,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 952,
+              "source_line": 910,
+              "declaration": "yaoHybrid_simulators",
+              "normalized_message_identical": true,
+              "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:952:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool"
+            },
+            {
+              "kind": "a12",
+              "index": 2,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log",
+              "sealed_line": 73,
+              "source_line": 30,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:73:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool"
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "sealed_line": 1058,
+          "column": 69,
+          "source_line": 1016,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (outLen := Y.outLen) (gen := gen) (gen_poly := hgen) (circuit := Y.circ)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1058:69: error: Application type mismatch: The argument\n  Y.circ\nhas type\n  (n : ℕ) → DAGCircuit (Y.inA.eval n + Y.inB.eval n)\nbut is expected to have type\n  (n : ℕ) → DAGCircuit ((Y.inA.add Y.inB).eval n)\nin the application\n  FakeSimulatorFactory.exists_simulator E₁ E₂ hE₁ hE₂ Y.sizeBound (Y.inA.add Y.inB) Y.inA Y.inB Y.outLen gen hgen Y.circ",
+          "normalized_message": "Application type mismatch: The argument\n  Y.circ\nhas type\n  (n : ℕ) → DAGCircuit (Y.inA.eval n + Y.inB.eval n)\nbut is expected to have type\n  (n : ℕ) → DAGCircuit ((Y.inA.add Y.inB).eval n)\nin the application\n  FakeSimulatorFactory.exists_simulator E₁ E₂ hE₁ hE₂ Y.sizeBound (Y.inA.add Y.inB) Y.inA Y.inB Y.outLen gen hgen Y.circ",
+          "category": "new direct factory circuit input-index mismatch",
+          "attribution": "FakeSimulatorFactory is instantiated at inputs=.add Y.inA Y.inB. The actual circuit has DAGCircuit (Y.inA.eval n+Y.inB.eval n), while the sealed factory expects DAGCircuit ((Y.inA.add Y.inB).eval n). This is the first direct new body mismatch, corresponding to prototype diagnostic3.",
+          "causal_classification": "direct diagnostic",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 3,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log",
+              "sealed_line": 91,
+              "source_line": 48,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (outLen := Y.outLen) (gen := gen) (gen_poly := hgen) (circuit := Y.circ)",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:91:69: error: Application type mismatch: The argument\n  Y.circ\nhas type\n  (n : ℕ) → DAGCircuit (Y.inA.eval n + Y.inB.eval n)\nbut is expected to have type\n  (n : ℕ) → DAGCircuit ((Y.inA.add Y.inB).eval n)\nin the application\n  FakeSimulatorFactory.exists_simulator E₁ E₂ hE₁ hE₂ Y.sizeBound (Y.inA.add Y.inB) Y.inA Y.inB Y.outLen gen hgen Y.circ"
+            }
+          ]
+        },
+        {
+          "index": 17,
+          "sealed_line": 1062,
+          "column": 29,
+          "source_line": 1020,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (input_range := fun n => Nat.le_refl (Y.inA.eval n + Y.inB.eval n))",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1062:29: error: Type mismatch\n  Nat.le_refl (Y.inA.eval n + Y.inB.eval n)\nhas type\n  Y.inA.eval n + Y.inB.eval n ≤ Y.inA.eval n + Y.inB.eval n\nbut is expected to have type\n  Y.inA.eval n + Y.inB.eval n ≤ (Y.inA.add Y.inB).eval n",
+          "normalized_message": "Type mismatch\n  Nat.le_refl (Y.inA.eval n + Y.inB.eval n)\nhas type\n  Y.inA.eval n + Y.inB.eval n ≤ Y.inA.eval n + Y.inB.eval n\nbut is expected to have type\n  Y.inA.eval n + Y.inB.eval n ≤ (Y.inA.add Y.inB).eval n",
+          "category": "new direct factory input-range index mismatch",
+          "attribution": "The supplied Nat.le_refl proves A(n)+B(n)<=A(n)+B(n), while the factory expects A(n)+B(n)<=(Y.inA.add Y.inB).eval n. This is a second direct eval-add mismatch, prototype diagnostic4.",
+          "causal_classification": "direct diagnostic",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 4,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log",
+              "sealed_line": 95,
+              "source_line": 52,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (input_range := fun n => Nat.le_refl (Y.inA.eval n + Y.inB.eval n))",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:95:29: error: Type mismatch\n  Nat.le_refl (Y.inA.eval n + Y.inB.eval n)\nhas type\n  Y.inA.eval n + Y.inB.eval n ≤ Y.inA.eval n + Y.inB.eval n\nbut is expected to have type\n  Y.inA.eval n + Y.inB.eval n ≤ (Y.inA.add Y.inB).eval n"
+            }
+          ]
+        },
+        {
+          "index": 18,
+          "sealed_line": 1063,
+          "column": 12,
+          "source_line": 1021,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (key := by intro n q w hw b; funext t; rw [keyAt_eq, dif_pos hw, hSeedK, readBits_apply])",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1063:12: error: unsolved goals\ncase h\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nG₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nG₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool\nhGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)\nhGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) sorry\nhG₂ : PRFOut (PolyExpr.var.add innerLen) G₂\nhG₁₂ : PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => sorry\nhFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2\nhSeedK :\n  ∀ (n : ℕ) (r : List Bool) (v : Fin (Y.circ n).size) (b : Bool),\n    (yaoSeed Y n r).1 v b = readBits r ((b.toNat * Y.sizeBound.eval n + ↑v) * n) n\nhSeedR₀ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).1 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1\nhSeedR₁ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).2 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2\ngen : List Bool → List Bool\nhgen : PolyTimeComputable gen\nhgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)\nn : ℕ\nq : List Bool\nw : ℕ\nhw : w < (sorry n).size\nb : Bool\nt : Fin n\n⊢ (if h : w < (sorry n).size then (sorry n q).1 ⟨w, h⟩ b else default) t =\n    q.getD ((b.toNat * Y.sizeBound.eval n + w) * n + ↑t) false",
+          "normalized_message": "unsolved goals\ncase h\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nG₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nG₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool\nhGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)\nhGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) sorry\nhG₂ : PRFOut (PolyExpr.var.add innerLen) G₂\nhG₁₂ : PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => sorry\nhFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2\nhSeedK :\n  ∀ (n : ℕ) (r : List Bool) (v : Fin (Y.circ n).size) (b : Bool),\n    (yaoSeed Y n r).1 v b = readBits r ((b.toNat * Y.sizeBound.eval n + ↑v) * n) n\nhSeedR₀ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).1 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1\nhSeedR₁ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).2 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2\ngen : List Bool → List Bool\nhgen : PolyTimeComputable gen\nhgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)\nn : ℕ\nq : List Bool\nw : ℕ\nhw : w < (sorry n).size\nb : Bool\nt : Fin n\n⊢ (if h : w < (sorry n).size then (sorry n q).1 ⟨w, h⟩ b else default) t =\n    q.getD ((b.toNat * Y.sizeBound.eval n + w) * n + ↑t) false",
+          "category": "new dependent factory key-premise cascade",
+          "attribution": "After diagnostic16 rejected the actual circuit family, the key obligation explicitly contains (sorry n).size and (sorry n q) rather than Y.circ/yaoSeed. The actual seed-key reader cannot close that poisoned dependent obligation. This is the matching prototype diagnostic5 cascade, not an independent unproved seed law.",
+          "causal_classification": "dependent-elaboration cascade (inference)",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 5,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log",
+              "sealed_line": 96,
+              "source_line": 53,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (key := by intro n q w hw b; funext t; rw [keyAt_eq, dif_pos hw, hSeedK, readBits_apply])",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:96:12: error: unsolved goals\ncase h\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nG₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nG₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool\nhGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)\nhGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) sorry\nhG₂ : PRFOut (PolyExpr.var.add innerLen) G₂\nhG₁₂ : PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => sorry\nhFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2\nhSeedK :\n  ∀ (n : ℕ) (r : List Bool) (v : Fin (Y.circ n).size) (b : Bool),\n    (yaoSeed Y n r).1 v b = readBits r ((b.toNat * Y.sizeBound.eval n + ↑v) * n) n\nhSeedR₀ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).1 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1\nhSeedR₁ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).2 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2\ngen : List Bool → List Bool\nhgen : PolyTimeComputable gen\nhgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)\nn : ℕ\nq : List Bool\nw : ℕ\nhw : w < (sorry n).size\nb : Bool\nt : Fin n\n⊢ (if h : w < (sorry n).size then (sorry n q).1 ⟨w, h⟩ b else default) t =\n    q.getD ((b.toNat * Y.sizeBound.eval n + w) * n + ↑t) false"
+            }
+          ]
+        },
+        {
+          "index": 19,
+          "sealed_line": 1064,
+          "column": 35,
+          "source_line": 1022,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1064:35: error: `simp` made no progress",
+          "normalized_message": "`simp` made no progress",
+          "category": "new dependent factory first-nonce cascade",
+          "attribution": "The nonce0 simp step is a premise of the same factory whose circuit family was rejected in diagnostic16. The supplied actual nonce reader no longer matches that dependent family. The exact same source line/message is prototype diagnostic6; canonical A checks this premise successfully.",
+          "causal_classification": "dependent-elaboration cascade (inference)",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 6,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log",
+              "sealed_line": 97,
+              "source_line": 54,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:97:35: error: `simp` made no progress"
+            }
+          ]
+        },
+        {
+          "index": 20,
+          "sealed_line": 1065,
+          "column": 35,
+          "source_line": 1023,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (nonce₁ := by intro n q i a t; simp only [hSeedR₁, readBits_apply, assignIdx_eq])",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1065:35: error: `simp` made no progress",
+          "normalized_message": "`simp` made no progress",
+          "category": "new dependent factory second-nonce cascade",
+          "attribution": "The nonce1 premise is the separate corresponding dependent-family simp failure after diagnostic16, matching prototype diagnostic7; canonical A checks the unchanged source successfully.",
+          "causal_classification": "dependent-elaboration cascade (inference)",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 7,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log",
+              "sealed_line": 98,
+              "source_line": 55,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (nonce₁ := by intro n q i a t; simp only [hSeedR₁, readBits_apply, assignIdx_eq])",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:98:35: error: `simp` made no progress"
+            }
+          ]
+        },
+        {
+          "index": 21,
+          "sealed_line": 1067,
+          "column": 23,
+          "source_line": 1025,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "      intro n q i a t; simp only [yaoSeed_snd_snd, xorShift_apply, readBits_apply])",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1067:23: error: `simp` made no progress",
+          "normalized_message": "`simp` made no progress",
+          "category": "new dependent factory permutation cascade",
+          "attribution": "The factory permutation premise uses the actual seed/permutation readers, but the factory family is poisoned by diagnostic16. This separate simp-no-progress cascade matches prototype diagnostic8 and disappears in canonical A.",
+          "causal_classification": "dependent-elaboration cascade (inference)",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 8,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log",
+              "sealed_line": 100,
+              "source_line": 57,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "      intro n q i a t; simp only [yaoSeed_snd_snd, xorShift_apply, readBits_apply])",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:100:23: error: `simp` made no progress"
+            }
+          ]
+        },
+        {
+          "index": 22,
+          "sealed_line": 1110,
+          "column": 20,
+          "source_line": 1068,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x)) G₁ G₂ E₁ E₂ hE₂",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1110:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "normalized_message": "Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "category": "new direct computational joint-family index mismatch",
+          "attribution": "The GateHybridSecurity call supplies Fin.append G1 G2 at the exact joint polynomial L. B prevents reducing L.eval n to the explicit concatenation output length, so this body application fails just like prototype diagnostic9.",
+          "causal_classification": "direct diagnostic",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 9,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log",
+              "sealed_line": 143,
+              "source_line": 100,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x)) G₁ G₂ E₁ E₂ hE₂",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:143:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool"
+            }
+          ]
+        },
+        {
+          "index": 23,
+          "sealed_line": 1184,
+          "column": 35,
+          "source_line": 1142,
+          "declaration": "yaoHybrid_hbcSecure",
+          "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1184:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "normalized_message": "Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "category": "base HBC theorem PRF signature",
+          "attribution": "The unchanged yaoHybrid_hbcSecure G1 hypothesis again requires n+n to identify with the opaque polynomial add evaluation. It is the penultimate baseline diagnostic.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 14,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 974,
+              "source_line": 932,
+              "declaration": "yaoHybrid_hbcSecure",
+              "normalized_message_identical": true,
+              "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:974:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁"
+            }
+          ]
+        },
+        {
+          "index": 24,
+          "sealed_line": 1186,
+          "column": 20,
+          "source_line": 1144,
+          "declaration": "yaoHybrid_hbcSecure",
+          "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_strict.lean:1186:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "normalized_message": "Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "category": "base HBC theorem joint-PRF signature",
+          "attribution": "The unchanged yaoHybrid_hbcSecure joint-family header has the same explicit concatenation length versus opaque nested-add evaluation mismatch as the last baseline diagnostic.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 15,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log",
+              "sealed_line": 976,
+              "source_line": 934,
+              "declaration": "yaoHybrid_hbcSecure",
+              "normalized_message_identical": true,
+              "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_strict.lean:976:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool"
+            }
+          ]
+        }
+      ],
+      "counts": {
+        "total": 24,
+        "base": 15,
+        "efficiency": 2,
+        "new_body": 7,
+        "new_direct_eval_index": 3,
+        "new_dependent_cascade": 4
+      },
+      "failing_declarations": {
+        "yaoCoins_eval": 1,
+        "yaoHybrid": 3,
+        "yaoHybrid_callA": 1,
+        "yaoHybrid_callB": 1,
+        "yaoHybrid_answersB_getD": 4,
+        "yaoSeed_good_whp": 1,
+        "yaoHybrid_polyTime": 2,
+        "yaoHybrid_simulators": 9,
+        "yaoHybrid_hbcSecure": 2
+      }
+    },
+    "coe": {
+      "row": {
+        "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+        "probe": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean",
+        "variant": "B",
+        "coercions": "coe",
+        "original_insert_line": 10,
+        "inserted_lines": 42,
+        "start": "2026-11-16T06:07:08.702911+00:00",
+        "end": "2026-11-16T06:07:40.663295+00:00",
+        "seconds": 31.961146499961615,
+        "exit": 1,
+        "errors": 24,
+        "generic_errors": 0,
+        "fresh_olean": false,
+        "import_tree": "/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans",
+        "output_tree": "/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans",
+        "source_sha256": "150bd5f4295221ffbd3cd1121bd9a74f0614b3fbb457c0e3c71ad46ef9d3344c",
+        "log": "evidence/probe-runs/final-frozen-files-1/b2bd4201504c__Yao_B_coe.log"
+      },
+      "errors": [
+        {
+          "index": 1,
+          "sealed_line": 325,
+          "column": 82,
+          "source_line": 283,
+          "declaration": "yaoCoins_eval",
+          "source_line_text": "    (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n := rfl",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:325:82: error: Type mismatch\n  rfl\nhas type\n  ?m.23 = ?m.23\nbut is expected to have type\n  (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n",
+          "normalized_message": "Type mismatch\n  rfl\nhas type\n  ?m.23 = ?m.23\nbut is expected to have type\n  (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n",
+          "category": "base polynomial evaluation",
+          "attribution": "The unchanged yaoCoins_eval rfl requires the polynomial coin expression to evaluate to 10*S(n)*n+2*S(n). B seals PolyExpr.eval and blocks that owner-local arithmetic reduction.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 1,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 322,
+              "source_line": 280,
+              "declaration": "yaoCoins_eval",
+              "normalized_message_identical": true,
+              "source_line_text": "    (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n := rfl",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:322:82: error: Type mismatch\n  rfl\nhas type\n  ?m.23 = ?m.23\nbut is expected to have type\n  (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "sealed_line": 633,
+          "column": 83,
+          "source_line": 591,
+          "declaration": "yaoHybrid",
+          "source_line_text": "  callA n _ r j c := keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:633:83: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "category": "base call-index polynomial multiplication",
+          "attribution": "The first yaoHybrid callA argument j has Fin ((Y.inB.mul var).eval n), whereas yaoCall expects Fin (Y.inB.eval n*n). Sealed polynomial evaluation blocks the definitional identification.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 2,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 630,
+              "source_line": 588,
+              "declaration": "yaoHybrid",
+              "normalized_message_identical": true,
+              "source_line_text": "  callA n _ r j c := keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:630:83: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "sealed_line": 634,
+          "column": 40,
+          "source_line": 592,
+          "declaration": "yaoHybrid",
+          "source_line_text": "    (decide ((c : ℕ) = 1)) (yaoCall Y n j).2",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:634:40: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "category": "base call-index polynomial multiplication",
+          "attribution": "The second yaoHybrid callA use of yaoCall has the same explicit mul-evaluation index mismatch; it is a separate diagnostic in the unchanged definition.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 3,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 631,
+              "source_line": 589,
+              "declaration": "yaoHybrid",
+              "normalized_message_identical": true,
+              "source_line_text": "    (decide ((c : ℕ) = 1)) (yaoCall Y n j).2",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:631:40: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "sealed_line": 635,
+          "column": 41,
+          "source_line": 593,
+          "declaration": "yaoHybrid",
+          "source_line_text": "  callB n y _ j _ := y.getD (yaoCall Y n j).1 false",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:635:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j",
+          "category": "base call-index polynomial multiplication",
+          "attribution": "The yaoHybrid callB use of yaoCall has the same explicit mul-evaluation index mismatch in the unchanged definition.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 4,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 632,
+              "source_line": 590,
+              "declaration": "yaoHybrid",
+              "normalized_message_identical": true,
+              "source_line_text": "  callB n y _ j _ := y.getD (yaoCall Y n j).1 false",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:632:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin ((Y.inB.mul PolyExpr.var).eval n)\nbut is expected to have type\n  Fin (Y.inB.eval n * n)\nin the application\n  yaoCall Y n j"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "sealed_line": 641,
+          "column": 37,
+          "source_line": 599,
+          "declaration": "yaoHybrid_callA",
+          "source_line_text": "    (yaoHybrid Y E₁ E₂).callA n xs r j",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:641:37: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs r j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs r j",
+          "category": "base public callA reader index",
+          "attribution": "The unchanged yaoHybrid_callA reader passes product-index j into the protocol call domain ((yaoHybrid...).calls.eval n), which no longer reduces under the B eval seal.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 5,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 638,
+              "source_line": 596,
+              "declaration": "yaoHybrid_callA",
+              "normalized_message_identical": true,
+              "source_line_text": "    (yaoHybrid Y E₁ E₂).callA n xs r j",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:638:37: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs r j"
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "sealed_line": 649,
+          "column": 37,
+          "source_line": 607,
+          "declaration": "yaoHybrid_callB",
+          "source_line_text": "    (yaoHybrid Y E₁ E₂).callB n ys r j",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:649:37: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys r j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys r j",
+          "category": "base public callB reader index",
+          "attribution": "The unchanged yaoHybrid_callB reader has the corresponding product-index/protocol-call-domain mismatch.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 6,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 646,
+              "source_line": 604,
+              "declaration": "yaoHybrid_callB",
+              "normalized_message_identical": true,
+              "source_line_text": "    (yaoHybrid Y E₁ E₂).callB n ys r j",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:646:37: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys r j"
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "sealed_line": 760,
+          "column": 69,
+          "source_line": 718,
+          "declaration": "yaoHybrid_answersB_getD",
+          "source_line_text": "    fun j => (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:760:69: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j",
+          "category": "base answer reader callA index, first occurrence",
+          "attribution": "The unchanged answersB getD proof calls callA with product-index j; the protocol call-count evaluation is opaque in B.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 7,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 757,
+              "source_line": 715,
+              "declaration": "yaoHybrid_answersB_getD",
+              "normalized_message_identical": true,
+              "source_line_text": "    fun j => (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:757:69: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j"
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "sealed_line": 761,
+          "column": 41,
+          "source_line": 719,
+          "declaration": "yaoHybrid_answersB_getD",
+          "source_line_text": "      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:761:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j",
+          "category": "base answer reader callB index, first occurrence",
+          "attribution": "The same unchanged answer-reader expression calls callB with product-index j; this is its separate call-domain mismatch.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 8,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 758,
+              "source_line": 716,
+              "declaration": "yaoHybrid_answersB_getD",
+              "normalized_message_identical": true,
+              "source_line_text": "      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:758:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j"
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "sealed_line": 767,
+          "column": 71,
+          "source_line": 725,
+          "declaration": "yaoHybrid_answersB_getD",
+          "source_line_text": "    List.ofFn ((otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:767:71: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j",
+          "category": "base answer reader callA index, second occurrence",
+          "attribution": "The later ofFn expression in the unchanged answer-reader proof again calls callA with product-index j, with the opaque polynomial call domain.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 9,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 764,
+              "source_line": 722,
+              "declaration": "yaoHybrid_answersB_getD",
+              "normalized_message_identical": true,
+              "source_line_text": "    List.ofFn ((otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:764:71: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callA n xs rA j"
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "sealed_line": 768,
+          "column": 41,
+          "source_line": 726,
+          "declaration": "yaoHybrid_answersB_getD",
+          "source_line_text": "      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2))).flatten.getD (i * n + t) false = _",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:768:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j",
+          "normalized_message": "Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j",
+          "category": "base answer reader callB index, second occurrence",
+          "attribution": "The later ofFn expression separately calls callB with product-index j; the same eval multiplication reduction is blocked.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 10,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 765,
+              "source_line": 723,
+              "declaration": "yaoHybrid_answersB_getD",
+              "normalized_message_identical": true,
+              "source_line_text": "      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2))).flatten.getD (i * n + t) false = _",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:765:41: error: Application type mismatch: The argument\n  j\nhas type\n  Fin (Y.inB.eval n * n)\nbut is expected to have type\n  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nin the application\n  (yaoHybrid Y E₁ E₂).callB n ys rB j"
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "sealed_line": 859,
+          "column": 56,
+          "source_line": 817,
+          "declaration": "yaoSeed_good_whp",
+          "source_line_text": "theorem yaoSeed_good_whp (hG₁ : PRFOut (.add .var .var) G₁)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:859:56: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "normalized_message": "Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "category": "base good-seed PRF signature",
+          "attribution": "The frozen yaoSeed_good_whp signature supplies G1 with Fin(n+n) output, while PRFOut (.add var var) asks for Fin ((var.add var).eval n). This existing signature depends on exempt polynomial notation.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 11,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 856,
+              "source_line": 814,
+              "declaration": "yaoSeed_good_whp",
+              "normalized_message_identical": true,
+              "source_line_text": "theorem yaoSeed_good_whp (hG₁ : PRFOut (.add .var .var) G₁)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:856:56: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁"
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "sealed_line": 959,
+          "column": 4,
+          "source_line": 917,
+          "declaration": "yaoHybrid_polyTime",
+          "source_line_text": "    apply CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:959:4: error: Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x\n  r`\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 2 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 2),\n        call (finProdFinEquiv (i, t)) c =\n          r.getD (((decide (↑c = 1)).toNat * Y.sizeBound.eval n + Y.inA.eval n + ↑i) * n + ↑t) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputA Y.inA Y.sizeBound\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_1\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inA.eval n = 2\n⊢ OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)",
+          "normalized_message": "Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x\n  r`\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 2 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 2),\n        call (finProdFinEquiv (i, t)) c =\n          r.getD (((decide (↑c = 1)).toNat * Y.sizeBound.eval n + Y.inA.eval n + ↑i) * n + ↑t) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputA Y.inA Y.sizeBound\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_1\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inA.eval n = 2\n⊢ OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)",
+          "category": "existing efficiency-body callA index",
+          "attribution": "CallEquations.inputA_eq ranges over Fin (Y.inB.eval n*n), while the goal ranges over Fin ((yaoHybrid...).calls.eval n). Its ordinary/canonical-A application uses the authorized polynomial-evaluation notation; this exact failure already appears in the efficiency audit.",
+          "causal_classification": "direct diagnostic",
+          "origin": "efficiency",
+          "comparators": [
+            {
+              "kind": "efficiency",
+              "index": 12,
+              "log": "evidence/probe-runs/yao-efficiency-repair-1/aec596982f59__Yao_B_coe.log",
+              "sealed_line": 957,
+              "source_line": 915,
+              "declaration": "yaoHybrid_polyTime",
+              "normalized_message_identical": true,
+              "source_line_text": "    apply CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r",
+              "full_excerpt": "evidence/seals/yao-efficiency-repair/final/Yao_B_coe.lean:957:4: error: Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x\n  r`\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 2 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 2),\n        call (finProdFinEquiv (i, t)) c =\n          r.getD (((decide (↑c = 1)).toNat * Y.sizeBound.eval n + Y.inA.eval n + ↑i) * n + ↑t) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputA Y.inA Y.sizeBound\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_1\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inA.eval n = 2\n⊢ OTInputs.otInputA Y.inA Y.sizeBound\n      (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)"
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "sealed_line": 971,
+          "column": 4,
+          "source_line": 929,
+          "declaration": "yaoHybrid_polyTime",
+          "source_line_text": "    apply CallEquations.inputB_eq n (Y.inB.eval n) x r",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:971:4: error: Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputB_eq n (Y.inB.eval n) x r`\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputB_eq n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 1 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 1), call (finProdFinEquiv (i, t)) c = x.getD (↑i) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputB\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_2\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inB.eval n = 1\n⊢ OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)",
+          "normalized_message": "Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputB_eq n (Y.inB.eval n) x r`\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputB_eq n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 1 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 1), call (finProdFinEquiv (i, t)) c = x.getD (↑i) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputB\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_2\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inB.eval n = 1\n⊢ OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)",
+          "category": "existing efficiency-body callB index",
+          "attribution": "CallEquations.inputB_eq has the same product-domain versus opaque calls.eval mismatch. This exact failure is the second efficiency-only diagnostic.",
+          "causal_classification": "direct diagnostic",
+          "origin": "efficiency",
+          "comparators": [
+            {
+              "kind": "efficiency",
+              "index": 13,
+              "log": "evidence/probe-runs/yao-efficiency-repair-1/aec596982f59__Yao_B_coe.log",
+              "sealed_line": 969,
+              "source_line": 927,
+              "declaration": "yaoHybrid_polyTime",
+              "normalized_message_identical": true,
+              "source_line_text": "    apply CallEquations.inputB_eq n (Y.inB.eval n) x r",
+              "full_excerpt": "evidence/seals/yao-efficiency-repair/final/Yao_B_coe.lean:969:4: error: Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputB_eq n (Y.inB.eval n) x r`\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =\n    List.ofFn (?call ?j)\nwith the goal\n  OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)\n\nNote: The full type of `CallEquations.inputB_eq n (Y.inB.eval n) x r` is\n  ∀ (call : Fin (Y.inB.eval n * n) → Fin 1 → Bool),\n    (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 1), call (finProdFinEquiv (i, t)) c = x.getD (↑i) false) →\n      ∀ (j : Fin (Y.inB.eval n * n)),\n        OTInputs.otInputB\n            (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n          List.ofFn (call j)\n\ncase refine_2\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhAlice : (yaoAlice Y E₁ E₂).Efficient\nhBob : (yaoBob Y E₁ E₂).Efficient\nn : ℕ\nx r : List Bool\nj : Fin ((yaoHybrid Y E₁ E₂).calls.eval n)\nhlen : otFunctionality.inB.eval n = 1\n⊢ OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =\n    List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)"
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "sealed_line": 1037,
+          "column": 35,
+          "source_line": 995,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1037:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "normalized_message": "Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "category": "base simulator PRF signature",
+          "attribution": "The frozen simulator G1 hypothesis has the same Fin(n+n) versus Fin ((var.add var).eval n) mismatch as the baseline; it is also prototype diagnostic1.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 12,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 950,
+              "source_line": 908,
+              "declaration": "yaoHybrid_simulators",
+              "normalized_message_identical": true,
+              "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:950:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁"
+            },
+            {
+              "kind": "a12",
+              "index": 1,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log",
+              "sealed_line": 71,
+              "source_line": 28,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:71:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁"
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "sealed_line": 1039,
+          "column": 20,
+          "source_line": 997,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1039:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "normalized_message": "Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "category": "base simulator joint-PRF signature",
+          "attribution": "The frozen simulator concatenation Fin.append has output length n+n+(var.add innerLen).eval n, whereas joint PRFOut expects the opaque outer add evaluation; this is baseline and prototype diagnostic2.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 13,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 952,
+              "source_line": 910,
+              "declaration": "yaoHybrid_simulators",
+              "normalized_message_identical": true,
+              "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:952:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool"
+            },
+            {
+              "kind": "a12",
+              "index": 2,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log",
+              "sealed_line": 73,
+              "source_line": 30,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:73:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool"
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "sealed_line": 1058,
+          "column": 69,
+          "source_line": 1016,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (outLen := Y.outLen) (gen := gen) (gen_poly := hgen) (circuit := Y.circ)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1058:69: error: Application type mismatch: The argument\n  Y.circ\nhas type\n  (n : ℕ) → DAGCircuit (Y.inA.eval n + Y.inB.eval n)\nbut is expected to have type\n  (n : ℕ) → DAGCircuit ((Y.inA.add Y.inB).eval n)\nin the application\n  FakeSimulatorFactory.exists_simulator E₁ E₂ hE₁ hE₂ Y.sizeBound (Y.inA.add Y.inB) Y.inA Y.inB Y.outLen gen hgen Y.circ",
+          "normalized_message": "Application type mismatch: The argument\n  Y.circ\nhas type\n  (n : ℕ) → DAGCircuit (Y.inA.eval n + Y.inB.eval n)\nbut is expected to have type\n  (n : ℕ) → DAGCircuit ((Y.inA.add Y.inB).eval n)\nin the application\n  FakeSimulatorFactory.exists_simulator E₁ E₂ hE₁ hE₂ Y.sizeBound (Y.inA.add Y.inB) Y.inA Y.inB Y.outLen gen hgen Y.circ",
+          "category": "new direct factory circuit input-index mismatch",
+          "attribution": "FakeSimulatorFactory is instantiated at inputs=.add Y.inA Y.inB. The actual circuit has DAGCircuit (Y.inA.eval n+Y.inB.eval n), while the sealed factory expects DAGCircuit ((Y.inA.add Y.inB).eval n). This is the first direct new body mismatch, corresponding to prototype diagnostic3.",
+          "causal_classification": "direct diagnostic",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 3,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log",
+              "sealed_line": 91,
+              "source_line": 48,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (outLen := Y.outLen) (gen := gen) (gen_poly := hgen) (circuit := Y.circ)",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:91:69: error: Application type mismatch: The argument\n  Y.circ\nhas type\n  (n : ℕ) → DAGCircuit (Y.inA.eval n + Y.inB.eval n)\nbut is expected to have type\n  (n : ℕ) → DAGCircuit ((Y.inA.add Y.inB).eval n)\nin the application\n  FakeSimulatorFactory.exists_simulator E₁ E₂ hE₁ hE₂ Y.sizeBound (Y.inA.add Y.inB) Y.inA Y.inB Y.outLen gen hgen Y.circ"
+            }
+          ]
+        },
+        {
+          "index": 17,
+          "sealed_line": 1062,
+          "column": 29,
+          "source_line": 1020,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (input_range := fun n => Nat.le_refl (Y.inA.eval n + Y.inB.eval n))",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1062:29: error: Type mismatch\n  Nat.le_refl (Y.inA.eval n + Y.inB.eval n)\nhas type\n  Y.inA.eval n + Y.inB.eval n ≤ Y.inA.eval n + Y.inB.eval n\nbut is expected to have type\n  Y.inA.eval n + Y.inB.eval n ≤ (Y.inA.add Y.inB).eval n",
+          "normalized_message": "Type mismatch\n  Nat.le_refl (Y.inA.eval n + Y.inB.eval n)\nhas type\n  Y.inA.eval n + Y.inB.eval n ≤ Y.inA.eval n + Y.inB.eval n\nbut is expected to have type\n  Y.inA.eval n + Y.inB.eval n ≤ (Y.inA.add Y.inB).eval n",
+          "category": "new direct factory input-range index mismatch",
+          "attribution": "The supplied Nat.le_refl proves A(n)+B(n)<=A(n)+B(n), while the factory expects A(n)+B(n)<=(Y.inA.add Y.inB).eval n. This is a second direct eval-add mismatch, prototype diagnostic4.",
+          "causal_classification": "direct diagnostic",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 4,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log",
+              "sealed_line": 95,
+              "source_line": 52,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (input_range := fun n => Nat.le_refl (Y.inA.eval n + Y.inB.eval n))",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:95:29: error: Type mismatch\n  Nat.le_refl (Y.inA.eval n + Y.inB.eval n)\nhas type\n  Y.inA.eval n + Y.inB.eval n ≤ Y.inA.eval n + Y.inB.eval n\nbut is expected to have type\n  Y.inA.eval n + Y.inB.eval n ≤ (Y.inA.add Y.inB).eval n"
+            }
+          ]
+        },
+        {
+          "index": 18,
+          "sealed_line": 1063,
+          "column": 12,
+          "source_line": 1021,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (key := by intro n q w hw b; funext t; rw [keyAt_eq, dif_pos hw, hSeedK, readBits_apply])",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1063:12: error: unsolved goals\ncase h\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nG₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nG₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool\nhGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)\nhGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) sorry\nhG₂ : PRFOut (PolyExpr.var.add innerLen) G₂\nhG₁₂ : PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => sorry\nhFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2\nhSeedK :\n  ∀ (n : ℕ) (r : List Bool) (v : Fin (Y.circ n).size) (b : Bool),\n    (yaoSeed Y n r).1 v b = readBits r ((b.toNat * Y.sizeBound.eval n + ↑v) * n) n\nhSeedR₀ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).1 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1\nhSeedR₁ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).2 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2\ngen : List Bool → List Bool\nhgen : PolyTimeComputable gen\nhgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)\nn : ℕ\nq : List Bool\nw : ℕ\nhw : w < (sorry n).size\nb : Bool\nt : Fin n\n⊢ (if h : w < (sorry n).size then (sorry n q).1 ⟨w, h⟩ b else default) t =\n    q.getD ((b.toNat * Y.sizeBound.eval n + w) * n + ↑t) false",
+          "normalized_message": "unsolved goals\ncase h\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nG₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nG₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool\nhGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)\nhGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) sorry\nhG₂ : PRFOut (PolyExpr.var.add innerLen) G₂\nhG₁₂ : PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => sorry\nhFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2\nhSeedK :\n  ∀ (n : ℕ) (r : List Bool) (v : Fin (Y.circ n).size) (b : Bool),\n    (yaoSeed Y n r).1 v b = readBits r ((b.toNat * Y.sizeBound.eval n + ↑v) * n) n\nhSeedR₀ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).1 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1\nhSeedR₁ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).2 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2\ngen : List Bool → List Bool\nhgen : PolyTimeComputable gen\nhgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)\nn : ℕ\nq : List Bool\nw : ℕ\nhw : w < (sorry n).size\nb : Bool\nt : Fin n\n⊢ (if h : w < (sorry n).size then (sorry n q).1 ⟨w, h⟩ b else default) t =\n    q.getD ((b.toNat * Y.sizeBound.eval n + w) * n + ↑t) false",
+          "category": "new dependent factory key-premise cascade",
+          "attribution": "After diagnostic16 rejected the actual circuit family, the key obligation explicitly contains (sorry n).size and (sorry n q) rather than Y.circ/yaoSeed. The actual seed-key reader cannot close that poisoned dependent obligation. This is the matching prototype diagnostic5 cascade, not an independent unproved seed law.",
+          "causal_classification": "dependent-elaboration cascade (inference)",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 5,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log",
+              "sealed_line": 96,
+              "source_line": 53,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (key := by intro n q w hw b; funext t; rw [keyAt_eq, dif_pos hw, hSeedK, readBits_apply])",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:96:12: error: unsolved goals\ncase h\nY : YaoCircuit\nE₁ E₂ : List Bool → List Bool\nG₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nG₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool\nhGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)\nhGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)\nhE₁ : PolyTimeComputable E₁\nhE₂ : PolyTimeComputable E₂\nhG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) sorry\nhG₂ : PRFOut (PolyExpr.var.add innerLen) G₂\nhG₁₂ : PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => sorry\nhFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2\nhSeedK :\n  ∀ (n : ℕ) (r : List Bool) (v : Fin (Y.circ n).size) (b : Bool),\n    (yaoSeed Y n r).1 v b = readBits r ((b.toNat * Y.sizeBound.eval n + ↑v) * n) n\nhSeedR₀ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).1 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1\nhSeedR₁ :\n  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),\n    ((yaoSeed Y n q).2.1 i a).2 =\n      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,\n          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2\ngen : List Bool → List Bool\nhgen : PolyTimeComputable gen\nhgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)\nn : ℕ\nq : List Bool\nw : ℕ\nhw : w < (sorry n).size\nb : Bool\nt : Fin n\n⊢ (if h : w < (sorry n).size then (sorry n q).1 ⟨w, h⟩ b else default) t =\n    q.getD ((b.toNat * Y.sizeBound.eval n + w) * n + ↑t) false"
+            }
+          ]
+        },
+        {
+          "index": 19,
+          "sealed_line": 1064,
+          "column": 35,
+          "source_line": 1022,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1064:35: error: `simp` made no progress",
+          "normalized_message": "`simp` made no progress",
+          "category": "new dependent factory first-nonce cascade",
+          "attribution": "The nonce0 simp step is a premise of the same factory whose circuit family was rejected in diagnostic16. The supplied actual nonce reader no longer matches that dependent family. The exact same source line/message is prototype diagnostic6; canonical A checks this premise successfully.",
+          "causal_classification": "dependent-elaboration cascade (inference)",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 6,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log",
+              "sealed_line": 97,
+              "source_line": 54,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:97:35: error: `simp` made no progress"
+            }
+          ]
+        },
+        {
+          "index": 20,
+          "sealed_line": 1065,
+          "column": 35,
+          "source_line": 1023,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "    (nonce₁ := by intro n q i a t; simp only [hSeedR₁, readBits_apply, assignIdx_eq])",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1065:35: error: `simp` made no progress",
+          "normalized_message": "`simp` made no progress",
+          "category": "new dependent factory second-nonce cascade",
+          "attribution": "The nonce1 premise is the separate corresponding dependent-family simp failure after diagnostic16, matching prototype diagnostic7; canonical A checks the unchanged source successfully.",
+          "causal_classification": "dependent-elaboration cascade (inference)",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 7,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log",
+              "sealed_line": 98,
+              "source_line": 55,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "    (nonce₁ := by intro n q i a t; simp only [hSeedR₁, readBits_apply, assignIdx_eq])",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:98:35: error: `simp` made no progress"
+            }
+          ]
+        },
+        {
+          "index": 21,
+          "sealed_line": 1067,
+          "column": 23,
+          "source_line": 1025,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "      intro n q i a t; simp only [yaoSeed_snd_snd, xorShift_apply, readBits_apply])",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1067:23: error: `simp` made no progress",
+          "normalized_message": "`simp` made no progress",
+          "category": "new dependent factory permutation cascade",
+          "attribution": "The factory permutation premise uses the actual seed/permutation readers, but the factory family is poisoned by diagnostic16. This separate simp-no-progress cascade matches prototype diagnostic8 and disappears in canonical A.",
+          "causal_classification": "dependent-elaboration cascade (inference)",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 8,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log",
+              "sealed_line": 100,
+              "source_line": 57,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "      intro n q i a t; simp only [yaoSeed_snd_snd, xorShift_apply, readBits_apply])",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:100:23: error: `simp` made no progress"
+            }
+          ]
+        },
+        {
+          "index": 22,
+          "sealed_line": 1110,
+          "column": 20,
+          "source_line": 1068,
+          "declaration": "yaoHybrid_simulators",
+          "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x)) G₁ G₂ E₁ E₂ hE₂",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1110:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "normalized_message": "Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "category": "new direct computational joint-family index mismatch",
+          "attribution": "The GateHybridSecurity call supplies Fin.append G1 G2 at the exact joint polynomial L. B prevents reducing L.eval n to the explicit concatenation output length, so this body application fails just like prototype diagnostic9.",
+          "causal_classification": "direct diagnostic",
+          "origin": "new simulator body",
+          "comparators": [
+            {
+              "kind": "a12",
+              "index": 9,
+              "log": "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log",
+              "sealed_line": 143,
+              "source_line": 100,
+              "declaration": "simulators_complete",
+              "normalized_message_identical": true,
+              "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x)) G₁ G₂ E₁ E₂ hE₂",
+              "full_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:143:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool"
+            }
+          ]
+        },
+        {
+          "index": 23,
+          "sealed_line": 1184,
+          "column": 35,
+          "source_line": 1142,
+          "declaration": "yaoHybrid_hbcSecure",
+          "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1184:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "normalized_message": "Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁",
+          "category": "base HBC theorem PRF signature",
+          "attribution": "The unchanged yaoHybrid_hbcSecure G1 hypothesis again requires n+n to identify with the opaque polynomial add evaluation. It is the penultimate baseline diagnostic.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 14,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 974,
+              "source_line": 932,
+              "declaration": "yaoHybrid_hbcSecure",
+              "normalized_message_identical": true,
+              "source_line_text": "    (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:974:35: error: Application type mismatch: The argument\n  G₁\nhas type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool\nbut is expected to have type\n  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G₁"
+            }
+          ]
+        },
+        {
+          "index": 24,
+          "sealed_line": 1186,
+          "column": 20,
+          "source_line": 1144,
+          "declaration": "yaoHybrid_hbcSecure",
+          "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+          "full_excerpt": "evidence/seals/final-frozen-files/final/Yao_B_coe.lean:1186:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "normalized_message": "Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool",
+          "category": "base HBC theorem joint-PRF signature",
+          "attribution": "The unchanged yaoHybrid_hbcSecure joint-family header has the same explicit concatenation length versus opaque nested-add evaluation mismatch as the last baseline diagnostic.",
+          "causal_classification": "direct diagnostic",
+          "origin": "base",
+          "comparators": [
+            {
+              "kind": "base",
+              "index": 15,
+              "log": "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log",
+              "sealed_line": 976,
+              "source_line": 934,
+              "declaration": "yaoHybrid_hbcSecure",
+              "normalized_message_identical": true,
+              "source_line_text": "      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :",
+              "full_excerpt": "evidence/seals/frozen/base/Yao_B_coe.lean:976:20: error: Type mismatch\n  Fin.append (G₁ n s x) (G₂ n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool"
+            }
+          ]
+        }
+      ],
+      "counts": {
+        "total": 24,
+        "base": 15,
+        "efficiency": 2,
+        "new_body": 7,
+        "new_direct_eval_index": 3,
+        "new_dependent_cascade": 4
+      },
+      "failing_declarations": {
+        "yaoCoins_eval": 1,
+        "yaoHybrid": 3,
+        "yaoHybrid_callA": 1,
+        "yaoHybrid_callB": 1,
+        "yaoHybrid_answersB_getD": 4,
+        "yaoSeed_good_whp": 1,
+        "yaoHybrid_polyTime": 2,
+        "yaoHybrid_simulators": 9,
+        "yaoHybrid_hbcSecure": 2
+      }
+    }
+  },
+  "input_hashes": {
+    "TCSlib/Cryptography/SecureComputation/Yao.lean": {
+      "bytes": 67643,
+      "sha256": "aa54fc5eb5cd4fb3aca8671c1aaba7bfbeb6b0ccabcd2b30ad12db64aad3ee84"
+    },
+    "evidence/probe-runs/final-frozen-files-1/results.jsonl": {
+      "bytes": 6853,
+      "sha256": "565166c708635e3e655f7ce5b25c68f0b2443ce86cf7fa1608e49667a756a939"
+    },
+    "evidence/probe-runs/checkpoint1-frozen-readers/results.jsonl": {
+      "bytes": 25527,
+      "sha256": "389f303c99151a6ede1055b9360ea680d190d58f47a6fd49e4194aabd8d6ec04"
+    },
+    "evidence/probe-runs/yao-efficiency-repair-1/results.jsonl": {
+      "bytes": 2287,
+      "sha256": "f82cdc31340bda75f1caa05b14f08266c0a0ca433419aa9d2966835114639d13"
+    },
+    "evidence/subagents/a12/probe-runs/concrete-final-audit-02/results.jsonl": {
+      "bytes": 2834,
+      "sha256": "75e6024c8c3782916e62f3a6111f6c4c28c34b97cea6c977f135e1683a54306b"
+    },
+    "evidence/efficiency-seal-summary.json": {
+      "bytes": 8316,
+      "sha256": "722337400e50007ab594aaec1bcd9d11e76a3a70f2d1a08e6e475ed8f6c32812"
+    },
+    "evidence/subagents/a12/B-ATTRIBUTION.json": {
+      "bytes": 10075,
+      "sha256": "cd1a6b4ce0b2280cdc157c9ba643952806cdb9906e6973e1cbc413cf975e3ba6"
+    },
+    "evidence/headers/final-exact/Yao.base": {
+      "bytes": 56592,
+      "sha256": "22536d7f7849c39eeb90350c260f03eca65bc585d6c76ffbaaf0856b57269d65"
+    },
+    "evidence/subagents/a12/probes/CompleteSimulators.lean": {
+      "bytes": 10369,
+      "sha256": "2438566d0ccd1ec9b4b40e1e12b4d4dc5fc4e98f1db5741e1603d4c079b7d300"
+    },
+    "evidence/probe-runs/final-frozen-files-1/39e816f5398c__Yao_B_strict.log": {
+      "bytes": 418633,
+      "sha256": "af8f6f6119f8a510ce487385a639c65ddae934affd67cef5c7482bf074ead8ad"
+    },
+    "evidence/probe-runs/final-frozen-files-1/39e816f5398c__Yao_B_strict.source.lean": {
+      "bytes": 69535,
+      "sha256": "8bb088f12460c5fcc70e1d7d5233a9c23e9d59f19a4044d59bc57b1c07763901"
+    },
+    "evidence/seals/final-frozen-files/final/Yao_B_strict.lean": {
+      "bytes": 69535,
+      "sha256": "8bb088f12460c5fcc70e1d7d5233a9c23e9d59f19a4044d59bc57b1c07763901"
+    },
+    "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.log": {
+      "bytes": 284464,
+      "sha256": "d99b33f1a84385b805dca446834184e2489bbce401625002e96d0d84bf81dc18"
+    },
+    "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_strict.source.lean": {
+      "bytes": 58484,
+      "sha256": "a14246cacc6f1ad7eb7554fe077e27b1ddcbd997846b66c601ac6bc5c769e218"
+    },
+    "evidence/seals/frozen/base/Yao_B_strict.lean": {
+      "bytes": 58484,
+      "sha256": "a14246cacc6f1ad7eb7554fe077e27b1ddcbd997846b66c601ac6bc5c769e218"
+    },
+    "evidence/probe-runs/yao-efficiency-repair-1/41ca678f9889__Yao_B_strict.log": {
+      "bytes": 394704,
+      "sha256": "2b21d8a336988281b3aa42766c67e3edaf029f55ef61fef64406131ad76a22e8"
+    },
+    "evidence/probe-runs/yao-efficiency-repair-1/41ca678f9889__Yao_B_strict.source.lean": {
+      "bytes": 64534,
+      "sha256": "4850736105100505d79a9d059cfa4b895385ce7b7e5b10603e7934bf9174ddbc"
+    },
+    "evidence/seals/yao-efficiency-repair/final/Yao_B_strict.lean": {
+      "bytes": 64534,
+      "sha256": "4850736105100505d79a9d059cfa4b895385ce7b7e5b10603e7934bf9174ddbc"
+    },
+    "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.log": {
+      "bytes": 398187,
+      "sha256": "e87e251af977f56f1df9167a7100072ba47d03fa548e46a6a7f4c65a18a25cbe"
+    },
+    "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_strict.source.lean": {
+      "bytes": 12325,
+      "sha256": "95f4bf4dea92e00ef73be89ed310695e259845172caa4685568d4eb2490b12aa"
+    },
+    "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean": {
+      "bytes": 12325,
+      "sha256": "95f4bf4dea92e00ef73be89ed310695e259845172caa4685568d4eb2490b12aa"
+    },
+    "evidence/probe-runs/final-frozen-files-1/b2bd4201504c__Yao_B_coe.log": {
+      "bytes": 418563,
+      "sha256": "db59235e8e55778a766d11052adb8cef1f2ef55fdc3350e42392d4e102db74aa"
+    },
+    "evidence/probe-runs/final-frozen-files-1/b2bd4201504c__Yao_B_coe.source.lean": {
+      "bytes": 69534,
+      "sha256": "150bd5f4295221ffbd3cd1121bd9a74f0614b3fbb457c0e3c71ad46ef9d3344c"
+    },
+    "evidence/seals/final-frozen-files/final/Yao_B_coe.lean": {
+      "bytes": 69534,
+      "sha256": "150bd5f4295221ffbd3cd1121bd9a74f0614b3fbb457c0e3c71ad46ef9d3344c"
+    },
+    "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.log": {
+      "bytes": 284418,
+      "sha256": "f8e7ad6dbc8ad294d1f4b057da14cb9af221a3fb0dd7e8364944e9961f48a7f8"
+    },
+    "evidence/probe-runs/checkpoint1-frozen-readers/Yao_B_coe.source.lean": {
+      "bytes": 58483,
+      "sha256": "62aeae7027e27266db8099a35a3ea0940ced1a40a395dffd96f48142c9c199be"
+    },
+    "evidence/seals/frozen/base/Yao_B_coe.lean": {
+      "bytes": 58483,
+      "sha256": "62aeae7027e27266db8099a35a3ea0940ced1a40a395dffd96f48142c9c199be"
+    },
+    "evidence/probe-runs/yao-efficiency-repair-1/aec596982f59__Yao_B_coe.log": {
+      "bytes": 394655,
+      "sha256": "8e79a3309f6aa8964b96b0503680bb56dc0f878bc05882d8f82e490d629fed7d"
+    },
+    "evidence/probe-runs/yao-efficiency-repair-1/aec596982f59__Yao_B_coe.source.lean": {
+      "bytes": 64533,
+      "sha256": "13d40b85eafeee29c67e9f22e03b8228bca7391d223119cdab9962493f812b90"
+    },
+    "evidence/seals/yao-efficiency-repair/final/Yao_B_coe.lean": {
+      "bytes": 64533,
+      "sha256": "13d40b85eafeee29c67e9f22e03b8228bca7391d223119cdab9962493f812b90"
+    },
+    "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.log": {
+      "bytes": 398162,
+      "sha256": "5a419deea8324fe2d823f93607ecf3d35b5f333c4f37c7da2a4bad42b95172c5"
+    },
+    "evidence/subagents/a12/probe-runs/concrete-final-audit-02/CompleteSimulators_B_coe.source.lean": {
+      "bytes": 12324,
+      "sha256": "8f5aa5519d0e29b08ab9399675a42209442951230571b1ffeed94d53f1a7df6f"
+    },
+    "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean": {
+      "bytes": 12324,
+      "sha256": "8f5aa5519d0e29b08ab9399675a42209442951230571b1ffeed94d53f1a7df6f"
+    },
+    "evidence/probe-runs/final-frozen-files-1/036e8cb8464d__Yao_A_strict.log": {
+      "bytes": 407438,
+      "sha256": "4ca19d09ed88c34b323e25e53b6df3d9df2aedeb49c5296bb893da9c3a3316fc"
+    },
+    "evidence/probe-runs/final-frozen-files-1/036e8cb8464d__Yao_A_strict.source.lean": {
+      "bytes": 69534,
+      "sha256": "2c9973291497c13f01f99593773e51195495f8a49fa1d674e7dda3e073f605fb"
+    },
+    "evidence/seals/final-frozen-files/final/Yao_A_strict.lean": {
+      "bytes": 69534,
+      "sha256": "2c9973291497c13f01f99593773e51195495f8a49fa1d674e7dda3e073f605fb"
+    },
+    "evidence/probe-runs/final-frozen-files-1/08036d28802f__Yao_A_coe.log": {
+      "bytes": 407437,
+      "sha256": "753ab09ac8ecc130eb479113662482546026d27b1747584f0b9346494e95e3c9"
+    },
+    "evidence/probe-runs/final-frozen-files-1/08036d28802f__Yao_A_coe.source.lean": {
+      "bytes": 69533,
+      "sha256": "979f1c60d8c0521f58264f13b0b0b3ea010eb0891784b74fcc2dc22a423f67ae"
+    },
+    "evidence/seals/final-frozen-files/final/Yao_A_coe.lean": {
+      "bytes": 69533,
+      "sha256": "979f1c60d8c0521f58264f13b0b0b3ea010eb0891784b74fcc2dc22a423f67ae"
+    }
+  }
+}

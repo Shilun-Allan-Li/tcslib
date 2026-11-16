@@ -1,0 +1,27 @@
+{
+  "review_time": "2026-11-16T07:23:42.345168+00:00",
+  "review_scope": "Static source and exact probe/hash metadata review only. No Lean command or runtime lock test.",
+  "prior_report_sha256": "025d9f689f64581166e8df3c7a47429b0db5d06cc46c59ae62f7447301992f49",
+  "input_sha256": {
+    "run_final_helper_seals.py": "20a2fe74bd77eb91351aedf3306a0431e894ff4c8c83083720e5fe892ec2df74",
+    "run_probes.py": "d7b35534e6ffae27f4a5f0580c91c2acb9a501e42488b9217c2ee420aade854f",
+    "check_modules.py": "80ce60857ebfe60b8b75a69637c0348355ee829b18d0d7bf67dbd1c70287ab89"
+  },
+  "checks": {
+    "parent_shared_import_lock": true,
+    "every_runner_receives_read_only_import_lock_flag": true,
+    "runner_shared_lock_same_root_driver_file": true,
+    "runner_lock_reference_retained_entire_process": true,
+    "ordinary_writers_exclusive_same_driver_file": true,
+    "all_272_expected_probe_hashes_captured_before_spawn": true,
+    "exact_result_coverage_unique_then_every_hash_compared": true,
+    "import_artifacts_before_after_equality_asserted": true,
+    "prepared_probes_and_sources_unchanged_from_prior_review": true,
+    "wrapper_and_cap_not_overridden": true
+  },
+  "prior_findings": {
+    "M1": "Closed for the identified controller-death/runner-survival case: every surviving runner independently retains its shared lock; ordinary cooperating writers cannot take EX.",
+    "M2": "Closed: initial hashes are captured before spawning, preserved in expected-probe-hashes.json, and compared against each result after exact coverage/uniqueness validation."
+  },
+  "remaining": "Runtime completion, unchanged artifact hashes, all diagnostic/fresh-output checks, and final package inclusion remain root-owned. Static review does not claim pending seals passed."
+}

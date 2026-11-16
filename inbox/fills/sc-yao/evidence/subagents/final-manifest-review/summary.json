@@ -1,0 +1,38 @@
+{
+  "review_time": "2026-11-16T07:21:19.595942+00:00",
+  "root": "/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange",
+  "review_worktree": "/Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange",
+  "files": 68,
+  "children": 67,
+  "hub": 1,
+  "probes": 272,
+  "all_four_variants": true,
+  "unique_probe_paths_and_stems": true,
+  "exact_source_reconstruction": true,
+  "injected_lines": 42,
+  "base_absent": 68,
+  "base_git_tree_absence_verified": true,
+  "shard_sizes": [
+    91,
+    91,
+    90
+  ],
+  "shards_exact_disjoint_cover": true,
+  "source_width_max": 100,
+  "fallback_import_tree_absent": true,
+  "slot_override_environment_unset": true,
+  "proof_checks_run": 0,
+  "scope": "Metadata/source audit only; no Lean/Lake/tree command or proof/source edit.",
+  "prelaunch_improvements": [
+    {
+      "id": "M1",
+      "finding": "Only controller initially held EX import lock. Surviving children after controller interruption could lose protection from a later ordinary writer.",
+      "root_disposition": "Root agreed before launch to parent SH and child --read-only-import-lock SH, ordinary writer EX unchanged; implementation/final execution remains root-owned."
+    },
+    {
+      "id": "M2",
+      "finding": "Initial aggregator checked coverage/diagnostics but did not compare final row source_sha256 against initial expected probe bytes.",
+      "root_disposition": "Root agreed to snapshot all272initial probe hashes and compare every final result; probe-inventory.json independently supplies exact expected hashes."
+    }
+  ]
+}

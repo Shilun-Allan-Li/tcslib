@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
 """Find explicit tactic references to definitions, including core/Mathlib (review inventory)."""
 from pathlib import Path
-import re,json,runpy
+import re,json,runpy,argparse
+parser=argparse.ArgumentParser()
+parser.add_argument('--include-target-bodies',action='store_true')
+args=parser.parse_args()
 lex=runpy.run_path('evidence/tools/header_lexer.py')
 # Reuse the namespace-resolving scanner without running its comparison-tip driver.
 namespace={};exec(Path('evidence/tools/name_clash.py').read_text().split('\ncomparisons = ')[0],namespace)
 scan=namespace['scan']
 helpers=sorted(Path('TCSlib/Cryptography/SecureComputation/Yao/HybridProof').rglob('*.lean'))
+if args.include_target_bodies:
+ helpers.append(Path('TCSlib/Cryptography/SecureComputation/Yao.lean'))
 refs=[];owned={};locals_={}
 for p in helpers:
  source=p.read_text();code,_=lex['lex'](source);owned[str(p)]={r['name'] for r in scan(source) if r['kind'] in ['def','abbrev']}
+ if p.name=='Yao.lean':
+  masked=['\n' if c=='\n' else ' ' for c in code]
+  for d in lex['declarations'](source):
+   if d['name'] in ['yaoHybrid_polyTime','yaoHybrid_simulators']:
+    masked[d['cut']:d['end']]=code[d['cut']:d['end']]
+  code=''.join(masked)
  locals_[str(p)]=set(re.findall(r'\b(?:let|have)\s+([^\s:(=]+)',code))
  for match in re.finditer(r'\b(simp_all|simp_rw|simp|rw|dsimp)\s*(?:only\s*)?\[',code):
   start=match.end();depth=0;items=[];last=start;j=start
@@ -45,6 +56,6 @@ for ref in refs:
  if any(name in owned[ref['path']] for name,_ in hits):continue
  if hits:findings.append(dict(**ref,hits=[dict(name=n,homes=h) for n,h in hits]))
 out=Path('evidence/unfold');out.mkdir(exist_ok=True)
-(out/'explicit-definition-review.json').write_text(json.dumps(dict(files_scanned=files,tactic_references=len(refs),findings=findings),indent=2)+'\n')
+(out/'explicit-definition-review.json').write_text(json.dumps(dict(files_scanned=files,tactic_references=len(refs),include_target_bodies=args.include_target_bodies,findings=findings),indent=2)+'\n')
 print('SCANNED',files,'files;',len(refs),'explicit tactic references;',len(findings),'definition-reference candidates')
 for row in findings:print(row['path'],row['line'],row['tactic'],row['token'],[h['name'] for h in row['hits']])

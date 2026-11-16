@@ -3,9 +3,10 @@
 Searches preceded probability, list, coin and machine proofs. Detailed searches and nearest
 relatives are retained under each agent's evidence. These disclosures include inline proofs.
 
-- The description decoder reuses DAGCircuit.decode/decode_encode where validation fits; its
-  new streaming host recodes the gate fields for computation. CVAL decides a language and
-  does not supply a generic data-returning evaluator, so it cannot replace these contracts.
+- The description decoder compares the existing DAGCircuit.decode/decode_encode validator,
+  but does not invoke it. The new total streaming host recodes gate fields into traversal
+  records through ChunkScanner and the SY-3 encoders. CVAL decides a language and cannot
+  replace this data-returning contract.
 - DescriptionDecoder.dbl_pair reuses public MultiMsg.dbl_append at
   Encryption/PrivateKey/FromPRF/ReductionMachine.lean:235. An unpublished local duplicate was
   removed before checking.
@@ -66,8 +67,8 @@ Further disclosed general contracts:
   consume those facts. No unmerged declaration is imported. This SY-5 debt is explicitly
   requested for proof-only re-pointing/promotion review after both sides land.
 - RelabelGarbling reuses argKeys/garbledTable/keyAt/inputKeys readers and xorPerm_apply;
-  double-XOR cancellation is inline from Bool equations, nearest the private involution
-  proof inside xorPerm. No public probability or list theorem is copied.
+  double-XOR cancellation is inline from Bool equations, nearest the anonymous inline involution
+  proof inside the public xorPerm definition. No public probability or list theorem is copied.
 - GateHybrids/GateHybridMessage are new parameterized hybrid objects with readers; they
   consume existing real/fake semantics and specialize via exact equalities. They do not
   reimplement the real/fake sampler. The unmerged sc-garble searches found no corresponding

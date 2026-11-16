@@ -1,0 +1,1744 @@
+{
+  "created": "2026-11-16T08:34:14.960027+00:00",
+  "root_head": "6e7ef601ad9a05d5e26d09f32eadb9c17a4a6cbc",
+  "refs": {
+    "TCSlib": "6ce4658db08a1dc2a03a149987197660db078011",
+    "Mathlib": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+    "Lean": "v4.25.0"
+  },
+  "groups": [
+    {
+      "consumer": "DescriptionDecoder",
+      "relation": "Comparison only: existing decoder returns a validated DAG object. The new total polynomial-time scanner emits traversal records. Current proof invokes its own scanner and SY3 encoding readers, not DAGCircuit.decode/decode_encode.",
+      "locations": [
+        {
+          "name": "DAGCircuit.decode",
+          "path": "TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang.lean",
+          "line": 107,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "32b5660af1c25746bdf7a29c33d8dea718f662e9c3a22abd1f077eff90fe7f5b",
+          "header": "def DAGCircuit.decode (w : List Bool) : Option ((n : \u2115) \u00d7 DAGCircuit n) :=",
+          "context": [
+            "only if the result re-encodes to the input string. -/",
+            "def DAGCircuit.decode (w : List Bool) : Option ((n : \u2115) \u00d7 DAGCircuit n) :=",
+            "  (decodeNat w).bind fun p =>",
+            "    (decodeList DAGGate.decode p.2.length p.2).bind fun q =>"
+          ]
+        },
+        {
+          "name": "DAGCircuit.decode_encode",
+          "path": "TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang.lean",
+          "line": 160,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "32b5660af1c25746bdf7a29c33d8dea718f662e9c3a22abd1f077eff90fe7f5b",
+          "header": "theorem DAGCircuit.decode_encode {n : \u2115} (C : DAGCircuit n) :",
+          "context": [
+            "because they come from a circuit, and the result re-encodes to the input. -/",
+            "theorem DAGCircuit.decode_encode {n : \u2115} (C : DAGCircuit n) :",
+            "    DAGCircuit.decode C.encode = some \u27e8n, C\u27e9 := by",
+            "  have hl := length_encodeList_ge DAGGate.encode C.gates"
+          ]
+        },
+        {
+          "name": "decodeList_encodeList",
+          "path": "TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang.lean",
+          "line": 120,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "32b5660af1c25746bdf7a29c33d8dea718f662e9c3a22abd1f077eff90fe7f5b",
+          "header": "theorem decodeList_encodeList {\u03b1 : Type} (f : List Bool \u2192 Option (\u03b1 \u00d7 List Bool))",
+          "context": [
+            "and the tail's code (read back by induction with one less unit of fuel). -/",
+            "theorem decodeList_encodeList {\u03b1 : Type} (f : List Bool \u2192 Option (\u03b1 \u00d7 List Bool))",
+            "    (g : \u03b1 \u2192 List Bool) (as : List \u03b1) (hf : \u2200 a \u2208 as, \u2200 r, f (g a ++ r) = some (a, r))",
+            "    (fuel : \u2115) (hfuel : as.length < fuel) (r : List Bool) :"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "DescriptionDecoder / generic evaluator",
+      "relation": "Comparison only: CVAL is a Boolean decision language, not a data-returning generic runWith host.",
+      "locations": [
+        {
+          "name": "CVAL",
+          "path": "TCSlib/Complexity/CircuitComplexity/CircuitEval.lean",
+          "line": 71,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "38fb80f3794e2a54744af86170a44a35761489e6d58a58cd279355a2871cf77e",
+          "header": "def CVAL : Language Bool :=",
+          "context": [
+            "`C : DAGCircuit |x|` and an input `x` on which `C` outputs `1`. -/",
+            "def CVAL : Language Bool :=",
+            "  {z | \u2203 (x : List Bool) (C : DAGCircuit x.length), C.IsFaninTwo \u2227 C.eval x.get = true \u2227",
+            "    z = Turing.pairEncode C.encode x}"
+          ]
+        },
+        {
+          "name": "CVAL_mem_P",
+          "path": "TCSlib/Complexity/CircuitComplexity/CircuitEval.lean",
+          "line": 170,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "38fb80f3794e2a54744af86170a44a35761489e6d58a58cd279355a2871cf77e",
+          "header": "theorem CVAL_mem_P : CVAL \u2208 Complexity.P :=",
+          "context": [
+            "`Complexity.mem_P_iff`. -/",
+            "theorem CVAL_mem_P : CVAL \u2208 Complexity.P :=",
+            "  Complexity.mem_P_iff.mpr \u27e812, 2, _, CircuitEval.evalTM_decidesInTime_CVAL\u27e9",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "DescriptionDecoder.dbl_pair",
+      "relation": "Direct reuse; approved extra import avoids duplicating doubling over append.",
+      "locations": [
+        {
+          "name": "MultiMsg.dbl_append",
+          "path": "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean",
+          "line": 235,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "3de174cd147fc3100c3dbacf0a264a35ce267e6729f1e1fb992572542c3ed468",
+          "header": "theorem dbl_append (a b : List Bool) : dbl (a ++ b) = dbl a ++ dbl b := by",
+          "context": [
+            "/-- Doubling distributes over concatenation. -/",
+            "theorem dbl_append (a b : List Bool) : dbl (a ++ b) = dbl a ++ dbl b := by",
+            "  induction a with",
+            "  | nil => rw [List.nil_append, dbl_nil, List.nil_append]"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "Garbling.fixedTable_poly",
+      "relation": "General re-derivation of finite pairing assembly; nearest clNative_fields is private and outside allowed import closure. Public pairing combinators are consumed directly.",
+      "locations": [
+        {
+          "name": "Complexity.clNative_fields",
+          "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+          "line": 4000,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9477ad3dd96a0b121d1ee35b8c0a4f0f917de3176c920358374d652d8746e1c0",
+          "header": "private lemma clNative_fields (fs : List (List Bool \u2192 List Bool))",
+          "context": [
+            "self-delimiting fields. All repeated input scans are charged by composition. -/",
+            "private lemma clNative_fields (fs : List (List Bool \u2192 List Bool))",
+            "    (hf : \u2200 f \u2208 fs, PolyTimeComputable f) :",
+            "    PolyTimeComputable (fun x => clFields (fs.map (fun f => f x))) := by"
+          ]
+        },
+        {
+          "name": "PolyTimeComputable.pairEncode",
+          "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+          "line": 129,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "8915fe2b3029ab96ffcc6dbfbd7f198abe9de97c08ab44009861e892598acdc0",
+          "header": "theorem PolyTimeComputable.pairEncode {f g : List Bool \u2192 List Bool}",
+          "context": [
+            "`pairEncode x (pairEncode (f x) (g x))`, whose second component is the result. -/",
+            "theorem PolyTimeComputable.pairEncode {f g : List Bool \u2192 List Bool}",
+            "    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :",
+            "    PolyTimeComputable (fun x => Turing.pairEncode (f x) (g x)) := by"
+          ]
+        },
+        {
+          "name": "PolyTimeComputable.pairMapSnd",
+          "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+          "line": 94,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "8915fe2b3029ab96ffcc6dbfbd7f198abe9de97c08ab44009861e892598acdc0",
+          "header": "theorem PolyTimeComputable.pairMapSnd {g : List Bool \u2192 List Bool}",
+          "context": [
+            "most `K (C + 1) (n+1)^(c+1)`. -/",
+            "theorem PolyTimeComputable.pairMapSnd {g : List Bool \u2192 List Bool}",
+            "    (hg : PolyTimeComputable g) : PolyTimeComputable (Complexity.pairMapSnd g) := by",
+            "  obtain \u27e8G, C, c, hG\u27e9 := (polyTimeComputable_iff g).1 hg"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "Garbling.gateOut_small / private keyList_small",
+      "relation": "Bounded arity specialization through public readers; nearest map-range bridge is private, so cannot be invoked.",
+      "locations": [
+        {
+          "name": "map_range_getD_ofFn",
+          "path": "TCSlib/Cryptography/SecureComputation/Garbling.lean",
+          "line": 193,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "451308a2aa091b947dbfd5b87108ec0a9952eb15a253d965c807a8e3788fe9d6",
+          "header": "private theorem map_range_getD_ofFn {len : \u2115} (ass : Fin len \u2192 Bool) :",
+          "context": [
+            "/-- The range positions read the assignment back. -/",
+            "private theorem map_range_getD_ofFn {len : \u2115} (ass : Fin len \u2192 Bool) :",
+            "    (List.range len).map (fun a => (List.ofFn ass).getD a false) = List.ofFn ass := by",
+            "  refine List.ext_getElem (by simp) fun i h\u2081 h\u2082 => ?_"
+          ]
+        },
+        {
+          "name": "gateOut_eq",
+          "path": "TCSlib/Cryptography/SecureComputation/Garbling.lean",
+          "line": 202,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "451308a2aa091b947dbfd5b87108ec0a9952eb15a253d965c807a8e3788fe9d6",
+          "header": "theorem gateOut_eq (g : DAGGate) (vals : List Bool) :",
+          "context": [
+            "bits of the arguments is `DAGGate.eval`. -/",
+            "theorem gateOut_eq (g : DAGGate) (vals : List Bool) :",
+            "    gateOut g (fun t => vals.getD (g.args[t]) false) = g.eval vals := by",
+            "  have hA := map_range_getD_ofFn (fun t : Fin g.args.length => vals.getD (g.args[t]) false)"
+          ]
+        },
+        {
+          "name": "argKeys_eq",
+          "path": "TCSlib/Cryptography/SecureComputation/Garbling.lean",
+          "line": 250,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "451308a2aa091b947dbfd5b87108ec0a9952eb15a253d965c807a8e3788fe9d6",
+          "header": "theorem argKeys_eq (s : GarbleSeed Cc K \u03c1) (i : Fin Cc.gates.length)",
+          "context": [
+            "argument vertex `(Cc.gates[i]).args[t]`. -/",
+            "theorem argKeys_eq (s : GarbleSeed Cc K \u03c1) (i : Fin Cc.gates.length)",
+            "    (a : Fin (Cc.gates[i]).args.length \u2192 Bool) :",
+            "    argKeys Cc s i a = List.ofFn fun t => keyAt Cc s ((Cc.gates[i]).args[t]) (a t) := rfl"
+          ]
+        },
+        {
+          "name": "keyAt_eq",
+          "path": "TCSlib/Cryptography/SecureComputation/Garbling.lean",
+          "line": 240,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "451308a2aa091b947dbfd5b87108ec0a9952eb15a253d965c807a8e3788fe9d6",
+          "header": "theorem keyAt_eq (s : GarbleSeed Cc K \u03c1) (v : \u2115) (b : Bool) :",
+          "context": [
+            "/-- The key at `v` for bit `b` is the seed's key when `v < Cc.size`, and `default` otherwise. -/",
+            "theorem keyAt_eq (s : GarbleSeed Cc K \u03c1) (v : \u2115) (b : Bool) :",
+            "    keyAt Cc s v b = if h : v < Cc.size then s.1 \u27e8v, h\u27e9 b else default := rfl",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "WordLists",
+      "relation": "Direct reuse. ofFn_eq_map_range is a merged TCSlib reader, not a Mathlib lemma.",
+      "locations": [
+        {
+          "name": "ColMachines.polyTimeComputable_flatMap_range",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean",
+          "line": 159,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9c94965e5abc7c45f9e95cbfda15f466720a33421614483816640217067759a2",
+          "header": "theorem polyTimeComputable_flatMap_range {E : List Bool \u2192 \u2115 \u2192 List Bool}",
+          "context": [
+            "(`flatMap_range_ite`). -/",
+            "theorem polyTimeComputable_flatMap_range {E : List Bool \u2192 \u2115 \u2192 List Bool}",
+            "    (hE : PolyTimeComputable fun w => E (pairSndD w) (pairFstD w).length)",
+            "    {n : List Bool \u2192 \u2115} (hn : PolyTimeComputable fun z => List.replicate (n z) true) :"
+          ]
+        },
+        {
+          "name": "TCSlib.Cryptography.ofFn_eq_map_range",
+          "path": "TCSlib/Cryptography/Foundations/BitLists.lean",
+          "line": 128,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "79be625b3c19ad313f6998e58266be2ea1ee38e4b0b639755872db96aad82802",
+          "header": "theorem ofFn_eq_map_range {\u03b1 : Type*} {r : \u2115} (f : Fin r \u2192 \u03b1) (g : \u2115 \u2192 \u03b1)",
+          "context": [
+            "`List.ofFn f = (List.range r).map g` (both have `r` entries, entry `i` is `f i = g i`). -/",
+            "theorem ofFn_eq_map_range {\u03b1 : Type*} {r : \u2115} (f : Fin r \u2192 \u03b1) (g : \u2115 \u2192 \u03b1)",
+            "    (h : \u2200 i : Fin r, f i = g i) : List.ofFn f = (List.range r).map g := by",
+            "  refine List.ext_getElem (by rw [List.length_ofFn, List.length_map, List.length_range])"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "ChunkScanner",
+      "relation": "Changing finite control differs from fixed-position flatMap_range_drop. Scanner consumes actual emitting-loop host emitIter, not a new loop machine.",
+      "locations": [
+        {
+          "name": "flatMap_range_drop",
+          "path": "TCSlib/Cryptography/Foundations/BitLists.lean",
+          "line": 171,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "79be625b3c19ad313f6998e58266be2ea1ee38e4b0b639755872db96aad82802",
+          "header": "theorem flatMap_range_drop {\u03b2 \u03b3 : Type*} (F : List \u03b2 \u2192 List \u03b3) (g : \u03b2 \u2192 List \u03b3)",
+          "context": [
+            "the suffixes of the tail, within `m - 1` steps; the empty suffixes read `[]`. -/",
+            "theorem flatMap_range_drop {\u03b2 \u03b3 : Type*} (F : List \u03b2 \u2192 List \u03b3) (g : \u03b2 \u2192 List \u03b3)",
+            "    (hnil : F [] = []) :",
+            "    \u2200 (l : List \u03b2), (\u2200 e \u2208 l, \u2200 t, F (e :: t) = g e) \u2192 \u2200 m : \u2115, l.length \u2264 m \u2192"
+          ]
+        },
+        {
+          "name": "polyTimeComputable_emitIter",
+          "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+          "line": 345,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "346a52d4751decd7e164490c57f93bbfe07156354fb3e3d81c2228ab33238909",
+          "header": "theorem polyTimeComputable_emitIter {g e : List Bool \u2192 List Bool}",
+          "context": [
+            "`Turing.FinTM.computesFunInTime_polyBits`. -/",
+            "theorem polyTimeComputable_emitIter {g e : List Bool \u2192 List Bool}",
+            "    (hg : PolyTimeComputable g) (he : PolyTimeComputable e)",
+            "    (a' k' b l : \u2115)"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "RunWithHost",
+      "relation": "Direct reuse of stateFind and public gate-list recursion equations; no CVAL machine copy.",
+      "locations": [
+        {
+          "name": "polyTimeComputable_stateFind",
+          "path": "TCSlib/Complexity/Randomized/Repetition.lean",
+          "line": 241,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "f94702f4f5e17f71bfead906aa25e9993b25e6a20ad57c6e6b43c770a4bc329e",
+          "header": "theorem polyTimeComputable_stateFind {start step : List Bool \u2192 List Bool}",
+          "context": [
+            "(`StateLoop.find?_range_eq_some`), and the payload is `out \u27e8x, orbit x (N x)\u27e9`. -/",
+            "theorem polyTimeComputable_stateFind {start step : List Bool \u2192 List Bool}",
+            "    {acc : List Bool \u2192 Bool} {out : List Bool \u2192 List Bool}",
+            "    (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)"
+          ]
+        },
+        {
+          "name": "runWith_nil",
+          "path": "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+          "line": 153,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa",
+          "header": "@[simp] theorem runWith_nil (init : List \u03b2) : runWith f [] init = init := rfl",
+          "context": [
+            "/-- Running the empty gate list leaves the initial vertex data unchanged. -/",
+            "@[simp] theorem runWith_nil (init : List \u03b2) : runWith f [] init = init := rfl",
+            "",
+            "/-- Running `g :: gs` from `init` is running `gs` from `init` extended by the datum `f g init`"
+          ]
+        },
+        {
+          "name": "runWith_cons",
+          "path": "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+          "line": 157,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa",
+          "header": "theorem runWith_cons (g : DAGGate) (gs : List DAGGate) (init : List \u03b2) :",
+          "context": [
+            "of the first gate. -/",
+            "theorem runWith_cons (g : DAGGate) (gs : List DAGGate) (init : List \u03b2) :",
+            "    runWith f (g :: gs) init = runWith f gs (init ++ [f g init]) := rfl",
+            ""
+          ]
+        },
+        {
+          "name": "runWith_append",
+          "path": "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+          "line": 161,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa",
+          "header": "theorem runWith_append (gs hs : List DAGGate) (init : List \u03b2) :",
+          "context": [
+            "/-- Running a concatenation `gs ++ hs` is running `hs` from the result of running `gs`. -/",
+            "theorem runWith_append (gs hs : List DAGGate) (init : List \u03b2) :",
+            "    runWith f (gs ++ hs) init = runWith f hs (runWith f gs init) := by",
+            "  simp [runWith, List.foldl_append]"
+          ]
+        },
+        {
+          "name": "runWith_singleton",
+          "path": "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+          "line": 166,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa",
+          "header": "theorem runWith_singleton (g : DAGGate) (init : List \u03b2) :",
+          "context": [
+            "/-- Running a single gate `g` from `init` appends exactly the datum `f g init`. -/",
+            "theorem runWith_singleton (g : DAGGate) (init : List \u03b2) :",
+            "    runWith f [g] init = init ++ [f g init] := rfl",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "DescriptionDecoder / RunWithHost / ChunkScanner same-machine contract",
+      "relation": "Direct H14 composition ties result, polynomial first halt and all-time work heads to one machine; no time-to-space argument is re-proved.",
+      "locations": [
+        {
+          "name": "ModuleHost.clean_install",
+          "path": "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean",
+          "line": 319,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "4d3824deab3cbaf5ba3b2303e58610801ceb9d44e3b6913848047f7e9bc5b7bb",
+          "header": "theorem clean_install {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f) :",
+          "context": [
+            "the form `A' (|arg| + 1)^{d+1}`. -/",
+            "theorem clean_install {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f) :",
+            "    \u2203 M A d, Clean M f (fun _ => []) (fun n => A * (n + 1) ^ d) := by",
+            "  obtain \u27e8F, A, d, hF\u27e9 := hf"
+          ]
+        },
+        {
+          "name": "ModuleHost.Clean.envelope",
+          "path": "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean",
+          "line": 244,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "4d3824deab3cbaf5ba3b2303e58610801ceb9d44e3b6913848047f7e9bc5b7bb",
+          "header": "theorem Clean.envelope {M : FinTM Bool} {result emit : List Bool \u2192 List Bool} {B : \u2115 \u2192 \u2115}",
+          "context": [
+            "`MultiTapeTM.runFrom_of_halt`). -/",
+            "theorem Clean.envelope {M : FinTM Bool} {result emit : List Bool \u2192 List Bool} {B : \u2115 \u2192 \u2115}",
+            "    (h : Clean M result emit B) (x arg : List Bool) (v : \u2115) (j : Fin M.k) :",
+            "    |(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q\u2080 (stateWord M.k arg)) v).workTapePos j| \u2264"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "Decryption",
+      "relation": "Generalizes the existing tagged special-decryption computation: outer nested messages have width4n+2 rather than the existing key-width specialization. Uses existing polynomial leaf constructors.",
+      "locations": [
+        {
+          "name": "polyTimeComputable_spDecFun",
+          "path": "TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean",
+          "line": 214,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "df1bce29a3180eac266d0fb8aed57c260224d8b7d773487d901b8c19fadb001b",
+          "header": "theorem polyTimeComputable_spDecFun {E : List Bool \u2192 List Bool} (hE : PolyTimeComputable E) :",
+          "context": [
+            "Composition and conditional selection preserve polynomial time. -/",
+            "theorem polyTimeComputable_spDecFun {E : List Bool \u2192 List Bool} (hE : PolyTimeComputable E) :",
+            "    PolyTimeComputable (spDecFun E) := by",
+            "  have hP := NUPPT.polyTimeComputable_inParam"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "Lengths.length_spEncStr_le",
+      "relation": "Nearest length_spEncStr is an exact equality requiring sufficient evaluator pad. New upper bound works for arbitrary evaluator output lengths.",
+      "locations": [
+        {
+          "name": "length_spEncStr",
+          "path": "TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean",
+          "line": 258,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "df1bce29a3180eac266d0fb8aed57c260224d8b7d773487d901b8c19fadb001b",
+          "header": "theorem length_spEncStr (E : List Bool \u2192 List Bool) {k m r : List Bool}",
+          "context": [
+            "least `|r| + |m|` bits. -/",
+            "theorem length_spEncStr (E : List Bool \u2192 List Bool) {k m r : List Bool}",
+            "    (hp : r.length + m.length \u2264 (E (pairEncode k r)).length) :",
+            "    (spEncStr E k m r).length = 2 * r.length + 2 + (r.length + m.length) := by"
+          ]
+        },
+        {
+          "name": "BinArith.length_encWords_le",
+          "path": "TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+          "line": 81,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "0c29613c259feeb5d9733f23657ef39d0f172d31a42c3eab44f758d8ee3ea6fa",
+          "header": "theorem length_encWords_le (L : List (List Bool)) (c : \u2115) (h : \u2200 w \u2208 L, w.length \u2264 c) :",
+          "context": [
+            "/-- An encoded list of `k` words of length at most `c` has length at most `k(2c + 2)`. -/",
+            "theorem length_encWords_le (L : List (List Bool)) (c : \u2115) (h : \u2200 w \u2208 L, w.length \u2264 c) :",
+            "    (encWords L).length \u2264 L.length * (2 * c + 2) := by",
+            "  induction L with"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "FirstTagged",
+      "relation": "Direct reuse of public first-index search; canonical word-vector normalization uses mapW.",
+      "locations": [
+        {
+          "name": "EncodingMachines.polyTimeComputable_firstIdx",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+          "line": 324,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9996b7e0938a90433d7cdc3c667f9c66118604f01090c7019099f195cb6c3474",
+          "header": "theorem polyTimeComputable_firstIdx {p : List Bool \u2192 \u2115 \u2192 Bool}",
+          "context": [
+            "`firstIdx_le`), at it one holds (`q_firstIdx`, or `len z \u2264 firstIdx` on exhaustion). -/",
+            "theorem polyTimeComputable_firstIdx {p : List Bool \u2192 \u2115 \u2192 Bool}",
+            "    (hp : PolyTimeComputable fun w => [p (pairSndD w) (pairFstD w).length])",
+            "    {len : List Bool \u2192 \u2115} (hlen : PolyTimeComputable fun z => List.replicate (len z) true) :"
+          ]
+        },
+        {
+          "name": "BinArith.polyTimeComputable_mapW",
+          "path": "TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+          "line": 221,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "0c29613c259feeb5d9733f23657ef39d0f172d31a42c3eab44f758d8ee3ea6fa",
+          "header": "theorem polyTimeComputable_mapW {g : List Bool \u2192 List Bool} (hg : PolyTimeComputable g) :",
+          "context": [
+            "the emit loop `Complexity.polyTimeComputable_emitIter` applies with a linear bound. -/",
+            "theorem polyTimeComputable_mapW {g : List Bool \u2192 List Bool} (hg : PolyTimeComputable g) :",
+            "    PolyTimeComputable (mapW g) := by",
+            "  have hs : PolyTimeComputable listStep :="
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "BobIO / BobInit",
+      "relation": "Direct composition of word-vector selection/count/map APIs, not another list traversal.",
+      "locations": [
+        {
+          "name": "BinArith.polyTimeComputable_getW",
+          "path": "TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+          "line": 391,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "bfc635654c877d0dbd4b38d8d18d40a350b6517dd1c6d5150ea6bc9b2b5ff87b",
+          "header": "theorem polyTimeComputable_getW : PolyTimeComputable getW := by",
+          "context": [
+            "/-- Lookup is polynomial-time. -/",
+            "theorem polyTimeComputable_getW : PolyTimeComputable getW := by",
+            "  have hl : PolyTimeComputable (forLoop pairSndD) := by",
+            "    refine polyTimeComputable_forLoop polyTimeComputable_pairSndD 1 1 (fun c d j _ => ?_)"
+          ]
+        },
+        {
+          "name": "BinArith.polyTimeComputable_countW",
+          "path": "TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+          "line": 369,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "0c29613c259feeb5d9733f23657ef39d0f172d31a42c3eab44f758d8ee3ea6fa",
+          "header": "theorem polyTimeComputable_countW : PolyTimeComputable countW := by",
+          "context": [
+            "/-- **Counting the entries is polynomial-time.** -/",
+            "theorem polyTimeComputable_countW : PolyTimeComputable countW := by",
+            "  have he : PolyTimeComputable (fun w : List Bool => if w = [] then [] else [true]) := by",
+            "    convert polyTimeComputable_ite polyTimeComputable_isNil (polyTimeComputable_const [])"
+          ]
+        },
+        {
+          "name": "BinArith.polyTimeComputable_mapW",
+          "path": "TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+          "line": 221,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "0c29613c259feeb5d9733f23657ef39d0f172d31a42c3eab44f758d8ee3ea6fa",
+          "header": "theorem polyTimeComputable_mapW {g : List Bool \u2192 List Bool} (hg : PolyTimeComputable g) :",
+          "context": [
+            "the emit loop `Complexity.polyTimeComputable_emitIter` applies with a linear bound. -/",
+            "theorem polyTimeComputable_mapW {g : List Bool \u2192 List Bool} (hg : PolyTimeComputable g) :",
+            "    PolyTimeComputable (mapW g) := by",
+            "  have hs : PolyTimeComputable listStep :="
+          ]
+        },
+        {
+          "name": "EncodingMachines.polyTimeComputable_of_getD",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+          "line": 399,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9996b7e0938a90433d7cdc3c667f9c66118604f01090c7019099f195cb6c3474",
+          "header": "theorem polyTimeComputable_of_getD {F : List Bool \u2192 List Bool}",
+          "context": [
+            "`map_range_getD`). -/",
+            "theorem polyTimeComputable_of_getD {F : List Bool \u2192 List Bool}",
+            "    (hbit : PolyTimeComputable fun w => [(F (pairSndD w)).getD (pairFstD w).length false])",
+            "    (hlen : PolyTimeComputable fun z => List.replicate (F z).length true) :"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "CoinRead / raw window selectors",
+      "relation": "Direct public variable-window and padding reuse. No headD/drop or getD/ofFn copy.",
+      "locations": [
+        {
+          "name": "polyTimeComputable_pairDropPoly",
+          "path": "TCSlib/Complexity/Randomized/Primitives.lean",
+          "line": 207,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "0612ba120fab6fe4cac4770a6e15228f718949627d31b00100a0535efb0bd0ec",
+          "header": "theorem polyTimeComputable_pairDropPoly (p : PolyExpr) :",
+          "context": [
+            "after the split (`Complexity.pairSndD_pairEncode`). -/",
+            "theorem polyTimeComputable_pairDropPoly (p : PolyExpr) :",
+            "    PolyTimeComputable fun z => (pairSndD z).drop (p.eval (pairFstD z).length) := by",
+            "  convert polyTimeComputable_pairSndD.comp"
+          ]
+        },
+        {
+          "name": "polyTimeComputable_pairTakePoly",
+          "path": "TCSlib/Complexity/Randomized/Primitives.lean",
+          "line": 194,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "0612ba120fab6fe4cac4770a6e15228f718949627d31b00100a0535efb0bd0ec",
+          "header": "theorem polyTimeComputable_pairTakePoly (p : PolyExpr) :",
+          "context": [
+            "(`PolyTimeComputable.comp`, `funext`). -/",
+            "theorem polyTimeComputable_pairTakePoly (p : PolyExpr) :",
+            "    PolyTimeComputable fun z => (pairSndD z).take (p.eval (pairFstD z).length) := by",
+            "  convert polyTimeComputable_pairFstD.comp"
+          ]
+        },
+        {
+          "name": "EnsembleLemmas.polyTimeComputable_padL",
+          "path": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+          "line": 223,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "a503d42f456bb97ef05e9e1450d86db279314fc6fee8bc6ba30d90ff15f59af7",
+          "header": "theorem polyTimeComputable_padL (p : PolyExpr) {u a : List Bool \u2192 List Bool}",
+          "context": [
+            "`Complexity.polyTimeComputable_pairTakePoly`). -/",
+            "theorem polyTimeComputable_padL (p : PolyExpr) {u a : List Bool \u2192 List Bool}",
+            "    (hu : PolyTimeComputable u) (ha : PolyTimeComputable a) :",
+            "    PolyTimeComputable fun z => padL (p.eval (u z).length) (a z) := by"
+          ]
+        },
+        {
+          "name": "padFin_apply",
+          "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+          "line": 178,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3",
+          "header": "theorem padFin_apply (\u2113 : \u2115) (w : List Bool) (i : Fin \u2113) : padFin \u2113 w i = w.getD i false :=",
+          "context": [
+            "/-- Bit `i` of `padFin \u2113 w` is bit `i` of `w`, default `false`. -/",
+            "theorem padFin_apply (\u2113 : \u2115) (w : List Bool) (i : Fin \u2113) : padFin \u2113 w i = w.getD i false :=",
+            "  rfl",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "OTInputs / parameter selectors",
+      "relation": "Direct unary-polynomial, bit-read and quotient-selector composition.",
+      "locations": [
+        {
+          "name": "polyTimeComputable_unaryPoly",
+          "path": "TCSlib/Complexity/Randomized/Primitives.lean",
+          "line": 155,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "0612ba120fab6fe4cac4770a6e15228f718949627d31b00100a0535efb0bd0ec",
+          "header": "theorem polyTimeComputable_unaryPoly (p : PolyExpr) :",
+          "context": [
+            "being the `mul` case against `1^{p(|x|)}` (`pow_succ`). -/",
+            "theorem polyTimeComputable_unaryPoly (p : PolyExpr) :",
+            "    PolyTimeComputable fun x => List.replicate (p.eval x.length) true := by",
+            "  induction p with"
+          ]
+        },
+        {
+          "name": "EncodingMachines.unaryLength_poly",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+          "line": 117,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9996b7e0938a90433d7cdc3c667f9c66118604f01090c7019099f195cb6c3474",
+          "header": "theorem unaryLength_poly {h : List Bool \u2192 List Bool} (hh : PolyTimeComputable h) :",
+          "context": [
+            "(`Complexity.polyTimeComputable_unary`). -/",
+            "theorem unaryLength_poly {h : List Bool \u2192 List Bool} (hh : PolyTimeComputable h) :",
+            "    PolyTimeComputable fun x => List.replicate (h x).length true :=",
+            "  polyTimeComputable_unary.comp hh"
+          ]
+        },
+        {
+          "name": "EncodingMachines.getBit_poly",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+          "line": 174,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9996b7e0938a90433d7cdc3c667f9c66118604f01090c7019099f195cb6c3474",
+          "header": "theorem getBit_poly {h : List Bool \u2192 List Bool} (hh : PolyTimeComputable h) {f : List Bool \u2192 \u2115}",
+          "context": [
+            "the head (`polyTimeComputable_headD`). -/",
+            "theorem getBit_poly {h : List Bool \u2192 List Bool} (hh : PolyTimeComputable h) {f : List Bool \u2192 \u2115}",
+            "    (hf : PolyTimeComputable fun x => List.replicate (f x) true) :",
+            "    PolyTimeComputable fun x => [(h x).getD (f x) false] := by"
+          ]
+        },
+        {
+          "name": "EncodingMachines.divNum_poly",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+          "line": 653,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9996b7e0938a90433d7cdc3c667f9c66118604f01090c7019099f195cb6c3474",
+          "header": "theorem divNum_poly {f g : List Bool \u2192 \u2115}",
+          "context": [
+            "test `a < (q + 1) m`, `Complexity.polyTimeComputable_ite` for the zero divisor). -/",
+            "theorem divNum_poly {f g : List Bool \u2192 \u2115}",
+            "    (hf : PolyTimeComputable fun x => List.replicate (f x) true)",
+            "    (hg : PolyTimeComputable fun x => List.replicate (g x) true) :"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "Strategies",
+      "relation": "Two-message specialization of the public interactive-layout efficiency wrapper; same layout readers handle arbitrary histories.",
+      "locations": [
+        {
+          "name": "GI.efficient_of_polyTime",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+          "line": 594,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "f9aa26c3dfc1056fa567353910f8a60eff7a6308356fc727329851fe8baa5634",
+          "header": "theorem efficient_of_polyTime (S : Strategy) {F : List Bool \u2192 List Bool} (hF : PolyTimeComputable F)",
+          "context": [
+            "computing it (`NUPPT.runAtL_ofPolyTimeUniform`). -/",
+            "theorem efficient_of_polyTime (S : Strategy) {F : List Bool \u2192 List Bool} (hF : PolyTimeComputable F)",
+            "    (h : \u2200 x z r hist, S.next x z r hist = F (ilayout x z hist r)) : S.Efficient :=",
+            "  (Strategy.efficient_iff S).2 \u27e8NUPPT.ofPolyTimeUniform hF S.coins,"
+          ]
+        },
+        {
+          "name": "GI.argX_ilayout",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean",
+          "line": 302,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "b0fd54928c390aefaa97b57eca6de640b1b6a6ac4dccbda0d149464bd0fcacc7",
+          "header": "@[simp] theorem argX_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :",
+          "context": [
+            "/-- The common input of a layout. -/",
+            "@[simp] theorem argX_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :",
+            "    argX (ilayout x z hist r) = x := by",
+            "  simp [argX, ilayout_def]"
+          ]
+        },
+        {
+          "name": "GI.argZ_ilayout",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean",
+          "line": 307,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "b0fd54928c390aefaa97b57eca6de640b1b6a6ac4dccbda0d149464bd0fcacc7",
+          "header": "@[simp] theorem argZ_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :",
+          "context": [
+            "/-- The auxiliary input of a layout. -/",
+            "@[simp] theorem argZ_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :",
+            "    argZ (ilayout x z hist r) = z := by",
+            "  simp [argZ, ilayout_def]"
+          ]
+        },
+        {
+          "name": "GI.argM_ilayout",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean",
+          "line": 312,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "b0fd54928c390aefaa97b57eca6de640b1b6a6ac4dccbda0d149464bd0fcacc7",
+          "header": "@[simp] theorem argM_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :",
+          "context": [
+            "/-- The encoded messages of a layout. -/",
+            "@[simp] theorem argM_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :",
+            "    argM (ilayout x z hist r) = Strategy.encodeMsgs hist := by",
+            "  simp [argM, ilayout_def]"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "Strategies / history encodings",
+      "relation": "Direct first/tail/history iteration readers, not an encoding injectivity copy.",
+      "locations": [
+        {
+          "name": "Strategy.pairFstD_encodeMsgs",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean",
+          "line": 143,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "e41ec92da068e10d5f35278fe7b23c2f757c3997df5194c28c30cd3e0823f4ab",
+          "header": "theorem pairFstD_encodeMsgs (h : List (List Bool)) : pairFstD (encodeMsgs h) = h.headD [] := by",
+          "context": [
+            "/-- The first projection of an encoded history is its first message (`[]` when empty). -/",
+            "theorem pairFstD_encodeMsgs (h : List (List Bool)) : pairFstD (encodeMsgs h) = h.headD [] := by",
+            "  cases h with",
+            "  | nil =>"
+          ]
+        },
+        {
+          "name": "GI.pairSndD_encodeMsgs",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean",
+          "line": 93,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "3c3b0183450936f25d2d260b523c8155288a265fb717084f6eac084957785bda",
+          "header": "theorem pairSndD_encodeMsgs (hist : List (List Bool)) :",
+          "context": [
+            "/-- Peeling the encoding of a history drops its first message. -/",
+            "theorem pairSndD_encodeMsgs (hist : List (List Bool)) :",
+            "    pairSndD (Strategy.encodeMsgs hist) = Strategy.encodeMsgs (hist.drop 1) := by",
+            "  cases hist with"
+          ]
+        },
+        {
+          "name": "GI.iterate_pairSndD_encodeMsgs",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean",
+          "line": 101,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "3c3b0183450936f25d2d260b523c8155288a265fb717084f6eac084957785bda",
+          "header": "theorem iterate_pairSndD_encodeMsgs : \u2200 (k : \u2115) (hist : List (List Bool)),",
+          "context": [
+            "first `k` messages. -/",
+            "theorem iterate_pairSndD_encodeMsgs : \u2200 (k : \u2115) (hist : List (List Bool)),",
+            "    pairSndD^[k] (Strategy.encodeMsgs hist) = Strategy.encodeMsgs (hist.drop k)",
+            "  | 0, _ => rfl"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "TwoMoveViews / ProtocolEfficiency",
+      "relation": "Direct transcript/view/output APIs specialized to Alice-first two rounds; unmerged protocol-shape relatives remain separately disclosed.",
+      "locations": [
+        {
+          "name": "Protocol.transcriptWith_eq",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean",
+          "line": 421,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "e41ec92da068e10d5f35278fe7b23c2f757c3997df5194c28c30cd3e0823f4ab",
+          "header": "theorem transcriptWith_eq (\u03c0 : Protocol) (P' : Strategy) (x y z : List Bool)",
+          "context": [
+            "exec P' \u03c0.V \u03c0.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (\u03c0.rounds.eval x.length)`. -/",
+            "theorem transcriptWith_eq (\u03c0 : Protocol) (P' : Strategy) (x y z : List Bool)",
+            "    (r : \u03c0.ExecCoins P' x) : \u03c0.transcriptWith P' x y z r =",
+            "      exec P' \u03c0.V \u03c0.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (\u03c0.rounds.eval x.length) :="
+          ]
+        },
+        {
+          "name": "Protocol.transcript_eq",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean",
+          "line": 509,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "e41ec92da068e10d5f35278fe7b23c2f757c3997df5194c28c30cd3e0823f4ab",
+          "header": "theorem transcript_eq (\u03c0 : Protocol) (x y z : List Bool) (r : \u03c0.ExecCoins \u03c0.P x) :",
+          "context": [
+            "/-- The transcript is the pair of received-message components of the two views. -/",
+            "theorem transcript_eq (\u03c0 : Protocol) (x y z : List Bool) (r : \u03c0.ExecCoins \u03c0.P x) :",
+            "    \u03c0.transcript x y z r = ((\u03c0.viewP x y z r).received, (\u03c0.viewV x y z r).received) := rfl",
+            ""
+          ]
+        },
+        {
+          "name": "Protocol.viewP_eq",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean",
+          "line": 491,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "e41ec92da068e10d5f35278fe7b23c2f757c3997df5194c28c30cd3e0823f4ab",
+          "header": "theorem viewP_eq (\u03c0 : Protocol) (x y z : List Bool) (r : \u03c0.ExecCoins \u03c0.P x) :",
+          "context": [
+            "-/",
+            "theorem viewP_eq (\u03c0 : Protocol) (x y z : List Bool) (r : \u03c0.ExecCoins \u03c0.P x) :",
+            "    \u03c0.viewP x y z r = \u27e8x, y, List.ofFn r.1, (\u03c0.transcriptWith \u03c0.P x y z r).1\u27e9 :=",
+            "  rfl"
+          ]
+        },
+        {
+          "name": "Protocol.viewV_eq",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean",
+          "line": 470,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "e41ec92da068e10d5f35278fe7b23c2f757c3997df5194c28c30cd3e0823f4ab",
+          "header": "theorem viewV_eq (\u03c0 : Protocol) (x y z : List Bool) (r : \u03c0.ExecCoins \u03c0.P x) :",
+          "context": [
+            "-/",
+            "theorem viewV_eq (\u03c0 : Protocol) (x y z : List Bool) (r : \u03c0.ExecCoins \u03c0.P x) :",
+            "    \u03c0.viewV x y z r = \u27e8x, z, List.ofFn r.2, (\u03c0.transcriptWith \u03c0.P x y z r).2\u27e9 :=",
+            "  rfl"
+          ]
+        },
+        {
+          "name": "Protocol.outP_eq",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean",
+          "line": 458,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "e41ec92da068e10d5f35278fe7b23c2f757c3997df5194c28c30cd3e0823f4ab",
+          "header": "theorem outP_eq (\u03c0 : Protocol) (x y z : List Bool) (r : \u03c0.ExecCoins \u03c0.P x) :",
+          "context": [
+            "`\u03c0.outP x y z r = \u03c0.P.next x y (List.ofFn r.1) (\u03c0.transcriptWith \u03c0.P x y z r).1`. -/",
+            "theorem outP_eq (\u03c0 : Protocol) (x y z : List Bool) (r : \u03c0.ExecCoins \u03c0.P x) :",
+            "    \u03c0.outP x y z r = \u03c0.P.next x y (List.ofFn r.1) (\u03c0.transcriptWith \u03c0.P x y z r).1 :=",
+            "  rfl"
+          ]
+        },
+        {
+          "name": "Protocol.outV_eq",
+          "path": "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean",
+          "line": 449,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "e41ec92da068e10d5f35278fe7b23c2f757c3997df5194c28c30cd3e0823f4ab",
+          "header": "theorem outV_eq (\u03c0 : Protocol) (P' : Strategy) (x y z : List Bool) (r : \u03c0.ExecCoins P' x) :",
+          "context": [
+            "`\u03c0.outV P' x y z r = \u03c0.V.next x z (List.ofFn r.2) (\u03c0.transcriptWith P' x y z r).2`. -/",
+            "theorem outV_eq (\u03c0 : Protocol) (P' : Strategy) (x y z : List Bool) (r : \u03c0.ExecCoins P' x) :",
+            "    \u03c0.outV P' x y z r = \u03c0.V.next x z (List.ofFn r.2) (\u03c0.transcriptWith P' x y z r).2 := rfl",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "StatisticalSwitch",
+      "relation": "Direct published expectation inequality and StatClose/distinguisher readers; no new expectation bound.",
+      "locations": [
+        {
+          "name": "MultiMsg.abs_uexp_sub_le_uprob",
+          "path": "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean",
+          "line": 61,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "052cfe33b7866b5dc79065e2cdcc00e1dd9d0c63be6baa8792410a45e4584fe1",
+          "header": "theorem abs_uexp_sub_le_uprob {\u03a9 : Type*} [Fintype \u03a9] (a b : \u03a9 \u2192 \u211d) (E : \u03a9 \u2192 Prop)",
+          "context": [
+            "pointwise `|a \u2212 b| \u2264 [E]` since the difference vanishes off `E` and is at most `1` on it. -/",
+            "theorem abs_uexp_sub_le_uprob {\u03a9 : Type*} [Fintype \u03a9] (a b : \u03a9 \u2192 \u211d) (E : \u03a9 \u2192 Prop)",
+            "    [DecidablePred E] (ha : \u2200 \u03c9, 0 \u2264 a \u03c9 \u2227 a \u03c9 \u2264 1) (hb : \u2200 \u03c9, 0 \u2264 b \u03c9 \u2227 b \u03c9 \u2264 1)",
+            "    (heq : \u2200 \u03c9, \u00ac E \u03c9 \u2192 a \u03c9 = b \u03c9) :"
+          ]
+        },
+        {
+          "name": "statClose_iff",
+          "path": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+          "line": 133,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "353f3dd6e00625151a7d01c14b550fa84fab1f1e3b9c5f9da80ee28cba401c8a",
+          "header": "theorem statClose_iff (X : \u03c3 \u2192 \u03b3) (Y : \u03c4 \u2192 \u03b3) (\u03b4 : \u211d) :",
+          "context": [
+            "`|Pr_s[T (X s)] \u2212 Pr_t[T (Y t)]| \u2264 \u03b4` for every test set `T`. -/",
+            "theorem statClose_iff (X : \u03c3 \u2192 \u03b3) (Y : \u03c4 \u2192 \u03b3) (\u03b4 : \u211d) :",
+            "    StatClose X Y \u03b4 \u2194 \u2200 T : \u03b3 \u2192 Prop, |uprob (fun s => T (X s)) - uprob (fun t => T (Y t))| \u2264 \u03b4 :=",
+            "  Iff.rfl"
+          ]
+        },
+        {
+          "name": "distAdv_le_of_statClose",
+          "path": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+          "line": 249,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "353f3dd6e00625151a7d01c14b550fa84fab1f1e3b9c5f9da80ee28cba401c8a",
+          "header": "theorem distAdv_le_of_statClose {\u03c3 \u03c4 \u03b3 \u03c1 : Type*} [Fintype \u03c3] [Fintype \u03c4] [Fintype \u03c1]",
+          "context": [
+            "\"replace the ideal sampler by the rejection sampler\" step of the campaign (C10). -/",
+            "theorem distAdv_le_of_statClose {\u03c3 \u03c4 \u03b3 \u03c1 : Type*} [Fintype \u03c3] [Fintype \u03c4] [Fintype \u03c1]",
+            "    (X : \u03c3 \u2192 \u03b3) (Y : \u03c4 \u2192 \u03b3) {\u03b4 : \u211d} (h : StatClose X Y \u03b4) (D : \u03b3 \u2192 \u03c1 \u2192 Bool) :",
+            "    distAdv X Y D \u2264 \u03b4 := by"
+          ]
+        },
+        {
+          "name": "uprob_eq_uexp",
+          "path": "TCSlib/Cryptography/Foundations/Probability.lean",
+          "line": 80,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+          "header": "theorem uprob_eq_uexp (p : \u03b1 \u2192 Prop) [DecidablePred p] :",
+          "context": [
+            "/-- The probability of an event is the average of its indicator. -/",
+            "theorem uprob_eq_uexp (p : \u03b1 \u2192 Prop) [DecidablePred p] :",
+            "    uprob p = uexp (fun a => if p a then (1 : \u211d) else 0) := by",
+            "  rw [uprob_eq_card_filter, uexp, Finset.sum_boole]"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "CoordinateSwap / SelectedLaw / SamplerEndpoints",
+      "relation": "Direct uniform reindexing and ignored-coordinate laws. New content is the matching/actual-tape specialization, not counting.",
+      "locations": [
+        {
+          "name": "acceptProb_comp_equiv",
+          "path": "TCSlib/Cryptography/Foundations/Experiments.lean",
+          "line": 107,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220",
+          "header": "theorem acceptProb_comp_equiv (e : \u03c3 \u2243 \u03c4) (X : \u03c4 \u2192 \u03b3) (D : \u03b3 \u2192 \u03c1 \u2192 Bool) :",
+          "context": [
+            "that a distinguisher accepts: a bijective image of a uniform seed is uniform. -/",
+            "theorem acceptProb_comp_equiv (e : \u03c3 \u2243 \u03c4) (X : \u03c4 \u2192 \u03b3) (D : \u03b3 \u2192 \u03c1 \u2192 Bool) :",
+            "    acceptProb (fun s => X (e s)) D = acceptProb X D :=",
+            "  uprob_comp_equiv (e.prodCongr (Equiv.refl \u03c1)) (fun z : \u03c4 \u00d7 \u03c1 => D (X z.1) z.2 = true)"
+          ]
+        },
+        {
+          "name": "acceptProb_fst",
+          "path": "TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean",
+          "line": 73,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "aef249cb4283ac3581c723dc9dd7db685102ea76f59d5e39570b6bd81546805b",
+          "header": "theorem acceptProb_fst [Nonempty \u03c4] (X : \u03c3 \u2192 \u03b3) (D : \u03b3 \u2192 \u03c1 \u2192 Bool) :",
+          "context": [
+            "sampling `X` from the first coordinate of a uniform pair is sampling `X`. -/",
+            "theorem acceptProb_fst [Nonempty \u03c4] (X : \u03c3 \u2192 \u03b3) (D : \u03b3 \u2192 \u03c1 \u2192 Bool) :",
+            "    acceptProb (fun z : \u03c3 \u00d7 \u03c4 => X z.1) D = acceptProb X D := by",
+            "  let e : (\u03c3 \u00d7 \u03c4) \u00d7 \u03c1 \u2243 (\u03c3 \u00d7 \u03c1) \u00d7 \u03c4 :="
+          ]
+        },
+        {
+          "name": "uprob_comp_equiv",
+          "path": "TCSlib/Cryptography/Foundations/Probability.lean",
+          "line": 165,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+          "header": "theorem uprob_comp_equiv (e : \u03b1 \u2243 \u03b2) (p : \u03b2 \u2192 Prop) : uprob (fun a => p (e a)) = uprob p := by",
+          "context": [
+            "permutation of a uniform input is uniform. -/",
+            "theorem uprob_comp_equiv (e : \u03b1 \u2243 \u03b2) (p : \u03b2 \u2192 Prop) : uprob (fun a => p (e a)) = uprob p := by",
+            "  rw [uprob, uprob, Nat.card_congr (e.subtypeEquiv (fun _ => Iff.rfl)),",
+            "    Fintype.card_congr e]"
+          ]
+        },
+        {
+          "name": "uprob_fst",
+          "path": "TCSlib/Cryptography/Foundations/Probability.lean",
+          "line": 175,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+          "header": "theorem uprob_fst [Nonempty \u03b2] (p : \u03b1 \u2192 Prop) : uprob (fun z : \u03b1 \u00d7 \u03b2 => p z.1) = uprob p := by",
+          "context": [
+            "is `uprob p`. -/",
+            "theorem uprob_fst [Nonempty \u03b2] (p : \u03b1 \u2192 Prop) : uprob (fun z : \u03b1 \u00d7 \u03b2 => p z.1) = uprob p := by",
+            "  classical",
+            "  rw [uprob_prod, uprob_eq_uexp]"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "SliceReduction averaging and hybrid chain",
+      "relation": "Direct product expectation, public averaging inequality, public hybrid telescoping and polynomial-times-negligible closure.",
+      "locations": [
+        {
+          "name": "uprob_prod",
+          "path": "TCSlib/Cryptography/Foundations/Probability.lean",
+          "line": 153,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+          "header": "theorem uprob_prod (p : \u03b1 \u00d7 \u03b2 \u2192 Prop) :",
+          "context": [
+            "`|{z | p z}| / (|\u03b1| |\u03b2|) = (\u2211 a, |{b | p (a, b)}| / |\u03b2|) / |\u03b1|`. -/",
+            "theorem uprob_prod (p : \u03b1 \u00d7 \u03b2 \u2192 Prop) :",
+            "    uprob p = uexp (fun a => uprob (fun b => p (a, b))) := by",
+            "  classical"
+          ]
+        },
+        {
+          "name": "abs_uexp_sub_le",
+          "path": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+          "line": 210,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "353f3dd6e00625151a7d01c14b550fa84fab1f1e3b9c5f9da80ee28cba401c8a",
+          "header": "theorem abs_uexp_sub_le {\u03b1 : Type*} [Fintype \u03b1] {f g : \u03b1 \u2192 \u211d} {c : \u211d} (hc : 0 \u2264 c)",
+          "context": [
+            "`|f a \u2212 g a| \u2264 c` for all `a`, `|uexp f \u2212 uexp g| \u2264 c` (`0 \u2264 c` covers the empty type). -/",
+            "theorem abs_uexp_sub_le {\u03b1 : Type*} [Fintype \u03b1] {f g : \u03b1 \u2192 \u211d} {c : \u211d} (hc : 0 \u2264 c)",
+            "    (h : \u2200 a, |f a - g a| \u2264 c) : |uexp f - uexp g| \u2264 c := by",
+            "  rw [\u2190 HardcoreBit.uexp_sub, uexp_def]"
+          ]
+        },
+        {
+          "name": "abs_sub_le_sum_hybrids",
+          "path": "TCSlib/Cryptography/Foundations/Probability.lean",
+          "line": 218,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+          "header": "theorem abs_sub_le_sum_hybrids (P : \u2115 \u2192 \u211d) (t : \u2115) :",
+          "context": [
+            "`|P 0 - P (t+1)| \u2264 |P 0 - P t| + |P t - P (t+1)|`. -/",
+            "theorem abs_sub_le_sum_hybrids (P : \u2115 \u2192 \u211d) (t : \u2115) :",
+            "    |P 0 - P t| \u2264 \u2211 i \u2208 range t, |P i - P (i + 1)| := by",
+            "  induction t with"
+          ]
+        },
+        {
+          "name": "EnsembleLemmas.negligible_polyExpr_mul",
+          "path": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+          "line": 377,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "a503d42f456bb97ef05e9e1450d86db279314fc6fee8bc6ba30d90ff15f59af7",
+          "header": "theorem negligible_polyExpr_mul (p : PolyExpr) {\u03bc : \u2115 \u2192 \u211d} (h\u03bc : Negligible \u03bc) :",
+          "context": [
+            "`Negligible.const_mul`. -/",
+            "theorem negligible_polyExpr_mul (p : PolyExpr) {\u03bc : \u2115 \u2192 \u211d} (h\u03bc : Negligible \u03bc) :",
+            "    Negligible fun n => (p.eval n : \u211d) * \u03bc n := by",
+            "  obtain \u27e8C, e, hCe\u27e9 := p.eval_le"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "SliceReduction / simulator coin transport",
+      "relation": "Direct advice/composition machines and public coin-word transport readers; no reduction machine or coin congruence re-proof.",
+      "locations": [
+        {
+          "name": "NUPPT.exists_compParam",
+          "path": "TCSlib/Complexity/Randomized/Closure.lean",
+          "line": 241,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "869d10a947a0a2a6e230e866e10ea1ae48e0e283c039ab002ca44ec7f0d3e474",
+          "header": "theorem exists_compParam (A : NUPPT) {pre post : List Bool \u2192 List Bool}",
+          "context": [
+            "`\u27e81^n, y\u27e9 = advInput n y` and the value is `post \u27e81^n, A.runAtL n (pre (advInput n y)) r\u27e9`. -/",
+            "theorem exists_compParam (A : NUPPT) {pre post : List Bool \u2192 List Bool}",
+            "    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) :",
+            "    \u2203 B : NUPPT, B.coins = A.coins \u2227 B.adv = A.adv \u2227 B.advice = A.advice \u2227"
+          ]
+        },
+        {
+          "name": "NUPPT.exists_withAdvice",
+          "path": "TCSlib/Complexity/Randomized/Closure.lean",
+          "line": 358,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "869d10a947a0a2a6e230e866e10ea1ae48e0e283c039ab002ca44ec7f0d3e474",
+          "header": "theorem exists_withAdvice (A : NUPPT) (\u03b2 : \u2115 \u2192 List Bool) (b : PolyExpr)",
+          "context": [
+            "(`polyTimeComputable_layout`, projections). -/",
+            "theorem exists_withAdvice (A : NUPPT) (\u03b2 : \u2115 \u2192 List Bool) (b : PolyExpr)",
+            "    (h\u03b2 : \u2200 n, (\u03b2 n).length \u2264 b.eval n) :",
+            "    \u2203 B : NUPPT, B.coins = A.coins \u2227"
+          ]
+        },
+        {
+          "name": "EnsembleLemmas.acceptProb_coins_equiv",
+          "path": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+          "line": 85,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "a503d42f456bb97ef05e9e1450d86db279314fc6fee8bc6ba30d90ff15f59af7",
+          "header": "theorem acceptProb_coins_equiv (e : \u03ba \u2243 \u03c1) (X : \u03c3 \u2192 \u03b3) (D : \u03b3 \u2192 \u03c1 \u2192 Bool) :",
+          "context": [
+            "acceptance probability (the coin analogue of `acceptProb_comp_equiv`). -/",
+            "theorem acceptProb_coins_equiv (e : \u03ba \u2243 \u03c1) (X : \u03c3 \u2192 \u03b3) (D : \u03b3 \u2192 \u03c1 \u2192 Bool) :",
+            "    acceptProb X (fun z c => D z (e c)) = acceptProb X D :=",
+            "  uprob_eq_of_equiv ((Equiv.refl \u03c3).prodCongr e)"
+          ]
+        },
+        {
+          "name": "NUPPT.coinsCongr_ofFn",
+          "path": "TCSlib/Complexity/Randomized/PPT.lean",
+          "line": 252,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "97248e5603fc118c4343d564b60747bddba1443fa86c3ea60e74018e95da63ff",
+          "header": "theorem coinsCongr_ofFn {A B : NUPPT} (h : A.coins = B.coins) (n : \u2115) (r : A.Coins n) :",
+          "context": [
+            "/-- The coin equivalence keeps the coin string: `List.ofFn (coinsCongr h n r) = List.ofFn r`. -/",
+            "theorem coinsCongr_ofFn {A B : NUPPT} (h : A.coins = B.coins) (n : \u2115) (r : A.Coins n) :",
+            "    List.ofFn (coinsCongr h n r) = List.ofFn r :=",
+            "  (List.ofFn_congr (by rw [coinLen_eq, coinLen_eq, h]) r).symm"
+          ]
+        },
+        {
+          "name": "NUPPT.coinsEquivPoly_symm_ofFn",
+          "path": "TCSlib/Complexity/Randomized/PPT.lean",
+          "line": 278,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "97248e5603fc118c4343d564b60747bddba1443fa86c3ea60e74018e95da63ff",
+          "header": "theorem coinsEquivPoly_symm_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : \u2115)",
+          "context": [
+            "`List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w`. -/",
+            "theorem coinsEquivPoly_symm_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : \u2115)",
+            "    (w : Fin (c.eval n) \u2192 Bool) : List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w := by",
+            "  rw [\u2190 coinsEquivPoly_ofFn h n, Equiv.apply_symm_apply]"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "AliceSimulator / FakeSimulator",
+      "relation": "Direct uniform polynomial-time constructor; simulation coupling composes the shared StatisticalSwitch rather than adding a new probability law.",
+      "locations": [
+        {
+          "name": "NUPPT.ofPolyTimeUniform",
+          "path": "TCSlib/Complexity/Randomized/PPT.lean",
+          "line": 398,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "97248e5603fc118c4343d564b60747bddba1443fa86c3ea60e74018e95da63ff",
+          "header": "noncomputable def ofPolyTimeUniform {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f)",
+          "context": [
+            "/-- The uniform `NUPPT` with output function `f`: `ofPolyTime` with empty advice. -/",
+            "noncomputable def ofPolyTimeUniform {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f)",
+            "    (coins : PolyExpr) : NUPPT :=",
+            "  ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "CoinRelabel / TapeValues",
+      "relation": "Direct typed block equivalences and their addressed readers; the new contribution keeps shifts and unused blocks.",
+      "locations": [
+        {
+          "name": "blocksEquivX",
+          "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+          "line": 242,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3",
+          "header": "def blocksEquivX (q \u2113 : \u2115) (X : Type*) : (Fin (q * \u2113) \u2192 X) \u2243 (Fin q \u2192 Fin \u2113 \u2192 X) :=",
+          "context": [
+            "`finProdFinEquiv` and `Equiv.curry`). All `q`, `\u2113` (zero included). -/",
+            "def blocksEquivX (q \u2113 : \u2115) (X : Type*) : (Fin (q * \u2113) \u2192 X) \u2243 (Fin q \u2192 Fin \u2113 \u2192 X) :=",
+            "  (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl X)).trans (Equiv.curry _ _ _)",
+            ""
+          ]
+        },
+        {
+          "name": "FunFamily.blocks",
+          "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+          "line": 258,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3",
+          "header": "def FunFamily.blocks (q \u2113 : \u2115) : (Fin (q * \u2113) \u2192 Bool) \u2243 (Fin q \u2192 Fin \u2113 \u2192 Bool) :=",
+          "context": [
+            "`blocksEquivX`. -/",
+            "def FunFamily.blocks (q \u2113 : \u2115) : (Fin (q * \u2113) \u2192 Bool) \u2243 (Fin q \u2192 Fin \u2113 \u2192 Bool) :=",
+            "  blocksEquivX q \u2113 Bool",
+            ""
+          ]
+        },
+        {
+          "name": "FunFamily.blocks_apply",
+          "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+          "line": 262,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3",
+          "header": "theorem FunFamily.blocks_apply (q \u2113 : \u2115) (x : Fin (q * \u2113) \u2192 Bool) (i : Fin q) (j : Fin \u2113) :",
+          "context": [
+            "/-- The defining equation of `blocks`: block `i`, position `j` is position `\u2113\u00b7i + j` of `x`. -/",
+            "theorem FunFamily.blocks_apply (q \u2113 : \u2115) (x : Fin (q * \u2113) \u2192 Bool) (i : Fin q) (j : Fin \u2113) :",
+            "    FunFamily.blocks q \u2113 x i j = x (finProdFinEquiv (i, j)) :=",
+            "  blocksEquivX_apply q \u2113 x i j"
+          ]
+        },
+        {
+          "name": "Fin.appendEquiv",
+          "path": "Mathlib/Logic/Equiv/Fin/Basic.lean",
+          "line": 406,
+          "provider": "Mathlib",
+          "ref": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+          "kind": "declaration",
+          "source_sha256": "3f679d021b14f348b0cdf34cd87337ef0bcc53bfa8946f05bb8b24a5f40d1d72",
+          "header": "def Fin.appendEquiv {\u03b1 : Type*} (m n : \u2115) :",
+          "context": [
+            "@[simps]",
+            "def Fin.appendEquiv {\u03b1 : Type*} (m n : \u2115) :",
+            "    (Fin m \u2192 \u03b1) \u00d7 (Fin n \u2192 \u03b1) \u2243 (Fin (m + n) \u2192 \u03b1) where",
+            "  toFun fg := Fin.append fg.1 fg.2"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "SeedCoordinates / NonceCoordinates",
+      "relation": "Direct Mathlib function-space equivalences; no new general currying/coordinate equivalence is re-proved.",
+      "locations": [
+        {
+          "name": "Equiv.curry",
+          "path": "Mathlib/Logic/Equiv/Prod.lean",
+          "line": 115,
+          "provider": "Mathlib",
+          "ref": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+          "kind": "declaration",
+          "source_sha256": "a264dfb944c063a571c1f7e0432e30f4437db030027c2bd1c1bbeaf06bfbd65d",
+          "header": "def curry (\u03b1 \u03b2 \u03b3) : (\u03b1 \u00d7 \u03b2 \u2192 \u03b3) \u2243 (\u03b1 \u2192 \u03b2 \u2192 \u03b3) where",
+          "context": [
+            "@[simps (attr := grind =) -fullyApplied]",
+            "def curry (\u03b1 \u03b2 \u03b3) : (\u03b1 \u00d7 \u03b2 \u2192 \u03b3) \u2243 (\u03b1 \u2192 \u03b2 \u2192 \u03b3) where",
+            "  toFun := Function.curry",
+            "  invFun := uncurry"
+          ]
+        },
+        {
+          "name": "Equiv.piCurry",
+          "path": "Mathlib/Logic/Equiv/Basic.lean",
+          "line": 169,
+          "provider": "Mathlib",
+          "ref": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+          "kind": "declaration",
+          "source_sha256": "8591e69125f5e1c1a51f4b97f8afc9cfe718f5e2b3ba2d1059bac9b768f61cc0",
+          "header": "def piCurry {\u03b1} {\u03b2 : \u03b1 \u2192 Type*} (\u03b3 : \u2200 a, \u03b2 a \u2192 Type*) :",
+          "context": [
+            "This is `Sigma.curry` and `Sigma.uncurry` together as an equiv. -/",
+            "def piCurry {\u03b1} {\u03b2 : \u03b1 \u2192 Type*} (\u03b3 : \u2200 a, \u03b2 a \u2192 Type*) :",
+            "    (\u2200 x : \u03a3 i, \u03b2 i, \u03b3 x.1 x.2) \u2243 \u2200 a b, \u03b3 a b where",
+            "  toFun := Sigma.curry"
+          ]
+        },
+        {
+          "name": "Equiv.piCongrRight",
+          "path": "Mathlib/Logic/Equiv/Basic.lean",
+          "line": 147,
+          "provider": "Mathlib",
+          "ref": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+          "kind": "declaration",
+          "source_sha256": "8591e69125f5e1c1a51f4b97f8afc9cfe718f5e2b3ba2d1059bac9b768f61cc0",
+          "header": "def piCongrRight {\u03b2\u2081 \u03b2\u2082 : \u03b1 \u2192 Sort*} (F : \u2200 a, \u03b2\u2081 a \u2243 \u03b2\u2082 a) : (\u2200 a, \u03b2\u2081 a) \u2243 (\u2200 a, \u03b2\u2082 a) :=",
+          "context": [
+            "@[simps (attr := grind =)]",
+            "def piCongrRight {\u03b2\u2081 \u03b2\u2082 : \u03b1 \u2192 Sort*} (F : \u2200 a, \u03b2\u2081 a \u2243 \u03b2\u2082 a) : (\u2200 a, \u03b2\u2081 a) \u2243 (\u2200 a, \u03b2\u2082 a) :=",
+            "  \u27e8Pi.map fun a \u21a6 F a, Pi.map fun a \u21a6 (F a).symm, fun H => funext <| by simp,",
+            "    fun H => funext <| by simp\u27e9"
+          ]
+        },
+        {
+          "name": "Equiv.boolArrowEquivProd",
+          "path": "Mathlib/Logic/Equiv/Prod.lean",
+          "line": 429,
+          "provider": "Mathlib",
+          "ref": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+          "kind": "declaration",
+          "source_sha256": "a264dfb944c063a571c1f7e0432e30f4437db030027c2bd1c1bbeaf06bfbd65d",
+          "header": "def boolArrowEquivProd (\u03b1 : Type*) : (Bool \u2192 \u03b1) \u2243 \u03b1 \u00d7 \u03b1 where",
+          "context": [
+            "@[simps (attr := grind =)]",
+            "def boolArrowEquivProd (\u03b1 : Type*) : (Bool \u2192 \u03b1) \u2243 \u03b1 \u00d7 \u03b1 where",
+            "  toFun f := (f false, f true)",
+            "  invFun p b := if b then p.2 else p.1"
+          ]
+        },
+        {
+          "name": "Equiv.sumArrowEquivProdArrow",
+          "path": "Mathlib/Logic/Equiv/Prod.lean",
+          "line": 362,
+          "provider": "Mathlib",
+          "ref": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+          "kind": "declaration",
+          "source_sha256": "a264dfb944c063a571c1f7e0432e30f4437db030027c2bd1c1bbeaf06bfbd65d",
+          "header": "def sumArrowEquivProdArrow (\u03b1 \u03b2 \u03b3 : Type*) : (\u03b1 \u2295 \u03b2 \u2192 \u03b3) \u2243 (\u03b1 \u2192 \u03b3) \u00d7 (\u03b2 \u2192 \u03b3) :=",
+          "context": [
+            "on `\u03b1` and on `\u03b2`. -/",
+            "def sumArrowEquivProdArrow (\u03b1 \u03b2 \u03b3 : Type*) : (\u03b1 \u2295 \u03b2 \u2192 \u03b3) \u2243 (\u03b1 \u2192 \u03b3) \u00d7 (\u03b2 \u2192 \u03b3) :=",
+            "  \u27e8fun f => (f \u2218 inl, f \u2218 inr), fun p => Sum.elim p.1 p.2, fun f => by ext \u27e8\u27e9 <;> rfl, fun p => by",
+            "    cases p"
+          ]
+        },
+        {
+          "name": "Equiv.funUnique",
+          "path": "Mathlib/Logic/Equiv/Defs.lean",
+          "line": 563,
+          "provider": "Mathlib",
+          "ref": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+          "kind": "declaration",
+          "source_sha256": "8aef18ce7a86996f061e5568dc64287a43e99b56408e2ca6394831c2780d5891",
+          "header": "def funUnique (\u03b1 \u03b2) [Unique.{u} \u03b1] : (\u03b1 \u2192 \u03b2) \u2243 \u03b2 := piUnique _",
+          "context": [
+            "@[simps! (attr := grind =) -fullyApplied apply symm_apply]",
+            "def funUnique (\u03b1 \u03b2) [Unique.{u} \u03b1] : (\u03b1 \u2192 \u03b2) \u2243 \u03b2 := piUnique _",
+            "",
+            "/-- The sort of maps from `PUnit` is equivalent to the codomain. -/"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "List windows / typed coin words",
+      "relation": "Direct merged/core list APIs; these source locations distinguish the reused DL46/DL47 readers from new semantic reconstruction.",
+      "locations": [
+        {
+          "name": "List.getD_eq_getElem",
+          "path": "Mathlib/Data/List/GetD.lean",
+          "line": 30,
+          "provider": "Mathlib",
+          "ref": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+          "kind": "declaration",
+          "source_sha256": "982fc973a7c6d347b08b43dc99a6705864531ba8d42960b2478b46aa648415da",
+          "header": "theorem getD_eq_getElem {n : \u2115} (hn : n < l.length) : l.getD n d = l[n] := by",
+          "context": [
+            "",
+            "theorem getD_eq_getElem {n : \u2115} (hn : n < l.length) : l.getD n d = l[n] := by",
+            "  grind",
+            ""
+          ]
+        },
+        {
+          "name": "List.getElem_ofFn",
+          "path": "Init/Data/List/OfFn.lean",
+          "line": 47,
+          "provider": "Lean",
+          "ref": "v4.25.0",
+          "kind": "declaration",
+          "source_sha256": "6cd7e9519ca430a49bf18c05943874ea338d361e0c390d7f7fb92658ada56785",
+          "header": "protected theorem getElem_ofFn {f : Fin n \u2192 \u03b1} (h : i < (ofFn f).length) :",
+          "context": [
+            "@[simp, grind =]",
+            "protected theorem getElem_ofFn {f : Fin n \u2192 \u03b1} (h : i < (ofFn f).length) :",
+            "    (ofFn f)[i] = f \u27e8i, by simp_all\u27e9 := by",
+            "  simp only [ofFn]"
+          ]
+        },
+        {
+          "name": "headD_drop_ofFn",
+          "path": "TCSlib/Cryptography/Foundations/BitLists.lean",
+          "line": 61,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "79be625b3c19ad313f6998e58266be2ea1ee38e4b0b639755872db96aad82802",
+          "header": "theorem headD_drop_ofFn {\u03b1 : Type*} {n : \u2115} (f : Fin n \u2192 \u03b1) (i : Fin n) (d : \u03b1) :",
+          "context": [
+            "`i < n` it is the in-range entry `f i` (`List.getElem?_ofFn`). -/",
+            "theorem headD_drop_ofFn {\u03b1 : Type*} {n : \u2115} (f : Fin n \u2192 \u03b1) (i : Fin n) (d : \u03b1) :",
+            "    ((List.ofFn f).drop i.val).headD d = f i := by",
+            "  simp only [headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos i.isLt,"
+          ]
+        },
+        {
+          "name": "flatten_ofFn_one",
+          "path": "TCSlib/Cryptography/Foundations/BitLists.lean",
+          "line": 71,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "79be625b3c19ad313f6998e58266be2ea1ee38e4b0b639755872db96aad82802",
+          "header": "theorem flatten_ofFn_one {k l : \u2115} (hl : l = 1) (g : Fin k \u2192 Fin l \u2192 Bool) :",
+          "context": [
+            "**Proof sketch.** Induction on the number `k` of blocks (`List.ofFn_succ`, `List.flatten_cons`). -/",
+            "theorem flatten_ofFn_one {k l : \u2115} (hl : l = 1) (g : Fin k \u2192 Fin l \u2192 Bool) :",
+            "    (List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j \u27e80, by omega\u27e9 := by",
+            "  subst hl"
+          ]
+        },
+        {
+          "name": "padFin_ofFn",
+          "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+          "line": 211,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3",
+          "header": "theorem padFin_ofFn {\u2113 : \u2115} (x : Fin \u2113 \u2192 Bool) : padFin \u2113 (List.ofFn x) = x := by",
+          "context": [
+            "/-- Padding the encoding of an `\u2113`-bit string returns it. -/",
+            "theorem padFin_ofFn {\u2113 : \u2115} (x : Fin \u2113 \u2192 Bool) : padFin \u2113 (List.ofFn x) = x := by",
+            "  funext i",
+            "  simp [padFin]"
+          ]
+        },
+        {
+          "name": "ofFn_arrowCongr_finCongr",
+          "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+          "line": 232,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3",
+          "header": "theorem ofFn_arrowCongr_finCongr {a b : \u2115} (h : a = b) (v : Fin a \u2192 Bool) :",
+          "context": [
+            "`\u27e6(arrowCongr (finCongr h) (refl Bool)) v\u27e7 = \u27e6v\u27e7`. -/",
+            "theorem ofFn_arrowCongr_finCongr {a b : \u2115} (h : a = b) (v : Fin a \u2192 Bool) :",
+            "    List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) v) = List.ofFn v := by",
+            "  subst h"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "CallEquations",
+      "relation": "Direct generated finite-product address reader and Nat division lemmas. apply_val has no standalone textual declaration: it is generated by simps on the listed definition.",
+      "locations": [
+        {
+          "name": "finProdFinEquiv_apply_val (generated)",
+          "path": "Mathlib/Logic/Equiv/Fin/Basic.lean",
+          "line": 325,
+          "provider": "Mathlib",
+          "ref": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+          "kind": "simps-generated reader",
+          "source_sha256": "3f679d021b14f348b0cdf34cd87337ef0bcc53bfa8946f05bb8b24a5f40d1d72",
+          "header": "def finProdFinEquiv : Fin m \u00d7 Fin n \u2243 Fin (m * n) where",
+          "context": [
+            "@[simps]",
+            "def finProdFinEquiv : Fin m \u00d7 Fin n \u2243 Fin (m * n) where",
+            "  toFun x :=",
+            "    \u27e8x.2 + n * x.1,"
+          ]
+        },
+        {
+          "name": "Nat.add_mul_div_left",
+          "path": "Init/Data/Nat/Div/Basic.lean",
+          "line": 321,
+          "provider": "Lean",
+          "ref": "v4.25.0",
+          "kind": "declaration",
+          "source_sha256": "938113b7b27b255d1ed46fd5d9efdb32cf09c6b78b56e3f09b299115f1ae2db5",
+          "header": "theorem add_mul_div_left (x z : Nat) {y : Nat} (H : 0 < y) : (x + y * z) / y = x / y + z := by",
+          "context": [
+            "",
+            "theorem add_mul_div_left (x z : Nat) {y : Nat} (H : 0 < y) : (x + y * z) / y = x / y + z := by",
+            "  induction z with",
+            "  | zero => rw [Nat.mul_zero, Nat.add_zero, Nat.add_zero]"
+          ]
+        },
+        {
+          "name": "Nat.div_eq_of_lt",
+          "path": "Init/Data/Nat/Div/Basic.lean",
+          "line": 412,
+          "provider": "Lean",
+          "ref": "v4.25.0",
+          "kind": "declaration",
+          "source_sha256": "938113b7b27b255d1ed46fd5d9efdb32cf09c6b78b56e3f09b299115f1ae2db5",
+          "header": "theorem div_eq_of_lt (h\u2080 : a < b) : a / b = 0 := by",
+          "context": [
+            "",
+            "theorem div_eq_of_lt (h\u2080 : a < b) : a / b = 0 := by",
+            "  rw [div_eq a, if_neg]",
+            "  intro h\u2081"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "RelabelGarbling.keyAt_original / XOR cancellation",
+      "relation": "Actual proof directly rewrites public Bool cancellation lemmas. Nearest permutation packages an anonymous inline involutivity proof; it is not a separately named private theorem.",
+      "locations": [
+        {
+          "name": "xorPerm",
+          "path": "TCSlib/Cryptography/Foundations/BitLists.lean",
+          "line": 105,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "79be625b3c19ad313f6998e58266be2ea1ee38e4b0b639755872db96aad82802",
+          "header": "def xorPerm (v : Fin n \u2192 Bool) : Equiv.Perm (Fin n \u2192 Bool) :=",
+          "context": [
+            "/-- Exclusive-or with a fixed vector `v`, as a permutation of `{0,1}\u207f`: `xorPerm v y = y \u2295 v`. -/",
+            "def xorPerm (v : Fin n \u2192 Bool) : Equiv.Perm (Fin n \u2192 Bool) :=",
+            "  Function.Involutive.toPerm (fun y i => xor (y i) (v i)) fun y => funext fun i => by",
+            "    simp"
+          ]
+        },
+        {
+          "name": "xorPerm_apply",
+          "path": "TCSlib/Cryptography/Foundations/BitLists.lean",
+          "line": 110,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "declaration",
+          "source_sha256": "79be625b3c19ad313f6998e58266be2ea1ee38e4b0b639755872db96aad82802",
+          "header": "theorem xorPerm_apply (v y : Fin n \u2192 Bool) : xorPerm v y = fun i => xor (y i) (v i) := rfl",
+          "context": [
+            "/-- `xorPerm v y = y \u2295 v`. -/",
+            "theorem xorPerm_apply (v y : Fin n \u2192 Bool) : xorPerm v y = fun i => xor (y i) (v i) := rfl",
+            "",
+            "end XorPerm"
+          ]
+        },
+        {
+          "name": "Bool.xor_assoc",
+          "path": "Init/Data/Bool.lean",
+          "line": 361,
+          "provider": "Lean",
+          "ref": "v4.25.0",
+          "kind": "declaration",
+          "source_sha256": "1b2ae4d9686eee1217915cb51f557661da901c4f5a553f5c9e6d9502a8a5c75d",
+          "header": "theorem xor_assoc : \u2200 (x y z : Bool), ((x ^^ y) ^^ z) = (x ^^ (y ^^ z)) := bne_assoc",
+          "context": [
+            "",
+            "theorem xor_assoc : \u2200 (x y z : Bool), ((x ^^ y) ^^ z) = (x ^^ (y ^^ z)) := bne_assoc",
+            "",
+            "theorem xor_right_inj : \u2200 {x y z : Bool}, (x ^^ y) = (x ^^ z) \u2194 y = z := bne_right_inj"
+          ]
+        },
+        {
+          "name": "Bool.xor_self",
+          "path": "Init/Data/Bool.lean",
+          "line": 353,
+          "provider": "Lean",
+          "ref": "v4.25.0",
+          "kind": "declaration",
+          "source_sha256": "1b2ae4d9686eee1217915cb51f557661da901c4f5a553f5c9e6d9502a8a5c75d",
+          "header": "theorem xor_self : \u2200 (x : Bool), (x ^^ x) = false := by decide",
+          "context": [
+            "",
+            "theorem xor_self : \u2200 (x : Bool), (x ^^ x) = false := by decide",
+            "",
+            "theorem xor_comm : \u2200 (x y : Bool), (x ^^ y) = (y ^^ x) := by decide"
+          ]
+        },
+        {
+          "name": "Bool.xor_false",
+          "path": "Init/Data/Bool.lean",
+          "line": 337,
+          "provider": "Lean",
+          "ref": "v4.25.0",
+          "kind": "declaration",
+          "source_sha256": "1b2ae4d9686eee1217915cb51f557661da901c4f5a553f5c9e6d9502a8a5c75d",
+          "header": "theorem xor_false : \u2200 (x : Bool), (x ^^ false) = x := bne_false",
+          "context": [
+            "",
+            "theorem xor_false : \u2200 (x : Bool), (x ^^ false) = x := bne_false",
+            "",
+            "theorem true_xor : \u2200 (x : Bool), (true ^^ x) = !x := true_bne"
+          ]
+        }
+      ]
+    },
+    {
+      "consumer": "encodeMsgs_eq_encWords",
+      "relation": "Generalizes the local encoding bridge henc in the frozen Yao file; helper uses published nil/cons equations, not the private injectivity proof.",
+      "locations": [
+        {
+          "name": "Yao local henc",
+          "path": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+          "line": 352,
+          "provider": "TCSlib",
+          "ref": "6ce4658db08a1dc2a03a149987197660db078011",
+          "kind": "local have",
+          "source_sha256": "22536d7f7849c39eeb90350c260f03eca65bc585d6c76ffbaaf0856b57269d65",
+          "header": "  have henc : \u2200 ms : List (List Bool), Strategy.encodeMsgs ms = BinArith.encWords ms :=",
+          "context": [
+            "    decodeMsgs (Strategy.encodeMsgs l) = l := by",
+            "  have henc : \u2200 ms : List (List Bool), Strategy.encodeMsgs ms = BinArith.encWords ms :=",
+            "    List.rec (motive := fun ms : List (List Bool) =>",
+            "      Strategy.encodeMsgs ms = BinArith.encWords ms)"
+          ]
+        }
+      ]
+    }
+  ],
+  "method": "Read-only rg/source inspection and exact issue-base git show. Every line is resolved uniquely from the pinned source; JSON includes source SHA and local declaration context. No Lean, source edit, commit or theorem-equivalence claim.",
+  "corrections": [
+    "DescriptionDecoder compares/imports existing decoder but its proof does not invoke decode/decode_encode.",
+    "ofFn_eq_map_range is TCSlib Foundations/BitLists:128.",
+    "xorPerm involutivity is anonymous inline proof in public definition, not named private theorem.",
+    "finProdFinEquiv_apply_val is simps-generated from Mathlib finProdFinEquiv definition."
+  ]
+}
