@@ -1819,7 +1819,6 @@ source input (so `hS` applies with no monotonicity); for empty `Γ`, every
 source word is empty and an immediately halting one-tape machine suffices;
 for `M.k = 0`, the unused-tape embedding visits one cell, inside
 `c * (S + 1)`. -/
-
 theorem one_work_tape_spaceUsed {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (M : FinTM Γ) (f : List Γ → List Γ) (T S : ℕ → ℕ)
     (hM : M.ComputesFunInTime f T)
