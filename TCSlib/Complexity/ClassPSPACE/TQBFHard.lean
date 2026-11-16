@@ -52,8 +52,7 @@ and the prefix bits (`Complexity.TQBFHard.polyTimeComputable_levelBits`).
 configurations (Claim 4.4(2)) and leaves the reduction's running time to the reader. Here the
 matrix of the whole prenex formula is one polynomial-time predicate, made a CNF by the
 P-uniform tableau and Tseitin, so that no configuration-specific CNF (and no emitter for one)
-is needed; the configuration codec `Complexity.ConfigCodec` of `ClassPSPACE.TQBF` is not
-used. The midpoints quantify over all blocks without a validity guard: the one-step
+is needed. The midpoints quantify over all blocks without a validity guard: the one-step
 relation of blocks is "equal, or a step pair of codes", and a step pair's target is always a
 code word, so junk midpoints only occur on trivial (equality) paths.
 

@@ -74,15 +74,9 @@ private lemma twoPowTM_run (x : List Bool) : ∀ i, i ≤ x.length →
     · rw [moveInputPos_pos_of_ne_right _ (by omega)]; simp [hp]
     · simp [ho, List.replicate_succ']
 
-/-- The binary representation of `2ⁿ`, low bit first. -/
-private lemma bits_two_pow (n : ℕ) : (2 ^ n).bits = List.replicate n false ++ [true] := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    have h : 2 ^ (n + 1) = Nat.bit false (2 ^ n) := by
-      simp [Nat.bit_val, Nat.pow_succ]; ring
-    rw [h, Nat.bits_append_bit _ _ (fun h0 => absurd h0 (by positivity)), ih]
-    simp [List.replicate_succ]
+/-- The binary representation of `2ⁿ`, low bit first: `Turing.bits_two_pow_eq_replicate`. -/
+private lemma bits_two_pow (n : ℕ) : (2 ^ n).bits = List.replicate n false ++ [true] :=
+  Turing.bits_two_pow_eq_replicate n
 
 /-- **`2ⁿ` is time constructible** [AB09, §1.3: "`n`, `n log n`, `n²`, `2ⁿ` are time
 constructible"]: `n ≤ 2ⁿ`, and `twoPowTM` writes `bits (2^|x|) = 0^|x| 1` in
