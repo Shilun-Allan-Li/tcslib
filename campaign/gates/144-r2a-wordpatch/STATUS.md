@@ -1,2 +1,2 @@
-**Dispatched (Seyoon, 2026-11-16)**, findings pending · draft PR #330 at `ae4157ddf37ea3520e5d953faef808649b8688d3` against campaign Lean `720e2a9c`. Round 1.
-Closeout R2a: one interval patch (IW-1, WA-1). Replay 127/127 (18 inherited, main's); seals 31 proofs PASS, 34 definitions' controls; 0 explicit reads; no new copy pair.
+**Round 2 staged, not dispatched** · draft PR #330 at `a3c9c2102865e60c4eed295a4b613ef2b85a987c`. Round 1 HOLD (0/1/1): G144-01 fixed in Lean (proofs only), G144-02 fixed in the generator and records.
+Closeout R2a: one interval patch (IW-1, WA-1). Round 2: replay 127/127; seals 31 PASS, 68 controls; TCSlib and Lean-backed explicit-argument sweeps clean; no new copy pair.
