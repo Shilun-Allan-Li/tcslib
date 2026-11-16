@@ -34,3 +34,14 @@ Seyoon accepted all sixteen recommendations in [questions.md](questions.md), wit
 
 The PDFs still needed for later phases are Barrington (JCSS 1989) and BV11 (FOCS 2011 / ePrint 2011/344), and ACPS09
 only if small-secret LWE is to be proved rather than assumed.
+
+## Addendum (Seyoon, 2026-11-16)
+- **Sources received; the PDFs are not committed.**
+  - Barrington, "Bounded-Width Polynomial-Size Branching Programs Recognize Exactly Those Languages in NC¹",
+    JCSS 38(1):150–164, 1989. It is a 15-page scan with no text layer, so read it as page images.
+    SHA-256 `06fd3eeccecf8e3e42c0e33f50356588ea9377b2f7d2642b4d3e0370f4ca7831`.
+  - Brakerski–Vaikuntanathan, "Efficient Fully Homomorphic Encryption from (Standard) LWE", FOCS 2011, 39 pages.
+    SHA-256 `d3e95f9b9e017ea1133064bed227981ec21e38ee6fc6163eb08585dd238b0c00`.
+- **ACPS09 is not needed now.** Seyoon is happy to **assume small-secret LWE** for now, and to prove the equivalences
+  with standard LWE later. Phase plans state small-secret (normal-form) LWE as an explicit assumption (A3) wherever
+  it is used.
