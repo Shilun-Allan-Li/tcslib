@@ -11,8 +11,8 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. The latest merges are #337 (MIG-3, gate 148), #334 (R4-1, gate 145) and #336 (R3a, gate 147), 2026-11-16; their tip's adoption replay passed 328/328 and its output is the adopted snapshot `oleans-c56ab` (873 objects; `oleans-c68cb` is the fallback; campaign/status/2026-11-16-merge-334-336-337/). #335 (gate 146) then merged (`c2ad69cc`); its merged-tree replay built exactly the merge's Lean, and that output is the adopted snapshot `oleans-cc2ad` (873 objects; `oleans-c56ab` is the fallback; campaign/status/2026-11-16-merge-335/).
-Campaign Lean is `c2ad69cc247f21744cdaf95867fc02b89ade5ade`. Its replay output is the cloud snapshot `oleans-cc2ad`
-(873 objects; `oleans-c56ab` is the fallback); use it whole. See campaign/status/2026-11-16-merge-335/. **Closeout**
+Campaign Lean is `c01114e75577b579e11f2cb2bfd50fe0ae429ade` (#342, R4-2). Its replay output is the cloud snapshot `oleans-cc011`
+(874 objects; `oleans-cc2ad` is the fallback); use it whole. See campaign/status/2026-11-16-merge-342/. **Closeout**
 (campaign/closeout/PLAN.md, REFACTOR-PLAN.md): the chapter scope has no admission; refactor waves R0, R1a and R2a done (R2c measured and carried). **Overnight 2026-11-16** (Seyoon's authorization: cleanup and dedup on the maintainer's own, audited by Codex in the morning): R3–R6 measured (campaign/closeout/R3-R6-MEASUREMENT.md); four draft PRs built and gated, independent unless noted — #334/gate 145 (R4-1, −161), #335/gate 146 (R4 UH, stacked on #334, −297), #336/gate 147 (R3a, −303), #337/gate 148 (MIG-3, −444). Gates 145–148 are dispatched (Seyoon, 2026-11-16). R4-2 (SG1-B) is built as gate 149 (new module `ClassNP/CleanCall`, net +63 lines accepted over the +50 stop rule by Seyoon), branch `closeout/r4-2-cleancall`, on the merged #335. **Ladner's theorem is proved** (`Complexity.ladner`,
 standard axioms only; Ladner.lean has no admission). Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
 (`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
@@ -22,7 +22,7 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
-| #342 / 149 | **CLEAR** (round 1, 0/0/0); **clear to merge** (its replay is the merged-tree replay). Was dispatched 2026-11-16, draft at `a12da4d3fb38a849a7c5e8b7cdfd09e2cb30dfb7`. Closeout R4-2: new public module `ClassNP/CleanCall` (clean modules, stop adapter, first-halt and guard lemmas, install/emit); SAT's and Hardness's kind 1, 2 and 5 copies retired; net +66 lines (+63 accepted over the +50 stop rule by Seyoon, plus the lint-required sketch). Replay 53/53 on `oleans-cc2ad`; checks clean. Next: kind 3 (EmitIterEmbed citations). campaign/gates/149-r4-2-cleancall/. |
+| #342 / 149 | **Merged** (`c01114e7`, 2026-11-16); snapshot `oleans-cc011` adopted (status/2026-11-16-merge-342). Round 1 CLEAR (0/0/0). Was dispatched 2026-11-16, draft at `a12da4d3fb38a849a7c5e8b7cdfd09e2cb30dfb7`. Closeout R4-2: new public module `ClassNP/CleanCall` (clean modules, stop adapter, first-halt and guard lemmas, install/emit); SAT's and Hardness's kind 1, 2 and 5 copies retired; net +66 lines (+63 accepted over the +50 stop rule by Seyoon, plus the lint-required sketch). Replay 53/53 on `oleans-cc2ad`; checks clean. Next: kind 3 (EmitIterEmbed citations). campaign/gates/149-r4-2-cleancall/. |
 | #337 / 148 | **Merged** (`3e497899`, 2026-11-16); round 1 CLEAR (0/0/1), G148-01 fixed at `b6bf7ec2`. Was dispatched 2026-11-16, draft at `fed2c719f935ff7f3c4875c7c680e534b4779c78`. Closeout MIG-3: `one_work_tape` through the demand-grown witness; net −444 lines. Replay 328/328; checks clean (first head's seal failure repaired). campaign/gates/148-mig3-singletape/. |
 | #336 / 147 | **Merged** (`56ab33df`, 2026-11-16); round 1 CLEAR (0/0/2; G147-01 tracked, G147-02 procedure). Was dispatched 2026-11-16, draft at `5da18960590c223ce384470e7d0d8870641f881c`. Closeout R3a: SK-1, dead privates (CC7-1, C1E-1, MIG-8), RC-4 buffer half, PL-1's `a3n_poly_linear`; net −303 lines. Replay 46/46; checks clean. campaign/gates/147-r3a-cleanup/. |
 | #335 / 146 | **Merged** (`c2ad69cc`, 2026-11-16); snapshot `oleans-cc2ad` adopted (status/2026-11-16-merge-335). Round 1 CLEAR (0/0/1; G146-01 records erratum). Iterate import approved (Seyoon, 2026-11-16). Retargeted to the campaign branch (2026-11-16) after #334 merged. Merged-tree replay PASS 28/28 on `oleans-c56ab` (output `oleans-cl146b-c56ab`, which becomes the snapshot when #335 merges unchanged). **Clear to merge.** Was dispatched 2026-11-16, draft at `2dc0fc307ce90b5ae5b56da79b7345c4367183da`, **stacked on #334**. Closeout R4 UH: the unary-clock repetition host retired onto `BinArith.polyTimeComputable_iterate`; net −297 lines. Replay 28/28 on #334's snapshot (`oleans-cl145-c68cb`); checks clean. campaign/gates/146-r4-uh-iterate/. |
@@ -67,7 +67,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 150. Use complete
+Hardness CfgFacts import stays separate. Next free gate 150 (reserved: kind 3, branch `closeout/k3-padding`). Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 

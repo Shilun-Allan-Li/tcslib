@@ -1,1 +1,1 @@
-**Gate 149 CLEAR** (round 1, 0/0/0; resolutions.md) at `a12da4d3fb38a849a7c5e8b7cdfd09e2cb30dfb7`, PR #342. Replay 53/53 on `oleans-cc2ad` is the merged-tree replay (campaign Lean unchanged since). **Clear to merge: #342.**
+**Gate 149 closed.** #342 merged (`c01114e7`, 2026-11-16) at the audited head `a12da4d3fb38a849a7c5e8b7cdfd09e2cb30dfb7`; round 1 CLEAR (0/0/0). Snapshot `oleans-cc011` adopted (campaign/status/2026-11-16-merge-342/).
