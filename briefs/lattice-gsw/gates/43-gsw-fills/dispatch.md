@@ -35,8 +35,10 @@ phase 5) in https://github.com/Shilun-Allan-Li/tcslib.
    (no fabricated tags; check the citations against the DW-7 transcriptions
    in the bundle), and evidence completeness, under the rulings and
    dispositions in the pack. #338 and #339 change disjoint files and merge in
-   either order, and each was built on the tip separately. A combined build
-   of both is a merge condition the maintainer runs, not an audit item.
+   either order, and each was built on the tip separately. #327 and #324
+   have since merged (branch tip 201bf57a), touching neither PR's files. A
+   combined build of both on that tip is a merge condition the maintainer
+   runs, not an audit item.
 3. Return gate43-gsw-fills-findings.md as Markdown in this chat, with
    findings marked by PR. If you need multiple evidence files, return a ZIP
    containing that Markdown and evidence.
@@ -47,5 +49,7 @@ The user dispatches and merges.
 
 The records (pin `4ed91289`, then this dispatch commit) and the exchange commit `14e681e6` (on the exchange tip
 `641d7af7`) are pushed.
+
+Refreshed after #327 and #324 merged (`201bf57a`): only the merge-condition sentence changed; the pins are unchanged.
 
 **Ready to dispatch**

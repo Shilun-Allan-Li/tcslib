@@ -41,9 +41,10 @@ round 2, in https://github.com/Shilun-Allan-Li/tcslib.
    check-8 WARNs with existing readers). Say whether anything new is
    undisclosed, whether the round-1 confirmations still hold, and whether each
    round-1 finding is closed. The two Gate 40 notes for the later fills (T2's
-   relational simulation lemma, the T4 fill route) are not round-2 items. The
-   merge interaction with #327 and #324 is a maintainer merge condition, not
-   an audit item.
+   relational simulation lemma, the T4 fill route) are not round-2 items.
+   #327 and #324 have since merged (branch tip 201bf57a), touching none of
+   #331's files; an integration build of #331 on that tip is a maintainer
+   merge condition, not an audit item.
    Supplement (after the pack): records commit
    98a068069adf25d5cac64eb687e8a4163dbe8626 adds
    briefs/pairings/gates/40-pairings-statements/seals-merged/, a re-run of the
@@ -62,5 +63,7 @@ Done before dispatch: the records (pin `b356e50b`, then this dispatch commit) an
 (on the exchange tip `f1ccf616`) are pushed; #331's description is set from `pr-description-r2.md`; the current
 checkpoint of `briefs/pairings/README.md` is refreshed to this head (after the pin, so the pack still lists it as a
 slip).
+
+Refreshed after #327 and #324 merged (`201bf57a`): only the merge-condition sentence changed; the pins are unchanged.
 
 **Ready to dispatch**
