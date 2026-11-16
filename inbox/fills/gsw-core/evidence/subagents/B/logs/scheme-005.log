@@ -1,0 +1,61 @@
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:328:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  decide (?m.408 = ?m.408)
+in the target expression
+  e i₀ * ↑((fun i => decide (i = i₀)) i₀).toNat = e i₀
+
+P : Parameters
+hq : P.lwe.modulus = 2 ^ P.width
+hℓ : 0 < P.width
+s : Fin P.lwe.dimension → ZMod P.lwe.modulus
+b : Bool
+β : ℕ
+C : Ciphertext P
+h : Encrypts P (secretVector P s) (↑b.toNat) β C
+hsep : 2 * β < P.lwe.modulus / 2
+e : Fin P.columns → ℤ
+he : ∀ (j : Fin P.columns), (e j).natAbs ≤ β
+hdec :
+  decrypt P s C =
+    LWE.BitEncoding.decode P.lwe
+      (LWE.BitEncoding.codepoint P.lwe b + ↑(∑ i, e i * ↑(decomposeVec P (halfVector P) i).toNat))
+hl : P.width - 1 < P.width
+i₀ : Fin P.columns
+hi₀ : i₀ = finProdFinEquiv (Fin.last P.lwe.dimension, ⟨P.width - 1, hl⟩)
+hhalf : P.lwe.modulus / 2 = 2 ^ (P.width - 1)
+hlt : P.lwe.modulus / 2 < P.lwe.modulus
+hz : decomposeVec P (halfVector P) = fun i => decide (i = i₀)
+⊢ e i₀ * ↑((fun i => decide (i = i₀)) i₀).toNat = e i₀
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:330:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  decide (i = i₀)
+in the target expression
+  e i * ↑((fun i => decide (i = i₀)) i).toNat = 0
+
+P : Parameters
+hq : P.lwe.modulus = 2 ^ P.width
+hℓ : 0 < P.width
+s : Fin P.lwe.dimension → ZMod P.lwe.modulus
+b : Bool
+β : ℕ
+C : Ciphertext P
+h : Encrypts P (secretVector P s) (↑b.toNat) β C
+hsep : 2 * β < P.lwe.modulus / 2
+e : Fin P.columns → ℤ
+he : ∀ (j : Fin P.columns), (e j).natAbs ≤ β
+hdec :
+  decrypt P s C =
+    LWE.BitEncoding.decode P.lwe
+      (LWE.BitEncoding.codepoint P.lwe b + ↑(∑ i, e i * ↑(decomposeVec P (halfVector P) i).toNat))
+hl : P.width - 1 < P.width
+i₀ : Fin P.columns
+hi₀ : i₀ = finProdFinEquiv (Fin.last P.lwe.dimension, ⟨P.width - 1, hl⟩)
+hhalf : P.lwe.modulus / 2 = 2 ^ (P.width - 1)
+hlt : P.lwe.modulus / 2 < P.lwe.modulus
+hz : decomposeVec P (halfVector P) = fun i => decide (i = i₀)
+i : Fin P.columns
+hi : i ≠ i₀
+⊢ e i * ↑((fun i => decide (i = i₀)) i).toNat = 0
+FAIL(TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme): no fresh .olean produced
+[runlean] cmd=bash scripts/lean_check_tree.sh TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme
+[runlean] lock_wait=0.0s start=2026-11-16T08:42:19Z end=2026-11-16T08:42:21Z exit=1 max_rss_kib=2614684

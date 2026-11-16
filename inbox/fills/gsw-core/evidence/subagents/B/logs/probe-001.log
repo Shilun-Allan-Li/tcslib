@@ -1,0 +1,51 @@
+@vecMul_add : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} [inst : NonUnitalNonAssocSemiring α] [inst_1 : Fintype m]
+  (A B : Matrix m n α) (x : m → α), x ᵥ* (A + B) = x ᵥ* A + x ᵥ* B
+@vecMul_smul : ∀ {m : Type u_2} {n : Type u_3} {R : Type u_4} {α : Type u_1} [inst : NonUnitalNonAssocSemiring α]
+  [inst_1 : Fintype m] [inst_2 : DistribSMul R α] [SMulCommClass R α α] (v : m → α) (b : R) (M : Matrix m n α),
+  v ᵥ* (b • M) = b • v ᵥ* M
+@vecMul_vecMul : ∀ {m : Type u_2} {n : Type u_3} {o : Type u_4} {α : Type u_1} [inst : NonUnitalSemiring α]
+  [inst_1 : Fintype n] [inst_2 : Fintype m] (v : m → α) (M : Matrix m n α) (N : Matrix n o α),
+  v ᵥ* M ᵥ* N = v ᵥ* (M * N)
+@dotProduct_mulVec : ∀ {m : Type u_1} {n : Type u_2} {R : Type u_3} [inst : Fintype n] [inst_1 : Fintype m]
+  [inst_2 : NonUnitalSemiring R] (v : m → R) (A : Matrix m n R) (w : n → R), v ⬝ᵥ A *ᵥ w = v ᵥ* A ⬝ᵥ w
+probes/B_names1.lean:7:8: error(lean.unknownIdentifier): Unknown constant `Matrix.vecMul_submatrix`
+@submatrix_apply : ∀ {l : Type u_2} {m : Type u_3} {n : Type u_4} {o : Type u_5} {α : Type u_1} (A : Matrix m n α)
+  (r : l → m) (c : o → n) (i : l) (j : o), A.submatrix r c i j = A (r i) (c j)
+@Fin.init_def : ∀ {n : ℕ} {α : Fin (n + 1) → Sort u_1} {q : (i : Fin (n + 1)) → α i},
+  (Fin.init fun k => q k) = fun k => q k.castSucc
+@Fin.sum_univ_castSucc : ∀ {M : Type u_1} [inst : AddCommMonoid M] {n : ℕ} (f : Fin (n + 1) → M),
+  ∑ i, f i = ∑ i, f i.castSucc + f (Fin.last n)
+@Fin.snoc_castSucc : ∀ {n : ℕ} {α : Fin (n + 1) → Sort u_1} (x : α (Fin.last n)) (p : (i : Fin n) → α i.castSucc)
+  (i : Fin n), Fin.snoc p x i.castSucc = p i
+@Fin.snoc_last : ∀ {n : ℕ} {α : Fin (n + 1) → Sort u_1} (x : α (Fin.last n)) (p : (i : Fin n) → α i.castSucc),
+  Fin.snoc p x (Fin.last n) = x
+@transpose_apply : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} (M : Matrix m n α) (i : n) (j : m), Mᵀ i j = M j i
+probes/B_names1.lean:14:8: error(lean.unknownIdentifier): Unknown constant `Matrix.add_dotProduct`
+probes/B_names1.lean:15:8: error(lean.unknownIdentifier): Unknown constant `Matrix.smul_dotProduct`
+@add_dotProduct : ∀ {m : Type u_2} {α : Type u_1} [inst : Fintype m] [inst_1 : NonUnitalNonAssocSemiring α]
+  (u v w : m → α), (u + v) ⬝ᵥ w = u ⬝ᵥ w + v ⬝ᵥ w
+@smul_dotProduct : ∀ {m : Type u_2} {R : Type u_3} {α : Type u_1} [inst : Fintype m] [inst_1 : Mul α]
+  [inst_2 : AddCommMonoid α] [inst_3 : DistribSMul R α] [IsScalarTower R α α] (x : R) (v w : m → α),
+  x • v ⬝ᵥ w = x • (v ⬝ᵥ w)
+@dotProduct_mulVec : ∀ {m : Type u_1} {n : Type u_2} {R : Type u_3} [inst : Fintype n] [inst_1 : Fintype m]
+  [inst_2 : NonUnitalSemiring R] (v : m → R) (A : Matrix m n R) (w : n → R), v ⬝ᵥ A *ᵥ w = v ᵥ* A ⬝ᵥ w
+probes/B_names1.lean:19:8: error(lean.unknownIdentifier): Unknown constant `Matrix.vecMul_apply`
+@Equiv.ofBijective_apply : ∀ {α : Sort u_1} {β : Sort u_2} (f : α → β) (hf : Function.Bijective f) (a : α),
+  (Equiv.ofBijective f hf) a = f a
+@Equiv.coe_addRight : ∀ {G : Type u_1} [inst : AddGroup G] (a : G), ⇑(Equiv.addRight a) = fun x => x + a
+ZMod.val_natCast : ∀ (n a : ℕ), (↑a).val = a % n
+@Nat.pow_div : ∀ {x m n : ℕ}, n ≤ m → 0 < x → x ^ m / x ^ n = x ^ (m - n)
+@Fintype.sum_eq_single : ∀ {α : Type u_1} {M : Type u_2} [inst : Fintype α] [inst_1 : AddCommMonoid M] {f : α → M}
+  (a : α), (∀ (x : α), x ≠ a → f x = 0) → ∑ x, f x = f a
+@Finset.sum_ite_eq : ∀ {ι : Type u_1} {M : Type u_2} [inst : AddCommMonoid M] [inst_1 : DecidableEq ι] (s : Finset ι)
+  (a : ι) (b : ι → M), (∑ x ∈ s, if a = x then b x else 0) = if a ∈ s then b a else 0
+Try this:
+  [apply] exact rfl
+Try this:
+  [apply] exact rfl
+Try this:
+  [apply] exact rfl
+FAIL(probes/B_names1): lean exited with status 1
+FAIL(probes/B_names1): no fresh .olean produced
+[runlean] cmd=bash scripts/lean_check_tree.sh probes/B_names1
+[runlean] lock_wait=0.0s start=2026-11-16T08:09:16Z end=2026-11-16T08:09:18Z exit=1 max_rss_kib=2586984

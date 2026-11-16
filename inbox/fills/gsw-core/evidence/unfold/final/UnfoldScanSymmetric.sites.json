@@ -1,0 +1,204 @@
+{
+ "path": "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean",
+ "module": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Symmetric",
+ "sites": [
+  {
+   "line": 90,
+   "decl": "encrypts_symEncrypt",
+   "token": "encrypts_iff",
+   "selector": "rw [encrypts_iff]"
+  },
+  {
+   "line": 93,
+   "decl": "encrypts_symEncrypt",
+   "token": "symEncrypt_apply",
+   "selector": "rw [symEncrypt_apply, Matrix.vecMul_add, Matrix.vecMul_smul, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 93,
+   "decl": "encrypts_symEncrypt",
+   "token": "Matrix.vecMul_add",
+   "selector": "rw [symEncrypt_apply, Matrix.vecMul_add, Matrix.vecMul_smul, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 93,
+   "decl": "encrypts_symEncrypt",
+   "token": "Matrix.vecMul_smul",
+   "selector": "rw [symEncrypt_apply, Matrix.vecMul_add, Matrix.vecMul_smul, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 93,
+   "decl": "encrypts_symEncrypt",
+   "token": "Int.cast_natCast",
+   "selector": "rw [symEncrypt_apply, Matrix.vecMul_add, Matrix.vecMul_smul, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 93,
+   "decl": "encrypts_symEncrypt",
+   "token": "add_comm",
+   "selector": "rw [symEncrypt_apply, Matrix.vecMul_add, Matrix.vecMul_smul, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 101,
+   "decl": "encrypts_symEncrypt",
+   "token": "Matrix.submatrix_apply",
+   "selector": "simp only [Matrix.submatrix_apply, id_eq]"
+  },
+  {
+   "line": 101,
+   "decl": "encrypts_symEncrypt",
+   "token": "id_eq",
+   "selector": "simp only [Matrix.submatrix_apply, id_eq]"
+  },
+  {
+   "line": 127,
+   "decl": "exists_equiv_symEncrypt",
+   "token": "Prod.mk.eta",
+   "selector": "rw [Prod.mk.eta, Equiv.apply_symm_apply]"
+  },
+  {
+   "line": 127,
+   "decl": "exists_equiv_symEncrypt",
+   "token": "Equiv.apply_symm_apply",
+   "selector": "rw [Prod.mk.eta, Equiv.apply_symm_apply]"
+  },
+  {
+   "line": 133,
+   "decl": "exists_equiv_symEncrypt",
+   "token": "Equiv.symm_apply_apply",
+   "selector": "rw [Equiv.symm_apply_apply]"
+  },
+  {
+   "line": 138,
+   "decl": "exists_equiv_symEncrypt",
+   "token": "Equiv.trans_apply",
+   "selector": "rw [Equiv.trans_apply, Equiv.trans_apply, Equiv.coe_addRight, Equiv.ofBijective_apply, symEncrypt_apply]"
+  },
+  {
+   "line": 138,
+   "decl": "exists_equiv_symEncrypt",
+   "token": "Equiv.trans_apply",
+   "selector": "rw [Equiv.trans_apply, Equiv.trans_apply, Equiv.coe_addRight, Equiv.ofBijective_apply, symEncrypt_apply]"
+  },
+  {
+   "line": 138,
+   "decl": "exists_equiv_symEncrypt",
+   "token": "Equiv.coe_addRight",
+   "selector": "rw [Equiv.trans_apply, Equiv.trans_apply, Equiv.coe_addRight, Equiv.ofBijective_apply, symEncrypt_apply]"
+  },
+  {
+   "line": 138,
+   "decl": "exists_equiv_symEncrypt",
+   "token": "Equiv.ofBijective_apply",
+   "selector": "rw [Equiv.trans_apply, Equiv.trans_apply, Equiv.coe_addRight, Equiv.ofBijective_apply, symEncrypt_apply]"
+  },
+  {
+   "line": 138,
+   "decl": "exists_equiv_symEncrypt",
+   "token": "symEncrypt_apply",
+   "selector": "rw [Equiv.trans_apply, Equiv.trans_apply, Equiv.coe_addRight, Equiv.ofBijective_apply, symEncrypt_apply]"
+  },
+  {
+   "line": 165,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "acceptProb_def",
+   "selector": "rw [acceptProb_def, acceptProb_def]"
+  },
+  {
+   "line": 165,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "acceptProb_def",
+   "selector": "rw [acceptProb_def, acceptProb_def]"
+  },
+  {
+   "line": 172,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "acceptProb_comp_equiv",
+   "selector": "rw [\u2190 acceptProb_comp_equiv E id D, acceptProb_def, acceptProb_def]"
+  },
+  {
+   "line": 172,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "acceptProb_def",
+   "selector": "rw [\u2190 acceptProb_comp_equiv E id D, acceptProb_def, acceptProb_def]"
+  },
+  {
+   "line": 172,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "acceptProb_def",
+   "selector": "rw [\u2190 acceptProb_comp_equiv E id D, acceptProb_def, acceptProb_def]"
+  },
+  {
+   "line": 173,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "id_eq",
+   "selector": "simp only [id_eq, hE]"
+  },
+  {
+   "line": 173,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "hE",
+   "selector": "simp only [id_eq, hE]"
+  },
+  {
+   "line": 175,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "LWE.decisionAdvantage_eq",
+   "selector": "rw [LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, distAdv_def, hideal \u03bc\u2080, hideal \u03bc\u2081, \u2190 hreal \u03bc\u2080, \u2190 hreal \u03bc\u2081]"
+  },
+  {
+   "line": 175,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "LWE.decisionAdvantage_eq",
+   "selector": "rw [LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, distAdv_def, hideal \u03bc\u2080, hideal \u03bc\u2081, \u2190 hreal \u03bc\u2080, \u2190 hreal \u03bc\u2081]"
+  },
+  {
+   "line": 175,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "distAdv_def",
+   "selector": "rw [LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, distAdv_def, hideal \u03bc\u2080, hideal \u03bc\u2081, \u2190 hreal \u03bc\u2080, \u2190 hreal \u03bc\u2081]"
+  },
+  {
+   "line": 175,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "distAdv_def",
+   "selector": "rw [LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, distAdv_def, hideal \u03bc\u2080, hideal \u03bc\u2081, \u2190 hreal \u03bc\u2080, \u2190 hreal \u03bc\u2081]"
+  },
+  {
+   "line": 175,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "distAdv_def",
+   "selector": "rw [LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, distAdv_def, hideal \u03bc\u2080, hideal \u03bc\u2081, \u2190 hreal \u03bc\u2080, \u2190 hreal \u03bc\u2081]"
+  },
+  {
+   "line": 175,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "hideal",
+   "selector": "rw [LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, distAdv_def, hideal \u03bc\u2080, hideal \u03bc\u2081, \u2190 hreal \u03bc\u2080, \u2190 hreal \u03bc\u2081]"
+  },
+  {
+   "line": 175,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "hideal",
+   "selector": "rw [LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, distAdv_def, hideal \u03bc\u2080, hideal \u03bc\u2081, \u2190 hreal \u03bc\u2080, \u2190 hreal \u03bc\u2081]"
+  },
+  {
+   "line": 175,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "hreal",
+   "selector": "rw [LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, distAdv_def, hideal \u03bc\u2080, hideal \u03bc\u2081, \u2190 hreal \u03bc\u2080, \u2190 hreal \u03bc\u2081]"
+  },
+  {
+   "line": 175,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "hreal",
+   "selector": "rw [LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, distAdv_def, hideal \u03bc\u2080, hideal \u03bc\u2081, \u2190 hreal \u03bc\u2080, \u2190 hreal \u03bc\u2081]"
+  },
+  {
+   "line": 183,
+   "decl": "distAdv_symEncrypt_le",
+   "token": "abs_sub_comm",
+   "selector": "rw [abs_sub_comm (acceptProb (id : (Fin k \u2192 Ciphertext P) \u2192 _) D)]"
+  }
+ ]
+}

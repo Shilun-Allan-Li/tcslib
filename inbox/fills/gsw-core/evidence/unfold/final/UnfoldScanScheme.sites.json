@@ -1,0 +1,750 @@
+{
+ "path": "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean",
+ "module": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme",
+ "sites": [
+  {
+   "line": 91,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "Fin.sum_univ_castSucc",
+   "selector": "rw [Fin.sum_univ_castSucc, secretVector_eq, Regev.augmented_eq]"
+  },
+  {
+   "line": 91,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "secretVector_eq",
+   "selector": "rw [Fin.sum_univ_castSucc, secretVector_eq, Regev.augmented_eq]"
+  },
+  {
+   "line": 91,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "Regev.augmented_eq",
+   "selector": "rw [Fin.sum_univ_castSucc, secretVector_eq, Regev.augmented_eq]"
+  },
+  {
+   "line": 92,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "Fin.snoc_castSucc",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Matrix.transpose_apply, Pi.neg_apply, LWE.noisyValues_apply, one_mul, neg_mul, Finset.sum_neg_distrib]"
+  },
+  {
+   "line": 92,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "Fin.snoc_last",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Matrix.transpose_apply, Pi.neg_apply, LWE.noisyValues_apply, one_mul, neg_mul, Finset.sum_neg_distrib]"
+  },
+  {
+   "line": 92,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "Matrix.transpose_apply",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Matrix.transpose_apply, Pi.neg_apply, LWE.noisyValues_apply, one_mul, neg_mul, Finset.sum_neg_distrib]"
+  },
+  {
+   "line": 92,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "Pi.neg_apply",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Matrix.transpose_apply, Pi.neg_apply, LWE.noisyValues_apply, one_mul, neg_mul, Finset.sum_neg_distrib]"
+  },
+  {
+   "line": 92,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "LWE.noisyValues_apply",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Matrix.transpose_apply, Pi.neg_apply, LWE.noisyValues_apply, one_mul, neg_mul, Finset.sum_neg_distrib]"
+  },
+  {
+   "line": 92,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "one_mul",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Matrix.transpose_apply, Pi.neg_apply, LWE.noisyValues_apply, one_mul, neg_mul, Finset.sum_neg_distrib]"
+  },
+  {
+   "line": 92,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "neg_mul",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Matrix.transpose_apply, Pi.neg_apply, LWE.noisyValues_apply, one_mul, neg_mul, Finset.sum_neg_distrib]"
+  },
+  {
+   "line": 92,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "Finset.sum_neg_distrib",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Matrix.transpose_apply, Pi.neg_apply, LWE.noisyValues_apply, one_mul, neg_mul, Finset.sum_neg_distrib]"
+  },
+  {
+   "line": 97,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "hc",
+   "selector": "rw [hc, neg_add_cancel_left]"
+  },
+  {
+   "line": 97,
+   "decl": "vecMul_secretVector_augmented",
+   "token": "neg_add_cancel_left",
+   "selector": "rw [hc, neg_add_cancel_left]"
+  },
+  {
+   "line": 168,
+   "decl": "encrypts_encrypt",
+   "token": "encrypts_iff",
+   "selector": "rw [encrypts_iff]"
+  },
+  {
+   "line": 172,
+   "decl": "encrypts_encrypt",
+   "token": "encrypt_eq",
+   "selector": "rw [encrypt_eq, Matrix.vecMul_add, Matrix.vecMul_smul, \u2190 Matrix.vecMul_vecMul, vecMul_secretVector_augmented, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 172,
+   "decl": "encrypts_encrypt",
+   "token": "Matrix.vecMul_add",
+   "selector": "rw [encrypt_eq, Matrix.vecMul_add, Matrix.vecMul_smul, \u2190 Matrix.vecMul_vecMul, vecMul_secretVector_augmented, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 172,
+   "decl": "encrypts_encrypt",
+   "token": "Matrix.vecMul_smul",
+   "selector": "rw [encrypt_eq, Matrix.vecMul_add, Matrix.vecMul_smul, \u2190 Matrix.vecMul_vecMul, vecMul_secretVector_augmented, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 172,
+   "decl": "encrypts_encrypt",
+   "token": "Matrix.vecMul_vecMul",
+   "selector": "rw [encrypt_eq, Matrix.vecMul_add, Matrix.vecMul_smul, \u2190 Matrix.vecMul_vecMul, vecMul_secretVector_augmented, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 172,
+   "decl": "encrypts_encrypt",
+   "token": "vecMul_secretVector_augmented",
+   "selector": "rw [encrypt_eq, Matrix.vecMul_add, Matrix.vecMul_smul, \u2190 Matrix.vecMul_vecMul, vecMul_secretVector_augmented, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 172,
+   "decl": "encrypts_encrypt",
+   "token": "Int.cast_natCast",
+   "selector": "rw [encrypt_eq, Matrix.vecMul_add, Matrix.vecMul_smul, \u2190 Matrix.vecMul_vecMul, vecMul_secretVector_augmented, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 172,
+   "decl": "encrypts_encrypt",
+   "token": "add_comm",
+   "selector": "rw [encrypt_eq, Matrix.vecMul_add, Matrix.vecMul_smul, \u2190 Matrix.vecMul_vecMul, vecMul_secretVector_augmented, Int.cast_natCast, add_comm]"
+  },
+  {
+   "line": 178,
+   "decl": "encrypts_encrypt",
+   "token": "lift_apply",
+   "selector": "simp only [lift_apply, Int.cast_sum, Int.cast_mul, Int.cast_natCast]"
+  },
+  {
+   "line": 178,
+   "decl": "encrypts_encrypt",
+   "token": "Int.cast_sum",
+   "selector": "simp only [lift_apply, Int.cast_sum, Int.cast_mul, Int.cast_natCast]"
+  },
+  {
+   "line": 178,
+   "decl": "encrypts_encrypt",
+   "token": "Int.cast_mul",
+   "selector": "simp only [lift_apply, Int.cast_sum, Int.cast_mul, Int.cast_natCast]"
+  },
+  {
+   "line": 178,
+   "decl": "encrypts_encrypt",
+   "token": "Int.cast_natCast",
+   "selector": "simp only [lift_apply, Int.cast_sum, Int.cast_mul, Int.cast_natCast]"
+  },
+  {
+   "line": 196,
+   "decl": "encrypts_keygen_encrypt",
+   "token": "Regev.keygen_fst",
+   "selector": "rw [Regev.keygen_fst, Regev.keygen_snd, hs]"
+  },
+  {
+   "line": 196,
+   "decl": "encrypts_keygen_encrypt",
+   "token": "Regev.keygen_snd",
+   "selector": "rw [Regev.keygen_fst, Regev.keygen_snd, hs]"
+  },
+  {
+   "line": 196,
+   "decl": "encrypts_keygen_encrypt",
+   "token": "hs",
+   "selector": "rw [Regev.keygen_fst, Regev.keygen_snd, hs]"
+  },
+  {
+   "line": 204,
+   "decl": "halfVector_eq_zero_of_ne_last",
+   "token": "halfVector_eq",
+   "selector": "rw [halfVector_eq, Fin.snoc_castSucc, Pi.zero_apply]"
+  },
+  {
+   "line": 204,
+   "decl": "halfVector_eq_zero_of_ne_last",
+   "token": "Fin.snoc_castSucc",
+   "selector": "rw [halfVector_eq, Fin.snoc_castSucc, Pi.zero_apply]"
+  },
+  {
+   "line": 204,
+   "decl": "halfVector_eq_zero_of_ne_last",
+   "token": "Pi.zero_apply",
+   "selector": "rw [halfVector_eq, Fin.snoc_castSucc, Pi.zero_apply]"
+  },
+  {
+   "line": 226,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "decryptColumn_eq",
+   "selector": "rw [\u2190 decryptColumn_eq]"
+  },
+  {
+   "line": 228,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Fin.sum_univ_castSucc",
+   "selector": "rw [Fin.sum_univ_castSucc, secretVector_eq]"
+  },
+  {
+   "line": 228,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "secretVector_eq",
+   "selector": "rw [Fin.sum_univ_castSucc, secretVector_eq]"
+  },
+  {
+   "line": 229,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Fin.snoc_castSucc",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.neg_apply, neg_mul, one_mul, Finset.sum_neg_distrib, Fin.init_def]"
+  },
+  {
+   "line": 229,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Fin.snoc_last",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.neg_apply, neg_mul, one_mul, Finset.sum_neg_distrib, Fin.init_def]"
+  },
+  {
+   "line": 229,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Pi.neg_apply",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.neg_apply, neg_mul, one_mul, Finset.sum_neg_distrib, Fin.init_def]"
+  },
+  {
+   "line": 229,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "neg_mul",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.neg_apply, neg_mul, one_mul, Finset.sum_neg_distrib, Fin.init_def]"
+  },
+  {
+   "line": 229,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "one_mul",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.neg_apply, neg_mul, one_mul, Finset.sum_neg_distrib, Fin.init_def]"
+  },
+  {
+   "line": 229,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Finset.sum_neg_distrib",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.neg_apply, neg_mul, one_mul, Finset.sum_neg_distrib, Fin.init_def]"
+  },
+  {
+   "line": 229,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Fin.init_def",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.neg_apply, neg_mul, one_mul, Finset.sum_neg_distrib, Fin.init_def]"
+  },
+  {
+   "line": 236,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Fin.sum_univ_castSucc",
+   "selector": "rw [Fin.sum_univ_castSucc, secretVector_eq, halfVector_eq]"
+  },
+  {
+   "line": 236,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "secretVector_eq",
+   "selector": "rw [Fin.sum_univ_castSucc, secretVector_eq, halfVector_eq]"
+  },
+  {
+   "line": 236,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "halfVector_eq",
+   "selector": "rw [Fin.sum_univ_castSucc, secretVector_eq, halfVector_eq]"
+  },
+  {
+   "line": 237,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Fin.snoc_castSucc",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.zero_apply, mul_zero, Finset.sum_const_zero, zero_add, one_mul]"
+  },
+  {
+   "line": 237,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Fin.snoc_last",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.zero_apply, mul_zero, Finset.sum_const_zero, zero_add, one_mul]"
+  },
+  {
+   "line": 237,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Pi.zero_apply",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.zero_apply, mul_zero, Finset.sum_const_zero, zero_add, one_mul]"
+  },
+  {
+   "line": 237,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "mul_zero",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.zero_apply, mul_zero, Finset.sum_const_zero, zero_add, one_mul]"
+  },
+  {
+   "line": 237,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Finset.sum_const_zero",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.zero_apply, mul_zero, Finset.sum_const_zero, zero_add, one_mul]"
+  },
+  {
+   "line": 237,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "zero_add",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.zero_apply, mul_zero, Finset.sum_const_zero, zero_add, one_mul]"
+  },
+  {
+   "line": 237,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "one_mul",
+   "selector": "simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.zero_apply, mul_zero, Finset.sum_const_zero, zero_add, one_mul]"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "LWE.BitEncoding.codepoint_eq",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Bool.toNat_false",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Bool.toNat_true",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Nat.cast_zero",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Nat.cast_one",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Int.cast_zero",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Int.cast_one",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "zero_mul",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "one_mul",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Bool.false_eq_true",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "if_false",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 241,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "if_true",
+   "selector": "simp only [LWE.BitEncoding.codepoint_eq, Bool.toNat_false, Bool.toNat_true, Nat.cast_zero, Nat.cast_one, Int.cast_zero, Int.cast_one, zero_mul, one_mul, Bool.fa"
+  },
+  {
+   "line": 251,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Int.cast_sum",
+   "selector": "simp only [Int.cast_sum, Int.cast_mul, Int.cast_natCast]"
+  },
+  {
+   "line": 251,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Int.cast_mul",
+   "selector": "simp only [Int.cast_sum, Int.cast_mul, Int.cast_natCast]"
+  },
+  {
+   "line": 251,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Int.cast_natCast",
+   "selector": "simp only [Int.cast_sum, Int.cast_mul, Int.cast_natCast]"
+  },
+  {
+   "line": 253,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "decrypt_eq",
+   "selector": "rw [decrypt_eq, Regev.decrypt_eq]"
+  },
+  {
+   "line": 253,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Regev.decrypt_eq",
+   "selector": "rw [decrypt_eq, Regev.decrypt_eq]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "hsplit",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Matrix.dotProduct_mulVec",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "hC",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "add_dotProduct",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "smul_dotProduct",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "Matrix.dotProduct_mulVec",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "gadget_mulVec_decomposeVec",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "hw",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "herr",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "smul_eq_mul",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 255,
+   "decl": "decrypt_eq_decode_errorSum",
+   "token": "hb",
+   "selector": "rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct, \u2190 Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]"
+  },
+  {
+   "line": 277,
+   "decl": "decrypt_of_encrypts",
+   "token": "hdec",
+   "selector": "rw [hdec]"
+  },
+  {
+   "line": 300,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "hdec",
+   "selector": "rw [hdec]"
+  },
+  {
+   "line": 307,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "pow_succ",
+   "selector": "rw [\u2190 pow_succ, Nat.sub_add_cancel h\u2113]"
+  },
+  {
+   "line": 307,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Nat.sub_add_cancel",
+   "selector": "rw [\u2190 pow_succ, Nat.sub_add_cancel h\u2113]"
+  },
+  {
+   "line": 308,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "hq",
+   "selector": "rw [hq, h2, Nat.mul_div_cancel _ two_pos]"
+  },
+  {
+   "line": 308,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "h2",
+   "selector": "rw [hq, h2, Nat.mul_div_cancel _ two_pos]"
+  },
+  {
+   "line": 308,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Nat.mul_div_cancel",
+   "selector": "rw [hq, h2, Nat.mul_div_cancel _ two_pos]"
+  },
+  {
+   "line": 315,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "digits_decomposeVec",
+   "selector": "rw [digits_decomposeVec]"
+  },
+  {
+   "line": 318,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "digit_val",
+   "selector": "simp only [digit_val, TrapdoorFunctions.Lossy.digits_val]"
+  },
+  {
+   "line": 318,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "TrapdoorFunctions.Lossy.digits_val",
+   "selector": "simp only [digit_val, TrapdoorFunctions.Lossy.digits_val]"
+  },
+  {
+   "line": 320,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "halfVector_eq",
+   "selector": "rw [halfVector_eq, Fin.snoc_last, LWE.BitEncoding.codepoint_eq, if_pos rfl, ZMod.val_natCast, Nat.mod_eq_of_lt hlt, hhalf, Fintype.sum_eq_single (\u27e8P.width - 1, "
+  },
+  {
+   "line": 320,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Fin.snoc_last",
+   "selector": "rw [halfVector_eq, Fin.snoc_last, LWE.BitEncoding.codepoint_eq, if_pos rfl, ZMod.val_natCast, Nat.mod_eq_of_lt hlt, hhalf, Fintype.sum_eq_single (\u27e8P.width - 1, "
+  },
+  {
+   "line": 320,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "LWE.BitEncoding.codepoint_eq",
+   "selector": "rw [halfVector_eq, Fin.snoc_last, LWE.BitEncoding.codepoint_eq, if_pos rfl, ZMod.val_natCast, Nat.mod_eq_of_lt hlt, hhalf, Fintype.sum_eq_single (\u27e8P.width - 1, "
+  },
+  {
+   "line": 320,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "if_pos",
+   "selector": "rw [halfVector_eq, Fin.snoc_last, LWE.BitEncoding.codepoint_eq, if_pos rfl, ZMod.val_natCast, Nat.mod_eq_of_lt hlt, hhalf, Fintype.sum_eq_single (\u27e8P.width - 1, "
+  },
+  {
+   "line": 320,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "ZMod.val_natCast",
+   "selector": "rw [halfVector_eq, Fin.snoc_last, LWE.BitEncoding.codepoint_eq, if_pos rfl, ZMod.val_natCast, Nat.mod_eq_of_lt hlt, hhalf, Fintype.sum_eq_single (\u27e8P.width - 1, "
+  },
+  {
+   "line": 320,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Nat.mod_eq_of_lt",
+   "selector": "rw [halfVector_eq, Fin.snoc_last, LWE.BitEncoding.codepoint_eq, if_pos rfl, ZMod.val_natCast, Nat.mod_eq_of_lt hlt, hhalf, Fintype.sum_eq_single (\u27e8P.width - 1, "
+  },
+  {
+   "line": 320,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "hhalf",
+   "selector": "rw [halfVector_eq, Fin.snoc_last, LWE.BitEncoding.codepoint_eq, if_pos rfl, ZMod.val_natCast, Nat.mod_eq_of_lt hlt, hhalf, Fintype.sum_eq_single (\u27e8P.width - 1, "
+  },
+  {
+   "line": 320,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Fintype.sum_eq_single",
+   "selector": "rw [halfVector_eq, Fin.snoc_last, LWE.BitEncoding.codepoint_eq, if_pos rfl, ZMod.val_natCast, Nat.mod_eq_of_lt hlt, hhalf, Fintype.sum_eq_single (\u27e8P.width - 1, "
+  },
+  {
+   "line": 323,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "hi\u2080",
+   "selector": "rw [\u2190 hi\u2080, decide_eq_true rfl, Bool.toNat_true, one_mul]"
+  },
+  {
+   "line": 323,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "decide_eq_true",
+   "selector": "rw [\u2190 hi\u2080, decide_eq_true rfl, Bool.toNat_true, one_mul]"
+  },
+  {
+   "line": 323,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Bool.toNat_true",
+   "selector": "rw [\u2190 hi\u2080, decide_eq_true rfl, Bool.toNat_true, one_mul]"
+  },
+  {
+   "line": 323,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "one_mul",
+   "selector": "rw [\u2190 hi\u2080, decide_eq_true rfl, Bool.toNat_true, one_mul]"
+  },
+  {
+   "line": 326,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "hi\u2080",
+   "selector": "rw [hi\u2080]"
+  },
+  {
+   "line": 329,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "decide_eq_false",
+   "selector": "rw [decide_eq_false hne, Bool.toNat_false, zero_mul]"
+  },
+  {
+   "line": 329,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Bool.toNat_false",
+   "selector": "rw [decide_eq_false hne, Bool.toNat_false, zero_mul]"
+  },
+  {
+   "line": 329,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "zero_mul",
+   "selector": "rw [decide_eq_false hne, Bool.toNat_false, zero_mul]"
+  },
+  {
+   "line": 330,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "halfVector_eq",
+   "selector": "rw [halfVector_eq, Fin.snoc_castSucc, Pi.zero_apply, ZMod.val_zero]"
+  },
+  {
+   "line": 330,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Fin.snoc_castSucc",
+   "selector": "rw [halfVector_eq, Fin.snoc_castSucc, Pi.zero_apply, ZMod.val_zero]"
+  },
+  {
+   "line": 330,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Pi.zero_apply",
+   "selector": "rw [halfVector_eq, Fin.snoc_castSucc, Pi.zero_apply, ZMod.val_zero]"
+  },
+  {
+   "line": 330,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "ZMod.val_zero",
+   "selector": "rw [halfVector_eq, Fin.snoc_castSucc, Pi.zero_apply, ZMod.val_zero]"
+  },
+  {
+   "line": 334,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "hi\u2080",
+   "selector": "rw [hi\u2080]"
+  },
+  {
+   "line": 337,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "decide_eq_false",
+   "selector": "rw [decide_eq_false hne, Bool.toNat_false, zero_mul]"
+  },
+  {
+   "line": 337,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Bool.toNat_false",
+   "selector": "rw [decide_eq_false hne, Bool.toNat_false, zero_mul]"
+  },
+  {
+   "line": 337,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "zero_mul",
+   "selector": "rw [decide_eq_false hne, Bool.toNat_false, zero_mul]"
+  },
+  {
+   "line": 340,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "hz",
+   "selector": "rw [hz, Fintype.sum_eq_single i\u2080]"
+  },
+  {
+   "line": 340,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Fintype.sum_eq_single",
+   "selector": "rw [hz, Fintype.sum_eq_single i\u2080]"
+  },
+  {
+   "line": 342,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "decide_eq_true",
+   "selector": "rw [decide_eq_true rfl, Bool.toNat_true, Nat.cast_one, mul_one]"
+  },
+  {
+   "line": 342,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Bool.toNat_true",
+   "selector": "rw [decide_eq_true rfl, Bool.toNat_true, Nat.cast_one, mul_one]"
+  },
+  {
+   "line": 342,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Nat.cast_one",
+   "selector": "rw [decide_eq_true rfl, Bool.toNat_true, Nat.cast_one, mul_one]"
+  },
+  {
+   "line": 342,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "mul_one",
+   "selector": "rw [decide_eq_true rfl, Bool.toNat_true, Nat.cast_one, mul_one]"
+  },
+  {
+   "line": 345,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "decide_eq_false",
+   "selector": "rw [decide_eq_false hi, Bool.toNat_false, Nat.cast_zero, mul_zero]"
+  },
+  {
+   "line": 345,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Bool.toNat_false",
+   "selector": "rw [decide_eq_false hi, Bool.toNat_false, Nat.cast_zero, mul_zero]"
+  },
+  {
+   "line": 345,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "Nat.cast_zero",
+   "selector": "rw [decide_eq_false hi, Bool.toNat_false, Nat.cast_zero, mul_zero]"
+  },
+  {
+   "line": 345,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "mul_zero",
+   "selector": "rw [decide_eq_false hi, Bool.toNat_false, Nat.cast_zero, mul_zero]"
+  },
+  {
+   "line": 346,
+   "decl": "decrypt_of_encrypts_dyadic",
+   "token": "hsum",
+   "selector": "rw [hsum]"
+  }
+ ]
+}

@@ -1,0 +1,313 @@
+== TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: 20 base declarations, 0 unexpected difference(s)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: target digits_decomposeVec: body replaced (2 -> 2 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: sketch edited for gadget_mulVec_decomposeVec
+--- base
++++ final
+@@ -1,7 +1,8 @@
+ /-- `G · G⁻¹(u) = u` [Pei16, Section 5.4.3, relation `G · G⁻¹(u) = u (mod q)`].
+ 
+-**Proof sketch.** Coordinate `j` of the left side is the cast of the integer
+-`(Lossy.gadget ℓ (n+1))ᵗ · x` at `j`, where `x` is the decomposition read as integers.
+-`Lossy.gadget_mulVec` evaluates it to the digit value, `digits_decomposeVec` and
+-`digit_val` identify that with `(u j).val`, and `ZMod.natCast_zmod_val` casts back to `u j`.
+-The integer-to-residue cast commutes with the finite sum by `Int.cast_sum`/`Int.cast_mul`. -/+**Proof sketch.** Fix a coordinate `j`. Over the integers, `Lossy.gadget_mulVec` evaluates
++`(Lossy.gadget ℓ (n+1))ᵗ · x` at `j`, where `x` is the decomposition read as integers, to the
++block-`j` digit, which `digits_decomposeVec` and `digit_val` identify with `(u j).val`. Write
++`u j` as the residue of `(u j).val` (`ZMod.natCast_zmod_val`), hence as the residue of that
++integer sum; the cast commutes with the finite sum (`Int.cast_sum`), and each term is the
++matching entry of `G` times the lifted bit by `gadget_apply` and `Int.cast_mul`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: target gadget_mulVec_decomposeVec: body replaced (2 -> 12 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: sketch edited for gadget_mul_decompose
+--- base
++++ final
+@@ -1,6 +1,6 @@
+ /-- `G · G⁻¹(M) = M` for every matrix with `n+1` rows [Pei16, Section 5.4.3; AP14,
+ Equation (3.1)].
+ 
+-**Proof sketch.** Compare column `c`: it is `G` times the lifted decomposition of column
+-`c` of `M`, which is `gadget_mulVec_decomposeVec` read through `decompose_apply` and
+-`lift_apply`. -/+**Proof sketch.** Compare entry `(i, c)`: by `Matrix.mul_apply`, `decompose_apply` and
++`lift_apply` it is coordinate `i` of `G` times the lifted decomposition of column `c` of `M`,
++which is `M i c` by `gadget_mulVec_decomposeVec`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: target gadget_mul_decompose: body replaced (2 -> 6 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: sketch edited for decomposeVec_block_eq_false
+--- base
++++ final
+@@ -2,4 +2,5 @@
+ 
+ **Proof sketch.** `Lossy.digits_val` writes the block-`j` digit of `decomposeVec P u` as
+ `∑ₖ bitₖ · 2^k`; by `digits_decomposeVec` and `digit_val` it equals `(u j).val = 0`. A sum of
+-nonnegative terms is zero only if every term is, and `2^k > 0`. -/+natural numbers is zero only if every term is (`Finset.sum_eq_zero_iff`), so
++`bitₖ · 2^k = 0`; since `2^k ≠ 0`, the bit has value `0`, i.e. it is `false`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: target decomposeVec_block_eq_false: body replaced (2 -> 7 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: sketch edited for errorSum_decomposeVec_le
+--- base
++++ final
+@@ -2,6 +2,8 @@
+ has inner product with the decomposition of `u` at most `ℓ·β` in absolute value. This is
+ the decryption-noise bound used for the `G⁻¹`-column decryptor.
+ 
+-**Proof sketch.** Split the sum over `Fin ((n+1)ℓ)` through `finProdFinEquiv` into blocks.
+-Every block `j ≠ j₀` vanishes by `decomposeVec_block_eq_false`. The surviving block has `ℓ`
+-terms, each of magnitude at most `β`; apply `LWE.binaryErrorSum_bound` with `m := ℓ`. -/+**Proof sketch.** Split the sum over `Fin ((n+1)ℓ)` through `finProdFinEquiv` into blocks
++(`Equiv.sum_comp`, `Fintype.sum_prod_type`). Every block `j ≠ j₀` vanishes termwise by
++`decomposeVec_block_eq_false`, so `Finset.sum_eq_single` leaves block `j₀`. It is a binary
++subset sum of `ℓ` errors, each of magnitude at most `β`; apply `LWE.binaryErrorSum_bound`
++with `m := ℓ`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean: target errorSum_decomposeVec_le: body replaced (2 -> 11 lines)
+== TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: 21 base declarations, 0 unexpected difference(s)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: sketch edited for encrypts_gadget
+--- base
++++ final
+@@ -1,3 +1,3 @@
+ /-- The gadget encrypts `1` with zero noise [AP14, Section 3.3, "`μG` … has error 0"].
+ 
+-**Proof sketch.** Take `e = 0`; `1 • v + 0 = v`. -/+**Proof sketch.** Through `encrypts_iff`, take `e = 0`; coordinatewise `1 • v + 0 = v`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target encrypts_gadget: body replaced (2 -> 5 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: sketch edited for encrypts_zero
+--- base
++++ final
+@@ -1,3 +1,4 @@
+ /-- The zero matrix encrypts `0` with zero noise [AP14, Section 3.3].
+ 
+-**Proof sketch.** Take `e = 0`; `Matrix.vecMul_zero` and `zero_smul`. -/+**Proof sketch.** Through `encrypts_iff`, take `e = 0`; coordinatewise
++`Matrix.vecMul_zero` and `zero_smul`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target encrypts_zero: body replaced (2 -> 6 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target Encrypts.mono: body replaced (2 -> 3 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: sketch edited for Encrypts.add
+--- base
++++ final
+@@ -1,5 +1,6 @@
+ /-- Homomorphic addition adds messages and noise bounds [AP14, Lemma 3.5, first claim;
+ GSW13, Section 3.3, `Add`; BV14, Claim 3.4.1].
+ 
+-**Proof sketch.** Witness `e₁ + e₂`. `Matrix.vecMul_add` splits `tᵗ(C₁+C₂)`; `add_smul` and
+-`Int.cast_add` regroup; `Int.natAbs_add_le` bounds the entries. -/+**Proof sketch.** Witness `e₁ + e₂`; `Int.natAbs_add_le` bounds the entries.
++`Matrix.vecMul_add` splits `tᵗ(C₁+C₂)`, the two invariants are substituted, and coordinatewise
++`Int.cast_add` and ring arithmetic regroup `x₁ v + e₁ + x₂ v + e₂ = (x₁+x₂) v + (e₁+e₂)`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target Encrypts.add: body replaced (2 -> 9 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: sketch edited for Encrypts.neg
+--- base
++++ final
+@@ -1,3 +1,4 @@
+ /-- Negation negates the message and keeps the noise bound.
+ 
+-**Proof sketch.** Witness `-e`; `Matrix.vecMul_neg`, `neg_smul`, `Int.natAbs_neg`. -/+**Proof sketch.** Witness `-e`, bounded by `Int.natAbs_neg`. `Matrix.vecMul_neg` and the
++invariant give `-(x v + e)`, which is `(-x) v + (-e)` coordinatewise (`Int.cast_neg`, ring). -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target Encrypts.neg: body replaced (2 -> 7 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target Encrypts.sub: body replaced (2 -> 3 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target Encrypts.sum: body replaced (2 -> 10 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: sketch edited for Encrypts.mul
+--- base
++++ final
+@@ -4,9 +4,12 @@
+ operand's noise is multiplied by `N`, the number of `{0,1}` entries in a column of `G⁻¹(C₂)`;
+ the right operand's is multiplied only by the left message.
+ 
+-**Proof sketch.** `Matrix.vecMul_vecMul` rewrites `tᵗ (C₁ X)` as `(tᵗ C₁) X` with
+-`X = lift (G⁻¹ C₂)`. Substitute `h₁`: `(x₁ tᵗG + e₁ᵗ) X = x₁ tᵗ(G X) + e₁ᵗ X`. By
+-`gadget_mul_decompose`, `G X = C₂`, so the first term is `x₁ tᵗ C₂ = x₁x₂ tᵗG + x₁ e₂ᵗ` by `h₂`.
+-The witness is `j ↦ (∑ᵢ e₁ i · X i j) + x₁ · e₂ j`. The first summand is a binary subset sum of
+-`N` entries bounded by `β₁`, bounded by `N·β₁` via `LWE.binaryErrorSum_bound`; the second has
+-magnitude `|x₁|·|e₂ j| ≤ |x₁|·β₂` (`Int.natAbs_mul`). -/+**Proof sketch.** The witness is `j ↦ (∑ᵢ e₁ i · X i j) + x₁ · e₂ j` with
++`X = lift (G⁻¹ C₂)`. Bound: by `Int.natAbs_add_le`, the first summand is a binary subset sum
++of `N` entries bounded by `β₁`, bounded by `N·β₁` via `LWE.binaryErrorSum_bound`; the second
++has magnitude `|x₁|·|e₂ j| ≤ |x₁|·β₂` (`Int.natAbs_mul`). Invariant: `Matrix.vecMul_vecMul`
++rewrites `tᵗ (C₁ X)` as `(tᵗ C₁) X`; substituting `h₁` and distributing
++(`Matrix.add_vecMul`, `Matrix.smul_vecMul`) gives `x₁ tᵗ(G X) + e₁ᵗ X`. By
++`gadget_mul_decompose`, `G X = C₂`, so the first term is `x₁ (x₂ tᵗG + e₂ᵗ)` by `h₂`. Finally
++`e₁ᵗ X` is, coordinatewise, the residue of the integer sum `∑ᵢ e₁ i · X i j` (`lift_apply`,
++`Int.cast_sum`), and ring arithmetic in each coordinate closes the identity. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target Encrypts.mul: body replaced (2 -> 23 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: sketch edited for Encrypts.mul_bit
+--- base
++++ final
+@@ -1,4 +1,5 @@
+ /-- For a bit message on the left, multiplication has noise `N·β₁ + β₂` [GSW13, Section 3.3,
+ `Mult`; Pei16, Section 6.1.3].
+ 
+-**Proof sketch.** `Encrypts.mul` and `Encrypts.mono`, since `(b.toNat : ℤ).natAbs ≤ 1`. -/+**Proof sketch.** `Encrypts.mul` and `Encrypts.mono`, since `(b.toNat : ℤ).natAbs = b.toNat ≤ 1`
++(`Int.natAbs_natCast`, `Bool.toNat_le`). -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target Encrypts.mul_bit: body replaced (2 -> 4 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: sketch edited for Encrypts.mul_le
+--- base
++++ final
+@@ -1,4 +1,5 @@
+ /-- Symmetric corollary: two bit-message operands with noise at most `β` give a product with
+ noise at most `(N+1)·β` [GSW13, Section 3.4; Pei16, Section 6.1.3].
+ 
+-**Proof sketch.** `Encrypts.mul_bit` and `N·β + β = (N+1)·β`. -/+**Proof sketch.** `Encrypts.mul_bit` and `N·β + β = (N+1)·β`; the message
++`(b₁ && b₂).toNat = b₁.toNat · b₂.toNat` by cases on the bits. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target Encrypts.mul_le: body replaced (2 -> 5 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: sketch edited for Encrypts.nand
+--- base
++++ final
+@@ -2,5 +2,6 @@
+ factor of at most `N + 1`"; Pei16, Section 6.1.3]. Bit encryptions with noise `β₁`, `β₂` give
+ an encryption of `NAND(b₁,b₂)` with noise at most `N·β₁ + β₂`.
+ 
+-**Proof sketch.** `encrypts_gadget`, `Encrypts.mul_bit`, `Encrypts.sub`; the message
+-`1 − b₁b₂` equals `(!(b₁ && b₂)).toNat` by cases on the bits. -/+**Proof sketch.** `encrypts_gadget`, `Encrypts.mul_bit`, `Encrypts.sub` give noise
++`0 + (N·β₁ + β₂)`, which `Encrypts.mono` drops to `N·β₁ + β₂`; the message `1 − b₁b₂` equals
++`(!(b₁ && b₂)).toNat` by cases on the bits. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target Encrypts.nand: body replaced (2 -> 6 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: sketch edited for encrypts_chain
+--- base
++++ final
+@@ -5,6 +5,9 @@
+ with noise at most `β` and `acc` encrypts `x` with noise `β₀`, then
+ `C₁ ⊡ (⋯ ⊡ (Cₖ ⊡ acc))` encrypts `(∏ bᵢ)·x` with noise at most `β₀ + k·N·β`.
+ 
+-**Proof sketch.** Induction on the list. The step is `Encrypts.mul_bit` with the head on the
+-left: noise `N·β + (previous)`, message `b · (∏ rest · x)`; reassociate the product and the
+-sum `β₀ + (k+1)·N·β`. -/+**Proof sketch.** Induction on the `List.Forall₂` hypothesis. The empty chain is the
++accumulator, and the empty conjunction is `true`, whose `toNat` is `1`. The step is
++`Encrypts.mul_bit` with the head on the left: noise `N·β + (previous)`, message
++`b · ((∏ rest) · x)`; the message of the cons is `(b && ∏ rest) · x`, which is that product
++because `Bool.toNat` turns `&&` into multiplication (cases on the bits), and the noise
++`β₀ + (k+1)·N·β` equals `N·β + (β₀ + k·N·β)` by ring arithmetic. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean: target encrypts_chain: body replaced (2 -> 17 lines)
+== TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: 16 base declarations, 0 unexpected difference(s)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: sketch edited for vecMul_secretVector_augmented
+--- base
++++ final
+@@ -1,6 +1,8 @@
+ /-- `tᵗ Ā = eᵗ`: the key vector annihilates the augmented LWE public key up to the row errors
+ [Pei16, Equation (6.1.7); GSW13, Section 3.1, "Observe that `A · s = e`"].
+ 
+-**Proof sketch.** Column `i` of `Regev.augmented` is the `i`-th sample's row followed by its
+-value (`Regev.augmented_eq`, `Fin.sum_univ_castSucc`, `Fin.snoc_castSucc`, `Fin.snoc_last`). The
+-inner product is `−⟨s, aᵢ⟩ + (⟨aᵢ, s⟩ + eᵢ)` by `LWE.noisyValues_apply`, which is `eᵢ`. -/+**Proof sketch.** Write coordinate `i` of `tᵗ Ā` as a sum over the `n+1` rows and split off the
++last row (`Fin.sum_univ_castSucc`). Column `i` of `Regev.augmented` is the `i`-th sample's row
++followed by its value (`Regev.augmented_eq`, `Fin.snoc_castSucc`, `Fin.snoc_last`), and `t` is
++`−s` followed by `1`. The inner product is `−⟨s, aᵢ⟩ + (⟨aᵢ, s⟩ + eᵢ)` by
++`LWE.noisyValues_apply`; commuting the factors of `⟨s, aᵢ⟩` cancels it, leaving `eᵢ`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: target vecMul_secretVector_augmented: body replaced (2 -> 12 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: sketch edited for encrypts_encrypt
+--- base
++++ final
+@@ -2,6 +2,8 @@
+ encrypts `μ` under `t = (−s,1)` with noise at most `m·B` [GSW13, Section 3.1, "The error
+ `⟨Rᵢ, e⟩` has magnitude at most `‖e‖₁`"; Pei16, Section 6.1.3].
+ 
+-**Proof sketch.** `Matrix.vecMul_add`, `Matrix.vecMul_smul` and `Matrix.vecMul_vecMul` give
+-`tᵗ C = (tᵗ Ā) R + μ tᵗ G`; `vecMul_secretVector_augmented` replaces `tᵗ Ā` by `eᵗ`. The
+-witness is `j ↦ ∑ᵢ eᵢ · R i j`, bounded by `m·B` through `LWE.binaryErrorSum_bound`. -/+**Proof sketch.** The witness is `j ↦ ∑ᵢ eᵢ · R i j`, bounded by `m·B` through
++`LWE.binaryErrorSum_bound` applied to column `j` of `R`. `Matrix.vecMul_add`,
++`Matrix.vecMul_smul` and `Matrix.vecMul_vecMul` give `tᵗ C = (tᵗ Ā) R + μ tᵗ G`, and
++`vecMul_secretVector_augmented` replaces `tᵗ Ā` by `eᵗ`. Coordinate `j` of `eᵗ R` is
++`∑ᵢ eᵢ · R i j` read modulo `q` (`lift_apply`, `Int.cast_sum`, `Int.cast_mul`). -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: target encrypts_encrypt: body replaced (2 -> 12 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: sketch edited for encrypts_keygen_encrypt
+--- base
++++ final
+@@ -1,4 +1,6 @@
+ /-- Fresh-encryption noise for the actual key generator and a `B`-bounded noise law.
+ 
+-**Proof sketch.** Read `Regev.keygen_fst`, `Regev.keygen_snd`, `LWE.sample_fst`,
+-`LWE.sample_snd` and `Noise.bounded_iff`, then apply `encrypts_encrypt`. -/+**Proof sketch.** `Regev.keygen_fst` and `Regev.keygen_snd` expose the sample and the secret;
++`LWE.sample_fst` and `LWE.sample_snd` write the sample as `(A, A s + e)` with
++`eᵢ = χ.sample(seedᵢ)`, and `Noise.bounded_iff` bounds each `eᵢ` by `B`. Then apply
++`encrypts_encrypt`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: target encrypts_keygen_encrypt: body replaced (2 -> 7 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: sketch edited for decrypt_of_encrypts
+--- base
++++ final
+@@ -3,10 +3,12 @@
+ `xᵢ = μ·vᵢ + e'` for some error `e'` of magnitude at most `q/8` … Dec … output[s] the correct
+ value"; AP14, Claim 3.4; BV14, Lemma 3.2].
+ 
+-**Proof sketch.** `Regev.decrypt_eq` reads `c.2 − ⟨s, c.1⟩`, which for the split column `v` is
+-`⟨t, v⟩` (`Fin.sum_univ_castSucc`, `secretVector_eq`). `Matrix.dotProduct_mulVec` turns
+-`⟨t, C x⟩` into `⟨tᵗC, x⟩` with `x = G⁻¹(w)` lifted; substituting the invariant gives
++**Proof sketch.** The private glue lemma `decrypt_eq_decode_errorSum` does the algebra:
++`Regev.decrypt_eq` reads `c.2 − ⟨s, c.1⟩`, which for the split column `v` is `⟨t, v⟩`
++(`Fin.sum_univ_castSucc`, `secretVector_eq`). `Matrix.dotProduct_mulVec` turns `⟨t, C x⟩` into
++`⟨tᵗC, x⟩` with `x = G⁻¹(w)` lifted; substituting the invariant gives
+ `b·⟨t, G x⟩ + ⟨e, x⟩ = b·⟨t, w⟩ + ⟨e, x⟩` by `gadget_mulVec_decomposeVec`, and `⟨t, w⟩ = ⌊q/2⌋`
+ because `w` vanishes off the last coordinate where `t` is `1`. So the residual is
+-`codepoint b + ⟨e, x⟩`. `errorSum_decomposeVec_le` (with `j₀ = last`) bounds `|⟨e, x⟩| ≤ ℓ·β`,
+-and `LWE.BitEncoding.decode_codepoint_add` with `B := ℓ·β` finishes. -/+`codepoint b + ⟨e, x⟩`. Since `w` vanishes off the last coordinate,
++`errorSum_decomposeVec_le` (with `j₀ = last`) bounds `|⟨e, x⟩| ≤ ℓ·β`, and
++`LWE.BitEncoding.decode_codepoint_add` with `B := ℓ·β` finishes. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: target decrypt_of_encrypts: body replaced (2 -> 6 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: sketch edited for decrypt_of_encrypts_dyadic
+--- base
++++ final
+@@ -2,5 +2,10 @@
+ correctly: `⌊q/2⌋ = 2^{ℓ−1}` has a single binary digit, so the decryption column is the last
+ gadget column [AP14, Claim 3.4, dyadic case; GSW13, Section 3.1, `MPDec` remark].
+ 
+-**Proof sketch.** As `decrypt_of_encrypts`, but the decomposition of `w` has exactly one `1`,
+-at block `n+1` position `ℓ−1`; the error sum is a single entry of `e`, bounded by `β`. -/+**Proof sketch.** As `decrypt_of_encrypts`, the residual is `codepoint b + ⟨e, x⟩` with `x` the
++decomposition of `w` (`decrypt_eq_decode_errorSum`). Here `⌊q/2⌋ = 2^{ℓ−1} < q`, and `x` is the
++indicator of the single position `i₀ = (n, ℓ−1)` (last block and top position, zero-based):
++both have the same block digits (`Lossy.digits_val`, `digits_decomposeVec`, `digit_val`; the
++last block's positional sum is `2^{ℓ−1}`, every other block's is `0 = w_j`), and the digit map
++is injective (`Lossy.digits_injective`). So the error sum is the single entry `e i₀`, bounded by
++`β`, and `LWE.BitEncoding.decode_codepoint_add` with `B := β` finishes. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: target decrypt_of_encrypts_dyadic: body replaced (2 -> 50 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: target decrypt_keygen_encrypt: body replaced (2 -> 3 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean: new declarations: halfVector_eq_zero_of_ne_last, decrypt_eq_decode_errorSum
+== TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean: 6 base declarations, 0 unexpected difference(s)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean: sketch edited for encrypts_symEncrypt
+--- base
++++ final
+@@ -2,6 +2,7 @@
+ secret-key ciphertext encrypts its bit under `t = (−s,1)` with noise at most `B` [AP14,
+ Section 3.2, "Notice that `sᵗC = eᵗ + μ·sᵗG`"; BV14, Section 3.1].
+ 
+-**Proof sketch.** `Matrix.vecMul_add`, `Matrix.vecMul_smul`; the block of `tᵗ Ā` is
+-`tᵗ Ā` read at the reindexed columns (`Matrix.vecMul` of a `submatrix`), equal to
+-`e ∘ rowEquiv` by `vecMul_secretVector_augmented`. -/+**Proof sketch.** The witness is `j ↦ e (rowEquiv (i, j))`, bounded by `B`.
++`Matrix.vecMul_add`, `Matrix.vecMul_smul` split `tᵗ Cᵢ`; the block of `tᵗ Ā` is `tᵗ Ā` read at
++the reindexed columns (`Matrix.submatrix_apply`), equal to `e ∘ rowEquiv` by
++`vecMul_secretVector_augmented`. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean: target encrypts_symEncrypt: body replaced (2 -> 14 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean: sketch edited for distAdv_symEncrypt_le
+--- base
++++ final
+@@ -4,8 +4,9 @@
+ ciphertexts under one uniform secret differ by at most two DLWE advantages with `k·N` rows.
+ 
+ **Proof sketch.** As `Encryption.Symmetric.Regev.distAdv_encrypt_le`: each real batch is
+-`symEncrypt` of the actual LWE sample; on the uniform side, `(A,b) ↦ symEncrypt P hN (A,b) μ`
+-is a bijection onto `Fin k → Ciphertext P` (`Regev.augmented_bijective`, the column
+-reindexing by `rowEquiv`, and translation by `μG`; both sides have `q^{(n+1)·k·N}` elements),
+-so both ideal acceptance probabilities equal that of a uniform batch.
+-Insert it between the two real experiments and use the triangle inequality. -/+`symEncrypt` of the actual LWE sample (`acceptProb_def`); on the uniform side,
++`(A,b) ↦ symEncrypt P hN (A,b) μ` is an equivalence onto `Fin k → Ciphertext P` (the private
++glue `exists_equiv_symEncrypt`: `Regev.augmented_bijective`, the column reindexing by
++`rowEquiv`, and translation by `μG`), so by `acceptProb_comp_equiv` both ideal acceptance
++probabilities equal that of a uniform batch. Insert it between the two real experiments
++(`LWE.decisionAdvantage_eq`, `distAdv_def`) and use the triangle inequality. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean: target distAdv_symEncrypt_le: body replaced (2 -> 24 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean: new declarations: exists_equiv_symEncrypt
+== TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean: 18 base declarations, 0 unexpected difference(s)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean: target homAnd_encrypts: body replaced (2 -> 22 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean: sketch edited for homGate_encrypts
+--- base
++++ final
+@@ -2,10 +2,12 @@
+ encryptions of their values, produces a `(N+1)·β`-noisy encryption of its value [GSW13,
+ Section 3.3, `NAND`: "the error is increased by a factor of at most `N + 1`"].
+ 
+-**Proof sketch.** Case on `g.kind` through `homGate_eq` and `DAGGate.eval_eq`. With
+-`bs = g.args.map (vals.getD · false)` and `Cs = g.args.map (cts.getD · 0)`,
+-`List.forall₂_map_left_iff` and `List.forall₂_map_right_iff` give the hypothesis of
+-`homAnd_encrypts`; `List.all_map` matches the messages; `length ≤ 2`
+-bounds `((k−1)·N+1)·β ≤ (N+1)·β`. For `¬`, subtract from `encrypts_gadget` (`Encrypts.sub`,
+-noise `0 + ·`). For `∨`, the complements `G − C` keep noise `β`, then one more subtraction;
+-`Bool` De Morgan identifies the message. -/+**Proof sketch.** With `bs = g.args.map (vals.getD · false)` and
++`Cs = g.args.map (cts.getD · 0)`, `List.forall₂_map_left_iff`, `List.forall₂_map_right_iff` and
++`List.forall₂_same` turn `hargs` into the hypothesis of `homAnd_encrypts`; `List.all_map` matches
++the messages, and `length ≤ 2` bounds `((k−1)·N+1)·β ≤ (N+1)·β`. Then case on `g.kind` through
++`homGate_eq` and `DAGGate.eval_eq`. For `∧` this is the bound. For `¬`, subtract from
++`encrypts_gadget` (`Encrypts.sub`, noise `0 + ·`), the message being `1 − c.toNat = (!c).toNat`
++by cases on `c`. For `∨`, the complements `G − C` encrypt `!b` with noise `0 + β`, their
++conjunction is complemented once more, and `List.any_eq_not_all_not` (De Morgan) identifies the
++message. -/
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean: target homGate_encrypts: body replaced (2 -> 50 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean: target eval_encrypts: body replaced (2 -> 38 lines)
+NOTE TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean: target decrypt_keygen_eval: body replaced (2 -> 8 lines)
+HEADERS PASS: 0 unexpected difference(s)
