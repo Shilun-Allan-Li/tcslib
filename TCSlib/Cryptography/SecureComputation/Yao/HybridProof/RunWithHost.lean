@@ -84,10 +84,15 @@ theorem step_poly {F : List Bool → List Bool} (hF : PolyTimeComputable F) :
         (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)))))
 
 /-- The one-bit acceptance test `w ↦ [acc w]` is polynomial-time.
+Reuses `StateLoop.MajLoop.acc_poly`.
 `PolyTimeComputable fun w => [acc w]`. -/
-theorem acc_poly : PolyTimeComputable fun w => [acc w] :=
-  polyTimeComputable_isNil.comp
-    (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+theorem acc_poly : PolyTimeComputable fun w => [acc w] := by
+  have hacc : ∀ w, acc w = Complexity.StateLoop.MajLoop.acc w := fun w =>
+    (acc_eq w).trans (Complexity.StateLoop.MajLoop.acc_eq w).symm
+  have hfun : (fun w => [acc w]) = fun w => [Complexity.StateLoop.MajLoop.acc w] :=
+    funext fun w => congrArg (fun b : Bool => [b]) (hacc w)
+  rw [hfun]
+  exact Complexity.StateLoop.MajLoop.acc_poly
 
 /-- After `i ≤ |gs x|` rounds, the state is the unprocessed gate suffix paired with
 `valueCode x (runWith (f x) ((gs x).take i) (init x))`.
