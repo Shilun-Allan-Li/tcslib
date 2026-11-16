@@ -2099,16 +2099,7 @@ private theorem xr_replay_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Boo
   classical
   by_cases hb : (N.tm.runWith s (N.tm.initCfg z)).state = none
   · -- the branch halts: the `finish` exit at the first halting time
-    have hex : ∃ u, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state = none :=
-      ⟨s.length, by rw [List.take_length]; exact hb⟩
-    set τ := Nat.find hex with hτdef
-    have hτ : τ ≤ s.length := Nat.find_min' hex (by rw [List.take_length]; exact hb)
-    have hhalt : (N.tm.runWith (s.take τ) (N.tm.initCfg z)).state = none := Nat.find_spec hex
-    have hlive : ∀ u < τ, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state ≠ none :=
-      fun u hu => Nat.find_min hex hu
-    have hbτ : N.tm.runWith s (N.tm.initCfg z) = N.tm.runWith (s.take τ) (N.tm.initCfg z) := by
-      conv_lhs => rw [← List.take_append_drop τ s]
-      rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hhalt]
+    obtain ⟨τ, hτ, hhalt, hlive, hbτ⟩ := N.tm.exists_first_halt (N.tm.initCfg z) hb
     obtain ⟨T, hT, p, hp, w', hw', hrun, hguard⟩ :=
       xr_replay_finish C z s wL wL h (by rw [← hval]; rfl) τ hτ hhalt hlive
     refine ⟨T + 1, by omega, p, hp.trans hτ, w', hw', ?_⟩
