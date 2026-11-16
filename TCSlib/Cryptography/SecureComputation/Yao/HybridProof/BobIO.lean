@@ -97,6 +97,7 @@ The vertex's key is another word-list lookup, padded to the parameter length. Tw
 comparisons implement the decoding rule. Each lookup and padding operation is total, so
 malformed words require no separate machine. -/
 theorem outputBit_poly : PolyTimeComputable fun z => [outputBit z] := by
+  -- Step 1: the value list, decoding pairs and output vertices are projections of the context.
   let ctx := pairFstD
   let vals := fun z => pairFstD (pairSndD (ctx z))
   let pairs := fun z => pairFstD (pairSndD (pairSndD (ctx z)))
@@ -110,9 +111,11 @@ theorem outputBit_poly : PolyTimeComputable fun z => [outputBit z] := by
   have ho : PolyTimeComputable outs :=
     polyTimeComputable_pairSndD.comp
       (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp hc))
+  -- Step 2: unary word-list lookup gives the output vertex.
   let vertex := fun z => BinArith.uHead (BinArith.getW (pairEncode (pairSndD z) (outs z)))
   have hvertex : PolyTimeComputable vertex := BinArith.polyTimeComputable_uHead.comp
     (BinArith.polyTimeComputable_getW.comp (polyTimeComputable_pairSndD.pairEncode ho))
+  -- Step 3: the vertex's key is another word-list lookup, padded to the parameter length.
   let key := fun z => EnsembleLemmas.padL (pairFstD (ctx z)).length
     (BinArith.getW (pairEncode (vertex z) (vals z)))
   have hk0 := EnsembleLemmas.polyTimeComputable_padL .var
@@ -122,9 +125,11 @@ theorem outputBit_poly : PolyTimeComputable fun z => [outputBit z] := by
     (BinArith.polyTimeComputable_getW.comp' (hvertex.pairEncode hv))
   have hk : PolyTimeComputable key := hk0.congr (g := key) fun z => by
     simp only [key, PolyExpr.eval_var]
+  -- Step 4: unary word-list lookup gives the decoding pair.
   let pair := fun z => BinArith.getW (pairEncode (pairSndD z) (pairs z))
   have hpair : PolyTimeComputable pair :=
     BinArith.polyTimeComputable_getW.comp (polyTimeComputable_pairSndD.pairEncode hp)
+  -- Step 5: two word comparisons and a branch implement the decoding rule.
   have heq0 : PolyTimeComputable fun z => [decide (key z = pairFstD (pair z))] :=
     (polyTimeComputable_pairEq.comp
       (hk.pairEncode (polyTimeComputable_pairFstD.comp hpair))).congr fun z => by
@@ -135,6 +140,8 @@ theorem outputBit_poly : PolyTimeComputable fun z => [outputBit z] := by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
   refine (polyTimeComputable_ite heq0 (polyTimeComputable_const [false]) heq1).congr
     (g := fun z => [outputBit z]) ?_
+  -- Step 6: on every raw word the branch is `[outputBit z]`, by the reader `outputBit_eq`;
+  -- every lookup and padding operation is total, so malformed words need no separate case.
   intro z
   by_cases h : key z = pairFstD (pair z) <;>
     simp only [outputBit_eq, ctx, vals, pairs, outs, vertex, key, pair] at h ⊢ <;>

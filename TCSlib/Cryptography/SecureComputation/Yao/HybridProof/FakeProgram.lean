@@ -251,6 +251,9 @@ theorem tables_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCompu
       ((coins z).getD (10 * bound z * width z + 2 * i + t) false)) :
     PolyTimeComputable fun z => BinArith.encWords (List.ofFn fun i =>
       BinArith.encWords (FakeObjects.table (nestedSpecial E₁ E₂ (width z)) (C z) (s z) i)) := by
+  -- Step 1: the pieces: the decoded gate-record word, the argument-word list at a unary
+  -- index, the real garbler's row core with constant false output bit, and the guarded
+  -- table adapter.
   let gates := GarblingProgram.gatesWord description
   let record := fun w => BinArith.getW (pairEncode (pairFstD w) (gates (pairSndD w)))
   let args := fun w => pairSndD (record w)
@@ -260,6 +263,8 @@ theorem tables_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCompu
     args (fun w => coins (pairSndD w)) (fun _ => false) l a
   let entry := TablesFromCoins.tableWordWith args row
   let entryVal := fun z i => entry (pairEncode (List.replicate i true) z)
+  -- Step 2: each piece is polynomial-time; `hgs` reads the decoded word as the encoded gate
+  -- records.
   have hgates : PolyTimeComputable gates := GarblingProgram.gatesWord_poly hdescription
   have hgs (z : List Bool) :
       gates z = BinArith.encWords ((C z).gates.map DescriptionDecoder.gateRecord) :=
@@ -273,6 +278,8 @@ theorem tables_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCompu
       (hinputs.comp polyTimeComputable_pairSndD)
       (unaryLength_poly polyTimeComputable_pairFstD) hargs
       (hcoins.comp polyTimeComputable_pairSndD) (polyTimeComputable_const [false]) l a)
+  -- Step 3: the indexed word-vector assembler traverses all gate records; it remains to
+  -- identify each entry with its simulated table.
   have hcount : PolyTimeComputable fun z => List.replicate (C z).gates.length true := by
     refine (BinArith.polyTimeComputable_countW.comp hgates).congr fun z => ?_
     rw [Function.comp_apply, BinArith.countW_eq, hgs z,
@@ -281,6 +288,8 @@ theorem tables_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCompu
     hentry.comp ((polyTimeComputable_unary.comp polyTimeComputable_pairFstD).pairEncode
       polyTimeComputable_pairSndD)
   refine WordLists.ofFnTable_poly _ entryVal hcount he ?_
+  -- Step 4: correctness. Transport the retained context through the generic pointwise table
+  -- contract `tableWordWith_congr_at`.
   intro z i
   symm
   let w := pairEncode (List.replicate i true) z
@@ -299,6 +308,7 @@ theorem tables_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCompu
       List.length_replicate]
   change TablesFromCoins.tableWordWith args row w = _
   rw [TablesFromCoins.tableWordWith_congr_at args args' row row' w z ha hr]
+  -- Step 5: canonical record lookup fixes the argument list.
   have hrec : BinArith.getW (pairEncode (List.replicate i true) (gates z)) =
       DescriptionDecoder.gateRecord ((C z).gates[i]) := by
     rw [hgs z, BinArith.getW_pairEncode, List.length_replicate]
@@ -308,8 +318,11 @@ theorem tables_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCompu
       BinArith.encWords (((C z).gates[i]).args.map fun v => List.replicate v true) := by
     dsimp only [args']
     rw [hrec, DescriptionDecoder.gateRecord_eq, pairSndD_pairEncode]
+  -- Step 6: the fan-in bound removes the guard and normalizes the assignment enumeration.
   rw [TablesFromCoins.tableWordWith_of_encoded args' row' z _ (hfan z i) hcanonical,
     FakeObjects.table_eq]
+  -- Step 7: the arbitrary-output-bit row theorem identifies every enumerated row with the
+  -- simulated row.
   apply congrArg BinArith.encWords
   apply List.map_congr_left
   intro a _

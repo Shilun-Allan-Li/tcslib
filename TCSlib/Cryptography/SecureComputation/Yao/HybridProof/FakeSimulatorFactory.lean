@@ -88,6 +88,7 @@ theorem exists_data :
       ∀ n r f, FakeSimulator.messageAt d n r f =
         FakeObjects.message (nestedSpecial E₁ E₂ n) (circuit n) (seed n r)
           (inA.eval n) (outLen.eval n) (output n) (fun j => f.getD j false) := by
+  -- Step 1: construct the existing data value from the supplied fields, every argument named.
   refine ⟨FakeSimulator.Data.make
       (E₁ := E₁)
       (E₂ := E₂)
@@ -111,6 +112,7 @@ theorem exists_data :
       (nonce₀ := nonce₀)
       (nonce₁ := nonce₁)
       (permutation := permutation), ?_, ?_⟩
+  -- Step 2: answer words, by the pointwise constructor equation with every argument explicit.
   · intro n r
     exact FakeSimulator.Data.make_answersAt
       (E₁ := E₁)
@@ -136,6 +138,7 @@ theorem exists_data :
       (nonce₁ := nonce₁)
       (permutation := permutation)
       n r
+  -- Step 3: message words, by the pointwise constructor equation with every argument explicit.
   · intro n r f
     exact FakeSimulator.Data.make_messageAt
       (E₁ := E₁)

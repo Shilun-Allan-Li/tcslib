@@ -862,6 +862,8 @@ coin blocks and choice bits through the finite-product call index. The truncatio
 on ciphertexts give a message envelope independent of the supplied answers. -/
 theorem yaoHybrid_polyTime (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂) :
     (yaoHybrid Y E₁ E₂).PolyTime (yaoFunctionality Y) := by
+  -- Step 1: Alice is efficient. The generic garbling program computes her message from the
+  -- uniform circuit description and the seed's key, nonce and shift readers.
   open YaoHybridProof in
   have hAlice : (yaoAlice Y E₁ E₂).Efficient := by
     obtain ⟨gen, hgen, hgenEq⟩ := Y.uniform
@@ -892,11 +894,15 @@ theorem yaoHybrid_polyTime (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeCo
       (fun _ => Nat.le_add_right _ _) (fun w => Y.outs_lt _) (fun w => hfan _)
       (fun w v hv b => by rw [keyAt_yaoSeed Y _ _ hv]; rfl)
       (fun _ _ _ _ => rfl) (fun _ _ _ _ => rfl) (fun _ _ _ _ => rfl)
+    -- Step 2: the interactive-layout constructor covers every history: Alice sends this
+    -- garbling on the empty history and echoes the first received message otherwise.
     apply firstThenEcho_efficient (yaoAlice Y E₁ E₂)
       (fun x z r => yaoMsg Y E₁ E₂ x.length (pairFstD z) r)
       (yaoAlice_next_nil Y E₁ E₂) (yaoAlice_next_cons Y E₁ E₂)
     refine hp.congr fun w => ?_
     simp only [yaoMsg_eq, yaoTables_eq, yaoKeysA_eq, yaoPairs_eq, encodeMsgs_eq_encWords]
+  -- Step 3: Bob is efficient. The generic evaluator computes his reply from arbitrary
+  -- messages and answers.
   have hBob : (yaoBob Y E₁ E₂).Efficient := by
     obtain ⟨gen, hgen, hgenEq⟩ := Y.uniform
     have hdesc n : gen (List.replicate n true) = pairEncode (Y.circ n).encode
@@ -927,16 +933,22 @@ theorem yaoHybrid_polyTime (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeCo
         · rfl)
       (fun w => by simp only [yaoBobInit_eq, List.length_ofFn])
       (fun w v => by simp only [yaoBobTables_eq]; rfl) (fun _ => rfl)
+    -- Step 4: the interactive-layout constructor covers every history: Bob evaluates its
+    -- first message.
     apply reply_efficient (yaoBob Y E₁ E₂)
       (fun x z a => yaoBobOut Y E₁ E₂ x.length a (pairSndD z))
       (yaoBob_next Y E₁ E₂)
     refine hp.congr fun w => ?_
     simp only [yaoBobOut_eq, yaoBobValues_eq, decodeOut_eq, msg, ans]
+  -- Step 5: by `HybridProtocol.polyTime_iff`, it remains to give the two OT call-input
+  -- machines and the message envelope.
   apply (HybridProtocol.polyTime_iff (yaoHybrid Y E₁ E₂) (yaoFunctionality Y)).mpr
   refine ⟨hAlice, hBob,
     ⟨OTInputs.otInputA Y.inA Y.sizeBound,
       OTInputs.polyTimeComputable_otInputA Y.inA Y.sizeBound, ?_⟩,
     ⟨OTInputs.otInputB, OTInputs.polyTimeComputable_otInputB, ?_⟩, ?_⟩
+  -- Step 6: for call `(i, t)`, Alice's OT input machine reads bit `t` of both keys of wire
+  -- `inA + i` from the seed's coin blocks, through the finite-product call index.
   · intro n x r j
     have hlen : otFunctionality.inA.eval n = 2 := by
       rw [otFunctionality_inA, PolyExpr.eval_const]
@@ -949,6 +961,8 @@ theorem yaoHybrid_polyTime (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeCo
       have := i.isLt
       omega), readBits_apply]
     simp only [Nat.add_assoc]
+  -- Step 7: for call `(i, t)`, Bob's OT input machine reads his choice bit `y_i`, through the
+  -- finite-product call index.
   · intro n x r j
     have hlen : otFunctionality.inB.eval n = 1 := by
       rw [otFunctionality_inB, PolyExpr.eval_const]
@@ -956,6 +970,8 @@ theorem yaoHybrid_polyTime (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeCo
     apply CallEquations.inputB_eq n (Y.inB.eval n) x r
     intro i t c
     rw [yaoHybrid_callB, yaoCall_finProdFinEquiv]
+  -- Step 8: the truncation bounds on ciphertexts bound Alice's message, Bob's reply has
+  -- `outLen` bits, and the two-move bound gives an envelope independent of the answers.
   · have hfan n (i : Fin (Y.circ n).gates.length) :
         ((Y.circ n).gates[i]).args.length ≤ 2 :=
       ((DAGCircuit.isFaninTwo_iff (Y.circ n)).mp (Y.fanin n)).2 _

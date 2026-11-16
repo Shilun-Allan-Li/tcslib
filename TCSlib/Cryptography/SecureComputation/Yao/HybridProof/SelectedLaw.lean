@@ -80,6 +80,8 @@ theorem acceptProb_fill
         X (SelectedSeed.fill C rows (seed (List.ofFn z.1)) u q z.2.1 z.2.2)) D =
       acceptProb (fun r : Fin (10 * S * n + 2 * S) → Bool => X (seed (List.ofFn r))) D := by
   classical
+  -- Step 1: `e` splits the tape into the retained shift/unused-block parameter and the actual
+  -- key/nonce values in their coordinate type; `c` converts the challenge likewise.
   let P := TapeValues.Rest C S n hA hS
   let V := Fin n → Bool
   let e := (TapeValues.equiv C S n hA hS).trans (SeedCoordinates.paramEquiv C V P)
@@ -90,11 +92,13 @@ theorem acceptProb_fill
     Fintype.ofEquiv (V × (Fin (q + 1) → V)) c
   letI : Nonempty (SeedCoordinates.ChallengeIndex q → V) :=
     ⟨c ((fun _ => false), fun _ _ => false)⟩
+  -- Step 2: each parameter's permutations give the matched coordinate exchange `pick`/`place`.
   let perm : P → SeedCoordinates.Permutations C := TapeValues.permutation C S n hA hS
   let pick := fun p : P => SeedCoordinates.pick C rows (perm p) u q
   let place := fun p : P => SeedCoordinates.place C rows (perm p) u q
   have hmatch : ∀ p i j, pick p i = some j ↔ place p j = some i :=
     fun p => SeedCoordinates.pick_iff_place C rows (perm p) u q hargs hcomplete hrows
+  -- Step 3: the seed's inverse reader identifies the original sample with these coordinates.
   have hSeed (z : P × (SeedCoordinates.Index C → V)) :
       seed (List.ofFn (e.symm z)) =
         (SeedCoordinates.seedEquiv C V).symm (perm z.1, z.2) := by
@@ -104,6 +108,7 @@ theorem acceptProb_fill
     rw [SeedCoordinates.paramEquiv_symm,
       TapeValues.seed_on_inverse C S n hA hS seed hK hR₀ hR₁ hP]
     rw [SeedCoordinates.seedEquiv_symm, SeedCoordinates.dataEquiv_symm]
+  -- Step 4: the filled-seed reader identifies the replacement with the matched exchange.
   have hFilled (z : P × (SeedCoordinates.Index C → V))
       (t : SeedCoordinates.ChallengeIndex q → V) :
       SelectedSeed.fill C rows (seed (List.ofFn (e.symm z))) u q
@@ -124,6 +129,7 @@ theorem acceptProb_fill
       Equiv.apply_symm_apply c t
     rw [Equiv.apply_symm_apply, SeedCoordinates.seedEquiv_fill, hp, hd, hc,
       CoordinateSwap.swap_eq]
+  -- Step 5: transport the actual sampler through the tape equivalence `e`.
   let Z := fun z : P × (SeedCoordinates.Index C → V) =>
     X ((SeedCoordinates.seedEquiv C V).symm (perm z.1, z.2))
   have hStart : acceptProb Z D =
@@ -135,6 +141,7 @@ theorem acceptProb_fill
       funext fun z => congrArg X (hSeed z)
     rw [hf] at h
     exact h
+  -- Step 6: pointwise, the filled sampler is the exchanged one under `e.prodCongr c`.
   have hPoint (z : (Fin (10 * S * n + 2 * S) → Bool) ×
       (V × (Fin (q + 1) → V))) :
       X (SelectedSeed.fill C rows (seed (List.ofFn z.1)) u q z.2.1 z.2.2) =
@@ -146,6 +153,8 @@ theorem acceptProb_fill
         (perm (CoordinateSwap.swap pick place (e z.1, c z.2)).1.1,
           (CoordinateSwap.swap pick place (e z.1, c z.2)).1.2))
     exact h
+  -- Step 7: transport through `e.prodCongr c`, apply the exchange's proved uniform acceptance
+  -- law `CoordinateSwap.acceptProb_swap`, and return to the actual tape by Step 5.
   have hTransport := acceptProb_comp_equiv (e.prodCongr c)
     (fun z : (P × (SeedCoordinates.Index C → V)) ×
         (SeedCoordinates.ChallengeIndex q → V) => Z (CoordinateSwap.swap pick place z).1) D

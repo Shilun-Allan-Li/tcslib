@@ -247,6 +247,8 @@ theorem pick_iff_place {m : ℕ} (C : DAGCircuit m)
   | inl label =>
     cases j with
     | inl keySlot =>
+      -- Step 1: key summand. The only matching pair is the coordinate `(u, true)` and the single
+      -- key slot.
       cases keySlot
       rw [pick_eq, place_eq]
       change (if label = (u, true) then some (Sum.inl () : ChallengeIndex q) else none) =
@@ -264,6 +266,8 @@ theorem pick_iff_place {m : ℕ} (C : DAGCircuit m)
         · intro h'
           exact (h (Sum.inl.inj (Option.some.inj h')).symm).elim
     | inr nonce =>
+      -- Step 2: mixed summands cannot match. A key label never picks a nonce slot, and `place`
+      -- sends nonce slots only to nonce coordinates.
       rw [pick_eq, place_eq]
       change (if label = (u, true) then some (Sum.inl () : ChallengeIndex q) else none) =
         some (Sum.inr nonce : ChallengeIndex q) ↔
@@ -280,6 +284,8 @@ theorem pick_iff_place {m : ℕ} (C : DAGCircuit m)
   | inr coordinate =>
     cases j with
     | inl keySlot =>
+      -- Step 3: mixed summands cannot match. A nonce coordinate never picks the key slot, and
+      -- `place` sends the key slot to a key label.
       cases keySlot
       rw [pick_eq, place_eq]
       change (NonceCoordinates.pick C rows perm u.val q coordinate).map Sum.inr =
@@ -291,6 +297,8 @@ theorem pick_iff_place {m : ℕ} (C : DAGCircuit m)
         cases heq
       · intro h; cases h
     | inr nonce =>
+      -- Step 4: nonce summand. Injectivity of `Sum.inr` reduces both directions to the
+      -- nonce-coordinate inverse contract `NonceCoordinates.pick_iff_place`.
       rw [pick_eq, place_eq]
       change (NonceCoordinates.pick C rows perm u.val q coordinate).map Sum.inr =
         some (Sum.inr nonce : ChallengeIndex q) ↔
