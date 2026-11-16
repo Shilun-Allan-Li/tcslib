@@ -1,5 +1,11 @@
 # Lean 4 Proof Assistant System
 
+> **Campaign builds:** verification runs through `scripts/lean_check_tree.sh` against an olean
+> snapshot kept at the branch tip, with merged-tree replays per PR — see
+> [`workflow.md`](workflow.md) §6 and §6.1. Never `lake build` on campaign branches.
+> **External jobs** (audits, fills, statement drafts) are staged on a campaign's exchange branch
+> and dispatched by pasteable prompt; routes and the delivery payload are in `workflow.md` §4.1.
+
 This directory contains a coordinated multi-agent system for writing Lean 4 proofs incrementally, using **sorry-driven development** to avoid token-limit failures.
 
 **All Lean contributions must follow the repository standards in [`policy.md`](policy.md)** — modularity (file layout, size, namespaces, exports), attribution (every result traced to a textbook/paper reference via docstring tags and blueprint sources), and human-readable proof sketches accompanying every nontrivial proof. Read it before writing or landing any Lean code.
