@@ -1,8 +1,8 @@
 # Arora–Barak chapters 3–4: closeout plan (draft for Seyoon's review, 2026-11-16)
 
-Status: **rulings in progress (Seyoon, 2026-11-16).** Ruled: D1 = (a) remove; D4 = refactor
-before integration, all three debt groups; D5 as proposed; D6 as proposed. Open: D2 (Seyoon checks
-the book against the attribution below) and D3 (Seyoon decides from the full list). The work
+Status: **rulings in progress (Seyoon, 2026-11-16).** Ruled: D1 = (a) remove; D2 = Exercise 3.6
+covered by Ladner; D3 = Exercise 3.3 and the relativized hierarchies in scope, the rest deferred;
+D4 = refactor before integration, all three debt groups; D5 and D6 as proposed. All decided. The work
 packages start once the decisions they depend on are ruled.
 
 ## 1. Where the campaign stands
@@ -48,16 +48,21 @@ the ARM route proved TQBF (backlog §2 RD-2: "Fills held (user, 2026-10-14)"). O
 
 **D2 · Exercise 3.6 (a)(b).** **Answered (Seyoon, 2026-11-16, from the 2009 text):** (a) `H` is
 computable in polynomial time, proved as `ladnerH_polyTime`; (b) if `SAT_H` is NP-complete, then
-SAT is in P, which has no theorem of its own yet. A four-line proof from the published readers and
-targets 4 and 5 elaborates on `oleans-c2039` with standard axioms (`probes/Ex36b.lean.txt`); its
-landing as a public theorem awaits Seyoon's approval. Original question: The plan lists Ladner's "Claim and Ex 3.6(a)(b)". The source check
+SAT is in P. **Ruled (Seyoon, 2026-11-16): no separate theorem**; it is Ladner in substance (under
+`P ≠ NP` it is the third conjunct of `SAT_H_intermediate`). The four-line unconditional derivation
+from targets 4 and 5 is archived as a probe (`probes/Ex36b.lean.txt`, standard axioms). Original
+question: The plan lists Ladner's "Claim and Ex 3.6(a)(b)". The source check
 (`campaign/items/ladner/2026-11-08-source-check.md`) could not verify the 2009 wording of those
 parts, and the Lean cites Theorem 3.3 and its proof (PLAN §(f) fallback). The Claim is covered by
 targets 3 and 4 (`ladnerH_bounded_of_mem_P`, `ladnerH_unbounded_of_not_mem_P`). Options: check the
 2009 text yourself and either confirm coverage or add the parts as deferred; or close on the
 fallback citation as recorded.
 
-**D3 · The deferred items.** Confirm that closeout leaves these deferred (plan §1, backlog §3):
+**D3 · The deferred items.** **Ruled (Seyoon, 2026-11-16):** bring two into scope before
+closing: **Exercise 3.3** (a language `B ∈ EXP` with `P^B ≠ NP^B`; the existing
+`exists_oracle_ne` gives `P^B ≠ NP^B` for a classically chosen `B` with no EXP bound), and the
+**relativized hierarchy theorems**, by generalizing the existing hierarchy proofs rather than
+duplicating them. Everything else listed below stays deferred. Confirm that closeout leaves these deferred (plan §1, backlog §3):
 - Chapter 3: Ex 3.1, 3.3, 3.4, 3.7–3.9; the relativized hierarchy statements; Remark 3.8 and
   §3.4.1 (expository);
 - Chapter 4: Def 4.19 (read-once certificates; Thm 4.20 is proved directly on NDTMs); Example
