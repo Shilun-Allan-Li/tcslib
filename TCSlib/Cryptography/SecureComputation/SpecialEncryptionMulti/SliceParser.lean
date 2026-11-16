@@ -2,6 +2,7 @@
 Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
+import TCSlib.Cryptography.Asymptotic.BlockEncryptor
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.MultiMsgOut
 import TCSlib.Cryptography.Games.Efficiency
 
@@ -114,16 +115,6 @@ theorem polyTimeComputable_slicePost : PolyTimeComputable slicePost := by
   exact Games.polyTimeComputable_iterEmit
     ((hs.comp' hf).pairEncode (hs.comp' hs)) hemit 2 length_parserStep_le
 
-/-- Each encoded list has at least as many bits as entries:
-`l.length ≤ (PrivateKeyScheme.encodeList l).length`. -/
-theorem length_le_encodeList (l : List (List Bool)) :
-    l.length ≤ (PrivateKeyScheme.encodeList l).length := by
-  induction l with
-  | nil => rw [List.length_nil, PrivateKeyScheme.encodeList_nil, List.length_nil]
-  | cons a l ih =>
-    rw [List.length_cons, PrivateKeyScheme.encodeList_cons, length_pairEncode]
-    omega
-
 /-- On paired encoded lists of descriptors and ciphertexts, the parser cuts every body
 and keeps every nonce:
 `slicePost ⟨encodeList (l.map fst),encodeList (l.map snd)⟩ = encodeList
@@ -167,7 +158,7 @@ theorem slicePost_encode (l : List (List Bool × List Bool)) :
     rw [hcons, parserEmit_eq, pairSndD_pairEncode, if_neg (pairEncode_ne_nil _ _)]
     simp only [pairFstD_pairEncode, pairSndD_pairEncode, g]
   have hfuel : l.length ≤ (enc l).length + 1 := by
-    have h := length_le_encodeList (l.map Prod.snd)
+    have h := TCSlib.Cryptography.length_le_length_encodeList (l.map Prod.snd)
     rw [List.length_map] at h
     dsimp only [enc]
     rw [length_pairEncode]
