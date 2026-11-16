@@ -99,7 +99,11 @@ theorem phasePrefix_eq (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
   | j + 1 => phasePrefix_succ S k B verifierFirst x z rV rS j
 
 /-- If phase coin block `i` equals `List.ofFn r`, phase `i+1` calls precisely
-`S.simulate x (phaseAux z rV i pre) r`, with `pre` the earlier phase prefix. -/
+`S.simulate x (phaseAux z rV i pre) r`, with `pre` the earlier phase prefix.
+`phasePrefix S k B verifierFirst x z rV rS (i + 1) = let pre := phasePrefix S k B verifierFirst x z
+rV rS i; let aux := phaseAux z rV i pre; let p := if verifierFirst then k.eval x.length / 2 else
+(k.eval x.length + 1) / 2; pre ++ (normalizePhaseMsgs x aux p (B.eval x.length) (S.simulate x aux r)
+++ List.replicate (k.eval x.length - p) [])`. -/
 theorem phasePrefix_succ_simulate (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
     (x z rV rS : List Bool) (i : ℕ) (r : S.Coins x.length)
     (hcoins : coinBlock (S.coinLen x.length) i rS = List.ofFn r) :
@@ -131,6 +135,7 @@ theorem length_phasePrefix (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
     omega
 
 /-- Every message in `phasePrefix S k B verifierFirst x z rV rS i` has at most `B(|x|)` bits.
+`m.length ≤ B.eval x.length`.
 
 **Proof sketch.** Induct on the number of phases. Earlier messages satisfy the induction
 hypothesis, normalized real messages satisfy the published bit bound, and every filler is
@@ -154,7 +159,9 @@ theorem length_le_of_mem_phasePrefix (S : NUPPT) (k B : PolyExpr) (verifierFirst
         exact Nat.zero_le _
 
 /-- The encoded prefix after `i` phases has length at most
-`i * k(|x|) * (2 * B(|x|) + 2)`, uniformly over every simulator output and tape. -/
+`i * k(|x|) * (2 * B(|x|) + 2)`, uniformly over every simulator output and tape.
+`(Strategy.encodeMsgs (phasePrefix S k B verifierFirst x z rV rS i)).length ≤ i * k.eval x.length *
+(2 * B.eval x.length + 2)`. -/
 theorem length_encodeMsgs_phasePrefix_le (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
     (x z rV rS : List Bool) (i : ℕ) :
     (Strategy.encodeMsgs (phasePrefix S k B verifierFirst x z rV rS i)).length ≤
@@ -165,7 +172,8 @@ theorem length_encodeMsgs_phasePrefix_le (S : NUPPT) (k B : PolyExpr) (verifierF
   simpa only [length_phasePrefix] using h
 
 /-- If `N` is polynomial-time in unary, the encoding of `N w` empty messages is
-polynomial-time: `w ↦ Strategy.encodeMsgs (List.replicate (N w) [])`. -/
+polynomial-time: `w ↦ Strategy.encodeMsgs (List.replicate (N w) [])`.
+`PolyTimeComputable fun w => Strategy.encodeMsgs (List.replicate (N w) [])`. -/
 theorem encode_emptyMsgs_poly {N : List Bool → ℕ}
     (hN : PolyTimeComputable fun w => List.replicate (N w) true) :
     PolyTimeComputable fun w => Strategy.encodeMsgs (List.replicate (N w) []) := by
@@ -182,6 +190,8 @@ theorem encode_emptyMsgs_poly {N : List Bool → ℕ}
 polynomial-time words `X,Z,RV,RS`, the entire encoded prefix is polynomial-time:
 `w ↦ encodeMsgs (phasePrefix S k B verifierFirst (X w) (Z w) (RV w) (RS w)
 (Q.eval (X w).length))`. [PS10, Theorem 175.1, strict-PPT sequential simulation].
+`PolyTimeComputable fun w => Strategy.encodeMsgs (phasePrefix S k B verifierFirst (X w) (Z w) (RV w)
+(RS w) (Q.eval (X w).length))`.
 
 **Proof sketch.** Instantiate the published counted-loop host with the encoded prefix as
 state and its existing unary counter as phase index. The step decodes the prior state,
@@ -300,6 +310,10 @@ there is a uniform simulator `SQ` with coin polynomial `CV + Q*S.coins`. On `(x,
 one verifier tape from the first `CV(|x|)` coins, uses the remaining coins for the `Q(|x|)`
 phase calls, and outputs the canonical view with their normalized prefix.
 [PS10, Theorem 175.1; Gol01, §4.3.4, strict-PPT sequential simulation].
+`∃ SQ : NUPPT, SQ.Uniform ∧ SQ.coins = .add CV (.mul Q S.coins) ∧ ∀ x z (r : SQ.Coins x.length),
+SQ.simulate x z r = let rV := (List.ofFn r).take (CV.eval x.length); let rS := (List.ofFn r).drop
+(CV.eval x.length); View.encode ⟨x, z, rV, phasePrefix S k B verifierFirst x z rV rS (Q.eval
+x.length)⟩`.
 
 **Proof sketch.** Apply `phasePrefix_poly` to the common-input and auxiliary-input projections
 of the simulator layout, the first verifier-tape coin slice and the remaining phase tape.

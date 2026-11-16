@@ -39,6 +39,8 @@ namespace TCSlib.Cryptography.Composability
 `zP`, `zV`, tapes `rP`, `rV`, and move counts `g`, `t`, both components of
 `exec P V vFirst x zP zV rP rV g` are prefixes of the corresponding components after `g + t`
 moves. [PS10, §4.4].
+`(exec P V vFirst x zP zV rP rV g).1 <+: (exec P V vFirst x zP zV rP rV (g + t)).1 ∧ (exec P V
+vFirst x zP zV rP rV g).2 <+: (exec P V vFirst x zP zV rP rV (g + t)).2`.
 
 **Proof sketch.** Induct on the additional moves. Each move appends one message to exactly
 one received history, so prefix transitivity preserves both earlier histories. -/
@@ -60,7 +62,9 @@ theorem exec_prefix (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
 
 /-- For `P`, `V`, `vFirst`, `x`, `zP`, `zV`, `rP`, `rV`, `g`, `t`, taking the length of
 `(exec P V vFirst x zP zV rP rV g).1` from the first component after `g + t` moves gives
-`(exec P V vFirst x zP zV rP rV g).1`. -/
+`(exec P V vFirst x zP zV rP rV g).1`.
+`(exec P V vFirst x zP zV rP rV (g + t)).1.take (exec P V vFirst x zP zV rP rV g).1.length = (exec P
+V vFirst x zP zV rP rV g).1`. -/
 theorem exec_fst_take (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
     (g t : ℕ) :
     (exec P V vFirst x zP zV rP rV (g + t)).1.take
@@ -70,7 +74,9 @@ theorem exec_fst_take (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Boo
 
 /-- For `P`, `V`, `vFirst`, `x`, `zP`, `zV`, `rP`, `rV`, `g`, `t`, taking the length of
 `(exec P V vFirst x zP zV rP rV g).2` from the second component after `g + t` moves gives
-`(exec P V vFirst x zP zV rP rV g).2`. -/
+`(exec P V vFirst x zP zV rP rV g).2`.
+`(exec P V vFirst x zP zV rP rV (g + t)).2.take (exec P V vFirst x zP zV rP rV g).2.length = (exec P
+V vFirst x zP zV rP rV g).2`. -/
 theorem exec_snd_take (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
     (g t : ℕ) :
     (exec P V vFirst x zP zV rP rV (g + t)).2.take

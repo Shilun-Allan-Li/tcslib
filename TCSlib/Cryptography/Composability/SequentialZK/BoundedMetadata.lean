@@ -41,7 +41,9 @@ namespace TCSlib.Cryptography.SequentialZK
 /-- `PhaseMetadata n a v q h` is a common input of exactly `n` bits, auxiliary word of at
 most `a` bits, verifier tape of exactly `v` bits, phase index at most `q`, and raw prefix word
 of at most `h` bits. Standard product, function and sigma instances make this type finite.
-[PS10, Theorem 175.1, bounded phase-reduction advice]. -/
+[PS10, Theorem 175.1, bounded phase-reduction advice].
+`PhaseMetadata n a v q h = ((Fin n → Bool) × (Σ l : Fin (a + 1), Fin l → Bool) × (Fin v → Bool) ×
+Fin (q + 1) × (Σ l : Fin (h + 1), Fin l → Bool))`. -/
 abbrev PhaseMetadata (n a v q h : ℕ) : Type :=
   (Fin n → Bool) × (Σ l : Fin (a + 1), Fin l → Bool) × (Fin v → Bool) ×
     Fin (q + 1) × (Σ l : Fin (h + 1), Fin l → Bool)
@@ -56,14 +58,17 @@ theorem PhaseMetadata_eq (n a v q h : ℕ) : PhaseMetadata n a v q h =
 namespace PhaseMetadata
 
 /-- The all-false fixed-size words, empty bounded words and phase zero inhabit
-`PhaseMetadata n a v q h`, including when any or all bounds vanish. -/
+`PhaseMetadata n a v q h`, including when any or all bounds vanish.
+`Nonempty (PhaseMetadata n a v q h)`. -/
 instance {n a v q h : ℕ} : Nonempty (PhaseMetadata n a v q h) :=
   ⟨(fun _ => false, ⟨⟨0, Nat.zero_lt_succ a⟩, Fin.elim0⟩, fun _ => false,
     ⟨0, Nat.zero_lt_succ q⟩, ⟨⟨0, Nat.zero_lt_succ h⟩, Fin.elim0⟩)⟩
 
 /-- For metadata `m`, its raw advice is
 `reductionData (ofFn m.1) (ofFn m.2.1.2) (ofFn m.2.2.1) m.2.2.2.1
-  (ofFn m.2.2.2.2.2)`. [PS10, Theorem 175.1, phase-reduction advice]. -/
+  (ofFn m.2.2.2.2.2)`. [PS10, Theorem 175.1, phase-reduction advice].
+`m.toData = reductionData (List.ofFn m.1) (List.ofFn m.2.1.2) (List.ofFn m.2.2.1) m.2.2.2.1
+(List.ofFn m.2.2.2.2.2)`. -/
 def toData {n a v q h : ℕ} (m : PhaseMetadata n a v q h) : List Bool :=
   reductionData (List.ofFn m.1) (List.ofFn m.2.1.2) (List.ofFn m.2.2.1) m.2.2.2.1
     (List.ofFn m.2.2.2.2.2)
@@ -77,6 +82,8 @@ theorem toData_eq {n a v q h : ℕ} (m : PhaseMetadata n a v q h) :
 
 /-- For metadata `m`, its common-input and verifier-tape word lengths are exactly `n,v`,
 its auxiliary and prefix word lengths are at most `a,h`, and its phase index is at most `q`.
+`(List.ofFn m.1).length = n ∧ (List.ofFn m.2.1.2).length ≤ a ∧ (List.ofFn m.2.2.1).length = v ∧
+(m.2.2.2.1 : ℕ) ≤ q ∧ (List.ofFn m.2.2.2.2.2).length ≤ h`.
 -/
 theorem word_lengths {n a v q h : ℕ} (m : PhaseMetadata n a v q h) :
     (List.ofFn m.1).length = n ∧ (List.ofFn m.2.1.2).length ≤ a ∧

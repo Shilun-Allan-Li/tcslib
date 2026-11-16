@@ -37,6 +37,7 @@ open Complexity
 `PaddedProverSpec π ρ x (Q.eval |x|) p` at every `x`, with the original mover-dependent
 real-message count `p`, then `ρ` is statistically zero knowledge with error `Q(n)*δ(n)`.
 [PS10, Theorem 175.1; Gol01, §4.3.4].
+`StatZK ρ R (fun n => Q.eval n * δ n)`.
 
 **Proof sketch.** Apply the original statistical hypothesis to the efficient fixed-tape
 phase verifier. The existing uniform prefix machine supplies one strict-PPT simulator using

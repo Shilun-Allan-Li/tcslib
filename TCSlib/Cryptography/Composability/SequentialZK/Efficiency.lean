@@ -37,7 +37,9 @@ namespace TCSlib.Cryptography.Composability.SeqEfficiency
 open Complexity Turing
 
 /-- For a history `hist` and count `c`, cutting its encoding immediately before the encoding
-of `hist.drop c` gives `Strategy.encodeMsgs (hist.take c)`. -/
+of `hist.drop c` gives `Strategy.encodeMsgs (hist.take c)`.
+`(Strategy.encodeMsgs hist).take ((Strategy.encodeMsgs hist).length - (pairSndD^[c]
+(Strategy.encodeMsgs hist)).length) = Strategy.encodeMsgs (hist.take c)`. -/
 theorem take_encodeMsgs (hist : List (List Bool)) (c : ℕ) :
     (Strategy.encodeMsgs hist).take ((Strategy.encodeMsgs hist).length -
       (pairSndD^[c] (Strategy.encodeMsgs hist)).length) = Strategy.encodeMsgs (hist.take c) := by
@@ -49,7 +51,8 @@ theorem take_encodeMsgs (hist : List (List Bool)) (c : ℕ) :
 
 /-- For polynomial-time `M` and a unary polynomial-time count `c`, the word
 `(M w).take ((M w).length - (pairSndD^[c w] (M w)).length)` is polynomial-time. On an
-encoded history it is the encoding of the first `c w` messages (`take_encodeMsgs`). -/
+encoded history it is the encoding of the first `c w` messages (`take_encodeMsgs`).
+`PolyTimeComputable fun w => (M w).take ((M w).length - (pairSndD^[c w] (M w)).length)`. -/
 theorem takeMsgs_poly {M : List Bool → List Bool} (hM : PolyTimeComputable M)
     {c : List Bool → ℕ} (hc : PolyTimeComputable fun w => List.replicate (c w) true) :
     PolyTimeComputable fun w =>

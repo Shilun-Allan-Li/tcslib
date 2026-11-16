@@ -36,7 +36,9 @@ namespace TCSlib.Cryptography.Composability
 `q`, real prover-message count `p`, and terminal reply function `terminal z r hist`,
 `PaddedVerifierSpec π ρ x q p terminal` collects the coin, move, reply, verdict, and history
 length equations displayed below. Here a real phase has `π.rounds.eval |x|` moves and is
-padded to twice that length. [PS10, Theorem 175.1]. -/
+padded to twice that length. [PS10, Theorem 175.1].
+Its first three fields state `ρ.V.coinLen x.length = q * π.V.coinLen x.length`, `ρ.rounds.eval
+x.length = 2 * π.rounds.eval x.length * q` and `ρ.verifierFirst = π.verifierFirst`. -/
 structure PaddedVerifierSpec (π ρ : Protocol) (x : List Bool) (q p : ℕ)
     (terminal : List Bool → List Bool → List (List Bool) → List Bool) : Prop where
   /-- The verifier coin length is `ρ.V.coinLen |x| = q * π.V.coinLen |x|`. -/

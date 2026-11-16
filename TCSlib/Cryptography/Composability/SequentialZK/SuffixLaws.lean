@@ -34,7 +34,9 @@ namespace TCSlib.Cryptography.SequentialZK
 open Complexity
 
 /-- If global block `j` of `rS` equals `List.ofFn coin`, the normalized raw-tape update
-`phaseStep` equals the typed update `simStep` on `coin`. -/
+`phaseStep` equals the typed update `simStep` on `coin`.
+`phaseStep S k B verifierFirst x z rV rS j pre = simStep S x z rV (k.eval x.length) (B.eval
+x.length) (if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2) j pre coin`. -/
 theorem phaseStep_eq_simStep (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
     (x z rV rS : List Bool) (j : ℕ) (pre : List (List Bool)) (coin : S.Coins x.length)
     (hcoin : coinBlock (S.coinLen x.length) j rS = List.ofFn coin) :

@@ -185,7 +185,9 @@ def StatZK (π : Protocol) (R : List Bool → List Bool → Prop) (δ : ℕ → 
 
 /-- Statistical zero-knowledge is equivalent to the simulator property: for every efficient
 verifier `V'` there is a uniform simulator `S` with statistical error at most `δ(|x|)` on
-`(x, z)` for every witness `y` satisfying `R x y`. [PS10, §4.6]. -/
+`(x, z)` for every witness `y` satisfying `R x y`. [PS10, §4.6].
+`StatZK π R δ ↔ ∀ V' : Strategy, V'.Efficient → ∃ S : NUPPT, S.Uniform ∧ ∀ x y z, R x y → StatClose
+(fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z) (δ x.length)`. -/
 theorem StatZK_iff (π : Protocol) (R : List Bool → List Bool → Prop) (δ : ℕ → ℝ) :
     StatZK π R δ ↔ ∀ V' : Strategy, V'.Efficient →
       ∃ S : NUPPT, S.Uniform ∧ ∀ x y z, R x y →

@@ -43,6 +43,8 @@ open Complexity Turing Composability
 interval of `t` moves after `g`, if every active prover reply is empty, the verifier's
 received history appends exactly as many empty messages as its length increases.
 [PS10, Theorem 175.1, honest-prover fillers].
+`(exec P V vFirst x y z rP rV (g + t)).2 = (exec P V vFirst x y z rP rV g).2 ++ List.replicate
+((exec P V vFirst x y z rP rV (g + t)).2.length - (exec P V vFirst x y z rP rV g).2.length) []`.
 
 **Proof sketch.** Induct on the interval length to express the new received history as the
 old history followed by some number of empty messages. Verifier moves keep it fixed and

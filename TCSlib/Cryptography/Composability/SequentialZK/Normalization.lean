@@ -45,7 +45,9 @@ theorem encodeMsgs_eq_encWords (h : List (List Bool)) :
 
 /-- Bounded message slots: `normalizeMsgs p B raw` is the list of the first `p` words decoded
 from `raw`, with missing words replaced by `[]` and every word truncated to `B` bits.
-[PS10, Theorem 175.1, bounded phase-shape normalization]. -/
+[PS10, Theorem 175.1, bounded phase-shape normalization].
+`normalizeMsgs p B raw = (List.range p).map (fun i => ((BinArith.decWords raw).getD i []).take
+B)`. -/
 def normalizeMsgs (p B : ℕ) (raw : List Bool) : List (List Bool) :=
   (List.range p).map fun i => ((BinArith.decWords raw).getD i []).take B
 

@@ -45,6 +45,7 @@ open Complexity
 at every auxiliary input imply `δ`-close `realStep` and `simStep` at every index `i` and
 prefix `pre`. No shape assumption on `pre` and no efficiency assumption on `S` is required.
 [PS10, Theorem 175.1; Gol01, §4.3.4].
+`StatClose (realStep π V x y z rV p i pre) (simStep S x z rV (π.rounds.eval x.length) B p i pre) δ`.
 
 **Proof sketch.** Instantiate the zero-verifier normalization comparison with the original
 protocol whose verifier is the phase wrapper. The published wrapper reader supplies its

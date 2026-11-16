@@ -38,7 +38,8 @@ namespace TCSlib.Cryptography.SequentialZK
 open Complexity Turing
 
 /-- Canonical reencoding is polynomial-time: if `raw` is polynomial-time, so is
-`w ↦ BinArith.encWords (BinArith.decWords (raw w))`. -/
+`w ↦ BinArith.encWords (BinArith.decWords (raw w))`.
+`PolyTimeComputable fun w => BinArith.encWords (BinArith.decWords (raw w))`. -/
 theorem polyTimeComputable_encWords_decWords {raw : List Bool → List Bool}
     (hraw : PolyTimeComputable raw) :
     PolyTimeComputable fun w => BinArith.encWords (BinArith.decWords (raw w)) := by
@@ -49,7 +50,8 @@ theorem polyTimeComputable_encWords_decWords {raw : List Bool → List Bool}
   simp only [Function.comp_apply, BinArith.mapW_pairEncode, pairSndD_pairEncode, List.map_id']
 
 /-- Total decoded-word lookup is polynomial-time: if `raw` and the unary index `i` are
-polynomial-time, so is `w ↦ (BinArith.decWords (raw w)).getD (i w) []`. -/
+polynomial-time, so is `w ↦ (BinArith.decWords (raw w)).getD (i w) []`.
+`PolyTimeComputable fun w => (BinArith.decWords (raw w)).getD (i w) []`. -/
 theorem polyTimeComputable_decWords_getD {raw : List Bool → List Bool}
     (hraw : PolyTimeComputable raw) {i : List Bool → ℕ}
     (hi : PolyTimeComputable fun w => List.replicate (i w) true) :
@@ -63,6 +65,7 @@ theorem polyTimeComputable_decWords_getD {raw : List Bool → List Bool}
 and `raw` is polynomial-time, then so is
 `w ↦ Strategy.encodeMsgs (normalizeMsgs (p w) (B w) (raw w))`.
 [PS10, Theorem 175.1, bounded phase-shape normalization].
+`PolyTimeComputable fun w => Strategy.encodeMsgs (normalizeMsgs (p w) (B w) (raw w))`.
 
 **Proof sketch.** Canonically reencode the total decoder's result through the generic word
 map. The generic lookup host reads each requested slot, including empty defaults beyond the

@@ -119,7 +119,10 @@ theorem prefix_distAdv_le {C : Type*} [Fintype C] {π ρ : Protocol}
 
 /-- If the fixed-verifier-tape local gaps satisfy the same bound for every verifier tape,
 the joint canonical real/simulated prefix views have advantage at most `Q(|x|)*ε`.
-[PS10, Theorem 175.1, averaging the verifier tape]. -/
+[PS10, Theorem 175.1, averaging the verifier tape].
+`distAdv (fun r : V.Coins x.length × (Fin (Q.eval x.length) → π.P.Coins x.length) => View.encode ⟨x,
+z, List.ofFn r.1, realPrefix π V x y z (List.ofFn r.1) p (Q.eval x.length) r.2⟩) (fun r : V.Coins
+x.length × (Fin (Q.eval x.length) → …`. -/
 theorem prefix_distAdv_joint_le {C : Type*} [Fintype C] {π ρ : Protocol}
     (S : NUPPT) (B Q : PolyExpr) {x : List Bool} {p : ℕ}
     (d : PaddedProverSpec π ρ x (Q.eval x.length) p) (V : Strategy)
@@ -148,7 +151,8 @@ theorem prefix_distAdv_joint_le {C : Type*} [Fintype C] {π ρ : Protocol}
     prefix_distAdv_le S B Q d V y z (List.ofFn rV) D hp hbound ε hε (hlocal rV)
 
 /-- Reindexing two samplers by equivalences and supplied pointwise endpoint readers
-preserves the distinguishing advantage of any fixed `D`. -/
+preserves the distinguishing advantage of any fixed `D`.
+`distAdv F' G' D = distAdv F G D`. -/
 theorem distAdv_reindex {A B A' B' O C : Type*}
     [Fintype A] [Fintype B] [Fintype A'] [Fintype B'] [Fintype C]
     (F : A → O) (G : B → O) (F' : A' → O) (G' : B' → O) (D : O → C → Bool)
@@ -165,7 +169,10 @@ theorem distAdv_reindex {A B A' B' O C : Type*}
 
 /-- The actual encoded repeated view and `SQ.simulate` have exactly the advantage of the
 joint typed real/simulated prefix views, assuming their published padded-prover and raw
-simulator endpoint equations. [PS10, Theorem 175.1, computational endpoint transfer]. -/
+simulator endpoint equations. [PS10, Theorem 175.1, computational endpoint transfer].
+`distAdv (fun r => ((ρ.withV V).viewV x y z r).encode) (SQ.simulate x z) D = distAdv (fun r :
+V.Coins x.length × (Fin q → π.P.Coins x.length) => View.encode ⟨x, z, List.ofFn r.1, realPrefix π V
+x y z (List.ofFn r.1) p q r.2⟩) (fun r : …`. -/
 theorem distAdv_view_endpoints {C : Type*} [Fintype C] {π ρ : Protocol}
     {x : List Bool} {q p : ℕ} (d : PaddedProverSpec π ρ x q p) (V : Strategy)
     (y z : List Bool) (S SQ : NUPPT) (B : PolyExpr)

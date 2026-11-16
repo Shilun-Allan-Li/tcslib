@@ -54,7 +54,11 @@ def phaseStep (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
       List.replicate (k.eval x.length - p) [])
 
 /-- The equation for `phaseStep S k B verifierFirst x z rV rS j pre` is the earlier prefix
-followed by normalized real messages from simulator coin block `j` and then empty fillers. -/
+followed by normalized real messages from simulator coin block `j` and then empty fillers.
+`phaseStep S k B verifierFirst x z rV rS j pre = let aux := phaseAux z rV j pre; let p := if
+verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2; pre ++ (normalizePhaseMsgs x
+aux p (B.eval x.length) (S.runAtL x.length (pairEncode x aux) (coinBlock (S.coinLen x.length) j rS))
+++ List.replicate (k.eval x.length - p) [])`. -/
 theorem phaseStep_eq (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
     (x z rV rS : List Bool) (j : ℕ) (pre : List (List Bool)) :
     phaseStep S k B verifierFirst x z rV rS j pre =
@@ -66,6 +70,8 @@ theorem phaseStep_eq (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
 
 /-- One normalized step increases the encoded prefix length by at most
 `k(|x|) * (2*B(|x|)+2)`, regardless of the earlier messages or simulator output.
+`(Strategy.encodeMsgs (phaseStep S k B verifierFirst x z rV rS j pre)).length ≤ (Strategy.encodeMsgs
+pre).length + k.eval x.length * (2 * B.eval x.length + 2)`.
 
 **Proof sketch.** The normalized real portion has `p` messages of at most `B` bits and the
 remaining `k-p` messages are empty. Their encoding lengths are bounded by `p(2B+2)` and
@@ -102,6 +108,8 @@ polynomial-time phase `J`, and a message family `H` with polynomial-time encodin
 normalized update is polynomial-time: `w ↦ encodeMsgs (phaseStep S k B verifierFirst
 (X w) (Z w) (RV w) (RS w) (J w) (H w))`. No message bound on `H` is required.
 [PS10, Theorem 175.1, simulated-suffix step].
+`PolyTimeComputable fun w => Strategy.encodeMsgs (phaseStep S k B verifierFirst (X w) (Z w) (RV w)
+(RS w) (J w) (H w))`.
 
 **Proof sketch.** Assemble the phase auxiliary word from the input functions and encoded
 prefix, cut out global simulator coin block `J`, and run the original uniform simulator's
@@ -150,7 +158,10 @@ theorem phaseStep_poly (S : NUPPT) (hS : S.Uniform) (k B : PolyExpr)
 /-- Starting from `pre0` at phase `start`, `phaseSuffix S k B verifierFirst x z rV rS start
 pre0 t` applies the normalized append update at phases `start, …, start+t-1`, reading those
 global coin blocks from `rS`. It is a mathematical sequence realized below by the existing
-published counted-loop host. [PS10, Theorem 175.1, normalized simulated suffix]. -/
+published counted-loop host. [PS10, Theorem 175.1, normalized simulated suffix].
+`phaseSuffix S k B verifierFirst x z rV rS start pre0 t = match t with | 0 => pre0 | i + 1 =>
+phaseStep S k B verifierFirst x z rV rS (start + i) (phaseSuffix S k B verifierFirst x z rV rS start
+pre0 i)`. -/
 def phaseSuffix (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
     (x z rV rS : List Bool) (start : ℕ) (pre0 : List (List Bool)) : ℕ → List (List Bool)
   | 0 => pre0
@@ -171,7 +182,10 @@ theorem phaseSuffix_succ (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
         (phaseSuffix S k B verifierFirst x z rV rS start pre0 i) := rfl
 
 /-- The exhaustive suffix equation returns `pre0` at zero and, at `i+1`, applies
-`phaseStep` at global index `start+i` to `phaseSuffix … i`. -/
+`phaseStep` at global index `start+i` to `phaseSuffix … i`.
+`phaseSuffix S k B verifierFirst x z rV rS start pre0 t = match t with | 0 => pre0 | i + 1 =>
+phaseStep S k B verifierFirst x z rV rS (start + i) (phaseSuffix S k B verifierFirst x z rV rS start
+pre0 i)`. -/
 theorem phaseSuffix_eq (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
     (x z rV rS : List Bool) (start : ℕ) (pre0 : List (List Bool)) (t : ℕ) :
     phaseSuffix S k B verifierFirst x z rV rS start pre0 t =
@@ -185,7 +199,9 @@ theorem phaseSuffix_eq (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
 
 /-- For any initial prefix `pre0`, the suffix encoding grows by at most
 `t * k(|x|) * (2*B(|x|)+2)` beyond its initial encoded length. No bound is required on
-individual initial messages or on the starting phase index. -/
+individual initial messages or on the starting phase index.
+`(Strategy.encodeMsgs (phaseSuffix S k B verifierFirst x z rV rS start pre0 t)).length ≤
+(Strategy.encodeMsgs pre0).length + t * k.eval x.length * (2 * B.eval x.length + 2)`. -/
 theorem length_encodeMsgs_phaseSuffix_le (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
     (x z rV rS : List Bool) (start : ℕ) (pre0 : List (List Bool)) (t : ℕ) :
     (Strategy.encodeMsgs (phaseSuffix S k B verifierFirst x z rV rS start pre0 t)).length ≤
@@ -204,6 +220,8 @@ polynomial-time starting phase/count `Start,Count`, and initial message family `
 polynomial-time encoding, the entire suffix encoding is polynomial-time. There is no range
 premise on `Start,Count` and no bound on individual messages of `H`.
 [PS10, Theorem 175.1; Gol01, §4.3.4, efficient simulated suffix].
+`PolyTimeComputable fun w => Strategy.encodeMsgs (phaseSuffix S k B verifierFirst (X w) (Z w) (RV w)
+(RS w) (Start w) (H w) (Count w))`.
 
 **Proof sketch.** Use the published counted-loop host with encoded-prefix state and its
 existing unary counter `i`. The update is the polynomial-time leaf `phaseStep_poly`, at index
@@ -292,7 +310,9 @@ theorem phaseSuffix_poly (S : NUPPT) (hS : S.Uniform) (k B : PolyExpr)
 /-- For uniform `S`, fixed `k,B,verifierFirst`, polynomial-time words `X,Z,RV,RS,Raw`, and
 unary polynomial-time `Start,Count`, decode the arbitrary word `Raw w` as the initial prefix.
 The resulting suffix encoding is polynomial-time on every input, including malformed words
-and phase indices beyond the available tape. -/
+and phase indices beyond the available tape.
+`PolyTimeComputable fun w => Strategy.encodeMsgs (phaseSuffix S k B verifierFirst (X w) (Z w) (RV w)
+(RS w) (Start w) (BinArith.decWords (Raw w)) (Count w))`. -/
 theorem phaseSuffix_raw_poly (S : NUPPT) (hS : S.Uniform) (k B : PolyExpr)
     (verifierFirst : Bool) {X Z RV RS Raw : List Bool → List Bool}
     {Start Count : List Bool → ℕ}

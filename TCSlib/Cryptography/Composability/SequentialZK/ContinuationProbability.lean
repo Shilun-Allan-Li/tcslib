@@ -36,7 +36,8 @@ namespace TCSlib.Cryptography.SequentialZK
 
 open Complexity
 
-/-- Acceptance over sampler seeds `A×B` is the average over `a:A` of acceptance over `B`. -/
+/-- Acceptance over sampler seeds `A×B` is the average over `a:A` of acceptance over `B`.
+`acceptProb F D = uexp (fun a => acceptProb (fun b => F (a, b)) D)`. -/
 theorem acceptProb_prod {A B O C : Type*} [Fintype A] [Fintype B] [Fintype C]
     (F : A × B → O) (D : O → C → Bool) :
     acceptProb F D = uexp (fun a => acceptProb (fun b => F (a, b)) D) := by
@@ -83,6 +84,9 @@ theorem acceptProb_postprocess_fst {A Z B Raw O C : Type*}
 /-- `continuationProb … D i pre` is acceptance by `D` after simulating phases
 `i,…,Q(|x|)-1` from `pre`, with an independent full table of `Q(|x|)` simulator tapes.
 Only the suffix's own blocks are used. [PS10, Theorem 175.1, hybrid continuation potential].
+`continuationProb S k B Q verifierFirst x z rV D i pre = acceptProb (fun coins : Fin (Q.eval
+x.length) → S.Coins x.length => View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV
+(List.ofFn ((FunFamily.blocks (Q.eval x.length) …`.
 -/
 noncomputable def continuationProb {C : Type*} [Fintype C]
     (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool) (x z rV : List Bool)
@@ -93,7 +97,10 @@ noncomputable def continuationProb {C : Type*} [Fintype C]
       i pre (Q.eval x.length - i)⟩) D
 
 /-- The defining equation of `continuationProb` is the acceptance of the canonical view
-whose message list is the remaining `phaseSuffix`, sampled from the full typed coin table. -/
+whose message list is the remaining `phaseSuffix`, sampled from the full typed coin table.
+`continuationProb S k B Q verifierFirst x z rV D i pre = acceptProb (fun coins : Fin (Q.eval
+x.length) → S.Coins x.length => View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV
+(List.ofFn ((FunFamily.blocks (Q.eval x.length) …`. -/
 theorem continuationProb_eq {C : Type*} [Fintype C]
     (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool) (x z rV : List Bool)
     (D : List Bool → C → Bool) (i : ℕ) (pre : List (List Bool)) :
@@ -159,6 +166,9 @@ theorem continuationProb_bellman {C : Type*} [Fintype C]
 phase view, normalized and passed to `phaseContinuation`, has acceptance equal to the
 average next continuation potential of `realStep`. The wrapper's zero verifier coins
 are removed through the public uniform-product laws.
+`acceptProb (fun r : (π.withV (phaseVerifier V)).ExecCoins (π.withV (phaseVerifier V)).P x =>
+((π.withV (phaseVerifier V)).viewV x y (phaseAux z rV i pre) r).encode) (fun raw (r : (Fin (Q.eval
+x.length) → S.Coins x.length) × C) => D …`.
 
 **Proof sketch.** The published real-view fixed point identifies normalized messages with
 the original phase's verifier history. The specification supplies its exact message count;
@@ -305,7 +315,10 @@ theorem continuationProb_sim {C : Type*} [Fintype C]
 /-- The local raw-view gap at `i,pre`: original `π.P` against the fixed-tape phase verifier
 versus `S.simulate`, tested by the normalized `phaseContinuation` with independent full
 simulator-table coins and `D` coins. The witness `y` appears only in the mathematical real
-sampler. [PS10, Theorem 175.1, one-phase hybrid gap]. -/
+sampler. [PS10, Theorem 175.1, one-phase hybrid gap].
+`phaseGap π V S B Q x y z rV D i pre = distAdv (fun r : (π.withV (phaseVerifier V)).ExecCoins
+(π.withV (phaseVerifier V)).P x => ((π.withV (phaseVerifier V)).viewV x y (phaseAux z rV i pre)
+r).encode) (S.simulate x (phaseAux z rV i pre)) …`. -/
 noncomputable def phaseGap {C : Type*} [Fintype C] (π : Protocol) (V : Strategy)
     (S : NUPPT) (B Q : PolyExpr) (x y z rV : List Bool) (D : List Bool → C → Bool)
     (i : ℕ) (pre : List (List Bool)) : ℝ :=
@@ -318,7 +331,10 @@ noncomputable def phaseGap {C : Type*} [Fintype C] (π : Protocol) (V : Strategy
         (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.1))) r.2)
 
 /-- The defining equation of `phaseGap` is the displayed raw real-view/simulator
-`distAdv` after `phaseContinuation`, using a full independent typed simulator table. -/
+`distAdv` after `phaseContinuation`, using a full independent typed simulator table.
+`phaseGap π V S B Q x y z rV D i pre = distAdv (fun r : (π.withV (phaseVerifier V)).ExecCoins
+(π.withV (phaseVerifier V)).P x => ((π.withV (phaseVerifier V)).viewV x y (phaseAux z rV i pre)
+r).encode) (S.simulate x (phaseAux z rV i pre)) …`. -/
 theorem phaseGap_eq {C : Type*} [Fintype C] (π : Protocol) (V : Strategy)
     (S : NUPPT) (B Q : PolyExpr) (x y z rV : List Bool) (D : List Bool → C → Bool)
     (i : ℕ) (pre : List (List Bool)) :

@@ -44,19 +44,26 @@ open Complexity Turing
 
 /-- For original auxiliary input `z`, verifier tape `r`, phase `j` and received prefix
 `pre`, the phase auxiliary word is `⟨z, ⟨r, ⟨1^j, encodeMsgs pre⟩⟩⟩`.
-[PS10, Theorem 175.1, phase-verifier auxiliary data]. -/
+[PS10, Theorem 175.1, phase-verifier auxiliary data].
+`phaseAux z r j pre = pairEncode z (pairEncode r (pairEncode (List.replicate j true)
+(Strategy.encodeMsgs pre)))`. -/
 def phaseAux (z r : List Bool) (j : ℕ) (pre : List (List Bool)) : List Bool :=
   pairEncode z (pairEncode r (pairEncode (List.replicate j true) (Strategy.encodeMsgs pre)))
 
 /-- The equation for `phaseAux z r j pre` is the nested pair
-`pairEncode z (pairEncode r (pairEncode (List.replicate j true) (encodeMsgs pre)))`. -/
+`pairEncode z (pairEncode r (pairEncode (List.replicate j true) (encodeMsgs pre)))`.
+`phaseAux z r j pre = pairEncode z (pairEncode r (pairEncode (List.replicate j true)
+(Strategy.encodeMsgs pre)))`. -/
 theorem phaseAux_eq (z r : List Bool) (j : ℕ) (pre : List (List Bool)) :
     phaseAux z r j pre =
       pairEncode z (pairEncode r (pairEncode (List.replicate j true)
         (Strategy.encodeMsgs pre))) := rfl
 
 /-- The four projection fields of `phaseAux z r j pre` are, in order,
-`z`, `r`, `List.replicate j true`, and `Strategy.encodeMsgs pre`. -/
+`z`, `r`, `List.replicate j true`, and `Strategy.encodeMsgs pre`.
+`pairFstD (phaseAux z r j pre) = z ∧ pairFstD (pairSndD (phaseAux z r j pre)) = r ∧ pairFstD
+(pairSndD (pairSndD (phaseAux z r j pre))) = List.replicate j true ∧ pairSndD (pairSndD (pairSndD
+(phaseAux z r j pre))) = Strategy.encodeMsgs pre`. -/
 theorem phaseAux_fields (z r : List Bool) (j : ℕ) (pre : List (List Bool)) :
     pairFstD (phaseAux z r j pre) = z ∧
     pairFstD (pairSndD (phaseAux z r j pre)) = r ∧
@@ -89,7 +96,9 @@ theorem phaseAux_prefix (z r : List Bool) (j : ℕ) (pre : List (List Bool)) :
 /-- The phase wrapper of `V` runs on original input `x`, the first auxiliary field as `z`,
 the second as fixed tape, and the decoded prefix followed by its current received history.
 Its own random-tape polynomial is `PolyExpr.const 0`.
-[PS10, Theorem 175.1; Gol01, §4.3.4, the fixed-prefix phase verifier]. -/
+[PS10, Theorem 175.1; Gol01, §4.3.4, the fixed-prefix phase verifier].
+`phaseVerifier V = { next := fun x aux _ hist => V.next x (pairFstD aux) (pairFstD (pairSndD aux))
+(BinArith.decWords (pairSndD (pairSndD (pairSndD aux))) ++ hist), coins := .const 0 }`. -/
 def phaseVerifier (V : Strategy) : Strategy where
   next x aux _ hist :=
     V.next x (pairFstD aux) (pairFstD (pairSndD aux))
@@ -106,11 +115,14 @@ theorem phaseVerifier_eq (V : Strategy) :
             (BinArith.decWords (pairSndD (pairSndD (pairSndD aux))) ++ hist)
         coins := .const 0 } := rfl
 
-/-- The coin polynomial of `phaseVerifier V` is `PolyExpr.const 0`. -/
+/-- The coin polynomial of `phaseVerifier V` is `PolyExpr.const 0`.
+`(phaseVerifier V).coins = .const 0`. -/
 theorem phaseVerifier_coins (V : Strategy) : (phaseVerifier V).coins = .const 0 := rfl
 
 /-- For `V, x, aux, r, hist`, the next message of the phase wrapper is
-`V.next x (pairFstD aux) (pairFstD (pairSndD aux)) (decWords (snd (snd (snd aux))) ++ hist)`. -/
+`V.next x (pairFstD aux) (pairFstD (pairSndD aux)) (decWords (snd (snd (snd aux))) ++ hist)`.
+`(phaseVerifier V).next x aux r hist = V.next x (pairFstD aux) (pairFstD (pairSndD aux))
+(BinArith.decWords (pairSndD (pairSndD (pairSndD aux))) ++ hist)`. -/
 theorem phaseVerifier_next (V : Strategy) (x aux r : List Bool) (hist : List (List Bool)) :
     (phaseVerifier V).next x aux r hist =
       V.next x (pairFstD aux) (pairFstD (pairSndD aux))
@@ -183,7 +195,8 @@ theorem phaseVerifier_efficient {V : Strategy} (hV : V.Efficient) :
 
 /-- For polynomial-time words `Z, R`, a unary polynomial-time phase `J`, and a history
 family `H` whose encoding is polynomial-time, `w ↦ phaseAux (Z w) (R w) (J w) (H w)` is
-polynomial-time. -/
+polynomial-time.
+`PolyTimeComputable fun w => phaseAux (Z w) (R w) (J w) (H w)`. -/
 theorem phaseAux_poly {Z R : List Bool → List Bool} {J : List Bool → ℕ}
     {H : List Bool → List (List Bool)}
     (hZ : PolyTimeComputable Z) (hR : PolyTimeComputable R)

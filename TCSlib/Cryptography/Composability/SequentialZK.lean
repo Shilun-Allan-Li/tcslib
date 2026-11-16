@@ -270,7 +270,9 @@ theorem verifierMoveIndex_exec (P V : Strategy) (vFirst : Bool) (x zP zV rP rV :
 
 /-- For `P,V,vFirst,x,zP,zV,rP,rV,k,j`, each party has received exactly `j*k` messages
 at move `2*k*j`: both components of `exec P V vFirst x zP zV rP rV (2*k*j)` have length
-`j*k`. [PS10, Theorem 175.1, padded-phase boundaries]. -/
+`j*k`. [PS10, Theorem 175.1, padded-phase boundaries].
+`(exec P V vFirst x zP zV rP rV (2 * k * j)).1.length = j * k ∧ (exec P V vFirst x zP zV rP rV (2 *
+k * j)).2.length = j * k`. -/
 theorem exec_boundary_lengths (P V : Strategy) (vFirst : Bool)
     (x zP zV rP rV : List Bool) (k j : ℕ) :
     (exec P V vFirst x zP zV rP rV (2 * k * j)).1.length = j * k ∧

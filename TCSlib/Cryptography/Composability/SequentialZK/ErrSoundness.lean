@@ -58,6 +58,8 @@ auxiliary input `y`, tape `rP`, earlier received history `prior`, and verifier a
 input `z`, the probability over `rV : π.V.Coins |x|` that `π.V.next` accepts the execution
 of `prefixProver P y rP prior` on prover tape `[]` and verifier tape `List.ofFn rV` is at
 most `s |x|`. [PS10, Theorem 175.1, soundness with an earlier transcript fixed].
+`uprob (fun rV : π.V.Coins x.length => π.V.next x z (List.ofFn rV) (exec (prefixProver P y rP prior)
+π.V π.verifierFirst x [] z [] (List.ofFn rV) (π.rounds.eval x.length)).2 = [true]) ≤ s x.length`.
 
 **Proof sketch.** Apply the explicit-error acceptance bound to the prefix-hardwired prover.
 Its coin polynomial is zero, so every one of its coin strings is empty. Read the verifier

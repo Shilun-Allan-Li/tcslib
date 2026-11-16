@@ -46,7 +46,9 @@ open Complexity Turing
 /-- The validated message payload is `pairSndD (pairSndD raw)` when `raw` is exactly the
 encoding of `⟨x,z,[],decWords (pairSndD (pairSndD raw))⟩`, and is `[]` otherwise. This checks
 the known common input, auxiliary input, empty wrapper tape, and canonical message encoding.
-[PS10, Theorem 175.1, canonical phase-view fallback]. -/
+[PS10, Theorem 175.1, canonical phase-view fallback].
+`phaseViewPayload x z raw = if raw = View.encode ⟨x, z, [], BinArith.decWords (pairSndD (pairSndD
+raw))⟩ then pairSndD (pairSndD raw) else []`. -/
 def phaseViewPayload (x z raw : List Bool) : List Bool :=
   if raw = View.encode ⟨x, z, [], BinArith.decWords (pairSndD (pairSndD raw))⟩ then
     pairSndD (pairSndD raw)
@@ -62,7 +64,8 @@ theorem phaseViewPayload_eq (x z raw : List Bool) :
 
 /-- Canonical phase-view normalization validates `raw` for the known fields `x,z,[]`, then
 supplies exactly `p` slots, each truncated to `B` bits, with empty defaults. A malformed view
-therefore supplies `p` empty messages. [PS10, Theorem 175.1, phase-shape normalization]. -/
+therefore supplies `p` empty messages. [PS10, Theorem 175.1, phase-shape normalization].
+`normalizePhaseMsgs x z p B raw = normalizeMsgs p B (phaseViewPayload x z raw)`. -/
 def normalizePhaseMsgs (x z : List Bool) (p B : ℕ) (raw : List Bool) : List (List Bool) :=
   normalizeMsgs p B (phaseViewPayload x z raw)
 
@@ -126,6 +129,7 @@ theorem normalizePhaseMsgs_of_ne (x z : List Bool) (p B : ℕ) (raw : List Bool)
 
 /-- Canonical phase-view validation is polynomial-time: polynomial-time `x`, `z` and `raw`
 give a polynomial-time map `w ↦ phaseViewPayload (x w) (z w) (raw w)`.
+`PolyTimeComputable fun w => phaseViewPayload (x w) (z w) (raw w)`.
 
 **Proof sketch.** Extract the candidate message word through two pair projections, and
 canonically reencode its total decoding through the word-map host. Pair this encoding with
@@ -152,7 +156,9 @@ theorem polyTimeComputable_phaseViewPayload {x z raw : List Bool → List Bool}
 /-- Canonical bounded phase-view normalization is polynomial-time: polynomial-time `x`, `z`
 and `raw`, and unary-computable `p` and `B`, give a polynomial-time map
 `w ↦ Strategy.encodeMsgs (normalizePhaseMsgs (x w) (z w) (p w) (B w) (raw w))`.
-[PS10, Theorem 175.1, bounded canonical phase-view normalization]. -/
+[PS10, Theorem 175.1, bounded canonical phase-view normalization].
+`PolyTimeComputable fun w => Strategy.encodeMsgs (normalizePhaseMsgs (x w) (z w) (p w) (B w) (raw
+w))`. -/
 theorem polyTimeComputable_encode_normalizePhaseMsgs {x z raw : List Bool → List Bool}
     {p B : List Bool → ℕ}
     (hx : PolyTimeComputable x) (hz : PolyTimeComputable z) (hraw : PolyTimeComputable raw)

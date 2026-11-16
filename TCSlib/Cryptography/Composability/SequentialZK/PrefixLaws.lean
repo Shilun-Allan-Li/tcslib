@@ -42,7 +42,9 @@ theorem realPrefix_zero (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p
   rw [realPrefix_eq, Fin.foldl_zero]
 
 /-- For `π,V,x,y,z,rV,p,q,r`, the prefix on `q+1` coins equals `realStep` at index `q`
-applied to the prefix on the first `q` coins and to the last coin `r (Fin.last q)`. -/
+applied to the prefix on the first `q` coins and to the last coin `r (Fin.last q)`.
+`realPrefix π V x y z rV p (q + 1) r = realStep π V x y z rV p q (realPrefix π V x y z rV p q (fun i
+=> r i.castSucc)) (r (Fin.last q))`. -/
 theorem realPrefix_succ (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p q : ℕ)
     (r : Fin (q + 1) → π.P.Coins x.length) :
     realPrefix π V x y z rV p (q + 1) r =
@@ -52,7 +54,9 @@ theorem realPrefix_succ (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p
   rfl
 
 /-- For `π,V,x,y,z,rV,p,q,r,coin`, appending `coin` to `r` extends its real prefix by
-`realStep π V x y z rV p q` on that coin. -/
+`realStep π V x y z rV p q` on that coin.
+`realPrefix π V x y z rV p (q + 1) (Fin.snoc r coin) = realStep π V x y z rV p q (realPrefix π V x y
+z rV p q r) coin`. -/
 theorem realPrefix_snoc (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p q : ℕ)
     (r : Fin q → π.P.Coins x.length) (coin : π.P.Coins x.length) :
     realPrefix π V x y z rV p (q + 1) (Fin.snoc r coin) =
@@ -66,7 +70,9 @@ theorem simPrefix_zero (S : NUPPT) (x z rV : List Bool) (k B p : ℕ)
   rw [simPrefix_eq, Fin.foldl_zero]
 
 /-- For `S,x,z,rV,k,B,p,q,r`, the prefix on `q+1` coins equals `simStep` at index `q`
-applied to the prefix on the first `q` coins and to the last coin `r (Fin.last q)`. -/
+applied to the prefix on the first `q` coins and to the last coin `r (Fin.last q)`.
+`simPrefix S x z rV k B p (q + 1) r = simStep S x z rV k B p q (simPrefix S x z rV k B p q (fun i =>
+r i.castSucc)) (r (Fin.last q))`. -/
 theorem simPrefix_succ (S : NUPPT) (x z rV : List Bool) (k B p q : ℕ)
     (r : Fin (q + 1) → S.Coins x.length) :
     simPrefix S x z rV k B p (q + 1) r =
@@ -76,7 +82,9 @@ theorem simPrefix_succ (S : NUPPT) (x z rV : List Bool) (k B p q : ℕ)
   rfl
 
 /-- For `S,x,z,rV,k,B,p,q,r,coin`, appending `coin` to `r` extends its normalized prefix by
-`simStep S x z rV k B p q` on that coin. -/
+`simStep S x z rV k B p q` on that coin.
+`simPrefix S x z rV k B p (q + 1) (Fin.snoc r coin) = simStep S x z rV k B p q (simPrefix S x z rV k
+B p q r) coin`. -/
 theorem simPrefix_snoc (S : NUPPT) (x z rV : List Bool) (k B p q : ℕ)
     (r : Fin q → S.Coins x.length) (coin : S.Coins x.length) :
     simPrefix S x z rV k B p (q + 1) (Fin.snoc r coin) =

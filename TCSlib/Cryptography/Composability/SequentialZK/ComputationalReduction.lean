@@ -42,7 +42,9 @@ open Complexity Turing
 
 /-- For `x,z,rV,j,preWord`, the reduction metadata is
 `⟨x,⟨z,⟨rV,⟨1^j,preWord⟩⟩⟩⟩`. Keeping the prefix as a raw word gives an exact advice-size
-bound even on malformed metadata. [PS10, Theorem 175.1, phase-reduction advice]. -/
+bound even on malformed metadata. [PS10, Theorem 175.1, phase-reduction advice].
+`reductionData x z rV j preWord = pairEncode x (pairEncode z (pairEncode rV (pairEncode
+(List.replicate j true) preWord)))`. -/
 def reductionData (x z rV : List Bool) (j : ℕ) (preWord : List Bool) : List Bool :=
   pairEncode x (pairEncode z (pairEncode rV (pairEncode (List.replicate j true) preWord)))
 
@@ -54,7 +56,10 @@ theorem reductionData_eq (x z rV : List Bool) (j : ℕ) (preWord : List Bool) :
   rfl
 
 /-- The five projection fields of `reductionData x z rV j preWord`, in order, are
-`x,z,rV,List.replicate j true,preWord`. -/
+`x,z,rV,List.replicate j true,preWord`.
+`pairFstD (reductionData x z rV j preWord) = x ∧ pairFstD (pairSndD (reductionData x z rV j
+preWord)) = z ∧ pairFstD (pairSndD (pairSndD (reductionData x z rV j preWord))) = rV ∧ pairFstD
+(pairSndD (pairSndD (pairSndD (reductionData x z rV …`. -/
 theorem reductionData_fields (x z rV : List Bool) (j : ℕ) (preWord : List Bool) :
     pairFstD (reductionData x z rV j preWord) = x ∧
     pairFstD (pairSndD (reductionData x z rV j preWord)) = z ∧
@@ -65,7 +70,8 @@ theorem reductionData_fields (x z rV : List Bool) (j : ℕ) (preWord : List Bool
   simp only [reductionData_eq, pairFstD_pairEncode, pairSndD_pairEncode, and_self]
 
 /-- For polynomial-time `X,Z,RV,PreWord` and unary polynomial-time `J`, the metadata map
-`w ↦ reductionData (X w) (Z w) (RV w) (J w) (PreWord w)` is polynomial-time. -/
+`w ↦ reductionData (X w) (Z w) (RV w) (J w) (PreWord w)` is polynomial-time.
+`PolyTimeComputable fun w => reductionData (X w) (Z w) (RV w) (J w) (PreWord w)`. -/
 theorem reductionData_poly {X Z RV PreWord : List Bool → List Bool} {J : List Bool → ℕ}
     (hX : PolyTimeComputable X) (hZ : PolyTimeComputable Z) (hRV : PolyTimeComputable RV)
     (hJ : PolyTimeComputable fun w => List.replicate (J w) true)
@@ -123,6 +129,8 @@ unary polynomial-time phase `J`, and initial messages `H` with polynomial-time e
 `w ↦ phaseContinuation S k B Q verifierFirst (X w) (Z w) (RV w) (J w) (H w) (Raw w) (RS w)`
 is polynomial-time. No validity, reachability, witness, or phase-range premise is required.
 [PS10, Theorem 175.1, the one-phase hybrid machine].
+`PolyTimeComputable fun w => phaseContinuation S k B Q verifierFirst (X w) (Z w) (RV w) (J w) (H w)
+(Raw w) (RS w)`.
 
 **Proof sketch.** Build the expected phase auxiliary word and canonically normalize the
 current candidate. Append its real-message encoding and the existing empty-filler encoding
@@ -176,6 +184,9 @@ theorem phaseContinuation_poly (S : NUPPT) (hS : S.Uniform) (k B Q : PolyExpr)
 `phaseContinuation S k B Q verifierFirst x z rV j (decWords preWord) raw r`.
 This holds for every security parameter and every raw tape, without metadata validity tests.
 [PS10, Theorem 175.1, randomized one-phase hybrid continuation].
+`∃ U : NUPPT, U.Uniform ∧ U.coins = .mul Q S.coins ∧ ∀ (n : ℕ) (raw x z rV : List Bool) (j : ℕ)
+(preWord r : List Bool), U.runAtL n (pairEncode raw (reductionData x z rV j preWord)) r =
+phaseContinuation S k B Q verifierFirst x z rV j …`.
 
 **Proof sketch.** Decode the metadata through total pair projections, its phase through
 unary length, and its earlier prefix through the total word-list decoder. Apply
@@ -237,6 +248,9 @@ there is a nonuniform reduction with coins `Q*S.coins + D.coins`. Its activation
 the current raw phase, simulates the suffix on the first `Q*S.coins` bits, and runs `D` on
 the final canonical view with the remaining coins. No witness is stored or tested.
 [PS10, Theorem 175.1; Gol01, §4.3.4, advised one-phase hybrid reduction].
+`∃ Red : NUPPT, Red.coins = .add (.mul Q S.coins) D.coins ∧ ∀ (n : ℕ) (raw r : List Bool),
+Red.runAtL n raw r = D.runAtL n (phaseContinuation S k B Q verifierFirst (X n) (Z n) (RV n) (J n)
+(BinArith.decWords (PreWord n)) raw (r.take …`.
 
 **Proof sketch.** Take the uniform continuation sampler. Precompose `D` with the second pair
 projection, then apply the published fresh-coin sequential composition so that `D` receives

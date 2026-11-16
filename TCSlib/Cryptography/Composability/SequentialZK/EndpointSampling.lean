@@ -44,12 +44,15 @@ def coinTableEquiv {m q c : ℕ} (hlen : m = q * c) :
     (Fin m → Bool) ≃ (Fin q → Fin c → Bool) :=
   (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)).trans (FunFamily.blocks q c)
 
-/-- `coinTableEquiv hlen` is the finite-length cast followed by `FunFamily.blocks q c`. -/
+/-- `coinTableEquiv hlen` is the finite-length cast followed by `FunFamily.blocks q c`.
+`coinTableEquiv hlen = (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)).trans (FunFamily.blocks
+q c)`. -/
 theorem coinTableEquiv_eq {m q c : ℕ} (hlen : m = q * c) :
     coinTableEquiv hlen =
       (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)).trans (FunFamily.blocks q c) := rfl
 
-/-- Block `i` of `r` is the encoding of block `i` of `coinTableEquiv hlen r`. -/
+/-- Block `i` of `r` is the encoding of block `i` of `coinTableEquiv hlen r`.
+`coinBlock c i (List.ofFn r) = List.ofFn (coinTableEquiv hlen r i)`. -/
 theorem coinTableEquiv_block {m q c : ℕ} (hlen : m = q * c) (r : Fin m → Bool)
     (i : Fin q) :
     coinBlock c i (List.ofFn r) = List.ofFn (coinTableEquiv hlen r i) := by
@@ -68,7 +71,9 @@ def coinBlocksEquiv {m : ℕ} (v q c : ℕ) (hlen : m = v + q * c) :
       (Equiv.prodCongr (Equiv.refl _) (FunFamily.blocks q c)))
 
 /-- `coinBlocksEquiv v q c hlen` is the finite-length cast, then `splitCoins v (q*c)`,
-then the product of the identity on verifier coins and `FunFamily.blocks q c`. -/
+then the product of the identity on verifier coins and `FunFamily.blocks q c`.
+`coinBlocksEquiv v q c hlen = (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)).trans
+((splitCoins v (q * c)).trans (Equiv.prodCongr (Equiv.refl _) (FunFamily.blocks q c)))`. -/
 theorem coinBlocksEquiv_eq {m : ℕ} (v q c : ℕ) (hlen : m = v + q * c) :
     coinBlocksEquiv v q c hlen =
       (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)).trans
@@ -76,6 +81,7 @@ theorem coinBlocksEquiv_eq {m : ℕ} (v q c : ℕ) (hlen : m = v + q * c) :
           (Equiv.prodCongr (Equiv.refl _) (FunFamily.blocks q c))) := rfl
 
 /-- The verifier component of `coinBlocksEquiv v q c hlen r` encodes `(List.ofFn r).take v`.
+`List.ofFn (coinBlocksEquiv v q c hlen r).1 = (List.ofFn r).take v`.
 -/
 theorem coinBlocksEquiv_fst_ofFn {m : ℕ} (v q c : ℕ) (hlen : m = v + q * c)
     (r : Fin m → Bool) :
@@ -87,7 +93,8 @@ theorem coinBlocksEquiv_fst_ofFn {m : ℕ} (v q c : ℕ) (hlen : m = v + q * c)
   exact hfirst
 
 /-- Block `i` of the phase component of `coinBlocksEquiv v q c hlen r` encodes
-`coinBlock c i ((List.ofFn r).drop v)`. -/
+`coinBlock c i ((List.ofFn r).drop v)`.
+`coinBlock c i ((List.ofFn r).drop v) = List.ofFn ((coinBlocksEquiv v q c hlen r).2 i)`. -/
 theorem coinBlocksEquiv_block {m : ℕ} (v q c : ℕ) (hlen : m = v + q * c)
     (r : Fin m → Bool) (i : Fin q) :
     coinBlock c i ((List.ofFn r).drop v) =
@@ -144,7 +151,8 @@ theorem realPrefix_eq_exec {π ρ : Protocol} {x : List Bool} {q p : ℕ}
 
 /-- Reindex an actual `ρ.withV V` execution's coins as the verifier tape and the `q`
 original prover tapes. The prover split uses only `h.prover_coinLen`; the verifier part
-uses the published `withV_vCoinsEquiv`. -/
+uses the published `withV_vCoinsEquiv`.
+`(ρ.withV V).ExecCoins (ρ.withV V).P x ≃ V.Coins x.length × (Fin q → π.P.Coins x.length)`. -/
 def realCoinsEquiv {π ρ : Protocol} {x : List Bool} {q p : ℕ}
     (h : PaddedProverSpec π ρ x q p) (V : Strategy) :
     (ρ.withV V).ExecCoins (ρ.withV V).P x ≃
@@ -154,7 +162,9 @@ def realCoinsEquiv {π ρ : Protocol} {x : List Bool} {q p : ℕ}
     (ρ.withV_vCoinsEquiv V x.length)).trans (Equiv.prodComm _ _)
 
 /-- `h.realCoinsEquiv V` applies `coinTableEquiv` to the prover coins and
-`withV_vCoinsEquiv` to the verifier coins, then swaps the product coordinates. -/
+`withV_vCoinsEquiv` to the verifier coins, then swaps the product coordinates.
+`h.realCoinsEquiv V = (Equiv.prodCongr (coinTableEquiv (by rw [Protocol.withV_P]; exact
+h.prover_coinLen)) (ρ.withV_vCoinsEquiv V x.length)).trans (Equiv.prodComm _ _)`. -/
 theorem realCoinsEquiv_eq {π ρ : Protocol} {x : List Bool} {q p : ℕ}
     (h : PaddedProverSpec π ρ x q p) (V : Strategy) :
     h.realCoinsEquiv V =
@@ -162,14 +172,16 @@ theorem realCoinsEquiv_eq {π ρ : Protocol} {x : List Bool} {q p : ℕ}
         (coinTableEquiv (by rw [Protocol.withV_P]; exact h.prover_coinLen))
         (ρ.withV_vCoinsEquiv V x.length)).trans (Equiv.prodComm _ _) := rfl
 
-/-- The verifier component of `h.realCoinsEquiv V r` encodes the original verifier tape. -/
+/-- The verifier component of `h.realCoinsEquiv V r` encodes the original verifier tape.
+`List.ofFn (h.realCoinsEquiv V r).1 = List.ofFn r.2`. -/
 theorem realCoinsEquiv_fst_ofFn {π ρ : Protocol} {x : List Bool} {q p : ℕ}
     (h : PaddedProverSpec π ρ x q p) (V : Strategy)
     (r : (ρ.withV V).ExecCoins (ρ.withV V).P x) :
     List.ofFn (h.realCoinsEquiv V r).1 = List.ofFn r.2 :=
   ρ.withV_vCoinsEquiv_ofFn V x.length r.2
 
-/-- Block `i` of the repeated prover tape is block `i` of `h.realCoinsEquiv V r`. -/
+/-- Block `i` of the repeated prover tape is block `i` of `h.realCoinsEquiv V r`.
+`coinBlock (π.P.coinLen x.length) i (List.ofFn r.1) = List.ofFn ((h.realCoinsEquiv V r).2 i)`. -/
 theorem realCoinsEquiv_block {π ρ : Protocol} {x : List Bool} {q p : ℕ}
     (h : PaddedProverSpec π ρ x q p) (V : Strategy)
     (r : (ρ.withV V).ExecCoins (ρ.withV V).P x) (i : Fin q) :
@@ -178,7 +190,9 @@ theorem realCoinsEquiv_block {π ρ : Protocol} {x : List Bool} {q p : ℕ}
   coinTableEquiv_block (by rw [Protocol.withV_P]; exact h.prover_coinLen) r.1 i
 
 /-- The actual encoded verifier view in `ρ.withV V` is the canonical view of the jointly
-reindexed verifier tape and real prefix. [PS10, Theorem 175.1, real-view endpoint]. -/
+reindexed verifier tape and real prefix. [PS10, Theorem 175.1, real-view endpoint].
+`((ρ.withV V).viewV x y z r).encode = View.encode ⟨x, z, List.ofFn (h.realCoinsEquiv V r).1,
+realPrefix π V x y z (List.ofFn (h.realCoinsEquiv V r).1) p q (h.realCoinsEquiv V r).2⟩`. -/
 theorem viewV_eq_realPrefix {π ρ : Protocol} {x : List Bool} {q p : ℕ}
     (h : PaddedProverSpec π ρ x q p) (V : Strategy) (y z : List Bool)
     (r : (ρ.withV V).ExecCoins (ρ.withV V).P x) :
@@ -196,7 +210,10 @@ end PaddedProverSpec
 /-- Suppose `SQ`'s raw tape is split after `v` bits, and its published endpoint reader
 outputs the canonical view of `phasePrefix` on the remaining phase tape. Reindexing those
 coins by `coinBlocksEquiv` identifies that output with the canonical typed `simPrefix`.
-[PS10, Theorem 175.1, simulator endpoint]. -/
+[PS10, Theorem 175.1, simulator endpoint].
+`SQ.simulate x z r = View.encode ⟨x, z, List.ofFn (coinBlocksEquiv v q (S.coinLen x.length) hlen
+r).1, simPrefix S x z (List.ofFn (coinBlocksEquiv v q (S.coinLen x.length) hlen r).1) (k.eval
+x.length) (B.eval x.length) (if verifierFirst …`. -/
 theorem simulate_eq_simPrefix (S SQ : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
     (x z : List Bool) (q v : ℕ)
     (hlen : SQ.coinLen x.length = v + q * S.coinLen x.length)
