@@ -1,12 +1,18 @@
-# R4 design request: the SAT/Hardness duplication families (Claude, read-only design pass)
+# R4 design request: the SAT/Hardness duplication families (Claude cloud worker, read-only design pass)
 
-**Deliverable:** `r4-design.md` (and any `.lean.txt` probe files), pushed to
-`arora-barak-ch3-4/inbox/r4-design/` on the exchange branch after `git pull --rebase` (never force)
-and attached in chat as `r4-design.zip`. **This is a design and sizing study, not a fill:** edit no
-Lean file in any repository and open no PR. If you have a TCSlib checkout at campaign Lean
-`68cba664c2fcb4e33b4845b385feea3f456d0105` you may elaborate small probe files there, with **at most
-3 Lean processes at a time across the whole Mac** (other jobs run in parallel: count processes
-matching both bare `lean` and full executable paths before starting one). Never run `lake build`.
+**Who and where.** You are a Claude worker in the cloud with read and write access to the exchange
+branch `exchange/pass-shelat-ch5-8` of `Shilun-Allan-Li/tcslib`. Everything you need is in this
+bundle (`arora-barak-ch3-4/outbox/fills/r4-design/r4-design-bundle.md`, one section per file, in
+`BUNDLE-FILES.txt` order; check its SHA-256 against `SHA256SUMS`). The Lean sources in it are the
+campaign at Lean `68cba664c2fcb4e33b4845b385feea3f456d0105`.
+
+**Deliverable:** `r4-design.md`, pushed to `arora-barak-ch3-4/inbox/r4-design/` on the exchange
+branch (`git pull --rebase` first; never force-push; touch nothing outside `arora-barak-ch3-4/`).
+End your session with a short summary: the summary table of §3 and the push commit.
+
+**This is a design and sizing study, not a fill.** Edit no Lean file, open no pull request, and do
+not run Lean or `lake`: measure by reading the bundled sources (line counts, text searches). Where
+a number cannot be measured that way, give a range and say it is an estimate.
 
 ## 1. Why this study
 
@@ -54,7 +60,7 @@ bundled) unless noted.
    the bundled sources, and for pairs which declaration duplicates which.
 2. **Proposal:** what each member becomes. Prefer citing an existing public declaration. Where a
    new shared interface is needed, give its proposed Lean statement(s) (signatures and docstring
-   summary; a `.lean.txt` probe if you checked it compiles), and say where it would live.
+   summary, uncompiled), and say where it would live.
 3. **Use sites:** every declaration whose statement or proof mentions a member, so would change.
 4. **Net cost:** lines removed (members, copied proof text), lines added (interface, its proofs,
    each instance's adapter or transport, use-site edits), and the net; the copy-text pairs it
@@ -76,4 +82,4 @@ rule-10 repairs · new public API · statement changes · recommendation.
 - Follow `policy.md` (docstrings with proof sketches for proposed lemmas; attribution tags) and
   the campaign standards (`campaign/standards/TEMPLATE.md`).
 - Be honest about uncertainty: give ranges where you cannot measure, and say which numbers were
-  measured (by line counts or a probe) and which were estimated.
+  measured (line counts, searches in the bundled sources) and which were estimated.
