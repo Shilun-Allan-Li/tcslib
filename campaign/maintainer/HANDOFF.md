@@ -13,7 +13,7 @@ Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. The latest merge is #330 (closeout R2a, gate 144).
 Campaign Lean is `68cba664c2fcb4e33b4845b385feea3f456d0105`. Its replay output is the cloud snapshot `oleans-c68cb`
 (873 objects; `oleans-c720e` is the fallback); use it whole. See campaign/status/2026-11-16-merge-330/. **Closeout**
-(campaign/closeout/PLAN.md, REFACTOR-PLAN.md): the chapter scope has no admission; refactor waves R0, R1a and R2a done (R2c measured and carried). **Overnight 2026-11-16** (Seyoon's authorization: cleanup and dedup on the maintainer's own, audited by Codex in the morning): R3–R6 measured (campaign/closeout/R3-R6-MEASUREMENT.md); four draft PRs built and gated, independent unless noted — #334/gate 145 (R4-1, −161), #335/gate 146 (R4 UH, stacked on #334, −297), #336/gate 147 (R3a, −303), #337/gate 148 (MIG-3, −451). Gates 145–147 are staged; 148's replay (328 modules) was restarted after a disk-full failure. R4-2 (SG1-B) is not started (analysis in the measurement note). **Ladner's theorem is proved** (`Complexity.ladner`,
+(campaign/closeout/PLAN.md, REFACTOR-PLAN.md): the chapter scope has no admission; refactor waves R0, R1a and R2a done (R2c measured and carried). **Overnight 2026-11-16** (Seyoon's authorization: cleanup and dedup on the maintainer's own, audited by Codex in the morning): R3–R6 measured (campaign/closeout/R3-R6-MEASUREMENT.md); four draft PRs built and gated, independent unless noted — #334/gate 145 (R4-1, −161), #335/gate 146 (R4 UH, stacked on #334, −297), #336/gate 147 (R3a, −303), #337/gate 148 (MIG-3, −444). Gates 145–148 are staged. R4-2 (SG1-B) is not started (analysis in the measurement note). **Ladner's theorem is proved** (`Complexity.ladner`,
 standard axioms only; Ladner.lean has no admission). Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
 (`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
 (#322). Fill 7 proved target 6 (#325). Next: the
@@ -22,6 +22,7 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
+| #337 / 148 | **Staged** (2026-11-16), draft at `fed2c719f935ff7f3c4875c7c680e534b4779c78`. Closeout MIG-3: `one_work_tape` through the demand-grown witness; net −444 lines. Replay 328/328; checks clean (first head's seal failure repaired). campaign/gates/148-mig3-singletape/. |
 | #336 / 147 | **Staged** (2026-11-16), draft at `5da18960590c223ce384470e7d0d8870641f881c`. Closeout R3a: SK-1, dead privates (CC7-1, C1E-1, MIG-8), RC-4 buffer half, PL-1's `a3n_poly_linear`; net −303 lines. Replay 46/46; checks clean. campaign/gates/147-r3a-cleanup/. |
 | #335 / 146 | **Staged** (2026-11-16), draft at `2dc0fc307ce90b5ae5b56da79b7345c4367183da`, **stacked on #334**. Closeout R4 UH: the unary-clock repetition host retired onto `BinArith.polyTimeComputable_iterate`; net −297 lines. Replay 28/28 on #334's snapshot (`oleans-cl145-c68cb`); checks clean. campaign/gates/146-r4-uh-iterate/. |
 | #334 / 145 | **Staged** (2026-11-16), draft at `7bb1f687d87c8faa25c8523fc4bb1e15a5d473c1`. Closeout R4-1: the SAT/Hardness one-way transducer copies retired onto an extended `ClassNP/Transducer`; net −161 lines. Replay 137/137, seals/controls/sweeps clean. campaign/gates/145-r4-1-transducer/. |

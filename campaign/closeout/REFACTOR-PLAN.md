@@ -57,7 +57,7 @@ while R1–R3 run.
 disjoint files), plus two interface reviews for Seyoon (R4, R5). No Codex fills: refactors are
 maintainer work. R4 and R5 are the long items.
 
-**R3–R6 measured (2026-11-16 overnight):** `R3-R6-MEASUREMENT.md` gives the per-family what-if rule-10 exposure and a run/carry recommendation; overnight PRs #334–#337 (gates 145–148) total −1,212 lines.
+**R3–R6 measured (2026-11-16 overnight):** `R3-R6-MEASUREMENT.md` gives the per-family what-if rule-10 exposure and a run/carry recommendation; overnight PRs #334–#337 (gates 145–148) total −1,205 lines.
 
 ## 3. Decisions for Seyoon
 

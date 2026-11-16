@@ -2,7 +2,7 @@
 
 **Not yet clear to merge** · PR #337 is a draft. Seyoon dispatches and merges.
 
-- Lean head: `8e89f6e69616fff8e16286468ce5b20eb5e26e00`.
+- Lean head: `fed2c719f935ff7f3c4875c7c680e534b4779c78`.
 - Base: campaign Lean `68cba664`, records `967cde57`.
 - This is the first audit. The PR is independent of #334–#336.
 
@@ -40,7 +40,19 @@ This PR proves both through the second witness:
 - **Kept:** `sweepTM`, the shared sweep layer and its two private instances (typeclass search
   uses them). `dgTM` is built on them.
 
-Net: **−451 Lean lines**.
+Net: **−444 Lean lines**.
+
+**History.** The witness is a changed declaration, so the base proof's legacy reads in it became
+exposed. At the first head, `8e89f6e6`, the sealed check failed at four sites:
+- three bare `intro x`/`intro y` steps that unfold `ComputesFunInTimeVia`;
+- one that unfolds `ComputesFunInTime`.
+
+There were also applications of a `ComputesFunInTime` value to `x`, and the empty-alphabet case
+evaluated the halting machine's step by `rfl`. The head `fed2c719` reads all of them through
+`computesFunInTimeVia_iff`, `computesFunInTime_iff`, `MultiTapeTM.step_of_some`,
+`Action.apply_state`/`_output` and `Cfg.init_state`/`_output`, which is also how the old
+time-only `one_work_tape` proof read them. The failing seal lines are in the carrier
+(`history/head1-8e89f6e6/`).
 
 ## Brief for the auditor
 
@@ -54,13 +66,27 @@ Net: **−451 Lean lines**.
 4. **Deadness.** Check that each deleted declaration was referenced at base only from the deleted
    set or from `one_work_tape`'s old body.
 5. **Rule 10.** The changed proofs: seals, controls and both sweeps (counts below).
-6. **Copy screen** (population: SingleTape): see `evidence/PAIR-DISPOSITIONS.json`.
+6. **Copy screen** (population: SingleTape): see `evidence/PAIR-DISPOSITIONS.json` and the note under Evidence.
 
 ## Evidence
 
 - `evidence/REPLAY.json`: the merged-tree replay of SingleTape's downstream closure on
-  `oleans-c68cb`. REPLAY-PLACEHOLDER
-- Seals, controls and sweeps: CHECKS-PLACEHOLDER
+  `oleans-c68cb`.
+  - 328 modules replayed: 328 passed, 0 failed.
+  - The 28 inherited admissions are pre-existing ones from `main` (RAMSimulation, RecordTable,
+    Expanders).
+  - A run at the first head also passed 328/328. An earlier attempt failed one module during a
+    disk-full moment (an empty log) and was discarded.
+- **Seals:** the 4 changed proofs (`dg_all_inputs`, `one_work_tape_witness`, `one_work_tape`,
+  `one_work_tape_spaceUsed`) pass with every other-file definition they reach made irreducible
+  (17 heads).
+- **Controls:** 20 definitions' 40 paired controls close natively and fail when sealed.
+- **Proof-syntax sweep:** 4 roots, 0 explicit reads.
+- **Lean-backed sweep:** 44 identifiers, 0 foreign definitions.
+- **Lint:** no new finding. The deleted sweep blocks' missing-sketch findings are removed.
+- **Copy screen:** 12 directed pairs gone and 2 new. The new ones are one unordered pair:
+  `one_work_tape` and `one_work_tape_spaceUsed`, both two-line readers of the witness (obtain, then
+  the anonymous constructor). This is disclosed, not copied logic. Judge whether it is acceptable.
 - `evidence/DATA-CARRIER.json` and its recovery map: decode each gzip+base64 blob, then check its
   SHA-256 and byte count.
 

@@ -18,9 +18,9 @@ ready for Codex):
 | #334 | 145 | R4-1: SG1 kind 4 + riders + PL-1 twins, onto an extended `ClassNP/Transducer` | −161 | staged |
 | #335 (stacked on #334) | 146 | R4 SG1-UH: unary-clock host deleted; `clA5Iter_native` cites `BinArith.polyTimeComputable_iterate` | −297 | staged |
 | #336 | 147 | R3a: SK-1; dead CC7-1/C1E-1 members; RC-4 buffer half; MIG-8 dead chain; PL-1 `a3n_poly_linear` | −303 | see HANDOFF |
-| #337 | 148 | MIG-3: `one_work_tape` through the demand-grown witness; first sweep witness's run layer deleted | −451 | see HANDOFF |
+| #337 | 148 | MIG-3: `one_work_tape` through the demand-grown witness; first sweep witness's run layer deleted | −444 | see HANDOFF |
 
-Overnight total: **−1,212 Lean lines**. The only new public API is the three `Transducer`
+Overnight total: **−1,205 Lean lines**. The only new public API is the three `Transducer`
 declarations approved for R4-1.
 
 ## R3
@@ -94,7 +94,7 @@ run is pending, so the exposure column is not yet measured. The inventory:
 
 | Family | Members (lines) | Uses | New API? | Recommendation |
 |---|---|---|---|---|
-| MIG-3 | 14 (427) | 1 | no (a private witness) | **Done** (#337, −451) |
+| MIG-3 | 14 (427) | 1 | no (a private witness) | **Done** (#337, −444) |
 | MIG-8 | 14 (184) | 1 | no | Dead chain **done** (#336). The merge half waits on SH-1. |
 | SH-1 | 5 (75) | 2 | no; one import (Nondeterminism ← CertShell) | Small; next candidate after a measurement |
 | MIG-7 | 8 (126) | 6 | no; but an import of the Build stack into chapter-1 UniversalStartup | Ask. It pulls Build under the universal machine. |

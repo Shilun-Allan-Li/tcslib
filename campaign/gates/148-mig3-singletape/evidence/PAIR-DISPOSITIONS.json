@@ -1,0 +1,152 @@
+{
+ "base_summary": "declarations screened: 73; copy pairs (target reproduces >= half of source): 32; reproduced text: 9,236 chars",
+ "head_summary": "declarations screened: 62; copy pairs (target reproduces >= half of source): 22; reproduced text: 6,192 chars",
+ "new": 2,
+ "gone": 12,
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "SingleTape.lean::one_work_tape_spaceUsed",
+   "source": "SingleTape.lean::one_work_tape",
+   "chars": 99,
+   "source_chars": 101,
+   "pct": 98,
+   "note": "Sibling readers: one_work_tape and one_work_tape_spaceUsed are both two-line projections of the private one_work_tape_witness (obtain, then the anonymous constructor); no copied logic. Disclosed.",
+   "class": "sibling-reader"
+  },
+  {
+   "status": "NEW",
+   "target": "SingleTape.lean::one_work_tape",
+   "source": "SingleTape.lean::one_work_tape_spaceUsed",
+   "chars": 99,
+   "source_chars": 108,
+   "pct": 92,
+   "note": "Sibling readers: one_work_tape and one_work_tape_spaceUsed are both two-line projections of the private one_work_tape_witness (obtain, then the anonymous constructor); no copied logic. Disclosed.",
+   "class": "sibling-reader"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::sweepPos_move",
+   "source": "SingleTape.lean::dgPos_move",
+   "chars": 67,
+   "source_chars": 69,
+   "pct": 97,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::dgPos_move",
+   "source": "SingleTape.lean::sweepPos_move",
+   "chars": 67,
+   "source_chars": 72,
+   "pct": 93,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::sweep_init_block",
+   "source": "SingleTape.lean::sweep_grow_right_block",
+   "chars": 428,
+   "source_chars": 526,
+   "pct": 81,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::sweepInput_read",
+   "source": "SingleTape.lean::dgInput_read",
+   "chars": 189,
+   "source_chars": 247,
+   "pct": 77,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::sweep_grow_left_block",
+   "source": "SingleTape.lean::sweep_init_block",
+   "chars": 446,
+   "source_chars": 583,
+   "pct": 77,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::sweep_grow_right_block",
+   "source": "SingleTape.lean::sweep_init_block",
+   "chars": 428,
+   "source_chars": 583,
+   "pct": 73,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::dgStart",
+   "source": "SingleTape.lean::sweepStart",
+   "chars": 148,
+   "source_chars": 203,
+   "pct": 73,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::sweepStart",
+   "source": "SingleTape.lean::dgStart",
+   "chars": 148,
+   "source_chars": 205,
+   "pct": 72,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::sweep_grow_left_block",
+   "source": "SingleTape.lean::sweep_grow_right_block",
+   "chars": 343,
+   "source_chars": 526,
+   "pct": 65,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::sweep_init_block",
+   "source": "SingleTape.lean::sweep_grow_left_block",
+   "chars": 446,
+   "source_chars": 684,
+   "pct": 65,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::dgInput_read",
+   "source": "SingleTape.lean::sweepInput_read",
+   "chars": 189,
+   "source_chars": 294,
+   "pct": 64,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  },
+  {
+   "status": "GONE",
+   "target": "SingleTape.lean::sweep_grow_right_block",
+   "source": "SingleTape.lean::sweep_grow_left_block",
+   "chars": 343,
+   "source_chars": 684,
+   "pct": 50,
+   "note": "Retired: one side is a deleted member of the first sweep witness's run layer, or the old one_work_tape body.",
+   "class": "retired"
+  }
+ ],
+ "population": [
+  "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean"
+ ],
+ "round_note": "Gate 148 round 1: 12 directed pairs gone; 2 new (one unordered sibling-reader pair)."
+}

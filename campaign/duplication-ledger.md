@@ -2110,3 +2110,8 @@ helpers). Net −303 lines. Residue: Nondeterminism's epoch-3A and A3 notes stil
 deleted MIG-8 lemmas (editing them would pull the public `ntime_expPow_subset_NEXP` and
 `EXP_eq_NEXP_of_P_eq_NP`, whose proofs destructure `NTIME`/`NEXP` anonymously, into the PR; clean
 up when those proofs gain readers). Status: **retiring (gate 147; PR #336 draft)**.
+
+**MIG-3 (gate 148, 2026-11-16).** PR #337 retires `SingleTape`'s first one-work-tape witness run
+layer (`sweep_run_to_halt` and twelve helpers, the time-only route): `one_work_tape` now reads its
+witness off the demand-grown construction that `one_work_tape_spaceUsed` already used (shared
+private `one_work_tape_witness`). Net −444 lines. Status: **retiring (gate 148; PR #337 draft)**.
