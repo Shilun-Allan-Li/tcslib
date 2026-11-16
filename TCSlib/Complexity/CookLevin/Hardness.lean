@@ -662,67 +662,20 @@ private lemma clNative_unary (C e : ℕ) :
     PolyTimeComputable (fun x => List.replicate (C * (x.length + 1) ^ e) true) := by
   exact polyTimeComputable_polyUnary C e
 
-/-- Replace each native input bit by a fixed bit, with no work tapes.
-The boundary transition halts silently, so length zero is included. -/
-private def clFillTM (b : Bool) : FinTM Bool where
-  k := 0
-  State := Unit
-  tm := {
-    q₀ := ()
-    tr := fun _ inp _ => match inp with
-      | none => ⟨0, fun i => Fin.elim0 i, none, none⟩
-      | some _ => ⟨.pos, fun i => Fin.elim0 i, some b, some ()⟩ }
-
-/-- After each scanned bit one output bit has been written. This is the
-native scan invariant, including the final silent halting transition. -/
-private lemma clFill_run (b : Bool) (x : List Bool) (i : ℕ) (hi : i ≤ x.length)
-    (out : List Bool) :
-    (clFillTM b).tm.runFrom
-      (⟨some (), ⟨i + 1, by omega⟩, fun j => Fin.elim0 j,
-        fun j => Fin.elim0 j, out⟩ : Cfg 0 Bool Unit x)
-      (x.length - i + 1) =
-      ⟨none, ⟨x.length + 1, by omega⟩, fun j => Fin.elim0 j,
-        fun j => Fin.elim0 j, out ++ List.replicate (x.length - i) b⟩ := by
-  induction h : x.length - i generalizing i out with
-  | zero =>
-    have he : i = x.length := by omega
-    subst i
-    simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, clFillTM, Cfg.inputSymbol]
-    constructor <;> funext j <;> exact Fin.elim0 j
-  | succ r ih =>
-    have hil : i < x.length := by omega
-    have hs := inputSymbolInner (cfg :=
-      (⟨some (), ⟨i + 1, by omega⟩, fun j => Fin.elim0 j,
-        fun j => Fin.elim0 j, out⟩ : Cfg 0 Bool Unit x)) i (by simp [Nat.add_comm]) hil
-    rw [MultiTapeTM.runFrom_succ_eq_step]
-    have step : (clFillTM b).tm.step
-        (⟨some (), ⟨i + 1, by omega⟩, fun j => Fin.elim0 j,
-          fun j => Fin.elim0 j, out⟩ : Cfg 0 Bool Unit x) =
-        ⟨some (), ⟨i + 1 + 1, by omega⟩, fun j => Fin.elim0 j,
-          fun j => Fin.elim0 j, out ++ [b]⟩ := by
-      simp only [MultiTapeTM.step, clFillTM, hs, Action.apply]
-      refine Cfg.ext rfl ?_ (by funext j; exact Fin.elim0 j)
-        (by funext j; exact Fin.elim0 j) rfl
-      exact moveInputPos_pos_of_ne_right _ (by simp; omega)
-    rw [step]
-    simpa [List.replicate_succ, List.append_assoc] using
-      ih (i + 1) (by omega) (out ++ [b]) (by omega)
-
-/-- The all-false reference input is produced by an actual native scan,
-not by replacing the simulator's physical input with the instance. -/
+/-- Replacing every native input bit by a fixed bit is the one-state
+transduction emitting `b` on every bit (`polyTimeComputable_transduce`). -/
 private lemma clNative_fill (b : Bool) :
     PolyTimeComputable (fun x => List.replicate x.length b) := by
-  refine ⟨clFillTM b, 1, 1, fun x => ?_⟩
-  apply (FinTM.computesInTime_iff _ _ _ _).mpr
-  have h := clFill_run b x 0 (by omega) []
-  have hc : (clFillTM b).tm.initCfg x =
-      (⟨some (), ⟨0 + 1, by omega⟩, fun j => Fin.elim0 j,
-        fun j => Fin.elim0 j, []⟩ : Cfg 0 Bool Unit x) := by
-    refine Cfg.ext rfl rfl ?_ ?_ rfl <;> funext j <;> exact Fin.elim0 j
-  simp only [Nat.sub_zero, List.nil_append] at h
-  dsimp only
-  rw [Nat.one_mul, Nat.pow_one, hc, h]
-  exact ⟨rfl, rfl⟩
+  have hw (x : List Bool) :
+      transduce (fun (_ : Unit) _ => ()) (fun _ _ => some b) () x = List.replicate x.length b := by
+    induction x with
+    | nil => rw [transduce_nil, List.length_nil, List.replicate_zero]
+    | cons c r ih =>
+      rw [transduce_cons, ih, Option.toList_some, List.length_cons, List.replicate_succ,
+        List.singleton_append]
+  have h := polyTimeComputable_transduce (fun (_ : Unit) _ => ()) (fun _ _ => some b) ()
+  rwa [show transduce (fun (_ : Unit) _ => ()) (fun _ _ => some b) () =
+    fun x => List.replicate x.length b from funext hw] at h
 
 /-- Native exact preparation arithmetic for [AB09, Lemma 2.11]. The
 six fields retain the instance and the exact binary certificate length,
@@ -6642,82 +6595,6 @@ private lemma clA5_pt_and {p q : List Bool → Bool}
     PolyTimeComputable (fun x => [p x && q x]) := by
   exact polyTimeComputable_and hp hq
 
-/-- Pure semantics for a finite one-way word transducer with at most one
-emitted bit per input bit and one optional final bit. -/
-private def clA5MapWord {S : Type} (next : S → Bool → S)
-    (emit : S → Bool → Option Bool) (finish : S → Option Bool) : S → List Bool → List Bool
-  | q, [] => (finish q).toList
-  | q, b :: r => (emit q b).toList ++ clA5MapWord next emit finish (next q b) r
-
-/-- Finite one-way transducer for local word operations used by round-field
-assembly. It uses no work tapes and always halts at the right boundary. -/
-private def clA5MapTM {S : Type} [Fintype S] [DecidableEq S]
-    (next : S → Bool → S) (emit : S → Bool → Option Bool)
-    (finish : S → Option Bool) (start : S) : FinTM Bool where
-  k := 0
-  State := S
-  tm := {
-    q₀ := start
-    tr := fun q inp _ => match inp with
-      | some b => ⟨.pos, Fin.elim0, emit q b, some (next q b)⟩
-      | none => ⟨0, Fin.elim0, finish q, none⟩ }
-
-/-- Scanner frame with an explicit already-emitted prefix. -/
-private def clA5MapCfg {S : Type} (x : List Bool) (q : S) (i : ℕ)
-    (hi : i ≤ x.length) (out : List Bool) : Cfg 0 Bool S x :=
-  ⟨some q, ⟨i + 1, by omega⟩, Fin.elim0, Fin.elim0, out⟩
-
-/-- The finite transducer implements its recursive word semantics exactly.
-**Proof sketch.** Induct on the unread suffix. An input bit performs one
-transition and appends its optional emission; the right blank performs the
-final transition, including its optional last bit. -/
-private lemma clA5Map_run {S : Type} [Fintype S] [DecidableEq S]
-    (next : S → Bool → S) (emit : S → Bool → Option Bool)
-    (finish : S → Option Bool) (start : S) (x rest : List Bool) :
-    ∀ pre (hx : x = pre ++ rest) q out,
-      ((clA5MapTM next emit finish start).tm.runFrom
-        (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).state = none ∧
-      ((clA5MapTM next emit finish start).tm.runFrom
-        (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).output =
-          out ++ clA5MapWord next emit finish q rest := by
-  induction rest with
-  | nil =>
-    intro pre hx q out
-    simp only [List.append_nil] at hx
-    subst x
-    simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, clA5MapTM,
-      clA5MapCfg, Cfg.inputSymbol, Action.apply, clA5MapWord]
-  | cons b rest ih =>
-    intro pre hx q out
-    have hs : (clA5MapTM next emit finish start).tm.step
-        (clA5MapCfg x q pre.length (by simp [hx]) out) =
-        clA5MapCfg x (next q b) (pre ++ [b]).length (by simp [hx]) (out ++ (emit q b).toList) := by
-      have hin : (clA5MapCfg x q pre.length (by simp [hx]) out).inputSymbol = some b := by
-        rw [FinTM.inputSymbol_at _ pre.length (by simp [hx]) rfl]
-        simp [hx]
-      unfold MultiTapeTM.step
-      change (((clA5MapTM next emit finish start).tm.tr q _ _).apply _) = _
-      rw [hin]
-      refine Cfg.ext_zero_tapes rfl ?_ rfl
-      simpa using moveInputPos_pos_of_ne_right
-        (⟨pre.length + 1, by simp [hx] <;> omega⟩ : Fin (x.length + 2)) (by simp [hx] <;> omega)
-    simp only [List.length_cons]
-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
-    simpa only [clA5MapWord, List.append_assoc] using
-      ih (pre ++ [b]) (by simpa [List.append_assoc] using hx) (next q b) (out ++ (emit q b).toList)
-
-/-- Every finite mapper has the exact input-length-plus-one time bound. -/
-private lemma clA5Map_poly {S : Type} [Fintype S] [DecidableEq S]
-    (next : S → Bool → S) (emit : S → Bool → Option Bool)
-    (finish : S → Option Bool) (start : S) :
-    PolyTimeComputable (clA5MapWord next emit finish start) := by
-  refine ⟨clA5MapTM next emit finish start, 1, 1, fun x => ?_⟩
-  apply (FinTM.computesInTime_iff _ _ _ _).mpr
-  have hi : (clA5MapTM next emit finish start).tm.initCfg x =
-      clA5MapCfg x start 0 (Nat.zero_le _) [] := Cfg.ext_zero_tapes rfl rfl rfl
-  simpa only [Nat.pow_one, Nat.one_mul, hi, List.length_nil, List.nil_append] using
-    clA5Map_run next emit finish start x x [] (by simp) start []
-
 /-- Removing the first bit is polynomial-time by the public tail closure. -/
 private lemma clA5_pt_tail : PolyTimeComputable List.tail := by
   convert polyTimeComputable_tail using 1
@@ -6732,11 +6609,8 @@ private lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1) := by
 comparison constructor, after any polynomial field computation. -/
 private lemma clA5_pt_eq {f : List Bool → List Bool} (hf : PolyTimeComputable f) (w : List Bool) :
     PolyTimeComputable (fun x => [decide (f x = w)]) := by
-  have he : PolyTimeComputable (fun x => if x = w then [true] else [false]) :=
-    clNative_linear _ (FinTM.computesFunInTime_ifEq w [true] [false])
-  convert he.comp hf using 1
-  funext x
-  by_cases h : f x = w <;> simp [Function.comp_def, h]
+  simpa only [Function.comp_def] using
+    (polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq w)).comp hf
 
 /-- Any native transition with a quadratic orbit-size invariant can be
 iterated a native unary number of times in polynomial time.
@@ -7733,12 +7607,11 @@ private lemma clA5Div_native {f : List Bool → ℕ}
       if h : q.val = k then 0 else ⟨q.val + 1, by omega⟩
     let emit (q : Fin (k + 1)) (_ : Bool) : Option Bool := if q.val = k then some true else none
     have he (x : List Bool) (q : Fin (k + 1)) :
-        clA5MapWord next emit (fun _ => none) q x =
-          List.replicate ((q.val + x.length) / (k + 1)) true := by
+        transduce next emit q x = List.replicate ((q.val + x.length) / (k + 1)) true := by
       induction x generalizing q with
-      | nil => simp [clA5MapWord, Nat.div_eq_of_lt q.isLt]
+      | nil => simp [transduce_nil, Nat.div_eq_of_lt q.isLt]
       | cons b r ih =>
-        rw [clA5MapWord, ih]
+        rw [transduce_cons, ih]
         by_cases h : q.val = k
         · have ha : q.val + (b :: r).length = (k + 1) + r.length := by simp [h]; omega
           rw [ha]
@@ -7746,7 +7619,7 @@ private lemma clA5Div_native {f : List Bool → ℕ}
         · have ha : q.val + (b :: r).length = q.val + 1 + r.length := by simp; omega
           rw [ha]
           simp [emit, next, h]
-    have h := (clA5Map_poly next emit (fun _ => none) 0).comp hf
+    have h := (polyTimeComputable_transduce next emit 0).comp hf
     convert h using 1
     funext x
     simp [Function.comp_apply, he]
