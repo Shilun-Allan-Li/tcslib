@@ -4,6 +4,11 @@ This directory contains a coordinated multi-agent system for writing Lean 4 proo
 
 **All Lean contributions must follow the repository standards in [`policy.md`](policy.md)** — modularity (file layout, size, namespaces, exports), attribution (every result traced to a textbook/paper reference via docstring tags and blueprint sources), and human-readable proof sketches accompanying every nontrivial proof. Read it before writing or landing any Lean code.
 
+> **Campaign chats:** builds, checks and the olean snapshot procedure are in
+> [`workflow.md`](../workflow.md) §6–6.1 (`scripts/lean_check_tree.sh`, merged-tree replays
+> against a snapshot kept at the branch tip). The editor-only guidance below is for
+> interactive proof work.
+
 ## Core Principle: The Sorry Ladder
 
 Lean's `sorry` tactic closes any goal and makes the file compile. This means you can:

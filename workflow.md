@@ -222,6 +222,46 @@ pipeline detail).
 * **Vendored files** are frozen at their recorded upstream pin and periodically
   byte-compared against upstream; local modifications live only in the header list.
 
+### 6.1 The olean snapshot and merged-tree replays
+
+Full sweeps are slow because unchanged expensive modules (for example
+`Complexity/ClassP/BinaryArith/DetMod`, about 25 minutes) are rebuilt every time a
+check starts from an old base. Campaign chats keep their olean state at the branch tip
+instead:
+
+1. **One complete snapshot at the tip `T`.** Keep exactly one complete olean snapshot
+   directory, outside any worktree, built at the current branch tip. It holds every
+   TCSlib module's `.olean` (and `.ilean`), not an in-tree `.lake/build`. Record its
+   object map (module path → SHA-256 of the `.olean`), the map's SHA-256, `T` and the
+   module count in the campaign's records.
+2. **Validate each PR by a merged-tree replay against that snapshot,** never against an
+   older base:
+   * compute the prospective merge with `git merge-tree --write-tree <T> <PR head>` and
+     export that tree;
+   * start the output directory as a hard-linked copy of the snapshot (`cp -al`, almost
+     no disk);
+   * rebuild only the PR's changed modules and their downstream import closure, in
+     dependency order, one `lean` process per module (`scripts/lean_check_tree.sh`,
+     never `lake build`), deleting each module's stale `.olean`/`.ilean` before
+     compiling it so the hard link is broken and the snapshot is never written through;
+   * require exit 0 and zero `error:`/`error(` for every module, then write the output
+     object map and record the prospective tree hash. Seals, axiom prints and controls
+     run against the output directory.
+3. **On merge,** fetch the branch and run
+   `git diff --name-only <merge commit> <prospective tree> -- '*.lean' lean-toolchain lake-manifest.json`.
+   If it is empty, the replay output is exactly the merged code. Adopt it as the new
+   snapshot (rename it, or hard-link it under a new name), rehash it on disk against its
+   map (0 extra / 0 changed / 0 missing), and record the new map SHA-256, the merge commit
+   as the new `T`, the module count and the date. Delete the previous snapshot's oleans
+   but keep its manifest. No extra build is needed.
+4. **If that diff is not empty** (another PR merged in between and touched the same
+   closure), do not adopt: rerun the PR's replay on the new tip first. Better, before
+   merging: when two open PRs share downstream modules, merge the one with the larger
+   rebuild first, then re-replay the other (it rebuilds only its own closure).
+5. **Housekeeping:** one Lean process per module; never interrupt a running build; one
+   tree at a time; pause if free disk falls below about 1 GB; discard replay outputs that
+   will not be adopted once their evidence is recorded.
+
 ## 7. Relationship to the other documents
 
 * [`ROADMAP.md`](ROADMAP.md) — a one-page orientation: the phases ahead and pointers to
