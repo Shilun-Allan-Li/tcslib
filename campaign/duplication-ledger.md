@@ -2091,15 +2091,13 @@ and SAT's head/tail residues. `ClassNP/Transducer` (colleague-authored; Seyoon r
 Transducer API, `sat_pt_tail/_head` cite `polyTimeComputable_tail/_take1`, and
 `sat_pt_eq/clA5_pt_eq` cite `FinTM.computesFunInTime_decideEq`. Net −161 Lean lines. New screen
 pair: the two sibling polynomial-time wrappers in Transducer (disclosed in the gate 145 pack).
-`Nondeterminism`'s `a3n_poly_linear` is not in this PR. Status: **retiring (gate 145 dispatched
-when Seyoon sends it; PR #334 draft)**.
+`Nondeterminism`'s `a3n_poly_linear` is not in this PR. Status: **retired (#334 merged 2026-11-16)**.
 
 **SG1-UH (gate 146, 2026-11-16).** PR #335 (stacked on #334) deletes Hardness's private
 unary-clock repetition host (`clRepeat*`, 12 declarations) and the clean-call bridges that only it
 used: `clA5Iter_native` now cites the public `BinArith.polyTimeComputable_iterate` through a
 private counted round, so the family is retired without the public host contract (B1040) the
-design study priced at +170 to +370 lines. Net −297 Lean lines. Status: **retiring (gate 146;
-PR #335 draft)**.
+design study priced at +170 to +370 lines. Net −297 Lean lines. Status: **retired (#335 merged 2026-11-16)**.
 
 **R3a (gate 147, 2026-11-16).** PR #336 retires SK-1 (`ss_captureInitial` → the public
 `embedSilentCfg_initCfg`), RC-4's buffer half in CodeSimulator (`canonStageBuffer_none` cites
@@ -2109,9 +2107,22 @@ PR #335 draft)**.
 helpers). Net −303 lines. Residue: Nondeterminism's epoch-3A and A3 notes still name the two
 deleted MIG-8 lemmas (editing them would pull the public `ntime_expPow_subset_NEXP` and
 `EXP_eq_NEXP_of_P_eq_NP`, whose proofs destructure `NTIME`/`NEXP` anonymously, into the PR; clean
-up when those proofs gain readers). Status: **retiring (gate 147; PR #336 draft)**.
+up when those proofs gain readers). Status: **retired (#336 merged 2026-11-16)**; the two notes are tracked as G147-01.
 
 **MIG-3 (gate 148, 2026-11-16).** PR #337 retires `SingleTape`'s first one-work-tape witness run
 layer (`sweep_run_to_halt` and twelve helpers, the time-only route): `one_work_tape` now reads its
 witness off the demand-grown construction that `one_work_tape_spaceUsed` already used (shared
-private `one_work_tape_witness`). Net −444 lines. Status: **retiring (gate 148; PR #337 draft)**.
+private `one_work_tape_witness`). Net −444 lines. Status: **retired (#337 merged 2026-11-16)**.
+
+**SG1-B: kinds 1, 2 and 5 with riders (gate 149, 2026-11-16).** PR #342 (closeout R4-2) retires
+the SAT/Hardness clean-call layer copies onto a new public module `ClassNP/CleanCall` (API approved
+with R4-2; Seyoon, 2026-11-16): the stop adapters (`satStopTM`/`clA5StopTM`, their configurations
+and step lemmas), the clean-stop and bridge lemmas (`satStop_clean`, `satClean_stop`,
+`sat_bridge_bound` and the `clA5` twins), the live-prefix lemmas, and Hardness's first-halt cut.
+`SatClean`/`CLA5Clean`, the install/emit lemmas, the guard joins and SAT's first-halt cut stay as
+one-line private citations; Hardness's copy module, module bank and startup use `FinTM.stopTM`
+and read it through published equations. Net +63 Lean lines, over the +50 stop rule; Seyoon
+accepted the overshoot (2026-11-16). Copy screen: 36 directed pairs gone, 3 new (the install/emit
+sibling wrappers, and `clFirst`'s pair moved from the two deleted first-halt copies to the shared
+lemma). Kind 3 (padding) is not in this PR: it is the next slice, citing `Build/EmitIterEmbed` as
+ruled. Status: **retiring (gate 149; PR #342 draft)**.

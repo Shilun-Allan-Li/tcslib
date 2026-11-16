@@ -45,7 +45,7 @@ Total rule-10 exposure: 35 declarations.
 |---|---|
 | SG1 kind 4 + riders, PL-1 | #334 / gate 145 |
 | SG1-UH | #335 / gate 146: −297 lines instead of the study's +170 to +370 public host |
-| SG1 kinds 1, 2, 5 (R4-2) | Approved with the stop rule; **not started overnight** (maintainer's judgment). What-if exposure: K1 4/4, K2 4/6, K5 0/4, i.e. about 22 proofs to repair, including `clA5Startup` and `satReduction_poly`. See the note after this table. Recommend it as the next maintainer item, run against the +50 stop rule, with the consumer restatement priced first. |
+| SG1 kinds 1, 2, 5 (R4-2) | **Built** (2026-11-16): PR #342 / gate 149, new `ClassNP/CleanCall`, net +63 lines (over the stop rule; Seyoon accepted the overshoot), 36 directed pairs gone, 3 new. *Overnight note:* approved with the stop rule; not started overnight (maintainer's judgment). What-if exposure: K1 4/4, K2 4/6, K5 0/4, i.e. about 22 proofs to repair, including `clA5Startup` and `satReduction_poly`. See the note after this table. Recommend it as the next maintainer item, run against the +50 stop rule, with the consumer restatement priced first. |
 | SG1 kind 3 | Ruled: cite `Build/EmitIterEmbed`. The private signatures differ (no `m ≤ k` argument, no state map), so it rides with R4-2's host edits. |
 | SG1 kind 6, item 13 | Carried (ruled). |
 
