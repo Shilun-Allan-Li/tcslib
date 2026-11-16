@@ -847,28 +847,21 @@ private lemma counterSpan_iff_segment {k : ℕ} {Γ S : Type} {x : List Γ}
       ⟨fun u hu => ⟨fun h => hc u hu (Or.inl h), fun h => hc u hu (Or.inr h)⟩,
         fun u hu => (hp u hu).1, fun u hu => (hp u hu).2⟩⟩
 
-/-- Equal-width patches overwrite the same interval, preserving the original frame. -/
+/-- Equal-width patches overwrite the same interval: `Turing.wordPatch_twice`. -/
 private lemma counter_patch_twice {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
     (hv : v.length = u.length) :
-    wordPatch (wordPatch ct cp u) cp v = wordPatch ct cp v := by
-  funext q
-  simp only [wordPatch_apply, hv]
-  split_ifs <;> rfl
+    wordPatch (wordPatch ct cp u) cp v = wordPatch ct cp v :=
+  wordPatch_twice ct cp u v hv
 
-/-- Replacing a framed word by an equal-width word keeps both blank delimiters. -/
+/-- Replacing a framed word by an equal-width word keeps both blank delimiters:
+`Turing.wordPatch_frame`. -/
 private lemma counter_patch_frame {Γ : Type} (w v : List Γ) (ct : ℤ → Option Γ) (cp : ℤ)
     (hv : v.length = w.length)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       ct (cp + p) = FinTM.bufferTape w p) :
     ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
-      wordPatch ct cp v (cp + p) = FinTM.bufferTape v p := by
-  intro p hl hr
-  by_cases h : 0 ≤ p ∧ p < (v.length : ℤ)
-  · simp [wordPatch_apply, show cp ≤ cp + p ∧ cp + p < cp + (v.length : ℤ) by omega]
-  · have hp : p = -1 ∨ p = (v.length : ℤ) := by omega
-    rcases hp with rfl | rfl
-    · simp [wordPatch_apply, hw (-1) (by omega) (by omega), FinTM.bufferTape_left]
-    · simp [wordPatch_apply, hv, hw w.length (by omega) le_rfl, FinTM.bufferTape_nat]
+      wordPatch ct cp v (cp + p) = FinTM.bufferTape v p :=
+  wordPatch_frame ct cp w v hv hw
 
 /-- A decrement phase uses the proved framed contract and guarded state transport.
 **Proof sketch.** Decode the rich one-tape start, apply the landed success or

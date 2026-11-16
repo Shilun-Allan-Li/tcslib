@@ -236,56 +236,25 @@ private theorem sc_dec_inputPos {k : ℕ} {x : List Bool} (i : Fin k)
     · rfl
     · simp only [Action.apply, (decrementTM_tr_action i _ _ _).1, moveInputPos_zero]
 
-/-- **Patching in the word a tape already holds changes nothing**: if
-`ct` holds `u` delimited at `cp`, then `wordPatch ct cp u = ct` (the round induction's start,
-where the counter tape is still the caller's).
-
-**Proof sketch.** Inside the interval the hypothesis says `ct` already reads `u`; outside it the
-patch is `ct`. -/
+/-- **Patching in the word a tape already holds changes nothing**: `Turing.wordPatch_self`. -/
 private theorem sc_wordPatch_self {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ)
     (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) → ct (cp + p) = FinTM.bufferTape u p) :
-    wordPatch ct cp u = ct := by
-  funext q
-  simp only [wordPatch_apply]
-  split_ifs with inside
-  · have h := hu (q - cp) (by omega) (by omega)
-    rw [add_sub_cancel] at h
-    exact h.symm
-  · rfl
+    wordPatch ct cp u = ct :=
+  wordPatch_self ct cp u hu
 
-/-- **Patching one interval twice keeps the last patch**, for two words
-of the same width.
-
-**Proof sketch.** Pointwise: inside the interval both sides read the second word; outside it
-neither patch is visible. -/
+/-- **Patching one interval twice keeps the last patch**: `Turing.wordPatch_twice`. -/
 private theorem sc_wordPatch_twice {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
     (huv : v.length = u.length) :
-    wordPatch (wordPatch ct cp u) cp v = wordPatch ct cp v := by
-  funext q
-  simp only [wordPatch_apply]
-  rw [huv]
-  by_cases hq : cp ≤ q ∧ q < cp + (u.length : ℤ) <;> simp [hq]
+    wordPatch (wordPatch ct cp u) cp v = wordPatch ct cp v :=
+  wordPatch_twice ct cp u v huv
 
-/-- **A same-width patch keeps the counter delimited**: if `ct` holds
-`u` delimited at `cp`, then patching `v` of the same width over it holds `v` delimited at
-`cp`.
-
-**Proof sketch.** Inside the interval the patch reads `v`. The two delimiters, at `cp - 1` and
-`cp + |v|`, lie outside it, where `ct` is blank by the hypothesis on `u`. -/
+/-- **A same-width patch keeps the counter delimited**: `Turing.wordPatch_frame`. -/
 private theorem sc_wordPatch_frame {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
     (huv : v.length = u.length)
     (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) → ct (cp + p) = FinTM.bufferTape u p) :
     ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
-      wordPatch ct cp v (cp + p) = FinTM.bufferTape v p := by
-  intro p lo hi
-  simp only [wordPatch_apply]
-  by_cases inside : cp ≤ cp + p ∧ cp + p < cp + (v.length : ℤ)
-  · rw [if_pos inside, add_sub_cancel_left]
-  · rw [if_neg inside]
-    rcases (by omega : p = -1 ∨ p = (v.length : ℤ)) with rfl | rfl
-    · rw [hu (-1) le_rfl (by omega), FinTM.bufferTape_left, FinTM.bufferTape_left]
-    · rw [hu _ (by omega) (by omega)]
-      simp [huv]
+      wordPatch ct cp v (cp + p) = FinTM.bufferTape v p :=
+  wordPatch_frame ct cp u v huv hu
 
 /-- R1a (success). A predecessor keeps the width. -/
 private theorem sc_dec_success_width (w v : List Bool) (h : decFixed w = some v) :

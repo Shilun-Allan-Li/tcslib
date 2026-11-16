@@ -95,7 +95,8 @@ one framed contract and one trace serve them all.
   `Turing.length_joinFields_add_one` and `Turing.fieldOffset_add_length_le`.
 * `Turing.wordPatch` — a tape with a word written over an interval, with its equation
   `Turing.wordPatch_apply`, its cells `Turing.wordPatch_of_mem` and `Turing.wordPatch_of_not_mem`
-  (the specification API, user 2026-10-16), and `Turing.wordPatch_append` (adjacent patches join).
+  (the specification API, user 2026-10-16), `Turing.wordPatch_append` (adjacent patches join),
+  `Turing.wordPatch_self`, `Turing.wordPatch_twice` and `Turing.wordPatch_frame` (same-width patches).
 * `Turing.transferTM`, `Turing.copyTM`, `Turing.clearTM`,
   `Turing.compareTM`, `Turing.incrementTM`.
 * Part 3: `Turing.tapeAction`, `Turing.inputMoveAction` (one-tape
@@ -513,6 +514,56 @@ theorem wordPatch_append {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v :
       omega
     · rw [wordPatch_of_not_mem _ _ _ h₂, wordPatch_of_not_mem _ _ _ h₁,
         wordPatch_of_not_mem _ _ _ (by omega)]
+
+/-- **Patching in the word a tape already holds changes nothing**: if
+`ct` holds `u` delimited at `cp`, then `wordPatch ct cp u = ct`.
+
+**Proof sketch.** Inside the interval the hypothesis says `ct` already reads `u`; outside it the
+patch is `ct`. -/
+theorem wordPatch_self {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) → ct (cp + p) = FinTM.bufferTape u p) :
+    wordPatch ct cp u = ct := by
+  funext q
+  simp only [wordPatch_apply]
+  split_ifs with inside
+  · have h := hu (q - cp) (by omega) (by omega)
+    rw [add_sub_cancel] at h
+    exact h.symm
+  · rfl
+
+/-- **Patching one interval twice keeps the last patch**, for two words
+of the same width.
+
+**Proof sketch.** Pointwise: inside the interval both sides read the second word; outside it
+neither patch is visible. -/
+theorem wordPatch_twice {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
+    (huv : v.length = u.length) :
+    wordPatch (wordPatch ct cp u) cp v = wordPatch ct cp v := by
+  funext q
+  simp only [wordPatch_apply]
+  rw [huv]
+  by_cases hq : cp ≤ q ∧ q < cp + (u.length : ℤ) <;> simp [hq]
+
+/-- **A same-width patch keeps the word delimited**: if `ct` holds
+`u` delimited at `cp`, then patching `v` of the same width over it holds `v` delimited at
+`cp`.
+
+**Proof sketch.** Inside the interval the patch reads `v`. The two delimiters, at `cp - 1` and
+`cp + |v|`, lie outside it, where `ct` is blank by the hypothesis on `u`. -/
+theorem wordPatch_frame {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
+    (huv : v.length = u.length)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) → ct (cp + p) = FinTM.bufferTape u p) :
+    ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
+      wordPatch ct cp v (cp + p) = FinTM.bufferTape v p := by
+  intro p lo hi
+  simp only [wordPatch_apply]
+  by_cases inside : cp ≤ cp + p ∧ cp + p < cp + (v.length : ℤ)
+  · rw [if_pos inside, add_sub_cancel_left]
+  · rw [if_neg inside]
+    rcases (by omega : p = -1 ∨ p = (v.length : ℤ)) with rfl | rfl
+    · rw [hu (-1) le_rfl (by omega), FinTM.bufferTape_left, FinTM.bufferTape_left]
+    · rw [hu _ (by omega) (by omega)]
+      simp [huv]
 
 /-- **Extending a written prefix writes exactly its next cell** (design §12.6; public
 since the §12.8 fill, so that every writing sweep cites it). Writing `w[r]` at `a + r` on
