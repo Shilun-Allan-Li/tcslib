@@ -3,13 +3,28 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.ComposePhases
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Machines
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Efficiency
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Probability
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Reductions
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Assembly
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Runs
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Bounds
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Sim
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Chain
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Accept
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Correct
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Template
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Lengths
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.SideA
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.SideB
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# The composition theorem for the semi-honest model (statement phase)
+# The composition theorem for the semi-honest model
 
 [Gol04, §7.3.1, Theorem 7.3.3]: if a protocol `H` privately computes `F` in the `G`-hybrid model
 and a protocol `ρ` privately computes `G`, then `H` with every ideal call replaced by a run of `ρ`
@@ -25,8 +40,10 @@ follows from this theorem with Protocol 160.4 for `ρ`.
 **Polynomial time** (ruling of 2026-11-05: security includes polynomial-time parties). The
 messages of `H.compose ρ` are bounded by the sum of `main`'s and `ρ`'s bounds
 (`compose_msg_bound`, proved). This uses that `H.PolyTime` bounds `main`'s messages for **any**
-answers of the right lengths, since in `H.compose ρ` `main` runs on `ρ`'s outputs. That the
-composed strategies are PPT is stated, with `sorry`s under their sketches.
+answers of the right lengths, since in `H.compose ρ` `main` runs on `ρ`'s outputs. The composed
+strategies are PPT (`composeP_efficient`, `composeV_efficient`): each is a polynomial-time
+function of the machine layout built from `main`'s and `ρ`'s machines and the call-input
+functions (`ComposeSecurity/Efficiency.lean`).
 
 **Deviations from [Gol04, Theorem 7.3.3].**
 - **Calls first only**, and the layout with fillers (`Compose.lean`).
@@ -46,15 +63,38 @@ composed strategies are PPT is stated, with `sorry`s under their sketches.
 * None: the composed protocol is defined in `Compose.lean` and its phases in
   `ComposePhases.lean`.
 
+## Contents
+
+* `ComposeSecurity/Machines.lean`: polynomial-time machines on encoded histories (loops over a
+  data-dependent range, the interleaved-slot map, strategies as functions of the layout).
+* `ComposeSecurity/Efficiency.lean`: the composed parties as polynomial-time functions of the
+  machine layout.
+* `ComposeSecurity/Probability.lean`: distinguishing-advantage tools (the statistical switch,
+  fixing coordinates, a negligible function times a polynomial).
+* `ComposeSecurity/Reductions.lean`: machines with advice-dependent pre- and post-processing.
+* `ComposeSecurity/Assembly.lean`: a view of the composed protocol assembled from run views.
+* `ComposeSecurity/Runs.lean`: the coins of the composed protocol run by run, and the real
+  samples when every run gives the ideal answers.
+* `ComposeSecurity/Bounds.lean`: lengths of encodings, transcripts and machine outputs.
+* `ComposeSecurity/Sim.lean`: the post-processing `Φ`, the simulators and the reduction to the
+  hybrid model.
+* `ComposeSecurity/Chain.lean`: the hybrid argument over the runs.
+* `ComposeSecurity/Accept.lean`: acceptance of machines with split coins; test machines.
+* `ComposeSecurity/Correct.lean`: a secure protocol is correct; the union bound over the runs.
+* `ComposeSecurity/Template.lean`: the reduction of one hybrid step to the sub-protocol.
+* `ComposeSecurity/Lengths.lean`: polynomial bounds on the words of the templates.
+* `ComposeSecurity/SideA.lean`, `ComposeSecurity/SideB.lean`: Alice's and Bob's sides of the
+  composition theorem.
+
 ## Main results
 
 * `HybridProtocol.exists_runExec_eq_transcript`, `exists_mainExec_eq_transcript`: the runs and
   the main phase are transcripts of `ρ` and `main` on inputs and coins of the right types.
 * `HybridProtocol.compose_msg_bound`: the messages of `H.compose ρ` are polynomially bounded.
-* `HybridProtocol.composeP_efficient`, `composeV_efficient` (stated; `sorry`s under their
-  sketches), and `polyTime_compose` (proved from the three).
-* `HybridProtocol.hbcSecure_compose` ([Gol04, Theorem 7.3.3], stated; a `sorry` under its
-  sketch).
+* `HybridProtocol.composeP_efficient`, `composeV_efficient`: the composed strategies are PPT;
+  `polyTime_compose` (proved from the three).
+* `HybridProtocol.hbcSecure_compose` ([Gol04, Theorem 7.3.3]): from Alice's and Bob's sides
+  (`exists_simA`, `exists_simB`).
 
 ## References
 
@@ -280,35 +320,52 @@ theorem compose_msg_bound {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyT
 /-- **Alice's strategy in `H.compose ρ` is PPT** (`Strategy.Efficient`), when `main`'s and `ρ`'s
 are and the call inputs are polynomial-time.
 
-**Proof sketch.** A uniform machine with the coin polynomial `main.P.coins + calls · ρ.P.coins`
-computes `composeP.next` on `⟨⟨x, z⟩, hist⟩` and the tape `r`:
-1. it computes `n = |x|`, `L`, `R`, `|hist|` and the pair, run and position indices;
-2. it recomputes the run inputs with the polynomial-time function of `H.PolyTime` on
-   `⟨1^n, ⟨z, ⟨r_main, 1^j⟩⟩⟩`, cuts the run tapes out of `r`, and reads the run histories from
-   `hist` (`slotMsgs`);
-3. it runs the uniform machine of `ρ.P` once (a run move) or `L(n)` times (the answers), and that
-   of `main.P` once, each on an input of length polynomial in its own.
-
-Each piece is polynomial-time on the raw layout, and `L` is a polynomial, so the composition is
-(`NUPPT.ofPolyTimeUniform`). -/
+**Proof sketch.** Take polynomial-time functions of the machine layout for the efficient
+strategies `ρ.P` and `main.P` (`ComposeMachines.Efficient.exists_polyTime`) and Alice's
+call-input function from `H.PolyTime`. Alice's next message is `composePW` on the layout
+`⟨⟨⟨1^n, ⟨⟨x, z⟩, hist⟩⟩, []⟩, r⟩` (`composeP_next_eq_composePW`):
+1. the number `k = |hist|` of messages received, `L`, `R`, `k / R`, `k % R` and the mover test
+   are unary computations (`GI.msgCount_poly`, `divNum_poly`, `modNum_poly`);
+2. a run move is one activation of `ρ.P`'s machine on the call input (recomputed from the
+   `main`-tape), the run tape cut from `r` and the run's messages read at the interleaved
+   pairs (`ComposeMachines.runW`, `ComposeMachines.polyTimeComputable_slots`);
+3. the main move is one activation of `main.P`'s machine on `⟨z, answers⟩` and the messages
+   after the runs, the answers being `L(n)` such activations of `ρ.P`'s machine, padded and
+   concatenated (`ComposeMachines.ansW`, `ComposeMachines.polyTimeComputable_flatMap_range`).
+So `composePW` is polynomial-time (`polyTimeComputable_composePW`), and its uniform machine with
+the coin polynomial `main.P.coins + calls · ρ.P.coins` computes `composeP`
+(`GI.efficient_of_polyTime`). -/
 theorem composeP_efficient {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyTime ρ) :
     (H.composeP ρ).Efficient := by
-  sorry
+  obtain ⟨hmain, -, ⟨fA, hfA, hcallA⟩, -, -⟩ := (HybridProtocol.polyTime_iff H F).mp hH
+  obtain ⟨hρP, -, -⟩ := (Functionality.polyTime_iff G ρ).mp hρ
+  obtain ⟨Fρ, hFρ, hρeq⟩ := ComposeMachines.Efficient.exists_polyTime hρP
+  obtain ⟨Fm, hFm, hmeq⟩ := ComposeMachines.Efficient.exists_polyTime hmain
+  exact GI.efficient_of_polyTime _ (H.polyTimeComputable_composePW ρ hFρ hFm hfA)
+    (H.composeP_next_eq_composePW ρ hρeq hmeq hcallA)
 
 /-- **Bob's strategy in `H.compose ρ` is PPT** (`Strategy.Efficient`), when `main`'s and `ρ`'s
 are and the call inputs are polynomial-time.
 
-**Proof sketch.** As for Alice (`composeP_efficient`), with `ρ.V`, `main.V`, the call-input
-function for Bob, and the coin polynomial `main.V.coins + calls · ρ.V.coins`. -/
+**Proof sketch.** As for Alice (`composeP_efficient`): Bob's next message is `composeVW` on the
+layout (`composeV_next_eq_composeVW`), with `ρ.V`'s and `main.V`'s machines, Bob's call-input
+function, the count `k = |hist| − 1`, the selector of Alice's moves, the drop count
+`L·R + lead` before the main phase, and the coin polynomial `main.V.coins + calls · ρ.V.coins`;
+`composeVW` is polynomial-time (`polyTimeComputable_composeVW`). -/
 theorem composeV_efficient {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyTime ρ) :
     (H.composeV ρ).Efficient := by
-  sorry
+  obtain ⟨-, hmain, -, ⟨fB, hfB, hcallB⟩, -⟩ := (HybridProtocol.polyTime_iff H F).mp hH
+  obtain ⟨-, hρV, -⟩ := (Functionality.polyTime_iff G ρ).mp hρ
+  obtain ⟨Fρ, hFρ, hρeq⟩ := ComposeMachines.Efficient.exists_polyTime hρV
+  obtain ⟨Fm, hFm, hmeq⟩ := ComposeMachines.Efficient.exists_polyTime hmain
+  exact GI.efficient_of_polyTime _ (H.polyTimeComputable_composeVW ρ hFρ hFm hfB)
+    (H.composeV_next_eq_composeVW ρ hρeq hmeq hcallB)
 
 /-- **The composed parties run in polynomial time** [Gol04, §7.3.1, the efficiency of the
 protocol of Theorem 7.3.3]: if `H` runs in polynomial time on `F`'s inputs (`H.PolyTime F`) and
 `ρ` on `G`'s (`G.PolyTime ρ`), then `H.compose ρ` runs in polynomial time on `F`'s inputs.
-The two strategies are PPT (`composeP_efficient`, `composeV_efficient`; `sorry`s under their
-sketches), and the messages are bounded by `B_main + B_ρ` (`compose_msg_bound`, proved). The
+The two strategies are PPT (`composeP_efficient`, `composeV_efficient`, proved), and the
+messages are bounded by `B_main + B_ρ` (`compose_msg_bound`, proved). The
 message bound uses that `H.PolyTime` bounds `main`'s messages for **any** answers of the right
 lengths, since `main` runs on `ρ`'s outputs. -/
 theorem polyTime_compose {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyTime ρ) :
@@ -337,45 +394,55 @@ D8's output convention (the module docstring gives an example): if `main.rounds(
 last move of `H.compose ρ` is a run move or the leading filler, and its sender outputs that
 message instead of its output in `main`.
 
-**Proof sketch.** Write `L = calls(n)`. Efficiency is `polyTime_compose`. Fix a non-uniform
-PPT distinguisher `D`. Alice's side follows; Bob's is symmetric.
-1. *The simulator* `S_A`, on `⟨1^n, ⟨x, f_A(x, y)⟩⟩`: run the hybrid simulator `S_A^H` on the
-   same input and read its output as a view of `main` with private input `⟨x, a⟩` and tape
-   `r_main`. For each `j < L`, recompute Alice's input to call `j`, `callA(n, x, r_main, j)`
-   (polynomial time by `H.PolyTime`), and run `ρ`'s simulator `S_A^ρ` on it and the `j`-th
-   `G.outA(n)`-bit block of `a`, with fresh coins; read its output as a view of `ρ` (tape `r_j`,
-   messages `m_j`). Output Alice's view of `H.compose ρ`: input `x`, tape
-   `r_main r_0 ⋯ r_{L−1}` (each cut to its length), and the messages `m_j` at Bob's pairs, with
-   fillers, followed by the hybrid view's messages (the layout of `compose_viewP`). `S_A` makes
-   `L(n) + 1` simulator calls and polynomial-time work: a non-uniform PPT.
-2. *Correct answers.* By the output clause of `HBCSecure ρ G`, applied to the distinguisher that
-   compares the second component of Bob's `ρ`-sample with a string given as advice (Alice's
-   ideal output on the worst-case inputs of length `n`, so one non-uniform machine serves every
-   `n`), Alice's `ρ`-output differs from her ideal output with probability at most `ε₁(n)`,
-   uniformly over the inputs (`ε` before the inputs in `HBCSecure`); likewise Bob's. By the
-   union bound, except with probability `2L(n)ε₁(n)` over the coins, every run's outputs are
-   the ideal answers, read back exactly by `padFin` (`padFin_ofFn`). Then `answersRealA`,
-   `answersRealB` are the hybrid answers `answersA`, `answersB`, and the main phase and both
-   outputs are those of the hybrid execution (`compose_exec_main`, `compose_outV`, using `hM`).
-   So the real sample is within statistical distance `2L(n)ε₁(n)` of the sample in which `main`
-   runs on the ideal answers.
-3. *Hybrid argument over the runs.* In `H_i` the first `i` runs of Alice's view are replaced by
-   `S_A^ρ` on the call inputs and the ideal answers, the others are real, and `main` runs on the
-   ideal answers. `H_i` and `H_{i+1}` differ in run `i` only (`compose_exec_runs`: run `i` is an
-   honest execution of `ρ` on the call inputs and the run tapes, independent of the other
-   runs given the `main`-tapes). A distinguisher between them gives one for `ρ`'s Alice side,
-   holding as advice the worst-case `i`, inputs, `main`-tapes and ideal answers for length `n`;
-   it simulates the other runs, runs `main` on the ideal answers, and assembles the sample in
-   polynomial time. So `|Pr[H_i] − Pr[H_{i+1}]| ≤ ε₂(n)`, and `H_0`, `H_L` are within `L(n)ε₂(n)`.
-4. *The hybrid model.* `H_L` is the post-processing `Φ` of step 1 applied to the hybrid real
-   sample `H.realA F n x y` (Bob's output there is `main`'s, as in `H_L`), and `idealA S_A` is
-   `Φ` applied to `F.idealA S_A^H`. `D ∘ Φ` is a non-uniform PPT, so `H.HBCSecure F` bounds the
-   remaining distance by `ε₃(n)`.
-5. In total `L(n)(2ε₁(n) + ε₂(n)) + ε₃(n)`, negligible since `L` is a polynomial. -/
+**Proof sketch.** Write `L = calls(n)`. Efficiency is `polyTime_compose`. Alice's side is
+`exists_simA` (`ComposeSecurity/SideA.lean`), Bob's is symmetric (`exists_simB`); for a
+distinguisher `D` the sum of the two negligible bounds bounds both advantages. On Alice's side:
+1. *The simulator* `S_A` (`ComposeSim.exists_simulator`), on `⟨1^n, ⟨x, f_A(x, y)⟩⟩`: run the
+   hybrid simulator `S_A^H` on the same input and read its output as a view of `main` with
+   private input `⟨x, a⟩` and tape `r_main`. For each `j < L`, recompute Alice's input to call
+   `j`, `callA(n, x, r_main, j)` (polynomial time by `H.PolyTime`), and run `ρ`'s simulator
+   `S_A^ρ` on it and the `j`-th `G.outA(n)`-bit block of `a`, with the `j`-th block of fresh
+   coins. Output Alice's view of `H.compose ρ` (`ComposeSim.asmView`): input `x`, tape
+   `r_main r_0 ⋯ r_{L−1}` (each cut or padded to its length), and the run messages at Bob's
+   pairs, with fillers, followed by the hybrid view's messages (the layout of `compose_viewP`).
+2. *Correct answers* (`ComposeProb.exists_correct`). The output clause of `HBCSecure ρ G`,
+   applied to the machine that compares the second component of a sample with an advice string
+   (each party's ideal output on the worst-case inputs of length `n`), bounds the probability
+   that a party's `ρ`-output is not its ideal output by `ε_c(n)`, uniformly over the inputs. By
+   the union bound, every run gives the ideal answers except with probability `L(n)ε_c(n)`
+   (`uprob_not_goodRuns_le`), and then the real sample is the assembled view of the real run
+   views with the hybrid main phase and Bob's output in `main` (`realA_compose_eq`, using `hM`;
+   the statistical switch `ComposeProb.distAdv_le_uprob_of_eq`).
+3. *Hybrid argument over the runs* (`ComposeProb.abs_chain_le`). In hybrid `i` the first `i`
+   run views are `S_A^ρ`'s outputs on the call inputs and the ideal answers. Resampling run `i`
+   at fixed other coordinates (`exists_hyb_step`), neighbouring hybrids give a distinguisher for
+   `ρ`'s Alice side that holds as advice the template of the worst-case inputs, run index and
+   coordinates at length `n`: the header of the view, the other runs' words and Bob's output,
+   of polynomial length (`exists_tmplA_bound`). It inserts the `ρ`-view and assembles the
+   sample in polynomial time (`ComposeSim.exists_gap_le`), so each step is within `ε₂(n)`.
+4. *The hybrid model.* With every run simulated the sample is `Φ` applied to the hybrid real
+   sample `H.realA F n x y` (`acceptProb_realA_dPhi`), and `idealA S_A` is `Φ` applied to
+   `F.idealA S_A^H` (`ComposeProb.acceptProb_post_pre`). `D ∘ Φ` is a non-uniform PPT
+   (`ComposeSim.exists_dPhi`), so `H.HBCSecure F` bounds the remaining distance by `ε₃(n)`.
+5. In total `L(n)(ε_c(n) + ε₂(n)) + ε₃(n)`, negligible since `L` is a polynomial
+   (`ComposeProb.negligible_polyExpr_mul`). -/
 theorem hbcSecure_compose {G F : Functionality} (H : HybridProtocol G) (ρ : Protocol)
     (hM : ∀ n, 0 < H.main.rounds.eval n) (hH : H.HBCSecure F)
     (hρ : SecureComputation.HBCSecure ρ G) : SecureComputation.HBCSecure (H.compose ρ) F := by
-  sorry
+  have hHpt := ((HybridProtocol.hbcSecure_iff H F).mp hH).1
+  have hρpt := ((SecureComputation.hbcSecure_iff ρ G).mp hρ).1
+  obtain ⟨SA, hSA⟩ := H.exists_simA ρ hM hH hρ
+  obtain ⟨SB, hSB⟩ := H.exists_simB ρ hM hH hρ
+  refine (SecureComputation.hbcSecure_iff (H.compose ρ) F).mpr
+    ⟨H.polyTime_compose ρ hHpt hρpt, SA, SB, fun D => ?_⟩
+  obtain ⟨εA, hεA, hA⟩ := hSA D
+  obtain ⟨εB, hεB, hB⟩ := hSB D
+  refine ⟨fun n => εA n + εB n, hεA.add hεB, fun n x y => ⟨?_, ?_⟩⟩
+  · -- `εB n` bounds a distinguishing advantage, so it is nonnegative
+    have h0 : 0 ≤ εB n := (abs_nonneg _).trans ((distAdv_def _ _ _).symm.le.trans (hB n x y))
+    exact (hA n x y).trans (le_add_of_nonneg_right h0)
+  · have h0 : 0 ≤ εA n := (abs_nonneg _).trans ((distAdv_def _ _ _).symm.le.trans (hA n x y))
+    exact (hB n x y).trans (le_add_of_nonneg_left h0)
 
 end HybridProtocol
 
