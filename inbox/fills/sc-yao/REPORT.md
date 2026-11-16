@@ -1,21 +1,21 @@
-# sc-yao · checkpoint 1
+# sc-yao · checkpoint 2
 
 Issue base: `6ce4658db08a1dc2a03a149987197660db078011`.
 Issued exchange pin: `f41e1b4ddaff2a140c893d510bdd8d227f83fed8`.
-Local proof tip for this checkpoint: `f5f6fae4b4b45cb20bd42e1c9d9119e232c59513`.
+Local proof tip for this checkpoint: `9b7b1147b2b27a1bfb9845f7b9c5ab104574c860`.
 The proof branch `fill/sc-yao` stays local. Only this payload is delivered to the exchange.
 
 ## Status
 
-The decoder, garbling-from-coins program, garbled evaluator, message bounds and call-input
-machines are proved as whole generic declarations. The payload also includes completed
-view/simulator and coin-bijection infrastructure. Both owned target bodies and their proof
-sketches remain exactly as issued in this checkpoint. The single approved hub import connects
-the infrastructure. No helper contains an admission.
+`yaoHybrid_polyTime` is proved with its frozen signature. It uses only propext,
+Classical.choice and Quot.sound and reaches no admitted declaration. The proof covers
+arbitrary histories/private words/tapes and arbitrary answer strings of the required lengths.
 
-The concrete `yaoHybrid_polyTime` proof has separately passed in the lead worktree and is
-reserved for checkpoint 2. It is not represented as proved by this checkpoint's source.
-`yaoHybrid_simulators` remains open. The full security route is still being developed.
+`yaoHybrid_simulators` remains admitted with its issued body and sketch unchanged. All
+checkpoint1 helper declarations remain proved. Completed simulator-route contracts are
+preserved as whole declarations; the full security route continues after this checkpoint.
+The complete fake program, tape-to-seed relabeling and all-occurrence contracts are verified
+in separate agent handoffs for later integration, not claimed as part of this source snapshot.
 
 The results are developed at the exact issue base; no unmerged proof declaration is consumed.
 The sc-garble statements remain frozen admissions, and are not needed by the efficiency helpers.
@@ -29,7 +29,7 @@ line inventory and complete declaration signatures are in `evidence/interfaces/`
 
 The hub is `TCSlib.Cryptography.SecureComputation.Yao.HybridProof`. All helpers live below
 its directory and are imported by that facade. They never import Yao, YaoReal, OT or Compose.
-Yao.lean has 943 lines at this checkpoint, or 971 after sc-garble's 28-line addition, below
+Yao.lean has 1062 lines at this checkpoint, or 1090 after sc-garble's 28-line addition, below
 SY-2's 1,200-line combined cap. Other source files are below 1,000 lines and width 100.
 
 | Agent | Proved contributions |
@@ -57,7 +57,7 @@ description map, output validity, polynomial-time raw parameter/message/answer s
 and exact initial-list/table/pair readers. The traversal derives its own polynomial state
 and round bounds from the polynomial-time encodings.
 
-The concrete body in checkpoint 2 discharges those hypotheses with `Y.uniform`,
+The proved concrete body discharges those hypotheses with `Y.uniform`,
 `encodeCircuit_eq`, `encodeMsgs_eq_encWords`, `Y.outs_lt`, `isFaninTwo_iff`,
 `keyAt_yaoSeed`, `yaoSeed_snd_fst`, `yaoSeed_snd_snd`, `readBits_apply`, and owned-definition
 `rfl`. Bob's shape equations use `yaoBobInit_eq`, `yaoBobTables_eq`, `yaoBobValues_eq`,
@@ -157,10 +157,16 @@ isFaninTwo_iff, encodeList_nil/cons, GateKind.encode_and/or/not, DAGGate.encode_
 DAGCircuit.encode_parts. The fan-in reader is byte-identical to sc-garble. The circuit
 encoding reader name avoids the existing LogspaceUniformAdjBasic.encode_eq declaration.
 
-Three extra helper imports were explicitly approved. Verbatim requests and answers are under
+Three extra helper imports in this source were explicitly approved. Verbatim requests and answers are under
 `evidence/scope-request/`: ThreeColoring.Machines (ordered loop), FromPRF.ReductionMachine
 (doubling/concatenation), and FromPRF.HybridLemmas (expectation switch). Their dependency
 closure extends the 184-module order to 192. No other frozen file was edited.
+
+A fourth helper-import request for the ongoing security work was approved with the verbatim
+answer “Yes”: Asymptotic.BlockEncryptor, for public encodeList_eq_flatMap. It adds exactly
+one module and no Mathlib roots. The approved module is bootstrapped and included in the
+224-module sweep; its future consumer is not yet part of this source snapshot. The request
+and approval are under evidence/scope-request/block-encoding.md.
 
 The user explicitly authorized the full objective, commits/delivery and wrapper checks
 notwithstanding the supplied AGENTS prohibition: “Yes, follow the full objective and wrapper
@@ -190,8 +196,8 @@ TCSlib artifacts were APFS-cloned to their separate olean trees.
 
 Initial headroom was 6.060 GiB, later 5.589 GiB, and after resume 7.327 GiB; each exceeds
 4 GiB. Free disk exceeded 150 GiB. The supplied packs and source pins passed SHA-256 checks.
-The original 184-module bootstrap passed with 32 base sorry warnings; the eight approved
-extra dependencies also passed. The lead rechecked every integrated helper. Timing,
+The original184-module bootstrap passed with32 base sorry warnings. The first eight
+approved extra dependencies and the subsequently approved BlockEncryptor module also passed. The lead rechecked every integrated helper. Timing,
 source snapshots, raw logs, slot records and both diagnostic error forms are retained.
 
 The original agent-a seals exposed a derived gate-kind comparison and a default-size
@@ -201,8 +207,7 @@ for instrumentation (not a resource failure); its raw sample, source and resolut
 preserved. Some earliest agent-a source versions were reconstructed and are explicitly
 marked as reconstructed, rather than represented as original snapshots.
 
-Every checkpoint helper uses only standard axioms and has no sorried dependency. The two
-owned targets remain admitted in this checkpoint. Whole-file A/B and strict/coe seals,
+Every checkpoint helper uses only standard axioms and has no sorried dependency. The simulator target remains admitted; the efficiency target is proved. Whole-file A/B and strict/coe seals,
 paired negative controls, SY-3 reader controls, explicit-unfold scan, header/scope controls,
 name clash scan and lint comparisons are retained in evidence. The final merged audit
 summary identifies each completed check and any baseline diagnostic differences.
@@ -211,7 +216,7 @@ The name scan compares explicit public/private names against the entire issue ba
 sc-garble a73072f1, #318 f62a25b3 and sc-compose bdfdcb76: no unexpected collision. The
 single expected coincidence is the approved byte-identical fan-in reader. Lint comparisons
 use complete line sets. No new FAIL is introduced. The efficiency worktree's only new WARN
-is the explicitly approved SY-2 size exception; the checkpoint1 source itself has 943 lines.
+is the explicitly approved SY-2 size exception; the checkpoint2 source has 1062 lines under the explicit SY-2 exception.
 The old Yao target-size INFO disappears when the new directory makes it a facade.
 
 Large raw stack samples are delivered losslessly in numbered evidence ZIP parts with
@@ -219,11 +224,11 @@ entry lists, to respect the exchange's per-file limit. They are not omitted or a
 Both evidence and top-level manifests are exact path-set manifests, with no leading ./.
 
 
-## Completed checkpoint audit
+## Checkpoint1 audit carried forward
 
 The exact exported checkpoint source passes header/order/frozen-region checks and both
 negative controls. It has 34 changed/new files. The required public/private name scan at
-that exact source tip reports zero unexpected clashes. Its three unsigned patches were
+that exact source tip reports zero unexpected clashes. Its first three unsigned patches were
 applied in order in a fresh shared scratch clone with the recorded committer metadata:
 all three commit hashes were reproduced exactly (`evidence/patch-reproduction.log`).
 
@@ -232,8 +237,8 @@ repairs. All 24 lead-helper variants pass. The evaluator's24 variants, BobProgra
 BobSimulator's4, and agent-c's12+8+4 variants pass. The lead dynamically enumerated769 stored
 constants across the integrated modules and consumers, including391 helper constants;
 every helper has standard axioms only and an empty sorry closure. The raw signature/axiom
-probe includes private/generated constants. Both target bodies remain the issued admissions
-in this source snapshot; the audit also records the separately checked efficiency proof.
+probe includes private/generated constants. The efficiency proof is included in checkpoint2; its dependency audit reports an empty
+sorry closure. Only the simulator target remains an issued admission.
 
 The24 SY-3 controls have the required outcomes:8 unsealed direct proofs pass,8 sealed direct
 proofs fail exactly once,8 sealed reader proofs pass. Every count includes error: and
@@ -262,3 +267,60 @@ The payload's source/patch reproduction evidence is copied alongside all complet
 and sub-agent records. Active post-checkpoint repair output is excluded until its run finishes;
 no checkpoint1 check is in progress. Evidence and top-level manifests are checked for exact
 path-set equality and byte hashes before delivery.
+
+
+## Efficiency proof and checkpoint2 validation
+
+The fourth local commit proves only the frozen efficiency target, updates its proof sketch
+and splits the allowed Main results bullet. There is no new declaration in Yao.lean and no
+other frozen-region edit. The full header/definition/order/scope checker passes with controls.
+The proof instantiates AliceProgram.message_poly, BobProgram.output_poly, the two generic
+strategy constructors, both call-input equations, and the answer-independent message bound.
+The complete elaborated target signature is unchanged.
+
+All four whole-file variants were rerun after replacing one padded-key definitional closure
+with padFin_apply. The canonical A strict and coe variants both pass. B strict and coe each
+have17 diagnostics:15 in the same unchanged base declarations plus two applications in
+yaoHybrid_polyTime. In those applications, sealing PolyExpr.eval prevents identifying
+(yaoHybrid Y E1 E2).calls.eval n with Y.inB.eval n*n. This evaluation is explicitly exempt
+notation under the issued ruling; the canonical variants both pass. Every new B failure is
+attributed in evidence/efficiency-seal-summary.json, with raw logs and source snapshots.
+The original padFin failure and repaired runs are also retained.
+
+The target's axiom set is exactly [propext, Classical.choice, Quot.sound] and its transitive
+sorry closure is empty. yaoHybrid_hbcSecure still reaches yaoHybrid_simulators only;
+yaoProtocol_hbcSecure additionally reaches the two OT targets and HybridProtocol.hbcSecure_compose.
+Those are the frozen sc-ot/sc-compose admissions, not new dependencies of this proof.
+The base/final consumer traces are retained and the unwrapped array summary names them all.
+
+The ordinary complete narrowed sweep uses the original184 modules, the nine explicitly
+approved extra-import modules, and31 infrastructure helper/facade modules,224 in total.
+The first27 passed before the user's relocation; the requested SIGINT then stopped the
+current EXP check. On resume the process inventory showed no orphan, fresh preflight gave
+6.463GiB headroom, and the197 remaining modules resumed in a new log phase from EXP.
+All source snapshots, timing, process-pause record and both error forms are retained.
+The completed sweep and sorry-warning comparison are recorded in the checkpoint2 summary.
+
+Exact source lint adds no FAIL. Its only new Cryptography WARN is Yao's1062-line size, the
+explicitly approved SY-2 exception. The frozen circuit missing-reader warning replacements
+reduce the listed missing-reader counts and add no new issue. Width100 and combined1090
+lines are within the issued budgets. This checkpoint's complete four-patch series is
+reproduced from the issue base using its recorded author/committer dates before delivery.
+
+
+## Completed checkpoint2 sweep and export
+
+All224 modules passed with0 errors and fresh artifacts. The comparison against the issued
+base-sorries.txt identifies31 remaining declarations and exactly one removed admission:
+yaoHybrid_polyTime. No admission was added. The two sweep phases are joined in their original
+module order in evidence/checkpoint2-sweep-summary.json; the user-interrupted partial EXP log
+is retained and the resumed EXP check passed. The full sweep includes YaoReal and the
+SecureComputation facade, so the new target is checked through its actual consumers.
+
+The exact9b7b1147b snapshot passes header/order/frozen-region controls and the four-tip name
+clash scan. Lint is92 FAIL/102 WARN for Cryptography, compared with92/101 at base; the sole
+new warning is the approved Yao size exception. Circuits remains0 FAIL/79 WARN, with only
+the disclosed missing-reader warning improvements. Four unsigned patches applied in a fresh
+scratch clone reproduce all four hashes exactly. Source inventory/signatures, full metadata,
+reproduction log and exact path-set/hash manifests are delivered. Checkpoint1 remains in the
+exchange history at f0a9a6163c5c91599147eb550fd5bb929cc68aa0.

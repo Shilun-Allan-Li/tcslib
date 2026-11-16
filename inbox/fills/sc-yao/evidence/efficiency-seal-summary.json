@@ -1,0 +1,248 @@
+[
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+    "probe": "evidence/seals/yao-efficiency-repair/final/Yao_A_strict.lean",
+    "variant": "A",
+    "coercions": "strict",
+    "original_insert_line": 10,
+    "inserted_lines": 42,
+    "start": "2026-11-16T00:16:21.764531+00:00",
+    "end": "2026-11-16T00:16:51.869215+00:00",
+    "seconds": 30.10534541727975,
+    "exit": 0,
+    "errors": 0,
+    "generic_errors": 0,
+    "fresh_olean": true,
+    "source_sha256": "e19e57934e8274d0607aaf7ac0b137bcda6ccfd28ccb1923ed62f64299cd8dd2",
+    "log": "evidence/probe-runs/yao-efficiency-repair-1/36f5b989e32c__Yao_A_strict.log",
+    "declaration_errors": []
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+    "probe": "evidence/seals/yao-efficiency-repair/final/Yao_A_coe.lean",
+    "variant": "A",
+    "coercions": "coe",
+    "original_insert_line": 10,
+    "inserted_lines": 42,
+    "start": "2026-11-16T00:16:51.875726+00:00",
+    "end": "2026-11-16T00:17:20.450855+00:00",
+    "seconds": 28.5757839162834,
+    "exit": 0,
+    "errors": 0,
+    "generic_errors": 0,
+    "fresh_olean": true,
+    "source_sha256": "ac715d1898340c5f886a6d173d869247822f1fe90cde7db03805e87cec5dcf8d",
+    "log": "evidence/probe-runs/yao-efficiency-repair-1/bfe1679ffc71__Yao_A_coe.log",
+    "declaration_errors": []
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+    "probe": "evidence/seals/yao-efficiency-repair/final/Yao_B_strict.lean",
+    "variant": "B",
+    "coercions": "strict",
+    "original_insert_line": 10,
+    "inserted_lines": 42,
+    "start": "2026-11-16T00:17:20.456427+00:00",
+    "end": "2026-11-16T00:17:47.899341+00:00",
+    "seconds": 27.443888958077878,
+    "exit": 1,
+    "errors": 17,
+    "generic_errors": 0,
+    "fresh_olean": false,
+    "source_sha256": "4850736105100505d79a9d059cfa4b895385ce7b7e5b10603e7934bf9174ddbc",
+    "log": "evidence/probe-runs/yao-efficiency-repair-1/41ca678f9889__Yao_B_strict.log",
+    "declaration_errors": [
+      {
+        "line": 323,
+        "declaration": "yaoCoins_eval",
+        "message": " Type mismatch"
+      },
+      {
+        "line": 631,
+        "declaration": "yaoHybrid",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 632,
+        "declaration": "yaoHybrid",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 633,
+        "declaration": "yaoHybrid",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 639,
+        "declaration": "yaoHybrid_callA",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 647,
+        "declaration": "yaoHybrid_callB",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 758,
+        "declaration": "yaoHybrid_answersB_getD",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 759,
+        "declaration": "yaoHybrid_answersB_getD",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 765,
+        "declaration": "yaoHybrid_answersB_getD",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 766,
+        "declaration": "yaoHybrid_answersB_getD",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 857,
+        "declaration": "yaoSeed_good_whp",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 957,
+        "declaration": "yaoHybrid_polyTime",
+        "message": " Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x"
+      },
+      {
+        "line": 969,
+        "declaration": "yaoHybrid_polyTime",
+        "message": " Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputB_eq n (Y.inB.eval n) x r`"
+      },
+      {
+        "line": 1070,
+        "declaration": "yaoHybrid_simulators",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 1072,
+        "declaration": "yaoHybrid_simulators",
+        "message": " Type mismatch"
+      },
+      {
+        "line": 1094,
+        "declaration": "yaoHybrid_hbcSecure",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 1096,
+        "declaration": "yaoHybrid_hbcSecure",
+        "message": " Type mismatch"
+      }
+    ],
+    "new_B_attribution": "Both call-input applications require the equality between (yaoHybrid Y E1 E2).calls.eval n and Y.inB.eval n*n. Sealing PolyExpr.eval disables the notation reduction. The two canonical A variants pass. All remaining15 diagnostics occur in unchanged base declarations."
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+    "probe": "evidence/seals/yao-efficiency-repair/final/Yao_B_coe.lean",
+    "variant": "B",
+    "coercions": "coe",
+    "original_insert_line": 10,
+    "inserted_lines": 42,
+    "start": "2026-11-16T00:17:47.904866+00:00",
+    "end": "2026-11-16T00:18:15.917748+00:00",
+    "seconds": 28.013625292107463,
+    "exit": 1,
+    "errors": 17,
+    "generic_errors": 0,
+    "fresh_olean": false,
+    "source_sha256": "13d40b85eafeee29c67e9f22e03b8228bca7391d223119cdab9962493f812b90",
+    "log": "evidence/probe-runs/yao-efficiency-repair-1/aec596982f59__Yao_B_coe.log",
+    "declaration_errors": [
+      {
+        "line": 323,
+        "declaration": "yaoCoins_eval",
+        "message": " Type mismatch"
+      },
+      {
+        "line": 631,
+        "declaration": "yaoHybrid",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 632,
+        "declaration": "yaoHybrid",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 633,
+        "declaration": "yaoHybrid",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 639,
+        "declaration": "yaoHybrid_callA",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 647,
+        "declaration": "yaoHybrid_callB",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 758,
+        "declaration": "yaoHybrid_answersB_getD",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 759,
+        "declaration": "yaoHybrid_answersB_getD",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 765,
+        "declaration": "yaoHybrid_answersB_getD",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 766,
+        "declaration": "yaoHybrid_answersB_getD",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 857,
+        "declaration": "yaoSeed_good_whp",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 957,
+        "declaration": "yaoHybrid_polyTime",
+        "message": " Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x"
+      },
+      {
+        "line": 969,
+        "declaration": "yaoHybrid_polyTime",
+        "message": " Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputB_eq n (Y.inB.eval n) x r`"
+      },
+      {
+        "line": 1070,
+        "declaration": "yaoHybrid_simulators",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 1072,
+        "declaration": "yaoHybrid_simulators",
+        "message": " Type mismatch"
+      },
+      {
+        "line": 1094,
+        "declaration": "yaoHybrid_hbcSecure",
+        "message": " Application type mismatch: The argument"
+      },
+      {
+        "line": 1096,
+        "declaration": "yaoHybrid_hbcSecure",
+        "message": " Type mismatch"
+      }
+    ],
+    "new_B_attribution": "Both call-input applications require the equality between (yaoHybrid Y E1 E2).calls.eval n and Y.inB.eval n*n. Sealing PolyExpr.eval disables the notation reduction. The two canonical A variants pass. All remaining15 diagnostics occur in unchanged base declarations."
+  }
+]

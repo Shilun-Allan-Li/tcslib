@@ -2,10 +2,10 @@
 """Copy immutable evidence, retain large raw samples losslessly, and seal exact path sets."""
 from pathlib import Path
 import argparse,hashlib,json,shutil
-parser=argparse.ArgumentParser();parser.add_argument('payload');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('payload');parser.add_argument('--exclude-prefix',action='append',default=[]);args=parser.parse_args()
 root=Path.cwd();dest=Path(args.payload);assert (dest/'REPORT.md').is_file()
 skip={'logs/bobio-sample.txt','subagents/a/logs/all-tables-02-sample.txt'}
-exclude_prefix=['probe-runs/yao-efficiency-repair-1/','seals/yao-efficiency-repair/']
+exclude_prefix=args.exclude_prefix
 for src in sorted((root/'evidence').rglob('*')):
  if not src.is_file():continue
  rel=src.relative_to(root/'evidence').as_posix()
