@@ -1,1 +1,1 @@
-**Dispatched (Seyoon, 2026-11-16)** · PR #334 (draft) at head `7bb1f687d87c8faa25c8523fc4bb1e15a5d473c1`, against campaign Lean `68cba664` (records `e805e481`). Closeout R4-1: the SAT/Hardness one-way transducer copies. Replay 137/137; seals, controls and sweeps clean (pack.md).
+**Gate 145 CLEAR** (round 1, 0/0/1; resolutions.md) at `7bb1f687d87c8faa25c8523fc4bb1e15a5d473c1`. G145-01 fixed in records. **#334 clear to merge.** Once it merges, #335 (gate 146, CLEAR) is retargeted and replayed.
