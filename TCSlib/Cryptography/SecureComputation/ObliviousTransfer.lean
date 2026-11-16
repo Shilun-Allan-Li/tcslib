@@ -4,13 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.Defs
 import TCSlib.Cryptography.Asymptotic.Collections
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Shape
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Efficiency
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Simulators
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.ViewA
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Predictor
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.ViewB
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Oblivious transfer from trapdoor permutations (statement phase)
+# Oblivious transfer from trapdoor permutations
 
 [PS10, Protocol 160.4]: for a collection of trapdoor permutations `{f_i}` with a hard-core
 predicate `h`,
@@ -70,10 +76,31 @@ cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
 * `SecureComputation.SamplerCanonical`: the sampler outputs canonical encodings.
 * `SecureComputation.otProtocol_outV`, `otProtocol_outP`: correctness: Bob outputs `a_b` and
   Alice outputs `⊥ = []`, on every coin string.
-* `SecureComputation.otProtocol_polyTime` (the parties run in polynomial time, stated; a `sorry`
-  under its sketch).
-* `SecureComputation.otProtocol_simulators` (Prop 161.5 with the explicit simulators, stated; a
-  `sorry` under its sketch), and `otProtocol_hbcSecure` (Prop 161.5, proved from the two).
+* `SecureComputation.otProtocol_isOT`: the protocol has the shape `OT.IsOT` of the helper
+  modules.
+* `SecureComputation.otProtocol_polyTime`: the parties run in polynomial time (proved,
+  `OT.polyTime_of_isOT`).
+* `SecureComputation.otSimA_isSimA`, `otSimB_isSimB`: the simulators have the shapes
+  `OT.IsSimA`, `OT.IsSimB` of the helper modules.
+* `SecureComputation.otProtocol_simulators`: Prop 161.5 with the explicit simulators (proved,
+  `OT.simulators_of_isOT`), and `otProtocol_hbcSecure` (Prop 161.5, proved from the two).
+
+## Contents
+
+The proofs are in the helper modules under `SecureComputation/ObliviousTransfer/`, which state
+them for every protocol of the shape of Protocol 160.4:
+* `ObliviousTransfer/Shape.lean`: the shape `OT.IsOT` (the next-message functions restated) and
+  the five moves of its executions.
+* `ObliviousTransfer/Efficiency.lean`: the parties' machines and the message bound
+  (`OT.polyTime_of_isOT`).
+* `ObliviousTransfer/Simulators.lean`: the simulators' shapes `OT.IsSimA`, `OT.IsSimB` (their raw
+  functions restated), the coin spaces, and the simulated views on assembled tapes.
+* `ObliviousTransfer/ViewA.lean`: Alice's side, the bound `2δ(n)`
+  (`OT.distAdv_realA_idealA_le`).
+* `ObliviousTransfer/Predictor.lean`: the view-building distinguisher `OT.viewDist` behind Bob's
+  side.
+* `ObliviousTransfer/ViewB.lean`: Bob's side through the signed predictor
+  (`OT.exists_negligible_bob`) and the two sides together (`OT.simulators_of_isOT`).
 
 ## References
 
@@ -210,6 +237,19 @@ theorem otProtocol_rounds (H : List Bool → List Bool) : (otProtocol T H).round
 /-- The OT protocol starts with Alice, rather than the verifier-side party. -/
 theorem otProtocol_verifierFirst (H : List Bool → List Bool) :
     (otProtocol T H).verifierFirst = false := rfl
+
+/-- **Protocol 160.4 has the shape `OT.IsOT`**: its next-message functions are `OT.senderNext`
+and `OT.receiverNext` (the field equations, with `otMask_eq`, `otKnown_eq` and `otRaw_eq`), Alice
+uses `Gen`'s coins and Bob two sampler blocks, and it has five messages, Alice first:
+`OT.IsOT T H (otProtocol T H)`. -/
+theorem otProtocol_isOT (H : List Bool → List Bool) : OT.IsOT T H (otProtocol T H) := by
+  refine (OT.isOT_iff T H _).2 ⟨?_, ?_, by rw [otProtocol_P, otSender_coins],
+    by rw [otProtocol_V, otReceiver_coins], otProtocol_rounds T H, otProtocol_verifierFirst T H⟩
+  · funext x y r hist
+    rw [otProtocol_P, otSender_next, OT.senderNext_eq, otMask_eq, otMask_eq, OT.mask_eq,
+      OT.mask_eq]
+  · funext x z r hist
+    rw [otProtocol_V, otReceiver_next, OT.receiverNext_eq, otKnown_eq, otRaw_eq]
 
 /-- **The sampler outputs canonical encodings** [PS10, Definition 41.1 (2)]: at every generated
 index, every output of the domain sampler is `encD i x` for some `x ∈ D_i`
@@ -586,6 +626,26 @@ theorem runAt_otSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H)
   unfold otSimB
   rw [NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq, NUPPT.layout_eq]
 
+/-- **`S_A` has the shape `OT.IsSimA`**: its coins are `coins_Gen + (coins_Sample + coins_Sample)`
+and it computes `OT.simAView` (`otSimA_coins`, `runAt_otSimA`, and the readers of `otSimAFun`,
+`coinSeg`, `simIdx`, `simSample`): `OT.IsSimA T (otSimA T)`. -/
+theorem otSimA_isSimA : OT.IsSimA T (otSimA T) := by
+  refine (OT.isSimA_iff T _).2 ⟨otSimA_coins T, fun n y r => ?_⟩
+  rw [runAt_otSimA]
+  simp only [otSimAFun_eq, simSample_eq, simIdx_eq, coinSeg_eq, OT.simAView_eq, OT.simSampled_eq,
+    OT.simIndex_eq, OT.simSeg_eq]
+
+/-- **`S_B` has the shape `OT.IsSimB`**: its coins are
+`coins_Gen + (coins_Sample + (coins_Sample + 1))` and it computes `OT.simBView` (`otSimB_coins`,
+`runAt_otSimB`, and the readers of `otSimBFun`, `otSimZ`, `otSimZb`, `coinSeg`, `simIdx`,
+`simSample`): `OT.IsSimB T H (otSimB T hH)`. -/
+theorem otSimB_isSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
+    OT.IsSimB T H (otSimB T hH) := by
+  refine (OT.isSimB_iff T H _).2 ⟨otSimB_coins T hH, fun n y r => ?_⟩
+  rw [runAt_otSimB]
+  simp only [otSimBFun_eq, otSimZ_eq, otSimZb_eq, simSample_eq, simIdx_eq, coinSeg_eq,
+    OT.simBView_eq, OT.simZpair_eq, OT.simZbit_eq, OT.simSampled_eq, OT.simIndex_eq, OT.simSeg_eq]
+
 /-! ### Proposition 161.5 -/
 
 section Security
@@ -599,35 +659,44 @@ include henc in
 `S_A = otSimA` and `S_B = otSimB` simulate the two sides of Protocol 160.4 within a negligible
 advantage, uniformly over the inputs.
 
-**Proof sketch.**
+**Proof sketch.** The protocol and the simulators have the shapes `OT.IsOT`, `OT.IsSimA`,
+`OT.IsSimB` (`otProtocol_isOT`, `otSimA_isSimA`, `otSimB_isSimB`), and `OT.simulators_of_isOT`
+proves the statement for every protocol and simulators of these shapes.
 1. *Correctness* (`otProtocol_outV`, `otProtocol_outP`): the real outputs are `a_b` for Bob and
    `[]` for Alice on every coin string, which are the ideal outputs. So each side reduces to its
    view.
-2. *Alice's side* (`S_A`). Alice's real view differs from `S_A`'s only in Bob's message.
-   - Real: `y_b = encD(perm x)` for a sampled `x`, and `y_{1−b}` a sampled element.
-   - Simulated: two sampled elements, canonical by `SamplerCanonical`.
+2. *Alice's side* (`OT.distAdv_realA_idealA_le`). On the coins `(r, s₁, s₂)` (`OT.realCoins`,
+   `OT.simACoins`) Alice's real and simulated views differ only in Bob's message.
+   - Real: `⟨f_i(w₁), w₂⟩` (or `⟨w₂, f_i(w₁)⟩` when `b`), with `w_j = Sample(i; s_j)`.
+   - Simulated: `⟨w₁, w₂⟩`, two sampled elements, canonical by `SamplerCanonical`.
 
    The sampler is within `δ(n)` of uniform on `D_i` (`T.OneWay.sampleClose`), and `perm` is a
-   bijection, so each coordinate is within `δ(n)` of `encD` of a uniform element, independently
-   of `b`. The views are `2δ(n)`-close statistically, so any distinguisher's advantage is at most
-   `2δ(n)` (`distAdv_le_of_statClose`).
-3. *Bob's side* (`S_B`).
+   bijection, so at every generated index `f_i(w) = eval ⟨i, w⟩` is `2δ(n)`-close to a sampled
+   element (`OT.statClose_eval_sample`). The views are `2δ(n)`-close statistically, so any
+   distinguisher's advantage is at most `2δ(n)` (`distAdv_le_of_statClose`).
+3. *Bob's side* (`OT.exists_negligible_bob`).
    - Bob's real view is his tape, `i`, and `(z₁, z₂)` with `z_b = h(x) ⊕ a_b` and
-     `z_{1−b} = h(u) ⊕ a_{1−b}`, where `u = perm⁻¹(x')` for Bob's raw element `x'`.
-   - `S_B` produces the same, but with `z_{1−b}` a fresh coin.
+     `z_{1−b} = h(u) ⊕ a_{1−b}`, where `u = perm⁻¹(x')` for Bob's raw element `x'`
+     (`OT.mask_eval`, `OT.mask_raw`).
+   - `S_B` produces the same, but with `z_{1−b}` a fresh coin. Writing `P(β)` for `D`'s
+     acceptance with `z_{1−b} = β ⊕ a_{1−b}`, the advantage is `|E_r P(B) − E_r P(¬B)| / 2`
+     for `B = h(u)` (`OT.acceptProb_realB`, `OT.acceptProb_idealB`).
    - A distinguisher of the two gives a predictor of `h(u)` from `⟨i, s'⟩`, where `s'` are the
-     sampler coins of `x'`: build the view around the challenge (Bob's tape contains `s'`), run
-     the distinguisher, and flip according to `a_{1−b}` (the signed-predictor identity
-     `exists_pkPredictor` of Algorithm 104.3).
-   - Its advantage is at most `2 ε_EHC(n)` by `hEHC` (enhanced hard-core: the predictor sees the
-     sampler's coins, which the plain hard-core property would not allow).
-   - Building the selected mask also uses `a_b`, so take all eight triples `(b,a₀,a₁)`.
-     The maximum of their eight negligible bounds is negligible and uniform over the inputs;
-     fixing only the choice and unselected sender bit would not specify the complete view.
-4. *Efficiency.* The predictor runs Bob's sampler, the distinguisher, and one XOR: a machine by
-   composition (`NUPPT.exists_comp`).
+     sampler coins of `x'`: the machine `OT.viewDist` builds the view around the challenge (Bob's
+     tape contains `s'`) and runs the distinguisher, inside `tdpPredictor` of Algorithm 104.3. It
+     predicts with probability `1/2 ± (P(B) − P(¬B))/2` (the signed-predictor identity
+     `OT.uprob_signedPredictor_false`/`_true`, for uniform coin challenges).
+   - Its advantage is at most `|ε_false(n)| + |ε_true(n)|` by `hEHC` (enhanced hard-core: the
+     predictor sees the sampler's coins, which the plain hard-core property would not allow).
+   - Building the selected mask also uses `a_b`, so the bits `(b, a₀, a₁)` are fixed in the
+     machine: eight triples and two signs. The sum of the sixteen negligible bounds is negligible
+     and uniform over the inputs; fixing only the choice and unselected sender bit would not
+     specify the complete view.
+4. *Efficiency.* The predictor runs Bob's sampler, `H`, one XOR and the distinguisher (with its
+   advice): `NUPPT.ofPolyTime` of a polynomial-time raw function (`OT.viewDist`).
 
-The source writes out `S_A` only and leaves `S_B` "as an exercise"; step 3 is that exercise. -/
+The bound is `ε(n) = 2|δ(n)| + ε_B(n)`. The source writes out `S_A` only and leaves `S_B` "as an
+exercise"; step 3 is that exercise. -/
 theorem otProtocol_simulators (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
     ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
       ∀ n (x : Fin (otFunctionality.inA.eval n) → Bool)
@@ -635,25 +704,33 @@ theorem otProtocol_simulators (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
         distAdv (otFunctionality.realA (otProtocol T H) n x y)
             (otFunctionality.idealA (otSimA T) n x y) (D.distinguisherL n) ≤ ε n ∧
           distAdv (otFunctionality.realB (otProtocol T H) n x y)
-            (otFunctionality.idealB (otSimB T hH) n x y) (D.distinguisherL n) ≤ ε n := by
-  sorry
+            (otFunctionality.idealB (otSimB T hH) n x y) (D.distinguisherL n) ≤ ε n :=
+  OT.simulators_of_isOT T H hH henc (otProtocol_isOT T H) (otProtocol_outV T H henc)
+    (otProtocol_outP T H) (otSimA_isSimA T) (otSimB_isSimB T hH) hT
+    ((enhancedHardCore_iff T h).1 hEHC)
 
 include hH in
 /-- **Protocol 160.4 runs in polynomial time** (Definition 155.1's efficiency requirement,
 `Functionality.PolyTime`).
 
-**Proof sketch.**
+**Proof sketch.** The protocol has the shape `OT.IsOT` (`otProtocol_isOT`), and
+`OT.polyTime_of_isOT` proves the requirement for every protocol of that shape.
 1. *Alice.* On the empty history she outputs `Gen`'s index; on one message, the two masks (the
-   trapdoor inverter, `H` and one XOR each, paired); otherwise `[]`. `Gen` and the inverter are
-   uniform machines and `H` is polynomial-time, so a uniform machine computes her next-message
-   function by composition, as for Algorithm 104.3's machines.
-2. *Bob.* His sampler twice, `eval` and a pairing on one message; `[]` on two; `H` and one XOR on
-   his complete history. The same composition gives a uniform machine.
-3. *Messages.* The index has at most `Gen`'s output length (`NUPPT.runLenPoly`). Bob's pair is
-   two sampler outputs or evaluations, polynomial in `n` and the index. The masks have one bit
-   each, paired, and the fillers are empty. Their maximum is a polynomial `B`. -/
-theorem otProtocol_polyTime : otFunctionality.PolyTime (otProtocol T H) := by
-  sorry
+   trapdoor inverter, `H` and one XOR each, paired); otherwise `[]`. The raw machine
+   `OT.senderRaw` reads the case off the encoded history `w`: `w = []`, or `snd w = []`
+   (`polyTimeComputable_isNil`). `Gen` and the inverter are uniform machines and `H` is
+   polynomial-time, so `NUPPT.ofPolyTimeUniform` of it computes her next-message function
+   (`OT.senderRaw_advInput`), with `Gen`'s coins.
+2. *Bob.* His sampler on the two coin blocks, `eval` and a pairing on one message; `[]` on two;
+   `H` and one XOR otherwise (`OT.receiverRaw`, with a third emptiness test). The same
+   construction gives a uniform machine with two sampler blocks of coins.
+3. *Messages.* The transcript is `([y, []], [i, z, []])` (`OT.transcriptWith_isOT`). The index has
+   `|i| ≤ Q₁(n)`, `Gen`'s `NUPPT.runLenPoly`. Bob's pair `y` has two sampler outputs (`≤ Q₂(n)`,
+   the sampler's `runLenPoly` at `Q₁`) or evaluations (`≤ Q₃(n)`, `eval`'s polynomial bound), so
+   `|y| ≤ 3(Q₂ + Q₃) + 2`. The masks have one bit each, so `|z| ≤ 5`, and the fillers are empty.
+   So `B = Q₁ + (3(Q₂ + Q₃) + 2) + 5` (`OT.exists_messages_le`). -/
+theorem otProtocol_polyTime : otFunctionality.PolyTime (otProtocol T H) :=
+  OT.polyTime_of_isOT T hH (otProtocol_isOT T H)
 
 include henc hH in
 /-- **Proposition 161.5** [PS10]: Protocol 160.4 is an honest-but-curious one-out-of-two
