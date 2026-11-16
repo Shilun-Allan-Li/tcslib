@@ -1,4 +1,6 @@
-# R2c · The §12 common scanner: design note (draft for Seyoon, 2026-11-16)
+# R2c · The §12 common scanner: design note (2026-11-16)
+
+**Approved (Seyoon, 2026-11-16): the API of §3 and the transport approach, as written.**
 
 Seyoon ruled R2c "do it" (2026-11-16). This note fixes the shape before any Lean, and lists the
 new public API for approval (standing rule).
