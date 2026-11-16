@@ -1,0 +1,25 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Advanced encryption primitives
+
+Encryption primitives beyond private-key and public-key encryption.
+
+## Contents
+
+* `IdentityBased`: identity-based encryption, selective-identity security and the Boneh–Boyen
+  system (BB1).
+
+## References
+
+* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
+  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004.
+-/

@@ -1,0 +1,189 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
+import TCSlib.Cryptography.Pairing.Assumptions
+import TCSlib.Cryptography.Pairing.Operations
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Selective-identity security of BB1 under Decision BDH
+
+[BB04, Theorem 4.1] at depth `ℓ = 1`: if Decision BDH holds in `G`, the BB1 system is
+IND-sID-CPA secure. The proof [BB04, pp. 7–8] builds a Decision BDH algorithm `B` that, given
+`(g, g^a, g^b, g^c, T)`, plays the selective-identity game with the adversary without knowing the
+master key `g^{ab}`:
+* **Setup**, once `ID*` is committed: a random `α_1 ∈ Z_p`, `h = g_1^{−ID*} g^{α_1}`,
+  `params = (g, g_1 = g^a, g_2 = g^b, h)`, so that `F(x) = g_1^{x − ID*} g^{α_1}`;
+* **private keys** for `ID ≠ ID*`: a random `r ∈ Z_p`,
+  `(g_2^{−α_1/(ID − ID*)} F(ID)^r, g_2^{−1/(ID − ID*)} g^r)`;
+* **the challenge**: `(M_b · T, g^c, (g^c)^{α_1})`.
+
+**The simulation game.** `bb1SimGame` (defined beside the scheme in
+`AdvancedEncryption/IdentityBased/BonehBoyen.lean`) is that simulator as a game of the `Games`
+framework, with ideal uniform exponents, run against the adversary machine on a Decision BDH
+tuple drawn from `P_BDH` (`real`) or `R_BDH`. The security proof has three named steps:
+1. `bb1_sim_real`: on `P_BDH`, the simulation is the real game, except when distinct
+   identities collide in `Z_p` (the generator's coins with `p < 2^ℓ`);
+2. `bb1_sim_random`: on `R_BDH`, the simulation does not depend on the challenge bit;
+3. `exists_bb1_distinguisher`: the simulation is, up to a negligible statistical term, the
+   Decision BDH experiment of a non-uniform PPT distinguisher (the machine step: handler theorem
+   T1 with exponents drawn from coin blocks).
+`bb1_sidSecure` assembles them by the triangle inequality.
+
+**Deviation:** the paper's `B` draws the challenge bit itself and outputs `[b = b']`; here there
+is one simulation per value of `b`, and the advantage of the two-experiment form is bounded by
+the sum of two Decision BDH advantages; the paper's statement is concrete (`t' < t − Θ(τ ℓ q_S)`).
+
+## Main definitions
+
+None: the simulator (`bb1SimImpl`, `bb1SimGame`) is defined beside the scheme, in
+`AdvancedEncryption.IdentityBased.BonehBoyen`.
+
+## Main results
+
+* `bb1_sim_real`, `bb1_sim_random`, `exists_bb1_distinguisher` — the three steps.
+* `bb1_sidSecure` — [BB04, Theorem 4.1] at depth 1.
+
+## References
+
+* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
+  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
+  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): Theorem 4.1 and
+  its proof; §4.4 (p. 8).
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (Definition 26.8, non-uniform PPT.)
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
+  TCSlib.Cryptography.Composability
+
+variable (G : BilinearGen) (ℓ : PolyExpr)
+
+/-- **Step 1: on `P_BDH` the simulation is the real game** [BB04, proof of Theorem 4.1, "When
+the input 5-tuple is sampled from `P_BDH` … `A`'s view is identical to its view in a real attack
+game"], except on the generator's coins where `p < 2^ℓ`, where distinct identities may collide
+in `Z_p`.
+
+**Proof sketch.** Fix coins with `2^ℓ ≤ p`, so `idToZ` is injective on `ℓ`-bit strings
+(`bitsToNat_lt`, `bitsToNat_injective`). Couple the two games: the real `Setup` draws
+`(g, α, h, g_2)`, the simulation `(g, a, b', c)` and, at `Init`, `α_1`. Map `α ↦ a`,
+`g_2 ↦ g^{b'}` and `h ↦ g_1^{−ID*} g^{α_1}` (a bijection in `α_1` for each `ID*`, so `h` is uniform
+and independent; `expect_sample_equiv`). Answers to `Init` agree. For `ID ≠ ID*` the simulated
+key with exponent `r` is the real key with exponent `r̃ = r − b'/(ID − ID*)`, a bijection of
+`Z_p` (the paper's computation, `pow_val_mul`, `bilinear_pow`). The challenge is `Encrypt` with
+`s = c`, since `F(ID*) = g^{α_1}` and `e(g, g)^{ab'c} = e(g_1, g_2)^c`. The state machines agree
+step by step (`simulate` with matched implementations, `Games.expect_simulate_congr`), so the
+acceptance probabilities differ only on the excluded coins, of probability
+`Pr_r[p < 2^ℓ]`. -/
+theorem bb1_sim_real (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ) :
+    advantage ((bb1Scheme G ℓ).sidGame A q b κ) (bb1SimGame G ℓ A q b true κ) ≤
+      uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < 2 ^ ℓ.eval κ) := by
+  sorry
+
+/-- **Step 2: on `R_BDH` the simulation does not depend on the challenge bit** [BB04, proof of
+Theorem 4.1, "when `T` is uniform and independent in `G_1` … `C` is independent of `b` in the
+adversary's view"].
+
+**Proof sketch.** In the `R_BDH` game, `T` is uniform in `G_T` and is used only in the first
+component `M_b · T` of the challenge. For each fixed run up to the challenge, `T ↦ M_b · T` is a
+bijection of `G_T`, so exchanging the sample of `T` with the rest of the game
+(`expect_expect_sample`) and reindexing it by `T ↦ M_b^{−1} M_{1−b} · T`
+(`expect_sample_equiv`) turns the game with `b = 0` into the game with `b = 1`. Challenges
+outside the message space are refused in both games. -/
+theorem bb1_sim_random (A : NUPPT) (q : ℕ) (κ : ℕ) :
+    advantage (bb1SimGame G ℓ A q false false κ) (bb1SimGame G ℓ A q true false κ) = 0 := by
+  sorry
+
+/-- **Step 3: the simulation is a Decision BDH distinguisher**: with efficient group operations
+`O` and the arithmetic bundle `H`, for every adversary `A` and polynomial budget `q` there are
+non-uniform PPT distinguishers `D_b` and a negligible `σ` with
+`|Pr[bb1SimGame … b real = 1] − Pr[dbdhGame (D_b) real = 1]| ≤ σ(κ)` for both tuple
+distributions.
+
+**Proof sketch.** `D_b` parses `⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩` and runs `A` with the handler of
+`bb1SimImpl`: group operations by `O.mulG`, `O.powG`, `O.mulT`, membership by `O.memT`, exponent
+arithmetic modulo `p = O.orderStr d` with `H` (negation, difference, inverse via `xgcd`,
+product), and `α_1` and every `r` read from its own coin blocks by the rejection sampler
+`Candidates.sampleBelowL` with `wG(κ)`-bit trials (`p ≤ 2^{wG}`, as `encG` is injective). The
+handler is polynomial-time with polynomial state, so the handler theorem
+`Games.exists_handlerMachine` (T1) makes the run a machine whose output is exactly `A`'s guess
+in a game equal to `bb1SimGame` with sampled instead of ideal exponents. The at most `q(κ) + 1`
+sampled exponents are each within `2^{−κ}` of uniform (`statClose_sampleBelowL`), so
+`σ(κ) = (q(κ) + 1) · 2^{−κ}` works (hybrid over the samples). -/
+theorem exists_bb1_distinguisher (H : Candidates.ArithmeticFP) (O : G.Ops) (A : NUPPT)
+    (q : PolyExpr) :
+    ∃ D : Bool → NUPPT, ∃ σ : ℕ → ℝ, Negligible σ ∧ ∀ (b real : Bool) (κ : ℕ),
+      advantage (bb1SimGame G ℓ A (q.eval κ) b real κ) (G.dbdhGame (D b) real κ) ≤ σ κ := by
+  sorry
+
+/-- **BB1 is IND-sID-CPA secure under Decision BDH** [BB04, Theorem 4.1, at depth `ℓ = 1`]: if
+the generator's groups have efficient operations, the arithmetic bundle holds, the order is at
+least `2^{ℓ(κ)}` except with negligible probability, and Decision BDH holds, then the BB1 system
+for `ℓ(κ)`-bit identities is IND-sID-CPA secure.
+
+**Deviation:** asymptotic form of the paper's concrete bound (`(t', q_S, ε)`-security from
+`(t, ε)`-Decision BDH); the efficiency hypotheses `O` and `H` make the paper's simulator a
+non-uniform PPT; `hN` makes distinct `ℓ`-bit identities distinct in `Z_p` (the condition
+`2^b < p` of [BB04, §4.4]); the advantage is bounded by two Decision BDH advantages, one per
+challenge bit, instead of one.
+
+**Proof sketch.** By the triangle inequality through the simulation games and the Decision BDH
+experiments of the two distinguishers `D_0`, `D_1` of step 3,
+`advantage (sidGame … false) (sidGame … true)` is at most
+`2 Pr_r[p < 2^ℓ] + 4σ(κ) + dbdhAdv D_0 κ + dbdhAdv D_1 κ` (steps 1 and 3 for each bit, step 2
+in the middle). Each term is negligible (`hN`, step 3, `h`). -/
+theorem bb1_sidSecure (H : Candidates.ArithmeticFP) (O : G.Ops)
+    (hN : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.OrderAtLeastExcept (fun κ => 2 ^ ℓ.eval κ) δ)
+    (h : G.DBDHAssumption) : (bb1Scheme G ℓ).SIDSecure := by
+  rw [IBEScheme.sidSecure_iff]
+  intro A q
+  obtain ⟨δ, hδ, hN⟩ := hN
+  obtain ⟨D, σ, hσ, hD⟩ := exists_bb1_distinguisher G ℓ H O A q
+  refine ⟨fun κ => 2 * δ κ + 4 * σ κ + (G.dbdhAdv (D false) κ + G.dbdhAdv (D true) κ),
+    ((hδ.const_mul 2).add (hσ.const_mul 4)).add
+      ((G.dbdhAssumption_iff.1 h (D false)).add (G.dbdhAssumption_iff.1 h (D true))), fun κ => ?_⟩
+  have hu := (G.orderAtLeastExcept_iff _ δ).1 hN κ
+  have t := fun G₀ G₁ G₂ : ProbComp Bool => advantage_triangle G₀ G₁ G₂
+  have hc := fun G₀ G₁ : ProbComp Bool => advantage_comm G₀ G₁
+  have s0 := bb1_sim_real G ℓ A (q.eval κ) false κ
+  have s1 := bb1_sim_real G ℓ A (q.eval κ) true κ
+  have s2 := bb1_sim_random G ℓ A (q.eval κ) κ
+  have d0T := hD false true κ
+  have d0F := hD false false κ
+  have d1T := hD true true κ
+  have d1F := hD true false κ
+  have a0 := G.dbdhAdv_eq (D false) κ
+  have a1 := G.dbdhAdv_eq (D true) κ
+  set S0 := (bb1Scheme G ℓ).sidGame A (q.eval κ) false κ
+  set S1 := (bb1Scheme G ℓ).sidGame A (q.eval κ) true κ
+  set M0T := bb1SimGame G ℓ A (q.eval κ) false true κ
+  set M0F := bb1SimGame G ℓ A (q.eval κ) false false κ
+  set M1T := bb1SimGame G ℓ A (q.eval κ) true true κ
+  set M1F := bb1SimGame G ℓ A (q.eval κ) true false κ
+  set E0T := G.dbdhGame (D false) true κ
+  set E0F := G.dbdhGame (D false) false κ
+  set E1T := G.dbdhGame (D true) true κ
+  set E1F := G.dbdhGame (D true) false κ
+  have := t S0 M0T S1
+  have := t M0T E0T S1
+  have := t E0T E0F S1
+  have := t E0F M0F S1
+  have := t M0F M1F S1
+  have := t M1F E1F S1
+  have := t E1F E1T S1
+  have := t E1T M1T S1
+  have := hc E0T E0F
+  have := hc E0F M0F
+  have := hc E1T M1T
+  have := hc M1T S1
+  linarith
+
+end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
