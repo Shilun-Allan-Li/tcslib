@@ -10,11 +10,10 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 ## 0. Current state (2026-11-16; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. The latest merges are #328 and #329 (closeout W2 and R1a, gates 142 and 143).
-Campaign Lean is `720e2a9cab2e80924d208f997e89045f573a69f0`. Its replay output is the cloud snapshot `oleans-c720e`
-(873 objects; `oleans-c2039` is the fallback); use it whole. See campaign/status/2026-11-16-merge-328-329/. **Closeout**
-(campaign/closeout/PLAN.md, REFACTOR-PLAN.md): the chapter scope has no admission; refactor waves R0 and R1a done, R2a in
-progress, R2c (common scanner) next. **Ladner's theorem is proved** (`Complexity.ladner`,
+only go directly after fetch/rebase. The latest merge is #330 (closeout R2a, gate 144).
+Campaign Lean is `68cba664c2fcb4e33b4845b385feea3f456d0105`. Its replay output is the cloud snapshot `oleans-c68cb`
+(873 objects; `oleans-c720e` is the fallback); use it whole. See campaign/status/2026-11-16-merge-330/. **Closeout**
+(campaign/closeout/PLAN.md, REFACTOR-PLAN.md): the chapter scope has no admission; refactor waves R0, R1a and R2a done (R2c measured and carried); next, measuring R3–R6 for Seyoon's go/carry decisions. **Ladner's theorem is proved** (`Complexity.ladner`,
 standard axioms only; Ladner.lean has no admission). Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
 (`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
 (#322). Fill 7 proved target 6 (#325). Next: the
@@ -23,7 +22,7 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
-| #330 / 144 | **CLEAR (round 2, 0/0/0), ready to merge** at `a3c9c2102865e60c4eed295a4b613ef2b85a987c` at `ae4157ddf37ea3520e5d953faef808649b8688d3`. Closeout R2a: `wordPatch` to Catalog, IW-1 and WA-1 retired, eight proofs' legacy reads repaired. Replay 127/127. campaign/gates/144-r2a-wordpatch/. |
+| #330 / 144 | **Merged** (`68cba664`, 2026-11-16); round 2 CLEAR. Snapshot `oleans-c68cb` (status/2026-11-16-merge-330) at `a3c9c2102865e60c4eed295a4b613ef2b85a987c` at `ae4157ddf37ea3520e5d953faef808649b8688d3`. Closeout R2a: `wordPatch` to Catalog, IW-1 and WA-1 retired, eight proofs' legacy reads repaired. Replay 127/127. campaign/gates/144-r2a-wordpatch/. |
 | #329 / 143 | **Merged** (`856306d8d`, 2026-11-16); round 1 CLEAR at `ba93b96c566bbb56ec8185cb1c09b708b0169285`. Closeout R1a: BW-1 and CH34-D4 retired by citations. Replay 41/41. campaign/gates/143-r1a-dedup/. |
 | #328 / 142 | **Merged** (`720e2a9c`, 2026-11-16); round 1 CLEAR. Snapshot after both: `oleans-c720e` (873 objects; status/2026-11-16-merge-328-329) at `dcbab37806581f2bd0fd24cb55fee75fcacd2dab`. Closeout W2: remove the RD-2/H6 route (41 admissions). Replay 3/3, 0 admissions. campaign/gates/142-remove-rd2/. |
 | #325 / 141 | **Merged** at `20394834d86a509ad5776c36dbbfccc33b023306` (2026-11-16). Gate closed (CLEAR). Ladner fill 7: target 6 `SAT_H_intermediate`; **Ladner's theorem complete**. Its replay output is the campaign snapshot `oleans-c2039` (876 objects; campaign/status/2026-11-16-merge-325/). |

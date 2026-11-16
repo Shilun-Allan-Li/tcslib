@@ -2080,4 +2080,4 @@ exposed restated lemmas, retired by new public lemmas (Seyoon, 2026-11-16): `wor
 `decrementTM_shadow_pre` and `decrementTM_liftSymbols_runFrom` (StepClock and CounterLoop's
 `counter_debit`); the privates are kept as one-line citations or deleted. It also repaired the
 pre-existing foreign-definition reads in the eight proofs it touched (gate 144 pack). Status:
-**retired upon #330's merge**.
+**retired (#330 merged 2026-11-16)**.
