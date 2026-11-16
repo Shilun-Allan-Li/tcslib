@@ -2136,7 +2136,7 @@ New public field equations (Seyoon, 2026-11-16, after a measured scratch prototy
 `simp`. The host-call proofs read both configurations through them. Net +6 Lean lines; copy
 screen 8 directed pairs gone, 3 new (the `satPad_words` twin, and a text artifact on `embedCfg`).
 Residue: `satPadTM`, `satPad_run`, `satPad_words`, `satHost_seam`/`_call` remain private twins
-with the host dispatcher (kind 6, carried). Status: **retiring (gate 150 CLEAR; PR #343 clear to merge)**.
+with the host dispatcher (kind 6, carried). Status: **retired (#343 merged 2026-11-16)**.
 
 **C1E-1 trims (gate 151, 2026-11-16).** PR #344 applies backlog C1E-1 (b), (c) and (d) in
 `ClassNP/ExhaustiveReplay`: `xr_bufferTape_neg`/`_ge` deleted (`FinTM.bufferTape_of_neg`;
