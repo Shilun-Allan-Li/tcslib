@@ -46,7 +46,11 @@ the ARM route proved TQBF (backlog §2 RD-2: "Fills held (user, 2026-10-14)"). O
 - **(c) Carry them** as a documented hold into `main` (they are already there). The chapters are
   then "done except a held, unused alternative route".
 
-**D2 · Exercise 3.6 (a)(b).** The plan lists Ladner's "Claim and Ex 3.6(a)(b)". The source check
+**D2 · Exercise 3.6 (a)(b).** **Answered (Seyoon, 2026-11-16, from the 2009 text):** (a) `H` is
+computable in polynomial time, proved as `ladnerH_polyTime`; (b) if `SAT_H` is NP-complete, then
+SAT is in P, which has no theorem of its own yet. A four-line proof from the published readers and
+targets 4 and 5 elaborates on `oleans-c2039` with standard axioms (`probes/Ex36b.lean.txt`); its
+landing as a public theorem awaits Seyoon's approval. Original question: The plan lists Ladner's "Claim and Ex 3.6(a)(b)". The source check
 (`campaign/items/ladner/2026-11-08-source-check.md`) could not verify the 2009 wording of those
 parts, and the Lean cites Theorem 3.3 and its proof (PLAN §(f) fallback). The Claim is covered by
 targets 3 and 4 (`ladnerH_bounded_of_mem_P`, `ladnerH_unbounded_of_not_mem_P`). Options: check the

@@ -1,0 +1,16 @@
+import TCSlib.Complexity.Diagonalization.Ladner
+
+namespace Complexity
+
+/-- If the padded language `SAT_H` is NP-complete, then SAT is in P.
+[AB09, Exercise 3.6(b)] -/
+theorem SAT_mem_P_of_SAT_H_NPComplete (hc : NPComplete SAT_H) : SAT ∈ P := by
+  obtain ⟨-, hH⟩ := (NPComplete_iff _).mp hc
+  by_cases hP : SAT_H ∈ P
+  · exact mem_P_of_polyTimeReducible ((NPHard_iff _).mp hH SAT SAT_mem_NP) hP
+  · rw [SAT_H_eq] at hH
+    exact SAT_mem_P_of_padSAT_NPHard ladnerH_polyTime (ladnerH_unbounded_of_not_mem_P hP) hH
+
+end Complexity
+
+#print axioms Complexity.SAT_mem_P_of_SAT_H_NPComplete
