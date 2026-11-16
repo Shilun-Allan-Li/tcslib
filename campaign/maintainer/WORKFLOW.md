@@ -229,3 +229,7 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   - the VM is about 4 vCPU, 16 GB and 30 GB of disk, so prune snapshots;
   - Mathlib's cache hosts need custom network access;
   - the GitHub proxy rejects GraphQL, so use `gh api repos/…` (REST) instead of `gh pr …`.
+
+**Bundles carry citation homes** (gate 147 G147-02, 2026-11-16). A gate bundle includes the source
+file of every public lemma that a changed proof newly cites, pinned at the audited head, alongside
+the changed owners.

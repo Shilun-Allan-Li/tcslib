@@ -4426,3 +4426,11 @@ round3 remain. The source-inclusive PolyTimePairing union now includes lenLe:
 at least10/26(38.5%) pre-repair, not retained/acknowledged general-closure debt.
 Separate on-image/iteration candidates keep their bounded interface assessments;
 the fixed-bit transducer's3 members fit the already accepted transducer kind.
+
+### Nondeterminism historical notes (gate 147 G147-01, 2026-11-16)
+
+Two module notes in `ClassNP/Nondeterminism` still name lemmas deleted by #336 (MIG-8):
+`e3_split_of_body` in the epoch-3A appendix and `a3n_prevalidation` in the A3 completion note.
+Correct them in the PR that gives `NTIME`/`NEXP` membership published readers. Editing them earlier
+pulls the public `ntime_expPow_subset_NEXP` and `EXP_eq_NEXP_of_P_eq_NP` into the changed set, and
+those proofs destructure membership anonymously.
