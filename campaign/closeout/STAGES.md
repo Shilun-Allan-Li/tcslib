@@ -49,3 +49,20 @@ Rebuilds and gates happen only between stages. Agreed plan:
 
 11. **F6-1(f)** (`oracleEmbed_updateTape`). There is no second copy today, so it goes with MIG-16
     to the stage 3 register.
+
+## Stage 1 build notes (2026-11-16)
+
+- **Oracle import.** Seyoon approved `TuringMachine/Oracle ← CfgFacts` for MIG-10: the step
+  proof reads the input symbol through `Cfg.inputSymbol_congr`.
+- **TR-1** needed no new import; NTIME proves the lemma from `NDTM` equations it already sees.
+- **RS-1: carried** (Seyoon). The three sites compare against constructed configurations, not
+  `(A.initCfg x).mapState f`, so a citation would save almost nothing and add three imports.
+- **CK-1: two lemmas approved** (Seyoon): `Codec.acceptChk_def` and `initChk_def`, beside
+  `edgeChk_def`. The published `_iff` characterizations do not fit the deciders' proofs.
+- **C1E-1(d)'s optional merge: carried** (Seyoon); it needs a bank-indexed layout redesign.
+- **F6-1(c)** applies to NotTimeConstructible only; UHaltMachine's `bits_foldr_bit_one` states a
+  different fact.
+- **F6-1(d)** is published general in the tape count, as `Turing.scanTM_run_preserves`; RecordTable
+  uses two tapes.
+- Net −2 Lean lines across 19 files. The approved promotions add documented public lemmas, and
+  the carried items were the larger savings.
