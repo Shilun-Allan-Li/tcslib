@@ -2137,3 +2137,11 @@ New public field equations (Seyoon, 2026-11-16, after a measured scratch prototy
 screen 8 directed pairs gone, 3 new (the `satPad_words` twin, and a text artifact on `embedCfg`).
 Residue: `satPadTM`, `satPad_run`, `satPad_words`, `satHost_seam`/`_call` remain private twins
 with the host dispatcher (kind 6, carried). Status: **retiring (gate 150; PR #343 draft)**.
+
+**C1E-1 trims (gate 151, 2026-11-16).** PR #344 applies backlog C1E-1 (b), (c) and (d) in
+`ClassNP/ExhaustiveReplay`: `xr_bufferTape_neg`/`_ge` deleted (`FinTM.bufferTape_of_neg`;
+`xr_bufferTape_eq_none_iff` proved from `FinTM.bufferTape_eq`); `xr_replay_finish`/`_timeout` share
+`xr_replay_prelude`; the ten `xr_*_ne_*` bank lemmas become the file-local tactic `xr_bank_ne`.
+Net −38 Lean lines; copy screen 119 → 105 (22 gone, 8 new among the one-bank update siblings).
+Remaining: (a) declined (no saving), (d)'s optional one-bank update merge, (e)–(h) as recorded.
+Status: **retiring (gate 151; PR #344 draft)**.
