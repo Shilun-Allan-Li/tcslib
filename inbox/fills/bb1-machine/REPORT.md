@@ -1,4 +1,4 @@
-# Fill `bb1-machine`: T4 `exists_bb1_distinguisher` — checkpoint 1 (readers and T4)
+# Fill `bb1-machine`: T4 `exists_bb1_distinguisher` — final
 
 External Claude fill (lead plus one sub-agent), 2026-11-16 UTC, from the issued pack at exchange commit
 `78d89c5cda437ae1bea629328eb3116e2f36d026` (`outbox/fills/bb1-machine/`).
@@ -9,10 +9,16 @@ byte for byte. The glue is in a new helper module, `BonehBoyenMachine/Oracles.le
 admission is added, and no frozen file changes beyond the seven insertions. There is no blocker and no new scope
 request.
 
-This is **checkpoint 1**, steps 1–4 of the brief. It carries the native sweep of the whole order (with the new
-helper), the axioms of T4 and of the readers, the dependency trace, the reader-insertion check, and also the
-statements diff, the frozen-header check, lint and the name-clash scan. The canonical Rule 10 seals and controls,
-the base seals, and the unfold scan follow in the final.
+This is the **final** payload. It carries the full evidence of the brief: the native sweep of the whole order (with
+the new helper), the axioms of T4 and of the readers, the dependency trace, the statements diff, the reader-insertion
+and frozen-header checks with their mutation controls, the canonical Rule 10 seals A and B, strict and coe, of all
+eight changed owners with paired controls (seven new reader rows), the base seals of `Defs` and `BonehBoyen` at the
+issue base, the explicit-unfold scan, lint and the name-clash scan.
+
+**Exchange history.** Checkpoint 1 (the same three commits; everything below except Rule 10, the base seals and the
+scan) was pushed as `309071c6efc7a98cf0e832c7ff0c8973127d3701` (`fill bb1-machine: checkpoint 1`). The proof branch
+has not changed since: the final head is still `c90273fa…`. This payload replaces the checkpoint's files under
+`inbox/fills/bb1-machine/`.
 
 ## Base and branch
 
@@ -131,11 +137,11 @@ Line counts are given at #331 (`9e7a9648`), at the issue base, and at the head.
 
 No new definitions, no `@[simp]`, no attributes.
 
-## Checks (checkpoint 1)
+## Checks
 
 | Check | Result | Evidence |
 |---|---|---|
-| Native sweep of the whole order with `Oracles` (189 modules) at `c90273fa` | rc 0 for all; 0 errors (`error:` and `error(`); 0 `error` substrings; sources bound to `git show HEAD` 189/189 | `build/sweep-cp1/` (`summary.txt`) |
+| Native sweep of the whole order with `Oracles` (189 modules) at `c90273fa` (the final head; no commit since) | rc 0 for all; 0 errors (`error:` and `error(`); 0 `error` substrings; sources bound to `git show HEAD` 189/189 | `build/sweep-cp1/` (`summary.txt`) |
 | Admissions | 56 `sorry` warnings in 17 modules. The only change from `base-sorries.txt` (57 in 18) is the removal of T4 (`BonehBoyenMachine`). T1 (`Pairing/Assumptions`), T2 and T3 (`BonehBoyenSecurity`) remain. | `build/sweep-cp1/summary.txt` |
 | Axioms census (all stored constants of the 8 changed owners) | 571 constants, 0 non-standard | `axioms/runs/` |
 | `#print axioms` | T4 and `abs_expect_bb1Sim_sub_distinguisherL_le`: `[propext, Classical.choice, Quot.sound]`. The three `oracleImpl_*_onSpec`: `[propext, Quot.sound]`. The four BonehBoyen readers: the standard three. `bb1_sidSecure`: adds `sorryAx` | `axioms/runs/` |
@@ -150,6 +156,11 @@ No new definitions, no `@[simp]`, no attributes.
 | `style_lint.py` on the 8 PR files | 0 findings | `lint/style-lint-files.txt` |
 | `dev/sk15.py` | One hit: `bb1SimChal_fresh` (`BonehBoyen.lean:631`), which is frozen. It is pre-existing: the same hit is at the base (line 594), and the change is outside this fill's scope. No hit in the new code | `lint/proof-sketch-15.txt` |
 | Widths and sizes | 0 lines over 100 in the 8 PR files; largest file `Handler.lean` (899, unchanged) | `lint/width.txt` |
+| **Rule 10 seals, final head** (canonical: coe A) | All 32 probes (8 owners × strict/coe × A/B): rc 0, 0 errors (`error:` 0, `error(` 0), install and EOF records present, **no failing declaration**. Requests (strict A / strict B / coe A / coe B): `Defs` 805/806/804/805, `BonehBoyen` 840/841/839/840, `Draws` 1645/1646/1644/1645, `Words` 2241/2242/2240/2241, `Handler` 2274/2275/2273/2274, `Reduction` 2308/2309/2307/2308, `Oracles` 2309/2310/2308/2309, `BonehBoyenMachine` 2310/2311/2309/2310 | `rule10/seals-{A,B,coe-A,coe-B}.tsv`, `rule10/error-forms.txt`, raw logs `rule10/seal-runs/mods/` |
+| Seal attribution | `Defs` and `BonehBoyen`: request sets equal to the #331 merged record (Gate 40 seals-merged, 0 errors) in all four variants, at the head and at the base: the readers are theorems and add no request. `Draws`, `Words`, `Handler`, `Reduction`: equal to the in-house checkpoint's records. `BonehBoyenMachine`: +1 in each variant, exactly `…BonehBoyenMachine.Oracles.0…BB1Machine.expect_bb1SimImpl.match_1_1`, the compiler-generated matcher of the new private glue lemma (in its import closure through `Oracles`). It is not read by any proof: the seal's raw log has 0 errors. `Oracles` is a new owner | `rule10/attribution/requests-vs-{331,checkpoint}.txt` |
+| Paired controls (strict and coe) | `ALL_OK True` for both: 24 control probes each (6 covering owners × sealed/unsealed × A/B; the lineage's covering-subset rule picks, per target and variant, the sealed owner with the fewest requests containing it, so `Oracles` and `BonehBoyenMachine`, whose request sets contain those of `Reduction`, are not picked). Every sealed negative fails exactly once (A: 154 errors = 154 expected; B: 160, the six extra being `ctlEval` under `SEAL_EVAL`), every positive passes, all pass unsealed (0 errors). The seven new reader rows (`ctlOracleZero/One/Two`, `ctlEncPP`, `ctlEncSK`, `ctlMsgSpace`, `ctlSimCt`) are exercised in `Draws`, `Words`, `Handler`, `Reduction` (all seven) and `BonehBoyen` (the three `oracleImpl` rows; the `bb1Scheme`/`bb1SimCt` targets are its own). The unsealed pretest ran first (6 probes, 0 errors) | `rule10/ctlcheck-{strict,coe}.{log,json}`, `rule10/controls-*/`, `rule10/pretest/` |
+| **Base seals** (`Defs`, `BonehBoyen` at `7c0a55e0`) | 8/8: rc 0, 0 errors in both forms, no failing declaration; requests 805/806/804/805 and 840/841/839/840, equal to the #331 record (805/806/804/805, 840/841/839/840, 0 errors). Source bytes from `git show 7c0a55e0:<path>`; imports resolved against the head's olean tree (the two owners' closures are unchanged; the head `Defs` olean adds only the three reader theorems). No difference from the base to attribute | `rule10-base/seals-*.tsv`, `rule10-base/error-forms.txt`, `rule10-base/phase.out`, `rule10-base/seal-runs/mods/` |
+| Explicit-unfold scan (the 8 files changed against `9e7a9648`) | 952 items (695 theorems, 163 local or unresolved, 94 owned definitions); **0 foreign**. Kinds probe rc 0, 0 errors | `scan/explicit-head.json`, `scan/scan2-head.log`, `scan/runs/` |
 
 ## Overlap and reuse
 
@@ -199,14 +210,6 @@ minimal form), inserted verbatim. No other frozen file is changed.
   `sidSpec_rng_one'`/`_two'`. They belong in `IdentityBased/Defs.lean`. **Not requested for this PR**: the 13-reader
   variant was not approved. This is recorded for a later decision only.
 
-## Not yet in this checkpoint (final)
-
-- Canonical seals A and B, strict and coe (coe A canonical), of the 8 changed owners, with paired controls
-  (`mkctl_bb1m_readers.py`: `mkctl_bb1m.py` plus the 7 reader rows, pretested unsealed).
-- The base seals of `Defs` and `BonehBoyen` at `7c0a55e0`.
-- The explicit-unfold scan.
-- The final pruning of `evidence/tools/` to the tools used, with each adaptation recorded.
-
 ## Evidence
 
 `evidence/SHA256SUMS` lists every evidence file. The top-level `SHA256SUMS` lists every delivered file except
@@ -217,7 +220,29 @@ itself.
   per-module logs.
 - `axioms/`, `statements/`, `headers/{insertion,frozen,t4}/`, `clash/`, `overlap/`, `lint/`.
 - `subagents/tools-agent/`.
-- `tools/`: a copy of the checkpoint's `tools/`, with the shared-tree backup and restore tools removed. Adapted:
-  `review/runner.py` and `seal/runner_full.py` (headers state the changes). New: `drivers/rule10_final.sh`,
-  `seal/review/mkctl_bb1m_readers.py`, `deliver.py`, `sweepsum.py`, `t4_header.py`, `widths.py`.
+- `rule10/`: the final seals and controls at the head (records `seals*/`, probe sources `*.lean.txt`, raw logs
+  `seal-runs/mods/`, `results.jsonl`, the summaries `seals-*.tsv`, `ctlcheck-*.{log,json}`, `error-forms.txt`), the
+  collector (`probe-runs/`), the unsealed pretest (`pretest/`) and `attribution/`.
+- `rule10-base/`: the base seals of `Defs` and `BonehBoyen` at `7c0a55e0` (records, raw logs, `seals-*.tsv`).
+- `scan/`: the explicit-unfold scan (items, the kinds probe and its log, `explicit-head.json`, `scan2-head.log`).
+- `tools/`: **the tools used, and only those**, copied from the checkpoint's `tools/` (records branch, in-house r1)
+  and adapted where needed; each adaptation is stated in the tool's header.
+  - **Adapted (host paths, lock):** `review/runner.py` (per-module `flock` on the host's one-Lean lock);
+    `seal/runner_full.py` (`LAKE_PACKAGES` defaults to the lead clone's `.lake/packages`, per-probe `flock`);
+    `drivers/rule10_final.sh` (from the checkpoint's `drivers/rule10_bb1m.sh`: host paths, the eight owners, the
+    reader controls generator, the `pretest` and `baseseals` phases, the scan's file list against `9e7a9648`).
+  - **Adapted (content):** `seal/review/mkctl_bb1m_readers.py` = the checkpoint's `mkctl_bb1m.py` plus the seven
+    reader rows (diff it against `outbox/fills/bb1-machine/checkpoint/tools/seal/review/mkctl_bb1m.py`).
+  - **Unchanged copies:** `seal/rule10_b.sh`, `seal/scan1_g40.py`, `seal/scan2.py`, `seal/decls2.py`,
+    `seal/review/{mkcollect.py,NmCollect.template.lean,mkseals_ab.py,mkseals_coe.py,ctlcheck2.py,sealsum.py,
+    touched.py}`, `seal/review/archived-gate10-tools/` (whole), `dev/sk15.py`.
+  - **New (this fill):** `deliver.py`, `sweepsum.py`, `t4_header.py`, `widths.py`, `insert_readers.py`,
+    `rewrap_sketch.py`.
+  - **Removed from the copy (not used by this fill):** the shared-tree backup and restore tools (`backup_cum.py`,
+    `backup_g40m.py`, `restore_derand.sh`, `restoreplan.py`, `snapshot.py`, `stateplan.py`, `seal/backup.py`,
+    `seal/restore.py`, `seal/snapshot.py`; never copied), and 30 further files listed with
+    their SHA-256 in `tools/PRUNED.txt` (the earlier `mkctl_*` generations, the gate-40 drivers, the checkpoint's
+    own drivers, the `dev/` scratch tools other than `sk15.py`, the frozen-check originals, which the sub-agent
+    adapted under `headers/frozen/`).
+  - The sub-agent's tools are under `headers/insertion/`, `headers/frozen/`, `clash/` and `overlap/`.
 - `delivery/`: the `git am` reproduction check.
