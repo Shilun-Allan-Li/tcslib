@@ -1,0 +1,184 @@
+From a1bc6aacd11f227c7f1e4a82475ec936380b3cd9 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 16 Nov 2026 08:20:11 +0000
+Subject: [PATCH 2/2] gsw-core F4: prove homomorphic circuit evaluation and
+ leveled correctness
+
+Eval.lean (4 targets): homAnd_encrypts, homGate_encrypts, eval_encrypts
+(through the proved host runWith_rel) and decrypt_keygen_eval; proved by the
+lead, modulo the frozen F3 statements until F3 lands. No new declarations.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTmYX1Ssebxn45h2ai1
+---
+ .../Homomorphic/GSW/Eval.lean                 | 134 ++++++++++++++++--
+ 1 file changed, 123 insertions(+), 11 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean
+index 07252fd12..3a250ba9c 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean
+@@ -143,24 +143,94 @@ theorem homAnd_encrypts {bs : List Bool} {Cs : List (Ciphertext P)} {β : ℕ}
+     (hs : List.Forall₂ (fun b C => Encrypts P t (b.toNat : ℤ) β C) bs Cs) :
+     Encrypts P t ((bs.all id).toNat : ℤ) (((Cs.length - 1) * P.columns + 1) * β)
+       (homAnd P Cs) := by
+-  sorry
++  induction hs with
++  | nil =>
++    -- `[]`: the gadget encrypts `1 = ([].all id).toNat` with noise `0 ≤ β`.
++    rw [homAnd_nil, List.all_nil]
++    exact Encrypts.mono P (encrypts_gadget P) (Nat.zero_le _)
++  | @cons b C bs Cs hb hrest ih =>
++    cases hrest with
++    | nil =>
++      -- `[C]`: the ciphertext itself, with noise `((1 - 1)·N + 1)·β = β`.
++      rw [homAnd_singleton, List.all_cons, List.all_nil, Bool.and_true]
++      simpa only [List.length_singleton, Nat.sub_self, zero_mul, zero_add, one_mul] using hb
++    | @cons b' C' bs' Cs' hb' hrest' =>
++      -- `C :: C' :: Cs'`: one product with the head on the left (`Encrypts.mul_bit`).
++      rw [homAnd_cons_cons, List.all_cons]
++      have hmsg : (((id b && (b' :: bs').all id)).toNat : ℤ) =
++          (b.toNat : ℤ) * ((b' :: bs').all id).toNat := by
++        cases b <;> cases ((b' :: bs').all id) <;> rfl
++      rw [hmsg]
++      refine Encrypts.mono P (Encrypts.mul_bit P hb ih) (le_of_eq ?_)
++      simp only [List.length_cons, Nat.add_sub_cancel]
++      ring
+ 
+ /-- **Per-gate noise.** A gate of fan-in at most two, whose argument vertices hold `β`-noisy
+ encryptions of their values, produces a `(N+1)·β`-noisy encryption of its value [GSW13,
+ Section 3.3, `NAND`: "the error is increased by a factor of at most `N + 1`"].
+ 
+-**Proof sketch.** Case on `g.kind` through `homGate_eq` and `DAGGate.eval_eq`. With
+-`bs = g.args.map (vals.getD · false)` and `Cs = g.args.map (cts.getD · 0)`,
+-`List.forall₂_map_left_iff` and `List.forall₂_map_right_iff` give the hypothesis of
+-`homAnd_encrypts`; `List.all_map` matches the messages; `length ≤ 2`
+-bounds `((k−1)·N+1)·β ≤ (N+1)·β`. For `¬`, subtract from `encrypts_gadget` (`Encrypts.sub`,
+-noise `0 + ·`). For `∨`, the complements `G − C` keep noise `β`, then one more subtraction;
+-`Bool` De Morgan identifies the message. -/
++**Proof sketch.** With `bs = g.args.map (vals.getD · false)` and
++`Cs = g.args.map (cts.getD · 0)`, `List.forall₂_map_left_iff`, `List.forall₂_map_right_iff` and
++`List.forall₂_same` turn `hargs` into the hypothesis of `homAnd_encrypts`; `List.all_map` matches
++the messages, and `length ≤ 2` bounds `((k−1)·N+1)·β ≤ (N+1)·β`. Then case on `g.kind` through
++`homGate_eq` and `DAGGate.eval_eq`. For `∧` this is the bound. For `¬`, subtract from
++`encrypts_gadget` (`Encrypts.sub`, noise `0 + ·`), the message being `1 − c.toNat = (!c).toNat`
++by cases on `c`. For `∨`, the complements `G − C` encrypt `!b` with noise `0 + β`, their
++conjunction is complemented once more, and `List.any_eq_not_all_not` (De Morgan) identifies the
++message. -/
+ theorem homGate_encrypts (g : DAGGate) (hfan : g.args.length ≤ 2) (vals : List Bool)
+     (cts : List (Ciphertext P)) (β : ℕ)
+     (hargs : ∀ a ∈ g.args, Encrypts P t ((vals.getD a false).toNat : ℤ) β (cts.getD a 0)) :
+     Encrypts P t ((g.eval vals).toNat : ℤ) ((P.columns + 1) * β) (homGate P g cts) := by
+-  sorry
++  -- The argument encryptions, as the hypothesis of `homAnd_encrypts`.
++  have hall : List.Forall₂ (fun b C => Encrypts P t (b.toNat : ℤ) β C)
++      (g.args.map fun a => vals.getD a false) (g.args.map fun a => cts.getD a 0) := by
++    rw [List.forall₂_map_left_iff, List.forall₂_map_right_iff, List.forall₂_same]
++    exact hargs
++  -- A conjunction of at most two arguments has noise at most `(N+1)·β`.
++  have hlen : ((g.args.length - 1) * P.columns + 1) * β ≤ (P.columns + 1) * β := by
++    refine Nat.mul_le_mul_right β ?_
++    have h1 : (g.args.length - 1) * P.columns ≤ 1 * P.columns :=
++      Nat.mul_le_mul_right _ (by omega)
++    omega
++  have hand := homAnd_encrypts P hall
++  rw [List.all_map, Function.id_comp, List.length_map] at hand
++  rw [homGate_eq, DAGGate.eval_eq]
++  rcases g with ⟨kind, args⟩
++  cases kind with
++  | and =>
++    exact Encrypts.mono P hand hlen
++  | or =>
++    -- De Morgan: complement each argument (`G − C`, noise `0 + β`), conjoin, complement.
++    have hneg : List.Forall₂ (fun b C => Encrypts P t (b.toNat : ℤ) β C)
++        (args.map fun a => !vals.getD a false)
++        ((args.map fun a => cts.getD a 0).map fun C => gadget P - C) := by
++      rw [List.map_map, List.forall₂_map_left_iff, List.forall₂_map_right_iff,
++        List.forall₂_same]
++      intro a ha
++      have h := Encrypts.sub P (encrypts_gadget P) (hargs a ha)
++      rw [zero_add] at h
++      have hm : ((!vals.getD a false).toNat : ℤ) = 1 - ((vals.getD a false).toNat : ℤ) := by
++        cases vals.getD a false <;> rfl
++      rw [hm]
++      exact h
++    have hor := Encrypts.sub P (encrypts_gadget P) (homAnd_encrypts P hneg)
++    rw [List.all_map, Function.id_comp, zero_add, List.length_map, List.length_map] at hor
++    have hm : ((args.any fun a => vals.getD a false).toNat : ℤ) =
++        1 - ((args.all fun a => !vals.getD a false).toNat : ℤ) := by
++      rw [List.any_eq_not_all_not]
++      cases args.all (fun a => !vals.getD a false) <;> rfl
++    rw [homOr_eq, hm]
++    exact Encrypts.mono P hor hlen
++  | not =>
++    -- `¬`: subtract the conjunction from the gadget (noise `0 + ·`).
++    have hnot := Encrypts.sub P (encrypts_gadget P) hand
++    rw [zero_add] at hnot
++    have hm : ((!(args.all fun a => vals.getD a false)).toNat : ℤ) =
++        1 - ((args.all fun a => vals.getD a false).toNat : ℤ) := by
++      cases args.all (fun a => vals.getD a false) <;> rfl
++    rw [homNot_eq, hm]
++    exact Encrypts.mono P hnot hlen
+ 
+ /-- **Depth-indexed noise growth.** For a circuit of fan-in at most two, if every input
+ ciphertext encrypts its input bit with noise at most `β`, then the output ciphertext
+@@ -181,7 +251,43 @@ theorem eval_encrypts {k : ℕ} (Cc : DAGCircuit k) (hfan : ∀ g ∈ Cc.gates,
+     (x : Fin k → Bool) (cts : Fin k → Ciphertext P) (β : ℕ)
+     (hin : ∀ i, Encrypts P t ((x i).toNat : ℤ) β (cts i)) :
+     Encrypts P t ((Cc.eval x).toNat : ℤ) ((P.columns + 1) ^ Cc.depth * β) (eval P Cc cts) := by
+-  sorry
++  -- Step 1: the per-vertex invariant `(N+1)^{depthAt v}·β`, by `runWith_rel`.
++  have key := runWith_rel DAGGate.eval (homGate P)
++    (fun v b C => Encrypts P t (b.toNat : ℤ) ((P.columns + 1) ^ Cc.depthAt v * β) C)
++    false 0 Cc.gates (List.ofFn x) (List.ofFn cts) (by rw [List.length_ofFn, List.length_ofFn])
++    (by
++      -- Input vertices have depth `0` and hold the input encryptions.
++      intro v hv
++      rw [List.length_ofFn] at hv
++      rw [List.getD_eq_getElem _ _ (by rwa [List.length_ofFn]),
++        List.getD_eq_getElem _ _ (by rwa [List.length_ofFn]), List.getElem_ofFn,
++        List.getElem_ofFn, Cc.depthAt_input hv, pow_zero, one_mul]
++      exact hin ⟨v, hv⟩)
++    (by
++      intro i hi a ha
++      rw [List.length_ofFn]
++      exact Cc.args_lt i hi a ha)
++    (by
++      -- Gate vertices: arguments are one level shallower; one gate multiplies by `N+1`.
++      intro i hi vA vB _ _ hargs
++      rw [List.length_ofFn, Cc.depthAt_gate hi]
++      have hd : 1 ≤ Cc.gates[i].depth Cc.depths := by
++        rw [DAGGate.depth_eq]
++        omega
++      have hargs' : ∀ a ∈ Cc.gates[i].args, Encrypts P t ((vA.getD a false).toNat : ℤ)
++          ((P.columns + 1) ^ (Cc.gates[i].depth Cc.depths - 1) * β) (vB.getD a 0) := by
++        intro a ha
++        refine Encrypts.mono P (hargs a ha) (Nat.mul_le_mul_right β ?_)
++        refine Nat.pow_le_pow_right (Nat.succ_pos _) ?_
++        have := DAGGate.getD_lt_depth Cc.gates[i] Cc.depths ha
++        rw [Cc.depthAt_eq a]
++        omega
++      have hg := homGate_encrypts P Cc.gates[i] (hfan _ (List.getElem_mem hi)) vA vB _ hargs'
++      rwa [← mul_assoc, ← pow_succ', Nat.sub_add_cancel hd] at hg)
++  -- Step 2: read the in-range output vertex on both sides.
++  have hout := key Cc.output (by rw [List.length_ofFn]; exact Cc.output_lt)
++  rw [Cc.eval_eq, Cc.values_eq, Cc.depth_eq, eval_eq P Cc cts, evalValues_eq P Cc cts]
++  exact hout
+ 
+ /-- **Leveled correctness of public-key GSW** [GSW13, Sections 3.3–3.4; Pei16, Section 6.1.3].
+ For every key-generation seed, every fan-in-two circuit of depth at most `L`, every input and
+@@ -202,7 +308,13 @@ theorem decrypt_keygen_eval (χ : LWE.Noise)
+     decrypt P (Regev.keygen P.lwe χ rg).2
+         (eval P Cc fun i => encrypt P (Regev.keygen P.lwe χ rg).1 (x i) (R i)) =
+       Cc.eval x := by
+-  sorry
++  have hin : ∀ i, Encrypts P (secretVector P (Regev.keygen P.lwe χ rg).2) ((x i).toNat : ℤ)
++      (P.lwe.samples * B) (encrypt P (Regev.keygen P.lwe χ rg).1 (x i) (R i)) :=
++    fun i => encrypts_keygen_encrypt P χ rg B hχ (x i) (R i)
++  have hev := eval_encrypts P Cc hfan x _ _ hin
++  refine decrypt_of_encrypts P _ _ _ _
++    (Encrypts.mono P hev (Nat.mul_le_mul_right _ ?_)) hsep
++  exact Nat.pow_le_pow_right (Nat.succ_pos _) hdepth
+ 
+ end Correctness
+ 

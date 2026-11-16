@@ -1,0 +1,20 @@
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
+import TCSlib.Complexity.CircuitComplexity.DAGCircuit
+#check @List.forall₂_same
+#check @List.forall₂_map_left_iff
+#check @List.forall₂_map_right_iff
+#check @List.all_map
+#check @List.any_map
+#check @List.all_eq_not_any_not
+#check @List.any_eq_not_all_not
+#check @List.not_all_eq_any_not
+#check @List.getD_eq_getElem
+#check @List.getElem_ofFn
+#check @List.length_ofFn
+#check @List.map_map
+#check @List.all_cons
+#check @List.all_nil
+#check @Bool.toNat_and
+#check @Nat.pow_le_pow_right
+#check @List.getD_eq_getElem?_getD
+example (l : List ℕ) (p : ℕ → Bool) : l.any p = !(l.all fun a => !p a) := by exact?

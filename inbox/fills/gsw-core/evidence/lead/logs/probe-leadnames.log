@@ -1,0 +1,29 @@
+@List.forall₂_same : ∀ {α : Type u_1} {Rₐ : α → α → Prop} {l : List α}, List.Forall₂ Rₐ l l ↔ ∀ x ∈ l, Rₐ x x
+@List.forall₂_map_left_iff : ∀ {α : Type u_1} {β : Type u_2} {γ : Type u_3} {R : α → β → Prop} {f : γ → α} {l : List γ}
+  {u : List β}, List.Forall₂ R (List.map f l) u ↔ List.Forall₂ (fun c b => R (f c) b) l u
+@List.forall₂_map_right_iff : ∀ {α : Type u_1} {β : Type u_2} {γ : Type u_3} {R : α → β → Prop} {f : γ → β} {l : List α}
+  {u : List γ}, List.Forall₂ R l (List.map f u) ↔ List.Forall₂ (fun a c => R a (f c)) l u
+@List.all_map : ∀ {α : Type u_1} {β : Type u_2} {f : α → β} {l : List α} {p : β → Bool},
+  (List.map f l).all p = l.all (p ∘ f)
+@List.any_map : ∀ {α : Type u_1} {β : Type u_2} {f : α → β} {l : List α} {p : β → Bool},
+  (List.map f l).any p = l.any (p ∘ f)
+@List.all_eq_not_any_not : ∀ {α : Type u_1} {l : List α} {p : α → Bool}, l.all p = !l.any fun x => !p x
+@List.any_eq_not_all_not : ∀ {α : Type u_1} {l : List α} {p : α → Bool}, l.any p = !l.all fun x => !p x
+@List.not_all_eq_any_not : ∀ {α : Type u_1} {l : List α} {p : α → Bool}, (!l.all p) = l.any fun a => !p a
+@List.getD_eq_getElem : ∀ {α : Type u_1} (l : List α) (d : α) {n : ℕ} (hn : n < l.length), l.getD n d = l[n]
+@List.getElem_ofFn : ∀ {n : ℕ} {α : Type u_1} {i : ℕ} {f : Fin n → α} (h : i < (List.ofFn f).length),
+  (List.ofFn f)[i] = f ⟨i, ⋯⟩
+@List.length_ofFn : ∀ {n : ℕ} {α : Type u_1} {f : Fin n → α}, (List.ofFn f).length = n
+@List.map_map : ∀ {β : Type u_1} {γ : Type u_2} {α : Type u_3} {g : β → γ} {f : α → β} {l : List α},
+  List.map g (List.map f l) = List.map (g ∘ f) l
+@List.all_cons : ∀ {α : Type u_1} {a : α} {l : List α} {f : α → Bool}, (a :: l).all f = (f a && l.all f)
+@List.all_nil : ∀ {α : Type u_1} {f : α → Bool}, [].all f = true
+probes/LeadNames.lean:17:8: error(lean.unknownIdentifier): Unknown constant `Bool.toNat_and`
+@Nat.pow_le_pow_right : ∀ {n : ℕ}, n > 0 → ∀ {i j : ℕ}, i ≤ j → n ^ i ≤ n ^ j
+@List.getD_eq_getElem?_getD : ∀ {α : Type u_1} {l : List α} {i : ℕ} {a : α}, l.getD i a = l[i]?.getD a
+Try this:
+  [apply] exact List.any_eq_not_all_not
+FAIL(probes/LeadNames): lean exited with status 1
+FAIL(probes/LeadNames): no fresh .olean produced
+[runlean] cmd=bash scripts/lean_check_tree.sh probes/LeadNames
+[runlean] lock_wait=0.0s start=2026-11-16T08:07:42Z end=2026-11-16T08:07:47Z exit=1 max_rss_kib=3141504

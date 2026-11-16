@@ -1,0 +1,42 @@
+@Matrix.vecMul_add : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} [inst : NonUnitalNonAssocSemiring α]
+  [inst_1 : Fintype m] (A B : Matrix m n α) (x : m → α), Matrix.vecMul x (A + B) = Matrix.vecMul x A + Matrix.vecMul x B
+@Matrix.add_vecMul : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} [inst : NonUnitalNonAssocSemiring α]
+  [inst_1 : Fintype m] (A : Matrix m n α) (x y : m → α), Matrix.vecMul (x + y) A = Matrix.vecMul x A + Matrix.vecMul y A
+@Matrix.vecMul_smul : ∀ {m : Type u_2} {n : Type u_3} {R : Type u_4} {α : Type u_1} [inst : NonUnitalNonAssocSemiring α]
+  [inst_1 : Fintype m] [inst_2 : DistribSMul R α] [SMulCommClass R α α] (v : m → α) (b : R) (M : Matrix m n α),
+  Matrix.vecMul v (b • M) = b • Matrix.vecMul v M
+@Matrix.smul_vecMul : ∀ {m : Type u_2} {n : Type u_3} {R : Type u_4} {α : Type u_1} [inst : NonUnitalNonAssocSemiring α]
+  [inst_1 : Fintype m] [inst_2 : DistribSMul R α] [IsScalarTower R α α] (b : R) (v : m → α) (M : Matrix m n α),
+  Matrix.vecMul (b • v) M = b • Matrix.vecMul v M
+@Matrix.vecMul_neg : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} [inst : NonUnitalNonAssocRing α]
+  [inst_1 : Fintype m] (v : m → α) (A : Matrix m n α), Matrix.vecMul v (-A) = -Matrix.vecMul v A
+@Matrix.neg_vecMul : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} [inst : NonUnitalNonAssocRing α]
+  [inst_1 : Fintype m] (v : m → α) (A : Matrix m n α), Matrix.vecMul (-v) A = -Matrix.vecMul v A
+@Matrix.vecMul_zero : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} [inst : NonUnitalNonAssocSemiring α]
+  [inst_1 : Fintype m] (v : m → α), Matrix.vecMul v 0 = 0
+@Matrix.zero_vecMul : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} [inst : NonUnitalNonAssocSemiring α]
+  [inst_1 : Fintype m] (A : Matrix m n α), Matrix.vecMul 0 A = 0
+@Matrix.vecMul_vecMul : ∀ {m : Type u_2} {n : Type u_3} {o : Type u_4} {α : Type u_1} [inst : NonUnitalSemiring α]
+  [inst_1 : Fintype n] [inst_2 : Fintype m] (v : m → α) (M : Matrix m n α) (N : Matrix n o α),
+  Matrix.vecMul (Matrix.vecMul v M) N = Matrix.vecMul v (M * N)
+@Matrix.mul_apply : ∀ {l : Type u_2} {m : Type u_3} {n : Type u_4} {α : Type u_1} [inst : Fintype m] [inst_1 : Mul α]
+  [inst_2 : AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α} {i : l} {k : n}, (M * N) i k = ∑ j, M i j * N j k
+@Bool.toNat_eq_zero : ∀ {b : Bool}, b.toNat = 0 ↔ b = false
+Bool.toNat_le : ∀ (c : Bool), c.toNat ≤ 1
+Int.natAbs_natCast : ∀ (n : ℕ), (↑n).natAbs = n
+Int.natAbs_cast : ∀ (n : ℕ), (↑n).natAbs = n
+@ZMod.natCast_zmod_val : ∀ {n : ℕ} [NeZero n] (a : ZMod n), ↑a.val = a
+@Int.cast_natCast : ∀ {R : Type u_1} [inst : AddGroupWithOne R] (n : ℕ), ↑↑n = ↑n
+@Finset.sum_eq_zero_iff : ∀ {ι : Type u_1} {M : Type u_2} {s : Finset ι} [inst : AddCommMonoid M] {f : ι → M}
+  [Subsingleton (AddUnits M)], ∑ i ∈ s, f i = 0 ↔ ∀ i ∈ s, f i = 0
+@Finset.sum_eq_single : ∀ {ι : Type u_1} {M : Type u_2} [inst : AddCommMonoid M] {s : Finset ι} {f : ι → M} (a : ι),
+  (∀ b ∈ s, b ≠ a → f b = 0) → (a ∉ s → f a = 0) → ∑ x ∈ s, f x = f a
+@List.all_cons : ∀ {α : Type u_1} {a : α} {l : List α} {f : α → Bool}, (a :: l).all f = (f a && l.all f)
+@Finset.induction_on : ∀ {α : Type u_1} {motive : Finset α → Prop} [inst : DecidableEq α] (s : Finset α),
+  motive ∅ → (∀ (a : α) (s : Finset α), a ∉ s → motive s → motive (insert a s)) → motive s
+@Matrix.mulVec_transpose : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} [inst : NonUnitalCommSemiring α]
+  [inst_1 : Fintype m] (A : Matrix m n α) (x : m → α), A.transpose.mulVec x = Matrix.vecMul x A
+@Matrix.vecMul_transpose : ∀ {m : Type u_2} {n : Type u_3} {α : Type u_1} [inst : NonUnitalCommSemiring α]
+  [inst_1 : Fintype n] (A : Matrix m n α) (x : n → α), Matrix.vecMul x A.transpose = A.mulVec x
+[runlean] cmd=bash scripts/lean_check_tree.sh probes/NamesA
+[runlean] lock_wait=0.0s start=2026-11-16T08:08:52Z end=2026-11-16T08:08:53Z exit=0 max_rss_kib=1977772

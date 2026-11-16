@@ -1,0 +1,161 @@
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:195:4: error: linarith failed to find a contradiction
+case h
+P : Parameters
+t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus
+g : DAGGate
+hfan : g.args.length ≤ 2
+vals : List Bool
+cts : List (Ciphertext P)
+β : ℕ
+hargs : ∀ a ∈ g.args, Encrypts P t (↑(vals.getD a false).toNat) β (cts.getD a 0)
+hall :
+  List.Forall₂ (fun b C => Encrypts P t (↑b.toNat) β C) (List.map (fun a => vals.getD a false) g.args)
+    (List.map (fun a => cts.getD a 0) g.args)
+α : Type
+f : ℕ → α
+this : g.args.length - 1 ≤ 1
+a✝ : P.columns + 1 < (g.args.length - 1) * P.columns + 1
+⊢ False
+failed
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:222:60: error: Tactic `rfl` failed: The left-hand side
+  ↑(!args.all fun x => !vals.getD x false).toNat
+is not definitionally equal to the right-hand side
+  1 - ↑false.toNat
+
+case false
+P : Parameters
+t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus
+vals : List Bool
+cts : List (Ciphertext P)
+β : ℕ
+args : List ℕ
+hfan : { kind := GateKind.or, args := args }.args.length ≤ 2
+hargs : ∀ a ∈ { kind := GateKind.or, args := args }.args, Encrypts P t (↑(vals.getD a false).toNat) β (cts.getD a 0)
+hall :
+  List.Forall₂ (fun b C => Encrypts P t (↑b.toNat) β C)
+    (List.map (fun a => vals.getD a false) { kind := GateKind.or, args := args }.args)
+    (List.map (fun a => cts.getD a 0) { kind := GateKind.or, args := args }.args)
+hlen :
+  ∀ {α : Type} (f : ℕ → α),
+    (((List.map f { kind := GateKind.or, args := args }.args).length - 1) * P.columns + 1) * β ≤ (P.columns + 1) * β
+hand :
+  Encrypts P t (↑({ kind := GateKind.or, args := args }.args.all (id ∘ fun a => vals.getD a false)).toNat)
+    ((((List.map (fun a => cts.getD a 0) { kind := GateKind.or, args := args }.args).length - 1) * P.columns + 1) * β)
+    (homAnd P (List.map (fun a => cts.getD a 0) { kind := GateKind.or, args := args }.args))
+hneg :
+  List.Forall₂ (fun b C => Encrypts P t (↑b.toNat) β C) (List.map (fun a => !vals.getD a false) args)
+    (List.map (fun C => gadget P - C) (List.map (fun a => cts.getD a 0) args))
+hor :
+  Encrypts P t (1 - ↑(args.all (id ∘ fun a => !vals.getD a false)).toNat)
+    ((((List.map (fun C => gadget P - C) (List.map (fun a => cts.getD a 0) args)).length - 1) * P.columns + 1) * β)
+    (gadget P - homAnd P (List.map (fun C => gadget P - C) (List.map (fun a => cts.getD a 0) args)))
+⊢ ↑(!args.all fun x => !vals.getD x false).toNat = 1 - ↑false.toNat
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:222:60: error: Tactic `rfl` failed: The left-hand side
+  ↑(!args.all fun x => !vals.getD x false).toNat
+is not definitionally equal to the right-hand side
+  1 - ↑true.toNat
+
+case true
+P : Parameters
+t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus
+vals : List Bool
+cts : List (Ciphertext P)
+β : ℕ
+args : List ℕ
+hfan : { kind := GateKind.or, args := args }.args.length ≤ 2
+hargs : ∀ a ∈ { kind := GateKind.or, args := args }.args, Encrypts P t (↑(vals.getD a false).toNat) β (cts.getD a 0)
+hall :
+  List.Forall₂ (fun b C => Encrypts P t (↑b.toNat) β C)
+    (List.map (fun a => vals.getD a false) { kind := GateKind.or, args := args }.args)
+    (List.map (fun a => cts.getD a 0) { kind := GateKind.or, args := args }.args)
+hlen :
+  ∀ {α : Type} (f : ℕ → α),
+    (((List.map f { kind := GateKind.or, args := args }.args).length - 1) * P.columns + 1) * β ≤ (P.columns + 1) * β
+hand :
+  Encrypts P t (↑({ kind := GateKind.or, args := args }.args.all (id ∘ fun a => vals.getD a false)).toNat)
+    ((((List.map (fun a => cts.getD a 0) { kind := GateKind.or, args := args }.args).length - 1) * P.columns + 1) * β)
+    (homAnd P (List.map (fun a => cts.getD a 0) { kind := GateKind.or, args := args }.args))
+hneg :
+  List.Forall₂ (fun b C => Encrypts P t (↑b.toNat) β C) (List.map (fun a => !vals.getD a false) args)
+    (List.map (fun C => gadget P - C) (List.map (fun a => cts.getD a 0) args))
+hor :
+  Encrypts P t (1 - ↑(args.all (id ∘ fun a => !vals.getD a false)).toNat)
+    ((((List.map (fun C => gadget P - C) (List.map (fun a => cts.getD a 0) args)).length - 1) * P.columns + 1) * β)
+    (gadget P - homAnd P (List.map (fun C => gadget P - C) (List.map (fun a => cts.getD a 0) args)))
+⊢ ↑(!args.all fun x => !vals.getD x false).toNat = 1 - ↑true.toNat
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:224:35: error: Application type mismatch: The argument
+  hlen ?m.428
+has type
+  (((List.map ?m.428 { kind := GateKind.or, args := args }.args).length - 1) * P.columns + 1) * β ≤ (P.columns + 1) * β
+but is expected to have type
+  (((List.map (fun C => gadget P - C) (List.map (fun a => cts.getD a 0) args)).length - 1) * P.columns + 1) * β ≤
+    (P.columns + 1) * β
+in the application
+  Encrypts.mono P hor (hlen ?m.428)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:231:59: error: Tactic `rfl` failed: The left-hand side
+  ↑(!args.all fun a => vals.getD a false).toNat
+is not definitionally equal to the right-hand side
+  1 - ↑false.toNat
+
+case false
+P : Parameters
+t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus
+vals : List Bool
+cts : List (Ciphertext P)
+β : ℕ
+args : List ℕ
+hfan : { kind := GateKind.not, args := args }.args.length ≤ 2
+hargs : ∀ a ∈ { kind := GateKind.not, args := args }.args, Encrypts P t (↑(vals.getD a false).toNat) β (cts.getD a 0)
+hall :
+  List.Forall₂ (fun b C => Encrypts P t (↑b.toNat) β C)
+    (List.map (fun a => vals.getD a false) { kind := GateKind.not, args := args }.args)
+    (List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args)
+hlen :
+  ∀ {α : Type} (f : ℕ → α),
+    (((List.map f { kind := GateKind.not, args := args }.args).length - 1) * P.columns + 1) * β ≤ (P.columns + 1) * β
+hand :
+  Encrypts P t (↑({ kind := GateKind.not, args := args }.args.all (id ∘ fun a => vals.getD a false)).toNat)
+    ((((List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args).length - 1) * P.columns + 1) * β)
+    (homAnd P (List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args))
+hnot :
+  Encrypts P t (1 - ↑({ kind := GateKind.not, args := args }.args.all (id ∘ fun a => vals.getD a false)).toNat)
+    ((((List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args).length - 1) * P.columns + 1) * β)
+    (gadget P - homAnd P (List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args))
+⊢ ↑(!args.all fun a => vals.getD a false).toNat = 1 - ↑false.toNat
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:231:59: error: Tactic `rfl` failed: The left-hand side
+  ↑(!args.all fun a => vals.getD a false).toNat
+is not definitionally equal to the right-hand side
+  1 - ↑true.toNat
+
+case true
+P : Parameters
+t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus
+vals : List Bool
+cts : List (Ciphertext P)
+β : ℕ
+args : List ℕ
+hfan : { kind := GateKind.not, args := args }.args.length ≤ 2
+hargs : ∀ a ∈ { kind := GateKind.not, args := args }.args, Encrypts P t (↑(vals.getD a false).toNat) β (cts.getD a 0)
+hall :
+  List.Forall₂ (fun b C => Encrypts P t (↑b.toNat) β C)
+    (List.map (fun a => vals.getD a false) { kind := GateKind.not, args := args }.args)
+    (List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args)
+hlen :
+  ∀ {α : Type} (f : ℕ → α),
+    (((List.map f { kind := GateKind.not, args := args }.args).length - 1) * P.columns + 1) * β ≤ (P.columns + 1) * β
+hand :
+  Encrypts P t (↑({ kind := GateKind.not, args := args }.args.all (id ∘ fun a => vals.getD a false)).toNat)
+    ((((List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args).length - 1) * P.columns + 1) * β)
+    (homAnd P (List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args))
+hnot :
+  Encrypts P t (1 - ↑({ kind := GateKind.not, args := args }.args.all (id ∘ fun a => vals.getD a false)).toNat)
+    ((((List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args).length - 1) * P.columns + 1) * β)
+    (gadget P - homAnd P (List.map (fun a => cts.getD a 0) { kind := GateKind.not, args := args }.args))
+⊢ ↑(!args.all fun a => vals.getD a false).toNat = 1 - ↑true.toNat
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:250:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:264:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval): no fresh .olean produced
+[runlean] cmd=bash scripts/lean_check_tree.sh TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval
+[runlean] lock_wait=0.0s start=2026-11-16T08:08:47Z end=2026-11-16T08:08:51Z exit=1 max_rss_kib=2630276

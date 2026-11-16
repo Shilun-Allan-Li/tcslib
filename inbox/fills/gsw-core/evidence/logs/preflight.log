@@ -1,0 +1,136 @@
+# preflight 2026-11-16T07:59:04Z
+## nproc
+4
+## cgroup
+9:name=systemd:/
+8:pids:/process_api
+7:blkio:/
+6:freezer:/
+5:devices:/
+4:memory:/process_api/01a1e359-18d9-751c-b708-60e347206574/claude-code-bash
+3:cpuset:/
+2:cpuacct:/
+1:cpu:/
+0::/
+### memory.max
+cat: /sys/fs/cgroup/memory.max: No such file or directory
+### memory.current
+cat: /sys/fs/cgroup/memory.current: No such file or directory
+### memory.events
+cat: /sys/fs/cgroup/memory.events: No such file or directory
+### memory.stat
+cat: /sys/fs/cgroup/memory.stat: No such file or directory
+## /proc/meminfo
+MemTotal:       16473776 kB
+MemFree:         1583440 kB
+MemAvailable:   15412572 kB
+Buffers:           82644 kB
+Cached:         13591088 kB
+## df -B1
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 24478171136 16805363712  60% /
+/dev/vda       270553174016 24478171136 16805363712  60% /
+/dev/vda       270553174016 24478171136 16805363712  60% /
+## df -T
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 23904464  16411488  60% /
+/dev/vda       ext4 264212084 23904464  16411488  60% /
+/dev/vda       ext4 264212084 23904464  16411488  60% /
+## cgroup v1 memory
+### /sys/fs/cgroup/memory
+memory.limit_in_bytes: 9223372036854771712
+memory.usage_in_bytes: 14212526080
+memory.stat:
+cache 19521536
+rss 544768
+rss_huge 0
+shmem 17031168
+mapped_file 9428992
+dirty 180224
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 7966
+pgpgout 3067
+pgfault 2121
+pgmajfault 0
+inactive_anon 3223552
+active_anon 0
+inactive_file 36864
+active_file 2453504
+unevictable 14352384
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 14002409472
+total_rss 210399232
+total_rss_huge 0
+total_shmem 17031168
+total_mapped_file 149688320
+total_dirty 503857152
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 31
+total_swap 0
+total_swapcached 0
+total_pgpgin 5197531
+total_pgpgout 3505614
+total_pgfault 3487621
+total_pgmajfault 2293
+total_inactive_anon 212156416
+total_active_anon 94208
+total_inactive_file 11195891712
+### /sys/fs/cgroup/memory/process_api/01a1e359-18d9-751c-b708-60e347206574/claude-code-bash
+memory.limit_in_bytes: 14338772992
+memory.usage_in_bytes: 14124118016
+memory.stat:
+cache 13653295104
+rss 647168
+rss_huge 0
+shmem 0
+mapped_file 77824
+dirty 503521280
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 31
+swap 0
+swapcached 0
+pgpgin 4504834
+pgpgout 2928265
+pgfault 2837315
+pgmajfault 356
+inactive_anon 524288
+active_anon 24576
+inactive_file 11002142720
+active_file 2651152384
+unevictable 0
+hierarchical_memory_limit 14338772992
+hierarchical_memsw_limit 9223372036854771712
+total_cache 13653295104
+total_rss 647168
+total_rss_huge 0
+total_shmem 0
+total_mapped_file 77824
+total_dirty 503521280
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 31
+total_swap 0
+total_swapcached 0
+total_pgpgin 4504834
+total_pgpgout 2928265
+total_pgfault 2837315
+total_pgmajfault 356
+total_inactive_anon 524288
+total_active_anon 24576
+total_inactive_file 11002142720
+## computation (cgroup v1, claude-code-bash group)
+headroom = limit 14338772992 - (usage 14124118016 - total_cache 13653295104 + total_shmem 0) = 13867950080 B = 12.92 GiB (floor 4 GiB): PASS
+disk free (df -B1, /home/user/gsw, ext4) = 16805363712 B = 15.65 GiB (floor 12 GiB): PASS
+no tmpfs used: clone, .lake, olean trees and TMPDIR are on /dev/vda (ext4)
+## re-check before cache get 2026-11-16T08:00:03Z (after toolchain install; floor 8 GiB)
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 27063750656 14219784192  66% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 26429444  13886508  66% /

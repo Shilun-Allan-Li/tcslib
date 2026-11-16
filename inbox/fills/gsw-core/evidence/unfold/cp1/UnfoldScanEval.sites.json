@@ -1,0 +1,366 @@
+{
+ "path": "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean",
+ "module": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval",
+ "sites": [
+  {
+   "line": 149,
+   "decl": "homAnd_encrypts",
+   "token": "homAnd_nil",
+   "selector": "rw [homAnd_nil, List.all_nil]"
+  },
+  {
+   "line": 149,
+   "decl": "homAnd_encrypts",
+   "token": "List.all_nil",
+   "selector": "rw [homAnd_nil, List.all_nil]"
+  },
+  {
+   "line": 155,
+   "decl": "homAnd_encrypts",
+   "token": "homAnd_singleton",
+   "selector": "rw [homAnd_singleton, List.all_cons, List.all_nil, Bool.and_true]"
+  },
+  {
+   "line": 155,
+   "decl": "homAnd_encrypts",
+   "token": "List.all_cons",
+   "selector": "rw [homAnd_singleton, List.all_cons, List.all_nil, Bool.and_true]"
+  },
+  {
+   "line": 155,
+   "decl": "homAnd_encrypts",
+   "token": "List.all_nil",
+   "selector": "rw [homAnd_singleton, List.all_cons, List.all_nil, Bool.and_true]"
+  },
+  {
+   "line": 155,
+   "decl": "homAnd_encrypts",
+   "token": "Bool.and_true",
+   "selector": "rw [homAnd_singleton, List.all_cons, List.all_nil, Bool.and_true]"
+  },
+  {
+   "line": 156,
+   "decl": "homAnd_encrypts",
+   "token": "List.length_singleton",
+   "selector": "simpa only [List.length_singleton, Nat.sub_self, zero_mul, zero_add, one_mul]"
+  },
+  {
+   "line": 156,
+   "decl": "homAnd_encrypts",
+   "token": "Nat.sub_self",
+   "selector": "simpa only [List.length_singleton, Nat.sub_self, zero_mul, zero_add, one_mul]"
+  },
+  {
+   "line": 156,
+   "decl": "homAnd_encrypts",
+   "token": "zero_mul",
+   "selector": "simpa only [List.length_singleton, Nat.sub_self, zero_mul, zero_add, one_mul]"
+  },
+  {
+   "line": 156,
+   "decl": "homAnd_encrypts",
+   "token": "zero_add",
+   "selector": "simpa only [List.length_singleton, Nat.sub_self, zero_mul, zero_add, one_mul]"
+  },
+  {
+   "line": 156,
+   "decl": "homAnd_encrypts",
+   "token": "one_mul",
+   "selector": "simpa only [List.length_singleton, Nat.sub_self, zero_mul, zero_add, one_mul]"
+  },
+  {
+   "line": 159,
+   "decl": "homAnd_encrypts",
+   "token": "homAnd_cons_cons",
+   "selector": "rw [homAnd_cons_cons, List.all_cons]"
+  },
+  {
+   "line": 159,
+   "decl": "homAnd_encrypts",
+   "token": "List.all_cons",
+   "selector": "rw [homAnd_cons_cons, List.all_cons]"
+  },
+  {
+   "line": 163,
+   "decl": "homAnd_encrypts",
+   "token": "hmsg",
+   "selector": "rw [hmsg]"
+  },
+  {
+   "line": 165,
+   "decl": "homAnd_encrypts",
+   "token": "List.length_cons",
+   "selector": "simp only [List.length_cons, Nat.add_sub_cancel]"
+  },
+  {
+   "line": 165,
+   "decl": "homAnd_encrypts",
+   "token": "Nat.add_sub_cancel",
+   "selector": "simp only [List.length_cons, Nat.add_sub_cancel]"
+  },
+  {
+   "line": 188,
+   "decl": "homGate_encrypts",
+   "token": "List.forall\u2082_map_left_iff",
+   "selector": "rw [List.forall\u2082_map_left_iff, List.forall\u2082_map_right_iff, List.forall\u2082_same]"
+  },
+  {
+   "line": 188,
+   "decl": "homGate_encrypts",
+   "token": "List.forall\u2082_map_right_iff",
+   "selector": "rw [List.forall\u2082_map_left_iff, List.forall\u2082_map_right_iff, List.forall\u2082_same]"
+  },
+  {
+   "line": 188,
+   "decl": "homGate_encrypts",
+   "token": "List.forall\u2082_same",
+   "selector": "rw [List.forall\u2082_map_left_iff, List.forall\u2082_map_right_iff, List.forall\u2082_same]"
+  },
+  {
+   "line": 197,
+   "decl": "homGate_encrypts",
+   "token": "List.all_map",
+   "selector": "rw [List.all_map, Function.id_comp, List.length_map]"
+  },
+  {
+   "line": 197,
+   "decl": "homGate_encrypts",
+   "token": "Function.id_comp",
+   "selector": "rw [List.all_map, Function.id_comp, List.length_map]"
+  },
+  {
+   "line": 197,
+   "decl": "homGate_encrypts",
+   "token": "List.length_map",
+   "selector": "rw [List.all_map, Function.id_comp, List.length_map]"
+  },
+  {
+   "line": 198,
+   "decl": "homGate_encrypts",
+   "token": "homGate_eq",
+   "selector": "rw [homGate_eq, DAGGate.eval_eq]"
+  },
+  {
+   "line": 198,
+   "decl": "homGate_encrypts",
+   "token": "DAGGate.eval_eq",
+   "selector": "rw [homGate_eq, DAGGate.eval_eq]"
+  },
+  {
+   "line": 208,
+   "decl": "homGate_encrypts",
+   "token": "List.map_map",
+   "selector": "rw [List.map_map, List.forall\u2082_map_left_iff, List.forall\u2082_map_right_iff, List.forall\u2082_same]"
+  },
+  {
+   "line": 208,
+   "decl": "homGate_encrypts",
+   "token": "List.forall\u2082_map_left_iff",
+   "selector": "rw [List.map_map, List.forall\u2082_map_left_iff, List.forall\u2082_map_right_iff, List.forall\u2082_same]"
+  },
+  {
+   "line": 208,
+   "decl": "homGate_encrypts",
+   "token": "List.forall\u2082_map_right_iff",
+   "selector": "rw [List.map_map, List.forall\u2082_map_left_iff, List.forall\u2082_map_right_iff, List.forall\u2082_same]"
+  },
+  {
+   "line": 208,
+   "decl": "homGate_encrypts",
+   "token": "List.forall\u2082_same",
+   "selector": "rw [List.map_map, List.forall\u2082_map_left_iff, List.forall\u2082_map_right_iff, List.forall\u2082_same]"
+  },
+  {
+   "line": 212,
+   "decl": "homGate_encrypts",
+   "token": "zero_add",
+   "selector": "rw [zero_add]"
+  },
+  {
+   "line": 215,
+   "decl": "homGate_encrypts",
+   "token": "hm",
+   "selector": "rw [hm]"
+  },
+  {
+   "line": 218,
+   "decl": "homGate_encrypts",
+   "token": "List.all_map",
+   "selector": "rw [List.all_map, Function.id_comp, zero_add, List.length_map, List.length_map]"
+  },
+  {
+   "line": 218,
+   "decl": "homGate_encrypts",
+   "token": "Function.id_comp",
+   "selector": "rw [List.all_map, Function.id_comp, zero_add, List.length_map, List.length_map]"
+  },
+  {
+   "line": 218,
+   "decl": "homGate_encrypts",
+   "token": "zero_add",
+   "selector": "rw [List.all_map, Function.id_comp, zero_add, List.length_map, List.length_map]"
+  },
+  {
+   "line": 218,
+   "decl": "homGate_encrypts",
+   "token": "List.length_map",
+   "selector": "rw [List.all_map, Function.id_comp, zero_add, List.length_map, List.length_map]"
+  },
+  {
+   "line": 218,
+   "decl": "homGate_encrypts",
+   "token": "List.length_map",
+   "selector": "rw [List.all_map, Function.id_comp, zero_add, List.length_map, List.length_map]"
+  },
+  {
+   "line": 221,
+   "decl": "homGate_encrypts",
+   "token": "List.any_eq_not_all_not",
+   "selector": "rw [List.any_eq_not_all_not]"
+  },
+  {
+   "line": 223,
+   "decl": "homGate_encrypts",
+   "token": "homOr_eq",
+   "selector": "rw [homOr_eq, hm]"
+  },
+  {
+   "line": 223,
+   "decl": "homGate_encrypts",
+   "token": "hm",
+   "selector": "rw [homOr_eq, hm]"
+  },
+  {
+   "line": 228,
+   "decl": "homGate_encrypts",
+   "token": "zero_add",
+   "selector": "rw [zero_add]"
+  },
+  {
+   "line": 232,
+   "decl": "homGate_encrypts",
+   "token": "homNot_eq",
+   "selector": "rw [homNot_eq, hm]"
+  },
+  {
+   "line": 232,
+   "decl": "homGate_encrypts",
+   "token": "hm",
+   "selector": "rw [homNot_eq, hm]"
+  },
+  {
+   "line": 257,
+   "decl": "eval_encrypts",
+   "token": "List.length_ofFn",
+   "selector": "rw [List.length_ofFn, List.length_ofFn]"
+  },
+  {
+   "line": 257,
+   "decl": "eval_encrypts",
+   "token": "List.length_ofFn",
+   "selector": "rw [List.length_ofFn, List.length_ofFn]"
+  },
+  {
+   "line": 261,
+   "decl": "eval_encrypts",
+   "token": "List.length_ofFn",
+   "selector": "rw [List.length_ofFn]"
+  },
+  {
+   "line": 262,
+   "decl": "eval_encrypts",
+   "token": "List.getD_eq_getElem",
+   "selector": "rw [List.getD_eq_getElem _ _ (by rwa [List.length_ofFn]"
+  },
+  {
+   "line": 263,
+   "decl": "eval_encrypts",
+   "token": "List.length_ofFn",
+   "selector": "rwa [List.length_ofFn]"
+  },
+  {
+   "line": 268,
+   "decl": "eval_encrypts",
+   "token": "List.length_ofFn",
+   "selector": "rw [List.length_ofFn]"
+  },
+  {
+   "line": 273,
+   "decl": "eval_encrypts",
+   "token": "List.length_ofFn",
+   "selector": "rw [List.length_ofFn, Cc.depthAt_gate hi]"
+  },
+  {
+   "line": 273,
+   "decl": "eval_encrypts",
+   "token": "Cc.depthAt_gate",
+   "selector": "rw [List.length_ofFn, Cc.depthAt_gate hi]"
+  },
+  {
+   "line": 275,
+   "decl": "eval_encrypts",
+   "token": "DAGGate.depth_eq",
+   "selector": "rw [DAGGate.depth_eq]"
+  },
+  {
+   "line": 283,
+   "decl": "eval_encrypts",
+   "token": "Cc.depthAt_eq",
+   "selector": "rw [Cc.depthAt_eq a]"
+  },
+  {
+   "line": 286,
+   "decl": "eval_encrypts",
+   "token": "mul_assoc",
+   "selector": "rwa [\u2190 mul_assoc, \u2190 pow_succ', Nat.sub_add_cancel hd]"
+  },
+  {
+   "line": 286,
+   "decl": "eval_encrypts",
+   "token": "pow_succ'",
+   "selector": "rwa [\u2190 mul_assoc, \u2190 pow_succ', Nat.sub_add_cancel hd]"
+  },
+  {
+   "line": 286,
+   "decl": "eval_encrypts",
+   "token": "Nat.sub_add_cancel",
+   "selector": "rwa [\u2190 mul_assoc, \u2190 pow_succ', Nat.sub_add_cancel hd]"
+  },
+  {
+   "line": 288,
+   "decl": "eval_encrypts",
+   "token": "List.length_ofFn",
+   "selector": "rw [List.length_ofFn]"
+  },
+  {
+   "line": 289,
+   "decl": "eval_encrypts",
+   "token": "Cc.eval_eq",
+   "selector": "rw [Cc.eval_eq, Cc.values_eq, Cc.depth_eq, eval_eq P Cc cts, evalValues_eq P Cc cts]"
+  },
+  {
+   "line": 289,
+   "decl": "eval_encrypts",
+   "token": "Cc.values_eq",
+   "selector": "rw [Cc.eval_eq, Cc.values_eq, Cc.depth_eq, eval_eq P Cc cts, evalValues_eq P Cc cts]"
+  },
+  {
+   "line": 289,
+   "decl": "eval_encrypts",
+   "token": "Cc.depth_eq",
+   "selector": "rw [Cc.eval_eq, Cc.values_eq, Cc.depth_eq, eval_eq P Cc cts, evalValues_eq P Cc cts]"
+  },
+  {
+   "line": 289,
+   "decl": "eval_encrypts",
+   "token": "eval_eq",
+   "selector": "rw [Cc.eval_eq, Cc.values_eq, Cc.depth_eq, eval_eq P Cc cts, evalValues_eq P Cc cts]"
+  },
+  {
+   "line": 289,
+   "decl": "eval_encrypts",
+   "token": "evalValues_eq",
+   "selector": "rw [Cc.eval_eq, Cc.values_eq, Cc.depth_eq, eval_eq P Cc cts, evalValues_eq P Cc cts]"
+  }
+ ]
+}

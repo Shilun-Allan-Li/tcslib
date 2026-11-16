@@ -1,0 +1,42 @@
+UNFOLDSCAN Bool.and_true Bool.and_true thm Init.SimpLemmas red=[semireducible] proj=false matcher=false
+UNFOLDSCAN Cc.depthAt_eq UNRESOLVED
+UNFOLDSCAN Cc.depthAt_gate UNRESOLVED
+UNFOLDSCAN Cc.depth_eq UNRESOLVED
+UNFOLDSCAN Cc.eval_eq UNRESOLVED
+UNFOLDSCAN Cc.values_eq UNRESOLVED
+UNFOLDSCAN DAGGate.depth_eq BoolCircuit.DAGGate.depth_eq thm TCSlib.Complexity.CircuitComplexity.DAGCircuit red=[semireducible] proj=false matcher=false
+UNFOLDSCAN DAGGate.eval_eq BoolCircuit.DAGGate.eval_eq thm TCSlib.Complexity.CircuitComplexity.DAGCircuit red=[semireducible] proj=false matcher=false
+UNFOLDSCAN Function.id_comp Function.id_comp thm Init.Core red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.all_cons List.all_cons thm Init.Data.List.Basic red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.all_map List.all_map thm Init.Data.List.Lemmas red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.all_nil List.all_nil thm Init.Data.List.Basic red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.any_eq_not_all_not List.any_eq_not_all_not thm Init.Data.List.Lemmas red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.forall₂_map_left_iff List.forall₂_map_left_iff thm Mathlib.Data.List.Forall2 red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.forall₂_map_right_iff List.forall₂_map_right_iff thm Mathlib.Data.List.Forall2 red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.forall₂_same List.forall₂_same thm Mathlib.Data.List.Forall2 red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.getD_eq_getElem List.getD_eq_getElem thm Mathlib.Data.List.GetD red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.length_cons List.length_cons thm Init.Data.List.Basic red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.length_map List.length_map thm Init.Data.List.Lemmas red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.length_ofFn List.length_ofFn thm Init.Data.List.OfFn red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.length_singleton List.length_singleton thm Init.Data.List.Basic red=[semireducible] proj=false matcher=false
+UNFOLDSCAN List.map_map List.map_map thm Init.Data.List.Lemmas red=[semireducible] proj=false matcher=false
+UNFOLDSCAN Nat.add_sub_cancel Nat.add_sub_cancel thm Init.Data.Nat.Basic red=[semireducible] proj=false matcher=false
+UNFOLDSCAN Nat.sub_add_cancel Nat.sub_add_cancel thm Init.Data.Nat.Basic red=[semireducible] proj=false matcher=false
+UNFOLDSCAN Nat.sub_self Nat.sub_self thm Init.Data.Nat.Basic red=[semireducible] proj=false matcher=false
+UNFOLDSCAN evalValues_eq TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.evalValues_eq thm TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval red=[semireducible] proj=false matcher=false
+UNFOLDSCAN eval_eq TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.eval_eq thm TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval red=[semireducible] proj=false matcher=false
+UNFOLDSCAN hm UNRESOLVED
+UNFOLDSCAN hmsg UNRESOLVED
+UNFOLDSCAN homAnd_cons_cons TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homAnd_cons_cons thm TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval red=[semireducible] proj=false matcher=false
+UNFOLDSCAN homAnd_nil TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homAnd_nil thm TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval red=[semireducible] proj=false matcher=false
+UNFOLDSCAN homAnd_singleton TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homAnd_singleton thm TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval red=[semireducible] proj=false matcher=false
+UNFOLDSCAN homGate_eq TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homGate_eq thm TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval red=[semireducible] proj=false matcher=false
+UNFOLDSCAN homNot_eq TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homNot_eq thm TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval red=[semireducible] proj=false matcher=false
+UNFOLDSCAN homOr_eq TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homOr_eq thm TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval red=[semireducible] proj=false matcher=false
+UNFOLDSCAN mul_assoc mul_assoc thm Mathlib.Algebra.Group.Defs red=[semireducible] proj=false matcher=false
+UNFOLDSCAN one_mul one_mul thm Mathlib.Algebra.Group.Defs red=[semireducible] proj=false matcher=false
+UNFOLDSCAN pow_succ' pow_succ' thm Mathlib.Algebra.Group.Defs red=[semireducible] proj=false matcher=false
+UNFOLDSCAN zero_add zero_add thm Mathlib.Algebra.Group.Defs red=[semireducible] proj=false matcher=false
+UNFOLDSCAN zero_mul MulZeroClass.zero_mul thm Mathlib.Algebra.GroupWithZero.Defs red=[semireducible] proj=true matcher=false
+[runlean] cmd=bash scripts/lean_check_tree.sh probes/unfold-cp1/UnfoldScanEval
+[runlean] lock_wait=0.0s start=2026-11-16T08:31:51Z end=2026-11-16T08:31:53Z exit=0 max_rss_kib=2617872
