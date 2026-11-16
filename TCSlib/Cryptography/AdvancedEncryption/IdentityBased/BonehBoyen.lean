@@ -386,6 +386,31 @@ noncomputable def bb1Scheme (G : BilinearGen) (ℓ : PolyExpr) : IBEScheme where
 attribute [simps (config := { isSimp := false }) idLen msgLen ppLen skLen ctLen PP MSK SK CT
   setup keyGen enc dec MsgSpace encPP encSK encCT] bb1Scheme
 
+/-- **The parameter encoding as a word**: `⟦encPP ⟨d, pp⟩⟧` is the padded word
+`d ‖ g ‖ g_1 ‖ g_2 ‖ h` (`ppLen(κ)` bits). -/
+theorem ofFn_bb1Scheme_encPP (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (pp : BB1.Params (G.group κ d)) :
+    List.ofFn ((bb1Scheme G ℓ).encPP κ ⟨d, pp⟩) =
+      List.ofFn (padFin ((bb1Scheme G ℓ).ppLen.eval κ) (d ++ List.ofFn ((G.group κ d).encG pp.g) ++
+        List.ofFn ((G.group κ d).encG pp.g1) ++ List.ofFn ((G.group κ d).encG pp.g2) ++
+        List.ofFn ((G.group κ d).encG pp.h))) := rfl
+
+/-- **The key encoding as a word**: `⟦encSK ⟨d, k⟩⟧` is the padded word `d_0 ‖ d_1`
+(`skLen(κ)` bits). -/
+theorem ofFn_bb1Scheme_encSK (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (k : BB1.Key (G.group κ d)) :
+    List.ofFn ((bb1Scheme G ℓ).encSK κ ⟨d, k⟩) =
+      List.ofFn (padFin ((bb1Scheme G ℓ).skLen.eval κ) (List.ofFn ((G.group κ d).encG k.d0) ++
+        List.ofFn ((G.group κ d).encG k.d1))) := rfl
+
+/-- **The message space as words**: a `msgLen(κ)`-bit message is in the message space of
+`⟨d, pp⟩` iff its word is the word of the encoding of an element of `G_T`. -/
+theorem bb1Scheme_msgSpace_iff (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (pp : BB1.Params (G.group κ d)) (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) :
+    (bb1Scheme G ℓ).MsgSpace κ ⟨d, pp⟩ m ↔
+      ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m :=
+  exists_congr fun _ => List.ofFn_inj.symm
+
 /-- **BB1 is perfectly correct** [BB04, §4.1, "Indeed, for a valid ciphertext …"]: every
 honest run with a message of the message space decrypts to that message.
 
@@ -549,6 +574,18 @@ theorem bb1SimCt_eq (κ : ℕ) (d : List Bool) (Z : (G.group κ d).G) (T : (G.gr
     (α₁ : ZMod (G.group κ d).order) (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) :
     bb1SimCt G ℓ κ d Z T α₁ m =
       (bb1Scheme G ℓ).encCT κ ⟨d, ⟨BB1.decodeT _ m * T, Z, Z ^ α₁.val⟩⟩ := rfl
+
+/-- **The simulated challenge as a word**: `⟦bb1SimCt … m⟧` is the padded word
+`decodeT(m) · T ‖ Z ‖ Z^{α_1.val}` (`ctLen(κ)` bits), the message read at the width of `G_T`. -/
+theorem ofFn_bb1SimCt (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (Z : (G.group κ d).G) (T : (G.group κ d).GT) (α₁ : ZMod (G.group κ d).order)
+    (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) :
+    List.ofFn (bb1SimCt G ℓ κ d Z T α₁ m) =
+      List.ofFn (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn ((G.group κ d).encT (BB1.decodeT (G.group κ d) (padFin _ (List.ofFn m)) * T)) ++
+          List.ofFn ((G.group κ d).encG Z) ++ List.ofFn ((G.group κ d).encG (Z ^ α₁.val)))) := by
+  rw [padFin_ofFn]
+  rfl
 
 open Classical in
 /-- **The simulator's `Challenge`** [BB04, proof of Theorem 4.1, *Challenge*] with challenge bit
