@@ -4840,108 +4840,6 @@ private lemma canonRepeat_orbit {m : ℕ} {S : Type} {x : List Bool}
     · refine ⟨j, by omega, earlier, Or.inr ⟨failure.1, failure.2.1, ?_⟩⟩
       rw [canonRepeat_last, failure.2.2, Option.bind_none]
 
-/-- A public counter loop whose positive rounds decide a skipper decides its repetition,
-failing at the first unsuccessful round. The exact time counts only attempted rounds;
-the displayed upper bound uses the binary counter value and its width. The residual
-counter is the public host's all-true word on completion or its decremented word on escape.
-
-**Proof sketch.** The semantic orbit lemma supplies either all successful rounds or the
-first failing round. Apply the public done or escape contract once. Bound the round sum
-by the per-round budget and cite the corresponding public amortized counter bound.
-No counter transition, host trace, or decrement arithmetic is repeated. -/
-private lemma canonCounterRepeat {m : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
-    (M : MultiTapeTM m Bool S) (anchor escape : S) (different : escape ≠ anchor)
-    (τ : Cfg m Bool S x → ℕ) (valid : Cfg m Bool S x → Prop)
-    (tail : Cfg m Bool S x → List Bool) (r : List Bool → Option (List Bool)) (B : ℕ)
-    (spec : ∀ d, valid d → d.state = some anchor →
-      0 < τ d ∧ τ d ≤ B ∧
-      (∀ u, 0 < u → u < τ d →
-        ∃ q, (M.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
-      (M.runFrom d (τ d)).state = some (if (r (tail d)).isSome then anchor else escape) ∧
-      ∀ ys, r (tail d) = some ys → valid (M.runFrom d (τ d)) ∧
-        tail (M.runFrom d (τ d)) = ys)
-    (c : Cfg m Bool S x) (hc : valid c) (ha : c.state = some anchor)
-    (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ)
-    (word : ∀ z : ℤ, -1 ≤ z → z ≤ (w.length : ℤ) →
-      ct (cp + z) = FinTM.bufferTape w z)
-    (n : ℕ) (value : Nat.ofDigits 2 (w.map Bool.toNat) = n) :
-    ∃ T ≤ n * (B + 4) + 2 * w.length + 2, ∃ j ≤ n,
-      T = (∑ i ∈ Finset.range j, τ (roundOrbit M τ c i)) +
-        counterOverhead w (j + if (codeSkipRepeat r n (tail c)).isSome then 1 else 0) ∧
-      (counterLoopTM M anchor (some escape)).runFrom
-          (counterLoopCfg (some (.dec .run)) c ct cp) T =
-        counterLoopCfg (some (if (codeSkipRepeat r n (tail c)).isSome then .done else .escape))
-          (roundOrbit M τ c j)
-          (fun z => if cp ≤ z ∧ z < cp + (w.length : ℤ) then
-            if (codeSkipRepeat r n (tail c)).isSome then some true
-            else FinTM.bufferTape (counterWord w j) (z - cp) else ct z) cp ∧
-      (∀ u < T,
-        ((counterLoopTM M anchor (some escape)).runFrom
-          (counterLoopCfg (some (.dec .run)) c ct cp) u).state ≠ some .done ∧
-        ((counterLoopTM M anchor (some escape)).runFrom
-          (counterLoopCfg (some (.dec .run)) c ct cp) u).state ≠ some .escape) ∧
-      (∀ ys, codeSkipRepeat r n (tail c) = some ys →
-        j = n ∧ valid (roundOrbit M τ c j) ∧ tail (roundOrbit M τ c j) = ys) ∧
-      (codeSkipRepeat r n (tail c) = none →
-        0 < j ∧ (roundOrbit M τ c j).state = some escape) := by
-  obtain ⟨j, hj, starts, finished | failed⟩ := canonRepeat_orbit M anchor escape τ valid tail r
-    (fun d hd hs => (spec d hd hs).2.2.2) c hc ha n
-  · obtain ⟨same, good, state, parsed⟩ := finished
-    subst j
-    let T := (∑ i ∈ Finset.range n, τ (roundOrbit M τ c i)) + counterOverhead w (n + 1)
-    have result := counterLoopTM_run_done M anchor (some escape) τ c w ct cp word n value
-      (by
-        intro i hi
-        obtain ⟨hd, hs⟩ := starts i hi
-        obtain ⟨positive, _, interior, _, _⟩ := spec _ hd hs
-        refine ⟨hs, positive, ?_, ?_⟩
-        · intro u hu ht
-          obtain ⟨q, hq, hqa, hqe⟩ := interior u hu ht
-          exact ⟨q, hq, hqa, fun eq => hqe (Option.some.inj eq).symm⟩
-        · by_cases earlier : i + 1 < n
-          · exact (starts (i + 1) earlier).2
-          · have last : i + 1 = n := by omega
-            simpa only [last] using state) T rfl
-    have budget := counterLoop_time_le M τ c w n value B
-      (fun i hi => (spec _ (starts i hi).1 (starts i hi).2).2.1)
-    refine ⟨T, by dsimp only [T]; nlinarith [budget], n, le_rfl, ?_, ?_, result.2.1, ?_, ?_⟩
-    · simp only [parsed, Option.isSome_some, if_true]
-      rfl
-    · simpa only [parsed, Option.isSome_some, if_true] using result.1
-    · intro ys hy
-      exact ⟨rfl, good, Option.some.inj (parsed.symm.trans hy)⟩
-    · intro impossible
-      rw [parsed] at impossible
-      cases impossible
-  · obtain ⟨positive, state, parsed⟩ := failed
-    have rounds : j - 1 + 1 = j := by omega
-    let T := (∑ i ∈ Finset.range j, τ (roundOrbit M τ c i)) + counterOverhead w j
-    have result := counterLoopTM_run_escape M anchor escape different τ c w ct cp word
-      (j - 1) (by omega) (by
-        intro i hi
-        obtain ⟨hd, hs⟩ := starts i (by omega)
-        obtain ⟨pos, _, interior, _, _⟩ := spec _ hd hs
-        exact ⟨hs, pos, interior⟩) (by simpa only [rounds] using state)
-      T (by rw [rounds])
-    rw [rounds] at result
-    have sumBound : (∑ i ∈ Finset.range j, τ (roundOrbit M τ c i)) ≤ j * B := by
-      calc
-        _ ≤ ∑ _i ∈ Finset.range j, B := Finset.sum_le_sum (fun i hi =>
-          (spec _ (starts i (Finset.mem_range.mp hi)).1
-            (starts i (Finset.mem_range.mp hi)).2).2.1)
-        _ = j * B := by simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id]
-    have counterBound := counterOverhead_le_of_le w j (by omega)
-    have cost : T ≤ n * (B + 4) + 2 * w.length + 2 := by
-      dsimp only [T]
-      nlinarith [Nat.mul_le_mul_right B hj]
-    refine ⟨T, cost, j, hj, ?_, ?_, result.2.1, ?_, fun _ => ⟨positive, state⟩⟩
-    · simp only [parsed, Option.isSome_none, Bool.false_eq_true, if_false, Nat.add_zero]
-      rfl
-    · simpa only [parsed, Option.isSome_none, Bool.false_eq_true, if_false] using result.1
-    · intro ys impossible
-      rw [parsed] at impossible
-      cases impossible
-
 /-- A successful record skip returns a suffix of its input. -/
 private lemma canonStageSkip_suffix (k n : ℕ) (xs ys : List Bool)
     (h : codeSkipActionK k n xs = some ys) : ys.IsSuffix xs := by
@@ -5048,9 +4946,8 @@ private lemma canonStageRoundSpec (k : ℕ) :
 
 /-- A buffered word is blank at and beyond its length. -/
 private lemma canonStageBuffer_none (w : List Bool) (q : ℤ) (h : (w.length : ℤ) ≤ q) :
-    FinTM.bufferTape w q = none := by
-  rw [FinTM.bufferTape_eq, if_pos (by omega : (0 : ℤ) ≤ q)]
-  exact List.getElem?_eq_none (by omega)
+    FinTM.bufferTape w q = none :=
+  FinTM.bufferTape_eq_none_of_not_mem w (by omega)
 
 /-- **The inner block's loop specification.** The write-then-loop seam —
 `writeConstTM` writing the inner counter word for `3 ^ (k + 1)` rounds, then the record

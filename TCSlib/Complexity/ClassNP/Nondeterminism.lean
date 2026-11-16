@@ -2649,136 +2649,6 @@ private lemma e3_verifier_of_split (N : FinNDTM Bool) (C c : ℕ)
       Nat.add_le_add_left (Nat.mul_le_mul_left 13 hp) _
     _ = (A + 13) * (y.length + 1) ^ (r + 1) := by ring
 
-/-- The bounded search advances unary candidate length and stalls just past
-the input, so its invariant is closed on every possible round state. -/
-private def e3SplitStep (w s : List Bool) : List Bool :=
-  if s.length ≤ w.length then s ++ [true] else s
-
-/-- The search round tests the exact exponential length equation. -/
-private def e3SplitAccept (C c : ℕ) (w s : List Bool) : Bool :=
-  decide (s.length + C * 2 ^ (s.length + 1) ^ c = w.length)
-
-/-- Search-state length is preserved by the one-past-end stall. -/
-private lemma e3_step_inv (w s : List Bool) (hs : s.length ≤ w.length + 1) :
-    (e3SplitStep w s).length ≤ w.length + 1 := by
-  unfold e3SplitStep
-  split <;> simp_all
-
-/-- The tested orbit consists exactly of the unary candidate indices. -/
-private lemma e3_step_orbit (w : List Bool) : ∀ i, i ≤ w.length + 1 →
-    (e3SplitStep w)^[i] [] = List.replicate i true := by
-  intro i
-  induction i with
-  | zero => intro _; rfl
-  | succ i ih =>
-    intro hi
-    rw [Function.iterate_succ_apply', ih (by omega)]
-    simp only [e3SplitStep, List.length_replicate, if_pos (by omega : i ≤ w.length)]
-    exact List.replicate_succ'.symm
-
-/-- Predicate equality on a finite list preserves the least-success result. -/
-private lemma e3_find_congr {α : Type} (xs : List α) (p q : α → Bool)
-    (h : ∀ a ∈ xs, p a = q a) : xs.find? p = xs.find? q := by
-  induction xs with
-  | nil => rfl
-  | cons a xs ih =>
-    simp only [List.find?_cons, h a (by simp)]
-    rw [ih (fun b hb => h b (by simp [hb]))]
-
-/-- The loop's bounded orbit search is the specified exponential split search. -/
-private lemma e3_find_eq (C c : ℕ) (w : List Bool) :
-    (List.range (w.length + 1)).find?
-      (fun i => e3SplitAccept C c w ((e3SplitStep w)^[i] [])) = e3Split C c w.length := by
-  apply e3_find_congr
-  intro i hi
-  have hi' : i ≤ w.length := by simpa only [List.mem_range, Nat.lt_succ_iff] using hi
-  rw [e3_step_orbit w i (by omega)]
-  simp only [e3SplitAccept, List.length_replicate]
-
-/-- Both successful payloads and exhaustion agree with the split emitter. -/
-private lemma e3_loop_result (C c : ℕ) (w : List Bool) :
-    (match (List.range (w.length + 1)).find?
-        (fun i => e3SplitAccept C c w ((e3SplitStep w)^[i] [])) with
-      | some i => pairEncode (w.take ((e3SplitStep w)^[i] []).length)
-          (w.drop ((e3SplitStep w)^[i] []).length)
-      | none => []) = e3SplitWord C c w := by
-  rw [e3_find_eq]
-  cases hs : e3Split C c w.length with
-  | none => simp [e3SplitWord, hs]
-  | some i =>
-    have hi := (e3_split_spec C c w.length i hs).1
-    simp only [e3SplitWord, hs, e3_step_orbit w i (by omega), List.length_replicate]
-
-/-- The result-bearing loop increases the round exponent by one. -/
-private lemma e3_loop_bound (b A r n : ℕ) :
-    b * (A * (n + 1) ^ (r + 1) + 1) * (n + 2) ≤
-      (2 * b * (A + 1)) * (n + 1) ^ (r + 2) := by
-  have hp : 1 ≤ (n + 1) ^ (r + 1) := Nat.one_le_pow _ _ (Nat.succ_pos _)
-  have hfirst : A * (n + 1) ^ (r + 1) + 1 ≤ (A + 1) * (n + 1) ^ (r + 1) := by
-    rw [Nat.add_mul, Nat.one_mul]
-    omega
-  calc
-    _ ≤ b * ((A + 1) * (n + 1) ^ (r + 1)) * (2 * (n + 1)) :=
-      Nat.mul_le_mul (Nat.mul_le_mul_left b hfirst) (by omega)
-    _ = _ := by rw [show r + 2 = (r + 1) + 1 by omega, Nat.pow_succ]; ring
-
-/-- Concrete startup and scratch-restoring round contracts suffice for
-polynomial-time exponential split recovery through the audited loop engine.
-**Proof sketch.** Use the binary input-length machine as fuel, enlarge the
-common round coefficient to cover fuel generation, and invoke the public
-result-bearing loop. The proved unary orbit identifies the least valid
-split and the payload, with the empty output on exhaustion. The loop bound
-raises the round exponent by one. No body contract is inferred from a
-function-level evaluator or from an untimed computation. -/
-private lemma e3_split_of_body (C c : ℕ) (body : FinTM Bool) (anchor : body.State)
-    (A r : ℕ)
-    (hstart : ∀ w : List Bool, ∃ t ≤ A * (w.length + 1) ^ (r + 1),
-      (∀ t' < t, (body.tm.runFrom (body.tm.initCfg w) t').state ≠ some anchor) ∧
-      body.tm.runFrom (body.tm.initCfg w) t = Cfg.ofWords anchor (stateWord body.k []))
-    (hround : ∀ (w s : List Bool), s.length ≤ w.length + 1 →
-      ∃ t, 0 < t ∧ t ≤ A * (w.length + 1) ^ (r + 1) ∧
-        (∀ t', 0 < t' → t' < t →
-          (body.tm.runFrom (Cfg.ofWords (input := w) anchor (stateWord body.k s)) t').state
-            ≠ some anchor) ∧
-        if e3SplitAccept C c w s then
-          (body.tm.runFrom (Cfg.ofWords (input := w) anchor (stateWord body.k s)) t).state = none ∧
-          (body.tm.runFrom (Cfg.ofWords (input := w) anchor (stateWord body.k s)) t).output =
-            pairEncode (w.take s.length) (w.drop s.length)
-        else
-          body.tm.runFrom (Cfg.ofWords (input := w) anchor (stateWord body.k s)) t =
-            Cfg.ofWords anchor (stateWord body.k (e3SplitStep w s))) :
-    ∃ (M : FinTM Bool) (B : ℕ),
-      M.ComputesFunInTime (e3SplitWord C c) (fun n => B * (n + 1) ^ (r + 2)) := by
-  obtain ⟨F, a, hF⟩ := computesFunInTime_lengthBits
-  have hn (n : ℕ) : n + 1 ≤ (n + 1) ^ (r + 1) := by
-    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos n)
-      (show 1 ≤ r + 1 by omega)
-  have hbody (n : ℕ) : A * (n + 1) ^ (r + 1) ≤ (A + a) * (n + 1) ^ (r + 1) :=
-    Nat.mul_le_mul_right _ (by omega)
-  have hF' : F.ComputesFunInTime (fun w => Nat.bits w.length)
-      (fun n => (A + a) * (n + 1) ^ (r + 1)) := by
-    intro w
-    apply (hF w).mono
-    exact (Nat.mul_le_mul_left a (hn w.length)).trans (Nat.mul_le_mul_right _ (by omega))
-  obtain ⟨M, b, hM⟩ := exists_loopFindTM body F anchor
-    (fun w s => s.length ≤ w.length + 1) e3SplitStep (e3SplitAccept C c)
-    (fun w s => pairEncode (w.take s.length) (w.drop s.length)) (fun _ => [])
-    id (fun n => (A + a) * (n + 1) ^ (r + 1)) hF'
-    (by intro w; simp) e3_step_inv
-    (by
-      intro w
-      obtain ⟨t, ht, hi, hh⟩ := hstart w
-      exact ⟨t, ht.trans (hbody w.length), hi, hh⟩)
-    (by
-      intro w s hs
-      obtain ⟨t, htpos, ht, hi, hh⟩ := hround w s hs
-      exact ⟨t, htpos, ht.trans (hbody w.length), hi, hh⟩)
-  refine ⟨M, 2 * b * (A + a + 1), fun w => ?_⟩
-  have hm := hM w
-  dsimp only [id_eq] at hm
-  convert hm.mono (e3_loop_bound b (A + a) r w.length) using 1
-  exact (e3_loop_result C c w).symm
-
 /-- Equality of one-longer prefixes checks the entire old prefix and the next
 optional bit. In particular, a missing bit differs from a present false bit. -/
 private lemma e3c_take_succ_eq (u v : List Bool) (j : ℕ) :
@@ -2827,8 +2697,9 @@ absorb).
 uniqueness, explicit failure, pre-validation binary-length bound, and a
 native polynomial-time binary evaluator are proved in the `e3*` layer.
 The existing paired loader and choice core provide the completed verifier
-after split recovery; `e3_split_of_body` supplies the audited result-bearing
-loop and its full polynomial time bound from concrete round contracts.
+after split recovery. (The result-bearing loop lemma `e3_split_of_body` that
+supplied its time bound from concrete round contracts was unused and has since been
+removed.)
 Coefficient zero is excluded for a decider and the degree-zero case is
 closed through the catalog's constant-width split. The sole remaining
 local admission below constructs the positive-degree native search body:
@@ -3536,9 +3407,8 @@ pairs; grammar guards separately cover every malformed outer input. -/
 /-- A linear machine contract is already in the polynomial normal form. -/
 private lemma a3n_poly_linear {f : List Bool → List Bool}
     (h : ∃ (M : FinTM Bool) (a : ℕ),
-      M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f := by
-  obtain ⟨M, a, hM⟩ := h
-  exact ⟨M, a, 1, by simpa only [Nat.pow_one] using hM⟩
+      M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f :=
+  polyTimeComputable_of_linear h
 
 /-- Fixed output words are polynomial-time computable. -/
 private lemma a3n_poly_const (w : List Bool) :
@@ -4138,21 +4008,6 @@ private lemma a3n_pad_mem_NP (L V : Language Bool) (C c : ℕ) (hV : V ∈ P)
       exact ⟨x, (hcert x).mpr ⟨u, hv'.2.1, hv'.2.2⟩,
         (a3n_pair_inverse z x pad hz).trans (congrArg (pairEncode x) hv'.1)⟩
 
-/-- Parsed original inputs are length-bounded before either exact padding
-check. The binary width bound therefore uses no accepted-input assumption. -/
-private lemma a3n_prevalidation (C c : ℕ) (w x' u x pad : List Bool)
-    (ho : pairDecode w = some (x', u)) (hi : pairDecode x' = some (x, pad)) :
-    x.length ≤ w.length ∧
-      (Nat.bits (C * 2 ^ (x.length + 1) ^ c)).length ≤
-        (w.length + 1) ^ c + (Nat.bits C).length := by
-  have hw := a3n_pair_inverse w x' u ho
-  have hx := a3n_pair_inverse x' x pad hi
-  have hlen : x.length ≤ w.length := by
-    rw [hw, hx]
-    simp [pairEncode]
-    omega
-  exact ⟨hlen, e3_bits_length_bound C c x.length w.length hlen⟩
-
 /-- A polynomial in a linearly rescaled exponential width still has an
 `EXP` budget, with uniform constants at all small lengths and zero parameters.
 **Proof sketch.** The exponent is bounded by `(s^c+1)(n+1)^(c+1)`.
@@ -4331,9 +4186,7 @@ fixed `e` beyond a fixed threshold, small lengths absorbed into `DTIME`'s consta
 `L ∈ EXP`.
 
 **A3 completion.** `a3n_verifier_mem_P` evaluates the binary width on the
-parsed original input with an unconditional polynomial budget;
-`a3n_prevalidation` records the corresponding substring and bit-length
-bounds. Its grammar guards reject malformed pairs, and its separate
+parsed original input with an unconditional polynomial budget. Its grammar guards reject malformed pairs, and its separate
 all-true, pad-length, and certificate-length tests enforce both exact
 checks. `a3n_pad_mem_NP` applies the bounded paired characterization.
 `a3n_pad_emit` retains the original input while A2's binary countdown emits
