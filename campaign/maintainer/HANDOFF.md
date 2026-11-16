@@ -21,6 +21,7 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
+| #328 / 142 | **Draft, staged** at `dcbab37806581f2bd0fd24cb55fee75fcacd2dab`. Closeout W2: remove the RD-2/H6 route (41 admissions). Replay 3/3, 0 admissions. campaign/gates/142-remove-rd2/. |
 | #325 / 141 | **Merged** at `20394834d86a509ad5776c36dbbfccc33b023306` (2026-11-16). Gate closed (CLEAR). Ladner fill 7: target 6 `SAT_H_intermediate`; **Ladner's theorem complete**. Its replay output is the campaign snapshot `oleans-c2039` (876 objects; campaign/status/2026-11-16-merge-325/). |
 | #322 / 140 | **Merged** at `d811bdaaf5e923b2a57f0453135af5c7ee37713a` (2026-11-15). Gate closed (CLEAR). Ladner fills 5 and 6: targets 2 `SAT_H_mem_NP` and 5 `SAT_mem_P_of_padSAT_NPHard`. Its replay output is the campaign snapshot `oleans-cd811` (876 objects; campaign/status/2026-11-15-merge-322/). |
 | #321 / 139 | **Merged** at `34643146ee1fe6bf6d7ffdf2e543e8342a3e16a0` (2026-11-15). Gate closed (CLEAR). Ladner fill 4: the approved reorder and target 1 `ladnerH_polyTime`. Its replay output is the campaign snapshot `oleans-c3464` (876 objects; campaign/status/2026-11-15-merge-321/). |
@@ -58,7 +59,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 142. Use complete
+Hardness CfgFacts import stays separate. Next free gate 143. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 
