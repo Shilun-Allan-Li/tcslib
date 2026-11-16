@@ -2152,3 +2152,11 @@ the shell's plain machine must read the input natively and always halt, and the 
 `exists_choiceVerifier_mem_P` is stated for arbitrary `N`. That is about +25 to +85 net lines to
 retire the 4-line `contSplitWord`/`certSplitWord` pair. Seyoon ruled: carry (backlog §SH-1).
 Status: **carried**.
+
+**CC7-1 legs (gate 152, 2026-11-16).** PR #345 retires the leg-template and cut-leg families of
+CC7-1 in `TuringMachine/CodeSimulator` (design note `campaign/closeout/CC7-1-DESIGN.md`): the seven
+`canonStageLeg0`–`6` cite one private `canonStageLeg_of` (with `canonStage_guard` and
+`canonStageBank_move`), and `canonStageCut_leg`/`canonGramCut_leg` cite one private `phaseCut_leg`.
+Statements unchanged. Net −212 Lean lines; copy screen 69 → 42 directed pairs (62,792 → 16,086
+reproduced characters). Remaining CC7-1 member: the per-record bound (`canonStageBlock_consumes`
+re-proving `skipTable_consumes`'s local bound, 61%). Status: **retiring (gate 152; PR #345 draft)**.

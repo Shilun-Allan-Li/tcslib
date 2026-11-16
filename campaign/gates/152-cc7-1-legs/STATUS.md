@@ -1,0 +1,1 @@
+**Gate 152 staged** (round 1) at `1dcbbe3171dd685600525d4f7cf71548889ecceb`, PR #345 (draft). Replay 24/24 on `oleans-cfb6f2`; seals 13/13, controls 50/50, sweeps clean, no lint change; copy screen 69 → 42 (29 gone, 2 new shape matches). Net −212 Lean lines; no statement changes. Awaiting dispatch.
