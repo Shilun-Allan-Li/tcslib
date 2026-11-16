@@ -12,12 +12,12 @@ fills and all other external jobs), a lead with up to 1 sub-agent. Seyoon dispat
 head, reproduced by `git am` of `inbox/fills/bb1-machine/patches/` (exchange, final commit
 `f14ac810da888829d21a1bd94fef4dcd4258b863`) onto `7c0a55e0239c14786612d0cd4462e64238543ca1`.
 
-**Records pin.** `<RECORDS-PIN>`: the records commit that carries this folder. The maintainer writes its full hash
+**Records pin.** `6fa1e1024291284c7d539910f58c5454c536db88`: the records commit that carries this folder. The maintainer writes its full hash
 here, and in the prompt below, after committing.
 
 **Before dispatch** (maintainer):
 1. Commit `briefs/pairings/fills/bb1-sim/issued-stmt-r1/` to the records branch; put that commit's full hash for
-   `<RECORDS-PIN>` in the **Records pin** line and in the prompt.
+   `6fa1e1024291284c7d539910f58c5454c536db88` in the **Records pin** line and in the prompt.
 2. Push the exchange commit. If it is replayed onto a newer exchange tip, put the pushed hash in the pack link, the
    staging line and the prompt.
 
@@ -34,7 +34,7 @@ Mathlib). You may use up to 1 sub-agent.
    outbox/fills/bb1-sim-statements/README.md, brief.md and
    fill-environment-addendum.md. Verify the pack with SHA256SUMS
    (shasum -a 256 -c, from its directory). You are the lead the brief
-   describes. The records of this issue are at commit <RECORDS-PIN> of
+   describes. The records of this issue are at commit 6fa1e1024291284c7d539910f58c5454c536db88 of
    cryptography/pass-shelat-ch2-4
    (briefs/pairings/fills/bb1-sim/issued-stmt-r1/, equal to the pack).
 2. In a separate clone, fetch cryptography/pass-shelat-ch2-4 by name and
