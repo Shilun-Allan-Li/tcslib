@@ -45,3 +45,7 @@ Head `110c2f9db810d243693b9a5e8976a5ad205f1bab` on the local `stmt/pairings`, re
 
 The records branch advanced to `a32ad0df` during the job (#318, #319, #323); no pairing-closure file changed and
 the branch merges cleanly.
+
+**Filed (Gate 40, 2026-11-16).** The round-2 archive is now in the records at `evidence-r2/stmt-pairings-r2.zip`
+(SHA-256 `83b05fbea2fc14ab47687e6a4222dc7073f74d21cb49f22420cefdc5301d573d`), byte-identical, with its inner manifest
+`evidence-r2/SHA256SUMS` (411 files, all verified) and `evidence-r2/PROVENANCE.txt`.
