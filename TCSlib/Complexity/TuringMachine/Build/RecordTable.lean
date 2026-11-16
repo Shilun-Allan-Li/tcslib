@@ -3189,11 +3189,8 @@ private theorem rt_writeReleased_run {Γ : Type*} {k : ℕ} {x : List Γ}
     exact abs_le.mpr ⟨by omega, by omega⟩
   · rw [h, sub_self, abs_zero]; exact_mod_cast Nat.zero_le _
 
-/-- Two adjacent framed word writes are one write of their concatenation.
-
-**Proof sketch.** Partition a cell into the first interval, the second, and
-its complement. The public list-append lookup equations identify both
-interior cases; the complement preserves the original cell. -/
+/-- Two adjacent framed word writes are one write of their concatenation: `Turing.wordPatch_append`
+read through `Turing.wordPatch_apply`. -/
 private theorem rt_adjacentWrites {Γ : Type*} (tape : ℤ → Option Γ) (o : ℤ)
     (u v : List Γ) :
     (fun q => if o + (u.length : ℤ) ≤ q ∧ q < o + u.length + (v.length : ℤ)
@@ -3203,20 +3200,7 @@ private theorem rt_adjacentWrites {Γ : Type*} (tape : ℤ → Option Γ) (o : �
     (fun q => if o ≤ q ∧ q < o + ((u ++ v).length : ℤ)
       then FinTM.bufferTape (u ++ v) (q - o) else tape q) := by
   funext q
-  simp only [List.length_append, Nat.cast_add]
-  by_cases first : o ≤ q ∧ q < o + (u.length : ℤ)
-  · rw [if_neg (by omega), if_pos first, if_pos (by omega)]
-    simp only [FinTM.bufferTape, if_pos (show 0 ≤ q - o by omega)]
-    exact (List.getElem?_append_left (show (q - o).toNat < u.length by omega)).symm
-  · rw [if_neg first]
-    by_cases second : o + (u.length : ℤ) ≤ q ∧ q < o + u.length + (v.length : ℤ)
-    · rw [if_pos second, if_pos (by omega)]
-      simp only [FinTM.bufferTape, if_pos (show 0 ≤ q - (o + u.length) by omega),
-        if_pos (show 0 ≤ q - o by omega),
-        List.getElem?_append_right (show u.length ≤ (q - o).toNat by omega)]
-      congr 1
-      omega
-    · rw [if_neg second, if_neg (by omega)]
+  simpa only [wordPatch_apply] using congrFun (wordPatch_append tape o u v) q
 
 /-- The endpoint of writing one contiguous word and advancing its tape head. -/
 private def rt_advanceCfg {k : ℕ} {Γ P : Type*} {x : List Γ}

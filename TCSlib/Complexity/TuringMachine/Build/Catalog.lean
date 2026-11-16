@@ -93,6 +93,11 @@ one framed contract and one trace serve them all.
   `Turing.step_of_inputMoveAction`; the field-layout facts `Turing.joinFields_cons_cons`,
   `Turing.fieldsTape_cons_shift`, `Turing.fieldOffset_succ`, `Turing.fieldOffset_cons_succ`,
   `Turing.length_joinFields_add_one` and `Turing.fieldOffset_add_length_le`.
+* `Turing.wordPatch` — a tape with a word written over an interval, with its equation
+  `Turing.wordPatch_apply`, its cells `Turing.wordPatch_of_mem` and `Turing.wordPatch_of_not_mem`
+  (the specification API, user 2026-10-16), `Turing.wordPatch_append` (adjacent patches join),
+  `Turing.wordPatch_self`, `Turing.wordPatch_twice` and `Turing.wordPatch_frame` (same-width patches),
+  and `Turing.wordPatch_replicate` (a constant word).
 * `Turing.transferTM`, `Turing.copyTM`, `Turing.clearTM`,
   `Turing.compareTM`, `Turing.incrementTM`.
 * Part 3: `Turing.tapeAction`, `Turing.inputMoveAction` (one-tape
@@ -459,11 +464,121 @@ private lemma catalog_space_one {S : Type*} (M : MultiTapeTM k Bool S)
   rw [Finset.image_const Finset.nonempty_range_add_one]
   rfl
 
-/-- Replace one finite word interval, keeping every exterior cell from the
-arbitrary original tape. Coordinates remain integers throughout. -/
-private def catalogTape {Symbol : Type*} (f : ℤ → Option Symbol) (a : ℤ) (w : List Symbol) (q : ℤ) :
-    Option Symbol :=
-  if a ≤ q ∧ q < a + (w.length : ℤ) then FinTM.bufferTape w (q - a) else f q
+/-- **A tape with a word patched in**: the cells `cp, …, cp + |u| - 1` hold `u`, every other
+cell is `ct`'s. -/
+def wordPatch {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) : ℤ → Option Γ :=
+  fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q
+
+/-- **The patch's cells** (its published equation, for consumers in other files): a cell inside
+`[cp, cp + |u|)` reads `u`'s letter at its offset, and every other cell reads `ct`. -/
+theorem wordPatch_apply {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) (q : ℤ) :
+    wordPatch ct cp u q =
+      if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q :=
+  rfl
+
+/-- A cell inside the patched interval holds the word's letter at its offset:
+`wordPatch ct cp u q = FinTM.bufferTape u (q - cp)` when `cp ≤ q < cp + u.length`
+(the specification API, user 2026-10-16). -/
+theorem wordPatch_of_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+    (h₁ : cp ≤ q) (h₂ : q < cp + (u.length : ℤ)) :
+    wordPatch ct cp u q = FinTM.bufferTape u (q - cp) := by
+  simp [wordPatch, h₁, h₂]
+
+/-- A cell outside the patched interval is the original tape's: `wordPatch ct cp u q = ct q`
+(the specification API, user 2026-10-16). -/
+theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+    (h : ¬(cp ≤ q ∧ q < cp + (u.length : ℤ))) : wordPatch ct cp u q = ct q := by
+  simp only [wordPatch, if_neg h]
+
+/-- **Adjacent patches join**: patching `u` at `cp` and then `v` at `cp + |u|`, right after it,
+is patching `u ++ v` at `cp`.
+
+**Proof sketch.** Split on the cell. Inside `u`'s interval both sides read `u`'s letter, since
+`u ++ v` begins with `u`; inside `v`'s interval both read `v`'s letter at the offset past `u`;
+outside both intervals both read the original tape. -/
+theorem wordPatch_append {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ) :
+    wordPatch (wordPatch ct cp u) (cp + u.length) v = wordPatch ct cp (u ++ v) := by
+  funext q
+  have hlen : ((u ++ v).length : ℤ) = u.length + v.length := by simp
+  by_cases h₁ : cp ≤ q ∧ q < cp + (u.length : ℤ)
+  · have hn : 0 ≤ q - cp := by omega
+    rw [wordPatch_of_not_mem _ _ _ (by omega), wordPatch_of_mem _ _ _ h₁.1 h₁.2,
+      wordPatch_of_mem _ _ _ h₁.1 (by omega), ← Int.toNat_of_nonneg hn, FinTM.bufferTape_nat,
+      FinTM.bufferTape_nat, List.getElem?_append_left (by omega)]
+  · by_cases h₂ : cp + (u.length : ℤ) ≤ q ∧ q < cp + u.length + (v.length : ℤ)
+    · have hn : 0 ≤ q - (cp + u.length) := by omega
+      have hm : 0 ≤ q - cp := by omega
+      rw [wordPatch_of_mem _ _ _ h₂.1 h₂.2, wordPatch_of_mem _ _ _ (by omega) (by omega),
+        ← Int.toNat_of_nonneg hn, ← Int.toNat_of_nonneg hm, FinTM.bufferTape_nat,
+        FinTM.bufferTape_nat, List.getElem?_append_right (by omega)]
+      congr 1
+      omega
+    · rw [wordPatch_of_not_mem _ _ _ h₂, wordPatch_of_not_mem _ _ _ h₁,
+        wordPatch_of_not_mem _ _ _ (by omega)]
+
+/-- **Patching in the word a tape already holds changes nothing**: if
+`ct` holds `u` delimited at `cp`, then `wordPatch ct cp u = ct`.
+
+**Proof sketch.** Inside the interval the hypothesis says `ct` already reads `u`; outside it the
+patch is `ct`. -/
+theorem wordPatch_self {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) → ct (cp + p) = FinTM.bufferTape u p) :
+    wordPatch ct cp u = ct := by
+  funext q
+  simp only [wordPatch_apply]
+  split_ifs with inside
+  · have h := hu (q - cp) (by omega) (by omega)
+    rw [add_sub_cancel] at h
+    exact h.symm
+  · rfl
+
+/-- **Patching one interval twice keeps the last patch**, for two words
+of the same width.
+
+**Proof sketch.** Pointwise: inside the interval both sides read the second word; outside it
+neither patch is visible. -/
+theorem wordPatch_twice {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
+    (huv : v.length = u.length) :
+    wordPatch (wordPatch ct cp u) cp v = wordPatch ct cp v := by
+  funext q
+  simp only [wordPatch_apply]
+  rw [huv]
+  by_cases hq : cp ≤ q ∧ q < cp + (u.length : ℤ) <;> simp [hq]
+
+/-- **A same-width patch keeps the word delimited**: if `ct` holds
+`u` delimited at `cp`, then patching `v` of the same width over it holds `v` delimited at
+`cp`.
+
+**Proof sketch.** Inside the interval the patch reads `v`. The two delimiters, at `cp - 1` and
+`cp + |v|`, lie outside it, where `ct` is blank by the hypothesis on `u`. -/
+theorem wordPatch_frame {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
+    (huv : v.length = u.length)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) → ct (cp + p) = FinTM.bufferTape u p) :
+    ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
+      wordPatch ct cp v (cp + p) = FinTM.bufferTape v p := by
+  intro p lo hi
+  simp only [wordPatch_apply]
+  by_cases inside : cp ≤ cp + p ∧ cp + p < cp + (v.length : ℤ)
+  · rw [if_pos inside, add_sub_cancel_left]
+  · rw [if_neg inside]
+    rcases (by omega : p = -1 ∨ p = (v.length : ℤ)) with rfl | rfl
+    · rw [hu (-1) le_rfl (by omega), FinTM.bufferTape_left, FinTM.bufferTape_left]
+    · rw [hu _ (by omega) (by omega)]
+      simp [huv]
+
+/-- **Patching a constant word**: patching `n` copies of `a` at `cp` writes `a` on
+`[cp, cp + n)` and keeps every other cell.
+
+**Proof sketch.** Inside the interval the constant word's buffer reads `a` at every offset;
+outside it the patch is the original tape. -/
+theorem wordPatch_replicate {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (n : ℕ) (a : Γ) :
+    wordPatch ct cp (List.replicate n a) =
+      fun q => if cp ≤ q ∧ q < cp + (n : ℤ) then some a else ct q := by
+  funext q
+  simp only [wordPatch_apply, List.length_replicate]
+  split_ifs with h
+  · rw [FinTM.bufferTape_eq, if_pos (by omega), List.getElem?_replicate_of_lt (by omega)]
+  · rfl
 
 /-- **Extending a written prefix writes exactly its next cell** (design §12.6; public
 since the §12.8 fill, so that every writing sweep cites it). Writing `w[r]` at `a + r` on
@@ -1085,18 +1200,18 @@ Elsewhere the frame tests agree; inside the window, prefix and suffix lookups
 agree away from the changed cell. -/
 private lemma catalog_write_middle {Symbol : Type*} (f : ℤ → Option Symbol) (z : ℤ)
     (pre rest : List Symbol) (a b : Symbol) :
-    Function.update (catalogTape f z (pre ++ a :: rest)) (z + (pre.length : ℤ)) (some b) =
-      catalogTape f z (pre ++ b :: rest) := by
+    Function.update (wordPatch f z (pre ++ a :: rest)) (z + (pre.length : ℤ)) (some b) =
+      wordPatch f z (pre ++ b :: rest) := by
   funext q
   by_cases hq : q = z + (pre.length : ℤ)
   · subst q
-    simp [catalogTape]
+    simp [wordPatch]
   · rw [Function.update_of_ne hq]
-    unfold catalogTape
+    unfold wordPatch
     simp only [List.length_append, List.length_cons]
     split_ifs with h
     · have h0 : 0 ≤ q - z := by omega
-      simp only [FinTM.bufferTape, if_pos h0, List.getElem?_append]
+      simp only [FinTM.bufferTape_eq, if_pos h0, List.getElem?_append]
       by_cases hlt : (q - z).toNat < pre.length
       · simp [hlt]
       · have he : (q - z).toNat - pre.length = ((q - z).toNat - pre.length - 1) + 1 := by
@@ -1112,7 +1227,7 @@ private def catalogIncF (i : Fin k) (d : Cfg k Bool FlagPhase x) (p : ℕ)
     (tail : Option (List Bool)) (r : ℕ) : Cfg k Bool FlagPhase x :=
   { d with state := some .run
            workTapes := fun j => if j = i then
-             catalogTape (d.workTapes j) (d.workTapePos j)
+             wordPatch (d.workTapes j) (d.workTapePos j)
                (List.replicate r false ++ List.replicate (p - r) true ++ tail.elim [] (false :: ·))
              else d.workTapes j
            workTapePos := fun j => d.workTapePos j + if j = i then (r : ℤ) else 0 }
@@ -1123,7 +1238,7 @@ private def catalogIncR (i : Fin k) (d : Cfg k Bool FlagPhase x) (p : ℕ)
     (tail : Option (List Bool)) (r : ℕ) : Cfg k Bool FlagPhase x :=
   { d with state := some (.rewind tail.isSome)
            workTapes := fun j => if j = i then
-             catalogTape (d.workTapes j) (d.workTapePos j)
+             wordPatch (d.workTapes j) (d.workTapePos j)
                (List.replicate p false ++ tail.elim [] (true :: ·))
              else d.workTapes j
            workTapePos := fun j => d.workTapePos j + if j = i then (r : ℤ) - 1 else 0 }
@@ -1149,7 +1264,7 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
     by_cases hj : j = i
     · subst j
       funext q
-      simp only [ite_true, catalogTape]
+      simp only [ite_true, wordPatch]
       split_ifs with h
       · simpa using (hw (q - d.workTapePos i) (by omega) (by omega)).symm
       · rfl
@@ -1159,71 +1274,128 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
   · intro r hr
     have hpr : p - r = (p - (r + 1)) + 1 := by omega
     have hs : (catalogIncF i d p tail r).workTapeSymbols i = some true := by
-      simp [catalogIncF, catalogTape, Cfg.workTapeSymbols_eq, hpr,
+      simp [catalogIncF, wordPatch, Cfg.workTapeSymbols_eq, hpr,
         List.replicate_succ, List.append_assoc]
       omega
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF]
+    apply Cfg.ext
+    · rw [Action.apply_state]; simp [catalogIncF]
+    · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncF]
     · funext j
+      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
       by_cases hj : j = i
       · subst j
         have hh := catalog_write_middle (d.workTapes i) (d.workTapePos i)
           (List.replicate r false)
           (List.replicate (p - (r + 1)) true ++ tail.elim [] (false :: ·)) true false
-        simp only [ite_true]
-        rw [hpr, List.replicate_succ, List.cons_append]
+        simp only [ite_true, Option.getD_some, catalogIncF]
+        rw [hpr, List.replicate_succ]
         simpa only [List.length_replicate, List.replicate_succ',
           List.append_assoc, List.singleton_append] using hh
-      · simp [hj]
+      · simp [hj, catalogIncF]
     · funext j
-      split_ifs <;> simp_all [SignType.cast] <;> omega
+      rw [Action.apply_workTapePos]
+      by_cases hj : j = i <;> simp [hj, catalogIncF, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+          SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+    · rw [Action.apply_output]; simp [catalogIncF]
   · cases tail with
     | none =>
       have hs : (catalogIncF i d p none p).workTapeSymbols i = none := by
         have hh := hw p (by omega) (by simp [hsplit])
-        simpa [catalogIncF, catalogTape, Cfg.workTapeSymbols_eq, hsplit] using hh
+        simpa [catalogIncF, wordPatch, Cfg.workTapeSymbols_eq, hsplit] using hh
       rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [incrementTM, hs]
-      apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF, catalogIncR]
-      all_goals
-        funext j
-        split_ifs <;> simp_all [SignType.cast] <;> omega
+      apply Cfg.ext
+      · rw [Action.apply_state]; simp [catalogIncR]
+      · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncF, catalogIncR]
+      · funext j q
+        rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+        by_cases hj : j = i
+        · subst hj; simp [catalogIncF, catalogIncR, Function.update_apply]
+          rintro rfl; rfl
+        · simp [hj, catalogIncF, catalogIncR, Function.update_apply]
+          rintro rfl; rfl
+      · funext j
+        rw [Action.apply_workTapePos]
+        by_cases hj : j = i <;> simp [hj, catalogIncF, catalogIncR, SignType.pos_eq_one,
+            SignType.neg_eq_neg_one, SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+      · rw [Action.apply_output]; simp [catalogIncF, catalogIncR]
     | some v =>
       have hs : (catalogIncF i d p (some v) p).workTapeSymbols i = some false := by
-        simp [catalogIncF, catalogTape, Cfg.workTapeSymbols_eq]
+        simp [catalogIncF, wordPatch, Cfg.workTapeSymbols_eq]
       rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [incrementTM, hs]
-      apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF, catalogIncR]
+      apply Cfg.ext
+      · rw [Action.apply_state]; simp [catalogIncR]
+      · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncF, catalogIncR]
       · funext j
+        rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
         by_cases hj : j = i
         · subst j
+          simp only [ite_true, Option.getD_some, catalogIncF, catalogIncR]
           simpa using catalog_write_middle (d.workTapes i) (d.workTapePos i)
             (List.replicate p false) v false true
-        · simp [hj]
+        · simp [hj, catalogIncF, catalogIncR, Function.update_apply]
       · funext j
-        split_ifs <;> simp_all [SignType.cast] <;> omega
+        rw [Action.apply_workTapePos]
+        by_cases hj : j = i <;> simp [hj, catalogIncF, catalogIncR, SignType.pos_eq_one,
+            SignType.neg_eq_neg_one, SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+      · rw [Action.apply_output]; simp [catalogIncF, catalogIncR]
   · intro r hr
     have hs : (catalogIncR i d p tail (r + 1)).workTapeSymbols i = some false := by
       have hb : (r : ℤ) < p + (tail.elim [] (true :: ·)).length := by omega
-      simp [catalogIncR, catalogTape, Cfg.workTapeSymbols_eq, List.getElem?_append, hr, hb]
+      simp [catalogIncR, wordPatch, Cfg.workTapeSymbols_eq, List.getElem?_append, hr, hb]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncR]
-    all_goals
-      funext j
-      split_ifs <;> simp_all [SignType.cast] <;> omega
+    apply Cfg.ext
+    · rw [Action.apply_state]; simp [catalogIncR]
+    · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncR]
+    · funext j q
+      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+      by_cases hj : j = i
+      · subst hj; simp [catalogIncR, Function.update_apply]
+        rintro rfl; first | rfl | (congr 1; omega)
+      · simp [hj, catalogIncR, Function.update_apply]
+        rintro rfl; rfl
+    · funext j
+      rw [Action.apply_workTapePos]
+      by_cases hj : j = i <;> simp [hj, catalogIncR, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+          SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+    · rw [Action.apply_output]; simp [catalogIncR]
   · have hs : (catalogIncR i d p tail 0).workTapeSymbols i = none := by
-      simpa [catalogIncR, catalogTape, Cfg.workTapeSymbols_eq] using
+      simpa [catalogIncR, wordPatch, Cfg.workTapeSymbols_eq] using
         hw (-1) (by omega) (by omega)
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncR]
-    all_goals
-      funext j
-      split_ifs <;> simp_all [SignType.cast] <;> omega
+    apply Cfg.ext
+    · rw [Action.apply_state]
+    · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncR]
+    · funext j q
+      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+      by_cases hj : j = i
+      · subst hj; simp [catalogIncR, Function.update_apply]
+        rintro rfl; first | rfl | (congr 1; omega)
+      · simp [hj, catalogIncR, Function.update_apply]
+        rintro rfl; rfl
+    · funext j
+      rw [Action.apply_workTapePos]
+      by_cases hj : j = i <;> simp [hj, catalogIncR, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+          SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+    · rw [Action.apply_output]; simp [catalogIncR]
   · rw [MultiTapeTM.step_of_some (by rfl)]
-    apply Cfg.ext <;> simp [incrementTM, -Action.apply, Action.apply.eq_1]
+    simp only [incrementTM]
+    apply Cfg.ext
+    · rw [Action.apply_state]
+    · rw [Action.apply_inputPos, moveInputPos_zero]
+    · funext j; rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]; simp
+    · funext j; rw [Action.apply_workTapePos]; simp
+    · rw [Action.apply_output]; simp
 
 /-! ### Framed contracts (design §12.6)
 
@@ -1628,7 +1800,7 @@ private theorem catalog_increment_framed {k : ℕ} {x : List Bool} (i : Fin k)
       show ¬2 * p + 2 ≤ 2 * p + 1 by omega, ite_false]
     apply Cfg.ext <;> simp [catalogIncR]
     funext j q
-    by_cases hj : j = i <;> simp [hj, catalogTape, hlen]
+    by_cases hj : j = i <;> simp [hj, wordPatch, hlen]
   · constructor
     · intro t ht b
       rw [catalog_increment_trace i w d hstate hw p tail hsplit]
@@ -3818,7 +3990,7 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
   let R : ℕ → Cfg k Γ (ScanPhase A) x := fun r => { d with
     state := some (.bwd (b r).1)
     workTapes := fun j => if j = i then
-      catalogTape (d.workTapes j) (d.workTapePos j) (f.2.take r ++ (b r).2.reverse)
+      wordPatch (d.workTapes j) (d.workTapePos j) (f.2.take r ++ (b r).2.reverse)
       else d.workTapes j
     workTapePos := fun j => d.workTapePos j + if j = i then (r : ℤ) - 1 else 0 }
   let D : Cfg k Γ (ScanPhase A) x := { d with
@@ -3843,7 +4015,7 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
   have hF (r : ℕ) (hr : r < w.length) :
       (scanTM k i δf δb a₀).step (F r) = F (r + 1) := by
     have hs : (F r).workTapeSymbols i = some w[r] := by
-      simp only [F, Cfg.workTapeSymbols, ↓reduceIte, true_and]
+      simp only [F, Cfg.workTapeSymbols_eq, ↓reduceIte, true_and]
       rw [if_neg (by omega)]
       simpa only [FinTM.bufferTape_nat, List.getElem?_eq_getElem hr] using
         hw r (by omega) (by omega)
@@ -3871,7 +4043,7 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
     · rfl
   have hturn : (scanTM k i δf δb a₀).step (F w.length) = R w.length := by
     have hs : (F w.length).workTapeSymbols i = none := by
-      simp only [F, Cfg.workTapeSymbols, ↓reduceIte, true_and]
+      simp only [F, Cfg.workTapeSymbols_eq, ↓reduceIte, true_and]
       rw [if_neg (by omega)]
       simpa using hw w.length (by omega) (by omega)
     rw [step_of_tapeAction_move (scanTM k i δf δb a₀) (F w.length)
@@ -3883,12 +4055,13 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
     · funext j q
       by_cases hj : j = i
       · subst j
-        simp [F, R, b, mealyRun, catalogTape, fl, ft]
+        simp [F, R, b, mealyRun, wordPatch, fl, ft]
       · simp [F, R, hj]
     · funext j
       by_cases hj : j = i
       · subst j
-        simp [F, R, SignType.cast, sub_eq_add_neg, add_assoc]
+        simp [F, R, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_one,
+        SignType.coe_neg_one, SignType.coe_zero, sub_eq_add_neg, add_assoc]
       · simp [F, R, hj]
     · rfl
   have hR (r : ℕ) (hr : r < w.length) :
@@ -3912,9 +4085,9 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
       rfl
     have hl : (f.2.take r).length = r := by simp [fl, Nat.min_eq_left hr.le]
     have hs : (R (r + 1)).workTapeSymbols i = some f.2[r] := by
-      simp only [R, Cfg.workTapeSymbols, ↓reduceIte]
+      simp only [R, Cfg.workTapeSymbols_eq, ↓reduceIte]
       rw [show d.workTapePos i + (((r + 1 : ℕ) : ℤ) - 1) = d.workTapePos i + r by omega]
-      unfold catalogTape
+      unfold wordPatch
       rw [wl (r + 1) (by omega), if_pos (by omega)]
       rw [show d.workTapePos i + (r : ℤ) - d.workTapePos i = r by omega,
         FinTM.bufferTape_nat, hword, List.getElem?_append_right (by omega)]
@@ -3940,7 +4113,8 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
     · funext j
       by_cases hj : j = i
       · subst j
-        simp [R, SignType.cast]
+        simp [R, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_one,
+        SignType.coe_neg_one, SignType.coe_zero]
         omega
       · simp [R, hj]
     · rfl
@@ -3952,9 +4126,9 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
       rw [hb0]
       rfl
     have hs : (R 0).workTapeSymbols i = none := by
-      simp only [R, Cfg.workTapeSymbols, ↓reduceIte, Nat.cast_zero, zero_sub, catalogTape]
+      simp only [R, Cfg.workTapeSymbols_eq, ↓reduceIte, Nat.cast_zero, zero_sub, wordPatch]
       rw [if_neg (by omega)]
-      simpa only [sub_eq_add_neg] using hw (-1) (by omega) (by omega)
+      simpa only [sub_eq_add_neg, FinTM.bufferTape_left] using hw (-1) (by omega) (by omega)
     rw [step_of_tapeAction_move (scanTM k i δf δb a₀) (R 0)
       (q' := .done (b 0).1) i 0 .pos rfl (by simp only [scanTM, hs])]
     apply Cfg.ext
@@ -3963,7 +4137,7 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
     · funext j q
       by_cases hj : j = i
       · subst j
-        simp [R, D, catalogTape, result, bl]
+        simp [R, D, wordPatch, result, bl]
       · simp [R, D, hj]
     · funext j
       by_cases hj : j = i

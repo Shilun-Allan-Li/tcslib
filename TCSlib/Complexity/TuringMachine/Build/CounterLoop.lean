@@ -416,6 +416,42 @@ theorem decrementTM_tr_action {k : ℕ} (i : Fin k) (q : FlagPhase) (inp : Optio
   cases q <;> dsimp only [incrementTM] <;> (try split) <;>
     exact ⟨rfl, fun j => by by_cases hj : j = i <;> simp [hj]⟩
 
+/-- **The decoded shadow of a counter start meets the decrement's preconditions**: for the
+one-tape start holding the digits `w.map e` delimited at `cp`, its `Bool` shadow is in the
+working phase and holds `w` delimited at its head.
+
+**Proof sketch.** The shadow keeps the state and the heads, and its cells are the decoded cells
+(`Turing.Cfg.decodeSymbols_state`, `_workTapes`, `_workTapePos`); decoding the digits gives back
+`w` (`Turing.FinTM.bufferTape_map_decode`). -/
+theorem decrementTM_shadow_pre {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    (ip : Fin (x.length + 2)) (out : List Γ) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    let D : Cfg 1 Γ FlagPhase x := ⟨some .run, ip, fun _ => ct, fun _ => cp, out⟩
+    (Cfg.decodeSymbols e D).state = some .run ∧
+      ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+        (Cfg.decodeSymbols e D).workTapes 0 ((Cfg.decodeSymbols e D).workTapePos 0 + p) =
+          FinTM.bufferTape w p := by
+  intro D
+  refine ⟨Cfg.decodeSymbols_state e D, fun p lo hi => ?_⟩
+  rw [Cfg.decodeSymbols_workTapes, Cfg.decodeSymbols_workTapePos]
+  show (ct (cp + p)).bind (decodeBool e) = _
+  rw [hw p lo hi, FinTM.bufferTape_map_decode]
+
+/-- **The lifted decrement runs as the overlay of the decrement's run on the shadow**, from any
+rich start.
+
+**Proof sketch.** The rich start is the overlay of its shadow on itself
+(`Turing.Cfg.liftOver_decodeSymbols`); the overlay transport
+`Turing.MultiTapeTM.liftSymbols_runFrom_over` applies, its side conditions being
+`Turing.decrementTM_tr_input` and the blank-freeness half of `Turing.decrementTM_tr_action`. -/
+theorem decrementTM_liftSymbols_runFrom {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    (D : Cfg 1 Γ FlagPhase x) (t : ℕ) :
+    ((decrementTM 1 0).liftSymbols e).runFrom D t =
+      Cfg.liftOver e (by simp) D ((decrementTM 1 0).runFrom (Cfg.decodeSymbols e D) t) := by
+  conv_lhs => rw [← Cfg.liftOver_decodeSymbols e D]
+  exact MultiTapeTM.liftSymbols_runFrom_over e (decrementTM 1 0) (decrementTM_tr_input 0)
+    (fun q inp work j => (decrementTM_tr_action 0 q inp work).2 j) _ D (Cfg.decodeSymbols e D) t
+
 /-! ## Counter arithmetic -/
 
 /-- The counter word after `r` decrements. A decrement at value zero leaves
@@ -847,33 +883,21 @@ private lemma counterSpan_iff_segment {k : ℕ} {Γ S : Type} {x : List Γ}
       ⟨fun u hu => ⟨fun h => hc u hu (Or.inl h), fun h => hc u hu (Or.inr h)⟩,
         fun u hu => (hp u hu).1, fun u hu => (hp u hu).2⟩⟩
 
-/-- A width-preserving overwrite of just the counter word interval. -/
-private def counterPatch {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (w : List Γ) : ℤ → Option Γ :=
-  fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ)
-    then FinTM.bufferTape w (q - cp) else ct q
-
-/-- Equal-width patches overwrite the same interval, preserving the original frame. -/
+/-- Equal-width patches overwrite the same interval: `Turing.wordPatch_twice`. -/
 private lemma counter_patch_twice {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
     (hv : v.length = u.length) :
-    counterPatch (counterPatch ct cp u) cp v = counterPatch ct cp v := by
-  funext q
-  simp only [counterPatch, hv]
-  split_ifs <;> rfl
+    wordPatch (wordPatch ct cp u) cp v = wordPatch ct cp v :=
+  wordPatch_twice ct cp u v hv
 
-/-- Replacing a framed word by an equal-width word keeps both blank delimiters. -/
+/-- Replacing a framed word by an equal-width word keeps both blank delimiters:
+`Turing.wordPatch_frame`. -/
 private lemma counter_patch_frame {Γ : Type} (w v : List Γ) (ct : ℤ → Option Γ) (cp : ℤ)
     (hv : v.length = w.length)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       ct (cp + p) = FinTM.bufferTape w p) :
     ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
-      counterPatch ct cp v (cp + p) = FinTM.bufferTape v p := by
-  intro p hl hr
-  by_cases h : 0 ≤ p ∧ p < (v.length : ℤ)
-  · simp [counterPatch, show cp ≤ cp + p ∧ cp + p < cp + (v.length : ℤ) by omega]
-  · have hp : p = -1 ∨ p = (v.length : ℤ) := by omega
-    rcases hp with rfl | rfl
-    · simp [counterPatch, hw (-1) (by omega) (by omega), FinTM.bufferTape_left]
-    · simp [counterPatch, hv, hw w.length (by omega) le_rfl, FinTM.bufferTape_nat]
+      wordPatch ct cp v (cp + p) = FinTM.bufferTape v p :=
+  wordPatch_frame ct cp w v hv hw
 
 /-- A decrement phase uses the proved framed contract and guarded state transport.
 **Proof sketch.** Decode the rich one-tape start, apply the landed success or
@@ -890,7 +914,7 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
     let v := (decFixed w).getD (List.replicate w.length true)
     let q : CounterLoopState S := if (decFixed w).isSome then .body a else .done
     (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) cost =
-      counterLoopCfg (some q) c (counterPatch ct cp (v.map e)) cp ∧
+      counterLoopCfg (some q) c (wordPatch ct cp (v.map e)) cp ∧
     counterSpan (counterLoopTMVia e M a exit) (counterLoopCfg (some (.dec .run)) c ct cp)
       cost cp w.length (fun p => ∀ j, p j = c.workTapePos j) := by
   let D : Cfg 1 Γ FlagPhase x :=
@@ -905,27 +929,17 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
   have layout (d : Cfg 1 Γ FlagPhase x) : bank d =
       ⟨d.state, d.inputPos, Fin.lastCases (d.workTapes 0) c.workTapes,
         Fin.lastCases (d.workTapePos 0) c.workTapePos, d.output⟩ := by
-    have frame (i : Fin k) := (embedEmitTM_frame (lastEmb k) N
-      (Fin.lastCases ct c.workTapes) (Fin.lastCases cp c.workTapePos) [] d 0).1
-      i.castSucc (by rintro ⟨j, hj⟩; exact Fin.castSucc_ne_last i hj.symm)
-    apply Cfg.ext <;> try rfl
-    · funext j
-      refine Fin.lastCases ?_ (fun i => ?_) j
-      · simpa only [bank, Fin.lastCases_last] using
-          embedEmitCfg_selected_tape (lastEmb k) (Fin.lastCases ct c.workTapes)
-            (Fin.lastCases cp c.workTapePos) [] d 0
-      · simpa only [MultiTapeTM.runFrom_zero, Fin.lastCases_castSucc] using (frame i).1
-    · funext j
-      refine Fin.lastCases ?_ (fun i => ?_) j
-      · simpa only [bank, Fin.lastCases_last] using
-          embedEmitCfg_selected_pos (lastEmb k) (Fin.lastCases ct c.workTapes)
-            (Fin.lastCases cp c.workTapePos) [] d 0
-      · simpa only [MultiTapeTM.runFrom_zero, Fin.lastCases_castSucc] using (frame i).2
+    apply embedEmitCfg_eq (lastEmb k) _ _ [] d _ rfl rfl (List.nil_append _)
+    · intro i
+      obtain rfl : i = 0 := Subsingleton.elim i 0
+      simp [lastEmb_apply]
+    · intro j hj
+      refine Fin.lastCases (fun hl => ?_) (fun i _ => ?_) j hj
+      · exact absurd ⟨0, lastEmb_apply k 0⟩ hl
+      · simp
   have hz : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-      z.workTapes 0 (z.workTapePos 0 + p) = FinTM.bufferTape w p := by
-    intro p hl hr
-    change (ct (cp + p)).bind (decodeBool e) = _
-    rw [hw p hl hr, FinTM.bufferTape_map_decode]
+      z.workTapes 0 (z.workTapePos 0 + p) = FinTM.bufferTape w p :=
+    (decrementTM_shadow_pre e c.inputPos c.output w ct cp hw).2
   -- The only decrement facts are the landed framed contracts, on the decoded shadow.
   have spec :
       (decrementTM 1 0).runFrom z cost =
@@ -942,35 +956,36 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
       have hp : (w.takeWhile not).length = w.length := by
         conv_lhs => rw [hs]
         simp
-      obtain ⟨he, hc, hh⟩ := decrementTM_run_underflow_ofCfg 0 w hd z rfl hz
+      obtain ⟨he, hc, hh⟩ :=
+        decrementTM_run_underflow_ofCfg 0 w hd z (Cfg.decodeSymbols_state e D) hz
       refine ⟨by simpa [cost, v, hd, hp] using he,
         by simpa [cost, hp] using hc, ?_⟩
       intro t ht
-      simpa [z, D, Cfg.decodeSymbols] using hh 0 t (by simpa [cost, hp] using ht)
+      simpa [z, D, Cfg.decodeSymbols_workTapePos] using hh 0 t (by simpa [cost, hp] using ht)
     | some u =>
-      obtain ⟨he, hc, hh⟩ := decrementTM_run_succ_ofCfg 0 w u hd z rfl hz
+      obtain ⟨he, hc, hh⟩ :=
+        decrementTM_run_succ_ofCfg 0 w u hd z (Cfg.decodeSymbols_state e D) hz
       refine ⟨by simpa [v, hd] using he, hc, ?_⟩
       intro t ht
       have h := hh 0 t ht
-      simp only [ite_true, Finset.mem_Icc] at h ⊢
+      simp only [ite_true, Finset.mem_Icc, z, D, Cfg.decodeSymbols_workTapePos] at h ⊢
       have hlen := (List.takeWhile_sublist (p := not) (l := w)).length_le
       exact ⟨h.1, by
         have upper : ((decrementTM 1 0).runFrom z t).workTapePos 0 ≤
             cp + ((w.takeWhile not).length : ℤ) := h.2
         omega⟩
   have rich (t : ℕ) : N.runFrom D t =
-      Cfg.liftOver e (by simp) D ((decrementTM 1 0).runFrom z t) := by
-    conv_lhs => rw [← Cfg.liftOver_decodeSymbols e D]
-    apply MultiTapeTM.liftSymbols_runFrom_over e _ (fun _ _ _ _ => rfl)
-    intro f inp work j
-    rcases f with _ | b | b <;>
-    rcases h : work 0 with _ | b' <;> (try cases b') <;>
-    simp [decrementTM, MultiTapeTM.mapWorkSymbols, incrementTM, Action.mapWorkSymbols, h] <;>
-    split_ifs <;> simp
+      Cfg.liftOver e (by simp) D ((decrementTM 1 0).runFrom z t) :=
+    decrementTM_liftSymbols_runFrom e D t
   let emb : FlagPhase ↪ CounterLoopState S := ⟨counterLoopDecExit a, counter_dec_injective a⟩
   have start : (bank D).mapState emb = counterLoopCfg (some (.dec .run)) c ct cp := by
     rw [layout, counter_layout]
-    rfl
+    apply Cfg.ext
+    · simp only [Cfg.mapState_state]; rfl
+    · simp only [Cfg.mapState_inputPos]; rfl
+    · funext i p; simp only [Cfg.mapState_workTapes]; rfl
+    · funext i; simp only [Cfg.mapState_workTapePos]; rfl
+    · simp only [Cfg.mapState_output]; rfl
   have run (t : ℕ) (ht : t ≤ cost) :
       (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) t =
         (bank (Cfg.liftOver e (by simp) D ((decrementTM 1 0).runFrom z t))).mapState emb := by
@@ -984,7 +999,8 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
         | done b => exact False.elim (hf b rfl)) (bank D) t (by
           intro u hu f hf b he
           rw [show E.runFrom (bank D) u = bank (N.runFrom D u) from
-            embedEmitTM_runFrom (lastEmb k) N _ _ [] D u, rich] at hf
+            embedEmitTM_runFrom (lastEmb k) N _ _ [] D u, rich, layout] at hf
+          simp only [Cfg.liftOver_state] at hf
           exact spec.2.1 u (by omega) b (hf.trans (congrArg some he)))
     rw [h, show E.runFrom (bank D) t = bank (N.runFrom D t) from
       embedEmitTM_runFrom (lastEmb k) N _ _ [] D t, rich]
@@ -995,25 +1011,35 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [run cost le_rfl, spec.1, layout, counter_layout]
     apply Cfg.ext
-    · cases hd : decFixed w <;> simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols,
+    · cases hd : decFixed w <;> simp [Cfg.mapState_state, Cfg.mapState_inputPos,
+        Cfg.mapState_workTapes, Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state,
+        Cfg.liftOver_inputPos, Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos,
+        Cfg.liftOver_output, Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes,
+        Cfg.liftSymbols_output,
         emb, counterLoopDecExit]
-    · apply Fin.ext; rfl
+    · apply Fin.ext
+      simp only [Cfg.mapState_inputPos, Cfg.liftOver_inputPos, z, Cfg.decodeSymbols_inputPos, D]
     · funext j p
       refine Fin.lastCases ?_ (fun i => ?_) j
-      · simp only [Cfg.mapState, Fin.lastCases_last]
-        change (if (if (0 : Fin 1) = 0 ∧ cp ≤ p ∧ p < cp + (w.length : ℤ)
+      · simp only [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+          Cfg.mapState_workTapePos, Cfg.mapState_output, Fin.lastCases_last]
+        rw [Cfg.liftOver_workTapes]
+        simp only [z, Cfg.decodeSymbols_workTapes, Cfg.decodeSymbols_workTapePos]
+        change (if (if True ∧ cp ≤ p ∧ p < cp + (w.length : ℤ)
             then FinTM.bufferTape v (p - cp) else (ct p).bind (decodeBool e)) =
               (ct p).bind (decodeBool e) then ct p
-            else (if (0 : Fin 1) = 0 ∧ cp ≤ p ∧ p < cp + (w.length : ℤ)
+            else (if True ∧ cp ≤ p ∧ p < cp + (w.length : ℤ)
               then FinTM.bufferTape v (p - cp) else (ct p).bind (decodeBool e)).map e) =
-          counterPatch ct cp (v.map e) p
-        simp only [true_and, counterPatch, List.length_map, vl, FinTM.bufferTape_map]
+          wordPatch ct cp (v.map e) p
+        simp only [true_and, wordPatch_apply, List.length_map, vl, FinTM.bufferTape_map]
         by_cases hp : cp ≤ p ∧ p < cp + (w.length : ℤ)
         · simp only [if_pos hp]
           split_ifs with he
           · have hn : (p - cp).toNat < v.length := by omega
             have hb : FinTM.bufferTape v (p - cp) = some v[(p - cp).toNat] := by
-              simp [FinTM.bufferTape, hp.1, hn]
+              have h0 : ((p - cp).toNat : ℤ) = p - cp := Int.toNat_of_nonneg (by omega)
+              nth_rw 1 [← h0]
+              rw [FinTM.bufferTape_nat, List.getElem?_eq_getElem hn]
             cases hct : ct p with
             | none => simp [hct, hb] at he
             | some γ =>
@@ -1022,27 +1048,52 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
               simp only [hb, Option.map_some, decodeBool_eq_some e γ _ decoded]
           · rfl
         · simp only [if_neg hp, if_true]
-      · simp only [Cfg.mapState, Fin.lastCases_castSucc]
-    · rfl
-    · simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols, z, Cfg.decodeSymbols, D]
+      · simp only [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+          Cfg.mapState_workTapePos, Cfg.mapState_output, Fin.lastCases_castSucc]
+    · funext i
+      simp only [Cfg.mapState_workTapePos, Cfg.liftOver_workTapePos, z,
+        Cfg.decodeSymbols_workTapePos]
+      rfl
+    · simp [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+        Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state, Cfg.liftOver_inputPos,
+        Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos, Cfg.liftOver_output,
+        Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes, Cfg.liftSymbols_output, z,
+        Cfg.decodeSymbols_state, Cfg.decodeSymbols_inputPos, Cfg.decodeSymbols_workTapes,
+        Cfg.decodeSymbols_workTapePos, Cfg.decodeSymbols_output, D]
   · intro t ht
     rw [run t (by omega), layout]
     have hc := spec.2.1 t ht
     cases hs : ((decrementTM 1 0).runFrom z t).state with
-    | none => simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols, hs]
+    | none => simp [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+        Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state, Cfg.liftOver_inputPos,
+        Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos, Cfg.liftOver_output,
+        Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes, Cfg.liftSymbols_output, hs]
     | some f =>
       cases f with
-      | run => simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols, hs, emb, counterLoopDecExit]
+      | run => simp [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+          Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state,
+          Cfg.liftOver_inputPos, Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos,
+          Cfg.liftOver_output, Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes,
+          Cfg.liftSymbols_output, hs, emb, counterLoopDecExit]
       | rewind b =>
-        simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols, hs, emb, counterLoopDecExit]
+        simp [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+            Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state,
+            Cfg.liftOver_inputPos, Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos,
+            Cfg.liftOver_output, Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes,
+            Cfg.liftSymbols_output, hs, emb, counterLoopDecExit]
       | done b => exact False.elim (hc b hs)
   · intro t ht
     rw [run t ht, layout]
-    simpa only [Cfg.mapState, Fin.lastCases_last, Cfg.liftOver, Cfg.liftSymbols] using
+    simpa only [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+        Cfg.mapState_workTapePos, Cfg.mapState_output, Fin.lastCases_last, Cfg.liftOver_state,
+        Cfg.liftOver_inputPos, Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos,
+        Cfg.liftOver_output, Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes,
+        Cfg.liftSymbols_output] using
       spec.2.2 t ht
   · intro t ht j
     rw [run t ht, layout]
-    simp only [Cfg.mapState, Fin.lastCases_castSucc]
+    simp only [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+        Cfg.mapState_workTapePos, Cfg.mapState_output, Fin.lastCases_castSucc]
 
 /-- The body phase executes its entry action once, then uses guarded transport.
 **Proof sketch.** The entry action reads the forwarding embedding. After that
@@ -1226,7 +1277,7 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
     (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) elapsed =
       counterLoopCfg (if n = 0 then some (.dec .run) else
         (counterLoopOrbit M τ c n).state.map (counterLoopRedirect a exit))
-        (counterLoopOrbit M τ c n) (counterPatch ct cp ((counterWord w n).map e)) cp ∧
+        (counterLoopOrbit M τ c n) (wordPatch ct cp ((counterWord w n).map e)) cp ∧
     counterSpan (counterLoopTMVia e M a exit) (counterLoopCfg (some (.dec .run)) c ct cp)
       elapsed cp w.length (fun p => ∃ r u,
         ((r < n ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = n ∧ u = 0)) ∧
@@ -1235,22 +1286,17 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
   | zero =>
     simp only [Finset.range_zero, Finset.sum_empty, counterOverhead, Finset.sum_empty,
       Nat.zero_add, MultiTapeTM.runFrom_zero, ite_true]
-    have hpatch : counterPatch ct cp ((counterWord w 0).map e) = ct := by
-      change counterPatch ct cp (w.map e) = ct
-      funext q
-      apply ite_eq_right_iff.mpr
-      intro h
-      simp only [List.length_map] at h
-      have hf := hw (q - cp) (by omega) (by omega)
-      simpa using hf.symm
+    have hpatch : wordPatch ct cp ((counterWord w 0).map e) = ct := by
+      change wordPatch ct cp (w.map e) = ct
+      exact wordPatch_self ct cp (w.map e) (by simpa only [List.length_map] using hw)
     rw [hpatch]
-    refine ⟨rfl, ?_, ?_, ?_⟩
+    refine ⟨by simp only [counterLoopOrbit, roundOrbit_zero], ?_, ?_, ?_⟩
     · intro u hu; omega
     · intro u hu; have hz : u = 0 := by omega
       subst u; simp [counter_layout, Finset.mem_Icc]
     · intro u hu; have hz : u = 0 := by omega
       subst u
-      exact ⟨0, 0, Or.inr ⟨rfl, rfl⟩, by simp [counter_layout, counterLoopOrbit, roundOrbit]⟩
+      exact ⟨0, 0, Or.inr ⟨rfl, rfl⟩, by simp [counter_layout, counterLoopOrbit, roundOrbit_zero]⟩
   | succ n ih =>
     obtain ⟨before, span⟩ := ih (by omega) (fun r hr => hround r (by omega))
     obtain ⟨ha, ht, hg⟩ := hround n (by omega)
@@ -1261,8 +1307,8 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
     rw [control] at before
     let cn := counterLoopOrbit M τ c n
     let wn := counterWord w n
-    let pn := counterPatch ct cp (wn.map e)
-    let nextTape := counterPatch ct cp ((counterWord w (n + 1)).map e)
+    let pn := wordPatch ct cp (wn.map e)
+    let nextTape := wordPatch ct cp ((counterWord w (n + 1)).map e)
     let cost := 2 * (wn.takeWhile not).length + 2
     have hd := counter_word_decrement w n (by omega)
     have hf := counter_patch_frame (w.map e) (wn.map e) ct cp
@@ -1279,7 +1325,7 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
           (counterLoopOrbit M τ c (n + 1)) nextTape cp := by
       rw [MultiTapeTM.runFrom_add, debit, body]
       rw [show counterLoopOrbit M τ c (n + 1) = M.runFrom cn (τ cn) from
-        Function.iterate_succ_apply' _ _ _]
+        roundOrbit_succ M τ c n]
     have rs : counterSpan (counterLoopTMVia e M a exit)
         (counterLoopCfg (some (.dec .run)) cn pn cp) (cost + τ cn) cp w.length
         (fun p => ∃ u ≤ τ cn, ∀ j, p j = (M.runFrom cn u).workTapePos j) := by
@@ -1375,20 +1421,15 @@ theorem counterLoopTMVia_run_done {k : ℕ} {Γ S : Type} [DecidableEq S] [Decid
   have framed := counter_patch_frame (w.map e) (wd.map e) ct cp
     (by simpa using width) (by simpa using hw)
   obtain ⟨debit, ds⟩ := counter_debit e M a exit (counterLoopOrbit M τ c d) wd
-    (counterPatch ct cp (wd.map e)) cp (by simpa using framed)
+    (wordPatch ct cp (wd.map e)) cp (by simpa using framed)
   simp only [under, Option.getD_none, Option.isSome_none, Bool.false_eq_true, ite_false,
     width] at debit
   rw [counter_patch_twice ct cp (wd.map e) ((List.replicate w.length true).map e)
     (by simp [width])] at debit
-  have fill : counterPatch ct cp ((List.replicate w.length true).map e) =
+  have fill : wordPatch ct cp ((List.replicate w.length true).map e) =
       (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q) := by
-    funext q
-    simp only [counterPatch, List.length_replicate, List.map_replicate]
-    split_ifs with h
-    · have hp : 0 ≤ q - cp := by omega
-      have hn : (q - cp).toNat < w.length := by omega
-      simp [FinTM.bufferTape, h.1, hn]
-    · rfl
+    rw [List.map_replicate]
+    exact wordPatch_replicate ct cp w.length (e true)
   rw [fill] at debit
   have time : (∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r)) +
       counterOverhead w (d + 1) =
@@ -1456,7 +1497,10 @@ theorem counterLoopTMVia_run_escape {k : ℕ} {Γ S : Type} [DecidableEq S] [Dec
       obtain ⟨s, hst, hsa, hse⟩ := hg u hu hut
       exact ⟨s, hst, hsa, fun h => hse (Option.some.inj h).symm⟩)
   refine ⟨?_, hs.1, hs.2.1, ?_⟩
-  · unfold counterPatch at he
+  · have hpatch : ∀ u : List _, wordPatch ct cp u = fun q =>
+        if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q :=
+      fun u => funext (wordPatch_apply ct cp u)
+    simp only [hpatch] at he
     simp only [List.length_map, counterWord_length] at he
     simpa [hexit, hea, counterLoopRedirect] using he
   · simpa only [Nat.lt_succ_iff] using hs.2.2
