@@ -1,0 +1,129 @@
+#327 (seq-zk) LE-gate39 (Gate 39 G39-01, major: inline re-proof of the PR's own public next_length_le), maintainer job, 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I; Lean 4.25.0 (PATH=$HOME/.elan/bin:$PATH); one Lean process of ours at a time, only on $SP/dl-oleans (another
+  job's lean on dl-oleans-2 was seen running during the job and not touched); builds only through scripts/lean_check_tree.sh
+  (worktree copy byte-equal to /home/user/tcslib/scripts/lean_check_tree.sh) via tools-used/review/runner.py (G26-N1, both
+  error forms); probes via tools-used/runner_full.py (lean -DmaxErrors=0, no -o); no lake command; no cache get; nothing pushed;
+  no rebase; no commit or branch in /home/user/tcslib (only `git fetch`, `git worktree` and unreferenced `git commit-tree
+  --no-gpg-sign` scratch objects); the shared .lake/packages not modified.
+Method and tools: records briefs/pass-shelat-ch5-8/maintainer/int-all-open-2026-11-16/int-all-open-evidence.zip (SHA-256
+  4f8cb3746353c968be8d8b6d11407c03d5a96969b61029644a014db9577606fe), extracted into a fresh directory: 1248/1248 OK against
+  evidence-SHA256SUMS, path set exact, SHA256SUMS = evidence-SHA256SUMS. tools-used/: unmodified copies of its tools-used/ (incl.
+  review/{runner,downorder,snapshot,buildsum,sorrycensus,treecheck}.py, buildset, permod, refunion2, soloenv, soloverify,
+  tipcensus, treecheck_ml, restoreplan, runner_full, and the Mathlib overlay method mloverlay.sh + mathlibextra.sh). Statement
+  and Rule 10 tools, unmodified, from records gates/37-sc-compose/landing-r1/gate37-le-evidence.zip (382c09f4...; 202 files, OK
+  against its evidence-SHA256SUMS): decls2.py, docaudit.py, doconly.py, doconly_sg.py, frozencheck_lib.py, touched.py,
+  upclosure.py, rule10_b.sh, review/{mkcollect,mkseals_ab,mkseals_coe,sealsum,sealtable,ctlcheck2,touched}.py,
+  NmCollect.template.lean, archived-gate10-tools/; and from records fills/seq-zk/final-r1/review-evidence.zip (f9c39479...,
+  1106/1106 OK, SHA256SUMS = evidence-SHA256SUMS): mkctl_seqzk.py, mkcensus_seqzk.py (all byte-equal across the three sources
+  where present). New: legate39_checks.py (header/strip/insertion check of the edited file), backupq.py (pre-build backup),
+  restore_g39.sh (restore_derand.sh's steps with this job's paths + restoreplan.py --delete).
+
+coordinator update during the job (before any build): #326 (derand, c27005d6) was merged; the job used the NEW tip.
+  tip = origin/cryptography/pass-shelat-ch2-4 after `git fetch` = 0542dd9210ccdb844ad125cd95f8488c9f553153 ("Records: #326
+  merged"; it contains #313, #318, #319, #323, #326; c27005d6 is an ancestor). The earlier tip b87d148b was NOT used for any build.
+  PR heads by `git ls-remote` at the time: #324 4bd2d80bfb58fab5243c66c9f1a697a30b533756, #326 c27005d6, #327 bd19c433 (parent).
+
+olean tree $SP/dl-oleans: pre tree/snapshot-pre.txt: 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required value.
+
+landing (landing/): land/pass-shelat-seq-zk in its worktree $SP/wt-land-seq-zk (sparse, briefs/ excluded, .lake/packages linked).
+  parent bd19c433a4cf3d4027ffc891d7d3c06e927e9dfa (= refs/pull/327/head). NEW HEAD a94ba750b2f21ea5f2c3e58bc7959ad5ac9de871, tree
+  3efe62af6b414655aefa9506e3e63baedea33ae5; author = committer = Claude <noreply@anthropic.com>, SSH-signed by the environment
+  default (gpgsig present; `%G?` prints N only for lack of an allowedSignersFile); subject "seq-zk landing edit LE-gate39: hsource
+  from the public next_length_le (G39-01)", message landing/commit-msg.txt (both trailers); patch landing/patch/, diff
+  landing/le-gate39.diff (1 file, +5/-5), landing/commits.txt. Worktree clean at the new head.
+edit (TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean):
+  - import: `import TCSlib.Cryptography.Composability.SequentialZK.ProofTransfers` after the two existing imports. Acyclic:
+    ProofTransfers' local closure (135 modules, from source) does not contain RealPrefixBounds; it is a subset of RealPrefixBounds'
+    closure (143), so the import adds exactly one module (ProofTransfers) to it.
+  - proof: in PaddedProverSpec.realPrefix_bounds the local
+      have hsource (hist : List (List Bool)) : (ρ.P.next x y tape hist).length ≤ B := by
+        rw [d.next y tape hist]; dsimp only; split_ifs <;> first | exact hbound _ _ | exact Nat.zero_le B
+    is now
+      have hsource (hist : List (List Bool)) : (ρ.P.next x y tape hist).length ≤ B :=
+        d.next_length_le y B hbound tape hist
+    (exactly the requested replacement; it compiled first time).
+  - docstring: the proof sketch describes this step ("Each repeated-prover reply is either an original bounded message or an
+    empty filler, by the specification's public reply equation."); one pure insertion right after it: " This is the\npublic
+    theorem `next_length_le`." (the line break keeps widths <= 100; max width 94; file 101 lines before and after).
+checks (statements/, checks/):
+  - statements/decls2-vs-parent.tsv (decls2.py, parent bd19c433 vs head): EMPTY; decls2.err empty.
+  - checks/legate39-checks.txt (legate39_checks.py): (1) frozencheck_lib.compare: 1 declaration, realPrefix_bounds header
+    byte-identical, statement prose identical, no MISSING/ORDER; (2) doc/module comments stripped: 7 code lines changed, exactly
+    the import line and the hsource proof (4 lines -> 2); (3) the one changed docstring is a pure insertion of one contiguous
+    chunk (verified: removing it gives the parent text). checks/doconly-sg.txt: code-identical False (expected: the proof and
+    import changed), docstring counts 2 -> 2, 1 changed.
+  - statements/touched-vs-parent.tsv (touched.py): 1 CHANGED, realPrefix_bounds (lines 41-100); touched-after.json for sealsum.
+lint (lint/): scripts/campaign_style_lint.py TCSlib/Cryptography --check8b at a94ba750: 92 FAIL / 101 WARN; FAIL/WARN line set
+  identical to the LE-doc lint at bd19c433 (lint/linediff-Cryptography-bd19c433-vs-a94ba750.txt empty).
+
+(a) #327 alone on the tip (merged second, after #326):
+  scratch merge (landing/merge-tree-a-tip-x-327.txt): `git merge-tree --write-tree --messages` tip 0542dd92 x a94ba750: rc 0, no
+    conflict message, tree daac61401cafe36fb036598e1bb33cdf6d5e743e; commit 4cd422c76c73cdcf4270b94a9c4ca9fcecd0fd9a (unsigned, no
+    ref, fixed date). Tree = tip + #327's 41 files exactly (39 A, 2 M), every blob = a94ba750's (landing/solo-a-vs-tip-name-status.txt).
+  worktree $SP/wt-g39 (sparse, non-cone /* !/briefs/, .lake/packages linked), detached at 4cd422c7.
+  order-a/: downorder.py vs eff2dcd0 (the snapshot's base): changed 153, down 679, order 1317, 377 Mathlib roots. buildset.py,
+    seeds RealPrefixBounds + audits/garg-ch1-3/Checks + audits/pass-shelat/Checks: down-seed 8 (RealPrefixBounds,
+    ComputationalTransfer, SequentialZK facade, ThreeColoring, Composability, root TCSlib, both audits Checks), build set 679 =
+    down-seed + 671 base-delta modules the tree needs (the snapshot predates #313/#318/#319/#323/#326/#327), excluded 0; queue
+    imports-first (asserted per edge). (With RealPrefixBounds alone as seed, order-a/rpb-only/: down-seed 6, the audits Checks
+    are not downstream of it; they were added as seeds as required.)
+  Mathlib overlay (build-mathlib-extra/): mloverlay.sh: 3346 symlinks in dl-oleans/Mathlib; mathlibextra.sh compiled
+    Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas (pinned mathlib 029db123, source b371bf48...) with plain lean -o: rc 0,
+    olean c0a9cff04c6707edac6980cf4d3c3cc8116ab8843e9ddfb82f6688aee8e0f54c = the derand review's / int-all-open's.
+  backups: tools-used/backupq.py before each build: 561 snapshot oleans copied to $SP/dl-g39-backup (hash-verified,
+    tree/backed-up.txt), 133 new modules listed (tree/new-oleans.txt; 118 for (a), 15 for (b)).
+  build-a/ (runner.py, rc 0): 679/679 rc 0; errors 0 (`error:` 0, `error(` 0, per-module.tsv / permod.out, every log hash = its
+    record); substring "error" 0; 59 sorry warnings (all in admitted non-PR modules, plus ComposeSecurity 3 and Yao 2, tip
+    admissions); 420 warnings; 6167 s module time, 05:32-07:15 UTC. RealPrefixBounds: rc 0, 0 errors, 0 sorry, 0 warnings, 2.2 s.
+    The 8 down-seed modules all rc 0, 0 errors both forms, 0 sorry; warnings only SequentialZK 1 (the disclosed unused hQ).
+  refcmp (build-a/refunion.txt, refunion2.py vs int-all-open's combined records, its 4 solo builds and its 24 reference runs;
+    build-a/refs-args.txt): 678 of 679 byte-identical (source and olean) to at least one reference; the one without is
+    RealPrefixBounds (new source). SliceReduction: same-source different-olean vs int-313-323-324/sc-garble, SAME vs
+    int-all-open/gate36 (the known LE-gate36 import-closure change).
+  admissions (admissions/): tipcensus.py at the tip 0542dd92: 202; at 4cd422c7: 197 = 202 - 5 (SequentialZK 5 -> 0), every new
+    seq-zk module 0; per-module identical to int-all-open's combined census 639d16d9 except ComposeSecurity (3 here: #324 is not
+    in (a)) and #324's new modules (absent). RealPrefixBounds has no sorry/admit token.
+
+(b) the final combined tree (tip, which now contains #326, + #327 a94ba750 + #324 4bd2d80b; merging #326 again is a no-op):
+  landing/merge-tree-b-SA-x-324.txt: 4cd422c7 x 4bd2d80b: rc 0, no conflict, tree 129810e45fa842afa19219804e6cde7fe64cee7c;
+    commit c51cf08dcf588ca6bbd79670462df5b8bb0ecb92 = THE NEW FINAL COMBINED TREE. Alternative order (tip x #324, then x
+    a94ba750) gives the same tree 129810e4; merging c27005d6 into c51cf08d again gives 129810e4 (no-op). All clean.
+  checks/combined-old-639d16d9-vs-new-c51cf08d-code.txt: outside briefs/, the new combined tree differs from int-all-open's
+    final combined tree 639d16d9 only in RealPrefixBounds.lean (and the plan .md files changed on the records tip).
+  rebuild set (order-b/; downorder at c51cf08d vs eff2dcd0: changed 169, down 694, order 1332): down(RealPrefixBounds +
+    both audits Checks) 8 + down(#324's 16 files) 19 = 26 (shared: root TCSlib). #324's downstream is included because the (a)
+    tree held the tip state for those modules.
+  environment (build-b/env/, soloenv.py at c51cf08d with int-all-open's admissions/records-final.jsonl): every module of the
+    rebuild set's import closure outside it (1306) has the combined build's source (asserted) and ALREADY held the combined
+    build's recorded olean: OK 1306, RESTORE 0, MISSING 0 (the (a) build reproduced them byte for byte).
+  build-b/build/ (runner.py at c51cf08d, queue build-b/env/queue.txt, rc 0): 26/26 rc 0, errors 0 (`error:` 0, `error(` 0),
+    substring 0, sorry 0, warnings 1 (SequentialZK, unused hQ), 376 s, 07:16-07:22 UTC. build-b/verify.txt (soloverify.py):
+    RESULT OK; RealPrefixBounds byte-identical to build-a; the other 25 byte-identical to int-all-open's combined build (and 9 of
+    them also to build-a).
+  admissions: admissions/census-b-c51cf08d.txt: 194, per module identical to int-all-open's merge-census-639d16d9
+    (census-b-vs-int-all-open-639d16d9.diff empty): no admission added or removed beyond the targets already removed.
+  tree check (tree/tree-check-combined.txt, treecheck_ml.py, order-b/order.txt 1332 modules, admissions/records-final-b.jsonl =
+    int-all-open records-final + build-a + build-b): every module rc 0 at the c51cf08d source, every olean = its record, none
+    missing, no stray olean, no empty dir: RESULT OK (4710 files = 1332 + 31 PFR + 3347 Mathlib overlay entries, attributed).
+
+Rule 10 (rule10/; at c51cf08d in $SP/wt-g39; owner RealPrefixBounds.lean; probes under G39Probe/, removed afterwards,
+  rule10/probe-files-in-worktree.txt; runner_full.py writes no olean, every run lean -DmaxErrors=0):
+  - collector G39Probe/CollectHead (mkcollect.py; probe-runs/ rc 0, 0 errors; 2508 CAT lines).
+  - seals (rule10_b.sh: mkseals_ab.py strict A, B with SEAL_EVAL=1; mkseals_coe.py coe A, B): seals-{A,B,coe-A,coe-B}.tsv: all 4
+    probes rc 0, 0 errors, 0 failing declarations, install and EOF records present; requests strict A 1875 / B 1876, coe A 1874 /
+    B 1875 (terms 12, stored 1).
+  - paired controls (mkctl_seqzk.py: PolyExpr.eval, the FinDist CoeFun instance, ZK/ZK_iff, StatZK/StatZK_iff,
+    Composability.prefixProver/prefixProver_coins; Protocol.seqRep not selected): coe 4 probes, 7 sealed negatives, each failing
+    exactly once, readers 0, unsealed 0: ctlcheck-coe.log ALL_OK True. strict 4 probes, 9 sealed negatives each failing exactly
+    once; ALL_OK False only because ctlCoeReader also fails once under the strict seal (harness effect, as in the seq-zk review,
+    sc-compose review and LE-gate37; rule10/controls-strict-attribution.txt). Unsealed controls all pass.
+axioms (axioms/; Axioms.lean.txt run as G39Probe/Axioms at c51cf08d with runner_full.py: rc 0, 0 errors, 0 warnings; source
+  removed afterwards): the five targets ZK.seqRep, StatZK.seqRep, InteractiveProof.seqRep, InteractiveProofErr.seqRep,
+  EfficientProverProofErr.seqRep, and PerfectZK.seqRep, PerfectZKAbort.seqRep, colSeq_efficientProverProof_zk,
+  negligible_colSeqSound, StatZK_iff, zk_of_padded_spec, realPrefix_bounds: [propext, Classical.choice, Quot.sound];
+  next_length_le: [propext] (axioms/probe-runs/mods/G39Probe_Axioms.log).
+
+## Restore (run by the maintainer, 2026-11-16T07:39:34Z)
+finish1.sh: backup hash failures 0; restored 561; deleted new oleans 133; Mathlib overlay removed (3346 symlinks, 1 file c0a9cff0); restoreplan: extra 0, changed 0, missing 0, 17 emptied dirs deleted; post snapshot sha256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f: SNAPSHOT EQUAL. Probe files hashed (14) and removed.
