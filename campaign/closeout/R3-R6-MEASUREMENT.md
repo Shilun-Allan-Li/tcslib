@@ -34,7 +34,7 @@ Total rule-10 exposure: 35 declarations.
 | RS-1 | 3 (87) | 2 | 0 / 0 | Small. Needs your import choice (`Build/UniversalParts` vs the `CfgFacts` route). |
 | TR-1 | 4 (58) | 8 | 2 / 6 | **Carry**, or a later small PR. Needs new API (`AcceptsWithin.iff_of_haltsWithin`). |
 | SK-1 | 1 (39) | 1 | 0 / 0 | **Done** (#336). |
-| CC7-1 | 12 (863) | 4 | 0 / 0 | Dead `canonCounterRepeat` **done** (#336). The 7-leg template: design note `CC7-1-DESIGN.md`, **built** (2026-11-16): PR #345 / gate 152, −212 lines. |
+| CC7-1 | 12 (863) | 4 | 0 / 0 | Dead `canonCounterRepeat` **done** (#336). The 7-leg template: design note `CC7-1-DESIGN.md`, **built** (2026-11-16): PR #345 / gate 152, −211 lines. |
 | RN-1 | 39 (982) | 0 | 2 / 0 | Low exposure, but it touches Primitives (222 downstream modules) and Loop (223). Recommend narrowing it to CodeSimulator's part, with CC7-1. |
 | RC-4 | 3 (39) | 5 | 0 / 0 | Buffer half **done** in CodeSimulator (#336). The first-halt row needs new API in `Nondeterministic` (160-module replay): **carry**. |
 | F7-1(b) | 9 (229) | 23 | 9 / 15 | **Carry.** High exposure; the backlog assigns it to MIG-14. |

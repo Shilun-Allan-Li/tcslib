@@ -1,0 +1,326 @@
+{
+ "base_summary": "declarations screened: 178; copy pairs (target reproduces >= half of source): 69; reproduced text: 62,792 chars",
+ "head_summary": "declarations screened: 181; copy pairs (target reproduces >= half of source): 42; reproduced text: 16,086 chars",
+ "population_base": [
+  "TCSlib/Complexity/TuringMachine/CodeSimulator.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/TuringMachine/CodeSimulator.lean"
+ ],
+ "new": 2,
+ "gone": 29,
+ "net_directed_pairs": "69 -> 42",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "CodeSimulator.lean::canonStageLeg_of",
+   "source": "CodeSimulator.lean::us_start",
+   "chars": 153,
+   "source_chars": 281,
+   "pct": 54,
+   "class": "shape-match",
+   "note": "Erratum G152-02: us_start proves an initial-configuration identity and does not call phaseHostTM_run. The 153 matched characters are the five configuration-field rewrite fragments (Cfg.mapState_* / Cfg.ext steps) that both proofs use. Structural similarity, different statements."
+  },
+  {
+   "status": "NEW",
+   "target": "CodeSimulator.lean::canonStageFrontSpec",
+   "source": "CodeSimulator.lean::canonStageLeg_of",
+   "chars": 243,
+   "source_chars": 485,
+   "pct": 50,
+   "class": "shape-match",
+   "note": "Erratum G152-02: the 243 matched characters are proof text (the phaseHostTM_run call and the configuration-field rewrites), not the statements. canonStageFrontSpec is unchanged and is the consumer of the seven legs. Structural similarity, different statements."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonGramCut_leg",
+   "source": "CodeSimulator.lean::canonStageCut_leg",
+   "chars": 298,
+   "source_chars": 307,
+   "pct": 97,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageCut_leg",
+   "source": "CodeSimulator.lean::canonGramCut_leg",
+   "chars": 298,
+   "source_chars": 308,
+   "pct": 97,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg4",
+   "source": "CodeSimulator.lean::canonStageLeg2",
+   "chars": 1532,
+   "source_chars": 2121,
+   "pct": 72,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg1",
+   "source": "CodeSimulator.lean::canonStageLeg2",
+   "chars": 1527,
+   "source_chars": 2121,
+   "pct": 72,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg5",
+   "source": "CodeSimulator.lean::canonStageLeg2",
+   "chars": 1481,
+   "source_chars": 2121,
+   "pct": 70,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg4",
+   "source": "CodeSimulator.lean::canonStageLeg0",
+   "chars": 1346,
+   "source_chars": 2064,
+   "pct": 65,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg1",
+   "source": "CodeSimulator.lean::canonStageLeg0",
+   "chars": 1336,
+   "source_chars": 2064,
+   "pct": 65,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg4",
+   "source": "CodeSimulator.lean::canonStageLeg3",
+   "chars": 1646,
+   "source_chars": 2692,
+   "pct": 61,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg5",
+   "source": "CodeSimulator.lean::canonStageLeg0",
+   "chars": 1256,
+   "source_chars": 2064,
+   "pct": 61,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg2",
+   "source": "CodeSimulator.lean::canonStageLeg0",
+   "chars": 1242,
+   "source_chars": 2064,
+   "pct": 60,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg6",
+   "source": "CodeSimulator.lean::us_start",
+   "chars": 169,
+   "source_chars": 281,
+   "pct": 60,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg5",
+   "source": "CodeSimulator.lean::us_start",
+   "chars": 169,
+   "source_chars": 281,
+   "pct": 60,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg4",
+   "source": "CodeSimulator.lean::us_start",
+   "chars": 169,
+   "source_chars": 281,
+   "pct": 60,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg3",
+   "source": "CodeSimulator.lean::us_start",
+   "chars": 169,
+   "source_chars": 281,
+   "pct": 60,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg2",
+   "source": "CodeSimulator.lean::us_start",
+   "chars": 169,
+   "source_chars": 281,
+   "pct": 60,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg1",
+   "source": "CodeSimulator.lean::us_start",
+   "chars": 169,
+   "source_chars": 281,
+   "pct": 60,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg0",
+   "source": "CodeSimulator.lean::us_start",
+   "chars": 169,
+   "source_chars": 281,
+   "pct": 60,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg2",
+   "source": "CodeSimulator.lean::canonStageLeg4",
+   "chars": 1532,
+   "source_chars": 2585,
+   "pct": 59,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg6",
+   "source": "CodeSimulator.lean::canonStageLeg2",
+   "chars": 1250,
+   "source_chars": 2121,
+   "pct": 59,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg0",
+   "source": "CodeSimulator.lean::canonStageLeg2",
+   "chars": 1242,
+   "source_chars": 2121,
+   "pct": 59,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg0",
+   "source": "CodeSimulator.lean::canonStageLeg5",
+   "chars": 1256,
+   "source_chars": 2178,
+   "pct": 58,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg3",
+   "source": "CodeSimulator.lean::canonStageLeg6",
+   "chars": 1447,
+   "source_chars": 2547,
+   "pct": 57,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg0",
+   "source": "CodeSimulator.lean::canonStageLeg3",
+   "chars": 1520,
+   "source_chars": 2692,
+   "pct": 56,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg5",
+   "source": "CodeSimulator.lean::canonStageLeg6",
+   "chars": 1394,
+   "source_chars": 2547,
+   "pct": 55,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg4",
+   "source": "CodeSimulator.lean::canonStageLeg6",
+   "chars": 1384,
+   "source_chars": 2547,
+   "pct": 54,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg6",
+   "source": "CodeSimulator.lean::canonStageLeg3",
+   "chars": 1447,
+   "source_chars": 2692,
+   "pct": 54,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg6",
+   "source": "CodeSimulator.lean::canonStageLeg4",
+   "chars": 1384,
+   "source_chars": 2585,
+   "pct": 54,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg0",
+   "source": "CodeSimulator.lean::canonStageLeg4",
+   "chars": 1346,
+   "source_chars": 2585,
+   "pct": 52,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageLeg1",
+   "source": "CodeSimulator.lean::canonStageLeg6",
+   "chars": 1292,
+   "source_chars": 2547,
+   "pct": 51,
+   "class": "retired",
+   "note": "Retired: one side is a stage-front leg (canonStageLeg0-6), whose shared skeleton (phaseHostTM_run call, guard, Cfg.ext) moved into canonStageLeg_of, or the cut-leg twin, now one private phaseCut_leg cited by canonStageCut_leg and canonGramCut_leg."
+  }
+ ],
+ "erratum": "G152-02 (gate 152 round 1): notes of the two new pairs corrected; the dispatched PAIR-DISPOSITIONS.json is preserved."
+}

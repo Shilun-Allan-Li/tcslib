@@ -51,7 +51,7 @@ about **−250 to −320** Lean lines, with the four ≥ 90% leg/cut pairs gone.
 
 **Cost and risk.** CodeSimulator sits under 23 modules, so the replay is small. Rule-10 exposure
 is 0 (measured): the legs already read every other-file definition through published equations,
-and the templates use the same ones. The leg statements' consumer (`canonStage_run`, the
+and the templates use the same ones. The leg statements' consumer (`canonStageFrontSpec` (corrected, G152-02), the
 `obtain ⟨hpre_i, hop_i⟩` block) is unchanged if the leg statements are kept as written.
 `canonStageAt` changes them syntactically but not up to definitional unfolding of a same-file
 abbreviation. The prototype will tell whether the consumer needs a one-line `show`.
