@@ -382,25 +382,25 @@ theorem assignmentFold_eq_two {l : ℕ} (a : Fin l → Bool) (hl : l ≤ 2) :
   rcases hc with rfl | rfl | rfl <;> simp [List.ofFn_succ]
 
 
-/-- The raw row machine equals the garbled row selected by a supplied XOR row permutation,
-when the gate-description fields and the key/nonce block equations hold.
-The contract is generic in the circuit and seed. [PS10, Protocol 162.6; BMR90]
+/-- The generic raw row encrypts the output key selected by `outputBit z` under the
+permuted assignment's argument keys, with the supplied seed's row coins. The output bit
+is independent of the gate truth function. [PS10, Theorem 163.7; Protocol 162.6]
 
-**Proof sketch.** The permutation equation identifies the two raw assignment bits with the
-first two bits of the permuted assignment. The kind-code equation identifies the raw output
-bit. Canonical word lookup reads the two argument vertices; acyclicity puts these and the
-output vertex inside the circuit, so the key-block equation supplies every addressed key.
-The bounded-arity assignment-fold equation identifies the nonce index, and the two nonce
-block equations identify both nonce words. The nested word adapter then equals the public
-garbled-row interface for at most two argument keys. -/
-theorem rowWord_garbledRow (E₁ E₂ : List Bool → List Bool)
-    (width bound inputs gate : List Bool → ℕ) (kind args coins : List Bool → List Bool)
+**Proof sketch.** Read the two shifted assignment bits through the permutation equation.
+Canonical argument-word lookup gives the two argument vertices. Circuit acyclicity and the
+published size equation put every addressed argument and output key in the seed's range.
+The seed key equation identifies each key window, including the arbitrary output-bit key.
+The bounded-arity assignment fold identifies the nonce address, and both seed nonce equations
+identify its two halves. Finally the generic nested word-encryption contract turns these
+encoded vectors into the multi-key encryption of the requested output key. -/
+theorem rowWordWith_enc (E₁ E₂ : List Bool → List Bool)
+    (width bound inputs gate : List Bool → ℕ) (args coins : List Bool → List Bool)
+    (outputBit : List Bool → Bool)
     (z : List Bool) (C : DAGCircuit (inputs z))
     (s : GarbleSeed C (Fin (width z) → Bool)
       ((Fin (width z) → Bool) × (Fin (width z) → Bool)))
     (i : Fin C.gates.length) (a : Fin (C.gates[i]).args.length → Bool)
     (hfan : (C.gates[i]).args.length ≤ 2) (hgate : gate z = i)
-    (hkind : kind z = (C.gates[i]).kind.encode)
     (hargs : args z = BinArith.encWords ((C.gates[i]).args.map fun v => List.replicate v true))
     (hkey : ∀ (v : ℕ), v < C.size → ∀ b,
       keyAt C s v b = fun t : Fin (width z) =>
@@ -415,8 +415,10 @@ theorem rowWord_garbledRow (E₁ E₂ : List Bool → List Bool)
           (2 * width z) + width z + t) false)
     (hperm : ∀ a t, s.2.2 i a t = xor (a t)
       ((coins z).getD (10 * bound z * width z + 2 * gate z + t) false)) :
-    rowWord E₁ E₂ width bound inputs gate kind args coins (C.gates[i]).args.length a z =
-      garbledRow (nestedSpecial E₁ E₂ (width z)) C s i (s.2.2 i a) := by
+    rowWordWith E₁ E₂ width bound inputs gate args coins outputBit
+        (C.gates[i]).args.length a z =
+      (nestedSpecial E₁ E₂ (width z)).enc (argKeys C s i (s.2.2 i a))
+        (keyAt C s (inputs z + i) (outputBit z)) (s.2.1 i (s.2.2 i a)) := by
   let b₀ := assignmentBit width bound gate coins (C.gates[i]).args.length a 0
   let b₁ := assignmentBit width bound gate coins (C.gates[i]).args.length a 1
   let a' := s.2.2 i a
@@ -424,7 +426,6 @@ theorem rowWord_garbledRow (E₁ E₂ : List Bool → List Bool)
     assignmentBit_of_perm width bound gate coins _ a (s.2.2 i) z 0 (hperm a)
   have hb₁ : b₁ z = (List.ofFn a').getD 1 false :=
     assignmentBit_of_perm width bound gate coins _ a (s.2.2 i) z 1 (hperm a)
-  have houtput := gateBit_eq_gateOut (C.gates[i]) a' kind b₀ b₁ z hfan hkind hb₀ hb₁
   -- Canonical lookup reads argument numbers, including its zero default.
   have hlookup (j : ℕ) :
       (BinArith.getW (pairEncode (List.replicate j true) (args z))).length =
@@ -472,9 +473,9 @@ theorem rowWord_garbledRow (E₁ E₂ : List Bool → List Bool)
         BinArith.encWords ((argKeys C s i a').map List.ofFn) := by
     rw [hk₀, hk₁, Garbling.argKeys_small C s i a' hfan]
   have hout : keyWord width bound (fun w => inputs w + gate w)
-      (gateBit kind (C.gates[i]).args.length b₀ b₁) coins z =
-        List.ofFn (keyAt C s (inputs z + i) (gateOut (C.gates[i]) a')) := by
-    rw [hkeyWord _ _ (by simpa only [hgate] using houtlt), hgate, houtput]
+      outputBit coins z =
+        List.ofFn (keyAt C s (inputs z + i) (outputBit z)) := by
+    rw [hkeyWord _ _ (by simpa only [hgate] using houtlt), hgate]
   -- The assignment fold gives the exact address of both nonce halves.
   let index := fun w => (b₀ w).toNat + 2 * (b₁ w).toNat
   have hindex : index z = (List.ofFn a').foldr (fun b k => b.toNat + 2 * k) 0 := by
@@ -492,13 +493,73 @@ theorem rowWord_garbledRow (E₁ E₂ : List Bool → List Bool)
     apply congrArg List.ofFn
     funext t
     exact (hr₁ a' t).symm
-  rw [rowWord_eq]
+  rw [rowWordWith_eq]
   dsimp only
-  rw [hkeys, hout, hrzero, hrone, garbledRow_eq]
+  rw [hkeys, hout, hrzero, hrone]
   apply Garbling.nestedWordEnc_vectors
   rw [argKeys_eq, List.length_ofFn]
   exact hfan
 
+
+/-- The raw row machine equals the garbled row selected by a supplied XOR row permutation,
+when the gate-description fields and the key/nonce block equations hold.
+The contract is generic in the circuit and seed. [PS10, Protocol 162.6; BMR90]
+
+**Proof sketch.** The permutation equation identifies the two raw assignment bits with the
+first two bits of the permuted assignment. The kind-code equation then identifies the raw
+output bit with the gate truth function. Apply the arbitrary-output-bit row contract, which
+already identifies every key and nonce window, and read the public garbled-row equation. -/
+theorem rowWord_garbledRow (E₁ E₂ : List Bool → List Bool)
+    (width bound inputs gate : List Bool → ℕ) (kind args coins : List Bool → List Bool)
+    (z : List Bool) (C : DAGCircuit (inputs z))
+    (s : GarbleSeed C (Fin (width z) → Bool)
+      ((Fin (width z) → Bool) × (Fin (width z) → Bool)))
+    (i : Fin C.gates.length) (a : Fin (C.gates[i]).args.length → Bool)
+    (hfan : (C.gates[i]).args.length ≤ 2) (hgate : gate z = i)
+    (hkind : kind z = (C.gates[i]).kind.encode)
+    (hargs : args z = BinArith.encWords ((C.gates[i]).args.map fun v => List.replicate v true))
+    (hkey : ∀ (v : ℕ), v < C.size → ∀ b,
+      keyAt C s v b = fun t : Fin (width z) =>
+        (coins z).getD ((b.toNat * bound z + v) * width z + t) false)
+    (hr₀ : ∀ a t, (s.2.1 i a).1 t = (coins z).getD
+      (2 * bound z * width z +
+        (4 * gate z + (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0) *
+          (2 * width z) + t) false)
+    (hr₁ : ∀ a t, (s.2.1 i a).2 t = (coins z).getD
+      (2 * bound z * width z +
+        (4 * gate z + (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0) *
+          (2 * width z) + width z + t) false)
+    (hperm : ∀ a t, s.2.2 i a t = xor (a t)
+      ((coins z).getD (10 * bound z * width z + 2 * gate z + t) false)) :
+    rowWord E₁ E₂ width bound inputs gate kind args coins (C.gates[i]).args.length a z =
+      garbledRow (nestedSpecial E₁ E₂ (width z)) C s i (s.2.2 i a) := by
+  let b₀ := assignmentBit width bound gate coins (C.gates[i]).args.length a 0
+  let b₁ := assignmentBit width bound gate coins (C.gates[i]).args.length a 1
+  let a' := s.2.2 i a
+  have hb₀ : b₀ z = (List.ofFn a').getD 0 false :=
+    assignmentBit_of_perm width bound gate coins _ a (s.2.2 i) z 0 (hperm a)
+  have hb₁ : b₁ z = (List.ofFn a').getD 1 false :=
+    assignmentBit_of_perm width bound gate coins _ a (s.2.2 i) z 1 (hperm a)
+  have houtput := gateBit_eq_gateOut (C.gates[i]) a' kind b₀ b₁ z hfan hkind hb₀ hb₁
+  change rowWordWith E₁ E₂ width bound inputs gate args coins
+    (gateBit kind (C.gates[i]).args.length b₀ b₁) (C.gates[i]).args.length a z = _
+  rw [rowWordWith_enc E₁ E₂ width bound inputs gate args coins
+    (gateBit kind (C.gates[i]).args.length b₀ b₁) z C s i a hfan hgate hargs
+    hkey hr₀ hr₁ hperm]
+  rw [houtput, garbledRow_eq]
+
+
+/-- A generic raw row depends only on the data maps and output bit at its input:
+freezing every map to its value at `z` and running at `[]` gives the same encrypted row. -/
+theorem rowWordWith_value (E₁ E₂ : List Bool → List Bool)
+    (width bound inputs gate : List Bool → ℕ) (args coins : List Bool → List Bool)
+    (outputBit : List Bool → Bool) (l : ℕ) (a : Fin l → Bool) (z : List Bool) :
+    rowWordWith E₁ E₂ width bound inputs gate args coins outputBit l a z =
+      rowWordWith E₁ E₂ (fun _ => width z) (fun _ => bound z)
+        (fun _ => inputs z) (fun _ => gate z) (fun _ => args z) (fun _ => coins z)
+        (fun _ => outputBit z) l a [] := by
+  rw [rowWordWith_eq, rowWordWith_eq]
+  simp only [keyWord_eq, nonceWord_eq, assignmentBit_eq]
 
 /-- A raw row depends only on the supplied data maps' values at its input:
 freezing each map to its value at `z` and running at `[]` gives the same row.
