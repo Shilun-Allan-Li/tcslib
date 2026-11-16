@@ -1,0 +1,131 @@
+{
+ "base_summary": "declarations screened: 628; copy pairs (target reproduces >= half of source): 242; reproduced text: 45,106 chars",
+ "head_summary": "declarations screened: 622; copy pairs (target reproduces >= half of source): 237; reproduced text: 46,272 chars",
+ "population_base": [
+  "TCSlib/Complexity/ClassNP/SAT.lean",
+  "TCSlib/Complexity/CookLevin/Hardness.lean",
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/ClassNP/SAT.lean",
+  "TCSlib/Complexity/CookLevin/Hardness.lean",
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean"
+ ],
+ "new": 3,
+ "gone": 8,
+ "net_directed_pairs": "242 -> 237",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "SAT.lean::satPad_words",
+   "source": "Hardness.lean::clA5Pad_words",
+   "chars": 117,
+   "source_chars": 117,
+   "pct": 100,
+   "class": "accepted-twin",
+   "note": "New private 9-line twin (the padded word assignment of embedCfg_ofWords is stateWord K w). It replaces the 12-line satPad_seam/clA5Pad_seam twin (gone). Both files keep their host layer private (kind 6, the dispatcher, is carried), so the shared padding lemmas stay private twins."
+  },
+  {
+   "status": "NEW",
+   "target": "Hardness.lean::clA5Pad_words",
+   "source": "SAT.lean::satPad_words",
+   "chars": 117,
+   "source_chars": 117,
+   "pct": 100,
+   "class": "accepted-twin",
+   "note": "New private 9-line twin (the padded word assignment of embedCfg_ofWords is stateWord K w). It replaces the 12-line satPad_seam/clA5Pad_seam twin (gone). Both files keep their host layer private (kind 6, the dispatcher, is carried), so the shared padding lemmas stay private twins."
+  },
+  {
+   "status": "NEW",
+   "target": "EmitIterEmbed.lean::embedCfg",
+   "source": "Wrappers.lean::captureCfg",
+   "chars": 175,
+   "source_chars": 324,
+   "pct": 54,
+   "class": "screen-artifact",
+   "note": "The new simps attribute line (with its field list `state inputPos workTapes workTapePos`) and comment attach to embedCfg's text chunk, which raises its textual overlap with the record map captureCfg from below half to 54%. embedCfg's definition is unchanged; both are distinct five-field record maps."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satPadCfg",
+   "source": "Hardness.lean::clA5PadCfg",
+   "chars": 134,
+   "source_chars": 134,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a deleted SAT/Hardness padding copy (satPadAction, satPadCfg, satPad_apply, satPad_seam or the clA5 twin); padding now goes through the public Turing.padAction/embedCfg layer of Build/EmitIterEmbed."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5PadCfg",
+   "source": "SAT.lean::satPadCfg",
+   "chars": 134,
+   "source_chars": 134,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a deleted SAT/Hardness padding copy (satPadAction, satPadCfg, satPad_apply, satPad_seam or the clA5 twin); padding now goes through the public Turing.padAction/embedCfg layer of Build/EmitIterEmbed."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satPadAction",
+   "source": "Hardness.lean::clA5PadAction",
+   "chars": 84,
+   "source_chars": 84,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a deleted SAT/Hardness padding copy (satPadAction, satPadCfg, satPad_apply, satPad_seam or the clA5 twin); padding now goes through the public Turing.padAction/embedCfg layer of Build/EmitIterEmbed."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5PadAction",
+   "source": "SAT.lean::satPadAction",
+   "chars": 84,
+   "source_chars": 84,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a deleted SAT/Hardness padding copy (satPadAction, satPadCfg, satPad_apply, satPad_seam or the clA5 twin); padding now goes through the public Turing.padAction/embedCfg layer of Build/EmitIterEmbed."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Pad_seam",
+   "source": "SAT.lean::satPad_seam",
+   "chars": 208,
+   "source_chars": 239,
+   "pct": 87,
+   "class": "retired",
+   "note": "Retired: one side is a deleted SAT/Hardness padding copy (satPadAction, satPadCfg, satPad_apply, satPad_seam or the clA5 twin); padding now goes through the public Turing.padAction/embedCfg layer of Build/EmitIterEmbed."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satPad_seam",
+   "source": "Hardness.lean::clA5Pad_seam",
+   "chars": 208,
+   "source_chars": 242,
+   "pct": 86,
+   "class": "retired",
+   "note": "Retired: one side is a deleted SAT/Hardness padding copy (satPadAction, satPadCfg, satPad_apply, satPad_seam or the clA5 twin); padding now goes through the public Turing.padAction/embedCfg layer of Build/EmitIterEmbed."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Pad_apply",
+   "source": "SAT.lean::satPad_apply",
+   "chars": 117,
+   "source_chars": 171,
+   "pct": 68,
+   "class": "retired",
+   "note": "Retired: one side is a deleted SAT/Hardness padding copy (satPadAction, satPadCfg, satPad_apply, satPad_seam or the clA5 twin); padding now goes through the public Turing.padAction/embedCfg layer of Build/EmitIterEmbed."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satPad_apply",
+   "source": "Hardness.lean::clA5Pad_apply",
+   "chars": 117,
+   "source_chars": 175,
+   "pct": 67,
+   "class": "retired",
+   "note": "Retired: one side is a deleted SAT/Hardness padding copy (satPadAction, satPadCfg, satPad_apply, satPad_seam or the clA5 twin); padding now goes through the public Turing.padAction/embedCfg layer of Build/EmitIterEmbed."
+  }
+ ]
+}
