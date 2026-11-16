@@ -847,17 +847,12 @@ private lemma counterSpan_iff_segment {k : ℕ} {Γ S : Type} {x : List Γ}
       ⟨fun u hu => ⟨fun h => hc u hu (Or.inl h), fun h => hc u hu (Or.inr h)⟩,
         fun u hu => (hp u hu).1, fun u hu => (hp u hu).2⟩⟩
 
-/-- A width-preserving overwrite of just the counter word interval. -/
-private def counterPatch {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (w : List Γ) : ℤ → Option Γ :=
-  fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ)
-    then FinTM.bufferTape w (q - cp) else ct q
-
 /-- Equal-width patches overwrite the same interval, preserving the original frame. -/
 private lemma counter_patch_twice {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
     (hv : v.length = u.length) :
-    counterPatch (counterPatch ct cp u) cp v = counterPatch ct cp v := by
+    wordPatch (wordPatch ct cp u) cp v = wordPatch ct cp v := by
   funext q
-  simp only [counterPatch, hv]
+  simp only [wordPatch_apply, hv]
   split_ifs <;> rfl
 
 /-- Replacing a framed word by an equal-width word keeps both blank delimiters. -/
@@ -866,14 +861,14 @@ private lemma counter_patch_frame {Γ : Type} (w v : List Γ) (ct : ℤ → Opti
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       ct (cp + p) = FinTM.bufferTape w p) :
     ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
-      counterPatch ct cp v (cp + p) = FinTM.bufferTape v p := by
+      wordPatch ct cp v (cp + p) = FinTM.bufferTape v p := by
   intro p hl hr
   by_cases h : 0 ≤ p ∧ p < (v.length : ℤ)
-  · simp [counterPatch, show cp ≤ cp + p ∧ cp + p < cp + (v.length : ℤ) by omega]
+  · simp [wordPatch_apply, show cp ≤ cp + p ∧ cp + p < cp + (v.length : ℤ) by omega]
   · have hp : p = -1 ∨ p = (v.length : ℤ) := by omega
     rcases hp with rfl | rfl
-    · simp [counterPatch, hw (-1) (by omega) (by omega), FinTM.bufferTape_left]
-    · simp [counterPatch, hv, hw w.length (by omega) le_rfl, FinTM.bufferTape_nat]
+    · simp [wordPatch_apply, hw (-1) (by omega) (by omega), FinTM.bufferTape_left]
+    · simp [wordPatch_apply, hv, hw w.length (by omega) le_rfl, FinTM.bufferTape_nat]
 
 /-- A decrement phase uses the proved framed contract and guarded state transport.
 **Proof sketch.** Decode the rich one-tape start, apply the landed success or
@@ -890,7 +885,7 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
     let v := (decFixed w).getD (List.replicate w.length true)
     let q : CounterLoopState S := if (decFixed w).isSome then .body a else .done
     (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) cost =
-      counterLoopCfg (some q) c (counterPatch ct cp (v.map e)) cp ∧
+      counterLoopCfg (some q) c (wordPatch ct cp (v.map e)) cp ∧
     counterSpan (counterLoopTMVia e M a exit) (counterLoopCfg (some (.dec .run)) c ct cp)
       cost cp w.length (fun p => ∀ j, p j = c.workTapePos j) := by
   let D : Cfg 1 Γ FlagPhase x :=
@@ -1006,8 +1001,8 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
               (ct p).bind (decodeBool e) then ct p
             else (if (0 : Fin 1) = 0 ∧ cp ≤ p ∧ p < cp + (w.length : ℤ)
               then FinTM.bufferTape v (p - cp) else (ct p).bind (decodeBool e)).map e) =
-          counterPatch ct cp (v.map e) p
-        simp only [true_and, counterPatch, List.length_map, vl, FinTM.bufferTape_map]
+          wordPatch ct cp (v.map e) p
+        simp only [true_and, wordPatch_apply, List.length_map, vl, FinTM.bufferTape_map]
         by_cases hp : cp ≤ p ∧ p < cp + (w.length : ℤ)
         · simp only [if_pos hp]
           split_ifs with he
@@ -1226,7 +1221,7 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
     (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) elapsed =
       counterLoopCfg (if n = 0 then some (.dec .run) else
         (counterLoopOrbit M τ c n).state.map (counterLoopRedirect a exit))
-        (counterLoopOrbit M τ c n) (counterPatch ct cp ((counterWord w n).map e)) cp ∧
+        (counterLoopOrbit M τ c n) (wordPatch ct cp ((counterWord w n).map e)) cp ∧
     counterSpan (counterLoopTMVia e M a exit) (counterLoopCfg (some (.dec .run)) c ct cp)
       elapsed cp w.length (fun p => ∃ r u,
         ((r < n ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = n ∧ u = 0)) ∧
@@ -1235,8 +1230,8 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
   | zero =>
     simp only [Finset.range_zero, Finset.sum_empty, counterOverhead, Finset.sum_empty,
       Nat.zero_add, MultiTapeTM.runFrom_zero, ite_true]
-    have hpatch : counterPatch ct cp ((counterWord w 0).map e) = ct := by
-      change counterPatch ct cp (w.map e) = ct
+    have hpatch : wordPatch ct cp ((counterWord w 0).map e) = ct := by
+      change wordPatch ct cp (w.map e) = ct
       funext q
       apply ite_eq_right_iff.mpr
       intro h
@@ -1261,8 +1256,8 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
     rw [control] at before
     let cn := counterLoopOrbit M τ c n
     let wn := counterWord w n
-    let pn := counterPatch ct cp (wn.map e)
-    let nextTape := counterPatch ct cp ((counterWord w (n + 1)).map e)
+    let pn := wordPatch ct cp (wn.map e)
+    let nextTape := wordPatch ct cp ((counterWord w (n + 1)).map e)
     let cost := 2 * (wn.takeWhile not).length + 2
     have hd := counter_word_decrement w n (by omega)
     have hf := counter_patch_frame (w.map e) (wn.map e) ct cp
@@ -1375,15 +1370,15 @@ theorem counterLoopTMVia_run_done {k : ℕ} {Γ S : Type} [DecidableEq S] [Decid
   have framed := counter_patch_frame (w.map e) (wd.map e) ct cp
     (by simpa using width) (by simpa using hw)
   obtain ⟨debit, ds⟩ := counter_debit e M a exit (counterLoopOrbit M τ c d) wd
-    (counterPatch ct cp (wd.map e)) cp (by simpa using framed)
+    (wordPatch ct cp (wd.map e)) cp (by simpa using framed)
   simp only [under, Option.getD_none, Option.isSome_none, Bool.false_eq_true, ite_false,
     width] at debit
   rw [counter_patch_twice ct cp (wd.map e) ((List.replicate w.length true).map e)
     (by simp [width])] at debit
-  have fill : counterPatch ct cp ((List.replicate w.length true).map e) =
+  have fill : wordPatch ct cp ((List.replicate w.length true).map e) =
       (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q) := by
     funext q
-    simp only [counterPatch, List.length_replicate, List.map_replicate]
+    simp only [wordPatch_apply, List.length_replicate, List.map_replicate]
     split_ifs with h
     · have hp : 0 ≤ q - cp := by omega
       have hn : (q - cp).toNat < w.length := by omega
@@ -1456,7 +1451,9 @@ theorem counterLoopTMVia_run_escape {k : ℕ} {Γ S : Type} [DecidableEq S] [Dec
       obtain ⟨s, hst, hsa, hse⟩ := hg u hu hut
       exact ⟨s, hst, hsa, fun h => hse (Option.some.inj h).symm⟩)
   refine ⟨?_, hs.1, hs.2.1, ?_⟩
-  · unfold counterPatch at he
+  · simp only [show ∀ u : List _, wordPatch ct cp u = fun q =>
+        if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q from
+      fun u => funext (wordPatch_apply ct cp u)] at he
     simp only [List.length_map, counterWord_length] at he
     simpa [hexit, hea, counterLoopRedirect] using he
   · simpa only [Nat.lt_succ_iff] using hs.2.2

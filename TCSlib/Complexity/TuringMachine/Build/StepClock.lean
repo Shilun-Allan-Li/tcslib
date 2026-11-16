@@ -43,11 +43,9 @@ transports and segment composition.
 ## Main definitions
 
 * `Turing.clockCfg` — the host layout: body tapes first, the counter tape last.
-* `Turing.wordPatch` — a tape with a word written over an interval.
-* `Turing.wordPatch_of_mem`, `Turing.wordPatch_of_not_mem` — its cells, the specification API
-  (user, 2026-10-16).
-* `Turing.wordPatch_append` — adjacent patches join: patching `u` and then `v` right after it
-  is patching `u ++ v`.
+* The counter tape's patches are `Turing.wordPatch` (`Build/Catalog`), read through its
+  published API: `Turing.wordPatch_apply`, `Turing.wordPatch_of_mem`,
+  `Turing.wordPatch_of_not_mem` and `Turing.wordPatch_append`.
 * `Turing.Cfg.Stopped` — a body configuration that is halted or in a designated stop state.
 
 ## Main results
@@ -82,51 +80,6 @@ without the `simp` attribute: the state is `q`, the input head and output are `c
 `(clockCfg q c ct cp).workTapePos = Fin.lastCases cp c.workTapePos`. -/
 attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
   clockCfg
-
-/-- **A tape with a word patched in**: the cells `cp, …, cp + |u| - 1` hold `u`, every other
-cell is `ct`'s. -/
-def wordPatch {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) : ℤ → Option Γ :=
-  fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q
-
-/-- A cell inside the patched interval holds the word's letter at its offset:
-`wordPatch ct cp u q = FinTM.bufferTape u (q - cp)` when `cp ≤ q < cp + u.length`
-(the specification API, user 2026-10-16). -/
-theorem wordPatch_of_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
-    (h₁ : cp ≤ q) (h₂ : q < cp + (u.length : ℤ)) :
-    wordPatch ct cp u q = FinTM.bufferTape u (q - cp) := by
-  simp [wordPatch, h₁, h₂]
-
-/-- A cell outside the patched interval is the original tape's: `wordPatch ct cp u q = ct q`
-(the specification API, user 2026-10-16). -/
-theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
-    (h : ¬(cp ≤ q ∧ q < cp + (u.length : ℤ))) : wordPatch ct cp u q = ct q := by
-  simp only [wordPatch, if_neg h]
-
-/-- **Adjacent patches join**: patching `u` at `cp` and then `v` at `cp + |u|`, right after it,
-is patching `u ++ v` at `cp`.
-
-**Proof sketch.** Split on the cell. Inside `u`'s interval both sides read `u`'s letter, since
-`u ++ v` begins with `u`; inside `v`'s interval both read `v`'s letter at the offset past `u`;
-outside both intervals both read the original tape. -/
-theorem wordPatch_append {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ) :
-    wordPatch (wordPatch ct cp u) (cp + u.length) v = wordPatch ct cp (u ++ v) := by
-  funext q
-  have hlen : ((u ++ v).length : ℤ) = u.length + v.length := by simp
-  by_cases h₁ : cp ≤ q ∧ q < cp + (u.length : ℤ)
-  · have hn : 0 ≤ q - cp := by omega
-    rw [wordPatch_of_not_mem _ _ _ (by omega), wordPatch_of_mem _ _ _ h₁.1 h₁.2,
-      wordPatch_of_mem _ _ _ h₁.1 (by omega), ← Int.toNat_of_nonneg hn, FinTM.bufferTape_nat,
-      FinTM.bufferTape_nat, List.getElem?_append_left (by omega)]
-  · by_cases h₂ : cp + (u.length : ℤ) ≤ q ∧ q < cp + u.length + (v.length : ℤ)
-    · have hn : 0 ≤ q - (cp + u.length) := by omega
-      have hm : 0 ≤ q - cp := by omega
-      rw [wordPatch_of_mem _ _ _ h₂.1 h₂.2, wordPatch_of_mem _ _ _ (by omega) (by omega),
-        ← Int.toNat_of_nonneg hn, ← Int.toNat_of_nonneg hm, FinTM.bufferTape_nat,
-        FinTM.bufferTape_nat, List.getElem?_append_right (by omega)]
-      congr 1
-      omega
-    · rw [wordPatch_of_not_mem _ _ _ h₂, wordPatch_of_not_mem _ _ _ h₁,
-        wordPatch_of_not_mem _ _ _ (by omega)]
 
 /-- **A stopped body configuration**: halted, or live in a designated stop state. -/
 def Cfg.Stopped {k : ℕ} {Γ S : Type*} {x : List Γ} (stopAt : S → Bool) (c : Cfg k Γ S x) :
@@ -293,7 +246,7 @@ private theorem sc_wordPatch_self {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ
     (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) → ct (cp + p) = FinTM.bufferTape u p) :
     wordPatch ct cp u = ct := by
   funext q
-  unfold wordPatch
+  simp only [wordPatch_apply]
   split_ifs with inside
   · have h := hu (q - cp) (by omega) (by omega)
     rw [add_sub_cancel] at h
@@ -309,7 +262,7 @@ private theorem sc_wordPatch_twice {Γ : Type} (ct : ℤ → Option Γ) (cp : �
     (huv : v.length = u.length) :
     wordPatch (wordPatch ct cp u) cp v = wordPatch ct cp v := by
   funext q
-  unfold wordPatch
+  simp only [wordPatch_apply]
   rw [huv]
   by_cases hq : cp ≤ q ∧ q < cp + (u.length : ℤ) <;> simp [hq]
 
@@ -325,7 +278,7 @@ private theorem sc_wordPatch_frame {Γ : Type} (ct : ℤ → Option Γ) (cp : �
     ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
       wordPatch ct cp v (cp + p) = FinTM.bufferTape v p := by
   intro p lo hi
-  unfold wordPatch
+  simp only [wordPatch_apply]
   by_cases inside : cp ≤ cp + p ∧ cp + p < cp + (v.length : ℤ)
   · rw [if_pos inside, add_sub_cancel_left]
   · rw [if_neg inside]
@@ -535,7 +488,7 @@ private theorem sc_debit {k : ℕ} {Γ S Q : Type} [DecidableEq Γ] {x : List Γ
     funext p
     rw [sc_lift_run, binary.1, Cfg.liftOver_workTapes]
     have width : word.length = w.length := sc_dec_patch_width w
-    simp only [result, pos, seed, true_and, wordPatch, List.length_map, width]
+    simp only [result, pos, seed, true_and, wordPatch_apply, List.length_map, width]
     by_cases inside : cp ≤ p ∧ p < cp + (w.length : ℤ)
     · simp only [if_pos inside, FinTM.bufferTape_map]
       by_cases unchanged : FinTM.bufferTape word (p - cp) = (ct p).bind (decodeBool e)
