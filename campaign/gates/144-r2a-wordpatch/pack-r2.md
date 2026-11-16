@@ -32,7 +32,7 @@ Round 1 held the gate (`findings.md`, verbatim; `resolutions.md`):
 
 ## Brief for the auditor
 
-1. **G144-01.** Check the diff `ae4157dd..a3c9c210` (`patch/` in the carrier and the bundled
+1. **G144-01.** Check the diff `ae4157dd..a3c9c210` (`patch/round1-to-round2.patch` in the carrier and the bundled
    Catalog): proofs only, in `catalog_increment_trace` and `scanTM_run_ofCfg`; no statement change.
    Check that the changed declarations now pass no other module's definition and no generated
    equation lemma. `defsweep/SUMMARY.json`'s remaining non-own hits are not definition reads: in
@@ -56,7 +56,7 @@ Round 1 held the gate (`findings.md`, verbatim; `resolutions.md`):
   Lint: no change. Metadata: standard axioms only.
 - Copy screen (the five owners): 81 pairs at head against 82 at base; no new pair, one gone
   (`catalog_increment_trace` → `catalog_clear_trace`, which diverged with the rewrite).
-- `evidence-r2/DATA-CARRIER.json` and its recovery map (518 logical files): round 2's runs, the
+- `evidence-r2/DATA-CARRIER.json` and its recovery map (519 logical files): round 2's runs, the
   sweep, and round 1's results under `history/round1-ae4157dd/`. Decode each blob and check its
   SHA-256 and byte count.
 
