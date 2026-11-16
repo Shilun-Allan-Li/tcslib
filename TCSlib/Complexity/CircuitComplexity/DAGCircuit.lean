@@ -50,6 +50,11 @@ and `LayeredDAG.lean`.
   the value of an existing vertex.  These two facts drive every proof about the model.
 * `BoolCircuit.DAGCircuit.values_getD_gate`, `BoolCircuit.DAGCircuit.depthAt_gate` — the
   evaluation and depth recurrences at a gate vertex.
+* `BoolCircuit.DAGGate.getD_lt_depth` — every vertex a gate reads is shallower than the gate;
+  with the readers `DAGGate.depth_eq`, `DAGCircuit.depths_eq`, `DAGCircuit.depthAt_eq` and
+  `DAGCircuit.depth_eq`.
+* `BoolCircuit.runWith_rel` — two evaluators run over one gate list stay related vertex by
+  vertex when every gate preserves the relation (the relational host lemma).
 * `BoolCircuit.DAGGate.eval_remap`, `BoolCircuit.runWith_remap_rel` — renaming vertices
   commutes with evaluation, gate by gate and along a whole gate list.
 * `BoolCircuit.gatesAcyclic_append`, `BoolCircuit.gatesAcyclic_cons` — acyclicity of
@@ -549,6 +554,95 @@ theorem depthAt_gate {i : ℕ} (hi : i < C.gates.length) :
     runWith_getD_take _ _ _ hi.le (by simpa using C.args_lt i hi a ha) 0
 
 end DAGCircuit
+
+/-! ## Depth readers and the relational simulation of `runWith` -/
+
+/-- A gate's depth is one more than the maximum depth of the vertices it reads, vertex `v`'s
+depth being `ds.getD v 0` [AB09, Def 6.1, depth of a vertex]. -/
+theorem DAGGate.depth_eq (g : DAGGate) (ds : List ℕ) :
+    g.depth ds = 1 + (g.args.map fun a => ds.getD a 0).foldr max 0 := rfl
+
+/-- Every vertex a gate reads is strictly shallower than the gate:
+`ds.getD a 0 < g.depth ds` for `a ∈ g.args`.
+
+**Proof sketch.** By `DAGGate.depth_eq`, it suffices that `ds.getD a 0` is at most the
+`foldr max 0` of the mapped list when `a ∈ g.args`; induct on `g.args` with `le_max_left` /
+`le_max_right` and `List.mem_cons`. -/
+theorem DAGGate.getD_lt_depth (g : DAGGate) (ds : List ℕ) {a : ℕ} (ha : a ∈ g.args) :
+    ds.getD a 0 < g.depth ds := by
+  have key : ∀ l : List ℕ, a ∈ l → ds.getD a 0 ≤ (l.map fun a => ds.getD a 0).foldr max 0 := by
+    intro l hl
+    induction l with
+    | nil => cases hl
+    | cons b l ih =>
+      rw [List.map_cons, List.foldr_cons]
+      rcases List.mem_cons.mp hl with rfl | hl
+      · exact le_max_left _ _
+      · exact le_trans (ih hl) (le_max_right _ _)
+  rw [DAGGate.depth_eq]
+  have := key g.args ha
+  omega
+
+namespace DAGCircuit
+
+variable {n : ℕ} (C : DAGCircuit n)
+
+/-- The vertex-depth list runs `DAGGate.depth` from `n` zeros [AB09, Def 6.1]:
+`C.depths = runWith DAGGate.depth C.gates (List.replicate n 0)`. -/
+theorem depths_eq : C.depths = runWith DAGGate.depth C.gates (List.replicate n 0) := rfl
+
+/-- The depth of vertex `v` is entry `v` of the depth list, `0` out of range:
+`C.depthAt v = C.depths.getD v 0`. -/
+theorem depthAt_eq (v : ℕ) : C.depthAt v = C.depths.getD v 0 := rfl
+
+/-- The circuit depth is the depth of its output vertex [AB09, Def 6.1]:
+`C.depth = C.depthAt C.output`. -/
+theorem depth_eq : C.depth = C.depthAt C.output := rfl
+
+end DAGCircuit
+
+/-- **Relational indexed simulation of `runWith`.** Two evaluators run the same gate list from
+initial data related vertex by vertex by `R v`. If, at gate `i`, related data on the gate's
+inputs always produce related outputs at vertex `L + i`, then the two runs are related at
+every vertex `v < L + |gs|`, where `L` is the number of initial vertices. Technical host lemma
+with no textbook counterpart; `SecureComputation.runWith_sim` is the functional special case
+`R v a b ↔ b = W v a`.
+
+**Proof sketch.** Strong induction on the vertex, exactly as `runWith_sim`: input vertices
+are the initial relation (`runWith_getD_of_lt`); a gate vertex `L + i` reads both runs'
+prefixes (`runWith_getD_gate`), whose argument entries agree with the full runs
+(`runWith_getD_take`) and are related by the induction hypothesis, since acyclicity puts every
+argument below `L + i`. -/
+theorem runWith_rel {α β : Type} (fA : DAGGate → List α → α) (fB : DAGGate → List β → β)
+    (R : ℕ → α → β → Prop) (dA : α) (dB : β) (gs : List DAGGate)
+    (initA : List α) (initB : List β) (hlen : initB.length = initA.length)
+    (hinit : ∀ v < initA.length, R v (initA.getD v dA) (initB.getD v dB))
+    (hacyc : ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < initA.length + i)
+    (hgate : ∀ (i : ℕ) (h : i < gs.length) (vA : List α) (vB : List β),
+      vA.length = initA.length + i → vB.length = initA.length + i →
+      (∀ a ∈ (gs[i]).args, R a (vA.getD a dA) (vB.getD a dB)) →
+      R (initA.length + i) (fA gs[i] vA) (fB gs[i] vB)) :
+    ∀ v < initA.length + gs.length,
+      R v ((runWith fA gs initA).getD v dA) ((runWith fB gs initB).getD v dB) := by
+  intro v
+  induction v using Nat.strong_induction_on with
+  | _ v ih =>
+    intro hv
+    by_cases hlt : v < initA.length
+    · rw [runWith_getD_of_lt _ _ _ hlt, runWith_getD_of_lt _ _ _ (hlen ▸ hlt)]
+      exact hinit v hlt
+    · obtain ⟨i, rfl⟩ : ∃ i, v = initA.length + i := ⟨v - initA.length, by omega⟩
+      have hi : i < gs.length := by omega
+      have hB := runWith_getD_gate fB gs initB hi dB
+      have hA := runWith_getD_gate fA gs initA hi dA
+      rw [hlen] at hB
+      rw [hA, hB]
+      refine hgate i hi _ _ (by rw [length_runWith, List.length_take_of_le hi.le])
+        (by rw [length_runWith, List.length_take_of_le hi.le, hlen]) fun a ha => ?_
+      have ha' := hacyc i hi a ha
+      rw [runWith_getD_take _ gs initA hi.le ha',
+        runWith_getD_take _ gs initB hi.le (by omega)]
+      exact ih a ha' (by omega)
 
 /-- The constant circuit on `n` inputs with output `b`: one constant gate
 (`constGate b`), which is the output. -/
