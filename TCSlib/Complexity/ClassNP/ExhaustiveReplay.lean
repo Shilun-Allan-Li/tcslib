@@ -638,35 +638,14 @@ private theorem xr_extendTM_run {K : ℕ} {x : List Bool} (r : Fin K) (u : List 
 
 /-! #### Buffer-tape facts needed by the rows (from the published equations only) -/
 
-/-- A stored word is blank at every negative cell. -/
-private theorem xr_bufferTape_neg (v : List Bool) (p : ℤ) (hp : p < 0) :
-    FinTM.bufferTape v p = none := by
-  induction v using List.reverseRecOn with
-  | nil => rw [FinTM.bufferTape_nil]
-  | append_singleton L b ih =>
-    rw [FinTM.bufferTape_append, Function.update_of_ne (by omega)]
-    exact ih
-
-/-- A stored word is blank at and beyond its length. -/
-private theorem xr_bufferTape_ge (v : List Bool) (p : ℤ) (hp : (v.length : ℤ) ≤ p) :
-    FinTM.bufferTape v p = none := by
-  obtain ⟨n, rfl⟩ : ∃ n : ℕ, p = n := ⟨p.toNat, by omega⟩
-  rw [FinTM.bufferTape_nat, List.getElem?_eq_none_iff]
-  omega
-
-/-- A stored word is blank exactly off `[0, |v|)`. -/
+/-- A stored word is blank exactly off `[0, |v|)` (`FinTM.bufferTape_eq`). -/
 private theorem xr_bufferTape_eq_none_iff (v : List Bool) (p : ℤ) :
     FinTM.bufferTape v p = none ↔ p < 0 ∨ (v.length : ℤ) ≤ p := by
-  constructor
-  · intro h
-    by_contra hc
-    push_neg at hc
-    obtain ⟨n, rfl⟩ : ∃ n : ℕ, p = n := ⟨p.toNat, by omega⟩
-    rw [FinTM.bufferTape_nat, List.getElem?_eq_none_iff] at h
+  rw [FinTM.bufferTape_eq]
+  split_ifs with h
+  · rw [List.getElem?_eq_none_iff]
     omega
-  · rintro (h | h)
-    · exact xr_bufferTape_neg v p h
-    · exact xr_bufferTape_ge v p h
+  · exact ⟨fun _ => Or.inl (by omega), fun _ => rfl⟩
 
 /-- A stored word is non-blank on `[0, |v|)`. -/
 private theorem xr_bufferTape_ne_none (v : List Bool) (i : ℕ) (hi : i < v.length) :
@@ -851,7 +830,7 @@ private theorem xr_passTM_run {K : ℕ} {x : List Bool} (j r : Fin K) (hjr : j �
     (by
       dsimp only
       rw [Function.update_of_ne (Ne.symm hjr), hr]
-      exact xr_bufferTape_neg u _ (by omega))
+      exact FinTM.bufferTape_of_neg u (by omega))
   refine ⟨f', ?_, ?_, ?_⟩
   · have hsplit : (xr_passTM K j r dir).runFrom d (2 * u.length + 2) =
         (xr_passTM K j r dir).runFrom
@@ -924,7 +903,7 @@ private theorem xr_test_tail {K : ℕ} {x : List Bool} (r : Fin K) (v : List Boo
     (fun b inp w s hs => by simp [xr_testTM, hs]) (fun b inp w hw => by simp [xr_testTM, hw])
     false 0 v.length d hd (by rw [hpos]; ring)
     (fun i hi => by rw [zero_add, hr]; exact xr_bufferTape_ne_none v i hi)
-    (by rw [hr]; exact xr_bufferTape_neg v _ (by omega)), hr, xr_clear_fun]
+    (by rw [hr]; exact FinTM.bufferTape_of_neg v (by omega)), hr, xr_clear_fun]
 
 /-- **The capture test's contract.** With the output `out` stored at the origin and the head at
 its end, `|out| + 2` steps clear it, return the head to `0`, change nothing else, and stop at
@@ -1459,6 +1438,26 @@ private theorem xr_replay_state {N : FinNDTM Bool} (z s : List Bool) (h : Fin N.
   rw [hrun, NDTM.withChoiceTape_state, xr_runWith_shift]
   rfl
 
+/-- **The replay's common start.** The shifted initial configuration with the choice word is live
+at `N`'s start state, the budget word is unshifted on the counter, and the replay phase runs as the
+silent embedding of the clock host's run. -/
+private theorem xr_replay_prelude {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD : List Bool)
+    (h : Fin N.k → ℤ) :
+    (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0).state =
+      some N.tm.q₀ ∧
+    (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      FinTM.bufferTape w (0 + p) = FinTM.bufferTape w p) ∧
+    ∀ u, (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u =
+      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
+        (C.H.runFrom (clockCfg (some (C.inj N.tm.q₀))
+          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
+          (FinTM.bufferTape w) 0) u) := by
+  refine ⟨?_, fun p _ _ => by rw [zero_add], fun u => ?_⟩
+  · rw [NDTM.withChoiceTape_state]
+    show (N.tm.initCfg z).state = _
+    rw [NDTM.initCfg_eq, Cfg.init_state]
+  · rw [xr_replayStart_eq, xr_replayTM, embedSilentTM_runFrom _ _ (xr_cap_not_mem N.k)]
+
 /-- **One replay, the `finish` exit.** If the branch along `s` first halts at `τ ≤ |s|`, and the
 budget word `w` has value `|s|`, the replay phase reaches, within `5τ + 2|w| + 2` steps and with no
 earlier exit, the exit `finish none` over `N`'s halted branch configuration, translated by `h`:
@@ -1481,24 +1480,12 @@ private theorem xr_replay_finish {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD :
       ∀ u < T, ∀ r,
         ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.finish r) ∧
         ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.timeout r) := by
-  have hq : (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0).state =
-      some N.tm.q₀ := by
-    rw [NDTM.withChoiceTape_state]
-    show (N.tm.initCfg z).state = _
-    rw [NDTM.initCfg_eq, Cfg.init_state]
-  have hct : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-      FinTM.bufferTape w (0 + p) = FinTM.bufferTape w p := fun p _ _ => by rw [zero_add]
+  obtain ⟨hq, hct, hE⟩ := xr_replay_prelude C z s w wD h
   obtain ⟨T, hT, w', hw', hrun, hguard⟩ := C.spec_finish _ _ hq w (FinTM.bufferTape w) 0 hct τ
     (by rw [hval]; exact hτ) (by rw [xr_replay_state z s h τ hτ]; exact hhalt)
     (fun u hu => by rw [xr_replay_state z s h u (by omega)]; exact hlive u hu)
   obtain ⟨p, hp, -, hrep⟩ := NDTM.replayTM_runFrom N.tm (xr_shift h (N.tm.initCfg z)) s τ hτ
   rw [xr_runWith_shift] at hrep
-  have hE : ∀ u, (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u =
-      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
-        (C.H.runFrom (clockCfg (some (C.inj N.tm.q₀))
-          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
-          (FinTM.bufferTape w) 0) u) := fun u => by
-    rw [xr_replayStart_eq, xr_replayTM, embedSilentTM_runFrom _ _ (xr_cap_not_mem N.k)]
   refine ⟨T, hT, p, hp, w', hw', ?_, fun u hu r => ?_⟩
   · rw [hE, hrun, hrep, xr_embed_eq, xr_wordPatch_buffer w w' hw', List.nil_append]
     rfl
@@ -1526,25 +1513,13 @@ private theorem xr_replay_timeout {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD 
       ∀ u < T, ∀ r,
         ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.finish r) ∧
         ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.timeout r) := by
-  have hq : (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0).state =
-      some N.tm.q₀ := by
-    rw [NDTM.withChoiceTape_state]
-    show (N.tm.initCfg z).state = _
-    rw [NDTM.initCfg_eq, Cfg.init_state]
-  have hct : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-      FinTM.bufferTape w (0 + p) = FinTM.bufferTape w p := fun p _ _ => by rw [zero_add]
+  obtain ⟨hq, hct, hE⟩ := xr_replay_prelude C z s w wD h
   obtain ⟨T, hT, w', hw', hrun, hguard⟩ := C.spec_timeout _ _ hq w (FinTM.bufferTape w) 0 hct
     (fun u hu => by rw [xr_replay_state z s h u (by omega)]; exact hlive u (by omega))
   rw [hval] at hT hrun
   obtain ⟨p, hp, -, hrep⟩ := NDTM.replayTM_runFrom N.tm (xr_shift h (N.tm.initCfg z)) s s.length
     le_rfl
   rw [xr_runWith_shift, List.take_length] at hrep
-  have hE : ∀ u, (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u =
-      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
-        (C.H.runFrom (clockCfg (some (C.inj N.tm.q₀))
-          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
-          (FinTM.bufferTape w) 0) u) := fun u => by
-    rw [xr_replayStart_eq, xr_replayTM, embedSilentTM_runFrom _ _ (xr_cap_not_mem N.k)]
   refine ⟨T, hT, p, hp, w', hw', ?_, fun u hu r => ?_⟩
   · rw [hE, hrun, hrep, xr_embed_eq, xr_wordPatch_buffer w w' hw', List.nil_append,
       NDTM.withChoiceTape_state]
@@ -1601,26 +1576,13 @@ private theorem xr_cap_val (k : ℕ) : (xr_cap k).val = k + 2 := by
 private theorem xr_dep_val (k : ℕ) : (xr_dep k).val = k + 3 := by
   simp [xr_dep]
 
-private theorem xr_work_ne_choice {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_choice k := by
-  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_choice_val] at this; omega
-private theorem xr_work_ne_ctr {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_ctr k := by
-  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_ctr_val] at this; omega
-private theorem xr_work_ne_cap {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_cap k := by
-  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_cap_val] at this; omega
-private theorem xr_work_ne_dep {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_dep k := by
-  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_dep_val] at this; omega
-private theorem xr_choice_ne_ctr (k : ℕ) : xr_choice k ≠ xr_ctr k := by
-  intro h; have := congrArg Fin.val h; rw [xr_choice_val, xr_ctr_val] at this; omega
-private theorem xr_choice_ne_cap (k : ℕ) : xr_choice k ≠ xr_cap k := by
-  intro h; have := congrArg Fin.val h; rw [xr_choice_val, xr_cap_val] at this; omega
-private theorem xr_choice_ne_dep (k : ℕ) : xr_choice k ≠ xr_dep k := by
-  intro h; have := congrArg Fin.val h; rw [xr_choice_val, xr_dep_val] at this; omega
-private theorem xr_ctr_ne_cap (k : ℕ) : xr_ctr k ≠ xr_cap k := by
-  intro h; have := congrArg Fin.val h; rw [xr_ctr_val, xr_cap_val] at this; omega
-private theorem xr_ctr_ne_dep (k : ℕ) : xr_ctr k ≠ xr_dep k := by
-  intro h; have := congrArg Fin.val h; rw [xr_ctr_val, xr_dep_val] at this; omega
-private theorem xr_cap_ne_dep (k : ℕ) : xr_cap k ≠ xr_dep k := by
-  intro h; have := congrArg Fin.val h; rw [xr_cap_val, xr_dep_val] at this; omega
+/-- `xr_bank_ne` proves that two different banks of `E`'s tape indices are different, by
+comparing their values (`xr_work_val`, …, `xr_dep_val`). -/
+local macro "xr_bank_ne" : tactic =>
+  `(tactic| (apply Fin.ne_of_val_ne
+             simp only [xr_work_val, xr_choice_val, xr_ctr_val, xr_cap_val, xr_dep_val]
+             omega))
+
 private theorem xr_work_injective {k : ℕ} {j j' : Fin k} (h : xr_work k j = xr_work k j') :
     j = j' := by
   apply Fin.ext
@@ -1655,49 +1617,49 @@ private theorem xr_tapes_upd_work {k : ℕ} (wk : Fin k → ℤ → Option Bool)
     · subst hj; rw [Function.update_self, xr_tapes_work, Function.update_self]
     · rw [Function.update_of_ne (fun h => hj (xr_work_injective h)), xr_tapes_work, xr_tapes_work,
         Function.update_of_ne hj]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_choice j)), xr_tapes_choice, xr_tapes_choice]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_ctr j)), xr_tapes_ctr, xr_tapes_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_cap j)), xr_tapes_cap, xr_tapes_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_dep j)), xr_tapes_dep, xr_tapes_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_dep, xr_tapes_dep]
 
 private theorem xr_tapes_upd_choice {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
     (X : ℤ → Option Bool) :
     Function.update (xr_tapes wk ch ctr cp dp) (xr_choice k) X = xr_tapes wk X ctr cp dp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_choice j), xr_tapes_work, xr_tapes_work]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_work, xr_tapes_work]
   · rw [Function.update_self, xr_tapes_choice]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_ctr k)), xr_tapes_ctr, xr_tapes_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_cap k)), xr_tapes_cap, xr_tapes_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_dep k)), xr_tapes_dep, xr_tapes_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_dep, xr_tapes_dep]
 
 private theorem xr_tapes_upd_ctr {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
     (X : ℤ → Option Bool) :
     Function.update (xr_tapes wk ch ctr cp dp) (xr_ctr k) X = xr_tapes wk ch X cp dp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_ctr j), xr_tapes_work, xr_tapes_work]
-  · rw [Function.update_of_ne (xr_choice_ne_ctr k), xr_tapes_choice, xr_tapes_choice]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_choice, xr_tapes_choice]
   · rw [Function.update_self, xr_tapes_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_cap k)), xr_tapes_cap, xr_tapes_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_dep k)), xr_tapes_dep, xr_tapes_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_dep, xr_tapes_dep]
 
 private theorem xr_tapes_upd_cap {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
     (X : ℤ → Option Bool) :
     Function.update (xr_tapes wk ch ctr cp dp) (xr_cap k) X = xr_tapes wk ch ctr X dp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_cap j), xr_tapes_work, xr_tapes_work]
-  · rw [Function.update_of_ne (xr_choice_ne_cap k), xr_tapes_choice, xr_tapes_choice]
-  · rw [Function.update_of_ne (xr_ctr_ne_cap k), xr_tapes_ctr, xr_tapes_ctr]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_ctr, xr_tapes_ctr]
   · rw [Function.update_self, xr_tapes_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_cap_ne_dep k)), xr_tapes_dep, xr_tapes_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_dep, xr_tapes_dep]
 
 private theorem xr_tapes_upd_dep {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
     (X : ℤ → Option Bool) :
     Function.update (xr_tapes wk ch ctr cp dp) (xr_dep k) X = xr_tapes wk ch ctr cp X := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_dep j), xr_tapes_work, xr_tapes_work]
-  · rw [Function.update_of_ne (xr_choice_ne_dep k), xr_tapes_choice, xr_tapes_choice]
-  · rw [Function.update_of_ne (xr_ctr_ne_dep k), xr_tapes_ctr, xr_tapes_ctr]
-  · rw [Function.update_of_ne (xr_cap_ne_dep k), xr_tapes_cap, xr_tapes_cap]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_cap, xr_tapes_cap]
   · rw [Function.update_self, xr_tapes_dep]
 
 private theorem xr_heads_upd_work {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (j : Fin k)
@@ -1710,37 +1672,37 @@ private theorem xr_heads_upd_work {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp h
     · subst hj; rw [Function.update_self, xr_heads_work, Function.update_self]
     · rw [Function.update_of_ne (fun h => hj (xr_work_injective h)), xr_heads_work, xr_heads_work,
         Function.update_of_ne hj]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_choice j)), xr_heads_choice, xr_heads_choice]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_ctr j)), xr_heads_ctr, xr_heads_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_cap j)), xr_heads_cap, xr_heads_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_dep j)), xr_heads_dep, xr_heads_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_cap, xr_heads_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_dep, xr_heads_dep]
 
 private theorem xr_heads_upd_choice {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
     Function.update (xr_heads hk hch hctr hcp hdp) (xr_choice k) X =
       xr_heads hk X hctr hcp hdp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_choice j), xr_heads_work, xr_heads_work]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_heads_work, xr_heads_work]
   · rw [Function.update_self, xr_heads_choice]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_ctr k)), xr_heads_ctr, xr_heads_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_cap k)), xr_heads_cap, xr_heads_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_dep k)), xr_heads_dep, xr_heads_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_cap, xr_heads_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_dep, xr_heads_dep]
 
 private theorem xr_heads_upd_cap {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
     Function.update (xr_heads hk hch hctr hcp hdp) (xr_cap k) X = xr_heads hk hch hctr X hdp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_cap j), xr_heads_work, xr_heads_work]
-  · rw [Function.update_of_ne (xr_choice_ne_cap k), xr_heads_choice, xr_heads_choice]
-  · rw [Function.update_of_ne (xr_ctr_ne_cap k), xr_heads_ctr, xr_heads_ctr]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_heads_work, xr_heads_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_ctr, xr_heads_ctr]
   · rw [Function.update_self, xr_heads_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_cap_ne_dep k)), xr_heads_dep, xr_heads_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_dep, xr_heads_dep]
 
 private theorem xr_heads_upd_dep {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
     Function.update (xr_heads hk hch hctr hcp hdp) (xr_dep k) X = xr_heads hk hch hctr hcp X := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_dep j), xr_heads_work, xr_heads_work]
-  · rw [Function.update_of_ne (xr_choice_ne_dep k), xr_heads_choice, xr_heads_choice]
-  · rw [Function.update_of_ne (xr_ctr_ne_dep k), xr_heads_ctr, xr_heads_ctr]
-  · rw [Function.update_of_ne (xr_cap_ne_dep k), xr_heads_cap, xr_heads_cap]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_heads_work, xr_heads_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_cap, xr_heads_cap]
   · rw [Function.update_self, xr_heads_dep]
 
 /-- **The catalog rows' result tape.** A row that rewrites the cells `[0, |w|)` of a bank holding
@@ -2105,7 +2067,7 @@ private theorem xr_copy_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool)
         xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape wL) (FinTM.bufferTape [])
           (FinTM.bufferTape wL),
         xr_heads h 0 0 0 0, []⟩ := by
-  obtain ⟨hcfg, hguard, -⟩ := copyTM_run_ofCfg (xr_dep N.k) (xr_ctr N.k) (xr_ctr_ne_dep N.k).symm wL
+  obtain ⟨hcfg, hguard, -⟩ := copyTM_run_ofCfg (xr_dep N.k) (xr_ctr N.k) (by xr_bank_ne) wL
     (⟨some SweepPhase.sweep, 1, xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u)
       (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ :
       Cfg (N.k + 2 + 2) Bool SweepPhase z) rfl
@@ -2353,7 +2315,7 @@ private theorem xr_pass_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool)
       (∀ p : ℤ, (∃ i : ℕ, i ≤ wL.length ∧ p = hk j + i * (if n.val < 2 then -1 else 1)) →
         f p = none) ∧
       (∀ p, f p = none ∨ f p = wk j p) := by
-  obtain ⟨f, hrun, hblank, hkeep⟩ := xr_passTM_run (xr_work N.k j) (xr_dep N.k) (xr_work_ne_dep j)
+  obtain ⟨f, hrun, hblank, hkeep⟩ := xr_passTM_run (xr_work N.k j) (xr_dep N.k) (by xr_bank_ne)
     (xr_dir n) wL
     (⟨some xr_St.run, ip, xr_tapes wk ch ctr cp (FinTM.bufferTape wL),
       xr_heads hk hch hctr hcp 0, []⟩ : Cfg (N.k + 2 + 2) Bool xr_St z) rfl
