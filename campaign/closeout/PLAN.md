@@ -96,7 +96,7 @@ audits (and for fills if D1 = (b)).
 
 | # | Package | Depends on | Codex use |
 |---|---|---|---|
-| W1 | **Admission and statement census.** A whole-campaign inventory, maintainer-run: every direct admission in `TCSlib` at the campaign tip, classified (campaign-introduced, inherited from `main`, held); and a statement-drift check of every public chapter 3–4 declaration against its last gated version (the gates' `SOURCE.json` freezes). Records only. | — | none |
+| W1 | **Done (2026-11-16, `census/`):** no campaign-introduced admission; 166 in the snapshot, 41 of them RD-2/H6; 26 public removals and 19 restatements, none used by `main`'s changed files. **Admission and statement census.** A whole-campaign inventory, maintainer-run: every direct admission in `TCSlib` at the campaign tip, classified (campaign-introduced, inherited from `main`, held); and a statement-drift check of every public chapter 3–4 declaration against its last gated version (the gates' `SOURCE.json` freezes). Records only. | — | none |
 | W2 | **RD-2/H6 per D1.** (a): one removal PR, full downstream replay, gate. (b): regenerate RD-2a/b briefs, two fills, gates. (c): nothing. | D1, W1 | (a) 1 audit; (b) 2 fills + 2 audits |
 | W3 | **Debt register** per D4: one record listing each acknowledged family, its file, size, owner and window, carried into `main`'s backlog. Records only. | D4 | none |
 | W4 | **Sync `main` into the campaign** (25 commits, disjoint), full replay on the merged tree, new snapshot. | D5 | none (records-only gate if wanted) |
