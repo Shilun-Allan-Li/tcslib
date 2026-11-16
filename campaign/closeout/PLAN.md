@@ -1,8 +1,8 @@
 # Arora–Barak chapters 3–4: closeout plan (draft for Seyoon's review, 2026-11-16)
 
 Status: **rulings in progress (Seyoon, 2026-11-16).** Ruled: D1 = (a) remove; D2 = Exercise 3.6
-covered by Ladner; D3 = Exercise 3.3 and the relativized hierarchies in scope, the rest deferred;
-D4 = refactor before integration, all three debt groups; D5 and D6 as proposed. All decided. The work
+covered by Ladner; D3 = the relativized hierarchies in scope (Exercise 3.3 brought in, then deferred again), the rest deferred;
+D4 = refactor before integration, all three debt groups; D5 and D6 as proposed. All decided. **Go-ahead (Seyoon, 2026-11-16): run the queue.** The work
 packages start once the decisions they depend on are ruled.
 
 ## 1. Where the campaign stands
@@ -72,7 +72,8 @@ duplicating them. Everything else listed below stays deferred. Confirm that clos
 **D4 · Duplication debt at closeout.** **Ruled (Seyoon, 2026-11-16): refactor before integration,
 all three groups**: the chapter 3–4 families (CH34-D2, D3, D4 leftovers, SG1-UH, FE-LIVE-1), the
 12.2c infrastructure families (Catalog D-R2, the §12 sibling rows, Loop/RB4, ch7), and the ARM
-layer (ARM-1/ARM-2, after the shared interfaces are designed with Hydroxyi). Sequencing and
+layer (ARM-1/ARM-2). **Seyoon, 2026-11-16:** Hydroxyi no longer works on the ARM layer, so it
+needs no coordination; the maintainer designs its shared interfaces. Sequencing and
 sizing: `campaign/closeout/REFACTOR-PLAN.md` (to be drafted). Every chapter 3–4 family in the ledger is acknowledged
 (CH34-D2, D3; D4's factorings landed in #70; ARM-1/ARM-2; SG1-UH; FE-LIVE-1), with cleanup
 scheduled to the 12.2c / MIG / dedup windows. Two small follow-ups remain open under CH34-D4 (two
@@ -101,12 +102,12 @@ audits (and for fills if D1 = (b)).
 | W4 | **Sync `main` into the campaign** (25 commits, disjoint), full replay on the merged tree, new snapshot. | D5 | none (records-only gate if wanted) |
 | W5 | **Blueprint increment** for chapters 3–4, with the repository's `/blueprint-extract` on the synced tree (after W4, so it builds on `main`'s reorganized blueprint). One PR. | W4 | 1 audit (light) |
 | W6 | **Final audit**: one Codex gate over the chapter scope: the headline and admission probes, the statement-vs-book fidelity table (plan §1), standards lint, W1's census and W3's register. | W1–W5 | 1 audit |
-| W8 | **Exercise 3.3** (D3): an EXP oracle `B` with `P^B ≠ NP^B`. Design note first: replace the classical choices in `bgsOracle` (fresh lengths, unqueried witnesses) by canonical least choices computed stage by stage, and show the resulting oracle in EXP by simulating each stage's oracle machine against the oracle built so far. Then a statement gate and a fill. | D3 | 1 design review, 1 fill, 1–2 audits |
+| W8 | ~~Exercise 3.3~~ **Deferred again (Seyoon, 2026-11-16):** the existence of `B` (`exists_oracle_ne`) matters more than `B ∈ EXP`. | — | none |
 | W9 | **Relativized hierarchies** (D3): generalize rather than duplicate. Design note first, on one interface over machine models (plain and oracle) that the existing deterministic proof (`DiagSimulator`), the nondeterministic proof and the space proof are restated against, each instantiated twice. The oracle space hierarchy needs an oracle space class and its query-tape convention, which AB09 leaves open; the note proposes one for Seyoon. Then statement gates and fills, one hierarchy at a time. | D3 | design review, 3 fills, 3+ audits |
 | W7 | **Integration PR** to `main` (shape per D5), with D6's normalization; replay on `main`'s tree. Seyoon merges. | W6 | none, or 1 audit if wanted |
 
-**Order:** W1 now; then W2, W3 and the design notes for W8 and W9 in parallel; the refactors and
-W8–W9 fills; W4; W5; W6; W7.
+**Order:** W1 now; then W2, W3, the W9 design note and the refactor plan in parallel; the refactors and
+the W9 fills; W4; W5; W6; W7.
 
 **Cost, with D1 = (a):** four or five Codex audits (W2, W5, W6, optionally W7) and no fills.
 With D1 = (b), add two fills and two audits.

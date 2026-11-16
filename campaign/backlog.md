@@ -836,6 +836,9 @@ stopped items:**
 
 ### ARM-2: the ARM layer's internal duplication, to coordinate with Hydroxyi (user, 2026-10-14)
 
+**Update (Seyoon, 2026-11-16):** Hydroxyi no longer works on the ARM layer; no coordination is needed.
+The maintainer designs the shared interfaces as part of the closeout refactor (`campaign/closeout/PLAN.md` D4).
+
 *Origin: the ARM fill gate (ARM-1), groups B and C of the maintainer's duplication summary.*
 
 The user judges a correct fix nontrivial: it needs shared interfaces designed, not mechanical
