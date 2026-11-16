@@ -413,7 +413,7 @@ theorem incFixed_enumWord (w v : ℕ) (hv : v + 1 < 2 ^ w) :
       simp [incFixed, ih k (by rw [pow_succ] at hv; omega)]
 
 /-- Increment overflows exactly on the all-`true` word: `Turing.incFixed_eq_none_iff_replicate`,
-kept under this name for this file's consumers (CH34-D4). -/
+kept under this name for this file's consumers. -/
 theorem incFixed_eq_none_iff (u : List Bool) : incFixed u = none ↔ u = List.replicate u.length true :=
   incFixed_eq_none_iff_replicate u
 

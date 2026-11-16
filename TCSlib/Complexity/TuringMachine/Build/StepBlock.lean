@@ -2026,7 +2026,7 @@ private lemma seekTM_lookup {k n : ℕ} {x : List Bool}
     omega
 
 /-- Read a unary state word at any valid cell, including its terminating
-false: `Turing.FinTM.bufferTape_unary` (BW-1). -/
+false: `Turing.FinTM.bufferTape_unary`. -/
 private lemma bufferTape_unary (q r : ℕ) (hr : r ≤ q) :
     FinTM.bufferTape (List.replicate q true ++ [false]) r = some (decide (r < q)) :=
   FinTM.bufferTape_unary q r hr
@@ -2058,7 +2058,7 @@ lemma summaryCells_update (summary next : Option Bool) (word : List Bool) :
   · simp [summaryCells, hz]
 
 /-- The canonical buffer is blank off its finite support:
-`Turing.FinTM.bufferTape_eq_none_of_not_mem` (BW-1). -/
+`Turing.FinTM.bufferTape_eq_none_of_not_mem`. -/
 private lemma bufferTape_outside (word : List Bool) (z : ℤ)
     (hz : ¬(0 ≤ z ∧ z < word.length)) : FinTM.bufferTape word z = none :=
   FinTM.bufferTape_eq_none_of_not_mem word hz
@@ -2578,7 +2578,7 @@ private lemma roundTM_prepare {k n : ℕ} {x : List Bool}
   simpa only [atKey, s0, d0, d4, Cfg.mapState, roundData, cost] using joined
 
 /-- Literal cells of the middle word of a canonical concatenated buffer.
-`Turing.FinTM.bufferTape_append_mid` (BW-1). -/
+`Turing.FinTM.bufferTape_append_mid`. -/
 private lemma bufferTape_reads (before word after : List Bool) :
     ∀ (r : ℕ) (hr : r < word.length),
       FinTM.bufferTape (before ++ word ++ after) (before.length + r) = some (word[r]'hr) :=
@@ -2746,7 +2746,7 @@ private lemma roundTM_payload {k n : ℕ} {x : List Bool}
   simpa only [atKey, d0, d3, moving, copying, d1, d2, Cfg.mapState, roundData, cost] using combined
 
 /-- A canonical buffer's suffix, including its right blank and all cells
-beyond it: `Turing.FinTM.bufferTape_append_shift` (BW-1). -/
+beyond it: `Turing.FinTM.bufferTape_append_shift`. -/
 private lemma bufferTape_suffix (before word : List Bool) (z : ℤ) (hz : 0 ≤ z) :
     FinTM.bufferTape (before ++ word) (before.length + z) = FinTM.bufferTape word z :=
   FinTM.bufferTape_append_shift before word hz

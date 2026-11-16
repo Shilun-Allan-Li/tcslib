@@ -74,8 +74,7 @@ private lemma twoPowTM_run (x : List Bool) : ∀ i, i ≤ x.length →
     · rw [moveInputPos_pos_of_ne_right _ (by omega)]; simp [hp]
     · simp [ho, List.replicate_succ']
 
-/-- The binary representation of `2ⁿ`, low bit first: `Turing.bits_two_pow_eq_replicate`
-(CH34-D4). -/
+/-- The binary representation of `2ⁿ`, low bit first: `Turing.bits_two_pow_eq_replicate`. -/
 private lemma bits_two_pow (n : ℕ) : (2 ^ n).bits = List.replicate n false ++ [true] :=
   Turing.bits_two_pow_eq_replicate n
 
