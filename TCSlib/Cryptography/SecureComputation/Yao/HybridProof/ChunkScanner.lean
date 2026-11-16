@@ -27,6 +27,9 @@ The circuit-description decoder uses its seven control phases.
 
 ## References
 
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009, §6.2 (descriptions of uniform circuit families).
+
 Generic parsing infrastructure for [AB09, §6.2], circuit descriptions. The machine assembly
 uses the emitting-loop host of `Complexity.polyTimeComputable_emitIter`.
 -/

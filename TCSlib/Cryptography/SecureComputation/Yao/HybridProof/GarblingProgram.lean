@@ -28,6 +28,8 @@ to any definition from `Yao.lean`.
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
   2010, Protocol 162.6 (garbling the canonical uniform circuit).
+* [BMR90] D. Beaver, S. Micali, P. Rogaway, *The round complexity of secure protocols*,
+  STOC 1990, pp. 503–513 (point-and-permute row order of the garbled tables).
 -/
 
 namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.GarblingProgram
