@@ -1,1 +1,1 @@
-**Gate 147 CLEAR** (round 1, 0/0/2; resolutions.md) at `5da18960590c223ce384470e7d0d8870641f881c`. Both minors resolved in records/procedure. **#336 clear to merge** (its owners are disjoint from #334/#337; the post-merge adoption replay covers the union).
+**Merged** · #336 merged at `56ab33df9e688f7ba9404a8d5d270e3423b293f3` (2026-11-16), head `5da18960590c223ce384470e7d0d8870641f881c`. Gate 147 closed: round 1 CLEAR (0/0/2; G147-01 tracked in the backlog, G147-02 a workflow rule).
