@@ -2,6 +2,8 @@
 
 **Approved (Seyoon, 2026-11-16): the API of §3 and the transport approach, as written.**
 
+**Outcome (2026-11-16): built, measured, and carried (Seyoon).** See §6.
+
 Seyoon ruled R2c "do it" (2026-11-16). This note fixes the shape before any Lean, and lists the
 new public API for approval (standing rule).
 
@@ -64,3 +66,25 @@ since both edit Catalog; Catalog's downstream replay (about 130 modules).
 
 Approve the API in §3 (names and the transport approach), or name changes. Not in scope:
 `transferTM`/`copyTM` (already mapped-sweep instances) and `scanTM`.
+
+## 6. Outcome: built, measured, carried
+
+The design was built in full (`archive/R2c-LockScan.lean.txt`, then spliced into Catalog on top of
+R2a: `archive/R2c-Catalog-splice.diff.txt`). It works: `clearTM_run_ofCfg`,
+`catalog_increment_framed` and `compareTM_run_stop_ofCfg` are re-derived through `lockScanTM` with
+their statements unchanged, the three space wrappers follow, and Catalog compiles. But it does not
+pay off:
+
+| | Catalog lines | Copy-screen pairs (Catalog alone) |
+|---|---|---|
+| R2a head | 4,282 | 48 |
+| with R2c | 4,643 (+361) | 58 (19 new, 9 gone) |
+
+The new scaffolding (per-row configuration lifts, run transports, space wrappers) resembles itself
+(`archive/R2c-pairdiff.txt`). Further factoring was estimated at +150–200 lines at about the base
+pair count, still net growth. §4's estimate (−200 to −300) was wrong: it counted the removed rows'
+traces but not the transport and instance code each row needs.
+
+**Ruled (Seyoon, 2026-11-16): carry the family** (12.2c item 5, the §12 sibling rows) in the
+register, as measured debt: unifying costs more code than it removes. The archive is the starting
+point if a future change makes a generic scanner worthwhile (for example, a fourth sibling row).
