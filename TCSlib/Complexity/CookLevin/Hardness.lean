@@ -5945,8 +5945,12 @@ private lemma clA5Host_call (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M
   let emb : (M i).State → CLA5HostState M := fun s => .inr ⟨i, s⟩
   have hinit : emitCfg emb (clA5HostRet M i) pre (embedCfg (hk i) id c) =
       {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} := by
-    simpa [emb, c, clA5HostEntry] using
-      clA5Host_seam M K i (hk i) hp x arg pre [] (M i).tm.q₀ (some (M i).tm.q₀)
+    have h0 : ({Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)
+        with state := some (M i).tm.q₀, output := []} : Cfg (M i).k Bool (M i).State x) = c :=
+      Cfg.ext (Cfg.ofWords_state _ _).symm rfl rfl rfl (Cfg.ofWords_output _ _).symm
+    have h := clA5Host_seam M K i (hk i) hp x arg pre [] (M i).tm.q₀ (some (M i).tm.q₀)
+    rw [h0] at h
+    simpa [emb, clA5HostEntry] using h
   have hrun (v : ℕ) (hv : v ≤ t) :
       (clA5HostTM M K hk).tm.runFrom
         {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} v =
