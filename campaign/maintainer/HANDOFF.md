@@ -22,6 +22,7 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
+| #336 / 147 | **Staged** (2026-11-16), draft at `5da18960590c223ce384470e7d0d8870641f881c`. Closeout R3a: SK-1, dead privates (CC7-1, C1E-1, MIG-8), RC-4 buffer half, PL-1's `a3n_poly_linear`; net −303 lines. Replay 46/46; checks clean. campaign/gates/147-r3a-cleanup/. |
 | #335 / 146 | **Staged** (2026-11-16), draft at `2dc0fc307ce90b5ae5b56da79b7345c4367183da`, **stacked on #334**. Closeout R4 UH: the unary-clock repetition host retired onto `BinArith.polyTimeComputable_iterate`; net −297 lines. Replay 28/28 on #334's snapshot (`oleans-cl145-c68cb`); checks clean. campaign/gates/146-r4-uh-iterate/. |
 | #334 / 145 | **Staged** (2026-11-16), draft at `7bb1f687d87c8faa25c8523fc4bb1e15a5d473c1`. Closeout R4-1: the SAT/Hardness one-way transducer copies retired onto an extended `ClassNP/Transducer`; net −161 lines. Replay 137/137, seals/controls/sweeps clean. campaign/gates/145-r4-1-transducer/. |
 | #330 / 144 | **Merged** (`68cba664`, 2026-11-16); round 2 CLEAR. Snapshot `oleans-c68cb` (status/2026-11-16-merge-330) at `a3c9c2102865e60c4eed295a4b613ef2b85a987c` at `ae4157ddf37ea3520e5d953faef808649b8688d3`. Closeout R2a: `wordPatch` to Catalog, IW-1 and WA-1 retired, eight proofs' legacy reads repaired. Replay 127/127. campaign/gates/144-r2a-wordpatch/. |
@@ -64,7 +65,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 147. Use complete
+Hardness CfgFacts import stays separate. Next free gate 149. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 

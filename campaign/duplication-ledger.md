@@ -2100,3 +2100,13 @@ used: `clA5Iter_native` now cites the public `BinArith.polyTimeComputable_iterat
 private counted round, so the family is retired without the public host contract (B1040) the
 design study priced at +170 to +370 lines. Net −297 Lean lines. Status: **retiring (gate 146;
 PR #335 draft)**.
+
+**R3a (gate 147, 2026-11-16).** PR #336 retires SK-1 (`ss_captureInitial` → the public
+`embedSilentCfg_initCfg`), RC-4's buffer half in CodeSimulator (`canonStageBuffer_none` cites
+`FinTM.bufferTape_eq_none_of_not_mem`), PL-1's `a3n_poly_linear` (cites
+`polyTimeComputable_of_linear`), and deletes the dead privates `canonCounterRepeat` (CC7-1),
+`xr_firstArrival` (C1E-1) and the MIG-8 chain (`e3_split_of_body`, `a3n_prevalidation` and eight
+helpers). Net −303 lines. Residue: Nondeterminism's epoch-3A and A3 notes still name the two
+deleted MIG-8 lemmas (editing them would pull the public `ntime_expPow_subset_NEXP` and
+`EXP_eq_NEXP_of_P_eq_NP`, whose proofs destructure `NTIME`/`NEXP` anonymously, into the PR; clean
+up when those proofs gain readers). Status: **retiring (gate 147; PR #336 draft)**.

@@ -1,0 +1,1 @@
+**Staged, not yet dispatched** · PR #336 (draft) at head `5da18960590c223ce384470e7d0d8870641f881c`, against campaign Lean `68cba664` (records `967cde57`). Closeout R3a: SK-1, dead privates (CC7-1, C1E-1, MIG-8), RC-4's buffer half and PL-1's `a3n_poly_linear`; net −303 lines. Replay 46/46; seals, controls and sweeps clean; screen 0 new.

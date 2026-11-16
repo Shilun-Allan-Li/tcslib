@@ -17,10 +17,10 @@ ready for Codex):
 |---|---|---|---|---|
 | #334 | 145 | R4-1: SG1 kind 4 + riders + PL-1 twins, onto an extended `ClassNP/Transducer` | −161 | staged |
 | #335 (stacked on #334) | 146 | R4 SG1-UH: unary-clock host deleted; `clA5Iter_native` cites `BinArith.polyTimeComputable_iterate` | −297 | staged |
-| #336 | 147 | R3a: SK-1; dead CC7-1/C1E-1 members; RC-4 buffer half; MIG-8 dead chain; PL-1 `a3n_poly_linear` | −304 | see HANDOFF |
+| #336 | 147 | R3a: SK-1; dead CC7-1/C1E-1 members; RC-4 buffer half; MIG-8 dead chain; PL-1 `a3n_poly_linear` | −303 | see HANDOFF |
 | #337 | 148 | MIG-3: `one_work_tape` through the demand-grown witness; first sweep witness's run layer deleted | −451 | see HANDOFF |
 
-Overnight total: **−1,213 Lean lines**. The only new public API is the three `Transducer`
+Overnight total: **−1,212 Lean lines**. The only new public API is the three `Transducer`
 declarations approved for R4-1.
 
 ## R3
