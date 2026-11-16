@@ -186,13 +186,15 @@ simulation on `P_BDH` up to identity collisions (`bb1_sim_real`), bit-independen
 | `KeyExchange.lean` (facade) | 23 | |
 | `AdvancedEncryption/IdentityBased/Defs.lean` | 408 | `IBEScheme`, `Correct`, IND-sID-CPA game, `oracleImpl` |
 | `AdvancedEncryption/IdentityBased/BonehBoyen.lean` | 553 | BB1, `bb1Scheme`, correctness (proved), the simulator |
-| `AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean` | 189 | T2–T4 and `bb1_sidSecure` |
-| `AdvancedEncryption/IdentityBased.lean`, `AdvancedEncryption.lean` (facades) | 29, 25 | |
+| `AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean` | 78 | T4 (Q11: its own module) |
+| `AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean` | 170 | T2, T3 and `bb1_sidSecure` |
+| `AdvancedEncryption/IdentityBased.lean`, `AdvancedEncryption.lean` (facades) | 32, 25 | |
 | `TCSlib.lean` | +3 imports | separate commit |
 
 Every file is under 1000 lines and no line exceeds 100 characters. Layout deviation from the
 initial proposal: `Operations.lean` (keeps `Group.lean` free of the arithmetic layer's imports)
-and `BonehBoyenSecurity.lean` (definitions separate from the heavyweight theorem file, policy §1).
+and `BonehBoyenSecurity.lean` (definitions separate from the heavyweight theorem file, policy §1);
+`BonehBoyenMachine.lean` (T4 alone, so that its fill unit owns its own file; ruling Q11).
 
 ## Statements
 
@@ -239,10 +241,11 @@ Each unit owns its target's file; helper modules are allowed beside it.
 |---|---|---|---|
 | `pair-bdh` | T1 | `Pairing/Assumptions.lean` | machine composition (`NUPPT` re-pairing and a string-equality test), a `1/p` bound and `OrderAtLeastExcept` |
 | `bb1-sim` | T2, T3 | `IdentityBased/BonehBoyenSecurity.lean` | typed coupling of two `simulate` runs (state relation), re-randomization of `h` and `r`, lazy sampling of `T` (`Games.Hopping` eager/lazy lemmas) |
-| `bb1-machine` | T4 | same file (or split first, Q11) | handler theorem T1 (`Games.exists_handlerMachine`), `Ops`, `ArithmeticFP`, exponent sampling with `Candidates.sampleBelowL` and `statClose_sampleBelowL` |
+| `bb1-machine` | T4 | `IdentityBased/BonehBoyenMachine.lean` | handler theorem T1 (`Games.exists_handlerMachine`), `Ops`, `ArithmeticFP`, exponent sampling with `Candidates.sampleBelowL` and `statClose_sampleBelowL` |
 
-T2/T3 and T4 are independent statements; with T4 moved to its own module before issue (Q11),
-`bb1-sim` and `bb1-machine` can run in parallel.
+T2/T3 and T4 are independent statements. T4 is in its own module (Q11, applied on
+`stmt/pairings`), so `bb1-sim` and `bb1-machine` own disjoint files and can run in parallel;
+`BonehBoyenSecurity` imports `BonehBoyenMachine` for `bb1_sidSecure` (proved-modulo rule).
 
 ## Modelling choices for the statement gate
 
@@ -361,6 +364,18 @@ Evidence: `briefs/pairings/statement-phase/evidence/` (summary in `EVIDENCE.md` 
   directories pruned; snapshot after: 1230 files, `457ba704…a15f`, byte-identical (SNAPSHOT
   EQUAL).
 
+- **Round 2 (Q11 split, 2026-11-16).** `stmt/pairings` rebased onto `523d80d2` (records only
+  since `e7a9f70f`; range-diff identical, Lean sources unchanged) and T4 moved, byte-identical,
+  to `BonehBoyenMachine.lean`. 12 modules: 12/12 rc 0, 0 errors, 4 target `sorry`s
+  (`Assumptions` 1, `BonehBoyenMachine` 1, `BonehBoyenSecurity` 2). Axioms: 320 declarations and
+  52 auxiliary constants, standard only except `sorryAx` in the 4 targets and `bb1_sidSecure`.
+  Rule 10: the round-1 seal probes for the two changed modules pass (controls as before), and
+  whole-file seals A/B, strict and coe, of `BonehBoyenMachine`, `BonehBoyenSecurity` and the
+  `IdentityBased` facade pass 12/12 (`-DmaxErrors=0`). Lint unchanged (0 findings; 0 FAIL,
+  2 WARN). Root `TCSlib` builds: 278 modules rebuilt from source on the tree (the closure's
+  changed and missing modules and their downstream), 278/278 rc 0, root included. Evidence:
+  `briefs/pairings/statement-phase/EVIDENCE.md`, round 2.
+
 ## Decision log
 
 | Date | Decision / evidence | Status |
@@ -372,3 +387,4 @@ Evidence: `briefs/pairings/statement-phase/evidence/` (summary in `EVIDENCE.md` 
 | 2026-11-16 | **`dl-oleans-2` restored** to snapshot `457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f` (8 backups restored, 15 new oleans deleted; SNAPSHOT EQUAL). | Done |
 | 2026-11-16 | Questions Q1–Q13 (§ Questions) await Seyoon's rulings. | Open |
 | 2026-11-16 | **Rulings Q1–Q13 (Seyoon): all recommendations accepted.** Q1: abstract bilinear bundle from a uniform PPT generator with a total description map. Q2: `g` uniform in `G*`. Q3: Joux in the single-point `F_W` form. Q4: Joux key indistinguishability under DBDH only. Q5: typed IBE algorithms; a "BB1 is PPT" statement is deferred. Q6: `ℓ`-bit identities read in `Z_p`. Q7: one machine with an `Init` oracle. Q8: out-of-space challenge messages refused with `⊥`. Q9: the two-experiment advantage. Q10: keep T1 (DBDH ⇒ BDH). Q11: three fill units (`pair-bdh`, `bb1-sim`, `bb1-machine`), with T4 moved to its own module before the statement PR. Q12: PDFs uncommitted, with Markdown transcriptions of only the passages used, ingested later. Q13: `Ops` as drafted. Noted: Joux 2000 states no security theorem, so key indistinguishability under DBDH formalises its §5 remark. Draft branch `stmt/pairings` pushed at `ce9c3728`. | Approved |
+| 2026-11-16 | **Q11 applied** on the local `stmt/pairings`: rebased onto `523d80d2d4dd8e4ed6799358831e5b3806c6187b` (records only since `e7a9f70f`; range-diff 2/2 identical: `8aa111658bd0509c0fd204d605538ff440f08d02`, `b7ca25477c1685795f2ea45cd895889f7ecaf1c8`) and T4 `exists_bb1_distinguisher` moved byte-identically to `AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean`: head `110c2f9db810d243693b9a5e8976a5ad205f1bab` (SSH-signed). `bb1-sim` owns `BonehBoyenSecurity.lean` (T2, T3), `bb1-machine` owns `BonehBoyenMachine.lean` (T4). 12/12 modules rc 0 with the 4 target `sorry`s; axioms, seals and lint as in § Verification, round 2; root `TCSlib` builds. `dl-oleans-2` restored (SNAPSHOT EQUAL). Not pushed: `origin/stmt/pairings` is still `ce9c3728`. The records branch then advanced to `a32ad0df` (#318, #319, #323 merged); none of their Lean files is in the pairing closure and `stmt/pairings` merges into it cleanly (`git merge-tree`). | Ready for the statement PR (maintainer) |
