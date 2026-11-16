@@ -2159,4 +2159,4 @@ CC7-1 in `TuringMachine/CodeSimulator` (design note `campaign/closeout/CC7-1-DES
 `canonStageBank_move`), and `canonStageCut_leg`/`canonGramCut_leg` cite one private `phaseCut_leg`.
 Statements unchanged. Net −211 Lean lines (G152-01); copy screen 69 → 42 directed pairs (62,792 → 16,086
 reproduced characters). Remaining CC7-1 member: the per-record bound (`canonStageBlock_consumes`
-re-proving `skipTable_consumes`'s local bound, 61%). Status: **retiring (gate 152 CLEAR; PR #345 clear to merge)**.
+re-proving `skipTable_consumes`'s local bound, 61%). Status: **retired (#345 merged 2026-11-16)**.

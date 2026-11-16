@@ -1,1 +1,1 @@
-**Gate 152 CLEAR** (round 1, 0/0/2; resolutions.md, both minors records errata) at `1dcbbe3171dd685600525d4f7cf71548889ecceb`, PR #345. Replay 24/24 on `oleans-cfb6f2` is the merged-tree replay (campaign Lean unchanged since). **Clear to merge: #345.**
+**Gate 152 closed.** #345 merged (`b913bbc9`, 2026-11-16) at the audited head `1dcbbe3171dd685600525d4f7cf71548889ecceb`; round 1 CLEAR (0/0/2, records errata fixed). Snapshot `oleans-cb913b` adopted (campaign/status/2026-11-16-merge-345/).
