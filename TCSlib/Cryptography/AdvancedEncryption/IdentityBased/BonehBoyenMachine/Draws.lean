@@ -42,7 +42,8 @@ sampler `Candidates.sampleBelowL p (Nat.size p) n n` with `n = κ + wG(κ) + 1` 
 
 * `BB1Machine.qLen_eval`, `BB1Machine.aLen_eval` — the lengths are the game's.
 * `BB1Machine.statClose_draw` — a drawn exponent is `(1/2)^n`-close to uniform.
-* `BB1Machine.drawStep_init_none`, …, `BB1Machine.drawStep_chal` — the case lemmas.
+* `BB1Machine.drawStep_zero`, `BB1Machine.drawStep_one_none`, …,
+  `BB1Machine.drawStep_two_invalid` — the case lemmas.
 * `BB1Machine.exists_drawStep_eq_pure`, `BB1Machine.exists_simulate_tape_eq_pure` — the oracles
   and their runs from a tape are deterministic.
 * `BB1Machine.abs_expect_draws_sub_le` — drawn against ideal exponents.
@@ -214,12 +215,15 @@ noncomputable def drawStep (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.g
     | some (t, α₁) =>
       if List.ofFn x = List.ofFn t then .pure (zeroBits _, s)
       else .pure (padFin _ (true :: (List.ofFn ((G.group κ d).encG
-          (Y ^ (-α₁ / (BB1.idToZ (G.group κ d) (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
+          (Y ^ (-α₁ / (BB1.idToZ (G.group κ d)
+              (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
               BB1.idToZ (G.group κ d) t)).val *
-            (X ^ (BB1.idToZ (G.group κ d) (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x))).val *
+            (X ^ (BB1.idToZ (G.group κ d)
+                (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x))).val *
               (X ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val)) ^ u.val)) ++
           List.ofFn ((G.group κ d).encG
-            (Y ^ (-1 / (BB1.idToZ (G.group κ d) (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
+            (Y ^ (-1 / (BB1.idToZ (G.group κ d)
+                (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
               BB1.idToZ (G.group κ d) t)).val * g ^ u.val)))), s)
     | none => .pure (zeroBits _, s)
   | 2, mm, s, _ =>
@@ -276,19 +280,25 @@ theorem drawStep_one_target (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
   rw [if_pos h]
 
 /-- **`KeyGen` for another identity** answers the padded word `1 ‖ d_0 ‖ d_1` of the simulated
-key with `r = u` and keeps the state. -/
+key with `r = u` and keeps the state.
+
+**Proof sketch.** The committed branch of `drawStep` at index `1` is the test `⟦x⟧ = ⟦t⟧`;
+it fails by `h`. -/
 theorem drawStep_one_key (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
     (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
     (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) (u : ZMod (G.group κ d).order)
     (h : List.ofFn x ≠ List.ofFn t) :
     drawStep G ℓ b κ d g X Y Z T 1 x (some (t, α₁), c) u =
       .pure (padFin _ (true :: (List.ofFn ((G.group κ d).encG
-          (Y ^ (-α₁ / (BB1.idToZ (G.group κ d) (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
+          (Y ^ (-α₁ / (BB1.idToZ (G.group κ d)
+              (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
               BB1.idToZ (G.group κ d) t)).val *
-            (X ^ (BB1.idToZ (G.group κ d) (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x))).val *
+            (X ^ (BB1.idToZ (G.group κ d)
+                (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x))).val *
               (X ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val)) ^ u.val)) ++
           List.ofFn ((G.group κ d).encG
-            (Y ^ (-1 / (BB1.idToZ (G.group κ d) (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
+            (Y ^ (-1 / (BB1.idToZ (G.group κ d)
+                (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
               BB1.idToZ (G.group κ d) t)).val * g ^ u.val)))), (some (t, α₁), c)) := by
   show (if List.ofFn x = List.ofFn t then _ else _) = _
   rw [if_neg h]
@@ -309,7 +319,10 @@ theorem drawStep_two_repeat (mm : Fin ((qLen G ℓ 2).eval κ) → Bool)
 
 open Classical in
 /-- **The first `Challenge` with both halves in `G_T`** answers and records the padded word
-`M_b · T ‖ Z ‖ Z^{α_1.val}`, `M_b` the decoded half selected by `b`. -/
+`M_b · T ‖ Z ‖ Z^{α_1.val}`, `M_b` the decoded half selected by `b`.
+
+**Proof sketch.** The branch of `drawStep` at index `2` with a commitment and no recorded
+challenge is the test that both halves encode elements of `G_T`; it holds by `h`. -/
 theorem drawStep_two_fresh (mm : Fin ((qLen G ℓ 2).eval κ) → Bool)
     (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
     (u : ZMod (G.group κ d).order)
@@ -326,7 +339,8 @@ theorem drawStep_two_fresh (mm : Fin ((qLen G ℓ 2).eval κ) → Bool)
             (G.group κ d) (padFin _ (if b then (List.ofFn mm).drop
               ((bb1Scheme G ℓ).msgLen.eval κ) else (List.ofFn mm).take
                 ((bb1Scheme G ℓ).msgLen.eval κ))) * T)) ++
-            List.ofFn ((G.group κ d).encG Z) ++ List.ofFn ((G.group κ d).encG (Z ^ α₁.val)))))) := by
+            List.ofFn ((G.group κ d).encG Z) ++
+              List.ofFn ((G.group κ d).encG (Z ^ α₁.val)))))) := by
   show (if _ then _ else _) = _
   rw [if_pos h]
 
@@ -345,7 +359,12 @@ theorem drawStep_two_invalid (mm : Fin ((qLen G ℓ 2).eval κ) → Bool)
   rw [if_neg h]
 
 /-- **The oracles with the exponent given are deterministic**: every call returns one answer and
-one new state (`drawStep_zero`, …, `drawStep_two_invalid`). -/
+one new state.
+
+**Proof sketch.** Cases on the oracle, the commitment, the recorded challenge and the tests, each
+closed by its case lemma (`drawStep_zero`, `drawStep_one_none`, `drawStep_one_target`,
+`drawStep_one_key`, `drawStep_two_none`, `drawStep_two_fresh`, `drawStep_two_invalid`,
+`drawStep_two_repeat`). -/
 theorem exists_drawStep_eq_pure (i : Fin 3) (x : Fin ((qLen G ℓ i).eval κ) → Bool)
     (s : BB1SimState G ℓ κ d) (u : ZMod (G.group κ d).order) :
     ∃ y s', drawStep G ℓ b κ d g X Y Z T i x s u = .pure (y, s') := by

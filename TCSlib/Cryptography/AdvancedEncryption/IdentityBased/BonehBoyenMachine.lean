@@ -4,6 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Draws
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Handler
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Reduction
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Words
 import TCSlib.Cryptography.Pairing.Assumptions
 import TCSlib.Cryptography.Pairing.Operations
 
@@ -31,6 +35,17 @@ This step is its own module so that it can be filled independently of the coupli
 ## Main definitions
 
 None.
+
+## Contents
+
+The machine is built in helper modules:
+
+* `BonehBoyenMachine.Draws`: the exponents drawn from coin blocks, their distance from uniform,
+  and the simulator with exponents read from a tape.
+* `BonehBoyenMachine.Words`: the polynomial-time string functions of the handler.
+* `BonehBoyenMachine.Handler`: the handler and its run.
+* `BonehBoyenMachine.Reduction`: the acceptance of the T1 machine and the comparison of the drawn
+  with the ideal exponents.
 
 ## Main results
 
