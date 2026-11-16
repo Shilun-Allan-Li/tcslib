@@ -74,6 +74,11 @@ private lemma twoPowTM_run (x : List Bool) : ∀ i, i ≤ x.length →
     · rw [moveInputPos_pos_of_ne_right _ (by omega)]; simp [hp]
     · simp [ho, List.replicate_succ']
 
+/-- The binary representation of `2ⁿ`, low bit first: `Turing.bits_two_pow_eq_replicate`
+(CH34-D4). -/
+private lemma bits_two_pow (n : ℕ) : (2 ^ n).bits = List.replicate n false ++ [true] :=
+  Turing.bits_two_pow_eq_replicate n
+
 /-- **`2ⁿ` is time constructible** [AB09, §1.3: "`n`, `n log n`, `n²`, `2ⁿ` are time
 constructible"]: `n ≤ 2ⁿ`, and `twoPowTM` writes `bits (2^|x|) = 0^|x| 1` in
 `|x| + 1 ≤ 2^|x| + 1` steps. -/
@@ -89,7 +94,7 @@ theorem timeConstructible_two_pow : TimeConstructible (fun n => 2 ^ n) := by
     unfold MultiTapeTM.step
     rw [hs]
     simp only [twoPowTM, hin, Action.apply]
-    exact ⟨trivial, by simp [ho, Turing.bits_two_pow_eq_replicate]⟩
+    exact ⟨trivial, by simp [ho, bits_two_pow]⟩
   exact hhalt.mono (by have := @Nat.lt_two_pow_self x.length; simp only; omega)
 
 /-- **Polynomials are eventually below `2ⁿ`**: for all constants `A` and `K` there is

@@ -2025,6 +2025,12 @@ private lemma seekTM_lookup {k n : ℕ} {x : List Bool}
     unfold seekCost
     omega
 
+/-- Read a unary state word at any valid cell, including its terminating
+false: `Turing.FinTM.bufferTape_unary` (BW-1). -/
+private lemma bufferTape_unary (q r : ℕ) (hr : r ≤ q) :
+    FinTM.bufferTape (List.replicate q true ++ [false]) r = some (decide (r < q)) :=
+  FinTM.bufferTape_unary q r hr
+
 /-- The summary tape's cells: the summary at `0`, a blank at `1`, and the unary state word from
 `2` on. (`h1SummaryState`.) -/
 def summaryCells (summary : Option Bool) (word : List Bool) (z : ℤ) : Option Bool :=
@@ -2051,6 +2057,12 @@ lemma summaryCells_update (summary next : Option Bool) (word : List Bool) :
   · subst z; simp [summaryCells]
   · simp [summaryCells, hz]
 
+/-- The canonical buffer is blank off its finite support:
+`Turing.FinTM.bufferTape_eq_none_of_not_mem` (BW-1). -/
+private lemma bufferTape_outside (word : List Bool) (z : ℤ)
+    (hz : ¬(0 ≤ z ∧ z < word.length)) : FinTM.bufferTape word z = none :=
+  FinTM.bufferTape_eq_none_of_not_mem word hz
+
 /-- Copying a complete new state word into the cleared state region yields
 exactly the next summary/state layout. -/
 lemma summaryCells_copy (summary : Option Bool) (word : List Bool) :
@@ -2061,7 +2073,7 @@ lemma summaryCells_copy (summary : Option Bool) (word : List Bool) :
   · subst z; simp [summaryCells]
   · by_cases hinside : 2 ≤ z ∧ z < 2 + word.length
     · simp [hinside, summaryCells, hz]
-    · have off := FinTM.bufferTape_eq_none_of_not_mem word (z := z - 2) (by omega)
+    · have off := bufferTape_outside word (z - 2) (by omega)
       simp [hinside, summaryCells, hz, off]
 
 /-- The catalog's framed clear erases only the state word, preserving the
@@ -2122,7 +2134,7 @@ private lemma seekTM_select {k n : ℕ} {x : List Bool}
         some (decide (r < groups.length)) := by
     intro r hr
     rw [hs, hsp, zero_add, summaryCells_shift _ _ _ (by omega)]
-    simpa only [unaryFin, hglen] using FinTM.bufferTape_unary q.val r (by omega)
+    simpa only [unaryFin, hglen] using bufferTape_unary q.val r (by omega)
   have run := seekTM_lookup groups rest d hgroup hrank hq stateReads words.1
   dsimp only at run
   have gl := groups_length groups hgroup
@@ -2565,6 +2577,13 @@ private lemma roundTM_prepare {k n : ℕ} {x : List Bool}
       3 * q.val + 16 := by simp [unaryFin]; omega
   simpa only [atKey, s0, d0, d4, Cfg.mapState, roundData, cost] using joined
 
+/-- Literal cells of the middle word of a canonical concatenated buffer.
+`Turing.FinTM.bufferTape_append_mid` (BW-1). -/
+private lemma bufferTape_reads (before word after : List Bool) :
+    ∀ (r : ℕ) (hr : r < word.length),
+      FinTM.bufferTape (before ++ word ++ after) (before.length + r) = some (word[r]'hr) :=
+  fun r hr => FinTM.bufferTape_append_mid before word after r hr
+
 /-- Execute the inherited fixed payload, return to the cleared state word,
 then install the complete successor. The exit still precedes head restoration.
 The halting case consumes its false tag and keeps a live physical exit.
@@ -2596,8 +2615,7 @@ private lemma roundTM_payload {k n : ℕ} {x : List Bool}
   have reads : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
       d0.workTapes (tableTape k) (d0.workTapePos (tableTape k) + r) = some ((actionBitsK
         a)[r]'hr) := by
-    simpa [d0, roundData, tableTape, ht] using
-      fun r hr => FinTM.bufferTape_append_mid before (actionBitsK a) after r hr
+    simpa [d0, roundData, tableTape, ht] using bufferTape_reads before (actionBitsK a) after
   obtain ⟨bits, split, length, fixedReads, fieldReads⟩ := actionBitsK_reads d0 a reads
   have hbits : List.ofFn bits = (actionBitsK a).take (recordWidth k) := by
     rw [split]
@@ -2727,6 +2745,12 @@ private lemma roundTM_payload {k n : ℕ} {x : List Bool}
       (actionBitsK a).length + 6 := by omega
   simpa only [atKey, d0, d3, moving, copying, d1, d2, Cfg.mapState, roundData, cost] using combined
 
+/-- A canonical buffer's suffix, including its right blank and all cells
+beyond it: `Turing.FinTM.bufferTape_append_shift` (BW-1). -/
+private lemma bufferTape_suffix (before word : List Bool) (z : ℤ) (hz : 0 ≤ z) :
+    FinTM.bufferTape (before ++ word) (before.length + z) = FinTM.bufferTape word z :=
+  FinTM.bufferTape_append_shift before word hz
+
 /-- Restore the table and successor-state heads after payload execution.
 The table scan reaches its right blank and the catalog reverse scan returns
 it to zero. The copied state word is then rewound to two, and the final fixed
@@ -2761,8 +2785,8 @@ private lemma roundTM_restore {k n : ℕ} {x : List Bool}
   have tableLength : table.length = before.length + tail.length := by rw [ht, List.length_append]
   have tableSkip := skipTM_run_ofCfg (tableTape k) tail s0 rfl (by
     intro z hz _
-    simpa [s0, d0, data, roundData, Cfg.mapState, tableTape, ht] using
-      FinTM.bufferTape_append_shift before tail hz)
+    simpa [s0, d0, data, roundData, Cfg.mapState, tableTape, ht] using bufferTape_suffix before tail
+      z hz)
   have tableSkipEnd : (skipTM (k + 2) (tableTape k)).runFrom s0 (tail.length + 1) =
       d1.mapState (fun _ => SeekPhase.done) := by
     rw [tableSkip.1]
