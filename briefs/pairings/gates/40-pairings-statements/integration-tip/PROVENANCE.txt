@@ -1,0 +1,117 @@
+Verification build of the updated pairings PR #331 head merged onto the records tip (int-331-tip)
+maintainer job, 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0 cdd38ac5 (checks/lean-version.txt; PATH=$HOME/.elan/bin:$PATH). Every Lean run, including
+  the Mathlib NthRootLemmas extra and the axioms probe, was a `bash scripts/lean_check_tree.sh <Module/Path>` call through
+  tools-used/review/runner.py (G26-N1 count `^\S+\.lean:\d+:\d+: error[:(]`) with TCSLIB_OLEANS=$SP/dl-oleans. Only one of
+  this job's Lean processes ran at a time. No lake command, no cache get. No commit, branch, checkout or push. Nothing was written
+  under /home/user/tcslib; it was read only through `git rev-parse/diff/show/archive/hash-object/ls-tree`. dl-oleans-2 and
+  wt-gate40 were not modified.
+Head verified: 39d42e235a62b7085ffc19b01f371015c20d7795 (tree d77da415636c959e6626ac2287abdb7ebcaa6aff). Parents are #331's head
+  70c1f44432a41bcdb6f6d8602d957d2fc68ce0da and the records tip 673a27158338437896c624df32bf5421c6ba45cf. It carries a gpgsig (SSH)
+  header. That signature was not verified here because gpg.ssh.allowedSignersFile is not configured.
+Source export: $SP/wt-i331tip = `git archive 39d42e23 -- TCSlib TCSlib.lean audits scripts lakefile.lean lake-manifest.json
+  lean-toolchain`, plus .lake/packages -> /home/user/tcslib/.lake/packages. scripts/lean_check_tree.sh is byte-equal to
+  /home/user/tcslib's copy. Removed at the end.
+Method and tools: briefs/pass-shelat-ch5-8/maintainer/int-stmt-331-333-2026-11-16/int-stmt-331-333-evidence.zip (SHA-256
+  9ffa41bbb1fb703bcd36ff15bc810a7ee09f3236445f81e1096eb63144617172). It was extracted to a fresh $SP/ev-i331tip and checked:
+  1141/1141 OK against evidence-SHA256SUMS, path set exact, SHA256SUMS byte-equal. The extract was removed afterwards.
+  tools-used/ holds unmodified copies of its tools-used/, plus one new tool, tools-used/fullorder.py (imports-first local closure
+  of the roots). Probe source: axioms/AxiomsInt331Tip.lean.txt (`import TCSlib` + that job's `#admitted` DepTrace + 12 names).
+
+git checks (checks/git-checks.txt):
+  - `git diff 673a2715 39d42e23` touches exactly 13 files. They equal #331's own file set (merge-base 523d80d2 .. 70c1f444).
+    The 11 non-facade files are blob-equal to 70c1f444.
+  - The facade blobs equal resolved/: TCSlib.lean 124658fc8de755bcd1b4bc637d358cc984d3a789 and
+    TCSlib/Cryptography/AdvancedEncryption.lean c1bc37f9a01e280205e9e850bd3955a1399ee309.
+  - Code tree vs C4 cbfa9d85 (tree 26a68b89): audits/ e204e63c, TCSlib.lean, scripts/ and lake files are equal. TCSlib/ differs
+    (66432452 vs 9fdaa525) in exactly 5 files, all M: AdvancedEncryption/IdentityBased/{Defs,BonehBoyen,BonehBoyenMachine}.lean
+    and Pairing/{Group,Assumptions}.lean. In each of the 5, the C4 blob equals old #331 head 110c2f9d and the head blob equals new
+    #331 head 70c1f444. These are exactly the code files changed between 110c2f9d and 70c1f444 (LE-gate40).
+
+olean tree $SP/dl-oleans: pre tree/snapshot-pre.txt has 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f (the required value, byte-equal to int-stmt-331-333's pre). All
+  1230 oleans match the base records (eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9, int-317).
+order: order/order.txt is the closure of root TCSlib + audits/garg-ch1-3/Checks + audits/pass-shelat/Checks at the head. It has
+  1299 modules and is identical as a set to downorder.py's order vs eff2dcd0 (order/down-vs-base/). 34 modules lie outside it
+  (order/outside-closure.txt), and none of them has a snapshot olean.
+plan (stateplan.py, state/state-init.json = snapshot keyed at eff2dcd0): build 661 (= downorder's down set exactly: 561 snapshot
+  oleans to overwrite + 100 new), reuse 638. The 561 were copied to $SP/dl-i331tip-backup (tree/backed-up.txt, verified 561/561,
+  all equal to snapshot-pre). Mathlib overlay: mloverlay.sh (3346 symlinks). NthRootLemmas (pinned mathlib 029db123, source
+  b371bf48...) was copied byte-equal into the export and built through lean_check_tree.sh (build-mathlib-extra/): rc 0, olean
+  c0a9cff04c67... = int-stmt-331-333's.
+
+build (build/: results.jsonl, mods/*.log, per-module.tsv from permod.py, err_colon = `error:`, err_paren = `error(`), queue
+  plan/queue.txt: 661/661 rc 0; error: 0; error( 0; substring "error" 0; 103 sorry warnings, 463 warnings; 08:58:39-10:38:55 UTC,
+  6015 s, max RSS 4.51 GB. runner exit 0.
+  #331 modules: Pairing/Assumptions 1 (T1 bdhAssumption_of_dbdhAssumption), BonehBoyenSecurity 2 (T2 bb1_sim_real, T3
+  bb1_sim_random), BonehBoyenMachine 1 (T4 exists_bb1_distinguisher). The other 10, including Defs, BonehBoyen, Group, the facades
+  and root TCSlib: 0 sorry, 0 warnings.
+  First attempt (build-aborted-0858/): it was started as a tool-managed background task with a 2 h limit. I stopped it after 3
+  modules (my own PIDs only) and relaunched it detached (run-build.sh, setsid nohup) with a fresh build/. The orphaned EXP check was
+  killed before it wrote a record.
+  state: `update` took 661 modules; `check` over the 1299-module order -> RESULT OK (state/statecheck.txt).
+
+INCIDENT (disk full, about 08:59:50-09:00:25 UTC): during the lint step, a full `git archive` of tip and head (the briefs/ zips,
+  about 2 GB) filled the volume. The export was deleted within seconds (2.3 GB free again). It broke the OTHER job's build on
+  dl-oleans-2: its runner stopped at KarpLiptonSearchFamily with a 0-byte olean and an empty log. That was reported to the
+  coordinator at once; I did not touch that job. Lint then used small `git archive -- TCSlib TCSlib.lean scripts` exports (66 MB).
+  Own-build check:
+  - checks/incident-window-check.txt: the 31 modules that started before 09:01:30 (08:58:39-09:01:16) all have rc 0 and non-empty
+    oleans equal to their records.
+  - They were rechecked after the build (build-recheck/, order checks/incident-recheck-order.txt): 31/31 rc 0, 0 errors in both
+    forms. Every olean, log hash, sorry and warning count is identical to the first run (checks/incident-recheck-compare.txt,
+    differing 0). Parity, which spanned the window, reproduced byte-for-byte.
+  - Every state file and tree/*.txt was written before or after the window. snapshot-pre.txt still hashes to 457ba704.
+  - The final whole-tree check verifies every olean against a successful (rc 0, same-source) record.
+
+whole-tree check (tree-final/; treecheck_ml.py at 39d42e23 against order/order.txt and records/records-final.jsonl = base records
+  (int-317) + build + build-recheck; run before the probe and the restore):
+  - all 1299 modules rc 0 at the head source;
+  - every olean equal to its record; none missing; no stray olean; no empty dir;
+  - 4677 files = 1299 + 31 PFR + 3347 Mathlib overlay entries (3346 symlinks + NthRootLemmas);
+  - RESULT OK.
+
+admissions (admissions/census-{tip,head}.txt; tipcensus.py; record sets: base = int-317 base records, intall = int-all-open
+  records-final, int331333 = int-stmt-331-333 records/records-final, this = build/results.jsonl; the first three come from the
+  int-stmt-331-333 evidence zip; disagreeing 0):
+  - tip 673a2715: 237 over 1288 modules.
+  - head 39d42e23: 241 over 1299 modules, i.e. +4.
+  - The census diff is only the 11 new #331 modules (Assumptions 1, BonehBoyenSecurity 2, BonehBoyenMachine 1, the other 8 at 0)
+    plus record-set tags on the facades and root (0 at both). No other module changes its count.
+  - The 34 modules outside root TCSlib's closure have no record at either rev, as before.
+
+axioms (axioms/probe-run/: PlProbe/AxiomsInt331Tip via lean_check_tree.sh: rc 0, 0 errors, 0 warnings, 0 sorry. Its olean was
+  written to PlProbe/ in the tree and deleted at restore, logged):
+  - [propext, Classical.choice, Quot.sound], with no sorryAx user in the closure: bb1_correct (closure 8663), joux_correct (6837),
+    jouxKeyIndist_of_dbdhAssumption (10289), bb1_encPP_inj (1530), bb1_encSK_inj (1526), bb1_encCT_inj (1531).
+  - [propext, sorryAx, Classical.choice, Quot.sound], each its own closure's only direct sorryAx user:
+    T1 Pairing.BilinearGen.bdhAssumption_of_dbdhAssumption (9582), T2 bb1_sim_real (10290), T3 bb1_sim_random (8324),
+    T4 exists_bb1_distinguisher (8347).
+  - bb1_sidSecure: [propext, sorryAx, Classical.choice, Quot.sound], inherited. The direct sorryAx users in its closure (14014)
+    are exactly bb1_sim_random, bb1_sim_real and exists_bb1_distinguisher (T2-T4). T1 is not in it.
+  - GSW.eval_encrypts: [propext, sorryAx, Classical.choice, Quot.sound]. It is its own closure's (5807) only direct sorryAx user,
+    a pre-existing GSW statement-phase admission at the tip (#333, Eval.lean:184 `sorry`), unchanged by #331.
+
+lint (lint/; `python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography --check8b` run from TCSlib/TCSlib.lean/scripts exports
+  of each rev, removed afterwards):
+  - tip 673a2715: 92 FAIL / 101 WARN over 385 files.
+  - head 39d42e23: 92 FAIL / 103 WARN over 396 files.
+  - linediff-Cryptography-tip-vs-head.txt: only +2 lines, the known check-8 WARN false positives IdentityBased/Defs (SIDSecure)
+    and Pairing/Assumptions (BDHAssumption, DBDHAssumption). No new FAIL.
+  - The head's FAIL/WARN line set equals C4's (int-stmt-331-333 lint-Cryptography-b4).
+
+restore (restore/; finish-restore.sh = tools-used/restore_derand.sh with a temporary `tools` symlink, removed, then restoreplan.py):
+  - backup hash failures 0; 561 restored; 100 new oleans deleted; Mathlib overlay deleted (3346 symlinks + NthRootLemmas
+    c0a9cff0, logged); probe olean PlProbe/AxiomsInt331Tip deleted (logged); 19 emptied dirs pruned.
+  - tree/snapshot-post.txt: 1230 files, 0 empty dirs, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f,
+    byte-identical to snapshot-pre (SNAPSHOT EQUAL).
+  - restoreplan (no --delete): extra 0, changed 0, missing 0.
+  - A second independent snapshot (restore/snapshot-verify.txt/.out) also matches: 457ba704, equal.
+  - The backup directory, the source export and the evidence extract were removed afterwards.
+  (finish-restore.sh's console output was not saved because the tee target directory did not exist yet. Its results are in
+  restore/restore-log.txt, tree/snapshot-post.txt, restore/restoreplan-check.out and restore/snapshot-verify.out.)
+results.jsonl: every Lean run of this job in time order: build-mathlib-extra (1), build (661), build-recheck (31), probe (1),
+  with done markers.
+SHA256SUMS: every file here except itself (paths without "./"). ../int-331-tip-evidence.zip holds exactly these paths plus
+  SHA256SUMS, under int-331-tip/.
