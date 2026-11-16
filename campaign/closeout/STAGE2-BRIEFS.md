@@ -89,3 +89,5 @@ only).
   configurations converted field by field". `us_start` stays as it is; RS-1 is carried.
 - **MIG-7 (approval C2).** Move `universalCaptureTM` onto `Build/Embed`'s `embedSilentTM`.
   Backlog MIG-7, about −130 lines. Measured: 8 members, 126 lines, 6 uses, 5/5 rule-10 exposure.
+
+**Dispatched (Seyoon, 2026-11-16):** fills A, B and C, each to its own outside worker (Claude, cloud), from base `ceece3a0`.
