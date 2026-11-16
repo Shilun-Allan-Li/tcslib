@@ -1,0 +1,211 @@
+### git grep -nE 'real_uniformKey_advantage' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:26:* `real_uniformKey_advantage`: real-to-uniform-key advantage equals one DLWE advantage.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:150:**Proof sketch.** As `Regev.real_uniformKey_advantage`: reassociate the independent key,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:153:theorem real_uniformKey_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:187:inequality gives the two exact DLWE terms (`real_uniformKey_advantage`) and two statistical
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:128:theorem real_uniformKey_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:312:  have hkey₀ := real_uniformKey_advantage P χ μ₀ D
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:313:  have hkey₁ := real_uniformKey_advantage P χ μ₁ D
+(total: 7 lines)
+### git grep -nE 'uniformKey_uniform_advantage_le' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:27:* `uniformKey_uniform_advantage_le`: under a uniform key the view is within
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:172:theorem uniformKey_uniform_advantage_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:188:terms (`uniformKey_uniform_advantage_le`), as in `Regev.distAdv_encrypt_le`. -/
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:244:theorem uniformKey_uniform_advantage_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:315:    uniformKey_uniform_advantage_le P μ₀ D
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:317:    uniformKey_uniform_advantage_le P μ₁ D
+(total: 6 lines)
+### git grep -nE 'distAdv_encrypt_le' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:29:* `distAdv_encrypt_le`: two fixed bits' views differ by at most two DLWE advantages plus
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:31:* `distAdv_encrypt_le_of_width`: with `(n+1)·w + 2κ ≤ m` the statistical term is at most
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:188:terms (`uniformKey_uniform_advantage_le`), as in `Regev.distAdv_encrypt_le`. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:189:theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:203:**Proof sketch.** `distAdv_encrypt_le` and `Regev.two_extractionError_le`, multiplying the
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:205:theorem distAdv_encrypt_le_of_width {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean:96:**Proof sketch.** As `Encryption.Symmetric.Regev.distAdv_encrypt_le`: each real batch is
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:301:theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:22:in the ideal uniform experiment. `distAdv_encrypt_le` proves the two-reduction bound.
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:116:theorem distAdv_encrypt_le (P : Parameters) (χ : Noise)
+(total: 10 lines)
+### git grep -nE 'two_extractionError_le' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:203:**Proof sketch.** `distAdv_encrypt_le` and `Regev.two_extractionError_le`, multiplying the
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:334:theorem two_extractionError_le (P : Parameters) (width κ : ℕ)
+(total: 2 lines)
+### git grep -nE 'extractionError' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:28:  `N · ε_LHL` of uniform, with `ε_LHL = Regev.extractionError`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:163:`Regev.extractionError` [GSW13, Section 3.2, "`R · A` is statistically uniform by the
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:171:and `Regev.extractionError_eq`. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:179:      P.columns * Regev.extractionError P.lwe := by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:196:      2 * (P.columns * Regev.extractionError P.lwe) := by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:203:**Proof sketch.** `distAdv_encrypt_le` and `Regev.two_extractionError_le`, multiplying the
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:24:* `extractionError`: the explicit strong leftover-hash error.
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:227:noncomputable def extractionError (P : Parameters) : ℝ :=
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:232:theorem extractionError_eq (P : Parameters) :
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:233:    extractionError P =
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:236:/-- The uniform-key encryption view is within `extractionError P` of a fully uniform,
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:253:      extractionError P := by
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:291:  rw [hreal, hideal, extractionError_eq]
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:308:      LWE.decisionAdvantage P χ (reduction P μ₁ D) + 2 * extractionError P := by
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:314:  have hstat₀ : distAdv (uniformKeyView P μ₀) ideal D ≤ extractionError P :=
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:316:  have hstat₁ : distAdv (uniformKeyView P μ₁) ideal D ≤ extractionError P :=
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:334:theorem two_extractionError_le (P : Parameters) (width κ : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:337:    2 * extractionError P ≤ ((2 : ℝ)⁻¹) ^ κ := by
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:342:  rw [extractionError_eq]
+(total: 19 lines)
+### git grep -nE 'augmented_bijective' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:166:**Proof sketch.** Relabel the key by the bijection `Regev.augmented_bijective`. The ciphertext
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean:98:is a bijection onto `Fin k → Ciphertext P` (`Regev.augmented_bijective`, the column
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:182:theorem augmented_bijective (P : Parameters) : Function.Bijective (augmented P) := by
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:260:  let keyEquiv : Key ≃ AugKey := Equiv.ofBijective (augmented P) (augmented_bijective P)
+(total: 4 lines)
+### git grep -nE 'hashParameters' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:132:**Disclosure.** Field-for-field equal to `Regev.hashParameters`; a GSW-local copy because
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:133:GSW's types index matrices by `Fin (n+1)`, and reading `Regev.hashParameters` at the type level
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:23:* `hashParameters`, `augmented`: adapt the existing binary matrix hash to the ciphertext.
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:154:def hashParameters (P : Parameters) : TCSlib.Cryptography.SIS.Parameters where
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:162:  hashParameters
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:203:      Hashing.SIS.hash (hashParameters P) (augmented P pk) r
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:269:    (r.1, Hashing.SIS.hash (hashParameters P) r.1 r.2)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:289:  have hbound := Hashing.SIS.distAdv_hash_uniform_le (hashParameters P) test
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:292:  simpa only [hashParameters_modulus, hashParameters_dimension, hashParameters_columns] using hbound
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:338:  have h := Hashing.SIS.leftover_error_le (hashParameters P) width κ
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:339:    (by simpa only [hashParameters_modulus] using hq)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:340:    (by simpa only [hashParameters_dimension, hashParameters_columns] using hm)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:341:  rw [hashParameters_modulus, hashParameters_dimension, hashParameters_columns] at h
+(total: 13 lines)
+### git grep -nE 'columnHashParameters' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:22:* `columnHashParameters`: the SIS-hash shape `(n+1) × m` of the augmented public key.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:136:def columnHashParameters (P : Parameters) : TCSlib.Cryptography.SIS.Parameters where
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:144:  columnHashParameters
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:167:is `hashColumns (columnHashParameters P) N Ā R + μG` (`encrypt_eq`, `hashColumns_eq_mul`);
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:170:`distAdv_hashColumns_uniform_le` and rewrite its bound with the `columnHashParameters` readers
+(total: 5 lines)
+### git grep -nE 'theorem acceptProb_bind' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:91:theorem acceptProb_bind (X : σ → γ) (P : γ → κ → δ) (D : δ → ρ → Bool) :
+(total: 1 lines)
+### git grep -nE 'sunglassRed|distAdv_comp' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:427:`n` is the concrete `sunglassRed P (D.distinguisher n (ℓ' n))` with
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:99:3. `distAdv_comp` and `distAdv_prfEncRealOut_le` bound the advantage by
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:158:    exact (distAdv_comp encodeTupleOut (prfEncRealOut (F n) (μ n).1)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:99:are the definitions of `prgAdv` and `distAdv` (the sunglass identity `distAdv_comp`, here
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:383:(`distAdv_comp`). Hence the advantage is at most `∑_{j<n}` of the advantages of
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:442:(`distAdv_comp`), so the advantage is at most `∑_{j ≤ q n}` of the advantages of
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:198:(the encoding moved into `Dst`, `distAdv_comp`) bounds the advantage by the sum of the `q + 1`
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:291:sunglass identity `distAdv_comp` its advantage against `G n` is the advantage of `D` between
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:312:    distAdv_comp (fun t : Fin (P.stretch.eval n) → Bool => fun i : Fin (m.eval n) =>
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:393:the sunglass identity `distAdv_comp` with the projection `t ↦ t ∘ castLE` (a uniform
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:416:distinguisher `D ∘ take (2n)` of the expansion (`NUPPT.exists_comp`), `distAdv_comp` with the
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:32:* `sunglassRed P D`: the distinguisher `D ∘ P` for `X` and `Y`.
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:44:* `distAdv_sunglassRed`: [Gar26, Lemma 3.2], with equal advantage.
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:125:def sunglassRed (P : γ → κ → δ) (D : δ → ρ → Bool) : γ → κ × ρ → Bool :=
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:131:theorem distAdv_sunglassRed (P : γ → κ → δ) (X : σ → γ) (Y : τ → γ)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:133:    distAdv X Y (sunglassRed P D) = distAdv (pushSampler P X) (pushSampler P Y) D := by
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:134:  unfold sunglassRed pushSampler
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:141:theorem distAdv_comp (P : γ → δ) (X : σ → γ) (Y : τ → γ) (D : δ → ρ → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:783:`exists_pairRed_ge` (after `owpComStr_ofFn`, `distAdv_comp` and the seed reindexing
+(total: 19 lines)
+### git grep -nE 'abs_sub_le ' -- TCSlib  (base 486f44f8)
+TCSlib/BooleanAnalysis/GaussianSpace/Borell/Bivariate.lean:303:  exact (abs_sub_le (gaussianBivariateStability ρ α β)
+TCSlib/BooleanAnalysis/GaussianSpace/Halfspace.lean:150:          abs_sub_le (t * (1 - Real.cos θ)) 0 (Real.sin θ * y)
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Smoothing.lean:232:      have ht := abs_sub_le (intervalSmooth η (((intervalSmooth η)^[m + 1]) ψ) x)
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Smoothing.lean:315:      (abs_sub_le _ _ _).trans (add_le_add_left (abs_sub_le _ _ _) _)
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Taylor.lean:308:          (∫ ω, ψ (a + b * Y ω) ∂ν)| := abs_sub_le _ _ _
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Taylor.lean:336:          (∫ ω, ψ (a + b * Y ω) ∂ν)| := abs_sub_le _ _ _
+TCSlib/BooleanAnalysis/GaussianSpace/InvarianceExtensions.lean:153:      (abs_sub_le _ _ _).trans (add_le_add_left (abs_sub_le _ _ _) _)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:5606:    exact (abs_sub_le _ _ _).trans ((add_le_add (hr z hz tape) (ho tape)).trans hb)
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:471:  exact abs_sub_le _ _ _
+TCSlib/Cryptography/Asymptotic/Sampling.lean:169:  (abs_sub_le _ _ _).trans (add_le_add (h T) (h' T))
+TCSlib/Cryptography/Asymptotic/Sampling.lean:271:  exact (abs_sub_le _ (uprob fun z : τ × σ' => T (X' z.1, Y z.2)) _).trans (add_le_add h1 h2)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:447:  have t1 := abs_sub_le (acceptProb (prfEncRealOut F m) D)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:453:  have t3 := abs_sub_le (acceptProb (otpEncOut m') D)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:109:  exact (abs_sub_le _ _ _).trans_eq (congrArg _ (abs_sub_comm _ _))
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:356:        have t1 := abs_sub_le a₀ X₀ a₁
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:357:        have t2 := abs_sub_le X₀ X₁ a₁
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:318:  have htriangle₀ := abs_sub_le (acceptProb (realView P χ μ₀) D)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:320:  have htriangle₁ := abs_sub_le (acceptProb (uniformKeyView P μ₀) D)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:322:  have htriangle₂ := abs_sub_le (acceptProb ideal D)
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:526:  have htri1 := abs_sub_le A₀ Qa A₁
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:527:  have htri2 := abs_sub_le Qa Qb A₁
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:134:        |acceptProb id D - acceptProb (encryptDist P χ μ₁) D| := abs_sub_le _ _ _
+TCSlib/Cryptography/Foundations/Probability.lean:224:    exact (abs_sub_le _ _ _).trans (add_le_add_right ih _)
+TCSlib/Cryptography/Games/Advantage.lean:105:  abs_sub_le _ _ _
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:399:  exact (abs_sub_le _ _ _).trans (le_abs_self _)
+(total: 35 lines)
+### git grep -nE 'reduction_eq' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:121:theorem reduction_eq {ρ : Type*} (P : Parameters) (μ : Bool)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:114:theorem reduction_eq {ρ : Type*} (P : Parameters) (μ : Bool)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:141:    simp only [acceptProb_def, realView_eq, reduction_eq]
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:146:    simp only [acceptProb_def, uniformKeyView_eq, reduction_eq, id_eq]
+(total: 4 lines)
+### git grep -nE 'Equiv.addRight' -- TCSlib  (base 486f44f8)
+TCSlib/BooleanAnalysis/BLR/ZkFourier.lean:485:      rw [ ← Equiv.sum_comp ( Equiv.addRight x ) ] ; simp +decide [ mul_comm, mul_left_comm, char_s_add ]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:394:(`Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))`) carrying the sampler for `m'` to the
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:400:      otpEncOut m' ((Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))) z) =
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:412:          ((Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))) z)) D := by
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1306:of `h^z mod p` (the shift `z ↦ z + k`, `Equiv.addRight`). -/
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1312:  rw [← uprob_comp_equiv (Equiv.addRight ((k : ℕ) : ZMod q))
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1316:  have hval : h ^ z.val % p * c % p = h ^ (Equiv.addRight ((k : ℕ) : ZMod q) z).val % p := by
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1318:        ((h ^ (Equiv.addRight ((k : ℕ) : ZMod q) z).val % p : ℕ) : ZMod p) := by
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1765:and `m'_b ∈ G_q` is `h^k` (`zpowers_eq_QR`), so the shift `z ↦ z + k` (`Equiv.addRight`,
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:266:    keyEquiv.symm.prodCongr ((Equiv.addRight shift).trans cipherEquiv.symm)
+TCSlib/Cryptography/HardcoreBit/Basic.lean:204:  pushesUniform_equiv (Equiv.addRight e)
+TCSlib/Cryptography/Hashing/SIS/Universality.lean:77:      (Equiv.addRight (fun i => ∑ k : {k : Fin P.columns // k ≠ j}, a k i * difference k))
+TCSlib/Cryptography/SecretSharing/Shamir.lean:154:  refine ⟨Equiv.addRight (⟨r, hrdeg⟩ : degreeLT F (k - 1)), fun q b hb => ?_⟩
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:336:      let move : Key ≃ Key := (Equiv.refl Public).prodCongr (Equiv.addRight M)
+(total: 14 lines)
+### git grep -nE 'Equiv.ofBijective' -- TCSlib  (base 486f44f8)
+TCSlib/Complexity/Randomized/MatchingMath.lean:130:    refine ⟨Equiv.ofBijective f (Finite.injective_iff_bijective.mp hinj), fun i => ?_⟩
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:335:      ⇑((Equiv.ofBijective _ hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) := by
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:341:    (((Equiv.ofBijective _ hf).prodCongr _).bijective.comp (Fin.appendEquiv _ _).symm.bijective)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:423:  Equiv.ofBijective (fun b => ⟨bitsToNat b, bitsToNat_lt b⟩)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2577:  set eD := Equiv.ofBijective _ (dlb_split_bijective S A n ℓ hN) with heD
+TCSlib/Cryptography/Candidates/RSA.lean:159:  Equiv.ofBijective (fun x => x ^ e) (rsa_pow_bijective he)
+TCSlib/Cryptography/Candidates/Rabin.lean:2371:    Equiv.ofBijective (fun x : QR (blumMod i) => sqTo (blumMod i) (x : (ZMod (blumMod i))ˣ))
+TCSlib/Cryptography/Candidates/Rabin.lean:2382:    simp only [blumF, blumEnc, blumEncVal, if_pos hv, blumPermAt, dif_pos hv, Equiv.ofBijective_apply,
+TCSlib/Cryptography/Candidates/Rabin.lean:2717:(`Equiv.symm_apply_eq`, `Equiv.ofBijective_apply`, `coe_sqTo`), and the inverter's string is
+TCSlib/Cryptography/Candidates/Rabin.lean:2740:    rw [Equiv.symm_apply_eq, blumPermAt, dif_pos hV, Equiv.ofBijective_apply]
+TCSlib/Cryptography/Candidates/Rabin.lean:3108:    rw [← hperm, blumPermAt, dif_pos hV, Equiv.ofBijective_apply, coe_sqTo]
+TCSlib/Cryptography/Candidates/Rabin.lean:3487:    · rw [blumPermAt, dif_pos hV, Equiv.ofBijective_apply]
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:260:  let keyEquiv : Key ≃ AugKey := Equiv.ofBijective (augmented P) (augmented_bijective P)
+TCSlib/Cryptography/LWE/Sampling.lean:77:  let eA := Equiv.ofBijective
+TCSlib/Cryptography/LWE/Sampling.lean:80:  let eS := Equiv.ofBijective
+TCSlib/Cryptography/LWE/Sampling.lean:140:  let eA := Equiv.ofBijective
+TCSlib/Cryptography/LWE/Sampling.lean:143:  let eV := Equiv.ofBijective
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits.lean:125:  let e : X ≃ (Fin L → Bool) := Equiv.ofBijective enc
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:194:    then Equiv.ofBijective _ h else 1
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:203:          then Equiv.ofBijective _ h else 1) := rfl
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:231:applies and `Equiv.ofBijective ⇑π _ = π`. -/
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:236:    rw [Equiv.ofBijective_apply]
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:389:  exact HardcoreBit.pushesUniform_equiv (Equiv.ofBijective _ hbij)
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:489:  · rw [Equiv.ofBijective_apply]
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:500:`map i = u` (`Equiv.ofBijective_apply_symm_apply`), i.e. `rowMap n b i = u`
+(total: 35 lines)
+### git grep -nE 'mul_le_mul_of_nonneg_left' -- TCSlib  (base 486f44f8)
+TCSlib/BooleanAnalysis/ArrowTheorem.lean:211:    -- Handle even case first (before applying mul_le_mul_of_nonneg_left)
+TCSlib/BooleanAnalysis/ArrowTheorem.lean:217:      apply mul_le_mul_of_nonneg_left _ (sq_nonneg _)
+TCSlib/BooleanAnalysis/BLR/BoolBLR.lean:276:  refine le_trans ?_ ( sub_le_sub_left ( mul_le_mul_of_nonneg_left hdist <| by norm_num ) 1 );
+TCSlib/BooleanAnalysis/BLR/ZkBLR.lean:503:  refine' le_trans ( Finset.sum_le_sum fun s _ => mul_le_mul_of_nonneg_left ( Complex.re_le_norm _ ) ( sq_nonneg _ ) ) _;
+TCSlib/BooleanAnalysis/BLR/ZkBLR.lean:607:  refine' le_trans ( Finset.sum_le_sum fun s _ => mul_le_mul_of_nonneg_left ( re_epsilon_far_bounds_fourier (Nat.Prime.two_le Fact.out) f ε hfar s ) ( sq_nonneg _ ) ) _;
+TCSlib/BooleanAnalysis/BLR/ZkBLR.lean:670:    mul_le_mul_of_nonneg_left
+TCSlib/BooleanAnalysis/BLR/ZkBLR.lean:691:  refine' le_trans ( mul_le_mul_of_nonneg_left ( add_le_add ( le_of_eq <| lift_omega_j_zero_contribution f ) <| Finset.sum_le_sum fun x hx => weighted_sum_lift_omega_j_bound f ε hfar x <| by aesop ) <| by positivity ) _;
+TCSlib/BooleanAnalysis/BLR/ZkBLR.lean:773:  refine' le_trans ( Finset.sum_le_sum fun s _ => mul_le_mul_of_nonneg_left ( h_coeff_unit_bound s ) ( sq_nonneg _ ) ) _;
+TCSlib/BooleanAnalysis/Basic.lean:999:        apply mul_le_mul_of_nonneg_left hsum
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.lean:63:      exact (hD.norm_sub_le z x).trans (mul_le_mul_of_nonneg_left
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/TwoPoint.lean:258:  have hl := mul_le_mul_of_nonneg_left (profile_sq_central_deficit hb hminus hplus)
+TCSlib/BooleanAnalysis/GaussianSpace/Halfspace.lean:108:  simpa only [mul_one] using mul_le_mul_of_nonneg_left
+TCSlib/BooleanAnalysis/GaussianSpace/Halfspace.lean:158:    ((mul_le_mul_of_nonneg_left hb (standardGaussianPDF_pos 0).le).trans_eq (by ring))
+TCSlib/BooleanAnalysis/GaussianSpace/IndicatorRegularity.lean:156:    _ ≤ (C : ℝ) * ‖x - y‖ := mul_le_mul_of_nonneg_left hpoint C.coe_nonneg
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance.lean:143:      mul_le_mul_of_nonneg_left
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance.lean:250:      mul_le_mul_of_nonneg_left (invariance_quarter_power_le k hε) (by positivity)
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Perturbation.lean:90:    _ ≤ _ := mul_le_mul_of_nonneg_left hnorm c.coe_nonneg
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Replacement.lean:259:      mul_le_mul_of_nonneg_left
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Smoothing.lean:201:    _ ≤ (c : ℝ) * η := mul_le_mul_of_nonneg_left ht.2.le c.coe_nonneg
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Taylor.lean:91:        (mul_le_mul_of_nonneg_left (hC _) (by positivity)) (by positivity)
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Taylor.lean:269:      mul_le_mul_of_nonneg_left hfourth (by positivity)
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/ThirdMoments.lean:251:                  (mul_le_mul_of_nonneg_left (ih m G (coordinateDerivative_degree H i hH)) (sq_nonneg r))
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/ThirdOrder.lean:126:      mul_le_mul_of_nonneg_left (add_le_add hboundX hboundY) (by positivity)
+TCSlib/BooleanAnalysis/GaussianSpace/InvarianceExtensions.lean:142:          (mul_le_mul_of_nonneg_left hfloor (mul_nonneg hK.le c.coe_nonneg))
+TCSlib/BooleanAnalysis/GaussianSpace/InvarianceExtensions.lean:202:      mul_le_mul_of_nonneg_left (add_le_add hpower htail) (mul_nonneg hK.le c.coe_nonneg)
+(total: 283 lines)
+### git grep -nE 'theorem distAdv_triangle|abs_chain_le|distAdv_le_add|distAdv_trans' -- TCSlib  (base 486f44f8)
+(total: 0 lines)

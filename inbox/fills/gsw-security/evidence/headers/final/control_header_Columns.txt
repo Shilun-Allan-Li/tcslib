@@ -1,0 +1,28 @@
+# frozen-statement check: control 1 (distAdv_hashColumns_uniform_le header, one character)
+# base=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/final/base_Columns.lean
+# final=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/final/control_header_Columns.lean
+SAME      command  /-
+SAME      command  import TCSlib.Cryptography.Hashing.SIS.Universality
+SAME      command  import TCSlib.Cryptography.Foundations.Probability
+SAME      command  set_option maxHeartbeats 0
+SAME      command  set_option relaxedAutoImplicit false
+SAME      command  set_option autoImplicit false
+SAME      command  /-!
+SAME      command  namespace TCSlib.Cryptography.Hashing.SIS
+SAME      command  open TCSlib.Cryptography.SIS (Parameters)
+SAME      whole    hashColumns
+SAME      whole    hashColumns_apply
+SAME      target   hashColumns_eq_mul (header and statement prose; body replaced)
+CHANGED   target   distAdv_hashColumns_uniform_le (header DIFFERS, prose ok)
+SAME      command  end TCSlib.Cryptography.Hashing.SIS
+ADDED     command  import TCSlib.Cryptography.Pseudorandom.Indistinguishability
+--- DIFF header distAdv_hashColumns_uniform_le
+--- base
++++ final
+@@ -6,4 +6,4 @@
+         Matrix (Fin P.columns) (Fin N) Bool => (r.1, hashColumns P N r.1 r.2))
+       (id : (Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
+         Matrix (Fin P.dimension) (Fin N) (ZMod P.modulus)) → _) D ≤
+-      N * ((1 / 2) * Real.sqrt ((P.modulus : ℝ) ^ P.dimension / (2 : ℝ) ^ P.columns)) 
++      N * ((1 / 3) * Real.sqrt ((P.modulus : ℝ) ^ P.dimension / (2 : ℝ) ^ P.columns)) 
+DIFFERENCES=1 CHANGED=1 REMOVED=0 ORDER=ok ADDED_DECLS=0 ADDED_COMMANDS=1

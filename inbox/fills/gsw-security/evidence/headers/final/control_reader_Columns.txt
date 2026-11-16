@@ -1,0 +1,29 @@
+# frozen-statement check: control 2 (hashColumns_apply deleted)
+# base=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/final/base_Columns.lean
+# final=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/final/control_reader_Columns.lean
+SAME      command  /-
+SAME      command  import TCSlib.Cryptography.Hashing.SIS.Universality
+SAME      command  import TCSlib.Cryptography.Foundations.Probability
+SAME      command  set_option maxHeartbeats 0
+SAME      command  set_option relaxedAutoImplicit false
+SAME      command  set_option autoImplicit false
+SAME      command  /-!
+SAME      command  namespace TCSlib.Cryptography.Hashing.SIS
+SAME      command  open TCSlib.Cryptography.SIS (Parameters)
+SAME      whole    hashColumns
+REMOVED   decl     hashColumns_apply (occurrences at final: 0)
+SAME      target   hashColumns_eq_mul (header and statement prose; body replaced)
+SAME      target   distAdv_hashColumns_uniform_le (header and statement prose; body replaced)
+SAME      command  end TCSlib.Cryptography.Hashing.SIS
+ADDED     command  import TCSlib.Cryptography.Pseudorandom.Indistinguishability
+--- DIFF decl hashColumns_apply
+--- base
++++ final
+@@ -1,5 +1 @@
+-/-- Entry `(i,j)` of `hashColumns P N A R` is coordinate `i` of the hash of column `j`. -/
+-theorem hashColumns_apply (P : Parameters) (N : ℕ)
+-    (A : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus))
+-    (R : Matrix (Fin P.columns) (Fin N) Bool) (i : Fin P.dimension) (j : Fin N) :
+-    hashColumns P N A R i j = hash P A (fun c => R c j) i := rfl
++
+DIFFERENCES=1 CHANGED=0 REMOVED=1 ORDER=ok ADDED_DECLS=0 ADDED_COMMANDS=1

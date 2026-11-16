@@ -1,0 +1,31 @@
+# frozen-statement check: TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean
+# base=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/final/base_Security.lean
+# final=TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean
+SAME      command  /-
+SAME      command  import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
+SAME      command  import TCSlib.Cryptography.Hashing.SIS.Columns
+SAME      command  import TCSlib.Cryptography.LWE.Experiments
+SAME      command  import Mathlib.Tactic.Simps.Basic
+SAME      command  set_option maxHeartbeats 0
+SAME      command  set_option relaxedAutoImplicit false
+SAME      command  set_option autoImplicit false
+SAME      command  /-!
+SAME      command  namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+SAME      command  open Encryption.PublicKey
+SAME      whole    view
+SAME      whole    view_eq
+SAME      whole    realView
+SAME      whole    realView_eq
+SAME      whole    uniformKeyView
+SAME      whole    uniformKeyView_eq
+SAME      whole    reduction
+SAME      whole    reduction_eq
+SAME      whole    columnHashParameters
+SAME      command  attribute [simps (config := { isSimp := false }) dimension columns mod
+SAME      target   real_uniformKey_advantage (header and statement prose; body replaced)
+SAME      target   uniformKey_uniform_advantage_le (header and statement prose; body replaced)
+SAME      target   distAdv_encrypt_le (header and statement prose; body replaced)
+SAME      target   distAdv_encrypt_le_of_width (header and statement prose; body replaced)
+SAME      command  end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+ADDED     command  import TCSlib.Cryptography.Pseudorandom.Indistinguishability
+DIFFERENCES=0 CHANGED=0 REMOVED=0 ORDER=ok ADDED_DECLS=0 ADDED_COMMANDS=1

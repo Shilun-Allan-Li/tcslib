@@ -1,0 +1,34 @@
+START 2026-11-16T08:35:45.731+00:00 TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security
+COMMAND bash scripts/lean_check_tree.sh TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:207:10: error(lean.unknownIdentifier): Unknown identifier `hashColumns`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:215:17: error(lean.unknownIdentifier): Unknown identifier `hashColumns`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:217:10: error(lean.unknownIdentifier): Unknown identifier `hashColumns_eq_mul`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:230:17: error(lean.unknownIdentifier): Unknown identifier `distAdv_hashColumns_uniform_le`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:195:49: error: unsolved goals
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+P : Parameters
+μ : Bool
+D :
+  (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) × (Fin P.lwe.samples → ZMod P.lwe.modulus)) ×
+      Ciphertext P →
+    ρ → Bool
+Key : Type :=
+  Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) × (Fin P.lwe.samples → ZMod P.lwe.modulus)
+AugKey : Type := Matrix (Fin (P.lwe.dimension + 1)) (Fin P.lwe.samples) (ZMod P.lwe.modulus)
+Coins : Type := Matrix (Fin P.lwe.samples) (Fin P.columns) Bool
+keyEquiv : Key ≃ AugKey := Equiv.ofBijective (Regev.augmented P.lwe) ⋯
+shift : Ciphertext P := ↑μ.toNat • gadget P
+unpack : AugKey × Ciphertext P ≃ Key × Ciphertext P := keyEquiv.symm.prodCongr (Equiv.addRight shift)
+keySeeds : Key × Coins ≃ AugKey × Coins := keyEquiv.prodCongr (Equiv.refl Coins)
+sampleHash : AugKey × Coins → AugKey × Ciphertext P := fun r => (r.1, sorry)
+test : AugKey × Ciphertext P → ρ → Bool := fun v coins => D (unpack v) coins
+hsampler : uniformKeyView P μ = fun r => unpack (sampleHash (keySeeds r))
+hreal : acceptProb (uniformKeyView P μ) D = acceptProb sampleHash test
+hideal : acceptProb id D = acceptProb id test
+⊢ distAdv (uniformKeyView P μ) id D ≤ ↑P.columns * Regev.extractionError P.lwe
+FAIL(TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security): no fresh .olean produced
+END 2026-11-16T08:35:48.488+00:00 TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security EXIT 1 MAXRSS_KIB 2634108

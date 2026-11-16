@@ -92,8 +92,9 @@ SETS = {
     'security': (SECURITY_HEAD, SECURITY_TAIL, [('hashColumns', HASHCOLS),
                                                 ('augmented', AUGMENTED), ('sample', SAMPLE),
                                                 ('encrypt', ENCRYPT), ('distAdv', DISTADV),
-                                                ('finDistCoe', FINDIST),
-                                                ('polyEval', POLYEVAL)]),
+                                                ('finDistCoe', FINDIST)]),
+    # POLYEVAL is not used: `Complexity.PolyExpr` is outside both owned files' import closures
+    # (an unsealed pre-check failed with `Unknown identifier`), so seals A and B coincide there.
 }
 head, tail, rows = SETS[which]
 out = Path('probes/controls') / phase

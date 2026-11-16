@@ -1,0 +1,42 @@
+# frozen-statement check: control 2 (view_eq deleted)
+# base=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/final/base_Security.lean
+# final=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/final/control_reader_Security.lean
+SAME      command  /-
+SAME      command  import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
+SAME      command  import TCSlib.Cryptography.Hashing.SIS.Columns
+SAME      command  import TCSlib.Cryptography.LWE.Experiments
+SAME      command  import Mathlib.Tactic.Simps.Basic
+SAME      command  set_option maxHeartbeats 0
+SAME      command  set_option relaxedAutoImplicit false
+SAME      command  set_option autoImplicit false
+SAME      command  /-!
+SAME      command  namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+SAME      command  open Encryption.PublicKey
+SAME      whole    view
+REMOVED   decl     view_eq (occurrences at final: 0)
+SAME      whole    realView
+SAME      whole    realView_eq
+SAME      whole    uniformKeyView
+SAME      whole    uniformKeyView_eq
+SAME      whole    reduction
+SAME      whole    reduction_eq
+SAME      whole    columnHashParameters
+SAME      command  attribute [simps (config := { isSimp := false }) dimension columns mod
+SAME      target   real_uniformKey_advantage (header and statement prose; body replaced)
+SAME      target   uniformKey_uniform_advantage_le (header and statement prose; body replaced)
+SAME      target   distAdv_encrypt_le (header and statement prose; body replaced)
+SAME      target   distAdv_encrypt_le_of_width (header and statement prose; body replaced)
+SAME      command  end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+ADDED     command  import TCSlib.Cryptography.Pseudorandom.Indistinguishability
+--- DIFF decl view_eq
+--- base
++++ final
+@@ -1,6 +1 @@
+-/-- The view is the key paired with its GSW encryption. -/
+-theorem view_eq (P : Parameters) (μ : Bool)
+-    (pk : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+-      (Fin P.lwe.samples → ZMod P.lwe.modulus))
+-    (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
+-    view P μ pk R = (pk, encrypt P pk μ R) := rfl
++
+DIFFERENCES=1 CHANGED=0 REMOVED=1 ORDER=ok ADDED_DECLS=0 ADDED_COMMANDS=1

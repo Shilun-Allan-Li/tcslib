@@ -1,0 +1,36 @@
+=== real_uniformKey_advantage
+theorem real_uniformKey_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    (P : Parameters) (χ : LWE.Noise) (μ : Bool)
+    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool) :
+    distAdv (realView P χ μ) (uniformKeyView P μ) D =
+      LWE.decisionAdvantage P.lwe χ (reduction P μ D) 
+=== uniformKey_uniform_advantage_le
+theorem uniformKey_uniform_advantage_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    (P : Parameters) (μ : Bool)
+    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool) :
+    distAdv (uniformKeyView P μ)
+      (id : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+        (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → _) D ≤
+      P.columns * Regev.extractionError P.lwe 
+=== distAdv_encrypt_le
+theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    (P : Parameters) (χ : LWE.Noise) (μ₀ μ₁ : Bool)
+    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool) :
+    distAdv (realView P χ μ₀) (realView P χ μ₁) D ≤
+      LWE.decisionAdvantage P.lwe χ (reduction P μ₀ D) +
+      LWE.decisionAdvantage P.lwe χ (reduction P μ₁ D) +
+      2 * (P.columns * Regev.extractionError P.lwe) 
+=== distAdv_encrypt_le_of_width
+theorem distAdv_encrypt_le_of_width {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    (P : Parameters) (χ : LWE.Noise) (μ₀ μ₁ : Bool) (w κ : ℕ)
+    (hq : P.lwe.modulus ≤ 2 ^ w)
+    (hm : (P.lwe.dimension + 1) * w + 2 * κ ≤ P.lwe.samples)
+    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool) :
+    distAdv (realView P χ μ₀) (realView P χ μ₁) D ≤
+      LWE.decisionAdvantage P.lwe χ (reduction P μ₀ D) +
+      LWE.decisionAdvantage P.lwe χ (reduction P μ₁ D) +
+      P.columns * ((2 : ℝ)⁻¹) ^ κ 
