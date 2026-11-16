@@ -1,0 +1,59 @@
+{
+  "checks": 17,
+  "all_pass": true,
+  "stored_constants": 1082,
+  "helper_stored_constants": 704,
+  "helper_nonstandard_axioms_or_admissions": {},
+  "targets": {
+    "TCSlib.Cryptography.SecureComputation.yaoHybrid_polyTime": {
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "sorry_closure": []
+    },
+    "TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators": {
+      "axioms": [
+        "propext",
+        "sorryAx",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "sorry_closure": [
+        "TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators"
+      ]
+    },
+    "TCSlib.Cryptography.SecureComputation.yaoHybrid_hbcSecure": {
+      "axioms": [
+        "propext",
+        "sorryAx",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "sorry_closure": [
+        "TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators"
+      ]
+    },
+    "TCSlib.Cryptography.SecureComputation.yaoProtocol_hbcSecure": {
+      "axioms": [
+        "propext",
+        "sorryAx",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "sorry_closure": [
+        "TCSlib.Cryptography.SecureComputation.otProtocol_polyTime",
+        "TCSlib.Cryptography.SecureComputation.otProtocol_simulators",
+        "TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators",
+        "TCSlib.Cryptography.SecureComputation.HybridProtocol.hbcSecure_compose"
+      ]
+    }
+  },
+  "normal_modules": "resume3-integrated-endpoints-2",
+  "note": "SimulationBound then received only its module-inventory documentation fix; final exact-source four-seal rerun and own trace in simulation-inventory-resume3-audit-1.",
+  "exact_source_simulation_seals": "four/four PASS; simulation-inventory-resume3-audit-1",
+  "concrete_Alice": "AliceGenericGlue PASS; eight-line constructor application",
+  "concrete_Bob_output_switch": "BobOutputSwitchGlue PASS after explicit product tape types; first matcher failure retained.",
+  "proof_tip": "303e62b64db871df1f070ed2d89e8650e1d1e111"
+}

@@ -1,0 +1,51 @@
+START 2026-11-16T00:02:42.522882+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:101:41: error: Application type mismatch: The argument
+  t
+has type
+  Fin l
+but is expected to have type
+  Bool
+in the application
+  @List.getD_eq_getElem Bool (List.ofFn a) t
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:74:61: error: unsolved goals
+case h
+l : ℕ
+hl : l ≤ 2
+a b : Fin l → Bool
+hab :
+  ((List.ofFn a).getD 0 false).toNat + 2 * ((List.ofFn a).getD 1 false).toNat =
+    ((List.ofFn b).getD 0 false).toNat + 2 * ((List.ofFn b).getD 1 false).toNat
+ha₀ : ((List.ofFn a).getD 0 false).toNat ≤ 1
+ha₁ : ((List.ofFn a).getD 1 false).toNat ≤ 1
+hb₀ : ((List.ofFn b).getD 0 false).toNat ≤ 1
+hb₁ : ((List.ofFn b).getD 1 false).toNat ≤ 1
+h₀ : ((List.ofFn a).getD 0 false).toNat = ((List.ofFn b).getD 0 false).toNat
+h₁ : ((List.ofFn a).getD 1 false).toNat = ((List.ofFn b).getD 1 false).toNat
+h₀' : (List.ofFn a).getD 0 false = (List.ofFn b).getD 0 false
+h₁' : (List.ofFn a).getD 1 false = (List.ofFn b).getD 1 false
+t : Fin l
+ht : ↑t = 0 ∨ ↑t = 1
+hget : (List.ofFn a).getD (↑t) false = (List.ofFn b).getD (↑t) false
+⊢ a t = b t
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): no fresh .olean produced
+        2.50 real         1.42 user         1.06 sys
+          2172928000  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              169921  page reclaims
+                2761  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 182  voluntary context switches
+                6800  involuntary context switches
+            32541839  instructions retired
+            15149153  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T00:02:45.068197+00:00 exit=1

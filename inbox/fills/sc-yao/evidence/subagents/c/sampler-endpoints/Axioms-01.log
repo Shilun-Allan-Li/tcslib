@@ -1,0 +1,430 @@
+START 2026-11-16T02:26:48.872573+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.real_eq_stage0_on_tape {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2)
+  (v : ℕ → Bool) (hS : C.size ≤ S)
+  (seed :
+    List Bool → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (hK :
+    ∀ (q : List Bool) (w : Fin C.size) (b : Bool) (t : Fin n),
+      (seed q).1 w b t = q.getD ((b.toNat * S + ↑w) * n + ↑t) false)
+  (hR₀ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).1 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t) false)
+  (hR₁ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).2 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n + ↑t)
+          false)
+  (hP :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin C.gates[i].args.length),
+      ((seed q).2.2 i) a t = (a t ^^ q.getD (10 * S * n + 2 * ↑i + ↑t) false))
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin n → Bool) (List Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (real : (Fin (10 * S * n + 2 * S) → Bool) → List Bool)
+  (hReal :
+    ∀ (r : Fin (10 * S * n + 2 * S) → Bool),
+      real r =
+        Turing.pairEncode
+          { x := commonInput,
+              z :=
+                Turing.pairEncode bobInput
+                  (List.ofFn fun t =>
+                    TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (inA + ↑t.divNat)
+                      (v (inA + ↑t.divNat)) t.modNat),
+              r := bobCoins,
+              received :=
+                [Turing.pairEncode
+                    (Complexity.BinArith.encWords
+                      (List.ofFn fun i =>
+                        Complexity.BinArith.encWords
+                          (TCSlib.Cryptography.SecureComputation.garbledTable M C (seed (List.ofFn r)) i)))
+                    (Turing.pairEncode
+                      (Complexity.BinArith.encWords
+                        (List.ofFn fun w =>
+                          List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (↑w) (v ↑w))))
+                      (Complexity.BinArith.encWords
+                        (List.ofFn fun j =>
+                          Turing.pairEncode
+                            (List.ofFn
+                              (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (output j) false))
+                            (List.ofFn
+                              (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (output j)
+                                true)))))] }.encode
+          aliceOutput)
+  (r : Fin (10 * S * n + 2 * S) → Bool) :
+  real r =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C
+      (seed
+        (List.ofFn
+          ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask C S v)
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v)
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask C S v))
+            r)))
+      inA inB outLen output v commonInput bobInput bobCoins aliceOutput 0
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.real_eq_stage0_on_tape' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_real_eq_stage0.{u_1} {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2)
+  (v : ℕ → Bool) (hS : C.size ≤ S)
+  (seed :
+    List Bool → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (hK :
+    ∀ (q : List Bool) (w : Fin C.size) (b : Bool) (t : Fin n),
+      (seed q).1 w b t = q.getD ((b.toNat * S + ↑w) * n + ↑t) false)
+  (hR₀ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).1 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t) false)
+  (hR₁ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).2 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n + ↑t)
+          false)
+  (hP :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin C.gates[i].args.length),
+      ((seed q).2.2 i) a t = (a t ^^ q.getD (10 * S * n + 2 * ↑i + ↑t) false))
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin n → Bool) (List Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (real : (Fin (10 * S * n + 2 * S) → Bool) → List Bool)
+  (hReal :
+    ∀ (r : Fin (10 * S * n + 2 * S) → Bool),
+      real r =
+        Turing.pairEncode
+          { x := commonInput,
+              z :=
+                Turing.pairEncode bobInput
+                  (List.ofFn fun t =>
+                    TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (inA + ↑t.divNat)
+                      (v (inA + ↑t.divNat)) t.modNat),
+              r := bobCoins,
+              received :=
+                [Turing.pairEncode
+                    (Complexity.BinArith.encWords
+                      (List.ofFn fun i =>
+                        Complexity.BinArith.encWords
+                          (TCSlib.Cryptography.SecureComputation.garbledTable M C (seed (List.ofFn r)) i)))
+                    (Turing.pairEncode
+                      (Complexity.BinArith.encWords
+                        (List.ofFn fun w =>
+                          List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (↑w) (v ↑w))))
+                      (Complexity.BinArith.encWords
+                        (List.ofFn fun j =>
+                          Turing.pairEncode
+                            (List.ofFn
+                              (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (output j) false))
+                            (List.ofFn
+                              (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (output j)
+                                true)))))] }.encode
+          aliceOutput)
+  {κ : Type u_1} [Fintype κ] (D : List Bool → κ → Bool) :
+  TCSlib.Cryptography.acceptProb real D =
+    TCSlib.Cryptography.acceptProb
+      (fun r =>
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C (seed (List.ofFn r)) inA inB
+          outLen output v commonInput bobInput bobCoins aliceOutput 0)
+      D
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_real_eq_stage0' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_real_eq_stage0_fst.{u_1, u_2}
+  {inputs : ℕ} (C : BoolCircuit.DAGCircuit inputs) (S n : ℕ)
+  (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool) (hS : C.size ≤ S)
+  (seed :
+    List Bool → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (hK :
+    ∀ (q : List Bool) (w : Fin C.size) (b : Bool) (t : Fin n),
+      (seed q).1 w b t = q.getD ((b.toNat * S + ↑w) * n + ↑t) false)
+  (hR₀ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).1 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t) false)
+  (hR₁ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).2 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n + ↑t)
+          false)
+  (hP :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin C.gates[i].args.length),
+      ((seed q).2.2 i) a t = (a t ^^ q.getD (10 * S * n + 2 * ↑i + ↑t) false))
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin n → Bool) (List Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (real : (Fin (10 * S * n + 2 * S) → Bool) → List Bool)
+  (hReal :
+    ∀ (r : Fin (10 * S * n + 2 * S) → Bool),
+      real r =
+        Turing.pairEncode
+          { x := commonInput,
+              z :=
+                Turing.pairEncode bobInput
+                  (List.ofFn fun t =>
+                    TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (inA + ↑t.divNat)
+                      (v (inA + ↑t.divNat)) t.modNat),
+              r := bobCoins,
+              received :=
+                [Turing.pairEncode
+                    (Complexity.BinArith.encWords
+                      (List.ofFn fun i =>
+                        Complexity.BinArith.encWords
+                          (TCSlib.Cryptography.SecureComputation.garbledTable M C (seed (List.ofFn r)) i)))
+                    (Turing.pairEncode
+                      (Complexity.BinArith.encWords
+                        (List.ofFn fun w =>
+                          List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (↑w) (v ↑w))))
+                      (Complexity.BinArith.encWords
+                        (List.ofFn fun j =>
+                          Turing.pairEncode
+                            (List.ofFn
+                              (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (output j) false))
+                            (List.ofFn
+                              (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (output j)
+                                true)))))] }.encode
+          aliceOutput)
+  {τ : Type u_1} {κ : Type u_2} [Fintype τ] [Nonempty τ] [Fintype κ] (D : List Bool → κ → Bool) :
+  TCSlib.Cryptography.acceptProb (fun r => real r.1) D =
+    TCSlib.Cryptography.acceptProb
+      (fun r =>
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C (seed (List.ofFn r)) inA inB
+          outLen output v commonInput bobInput bobCoins aliceOutput 0)
+      D
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_real_eq_stage0_fst' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.distAdv_real_stage0_zero.{u_1} {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2)
+  (v : ℕ → Bool) (hS : C.size ≤ S)
+  (seed :
+    List Bool → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (hK :
+    ∀ (q : List Bool) (w : Fin C.size) (b : Bool) (t : Fin n),
+      (seed q).1 w b t = q.getD ((b.toNat * S + ↑w) * n + ↑t) false)
+  (hR₀ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).1 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t) false)
+  (hR₁ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).2 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n + ↑t)
+          false)
+  (hP :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin C.gates[i].args.length),
+      ((seed q).2.2 i) a t = (a t ^^ q.getD (10 * S * n + 2 * ↑i + ↑t) false))
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin n → Bool) (List Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (real : (Fin (10 * S * n + 2 * S) → Bool) → List Bool)
+  (hReal :
+    ∀ (r : Fin (10 * S * n + 2 * S) → Bool),
+      real r =
+        Turing.pairEncode
+          { x := commonInput,
+              z :=
+                Turing.pairEncode bobInput
+                  (List.ofFn fun t =>
+                    TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (inA + ↑t.divNat)
+                      (v (inA + ↑t.divNat)) t.modNat),
+              r := bobCoins,
+              received :=
+                [Turing.pairEncode
+                    (Complexity.BinArith.encWords
+                      (List.ofFn fun i =>
+                        Complexity.BinArith.encWords
+                          (TCSlib.Cryptography.SecureComputation.garbledTable M C (seed (List.ofFn r)) i)))
+                    (Turing.pairEncode
+                      (Complexity.BinArith.encWords
+                        (List.ofFn fun w =>
+                          List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (↑w) (v ↑w))))
+                      (Complexity.BinArith.encWords
+                        (List.ofFn fun j =>
+                          Turing.pairEncode
+                            (List.ofFn
+                              (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (output j) false))
+                            (List.ofFn
+                              (TCSlib.Cryptography.SecureComputation.keyAt C (seed (List.ofFn r)) (output j)
+                                true)))))] }.encode
+          aliceOutput)
+  {κ : Type u_1} [Fintype κ] (D : List Bool → κ → Bool) :
+  TCSlib.Cryptography.distAdv real
+      (fun r =>
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C (seed (List.ofFn r)) inA inB
+          outLen output v commonInput bobInput bobCoins aliceOutput 0)
+      D =
+    0
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.distAdv_real_stage0_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.sample_end_of_result {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (result : Fin outLen → Bool)
+  (hResult : ∀ (j : Fin outLen), v (output j) = result j) (commonInput bobInput bobCoins aliceOutput : List Bool) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C s inA inB outLen output v
+      commonInput bobInput bobCoins aliceOutput (2 * C.gates.length) =
+    Turing.pairEncode
+      { x := commonInput,
+          z :=
+            Turing.pairEncode bobInput
+              (List.ofFn (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C s inA inB)),
+          r := bobCoins,
+          received :=
+            [TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message M C s inA outLen output
+                result] }.encode
+      aliceOutput
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.sample_end_of_result' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_end_eq_fake.{u_1, u_2}
+  {inputs width : ℕ} {ρ : Type} {σ : Type u_1} {κ : Type u_2} [Fintype σ] [Fintype κ]
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs)
+  (seed : σ → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ) (inA inB outLen : ℕ)
+  (output : Fin outLen → ℕ) (v : ℕ → Bool) (result : Fin outLen → Bool)
+  (hResult : ∀ (j : Fin outLen), v (output j) = result j) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (D : List Bool → κ → Bool) :
+  TCSlib.Cryptography.acceptProb
+      (fun r =>
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C (seed r) inA inB outLen output
+          v commonInput bobInput bobCoins aliceOutput (2 * C.gates.length))
+      D =
+    TCSlib.Cryptography.acceptProb
+      (fun r =>
+        Turing.pairEncode
+          { x := commonInput,
+              z :=
+                Turing.pairEncode bobInput
+                  (List.ofFn
+                    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C (seed r) inA
+                      inB)),
+              r := bobCoins,
+              received :=
+                [TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message M C (seed r) inA outLen output
+                    result] }.encode
+          aliceOutput)
+      D
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_end_eq_fake' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_end_eq_ideal.{u_1, u_2, u_3}
+  {inputs width : ℕ} {ρ : Type} {σ : Type u_1} {τ : Type u_2} [Fintype σ] [Fintype τ]
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs)
+  (seed : σ → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ) (inA inB outLen : ℕ)
+  (output : Fin outLen → ℕ) (v : ℕ → Bool) (result : Fin outLen → Bool)
+  (hResult : ∀ (j : Fin outLen), v (output j) = result j) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (e : σ ≃ τ) (ideal : τ → List Bool)
+  (hIdeal :
+    ∀ (r : σ),
+      ideal (e r) =
+        Turing.pairEncode
+          { x := commonInput,
+              z :=
+                Turing.pairEncode bobInput
+                  (List.ofFn
+                    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C (seed r) inA
+                      inB)),
+              r := bobCoins,
+              received :=
+                [TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message M C (seed r) inA outLen output
+                    result] }.encode
+          aliceOutput)
+  {κ : Type u_3} [Fintype κ] (D : List Bool → κ → Bool) :
+  TCSlib.Cryptography.acceptProb
+      (fun r =>
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C (seed r) inA inB outLen output
+          v commonInput bobInput bobCoins aliceOutput (2 * C.gates.length))
+      D =
+    TCSlib.Cryptography.acceptProb ideal D
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_end_eq_ideal' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.distAdv_end_ideal_zero.{u_1, u_2, u_3}
+  {inputs width : ℕ} {ρ : Type} {σ : Type u_1} {τ : Type u_2} [Fintype σ] [Fintype τ]
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs)
+  (seed : σ → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ) (inA inB outLen : ℕ)
+  (output : Fin outLen → ℕ) (v : ℕ → Bool) (result : Fin outLen → Bool)
+  (hResult : ∀ (j : Fin outLen), v (output j) = result j) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (e : σ ≃ τ) (ideal : τ → List Bool)
+  (hIdeal :
+    ∀ (r : σ),
+      ideal (e r) =
+        Turing.pairEncode
+          { x := commonInput,
+              z :=
+                Turing.pairEncode bobInput
+                  (List.ofFn
+                    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C (seed r) inA
+                      inB)),
+              r := bobCoins,
+              received :=
+                [TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message M C (seed r) inA outLen output
+                    result] }.encode
+          aliceOutput)
+  {κ : Type u_3} [Fintype κ] (D : List Bool → κ → Bool) :
+  TCSlib.Cryptography.distAdv
+      (fun r =>
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C (seed r) inA inB outLen output
+          v commonInput bobInput bobCoins aliceOutput (2 * C.gates.length))
+      ideal D =
+    0
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.distAdv_end_ideal_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+STORED_CONSTANT_COUNT 10
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.distAdv_end_ideal_zero: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.distAdv_end_ideal_zero: closure=9211 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_real_eq_stage0: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_real_eq_stage0: closure=9254 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.sample_end_of_result: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.sample_end_of_result: closure=2720 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_end_eq_fake: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_end_eq_fake: closure=8038 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.distAdv_real_stage0_zero: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.distAdv_real_stage0_zero: closure=9845 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SamplerEndpoints.0._proof_8: [propext, Quot.sound]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SamplerEndpoints.0._proof_8: closure=1297 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_end_eq_ideal: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_end_eq_ideal: closure=8075 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SamplerEndpoints.0._proof_9: [propext, Quot.sound]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SamplerEndpoints.0._proof_9: closure=1298 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.real_eq_stage0_on_tape: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.real_eq_stage0_on_tape: closure=4742 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_real_eq_stage0_fst: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SamplerEndpoints.acceptProb_real_eq_stage0_fst: closure=10240 sorried=[]
+       30.02 real        27.89 user         1.34 sys
+          2223210496  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              164455  page reclaims
+               11516  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 357  voluntary context switches
+               10207  involuntary context switches
+            32219017  instructions retired
+            16439141  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-16T02:27:18.924228+00:00 exit=0

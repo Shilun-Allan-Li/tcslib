@@ -1,0 +1,103 @@
+START 2026-11-16T02:10:38.417257+00:00 evidence/probes/BobAnswersGlue
+evidence/probes/BobAnswersGlue.lean:22:4: error: Tactic `rfl` failed: The left-hand side
+  (List.ofFn
+      (List.length ∘ fun j =>
+        List.ofFn
+          (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j) ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2)).sum
+is not definitionally equal to the right-hand side
+  Y.inB.eval n * n
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+n : ℕ
+xs ys rA rB : List Bool
+v : ℕ → Bool
+hv : ∀ (i : Fin (Y.inB.eval n)), v (Y.inA.eval n + ↑i) = ys.getD (↑i) false
+⊢ (List.ofFn
+        (List.length ∘ fun j =>
+          List.ofFn
+            (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j) ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2)).sum =
+    Y.inB.eval n * n
+evidence/probes/BobAnswersGlue.lean:29:38: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (Equiv.symm ?e) (?e ?x)
+in the target expression
+  ((yaoHybrid Y E₁ E₂).answersB n xs ys rA rB).getD (↑(finProdFinEquiv (i, t))) false =
+    keyAt (Y.circ n) (RelabelGarbling.relabelSeed (Y.circ n) v (yaoSeed Y n rA))
+      (Y.inA.eval n + ↑(finProdFinEquiv (i, t)).divNat) false (finProdFinEquiv (i, t)).modNat
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+n : ℕ
+xs ys rA rB : List Bool
+v : ℕ → Bool
+hv : ∀ (i : Fin (Y.inB.eval n)), v (Y.inA.eval n + ↑i) = ys.getD (↑i) false
+hlen : ((yaoHybrid Y E₁ E₂).answersB n xs ys rA rB).length = Y.inB.eval n * n
+i : Fin (Y.inB.eval n)
+t : Fin n
+⊢ ((yaoHybrid Y E₁ E₂).answersB n xs ys rA rB).getD (↑(finProdFinEquiv (i, t))) false =
+    keyAt (Y.circ n) (RelabelGarbling.relabelSeed (Y.circ n) v (yaoSeed Y n rA))
+      (Y.inA.eval n + ↑(finProdFinEquiv (i, t)).divNat) false (finProdFinEquiv (i, t)).modNat
+evidence/probes/BobAnswersGlue.lean:20:15: warning: This simp argument is unused:
+  Function.comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵o̵f̵F̵n̵,̵[̲L̲i̲s̲t̲.̲l̲e̲n̲g̲t̲h̲_̲o̲f̲F̲n̲,̲ otFunctionality_outB, PolyExpr.eval_const, List.ofFn_const,
+  ̲  ̲ ̲ ̲ ̲ ̲List.sum_replicate_nat, Nat.mul_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+evidence/probes/BobAnswersGlue.lean:20:36: warning: This simp argument is unused:
+  List.length_ofFn
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵o̵f̵F̵n̵,̵ ̵otFunctionality_outB, PolyExpr.eval_const, List.ofFn_const,
+  ̲  ̲ ̲ ̲ ̲ ̲List.sum_replicate_nat, Nat.mul_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+evidence/probes/BobAnswersGlue.lean:21:27: warning: This simp argument is unused:
+  List.ofFn_const
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, List.length_ofFn, otFunctionality_outB,
+  ̵  ̵ ̵ ̵ ̵ ̵PolyExpr.eval_const,
+  ̲ L̵i̵s̵t̵.̵o̵f̵F̵n̵_̵c̵o̵n̵s̵t̵,̵  ̲ ̲ ̲ ̲List.sum_replicate_nat, Nat.mul_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+evidence/probes/BobAnswersGlue.lean:21:44: warning: This simp argument is unused:
+  List.sum_replicate_nat
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, List.length_ofFn, otFunctionality_outB, PolyExpr.eval_const,
+  ̲  ̲ ̲ ̲ ̲ ̲List.ofFn_const, L̵i̵s̵t̵.̵s̵u̵m̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵_̵n̵a̵t̵,̵ ̵Nat.mul_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+evidence/probes/BobAnswersGlue.lean:21:68: warning: This simp argument is unused:
+  Nat.mul_one
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, List.length_ofFn, otFunctionality_outB,
+  ̵  ̵ ̵ ̵ ̵ ̵PolyExpr.eval_const,
+  ̲  ̲ ̲ ̲ ̲ ̲List.ofFn_const, List.sum_replicate_nat,̵ ̵N̵a̵t̵.̵m̵u̵l̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(evidence/probes/BobAnswersGlue): lean exited with status 1
+FAIL(evidence/probes/BobAnswersGlue): error diagnostics reported
+FAIL(evidence/probes/BobAnswersGlue): no fresh .olean produced
+        3.44 real         1.63 user         1.14 sys
+          2248097792  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              167389  page reclaims
+               10571  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 618  voluntary context switches
+               11012  involuntary context switches
+            32212108  instructions retired
+            19637491  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-16T02:10:41.892424+00:00 EXIT 1

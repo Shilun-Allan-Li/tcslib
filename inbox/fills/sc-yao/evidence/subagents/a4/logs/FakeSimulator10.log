@@ -1,0 +1,55 @@
+START 2026-11-16T01:42:34Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulator
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulator.lean:291:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    F.idealB _a n x y r =
+      pairEncode
+        { x := List.replicate n true, z := pairEncode (List.ofFn y) (answersAt d n (List.ofFn r)), r := [],
+            received := [messageAt d n (List.ofFn r) (List.ofFn (F.f n x y).2)] }.encode
+        (List.ofFn (F.f n x y).1)
+Error: Application type mismatch: The argument
+  r
+has type
+  (simulator d coins).Coins n
+but is expected to have type
+  _a.Coins n
+in the application
+  F.idealB _a n x y r
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+d : Data
+coins : PolyExpr
+F : Functionality
+n : ℕ
+x : Fin (F.inA.eval n) → Bool
+y : Fin (F.inB.eval n) → Bool
+r : (simulator d coins).Coins n
+⊢ F.idealB (simulator d coins) n x y r =
+    pairEncode
+      { x := List.replicate n true, z := pairEncode (List.ofFn y) (answersAt d n (List.ofFn r)), r := [],
+          received := [messageAt d n (List.ofFn r) (List.ofFn (F.f n x y).2)] }.encode
+      (List.ofFn (F.f n x y).1)
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulator): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulator): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulator): no fresh .olean produced
+        3.05 real         2.15 user         1.18 sys
+          2268250112  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179206  page reclaims
+                  16  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  19  voluntary context switches
+                5450  involuntary context switches
+            32211678  instructions retired
+            15113133  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T01:42:37Z status=1

@@ -1,0 +1,61 @@
+START 2026-11-16T02:22:14.954320+00:00
+SEALED	TCSlib.Cryptography.Pseudorandom.Indistinguishability	TCSlib.Cryptography.multicopyHybrid
+EXCLUDED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.noConfusion
+EXCLUDED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.mk.noConfusion
+EXCLUDED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.ctorIdx
+SEALED	TCSlib.Cryptography.SecureComputation.Yao.HybridProof.CoordinateSwap	TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoordinateSwap.swap
+SEALED	TCSlib.Cryptography.Pseudorandom.Indistinguishability	TCSlib.Cryptography.mixDist
+SEALED	TCSlib.InformationTheory.StatisticalDistance	TCSlib.InformationTheory.statDist
+SEALED	TCSlib.Cryptography.Foundations.Experiments	TCSlib.Cryptography.acceptProb
+EXCLUDED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.prob
+SEALED	TCSlib.Cryptography.Pseudorandom.Indistinguishability	TCSlib.Cryptography.sunglassRed
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist._sizeOf_1
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist._sizeOf_inst
+EXCLUDED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.recOn
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.collision
+SEALED	TCSlib.Cryptography.Foundations.Experiments	TCSlib.Cryptography.invProb
+SEALED	TCSlib.Cryptography.Foundations.Experiments	TCSlib.Cryptography.predProb
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.instCoeFunForallReal
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.HasMinEntropy
+SEALED	TCSlib.Cryptography.Foundations.Experiments	TCSlib.Cryptography.distAdv
+EXCLUDED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.noConfusionType
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.mk._flat_ctor
+SEALED	TCSlib.Cryptography.Pseudorandom.Indistinguishability	TCSlib.Cryptography.multicopyAvgRed
+SEALED	TCSlib.Cryptography.Pseudorandom.Indistinguishability	TCSlib.Cryptography.multicopyRed
+EXCLUDED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.casesOn
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.uniform
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.probTrue
+SEALED	TCSlib.Cryptography.Foundations.Probability	TCSlib.Cryptography.uprob
+SEALED	TCSlib.Cryptography.Pseudorandom.Indistinguishability	TCSlib.Cryptography.copies
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.map
+SEALED	TCSlib.Cryptography.Foundations.Probability	TCSlib.Cryptography.uexp
+SEALED	TCSlib.Cryptography.SecureComputation.Yao.HybridProof.CoordinateSwap	TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoordinateSwap.equiv
+SEALED	TCSlib.InformationTheory.FinDist	TCSlib.InformationTheory.FinDist.prod
+SEALED	TCSlib.Cryptography.Pseudorandom.Indistinguishability	TCSlib.Cryptography.pushSampler
+SEAL_COUNTS requested=26 excluded=7
+evidence/subagents/a5/seals/controls/Control_A_strict_sealed.lean:49:2: error: Tactic `rfl` failed: The left-hand side
+  TCSlib.Cryptography.uprob p
+is not definitionally equal to the right-hand side
+  ↑(Nat.card { a // p a }) / ↑(Fintype.card (Fin 1))
+
+p : Fin 1 → Prop
+⊢ TCSlib.Cryptography.uprob p = ↑(Nat.card { a // p a }) / ↑(Fintype.card (Fin 1))
+       22.69 real        21.53 user         1.15 sys
+          2154741760  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              168485  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                1151  involuntary context switches
+        106668881172  instructions retired
+         63532779827  cycles elapsed
+           345251104  peak memory footprint
+END 2026-11-16T02:22:37.674135+00:00

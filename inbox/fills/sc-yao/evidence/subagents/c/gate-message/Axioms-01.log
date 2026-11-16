@@ -1,0 +1,218 @@
+START 2026-11-16T01:48:15.360162+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage : ℕ) : List Bool
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_eq {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage : ℕ) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C s inA outLen output v stage =
+    Turing.pairEncode
+      (Complexity.BinArith.encWords
+        (List.ofFn fun i =>
+          Complexity.BinArith.encWords
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.tableWith M C s
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v stage) i)))
+      (Turing.pairEncode
+        (Complexity.BinArith.encWords
+          (List.ofFn fun w => List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C s (↑w) false)))
+        (Complexity.BinArith.encWords
+          (List.ofFn fun j =>
+            Turing.pairEncode
+              (List.ofFn
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.decodePair C s (output j)
+                    (v (output j))).1)
+              (List.ofFn
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.decodePair C s (output j)
+                    (v (output j))).2))))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (stage : ℕ) : List Bool
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_eq {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (stage : ℕ) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C s inA inB outLen output v
+      commonInput bobInput bobCoins aliceOutput stage =
+    Turing.pairEncode
+      { x := commonInput,
+          z :=
+            Turing.pairEncode bobInput
+              (List.ofFn (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C s inA inB)),
+          r := bobCoins,
+          received :=
+            [TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C s inA outLen output v
+                stage] }.encode
+      aliceOutput
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.activeAnswers_relabel {inputs width : ℕ}
+  {ρ : Type} (C : BoolCircuit.DAGCircuit inputs)
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ) (v : ℕ → Bool) (first count : ℕ) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) first count =
+    fun t => TCSlib.Cryptography.SecureComputation.keyAt C s (first + ↑t.divNat) (v (first + ↑t.divNat)) t.modNat
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.activeAnswers_relabel' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.decodePair_relabel {inputs width : ℕ} {ρ : Type}
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (v : ℕ → Bool) (w : ℕ) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.decodePair C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) w (v w) =
+    (TCSlib.Cryptography.SecureComputation.keyAt C s w false, TCSlib.Cryptography.SecureComputation.keyAt C s w true)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.decodePair_relabel' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_relabel {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) :
+  Turing.pairEncode
+      (Complexity.BinArith.encWords
+        (List.ofFn fun i => Complexity.BinArith.encWords (TCSlib.Cryptography.SecureComputation.garbledTable M C s i)))
+      (Turing.pairEncode
+        (Complexity.BinArith.encWords
+          (List.ofFn fun w => List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C s (↑w) (v ↑w))))
+        (Complexity.BinArith.encWords
+          (List.ofFn fun j =>
+            Turing.pairEncode (List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C s (output j) false))
+              (List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C s (output j) true))))) =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) inA outLen output v 0
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_relabel' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_end {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C s inA outLen output v
+      (2 * C.gates.length) =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message M C s inA outLen output fun j =>
+      v (output j)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_end' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_relabel {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool)
+  (commonInput bobInput bobCoins aliceOutput : List Bool) :
+  Turing.pairEncode
+      { x := commonInput,
+          z :=
+            Turing.pairEncode bobInput
+              (List.ofFn fun t =>
+                TCSlib.Cryptography.SecureComputation.keyAt C s (inA + ↑t.divNat) (v (inA + ↑t.divNat)) t.modNat),
+          r := bobCoins,
+          received :=
+            [Turing.pairEncode
+                (Complexity.BinArith.encWords
+                  (List.ofFn fun i =>
+                    Complexity.BinArith.encWords (TCSlib.Cryptography.SecureComputation.garbledTable M C s i)))
+                (Turing.pairEncode
+                  (Complexity.BinArith.encWords
+                    (List.ofFn fun w => List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C s (↑w) (v ↑w))))
+                  (Complexity.BinArith.encWords
+                    (List.ofFn fun j =>
+                      Turing.pairEncode (List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C s (output j) false))
+                        (List.ofFn (TCSlib.Cryptography.SecureComputation.keyAt C s (output j) true)))))] }.encode
+      aliceOutput =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) inA inB outLen output v
+      commonInput bobInput bobCoins aliceOutput 0
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_relabel' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_end {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool)
+  (commonInput bobInput bobCoins aliceOutput : List Bool) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C s inA inB outLen output v
+      commonInput bobInput bobCoins aliceOutput (2 * C.gates.length) =
+    Turing.pairEncode
+      { x := commonInput,
+          z :=
+            Turing.pairEncode bobInput
+              (List.ofFn (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C s inA inB)),
+          r := bobCoins,
+          received :=
+            [TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message M C s inA outLen output fun j =>
+                v (output j)] }.encode
+      aliceOutput
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_end' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+STORED_CONSTANT_COUNT 10
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_eq: closure=2597 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.decodePair_relabel: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.decodePair_relabel: closure=1384 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.activeAnswers_relabel: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.activeAnswers_relabel: closure=1504 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message: closure=2596 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_end: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_end: closure=2719 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_eq: closure=2628 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_end: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_end: closure=2687 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_relabel: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample_relabel: closure=2669 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample: closure=2627 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_relabel: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message_relabel: closure=2635 sorried=[]
+       25.48 real        24.22 user         1.17 sys
+          2215657472  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175366  page reclaims
+                  18  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  18  voluntary context switches
+                2263  involuntary context switches
+            31909555  instructions retired
+            14423727  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-16T01:48:40.876636+00:00 exit=0

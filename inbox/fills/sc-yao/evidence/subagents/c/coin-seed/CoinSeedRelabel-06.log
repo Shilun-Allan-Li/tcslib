@@ -1,0 +1,47 @@
+START 2026-11-16T00:11:48.094335+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:189:90: error: unsolved goals
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2
+v : ℕ → Bool
+hG : C.gates.length ≤ S
+i : Fin C.gates.length
+⊢ assignmentPerm C.gates[↑i].args.length ⋯ (RelabelGarbling.argValues C v ⟨↑i, ⋯⟩) =
+    assignmentPerm C.gates[i].args.length ⋯ (RelabelGarbling.argValues C v i)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:241:22: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  dite (↑t < C.gates[i].args.length) ?m.156 ?m.157
+in the target expression
+  (if ht : ↑t < C.gates[↑i].args.length then v C.gates[↑i].args[↑t] else false) = v C.gates[i].args[t]
+
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2
+v : ℕ → Bool
+hG : C.gates.length ≤ S
+i : Fin C.gates.length
+t : Fin C.gates[i].args.length
+⊢ (if ht : ↑t < C.gates[↑i].args.length then v C.gates[↑i].args[↑t] else false) = v C.gates[i].args[t]
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): no fresh .olean produced
+        3.08 real         2.27 user         1.03 sys
+          2188050432  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170984  page reclaims
+                2784  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 182  voluntary context switches
+                5594  involuntary context switches
+            32345522  instructions retired
+            15882392  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T00:12:11.309947+00:00 exit=1

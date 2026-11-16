@@ -1,0 +1,43 @@
+COMMAND ['rg', '-n', '(acceptProb_comp_equiv|acceptProb_fst|distAdv_def)', 'TCSlib/Cryptography/Foundations/Experiments.lean', 'TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean']
+TCSlib/Cryptography/Foundations/Experiments.lean:38:* `acceptProb_comp_equiv`: relabelling the seeds by a bijection preserves acceptance.
+TCSlib/Cryptography/Foundations/Experiments.lean:102:theorem distAdv_def (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Foundations/Experiments.lean:107:theorem acceptProb_comp_equiv (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:41:* `uprob_eq_of_equiv`, `acceptProb_fst`, `acceptProb_snd`,
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:73:theorem acceptProb_fst [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:82:/-- As `acceptProb_fst`, for an ignored first seed coordinate. -/
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:85:  (acceptProb_comp_equiv (Equiv.prodComm τ σ) (fun z : σ × τ => X z.1) D).trans
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:86:    (acceptProb_fst X D)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:112:  rw [← acceptProb_fst (τ := σ) (fun v : (ι → σ) × τ => Z v.1 v.2) D]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:113:  exact acceptProb_comp_equiv e (fun w : ((ι → σ) × τ) × σ => Z w.1.1 w.1.2) D
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:135:  simp only [distAdv_def]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:143:  simp only [distAdv_def, acceptProb_def]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:175:  simp only [distAdv_def]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:231:  rw [h, acceptProb_fst]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:273:  refine Eq.trans ?_ ((acceptProb_comp_equiv e _ D).trans
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:276:    (acceptProb_comp_equiv (Equiv.prodComm _ _) (multicopyHybrid X Y t (k + 1)) D)))
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:301:  simp only [distAdv_def]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:323:    (fun k => acceptProb_multicopyRed_right X Y k.isLt D), distAdv_def,
+EXIT 0
+
+COMMAND ['rg', '-n', '(acceptProb_coins_equiv|acceptProb_coins_fst)', 'TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean']
+48:* `TCSlib.Cryptography.EnsembleLemmas.acceptProb_coins_equiv`, `acceptProb_coins_fst`,
+85:theorem acceptProb_coins_equiv (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool) :
+92:theorem acceptProb_coins_fst [Nonempty κ] (X : σ → γ) (D : γ → ρ → Bool) :
+264:  rw [← acceptProb_coins_equiv e, ← acceptProb_not]
+282:  rw [← acceptProb_coins_equiv e]
+290:(`acceptProb_coins_fst`) after the split `coinsEquiv`. -/
+300:  rw [← acceptProb_coins_equiv (coinsEquiv hlen)]
+301:  conv_rhs => rw [← acceptProb_coins_fst (κ := Fin (D.coinLen (p.eval m) - D.coinLen (φ m)) → Bool)
+363:  rw [← acceptProb_coins_equiv (coinsEquiv hlen),
+EXIT 0
+
+COMMAND ['rg', '-n', '(sample_relabel|sample_end)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridMessage.lean']
+29:* `message_end`, `sample_end`: exact canonical fake-message/view endpoints.
+143:theorem sample_relabel (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
+164:theorem sample_end (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
+EXIT 0
+
+COMMAND ['rg', '-n', 'seed_relabel', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean']
+29:* `seed_relabel`: the seed of the relabeled tape is the relabeling of the original seed.
+350:theorem seed_relabel {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+EXIT 0

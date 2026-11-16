@@ -1,0 +1,62 @@
+START 2026-11-16T00:15:18.951053+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:352:63: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ((seed ?q).2.2 ?i) ?a ?t
+in the target expression
+  (a t ^^
+      (List.ofFn ((CoinRelabel.relabel S n (keyMask C S v) (rowPerm C S hA v) (shiftMask C S v)) r)).getD
+        (10 * S * n + 2 * ↑i + ↑t) false) =
+    (fun i_1 => ((seed (List.ofFn r)).2.2 i) a i_1 ^^ RelabelGarbling.argValues C v i i_1) t
+
+case snd.snd.h.H.h
+m : ℕ
+C : DAGCircuit m
+S n : ℕ
+hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2
+v : ℕ → Bool
+hS : C.size ≤ S
+seed : List Bool → GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool))
+hK :
+  ∀ (q : List Bool) (w : Fin C.size) (b : Bool) (t : Fin n),
+    (seed q).1 w b t = q.getD ((b.toNat * S + ↑w) * n + ↑t) false
+hR₀ :
+  ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+    ((seed q).2.1 i a).1 t =
+      q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t) false
+hR₁ :
+  ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+    ((seed q).2.1 i a).2 t =
+      q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n + ↑t) false
+hP :
+  ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin C.gates[i].args.length),
+    ((seed q).2.2 i) a t = (a t ^^ q.getD (10 * S * n + 2 * ↑i + ↑t) false)
+r : Fin (10 * S * n + 2 * S) → Bool
+hG : C.gates.length ≤ S
+i : Fin C.gates.length
+a : Fin C.gates[i].args.length → Bool
+t : Fin C.gates[i].args.length
+⊢ (a t ^^
+      (List.ofFn ((CoinRelabel.relabel S n (keyMask C S v) (rowPerm C S hA v) (shiftMask C S v)) r)).getD
+        (10 * S * n + 2 * ↑i + ↑t) false) =
+    (fun i_1 => ((seed (List.ofFn r)).2.2 i) a i_1 ^^ RelabelGarbling.argValues C v i i_1) t
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): no fresh .olean produced
+        4.81 real         4.01 user         1.31 sys
+          2203762688  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172149  page reclaims
+                2775  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 179  voluntary context switches
+                7574  involuntary context switches
+            33343262  instructions retired
+            25465336  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-16T00:15:23.808786+00:00 exit=1

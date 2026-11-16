@@ -127,6 +127,30 @@ theorem tableWord_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCo
   exact tableWordWith_poly _ hargs (fun l _ a =>
     RowFromCoins.rowWord_poly hE₁ hE₂ hwidth hbound hinputs hgate hkind hargs hcoins l a)
 
+/-- On an encoded unary argument list of length at most two, the guarded table adapter
+is precisely the encoded fixed-enumeration row list at that genuine argument length.
+
+**Proof sketch.** Canonical decoding determines the argument-word count. The fan-in bound
+removes the malformed-word guard and makes the capped arity equal the genuine length.
+Normalize that natural arity before opening the dependent finite assignment enumeration. -/
+theorem tableWordWith_of_encoded (args : List Bool → List Bool)
+    (row : ∀ l : ℕ, (Fin l → Bool) → List Bool → List Bool) (z : List Bool)
+    (vertices : List ℕ) (hfan : vertices.length ≤ 2)
+    (hargs : args z = BinArith.encWords (vertices.map fun v => List.replicate v true)) :
+    tableWordWith args row z = BinArith.encWords
+      ((Finset.univ : Finset (Fin vertices.length → Bool)).toList.map fun a =>
+        row vertices.length a z) := by
+  have hcount : (BinArith.decWords (args z)).length = vertices.length := by
+    rw [hargs, BinArith.decWords_encWords, List.length_map]
+  have hcap : min (BinArith.decWords (args z)).length 2 = vertices.length := by
+    rw [hcount, min_eq_left hfan]
+  let emit (l : ℕ) := BinArith.encWords
+    ((Finset.univ : Finset (Fin l → Bool)).toList.map fun a => row l a z)
+  rw [tableWordWith_eq]
+  change (if (BinArith.decWords (args z)).length ≤ 2 then
+    emit (min (BinArith.decWords (args z)).length 2) else []) = emit vertices.length
+  rw [if_pos (by rw [hcount]; exact hfan), hcap]
+
 /-- On a genuine argument-word list, if every raw row equals the corresponding garbled
 row after the seed permutation, the table adapter equals the encoded garbled table.
 [PS10, Protocol 162.6]
@@ -147,22 +171,43 @@ theorem tableWord_garbledTable (E₁ E₂ : List Bool → List Bool)
         garbledRow (nestedSpecial E₁ E₂ (width z)) C s i (s.2.2 i a)) :
     tableWord E₁ E₂ width bound inputs gate kind args coins z =
       BinArith.encWords (garbledTable (nestedSpecial E₁ E₂ (width z)) C s i) := by
-  have hcount : (BinArith.decWords (args z)).length = (C.gates[i]).args.length := by
-    rw [hargs, BinArith.decWords_encWords, List.length_map]
-  have hcap : min (BinArith.decWords (args z)).length 2 = (C.gates[i]).args.length := by
-    rw [hcount, min_eq_left hfan]
-  let emit (l : ℕ) := BinArith.encWords
-    ((Finset.univ : Finset (Fin l → Bool)).toList.map fun a =>
-      RowFromCoins.rowWord E₁ E₂ width bound inputs gate kind args coins l a z)
-  rw [tableWord_eq]
-  change (if (BinArith.decWords (args z)).length ≤ 2 then
-    emit (min (BinArith.decWords (args z)).length 2) else []) = _
-  rw [if_pos (by rw [hcount]; exact hfan), hcap]
-  dsimp only [emit]
-  rw [garbledTable_eq]
+  change tableWordWith args (fun l a =>
+    RowFromCoins.rowWord E₁ E₂ width bound inputs gate kind args coins l a) z = _
+  rw [tableWordWith_of_encoded args _ z (C.gates[i]).args hfan hargs, garbledTable_eq]
   apply congrArg BinArith.encWords
   apply List.map_congr_left
   intro a _
   exact hrow a
+
+
+/-- Two guarded table adapters agree at their inputs when their argument words agree
+and their supplied row maps agree pointwise at every arity and assignment.
+
+**Proof sketch.** Package each dependent assignment enumeration as a function of its
+natural arity. Rewrite the argument-word equality before opening that enumeration, so both
+sides use the same finite domain. Congruence of the encoded list and its map then reduces
+the table equality to the supplied row equality; both rejected branches are empty. -/
+theorem tableWordWith_congr_at (args args' : List Bool → List Bool)
+    (row row' : ∀ l : ℕ, (Fin l → Bool) → List Bool → List Bool) (z z' : List Bool)
+    (hargs : args z = args' z') (hrow : ∀ l a, row l a z = row' l a z') :
+    tableWordWith args row z = tableWordWith args' row' z' := by
+  let left (l : ℕ) := BinArith.encWords
+    ((Finset.univ : Finset (Fin l → Bool)).toList.map fun a => row l a z)
+  let right (l : ℕ) := BinArith.encWords
+    ((Finset.univ : Finset (Fin l → Bool)).toList.map fun a => row' l a z')
+  rw [tableWordWith_eq, tableWordWith_eq]
+  change (if (BinArith.decWords (args z)).length ≤ 2 then
+    left (min (BinArith.decWords (args z)).length 2) else []) =
+      if (BinArith.decWords (args' z')).length ≤ 2 then
+        right (min (BinArith.decWords (args' z')).length 2) else []
+  rw [hargs]
+  split_ifs
+  · dsimp only [left, right]
+    apply congrArg BinArith.encWords
+    apply List.map_congr_left
+    intro a _
+    exact hrow _ a
+  · rfl
+
 
 end TCSlib.Cryptography.SecureComputation.YaoHybridProof.TablesFromCoins

@@ -1,0 +1,149 @@
+START 2026-11-16T02:12:42Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:122:4: error: failed to synthesize
+  Fintype ((P × (I → V)) × (J → V))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:123:6: error: failed to synthesize
+  Fintype (P × (I → V))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:124:12: error: failed to synthesize
+  Fintype ((P × (I → V)) × (J → V))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:126:2: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:123:24: error: unsolved goals
+case refine_1
+P : Type u_1
+I : Type u_2
+J : Type u_3
+V : Type u_4
+inst✝⁵ : Fintype P
+inst✝⁴ : Fintype I
+inst✝³ : Fintype J
+inst✝² : Fintype V
+inst✝¹ : Nonempty (J → V)
+γ : Type u_5
+ρ : Type u_6
+inst✝ : Fintype ρ
+pick : P → I → Option J
+place : P → J → Option I
+hmatch : ∀ (p : P) (i : I) (j : J), pick p i = some j ↔ place p j = some i
+X : P × (I → V) → γ
+D : γ → ρ → Bool
+⊢ Fintype ((P × (I → V)) × (J → V))
+
+case refine_2
+P : Type u_1
+I : Type u_2
+J : Type u_3
+V : Type u_4
+inst✝⁵ : Fintype P
+inst✝⁴ : Fintype I
+inst✝³ : Fintype J
+inst✝² : Fintype V
+inst✝¹ : Nonempty (J → V)
+γ : Type u_5
+ρ : Type u_6
+inst✝ : Fintype ρ
+pick : P → I → Option J
+place : P → J → Option I
+hmatch : ∀ (p : P) (i : I) (j : J), pick p i = some j ↔ place p j = some i
+X : P × (I → V) → γ
+D : γ → ρ → Bool
+⊢ Fintype ((P × (I → V)) × (J → V))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:147:19: error: failed to synthesize
+  Fintype ((P × (I → V)) × (J → V))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:153:31: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (swap pick place (seedEquiv z.1, challengeEquiv z.2)).1
+in the target expression
+  X (fill z.1 z.2) = X (seedEquiv.symm (swap pick place (Prod.map (⇑seedEquiv) (⇑challengeEquiv) z)).1)
+
+case h
+P : Type u_1
+I : Type u_2
+J : Type u_3
+V : Type u_4
+inst✝⁷ : Fintype P
+inst✝⁶ : Fintype I
+inst✝⁵ : Fintype J
+inst✝⁴ : Fintype V
+S : Type u_5
+T : Type u_6
+γ : Type u_7
+ρ : Type u_8
+inst✝³ : Fintype S
+inst✝² : Fintype T
+inst✝¹ : Nonempty T
+inst✝ : Fintype ρ
+pick : P → I → Option J
+place : P → J → Option I
+hmatch : ∀ (p : P) (i : I) (j : J), pick p i = some j ↔ place p j = some i
+seedEquiv : S ≃ P × (I → V)
+challengeEquiv : T ≃ (J → V)
+fill : S → T → S
+hfill : ∀ (s : S) (c : T), seedEquiv (fill s c) = (swap pick place (seedEquiv s, challengeEquiv c)).1
+X : S → γ
+D : γ → ρ → Bool
+this : Nonempty (J → V) := Nonempty.map (⇑challengeEquiv) inferInstance
+hRelabel :
+  acceptProb (fun s => X (seedEquiv.symm (swap pick place ((seedEquiv.prodCongr challengeEquiv) s)).1)) D =
+    acceptProb (fun w => X (seedEquiv.symm (swap pick place w).1)) D
+z : S × T
+⊢ X (fill z.1 z.2) = X (seedEquiv.symm (swap pick place (Prod.map (⇑seedEquiv) (⇑challengeEquiv) z)).1)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:155:25: error(lean.unknownIdentifier): Unknown identifier `acceptProb_swap`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:145:73: error: unsolved goals
+case refine_1
+P : Type u_1
+I : Type u_2
+J : Type u_3
+V : Type u_4
+inst✝⁷ : Fintype P
+inst✝⁶ : Fintype I
+inst✝⁵ : Fintype J
+inst✝⁴ : Fintype V
+S : Type u_5
+T : Type u_6
+γ : Type u_7
+ρ : Type u_8
+inst✝³ : Fintype S
+inst✝² : Fintype T
+inst✝¹ : Nonempty T
+inst✝ : Fintype ρ
+pick : P → I → Option J
+place : P → J → Option I
+hmatch : ∀ (p : P) (i : I) (j : J), pick p i = some j ↔ place p j = some i
+seedEquiv : S ≃ P × (I → V)
+challengeEquiv : T ≃ (J → V)
+fill : S → T → S
+hfill : ∀ (s : S) (c : T), seedEquiv (fill s c) = (swap pick place (seedEquiv s, challengeEquiv c)).1
+X : S → γ
+D : γ → ρ → Bool
+this : Nonempty (J → V) := ⋯
+⊢ Fintype ((P × (I → V)) × (J → V))
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap): no fresh .olean produced
+        3.12 real         1.71 user         1.22 sys
+          2121908224  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              164288  page reclaims
+                5626  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 430  voluntary context switches
+                6227  involuntary context switches
+            32268497  instructions retired
+            16733395  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T02:12:45Z status=1

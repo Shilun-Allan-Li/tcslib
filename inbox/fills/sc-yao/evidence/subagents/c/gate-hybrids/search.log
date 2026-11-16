@@ -1,0 +1,14 @@
+COMMAND ['rg', '-n', '(tableWith|rowWith|stageBit|hybridTable|gateHybrid)', 'TCSlib/Cryptography/SecureComputation', '--glob', '*.lean', '--max-count', '5']
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridMessage.lean:50:      BinArith.encWords (GateHybrids.tableWith M C s (GateHybrids.stageBit C v stage) i)))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridMessage.lean:64:          BinArith.encWords (GateHybrids.tableWith M C s
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridMessage.lean:65:            (GateHybrids.stageBit C v stage) i)))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridMessage.lean:128:  simp only [message_eq, ← GateHybrids.tableWith_start M C v s,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridMessage.lean:138:  simp only [message_eq, FakeObjects.message_eq, GateHybrids.tableWith_end]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean:23:* `rowWith`, `tableWith`: garbled rows and tables with supplied output-key labels.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean:25:* `stageBit`: the natural-indexed family with cutoff `t / 2` and phase `t % 2`.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean:46:def rowWith (M : MultiEnc K Cipher ρ) (C : DAGCircuit inputs) (s : GarbleSeed C K ρ)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean:51:/-- `rowWith ... bit i a` is the encryption of output key `bit i a` with the
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean:53:theorem rowWith_eq (M : MultiEnc K Cipher ρ) (C : DAGCircuit inputs)
+EXIT 0
+COMMAND ['git', 'grep', '-n', '-E', '(hybridRow|hybridTable|gateHybrid|outputBit|tableWith|rowWith)', 'a73072f1', '--', 'TCSlib/Cryptography/SecureComputation', 'inbox/fills/sc-garble']
+EXIT 1

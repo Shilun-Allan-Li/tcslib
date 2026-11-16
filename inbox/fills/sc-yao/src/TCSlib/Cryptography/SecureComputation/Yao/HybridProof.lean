@@ -4,29 +4,45 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.AliceProgram
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.AliceSimulator
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.AliceStatistical
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.AllTables
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.BobIO
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.BobInit
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.BobProgram
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.BobSimulator
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.BobTables
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.BobViewShape
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.CallEquations
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.ChunkScanner
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.CoinGarbling
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.CoinRead
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.CoinRelabel
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.CoinSeedRelabel
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.CoordinateSwap
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.DescriptionDecoder
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.FakeMessage
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.FakeObjects
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.FakeProgram
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.FakeSimulator
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.FirstTagged
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GarbledRun
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Garbling
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GarblingProgram
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GateHybridMessage
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GateHybrids
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GateOccurrences
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Lengths
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.OTAnswerWords
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.OTInputs
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.ProtocolEfficiency
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.RelabelGarbling
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.RowFromCoins
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.RunWithHost
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SamplerEndpoints
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SimulationBound
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SliceReduction
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.StatisticalSwitch
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Strategies
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TablesFromCoins
@@ -40,41 +56,58 @@ set_option autoImplicit false
 /-!
 # Helpers for Yao’s protocol in the OT-hybrid model
 
-The generic contracts below support polynomial-time garbling, evaluation, message bounds
-and simulation without importing the concrete Yao protocol.
+These generic contracts provide total garbling/evaluation programs, message bounds,
+simulator machines, exact seed relabelings and the probability framework for gate hybrids.
+They do not import the concrete Yao protocol.
 
 ## Contents
 
-* `AliceProgram`: AliceProgram.
-* `AliceSimulator`: AliceSimulator.
-* `AllTables`: AllTables.
-* `BobIO`: BobIO.
-* `BobInit`: BobInit.
-* `BobProgram`: BobProgram.
-* `BobSimulator`: BobSimulator.
-* `BobTables`: BobTables.
-* `CallEquations`: CallEquations.
-* `ChunkScanner`: ChunkScanner.
-* `CoinGarbling`: CoinGarbling.
-* `CoinRead`: CoinRead.
-* `CoinRelabel`: CoinRelabel.
-* `Decryption`: Decryption.
-* `DescriptionDecoder`: DescriptionDecoder.
-* `EvalGate`: EvalGate.
-* `FirstTagged`: FirstTagged.
-* `GarbledRun`: GarbledRun.
-* `Garbling`: Garbling.
-* `GarblingProgram`: GarblingProgram.
-* `Lengths`: Lengths.
-* `OTInputs`: OTInputs.
-* `ProtocolEfficiency`: ProtocolEfficiency.
-* `RowFromCoins`: RowFromCoins.
-* `RunWithHost`: RunWithHost.
-* `StatisticalSwitch`: StatisticalSwitch.
-* `Strategies`: Strategies.
-* `TablesFromCoins`: TablesFromCoins.
-* `TwoMoveViews`: TwoMoveViews.
-* `WordLists`: WordLists.
+* `AliceProgram`: polynomial-time Alice messages from generic circuit and seed readers.
+* `AliceSimulator`: a copying simulator for an Alice-first two-message view.
+* `AliceStatistical`: statistical simulation of the sender's two-message view.
+* `AllTables`: polynomial-time assembly of all garbled tables.
+* `BobIO`: reading the output of an encoded garbled evaluation.
+* `BobInit`: polynomial-time initial keys for a garbled evaluation.
+* `BobProgram`: the complete generic polynomial-time garbled-circuit evaluator.
+* `BobSimulator`: a polynomial-time Bob simulator from generic fake-garbling interfaces.
+* `BobTables`: a total row-table selector for the garbled-evaluation host.
+* `BobViewShape`: the exact Bob-view shape of an OT-hybrid two-message protocol.
+* `CallEquations`: the bit-OT input machines and a product call index.
+* `ChunkScanner`: finite scanners with word-valued emissions.
+* `CoinGarbling`: polynomial-time garbling coin addresses.
+* `CoinRead`: polynomial-time windows of a coin string.
+* `CoinRelabel`: exact coin-block bijections for garbling.
+* `CoinSeedRelabel`: the tape-to-seed coin relabeling bridge.
+* `CoordinateSwap`: re-randomizing a partial family of seed coordinates.
+* `Decryption`: tagged special decryption at arbitrary message lengths.
+* `DescriptionDecoder`: a polynomial-time host for circuit descriptions.
+* `EvalGate`: polynomial-time garbled-gate evaluation.
+* `FakeMessage`: the canonical encoded simulated garbling message.
+* `FakeObjects`: active-key simulated garblings.
+* `FakeProgram`: polynomial-time simulated garbling programs.
+* `FakeSimulator`: a fixed uniform Bob simulator from circuit and seed readers.
+* `FirstTagged`: first successful tagged row in polynomial time.
+* `GarbledRun`: the generic polynomial-time garbled-evaluation host.
+* `Garbling`: polynomial-time leaves for circuit garbling.
+* `GarblingProgram`: generic garbling programs from uniform circuit descriptions.
+* `GateHybridMessage`: encoded endpoints of the garbled-gate hybrid.
+* `GateHybrids`: two-stage garbled-gate hybrids.
+* `GateOccurrences`: all occurrences of a selected inactive wire label.
+* `Lengths`: length bounds for garbled messages.
+* `OTAnswerWords`: bit-transfer answers as active wire labels.
+* `OTInputs`: polynomial-time inputs for bit oblivious transfers.
+* `ProtocolEfficiency`: message bounds for an Alice-first two-move protocol.
+* `RelabelGarbling`: seed-by-seed relabeling of a generic garbling.
+* `RowFromCoins`: a polynomial-time row garbler from coin words.
+* `RunWithHost`: a polynomial-time host for data-dependent gate evaluation.
+* `SamplerEndpoints`: exact sampler transport at the gate-hybrid endpoints.
+* `SimulationBound`: combining the two simulation bounds.
+* `SliceReduction`: advice and averaging for a slice-encryption reduction.
+* `StatisticalSwitch`: statistical switches outside a bad event.
+* `Strategies`: efficient first-message and reply strategies.
+* `TablesFromCoins`: polynomial-time garbled tables from coin words.
+* `TwoMoveViews`: views of an Alice-first two-message protocol.
+* `WordLists`: polynomial-time encoded word vectors.
 
 ## References
 

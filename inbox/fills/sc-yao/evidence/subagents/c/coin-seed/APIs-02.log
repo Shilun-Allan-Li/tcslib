@@ -1,0 +1,42 @@
+START 2026-11-16T00:01:05.856794+00:00
+Equiv.ofInjective.{u_3, u_4} {α : Sort u_3} {β : Type u_4} (f : α → β) (hf : Function.Injective f) : α ≃ ↑(Set.range f)
+Equiv.ofInjective_apply.{u_3, u_4} {α : Sort u_3} {β : Type u_4} (f : α → β) (hf : Function.Injective f) (a : α) :
+  (Equiv.ofInjective f hf) a = ⟨f a, ⋯⟩
+Equiv.Perm.extendDomain.{u_9, u_10} {α' : Type u_9} {β' : Type u_10} (e : Equiv.Perm α') {p : β' → Prop}
+  [DecidablePred p] (f : α' ≃ Subtype p) : Equiv.Perm β'
+Equiv.Perm.extendDomain_apply_image.{u_9, u_10} {α' : Type u_9} {β' : Type u_10} (e : Equiv.Perm α') {p : β' → Prop}
+  [DecidablePred p] (f : α' ≃ Subtype p) (a : α') : (e.extendDomain f) ↑(f a) = ↑(f (e a))
+Equiv.Perm.extendDomain_apply_not_subtype.{u_9, u_10} {α' : Type u_9} {β' : Type u_10} (e : Equiv.Perm α')
+  {p : β' → Prop} [DecidablePred p] (f : α' ≃ Subtype p) {b : β'} (h : ¬p b) : (e.extendDomain f) b = b
+Equiv.Perm.viaFintypeEmbedding.{u_1, u_2} {α : Type u_1} {β : Type u_2} [Fintype α] [DecidableEq β] (e : Equiv.Perm α)
+  (f : α ↪ β) : Equiv.Perm β
+Equiv.Perm.viaFintypeEmbedding_apply_image.{u_1, u_2} {α : Type u_1} {β : Type u_2} [Fintype α] [DecidableEq β]
+  (e : Equiv.Perm α) (f : α ↪ β) (a : α) : (e.viaFintypeEmbedding f) (f a) = f (e a)
+Equiv.Perm.viaFintypeEmbedding_apply_notMem_range.{u_1, u_2} {α : Type u_1} {β : Type u_2} [Fintype α] [DecidableEq β]
+  (e : Equiv.Perm α) (f : α ↪ β) {b : β} (h : b ∉ Set.range ⇑f) : (e.viaFintypeEmbedding f) b = b
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RowFromCoins.assignmentFold_eq_two {l : ℕ} (a : Fin l → Bool)
+  (hl : l ≤ 2) :
+  List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a) =
+    ((List.ofFn a).getD 0 false).toNat + 2 * ((List.ofFn a).getD 1 false).toNat
+Bool.toNat_le (c : Bool) : c.toNat ≤ 1
+Bool.toNat_lt (b : Bool) : b.toNat < 2
+List.getD_eq_default.{u} {α : Type u} (l : List α) (d : α) {n : ℕ} (hn : l.length ≤ n) : l.getD n d = d
+        2.66 real         1.32 user         1.26 sys
+          2151350272  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              168372  page reclaims
+                2923  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 262  voluntary context switches
+               10570  involuntary context switches
+            31920597  instructions retired
+            17721630  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-16T00:01:08.558383+00:00 exit=0

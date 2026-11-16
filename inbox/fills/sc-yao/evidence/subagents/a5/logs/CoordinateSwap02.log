@@ -1,0 +1,78 @@
+START 2026-11-16T02:11:19Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:120:4: error: failed to synthesize
+  Fintype ((P × (I → V)) × (J → V))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:121:6: error: failed to synthesize
+  Fintype (P × (I → V))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:122:12: error: failed to synthesize
+  Fintype ((P × (I → V)) × (J → V))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:124:2: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:121:24: error: unsolved goals
+case refine_1
+P : Type u_1
+I : Type u_2
+J : Type u_3
+V : Type u_4
+inst✝⁵ : Fintype P
+inst✝⁴ : Fintype I
+inst✝³ : Fintype J
+inst✝² : Fintype V
+inst✝¹ : Nonempty (J → V)
+γ : Type u_5
+ρ : Type u_6
+inst✝ : Fintype ρ
+pick : P → I → Option J
+place : P → J → Option I
+hmatch : ∀ (p : P) (i : I) (j : J), pick p i = some j ↔ place p j = some i
+X : P × (I → V) → γ
+D : γ → ρ → Bool
+⊢ Fintype ((P × (I → V)) × (J → V))
+
+case refine_2
+P : Type u_1
+I : Type u_2
+J : Type u_3
+V : Type u_4
+inst✝⁵ : Fintype P
+inst✝⁴ : Fintype I
+inst✝³ : Fintype J
+inst✝² : Fintype V
+inst✝¹ : Nonempty (J → V)
+γ : Type u_5
+ρ : Type u_6
+inst✝ : Fintype ρ
+pick : P → I → Option J
+place : P → J → Option I
+hmatch : ∀ (p : P) (i : I) (j : J), pick p i = some j ↔ place p j = some i
+X : P × (I → V) → γ
+D : γ → ρ → Bool
+⊢ Fintype ((P × (I → V)) × (J → V))
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap): no fresh .olean produced
+        4.03 real         1.52 user         1.27 sys
+          2117844992  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              153759  page reclaims
+               15851  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1387  voluntary context switches
+               17316  involuntary context switches
+            32257336  instructions retired
+            16659923  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T02:11:24Z status=1

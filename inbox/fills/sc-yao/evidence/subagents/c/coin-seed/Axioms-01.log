@@ -1,0 +1,420 @@
+START 2026-11-16T00:21:00.709147+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_four {l : ℕ} (a : Fin l → Bool)
+  (hl : l ≤ 2) : List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a) < 4
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_four' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_pow {l : ℕ} (a : Fin l → Bool)
+  (hl : l ≤ 2) : List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a) < 2 ^ l
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_pow' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective (l : ℕ) (hl : l ≤ 2) :
+  Function.Injective fun a => List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding (l : ℕ) (hl : l ≤ 2) :
+  (Fin l → Bool) ↪ Fin 4
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding_eq (l : ℕ) (hl : l ≤ 2)
+  (a : Fin l → Bool) :
+  ↑((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding l hl) a) =
+    List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding_lt_pow (l : ℕ) (hl : l ≤ 2)
+  (a : Fin l → Bool) :
+  ↑((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding l hl) a) < 2 ^ l
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding_lt_pow' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm (l : ℕ) (hl : l ≤ 2)
+  (mask : Fin l → Bool) : Equiv.Perm (Fin 4)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_eq (l : ℕ) (hl : l ≤ 2)
+  (mask : Fin l → Bool) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm l hl mask =
+    (TCSlib.Cryptography.xorPerm mask).viaFintypeEmbedding
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding l hl)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_code (l : ℕ) (hl : l ≤ 2)
+  (mask a : Fin l → Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm l hl mask)
+      ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding l hl) a) =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding l hl)
+      ((TCSlib.Cryptography.xorPerm mask) a)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_code' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_unused (l : ℕ) (hl : l ≤ 2)
+  (mask : Fin l → Bool) (a : Fin 4) (ha : 2 ^ l ≤ ↑a) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm l hl mask) a = a
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_unused' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (v : ℕ → Bool) (w : Fin S) : Bool
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (v : ℕ → Bool) (w : Fin S) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask C S v w =
+    if ↑w < C.size then v ↑w else false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_eq' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_vertex {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S : ℕ) (v : ℕ → Bool) (hS : C.size ≤ S) (w : Fin C.size) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask C S v (Fin.castLE hS w) = v ↑w
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_vertex' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool) (i : Fin S) : Equiv.Perm (Fin 4)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool) (i : Fin S) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v i =
+    if hi : ↑i < C.gates.length then
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm C.gates[↑i].args.length ⋯
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v ⟨↑i, hi⟩)
+    else Equiv.refl (Fin 4)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_gate {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool) (hG : C.gates.length ≤ S)
+  (i : Fin C.gates.length) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v (Fin.castLE hG i) =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm C.gates[i].args.length ⋯
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_gate' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_fold {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool) (hG : C.gates.length ≤ S)
+  (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) :
+  ↑((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v (Fin.castLE hG i))
+        ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding
+            C.gates[i].args.length ⋯)
+          a)) =
+    List.foldr (fun b k => b.toNat + 2 * k) 0
+      (List.ofFn
+        ((TCSlib.Cryptography.xorPerm
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i))
+          a))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_fold' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (v : ℕ → Bool) (i : Fin S) (t : Fin 2) : Bool
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (v : ℕ → Bool) (i : Fin S) (t : Fin 2) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask C S v i t =
+    if hi : ↑i < C.gates.length then if ht : ↑t < C.gates[↑i].args.length then v C.gates[↑i].args[↑t] else false
+    else false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_eq' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_argument {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool)
+  (hG : C.gates.length ≤ S) (i : Fin C.gates.length) (t : Fin C.gates[i].args.length) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask C S v (Fin.castLE hG i)
+      (Fin.castLE ⋯ t) =
+    v C.gates[i].args[t]
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_argument' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_unused {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S : ℕ) (v : ℕ → Bool) (w : Fin S) (hw : C.size ≤ ↑w) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask C S v w = false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_unused' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_unused_gate {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool)
+  (i : Fin S) (hi : C.gates.length ≤ ↑i) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v i = Equiv.refl (Fin 4)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_unused_gate' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_unused_code {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool)
+  (hG : C.gates.length ≤ S) (i : Fin C.gates.length) (a : Fin 4) (ha : 2 ^ C.gates[i].args.length ≤ ↑a) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v (Fin.castLE hG i)) a = a
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_unused_code' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_unused_gate {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S : ℕ) (v : ℕ → Bool) (i : Fin S) (t : Fin 2) (hi : C.gates.length ≤ ↑i) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask C S v i t = false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_unused_gate' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_unused_argument {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S : ℕ) (v : ℕ → Bool) (hG : C.gates.length ≤ S) (i : Fin C.gates.length) (t : Fin 2)
+  (ht : C.gates[i].args.length ≤ ↑t) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask C S v (Fin.castLE hG i) t = false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_unused_argument' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_key_getD {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool)
+  (hS : C.size ≤ S) (r : Fin (10 * S * n + 2 * S) → Bool) (w : Fin C.size) (b : Bool) (t : Fin n) :
+  (List.ofFn
+          ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask C S v)
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v)
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask C S v))
+            r)).getD
+      ((b.toNat * S + ↑w) * n + ↑t) false =
+    (List.ofFn r).getD (((b ^^ v ↑w).toNat * S + ↑w) * n + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_key_getD' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_row_getD {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool)
+  (hG : C.gates.length ≤ S) (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length)
+  (a : Fin C.gates[i].args.length → Bool) (t : Fin (2 * n)) :
+  (List.ofFn
+          ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask C S v)
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v)
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask C S v))
+            r)).getD
+      (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t) false =
+    (List.ofFn r).getD
+      (2 * S * n +
+          (4 * ↑i +
+              List.foldr (fun b k => b.toNat + 2 * k) 0
+                (List.ofFn
+                  ((TCSlib.Cryptography.xorPerm
+                      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i))
+                    a))) *
+            (2 * n) +
+        ↑t)
+      false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_row_getD' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_shift_getD {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool)
+  (hG : C.gates.length ≤ S) (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length)
+  (t : Fin C.gates[i].args.length) :
+  (List.ofFn
+          ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask C S v)
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v)
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask C S v))
+            r)).getD
+      (10 * S * n + 2 * ↑i + ↑t) false =
+    ((List.ofFn r).getD (10 * S * n + 2 * ↑i + ↑t) false ^^ v C.gates[i].args[t])
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_shift_getD' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) (v : ℕ → Bool) (hS : C.size ≤ S)
+  (seed :
+    List Bool → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (hK :
+    ∀ (q : List Bool) (w : Fin C.size) (b : Bool) (t : Fin n),
+      (seed q).1 w b t = q.getD ((b.toNat * S + ↑w) * n + ↑t) false)
+  (hR₀ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).1 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t) false)
+  (hR₁ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).2 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n + ↑t)
+          false)
+  (hP :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) (t : Fin C.gates[i].args.length),
+      ((seed q).2.2 i) a t = (a t ^^ q.getD (10 * S * n + 2 * ↑i + ↑t) false))
+  (r : Fin (10 * S * n + 2 * S) → Bool) :
+  seed
+      (List.ofFn
+        ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask C S v)
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm C S hA v)
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask C S v))
+          r)) =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v (seed (List.ofFn r))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+STORED_CONSTANT_COUNT 49
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_unused_gate: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_unused_gate: closure=3256 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_pow._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_pow._proof_1_1: closure=1374 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm._proof_3: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm._proof_3: closure=1302 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective._simp_1_3: [propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective._simp_1_3: closure=59 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_unused_gate: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_unused_gate: closure=205 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_vertex: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_vertex: closure=170 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_unused._proof_1_1: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_unused._proof_1_1: closure=2138 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_unused: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_unused: closure=207 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_eq: closure=3233 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm.congr_simp: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm.congr_simp: closure=3233 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_pow._proof_1_2: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_pow._proof_1_2: closure=1069 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm._proof_2: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm._proof_2: closure=1301 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_four: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_four: closure=2071 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_argument: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_argument: closure=1312 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective: closure=2112 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective._proof_1_4: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective._proof_1_4: closure=1382 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_row_getD: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_row_getD: closure=4640 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_gate._proof_1: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_gate._proof_1: closure=1297 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding._proof_1: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding._proof_1: closure=2115 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm.congr_simp: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm.congr_simp: closure=3255 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_argument._proof_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_argument._proof_1: closure=1303 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_unused_argument: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_unused_argument: closure=1305 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding: closure=2118 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_four._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_four._proof_1_1: closure=1393 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm._proof_1: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm._proof_1: closure=1297 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel._proof_1_1: closure=1377 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_pow: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_pow: closure=2237 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_key_getD: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_key_getD: closure=4624 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_eq: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask_eq: closure=163 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_fold: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_fold: closure=3275 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask: closure=160 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel._proof_1_2: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel._proof_1_2: closure=1399 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_eq: closure=3255 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm: closure=3254 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm: closure=3232 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_code: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_code: closure=3247 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding_lt_pow: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding_lt_pow: closure=2293 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel._proof_1_4: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel._proof_1_4: closure=1366 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective._proof_1_2: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective._proof_1_2: closure=1379 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding_eq: closure=2128 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_shift_getD: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.relabel_shift_getD: closure=4629 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.keyMask: closure=162 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_eq: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.shiftMask_eq: closure=161 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_gate: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_gate: closure=3258 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_unused: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentPerm_unused: closure=3393 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentFold_injective._proof_1_1: closure=1421 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_unused_code: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm_unused_code: closure=3420 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm._proof_4: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.rowPerm._proof_4: closure=1304 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.seed_relabel: closure=4670 sorried=[]
+       29.43 real        28.03 user         1.23 sys
+          2220081152  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175482  page reclaims
+                 190  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  26  voluntary context switches
+               10727  involuntary context switches
+            32095196  instructions retired
+            14982248  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-16T00:21:30.186487+00:00 exit=0

@@ -1,0 +1,132 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.SecureComputation.Hybrid
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.StatisticalSwitch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Combining the two simulation bounds
+
+The simulators are fixed before the distinguisher. Alice has a statistical bound;
+Bob has the same statistical output switch followed by a computational hybrid bound.
+Their sum is one negligible function uniform over the parties' inputs.
+
+## Main definitions
+
+There are no new definitions.
+
+## Main results
+
+* `simulators_of_output_switch`: combine statistical and computational simulation.
+* `realB_output_switch`: replace Alice's real output outside a bounded bad event.
+* `strategyTapeEquiv`, `acceptProb_firstTape`: normalize the first strategy's tape.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
+  January 2010, Theorem 163.7 (the two simulators in the OT-hybrid model).
+-/
+
+namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof
+
+open Complexity Turing TCSlib.Cryptography
+
+/-- For fixed simulators `SA`, `SB`, suppose Alice's advantage is bounded by negligible
+`δ`, Bob's real experiment is `δ`-close to an output-switched experiment, and that experiment
+has a negligible simulation bound for every distinguisher uniformly over the inputs.
+Then the same simulators satisfy both simulation clauses with one negligible bound.
+[PS10, Theorem 163.7]
+
+**Proof sketch.** For each distinguisher take Bob's uniform hybrid bound. It is nonnegative
+at every parameter, since all-false inputs exist and an advantage is nonnegative. Add it
+to the statistical bound. Alice's bound only grows; Bob's bound follows from the triangle
+inequality between the real, switched and ideal acceptance probabilities. The existing
+closure theorem proves the sum negligible. -/
+theorem simulators_of_output_switch {G : Functionality} (H : HybridProtocol G)
+    (F : Functionality) (SA SB : NUPPT)
+    (switched : ∀ n, (Fin (F.inA.eval n) → Bool) → (Fin (F.inB.eval n) → Bool) →
+      H.Coins n → List Bool)
+    (δ : ℕ → ℝ) (hδ : Negligible δ)
+    (hAlice : ∀ (D : NUPPT) n x y,
+      distAdv (H.realA F n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ δ n)
+    (hSwitch : ∀ n x y, StatClose (H.realB F n x y) (switched n x y) (δ n))
+    (hBob : ∀ D : NUPPT, ∃ μ : ℕ → ℝ, Negligible μ ∧ ∀ n x y,
+      distAdv (switched n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ μ n) :
+    ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n x y,
+      distAdv (H.realA F n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
+        distAdv (H.realB F n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε n := by
+  intro D
+  obtain ⟨μ, hμ, hB⟩ := hBob D
+  have hNonneg n : 0 ≤ μ n := by
+    have hb := hB n (fun _ => false) (fun _ => false)
+    rw [distAdv_def] at hb
+    exact (abs_nonneg _).trans hb
+  refine ⟨fun n => δ n + μ n, hδ.add hμ, fun n x y => ⟨?_, ?_⟩⟩
+  · exact (hAlice D n x y).trans (le_add_of_nonneg_right (hNonneg n))
+  · have hs := distAdv_le_of_statClose (H.realB F n x y) (switched n x y)
+      (hSwitch n x y) (D.distinguisherL n)
+    have hb := hB n x y
+    rw [distAdv_def] at hs hb ⊢
+    exact (abs_sub_le _ _ _).trans (add_le_add hs hb)
+
+/-- If Alice's actual output equals her functionality output outside a bad event of
+probability at most `δ`, Bob's real experiment is `δ`-close to the same encoded view paired
+with that functionality output. No change is made to Bob's view or its randomness.
+[PS10, Theorem 163.7, Bob's statistical output switch] -/
+theorem realB_output_switch {G : Functionality} (H : HybridProtocol G)
+    (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (Bad : H.Coins n → Prop) (δ : ℝ)
+    (hBad : uprob Bad ≤ δ)
+    (hOut : ∀ r, ¬ Bad r →
+      H.main.outP (List.replicate n true)
+        (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+        (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r =
+          List.ofFn (F.f n x y).1) :
+    StatClose (H.realB F n x y)
+      (fun r => pairEncode
+        (H.main.viewV (List.replicate n true)
+          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+        (List.ofFn (F.f n x y).1)) δ := by
+  apply StatisticalSwitch.statClose_of_eq_off _ _ Bad δ hBad
+  intro r hr
+  rw [HybridProtocol.realB_eq, hOut r hr]
+
+/-- A strategy tape of known length `m` is equivalent to `Fin m → Bool`.
+The equality is supplied explicitly, so no strategy or coin polynomial is unfolded. -/
+def strategyTapeEquiv (S : Strategy) (n m : ℕ) (h : S.coinLen n = m) :
+    S.Coins n ≃ (Fin m → Bool) :=
+  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
+
+/-- `strategyTapeEquiv S n m h` is the function-space equivalence induced by `finCongr h`. -/
+theorem strategyTapeEquiv_eq (S : Strategy) (n m : ℕ) (h : S.coinLen n = m) :
+    strategyTapeEquiv S n m h = Equiv.arrowCongr (finCongr h) (Equiv.refl Bool) := rfl
+
+/-- Normalizing a strategy tape preserves its bit word:
+`ofFn (strategyTapeEquiv S n m h r) = ofFn r`. -/
+theorem strategyTapeEquiv_ofFn (S : Strategy) (n m : ℕ) (h : S.coinLen n = m)
+    (r : S.Coins n) : List.ofFn (strategyTapeEquiv S n m h r) = List.ofFn r :=
+  ofFn_arrowCongr_finCongr h r
+
+/-- If a hybrid sample depends only on its first tape through a known-length tape
+equivalence, its acceptance probability is that of the normalized first-tape sampler.
+The unused second tape may have any length. [PS10, Theorem 163.7, sampler transport] -/
+theorem acceptProb_firstTape {G : Functionality} (H : HybridProtocol G) (n m : ℕ)
+    (hLen : H.main.P.coinLen (List.replicate n true).length = m)
+    (X : H.Coins n → List Bool) (Y : (Fin m → Bool) → List Bool)
+    (hX : ∀ r, X r = Y (strategyTapeEquiv H.main.P (List.replicate n true).length m hLen r.1))
+    {ρ : Type*} [Fintype ρ] (D : List Bool → ρ → Bool) :
+    acceptProb X D = acceptProb Y D := by
+  rw [show X = (fun r => Y (strategyTapeEquiv H.main.P
+    (List.replicate n true).length m hLen r.1)) from funext hX]
+  exact (acceptProb_comp_equiv
+    ((strategyTapeEquiv H.main.P (List.replicate n true).length m hLen).prodCongr
+      (Equiv.refl (H.main.V.Coins (List.replicate n true).length)))
+    (fun r => Y r.1) D).trans (acceptProb_fst Y D)
+
+end TCSlib.Cryptography.SecureComputation.YaoHybridProof

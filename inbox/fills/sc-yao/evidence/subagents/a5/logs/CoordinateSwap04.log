@@ -1,0 +1,62 @@
+START 2026-11-16T02:14:18Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean:156:31: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (swap pick place (seedEquiv z.1, challengeEquiv z.2)).1
+in the target expression
+  X (fill z.1 z.2) = X (seedEquiv.symm (swap pick place (Prod.map (⇑seedEquiv) (⇑challengeEquiv) z)).1)
+
+case h
+P : Type u_1
+I : Type u_2
+J : Type u_3
+V : Type u_4
+inst✝⁹ : Fintype P
+inst✝⁸ : Fintype I
+inst✝⁷ : Fintype J
+inst✝⁶ : Fintype V
+inst✝⁵ : DecidableEq I
+inst✝⁴ : DecidableEq J
+S : Type u_5
+T : Type u_6
+γ : Type u_7
+ρ : Type u_8
+inst✝³ : Fintype S
+inst✝² : Fintype T
+inst✝¹ : Nonempty T
+inst✝ : Fintype ρ
+pick : P → I → Option J
+place : P → J → Option I
+hmatch : ∀ (p : P) (i : I) (j : J), pick p i = some j ↔ place p j = some i
+seedEquiv : S ≃ P × (I → V)
+challengeEquiv : T ≃ (J → V)
+fill : S → T → S
+hfill : ∀ (s : S) (c : T), seedEquiv (fill s c) = (swap pick place (seedEquiv s, challengeEquiv c)).1
+X : S → γ
+D : γ → ρ → Bool
+this : Nonempty (J → V) := Nonempty.map (⇑challengeEquiv) inferInstance
+hRelabel :
+  acceptProb (fun s => X (seedEquiv.symm (swap pick place ((seedEquiv.prodCongr challengeEquiv) s)).1)) D =
+    acceptProb (fun w => X (seedEquiv.symm (swap pick place w).1)) D
+z : S × T
+⊢ X (fill z.1 z.2) = X (seedEquiv.symm (swap pick place (Prod.map (⇑seedEquiv) (⇑challengeEquiv) z)).1)
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap): no fresh .olean produced
+        2.66 real         1.57 user         1.15 sys
+          2120597504  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              169477  page reclaims
+                 366  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  52  voluntary context switches
+                4049  involuntary context switches
+            32404011  instructions retired
+            17465228  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-16T02:14:20Z status=1

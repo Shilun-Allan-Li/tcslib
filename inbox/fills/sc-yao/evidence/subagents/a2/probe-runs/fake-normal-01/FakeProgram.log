@@ -1,0 +1,54 @@
+START 2026-11-15T23:58:38.969612+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram.lean:78:82: error: unsolved goals
+width bound first count inputs : List Bool → ℕ
+coins : List Bool → List Bool
+hwidth : PolyTimeComputable fun z => List.replicate (width z) true
+hbound : PolyTimeComputable fun z => List.replicate (bound z) true
+hfirst : PolyTimeComputable fun z => List.replicate (first z) true
+hcount : PolyTimeComputable fun z => List.replicate (count z) true
+hcoins : PolyTimeComputable coins
+C : (z : List Bool) → DAGCircuit (inputs z)
+s : (z : List Bool) → GarbleSeed (C z) (Fin (width z) → Bool) ((Fin (width z) → Bool) × (Fin (width z) → Bool))
+hrange : ∀ (z : List Bool), first z + count z ≤ inputs z
+hkey :
+  ∀ (z : List Bool),
+    ∀ v < (C z).size,
+      ∀ (b : Bool), keyAt (C z) (s z) v b = fun t => (coins z).getD ((b.toNat * bound z + v) * width z + ↑t) false
+entry : List Bool → ℕ → List Bool :=
+  fun z i => RowFromCoins.keyWord width bound (fun v => first v + i) (fun x => false) coins z
+hv : PolyTimeComputable fun x => List.replicate (first (pairSndD x) + (pairFstD x).length) true
+w : List Bool
+⊢ (List.ofFn fun t =>
+      ((coins ∘ pairSndD) w).getD
+        ((false.toNat * bound (pairSndD w) + (first (pairSndD w) + (pairFstD w).length)) * width (pairSndD w) + ↑t)
+        false) =
+    List.ofFn fun t =>
+      (coins (pairSndD w)).getD
+        ((false.toNat * bound (pairSndD w) + (first (pairSndD w) + (pairFstD w).length)) * width (pairSndD w) + ↑t)
+        false
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram.lean:176:17: warning: This simp argument is unused:
+  hb
+
+Hint: Omit it from the simp argument list.
+  simp [value, h̵b̵,̵ ̵FakeObjects.decodePair_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+       25.26 real        23.20 user         1.60 sys
+          2242248704  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              169156  page reclaims
+                6991  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 407  voluntary context switches
+               30280  involuntary context switches
+        247010241861  instructions retired
+         69014284062  cycles elapsed
+           341881520  peak memory footprint
+END 2026-11-15T23:59:04.264566+00:00

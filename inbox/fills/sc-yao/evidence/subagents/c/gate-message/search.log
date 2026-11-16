@@ -1,0 +1,15 @@
+COMMAND ['rg', '-n', '(realB_eq|encode_viewV_eq)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean']
+27:* `realA_eq`, `realB_eq`: pointwise equations for the two hybrid real samplers.
+94:theorem encode_viewV_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+149:theorem realB_eq (hEcho : ∀ w z r b, H.main.P.next w z r [b] = b)
+160:  rw [HybridProtocol.realB_eq,
+161:    encode_viewV_eq H.main msgA msgB hRounds hFirst hSender hReply,
+EXIT 0
+
+COMMAND ['rg', '-n', '(def message|theorem message_eq)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeMessage.lean']
+40:noncomputable def message {inputs width : ℕ} {ρ : Type}
+54:theorem message_eq {inputs width : ℕ} {ρ : Type}
+EXIT 0
+
+COMMAND ['git', 'grep', '-n', '-E', '(hybridRow|hybridTable|gateHybrid|outputBit|tableWith|rowWith)', 'a73072f1', '--', 'TCSlib/Cryptography/SecureComputation', 'inbox/fills/sc-garble']
+EXIT 1

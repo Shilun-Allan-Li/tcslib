@@ -1,0 +1,69 @@
+{
+  "candidates": 9,
+  "foreign_definition_violations": 0,
+  "resolutions": [
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO.lean",
+      "line": 129,
+      "token": "h",
+      "classification": "Local hypothesis/case binder; the global same-basename definitions are not referenced.",
+      "source_context": "  have heq1 : PolyTimeComputable fun z => [decide (key z = pairSndD (pair z))] :=\n    (polyTimeComputable_pairEq.comp\n      (hk.pairEncode (polyTimeComputable_pairSndD.comp hpair))).congr fun z => by\n        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]\n  refine (polyTimeComputable_ite heq0 (polyTimeComputable_const [false]) heq1).congr\n    (g := fun z => [outputBit z]) ?_\n  intro z\n  by_cases h : key z = pairFstD (pair z) <;>\n    simp only [outputBit_eq, ctx, vals, pairs, outs, vertex, key, pair] at h \u22a2 <;>\n    simp only [h, decide_true, decide_false, Bool.false_eq_true,\n      if_true, if_false]\n"
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO.lean",
+      "line": 168,
+      "token": "h",
+      "classification": "Local hypothesis/case binder; the global same-basename definitions are not referenced.",
+      "source_context": "  have hb : PolyTimeComputable fun w =>\n      [outputBit (pairEncode (pairSndD w)\n        (List.replicate (pairFstD w).length true))] :=\n    outputBit_poly.comp (polyTimeComputable_pairSndD.pairEncode\n      (polyTimeComputable_unary.comp polyTimeComputable_pairFstD))\n  refine EncodingMachines.polyTimeComputable_of_getD (F := outputWord p) ?_ ?_\n  \u00b7 refine (polyTimeComputable_ite ht hb (polyTimeComputable_const [false])).congr ?_\n    intro w\n    by_cases h : (pairFstD w).length < p.eval (pairFstD (pairSndD w)).length <;>\n      simp only [outputWord_getD, h, decide_true, decide_false,\n        Bool.false_eq_true, if_true, if_false]\n  \u00b7 exact ((polyTimeComputable_unaryPoly p).comp polyTimeComputable_pairFstD).congr"
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean",
+      "line": 335,
+      "token": "hv",
+      "classification": "Local hypothesis/case binder; the global same-basename definitions are not referenced.",
+      "source_context": "\n/-- A key block at a vertex whose value mask is `false` is unchanged by relabeling.\nThis preserves unused key blocks when their value masks are set to `false`. -/\ntheorem relabel_key_fixed (S n : \u2115) (values : Fin S \u2192 Bool)\n    (rows : Fin S \u2192 Equiv.Perm (Fin 4)) (mask : Fin S \u2192 Fin 2 \u2192 Bool)\n    (r : Fin (10 * S * n + 2 * S) \u2192 Bool) (b : Bool) (v : Fin S) (t : Fin n)\n    (hv : values v = false) :\n    (List.ofFn (relabel S n values rows mask r)).getD ((b.toNat * S + v) * n + t) false =\n      (List.ofFn r).getD ((b.toNat * S + v) * n + t) false := by\n  rw [relabel_key_getD, hv, Bool.xor_false]\n\n/-- A row coordinate fixed by `rows i` keeps every nonce bit. In particular,"
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean",
+      "line": 88,
+      "token": "h",
+      "classification": "Local hypothesis/case binder; the global same-basename definitions are not referenced.",
+      "source_context": "/-- Equal output labels at every assignment of a gate give equal generic tables. -/\ntheorem tableWith_congr (M : MultiEnc K Cipher \u03c1) (C : DAGCircuit inputs)\n    (s : GarbleSeed C K \u03c1)\n    (bit bit' : \u2200 i : Fin C.gates.length, (Fin (C.gates[i]).args.length \u2192 Bool) \u2192 Bool)\n    (i : Fin C.gates.length) (h : \u2200 a, bit i a = bit' i a) :\n    tableWith M C s bit i = tableWith M C s bit' i := by\n  rw [tableWith_eq, tableWith_eq]\n  apply List.map_congr_left\n  intro a _\n  rw [rowWith_eq, rowWith_eq, h]\n\n/-- With the gate's ordinary truth function as labels, `rowWith` equals the"
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean",
+      "line": 285,
+      "token": "hi",
+      "classification": "Local hypothesis/case binder; the global same-basename definitions are not referenced.",
+      "source_context": "  simp only [h\u2080, h\u2081, List.ofFn_const, List.getD_eq_getElem?_getD,\n    List.getElem?_getD_replicate_default_eq, Bool.toNat_false]\n\n/-- The first substep leaves every other gate and every first-bit-false row unchanged. -/\ntheorem outputBit_first_unchanged (C : DAGCircuit inputs) (v : \u2115 \u2192 Bool)\n    (cutoff : \u2115) (i : Fin C.gates.length) (a : Fin (C.gates[i]).args.length \u2192 Bool)\n    (h : (i : \u2115) \u2260 cutoff \u2228 (List.ofFn a).getD 0 false = false) :\n    outputBit C v cutoff 0 i a = outputBit C v cutoff 1 i a := by\n  rcases h with hi | ha\n  \u00b7 simp only [outputBit_eq, hi, false_and, or_false]\n  \u00b7 simp only [outputBit_eq, ha, Bool.false_eq_true, and_false, or_false]\n"
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTAnswerWords.lean",
+      "line": 78,
+      "token": "hv",
+      "classification": "Local hypothesis/case binder; the global same-basename definitions are not referenced.",
+      "source_context": "  have hlen := (length_answersB H n xs ys rA rB).trans hCalls\n  have hBit (j : Fin (count * width)) :\n      (H.answersB n xs ys rA rB).getD j false =\n        FakeObjects.activeAnswers C (RelabelGarbling.relabelSeed C v s) first count j := by\n    obtain \u27e8\u27e8i, t\u27e9, rfl\u27e9 := (finProdFinEquiv (m := count) (n := width)).surjective j\n    rw [GateHybridMessage.activeAnswers_relabel]\n    change _ = keyAt C s (first + (finProdFinEquiv.symm (finProdFinEquiv (i, t))).1)\n      (v (first + (finProdFinEquiv.symm (finProdFinEquiv (i, t))).1))\n      (finProdFinEquiv.symm (finProdFinEquiv (i, t))).2\n    rw [Equiv.symm_apply_apply, hv]\n    have hi : i * width + t = (finProdFinEquiv (i, t) : \u2115) := by\n      rw [finProdFinEquiv_apply_val]"
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean",
+      "line": 200,
+      "token": "hv",
+      "classification": "Local hypothesis/case binder; the global same-basename definitions are not referenced.",
+      "source_context": "/-- The original output-key pair at `w` is the relabeled pair with its two\nentries swapped exactly when `v w = true`. This also holds for default keys\noutside `C.size`. -/\ntheorem output_pair_relabel {m : \u2115} (C : DAGCircuit m) (v : \u2115 \u2192 Bool)\n    {K \u03c1 : Type} [Inhabited K] (s : GarbleSeed C K \u03c1) (w : \u2115) :\n    (keyAt C s w false, keyAt C s w true) =\n      if v w then\n        (keyAt C (relabelSeed C v s) w true, keyAt C (relabelSeed C v s) w false)\n      else (keyAt C (relabelSeed C v s) w false, keyAt C (relabelSeed C v s) w true) := by\n  cases hv : v w <;> simp [hv, keyAt_relabel]\n\nend TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling"
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean",
+      "line": 63,
+      "token": "heq",
+      "classification": "Local hypothesis/case binder; the global same-basename definitions are not referenced.",
+      "source_context": "    (fun r => if T (X r) then (1 : \u211d) else 0)\n    (fun r => if T (Y r) then (1 : \u211d) else 0) Bad ?_ ?_ ?_).trans hBad\n  \u00b7 intro r\n    dsimp only\n    split_ifs <;> norm_num\n  \u00b7 intro r\n    dsimp only\n    split_ifs <;> norm_num\n  \u00b7 intro r hr\n    simp only [heq r hr]\n\n/-- For same-coins samplers `X`, `Y` agreeing outside an event of probability at most"
+    },
+    {
+      "path": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies.lean",
+      "line": 74,
+      "token": "hNext",
+      "classification": "Local hypothesis/case binder; the global same-basename definitions are not referenced.",
+      "source_context": "the corresponding interactive-layout map is polynomial-time. The contract includes\nempty and malformed histories and arbitrary private words. [PS10, Definition 155.1] -/\ntheorem reply_efficient (S : Strategy)\n    (reply : List Bool \u2192 List Bool \u2192 List Bool \u2192 List Bool)\n    (hNext : \u2200 x z r hist, S.next x z r hist = reply x z (hist.headD []))\n    (hReply : PolyTimeComputable fun w =>\n      reply (GI.argX w) (GI.argZ w) (pairFstD (GI.argM w))) : S.Efficient := by\n  refine GI.efficient_of_polyTime S hReply ?_\n  intro x z r hist\n  rw [hNext, GI.argX_ilayout, GI.argZ_ilayout, GI.argM_ilayout,\n    Strategy.pairFstD_encodeMsgs]\n"
+    }
+  ]
+}

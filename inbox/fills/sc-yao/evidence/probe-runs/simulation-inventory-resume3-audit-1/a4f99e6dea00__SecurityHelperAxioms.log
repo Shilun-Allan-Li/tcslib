@@ -1,0 +1,212 @@
+START 2026-11-16T03:17:58.370323+00:00
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.realB_output_switch	∀
+  {G : TCSlib.Cryptography.SecureComputation.Functionality} (H : TCSlib.Cryptography.SecureComputation.HybridProtocol G)
+  (F : TCSlib.Cryptography.SecureComputation.Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+  (y : Fin (F.inB.eval n) → Bool) (Bad : H.Coins n → Prop) (δ : ℝ),
+  TCSlib.Cryptography.uprob Bad ≤ δ →
+    (∀ (r : H.Coins n),
+        ¬Bad r →
+          H.main.outP (List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+              (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r =
+            List.ofFn (F.f n x y).1) →
+      TCSlib.Cryptography.StatClose (H.realB F n x y)
+        (fun r =>
+          Turing.pairEncode
+            (H.main.viewV (List.replicate n true)
+                (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+                (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+            (List.ofFn (F.f n x y).1))
+        δ
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.realB_output_switch' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.realB_output_switch	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.realB_output_switch	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.distAdv_fibers_le	∀ {α : Type u_1}
+  {β : Type u_2} {γ : Type u_3} {ρ : Type u_4} [inst : Fintype α] [inst_1 : Fintype β] [inst_2 : Fintype ρ]
+  (X Y : α → β → γ) (D : γ → ρ → Bool) (ε : ℝ),
+  0 ≤ ε →
+    (∀ (a : α), TCSlib.Cryptography.distAdv (X a) (Y a) D ≤ ε) →
+      TCSlib.Cryptography.distAdv (fun r => X r.1 r.2) (fun r => Y r.1 r.2) D ≤ ε
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.distAdv_fibers_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.distAdv_fibers_le	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.distAdv_fibers_le	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.chain_negligible	∀ {I : ℕ → Type u_1}
+  {σ : ℕ → Type u_2} [inst : (n : ℕ) → Fintype (σ n)] (H : (n : ℕ) → I n → ℕ → σ n → List Bool) (D : Complexity.NUPPT)
+  (steps : ℕ → ℕ) (p : Complexity.PolyExpr),
+  (∀ (n : ℕ), steps n ≤ p.eval n) →
+    ∀ {μ : ℕ → ℝ},
+      TCSlib.Cryptography.Negligible μ →
+        (∀ (n : ℕ) (a : I n),
+            ∀ i < steps n, TCSlib.Cryptography.distAdv (H n a i) (H n a (i + 1)) (D.distinguisherL n) ≤ μ n) →
+          ∃ ε,
+            TCSlib.Cryptography.Negligible ε ∧
+              ∀ (n : ℕ) (a : I n), TCSlib.Cryptography.distAdv (H n a 0) (H n a (steps n)) (D.distinguisherL n) ≤ ε n
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.chain_negligible' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.chain_negligible	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.chain_negligible	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.distAdv_chain_le	∀ {σ : Type u_1}
+  {γ : Type u_2} {ρ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype ρ] (H : ℕ → σ → γ) (D : γ → ρ → Bool) (t : ℕ)
+  (ε : ℝ),
+  (∀ i < t, TCSlib.Cryptography.distAdv (H i) (H (i + 1)) D ≤ ε) → TCSlib.Cryptography.distAdv (H 0) (H t) D ≤ ↑t * ε
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.distAdv_chain_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.distAdv_chain_le	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.distAdv_chain_le	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv	(S : TCSlib.Cryptography.Strategy) →
+  (n m : ℕ) → S.coinLen n = m → S.Coins n ≃ (Fin m → Bool)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.simulators_of_output_switch	∀
+  {G : TCSlib.Cryptography.SecureComputation.Functionality} (H : TCSlib.Cryptography.SecureComputation.HybridProtocol G)
+  (F : TCSlib.Cryptography.SecureComputation.Functionality) (SA SB : Complexity.NUPPT)
+  (switched : (n : ℕ) → (Fin (F.inA.eval n) → Bool) → (Fin (F.inB.eval n) → Bool) → H.Coins n → List Bool) (δ : ℕ → ℝ),
+  TCSlib.Cryptography.Negligible δ →
+    (∀ (D : Complexity.NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
+        TCSlib.Cryptography.distAdv (H.realA F n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ δ n) →
+      (∀ (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
+          TCSlib.Cryptography.StatClose (H.realB F n x y) (switched n x y) (δ n)) →
+        (∀ (D : Complexity.NUPPT),
+            ∃ μ,
+              TCSlib.Cryptography.Negligible μ ∧
+                ∀ (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
+                  TCSlib.Cryptography.distAdv (switched n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ μ n) →
+          ∀ (D : Complexity.NUPPT),
+            ∃ ε,
+              TCSlib.Cryptography.Negligible ε ∧
+                ∀ (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
+                  TCSlib.Cryptography.distAdv (H.realA F n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
+                    TCSlib.Cryptography.distAdv (H.realB F n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε n
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.simulators_of_output_switch' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.simulators_of_output_switch	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.simulators_of_output_switch	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.acceptProb_firstTape	∀
+  {G : TCSlib.Cryptography.SecureComputation.Functionality} (H : TCSlib.Cryptography.SecureComputation.HybridProtocol G)
+  (n m : ℕ) (hLen : H.main.P.coinLen (List.replicate n true).length = m) (X : H.Coins n → List Bool)
+  (Y : (Fin m → Bool) → List Bool),
+  (∀ (r : H.Coins n),
+      X r =
+        Y
+          ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv H.main.P
+              (List.replicate n true).length m hLen)
+            r.1)) →
+    ∀ {ρ : Type u_1} [inst : Fintype ρ] (D : List Bool → ρ → Bool),
+      TCSlib.Cryptography.acceptProb X D = TCSlib.Cryptography.acceptProb Y D
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.acceptProb_firstTape' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.acceptProb_firstTape	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.acceptProb_firstTape	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.reconstruction_negligible	∀
+  {L : Complexity.PolyExpr} {G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L.eval n) → Bool},
+  TCSlib.Cryptography.SecureComputation.SliceMultiMessageSecure G →
+    ∀ (D : Complexity.NUPPT) (q b : Complexity.PolyExpr) {A : ℕ → Type u_1} [(n : ℕ) → Fintype (A n)]
+      [∀ (n : ℕ), Nonempty (A n)] (advice : (n : ℕ) → A n → List Bool),
+      (∀ (n : ℕ) (a : A n), (advice n a).length ≤ b.eval n) →
+        ∀ {rebuild : List Bool → List Bool},
+          Complexity.PolyTimeComputable rebuild →
+            ∀ (offset len : (n : ℕ) → A n → Fin (q.eval n + 1) → ℕ),
+              (∀ (n : ℕ) (a : A n) (i : Fin (q.eval n + 1)), offset n a i + n + len n a i ≤ L.eval n) →
+                ∀ (m₀ m₁ : (n : ℕ) → (a : A n) → (i : Fin (q.eval n + 1)) → Fin (len n a i) → Bool),
+                  ∃ ε,
+                    TCSlib.Cryptography.Negligible ε ∧
+                      ∀ (n : ℕ) (a : A n),
+                        TCSlib.Cryptography.distAdv
+                            (fun t =>
+                              rebuild
+                                (Turing.pairEncode (List.replicate n true)
+                                  (Turing.pairEncode
+                                    (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n (q.eval n) (offset n a)
+                                      (len n a) (m₀ n a) t)
+                                    (advice n a))))
+                            (fun t =>
+                              rebuild
+                                (Turing.pairEncode (List.replicate n true)
+                                  (Turing.pairEncode
+                                    (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n (q.eval n) (offset n a)
+                                      (len n a) (m₁ n a) t)
+                                    (advice n a))))
+                            (D.distinguisherL n) ≤
+                          ε n
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.reconstruction_negligible' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.reconstruction_negligible	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.reconstruction_negligible	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv_eq	∀ (S : TCSlib.Cryptography.Strategy)
+  (n m : ℕ) (h : S.coinLen n = m),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv S n m h =
+    (finCongr h).arrowCongr (Equiv.refl Bool)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv_eq	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv_ofFn	∀
+  (S : TCSlib.Cryptography.Strategy) (n m : ℕ) (h : S.coinLen n = m) (r : S.Coins n),
+  List.ofFn ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv S n m h) r) = List.ofFn r
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv_ofFn' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv_ofFn	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv_ofFn	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.exists_adviceReduction	∀
+  (D : Complexity.NUPPT) {rebuild : List Bool → List Bool},
+  Complexity.PolyTimeComputable rebuild →
+    ∀ (β : ℕ → List Bool) (b : Complexity.PolyExpr),
+      (∀ (n : ℕ), (β n).length ≤ b.eval n) →
+        ∃ R,
+          ∃ (hcoins : R.coins = D.coins),
+            ∀ (n : ℕ) (challenge : List Bool) (r : D.Coins n),
+              R.distinguisherL n challenge ((Complexity.NUPPT.coinsCongr ⋯ n) r) =
+                D.distinguisherL n
+                  (rebuild (Turing.pairEncode (List.replicate n true) (Turing.pairEncode challenge (β n)))) r
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.exists_adviceReduction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.exists_adviceReduction	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReduction.exists_adviceReduction	[]
+STORED_CONSTANTS 11
+       32.84 real        30.79 user         1.40 sys
+          2254929920  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172777  page reclaims
+                3149  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  68  voluntary context switches
+               18128  involuntary context switches
+        172263685344  instructions retired
+         89896813705  cycles elapsed
+           362671232  peak memory footprint
+END 2026-11-16T03:18:31.245399+00:00

@@ -1,0 +1,57 @@
+START 2026-11-16T03:17:55.906286+00:00
+evidence/probes/BobOutputSwitchGlue.lean:35:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob fun z => ?p z.1
+in the target expression
+  (uprob fun r =>
+      ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) ∧
+          ∀ (j : Fin (Y.outLen.eval n)),
+            keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) false ≠
+              keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) true)) ≤
+    δ n
+
+case refine_1
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+δ : ℕ → ℝ
+hWHP :
+  ∀ (n : ℕ),
+    (uprob fun r =>
+        ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+            ∀ (j : Fin (Y.outLen.eval n)),
+              keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+                keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)) ≤
+      δ n
+n : ℕ
+x : Fin ((yaoFunctionality Y).inA.eval n) → Bool
+y : Fin ((yaoFunctionality Y).inB.eval n) → Bool
+Bad : (yaoHybrid Y E₁ E₂).Coins n → Prop :=
+  fun r =>
+    ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) ∧
+        ∀ (j : Fin (Y.outLen.eval n)),
+          keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) false ≠
+            keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) true)
+⊢ (uprob fun r =>
+      ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) ∧
+          ∀ (j : Fin (Y.outLen.eval n)),
+            keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) false ≠
+              keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) true)) ≤
+    δ n
+        2.43 real         1.39 user         0.99 sys
+          2218622976  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175528  page reclaims
+                 206  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   2  voluntary context switches
+                5127  involuntary context switches
+         18148450812  instructions retired
+          6520678008  cycles elapsed
+           333953008  peak memory footprint
+END 2026-11-16T03:17:58.368787+00:00

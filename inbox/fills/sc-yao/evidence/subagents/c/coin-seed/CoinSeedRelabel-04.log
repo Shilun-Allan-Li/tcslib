@@ -1,0 +1,158 @@
+START 2026-11-16T00:06:50.842923+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:169:28: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:169:20: error: failed to prove index is valid, possible solutions:
+  - Use `have`-expressions to prove the index is valid
+  - Use `a[i]!` notation instead, runtime check is performed, and 'Panic' error message is produced if index is not valid
+  - Use `a[i]?` notation instead, result is an `Option` type
+  - Use `a[i]'h` notation instead, where `h` is a proof that index is valid
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2
+v : ℕ → Bool
+i : Fin S
+hi : ↑i < C.gates.length
+⊢ ?m.57 C.gates sorry
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:179:32: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:179:24: error: failed to prove index is valid, possible solutions:
+  - Use `have`-expressions to prove the index is valid
+  - Use `a[i]!` notation instead, runtime check is performed, and 'Panic' error message is produced if index is not valid
+  - Use `a[i]?` notation instead, result is an `Option` type
+  - Use `a[i]'h` notation instead, where `h` is a proof that index is valid
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2
+v : ℕ → Bool
+i : Fin S
+hi : ↑i < C.gates.length
+⊢ ?m.47 C.gates sorry
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:190:6: error(lean.unknownIdentifier): Unknown identifier `rowPerm_eq`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:189:90: error: unsolved goals
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2
+v : ℕ → Bool
+hG : C.gates.length ≤ S
+i : Fin C.gates.length
+⊢ rowPerm C S hA v (Fin.castLE hG i) = assignmentPerm C.gates[i].args.length ⋯ (RelabelGarbling.argValues C v i)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:209:31: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:210:18: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:210:9: error: failed to prove index is valid, possible solutions:
+  - Use `have`-expressions to prove the index is valid
+  - Use `a[i]!` notation instead, runtime check is performed, and 'Panic' error message is produced if index is not valid
+  - Use `a[i]?` notation instead, result is an `Option` type
+  - Use `a[i]'h` notation instead, where `h` is a proof that index is valid
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+v : ℕ → Bool
+i : Fin S
+t : Fin 2
+hi : ↑i < C.gates.length
+ht : ↑t < sorry
+⊢ ?m.37 hi ht sorry t
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:209:23: error: failed to prove index is valid, possible solutions:
+  - Use `have`-expressions to prove the index is valid
+  - Use `a[i]!` notation instead, runtime check is performed, and 'Panic' error message is produced if index is not valid
+  - Use `a[i]?` notation instead, result is an `Option` type
+  - Use `a[i]'h` notation instead, where `h` is a proof that index is valid
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+v : ℕ → Bool
+i : Fin S
+t : Fin 2
+hi : ↑i < C.gates.length
+⊢ ?m.50 C.gates sorry
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:210:10: error: failed to prove index is valid, possible solutions:
+  - Use `have`-expressions to prove the index is valid
+  - Use `a[i]!` notation instead, runtime check is performed, and 'Panic' error message is produced if index is not valid
+  - Use `a[i]?` notation instead, result is an `Option` type
+  - Use `a[i]'h` notation instead, where `h` is a proof that index is valid
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+v : ℕ → Bool
+i : Fin S
+t : Fin 2
+hi : ↑i < C.gates.length
+ht : ↑t < sorry
+⊢ ?m.57 C.gates sorry
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:219:35: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:220:22: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:220:13: error: failed to prove index is valid, possible solutions:
+  - Use `have`-expressions to prove the index is valid
+  - Use `a[i]!` notation instead, runtime check is performed, and 'Panic' error message is produced if index is not valid
+  - Use `a[i]?` notation instead, result is an `Option` type
+  - Use `a[i]'h` notation instead, where `h` is a proof that index is valid
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+v : ℕ → Bool
+i : Fin S
+t : Fin 2
+hi : ↑i < C.gates.length
+ht : ↑t < sorry
+⊢ ?m.39 hi ht sorry t
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:219:27: error: failed to prove index is valid, possible solutions:
+  - Use `have`-expressions to prove the index is valid
+  - Use `a[i]!` notation instead, runtime check is performed, and 'Panic' error message is produced if index is not valid
+  - Use `a[i]?` notation instead, result is an `Option` type
+  - Use `a[i]'h` notation instead, where `h` is a proof that index is valid
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+v : ℕ → Bool
+i : Fin S
+t : Fin 2
+hi : ↑i < C.gates.length
+⊢ ?m.53 C.gates sorry
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:220:14: error: failed to prove index is valid, possible solutions:
+  - Use `have`-expressions to prove the index is valid
+  - Use `a[i]!` notation instead, runtime check is performed, and 'Panic' error message is produced if index is not valid
+  - Use `a[i]?` notation instead, result is an `Option` type
+  - Use `a[i]'h` notation instead, where `h` is a proof that index is valid
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+v : ℕ → Bool
+i : Fin S
+t : Fin 2
+hi : ↑i < C.gates.length
+ht : ↑t < sorry
+⊢ ?m.60 C.gates sorry
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:232:6: error(lean.unknownIdentifier): Unknown identifier `shiftMask_eq`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean:231:34: error: unsolved goals
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2
+v : ℕ → Bool
+hG : C.gates.length ≤ S
+i : Fin C.gates.length
+t : Fin C.gates[i].args.length
+⊢ shiftMask C S v (Fin.castLE hG i) (Fin.castLE ⋯ t) = v C.gates[i].args[t]
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel): no fresh .olean produced
+        3.85 real         2.93 user         1.07 sys
+          2189787136  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171153  page reclaims
+                2784  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 183  voluntary context switches
+                6540  involuntary context switches
+            32767964  instructions retired
+            14679927  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T00:06:54.724104+00:00 exit=1

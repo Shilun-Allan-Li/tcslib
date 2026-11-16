@@ -1,0 +1,53 @@
+START 2026-11-16T02:17:54.543614+00:00 evidence/probes/BobViewGlue
+evidence/probes/BobViewGlue.lean:32:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ((yaoMain Y E₁ E₂).viewV ?w ?zA ?zB ?r).encode
+in the target expression
+  ((yaoHybrid Y E₁ E₂).main.viewV (List.replicate n true)
+        ((yaoHybrid Y E₁ E₂).privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+        ((yaoHybrid Y E₁ E₂).privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode =
+    { x := List.replicate n true,
+        z :=
+          pairEncode (List.ofFn y)
+            ((yaoHybrid Y E₁ E₂).answersB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)),
+        r := [], received := [yaoMsg Y E₁ E₂ n (List.ofFn x) (List.ofFn r.1)] }.encode
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+n : ℕ
+x : Fin ((yaoFunctionality Y).inA.eval n) → Bool
+y : Fin ((yaoFunctionality Y).inB.eval n) → Bool
+r : (yaoHybrid Y E₁ E₂).Coins n
+hBob : List.ofFn r.2 = []
+hMsg :
+  yaoMsg Y E₁ E₂ (List.replicate n true).length (List.ofFn x) (List.ofFn r.1) =
+    yaoMsg Y E₁ E₂ n (List.ofFn x) (List.ofFn r.1)
+⊢ ((yaoHybrid Y E₁ E₂).main.viewV (List.replicate n true)
+        ((yaoHybrid Y E₁ E₂).privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+        ((yaoHybrid Y E₁ E₂).privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode =
+    { x := List.replicate n true,
+        z :=
+          pairEncode (List.ofFn y)
+            ((yaoHybrid Y E₁ E₂).answersB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)),
+        r := [], received := [yaoMsg Y E₁ E₂ n (List.ofFn x) (List.ofFn r.1)] }.encode
+FAIL(evidence/probes/BobViewGlue): lean exited with status 1
+FAIL(evidence/probes/BobViewGlue): error diagnostics reported
+FAIL(evidence/probes/BobViewGlue): no fresh .olean produced
+        2.53 real         1.38 user         1.04 sys
+          2220654592  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              177460  page reclaims
+                1056  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  25  voluntary context switches
+                7708  involuntary context switches
+            38455040  instructions retired
+            20366869  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-16T02:17:57.114877+00:00 EXIT 1

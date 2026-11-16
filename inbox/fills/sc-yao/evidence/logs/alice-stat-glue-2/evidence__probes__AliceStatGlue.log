@@ -1,0 +1,113 @@
+START 2026-11-16T01:53:59.541315+00:00 evidence/probes/AliceStatGlue
+evidence/probes/AliceStatGlue.lean:62:2: error: Tactic `rfl` failed: The left-hand side
+  pairEncode
+    (pairEncode (pairEncode (List.replicate n true) (pairEncode (List.ofFn x) []))
+      (pairEncode (List.ofFn r.1)
+        (Strategy.encodeMsgs
+          [yaoBobOut Y E₁ E₂ (List.replicate n true).length
+              (yaoMsg Y E₁ E₂ (List.replicate n true).length (pairFstD (pairEncode (List.ofFn x) [])) (List.ofFn r.1))
+              (H.answersB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))])))
+    (yaoBobOut Y E₁ E₂ (List.replicate n true).length
+      (yaoMsg Y E₁ E₂ (List.replicate n true).length (pairFstD (pairEncode (List.ofFn x) [])) (List.ofFn r.1))
+      (H.answersB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)))
+is not definitionally equal to the right-hand side
+  pairEncode
+    (pairEncode (pairEncode (List.replicate n true) (pairEncode (List.ofFn x) []))
+      (pairEncode (List.ofFn r.1) (Strategy.encodeMsgs [List.ofFn ((yaoFunctionality Y).f n x y).1])))
+    (List.ofFn ((yaoFunctionality Y).f n x y).2)
+
+case hReal
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+δ : ℕ → ℝ
+hWHP :
+  ∀ (n : ℕ),
+    (uprob fun r =>
+        ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+            ∀ (j : Fin (Y.outLen.eval n)),
+              keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+                keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)) ≤
+      δ n
+D : NUPPT
+n : ℕ
+x : Fin ((yaoFunctionality Y).inA.eval n) → Bool
+y : Fin ((yaoFunctionality Y).inB.eval n) → Bool
+H : HybridProtocol otFunctionality := yaoHybrid Y E₁ E₂
+σ : Type := H.main.P.Coins (List.replicate n true).length
+hLen : H.main.P.coinLen (List.replicate n true).length = (yaoCoins Y).eval n
+e₀ : σ ≃ (Fin ((yaoCoins Y).eval n) → Bool) := (finCongr hLen).arrowCongr (Equiv.refl Bool)
+e : σ ≃ (AliceSimulator.simulator (yaoCoins Y)).Coins n := e₀.trans (NUPPT.coinsEquivPoly ⋯ n).symm
+he₀ : ∀ (r : σ), List.ofFn (e₀ r) = List.ofFn r
+he : ∀ (r : σ), List.ofFn (e r) = List.ofFn r
+Bad : σ → Prop :=
+  fun r =>
+    ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+        ∀ (j : Fin (Y.outLen.eval n)),
+          keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+            keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)
+hBad : uprob Bad ≤ δ n
+r : σ × H.main.V.Coins (List.replicate n true).length
+hr : ¬Bad r.1
+hg :
+  Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) ∧
+    ∀ (j : Fin (Y.outLen.eval n)),
+      keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) false ≠
+        keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) true
+hNil : H.answersA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2) = []
+hv :
+  yaoBobOut Y E₁ E₂ (List.replicate n true).length
+      (yaoMsg Y E₁ E₂ (List.replicate n true).length (List.ofFn x) (List.ofFn r.1))
+      ((yaoHybrid Y E₁ E₂).answersB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) =
+    List.ofFn ((yaoFunctionality Y).f n x y).2
+⊢ pairEncode
+      (pairEncode (pairEncode (List.replicate n true) (pairEncode (List.ofFn x) []))
+        (pairEncode (List.ofFn r.1)
+          (Strategy.encodeMsgs
+            [yaoBobOut Y E₁ E₂ (List.replicate n true).length
+                (yaoMsg Y E₁ E₂ (List.replicate n true).length (pairFstD (pairEncode (List.ofFn x) [])) (List.ofFn r.1))
+                (H.answersB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))])))
+      (yaoBobOut Y E₁ E₂ (List.replicate n true).length
+        (yaoMsg Y E₁ E₂ (List.replicate n true).length (pairFstD (pairEncode (List.ofFn x) [])) (List.ofFn r.1))
+        (H.answersB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))) =
+    pairEncode
+      (pairEncode (pairEncode (List.replicate n true) (pairEncode (List.ofFn x) []))
+        (pairEncode (List.ofFn r.1) (Strategy.encodeMsgs [List.ofFn ((yaoFunctionality Y).f n x y).1])))
+      (List.ofFn ((yaoFunctionality Y).f n x y).2)
+evidence/probes/AliceStatGlue.lean:60:13: warning: This simp argument is unused:
+  HybridProtocol.pairFstD_privA
+
+Hint: Omit it from the simp argument list.
+  simp only [̵H̵y̵b̵r̵i̵d̵P̵r̵o̵t̵o̵c̵o̵l̵.̵p̵a̵i̵r̵F̵s̵t̵D̵_̵p̵r̵i̵v̵A̵,̵ ̵H̵y̵b̵r̵i̵d̵P̵r̵o̵t̵o̵c̵o̵l̵.̵p̵a̵i̵r̵S̵n̵d̵D̵_̵p̵r̵i̵v̵B̵,̵[̲H̲y̲b̲r̲i̲d̲P̲r̲o̲t̲o̲c̲o̲l̲.̲p̲a̲i̲r̲S̲n̲d̲D̲_̲p̲r̲i̲v̲B̲,̲ hv, HybridProtocol.privA_eq, hNil, View.encode_mk, he]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+evidence/probes/AliceStatGlue.lean:61:4: warning: This simp argument is unused:
+  hv
+
+Hint: Omit it from the simp argument list.
+  simp only [HybridProtocol.pairFstD_privA, HybridProtocol.pairSndD_privB,
+  ̵  ̵ ̵ ̵h̵v̵,̵ ̵HybridProtocol.privA_eq,
+  ̲  ̲ ̲ ̲hNil, View.encode_mk, he]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(evidence/probes/AliceStatGlue): lean exited with status 1
+FAIL(evidence/probes/AliceStatGlue): error diagnostics reported
+FAIL(evidence/probes/AliceStatGlue): no fresh .olean produced
+        3.91 real         2.37 user         1.15 sys
+          2247065600  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171949  page reclaims
+                5949  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 442  voluntary context switches
+               12739  involuntary context switches
+            32257274  instructions retired
+            18141913  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-16T01:54:03.515008+00:00 EXIT 1

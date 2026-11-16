@@ -78,3 +78,24 @@ normal checks, and repaired seals are running. Agent b's evaluator, BobProgram a
 BobSimulator all pass four variants and axiom/closure traces. Agent c's CoinRelabel passes
 all four variants and37 stored-constant traces. Mathematical seed relabeling and all-key
 occurrence/padding contracts are progressing; fake-program and B1 reconstruction remain.
+
+
+## Second resume and checkpoint2 delivery
+
+User explicitly resumed. Fresh macOS preflight recorded6.463GiB headroom and>130GiB free;
+no orphan checks existed, wrapper hashes match. Resumed remaining197modules in newphase.
+All224 modules pass,31sorrieddeclarations: onlyyaoHybrid_polyTime removed,noneadded.
+Exactcheckpoint2sourceheaders/clash/lint pass; cryptography92FAIL/102WARN includesonlythe
+approved1062-lineYaoexception; circuits0FAIL/79WARN. Fourunsignedpatches reproduceexactly.
+Checkpoint2 payload2391files includingtopmanifest, exacthash/pathsetsverified; pushedonly
+inbox/fills/sc-yao at816971fc6922646f056a47efd41b1407f762320d. Proofbranch9b7b1147b stayslocal.
+
+Integrated immutablefakev3 andCoinSeedRelabelhand-offs aftersweep; prior3overwritten evidence
+versions preserved underhistory/integration-resume2. Leadnormalchecks pass updatedrows/tables,
+AllTables/GarblingProgram/AliceProgram,FakeObjects,FakeProgram,FakeMessage,CoinSeedRelabel.
+RootSliceReductionall5theorems pass; SimulationBound commonεassembly/outputswitch pass.
+GateHybrids handoff verified42files and integrated; exactselectedsubsteps/allzero/endpoints
+proved byc with4seals andall49storedclosuresstd/noadmissions. AliceStatGlue probe underway.
+FakeSimulator/FakeMessage contractbundle bya andGateHybridMessage byc are finishingaudits;
+b completesrankedselectedseed/ciphertextreconstruction. a will separatelyown genericselected
+coordinate-swap uniformlaw, coordinatingwithb. The securitytargetremainsunproved.

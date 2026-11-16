@@ -1,0 +1,89 @@
+START 2026-11-16T01:52:32.776398+00:00 evidence/probes/AliceStatGlue
+evidence/probes/AliceStatGlue.lean:55:4: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    yaoBobOut Y E₁ E₂ _a (yaoMsg Y E₁ E₂ _a (List.ofFn x) (List.ofFn r.1))
+        ((yaoHybrid Y E₁ E₂).answersB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) =
+      List.ofFn ((yaoFunctionality Y).f n x y).2
+Error: Application type mismatch: The argument
+  r
+has type
+  σ × H.main.V.Coins (List.replicate n true).length
+but is expected to have type
+  (yaoMain Y E₁ E₂).P.Coins _a × (yaoMain Y E₁ E₂).V.Coins _a
+in the application
+  r.1
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+case hReal
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+δ : ℕ → ℝ
+hWHP :
+  ∀ (n : ℕ),
+    (uprob fun r =>
+        ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+            ∀ (j : Fin (Y.outLen.eval n)),
+              keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+                keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)) ≤
+      δ n
+D : NUPPT
+n : ℕ
+x : Fin ((yaoFunctionality Y).inA.eval n) → Bool
+y : Fin ((yaoFunctionality Y).inB.eval n) → Bool
+H : HybridProtocol otFunctionality := yaoHybrid Y E₁ E₂
+σ : Type := H.main.P.Coins (List.replicate n true).length
+hLen : H.main.P.coinLen (List.replicate n true).length = (yaoCoins Y).eval n
+e₀ : σ ≃ (Fin ((yaoCoins Y).eval n) → Bool) := (finCongr hLen).arrowCongr (Equiv.refl Bool)
+e : σ ≃ (AliceSimulator.simulator (yaoCoins Y)).Coins n := e₀.trans (NUPPT.coinsEquivPoly ⋯ n).symm
+he₀ : ∀ (r : σ), List.ofFn (e₀ r) = List.ofFn r
+he : ∀ (r : σ), List.ofFn (e r) = List.ofFn r
+Bad : σ → Prop :=
+  fun r =>
+    ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+        ∀ (j : Fin (Y.outLen.eval n)),
+          keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+            keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)
+hBad : uprob Bad ≤ δ n
+r : σ × H.main.V.Coins (List.replicate n true).length
+hr : ¬Bad r.1
+hg :
+  Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) ∧
+    ∀ (j : Fin (Y.outLen.eval n)),
+      keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) false ≠
+        keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.outs n j) true
+hNil : H.answersA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2) = []
+hv :
+  yaoBobOut Y E₁ E₂ (List.replicate n true).length
+      (yaoMsg Y E₁ E₂ (List.replicate n true).length (List.ofFn x) (List.ofFn r.1))
+      ((yaoHybrid Y E₁ E₂).answersB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) =
+    List.ofFn ((yaoFunctionality Y).f n x y).2
+⊢ H.realA (yaoFunctionality Y) n x y r =
+    pairEncode
+      { x := List.replicate n true, z := pairEncode (List.ofFn x) [], r := List.ofFn (e r.1),
+          received := [List.ofFn ((yaoFunctionality Y).f n x y).1] }.encode
+      (List.ofFn ((yaoFunctionality Y).f n x y).2)
+FAIL(evidence/probes/AliceStatGlue): lean exited with status 1
+FAIL(evidence/probes/AliceStatGlue): error diagnostics reported
+FAIL(evidence/probes/AliceStatGlue): no fresh .olean produced
+        2.92 real         1.56 user         1.04 sys
+          2245459968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171899  page reclaims
+                5934  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 431  voluntary context switches
+                6208  involuntary context switches
+            31852913  instructions retired
+            14548335  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-16T01:52:35.729716+00:00 EXIT 1

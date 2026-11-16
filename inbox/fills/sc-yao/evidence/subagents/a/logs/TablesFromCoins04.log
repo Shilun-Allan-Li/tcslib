@@ -1,0 +1,42 @@
+START 2026-11-16T00:02:53Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.lean:201:4: error: Tactic `apply` failed: could not unify the conclusion of `@List.map_congr_left`
+  List.map ?f ?l = List.map ?g ?l
+with the goal
+  List.map (fun a => row (min (BinArith.decWords (args z)).length 2) a z) Finset.univ.toList =
+    List.map (fun a => row' (min (BinArith.decWords (args' z')).length 2) a z') Finset.univ.toList
+
+Note: The full type of `@List.map_congr_left` is
+  ∀ {α : Type ?u.82195} {l : List α} {α_1 : Type ?u.82194} {f g : α → α_1},
+    (∀ a ∈ l, f a = g a) → List.map f l = List.map g l
+
+case pos
+args args' : List Bool → List Bool
+row row' : (l : ℕ) → (Fin l → Bool) → List Bool → List Bool
+z z' : List Bool
+hargs : args z = args' z'
+hrow : ∀ (l : ℕ) (a : Fin l → Bool), row l a z = row' l a z'
+h✝ : (BinArith.decWords (args' z')).length ≤ 2
+⊢ List.map (fun a => row (min (BinArith.decWords (args z)).length 2) a z) Finset.univ.toList =
+    List.map (fun a => row' (min (BinArith.decWords (args' z')).length 2) a z') Finset.univ.toList
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins): no fresh .olean produced
+        3.26 real         2.04 user         1.14 sys
+          2182201344  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171104  page reclaims
+                2882  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 264  voluntary context switches
+                8743  involuntary context switches
+            32634427  instructions retired
+            15429736  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T00:02:56Z status=1
