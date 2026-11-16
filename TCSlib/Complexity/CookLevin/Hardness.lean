@@ -5825,23 +5825,6 @@ module host below is locally harvested from `ClassNP/SAT.lean`, with five
 phases: native copy, complete producer, cursor initialization, emission,
 and cursor update. All inherited A/A2/A3/A4 declarations remain frozen. -/
 
-/-- A padded halting run can be cut at its first positive halt without changing
-any endpoint field. Apply `Turing.MultiTapeTM.exists_first_halt`; the live
-initial state excludes time zero. -/
-private lemma clA5_call_first_halt {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
-    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
-    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
-      tm.runFrom cfg u = tm.runFrom cfg t := by
-  obtain ⟨u, hu, hg, he⟩ := MultiTapeTM.exists_first_halt tm cfg hhalt
-  have hp : 0 < u := by
-    by_contra hn
-    have hz : u = 0 := by omega
-    have hs := congrArg Cfg.state he
-    rw [hz, MultiTapeTM.runFrom_zero, hhalt] at hs
-    exact hstart hs
-  exact ⟨u, hp, hu, hg, he⟩
-
 /-- Pad a callable module into a shared bank, keeping unused tapes stationary. -/
 private def clA5PadAction {k K : ℕ} {S : Type} (a : Action k Bool S) : Action K Bool S :=
   ⟨a.inputTape, fun i => if h : i.val < k then a.workTapes ⟨i.val, h⟩ else (none, 0),
@@ -5905,78 +5888,6 @@ private lemma clA5Pad_seam {k K : ℕ} {S : Type} {x : List Bool}
       simp [clA5PadCfg, Cfg.ofWords, stateWord, hi, hn, FinTM.bufferTape]
   · funext i
     by_cases hi : i.val < k <;> simp [clA5PadCfg, Cfg.ofWords, hi]
-
-/-- Convert a first-positive-exit module into a halting source for `emit_run`.
-The Boolean release flag ensures even an entry equal to exit executes once. -/
-private def clA5StopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where
-  k := C.k
-  State := Bool × C.State
-  tm := { q₀ := (false, entry)
-          tr := fun q inp work =>
-            if q.1 = true ∧ q.2 = exit then FinTM.controlAction 0 none
-            else {C.tm.tr q.2 inp work with state := (C.tm.tr q.2 inp work).state.map (true, ·)} }
-
-/-- Release-flag embedding preserves all physical fields of a call. -/
-private def clA5StopCfg {k : ℕ} {S : Type} {x : List Bool}
-    (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool × S) x :=
-  ⟨c.state.map (b, ·), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
-
-/-- Before the designated positive exit, the stopped source takes the same
-physical step as the module and raises the release flag. -/
-private lemma clA5Stop_step (C : FinTM Bool) (entry exit : C.State)
-    {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)
-    (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :
-    (clA5StopTM C entry exit).tm.step (clA5StopCfg b c) = clA5StopCfg true (C.tm.step c) := by
-  cases hs : c.state with
-  | none => exact False.elim (hlive hs)
-  | some q =>
-    have hq : ¬(b = true ∧ q = exit) := by
-      rintro ⟨hb, rfl⟩; exact hg hb hs
-    simp only [MultiTapeTM.step, clA5StopCfg, hs, Option.map_some]
-    simp only [clA5StopTM, hq, ↓reduceIte]
-    rfl
-
-/-- Live endpoints force earlier module states to be live by
-`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
-private lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
-    (ht : (tm.runFrom c t).state ≠ none) :
-    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
-  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
-
-/-- Stop a clean call one silent step after its certified first positive exit.
-**Proof sketch.** Induct on prefixes, keeping the release flag false only at
-time zero. The supplied guard prevents early stopping; a final silent halt
-retains every canonical seam field and every emitted bit. -/
-private lemma clA5Stop_clean (C : FinTM Bool) (entry exit : C.State)
-    (x arg result out : List Bool) (t : ℕ) (ht : 0 < t)
-    (hg : ∀ v, 0 < v → v < t → (C.tm.runFrom
-      (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state ≠ some exit)
-    (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
-      {Cfg.ofWords exit (stateWord C.k result) with output := out}) :
-    (clA5StopTM C entry exit).tm.runFrom
-      (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1) =
-      {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out} := by
-  let c := Cfg.ofWords (input := x) entry (stateWord C.k arg)
-  have hl := clA5_live_prefix C.tm c t (by rw [show C.tm.runFrom c t = _ from he]; simp [Cfg.ofWords])
-  have hp : ∀ v, v ≤ t → (clA5StopTM C entry exit).tm.runFrom (clA5StopCfg false c) v =
-      clA5StopCfg (decide (v ≠ 0)) (C.tm.runFrom c v) := by
-    intro v
-    induction v with
-    | zero => intro _; rfl
-    | succ v ih =>
-      intro hv
-      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
-        clA5Stop_step C entry exit _ _ (hl v (by omega)) (by
-          intro hn
-          exact hg v (Nat.pos_of_ne_zero (of_decide_eq_true hn)) (by omega)),
-        MultiTapeTM.runFrom_succ_eq_step']
-      rfl
-  have hi : Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg) = clA5StopCfg false c := rfl
-  rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]
-  have hflag : decide (t ≠ 0) = true := by simp [Nat.ne_of_gt ht]
-  rw [hflag, show C.tm.runFrom c t = _ from he]
-  simp [MultiTapeTM.step, clA5StopTM, clA5StopCfg, Cfg.ofWords, FinTM.controlAction, Action.apply]
 
 /-- Five finite modules form the body: native input copy, full packed-record
 installation and cursor installation, then recurring emission and cursor update. -/
@@ -6072,111 +5983,32 @@ private lemma clA5Host_call (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M
     exact clA5Host_seam M K i hp x result pre out q none
 
 /-- Joining two guarded segments preserves the first-return guard when the
-intermediate seam is also outside the anchor. -/
+intermediate seam is also outside the anchor (`Turing.MultiTapeTM.avoid_add`). -/
 private lemma clA5_guard_add {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : ℕ)
     (ha : ∀ v < a, (tm.runFrom c v).state ≠ some anchor)
     (he : tm.runFrom c a = d)
     (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
-    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
-  have h₁ : Turing.Segment tm {some anchor} (fun _ => True) c d a :=
-    (Turing.segment_iff tm {some anchor} (fun _ => True) c d a).mpr
-      ⟨he, fun v hv hm => ha v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
-  have h₂ : Turing.Segment tm {some anchor} (fun _ => True) d (tm.runFrom d b) b :=
-    (Turing.segment_iff tm {some anchor} (fun _ => True) d (tm.runFrom d b) b).mpr
-      ⟨rfl, fun v hv hm => hb v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
-  have h := (Turing.segment_iff tm {some anchor} (fun _ => True) c (tm.runFrom d b)
-    (a + b)).mp (Turing.Segment.trans h₁ h₂)
-  intro v hv hm
-  exact h.2.1 v hv (Set.mem_singleton_iff.mpr hm)
+    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor :=
+  MultiTapeTM.avoid_add tm anchor c d a b ha he hb
 
 /-- Uniform clean-module contract: a first halt with a prescribed replacement
-word and emitted chunk, over every untouched native input. -/
-private def CLA5Clean (M : FinTM Bool) (result emit : List Bool → List Bool) (B : ℕ → ℕ) : Prop :=
-  0 < M.k ∧ ∀ x arg : List Bool, ∃ t, 0 < t ∧ t ≤ B arg.length ∧
-    (∀ v < t, ¬(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v).Halted) ∧
-    M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) t =
-      {Cfg.ofWords M.tm.q₀ (stateWord M.k (result arg)) with state := none, output := emit arg}
-
-/-- Turn a clean-call bridge contract into the uniform first-halting form.
-**Proof sketch.** The release wrapper stops one step after the positive exit;
-minimal-halt cutting retains its entire clean configuration. -/
-private lemma clA5Clean_stop (C : FinTM Bool) (entry exit : C.State)
-    (result emit : List Bool → List Bool) (B : ℕ → ℕ) (hk : 0 < C.k)
-    (h : ∀ x arg : List Bool, ∃ t ≤ B arg.length, 0 < t ∧
-      (∀ v, 0 < v → v < t → (C.tm.runFrom
-        (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state ≠ some exit) ∧
-      C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
-        {Cfg.ofWords exit (stateWord C.k (result arg)) with output := emit arg}) :
-    CLA5Clean (clA5StopTM C entry exit) result emit (fun n => B n + 1) := by
-  refine ⟨hk, fun x arg => ?_⟩
-  obtain ⟨t, hb, ht, hg, he⟩ := h x arg
-  have hs := clA5Stop_clean C entry exit x arg (result arg) (emit arg) t ht hg he
-  obtain ⟨u, hu, hut, hguard, hend⟩ := clA5_call_first_halt (clA5StopTM C entry exit).tm
-    (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1)
-    (by simp [Cfg.ofWords]) (by rw [hs])
-  refine ⟨u, hu, by dsimp only; omega, hguard, ?_⟩
-  simpa only [clA5StopTM, Cfg.ofWords] using hend.trans hs
-
-/-- The bridge overhead is bounded by one monomial of degree one higher.
-**Proof sketch.** Output length is bounded by source time; `n+1` and both
-source-time terms fit the larger power. The last unit pays for stopping. -/
-private lemma clA5_bridge_bound (c A d n len : ℕ) (hlen : len ≤ A * (n + 1) ^ d) :
-    c * (A * (n + 1) ^ d + n + len + 1) + 1 ≤
-      (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1) := by
-  have hd := Nat.mul_le_mul_left A
-    (Nat.pow_le_pow_right (Nat.succ_pos n) (show d ≤ d + 1 by omega))
-  simp only [Nat.succ_eq_add_one] at hd
-  have hn : n + 1 ≤ (n + 1) ^ (d + 1) := by
-    simpa using Nat.pow_le_pow_right (Nat.succ_pos n) (show 1 ≤ d + 1 by omega)
-  have h1 : 1 ≤ (n + 1) ^ (d + 1) := by omega
-  calc
-    _ ≤ c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + 1 := by
-      apply Nat.add_le_add_right
-      apply Nat.mul_le_mul_left
-      simp only [Nat.add_mul, Nat.one_mul, Nat.mul_assoc, two_mul]
-      omega
-    _ ≤ c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + (n + 1) ^ (d + 1) := Nat.add_le_add_left h1 _
-    _ = _ := by ring
+word and emitted chunk, over every untouched native input (`Turing.FinTM.CleanModule`). -/
+private abbrev CLA5Clean (M : FinTM Bool) (result emit : List Bool → List Bool) (B : ℕ → ℕ) :
+    Prop :=
+  FinTM.CleanModule M result emit B
 
 /-- Every polynomial word computation has a clean first-halting install
 module with a polynomial budget on the argument length. -/
 private lemma clA5Clean_install {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
-    ∃ M A d, CLA5Clean M f (fun _ => []) (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
-  obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_installCallTM F f _ hF
-  -- The bridge's result length depends on the word, so enlarge it pointwise
-  -- to source time before putting it in the uniform argument-length budget.
-  have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
-    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
-  have hstop := clA5Clean_stop C entry exit f (fun _ => [])
-    (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
-      intro x arg
-      obtain ⟨t, ht, hp, hg, he⟩ := hc x arg
-      refine ⟨t, ht.trans (Nat.mul_le_mul_left c (by have := hlen arg; omega)), hp, hg, ?_⟩
-      exact he)
-  refine ⟨clA5StopTM C entry exit, c * (2 * A + 1) + 1, d + 1, hk, fun x arg => ?_⟩
-  obtain ⟨t, hp, ht, hg, he⟩ := hstop.2 x arg
-  exact ⟨t, hp, ht.trans (clA5_bridge_bound c A d arg.length _ (Nat.le_refl _)), hg, he⟩
+    ∃ M A d, CLA5Clean M f (fun _ => []) (fun n => A * (n + 1) ^ d) :=
+  exists_cleanInstall hf
 
 /-- The emit-mode counterpart preserves the argument and forwards the exact
 computed chunk. Its polynomial budget includes cleanup and the final halt. -/
 private lemma clA5Clean_emit {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
-    ∃ M A d, CLA5Clean M id f (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
-  obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_emitCallTM F f _ hF
-  have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
-    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
-  have hstop := clA5Clean_stop C entry exit id f
-    (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
-      intro x arg
-      obtain ⟨t, ht, hp, hg, he⟩ := hc x arg
-      exact ⟨t, ht.trans (Nat.mul_le_mul_left c (by have := hlen arg; omega)), hp, hg, he⟩)
-  refine ⟨clA5StopTM C entry exit, c * (2 * A + 1) + 1, d + 1, hk, fun x arg => ?_⟩
-  obtain ⟨t, hp, ht, hg, he⟩ := hstop.2 x arg
-  exact ⟨t, hp, ht.trans (clA5_bridge_bound c A d arg.length _ (Nat.le_refl _)), hg, he⟩
+    ∃ M A d, CLA5Clean M id f (fun n => A * (n + 1) ^ d) :=
+  exists_cleanEmit hf
 
 /-- Specialize a clean module to one call site in the finite host. -/
 private lemma clA5Host_clean (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
@@ -6193,42 +6025,57 @@ private lemma clA5Host_clean (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (
   obtain ⟨hguard, hend⟩ := clA5Host_call M K hk i h.1 x arg (f arg) (g arg) pre (M i).tm.q₀ t hg he
   exact ⟨t, hp, ht, hguard, hend⟩
 
+/-- A machine's initial configuration is its start state on the empty state word. -/
+private lemma clA5_initCfg {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S) (x : List Bool) :
+    tm.initCfg x = Cfg.ofWords (input := x) tm.q₀ (stateWord k []) := by
+  rw [MultiTapeTM.initCfg_eq]
+  apply Cfg.ext
+  · rw [Cfg.init_state, Cfg.ofWords_state]
+  · rw [Cfg.init_inputPos, Cfg.ofWords_inputPos]
+  · funext i z
+    simp only [Cfg.init_workTapes, Cfg.ofWords_workTapes, stateWord_eq, ite_self,
+      FinTM.bufferTape_nil]
+  · funext i
+    rw [Cfg.init_workTapePos, Cfg.ofWords_workTapePos]
+  · rw [Cfg.init_output, Cfg.ofWords_output]
+
+/-- A seam whose output is reset to empty is the seam itself. -/
+private lemma clA5_ofWords_out {k : ℕ} {S : Type} {x : List Bool} (q : S) (w : Fin k → List Bool) :
+    {Cfg.ofWords (input := x) q w with output := []} = Cfg.ofWords q w :=
+  Cfg.ext rfl rfl rfl rfl (Cfg.ofWords_output q w).symm
+
 /-- The inherited native input copier becomes a first-halting startup
 module without changing its stored word, heads, or silent output.
-**Proof sketch.** Consume the banked positive first return, add the proved
-release wrapper, then cut the absorbing endpoint at its first halt. -/
+**Proof sketch.** Consume the banked positive first return, stop it with the
+public release adapter (`Turing.FinTM.stopTM_runFrom_clean`), then cut the
+absorbing endpoint at its first halt. -/
 private lemma clA5Copy_clean (x : List Bool) :
-    let D := clA5StopTM clInputTM (0 : Fin 3) (2 : Fin 3)
+    let D := FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)
     ∃ t, 0 < t ∧ t ≤ 2 * x.length + 3 ∧
       (∀ j < t, ¬(D.tm.runFrom
         (Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k [])) j).Halted) ∧
       D.tm.runFrom (Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k [])) t =
-        {Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k x) with state := none} := by
+        {Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k x) with state := none, output := []} := by
   dsimp only
   obtain ⟨t, ht, hp, hf, he⟩ := clInput_first x
   have hi : clInputTM.tm.initCfg x =
-      Cfg.ofWords (input := x) (0 : Fin 3) (stateWord 1 []) := by
-    refine Cfg.ext rfl rfl ?_ rfl rfl
-    funext i z
-    simp [MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, stateWord, FinTM.bufferTape]
+      Cfg.ofWords (input := x) (0 : Fin 3) (stateWord 1 []) := clA5_initCfg clInputTM.tm x
   have hw : (fun _ : Fin 1 => x) = stateWord 1 x := by
-    funext i; have hi := Fin.eq_zero i; subst i; rfl
-  rw [hi, hw] at he
-  have hr := clA5Stop_clean clInputTM (0 : Fin 3) (2 : Fin 3) x [] x [] t hp
+    funext i
+    rw [stateWord_eq, if_pos (Fin.val_eq_zero i)]
+  rw [hi, hw, ← clA5_ofWords_out (2 : Fin 3) (stateWord 1 x)] at he
+  have hr := FinTM.stopTM_runFrom_clean clInputTM (0 : Fin 3) (2 : Fin 3) x [] x [] t hp
     (by
       intro j hj hjt
       change (clInputTM.tm.runFrom (Cfg.ofWords (input := x) (0 : Fin 3) (stateWord 1 [])) j).state ≠ some (2 : Fin 3)
       rw [← hi]
       exact hf j hjt) he
-  change (clA5StopTM clInputTM (0 : Fin 3) (2 : Fin 3)).tm.runFrom
-    (Cfg.ofWords (input := x) (false, (0 : Fin 3)) (stateWord 1 [])) (t + 1) =
-    {Cfg.ofWords (true, (2 : Fin 3)) (stateWord 1 x) with state := none, output := []} at hr
-  obtain ⟨u, hu, hub, hug, hue⟩ := clA5_call_first_halt
-    (clA5StopTM clInputTM (0 : Fin 3) (2 : Fin 3)).tm
-    (Cfg.ofWords (input := x) (false, (0 : Fin 3)) (stateWord 1 [])) (t + 1)
-    (by simp [Cfg.ofWords]) (by rw [hr])
-  refine ⟨u, hu, by omega, hug, ?_⟩
-  simpa only [clA5StopTM, Cfg.ofWords] using hue.trans hr
+  obtain ⟨u, hu, hub, hug, hue⟩ := MultiTapeTM.exists_first_halt_pos
+    (FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)).tm
+    (Cfg.ofWords (input := x) (FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)).tm.q₀
+      (stateWord (FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)).k [])) (t + 1)
+    (by rw [Cfg.ofWords_state]; exact Option.some_ne_none _) (by rw [hr])
+  exact ⟨u, hu, by omega, hug, hue.trans hr⟩
 
 /-- The final install call consumes the completed A4 producer itself. Its
 argument is the genuine retained native input; its result is the full header,
@@ -6254,7 +6101,7 @@ private lemma clA5Cursor_install :
 packed/cursor seam; the last two are the emission and cursor-update modules. -/
 private def clA5Modules (S J E I : FinTM Bool) : Fin 5 → FinTM Bool := fun i =>
   match i.val with
-  | 0 => clA5StopTM clInputTM (0 : Fin 3) (2 : Fin 3)
+  | 0 => FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)
   | 1 => S
   | 2 => J
   | 3 => E
@@ -6264,7 +6111,7 @@ private def clA5Modules (S J E I : FinTM Bool) : Fin 5 → FinTM Bool := fun i =
 private lemma clA5Modules_bound (S J E I : FinTM Bool) :
     ∀ i, (clA5Modules S J E I i).k ≤ 1 + S.k + J.k + E.k + I.k := by
   intro i
-  fin_cases i <;> simp [clA5Modules, clA5StopTM, clInputTM] <;> omega
+  fin_cases i <;> simp [clA5Modules, FinTM.stopTM_k, clInputTM] <;> omega
 
 /-- The complete final-body startup, from native `initCfg`, is silent and
 ends at its first anchor with every administrative tape blank and head zero.
@@ -6298,26 +6145,27 @@ private lemma clA5Startup (M : FinTM Bool) (C e c A d : ℕ) :
   intro x
   obtain ⟨t0, hp0, ht0, hg0, he0⟩ := clA5Copy_clean x
   obtain ⟨g0, e0⟩ := clA5Host_call bank K (clA5Modules_bound S J E I) 0
-    (by simp [bank, clA5Modules, clA5StopTM, clInputTM]) x [] x [] []
-    (false, (0 : Fin 3)) t0 hg0 he0
-  have hi : H.tm.initCfg x =
-      Cfg.ofWords (clA5HostEntry bank 0) (stateWord K []) := by
-    refine Cfg.ext rfl rfl ?_ rfl rfl
-    funext i z
-    simp [MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, stateWord, FinTM.bufferTape]
+    (by simp [bank, clA5Modules, FinTM.stopTM_k, clInputTM]) x [] x [] [] _ t0 hg0 he0
+  have hi : H.tm.initCfg x = Cfg.ofWords (clA5HostEntry bank 0) (stateWord K []) :=
+    clA5_initCfg H.tm x
+  simp only [List.nil_append, clA5_ofWords_out] at g0 e0
   change H.tm.runFrom (Cfg.ofWords (input := x) (clA5HostEntry bank 0) (stateWord K [])) t0 =
     Cfg.ofWords (clA5HostEntry bank 1) (stateWord K x) at e0
   obtain ⟨t1, hp1, ht1, g1, e1⟩ := clA5Host_clean bank K (clA5Modules_bound S J E I) 1
     (clPackedRecords M C e c A d) (fun _ => []) (fun n => aS * (n + 1) ^ dS)
     (by simpa [bank, clA5Modules] using hS) x x []
+  simp only [List.nil_append, clA5_ofWords_out] at g1 e1
   change H.tm.runFrom (Cfg.ofWords (input := x) (clA5HostEntry bank 1) (stateWord K x)) t1 =
     Cfg.ofWords (clA5HostEntry bank 2) (stateWord K (clPackedRecords M C e c A d x)) at e1
   obtain ⟨t2, hp2, ht2, g2, e2⟩ := clA5Host_clean bank K (clA5Modules_bound S J E I) 2
     (pairEncode []) (fun _ => []) (fun n => aJ * (n + 1) ^ dJ)
     (by simpa [bank, clA5Modules] using hJ) x (clPackedRecords M C e c A d x) []
+  simp only [List.nil_append, clA5_ofWords_out] at g2 e2
+  have hpack : clA5Pack M C e c A d x 0 = pairEncode [] (clPackedRecords M C e c A d x) := by
+    rw [clA5Pack, List.replicate_zero]
   change H.tm.runFrom
     (Cfg.ofWords (input := x) (clA5HostEntry bank 2) (stateWord K (clPackedRecords M C e c A d x))) t2 =
-    Cfg.ofWords (.inl ()) (stateWord K (clA5Pack M C e c A d x 0)) at e2
+    Cfg.ofWords (.inl ()) (stateWord K (pairEncode [] (clPackedRecords M C e c A d x))) at e2
   have hb2 := Nat.mul_le_mul_left aJ
     (Nat.pow_le_pow_left (Nat.add_le_add_right (hlen x) 1) dJ)
   have e01 : H.tm.runFrom
@@ -6328,7 +6176,7 @@ private lemma clA5Startup (M : FinTM Bool) (C e c A d : ℕ) :
   refine ⟨t0 + t1 + t2, by omega, ?_, ?_⟩
   · rw [hi]
     exact clA5_guard_add H.tm (.inl ()) _ _ (t0 + t1) t2 g01 e01 g2
-  · rw [hi, MultiTapeTM.runFrom_add, e01, e2]
+  · rw [hi, MultiTapeTM.runFrom_add, e01, e2, hpack]
     rfl
 
 /-- A fixed word is emitted from finite control. -/
