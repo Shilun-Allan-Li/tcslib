@@ -1,0 +1,19 @@
+HEAD PASS | PASS: 5 helper import(s) added (incl. Oracles, after .Handler); Contents section = issue base + Oracles bullet; T4 header and statement prose byte-identical; T4 sketch replaced; T4 body replaced
+C1-T4-header FAIL(expected) | FAIL: T4 header differs at line 3: base '    (q : PolyExpr) :' head '    (q : PolyExpr) (hq : 0 < q.eval 0) :'
+C2-T4-statement FAIL(expected) | FAIL: head: T4 header end line not found exactly once
+C3-T4-prose FAIL(expected) | FAIL: before T4 sketch differs at line 60: base 'negligible `σ` with `|Pr[bb1SimGame … b real = 1] − Pr[dbdhGame (D_b) real = 1]| ≤ σ(κ)` for' head 'negligible `σ` such that `|Pr[bb1SimGame … b real = 1] − Pr[dbdhGame (D_b) real = 1]| ≤ σ(κ)` for'
+C4-module-doc FAIL(expected) | FAIL: before T4 sketch differs at line 28: base 'This step is its own module so that it can be filled independently of the coupling steps' head 'This step is a module of its own so that it can be filled independently of the coupling steps'
+C5-foreign-import FAIL(expected) | FAIL: added import not a helper: 'import TCSlib.Cryptography.Games.Hopping\n'
+C6-helper-import-misplaced FAIL(expected) | FAIL: added import not a helper: 'import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Words2\n'
+C7-added-decl FAIL(expected) | FAIL: top-level line in T4 body: 'theorem extra : True := trivial'
+C8-main-results FAIL(expected) | FAIL: before T4 sketch differs at line 37: base '* `exists_bb1_distinguisher` — the simulation is a Decision BDH distinguisher (step 3).' head '* `exists_bb1_distinguisher` — this simulation is a Decision BDH distinguisher (step 3).'
+C9a-sketch-spill-blank-line FAIL(expected) | FAIL: before T4 sketch differs at line 63: base '' head None
+C9b-sketch-spill-prose-word FAIL(expected) | FAIL: before T4 sketch differs at line 61: base 'both tuple distributions.' head 'both tuple distribution.'
+C10a-contents-reword-bullet FAIL(expected) | FAIL: ## Contents differs from the issue base + Oracles bullet at section line 9: expected '* `BonehBoyenMachine.Handler`: the handler and its run.' head '* `BonehBoyenMachine.Handler`: the handler and its runs.'
+C10b-contents-extra-bullet FAIL(expected) | FAIL: ## Contents differs from the issue base + Oracles bullet at section line 12: expected "* `BonehBoyenMachine.Oracles`: the simulator's oracles as `drawStep` with fresh exponents, call by" head '* `BonehBoyenMachine.Glue`: further glue.'
+C10b2-contents-second-bullet FAIL(expected) | FAIL: ## Contents differs from the issue base + Oracles bullet at section line 14: expected '' head '* `BonehBoyenMachine.Glue`: further glue.'
+C10c-contents-bullet-dropped FAIL(expected) | FAIL: ## Contents differs from the issue base + Oracles bullet at section line 12: expected "* `BonehBoyenMachine.Oracles`: the simulator's oracles as `drawStep` with fresh exponents, call by" head ''
+C10d-oracles-import-dropped FAIL(expected) | FAIL: ## Contents differs from the issue base at section line 12: expected '' head "* `BonehBoyenMachine.Oracles`: the simulator's oracles as `drawStep` with fresh exponents, call by"
+C11a-oracles-import-after-Reduction FAIL(expected) | FAIL: import block differs from the issue base + Oracles at import 4: expected 'import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Oracles' head 'import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Reduction'
+C11b-oracles-import-last FAIL(expected) | FAIL: import block differs from the issue base + Oracles at import 4: expected 'import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Oracles' head 'import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Reduction'
+ALL_CONTROLS_OK True

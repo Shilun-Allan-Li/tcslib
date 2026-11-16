@@ -1,0 +1,13 @@
+M0-unmutated: OK | checker PASS rc=0 | READERS ok=7 missing=[] dup=[] moved=[] textdiff=[] | DIFF_VS_EXPECTED {'Defs': (0, 0, 0), 'BonehBoyen': (0, 0, 0)}
+M1a-char-in-reader-Defs: OK | checker FAIL rc=1 | READERS ok=6 missing=[] dup=[] moved=[] textdiff=['oracleImpl_two_onSpec'] | DIFF_VS_EXPECTED {'Defs': (0, 0, 1), 'BonehBoyen': (0, 0, 0)}
+M1b-char-in-reader-BonehBoyen: OK | checker FAIL rc=1 | READERS ok=6 missing=[] dup=[] moved=[] textdiff=['bb1Scheme_msgSpace_iff'] | DIFF_VS_EXPECTED {'Defs': (0, 0, 0), 'BonehBoyen': (0, 0, 1)}
+M2a-reader-deleted-Defs: OK | checker FAIL rc=1 | READERS ok=6 missing=['oracleImpl_one_onSpec'] dup=[] moved=[] textdiff=[] | DIFF_VS_EXPECTED {'Defs': (0, 14, 0), 'BonehBoyen': (0, 0, 0)}
+M2b-reader-deleted-BonehBoyen: OK | checker FAIL rc=1 | READERS ok=6 missing=['ofFn_bb1SimCt'] dup=[] moved=[] textdiff=[] | DIFF_VS_EXPECTED {'Defs': (0, 0, 0), 'BonehBoyen': (0, 12, 0)}
+M3a-extra-line-Defs: OK | checker FAIL rc=1 | READERS ok=7 missing=[] dup=[] moved=[] textdiff=[] | DIFF_VS_EXPECTED {'Defs': (1, 0, 0), 'BonehBoyen': (0, 0, 0)}
+M3b-extra-line-BonehBoyen: OK | checker FAIL rc=1 | READERS ok=7 missing=[] dup=[] moved=[] textdiff=[] | DIFF_VS_EXPECTED {'Defs': (0, 0, 0), 'BonehBoyen': (1, 0, 0)}
+M4a-reader-moved-BonehBoyen: OK | checker FAIL rc=1 | READERS ok=6 missing=[] dup=[] moved=['ofFn_bb1SimCt'] textdiff=[] | DIFF_VS_EXPECTED {'Defs': (0, 0, 0), 'BonehBoyen': (12, 12, 0)}
+M4b-readers-reordered-Defs: OK | checker FAIL rc=1 | READERS ok=5 missing=[] dup=[] moved=['oracleImpl_zero_onSpec', 'oracleImpl_one_onSpec'] textdiff=[] | DIFF_VS_EXPECTED {'Defs': (14, 14, 0), 'BonehBoyen': (0, 0, 0)}
+M5a-docstring-edited-BonehBoyen: OK | checker FAIL rc=1 | READERS ok=6 missing=[] dup=[] moved=[] textdiff=['ofFn_bb1Scheme_encSK'] | DIFF_VS_EXPECTED {'Defs': (0, 0, 0), 'BonehBoyen': (0, 0, 1)}
+M5b-docstring-edited-Defs: OK | checker FAIL rc=1 | READERS ok=6 missing=[] dup=[] moved=[] textdiff=['oracleImpl_two_onSpec'] | DIFF_VS_EXPECTED {'Defs': (0, 0, 1), 'BonehBoyen': (0, 0, 0)}
+M6-reader-duplicated-Defs: OK | checker FAIL rc=1 | READERS ok=6 missing=[] dup=['oracleImpl_zero_onSpec'] moved=[] textdiff=[] | DIFF_VS_EXPECTED {'Defs': (15, 0, 0), 'BonehBoyen': (0, 0, 0)}
+ALL_CONTROLS_OK True

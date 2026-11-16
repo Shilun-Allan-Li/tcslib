@@ -1,0 +1,40 @@
+[PASS] C0 source: /home/user/inhouse/r1/scope-request/BB1ReadersMin.lean.txt sha256 8644e7228ee7acd4d00c10adb004dca4fe0f94429a18a426e361406d5783420d
+[PASS] C0 base Defs: 433 lines sha256 9af4b7738f041d2b7f166df6b6ef7c35cf1fcf41c891e04317b50bdff06cf4a8
+[PASS] C0 base anchor D1: anchor at base line(s) [387] (expected [387])
+[PASS] C0 base BonehBoyen: 677 lines sha256 22caae4f61102c6c31b242fbc37f486939442960049b5e6e4c54790fca96ecd6
+[PASS] C0 base anchor B2: anchor at base line(s) [551] (expected [551])
+[PASS] C0 base anchor B1: anchor at base line(s) [387] (expected [387])
+      approved readers: 7 ['bb1Scheme_msgSpace_iff', 'ofFn_bb1Scheme_encPP', 'ofFn_bb1Scheme_encSK', 'ofFn_bb1SimCt', 'oracleImpl_one_onSpec', 'oracleImpl_two_onSpec', 'oracleImpl_zero_onSpec']
+[PASS] C1 block D1 (Defs): verbatim at head lines 388-430 (blank + approved 27-68), after anchor line 387
+[FAIL] C1 block B1 (BonehBoyen): 1 of 25 lines differ positionally in the window after anchor line 387
+        line 398: want '/-- **The key encoding as a word**: `⟦encSK ⟨d, k⟩⟧` is the padded word `d_0 ‖ d_1`'
+        line 398: have '/-- **The key encoding as a string**: `⟦encSK ⟨d, k⟩⟧` is the padded word `d_0 ‖ d_1`'
+[PASS] C1 block B2 (BonehBoyen): verbatim at head lines 577-588 (blank + approved 99-109), after anchor line 576
+[PASS] C2 reader ofFn_bb1Scheme_encPP: once, verbatim, BonehBoyen.lean lines 389-396 (block B1, offset 0)
+[FAIL] C2 reader ofFn_bb1Scheme_encSK: TEXT DIFFERS (1 line(s)) in BonehBoyen.lean at lines 398-404
+        line 398: want '/-- **The key encoding as a word**: `⟦encSK ⟨d, k⟩⟧` is the padded word `d_0 ‖ d_1`'
+        line 398: have '/-- **The key encoding as a string**: `⟦encSK ⟨d, k⟩⟧` is the padded word `d_0 ‖ d_1`'
+[PASS] C2 reader bb1Scheme_msgSpace_iff: once, verbatim, BonehBoyen.lean lines 406-412 (block B1, offset 17)
+[PASS] C2 reader ofFn_bb1SimCt: once, verbatim, BonehBoyen.lean lines 578-588 (block B2, offset 0)
+[PASS] C2 reader oracleImpl_zero_onSpec: once, verbatim, Defs.lean lines 389-401 (block D1, offset 0)
+[PASS] C2 reader oracleImpl_one_onSpec: once, verbatim, Defs.lean lines 403-415 (block D1, offset 14)
+[PASS] C2 reader oracleImpl_two_onSpec: once, verbatim, Defs.lean lines 417-430 (block D1, offset 28)
+READERS ok=6 missing=[] duplicate=[] moved=[] textdiff=['ofFn_bb1Scheme_encSK']
+[PASS] C3 removal Defs: blocks ['D1'] removed: equals base byte for byte (sha256 9af4b7738f041d2b7f166df6b6ef7c35cf1fcf41c891e04317b50bdff06cf4a8)
+[PASS] C4 hash Defs: 476 lines sha256 4e220eadd4bf71ea62372bc371a3e2062b9f213acc696dbb66994c1f64069dfd (expected 476 4e220eadd4bf71ea62372bc371a3e2062b9f213acc696dbb66994c1f64069dfd)
+[PASS] C5 diff-vs-base Defs: ADDED 43 REMOVED 0 CHANGED 0 in 1 hunk(s) (expected ADDED 43 REMOVED 0 CHANGED 0); inserted hunks are exactly the approved blocks
+      insert after base line 388: head lines 389-431
+DIFF_VS_EXPECTED Defs added=0 removed=0 changed=0
+[PASS] C6 diff-vs-expected Defs: head vs base+verbatim blocks: ADDED 0 REMOVED 0 CHANGED 0
+[FAIL] C3 removal BonehBoyen: blocks ['B1'] not located verbatim; removal not applicable
+[FAIL] C4 hash BonehBoyen: 714 lines sha256 f4bf7c8803c8ca5d373d379e1b6a2d94a3eb58a4c82f3d041b360e92601fa80f (expected 714 da875140806706f26c4cdbb5cf765f522144f3a5a885c5156a58b8c611cd25f4)
+[FAIL] C5 diff-vs-base BonehBoyen: ADDED 37 REMOVED 0 CHANGED 0 in 2 hunk(s) (expected ADDED 37 REMOVED 0 CHANGED 0); inserted hunks are NOT exactly the approved blocks
+      insert after base line 388: head lines 389-413
+      insert after base line 552: head lines 578-589
+DIFF_VS_EXPECTED BonehBoyen added=0 removed=0 changed=1
+[FAIL] C6 diff-vs-expected BonehBoyen: head vs base+verbatim blocks: ADDED 0 REMOVED 0 CHANGED 1
+      replace base/exp 398-398 head 398-398
+        - 398: '/-- **The key encoding as a word**: `⟦encSK ⟨d, k⟩⟧` is the padded word `d_0 ‖ d_1`'
+        + 398: '/-- **The key encoding as a string**: `⟦encSK ⟨d, k⟩⟧` is the padded word `d_0 ‖ d_1`'
+CHECKS 18/24 PASS
+RESULT FAIL

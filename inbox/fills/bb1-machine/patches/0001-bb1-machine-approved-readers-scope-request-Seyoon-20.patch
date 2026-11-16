@@ -1,0 +1,128 @@
+From 633dcf99907e26fe5e1573f4c215d9b57585bf28 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 16 Nov 2026 18:53:41 +0000
+Subject: [PATCH 1/3] bb1-machine: approved readers (scope request, Seyoon
+ 2026-11-16)
+
+Insert the seven approved readers verbatim (scope-request/BB1ReadersMin.lean.txt, lines 27-68 and
+74-109) as pure insertions: oracleImpl_{zero,one,two}_onSpec in IdentityBased/Defs.lean (after
+oracleImpl_two), ofFn_bb1Scheme_encPP, ofFn_bb1Scheme_encSK and bb1Scheme_msgSpace_iff in
+IdentityBased/BonehBoyen.lean (after the simps attribute of bb1Scheme), ofFn_bb1SimCt (after
+bb1SimCt_eq). Nothing else changes in either file.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjgrzZvrwGghDJP61L
+---
+ .../IdentityBased/BonehBoyen.lean             | 37 ++++++++++++++++
+ .../IdentityBased/Defs.lean                   | 43 +++++++++++++++++++
+ 2 files changed, 80 insertions(+)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean
+index 73e522be5..930b04805 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean
+@@ -386,6 +386,31 @@ noncomputable def bb1Scheme (G : BilinearGen) (ℓ : PolyExpr) : IBEScheme where
+ attribute [simps (config := { isSimp := false }) idLen msgLen ppLen skLen ctLen PP MSK SK CT
+   setup keyGen enc dec MsgSpace encPP encSK encCT] bb1Scheme
+ 
++/-- **The parameter encoding as a word**: `⟦encPP ⟨d, pp⟩⟧` is the padded word
++`d ‖ g ‖ g_1 ‖ g_2 ‖ h` (`ppLen(κ)` bits). -/
++theorem ofFn_bb1Scheme_encPP (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
++    (pp : BB1.Params (G.group κ d)) :
++    List.ofFn ((bb1Scheme G ℓ).encPP κ ⟨d, pp⟩) =
++      List.ofFn (padFin ((bb1Scheme G ℓ).ppLen.eval κ) (d ++ List.ofFn ((G.group κ d).encG pp.g) ++
++        List.ofFn ((G.group κ d).encG pp.g1) ++ List.ofFn ((G.group κ d).encG pp.g2) ++
++        List.ofFn ((G.group κ d).encG pp.h))) := rfl
++
++/-- **The key encoding as a word**: `⟦encSK ⟨d, k⟩⟧` is the padded word `d_0 ‖ d_1`
++(`skLen(κ)` bits). -/
++theorem ofFn_bb1Scheme_encSK (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
++    (k : BB1.Key (G.group κ d)) :
++    List.ofFn ((bb1Scheme G ℓ).encSK κ ⟨d, k⟩) =
++      List.ofFn (padFin ((bb1Scheme G ℓ).skLen.eval κ) (List.ofFn ((G.group κ d).encG k.d0) ++
++        List.ofFn ((G.group κ d).encG k.d1))) := rfl
++
++/-- **The message space as words**: a `msgLen(κ)`-bit message is in the message space of
++`⟨d, pp⟩` iff its word is the word of the encoding of an element of `G_T`. -/
++theorem bb1Scheme_msgSpace_iff (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
++    (pp : BB1.Params (G.group κ d)) (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) :
++    (bb1Scheme G ℓ).MsgSpace κ ⟨d, pp⟩ m ↔
++      ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m :=
++  exists_congr fun _ => List.ofFn_inj.symm
++
+ /-- **BB1 is perfectly correct** [BB04, §4.1, "Indeed, for a valid ciphertext …"]: every
+ honest run with a message of the message space decrypts to that message.
+ 
+@@ -550,6 +575,18 @@ theorem bb1SimCt_eq (κ : ℕ) (d : List Bool) (Z : (G.group κ d).G) (T : (G.gr
+     bb1SimCt G ℓ κ d Z T α₁ m =
+       (bb1Scheme G ℓ).encCT κ ⟨d, ⟨BB1.decodeT _ m * T, Z, Z ^ α₁.val⟩⟩ := rfl
+ 
++/-- **The simulated challenge as a word**: `⟦bb1SimCt … m⟧` is the padded word
++`decodeT(m) · T ‖ Z ‖ Z^{α_1.val}` (`ctLen(κ)` bits), the message read at the width of `G_T`. -/
++theorem ofFn_bb1SimCt (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
++    (Z : (G.group κ d).G) (T : (G.group κ d).GT) (α₁ : ZMod (G.group κ d).order)
++    (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) :
++    List.ofFn (bb1SimCt G ℓ κ d Z T α₁ m) =
++      List.ofFn (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
++        (List.ofFn ((G.group κ d).encT (BB1.decodeT (G.group κ d) (padFin _ (List.ofFn m)) * T)) ++
++          List.ofFn ((G.group κ d).encG Z) ++ List.ofFn ((G.group κ d).encG (Z ^ α₁.val)))) := by
++  rw [padFin_ofFn]
++  rfl
++
+ open Classical in
+ /-- **The simulator's `Challenge`** [BB04, proof of Theorem 4.1, *Challenge*] with challenge bit
+ `b`, on `Z = g^c` and `T`: with `ID*` recorded and no challenge yet, if `M₀, M₁` are in the
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean
+index 6c9331020..b0fc112a2 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean
+@@ -386,6 +386,49 @@ theorem oracleImpl_two {σ : Type} (κ : ℕ)
+     (x : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) (s : σ) :
+     S.oracleImpl κ init key chal 2 x s = chal x s := rfl
+ 
++/-- **Oracle `0` of `oracleImpl` on the game's query type**: the handler `init` on the query read
++as an identity, its answer read back on the game's answer type. -/
++theorem oracleImpl_zero_onSpec {σ : Type} (κ : ℕ)
++    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
++    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
++    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
++      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
++    (x : (S.sidSpec κ).dom 0) (s : σ) :
++    S.oracleImpl κ init key chal 0 x s =
++      (init (cast (show (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) from rfl) x) s).bind
++        fun p => .pure (cast (show (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
++          from rfl).symm p.1, p.2) :=
++  (OracleComp.bind_pure _).symm
++
++/-- **Oracle `1` of `oracleImpl` on the game's query type**: the handler `key` on the query read
++as an identity, its answer read back on the game's answer type. -/
++theorem oracleImpl_one_onSpec {σ : Type} (κ : ℕ)
++    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
++    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
++    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
++      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
++    (x : (S.sidSpec κ).dom 1) (s : σ) :
++    S.oracleImpl κ init key chal 1 x s =
++      (key (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl) x) s).bind
++        fun p => .pure (cast (show (S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool)
++          from rfl).symm p.1, p.2) :=
++  (OracleComp.bind_pure _).symm
++
++/-- **Oracle `2` of `oracleImpl` on the game's query type**: the handler `chal` on the query read
++as two messages, its answer read back on the game's answer type. -/
++theorem oracleImpl_two_onSpec {σ : Type} (κ : ℕ)
++    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
++    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
++    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
++      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
++    (x : (S.sidSpec κ).dom 2) (s : σ) :
++    S.oracleImpl κ init key chal 2 x s =
++      (chal (cast (show (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
++        from rfl) x) s).bind
++        fun p => .pure (cast (show (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool)
++          from rfl).symm p.1, p.2) :=
++  (OracleComp.bind_pure _).symm
++
+ /-- The codec of the adversary: the three oracles and a one-bit guess. -/
+ def sidCodec (κ : ℕ) : MachineCodec (S.sidSpec κ) (Fin 1 → Bool) :=
+   bitCodec (S.inLens κ) (S.outLens κ) 1

@@ -1,0 +1,40 @@
+[PASS] C0 source: /home/user/inhouse/r1/scope-request/BB1ReadersMin.lean.txt sha256 8644e7228ee7acd4d00c10adb004dca4fe0f94429a18a426e361406d5783420d
+[PASS] C0 base Defs: 433 lines sha256 9af4b7738f041d2b7f166df6b6ef7c35cf1fcf41c891e04317b50bdff06cf4a8
+[PASS] C0 base anchor D1: anchor at base line(s) [387] (expected [387])
+[PASS] C0 base BonehBoyen: 677 lines sha256 22caae4f61102c6c31b242fbc37f486939442960049b5e6e4c54790fca96ecd6
+[PASS] C0 base anchor B2: anchor at base line(s) [551] (expected [551])
+[PASS] C0 base anchor B1: anchor at base line(s) [387] (expected [387])
+      approved readers: 7 ['bb1Scheme_msgSpace_iff', 'ofFn_bb1Scheme_encPP', 'ofFn_bb1Scheme_encSK', 'ofFn_bb1SimCt', 'oracleImpl_one_onSpec', 'oracleImpl_two_onSpec', 'oracleImpl_zero_onSpec']
+[FAIL] C1 block D1 (Defs): 1 of 43 lines differ positionally in the window after anchor line 387
+        line 424: want '    (x : (S.sidSpec κ).dom 2) (s : σ) :'
+        line 424: have '    (x : (S.sidSpec κ).dom 1) (s : σ) :'
+[PASS] C1 block B1 (BonehBoyen): verbatim at head lines 388-412 (blank + approved 74-97), after anchor line 387
+[PASS] C1 block B2 (BonehBoyen): verbatim at head lines 577-588 (blank + approved 99-109), after anchor line 576
+[PASS] C2 reader ofFn_bb1Scheme_encPP: once, verbatim, BonehBoyen.lean lines 389-396 (block B1, offset 0)
+[PASS] C2 reader ofFn_bb1Scheme_encSK: once, verbatim, BonehBoyen.lean lines 398-404 (block B1, offset 9)
+[PASS] C2 reader bb1Scheme_msgSpace_iff: once, verbatim, BonehBoyen.lean lines 406-412 (block B1, offset 17)
+[PASS] C2 reader ofFn_bb1SimCt: once, verbatim, BonehBoyen.lean lines 578-588 (block B2, offset 0)
+[PASS] C2 reader oracleImpl_zero_onSpec: once, verbatim, Defs.lean lines 389-401 (block D1, offset 0)
+[PASS] C2 reader oracleImpl_one_onSpec: once, verbatim, Defs.lean lines 403-415 (block D1, offset 14)
+[FAIL] C2 reader oracleImpl_two_onSpec: TEXT DIFFERS (1 line(s)) in Defs.lean at lines 417-430
+        line 424: want '    (x : (S.sidSpec κ).dom 2) (s : σ) :'
+        line 424: have '    (x : (S.sidSpec κ).dom 1) (s : σ) :'
+READERS ok=6 missing=[] duplicate=[] moved=[] textdiff=['oracleImpl_two_onSpec']
+[FAIL] C3 removal Defs: blocks ['D1'] not located verbatim; removal not applicable
+[FAIL] C4 hash Defs: 476 lines sha256 6cedb4e7c3a0ea294295e04516acb797d32903c515405aba68e3762d3d5dcaf6 (expected 476 4e220eadd4bf71ea62372bc371a3e2062b9f213acc696dbb66994c1f64069dfd)
+[FAIL] C5 diff-vs-base Defs: ADDED 43 REMOVED 0 CHANGED 0 in 1 hunk(s) (expected ADDED 43 REMOVED 0 CHANGED 0); inserted hunks are NOT exactly the approved blocks
+      insert after base line 388: head lines 389-431
+DIFF_VS_EXPECTED Defs added=0 removed=0 changed=1
+[FAIL] C6 diff-vs-expected Defs: head vs base+verbatim blocks: ADDED 0 REMOVED 0 CHANGED 1
+      replace base/exp 424-424 head 424-424
+        - 424: '    (x : (S.sidSpec κ).dom 2) (s : σ) :'
+        + 424: '    (x : (S.sidSpec κ).dom 1) (s : σ) :'
+[PASS] C3 removal BonehBoyen: blocks ['B1', 'B2'] removed: equals base byte for byte (sha256 22caae4f61102c6c31b242fbc37f486939442960049b5e6e4c54790fca96ecd6)
+[PASS] C4 hash BonehBoyen: 714 lines sha256 da875140806706f26c4cdbb5cf765f522144f3a5a885c5156a58b8c611cd25f4 (expected 714 da875140806706f26c4cdbb5cf765f522144f3a5a885c5156a58b8c611cd25f4)
+[PASS] C5 diff-vs-base BonehBoyen: ADDED 37 REMOVED 0 CHANGED 0 in 2 hunk(s) (expected ADDED 37 REMOVED 0 CHANGED 0); inserted hunks are exactly the approved blocks
+      insert after base line 388: head lines 389-413
+      insert after base line 552: head lines 578-589
+DIFF_VS_EXPECTED BonehBoyen added=0 removed=0 changed=0
+[PASS] C6 diff-vs-expected BonehBoyen: head vs base+verbatim blocks: ADDED 0 REMOVED 0 CHANGED 0
+CHECKS 18/24 PASS
+RESULT FAIL

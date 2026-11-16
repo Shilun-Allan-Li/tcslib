@@ -1,0 +1,48 @@
+[PASS] C0 source: /home/user/inhouse/r1/scope-request/BB1ReadersMin.lean.txt sha256 8644e7228ee7acd4d00c10adb004dca4fe0f94429a18a426e361406d5783420d
+[PASS] C0 base Defs: 433 lines sha256 9af4b7738f041d2b7f166df6b6ef7c35cf1fcf41c891e04317b50bdff06cf4a8
+[PASS] C0 base anchor D1: anchor at base line(s) [387] (expected [387])
+[PASS] C0 base BonehBoyen: 677 lines sha256 22caae4f61102c6c31b242fbc37f486939442960049b5e6e4c54790fca96ecd6
+[PASS] C0 base anchor B2: anchor at base line(s) [551] (expected [551])
+[PASS] C0 base anchor B1: anchor at base line(s) [387] (expected [387])
+      approved readers: 7 ['bb1Scheme_msgSpace_iff', 'ofFn_bb1Scheme_encPP', 'ofFn_bb1Scheme_encSK', 'ofFn_bb1SimCt', 'oracleImpl_one_onSpec', 'oracleImpl_two_onSpec', 'oracleImpl_zero_onSpec']
+[PASS] C1 block D1 (Defs): verbatim at head lines 388-430 (blank + approved 27-68), after anchor line 387
+[PASS] C1 block B1 (BonehBoyen): verbatim at head lines 388-412 (blank + approved 74-97), after anchor line 387
+[FAIL] C1 block B2 (BonehBoyen): 11 of 12 lines differ positionally in the window after anchor line 588
+        line 590: want '/-- **The simulated challenge as a word**: `⟦bb1SimCt … m⟧` is the padded word'
+        line 590: have 'open Classical in'
+        line 591: want '`decodeT(m) · T ‖ Z ‖ Z^{α_1.val}` (`ctLen(κ)` bits), the message read at the width of `G_T`. -/'
+        line 591: have "/-- **The simulator's `Challenge`** [BB04, proof of Theorem 4.1, *Challenge*] with challenge bit"
+        line 592: want 'theorem ofFn_bb1SimCt (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)'
+        line 592: have '`b`, on `Z = g^c` and `T`: with `ID*` recorded and no challenge yet, if `M₀, M₁` are in the'
+        line 593: want '    (Z : (G.group κ d).G) (T : (G.group κ d).GT) (α₁ : ZMod (G.group κ d).order)'
+        line 593: have 'message space, answer and record `(M_b · T, Z, Z^{α_1})`, and otherwise `⊥`; once a challenge is'
+[PASS] C2 reader ofFn_bb1Scheme_encPP: once, verbatim, BonehBoyen.lean lines 389-396 (block B1, offset 0)
+[PASS] C2 reader ofFn_bb1Scheme_encSK: once, verbatim, BonehBoyen.lean lines 398-404 (block B1, offset 9)
+[PASS] C2 reader bb1Scheme_msgSpace_iff: once, verbatim, BonehBoyen.lean lines 406-412 (block B1, offset 17)
+[FAIL] C2 reader ofFn_bb1SimCt: MOVED: verbatim in BonehBoyen.lean at line 414, expected BonehBoyen.lean line 590 (block B2)
+[PASS] C2 reader oracleImpl_zero_onSpec: once, verbatim, Defs.lean lines 389-401 (block D1, offset 0)
+[PASS] C2 reader oracleImpl_one_onSpec: once, verbatim, Defs.lean lines 403-415 (block D1, offset 14)
+[PASS] C2 reader oracleImpl_two_onSpec: once, verbatim, Defs.lean lines 417-430 (block D1, offset 28)
+READERS ok=6 missing=[] duplicate=[] moved=['ofFn_bb1SimCt'] textdiff=[]
+[PASS] C3 removal Defs: blocks ['D1'] removed: equals base byte for byte (sha256 9af4b7738f041d2b7f166df6b6ef7c35cf1fcf41c891e04317b50bdff06cf4a8)
+[PASS] C4 hash Defs: 476 lines sha256 4e220eadd4bf71ea62372bc371a3e2062b9f213acc696dbb66994c1f64069dfd (expected 476 4e220eadd4bf71ea62372bc371a3e2062b9f213acc696dbb66994c1f64069dfd)
+[PASS] C5 diff-vs-base Defs: ADDED 43 REMOVED 0 CHANGED 0 in 1 hunk(s) (expected ADDED 43 REMOVED 0 CHANGED 0); inserted hunks are exactly the approved blocks
+      insert after base line 388: head lines 389-431
+DIFF_VS_EXPECTED Defs added=0 removed=0 changed=0
+[PASS] C6 diff-vs-expected Defs: head vs base+verbatim blocks: ADDED 0 REMOVED 0 CHANGED 0
+[FAIL] C3 removal BonehBoyen: blocks ['B2'] not located verbatim; removal not applicable
+[FAIL] C4 hash BonehBoyen: 714 lines sha256 08349bc436a629002cb162fea87e78b1dc2081300b3a6606f980ced5ffa3e0cf (expected 714 da875140806706f26c4cdbb5cf765f522144f3a5a885c5156a58b8c611cd25f4)
+[FAIL] C5 diff-vs-base BonehBoyen: ADDED 37 REMOVED 0 CHANGED 0 in 1 hunk(s) (expected ADDED 37 REMOVED 0 CHANGED 0); inserted hunks are NOT exactly the approved blocks
+      insert after base line 388: head lines 389-425
+DIFF_VS_EXPECTED BonehBoyen added=12 removed=12 changed=0
+[FAIL] C6 diff-vs-expected BonehBoyen: head vs base+verbatim blocks: ADDED 12 REMOVED 12 CHANGED 0
+      insert base/exp 414-413 head 414-425
+        + 414: '/-- **The simulated challenge as a word**: `⟦bb1SimCt … m⟧` is the padded word'
+        + 415: '`decodeT(m) · T ‖ Z ‖ Z^{α_1.val}` (`ctLen(κ)` bits), the message read at the width of `G_T`. -/'
+        + 416: 'theorem ofFn_bb1SimCt (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)'
+      delete base/exp 578-589 head 590-589
+        - 578: '/-- **The simulated challenge as a word**: `⟦bb1SimCt … m⟧` is the padded word'
+        - 579: '`decodeT(m) · T ‖ Z ‖ Z^{α_1.val}` (`ctLen(κ)` bits), the message read at the width of `G_T`. -/'
+        - 580: 'theorem ofFn_bb1SimCt (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)'
+CHECKS 18/24 PASS
+RESULT FAIL

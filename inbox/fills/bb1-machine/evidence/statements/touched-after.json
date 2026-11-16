@@ -1,0 +1,3460 @@
+{
+ "base": "9e7a96481785d6cac4dea3b2e990c49ac278b060",
+ "head": "c90273fad3511ada7c9c1a53e1abdd8478237cee",
+ "files": {
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.Params",
+     "kind": "structure",
+     "private": false,
+     "start": 87,
+     "decl_line": 88,
+     "end": 97,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.Key",
+     "kind": "structure",
+     "private": false,
+     "start": 98,
+     "decl_line": 99,
+     "end": 104,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.Ciphertext",
+     "kind": "structure",
+     "private": false,
+     "start": 105,
+     "decl_line": 106,
+     "end": 113,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.F",
+     "kind": "def",
+     "private": false,
+     "start": 116,
+     "decl_line": 117,
+     "end": 118,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.F_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 119,
+     "decl_line": 120,
+     "end": 121,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.setup",
+     "kind": "def",
+     "private": false,
+     "start": 124,
+     "decl_line": 126,
+     "end": 132,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.setup_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 135,
+     "end": 142,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.keyGen",
+     "kind": "def",
+     "private": false,
+     "start": 145,
+     "decl_line": 147,
+     "end": 149,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.keyGen_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 150,
+     "decl_line": 151,
+     "end": 155,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.encrypt",
+     "kind": "def",
+     "private": false,
+     "start": 156,
+     "decl_line": 158,
+     "end": 162,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.encrypt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 163,
+     "decl_line": 164,
+     "end": 168,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.decrypt",
+     "kind": "def",
+     "private": false,
+     "start": 169,
+     "decl_line": 171,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.decrypt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 174,
+     "end": 176,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.decrypt_encrypt",
+     "kind": "theorem",
+     "private": false,
+     "start": 177,
+     "decl_line": 186,
+     "end": 201,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ",
+     "kind": "def",
+     "private": false,
+     "start": 204,
+     "decl_line": 206,
+     "end": 207,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 208,
+     "decl_line": 209,
+     "end": 211,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.decodeT",
+     "kind": "def",
+     "private": false,
+     "start": 212,
+     "decl_line": 214,
+     "end": 215,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.decodeT_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 216,
+     "decl_line": 217,
+     "end": 219,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.decodeT_encT",
+     "kind": "theorem",
+     "private": false,
+     "start": 220,
+     "decl_line": 221,
+     "end": 223,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_encPP_inj",
+     "kind": "theorem",
+     "private": false,
+     "start": 235,
+     "decl_line": 243,
+     "end": 270,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_encSK_inj",
+     "kind": "theorem",
+     "private": false,
+     "start": 271,
+     "decl_line": 277,
+     "end": 294,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_encCT_inj",
+     "kind": "theorem",
+     "private": false,
+     "start": 295,
+     "decl_line": 302,
+     "end": 323,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme",
+     "kind": "def",
+     "private": false,
+     "start": 326,
+     "decl_line": 339,
+     "end": 385,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_bb1Scheme_encPP",
+     "kind": "theorem",
+     "private": false,
+     "start": 389,
+     "decl_line": 391,
+     "end": 397,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_bb1Scheme_encSK",
+     "kind": "theorem",
+     "private": false,
+     "start": 398,
+     "decl_line": 400,
+     "end": 405,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_msgSpace_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 406,
+     "decl_line": 408,
+     "end": 413,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_correct",
+     "kind": "theorem",
+     "private": false,
+     "start": 414,
+     "decl_line": 423,
+     "end": 441,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState",
+     "kind": "abbrev",
+     "private": false,
+     "start": 452,
+     "decl_line": 454,
+     "end": 457,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimState_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 458,
+     "decl_line": 460,
+     "end": 464,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimParams",
+     "kind": "def",
+     "private": false,
+     "start": 465,
+     "decl_line": 467,
+     "end": 471,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimParams_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 472,
+     "decl_line": 473,
+     "end": 477,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimKey",
+     "kind": "def",
+     "private": false,
+     "start": 478,
+     "decl_line": 481,
+     "end": 488,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimKey_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 489,
+     "decl_line": 491,
+     "end": 499,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimInit",
+     "kind": "def",
+     "private": false,
+     "start": 500,
+     "decl_line": 503,
+     "end": 510,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimInit_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 511,
+     "decl_line": 512,
+     "end": 519,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimInit_some",
+     "kind": "theorem",
+     "private": false,
+     "start": 520,
+     "decl_line": 521,
+     "end": 527,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimKeyQ",
+     "kind": "def",
+     "private": false,
+     "start": 528,
+     "decl_line": 530,
+     "end": 540,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimKeyQ_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 541,
+     "decl_line": 542,
+     "end": 546,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimKeyQ_target",
+     "kind": "theorem",
+     "private": false,
+     "start": 547,
+     "decl_line": 548,
+     "end": 553,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimKeyQ_ne",
+     "kind": "theorem",
+     "private": false,
+     "start": 554,
+     "decl_line": 555,
+     "end": 564,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimCt",
+     "kind": "def",
+     "private": false,
+     "start": 565,
+     "decl_line": 567,
+     "end": 571,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimCt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 572,
+     "decl_line": 573,
+     "end": 577,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_bb1SimCt",
+     "kind": "theorem",
+     "private": false,
+     "start": 578,
+     "decl_line": 580,
+     "end": 589,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimChal",
+     "kind": "def",
+     "private": false,
+     "start": 591,
+     "decl_line": 595,
+     "end": 613,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimChal_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 614,
+     "decl_line": 615,
+     "end": 620,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimChal_repeat",
+     "kind": "theorem",
+     "private": false,
+     "start": 621,
+     "decl_line": 622,
+     "end": 628,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimChal_fresh",
+     "kind": "theorem",
+     "private": false,
+     "start": 629,
+     "decl_line": 631,
+     "end": 646,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimChal_invalid",
+     "kind": "theorem",
+     "private": false,
+     "start": 647,
+     "decl_line": 648,
+     "end": 660,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl",
+     "kind": "def",
+     "private": false,
+     "start": 661,
+     "decl_line": 664,
+     "end": 669,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 670,
+     "decl_line": 671,
+     "end": 676,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimGame",
+     "kind": "def",
+     "private": false,
+     "start": 677,
+     "decl_line": 682,
+     "end": 694,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimGame_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 695,
+     "decl_line": 697,
+     "end": 711,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 48,
+   "head_count": 52
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.exists_bb1_distinguisher",
+     "kind": "theorem",
+     "private": false,
+     "start": 74,
+     "decl_line": 104,
+     "end": 136,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 1,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.qLen",
+     "kind": "def",
+     "private": false,
+     "start": 72,
+     "decl_line": 74,
+     "end": 78,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.qLen_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 79,
+     "decl_line": 80,
+     "end": 81,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.qLen_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 82,
+     "decl_line": 83,
+     "end": 84,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.qLen_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 85,
+     "decl_line": 86,
+     "end": 87,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.aLen",
+     "kind": "def",
+     "private": false,
+     "start": 88,
+     "decl_line": 90,
+     "end": 94,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.aLen_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 95,
+     "decl_line": 96,
+     "end": 97,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.aLen_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 98,
+     "decl_line": 99,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.aLen_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 101,
+     "decl_line": 102,
+     "end": 103,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.qLen_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 104,
+     "decl_line": 105,
+     "end": 111,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.aLen_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 112,
+     "decl_line": 113,
+     "end": 119,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.blockLen",
+     "kind": "def",
+     "private": false,
+     "start": 122,
+     "decl_line": 124,
+     "end": 125,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.blockLen_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 126,
+     "decl_line": 127,
+     "end": 129,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.draw",
+     "kind": "def",
+     "private": false,
+     "start": 130,
+     "decl_line": 133,
+     "end": 137,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.draw_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 138,
+     "decl_line": 139,
+     "end": 144,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.order_le_two_pow",
+     "kind": "theorem",
+     "private": false,
+     "start": 145,
+     "decl_line": 147,
+     "end": 152,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.statClose_draw",
+     "kind": "theorem",
+     "private": false,
+     "start": 153,
+     "decl_line": 159,
+     "end": 185,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.drawStep",
+     "kind": "def",
+     "private": false,
+     "start": 189,
+     "decl_line": 202,
+     "end": 247,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.drawStep_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 252,
+     "decl_line": 255,
+     "end": 265,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.drawStep_one_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 266,
+     "decl_line": 267,
+     "end": 271,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.drawStep_one_target",
+     "kind": "theorem",
+     "private": false,
+     "start": 272,
+     "decl_line": 273,
+     "end": 281,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.drawStep_one_key",
+     "kind": "theorem",
+     "private": false,
+     "start": 282,
+     "decl_line": 287,
+     "end": 305,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.drawStep_two_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 306,
+     "decl_line": 307,
+     "end": 311,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.drawStep_two_repeat",
+     "kind": "theorem",
+     "private": false,
+     "start": 312,
+     "decl_line": 313,
+     "end": 319,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.drawStep_two_fresh",
+     "kind": "theorem",
+     "private": false,
+     "start": 321,
+     "decl_line": 326,
+     "end": 346,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.drawStep_two_invalid",
+     "kind": "theorem",
+     "private": false,
+     "start": 348,
+     "decl_line": 349,
+     "end": 360,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.exists_drawStep_eq_pure",
+     "kind": "theorem",
+     "private": false,
+     "start": 361,
+     "decl_line": 368,
+     "end": 392,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.exists_simulate_tape_eq_pure",
+     "kind": "theorem",
+     "private": false,
+     "start": 393,
+     "decl_line": 399,
+     "end": 412,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.expect_sample_eq_uprob",
+     "kind": "theorem",
+     "private": true,
+     "start": 417,
+     "decl_line": 419,
+     "end": 430,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.abs_expect_draws_sub_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 431,
+     "decl_line": 439,
+     "end": 448,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 29
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.stLen",
+     "kind": "def",
+     "private": true,
+     "start": 79,
+     "decl_line": 80,
+     "end": 83,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.hS",
+     "kind": "def",
+     "private": true,
+     "start": 86,
+     "decl_line": 87,
+     "end": 89,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.tSel",
+     "kind": "def",
+     "private": true,
+     "start": 90,
+     "decl_line": 91,
+     "end": 91,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.aSel",
+     "kind": "def",
+     "private": true,
+     "start": 92,
+     "decl_line": 93,
+     "end": 94,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ans0",
+     "kind": "def",
+     "private": true,
+     "start": 95,
+     "decl_line": 96,
+     "end": 98,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.keyOk",
+     "kind": "def",
+     "private": true,
+     "start": 99,
+     "decl_line": 100,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.diffS",
+     "kind": "def",
+     "private": true,
+     "start": 101,
+     "decl_line": 102,
+     "end": 103,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.invD",
+     "kind": "def",
+     "private": true,
+     "start": 104,
+     "decl_line": 105,
+     "end": 105,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.d0S",
+     "kind": "def",
+     "private": true,
+     "start": 106,
+     "decl_line": 107,
+     "end": 110,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.d1S",
+     "kind": "def",
+     "private": true,
+     "start": 111,
+     "decl_line": 112,
+     "end": 113,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ans1",
+     "kind": "def",
+     "private": true,
+     "start": 114,
+     "decl_line": 115,
+     "end": 118,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.m0",
+     "kind": "def",
+     "private": true,
+     "start": 119,
+     "decl_line": 120,
+     "end": 121,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.m1",
+     "kind": "def",
+     "private": true,
+     "start": 122,
+     "decl_line": 123,
+     "end": 124,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.mB",
+     "kind": "def",
+     "private": true,
+     "start": 125,
+     "decl_line": 126,
+     "end": 126,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.valid",
+     "kind": "def",
+     "private": true,
+     "start": 127,
+     "decl_line": 128,
+     "end": 130,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ctS",
+     "kind": "def",
+     "private": true,
+     "start": 131,
+     "decl_line": 132,
+     "end": 133,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ans2",
+     "kind": "def",
+     "private": true,
+     "start": 134,
+     "decl_line": 135,
+     "end": 140,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.isI",
+     "kind": "def",
+     "private": true,
+     "start": 141,
+     "decl_line": 142,
+     "end": 142,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.isK",
+     "kind": "def",
+     "private": true,
+     "start": 143,
+     "decl_line": 144,
+     "end": 145,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ansW",
+     "kind": "def",
+     "private": true,
+     "start": 146,
+     "decl_line": 147,
+     "end": 148,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.newO1",
+     "kind": "def",
+     "private": true,
+     "start": 149,
+     "decl_line": 150,
+     "end": 151,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.newO2",
+     "kind": "def",
+     "private": true,
+     "start": 152,
+     "decl_line": 153,
+     "end": 156,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.runF",
+     "kind": "def",
+     "private": true,
+     "start": 157,
+     "decl_line": 159,
+     "end": 162,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_hS",
+     "kind": "theorem",
+     "private": true,
+     "start": 167,
+     "decl_line": 167,
+     "end": 169,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_tSel",
+     "kind": "theorem",
+     "private": true,
+     "start": 170,
+     "decl_line": 170,
+     "end": 171,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_aSel",
+     "kind": "theorem",
+     "private": true,
+     "start": 172,
+     "decl_line": 172,
+     "end": 173,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_ans0",
+     "kind": "theorem",
+     "private": true,
+     "start": 174,
+     "decl_line": 174,
+     "end": 177,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_keyOk",
+     "kind": "theorem",
+     "private": true,
+     "start": 178,
+     "decl_line": 178,
+     "end": 181,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_diffS",
+     "kind": "theorem",
+     "private": true,
+     "start": 182,
+     "decl_line": 182,
+     "end": 183,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_invD",
+     "kind": "theorem",
+     "private": true,
+     "start": 184,
+     "decl_line": 184,
+     "end": 185,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_d0S",
+     "kind": "theorem",
+     "private": true,
+     "start": 186,
+     "decl_line": 186,
+     "end": 190,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_d1S",
+     "kind": "theorem",
+     "private": true,
+     "start": 191,
+     "decl_line": 191,
+     "end": 193,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_ans1",
+     "kind": "theorem",
+     "private": true,
+     "start": 194,
+     "decl_line": 194,
+     "end": 199,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_m0",
+     "kind": "theorem",
+     "private": true,
+     "start": 200,
+     "decl_line": 200,
+     "end": 203,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_m1",
+     "kind": "theorem",
+     "private": true,
+     "start": 204,
+     "decl_line": 204,
+     "end": 207,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_mB",
+     "kind": "theorem",
+     "private": true,
+     "start": 208,
+     "decl_line": 208,
+     "end": 209,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_valid",
+     "kind": "theorem",
+     "private": true,
+     "start": 210,
+     "decl_line": 210,
+     "end": 213,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_ctS",
+     "kind": "theorem",
+     "private": true,
+     "start": 214,
+     "decl_line": 214,
+     "end": 216,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_ans2",
+     "kind": "theorem",
+     "private": true,
+     "start": 217,
+     "decl_line": 217,
+     "end": 223,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_isI",
+     "kind": "theorem",
+     "private": true,
+     "start": 224,
+     "decl_line": 224,
+     "end": 225,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_isK",
+     "kind": "theorem",
+     "private": true,
+     "start": 226,
+     "decl_line": 226,
+     "end": 228,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_ansW",
+     "kind": "theorem",
+     "private": true,
+     "start": 229,
+     "decl_line": 229,
+     "end": 231,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_newO1",
+     "kind": "theorem",
+     "private": true,
+     "start": 232,
+     "decl_line": 232,
+     "end": 233,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_newO2",
+     "kind": "theorem",
+     "private": true,
+     "start": 234,
+     "decl_line": 234,
+     "end": 241,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_runF",
+     "kind": "theorem",
+     "private": true,
+     "start": 242,
+     "decl_line": 245,
+     "end": 250,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.handler",
+     "kind": "def",
+     "private": false,
+     "start": 255,
+     "decl_line": 259,
+     "end": 269,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.handler_seedLen",
+     "kind": "theorem",
+     "private": false,
+     "start": 272,
+     "decl_line": 273,
+     "end": 275,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.handler_advInput",
+     "kind": "theorem",
+     "private": false,
+     "start": 276,
+     "decl_line": 277,
+     "end": 282,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.handler_result",
+     "kind": "theorem",
+     "private": false,
+     "start": 283,
+     "decl_line": 284,
+     "end": 291,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.seedLen_eval",
+     "kind": "theorem",
+     "private": true,
+     "start": 292,
+     "decl_line": 293,
+     "end": 297,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.seedBlocks",
+     "kind": "def",
+     "private": false,
+     "start": 298,
+     "decl_line": 300,
+     "end": 305,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.seedBlocks_window",
+     "kind": "theorem",
+     "private": false,
+     "start": 306,
+     "decl_line": 308,
+     "end": 314,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.o1Word",
+     "kind": "def",
+     "private": true,
+     "start": 317,
+     "decl_line": 318,
+     "end": 323,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.o2Word",
+     "kind": "def",
+     "private": true,
+     "start": 324,
+     "decl_line": 325,
+     "end": 328,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.stWord",
+     "kind": "def",
+     "private": true,
+     "start": 329,
+     "decl_line": 330,
+     "end": 332,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.stEnc",
+     "kind": "def",
+     "private": true,
+     "start": 333,
+     "decl_line": 334,
+     "end": 339,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.stLen_eval",
+     "kind": "theorem",
+     "private": true,
+     "start": 342,
+     "decl_line": 343,
+     "end": 347,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.length_o1Word_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 348,
+     "decl_line": 349,
+     "end": 357,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.length_o2Word_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 358,
+     "decl_line": 359,
+     "end": 367,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.length_stWord_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 368,
+     "decl_line": 369,
+     "end": 375,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.fields_stEnc",
+     "kind": "theorem",
+     "private": true,
+     "start": 376,
+     "decl_line": 378,
+     "end": 387,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.headD_o2Word",
+     "kind": "theorem",
+     "private": true,
+     "start": 388,
+     "decl_line": 389,
+     "end": 394,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.take_o2Word",
+     "kind": "theorem",
+     "private": true,
+     "start": 395,
+     "decl_line": 396,
+     "end": 401,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.fields_rS",
+     "kind": "theorem",
+     "private": true,
+     "start": 406,
+     "decl_line": 407,
+     "end": 415,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.padL_newState",
+     "kind": "theorem",
+     "private": true,
+     "start": 428,
+     "decl_line": 430,
+     "end": 438,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sCom_of",
+     "kind": "theorem",
+     "private": true,
+     "start": 439,
+     "decl_line": 440,
+     "end": 447,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sO2_of",
+     "kind": "theorem",
+     "private": true,
+     "start": 448,
+     "decl_line": 449,
+     "end": 458,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.uS_of",
+     "kind": "theorem",
+     "private": true,
+     "start": 459,
+     "decl_line": 461,
+     "end": 468,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.hS_ofFn",
+     "kind": "theorem",
+     "private": true,
+     "start": 469,
+     "decl_line": 470,
+     "end": 479,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.length_ppWord",
+     "kind": "theorem",
+     "private": true,
+     "start": 480,
+     "decl_line": 481,
+     "end": 488,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.runF_zero",
+     "kind": "theorem",
+     "private": true,
+     "start": 489,
+     "decl_line": 499,
+     "end": 549,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.d0S_of",
+     "kind": "theorem",
+     "private": true,
+     "start": 550,
+     "decl_line": 559,
+     "end": 575,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.d1S_of",
+     "kind": "theorem",
+     "private": true,
+     "start": 576,
+     "decl_line": 578,
+     "end": 590,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.runF_one",
+     "kind": "theorem",
+     "private": true,
+     "start": 591,
+     "decl_line": 600,
+     "end": 671,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.length_ctWord",
+     "kind": "theorem",
+     "private": true,
+     "start": 672,
+     "decl_line": 673,
+     "end": 681,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.runF_two",
+     "kind": "theorem",
+     "private": true,
+     "start": 682,
+     "decl_line": 694,
+     "end": 816,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.handler_impl_stEnc",
+     "kind": "theorem",
+     "private": true,
+     "start": 822,
+     "decl_line": 832,
+     "end": 859,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.simulate_handler",
+     "kind": "theorem",
+     "private": false,
+     "start": 860,
+     "decl_line": 874,
+     "end": 894,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 78
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Oracles.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.cast_eq_padFin",
+     "kind": "theorem",
+     "private": true,
+     "start": 57,
+     "decl_line": 58,
+     "end": 62,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ofFn_padFin_ofFn",
+     "kind": "theorem",
+     "private": true,
+     "start": 63,
+     "decl_line": 64,
+     "end": 67,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ofFn_decAnswer_some",
+     "kind": "theorem",
+     "private": true,
+     "start": 68,
+     "decl_line": 69,
+     "end": 73,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sidSpec_rng_one'",
+     "kind": "theorem",
+     "private": true,
+     "start": 74,
+     "decl_line": 77,
+     "end": 80,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sidSpec_rng_two'",
+     "kind": "theorem",
+     "private": true,
+     "start": 81,
+     "decl_line": 84,
+     "end": 87,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.expect_bb1SimImpl",
+     "kind": "theorem",
+     "private": true,
+     "start": 93,
+     "decl_line": 110,
+     "end": 310,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.abs_expect_bb1Sim_sub_distinguisherL_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 313,
+     "decl_line": 330,
+     "end": 370,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 7
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.runAccept",
+     "kind": "def",
+     "private": false,
+     "start": 61,
+     "decl_line": 65,
+     "end": 72,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.runAccept_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 73,
+     "decl_line": 75,
+     "end": 84,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.runAccept_eq_zero_or_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 85,
+     "decl_line": 87,
+     "end": 98,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.expect_handlerMachine",
+     "kind": "theorem",
+     "private": false,
+     "start": 101,
+     "decl_line": 113,
+     "end": 185,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ite_ofFn_one",
+     "kind": "theorem",
+     "private": true,
+     "start": 186,
+     "decl_line": 187,
+     "end": 193,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.expect_castImpl_freshImpl",
+     "kind": "theorem",
+     "private": false,
+     "start": 194,
+     "decl_line": 203,
+     "end": 225,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.abs_expect_runAccept_sub_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 226,
+     "decl_line": 229,
+     "end": 240,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 7
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Words.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.aWidth",
+     "kind": "def",
+     "private": false,
+     "start": 77,
+     "decl_line": 78,
+     "end": 79,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.aWidth_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 80,
+     "decl_line": 81,
+     "end": 83,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.nn",
+     "kind": "def",
+     "private": false,
+     "start": 84,
+     "decl_line": 85,
+     "end": 86,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.nn_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 87,
+     "decl_line": 88,
+     "end": 90,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rU",
+     "kind": "def",
+     "private": false,
+     "start": 93,
+     "decl_line": 94,
+     "end": 94,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rZ",
+     "kind": "def",
+     "private": false,
+     "start": 95,
+     "decl_line": 96,
+     "end": 96,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rW",
+     "kind": "def",
+     "private": false,
+     "start": 97,
+     "decl_line": 98,
+     "end": 98,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rS",
+     "kind": "def",
+     "private": false,
+     "start": 99,
+     "decl_line": 100,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rI",
+     "kind": "def",
+     "private": false,
+     "start": 101,
+     "decl_line": 102,
+     "end": 102,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rX",
+     "kind": "def",
+     "private": false,
+     "start": 103,
+     "decl_line": 104,
+     "end": 105,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zD",
+     "kind": "def",
+     "private": false,
+     "start": 106,
+     "decl_line": 107,
+     "end": 107,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zG",
+     "kind": "def",
+     "private": false,
+     "start": 108,
+     "decl_line": 109,
+     "end": 109,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zX",
+     "kind": "def",
+     "private": false,
+     "start": 110,
+     "decl_line": 111,
+     "end": 111,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zY",
+     "kind": "def",
+     "private": false,
+     "start": 112,
+     "decl_line": 113,
+     "end": 113,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zZ",
+     "kind": "def",
+     "private": false,
+     "start": 114,
+     "decl_line": 115,
+     "end": 116,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zT",
+     "kind": "def",
+     "private": false,
+     "start": 117,
+     "decl_line": 118,
+     "end": 120,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sJ",
+     "kind": "def",
+     "private": false,
+     "start": 121,
+     "decl_line": 122,
+     "end": 122,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sO1",
+     "kind": "def",
+     "private": false,
+     "start": 123,
+     "decl_line": 124,
+     "end": 124,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sR",
+     "kind": "def",
+     "private": false,
+     "start": 125,
+     "decl_line": 126,
+     "end": 126,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sCom",
+     "kind": "def",
+     "private": false,
+     "start": 127,
+     "decl_line": 128,
+     "end": 128,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sChal",
+     "kind": "def",
+     "private": false,
+     "start": 129,
+     "decl_line": 130,
+     "end": 130,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sC",
+     "kind": "def",
+     "private": false,
+     "start": 131,
+     "decl_line": 132,
+     "end": 133,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sO2",
+     "kind": "def",
+     "private": false,
+     "start": 134,
+     "decl_line": 135,
+     "end": 135,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.kT",
+     "kind": "def",
+     "private": false,
+     "start": 136,
+     "decl_line": 137,
+     "end": 137,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.kA",
+     "kind": "def",
+     "private": false,
+     "start": 138,
+     "decl_line": 139,
+     "end": 140,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.pS",
+     "kind": "def",
+     "private": false,
+     "start": 143,
+     "decl_line": 144,
+     "end": 144,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.modS",
+     "kind": "def",
+     "private": false,
+     "start": 145,
+     "decl_line": 146,
+     "end": 146,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.negS",
+     "kind": "def",
+     "private": false,
+     "start": 147,
+     "decl_line": 148,
+     "end": 149,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.addS",
+     "kind": "def",
+     "private": false,
+     "start": 150,
+     "decl_line": 151,
+     "end": 151,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.mulS",
+     "kind": "def",
+     "private": false,
+     "start": 152,
+     "decl_line": 153,
+     "end": 153,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.invS",
+     "kind": "def",
+     "private": false,
+     "start": 154,
+     "decl_line": 155,
+     "end": 155,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.mulGS",
+     "kind": "def",
+     "private": false,
+     "start": 156,
+     "decl_line": 157,
+     "end": 157,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.powGS",
+     "kind": "def",
+     "private": false,
+     "start": 158,
+     "decl_line": 159,
+     "end": 160,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.blkS",
+     "kind": "def",
+     "private": false,
+     "start": 163,
+     "decl_line": 165,
+     "end": 167,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.uS",
+     "kind": "def",
+     "private": false,
+     "start": 168,
+     "decl_line": 170,
+     "end": 174,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rU_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 177,
+     "decl_line": 178,
+     "end": 178,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rZ_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 179,
+     "decl_line": 180,
+     "end": 180,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rW_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 181,
+     "decl_line": 182,
+     "end": 182,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 183,
+     "decl_line": 184,
+     "end": 184,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rI_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 185,
+     "decl_line": 186,
+     "end": 186,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rX_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 187,
+     "decl_line": 188,
+     "end": 188,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zD_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 189,
+     "decl_line": 190,
+     "end": 190,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zG_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 191,
+     "decl_line": 192,
+     "end": 192,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zX_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 193,
+     "decl_line": 194,
+     "end": 194,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zY_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 195,
+     "decl_line": 196,
+     "end": 196,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zZ_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 197,
+     "decl_line": 198,
+     "end": 199,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zT_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 200,
+     "decl_line": 201,
+     "end": 202,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sJ_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 203,
+     "decl_line": 204,
+     "end": 204,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sO1_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 205,
+     "decl_line": 206,
+     "end": 206,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sR_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 207,
+     "decl_line": 208,
+     "end": 208,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sCom_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 209,
+     "decl_line": 210,
+     "end": 210,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sChal_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 211,
+     "decl_line": 212,
+     "end": 212,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sC_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 213,
+     "decl_line": 214,
+     "end": 215,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sO2_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 216,
+     "decl_line": 217,
+     "end": 217,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.kT_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 218,
+     "decl_line": 219,
+     "end": 219,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.kA_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 220,
+     "decl_line": 221,
+     "end": 221,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.pS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 222,
+     "decl_line": 223,
+     "end": 223,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.modS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 224,
+     "decl_line": 225,
+     "end": 226,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.negS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 227,
+     "decl_line": 228,
+     "end": 229,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.addS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 230,
+     "decl_line": 231,
+     "end": 232,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.mulS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 233,
+     "decl_line": 234,
+     "end": 235,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.invS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 236,
+     "decl_line": 237,
+     "end": 238,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.mulGS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 239,
+     "decl_line": 240,
+     "end": 241,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.powGS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 242,
+     "decl_line": 243,
+     "end": 244,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.blkS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 245,
+     "decl_line": 246,
+     "end": 248,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.uS_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 249,
+     "decl_line": 250,
+     "end": 255,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_rU",
+     "kind": "theorem",
+     "private": false,
+     "start": 260,
+     "decl_line": 261,
+     "end": 262,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_rZ",
+     "kind": "theorem",
+     "private": false,
+     "start": 263,
+     "decl_line": 264,
+     "end": 265,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_rW",
+     "kind": "theorem",
+     "private": false,
+     "start": 266,
+     "decl_line": 267,
+     "end": 268,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_rS",
+     "kind": "theorem",
+     "private": false,
+     "start": 269,
+     "decl_line": 270,
+     "end": 271,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_rI",
+     "kind": "theorem",
+     "private": false,
+     "start": 272,
+     "decl_line": 273,
+     "end": 274,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_rX",
+     "kind": "theorem",
+     "private": false,
+     "start": 275,
+     "decl_line": 276,
+     "end": 277,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_zD",
+     "kind": "theorem",
+     "private": false,
+     "start": 278,
+     "decl_line": 279,
+     "end": 279,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_zG",
+     "kind": "theorem",
+     "private": false,
+     "start": 280,
+     "decl_line": 281,
+     "end": 282,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_zX",
+     "kind": "theorem",
+     "private": false,
+     "start": 283,
+     "decl_line": 284,
+     "end": 286,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_zY",
+     "kind": "theorem",
+     "private": false,
+     "start": 287,
+     "decl_line": 288,
+     "end": 290,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_zZ",
+     "kind": "theorem",
+     "private": false,
+     "start": 291,
+     "decl_line": 292,
+     "end": 295,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_zT",
+     "kind": "theorem",
+     "private": false,
+     "start": 296,
+     "decl_line": 297,
+     "end": 300,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_sJ",
+     "kind": "theorem",
+     "private": false,
+     "start": 301,
+     "decl_line": 302,
+     "end": 302,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_sO1",
+     "kind": "theorem",
+     "private": false,
+     "start": 303,
+     "decl_line": 304,
+     "end": 305,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_sR",
+     "kind": "theorem",
+     "private": false,
+     "start": 306,
+     "decl_line": 307,
+     "end": 308,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_sCom",
+     "kind": "theorem",
+     "private": false,
+     "start": 309,
+     "decl_line": 310,
+     "end": 311,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_sChal",
+     "kind": "theorem",
+     "private": false,
+     "start": 312,
+     "decl_line": 313,
+     "end": 314,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_sC",
+     "kind": "theorem",
+     "private": false,
+     "start": 315,
+     "decl_line": 316,
+     "end": 319,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_sO2",
+     "kind": "theorem",
+     "private": false,
+     "start": 320,
+     "decl_line": 321,
+     "end": 324,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_kT",
+     "kind": "theorem",
+     "private": false,
+     "start": 325,
+     "decl_line": 326,
+     "end": 326,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_kA",
+     "kind": "theorem",
+     "private": false,
+     "start": 327,
+     "decl_line": 328,
+     "end": 329,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_pS",
+     "kind": "theorem",
+     "private": false,
+     "start": 330,
+     "decl_line": 331,
+     "end": 332,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_modS",
+     "kind": "theorem",
+     "private": false,
+     "start": 333,
+     "decl_line": 334,
+     "end": 336,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_negS",
+     "kind": "theorem",
+     "private": false,
+     "start": 337,
+     "decl_line": 338,
+     "end": 340,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_addS",
+     "kind": "theorem",
+     "private": false,
+     "start": 341,
+     "decl_line": 342,
+     "end": 344,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_mulS",
+     "kind": "theorem",
+     "private": false,
+     "start": 345,
+     "decl_line": 346,
+     "end": 348,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_invS",
+     "kind": "theorem",
+     "private": false,
+     "start": 349,
+     "decl_line": 350,
+     "end": 352,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_mulGS",
+     "kind": "theorem",
+     "private": false,
+     "start": 353,
+     "decl_line": 354,
+     "end": 356,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_powGS",
+     "kind": "theorem",
+     "private": false,
+     "start": 357,
+     "decl_line": 358,
+     "end": 361,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_blkS",
+     "kind": "theorem",
+     "private": false,
+     "start": 362,
+     "decl_line": 364,
+     "end": 377,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.poly_uS",
+     "kind": "theorem",
+     "private": false,
+     "start": 378,
+     "decl_line": 388,
+     "end": 415,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rU_input",
+     "kind": "theorem",
+     "private": false,
+     "start": 424,
+     "decl_line": 425,
+     "end": 426,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rZ_input",
+     "kind": "theorem",
+     "private": false,
+     "start": 427,
+     "decl_line": 428,
+     "end": 429,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rW_input",
+     "kind": "theorem",
+     "private": false,
+     "start": 430,
+     "decl_line": 431,
+     "end": 432,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rS_input",
+     "kind": "theorem",
+     "private": false,
+     "start": 433,
+     "decl_line": 434,
+     "end": 435,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rI_input",
+     "kind": "theorem",
+     "private": false,
+     "start": 436,
+     "decl_line": 437,
+     "end": 438,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.rX_input",
+     "kind": "theorem",
+     "private": false,
+     "start": 439,
+     "decl_line": 440,
+     "end": 442,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zD_of",
+     "kind": "theorem",
+     "private": false,
+     "start": 450,
+     "decl_line": 451,
+     "end": 452,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zG_of",
+     "kind": "theorem",
+     "private": false,
+     "start": 453,
+     "decl_line": 454,
+     "end": 455,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zX_of",
+     "kind": "theorem",
+     "private": false,
+     "start": 456,
+     "decl_line": 457,
+     "end": 458,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zY_of",
+     "kind": "theorem",
+     "private": false,
+     "start": 459,
+     "decl_line": 460,
+     "end": 462,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zZ_of",
+     "kind": "theorem",
+     "private": false,
+     "start": 463,
+     "decl_line": 464,
+     "end": 466,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.zT_of",
+     "kind": "theorem",
+     "private": false,
+     "start": 467,
+     "decl_line": 468,
+     "end": 471,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.pS_lt",
+     "kind": "theorem",
+     "private": false,
+     "start": 481,
+     "decl_line": 482,
+     "end": 484,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.listToNat_modS",
+     "kind": "theorem",
+     "private": false,
+     "start": 485,
+     "decl_line": 486,
+     "end": 490,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.listToNat_negS",
+     "kind": "theorem",
+     "private": false,
+     "start": 491,
+     "decl_line": 492,
+     "end": 496,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.listToNat_addS",
+     "kind": "theorem",
+     "private": false,
+     "start": 497,
+     "decl_line": 498,
+     "end": 501,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.listToNat_mulS",
+     "kind": "theorem",
+     "private": false,
+     "start": 502,
+     "decl_line": 503,
+     "end": 506,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.listToNat_invS",
+     "kind": "theorem",
+     "private": false,
+     "start": 507,
+     "decl_line": 508,
+     "end": 512,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.listToNat_pS",
+     "kind": "theorem",
+     "private": false,
+     "start": 521,
+     "decl_line": 522,
+     "end": 528,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.mulGS_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 529,
+     "decl_line": 530,
+     "end": 538,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.powGS_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 539,
+     "decl_line": 540,
+     "end": 548,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.mulT_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 549,
+     "decl_line": 550,
+     "end": 558,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.memT_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 559,
+     "decl_line": 560,
+     "end": 567,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.memT_headD",
+     "kind": "theorem",
+     "private": false,
+     "start": 568,
+     "decl_line": 569,
+     "end": 580,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.order_lt_aWidth",
+     "kind": "theorem",
+     "private": false,
+     "start": 589,
+     "decl_line": 590,
+     "end": 596,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.listToNat_natToList_val",
+     "kind": "theorem",
+     "private": false,
+     "start": 597,
+     "decl_line": 598,
+     "end": 601,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.idToZ_padFin",
+     "kind": "theorem",
+     "private": false,
+     "start": 602,
+     "decl_line": 604,
+     "end": 610,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.uS_of_blkS",
+     "kind": "theorem",
+     "private": false,
+     "start": 615,
+     "decl_line": 617,
+     "end": 627,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 125
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme",
+     "kind": "structure",
+     "private": false,
+     "start": 86,
+     "decl_line": 106,
+     "end": 160,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.honestRun",
+     "kind": "def",
+     "private": false,
+     "start": 165,
+     "decl_line": 167,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.honestRun_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 175,
+     "end": 181,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.Correct",
+     "kind": "def",
+     "private": false,
+     "start": 182,
+     "decl_line": 186,
+     "end": 189,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.correct_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 190,
+     "decl_line": 192,
+     "end": 196,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.inLens",
+     "kind": "def",
+     "private": false,
+     "start": 199,
+     "decl_line": 201,
+     "end": 205,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.inLens_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 206,
+     "decl_line": 207,
+     "end": 208,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.inLens_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 209,
+     "decl_line": 210,
+     "end": 211,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.inLens_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 212,
+     "decl_line": 213,
+     "end": 214,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.outLens",
+     "kind": "def",
+     "private": false,
+     "start": 215,
+     "decl_line": 217,
+     "end": 221,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.outLens_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 222,
+     "decl_line": 223,
+     "end": 224,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.outLens_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 225,
+     "decl_line": 226,
+     "end": 227,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.outLens_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 228,
+     "decl_line": 229,
+     "end": 230,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidSpec",
+     "kind": "abbrev",
+     "private": false,
+     "start": 231,
+     "decl_line": 232,
+     "end": 233,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidSpec_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 234,
+     "decl_line": 236,
+     "end": 237,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.SidState",
+     "kind": "abbrev",
+     "private": false,
+     "start": 238,
+     "decl_line": 240,
+     "end": 242,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidState_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 243,
+     "decl_line": 245,
+     "end": 248,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl",
+     "kind": "def",
+     "private": false,
+     "start": 250,
+     "decl_line": 258,
+     "end": 282,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_init_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 283,
+     "decl_line": 284,
+     "end": 287,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_init_some",
+     "kind": "theorem",
+     "private": false,
+     "start": 288,
+     "decl_line": 289,
+     "end": 292,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_keyGen_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 293,
+     "decl_line": 294,
+     "end": 297,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_keyGen_target",
+     "kind": "theorem",
+     "private": false,
+     "start": 298,
+     "decl_line": 299,
+     "end": 303,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_keyGen_ne",
+     "kind": "theorem",
+     "private": false,
+     "start": 304,
+     "decl_line": 306,
+     "end": 313,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_challenge_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 314,
+     "decl_line": 315,
+     "end": 319,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_challenge_repeat",
+     "kind": "theorem",
+     "private": false,
+     "start": 320,
+     "decl_line": 321,
+     "end": 325,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_challenge_fresh",
+     "kind": "theorem",
+     "private": false,
+     "start": 326,
+     "decl_line": 328,
+     "end": 338,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_challenge_invalid",
+     "kind": "theorem",
+     "private": false,
+     "start": 339,
+     "decl_line": 340,
+     "end": 347,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl",
+     "kind": "def",
+     "private": false,
+     "start": 348,
+     "decl_line": 352,
+     "end": 361,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 362,
+     "decl_line": 363,
+     "end": 370,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 371,
+     "decl_line": 372,
+     "end": 379,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 380,
+     "decl_line": 381,
+     "end": 388,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl_zero_onSpec",
+     "kind": "theorem",
+     "private": false,
+     "start": 389,
+     "decl_line": 391,
+     "end": 402,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl_one_onSpec",
+     "kind": "theorem",
+     "private": false,
+     "start": 403,
+     "decl_line": 405,
+     "end": 416,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl_two_onSpec",
+     "kind": "theorem",
+     "private": false,
+     "start": 417,
+     "decl_line": 419,
+     "end": 431,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidCodec",
+     "kind": "def",
+     "private": false,
+     "start": 432,
+     "decl_line": 433,
+     "end": 435,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidCodec_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 436,
+     "decl_line": 437,
+     "end": 438,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidGame",
+     "kind": "def",
+     "private": false,
+     "start": 439,
+     "decl_line": 442,
+     "end": 447,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidGame_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 448,
+     "decl_line": 450,
+     "end": 456,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.SIDSecure",
+     "kind": "def",
+     "private": false,
+     "start": 457,
+     "decl_line": 463,
+     "end": 466,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidSecure_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 467,
+     "decl_line": 469,
+     "end": 473,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 37,
+   "head_count": 40
+  }
+ }
+}

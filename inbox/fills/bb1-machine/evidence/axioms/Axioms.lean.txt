@@ -1,0 +1,72 @@
+import Lean
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity
+
+/-! fill bb1-machine axioms probe (final; adapted from the checkpoint's `probes/Axioms.lean.txt`:
+the owner list is now the eight changed owners, the seven readers are printed, and a dependency
+trace is added). (1) The census of every stored constant of the owners `Defs`, `BonehBoyen`,
+`Draws`, `Words`, `Handler`, `Reduction`, `Oracles`, `BonehBoyenMachine`: axioms of each, any
+outside `propext`, `Classical.choice`, `Quot.sound` listed. (2) `#print axioms` of T4, of the
+assembled theorem, of the seven readers and of the new public lemma. (3) The dependency trace:
+walk the constant closure (types and values) of a root and list every constant reached whose own
+type or value mentions `sorryAx` directly (the sorried constants reached). -/
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let P := `TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+  let mods : List Name := [P ++ `Defs, P ++ `BonehBoyen, P ++ `BonehBoyenMachine.Draws,
+    P ++ `BonehBoyenMachine.Words, P ++ `BonehBoyenMachine.Handler,
+    P ++ `BonehBoyenMachine.Reduction, P ++ `BonehBoyenMachine.Oracles, P ++ `BonehBoyenMachine]
+  let mut n : Nat := 0
+  let mut bad : Array (Name × Array Name) := #[]
+  for (c, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? c | continue
+    unless mods.contains env.header.moduleNames[mi.toNat]! do continue
+    let axs ← Lean.collectAxioms c
+    n := n + 1
+    let ns := axs.filter fun a => !([``propext, ``Classical.choice, ``Quot.sound].contains a)
+    unless ns.isEmpty do bad := bad.push (c, ns)
+  logInfo m!"AXCENSUS owners {mods.length} constants {n} nonstandard {bad.size}: {bad.toList}"
+
+open Lean Elab Command in
+/-- The sorried constants reached from `root`: every constant in the closure of `root` (through
+types and values) whose own type or value uses `sorryAx`. -/
+def sorriedReached (env : Environment) (root : Name) : Nat × Array Name := Id.run do
+  let mut seen : NameSet := {}
+  let mut todo : Array Name := #[root]
+  let mut hits : Array Name := #[]
+  while todo.size > 0 do
+    let c := todo.back!
+    todo := todo.pop
+    if seen.contains c then continue
+    seen := seen.insert c
+    let some ci := env.find? c | continue
+    let used := ci.getUsedConstantsAsSet
+    if used.contains ``sorryAx then hits := hits.push c
+    for d in used.toList do
+      unless seen.contains d do todo := todo.push d
+  return (seen.size, hits.qsort (·.toString < ·.toString))
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let P := `TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+  for r in [P ++ `exists_bb1_distinguisher, P ++ `bb1_sidSecure, P ++ `bb1_sim_real,
+      P ++ `bb1_sim_random,
+      P ++ `BB1Machine.abs_expect_bb1Sim_sub_distinguisherL_le] do
+    let (k, hits) := sorriedReached env r
+    logInfo m!"DEPTRACE {r}: closure {k} constants; sorried constants reached {hits.size}: {hits.toList}"
+
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.exists_bb1_distinguisher
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sidSecure
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl_zero_onSpec
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl_one_onSpec
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.oracleImpl_two_onSpec
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_bb1Scheme_encPP
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_bb1Scheme_encSK
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_msgSpace_iff
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_bb1SimCt
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.abs_expect_bb1Sim_sub_distinguisherL_le
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.simulate_handler
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.expect_handlerMachine
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.abs_expect_runAccept_sub_le

@@ -1,0 +1,1798 @@
+# search.log: overlap searches of fill bb1-machine (tools-agent, sub-agent).
+# Every command run, verbatim, followed by its output and exit status. TCSlib searches run in the
+# tools-agent worktree /home/user/fill/wt-sub at 633dcf999 (issue base 7c0a55e0 + the seven
+# readers); Mathlib searches in /home/user/fill/tcslib/.lake/packages/mathlib/Mathlib (read-only).
+# grep exits 1 when nothing matches.
+
+$ cd /home/user/fill/wt-sub && git rev-parse HEAD && git status --short | wc -l
+633dcf99907e26fe5e1573f4c215d9b57585bf28
+0
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'cast_eq_padFin|ofFn_padFin_ofFn|ofFn_decAnswer_some|sidSpec_rng_one|sidSpec_rng_two|expect_bb1SimImpl|abs_expect_bb1Sim|distinguisherL_le|_onSpec\b|ofFn_bb1Scheme_enc|bb1Scheme_msgSpace_iff|ofFn_bb1SimCt' TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:199:      rw [Option.map_some, Games.castImpl_eq, S.indImpl_challenge_repeat_onSpec,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:204:      rw [Option.map_none, Games.castImpl_eq, S.indImpl_challenge_none_onSpec, rImpl_none_lazy,
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveSecurity.lean:95:    S.indImpl_challenge_none_onSpec, OracleComp.bind_assoc]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveSecurity.lean:149:        List.not_mem_nil, List.head?_nil, S.indImpl_dec_onSpec]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveSecurity.lean:155:        rw [S.indImpl_dec_onSpec, h]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveSecurity.lean:159:        simp only [Option.toList_some, List.head?_cons, S.indImpl_dec_onSpec]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveSecurity.lean:165:        S.indImpl_challenge_repeat_onSpec]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:87:cast `indSpec_challengeRng`, and the oracle equations `indImpl_dec_onSpec` (with `decOpen_cpa`),
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:88:`indImpl_challenge_repeat_onSpec` and `indImpl_challenge_none_onSpec`: decryption queries are
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:102:      rw [S.indImpl_dec_onSpec]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:104:    (fun mm C => S.indImpl_challenge_repeat_onSpec .cpa b n pk sk mm C)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:105:    (fun mm => S.indImpl_challenge_none_onSpec .cpa b n pk sk mm) G c s
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean:66:   `indImpl_dec_onSpec`), and the selector matters only below the cap
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean:144:`_dec_other`, `indImpl_dec_onSpec`, `decOpen_cpa`). A fresh challenge below the cap encrypts
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean:147:`indImpl_challenge_repeat_onSpec`), and an empty history has cap `0` (`_challenge_zero`). Every
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean:161:      · rw [S.adaptiveIndImpl_dec_other .cpa b n pk sk κ _ h hc, S.indImpl_dec_onSpec,
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean:187:            (Nat.le_of_not_lt hh) c rfl, S.indImpl_challenge_repeat_onSpec, OracleComp.pure_bind,
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:55:  rw [castImpl_eq, S.indImpl_challenge_none_onSpec, OracleComp.bind_assoc]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:597:theorem indImpl_dec_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:611:/-- `indImpl_dec_onSpec` with the answer cast through `indSpec_decRng`: for `c' = cast _ c`,
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:621:  simpa only [cast_eq] using S.indImpl_dec_onSpec atk b n pk sk c s
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:635:theorem indImpl_challenge_none_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:647:theorem indImpl_challenge_repeat_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:746:depend on the bit (`indImpl_dec_onSpec`), a repeated challenge repeats the record
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:747:(`indImpl_challenge_repeat_onSpec`), and a first challenge encrypts a half of the query
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:748:(`indImpl_challenge_none_onSpec`), whose string is `[]` either way. -/
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:755:  | 0 => rw [S.indImpl_dec_onSpec, S.indImpl_dec_onSpec]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:758:    | some c => rw [S.indImpl_challenge_repeat_onSpec, S.indImpl_challenge_repeat_onSpec]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:760:      rw [S.indImpl_challenge_none_onSpec, S.indImpl_challenge_none_onSpec]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:43:**Proof sketch.** By the oracle (the `_onSpec` readers). Encryption and the first challenge
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:68:    rw [S.indImpl_enc_onSpec, fImpl_enc, expect_bind, expect_bind, ← expect_sample_equiv ν]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:83:    rw [S.indImpl_dec_onSpec, fImpl_dec, decOpen_atkOf]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:126:      rw [S.indImpl_challenge_repeat_onSpec, fImpl_challenge_some, expect_pure, expect_pure]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:132:      rw [S.indImpl_challenge_none_onSpec, fImpl_challenge_none, expect_bind, expect_bind,
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:302:theorem indImpl_dec_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:315:theorem indImpl_challenge_none_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:327:theorem indImpl_enc_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:338:theorem indImpl_challenge_repeat_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:748:    FixedLengthScheme.indImpl_challenge_none_onSpec]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:768:    FixedLengthScheme.indImpl_dec_onSpec]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:60:**Proof sketch.** By the oracle (the `_onSpec` readers). Encryption and the first challenge
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:83:    rw [S.indImpl_enc_onSpec, expect_bind, ← expect_sample_equiv ν]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:97:    rw [S.indImpl_dec_onSpec, FixedLengthScheme.decOpen_cca2, Bool.true_and]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:152:      rw [stRec_eq, S.indImpl_challenge_repeat_onSpec, expect_pure]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:160:      rw [stRec_eq, S.indImpl_challenge_none_onSpec, expect_bind, ← expect_sample_equiv ν]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:391:theorem oracleImpl_zero_onSpec {σ : Type} (κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:405:theorem oracleImpl_one_onSpec {σ : Type} (κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:419:theorem oracleImpl_two_onSpec {σ : Type} (κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:391:theorem ofFn_bb1Scheme_encPP (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:400:theorem ofFn_bb1Scheme_encSK (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:408:theorem bb1Scheme_msgSpace_iff (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:580:theorem ofFn_bb1SimCt (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' '^(@\[[^]]*\] *)?((private|protected|noncomputable) +)*(theorem|lemma|def|abbrev) +[^ ]*padFin' TCSlib
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean:71:theorem finish_of_query_padFin (H : InteractiveHandler k din dout k' din' dout') (n : ℕ)
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean:95:theorem ofFn_padFin_eq_take (ℓ : ℕ) (w : List Bool) :
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean:109:theorem ofFn_padFin_eq_padStr (p : PolyExpr) (u w : List Bool) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:169:def padFin (ℓ : ℕ) (w : List Bool) : Fin ℓ → Bool := fun i => w.getD i false
+TCSlib/Cryptography/Asymptotic/Adversary.lean:172:theorem padFin_def (ℓ : ℕ) (w : List Bool) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:178:theorem padFin_apply (ℓ : ℕ) (w : List Bool) (i : Fin ℓ) : padFin ℓ w i = w.getD i false :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:211:theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x) = x := by
+TCSlib/Cryptography/Asymptotic/Adversary.lean:216:theorem ofFn_padFin_of_length {L : ℕ} {w : List Bool} (hw : w.length = L) :
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:182:theorem ofFn_padFin_of_le {ℓ : ℕ} {w : List Bool} (hw : w.length ≤ ℓ) :
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:195:theorem padFin_append_true_injective {ℓ : ℕ} {s s' : List Bool} (hs : s.length < ℓ)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:198:theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) : List.ofFn (padFin k a) = padL k a := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean:563:private theorem ofFn_padFin_pair {r c : List Bool} (hr : r.length = n) (hc : c.length = n) :
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean:645:private theorem ofFn_padFin_msg {m : ℕ} (x : Fin m → Bool) (hm : m = n) :
+TCSlib/Cryptography/Games/BitCodec.lean:139:theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
+TCSlib/Cryptography/Games/BitCodec.lean:147:theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) = zeroBits d := by
+TCSlib/Cryptography/Games/BitCodec.lean:151:theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
+TCSlib/Cryptography/Games/BitCodec.lean:156:theorem padFin_append_split {d₁ d₂ : ℕ} (u v : List Bool) (hu : u.length = d₁) :
+TCSlib/Cryptography/Games/Forwarding.lean:66:theorem impl_of_ret_padFin (i : Fin k) (x : Fin ((din i).eval n) → Bool)
+TCSlib/Cryptography/Games/Forwarding.lean:79:theorem impl_of_query_padFin (i : Fin k) (x : Fin ((din i).eval n) → Bool)
+TCSlib/Cryptography/Games/Forwarding.lean:96:theorem finish_of_ret_padFin (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ} (a : Fin d → Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Words.lean:604:theorem idToZ_padFin {d : List Bool} {e : ℕ} (x : Fin e → Bool)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:327:theorem ofFn_padFin (L : ℕ) (w : List Bool) : List.ofFn (padFin L w) = padTo L w := by
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:538:private theorem padFin_inj {n : ℕ} {v₀ v₁ : List Bool} (hv₀ : v₀.length = n) (hv₁ : v₁.length = n)
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 205,222p TCSlib/Cryptography/Asymptotic/Adversary.lean
+    rw [h']
+    exact (List.ofFn_get w).symm
+  · rintro rfl
+    exact decodeFin_ofFn x
+
+/-- Padding the encoding of an `ℓ`-bit string returns it. -/
+theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x) = x := by
+  funext i
+  simp [padFin]
+
+/-- The encoding of `padFin L w` is `w` when `|w| = L`: `List.ofFn (padFin L w) = w`. -/
+theorem ofFn_padFin_of_length {L : ℕ} {w : List Bool} (hw : w.length = L) :
+    List.ofFn (padFin L w) = w := by
+  refine List.ext_getElem (by simp [hw]) fun j hj₁ hj₂ => ?_
+  simp [padFin_def, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj₂]
+
+/-! ### Bit vectors across equal widths -/
+
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 643,652p TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean; echo; sed -n 561,570p TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean; echo; sed -n 180,186p TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean; echo; sed -n 536,541p TCSlib/Cryptography/ZeroKnowledge/Commitment.lean
+
+/-- The inner query word read at the outer length: `⟦padFin _ ⟦x⟧⟧ = ⟦x⟧` for an `n`-bit `x`. -/
+private theorem ofFn_padFin_msg {m : ℕ} (x : Fin m → Bool) (hm : m = n) :
+    List.ofFn (padFin ((pkDin 0).eval n) (List.ofFn x)) = List.ofFn x :=
+  ofFn_padFin_of_length (by rw [List.length_ofFn, PRFGame.pkDin_zero, PolyExpr.eval_var, hm])
+
+/-- **Encryption:** from `bState j L o` with `j < q(n)`, the query `m = ⟦x⟧` asks the CPA
+encryption oracle at `m`; its answer `y` gives the ciphertext `⟨pairFstD y, ⟨pairSndD y, t⟩⟩`
+with the tag `t` of the pair `bKeyOf n y` (`tagOf`, else the tape `j`), and the state
+`bState (j + 1) ((bKeyOf n y, t, m) :: L) o`.
+
+
+/-- The outer query word of a pair `r ‖ c₁` with `|r| = |c₁| = n`, read at `2n` bits. -/
+private theorem ofFn_padFin_pair {r c : List Bool} (hr : r.length = n) (hc : c.length = n) :
+    List.ofFn (padFin ((tagOut 0).eval n) (r ++ c)) = r ++ c :=
+  ofFn_padFin_of_length (by rw [List.length_append, hr, hc, tagOut_eq, tagLen_eval]; omega)
+
+/-- The all-`false` decryption answer as a list. -/
+private theorem rZero_fields (w : List Bool) (hU : rU w = List.replicate n true) :
+    rZero w = List.ofFn (padFin ((ettDout 1).eval n) ([] : List Bool)) := by
+  rw [rZero, hU, List.length_replicate, padFin_nil, ofFn_zeroBits, ettDout_one]
+
+
+/-- The padding of a short string is the string followed by zeros. -/
+theorem ofFn_padFin_of_le {ℓ : ℕ} {w : List Bool} (hw : w.length ≤ ℓ) :
+    List.ofFn (padFin ℓ w) = w ++ List.replicate (ℓ - w.length) false := by
+  refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
+  simp only [List.getElem_ofFn, padFin_def, List.getD_eq_getElem?_getD]
+  rw [List.getElem_append]
+
+
+/-- Two strings of length `n` with the same `n`-bit padding are equal. -/
+private theorem padFin_inj {n : ℕ} {v₀ v₁ : List Bool} (hv₀ : v₀.length = n) (hv₁ : v₁.length = n)
+    (h : padFin n v₀ = padFin n v₁) : v₀ = v₁ := by
+  refine List.ext_getElem (hv₀.trans hv₁.symm) fun i h₁ h₂ => ?_
+  have := congrFun h ⟨i, hv₀ ▸ h₁⟩
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'cast [^=]*= *padFin|padFin [^=]*= *cast|cast_eq_pad|cast_.*padFin|padFin.*cast' TCSlib
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:301:  rw [CRH.hash_eq, padFin_apply, padFin_apply, Fin.coe_cast]
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:379:  rw [padFin_apply, ← Fin.coe_cast (handler_output_width H S n) j,
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:358:      padFin (H.rangeLen.eval (List.replicate n true).length) w (Fin.cast hl.symm j)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:586:      simpa only [HashSignFill.queryHash_eq, CRH.hash_eq, padFin_apply, Fin.coe_cast] using hv
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:361:      simp only [padFin_def, coe_finCastEquiv, Fin.coe_cast]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:253:(`ofFn_nthCt`, `ofFn_padFin_eq_take`, `ofFn_cast`); they are equal as strings
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:73:    have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:88:    have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
+TCSlib/Cryptography/Games/BitCodec.lean:157:    (fun j : Fin d₁ => padFin (d₁ + d₂) (u ++ v) (Fin.castAdd d₂ j)) = padFin d₁ u ∧
+TCSlib/Cryptography/Games/BitCodec.lean:160:  · rw [padFin_apply, padFin_apply, Fin.coe_castAdd, List.getD_append _ _ _ _ (by omega)]
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' '^(@\[[^]]*\] *)?((private|protected) +)*(theorem|lemma) +[^ ]*cast[^ ]*' TCSlib | grep -iE 'ofFn|fin|bool|bits|word|spec|rng|dom' | head -80
+TCSlib/CommunicationComplexity/DeterministicCC/BitString.lean:149:theorem signedInner_comp_cast {m n : ℕ} (h : m = n)
+TCSlib/Programs/WordRAM/Steps.lean:153:theorem Steps.cast_pos {n p p' : ℕ} {c : Cfg W} {m : ℤ → BitVec W} (h : Steps P n c ⟨p, m⟩)
+TCSlib/Programs/WordRAM/Steps.lean:157:theorem Steps.cast_count {n n' : ℕ} {c c' : Cfg W} (h : Steps P n c c') (hn : n = n') :
+TCSlib/Programs/WordRAM/Steps.lean:238:theorem CodeAt.cast_pos {pos pos' : ℕ} {l : List Instr} (h : CodeAt P pos l) (hp : pos = pos') :
+TCSlib/BooleanAnalysis/RazborovSmolensky/ACpGates.lean:80:lemma cast_bitify_eq {a : ZMod p} (ha : a ∈ ({0, 1} : Set (ZMod p))) :
+TCSlib/BooleanAnalysis/Hypercontractivity/Cube/FourthMoment.lean:57:lemma chiS_snoc_castSucc {n : ℕ} (S : Finset (Fin n)) (x : BoolCube n) (b : Bool) :
+TCSlib/BooleanAnalysis/Hypercontractivity/Cube/FourthMoment.lean:105:lemma card_image_castSucc {n : ℕ} (S : Finset (Fin n)) :
+TCSlib/BooleanAnalysis/Hypercontractivity/Cube/FourthMoment.lean:113:lemma card_image_castSucc_union_last {n : ℕ} (S : Finset (Fin n)) :
+TCSlib/BooleanAnalysis/LMN/GateMerge.lean:29:lemma mergeGates_castAdd {α : Type*} {m₁ m₂ : ℕ}
+TCSlib/Cryptography/Candidates/Arithmetic.lean:115:theorem natToBits_succ_castSucc (k N : ℕ) (i : Fin k) :
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:288:theorem take_ofFn_castLE {ℓ m : ℕ} (h : m ≤ ℓ) (f : Fin ℓ → Bool) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:225:theorem ofFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:107:theorem PermFamily.glHalfFun_castLE (P : PermFamily) (n : ℕ) (z : Fin n → Bool)
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:114:theorem PermFamily.glHalfInv_castLE (P : PermFamily) (n : ℕ) (z : Fin n → Bool)
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:158:theorem HardcoreBit.ip_cast {k m : ℕ} (h : k = m) (x r : Fin k → Bool) :
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:95:theorem ofFn_castLE_eq_take {m k : ℕ} (h : m ≤ k) (a : Fin k → Bool) :
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:148:private theorem ip_cast' {k m : ℕ} (h : k = m) (x r : Fin k → Bool) :
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:189:private theorem ofFn_splitCoins_symm_cast {a b n : ℕ} (h : a + b = n)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:154:theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:488:theorem castImpl_snmImpl (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:232:private theorem castImpl_indImpl_dec (b : Bool) (n : ℕ) (pk sk : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean:149:theorem castImpl_adaptiveIndImpl (b : Bool) (n : ℕ) (pk sk : List Bool) (κ : ℕ) :
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:48:theorem castImpl_indImpl_challenge (b : Bool) (n : ℕ) (pk sk : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:614:theorem indImpl_dec_onSpec_cast (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:93:theorem owpGenPRG_G_castSucc (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ)
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:253:theorem acceptProb_castLE {ℓ m : ℕ} (h : m ≤ ℓ) {ρ : Type*} [Fintype ρ]
+TCSlib/Cryptography/Games/BitCodec.lean:394:theorem castImpl_eq {ins ins' outs outs' : Fin k → ℕ}
+TCSlib/Cryptography/Games/BitCodec.lean:403:theorem castImpl_self {ins outs : Fin k → ℕ} (O : QueryImpl (bitSpec ins outs) σ unifSpec) :
+TCSlib/Cryptography/Games/BitCodec.lean:415:theorem simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
+TCSlib/Cryptography/Games/BitCodec.lean:430:theorem expect_simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:105:theorem pushesUniform_castLE {B : Type*} [Fintype B] [Nonempty B] {m c : ℕ} (h : m ≤ c) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:129:theorem coinTable_ofFn_castLE {n T k c : ℕ} (h : n * T * k ≤ c) (t : Fin c → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:139:theorem samplePerm_ofFn_castLE {n c : ℕ} (h : permCoinLen n ≤ c) (t : Fin c → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:396:theorem sampleEdgeIdx_ofFn_castLE {m T c : ℕ} (h : T * Nat.size m ≤ c) (t : Fin c → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:275:private theorem challengesBefore_snoc_castSucc {k m : ℕ} (e : Fin k → Fin m) (x : Fin m)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:837:theorem coinTable_ofFn_castLE {n T k c : ℕ} (h : n * T * k ≤ c) (t : Fin c → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:847:theorem samplePerm_ofFn_castLE {n c : ℕ} (h : permCoinLen n ≤ c) (t : Fin c → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:432:@[simp] theorem bitCom_castSucc {n : ℕ} (f : (Fin n → Bool) ≃ (Fin n → Bool))
+TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:83:lemma Reach.cast {y : List Bool} {B : ℕ} {l₁ l₂ : Lab N} {v₁ v₂ v₂' : Fin 21 → ℕ}
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:74:@[simp] lemma memCfg_symbols_castSucc (c : Cfg K Bool St x) (M : ℤ → Option Bool) (p : ℤ)
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2382:private theorem xr_dir_cast (n : Fin 6) :
+TCSlib/Complexity/TuringMachine/Simulation.lean:925:theorem bufferedSecondCfg_workTapes_cast (M₁ M₂ : FinTM Bool) {x y : List Bool}
+TCSlib/Complexity/TuringMachine/Simulation.lean:936:theorem bufferedSecondCfg_workTapePos_cast (M₁ M₂ : FinTM Bool) {x y : List Bool}
+TCSlib/Complexity/TuringMachine/SymbolLift.lean:135:private lemma moveInputPos_cast {n m : ℕ} (h : n + 2 = m + 2) (p : Fin (n + 2)) (s : SignType) :
+TCSlib/Complexity/TuringMachine/Build/Zone.lean:1314:theorem ZoneContents.extend_words_castSucc {ℓ : ℕ} (side : Bool) (z : ZoneContents ℓ)
+TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean:183:theorem castSucc_le (d : Fin (C.gates.length + 1)) : d.castSucc.val ≤ C.gates.length := by
+TCSlib/Complexity/Randomized/DirectedWalk.lean:166:private theorem sum_range_succ_cast (N : ℕ) :
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 222,232p TCSlib/Cryptography/Asymptotic/Adversary.lean; echo; sed -n 70,77p TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean; echo; sed -n 85,92p TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean
+
+/-- Reading a bit vector across an equality of widths keeps its string:
+`⟦cast h f⟧ = ⟦f⟧` when `a = b`. -/
+theorem ofFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
+    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
+  subst hab
+  rfl
+
+/-- Reading a vector at an equal width keeps its word:
+`⟦(arrowCongr (finCongr h) (refl Bool)) v⟧ = ⟦v⟧`. -/
+theorem ofFn_arrowCongr_finCongr {a b : ℕ} (h : a = b) (v : Fin a → Bool) :
+
+    rw [expect_pure, expect_pure]
+    have hm : List.ofFn (cast (S.indSpec_encDom n) m) = List.ofFn m :=
+      ofFn_cast (S.inLens_zero n) _ m
+    have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
+      List.ofFn_injective (by rw [hm, ofFn_padFin_of_length (by
+        rw [List.length_ofFn, S.inLens_zero])])
+    congr 2
+    refine List.ofFn_injective ?_
+
+    rw [expect_pure, expect_pure, ettStep_enc, stRec_eq, stRec_eq]
+    have hm : List.ofFn (cast (S.indSpec_encDom n) m) = List.ofFn m :=
+      ofFn_cast (S.inLens_zero n) _ m
+    have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
+      List.ofFn_injective (by rw [hm, ofFn_padFin_of_length (by
+        rw [List.length_ofFn, S.inLens_zero])])
+    have hmn : (List.ofFn m).length = n := by rw [List.length_ofFn, S.inLens_zero]
+    congr 2
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'cast \([^)]*\) [a-z]+ = padFin|cast [a-zA-Z_.]+ [a-z]+ = padFin' TCSlib
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:73:    have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:88:    have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'decAnswer' TCSlib | grep -vE '^\S+:[0-9]+: +(rw|simp|exact|·|refine|have|show|calc)' | head -60
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:591:      else List.ofFn (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:163:      .pure (padFin _ (List.ofFn (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:201:        .pure (padFin _ (List.ofFn (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:386:  else false :: List.ofFn (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:390:if copy then true :: 0^{msgLen + 1} else false :: ⟦decAnswer (Dec_sk c)⟧`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:393:      else false :: List.ofFn (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:224:      .pure (FixedLengthScheme.decAnswer (decodeFin _ (S.dec (pairEncode sk (List.ofFn c)))), s)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:241:        .pure (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:315:    (FixedLengthScheme.decAnswer (decodeFin _ (S.dec (pairEncode sk (List.ofFn c)))))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:323:        (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:313:    guessBit (List.ofFn (FixedLengthScheme.decAnswer (some fun _ : Fin m => g)) ++ v₂) = g := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:322:      List.ofFn (FixedLengthScheme.decAnswer (some fun _ : Fin m => !g))) = g := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:29:`Dec`'s oracle answers are (`decAnswer`): a validity flag and the message, all-`false` for `⊥`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:127:  else FixedLengthScheme.decAnswer (decodeFin _ (S.dec (pairEncode sk (List.ofFn c'))))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:135:      else FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:282:private theorem decAnswers_eq_nmOutput (ℓ : PolyExpr) (n : ℕ) (sk : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:310:`S.nmOutput sk st a` (`decAnswers_eq_nmOutput`). That is `NM_b`'s output, after transporting
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:387:    pairSndD_pairEncode, decAnswers_eq_nmOutput, NUPPT.coinsEquivPoly_ofFn,
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:557:      .pure (FixedLengthScheme.decAnswer (decodeFin _ (S.dec (pairEncode sk (List.ofFn c)))), s)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:575:        .pure (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:601:      then .pure (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:613:pure (cast _ (decAnswer (decodeFin _ (Dec ⟨sk, c'⟩))), s) else pure (zeroBits _, s)`. -/
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:618:      then .pure (cast (S.indSpec_decRng n).symm (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:54:      List.ofFn (FixedLengthScheme.decAnswer (decodeFin n
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:161:def decAnswer {n : ℕ} : Option (Fin n → Bool) → (Fin (n + 1) → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:166:theorem decAnswer_some {n : ℕ} (m : Fin n → Bool) :
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:167:    decAnswer (some m) = Fin.cons (α := fun _ => Bool) true m := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:170:theorem decAnswer_none (n : ℕ) : decAnswer (n := n) none = zeroBits (n + 1) := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:217:        .pure (decAnswer (decodeFin n (S.dec.runAt n (pairEncode k (List.ofFn c)) r)), s)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:240:          .pure (decAnswer (decodeFin n (S.dec.runAt n (pairEncode k (List.ofFn c)) r)), st)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:301:`cast _ (decAnswer (decodeFin n (Dec.runAt n ⟨k, c'⟩ r)))` with state `st`, else `⊥` with `st`. -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:307:          .pure (cast (S.indSpec_decRng n).symm (decAnswer (decodeFin n
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:507:`decodeFin_ofFn`, `decAnswer_some`); otherwise the output `true :: 1^n` has `n + 1` bits, decodes
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:508:to nothing and is read as `0^{n+1}` (`decodeFin_eq`, `decAnswer_none`, `ofFn_zeroBits`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:509:private theorem ofFn_cca_decAnswer (n : ℕ) (k₁ : Fin n → Bool) (k₂ : Fin (2 * n) → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:511:    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n ((ccaScheme F E hE hFE).dec.runAt n
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:551:    conv_lhs => rw [hk, hFE, hdec, decodeFin_ofFn, FixedLengthScheme.decAnswer_some]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:568:      FixedLengthScheme.decAnswer_none, ofFn_zeroBits]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:574:nonce (`ccaNonceEq`) and the readers `ofFn_cca_encryptAt`, `ofFn_cca_decAnswer`; the key coins are
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:586:      (fun rg w rd => by rw [cca_gen_runAt]; exact ofFn_cca_decAnswer F E hE hFE n _ _ w rd),
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:178:private theorem ofFn_prf_decAnswer (n : ℕ) (hn : 0 < n) (k : Fin n → Bool) (w : List Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:180:    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:205:      FixedLengthScheme.decAnswer_some, List.ofFn_succ, Fin.cons_zero]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:243:(`expect_indImpl_fImpl`, from `ofFn_prf_encryptAt` and `ofFn_prf_decAnswer`), so the simulations
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:273:      (fun w rd => ofFn_prf_decAnswer F E hE hFE n hn _ w rd) i x s g),
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:70:      List.ofFn (FixedLengthScheme.decAnswer (decodeFin n
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:195:      List.ofFn (FixedLengthScheme.decAnswer (decodeFin n
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:269:        .pure (FixedLengthScheme.decAnswer (some (S.encSK κ sk)), s)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:311:        .pure (FixedLengthScheme.decAnswer (some (S.encSK κ sk)), (some t, c)) := by
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:537:      .pure (FixedLengthScheme.decAnswer
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:560:        .pure (FixedLengthScheme.decAnswer
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' '= *true :: List.ofFn|true :: List.ofFn [a-z]+ *:?=?$|ofFn \(Fin.cons' TCSlib | head -30
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean:130:    blocks (m :: L) = true :: List.ofFn m ++ blocks L := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:324:  have h2 : List.ofFn (Fin.cons (α := fun _ => Bool) true (fun _ : Fin (m' + 1) => !g)) =
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:111:  | some c => true :: List.ofFn c
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:118:    recBits n (some c) = true :: List.ofFn c := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:707:    (List.ofFn (Fin.cons (α := fun _ => Bool) true (cca2FlipBits (n := n) fun _ => b))).getLastD
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:732:      (List.ofFn (Fin.cons (α := fun _ => Bool) true v)).getLastD false = !b)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean:136:  | some c => true :: List.ofFn c
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean:144:    recBits n (some c) = true :: List.ofFn c := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean:327:  | some c => true :: List.ofFn c
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 158,171p TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean; echo; sed -n 176,184p TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean; sed -n 198,207p TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean; echo; sed -n 505,515p TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean; sed -n 548,553p TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean
+      (S.enc.runAt n (pairEncode k (List.ofFn m)) r) := rfl
+
+/-- `Dec`'s answer `⟨1, m⟩` on a valid decryption `m`, and the all-`false` `⊥` otherwise. -/
+def decAnswer {n : ℕ} : Option (Fin n → Bool) → (Fin (n + 1) → Bool)
+  | some m => Fin.cons (α := fun _ => Bool) true m
+  | none => zeroBits _
+
+/-- A successful decryption is prefixed by its `true` validity bit. -/
+theorem decAnswer_some {n : ℕ} (m : Fin n → Bool) :
+    decAnswer (some m) = Fin.cons (α := fun _ => Bool) true m := rfl
+
+/-- Failed decryption is the all-false answer. -/
+theorem decAnswer_none (n : ℕ) : decAnswer (n := n) none = zeroBits (n + 1) := rfl
+
+
+/-- **Decryption with the key `k`**, for `n > 0`: on a well-formed `w = ⟨x, v⟩` the answer is
+`⟨1, v ⊕ F_k(x)⟩`, and otherwise `⊥` (`runAt_prfDec`, `decodeFin_runAt_prfDec_of_not_wf`). -/
+private theorem ofFn_prf_decAnswer (n : ℕ) (hn : 0 < n) (k : Fin n → Bool) (w : List Bool)
+    (rd : (prfFixedScheme F E hE hFE).dec.Coins n) :
+    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n
+        ((prfFixedScheme F E hE hFE).dec.runAt n (pairEncode (List.ofFn k) w) rd))) =
+      if decWF n w then
+        true :: List.zipWith xor (pairSndD w) (List.ofFn (F n k (padFin n (pairFstD w))))
+      else List.replicate (n + 1) false := by
+    have hv : List.zipWith xor (pairSndD w) (List.ofFn (F n k (padFin n (pairFstD w)))) =
+        List.ofFn (padFin n (List.zipWith xor (pairSndD w)
+          (List.ofFn (F n k (padFin n (pairFstD w)))))) :=
+      (ofFn_padFin_of_length (by
+        rw [List.length_zipWith, List.length_ofFn, hw.2, Nat.min_self])).symm
+    conv_lhs => rw [eq_pairEncode_of_pairFstD_ne hne]
+    rw [runAt_prfDec hE _ n _ _ _ hw.1 hw.2, hx, hFE, ← hx, hv, decodeFin_ofFn,
+      FixedLengthScheme.decAnswer_some, List.ofFn_succ, Fin.cons_zero]
+    simp only [Fin.cons_succ]
+  · rw [if_neg hw, decodeFin_runAt_prfDec_of_not_wf hE _ n _ w (by
+
+`tagL (F (2n) k₂) (wR w) (wC w)` (`hFE`, `pairV_eq`), so the test is `validW`. On a valid word
+the output `wC w ⊕ E⟨⟦k₁⟧, wR w⟩` has `n` bits and decodes, giving `decL (F n k₁) w` (`hFE`,
+`decodeFin_ofFn`, `decAnswer_some`); otherwise the output `true :: 1^n` has `n + 1` bits, decodes
+to nothing and is read as `0^{n+1}` (`decodeFin_eq`, `decAnswer_none`, `ofFn_zeroBits`). -/
+private theorem ofFn_cca_decAnswer (n : ℕ) (k₁ : Fin n → Bool) (k₂ : Fin (2 * n) → Bool)
+    (w : List Bool) (rd : (ccaScheme F E hE hFE).dec.Coins n) :
+    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n ((ccaScheme F E hE hFE).dec.runAt n
+        (pairEncode (pairEncode (List.ofFn k₁) (List.ofFn k₂)) w) rd))) =
+      if validW (F (2 * n) k₂) w = true then decL (F n k₁) w
+      else List.replicate (n + 1) false := by
+  revert rd
+        (List.ofFn (F n k₁ (padFin n (pairFstD w)))) =
+        List.ofFn (padFin n (List.zipWith xor (pairFstD (pairSndD w))
+          (List.ofFn (F n k₁ (padFin n (pairFstD w)))))) := (ofFn_padFin_of_length hlen).symm
+    conv_lhs => rw [hk, hFE, hdec, decodeFin_ofFn, FixedLengthScheme.decAnswer_some]
+    rw [List.ofFn_succ, Fin.cons_zero]
+    simp only [Fin.cons_succ]
+[exit 0]
+
+$ cd /home/user/fill/tcslib/.lake/packages/mathlib/Mathlib && grep -rnE '^(@\[[^]]*\] *)?theorem (ofFn_cons|ofFn_succ|ofFn_inj|ofFn_injective|ofFn_congr|ofFn_fin_append|ofFn_cast)\b' . | head
+./Data/List/OfFn.lean:47:theorem ofFn_congr {m n : ℕ} (h : m = n) (f : Fin m → α) :
+./Data/List/OfFn.lean:52:theorem ofFn_succ' {n} (f : Fin (succ n) → α) :
+./Data/List/OfFn.lean:61:theorem ofFn_fin_append {m n} (a : Fin m → α) (b : Fin n → α) :
+./Data/List/OfFn.lean:187:theorem ofFn_inj' {m n : ℕ} {f : Fin m → α} {g : Fin n → α} :
+./Data/List/OfFn.lean:192:theorem ofFn_injective {n : ℕ} : Function.Injective (ofFn : (Fin n → α) → List α) := fun f g h =>
+./Data/List/OfFn.lean:197:theorem ofFn_inj {n : ℕ} {f g : Fin n → α} : ofFn f = ofFn g ↔ f = g :=
+[exit 0]
+
+$ cd /home/user/fill/tcslib/.lake/packages/mathlib/Mathlib && sed -n 40,66p Data/List/OfFn.lean; grep -rnE 'theorem ofFn_cons|theorem ofFn_succ\b' . | head
+
+/-- Useful if `rw [← map_ofFn]` complains that `g ∘ f` is not the same as `fun i => g (f i)`. -/
+theorem ofFn_comp' {β : Type*} {n : ℕ} (f : Fin n → α) (g : α → β) :
+    ofFn (fun i => g (f i)) = map g (ofFn f) :=
+  (map_ofFn f g).symm
+
+@[congr]
+theorem ofFn_congr {m n : ℕ} (h : m = n) (f : Fin m → α) :
+    ofFn f = ofFn fun i : Fin n => f (Fin.cast h.symm i) := by
+  subst h
+  simp_rw [Fin.cast_refl, id]
+
+theorem ofFn_succ' {n} (f : Fin (succ n) → α) :
+    ofFn f = (ofFn fun i => f (Fin.castSucc i)).concat (f (Fin.last _)) := by
+  induction n with
+  | zero => rw [ofFn_zero, concat_nil, ofFn_succ, ofFn_zero, Fin.last_zero]
+  | succ n IH =>
+    rw [ofFn_succ, IH, ofFn_succ, concat_cons, Fin.castSucc_zero, Fin.succ_last]
+    simp only [succ_eq_add_one, Fin.castSucc_succ]
+
+@[simp]
+theorem ofFn_fin_append {m n} (a : Fin m → α) (b : Fin n → α) :
+    List.ofFn (Fin.append a b) = List.ofFn a ++ List.ofFn b := by
+  simp_rw [ofFn_add]
+  simp [Fin.append_left', Fin.append_right]
+
+/-- This breaks a list of `m*n` items into `m` groups each containing `n` elements. -/
+./Data/List/OfFn.lean:52:theorem ofFn_succ' {n} (f : Fin (succ n) → α) :
+./Data/List/OfFn.lean:117:theorem ofFn_const : ∀ (n : ℕ) (c : α), (ofFn fun _ : Fin n => c) = replicate n c
+[exit 0]
+
+$ cd /root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data && grep -rnE -A3 'theorem ofFn_cons|theorem ofFn_succ\b|theorem ofFn_inj\b' . | head -30
+./List/OfFn.lean:77:theorem ofFn_succ {n} {f : Fin (n + 1) → α} : ofFn f = f 0 :: ofFn fun i => f i.succ :=
+./List/OfFn.lean-78-  ext_get (by simp) (fun i hi₁ hi₂ => by
+./List/OfFn.lean-79-    cases i
+./List/OfFn.lean-80-    · simp
+--
+./Vector/OfFn.lean:44:theorem ofFn_succ {f : Fin (n+1) → α} :
+./Vector/OfFn.lean-45-    ofFn f = (ofFn (fun (i : Fin n) => f i.castSucc)).push (f ⟨n, by omega⟩) := by
+./Vector/OfFn.lean-46-  ext i h
+./Vector/OfFn.lean-47-  · simp only [getElem_ofFn, getElem_push, Fin.castSucc_mk, left_eq_dite_iff]
+--
+./Vector/OfFn.lean:57:theorem ofFn_succ' {f : Fin (n+1) → α} :
+./Vector/OfFn.lean-58-    ofFn f = (#v[f 0] ++ ofFn (fun i => f i.succ)).cast (by omega) := by
+./Vector/OfFn.lean-59-  apply Vector.toArray_inj.mp
+./Vector/OfFn.lean-60-  simp [Array.ofFn_succ']
+--
+./Array/OfFn.lean:29:theorem ofFn_succ {f : Fin (n+1) → α} :
+./Array/OfFn.lean-30-    ofFn f = (ofFn (fun (i : Fin n) => f i.castSucc)).push (f ⟨n, by omega⟩) := by
+./Array/OfFn.lean-31-  ext i h₁ h₂
+./Array/OfFn.lean-32-  · simp
+--
+./Array/OfFn.lean:51:theorem ofFn_succ' {f : Fin (n+1) → α} :
+./Array/OfFn.lean-52-    ofFn f = #[f 0] ++ ofFn (fun i => f i.succ) := by
+./Array/OfFn.lean-53-  apply Array.toList_inj.mp
+./Array/OfFn.lean-54-  simp [List.ofFn_succ]
+[exit 0]
+
+$ cd /home/user/fill/tcslib/.lake/packages/mathlib/Mathlib && grep -rnE 'ofFn \(Fin\.cons|ofFn_cons|ofFn \(cons ' . ../../batteries/Batteries /root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init | head -20
+./Algebra/Group/Pointwise/Set/ListOfFn.lean:48:  rw [← mem_prod_list_ofFn, List.ofFn_const, List.prod_replicate]
+./Analysis/Analytic/Constructions.lean:869:      List.ofFn_const, List.prod_replicate]
+./Analysis/Analytic/OfScalars.lean:70:  simp only [mkPiAlgebraFin_apply, List.ofFn_const, List.prod_replicate, one_pow, ne_eq]
+./Data/List/OfFn.lean:117:theorem ofFn_const : ∀ (n : ℕ) (c : α), (ofFn fun _ : Fin n => c) = replicate n c
+./Data/List/OfFn.lean:119:  | n + 1, c => by rw [replicate, ← ofFn_const n]; simp
+./Data/List/OfFn.lean:124:  simp_rw [ofFn_mul, ← ofFn_const, Fin.repeat, Fin.modNat, Nat.add_comm,
+./Data/List/OfFn.lean:138:lemma ofFn_cons {n} (a : α) (f : Fin n → α) : ofFn (Fin.cons a f) = a :: ofFn f := by
+[exit 0]
+
+$ cd /home/user/fill/tcslib/.lake/packages/mathlib/Mathlib && sed -n 134,142p Data/List/OfFn.lean; grep -n 'namespace\|^end' Data/List/OfFn.lean | head; grep -rn 'Mathlib.Data.List.OfFn' /home/user/fill/wt-sub/TCSlib --include=*.lean | head -3
+lemma getLast_ofFn_succ {n : ℕ} (f : Fin n.succ → α) :
+    (ofFn f).getLast (mt ofFn_eq_nil_iff.1 (Nat.succ_ne_zero _)) = f (Fin.last _) :=
+  getLast_ofFn _
+
+lemma ofFn_cons {n} (a : α) (f : Fin n → α) : ofFn (Fin.cons a f) = a :: ofFn f := by
+  rw [ofFn_succ]
+  rfl
+
+lemma find?_ofFn_eq_some {n} {f : Fin n → α} {p : α → Bool} {b : α} :
+31:namespace List
+200:end List
+/home/user/fill/wt-sub/TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean:5:import Mathlib.Data.List.OfFn
+/home/user/fill/wt-sub/TCSlib/Cryptography/Authentication/Signatures/Lamport/Seed.lean:6:import Mathlib.Data.List.OfFn
+/home/user/fill/wt-sub/TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean:7:import Mathlib.Data.List.OfFn
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' '^(@\[[^]]*\] *)?((private|protected) +)*(theorem|lemma|def|abbrev) +(sidSpec|bitSpec|outLens|inLens|bitSpecAt|SidState)[A-Za-z_]*' TCSlib
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:505:def inLens (n : ℕ) : Fin 2 → ℕ
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:510:theorem inLens_zero (n : ℕ) : S.inLens n 0 = S.ctLen.eval n := rfl
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:513:theorem inLens_one (n : ℕ) : S.inLens n 1 = S.msgLen.eval n + S.msgLen.eval n := rfl
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:516:def outLens (n : ℕ) : Fin 2 → ℕ
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:521:theorem outLens_zero (n : ℕ) : S.outLens n 0 = S.msgLen.eval n + 1 := rfl
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:524:theorem outLens_one (n : ℕ) : S.outLens n 1 = S.ctLen.eval n := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:99:def inLens (n : ℕ) : Fin 3 → ℕ
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:105:theorem inLens_zero (n : ℕ) : S.inLens n 0 = n := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:108:theorem inLens_one (n : ℕ) : S.inLens n 1 = S.ctLen.eval n := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:111:theorem inLens_two (n : ℕ) : S.inLens n 2 = n + n := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:115:def outLens (n : ℕ) : Fin 3 → ℕ
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:121:theorem outLens_zero (n : ℕ) : S.outLens n 0 = S.ctLen.eval n := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:124:theorem outLens_one (n : ℕ) : S.outLens n 1 = n + 1 := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:127:theorem outLens_two (n : ℕ) : S.outLens n 2 = S.ctLen.eval n := rfl
+TCSlib/Cryptography/Games/Efficiency.lean:134:abbrev bitSpecAt (din dout : Fin k → PolyExpr) (n : ℕ) : OracleSpec (Fin k) :=
+TCSlib/Cryptography/Games/Efficiency.lean:139:theorem bitSpecAt_eq (din dout : Fin k → PolyExpr) (n : ℕ) :
+TCSlib/Cryptography/Games/BitCodec.lean:73:abbrev bitSpec (din dout : Fin k → ℕ) : OracleSpec (Fin k) :=
+TCSlib/Cryptography/Games/BitCodec.lean:77:theorem bitSpec_dom (din dout : Fin k → ℕ) (i : Fin k) :
+TCSlib/Cryptography/Games/BitCodec.lean:82:theorem bitSpec_rng (din dout : Fin k → ℕ) (i : Fin k) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:201:def inLens (κ : ℕ) : Fin 3 → ℕ
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:207:theorem inLens_zero (κ : ℕ) : S.inLens κ 0 = S.idLen.eval κ := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:210:theorem inLens_one (κ : ℕ) : S.inLens κ 1 = S.idLen.eval κ := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:213:theorem inLens_two (κ : ℕ) : S.inLens κ 2 = S.msgLen.eval κ + S.msgLen.eval κ := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:217:def outLens (κ : ℕ) : Fin 3 → ℕ
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:223:theorem outLens_zero (κ : ℕ) : S.outLens κ 0 = S.ppLen.eval κ := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:226:theorem outLens_one (κ : ℕ) : S.outLens κ 1 = S.skLen.eval κ + 1 := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:229:theorem outLens_two (κ : ℕ) : S.outLens κ 2 = S.ctLen.eval κ := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:232:abbrev sidSpec (κ : ℕ) : OracleSpec (Fin 3) := bitSpec (S.inLens κ) (S.outLens κ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:236:theorem sidSpec_eq (κ : ℕ) : S.sidSpec κ = bitSpec (S.inLens κ) (S.outLens κ) := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:240:abbrev SidState (κ : ℕ) : Type :=
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' '\.rng [0-9] *= *\(Fin|rng_one|rng_two|Rng\b|_rng\b' TCSlib | grep -E '(theorem|lemma|have)' | head -40
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:543:theorem indSpec_rng (n : ℕ) (i : Fin 2) :
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:608:theorem indSpec_decRng (n : ℕ) : (S.indSpec n).rng 0 = (Fin (S.msgLen.eval n + 1) → Bool) := by
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:624:theorem indSpec_challengeRng (n : ℕ) :
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:275:theorem indSpec_encRng (n : ℕ) : (S.indSpec n).rng 0 = (Fin (S.ctLen.eval n) → Bool) := by
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:285:theorem indSpec_decRng (n : ℕ) : (S.indSpec n).rng 1 = (Fin (n + 1) → Bool) := by
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:295:theorem indSpec_challengeRng (n : ℕ) : (S.indSpec n).rng 2 = (Fin (S.ctLen.eval n) → Bool) := by
+TCSlib/Cryptography/Games/OracleComp.lean:163:theorem singleSpec_rng (I O : Type) (u : Unit) : (singleSpec I O).rng u = O := rfl
+TCSlib/Cryptography/Games/BitCodec.lean:82:theorem bitSpec_rng (din dout : Fin k → ℕ) (i : Fin k) :
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 73,86p TCSlib/Cryptography/Games/BitCodec.lean; echo; sed -n 270,300p TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean; echo; sed -n 540,548p TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean; sed -n 606,630p TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+abbrev bitSpec (din dout : Fin k → ℕ) : OracleSpec (Fin k) :=
+  ⟨fun i => Fin (din i) → Bool, fun i => Fin (dout i) → Bool⟩
+
+/-- Oracle `i` of `bitSpec din dout` takes `din i`-bit strings. -/
+theorem bitSpec_dom (din dout : Fin k → ℕ) (i : Fin k) :
+    (bitSpec din dout).dom i = (Fin (din i) → Bool) :=
+  rfl
+
+/-- Oracle `i` of `bitSpec din dout` answers with `dout i`-bit strings. -/
+theorem bitSpec_rng (din dout : Fin k → ℕ) (i : Fin k) :
+    (bitSpec din dout).rng i = (Fin (dout i) → Bool) :=
+  rfl
+
+/-- Decoding of an oracle index written in unary: `1^i` with `i < k` is `i`; every other word
+
+theorem indSpec_encDom (n : ℕ) : (S.indSpec n).dom 0 = (Fin n → Bool) := by
+  rw [S.indSpec_eq, bitSpec_dom, S.inLens_zero]
+
+/-- The encryption oracle answers a ciphertext at the fixed ciphertext width:
+`(S.indSpec n).rng 0 = (Fin (S.ctLen.eval n) → Bool)`. -/
+theorem indSpec_encRng (n : ℕ) : (S.indSpec n).rng 0 = (Fin (S.ctLen.eval n) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_rng, S.outLens_zero]
+
+/-- The decryption oracle accepts a ciphertext at the fixed ciphertext width:
+`(S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool)`. -/
+theorem indSpec_decDom (n : ℕ) : (S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_dom, S.inLens_one]
+
+/-- The decryption oracle answers a validity bit followed by an `n`-bit message:
+`(S.indSpec n).rng 1 = (Fin (n + 1) → Bool)`. -/
+theorem indSpec_decRng (n : ℕ) : (S.indSpec n).rng 1 = (Fin (n + 1) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_rng, S.outLens_one]
+
+/-- A challenge query contains two `n`-bit messages:
+`(S.indSpec n).dom 2 = (Fin (n + n) → Bool)`. -/
+theorem indSpec_challengeDom (n : ℕ) : (S.indSpec n).dom 2 = (Fin (n + n) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_dom, S.inLens_two]
+
+/-- The challenge oracle answers a ciphertext at the fixed ciphertext width:
+`(S.indSpec n).rng 2 = (Fin (S.ctLen.eval n) → Bool)`. -/
+theorem indSpec_challengeRng (n : ℕ) : (S.indSpec n).rng 2 = (Fin (S.ctLen.eval n) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_rng, S.outLens_two]
+
+/-- The decryption equation on the query specification's type: with `c' = cast _ c` the
+ciphertext read at width `ct(n)`, `S.indImpl atk b n k 1 c st` is
+`if decOpen atk st.isSome && !decide (st = some c')` then a fresh `r ← Dec.Coins n` and the answer
+
+  rw [S.indSpec_dom, S.inLens_zero]
+
+/-- Oracle `i` returns bit strings of length `S.outLens n i`. -/
+theorem indSpec_rng (n : ℕ) (i : Fin 2) :
+    (S.indSpec n).rng i = (Fin (S.outLens n i) → Bool) :=
+  bitSpec_rng (S.inLens n) (S.outLens n) i
+
+/-- **The oracles of `Ind_b`** at parameter `n`, for the keys `pk`, `sk`; the state is the
+challenge, once asked.
+/-- The decryption oracle answers a validity bit followed by one message:
+`(S.indSpec n).rng 0 = (Fin (S.msgLen.eval n + 1) → Bool)`. -/
+theorem indSpec_decRng (n : ℕ) : (S.indSpec n).rng 0 = (Fin (S.msgLen.eval n + 1) → Bool) := by
+  rw [S.indSpec_rng, S.outLens_zero]
+
+/-- `indImpl_dec_onSpec` with the answer cast through `indSpec_decRng`: for `c' = cast _ c`,
+`S.indImpl atk b n pk sk 0 c s = if decOpen atk s.isSome && s ≠ some c' then
+pure (cast _ (decAnswer (decodeFin _ (Dec ⟨sk, c'⟩))), s) else pure (zeroBits _, s)`. -/
+theorem indImpl_dec_onSpec_cast (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+    (c : (S.indSpec n).dom 0) (s : Option (Fin (S.ctLen.eval n) → Bool)) :
+    S.indImpl atk b n pk sk 0 c s =
+      if FixedLengthScheme.decOpen atk s.isSome && !decide (s = some (cast (S.indSpec_decDom n) c))
+      then .pure (cast (S.indSpec_decRng n).symm (FixedLengthScheme.decAnswer
+        (decodeFin _ (S.dec (pairEncode sk (List.ofFn (cast (S.indSpec_decDom n) c)))))), s)
+      else .pure (zeroBits _, s) := by
+  simpa only [cast_eq] using S.indImpl_dec_onSpec atk b n pk sk c s
+
+/-- The challenge oracle returns a ciphertext at the scheme's encoded width. -/
+theorem indSpec_challengeRng (n : ℕ) :
+    (S.indSpec n).rng 1 = (Fin (S.ctLen.eval n) → Bool) := by
+  rw [S.indSpec_rng, S.outLens_one]
+
+/-- A challenge query contains two messages at the scheme's message width. -/
+theorem indSpec_challengeDom (n : ℕ) :
+    (S.indSpec n).dom 1 = (Fin (S.msgLen.eval n + S.msgLen.eval n) → Bool) := by
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'sidSpec[^)]*\)\.(rng|dom)|sidSpec κ\)\.(rng|dom)' TCSlib | head -40
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:396:    (x : (S.sidSpec κ).dom 0) (s : σ) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:398:      (init (cast (show (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) from rfl) x) s).bind
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:399:        fun p => .pure (cast (show (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:410:    (x : (S.sidSpec κ).dom 1) (s : σ) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:412:      (key (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl) x) s).bind
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:413:        fun p => .pure (cast (show (S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:424:    (x : (S.sidSpec κ).dom 2) (s : σ) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:426:      (chal (cast (show (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:428:        fun p => .pure (cast (show (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool)
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -nE '^(@\[[^]]*\] *)?((private|protected|noncomputable) +)*(theorem|lemma|def|abbrev) ' TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean | sed -E 's/^(TCSlib[^:]*\/)//' | cut -c1-140
+Draws.lean:74:noncomputable def qLen : Fin 3 → PolyExpr
+Draws.lean:80:theorem qLen_zero : qLen G ℓ 0 = (bb1Scheme G ℓ).idLen := rfl
+Draws.lean:83:theorem qLen_one : qLen G ℓ 1 = (bb1Scheme G ℓ).idLen := rfl
+Draws.lean:86:theorem qLen_two : qLen G ℓ 2 = (bb1Scheme G ℓ).msgLen.add (bb1Scheme G ℓ).msgLen := rfl
+Draws.lean:90:noncomputable def aLen : Fin 3 → PolyExpr
+Draws.lean:96:theorem aLen_zero : aLen G ℓ 0 = (bb1Scheme G ℓ).ppLen := rfl
+Draws.lean:99:theorem aLen_one : aLen G ℓ 1 = (bb1Scheme G ℓ).skLen.add (.const 1) := rfl
+Draws.lean:102:theorem aLen_two : aLen G ℓ 2 = (bb1Scheme G ℓ).ctLen := rfl
+Draws.lean:105:theorem qLen_eval (κ : ℕ) : (fun i => (qLen G ℓ i).eval κ) = (bb1Scheme G ℓ).inLens κ := by
+Draws.lean:113:theorem aLen_eval (κ : ℕ) : (fun i => (aLen G ℓ i).eval κ) = (bb1Scheme G ℓ).outLens κ := by
+Draws.lean:124:def blockLen : PolyExpr := (PolyExpr.var.add G.wG).add (.const 1)
+Draws.lean:127:theorem blockLen_eval (κ : ℕ) : (blockLen G).eval κ = κ + G.wG.eval κ + 1 := by
+Draws.lean:133:noncomputable def draw (κ : ℕ) (d : List Bool)
+Draws.lean:139:theorem draw_eq (κ : ℕ) (d : List Bool)
+Draws.lean:147:theorem order_le_two_pow (κ : ℕ) (d : List Bool) : (G.group κ d).order ≤ 2 ^ G.wG.eval κ := by
+Draws.lean:159:theorem statClose_draw (κ : ℕ) (d : List Bool) :
+Draws.lean:202:noncomputable def drawStep (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+Draws.lean:255:theorem drawStep_zero (x : Fin ((qLen G ℓ 0).eval κ) → Bool) (s : BB1SimState G ℓ κ d)
+Draws.lean:267:theorem drawStep_one_none (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
+Draws.lean:273:theorem drawStep_one_target (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
+Draws.lean:287:theorem drawStep_one_key (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
+Draws.lean:307:theorem drawStep_two_none (mm : Fin ((qLen G ℓ 2).eval κ) → Bool)
+Draws.lean:313:theorem drawStep_two_repeat (mm : Fin ((qLen G ℓ 2).eval κ) → Bool)
+Draws.lean:326:theorem drawStep_two_fresh (mm : Fin ((qLen G ℓ 2).eval κ) → Bool)
+Draws.lean:349:theorem drawStep_two_invalid (mm : Fin ((qLen G ℓ 2).eval κ) → Bool)
+Draws.lean:368:theorem exists_drawStep_eq_pure (i : Fin 3) (x : Fin ((qLen G ℓ i).eval κ) → Bool)
+Draws.lean:399:theorem exists_simulate_tape_eq_pure (V : ℕ → ZMod (G.group κ d).order) {α : Type}
+Draws.lean:419:private theorem expect_sample_eq_uprob {α : Type} [Fintype α] [Nonempty α] (Φ : α → ℝ)
+Draws.lean:439:theorem abs_expect_draws_sub_le (κ : ℕ) (d : List Bool) (cap : ℕ)
+Reduction.lean:65:noncomputable def runAccept (ρ : A'.Coins κ)
+Reduction.lean:75:theorem runAccept_eq (ρ : A'.Coins κ)
+Reduction.lean:87:theorem runAccept_eq_zero_or_one (ρ : A'.Coins κ)
+Reduction.lean:113:theorem expect_handlerMachine (B : NUPPT)
+Reduction.lean:187:private theorem ite_ofFn_one {σ : Type} :
+Reduction.lean:203:theorem expect_castImpl_freshImpl (ρ : A'.Coins κ) :
+Reduction.lean:229:theorem abs_expect_runAccept_sub_le :
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 103,121p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean; echo ...; sed -n 410,449p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean
+
+/-- The query lengths are the game's: `(qLen G ℓ ·).eval κ = (bb1Scheme G ℓ).inLens κ`. -/
+theorem qLen_eval (κ : ℕ) : (fun i => (qLen G ℓ i).eval κ) = (bb1Scheme G ℓ).inLens κ := by
+  funext i
+  match i with
+  | 0 => rw [qLen_zero, IBEScheme.inLens_zero]
+  | 1 => rw [qLen_one, IBEScheme.inLens_one]
+  | 2 => rw [qLen_two, PolyExpr.eval_add, IBEScheme.inLens_two]
+
+/-- The answer lengths are the game's: `(aLen G ℓ ·).eval κ = (bb1Scheme G ℓ).outLens κ`. -/
+theorem aLen_eval (κ : ℕ) : (fun i => (aLen G ℓ i).eval κ) = (bb1Scheme G ℓ).outLens κ := by
+  funext i
+  match i with
+  | 0 => rw [aLen_zero, IBEScheme.outLens_zero]
+  | 1 => rw [aLen_one, PolyExpr.eval_add, PolyExpr.eval_const, IBEScheme.outLens_one]
+  | 2 => rw [aLen_two, IBEScheme.outLens_two]
+
+/-! ### Exponents drawn from coins -/
+
+...
+    rw [simulate_query, ETTGame.tapeImpl_apply, h, OracleComp.pure_bind, OracleComp.pure_bind]
+    exact hk
+
+end Cases
+
+/-! ### Drawn against ideal exponents -/
+
+/-- A function with values `0` and `1` averages to the probability of the value `1`:
+`𝔼_{x ← α} Φ x = Pr_{x ← α}[Φ x = 1]` (`prob_sample_eq_uprob`). -/
+private theorem expect_sample_eq_uprob {α : Type} [Fintype α] [Nonempty α] (Φ : α → ℝ)
+    (hΦ : ∀ x, Φ x = 0 ∨ Φ x = 1) :
+    ProbComp.expect (ProbComp.sample α) Φ = uprob fun x => Φ x = 1 := by
+  classical
+  have h : Φ = fun x => if Φ x = 1 then 1 else 0 := by
+    funext x
+    rcases hΦ x with h0 | h1
+    · rw [h0, if_neg zero_ne_one]
+    · rw [h1, if_pos rfl]
+  rw [← Bridge.prob_sample_eq_uprob, ProbComp.prob_eq_expect]
+  conv_lhs => rw [h]
+
+/-- **Drawn exponents against ideal ones, on a test with values `0` and `1`**: for `cap`
+exponents and any `Φ` with values in `{0, 1}`,
+`|𝔼_{T} Φ(draw ∘ T) − 𝔼_{U ← Z_p^cap} Φ(U)| ≤ cap · (1/2)^n`, `T` uniform over `cap` blocks of
+`n · n` coins.
+
+**Proof sketch.** Both averages are probabilities of the event `Φ = 1`
+(`prob_sample_eq_uprob`); `cap` independent draws are `cap · (1/2)^n`-close to `cap` uniform
+exponents (`statClose_draw`, `OneWay.statClose_pi`), and the event is a test set. -/
+theorem abs_expect_draws_sub_le (κ : ℕ) (d : List Bool) (cap : ℕ)
+    (Φ : (Fin cap → ZMod (G.group κ d).order) → ℝ) (hΦ : ∀ U, Φ U = 0 ∨ Φ U = 1) :
+    |ProbComp.expect
+        (ProbComp.sample (Fin cap → Fin ((blockLen G).eval κ * (blockLen G).eval κ) → Bool))
+        (fun T => Φ fun j => draw G κ d (T j)) -
+      ProbComp.expect (ProbComp.sample (Fin cap → ZMod (G.group κ d).order)) Φ| ≤
+      cap * (1 / 2 : ℝ) ^ (blockLen G).eval κ := by
+  rw [expect_sample_eq_uprob _ fun T => hΦ _, expect_sample_eq_uprob Φ hΦ]
+  exact (OneWay.statClose_pi (statClose_draw G κ d) cap).abs_uprob_sub_le fun U => Φ U = 1
+
+end BB1Machine
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 105,130p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean; echo ...; sed -n 180,243p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean
+`n · n` coins.
+
+**Proof sketch.** Move `B`'s coins to `(ω, ρ)` along `φ` (`expect_sample_equiv`). For fixed coins,
+T1 makes `B`'s output the adversary's output `a` of the handler's run (`handler_result`), and the
+handler's run is the run of `drawStep` with exponents from the seed blocks
+(`simulate_handler`), so `[B accepts] = runAccept ρ (j ↦ draw (block j of ω))`. Split the uniform
+pair (`Bridge.expect_sample_pair`), exchange the samples (`expect_sample_comm`) and read the seed as
+its blocks (`seedBlocks`, `expect_sample_equiv`). -/
+theorem expect_handlerMachine (B : NUPPT)
+    (φ : (Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool) × A'.Coins κ ≃ B.Coins κ)
+    (hφ : ∀ (z : List Bool) (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool)
+      (ρ : A'.Coins κ), ∃ (a : Fin ((PolyExpr.const 1).eval κ) → Bool)
+        (s : Fin ((handler G ℓ O b q H).stateLen.eval κ) → Bool),
+        simulate ((handler G ℓ O b q H).impl κ z ω)
+            (A'.toCompOn (bitCodec (fun i => (qLen G ℓ i).eval κ) (fun i => (aLen G ℓ i).eval κ)
+              ((PolyExpr.const 1).eval κ)) κ (q.eval κ) ((handler G ℓ O b q H).advInput κ z ω) ρ)
+            ((handler G ℓ O b q H).init κ) = .pure (a, s) ∧
+          B.runAt κ z (φ (ω, ρ)) = (handler G ℓ O b q H).result κ z ω s a) :
+    ProbComp.expect (ProbComp.sample (B.Coins κ))
+        (fun ρ => if B.distinguisherL κ
+          (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T) ρ = true then 1 else 0) =
+      ProbComp.expect (ProbComp.sample (A'.Coins κ)) fun ρ =>
+        ProbComp.expect (ProbComp.sample (Fin (q.eval κ) →
+            Fin ((blockLen G).eval κ * (blockLen G).eval κ) → Bool))
+          fun V => runAccept G ℓ b q A' κ r g X Y Z T ρ fun j => draw G κ (G.desc κ r) (V j) := by
+  have hpt : ∀ x : (Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool) × A'.Coins κ,
+...
+            fun ω => runAccept G ℓ b q A' κ r g X Y Z T ρ
+              fun j => draw G κ (G.desc κ r) (seedBlocks G ℓ O b q H κ ω j)) :=
+        ProbComp.expect_sample_comm _
+    _ = _ := congrArg _ (funext fun ρ => ProbComp.expect_sample_equiv (seedBlocks G ℓ O b q H κ)
+          (fun V => runAccept G ℓ b q A' κ r g X Y Z T ρ fun j => draw G κ (G.desc κ r) (V j)))
+
+/-- The output bit read as a word: `[a 0 = 1] = [⟦a⟧ = [1]]` for a one-bit output `a`. -/
+private theorem ite_ofFn_one {σ : Type} :
+    (fun p : (Fin 1 → Bool) × σ => if p.1 0 = true then (1 : ℝ) else 0) =
+      fun p => (fun lp : List Bool × σ => if lp.1 = [true] then (1 : ℝ) else 0)
+        (List.ofFn p.1, p.2) := by
+  funext p
+  simp only [List.ofFn_succ, List.ofFn_zero, List.cons.injEq, and_true]
+
+/-- **The simulator with fresh exponents accepts with the average of `runAccept` over uniform
+exponents**: the run of `A'` on the game's oracle lengths against the oracles of `drawStep` with
+a fresh uniform exponent per query, read on the game's lengths (`castImpl` of
+`ETTGame.freshImpl`), outputs `1` with probability `𝔼_{U ← Z_p^{q(κ)}} runAccept ρ U`.
+
+**Proof sketch.** Transport the run to the handler's lengths, which are the game's
+(`expect_simulate_castImpl_toCompOn` with `qLen_eval`, `aLen_eval`), then draw the exponents in
+advance (`ETTGame.expect_simulate_tapeImpl`: `A'` makes at most `q(κ)` queries,
+`NUPPT.toCompOn_costBoundedBy`). -/
+theorem expect_castImpl_freshImpl (ρ : A'.Coins κ) :
+    ProbComp.expect (simulate (castImpl (ins := (bb1Scheme G ℓ).inLens κ)
+        (outs := (bb1Scheme G ℓ).outLens κ)
+        (ETTGame.freshImpl (spec := bitSpecAt (qLen G ℓ) (aLen G ℓ) κ)
+          (drawStep G ℓ b κ (G.desc κ r) g X Y Z T)))
+        (A'.toCompOn (bitCodec ((bb1Scheme G ℓ).inLens κ) ((bb1Scheme G ℓ).outLens κ) 1) κ
+          (q.eval κ) [] ρ) (none, none))
+      (fun p => if p.1 0 = true then 1 else 0) =
+      ProbComp.expect (ProbComp.sample (Fin (q.eval κ) → ZMod (G.group κ (G.desc κ r)).order))
+        fun U => runAccept G ℓ b q A' κ r g X Y Z T ρ U := by
+  rw [ite_ofFn_one]
+  refine (expect_simulate_castImpl_toCompOn (qLen_eval G ℓ κ).symm
+    (aLen_eval G ℓ κ).symm (PolyExpr.eval_const 1 κ).symm
+    (ETTGame.freshImpl (spec := bitSpecAt (qLen G ℓ) (aLen G ℓ) κ)
+      (drawStep G ℓ b κ (G.desc κ r) g X Y Z T)) A' κ (q.eval κ) [] ρ (none, none)
+    (fun lp => if lp.1 = [true] then (1 : ℝ) else 0)).trans ?_
+  exact (ETTGame.expect_simulate_tapeImpl (spec := bitSpecAt (qLen G ℓ) (aLen G ℓ) κ)
+    (drawStep G ℓ b κ (G.desc κ r) g X Y Z T) (q.eval κ)
+    (fun a => if List.ofFn a = [true] then (1 : ℝ) else 0)
+    (A'.toCompOn (bitCodec (fun i => (qLen G ℓ i).eval κ) (fun i => (aLen G ℓ i).eval κ)
+      ((PolyExpr.const 1).eval κ)) κ (q.eval κ) [] ρ) (q.eval κ)
+    (NUPPT.toCompOn_costBoundedBy _ _ _ _ _ _) (none, none) 0 (by omega)).symm
+
+/-- **Drawn exponents against uniform ones**: averaged over the adversary's coins,
+`|𝔼_ρ 𝔼_V runAccept ρ (draw ∘ V) − 𝔼_ρ 𝔼_U runAccept ρ U| ≤ q(κ) · (1/2)^n`
+(`abs_expect_draws_sub_le` for each `ρ`, `runAccept` having values `0` and `1`). -/
+theorem abs_expect_runAccept_sub_le :
+    |ProbComp.expect (ProbComp.sample (A'.Coins κ)) (fun ρ =>
+        ProbComp.expect (ProbComp.sample (Fin (q.eval κ) →
+            Fin ((blockLen G).eval κ * (blockLen G).eval κ) → Bool))
+          fun V => runAccept G ℓ b q A' κ r g X Y Z T ρ fun j => draw G κ (G.desc κ r) (V j)) -
+      ProbComp.expect (ProbComp.sample (A'.Coins κ)) (fun ρ =>
+        ProbComp.expect (ProbComp.sample (Fin (q.eval κ) → ZMod (G.group κ (G.desc κ r)).order))
+          fun U => runAccept G ℓ b q A' κ r g X Y Z T ρ U)| ≤
+      q.eval κ * (1 / 2 : ℝ) ^ (blockLen G).eval κ :=
+  ProbComp.abs_expect_sub_le _ fun ρ => abs_expect_draws_sub_le G κ (G.desc κ r) (q.eval κ)
+    (runAccept G ℓ b q A' κ r g X Y Z T ρ) (runAccept_eq_zero_or_one G ℓ b q A' κ r g X Y Z T ρ)
+
+end BB1Machine
+
+end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' '^(@\[[^]]*\] *)?((private|protected) +)*(theorem|lemma) +[A-Za-z_.]*expect_simulate[A-Za-z_]*' TCSlib | cut -c1-160
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling.lean:47:theorem expect_simulate_sample_once {ι α R : Type} {spec : OracleSpec ι}
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:267:theorem expect_simulate_rImpl_eager (atk : Attack) (b : Bool) (samp : NUPPT)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:91:theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:148:theorem expect_simulate_eager {ins outs : Fin 2 → ℕ} {d : ℕ} (hd : outs 1 = 
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:65:theorem expect_simulate_abs (impl₁ : QueryImpl spec σ₁ unifSpec)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:88:theorem expect_simulate_abs_inv (impl₁ : QueryImpl spec σ₁ unifSpec)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:167:theorem expect_simulate_tapeImpl [Fintype τ] [Nonempty τ]
+TCSlib/Cryptography/Games/Hopping.lean:384:theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
+TCSlib/Cryptography/Games/Hopping.lean:494:theorem expect_simulate_eager (O : QueryImpl spec σ unifSpec) (OE : T → QueryImpl spec σ unifSpec)
+TCSlib/Cryptography/Games/BitCodec.lean:430:theorem expect_simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rn -A8 'theorem expect_simulate_congr' TCSlib --include=*.lean
+TCSlib/Cryptography/Games/Hopping.lean:384:theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
+TCSlib/Cryptography/Games/Hopping.lean-385-    (impl₀ impl₁ : QueryImpl spec σ unifSpec)
+TCSlib/Cryptography/Games/Hopping.lean-386-    (h : ∀ i x s (g : spec.rng i × σ → ℝ), expect (impl₀ i x s) g = expect (impl₁ i x s) g)
+TCSlib/Cryptography/Games/Hopping.lean-387-    (c : OracleComp spec α) (s : σ) (G : α × σ → ℝ) :
+TCSlib/Cryptography/Games/Hopping.lean-388-    expect (simulate impl₀ c s) G = expect (simulate impl₁ c s) G := by
+TCSlib/Cryptography/Games/Hopping.lean-389-  induction c generalizing s with
+TCSlib/Cryptography/Games/Hopping.lean-390-  | pure a => rw [simulate_pure, simulate_pure]
+TCSlib/Cryptography/Games/Hopping.lean-391-  | query i x k ih =>
+TCSlib/Cryptography/Games/Hopping.lean-392-    rw [simulate_query, simulate_query, expect_bind, expect_bind, h]
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' '^(@\[[^]]*\] *)?((private|protected) +)*(theorem|lemma) +[A-Za-z_.]*expect_[A-Za-z_]*Impl[A-Za-z_]*' TCSlib | cut -c1-170
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:267:theorem expect_simulate_rImpl_eager (atk : Attack) (b : Bool) (samp : NUPPT) (pl hl : 
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:91:theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:244:theorem expect_tapeImpl (κ : ℕ) (E : Bool → (Fin (ins 1) → Bool) → C → (Fin L → Bool))
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:48:theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:153:theorem expect_fImpl_transport {ins ins' outs outs' : Fin 3 → ℕ} {d d' : ℕ}
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:237:theorem expect_eImpl (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:351:theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (G : α → ℝ)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:213:theorem expect_fImpl_width {ins outs : Fin 3 → ℕ} {d d' : ℕ} (hd : d = d') (c n : ℕ)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:375:theorem abs_expect_fImpl_sub_le (hatk : FixedLengthScheme.decOpen atk true = false)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:65:theorem expect_indImpl_ettImpl (hct : S.ctLen.eval n = 6 * n + 4)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:167:theorem expect_simulate_tapeImpl [Fintype τ] [Nonempty τ]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean:421:theorem expect_ettImpl_transport {ins ins' outs outs' : Fin 3 → ℕ} {d d' : ℕ} (hi : ins = in
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:499:theorem expect_ettImpl_lazy (hd : d = 6 * n + 4) (hi0 : ins 0 = n) (hi2 : ins 2 = n + n)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:198:theorem expect_ettImpl_outLen {ins outs : Fin 3 → ℕ} {c n : ℕ} {d d' : ℕ} (hd : d = d'
+TCSlib/Cryptography/Games/BitCodec.lean:430:theorem expect_simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:203:theorem expect_castImpl_freshImpl (ρ : A'.Coins κ) :
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'bb1SimImpl|freshImpl' TCSlib | grep -E '(theorem|lemma|def|abbrev) ' | cut -c1-170
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:116:noncomputable def freshImpl [Fintype τ] [Nonempty τ]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:122:theorem freshImpl_apply [Fintype τ] [Nonempty τ]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean:356:theorem ettImpl_eq_freshImpl :
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:445:theorem ettLazy_eq : ettLazy ins outs d n f b = freshImpl (ettLazyK ins outs d n f b) := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:664:noncomputable def bb1SimImpl (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:671:theorem bb1SimImpl_eq (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:203:theorem expect_castImpl_freshImpl (ρ : A'.Coins κ) :
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 36,60p TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean; echo ...; sed -n 55,72p TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean; echo ...; sed -n 110,128p TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean
+/-- **One call of `IND_b` with the key `key` has the law of `fImpl` with the pad function `fk`**
+(CPA or CCA1), for every function `g` of the answer and the new state, for a scheme `S` whose
+encryption with `key` is `ctOf` with the nonce `ν re` of a bijection `ν` (`henc`), whose
+decryption is `⟨1, v ⊕ fk(x)⟩` on well-formed `⟨x, v⟩` and `⊥` otherwise (`hdec`), with
+`(3n + 2)`-bit ciphertexts:
+`𝔼[g] (S.indImpl (atkOf atkBit) b n key i x s) = 𝔼[g] (fImpl … fk i x s)`.
+
+**Proof sketch.** By the oracle (the `_onSpec` readers). Encryption and the first challenge
+sample the coins of `Enc`, which are the nonce (`expect_sample_equiv ν`), and encrypt as `ctOf`;
+the selected half is `msgOf` (`ofFn_splitHalf_fst`, `_snd`). Decryption is open only before the
+challenge (CCA1) or never (CPA), so the refusal of the challenge is vacuous; its coins are unused
+(`expect_const`). A repeated challenge returns the record. -/
+theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+    (key : List Bool) (fk : (Fin n → Bool) → (Fin n → Bool)) (hct : S.ctLen.eval n = 3 * n + 2)
+    (ν : S.enc.Coins n ≃ (Fin n → Bool))
+    (henc : ∀ (m : Fin n → Bool) (re : S.enc.Coins n),
+      List.ofFn (S.encryptAt n key m re) = ctOf (ν re) (List.ofFn m) (fk (ν re)))
+    (hdec : ∀ (w : List Bool) (rd : S.dec.Coins n),
+      List.ofFn (FixedLengthScheme.decAnswer (decodeFin n
+          (S.dec.runAt n (pairEncode key w) rd))) =
+        if decWF n w then
+          true :: List.zipWith xor (pairSndD w) (List.ofFn (fk (padFin n (pairFstD w))))
+        else List.replicate (n + 1) false)
+    (i : Fin 3) (x : (S.indSpec n).dom i) (s : Option (Fin (S.ctLen.eval n) → Bool))
+    (g : (S.indSpec n).rng i × Option (Fin (S.ctLen.eval n) → Bool) → ℝ) :
+...
+for every function `G` of the answer and the record, for a scheme `S` whose encryption with `key`
+is `encW f g` with the nonce `ν re` of a bijection `ν` (`henc`), whose decryption is `decL f` on
+valid words and `⊥` otherwise (`hdec`), with `(6n + 4)`-bit ciphertexts:
+`𝔼[G] (S.indImpl .cca2 b n key i x (stRec s)) = 𝔼[G ∘ (id × stRec)] (ettImpl … f g false b i x s)`.
+
+**Proof sketch.** By the oracle (the `_onSpec` readers). Encryption and the first challenge
+sample the coins of `Enc`, which are the nonce (`expect_sample_equiv ν`), and encrypt as `encW`;
+the selected half is `msgOf` (`ofFn_splitHalf_fst`, `_snd`). Decryption refuses the record
+(`refW`) and otherwise answers `decAnsW`; its coins and the experiment's nonce are unused
+(`expect_const`). A repeated challenge returns the record. -/
+theorem expect_indImpl_ettImpl (hct : S.ctLen.eval n = 6 * n + 4)
+    (ν : S.enc.Coins n ≃ (Fin n → Bool))
+    (henc : ∀ (m : Fin n → Bool) (re : S.enc.Coins n),
+      List.ofFn (S.encryptAt n key m re) = encW f g (ν re) (List.ofFn m))
+    (hdec : ∀ (w : List Bool) (rd : S.dec.Coins n),
+      List.ofFn (FixedLengthScheme.decAnswer (decodeFin n
+          (S.dec.runAt n (pairEncode key w) rd))) =
+        if validW g w = true then decL f w else List.replicate (n + 1) false)
+...
+section Tapes
+
+variable {ι : Type} {spec : OracleSpec ι} {σ τ α : Type}
+
+/-- **One fresh coin per query:** the query `x` to oracle `i` in state `s` draws a uniform
+`t ∈ τ`, then runs `K i x s t`. -/
+noncomputable def freshImpl [Fintype τ] [Nonempty τ]
+    (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ)) :
+    QueryImpl spec σ unifSpec :=
+  fun i x s => (sample τ).bind (K i x s)
+
+/-- `freshImpl K i x s = (sample τ).bind (K i x s)`. -/
+theorem freshImpl_apply [Fintype τ] [Nonempty τ]
+    (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ)) (i : ι)
+    (x : spec.dom i) (s : σ) : freshImpl K i x s = (sample τ).bind (K i x s) :=
+  rfl
+
+/-- **One coin per query, from tapes in advance:** the query `x` to oracle `i` in state `(s, j)`
+runs `K i x s (T j)` and advances the query counter `j`,
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -nE '^(@\[[^]]*\] *)?((private|protected|noncomputable) +)*(theorem|lemma|def|abbrev) +bb1Sim' TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean | cut -c1-150
+460:theorem bb1SimState_eq (κ : ℕ) (d : List Bool) :
+467:noncomputable def bb1SimParams {κ : ℕ} {d : List Bool} (g X Y : (G.group κ d).G)
+473:theorem bb1SimParams_eq {κ : ℕ} {d : List Bool} (g X Y : (G.group κ d).G)
+481:noncomputable def bb1SimKey {κ : ℕ} {d : List Bool} (g X Y : (G.group κ d).G)
+491:theorem bb1SimKey_eq {κ : ℕ} {d : List Bool} (g X Y : (G.group κ d).G)
+503:noncomputable def bb1SimInit (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+512:theorem bb1SimInit_none (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+521:theorem bb1SimInit_some (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+530:noncomputable def bb1SimKeyQ (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+542:theorem bb1SimKeyQ_none (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+548:theorem bb1SimKeyQ_target (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+555:theorem bb1SimKeyQ_ne (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+567:noncomputable def bb1SimCt (κ : ℕ) (d : List Bool) (Z : (G.group κ d).G) (T : (G.group κ d).GT)
+573:theorem bb1SimCt_eq (κ : ℕ) (d : List Bool) (Z : (G.group κ d).G) (T : (G.group κ d).GT)
+595:noncomputable def bb1SimChal (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+615:theorem bb1SimChal_none (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+622:theorem bb1SimChal_repeat (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+631:theorem bb1SimChal_fresh (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+648:theorem bb1SimChal_invalid (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+664:noncomputable def bb1SimImpl (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+671:theorem bb1SimImpl_eq (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+682:noncomputable def bb1SimGame (A : NUPPT) (q : ℕ) (b real : Bool) (κ : ℕ) : ProbComp Bool :=
+697:theorem bb1SimGame_eq (A : NUPPT) (q : ℕ) (b real : Bool) (κ : ℕ) :
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 590,606p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean; echo ...; sed -n 660,700p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean
+open Classical in
+/-- **The simulator's `Challenge`** [BB04, proof of Theorem 4.1, *Challenge*] with challenge bit
+`b`, on `Z = g^c` and `T`: with `ID*` recorded and no challenge yet, if `M₀, M₁` are in the
+message space, answer and record `(M_b · T, Z, Z^{α_1})`, and otherwise `⊥`; once a challenge is
+recorded, repeat it; before `Init`, `⊥`. -/
+noncomputable def bb1SimChal (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+    (T : (G.group κ d).GT)
+    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
+    (s : BB1SimState G ℓ κ d) :
+    ProbComp ((Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) × BB1SimState G ℓ κ d) :=
+  match s.1, s.2 with
+  | some _, some c => .pure (c, s)
+  | some (t, α₁), none =>
+    if (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+          (FixedLengthScheme.splitHalf mm).1 ∧
+        (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+          (FixedLengthScheme.splitHalf mm).2 then
+...
+
+/-- **The simulator's oracles** [BB04, proof of Theorem 4.1] with challenge bit `b`, at
+parameter `κ`, on the description `d` and the Decision BDH tuple `(g, X, Y, Z, T)`: the three
+handlers `bb1SimInit`, `bb1SimKeyQ`, `bb1SimChal` as an implementation of the game's oracles. -/
+noncomputable def bb1SimImpl (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+    (T : (G.group κ d).GT) :
+    QueryImpl ((bb1Scheme G ℓ).sidSpec κ) (BB1SimState G ℓ κ d) unifSpec :=
+  (bb1Scheme G ℓ).oracleImpl κ (bb1SimInit G ℓ κ d g X Y) (bb1SimKeyQ G ℓ κ d g X Y)
+    (bb1SimChal G ℓ b κ d g X Y Z T)
+
+/-- `bb1SimImpl` is `oracleImpl` of the three simulator handlers. -/
+theorem bb1SimImpl_eq (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+    (T : (G.group κ d).GT) :
+    bb1SimImpl G ℓ b κ d g X Y Z T =
+      (bb1Scheme G ℓ).oracleImpl κ (bb1SimInit G ℓ κ d g X Y) (bb1SimKeyQ G ℓ κ d g X Y)
+        (bb1SimChal G ℓ b κ d g X Y Z T) := rfl
+
+/-- **The simulation game** [BB04, proof of Theorem 4.1] for the adversary `A` with budget `q`,
+challenge bit `b`, on `P_BDH` (`real`) or `R_BDH`: draw the generator's coins `r`, `g ∈ G^*`,
+`a, b', c ∈ Z_p`, `T ∈ G_T` and `A`'s coins, run `A(1^κ)` against the simulator's oracles on
+`(g, g^a, g^{b'}, g^c, T')` with `T' = e(g, g)^{ab'c}` if `real` and `T` otherwise, and return
+`A`'s guess. -/
+noncomputable def bb1SimGame (A : NUPPT) (q : ℕ) (b real : Bool) (κ : ℕ) : ProbComp Bool :=
+  (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+  (ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
+  (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order × ZMod (G.group κ (G.desc κ r)).order ×
+    ZMod (G.group κ (G.desc κ r)).order)).bind fun abc =>
+  (ProbComp.sample (G.group κ (G.desc κ r)).GT).bind fun t =>
+  (ProbComp.sample (A.Coins κ)).bind fun ρ =>
+  (simulate (bb1SimImpl G ℓ b κ (G.desc κ r) g.1 (g.1 ^ abc.1.val) (g.1 ^ abc.2.1.val)
+      (g.1 ^ abc.2.2.val)
+      (if real then (G.group κ (G.desc κ r)).pair g.1 g.1 ^ (abc.1 * abc.2.1 * abc.2.2).val
+        else t))
+    (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ) (none, none)).bind fun res => .pure (res.1 0)
+
+/-- The simulation game draws the generator's coins, `g ∈ G^*`, `(a, b', c)`, `T` and `A`'s
+coins, and simulates `A` against `bb1SimImpl` on the Decision BDH tuple. -/
+theorem bb1SimGame_eq (A : NUPPT) (q : ℕ) (b real : Bool) (κ : ℕ) :
+    bb1SimGame G ℓ A q b real κ =
+      (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+      (ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 500,566p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean; echo ...; sed -n 612,660p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean
+/-- **The simulator's `Init`** [BB04, proof of Theorem 4.1, *Initialization* and *Setup*] on the
+description `d` and `g, X = g^a, Y = g^{b'}`: before any commitment, draw `α_1 ∈ Z_p`, record
+`(ID, α_1)` and answer the simulated parameters; afterwards answer the recorded identity's. -/
+noncomputable def bb1SimInit (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (s : BB1SimState G ℓ κ d) :
+    ProbComp ((Fin ((bb1Scheme G ℓ).ppLen.eval κ) → Bool) × BB1SimState G ℓ κ d) :=
+  match s.1 with
+  | none => (ProbComp.sample (ZMod (G.group κ d).order)).bind fun α₁ =>
+      .pure ((bb1Scheme G ℓ).encPP κ ⟨d, bb1SimParams G ℓ g X Y id α₁⟩, (some (id, α₁), s.2))
+  | some (t, α₁) => .pure ((bb1Scheme G ℓ).encPP κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩, s)
+
+/-- `Init` before any commitment draws `α_1` and answers the simulated parameters. -/
+theorem bb1SimInit_none (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
+    bb1SimInit G ℓ κ d g X Y id (none, c) =
+      (ProbComp.sample (ZMod (G.group κ d).order)).bind fun α₁ =>
+        .pure ((bb1Scheme G ℓ).encPP κ ⟨d, bb1SimParams G ℓ g X Y id α₁⟩, (some (id, α₁), c)) :=
+  rfl
+
+/-- `Init` after a commitment answers the recorded identity's simulated parameters. -/
+theorem bb1SimInit_some (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+    (id t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
+    bb1SimInit G ℓ κ d g X Y id (some (t, α₁), c) =
+      .pure ((bb1Scheme G ℓ).encPP κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩, (some (t, α₁), c)) :=
+  rfl
+
+/-- **The simulator's `KeyGen`** [BB04, proof of Theorem 4.1, *Phase 1*]: when `ID*` is recorded
+and `ID ≠ ID*`, draw `r ∈ Z_p` and answer `⟨1, bb1SimKey … ID r⟩`; otherwise `⊥`. -/
+noncomputable def bb1SimKeyQ (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (s : BB1SimState G ℓ κ d) :
+    ProbComp ((Fin ((bb1Scheme G ℓ).skLen.eval κ + 1) → Bool) × BB1SimState G ℓ κ d) :=
+  match s.1 with
+  | some (t, α₁) =>
+    if id = t then .pure (zeroBits _, s)
+    else (ProbComp.sample (ZMod (G.group κ d).order)).bind fun r =>
+      .pure (FixedLengthScheme.decAnswer
+        (some ((bb1Scheme G ℓ).encSK κ ⟨d, bb1SimKey G ℓ g X Y t α₁ id r⟩)), s)
+  | none => .pure (zeroBits _, s)
+
+/-- `KeyGen` before `Init` answers `⊥`. -/
+theorem bb1SimKeyQ_none (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
+    bb1SimKeyQ G ℓ κ d g X Y id (none, c) = .pure (zeroBits _, (none, c)) := rfl
+
+/-- `KeyGen` for the committed identity answers `⊥`. -/
+theorem bb1SimKeyQ_target (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
+    bb1SimKeyQ G ℓ κ d g X Y t (some (t, α₁), c) = .pure (zeroBits _, (some (t, α₁), c)) := by
+  simp [bb1SimKeyQ]
+
+/-- `KeyGen` for `ID ≠ ID*` draws `r` and answers the simulated key. -/
+theorem bb1SimKeyQ_ne (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
+    (id t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) (h : id ≠ t) :
+    bb1SimKeyQ G ℓ κ d g X Y id (some (t, α₁), c) =
+      (ProbComp.sample (ZMod (G.group κ d).order)).bind fun r =>
+        .pure (FixedLengthScheme.decAnswer
+          (some ((bb1Scheme G ℓ).encSK κ ⟨d, bb1SimKey G ℓ g X Y t α₁ id r⟩)),
+          (some (t, α₁), c)) := by
+  simp [bb1SimKeyQ, h]
+
+/-- The simulated challenge `(M · T, Z, Z^{α_1})` [BB04, proof of Theorem 4.1, *Challenge*] of the
+message string `m`, encoded. -/
+...
+  | none, _ => .pure (zeroBits _, s)
+
+/-- `Challenge` before `Init` answers `⊥`. -/
+theorem bb1SimChal_none (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+    (T : (G.group κ d).GT)
+    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
+    bb1SimChal G ℓ b κ d g X Y Z T mm (none, c) = .pure (zeroBits _, (none, c)) := rfl
+
+/-- `Challenge` after a recorded challenge repeats it. -/
+theorem bb1SimChal_repeat (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+    (T : (G.group κ d).GT)
+    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
+    (t : (Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) × ZMod (G.group κ d).order)
+    (w : Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) :
+    bb1SimChal G ℓ b κ d g X Y Z T mm (some t, some w) = .pure (w, (some t, some w)) := rfl
+
+/-- The first `Challenge` with both messages in the message space answers and records
+`(M_b · T, Z, Z^{α_1})`. -/
+theorem bb1SimChal_fresh (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+    (T : (G.group κ d).GT)
+    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
+    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
+    (h : (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+          (FixedLengthScheme.splitHalf mm).1 ∧
+        (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+          (FixedLengthScheme.splitHalf mm).2) :
+    bb1SimChal G ℓ b κ d g X Y Z T mm (some (t, α₁), none) =
+      .pure (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.splitHalf mm).2
+          else (FixedLengthScheme.splitHalf mm).1),
+        (some (t, α₁), some (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.splitHalf mm).2
+          else (FixedLengthScheme.splitHalf mm).1)))) := by
+  simp only [bb1SimChal]
+  rw [if_pos h]
+
+/-- The first `Challenge` with a message outside the message space answers `⊥`. -/
+theorem bb1SimChal_invalid (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+    (T : (G.group κ d).GT)
+    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
+    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
+    (h : ¬ ((bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+          (FixedLengthScheme.splitHalf mm).1 ∧
+        (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+          (FixedLengthScheme.splitHalf mm).2)) :
+    bb1SimChal G ℓ b κ d g X Y Z T mm (some (t, α₁), none) =
+      .pure (zeroBits _, (some (t, α₁), none)) := by
+  simp only [bb1SimChal]
+  rw [if_neg h]
+
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 185,300p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean
+
+/-! ### The simulator's oracles with the exponent given -/
+
+open Classical in
+/-- **The simulator's oracles with the exponent `u` supplied**, on the lengths `qLen`, `aLen`,
+answering with the words of BB1's encodings: the oracles of `bb1SimImpl` [BB04, proof of
+Theorem 4.1] with the uniform exponent replaced by `u`.
+* `Init` on `ID`: with `(ID*, α_1)` the recorded pair, or `(ID, u)` before a commitment (which it
+  records), the word `d ‖ g ‖ X ‖ Y ‖ h` of the parameters `(g, X, Y, h)`,
+  `h = X^{(−ID*).val} · g^{α_1.val}`.
+* `KeyGen` on `ID`: `⊥` before `Init` or for `ID = ID*`; otherwise `1 ‖ d_0 ‖ d_1` with
+  `d_0 = Y^{(−α_1/(ID − ID*)).val} · F(ID)^{u.val}`, `F(ID) = X^{ID.val} · h`, and
+  `d_1 = Y^{(−1/(ID − ID*)).val} · g^{u.val}`.
+* `Challenge` on `M_0 ‖ M_1`: `⊥` before `Init`; the recorded challenge once there is one;
+  otherwise, if both halves are encodings of `G_T`, the word `M_b · T ‖ Z ‖ Z^{α_1.val}`, recorded;
+  `⊥` if not.
+Identities are read in `Z_p` by `BB1.idToZ` and messages decoded by `BB1.decodeT`. -/
+noncomputable def drawStep (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
+    (T : (G.group κ d).GT) :
+    ∀ i : Fin 3, (Fin ((qLen G ℓ i).eval κ) → Bool) → BB1SimState G ℓ κ d →
+      ZMod (G.group κ d).order →
+        ProbComp ((Fin ((aLen G ℓ i).eval κ) → Bool) × BB1SimState G ℓ κ d)
+  | 0, x, s, u =>
+    .pure (padFin _ (d ++ List.ofFn ((G.group κ d).encG g) ++ List.ofFn ((G.group κ d).encG X) ++
+        List.ofFn ((G.group κ d).encG Y) ++ List.ofFn ((G.group κ d).encG
+          (X ^ (-BB1.idToZ (G.group κ d) (s.1.getD (padFin _ (List.ofFn x), u)).1).val *
+            g ^ (s.1.getD (padFin _ (List.ofFn x), u)).2.val))),
+      (some (s.1.getD (padFin _ (List.ofFn x), u)), s.2))
+  | 1, x, s, u =>
+    match s.1 with
+    | some (t, α₁) =>
+      if List.ofFn x = List.ofFn t then .pure (zeroBits _, s)
+      else .pure (padFin _ (true :: (List.ofFn ((G.group κ d).encG
+          (Y ^ (-α₁ / (BB1.idToZ (G.group κ d)
+              (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
+              BB1.idToZ (G.group κ d) t)).val *
+            (X ^ (BB1.idToZ (G.group κ d)
+                (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x))).val *
+              (X ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val)) ^ u.val)) ++
+          List.ofFn ((G.group κ d).encG
+            (Y ^ (-1 / (BB1.idToZ (G.group κ d)
+                (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
+              BB1.idToZ (G.group κ d) t)).val * g ^ u.val)))), s)
+    | none => .pure (zeroBits _, s)
+  | 2, mm, s, _ =>
+    match s.1, s.2 with
+    | some _, some c => .pure (padFin _ (List.ofFn c), s)
+    | some (_, α₁), none =>
+      if (∃ v, List.ofFn ((G.group κ d).encT v) =
+            (List.ofFn mm).take ((bb1Scheme G ℓ).msgLen.eval κ)) ∧
+          (∃ v, List.ofFn ((G.group κ d).encT v) =
+            (List.ofFn mm).drop ((bb1Scheme G ℓ).msgLen.eval κ)) then
+        .pure (padFin _ (List.ofFn ((G.group κ d).encT (BB1.decodeT (G.group κ d)
+            (padFin _ (if b then (List.ofFn mm).drop ((bb1Scheme G ℓ).msgLen.eval κ)
+              else (List.ofFn mm).take ((bb1Scheme G ℓ).msgLen.eval κ))) * T)) ++
+            List.ofFn ((G.group κ d).encG Z) ++ List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+          (s.1, some (padFin _ (List.ofFn ((G.group κ d).encT (BB1.decodeT (G.group κ d)
+            (padFin _ (if b then (List.ofFn mm).drop ((bb1Scheme G ℓ).msgLen.eval κ)
+              else (List.ofFn mm).take ((bb1Scheme G ℓ).msgLen.eval κ))) * T)) ++
+            List.ofFn ((G.group κ d).encG Z) ++ List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))))
+      else .pure (zeroBits _, s)
+    | none, _ => .pure (zeroBits _, s)
+
+section Cases
+
+variable (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G) (T : (G.group κ d).GT)
+
+/-- **`Init`**: with `(t, α) = s.1.getD (ID, u)` (the recorded pair, or the query and `u` before a
+commitment), the answer is the padded word `d ‖ g ‖ X ‖ Y ‖ X^{(−t).val} g^{α.val}` and the state
+records `(t, α)`. -/
+theorem drawStep_zero (x : Fin ((qLen G ℓ 0).eval κ) → Bool) (s : BB1SimState G ℓ κ d)
+    (u : ZMod (G.group κ d).order) :
+    drawStep G ℓ b κ d g X Y Z T 0 x s u =
+      .pure (padFin _ (d ++ List.ofFn ((G.group κ d).encG g) ++
+          List.ofFn ((G.group κ d).encG X) ++ List.ofFn ((G.group κ d).encG Y) ++
+          List.ofFn ((G.group κ d).encG
+            (X ^ (-BB1.idToZ (G.group κ d) (s.1.getD (padFin _ (List.ofFn x), u)).1).val *
+              g ^ (s.1.getD (padFin _ (List.ofFn x), u)).2.val))),
+        (some (s.1.getD (padFin _ (List.ofFn x), u)), s.2)) :=
+  rfl
+
+/-- **`KeyGen` before `Init`** answers `⊥` and keeps the state. -/
+theorem drawStep_one_none (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) (u : ZMod (G.group κ d).order) :
+    drawStep G ℓ b κ d g X Y Z T 1 x (none, c) u = .pure (zeroBits _, (none, c)) :=
+  rfl
+
+/-- **`KeyGen` for the committed identity** (equal words) answers `⊥` and keeps the state. -/
+theorem drawStep_one_target (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
+    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) (u : ZMod (G.group κ d).order)
+    (h : List.ofFn x = List.ofFn t) :
+    drawStep G ℓ b κ d g X Y Z T 1 x (some (t, α₁), c) u =
+      .pure (zeroBits _, (some (t, α₁), c)) := by
+  show (if List.ofFn x = List.ofFn t then _ else _) = _
+  rw [if_pos h]
+
+/-- **`KeyGen` for another identity** answers the padded word `1 ‖ d_0 ‖ d_1` of the simulated
+key with `r = u` and keeps the state.
+
+**Proof sketch.** The committed branch of `drawStep` at index `1` is the test `⟦x⟧ = ⟦t⟧`;
+it fails by `h`. -/
+theorem drawStep_one_key (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
+    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) (u : ZMod (G.group κ d).order)
+    (h : List.ofFn x ≠ List.ofFn t) :
+    drawStep G ℓ b κ d g X Y Z T 1 x (some (t, α₁), c) u =
+      .pure (padFin _ (true :: (List.ofFn ((G.group κ d).encG
+          (Y ^ (-α₁ / (BB1.idToZ (G.group κ d)
+              (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) -
+              BB1.idToZ (G.group κ d) t)).val *
+            (X ^ (BB1.idToZ (G.group κ d)
+                (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x))).val *
+              (X ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val)) ^ u.val)) ++
+          List.ofFn ((G.group κ d).encG
+            (Y ^ (-1 / (BB1.idToZ (G.group κ d)
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 350,388p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean
+strings of the scheme's lengths. Simulators and reductions describe their oracles this way, so
+that they never read the oracle lengths `inLens`, `outLens` through their bodies. -/
+def oracleImpl {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ)) :
+    QueryImpl (S.sidSpec κ) σ unifSpec
+  | 0, x, s => init x s
+  | 1, x, s => key x s
+  | 2, x, s => chal x s
+
+/-- Oracle `0` of `S.oracleImpl κ init key chal` is the handler `init`. -/
+theorem oracleImpl_zero {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : Fin (S.idLen.eval κ) → Bool) (s : σ) :
+    S.oracleImpl κ init key chal 0 x s = init x s := rfl
+
+/-- Oracle `1` of `S.oracleImpl κ init key chal` is the handler `key`. -/
+theorem oracleImpl_one {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : Fin (S.idLen.eval κ) → Bool) (s : σ) :
+    S.oracleImpl κ init key chal 1 x s = key x s := rfl
+
+/-- Oracle `2` of `S.oracleImpl κ init key chal` is the handler `chal`. -/
+theorem oracleImpl_two {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) (s : σ) :
+    S.oracleImpl κ init key chal 2 x s = chal x s := rfl
+
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -n 'simps\|^noncomputable def bb1Scheme\|^def bb1Scheme\|encPP :=\|encSK :=\|MsgSpace :=\|encCT :=\|encPP κ\b' TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean | head -20; grep -rnE --include='*.lean' 'bb1Scheme_(encPP|encSK|MsgSpace|encCT|ppLen|skLen|ctLen|msgLen)' TCSlib | cut -c1-170 | head -30
+339:noncomputable def bb1Scheme (G : BilinearGen) (ℓ : PolyExpr) : IBEScheme where
+386:attribute [simps (config := { isSimp := false }) idLen msgLen ppLen skLen ctLen PP MSK SK CT
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:391:theorem ofFn_bb1Scheme_encPP (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:400:theorem ofFn_bb1Scheme_encSK (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean:365:    rw [bb1Scheme_ctLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean:486:  rw [aLen_zero, bb1Scheme_ppLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.e
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean:619:    rw [aLen_one, PolyExpr.eval_add, PolyExpr.eval_const, bb1Scheme_skLen, PolyExp
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean:679:  rw [bb1Scheme_ctLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean:711:  have hmsg : (bb1Scheme G ℓ).msgLen.eval κ = G.wT.eval κ := by rw [bb1Scheme_
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 336,388p TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean
+bits (`BilinearGen.length_desc`, `bb1_encPP_inj`), and the keys and ciphertexts of one possible
+output of `Setup` carry its description, in whose group the element encodings are injective
+(`bb1_encSK_inj`, `bb1_encCT_inj`). -/
+noncomputable def bb1Scheme (G : BilinearGen) (ℓ : PolyExpr) : IBEScheme where
+  idLen := ℓ
+  msgLen := G.wT
+  ppLen := .add G.descLen (.mul (.const 4) G.wG)
+  skLen := .mul (.const 2) G.wG
+  ctLen := .add G.wT (.mul (.const 2) G.wG)
+  PP κ := Σ d : List Bool, BB1.Params (G.group κ d)
+  MSK κ := Σ d : List Bool, BB1.Params (G.group κ d) × (G.group κ d).G
+  SK κ := Σ d : List Bool, BB1.Key (G.group κ d)
+  CT κ := Σ d : List Bool, BB1.Ciphertext (G.group κ d)
+  setup κ :=
+    (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+    (BB1.setup (G.group κ (G.desc κ r))).bind fun k =>
+      .pure (⟨G.desc κ r, k.1⟩, ⟨G.desc κ r, k⟩)
+  keyGen _ msk id :=
+    (BB1.keyGen msk.2.1 msk.2.2 (BB1.idToZ _ id)).bind fun d => .pure ⟨msk.1, d⟩
+  enc _ pp id m :=
+    (BB1.encrypt pp.2 (BB1.idToZ _ id) (BB1.decodeT _ m)).bind fun c => .pure ⟨pp.1, c⟩
+  dec κ sk c :=
+    if h : c.1 = sk.1 then
+      some ((G.group κ sk.1).encT (BB1.decrypt sk.2 (h ▸ c.2)))
+    else none
+  MsgSpace κ pp m := ∃ u, (G.group κ pp.1).encT u = m
+  encPP κ pp := padFin _ (pp.1 ++ List.ofFn ((G.group κ pp.1).encG pp.2.g) ++
+    List.ofFn ((G.group κ pp.1).encG pp.2.g1) ++ List.ofFn ((G.group κ pp.1).encG pp.2.g2) ++
+    List.ofFn ((G.group κ pp.1).encG pp.2.h))
+  encSK κ sk := padFin _ (List.ofFn ((G.group κ sk.1).encG sk.2.d0) ++
+    List.ofFn ((G.group κ sk.1).encG sk.2.d1))
+  encCT κ c := padFin _ (List.ofFn ((G.group κ c.1).encT c.2.a) ++
+    List.ofFn ((G.group κ c.1).encG c.2.b) ++ List.ofFn ((G.group κ c.1).encG c.2.c))
+  encPP_inj κ := by
+    refine (OracleComp.allOutputs_true _).bind fun r _ =>
+      (OracleComp.allOutputs_true _).bind fun k _ => OracleComp.allOutputs_pure.2 ?_
+    refine (OracleComp.allOutputs_true _).bind fun r' _ =>
+      (OracleComp.allOutputs_true _).bind fun k' _ => OracleComp.allOutputs_pure.2 ?_
+    exact fun h => bb1_encPP_inj G h (G.length_desc κ r) (G.length_desc κ r')
+  encSK_inj κ := by
+    refine (OracleComp.allOutputs_true _).mono fun k _ id id' => ?_
+    refine (OracleComp.allOutputs_true _).bind fun a _ => OracleComp.allOutputs_pure.2 ?_
+    refine (OracleComp.allOutputs_true _).bind fun a' _ => OracleComp.allOutputs_pure.2 ?_
+    exact fun h => congrArg (Sigma.mk k.2.1) (bb1_encSK_inj G h)
+  encCT_inj κ := by
+    refine (OracleComp.allOutputs_true _).mono fun k _ id id' m m' => ?_
+    refine (OracleComp.allOutputs_true _).bind fun a _ => OracleComp.allOutputs_pure.2 ?_
+    refine (OracleComp.allOutputs_true _).bind fun a' _ => OracleComp.allOutputs_pure.2 ?_
+    exact fun h => congrArg (Sigma.mk k.1.1) (bb1_encCT_inj G h)
+
+attribute [simps (config := { isSimp := false }) idLen msgLen ppLen skLen ctLen PP MSK SK CT
+  setup keyGen enc dec MsgSpace encPP encSK encCT] bb1Scheme
+
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'MsgSpace' TCSlib/Cryptography/AdvancedEncryption | grep -vE '^\S+:[0-9]+: +(rw|simp|exact|·|refine)' | cut -c1-170
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:31:given parameters (`MsgSpace`, the paper's message space `M`). For the adversary, parameters,
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:94:* the message space `MsgSpace κ params` (the paper's `M`), and fixed-width encodings of
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:135:  MsgSpace : (κ : ℕ) → PP κ → (Fin (msgLen.eval κ) → Bool) → Prop
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:188:    (S.honestRun κ id m).AllOutputs fun x => S.MsgSpace κ x.1 m → S.dec κ x.2.1 x.2.2 = some m
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:195:        S.MsgSpace κ x.1 m → S.dec κ x.2.1 x.2.2 = some m := Iff.rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:275:      if S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).1 ∧
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:276:          S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).2 then
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:330:    (h : S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).1 ∧
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:331:      S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).2) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:342:    (h : ¬ (S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).1 ∧
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:343:      S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).2)) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:361:  MsgSpace κ pp m := ∃ u, (G.group κ pp.1).encT u = m
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:387:  setup keyGen enc dec MsgSpace encPP encSK encCT] bb1Scheme
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:410:    (bb1Scheme G ℓ).MsgSpace κ ⟨d, pp⟩ m ↔
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:603:    if (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:605:        (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:635:    (h : (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:637:        (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:652:    (h : ¬ ((bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:654:        (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'List.ofFn \(\(bb1Scheme|List.ofFn \(bb1SimCt|encCT κ ⟨|bb1SimCt' TCSlib | grep -v '^TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:5[0-9][0-9]:\s' | cut -c1-170 | head -40
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:57:  `bb1SimCt`, `bb1SimChal`, `bb1SimImpl`, `bb1SimGame` — the simulator of
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:393:    List.ofFn ((bb1Scheme G ℓ).encPP κ ⟨d, pp⟩) =
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:402:    List.ofFn ((bb1Scheme G ℓ).encSK κ ⟨d, k⟩) =
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:567:noncomputable def bb1SimCt (κ : ℕ) (d : List Bool) (Z : (G.group κ d).G) (T : (G.group κ d).
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:572:/-- `bb1SimCt G ℓ κ d Z T α₁ m` is the encoding of `(decodeT m · T, Z, Z ^ α₁.val)`. -/
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:573:theorem bb1SimCt_eq (κ : ℕ) (d : List Bool) (Z : (G.group κ d).G) (T : (G.group κ d).GT)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:578:/-- **The simulated challenge as a word**: `⟦bb1SimCt … m⟧` is the padded word
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:580:theorem ofFn_bb1SimCt (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:607:      .pure (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.splitHalf mm).2
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:609:        (s.1, some (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.splitHalf mm).2
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:640:      .pure (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.splitHalf mm).2
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:642:        (some (t, α₁), some (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.split
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'encPP|encSK|encCT|bb1SimCt|oracleImpl' TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean | cut -c1-170
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'oracleImpl_(zero|one|two)' TCSlib audits | cut -c1-170
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:68:  oracles case by case; `oracleImpl_zero`, `oracleImpl_one`, `oracleImpl_two`.
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:363:theorem oracleImpl_zero {σ : Type} (κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:372:theorem oracleImpl_one {σ : Type} (κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:381:theorem oracleImpl_two {σ : Type} (κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:391:theorem oracleImpl_zero_onSpec {σ : Type} (κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:405:theorem oracleImpl_one_onSpec {σ : Type} (κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:419:theorem oracleImpl_two_onSpec {σ : Type} (κ : ℕ)
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' '^(@\[[^]]*\] *)?((private|protected) +)*(theorem|lemma) +[A-Za-z_.]*(uprob|ite_ofFn|ofFn_one|expect_sample_eq|prob_sample_eq)[A-Za-z_]*' TCSlib | cut -c1-170
+TCSlib/Cryptography/NumberTheory/Primality.lean:495:theorem uprob_millerRabin_le {N : ℕ} (hN : ¬ N.Prime) (h2 : 2 < N) (t : ℕ) :
+TCSlib/Cryptography/NumberTheory/Primality.lean:580:theorem uprob_samplePrime_none (n T : ℕ) :
+TCSlib/Cryptography/NumberTheory/Primality.lean:590:theorem uprob_samplePrime_none_le (n T : ℕ) (hn : 2 ≤ n) :
+TCSlib/Cryptography/NumberTheory/Primality.lean:604:theorem uprob_samplePrime_none_le_exp (n : ℕ) (hn : 2 ≤ n) :
+TCSlib/Cryptography/NumberTheory/Primality.lean:620:theorem uprob_samplePrime_none_le_two_pow (n : ℕ) (hn : 2 ≤ n) :
+TCSlib/Cryptography/NumberTheory/Chebyshev.lean:268:theorem uprob_prime_eq (n : ℕ) :
+TCSlib/Cryptography/NumberTheory/Chebyshev.lean:277:theorem uprob_prime_bits (n : ℕ) :
+TCSlib/Cryptography/NumberTheory/Chebyshev.lean:284:theorem one_div_le_uprob_prime (n : ℕ) (hn : 2 ≤ n) :
+TCSlib/Cryptography/NumberTheory/Chebyshev.lean:293:theorem uprob_prime_pair (n : ℕ) :
+TCSlib/Cryptography/NumberTheory/Chebyshev.lean:302:theorem one_div_le_uprob_prime_pair (n : ℕ) (hn : 2 ≤ n) :
+TCSlib/Cryptography/Foundations/BitLists.lean:71:theorem flatten_ofFn_one {k l : ℕ} (hl : l = 1) (g : Fin k → Fin l → Bool) :
+TCSlib/Cryptography/Foundations/BitLists.lean:88:theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
+TCSlib/Cryptography/Foundations/Experiments.lean:117:theorem uprob_comp_eq_sum_map [Nonempty σ] [Fintype γ] [DecidableEq γ] (X : σ → γ)
+TCSlib/Cryptography/Foundations/Probability.lean:64:theorem uprob_def (p : α → Prop) : uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α := rfl
+TCSlib/Cryptography/Foundations/Probability.lean:75:theorem uprob_eq_card_filter (p : α → Prop) [DecidablePred p] :
+TCSlib/Cryptography/Foundations/Probability.lean:80:theorem uprob_eq_uexp (p : α → Prop) [DecidablePred p] :
+TCSlib/Cryptography/Foundations/Probability.lean:85:theorem uprob_nonneg (p : α → Prop) : 0 ≤ uprob p := by
+TCSlib/Cryptography/Foundations/Probability.lean:89:theorem uprob_le_one (p : α → Prop) : uprob p ≤ 1 := by
+TCSlib/Cryptography/Foundations/Probability.lean:95:theorem uprob_true [Nonempty α] : uprob (fun _ : α => True) = 1 := by
+TCSlib/Cryptography/Foundations/Probability.lean:101:theorem uprob_false : uprob (fun _ : α => False) = 0 := by
+TCSlib/Cryptography/Foundations/Probability.lean:109:theorem uprob_not [Nonempty α] (p : α → Prop) : uprob (fun a => ¬ p a) = 1 - uprob p := by
+TCSlib/Cryptography/Foundations/Probability.lean:120:theorem uprob_mono {p q : α → Prop} (h : ∀ a, p a → q a) : uprob p ≤ uprob q := by
+TCSlib/Cryptography/Foundations/Probability.lean:127:theorem uprob_or_le (p q : α → Prop) : uprob (fun a => p a ∨ q a) ≤ uprob p + uprob q := by
+TCSlib/Cryptography/Foundations/Probability.lean:137:theorem uprob_exists_le {ι : Type*} (s : Finset ι) (p : ι → α → Prop) :
+TCSlib/Cryptography/Foundations/Probability.lean:153:theorem uprob_prod (p : α × β → Prop) :
+TCSlib/Cryptography/Foundations/Probability.lean:165:theorem uprob_comp_equiv (e : α ≃ β) (p : β → Prop) : uprob (fun a => p (e a)) = uprob p := by
+TCSlib/Cryptography/Foundations/Probability.lean:175:theorem uprob_fst [Nonempty β] (p : α → Prop) : uprob (fun z : α × β => p z.1) = uprob p := by
+TCSlib/Cryptography/Foundations/Probability.lean:190:theorem half_le_uprob_good (p : α × β → Prop) {ε : ℝ} (h : ε ≤ uprob p) :
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:50:theorem uprob_congr {p q : α → Prop} (h : ∀ a, p a ↔ q a) : uprob p = uprob q := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:89:theorem uprob_and_le_mul (S : α → Prop) (p : α × β → Prop) {θ : ℝ}
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:105:theorem sum_uprob_eq_card_mul (p : β → α → Prop) :
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:118:theorem uprob_pi_forall {ι : Type*} [Fintype ι] [DecidableEq ι] (p : α → Prop) :
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:131:theorem uprob_update {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty α] (i : ι)
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:144:theorem uprob_eq_one_div_card (a : α) : uprob (fun x : α => x = a) = 1 / Fintype.card α := by
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:549:theorem expGen_coinsEquiv_uprob {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ)
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:829:theorem expCollection_domEquiv_uprob {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:879:theorem expCollection_coinsEquiv_uprob {V : List Bool → Prop} (H : ArithmeticFP)
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:1139:theorem dlCollection_domEquiv_uprob (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool)
+TCSlib/Cryptography/Candidates/Factoring.lean:464:private theorem fac_uprob_primes_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n : ℕ) (hn : 2 ≤ n)
+TCSlib/Cryptography/Candidates/Factoring.lean:1515:theorem factoringCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:418:private theorem dlb_uprob_val_le (m : ℕ) [NeZero m] (P : ℕ → Prop) (S : Finset ℕ)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:469:theorem uprob_trial_ge {g : (ZMod p)ˣ} (hg : IsGenerator g) {ρ : Type*} [Fintype ρ]
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:564:theorem uprob_majOracle_ne_le {g : (ZMod p)ˣ} (hg : IsGenerator g) {ρ : Type*} [Fintype ρ]
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:844:theorem fullDLCollection_domEquiv_uprob (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:885:theorem fullDLCollection_coinsEquiv_uprob (H : ArithmeticFP) (G : FullGroupGen) (n : ℕ)
+TCSlib/Cryptography/Candidates/RSA.lean:441:private theorem rsa_uprob_units (N k : ℕ) [NeZero N] (hk : N ≤ 2 ^ k) :
+TCSlib/Cryptography/Candidates/RSA.lean:1341:theorem rsaTrapdoor_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+TCSlib/Cryptography/Candidates/RSA.lean:1428:theorem rsaCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+TCSlib/Cryptography/Candidates/Concrete.lean:112:theorem uprob_and_eq_mul_subtype (E S : α → Prop) [DecidablePred E] :
+TCSlib/Cryptography/Candidates/Concrete.lean:132:theorem one_sub_div_le_uprob_subtype (E S : α → Prop) [DecidablePred E] {δ : ℝ} (hδ : 0 < δ)
+TCSlib/Cryptography/Candidates/Concrete.lean:160:theorem uprob_le_uprob_subtype_add (E S : α → Prop) [DecidablePred E] :
+TCSlib/Cryptography/Candidates/Concrete.lean:177:theorem uprob_subtype_prod_eq (E : α → Prop) [DecidablePred E] (S : α × ρ → Prop) :
+TCSlib/Cryptography/Candidates/Concrete.lean:184:theorem uprob_diag {γ : Type*} [Fintype γ] [DecidableEq γ] [Nonempty γ] :
+TCSlib/Cryptography/Candidates/Concrete.lean:323:theorem one_div_le_uprob_prime_pair_bits (n : ℕ) (hn : 2 ≤ n) :
+TCSlib/Cryptography/Candidates/Rabin.lean:133:private theorem rabin_uprob_subtype_le {α ρ : Type*} [Fintype α] [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Candidates/Rabin.lean:146:private theorem rabin_uprob_distinct_ge {n : ℕ} (F : Primes n × Primes n → Prop) :
+TCSlib/Cryptography/Candidates/Rabin.lean:154:private theorem rabin_uprob_val_eq_le {n : ℕ} (c : ℕ) :
+TCSlib/Cryptography/Candidates/Rabin.lean:167:private theorem rabin_uprob_diag_le {n : ℕ} :
+TCSlib/Cryptography/Candidates/Rabin.lean:177:private theorem rabin_uprob_snd_val_eq_le {n : ℕ} (c : ℕ) :
+TCSlib/Cryptography/Candidates/Rabin.lean:211:private theorem rabin_uprob_blum (n : ℕ) :
+TCSlib/Cryptography/Candidates/Rabin.lean:1189:theorem rabinCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+TCSlib/Cryptography/Candidates/Rabin.lean:1853:private theorem rabin_uprob_C (P : ℕ → Prop) [DecidablePred P] (n : ℕ) :
+TCSlib/Cryptography/Candidates/Rabin.lean:2869:theorem rabinBlumTrapdoor_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+TCSlib/Cryptography/Candidates/DDH.lean:131:theorem uprob_sq_eq_one (hpq : p = 2 * q + 1) :
+TCSlib/Cryptography/Candidates/DDH.lean:145:theorem statClose_of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
+TCSlib/Cryptography/Candidates/DDH.lean:173:private theorem dlc_abs_uprob_sub_uprob_ne_le {α : Type*} [Fintype α] [DecidableEq α] (a : α)
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:50:theorem uprob_comp_eq_probTrue_map (X : σ → γ) (D : γ → Bool) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:440:theorem _root_.Complexity.NUPPT.computes_iff_uprob (A : NUPPT) (f : List Bool → List Bool) :
+TCSlib/Cryptography/Asymptotic/OneWay.lean:261:theorem invProbAt_eq_uprob (𝓕 : FunFamily) (A : NUPPT) (n : ℕ) :
+TCSlib/Cryptography/Asymptotic/Permutations.lean:287:theorem uprob_pi_forall_dep {ι α : Type*} [Fintype ι] [DecidableEq ι] [Fintype α]
+TCSlib/Cryptography/Asymptotic/Permutations.lean:379:theorem uprob_permFromCoins_none_le (n k T : ℕ) (hk : n ≤ 2 ^ k) :
+TCSlib/Cryptography/Asymptotic/Permutations.lean:470:theorem uprob_permFromCoins_none_le_two_pow (n : ℕ) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:108:theorem uprob_const {α : Type*} [Fintype α] [Nonempty α] (p : Prop) [Decidable p] :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:138:theorem StatClose.abs_uprob_sub_le {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:144:theorem StatClose.uprob_le_add {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:237:theorem StatClose.abs_uprob_sub_le_prod {ρ : Type*} [Fintype ρ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:435:theorem uprob_bitsToNat_lt {m k : ℕ} (hk : m ≤ 2 ^ k) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:486:theorem uprob_uniformFromBits_eq_some {m k : ℕ} (hk : m ≤ 2 ^ k) (i : Fin m) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:500:theorem uprob_uniformFromBits_none {m k : ℕ} (hk : m ≤ 2 ^ k) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:507:theorem uprob_comp_eq_sum_fiber {Ω β : Type*} [Fintype Ω] [Fintype β] [DecidableEq β] (f : Ω → β)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:564:theorem uprob_firstHit_none [Nonempty α] (T : ℕ) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:768:theorem uprob_rejectionSample_none (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:779:theorem uprob_rejectionSample_none_le_half_pow (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k)
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:222:theorem glColl_uprob_le (F : Collection) (mP K : PolyExpr) (k : ℕ → ℕ)
+TCSlib/Cryptography/Asymptotic/Universal.lean:561:theorem uprob_fiber_le_card_mul {α β : Type*} [Fintype α] [Fintype β] (E : α × β → Prop)
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1151:private theorem dlc_abs_uprob_sub_le_of_iff {Ω : Type*} [Fintype Ω] {A B C : Ω → Prop}
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1197:private theorem dlc_uprob_egUnit_sq_le {p n : ℕ} (hp : p.Prime) (hpn : p < 2 ^ n) :
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1236:private theorem dlc_uprob_bad_le (G : SafePrimeGen) {δ : ℕ → ℝ} (hδ : G.FullLengthExcept δ) {n : ℕ}
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1307:private theorem dlc_uprob_shift {p q : ℕ} [NeZero q] {h c k : ℕ}
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:151:theorem uprob_tdpPredictor {α : Type*} [Fintype α] (D : NUPPT) (flip : Bool) (n : ℕ)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:291:theorem uprob_not_injective_le :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:61:theorem abs_uexp_sub_le_uprob {Ω : Type*} [Fintype Ω] (a b : Ω → ℝ) (E : Ω → Prop)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:111:theorem uprob_eq_pair {α : Type*} [Fintype α] [Nonempty α] :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:60:theorem uprob_congr {p p' : α → Prop} (h : ∀ a, p a ↔ p' a) : uprob p = uprob p' :=
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:64:theorem uprob_prod_comm (p : α → β → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:70:theorem uprob_snd [Nonempty α] (p : β → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:77:theorem uprob_sections_congr (p : α → β → Prop) (p' : α → γ → Prop)
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:87:theorem uprob_update_absorb [Nonempty β] (i : α) (f : (α → β) → γ → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:100:theorem uprob_update_absorb' [Nonempty β] (i : α) (f : (α → β) → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:112:theorem uprob_update_split [Nonempty β] (i : α) (g : β → (α → β) → Prop)
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:211:private theorem uprob_const_eq {β γ : Type*} [Fintype β] [Fintype γ] [Nonempty β]
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:323:private theorem uprob_evalLazy_aux [Fintype I] [Fintype O] [Nonempty O] (φ : α → Prop)
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:393:theorem uprob_evalLazy [Fintype I] [Fintype O] [Nonempty O] (φ : α → Prop)
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:59:theorem uprob_bool_prod {γ : Type*} [Fintype γ] (p : Bool × γ → Prop) :
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:154:private theorem uprob_split_bit {σ ρ : Type*} [Fintype σ] [Fintype ρ] {ℓ : ℕ} (i : Fin ℓ)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:64:theorem uprob_eq_of_equiv {α β : Type*} [Fintype α] [Fintype β] (e : α ≃ β)
+TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:129:theorem uprob_majorityRecover_ne_le [Nonempty ρ] (f : (Fin n → Bool) → β)
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:172:theorem uprob_idealRecover_ne_le [Nonempty ρ] (f : (Fin n → Bool) → β)
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:212:theorem uprob_guess_eq {k : ℕ} (b₀ : Fin k → Bool) :
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:226:theorem uprob_guessRecover_ge (f : (Fin n → Bool) → β) (A : β × (Fin n → Bool) → ρ → Bool)
+TCSlib/Cryptography/HardcoreBit/Basic.lean:105:theorem uprob_eq_uexp_ite (p : Ω → Prop) [DecidablePred p] :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:110:theorem forall_of_uprob_eq_one {p : Ω → Prop} (h : uprob p = 1) (ω : Ω) : p ω := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:123:theorem uprob_eq_one_of_forall [Nonempty Ω] {p : Ω → Prop} (h : ∀ ω, p ω) : uprob p = 1 := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:129:theorem uprob_prod_and (p : α → Prop) (q : β → Prop) :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:142:theorem uprob_mul_le_uexp {G : Ω → Prop} {q : Ω → ℝ} {b : ℝ} (hq : ∀ ω, 0 ≤ q ω)
+TCSlib/Cryptography/HardcoreBit/Basic.lean:158:theorem half_le_uprob_threshold [Nonempty α] (q : α → ℝ) (hq : ∀ a, q a ≤ 1) {c ε : ℝ}
+TCSlib/Cryptography/HardcoreBit/Basic.lean:184:theorem PushesUniform.uprob_eq {π : Ω → γ} (h : PushesUniform π) (p : γ → Prop) :
+TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:70:theorem uprob_bool_eq (b : Bool) : uprob (fun c : Bool => c = b) = 1 / 2 := by
+TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:76:theorem uprob_fin_eq (i : Fin (n + 1)) :
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:158:theorem half_le_uprob_good (f : (Fin n → Bool) → β) (A : β × (Fin n → Bool) → ρ → Bool)
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:166:theorem uprob_recover_le_invProb (f : (Fin n → Bool) → β) (R : β → γ → Fin n → Bool) :
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:202:theorem one_sub_sum_le_uprob_eq [Nonempty γ] (R : γ → Fin n → Bool) (x : Fin n → Bool) :
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:184:theorem uprob_le_abs_le [Nonempty Ω] (Z : Ω → ℝ) {c : ℝ} (hc : 0 < c) :
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:265:theorem uprob_majority_fails_le [Nonempty Ω] [Fintype ι] {X : ι → Ω → Bool}
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:65:theorem prob_sample_eq_uprob [Fintype α] [Nonempty α] (p : α → Prop) :
+TCSlib/Cryptography/Games/Probability.lean:303:theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
+TCSlib/Cryptography/Randomness/BPPBridge.lean:113:theorem randProb_eq_uprob (m : ℕ) (A : List Bool → Prop) [DecidablePred A] :
+TCSlib/Cryptography/Randomness/Learning/Law.lean:75:theorem predictSuccess_eq_uprob {X I ρ : Type*} [Fintype X] [Nonempty X] [Fintype I] [Nonempty I]
+TCSlib/Cryptography/Randomness/Learning/Random.lean:100:theorem uprob_flip_half {m : ℕ} {ρ : Type*}
+TCSlib/Cryptography/Randomness/Learning/Random.lean:128:theorem uprob_eq_point (y : Fin n → Bool) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean:419:private theorem expect_sample_eq_uprob {α : Type} [Fintype α] [Nonempty α] (Φ : 
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:187:private theorem ite_ofFn_one {σ : Type} :
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean:77:theorem uprob_random_prefix {n L : ℕ} (h : n ≤ L) (r v : Fin n → Bool) :
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean:71:theorem uprob_signedPredictor_false {α ρ : Type*} [Fintype α] [Fintype ρ] [Nonempty α]
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean:101:theorem uprob_signedPredictor_true {α ρ : Type*} [Fintype α] [Fintype ρ] [Nonempty α]
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean:128:theorem uprob_xor_shear {X : Type*} [Fintype X] (g : X → Bool) (a : Bool) (Q : Bool → X → Pro
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean:366:theorem uprob_predictor_false (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputable H) (D : NUPPT)
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean:388:theorem uprob_predictor_true (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputable H) (D : NUPPT)
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals.lean:52:theorem uprob_isSome_lt_of_none {Ω α : Type} [Fintype Ω] [Nonempty Ω]
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:163:theorem uprob_not_good_distinct_le_of_uniform_data [Fintype K] [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/SecureComputation/Garbling.lean:474:theorem uprob_crossOpening_le_of_perm [Fintype K] [Fintype ρ] {δ : ℝ}
+TCSlib/Cryptography/SecureComputation/Garbling.lean:540:theorem uprob_not_good_le_of_uniform_data [Fintype K] [Fintype ρ]
+TCSlib/Cryptography/SecureComputation/Garbling.lean:625:theorem uprob_not_good_le_of_perm [Fintype K] [Fintype ρ] (hdec : M.DecCorrect) {δ : ℝ}
+TCSlib/Cryptography/SecureComputation/Garbling.lean:644:theorem uprob_not_good_le [Fintype K] [Fintype ρ] (hdec : M.DecCorrect) {δ : ℝ}
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean:86:theorem sampleBelowL_uprob_le {i : List Bool} (hi : ExpValid i) {n : ℕ}
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean:40:theorem expect_sample_eq_uexp {α : Type} [Fintype α] [Nonempty α] (f : α → ℝ) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:537:theorem uprob_outV_eq_uexp (π : Protocol) (P' : Strategy) (x y z : List Bool)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:573:theorem uprob_not_ne_nil_le {Ω : Type*} [Fintype Ω] (g : Ω → List Bool)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:131:theorem uprob_giHonestView_eq {n : ℕ} {G₀ G₁ : Graph n} {σ : Equiv.Perm (Fin n)}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:221:theorem uprob_giSimAttempt_none {n : ℕ} {ρ : Type*} [Fintype ρ] [Nonempty ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:241:private theorem uprob_and_add_uprob_not_and {α : Type*} [Fintype α] (p q : α → Prop) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:262:theorem uprob_giSimAttempt_some {n : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:326:theorem uprob_giSimTrunc_none {n : ℕ} {ρ : Type*} [Fintype ρ] [Nonempty ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:359:private theorem uprob_prod_and {α β : Type*} [Fintype α] [Fintype β] (A : α → Prop) (B : β → Prop)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:379:private theorem uprob_giSimTrunc_succ {n : ℕ} {ρ : Type*} [Fintype ρ] [Nonempty ρ] {G₀ G₁ : Graph n
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:424:private theorem abs_uprob_giSimTrunc_sub_le {n : ℕ} {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:589:theorem uprob_permGraph_eq_of_isomorphic {n : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:600:theorem uprob_permGraph_eq_of_isomorphic' {n : ℕ} {G₀ G₁ : Graph n} {σ₀ : Equiv.Perm (Fin n)}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:685:theorem uprob_adaptive_guess (m : ℕ) {W : Type*} [Fintype W] [Nonempty W]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:711:theorem uprob_gi_cheat_le_half {n : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:743:theorem uprob_gi_rep_cheat_le {n m : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:825:theorem uprob_gni_rep_cheat {n m : ℕ} {ρ : Type*} [Fintype ρ] [Nonempty ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:196:theorem uprob_colSimAttemptW_eq [Fintype ρ] {c : Fin n → Fin 3} (hc : ProperColoring G c)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:238:theorem uprob_colSimTruncW_eq [Fintype ρ] {c : Fin n → Fin 3} (hc : ProperColoring G c)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:253:theorem uprob_colSimAttemptH_none [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:288:theorem uprob_colSimAttemptH_some [Fintype ρ] (hm : 0 < edgeCount G)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:327:theorem uprob_colSimTruncH_none [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:62:theorem uprob_ne_idx {m : ℕ} (hm : 0 < m) {α : Type*} [Fintype α] [Nonempty α]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:79:theorem uprob_eq_idx_and {m : ℕ} (hm : 0 < m) {α : Type*} [Fintype α]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:133:theorem uprob_and_add_uprob_not_and {α : Type*} [Fintype α] (p q : α → Prop) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:147:theorem uprob_prod_and {α β : Type*} [Fintype α] [Fintype β] (A : α → Prop) (B : β → Pr
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:239:theorem uprob_plantEP (hm : 0 < m) [Fintype R] [Fintype τ] {N : ℕ} (k : Fin N) {ρ' : Type*}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:285:theorem uprob_mergeAt [Fintype τ] {N : ℕ} (k : Fin N) (p : Fin n × Fin n)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:336:theorem uprob_truncAttempts_succ [Nonempty W] (att : W → Option α) (view : U → α) {θ : ℝ
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:379:theorem abs_uprob_truncAttempts_sub_le [Nonempty W] (att : W → Option α) (view : U → α) {θ
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:506:theorem uprob_hybGen_eq_uexp (hm : 0 < m)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:307:theorem uprob_adaptive_escape (m k : ℕ) (hm : 0 < m) {W : Type*} [Fintype W]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:371:theorem uprob_col_cheat_le {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:781:private theorem uprob_check_uniform_le {Com : List Bool → List Bool} {ℓ : PolyExpr}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:892:theorem uprob_permGraph_eq_of_isomorphic' {n : ℕ} {G₀ G₁ : Graph n} {σ₀ : Equiv.Perm (Fin n)}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:904:theorem uprob_guess_eq_half {n : ℕ} {G₀ G₁ : Graph n} {σ₀ : Equiv.Perm (Fin n)}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:919:theorem uprob_gi_cheat_le_half {n : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:159:theorem uprob_adaptive_guess (m : ℕ) {W : Type*} [Fintype W] [Nonempty W]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:189:theorem uprob_gi_rep_cheat_le {n m : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:271:theorem uprob_gni_rep_cheat {n m : ℕ} {ρ : Type*} [Fintype ρ] [Nonempty ρ] {G₀ G₁ : Graph n}
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:141:theorem UnifProj.uprob_comp {Ω Ω' : Type} [Fintype Ω] [Fintype Ω'] {g : Ω → Ω'} (hg : UnifProj g)
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:196:theorem InteractiveProof.exists_uprob_accept_lt {π : Protocol} {L : Language Bool}
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'theorem prob_sample_eq_uprob|theorem prob_eq_expect' -A3 TCSlib | head -20
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:65:theorem prob_sample_eq_uprob [Fintype α] [Nonempty α] (p : α → Prop) :
+TCSlib/Cryptography/Games/Bridges/Experiments.lean-66-    prob (sample α) p = uprob p := by
+TCSlib/Cryptography/Games/Bridges/Experiments.lean-67-  classical
+TCSlib/Cryptography/Games/Bridges/Experiments.lean-68-  rw [prob_eq_expect, expect_sample, uprob_eq_card_filter, sum_boole, inv_mul_eq_div]
+--
+TCSlib/Cryptography/Games/Probability.lean:207:theorem prob_eq_expect (c : ProbComp α) (p : α → Prop) [DecidablePred p] :
+TCSlib/Cryptography/Games/Probability.lean-208-    prob c p = expect c (fun a => if p a then 1 else 0) := by
+TCSlib/Cryptography/Games/Probability.lean-209-  unfold prob
+TCSlib/Cryptography/Games/Probability.lean-210-  congr 1
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' '^(@\[[^]]*\] *)?((private|protected) +)*(theorem|lemma) +[A-Za-z_.]*(distinguisherL|abs_inner|abs_expect_[A-Za-z_]*sub)[A-Za-z_]*' TCSlib | cut -c1-170
+TCSlib/Cryptography/Asymptotic/Adversary.lean:356:theorem _root_.Complexity.NUPPT.distinguisherL_eq (A : NUPPT) (n : ℕ) (w : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:438:theorem halfDist_distinguisherL (n : ℕ) (y : List Bool) (ρ : (halfDist S).Coins n) 
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:530:theorem tailDist_distinguisherL (n : ℕ) (y : List Bool) (rD : D.Coins n) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:235:theorem recDist_distinguisherL (n : ℕ) (u : List Bool) (rD : D.Coins n) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:301:theorem guessDist_distinguisherL (n : ℕ) (w : List Bool) (ρ : guessDist.
+TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:397:theorem acceptProb_distinguisherL_coins {σ τ : Type*} [Fintype σ] [Fintype τ] (B : NUPPT)
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:58:theorem acceptProb_distinguisherL_congr {σ : Type*} [Fintype σ] {A B : NUPPT}
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:230:theorem distinguisherL_firstTwoEq (coins : PolyExpr) (n : ℕ) (w : List Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:375:theorem abs_expect_fImpl_sub_le (hatk : FixedLengthScheme.decOpen atk true = false)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:515:private theorem abs_expect_sub_le_expect {β : Type} (c : ProbComp β) {f g h : β → ℝ}
+TCSlib/Cryptography/Games/Probability.lean:392:theorem abs_expect_sub_le (c : ProbComp α) {f g : α → ℝ} {ε : ℝ}
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean:439:theorem abs_expect_draws_sub_le (κ : ℕ) (d : List Bool) (cap : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:229:theorem abs_expect_runAccept_sub_le :
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Predictor.lean:202:theorem distinguisherL_viewDist {H : List Bool → List Bool} (hH : PolyTimeComputable H)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:287:theorem distAdv_distinguisherL_reparam {σ τ : Type*} [Fintype σ] [Fintype τ] {B D : NUPPT}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:406:theorem distAdv_distinguisherL_congr {σ τ : Type*} [Fintype σ] [Fintype τ] (D : NUPPT)
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:400:theorem distinguisherL_lift {D D' : NUPPT} {φ : ℕ → ℕ} {c : PolyExpr}
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:145:theorem acceptProb_distinguisherL_of_runAtL {σ : Type*} [Fintype σ] {B D : NUPPT}
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rlE --include='*.lean' 'B.distinguisherL κ|\.distinguisherL κ' TCSlib | head -20
+TCSlib/Cryptography/KeyExchange/Joux.lean
+TCSlib/Cryptography/Pairing/Assumptions.lean
+TCSlib/Cryptography/LWE/Assumption.lean
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean
+[exit 0]
+
+$ cd /home/user/fill/tcslib/.lake/packages/mathlib/Mathlib && grep -rnE '^(@\[[^]]*\] *)?(theorem|lemma) +[A-Za-z_.]*(heq_fun_iff|cast_eq_cast|ofFn_cast|ofFn_congr|ofFn_inj|cast_fun|eq_rec_fun)[A-Za-z_]*' . | head -20
+./Combinatorics/Enumerative/Composition.lean:588:theorem cast_eq_cast (c : Composition m) (hmn : m = n) :
+./Combinatorics/Quiver/Cast.lean:35:theorem Hom.cast_eq_cast {u v u' v' : U} (hu : u = u') (hv : v = v') (e : u ⟶ v) :
+./Combinatorics/Quiver/Cast.lean:77:theorem Path.cast_eq_cast {u v u' v' : U} (hu : u = u') (hv : v = v') (p : Path u v) :
+./Data/Nat/Cast/Order/Ring.lean:99:@[simp, norm_cast] lemma neg_cast_eq_cast : (-m : R) = n ↔ m = 0 ∧ n = 0 := by
+./Data/Fin/SuccPred.lean:158:theorem cast_eq_cast (h : n = m) : (Fin.cast h : Fin n → Fin m) = _root_.cast (h ▸ rfl) := by
+./Data/List/OfFn.lean:47:theorem ofFn_congr {m n : ℕ} (h : m = n) (f : Fin m → α) :
+./Data/List/OfFn.lean:187:theorem ofFn_inj' {m n : ℕ} {f : Fin m → α} {g : Fin n → α} :
+./Data/List/OfFn.lean:192:theorem ofFn_injective {n : ℕ} : Function.Injective (ofFn : (Fin n → α) → List α) := fun f g h =>
+./Data/List/OfFn.lean:197:theorem ofFn_inj {n : ℕ} {f g : Fin n → α} : ofFn f = ofFn g ↔ f = g :=
+./Data/Fintype/Card.lean:503:theorem Fin.cast_eq_cast' {n m : ℕ} (h : Fin n = Fin m) :
+./Order/Interval/Set/Fin.lean:316:theorem image_cast_fun (h : m = n) : image (Fin.cast h) = preimage (Fin.cast h.symm) :=
+./LinearAlgebra/TensorPower/Basic.lean:126:theorem cast_eq_cast {i j} (h : i = j) :
+[exit 0]
+
+$ cd /home/user/fill/tcslib/.lake/packages/mathlib/Mathlib && grep -rnE 'expect_simulate|QueryImpl|OracleComp' . | head -5; grep -rlE 'padFin|decAnswer|sidSpec|bitSpec' . | head
+[exit 0]
+
+$ cd /tmp && python3 -I /tmp/claude-0/-home-user-tcslib/49f99feb-bb70-59b9-9578-431fc6ae4ea6/scratchpad/tools-agent/alt_ns.py
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.cast_eq_padFin free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.cast_eq_padFin free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.cast_eq_padFin free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_padFin_ofFn free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ofFn_padFin_ofFn free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.ofFn_padFin_ofFn free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_decAnswer_some free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.ofFn_decAnswer_some free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.ofFn_decAnswer_some free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.sidSpec_rng_one' free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sidSpec_rng_one' free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidSpec_rng_one' free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.sidSpec_rng_two' free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sidSpec_rng_two' free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidSpec_rng_two' free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.expect_bb1SimImpl free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.expect_bb1SimImpl free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.expect_bb1SimImpl free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.abs_expect_bb1Sim_sub_distinguisherL_le free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.abs_expect_bb1Sim_sub_distinguisherL_le free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.abs_expect_bb1Sim_sub_distinguisherL_le free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.abs_inner_le free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.abs_inner_le free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.abs_inner_le free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.sidSpec_rng_one free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sidSpec_rng_one free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidSpec_rng_one free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.sidSpec_rng_two free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.sidSpec_rng_two free [] short: []
+TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidSpec_rng_two free [] short: []
+[exit 0]
+# (re-run of the same check from the evidence copy overlap/alt_ns.py; docstring added)
+
+$ cd /tmp && python3 -I /home/user/exch/x/inbox/fills/bb1-machine/evidence/overlap/alt_ns.py | grep -c free; python3 -I /home/user/exch/x/inbox/fills/bb1-machine/evidence/overlap/alt_ns.py | grep -v free; echo end
+30
+end
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -rnE --include='*.lean' 'theorem bind_pure\b' TCSlib/Cryptography/Games; grep -nE '^namespace|^end' TCSlib/Cryptography/Games/Probability.lean TCSlib/Cryptography/Games/Hopping.lean TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean TCSlib/Cryptography/Games/BitCodec.lean TCSlib/Cryptography/Asymptotic/Adversary.lean TCSlib/Cryptography/Games/Bridges/Experiments.lean
+TCSlib/Cryptography/Games/OracleComp.lean:124:@[simp] theorem bind_pure (c : OracleComp spec α) : c.bind .pure = c := by
+TCSlib/Cryptography/Games/Probability.lean:67:namespace TCSlib.Cryptography.Games
+TCSlib/Cryptography/Games/Probability.lean:79:namespace ProbComp
+TCSlib/Cryptography/Games/Probability.lean:405:end Sampling
+TCSlib/Cryptography/Games/Probability.lean:407:end ProbComp
+TCSlib/Cryptography/Games/Probability.lean:409:end TCSlib.Cryptography.Games
+TCSlib/Cryptography/Games/Hopping.lean:68:namespace TCSlib.Cryptography.Games
+TCSlib/Cryptography/Games/Hopping.lean:74:namespace ProbComp
+TCSlib/Cryptography/Games/Hopping.lean:175:end ProbComp
+TCSlib/Cryptography/Games/Hopping.lean:372:namespace ProbComp
+TCSlib/Cryptography/Games/Hopping.lean:460:end ProbComp
+TCSlib/Cryptography/Games/Hopping.lean:522:end Eager
+TCSlib/Cryptography/Games/Hopping.lean:524:end TCSlib.Cryptography.Games
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:45:namespace TCSlib.Cryptography.Composability.ETTGame
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:106:end Abs
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:208:end Tapes
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:293:end Override
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:295:end TCSlib.Cryptography.Composability.ETTGame
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:71:namespace TCSlib.Cryptography.Composability
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:94:namespace FixedLengthScheme
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:398:end FixedLengthScheme
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:400:end TCSlib.Cryptography.Composability
+TCSlib/Cryptography/Games/BitCodec.lean:65:namespace TCSlib.Cryptography.Games
+TCSlib/Cryptography/Games/BitCodec.lean:442:end Transport
+TCSlib/Cryptography/Games/BitCodec.lean:444:end TCSlib.Cryptography.Games
+TCSlib/Cryptography/Asymptotic/Adversary.lean:87:namespace TCSlib.Cryptography
+TCSlib/Cryptography/Asymptotic/Adversary.lean:452:end TCSlib.Cryptography
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:53:namespace TCSlib.Cryptography.Games.Bridge
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:136:end TCSlib.Cryptography.Games.Bridge
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && sed -n 300,306p TCSlib/Cryptography/Games/Probability.lean; sed -n 390,395p TCSlib/Cryptography/Games/Probability.lean; sed -n 86,90p TCSlib/Cryptography/Foundations/BitLists.lean; sed -n 38,43p TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean; sed -n 103,108p TCSlib/Cryptography/HardcoreBit/Basic.lean; sed -n 392,400p TCSlib/Cryptography/Games/BitCodec.lean; sed -n 137,141p TCSlib/Cryptography/Games/BitCodec.lean
+
+**Proof sketch.** Both are uniform averages (`expect_sample`); the cardinalities agree
+(`Fintype.card_congr`) and the sums agree by reindexing along `e` (`Equiv.sum_comp`). -/
+theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
+    (g : β → ℝ) : expect (sample α) (fun a => g (e a)) = expect (sample β) g := by
+  rw [expect_sample, expect_sample, Fintype.card_congr e, Equiv.sum_comp e g]
+
+/-- Expectations of functions `ε`-close at every point are `ε`-close:
+`(∀ x, |f x - g x| ≤ ε) → |𝔼_c f - 𝔼_c g| ≤ ε`. -/
+theorem abs_expect_sub_le (c : ProbComp α) {f g : α → ℝ} {ε : ℝ}
+    (h : ∀ x, |f x - g x| ≤ ε) : |expect c f - expect c g| ≤ ε := by
+  have h1 : expect c f ≤ expect c g + ε :=
+    calc expect c f ≤ expect c (fun x => g x + ε) :=
+
+/-- The bit of a one-bit output is the head of its string: `⟦f⟧.headD false = f 0`. -/
+theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
+  rw [List.ofFn_succ, List.headD_cons]
+
+average `uexp f`: `ProbComp.expect (ProbComp.sample α) f = uexp f`. Both expressions
+are the sum of `f` divided by the type's size. -/
+theorem expect_sample_eq_uexp {α : Type} [Fintype α] [Nonempty α] (f : α → ℝ) :
+    ProbComp.expect (ProbComp.sample α) f = uexp f := by
+  rw [ProbComp.expect_sample, uexp_def, inv_mul_eq_div]
+
+/-- The probability of an event is the average of its indicator (decidability supplied
+classically). -/
+theorem uprob_eq_uexp_ite (p : Ω → Prop) [DecidablePred p] :
+    uprob p = uexp (fun ω => if p ω then (1 : ℝ) else 0) :=
+  uprob_eq_uexp p
+
+/-- The defining equation of `castImpl`: `castImpl O i x s =
+(O i (padFin (ins' i) ⟦x⟧) s).bind fun p => pure (padFin (outs i) ⟦p.1⟧, p.2)`. -/
+theorem castImpl_eq {ins ins' outs outs' : Fin k → ℕ}
+    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (i : Fin k) (x : Fin (ins i) → Bool)
+    (s : σ) :
+    castImpl (ins := ins) (outs := outs) O i x s =
+      (O i (padFin (ins' i) (List.ofFn x)) s).bind fun p =>
+        .pure (padFin (outs i) (List.ofFn p.1), p.2) :=
+  rfl
+/-- The all-`false` answer, read at any width, is all-`false`:
+`padFin d ⟦zeroBits m⟧ = zeroBits d`. -/
+theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
+  funext i
+  rw [padFin_apply, ofFn_zeroBits, zeroBits_apply, List.getD_eq_getElem?_getD,
+[exit 0]
+
+$ cd /home/user/fill/wt-sub && grep -nE '^  (MsgSpace|encPP|encSK|encCT) ' TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean; grep -nE '^namespace|^end' TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+361:  MsgSpace κ pp m := ∃ u, (G.group κ pp.1).encT u = m
+362:  encPP κ pp := padFin _ (pp.1 ++ List.ofFn ((G.group κ pp.1).encG pp.2.g) ++
+365:  encSK κ sk := padFin _ (List.ofFn ((G.group κ sk.1).encG sk.2.d0) ++
+367:  encCT κ c := padFin _ (List.ofFn ((G.group κ c.1).encT c.2.a) ++
+75:namespace TCSlib.Cryptography.Composability
+255:namespace FixedLengthPKScheme
+325:end PaddedReaders
+327:end FixedLengthPKScheme
+383:end PublicKeyPaddedReaders
+432:end BitPublicKeyPaddedReaders
+500:namespace FixedLengthPKScheme
+763:end FixedLengthPKScheme
+765:end TCSlib.Cryptography.Composability
+[exit 0]
+
+$ cd /home/user/inhouse/r1/scope-request && grep -nE 'expect_sample_eq_uprob|ite_ofFn_one|uprob|qLen_eval|aLen_eval|padFin_ofFn_zeroBits' MachineProbeMin.lean.txt
+[exit 1]
