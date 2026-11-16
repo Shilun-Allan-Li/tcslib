@@ -26,3 +26,7 @@ Method as for the pairing statements (`../../pairings/statement-phase/EVIDENCE.m
 Open: GSW13 ingestion (Q14) is not in these branches. The records branch advanced to `a32ad0df` during the job
 (#318, #319, #323): all three branches merge cleanly; the only closure overlap is #323's `isFaninTwo_iff` in
 `DAGCircuit.lean`, a disjoint hunk.
+
+**Filed (Gate 41, 2026-11-16).** The archive is now in the records at `evidence/stmt-gsw.zip` (SHA-256
+`4b144e17683c3675088a620796bd21e9963d8a43a489145208efda9c5c1f85d3`), byte-identical, with its inner manifest
+`evidence/SHA256SUMS` (545 files, all verified) and `evidence/PROVENANCE.txt`.

@@ -1,0 +1,60 @@
+stmt-gsw: GSW phase-5 statements (rulings Q1-Q16, Q9 changed) and the DAGCircuit owner additions (Q2), 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: no lake build, no cache get. Lean 4.25.0 (PATH=$HOME/.elan/bin:$PATH), one Lean process at a time, only on
+  $SP/dl-oleans-2 (dl-oleans, used by another job, never touched). python3 -I throughout. Nothing pushed.
+Inputs: records branch origin/cryptography/pass-shelat-ch2-4 at 523d80d2d4dd8e4ed6799358831e5b3806c6187b (fetched; equal to the
+  local branch). Drafts briefs/lattice-gsw/draft/ (records commit 5bbeb9e88caeff2baee20e025dc504d603f6287a), copied verbatim to
+  draft/draft-as-received/; rulings briefs/lattice-gsw/rulings.md (3a7b6920009f1100b304fdd8dcc789d638141583, addendum 44e2dc2b).
+Branches (local only; sparse worktree $SP/wt-stmt-gsw, briefs/ excluded, .lake/packages symlinked; upstream unset):
+  stmt/dagcircuit-readers 94eae71b779c4ca0f76c138d699f4d737dbd6cee  (parent 523d80d2): DAGCircuit.lean only.
+  stmt/gsw                48d796a8a68cd50897047f01825a8132dd19e8d8  (parents 8ce56b0d0b5175e6001e1b18a6777f07194e944d, 94eae71b):
+    8ce56b0d modules and facades; 48d796a8 exports (Hashing/SIS.lean, TCSlib.lean). git/commits.txt, git/signing.txt (gpgsig
+    header present on all three; author/committer Claude <noreply@anthropic.com>, default SSH signing).
+  stmt/dagcircuit-readers also merges cleanly with land/pass-shelat-sc-garble (which adds isFaninTwo_iff to the same file;
+    git merge-tree, no conflict).
+Files (lint/sizes-widths.txt): GSW/{Gadget 204, Noise 235, Scheme 215, Eval 207, Security 217, Symmetric 111}, Hashing/SIS/Columns 89,
+  facades AdvancedEncryption 25, AdvancedEncryption/Homomorphic 22, Homomorphic/GSW 35; changed Hashing/SIS.lean 34 (+2),
+  TCSlib.lean (+1), DAGCircuit.lean 627 -> 721. Max width 100; all files < 1000 lines.
+Draft -> committed (draft/draft-to-final.diff, after the namespace rename): unchecked-fixes.md (23 UNCHECKED blocks, all verified
+  as drafted and removed; fixes F1-F4, two of them statement text, meaning unchanged: questions-statement-changes.md QS1, QS2);
+  the facade GSW.lean's missing `-/` added; draft banners dropped; Authors line added.
+olean tree: tree/snapshot-pre.txt (tools/snapshot.py): 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required value (taken before both jobs).
+  The tree holds the eff2dcd0 sources; tools/need.py lists, for the closure, modules with a missing olean (M), a source changed
+  since eff2dcd0 (C) and their downstream (D): build/closure-need.txt (117-module closure, 33 to build). Every olean was backed up
+  before its first rebuild (tools/backup.py, hash checked against the snapshot; tree/backup-log.txt).
+Build (tools/ladder.sh -> the worktree's scripts/lean_check_tree.sh, TCSLIB_OLEANS=$SP/dl-oleans-2):
+  base: build/base-rebuild/ (16 stale base modules, 16/16 rc 0; the other 5 stale base modules were rebuilt by the pairing job
+    first, same tip sources); DAGCircuit first check build/dagcircuit-first/; iterations build/iterations-summary.txt.
+  final sweep from the committed sources, build/final/summary.txt: 12/12 rc 0, 0 errors; warnings only the 35 target sorry's
+    (Gadget 5, Noise 12, Scheme 6, Eval 4, Columns 2, Security 4, Symmetric 2; DAGCircuit 0).
+Statements: statements/statements.txt (probe/StmtDump.lean): all 130 constants with full names; the only constants reached
+  through `open Encryption.PublicKey` are Regev.{augmented,decrypt,extractionError,keygen}. statements/apicheck.txt
+  (probe/ApiCheck.lean): every name cited by sketches and UNCHECKED notes; 4 error lines: List.forall₂_map (fix F3),
+  Symmetric.Regev.distAdv_encrypt_le (fix F4), the probe's own wrong guess Encryption.PrivateKey.Symmetric.Regev..., and the plan
+  section's PublicKeyScheme.distAdv_multi_le_sum (real name TCSlib.Cryptography.distAdv_multi_le_sum, as the module docstring has).
+Axioms: axioms.txt (probe/AxiomProbe.lean, Lean.collectAxioms over every constant of the 12 modules): 285 declarations and
+  56 auxiliary constants (GSW and Columns: 124 + 8; DAGCircuit 161 + 48). sorryAx in exactly the 35 targets; every other constant
+  uses only propext, Quot.sound, Classical.choice (or none). DAGGate.getD_lt_depth and runWith_rel are proved (standard axioms).
+Rule 10 (head 48d796a8): collector rule10/CollectGsw.lean (tools/xr/mkcollect.py from NmCollect.template.lean) -> rule10/collect-run/;
+  whole-file conservative seals with the archived Gate06/Gate10 instrumenter: tools/xr/mkseals_ab.py (strict; A = PolyExpr.eval
+  as notation, B = SEAL_EVAL=1, PolyExpr.eval sealed) -> rule10/seals/{A,B}; tools/xr/mkseals_coe.py (FinDist CoeFun instance as
+  notation, canonical) -> rule10/seals-coe/{A,B}; 12 modules x 4 = 48 probes run with lean -DmaxErrors=0
+  (tools/xr/runner_full.py, nothing written to the tree) -> rule10/seal-runs/; rule10/seal-*.tsv (tools/xr/sealsum.py, with
+  rule10/touched.json from tools/xr/touched.py against 523d80d2): A 12/12, B 12/12, coe-A 12/12, coe-B 12/12, every probe with its
+  install and EOF records. Requests per probe in rule10/mkseals-*.log (0 for DAGCircuit, whose closure has no TCSlib definition).
+  Controls rule10/controls/: Control_neg_sealed 5 errors, one in each of the 5 negative examples (Iff.rfl/rfl through Encrypts,
+  gadget, decrypt, hashColumns, DAGCircuit.depth); Control_neg_unsealed rc 0; Control_pos_sealed (published readers) rc 0.
+Lint (lint/): scripts/style_lint.py 0 findings in 12 files; scripts/campaign_style_lint.py --check8b: AdvancedEncryption 0 FAIL /
+  0 WARN (8 files), Hashing 0 / 0 (17 files); CircuitComplexity head vs tip (dag-head.txt, dag-base.txt): the only change is
+  DAGCircuit's check-8 WARN losing `depths` (it now has its reader) and the size lines.
+Root TCSlib (build/root/summary.txt; build/root-need.txt from tools/need_vs.py: closure modules whose source differs from the
+  stmt/pairings sources the tree had just been built from, plus downstream; that tree state is stmt-pairings-r2's root build):
+  278 modules (DAGCircuit and its downstream, the GSW modules, Hashing.SIS and its downstream, AdvancedEncryption, TCSlib), root
+  last: 278/278 rc 0, 0 errors; 67 sorry warnings library-wide (the 35 GSW targets and existing admissions downstream of DAGCircuit).
+Restore (shared with stmt-pairings-r2, once at the end; tree/): 328 backups restored (0 hash failures), 75 new oleans deleted,
+  13 emptied directories pruned; tree/snapshot-post.txt 1230 files, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to snapshot-pre (SNAPSHOT EQUAL).
+Not done here: GSW13 source ingestion (ruling Q14(A): "in the statement PR"); no PDF is in the repository and this job's brief did
+  not cover it. The proposed plan rows of plan-section.md G10 are not applied to LatticeCryptographyPlan.md.
+SHA256SUMS lists every other file of this directory.
