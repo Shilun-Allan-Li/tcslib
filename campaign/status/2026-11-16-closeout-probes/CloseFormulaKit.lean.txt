@@ -1,0 +1,21 @@
+import TCSlib.Complexity.FormulaKit.Emit
+
+set_option maxHeartbeats 0
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let prefixes := ["TCSlib.Complexity.FormulaKit"]
+  let mut nChecked : Nat := 0
+  let mut nDirect : Nat := 0
+  for (n, ci) in env.constants.toList do
+    if let some i := env.getModuleIdxFor? n then
+      let owner := env.header.moduleNames[i.toNat]!.toString
+      if prefixes.any (fun p => owner == p || owner.startsWith (p ++ ".")) then
+        nChecked := nChecked + 1
+        let inType := ci.type.getUsedConstants.contains ``sorryAx
+        let inValue := (ci.value? (allowOpaque := true)).any
+          (fun e => e.getUsedConstants.contains ``sorryAx)
+        if inType || inValue then
+          nDirect := nDirect + 1
+          logInfo m!"DIRECT|{owner}|{n}|type={inType}|value={inValue}"
+  logInfo m!"TOTAL|{nChecked}|{nDirect}"

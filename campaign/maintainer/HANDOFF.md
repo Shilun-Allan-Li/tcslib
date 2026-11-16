@@ -16,7 +16,8 @@ Campaign Lean is `20394834d86a509ad5776c36dbbfccc33b023306`. Its replay output i
 standard axioms only; Ladner.lean has no admission). Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
 (`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
 (#322). Fill 7 proved target 6 (#325). Next: the
-chapters 3–4 closeout (campaign/closeout/PLAN.md, draft for Seyoon's review). Earlier merges are in the table.
+chapters 3–4 closeout. Plan drafted (campaign/closeout/PLAN.md), awaiting Seyoon's decisions D1–D6;
+fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
