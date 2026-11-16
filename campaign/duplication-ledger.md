@@ -2125,4 +2125,4 @@ and read it through published equations. Net +63 Lean lines, over the +50 stop r
 accepted the overshoot (2026-11-16). Copy screen: 36 directed pairs gone, 3 new (the install/emit
 sibling wrappers, and `clFirst`'s pair moved from the two deleted first-halt copies to the shared
 lemma). Kind 3 (padding) is not in this PR: it is the next slice, citing `Build/EmitIterEmbed` as
-ruled. Status: **retiring (gate 149; PR #342 draft)**.
+ruled. Status: **retiring (gate 149 CLEAR; PR #342 clear to merge)**.
