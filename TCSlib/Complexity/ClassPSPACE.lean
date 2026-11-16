@@ -25,15 +25,14 @@ import TCSlib.Complexity.ClassPSPACE.TQBFHard
 the Stockmeyer-Meyer theorem, and the game-playing face of the class. The
 headline statements (phase P4.3 of `AroraBarakChapters3-4Plan.md`) are
 `Complexity.TQBF_PSPACEComplete` ([AB09, Theorem 4.13]) with its two halves,
-the closed-form configuration codec of Claim 4.4(2) (`Complexity.ConfigCodec`,
-restated by RD-2), and Zermelo determinacy for finite perfect-information games
-([AB09, Exercise 4.10]).
+Claim 4.4(2) in packaged form, and Zermelo determinacy for finite
+perfect-information games ([AB09, Exercise 4.10]).
 
 ## Contents
 
 - `ClassPSPACE.TQBF`: Definition 4.9, the collapse corollary, Claim 4.4(2)
-  as the closed-form codec `Complexity.ConfigCodec` and its uniform emitters,
-  `TQBF`, and Theorem 4.13
+  in packaged quotient form (`Complexity.exists_adjacency_codec_cnf`), `TQBF`, and
+  Theorem 4.13
 - `ClassPSPACE.Games`: finite two-person perfect-information games and
   Zermelo determinacy
 - `ClassPSPACE.TQBFARM.Semantics`: the pure side of the polynomial-width register machine
