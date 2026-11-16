@@ -2071,3 +2071,13 @@ four private buffer-word lemmas are one-line citations of `TuringMachine/BufferW
 deviation from the 2026-10-18 deletion wording, gate 143 resolutions); `Separation`'s
 `bits_two_pow` and `MeyerTableau`'s `incFixed_eq_none_iff` cite the #70 lemmas. Status: **retired (#329 merged 2026-11-16)**. Not covered: the pre-existing foreign-definition reads in the aliases' use
 sites (`StepBlock`'s round proofs; `timeConstructible_two_pow`), which are legacy rule-10 debt.
+
+**IW-1 and WA-1 (gate 144, 2026-11-16).** PR #330 retires the interval-patch family: `wordPatch`
+moves to `Build/Catalog` (same names and statements) and the private copies `catalogTape`,
+`counterPatch` and `iw_patch` are deleted; `rt_adjacentWrites` cites `wordPatch_append`. The move
+exposed restated lemmas, retired by new public lemmas (Seyoon, 2026-11-16): `wordPatch_self`,
+`_twice`, `_frame` (StepClock and CounterLoop), `wordPatch_replicate` (InputWindow and CounterLoop),
+`decrementTM_shadow_pre` and `decrementTM_liftSymbols_runFrom` (StepClock and CounterLoop's
+`counter_debit`); the privates are kept as one-line citations or deleted. It also repaired the
+pre-existing foreign-definition reads in the eight proofs it touched (gate 144 pack). Status:
+**retired upon #330's merge**.
