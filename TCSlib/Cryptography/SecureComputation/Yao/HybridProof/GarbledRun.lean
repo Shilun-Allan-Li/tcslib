@@ -36,7 +36,9 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof
 open Complexity Turing BoolCircuit
 
 /-- On the host word `⟨x, ⟨gateRecord, values⟩⟩`, append the key evaluated with
-parameter `N x`, argument list `snd gateRecord` and row table `tableWord w`. -/
+parameter `N x`, argument list `snd gateRecord` and row table `tableWord w`.
+`garbledStep E₁ E₂ N tableWord w = evalGateAppendWord E₁ E₂ (pairEncode (N (pairFstD w)) (pairEncode
+(pairSndD (pairFstD (pairSndD w))) (pairEncode (pairSndD (pairSndD w)) (tableWord w))))`. -/
 noncomputable def garbledStep (E₁ E₂ : List Bool → List Bool)
     (N tableWord : List Bool → List Bool) (w : List Bool) : List Bool :=
   evalGateAppendWord E₁ E₂ (pairEncode (N (pairFstD w))
@@ -44,7 +46,9 @@ noncomputable def garbledStep (E₁ E₂ : List Bool → List Bool)
       (pairEncode (pairSndD (pairSndD w)) (tableWord w))))
 
 /-- For every `w`, `garbledStep E₁ E₂ N tableWord w` calls `evalGateAppendWord`
-on its selected parameter, argument code, encoded values and selected table. -/
+on its selected parameter, argument code, encoded values and selected table.
+`garbledStep E₁ E₂ N tableWord w = evalGateAppendWord E₁ E₂ (pairEncode (N (pairFstD w)) (pairEncode
+(pairSndD (pairFstD (pairSndD w))) (pairEncode (pairSndD (pairSndD w)) (tableWord w))))`. -/
 theorem garbledStep_eq (E₁ E₂ : List Bool → List Bool)
     (N tableWord : List Bool → List Bool) (w : List Bool) :
     garbledStep E₁ E₂ N tableWord w =
@@ -53,7 +57,8 @@ theorem garbledStep_eq (E₁ E₂ : List Bool → List Bool)
           (pairEncode (pairSndD (pairSndD w)) (tableWord w)))) := rfl
 
 /-- If the evaluators, parameter selector and table selector are polynomial-time,
-then the generic garbled-evaluation step is polynomial-time. -/
+then the generic garbled-evaluation step is polynomial-time.
+`PolyTimeComputable (garbledStep E₁ E₂ N tableWord)`. -/
 theorem garbledStep_poly {E₁ E₂ N tableWord : List Bool → List Bool}
     (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂)
     (hN : PolyTimeComputable N) (hT : PolyTimeComputable tableWord) :
@@ -69,6 +74,8 @@ gate records, initial keys and current-row table selector are polynomial-time.
 Gate records must expose their unary argument lists, and `tableWord` must select
 `T x |vs|` on every host word. The key width may depend on `x`.
 [PS10, Protocol 162.6]
+`PolyTimeComputable fun x => BinArith.encWords ((runWith (fun g vs => evalGate (nestedSpecial E₁ E₂
+(N x).length) (T x) vs.length g vs) (gs x) (init x)).map List.ofFn)`.
 
 **Proof sketch.** Instantiate the generic traversal with the nested-special gate
 step. Polynomial-time parameter, gate and initial-key maps give polynomial bounds

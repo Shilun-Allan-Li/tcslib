@@ -38,6 +38,10 @@ empty-history message is `first |w| (fst zA) rA`, then Bob's actual encoded view
 `View.encode ⟨1^n, ⟨ys, H.answersB ...⟩, [], [first n xs rA]⟩`. The inputs `xs` and `ys`
 are arbitrary raw words, and no hypothesis on Bob's reply is required.
 [PS10, Protocol 162.6 and Theorem 163.7]
+`(H.main.viewV (List.replicate n true) (H.privA n xs ys (List.ofFn r.1) (List.ofFn r.2)) (H.privB n
+xs ys (List.ofFn r.1) (List.ofFn r.2)) r).encode = (⟨List.replicate n true, pairEncode ys
+(H.answersB n xs ys (List.ofFn r.1) (List.ofFn r.2)), [], [first n xs (List.ofFn r.1)]⟩ :
+View).encode`.
 
 **Proof sketch.** The public coin-length equation turns Bob's constant-zero coin polynomial
 into a zero-length tape, whose list encoding is empty. Normalize the unary parameter length

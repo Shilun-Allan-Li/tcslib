@@ -51,6 +51,8 @@ theorem length_answersB (H : HybridProtocol otFunctionality) (n : ℕ)
 the chosen wire values agree with Bob's input word. The full receiver answer word is then
 the false-key word under the relabeled seed. No positive-width assumption is required.
 [PS10, Protocol 162.6]
+`H.answersB n xs ys rA rB = List.ofFn (FakeObjects.activeAnswers C (RelabelGarbling.relabelSeed C v
+s) first count)`.
 
 **Proof sketch.** One bit per call gives the exact total length. Every valid flat index
 comes from the finite product of a wire and a key-bit index. At this index, the supplied

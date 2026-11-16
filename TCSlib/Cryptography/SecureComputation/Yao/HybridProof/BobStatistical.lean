@@ -40,6 +40,9 @@ her tape of probability at most `δ(n)`, Bob's real experiment is `δ(n)`-close
 to his unchanged actual encoded view paired with that functionality output.
 The tape bound is stated on the canonical polynomial-length bit tape, and
 Bob's independent tape can have any length. [PS10, Theorem 163.7]
+`∀ n x y, StatClose (H.realB F n x y) (fun r => pairEncode (H.main.viewV (List.replicate n true)
+(H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) (H.privB n (List.ofFn x)
+(List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode (List.ofFn (F.f n x y).1)) (δ n)`.
 
 **Proof sketch.** Use the sender's coin-polynomial equation to normalize her
 actual tape to the canonical bit tape without changing its word. Pull back

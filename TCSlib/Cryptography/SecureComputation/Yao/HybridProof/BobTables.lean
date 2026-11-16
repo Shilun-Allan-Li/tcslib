@@ -37,7 +37,11 @@ open Complexity Turing
 
 /-- At `⟨x, ⟨gateRecord, values⟩⟩`, count the vertex values. If their count `v`
 is at least `|m x|`, select table `v - |m x|` from the message's first component
-and normalize its rows; otherwise return the empty encoded list. -/
+and normalize its rows; otherwise return the empty encoded list.
+`tableSelector m msg w = let x := pairFstD w; let v := (BinArith.decWords (pairSndD (pairSndD
+w))).length; if (m x).length ≤ v then BinArith.encWords (BinArith.decWords (BinArith.getW
+(pairEncode (List.replicate (v - (m x).length) true) (BinArith.encWords (BinArith.decWords (pairFstD
+(msg x))))))) else []`. -/
 def tableSelector (m msg : List Bool → List Bool) (w : List Bool) : List Bool :=
   let x := pairFstD w
   let v := (BinArith.decWords (pairSndD (pairSndD w))).length
@@ -48,7 +52,11 @@ def tableSelector (m msg : List Bool → List Bool) (w : List Bool) : List Bool 
   else []
 
 /-- For every `w`, `tableSelector m msg w` compares the input-count word's
-length with the current decoded-value count and normalizes the selected row table. -/
+length with the current decoded-value count and normalizes the selected row table.
+`tableSelector m msg w = let x := pairFstD w; let v := (BinArith.decWords (pairSndD (pairSndD
+w))).length; if (m x).length ≤ v then BinArith.encWords (BinArith.decWords (BinArith.getW
+(pairEncode (List.replicate (v - (m x).length) true) (BinArith.encWords (BinArith.decWords (pairFstD
+(msg x))))))) else []`. -/
 theorem tableSelector_eq (m msg : List Bool → List Bool) (w : List Bool) :
     tableSelector m msg w =
       let x := pairFstD w
@@ -61,6 +69,7 @@ theorem tableSelector_eq (m msg : List Bool → List Bool) (w : List Bool) :
 
 /-- For polynomial-time selectors `m` and `msg`, `tableSelector m msg` is
 polynomial-time on every input word, including malformed messages and states.
+`PolyTimeComputable (tableSelector m msg)`.
 
 **Proof sketch.** Count the current encoded values and compute the unary input
 count. The existing unary subtraction gives their index difference. Normalize

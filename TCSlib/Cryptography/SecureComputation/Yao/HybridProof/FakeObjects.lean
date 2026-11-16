@@ -38,7 +38,8 @@ open BoolCircuit
 variable {K Cipher ρ : Type} [Inhabited K] {inputs : ℕ}
 
 /-- A simulated row encrypts the false key of vertex `inputs + i` under the assignment's
-ordinary argument keys, using that row's seed coins. [PS10, Theorem 163.7] -/
+ordinary argument keys, using that row's seed coins. [PS10, Theorem 163.7]
+`row M C s i a = M.enc (argKeys C s i a) (keyAt C s (inputs + i) false) (s.2.1 i a)`. -/
 def row (M : MultiEnc K Cipher ρ) (C : DAGCircuit inputs) (s : GarbleSeed C K ρ)
     (i : Fin C.gates.length) (a : Fin (C.gates[i]).args.length → Bool) : Cipher :=
   M.enc (argKeys C s i a) (keyAt C s (inputs + i) false) (s.2.1 i a)
@@ -49,13 +50,17 @@ theorem row_eq (M : MultiEnc K Cipher ρ) (C : DAGCircuit inputs) (s : GarbleSee
     row M C s i a = M.enc (argKeys C s i a) (keyAt C s (inputs + i) false) (s.2.1 i a) := rfl
 
 /-- A simulated table enumerates all assignments in the public fixed order, applies the
-seed row permutation, and emits a simulated row at every position. [PS10, Theorem 163.7] -/
+seed row permutation, and emits a simulated row at every position. [PS10, Theorem 163.7]
+`table M C s i = (Finset.univ : Finset (Fin (C.gates[i]).args.length → Bool)).toList.map fun a =>
+row M C s i (s.2.2 i a)`. -/
 noncomputable def table (M : MultiEnc K Cipher ρ) (C : DAGCircuit inputs)
     (s : GarbleSeed C K ρ) (i : Fin C.gates.length) : List Cipher :=
   (Finset.univ : Finset (Fin (C.gates[i]).args.length → Bool)).toList.map
     fun a => row M C s i (s.2.2 i a)
 
-/-- `table M C s i` is the fixed assignment enumeration mapped to `row M C s i (s.perm i a)`. -/
+/-- `table M C s i` is the fixed assignment enumeration mapped to `row M C s i (s.perm i a)`.
+`table M C s i = (Finset.univ : Finset (Fin (C.gates[i]).args.length → Bool)).toList.map fun a =>
+row M C s i (s.2.2 i a)`. -/
 theorem table_eq (M : MultiEnc K Cipher ρ) (C : DAGCircuit inputs)
     (s : GarbleSeed C K ρ) (i : Fin C.gates.length) :
     table M C s i =
@@ -63,7 +68,8 @@ theorem table_eq (M : MultiEnc K Cipher ρ) (C : DAGCircuit inputs)
         fun a => row M C s i (s.2.2 i a) := rfl
 
 /-- The simulated decoding pair at vertex `v` is `(key_v(b), key_v(!b))`, placing the
-false active key at the position named by the prescribed result `b`. [PS10, Theorem 163.7] -/
+false active key at the position named by the prescribed result `b`. [PS10, Theorem 163.7]
+`decodePair C s v b = (keyAt C s v b, keyAt C s v (!b))`. -/
 def decodePair (C : DAGCircuit inputs) (s : GarbleSeed C K ρ) (v : ℕ) (b : Bool) : K × K :=
   (keyAt C s v b, keyAt C s v (!b))
 
@@ -73,7 +79,8 @@ theorem decodePair_eq (C : DAGCircuit inputs) (s : GarbleSeed C K ρ) (v : ℕ) 
 
 /-- The simulated OT answer concatenates `count` false-key blocks beginning at input
 vertex `first`: position `t` reads key `first + t.divNat` at coordinate `t.modNat`.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`activeAnswers C s first count t = keyAt C s (first + t.divNat) false t.modNat`. -/
 def activeAnswers {width : ℕ} (C : DAGCircuit inputs)
     (s : GarbleSeed C (Fin width → Bool) ρ) (first count : ℕ) :
     Fin (count * width) → Bool :=

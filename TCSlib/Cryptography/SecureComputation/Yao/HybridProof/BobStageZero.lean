@@ -85,6 +85,10 @@ payload and addressed seed readers, then its actual encoded receiver view paired
 `aliceOutput` has exactly the acceptance probability of stage zero over `10*S*n+2*S` bits.
 The receiver's selected wire values agree with `ys`, and no positivity premise is needed.
 [PS10, Protocol 162.6 and Theorem 163.7]
+`acceptProb (fun r : H.Coins n => pairEncode (H.main.viewV (List.replicate n true) (H.privA n xs ys
+(List.ofFn r.1) (List.ofFn r.2)) (H.privB n xs ys (List.ofFn r.1) (List.ofFn r.2)) r).encode
+aliceOutput) D = acceptProb (fun r : Fin (10 * S * n + 2 * S) → Bool => GateHybridMessage.sample M C
+(seed (List.ofFn r)) inA inB outLen output v (List.replicate n true) ys [] aliceOutput 0) D`.
 
 **Proof sketch.** Form a word sampler over the full normalized first tape, using the
 supplied first-message function and the answers selected by the wire values. The answer

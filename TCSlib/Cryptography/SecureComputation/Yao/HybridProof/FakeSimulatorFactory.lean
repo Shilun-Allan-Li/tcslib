@@ -72,6 +72,10 @@ include E₁_poly E₂_poly gen_poly shape input_range output_lt fanin key nonce
 admit one data value whose actual answer and message words are exactly those supplied.
 The public data constructor and its word equations are consumed in a generic context.
 [PS10, Theorem 163.7]
+`∃ d : FakeSimulator.Data, (∀ n r, FakeSimulator.answersAt d n r = List.ofFn
+(FakeObjects.activeAnswers (circuit n) (seed n r) (inA.eval n) (inB.eval n))) ∧ ∀ n r f,
+FakeSimulator.messageAt d n r f = FakeObjects.message (nestedSpecial E₁ E₂ n) (circuit n) (seed n r)
+(inA.eval n) (outLen.eval n) (output n) (fun j => f.getD j false)`.
 
 **Proof sketch.** Construct the existing data value from the supplied fields. Apply each
 of its pointwise constructor equations with every argument explicit. The resulting word
@@ -162,6 +166,16 @@ theorem exists_data :
 polynomial and exact raw-run and ideal-sampler equations in the original supplied families.
 No downstream dependent-constructor matching or assumed leaf efficiency is needed.
 [PS10, Theorem 163.7]
+`∃ SB : NUPPT, SB.Uniform ∧ SB.coins = coins ∧ (∀ n y f r, SB.runAtL n (pairEncode y f) r =
+(⟨List.replicate n true, pairEncode y (List.ofFn (FakeObjects.activeAnswers (circuit n) (seed n r)
+(inA.eval n) (inB.eval n))), [], [FakeObjects.message (nestedSpecial E₁ E₂ n) (circuit n) (seed n r)
+(inA.eval n) (outLen.eval n) (output n) (fun j => f.getD j false)]⟩ : View).encode) ∧ ∀ (F :
+Functionality) n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (r : SB.Coins n),
+F.idealB SB n x y r = pairEncode (⟨List.replicate n true, pairEncode (List.ofFn y) (List.ofFn
+(FakeObjects.activeAnswers (circuit n) (seed n (List.ofFn r)) (inA.eval n) (inB.eval n))), [],
+[FakeObjects.message (nestedSpecial E₁ E₂ n) (circuit n) (seed n (List.ofFn r)) (inA.eval n)
+(outLen.eval n) (output n) (fun j => (List.ofFn (F.f n x y).2).getD j false)]⟩ : View).encode
+(List.ofFn (F.f n x y).1)`.
 
 **Proof sketch.** Obtain the existing data value together with its two plain word equations.
 Choose the previously proved uniform simulator on this data. Its coin contract supplies the

@@ -49,7 +49,11 @@ def otInputA (inA sizeBound : PolyExpr) (z : List Bool) : List Bool :=
         (pairFstD z).length + (pairSndD (pairSndD (pairSndD z))).length) false]
 
 /-- `otInputA inA S z` is the two defaulted coin bits at offsets
-`inA(|fst z|) |fst z| + |snd³ z|` and `(S(|fst z|) + inA(|fst z|)) |fst z| + |snd³ z|`. -/
+`inA(|fst z|) |fst z| + |snd³ z|` and `(S(|fst z|) + inA(|fst z|)) |fst z| + |snd³ z|`.
+`otInputA inA sizeBound z = [(pairFstD (pairSndD (pairSndD z))).getD (inA.eval (pairFstD z).length *
+(pairFstD z).length + (pairSndD (pairSndD (pairSndD z))).length) false, (pairFstD (pairSndD
+(pairSndD z))).getD ((sizeBound.eval (pairFstD z).length + inA.eval (pairFstD z).length) * (pairFstD
+z).length + (pairSndD (pairSndD (pairSndD z))).length) false]`. -/
 theorem otInputA_eq (inA sizeBound : PolyExpr) (z : List Bool) :
     otInputA inA sizeBound z =
       [(pairFstD (pairSndD (pairSndD z))).getD
@@ -60,7 +64,10 @@ theorem otInputA_eq (inA sizeBound : PolyExpr) (z : List Bool) :
             (pairFstD z).length + (pairSndD (pairSndD (pairSndD z))).length) false] := rfl
 
 /-- `otInputA inA S ⟨1^n, ⟨x, ⟨r, 1^j⟩⟩⟩` returns the coin bits at offsets
-`inA(n) n + j` and `(S(n) + inA(n)) n + j`, defaulting to `false`. -/
+`inA(n) n + j` and `(S(n) + inA(n)) n + j`, defaulting to `false`.
+`otInputA inA sizeBound (pairEncode (List.replicate n true) (pairEncode x (pairEncode r
+(List.replicate j true)))) = [r.getD (inA.eval n * n + j) false, r.getD ((sizeBound.eval n +
+inA.eval n) * n + j) false]`. -/
 theorem otInputA_layout (inA sizeBound : PolyExpr) (n j : ℕ) (x r : List Bool) :
     otInputA inA sizeBound (pairEncode (List.replicate n true)
       (pairEncode x (pairEncode r (List.replicate j true)))) =
@@ -71,6 +78,7 @@ theorem otInputA_layout (inA sizeBound : PolyExpr) (n j : ℕ) (x r : List Bool)
 
 /-- For polynomial expressions `inA` and `S`, the two-bit input machine
 `otInputA inA S` is polynomial-time on every string. [PS10, Protocol 162.6]
+`PolyTimeComputable (otInputA inA sizeBound)`.
 
 **Proof sketch.** Project the parameter, coin word and call index. Compute both offsets
 with the existing unary polynomial-evaluation, addition and multiplication machines.
@@ -111,6 +119,7 @@ theorem otInputB_layout (n j : ℕ) (y r : List Bool) :
 
 /-- The one-bit choice-input machine `otInputB` is polynomial-time on every string,
 including the zero-parameter case. [PS10, Protocol 162.6]
+`PolyTimeComputable otInputB`.
 
 **Proof sketch.** Read the parameter and call-index lengths in unary, reuse the public
 unary division machine and its quotient equation, and extract the defaulted input bit. -/

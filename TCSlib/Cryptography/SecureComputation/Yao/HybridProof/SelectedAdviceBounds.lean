@@ -40,6 +40,7 @@ open Complexity Turing BoolCircuit TCSlib.Cryptography
 
 /-- Every reconstruction record has at most `2q+7n+8` bits when the padded occurrence list
 fits in `q+1` slots. This includes fixed zero/unselected rows and all selected layers.
+`(SelectedPlan.record C rows s u E₁ E₂ o i a).length ≤ 2 * q + 7 * n + 8`.
 
 **Proof sketch.** A fixed record adds two bits to a nested ciphertext, whose length is at
 most `7n+4`. A selected record has index at most `q`, so its direct or wrapped descriptor
@@ -74,6 +75,8 @@ theorem record_le {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCirc
 
 /-- An encoded descriptor table has at most `4(2(2q+7n+8)+2)` bits when its row enumeration
 has length at most four and the occurrence list fits the padded capacity.
+`(BinArith.encWords ((rows i).map fun a => SelectedPlan.record C rows s u E₁ E₂ o i (s.2.2 i
+a))).length ≤ 4 * (2 * (2 * q + 7 * n + 8) + 2)`.
 
 **Proof sketch.** Every row record satisfies the common record bound. The public encoded-list
 length bound charges twice that record length plus two delimiter bits per row. At most four
@@ -100,6 +103,8 @@ theorem table_le {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCircu
 
 /-- The encoded descriptor-table word has at most
 `C.gates.length * (16*(2q+7n+8)+18)` bits, with at most four rows at each gate.
+`(BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂ o).map BinArith.encWords)).length ≤
+C.gates.length * (16 * (2 * q + 7 * n + 8) + 18)`.
 
 **Proof sketch.** Each encoded table has the bound from `table_le`. Apply the encoded-list
 length bound once more to the gate-index vector. Its length is the gate count; simplifying
@@ -128,7 +133,10 @@ theorem encodedTables_le {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : 
   simpa only [List.length_ofFn, hc] using ht
 
 /-- Full reconstruction advice has at most
-`2G*(16*(2q+7n+8)+18)+2|tail|+2|privateInput|+|aliceOutput|+6` bits, where `G` is the gate count. -/
+`2G*(16*(2q+7n+8)+18)+2|tail|+2|privateInput|+|aliceOutput|+6` bits, where `G` is the gate count.
+`(SliceReconstruction.advice (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂ o).map
+BinArith.encWords)) tail privateInput aliceOutput).length ≤ 2 * C.gates.length * (16 * (2 * q + 7 *
+n + 8) + 18) + 2 * tail.length + 2 * privateInput.length + aliceOutput.length + 6`. -/
 theorem advice_le {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
@@ -150,14 +158,22 @@ theorem advice_le {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCirc
   omega
 
 /-- The polynomial advice budget for gate bound `S`, slot bound `Q`, and surrounding-field
-bounds `T,I,A` is `2S(16(2Q+7n+8)+18)+2T+2I+A+6`. -/
+bounds `T,I,A` is `2S(16(2Q+7n+8)+18)+2T+2I+A+6`.
+`budget S Q T I A = let row : PolyExpr := .add (.add (.mul (.const 2) Q) (.mul (.const 7) .var))
+(.const 8); let descriptors : PolyExpr := .mul (.mul (.const 2) S) (.add (.mul (.const 16) row)
+(.const 18)); .add (.add (.add (.add descriptors (.mul (.const 2) T)) (.mul (.const 2) I)) A)
+(.const 6)`. -/
 def budget (S Q T I A : PolyExpr) : PolyExpr :=
   let row : PolyExpr := .add (.add (.mul (.const 2) Q) (.mul (.const 7) .var)) (.const 8)
   let descriptors : PolyExpr := .mul (.mul (.const 2) S)
     (.add (.mul (.const 16) row) (.const 18))
   .add (.add (.add (.add descriptors (.mul (.const 2) T)) (.mul (.const 2) I)) A) (.const 6)
 
-/-- `budget` is the displayed composition of polynomial addition, multiplication and constants. -/
+/-- `budget` is the displayed composition of polynomial addition, multiplication and constants.
+`budget S Q T I A = let row : PolyExpr := .add (.add (.mul (.const 2) Q) (.mul (.const 7) .var))
+(.const 8); let descriptors : PolyExpr := .mul (.mul (.const 2) S) (.add (.mul (.const 16) row)
+(.const 18)); .add (.add (.add (.add descriptors (.mul (.const 2) T)) (.mul (.const 2) I)) A)
+(.const 6)`. -/
 theorem budget_eq (S Q T I A : PolyExpr) :
     budget S Q T I A =
       let row : PolyExpr := .add (.add (.mul (.const 2) Q) (.mul (.const 7) .var)) (.const 8)
@@ -167,7 +183,9 @@ theorem budget_eq (S Q T I A : PolyExpr) :
   rfl
 
 /-- Evaluating the advice budget gives the explicit natural-number bound
-`2S(n)(16(2Q(n)+7n+8)+18)+2T(n)+2I(n)+A(n)+6`. -/
+`2S(n)(16(2Q(n)+7n+8)+18)+2T(n)+2I(n)+A(n)+6`.
+`(budget S Q T I A).eval n = 2 * S.eval n * (16 * (2 * Q.eval n + 7 * n + 8) + 18) + 2 * T.eval n +
+2 * I.eval n + A.eval n + 6`. -/
 theorem budget_eval (S Q T I A : PolyExpr) (n : ℕ) :
     (budget S Q T I A).eval n =
       2 * S.eval n * (16 * (2 * Q.eval n + 7 * n + 8) + 18) +
@@ -179,6 +197,8 @@ theorem budget_eval (S Q T I A : PolyExpr) (n : ℕ) :
 the gate count, slot parameter and three fixed surrounding fields have these polynomial
 bounds. This makes the polynomial-advice claim explicit for this encoding.
 [PS10, Theorem 163.7]
+`(SliceReconstruction.advice (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂ o).map
+BinArith.encWords)) tail privateInput aliceOutput).length ≤ (budget S Q T I A).eval n`.
 
 **Proof sketch.** Start with the pointwise advice bound. Enlarge the row-record coefficient
 using the slot polynomial, and enlarge the descriptor-table count using the gate polynomial.
@@ -212,7 +232,9 @@ theorem advice_budget {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAG
 
 /-- The hybrid message's fixed tail has at most
 `2*(inA*(2n+2))+2+outLen*(6n+6)` bits, independently of its stage tables and all key values.
-The bound reuses the public input-key and output-pair encoding bounds. -/
+The bound reuses the public input-key and output-pair encoding bounds.
+`(pairSndD (GateHybridMessage.message M C s inA outLen output v stage)).length ≤ 2 * (inA * (2 * n +
+2)) + 2 + outLen * (6 * n + 6)`. -/
 theorem messageTail_le {m n : ℕ} {ρ : Type}
     (M : MultiEnc (Fin n → Bool) (List Bool) ρ) (C : DAGCircuit m)
     (s : GarbleSeed C (Fin n → Bool) ρ) (inA outLen : ℕ) (output : Fin outLen → ℕ)
@@ -231,44 +253,55 @@ theorem messageTail_le {m n : ℕ} {ρ : Type}
   exact Nat.add_le_add (Nat.add_le_add_right (Nat.mul_le_mul_left 2 hk) 2) hp
 
 /-- The private view-input word has exactly `2|bobInput|+2+count*n` bits: the encoded Bob
-input followed by the false-key OT answer vector. Zero key width and zero count are included. -/
+input followed by the false-key OT answer vector. Zero key width and zero count are included.
+`(pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C s first count))).length = 2 *
+bobInput.length + 2 + count * n`. -/
 theorem privateInput_length {m n : ℕ} {ρ : Type} (C : DAGCircuit m)
     (s : GarbleSeed C (Fin n → Bool) ρ) (first count : ℕ) (bobInput : List Bool) :
     (pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C s first count))).length =
       2 * bobInput.length + 2 + count * n := by
   rw [length_pairEncode, List.length_ofFn]
 
-/-- The selected-key experiment has `4S(n)+1` padded nonce slots, using slot parameter `4S`. -/
+/-- The selected-key experiment has `4S(n)+1` padded nonce slots, using slot parameter `4S`.
+`slotBudget S = .mul (.const 4) S`. -/
 def slotBudget (S : PolyExpr) : PolyExpr := .mul (.const 4) S
 
 /-- `slotBudget S = 4*S` as a polynomial expression. -/
 theorem slotBudget_eq (S : PolyExpr) : slotBudget S = .mul (.const 4) S := rfl
 
-/-- The fixed message-tail budget is `2*A(n)*(2n+2)+2+O(n)*(6n+6)`. -/
+/-- The fixed message-tail budget is `2*A(n)*(2n+2)+2+O(n)*(6n+6)`.
+`tailBudget A O = .add (.add (.mul (.const 2) (.mul A (.add (.mul (.const 2) .var) (.const 2))))
+(.const 2)) (.mul O (.add (.mul (.const 6) .var) (.const 6)))`. -/
 def tailBudget (A O : PolyExpr) : PolyExpr :=
   .add (.add (.mul (.const 2) (.mul A (.add (.mul (.const 2) .var) (.const 2)))) (.const 2))
     (.mul O (.add (.mul (.const 6) .var) (.const 6)))
 
-/-- `tailBudget` combines the two public key/pair encoding bounds. -/
+/-- `tailBudget` combines the two public key/pair encoding bounds.
+`tailBudget A O = .add (.add (.mul (.const 2) (.mul A (.add (.mul (.const 2) .var) (.const 2))))
+(.const 2)) (.mul O (.add (.mul (.const 6) .var) (.const 6)))`. -/
 theorem tailBudget_eq (A O : PolyExpr) :
     tailBudget A O =
       .add (.add (.mul (.const 2) (.mul A (.add (.mul (.const 2) .var) (.const 2)))) (.const 2))
         (.mul O (.add (.mul (.const 6) .var) (.const 6))) := rfl
 
-/-- The private view-input budget is `2B(n)+2+B(n)*n`. -/
+/-- The private view-input budget is `2B(n)+2+B(n)*n`.
+`privateBudget B = .add (.add (.mul (.const 2) B) (.const 2)) (.mul B .var)`. -/
 def privateBudget (B : PolyExpr) : PolyExpr :=
   .add (.add (.mul (.const 2) B) (.const 2)) (.mul B .var)
 
-/-- `privateBudget B` is the polynomial for Bob's input paired with his active answers. -/
+/-- `privateBudget B` is the polynomial for Bob's input paired with his active answers.
+`privateBudget B = .add (.add (.mul (.const 2) B) (.const 2)) (.mul B .var)`. -/
 theorem privateBudget_eq (B : PolyExpr) :
     privateBudget B = .add (.add (.mul (.const 2) B) (.const 2)) (.mul B .var) := rfl
 
 /-- The concrete hybrid-view advice budget uses gate bound `S`, input bounds `A,B`,
-output-pair count `O`, and retained Alice-output bound `R`. -/
+output-pair count `O`, and retained Alice-output bound `R`.
+`sampleBudget S A B O R = budget S (slotBudget S) (tailBudget A O) (privateBudget B) R`. -/
 def sampleBudget (S A B O R : PolyExpr) : PolyExpr :=
   budget S (slotBudget S) (tailBudget A O) (privateBudget B) R
 
-/-- `sampleBudget` instantiates the generic advice polynomial with the fixed hybrid fields. -/
+/-- `sampleBudget` instantiates the generic advice polynomial with the fixed hybrid fields.
+`sampleBudget S A B O R = budget S (slotBudget S) (tailBudget A O) (privateBudget B) R`. -/
 theorem sampleBudget_eq (S A B O R : PolyExpr) :
     sampleBudget S A B O R = budget S (slotBudget S) (tailBudget A O) (privateBudget B) R := rfl
 
@@ -278,14 +311,16 @@ theorem slotBudget_eval (S : PolyExpr) (n : ℕ) :
   simp only [slotBudget_eq, PolyExpr.eval_mul, PolyExpr.eval_const]
 
 /-- Evaluating the fixed message-tail budget gives
-`2*A(n)*(2n+2)+2+O(n)*(6n+6)`. -/
+`2*A(n)*(2n+2)+2+O(n)*(6n+6)`.
+`(tailBudget A O).eval n = 2 * (A.eval n * (2 * n + 2)) + 2 + O.eval n * (6 * n + 6)`. -/
 theorem tailBudget_eval (A O : PolyExpr) (n : ℕ) :
     (tailBudget A O).eval n =
       2 * (A.eval n * (2 * n + 2)) + 2 + O.eval n * (6 * n + 6) := by
   simp only [tailBudget_eq, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
     PolyExpr.eval_var]
 
-/-- Evaluating the private-input polynomial gives `2B(n)+2+B(n)*n`. -/
+/-- Evaluating the private-input polynomial gives `2B(n)+2+B(n)*n`.
+`(privateBudget B).eval n = 2 * B.eval n + 2 + B.eval n * n`. -/
 theorem privateBudget_eval (B : PolyExpr) (n : ℕ) :
     (privateBudget B).eval n = 2 * B.eval n + 2 + B.eval n * n := by
   simp only [privateBudget_eq, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
@@ -294,6 +329,10 @@ theorem privateBudget_eval (B : PolyExpr) (n : ℕ) :
 /-- The complete actual hybrid-view advice has the explicit polynomial bound
 `sampleBudget S A B O R`, using `4S(n)+1` padded challenge slots. The circuit, all keys,
 nonces, masks, stage and prescribed outputs may be arbitrary. [PS10, Theorem 163.7]
+`(SelectedPlan.advice C rows s u E₁ E₂ o (pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂
+n) C s (A.eval n) (O.eval n) output v stage)) (pairEncode bobInput (List.ofFn
+(FakeObjects.activeAnswers C s (A.eval n) (B.eval n)))) aliceOutput).length ≤ (sampleBudget S A B O
+R).eval n`.
 
 **Proof sketch.** Fan-in two supplies distinct arguments and the canonical assignment lists
 have at most four rows by the existing garbled-table bound. The all-gate occurrence bound is

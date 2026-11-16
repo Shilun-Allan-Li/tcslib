@@ -59,6 +59,10 @@ include hG hGE₁ hGE₂ in
 /-- Every row record reconstructs precisely the nested encryption using the filled seed's
 argument keys and nonce pair and the fixed plaintext key, for every challenge key and nonce
 vector. The capacity covers the complete all-gate occurrence list. [PS10, Theorem 163.7]
+`SliceReconstruction.row E₂ (pairEncode (sliceMultiEncDist G n q (SelectedPlan.slotOffset C rows s u
+q) (SelectedPlan.slotLength C rows s u q) (SelectedPlan.slotMessage C rows s u q E₁ o) (k, rs))
+(SelectedPlan.record C rows s u E₁ E₂ o i a)) = (nestedSpecial E₁ E₂ n).enc (argKeys C
+(SelectedSeed.fill C rows s u q k rs) i a) (o i a) ((SelectedSeed.fill C rows s u q k rs).2.1 i a)`.
 
 **Proof sketch.** An unselected row retains both its argument-key list and nonce pair, so its
 fixed record is already the required row. For a selected argument, its occurrence rank fits
@@ -122,6 +126,12 @@ include hG hGE₁ hGE₂ in
 /-- Reconstructing all descriptor tables yields exactly every filled-seed row in the original
 gate and permuted-row order, for every slice-sampler key and nonce vector.
 [PS10, Theorem 163.7]
+`SliceReconstruction.tables E₂ (pairEncode (sliceMultiEncDist G n q (SelectedPlan.slotOffset C rows
+s u q) (SelectedPlan.slotLength C rows s u q) (SelectedPlan.slotMessage C rows s u q E₁ o) (k, rs))
+(BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂ o).map BinArith.encWords))) =
+BinArith.encWords (List.ofFn fun i => BinArith.encWords ((rows i).map fun a => (nestedSpecial E₁ E₂
+n).enc (argKeys C (SelectedSeed.fill C rows s u q k rs) i (s.2.2 i a)) (o i (s.2.2 i a))
+((SelectedSeed.fill C rows s u q k rs).2.1 i (s.2.2 i a))))`.
 
 **Proof sketch.** The public nested-list reconstruction contract maps each stored descriptor
 in place. The descriptor table reader exposes the original gate-index and row enumerations.
@@ -161,6 +171,12 @@ include hG hGE₁ hGE₂ in
 /-- With canonical row enumeration, reconstruction gives the shared generic hybrid tables.
 The fixed plaintext family is read from the original seed; symbolic output-label separation
 identifies it with the filled seed's output keys. [PS10, Theorem 163.7]
+`SliceReconstruction.tables E₂ (pairEncode (sliceMultiEncDist G n q (SelectedPlan.slotOffset C rows
+s u q) (SelectedPlan.slotLength C rows s u q) (SelectedPlan.slotMessage C rows s u q E₁ (fun i a =>
+keyAt C s (m + i.val) (bit i a))) (k, rs)) (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂
+(fun i a => keyAt C s (m + i.val) (bit i a))).map BinArith.encWords))) = BinArith.encWords
+(List.ofFn fun i => BinArith.encWords (GateHybrids.tableWith (nestedSpecial E₁ E₂ n) C
+(SelectedSeed.fill C rows s u q k rs) bit i))`.
 
 **Proof sketch.** Apply the complete table reconstruction theorem using the original seed's
 output keys as fixed plaintexts. The canonical enumeration is the hybrid table's enumeration.
@@ -207,6 +223,14 @@ include hG hGE₁ hGE₂ in
 /-- The total reconstruction machine returns the encoded view/output endpoint with the
 filled seed's generic hybrid tables and the supplied fixed surrounding fields.
 [PS10, Theorem 163.7]
+`SliceReconstruction.rebuild E₂ (pairEncode N (pairEncode (sliceMultiEncDist G n q
+(SelectedPlan.slotOffset C rows s u q) (SelectedPlan.slotLength C rows s u q)
+(SelectedPlan.slotMessage C rows s u q E₁ (fun i a => keyAt C s (m + i.val) (bit i a))) (k, rs))
+(SliceReconstruction.advice (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂ (fun i a =>
+keyAt C s (m + i.val) (bit i a))).map BinArith.encWords)) tail privateInput aliceOutput))) =
+pairEncode (⟨N, privateInput, [], [pairEncode (BinArith.encWords (List.ofFn fun i =>
+BinArith.encWords (GateHybrids.tableWith (nestedSpecial E₁ E₂ n) C (SelectedSeed.fill C rows s u q k
+rs) bit i))) tail]⟩ : View).encode aliceOutput`.
 
 **Proof sketch.** The reconstruction layout reader retains the supplied common input,
 private input, message tail and Alice output. Substitute the exact shared hybrid-table
@@ -248,6 +272,14 @@ include hG hGE₁ hGE₂ in
 /-- The padded slice experiment reconstructs the actual shared hybrid view sampler under
 the filled seed, with empty Bob coins and the retained Alice output. All fixed fields are
 computed from the original seed. [PS10, Theorem 163.7]
+`SliceReconstruction.rebuild E₂ (pairEncode N (pairEncode (sliceMultiEncDist G n q
+(SelectedPlan.slotOffset C rows s u q) (SelectedPlan.slotLength C rows s u q)
+(SelectedPlan.slotMessage C rows s u q E₁ (fun i a => keyAt C s (m + i.val) (GateHybrids.stageBit C
+v stage i a))) (k, rs)) (SelectedPlan.advice C rows s u E₁ E₂ (fun i a => keyAt C s (m + i.val)
+(GateHybrids.stageBit C v stage i a)) (pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂ n) C
+s inA outLen output v stage)) (pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C s inA
+inB))) aliceOutput))) = GateHybridMessage.sample (nestedSpecial E₁ E₂ n) C (SelectedSeed.fill C rows
+s u q k rs) inA inB outLen output v N bobInput [] aliceOutput stage`.
 
 **Proof sketch.** Reconstruct the filled-seed tables using the stage-bit plaintext family.
 False active answers are unchanged by selected fill. Output vertices differ from the selected

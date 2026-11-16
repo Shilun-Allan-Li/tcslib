@@ -53,6 +53,7 @@ theorem activeAnswers_word {inputs width : ℕ} {ρ : Type} (C : DAGCircuit inpu
 /-- The canonical flat false-key answer is polynomial-time from unary width, bound,
 starting vertex and count maps, a polynomial-time coin word, a valid input range, and the
 seed's addressed-key equation. [PS10, Theorem 163.7]
+`PolyTimeComputable fun z => List.ofFn (FakeObjects.activeAnswers (C z) (s z) (first z) (count z))`.
 
 **Proof sketch.** On an indexed retained input, add the unary index to the starting vertex
 and read its false-key window. The public data-dependent concatenation loop emits one such
@@ -99,6 +100,8 @@ theorem activeAnswers_poly (width bound first count inputs : List Bool → ℕ)
 /-- Swapping each encoded pair according to the corresponding bit of a polynomial-time
 result word preserves polynomial time. The pair vector is supplied by a polynomial-time
 canonical encoding, and its unary length is polynomial-time. [PS10, Theorem 163.7]
+`PolyTimeComputable fun z => BinArith.encWords (List.ofFn fun j => if (result z).getD j false then
+pairEncode (value z j).2 (value z j).1 else pairEncode (value z j).1 (value z j).2)`.
 
 **Proof sketch.** At a unary index, read the pair from its canonical word vector and read
 the corresponding result bit. A conditional either swaps the two public pair projections
@@ -140,6 +143,9 @@ theorem swapPairs_poly (count : List Bool → ℕ) (pairs result : List Bool →
 /-- The encoded simulated decoding-pair vector is polynomial-time from the real output
 pair readers and a polynomial-time prescribed result word. Each result bit swaps the
 corresponding two keys. [PS10, Theorem 163.7]
+`PolyTimeComputable fun z => BinArith.encWords (List.ofFn fun j : Fin (count z) => pairEncode
+(List.ofFn (FakeObjects.decodePair (C z) (s z) (output z j) ((result z).getD j false)).1) (List.ofFn
+(FakeObjects.decodePair (C z) (s z) (output z j) ((result z).getD j false)).2))`.
 
 **Proof sketch.** Compute the real canonical output-pair vector once. Apply the generic
 indexed pair-swap contract to that vector and the result word. A Boolean case split on
@@ -183,7 +189,9 @@ theorem outputPairs_poly (width bound count inputs : List Bool → ℕ)
 
 /-- The encoded simulated Alice input-key vector contains the false key at every input
 vertex and is polynomial-time under the real selected-key reader hypotheses.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`PolyTimeComputable fun z => BinArith.encWords (List.ofFn fun v : Fin (count z) => List.ofFn (keyAt
+(C z) (s z) v false))`. -/
 theorem inputKeys_poly (width bound count inputs : List Bool → ℕ)
     (coins : List Bool → List Bool)
     (hwidth : PolyTimeComputable fun z => List.replicate (width z) true)
@@ -205,6 +213,8 @@ theorem inputKeys_poly (width bound count inputs : List Bool → ℕ)
 /-- The actual encoded simulated table vector is polynomial-time from the generic uniform
 circuit-description map and the seed's key, nonce, and XOR-permutation readers. Every row
 plaintext is its output vertex's false key. [PS10, Theorem 163.7]
+`PolyTimeComputable fun z => BinArith.encWords (List.ofFn fun i => BinArith.encWords
+(FakeObjects.table (nestedSpecial E₁ E₂ (width z)) (C z) (s z) i))`.
 
 **Proof sketch.** Decode the canonical circuit description to the public gate-record word.
 At a unary index, select its argument-word list and invoke the real garbler's generic row
@@ -313,6 +323,12 @@ theorem tables_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCompu
 row plaintexts, Alice's false input keys, and output pairs swapped by the prescribed output
 word. The assumptions are the generic uniform-description and seed block readers, valid
 input/output ranges, and polynomial-time raw selectors. [PS10, Theorem 163.7]
+`PolyTimeComputable fun z => pairEncode (BinArith.encWords (List.ofFn fun i => BinArith.encWords
+(FakeObjects.table (nestedSpecial E₁ E₂ (width z)) (C z) (s z) i))) (pairEncode (BinArith.encWords
+(List.ofFn fun v : Fin (inA z) => List.ofFn (keyAt (C z) (s z) v false))) (BinArith.encWords
+(List.ofFn fun j : Fin (outLen z) => pairEncode (List.ofFn (FakeObjects.decodePair (C z) (s z)
+(output z j) ((result z).getD j false)).1) (List.ofFn (FakeObjects.decodePair (C z) (s z) (output z
+j) ((result z).getD j false)).2))))`.
 
 **Proof sketch.** The generic simulated-table program computes all false-output-key tables.
 The real selected-key contract at a constant false input gives Alice's active input keys.

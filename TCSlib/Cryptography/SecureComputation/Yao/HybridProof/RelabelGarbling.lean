@@ -53,14 +53,17 @@ theorem argValues_eq {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
     (i : Fin C.gates.length) :
     argValues C v i = fun t => v ((C.gates[i]).args[t]) := rfl
 
-/-- Argument position `t` reads the wire value at `C.gates[i].args[t]`. -/
+/-- Argument position `t` reads the wire value at `C.gates[i].args[t]`.
+`argValues C v i t = v ((C.gates[i]).args[t])`. -/
 theorem argValues_apply {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
     (i : Fin C.gates.length) (t : Fin (C.gates[i]).args.length) :
     argValues C v i t = v ((C.gates[i]).args[t]) := rfl
 
 /-- Relabel a garbling seed by wire values `v`: key choice `b` becomes `b XOR v w`,
 row coins at assignment `a` come from `a XOR argValues`, and the row permutation
-is composed with that same assignment XOR. [PS10, Theorem 163.7; LP09] -/
+is composed with that same assignment XOR. [PS10, Theorem 163.7; LP09]
+`relabelSeed C v s = ((fun w b => s.1 w (xor b (v w))), (fun i a => s.2.1 i (xorPerm (argValues C v
+i) a)), fun i => (s.2.2 i).trans (xorPerm (argValues C v i)))`. -/
 def relabelSeed {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
     (s : GarbleSeed C K ρ) : GarbleSeed C K ρ :=
   ((fun w b => s.1 w (xor b (v w))),
@@ -68,7 +71,9 @@ def relabelSeed {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
     fun i => (s.2.2 i).trans (xorPerm (argValues C v i)))
 
 /-- `relabelSeed C v s` is the tuple of choice-relabeled keys, XOR-addressed row
-coins, and the row permutations composed with assignment XOR. -/
+coins, and the row permutations composed with assignment XOR.
+`relabelSeed C v s = ((fun w b => s.1 w (xor b (v w))), (fun i a => s.2.1 i (xorPerm (argValues C v
+i) a)), fun i => (s.2.2 i).trans (xorPerm (argValues C v i)))`. -/
 theorem relabelSeed_eq {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
     (s : GarbleSeed C K ρ) :
     relabelSeed C v s =
@@ -76,18 +81,21 @@ theorem relabelSeed_eq {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool) {K ρ : T
         (fun i a => s.2.1 i (xorPerm (argValues C v i) a)),
         fun i => (s.2.2 i).trans (xorPerm (argValues C v i))) := rfl
 
-/-- The relabeled key at wire `w` and choice `b` is `s.1 w (b XOR v w)`. -/
+/-- The relabeled key at wire `w` and choice `b` is `s.1 w (b XOR v w)`.
+`(relabelSeed C v s).1 w b = s.1 w (xor b (v w))`. -/
 theorem relabelSeed_key {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
     (s : GarbleSeed C K ρ) (w : Fin C.size) (b : Bool) :
     (relabelSeed C v s).1 w b = s.1 w (xor b (v w)) := rfl
 
-/-- The relabeled row coin at `i,a` is the old coin at `i,a XOR argValues`. -/
+/-- The relabeled row coin at `i,a` is the old coin at `i,a XOR argValues`.
+`(relabelSeed C v s).2.1 i a = s.2.1 i (xorPerm (argValues C v i) a)`. -/
 theorem relabelSeed_coin {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
     (s : GarbleSeed C K ρ) (i : Fin C.gates.length)
     (a : Fin (C.gates[i]).args.length → Bool) :
     (relabelSeed C v s).2.1 i a = s.2.1 i (xorPerm (argValues C v i) a) := rfl
 
-/-- The relabeled row permutation maps `a` to `s.2.2 i a XOR argValues`. -/
+/-- The relabeled row permutation maps `a` to `s.2.2 i a XOR argValues`.
+`(relabelSeed C v s).2.2 i a = xorPerm (argValues C v i) (s.2.2 i a)`. -/
 theorem relabelSeed_perm {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
     (s : GarbleSeed C K ρ) (i : Fin C.gates.length)
     (a : Fin (C.gates[i]).args.length → Bool) :
@@ -110,7 +118,8 @@ theorem keyAt_original {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
   rw [keyAt_relabel, Bool.xor_assoc, Bool.xor_self, Bool.xor_false]
 
 /-- Argument keys under the relabeled seed at assignment `a` are the original
-argument keys at `a XOR argValues C v i`. -/
+argument keys at `a XOR argValues C v i`.
+`argKeys C (relabelSeed C v s) i a = argKeys C s i (xorPerm (argValues C v i) a)`. -/
 theorem argKeys_relabel {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
     {K ρ : Type} [Inhabited K] (s : GarbleSeed C K ρ) (i : Fin C.gates.length)
     (a : Fin (C.gates[i]).args.length → Bool) :
@@ -124,7 +133,10 @@ theorem argKeys_relabel {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
 /-- Encrypting under the relabeled seed at `a`, with output bit
 `gateOut (a XOR argValues) XOR v(output)`, is the original row at
 `a XOR argValues`. This is pointwise in every key and row coin.
-[PS10, Theorem 163.7; LP09] -/
+[PS10, Theorem 163.7; LP09]
+`M.enc (argKeys C (relabelSeed C v s) i a) (keyAt C (relabelSeed C v s) (m + i) (xor (gateOut
+(C.gates[i]) (xorPerm (argValues C v i) a)) (v (m + i)))) ((relabelSeed C v s).2.1 i a) = garbledRow
+M C s i (xorPerm (argValues C v i) a)`. -/
 theorem row_relabel {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
     {K W ρ : Type} [Inhabited K] (M : MultiEnc K W ρ) (s : GarbleSeed C K ρ)
     (i : Fin C.gates.length) (a : Fin (C.gates[i]).args.length → Bool) :
@@ -140,6 +152,10 @@ theorem row_relabel {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
 from the relabeled seed, with plaintext bit
 `gateOut (a XOR argValues) XOR v(output)`. No reordering of the enumeration
 or probabilistic argument is needed. [PS10, Theorem 163.7; LP09]
+`garbledTable M C s i = (Finset.univ : Finset (Fin (C.gates[i]).args.length → Bool)).toList.map (fun
+a => let b := (relabelSeed C v s).2.2 i a; M.enc (argKeys C (relabelSeed C v s) i b) (keyAt C
+(relabelSeed C v s) (m + i) (xor (gateOut (C.gates[i]) (xorPerm (argValues C v i) b)) (v (m + i))))
+((relabelSeed C v s).2.1 i b))`.
 
 **Proof sketch.** At each enumerated assignment, the new row permutation XORs
 the old assignment with the argument values. The transformed-row identity
@@ -177,7 +193,9 @@ theorem inputKeys_relabel {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
 
 /-- Any selected list of original wire keys is the selected list of relabeled
 keys with choice `bits j XOR v (wire j)`. This includes subsets of input wires
-and repeated selected wires. -/
+and repeated selected wires.
+`(List.ofFn fun j => keyAt C s (wire j) (bits j)) = (List.ofFn fun j => keyAt C (relabelSeed C v s)
+(wire j) (xor (bits j) (v (wire j))))`. -/
 theorem selectedKeys_original {m k : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
     {K ρ : Type} [Inhabited K] (s : GarbleSeed C K ρ) (wire : Fin k → ℕ)
     (bits : Fin k → Bool) :

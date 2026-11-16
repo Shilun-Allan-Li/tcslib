@@ -42,7 +42,12 @@ variable {inputs width : ℕ} {ρ : Type}
 
 /-- The hybrid's first message encodes its stage tables, Alice's false keys,
 and decoding pairs ordered by the prescribed output-wire values.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`message M C s inA outLen output v stage = pairEncode (BinArith.encWords (List.ofFn fun i =>
+BinArith.encWords (GateHybrids.tableWith M C s (GateHybrids.stageBit C v stage) i))) (pairEncode
+(BinArith.encWords (List.ofFn fun w : Fin inA => List.ofFn (keyAt C s w false))) (BinArith.encWords
+(List.ofFn fun j => pairEncode (List.ofFn (FakeObjects.decodePair C s (output j) (v (output j))).1)
+(List.ofFn (FakeObjects.decodePair C s (output j) (v (output j))).2))))`. -/
 noncomputable def message (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
     (C : DAGCircuit inputs) (s : GarbleSeed C (Fin width → Bool) ρ)
     (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage : ℕ) : List Bool :=
@@ -55,7 +60,12 @@ noncomputable def message (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
           (List.ofFn (FakeObjects.decodePair C s (output j) (v (output j))).2))))
 
 /-- `message ... stage` is the encoded stage-table vector paired with the
-false-key vector and output-value-ordered decoding-pair vector. -/
+false-key vector and output-value-ordered decoding-pair vector.
+`message M C s inA outLen output v stage = pairEncode (BinArith.encWords (List.ofFn fun i =>
+BinArith.encWords (GateHybrids.tableWith M C s (GateHybrids.stageBit C v stage) i))) (pairEncode
+(BinArith.encWords (List.ofFn fun w : Fin inA => List.ofFn (keyAt C s w false))) (BinArith.encWords
+(List.ofFn fun j => pairEncode (List.ofFn (FakeObjects.decodePair C s (output j) (v (output j))).1)
+(List.ofFn (FakeObjects.decodePair C s (output j) (v (output j))).2))))`. -/
 theorem message_eq (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
     (C : DAGCircuit inputs) (s : GarbleSeed C (Fin width → Bool) ρ)
     (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage : ℕ) :
@@ -71,7 +81,10 @@ theorem message_eq (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
 
 /-- The stage sampler pairs Bob's encoded view with the prescribed Alice output.
 Bob's private input is his own word paired with the active false-key answers.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`sample M C s inA inB outLen output v commonInput bobInput bobCoins aliceOutput stage = pairEncode
+(⟨commonInput, pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C s inA inB)), bobCoins,
+[message M C s inA outLen output v stage]⟩ : View).encode aliceOutput`. -/
 noncomputable def sample (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
     (C : DAGCircuit inputs) (s : GarbleSeed C (Fin width → Bool) ρ)
     (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool)
@@ -92,7 +105,9 @@ theorem sample_eq (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
         bobCoins, [message M C s inA outLen output v stage]⟩ : View).encode aliceOutput := rfl
 
 /-- False active answers under the relabeled seed are exactly the original
-answers chosen by the wire values, including when the key width is zero. -/
+answers chosen by the wire values, including when the key width is zero.
+`FakeObjects.activeAnswers C (RelabelGarbling.relabelSeed C v s) first count = fun t => keyAt C s
+(first + t.divNat) (v (first + t.divNat)) t.modNat`. -/
 theorem activeAnswers_relabel (C : DAGCircuit inputs)
     (s : GarbleSeed C (Fin width → Bool) ρ) (v : ℕ → Bool) (first count : ℕ) :
     FakeObjects.activeAnswers C (RelabelGarbling.relabelSeed C v s) first count =
@@ -101,7 +116,9 @@ theorem activeAnswers_relabel (C : DAGCircuit inputs)
   simp only [FakeObjects.activeAnswers_eq, RelabelGarbling.keyAt_relabel, Bool.false_xor]
 
 /-- The output-value-ordered decoding pair under the relabeled seed is exactly
-the original `(false key,true key)` pair, including default vertices. -/
+the original `(false key,true key)` pair, including default vertices.
+`FakeObjects.decodePair C (RelabelGarbling.relabelSeed C v s) w (v w) = (keyAt C s w false, keyAt C
+s w true)`. -/
 theorem decodePair_relabel (C : DAGCircuit inputs)
     (s : GarbleSeed C (Fin width → Bool) ρ) (v : ℕ → Bool) (w : ℕ) :
     FakeObjects.decodePair C (RelabelGarbling.relabelSeed C v s) w (v w) =
@@ -112,7 +129,12 @@ theorem decodePair_relabel (C : DAGCircuit inputs)
 /-- The original real payload is exactly stage zero under the relabeled seed:
 real tables, keys selected by input-wire values, and ordinary output pairs
 become the stage tables, false keys, and output-value-ordered pairs.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`pairEncode (BinArith.encWords (List.ofFn fun i => BinArith.encWords (garbledTable M C s i)))
+(pairEncode (BinArith.encWords (List.ofFn fun w : Fin inA => List.ofFn (keyAt C s w (v w))))
+(BinArith.encWords (List.ofFn fun j => pairEncode (List.ofFn (keyAt C s (output j) false))
+(List.ofFn (keyAt C s (output j) true))))) = message M C (RelabelGarbling.relabelSeed C v s) inA
+outLen output v 0`. -/
 theorem message_relabel (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
     (C : DAGCircuit inputs) (s : GarbleSeed C (Fin width → Bool) ρ)
     (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) :
@@ -129,7 +151,9 @@ theorem message_relabel (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
     RelabelGarbling.keyAt_relabel, Bool.false_xor, decodePair_relabel]
 
 /-- The final-stage encoded payload is exactly the shared canonical fake
-message, with result bits read at the output wires. [PS10, Theorem 163.7] -/
+message, with result bits read at the output wires. [PS10, Theorem 163.7]
+`message M C s inA outLen output v (2 * C.gates.length) = FakeObjects.message M C s inA outLen
+output (fun j => v (output j))`. -/
 theorem message_end (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
     (C : DAGCircuit inputs) (s : GarbleSeed C (Fin width → Bool) ρ)
     (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) :
@@ -139,7 +163,14 @@ theorem message_end (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
 
 /-- The real payload and wire-value-selected OT answers give exactly the
 stage-zero Bob-view sampler after seed relabeling. The prescribed Alice output
-remains outside the encoded view. [PS10, Theorem 163.7] -/
+remains outside the encoded view. [PS10, Theorem 163.7]
+`pairEncode (⟨commonInput, pairEncode bobInput (List.ofFn fun t : Fin (inB * width) => keyAt C s
+(inA + t.divNat) (v (inA + t.divNat)) t.modNat), bobCoins, [pairEncode (BinArith.encWords (List.ofFn
+fun i => BinArith.encWords (garbledTable M C s i))) (pairEncode (BinArith.encWords (List.ofFn fun w
+: Fin inA => List.ofFn (keyAt C s w (v w)))) (BinArith.encWords (List.ofFn fun j => pairEncode
+(List.ofFn (keyAt C s (output j) false)) (List.ofFn (keyAt C s (output j) true)))))]⟩ : View).encode
+aliceOutput = sample M C (RelabelGarbling.relabelSeed C v s) inA inB outLen output v commonInput
+bobInput bobCoins aliceOutput 0`. -/
 theorem sample_relabel (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
     (C : DAGCircuit inputs) (s : GarbleSeed C (Fin width → Bool) ρ)
     (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool)
@@ -160,7 +191,11 @@ theorem sample_relabel (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
   rw [sample_eq, activeAnswers_relabel, ← message_relabel]
 
 /-- The last-stage view sampler is exactly Bob's canonical fake-message and
-active-answer view, paired with the prescribed Alice output. [PS10, Theorem 163.7] -/
+active-answer view, paired with the prescribed Alice output. [PS10, Theorem 163.7]
+`sample M C s inA inB outLen output v commonInput bobInput bobCoins aliceOutput (2 * C.gates.length)
+= pairEncode (⟨commonInput, pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C s inA inB)),
+bobCoins, [FakeObjects.message M C s inA outLen output (fun j => v (output j))]⟩ : View).encode
+aliceOutput`. -/
 theorem sample_end (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
     (C : DAGCircuit inputs) (s : GarbleSeed C (Fin width → Bool) ρ)
     (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool)

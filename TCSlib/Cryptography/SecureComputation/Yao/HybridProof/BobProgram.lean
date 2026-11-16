@@ -44,6 +44,11 @@ and arbitrary polynomial-time parameter/message/answer selectors, the output-com
 vector after garbled evaluation is polynomial-time. Initial keys, row tables and decoding
 pairs are supplied through the stated reader equations. No well-formed-message hypothesis
 is imposed. [PS10, Protocol 162.6]
+`PolyTimeComputable fun z => let vals := runWith (fun g vs => evalGate (nestedSpecial E₁ E₂ (N
+z).length) (T z) vs.length g vs) (circ (N z).length).gates (init z); List.ofFn fun j : Fin
+(outLen.eval (N z).length) => if List.ofFn (vals.getD (outs (N z).length j) default) = pairFstD
+((pairs z).getD j []) then false else decide (List.ofFn (vals.getD (outs (N z).length j) default) =
+pairSndD ((pairs z).getD j []))`.
 
 **Proof sketch.** Normalize the parameter to unary before calling the uniform generator.
 The public description decoder supplies the gate records. The initial-key machine and

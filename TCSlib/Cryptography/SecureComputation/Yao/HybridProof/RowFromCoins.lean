@@ -41,7 +41,9 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.RowFromCoins
 open Complexity Turing BoolCircuit TCSlib.Cryptography.EncodingMachines
 
 /-- Position `j` of a fixed assignment to `l` positions, XOR its shift coin at
-`10 · bound z · width z + 2 · gate z + j`; absent positions are false. [BMR90] -/
+`10 · bound z · width z + 2 · gate z + j`; absent positions are false. [BMR90]
+`assignmentBit width bound gate coins l a j z = if j < l then xor ((List.ofFn a).getD j false)
+((coins z).getD (10 * bound z * width z + 2 * gate z + j) false) else false`. -/
 def assignmentBit (width bound gate : List Bool → ℕ) (coins : List Bool → List Bool)
     (l : ℕ) (a : Fin l → Bool) (j : ℕ) (z : List Bool) : Bool :=
   if j < l then xor ((List.ofFn a).getD j false)
@@ -55,7 +57,8 @@ theorem assignmentBit_eq (width bound gate : List Bool → ℕ) (coins : List Bo
         ((coins z).getD (10 * bound z * width z + 2 * gate z + j) false) else false := rfl
 
 /-- Every fixed shifted-assignment bit is polynomial-time from polynomial-time unary
-width, bound, and gate maps and a polynomial-time coin word. [BMR90] -/
+width, bound, and gate maps and a polynomial-time coin word. [BMR90]
+`PolyTimeComputable fun z => [assignmentBit width bound gate coins l a j z]`. -/
 theorem assignmentBit_poly {width bound gate : List Bool → ℕ} {coins : List Bool → List Bool}
     (hwidth : PolyTimeComputable fun z => List.replicate (width z) true)
     (hbound : PolyTimeComputable fun z => List.replicate (bound z) true)
@@ -80,7 +83,10 @@ def gateBit (kind : List Bool → List Bool) (l : ℕ) (b₀ b₁ : List Bool �
   else !(if l = 0 then true else if l = 1 then b₀ z else b₀ z && b₁ z)
 
 /-- `gateBit kind l b₀ b₁ z` is the conjunction, disjunction, or negated conjunction
-selected by the `00`, `01`, or remaining kind-code cases, with empty/one-bit cases. -/
+selected by the `00`, `01`, or remaining kind-code cases, with empty/one-bit cases.
+`gateBit kind l b₀ b₁ z = if kind z = [false, false] then if l = 0 then true else if l = 1 then b₀ z
+else b₀ z && b₁ z else if kind z = [false, true] then if l = 0 then false else if l = 1 then b₀ z
+else b₀ z || b₁ z else !(if l = 0 then true else if l = 1 then b₀ z else b₀ z && b₁ z)`. -/
 theorem gateBit_eq (kind : List Bool → List Bool) (l : ℕ) (b₀ b₁ : List Bool → Bool)
     (z : List Bool) :
     gateBit kind l b₀ b₁ z =
@@ -92,6 +98,7 @@ theorem gateBit_eq (kind : List Bool → List Bool) (l : ℕ) (b₀ b₁ : List 
 
 /-- The finite gate-output calculation is polynomial-time if the kind word and the two
 supplied bits are polynomial-time: `z ↦ [gateBit kind l b₀ b₁ z]`.
+`PolyTimeComputable fun z => [gateBit kind l b₀ b₁ z]`.
 
 **Proof sketch.** Fixed arity makes conjunction and disjunction either constants, the first
 bit, or one Boolean operation on the two bits. Compare the kind word with its two constant
@@ -135,13 +142,17 @@ theorem gateBit_poly {kind : List Bool → List Bool} (hkind : PolyTimeComputabl
   split_ifs <;> rfl
 
 /-- The addressed key word consists of `width z` coins from
-`((bit z).toNat · bound z + vertex z) · width z`, padded with false bits. -/
+`((bit z).toNat · bound z + vertex z) · width z`, padded with false bits.
+`keyWord width bound vertex bit coins z = List.ofFn fun t : Fin (width z) => (coins z).getD (((bit
+z).toNat * bound z + vertex z) * width z + t) false`. -/
 def keyWord (width bound vertex : List Bool → ℕ) (bit : List Bool → Bool)
     (coins : List Bool → List Bool) (z : List Bool) : List Bool :=
   List.ofFn fun t : Fin (width z) =>
     (coins z).getD (((bit z).toNat * bound z + vertex z) * width z + t) false
 
-/-- `keyWord ... z` is the addressed `List.ofFn` coin window of width `width z`. -/
+/-- `keyWord ... z` is the addressed `List.ofFn` coin window of width `width z`.
+`keyWord width bound vertex bit coins z = List.ofFn fun t : Fin (width z) => (coins z).getD (((bit
+z).toNat * bound z + vertex z) * width z + t) false`. -/
 theorem keyWord_eq (width bound vertex : List Bool → ℕ) (bit : List Bool → Bool)
     (coins : List Bool → List Bool) (z : List Bool) :
     keyWord width bound vertex bit coins z =
@@ -149,7 +160,8 @@ theorem keyWord_eq (width bound vertex : List Bool → ℕ) (bit : List Bool →
         (coins z).getD (((bit z).toNat * bound z + vertex z) * width z + t) false := rfl
 
 /-- The addressed key-word map is polynomial-time from polynomial-time coins, unary
-width/bound/vertex maps, and its selection bit. [PS10, Protocol 162.6] -/
+width/bound/vertex maps, and its selection bit. [PS10, Protocol 162.6]
+`PolyTimeComputable (keyWord width bound vertex bit coins)`. -/
 theorem keyWord_poly {width bound vertex : List Bool → ℕ} {bit : List Bool → Bool}
     {coins : List Bool → List Bool} (hcoins : PolyTimeComputable coins)
     (hwidth : PolyTimeComputable fun z => List.replicate (width z) true)
@@ -163,14 +175,20 @@ theorem keyWord_poly {width bound vertex : List Bool → ℕ} {bit : List Bool �
     (fun _ _ => rfl)
 
 /-- The selected row-nonce half is `width z` coins from
-`2 · bound z · width z + (4 · gate z + index z) · (2 · width z) + half.toNat · width z`. -/
+`2 · bound z · width z + (4 · gate z + index z) · (2 · width z) + half.toNat · width z`.
+`nonceWord width bound gate index coins half z = List.ofFn fun t : Fin (width z) => (coins z).getD
+(2 * bound z * width z + (4 * gate z + index z) * (2 * width z) + half.toNat * width z + t)
+false`. -/
 def nonceWord (width bound gate index : List Bool → ℕ) (coins : List Bool → List Bool)
     (half : Bool) (z : List Bool) : List Bool :=
   List.ofFn fun t : Fin (width z) =>
     (coins z).getD (2 * bound z * width z + (4 * gate z + index z) * (2 * width z) +
       half.toNat * width z + t) false
 
-/-- `nonceWord ... half z` is the addressed `List.ofFn` nonce window of width `width z`. -/
+/-- `nonceWord ... half z` is the addressed `List.ofFn` nonce window of width `width z`.
+`nonceWord width bound gate index coins half z = List.ofFn fun t : Fin (width z) => (coins z).getD
+(2 * bound z * width z + (4 * gate z + index z) * (2 * width z) + half.toNat * width z + t)
+false`. -/
 theorem nonceWord_eq (width bound gate index : List Bool → ℕ) (coins : List Bool → List Bool)
     (half : Bool) (z : List Bool) :
     nonceWord width bound gate index coins half z =
@@ -179,7 +197,8 @@ theorem nonceWord_eq (width bound gate index : List Bool → ℕ) (coins : List 
           half.toNat * width z + t) false := rfl
 
 /-- Either addressed row-nonce half is polynomial-time from polynomial-time coins and
-unary width/bound/gate/assignment-index maps. [PS10, Protocol 162.6] -/
+unary width/bound/gate/assignment-index maps. [PS10, Protocol 162.6]
+`PolyTimeComputable (nonceWord width bound gate index coins half)`. -/
 theorem nonceWord_poly {width bound gate index : List Bool → ℕ}
     {coins : List Bool → List Bool} (half : Bool) (hcoins : PolyTimeComputable coins)
     (hwidth : PolyTimeComputable fun z => List.replicate (width z) true)
@@ -195,7 +214,16 @@ theorem nonceWord_poly {width bound gate index : List Bool → ℕ}
 /-- Assemble one garbled row from unary numeric maps, an output-bit map, encoded unary argument
 indices, and a coin word. The fixed assignment is XOR-shifted; its selected argument keys,
 output key for the supplied bit, and two addressed nonce halves are passed to `nestedWordEnc`.
-[PS10, Protocol 162.6; BMR90] -/
+[PS10, Protocol 162.6; BMR90]
+`rowWordWith E₁ E₂ width bound inputs gate args coins outputBit l a z = let b₀ := assignmentBit
+width bound gate coins l a 0; let b₁ := assignmentBit width bound gate coins l a 1; let k₀ :=
+keyWord width bound (fun w => (BinArith.getW (pairEncode [] (args w))).length) b₀ coins; let k₁ :=
+keyWord width bound (fun w => (BinArith.getW (pairEncode [true] (args w))).length) b₁ coins; let
+keys := if l = 0 then [] else if l = 1 then pairEncode (k₀ z) [] else pairEncode (k₀ z) (pairEncode
+(k₁ z) []); let out := keyWord width bound (fun w => inputs w + gate w) outputBit coins; let index
+:= fun w => (b₀ w).toNat + 2 * (b₁ w).toNat; Garbling.nestedWordEnc E₁ E₂ (pairEncode keys
+(pairEncode (out z) (pairEncode (nonceWord width bound gate index coins false z) (nonceWord width
+bound gate index coins true z))))`. -/
 def rowWordWith (E₁ E₂ : List Bool → List Bool) (width bound inputs gate : List Bool → ℕ)
     (args coins : List Bool → List Bool) (outputBit : List Bool → Bool) (l : ℕ) (a : Fin l → Bool)
     (z : List Bool) : List Bool :=
@@ -216,7 +244,16 @@ def rowWordWith (E₁ E₂ : List Bool → List Bool) (width bound inputs gate :
 
 /-- `rowWordWith ... z` encrypts its addressed output key under the zero, one, or two addressed
 argument keys with the two addressed nonce halves. All addressing is given explicitly
-by `keyWord_eq`, `nonceWord_eq`, and `assignmentBit_eq`. -/
+by `keyWord_eq`, `nonceWord_eq`, and `assignmentBit_eq`.
+`rowWordWith E₁ E₂ width bound inputs gate args coins outputBit l a z = let b₀ := assignmentBit
+width bound gate coins l a 0; let b₁ := assignmentBit width bound gate coins l a 1; let k₀ :=
+keyWord width bound (fun w => (BinArith.getW (pairEncode [] (args w))).length) b₀ coins; let k₁ :=
+keyWord width bound (fun w => (BinArith.getW (pairEncode [true] (args w))).length) b₁ coins; let
+keys := if l = 0 then [] else if l = 1 then pairEncode (k₀ z) [] else pairEncode (k₀ z) (pairEncode
+(k₁ z) []); let out := keyWord width bound (fun w => inputs w + gate w) outputBit coins; let index
+:= fun w => (b₀ w).toNat + 2 * (b₁ w).toNat; Garbling.nestedWordEnc E₁ E₂ (pairEncode keys
+(pairEncode (out z) (pairEncode (nonceWord width bound gate index coins false z) (nonceWord width
+bound gate index coins true z))))`. -/
 theorem rowWordWith_eq (E₁ E₂ : List Bool → List Bool) (width bound inputs gate : List Bool → ℕ)
     (args coins : List Bool → List Bool) (outputBit : List Bool → Bool)
     (l : ℕ) (a : Fin l → Bool) (z : List Bool) :
@@ -239,7 +276,16 @@ theorem rowWordWith_eq (E₁ E₂ : List Bool → List Bool) (width bound inputs
 /-- Assemble one garbled row from unary numeric maps, a kind word, encoded unary argument
 indices, and a coin word. The fixed assignment is XOR-shifted; its selected argument keys,
 output key, and two addressed nonce halves are passed to `nestedWordEnc`.
-[PS10, Protocol 162.6; BMR90] -/
+[PS10, Protocol 162.6; BMR90]
+`rowWord E₁ E₂ width bound inputs gate kind args coins l a z = let b₀ := assignmentBit width bound
+gate coins l a 0; let b₁ := assignmentBit width bound gate coins l a 1; let k₀ := keyWord width
+bound (fun w => (BinArith.getW (pairEncode [] (args w))).length) b₀ coins; let k₁ := keyWord width
+bound (fun w => (BinArith.getW (pairEncode [true] (args w))).length) b₁ coins; let keys := if l = 0
+then [] else if l = 1 then pairEncode (k₀ z) [] else pairEncode (k₀ z) (pairEncode (k₁ z) []); let
+out := keyWord width bound (fun w => inputs w + gate w) (gateBit kind l b₀ b₁) coins; let index :=
+fun w => (b₀ w).toNat + 2 * (b₁ w).toNat; Garbling.nestedWordEnc E₁ E₂ (pairEncode keys (pairEncode
+(out z) (pairEncode (nonceWord width bound gate index coins false z) (nonceWord width bound gate
+index coins true z))))`. -/
 def rowWord (E₁ E₂ : List Bool → List Bool) (width bound inputs gate : List Bool → ℕ)
     (kind args coins : List Bool → List Bool) (l : ℕ) (a : Fin l → Bool)
     (z : List Bool) : List Bool :=
@@ -249,7 +295,16 @@ def rowWord (E₁ E₂ : List Bool → List Bool) (width bound inputs gate : Lis
 
 /-- `rowWord ... z` encrypts its addressed output key under the zero, one, or two addressed
 argument keys with the two addressed nonce halves. All addressing is given explicitly
-by `keyWord_eq`, `nonceWord_eq`, and `assignmentBit_eq`. -/
+by `keyWord_eq`, `nonceWord_eq`, and `assignmentBit_eq`.
+`rowWord E₁ E₂ width bound inputs gate kind args coins l a z = let b₀ := assignmentBit width bound
+gate coins l a 0; let b₁ := assignmentBit width bound gate coins l a 1; let k₀ := keyWord width
+bound (fun w => (BinArith.getW (pairEncode [] (args w))).length) b₀ coins; let k₁ := keyWord width
+bound (fun w => (BinArith.getW (pairEncode [true] (args w))).length) b₁ coins; let keys := if l = 0
+then [] else if l = 1 then pairEncode (k₀ z) [] else pairEncode (k₀ z) (pairEncode (k₁ z) []); let
+out := keyWord width bound (fun w => inputs w + gate w) (gateBit kind l b₀ b₁) coins; let index :=
+fun w => (b₀ w).toNat + 2 * (b₁ w).toNat; Garbling.nestedWordEnc E₁ E₂ (pairEncode keys (pairEncode
+(out z) (pairEncode (nonceWord width bound gate index coins false z) (nonceWord width bound gate
+index coins true z))))`. -/
 theorem rowWord_eq (E₁ E₂ : List Bool → List Bool) (width bound inputs gate : List Bool → ℕ)
     (kind args coins : List Bool → List Bool) (l : ℕ) (a : Fin l → Bool) (z : List Bool) :
     rowWord E₁ E₂ width bound inputs gate kind args coins l a z =
@@ -271,6 +326,7 @@ theorem rowWord_eq (E₁ E₂ : List Bool → List Bool) (width bound inputs gat
 /-- The complete row machine is polynomial-time on every string when its evaluators, coin
 word, output-bit map, argument word, and unary numeric maps are polynomial-time.
 [PS10, Protocol 162.6; BMR90]
+`PolyTimeComputable (rowWordWith E₁ E₂ width bound inputs gate args coins outputBit l a)`.
 
 **Proof sketch.** Read the two shifted assignment bits. The output-key bit is supplied as a
 polynomial-time parameter. Read the two argument vertex numbers from the encoded
@@ -328,6 +384,7 @@ theorem rowWordWith_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTime
 /-- The real row machine is polynomial-time on every string when its evaluators, coin
 word, kind/argument words, and unary numeric maps are polynomial-time.
 [PS10, Protocol 162.6; BMR90]
+`PolyTimeComputable (rowWord E₁ E₂ width bound inputs gate kind args coins l a)`.
 
 **Proof sketch.** Apply the shared `rowWordWith_poly` core, using `gateBit_poly` on the
 two polynomial-time shifted assignment bits as its output-key selection bit. -/
@@ -346,7 +403,8 @@ theorem rowWord_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeComp
       (assignmentBit_poly hwidth hbound hgate hcoins l a 1)) l a
 
 /-- If the supplied row permutation satisfies the pointwise XOR-shift equation, the raw
-assignment-bit reader is exactly its output word's `j`-th bit, with false defaults. [BMR90] -/
+assignment-bit reader is exactly its output word's `j`-th bit, with false defaults. [BMR90]
+`assignmentBit width bound gate coins l a j z = (List.ofFn (p a)).getD j false`. -/
 theorem assignmentBit_of_perm (width bound gate : List Bool → ℕ)
     (coins : List Bool → List Bool) (l : ℕ) (a : Fin l → Bool)
     (p : Equiv.Perm (Fin l → Bool)) (z : List Bool) (j : ℕ)
@@ -362,7 +420,8 @@ theorem assignmentBit_of_perm (width bound gate : List Bool → ℕ)
 
 
 /-- On a genuine gate-kind code and assignment-word bits, the raw finite calculation is
-`gateOut g a` for every gate with at most two arguments. [PS10, Protocol 162.6] -/
+`gateOut g a` for every gate with at most two arguments. [PS10, Protocol 162.6]
+`gateBit kind g.args.length b₀ b₁ z = gateOut g a`. -/
 theorem gateBit_eq_gateOut (g : DAGGate) (a : Fin g.args.length → Bool)
     (kind : List Bool → List Bool) (b₀ b₁ : List Bool → Bool) (z : List Bool)
     (hfan : g.args.length ≤ 2) (hkind : kind z = g.kind.encode)
@@ -374,7 +433,9 @@ theorem gateBit_eq_gateOut (g : DAGGate) (a : Fin g.args.length → Bool)
 
 
 /-- For at most two positions, the assignment's binary fold is its first bit plus twice
-its second bit, with false defaults for absent positions. [PS10, Protocol 162.6] -/
+its second bit, with false defaults for absent positions. [PS10, Protocol 162.6]
+`(List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0 = ((List.ofFn a).getD 0 false).toNat + 2 *
+((List.ofFn a).getD 1 false).toNat`. -/
 theorem assignmentFold_eq_two {l : ℕ} (a : Fin l → Bool) (hl : l ≤ 2) :
     (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0 =
       ((List.ofFn a).getD 0 false).toNat + 2 * ((List.ofFn a).getD 1 false).toNat := by
@@ -385,6 +446,9 @@ theorem assignmentFold_eq_two {l : ℕ} (a : Fin l → Bool) (hl : l ≤ 2) :
 /-- The generic raw row encrypts the output key selected by `outputBit z` under the
 permuted assignment's argument keys, with the supplied seed's row coins. The output bit
 is independent of the gate truth function. [PS10, Theorem 163.7; Protocol 162.6]
+`rowWordWith E₁ E₂ width bound inputs gate args coins outputBit (C.gates[i]).args.length a z =
+(nestedSpecial E₁ E₂ (width z)).enc (argKeys C s i (s.2.2 i a)) (keyAt C s (inputs z + i) (outputBit
+z)) (s.2.1 i (s.2.2 i a))`.
 
 **Proof sketch.** Read the two shifted assignment bits through the permutation equation.
 Canonical argument-word lookup gives the two argument vertices. Circuit acyclicity and the
@@ -504,6 +568,8 @@ theorem rowWordWith_enc (E₁ E₂ : List Bool → List Bool)
 /-- The raw row machine equals the garbled row selected by a supplied XOR row permutation,
 when the gate-description fields and the key/nonce block equations hold.
 The contract is generic in the circuit and seed. [PS10, Protocol 162.6; BMR90]
+`rowWord E₁ E₂ width bound inputs gate kind args coins (C.gates[i]).args.length a z = garbledRow
+(nestedSpecial E₁ E₂ (width z)) C s i (s.2.2 i a)`.
 
 **Proof sketch.** The permutation equation identifies the two raw assignment bits with the
 first two bits of the permuted assignment. The kind-code equation then identifies the raw
@@ -550,7 +616,10 @@ theorem rowWord_garbledRow (E₁ E₂ : List Bool → List Bool)
 
 
 /-- A generic raw row depends only on the data maps and output bit at its input:
-freezing every map to its value at `z` and running at `[]` gives the same encrypted row. -/
+freezing every map to its value at `z` and running at `[]` gives the same encrypted row.
+`rowWordWith E₁ E₂ width bound inputs gate args coins outputBit l a z = rowWordWith E₁ E₂ (fun _ =>
+width z) (fun _ => bound z) (fun _ => inputs z) (fun _ => gate z) (fun _ => args z) (fun _ => coins
+z) (fun _ => outputBit z) l a []`. -/
 theorem rowWordWith_value (E₁ E₂ : List Bool → List Bool)
     (width bound inputs gate : List Bool → ℕ) (args coins : List Bool → List Bool)
     (outputBit : List Bool → Bool) (l : ℕ) (a : Fin l → Bool) (z : List Bool) :
@@ -563,7 +632,10 @@ theorem rowWordWith_value (E₁ E₂ : List Bool → List Bool)
 
 /-- A raw row depends only on the supplied data maps' values at its input:
 freezing each map to its value at `z` and running at `[]` gives the same row.
-This exposes pointwise field normalization without reducing any foreign implementation. -/
+This exposes pointwise field normalization without reducing any foreign implementation.
+`rowWord E₁ E₂ width bound inputs gate kind args coins l a z = rowWord E₁ E₂ (fun _ => width z) (fun
+_ => bound z) (fun _ => inputs z) (fun _ => gate z) (fun _ => kind z) (fun _ => args z) (fun _ =>
+coins z) l a []`. -/
 theorem rowWord_value (E₁ E₂ : List Bool → List Bool)
     (width bound inputs gate : List Bool → ℕ) (kind args coins : List Bool → List Bool)
     (l : ℕ) (a : Fin l → Bool) (z : List Bool) :

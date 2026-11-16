@@ -58,7 +58,8 @@ theorem keyWord_poly {coins : List Bool → List Bool} {width bound vertex : Lis
   exact (hkey z t).symm
 
 /-- The unary two-bit assignment index `b₀ + 2 b₁` is polynomial-time when both bits are:
-`z ↦ 1^((b₀ z).toNat + 2 · (b₁ z).toNat)`. [PS10, Protocol 162.6] -/
+`z ↦ 1^((b₀ z).toNat + 2 · (b₁ z).toNat)`. [PS10, Protocol 162.6]
+`PolyTimeComputable fun z => List.replicate ((b₀ z).toNat + 2 * (b₁ z).toNat) true`. -/
 theorem assignmentIndex_poly {b₀ b₁ : List Bool → Bool}
     (h₀ : PolyTimeComputable fun z => [b₀ z])
     (h₁ : PolyTimeComputable fun z => [b₁ z]) :
@@ -94,7 +95,8 @@ theorem rowCoinWord_poly {coins : List Bool → List Bool}
 
 /-- Position `j` of a gate's shift is polynomial-time:
 `z ↦ [(coins z).getD (10 · bound z · width z + 2 · gate z + j) false]`,
-when the coin and unary-number maps are polynomial-time. [PS10, Protocol 162.6] -/
+when the coin and unary-number maps are polynomial-time. [PS10, Protocol 162.6]
+`PolyTimeComputable fun z => [(coins z).getD (10 * bound z * width z + 2 * gate z + j) false]`. -/
 theorem shiftBit_poly {coins : List Bool → List Bool} {width bound gate : List Bool → ℕ}
     (j : ℕ) (hcoins : PolyTimeComputable coins)
     (hwidth : PolyTimeComputable fun z => List.replicate (width z) true)

@@ -80,7 +80,9 @@ theorem step_cases_exact (t : ℕ) (ht : t < 2 * C.gates.length) :
 
 /-- Every step below twice the gate count either has unchanged labels or is
 the substep of an actual argument at position zero or one. This is the shorter
-consumer interface to `step_cases_exact`. [PS10, Theorem 163.7] -/
+consumer interface to `step_cases_exact`. [PS10, Theorem 163.7]
+`GateHybrids.stageBit C v t = GateHybrids.stageBit C v (t + 1) ∨ ∃ i : Fin C.gates.length, ∃ p : Fin
+(C.gates[i.val]).args.length, t = 2 * i.val + p.val ∧ p.val < 2`. -/
 theorem step_cases (t : ℕ) (ht : t < 2 * C.gates.length) :
     GateHybrids.stageBit C v t = GateHybrids.stageBit C v (t + 1) ∨
       ∃ i : Fin C.gates.length, ∃ p : Fin (C.gates[i.val]).args.length,

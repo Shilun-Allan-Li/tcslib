@@ -37,16 +37,21 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates
 open BoolCircuit
 
 /-- A nonce coordinate consists of a gate, its actual argument assignment, and a half bit:
-`false` denotes the first nonce, and `true` the second. -/
+`false` denotes the first nonce, and `true` the second.
+`Index C = (Σ i : Fin C.gates.length, (Fin C.gates[i.val].args.length → Bool) × Bool)`. -/
 abbrev Index {m : ℕ} (C : DAGCircuit m) :=
   Σ i : Fin C.gates.length, (Fin C.gates[i.val].args.length → Bool) × Bool
 
-/-- `Index C` is the dependent product of gate indices and assignment/half pairs. -/
+/-- `Index C` is the dependent product of gate indices and assignment/half pairs.
+`Index C = (Σ i : Fin C.gates.length, (Fin C.gates[i.val].args.length → Bool) × Bool)`. -/
 theorem Index_eq {m : ℕ} (C : DAGCircuit m) :
     Index C = (Σ i : Fin C.gates.length, (Fin C.gates[i.val].args.length → Bool) × Bool) := rfl
 
 /-- Pick the challenge index for a selected nonce coordinate. The selected argument's half
-is first for position zero and second otherwise; out-of-capacity occurrences return `none`. -/
+is first for position zero and second otherwise; out-of-capacity occurrences return `none`.
+`pick C rows perm u q x = (GateOccurrences.selectedPosition C.gates[x.1.val] x.2.1 u).bind (fun p =>
+if x.2.2 = decide (p.val ≠ 0) then let j := SelectedSeed.slotIndex C rows perm u x.1 x.2.1 p; if h :
+j < q + 1 then some ⟨j, h⟩ else none else none)`. -/
 noncomputable def pick {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -57,7 +62,10 @@ noncomputable def pick {m : ℕ} (C : DAGCircuit m)
       if h : j < q + 1 then some ⟨j, h⟩ else none
     else none
 
-/-- `pick` selects the occurrence rank exactly for the selected nonce half and within capacity. -/
+/-- `pick` selects the occurrence rank exactly for the selected nonce half and within capacity.
+`pick C rows perm u q x = (GateOccurrences.selectedPosition C.gates[x.1.val] x.2.1 u).bind (fun p =>
+if x.2.2 = decide (p.val ≠ 0) then let j := SelectedSeed.slotIndex C rows perm u x.1 x.2.1 p; if h :
+j < q + 1 then some ⟨j, h⟩ else none else none)`. -/
 theorem pick_eq {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -70,7 +78,10 @@ theorem pick_eq {m : ℕ} (C : DAGCircuit m)
         else none) := rfl
 
 /-- Place a padded challenge slot at its gate, actual assignment, and selected nonce half.
-Padding without an occurrence has no destination coordinate. -/
+Padding without an occurrence has no destination coordinate.
+`place C rows perm u q j = (GateOccurrences.padded q (GateOccurrences.occurrences C rows perm u)
+j).map (fun s => ⟨s.1, (perm s.1 ((rows s.1).getD s.2.1 (fun _ => false)), decide (s.2.2 ≠
+0))⟩)`. -/
 def place {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -78,7 +89,10 @@ def place {m : ℕ} (C : DAGCircuit m)
   (GateOccurrences.padded q (GateOccurrences.occurrences C rows perm u) j).map fun s =>
     ⟨s.1, (perm s.1 ((rows s.1).getD s.2.1 (fun _ => false)), decide (s.2.2 ≠ 0))⟩
 
-/-- `place` maps the padded occurrence triple to its actual-assignment nonce coordinate. -/
+/-- `place` maps the padded occurrence triple to its actual-assignment nonce coordinate.
+`place C rows perm u q j = (GateOccurrences.padded q (GateOccurrences.occurrences C rows perm u)
+j).map (fun s => ⟨s.1, (perm s.1 ((rows s.1).getD s.2.1 (fun _ => false)), decide (s.2.2 ≠
+0))⟩)`. -/
 theorem place_eq {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -101,6 +115,7 @@ theorem place_of_padded {m : ℕ} (C : DAGCircuit m)
 
 /-- Every picked challenge slot is placed back at the original nonce coordinate.
 Completeness of the assignment rows ensures the occurrence rank has the prescribed row.
+`place C rows perm u q j = some x`.
 
 **Proof sketch.** A successful pick identifies the selected argument, the matching nonce
 half, and an in-capacity occurrence rank. Reading that padded rank returns the exact gate,
@@ -131,6 +146,7 @@ theorem place_of_pick {m : ℕ} (C : DAGCircuit m)
 
 /-- Every placed challenge slot is picked back at the same index. Duplicate-free row
 and occurrence enumerations make both indices exact.
+`pick C rows perm u q x = some j`.
 
 **Proof sketch.** A successful placement supplies an occurrence triple and its valid row
 and argument indices. Its vertex and bit tests force the selected-position search to choose
@@ -166,7 +182,8 @@ theorem pick_of_place {m : ℕ} (C : DAGCircuit m)
   exact congrArg some (Fin.ext hidx)
 
 /-- Pick and place are exact partial inverses, including unmatched padding and unchanged
-nonce coordinates. These are the hypotheses of the generic coordinate-swap law. -/
+nonce coordinates. These are the hypotheses of the generic coordinate-swap law.
+`pick C rows perm u q x = some j ↔ place C rows perm u q j = some x`. -/
 theorem pick_iff_place {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -179,6 +196,9 @@ theorem pick_iff_place {m : ℕ} (C : DAGCircuit m)
 
 /-- Reading either half of the filled nonce table is exactly the partial coordinate
 replacement prescribed by `pick`, with the old nonce retained for an unmatched coordinate.
+`(if half then (SelectedSeed.nonce C rows s u q r i a).2 else (SelectedSeed.nonce C rows s u q r i
+a).1) = (pick C rows s.2.2 u q ⟨i, (a, half)⟩).elim (if half then (s.2.1 i a).2 else (s.2.1 i a).1)
+r`.
 
 **Proof sketch.** With no selected argument both halves are retained. With a selected
 argument, distinguish its first/second encryption layer and whether its occurrence fits the

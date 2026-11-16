@@ -47,14 +47,18 @@ open Complexity Turing BoolCircuit
 
 /-- The traversal step sends `⟨x, ⟨records, values⟩⟩` to
 `⟨tail records, F ⟨x, ⟨head records, values⟩⟩⟩`.
-The outer retained input is maintained by the state-loop host. -/
+The outer retained input is maintained by the state-loop host.
+`step F w = pairEncode (pairSndD (pairFstD (pairSndD w))) (F (pairEncode (pairFstD w) (pairEncode
+(pairFstD (pairFstD (pairSndD w))) (pairSndD (pairSndD w)))))`. -/
 def step (F : List Bool → List Bool) (w : List Bool) : List Bool :=
   pairEncode (pairSndD (pairFstD (pairSndD w)))
     (F (pairEncode (pairFstD w)
       (pairEncode (pairFstD (pairFstD (pairSndD w))) (pairSndD (pairSndD w)))))
 
 /-- For every word `w`, `step F w` drops its first gate record and calls `F` on
-`⟨fst w, ⟨head records, values⟩⟩`. -/
+`⟨fst w, ⟨head records, values⟩⟩`.
+`step F w = pairEncode (pairSndD (pairFstD (pairSndD w))) (F (pairEncode (pairFstD w) (pairEncode
+(pairFstD (pairFstD (pairSndD w))) (pairSndD (pairSndD w)))))`. -/
 theorem step_eq (F : List Bool → List Bool) (w : List Bool) :
     step F w = pairEncode (pairSndD (pairFstD (pairSndD w)))
       (F (pairEncode (pairFstD w)
@@ -68,7 +72,8 @@ def acc (w : List Bool) : Bool := decide (pairFstD (pairSndD w) = [])
 theorem acc_eq (w : List Bool) : acc w = decide (pairFstD (pairSndD w) = []) := rfl
 
 /-- If `F` is polynomial-time, then `step F` is polynomial-time; it consists of
-pair projections, two pairings and one call to `F`. -/
+pair projections, two pairings and one call to `F`.
+`PolyTimeComputable (step F)`. -/
 theorem step_poly {F : List Bool → List Bool} (hF : PolyTimeComputable F) :
     PolyTimeComputable (step F) :=
   ((polyTimeComputable_pairSndD.comp
@@ -78,7 +83,8 @@ theorem step_poly {F : List Bool → List Bool} (hF : PolyTimeComputable F) :
           (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)).pairEncode
         (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)))))
 
-/-- The one-bit acceptance test `w ↦ [acc w]` is polynomial-time. -/
+/-- The one-bit acceptance test `w ↦ [acc w]` is polynomial-time.
+`PolyTimeComputable fun w => [acc w]`. -/
 theorem acc_poly : PolyTimeComputable fun w => [acc w] :=
   polyTimeComputable_isNil.comp
     (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
@@ -122,6 +128,7 @@ when the encoded input maps and leaf routine are polynomial-time, the gate count
 is at most `R |x|`, and every encoded prefix state has length at most `B |x|`.
 The leaf receives `⟨x, ⟨gateCode g, valueCode x vs⟩⟩` and returns
 `valueCode x (vs ++ [f x g vs])`. [PS10, Protocol 162.6]
+`PolyTimeComputable fun x => valueCode x (runWith (f x) (gs x) (init x))`.
 
 **Proof sketch.** Use the public state-loop host with the unprocessed gate records
 and current vertex data as state. The orbit equation gives the caller's length
@@ -168,6 +175,10 @@ theorem polyTimeComputable_runWith {β : List Bool → Type} (gateCode : DAGGate
 and emitting nothing. At every time every work head of that same machine is
 within the budget of the origin. The hypotheses are those of
 `polyTimeComputable_runWith`. [PS10, Protocol 162.6]
+`∃ (M : FinTM Bool) (A d : ℕ), ModuleHost.Clean M (fun x => valueCode x (runWith (f x) (gs x) (init
+x))) (fun _ => []) (fun n => A * (n + 1) ^ d) ∧ ∀ (x arg : List Bool) (v : ℕ) (j : Fin M.k),
+|(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v).workTapePos j| ≤ (A *
+(arg.length + 1) ^ d : ℕ)`.
 
 The machine is obtained by applying the registered H14 clean-install contract to
 the traversal's polynomial-time function; its head envelope is H14's `Clean.envelope`. -/

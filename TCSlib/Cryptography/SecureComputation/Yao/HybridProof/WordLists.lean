@@ -38,7 +38,8 @@ open Complexity Turing
 
 /-- Encoding a data-dependent list of entries is polynomial-time:
 `z ↦ encWords ((range (count z)).map (entry z))`, if the unary count and the entry map
-on `⟨1^i, z⟩` are polynomial-time. [PS10, Protocol 162.6] -/
+on `⟨1^i, z⟩` are polynomial-time. [PS10, Protocol 162.6]
+`PolyTimeComputable fun z => BinArith.encWords ((List.range (count z)).map (entry z))`. -/
 theorem rangeTable_poly {count : List Bool → ℕ} {entry : List Bool → ℕ → List Bool}
     (hcount : PolyTimeComputable fun z => List.replicate (count z) true)
     (hentry : PolyTimeComputable fun w => entry (pairSndD w) (pairFstD w).length) :

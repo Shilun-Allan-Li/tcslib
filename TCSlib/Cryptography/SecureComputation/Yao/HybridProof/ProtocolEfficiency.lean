@@ -36,7 +36,9 @@ open Complexity Turing TCSlib.Cryptography
 
 /-- The garbling-message envelope at `n` is
 `2 S(n) (112 n + 82) + 2 A(n) (2 n + 2) + O(n) (6 n + 6) + 4`.
-[PS10, Protocol 162.6] -/
+[PS10, Protocol 162.6]
+`(aliceMessageBound S A O).eval n = 2 * (S.eval n * (112 * n + 82)) + 2 * (A.eval n * (2 * n + 2)) +
+O.eval n * (6 * n + 6) + 4`. -/
 def aliceMessageBound (S A O : PolyExpr) : PolyExpr :=
   .add (.add (.add
     (.mul (.const 2) (.mul S (.add (.mul (.const 112) .var) (.const 82))))
@@ -55,7 +57,8 @@ theorem aliceMessageBound_eq (S A O : PolyExpr) (n : ℕ) :
 
 /-- In an Alice-first protocol with two messages, bounds `BA(|w|)` and `BB(|w|)` on
 the first message and reply imply bound `(BA + BB)(|w|)` on every transcript message,
-for arbitrary private inputs and tapes. [PS10, Definition 155.1; Protocol 162.6] -/
+for arbitrary private inputs and tapes. [PS10, Definition 155.1; Protocol 162.6]
+`msg.length ≤ (PolyExpr.add BA BB).eval w.length`. -/
 theorem twoMove_message_length_le (π : Protocol)
     (msgA : List Bool → List Bool → List Bool → List Bool)
     (msgB : List Bool → List Bool → List Bool → List Bool → List Bool)

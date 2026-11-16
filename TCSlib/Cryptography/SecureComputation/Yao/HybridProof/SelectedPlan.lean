@@ -46,7 +46,11 @@ variable {m n : ℕ} (C : DAGCircuit m)
   (u : Fin C.size) (q : ℕ)
 
 /-- A row with no selected label retains its precomputed ciphertext. A selected row uses
-the challenge descriptor for its unique selected argument and occurrence rank. -/
+the challenge descriptor for its unique selected argument and occurrence rank.
+`record C rows s u E₁ E₂ o i a = (GateOccurrences.selectedPosition C.gates[i.val] a u.val).elim
+(SliceReconstruction.fixedRecord ((nestedSpecial E₁ E₂ n).enc (argKeys C s i a) (o i a) (s.2.1 i
+a))) (fun p => SelectedRows.descriptor n (argKeys C s i a) (s.2.1 i a) p.val (SelectedSeed.slotIndex
+C rows s.2.2 u.val i a p))`. -/
 noncomputable def record (E₁ E₂ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
     (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) : List Bool :=
@@ -57,7 +61,11 @@ noncomputable def record (E₁ E₂ : List Bool → List Bool)
       (SelectedSeed.slotIndex C rows s.2.2 u.val i a p))
 
 /-- `record` is a fixed ciphertext for an unselected row and the selected-layer descriptor
-at its occurrence rank for a selected row. -/
+at its occurrence rank for a selected row.
+`record C rows s u E₁ E₂ o i a = (GateOccurrences.selectedPosition C.gates[i.val] a u.val).elim
+(SliceReconstruction.fixedRecord ((nestedSpecial E₁ E₂ n).enc (argKeys C s i a) (o i a) (s.2.1 i
+a))) (fun p => SelectedRows.descriptor n (argKeys C s i a) (s.2.1 i a) p.val (SelectedSeed.slotIndex
+C rows s.2.2 u.val i a p))`. -/
 theorem record_eq (E₁ E₂ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
     (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) :
@@ -68,26 +76,38 @@ theorem record_eq (E₁ E₂ : List Bool → List Bool)
         (fun p => SelectedRows.descriptor n (argKeys C s i a) (s.2.1 i a) p.val
           (SelectedSeed.slotIndex C rows s.2.2 u.val i a p)) := rfl
 
-/-- A challenge slot has the selected row's layer offset, or zero for unused padding. -/
+/-- A challenge slot has the selected row's layer offset, or zero for unused padding.
+`slotOffset C rows s u q j = (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2
+u.val) j).elim 0 (fun t => SelectedRows.offset n (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1
+(fun _ => false)))) t.2.2)`. -/
 noncomputable def slotOffset (j : Fin (q + 1)) : ℕ :=
   (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 u.val) j).elim 0 fun t =>
     SelectedRows.offset n
       (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _ => false)))) t.2.2
 
-/-- `slotOffset` reads the selected row's layer offset, with padding offset zero. -/
+/-- `slotOffset` reads the selected row's layer offset, with padding offset zero.
+`slotOffset C rows s u q j = (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2
+u.val) j).elim 0 (fun t => SelectedRows.offset n (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1
+(fun _ => false)))) t.2.2)`. -/
 theorem slotOffset_eq (j : Fin (q + 1)) :
     slotOffset C rows s u q j =
       (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 u.val) j).elim 0
         (fun t => SelectedRows.offset n
           (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _ => false)))) t.2.2) := rfl
 
-/-- A challenge slot has its selected row's message length, or `n` for unused padding. -/
+/-- A challenge slot has its selected row's message length, or `n` for unused padding.
+`slotLength C rows s u q j = (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2
+u.val) j).elim n (fun t => SelectedRows.length n (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1
+(fun _ => false)))) t.2.2)`. -/
 noncomputable def slotLength (j : Fin (q + 1)) : ℕ :=
   (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 u.val) j).elim n fun t =>
     SelectedRows.length n
       (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _ => false)))) t.2.2
 
-/-- `slotLength` reads the selected row's message length, with padding length `n`. -/
+/-- `slotLength` reads the selected row's message length, with padding length `n`.
+`slotLength C rows s u q j = (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2
+u.val) j).elim n (fun t => SelectedRows.length n (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1
+(fun _ => false)))) t.2.2)`. -/
 theorem slotLength_eq (j : Fin (q + 1)) :
     slotLength C rows s u q j =
       (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 u.val) j).elim n
@@ -95,7 +115,10 @@ theorem slotLength_eq (j : Fin (q + 1)) :
           (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _ => false)))) t.2.2) := rfl
 
 /-- A challenge slot's precomputed plaintext word uses only fixed keys and nonce halves;
-unused padding has the fixed `n`-bit zero word. -/
+unused padding has the fixed `n`-bit zero word.
+`slotWord C rows s u q E₁ o j = (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2
+u.val) j).elim (List.replicate n false) (fun t => let a := s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _
+=> false)); SelectedRows.word E₁ n (argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2)`. -/
 noncomputable def slotWord (E₁ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
     (j : Fin (q + 1)) : List Bool :=
@@ -104,7 +127,10 @@ noncomputable def slotWord (E₁ : List Bool → List Bool)
       let a := s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _ => false))
       SelectedRows.word E₁ n (argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2
 
-/-- `slotWord` reads the selected row's precomputed message, with zero-word padding. -/
+/-- `slotWord` reads the selected row's precomputed message, with zero-word padding.
+`slotWord C rows s u q E₁ o j = (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2
+u.val) j).elim (List.replicate n false) (fun t => let a := s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _
+=> false)); SelectedRows.word E₁ n (argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2)`. -/
 theorem slotWord_eq (E₁ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
     (j : Fin (q + 1)) :
@@ -114,32 +140,41 @@ theorem slotWord_eq (E₁ : List Bool → List Bool)
           let a := s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _ => false))
           SelectedRows.word E₁ n (argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2) := rfl
 
-/-- The typed padded slot message is `padFin` of its precomputed word at its slot length. -/
+/-- The typed padded slot message is `padFin` of its precomputed word at its slot length.
+`slotMessage C rows s u q E₁ o j = padFin (slotLength C rows s u q j) (slotWord C rows s u q E₁ o
+j)`. -/
 noncomputable def slotMessage (E₁ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
     (j : Fin (q + 1)) : Fin (slotLength C rows s u q j) → Bool :=
   padFin (slotLength C rows s u q j) (slotWord C rows s u q E₁ o j)
 
-/-- `slotMessage` is the padded typed view of the slot's precomputed word. -/
+/-- `slotMessage` is the padded typed view of the slot's precomputed word.
+`slotMessage C rows s u q E₁ o j = padFin (slotLength C rows s u q j) (slotWord C rows s u q E₁ o
+j)`. -/
 theorem slotMessage_eq (E₁ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
     (j : Fin (q + 1)) :
     slotMessage C rows s u q E₁ o j =
       padFin (slotLength C rows s u q j) (slotWord C rows s u q E₁ o j) := rfl
 
-/-- The descriptor tables retain every gate and every enumerated row in its original order. -/
+/-- The descriptor tables retain every gate and every enumerated row in its original order.
+`tables C rows s u E₁ E₂ o = List.ofFn (fun i => (rows i).map fun a => record C rows s u E₁ E₂ o i
+(s.2.2 i a))`. -/
 noncomputable def tables (E₁ E₂ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool)) :
     List (List (List Bool)) :=
   List.ofFn fun i => (rows i).map fun a => record C rows s u E₁ E₂ o i (s.2.2 i a)
 
-/-- `tables` is the `ofFn` list of each gate's enumerated, permuted row records. -/
+/-- `tables` is the `ofFn` list of each gate's enumerated, permuted row records.
+`tables C rows s u E₁ E₂ o = List.ofFn (fun i => (rows i).map fun a => record C rows s u E₁ E₂ o i
+(s.2.2 i a))`. -/
 theorem tables_eq (E₁ E₂ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool)) :
     tables C rows s u E₁ E₂ o =
       List.ofFn (fun i => (rows i).map fun a => record C rows s u E₁ E₂ o i (s.2.2 i a)) := rfl
 
-/-- Every slot word has exactly its prescribed message length, including unused padding. -/
+/-- Every slot word has exactly its prescribed message length, including unused padding.
+`(slotWord C rows s u q E₁ o j).length = slotLength C rows s u q j`. -/
 theorem slotWord_length
     {G₁ : ∀ k, (Fin k → Bool) → (Fin k → Bool) → (Fin (k + k) → Bool)}
     {E₁ : List Bool → List Bool}
@@ -155,7 +190,8 @@ theorem slotWord_length
     simp only [Option.elim_some]
     exact SelectedRows.word_length hGE₁ n _ _ _ _
 
-/-- Encoding a typed slot message returns its precomputed word exactly, including padding. -/
+/-- Encoding a typed slot message returns its precomputed word exactly, including padding.
+`List.ofFn (slotMessage C rows s u q E₁ o j) = slotWord C rows s u q E₁ o j`. -/
 theorem slotMessage_ofFn
     {G₁ : ∀ k, (Fin k → Bool) → (Fin k → Bool) → (Fin (k + k) → Bool)}
     {E₁ : List Bool → List Bool}
@@ -168,7 +204,11 @@ theorem slotMessage_ofFn
     ← slotWord_length C rows s u q hGE₁ o j, List.take_left]
 
 /-- At a stored occurrence triple, all three slice readers are the corresponding row's
-precomputed offset, message length and word after its fixed assignment permutation. -/
+precomputed offset, message length and word after its fixed assignment permutation.
+`let a := s.2.2 i ((rows i).getD row (fun _ => false)); slotOffset C rows s u q j =
+SelectedRows.offset n (argKeys C s i a) p ∧ slotLength C rows s u q j = SelectedRows.length n
+(argKeys C s i a) p ∧ slotWord C rows s u q E₁ o j = SelectedRows.word E₁ n (argKeys C s i a) (o i
+a) (s.2.1 i a) p`. -/
 theorem slotReaders_of_padded (E₁ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
     (j : Fin (q + 1)) (i : Fin C.gates.length) (row p : ℕ)
@@ -182,7 +222,8 @@ theorem slotReaders_of_padded (E₁ : List Bool → List Bool)
   simp only [slotOffset_eq, slotLength_eq, slotWord_eq, hpad, Option.elim_some, and_self]
 
 /-- Every padded slot's offset and message length fit in the joint pad of length
-`2n+(n+(4n+2))`, including unused slots whose shape is `(0,n)`. -/
+`2n+(n+(4n+2))`, including unused slots whose shape is `(0,n)`.
+`slotOffset C rows s u q j + n + slotLength C rows s u q j ≤ (n + n) + (n + (4 * n + 2))`. -/
 theorem slots_fit (j : Fin (q + 1)) :
     slotOffset C rows s u q j + n + slotLength C rows s u q j ≤
       (n + n) + (n + (4 * n + 2)) := by
@@ -197,6 +238,7 @@ theorem slots_fit (j : Fin (q + 1)) :
 
 /-- Two plaintext families give the same row record if they agree on rows with no selected
 inactive argument. Selected-row records themselves do not contain the plaintext.
+`record C rows s u E₁ E₂ o₀ i a = record C rows s u E₁ E₂ o₁ i a`.
 
 **Proof sketch.** For an unselected row, the fixed ciphertexts agree by the plaintext
 hypothesis. For a selected row, both records are the same direct or known-key wrapped
@@ -213,7 +255,8 @@ theorem record_congr (E₁ E₂ : List Bool → List Bool)
   | some p => simp only [Option.elim_some]
 
 /-- Two plaintext families have the same complete descriptor tables when they agree on
-all rows without a selected inactive argument. Thus both slice experiments use one advice. -/
+all rows without a selected inactive argument. Thus both slice experiments use one advice.
+`tables C rows s u E₁ E₂ o₀ = tables C rows s u E₁ E₂ o₁`. -/
 theorem tables_congr (E₁ E₂ : List Bool → List Bool)
     (o₀ o₁ : (i : Fin C.gates.length) →
       (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
@@ -227,7 +270,10 @@ theorem tables_congr (E₁ E₂ : List Bool → List Bool)
   exact record_congr C rows s u E₁ E₂ o₀ o₁ i (s.2.2 i a) (ho i (s.2.2 i a))
 
 /-- Fixed reconstruction advice serializes the descriptor tables, message tail, private input
-and retained Alice output. No challenge key or nonce is an input to this construction. -/
+and retained Alice output. No challenge key or nonce is an input to this construction.
+`advice C rows s u E₁ E₂ o tail privateInput aliceOutput = SliceReconstruction.advice
+(BinArith.encWords ((tables C rows s u E₁ E₂ o).map BinArith.encWords)) tail privateInput
+aliceOutput`. -/
 noncomputable def advice (E₁ E₂ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
     (tail privateInput aliceOutput : List Bool) : List Bool :=
@@ -235,7 +281,10 @@ noncomputable def advice (E₁ E₂ : List Bool → List Bool)
     (BinArith.encWords ((tables C rows s u E₁ E₂ o).map BinArith.encWords))
     tail privateInput aliceOutput
 
-/-- `advice` is the reconstruction encoding of the descriptor tables and three fixed fields. -/
+/-- `advice` is the reconstruction encoding of the descriptor tables and three fixed fields.
+`advice C rows s u E₁ E₂ o tail privateInput aliceOutput = SliceReconstruction.advice
+(BinArith.encWords ((tables C rows s u E₁ E₂ o).map BinArith.encWords)) tail privateInput
+aliceOutput`. -/
 theorem advice_eq (E₁ E₂ : List Bool → List Bool)
     (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
     (tail privateInput aliceOutput : List Bool) :
@@ -245,7 +294,9 @@ theorem advice_eq (E₁ E₂ : List Bool → List Bool)
         tail privateInput aliceOutput := rfl
 
 /-- Two plaintext families agreeing on every unselected row use the identical fixed advice,
-when the surrounding fields are the same. -/
+when the surrounding fields are the same.
+`advice C rows s u E₁ E₂ o₀ tail privateInput aliceOutput = advice C rows s u E₁ E₂ o₁ tail
+privateInput aliceOutput`. -/
 theorem advice_congr (E₁ E₂ : List Bool → List Bool)
     (o₀ o₁ : (i : Fin C.gates.length) →
       (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))

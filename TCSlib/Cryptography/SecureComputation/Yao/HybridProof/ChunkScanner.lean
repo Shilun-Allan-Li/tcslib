@@ -38,7 +38,8 @@ open Complexity Turing
 /-- The scanner has three bits of finite control: `Phase = Bool × Bool × Bool`. -/
 abbrev Phase := Bool × Bool × Bool
 
-/-- The phase code is the three-bit word `[q.1, q.2.1, q.2.2]`. -/
+/-- The phase code is the three-bit word `[q.1, q.2.1, q.2.2]`.
+`phaseCode q = [q.1, q.2.1, q.2.2]`. -/
 def phaseCode (q : Phase) : List Bool := [q.1, q.2.1, q.2.2]
 
 /-- `phaseCode q = [q.1, q.2.1, q.2.2]`. -/
@@ -47,7 +48,8 @@ theorem phaseCode_eq (q : Phase) : phaseCode q = [q.1, q.2.1, q.2.2] := rfl
 /-- Every phase code has length three: `|phaseCode q| = 3`. -/
 theorem length_phaseCode (q : Phase) : (phaseCode q).length = 3 := rfl
 
-/-- Read the first three bits, defaulting each missing bit to false. -/
+/-- Read the first three bits, defaulting each missing bit to false.
+`readPhase w = (w.headD false, (w.drop 1).headD false, (w.drop 2).headD false)`. -/
 def readPhase (w : List Bool) : Phase :=
   (w.headD false, (w.drop 1).headD false, (w.drop 2).headD false)
 
@@ -58,7 +60,8 @@ theorem readPhase_eq (w : List Bool) :
 /-- Reading the phase code recovers the phase: `readPhase (phaseCode q) = q`. -/
 theorem readPhase_code (q : Phase) : readPhase (phaseCode q) = q := rfl
 
-/-- Concatenate the word `o q b` emitted at each input bit, changing control by `δ q b`. -/
+/-- Concatenate the word `o q b` emitted at each input bit, changing control by `δ q b`.
+`scan δ o q [] = []` and `scan δ o q (b :: w) = o q b ++ scan δ o (δ q b) w`. -/
 def scan (δ : Phase → Bool → Phase) (o : Phase → Bool → List Bool) :
     Phase → List Bool → List Bool
   | _, [] => []
@@ -73,22 +76,30 @@ theorem scan_cons (δ : Phase → Bool → Phase) (o : Phase → Bool → List B
     (b : Bool) (w : List Bool) :
     scan δ o q (b :: w) = o q b ++ scan δ o (δ q b) w := rfl
 
-/-- A scanner round stores the next three-bit control and removes one input bit. -/
+/-- A scanner round stores the next three-bit control and removes one input bit.
+`step δ w = pairEncode (phaseCode (δ (readPhase (pairFstD w)) ((pairSndD w).headD false)))
+((pairSndD w).drop 1)`. -/
 def step (δ : Phase → Bool → Phase) (w : List Bool) : List Bool :=
   pairEncode (phaseCode (δ (readPhase (pairFstD w)) ((pairSndD w).headD false)))
     ((pairSndD w).drop 1)
 
-/-- `step δ w` pairs the next phase code with `(pairSndD w).drop 1`. -/
+/-- `step δ w` pairs the next phase code with `(pairSndD w).drop 1`.
+`step δ w = pairEncode (phaseCode (δ (readPhase (pairFstD w)) ((pairSndD w).headD false)))
+((pairSndD w).drop 1)`. -/
 theorem step_eq (δ : Phase → Bool → Phase) (w : List Bool) :
     step δ w =
       pairEncode (phaseCode (δ (readPhase (pairFstD w)) ((pairSndD w).headD false)))
         ((pairSndD w).drop 1) := rfl
 
-/-- A scanner emits nothing on an empty suffix, and otherwise emits `o q (head suffix)`. -/
+/-- A scanner emits nothing on an empty suffix, and otherwise emits `o q (head suffix)`.
+`emit o w = if pairSndD w = [] then [] else o (readPhase (pairFstD w)) ((pairSndD w).headD
+false)`. -/
 def emit (o : Phase → Bool → List Bool) (w : List Bool) : List Bool :=
   if pairSndD w = [] then [] else o (readPhase (pairFstD w)) ((pairSndD w).headD false)
 
-/-- `emit o w` is empty on an empty second component and otherwise is the table entry. -/
+/-- `emit o w` is empty on an empty second component and otherwise is the table entry.
+`emit o w = if pairSndD w = [] then [] else o (readPhase (pairFstD w)) ((pairSndD w).headD
+false)`. -/
 theorem emit_eq (o : Phase → Bool → List Bool) (w : List Bool) :
     emit o w =
       if pairSndD w = [] then []
@@ -169,13 +180,15 @@ theorem emit_poly (o : Phase → Bool → List Bool) : PolyTimeComputable (emit 
   funext w
   simp only [emit_eq, readPhase_eq, decide_eq_true_eq, Function.comp_apply]
 
-/-- On a phase/suffix pair the round advances its phase and drops one suffix bit. -/
+/-- On a phase/suffix pair the round advances its phase and drops one suffix bit.
+`step δ (pairEncode (phaseCode q) w) = pairEncode (phaseCode (δ q (w.headD false))) (w.drop 1)`. -/
 theorem step_pair (δ : Phase → Bool → Phase) (q : Phase) (w : List Bool) :
     step δ (pairEncode (phaseCode q) w) =
       pairEncode (phaseCode (δ q (w.headD false))) (w.drop 1) := by
   rw [step_eq, pairFstD_pairEncode, pairSndD_pairEncode, readPhase_code]
 
-/-- On a phase/suffix pair emission is empty exactly for the exhausted suffix. -/
+/-- On a phase/suffix pair emission is empty exactly for the exhausted suffix.
+`emit o (pairEncode (phaseCode q) w) = if w = [] then [] else o q (w.headD false)`. -/
 theorem emit_pair (o : Phase → Bool → List Bool) (q : Phase) (w : List Bool) :
     emit o (pairEncode (phaseCode q) w) =
       if w = [] then [] else o q (w.headD false) := by
@@ -211,6 +224,8 @@ theorem length_iterate (δ : Phase → Bool → Phase) (w : List Bool) (i : ℕ)
     omega
 
 /-- Emitting along at least `|w|` rounds of the encoded scanner yields `scan δ o q w`.
+`(List.range N).flatMap (fun i => emit o ((step δ)^[i] (pairEncode (phaseCode q) w))) = scan δ o q
+w`.
 
 **Proof sketch.** Induct on the round budget. The first round emits the head's table entry,
 then the next state holds the remaining input. Once the suffix is empty all later emissions
@@ -262,7 +277,10 @@ theorem scan_poly (δ : Phase → Bool → Phase) (o : Phase → Bool → List B
 
 /-- One clean finite machine installs the scanner's value and emits nothing within
 `A · (|arg| + 1)^d` steps. Every work head of that same machine remains within that bound
-at every time. The machine is the public H14 clean-install module for `scan δ o q`. -/
+at every time. The machine is the public H14 clean-install module for `scan δ o q`.
+`∃ (M : FinTM Bool) (A d : ℕ), ModuleHost.Clean M (scan δ o q) (fun _ => []) (fun n => A * (n + 1) ^
+d) ∧ ∀ (x arg : List Bool) (v : ℕ) (j : Fin M.k), |(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀
+(stateWord M.k arg)) v).workTapePos j| ≤ (A * (arg.length + 1) ^ d : ℕ)`. -/
 theorem scan_host (δ : Phase → Bool → Phase) (o : Phase → Bool → List Bool) (q : Phase) :
     ∃ (M : FinTM Bool) (A d : ℕ),
       ModuleHost.Clean M (scan δ o q) (fun _ => []) (fun n => A * (n + 1) ^ d) ∧

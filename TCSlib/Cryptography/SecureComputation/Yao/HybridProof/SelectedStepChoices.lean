@@ -39,16 +39,19 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedStepChoic
 
 open Complexity Turing BoolCircuit TCSlib.Cryptography
 
-/-- A selection is a gate and one of its actual argument positions. -/
+/-- A selection is a gate and one of its actual argument positions.
+`Selection C = (Σ i : Fin C.gates.length, Fin C.gates[i.val].args.length)`. -/
 abbrev Selection {m : ℕ} (C : DAGCircuit m) :=
   Σ i : Fin C.gates.length, Fin C.gates[i.val].args.length
 
-/-- `Selection C` is the dependent pair of a gate index and a valid argument index. -/
+/-- `Selection C` is the dependent pair of a gate index and a valid argument index.
+`Selection C = (Σ i : Fin C.gates.length, Fin C.gates[i.val].args.length)`. -/
 theorem Selection_eq {m : ℕ} (C : DAGCircuit m) :
     Selection C = (Σ i : Fin C.gates.length, Fin C.gates[i.val].args.length) := rfl
 
 /-- The selected vertex is the vertex read at the selected argument position. Acyclicity
-puts this vertex within the circuit's finite key table. -/
+puts this vertex within the circuit's finite key table.
+`(wire C a).val = C.gates[a.1.val].args[a.2.val]`. -/
 def wire {m : ℕ} (C : DAGCircuit m) (a : Selection C) : Fin C.size :=
   ⟨C.gates[a.1.val].args[a.2.val], by
     have h := GateOccurrences.selected_wire_lt C a.1 _ (List.getElem_mem a.2.isLt)
@@ -56,28 +59,34 @@ def wire {m : ℕ} (C : DAGCircuit m) (a : Selection C) : Fin C.size :=
     rw [DAGCircuit.size_eq]
     omega⟩
 
-/-- `wire C a` has value `C.gates[a.gate].args[a.position]`. -/
+/-- `wire C a` has value `C.gates[a.gate].args[a.position]`.
+`(wire C a).val = C.gates[a.1.val].args[a.2.val]`. -/
 theorem wire_val {m : ℕ} (C : DAGCircuit m) (a : Selection C) :
     (wire C a).val = C.gates[a.1.val].args[a.2.val] := rfl
 
-/-- The full baseline tape has `10*S(n)*n+2*S(n)` bits, including all unused coordinates. -/
+/-- The full baseline tape has `10*S(n)*n+2*S(n)` bits, including all unused coordinates.
+`Tape S n = (Fin (10 * S.eval n * n + 2 * S.eval n) → Bool)`. -/
 abbrev Tape (S : PolyExpr) (n : ℕ) := Fin (10 * S.eval n * n + 2 * S.eval n) → Bool
 
-/-- `Tape S n` is the complete addressed key/nonce/shift bit-vector type. -/
+/-- `Tape S n` is the complete addressed key/nonce/shift bit-vector type.
+`Tape S n = (Fin (10 * S.eval n * n + 2 * S.eval n) → Bool)`. -/
 theorem Tape_eq (S : PolyExpr) (n : ℕ) :
     Tape S n = (Fin (10 * S.eval n * n + 2 * S.eval n) → Bool) := rfl
 
 /-- A choice is an optional input and actual selected argument, paired with a full baseline
-tape. `none` permits an advice choice even when no gate or input option exists. -/
+tape. `none` permits an advice choice even when no gate or input option exists.
+`Choice I C S n = (Option (I n × Selection (C n)) × Tape S n)`. -/
 abbrev Choice (I : ℕ → Type) {inputs : ℕ → ℕ} (C : ∀ n, DAGCircuit (inputs n))
     (S : PolyExpr) (n : ℕ) := Option (I n × Selection (C n)) × Tape S n
 
-/-- `Choice I C S n` retains an optional input/argument pair and the full baseline tape. -/
+/-- `Choice I C S n` retains an optional input/argument pair and the full baseline tape.
+`Choice I C S n = (Option (I n × Selection (C n)) × Tape S n)`. -/
 theorem Choice_eq (I : ℕ → Type) {inputs : ℕ → ℕ} (C : ∀ n, DAGCircuit (inputs n))
     (S : PolyExpr) (n : ℕ) :
     Choice I C S n = (Option (I n × Selection (C n)) × Tape S n) := rfl
 
-/-- The canonical row list enumerates every Boolean assignment by `Finset.univ.toList`. -/
+/-- The canonical row list enumerates every Boolean assignment by `Finset.univ.toList`.
+`rows C i = (Finset.univ : Finset (Fin C.gates[i.val].args.length → Bool)).toList`. -/
 noncomputable def rows {m : ℕ} (C : DAGCircuit m) (i : Fin C.gates.length) :
     List (Fin C.gates[i.val].args.length → Bool) := Finset.univ.toList
 
@@ -85,18 +94,22 @@ noncomputable def rows {m : ℕ} (C : DAGCircuit m) (i : Fin C.gates.length) :
 theorem rows_eq {m : ℕ} (C : DAGCircuit m) (i : Fin C.gates.length) :
     rows C i = (Finset.univ : Finset (Fin C.gates[i.val].args.length → Bool)).toList := rfl
 
-/-- Every Boolean assignment occurs in the canonical row list. -/
+/-- Every Boolean assignment occurs in the canonical row list.
+`a ∈ rows C i`. -/
 theorem rows_complete {m : ℕ} (C : DAGCircuit m) (i : Fin C.gates.length)
     (a : Fin C.gates[i.val].args.length → Bool) : a ∈ rows C i :=
   Eq.mpr (congrArg (fun xs : List (Fin C.gates[i.val].args.length → Bool) => a ∈ xs)
     (rows_eq C i)) (Finset.mem_toList.mpr (Finset.mem_univ a))
 
-/-- The canonical row list has no repeated assignments. -/
+/-- The canonical row list has no repeated assignments.
+`(rows C i).Nodup`. -/
 theorem rows_nodup {m : ℕ} (C : DAGCircuit m) (i : Fin C.gates.length) : (rows C i).Nodup :=
   Eq.mpr (congrArg List.Nodup (rows_eq C i)) (Finset.nodup_toList _)
 
 /-- A size-S fan-in-two circuit's full selected occurrence list fits in `4*S(n)+1` slots,
-for every row permutation and selected vertex. [PS10, Theorem 163.7] -/
+for every row permutation and selected vertex. [PS10, Theorem 163.7]
+`(GateOccurrences.occurrences C (rows C) perm u).length ≤ (SelectedAdviceBounds.slotBudget S).eval
+n + 1`. -/
 theorem capacity {m : ℕ} (C : DAGCircuit m) (S : PolyExpr) (n : ℕ)
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
     (u : ℕ) (hSize : C.size ≤ S.eval n) (hfanin : C.IsFaninTwo) :
@@ -118,7 +131,10 @@ variable {I : ℕ → Type} {inputs : ℕ → ℕ} (C : ∀ n, DAGCircuit (input
   (v : ∀ n, I n → ℕ → Bool) (output : ∀ n, Fin (O.eval n) → ℕ)
   (bobWord aliceWord : ∀ n, I n → List Bool) (E₁ E₂ : List Bool → List Bool)
 
-/-- A real choice uses its selected row offsets; the absent choice uses offset zero. -/
+/-- A real choice uses its selected row offsets; the absent choice uses offset zero.
+`offset (I := I) C S seed n (none, t) = fun _ => 0` and `offset C S seed n (some (z, b), t) =
+SelectedPlan.slotOffset (C n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b)
+((SelectedAdviceBounds.slotBudget S).eval n)`. -/
 noncomputable def offset (n : ℕ) (a : Choice I C S n) :
     Fin ((SelectedAdviceBounds.slotBudget S).eval n + 1) → ℕ :=
   match a with
@@ -126,16 +142,22 @@ noncomputable def offset (n : ℕ) (a : Choice I C S n) :
   | (some (_, b), t) => SelectedPlan.slotOffset (C n) (rows (C n))
       (seed n (List.ofFn t)) (wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n)
 
-/-- The absent choice's offset vector is constantly zero. -/
+/-- The absent choice's offset vector is constantly zero.
+`offset (I := I) C S seed n (none, t) = fun _ => 0`. -/
 theorem offset_none (n : ℕ) (t : Tape S n) :
     offset (I := I) C S seed n (none, t) = fun _ => 0 := rfl
 
-/-- A real choice's offsets are exactly the complete selected occurrence plan. -/
+/-- A real choice's offsets are exactly the complete selected occurrence plan.
+`offset C S seed n (some (z, b), t) = SelectedPlan.slotOffset (C n) (rows (C n)) (seed n (List.ofFn
+t)) (wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n)`. -/
 theorem offset_some (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n) :
     offset C S seed n (some (z, b), t) = SelectedPlan.slotOffset (C n) (rows (C n))
       (seed n (List.ofFn t)) (wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n) := rfl
 
-/-- A real choice uses the selected row message lengths; the absent choice uses zero. -/
+/-- A real choice uses the selected row message lengths; the absent choice uses zero.
+`len (I := I) C S seed n (none, t) = fun _ => 0` and `len C S seed n (some (z, b), t) =
+SelectedPlan.slotLength (C n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b)
+((SelectedAdviceBounds.slotBudget S).eval n)`. -/
 noncomputable def len (n : ℕ) (a : Choice I C S n) :
     Fin ((SelectedAdviceBounds.slotBudget S).eval n + 1) → ℕ :=
   match a with
@@ -143,17 +165,25 @@ noncomputable def len (n : ℕ) (a : Choice I C S n) :
   | (some (_, b), t) => SelectedPlan.slotLength (C n) (rows (C n))
       (seed n (List.ofFn t)) (wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n)
 
-/-- The absent choice's message-length vector is constantly zero. -/
+/-- The absent choice's message-length vector is constantly zero.
+`len (I := I) C S seed n (none, t) = fun _ => 0`. -/
 theorem len_none (n : ℕ) (t : Tape S n) :
     len (I := I) C S seed n (none, t) = fun _ => 0 := rfl
 
-/-- A real choice's lengths are exactly the complete selected occurrence plan. -/
+/-- A real choice's lengths are exactly the complete selected occurrence plan.
+`len C S seed n (some (z, b), t) = SelectedPlan.slotLength (C n) (rows (C n)) (seed n (List.ofFn t))
+(wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n)`. -/
 theorem len_some (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n) :
     len C S seed n (some (z, b), t) = SelectedPlan.slotLength (C n) (rows (C n))
       (seed n (List.ofFn t)) (wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n) := rfl
 
 /-- The chosen side supplies its fixed plaintext keys to every selected occurrence; an
-absent choice supplies the unique empty messages. -/
+absent choice supplies the unique empty messages.
+`message C S seed v E₁ side n (none, t) = fun _ _ => false` and `message C S seed v E₁ side n (some
+(z, b), t) = SelectedPlan.slotMessage (C n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b)
+((SelectedAdviceBounds.slotBudget S).eval n) E₁ (fun i a => keyAt (C n) (seed n (List.ofFn t))
+(inputs n + i.val) (GateHybrids.stageBit (C n) (v n z) (2 * b.1.val + b.2.val + side.toNat) i
+a))`. -/
 noncomputable def message (side : Bool) (n : ℕ) (a : Choice I C S n) :
     ∀ j, Fin (len C S seed n a j) → Bool :=
   match a with
@@ -163,12 +193,17 @@ noncomputable def message (side : Bool) (n : ℕ) (a : Choice I C S n) :
       (fun i a => keyAt (C n) (seed n (List.ofFn t)) (inputs n + i.val)
         (GateHybrids.stageBit (C n) (v n z) (2 * b.1.val + b.2.val + side.toNat) i a))
 
-/-- The absent choice uses the constant-false function on each empty message type. -/
+/-- The absent choice uses the constant-false function on each empty message type.
+`message C S seed v E₁ side n (none, t) = fun _ _ => false`. -/
 theorem message_none (side : Bool) (n : ℕ) (t : Tape S n) :
     message C S seed v E₁ side n (none, t) = fun _ _ => false := rfl
 
 /-- A real choice's side-specific messages are exactly the selected occurrence plan at
-stage `2*gate+position+side.toNat`. -/
+stage `2*gate+position+side.toNat`.
+`message C S seed v E₁ side n (some (z, b), t) = SelectedPlan.slotMessage (C n) (rows (C n)) (seed n
+(List.ofFn t)) (wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n) E₁ (fun i a => keyAt (C
+n) (seed n (List.ofFn t)) (inputs n + i.val) (GateHybrids.stageBit (C n) (v n z) (2 * b.1.val +
+b.2.val + side.toNat) i a))`. -/
 theorem message_some (side : Bool) (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n) :
     message C S seed v E₁ side n (some (z, b), t) =
       SelectedPlan.slotMessage (C n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b)
@@ -177,7 +212,15 @@ theorem message_some (side : Bool) (n : ℕ) (z : I n) (b : Selection (C n)) (t 
           (GateHybrids.stageBit (C n) (v n z) (2 * b.1.val + b.2.val + side.toNat) i a)) := rfl
 
 /-- Real advice is the fixed before-stage descriptor/view word. The absent choice uses
-empty advice. Both sides use this same word, independent of the challenge key/nonces. -/
+empty advice. Both sides use this same word, independent of the challenge key/nonces.
+`advice C S A B O seed v output bobWord aliceWord E₁ E₂ n (none, t) = []` and `advice C S A B O seed
+v output bobWord aliceWord E₁ E₂ n (some (z, b), t) = SelectedPlan.advice (C n) (rows (C n)) (seed n
+(List.ofFn t)) (wire (C n) b) E₁ E₂ (fun i a => keyAt (C n) (seed n (List.ofFn t)) (inputs n +
+i.val) (GateHybrids.stageBit (C n) (v n z) (2 * b.1.val + b.2.val) i a)) (pairSndD
+(GateHybridMessage.message (nestedSpecial E₁ E₂ n) (C n) (seed n (List.ofFn t)) (A.eval n) (O.eval
+n) (output n) (v n z) (2 * b.1.val + b.2.val))) (pairEncode (bobWord n z) (List.ofFn
+(FakeObjects.activeAnswers (C n) (seed n (List.ofFn t)) (A.eval n) (B.eval n)))) (aliceWord n
+z)`. -/
 noncomputable def advice (n : ℕ) (a : Choice I C S n) : List Bool :=
   match a with
   | (none, _) => []
@@ -190,11 +233,19 @@ noncomputable def advice (n : ℕ) (a : Choice I C S n) : List Bool :=
         (List.ofFn (FakeObjects.activeAnswers (C n) (seed n (List.ofFn t)) (A.eval n)
           (B.eval n)))) (aliceWord n z)
 
-/-- The absent choice has empty advice. -/
+/-- The absent choice has empty advice.
+`advice C S A B O seed v output bobWord aliceWord E₁ E₂ n (none, t) = []`. -/
 theorem advice_none (n : ℕ) (t : Tape S n) :
     advice C S A B O seed v output bobWord aliceWord E₁ E₂ n (none, t) = [] := rfl
 
-/-- Real advice is the complete fixed before-stage selected-plan advice word. -/
+/-- Real advice is the complete fixed before-stage selected-plan advice word.
+`advice C S A B O seed v output bobWord aliceWord E₁ E₂ n (some (z, b), t) = SelectedPlan.advice (C
+n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b) E₁ E₂ (fun i a => keyAt (C n) (seed n
+(List.ofFn t)) (inputs n + i.val) (GateHybrids.stageBit (C n) (v n z) (2 * b.1.val + b.2.val) i a))
+(pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂ n) (C n) (seed n (List.ofFn t)) (A.eval n)
+(O.eval n) (output n) (v n z) (2 * b.1.val + b.2.val))) (pairEncode (bobWord n z) (List.ofFn
+(FakeObjects.activeAnswers (C n) (seed n (List.ofFn t)) (A.eval n) (B.eval n)))) (aliceWord n
+z)`. -/
 theorem advice_some (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n) :
     advice C S A B O seed v output bobWord aliceWord E₁ E₂ n (some (z, b), t) =
       SelectedPlan.advice (C n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b) E₁ E₂
@@ -208,6 +259,7 @@ theorem advice_some (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n) :
 
 /-- Every choice's slice fits in a joint pad of length at least `7n+2`. The absent choice
 has offset and message length zero; real choices use the existing selected-plan fit.
+`offset C S seed n a j + n + len C S seed n a j ≤ L.eval n`.
 
 **Proof sketch.** Split the optional selection. The empty case needs only n bits and fits
 the supplied lower bound. In the real case the published selected-plan inequality bounds
@@ -233,6 +285,8 @@ theorem fits (L : PolyExpr) (hL : ∀ n, 7 * n + 2 ≤ L.eval n)
 /-- Every finite advice choice has length at most `sampleBudget S A B O R`, whenever
 circuit size and the retained input/output words have their stated bounds.
 [PS10, Theorem 163.7]
+`(advice C S A B O seed v output bobWord aliceWord E₁ E₂ n a).length ≤
+(SelectedAdviceBounds.sampleBudget S A B O R).eval n`.
 
 **Proof sketch.** Empty advice satisfies every natural-number budget. For a real selection,
 apply the existing complete sample-advice budget to its baseline seed, selected vertex and
@@ -277,6 +331,13 @@ include hG hGE₁ hGE₂ in
 choice advice gives exactly the corresponding actual hybrid sample under the filled seed.
 All structural premises are discharged from circuit size, fan-in, consistency and sinks.
 [PS10, Theorem 163.7]
+`SliceReconstruction.rebuild E₂ (pairEncode (List.replicate n true) (pairEncode (sliceMultiEncDist G
+n ((SelectedAdviceBounds.slotBudget S).eval n) (offset C S seed n (some (z, b), t)) (len C S seed n
+(some (z, b), t)) (message C S seed v E₁ side n (some (z, b), t)) (k, rs)) (advice C S A B O seed v
+output bobWord aliceWord E₁ E₂ n (some (z, b), t)))) = GateHybridMessage.sample (nestedSpecial E₁ E₂
+n) (C n) (SelectedSeed.fill (C n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b)
+((SelectedAdviceBounds.slotBudget S).eval n) k rs) (A.eval n) (B.eval n) (O.eval n) (output n) (v n
+z) (List.replicate n true) (bobWord n z) [] (aliceWord n z) (2 * b.1.val + b.2.val + side.toNat)`.
 
 **Proof sketch.** Apply the proved selected-step contract to the actual selected position.
 The finite wire reader identifies its vertex; the canonical row reader fixes the row order,

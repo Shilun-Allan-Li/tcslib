@@ -57,7 +57,8 @@ private theorem splitEmbedding_unused {ι κ : Type} (e : ι ↪ κ) (V : Type)
     (f : κ → V) (j : {x : κ // x ∉ Set.range e}) :
     (splitEmbedding e V f).2 j = f j := rfl
 
-/-- Embed a real key label `(w,b)` as padded block `(b,castLE w)`. -/
+/-- Embed a real key label `(w,b)` as padded block `(b,castLE w)`.
+`keyEmbedding C S hS (w, b) = (b, Fin.castLE hS w)`. -/
 def keyEmbedding {m : ℕ} (C : DAGCircuit m) (S : ℕ) (hS : C.size ≤ S) :
     (Fin C.size × Bool) ↪ (Bool × Fin S) where
   toFun x := (x.2, Fin.castLE hS x.1)
@@ -76,7 +77,9 @@ private theorem gateBound {m : ℕ} (C : DAGCircuit m) (S : ℕ) (hS : C.size �
   omega
 
 /-- Embed a real gate/assignment row as its gate coordinate and binary-fold code.
-Only actual assignments are used, leaving padded and unused row codes separate. -/
+Only actual assignments are used, leaving padded and unused row codes separate.
+`rowEmbedding C S hA hS ⟨i, a⟩ = (Fin.castLE hG i, CoinSeedRelabel.assignmentEmbedding
+(C.gates[i.val]).args.length (hA i) a)`. -/
 def rowEmbedding {m : ℕ} (C : DAGCircuit m) (S : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2)
     (hS : C.size ≤ S) :
@@ -169,7 +172,10 @@ private theorem rowEquiv_unused {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (rowEquiv C S n hA hS q).2 x = q x.1.1 x.1.2 := rfl
 
 /-- The retained parameter is every shift bit, every unused key block and every
-unused row block, in that order. Actual key/nonce values are kept separately. -/
+unused row block, in that order. Actual key/nonce values are kept separately.
+`Rest C S n hA hS = ((Fin S → Fin 2 → Bool) × ({x : Bool × Fin S // x ∉ Set.range (keyEmbedding C S
+hS)} → Fin n → Bool) × ({x : Fin S × Fin 4 // x ∉ Set.range (rowEmbedding C S hA hS)} → Fin (2 * n)
+→ Bool))`. -/
 abbrev Rest {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S) :=
   (Fin S → Fin 2 → Bool) ×
@@ -177,7 +183,10 @@ abbrev Rest {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     ({x : Fin S × Fin 4 // x ∉ Set.range (rowEmbedding C S hA hS)} → Fin (2 * n) → Bool)
 
 /-- `Rest` is the product of the full shift table and the complementary padded
-key and row block functions. -/
+key and row block functions.
+`Rest C S n hA hS = ((Fin S → Fin 2 → Bool) × ({x : Bool × Fin S // x ∉ Set.range (keyEmbedding C S
+hS)} → Fin n → Bool) × ({x : Fin S × Fin 4 // x ∉ Set.range (rowEmbedding C S hA hS)} → Fin (2 * n)
+→ Bool))`. -/
 theorem Rest_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S) :
     Rest C S n hA hS = ((Fin S → Fin 2 → Bool) ×
@@ -188,7 +197,13 @@ theorem Rest_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
 /-- The complete tape is in bijection with the retained parameter and the actual
 key/nonce tables. All unused padded coordinates remain in `Rest`.
 This is a composition of the existing block, image-split and product equivalences.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`equiv C S n hA hS r = let q := CoinRelabel.blocksEquiv S n r; ((q.2.2, (fun x => q.1 x.1.1 x.1.2),
+(fun x => q.2.1 x.1.1 x.1.2)), (fun w b => q.1 b (Fin.castLE hS w)), (fun i a => ((fun t => q.2.1
+(Fin.castLE hG i) (CoinSeedRelabel.assignmentEmbedding (C.gates[i.val]).args.length (hA i) a)
+((finCongr (two_mul n)).symm (Fin.castAdd n t))), (fun t => q.2.1 (Fin.castLE hG i)
+(CoinSeedRelabel.assignmentEmbedding (C.gates[i.val]).args.length (hA i) a) ((finCongr (two_mul
+n)).symm (Fin.natAdd n t))))))`. -/
 noncomputable def equiv {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S) :
     (Fin (10 * S * n + 2 * S) → Bool) ≃ Rest C S n hA hS ×
@@ -212,7 +227,13 @@ noncomputable def equiv {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
       (Equiv.refl Shift))).trans reorder)
 
 /-- The split retains the shift and complementary block functions, and reads the
-actual key blocks and both nonce halves at their embedded padded coordinates. -/
+actual key blocks and both nonce halves at their embedded padded coordinates.
+`equiv C S n hA hS r = let q := CoinRelabel.blocksEquiv S n r; ((q.2.2, (fun x => q.1 x.1.1 x.1.2),
+(fun x => q.2.1 x.1.1 x.1.2)), (fun w b => q.1 b (Fin.castLE hS w)), (fun i a => ((fun t => q.2.1
+(Fin.castLE hG i) (CoinSeedRelabel.assignmentEmbedding (C.gates[i.val]).args.length (hA i) a)
+((finCongr (two_mul n)).symm (Fin.castAdd n t))), (fun t => q.2.1 (Fin.castLE hG i)
+(CoinSeedRelabel.assignmentEmbedding (C.gates[i.val]).args.length (hA i) a) ((finCongr (two_mul
+n)).symm (Fin.natAdd n t))))))`. -/
 theorem equiv_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (hG : C.gates.length ≤ S) (r : Fin (10 * S * n + 2 * S) → Bool) :
@@ -229,7 +250,8 @@ theorem equiv_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
             ((finCongr (two_mul n)).symm (Fin.natAdd n t)))))) := rfl
 
 /-- Every retained shift coordinate reads its exact original tape bit, including
-unused gates and argument positions and the zero-width case. -/
+unused gates and argument positions and the zero-width case.
+`(equiv C S n hA hS r).1.1 i t = (List.ofFn r).getD (10 * S * n + 2 * i + t) false`. -/
 theorem equiv_shift {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (t : Fin 2) :
@@ -238,7 +260,8 @@ theorem equiv_shift {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
   rw [equiv_eq C S n hA hS (gateBound C S hS)]
   exact CoinRelabel.blocksEquiv_shift S n r i t
 
-/-- Each extracted real key bit reads the exact original key tape address. -/
+/-- Each extracted real key bit reads the exact original key tape address.
+`(equiv C S n hA hS r).2.1 w b t = (List.ofFn r).getD ((b.toNat * S + w) * n + t) false`. -/
 theorem equiv_key {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (r : Fin (10 * S * n + 2 * S) → Bool) (w : Fin C.size) (b : Bool) (t : Fin n) :
@@ -247,7 +270,9 @@ theorem equiv_key {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
   rw [equiv_eq C S n hA hS (gateBound C S hS)]
   exact CoinRelabel.blocksEquiv_key S n r b (Fin.castLE hS w) t
 
-/-- The extracted first nonce half reads the original row's first-width tape bits. -/
+/-- The extracted first nonce half reads the original row's first-width tape bits.
+`((equiv C S n hA hS r).2.2 i a).1 t = (List.ofFn r).getD (2 * S * n + (4 * i + (List.ofFn a).foldr
+(fun b k => b.toNat + 2 * k) 0) * (2 * n) + t) false`. -/
 theorem equiv_nonce_first {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length)
@@ -262,7 +287,9 @@ theorem equiv_nonce_first {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
   rw [CoinSeedRelabel.assignmentEmbedding_eq] at h
   exact h
 
-/-- The extracted second nonce half reads the original row's second-width tape bits. -/
+/-- The extracted second nonce half reads the original row's second-width tape bits.
+`((equiv C S n hA hS r).2.2 i a).2 t = (List.ofFn r).getD (2 * S * n + (4 * i + (List.ofFn a).foldr
+(fun b k => b.toNat + 2 * k) 0) * (2 * n) + n + t) false`. -/
 theorem equiv_nonce_second {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length)
@@ -277,7 +304,8 @@ theorem equiv_nonce_second {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
   rw [CoinSeedRelabel.assignmentEmbedding_eq] at h
   simpa only [Nat.add_assoc] using h
 
-/-- Each unused key block is retained verbatim in the unchanged parameter. -/
+/-- Each unused key block is retained verbatim in the unchanged parameter.
+`(equiv C S n hA hS r).1.2.1 x t = (List.ofFn r).getD ((x.1.1.toNat * S + x.1.2) * n + t) false`. -/
 theorem equiv_unused_key {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (r : Fin (10 * S * n + 2 * S) → Bool)
@@ -287,7 +315,9 @@ theorem equiv_unused_key {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
   rw [equiv_eq C S n hA hS (gateBound C S hS)]
   exact CoinRelabel.blocksEquiv_key S n r x.1.1 x.1.2 t
 
-/-- Each unused row block, including unused assignment codes, is retained verbatim. -/
+/-- Each unused row block, including unused assignment codes, is retained verbatim.
+`(equiv C S n hA hS r).1.2.2 x t = (List.ofFn r).getD (2 * S * n + (4 * x.1.1 + x.1.2) * (2 * n) +
+t) false`. -/
 theorem equiv_unused_row {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (r : Fin (10 * S * n + 2 * S) → Bool)
@@ -300,14 +330,16 @@ theorem equiv_unused_row {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
 
 /-- The actual assignment permutation XORs each argument with its retained
 shift bit. It depends only on `Rest`, not on the extracted value table.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`permutation C S n hA hS p i = xorPerm (fun t => p.1 (Fin.castLE hG i) (Fin.castLE (hA i) t))`. -/
 def permutation {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (p : Rest C S n hA hS) (i : Fin C.gates.length) :
     Equiv.Perm (Fin (C.gates[i.val]).args.length → Bool) :=
   xorPerm (fun t => p.1 (Fin.castLE (gateBound C S hS) i) (Fin.castLE (hA i) t))
 
-/-- `permutation ... p i` is `xorPerm` of the retained argument-shift bits. -/
+/-- `permutation ... p i` is `xorPerm` of the retained argument-shift bits.
+`permutation C S n hA hS p i = xorPerm (fun t => p.1 (Fin.castLE hG i) (Fin.castLE (hA i) t))`. -/
 theorem permutation_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (hG : C.gates.length ≤ S) (p : Rest C S n hA hS) (i : Fin C.gates.length) :
@@ -315,7 +347,8 @@ theorem permutation_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
       xorPerm (fun t => p.1 (Fin.castLE hG i) (Fin.castLE (hA i) t)) := rfl
 
 /-- At every argument position, the derived permutation XORs the supplied
-assignment bit with exactly that retained shift bit. -/
+assignment bit with exactly that retained shift bit.
+`permutation C S n hA hS p i a t = xor (a t) (p.1 (Fin.castLE hG i) (Fin.castLE (hA i) t))`. -/
 theorem permutation_apply {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (hG : C.gates.length ≤ S) (p : Rest C S n hA hS) (i : Fin C.gates.length)
@@ -327,6 +360,7 @@ theorem permutation_apply {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
 /-- A seed whose permutation reader XORs the addressed shift bits has exactly
 the permutation derived from the retained tape parameter. No distribution over
 all permutations is asserted. [PS10, Theorem 163.7]
+`(seed (List.ofFn r)).2.2 i a = permutation C S n hA hS (equiv C S n hA hS r).1 i a`.
 
 **Proof sketch.** Compare each assignment position. The seed reader and the
 retained-shift reader give the same bit address; the finite cast reader removes
@@ -369,6 +403,8 @@ include hK hR₀ hR₁ hP
 /-- A seed with the four addressed readers is exactly the extracted actual
 key/nonce tables together with the permutation derived from retained shifts.
 No actual sampler is defined here. [PS10, Theorem 163.7]
+`seed (List.ofFn r) = ((equiv C S n hA hS r).2.1, (equiv C S n hA hS r).2.2, permutation C S n hA hS
+(equiv C S n hA hS r).1)`.
 
 **Proof sketch.** Compare keys coordinate by coordinate using the key-address
 reader. Compare each nonce pair using the two half-address readers. Finally,
@@ -396,7 +432,8 @@ theorem seed_eq (r : Fin (10 * S * n + 2 * S) → Bool) :
 /-- On the inverse tape encoded by a retained parameter and actual value table,
 the supplied seed has exactly those keys/nonces and the parameter's derived
 permutation. This is the concrete sampler identification used by coordinate fill.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`seed (List.ofFn ((equiv C S n hA hS).symm (p, d))) = (d.1, d.2, permutation C S n hA hS p)`. -/
 theorem seed_on_inverse (p : Rest C S n hA hS)
     (d : (Fin C.size → Bool → Fin n → Bool) ×
       ((i : Fin C.gates.length) → (Fin (C.gates[i.val]).args.length → Bool) →
@@ -422,7 +459,8 @@ theorem key_not_mem_range {m : ℕ} (C : DAGCircuit m) (S : ℕ) (hS : C.size �
   omega
 
 /-- A row at a padded gate index beyond the actual gate list is outside the
-actual-row embedding image and remains in the retained parameter. -/
+actual-row embedding image and remains in the retained parameter.
+`(i, a) ∉ Set.range (rowEmbedding C S hA hS)`. -/
 theorem row_not_mem_range_of_gate {m : ℕ} (C : DAGCircuit m) (S : ℕ)
     (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
     (i : Fin S) (a : Fin 4) (hi : C.gates.length ≤ (i : ℕ)) :
@@ -437,6 +475,7 @@ theorem row_not_mem_range_of_gate {m : ℕ} (C : DAGCircuit m) (S : ℕ)
 /-- At a real gate, every row code at least `2^arity` is outside the actual-row
 image. Thus arity zero retains codes one through three, and arity one retains
 two and three in the unchanged parameter.
+`(Fin.castLE hG i, code) ∉ Set.range (rowEmbedding C S hA hS)`.
 
 **Proof sketch.** Equality with an embedded row first identifies its gate index.
 At that same gate, the published assignment-code bound puts every embedded code

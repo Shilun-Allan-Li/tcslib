@@ -49,13 +49,18 @@ abbrev Blocks (S n : ℕ) :=
   (Bool → Fin S → Fin n → Bool) ×
     (Fin S → Fin 4 → Fin (2 * n) → Bool) × (Fin S → Fin 2 → Bool)
 
-/-- `Blocks S n` is the product of its key, row and shift function types. -/
+/-- `Blocks S n` is the product of its key, row and shift function types.
+`Blocks S n = ((Bool → Fin S → Fin n → Bool) × (Fin S → Fin 4 → Fin (2 * n) → Bool) × (Fin S → Fin 2
+→ Bool))`. -/
 theorem Blocks_eq (S n : ℕ) :
     Blocks S n = ((Bool → Fin S → Fin n → Bool) ×
       (Fin S → Fin 4 → Fin (2 * n) → Bool) × (Fin S → Fin 2 → Bool)) := rfl
 
 /-- Split `10 S n + 2 S` coin bits into regions of lengths `2 S n`, `4 S (2 n)`
-and `2 S`, by two append equivalences. Zero widths are included. -/
+and `2 S`, by two append equivalences. Zero widths are included.
+`splitTape S n r = ((fun i : Fin ((2 * S) * n) => (List.ofFn r).getD i false), (fun i : Fin
+((S * 4) * (2 * n)) => (List.ofFn r).getD (2 * S * n + i) false), (fun i : Fin (S * 2) => (List.ofFn
+r).getD (10 * S * n + i) false))`. -/
 def splitTape (S n : ℕ) :
     (Fin (10 * S * n + 2 * S) → Bool) ≃
       (Fin ((2 * S) * n) → Bool) ×
@@ -103,7 +108,10 @@ theorem splitTape_shift (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool)
   ring
 
 /-- `splitTape S n r` is the triple of windows at offsets `0`, `2 S n`, and
-`10 S n`, of lengths `2 S n`, `4 S (2 n)`, and `2 S`, respectively. -/
+`10 S n`, of lengths `2 S n`, `4 S (2 n)`, and `2 S`, respectively.
+`splitTape S n r = ((fun i : Fin ((2 * S) * n) => (List.ofFn r).getD i false), (fun i : Fin
+((S * 4) * (2 * n)) => (List.ofFn r).getD (2 * S * n + i) false), (fun i : Fin (S * 2) => (List.ofFn
+r).getD (10 * S * n + i) false))`. -/
 theorem splitTape_eq (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool) :
     splitTape S n r =
       ((fun i : Fin ((2 * S) * n) => (List.ofFn r).getD i false),
@@ -147,7 +155,9 @@ theorem blocksEquiv_key (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool)
   ring
 
 /-- Row-coin bit `t` of assignment index `a` at gate `i` is tape bit
-`2 S n + (4 i + a) (2 n) + t`, for every `S` and `n`. -/
+`2 S n + (4 i + a) (2 n) + t`, for every `S` and `n`.
+`(blocksEquiv S n r).2.1 i a t = (List.ofFn r).getD (2 * S * n + (4 * i + a) * (2 * n) + t)
+false`. -/
 theorem blocksEquiv_row (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool)
     (i : Fin S) (a : Fin 4) (t : Fin (2 * n)) :
     (blocksEquiv S n r).2.1 i a t =
@@ -171,7 +181,11 @@ theorem blocksEquiv_shift (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool)
   ring
 
 /-- `blocksEquiv S n r` is exactly the key, row and shift tables at their
-specified tape offsets. -/
+specified tape offsets.
+`blocksEquiv S n r = ((fun (b : Bool) (v : Fin S) (t : Fin n) => (List.ofFn r).getD ((b.toNat * S +
+v) * n + t) false), (fun (i : Fin S) (a : Fin 4) (t : Fin (2 * n)) => (List.ofFn r).getD (2 * S *
+n + (4 * i + a) * (2 * n) + t) false), (fun (i : Fin S) (t : Fin 2) => (List.ofFn r).getD (10 * S *
+n + 2 * i + t) false))`. -/
 theorem blocksEquiv_eq (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool) :
     blocksEquiv S n r =
       ((fun (b : Bool) (v : Fin S) (t : Fin n) =>
@@ -190,7 +204,8 @@ theorem blocksEquiv_eq (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool) :
       exact blocksEquiv_shift S n r i t
 
 /-- Relabel a key table by changing choice `b` at `v` to `b XOR values v`.
-This is an involutive permutation of complete key tables. -/
+This is an involutive permutation of complete key tables.
+`keyRelabel S n values k b v t = k (xor b (values v)) v t`. -/
 def keyRelabel (S n : ℕ) (values : Fin S → Bool) :
     Equiv.Perm (Bool → Fin S → Fin n → Bool) :=
   Function.Involutive.toPerm
@@ -228,28 +243,36 @@ theorem shiftRelabel_eq (S : ℕ) (mask : Fin S → Fin 2 → Bool)
   exact congrFun (xorPerm_apply (mask i) (k i)) t
 
 /-- Relabel the key, row and shift tables independently by their supplied choice
-flips, row permutations and shift masks. [PS10, Theorem 163.7] -/
+flips, row permutations and shift masks. [PS10, Theorem 163.7]
+`blockRelabel S n values rows mask q = (keyRelabel S n values q.1, rowRelabel S n rows q.2.1,
+shiftRelabel S mask q.2.2)`. -/
 def blockRelabel (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) :
     Equiv.Perm (Blocks S n) :=
   (keyRelabel S n values).prodCongr ((rowRelabel S n rows).prodCongr (shiftRelabel S mask))
 
 /-- `blockRelabel` applies `keyRelabel`, `rowRelabel` and `shiftRelabel` to the
-three components of the block triple. -/
+three components of the block triple.
+`blockRelabel S n values rows mask q = (keyRelabel S n values q.1, rowRelabel S n rows q.2.1,
+shiftRelabel S mask q.2.2)`. -/
 theorem blockRelabel_eq (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (q : Blocks S n) :
     blockRelabel S n values rows mask q =
       (keyRelabel S n values q.1, rowRelabel S n rows q.2.1, shiftRelabel S mask q.2.2) := rfl
 
 /-- Conjugating `blockRelabel` by `blocksEquiv` gives a permutation of all
-`10 S n + 2 S` tape bits. [PS10, Theorem 163.7; BMR90] -/
+`10 S n + 2 S` tape bits. [PS10, Theorem 163.7; BMR90]
+`relabel S n values rows mask r = (blocksEquiv S n).symm (blockRelabel S n values rows mask
+(blocksEquiv S n r))`. -/
 def relabel (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) :
     Equiv.Perm (Fin (10 * S * n + 2 * S) → Bool) :=
   (blocksEquiv S n).trans ((blockRelabel S n values rows mask).trans (blocksEquiv S n).symm)
 
 /-- `relabel S n values rows mask r` is the inverse block encoding of the
-relabeled block triple of `r`. -/
+relabeled block triple of `r`.
+`relabel S n values rows mask r = (blocksEquiv S n).symm (blockRelabel S n values rows mask
+(blocksEquiv S n r))`. -/
 theorem relabel_eq (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) :
@@ -267,7 +290,9 @@ theorem relabel_blocks (S n : ℕ) (values : Fin S → Bool)
   rw [relabel_eq, Equiv.apply_symm_apply]
 
 /-- In the relabeled tape, key choice `b` at `v` reads the original key choice
-`b XOR values v` at that same vertex. -/
+`b XOR values v` at that same vertex.
+`(blocksEquiv S n (relabel S n values rows mask r)).1 b v t = (blocksEquiv S n r).1 (xor b (values
+v)) v t`. -/
 theorem relabel_key (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) (b : Bool) (v : Fin S) (t : Fin n) :
@@ -276,7 +301,9 @@ theorem relabel_key (S n : ℕ) (values : Fin S → Bool)
   simp only [relabel_blocks, blockRelabel_eq, keyRelabel_eq]
 
 /-- Row `a` of gate `i` in the relabeled tape reads original row `rows i a`,
-with the within-row nonce coordinate unchanged. -/
+with the within-row nonce coordinate unchanged.
+`(blocksEquiv S n (relabel S n values rows mask r)).2.1 i a t = (blocksEquiv S n r).2.1 i (rows i a)
+t`. -/
 theorem relabel_row (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (a : Fin 4) (t : Fin (2 * n)) :
@@ -285,7 +312,9 @@ theorem relabel_row (S n : ℕ) (values : Fin S → Bool)
   simp only [relabel_blocks, blockRelabel_eq, rowRelabel_eq]
 
 /-- Shift bit `t` at gate `i` in the relabeled tape is the original shift bit
-XOR the supplied mask bit `mask i t`. -/
+XOR the supplied mask bit `mask i t`.
+`(blocksEquiv S n (relabel S n values rows mask r)).2.2 i t = xor ((blocksEquiv S n r).2.2 i t)
+(mask i t)`. -/
 theorem relabel_shift (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (t : Fin 2) :
@@ -294,7 +323,9 @@ theorem relabel_shift (S n : ℕ) (values : Fin S → Bool)
   simp only [relabel_blocks, blockRelabel_eq, shiftRelabel_eq]
 
 /-- At exact tape offsets, relabeling replaces key choice `b` by
-`b XOR values v`: the coordinate `(b*S+v)*n+t` reads `((b XOR values v)*S+v)*n+t`. -/
+`b XOR values v`: the coordinate `(b*S+v)*n+t` reads `((b XOR values v)*S+v)*n+t`.
+`(List.ofFn (relabel S n values rows mask r)).getD ((b.toNat * S + v) * n + t) false = (List.ofFn
+r).getD (((xor b (values v)).toNat * S + v) * n + t) false`. -/
 theorem relabel_key_getD (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) (b : Bool) (v : Fin S) (t : Fin n) :
@@ -304,7 +335,9 @@ theorem relabel_key_getD (S n : ℕ) (values : Fin S → Bool)
     relabel_key, blocksEquiv_key]
 
 /-- At exact row-coin offsets, relabeling replaces assignment code `a` by
-`rows i a` and keeps nonce bit `t` unchanged. -/
+`rows i a` and keeps nonce bit `t` unchanged.
+`(List.ofFn (relabel S n values rows mask r)).getD (2 * S * n + (4 * i + a) * (2 * n) + t) false =
+(List.ofFn r).getD (2 * S * n + (4 * i + (rows i a : ℕ)) * (2 * n) + t) false`. -/
 theorem relabel_row_getD (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (a : Fin 4) (t : Fin (2 * n)) :
@@ -315,7 +348,9 @@ theorem relabel_row_getD (S n : ℕ) (values : Fin S → Bool)
     relabel_row, blocksEquiv_row]
 
 /-- At tape offset `10 S n + 2 i + t`, relabeling XORs the existing shift bit
-with `mask i t`, including when the key length is zero. -/
+with `mask i t`, including when the key length is zero.
+`(List.ofFn (relabel S n values rows mask r)).getD (10 * S * n + 2 * i + t) false = xor ((List.ofFn
+r).getD (10 * S * n + 2 * i + t) false) (mask i t)`. -/
 theorem relabel_shift_getD (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (t : Fin 2) :
@@ -325,7 +360,9 @@ theorem relabel_shift_getD (S n : ℕ) (values : Fin S → Bool)
     relabel_shift, blocksEquiv_shift]
 
 /-- A key block at a vertex whose value mask is `false` is unchanged by relabeling.
-This preserves unused key blocks when their value masks are set to `false`. -/
+This preserves unused key blocks when their value masks are set to `false`.
+`(List.ofFn (relabel S n values rows mask r)).getD ((b.toNat * S + v) * n + t) false = (List.ofFn
+r).getD ((b.toNat * S + v) * n + t) false`. -/
 theorem relabel_key_fixed (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) (b : Bool) (v : Fin S) (t : Fin n)
@@ -335,7 +372,9 @@ theorem relabel_key_fixed (S n : ℕ) (values : Fin S → Bool)
   rw [relabel_key_getD, hv, Bool.xor_false]
 
 /-- A row coordinate fixed by `rows i` keeps every nonce bit. In particular,
-callers preserve unused assignment codes by fixing them in the supplied permutation. -/
+callers preserve unused assignment codes by fixing them in the supplied permutation.
+`(List.ofFn (relabel S n values rows mask r)).getD (2 * S * n + (4 * i + a) * (2 * n) + t) false =
+(List.ofFn r).getD (2 * S * n + (4 * i + a) * (2 * n) + t) false`. -/
 theorem relabel_row_fixed (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (a : Fin 4) (t : Fin (2 * n))
@@ -346,7 +385,9 @@ theorem relabel_row_fixed (S n : ℕ) (values : Fin S → Bool)
   rw [relabel_row_getD, ha]
 
 /-- A shift bit with a `false` mask is unchanged. Callers can therefore preserve
-unused shift positions by setting exactly those mask bits to `false`. -/
+unused shift positions by setting exactly those mask bits to `false`.
+`(List.ofFn (relabel S n values rows mask r)).getD (10 * S * n + 2 * i + t) false = (List.ofFn
+r).getD (10 * S * n + 2 * i + t) false`. -/
 theorem relabel_shift_fixed (S n : ℕ) (values : Fin S → Bool)
     (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
     (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (t : Fin 2)

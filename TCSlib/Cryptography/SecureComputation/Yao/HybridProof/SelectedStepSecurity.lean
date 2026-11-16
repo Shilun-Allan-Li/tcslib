@@ -69,6 +69,18 @@ include hSize hfanin hEval hsink hBob hAlice hE₂ hG hGE₁ hGE₂ hL hSecure i
 selected argument and fixed baseline tape, between the two neighboring samples after
 fresh selected-key/nonce fill. The bound is uniform over all these choices.
 [PS10, Theorem 163.7]
+`∃ μ : ℕ → ℝ, Negligible μ ∧ (∀ n, 0 ≤ μ n) ∧ ∀ n (z : I n) (b : SelectedStepChoices.Selection (C
+n)) (t : SelectedStepChoices.Tape S n), distAdv (fun r : (Fin n → Bool) × (Fin
+((SelectedAdviceBounds.slotBudget S).eval n + 1) → Fin n → Bool) => GateHybridMessage.sample
+(nestedSpecial E₁ E₂ n) (C n) (SelectedSeed.fill (C n) (SelectedStepChoices.rows (C n)) (seed n
+(List.ofFn t)) (SelectedStepChoices.wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n) r.1
+r.2) (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true) (bobWord n z) []
+(aliceWord n z) (2 * b.1.val + b.2.val)) (fun r : (Fin n → Bool) × (Fin
+((SelectedAdviceBounds.slotBudget S).eval n + 1) → Fin n → Bool) => GateHybridMessage.sample
+(nestedSpecial E₁ E₂ n) (C n) (SelectedSeed.fill (C n) (SelectedStepChoices.rows (C n)) (seed n
+(List.ofFn t)) (SelectedStepChoices.wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n) r.1
+r.2) (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true) (bobWord n z) []
+(aliceWord n z) (2 * b.1.val + b.2.val + 1)) (D.distinguisherL n) ≤ μ n`.
 
 **Proof sketch.** Apply the existing finite-advice reduction to the padded choice family,
 using the complete advice polynomial and the total reconstruction machine. The empty
@@ -166,6 +178,13 @@ include hSize hfanin hEval hsink hBob hAlice hE₂ hG hGE₁ hGE₂ hL hSecure
 bounds the advantage of every neighboring hybrid substep with an actual selected argument,
 uniformly in the input, gate and argument. Empty circuits require no selected vertex.
 [PS10, Theorem 163.7]
+`∃ μ : ℕ → ℝ, Negligible μ ∧ (∀ n, 0 ≤ μ n) ∧ ∀ n (z : I n) (i : Fin (C n).gates.length) (p : Fin (C
+n).gates[i.val].args.length), distAdv (fun t : SelectedStepChoices.Tape S n =>
+GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n) (seed n (List.ofFn t)) (A.eval n) (B.eval n)
+(O.eval n) (output n) (v n z) (List.replicate n true) (bobWord n z) [] (aliceWord n z) (2 * i.val +
+p.val)) (fun t : SelectedStepChoices.Tape S n => GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C
+n) (seed n (List.ofFn t)) (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n
+true) (bobWord n z) [] (aliceWord n z) (2 * i.val + p.val + 1)) (D.distinguisherL n) ≤ μ n`.
 
 **Proof sketch.** Obtain the uniform bound with each baseline tape fixed. Average that tape
 using the existing fiber advantage inequality, which applies because the bound is nonnegative.

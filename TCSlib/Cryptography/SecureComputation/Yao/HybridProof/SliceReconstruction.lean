@@ -41,13 +41,15 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstructi
 
 open Complexity Turing TCSlib.Cryptography
 
-/-- The fixed-row record is `⟨[], c⟩`, retaining ciphertext `c` unchanged. -/
+/-- The fixed-row record is `⟨[], c⟩`, retaining ciphertext `c` unchanged.
+`fixedRecord c = pairEncode [] c`. -/
 def fixedRecord (c : List Bool) : List Bool := pairEncode [] c
 
 /-- `fixedRecord c = ⟨[], c⟩`. -/
 theorem fixedRecord_eq (c : List Bool) : fixedRecord c = pairEncode [] c := rfl
 
-/-- The direct-challenge record is `⟨[true], ⟨1^j, []⟩⟩`, selecting challenge slot `j`. -/
+/-- The direct-challenge record is `⟨[true], ⟨1^j, []⟩⟩`, selecting challenge slot `j`.
+`directRecord j = pairEncode [true] (pairEncode (List.replicate j true) [])`. -/
 def directRecord (j : ℕ) : List Bool :=
   pairEncode [true] (pairEncode (List.replicate j true) [])
 
@@ -56,7 +58,8 @@ theorem directRecord_eq (j : ℕ) :
     directRecord j = pairEncode [true] (pairEncode (List.replicate j true) []) := rfl
 
 /-- The wrapped-challenge record is `⟨[false], ⟨1^j, ⟨k,r⟩⟩⟩`, selecting challenge
-slot `j` and encrypting it under the supplied known outer key `k` with nonce `r`. -/
+slot `j` and encrypting it under the supplied known outer key `k` with nonce `r`.
+`wrappedRecord j k r = pairEncode [false] (pairEncode (List.replicate j true) (pairEncode k r))`. -/
 def wrappedRecord (j : ℕ) (k r : List Bool) : List Bool :=
   pairEncode [false] (pairEncode (List.replicate j true) (pairEncode k r))
 
@@ -68,7 +71,11 @@ theorem wrappedRecord_eq (j : ℕ) (k r : List Bool) :
 /-- On `⟨challenge, descriptor⟩`, retain a fixed row, read a challenge slot, or wrap that
 slot under its known key and nonce. Empty tags select fixed rows; `[true]` selects a direct
 slot; every other tag selects wrapping. Out-of-range challenge lookups return `[]`.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`row E₂ z = let descriptor := pairSndD z; let tag := pairFstD descriptor; let data := pairSndD
+descriptor; let c := (BinArith.decWords (pairFstD z)).getD (pairFstD data).length []; if tag = []
+then data else if tag = [true] then c else spEncStr E₂ (pairFstD (pairSndD data)) c (pairSndD
+(pairSndD data))`. -/
 def row (E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   let descriptor := pairSndD z
   let tag := pairFstD descriptor
@@ -78,7 +85,11 @@ def row (E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   else spEncStr E₂ (pairFstD (pairSndD data)) c (pairSndD (pairSndD data))
 
 /-- `row E₂ z` branches on the descriptor tag and uses the decoded challenge slot at the
-unary index stored in its data, with default `[]`. -/
+unary index stored in its data, with default `[]`.
+`row E₂ z = let descriptor := pairSndD z; let tag := pairFstD descriptor; let data := pairSndD
+descriptor; let c := (BinArith.decWords (pairFstD z)).getD (pairFstD data).length []; if tag = []
+then data else if tag = [true] then c else spEncStr E₂ (pairFstD (pairSndD data)) c (pairSndD
+(pairSndD data))`. -/
 theorem row_eq (E₂ : List Bool → List Bool) (z : List Bool) :
     row E₂ z =
       let descriptor := pairSndD z
@@ -90,6 +101,7 @@ theorem row_eq (E₂ : List Bool → List Bool) (z : List Bool) :
 
 /-- The row interpreter is polynomial-time for polynomial-time `E₂`, on every raw input.
 No selected key is supplied to the interpreter. [PS10, Theorem 163.7]
+`PolyTimeComputable (row E₂)`.
 
 **Proof sketch.** Normalize the challenge word list and apply the existing polynomial-time
 indexed lookup. Descriptor projections give the known wrapping key and nonce. Special
@@ -114,12 +126,14 @@ theorem row_poly {E₂ : List Bool → List Bool} (hE₂ : PolyTimeComputable E�
   simp only [row_eq, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
     BinArith.getW_pairEncode, List.length_replicate, decide_eq_true_eq]
 
-/-- A fixed record reconstructs its retained ciphertext unchanged for every challenge word. -/
+/-- A fixed record reconstructs its retained ciphertext unchanged for every challenge word.
+`row E₂ (pairEncode challenge (fixedRecord c)) = c`. -/
 theorem row_fixedRecord (E₂ : List Bool → List Bool) (challenge c : List Bool) :
     row E₂ (pairEncode challenge (fixedRecord c)) = c := by
   simp only [row_eq, fixedRecord_eq, pairFstD_pairEncode, pairSndD_pairEncode, ite_true]
 
-/-- Reconstruct an encoded row-descriptor list with one retained challenge tuple. -/
+/-- Reconstruct an encoded row-descriptor list with one retained challenge tuple.
+`table E₂ z = BinArith.mapW (row E₂) z`. -/
 def table (E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   BinArith.mapW (row E₂) z
 
@@ -127,17 +141,21 @@ def table (E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
 theorem table_eq (E₂ : List Bool → List Bool) (z : List Bool) :
     table E₂ z = BinArith.mapW (row E₂) z := rfl
 
-/-- Reconstructing one encoded table is polynomial-time on every raw word. -/
+/-- Reconstructing one encoded table is polynomial-time on every raw word.
+`PolyTimeComputable (table E₂)`. -/
 theorem table_poly {E₂ : List Bool → List Bool} (hE₂ : PolyTimeComputable E₂) :
     PolyTimeComputable (table E₂) := BinArith.polyTimeComputable_mapW (row_poly hE₂)
 
-/-- On `⟨challenge, descriptors⟩`, reconstruct each decoded row descriptor in order. -/
+/-- On `⟨challenge, descriptors⟩`, reconstruct each decoded row descriptor in order.
+`table E₂ (pairEncode challenge descriptors) = BinArith.encWords ((BinArith.decWords
+descriptors).map fun d => row E₂ (pairEncode challenge d))`. -/
 theorem table_pairEncode (E₂ : List Bool → List Bool) (challenge descriptors : List Bool) :
     table E₂ (pairEncode challenge descriptors) = BinArith.encWords
       ((BinArith.decWords descriptors).map fun d => row E₂ (pairEncode challenge d)) :=
   (table_eq _ _).trans (BinArith.mapW_pairEncode _ _ _)
 
-/-- Reconstruct an encoded list of tables from its encoded lists of row descriptors. -/
+/-- Reconstruct an encoded list of tables from its encoded lists of row descriptors.
+`tables E₂ z = BinArith.mapW (table E₂) z`. -/
 def tables (E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   BinArith.mapW (table E₂) z
 
@@ -145,18 +163,22 @@ def tables (E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
 theorem tables_eq (E₂ : List Bool → List Bool) (z : List Bool) :
     tables E₂ z = BinArith.mapW (table E₂) z := rfl
 
-/-- Reconstructing all encoded tables is polynomial-time on every raw word. -/
+/-- Reconstructing all encoded tables is polynomial-time on every raw word.
+`PolyTimeComputable (tables E₂)`. -/
 theorem tables_poly {E₂ : List Bool → List Bool} (hE₂ : PolyTimeComputable E₂) :
     PolyTimeComputable (tables E₂) := BinArith.polyTimeComputable_mapW (table_poly hE₂)
 
-/-- On `⟨challenge, descriptors⟩`, reconstruct each decoded table-descriptor list in order. -/
+/-- On `⟨challenge, descriptors⟩`, reconstruct each decoded table-descriptor list in order.
+`tables E₂ (pairEncode challenge descriptors) = BinArith.encWords ((BinArith.decWords
+descriptors).map fun d => table E₂ (pairEncode challenge d))`. -/
 theorem tables_pairEncode (E₂ : List Bool → List Bool) (challenge descriptors : List Bool) :
     tables E₂ (pairEncode challenge descriptors) = BinArith.encWords
       ((BinArith.decWords descriptors).map fun d => table E₂ (pairEncode challenge d)) :=
   (tables_eq _ _).trans (BinArith.mapW_pairEncode _ _ _)
 
 /-- A direct record selects exactly the indexed ciphertext from a canonical challenge list,
-using `[]` as the default for an index beyond the list. -/
+using `[]` as the default for an index beyond the list.
+`row E₂ (pairEncode (BinArith.encWords challenge) (directRecord j)) = challenge.getD j []`. -/
 theorem row_directRecord (E₂ : List Bool → List Bool) (challenge : List (List Bool)) (j : ℕ) :
     row E₂ (pairEncode (BinArith.encWords challenge) (directRecord j)) =
       challenge.getD j [] := by
@@ -164,7 +186,9 @@ theorem row_directRecord (E₂ : List Bool → List Bool) (challenge : List (Lis
     BinArith.decWords_encWords, List.length_replicate, List.cons_ne_nil, ite_false, ite_true]
 
 /-- A wrapped record encrypts the indexed canonical challenge ciphertext under exactly
-the supplied known outer key and nonce. -/
+the supplied known outer key and nonce.
+`row E₂ (pairEncode (BinArith.encWords challenge) (wrappedRecord j k r)) = spEncStr E₂ k
+(challenge.getD j []) r`. -/
 theorem row_wrappedRecord (E₂ : List Bool → List Bool) (challenge : List (List Bool))
     (j : ℕ) (k r : List Bool) :
     row E₂ (pairEncode (BinArith.encWords challenge) (wrappedRecord j k r)) =
@@ -174,7 +198,8 @@ theorem row_wrappedRecord (E₂ : List Bool → List Bool) (challenge : List (Li
     Bool.false_eq_true, false_and, ite_false]
 
 /-- Fixed reconstruction advice is `⟨tableDescriptors, ⟨messageTail, ⟨privateInput,aliceOut⟩⟩⟩`.
-Its fields contain no selected challenge key or challenge nonces. -/
+Its fields contain no selected challenge key or challenge nonces.
+`advice d t x a = pairEncode d (pairEncode t (pairEncode x a))`. -/
 def advice (tableDescriptors messageTail privateInput aliceOut : List Bool) : List Bool :=
   pairEncode tableDescriptors (pairEncode messageTail (pairEncode privateInput aliceOut))
 
@@ -184,7 +209,11 @@ theorem advice_eq (d t x a : List Bool) :
 
 /-- On `⟨N,⟨challenge,advice⟩⟩`, reconstruct the tables, append the fixed message tail,
 and encode the view with fixed private input, empty tape, and that sole received message.
-Pair the view with the retained Alice output. [PS10, Theorem 163.7] -/
+Pair the view with the retained Alice output. [PS10, Theorem 163.7]
+`rebuild E₂ z = let data := pairSndD (pairSndD z); let rest := pairSndD data; let message :=
+pairEncode (tables E₂ (pairEncode (pairFstD (pairSndD z)) (pairFstD data))) (pairFstD rest);
+pairEncode (⟨pairFstD z, pairFstD (pairSndD rest), [], [message]⟩ : View).encode (pairSndD (pairSndD
+rest))`. -/
 def rebuild (E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   let data := pairSndD (pairSndD z)
   let rest := pairSndD data
@@ -194,7 +223,11 @@ def rebuild (E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
     (pairSndD (pairSndD rest))
 
 /-- `rebuild E₂ z` assembles the reconstructed table word and three fixed advice fields
-into the encoded view and retained Alice output. -/
+into the encoded view and retained Alice output.
+`rebuild E₂ z = let data := pairSndD (pairSndD z); let rest := pairSndD data; let message :=
+pairEncode (tables E₂ (pairEncode (pairFstD (pairSndD z)) (pairFstD data))) (pairFstD rest);
+pairEncode (⟨pairFstD z, pairFstD (pairSndD rest), [], [message]⟩ : View).encode (pairSndD (pairSndD
+rest))`. -/
 theorem rebuild_eq (E₂ : List Bool → List Bool) (z : List Bool) :
     rebuild E₂ z =
       let data := pairSndD (pairSndD z)
@@ -207,6 +240,7 @@ theorem rebuild_eq (E₂ : List Bool → List Bool) (z : List Bool) :
 /-- Reconstructing the entire encoded view/output endpoint is polynomial-time on every
 raw input whenever the known-key outer evaluator is polynomial-time.
 [PS10, Theorem 163.7]
+`PolyTimeComputable (rebuild E₂)`.
 
 **Proof sketch.** Project the challenge tuple and table descriptors, then apply the public
 polynomial-time nested table interpreter. Pair its result with the fixed message tail.
@@ -233,13 +267,17 @@ theorem rebuild_poly {E₂ : List Bool → List Bool} (hE₂ : PolyTimeComputabl
     Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil]
 
 /-- The private-key ciphertext-list encoding is the binary-arithmetic word-list encoding.
-This bridge reuses the existing public concatenation characterization. -/
+This bridge reuses the existing public concatenation characterization.
+`PrivateKeyScheme.encodeList cs = BinArith.encWords cs`. -/
 theorem encodeList_eq_encWords (cs : List (List Bool)) :
     PrivateKeyScheme.encodeList cs = BinArith.encWords cs :=
   (TCSlib.Cryptography.encodeList_eq_flatMap cs).trans (BinArith.encWords_def cs).symm
 
 /-- For any challenge word and canonical nested descriptor lists, reconstruct each row
-in its original table, preserving the order of both tables and rows. -/
+in its original table, preserving the order of both tables and rows.
+`tables E₂ (pairEncode challenge (BinArith.encWords (descriptors.map BinArith.encWords))) =
+BinArith.encWords (descriptors.map fun ds => BinArith.encWords (ds.map fun d => row E₂ (pairEncode
+challenge d)))`. -/
 theorem tables_records (E₂ : List Bool → List Bool) (challenge : List Bool)
     (descriptors : List (List (List Bool))) :
     tables E₂ (pairEncode challenge (BinArith.encWords (descriptors.map BinArith.encWords))) =
@@ -251,7 +289,10 @@ theorem tables_records (E₂ : List Bool → List Bool) (challenge : List Bool)
   intro ds _
   simp only [Function.comp_apply, BinArith.decWords_encWords]
 
-/-- On canonical challenge and descriptor lists, reconstruction retains table and row order. -/
+/-- On canonical challenge and descriptor lists, reconstruction retains table and row order.
+`tables E₂ (pairEncode (BinArith.encWords challenge) (BinArith.encWords (descriptors.map
+BinArith.encWords))) = BinArith.encWords (descriptors.map fun ds => BinArith.encWords (ds.map fun d
+=> row E₂ (pairEncode (BinArith.encWords challenge) d)))`. -/
 theorem tables_encoded (E₂ : List Bool → List Bool) (challenge : List (List Bool))
     (descriptors : List (List (List Bool))) :
     tables E₂ (pairEncode (BinArith.encWords challenge)
@@ -261,7 +302,9 @@ theorem tables_encoded (E₂ : List Bool → List Bool) (challenge : List (List 
   tables_records E₂ (BinArith.encWords challenge) descriptors
 
 /-- The fixed, direct, and wrapped record lengths are respectively `|c|+2`, `2j+6`, and
-`2j+2|k|+|r|+8`. Thus a unary challenge index and the known words give explicit advice costs. -/
+`2j+2|k|+|r|+8`. Thus a unary challenge index and the known words give explicit advice costs.
+`(fixedRecord c).length = c.length + 2 ∧ (directRecord j).length = 2 * j + 6 ∧ (wrappedRecord j k
+r).length = 2 * j + 2 * k.length + r.length + 8`. -/
 theorem record_lengths (c : List Bool) (j : ℕ) (k r : List Bool) :
     (fixedRecord c).length = c.length + 2 ∧
       (directRecord j).length = 2 * j + 6 ∧
@@ -271,7 +314,8 @@ theorem record_lengths (c : List Bool) (j : ℕ) (k r : List Bool) :
   omega
 
 /-- Fixed surrounding advice has length `2|d|+2|t|+2|x|+|a|+6`, where the fields are
-table descriptors, message tail, private input, and retained Alice output. -/
+table descriptors, message tail, private input, and retained Alice output.
+`(advice d t x a).length = 2 * d.length + 2 * t.length + 2 * x.length + a.length + 6`. -/
 theorem advice_length (d t x a : List Bool) :
     (advice d t x a).length = 2 * d.length + 2 * t.length + 2 * x.length + a.length + 6 := by
   rw [advice_eq]
@@ -279,7 +323,9 @@ theorem advice_length (d t x a : List Bool) :
   omega
 
 /-- On its canonical layout, reconstruction returns the view with reconstructed tables,
-fixed message tail and private input, paired with the fixed actual Alice output. -/
+fixed message tail and private input, paired with the fixed actual Alice output.
+`rebuild E₂ (pairEncode N (pairEncode challenge (advice d t x a))) = pairEncode (⟨N, x, [],
+[pairEncode (tables E₂ (pairEncode challenge d)) t]⟩ : View).encode a`. -/
 theorem rebuild_layout (E₂ : List Bool → List Bool) (N challenge d t x a : List Bool) :
     rebuild E₂ (pairEncode N (pairEncode challenge (advice d t x a))) =
       pairEncode

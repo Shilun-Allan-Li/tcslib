@@ -44,7 +44,8 @@ theorem gatesWord_eq (description : List Bool → List Bool) (z : List Bool) :
     gatesWord description z =
       pairSndD (DescriptionDecoder.readCircuit (pairFstD (description z))) := rfl
 
-/-- Extracting the gate-record word is polynomial-time from a polynomial-time description. -/
+/-- Extracting the gate-record word is polynomial-time from a polynomial-time description.
+`PolyTimeComputable (gatesWord description)`. -/
 theorem gatesWord_poly {description : List Bool → List Bool}
     (hdescription : PolyTimeComputable description) : PolyTimeComputable (gatesWord description) :=
   polyTimeComputable_pairSndD.comp
@@ -62,6 +63,8 @@ theorem gatesWord_description (description : List Bool → List Bool) (z : List 
 /-- The actual encoded garbled-table vector is polynomial-time from a polynomial-time
 circuit-description pair, polynomial-time unary/coin maps, fan-in at most two, and the
 supplied seed's key, row-nonce, and XOR-shift equations. [PS10, Protocol 162.6; BMR90]
+`PolyTimeComputable fun z => BinArith.encWords (List.ofFn fun i => BinArith.encWords (garbledTable
+(nestedSpecial E₁ E₂ (width z)) (C z) (s z) i))`.
 
 **Proof sketch.** Decode the description to its gate-record word and apply the total raw
 all-table machine. At a canonical index, the public context-transport equation exposes the

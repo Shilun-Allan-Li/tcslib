@@ -45,14 +45,18 @@ open Complexity Turing TCSlib.Cryptography
 /-- Assemble Bob's simulated view
 `⟨inParam z, ⟨fst (inArg z), activeAnswers z⟩, [], [fakeMessage z]⟩`.
 The prescribed output is available to the leaves as `snd (inArg z)`.
-[PS10, Theorem 163.7; LP09] -/
+[PS10, Theorem 163.7; LP09]
+`raw fakeMessage activeAnswers z = (⟨NUPPT.inParam z, pairEncode (pairFstD (NUPPT.inArg z))
+(activeAnswers z), [], [fakeMessage z]⟩ : View).encode`. -/
 def raw (fakeMessage activeAnswers : List Bool → List Bool) (z : List Bool) : List Bool :=
   (⟨NUPPT.inParam z, pairEncode (pairFstD (NUPPT.inArg z)) (activeAnswers z),
     [], [fakeMessage z]⟩ : View).encode
 
 /-- For every word `z`, `raw fakeMessage activeAnswers z` is the encoded view with
 common input `inParam z`, private input `⟨fst (inArg z), activeAnswers z⟩`, empty
-private tape and sole received message `fakeMessage z`. -/
+private tape and sole received message `fakeMessage z`.
+`raw fakeMessage activeAnswers z = (⟨NUPPT.inParam z, pairEncode (pairFstD (NUPPT.inArg z))
+(activeAnswers z), [], [fakeMessage z]⟩ : View).encode`. -/
 theorem raw_eq (fakeMessage activeAnswers : List Bool → List Bool) (z : List Bool) :
     raw fakeMessage activeAnswers z =
       (⟨NUPPT.inParam z, pairEncode (pairFstD (NUPPT.inArg z)) (activeAnswers z),
@@ -60,7 +64,8 @@ theorem raw_eq (fakeMessage activeAnswers : List Bool → List Bool) (z : List B
 
 /-- For fixed polynomial-time fake-message and active-answer maps, assembling
 Bob's simulated view is polynomial-time on every raw input word.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`PolyTimeComputable (raw fakeMessage activeAnswers)`. -/
 theorem raw_poly {fakeMessage activeAnswers : List Bool → List Bool}
     (hM : PolyTimeComputable fakeMessage) (hA : PolyTimeComputable activeAnswers) :
     PolyTimeComputable (raw fakeMessage activeAnswers) := by
@@ -74,7 +79,8 @@ theorem raw_poly {fakeMessage activeAnswers : List Bool → List Bool}
 
 /-- The Bob simulator is the uniform machine for `raw fakeMessage activeAnswers`
 with the supplied coin polynomial. Both leaf maps and the coin polynomial are
-fixed independently of a distinguisher. [PS10, Theorem 163.7] -/
+fixed independently of a distinguisher. [PS10, Theorem 163.7]
+`simulator hM hA coins = NUPPT.ofPolyTimeUniform (raw_poly hM hA) coins`. -/
 noncomputable def simulator {fakeMessage activeAnswers : List Bool → List Bool}
     (hM : PolyTimeComputable fakeMessage) (hA : PolyTimeComputable activeAnswers)
     (coins : PolyExpr) : NUPPT :=
@@ -105,7 +111,10 @@ theorem simulator_coins {fakeMessage activeAnswers : List Bool → List Bool}
 /-- On parameter `n`, private input `y`, prescribed output `f`, and any tape `r`,
 the simulator returns Bob's view with the leaves evaluated at the canonical word
 `NUPPT.layout (1^n) ⟨y,f⟩ [] r`. Its private tape field is empty.
-[PS10, Theorem 163.7; LP09] -/
+[PS10, Theorem 163.7; LP09]
+`(simulator hM hA coins).runAtL n (pairEncode y f) r = let w := NUPPT.layout (List.replicate n true)
+(pairEncode y f) [] r; (⟨List.replicate n true, pairEncode y (activeAnswers w), [], [fakeMessage w]⟩
+: View).encode`. -/
 theorem simulator_runAtL {fakeMessage activeAnswers : List Bool → List Bool}
     (hM : PolyTimeComputable fakeMessage) (hA : PolyTimeComputable activeAnswers)
     (coins : PolyExpr) (n : ℕ) (y f r : List Bool) :
@@ -119,7 +128,10 @@ theorem simulator_runAtL {fakeMessage activeAnswers : List Bool → List Bool}
 
 /-- On a typed simulator tape `r`, the view contract uses the canonical layout
 with coin word `List.ofFn r`; the actual tape field in Bob's view remains empty.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`(simulator hM hA coins).runAt n (pairEncode y f) r = let w := NUPPT.layout (List.replicate n true)
+(pairEncode y f) [] (List.ofFn r); (⟨List.replicate n true, pairEncode y (activeAnswers w), [],
+[fakeMessage w]⟩ : View).encode`. -/
 theorem simulator_runAt {fakeMessage activeAnswers : List Bool → List Bool}
     (hM : PolyTimeComputable fakeMessage) (hA : PolyTimeComputable activeAnswers)
     (coins : PolyExpr) (n : ℕ) (y f : List Bool) (r : (simulator hM hA coins).Coins n) :
@@ -133,6 +145,10 @@ theorem simulator_runAt {fakeMessage activeAnswers : List Bool → List Bool}
 `(F.f n x y).2`, paired with the actual Alice output `(F.f n x y).1`. The leaves
 receive only the canonical layout of Bob's input, prescribed output and simulator coins.
 [PS10, Theorem 163.7]
+`F.idealB (simulator hM hA coins) n x y r = let w := NUPPT.layout (List.replicate n true)
+(pairEncode (List.ofFn y) (List.ofFn (F.f n x y).2)) [] (List.ofFn r); pairEncode (⟨List.replicate n
+true, pairEncode (List.ofFn y) (activeAnswers w), [], [fakeMessage w]⟩ : View).encode (List.ofFn
+(F.f n x y).1)`.
 
 This is an endpoint identity, independent of any distinguisher or hybrid argument. -/
 theorem idealB_eq {fakeMessage activeAnswers : List Bool → List Bool}

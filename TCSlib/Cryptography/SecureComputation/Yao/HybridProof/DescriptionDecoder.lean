@@ -80,7 +80,8 @@ theorem gateRecord_eq (g : DAGGate) :
         (BinArith.encWords (g.args.map fun a => List.replicate a true)) := rfl
 
 /-- Parse the circuit grammar into `⟨1^inputCount, encWords gateRecords⟩`.
-[AB09, §6.2], using the seven finite control phases described above. -/
+[AB09, §6.2], using the seven finite control phases described above.
+`readCircuit w = ChunkScanner.scan next output (false, false, false) w`. -/
 def readCircuit (w : List Bool) : List Bool :=
   ChunkScanner.scan next output (false, false, false) w
 
@@ -205,7 +206,9 @@ theorem readCircuit_encode {n : ℕ} (C : DAGCircuit n) :
 
 /-- On a circuit description paired with any output word, the host returns
 `⟨⟨1^n, encWords (C.gates.map gateRecord)⟩, outs⟩`.
-[PS10, Protocol 162.6], decoding the canonical description with an output list. -/
+[PS10, Protocol 162.6], decoding the canonical description with an output list.
+`decodeDescription (pairEncode C.encode outs) = pairEncode (pairEncode (List.replicate n true)
+(BinArith.encWords (C.gates.map gateRecord))) outs`. -/
 theorem decodeDescription_pair {n : ℕ} (C : DAGCircuit n) (outs : List Bool) :
     decodeDescription (pairEncode C.encode outs) =
       pairEncode
@@ -218,6 +221,11 @@ theorem decodeDescription_pair {n : ℕ} (C : DAGCircuit n) (outs : List Bool) :
 of that same machine remains within this envelope at every time. On `⟨C.encode, outs⟩` the
 installed word is `⟨⟨1^n, encWords (C.gates.map gateRecord)⟩, outs⟩`.
 [AB09, §6.2; PS10, Protocol 162.6]
+`∃ (M : FinTM Bool) (A c : ℕ), ModuleHost.Clean M decodeDescription (fun _ => []) (fun n => A *
+(n + 1) ^ c) ∧ (∀ (x arg : List Bool) (v : ℕ) (j : Fin M.k), |(M.tm.runFrom (Cfg.ofWords (input :=
+x) M.tm.q₀ (stateWord M.k arg)) v).workTapePos j| ≤ (A * (arg.length + 1) ^ c : ℕ)) ∧ ∀ (n : ℕ) (C :
+DAGCircuit n) (outs : List Bool), decodeDescription (pairEncode C.encode outs) = pairEncode
+(pairEncode (List.replicate n true) (BinArith.encWords (C.gates.map gateRecord))) outs`.
 
 The machine uses the registered H14 clean-install host; the work-head bound is its
 `Clean.envelope` contract, so correctness, time, and work heads refer to the same machine. -/

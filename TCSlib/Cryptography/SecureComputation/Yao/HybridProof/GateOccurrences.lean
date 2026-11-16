@@ -50,7 +50,9 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences
 open BoolCircuit
 
 /-- Find an argument position whose vertex is `u` and whose actual assignment bit is
-`true`, by searching `finRange g.args.length`. -/
+`true`, by searching `finRange g.args.length`.
+`selectedPosition g a u = (List.finRange g.args.length).find? fun p => decide (g.args[p.val] = u ∧ a
+p = true)`. -/
 def selectedPosition (g : DAGGate) (a : Fin g.args.length → Bool) (u : ℕ) :
     Option (Fin g.args.length) :=
   (List.finRange g.args.length).find? fun p => decide (g.args[p.val] = u ∧ a p = true)
@@ -64,6 +66,7 @@ theorem selectedPosition_eq (g : DAGGate) (a : Fin g.args.length → Bool) (u : 
 
 /-- For distinct gate arguments, the search returns `p` exactly when its vertex is `u`
 and its actual row bit is `true`. Every qualifying position is therefore selected.
+`selectedPosition g a u = some p ↔ g.args[p.val] = u ∧ a p = true`.
 
 **Proof sketch.** A found position satisfies the search predicate. Conversely a qualifying
 position makes the search succeed. Any found position has the same argument vertex;
@@ -89,13 +92,17 @@ theorem selectedPosition_eq_some_iff (g : DAGGate) (a : Fin g.args.length → Bo
     exact heq ▸ hq
 
 /-- The row slots of `g` record each row index and the selected argument index after
-applying the actual-assignment permutation `perm`. Rows without that occurrence are omitted. -/
+applying the actual-assignment permutation `perm`. Rows without that occurrence are omitted.
+`rowSlots g rows perm u = (List.range rows.length).filterMap (fun r => (selectedPosition g (perm
+(rows.getD r (fun _ => false))) u).map fun p => (r, p.val))`. -/
 def rowSlots (g : DAGGate) (rows : List (Fin g.args.length → Bool))
     (perm : Equiv.Perm (Fin g.args.length → Bool)) (u : ℕ) : List (ℕ × ℕ) :=
   (List.range rows.length).filterMap fun r =>
     (selectedPosition g (perm (rows.getD r (fun _ => false))) u).map fun p => (r, p.val)
 
-/-- `rowSlots` filters the row indices by the selected position and retains `(row, position)`. -/
+/-- `rowSlots` filters the row indices by the selected position and retains `(row, position)`.
+`rowSlots g rows perm u = (List.range rows.length).filterMap (fun r => (selectedPosition g (perm
+(rows.getD r (fun _ => false))) u).map fun p => (r, p.val))`. -/
 theorem rowSlots_eq (g : DAGGate) (rows : List (Fin g.args.length → Bool))
     (perm : Equiv.Perm (Fin g.args.length → Bool)) (u : ℕ) :
     rowSlots g rows perm u = (List.range rows.length).filterMap (fun r =>
@@ -103,7 +110,9 @@ theorem rowSlots_eq (g : DAGGate) (rows : List (Fin g.args.length → Bool))
   rfl
 
 /-- The occurrence list concatenates every gate's row slots, retaining the gate index.
-The row enumeration and the permutation describing its actual assignments are parameters. -/
+The row enumeration and the permutation describing its actual assignments are parameters.
+`occurrences C rows perm u = (List.finRange C.gates.length).flatMap (fun i => (rowSlots
+C.gates[i.val] (rows i) (perm i) u).map fun rp => (i, rp))`. -/
 def occurrences {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -111,7 +120,9 @@ def occurrences {m : ℕ} (C : DAGCircuit m)
   (List.finRange C.gates.length).flatMap fun i =>
     (rowSlots C.gates[i.val] (rows i) (perm i) u).map fun rp => (i, rp)
 
-/-- `occurrences` is the concatenation of the indexed `rowSlots` over all gates. -/
+/-- `occurrences` is the concatenation of the indexed `rowSlots` over all gates.
+`occurrences C rows perm u = (List.finRange C.gates.length).flatMap (fun i => (rowSlots
+C.gates[i.val] (rows i) (perm i) u).map fun rp => (i, rp))`. -/
 theorem occurrences_eq {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -122,6 +133,8 @@ theorem occurrences_eq {m : ℕ} (C : DAGCircuit m)
 
 /-- A slot `(r,p)` occurs exactly when `r` is a row index, `p` is an argument index,
 that argument is `u`, and its actual permuted assignment bit is `true`.
+`(r, p) ∈ rowSlots g rows perm u ↔ r < rows.length ∧ ∃ hp : p < g.args.length, g.args[p] = u ∧ perm
+(rows.getD r (fun _ => false)) ⟨p, hp⟩ = true`.
 
 **Proof sketch.** Membership in a filtered map gives a row and a found position. The exact
 search contract supplies the vertex and bit tests. Conversely those tests force the search
@@ -145,6 +158,9 @@ theorem mem_rowSlots_iff (g : DAGGate) (rows : List (Fin g.args.length → Bool)
 
 /-- A triple `(i,r,p)` occurs exactly when row `r` at gate `i` uses vertex `u` at
 position `p` with actual assignment bit `true`. This lists occurrences across all gates.
+`(i, r, p) ∈ occurrences C rows perm u ↔ r < (rows i).length ∧ ∃ hp : p <
+C.gates[i.val].args.length, C.gates[i.val].args[p] = u ∧ perm i ((rows i).getD r (fun _ => false))
+⟨p, hp⟩ = true`.
 
 **Proof sketch.** Flat-map membership selects a gate, and mapped-pair membership identifies
 it with `i`. The one-gate slot contract gives the exact row, vertex, and assignment tests.
@@ -169,6 +185,7 @@ theorem mem_occurrences_iff {m : ℕ} (C : DAGCircuit m)
 /-- Every actual assignment with the selected inactive argument occurs at some row of its
 gate, provided the row enumeration contains every assignment. The returned row's actual
 assignment is exactly the prescribed one, even when `perm` is nontrivial.
+`∃ r, (i, r, p.val) ∈ occurrences C rows perm u ∧ perm i ((rows i).getD r (fun _ => false)) = a`.
 
 **Proof sketch.** Enumerate the inverse image of the prescribed assignment under the row
 permutation. A list-membership witness supplies its row index. Reading that row and applying
@@ -190,7 +207,8 @@ theorem exhaustive {m : ℕ} (C : DAGCircuit m)
   exact ⟨hr, p.isLt, hvertex, hactual ▸ hbit⟩
 
 /-- Two selected occurrences at the same gate and row have the same argument index,
-because the gate's argument vertices are distinct. -/
+because the gate's argument vertices are distinct.
+`p = p'`. -/
 theorem per_row_unique {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -202,7 +220,8 @@ theorem per_row_unique {m : ℕ} (C : DAGCircuit m)
   exact hargs.getElem_inj_iff.mp (hvertex.trans hvertex'.symm)
 
 /-- The row-slot list contains no duplicate pair, since its row indices come from a
-range without repetitions. This holds even without distinct gate arguments. -/
+range without repetitions. This holds even without distinct gate arguments.
+`(rowSlots g rows perm u).Nodup`. -/
 theorem rowSlots_nodup (g : DAGGate) (rows : List (Fin g.args.length → Bool))
     (perm : Equiv.Perm (Fin g.args.length → Bool)) (u : ℕ) :
     (rowSlots g rows perm u).Nodup := by
@@ -215,6 +234,7 @@ theorem rowSlots_nodup (g : DAGGate) (rows : List (Fin g.args.length → Bool))
 
 /-- The full occurrence list has no repeated gate/row/argument triple. Distinct gate
 indices keep their row-slot lists disjoint.
+`(occurrences C rows perm u).Nodup`.
 
 **Proof sketch.** Each row-slot list has no repetitions and adding its gate index is
 injective. The concatenated lists for distinct gates are disjoint because equality of
@@ -235,6 +255,7 @@ theorem occurrences_nodup {m : ℕ} (C : DAGCircuit m)
 
 /-- A duplicate-free row enumeration for a gate of arity at most two contributes at
 most four selected occurrences, for every assignment permutation.
+`(rowSlots g rows perm u).length ≤ 4`.
 
 **Proof sketch.** Filtering cannot increase the row count. A duplicate-free list of Boolean
 assignments has length at most the cardinality `2^arity`. The arity bound makes this at most
@@ -258,6 +279,7 @@ theorem length_rowSlots_le_four (g : DAGGate) (rows : List (Fin g.args.length �
 /-- For a fan-in-two circuit with duplicate-free assignment rows, the complete occurrence
 list has length at most `4 * C.gates.length`. [PS10, Theorem 163.7] This explicit bound
 counts all uses of the selected wire, including uses in different gates.
+`(occurrences C rows perm u).length ≤ 4 * C.gates.length`.
 
 **Proof sketch.** Each gate contributes at most four slots by the assignment-cardinality
 bound. The concatenation length is the sum of these contributions. Bound the sum by four
@@ -278,16 +300,19 @@ theorem length_occurrences_le {m : ℕ} (C : DAGCircuit m)
   simpa only [List.length_finRange, Nat.mul_comm] using h
 
 /-- Pad `slots` to `q+1` optional entries by reading `slots[j.val]?`. Valid slots are
-`some` values, and every index beyond the list is `none`. -/
+`some` values, and every index beyond the list is `none`.
+`padded q slots j = slots[j.val]?`. -/
 def padded {α : Type*} (q : ℕ) (slots : List α) : Fin (q + 1) → Option α :=
   fun j => slots[j.val]?
 
-/-- The `j`th padded entry is the optional list lookup `slots[j.val]?`. -/
+/-- The `j`th padded entry is the optional list lookup `slots[j.val]?`.
+`padded q slots j = slots[j.val]?`. -/
 theorem padded_eq {α : Type*} (q : ℕ) (slots : List α) (j : Fin (q + 1)) :
     padded q slots j = slots[j.val]? := rfl
 
 /-- A value occurs in a padded vector exactly when it belongs to the original list,
 provided the list fits in the `q+1` available slots.
+`(∃ j, padded q slots j = some a) ↔ a ∈ slots`.
 
 **Proof sketch.** A successful padded lookup witnesses list membership. Conversely list
 membership provides an index below the list length. The capacity bound places this index
@@ -304,13 +329,15 @@ theorem padded_some_iff {α : Type*} (q : ℕ) (slots : List α)
     refine ⟨⟨i, lt_of_lt_of_le hi hlen⟩, ?_⟩
     rw [padded_eq, List.getElem?_eq_getElem hi, hget]
 
-/-- A padded entry is `none` exactly when its index is at least the original list length. -/
+/-- A padded entry is `none` exactly when its index is at least the original list length.
+`padded q slots j = none ↔ slots.length ≤ j.val`. -/
 theorem padded_eq_none_iff {α : Type*} (q : ℕ) (slots : List α) (j : Fin (q + 1)) :
     padded q slots j = none ↔ slots.length ≤ j.val := by
   rw [padded_eq, List.getElem?_eq_none_iff]
 
 /-- Padding the full occurrence list loses no occurrence when `q+1` is at least
-`4 * C.gates.length`; padded `some` entries are exactly the original occurrences. -/
+`4 * C.gates.length`; padded `some` entries are exactly the original occurrences.
+`(∃ j, padded q (occurrences C rows perm u) j = some s) ↔ s ∈ occurrences C rows perm u`. -/
 theorem padded_occurrences_some_iff {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -321,7 +348,8 @@ theorem padded_occurrences_some_iff {m : ℕ} (C : DAGCircuit m)
   padded_some_iff q _ ((length_occurrences_le C rows perm u hrows hfanin).trans hbudget) s
 
 /-- A wire used by gate `i₀` precedes that gate's output vertex `m+i₀`, by circuit
-acyclicity. [PS10, Theorem 163.7] -/
+acyclicity. [PS10, Theorem 163.7]
+`u < m + i₀.val`. -/
 theorem selected_wire_lt {m : ℕ} (C : DAGCircuit m) (i₀ : Fin C.gates.length)
     (u : ℕ) (hu : u ∈ C.gates[i₀.val].args) : u < m + i₀.val :=
   C.args_lt i₀.val i₀.isLt u hu
@@ -343,20 +371,23 @@ theorem hybrid_plaintext_ne (m i₀ u j : ℕ) (hu : u < m + i₀) (b : Bool) :
     omega
 
 /-- If gate `i₀` reads `u`, every hybrid plaintext label differs from `(u,true)`.
-This is the circuit-indexed form of `hybrid_plaintext_ne`. [PS10, Theorem 163.7] -/
+This is the circuit-indexed form of `hybrid_plaintext_ne`. [PS10, Theorem 163.7]
+`(m + j, if j < i₀.val then false else b) ≠ (u, true)`. -/
 theorem hybrid_plaintext_ne_of_used {m : ℕ} (C : DAGCircuit m)
     (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ C.gates[i₀.val].args) (j : ℕ) (b : Bool) :
     (m + j, if j < i₀.val then false else b) ≠ (u, true) :=
   hybrid_plaintext_ne m i₀.val u j (selected_wire_lt C i₀ u hu) b
 
 /-- Every active label `(v,false)` differs from the selected inactive label `(u,true)`,
-including when the two labels refer to the same vertex. [PS10, Theorem 163.7] -/
+including when the two labels refer to the same vertex. [PS10, Theorem 163.7]
+`(v, false) ≠ (u, true)`. -/
 theorem active_label_ne (v u : ℕ) : (v, false) ≠ (u, true) :=
   fun h => Bool.false_ne_true (congrArg Prod.snd h)
 
 /-- If every designated output is a sink, a wire `u` read by gate `i₀` cannot occur in
 any output decoding label `(outs j,b)`. [PS10, Theorem 163.7] The bit `b` is arbitrary,
 so the statement covers both entries of every decoding pair.
+`(outs j, b) ≠ (u, true)`.
 
 **Proof sketch.** Equality of labels would identify the output vertex with `u`. The selected
 gate reads `u`, whereas the sink hypothesis forbids this output vertex from belonging to

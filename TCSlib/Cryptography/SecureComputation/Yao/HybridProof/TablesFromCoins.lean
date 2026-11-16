@@ -35,7 +35,10 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.TablesFromCoins
 open Complexity Turing BoolCircuit TCSlib.Cryptography.EncodingMachines
 
 /-- Encode a supplied row family using the argument-word count capped at two; counts
-larger than two return `[]`. The row family can select either real or simulated plaintexts. -/
+larger than two return `[]`. The row family can select either real or simulated plaintexts.
+`tableWordWith args row z = let count := (BinArith.decWords (args z)).length; let arity := min count
+2; if count ≤ 2 then BinArith.encWords ((Finset.univ : Finset (Fin arity → Bool)).toList.map fun a
+=> row arity a z) else []`. -/
 noncomputable def tableWordWith (args : List Bool → List Bool)
     (row : ∀ l : ℕ, (Fin l → Bool) → List Bool → List Bool) (z : List Bool) : List Bool :=
   let count := (BinArith.decWords (args z)).length
@@ -57,7 +60,11 @@ theorem tableWordWith_eq (args : List Bool → List Bool)
 
 /-- The encoded row list of the supplied raw gate data for arity at most two; other
 arities return `[]`. The finite assignment list is a constant for each arity.
-[PS10, Protocol 162.6] -/
+[PS10, Protocol 162.6]
+`tableWord E₁ E₂ width bound inputs gate kind args coins z = let count := (BinArith.decWords (args
+z)).length; let arity := min count 2; if count ≤ 2 then BinArith.encWords ((Finset.univ : Finset
+(Fin arity → Bool)).toList.map fun a => RowFromCoins.rowWord E₁ E₂ width bound inputs gate kind args
+coins arity a z) else []`. -/
 noncomputable def tableWord (E₁ E₂ : List Bool → List Bool)
     (width bound inputs gate : List Bool → ℕ) (kind args coins : List Bool → List Bool)
     (z : List Bool) : List Bool :=
@@ -65,7 +72,11 @@ noncomputable def tableWord (E₁ E₂ : List Bool → List Bool)
     RowFromCoins.rowWord E₁ E₂ width bound inputs gate kind args coins l a) z
 
 /-- `tableWord ... z` is the encoded constant-enumeration row list at `min count 2`
-when the decoded argument count is at most two, and is `[]` otherwise. -/
+when the decoded argument count is at most two, and is `[]` otherwise.
+`tableWord E₁ E₂ width bound inputs gate kind args coins z = let count := (BinArith.decWords (args
+z)).length; let arity := min count 2; if count ≤ 2 then BinArith.encWords ((Finset.univ : Finset
+(Fin arity → Bool)).toList.map fun a => RowFromCoins.rowWord E₁ E₂ width bound inputs gate kind args
+coins arity a z) else []`. -/
 theorem tableWord_eq (E₁ E₂ : List Bool → List Bool)
     (width bound inputs gate : List Bool → ℕ) (kind args coins : List Bool → List Bool)
     (z : List Bool) :
@@ -79,6 +90,7 @@ theorem tableWord_eq (E₁ E₂ : List Bool → List Bool)
 
 /-- The guarded table assembler is polynomial-time if its argument word and every
 supplied row map for the three possible arities are polynomial-time.
+`PolyTimeComputable (tableWordWith args row)`.
 
 **Proof sketch.** Count argument words in unary and cap the count at two. Assemble each
 of the three constant enumeration lists from its polynomial-time row maps, using the
@@ -108,6 +120,7 @@ theorem tableWordWith_poly {args : List Bool → List Bool}
 
 /-- The total table adapter is polynomial-time if the evaluators, coin/kind/argument words,
 and unary numeric maps are polynomial-time. [PS10, Protocol 162.6]
+`PolyTimeComputable (tableWord E₁ E₂ width bound inputs gate kind args coins)`.
 
 **Proof sketch.** Count the argument words with the public polynomial-time list counter.
 Cap the enumeration arity at two, so the enumeration is one of three fixed finite lists.
@@ -129,6 +142,8 @@ theorem tableWord_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCo
 
 /-- On an encoded unary argument list of length at most two, the guarded table adapter
 is precisely the encoded fixed-enumeration row list at that genuine argument length.
+`tableWordWith args row z = BinArith.encWords ((Finset.univ : Finset (Fin vertices.length →
+Bool)).toList.map fun a => row vertices.length a z)`.
 
 **Proof sketch.** Canonical decoding determines the argument-word count. The fan-in bound
 removes the malformed-word guard and makes the capped arity equal the genuine length.
@@ -154,6 +169,8 @@ theorem tableWordWith_of_encoded (args : List Bool → List Bool)
 /-- On a genuine argument-word list, if every raw row equals the corresponding garbled
 row after the seed permutation, the table adapter equals the encoded garbled table.
 [PS10, Protocol 162.6]
+`tableWord E₁ E₂ width bound inputs gate kind args coins z = BinArith.encWords (garbledTable
+(nestedSpecial E₁ E₂ (width z)) C s i)`.
 
 **Proof sketch.** Canonical decoding identifies the argument count, so the cap and guard
 leave the genuine arity unchanged. The fixed enumeration is then exactly the public
@@ -182,6 +199,7 @@ theorem tableWord_garbledTable (E₁ E₂ : List Bool → List Bool)
 
 /-- Two guarded table adapters agree at their inputs when their argument words agree
 and their supplied row maps agree pointwise at every arity and assignment.
+`tableWordWith args row z = tableWordWith args' row' z'`.
 
 **Proof sketch.** Package each dependent assignment enumeration as a function of its
 natural arity. Rewrite the argument-word equality before opening that enumeration, so both

@@ -36,7 +36,8 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed
 
 open BoolCircuit
 
-/-- The enumerated row of actual assignment `a` is the index of `perm.symm a` in `rows`. -/
+/-- The enumerated row of actual assignment `a` is the index of `perm.symm a` in `rows`.
+`rowIndex C rows perm i a = (rows i).idxOf ((perm i).symm a)`. -/
 noncomputable def rowIndex {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -50,7 +51,8 @@ theorem rowIndex_eq {m : ℕ} (C : DAGCircuit m)
     (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) :
     rowIndex C rows perm i a = (rows i).idxOf ((perm i).symm a) := rfl
 
-/-- A complete assignment enumeration contains the row index of every actual assignment. -/
+/-- A complete assignment enumeration contains the row index of every actual assignment.
+`rowIndex C rows perm i a < (rows i).length`. -/
 theorem rowIndex_lt {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -59,7 +61,8 @@ theorem rowIndex_lt {m : ℕ} (C : DAGCircuit m)
   List.idxOf_lt_length_iff.mpr (hcomplete ((perm i).symm a))
 
 /-- Reading the enumerated row at `rowIndex` and applying its permutation recovers the
-prescribed actual assignment exactly. -/
+prescribed actual assignment exactly.
+`perm i ((rows i).getD (rowIndex C rows perm i a) (fun _ => false)) = a`. -/
 theorem rowIndex_actual {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -72,7 +75,9 @@ theorem rowIndex_actual {m : ℕ} (C : DAGCircuit m)
   exact Equiv.apply_symm_apply (perm i) a
 
 /-- The challenge slot for actual assignment `a` and argument position `p` is the index
-of `(i,rowIndex a,p)` in the complete occurrence list. -/
+of `(i,rowIndex a,p)` in the complete occurrence list.
+`slotIndex C rows perm u i a p = @List.idxOf (Fin C.gates.length × ℕ × ℕ) instBEqOfDecidableEq (i,
+rowIndex C rows perm i a, p.val) (GateOccurrences.occurrences C rows perm u)`. -/
 noncomputable def slotIndex {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -81,7 +86,9 @@ noncomputable def slotIndex {m : ℕ} (C : DAGCircuit m)
   @List.idxOf (Fin C.gates.length × ℕ × ℕ) instBEqOfDecidableEq
     (i, rowIndex C rows perm i a, p.val) (GateOccurrences.occurrences C rows perm u)
 
-/-- `slotIndex` is the occurrence-list index of the gate, enumerated row, and position. -/
+/-- `slotIndex` is the occurrence-list index of the gate, enumerated row, and position.
+`slotIndex C rows perm u i a p = @List.idxOf (Fin C.gates.length × ℕ × ℕ) instBEqOfDecidableEq (i,
+rowIndex C rows perm i a, p.val) (GateOccurrences.occurrences C rows perm u)`. -/
 theorem slotIndex_eq {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -93,6 +100,7 @@ theorem slotIndex_eq {m : ℕ} (C : DAGCircuit m)
 
 /-- Every selected inactive argument has a slot strictly below the occurrence-list length.
 Completeness supplies its row even when the assignment permutation is nontrivial.
+`slotIndex C rows perm u i a p < (GateOccurrences.occurrences C rows perm u).length`.
 
 **Proof sketch.** The inverse permutation supplies the row index, whose actual assignment
 is `a`. Its argument and bit tests imply membership in the all-occurrence list. The library
@@ -121,7 +129,10 @@ variable {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
 
 /-- Fill the selected row's first nonce for argument position zero and its second nonce
 for other positions, using that occurrence's challenge slot. Unselected rows and positions
-whose slot is outside the supplied capacity retain their fixed nonce pair. -/
+whose slot is outside the supplied capacity retain their fixed nonce pair.
+`nonce C rows s u q r i a = (GateOccurrences.selectedPosition C.gates[i.val] a u).elim (s.2.1 i a)
+(fun p => let j := slotIndex C rows s.2.2 u i a p; if h : j < q + 1 then if p.val = 0 then (r ⟨j,
+h⟩, (s.2.1 i a).2) else ((s.2.1 i a).1, r ⟨j, h⟩) else s.2.1 i a)`. -/
 noncomputable def nonce (i : Fin C.gates.length)
     (a : Fin C.gates[i.val].args.length → Bool) : ρ × ρ :=
   (GateOccurrences.selectedPosition C.gates[i.val] a u).elim (s.2.1 i a) fun p =>
@@ -131,7 +142,10 @@ noncomputable def nonce (i : Fin C.gates.length)
     else s.2.1 i a
 
 /-- `nonce` changes exactly the selected argument's encryption-nonce half, reading the
-independent nonce at its occurrence rank when that rank fits in `q+1` slots. -/
+independent nonce at its occurrence rank when that rank fits in `q+1` slots.
+`nonce C rows s u q r i a = (GateOccurrences.selectedPosition C.gates[i.val] a u).elim (s.2.1 i a)
+(fun p => let j := slotIndex C rows s.2.2 u i a p; if h : j < q + 1 then if p.val = 0 then (r ⟨j,
+h⟩, (s.2.1 i a).2) else ((s.2.1 i a).1, r ⟨j, h⟩) else s.2.1 i a)`. -/
 theorem nonce_eq (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) :
     nonce C rows s u q r i a =
       (GateOccurrences.selectedPosition C.gates[i.val] a u).elim (s.2.1 i a) (fun p =>
@@ -140,14 +154,17 @@ theorem nonce_eq (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length �
           if p.val = 0 then (r ⟨j, h⟩, (s.2.1 i a).2) else ((s.2.1 i a).1, r ⟨j, h⟩)
         else s.2.1 i a) := rfl
 
-/-- A row with no selected inactive argument retains both fixed nonce halves. -/
+/-- A row with no selected inactive argument retains both fixed nonce halves.
+`nonce C rows s u q r i a = s.2.1 i a`. -/
 theorem nonce_of_none (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
     (h : GateOccurrences.selectedPosition C.gates[i.val] a u = none) :
     nonce C rows s u q r i a = s.2.1 i a := by
   rw [nonce_eq, h, Option.elim_none]
 
 /-- A selected row whose occurrence rank fits the capacity receives exactly that independent
-nonce in its selected encryption layer, retaining the opposite fixed nonce half. -/
+nonce in its selected encryption layer, retaining the opposite fixed nonce half.
+`nonce C rows s u q r i a = if p.val = 0 then (r ⟨slotIndex C rows s.2.2 u i a p, hslot⟩, (s.2.1 i
+a).2) else ((s.2.1 i a).1, r ⟨slotIndex C rows s.2.2 u i a p, hslot⟩)`. -/
 theorem nonce_of_some (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
     (p : Fin C.gates[i.val].args.length)
     (h : GateOccurrences.selectedPosition C.gates[i.val] a u = some p)
@@ -162,7 +179,9 @@ end Fill
 
 /-- Replace only the inactive key at `u`, and fill one independent nonce for every selected
 occurrence. All other keys, opposite nonce halves, and the complete row permutation remain
-fixed. The selected key is not used to compute any occurrence address. [PS10, Theorem 163.7] -/
+fixed. The selected key is not used to compute any occurrence address. [PS10, Theorem 163.7]
+`fill C rows s u q k r = ((fun v b => if v = u ∧ b = true then k else s.1 v b), (nonce C rows s
+u.val q r, s.2.2))`. -/
 noncomputable def fill {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
@@ -171,7 +190,9 @@ noncomputable def fill {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
     (nonce C rows s u.val q r, s.2.2))
 
 /-- `fill` is the product of the one-label key replacement, occurrence-indexed nonce fill,
-and the unchanged assignment permutation. -/
+and the unchanged assignment permutation.
+`fill C rows s u q k r = ((fun v b => if v = u ∧ b = true then k else s.1 v b), (nonce C rows s
+u.val q r, s.2.2))`. -/
 theorem fill_eq {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
@@ -180,14 +201,16 @@ theorem fill_eq {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
       ((fun v b => if v = u ∧ b = true then k else s.1 v b),
         (nonce C rows s u.val q r, s.2.2)) := rfl
 
-/-- The filled key table changes just `(u,true)` to the independently supplied key `k`. -/
+/-- The filled key table changes just `(u,true)` to the independently supplied key `k`.
+`(fill C rows s u q k r).1 v b = if v = u ∧ b = true then k else s.1 v b`. -/
 theorem fill_key {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
     (r : Fin (q + 1) → ρ) (v : Fin C.size) (b : Bool) :
     (fill C rows s u q k r).1 v b = if v = u ∧ b = true then k else s.1 v b := rfl
 
-/-- The filled row-coin table is exactly the occurrence-indexed `nonce` function. -/
+/-- The filled row-coin table is exactly the occurrence-indexed `nonce` function.
+`(fill C rows s u q k r).2.1 i a = nonce C rows s u.val q r i a`. -/
 theorem fill_nonce {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
@@ -195,14 +218,16 @@ theorem fill_nonce {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
     (a : Fin C.gates[i.val].args.length → Bool) :
     (fill C rows s u q k r).2.1 i a = nonce C rows s u.val q r i a := rfl
 
-/-- The filled seed retains every original assignment permutation. -/
+/-- The filled seed retains every original assignment permutation.
+`(fill C rows s u q k r).2.2 i = s.2.2 i`. -/
 theorem fill_perm {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
     (r : Fin (q + 1) → ρ) (i : Fin C.gates.length) :
     (fill C rows s u q k r).2.2 i = s.2.2 i := rfl
 
-/-- Reading the selected inactive coordinate of the filled key table returns `k`. -/
+/-- Reading the selected inactive coordinate of the filled key table returns `k`.
+`(fill C rows s u q k r).1 u true = k`. -/
 theorem fill_key_selected {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
@@ -210,7 +235,8 @@ theorem fill_key_selected {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
   (fill_key C rows s u q k r u true).trans (if_pos ⟨rfl, rfl⟩)
 
 /-- Every key coordinate with a different symbolic label retains its fixed value.
-No inequality between key values is assumed. -/
+No inequality between key values is assumed.
+`(fill C rows s u q k r).1 v b = s.1 v b`. -/
 theorem fill_key_other {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
@@ -220,6 +246,7 @@ theorem fill_key_other {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
 
 /-- Total wire-key lookup in the filled seed changes exactly the symbolic label `(u,true)`,
 including the default behavior beyond the circuit. Key values may collide.
+`keyAt C (fill C rows s u q k r) v b = if (v, b) = (u.val, true) then k else keyAt C s v b`.
 
 **Proof sketch.** At an in-range vertex, read the filled key table and identify equality of
 finite vertex/bit coordinates with equality of natural vertex/bit labels. Outside the circuit,
@@ -243,7 +270,9 @@ theorem fill_keyAt {m : ℕ} {K ρ : Type} [Inhabited K] (C : DAGCircuit m)
     rw [keyAt_eq, dif_neg hv, if_neg hne, keyAt_eq, dif_neg hv]
 
 /-- The filled argument-key list replaces exactly those coordinates bearing symbolic label
-`(u,true)`, with all other wire-key values read from the fixed seed. -/
+`(u,true)`, with all other wire-key values read from the fixed seed.
+`argKeys C (fill C rows s u q k r) i a = List.ofFn (fun p => if (C.gates[i.val].args[p.val], a p) =
+(u.val, true) then k else keyAt C s C.gates[i.val].args[p.val] (a p))`. -/
 theorem fill_argKeys {m : ℕ} {K ρ : Type} [Inhabited K] (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
@@ -270,6 +299,7 @@ theorem argument_label_eq_iff (g : DAGGate) (a : Fin g.args.length → Bool) (u 
 
 /-- A row with selected position `p` has exactly its `p`th argument key replaced by `k`.
 The other argument key is fixed even if its value happens to equal `k`.
+`argKeys C (fill C rows s u q k r) i a = (argKeys C s i a).set p.val k`.
 
 **Proof sketch.** Compare entries of the two lists. The key-table reader changes an entry
 exactly when its symbolic label is selected. Argument distinctness identifies that event
@@ -299,6 +329,7 @@ theorem fill_argKeys_some {m : ℕ} {K ρ : Type} [Inhabited K] (C : DAGCircuit 
     rw [if_neg (fun h' => hfin (hc.mp h')), if_neg (Ne.symm hjp)]
 
 /-- A row with no selected inactive argument keeps its entire argument-key list fixed.
+`argKeys C (fill C rows s u q k r) i a = argKeys C s i a`.
 
 **Proof sketch.** A position bearing the selected label would force the position search
 to return that position, contrary to its `none` result. Thus every coordinate uses the
@@ -323,7 +354,8 @@ theorem fill_argKeys_none {m : ℕ} {K ρ : Type} [Inhabited K] (C : DAGCircuit 
   exact if_neg hne
 
 /-- Applying a row permutation and then finding its enumerated row recovers the original
-row index, when the enumeration has no repetitions. -/
+row index, when the enumeration has no repetitions.
+`rowIndex C rows perm i (perm i ((rows i).getD r (fun _ => false))) = r`. -/
 theorem rowIndex_of_row {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
@@ -335,6 +367,7 @@ theorem rowIndex_of_row {m : ℕ} (C : DAGCircuit m)
 /-- An occurrence read at list index `j` maps back to exactly challenge index `j`.
 The row enumeration's distinctness recovers its row index, and the occurrence enumeration's
 distinctness recovers its challenge index.
+`slotIndex C rows perm u i (perm i ((rows i).getD r (fun _ => false))) p = j`.
 
 **Proof sketch.** The actual assignment at the stored row maps back to that row by the inverse
 row-index reader. The slot index is therefore the index of the looked-up triple. Since the
@@ -351,7 +384,9 @@ theorem slotIndex_of_lookup {m : ℕ} (C : DAGCircuit m)
   exact List.idxOf_getElem (GateOccurrences.occurrences_nodup C rows perm u) j hj
 
 /-- Reading a selected argument's padded challenge slot returns its exact occurrence triple.
-This is the forward inverse of the occurrence-rank map. -/
+This is the forward inverse of the occurrence-rank map.
+`GateOccurrences.padded q (GateOccurrences.occurrences C rows perm u) ⟨slotIndex C rows perm u i a
+p, hslot⟩ = some (i, rowIndex C rows perm i a, p.val)`. -/
 theorem slotIndex_padded {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))

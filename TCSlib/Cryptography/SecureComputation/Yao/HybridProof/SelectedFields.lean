@@ -49,24 +49,29 @@ variable {inputs : ℕ} {K ρ : Type} [Inhabited K]
   (rs : Fin (q + 1) → ρ)
 
 /-- Total key lookup is unchanged at every symbolic label other than `(u,true)`,
-including the default region outside the circuit. [PS10, Theorem 163.7] -/
+including the default region outside the circuit. [PS10, Theorem 163.7]
+`keyAt C (SelectedSeed.fill C rows s u q k rs) w b = keyAt C s w b`. -/
 theorem keyAt_of_label_ne (w : ℕ) (b : Bool) (h : (w, b) ≠ (u.val, true)) :
     keyAt C (SelectedSeed.fill C rows s u q k rs) w b = keyAt C s w b := by
   rw [SelectedSeed.fill_keyAt, if_neg h]
 
 /-- False active keys are unchanged at every vertex, including default vertices.
-This is a symbolic-label fact and does not require distinct key values. -/
+This is a symbolic-label fact and does not require distinct key values.
+`keyAt C (SelectedSeed.fill C rows s u q k rs) w false = keyAt C s w false`. -/
 theorem keyAt_false (w : ℕ) :
     keyAt C (SelectedSeed.fill C rows s u q k rs) w false = keyAt C s w false := by
   simp only [SelectedSeed.fill_keyAt, Prod.mk.injEq, Bool.false_eq_true, and_false, ite_false]
 
-/-- Both key choices are unchanged at a vertex different from the selected vertex. -/
+/-- Both key choices are unchanged at a vertex different from the selected vertex.
+`keyAt C (SelectedSeed.fill C rows s u q k rs) w b = keyAt C s w b`. -/
 theorem keyAt_of_ne (w : ℕ) (b : Bool) (hw : w ≠ u.val) :
     keyAt C (SelectedSeed.fill C rows s u q k rs) w b = keyAt C s w b :=
   keyAt_of_label_ne C rows s u q k rs w b (fun h => hw (congrArg Prod.fst h))
 
 /-- An output decoding pair at an unrelated vertex is unchanged, for every
-prescribed result bit. No encryption assumption is needed. -/
+prescribed result bit. No encryption assumption is needed.
+`FakeObjects.decodePair C (SelectedSeed.fill C rows s u q k rs) w b = FakeObjects.decodePair C s w
+b`. -/
 theorem decodePair_fill (w : ℕ) (b : Bool) (hw : w ≠ u.val) :
     FakeObjects.decodePair C (SelectedSeed.fill C rows s u q k rs) w b =
       FakeObjects.decodePair C s w b := by
@@ -76,7 +81,9 @@ theorem decodePair_fill (w : ℕ) (b : Bool) (hw : w ≠ u.val) :
 end Keys
 
 /-- The complete false-key answer vector is unchanged by selected fill for
-all starting vertices and counts, including zero key width. -/
+all starting vertices and counts, including zero key width.
+`FakeObjects.activeAnswers C (SelectedSeed.fill C rows s u q k rs) first count =
+FakeObjects.activeAnswers C s first count`. -/
 theorem activeAnswers_fill {inputs width : ℕ} {ρ : Type} (C : DAGCircuit inputs)
     (rows : (i : Fin C.gates.length) → List (Fin (C.gates[i.val]).args.length → Bool))
     (s : GarbleSeed C (Fin width → Bool) (ρ × ρ)) (u : Fin C.size) (q : ℕ)
@@ -87,7 +94,9 @@ theorem activeAnswers_fill {inputs width : ℕ} {ρ : Type} (C : DAGCircuit inpu
   rw [FakeObjects.activeAnswers_eq, FakeObjects.activeAnswers_eq, keyAt_false]
 
 /-- The encoded message tail is independent of the hybrid stage: only the
-encoded table head depends on the stage. -/
+encoded table head depends on the stage.
+`pairSndD (GateHybridMessage.message M C s inA outLen output v stage) = pairSndD
+(GateHybridMessage.message M C s inA outLen output v stage')`. -/
 theorem message_tail_stage_eq {inputs width : ℕ} {ρ : Type}
     (M : MultiEnc (Fin width → Bool) (List Bool) ρ) (C : DAGCircuit inputs)
     (s : GarbleSeed C (Fin width → Bool) ρ) (inA outLen : ℕ)
@@ -98,6 +107,8 @@ theorem message_tail_stage_eq {inputs width : ℕ} {ρ : Type}
 
 /-- The encoded message tail is unchanged by selected fill when no output
 vertex is the selected argument vertex. [PS10, Theorem 163.7]
+`pairSndD (GateHybridMessage.message M C (SelectedSeed.fill C rows s u q k rs) inA outLen output v
+stage) = pairSndD (GateHybridMessage.message M C s inA outLen output v stage)`.
 
 **Proof sketch.** Read the message pair and discard its table head. Every
 encoded Alice input key is false and is unchanged. Each output decoding pair
@@ -127,7 +138,8 @@ theorem message_tail_fill {inputs width : ℕ} {ρ : Type}
 
 /-- Every hybrid output-key label differs from `(u,true)` when the selected
 wire precedes the current cutoff vertex. This concerns symbolic labels, not
-inequality of key values. [PS10, Theorem 163.7] -/
+inequality of key values. [PS10, Theorem 163.7]
+`(inputs + i.val, GateHybrids.outputBit C v cutoff phase i a) ≠ (u, true)`. -/
 theorem outputBit_plaintext_ne_of_lt {inputs : ℕ} (C : DAGCircuit inputs)
     (v : ℕ → Bool) (cutoff phase u : ℕ) (hu : u < inputs + cutoff)
     (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
@@ -140,7 +152,8 @@ theorem outputBit_plaintext_ne_of_lt {inputs : ℕ} (C : DAGCircuit inputs)
   · simpa only [if_neg hi] using h
 
 /-- Selecting a current gate's argument gives a different symbolic key label
-from every hybrid row plaintext, at every phase. [PS10, Theorem 163.7] -/
+from every hybrid row plaintext, at every phase. [PS10, Theorem 163.7]
+`(inputs + i.val, GateHybrids.outputBit C v i₀.val phase i a) ≠ (u, true)`. -/
 theorem outputBit_plaintext_ne {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
     (i₀ : Fin C.gates.length) (phase u : ℕ) (hu : u ∈ (C.gates[i₀.val]).args)
     (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
@@ -149,7 +162,8 @@ theorem outputBit_plaintext_ne {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ �
     (GateOccurrences.selected_wire_lt C i₀ u hu) i a
 
 /-- At the even stage of a gate, all row plaintext labels avoid its selected
-argument's inactive key label. -/
+argument's inactive key label.
+`(inputs + i.val, GateHybrids.stageBit C v (2 * i₀.val) i a) ≠ (u, true)`. -/
 theorem stageBit_plaintext_ne_even {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
     (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ (C.gates[i₀.val]).args)
     (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
@@ -158,7 +172,8 @@ theorem stageBit_plaintext_ne_even {inputs : ℕ} (C : DAGCircuit inputs) (v : �
   exact outputBit_plaintext_ne C v i₀ 0 u hu i a
 
 /-- At the odd stage of a gate, all row plaintext labels avoid its selected
-argument's inactive key label. -/
+argument's inactive key label.
+`(inputs + i.val, GateHybrids.stageBit C v (2 * i₀.val + 1) i a) ≠ (u, true)`. -/
 theorem stageBit_plaintext_ne_odd {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
     (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ (C.gates[i₀.val]).args)
     (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
@@ -167,7 +182,8 @@ theorem stageBit_plaintext_ne_odd {inputs : ℕ} (C : DAGCircuit inputs) (v : �
   exact outputBit_plaintext_ne C v i₀ 1 u hu i a
 
 /-- After completing the current gate, all row plaintext labels still avoid
-its selected argument's inactive key label. -/
+its selected argument's inactive key label.
+`(inputs + i.val, GateHybrids.stageBit C v (2 * i₀.val + 2) i a) ≠ (u, true)`. -/
 theorem stageBit_plaintext_ne_next {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
     (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ (C.gates[i₀.val]).args)
     (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
@@ -179,7 +195,8 @@ theorem stageBit_plaintext_ne_next {inputs : ℕ} (C : DAGCircuit inputs) (v : �
   exact outputBit_plaintext_ne_of_lt C v (i₀.val + 1) 0 u hu' i a
 
 /-- The first substep at an arity-zero gate changes no stage label. The
-statement requires no selected wire because the first argument is absent. -/
+statement requires no selected wire because the first argument is absent.
+`GateHybrids.stageBit C v (2 * i₀.val) = GateHybrids.stageBit C v (2 * i₀.val + 1)`. -/
 theorem stage_first_of_arity_zero {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
     (i₀ : Fin C.gates.length) (hzero : (C.gates[i₀.val]).args.length = 0) :
     GateHybrids.stageBit C v (2 * i₀.val) =
@@ -196,6 +213,7 @@ theorem stage_first_of_arity_zero {inputs : ℕ} (C : DAGCircuit inputs) (v : �
 
 /-- The second substep at a gate of arity at most one changes no stage label
 for consistent wire values. No second argument or selected wire is required.
+`GateHybrids.stageBit C v (2 * i₀.val + 1) = GateHybrids.stageBit C v (2 * i₀.val + 2)`.
 
 **Proof sketch.** Other gates are unchanged by cutoff advancement. At the
 current gate the padded second bit is false because the assignment has length
@@ -220,7 +238,9 @@ theorem stage_second_of_arity_le_one {inputs : ℕ} (C : DAGCircuit inputs)
       simpa only [List.length_ofFn, Fin.getElem_fin] using hsmall)
   · exact Or.inl (fun h => hi (Fin.ext h))
 
-/-- Equal stage-label families give equal complete encoded messages. -/
+/-- Equal stage-label families give equal complete encoded messages.
+`GateHybridMessage.message M C s inA outLen output v stage = GateHybridMessage.message M C s inA
+outLen output v stage'`. -/
 theorem message_eq_of_stageBit_eq {inputs width : ℕ} {ρ : Type}
     (M : MultiEnc (Fin width → Bool) (List Bool) ρ) (C : DAGCircuit inputs)
     (s : GarbleSeed C (Fin width → Bool) ρ) (inA outLen : ℕ)
@@ -231,7 +251,10 @@ theorem message_eq_of_stageBit_eq {inputs width : ℕ} {ρ : Type}
   rw [GateHybridMessage.message_eq, GateHybridMessage.message_eq, h]
 
 /-- Equal stage-label families give exactly equal Bob-view samples for every
-seed and prescribed Alice output. -/
+seed and prescribed Alice output.
+`GateHybridMessage.sample M C s inA inB outLen output v commonInput bobInput bobCoins aliceOutput
+stage = GateHybridMessage.sample M C s inA inB outLen output v commonInput bobInput bobCoins
+aliceOutput stage'`. -/
 theorem sample_eq_of_stageBit_eq {inputs width : ℕ} {ρ : Type}
     (M : MultiEnc (Fin width → Bool) (List Bool) ρ) (C : DAGCircuit inputs)
     (s : GarbleSeed C (Fin width → Bool) ρ) (inA inB outLen : ℕ)
@@ -246,7 +269,8 @@ theorem sample_eq_of_stageBit_eq {inputs width : ℕ} {ρ : Type}
     message_eq_of_stageBit_eq M C s inA outLen output v stage stage' h]
 
 /-- If no selected position exists, any argument at the selected wire has
-false assignment bit. This directly specializes the published position reader. -/
+false assignment bit. This directly specializes the published position reader.
+`a p = false`. -/
 theorem selectedPosition_none_bit (g : DAGGate) (a : Fin g.args.length → Bool)
     (u : ℕ) (hargs : g.args.Nodup) (p : Fin g.args.length) (hp : g.args[p.val] = u)
     (hNone : GateOccurrences.selectedPosition g a u = none) : a p = false := by
@@ -259,7 +283,8 @@ theorem selectedPosition_none_bit (g : DAGGate) (a : Fin g.args.length → Bool)
     cases hsome
 
 /-- The encoded assignment bit at a selected wire is false when the selected
-position search returns none. The list lookup uses the existing `ofFn` readers. -/
+position search returns none. The list lookup uses the existing `ofFn` readers.
+`(List.ofFn a).getD p.val false = false`. -/
 theorem selectedPosition_none_getD (g : DAGGate) (a : Fin g.args.length → Bool)
     (u : ℕ) (hargs : g.args.Nodup) (p : Fin g.args.length) (hp : g.args[p.val] = u)
     (hNone : GateOccurrences.selectedPosition g a u = none) :
@@ -270,7 +295,8 @@ theorem selectedPosition_none_getD (g : DAGGate) (a : Fin g.args.length → Bool
 
 /-- In the first substep, rows without the selected first-argument key have
 unchanged stage labels. The actual first argument is supplied, so no absent
-argument is represented by a dummy wire. [PS10, Theorem 163.7] -/
+argument is represented by a dummy wire. [PS10, Theorem 163.7]
+`GateHybrids.stageBit C v (2 * i₀.val) i a = GateHybrids.stageBit C v (2 * i₀.val + 1) i a`. -/
 theorem stage_first_unselected {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
     (i₀ : Fin C.gates.length) (hargs : (C.gates[i₀.val]).args.Nodup)
     (p : Fin (C.gates[i₀.val]).args.length) (hp : p.val = 0)
@@ -291,6 +317,7 @@ theorem stage_first_unselected {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ �
 /-- In the second substep, rows without the selected second-argument key
 have unchanged stage labels for consistent wire values. The actual argument
 at position one is supplied. [PS10, Theorem 163.7]
+`GateHybrids.stageBit C v (2 * i₀.val + 1) i a = GateHybrids.stageBit C v (2 * i₀.val + 2) i a`.
 
 **Proof sketch.** Outside the current gate, cutoff advancement changes no row.
 At the current gate, an unsuccessful selected-position search forces the

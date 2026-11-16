@@ -43,17 +43,22 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof
 open Complexity Turing BoolCircuit TCSlib.Cryptography
 
 /-- On `⟨⟨N, values⟩, index⟩`, read the `|index|`-th word from `values`
-and pad or truncate it to `|N|` bits. -/
+and pad or truncate it to `|N|` bits.
+`keyLookup z = EnsembleLemmas.padL (pairFstD (pairFstD z)).length (BinArith.getW (pairEncode
+(pairSndD z) (pairSndD (pairFstD z))))`. -/
 def keyLookup (z : List Bool) : List Bool :=
   EnsembleLemmas.padL (pairFstD (pairFstD z)).length
     (BinArith.getW (pairEncode (pairSndD z) (pairSndD (pairFstD z))))
 
-/-- For every `z`, `keyLookup z` is the padded `getW` lookup at its unary index. -/
+/-- For every `z`, `keyLookup z` is the padded `getW` lookup at its unary index.
+`keyLookup z = EnsembleLemmas.padL (pairFstD (pairFstD z)).length (BinArith.getW (pairEncode
+(pairSndD z) (pairSndD (pairFstD z))))`. -/
 theorem keyLookup_eq (z : List Bool) :
     keyLookup z = EnsembleLemmas.padL (pairFstD (pairFstD z)).length
       (BinArith.getW (pairEncode (pairSndD z) (pairSndD (pairFstD z)))) := rfl
 
-/-- Padded encoded-key lookup is polynomial-time on every word. -/
+/-- Padded encoded-key lookup is polynomial-time on every word.
+`PolyTimeComputable keyLookup`. -/
 theorem keyLookup_poly : PolyTimeComputable keyLookup := by
   have hN := polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD
   have hv := polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD
@@ -85,20 +90,25 @@ theorem keyLookup_encoded (N : List Bool) (vs : List (Fin N.length → Bool)) (a
     rfl
   | some k => simp only [Option.map_some, Option.getD_some, padFin_ofFn]
 
-/-- On `⟨N, ⟨values, args⟩⟩`, map padded key lookup over the unary argument indices. -/
+/-- On `⟨N, ⟨values, args⟩⟩`, map padded key lookup over the unary argument indices.
+`argKeysCode z = BinArith.mapW keyLookup (pairEncode (pairEncode (pairFstD z) (pairFstD (pairSndD
+z))) (pairSndD (pairSndD z)))`. -/
 def argKeysCode (z : List Bool) : List Bool :=
   BinArith.mapW keyLookup
     (pairEncode (pairEncode (pairFstD z) (pairFstD (pairSndD z)))
       (pairSndD (pairSndD z)))
 
 /-- For every `z`, `argKeysCode z` is `mapW keyLookup` with the parameter and
-encoded vertex values as retained context and the argument indices as the list. -/
+encoded vertex values as retained context and the argument indices as the list.
+`argKeysCode z = BinArith.mapW keyLookup (pairEncode (pairEncode (pairFstD z) (pairFstD (pairSndD
+z))) (pairSndD (pairSndD z)))`. -/
 theorem argKeysCode_eq (z : List Bool) :
     argKeysCode z = BinArith.mapW keyLookup
       (pairEncode (pairEncode (pairFstD z) (pairFstD (pairSndD z)))
         (pairSndD (pairSndD z))) := rfl
 
-/-- The encoded argument-key map `argKeysCode` is polynomial-time on every word. -/
+/-- The encoded argument-key map `argKeysCode` is polynomial-time on every word.
+`PolyTimeComputable argKeysCode`. -/
 theorem argKeysCode_poly : PolyTimeComputable argKeysCode :=
   (BinArith.polyTimeComputable_mapW keyLookup_poly).comp
     ((polyTimeComputable_pairFstD.pairEncode
@@ -106,7 +116,10 @@ theorem argKeysCode_poly : PolyTimeComputable argKeysCode :=
         (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
 
 /-- On encoded vertices and unary arguments, `argKeysCode` is the encoded list
-of the defaulted vertex keys at those argument indices. -/
+of the defaulted vertex keys at those argument indices.
+`argKeysCode (pairEncode N (pairEncode (BinArith.encWords (vs.map List.ofFn)) (BinArith.encWords
+(args.map fun a => List.replicate a true)))) = BinArith.encWords ((args.map fun a => vs.getD a
+default).map List.ofFn)`. -/
 theorem argKeysCode_encoded (N : List Bool) (vs : List (Fin N.length → Bool))
     (args : List ℕ) :
     argKeysCode (pairEncode N (pairEncode (BinArith.encWords (vs.map List.ofFn))
@@ -119,19 +132,24 @@ theorem argKeysCode_encoded (N : List Bool) (vs : List (Fin N.length → Bool))
   intro a _
   exact keyLookup_encoded N vs a
 
-/-- Adapt `⟨⟨N, keys⟩, row⟩` to the nested-decryption input `⟨N, ⟨keys, row⟩⟩`. -/
+/-- Adapt `⟨⟨N, keys⟩, row⟩` to the nested-decryption input `⟨N, ⟨keys, row⟩⟩`.
+`nestedRowTagged E₁ E₂ z = nestedDecTagged E₁ E₂ (pairEncode (pairFstD (pairFstD z)) (pairEncode
+(pairSndD (pairFstD z)) (pairSndD z)))`. -/
 def nestedRowTagged (E₁ E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   nestedDecTagged E₁ E₂ (pairEncode (pairFstD (pairFstD z))
     (pairEncode (pairSndD (pairFstD z)) (pairSndD z)))
 
 /-- For every `z`, `nestedRowTagged E₁ E₂ z` runs `nestedDecTagged` with
-parameter `fst (fst z)`, keys `snd (fst z)` and row `snd z`. -/
+parameter `fst (fst z)`, keys `snd (fst z)` and row `snd z`.
+`nestedRowTagged E₁ E₂ z = nestedDecTagged E₁ E₂ (pairEncode (pairFstD (pairFstD z)) (pairEncode
+(pairSndD (pairFstD z)) (pairSndD z)))`. -/
 theorem nestedRowTagged_eq (E₁ E₂ : List Bool → List Bool) (z : List Bool) :
     nestedRowTagged E₁ E₂ z =
       nestedDecTagged E₁ E₂ (pairEncode (pairFstD (pairFstD z))
         (pairEncode (pairSndD (pairFstD z)) (pairSndD z))) := rfl
 
-/-- For polynomial-time evaluators, the nested row adapter is polynomial-time. -/
+/-- For polynomial-time evaluators, the nested row adapter is polynomial-time.
+`PolyTimeComputable (nestedRowTagged E₁ E₂)`. -/
 theorem nestedRowTagged_poly {E₁ E₂ : List Bool → List Bool}
     (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂) :
     PolyTimeComputable (nestedRowTagged E₁ E₂) :=
@@ -141,18 +159,23 @@ theorem nestedRowTagged_poly {E₁ E₂ : List Bool → List Bool}
         polyTimeComputable_pairSndD))
 
 /-- On `⟨N, tagged⟩`, return `|N|` false bits when the tag is empty and
-otherwise remove its first bit. -/
+otherwise remove its first bit.
+`untagDefault z = if pairSndD z = [] then List.replicate (pairFstD z).length false else (pairSndD
+z).drop 1`. -/
 def untagDefault (z : List Bool) : List Bool :=
   if pairSndD z = [] then List.replicate (pairFstD z).length false
   else (pairSndD z).drop 1
 
 /-- For every `z`, `untagDefault z` is the zero key on empty tag and the
-payload `drop 1 (snd z)` otherwise. -/
+payload `drop 1 (snd z)` otherwise.
+`untagDefault z = if pairSndD z = [] then List.replicate (pairFstD z).length false else (pairSndD
+z).drop 1`. -/
 theorem untagDefault_eq (z : List Bool) :
     untagDefault z = if pairSndD z = [] then List.replicate (pairFstD z).length false
       else (pairSndD z).drop 1 := rfl
 
-/-- Removing the tag and supplying the default zero key is polynomial-time. -/
+/-- Removing the tag and supplying the default zero key is polynomial-time.
+`PolyTimeComputable untagDefault`. -/
 theorem untagDefault_poly : PolyTimeComputable untagDefault := by
   simpa only [untagDefault_eq, PolyExpr.eval_var, Function.comp_apply, decide_eq_true_eq] using
     polyTimeComputable_ite (polyTimeComputable_isNil.comp polyTimeComputable_pairSndD)
@@ -176,7 +199,11 @@ theorem untagDefault_encoded (N : List Bool) (o : Option (Fin N.length → Bool)
 
 /-- On `⟨N, ⟨args, ⟨values, rows⟩⟩⟩`, look up the gate's argument keys, scan
 its rows for the first successful nested special decryption, and return the
-resulting key or the default zero key. [PS10, Protocol 162.6] -/
+resulting key or the default zero key. [PS10, Protocol 162.6]
+`evalGateWord E₁ E₂ z = let N := pairFstD z; let args := pairFstD (pairSndD z); let values :=
+pairFstD (pairSndD (pairSndD z)); let rows := pairSndD (pairSndD (pairSndD z)); let keys :=
+argKeysCode (pairEncode N (pairEncode values args)); untagDefault (pairEncode N (firstTagged
+(nestedRowTagged E₁ E₂) (pairEncode (pairEncode N keys) rows)))`. -/
 noncomputable def evalGateWord (E₁ E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   let N := pairFstD z
   let args := pairFstD (pairSndD z)
@@ -188,7 +215,11 @@ noncomputable def evalGateWord (E₁ E₂ : List Bool → List Bool) (z : List B
 
 /-- For every `z`, `evalGateWord E₁ E₂ z` reads its parameter, argument indices,
 vertex keys and row table, computes `argKeysCode`, applies `firstTagged` with
-the nested-decryption row adapter and removes the tag with `untagDefault`. -/
+the nested-decryption row adapter and removes the tag with `untagDefault`.
+`evalGateWord E₁ E₂ z = let N := pairFstD z; let args := pairFstD (pairSndD z); let values :=
+pairFstD (pairSndD (pairSndD z)); let rows := pairSndD (pairSndD (pairSndD z)); let keys :=
+argKeysCode (pairEncode N (pairEncode values args)); untagDefault (pairEncode N (firstTagged
+(nestedRowTagged E₁ E₂) (pairEncode (pairEncode N keys) rows)))`. -/
 theorem evalGateWord_eq (E₁ E₂ : List Bool → List Bool) (z : List Bool) :
     evalGateWord E₁ E₂ z =
   let N := pairFstD z
@@ -201,6 +232,7 @@ theorem evalGateWord_eq (E₁ E₂ : List Bool → List Bool) (z : List Bool) :
 
 /-- For polynomial-time evaluators `E₁` and `E₂`, `evalGateWord E₁ E₂`
 is polynomial-time on every input word. [PS10, Protocol 162.6]
+`PolyTimeComputable (evalGateWord E₁ E₂)`.
 
 **Proof sketch.** Read the four fields by pair projections. The argument-key map,
 nested-decryption adapter and first-index adapter are polynomial-time on raw
@@ -224,6 +256,9 @@ theorem evalGateWord_poly {E₁ E₂ : List Bool → List Bool}
 `List.ofFn (evalGate (nestedSpecial E₁ E₂ |N|) T v g vs)` on the corresponding
 unary-argument and word-list encodings. No well-formedness or ciphertext-validity
 hypothesis is needed. [PS10, Protocol 162.6]
+`evalGateWord E₁ E₂ (pairEncode N (pairEncode (BinArith.encWords (g.args.map fun a => List.replicate
+a true)) (pairEncode (BinArith.encWords (vs.map List.ofFn)) (BinArith.encWords (T v))))) = List.ofFn
+(evalGate (nestedSpecial E₁ E₂ N.length) T v g vs)`.
 
 **Proof sketch.** The argument-key map gives exactly the defaulted keys read by
 `evalGate`. The nested row adapter tags precisely the optional decryption result.
@@ -261,18 +296,23 @@ theorem evalGateWord_encoded (E₁ E₂ : List Bool → List Bool) (N : List Boo
   | some k => simpa only [hd] using hh
 
 /-- Append the encoded evaluated key to the input value list in
-`⟨N, ⟨args, ⟨values, rows⟩⟩⟩`. -/
+`⟨N, ⟨args, ⟨values, rows⟩⟩⟩`.
+`evalGateAppendWord E₁ E₂ z = pairFstD (pairSndD (pairSndD z)) ++ pairEncode (evalGateWord E₁ E₂ z)
+[]`. -/
 noncomputable def evalGateAppendWord (E₁ E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   pairFstD (pairSndD (pairSndD z)) ++ pairEncode (evalGateWord E₁ E₂ z) []
 
 /-- For every `z`, `evalGateAppendWord E₁ E₂ z` appends the pair-encoded output
-of `evalGateWord E₁ E₂ z` to `fst (snd (snd z))`. -/
+of `evalGateWord E₁ E₂ z` to `fst (snd (snd z))`.
+`evalGateAppendWord E₁ E₂ z = pairFstD (pairSndD (pairSndD z)) ++ pairEncode (evalGateWord E₁ E₂ z)
+[]`. -/
 theorem evalGateAppendWord_eq (E₁ E₂ : List Bool → List Bool) (z : List Bool) :
     evalGateAppendWord E₁ E₂ z =
       pairFstD (pairSndD (pairSndD z)) ++ pairEncode (evalGateWord E₁ E₂ z) [] := rfl
 
 /-- For polynomial-time `E₁` and `E₂`, appending the evaluated key to the
-encoded value list is polynomial-time. -/
+encoded value list is polynomial-time.
+`PolyTimeComputable (evalGateAppendWord E₁ E₂)`. -/
 theorem evalGateAppendWord_poly {E₁ E₂ : List Bool → List Bool}
     (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂) :
     PolyTimeComputable (evalGateAppendWord E₁ E₂) :=
@@ -281,7 +321,11 @@ theorem evalGateAppendWord_poly {E₁ E₂ : List Bool → List Bool}
     ((evalGateWord_poly hE₁ hE₂).pairEncode (polyTimeComputable_const []))
 
 /-- On the encoded gate arguments, values and table, appending the evaluated key
-produces the encoding of `vs ++ [evalGate (nestedSpecial …) T v g vs]`. -/
+produces the encoding of `vs ++ [evalGate (nestedSpecial …) T v g vs]`.
+`evalGateAppendWord E₁ E₂ (pairEncode N (pairEncode (BinArith.encWords (g.args.map fun a =>
+List.replicate a true)) (pairEncode (BinArith.encWords (vs.map List.ofFn)) (BinArith.encWords (T
+v))))) = BinArith.encWords ((vs ++ [evalGate (nestedSpecial E₁ E₂ N.length) T v g vs]).map
+List.ofFn)`. -/
 theorem evalGateAppendWord_encoded (E₁ E₂ : List Bool → List Bool) (N : List Bool)
     (T : ℕ → List (List Bool)) (v : ℕ) (g : DAGGate)
     (vs : List (Fin N.length → Bool)) :

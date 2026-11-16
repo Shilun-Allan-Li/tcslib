@@ -86,6 +86,12 @@ consistent values, joint slice security gives one negligible bound on the actual
 sample's advantage from stage zero to stage `2*gatecount`, uniformly over every input
 option. The simulator sample is the existing `GateHybridMessage.sample`, including the
 prescribed receiver word and outer sender output. [PS10, Theorem 163.7]
+`∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (z : I n), distAdv (fun r : SelectedStepChoices.Tape S n =>
+GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n) (seed n (List.ofFn r)) (A.eval n) (B.eval n)
+(O.eval n) (output n) (v n z) (List.replicate n true) (bobWord n z) [] (aliceWord n z) 0) (fun r :
+SelectedStepChoices.Tape S n => GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n) (seed n
+(List.ofFn r)) (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true) (bobWord
+n z) [] (aliceWord n z) (2 * (C n).gates.length)) (D.distinguisherL n) ≤ ε n`.
 
 **Proof sketch.** Apply the established selected-step theorem to the actual uniform tape.
 It returns a nonnegative negligible bound uniform over all inputs, gates and present

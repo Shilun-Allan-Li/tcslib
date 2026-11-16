@@ -41,7 +41,9 @@ variable {P I J V : Type*}
 
 /-- Exchange every full coordinate selected by `pick` with its challenge coordinate,
 using `place` for the reverse direction. The control value stays fixed, and `none` retains
-that side's original value, including every unused padded challenge slot. -/
+that side's original value, including every unused padded challenge slot.
+`swap pick place s = ((s.1.1, fun i => (pick s.1.1 i).elim (s.1.2 i) (fun j => s.2 j)), fun j =>
+(place s.1.1 j).elim (s.2 j) (fun i => s.1.2 i))`. -/
 @[simps (config := { isSimp := false })]
 def swap (pick : P → I → Option J) (place : P → J → Option I)
     (s : (P × (I → V)) × (J → V)) : (P × (I → V)) × (J → V) :=
@@ -49,7 +51,9 @@ def swap (pick : P → I → Option J) (place : P → J → Option I)
     fun j => (place s.1.1 j).elim (s.2 j) (fun i => s.1.2 i))
 
 /-- `swap pick place s` retains `s.control`, exchanges matched full/challenge coordinates,
-and retains a side's original coordinate when its selector returns `none`. -/
+and retains a side's original coordinate when its selector returns `none`.
+`swap pick place s = ((s.1.1, fun i => (pick s.1.1 i).elim (s.1.2 i) (fun j => s.2 j)), fun j =>
+(place s.1.1 j).elim (s.2 j) (fun i => s.1.2 i))`. -/
 theorem swap_eq (pick : P → I → Option J) (place : P → J → Option I)
     (s : (P × (I → V)) × (J → V)) :
     swap pick place s =
@@ -85,7 +89,9 @@ theorem swap_involutive (pick : P → I → Option J) (place : P → J → Optio
       simp only [swap_eq, h, h', Option.elim_some]
 
 /-- The matched-coordinate exchange is a bijection of the joint full/challenge seed space.
-Its inverse is the same exchange; the control value remains fixed. -/
+Its inverse is the same exchange; the control value remains fixed.
+`equiv pick place hmatch s = swap pick place s` and `(equiv pick place hmatch).symm s = swap pick
+place s`. -/
 @[simps (config := { isSimp := false }) apply symm_apply]
 def equiv (pick : P → I → Option J) (place : P → J → Option I)
     (hmatch : ∀ p i j, pick p i = some j ↔ place p j = some i) :
@@ -95,13 +101,15 @@ def equiv (pick : P → I → Option J) (place : P → J → Option I)
   left_inv := swap_involutive pick place hmatch
   right_inv := swap_involutive pick place hmatch
 
-/-- Applying `equiv pick place hmatch` is exactly `swap pick place`. -/
+/-- Applying `equiv pick place hmatch` is exactly `swap pick place`.
+`equiv pick place hmatch s = swap pick place s`. -/
 theorem equiv_apply_eq (pick : P → I → Option J) (place : P → J → Option I)
     (hmatch : ∀ p i j, pick p i = some j ↔ place p j = some i)
     (s : (P × (I → V)) × (J → V)) :
     equiv pick place hmatch s = swap pick place s := rfl
 
-/-- Applying the inverse of `equiv pick place hmatch` is the same `swap pick place`. -/
+/-- Applying the inverse of `equiv pick place hmatch` is the same `swap pick place`.
+`(equiv pick place hmatch).symm s = swap pick place s`. -/
 theorem equiv_symm_apply_eq (pick : P → I → Option J) (place : P → J → Option I)
     (hmatch : ∀ p i j, pick p i = some j ↔ place p j = some i)
     (s : (P × (I → V)) × (J → V)) :
@@ -112,6 +120,7 @@ challenge coordinates preserves every sampler acceptance probability. Unmatched 
 slots may be padded, and coordinate values may repeat. Only the full coordinate spaces need
 finite enumerations; the control and address types are not separately enumerated.
 [PS10, Theorem 163.7]
+`acceptProb (fun s : (P × (I → V)) × (J → V) => X (swap pick place s).1) D = acceptProb X D`.
 
 **Proof sketch.** Relabel the joint uniform sample by the proved exchange bijection.
 The sampler then sees just the original full-seed component. Remove its independent unused
@@ -131,6 +140,7 @@ theorem acceptProb_swap [Fintype (P × (I → V))] [Fintype (J → V)]
 /-- A concrete fill preserves the full seed's acceptance law when coordinate equivalences
 identify it with the matched exchange. The challenge may have any equivalent finite shape,
 including a key paired with padded nonce slots. [PS10, Theorem 163.7]
+`acceptProb (fun z : S × T => X (fill z.1 z.2)) D = acceptProb X D`.
 
 **Proof sketch.** Relabel the concrete full/challenge product by its two coordinate
 bijections. The supplied fill equation identifies its full output with the first component

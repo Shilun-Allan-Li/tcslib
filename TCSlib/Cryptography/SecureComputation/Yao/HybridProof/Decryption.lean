@@ -38,7 +38,10 @@ open Complexity Turing
 /-- Tagged special decryption on `⟨N, ⟨L, ⟨k, c⟩⟩⟩`: run `spDecStr E |N| |L| k c`,
 returning `[]` on failure and `true :: m` on success with message `m`.
 The unary lengths are separate, so the adapter covers either encryption layer.
-[PS10, Algorithm 157.2] -/
+[PS10, Algorithm 157.2]
+`specialDecTagged E z = match spDecStr E (pairFstD z).length (pairFstD (pairSndD z)).length
+(pairFstD (pairSndD (pairSndD z))) (pairSndD (pairSndD (pairSndD z))) with | none => [] | some m =>
+true :: m`. -/
 def specialDecTagged (E : List Bool → List Bool) (z : List Bool) : List Bool :=
   match spDecStr E (pairFstD z).length (pairFstD (pairSndD z)).length
       (pairFstD (pairSndD (pairSndD z))) (pairSndD (pairSndD (pairSndD z))) with
@@ -47,7 +50,10 @@ def specialDecTagged (E : List Bool → List Bool) (z : List Bool) : List Bool :
 
 /-- For every `z`, `specialDecTagged E z` encodes the result of decryption with
 key length `|fst z|`, message length `|fst (snd z)|`, key `fst (snd (snd z))`
-and ciphertext `snd (snd (snd z))` by `none ↦ []`, `some m ↦ true :: m`. -/
+and ciphertext `snd (snd (snd z))` by `none ↦ []`, `some m ↦ true :: m`.
+`specialDecTagged E z = match spDecStr E (pairFstD z).length (pairFstD (pairSndD z)).length
+(pairFstD (pairSndD (pairSndD z))) (pairSndD (pairSndD (pairSndD z))) with | none => [] | some m =>
+true :: m`. -/
 theorem specialDecTagged_eq (E : List Bool → List Bool) (z : List Bool) :
     specialDecTagged E z =
       match spDecStr E (pairFstD z).length (pairFstD (pairSndD z)).length
@@ -58,6 +64,7 @@ theorem specialDecTagged_eq (E : List Bool → List Bool) (z : List Bool) :
 /-- For a polynomial-time evaluator `E`, `specialDecTagged E` is polynomial-time
 on every word, with independent unary key and message lengths.
 [PS10, Algorithm 157.2]
+`PolyTimeComputable (specialDecTagged E)`.
 
 **Proof sketch.** Read the two unary lengths, key, nonce and ciphertext body.
 Test the three shape equalities. Compute the pad and compare its key-length
@@ -96,7 +103,9 @@ theorem specialDecTagged_poly {E : List Bool → List Bool} (hE : PolyTimeComput
   split_ifs <;> rfl
 
 /-- On the explicit layout, `specialDecTagged E ⟨N, ⟨L, ⟨k, c⟩⟩⟩` is
-`[]` if `spDecStr E |N| |L| k c` fails and `true :: m` if it returns `m`. -/
+`[]` if `spDecStr E |N| |L| k c` fails and `true :: m` if it returns `m`.
+`specialDecTagged E (pairEncode N (pairEncode L (pairEncode k c))) = match spDecStr E N.length
+L.length k c with | none => [] | some m => true :: m`. -/
 theorem specialDecTagged_pairEncode (E : List Bool → List Bool) (N L k c : List Bool) :
     specialDecTagged E (pairEncode N (pairEncode L (pairEncode k c))) =
       match spDecStr E N.length L.length k c with
@@ -114,7 +123,9 @@ def bindTagged (F : List Bool → List Bool) (w : List Bool) : List Bool :=
 theorem bindTagged_eq (F : List Bool → List Bool) (w : List Bool) :
     bindTagged F w = if w = [] then [] else F (w.drop 1) := rfl
 
-/-- On a tagged optional payload, `bindTagged` applies `F` exactly in the success case. -/
+/-- On a tagged optional payload, `bindTagged` applies `F` exactly in the success case.
+`bindTagged F (match o with | none => [] | some m => true :: m) = match o with | none => [] | some m
+=> F m`. -/
 theorem bindTagged_option (F : List Bool → List Bool) (o : Option (List Bool)) :
     bindTagged F (match o with | none => [] | some m => true :: m) =
       match o with | none => [] | some m => F m := by
@@ -124,7 +135,8 @@ theorem bindTagged_option (F : List Bool → List Bool) (o : Option (List Bool))
     rw [bindTagged_eq, if_neg (List.cons_ne_nil true m)]
     rfl
 
-/-- If `F` is polynomial-time, then `bindTagged F` is polynomial-time on all words. -/
+/-- If `F` is polynomial-time, then `bindTagged F` is polynomial-time on all words.
+`PolyTimeComputable (bindTagged F)`. -/
 theorem bindTagged_poly {F : List Bool → List Bool} (hF : PolyTimeComputable F) :
     PolyTimeComputable (bindTagged F) := by
   simpa only [bindTagged_eq, Function.comp_apply, decide_eq_true_eq] using
@@ -132,14 +144,18 @@ theorem bindTagged_poly {F : List Bool → List Bool} (hF : PolyTimeComputable F
       (hF.comp polyTimeComputable_tail)
 
 /-- Check a tagged word at `⟨N, w⟩`: reject the empty failure word and
-wrong-length payloads, and return `true :: payload` when its length is `|N|`. -/
+wrong-length payloads, and return `true :: payload` when its length is `|N|`.
+`checkFinTagged z = if pairSndD z = [] then [] else if ((pairSndD z).drop 1).length = (pairFstD
+z).length then true :: (pairSndD z).drop 1 else []`. -/
 def checkFinTagged (z : List Bool) : List Bool :=
   if pairSndD z = [] then []
   else if ((pairSndD z).drop 1).length = (pairFstD z).length then
     true :: (pairSndD z).drop 1 else []
 
 /-- For every `z`, `checkFinTagged z` succeeds exactly when `snd z` is nonempty
-and its payload `drop 1 (snd z)` has length `|fst z|`. -/
+and its payload `drop 1 (snd z)` has length `|fst z|`.
+`checkFinTagged z = if pairSndD z = [] then [] else if ((pairSndD z).drop 1).length = (pairFstD
+z).length then true :: (pairSndD z).drop 1 else []`. -/
 theorem checkFinTagged_eq (z : List Bool) :
     checkFinTagged z = if pairSndD z = [] then []
       else if ((pairSndD z).drop 1).length = (pairFstD z).length then
@@ -147,6 +163,8 @@ theorem checkFinTagged_eq (z : List Bool) :
 
 /-- Checking the tagged encoding of `o : Option (List Bool)` produces the tagged
 encoding of `o.bind (decodeFin |N|)`, with a decoded key represented by `List.ofFn`.
+`checkFinTagged (pairEncode N (match o with | none => [] | some m => true :: m)) = match o.bind
+(TCSlib.Cryptography.decodeFin N.length) with | none => [] | some k => true :: List.ofFn k`.
 
 **Proof sketch.** Failure stays failure. For a successful string, split on its
 `decodeFin` result. A failed decode has the wrong length by the decoder reader;
@@ -175,7 +193,8 @@ theorem checkFinTagged_option (N : List Bool) (o : Option (List Bool)) :
       have hm := (TCSlib.Cryptography.decodeFin_eq_some_iff N.length m k).mp hd
       rw [hm, List.length_ofFn, if_pos rfl]
 
-/-- The exact-length tagged key check `checkFinTagged` is polynomial-time on all words. -/
+/-- The exact-length tagged key check `checkFinTagged` is polynomial-time on all words.
+`PolyTimeComputable checkFinTagged`. -/
 theorem checkFinTagged_poly : PolyTimeComputable checkFinTagged := by
   have hp := polyTimeComputable_tail.comp polyTimeComputable_pairSndD
   have ht := polyTimeComputable_lenEq.comp (hp.pairEncode polyTimeComputable_pairFstD)
@@ -194,7 +213,14 @@ theorem checkFinTagged_poly : PolyTimeComputable checkFinTagged := by
 Zero keys check the cleartext; one key uses `E₁`; two keys remove the `E₂` outer
 layer at message length `4|N| + 2`, then the `E₁` inner layer. Other key counts
 fail. Successful keys are tagged as `true :: key`; failure is `[]`.
-[PS10, Protocol 162.6] -/
+[PS10, Protocol 162.6]
+`nestedDecTagged E₁ E₂ z = let N := pairFstD z; let keys := pairFstD (pairSndD z); let c := pairSndD
+(pairSndD z); if keys = [] then checkFinTagged (pairEncode N (true :: c)) else if pairSndD keys = []
+then checkFinTagged (pairEncode N (specialDecTagged E₁ (pairEncode N (pairEncode N (pairEncode
+(pairFstD keys) c))))) else if pairSndD (pairSndD keys) = [] then let outer := specialDecTagged E₂
+(pairEncode N (pairEncode (List.replicate (innerLen.eval N.length) true) (pairEncode (pairFstD keys)
+c))); if outer = [] then [] else checkFinTagged (pairEncode N (specialDecTagged E₁ (pairEncode N
+(pairEncode N (pairEncode (pairFstD (pairSndD keys)) (outer.drop 1)))))) else []`. -/
 def nestedDecTagged (E₁ E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   let N := pairFstD z
   let keys := pairFstD (pairSndD z)
@@ -215,7 +241,14 @@ def nestedDecTagged (E₁ E₂ : List Bool → List Bool) (z : List Bool) : List
 
 /-- For every input `z`, `nestedDecTagged E₁ E₂ z` branches on zero, one or two
 encoded keys and performs the corresponding tagged special decryptions and
-exact key-length check. -/
+exact key-length check.
+`nestedDecTagged E₁ E₂ z = let N := pairFstD z; let keys := pairFstD (pairSndD z); let c := pairSndD
+(pairSndD z); if keys = [] then checkFinTagged (pairEncode N (true :: c)) else if pairSndD keys = []
+then checkFinTagged (pairEncode N (specialDecTagged E₁ (pairEncode N (pairEncode N (pairEncode
+(pairFstD keys) c))))) else if pairSndD (pairSndD keys) = [] then let outer := specialDecTagged E₂
+(pairEncode N (pairEncode (List.replicate (innerLen.eval N.length) true) (pairEncode (pairFstD keys)
+c))); if outer = [] then [] else checkFinTagged (pairEncode N (specialDecTagged E₁ (pairEncode N
+(pairEncode N (pairEncode (pairFstD (pairSndD keys)) (outer.drop 1)))))) else []`. -/
 theorem nestedDecTagged_eq (E₁ E₂ : List Bool → List Bool) (z : List Bool) :
     nestedDecTagged E₁ E₂ z =
   let N := pairFstD z
@@ -238,6 +271,8 @@ theorem nestedDecTagged_eq (E₁ E₂ : List Bool → List Bool) (z : List Bool)
 /-- On the encoded key list `ks`, `nestedDecTagged E₁ E₂ ⟨N, ⟨keys, c⟩⟩`
 is `[]` when `(nestedSpecial E₁ E₂ |N|).dec ks c` fails and is
 `true :: List.ofFn k` when it returns key `k`. [PS10, Protocol 162.6]
+`nestedDecTagged E₁ E₂ (pairEncode N (pairEncode (BinArith.encWords (ks.map List.ofFn)) c)) = match
+(nestedSpecial E₁ E₂ N.length).dec ks c with | none => [] | some k => true :: List.ofFn k`.
 
 **Proof sketch.** Split into zero, one, two and more keys. The list-code readers
 select the corresponding branch. The exact-length checker implements `decodeFin`.
@@ -287,6 +322,7 @@ theorem nestedDecTagged_encoded (E₁ E₂ : List Bool → List Bool) (N : List 
 /-- If `E₁` and `E₂` are polynomial-time, then `nestedDecTagged E₁ E₂`
 is polynomial-time on every input, including malformed key lists and ciphertexts.
 [PS10, Protocol 162.6]
+`PolyTimeComputable (nestedDecTagged E₁ E₂)`.
 
 **Proof sketch.** Pair projections read the parameter, keys and ciphertext.
 Emptiness tests distinguish the four key-count cases. The no-key branch uses the

@@ -52,6 +52,8 @@ theorem plaintext_ne {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
 /-- Rows without the selected inactive argument have identical plaintext bits at stages
 `2*i0+p.val` and `2*i0+p.val+1`. The selected position is an actual argument of a gate with
 at most two arguments. [PS10, Theorem 163.7]
+`GateHybrids.stageBit C v (2 * i₀.val + p.val) i a = GateHybrids.stageBit C v (2 * i₀.val +
+p.val + 1) i a`.
 
 **Proof sketch.** The actual position is zero or one. Apply the published first-substep
 support reader in the first case and the second-substep support reader in the second case.
@@ -83,6 +85,12 @@ theorem unselected_eq {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
 /-- Neighboring stages for an actual selected argument have exactly the same fixed
 reconstruction advice, including the complete message tail. Only their challenge messages
 may differ. [PS10, Theorem 163.7]
+`SelectedPlan.advice C rows s u E₁ E₂ (fun i a => keyAt C s (m + i.val) (GateHybrids.stageBit C v
+(2 * i₀.val + p.val) i a)) (pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂ n) C s inA
+outLen output v (2 * i₀.val + p.val))) privateInput aliceOutput = SelectedPlan.advice C rows s u E₁
+E₂ (fun i a => keyAt C s (m + i.val) (GateHybrids.stageBit C v (2 * i₀.val + p.val + 1) i a))
+(pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂ n) C s inA outLen output v (2 * i₀.val +
+p.val + 1))) privateInput aliceOutput`.
 
 **Proof sketch.** The published tail reader removes the stage dependence of the retained
 message tail. The common-advice reader then reduces the claim to plaintext-key equality
@@ -134,6 +142,17 @@ include hG hGE₁ hGE₂ in
 /-- Both neighboring actual hybrid samples reconstruct from the same before-stage advice,
 with the same slice offsets and lengths and only the side-specific challenge messages.
 The equality holds for every challenge key and all padded row nonces. [PS10, Theorem 163.7]
+`let before := 2 * i₀.val + p.val; let stage := before + side.toNat; let plain : (i : Fin
+C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool) := fun i a => keyAt C s
+(m + i.val) (GateHybrids.stageBit C v stage i a); let beta := SelectedPlan.advice C rows s u E₁ E₂
+(fun i a => keyAt C s (m + i.val) (GateHybrids.stageBit C v before i a)) (pairSndD
+(GateHybridMessage.message (nestedSpecial E₁ E₂ n) C s inA outLen output v before)) (pairEncode
+bobInput (List.ofFn (FakeObjects.activeAnswers C s inA inB))) aliceOutput;
+SliceReconstruction.rebuild E₂ (pairEncode N (pairEncode (sliceMultiEncDist G n q
+(SelectedPlan.slotOffset C rows s u q) (SelectedPlan.slotLength C rows s u q)
+(SelectedPlan.slotMessage C rows s u q E₁ plain) (k, rs)) beta)) = GateHybridMessage.sample
+(nestedSpecial E₁ E₂ n) C (SelectedSeed.fill C rows s u q k rs) inA inB outLen output v N bobInput
+[] aliceOutput stage`.
 
 **Proof sketch.** Fan-in two supplies distinct arguments and an actual position zero or one.
 Canonical rows are complete. Since the selected argument precedes the current gate, every

@@ -41,6 +41,8 @@ coin polynomial is `p`. If both functionality outputs are the same word, and Bob
 that word outside an Alice-tape event of probability at most `δ(n)`, then the fixed copying
 simulator with polynomial `p` has advantage at most `δ(n)` for all inputs and tests.
 [PS10, Theorem 163.7]
+`∀ (D : NUPPT) n x y, distAdv (H.realA F n x y) (F.idealA (AliceSimulator.simulator p) n x y)
+(D.distinguisherL n) ≤ δ n`.
 
 **Proof sketch.** Normalize Alice's tape with a bit-word-preserving equivalence and lift
 its bad-event bound to the actual tape type. The two-move view and output readers identify

@@ -67,7 +67,9 @@ theorem transcript_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
     transcriptWith_eq π msgA msgB hR hF hA hB]
 
 /-- Alice's view in an Alice-first two-message protocol is
-`⟨w, zA, rA, [msgB w zB rB (msgA w zA rA)]⟩`. [PS10, Theorem 163.7] -/
+`⟨w, zA, rA, [msgB w zB rB (msgA w zA rA)]⟩`. [PS10, Theorem 163.7]
+`π.viewP w zA zB r = ⟨w, zA, List.ofFn r.1, [msgB w zB (List.ofFn r.2) (msgA w zA (List.ofFn
+r.1))]⟩`. -/
 theorem viewP_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
     π.viewP w zA zB r =
       ⟨w, zA, List.ofFn r.1,
@@ -75,14 +77,17 @@ theorem viewP_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
   rw [Protocol.viewP_eq, transcriptWith_eq π msgA msgB hR hF hA hB]
 
 /-- Bob's view in an Alice-first two-message protocol is
-`⟨w, zB, rB, [msgA w zA rA]⟩`. [PS10, Theorem 163.7] -/
+`⟨w, zB, rB, [msgA w zA rA]⟩`. [PS10, Theorem 163.7]
+`π.viewV w zA zB r = ⟨w, zB, List.ofFn r.2, [msgA w zA (List.ofFn r.1)]⟩`. -/
 theorem viewV_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
     π.viewV w zA zB r = ⟨w, zB, List.ofFn r.2, [msgA w zA (List.ofFn r.1)]⟩ := by
   rw [Protocol.viewV_eq, transcriptWith_eq π msgA msgB hR hF hA hB]
 
 /-- Alice's encoded view is
 `⟨⟨w, zA⟩, ⟨rA, encodeMsgs [msgB w zB rB (msgA w zA rA)]⟩⟩`.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`(π.viewP w zA zB r).encode = pairEncode (pairEncode w zA) (pairEncode (List.ofFn r.1)
+(Strategy.encodeMsgs [msgB w zB (List.ofFn r.2) (msgA w zA (List.ofFn r.1))]))`. -/
 theorem encode_viewP_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
     (π.viewP w zA zB r).encode =
       pairEncode (pairEncode w zA) (pairEncode (List.ofFn r.1)
@@ -90,7 +95,9 @@ theorem encode_viewP_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
   rw [viewP_eq π msgA msgB hR hF hA hB, View.encode_mk]
 
 /-- Bob's encoded view is `⟨⟨w, zB⟩, ⟨rB, encodeMsgs [msgA w zA rA]⟩⟩`.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`(π.viewV w zA zB r).encode = pairEncode (pairEncode w zB) (pairEncode (List.ofFn r.2)
+(Strategy.encodeMsgs [msgA w zA (List.ofFn r.1)]))`. -/
 theorem encode_viewV_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
     (π.viewV w zA zB r).encode =
       pairEncode (pairEncode w zB)

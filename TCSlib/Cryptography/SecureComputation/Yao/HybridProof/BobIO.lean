@@ -39,7 +39,12 @@ open Complexity Turing
 
 /-- On `⟨⟨u, ⟨values, ⟨pairs, outputs⟩⟩⟩, 1^j⟩`, read output vertex `outputs[j]`, pad its
 key from `values` to `|u|` bits, and decode it against `pairs[j]`: first key gives `false`,
-otherwise equality to the second key gives `true`. All projections and lookups are total. -/
+otherwise equality to the second key gives `true`. All projections and lookups are total.
+`outputBit z = let ctx := pairFstD z; let j := pairSndD z; let vals := pairFstD (pairSndD ctx); let
+pairs := pairFstD (pairSndD (pairSndD ctx)); let outs := pairSndD (pairSndD (pairSndD ctx)); let v
+:= BinArith.uHead (BinArith.getW (pairEncode j outs)); let k := EnsembleLemmas.padL (pairFstD
+ctx).length (BinArith.getW (pairEncode v vals)); let p := BinArith.getW (pairEncode j pairs); if k =
+pairFstD p then false else decide (k = pairSndD p)`. -/
 def outputBit (z : List Bool) : Bool :=
   let ctx := pairFstD z
   let j := pairSndD z
@@ -52,7 +57,12 @@ def outputBit (z : List Bool) : Bool :=
   if k = pairFstD p then false else decide (k = pairSndD p)
 
 /-- The bit reader is the comparison of the padded value at the selected output vertex
-with the two components of the selected decoding pair. -/
+with the two components of the selected decoding pair.
+`outputBit z = let ctx := pairFstD z; let j := pairSndD z; let vals := pairFstD (pairSndD ctx); let
+pairs := pairFstD (pairSndD (pairSndD ctx)); let outs := pairSndD (pairSndD (pairSndD ctx)); let v
+:= BinArith.uHead (BinArith.getW (pairEncode j outs)); let k := EnsembleLemmas.padL (pairFstD
+ctx).length (BinArith.getW (pairEncode v vals)); let p := BinArith.getW (pairEncode j pairs); if k =
+pairFstD p then false else decide (k = pairSndD p)`. -/
 theorem outputBit_eq (z : List Bool) :
     outputBit z =
       let ctx := pairFstD z
@@ -66,7 +76,9 @@ theorem outputBit_eq (z : List Bool) :
       if k = pairFstD p then false else decide (k = pairSndD p) := rfl
 
 /-- The output word at context `z` has `p(|fst z|)` bits; bit `j` is
-`outputBit ⟨z, 1^j⟩`. [PS10, Protocol 162.6] -/
+`outputBit ⟨z, 1^j⟩`. [PS10, Protocol 162.6]
+`outputWord p z = List.ofFn fun j : Fin (p.eval (pairFstD z).length) => outputBit (pairEncode z
+(List.replicate j true))`. -/
 def outputWord (p : PolyExpr) (z : List Bool) : List Bool :=
   List.ofFn fun j : Fin (p.eval (pairFstD z).length) =>
     outputBit (pairEncode z (List.replicate j true))
@@ -129,12 +141,15 @@ theorem outputBit_poly : PolyTimeComputable fun z => [outputBit z] := by
     simp only [h, decide_true, decide_false, Bool.false_eq_true,
       if_true, if_false]
 
-/-- The decoded output word has exactly `p(|fst z|)` bits. -/
+/-- The decoded output word has exactly `p(|fst z|)` bits.
+`(outputWord p z).length = p.eval (pairFstD z).length`. -/
 theorem length_outputWord (p : PolyExpr) (z : List Bool) :
     (outputWord p z).length = p.eval (pairFstD z).length := List.length_ofFn
 
 /-- Reading position `j` of the output word gives `outputBit ⟨z, 1^j⟩` in range and
-`false` otherwise. -/
+`false` otherwise.
+`(outputWord p z).getD j false = if j < p.eval (pairFstD z).length then outputBit (pairEncode z
+(List.replicate j true)) else false`. -/
 theorem outputWord_getD (p : PolyExpr) (z : List Bool) (j : ℕ) :
     (outputWord p z).getD j false =
       if j < p.eval (pairFstD z).length then
@@ -172,6 +187,11 @@ theorem outputWord_poly (p : PolyExpr) : PolyTimeComputable (outputWord p) := by
 
 /-- On encoded `n`-bit values, decoding pairs and unary output vertices, the bit reader
 compares the value at `outs j` with the `j`-th pair. The vertex must be in the value list.
+`outputBit (pairEncode (pairEncode (List.replicate n true) (pairEncode (BinArith.encWords (vs.map
+List.ofFn)) (pairEncode (BinArith.encWords ps) (BinArith.encWords (List.ofFn fun i =>
+BoolCircuit.encodeNat (outs i)))))) (List.replicate j true)) = if List.ofFn (vs.getD (outs j)
+default) = pairFstD (ps.getD j []) then false else decide (List.ofFn (vs.getD (outs j) default) =
+pairSndD (ps.getD j []))`.
 
 **Proof sketch.** The public word-list lookup equations read the output vertex and the
 pair. The vertex is encoded in unary, so its leading ones give its value. In-range lookup
@@ -200,7 +220,11 @@ theorem outputBit_layout {n k : ℕ} (vs : List (Fin n → Bool)) (ps : List (Li
 
 /-- On encoded `n`-bit values, decoding pairs and `p(n)` unary output vertices,
 `outputWord p` is the vector of comparisons with the selected decoding pairs. Every
-output vertex must be present in the value list. [PS10, Protocol 162.6] -/
+output vertex must be present in the value list. [PS10, Protocol 162.6]
+`outputWord p (pairEncode (List.replicate n true) (pairEncode (BinArith.encWords (vs.map List.ofFn))
+(pairEncode (BinArith.encWords ps) (BinArith.encWords (List.ofFn fun j => BoolCircuit.encodeNat
+(outs j)))))) = List.ofFn fun j => if List.ofFn (vs.getD (outs j) default) = pairFstD (ps.getD j [])
+then false else decide (List.ofFn (vs.getD (outs j) default) = pairSndD (ps.getD j []))`. -/
 theorem outputWord_layout (p : PolyExpr) {n : ℕ} (vs : List (Fin n → Bool))
     (ps : List (List Bool)) (outs : Fin (p.eval n) → ℕ)
     (hv : ∀ j, outs j < vs.length) :

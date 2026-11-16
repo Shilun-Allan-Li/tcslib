@@ -45,6 +45,9 @@ open Complexity Turing TCSlib.Cryptography
 there is one non-uniform PPT test that runs `D` on
 `rebuild ⟨1^n, ⟨challenge, β n⟩⟩`, at parameter `n`, with the same random bits.
 [PS10, Theorem 163.7, non-uniform reduction]
+`∃ R : NUPPT, ∃ hcoins : R.coins = D.coins, ∀ n challenge (r : D.Coins n), R.distinguisherL n
+challenge (NUPPT.coinsCongr hcoins.symm n r) = D.distinguisherL n (rebuild (pairEncode
+(List.replicate n true) (pairEncode challenge (β n)))) r`.
 
 **Proof sketch.** Use the existing parameter-aware composition constructor to run the
 reconstruction before `D`, then the advice constructor to fix `β`. The published coin
@@ -70,6 +73,10 @@ theorem exists_adviceReduction (D : NUPPT) {rebuild : List Bool → List Bool}
 distinguishing advantage uniformly over a finite family of polynomial-length advice choices.
 Slices and deterministic messages may depend on the choice; the reconstruction is fixed.
 [PS10, Theorem 163.7, fixing worst inputs, hybrid index and auxiliary randomness]
+`∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n a, distAdv (fun t => rebuild (pairEncode (List.replicate n true)
+(pairEncode (sliceMultiEncDist G n (q.eval n) (offset n a) (len n a) (m₀ n a) t) (advice n a))))
+(fun t => rebuild (pairEncode (List.replicate n true) (pairEncode (sliceMultiEncDist G n (q.eval n)
+(offset n a) (len n a) (m₁ n a) t) (advice n a)))) (D.distinguisherL n) ≤ ε n`.
 
 **Proof sketch.** At each parameter choose the advice option maximizing the reconstructed
 advantage. Hard-wire this polynomial-length option into one reduction, independent of the
@@ -131,6 +138,7 @@ theorem reconstruction_negligible {L : PolyExpr}
 that seed independently of the challenge and distinguisher coins also gives advantage at
 most `ε`. This permits the auxiliary keys, nonces and shifts to be fixed in the reduction.
 [PS10, Theorem 163.7, averaging the remaining randomness]
+`distAdv (fun r : α × β => X r.1 r.2) (fun r : α × β => Y r.1 r.2) D ≤ ε`.
 
 **Proof sketch.** Reassociate the joint sample and test coins, then apply the existing
 product-probability equation. Each acceptance probability becomes the average of its
@@ -153,7 +161,8 @@ theorem distAdv_fibers_le {α β γ ρ : Type*} [Fintype α] [Fintype β] [Finty
 
 /-- If each of `t` consecutive hybrids has distinguishing advantage at most `ε`, then
 the endpoints have advantage at most `t ε`. The assertion includes an empty chain.
-[PS10, Theorem 163.7, the gate hybrid; Gar26, Lemma 3.3] -/
+[PS10, Theorem 163.7, the gate hybrid; Gar26, Lemma 3.3]
+`distAdv (H 0) (H t) D ≤ (t : ℝ) * ε`. -/
 theorem distAdv_chain_le {σ γ ρ : Type*} [Fintype σ] [Fintype ρ]
     (H : ℕ → σ → γ) (D : γ → ρ → Bool) (t : ℕ) (ε : ℝ)
     (h : ∀ i < t, distAdv (H i) (H (i + 1)) D ≤ ε) :
@@ -169,6 +178,7 @@ theorem distAdv_chain_le {σ γ ρ : Type*} [Fintype σ] [Fintype ρ]
 /-- A polynomially bounded chain with a negligible bound on every neighboring advantage
 has a negligible endpoint advantage, uniformly over the same input family. Zero steps and
 signed negligible bounds are included. [PS10, Theorem 163.7, summing the gate hybrids]
+`∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n a, distAdv (H n a 0) (H n a (steps n)) (D.distinguisherL n) ≤ ε n`.
 
 **Proof sketch.** Replace the neighboring bound by its absolute value, which is still
 negligible by the existing domination rule. Apply the finite-chain bound and enlarge the

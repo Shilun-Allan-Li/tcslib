@@ -42,6 +42,9 @@ open Complexity Turing TCSlib.Cryptography
 has a negligible simulation bound for every distinguisher uniformly over the inputs.
 Then the same simulators satisfy both simulation clauses with one negligible bound.
 [PS10, Theorem 163.7]
+`∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n x y, distAdv (H.realA F n x y) (F.idealA SA n x y)
+(D.distinguisherL n) ≤ ε n ∧ distAdv (H.realB F n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε
+n`.
 
 **Proof sketch.** For each distinguisher take Bob's uniform hybrid bound. It is nonnegative
 at every parameter, since all-false inputs exist and an advantage is nonnegative. Add it
@@ -78,7 +81,10 @@ theorem simulators_of_output_switch {G : Functionality} (H : HybridProtocol G)
 /-- If Alice's actual output equals her functionality output outside a bad event of
 probability at most `δ`, Bob's real experiment is `δ`-close to the same encoded view paired
 with that functionality output. No change is made to Bob's view or its randomness.
-[PS10, Theorem 163.7, Bob's statistical output switch] -/
+[PS10, Theorem 163.7, Bob's statistical output switch]
+`StatClose (H.realB F n x y) (fun r => pairEncode (H.main.viewV (List.replicate n true) (H.privA n
+(List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) (H.privB n (List.ofFn x) (List.ofFn y)
+(List.ofFn r.1) (List.ofFn r.2)) r).encode (List.ofFn (F.f n x y).1)) δ`. -/
 theorem realB_output_switch {G : Functionality} (H : HybridProtocol G)
     (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
     (y : Fin (F.inB.eval n) → Bool) (Bad : H.Coins n → Prop) (δ : ℝ)
@@ -104,7 +110,8 @@ def strategyTapeEquiv (S : Strategy) (n m : ℕ) (h : S.coinLen n = m) :
     S.Coins n ≃ (Fin m → Bool) :=
   Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
 
-/-- `strategyTapeEquiv S n m h` is the function-space equivalence induced by `finCongr h`. -/
+/-- `strategyTapeEquiv S n m h` is the function-space equivalence induced by `finCongr h`.
+`strategyTapeEquiv S n m h = Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)`. -/
 theorem strategyTapeEquiv_eq (S : Strategy) (n m : ℕ) (h : S.coinLen n = m) :
     strategyTapeEquiv S n m h = Equiv.arrowCongr (finCongr h) (Equiv.refl Bool) := rfl
 
@@ -116,7 +123,8 @@ theorem strategyTapeEquiv_ofFn (S : Strategy) (n m : ℕ) (h : S.coinLen n = m)
 
 /-- If a hybrid sample depends only on its first tape through a known-length tape
 equivalence, its acceptance probability is that of the normalized first-tape sampler.
-The unused second tape may have any length. [PS10, Theorem 163.7, sampler transport] -/
+The unused second tape may have any length. [PS10, Theorem 163.7, sampler transport]
+`acceptProb X D = acceptProb Y D`. -/
 theorem acceptProb_firstTape {G : Functionality} (H : HybridProtocol G) (n m : ℕ)
     (hLen : H.main.P.coinLen (List.replicate n true).length = m)
     (X : H.Coins n → List Bool) (Y : (Fin m → Bool) → List Bool)

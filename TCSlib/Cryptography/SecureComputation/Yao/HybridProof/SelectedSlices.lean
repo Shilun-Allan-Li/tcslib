@@ -41,6 +41,7 @@ open Complexity Turing TCSlib.Cryptography
 
 /-- A zero-argument row is exactly its plaintext word, independently of both nonce halves.
 This case contains no selected-key encryption. [PS10, Protocol 162.6]
+`(nestedSpecial E₁ E₂ n).enc [] o (r₁, r₂) = List.ofFn o`.
 
 **Proof sketch.** The public nested-encryption reader at the empty key list returns the
 plaintext directly and ignores the nonce pair. -/
@@ -64,7 +65,8 @@ variable {L L₂ : ℕ → ℕ}
 
 include hG hGE₁ in
 /-- A `(0,n)` slice ciphertext is the complete row when the selected key is the only
-argument key. The unused second nonce can be fixed arbitrarily. [PS10, Theorem 163.7] -/
+argument key. The unused second nonce can be fixed arbitrarily. [PS10, Theorem 163.7]
+`sliceEnc G n 0 k r (List.ofFn o) = (nestedSpecial E₁ E₂ n).enc [k] o (r, r₂)`. -/
 theorem only_row (n : ℕ) (k o r r₂ : Fin n → Bool) :
     sliceEnc G n 0 k r (List.ofFn o) = (nestedSpecial E₁ E₂ n).enc [k] o (r, r₂) := by
   rw [nestedSpecial_enc]
@@ -73,7 +75,9 @@ theorem only_row (n : ℕ) (k o r r₂ : Fin n → Bool) :
 include hG hGE₁ in
 /-- If the selected key is the inner argument key, wrap its `(0,n)` challenge ciphertext
 under the known first key with the fixed outer nonce. This is exactly the two-key row,
-for every selected key and inner nonce. [PS10, Theorem 163.7] -/
+for every selected key and inner nonce. [PS10, Theorem 163.7]
+`spEncStr E₂ (List.ofFn outer) (sliceEnc G n 0 k r₂ (List.ofFn o)) (List.ofFn r₁) = (nestedSpecial
+E₁ E₂ n).enc [outer, k] o (r₁, r₂)`. -/
 theorem inner_row (n : ℕ) (k outer o r₁ r₂ : Fin n → Bool) :
     spEncStr E₂ (List.ofFn outer) (sliceEnc G n 0 k r₂ (List.ofFn o)) (List.ofFn r₁) =
       (nestedSpecial E₁ E₂ n).enc [outer, k] o (r₁, r₂) := by
@@ -82,7 +86,9 @@ theorem inner_row (n : ℕ) (k outer o r₁ r₂ : Fin n → Bool) :
 include hG hGE₂ in
 /-- If the selected key is the outer argument key, its `(2n,4n+2)` slice encrypts the
 inner ciphertext precomputed from the known second key and fixed inner nonce. The result
-is the complete two-key row, for every selected key and outer nonce. [PS10, Theorem 163.7] -/
+is the complete two-key row, for every selected key and outer nonce. [PS10, Theorem 163.7]
+`sliceEnc G n (n + n) k r₁ (spEncStr E₁ (List.ofFn inner) (List.ofFn o) (List.ofFn r₂)) =
+(nestedSpecial E₁ E₂ n).enc [k, inner] o (r₁, r₂)`. -/
 theorem outer_row (n : ℕ) (k inner o r₁ r₂ : Fin n → Bool) :
     sliceEnc G n (n + n) k r₁
       (spEncStr E₁ (List.ofFn inner) (List.ofFn o) (List.ofFn r₂)) =
@@ -92,7 +98,8 @@ theorem outer_row (n : ℕ) (k inner o r₁ r₂ : Fin n → Bool) :
 end Joint
 
 /-- A precomputed inner ciphertext of an `n`-bit output key has exactly `4n+2` bits
-when `E₁` evaluates a `2n`-bit pad family. [PS10, Algorithm 157.2] -/
+when `E₁` evaluates a `2n`-bit pad family. [PS10, Algorithm 157.2]
+`(spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)).length = 4 * n + 2`. -/
 theorem innerCipher_length
     {G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
     {E₁ : List Bool → List Bool}
@@ -108,19 +115,24 @@ theorem innerCipher_length
   omega
 
 /-- View a precomputed inner ciphertext as a `4n+2`-bit message, with false padding if the
-evaluator does not satisfy its prescribed pad-length contract. -/
+evaluator does not satisfy its prescribed pad-length contract.
+`innerMessage E₁ n k o r t = (spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)).getD t.val
+false`. -/
 def innerMessage (E₁ : List Bool → List Bool) (n : ℕ) (k o r : Fin n → Bool) :
     Fin (4 * n + 2) → Bool :=
   fun t => (spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)).getD t.val false
 
-/-- `innerMessage E₁ n k o r t` reads bit `t` of the precomputed inner ciphertext. -/
+/-- `innerMessage E₁ n k o r t` reads bit `t` of the precomputed inner ciphertext.
+`innerMessage E₁ n k o r t = (spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)).getD t.val
+false`. -/
 theorem innerMessage_eq (E₁ : List Bool → List Bool) (n : ℕ) (k o r : Fin n → Bool)
     (t : Fin (4 * n + 2)) :
     innerMessage E₁ n k o r t =
       (spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)).getD t.val false := rfl
 
 /-- Encoding the precomputed outer-slice message gives exactly the inner ciphertext,
-when `E₁` evaluates its prescribed `2n`-bit pad family. -/
+when `E₁` evaluates its prescribed `2n`-bit pad family.
+`List.ofFn (innerMessage E₁ n k o r) = spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)`. -/
 theorem innerMessage_ofFn
     {G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
     {E₁ : List Bool → List Bool}
@@ -134,7 +146,9 @@ theorem innerMessage_ofFn
   rw [List.getElem_ofFn, innerMessage_eq, List.getD_eq_getElem _ _ hj]
 
 /-- Reading slot `j` from the actual slice multi-message sampler returns precisely its
-slice ciphertext, for every sampled key and nonce vector. [PS10, Theorem 163.7] -/
+slice ciphertext, for every sampled key and nonce vector. [PS10, Theorem 163.7]
+`SliceReconstruction.row E₂ (pairEncode (sliceMultiEncDist G n q offset len m (k, r))
+(SliceReconstruction.directRecord j.val)) = sliceEnc G n (offset j) k (r j) (List.ofFn (m j))`. -/
 theorem direct_sampler {L : ℕ → ℕ}
     (G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (L n) → Bool))
     (E₂ : List Bool → List Bool) (n q : ℕ) (offset len : Fin (q + 1) → ℕ)
@@ -149,7 +163,10 @@ theorem direct_sampler {L : ℕ → ℕ}
 
 /-- Wrapping sampler slot `j` uses the exact sampled slice ciphertext with the supplied
 known outer key and fixed outer nonce. The selected challenge key is not given to wrapping.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`SliceReconstruction.row E₂ (pairEncode (sliceMultiEncDist G n q offset len m (k, r))
+(SliceReconstruction.wrappedRecord j.val outer nonce)) = spEncStr E₂ outer (sliceEnc G n (offset j)
+k (r j) (List.ofFn (m j))) nonce`. -/
 theorem wrapped_sampler {L : ℕ → ℕ}
     (G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (L n) → Bool))
     (E₂ : List Bool → List Bool) (n q : ℕ) (offset len : Fin (q + 1) → ℕ)
@@ -164,7 +181,9 @@ theorem wrapped_sampler {L : ℕ → ℕ}
 
 /-- Both selected-key slice shapes fit in the joint pad of length
 `2n + (n + (4n+2))`: the `(0,n)` slice and the `(2n,4n+2)` slice.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`0 + n + n ≤ (n + n) + (n + (4 * n + 2)) ∧ (n + n) + n + (4 * n + 2) ≤ (n + n) + (n + (4 * n +
+2))`. -/
 theorem slice_shapes_fit (n : ℕ) :
     0 + n + n ≤ (n + n) + (n + (4 * n + 2)) ∧
       (n + n) + n + (4 * n + 2) ≤ (n + n) + (n + (4 * n + 2)) := by

@@ -36,7 +36,12 @@ open Complexity Turing BoolCircuit
 
 /-- The simulated first message is the encoded table vector paired with Alice's encoded
 false-key vector and the encoded output pairs ordered by the prescribed result bits.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`message M C s inA outLen output result = pairEncode (BinArith.encWords (List.ofFn fun i =>
+BinArith.encWords (table M C s i))) (pairEncode (BinArith.encWords (List.ofFn fun v : Fin inA =>
+List.ofFn (keyAt C s v false))) (BinArith.encWords (List.ofFn fun j => pairEncode (List.ofFn
+(decodePair C s (output j) (result j)).1) (List.ofFn (decodePair C s (output j) (result
+j)).2))))`. -/
 noncomputable def message {inputs width : ℕ} {ρ : Type}
     (M : MultiEnc (Fin width → Bool) (List Bool) ρ) (C : DAGCircuit inputs)
     (s : GarbleSeed C (Fin width → Bool) ρ) (inA outLen : ℕ)
@@ -50,7 +55,12 @@ noncomputable def message {inputs width : ℕ} {ρ : Type}
 
 /-- `message M C s inA outLen output result` is
 `⟨encWords (ofFn (encWords ∘ table)), ⟨encWords (ofFn key0), encWords (ofFn decodePair)⟩⟩`,
-where keys are encoded by `List.ofFn` and each decoding pair by `pairEncode`. -/
+where keys are encoded by `List.ofFn` and each decoding pair by `pairEncode`.
+`message M C s inA outLen output result = pairEncode (BinArith.encWords (List.ofFn fun i =>
+BinArith.encWords (table M C s i))) (pairEncode (BinArith.encWords (List.ofFn fun v : Fin inA =>
+List.ofFn (keyAt C s v false))) (BinArith.encWords (List.ofFn fun j => pairEncode (List.ofFn
+(decodePair C s (output j) (result j)).1) (List.ofFn (decodePair C s (output j) (result
+j)).2))))`. -/
 theorem message_eq {inputs width : ℕ} {ρ : Type}
     (M : MultiEnc (Fin width → Bool) (List Bool) ρ) (C : DAGCircuit inputs)
     (s : GarbleSeed C (Fin width → Bool) ρ) (inA outLen : ℕ)

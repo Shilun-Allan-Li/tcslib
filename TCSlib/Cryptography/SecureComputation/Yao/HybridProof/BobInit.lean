@@ -54,7 +54,13 @@ def initEntry (z : List Bool) : List Bool :=
     ans.getD (((pairFstD z).length - A.length) * N.length + t) false
 
 /-- The entry reader selects the padded message key below `|A|`, and an answer block
-otherwise, through total pair and encoded-list readers. -/
+otherwise, through total pair and encoded-list readers.
+`initEntry z = let ctx := pairSndD z; let N := pairFstD ctx; let A := pairFstD (pairSndD ctx); let
+msg := pairFstD (pairSndD (pairSndD (pairSndD ctx))); let ans := pairSndD (pairSndD (pairSndD
+(pairSndD ctx))); if (pairFstD z).length < A.length then EnsembleLemmas.padL N.length (BinArith.getW
+(pairEncode (pairFstD z) (BinArith.encWords (BinArith.decWords (pairFstD (pairSndD msg)))))) else
+List.ofFn fun t : Fin N.length => ans.getD (((pairFstD z).length - A.length) * N.length + t)
+false`. -/
 theorem initEntry_eq (z : List Bool) :
     initEntry z =
       let ctx := pairSndD z
@@ -70,7 +76,9 @@ theorem initEntry_eq (z : List Bool) :
         ans.getD (((pairFstD z).length - A.length) * N.length + t) false := rfl
 
 /-- The initial encoded word list has `|A| + |B|` entries, entry `v` being
-`initEntry ⟨1^v, context⟩`. [PS10, Protocol 162.6] -/
+`initEntry ⟨1^v, context⟩`. [PS10, Protocol 162.6]
+`initWords z = BinArith.encWords ((List.range ((pairFstD (pairSndD z)).length + (pairFstD (pairSndD
+(pairSndD z))).length)).map fun v => initEntry (pairEncode (List.replicate v true) z))`. -/
 def initWords (z : List Bool) : List Bool :=
   BinArith.encWords
     ((List.range ((pairFstD (pairSndD z)).length +
@@ -78,7 +86,9 @@ def initWords (z : List Bool) : List Bool :=
         initEntry (pairEncode (List.replicate v true) z))
 
 /-- The initial encoded word list is the encoding of the entry reader over the range
-`0, …, |A| + |B| - 1`. -/
+`0, …, |A| + |B| - 1`.
+`initWords z = BinArith.encWords ((List.range ((pairFstD (pairSndD z)).length + (pairFstD (pairSndD
+(pairSndD z))).length)).map fun v => initEntry (pairEncode (List.replicate v true) z))`. -/
 theorem initWords_eq (z : List Bool) :
     initWords z = BinArith.encWords
       ((List.range ((pairFstD (pairSndD z)).length +
@@ -148,7 +158,11 @@ theorem initWords_poly : PolyTimeComputable initWords := by
       (g := initWords) fun z => (initWords_eq z).symm
 
 /-- On the stated context layout, entry `v` is the `v`-th padded key decoded from the
-message below `|A|`, and the answer block from `(v - |A|) |N|` otherwise. -/
+message below `|A|`, and the answer block from `(v - |A|) |N|` otherwise.
+`initEntry (pairEncode (List.replicate v true) (pairEncode N (pairEncode A (pairEncode B (pairEncode
+msg ans))))) = if v < A.length then List.ofFn (padFin N.length ((BinArith.decWords (pairFstD
+(pairSndD msg))).getD v [])) else List.ofFn fun t : Fin N.length => ans.getD ((v - A.length) *
+N.length + t) false`. -/
 theorem initEntry_layout (N A B msg ans : List Bool) (v : ℕ) :
     initEntry (pairEncode (List.replicate v true)
         (pairEncode N (pairEncode A (pairEncode B (pairEncode msg ans))))) =
@@ -163,6 +177,10 @@ theorem initEntry_layout (N A B msg ans : List Bool) (v : ℕ) :
 
 /-- On the context layout, the initial word list is the encoded vector of `|A| + |B|`
 keys: the first `|A|` are padded message keys, and the rest are answer blocks.
+`initWords (pairEncode N (pairEncode A (pairEncode B (pairEncode msg ans)))) = BinArith.encWords
+(List.ofFn fun v : Fin (A.length + B.length) => if (v : ℕ) < A.length then List.ofFn (padFin
+N.length ((BinArith.decWords (pairFstD (pairSndD msg))).getD v [])) else List.ofFn fun t : Fin
+N.length => ans.getD (((v : ℕ) - A.length) * N.length + t) false)`.
 
 **Proof sketch.** Replace the unary range map by the equal finite vector using the public
 range/vector identity. Then apply the entry reader's layout contract at every position. -/

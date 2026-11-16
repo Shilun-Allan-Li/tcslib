@@ -56,6 +56,9 @@ inactive key and every matched row nonce preserves every sampler's acceptance pr
 All shifts and unused padded coordinates retain their actual distribution; there is no
 uniformity assumption on the derived assignment permutations. No occurrence-capacity or
 key-value-distinctness premise is required. [PS10, Theorem 163.7]
+`acceptProb (fun z : (Fin (10 * S * n + 2 * S) → Bool) × ((Fin n → Bool) × (Fin (q + 1) → Fin n →
+Bool)) => X (SelectedSeed.fill C rows (seed (List.ofFn z.1)) u q z.2.1 z.2.2)) D = acceptProb (fun r
+: Fin (10 * S * n + 2 * S) → Bool => X (seed (List.ofFn r))) D`.
 
 **Proof sketch.** Split the complete tape into its retained shift/unused-block parameter
 and independent actual key/nonce values. Convert the value table and challenge into their

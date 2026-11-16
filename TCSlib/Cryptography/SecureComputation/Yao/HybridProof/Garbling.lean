@@ -38,7 +38,8 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.Garbling
 open Complexity Turing BoolCircuit
 
 /-- If `E`, `k`, `m`, and `r` are polynomial-time word maps, so is
-`z ↦ spEncStr E (k z) (m z) (r z)`. [PS10, Algorithm 157.2] -/
+`z ↦ spEncStr E (k z) (m z) (r z)`. [PS10, Algorithm 157.2]
+`PolyTimeComputable fun z => spEncStr E (k z) (m z) (r z)`. -/
 theorem spEncStr_poly {E k m r : List Bool → List Bool} (hE : PolyTimeComputable E)
     (hk : PolyTimeComputable k) (hm : PolyTimeComputable m) (hr : PolyTimeComputable r) :
     PolyTimeComputable fun z => spEncStr E (k z) (m z) (r z) := by
@@ -53,7 +54,12 @@ theorem spEncStr_poly {E k m r : List Bool → List Bool} (hE : PolyTimeComputab
 
 /-- On `⟨keys, ⟨m, ⟨r₁, r₂⟩⟩⟩`, return `m` for no key, encrypt under the first key
 with `r₁` for one key, or encrypt under the second key with `r₂` and then under the first
-with `r₁` for two keys. Longer encoded lists return `[]`. [PS10, Protocol 162.6] -/
+with `r₁` for two keys. Longer encoded lists return `[]`. [PS10, Protocol 162.6]
+`nestedWordEnc E₁ E₂ z = if pairFstD z = [] then pairFstD (pairSndD z) else if pairSndD (pairFstD z)
+= [] then spEncStr E₁ (pairFstD (pairFstD z)) (pairFstD (pairSndD z)) (pairFstD (pairSndD (pairSndD
+z))) else if pairSndD (pairSndD (pairFstD z)) = [] then spEncStr E₂ (pairFstD (pairFstD z))
+(spEncStr E₁ (pairFstD (pairSndD (pairFstD z))) (pairFstD (pairSndD z)) (pairSndD (pairSndD
+(pairSndD z)))) (pairFstD (pairSndD (pairSndD z))) else []`. -/
 def nestedWordEnc (E₁ E₂ : List Bool → List Bool) (z : List Bool) : List Bool :=
   if pairFstD z = [] then pairFstD (pairSndD z)
   else if pairSndD (pairFstD z) = [] then
@@ -66,7 +72,12 @@ def nestedWordEnc (E₁ E₂ : List Bool → List Bool) (z : List Bool) : List B
   else []
 
 /-- `nestedWordEnc E₁ E₂ z` branches on zero, one, or two encoded keys and performs
-zero, one, or two applications of `spEncStr`, respectively. -/
+zero, one, or two applications of `spEncStr`, respectively.
+`nestedWordEnc E₁ E₂ z = if pairFstD z = [] then pairFstD (pairSndD z) else if pairSndD (pairFstD z)
+= [] then spEncStr E₁ (pairFstD (pairFstD z)) (pairFstD (pairSndD z)) (pairFstD (pairSndD (pairSndD
+z))) else if pairSndD (pairSndD (pairFstD z)) = [] then spEncStr E₂ (pairFstD (pairFstD z))
+(spEncStr E₁ (pairFstD (pairSndD (pairFstD z))) (pairFstD (pairSndD z)) (pairSndD (pairSndD
+(pairSndD z)))) (pairFstD (pairSndD (pairSndD z))) else []`. -/
 theorem nestedWordEnc_eq (E₁ E₂ : List Bool → List Bool) (z : List Bool) :
     nestedWordEnc E₁ E₂ z =
       if pairFstD z = [] then pairFstD (pairSndD z)
@@ -148,7 +159,8 @@ theorem nestedWordEnc_vectors {n : ℕ} (E₁ E₂ : List Bool → List Bool)
 
 /-- A garbled row is polynomial-time when its encoded argument keys, output key, and both
 nonce words are polynomial-time, and its gate has at most two arguments.
-[PS10, Protocol 162.6], encryption of one row from supplied seed data. -/
+[PS10, Protocol 162.6], encryption of one row from supplied seed data.
+`PolyTimeComputable fun z => garbledRow (nestedSpecial E₁ E₂ (width z)) (C z) (s z) (i z) (a z)`. -/
 theorem garbledRow_poly {E₁ E₂ : List Bool → List Bool}
     (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂)
     (inputs width : List Bool → ℕ) (C : ∀ z, DAGCircuit (inputs z))
@@ -193,6 +205,12 @@ theorem fixedTable_poly {α : Type} (enum : List α) (row : α → List Bool →
 /-- For at most two arguments, `gateOut g a` is the conjunction, disjunction, or negated
 conjunction of the first zero, one, or two assignment bits, according to `g.kind`.
 Empty conjunction and disjunction are `true` and `false`. [PS10, Protocol 162.6]
+`gateOut g a = if g.kind = .and then if g.args.length = 0 then true else if g.args.length = 1 then
+(List.ofFn a).getD 0 false else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false else if
+g.kind = .or then if g.args.length = 0 then false else if g.args.length = 1 then (List.ofFn a).getD
+0 false else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false else !(if g.args.length = 0
+then true else if g.args.length = 1 then (List.ofFn a).getD 0 false else (List.ofFn a).getD 0 false
+&& (List.ofFn a).getD 1 false)`.
 
 **Proof sketch.** Split the argument list into zero, one, two, or at least three entries.
 For each gate kind in the first three cases, the public evaluation equations give the
@@ -230,6 +248,7 @@ theorem gateOut_small (g : DAGGate) (a : Fin g.args.length → Bool)
 /-- A gate's output assignment bit is polynomial-time when the two kind tests, the
 zero and one argument tests, and the first two assignment-bit maps are polynomial-time,
 provided every gate has at most two arguments. [PS10, Protocol 162.6]
+`PolyTimeComputable fun z => [gateOut (g z) (a z)]`.
 
 **Proof sketch.** Build the conjunction and disjunction of the at most two supplied bits,
 with their empty and one-bit cases. Two kind tests choose conjunction, disjunction, or
@@ -321,6 +340,11 @@ private theorem keyList_small (args : List ℕ) (a : Fin args.length → Bool)
 /-- For a gate with at most two arguments, its encoded argument keys are the zero-, one-,
 or two-entry word list selected by its argument count. The two possible entries read
 argument positions zero and one with defaults. [PS10, Protocol 162.6]
+`BinArith.encWords ((argKeys C s i a).map List.ofFn) = if (C.gates[i]).args.length = 0 then [] else
+if (C.gates[i]).args.length = 1 then pairEncode (List.ofFn (keyAt C s ((C.gates[i]).args.getD 0 0)
+((List.ofFn a).getD 0 false))) [] else pairEncode (List.ofFn (keyAt C s ((C.gates[i]).args.getD 0 0)
+((List.ofFn a).getD 0 false))) (pairEncode (List.ofFn (keyAt C s ((C.gates[i]).args.getD 1 0)
+((List.ofFn a).getD 1 false))) [])`.
 
 **Proof sketch.** Use the published argument-key equation. Split the argument list into
 its zero-, one-, and two-element cases; in each, the fixed-length `ofFn` reads precisely
@@ -346,7 +370,9 @@ theorem argKeys_small {m n : ℕ} (C : DAGCircuit m)
 
 /-- The encoded argument-key list is polynomial-time if its zero and one argument tests
 and the two potential key words are polynomial-time, for fan-in at most two.
-[PS10, Protocol 162.6], collecting the keys which encrypt one garbled row. -/
+[PS10, Protocol 162.6], collecting the keys which encrypt one garbled row.
+`PolyTimeComputable fun z => BinArith.encWords ((argKeys (C z) (s z) (i z) (a z)).map
+List.ofFn)`. -/
 theorem argKeys_poly (inputs width : List Bool → ℕ) (C : ∀ z, DAGCircuit (inputs z))
     (s : ∀ z, GarbleSeed (C z) (Fin (width z) → Bool)
       ((Fin (width z) → Bool) × (Fin (width z) → Bool)))
@@ -374,6 +400,7 @@ theorem argKeys_poly (inputs width : List Bool → ℕ) (C : ∀ z, DAGCircuit (
 /-- A table with zero, one, or two argument positions is polynomial-time for any constant
 assignment enumerations `enum l`, if every corresponding row map is polynomial-time and
 the zero and one arity tests are polynomial-time. [PS10, Protocol 162.6]
+`PolyTimeComputable fun z => BinArith.encWords ((enum (arity z)).map fun a => row (arity z) a z)`.
 
 **Proof sketch.** For each of the three arities, assemble the finite encoded row list with
 `fixedTable_poly`. Two polynomial-time tests select its arity. The fan-in bound ensures

@@ -88,6 +88,9 @@ theorem selectedKeys_poly (width bound count inputs : List Bool → ℕ)
 are polynomial-time from a polynomial-time description/coin map, unary width/bound/count
 maps, a canonical output-index word list, valid output vertices, and the seed key equation.
 [PS10, Protocol 162.6], the output decoding information.
+`PolyTimeComputable fun z => BinArith.encWords (List.ofFn fun j : Fin (count z) => pairEncode
+(List.ofFn (keyAt (C z) (s z) (output z j) false)) (List.ofFn (keyAt (C z) (s z) (output z j)
+true)))`.
 
 **Proof sketch.** On a unary index, read the corresponding output-index word from the
 description's second component. Dropping one symbol from its unary terminated code leaves
@@ -162,6 +165,11 @@ nested-special garbled tables and the pair of her selected input-key vector and 
 decoding-pair vector. The hypotheses are polynomial-time raw selectors, canonical uniform
 circuit descriptions, valid output vertices, fan-in at most two, and the supplied seed block
 and XOR-shift readers. [PS10, Protocol 162.6]
+`PolyTimeComputable fun z => pairEncode (BinArith.encWords (List.ofFn fun i => BinArith.encWords
+(garbledTable (nestedSpecial E₁ E₂ (width z)) (C z) (s z) i))) (pairEncode (BinArith.encWords
+(List.ofFn fun v : Fin (inA z) => List.ofFn (keyAt (C z) (s z) v ((xs z).getD v false))))
+(BinArith.encWords (List.ofFn fun j : Fin (outLen z) => pairEncode (List.ofFn (keyAt (C z) (s z)
+(output z j) false)) (List.ofFn (keyAt (C z) (s z) (output z j) true)))))`.
 
 **Proof sketch.** The generic garbling program proves polynomial time for the actual table
 vector from description and seed readers. `selectedKeys_poly` gives Alice's input-key vector,

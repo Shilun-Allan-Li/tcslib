@@ -42,7 +42,9 @@ open Complexity Turing TCSlib.Cryptography
 
 /-- The raw copying simulator returns the encoding of
 `⟨inParam z, ⟨fst (inArg z), []⟩, inCoins z, [snd (inArg z)]⟩`.
-It reads no circuit and makes no ideal calls. [PS10, Theorem 163.7] -/
+It reads no circuit and makes no ideal calls. [PS10, Theorem 163.7]
+`raw z = pairEncode (pairEncode (NUPPT.inParam z) (pairEncode (pairFstD (NUPPT.inArg z)) []))
+(pairEncode (NUPPT.inCoins z) (Strategy.encodeMsgs [pairSndD (NUPPT.inArg z)]))`. -/
 def raw (z : List Bool) : List Bool :=
   pairEncode (pairEncode (NUPPT.inParam z) (pairEncode (pairFstD (NUPPT.inArg z)) []))
     (pairEncode (NUPPT.inCoins z) (Strategy.encodeMsgs [pairSndD (NUPPT.inArg z)]))
@@ -75,7 +77,8 @@ noncomputable def simulator (coins : PolyExpr) : NUPPT :=
 theorem simulator_eq (coins : PolyExpr) :
     simulator coins = NUPPT.ofPolyTimeUniform polyTimeComputable_raw coins := rfl
 
-/-- `simulator coins` is uniform for every coin polynomial `coins`. -/
+/-- `simulator coins` is uniform for every coin polynomial `coins`.
+`(simulator coins).Uniform`. -/
 theorem simulator_uniform (coins : PolyExpr) : (simulator coins).Uniform := by
   rw [simulator_eq]
   exact NUPPT.ofPolyTimeUniform_uniform polyTimeComputable_raw coins
@@ -87,7 +90,9 @@ theorem simulator_coins (coins : PolyExpr) : (simulator coins).coins = coins := 
 
 /-- On every parameter `n`, input `x`, prescribed output `f` and tape `r`,
 `simulator coins` returns `View.encode ⟨1^n, ⟨x, []⟩, r, [f]⟩`.
-The equation holds for arbitrary word lengths. [PS10, Theorem 163.7] -/
+The equation holds for arbitrary word lengths. [PS10, Theorem 163.7]
+`(simulator coins).runAtL n (pairEncode x f) r = (⟨List.replicate n true, pairEncode x [], r, [f]⟩ :
+View).encode`. -/
 theorem simulator_runAtL (coins : PolyExpr) (n : ℕ) (x f r : List Bool) :
     (simulator coins).runAtL n (pairEncode x f) r =
       (⟨List.replicate n true, pairEncode x [], r, [f]⟩ : View).encode := by

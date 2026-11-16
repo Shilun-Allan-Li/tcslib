@@ -37,7 +37,11 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.AllTables
 open Complexity Turing BoolCircuit TCSlib.Cryptography.EncodingMachines
 
 /-- On `⟨1^i, z⟩`, read gate `i` from the supplied encoded gate list, then build its encoded
-row table from the retained unary data and coin word. [PS10, Protocol 162.6] -/
+row table from the retained unary data and coin word. [PS10, Protocol 162.6]
+`entryWord E₁ E₂ width bound inputs gates coins w = let record := fun v => BinArith.getW (pairEncode
+(pairFstD v) (gates (pairSndD v))); TablesFromCoins.tableWord E₁ E₂ (fun v => width (pairSndD v))
+(fun v => bound (pairSndD v)) (fun v => inputs (pairSndD v)) (fun v => (pairFstD v).length) (fun v
+=> pairFstD (record v)) (fun v => pairSndD (record v)) (fun v => coins (pairSndD v)) w`. -/
 noncomputable def entryWord (E₁ E₂ : List Bool → List Bool)
     (width bound inputs : List Bool → ℕ) (gates coins : List Bool → List Bool)
     (w : List Bool) : List Bool :=
@@ -49,7 +53,11 @@ noncomputable def entryWord (E₁ E₂ : List Bool → List Bool)
     (fun v => coins (pairSndD v)) w
 
 /-- `entryWord ... w` applies the total table adapter to the selected gate record and
-retained numeric/coin data of `pairSndD w`, with gate index `|pairFstD w|`. -/
+retained numeric/coin data of `pairSndD w`, with gate index `|pairFstD w|`.
+`entryWord E₁ E₂ width bound inputs gates coins w = let record := fun v => BinArith.getW (pairEncode
+(pairFstD v) (gates (pairSndD v))); TablesFromCoins.tableWord E₁ E₂ (fun v => width (pairSndD v))
+(fun v => bound (pairSndD v)) (fun v => inputs (pairSndD v)) (fun v => (pairFstD v).length) (fun v
+=> pairFstD (record v)) (fun v => pairSndD (record v)) (fun v => coins (pairSndD v)) w`. -/
 theorem entryWord_eq (E₁ E₂ : List Bool → List Bool)
     (width bound inputs : List Bool → ℕ) (gates coins : List Bool → List Bool)
     (w : List Bool) :
@@ -62,7 +70,8 @@ theorem entryWord_eq (E₁ E₂ : List Bool → List Bool)
         (fun v => coins (pairSndD v)) w := rfl
 
 /-- The indexed table adapter is polynomial-time when its evaluators, encoded gate list,
-coin word, and unary numeric maps are polynomial-time. [PS10, Protocol 162.6] -/
+coin word, and unary numeric maps are polynomial-time. [PS10, Protocol 162.6]
+`PolyTimeComputable (entryWord E₁ E₂ width bound inputs gates coins)`. -/
 theorem entryWord_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeComputable E₁)
     (hE₂ : PolyTimeComputable E₂) {width bound inputs : List Bool → ℕ}
     {gates coins : List Bool → List Bool}
@@ -93,7 +102,10 @@ noncomputable def allTablesWord (E₁ E₂ : List Bool → List Bool)
   BinArith.encWords ((List.range (BinArith.decWords (gates z)).length).map fun i =>
     entryWord E₁ E₂ width bound inputs gates coins (pairEncode (List.replicate i true) z))
 
-/-- `allTablesWord ... z` encodes every indexed table word of the decoded gate list. -/
+/-- `allTablesWord ... z` encodes every indexed table word of the decoded gate list.
+`allTablesWord E₁ E₂ width bound inputs gates coins z = BinArith.encWords ((List.range
+(BinArith.decWords (gates z)).length).map fun i => entryWord E₁ E₂ width bound inputs gates coins
+(pairEncode (List.replicate i true) z))`. -/
 theorem allTablesWord_eq (E₁ E₂ : List Bool → List Bool)
     (width bound inputs : List Bool → ℕ) (gates coins : List Bool → List Bool)
     (z : List Bool) :
@@ -104,6 +116,7 @@ theorem allTablesWord_eq (E₁ E₂ : List Bool → List Bool)
 
 /-- The complete encoded table list is polynomial-time when its evaluators, encoded gate
 list, coin word, and unary numeric maps are polynomial-time. [PS10, Protocol 162.6]
+`PolyTimeComputable (allTablesWord E₁ E₂ width bound inputs gates coins)`.
 
 **Proof sketch.** Count the encoded gate records in unary. Normalize an indexed input's
 counter to unary and apply the polynomial-time indexed table adapter. The public
@@ -154,6 +167,10 @@ theorem allTablesWord_garbledTables (E₁ E₂ : List Bool → List Bool)
 /-- On a canonical indexed input `⟨1^i, z⟩`, the adapter equals the table machine on the
 retained data with gate index fixed to `i` and the selected record's kind/argument fields.
 This equation includes arbitrary malformed retained words.
+`entryWord E₁ E₂ width bound inputs gates coins (pairEncode (List.replicate i true) z) =
+TablesFromCoins.tableWord E₁ E₂ width bound inputs (fun _ => i) (fun v => pairFstD (BinArith.getW
+(pairEncode (List.replicate i true) (gates v)))) (fun v => pairSndD (BinArith.getW (pairEncode
+(List.replicate i true) (gates v)))) coins z`.
 
 **Proof sketch.** Normalize the argument count before comparing the dependent finite
 assignment lists. Both branches then use the same enumeration. At each row, freeze the

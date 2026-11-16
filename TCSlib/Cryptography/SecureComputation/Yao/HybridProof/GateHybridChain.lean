@@ -41,6 +41,8 @@ argument has advantage at most one nonnegative negligible `μ(n)`, uniformly ove
 then the advantage from stage zero to stage `2*gatecount` has one negligible bound,
 uniformly over that same family. The input family need not be finite or nonempty.
 [PS10, Theorem 163.7]
+`∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n z, distAdv (H n z 0) (H n z (2 * (C n).gates.length))
+(D.distinguisherL n) ≤ ε n`.
 
 **Proof sketch.** Twice the gate count is bounded by twice the circuit size and hence
 by the polynomial twice `S`. Apply the established negligible-chain theorem with this

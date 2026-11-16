@@ -35,41 +35,54 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates
 
 open BoolCircuit
 
-/-- The unchanged seed component is the family of assignment permutations at every gate. -/
+/-- The unchanged seed component is the family of assignment permutations at every gate.
+`Permutations C = ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length →
+Bool))`. -/
 abbrev Permutations {m : ℕ} (C : DAGCircuit m) :=
   (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool)
 
-/-- `Permutations C` is the dependent family of per-gate assignment permutations. -/
+/-- `Permutations C` is the dependent family of per-gate assignment permutations.
+`Permutations C = ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length →
+Bool))`. -/
 theorem Permutations_eq {m : ℕ} (C : DAGCircuit m) :
     Permutations C =
       ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool)) := rfl
 
-/-- A full seed coordinate is either a vertex/bit key label or a row nonce coordinate. -/
+/-- A full seed coordinate is either a vertex/bit key label or a row nonce coordinate.
+`Index C = ((Fin C.size × Bool) ⊕ NonceCoordinates.Index C)`. -/
 abbrev Index {m : ℕ} (C : DAGCircuit m) :=
   (Fin C.size × Bool) ⊕ NonceCoordinates.Index C
 
-/-- `Index C` is the sum of key labels and row-nonce coordinates. -/
+/-- `Index C` is the sum of key labels and row-nonce coordinates.
+`Index C = ((Fin C.size × Bool) ⊕ NonceCoordinates.Index C)`. -/
 theorem Index_eq {m : ℕ} (C : DAGCircuit m) :
     Index C = ((Fin C.size × Bool) ⊕ NonceCoordinates.Index C) := rfl
 
-/-- Challenge coordinates consist of one selected key slot and `q+1` padded nonce slots. -/
+/-- Challenge coordinates consist of one selected key slot and `q+1` padded nonce slots.
+`ChallengeIndex q = (Unit ⊕ Fin (q + 1))`. -/
 abbrev ChallengeIndex (q : ℕ) := Unit ⊕ Fin (q + 1)
 
 /-- `ChallengeIndex q = Unit ⊕ Fin (q+1)`. -/
 theorem ChallengeIndex_eq (q : ℕ) : ChallengeIndex q = (Unit ⊕ Fin (q + 1)) := rfl
 
-/-- `Data C V` is the pair of the full two-key table and the full two-half nonce table. -/
+/-- `Data C V` is the pair of the full two-key table and the full two-half nonce table.
+`Data C V = ((Fin C.size → Bool → V) × ((i : Fin C.gates.length) → (Fin C.gates[i.val].args.length →
+Bool) → V × V))`. -/
 abbrev Data {m : ℕ} (C : DAGCircuit m) (V : Type) :=
   (Fin C.size → Bool → V) ×
     ((i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → V × V)
 
-/-- `Data C V` is the product of its key and nonce function tables. -/
+/-- `Data C V` is the product of its key and nonce function tables.
+`Data C V = ((Fin C.size → Bool → V) × ((i : Fin C.gates.length) → (Fin C.gates[i.val].args.length →
+Bool) → V × V))`. -/
 theorem Data_eq {m : ℕ} (C : DAGCircuit m) (V : Type) :
     Data C V = ((Fin C.size → Bool → V) ×
       ((i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → V × V)) := rfl
 
 /-- Existing currying, Boolean-function and sum-function equivalences identify the key/nonce
-value tables with one coordinate function. No permutation distribution is involved. -/
+value tables with one coordinate function. No permutation distribution is involved.
+`dataEquiv C V d = Sum.elim (fun label => d.1 label.1 label.2) (fun x => if x.2.2 then (d.2 x.1
+x.2.1).2 else (d.2 x.1 x.2.1).1)`. -/
 def dataEquiv {m : ℕ} (C : DAGCircuit m) (V : Type) : Data C V ≃ (Index C → V) :=
   let key := (Equiv.curry (Fin C.size) Bool V).symm
   let nonce : ((i : Fin C.gates.length) →
@@ -82,65 +95,82 @@ def dataEquiv {m : ℕ} (C : DAGCircuit m) (V : Type) : Data C V ≃ (Index C �
         (_ : (Fin C.gates[i.val].args.length → Bool) × Bool) => V)).symm
   (key.prodCongr nonce).trans (Equiv.sumArrowEquivProdArrow _ _ V).symm
 
-/-- The data-coordinate map reads the key table on key labels and the chosen nonce half. -/
+/-- The data-coordinate map reads the key table on key labels and the chosen nonce half.
+`dataEquiv C V d = Sum.elim (fun label => d.1 label.1 label.2) (fun x => if x.2.2 then (d.2 x.1
+x.2.1).2 else (d.2 x.1 x.2.1).1)`. -/
 theorem dataEquiv_eq {m : ℕ} (C : DAGCircuit m) (V : Type) (d : Data C V) :
     dataEquiv C V d = Sum.elim (fun label => d.1 label.1 label.2)
       (fun x => if x.2.2 then (d.2 x.1 x.2.1).2 else (d.2 x.1 x.2.1).1) := rfl
 
-/-- The inverse data-coordinate map restores both key choices and both nonce halves. -/
+/-- The inverse data-coordinate map restores both key choices and both nonce halves.
+`(dataEquiv C V).symm f = ((fun v b => f (Sum.inl (v, b))), fun i a => (f (Sum.inr ⟨i, (a, false)⟩),
+f (Sum.inr ⟨i, (a, true)⟩)))`. -/
 theorem dataEquiv_symm {m : ℕ} (C : DAGCircuit m) (V : Type) (f : Index C → V) :
     (dataEquiv C V).symm f = ((fun v b => f (Sum.inl (v, b))),
       fun i a => (f (Sum.inr ⟨i, (a, false)⟩), f (Sum.inr ⟨i, (a, true)⟩))) := rfl
 
 /-- The value-table equivalence retains any unchanged parameter `P`, such as actual XOR
-shifts and unused tape coordinates. No uniformity of a derived permutation is assumed. -/
+shifts and unused tape coordinates. No uniformity of a derived permutation is assumed.
+`paramEquiv C V P (p, d) = (p, dataEquiv C V d)`. -/
 def paramEquiv {m : ℕ} (C : DAGCircuit m) (V P : Type) :
     P × Data C V ≃ P × (Index C → V) := (Equiv.refl P).prodCongr (dataEquiv C V)
 
-/-- `paramEquiv` retains `p` and converts only the key/nonce data table. -/
+/-- `paramEquiv` retains `p` and converts only the key/nonce data table.
+`paramEquiv C V P (p, d) = (p, dataEquiv C V d)`. -/
 theorem paramEquiv_eq {m : ℕ} (C : DAGCircuit m) (V P : Type) (p : P) (d : Data C V) :
     paramEquiv C V P (p, d) = (p, dataEquiv C V d) := rfl
 
-/-- The inverse parameterized map retains `p` and restores only its data table. -/
+/-- The inverse parameterized map retains `p` and restores only its data table.
+`(paramEquiv C V P).symm (p, f) = (p, (dataEquiv C V).symm f)`. -/
 theorem paramEquiv_symm {m : ℕ} (C : DAGCircuit m) (V P : Type) (p : P) (f : Index C → V) :
     (paramEquiv C V P).symm (p, f) = (p, (dataEquiv C V).symm f) := rfl
 
 /-- A full abstract garbling seed is equivalent to its permutation family and key/nonce
 coordinate table. This auxiliary equivalence makes no claim that concrete XOR-shift tapes
-induce uniform samples over all permutations. -/
+induce uniform samples over all permutations.
+`seedEquiv C V s = (s.2.2, Sum.elim (fun label => s.1 label.1 label.2) (fun x => if x.2.2 then
+(s.2.1 x.1 x.2.1).2 else (s.2.1 x.1 x.2.1).1))`. -/
 def seedEquiv {m : ℕ} (C : DAGCircuit m) (V : Type) :
     GarbleSeed C V (V × V) ≃ Permutations C × (Index C → V) :=
   ((Equiv.prodAssoc _ _ _).symm.trans (Equiv.prodComm _ _)).trans
     ((Equiv.refl _).prodCongr (dataEquiv C V))
 
-/-- `seedEquiv` retains the permutations and reads key labels or first/second row nonces. -/
+/-- `seedEquiv` retains the permutations and reads key labels or first/second row nonces.
+`seedEquiv C V s = (s.2.2, Sum.elim (fun label => s.1 label.1 label.2) (fun x => if x.2.2 then
+(s.2.1 x.1 x.2.1).2 else (s.2.1 x.1 x.2.1).1))`. -/
 theorem seedEquiv_eq {m : ℕ} (C : DAGCircuit m) (V : Type) (s : GarbleSeed C V (V × V)) :
     seedEquiv C V s = (s.2.2, Sum.elim (fun label => s.1 label.1 label.2)
       (fun x => if x.2.2 then (s.2.1 x.1 x.2.1).2 else (s.2.1 x.1 x.2.1).1)) := rfl
 
-/-- The coordinate permutation family is exactly the original seed's permutation family. -/
+/-- The coordinate permutation family is exactly the original seed's permutation family.
+`(seedEquiv C V s).1 = s.2.2`. -/
 theorem seedEquiv_perm {m : ℕ} (C : DAGCircuit m) (V : Type) (s : GarbleSeed C V (V × V)) :
     (seedEquiv C V s).1 = s.2.2 := rfl
 
-/-- A key coordinate reads its original vertex/bit key. -/
+/-- A key coordinate reads its original vertex/bit key.
+`(seedEquiv C V s).2 (Sum.inl (v, b)) = s.1 v b`. -/
 theorem seedEquiv_key {m : ℕ} (C : DAGCircuit m) (V : Type) (s : GarbleSeed C V (V × V))
     (v : Fin C.size) (b : Bool) : (seedEquiv C V s).2 (Sum.inl (v, b)) = s.1 v b := rfl
 
-/-- A nonce coordinate reads the first half for `false` and the second half for `true`. -/
+/-- A nonce coordinate reads the first half for `false` and the second half for `true`.
+`(seedEquiv C V s).2 (Sum.inr ⟨i, (a, half)⟩) = if half then (s.2.1 i a).2 else (s.2.1 i a).1`. -/
 theorem seedEquiv_nonce {m : ℕ} (C : DAGCircuit m) (V : Type) (s : GarbleSeed C V (V × V))
     (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) (half : Bool) :
     (seedEquiv C V s).2 (Sum.inr ⟨i, (a, half)⟩) =
       if half then (s.2.1 i a).2 else (s.2.1 i a).1 := rfl
 
 /-- The inverse coordinate map restores the two key choices, both nonce halves, and the
-unchanged permutation family. -/
+unchanged permutation family.
+`(seedEquiv C V).symm (p, f) = ((fun v b => f (Sum.inl (v, b))), ((fun i a => (f (Sum.inr ⟨i, (a,
+false)⟩), f (Sum.inr ⟨i, (a, true)⟩))), p))`. -/
 theorem seedEquiv_symm {m : ℕ} (C : DAGCircuit m) (V : Type)
     (p : Permutations C) (f : Index C → V) :
     (seedEquiv C V).symm (p, f) =
       ((fun v b => f (Sum.inl (v, b))),
         ((fun i a => (f (Sum.inr ⟨i, (a, false)⟩), f (Sum.inr ⟨i, (a, true)⟩))), p)) := rfl
 
-/-- A selected key and its padded nonce vector are one table on the sum of challenge slots. -/
+/-- A selected key and its padded nonce vector are one table on the sum of challenge slots.
+`challengeEquiv q V (k, r) = Sum.elim (fun _ => k) r`. -/
 def challengeEquiv (q : ℕ) (V : Type) :
     V × (Fin (q + 1) → V) ≃ (ChallengeIndex q → V) :=
   (((Equiv.funUnique Unit V).symm).prodCongr (Equiv.refl _)).trans
@@ -150,12 +180,16 @@ def challengeEquiv (q : ℕ) (V : Type) :
 theorem challengeEquiv_eq (q : ℕ) (V : Type) (k : V) (r : Fin (q + 1) → V) :
     challengeEquiv q V (k, r) = Sum.elim (fun _ => k) r := rfl
 
-/-- The inverse challenge-coordinate map reads the key slot and all padded nonce slots. -/
+/-- The inverse challenge-coordinate map reads the key slot and all padded nonce slots.
+`(challengeEquiv q V).symm f = (f (Sum.inl ()), fun j => f (Sum.inr j))`. -/
 theorem challengeEquiv_symm (q : ℕ) (V : Type) (f : ChallengeIndex q → V) :
     (challengeEquiv q V).symm f = (f (Sum.inl ()), fun j => f (Sum.inr j)) := rfl
 
 /-- Pick the single key slot at `(u,true)`, or the selected nonce slot given by the nonce
-coordinate map. The map depends on the row permutation and never on coordinate values. -/
+coordinate map. The map depends on the row permutation and never on coordinate values.
+`pick C rows perm u q x = Sum.elim (fun label => if label = (u, true) then some (Sum.inl () :
+ChallengeIndex q) else none) (fun nonce => (NonceCoordinates.pick C rows perm u.val q nonce).map
+Sum.inr) x`. -/
 noncomputable def pick {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : Permutations C) (u : Fin C.size) (q : ℕ) (x : Index C) :
@@ -164,7 +198,10 @@ noncomputable def pick {m : ℕ} (C : DAGCircuit m)
     (fun nonce => (NonceCoordinates.pick C rows perm u.val q nonce).map Sum.inr) x
 
 /-- `pick` selects the key challenge at `(u,true)` and delegates nonce coordinates to the
-nonce-slot map. -/
+nonce-slot map.
+`pick C rows perm u q x = Sum.elim (fun label => if label = (u, true) then some (Sum.inl () :
+ChallengeIndex q) else none) (fun nonce => (NonceCoordinates.pick C rows perm u.val q nonce).map
+Sum.inr) x`. -/
 theorem pick_eq {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : Permutations C) (u : Fin C.size) (q : ℕ) (x : Index C) :
@@ -173,14 +210,18 @@ theorem pick_eq {m : ℕ} (C : DAGCircuit m)
         (fun label => if label = (u, true) then some (Sum.inl () : ChallengeIndex q) else none)
         (fun nonce => (NonceCoordinates.pick C rows perm u.val q nonce).map Sum.inr) x := rfl
 
-/-- Place the selected key at `(u,true)` and each used nonce slot at its selected row half. -/
+/-- Place the selected key at `(u,true)` and each used nonce slot at its selected row half.
+`place C rows perm u q j = Sum.elim (fun _ => some (Sum.inl (u, true) : Index C)) (fun nonce =>
+(NonceCoordinates.place C rows perm u.val q nonce).map Sum.inr) j`. -/
 def place {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : Permutations C) (u : Fin C.size) (q : ℕ) (j : ChallengeIndex q) : Option (Index C) :=
   Sum.elim (fun _ => some (Sum.inl (u, true) : Index C))
     (fun nonce => (NonceCoordinates.place C rows perm u.val q nonce).map Sum.inr) j
 
-/-- `place` retains the distinction between the key challenge and padded nonce challenges. -/
+/-- `place` retains the distinction between the key challenge and padded nonce challenges.
+`place C rows perm u q j = Sum.elim (fun _ => some (Sum.inl (u, true) : Index C)) (fun nonce =>
+(NonceCoordinates.place C rows perm u.val q nonce).map Sum.inr) j`. -/
 theorem place_eq {m : ℕ} (C : DAGCircuit m)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (perm : Permutations C) (u : Fin C.size) (q : ℕ) (j : ChallengeIndex q) :
@@ -190,6 +231,7 @@ theorem place_eq {m : ℕ} (C : DAGCircuit m)
 
 /-- Full key/nonce picks and placements are exact partial inverses. The key and nonce
 summands are disjoint, and nonce padding remains unmatched.
+`pick C rows perm u q x = some j ↔ place C rows perm u q j = some x`.
 
 **Proof sketch.** In the key summand there is one matching vertex/bit coordinate and one
 challenge slot. Mixed summands cannot match. Within the nonce summand, injectivity of the
@@ -270,7 +312,8 @@ theorem pick_iff_place {m : ℕ} (C : DAGCircuit m)
           (NonceCoordinates.pick_iff_place C rows perm u.val q hargs hcomplete hrows _ _).mpr hp,
           rfl⟩
 
-/-- The seed coordinate map is its unchanged permutation paired with the data-coordinate map. -/
+/-- The seed coordinate map is its unchanged permutation paired with the data-coordinate map.
+`seedEquiv C V s = (s.2.2, dataEquiv C V (s.1, s.2.1))`. -/
 theorem seedEquiv_eq_data {m : ℕ} (C : DAGCircuit m) (V : Type)
     (s : GarbleSeed C V (V × V)) :
     seedEquiv C V s = (s.2.2, dataEquiv C V (s.1, s.2.1)) := rfl
@@ -278,6 +321,8 @@ theorem seedEquiv_eq_data {m : ℕ} (C : DAGCircuit m) (V : Type)
 /-- Filling the selected key and nonce vector is exactly the value-coordinate replacement
 prescribed by `pick`. This pointwise identity holds at every value, including collisions,
 and for arbitrary unused padding; no distribution or permutation-uniformity assumption occurs.
+`dataEquiv C V ((SelectedSeed.fill C rows s u q k r).1, (SelectedSeed.fill C rows s u q k r).2.1) =
+fun x => (pick C rows s.2.2 u q x).elim (dataEquiv C V (s.1, s.2.1) x) (challengeEquiv q V (k, r))`.
 
 **Proof sketch.** At key coordinates the filled-key reader changes just `(u,true)`, matching
 the single key slot. At nonce coordinates the nonce-coordinate read contract gives precisely
@@ -310,7 +355,9 @@ theorem dataEquiv_fill {m : ℕ} (C : DAGCircuit m) (V : Type)
     | some j => simp only [Option.map_some, Option.elim_some, Sum.elim_inr]
 
 /-- The complete filled abstract seed retains its permutation and performs exactly the
-partial replacement of its key/nonce value coordinates. -/
+partial replacement of its key/nonce value coordinates.
+`seedEquiv C V (SelectedSeed.fill C rows s u q k r) = (s.2.2, fun x => (pick C rows s.2.2 u q
+x).elim (dataEquiv C V (s.1, s.2.1) x) (challengeEquiv q V (k, r)))`. -/
 theorem seedEquiv_fill {m : ℕ} (C : DAGCircuit m) (V : Type)
     (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
     (s : GarbleSeed C V (V × V)) (u : Fin C.size) (q : ℕ) (k : V)

@@ -36,6 +36,7 @@ open Complexity Turing TCSlib.Cryptography
 /-- A strategy that computes `first x z r` on the empty history and echoes the first
 received message on every nonempty history is efficient if its first-message map is
 polynomial-time on the interactive machine layout. [PS10, Definition 155.1]
+`S.Efficient`.
 
 **Proof sketch.** Test whether the encoded history is empty. The two branches are the
 given polynomial-time map and the first projection of the encoded history. Apply the
@@ -63,7 +64,8 @@ theorem firstThenEcho_efficient (S : Strategy)
 
 /-- A strategy whose next message is `reply x z (hist.headD [])` is efficient if
 the corresponding interactive-layout map is polynomial-time. The contract includes
-empty and malformed histories and arbitrary private words. [PS10, Definition 155.1] -/
+empty and malformed histories and arbitrary private words. [PS10, Definition 155.1]
+`S.Efficient`. -/
 theorem reply_efficient (S : Strategy)
     (reply : List Bool → List Bool → List Bool → List Bool)
     (hNext : ∀ x z r hist, S.next x z r hist = reply x z (hist.headD []))

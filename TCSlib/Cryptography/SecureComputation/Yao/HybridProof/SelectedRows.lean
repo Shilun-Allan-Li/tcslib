@@ -41,51 +41,63 @@ namespace TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows
 open Complexity Turing TCSlib.Cryptography
 
 /-- The selected slice begins at `2n` for position zero in a two-key row, and at zero
-for every other selected position. -/
+for every other selected position.
+`offset n ks p = if ks.length = 2 ∧ p = 0 then n + n else 0`. -/
 def offset (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) : ℕ :=
   if ks.length = 2 ∧ p = 0 then n + n else 0
 
-/-- `offset n ks p` is `2n` in the outer-layer case and zero otherwise. -/
+/-- `offset n ks p` is `2n` in the outer-layer case and zero otherwise.
+`offset n ks p = if ks.length = 2 ∧ p = 0 then n + n else 0`. -/
 theorem offset_eq (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) :
     offset n ks p = if ks.length = 2 ∧ p = 0 then n + n else 0 := rfl
 
-/-- The selected plaintext length is `4n+2` for an outer-layer occurrence, and `n` otherwise. -/
+/-- The selected plaintext length is `4n+2` for an outer-layer occurrence, and `n` otherwise.
+`length n ks p = if ks.length = 2 ∧ p = 0 then 4 * n + 2 else n`. -/
 def length (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) : ℕ :=
   if ks.length = 2 ∧ p = 0 then 4 * n + 2 else n
 
-/-- `length n ks p` is `4n+2` in the outer-layer case and `n` otherwise. -/
+/-- `length n ks p` is `4n+2` in the outer-layer case and `n` otherwise.
+`length n ks p = if ks.length = 2 ∧ p = 0 then 4 * n + 2 else n`. -/
 theorem length_eq (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) :
     length n ks p = if ks.length = 2 ∧ p = 0 then 4 * n + 2 else n := rfl
 
 /-- The precomputed plaintext is an inner encryption under the known second key for an
-outer-layer occurrence, and the output-key word for an only-key or inner occurrence. -/
+outer-layer occurrence, and the output-key word for an only-key or inner occurrence.
+`word E₁ n ks o nonce p = if ks.length = 2 ∧ p = 0 then spEncStr E₁ (List.ofFn (ks.getD 1 default))
+(List.ofFn o) (List.ofFn nonce.2) else List.ofFn o`. -/
 def word (E₁ : List Bool → List Bool) (n : ℕ) (ks : List (Fin n → Bool))
     (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) : List Bool :=
   if ks.length = 2 ∧ p = 0 then
     spEncStr E₁ (List.ofFn (ks.getD 1 default)) (List.ofFn o) (List.ofFn nonce.2)
   else List.ofFn o
 
-/-- `word` selects the precomputed inner ciphertext or the output-key word by layer. -/
+/-- `word` selects the precomputed inner ciphertext or the output-key word by layer.
+`word E₁ n ks o nonce p = if ks.length = 2 ∧ p = 0 then spEncStr E₁ (List.ofFn (ks.getD 1 default))
+(List.ofFn o) (List.ofFn nonce.2) else List.ofFn o`. -/
 theorem word_eq (E₁ : List Bool → List Bool) (n : ℕ) (ks : List (Fin n → Bool))
     (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) :
     word E₁ n ks o nonce p = if ks.length = 2 ∧ p = 0 then
       spEncStr E₁ (List.ofFn (ks.getD 1 default)) (List.ofFn o) (List.ofFn nonce.2)
     else List.ofFn o := rfl
 
-/-- The typed challenge message is the fixed-width padded view of the precomputed word. -/
+/-- The typed challenge message is the fixed-width padded view of the precomputed word.
+`message E₁ n ks o nonce p = padFin (length n ks p) (word E₁ n ks o nonce p)`. -/
 def message (E₁ : List Bool → List Bool) (n : ℕ) (ks : List (Fin n → Bool))
     (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) :
     Fin (length n ks p) → Bool :=
   padFin (length n ks p) (word E₁ n ks o nonce p)
 
-/-- `message` is `padFin (length n ks p) (word E₁ n ks o nonce p)`. -/
+/-- `message` is `padFin (length n ks p) (word E₁ n ks o nonce p)`.
+`message E₁ n ks o nonce p = padFin (length n ks p) (word E₁ n ks o nonce p)`. -/
 theorem message_eq (E₁ : List Bool → List Bool) (n : ℕ) (ks : List (Fin n → Bool))
     (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) :
     message E₁ n ks o nonce p =
       padFin (length n ks p) (word E₁ n ks o nonce p) := rfl
 
 /-- Read challenge slot `j` directly, except at position one of a two-key row, where its
-ciphertext is wrapped under the known first key and fixed outer nonce. -/
+ciphertext is wrapped under the known first key and fixed outer nonce.
+`descriptor n ks nonce p j = if ks.length = 2 ∧ p = 1 then SliceReconstruction.wrappedRecord j
+(List.ofFn (ks.getD 0 default)) (List.ofFn nonce.1) else SliceReconstruction.directRecord j`. -/
 def descriptor (n : ℕ) (ks : List (Fin n → Bool))
     (nonce : (Fin n → Bool) × (Fin n → Bool)) (p j : ℕ) : List Bool :=
   if ks.length = 2 ∧ p = 1 then SliceReconstruction.wrappedRecord j
@@ -93,7 +105,9 @@ def descriptor (n : ℕ) (ks : List (Fin n → Bool))
   else SliceReconstruction.directRecord j
 
 /-- `descriptor` is a known-key wrapped record at the second position of a two-key row,
-and a direct challenge record at all other selected positions. -/
+and a direct challenge record at all other selected positions.
+`descriptor n ks nonce p j = if ks.length = 2 ∧ p = 1 then SliceReconstruction.wrappedRecord j
+(List.ofFn (ks.getD 0 default)) (List.ofFn nonce.1) else SliceReconstruction.directRecord j`. -/
 theorem descriptor_eq (n : ℕ) (ks : List (Fin n → Bool))
     (nonce : (Fin n → Bool) × (Fin n → Bool)) (p j : ℕ) :
     descriptor n ks nonce p j = if ks.length = 2 ∧ p = 1 then
@@ -101,7 +115,8 @@ theorem descriptor_eq (n : ℕ) (ks : List (Fin n → Bool))
     else SliceReconstruction.directRecord j := rfl
 
 /-- The deterministic precomputed word has exactly the selected slice's message length,
-provided `E₁` evaluates its prescribed `2n`-bit pad family. -/
+provided `E₁` evaluates its prescribed `2n`-bit pad family.
+`(word E₁ n ks o nonce p).length = length n ks p`. -/
 theorem word_length
     {G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
     {E₁ : List Bool → List Bool}
@@ -116,6 +131,7 @@ theorem word_length
 
 /-- The typed message encodes exactly the precomputed word when `E₁` evaluates the pad
 family. Padding has no effect because the word already has the prescribed length.
+`List.ofFn (message E₁ n ks o nonce p) = word E₁ n ks o nonce p`.
 
 **Proof sketch.** The public vector-encoding reader converts padding to list padding. The
 word-length identity identifies the requested width with the actual word length, so taking
@@ -149,6 +165,9 @@ include hG hGE₁ hGE₂ in
 argument key and its encryption nonce replaced by the sampled key and nonce. The other
 key and opposite nonce remain fixed. This holds for every sampler seed, for every valid
 position in a row of at most two keys. [PS10, Theorem 163.7]
+`SliceReconstruction.row E₂ (pairEncode (sliceMultiEncDist G n q offsets lens msgs (k, rs))
+(descriptor n ks nonce p j.val)) = (nestedSpecial E₁ E₂ n).enc (ks.set p k) o (if p = 0 then (rs j,
+nonce.2) else (nonce.1, rs j))`.
 
 **Proof sketch.** A selected position excludes the zero-key case. With one key, position
 zero reads the inner slice directly. With two keys, position zero reads the outer slice
@@ -218,7 +237,8 @@ theorem descriptor_length_le (n q : ℕ) (ks : List (Fin n → Bool))
     omega
 
 /-- Every selected-row slice fits in the joint pad of length `2n+(n+(4n+2))`, regardless
-of the row's fixed data. -/
+of the row's fixed data.
+`offset n ks p + n + length n ks p ≤ (n + n) + (n + (4 * n + 2))`. -/
 theorem fits (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) :
     offset n ks p + n + length n ks p ≤ (n + n) + (n + (4 * n + 2)) := by
   rw [offset_eq, length_eq]

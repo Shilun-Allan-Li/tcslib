@@ -88,7 +88,8 @@ theorem encodeMsgs_eq_encWords (L : List (List Bool)) :
 
 /-- For every input count `m`, circuit `C`, seed `s`, gate `i` and assignment `a`,
 the nested-special garbled row has length at most `7 n + 4`.
-[PS10, Protocol 162.6] -/
+[PS10, Protocol 162.6]
+`(garbledRow (nestedSpecial E₁ E₂ n) C s i a).length ≤ 7 * n + 4`. -/
 theorem length_garbledRow_le (E₁ E₂ : List Bool → List Bool) (n : ℕ) {m : ℕ}
     (C : DAGCircuit m)
     (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
@@ -134,7 +135,9 @@ theorem length_encoded_garbledTable_le (E₁ E₂ : List Bool → List Bool) (n 
 
 /-- For evaluators `E₁`, `E₂`, key length `n`, circuit `C` and seed `s`, if each
 gate has at most two arguments, the encoded list of encoded garbled tables has length
-at most `C.gates.length * (112 n + 82)`. [PS10, Protocol 162.6] -/
+at most `C.gates.length * (112 n + 82)`. [PS10, Protocol 162.6]
+`(Strategy.encodeMsgs (List.ofFn fun i : Fin C.gates.length => Strategy.encodeMsgs (garbledTable
+(nestedSpecial E₁ E₂ n) C s i))).length ≤ C.gates.length * (112 * n + 82)`. -/
 theorem length_encoded_garbledTables_le (E₁ E₂ : List Bool → List Bool) (n : ℕ)
     {m : ℕ} (C : DAGCircuit m)
     (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
@@ -184,7 +187,9 @@ theorem length_encoded_pairs_le {o n : ℕ} (keys : Fin o → Bool → Fin n →
 /-- If the table word, input-key word and decoding-pair word satisfy the bounds
 `g (112 n + 82)`, `a (2 n + 2)` and `o (6 n + 6)`, their nested pair has length at most
 `2 g (112 n + 82) + 2 a (2 n + 2) + o (6 n + 6) + 4`.
-[PS10, Protocol 162.6] -/
+[PS10, Protocol 162.6]
+`(pairEncode tables (pairEncode keys pairs)).length ≤ 2 * (g * (112 * n + 82)) + 2 * (a * (2 * n +
+2)) + o * (6 * n + 6) + 4`. -/
 theorem length_message_of_parts_le (tables keys pairs : List Bool) (g a o n : ℕ)
     (ht : tables.length ≤ g * (112 * n + 82))
     (hk : keys.length ≤ a * (2 * n + 2))

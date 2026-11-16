@@ -38,7 +38,8 @@ open Complexity Turing
 
 /-- Re-encoding the word list read from any word is polynomial-time:
 `w ↦ BinArith.encWords (BinArith.decWords w)`.
-It is `mapW pairSndD` with empty retained context. -/
+It is `mapW pairSndD` with empty retained context.
+`PolyTimeComputable fun w => BinArith.encWords (BinArith.decWords w)`. -/
 theorem polyTimeComputable_reencodeWords :
     PolyTimeComputable fun w => BinArith.encWords (BinArith.decWords w) := by
   have h := (BinArith.polyTimeComputable_mapW polyTimeComputable_pairSndD).comp
@@ -51,7 +52,10 @@ theorem polyTimeComputable_reencodeWords :
 /-- On `⟨q, rows⟩`, return the first nonempty `F ⟨q, row⟩` among
 `BinArith.decWords rows`, or `[]` if every result is empty.
 The index is selected by the published bounded first-index host.
-[PS10, Protocol 162.6] -/
+[PS10, Protocol 162.6]
+`firstTagged F z = let rows := BinArith.decWords (pairSndD z); let i := EncodingMachines.firstIdx
+(fun j => !decide (F (pairEncode (pairFstD z) (rows.getD j [])) = [])) rows.length; if rows.length ≤
+i then [] else F (pairEncode (pairFstD z) (rows.getD i []))`. -/
 noncomputable def firstTagged (F : List Bool → List Bool) (z : List Bool) : List Bool :=
   let rows := BinArith.decWords (pairSndD z)
   let i := EncodingMachines.firstIdx
@@ -70,6 +74,7 @@ theorem firstTagged_eq (F : List Bool → List Bool) (z : List Bool) :
 
 /-- For polynomial-time `F`, `firstTagged F` is polynomial-time on every input word.
 [PS10, Protocol 162.6]
+`PolyTimeComputable (firstTagged F)`.
 
 **Proof sketch.** Normalize the row encoding so that the public list-lookup reader
 applies even to malformed input words. The bounded first-index host tests whether
@@ -107,6 +112,8 @@ theorem firstTagged_poly {F : List Bool → List Bool} (hF : PolyTimeComputable 
 
 /-- If `F ⟨q, row⟩` tags `f row` by `none ↦ []`, `some b ↦ true :: payload b`,
 then `firstTagged F ⟨q, encWords rows⟩` tags `rows.findSome? f` in the same way.
+`firstTagged F (pairEncode q (BinArith.encWords rows)) = match rows.findSome? f with | none => [] |
+some b => true :: payload b`.
 
 **Proof sketch.** If every row fails, the first-index characterization gives the
 row count. Otherwise the published first-success characterization splits the

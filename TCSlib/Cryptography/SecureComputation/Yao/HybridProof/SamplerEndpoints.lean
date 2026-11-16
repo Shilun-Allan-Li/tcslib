@@ -100,6 +100,8 @@ theorem real_eq_stage0_on_tape (r : Fin (10 * S * n + 2 * S) → Bool) :
 on the supplied real sampler and the uniform stage-zero sampler. This is the
 published uniform change-of-coins lemma specialized to the proved tape bijection.
 [PS10, Theorem 163.7; Gar26, §3.2]
+`acceptProb real D = acceptProb (fun r : Fin (10 * S * n + 2 * S) → Bool => GateHybridMessage.sample
+M C (seed (List.ofFn r)) inA inB outLen output v commonInput bobInput bobCoins aliceOutput 0) D`.
 
 **Proof sketch.** The pointwise reader identifies the real sampler with stage
 zero precomposed by the complete-tape permutation. Apply the existing uniform
@@ -126,7 +128,10 @@ theorem acceptProb_real_eq_stage0 {κ : Type*} [Fintype κ]
 
 /-- An independent Bob tape ignored by the real sampler can be dropped before
 the same stage-zero acceptance equality. This directly reuses `acceptProb_fst`.
-[PS10, Theorem 163.7; Gar26, §3.2] -/
+[PS10, Theorem 163.7; Gar26, §3.2]
+`acceptProb (fun r : (Fin (10 * S * n + 2 * S) → Bool) × τ => real r.1) D = acceptProb (fun r : Fin
+(10 * S * n + 2 * S) → Bool => GateHybridMessage.sample M C (seed (List.ofFn r)) inA inB outLen
+output v commonInput bobInput bobCoins aliceOutput 0) D`. -/
 theorem acceptProb_real_eq_stage0_fst {τ κ : Type*} [Fintype τ] [Nonempty τ]
     [Fintype κ] (D : List Bool → κ → Bool) :
     acceptProb (fun r : (Fin (10 * S * n + 2 * S) → Bool) × τ => real r.1) D =
@@ -138,7 +143,9 @@ theorem acceptProb_real_eq_stage0_fst {τ κ : Type*} [Fintype τ] [Nonempty τ]
     inA inB outLen output commonInput bobInput bobCoins aliceOutput real hReal D
 
 /-- The supplied real and stage-zero samplers have zero distinguishing
-advantage for every randomized distinguisher. [PS10, Theorem 163.7] -/
+advantage for every randomized distinguisher. [PS10, Theorem 163.7]
+`distAdv real (fun r : Fin (10 * S * n + 2 * S) → Bool => GateHybridMessage.sample M C (seed
+(List.ofFn r)) inA inB outLen output v commonInput bobInput bobCoins aliceOutput 0) D = 0`. -/
 theorem distAdv_real_stage0_zero {κ : Type*} [Fintype κ]
     (D : List Bool → κ → Bool) :
     distAdv real (fun r : Fin (10 * S * n + 2 * S) → Bool =>
@@ -155,7 +162,11 @@ variable {inputs width : ℕ} {ρ : Type}
 /-- When the output-wire values are the prescribed result bits, the last-stage
 sample is the canonical fake view paired with the prescribed Alice output.
 This is a pointwise identity and does not assume any simulator or coin type.
-[PS10, Theorem 163.7] -/
+[PS10, Theorem 163.7]
+`GateHybridMessage.sample M C s inA inB outLen output v commonInput bobInput bobCoins aliceOutput
+(2 * C.gates.length) = pairEncode (⟨commonInput, pairEncode bobInput (List.ofFn
+(FakeObjects.activeAnswers C s inA inB)), bobCoins, [FakeObjects.message M C s inA outLen output
+result]⟩ : View).encode aliceOutput`. -/
 theorem sample_end_of_result (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
     (C : DAGCircuit inputs) (s : GarbleSeed C (Fin width → Bool) ρ)
     (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool)
@@ -171,6 +182,11 @@ theorem sample_end_of_result (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
 
 /-- The final-stage sampler has exactly the acceptance probability of the
 canonical fake view over the same seed family. [PS10, Theorem 163.7]
+`acceptProb (fun r => GateHybridMessage.sample M C (seed r) inA inB outLen output v commonInput
+bobInput bobCoins aliceOutput (2 * C.gates.length)) D = acceptProb (fun r => pairEncode
+(⟨commonInput, pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C (seed r) inA inB)),
+bobCoins, [FakeObjects.message M C (seed r) inA outLen output result]⟩ : View).encode aliceOutput)
+D`.
 
 **Proof sketch.** Apply the pointwise final-stage equation at every seed, then
 transport the resulting function equality through the existing acceptance
@@ -211,7 +227,9 @@ include hResult hIdeal
 /-- A canonical fake-view equation for an ideal sampler, read through any coin
 bijection `e`, identifies its acceptance probability with the last hybrid stage.
 Only the published pointwise endpoint and uniform reseeding lemma are used.
-[PS10, Theorem 163.7; Gar26, §3.2] -/
+[PS10, Theorem 163.7; Gar26, §3.2]
+`acceptProb (fun r => GateHybridMessage.sample M C (seed r) inA inB outLen output v commonInput
+bobInput bobCoins aliceOutput (2 * C.gates.length)) D = acceptProb ideal D`. -/
 theorem acceptProb_end_eq_ideal {κ : Type*} [Fintype κ] (D : List Bool → κ → Bool) :
     acceptProb (fun r => GateHybridMessage.sample M C (seed r) inA inB outLen output v
       commonInput bobInput bobCoins aliceOutput (2 * C.gates.length)) D =
@@ -226,7 +244,9 @@ theorem acceptProb_end_eq_ideal {κ : Type*} [Fintype κ] (D : List Bool → κ 
 
 /-- The last hybrid stage and the supplied canonical ideal sampler have zero
 distinguishing advantage for every randomized distinguisher.
-This follows directly from their exact acceptance equality. [PS10, Theorem 163.7] -/
+This follows directly from their exact acceptance equality. [PS10, Theorem 163.7]
+`distAdv (fun r => GateHybridMessage.sample M C (seed r) inA inB outLen output v commonInput
+bobInput bobCoins aliceOutput (2 * C.gates.length)) ideal D = 0`. -/
 theorem distAdv_end_ideal_zero {κ : Type*} [Fintype κ] (D : List Bool → κ → Bool) :
     distAdv (fun r => GateHybridMessage.sample M C (seed r) inA inB outLen output v
       commonInput bobInput bobCoins aliceOutput (2 * C.gates.length)) ideal D = 0 := by
