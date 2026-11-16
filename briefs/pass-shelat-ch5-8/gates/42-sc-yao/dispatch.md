@@ -34,11 +34,10 @@ https://github.com/Shilun-Allan-Li/tcslib.
    a public lemma is a major; SY-F01 is confirmed, the four helper imports;
    SY-F02 is ruled ledger then promote, DL-51; SY-F03 is ruled ledger for
    both copies, DL-49 extended with sc-yao's and #327's
-   encodeMsgs_eq_encWords; check those ledger rows against the code; SY-F05's
-   remaining OTAnswerWords pair against #324's HybridProtocol.length_answersA/B
-   is still open, proposed as a ledger row with a re-point after #341 merges
-   and awaiting Seyoon's acknowledgement, so grade that disposition; grade
-   SY-F01 to SY-F12); Rule 10 (seal A on Yao.lean 0; seal B's 9 new errors
+   encodeMsgs_eq_encWords; SY-F05's remaining OTAnswerWords pair against
+   #324's HybridProtocol.length_answersA/B is ruled ledger then re-point after
+   #341 merges, DL-52, recorded at bf08dbfa3a057a3b41d20f6dbede3066bc5e6660;
+   check those ledger rows against the code; grade SY-F01 to SY-F12); Rule 10 (seal A on Yao.lean 0; seal B's 9 new errors
    attributed to PolyExpr.eval; Uniform.lean's 4 inherited errors; helpers
    coe-A 68/68 with sampled variants; the paired controls; the
    explicit-unfold scan); and the docstring and sketch rules, the sources
@@ -54,7 +53,7 @@ The user dispatches and merges.
 ```
 
 The records (pin `f22e0f67`; the rulings `67423db6`; the wording correction `d6fe1ddd`; the gate directory `895bc778`;
-then this dispatch commit) and the exchange commit `747b61e7` (on the exchange tip `14e681e6`) are pushed. The exchange
+the SY-F05 ruling `bf08dbfa`; then this dispatch commit) and the exchange commit `747b61e7` (on the exchange tip `14e681e6`) are pushed. The exchange
 commit was amended locally to add the rulings before it was pushed; it replaces the unpushed `e5390b37`.
 
 **Ready to dispatch**
