@@ -1,0 +1,83 @@
+LE-doc on two landing branches: derand F-04 (#326) and seq-zk S-02 (#327), maintainer job, 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I; no Lean run in this job (the edited files are compiled by the companion integration job, ../int-all-open/,
+  see "build" below); nothing pushed; no commit or branch change in /home/user/tcslib (only `git fetch`); the two commits are
+  on the existing local landing branches, in their worktrees $SP/wt-land-derand and $SP/wt-land-seq-zk (sparse, briefs/
+  excluded, .lake/packages linked), author = committer = Claude <noreply@anthropic.com>, SSH-signed by the environment
+  default (gpgsig present; `%G?` prints N only because no allowedSignersFile is configured), both trailers in the message.
+Method and tools: the sc-compose final-r1 LE-doc (records fills/sc-compose/final-r1/review-evidence.zip, SHA-256
+  c11ce8bb81d2ab7bf19259740f78c1dd2006d08e14e6672f9b257a131445a24b; extracted into a fresh directory, 850/850 OK against
+  evidence-SHA256SUMS, SHA256SUMS = evidence-SHA256SUMS). tools-used/: unmodified copies of its tools/ docaudit.py, doconly.py,
+  doconly_sg.py (the doc-only strip comparison), touched.py, frozencheck_lib.py, ledoc_sc.py, ledoc_list_sc.py, decls2.py,
+  sizewidth.py (byte-equal to the derand and seq-zk reviews' copies of docaudit/touched/frozencheck_lib/decls2/sizewidth).
+  New: ledoc_sqz.py (ledoc_sc.py keyed by docaudit's file:line through touched.json, frozen-target skip, an overrides file,
+  a wrap that leaves room for the closing ` -/`), ledoc_derand.py (one exact replacement). Inputs: the derand review
+  (fills/derand/final-r1/review-evidence.zip, ef0776d5b100fdb1b183d4f47a34e54fba70a8b099bd2998e759be4982f4cfcb, 1317/1317 OK)
+  and the seq-zk review (fills/seq-zk/final-r1/review-evidence.zip, f9c394794fd7637237a274163a396eaa78452250c5e31abc5d2878b9e353392f,
+  1106/1106 OK), both path sets exact, SHA256SUMS = evidence-SHA256SUMS.
+
+pre-edit docaudit reproduced (statements/*-pre/): touched.py (issue base -> landing head) + docaudit.py on the landing worktree
+  give touched.tsv and docaudit.tsv byte-identical to each review's statements/ (derand 01de2d8b -> 941b5a1e: 48 OK, 8 NO-FORMULA;
+  seq-zk 107f1e8c -> e9b5ea47: 113 OK, 86 NO-FORMULA, 2 NO-FORMULA+LABEL, 1 NO-DOC).
+
+derand F-04 (land/pass-shelat-derand, $SP/wt-land-derand)
+  parent 941b5a1e5116b1ecf3afa56188abd88159389600 (= origin/land/pass-shelat-derand = refs/pull/326/head at the start)
+  head   c27005d67298f79c785a4e8ac1648da0a67d3614, tree 7ea8bf7eebce9ed3be8403a80b96a1f79cc8216e
+  subject "derand landing edit LE-doc: formula docstring for inBPP_iff (F-04)" (landing/derand-commit-msg.txt).
+  Edit (tools-used/ledoc_derand.py; landing/derand-le-doc.diff, patch landing/derand-patch/): the Randomized.inBPP_iff docstring
+  (TCSlib/Complexity/Randomized/Classes.lean) states the theorem's own statement, in the header's order,
+  `InBPP E L ↔ ∃ (M : List Bool → List Bool → Bool) (a k : ℕ), E.Eff (boolVerifier M) ∧ ∀ x : List Bool, (x ∈ L → 2/3 ≤
+  randProb (polyLen a k x.length) fun r => M x r = true) ∧ (x ∉ L → 2/3 ≤ randProb (polyLen a k x.length) fun r => M x r = false)`,
+  with its [AB09, Definition 7.3] tag. It replaces the 4-line prose (whose content the formula states) by 4 lines, so the file
+  stays at 1415 lines and its recorded size WARN line is unchanged; widths 91/85/88/75.
+  Checks: checks/derand-doconly.txt (doconly_sg.py, doc and module comments stripped) and derand-doconly-plain.txt (doconly.py):
+  code-identical True, docstrings 65->65 (64->64), 1 changed, max width 97: RESULT OK.
+  statements/derand-post/: touched-vs-parent.tsv 1 CHANGED (inBPP_iff), 146 UNCHANGED; docaudit (01de2d8b -> c27005d6): 49 OK,
+  7 NO-FORMULA = the review's 7 Prop formulas without a relation symbol (polyTimeComputable_* x6, eff_mapCoins; tool
+  limitation); inBPP_iff OK.
+  lint/: campaign_style_lint.py --check8b at c27005d6: Cryptography 92 FAIL / 101 WARN, Complexity 25 / 390; FAIL/WARN line
+  sets identical to the review's landing-head lint (linediff-*-derand-review-vs-ledoc.txt empty).
+
+seq-zk S-02 (land/pass-shelat-seq-zk, $SP/wt-land-seq-zk)
+  parent e9b5ea47a1c3dcd664caf2dbf308f89c1beffbb8 (= origin/land/pass-shelat-seq-zk = refs/pull/327/head at the start)
+  head   bd19c433a4cf3d4027ffc891d7d3c06e927e9dfa, tree cc520026f83524433328359af759084d23cabd0e
+  subject "seq-zk landing edit LE-doc: formula docstrings for 81 new public declarations (S-02)" (landing/seq-zk-commit-msg.txt).
+  DEVIATION from the requested subject ("88"): the review's 88 NO-FORMULA rows are not 88 new declarations. 5 of them are the
+  frozen targets ZK.seqRep, StatZK.seqRep, InteractiveProof.seqRep, InteractiveProofErr.seqRep, EfficientProverProofErr.seqRep
+  (status CHANGED, not new; the brief freezes their statements and statement prose: "Preserve the target statements, every
+  other declaration, the statement prose"; the sc-compose LE-doc likewise skipped its frozen targets), and 2 new ones,
+  Protocol.ProverBounded.seqRep and SequentialZK.zk_of_padded_spec, already state their conclusion in backticks
+  (`(π.seqRep Q).ProverBounded R B`, `ZK ρ R`; flagged only because a Prop has no relation symbol). The other 81 are edited.
+  If the maintainer wants the 5 target docstrings edited too, that is a separate frozen-prose decision (SequentialZK.lean would
+  then be about 997-1000 lines).
+  Edit (tools-used/ledoc_sqz.py --apply; plan landing/seq-zk-le-doc-plan.tsv: 81 INSERT, 5 SKIP-frozen-target,
+  2 SKIP-already-stated; diff landing/seq-zk-le-doc.diff, stat .stat, patch landing/seq-zk-patch/): for each of the 81, the
+  declaration's own Lean conclusion (the header after the first depth-0 ':' following the binders; 60 rows) or, for a
+  def/abbrev whose type is not a relation, its `_eq` reader's conclusion (13 rows), added as "`<formula>`." at the end of the
+  statement prose (before **Proof sketch** when present). 8 are given by hand (statements/seq-zk-overrides.tsv) because the
+  scanner cannot read them: the PhaseMetadata Nonempty instance (anonymous), the `let` bodies of phasePrefix_succ_simulate,
+  exists_phaseSimulator and phaseStep_eq (written `let a := …; …`), phaseSuffix and phaseSuffix_eq (the `match`),
+  phaseVerifier (its _eq reader's structure instance, with the field comma) and the Prop structure PaddedVerifierSpec (its
+  first three field equations). 11 extracted conclusions longer than 240 characters are cut at a space and end in " …" (the
+  sc-compose rule). 23 files (22 under Composability/SequentialZK*, plus ZeroKnowledge/Defs.lean for StatZK_iff, the S-01
+  addition to the frozen file: docstring only), +219/-61 lines (the -61 are the old last prose lines, re-emitted unchanged
+  before the inserted formula).
+  Checks: checks/seq-zk-doconly.txt (doconly_sg.py) and seq-zk-doconly-plain.txt (doconly.py): all 23 files code-identical
+  True, docstring counts unchanged, 81 docstrings changed in all, max width 100: RESULT OK. Sizes: largest file
+  SequentialZK.lean 990 -> 992 lines; no line over 100 characters; added lines checked for Markdown block starters and
+  comment delimiters (none).
+  statements/seq-zk-post/: touched-vs-parent.tsv 81 CHANGED, 184 UNCHANGED (exactly the plan's 81). docaudit (107f1e8c ->
+  bd19c433): 190 OK, 2 LABEL (continuationProb_eq, phaseGap_eq: "defining equation" wording, the equation now stated),
+  1 NO-DOC (prefixProver: docstring before @[simps], tool artifact, as in the review), 9 NO-FORMULA = the 5 frozen targets,
+  the 2 already-stated ones, and 2 edited rows whose formula is a Prop without a relation symbol (the instance's
+  `Nonempty (PhaseMetadata n a v q h)`, statClose_step's `StatClose (realStep …) (simStep …) δ`; tool limitation).
+  lint/: at bd19c433 Cryptography 92/101, Complexity 25/391; FAIL/WARN line sets identical to the review's landing-head lint.
+
+build: both heads are compiled in ../int-all-open/ (the combined trees e2e26b9e and final 639d16d9 hold c27005d6's 15 and
+  bd19c433's 41 files byte-for-byte): Classes.lean and the 23 edited seq-zk files rc 0, 0 errors (both forms), 0 sorry;
+  warnings only Classes 2 (lines 586, 1302: the linter warnings of the unchanged code, as in the derand review) and
+  SequentialZK 1 (the disclosed unused hQ). The separate tip+#326 and tip+#327 checks there rebuilt the same 24 modules at the
+  tip-merged sources: rc 0, oleans byte-identical to the combined build's.
+worktrees: both clean at the new heads (checks/*-worktree-status.txt empty); left in place (they are the landing worktrees).
+SHA256SUMS: every file here except itself (paths without "./"); ../ledoc-derand-seqzk-evidence.zip holds exactly these paths
+  plus SHA256SUMS.
