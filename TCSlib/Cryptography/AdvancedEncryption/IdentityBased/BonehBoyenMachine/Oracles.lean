@@ -126,12 +126,6 @@ private theorem expect_bb1SimImpl (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ
         (List.ofFn (padFin ((BB1Machine.qLen G ℓ 0).eval κ) (List.ofFn x))) =
         padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x) := by
       rw [ofFn_padFin_ofFn hq]
-    have hpp : ∀ (L : List Bool), L.length = (BB1Machine.aLen G ℓ 0).eval κ →
-        List.ofFn (padFin ((bb1Scheme G ℓ).outLens κ 0)
-          (List.ofFn (padFin ((BB1Machine.aLen G ℓ 0).eval κ) L))) = L := by
-      intro L hL
-      rw [ofFn_padFin_of_length (by rw [List.length_ofFn, BB1Machine.aLen_zero,
-        IBEScheme.outLens_zero]), ofFn_padFin_of_length hL]
     rw [IBEScheme.oracleImpl_zero_onSpec,
       cast_eq_padFin (IBEScheme.inLens_zero (bb1Scheme G ℓ) κ) _ x]
     have hlen : ∀ h : (G.group κ (G.desc κ r)).G,
@@ -311,8 +305,8 @@ private theorem expect_bb1SimImpl (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ
 end Glue
 
 /-- **The simulation and the machine on one Decision BDH tuple**: with arithmetic `H`, operations
-`O`, an adversary `A`, its `toCompOn` form `A'` (coin bijection `φ'` with
-`A'.toCompOn codec κ q x (φ' ρ) = A.toComp codec κ q ρ`, `hφ'`), budget `q`, bit `b`, and a
+`O`, an adversary `A`, its `toCompOn` form `A'`, budget `q`, bit `b`, security parameter `κ`, a
+coin bijection `φ'` with `A'.toCompOn codec κ q x (φ' ρ) = A.toComp codec κ q ρ` (`hφ'`), and a
 machine `B` realizing `handler … b q` for `A'` (coin bijection `φ`, `hφ`: the conclusion of T1),
 for the generator's coins `r` and every tuple `(g, X, Y, Z, T)`,
 `|𝔼_{ρ ← A.Coins} 𝔼[[guess = 1] | simulate (bb1SimImpl … b κ d g X Y Z T)
