@@ -6,6 +6,7 @@ Claude cloud worker: read-only design and sizing pass for closeout wave R4 (the 
 |---|---|
 | `r4-design-bundle.md` | the bundle: 15 sections (one per file, in `BUNDLE-FILES.txt` order), 1335325 bytes |
 | `BUNDLE-FILES.txt` | the section order |
+| `maintainer-inventory-R4.json` | optional cross-check: the maintainer's grep-based inventory of the R4 families at the same tree (members, use sites, sizes). Unaudited: verify anything you rely on against the bundled sources; disagreements are worth reporting. |
 | `SHA256SUMS` | SHA-256 of the bundle and of this README |
 | `README.md` | this file |
 

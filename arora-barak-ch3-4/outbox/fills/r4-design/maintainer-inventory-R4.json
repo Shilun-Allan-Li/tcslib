@@ -1,0 +1,3932 @@
+{
+ "wave": "R4",
+ "measured_at": {
+  "commit": "4b372861d (records on top of Lean 68cba664c)",
+  "date": "2026-11-16",
+  "method": "grep/comment-stripped declaration-span parse; word-boundary match; private members searched in own file, public members in every file that transitively imports the member file"
+ },
+ "line_conventions": "line = declaration header (or its @[...] line); lines = header..last non-blank body line, docstring excluded; doc_lines = preceding docstring lines. Gate 106 \"298 lines per file\" = lines+doc_lines over the 22 pairs (SAT side reproduces 298 exactly: 257 code + 41 doc).",
+ "families": {
+  "SG1-K1-clean": {
+   "status": "open",
+   "members": [
+    {
+     "name": "Complexity.SatClean",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4054,
+     "lines": 5,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.CLA5Clean",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.CLA5Clean",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6387,
+     "lines": 5,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.SatClean",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satClean_stop",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4063,
+     "lines": 16,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Clean_stop",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Clean_stop",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6396,
+     "lines": 16,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satClean_stop",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satClean_install",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4103,
+     "lines": 18,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Clean_install",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Clean_install",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6436,
+     "lines": 18,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satClean_install",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satClean_emit",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4124,
+     "lines": 15,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Clean_emit",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Clean_emit",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6457,
+     "lines": 15,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satClean_emit",
+     "member_status": "open"
+    }
+   ],
+   "canonical": [
+    "needs new public interface: a clean-module contract (positive bounded first halt from canonical argument tapes Cfg.ofWords q (stateWord k w), uniform in the untouched native input, prescribed result word and emitted output, budget B) with its stop/install/emit lifting lemmas. Closest existing neighbour, not a drop-in: Turing.Contract / Turing.Contract.Positive (TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:144/184; reachable from SAT and Hardness)"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.satClean_stop",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4063,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "SatClean"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satClean_install",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4103,
+     "lines": 18,
+     "private": true,
+     "mentions": [
+      "SatClean",
+      "satClean_stop"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satClean_emit",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4124,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "SatClean",
+      "satClean_stop"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satHost_clean",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4154,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "SatClean"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satReduction_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4176,
+     "lines": 158,
+     "private": true,
+     "mentions": [
+      "satClean_emit",
+      "satClean_install"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Clean_stop",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6396,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "CLA5Clean"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Clean_install",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6436,
+     "lines": 18,
+     "private": true,
+     "mentions": [
+      "CLA5Clean",
+      "clA5Clean_stop"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Clean_emit",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6457,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "CLA5Clean",
+      "clA5Clean_stop"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Host_clean",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6474,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "CLA5Clean"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Packed_install",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6528,
+     "lines": 5,
+     "private": true,
+     "mentions": [
+      "CLA5Clean",
+      "clA5Clean_install"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Cursor_install",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6541,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "CLA5Clean",
+      "clA5Clean_install"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Round",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7028,
+     "lines": 38,
+     "private": true,
+     "mentions": [
+      "CLA5Clean"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Output_of_nativeChunk",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7123,
+     "lines": 72,
+     "private": true,
+     "mentions": [
+      "clA5Clean_emit",
+      "clA5Clean_install"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 7,
+   "files_touched": [
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 108,
+    "member_lines_with_doc": 126,
+    "by_file": {
+     "TCSlib/Complexity/ClassNP/SAT.lean": 63,
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 63
+    }
+   },
+   "new_api_needed": [
+    "SG1 kind 1: public clean-module contract + _stop/_install/_emit lemmas (user approval required; gate 106 ruling authorizes retained debt, not new API)"
+   ],
+   "notes": "4 exact prefix-renaming pairs (SatClean/CLA5Clean, _stop, _install, _emit), byte-identical after sat->clA5 renaming, docstrings included (re-verified). Kind 1 depends on kind 2 (satClean_stop uses satStopTM/satStop_clean), kind 5 (install/emit use the bridge bound) and FH-1 wrapper sat_call_first_halt/clA5_call_first_halt; the interfaces must be designed together. All members and use sites are private; no public statement changes. Hardness imports SAT directly (Hardness.lean:8), so promoting SAT's versions to public would remove the Hardness copies with no import change, but SAT is not the natural home (policy modularity). Largest use site: satReduction_poly (SAT:4176, 158 lines). Both files are Seyoon-authored (Authors: Seyoon Ragavan)."
+  },
+  "SG1-K2-release-stop": {
+   "status": "open",
+   "members": [
+    {
+     "name": "Complexity.satStopTM",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3869,
+     "lines": 7,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5StopTM",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5StopTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6203,
+     "lines": 7,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satStopTM",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satStopCfg",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3878,
+     "lines": 3,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5StopCfg",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5StopCfg",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6212,
+     "lines": 3,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satStopCfg",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satStop_step",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3884,
+     "lines": 12,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Stop_step",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Stop_step",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6218,
+     "lines": 12,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satStop_step",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satStop_clean",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3909,
+     "lines": 29,
+     "doc_lines": 4,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Stop_clean",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Stop_clean",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6243,
+     "lines": 29,
+     "doc_lines": 4,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satStop_clean",
+     "member_status": "open"
+    }
+   ],
+   "canonical": [
+    "needs new public interface: Boolean release-flag stop adapter (stopTM C entry exit on Bool x C.State, stopCfg, the pre-exit step lemma and the clean-stop lemma). Closest existing neighbour, different contract: Turing.seamReleaseTM (TCSlib/Complexity/TuringMachine/Build/Seam.lean:734; Unit+S fresh-start release without the stop-at-exit; Build/Seam is NOT reachable from SAT, Hardness imports it)"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.satStop_step",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3884,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "satStopCfg",
+      "satStopTM"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satStop_clean",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3909,
+     "lines": 29,
+     "private": true,
+     "mentions": [
+      "satStopCfg",
+      "satStopTM",
+      "satStop_step"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satClean_stop",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4063,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "satStopTM",
+      "satStop_clean"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satClean_install",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4103,
+     "lines": 18,
+     "private": true,
+     "mentions": [
+      "satStopTM"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satClean_emit",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4124,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "satStopTM"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Stop_step",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6218,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "clA5StopCfg",
+      "clA5StopTM"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Stop_clean",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6243,
+     "lines": 29,
+     "private": true,
+     "mentions": [
+      "clA5StopCfg",
+      "clA5StopTM",
+      "clA5Stop_step"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Clean_stop",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6396,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "clA5StopTM",
+      "clA5Stop_clean"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Clean_install",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6436,
+     "lines": 18,
+     "private": true,
+     "mentions": [
+      "clA5StopTM"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Clean_emit",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6457,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "clA5StopTM"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Copy_clean",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6492,
+     "lines": 32,
+     "private": true,
+     "mentions": [
+      "clA5StopTM",
+      "clA5Stop_clean"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Modules",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6547,
+     "lines": 7,
+     "private": true,
+     "mentions": [
+      "clA5StopTM"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Modules_bound",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6556,
+     "lines": 4,
+     "private": true,
+     "mentions": [
+      "clA5StopTM"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Startup",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6570,
+     "lines": 55,
+     "private": true,
+     "mentions": [
+      "clA5StopTM"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 10,
+   "files_touched": [
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 102,
+    "member_lines_with_doc": 120,
+    "by_file": {
+     "TCSlib/Complexity/ClassNP/SAT.lean": 60,
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 60
+    }
+   },
+   "new_api_needed": [
+    "SG1 kind 2: public positive-release stop adapter (TM, Cfg, step, clean)"
+   ],
+   "notes": "4 exact pairs, byte-identical after renaming. Adjacent but separately tracked (live-prefix record): sat_live_prefix (SAT:3899) / clA5_live_prefix (Hardness:6233) are one-line citations of Turing.MultiTapeTM.runFrom_state_ne_none_of_le and sit between Stop_step and Stop_clean; deleting them is a trivial rider. clA5StopTM is used beyond the clean kind by clA5Copy_clean, clA5Modules, clA5Modules_bound and clA5Startup, so those Hardness definitions' bodies change. All private."
+  },
+  "SG1-K3-bank-padding": {
+   "status": "open",
+   "members": [
+    {
+     "name": "Complexity.satPadAction",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3804,
+     "lines": 3,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5PadAction",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5PadAction",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6138,
+     "lines": 3,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satPadAction",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satPadTM",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3809,
+     "lines": 6,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5PadTM",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5PadTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6143,
+     "lines": 6,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satPadTM",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satPadCfg",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3817,
+     "lines": 5,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5PadCfg",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5PadCfg",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6151,
+     "lines": 5,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satPadCfg",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satPad_apply",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3826,
+     "lines": 8,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Pad_apply",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Pad_apply",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6160,
+     "lines": 8,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satPad_apply",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satPad_run",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3836,
+     "lines": 16,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Pad_run",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Pad_run",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6170,
+     "lines": 16,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satPad_run",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satPad_seam",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3854,
+     "lines": 12,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Pad_seam",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Pad_seam",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6188,
+     "lines": 12,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satPad_seam",
+     "member_status": "open"
+    }
+   ],
+   "canonical": [
+    "existing candidate: Turing.embedEmitTM (TCSlib/Complexity/TuringMachine/Build/Embed.lean:264) at Fin.castLEEmb hk with blank frame (fun _ _ => none), heads 0, pre [] — with Turing.embedEmitTM_tr (Embed:281), Turing.embedEmitTM_runFrom (Embed:566) for Pad_apply/Pad_run, and Turing.embedEmitCfg_ofWords_eq (Embed:1148) for Pad_seam; precedent: Hierarchy.lean:94 uses embedEmitCfg (Fin.castLEEmb ..). Build/Embed is reachable from both SAT and Hardness (no import change).",
+    "if a FinTM-level form is wanted: needs new public interface: padTM (M : FinTM Bool) K (hk : M.k <= K) : FinTM Bool as a wrapper of embedEmitTM"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.satPadTM",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3809,
+     "lines": 6,
+     "private": true,
+     "mentions": [
+      "satPadAction"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satPad_apply",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3826,
+     "lines": 8,
+     "private": true,
+     "mentions": [
+      "satPadAction",
+      "satPadCfg"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satPad_run",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3836,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "satPadAction",
+      "satPadCfg",
+      "satPadTM",
+      "satPad_apply"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satPad_seam",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3854,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "satPadCfg"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satHostTM",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3962,
+     "lines": 9,
+     "private": true,
+     "mentions": [
+      "satPadTM"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satHost_seam",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3975,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "satPadCfg",
+      "satPad_seam"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satHost_call",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3992,
+     "lines": 40,
+     "private": true,
+     "mentions": [
+      "satPadCfg",
+      "satPadTM",
+      "satPad_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5PadTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6143,
+     "lines": 6,
+     "private": true,
+     "mentions": [
+      "clA5PadAction"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Pad_apply",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6160,
+     "lines": 8,
+     "private": true,
+     "mentions": [
+      "clA5PadAction",
+      "clA5PadCfg"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Pad_run",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6170,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "clA5PadAction",
+      "clA5PadCfg",
+      "clA5PadTM",
+      "clA5Pad_apply"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Pad_seam",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6188,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "clA5PadCfg"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5HostTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6295,
+     "lines": 9,
+     "private": true,
+     "mentions": [
+      "clA5PadTM"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Host_seam",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6308,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "clA5PadCfg",
+      "clA5Pad_seam"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Host_call",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6325,
+     "lines": 40,
+     "private": true,
+     "mentions": [
+      "clA5PadCfg",
+      "clA5PadTM",
+      "clA5Pad_run"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 6,
+   "files_touched": [
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 100,
+    "member_lines_with_doc": 116,
+    "by_file": {
+     "TCSlib/Complexity/ClassNP/SAT.lean": 58,
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 58
+    }
+   },
+   "new_api_needed": [
+    "possibly none (R1 transformer suffices) or one FinTM wrapper; the plan counts it among the six SG1 interfaces to approve — design-note decision"
+   ],
+   "notes": "6 exact pairs. Replacing satPadCfg by embedEmitCfg changes the private statements of satHost_seam / satHost_call (and clA5Host_seam / clA5Host_call), i.e. kind 3 is entangled with kind 6. satPad_run / clA5Pad_run currently simp-unfold MultiTapeTM.step (rule-10 read) — citing embedEmitTM_runFrom removes it. All private; no import change."
+  },
+  "SG1-K4-one-way-transducer": {
+   "status": "partial",
+   "members": [
+    {
+     "name": "Complexity.satMapWord",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2745,
+     "lines": 4,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5MapWord",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5MapWord",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6647,
+     "lines": 4,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satMapWord",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satMapTM",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2752,
+     "lines": 10,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5MapTM",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5MapTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6654,
+     "lines": 10,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satMapTM",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satMapCfg",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2764,
+     "lines": 3,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5MapCfg",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5MapCfg",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6666,
+     "lines": 3,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satMapCfg",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satMap_run",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2772,
+     "lines": 34,
+     "doc_lines": 4,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Map_run",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Map_run",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6674,
+     "lines": 34,
+     "doc_lines": 4,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satMap_run",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satMap_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2808,
+     "lines": 10,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Map_poly",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Map_poly",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6710,
+     "lines": 10,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satMap_poly",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.sat_pt_tail",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2824,
+     "lines": 12,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5_pt_tail",
+     "member_status": "open (transducer instance; Hardness twin retired)"
+    },
+    {
+     "name": "Complexity.clA5_pt_tail",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6722,
+     "lines": 4,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.sat_pt_tail",
+     "member_status": "retired (cites polyTimeComputable_tail, #245)"
+    },
+    {
+     "name": "Complexity.sat_pt_head",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2838,
+     "lines": 12,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5_pt_head",
+     "member_status": "open (transducer instance; Hardness twin retired)"
+    },
+    {
+     "name": "Complexity.clA5_pt_head",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6728,
+     "lines": 2,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.sat_pt_head",
+     "member_status": "retired (cites polyTimeComputable_take1, #245)"
+    },
+    {
+     "name": "Complexity.clFillTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 667,
+     "lines": 8,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clFill_run",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 678,
+     "lines": 32,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clNative_fill",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 713,
+     "lines": 13,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    }
+   ],
+   "canonical": [
+    "head/tail: Complexity.polyTimeComputable_tail (TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:143) and Complexity.polyTimeComputable_take1 (PolyTimeBlockLoop:295) — Hardness already cites them (#245/gate 125); SAT does not reach PolyTimeBlockLoop (needs a new import; no cycle: PolyTimeBlockLoop does not reach SAT); pending import decision per ledger line 1831",
+    "transducer core: needs new public interface: finite one-way word transducer with optional final emission (word semantics, TM, cfg, run, polynomial-time). Closest existing: Complexity.transduce / Complexity.transducerTM / Complexity.transducer_run / Complexity.transducerTM_computes (TCSlib/Complexity/ClassNP/Transducer.lean:53/100/111/168; Hydroxyi-authored; no `finish` emission; not reachable from SAT or Hardness)",
+    "clFill trio: expressible through the same transducer (constant emission, no finish) — e.g. existing transducerTM_computes + Complexity.polyTimeComputable_of_linear, with an import of ClassNP/Transducer"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.satMap_run",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2772,
+     "lines": 34,
+     "private": true,
+     "mentions": [
+      "satMapCfg",
+      "satMapTM",
+      "satMapWord"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satMap_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2808,
+     "lines": 10,
+     "private": true,
+     "mentions": [
+      "satMapCfg",
+      "satMapTM",
+      "satMapWord",
+      "satMap_run"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.sat_pt_tail",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2824,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "satMapWord",
+      "satMap_poly"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.sat_pt_head",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2838,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "satMapWord",
+      "satMap_poly"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satReq_fields_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3537,
+     "lines": 21,
+     "private": true,
+     "mentions": [
+      "sat_pt_head"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satReqLink_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3565,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "sat_pt_head",
+      "sat_pt_tail"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satReqEmit_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3580,
+     "lines": 10,
+     "private": true,
+     "mentions": [
+      "sat_pt_head"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satReqStep_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3593,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "sat_pt_head"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clFill_run",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 678,
+     "lines": 32,
+     "private": true,
+     "mentions": [
+      "clFillTM"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clNative_fill",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 713,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clFillTM",
+      "clFill_run"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPrepHeader_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 750,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "clNative_fill"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clVisitRow_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5533,
+     "lines": 17,
+     "private": true,
+     "mentions": [
+      "clNative_fill"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Map_run",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6674,
+     "lines": 34,
+     "private": true,
+     "mentions": [
+      "clA5MapCfg",
+      "clA5MapTM",
+      "clA5MapWord"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Map_poly",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6710,
+     "lines": 10,
+     "private": true,
+     "mentions": [
+      "clA5MapCfg",
+      "clA5MapTM",
+      "clA5MapWord",
+      "clA5Map_run"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Field_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6841,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clNative_fill"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5StoredRound_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6954,
+     "lines": 10,
+     "private": true,
+     "mentions": [
+      "clNative_fill"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Next_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6973,
+     "lines": 6,
+     "private": true,
+     "mentions": [
+      "clNative_fill"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Sizes_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7541,
+     "lines": 7,
+     "private": true,
+     "mentions": [
+      "clNative_fill"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Div_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7726,
+     "lines": 27,
+     "private": true,
+     "mentions": [
+      "clA5MapWord",
+      "clA5Map_poly"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5GetBit_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7877,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "clA5_pt_head"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Cursor_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7906,
+     "lines": 5,
+     "private": true,
+     "mentions": [
+      "clNative_fill"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Indices_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7925,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clNative_fill"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Fragment_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7992,
+     "lines": 25,
+     "private": true,
+     "mentions": [
+      "clNative_fill"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 15,
+   "files_touched": [
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 205,
+    "member_lines_with_doc": 235,
+    "by_file": {
+     "TCSlib/Complexity/ClassNP/SAT.lean": 97,
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 138
+    }
+   },
+   "new_api_needed": [
+    "SG1 kind 4: public one-way transducer with final emission (extend ClassNP/Transducer — colleague file — or a new module)",
+    "import decision: SAT imports ClassNP/PolyTimeBlockLoop for sat_pt_head/sat_pt_tail"
+   ],
+   "notes": "5 exact pairs remain (MapWord, MapTM, MapCfg, Map_run, Map_poly). The head/tail pair is no longer exact: clA5_pt_tail (4 lines) and clA5_pt_head (2 lines) were retired to public closures by #245/gate 125; sat_pt_tail/sat_pt_head (12 lines each) are still transducer instances. So the 22-pair count of gate 106 is now 20 exact pairs + 2 one-sided SAT residues. clFillTM/clFill_run/clNative_fill (Hardness:667/678/713) are a Hardness-only exact instance of this kind (gate 106 accounting addon); clFill_run simp-unfolds MultiTapeTM.step. clNative_fill has 9 use sites. clA5Div_native (Hardness:7726) uses clA5MapWord/clA5Map_poly directly. Transducer.lean is Hydroxyi-owned (colleague file) if extended."
+  },
+  "SG1-K5-polynomial-bridge": {
+   "status": "open",
+   "members": [
+    {
+     "name": "Complexity.sat_bridge_bound",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4083,
+     "lines": 17,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5_bridge_bound",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5_bridge_bound",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6416,
+     "lines": 17,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.sat_bridge_bound",
+     "member_status": "open"
+    }
+   ],
+   "canonical": [
+    "needs new public interface: one arithmetic lemma, len <= A*(n+1)^d -> c*(A*(n+1)^d+n+len+1)+1 <= (c*(2*A+1)+1)*(n+1)^(d+1) (a polynomial-bound file, e.g. beside PolyTimeComputable bounds)"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.satClean_install",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4103,
+     "lines": 18,
+     "private": true,
+     "mentions": [
+      "sat_bridge_bound"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satClean_emit",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4124,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "sat_bridge_bound"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Clean_install",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6436,
+     "lines": 18,
+     "private": true,
+     "mentions": [
+      "clA5_bridge_bound"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Clean_emit",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6457,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "clA5_bridge_bound"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 4,
+   "files_touched": [
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 34,
+    "member_lines_with_doc": 40,
+    "by_file": {
+     "TCSlib/Complexity/ClassNP/SAT.lean": 20,
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 20
+    }
+   },
+   "new_api_needed": [
+    "SG1 kind 5: one public arithmetic lemma"
+   ],
+   "notes": "1 exact pair (17 lines + 3 doc each). Only used by the kind-1 install/emit lemmas (2 per file). Pure Nat arithmetic; no TM definitions read."
+  },
+  "SG1-K6-finite-family-dispatcher": {
+   "status": "open",
+   "members": [
+    {
+     "name": "Complexity.SatHostState",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3941,
+     "lines": 1,
+     "doc_lines": 2,
+     "kind": "abbrev",
+     "private": true,
+     "pair_of": "Complexity.CLA5HostState",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.CLA5HostState",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6275,
+     "lines": 1,
+     "doc_lines": 2,
+     "kind": "abbrev",
+     "private": true,
+     "pair_of": "Complexity.SatHostState",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satHostEntry",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3950,
+     "lines": 2,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5HostEntry",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5HostEntry",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6283,
+     "lines": 2,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satHostEntry",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satHostRet",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3954,
+     "lines": 4,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5HostRet",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5HostRet",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6287,
+     "lines": 4,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satHostRet",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satHostTM",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3962,
+     "lines": 9,
+     "doc_lines": 3,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.clA5HostTM",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5HostTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6295,
+     "lines": 9,
+     "doc_lines": 3,
+     "kind": "def",
+     "private": true,
+     "pair_of": "Complexity.satHostTM",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satHost_seam",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3975,
+     "lines": 12,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Host_seam",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Host_seam",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6308,
+     "lines": 12,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satHost_seam",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satHost_call",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3992,
+     "lines": 40,
+     "doc_lines": 4,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Host_call",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Host_call",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6325,
+     "lines": 40,
+     "doc_lines": 4,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satHost_call",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.satHost_clean",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4154,
+     "lines": 13,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5Host_clean",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Host_clean",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6474,
+     "lines": 13,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.satHost_clean",
+     "member_status": "open"
+    }
+   ],
+   "canonical": [
+    "needs new public interface: shared-bank dispatcher over a finite family M : Fin n -> FinTM Bool with routing next : Fin n -> Option (Fin n) and loop-back entry (state Unit + Sigma i, (M i).State), with entry/ret, HostTM, seam, call and clean lemmas. No existing public counterpart located (Turing.loopHostM in Build/Loop is a single-body host)."
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.satHostEntry",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3950,
+     "lines": 2,
+     "private": true,
+     "mentions": [
+      "SatHostState"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satHostRet",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3954,
+     "lines": 4,
+     "private": true,
+     "mentions": [
+      "SatHostState",
+      "satHostEntry"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satHostTM",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3962,
+     "lines": 9,
+     "private": true,
+     "mentions": [
+      "SatHostState",
+      "satHostEntry",
+      "satHostRet"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satHost_seam",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3975,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "SatHostState",
+      "satHostRet"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satHost_call",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3992,
+     "lines": 40,
+     "private": true,
+     "mentions": [
+      "SatHostState",
+      "satHostEntry",
+      "satHostRet",
+      "satHostTM",
+      "satHost_seam"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satHost_clean",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4154,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "satHostEntry",
+      "satHostRet",
+      "satHostTM",
+      "satHost_call"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.satReduction_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4176,
+     "lines": 158,
+     "private": true,
+     "mentions": [
+      "satHostEntry",
+      "satHostRet",
+      "satHostTM",
+      "satHost_call",
+      "satHost_clean"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5HostEntry",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6283,
+     "lines": 2,
+     "private": true,
+     "mentions": [
+      "CLA5HostState"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5HostRet",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6287,
+     "lines": 4,
+     "private": true,
+     "mentions": [
+      "CLA5HostState",
+      "clA5HostEntry"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5HostTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6295,
+     "lines": 9,
+     "private": true,
+     "mentions": [
+      "CLA5HostState",
+      "clA5HostEntry",
+      "clA5HostRet"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Host_seam",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6308,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "CLA5HostState",
+      "clA5HostRet"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Host_call",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6325,
+     "lines": 40,
+     "private": true,
+     "mentions": [
+      "CLA5HostState",
+      "clA5HostEntry",
+      "clA5HostRet",
+      "clA5HostTM",
+      "clA5Host_seam"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Host_clean",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6474,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clA5HostEntry",
+      "clA5HostRet",
+      "clA5HostTM",
+      "clA5Host_call"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Startup",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6570,
+     "lines": 55,
+     "private": true,
+     "mentions": [
+      "clA5HostEntry",
+      "clA5HostTM",
+      "clA5Host_call",
+      "clA5Host_clean"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Round",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7028,
+     "lines": 38,
+     "private": true,
+     "mentions": [
+      "clA5HostEntry",
+      "clA5HostTM",
+      "clA5Host_clean"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Output_of_nativeChunk",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7123,
+     "lines": 72,
+     "private": true,
+     "mentions": [
+      "clA5HostTM"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 4,
+   "files_touched": [
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 162,
+    "member_lines_with_doc": 192,
+    "by_file": {
+     "TCSlib/Complexity/ClassNP/SAT.lean": 96,
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 96
+    }
+   },
+   "new_api_needed": [
+    "SG1 kind 6: public finite-family dispatcher (parameterized by module count, routing table and loop-back entry)"
+   ],
+   "notes": "7 pairs (6 non-abbrev + HostState abbrev). Entry/Ret/seam/call/clean are exact after renaming; SatHostState/CLA5HostState differ only in Fin 6 vs Fin 5 and docstring; satHostTM/clA5HostTM differ in the loop-back entry (satHostEntry M 2 vs clA5HostEntry M 3). The routing tables satHostNext (SAT:3945) / clA5HostNext (Hardness:6279) are client data, excluded by the ruling; they become arguments. Depends on kind 3 (HostTM pads modules with PadTM; seam/call cite Pad_seam/Pad_run) and kind 1 (Host_clean is stated with the Clean predicate). Use sites outside the family: satReduction_poly (SAT:4176, 158 lines), clA5Startup (Hardness:6570), clA5Round (Hardness:7028), clA5Output_of_nativeChunk (Hardness:7123). All private."
+  },
+  "SG1-UH": {
+   "status": "open",
+   "members": [
+    {
+     "name": "Complexity.clRepeatTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5656,
+     "lines": 16,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeatCfg",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5675,
+     "lines": 7,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeat_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5684,
+     "lines": 13,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeat_call",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5704,
+     "lines": 45,
+     "doc_lines": 6,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeat_round",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5753,
+     "lines": 27,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeat_complete",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5787,
+     "lines": 31,
+     "doc_lines": 6,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeatWords",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5821,
+     "lines": 2,
+     "doc_lines": 2,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeat_initial",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5825,
+     "lines": 8,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeatOutputTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5835,
+     "lines": 3,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeatOutput_compute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5845,
+     "lines": 41,
+     "doc_lines": 6,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeat_budget",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5961,
+     "lines": 33,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRepeatArgument_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5997,
+     "lines": 16,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Iter_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6747,
+     "lines": 32,
+     "doc_lines": 6,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5Iter_shrinking",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6782,
+     "lines": 19,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    }
+   ],
+   "canonical": [
+    "needs new public interface: unary-clock clean-call host contract (B1040, backlog line ~1030): repetition of an arbitrary positive clean call under a unary clock, with frame/call/round/complete/initial, output-machine, budget and actual-orbit polynomial-iteration wrappers, including resource/head-envelope clauses"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.clRepeatCfg",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5675,
+     "lines": 7,
+     "private": true,
+     "mentions": [
+      "clRepeatTM"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRepeat_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5684,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clRepeatCfg",
+      "clRepeatTM"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRepeat_call",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5704,
+     "lines": 45,
+     "private": true,
+     "mentions": [
+      "clRepeatCfg",
+      "clRepeatTM",
+      "clRepeat_frame"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRepeat_round",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5753,
+     "lines": 27,
+     "private": true,
+     "mentions": [
+      "clRepeatCfg",
+      "clRepeatTM",
+      "clRepeat_call"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRepeat_complete",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5787,
+     "lines": 31,
+     "private": true,
+     "mentions": [
+      "clRepeatCfg",
+      "clRepeatTM",
+      "clRepeat_round"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRepeat_initial",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5825,
+     "lines": 8,
+     "private": true,
+     "mentions": [
+      "clRepeatCfg",
+      "clRepeatTM",
+      "clRepeatWords"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRepeatOutputTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5835,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "clRepeatTM"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRepeatOutput_compute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5845,
+     "lines": 41,
+     "private": true,
+     "mentions": [
+      "clRepeatCfg",
+      "clRepeatOutputTM",
+      "clRepeatTM",
+      "clRepeatWords",
+      "clRepeat_complete",
+      "clRepeat_initial"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRepeatArgument_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5997,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "clRepeatWords"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clVisitRows_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6040,
+     "lines": 36,
+     "private": true,
+     "mentions": [
+      "clRepeatArgument_native",
+      "clRepeatOutputTM",
+      "clRepeatOutput_compute",
+      "clRepeatWords",
+      "clRepeat_budget"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Iter_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6747,
+     "lines": 32,
+     "private": true,
+     "mentions": [
+      "clRepeatArgument_native",
+      "clRepeatOutputTM",
+      "clRepeatOutput_compute",
+      "clRepeatWords",
+      "clRepeat_budget"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Iter_shrinking",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6782,
+     "lines": 19,
+     "private": true,
+     "mentions": [
+      "clA5Iter_native"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clA5Field_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6841,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clA5Iter_shrinking"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Decode_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7421,
+     "lines": 26,
+     "private": true,
+     "mentions": [
+      "clA5Iter_native"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 3,
+   "files_touched": [
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 293,
+    "member_lines_with_doc": 336,
+    "by_file": {
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 336
+    }
+   },
+   "new_api_needed": [
+    "unary-clock host contract (B1040), user approval required"
+   ],
+   "notes": "14 Hardness-only privates (4 defs, 10 lemmas), no SAT twin; current lines shifted by +7 from the gate 106 addon (clRepeatTM 5649 -> 5656; clA5Iter_native 6763 -> 6747; clA5Iter_shrinking 6798 -> 6782). The host is built on item 13's layer: clRepeatTM, clRepeat_frame, clRepeat_call and clRepeatOutput_compute use clKeepLastPlacement / clPlacedAction / clPlacedCfg / clPlaced_apply / clPlaced_run, so UH must be sequenced with 12.2c item 13. Outside use sites: clVisitRows_native (Hardness:6040), clA5Field_native (6841), clA5Decode_native (7421)."
+  },
+  "PL-1": {
+   "status": "open",
+   "members": [
+    {
+     "name": "Complexity.a3n_poly_linear",
+     "file": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+     "line": 3537,
+     "lines": 5,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.polyTimeComputable_of_linear",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.a3n_poly_const",
+     "file": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+     "line": 3544,
+     "lines": 3,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.polyTimeComputable_const",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.sat_pt_eq",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2853,
+     "lines": 7,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5_pt_eq",
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clA5_pt_eq",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6733,
+     "lines": 7,
+     "doc_lines": 2,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.sat_pt_eq",
+     "member_status": "open"
+    }
+   ],
+   "canonical": [
+    "Complexity.polyTimeComputable_of_linear (TCSlib/Complexity/ClassNP/PolyTimePairing.lean:64) for a3n_poly_linear",
+    "Complexity.polyTimeComputable_const (PolyTimePairing:71) for a3n_poly_const",
+    "Turing.FinTM.computesFunInTime_decideEq (TCSlib/Complexity/TuringMachine/Build/WordTests.lean:87) composed with polyTimeComputable_of_linear for sat_pt_eq / clA5_pt_eq"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.a3n_poly_const",
+     "file": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+     "line": 3544,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "a3n_poly_linear"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.a3n_poly_pair",
+     "file": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+     "line": 3631,
+     "lines": 29,
+     "private": true,
+     "mentions": [
+      "a3n_poly_const",
+      "a3n_poly_linear"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.a3n_poly_fixed_eq",
+     "file": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+     "line": 3973,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "a3n_poly_linear"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.a3n_poly_unary",
+     "file": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+     "line": 3978,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "a3n_poly_linear"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.a3n_verifier_mem_P",
+     "file": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+     "line": 4031,
+     "lines": 49,
+     "private": true,
+     "mentions": [
+      "a3n_poly_const",
+      "a3n_poly_linear"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satReqLink_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3565,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "sat_pt_eq"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satReqEmit_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3580,
+     "lines": 10,
+     "private": true,
+     "mentions": [
+      "sat_pt_eq"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satReqStep_poly",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3593,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "sat_pt_eq"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5WorkFragment_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7694,
+     "lines": 10,
+     "private": true,
+     "mentions": [
+      "clA5_pt_eq"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Select_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7764,
+     "lines": 15,
+     "private": true,
+     "mentions": [
+      "clA5_pt_eq"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5IfZero_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7869,
+     "lines": 6,
+     "private": true,
+     "mentions": [
+      "clA5_pt_eq"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5GetBit_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7877,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "clA5_pt_eq"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 11,
+   "files_touched": [
+    "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 22,
+    "member_lines_with_doc": 28,
+    "by_file": {
+     "TCSlib/Complexity/ClassNP/Nondeterminism.lean": 10,
+     "TCSlib/Complexity/ClassNP/SAT.lean": 9,
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 9
+    }
+   },
+   "new_api_needed": [],
+   "notes": "Existing public rows; no new API. Imports: Nondeterminism already reaches PolyTimePairing transitively (via ClassNP/NP; the 2026-10-27 ledger text saying it does not is stale) — no import; Hardness already reaches Build/WordTests — no import; SAT does NOT reach Build/WordTests — sat_pt_eq needs one new import (WordTests imports only Build/Primitives; acyclic). sat_pt_eq and clA5_pt_eq are exact twins modulo their local linear-lift alias (sat_pt_linear SAT:79 / clNative_linear Hardness:628, both already one-line citations of polyTimeComputable_of_linear). a3n_poly_linear has 4 outside use sites (a3n_poly_pair, a3n_poly_fixed_eq, a3n_poly_unary, a3n_verifier_mem_P); either delete and re-point them or keep one-line aliases (#329 precedent). Nondeterminism is Seyoon-authored. Nondeterminism also has a3n_poly_cond/a3n_poly_map (closure re-proofs vs PolyTimePairing noted by gate 129) — outside PL-1, not counted."
+  },
+  "12.2c-13-clPlacement": {
+   "status": "open",
+   "members": [
+    {
+     "name": "Complexity.clPlacement",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1760,
+     "lines": 4,
+     "doc_lines": 1,
+     "kind": "structure",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacement.ofInverse",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1766,
+     "lines": 9,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacement.permute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1777,
+     "lines": 12,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacement.refl",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1791,
+     "lines": 4,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacement.empty",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1797,
+     "lines": 4,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacement.sum",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1805,
+     "lines": 32,
+     "doc_lines": 3,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacement.comp",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1839,
+     "lines": 13,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacement.trailing",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1854,
+     "lines": 16,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clKeepLastPlacement",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1872,
+     "lines": 9,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacement_lookup",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1888,
+     "lines": 13,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacedAction",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1903,
+     "lines": 3,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacedCfg",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1908,
+     "lines": 5,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacedAction_eq",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1915,
+     "lines": 9,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlacedCfg_eq",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1930,
+     "lines": 27,
+     "doc_lines": 5,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlaced_apply",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1964,
+     "lines": 14,
+     "doc_lines": 4,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlaced_run",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1982,
+     "lines": 14,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPlaced_release",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2545,
+     "lines": 21,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRowSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2000,
+     "lines": 10,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRecTrackSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2296,
+     "lines": 4,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRecRowSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2302,
+     "lines": 4,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clLoadSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 3474,
+     "lines": 2,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clPrepareSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 3820,
+     "lines": 2,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clRecordSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4034,
+     "lines": 2,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clMatchLoadSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4162,
+     "lines": 2,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clMatchCmpSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4166,
+     "lines": 10,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    },
+    {
+     "name": "Complexity.clOneSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4722,
+     "lines": 8,
+     "doc_lines": 1,
+     "kind": "def",
+     "private": true,
+     "pair_of": null,
+     "member_status": "open"
+    }
+   ],
+   "canonical": [
+    "Mathlib Fin k ↪ Fin l embeddings (Fin.castAddEmb/natAddEmb/castLEEmb, Function.Embedding.trans, Equiv.toEmbedding) consumed by the public R1 transformers Turing.embedEmitTM / embedSilentTM (Build/Embed.lean:264/253), Turing.embedEmitTM_tr (Embed:281, the item-6 action-level export, landed), embedEmitTM_runFrom (566), embedEmitCfg_eq / _select / _ofWords_eq (1108/1164/1148), Turing.Cfg.select (1092)",
+    "per plan item 13: promote to Build/Embed only a combinator found genuinely missing (e.g. a sum/append of embeddings if Mathlib lacks a usable one)"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.clPlacement.ofInverse",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1766,
+     "lines": 9,
+     "private": true,
+     "mentions": [
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacement.permute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1777,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacement.refl",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1791,
+     "lines": 4,
+     "private": true,
+     "mentions": [
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacement.empty",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1797,
+     "lines": 4,
+     "private": true,
+     "mentions": [
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacement.sum",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1805,
+     "lines": 32,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.ofInverse"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacement.comp",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1839,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacement.trailing",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1854,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clKeepLastPlacement",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1872,
+     "lines": 9,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.empty",
+      "clPlacement.ofInverse",
+      "clPlacement.refl",
+      "clPlacement.sum"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "<attribute [local simp] clPlacement.ofInverse clPlacement.ref>",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1882,
+     "lines": 2,
+     "private": true,
+     "mentions": [
+      "clPlacement.comp",
+      "clPlacement.empty",
+      "clPlacement.ofInverse",
+      "clPlacement.refl",
+      "clPlacement.sum",
+      "clPlacement.trailing"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clPlacement_lookup",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1888,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacedAction",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1903,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacedCfg",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1908,
+     "lines": 5,
+     "private": true,
+     "mentions": [
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacedAction_eq",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1915,
+     "lines": 9,
+     "private": true,
+     "mentions": [
+      "clPlacedAction",
+      "clPlacement",
+      "clPlacement_lookup"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlacedCfg_eq",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1930,
+     "lines": 27,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "<attribute [local simp] clPlacedCfg_eq>",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1958,
+     "lines": 1,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg_eq"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clPlaced_apply",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1964,
+     "lines": 14,
+     "private": true,
+     "mentions": [
+      "clPlacedAction",
+      "clPlacedCfg",
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPlaced_run",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 1982,
+     "lines": 14,
+     "private": true,
+     "mentions": [
+      "clPlacedAction",
+      "clPlacedCfg",
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRowSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2000,
+     "lines": 10,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.ofInverse"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRowTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2015,
+     "lines": 12,
+     "private": true,
+     "mentions": [
+      "clPlacedAction",
+      "clRowSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRow_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2039,
+     "lines": 19,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clRowSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRow_field",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2063,
+     "lines": 27,
+     "private": true,
+     "mentions": [
+      "clPlaced_run",
+      "clRowSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRecTrackSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2296,
+     "lines": 4,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.refl",
+      "clPlacement.trailing"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRecRowSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2302,
+     "lines": 4,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.empty",
+      "clPlacement.refl"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRecTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2315,
+     "lines": 22,
+     "private": true,
+     "mentions": [
+      "clPlacedAction",
+      "clRecRowSelect",
+      "clRecTrackSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRec_row_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2354,
+     "lines": 20,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clRecRowSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRec_row_inactive",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2377,
+     "lines": 19,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clRecRowSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRec_copy",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2401,
+     "lines": 31,
+     "private": true,
+     "mentions": [
+      "clPlaced_run",
+      "clRecRowSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRec_track_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2492,
+     "lines": 23,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clRecTrackSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRec_track_inactive",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2518,
+     "lines": 23,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clRecTrackSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clPlaced_release",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2545,
+     "lines": 21,
+     "private": true,
+     "mentions": [
+      "clPlacedAction",
+      "clPlacedCfg",
+      "clPlaced_apply",
+      "clPlacement"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRec_advance",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 2571,
+     "lines": 48,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clPlaced_release",
+      "clPlaced_run",
+      "clRecTrackSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clLoadSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 3474,
+     "lines": 2,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clRowSelect"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clLoadTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 3481,
+     "lines": 11,
+     "private": true,
+     "mentions": [
+      "clLoadSelect",
+      "clPlacedAction"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clLoad_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 3503,
+     "lines": 17,
+     "private": true,
+     "mentions": [
+      "clLoadSelect",
+      "clPlacedCfg",
+      "clPlacement.permute",
+      "clRowSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clLoad_field",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 3526,
+     "lines": 33,
+     "private": true,
+     "mentions": [
+      "clLoadSelect",
+      "clPlaced_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clPrepareSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 3820,
+     "lines": 2,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.trailing"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clPrepareTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 3824,
+     "lines": 10,
+     "private": true,
+     "mentions": [
+      "clPlacedAction",
+      "clPrepareSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clPrepare_start",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 3840,
+     "lines": 31,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clPlaced_run",
+      "clPrepareSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRecordSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4034,
+     "lines": 2,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.empty",
+      "clPlacement.refl"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clRecordTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4039,
+     "lines": 11,
+     "private": true,
+     "mentions": [
+      "clPlacedAction",
+      "clRecordSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRecordCfg",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4054,
+     "lines": 7,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clRecordSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRecord_prepare_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4067,
+     "lines": 20,
+     "private": true,
+     "mentions": [
+      "clRecordSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRecord_complete",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4094,
+     "lines": 56,
+     "private": true,
+     "mentions": [
+      "clPlaced_run",
+      "clRecordSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clMatchLoadSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4162,
+     "lines": 2,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.empty",
+      "clPlacement.refl"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clMatchCmpSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4166,
+     "lines": 10,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.ofInverse"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clMatchTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4186,
+     "lines": 22,
+     "private": true,
+     "mentions": [
+      "clMatchCmpSelect",
+      "clMatchLoadSelect",
+      "clPlacedAction"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clMatch_load_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4257,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clMatchLoadSelect",
+      "clPlacedCfg"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clMatch_load",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4276,
+     "lines": 34,
+     "private": true,
+     "mentions": [
+      "clMatchLoadSelect",
+      "clPlaced_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clMatch_cmp_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4316,
+     "lines": 20,
+     "private": true,
+     "mentions": [
+      "clMatchCmpSelect",
+      "clPlacedCfg"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clMatch_compare",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4359,
+     "lines": 36,
+     "private": true,
+     "mentions": [
+      "clMatchCmpSelect",
+      "clPlaced_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clOneSelect",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4722,
+     "lines": 8,
+     "private": true,
+     "mentions": [
+      "clPlacement",
+      "clPlacement.ofInverse"
+     ],
+     "is_member": true
+    },
+    {
+     "name": "Complexity.clOutputTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4733,
+     "lines": 9,
+     "private": true,
+     "mentions": [
+      "clOneSelect",
+      "clPlacedAction"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clOutput_compute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4749,
+     "lines": 47,
+     "private": true,
+     "mentions": [
+      "clOneSelect",
+      "clPlacedCfg",
+      "clPlaced_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clPreparedTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4799,
+     "lines": 5,
+     "private": true,
+     "mentions": [
+      "clKeepLastPlacement"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clPreparedCfg",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4806,
+     "lines": 5,
+     "private": true,
+     "mentions": [
+      "clKeepLastPlacement",
+      "clPlacedCfg"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clPrepared_run",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4817,
+     "lines": 42,
+     "private": true,
+     "mentions": [
+      "clKeepLastPlacement",
+      "clPlaced_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clPrepared_idle",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4867,
+     "lines": 37,
+     "private": true,
+     "mentions": [
+      "clKeepLastPlacement"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clQueryFlags_compute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 4942,
+     "lines": 39,
+     "private": true,
+     "mentions": [
+      "clKeepLastPlacement"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRecord_idle",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5031,
+     "lines": 25,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clPlacedCfg_eq",
+      "clPlaced_apply",
+      "clRecordSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRecordOutputTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5059,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "clRecordSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRecordOutput_compute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5103,
+     "lines": 31,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg",
+      "clRecordSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clOutputAt_compute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5242,
+     "lines": 47,
+     "private": true,
+     "mentions": [
+      "clOneSelect",
+      "clPlacedCfg",
+      "clPlaced_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clCountOutputTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5292,
+     "lines": 3,
+     "private": true,
+     "mentions": [
+      "clRecordSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clCountOutput_quadratic",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5301,
+     "lines": 26,
+     "private": true,
+     "mentions": [
+      "clRecordSelect"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRepeatTM",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5656,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "clKeepLastPlacement",
+      "clPlacedAction"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRepeat_frame",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5684,
+     "lines": 13,
+     "private": true,
+     "mentions": [
+      "clKeepLastPlacement",
+      "clPlacedCfg"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRepeat_call",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5704,
+     "lines": 45,
+     "private": true,
+     "mentions": [
+      "clKeepLastPlacement",
+      "clPlacedAction",
+      "clPlacedCfg",
+      "clPlaced_apply",
+      "clPlaced_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clRepeatOutput_compute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 5845,
+     "lines": 41,
+     "private": true,
+     "mentions": [
+      "clKeepLastPlacement"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Compare_compute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7212,
+     "lines": 113,
+     "private": true,
+     "mentions": [
+      "clPlacedCfg_eq"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 44,
+   "files_touched": [
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 253,
+    "member_lines_with_doc": 294,
+    "by_file": {
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 294
+    }
+   },
+   "new_api_needed": [
+    "none expected; at most one combinator promoted to Build/Embed (plan item 13)"
+   ],
+   "notes": "17-declaration certified-layout layer (clPlacement + 7 combinators, clKeepLastPlacement, clPlacement_lookup, clPlacedAction/Cfg, _eq lemmas, clPlaced_apply/_run/_release): 209 code lines, 241 with docstrings (plan: 259 at RB5). Plus 9 selector definitions (clRowSelect, clRecTrackSelect, clRecRowSelect, clLoadSelect, clPrepareSelect, clRecordSelect, clMatchLoadSelect, clMatchCmpSelect, clOneSelect; 44 lines, 53 with doc) that item 13 deletes. Two `attribute [local simp]` lines (Hardness:1882, 1958) also go. 44 outside use sites, all private, all in Hardness: every row/record/load/prepare/match/output/count/repeat machine and its frame/run lemmas. Cross-family: SG1-UH (clRepeat*) and the FE-LIVE-1 front clA5Compare_compute (uses clPlacedCfg_eq via clPreparedCfg) are use sites. Hardness-only; no import change (Embed already reachable)."
+  },
+  "FH-1-held": {
+   "status": "partial",
+   "members": [
+    {
+     "name": "Complexity.LogProg.call_run",
+     "file": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+     "line": 145,
+     "lines": 218,
+     "doc_lines": 4,
+     "kind": "theorem",
+     "private": false,
+     "pair_of": null,
+     "member_status": "open (own Nat.find first halt)"
+    },
+    {
+     "name": "Complexity.LogProg.cleanTM_run",
+     "file": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+     "line": 314,
+     "lines": 142,
+     "doc_lines": 6,
+     "kind": "theorem",
+     "private": false,
+     "pair_of": null,
+     "member_status": "open (own Nat.find first halt)"
+    },
+    {
+     "name": "Complexity.LogProg.runFrom_count_eq",
+     "file": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+     "line": 214,
+     "lines": 112,
+     "doc_lines": 7,
+     "kind": "theorem",
+     "private": false,
+     "pair_of": null,
+     "member_status": "retired (cites exists_first_halt)"
+    },
+    {
+     "name": "Turing.ClockHost.startup",
+     "file": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+     "line": 304,
+     "lines": 23,
+     "doc_lines": 2,
+     "kind": "theorem",
+     "private": false,
+     "pair_of": null,
+     "member_status": "retired (cites exists_first_halt)"
+    },
+    {
+     "name": "Complexity.clockStageCfg_captures",
+     "file": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+     "line": 871,
+     "lines": 23,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": false,
+     "pair_of": null,
+     "member_status": "retired (cites exists_first_halt)"
+    },
+    {
+     "name": "Turing.FinTM.one_work_tape",
+     "file": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+     "line": 915,
+     "lines": 40,
+     "doc_lines": 7,
+     "kind": "theorem",
+     "private": false,
+     "pair_of": null,
+     "member_status": "retired (cites exists_first_halt)"
+    },
+    {
+     "name": "Turing.FinTM.dg_all_inputs",
+     "file": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+     "line": 2116,
+     "lines": 78,
+     "doc_lines": 7,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "retired (cites exists_first_halt)"
+    },
+    {
+     "name": "Complexity.sat_first_halt",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 685,
+     "lines": 10,
+     "doc_lines": 1,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "retired (cites exists_first_halt); thin private wrapper remains"
+    },
+    {
+     "name": "Complexity.sat_call_first_halt",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3749,
+     "lines": 13,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.clA5_call_first_halt",
+     "member_status": "retired as FH-1 copy; exact twin wrapper of clA5_call_first_halt remains"
+    },
+    {
+     "name": "Complexity.clA5_call_first_halt",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6123,
+     "lines": 13,
+     "doc_lines": 3,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": "Complexity.sat_call_first_halt",
+     "member_status": "retired as FH-1 copy; exact twin wrapper of sat_call_first_halt remains"
+    }
+   ],
+   "canonical": [
+    "Turing.MultiTapeTM.exists_first_halt (TCSlib/Complexity/TuringMachine/Finite.lean:218)",
+    "for Call/Clean additionally (gate 122 / ledger \"Gate 122 held Call and Clean fronts\", ruled 2026-11-12): needs new public readers: SimRel/HaltRel introduction/elimination beside Machines/Sim; PB, markI and ccfg field equations beside Machines/CleanSweep"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.satEval_start",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 701,
+     "lines": 47,
+     "private": true,
+     "mentions": [
+      "sat_first_halt"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satPair_start",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 2549,
+     "lines": 38,
+     "private": true,
+     "mentions": [
+      "sat_first_halt"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satAppend_clean",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 3767,
+     "lines": 35,
+     "private": true,
+     "mentions": [
+      "sat_call_first_halt"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.satClean_stop",
+     "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+     "line": 4063,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "sat_call_first_halt"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Clean_stop",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6396,
+     "lines": 16,
+     "private": true,
+     "mentions": [
+      "clA5_call_first_halt"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.clA5Copy_clean",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 6492,
+     "lines": 32,
+     "private": true,
+     "mentions": [
+      "clA5_call_first_halt"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Randomized.clockHost_zDecides",
+     "file": "TCSlib/Complexity/Randomized/ZPPHosts.lean",
+     "line": 239,
+     "lines": 90,
+     "private": false,
+     "mentions": [
+      "startup"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Randomized.clockHost_abortDecides",
+     "file": "TCSlib/Complexity/Randomized/ZPPHosts.lean",
+     "line": 340,
+     "lines": 57,
+     "private": false,
+     "mentions": [
+      "startup"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.LogProg.bank_cleanRun",
+     "file": "TCSlib/Complexity/SpaceComplexity/Machines/Bank.lean",
+     "line": 174,
+     "lines": 49,
+     "private": false,
+     "mentions": [
+      "cleanTM_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.LogProg.compile_correct_from",
+     "file": "TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean",
+     "line": 123,
+     "lines": 73,
+     "private": false,
+     "mentions": [
+      "call_run"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.LogProg.marm_dtime",
+     "file": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+     "line": 443,
+     "lines": 109,
+     "private": false,
+     "mentions": [
+      "runFrom_count_eq"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.obliviousSchedule_ready",
+     "file": "TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean",
+     "line": 927,
+     "lines": 26,
+     "private": true,
+     "mentions": [
+      "clockStageCfg_captures"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Complexity.obliviousSchedule_halts",
+     "file": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger.lean",
+     "line": 81,
+     "lines": 50,
+     "private": true,
+     "mentions": [
+      "clockStageCfg_captures"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Turing.FinTM.one_work_tape_binary",
+     "file": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+     "line": 965,
+     "lines": 15,
+     "private": false,
+     "mentions": [
+      "one_work_tape"
+     ],
+     "is_member": false
+    },
+    {
+     "name": "Turing.FinTM.one_work_tape_spaceUsed",
+     "file": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+     "line": 2221,
+     "lines": 55,
+     "private": false,
+     "mentions": [
+      "dg_all_inputs"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 15,
+   "files_touched": [
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "TCSlib/Complexity/Randomized/ZPPHosts.lean",
+    "TCSlib/Complexity/SpaceComplexity/Machines/Bank.lean",
+    "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+    "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+    "TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean",
+    "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+    "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+    "TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean",
+    "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+    "TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger.lean",
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean"
+   ],
+   "sizes": {
+    "member_lines": 672,
+    "member_lines_with_doc": 715,
+    "by_file": {
+     "TCSlib/Complexity/ClassNP/SAT.lean": 27,
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 16,
+     "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean": 222,
+     "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean": 148,
+     "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean": 119,
+     "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean": 25,
+     "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean": 26,
+     "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean": 132
+    }
+   },
+   "new_api_needed": [
+    "Call/Clean reader API (SimRel/HaltRel intro/elim; PB/markI/ccfg equations) — API to Seyoon first per the 2026-11-12 ruling"
+   ],
+   "notes": "Gate 122 / #242 held 7 fronts, none in SAT or Hardness. Grep at HEAD: 5 of 7 now cite exists_first_halt (commits f6d8f0f3d 2026-11-08 and 6fe6b56cc 2026-11-09): LogProg.runFrom_count_eq (MARMTime:214), ClockHost.startup (NDClockHostRun:304), clockStageCfg_captures (ObliviousCandidate:871, header later restated by #300), FinTM.one_work_tape (SingleTape:915), FinTM.dg_all_inputs (SingleTape:2116) — retired. Still open (own Nat.find first-halt selection): Complexity.LogProg.call_run (Machines/Call.lean:145, 218 lines) and Complexity.LogProg.cleanTM_run (Machines/Clean.lean:314, 142 lines) — both PUBLIC theorems in Hydroxyi-authored (colleague) files, very large proofs; statements unchanged by the repair. Their use sites (Compile.compile_correct_from, Bank.bank_cleanRun; Hydroxyi files) do not change. A branch codex/ab34-call-clean-oblivious-readers exists but its Call.lean still uses Nat.find. SAT/Hardness FH-1 copies (sat_first_halt SAT:685, sat_call_first_halt SAT:3749, clA5_call_first_halt Hardness:6123) are retired (they cite exists_first_halt), but sat_call_first_halt / clA5_call_first_halt are byte-identical twin private wrappers (positive first halt, 13 lines each) used by the kind-1 _stop lemmas and satAppend_clean / clA5Copy_clean — they fold into the kind-1 interface or a public positive variant. Placing these Machines files in R4 (a SAT/Hardness wave) is a scoping oddity worth flagging.",
+   "files_touched_by_repair": [
+    "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+    "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+    "(reader homes) TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean, TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean"
+   ]
+  },
+  "FE-LIVE-1-Hardness": {
+   "status": "retired",
+   "members": [
+    {
+     "name": "Complexity.clA5Compare_compute",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7212,
+     "lines": 113,
+     "doc_lines": 6,
+     "kind": "lemma",
+     "private": true,
+     "pair_of": null,
+     "member_status": "retired (cites exists_first_entry_of_fixed, 5abe015a1/#241)"
+    }
+   ],
+   "canonical": [
+    "Turing.MultiTapeTM.exists_first_entry_of_fixed (TCSlib/Complexity/TuringMachine/Finite.lean:236) — already cited at Hardness:7264"
+   ],
+   "use_sites": [
+    {
+     "name": "Complexity.clA5EqNum_native",
+     "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+     "line": 7328,
+     "lines": 17,
+     "private": true,
+     "mentions": [
+      "clA5Compare_compute"
+     ],
+     "is_member": false
+    }
+   ],
+   "use_sites_outside_family": 1,
+   "files_touched": [
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+   ],
+   "sizes": {
+    "member_lines": 113,
+    "member_lines_with_doc": 119,
+    "by_file": {
+     "TCSlib/Complexity/CookLevin/Hardness.lean": 119
+    }
+   },
+   "new_api_needed": [],
+   "notes": "clA5Compare_compute (Hardness:7212, 113 lines) already selects the first verdict through exists_first_entry_of_fixed and reads configurations through published equations (commit 5abe015a1, 2026-11-08, merged in #241 / gate 121 round 2); no Nat.find remains in SAT or Hardness. The REFACTOR-PLAN R1 recount (2026-11-16) listing it as a held gate-121 front to R4 is stale for the Lean (5abe015a1 is an ancestor of the plan's 351ba259). Residual: it is a use site of item 13 (clPreparedTM/clPreparedCfg/clPrepared_run/clPlacedCfg_eq), so it changes under 12.2c-13, not FE-LIVE-1. Only use site: clA5EqNum_native (Hardness:7328)."
+  }
+ }
+}
