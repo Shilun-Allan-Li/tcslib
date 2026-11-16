@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
-import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Draws
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Words
 import TCSlib.Cryptography.Games.Efficiency
 import TCSlib.Cryptography.Pairing.Assumptions
 import TCSlib.Cryptography.Pairing.Operations
@@ -22,7 +22,9 @@ adversary's `Init`, `KeyGen` and `Challenge` queries, as a polynomial-time handl
 the encodings only: group operations by the contract `Pairing.BilinearGen.Ops`, exponent
 arithmetic modulo `p` by the arithmetic bundle `Candidates.ArithmeticFP`, and each exponent
 `α_1`, `r` drawn from the next block of `n · n` seed bits by the rejection sampler of
-`BonehBoyenMachine/Draws.lean`.
+`BonehBoyenMachine/Draws.lean`. The string functions it is assembled from (readers of the round
+input, arithmetic modulo `p`, the group operations, the drawn exponent) are those of
+`BonehBoyenMachine/Words.lean`.
 
 **The run.** The reduction input is the Decision BDH string `⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩` and the
 seed `ω` holds `q(κ)` blocks of `n · n` bits. The state is `⟨1^j, ⟨o_1, o_2⟩⟩` padded to a fixed
@@ -33,7 +35,7 @@ computed with truncated subtraction and division with remainder, and inverses wi
 Euclidean algorithm, whose inverse of `0` is `0`, as in `Z_p`.
 
 **Its meaning.** On the encoding of a state of the simulator, one query to the handler is one
-query to `drawStep` with the exponent read from the seed (`handler_answer_stEnc`), so the whole
+query to `drawStep` with the exponent read from the seed (`handler_impl_stEnc`), so the whole
 run is the run of `drawStep` with exponents read from a tape, through the encoding of the states
 (`simulate_handler`).
 
@@ -46,6 +48,7 @@ run is the run of `drawStep` with exponents read from a tape, through the encodi
 
 * `BB1Machine.handler_advInput`, `BB1Machine.handler_result` — the adversary's input and the
   reduction's output.
+* `BB1Machine.seedBlocks_window` — block `j` of the seed is its `j`-th window of `n · n` bits.
 * `BB1Machine.simulate_handler` — the handler's run is the run of `drawStep` with exponents
   drawn from the seed blocks.
 
@@ -73,99 +76,10 @@ variable (G : BilinearGen) (ℓ : PolyExpr) (O : G.Ops) (b : Bool) (q : PolyExpr
 
 /-! ### Lengths -/
 
-/-- The width `wG(κ) + 1` of the numeral of `α_1` in the state. -/
-private def aWidth : PolyExpr := G.wG.add (.const 1)
-
 /-- The state length `2q + 4ℓ + 4wG + wT + 11`, room for `⟨1^j, ⟨⟨ID*, α_1⟩, 1 ‖ C⟩⟩`, `j ≤ q`. -/
 private def stLen : PolyExpr :=
   ((((q.mul (.const 2)).add (ℓ.mul (.const 4))).add (G.wG.mul (.const 4))).add G.wT).add
     (.const 11)
-
-/-- The block length `n · n` of one exponent's coins. -/
-private def nn : PolyExpr := (blockLen G).mul (blockLen G)
-
-/-! ### Reading the round input `⟨⟨1^κ, ⟨z, ω⟩⟩, ⟨s, ⟨1^i, x⟩⟩⟩` -/
-
-/-- `1^κ`. -/
-private def rU (w : List Bool) : List Bool := pairFstD (pairFstD w)
-/-- The reduction input `z`. -/
-private def rZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
-/-- The seed `ω`. -/
-private def rW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
-/-- The state `s`. -/
-private def rS (w : List Bool) : List Bool := pairFstD (pairSndD w)
-/-- The oracle index `1^i`. -/
-private def rI (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
-/-- The query `x`. -/
-private def rX (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
-
-/-- The description `d` of `z = ⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩`. -/
-private def zD (w : List Bool) : List Bool := pairFstD (rZ w)
-/-- The word of `g`. -/
-private def zG (w : List Bool) : List Bool := pairFstD (pairSndD (rZ w))
-/-- The word of `X`. -/
-private def zX (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD (rZ w)))
-/-- The word of `Y`. -/
-private def zY (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD (pairSndD (rZ w))))
-/-- The word of `Z`. -/
-private def zZ (w : List Bool) : List Bool :=
-  pairFstD (pairSndD (pairSndD (pairSndD (pairSndD (rZ w)))))
-/-- The word of `T`. -/
-private def zT (w : List Bool) : List Bool :=
-  pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (rZ w)))))
-
-/-- The counter `1^j` of the state `⟨1^j, ⟨o_1, o_2⟩⟩`. -/
-private def sJ (w : List Bool) : List Bool := pairFstD (rS w)
-/-- The commitment `o_1`. -/
-private def sO1 (w : List Bool) : List Bool := pairFstD (pairSndD (rS w))
-/-- The challenge record `o_2`, followed by the padding. -/
-private def sR (w : List Bool) : List Bool := pairSndD (pairSndD (rS w))
-/-- Whether an identity is committed: `o_1 ≠ []`. -/
-private def sCom (w : List Bool) : Bool := !decide (sO1 w = [])
-/-- Whether a challenge is recorded: the first bit of `o_2`. -/
-private def sChal (w : List Bool) : Bool := (sR w).headD false
-/-- The recorded challenge `C` of `o_2 = 1 ‖ C`. -/
-private def sC (w : List Bool) : List Bool :=
-  ((sR w).drop 1).take ((bb1Scheme G ℓ).ctLen.eval (rU w).length)
-/-- The challenge record `o_2` without the padding. -/
-private def sO2 (w : List Bool) : List Bool := if sChal w then true :: sC G ℓ w else []
-/-- The committed identity. -/
-private def kT (w : List Bool) : List Bool := pairFstD (sO1 w)
-/-- The numeral of the committed `α_1`. -/
-private def kA (w : List Bool) : List Bool := pairSndD (sO1 w)
-
-/-! ### Arithmetic modulo `p` and in the groups -/
-
-/-- The numeral of the order `p`. -/
-private def pS (w : List Bool) : List Bool := O.orderStr (zD w)
-/-- `a mod p`. -/
-private def modS (w a : List Bool) : List Bool := pairSndD (divModStr (pairEncode a (pS G O w)))
-/-- `(p − (a mod p)) mod p`, the residue of `−a`. -/
-private def negS (w a : List Bool) : List Bool :=
-  modS G O w (subStr (pairEncode (pS G O w) (modS G O w a)))
-/-- `(a + c) mod p`. -/
-private def addS (w a c : List Bool) : List Bool := modS G O w (addStr (pairEncode a c))
-/-- `(a · c) mod p`. -/
-private def mulS (w a c : List Bool) : List Bool := modS G O w (mulStr (pairEncode a c))
-/-- The inverse of `a` modulo `p` (`0` for `a ≡ 0`). -/
-private def invS (w a : List Bool) : List Bool := pairSndD (xgcdStr (pairEncode a (pS G O w)))
-/-- The product `x · y` in `G`. -/
-private def mulGS (w x y : List Bool) : List Bool := O.mulG (pairEncode (zD w) (pairEncode x y))
-/-- The power `x^e` in `G`. -/
-private def powGS (w x e : List Bool) : List Bool := O.powG (pairEncode (zD w) (pairEncode x e))
-
-/-! ### The exponent of the query -/
-
-/-- The block of `n · n` seed bits of the `j`-th query. -/
-private def blkS (w : List Bool) : List Bool :=
-  ((rW w).drop ((sJ w).length * (nn G).eval (rU w).length)).take ((nn G).eval (rU w).length)
-
-/-- The exponent drawn from the block, as a `(wG(κ) + 1)`-bit numeral: `sampleBelowL p (Nat.size p)
-n n` with the fallback `0`. -/
-private def uS (w : List Bool) : List Bool :=
-  natToList ((aWidth G).eval (rU w).length)
-    ((sampleBelowL (listToNat (pS G O w)) (Nat.size (listToNat (pS G O w)))
-      ((blockLen G).eval (rU w).length) ((blockLen G).eval (rU w).length) (blkS G w)).getD 0)
 
 /-! ### The answers -/
 
@@ -203,9 +117,11 @@ private def ans1 (w : List Bool) : List Bool :=
   else List.replicate ((aLen G ℓ 1).eval (rU w).length) false
 
 /-- The first message `M_0` of a challenge query. -/
-private def m0 (w : List Bool) : List Bool := (rX w).take ((bb1Scheme G ℓ).msgLen.eval (rU w).length)
+private def m0 (w : List Bool) : List Bool :=
+  (rX w).take ((bb1Scheme G ℓ).msgLen.eval (rU w).length)
 /-- The second message `M_1` of a challenge query. -/
-private def m1 (w : List Bool) : List Bool := (rX w).drop ((bb1Scheme G ℓ).msgLen.eval (rU w).length)
+private def m1 (w : List Bool) : List Bool :=
+  (rX w).drop ((bb1Scheme G ℓ).msgLen.eval (rU w).length)
 /-- The message `M_b`. -/
 private def mB (w : List Bool) : List Bool := if b then m1 G ℓ w else m0 G ℓ w
 /-- Whether both messages encode elements of `G_T` (`memT`). -/
@@ -248,124 +164,6 @@ private def runF (w : List Bool) : List Bool :=
 
 section Poly
 
-private theorem poly_rU : PolyTimeComputable rU :=
-  polyTimeComputable_pairFstD.comp' polyTimeComputable_pairFstD
-private theorem poly_rZ : PolyTimeComputable rZ :=
-  polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairFstD)
-private theorem poly_rW : PolyTimeComputable rW :=
-  polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairFstD)
-private theorem poly_rS : PolyTimeComputable rS :=
-  polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD
-private theorem poly_rI : PolyTimeComputable rI :=
-  polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD)
-private theorem poly_rX : PolyTimeComputable rX :=
-  polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD)
-private theorem poly_zD : PolyTimeComputable zD := polyTimeComputable_pairFstD.comp' poly_rZ
-private theorem poly_zG : PolyTimeComputable zG :=
-  polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp' poly_rZ)
-private theorem poly_zX : PolyTimeComputable zX :=
-  polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp'
-    (polyTimeComputable_pairSndD.comp' poly_rZ))
-private theorem poly_zY : PolyTimeComputable zY :=
-  polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp'
-    (polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairSndD.comp' poly_rZ)))
-private theorem poly_zZ : PolyTimeComputable zZ :=
-  polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp'
-    (polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairSndD.comp'
-      (polyTimeComputable_pairSndD.comp' poly_rZ))))
-private theorem poly_zT : PolyTimeComputable zT :=
-  polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairSndD.comp'
-    (polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairSndD.comp'
-      (polyTimeComputable_pairSndD.comp' poly_rZ))))
-private theorem poly_sJ : PolyTimeComputable sJ := polyTimeComputable_pairFstD.comp' poly_rS
-private theorem poly_sO1 : PolyTimeComputable sO1 :=
-  polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp' poly_rS)
-private theorem poly_sR : PolyTimeComputable sR :=
-  polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairSndD.comp' poly_rS)
-private theorem poly_sCom : PolyTimeComputable fun w => [sCom w] :=
-  polyTimeComputable_not (polyTimeComputable_isNil.comp' poly_sO1)
-private theorem poly_sChal : PolyTimeComputable fun w => [sChal w] :=
-  polyTimeComputable_headD.comp' poly_sR
-private theorem poly_sC : PolyTimeComputable (sC G ℓ) :=
-  ((polyTimeComputable_pairTakePoly (bb1Scheme G ℓ).ctLen).comp'
-    (poly_rU.pairEncode (polyTimeComputable_tail.comp' poly_sR))).congr fun w => by
-      simp only [pairFstD_pairEncode, pairSndD_pairEncode]; rfl
-private theorem poly_sO2 : PolyTimeComputable (sO2 G ℓ) :=
-  (polyTimeComputable_ite poly_sChal ((polyTimeComputable_const [true]).append (poly_sC G ℓ))
-    (polyTimeComputable_const [])).congr fun w => by
-      simp only [sO2, List.singleton_append]
-private theorem poly_kT : PolyTimeComputable kT := polyTimeComputable_pairFstD.comp' poly_sO1
-private theorem poly_kA : PolyTimeComputable kA := polyTimeComputable_pairSndD.comp' poly_sO1
-
-private theorem poly_pS : PolyTimeComputable (pS G O) := O.orderStr_poly.comp' poly_zD
-
-private theorem poly_modS (H : ArithmeticFP) {a : List Bool → List Bool} (ha : PolyTimeComputable a) :
-    PolyTimeComputable fun w => modS G O w (a w) :=
-  polyTimeComputable_pairSndD.comp' (H.divMod.comp' (ha.pairEncode (poly_pS G O)))
-private theorem poly_negS (H : ArithmeticFP) {a : List Bool → List Bool} (ha : PolyTimeComputable a) :
-    PolyTimeComputable fun w => negS G O w (a w) :=
-  poly_modS G O H (H.sub.comp' ((poly_pS G O).pairEncode (poly_modS G O H ha)))
-private theorem poly_addS (H : ArithmeticFP) {a c : List Bool → List Bool} (ha : PolyTimeComputable a)
-    (hc : PolyTimeComputable c) : PolyTimeComputable fun w => addS G O w (a w) (c w) :=
-  poly_modS G O H (H.add.comp' (ha.pairEncode hc))
-private theorem poly_mulS (H : ArithmeticFP) {a c : List Bool → List Bool} (ha : PolyTimeComputable a)
-    (hc : PolyTimeComputable c) : PolyTimeComputable fun w => mulS G O w (a w) (c w) :=
-  poly_modS G O H (H.mul.comp' (ha.pairEncode hc))
-private theorem poly_invS (H : ArithmeticFP) {a : List Bool → List Bool} (ha : PolyTimeComputable a) :
-    PolyTimeComputable fun w => invS G O w (a w) :=
-  polyTimeComputable_pairSndD.comp' (H.xgcd.comp' (ha.pairEncode (poly_pS G O)))
-private theorem poly_mulGS {x y : List Bool → List Bool} (hx : PolyTimeComputable x)
-    (hy : PolyTimeComputable y) : PolyTimeComputable fun w => mulGS G O w (x w) (y w) :=
-  O.mulG_poly.comp' (poly_zD.pairEncode (hx.pairEncode hy))
-private theorem poly_powGS {x e : List Bool → List Bool} (hx : PolyTimeComputable x)
-    (he : PolyTimeComputable e) : PolyTimeComputable fun w => powGS G O w (x w) (e w) :=
-  O.powG_poly.comp' (poly_zD.pairEncode (hx.pairEncode he))
-
-private theorem poly_blkS : PolyTimeComputable (blkS G) := by
-  have hOff : PolyTimeComputable fun w =>
-      List.replicate ((sJ w).length * (nn G).eval (rU w).length) true :=
-    (OneWay.polyTimeComputable_unaryMulPair.comp'
-      (poly_sJ.pairEncode ((polyTimeComputable_unaryPoly (nn G)).comp' poly_rU))).congr fun w => by
-        simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
-  have hDrop : PolyTimeComputable fun w =>
-      (rW w).drop ((sJ w).length * (nn G).eval (rU w).length) :=
-    (polyTimeComputable_dropPrefixByLength.comp' (hOff.pairEncode poly_rW)).congr fun w => by
-      simp only [PrefixByLength.drop_def, pairFstD_pairEncode, pairSndD_pairEncode,
-        List.length_replicate]
-  exact ((polyTimeComputable_pairTakePoly (nn G)).comp' (poly_rU.pairEncode hDrop)).congr
-    fun w => by simp only [pairFstD_pairEncode, pairSndD_pairEncode]; rfl
-
-/-- The drawn exponent's numeral is polynomial-time: the block-rejection host
-`Candidates.polyTimeComputable_rejectBlocksL` with the test `v < p` (`H.le`), the width word
-`sizeStr p` (`H.size`) and `n` blocks of `n` bits, then the width normalization
-`(⟦0⟧_W ‖ v).drop |v| = ⟦v⟧_W` (`natToList_zero_append_drop`, `⟦0⟧_W = subStr ⟨1^W, 1^W⟩`), as in
-`Candidates.polyTimeComputable_expSampleRaw`. -/
-private theorem poly_uS (H : ArithmeticFP) : PolyTimeComputable (uS G O) := by
-  have hN : PolyTimeComputable fun w => List.replicate ((blockLen G).eval (rU w).length) true :=
-    (polyTimeComputable_unaryPoly (blockLen G)).comp' poly_rU
-  obtain ⟨g, hg, hs⟩ := polyTimeComputable_rejectBlocksL (fun a v => v < a)
-    (acc := fun x => !decide (listToNat (pairFstD x) ≤ listToNat (pairSndD x)))
-    (polyTimeComputable_not (H.le_poly polyTimeComputable_pairFstD polyTimeComputable_pairSndD))
-    (fun w c => by dsimp only; rw [pairFstD_pairEncode, pairSndD_pairEncode, ← decide_not, decide_eq_decide,
-      Nat.not_le]) (poly_pS G O) (H.size.comp' (poly_pS G O)) hN hN (poly_blkS G)
-  have hb : PolyTimeComputable fun w => (g w).tail :=
-    (PolyTimeComputable.comp' polyTimeComputable_tail hg).congr fun w => List.drop_one
-  have hW : PolyTimeComputable fun w => List.replicate ((aWidth G).eval (rU w).length) true :=
-    (polyTimeComputable_unaryPoly (aWidth G)).comp' poly_rU
-  have hz := H.sub.comp' (hW.pairEncode hW)
-  have hq := (polyTimeComputable_pairDropPoly .var).comp' (hb.pairEncode (hz.append hb))
-  refine hq.congr fun w => ?_
-  simp only [pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var, subStr_self,
-    List.length_replicate]
-  rw [natToList_zero_append_drop, uS, sampleBelowL_eq_rejectBlocksL]
-  have h2 := (hs w).2
-  rw [length_sizeStr, List.length_replicate] at h2
-  rw [h2]
-  split_ifs with he
-  · rw [he, List.tail_nil, listToNat_nil]
-    rfl
-  · rfl
-
 private theorem poly_hS (H : ArithmeticFP) {t a : List Bool → List Bool} (ht : PolyTimeComputable t)
     (ha : PolyTimeComputable a) : PolyTimeComputable fun w => hS G O w (t w) (a w) :=
   poly_mulGS G O (poly_powGS G O poly_zX (poly_negS G O H ht)) (poly_powGS G O poly_zG ha)
@@ -383,7 +181,8 @@ private theorem poly_keyOk : PolyTimeComputable fun w => [keyOk w] :=
       simp only [pairFstD_pairEncode, pairSndD_pairEncode]))
 private theorem poly_diffS (H : ArithmeticFP) : PolyTimeComputable (diffS G O) :=
   poly_addS G O H (poly_modS G O H poly_rX) (poly_negS G O H poly_kT)
-private theorem poly_invD (H : ArithmeticFP) : PolyTimeComputable (invD G O) := poly_invS G O H (poly_diffS G O H)
+private theorem poly_invD (H : ArithmeticFP) : PolyTimeComputable (invD G O) :=
+  poly_invS G O H (poly_diffS G O H)
 private theorem poly_d0S (H : ArithmeticFP) : PolyTimeComputable (d0S G O) :=
   poly_mulGS G O (poly_powGS G O poly_zY
       (poly_mulS G O H (poly_negS G O H poly_kA) (poly_invD G O H)))
@@ -445,7 +244,8 @@ word, an operation of `O`, an arithmetic function of `H`, the drawn exponent (`p
 a branch or a padding (`EnsembleLemmas.polyTimeComputable_padL`). -/
 private theorem poly_runF (H : ArithmeticFP) : PolyTimeComputable (runF G ℓ O b q) :=
   (poly_ansW G ℓ O b H).pairEncode (EnsembleLemmas.polyTimeComputable_padL (stLen G ℓ q) poly_rU
-    ((((polyTimeComputable_const [true]).append poly_sJ).congr fun _ => List.singleton_append).pairEncode
+    ((((polyTimeComputable_const [true]).append poly_sJ).congr
+        fun _ => List.singleton_append).pairEncode
       ((poly_newO1 G O H).pairEncode (poly_newO2 G ℓ O b))))
 
 end Poly
@@ -505,7 +305,7 @@ def seedBlocks (κ : ℕ) :
 
 /-- **Block `j` of the seed is its `j`-th window**:
 `⟦seedBlocks … κ ω j⟧ = (⟦ω⟧.drop (j · n²)).take n²`. -/
-theorem ofFn_seedBlocks (κ : ℕ) (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool)
+theorem seedBlocks_window (κ : ℕ) (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool)
     (j : Fin (q.eval κ)) :
     List.ofFn (seedBlocks G ℓ O b q H κ ω j) =
       ((List.ofFn ω).drop (j * ((blockLen G).eval κ * (blockLen G).eval κ))).take
@@ -536,49 +336,6 @@ private def stEnc (κ : ℕ) {d : List Bool} (s : BB1SimState G ℓ κ d) (j : �
   padFin _ (stWord G ℓ κ s j)
 
 
-/-! ### Reading the round input -/
-
-section Fields
-
-variable {κ : ℕ} {z W S X : List Bool} {i : Fin 3}
-
-private theorem rU_input : rU (PolyHandler.input κ z W S i X) = List.replicate κ true := by
-  rw [PolyHandler.input_eq, rU, pairFstD_pairEncode, pairFstD_pairEncode]
-private theorem rZ_input : rZ (PolyHandler.input κ z W S i X) = z := by
-  rw [PolyHandler.input_eq, rZ, pairFstD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode]
-private theorem rW_input : rW (PolyHandler.input κ z W S i X) = W := by
-  rw [PolyHandler.input_eq, rW, pairFstD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode]
-private theorem rS_input : rS (PolyHandler.input κ z W S i X) = S := by
-  rw [PolyHandler.input_eq, rS, pairSndD_pairEncode, pairFstD_pairEncode]
-private theorem rI_input : rI (PolyHandler.input κ z W S i X) = List.replicate i true := by
-  rw [PolyHandler.input_eq, rI, pairSndD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode]
-private theorem rX_input : rX (PolyHandler.input κ z W S i X) = X := by
-  rw [PolyHandler.input_eq, rX, pairSndD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode]
-
-end Fields
-
-section Tuple
-
-variable {w : List Bool} {wG wT : ℕ} {B : BilinearGroup wG wT} {d : List Bool}
-  {g X Y Z : B.G} {T : B.GT}
-
-private theorem zD_of (h : rZ w = tupleStr B d g X Y Z T) : zD w = d := by
-  rw [zD, h, tupleStr_eq, pairFstD_pairEncode]
-private theorem zG_of (h : rZ w = tupleStr B d g X Y Z T) : zG w = List.ofFn (B.encG g) := by
-  rw [zG, h, tupleStr_eq, pairSndD_pairEncode, pairFstD_pairEncode]
-private theorem zX_of (h : rZ w = tupleStr B d g X Y Z T) : zX w = List.ofFn (B.encG X) := by
-  rw [zX, h, tupleStr_eq, pairSndD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode]
-private theorem zY_of (h : rZ w = tupleStr B d g X Y Z T) : zY w = List.ofFn (B.encG Y) := by
-  rw [zY, h, tupleStr_eq, pairSndD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode,
-    pairFstD_pairEncode]
-private theorem zZ_of (h : rZ w = tupleStr B d g X Y Z T) : zZ w = List.ofFn (B.encG Z) := by
-  rw [zZ, h, tupleStr_eq, pairSndD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode,
-    pairSndD_pairEncode, pairFstD_pairEncode]
-private theorem zT_of (h : rZ w = tupleStr B d g X Y Z T) : zT w = List.ofFn (B.encT T) := by
-  rw [zT, h, tupleStr_eq, pairSndD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode,
-    pairSndD_pairEncode, pairSndD_pairEncode]
-
-end Tuple
 
 /-! ### Reading an encoded state -/
 
@@ -595,8 +352,7 @@ private theorem length_o1Word_le (κ : ℕ) {d : List Bool}
   rcases o with _ | ⟨t, α₁⟩
   · simp only [o1Word, List.length_nil]
     omega
-  · simp only [o1Word, length_pairEncode, List.length_ofFn, length_natToList, aWidth,
-      PolyExpr.eval_add, PolyExpr.eval_const]
+  · simp only [o1Word, length_pairEncode, List.length_ofFn, length_natToList, aWidth_eval]
     rw [bb1Scheme_idLen]
 
 /-- `|o_2| ≤ 1 + (wT + 2 wG)`. -/
@@ -653,106 +409,12 @@ private theorem fields_rS (hj : j ≤ q.eval κ) (hS : rS w = List.ofFn (stEnc G
       sR w = o2Word G ℓ κ s.2 ++ List.replicate k false := by
   obtain ⟨k, hk⟩ := fields_stEnc G ℓ O b q H κ s j hj
   refine ⟨k, ?_, ?_, ?_⟩
-  · rw [sJ, hS, hk, pairFstD_pairEncode]
-  · rw [sO1, hS, hk, pairSndD_pairEncode, pairFstD_pairEncode]
-  · rw [sR, hS, hk, pairSndD_pairEncode, pairSndD_pairEncode]
+  · rw [sJ_eq, hS, hk, pairFstD_pairEncode]
+  · rw [sO1_eq, hS, hk, pairSndD_pairEncode, pairFstD_pairEncode]
+  · rw [sR_eq, hS, hk, pairSndD_pairEncode, pairSndD_pairEncode]
 
 end State
 
-/-! ### Arithmetic modulo `p` on numerals -/
-
-section Arith
-
-variable {w : List Bool} {p : ℕ} [NeZero p]
-
-omit [NeZero p] in
-private theorem pS_lt (hp : listToNat (pS G O w) = p) : p < 2 ^ (pS G O w).length :=
-  hp ▸ listToNat_lt_two_pow _
-
-/-- `⟦a mod p⟧ = (a : Z_p).val`. -/
-private theorem listToNat_modS (hp : listToNat (pS G O w) = p) (a : List Bool) :
-    listToNat (modS G O w a) = ((listToNat a : ZMod p)).val := by
-  rw [modS, divModStr_pairEncode, pairSndD_pairEncode, hp, ZMod.val_natCast]
-  exact listToNat_natToList ((Nat.mod_lt _ (NeZero.pos p)).trans (pS_lt G O hp))
-
-/-- `⟦−a mod p⟧ = (−(a : Z_p)).val`. -/
-private theorem listToNat_negS (hp : listToNat (pS G O w) = p) (a : List Bool) :
-    listToNat (negS G O w a) = (-(listToNat a : ZMod p)).val := by
-  rw [negS, listToNat_modS G O hp, listToNat_subStr, hp, listToNat_modS G O hp, ZMod.neg_val',
-    ZMod.val_natCast]
-
-/-- `⟦(a + c) mod p⟧ = ((a : Z_p) + c).val`. -/
-private theorem listToNat_addS (hp : listToNat (pS G O w) = p) (a c : List Bool) :
-    listToNat (addS G O w a c) = ((listToNat a : ZMod p) + (listToNat c : ZMod p)).val := by
-  rw [addS, listToNat_modS G O hp, listToNat_addStr, Nat.cast_add]
-
-/-- `⟦(a · c) mod p⟧ = ((a : Z_p) · c).val`. -/
-private theorem listToNat_mulS (hp : listToNat (pS G O w) = p) (a c : List Bool) :
-    listToNat (mulS G O w a c) = ((listToNat a : ZMod p) * (listToNat c : ZMod p)).val := by
-  rw [mulS, listToNat_modS G O hp, listToNat_mulStr, Nat.cast_mul]
-
-/-- `⟦a⁻¹ mod p⟧ = ((a : Z_p)⁻¹).val` (the extended Euclidean algorithm; `0⁻¹ = 0`). -/
-private theorem listToNat_invS (hp : listToNat (pS G O w) = p) (a : List Bool) :
-    listToNat (invS G O w a) = ((listToNat a : ZMod p)⁻¹).val := by
-  rw [invS, xgcdStr_pairEncode, pairSndD_pairEncode, hp]
-  exact listToNat_natToList ((ZMod.val_lt _).trans (pS_lt G O hp))
-
-end Arith
-
-/-! ### Group operations on encodings -/
-
-section Group
-
-variable {w : List Bool} {κ : ℕ} {r : G.gen.Coins κ}
-
-/-- `⟦pS⟧ = p` on the generated description. -/
-private theorem listToNat_pS (hD : zD w = G.desc κ r) :
-    listToNat (pS G O w) = (G.group κ (G.desc κ r)).order := by
-  have h := O.orderStr_spec κ r
-  rw [BilinearGen.inst_eq] at h
-  rw [pS, hD]
-  exact h
-
-/-- `mulG` on encodings: `⟦x⟧ · ⟦y⟧ = ⟦x · y⟧`. -/
-private theorem mulGS_ofFn (hD : zD w = G.desc κ r) (x y : (G.group κ (G.desc κ r)).G) :
-    mulGS G O w (List.ofFn ((G.group κ (G.desc κ r)).encG x))
-      (List.ofFn ((G.group κ (G.desc κ r)).encG y)) =
-      List.ofFn ((G.group κ (G.desc κ r)).encG (x * y)) := by
-  have h := O.mulG_spec κ r
-  rw [BilinearGen.inst_eq] at h
-  rw [mulGS, hD]
-  exact h x y
-
-/-- `powG` on encodings: `⟦x⟧^e = ⟦x^{⟦e⟧}⟧`. -/
-private theorem powGS_ofFn (hD : zD w = G.desc κ r) (x : (G.group κ (G.desc κ r)).G)
-    (e : List Bool) :
-    powGS G O w (List.ofFn ((G.group κ (G.desc κ r)).encG x)) e =
-      List.ofFn ((G.group κ (G.desc κ r)).encG (x ^ listToNat e)) := by
-  have h := O.powG_spec κ r
-  rw [BilinearGen.inst_eq] at h
-  rw [powGS, hD]
-  exact h x e
-
-/-- `mulT` on encodings: `⟦u⟧ · ⟦v⟧ = ⟦u · v⟧` in `G_T`. -/
-private theorem mulT_ofFn (hD : zD w = G.desc κ r) (u v : (G.group κ (G.desc κ r)).GT) :
-    O.mulT (pairEncode (zD w) (pairEncode (List.ofFn ((G.group κ (G.desc κ r)).encT u))
-      (List.ofFn ((G.group κ (G.desc κ r)).encT v)))) =
-      List.ofFn ((G.group κ (G.desc κ r)).encT (u * v)) := by
-  have h := O.mulT_spec κ r
-  rw [BilinearGen.inst_eq] at h
-  rw [hD]
-  exact h u v
-
-/-- `memT` on encodings: `[w encodes an element of G_T]`. -/
-private theorem memT_ofFn (hD : zD w = G.desc κ r) (m : Fin (G.wT.eval κ) → Bool) :
-    O.memT (pairEncode (zD w) (List.ofFn m)) =
-      [decide (∃ u, (G.group κ (G.desc κ r)).encT u = m)] := by
-  have h := O.memT_spec κ r
-  rw [BilinearGen.inst_eq] at h
-  rw [hD]
-  exact h m
-
-end Group
 
 
 /-! ### One round on an encoded state -/
@@ -762,27 +424,6 @@ section Round
 variable {κ : ℕ} {r : G.gen.Coins κ} {g X Y Z : (G.group κ (G.desc κ r)).G}
   {T : (G.group κ (G.desc κ r)).GT} {w : List Bool} {s : BB1SimState G ℓ κ (G.desc κ r)} {j : ℕ}
 
-/-- The width of `α_1`'s numeral is `wG + 1`, and the order is below `2^{wG + 1}`. -/
-private theorem order_lt_aWidth (κ : ℕ) (d : List Bool) :
-    (G.group κ d).order < 2 ^ (aWidth G).eval κ := by
-  rw [aWidth, PolyExpr.eval_add, PolyExpr.eval_const, pow_succ]
-  have := order_le_two_pow G κ d
-  have h2 : 0 < 2 ^ G.wG.eval κ := Nat.two_pow_pos _
-  omega
-
-/-- The numeral of a residue at width `wG + 1` reads back as its value. -/
-private theorem listToNat_natToList_val {d : List Bool} (v : ZMod (G.group κ d).order) :
-    listToNat (natToList ((aWidth G).eval κ) v.val) = v.val :=
-  listToNat_natToList ((ZMod.val_lt v).trans (order_lt_aWidth G κ d))
-
-/-- An identity read in `Z_p` is its numeral's residue:
-`idToZ (padFin _ ⟦x⟧) = (⟦x⟧ : Z_p)`. -/
-private theorem idToZ_padFin {d : List Bool} {e : ℕ} (x : Fin e → Bool)
-    (h : e = (bb1Scheme G ℓ).idLen.eval κ) :
-    BB1.idToZ (G.group κ d) (padFin ((bb1Scheme G ℓ).idLen.eval κ) (List.ofFn x)) =
-      ((listToNat (List.ofFn x) : ℕ) : ZMod (G.group κ d).order) := by
-  rw [BB1.idToZ_eq, NumberTheory.bitsToNat_eq_listToNat,
-    ofFn_padFin_of_length (by rw [List.length_ofFn, h])]
 
 /-- **The encoded state after a round**: the new counter `1^{j+1}` and the new words `o_1`, `o_2`
 of the state `s'`, padded, are the encoding of `s'` after `j + 1` queries. -/
@@ -797,7 +438,7 @@ private theorem padL_newState (hU : (rU w).length = κ) (hJ : sJ w = List.replic
 
 /-- The commitment state of the round input: committed iff `s.1` is `some`. -/
 private theorem sCom_of (hO1 : sO1 w = o1Word G ℓ κ s.1) : sCom w = s.1.isSome := by
-  rw [sCom, hO1]
+  rw [sCom_eq, hO1]
   rcases s with ⟨_ | ⟨t, α₁⟩, c⟩
   · rfl
   · show (!decide (pairEncode _ _ = [])) = true
@@ -808,28 +449,22 @@ private theorem sCom_of (hO1 : sO1 w = o1Word G ℓ κ s.1) : sCom w = s.1.isSom
 private theorem sO2_of (hU : (rU w).length = κ) {k : ℕ}
     (hR : sR w = o2Word G ℓ κ s.2 ++ List.replicate k false) :
     sO2 G ℓ w = o2Word G ℓ κ s.2 := by
-  rw [sO2, sChal, hR, headD_o2Word]
+  rw [sO2_eq, sChal_eq, hR, headD_o2Word]
   rcases s with ⟨o, _ | c⟩
   · rfl
   · show true :: sC G ℓ w = _
-    rw [sC, hR, hU, take_o2Word]
+    rw [sC_eq, hR, hU, take_o2Word]
     rfl
 
 /-- **The drawn exponent of the round**: the numeral `uS` is `⟦u.val⟧_{wG+1}` for the exponent
-`u = draw (block j)` (`ofFn_seedBlocks`, `draw_eq`; a drawn value is below `p`). -/
+`u = draw (block j)` (`seedBlocks_window`, `uS_of_blkS`). -/
 private theorem uS_of (hj : j < q.eval κ) (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool)
     (hU : (rU w).length = κ) (hD : zD w = G.desc κ r) (hW : rW w = List.ofFn ω)
     (hJ : sJ w = List.replicate j true) :
     uS G O w = natToList ((aWidth G).eval κ)
       (draw G κ (G.desc κ r) (seedBlocks G ℓ O b q H κ ω ⟨j, hj⟩)).val := by
-  have hp := listToNat_pS G O hD
-  have hblk : blkS G w = List.ofFn (seedBlocks G ℓ O b q H κ ω ⟨j, hj⟩) := by
-    rw [blkS, hW, hJ, hU, List.length_replicate, ofFn_seedBlocks, nn, PolyExpr.eval_mul]
-  rw [uS, hU, hp, hblk, draw_eq, ZMod.val_natCast, Nat.mod_eq_of_lt]
-  generalize hs : sampleBelowL _ _ _ _ _ = o
-  rcases o with _ | v
-  · exact (G.group κ (G.desc κ r)).order_prime.pos
-  · exact sampleBelowL_lt hs
+  refine uS_of_blkS G O hU hD _ ?_
+  rw [blkS_eq, hW, hJ, hU, List.length_replicate, seedBlocks_window, nn_eval]
 
 /-- `h = X^{(−t).val} · g^{α}` on encodings, for the identity word `⟦t⟧` and `α`'s numeral. -/
 private theorem hS_ofFn (hZ : rZ w = tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
@@ -852,7 +487,15 @@ private theorem length_ppWord (h : (G.group κ (G.desc κ r)).G) :
   ring
 
 /-- **The `Init` round**: on the encoding of `s` after `j < q` queries, the handler answers and
-updates the state as `drawStep` does with the exponent `u` drawn from block `j`. -/
+updates the state as `drawStep` does with the exponent `u` drawn from block `j`.
+
+**Proof sketch.** Read the round input's fields (`rU_input`, `rZ_input`, `fields_rS`), take the
+`Init` branch of `runF`, and split on the commitment of `s` (`sCom_of`). Before a commitment the
+committed pair is the query and the drawn exponent (`uS_of`); after one, the recorded pair
+(`kT_eq`, `kA_eq`). In both cases `h = X^{(−t).val} · g^{α_1.val}` on encodings (`hS_ofFn`), the
+answer `d ‖ g ‖ X ‖ Y ‖ h` has `ppLen` bits (`length_ppWord`), the identity reads as its
+numeral's residue (`idToZ_padFin`, `BB1.idToZ_eq`), and the new state is the encoding of the
+state of `drawStep_zero` after `j + 1` queries (`padL_newState`). -/
 private theorem runF_zero (hj : j < q.eval κ)
     (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool) (x : Fin ((qLen G ℓ 0).eval κ) → Bool)
     (s : BB1SimState G ℓ κ (G.desc κ r)) (y : Fin ((aLen G ℓ 0).eval κ) → Bool)
@@ -865,7 +508,8 @@ private theorem runF_zero (hj : j < q.eval κ)
   rw [drawStep_zero] at h
   obtain ⟨rfl, rfl⟩ := Prod.mk.inj (OracleComp.pure.inj h)
   have hU : (rU (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
-      (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (0 : Fin 3) (List.ofFn x))).length = κ := by
+      (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (0 : Fin 3)
+        (List.ofFn x))).length = κ := by
     rw [rU_input, List.length_replicate]
   have hZ := rZ_input (κ := κ) (z := tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
     (W := List.ofFn ω) (S := List.ofFn (stEnc G ℓ O b q H κ s j)) (i := 0) (X := List.ofFn x)
@@ -878,7 +522,8 @@ private theorem runF_zero (hj : j < q.eval κ)
   rcases s with ⟨_ | ⟨t, α₁⟩, c⟩
   · -- before a commitment: the query and the drawn exponent
     have hcom : sCom (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
-        (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (none, c) j)) (0 : Fin 3) (List.ofFn x)) = false :=
+        (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (none, c) j)) (0 : Fin 3)
+          (List.ofFn x)) = false :=
       sCom_of G ℓ hO1
     rw [tSel, aSel, hcom, if_neg Bool.false_ne_true, if_neg Bool.false_ne_true, rX_input,
       uS_of G ℓ O b q H hj ω hU hD rW_input hJ, hS_ofFn G O hZ]
@@ -893,7 +538,7 @@ private theorem runF_zero (hj : j < q.eval κ)
         (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), c) j)) (0 : Fin 3)
         (List.ofFn x)) =
         true := sCom_of G ℓ hO1
-    rw [tSel, aSel, hcom, if_pos rfl, if_pos rfl, kT, kA, hO1]
+    rw [tSel, aSel, hcom, if_pos rfl, if_pos rfl, kT_eq, kA_eq, hO1]
     simp only [o1Word, pairFstD_pairEncode, pairSndD_pairEncode, Option.getD_some]
     rw [hS_ofFn G O hZ]
     congr 1
@@ -905,7 +550,12 @@ private theorem runF_zero (hj : j < q.eval κ)
 /-- **The key of `KeyGen` on encodings, first component**: with the query `⟦x⟧`, the committed
 identity `⟦t⟧`, `α_1`'s numeral and the drawn `u`'s numeral, `d0S` is the encoding of
 `Y^{(−α_1/(x − t)).val} · (X^{x.val} · (X^{(−t).val} g^{α_1.val}))^{u.val}`, identities read as
-their numerals' residues. -/
+their numerals' residues.
+
+**Proof sketch.** Unfold `d0S` (this file) and rewrite each field and operation by its value on
+encodings: the tuple's fields (`zX_of`, `zY_of`), the group operations (`powGS_ofFn`,
+`mulGS_ofFn`, `hS_ofFn`) and the residue arithmetic (`listToNat_modS`, …, `listToNat_invS`),
+then `ZMod.natCast_zmod_val`, `div_eq_mul_inv` and `sub_eq_add_neg` align the exponents. -/
 private theorem d0S_of (hZ : rZ w = tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
     (xw tw : List Bool) (α₁ u : ZMod (G.group κ (G.desc κ r)).order) (hX : rX w = xw)
     (hT : kT w = tw) (hA : kA w = natToList ((aWidth G).eval κ) α₁.val)
@@ -939,7 +589,14 @@ private theorem d1S_of (hZ : rZ w = tupleStr (G.group κ (G.desc κ r)) (G.desc 
     sub_eq_add_neg]
 
 /-- **The `KeyGen` round**: on the encoding of `s` after `j < q` queries, the handler answers and
-updates the state as `drawStep` does with the exponent `u` drawn from block `j`. -/
+updates the state as `drawStep` does with the exponent `u` drawn from block `j`.
+
+**Proof sketch.** Read the fields as for `Init` and take the `KeyGen` branch of `runF`, which
+keeps `o_1` and `o_2`. Before `Init` the answer is `⊥` (`drawStep_one_none`). After it, split on
+`⟦x⟧ = ⟦t⟧`: for the committed identity the answer is `⊥` (`drawStep_one_target`); otherwise it is
+`1 ‖ d_0 ‖ d_1` with `r = u` drawn from block `j` (`drawStep_one_key`, `d0S_of`, `d1S_of`,
+`uS_of`), of `1 + 2 wG` bits, with the identities read as their numerals' residues. The state is
+re-encoded after `j + 1` queries (`padL_newState`). -/
 private theorem runF_one (hj : j < q.eval κ)
     (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool) (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
     (s : BB1SimState G ℓ κ (G.desc κ r)) (y : Fin ((aLen G ℓ 1).eval κ) → Bool)
@@ -950,7 +607,8 @@ private theorem runF_one (hj : j < q.eval κ)
         (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (1 : Fin 3) (List.ofFn x)) =
       pairEncode (List.ofFn y) (List.ofFn (stEnc G ℓ O b q H κ s' (j + 1))) := by
   have hU : (rU (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
-      (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (1 : Fin 3) (List.ofFn x))).length = κ := by
+      (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (1 : Fin 3)
+        (List.ofFn x))).length = κ := by
     rw [rU_input, List.length_replicate]
   have hZ := rZ_input (κ := κ) (z := tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
     (W := List.ofFn ω) (S := List.ofFn (stEnc G ℓ O b q H κ s j)) (i := 1) (X := List.ofFn x)
@@ -977,12 +635,12 @@ private theorem runF_one (hj : j < q.eval κ)
     have hT : kT (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
         (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), c) j)) (1 : Fin 3)
           (List.ofFn x)) = List.ofFn t := by
-      rw [kT, hO1]
+      rw [kT_eq, hO1]
       simp only [o1Word, pairFstD_pairEncode]
     have hA : kA (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
         (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), c) j)) (1 : Fin 3)
           (List.ofFn x)) = natToList ((aWidth G).eval κ) α₁.val := by
-      rw [kA, hO1]
+      rw [kA_eq, hO1]
       simp only [o1Word, pairSndD_pairEncode]
     rw [hcom, rX_input, hT]
     simp only [Option.isSome_some, Bool.true_and]
@@ -1010,18 +668,6 @@ private theorem runF_one (hj : j < q.eval κ)
       · exact padL_newState G ℓ O b q H hU hJ _ hO1 rfl
 
 
-/-- The membership test on a `wT`-bit word: `(memT ⟨d, l⟩).headD false = [l encodes some u]`. -/
-private theorem memT_headD (hD : zD w = G.desc κ r) (l : List Bool) (hl : l.length = G.wT.eval κ) :
-    (O.memT (pairEncode (zD w) l)).headD false =
-      decide (∃ u, List.ofFn ((G.group κ (G.desc κ r)).encT u) = l) := by
-  have h := memT_ofFn G O hD (padFin _ l)
-  rw [ofFn_padFin_of_length hl] at h
-  rw [h, List.headD_cons, decide_eq_decide]
-  constructor
-  · rintro ⟨u, hu⟩
-    exact ⟨u, by rw [hu, ofFn_padFin_of_length hl]⟩
-  · rintro ⟨u, hu⟩
-    exact ⟨u, by rw [← hu, padFin_ofFn]⟩
 
 /-- The ciphertext word `M · T ‖ Z ‖ Z^{α_1}` has `ctLen` bits. -/
 private theorem length_ctWord (m : (G.group κ (G.desc κ r)).GT)
@@ -1034,7 +680,17 @@ private theorem length_ctWord (m : (G.group κ (G.desc κ r)).GT)
   ring
 
 /-- **The `Challenge` round**: on the encoding of `s` after `j < q` queries, the handler answers
-and updates the state as `drawStep` does. -/
+and updates the state as `drawStep` does.
+
+**Proof sketch.** Read the fields as for `Init` and take the `Challenge` branch of `runF`. Before
+`Init` the answer is `⊥` (`drawStep_two_none`). After it, split on the recorded challenge
+(`sChal_eq`, `headD_o2Word`): a recorded `C` is repeated (`drawStep_two_repeat`, `take_o2Word`).
+Otherwise the handler's test `valid` is the test of `drawStep` that both halves of the query
+(`take`/`drop` of `msgLen` bits) encode elements of `G_T` (`memT_headD`); if it holds, the selected
+half is some `encT v`, and the answer `M_b · T ‖ Z ‖ Z^{α_1}` (`mulT_ofFn`, `powGS_ofFn`, of
+`ctLen` bits by `length_ctWord`) is recorded as `o_2` (`drawStep_two_fresh`); if not, the answer is
+`⊥` (`drawStep_two_invalid`). The state is re-encoded after `j + 1` queries
+(`padL_newState`). -/
 private theorem runF_two (hj : j < q.eval κ)
     (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool) (x : Fin ((qLen G ℓ 2).eval κ) → Bool)
     (s : BB1SimState G ℓ κ (G.desc κ r)) (y : Fin ((aLen G ℓ 2).eval κ) → Bool)
@@ -1045,7 +701,8 @@ private theorem runF_two (hj : j < q.eval κ)
       pairEncode (List.ofFn y) (List.ofFn (stEnc G ℓ O b q H κ s' (j + 1))) := by
   classical
   have hU : (rU (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
-      (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (2 : Fin 3) (List.ofFn x))).length = κ := by
+      (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (2 : Fin 3)
+        (List.ofFn x))).length = κ := by
     rw [rU_input, List.length_replicate]
   have hZ := rZ_input (κ := κ) (z := tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
     (W := List.ofFn ω) (S := List.ofFn (stEnc G ℓ O b q H κ s j)) (i := 2) (X := List.ofFn x)
@@ -1069,17 +726,19 @@ private theorem runF_two (hj : j < q.eval κ)
     congr 1
     · rw [hU, ofFn_zeroBits]
     · exact padL_newState G ℓ O b q H hU hJ _ hO1 rfl
-  · have hchal : sChal (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
-        (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), c) j)) (2 : Fin 3)
+  · have hchal : sChal (PolyHandler.input κ
+        (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T) (List.ofFn ω)
+        (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), c) j)) (2 : Fin 3)
           (List.ofFn x)) = c.isSome := by
-      rw [sChal, hR, headD_o2Word]
-    simp only [Option.isSome_some, Bool.not_true, Bool.false_eq_true, if_false, Bool.true_and, hchal]
+      rw [sChal_eq, hR, headD_o2Word]
+    simp only [Option.isSome_some, Bool.not_true, Bool.false_eq_true, if_false, Bool.true_and,
+      hchal]
     rcases c with _ | c
     · -- no challenge yet
       have hA : kA (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
           (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), none) j)) (2 : Fin 3)
             (List.ofFn x)) = natToList ((aWidth G).eval κ) α₁.val := by
-        rw [kA, hO1]
+        rw [kA_eq, hO1]
         simp only [o1Word, pairSndD_pairEncode]
       have hl0 : ((List.ofFn x).take ((bb1Scheme G ℓ).msgLen.eval κ)).length = G.wT.eval κ := by
         rw [List.length_take, hx2, ← hmsg]
@@ -1150,7 +809,7 @@ private theorem runF_two (hj : j < q.eval κ)
       simp only [Option.isSome_some, Bool.not_true, Bool.false_and, if_true, Bool.false_eq_true,
         if_false]
       congr 1
-      · rw [sC, hR, hU, take_o2Word,
+      · rw [sC_eq, hR, hU, take_o2Word,
           ofFn_padFin_of_length (by rw [List.length_ofFn, hct])]
       · exact padL_newState G ℓ O b q H hU hJ _ hO1 rfl
 
@@ -1163,10 +822,17 @@ end Round
 /-- **One query to the handler on an encoded state is one query to `drawStep`**: from the
 encoding of `s` after `j < q` queries, the handler answers like `drawStep` with the exponent of
 the tape `V j = draw (block j)`, and moves to the encoding of the new state after `j + 1`
-queries. -/
-private theorem handler_impl_stEnc (κ : ℕ) (r : G.gen.Coins κ) (g X Y Z : (G.group κ (G.desc κ r)).G)
-    (T : (G.group κ (G.desc κ r)).GT) (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool)
-    (i : Fin 3) (x : Fin ((qLen G ℓ i).eval κ) → Bool)
+queries.
+
+**Proof sketch.** The tape's `j`-th entry is the draw from block `j` (`AdaptiveCPA.extTape_of_lt`),
+and `drawStep` answers with some `(y, s')` (`exists_drawStep_eq_pure`), which is the tape run's
+step (`ETTGame.tapeImpl_apply`). The handler's call answers with the first component of `runF` on
+the round input (`PolyHandler.impl_apply`, `PolyHandler.answer_of_run_eq`), which the round
+lemmas `runF_zero`, `runF_one`, `runF_two` identify with `y` and the encoding of `s'`. -/
+private theorem handler_impl_stEnc (κ : ℕ) (r : G.gen.Coins κ)
+    (g X Y Z : (G.group κ (G.desc κ r)).G) (T : (G.group κ (G.desc κ r)).GT)
+    (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool) (i : Fin 3)
+    (x : Fin ((qLen G ℓ i).eval κ) → Bool)
     (st : BB1SimState G ℓ κ (G.desc κ r) × ℕ) (hj : st.2 < q.eval κ) :
     ∃ (y : Fin ((aLen G ℓ i).eval κ) → Bool) (st' : BB1SimState G ℓ κ (G.desc κ r) × ℕ),
       ETTGame.tapeImpl (spec := bitSpecAt (qLen G ℓ) (aLen G ℓ) κ)
