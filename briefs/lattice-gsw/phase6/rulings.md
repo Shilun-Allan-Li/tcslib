@@ -41,3 +41,17 @@ The changed rulings enlarge the phase:
 - The general BP model (P6-Q4), the NAND conversion (P6-Q9) and the asymptotic forms (P6-Q10) are new items. The revised
   plan section estimates them.
 - Gate 45 (6a) now covers the BP model, Barrington in both directions, formula arithmetic and the NAND conversion.
+
+## Rulings P6-Q14 to P6-Q19 (Seyoon, 2026-11-16, on plan section r2)
+
+| # | Ruling | |
+|---|---|---|
+| P6-Q14 | **Consecutive keys plus a layering conversion.** Each `evk_d` encrypts the bits of `s_{d−1}`, giving `N·L` ciphertexts (the textbook chain). Circuits are made **layered** by a new generic conversion under `Complexity/`, which pads uneven paths with double-NAND identity chains, with care for odd gaps. It is part of 6a and Gate 45; estimated +150–250 lines. | **changed** (was: keys by depth, evk to every lower key) |
+| P6-Q15 | **Per-distinguisher concrete form:** `WeakCircularSecure P χ D ε := distAdv (fheView … false) (fheView … true) D ≤ ε`. The asymptotic `WeakCircularSecureFamily` (NUPPT, negligible) is the headline hypothesis, faithful to BV11 Def 3.8. This corrects P6-Q10's concrete form, which, quantified over every function, holds only for `ε` near 1. | as recommended |
+| P6-Q16 | **NAND form is a predicate on `DAGCircuit`:** every gate is a `¬` gate (negated conjunction) of fan-in ≤ 2. The conversion is an instance of `DAGCircuit.rewrite`, within its budget, with depth factor 2. Bootstrapping pads fan-in 1 to `(a, a)` and fan-in 0 to `(G, G)`. Disclosed: NAND-form circuits are not `IsWellFormed`. | as recommended |
+| P6-Q17 | **Registry rows:** `BranchingProgram.evalWith` as H18; `runWith`/`runWith_rel` recorded as H19 and `DAGCircuit.rewrite` as H20. Gate 45 audits their contracts. Records only. | as recommended |
+| P6-Q18 | **Thm 2's circuit is a `TreeCircuit` formula** with fan-in 2, mirroring Bar89's three sections. It reaches `DAGCircuit` and `Language.InNC 1` through `Language.InTreeNC.inNC`; its size `l^{O(log w)}` is polynomial for fixed `w`. | as recommended |
+| P6-Q19 | **Ingest Gen09:** the leveled-bootstrapping passage of Gentry's thesis or his STOC 2009 paper (the key chain and its security hybrid), which is cited for the leveled scheme. **Needs the PDF from Seyoon.** Until then the 6b leveled-scheme statements wait; 6a is unaffected. | **changed** (was: no new ingest) |
+
+Effect: 6a gains the layering conversion (P6-Q14). 6b's leveled scheme uses the consecutive chain over layered circuits and cites
+Gen09 once ingested. The plan section is updated to r3 accordingly.
