@@ -97,8 +97,8 @@ coins (`yaoSeed`): the keys, `2n` coins per row, and a shift `λ_i` per gate.
 * `SecureComputation.yaoSeed_good_whp` (proved): the garbling is good with distinct output keys
   except with negligible probability.
 * `SecureComputation.yaoHybrid_polyTime` (proved): the protocol is efficient.
-* `SecureComputation.yaoHybrid_simulators` (proved modulo sc-garble): the simulators of
-  Theorem 163.7 in the OT-hybrid model.
+* `SecureComputation.yaoHybrid_simulators` (proved): the simulators of Theorem 163.7 in the
+  OT-hybrid model.
 * `SecureComputation.yaoHybrid_hbcSecure` (Theorem 163.7 in the OT-hybrid model, proved from the
   two previous results).
 
