@@ -1,5 +1,8 @@
 # GSW phase 6 (bootstrapping, BV14 route): design questions for Seyoon
 
+**Ruled 2026-11-16:** see [rulings.md](rulings.md). Eight are as recommended; Q3, Q4, Q9, Q10 and Q11 changed. A location
+ruling puts branching programs, Barrington and the NAND conversion in `Complexity/`.
+
 Each question is multiple choice, with the recommended option first and marked **(rec.)**. Section
 numbers refer to `plan-section.md` in this folder. The questions are numbered P6-Q1 to P6-Q13 so
 that they do not collide with the ruled phase-5 questions Q1–Q16 (`../rulings.md`), several of
