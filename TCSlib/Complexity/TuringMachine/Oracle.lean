@@ -303,16 +303,6 @@ theorem runFrom_eq_of_forall_ne_qQuery (M : OracleTM k Symbol State) (O O' : Lan
     rw [runFrom_succ_eq_step', runFrom_succ_eq_step', ← ih (fun s hs => h s (by omega))]
     exact step_eq_of_ne_qQuery O O' (h t (by omega))
 
-/-- Applying any action changes a work-tape cell only at the old head position. -/
-private lemma apply_workTapes_eq_of_ne {k' : ℕ} (a : Action k' Symbol State)
-    (cfg : Cfg k' Symbol State input) (i : Fin k') {z : ℤ}
-    (hz : z ≠ cfg.workTapePos i) :
-    (a.apply cfg).workTapes i z = cfg.workTapes i z := by
-  dsimp only [Action.apply]
-  rcases h : (a.workTapes i).1 with _ | s
-  · rfl
-  · exact Function.update_of_ne hz _ _
-
 /-- A work-tape head moves by at most one cell in a single oracle step. -/
 lemma workTapePos_step_le (M : OracleTM k Symbol State) (O : Language Symbol)
     (cfg : Cfg (k + 1) Symbol State input) (i : Fin (k + 1)) :
@@ -334,7 +324,7 @@ lemma workTapes_step_eq_of_ne (M : OracleTM k Symbol State) (O : Language Symbol
   · rfl
   · split
     · rfl
-    · exact apply_workTapes_eq_of_ne _ cfg i hz
+    · exact Action.apply_workTapes_of_ne _ cfg i hz
 
 /-- **The one-step radius bound** ([AB09, proof of Theorem 3.7]: a machine reaches at most
 one new cell per step). If work head `i` is within distance `n` of the origin and every

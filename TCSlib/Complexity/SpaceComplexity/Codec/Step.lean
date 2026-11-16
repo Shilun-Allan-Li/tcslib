@@ -191,7 +191,8 @@ leaves the region (left end under a left move, right end under a right move) iff
 successor of a window-bounded configuration is window-bounded.
 
 **Proof sketch.** Writes happen under the heads, inside the window; a head at `p` with
-`|p| ≤ s` moves to `p ± 1`, which leaves `[-s, s]` exactly at the two ends. -/
+`|p| ≤ s` moves to `p ± 1`, which leaves `[-s, s]` exactly at the two ends
+(`Turing.Cfg.InWindow.apply_iff`). -/
 theorem boundary_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s C)
     (a : Action N.k Bool N.State) (h' : Hd N) :
     (stepCell a h' (cellE N) (cellE N) (cellOf s C 0) = cellE N ∧
@@ -214,34 +215,9 @@ theorem boundary_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s
     simp only [Prod.mk.injEq, true_and]
     cases (a.workTapes i).2 <;> simp [cellOf]
     omega
-  rw [left, right]
-  constructor
-  · rintro ⟨hl, hr⟩
-    refine ⟨fun i => ?_, fun i z hz => ?_⟩
-    · have hp := hC.1 i
-      rw [abs_le] at hp
-      simp only [Action.apply, signType_cast]
-      cases hm : (a.workTapes i).2 with
-      | zero => simp; rw [abs_le]; omega
-      | pos => have := hr i hm; simp; rw [abs_le]; constructor <;> omega
-      | neg => have := hl i hm; simp; rw [abs_le]; constructor <;> omega
-    · have hp := hC.1 i
-      simp only [Action.apply]
-      cases hw : (a.workTapes i).1 with
-      | none => exact hC.2 i z hz
-      | some w =>
-        dsimp only
-        have hzp : z ≠ C.workTapePos i := by
-          rintro rfl; exact absurd hp (not_le.mpr hz)
-        rw [Function.update_of_ne hzp]; exact hC.2 i z hz
-  · intro hW
-    refine ⟨fun i hm hp => ?_, fun i hm hp => ?_⟩
-    · have := hW.1 i
-      simp only [Action.apply, signType_cast, hm, hp] at this
-      rw [abs_le] at this; omega
-    · have := hW.1 i
-      simp only [Action.apply, signType_cast, hm, hp] at this
-      rw [abs_le] at this; omega
+  rw [left, right, hC.apply_iff a]
+  exact ⟨fun ⟨hl, hr⟩ i => ⟨fun h => hl i h.2 h.1, fun h => hr i h.2 h.1⟩,
+    fun h => ⟨fun i hm hp => (h i).1 ⟨hp, hm⟩, fun i hm hp => (h i).2 ⟨hp, hm⟩⟩⟩
 
 /-- **The sliding verdict of a step**: on the cells of a window-bounded configuration `C`
 and a list `v` of `2s + 1` decoded chunks, the local rule of the action `a` holds everywhere

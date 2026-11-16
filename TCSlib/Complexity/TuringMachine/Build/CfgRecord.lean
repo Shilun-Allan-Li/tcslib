@@ -160,7 +160,7 @@ theorem Cfg.InWindow.apply_iff {k : ℕ} {Symbol State : Type} {x : List Symbol}
       subst z
       have := hc.1 i
       omega
-    rw [Action.apply_workTapes, Function.update_of_ne hne]
+    rw [Action.apply_workTapes_of_ne a c i hne]
     exact hc.2 i z hz
 
 /-! ### The record alphabet -/

@@ -180,28 +180,6 @@ private lemma b3a_embed_space {m k : ℕ} {S : Type} {x : List Bool}
         omega
     _ = _ := by simp [MultiTapeTM.spaceUsed]
 
-/-- The additive space ledger for an arbitrary live-exit seam.
-**Proof sketch.** Apply the public visited-set inclusion on each tape, bound
-the cardinality of its union by the sum, and sum over the bank. -/
-private lemma b3a_seam_space {k : ℕ} {S T : Type} [DecidableEq S] {x : List Bool}
-    (R : MultiTapeTM k Bool S) (exit : S) (Q : MultiTapeTM k Bool T) (entry : T)
-    {d e : Cfg k Bool S x} {a b : ℕ} (run : R.runFrom d a = e)
-    (live : e.state = some exit) (cut : ∀ u < a, (R.runFrom d u).state ≠ some exit) :
-    (seamCompTM R exit Q entry).spaceUsed (d.mapState Sum.inl) (a + 1 + b) ≤
-      R.spaceUsed d a + Q.spaceUsed (e.mapState fun _ => entry) b := by
-  calc
-    _ ≤ ∑ i : Fin k, (R.spaceUsedByTape d a i +
-        Q.spaceUsedByTape (e.mapState fun _ => entry) b i) := by
-      apply Finset.sum_le_sum
-      intro i _
-      calc
-        _ ≤ (R.visitedByTapeHead d a i ∪
-            Q.visitedByTapeHead (e.mapState fun _ => entry) b i).card := by
-          apply Finset.card_le_card
-          exact seamCompTM_visitedByTapeHead_ofCfg R exit Q entry run live cut i
-        _ ≤ _ := Finset.card_union_le _ _
-    _ = _ := Finset.sum_add_distrib
-
 /-- The public native counter, specialized to blank origin tapes with a cardinality ledger.
 **Proof sketch.** Instantiate R8.5c at its entry, identify the globally blank frame
 with the buffer layout, and enclose each head's visited set in the promised interval.
@@ -418,10 +396,10 @@ private theorem b3a_log_machine :
   · rw [start]
     change H.spaceUsed _ _ ≤ _
     -- Add the three boundary-inclusive ledgers before absorbing the constant slack.
-    have firstLedger := b3a_seam_space C exit W (.wr 0) (b := 4)
+    have firstLedger := seamCompTM_spaceUsed_le_add_ofCfg C exit W (.wr 0) (T₂ := 4)
       countRun rfl countFirst
-    have lastLedger := b3a_seam_space CW (Sum.inr .done) E (L.tm.q₀, true) (b := u)
-      cwRun rfl cwFirst
+    have lastLedger := seamCompTM_spaceUsed_le_add_ofCfg CW (Sum.inr .done) E (L.tm.q₀, true)
+      (T₂ := u) cwRun rfl cwFirst
     simp only [b3a_cfg_map] at firstLedger lastLedger
     have cSpace := b3a_embed_space R ic (b3a_cfg entry x []) t
     rw [b3a_embed_cfg R ic ic0] at cSpace
