@@ -2747,6 +2747,8 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   do not depend on them. See
   `campaign/status/2026-11-08-roadmap-readiness/STATUS.md` and its exact Lean
   outputs. RD-2a/b remain held; no fill or scope ruling inferred.
+  **Ruled (Seyoon, 2026-11-16, closeout D1): remove** `ConfigCodec`'s admitted declarations and the
+  `FormulaKit` modules, keeping proved results that have a consumer (`campaign/closeout/PLAN.md`).
 
 * **RD-3: re-route B6 and restate `space_universal` forward-only** (§16b item 3).
   `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]

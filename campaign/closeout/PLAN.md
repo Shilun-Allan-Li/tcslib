@@ -1,7 +1,9 @@
 # Arora–Barak chapters 3–4: closeout plan (draft for Seyoon's review, 2026-11-16)
 
-Status: **draft**. Nothing here is ruled. Each decision below is Seyoon's; the work packages
-start only after the decisions they depend on.
+Status: **rulings in progress (Seyoon, 2026-11-16).** Ruled: D1 = (a) remove; D4 = refactor
+before integration (scope to be chosen); D5 as proposed; D6 as proposed. Open: D2 (Seyoon checks
+the book against the attribution below) and D3 (Seyoon decides from the full list). The work
+packages start once the decisions they depend on are ruled.
 
 ## 1. Where the campaign stands
 
@@ -30,7 +32,9 @@ roadmap probes, rerun unchanged except for adding `Complexity.ladner`
 
 ## 2. Decisions for Seyoon
 
-**D1 · The RD-2/H6 route (41 admissions).** `ConfigCodec` and `FormulaKit` have no consumer since
+**D1 · The RD-2/H6 route (41 admissions).** **Ruled (Seyoon, 2026-11-16): (a) remove.** A consumer
+check on the campaign, `main` and the other remote branches found no use outside the route itself
+(three docstrings mention it and are updated with the removal). `ConfigCodec` and `FormulaKit` have no consumer since
 the ARM route proved TQBF (backlog §2 RD-2: "Fills held (user, 2026-10-14)"). Options:
 - **(a) Remove** `ConfigCodec`'s admitted declarations and the `FormulaKit` modules, keeping
   `exists_adjacency_codec_cnf` (Claim 4.4(2), proved, standard axioms) and anything else proved
@@ -56,18 +60,19 @@ fallback citation as recorded.
   4.15; Ex 4.2, 4.4–4.6, 4.8, 4.9, 4.12;
 - the queued additive NL closure lemma (P4.4) and the B5a linear-headline H2.
 
-**D4 · Duplication debt at closeout.** Every chapter 3–4 family in the ledger is acknowledged
+**D4 · Duplication debt at closeout.** **Ruled (Seyoon, 2026-11-16): refactor before integration;**
+the scope (which families) is the next question. Every chapter 3–4 family in the ledger is acknowledged
 (CH34-D2, D3; D4's factorings landed in #70; ARM-1/ARM-2; SG1-UH; FE-LIVE-1), with cleanup
 scheduled to the 12.2c / MIG / dedup windows. Two small follow-ups remain open under CH34-D4 (two
 colleague-owned retirements, and the padding-parse uniqueness lemma). Options: carry all
 acknowledged debt into `main` with a closeout register (recommended: it is already documented,
 and much of it is already on `main`), or run some windows before integration.
 
-**D5 · Integration shape.** As in #180: merge `main` into the campaign first (disjoint changes),
+**D5 · Integration shape.** **Ruled (Seyoon, 2026-11-16): as proposed.** As in #180: merge `main` into the campaign first (disjoint changes),
 replay, then one PR from the campaign to `main` that leaves `campaign/` and `devtools/` off
 `main`. Confirm, or name a different shape (for example, a squash).
 
-**D6 · Minor normalizations.** `Diagonalization/Ladner.lean`'s header reads `Authors: Codex` (from
+**D6 · Minor normalizations.** **Ruled (Seyoon, 2026-11-16): as proposed.** `Diagonalization/Ladner.lean`'s header reads `Authors: Codex` (from
 the gate 128 scaffold); every other file names people or "TCSlib Contributors". Proposed: change
 it to the usual form in the integration PR. Confirm the wording.
 
