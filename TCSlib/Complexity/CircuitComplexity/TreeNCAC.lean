@@ -7,6 +7,7 @@ import Mathlib.Computability.Language
 import Mathlib.Data.List.FinRange
 import Mathlib.Data.Nat.Log
 import TCSlib.Complexity.CircuitComplexity.Basic
+import TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
 
 /-!
 # The formula classes `NC` and `AC`
@@ -169,190 +170,11 @@ namespace BoolCircuit
 
 variable {n : ℕ}
 
-/-! ### Simulating an unbounded gate by a balanced binary tree -/
-
-/-- Pair adjacent children under a gate of type `b`, halving the list. -/
-private def pairUp (b : Bool) : List (TreeCircuit n) → List (TreeCircuit n)
-  | [] => []
-  | [c] => [c]
-  | c₁ :: c₂ :: cs => TreeCircuit.node b [c₁, c₂] :: pairUp b cs
-
-/-- Pairing halves the list, rounding up. -/
-private theorem length_pairUp (b : Bool) :
-    ∀ cs : List (TreeCircuit n), (pairUp b cs).length = (cs.length + 1) / 2
-  | [] => by simp [pairUp]
-  | [_] => by simp [pairUp]
-  | _ :: _ :: cs => by
-      have := length_pairUp b cs
-      simp only [pairUp, List.length_cons] at *
-      omega
-
-/-- Pairing preserves the value of the surrounding gate. -/
-private theorem eval_node_pairUp (b : Bool) (x : Fin n → Bool) :
-    ∀ cs : List (TreeCircuit n),
-      (TreeCircuit.node b (pairUp b cs)).eval x = (TreeCircuit.node b cs).eval x
-  | [] => rfl
-  | [_] => by cases b <;> simp [pairUp, TreeCircuit.eval]
-  | c₁ :: c₂ :: cs => by
-      have := eval_node_pairUp b x cs
-      cases b <;>
-        simp only [pairUp, TreeCircuit.eval, List.foldr_cons, List.foldr_nil] at * <;>
-        simp [this, Bool.and_assoc, Bool.or_assoc]
-
-/-- Pairing adds at most one to the depth. -/
-private theorem maxDepth_pairUp (b : Bool) :
-    ∀ cs : List (TreeCircuit n), TreeCircuit.maxDepth (pairUp b cs) ≤ 1 + TreeCircuit.maxDepth cs
-  | [] => by simp [pairUp, TreeCircuit.maxDepth_nil]
-  | [c] => by simp [pairUp]
-  | c₁ :: c₂ :: cs => by
-      have ih := maxDepth_pairUp b cs
-      have h1 : (TreeCircuit.node b [c₁, c₂]).depth
-          = 1 + max c₁.depth (max c₂.depth 0) := by
-        rw [TreeCircuit.depth_node, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_nil]
-      simp only [pairUp, TreeCircuit.maxDepth_cons, h1]
-      omega
-
-/-- Pairing does not increase the total size plus length. -/
-private theorem sumSize_pairUp (b : Bool) :
-    ∀ cs : List (TreeCircuit n),
-      TreeCircuit.sumSize (pairUp b cs) + (pairUp b cs).length ≤
-        TreeCircuit.sumSize cs + cs.length
-  | [] => le_refl 0
-  | [_] => le_refl _
-  | c₁ :: c₂ :: cs => by
-      have ih := sumSize_pairUp b cs
-      have h1 : (TreeCircuit.node b [c₁, c₂]).size = 1 + (c₁.size + (c₂.size + 0)) := by
-        rw [TreeCircuit.size_node, TreeCircuit.sumSize_cons, TreeCircuit.sumSize_cons, TreeCircuit.sumSize_nil]
-      simp only [pairUp, TreeCircuit.sumSize_cons, h1, List.length_cons]
-      omega
-
-/-- Pairing introduces only fan-in-2 gates. -/
-private theorem maxFaninL_pairUp (b : Bool) :
-    ∀ cs : List (TreeCircuit n), TreeCircuit.maxFaninL (pairUp b cs) ≤ max 2 (TreeCircuit.maxFaninL cs)
-  | [] => Nat.zero_le _
-  | [c] => by simp [pairUp, TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_nil]
-  | c₁ :: c₂ :: cs => by
-      have ih := maxFaninL_pairUp b cs
-      have h1 : (TreeCircuit.node b [c₁, c₂]).maxFanin
-          = max 2 (max c₁.maxFanin (max c₂.maxFanin 0)) := by
-        rw [TreeCircuit.maxFanin_node, TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_cons,
-          TreeCircuit.maxFaninL_nil]
-        norm_num
-      simp only [pairUp, TreeCircuit.maxFaninL_cons, h1]
-      omega
-
-/-- Repeatedly pair a child list, `k` rounds at most, into a single circuit. -/
-private def combineFuel (b : Bool) : ℕ → List (TreeCircuit n) → TreeCircuit n
-  | 0, cs => TreeCircuit.node b cs
-  | _ + 1, [] => TreeCircuit.node b []
-  | _ + 1, [c] => c
-  | k + 1, c₁ :: c₂ :: cs => combineFuel b k (pairUp b (c₁ :: c₂ :: cs))
-
-/-- Combine a child list into a balanced binary tree of gates of type `b`. -/
-private def combine (b : Bool) (cs : List (TreeCircuit n)) : TreeCircuit n :=
-  combineFuel b cs.length cs
-
-/-- Combining computes the same value as the unbounded gate. -/
-private theorem combineFuel_eval (b : Bool) (x : Fin n → Bool) :
-    ∀ (k : ℕ) (cs : List (TreeCircuit n)),
-      (combineFuel b k cs).eval x = (TreeCircuit.node b cs).eval x
-  | 0, _ => rfl
-  | _ + 1, [] => rfl
-  | _ + 1, [c] => by cases b <;> simp [combineFuel, TreeCircuit.eval]
-  | k + 1, c₁ :: c₂ :: cs => by
-      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).eval x = _
-      rw [combineFuel_eval b x k, eval_node_pairUp]
-
-/-- Combining produces only fan-in-2 gates, given enough rounds. -/
-private theorem combineFuel_maxFanin (b : Bool) :
-    ∀ (k : ℕ) (cs : List (TreeCircuit n)), cs.length ≤ k →
-      (combineFuel b k cs).maxFanin ≤ max 2 (TreeCircuit.maxFaninL cs)
-  | 0, [], _ => by simp [combineFuel, TreeCircuit.maxFanin_node, TreeCircuit.maxFaninL_nil]
-  | 0, _ :: _, h => by simp at h
-  | _ + 1, [], _ => by simp [combineFuel, TreeCircuit.maxFanin_node, TreeCircuit.maxFaninL_nil]
-  | _ + 1, [c], _ => by
-      show c.maxFanin ≤ _
-      rw [TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_nil]
-      omega
-  | k + 1, c₁ :: c₂ :: cs, h => by
-      have hp := length_pairUp b (c₁ :: c₂ :: cs)
-      have hlen : (pairUp b (c₁ :: c₂ :: cs)).length ≤ k := by
-        simp only [List.length_cons] at h hp ⊢; omega
-      have ih := combineFuel_maxFanin b k _ hlen
-      have h2 := maxFaninL_pairUp b (c₁ :: c₂ :: cs)
-      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).maxFanin ≤ _
-      omega
-
-/-- Combining `m` children costs `⌈log₂ m⌉` extra levels of depth.
-
-**Proof sketch.** Induction on the fuel.  With no children, or one child, the bound is
-immediate.  With at least two children, one round of pairing halves the list (to
-`⌈m / 2⌉` entries) and raises the maximum child depth by at most one, while
-`⌈log₂ m⌉ = ⌈log₂ ⌈m / 2⌉⌉ + 1` for `m ≥ 2`; the induction hypothesis on the paired list
-then gives the bound. -/
-private theorem combineFuel_depth (b : Bool) :
-    ∀ (k : ℕ) (cs : List (TreeCircuit n)), cs.length ≤ k →
-      (combineFuel b k cs).depth ≤ TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1
-  | 0, [], _ => by simp [combineFuel, TreeCircuit.depth_node, TreeCircuit.maxDepth_nil]
-  | 0, _ :: _, h => by simp at h
-  | _ + 1, [], _ => by simp [combineFuel, TreeCircuit.depth_node, TreeCircuit.maxDepth_nil]
-  | _ + 1, [c], _ => by
-      show c.depth ≤ _
-      rw [TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_nil]
-      simp
-  | k + 1, c₁ :: c₂ :: cs, h => by
-      have hp := length_pairUp b (c₁ :: c₂ :: cs)
-      have hlen : (pairUp b (c₁ :: c₂ :: cs)).length ≤ k := by
-        simp only [List.length_cons] at h hp ⊢; omega
-      have ih := combineFuel_depth b k _ hlen
-      have h2 := maxDepth_pairUp b (c₁ :: c₂ :: cs)
-      have hclog : Nat.clog 2 (c₁ :: c₂ :: cs).length
-          = Nat.clog 2 ((pairUp b (c₁ :: c₂ :: cs)).length) + 1 := by
-        rw [hp]
-        have := Nat.clog_of_two_le (b := 2) (n := (c₁ :: c₂ :: cs).length)
-          (by norm_num) (by simp)
-        simpa using this
-      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).depth ≤ _
-      omega
-
-/-- Combining `m` children costs at most `m` extra gates. -/
-private theorem combineFuel_size (b : Bool) :
-    ∀ (k : ℕ) (cs : List (TreeCircuit n)),
-      (combineFuel b k cs).size ≤ TreeCircuit.sumSize cs + cs.length + 1
-  | 0, cs => by show (TreeCircuit.node b cs).size ≤ _; rw [TreeCircuit.size_node]; omega
-  | _ + 1, [] => by simp [combineFuel, TreeCircuit.size_node, TreeCircuit.sumSize_nil]
-  | _ + 1, [c] => by show c.size ≤ _; rw [TreeCircuit.sumSize_cons, TreeCircuit.sumSize_nil]; omega
-  | k + 1, c₁ :: c₂ :: cs => by
-      have ih := combineFuel_size b k (pairUp b (c₁ :: c₂ :: cs))
-      have h2 := sumSize_pairUp b (c₁ :: c₂ :: cs)
-      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).size ≤ _
-      omega
-
-/-- `combine` computes the unbounded gate. -/
-private theorem combine_eval (b : Bool) (cs : List (TreeCircuit n)) (x : Fin n → Bool) :
-    (combine b cs).eval x = (TreeCircuit.node b cs).eval x :=
-  combineFuel_eval b x _ cs
-
-/-- `combine` has fan-in 2, unless a child already had more. -/
-private theorem combine_maxFanin (b : Bool) (cs : List (TreeCircuit n)) :
-    (combine b cs).maxFanin ≤ max 2 (TreeCircuit.maxFaninL cs) :=
-  combineFuel_maxFanin b _ cs (le_refl _)
-
-/-- `combine` adds `⌈log₂ |cs|⌉ + 1` to the children's depth. -/
-private theorem combine_depth (b : Bool) (cs : List (TreeCircuit n)) :
-    (combine b cs).depth ≤ TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1 :=
-  combineFuel_depth b _ cs (le_refl _)
-
-/-- `combine` adds `|cs| + 1` to the children's total size. -/
-private theorem combine_size (b : Bool) (cs : List (TreeCircuit n)) :
-    (combine b cs).size ≤ TreeCircuit.sumSize cs + cs.length + 1 :=
-  combineFuel_size b _ cs
-
 /-- Rebuild every gate of a circuit as a balanced binary tree of gates of the same
 type, so that the result has fan-in `2`.  [AB09, p. 118] -/
 def TreeCircuit.toBinary : TreeCircuit n → TreeCircuit n
   | .lit l => .lit l
-  | .node b cs => combine b (cs.map TreeCircuit.toBinary)
+  | .node b cs => TreeCircuit.balanced b (cs.map TreeCircuit.toBinary)
 
 /-- A gate's value is unchanged when its children are replaced by equivalent ones. -/
 private theorem eval_node_map (b : Bool) (x : Fin n → Bool) (f : TreeCircuit n → TreeCircuit n) :
@@ -396,7 +218,7 @@ theorem toBinary_eval : ∀ (c : TreeCircuit n) (x : Fin n → Bool), c.toBinary
   | hnode b cs ih =>
       intro x
       simp only [TreeCircuit.toBinary]
-      rw [combine_eval]
+      rw [TreeCircuit.balanced_eval]
       exact eval_node_map b x TreeCircuit.toBinary cs (fun c hc => ih c hc x)
 
 /-- `toBinary` produces a fan-in-2 circuit. -/
@@ -406,7 +228,7 @@ theorem toBinary_maxFanin_le : ∀ c : TreeCircuit n, c.toBinary.maxFanin ≤ 2 
   | hlit l => simp [TreeCircuit.toBinary, TreeCircuit.maxFanin]
   | hnode b cs ih =>
       simp only [TreeCircuit.toBinary]
-      have h1 := combine_maxFanin b (cs.map TreeCircuit.toBinary)
+      have h1 := TreeCircuit.maxFanin_balanced_le b (cs.map TreeCircuit.toBinary)
       have h2 := maxFaninL_map_le TreeCircuit.toBinary 2 cs ih
       omega
 
@@ -428,7 +250,7 @@ private theorem toBinary_size_succ_le : ∀ c : TreeCircuit n, c.toBinary.size +
   | hlit l => simp [TreeCircuit.toBinary, TreeCircuit.size]
   | hnode b cs ih =>
       simp only [TreeCircuit.toBinary]
-      have h1 := combine_size b (cs.map TreeCircuit.toBinary)
+      have h1 := TreeCircuit.size_balanced_le b (cs.map TreeCircuit.toBinary)
       have h2 := sumSize_map_toBinary cs ih
       rw [TreeCircuit.size_node]
       simp only [List.length_map] at h1
@@ -456,7 +278,7 @@ theorem toBinary_depth_le {w : ℕ} : ∀ c : TreeCircuit n, c.maxFanin ≤ w �
             (Nat.mul_le_mul_right _ (TreeCircuit.depth_le_maxDepth hc))
       have hC : Nat.clog 2 cs.length ≤ Nat.clog 2 w := Nat.clog_mono_right 2 hlen
       simp only [TreeCircuit.toBinary]
-      refine le_trans (combine_depth b (cs.map TreeCircuit.toBinary)) ?_
+      refine le_trans (TreeCircuit.depth_balanced_le b (cs.map TreeCircuit.toBinary)) ?_
       rw [TreeCircuit.depth_node, Nat.add_mul, Nat.one_mul, List.length_map]
       omega
 
