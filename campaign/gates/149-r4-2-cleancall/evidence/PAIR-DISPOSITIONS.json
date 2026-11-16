@@ -1,0 +1,408 @@
+{
+ "base_summary": "declarations screened: 598; copy pairs (target reproduces >= half of source): 255; reproduced text: 55,978 chars",
+ "head_summary": "declarations screened: 589; copy pairs (target reproduces >= half of source): 222; reproduced text: 43,030 chars",
+ "population_base": [
+  "TCSlib/Complexity/ClassNP/SAT.lean",
+  "TCSlib/Complexity/CookLevin/Hardness.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/ClassNP/CleanCall.lean",
+  "TCSlib/Complexity/ClassNP/SAT.lean",
+  "TCSlib/Complexity/CookLevin/Hardness.lean"
+ ],
+ "new": 3,
+ "gone": 36,
+ "net_directed_pairs": "255 -> 222",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "CleanCall.lean::exists_cleanInstall",
+   "source": "CleanCall.lean::exists_cleanEmit",
+   "chars": 219,
+   "source_chars": 254,
+   "pct": 86,
+   "class": "accepted-sibling",
+   "note": "The two public wrappers (8 tactic lines each) instantiate the shared private bridge `clean_of_bridge` with two different public bridges (exists_installCallTM, exists_emitCallTM) and two different endpoint repairs. The shared work is already factored; they replace four 600-character copies (SAT and Hardness install/emit), whose eight pairs are gone."
+  },
+  {
+   "status": "NEW",
+   "target": "CleanCall.lean::exists_cleanEmit",
+   "source": "CleanCall.lean::exists_cleanInstall",
+   "chars": 219,
+   "source_chars": 273,
+   "pct": 80,
+   "class": "accepted-sibling",
+   "note": "The two public wrappers (8 tactic lines each) instantiate the shared private bridge `clean_of_bridge` with two different public bridges (exists_installCallTM, exists_emitCallTM) and two different endpoint repairs. The shared work is already factored; they replace four 600-character copies (SAT and Hardness install/emit), whose eight pairs are gone."
+  },
+  {
+   "status": "NEW",
+   "target": "Hardness.lean::clFirst",
+   "source": "CleanCall.lean::exists_first_halt_pos",
+   "chars": 126,
+   "source_chars": 206,
+   "pct": 61,
+   "class": "moved",
+   "note": "At base clFirst paired (61%) with both first-halt copies, SAT.sat_call_first_halt and Hardness.clA5_call_first_halt; those are now one public lemma, so two base pairs become this one. The statements differ (first entry to a fixed return state versus first halt); the shared text is the six-line positivity cut. Not a copy to retire."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::sat_guard_add",
+   "source": "Hardness.lean::clA5_guard_add",
+   "chars": 525,
+   "source_chars": 525,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5_guard_add",
+   "source": "SAT.lean::sat_guard_add",
+   "chars": 525,
+   "source_chars": 525,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::sat_bridge_bound",
+   "source": "Hardness.lean::clA5_bridge_bound",
+   "chars": 452,
+   "source_chars": 452,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5_bridge_bound",
+   "source": "SAT.lean::sat_bridge_bound",
+   "chars": 452,
+   "source_chars": 452,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::SatClean",
+   "source": "Hardness.lean::CLA5Clean",
+   "chars": 257,
+   "source_chars": 257,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::CLA5Clean",
+   "source": "SAT.lean::SatClean",
+   "chars": 257,
+   "source_chars": 257,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::sat_call_first_halt",
+   "source": "Hardness.lean::clA5_call_first_halt",
+   "chars": 206,
+   "source_chars": 206,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5_call_first_halt",
+   "source": "SAT.lean::sat_call_first_halt",
+   "chars": 206,
+   "source_chars": 206,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satStopTM",
+   "source": "Hardness.lean::clA5StopTM",
+   "chars": 180,
+   "source_chars": 180,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5StopTM",
+   "source": "SAT.lean::satStopTM",
+   "chars": 180,
+   "source_chars": 180,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satStopCfg",
+   "source": "Hardness.lean::clA5StopCfg",
+   "chars": 64,
+   "source_chars": 64,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5StopCfg",
+   "source": "SAT.lean::satStopCfg",
+   "chars": 64,
+   "source_chars": 64,
+   "pct": 100,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Clean_install",
+   "source": "SAT.lean::satClean_install",
+   "chars": 614,
+   "source_chars": 623,
+   "pct": 99,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Clean_emit",
+   "source": "SAT.lean::satClean_emit",
+   "chars": 595,
+   "source_chars": 604,
+   "pct": 99,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satClean_install",
+   "source": "Hardness.lean::clA5Clean_install",
+   "chars": 614,
+   "source_chars": 626,
+   "pct": 98,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satClean_emit",
+   "source": "Hardness.lean::clA5Clean_emit",
+   "chars": 595,
+   "source_chars": 607,
+   "pct": 98,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Clean_install",
+   "source": "Hardness.lean::clA5Clean_emit",
+   "chars": 592,
+   "source_chars": 607,
+   "pct": 98,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satClean_install",
+   "source": "SAT.lean::satClean_emit",
+   "chars": 589,
+   "source_chars": 604,
+   "pct": 98,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Clean_emit",
+   "source": "Hardness.lean::clA5Clean_install",
+   "chars": 592,
+   "source_chars": 626,
+   "pct": 95,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satClean_emit",
+   "source": "SAT.lean::satClean_install",
+   "chars": 589,
+   "source_chars": 623,
+   "pct": 95,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Stop_clean",
+   "source": "SAT.lean::satStop_clean",
+   "chars": 754,
+   "source_chars": 801,
+   "pct": 94,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satStop_clean",
+   "source": "Hardness.lean::clA5Stop_clean",
+   "chars": 754,
+   "source_chars": 809,
+   "pct": 93,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Clean_stop",
+   "source": "SAT.lean::satClean_stop",
+   "chars": 336,
+   "source_chars": 365,
+   "pct": 92,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Clean_install",
+   "source": "SAT.lean::satClean_emit",
+   "chars": 552,
+   "source_chars": 604,
+   "pct": 91,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satClean_stop",
+   "source": "Hardness.lean::clA5Clean_stop",
+   "chars": 336,
+   "source_chars": 369,
+   "pct": 91,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satClean_install",
+   "source": "Hardness.lean::clA5Clean_emit",
+   "chars": 552,
+   "source_chars": 607,
+   "pct": 91,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Clean_emit",
+   "source": "SAT.lean::satClean_install",
+   "chars": 552,
+   "source_chars": 623,
+   "pct": 89,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satClean_emit",
+   "source": "Hardness.lean::clA5Clean_install",
+   "chars": 552,
+   "source_chars": 626,
+   "pct": 88,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Stop_step",
+   "source": "SAT.lean::satStop_step",
+   "chars": 175,
+   "source_chars": 205,
+   "pct": 85,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satStop_step",
+   "source": "Hardness.lean::clA5Stop_step",
+   "chars": 175,
+   "source_chars": 207,
+   "pct": 85,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clFirst",
+   "source": "SAT.lean::sat_call_first_halt",
+   "chars": 126,
+   "source_chars": 206,
+   "pct": 61,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clFirst",
+   "source": "Hardness.lean::clA5_call_first_halt",
+   "chars": 126,
+   "source_chars": 206,
+   "pct": 61,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Stop_clean",
+   "source": "Hardness.lean::clCmp_forward",
+   "chars": 77,
+   "source_chars": 141,
+   "pct": 55,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satStop_clean",
+   "source": "Hardness.lean::clCmp_forward",
+   "chars": 75,
+   "source_chars": 141,
+   "pct": 53,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "SAT.lean::satStop_clean",
+   "source": "SAT.lean::sat_run_agree",
+   "chars": 111,
+   "source_chars": 213,
+   "pct": 52,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  },
+  {
+   "status": "GONE",
+   "target": "Hardness.lean::clA5Stop_clean",
+   "source": "SAT.lean::sat_run_agree",
+   "chars": 111,
+   "source_chars": 213,
+   "pct": 52,
+   "class": "retired",
+   "note": "Retired: one side is a SAT or Hardness copy of the clean-call layer (stop adapter, clean-stop/bridge lemmas, first-halt cut, guard join, clean contract, install/emit) whose body is now a single citation of ClassNP/CleanCall, or which is deleted."
+  }
+ ]
+}

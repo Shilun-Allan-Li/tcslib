@@ -1,0 +1,1 @@
+**Gate 149 staged** (round 1) at `a12da4d3fb38a849a7c5e8b7cdfd09e2cb30dfb7`, PR #342 (draft). Replay 53/53 on `oleans-cc2ad`; seals 25/25, controls 46/46, sweeps clean, no new lint; copy screen 36 gone, 3 new (disclosed). Net +66 Lean lines (+63 accepted by Seyoon over the +50 stop rule, plus the lint-required sketch). Awaiting dispatch.

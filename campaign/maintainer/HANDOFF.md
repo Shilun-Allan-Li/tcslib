@@ -22,6 +22,7 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
+| #342 / 149 | **Staged** (round 1), draft at `a12da4d3fb38a849a7c5e8b7cdfd09e2cb30dfb7`. Closeout R4-2: new public module `ClassNP/CleanCall` (clean modules, stop adapter, first-halt and guard lemmas, install/emit); SAT's and Hardness's kind 1, 2 and 5 copies retired; net +66 lines (+63 accepted over the +50 stop rule by Seyoon, plus the lint-required sketch). Replay 53/53 on `oleans-cc2ad`; checks clean. Next: kind 3 (EmitIterEmbed citations). campaign/gates/149-r4-2-cleancall/. |
 | #337 / 148 | **Merged** (`3e497899`, 2026-11-16); round 1 CLEAR (0/0/1), G148-01 fixed at `b6bf7ec2`. Was dispatched 2026-11-16, draft at `fed2c719f935ff7f3c4875c7c680e534b4779c78`. Closeout MIG-3: `one_work_tape` through the demand-grown witness; net −444 lines. Replay 328/328; checks clean (first head's seal failure repaired). campaign/gates/148-mig3-singletape/. |
 | #336 / 147 | **Merged** (`56ab33df`, 2026-11-16); round 1 CLEAR (0/0/2; G147-01 tracked, G147-02 procedure). Was dispatched 2026-11-16, draft at `5da18960590c223ce384470e7d0d8870641f881c`. Closeout R3a: SK-1, dead privates (CC7-1, C1E-1, MIG-8), RC-4 buffer half, PL-1's `a3n_poly_linear`; net −303 lines. Replay 46/46; checks clean. campaign/gates/147-r3a-cleanup/. |
 | #335 / 146 | **Merged** (`c2ad69cc`, 2026-11-16); snapshot `oleans-cc2ad` adopted (status/2026-11-16-merge-335). Round 1 CLEAR (0/0/1; G146-01 records erratum). Iterate import approved (Seyoon, 2026-11-16). Retargeted to the campaign branch (2026-11-16) after #334 merged. Merged-tree replay PASS 28/28 on `oleans-c56ab` (output `oleans-cl146b-c56ab`, which becomes the snapshot when #335 merges unchanged). **Clear to merge.** Was dispatched 2026-11-16, draft at `2dc0fc307ce90b5ae5b56da79b7345c4367183da`, **stacked on #334**. Closeout R4 UH: the unary-clock repetition host retired onto `BinArith.polyTimeComputable_iterate`; net −297 lines. Replay 28/28 on #334's snapshot (`oleans-cl145-c68cb`); checks clean. campaign/gates/146-r4-uh-iterate/. |
@@ -66,7 +67,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 149. Use complete
+Hardness CfgFacts import stays separate. Next free gate 150. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 
