@@ -2144,7 +2144,7 @@ with the host dispatcher (kind 6, carried). Status: **retired (#343 merged 2026-
 `xr_replay_prelude`; the ten `xr_*_ne_*` bank lemmas become the file-local tactic `xr_bank_ne`.
 Net −38 Lean lines; copy screen 119 → 105 (22 gone, 8 new among the one-bank update siblings).
 Remaining: (a) declined (no saving), (d)'s optional one-bank update merge, (e)–(h) as recorded.
-Status: **retiring (gate 151; PR #344 draft)**.
+Status: **retiring (gate 151 CLEAR; PR #344 clear to merge)**.
 
 **SH-1 carried (2026-11-16).** Measured before building: re-deriving `cont_choiceVerifier_mem_P`
 through `FinTM.exists_certificateShell` needs a new halting, native-input choice core, because
