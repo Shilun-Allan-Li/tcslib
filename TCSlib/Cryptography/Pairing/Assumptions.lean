@@ -200,9 +200,9 @@ theorem bdhAssumption_iff :
 probability: a BDH solver `A` gives the Decision BDH distinguisher "run `A` on `(g, g^a, g^b, g^c)`
 and accept iff its answer is `T`".
 
-**Source:** not stated in [BB04] or [Jou00]; [BB04, §3.1] defines both problems and calls the
-decision form the stronger assumption implicitly by using it. The implication is the standard
-remark that deciding is no harder than computing.
+**Source:** not stated in [BB04] or [Jou00], which define the two problems ([BB04, §3.1]). The
+implication is independently derived here: the folklore fact that deciding is no harder than
+computing.
 
 **Proof sketch.** Given `A`, let `D(1^κ, ⟨s, T⟩)` run `A(1^κ, s)` with its own coins and accept
 iff the answer equals the encoding of `T`, where `s` is re-paired from the first five components

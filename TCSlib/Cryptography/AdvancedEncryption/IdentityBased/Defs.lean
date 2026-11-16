@@ -29,7 +29,8 @@ queries (**Phase 2**) and outputs a guess `b'` (**Guess**). There are no decrypt
 over typed parameters, keys and ciphertexts (`IBEScheme`). Identities are `idLen(κ)`-bit strings
 and messages arrive as `msgLen(κ)`-bit strings; a scheme declares which strings are messages for
 given parameters (`MsgSpace`, the paper's message space `M`). For the adversary, parameters,
-private keys and ciphertexts are written as fixed-width strings (`encPP`, `encSK`, `encCT`).
+private keys and ciphertexts are written as fixed-width strings (`encPP`, `encSK`, `encCT`),
+injective on the objects the algorithms can output (`encPP_inj`, `encSK_inj`, `encCT_inj`).
 
 **The game's encoding.** As in the public-key games (`Encryption.PublicKey.OracleSecurity`), one
 non-uniform PPT machine plays every phase against bit-string oracles (`Games.bitCodec`):
@@ -91,11 +92,17 @@ system parameters `PP κ`, master keys `MSK κ`, private keys `SK κ` and cipher
   `M` for `ID`;
 * `dec κ d_ID C`, the deterministic decryption, `none` for `⊥`;
 * the message space `MsgSpace κ params` (the paper's `M`), and fixed-width encodings of
-  parameters, private keys and ciphertexts for the adversary.
+  parameters, private keys and ciphertexts for the adversary, which lose no information on the
+  objects the algorithms can output (`encPP_inj`, `encSK_inj`, `encCT_inj`).
 
 **Deviation:** messages are strings with a parameter-dependent message space (as for El Gamal,
 `Candidates.GroupPKScheme`); the algorithms are typed probabilistic computations, without an
-efficiency requirement in the interface. -/
+efficiency requirement in the interface. The adversary sees parameters, private keys and
+ciphertexts only through their encodings; their fidelity is injectivity on reachable objects
+(possible outputs of `setup`, and keys and ciphertexts under one possible output of `setup`), not
+efficient decoding, and not injectivity on all of `PP κ`, `SK κ`, `CT κ` (an encoding may omit
+data that the parameters fix). The efficiency of the encodings is deferred with that of the
+algorithms (ruling Q5 of `PairingCryptographyPlan.md`). -/
 structure IBEScheme where
   /-- The identity length. -/
   idLen : PolyExpr
@@ -132,6 +139,24 @@ structure IBEScheme where
   encSK : (κ : ℕ) → SK κ → Fin (skLen.eval κ) → Bool
   /-- The encoding of ciphertexts. -/
   encCT : (κ : ℕ) → CT κ → Fin (ctLen.eval κ) → Bool
+  /-- **The parameter encoding is injective on reachable parameters**: two parameters output by
+  `setup κ` with equal encodings are equal. With `encSK_inj` and `encCT_inj`, the adversary's
+  wire view loses no information about the objects it is given [BB04, §2.1: the adversary
+  receives `params`, the private keys `d_i` and the challenge ciphertext `C`]. -/
+  encPP_inj : ∀ κ, (setup κ).AllOutputs fun k => (setup κ).AllOutputs fun k' =>
+    encPP κ k.1 = encPP κ k'.1 → k.1 = k'.1
+  /-- **The private-key encoding is injective on reachable keys**: for every possible output
+  `(params, master-key)` of `setup κ`, two private keys output by `keyGen` with that master key,
+  for any identities, with equal encodings are equal [BB04, §2.1, the adversary's view]. -/
+  encSK_inj : ∀ κ, (setup κ).AllOutputs fun k => ∀ id id',
+    (keyGen κ k.2 id).AllOutputs fun d => (keyGen κ k.2 id').AllOutputs fun d' =>
+      encSK κ d = encSK κ d' → d = d'
+  /-- **The ciphertext encoding is injective on reachable ciphertexts**: for every possible output
+  of `setup κ`, two ciphertexts output by `enc` with its parameters, for any identities and
+  messages, with equal encodings are equal [BB04, §2.1, the adversary's view]. -/
+  encCT_inj : ∀ κ, (setup κ).AllOutputs fun k => ∀ id id' m m',
+    (enc κ k.1 id m).AllOutputs fun c => (enc κ k.1 id' m').AllOutputs fun c' =>
+      encCT κ c = encCT κ c' → c = c'
 
 namespace IBEScheme
 

@@ -62,6 +62,8 @@ parameters, keys and ciphertexts tagged with the group's description.
 * `BB1.decrypt_encrypt` — decryption inverts encryption [BB04, §4.1, "for a valid
   ciphertext"].
 * `bb1_correct` — BB1 is perfectly correct.
+* `bb1_encPP_inj`, `bb1_encSK_inj`, `bb1_encCT_inj` — BB1's encodings are injective on
+  parameters of the advertised description length and on keys and ciphertexts in one group.
 * `bb1SimInit_none`, …, `bb1SimChal_invalid` — the simulator's handlers case by case.
 
 ## References
@@ -177,8 +179,9 @@ theorem decrypt_eq (d : Key B) (C : Ciphertext B) :
 master key `g_2^α`, the private key with exponent `r` and the ciphertext with exponent `s` of
 `M` for the same identity, `Decrypt(d_ID, C) = M`.
 
-The proof is the paper's computation: `e(F(ID)^s, g^r) = e(g, F(ID))^{sr}` (bilinearity and
-symmetry) and `e(g^s, g_2^α F(ID)^r) = e(g, g_2)^{αs} · e(g, F(ID))^{sr}`, while the mask of `A`
+**Proof sketch.** The proof is the paper's computation:
+`e(F(ID)^s, g^r) = e(g, F(ID))^{sr}` (bilinearity and symmetry) and
+`e(g^s, g_2^α F(ID)^r) = e(g, g_2)^{αs} · e(g, F(ID))^{sr}`, while the mask of `A`
 is `e(g^α, g_2)^s = e(g, g_2)^{αs}`. -/
 theorem decrypt_encrypt (g g2 h : B.G) (α r s id : ZMod B.order) (M : B.GT) :
     decrypt (⟨g2 ^ α.val * F ⟨g, g ^ α.val, g2, h⟩ id ^ r.val, g ^ r.val⟩ : Key B)
@@ -220,6 +223,104 @@ theorem decodeT_encT (u : B.GT) : decodeT B (B.encT u) = u := by
 
 end BB1
 
+/-! ### The encodings of BB1 lose no information
+
+The wire formats of `bb1Scheme` below, before the scheme is assembled: each is injective on the
+objects it is used for, which gives the fields `encPP_inj`, `encSK_inj` and `encCT_inj`. -/
+
+section Encodings
+
+variable (G : BilinearGen)
+
+/-- **Parameters with a description of the advertised length are determined by their
+encoding** (the encoding of `bb1Scheme`'s parameters): for `pp, pp'` whose descriptions have
+`descLen(κ)` bits, equal padded words `d ‖ g ‖ g_1 ‖ g_2 ‖ h` give `pp = pp'`.
+
+**Proof sketch.** Both words have exactly `descLen(κ) + 4 · wG(κ)` bits, so they are equal before
+padding (`ofFn_padFin_of_length`). Splitting off the last four blocks of `wG(κ)` bits
+(`List.append_inj'`) leaves equal descriptions; in the one group they describe, the four element
+encodings are equal, so the elements are (`List.ofFn_inj`, `encG_injective`). -/
+theorem bb1_encPP_inj {κ : ℕ} {pp pp' : Σ d : List Bool, BB1.Params (G.group κ d)}
+    (h : padFin ((PolyExpr.add G.descLen (.mul (.const 4) G.wG)).eval κ)
+        (pp.1 ++ List.ofFn ((G.group κ pp.1).encG pp.2.g) ++
+          List.ofFn ((G.group κ pp.1).encG pp.2.g1) ++
+          List.ofFn ((G.group κ pp.1).encG pp.2.g2) ++
+          List.ofFn ((G.group κ pp.1).encG pp.2.h)) =
+      padFin ((PolyExpr.add G.descLen (.mul (.const 4) G.wG)).eval κ)
+        (pp'.1 ++ List.ofFn ((G.group κ pp'.1).encG pp'.2.g) ++
+          List.ofFn ((G.group κ pp'.1).encG pp'.2.g1) ++
+          List.ofFn ((G.group κ pp'.1).encG pp'.2.g2) ++
+          List.ofFn ((G.group κ pp'.1).encG pp'.2.h)))
+    (hl : pp.1.length = G.descLen.eval κ) (hl' : pp'.1.length = G.descLen.eval κ) :
+    pp = pp' := by
+  obtain ⟨d, ⟨g, g1, g2, x⟩⟩ := pp
+  obtain ⟨d', ⟨g', g1', g2', x'⟩⟩ := pp'
+  dsimp only at hl hl' h
+  have hw := congrArg List.ofFn h
+  rw [ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn, hl,
+      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]; omega),
+    ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn, hl',
+      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]; omega)] at hw
+  obtain ⟨hw, hx⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
+  obtain ⟨hw, hg2⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
+  obtain ⟨hw, hg1⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
+  obtain ⟨rfl, hg⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
+  rw [List.ofFn_inj, (BilinearGroup.encG_injective _).eq_iff] at hx hg2 hg1 hg
+  rw [hx, hg2, hg1, hg]
+
+/-- **Two keys in one group with equal encodings are equal** (the encoding of `bb1Scheme`'s
+private keys, which omits the description).
+
+**Proof sketch.** Both words `d_0 ‖ d_1` have exactly `2 · wG(κ)` bits, so they are equal
+before padding (`ofFn_padFin_of_length`); splitting at `wG(κ)` (`List.append_inj'`) gives equal
+encodings of `d_0` and of `d_1`, hence equal elements (`List.ofFn_inj`, `encG_injective`). -/
+theorem bb1_encSK_inj {κ : ℕ} {d : List Bool} {k k' : BB1.Key (G.group κ d)}
+    (h : padFin ((PolyExpr.mul (.const 2) G.wG).eval κ)
+        (List.ofFn ((G.group κ d).encG k.d0) ++ List.ofFn ((G.group κ d).encG k.d1)) =
+      padFin ((PolyExpr.mul (.const 2) G.wG).eval κ)
+        (List.ofFn ((G.group κ d).encG k'.d0) ++ List.ofFn ((G.group κ d).encG k'.d1))) :
+    k = k' := by
+  obtain ⟨a, b⟩ := k
+  obtain ⟨a', b'⟩ := k'
+  have hw := congrArg List.ofFn h
+  rw [ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
+      PolyExpr.eval_mul, PolyExpr.eval_const]; omega),
+    ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
+      PolyExpr.eval_mul, PolyExpr.eval_const]; omega)] at hw
+  obtain ⟨ha, hb⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
+  rw [List.ofFn_inj, (G.group κ d).encG_injective.eq_iff] at ha hb
+  rw [ha, hb]
+
+/-- **Two ciphertexts in one group with equal encodings are equal** (the encoding of
+`bb1Scheme`'s ciphertexts, which omits the description).
+
+**Proof sketch.** Both words `A ‖ B ‖ C_1` have exactly `wT(κ) + 2 · wG(κ)` bits, so they are
+equal before padding (`ofFn_padFin_of_length`); splitting off the last two blocks of `wG(κ)` bits
+(`List.append_inj'`) gives equal encodings of the three components, hence equal components
+(`List.ofFn_inj`, `encT_injective`, `encG_injective`). -/
+theorem bb1_encCT_inj {κ : ℕ} {d : List Bool} {c c' : BB1.Ciphertext (G.group κ d)}
+    (h : padFin ((PolyExpr.add G.wT (.mul (.const 2) G.wG)).eval κ)
+        (List.ofFn ((G.group κ d).encT c.a) ++ List.ofFn ((G.group κ d).encG c.b) ++
+          List.ofFn ((G.group κ d).encG c.c)) =
+      padFin ((PolyExpr.add G.wT (.mul (.const 2) G.wG)).eval κ)
+        (List.ofFn ((G.group κ d).encT c'.a) ++ List.ofFn ((G.group κ d).encG c'.b) ++
+          List.ofFn ((G.group κ d).encG c'.c))) :
+    c = c' := by
+  obtain ⟨a, b, x⟩ := c
+  obtain ⟨a', b', x'⟩ := c'
+  have hw := congrArg List.ofFn h
+  rw [ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
+      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]; omega),
+    ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
+      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]; omega)] at hw
+  obtain ⟨hw, hx⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
+  obtain ⟨ha, hb⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
+  rw [List.ofFn_inj, (G.group κ d).encG_injective.eq_iff] at hx hb
+  rw [List.ofFn_inj, (G.group κ d).encT_injective.eq_iff] at ha
+  rw [ha, hb, hx]
+
+end Encodings
+
 /-- **The BB1 IBE system** over the bilinear group generator `G`, for `ℓ(κ)`-bit identities
 [BB04, §4.1 at depth 1, with the identity encoding of §4.4]: `Setup` runs the generator and BB1's
 `Setup` in the group it describes; the parameters are `⟨d, (g, g_1, g_2, h)⟩`, the master key
@@ -227,7 +328,12 @@ also carries the parameters; `KeyGen` and `Encrypt` read the identity through `i
 message through `decodeT`; `Decrypt` returns the encoding of BB1's decryption, or `⊥` if the key
 and the ciphertext name different descriptions. The message space at `⟨d, params⟩` is the set
 of encodings of `G_T` of the group `d` describes. Parameters are encoded as `d` followed by the
-four elements, keys as two elements, ciphertexts as `A, B, C_1`. -/
+four elements, keys as two elements, ciphertexts as `A, B, C_1`.
+
+The encodings are injective where the interface asks: generated descriptions have `descLen(κ)`
+bits (`BilinearGen.length_desc`, `bb1_encPP_inj`), and the keys and ciphertexts of one possible
+output of `Setup` carry its description, in whose group the element encodings are injective
+(`bb1_encSK_inj`, `bb1_encCT_inj`). -/
 noncomputable def bb1Scheme (G : BilinearGen) (ℓ : PolyExpr) : IBEScheme where
   idLen := ℓ
   msgLen := G.wT
@@ -258,6 +364,22 @@ noncomputable def bb1Scheme (G : BilinearGen) (ℓ : PolyExpr) : IBEScheme where
     List.ofFn ((G.group κ sk.1).encG sk.2.d1))
   encCT κ c := padFin _ (List.ofFn ((G.group κ c.1).encT c.2.a) ++
     List.ofFn ((G.group κ c.1).encG c.2.b) ++ List.ofFn ((G.group κ c.1).encG c.2.c))
+  encPP_inj κ := by
+    refine (OracleComp.allOutputs_true _).bind fun r _ =>
+      (OracleComp.allOutputs_true _).bind fun k _ => OracleComp.allOutputs_pure.2 ?_
+    refine (OracleComp.allOutputs_true _).bind fun r' _ =>
+      (OracleComp.allOutputs_true _).bind fun k' _ => OracleComp.allOutputs_pure.2 ?_
+    exact fun h => bb1_encPP_inj G h (G.length_desc κ r) (G.length_desc κ r')
+  encSK_inj κ := by
+    refine (OracleComp.allOutputs_true _).mono fun k _ id id' => ?_
+    refine (OracleComp.allOutputs_true _).bind fun a _ => OracleComp.allOutputs_pure.2 ?_
+    refine (OracleComp.allOutputs_true _).bind fun a' _ => OracleComp.allOutputs_pure.2 ?_
+    exact fun h => congrArg (Sigma.mk k.2.1) (bb1_encSK_inj G h)
+  encCT_inj κ := by
+    refine (OracleComp.allOutputs_true _).mono fun k _ id id' m m' => ?_
+    refine (OracleComp.allOutputs_true _).bind fun a _ => OracleComp.allOutputs_pure.2 ?_
+    refine (OracleComp.allOutputs_true _).bind fun a' _ => OracleComp.allOutputs_pure.2 ?_
+    exact fun h => congrArg (Sigma.mk k.1.1) (bb1_encCT_inj G h)
 
 attribute [simps (config := { isSimp := false }) idLen msgLen ppLen skLen ctLen PP MSK SK CT
   setup keyGen enc dec MsgSpace encPP encSK encCT] bb1Scheme
@@ -265,7 +387,7 @@ attribute [simps (config := { isSimp := false }) idLen msgLen ppLen skLen ctLen 
 /-- **BB1 is perfectly correct** [BB04, §4.1, "Indeed, for a valid ciphertext …"]: every
 honest run with a message of the message space decrypts to that message.
 
-Every possible outcome of an honest run has parameters
+**Proof sketch.** Every possible outcome of an honest run has parameters
 `⟨d, (g, g^α, g_2, h)⟩`, key `⟨d, (g_2^α F(ID)^r, g^r)⟩` and ciphertext
 `⟨d, (e(g^α, g_2)^s · M', g^s, F(ID)^s)⟩` with the same description `d` and
 `M' = decodeT M`, so `Decrypt` takes its first branch and returns the encoding of `M'` by

@@ -25,7 +25,8 @@ groups stay abstract. No elliptic curve or concrete pairing (Weil, Tate) is form
 groups `G` and `GT` (the paper's `G_1`) of the same prime order, a distinguished generator `gen`,
 the pairing as a bimultiplicative map `G →* G →* GT`, and injective fixed-width encodings of the
 elements of both groups as `wG`- and `wT`-bit strings. A bimultiplicative map is the
-multiplicative form of [BB04, §2.2, item 1]: `bilinear_pow` derives `e(u^a, v^b) = e(u, v)^{ab}`.
+multiplicative form of [BB04, §2.2, item 1]: `bilinear_pow` reads `e(u^a, v^b) = e(u, v)^{ab}`
+for natural exponents; for integer exponents the law follows from the homomorphism fields.
 
 **The generator.** The asymptotic layer quantifies over non-uniform PPT adversaries
 (`Complexity.NUPPT`) and draws the group from a *bilinear group generator*, as the
@@ -81,8 +82,10 @@ of `G` (`g ≠ 1`; `G` has prime order), a pairing `e : G × G → G_T` that is 
 argument, and non-degenerate, `e(g, g) ≠ 1` [BB04, §2.2, items 1–2]. Elements are written as
 `wG`-bit (resp. `wT`-bit) strings by injective encodings, the representation handed to machines.
 
-**Deviation:** bilinearity is stated as a bimultiplicative map `G →* G →* G_T`; the paper's
-`e(u^a, v^b) = e(u, v)^{ab}` for `a, b ∈ ℤ` is derived (`bilinear_pow`). The fixed generator `gen`
+**Deviation:** bilinearity is stated as a bimultiplicative map `G →* G →* G_T`. The paper's
+`e(u^a, v^b) = e(u, v)^{ab}` for `a, b ∈ ℤ` follows from these homomorphism fields (`map_zpow` in
+each argument); the published reader `bilinear_pow` states it for natural exponents `a, b ∈ ℕ`,
+the form the schemes use (exponents `x.val` for `x ∈ Z_p`). The fixed generator `gen`
 witnesses that `G^* = G ∖ {1}` is not empty; the schemes and assumptions sample their generator
 uniformly from `G^*`, as [BB04, §3.1 and §4.1] do. -/
 structure BilinearGroup (wG wT : ℕ) where
@@ -143,7 +146,9 @@ instance neZeroOrder : NeZero B.order := ⟨B.order_prime.ne_zero⟩
 /-- `G^* = G ∖ {1}` is not empty: it contains the generator `gen`. -/
 instance nonempty_ne_one : Nonempty {x : B.G // x ≠ 1} := ⟨⟨B.gen, B.gen_ne_one⟩⟩
 
-/-- **Bilinearity** [BB04, §2.2, item 1]: `e(u^a, v^b) = e(u, v)^{ab}` for natural exponents. -/
+/-- **Bilinearity** [BB04, §2.2, item 1]: `e(u^a, v^b) = e(u, v)^{ab}` for natural exponents
+`a, b ∈ ℕ`. The paper states the law for `a, b ∈ ℤ`; that signed-exponent form follows from the
+homomorphism fields of `pair` (`map_zpow`), and this reader is the natural-exponent case. -/
 theorem bilinear_pow (u v : B.G) (a b : ℕ) : B.pair (u ^ a) (v ^ b) = B.pair u v ^ (a * b) := by
   rw [map_pow (B.pair (u ^ a)) v b, map_pow B.pair u a, MonoidHom.pow_apply, ← pow_mul,
     mul_comm]

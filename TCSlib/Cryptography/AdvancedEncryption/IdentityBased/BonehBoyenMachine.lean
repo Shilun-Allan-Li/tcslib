@@ -53,22 +53,29 @@ open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
 
 variable (G : BilinearGen) (ℓ : PolyExpr)
 
-/-- **Step 3: the simulation is a Decision BDH distinguisher**: with efficient group operations
-`O` and the arithmetic bundle `H`, for every adversary `A` and polynomial budget `q` there are
-non-uniform PPT distinguishers `D_b` and a negligible `σ` with
-`|Pr[bb1SimGame … b real = 1] − Pr[dbdhGame (D_b) real = 1]| ≤ σ(κ)` for both tuple
-distributions.
+/-- **Step 3: the simulation is a Decision BDH distinguisher** [BB04, §4.2, the algorithm `B`
+in the proof of Theorem 4.1, whose cost is the theorem's `Θ(τ ℓ q_S)` with the paper's hierarchy
+depth `ℓ = 1`]: with efficient group operations `O` and the arithmetic bundle `H`, for every
+adversary `A` and polynomial budget `q` there are non-uniform PPT distinguishers `D_b` and a
+negligible `σ` with `|Pr[bb1SimGame … b real = 1] − Pr[dbdhGame (D_b) real = 1]| ≤ σ(κ)` for
+both tuple distributions.
 
 **Proof sketch.** `D_b` parses `⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩` and runs `A` with the handler of
-`bb1SimImpl`: group operations by `O.mulG`, `O.powG`, `O.mulT`, membership by `O.memT`, exponent
-arithmetic modulo `p = O.orderStr d` with `H` (negation, difference, inverse via `xgcd`,
-product), and `α_1` and every `r` read from its own coin blocks by the rejection sampler
-`Candidates.sampleBelowL` with `wG(κ)`-bit trials (`p ≤ 2^{wG}`, as `encG` is injective). The
-handler is polynomial-time with polynomial state, so the handler theorem
-`Games.exists_handlerMachine` (T1) makes the run a machine whose output is exactly `A`'s guess
-in a game equal to `bb1SimGame` with sampled instead of ideal exponents. The at most `q(κ) + 1`
-sampled exponents are each within `2^{−κ}` of uniform (`statClose_sampleBelowL`), so
-`σ(κ) = (q(κ) + 1) · 2^{−κ}` works (hybrid over the samples). -/
+`bb1SimImpl`: group operations by `O.mulG`, `O.powG`, `O.mulT`, membership by `O.memT`, and
+exponent arithmetic modulo `p = O.orderStr d` with `H`: products by `mulStr` and `divModStr`;
+negation and differences of residues `x, y < p` as `(p − x) mod p` and `(x + (p − y)) mod p`
+with `H`'s natural-number functions `addStr`, `subStr`, `divModStr` (truncated subtraction
+alone is not modular subtraction); and the field inverse by `xgcdStr`, which returns the
+inverse of zero as zero, as `Z_p` does. Let `n = κ + wG(κ) + 1`. Each of `α_1` and the `r`s
+is drawn as `(Candidates.sampleBelowL p (Nat.size p) n n w).getD 0` on its own block `w` of
+`n²` fresh coin bits. Since `encG` is injective, `p ≤ 2^{wG(κ)} < 2^n`, and
+`0 < p`, so `statClose_sampleBelowL` puts each draw within `(1/2)^n ≤ 2^{−κ}` of uniform on
+`Z_p`. The handler is polynomial-time with polynomial state, so the handler theorem
+`Games.exists_handlerMachine` (T1), applied to the adversary obtained from `A` by
+`Games.exists_toCompOn_of_toComp` (its `toCompOn` interface), makes the run a machine whose
+output is exactly `A`'s guess in a game equal to `bb1SimGame` with sampled instead of ideal
+exponents. A run makes at most `q(κ) + 1` draws, from independent blocks, so the hybrid over the
+draws gives `σ(κ) = (q(κ) + 1) · 2^{−κ}`. -/
 theorem exists_bb1_distinguisher (H : Candidates.ArithmeticFP) (O : G.Ops) (A : NUPPT)
     (q : PolyExpr) :
     ∃ D : Bool → NUPPT, ∃ σ : ℕ → ℝ, Negligible σ ∧ ∀ (b real : Bool) (κ : ℕ),
