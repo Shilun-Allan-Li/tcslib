@@ -334,46 +334,6 @@ private theorem ss_cleanCanonizer_first_halt (F : FinTM Bool) (f : List Bool →
   · rw [hsame]
     exact (hclean α).2
 
-/-- Capturing a fresh run starts with blank host tapes and zero work heads.
-
-**Proof sketch.** Partition host tapes into selected tapes, the capture tape, and the frame.
-The selected tapes inherit the blank initial configuration; the empty captured output makes
-its tape blank; the frame is blank by construction. Compare all configuration fields. -/
-private theorem ss_captureInitial {m n : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
-    (ι : Fin m ↪ Fin n) (cap : Fin n) (hcap : cap ∉ Set.range ι) (x : List Bool) :
-    (embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
-      (M.initCfg x)).mapState Sum.inl =
-      Cfg.init (Sum.inl M.q₀ : S ⊕ Unit) x := by
-  classical
-  have hfields (j : Fin n) :
-      (embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
-        (M.initCfg x)).workTapes j = (fun _ => none) ∧
-      (embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
-        (M.initCfg x)).workTapePos j = 0 := by
-    by_cases hj : j ∈ Set.range ι
-    · obtain ⟨i, rfl⟩ := hj
-      rw [embedSilentCfg_selected_tape, embedSilentCfg_selected_pos,
-        MultiTapeTM.initCfg_eq]
-      exact ⟨funext fun z => Cfg.init_workTapes _ _ i z, Cfg.init_workTapePos _ _ i⟩
-    · by_cases he : j = cap
-      · subst j
-        have hh := embedSilentCfg_cap ι cap hcap (fun _ _ => none) (fun _ => 0)
-          [] [] (M.initCfg x)
-        simpa only [MultiTapeTM.initCfg_eq, Cfg.init_output, List.nil_append,
-          FinTM.bufferTape_nil, List.length_nil, Nat.cast_zero] using hh
-      · exact embedSilentCfg_unselected ι cap (fun _ _ => none) (fun _ => 0)
-          [] [] (M.initCfg x) j hj he
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, embedSilentCfg_state, MultiTapeTM.initCfg_eq,
-      Cfg.init_state, Option.map_some, Cfg.init_state]
-  · rw [Cfg.mapState_inputPos, embedSilentCfg_inputPos, MultiTapeTM.initCfg_eq,
-      Cfg.init_inputPos, Cfg.init_inputPos]
-  · funext j z
-    rw [Cfg.mapState_workTapes, Cfg.init_workTapes, (hfields j).1]
-  · funext j
-    rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, (hfields j).2]
-  · rw [Cfg.mapState_output, embedSilentCfg_output, Cfg.init_output]
-
 /-- The returning capture host, restarted in the source's initial state. -/
 private def ss_captureTM (F : FinTM Bool) {n : ℕ} (ι : Fin F.k ↪ Fin n) (cap : Fin n) :
     MultiTapeTM n Bool (F.State ⊕ Unit) :=
@@ -402,7 +362,7 @@ private theorem ss_capture_run (F : FinTM Bool) {n : ℕ} (ι : Fin F.k ↪ Fin 
     [] [] (F.tm.initCfg x) t hinit hlive hhalt
   simp only [MultiTapeTM.initCfg_eq] at hr
   simp only [ss_captureTM, MultiTapeTM.initCfg_with_q₀, MultiTapeTM.runFrom_with_q₀,
-    ← ss_captureInitial F.tm ι cap hcap x]
+    ← embedSilentCfg_initCfg F.tm ι cap hcap x]
   refine ⟨hr.2.1, hr.2.2, ?_⟩
   intro u hu
   rcases lt_or_eq_of_le hu with hlt | rfl
