@@ -1,7 +1,7 @@
 # Dispatch · gsw-6a-statements, issued-6a-r1 (Claude, lead plus up to 2 sub-agents)
 
-The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/7ad533f9a9166f5661f13ff7dfb6904e8a0a67c3/outbox/fills/gsw-6a-statements)
-is staged on the exchange at `7ad533f9a9166f5661f13ff7dfb6904e8a0a67c3` (local branch `stage/gsw-6a-exchange`,
+The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/7031cef6ea880180f265fd5878d26a37a25b868f/outbox/fills/gsw-6a-statements)
+is staged on the exchange at `7031cef6ea880180f265fd5878d26a37a25b868f` (local branch `stage/gsw-6a-exchange`,
 parent `78d89c5cda437ae1bea629328eb3116e2f36d026`; **not yet pushed**, so the link resolves only after the push).
 Brief SHA-256 `215978b24fb73d448922da88e9f80bd9b914372340a670de89eaa57fa23a3adb`. The worker is Claude under
 Seyoon's ruling of 2026-11-16 (the 6a statements go to an external Claude session; lead plus up to 2 sub-agents).
@@ -10,14 +10,14 @@ Seyoon dispatches.
 **Base.** `f6f295a6502b72bbf498bb8c64b63f847e910866`, the records tip at issue; its Lean is the merged #327/#324
 state.
 
-**Records pin.** `<RECORDS-PIN>`: the records commit that carries plan section r3 and this folder. The maintainer
+**Records pin.** `c5eb7cf4b9f13eb2d4340493b7537b9de092d457`: the records commit that carries plan section r3 and this folder. The maintainer
 writes its full hash here, and in the prompt below, after committing.
 
 **Before dispatch** (maintainer):
 1. Commit `briefs/lattice-gsw/phase6/plan-section.md` (r3, SHA-256
    `06824b3db875e7388771b6f7a5e78d62bf7d77fa35571fc3a9deeebc329214fd`, equal to the pack's
    `inputs/plan-section-r3.md`) and `briefs/lattice-gsw/phase6/issued-6a-r1/`; put that commit's full hash for
-   `<RECORDS-PIN>` in the **Records pin** line and in the prompt.
+   `c5eb7cf4b9f13eb2d4340493b7537b9de092d457` in the **Records pin** line and in the prompt.
 2. Push the exchange commit. If it is replayed onto a newer exchange tip (the tip was
    `4a64f6ed23d7b2a80e307f9b280fc01c959f33b3` at staging, an Arora–Barak gate-149 commit; the replay merges
    cleanly), put the pushed hash in the pack link, the staging line and the prompt.
@@ -31,12 +31,12 @@ https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0 and pinned
 Mathlib). You may use up to 2 sub-agents.
 
 1. Read exchange/pass-shelat-ch5-8 at
-   7ad533f9a9166f5661f13ff7dfb6904e8a0a67c3. Read README.md and
+   7031cef6ea880180f265fd5878d26a37a25b868f. Read README.md and
    outbox/fills/gsw-6a-statements/README.md, brief.md,
    fill-environment-addendum.md and inputs/ (plan section r3, the
    rulings, the Bar89 ingest). Verify the pack with SHA256SUMS and
    inputs/SHA256SUMS (shasum -a 256 -c). You are the lead the brief
-   describes. The records of this issue are at commit <RECORDS-PIN> of
+   describes. The records of this issue are at commit c5eb7cf4b9f13eb2d4340493b7537b9de092d457 of
    cryptography/pass-shelat-ch2-4 (briefs/lattice-gsw/phase6/
    plan-section.md and issued-6a-r1/, equal to the pack's copies).
 2. In a separate clone, fetch cryptography/pass-shelat-ch2-4 and start at
