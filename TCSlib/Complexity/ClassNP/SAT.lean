@@ -10,6 +10,7 @@ import TCSlib.Complexity.ClassNP.Transducer
 import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
 import TCSlib.Complexity.TuringMachine.Build.WordTests
 import TCSlib.Complexity.ClassNP.CleanCall
+import TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.List.MinMax
 
@@ -3648,69 +3649,42 @@ private lemma satAppend_clean (x w : List Bool) :
   simp only [List.length_append] at hut
   omega
 
-/-- Pad a callable module into a shared bank, keeping unused tapes stationary. -/
-private def satPadAction {k K : ℕ} {S : Type} (a : Action k Bool S) : Action K Bool S :=
-  ⟨a.inputTape, fun i => if h : i.val < k then a.workTapes ⟨i.val, h⟩ else (none, 0),
-    a.output, a.state⟩
-
-/-- All modules share tape zero; a positive source bank is padded on the right. -/
+/-- All modules share tape zero; a positive source bank is padded on the right by the public
+tape-padding layer (`Turing.padAction`). -/
 private def satPadTM (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K) : FinTM Bool where
   k := K
   State := M.State
   tm := { q₀ := M.tm.q₀
-          tr := fun q inp work => satPadAction (M.tm.tr q inp
-            (fun i => work ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩)) }
+          tr := fun q inp work => padAction hk (Option.map id)
+            (M.tm.tr q inp (fun i => work (Fin.castLE hk i))) }
 
-/-- Configuration embedding for the shared bank; the padding is genuinely blank. -/
-private def satPadCfg {k K : ℕ} {S : Type} {x : List Bool}
-    (c : Cfg k Bool S x) : Cfg K Bool S x :=
-  ⟨c.state, c.inputPos,
-    fun i => if h : i.val < k then c.workTapes ⟨i.val, h⟩ else fun _ => none,
-    fun i => if h : i.val < k then c.workTapePos ⟨i.val, h⟩ else 0, c.output⟩
-
-/-- Padding commutes with a transition, including writes at arbitrary cells.
-**Proof sketch.** Split each work index by membership in the source bank;
-the inactive branch neither writes nor moves. -/
-private lemma satPad_apply {k K : ℕ} {S : Type} {x : List Bool}
-    (a : Action k Bool S) (c : Cfg k Bool S x) :
-    (satPadAction (K := K) a).apply (satPadCfg c) = satPadCfg (a.apply c) := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · funext i z
-    by_cases h : i.val < k <;> simp [satPadAction, satPadCfg, Action.apply, h]
-  · funext i
-    by_cases h : i.val < k <;> simp [satPadAction, satPadCfg, Action.apply, h]
-
-/-- The padded source observes exactly its original work symbols. -/
+/-- The padded source runs as the embedded source.
+**Proof sketch.** Step by step: a live configuration steps by `Turing.embed_step` (the padded
+table is the source table), and a halted one stays put on both sides. -/
 private lemma satPad_run (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K)
     {x : List Bool} (c : Cfg M.k Bool M.State x) (t : ℕ) :
-    (satPadTM M K hk).tm.runFrom (satPadCfg c) t = satPadCfg (M.tm.runFrom c t) := by
+    (satPadTM M K hk).tm.runFrom (embedCfg hk id c) t = embedCfg hk id (M.tm.runFrom c t) := by
   apply MultiTapeTM.runFrom_comm_of_step
   intro c
   cases hs : c.state with
-  | none => simp [MultiTapeTM.step, satPadCfg, hs]
+  | none =>
+    rw [MultiTapeTM.step_of_halt hs, MultiTapeTM.step_of_halt
+      (by rw [embedCfg_state, hs, Option.map_none])]
   | some q =>
-    have hw : (fun i : Fin M.k => (satPadCfg (K := K) c).workTapeSymbols
-        ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩) = c.workTapeSymbols := by
-      funext i; simp [satPadCfg, Cfg.workTapeSymbols, i.isLt]
-    have hstate : (satPadCfg (K := K) c).state = some q := hs
-    simp only [MultiTapeTM.step, hstate, hs]
-    change (satPadAction (M.tm.tr q c.inputSymbol _)).apply _ = _
-    rw [hw]
-    exact satPad_apply _ _
+    have hc : {embedCfg hk id c with state := some q} = embedCfg hk id c :=
+      Cfg.ext (by rw [embedCfg_state, hs, Option.map_some, id_eq]) rfl rfl rfl rfl
+    rw [← hc]
+    exact embed_step hk M.tm (satPadTM M K hk).tm id c q hs q (fun _ _ => rfl)
 
 /-- Positive tape count makes the padded seam the same canonical state word. -/
-private lemma satPad_seam {k K : ℕ} {S : Type} {x : List Bool}
-    (hk : 0 < k) (q : S) (w out : List Bool) :
-    satPadCfg (K := K) ({Cfg.ofWords (input := x) q (stateWord k w) with output := out}) =
-      {Cfg.ofWords (input := x) q (stateWord K w) with output := out} := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · funext i z
-    by_cases hi : i.val < k
-    · simp [satPadCfg, Cfg.ofWords, stateWord, hi]
-    · have hn : i.val ≠ 0 := by omega
-      simp [satPadCfg, Cfg.ofWords, stateWord, hi, hn, FinTM.bufferTape]
-  · funext i
-    by_cases hi : i.val < k <;> simp [satPadCfg, Cfg.ofWords, hi]
+private lemma satPad_words {k K : ℕ} (hp : 0 < k) (w : List Bool) :
+    (fun i : Fin K => if h : (i : ℕ) < k then stateWord k w ⟨i, h⟩ else []) = stateWord K w := by
+  funext i
+  rw [stateWord_eq K]
+  by_cases hi : (i : ℕ) < k
+  · rw [dif_pos hi, stateWord_eq]
+  · have hn : (i : ℕ) ≠ 0 := by omega
+    rw [dif_neg hi, if_neg hn]
 
 /-- Six finite modules form the streaming body: startup append and install,
 then the recurring pack, append, emit, and install calls. -/
@@ -3747,19 +3721,32 @@ private def satHostTM (M : Fin 6 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k 
 
 /-- Forwarding a padded clean configuration produces the host's canonical
 seam with precisely the supplied output prefix. Positive tape count is used
-only to identify the real tape-zero word. -/
-private lemma satHost_seam (M : Fin 6 → FinTM Bool) (K : ℕ) (i : Fin 6)
+only to identify the real tape-zero word.
+**Proof sketch.** Field by field, through the published readers of `emitCfg`, `embedCfg` and
+`Cfg.ofWords`; the padded word assignment is `stateWord K w` (`satPad_words`). -/
+private lemma satHost_seam (M : Fin 6 → FinTM Bool) (K : ℕ) (i : Fin 6) (hk : (M i).k ≤ K)
     (hp : 0 < (M i).k) (x w pre out : List Bool) (q : (M i).State)
     (state : Option (M i).State) :
     emitCfg (fun s => (Sum.inr ⟨i, s⟩ : SatHostState M)) (satHostRet M i) pre
-      (satPadCfg (K := K) {Cfg.ofWords (input := x) q (stateWord (M i).k w)
+      (embedCfg hk id {Cfg.ofWords (input := x) q (stateWord (M i).k w)
         with state := state, output := out}) =
       {Cfg.ofWords (((state.map (fun s => (Sum.inr ⟨i, s⟩ : SatHostState M))).getD (satHostRet M i)))
         (stateWord K w) with output := pre ++ out} := by
-  have h := satPad_seam (K := K) (x := x) hp q w out
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · exact congrArg (fun c : Cfg K Bool (M i).State x => c.workTapes) h
-  · exact congrArg (fun c : Cfg K Bool (M i).State x => c.workTapePos) h
+  have hw := satPad_words (K := K) hp w
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_ <;> dsimp only
+  · rw [emitCfg_state, embedCfg_state, Option.map_id, id_eq, Cfg.ofWords_state]
+  · rw [emitCfg_inputPos, embedCfg_inputPos, Cfg.ofWords_inputPos, Cfg.ofWords_inputPos]
+  · funext j z
+    rw [emitCfg_workTapes, embedCfg_workTapes, ← hw]
+    by_cases hj : (j : ℕ) < (M i).k
+    · simp only [dif_pos hj, Cfg.ofWords_workTapes]
+    · simp only [dif_neg hj, Cfg.ofWords_workTapes, FinTM.bufferTape_nil]
+  · funext j
+    rw [emitCfg_workTapePos, embedCfg_workTapePos]
+    by_cases hj : (j : ℕ) < (M i).k
+    · simp only [dif_pos hj, Cfg.ofWords_workTapePos]
+    · simp only [dif_neg hj, Cfg.ofWords_workTapePos]
+  · rw [emitCfg_output, embedCfg_output_eq]
 
 /-- Run one clean module inside the body, forwarding exactly its output.
 **Proof sketch.** Padding preserves the source run. The audited `emit_run`
@@ -3781,20 +3768,22 @@ private lemma satHost_call (M : Fin 6 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M 
       {Cfg.ofWords (satHostRet M i) (stateWord K result) with output := pre ++ out} := by
   let c := Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)
   let emb : (M i).State → SatHostState M := fun s => .inr ⟨i, s⟩
-  have hinit : emitCfg emb (satHostRet M i) pre (satPadCfg (K := K) c) =
+  have hinit : emitCfg emb (satHostRet M i) pre (embedCfg (hk i) id c) =
       {Cfg.ofWords (input := x) (satHostEntry M i) (stateWord K arg) with output := pre} := by
     simpa [emb, c, satHostEntry] using
-      satHost_seam M K i hp x arg pre [] (M i).tm.q₀ (some (M i).tm.q₀)
+      satHost_seam M K i (hk i) hp x arg pre [] (M i).tm.q₀ (some (M i).tm.q₀)
   have hrun (v : ℕ) (hv : v ≤ t) :
       (satHostTM M K hk).tm.runFrom
         {Cfg.ofWords (input := x) (satHostEntry M i) (stateWord K arg) with output := pre} v =
-        emitCfg emb (satHostRet M i) pre (satPadCfg ((M i).tm.runFrom c v)) := by
+        emitCfg emb (satHostRet M i) pre (embedCfg (hk i) id ((M i).tm.runFrom c v)) := by
     rw [← hinit]
     rw [emit_run (satPadTM (M i) K (hk i)).tm (satHostTM M K hk).tm emb (satHostRet M i)
       (by intros; rfl) pre _ v (by
-        intro u hu
-        rw [satPad_run]
-        exact hg u (by omega))]
+        intro u hu hh
+        rw [satPad_run] at hh
+        have hn : (embedCfg (hk i) id ((M i).tm.runFrom c u)).state = none := hh
+        rw [embedCfg_state, Option.map_eq_none_iff] at hn
+        exact hg u (by omega) hn)]
     rw [satPad_run]
   constructor
   · intro v hv
@@ -3802,9 +3791,11 @@ private lemma satHost_call (M : Fin 6 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M 
     have hl := hg v hv
     cases hs : ((M i).tm.runFrom c v).state with
     | none => exact False.elim (hl hs)
-    | some s => simp [emitCfg, satPadCfg, hs, emb]
+    | some s =>
+      rw [emitCfg_state, embedCfg_state, hs, Option.map_some, Option.map_some, Option.getD_some]
+      exact fun h => Sum.inr_ne_inl (Option.some_injective _ h)
   · rw [hrun t (Nat.le_refl _), show (M i).tm.runFrom c t = _ from he]
-    exact satHost_seam M K i hp x result pre out q none
+    exact satHost_seam M K i (hk i) hp x result pre out q none
 
 /-- Joining two guarded segments preserves the first-return guard when the
 intermediate seam is also outside the anchor (`Turing.MultiTapeTM.avoid_add`). -/
