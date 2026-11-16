@@ -1,0 +1,35 @@
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean b/TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean
+index 9b732c32b..9f121d121 100644
+--- a/TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Composability.SequentialZK.EndpointSampling
+ import TCSlib.Cryptography.Composability.SequentialZK.ExecutionBounds
++import TCSlib.Cryptography.Composability.SequentialZK.ProofTransfers
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -48,7 +49,8 @@ open Complexity
+ requested independent phase blocks. The real-prefix endpoint reader identifies the fold
+ with the repeated execution on that tape. Its boundary reader gives exactly `j*k` received
+ messages. Each repeated-prover reply is either an original bounded message or an empty
+-filler, by the specification's public reply equation. The public execution-message bound
++filler, by the specification's public reply equation. This is the
++public theorem `next_length_le`. The public execution-message bound
+ therefore controls every received message. Finally reuse the execution encoding bound,
+ which already invokes the generic public encoded-word length theorem. -/
+ theorem realPrefix_bounds {π ρ : Protocol} {x : List Bool} {q p : ℕ}
+@@ -80,10 +82,8 @@ theorem realPrefix_bounds {π ρ : Protocol} {x : List Bool} {q p : ℕ}
+     rw [hend]
+     exact (d.boundary V y z tape rV j).2
+   -- Empty fillers satisfy the same cap as the original real replies.
+-  have hsource (hist : List (List Bool)) : (ρ.P.next x y tape hist).length ≤ B := by
+-    rw [d.next y tape hist]
+-    dsimp only
+-    split_ifs <;> first | exact hbound _ _ | exact Nat.zero_le B
++  have hsource (hist : List (List Bool)) : (ρ.P.next x y tape hist).length ≤ B :=
++    d.next_length_le y B hbound tape hist
+   have hmessages : ∀ m ∈ realPrefix π V x y z rV p j coins, m.length ≤ B := by
+     rw [hend]
+     exact exec_snd_bounded ρ.P V π.verifierFirst x y z tape rV B

@@ -172,7 +172,7 @@ Every definition has its reader beside it:
 The alternative is for Regev to publish type-level readers (Q11).
 
 **Exports (a separate small commit, as before):**
-- `TCSlib/Cryptography/Encryption.lean` gains `import TCSlib.Cryptography.Encryption.Homomorphic`.
+- A new facade `TCSlib/Cryptography/AdvancedEncryption.lean` imports `TCSlib.Cryptography.AdvancedEncryption.Homomorphic` (ruling Q9; shared with the pairing campaign's `IdentityBased`), and `TCSlib.lean` imports it.
 - `TCSlib/Cryptography/Hashing/SIS.lean` gains `import TCSlib.Cryptography.Hashing.SIS.Columns`.
 
 No other existing owner API changes.
@@ -370,7 +370,7 @@ Seyoon selects the worker and dispatches.
    - the `Encryption` and `Hashing/SIS` facades.
 
    It overlaps nothing in `Garbling.lean` (#323).
-7. **Cross-topic import.** `Encryption/Homomorphic` imports
+7. **Cross-topic import.** `AdvancedEncryption/Homomorphic` imports
    `TrapdoorFunctions/Lossy/Gadget.lean`, a light file that imports only `RandomBits` and
    Mathlib. Q10 offers moving the gadget to `Encoding/` later.
 8. **Asymptotic bridge.** It is deferred, as for Regev PKE. Until then no `SingleBitSecure`
@@ -450,7 +450,7 @@ Proposed additions to the organization table:
 
 | Directory under `TCSlib/Cryptography/` | Owner-side content |
 |---|---|
-| `Encryption/Homomorphic/GSW/` | Gadget and `G⁻¹`, noise invariant, public-key and secret-key GSW, circuit evaluation, leveled correctness, IND-CPA hybrids |
+| `AdvancedEncryption/Homomorphic/GSW/` | Gadget and `G⁻¹`, noise invariant, public-key and secret-key GSW, circuit evaluation, leveled correctness, IND-CPA hybrids |
 
 The phase table gains one row:
 
@@ -463,3 +463,6 @@ Proposed decision-log row:
 | Date | Decision/evidence | Status |
 |---|---|---|
 | 2026-11-16 | Seyoon approves GSW as a new phase of the lattice campaign, run by the maintainer, with PRs to `cryptography/pass-shelat-ch2-4`. The scope is leveled GSW, depth-`L` correctness with the explicit bound `(N+1)^L·mB`, and IND-CPA from DLWE. The FHE target sequence is recorded: phase 6 bootstrapping under explicit weak circular security, and phase 7 polynomial-ratio bootstrapping (BV14 or AP14). The design brief and draft statements are under `briefs/lattice-gsw/`; nothing has been elaborated. | Design only; statement gate and questions pending |
+
+
+> **Status note (2026-11-16, Gate 41 G41-04).** The paths above follow ruling Q9 (`AdvancedEncryption/Homomorphic/GSW/`). Phase 5 statements are compiled in [#333](https://github.com/Shilun-Allan-Li/tcslib/pull/333) (on #332). The decision-log rows proposed in §G10 are recorded in `LatticeCryptographyPlan.md` as dated rows; its organization table is updated when #333 merges.

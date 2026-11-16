@@ -10,6 +10,7 @@ import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 import TCSlib.Cryptography.Asymptotic.UniversalLemmas
 import TCSlib.Cryptography.Asymptotic.UniversalPadding
 import TCSlib.Cryptography.OneWayFunctions.OutputLength
+import TCSlib.Cryptography.Asymptotic.Universal.Canonizer
 import Mathlib.Data.Nat.Log
 
 set_option maxHeartbeats 0
@@ -44,8 +45,9 @@ length (`CanonizerExp c`), so that the coefficient is polynomial in `n` for code
 so the headlines `fUniversal_easy`, `fUniversal_hard`, `fUniversal_weakOneWay` and
 `theorem_63_1` are **conditional** on this hypothesis — ratified by the run-3 audit (P3-4) as
 an explicit hypothesis in the manner of the arithmetic bundle `Candidates.ArithmeticFP`
-(plan D11); the open problem of exhibiting a scheme with such a canonizer is the sorried
-`exists_canonizerExp`.
+(plan D11). Some scheme satisfies the hypothesis (`exists_canonizerExp`, proved from the
+machine library's polynomial canonizer `Turing.MachineFormat.exists_polyCanonizer`), so the
+conditional headlines apply to it.
 
 **Deviation (typed domains, D5):** `fUniversal c` is `FunFamily.ofString` of the string
 function with the output-length polynomial `univOutLen` (outputs padded with `false`, never
@@ -69,8 +71,8 @@ computable by a coded machine on the bare input (`FunFamily.QuadraticCode`).
   `clockedAnswer` (repackaging of `Turing.timed_universal_concrete`); the serialization-length
   facts it needs live in `TCSlib.Cryptography.Asymptotic.UniversalLemmas`;
   `TCSlib.Cryptography.exists_univCoeff_le` — its coefficient is polynomial on codes of
-  length `⌊log₂ n⌋` under `CanonizerExp`; `TCSlib.Cryptography.exists_canonizerExp` — the
-  open problem that some scheme satisfies `CanonizerExp` (sorried, run-3 audit P3-4).
+  length `⌊log₂ n⌋` under `CanonizerExp`; `TCSlib.Cryptography.exists_canonizerExp` — some
+  scheme satisfies `CanonizerExp` (proved, run-3 audit P3-4 closed).
 * `TCSlib.Cryptography.fUniversal_easy` — `f_universal` is polynomial-time computable
   [PS10, Algorithm 64.2, "computable in time `O(|y|³)`"] (proved; the evaluator is assembled
   from `polyTimeComputable_univCode`, `polyTimeComputable_univArg`,
@@ -87,6 +89,12 @@ computable by a coded machine on the bare input (`FunFamily.QuadraticCode`).
   (after amplification) strongly one-way [PS10, Theorem 63.1] (`fUniversal_hard` and
   `fUniversal_weakOneWay` are proved from the hypothesis of `lemma_64_3`; `theorem_63_1`
   uses the quadratic-time strong one-way family supplied by `lemma_64_3`).
+
+## Contents
+
+The proof of `exists_canonizerExp` uses the helper module
+`TCSlib.Cryptography.Asymptotic.Universal.Canonizer` (`exists_codeCanonizer`,
+`exists_effectiveMachineCode_canonizerTime_le`).
 
 ## References
 
@@ -189,7 +197,8 @@ def univArg (y : List Bool) : List Bool := y.drop (Nat.log 2 y.length)
   simp [univCode, Nat.log_le_self]
 
 /-- The argument field has `|y| - ⌊log₂ |y|⌋` bits. -/
-@[simp] theorem length_univArg (y : List Bool) : (univArg y).length = y.length - Nat.log 2 y.length := by
+@[simp] theorem length_univArg (y : List Bool) :
+    (univArg y).length = y.length - Nat.log 2 y.length := by
   simp [univArg]
 
 /-- The code field of `α ++ x` is `α` when `|α| = ⌊log₂ (|α| + |x|)⌋`. -/
@@ -282,25 +291,21 @@ through this hypothesis (no bound is known for `Turing.exists_effectiveMachineCo
 def CanonizerExp (c : EffectiveMachineCode) : Prop :=
   ∃ A B : ℕ, ∀ k, c.canonizerTime k ≤ A * 2 ^ (B * k)
 
-/-- **Open problem (run-3 audit P3-4): some effective encoding scheme has a canonizer at most
-exponential in the code length.** The standard encodings have polynomial canonizers (parse and
-re-serialize), so the hypothesis `CanonizerExp c` of `theorem_63_1` is mathematically harmless
-and is accepted as an explicit hypothesis (plan D11, like `Candidates.ArithmeticFP`); but the
-only scheme in the library, `Turing.exists_effectiveMachineCode`, carries a `canonizerTime`
-defined as a finite maximum of halting times with no bound, so no instance is available and the
-headlines of this file are conditional. This statement records the gap.
+/-- **Some effective encoding scheme has a canonizer at most exponential in the code length**
+[PS10, §2.13] (run-3 audit P3-4, formerly an open problem): `∃ c, CanonizerExp c`, i.e. some
+`c : EffectiveMachineCode` and `A, B` with `c.canonizerTime k ≤ A · 2^{B k}` for every `k`. So the
+hypothesis `CanonizerExp c` of `theorem_63_1` is satisfiable; the headlines of this file stay
+stated for an arbitrary scheme satisfying it (plan D11).
 
-**Proof sketch.** Build a scheme in the `Build/` style: keep the serialization
-`Turing.CodeTM.serialize` and the parser `Turing.codeDecode` of
-`TCSlib.Complexity.TuringMachine.MathlibBridge`, and implement the canonizer as an explicit
-finite machine performing the parse of the `9 · (numStates + 1)` fixed-format records (with the
-up-front minimum-length guard) followed by re-serialization — the superseded composition route
-described in `MathlibBridge` — through the combinators of
-`TCSlib.Complexity.TuringMachine.Composition` and the primitives of
-`TCSlib.Complexity.TuringMachine.Build`; its running time is polynomial in the code length,
-in particular `≤ A · 2^{B k}`. -/
+**Proof sketch.** The scheme is the machine library's one-tape code: serialization
+`Turing.CodeTM.serialize`, parser `Turing.codeDecode`, and the canonizer of
+`Turing.MachineFormat.exists_polyCanonizer` at `Turing.oneTapeMachineFormat`, which runs in time
+`d · (n + 1)^d` on every input, malformed codes included
+(`exists_effectiveMachineCode_canonizerTime_le`, in `Universal/Canonizer`). Since `k + 1 ≤ 2^k`,
+`d · (k + 1)^d ≤ d · 2^{d k}`, so `A = B = d`. -/
 theorem exists_canonizerExp : ∃ c : EffectiveMachineCode, CanonizerExp c := by
-  sorry
+  obtain ⟨c, d, h⟩ := exists_effectiveMachineCode_canonizerTime_le
+  exact ⟨c, d, d, h⟩
 
 /-- **The coefficient is polynomial on codes of logarithmic length.** If `c` has an
 exponential canonizer, there is a syntactic polynomial `p` with
@@ -654,7 +659,8 @@ private theorem exists_preimage_of_fUniversal_eq (c : EffectiveMachineCode) {L :
     (hc₀ : c₀ ≤ n + 1) (x : Fin (n - Nat.log 2 n) → Bool)
     (y y' : Fin ((fUniversal c).inLen.eval n) → Bool)
     (hy : List.ofFn y = code ++ List.ofFn x) (h : (fUniversal c).f n y' = (fUniversal c).f n y) :
-    ∃ x' : Fin (n - Nat.log 2 n) → Bool, List.ofFn x' = univArg (List.ofFn y') ∧ g _ x' = g _ x := by
+    ∃ x' : Fin (n - Nat.log 2 n) → Bool,
+      List.ofFn x' = univArg (List.ofFn y') ∧ g _ x' = g _ x := by
   have hkn : Nat.log 2 n ≤ n := Nat.log_le_self 2 n
   obtain ⟨x', hx'⟩ := exists_ofFn_eq_of_length (m := n - Nat.log 2 n)
     (w := univArg (List.ofFn y')) (by simp [fUniversal_inLen_eval])
@@ -717,7 +723,8 @@ private theorem invProbAt_reduction_ge (c : EffectiveMachineCode) {L : PolyExpr}
     exact (List.ofFn_congr hcast (Fin.append z.1 z.2)).symm
   obtain ⟨cf, hcf⟩ := exists_ofFn_eq_of_length (m := Nat.log 2 n) hcode
   let Invert : (Fin (Nat.log 2 n) → Bool) × ((Fin (n - Nat.log 2 n) → Bool) × A.Coins n) → Prop :=
-    fun w => ∃ y', A.runAt n (List.ofFn ((fUniversal c).f n (e (w.1, w.2.1)))) w.2.2 = List.ofFn y' ∧
+    fun w => ∃ y',
+      A.runAt n (List.ofFn ((fUniversal c).f n (e (w.1, w.2.1)))) w.2.2 = List.ofFn y' ∧
       (fUniversal c).f n y' = (fUniversal c).f n (e (w.1, w.2.1))
   have hInv : uprob Invert = (fUniversal c).invProbAt A n := by
     rw [FunFamily.invProbAt_eq_uprob]
@@ -752,7 +759,8 @@ private theorem invProbAt_reduction_ge (c : EffectiveMachineCode) {L : PolyExpr}
     g _ x' = g _ w.1.1
   have hBrun : B.runAt (n - Nat.log 2 n) (List.ofFn (g _ w.1.1)) (e₂ w).2 =
       univArg (List.ofFn y') := by
-    rw [NUPPT.runAt_eq, hB, hcoins, List.take_left' (List.length_ofFn (f := w.1.2)), ← NUPPT.runAt_eq,
+    rw [NUPPT.runAt_eq, hB, hcoins, List.take_left' (List.length_ofFn (f := w.1.2)),
+      ← NUPPT.runAt_eq,
       padStr_eq_ofFn_fUniversal_f c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1)) hy, hy']
   obtain ⟨x', hx', hgx'⟩ :=
     exists_preimage_of_fUniversal_eq c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1)) y' hy hfy'
@@ -892,8 +900,10 @@ theorem fUniversal_hard (c : EffectiveMachineCode) (hc : CanonizerExp c)
   rw [hφm] at hkey
   rw [abs_of_nonneg (FunFamily.invProbAt_nonneg _ _ _)]
   refine le_trans ?_ hkey
-  have hm2 : (2 : ℝ) ≤ ((n - Nat.log 2 n : ℕ) : ℝ) := by exact_mod_cast (show 2 ≤ n - Nat.log 2 n by omega)
-  have hn2 : (2 : ℝ) ≤ ((φ (n - Nat.log 2 n) : ℕ) : ℝ) := by exact_mod_cast (show 2 ≤ φ (n - Nat.log 2 n) by omega)
+  have hm2 : (2 : ℝ) ≤ ((n - Nat.log 2 n : ℕ) : ℝ) := by
+    exact_mod_cast (show 2 ≤ n - Nat.log 2 n by omega)
+  have hn2 : (2 : ℝ) ≤ ((φ (n - Nat.log 2 n) : ℕ) : ℝ) := by
+    exact_mod_cast (show 2 ≤ φ (n - Nat.log 2 n) by omega)
   have h1 : 1 / ((n - Nat.log 2 n : ℕ) : ℝ) ≤ 1 / 2 := one_div_le_one_div_of_le (by norm_num) hm2
   have h2 : 1 / ((φ (n - Nat.log 2 n) : ℕ) : ℝ) ^ 2 ≤ 1 / 2 := by
     refine one_div_le_one_div_of_le (by norm_num) ?_

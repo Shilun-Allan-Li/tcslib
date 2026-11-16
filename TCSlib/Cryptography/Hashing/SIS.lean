@@ -9,6 +9,7 @@ import TCSlib.Cryptography.Hashing.SIS.Universality
 import TCSlib.Cryptography.Hashing.SIS.CollisionOutput
 import TCSlib.Cryptography.Hashing.SIS.Implementation
 import TCSlib.Cryptography.Hashing.SIS.Asymptotic
+import TCSlib.Cryptography.Hashing.SIS.Columns
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -26,6 +27,7 @@ set_option autoImplicit false
 * `CollisionOutput`: exact raw-output signed postprocessing and probability bounds.
 * `Implementation`: the encoded polynomial-schedule binary matrix-hash evaluator.
 * `Asymptotic`: negligible raw collisions under the independent SIS assumption.
+* `Columns`: leftover hashing of many binary columns under one matrix (a column hybrid).
 
 No hardness is proved. The independent `SISAssumption`, efficient machine adapters and
 the future generic CRH-owner bridge remain explicit consumer obligations.

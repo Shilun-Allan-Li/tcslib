@@ -1,0 +1,127 @@
+Integration builds of the statement-phase PRs #331 (pairings), #332 (DAGCircuit readers), #333 (GSW) on the records tip
+maintainer job, 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0 (PATH=$HOME/.elan/bin:$PATH; checks/lean-version.txt: 4.25.0 cdd38ac5); one Lean process of
+  ours at a time (another job's runner and lean on $SP/dl-oleans were running throughout and were not touched); modules built only
+  by scripts/lean_check_tree.sh (the worktree copy, byte-equal to /home/user/tcslib/scripts/lean_check_tree.sh) through
+  tools-used/review/runner.py (G26-N1 count `^\S+\.lean:\d+:\d+: error[:(]`) with TCSLIB_OLEANS=$SP/dl-oleans-2 ONLY; probes by
+  tools-used/runner_full.py (lean -DmaxErrors=0, no -o, nothing written to the tree); no lake command; nothing pushed; no commit,
+  branch or checkout in /home/user/tcslib (only `git fetch`, `git worktree`, and unreferenced `git commit-tree --no-gpg-sign`
+  commits plus the resolved blobs/tree written with `git hash-object -w` / a scratch GIT_INDEX_FILE). The shared .lake/packages was
+  not modified. (/home/user/tcslib's branch gained 12 records-only commits from the coordinator during the job, c58597e6 ->
+  36a14072; `git diff` of TCSlib, TCSlib.lean, audits, scripts and the lake files between them is empty.)
+Method and tools: briefs/pass-shelat-ch5-8/maintainer/int-all-open-2026-11-16/int-all-open-evidence.zip (SHA-256
+  4f8cb3746353c968be8d8b6d11407c03d5a96969b61029644a014db9577606fe), extracted into a fresh directory ($SP/ev-intall-331, removed
+  after zipping): 1248/1248 OK against evidence-SHA256SUMS, path set exact, its SHA256SUMS byte-equal to evidence-SHA256SUMS.
+  tools-used/: unmodified copies of its tools-used/ (runner, runner_full, downorder, buildset, permod, snapshot, treecheck_ml,
+  tipcensus, restoreplan, mloverlay.sh, mathlibextra.sh, restore_derand.sh, ...). New: tools-used/stateplan.py (incremental
+  builds by import-closure keys, below). Probe sources: axioms/*.lean.txt (DepTrace.lean.txt = the `#admitted` dependency trace).
+
+scratch merges (landing/; author = committer = Claude <noreply@anthropic.com>, date 2026-11-16T00:00:00Z, unsigned, no ref, never pushed):
+  tip c58597e6c8eeb5b2df4e40a365c2125622a67c3e (= origin/cryptography/pass-shelat-ch2-4 after `git fetch`).
+  heads (= refs/pull/N/head by `git ls-remote`): #331 110c2f9db810d243693b9a5e8976a5ad205f1bab, #332
+    94eae71b779c4ca0f76c138d699f4d737dbd6cee, #333 486f44f8414c20a2d21e452c44de8b8c8d8513a0 (stacked on #332); merge base of each
+    with the tip 523d80d2d4dd8e4ed6799358831e5b3806c6187b.
+  C1 = tip x #332: `git merge-tree --write-tree --messages` rc 0, tree 68040ead15af546e17b3c8caf4e17f2e56079b39, commit
+    df4cfea40f5acf0857e5167103444afd7c4cebab. DAGCircuit auto-merged with #323's isFaninTwo_iff (checks/dagcircuit-merge.txt:
+    patch-id of tip->C1 = #332's own change 8d6b5b26; patch-id of #332->C1 = #323's change base->tip c5c1f921; isFaninTwo_iff at
+    line 519 of the merged file).
+  C2 = C1 x #333: rc 0, tree 699f98462f1029e30a2c5d3850b717d8e46300da, commit 1877708583522b0c8032d57e180fdb3d28e8c086.
+  C3 = tip x #331: rc 0, tree c94cffb4e4cdbb467b9de43e3c138a20db06490c, commit c67f94a4785ff38f4f50d5c8527a295c339f10cf.
+  C4 = C2 x #331: rc 1, CONFLICT (add/add) TCSlib/Cryptography/AdvancedEncryption.lean, CONFLICT (content) TCSlib.lean (conflicted
+    tree 68ea3ad2d71fe84c356de1a4140c90b28e47d8a8). Resolved by union (resolved/, the files the maintainer applies at merge time):
+    resolved/TCSlib/Cryptography/AdvancedEncryption.lean (blob c1bc37f9a01e280205e9e850bd3955a1399ee309): one facade importing
+      AdvancedEncryption.Homomorphic and AdvancedEncryption.IdentityBased, Contents listing both, References [BB04] and [GSW13];
+    resolved/TCSlib.lean (blob 124658fc8de755bcd1b4bc637d358cc984d3a789 = #331's side: the union of both import sets is #331's
+      Pairing, KeyExchange, AdvancedEncryption; #333 adds only AdvancedEncryption).
+    Resolved tree 26a68b892e7ad91d7b496b6e18f434f351056680, commit cbfa9d8504e7c0cd4b978fe67ed763573fe20a7d (parents C2, #331); no
+    conflict markers. C4 vs C2 = the 13 #331 files; C4 vs C3 = the 13 #332/#333 files (checks/tip-vs-C4-name-status.txt, 24 files).
+  checks/blobs-vs-heads.txt: every PR file at C1/C2/C3/C4 equals its PR head's blob (47 EQ) except DAGCircuit (three-way merge
+    above) and the two resolved files.
+
+worktree $SP/wt-int-331 (sparse, non-cone /* !/briefs/, .lake/packages -> /home/user/tcslib/.lake/packages); checked out at C3, C2,
+  C1, C4 in turn; clean at each step apart from the ignored .lake/ and a temporary IntProbe/ (removed); removed and pruned at the end.
+
+build sets (order-N/, bs-N/: downorder.py vs eff2dcd0 = the olean snapshot's base; buildset.py with seeds = the PR modules):
+  down-seed: build 1 (tip+#332) 281 (the expected ~281), build 2 (tip+#332+#333) 292, build 3 (tip+#331) 13, build 4 303. Each
+  contains root TCSlib; builds 1, 2, 4 also both audits/*/Checks. Since the snapshot predates the tip's base delta (112 changed
+  modules since eff2dcd0, e.g. #326's DTIME and #323's DAGCircuit), each build set is the whole downstream of the base delta and PRs:
+  640 / 650 / 650 (+2 audits Checks) / 661.
+incremental method (tools-used/stateplan.py; state/): a module's closure key = sha256 of its path, its source SHA-256 at the rev
+  and the sorted keys of its local imports (downorder.py's import parsing). state/state.json starts as every snapshot module keyed
+  at eff2dcd0 (1199 TCSlib/audits + 31 PFR; the base records state/base-records-from-int-317.jsonl agree with all 1199: source at
+  eff2dcd0 and olean hash). `plan` queues, imports-first, every module of the rev's order whose key differs from the tree's;
+  `update` records the built oleans; `check` verifies every module of the order (key = state key, tree olean = state hash).
+  Build order 3, 2, 1, 4 (the maintainer's priority change put tip+#332+#333 right after tip+#331; it is also the cheapest order:
+  652+292+3+4 rebuilt modules against 640+13+294+283 for 1, 2, 3, 4).
+Mathlib overlay (build-mathlib-extra/): as in int-all-open: mloverlay.sh (3346 symlinks into dl-oleans-2/Mathlib) and
+  mathlibextra.sh compiled Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas (pinned 029db123, source b371bf48...) for
+  Derandomization/RootSchedule: rc 0, olean c0a9cff04c67... = the derand review's. Removed at restore.
+olean tree $SP/dl-oleans-2: pre tree/snapshot-pre.txt: 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f (the required value). The 561 snapshot oleans in the union of
+  the four downstream sets (tree/down-union.txt, 661) were copied to $SP/dl-int331-backup (tree/backed-up.txt, verified 561/561);
+  the 100 others are new (tree/new-oleans.txt).
+
+builds (build-N/: results.jsonl, mods/*.log, per-module.tsv from permod.py with err_colon = `error:` and err_paren = `error(`;
+  statecheck.txt):
+  build 3, tip + #331 at C3 (plan-3: 652 = bs-3's 650 + both audits Checks): 652/652 rc 0; error: 0; error( 0; substring "error" 0;
+    68 sorry warnings, 428 warnings; 6084 s, 06:07:55-07:49:21 UTC, max RSS 4.49 GB. #331 modules: Pairing/Assumptions 1
+    (bdhAssumption_of_dbdhAssumption, T1), BonehBoyenSecurity 2 (bb1_sim_real T2, bb1_sim_random T3), BonehBoyenMachine 1
+    (exists_bb1_distinguisher T4), every other #331 module 0 sorry, 0 warnings beyond these. Non-PR sorries (64): TQBF 21,
+    RAMSimulation/Classes 9, UniqueGames 8, SequentialZK 5, Hierarchy 4, WordSize 3, ComposeSecurity 3, MaxCutAlgorithm 2,
+    Simulation 2, NTimeDiagonalizer 2, Yao 2, NonUniform 1, NDNormalForm 1, Savitch 1: each equal to a same-source reference record
+    (state/base-records-from-int-317.jsonl, state/int-all-open-records-final.jsonl). statecheck: 1290 modules OK.
+  build 2, tip + #332 + #333 at C2 (plan-2: 292 rebuilt = 283 DAGCircuit-downstream modules + 9 new; 996 reused: 638 snapshot,
+    358 from build 3): 292/292 rc 0; error: 0; error( 0; substring 0; 59 sorry warnings, 105 warnings; 1774 s, 07:50:09-08:19:44
+    UTC, max RSS 4.51 GB. GSW: 35 = Gadget 5, Noise 12, Scheme 6, Eval 4, Security 4, Symmetric 2, Hashing/SIS/Columns 2; DAGCircuit,
+    Hashing/SIS and the GSW/Homomorphic/AdvancedEncryption facades 0. Non-PR: TQBF 21, Yao 2, NonUniform 1 (= references).
+    statecheck: 1288 modules OK.
+  build 1, tip + #332 at C1 (plan-1: 3 rebuilt = Hashing/SIS, Hashing, root TCSlib; 1275 reused): 3/3 rc 0, 0 errors both forms,
+    0 sorry, 0 warnings, 08:21:01-08:21:10. statecheck: 1278 modules OK. Hashing/SIS's olean = the snapshot's (checks/determinism.txt).
+  build 4, combined at C4 (plan-4: 4 rebuilt = Hashing/SIS, Hashing, the resolved AdvancedEncryption facade, root TCSlib; 1295
+    reused, incl. the #331 modules from build 3 and the GSW modules from build 2, equal keys): 4/4 rc 0, 0 errors both forms, 0 sorry,
+    0 warnings, 08:21:34-08:21:44. Hashing/SIS and Hashing reproduce build 2's oleans byte-for-byte. statecheck: 1299 modules OK.
+  (A build's modules reused from an earlier build are the oleans of identical source closures; each build's records are in its own
+  directory and records/records-final.jsonl = base records + builds 3, 2, 1, 4 in that order.)
+
+whole-tree check (tree-final/; treecheck_ml.py at C4, order-4/order.txt 1299 modules, records/records-final.jsonl, run before the
+  restore): every module rc 0 at the C4 source, every olean = its record, none missing, no stray olean, no empty dir: RESULT OK
+  (4677 files = 1299 + 31 PFR + 3347 Mathlib overlay entries, attributed). Per-build tree checks: build-N/statecheck.txt (all OK).
+
+admissions (admissions/census-*.txt; tipcensus.py over the base records, int-all-open's records-final and builds 1-4; 34 modules
+  outside root TCSlib's closure have no record, as before; disagreeing 0 everywhere):
+  tip 202; C1 202 (+0); C2 237 (+35: exactly the 7 GSW/Columns modules above); C3 206 (+4: Assumptions 1, BonehBoyenSecurity 2,
+  BonehBoyenMachine 1); C4 241 (+39 = 35 + 4). No other module changes its count; every other new module has 0.
+
+axioms (axioms/; probes in the worktree with runner_full.py, rc 0, 0 errors, 0 warnings; sources removed afterwards):
+  probe-gsw-C2 (AxiomsGSW.lean.txt at C2) and probe-combined-C4 (AxiomsCombined.lean.txt, `import TCSlib`, at C4), same results
+  for the shared names:
+  #332 readers: BoolCircuit.DAGGate.getD_lt_depth [propext, Quot.sound]; BoolCircuit.runWith_rel [propext, Classical.choice,
+    Quot.sound]; DAGGate.depth_eq, DAGCircuit.depths_eq / depthAt_eq / depth_eq: no axioms; #323's DAGCircuit.isFaninTwo_iff: no axioms.
+  #331 proved: KeyExchange.joux_correct, jouxKey_eq, jouxGame_eq_dbdhGame, jouxAdv_eq, jouxKeyIndist_iff,
+    jouxKeyIndist_of_dbdhAssumption, IdentityBased.bb1_correct: [propext, Classical.choice, Quot.sound] (trace: no sorryAx user in
+    the closures of jouxKeyIndist_of_dbdhAssumption (10289 constants) or bb1_correct (8617)).
+  #331 targets: Pairing.BilinearGen.bdhAssumption_of_dbdhAssumption (T1), bb1_sim_real (T2), bb1_sim_random (T3),
+    exists_bb1_distinguisher (T4): [propext, sorryAx, Classical.choice, Quot.sound], each its closure's only direct sorryAx user;
+    bb1_sidSecure: sorryAx inherited, direct users in its closure (13961) exactly bb1_sim_real, bb1_sim_random,
+    exists_bb1_distinguisher.
+  GSW headline statements (gadget_mul_decompose, Encrypts.nand, encrypts_chain, decrypt_keygen_encrypt, eval_encrypts,
+    decrypt_keygen_eval, distAdv_encrypt_le, distAdv_encrypt_le_of_width, distAdv_symEncrypt_le, SIS.distAdv_hashColumns_uniform_le):
+    [propext, sorryAx, Classical.choice, Quot.sound], each its own closure's only direct sorryAx user. Sampled proved GSW readers
+    (gadget_apply, mul_eq, nand_eq, encrypt_eq, homGate_eq, view_eq): [propext, Classical.choice, Quot.sound].
+
+lint (lint/; scripts/campaign_style_lint.py --check8b, run from git-archive exports of each rev, removed afterwards):
+  Cryptography: tip 92 FAIL / 101 WARN; C1 92/101; C2 92/101; C3 92/103; C4 92/103. Complexity 25/390 at every rev.
+  linediff-*: C1/C2/C4 Complexity: DAGCircuit's check-8 WARN loses `depths` (#332's depths_eq). C3/C4 Cryptography: two new check-8
+  WARNs, IdentityBased/Defs (SIDSecure) and Pairing/Assumptions (BDHAssumption, DBDHAssumption) -> 103, not the expected 101.
+  No new FAIL at any rev; no PR file has a FAIL.
+
+restore (restore/): tools-used/restore_derand.sh (with a temporary `tools` symlink to tools-used/review, removed): backup hash
+  failures 0; 561 restored; 100 new oleans deleted; Mathlib overlay deleted (3346 symlinks + NthRootLemmas c0a9cff0..., logged);
+  19 emptied directories pruned (empty-dirs-before-prune.txt). tree/snapshot-post.txt: 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to tree/snapshot-pre.txt (SNAPSHOT EQUAL);
+  restoreplan.py (no --delete) against snapshot-pre: extra 0, changed 0, missing 0. Backups removed afterwards.
+cleanup: the worktree removed and pruned; the backup directory and the int-all-open extract removed after zipping.
+  Stray file: a mistyped redirection during the lint step wrote /lint-a (28967 bytes, a copy of the tip's Cryptography lint
+  FAIL/WARN lines) at the filesystem root; its removal was refused by a safety check and is left to the user.
+SHA256SUMS: every file here except itself (paths without "./"); ../int-stmt-331-333-evidence.zip holds exactly these paths plus SHA256SUMS.

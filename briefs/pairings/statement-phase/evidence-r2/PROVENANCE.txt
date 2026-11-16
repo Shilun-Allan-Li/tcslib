@@ -1,0 +1,51 @@
+stmt-pairings round 2: ruling Q11 (T4 to its own module), 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: no lake build, no cache get. Lean 4.25.0 (PATH=$HOME/.elan/bin:$PATH), one Lean process at a time, only on
+  $SP/dl-oleans-2 (dl-oleans never touched). python3 -I throughout. Nothing pushed (origin/stmt/pairings stays at ce9c3728).
+Rebase (git/): stmt/pairings ce9c3728ec582be45fc33ca68d64b5533701093d (base e7a9f70f5c1f11c2670f427ef813f2a6d8c53543) rebased in
+  $SP/wt-stmt-pairings onto origin/cryptography/pass-shelat-ch2-4 523d80d2d4dd8e4ed6799358831e5b3806c6187b (fetched). The 8 commits
+  e7a9f70f..523d80d2 change no Lean file (records, plans, briefs). rc 0, no conflict; git/rebase-range-diff.txt: 2/2 identical
+  (b02e6ce4 -> 8aa111658bd0509c0fd204d605538ff440f08d02, ce9c3728 -> b7ca25477c1685795f2ea45cd895889f7ecaf1c8); the Lean trees of
+  ce9c3728 and b7ca2547 are identical. Re-signed with the default SSH signing (gpgsig header present on all three commits).
+Split: 110c2f9db810d243693b9a5e8976a5ad205f1bab "Pairing statements: move T4 to BonehBoyenMachine (ruling Q11)" (new head):
+  new AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean (78 lines: T4 exists_bb1_distinguisher, imports BonehBoyen,
+  Pairing.Assumptions, Pairing.Operations); BonehBoyenSecurity.lean 189 -> 170 (T2, T3, bb1_sidSecure; imports BonehBoyen,
+  BonehBoyenMachine, Pairing.Assumptions; docstring and Main results updated); IdentityBased.lean facade 29 -> 32 (imports and
+  Contents). statements/T4-identity.txt: the 21-line T4 block (docstring, statement, `sorry`; SHA-256 f70ffe71...875e) occurs once
+  in ce9c3728's BonehBoyenSecurity.lean and once in the head's BonehBoyenMachine.lean, and the head's BonehBoyenSecurity.lean
+  differs from the ce9c3728 file minus that block only in the module docstring and imports. Unit files: bb1-sim owns
+  BonehBoyenSecurity.lean (T2, T3), bb1-machine owns BonehBoyenMachine.lean (T4): disjoint.
+olean tree: tree/snapshot-pre.txt (tools/snapshot.py): 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required value (taken before both jobs).
+  build/closure-need.txt (tools/need.py: M missing, C changed since the tree's eff2dcd0 sources, D downstream): 85-module closure,
+  20 to build: the 8 base modules of round 1 (Foundations/BitLists and 7 downstream) and the 12 pairing modules. Each olean was
+  backed up before its first rebuild (tools/backup.py, hash checked against the snapshot; tree/backup-log.txt).
+Build (tools/ladder.sh -> the worktree's scripts/lean_check_tree.sh, TCSLIB_OLEANS=$SP/dl-oleans-2): build/closure/summary.txt:
+  20/20 rc 0, 0 errors; sorry warnings only the 4 targets (Assumptions 1, BonehBoyenMachine 1, BonehBoyenSecurity 2).
+Axioms: axioms.txt (probe/AxiomProbe.lean, round-1 probe plus BonehBoyenMachine): 320 declarations and 52 auxiliary constants (as in
+  round 1); standard axioms only, except sorryAx in the 4 targets and bb1_sidSecure.
+Rule 10:
+  - round-1 method (tools/seal.py, the round-1 hand lists; BonehBoyenMachine gets BonehBoyenSecurity's 51 names), lean -DmaxErrors=0
+    (tools/runseal.sh): seal/summary.txt: both changed modules rc 0, 0 errors, 0 unknown; Control_neg rc 1 with 1 error,
+    Control_pos rc 0 (round-1 controls, rerun).
+  - canonical whole-file seals (the archived Gate06/Gate10 instrumenter; tools/xr/): collector rule10/CollectPair.lean ->
+    rule10/collect-run/; mkseals_ab.py (A, and B = SEAL_EVAL=1) and mkseals_coe.py (coe A/B) for BonehBoyenMachine,
+    BonehBoyenSecurity and the IdentityBased facade, 1099-1101 requests each; 12 probes, lean -DmaxErrors=0 (runner_full.py,
+    nothing written to the tree): rule10/seal-*.tsv (sealsum.py with touched.json against b7ca2547): A 3/3, B 3/3, coe-A 3/3,
+    coe-B 3/3, install and EOF records in every probe.
+Lint (lint/): scripts/style_lint.py 0 findings (12 files); campaign_style_lint.py --check8b: Pairing 0 FAIL / 1 WARN, KeyExchange
+  0 / 0, AdvancedEncryption 0 / 1: the two round-1 check-8 acronym WARNs (DBDHAssumption/BDHAssumption, SIDSecure; readers exist).
+  Widths at most 100 characters; BonehBoyenMachine 78 lines.
+Root TCSlib (build/root/summary.txt, order build/root-order.txt = tools/need.py for the root closure, 1263 modules): 278 modules
+  rebuilt in order at the head's sources (the 87 closure modules whose source changed since eff2dcd0, 54 of them missing from
+  the tree, and the 191 further downstream modules), root TCSlib last: 278/278 rc 0, 0 errors; 26 sorry warnings library-wide (the 4 targets and existing
+  admissions). Before it, DAGCircuit.olean and Hashing/SIS.olean, rebuilt meanwhile from stmt/gsw sources, were restored to their
+  snapshot copies (both sources unchanged since eff2dcd0). The earlier job could not build root because the tree lacks those 54
+  modules and holds stale oleans for the other changed files; rebuilding all 278 from source one at a time took about 35 min.
+Restore (shared with stmt-gsw, done once at the end of both jobs; tree/): tools/restore.py: 328 backups restored (hash equal to the
+  snapshot; 0 failures), 75 oleans not in the snapshot deleted, 13 emptied directories pruned (tree/restore-log.txt);
+  tree/snapshot-post.txt: 1230 files, 0 empty dirs, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f,
+  byte-identical to tree/snapshot-pre.txt (SNAPSHOT EQUAL).
+Plan: PairingCryptographyPlan.md (module table, unit split, verification round 2, decision log) committed on the records branch in
+  /home/user/tcslib; see EVIDENCE.md there. Not pushed.
+SHA256SUMS lists every other file of this directory.

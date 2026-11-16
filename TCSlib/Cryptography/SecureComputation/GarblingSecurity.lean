@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.GarblingSpecial
 import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity
+import TCSlib.Cryptography.SecureComputation.GarblingSecurity.CoinMarginals
+import TCSlib.Cryptography.SecureComputation.GarblingSecurity.NestedBounds
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Garbled circuits from PRFs: Claim 159.a (statement phase)
+# Garbled circuits from PRFs: Claim 159.a
 
 [PS10, §6.2.2–6.2.3]: with the nested special encryption of `GarblingSpecial.lean`, built from two
 pseudorandom function families (`PRFOut`), a random garbling is good with high probability. This
@@ -24,11 +26,16 @@ wrong-key contracts `MultiEnc.DecCorrect` and `MultiEnc.WrongKeyBot` from `Garbl
 
 ## Main results
 
-* `SecureComputation.nestedSpecial_wrongKeyBot` (Claim 157.a (ii) for the nesting, stated; a
-  `sorry` under its sketch).
+* `SecureComputation.nestedSpecial_wrongKeyBot` (Claim 157.a (ii) for the nesting): the
+  wrong-key error is negligible.
 * `SecureComputation.garbling_good_whp` (Claim 159.a, proved from the previous results): a random
   garbling of a fan-in-two circuit is good except with probability `12 · |gates| · δ(n)`, `δ`
   negligible.
+
+## Contents
+
+* `GarblingSecurity.CoinMarginals`: independent key/nonce marginals and option probabilities.
+* `GarblingSecurity.NestedBounds`: the three concrete nesting cases.
 
 ## References
 
@@ -62,11 +69,32 @@ nested special encryption has `WrongKeyBot` with a negligible error `δ(n)`.
   which is decrypted under an independent key: error `ε₁(n)`.
 
 So `δ = ε₁ + ε₂`, negligible (`Negligible.add`); `ε₁` and `ε₂` are averaged over the plaintext
-and the other layer's key and coins. -/
+and the other layer's key and coins. In the proof, `spDecStr_wrongKey` at `ℓ = n` (with `G₁`)
+and at `ℓ = innerLen` (with `G₂`) gives the two string success bounds
+(`GarblingCoins.uprob_isSome_lt_of_none`), and
+`GarblingCoins.nestedSpecial_wrongKeyBot_of_string_bounds` carries out the case analysis,
+including the zero-position case, which has no distinct choices. -/
 theorem nestedSpecial_wrongKeyBot (hG₁ : PRFOut (.add .var .var) G₁)
     (hG₂ : PRFOut (.add .var innerLen) G₂) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, (nestedSpecial E₁ E₂ n).WrongKeyBot (δ n) := by
-  sorry
+  obtain ⟨ε₁, hε₁, hb₁⟩ := spDecStr_wrongKey .var G₁ E₁ hGE₁ hG₁
+  simp only [PolyExpr.eval_var] at hb₁
+  obtain ⟨ε₂, hε₂, hb₂⟩ := spDecStr_wrongKey innerLen G₂ E₂ hGE₂ hG₂
+  refine ⟨fun n => ε₁ n + ε₂ n, hε₁.add hε₂, fun n => ?_⟩
+  have hs₁ : ∀ m : Fin n → Bool,
+      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+        (spDecStr E₁ n n (List.ofFn t.2.1)
+          (spEncStr E₁ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₁ n :=
+    fun m => (GarblingCoins.uprob_isSome_lt_of_none _ (hb₁ n m)).le
+  have hs₂ : ∀ m : Fin (innerLen.eval n) → Bool,
+      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+        (spDecStr E₂ n (innerLen.eval n) (List.ofFn t.2.1)
+          (spEncStr E₂ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₂ n :=
+    fun m => (GarblingCoins.uprob_isSome_lt_of_none _ (hb₂ n m)).le
+  have hε₁n : 0 ≤ ε₁ n := (uprob_nonneg _).trans (hs₁ (fun _ => false))
+  have hε₂n : 0 ≤ ε₂ n := (uprob_nonneg _).trans (hs₂ (fun _ => false))
+  exact GarblingCoins.nestedSpecial_wrongKeyBot_of_string_bounds G₁ G₂ E₁ E₂
+    hGE₁ hGE₂ n hε₁n hε₂n hs₁ hs₂
 
 include hGE₁ hGE₂ in
 /-- **Claim 159.a: a random garbling is good with high probability** [PS10, §6.2.3, "all but one

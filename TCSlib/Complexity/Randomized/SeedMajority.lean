@@ -7,13 +7,17 @@ import TCSlib.Complexity.ClassP.P
 import TCSlib.Complexity.ClassNP.PolyTime
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.Randomized.Classes
+import TCSlib.Complexity.Randomized.SeedMajority.Words
+import TCSlib.Complexity.Randomized.SeedMajority.State
+import TCSlib.Complexity.Randomized.SeedMajority.Enumeration
+import TCSlib.Complexity.Randomized.SeedMajority.Envelope
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Deterministic majority over all seeds (statement phase)
+# Deterministic majority over all seeds
 
 The counting enumeration host: a deterministic machine that, on input `x`, runs a
 polynomial-time test on `⟨x, u⟩` for **every** seed `u ∈ {0,1}^{w(|x|)}`, counts the accepting
@@ -56,14 +60,21 @@ Theorem 180.1 (`TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp`).
   `Turing.FinTM.DecidesInTime`, `Turing.FinTM.DecidesInTimeVia` and `DTIME` by their
   definitions (Rule 10).
 
+## Contents
+
+* `Complexity.Randomized.SeedMajority.Words`: binary seed words and prefix counts.
+* `Complexity.Randomized.SeedMajority.State`: the FP counting round and terminal tests.
+* `Complexity.Randomized.SeedMajority.Enumeration`: the finite binary-fuel machine.
+* `Complexity.Randomized.SeedMajority.Envelope`: the all-times work-head bound.
+
 ## Main results
 
 * `Complexity.exists_seedMajorityTM` — the host's machine-level contract: correctness, time and
-  head envelope of one machine (stated; a `sorry` under the route below, for the `derand` fill).
+  head envelope of one machine, proved through the generic binary-fuel harvest.
   [AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4 of the proof]
 * `Complexity.seedMajority_mem_DTIME` — the decision-class corollary
-  `∃ e, {x | 2^{w(|x|)} < 2 · count} ∈ DTIME (n ↦ 2^{w(n)} · (n+1)^e)` (stated; a `sorry`
-  until the `derand` fill adds `mem_DTIME_iff`, then read off the contract).
+  `∃ e, {x | 2^{w(|x|)} < 2 · count} ∈ DTIME (n ↦ 2^{w(n)} · (n+1)^e)`, proved from
+  the host contract through `mem_DTIME_iff`.
 * `Randomized.half_lt_randProb_iff` — majority as a probability:
   `1/2 < randProb m A ↔ 2^m < 2 · #{r | A r}` (proved).
 
@@ -175,7 +186,11 @@ open Classical in
 `Fin (w |x|) → Bool`, the numerator of `Randomized.randProb` (`Randomized.half_lt_randProb_iff`).
 The head envelope is not in the source; it is the host clause of `policy.md` §1.
 
-**Proof sketch** (the route of the module docstring; the `derand` fill).
+**Status.** Proved through `SeedMajority.exists_countingTM` and
+`SeedMajority.envelope_of_computesInTime`, using only the published decision and
+computation readers.
+
+**Proof sketch** (the route of the module docstring; implemented in the helpers).
 1. Run the state loop `⟨x, ⟨i, a⟩⟩ ↦ ⟨x, ⟨i + 1, a + [⟨x, word_w(i)⟩ ∈ V]⟩⟩` from
    `⟨x, ⟨0, 0⟩⟩`, stopping at `i = 2^{w(|x|)}` with the payload `[2^w < 2a]`; each piece is a
    polynomial-time word function of the state.
@@ -200,7 +215,20 @@ theorem exists_seedMajorityTM {V : Language Bool} (hV : V ∈ P) (w : ℕ → �
         ∀ (x : List Bool) (v : ℕ) (j : Fin M.k),
           |(M.tm.runFrom (M.tm.initCfg x) v).workTapePos j| ≤
             ((c * (2 ^ w x.length * (x.length + 1) ^ e) : ℕ) : ℤ) := by
-  sorry
+  obtain ⟨M, c, e, hM⟩ := SeedMajority.exists_countingTM hV w hw
+  refine ⟨M, c, e, ?_, ?_⟩
+  · apply (FinTM.decidesInTime_iff _ _ _).mpr
+    intro x
+    have hx := (FinTM.computesFunInTime_iff _ _ _).mp hM x
+    rw [MultiTapeTM.indicator_def]
+    by_cases h : 2 ^ w x.length <
+        2 * (Finset.univ.filter fun u : Fin (w x.length) → Bool =>
+          pairEncode x (List.ofFn u) ∈ V).card
+    · simpa only [Set.mem_setOf_eq, if_pos h, decide_eq_true h] using hx
+    · simpa only [Set.mem_setOf_eq, if_neg h, decide_eq_false h] using hx
+  · intro x v j
+    exact SeedMajority.envelope_of_computesInTime
+      ((FinTM.computesFunInTime_iff _ _ _).mp hM x) v j
 
 open Classical in
 /-- **Deterministic majority over all seeds: the decision class** [AB09, §7.1, p. 126];
@@ -211,11 +239,9 @@ puts the strict-majority language in `DTIME (n ↦ 2^{w(n)} · (n+1)^e)`:
 ∈ DTIME (fun n => 2^{w(n)} · (n+1)^e)`. Ties (`2 · count = 2^w`) reject. It is the corollary
 of the machine contract `exists_seedMajorityTM` that the consumers of the class read.
 
-**Status.** Admitted (a `sorry`). It follows from `exists_seedMajorityTM` through the reader
-`Complexity.mem_DTIME_iff`, which the `derand` fill adds beside `DTIME` (`ClassP/DTIME.lean`)
-under its pre-approval (Seyoon, 2026-11-15). The `derand` fill proves both the contract and
-this corollary. Until the reader exists, a proof would read `Turing.FinTM.DecidesInTime`,
-`Turing.FinTM.DecidesInTimeVia` and `DTIME` by their definitions, which Rule 10 forbids.
+**Status.** Proved from `exists_seedMajorityTM`. The proof reads the machine contract
+through `Complexity.mem_DTIME_iff`, added beside `DTIME` under the pre-approval of
+2026-11-15. It uses no definitional reading of either `DTIME` or `DecidesInTime`.
 
 **Proof sketch.** Take the machine `M` and constants `c, e` of `exists_seedMajorityTM` (the
 envelope is not needed here). `M` decides the language within
@@ -229,6 +255,7 @@ theorem seedMajority_mem_DTIME {V : Language Bool} (hV : V ∈ P) (w : ℕ → �
           2 * (Finset.univ.filter fun u : Fin (w x.length) → Bool =>
             pairEncode x (List.ofFn u) ∈ V).card} ∈
         DTIME fun n => 2 ^ w n * (n + 1) ^ e := by
-  sorry
+  obtain ⟨M, c, e, hM, _⟩ := exists_seedMajorityTM hV w hw
+  exact ⟨e, mem_DTIME_iff.mpr ⟨c, M, hM⟩⟩
 
 end Complexity

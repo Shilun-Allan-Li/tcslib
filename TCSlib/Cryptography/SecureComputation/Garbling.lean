@@ -6,13 +6,15 @@ import TCSlib.Complexity.CircuitComplexity.DAGCircuit
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.Perm
 import TCSlib.Cryptography.Foundations.Probability
+import TCSlib.Cryptography.SecureComputation.Garbling.Probability
+import TCSlib.Cryptography.SecureComputation.Garbling.CoinBlocks
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Garbled circuits (statement phase)
+# Garbled circuits
 
 [PS10, §6.2.1–6.2.3]. Construction 158.a (inventory): to garble a circuit `C` with fan-in two,
 associate two random keys `k_w^0, k_w^1` to every wire `w`. Each gate becomes a table with one
@@ -65,8 +67,15 @@ The special encryption scheme of Algorithm 157.2 gives both, nested (`GarblingSp
   encoding.
 * `SecureComputation.garbledValues_getD`, `garbledOutput_eq` (Claim 159.a, deterministic part,
   proved): a good garbling evaluates to the keys of the circuit's values, and of `C(x)`.
-* `SecureComputation.uprob_not_good_le` (Claim 159.a, probabilistic part, stated; a `sorry` under
-  a sketch): a garbling is good except with probability `12 · |gates| · δ`.
+* `SecureComputation.uprob_not_good_le_of_perm` (B2): the failure bound holds for every
+  fixed row-permutation family; `uprob_not_good_le` averages this bound over uniform permutations.
+* `SecureComputation.uprob_not_good_le_of_uniform_data`: uniform keys and row coins suffice,
+  even when row permutations depend on the seed.
+
+## Contents
+
+* `Garbling.Probability`: independent marginals and the first successful opening.
+* `Garbling.CoinBlocks`: the joint uniform law of disjoint key and row-coin blocks.
 
 ## References
 
@@ -403,25 +412,248 @@ theorem garbledOutput_eq (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : Fin
       ((DAGCircuit.size_eq Cc).symm ▸ Cc.output_lt)).trans
       (congrArg (keyAt Cc s Cc.output) (DAGCircuit.eval_eq Cc x).symm))
 
+/-- Correct rows and no successful cross-opening imply a good garbling:
+if `M` is correct, `Cc` is fan-in two, and for every gate and `a ≠ a'`,
+`M.dec (argKeys Cc s i a') (garbledRow M Cc s i a) = none`, then `Good M Cc s`.
+[PS10, §6.2.3, Claim 159.a]
+
+**Proof sketch.** The row for the current assignment opens by correctness. It occurs
+in the permuted table because the row permutation is surjective. Every other assignment's
+row fails by the cross-opening hypothesis. Thus each table has a successful row and every
+successful row gives the specified key, so its first successful opening is that key. -/
+theorem good_of_no_crossOpening (hdec : M.DecCorrect) (hC : Cc.IsFaninTwo)
+    (s : GarbleSeed Cc K ρ)
+    (hcross : ∀ (i : Fin Cc.gates.length)
+      (a a' : Fin (Cc.gates[i]).args.length → Bool), a ≠ a' →
+        M.dec (argKeys Cc s i a') (garbledRow M Cc s i a) = none) : Good M Cc s := by
+  classical
+  rw [good_iff]
+  intro i a
+  have hlen : (argKeys Cc s i a).length ≤ 2 := by
+    rw [argKeys_eq, List.length_ofFn]
+    exact ((DAGCircuit.isFaninTwo_iff Cc).mp hC).2 _ (List.getElem_mem i.isLt)
+  have hcorrect : M.dec (argKeys Cc s i a) (garbledRow M Cc s i a) =
+      some (keyAt Cc s (n + i) (gateOut (Cc.gates[i]) a)) := by
+    rw [garbledRow_eq]
+    exact (MultiEnc.decCorrect_iff M).mp hdec _ hlen _ _
+  rw [garbledTable_eq]
+  apply GarblingProbability.findSome_eq_some_of_dichotomy
+  · refine ⟨garbledRow M Cc s i a, ?_, hcorrect⟩
+    apply List.mem_map.mpr
+    refine ⟨(s.2.2 i).symm a, ?_, ?_⟩
+    · exact Finset.mem_toList.mpr (Finset.mem_univ _)
+    · rw [Equiv.apply_symm_apply]
+  · intro row hrow
+    obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hrow
+    by_cases hba : s.2.2 i b = a
+    · right
+      rw [hba]
+      exact hcorrect
+    · exact Or.inl (hcross i (s.2.2 i b) a hba)
+
+/-- A wrong-key probability bound is nonnegative:
+`M.WrongKeyBot δ → 0 ≤ δ`. Use distinct choices at one position and any plaintext key. -/
+theorem wrongKeyBot_nonneg [Fintype K] [Fintype ρ] {δ : ℝ}
+    (hδ : M.WrongKeyBot δ) : 0 ≤ δ := by
+  have h := (MultiEnc.wrongKeyBot_iff M δ).mp hδ 1 (by decide)
+    (fun _ => false) (fun _ => true)
+    (by intro heq; have hbit := congrFun heq 0; cases hbit) default
+  exact (uprob_nonneg _).trans h
+
+/-- At a fixed gate, two distinct assignments cross-open with probability at most `δ`,
+for every fixed row-permutation family `π`:
+`Pr_t[(M.dec (argKeys Cc (t.1,t.2,π) i a')
+  (garbledRow M Cc (t.1,t.2,π) i a)).isSome = true] ≤ δ` when `a ≠ a'`.
+[PS10, §6.2.3, Claim 159.a]
+
+**Proof sketch.** The circuit's argument vertices are distinct and precede this gate's
+output vertex. Restrict the uniform key table to these vertices and the selected output
+key, and read the row's independent coins. This gives a uniform plaintext key, argument
+key table and row coin. Average `WrongKeyBot` over the plaintext key. The row order is
+unused by a cross-opening event. -/
+theorem uprob_crossOpening_le_of_perm [Fintype K] [Fintype ρ] {δ : ℝ}
+    (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
+    (π : (i : Fin Cc.gates.length) → Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool))
+    (i : Fin Cc.gates.length) (a a' : Fin (Cc.gates[i]).args.length → Bool) (hne : a ≠ a') :
+    uprob (fun t : (Fin Cc.size → Bool → K) ×
+        ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) =>
+      (M.dec (argKeys Cc (t.1, t.2, π) i a')
+        (garbledRow M Cc (t.1, t.2, π) i a)).isSome = true) ≤ δ := by
+  classical
+  have hfan := (DAGCircuit.isFaninTwo_iff Cc).mp hC
+  have hmem : Cc.gates[i] ∈ Cc.gates := List.getElem_mem i.isLt
+  have hnodup := (hfan.1 _ hmem).1
+  have hlen := hfan.2 _ hmem
+  have hout : n + i < Cc.size := by rw [DAGCircuit.size_eq]; omega
+  have harglt : ∀ j : Fin (Cc.gates[i]).args.length,
+      (Cc.gates[i]).args[j] < n + i :=
+    fun j => Cc.args_lt i i.isLt _ (List.getElem_mem j.isLt)
+  have hargSize : ∀ j : Fin (Cc.gates[i]).args.length,
+      (Cc.gates[i]).args[j] < Cc.size := fun j => (harglt j).trans hout
+  let arg : Fin (Cc.gates[i]).args.length → Fin Cc.size :=
+    fun j => ⟨(Cc.gates[i]).args[j], hargSize j⟩
+  have hinj : Function.Injective arg := by
+    intro j k hjk
+    have hv := congrArg Fin.val hjk
+    change (Cc.gates[i]).args.get j = (Cc.gates[i]).args.get k at hv
+    exact hnodup.get_inj_iff.mp hv
+  let out : Fin Cc.size := ⟨n + i, hout⟩
+  have hnot : ∀ j, arg j ≠ out := fun j h =>
+    (Nat.ne_of_lt (harglt j)) (congrArg Fin.val h)
+  let R := (k : Fin Cc.gates.length) → (Fin (Cc.gates[k]).args.length → Bool) → ρ
+  have hlaw := GarblingProbability.pushesUniform_output_argKeys_row (K := K)
+    arg hinj out hnot
+    (gateOut (Cc.gates[i]) a) (fun r : R => r i a)
+    (GarblingProbability.pushesUniform_rowCoin
+      (A := fun k : Fin Cc.gates.length => Fin (Cc.gates[k]).args.length → Bool)
+      (ρ := ρ) i a)
+  let p : K × ((Fin (Cc.gates[i]).args.length → Bool → K) × ρ) → Prop := fun z =>
+    (M.dec (List.ofFn fun j => z.2.1 j (a' j))
+      (M.enc (List.ofFn fun j => z.2.1 j (a j)) z.1 z.2.2)).isSome = true
+  have hu := hlaw.uprob_eq p
+  calc
+    _ = uprob (fun t : (Fin Cc.size → Bool → K) × R =>
+        p (t.1 out (gateOut (Cc.gates[i]) a), (fun j => t.1 (arg j), t.2 i a))) := by
+      apply OneWay.uprob_congr
+      intro t
+      simp only [garbledRow_eq, argKeys_eq, keyAt_eq, hargSize, hout, dif_pos]
+      rfl
+    _ = uprob p := hu
+    _ ≤ δ := by
+      rw [uprob_prod]
+      exact (OneWay.uexp_mono (fun o : K =>
+        (MultiEnc.wrongKeyBot_iff M δ).mp hδ _ hlen a a' hne o)).trans
+          (OneWay.uexp_const δ).le
+
+/-- Uniform independent keys and row coins suffice for the garbling bound, with arbitrary
+row orders on the same seed space:
+`PushesUniform d → Pr_w[¬ Good M Cc ((d w).1,(d w).2,π w)] ≤ 12 * |Cc.gates| * δ`.
+The permutation `π w` may depend on any seed information; no independence from it is needed.
+[PS10, §6.2.3, Claim 159.a, strengthened seed-law form]
+
+**Proof sketch.** Goodness follows whenever no row cross-opens under a different assignment.
+Each cross-opening ignores row order, so its probability is transported by the uniform
+key/coin marginal and bounded by `WrongKeyBot`. A gate of arity at most two has at most
+four assignments and three different assignments per row. Apply the finite union bound
+within each gate and then over all gates. This proves the fixed-permutation B2 statement
+as a special case and also covers Yao's seed-dependent XOR shifts. -/
+theorem uprob_not_good_le_of_uniform_data [Fintype K] [Fintype ρ]
+    (hdec : M.DecCorrect) {δ : ℝ} (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
+    {Ω : Type} [Fintype Ω]
+    (d : Ω → (Fin Cc.size → Bool → K) ×
+      ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ))
+    (hd : HardcoreBit.PushesUniform d)
+    (π : Ω → (i : Fin Cc.gates.length) →
+      Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool)) :
+    uprob (fun w => ¬ Good M Cc ((d w).1, (d w).2, π w)) ≤
+      12 * Cc.gates.length * δ := by
+  classical
+  let event : (i : Fin Cc.gates.length) →
+      (Fin (Cc.gates[i]).args.length → Bool) →
+      (Fin (Cc.gates[i]).args.length → Bool) → Ω → Prop := fun i a a' w =>
+    (M.dec (argKeys Cc ((d w).1, (d w).2, π w) i a')
+      (garbledRow M Cc ((d w).1, (d w).2, π w) i a)).isSome = true
+  let gateBad : Fin Cc.gates.length → Ω → Prop := fun i w =>
+    ∃ a ∈ Finset.univ, ∃ a' ∈ Finset.univ.erase a, event i a a' w
+  have hpoint : ∀ i a a', a ≠ a' → uprob (event i a a') ≤ δ := by
+    intro i a a' hne
+    let π₀ : (i : Fin Cc.gates.length) →
+        Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool) := fun _ => Equiv.refl _
+    let p := fun t : (Fin Cc.size → Bool → K) ×
+        ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) =>
+      (M.dec (argKeys Cc (t.1, t.2, π₀) i a')
+        (garbledRow M Cc (t.1, t.2, π₀) i a)).isSome = true
+    have heq : event i a a' = fun w => p (d w) := rfl
+    rw [heq, hd.uprob_eq p]
+    exact uprob_crossOpening_le_of_perm M Cc hδ hC π₀ i a a' hne
+  have hbad : ∀ w, ¬ Good M Cc ((d w).1, (d w).2, π w) →
+      ∃ i ∈ Finset.univ, gateBad i w := by
+    intro w hw
+    by_contra hn
+    apply hw
+    apply good_of_no_crossOpening M Cc hdec hC
+    intro i a a' hne
+    apply Option.not_isSome_iff_eq_none.mp
+    intro hs
+    exact hn ⟨i, Finset.mem_univ _, a, Finset.mem_univ _, a',
+      Finset.mem_erase.mpr ⟨hne.symm, Finset.mem_univ _⟩, hs⟩
+  have hgate : ∀ i, uprob (gateBad i) ≤ 12 * δ := by
+    intro i
+    let A := Fin (Cc.gates[i]).args.length → Bool
+    have hlen : (Cc.gates[i]).args.length ≤ 2 :=
+      ((DAGCircuit.isFaninTwo_iff Cc).mp hC).2 (Cc.gates[i]) (List.getElem_mem i.isLt)
+    have hcardNat : Fintype.card A * (Fintype.card A - 1) ≤ 12 := by
+      simp only [A, Fintype.card_fun, Fintype.card_fin, Fintype.card_bool]
+      have hcases : (Cc.gates[i]).args.length = 0 ∨ (Cc.gates[i]).args.length = 1 ∨
+          (Cc.gates[i]).args.length = 2 := by omega
+      rcases hcases with h0 | h1 | h2
+      · rw [h0]; decide
+      · rw [h1]; decide
+      · rw [h2]; decide
+    have hcard : ((Fintype.card A * (Fintype.card A - 1) : ℕ) : ℝ) ≤ 12 := by
+      exact_mod_cast hcardNat
+    have herase (a : A) : (Finset.univ.erase a).card = Fintype.card A - 1 := by
+      rw [Finset.card_erase_of_mem (Finset.mem_univ a), Finset.card_univ]
+    refine (uprob_exists_le (Finset.univ : Finset A)
+      (fun a w => ∃ a' ∈ Finset.univ.erase a, event i a a' w)).trans ?_
+    calc
+      _ ≤ ∑ a ∈ (Finset.univ : Finset A), ∑ a' ∈ Finset.univ.erase a, δ := by
+        apply Finset.sum_le_sum
+        intro a ha
+        refine (uprob_exists_le (Finset.univ.erase a) (fun a' w => event i a a' w)).trans ?_
+        exact Finset.sum_le_sum fun a' ha' =>
+          hpoint i a a' (Finset.mem_erase.mp ha').1.symm
+      _ = ((Fintype.card A * (Fintype.card A - 1) : ℕ) : ℝ) * δ := by
+        simp only [Finset.sum_const, herase, Finset.card_univ, nsmul_eq_mul,
+          Nat.cast_mul, mul_assoc]
+      _ ≤ 12 * δ := mul_le_mul_of_nonneg_right hcard (wrongKeyBot_nonneg M hδ)
+  calc
+    _ ≤ uprob (fun w => ∃ i ∈ Finset.univ, gateBad i w) := uprob_mono hbad
+    _ ≤ ∑ i ∈ Finset.univ, uprob (gateBad i) := uprob_exists_le _ _
+    _ ≤ ∑ i ∈ Finset.univ, 12 * δ := Finset.sum_le_sum fun i _ => hgate i
+    _ = 12 * Cc.gates.length * δ := by
+      simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+      rw [mul_left_comm, ← mul_assoc]
+
+/-- **B2: goodness for every fixed row-permutation family.** For uniform independent
+keys and row coins and any fixed `π`,
+`Pr_t[¬ Good M Cc (t.1,t.2,π)] ≤ 12 * Cc.gates.length * δ`.
+[PS10, §6.2.3, Claim 159.a, strengthened permutation form]
+
+**Proof sketch.** Apply the uniform-data bound to the identity map on the key/coin product
+and the constant row-permutation family. This is the prescribed fixed-permutation B2 API. -/
+theorem uprob_not_good_le_of_perm [Fintype K] [Fintype ρ] (hdec : M.DecCorrect) {δ : ℝ}
+    (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
+    (π : (i : Fin Cc.gates.length) → Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool)) :
+    uprob (fun t : (Fin Cc.size → Bool → K) ×
+        ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) =>
+      ¬ Good M Cc (t.1, t.2, π)) ≤ 12 * Cc.gates.length * δ := by
+  exact uprob_not_good_le_of_uniform_data M Cc hdec hδ hC
+    (fun t => t) HardcoreBit.pushesUniform_id (fun _ => π)
+
 /-- **Claim 159.a, probabilistic part: a garbling is good with high probability** [PS10, §6.2.3,
 "all but one row will evaluate to `⊥`"]: for a fan-in-two circuit and a multi-key encryption
 that is correct and has the wrong-key property with error `δ`, a uniformly random garbling fails
 to be good with probability at most `12 · |gates| · δ`. The formal conclusion bounds failure
 of first-success correctness; it does not state the source's stronger unique-opening claim.
 
-**Proof sketch.** Fix a gate `i` and an assignment `a`.
-1. By correctness, the row of `a` decrypts under `a`'s keys to the right key. So `Good` can fail
-   at `(i, a)` only if another row, of an assignment `a'' ≠ a`, decrypts under `a`'s keys.
-2. The arguments are distinct vertices (`IsWellFormed`: no duplicates), and they precede the
-   gate's own vertex. So the keys of the argument positions are independent uniform pairs, and
-   the plaintext key and the row's coin are independent of them. By `WrongKeyBot`, averaged over
-   the plaintext and the coin, that event has probability at most `δ`.
-3. A gate has at most `2^2 = 4` assignments and `3` other rows each: at most `12` events per gate.
-   The union bound over the gates gives `12 · |gates| · δ`. The permutations play no role in
-   correctness. -/
+**Proof sketch.** Reassociate a uniform garbling seed as a permutation family and an
+independent key/coin pair. For each fixed permutation family apply the stronger B2 theorem
+`uprob_not_good_le_of_perm`. Average its constant bound with finite Fubini and the constant
+expectation identity. B2 itself bounds the at most twelve cross-opening events per gate. -/
 theorem uprob_not_good_le [Fintype K] [Fintype ρ] (hdec : M.DecCorrect) {δ : ℝ}
     (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo) :
     uprob (fun s : GarbleSeed Cc K ρ => ¬ Good M Cc s) ≤ 12 * Cc.gates.length * δ := by
-  sorry
+  let D := (Fin Cc.size → Bool → K) ×
+    ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ)
+  let P := (i : Fin Cc.gates.length) →
+    Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool)
+  let e : GarbleSeed Cc K ρ ≃ P × D :=
+    (Equiv.prodAssoc (Fin Cc.size → Bool → K)
+      ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) P).symm.trans
+        (Equiv.prodComm D P)
+  rw [← uprob_comp_equiv e.symm, uprob_prod]
+  exact (OneWay.uexp_mono (fun π : P =>
+    uprob_not_good_le_of_perm M Cc hdec hδ hC π)).trans (OneWay.uexp_const _).le
 
 end TCSlib.Cryptography.SecureComputation

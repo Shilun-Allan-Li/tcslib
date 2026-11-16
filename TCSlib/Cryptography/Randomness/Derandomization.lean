@@ -5,13 +5,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Randomness.BPPBridge
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
 import TCSlib.Complexity.ClassP.DTIME
+import TCSlib.Cryptography.Randomness.Derandomization.RootSchedule
+import TCSlib.Cryptography.Randomness.Derandomization.AdviceGap
+import TCSlib.Cryptography.Randomness.Derandomization.Expanded
+import TCSlib.Cryptography.Randomness.Derandomization.CoinGap
+import TCSlib.Cryptography.Randomness.Derandomization.Majority
+import TCSlib.Cryptography.Randomness.Derandomization.TimeBound
+import TCSlib.Complexity.Randomized.QuasiPolyHierarchy
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Derandomization from pseudorandom generators (statement phase)
+# Derandomization from pseudorandom generators
 
 [PS10, Theorem 180.1]: if pseudorandom generators exist, then `BPP ⊆ DTIME(2^{n^ε})` for every
 constant `ε > 0`.
@@ -36,10 +43,20 @@ constant `ε > 0`.
 
 * `Randomness.subexpBound`: `n ↦ ⌈2^{n^ε}⌉`.
 
+## Contents
+
+* `Randomness.Derandomization.RootSchedule`: the integer-root seed schedule.
+* `Randomness.Derandomization.AdviceGap`: the non-uniform advice gap bound.
+* `Randomness.Derandomization.Expanded`: the secure polynomial output envelope.
+* `Randomness.Derandomization.CoinGap`: the uniform prefix probability identification.
+* `Randomness.Derandomization.Majority`: the piecewise verifier and strict majority.
+* `Randomness.Derandomization.TimeBound`: the asymptotic estimate and finite exceptions.
+
 ## Main results
 
 * `Randomness.subexpBound_pos`: the bound is positive.
-* `Randomness.bpp_subset_dtime_subexp` (Thm 180.1, stated; a `sorry` under the source's sketch).
+* `Randomness.bpp_subset_dtime_subexp` (Thm 180.1), proved through the shared
+  seed-majority machine contract and its DTIME corollary.
 
 ## References
 
@@ -69,29 +86,42 @@ theorem subexpBound_pos (ε : ℝ) (n : ℕ) : 0 < subexpBound ε n :=
 [PS10, Theorem 180.1]: if a secure PRG exists, then every language of `main`'s `BPP` is in
 `DTIME(2^{n^ε})` for every `ε > 0`.
 
-**Proof sketch** (the source's, with the steps it leaves implicit; route note S3c).
-1. Let `L ∈ BPP` have verifier `M` and randomness `m(n) = a(n+1)^k`. Fix an integer `d ≥ 2`
-   with `1/d < min(ε,1)`. Compute `ℓ(n)` as the least natural `t` with `n ≤ t^d`, using integer
-   comparisons and powers. Then `n ≤ ℓ(n)^d` and `ℓ(n) ≤ n^{1/d}+1`. No computation of an
-   arbitrary real exponent is required. Expand the PRG to the syntactic polynomial envelope
-   `P(s) = a(s^d+1)^k+s+1`, which exceeds `s` and covers `m(n)` whenever `s = ℓ(n)`.
-2. Let `M'(x; u) = M(x; G(u)↾m(|x|))`, with seed length `ℓ(|x|)`. If infinitely many lengths
-   have an input with acceptance-probability gap `> 1/12`, choose one corresponding bad input
-   at each bad seed length. Its advice length is at most `s^d`. The verifier bridge, composed
-   with prefix truncation, is therefore a distinguisher polynomial in `s`; the probabilities
-   agree through `randProb_eq_uprob`. Each seed length has only finitely many corresponding
-   input lengths, so infinitely many bad input lengths give infinitely many bad seed lengths,
-   contradicting PRG security. The fixed `1/12` threshold leaves an explicit majority margin.
-3. Eventually every input has probability gap at most `1/12`. Since `M` is correct with
-   probability at least `2/3`, `M'` is correct with probability at least `7/12 > 1/2`.
-   The majority over all seeds is correct. A finite table handles the remaining input lengths.
-4. Construct a deterministic multi-tape machine enumerating the seeds, running `G` and `M`,
-   and counting, using the shared TM construction layer. For some constants `C,C'`, its time
-   is at most `2^{ℓ(n)} · poly(n) ≤ 2^{n^{1/d}+1+C log₂(n+1)+C'}`. Since `1/d < ε`, this is
-   eventually at most `2^{n^ε}`; a constant factor absorbs the finite exceptions. This machine
-   construction is the substantive remaining fill obligation, not supplied by the sketch. -/
+**Status.** Proved through `Complexity.exists_seedMajorityTM` and
+`Complexity.seedMajority_mem_DTIME`; the helpers introduce no admissions.
+
+**Proof sketch** ([PS10, Theorem 180.1], with an explicit piecewise test).
+1. Choose an integer `d ≥ 2` with `1/d < min(ε,1)`. The least natural root
+   `ℓ(n) = min{t | n ≤ t^d}` has an FP unary word and satisfies
+   `n ≤ ℓ(n)^d` and `ℓ(n) ≤ n^(1/d)+1`, including at zero.
+2. Expand a secure generator to `a(s^d+1)^k+s+1` and extract its FP evaluator.
+   Apply the verifier bridge to one bad input at each bad seed length, with
+   advice bound `s^d`. The published probability bridge and prefix projection
+   identify its PRG advantage with the verifier gap. Negligibility's inverse-linear
+   bound rules out every gap above `1/12` beyond a seed threshold, hence beyond
+   some input threshold `n₀`.
+3. Below `n₀`, use the original verifier with its true polynomial coin width;
+   from `n₀` on, use the generated prefix and width `ℓ(n)`. Both this paired
+   test and its unary width are polynomial-time. Acceptance is above `1/2`
+   exactly on members, with margins at least `7/12` and at most `5/12` in the
+   generated case. `half_lt_randProb_iff` identifies `L` with the strict seed
+   majority, including ties and zero widths. No exceptional-input table is used.
+4. Apply `seedMajority_mem_DTIME`. The logarithm of `2^w(n)(n+1)^e`, divided
+   by `n^ε`, tends to zero because `1/d < ε`; thus the time is eventually at
+   most `2^(n^ε)`. A natural constant absorbs all earlier lengths, since the
+   rounded bound is positive. Finish through `DTIME.mono` and
+   `Randomized.DTIME_const_mul_subset`. -/
 theorem bpp_subset_dtime_subexp (hPRG : ∃ G : PRG, G.Secure) (ε : ℝ) (hε : 0 < ε) :
     {L | Randomized.InBPP Randomized.polyTimeModel L} ⊆ DTIME (subexpBound ε) := by
-  sorry
+  intro L hL
+  obtain ⟨d, hd, hdε, _⟩ := Derand.exists_root_degree hε
+  have hdpos : 0 < d := by omega
+  obtain ⟨V, w, n₀, hV, hw, hevent, hmajority⟩ :=
+    Derand.exists_seed_majority hPRG hL d hdpos
+  obtain ⟨e, htime⟩ := seedMajority_mem_DTIME hV w hw
+  rw [← hmajority] at htime
+  obtain ⟨C, hbound⟩ := Derand.seed_time_le_subexp hdpos hε hdε w n₀ hevent e
+  apply Randomized.DTIME_const_mul_subset C (subexpBound ε)
+  apply DTIME.mono (fun n => ?_) htime
+  simpa only [subexpBound_eq] using hbound n
 
 end TCSlib.Cryptography.Randomness
