@@ -31,7 +31,7 @@ Total rule-10 exposure: 35 declarations.
 |---|---|---|---|---|
 | C1E-1 | 26 (218) | 33 | 0 / 0 | Dead `xr_firstArrival` **done** (#336). The rest is marginal. (a) `xr_val` → `counterValue` saves nothing: the public API is only `counterValue_eq`/`_bits`, so the eight `xr_val` lemmas would be re-proved under the public name. (b) `xr_bufferTape_neg` can cite `FinTM.bufferTape_of_neg` (−6). (c) a shared prelude for the two replay exits (about −20). (d) ten two-line `_ne_` lemmas merged into one. (b), (c) and (d) **built** (2026-11-16): PR #344 / gate 151, −38 lines. (f) is structural; it goes with IR-1. |
 | IR-1 | 6 (144) | 9 | 0 / 0 | **Carry.** Structural: the phase-host arms change. The seam-time arithmetic in the public `exists_selfStartupTMK` must be rechecked. |
-| RS-1 | 3 (87) | 2 | 0 / 0 | Small. Needs your import choice (`Build/UniversalParts` vs the `CfgFacts` route). |
+| RS-1 | 3 (87) | 2 | 0 / 0 | **Ruled (Seyoon, 2026-11-16): import `Build/UniversalParts`** in CodeSimulator, ExhaustiveReplay and NTimeHierarchy, and cite `MultiTapeTM.initCfg_eq_mapState` (no public move). Queued for the small-rulings PR. |
 | TR-1 | 4 (58) | 8 | 2 / 6 | **Carry**, or a later small PR. Needs new API (`AcceptsWithin.iff_of_haltsWithin`). |
 | SK-1 | 1 (39) | 1 | 0 / 0 | **Done** (#336). |
 | CC7-1 | 12 (863) | 4 | 0 / 0 | Dead `canonCounterRepeat` **done** (#336). The 7-leg template: design note `CC7-1-DESIGN.md`, **built** (2026-11-16): PR #345 / gate 152, −211 lines. |
