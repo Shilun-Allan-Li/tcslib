@@ -2039,3 +2039,28 @@ obliviousScheduleCfg W a c ∧ …`, superseding its cast form. Route probe:
 three producers' proofs, so that restating them reads `obliviousScheduleCfg` only through its
 readers. `setupCfg_initializes` still reaches ObliviousSetup's private steps, which are stated
 across the two types (a pre-existing front, as at the campaign base).
+
+## Closeout reconciliation (R0, 2026-11-16)
+
+Wave R0 of the closeout refactor plan (`campaign/closeout/REFACTOR-PLAN.md`, agreed by Seyoon
+2026-11-16). Each family's status was checked against the Lean at `351ba259` by grep. The rows
+above keep their history. This table is the current status, and it supersedes their open
+status columns.
+
+| Family (row) | Status at closeout | Evidence |
+|---|---|---|
+| D-R2, Catalog's expanded members (L318) | **Retired** by MIG-1 F-D (`af3273f75`, in #233): 356 privates, 8,202 lines | `Build/Catalog.lean` has no `f2_`/`a2_` name; 148 declarations |
+| Loop's H3 copies (L320) and RB4's inlined residue (L322) | **Retired** by RB4 (#13) and 11A (#20) | `emLoopHost` is an abbreviation of `loopHostM` (`Loop:4898`); no phase copies. Optional scope only: the original host's own pairs (P item 11), carried as optional |
+| Three-file relocation family (L321) | **Retired** by RB5 (#14); the twin `f2_splitEmbed_run` was removed by MIG-1 | absent |
+| ch7 per-loop lemma family, CH7-D1 (L323) | **Retired** (#18) | BL-W is an optional weakening, carried as optional |
+| ch7 `EmitIterEmbed` re-proofs, CH7-D2 (L324) | **Retired** by #20 and #243 | five one-line citations (`EmitIterEmbed:106–140`) |
+| `Codes2Tape` parse layer, CH34-D2 (L325) | **Discharged** (#19); `zfBFallback` is the approved residual | MIG-6 (parameterize by tape count) is scheduled to wave R1 |
+| R80B-E1 (L327; backlog §1) | **Closed, kept as is**: MIG-4 was closed as done (Seyoon, 2026-10-16; backlog MIG table) | the two definitions remain by that ruling |
+| FH-1, named copies (backlog) | **Retired** | every surviving copy calls `exists_first_halt`; #242's seven other implementations are held, and go to wave R4 |
+| CE-1, ZP-1 | **Retired** (#213, #212) | — |
+| ARM-1 (bulk) | **Retired** by payback #101 | residual `arm_reach` (`Machines/ARMReach:197`) goes to wave R5, after K18 |
+| AS-2, MT-1 | **Open** (not covered by #214, which they continue) | `Logspace/Mult`, `QueryReshape`, `NARMPSem`; the cross-file table reads. Scheduled to wave R5 |
+| FE-LIVE-1 | **Open**: #233 converted 5 sites and #241 converted 9 helpers; no count after #241 | recounted at the start of wave R1 |
+
+Everything else that is open, and its wave, is in `REFACTOR-PLAN.md` §2. CH34-D3 and the optional
+items are carried in the register (§4).

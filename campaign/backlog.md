@@ -403,7 +403,7 @@ change, so it waits for a window that may touch these public statements
 
 ---
 
-### R80B-E1: define `counterLoopTM` as the identity instance of `counterLoopTMVia` (from the R8.0b fill gate, finding F1)
+### R80B-E1: define `counterLoopTM` as the identity instance of `counterLoopTMVia` (from the R8.0b fill gate, finding F1) — **CLOSED, kept as is (MIG-4, Seyoon, 2026-10-16; closeout R0, 2026-11-16)**
 
 *This is MIG-4 (scenario B: the duplicated statements are retired).*
 
