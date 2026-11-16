@@ -89,24 +89,25 @@ measured repair load is about 9× R3's.
 
 ## R6
 
-The what-if seal for R6 (93 files) ran out of memory twice in its single metadata step. A split
-run is pending, so the exposure column is not yet measured. The inventory:
+Total rule-10 exposure: **291 declarations**. Measured in 10 memory-bounded slices; only
+`ZoneRebalance` could not be measured (its metadata step runs out of memory alone, but R3's run
+passed its 21 proofs). For MIG-3 and MIG-8, the exposed members are the ones #336/#337 deleted.
 
-| Family | Members (lines) | Uses | New API? | Recommendation |
-|---|---|---|---|---|
-| MIG-3 | 14 (427) | 1 | no (a private witness) | **Done** (#337, −444) |
-| MIG-8 | 14 (184) | 1 | no | Dead chain **done** (#336). The merge half waits on SH-1. |
-| SH-1 | 5 (75) | 2 | no; one import (Nondeterminism ← CertShell) | Small; next candidate after a measurement |
-| MIG-7 | 8 (126) | 6 | no; but an import of the Build stack into chapter-1 UniversalStartup | Ask. It pulls Build under the universal machine. |
-| CK-1, TC-1 | 2 each | 10 / 2 | no | Hydroxyi's files (FYI line per ruling); trivial bodies |
-| WL-1, SD-1 | 1–2 | 1–3 | public move/rename | Ask (public name changes) |
-| DT-1 | 2 (5) | 26 | `mem_DTIME_iff` | Large replay (DTIME is upstream of most of the tree); carry, or at a quiet point |
-| WS-1 | 11 (311) | 14 | a general `Action` lemma in a vendored file | Ask |
-| MIG-9 | 34 (615) | 20 | a bit-length counter row | Design first |
-| MIG-10 | 5 (47) | 1 | OracleTM relabelling | Small API; ask |
-| MIG-24 | 37 (546) | 186 | small symmetry lemmas | **Carry** (186 use sites) |
-| U-1/MIG-2 | 72 (1411) | 22 | U-1 host interface | **Carry**, or a design note: the largest item |
-| F6-1(b, c, d, f) | 1–4 each | 3–6 | one lemma each | Small, but each needs one API approval |
+| Family | Members (lines) | Uses | Exposure (m/u) | New API? | Recommendation |
+|---|---|---|---|---|---|
+| MIG-3 | 14 (427) | 1 | 12 / 1, deleted | no (a private witness) | **Done** (#337, −444; the witness's inherited reads were repaired) |
+| MIG-8 | 14 (184) | 1 | 2 / 1, deleted | no | Dead chain **done** (#336). The merge half waits on SH-1. |
+| SH-1 | 5 (75) | 2 | 1 / 1 | no; one import (Nondeterminism ← CertShell) | Small; the next candidate, but it stacks on #336 (same file) |
+| MIG-7 | 8 (126) | 6 | 5 / 5 | no; but an import of the Build stack into chapter-1 UniversalStartup | Ask, or carry |
+| CK-1, TC-1 | 2 each | 10 / 2 | CK-1 2 / 3, TC-1 2 / 1 | no | Hydroxyi's files (FYI line per ruling); trivial bodies, but every touched proof is exposed |
+| WL-1, SD-1 | 1–2 | 1–3 | 1 / 1, 1 / 3 | public move/rename | Ask (public name changes) |
+| DT-1 | 2 (5) | 26 | 0 / 23 | `mem_DTIME_iff` | **Carry.** 23 exposed readers, and the replay covers most of the tree. |
+| WS-1 | 11 (311) | 14 | 10 / 9 | a general `Action` lemma in a vendored file | Ask; 19 repairs |
+| MIG-9 | 34 (615) | 20 | 21 / 14 | a bit-length counter row | **Carry**, or a design note first |
+| MIG-10 | 5 (47) | 1 | 3 / 1 | OracleTM relabelling | Small API; ask |
+| MIG-24 | 37 (546) | 186 | 28 / 80 (+ZoneRebalance) | small symmetry lemmas | **Carry** |
+| U-1/MIG-2 | 72 (1411) | 22 | 44 / 0 | U-1 host interface | **Carry**, or a design note: the largest item |
+| F6-1(b, c, d, f) | 1–4 each | 3–6 | b 1/6, c 1/0, d 0/2, f 1/3 | one lemma each | (c) and (d) are smallest; each needs one API approval |
 
 ## Suggested order after the morning audits
 
