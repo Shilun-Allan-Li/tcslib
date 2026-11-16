@@ -4054,7 +4054,7 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
     have hs : (R 0).workTapeSymbols i = none := by
       simp only [R, Cfg.workTapeSymbols, ↓reduceIte, Nat.cast_zero, zero_sub, wordPatch]
       rw [if_neg (by omega)]
-      simpa only [sub_eq_add_neg] using hw (-1) (by omega) (by omega)
+      simpa only [sub_eq_add_neg, FinTM.bufferTape_left] using hw (-1) (by omega) (by omega)
     rw [step_of_tapeAction_move (scanTM k i δf δb a₀) (R 0)
       (q' := .done (b 0).1) i 0 .pos rfl (by simp only [scanTM, hs])]
     apply Cfg.ext

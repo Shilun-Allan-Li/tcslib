@@ -420,7 +420,12 @@ theorem exists_inputWindowCopyTM (k : ℕ) (j dst : Fin k) (hjd : j ≠ dst) :
   · simp only [he, out]
   · simp only [he, out, iw_prefix, y]
   · rw [he, ← hv]
-    rfl
+    show Function.update (Function.update c.workTapes dst
+        (wordPatch (c.workTapes dst) (c.workTapePos dst) y)) j
+        (wordPatch (c.workTapes j) (c.workTapePos j) v) = _
+    rw [show wordPatch (c.workTapes dst) (c.workTapePos dst) y = _ from
+        funext (wordPatch_apply _ _ _), show wordPatch (c.workTapes j) (c.workTapePos j) v = _ from
+        funext (wordPatch_apply _ _ _)]
   · simp only [he, out, y]
   · simp only [he, out]
   · intro u hu

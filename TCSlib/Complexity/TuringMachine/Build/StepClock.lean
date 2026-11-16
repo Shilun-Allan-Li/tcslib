@@ -449,9 +449,21 @@ private theorem sc_debit {k : ℕ} {Γ S Q : Type} [DecidableEq Γ] {x : List Γ
         have seen : ((decrementTM 1 0).runFrom shadow t).state = some (.done b) := by
           exact hstate.symm.trans (hf.trans (congrArg some hfb))
         exact binary.2.1 t (by omega) b seen)
-    have initial : start.mapState ρ = clockCfg (some (ρ .run)) c ct cp := rfl
+    have initial : start.mapState ρ = clockCfg (some (ρ .run)) c ct cp := by
+      apply Cfg.ext
+      · simp only [Cfg.mapState_state, start, clockCfg_state, Option.map_some]
+      · simp only [Cfg.mapState_inputPos, start, clockCfg_inputPos]
+      · funext j p; simp only [Cfg.mapState_workTapes, start, clockCfg_workTapes]
+      · funext j; simp only [Cfg.mapState_workTapePos, start, clockCfg_workTapePos]
+      · simp only [Cfg.mapState_output, start, clockCfg_output]
     rw [initial, placedRun u hu] at guarded
-    exact guarded
+    refine guarded.trans ?_
+    apply Cfg.ext
+    · simp only [Cfg.mapState_state, clockCfg_state]
+    · simp only [Cfg.mapState_inputPos, clockCfg_inputPos]
+    · funext j p; simp only [Cfg.mapState_workTapes, clockCfg_workTapes]
+    · funext j; simp only [Cfg.mapState_workTapePos, clockCfg_workTapePos]
+    · simp only [Cfg.mapState_output, clockCfg_output]
   -- The overlay retains the rich frame; its changed interval is precisely the word patch.
   have finalTape : (rich.runFrom seed ticks).workTapes 0 = wordPatch ct cp (word.map e) := by
     funext p
@@ -464,7 +476,9 @@ private theorem sc_debit {k : ℕ} {Γ S Q : Type} [DecidableEq Γ] {x : List Γ
       · rw [if_pos unchanged]
         have index : (p - cp).toNat < word.length := by omega
         have digit : FinTM.bufferTape word (p - cp) = some word[(p - cp).toNat] := by
-          simp [FinTM.bufferTape, inside.1, index]
+          have h0 : ((p - cp).toNat : ℤ) = p - cp := Int.toNat_of_nonneg (by omega)
+          nth_rw 1 [← h0]
+          rw [FinTM.bufferTape_nat, List.getElem?_eq_getElem index]
         cases cell : ct p with
         | none => simp [cell, digit] at unchanged
         | some a =>
