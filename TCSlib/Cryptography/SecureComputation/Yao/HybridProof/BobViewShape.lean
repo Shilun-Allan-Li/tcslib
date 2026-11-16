@@ -3,7 +3,6 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TwoMoveViews
-import TCSlib.Cryptography.SecureComputation.ObliviousTransfer
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
