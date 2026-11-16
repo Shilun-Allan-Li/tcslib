@@ -1,0 +1,181 @@
+Combined integration build of every open PR (#318, #319, #323, #324, #326, #327) on the records tip, with each PR's solo coverage,
+maintainer job, 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0 (PATH=$HOME/.elan/bin:$PATH; `lean --version` 4.25.0 cdd38ac5); one Lean process at a time
+  (ours: another job's lean on dl-oleans-2 was seen and not touched), only scripts/lean_check_tree.sh (worktree copy byte-equal to
+  /home/user/tcslib/scripts/lean_check_tree.sh, checks/runner-equal.txt) through tools-used/review/runner.py (the G26-N1 runner,
+  `^\S+\.lean:\d+:\d+: error[:(]`) with TCSLIB_OLEANS=$SP/dl-oleans; probes through tools-used/runner_full.py (lean
+  -DmaxErrors=0, no -o); no lake command; nothing pushed; no commit or branch in /home/user/tcslib (only `git fetch`, `git worktree`
+  and unreferenced `git commit-tree --no-gpg-sign` objects). The shared .lake/packages was not modified.
+Method and tools: the int-313-323-324 evidence (records gates/37-sc-compose/integration/int-313-323-324-evidence.zip, SHA-256
+  3917cc1e6136b8562a05e86f005c1505c5f2c2b943a0a9fdc1de3a8aac19df69), extracted into a fresh directory: 527/527 OK against
+  evidence-SHA256SUMS, path set exact, SHA256SUMS = evidence-SHA256SUMS. tools-used/: unmodified copies of its tools-used/
+  (review/{runner,downorder,snapshot,buildsum,sorrycensus,treecheck}.py; buildset, bothdown, bothdown3, bothdown317, refunion,
+  refcmp, permod, restoreplan, tipcensus) and, from the derand review (fills/derand/final-r1/review-evidence.zip, ef0776d5...,
+  1317/1317 OK), mloverlay.sh, mathlibextra.sh, restore_derand.sh, and runner_full.py (gate36-le / sc-compose copy). New:
+  bothdownN.py (bothdown3.py for N seed sets), refunion2.py (refunion.py, every reference run kept separately, rc-0 records only,
+  module x reference matrix), treecheck_ml.py (treecheck.py with the Mathlib overlay attributed and symlinks not followed),
+  solocheck.py, soloenv.py, solorun.sh, soloverify.py (solo coverage, below).
+
+trial merge (landing/):
+  records tip b0ebd475eb0b4131449bce58462f168f27eee17b (= origin/cryptography/pass-shelat-ch2-4 after `git fetch`, unchanged
+    during the job; its code equals 654323f2's: #313 merged).
+  heads (refs/pull/N/head by `git ls-remote` at the start): #318 b0bad23ae611983e3323460bb8c564da90ad6e8c, #319
+    47daa90792e96b93510384adbab9f6e492ccef3a, #323 8c3f3e3fe2912784f680c10f8c478d2eeeeb7f6a, #324 a6eaebd7 (then the LE-gate37
+    head 4bd2d80bfb58fab5243c66c9f1a697a30b533756, see ../gate37-le/), #326 = the derand LE-doc head
+    c27005d67298f79c785a4e8ac1648da0a67d3614, #327 = the seq-zk LE-doc head bd19c433a4cf3d4027ffc891d7d3c06e927e9dfa (both from
+    ../ledoc-derand-seqzk/). Merge bases (checks/pr-bases.txt): #318/#319/#327 05d26fe5, #323 1321b9cb, #324/#326 6ce4658d; each
+    base's code differs from the tip's only in #313's 5 Learning files.
+  `git merge-tree --write-tree --messages`, each rc 0 with no conflict message (landing/merge-tree-*.txt, scratch-chain.txt):
+    S1 tip x #318 bd129bfa -> d882e2c4; S2 x #319 66b34363 -> 6564ad82; S3 x #323 a7988cd9 -> d30ead70; S4 x #324(a6eaebd7)
+    35e9289d -> 6cfe68ac; S5 x #326 0c1134e5 -> 0f43c1e8; S6 x #327 tree 225d0f05fa5f6d03356438e91d2daa8ac2414fca, commit
+    e2e26b9e71747c03f71b26d684b99f943442d4d7 (the tree of the main build). Then, at the coordinator's request during the build,
+    S7 = S6 x #324 LE-gate37 4bd2d80b: tree 3fb05ea062395caf069c09643a8caf751d3ad6da, commit
+    639d16d943d4bb4777c77ae8614cd8c2ed91f1bd = THE FINAL COMBINED TREE (S7a with the superseded b4900559 kept in the chain
+    file). Other orders (landing/merge-tree-alt.txt): two orders give 225d0f05 with the old #324 head, three orders give 3fb05ea0
+    with the new one, all clean. All scratch commits: author = committer = Claude <noreply@anthropic.com>, date fixed
+    2026-11-16T00:00:00Z, unsigned, no ref, never pushed (also the solo merges below).
+  checks/: tip-vs-combined-name-status.txt (at 639d16d9) = the union of checks/pr*-name-status.txt: 97 .lean files (79 A, 18 M;
+    +17309/-300), #318 7, #319 4, #323 14, #324 16, #326 15, #327 41; shared paths 0 (checks/shared-paths.txt); every blob at the
+    combined tree equals its PR head's (checks/combined-blobs-vs-heads.txt: 7/7, 4/4, 14/14, 16/16, 15/15, 41/41).
+worktree $SP/wt-int-all (sparse, non-cone /* !/briefs/, .lake/packages -> /home/user/tcslib/.lake/packages): at S6 for the build,
+  S7 for the #324 rebuild, the axioms probe, Rule 10 of ../gate37-le/, tree check and lint, then at each solo merge. Clean at the
+  end (checks/worktree-status.txt: only the ignored .lake/); removed (`git worktree remove --force`), pruned.
+
+build set (order/ at S6; order-final/ at S7, identical sets and queue):
+  downorder.py vs eff2dcd0 (the olean snapshot's base): changed 169 = 72 base-delta modules since eff2dcd0 (order/basedelta-
+  modules.txt: int-313-323-324's 68 + #313's 5, minus SeedMajority, which #326 also changes) + the 97 PR modules; down 694; order
+  1332 (imports-first); 377 Mathlib roots. buildset.py (seeds = the 97): down-seed 661 (incl. root TCSlib, audits/garg-ch1-3/Checks,
+  audits/pass-shelat/Checks), build set 694 = down-seed + 33 base-delta modules they need, excluded 0; build-queue.txt 694 modules,
+  imports-first (asserted per edge). (The expected "700 or more": 694.)
+  downstream counts (order-final/bothdown.out, bothdownN.py at S7): #318 10, #319 68, #323 322, #324 19, #326 585, #327 65,
+  union 661. Downstream of both, per pair: 318&319 1, 318&323 6, 318&324 3, 318&326 10, 318&327 1, 319&323 37, 319&324 1,
+  319&326 57, 319&327 2, 323&324 16, 323&326 273, 323&327 41, 324&326 16, 324&327 1, 326&327 52; modules downstream of 1/2/3/4/6 PRs:
+  353/214/90/3/1 (only root TCSlib is downstream of all six; order-final/merge-multi.tsv). With the old #324 head (order/
+  bothdown.out) 323&324 was 3 and #323's downstream 309: G37-01's CommitmentLemmas import makes ComposeSecurity/Machines (hence
+  the 16 #324 modules) downstream of #323's DAGCircuit.
+
+Mathlib overlay (build-mathlib-extra/; the derand reviewer's method, derand-r1 PROVENANCE "environment"): the shared pinned Mathlib
+  build lacks Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.olean, imported by Derandomization/RootSchedule (the only
+  Mathlib module imported by the queue and missing). tools-used/mloverlay.sh put 3346 symlinks to the pinned Mathlib oleans in
+  dl-oleans/Mathlib (our tree only; nothing under /home/user/tcslib written) and mathlibextra.sh compiled that one module from the
+  pinned source (mathlib 029db123, source SHA-256 b371bf48...) with plain `lean -o`: rc 0, olean c0a9cff04c67... = the derand
+  review's. Removed at restore.
+
+olean tree $SP/dl-oleans:
+  pre: tree/snapshot-pre.txt (snapshot.py): 1230 files, 0 empty dirs, SHA-256
+    457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required value (byte-equal to int-313-323-324's
+    snapshot-post). Before the build the 561 base oleans the queue overwrites were copied aside ($SP/dl-intall-backup;
+    tree/backed-up.txt with hashes = snapshot-pre; copies verified 561/561) and the 133 new ones listed (tree/new-oleans.txt).
+
+build (build/; runner.py $SP/wt-int-all order/build-queue.txt $SP/dl-oleans build, at S6; runner rc 0):
+  build/summary.txt: 694/694 rc 0; errors 0 (G26-N1); substring "error" 0; 56 sorry warnings; 417 warnings; 5650 s of module time,
+  2026-11-16T01:42:54 - 03:17:06 UTC (1 h 34 min wall), max RSS 4.52 GB; slowest DetMod 1447 s, CookLevin/Hardness 329 s,
+  NARMProb 214 s, audits/pass-shelat/Checks 136 s, SequentialZK 117 s. build/per-module.tsv (permod.py): per module rc,
+  err_colon (`error:`), err_paren (`error(`), combined, error_substr, sorry, warnings: totals error: 0, error( 0; every log hash =
+  its record. The 97 PR modules: rc 0, 0 errors both forms; sorry 0 except Yao 2 (yaoHybrid_polyTime, yaoHybrid_simulators:
+  tip admissions, sc-yao); warnings 20 = IterateFind 12 (derand E1 copy of the base linter lines, disclosed), Classes 2 (lines
+  586/1302, unchanged code), Universal 1 (unused hc, canonizer), SequentialZK 1 (unused hQ, disclosed), SliceParser 1 and
+  NestedBounds 1 (SG-F06), Yao 2 (the sorries). Other sorry warnings only in admitted non-PR modules (TQBF 21, RAMSimulation/
+  Classes 9, UniqueGames 8, Hierarchy 4, WordSize 3, MaxCutAlgorithm 2, Simulation 2, NTimeDiagonalizer 2, NonUniform 1,
+  NDNormalForm 1, Savitch 1).
+  build-324/ (after LE-gate37; worktree at S7; order-final/rebuild324-queue.txt = down(#324) at S7 + both audits Checks, 21
+    modules, imports-first): 21/21 rc 0, 0 errors both forms, 0 sorry, 0 warnings, 204 s (03:24:21-03:27:44). build-324-attempt1/:
+    the same queue at the superseded b4900559 merge: Runs.lean 5 errors (the splitCoins name clash, ../gate37-le/), stopped there.
+  Records of the final tree: admissions/records-final.jsonl = int-317's base records (admissions/base-records-from-int-317.jsonl,
+    = int-313-323-324's and gate36-le's copy) + build/ + build-324/; build/results-final.jsonl = build/ + build-324/.
+
+admissions (admissions/):
+  tip (tip-census-b0ebd475.txt, tipcensus.py over the base records, int-313-323-324, gate36-le build/rerun/trial, sc-garble and
+    sc-compose builds; 1253 modules matched, 0 disagreeing; 34 modules outside root TCSlib's closure have no record, as at gate36):
+    215 sorry warnings tree-wide (= gate36-le's 654323f2 census, per module identical).
+  combined (merge-census-639d16d9.txt, tipcensus.py over records-final.jsonl at S7; 1332 modules matched): 194.
+  tip-count.txt / tip-vs-merge-census.diff: 194 = 215 - 2 (sc-ot: ObliviousTransfer 2->0) - 1 (canonizer: Universal 1->0) - 7
+    (sc-garble: SpecialEncryptionSecurity 3->0, Garbling 1->0, GarblingSecurity 1->0, SpecialEncryptionMulti 1->0, Yao 3->2) - 3
+    (sc-compose: ComposeSecurity 3->0) - 3 (derand: SeedMajority 2->0, Derandomization 1->0) - 5 (seq-zk: SequentialZK 5->0);
+    no other count changes; every new PR module 0.
+  pr-modules-sorry.txt: the 97 PR modules have 0 sorry warnings and 0 `sorry`/`admit` tokens in code except Yao (2 warnings,
+    2 code tokens = the two tip admissions; 3 with its docstring's mention). No PR module gained an admission.
+
+axioms (axioms/; AxiomsAll.lean.txt run as IntProbe/AxiomsAll in the worktree at S7 with runner_full.py: rc 0, 0 errors,
+  0 warnings, no olean written; source removed afterwards; probe-runs/, AxiomsAll.log, axioms-summary.txt): 67 #print axioms =
+  each unit's census / integration list: sc-ot (gate34-le census: otProtocol_polyTime, otProtocol_simulators, otProtocol_hbcSecure
+  and 8 OT helpers), canonizer (int-319 census: exists_canonizerExp, exists_polyCanonizer, ... 11), learning/sc-garble/sc-compose
+  (int-313-323-324 probe: 2 + 8 + 4), derand (review census: the 3 targets, E1-E3, inBPP_iff, ... 18), seq-zk (review census: the
+  5 targets, PerfectZK.seqRep, PerfectZKAbort.seqRep, ... 11), plus yaoHybrid_hbcSecure and yaoProtocol_hbcSecure. Result: 63
+  [propext, Classical.choice, Quot.sound]; Turing.oneTapeFormat_serialize_decode [propext, Quot.sound] (as in int-319);
+  OT.pairSndD_nil' no axioms; yaoHybrid_hbcSecure and yaoProtocol_hbcSecure [propext, sorryAx, Classical.choice, Quot.sound].
+  Dependency trace (the sc-garble review's DepTrace logic, unchanged): the admitted declarations (direct sorryAx) in the closure of
+  yaoProtocol_hbcSecure (18264 constants) are exactly yaoHybrid_polyTime and yaoHybrid_simulators (sc-yao); of
+  yaoHybrid_hbcSecure (9418) the same two. otProtocol_polyTime / otProtocol_simulators and hbcSecure_compose are gone.
+
+refcmp (build/; refunion2.py over build/results-final.jsonl):
+  references: 24 build runs (rc-0 records), copied to build/refs/jsonl/ and each byte-equal to its entry in its evidence's
+    SHA256SUMS (refs/refs-hash-check.txt 24/24); the zips (refs/refs-zip-check.txt) extracted into fresh directories and checked
+    against their records evidence-SHA256SUMS, path sets exact: fills/sc-ot/final-r1/review-evidence.zip (aa3bcfc3..., 810/810;
+    build, build-r2, build-r3, edit-build, lereuse-trial), fills/canonizer/final-r1 (2b52982f..., 838/838; build, build-r3),
+    fills/sc-garble/final-r1 (5a121c02..., 1200/1200; build, edit-build, base-build), fills/sc-compose/final-r1 (c11ce8bb...,
+    850/850; build, edit-build, base-build), fills/derand/final-r1 (ef0776d5..., 1317/1317; build, build-retry, base-build),
+    fills/seq-zk/final-r1 (f9c39479..., 1106/1106; build), gates/34-sc-ot/landing-r1/gate34-le (145d5574..., 459/459; build),
+    gates/35-canonizer/integration/int-319 (830395f8..., 299/299; build, build-combined), gates/36-sc-garble/landing-r1/gate36-le
+    (f77628dd..., 628/628; build, build-rerun, trial/build), gates/37-sc-compose/integration/int-313-323-324 (3917cc1e..., 527/527;
+    build). (Only the Rule 10 seal/control runs were deleted from the extracts after the check, to save disk.)
+  build/refunion.txt, refunion-matrix.tsv, refunion-per-ref.txt: 660 of 694 modules byte-identical in source and olean to at least
+    one reference.
+  - NO reference with the same source: 34 modules = exactly the files edited in this job (build/edited-this-job.txt; each has
+    references with a different source): derand LE-doc Classes; seq-zk LE-doc Defs + 22 SequentialZK files; LE-gate37's 10
+    ComposeSecurity files. Their sources are new here (docstrings are stored in the olean). No module has no reference at all.
+  - same source, different olean: 1, SpecialEncryptionMulti/SliceReduction vs int-313-323-324 and the sc-garble review; it is
+    byte-identical to gate36-le build and build-rerun. Explained by gate36-le: LE-gate36 (#323's head 8c3f3e3f) edited SliceParser's
+    imports (+BlockEncryptor, +FromPRG), changing SliceReduction's import closure; gate36's rerun showed the new olean deterministic.
+  - build/both-modules-refmatch.txt: of the 308 modules downstream of two or more PRs, 278 are byte-identical to a reference; the
+    other 30 are among the 34 edited files. Root TCSlib, both audits Checks, SecureComputation and Randomness match 11-18 references.
+tree check (tree/tree-check-merge.txt; treecheck_ml.py, order-final/order.txt 1332 modules, records-final.jsonl, rev S7, run after
+  the probes; tree/snapshot-merge.txt): every module rc 0 at the S7 source, every olean = its record, none missing, no stray olean,
+  no empty dir: RESULT OK (4710 files = 1332 + 31 PFR + the 3347 Mathlib overlay entries, attributed).
+lint (lint/; campaign_style_lint.py --check8b in the worktree at S7 and in a git-archive export of the tip, removed afterwards):
+  Cryptography 92 FAIL / 101 WARN at the tip and at the merge; linediff-Cryptography-tip-vs-combined.txt: only ZeroKnowledge/Defs'
+  check-8 list loses StatZK (#327's StatZK_iff). Complexity 25/391 at the tip, 25/390 at the merge; the line set changes only by
+  the disclosed ones: DAGCircuit check-8 loses IsFaninTwo (#323), DTIME's check-8 WARN removed (#326 E3), Classes 1403 -> 1415
+  lines and check-8 loses InBPP (#326 SR-01), CodeFormat check-8 loses oneTapeFormat and CodeSimulator 9126 -> 9133 lines and
+  loses oneTapeMachineFormat (#319). No new FAIL. No PR file has a new FAIL.
+
+solo coverage (solo/; summary.txt): each PR alone on the tip, scratch merges solo/solo-merges.txt (all rc 0, clean; tree = tip + the
+  PR's files exactly): #318 bae29c92, #319 5e5a4f6c, #323 4ebf36f9, #324 bcf945e8 (old head), #326 af5c9d44, #327 e3d2c3e4.
+  solocheck.py compares every module of the solo merge's build order (pr*/order/, downorder + buildset at the solo merge) with the
+  full record set its own integration build left; differ.txt = source differs or no record; rebuild.txt = their downstream.
+  - #319 (own build int-319 at 05d26fe5, records-B = base + job A + build/): differ = #313's 5 Learning modules; rebuild 7 =
+    Learning x5, Randomness, root TCSlib (the expected "Randomness and TCSlib" plus #313's own 5).
+  - #318 (own build gate34-le at 05d26fe5): the same 7.
+  - #323 (own build gate36-le, LE-gate36 on 654323f2, = the current code): 0 differ, 0 to rebuild.
+  - #326 (own build the derand review at d34fbf09 / 6ce4658d, logs/records-head.jsonl): differ Classes (LE-doc) + Learning x5;
+    rebuild 89 (Classes' downstream and Learning's).
+  - #327 (own build the seq-zk review at 05d26fe5): differ the 23 LE-doc files + Learning x5; rebuild 63.
+  - #324: its own builds (int-313-323-324, gate36 trial) predate LE-gate37; not re-checked alone (see below).
+  Separate tip+PR checks were run for all of #318, #319, #326, #327 (sets 7, 7, 89, 63), after the combined analysis, in the same
+  tree (solorun.sh): soloenv.py takes, for every module of the import closure of the rebuild set outside it, the olean its own
+  build recorded (same source and import-closure sources, so it is the expected one) and checks the tree: OK if present, RESTORE
+  from the base-snapshot backup if that is it, MISSING otherwise (rebuilt first, must reproduce the recorded hash); then the queue
+  (missing + set, imports-first) is built at the solo merge. soloverify.py, pr*/verify.txt:
+    #319: env OK 1230 / RESTORE 13 / MISSING 2 (tip SeedMajority, tip SpecialEncryptionMulti: rebuilt, = recorded hashes); 9/9 rc 0,
+      0 errors, 125 s; the 7 byte-identical to references (Learning to gate36-le/int-313-323-324/combined; Randomness, TCSlib to
+      14-19 builds). RESULT OK.
+    #318: OK 1246 / RESTORE 3 / MISSING 1 (ObliviousTransfer, = recorded); 8/8 rc 0, 127 s; RESULT OK.
+    #327: OK 1227 / RESTORE 1; 63/63 rc 0, 0 errors, 0 sorry, 548 s; every module byte-identical to a reference (the 23 LE-doc
+      modules to the combined build). RESULT OK.
+    #326: OK 1170 / RESTORE 2 / MISSING 2 (DTIME, IterateFind, = recorded); 91/91 rc 0, 0 errors, 0 sorry, 871 s; every module
+      byte-identical to a reference. RESULT OK.
+  So each of #318, #319, #323, #326, #327 is covered merging first onto the tip, and the combined tree covers all six together.
+  #324 at 4bd2d80b alone on the tip was not built: its rebuild set is small (down(#324) = 19 modules), but its environment needs
+  tip-state oleans for the #323/#326-downstream modules those 19 import, and no record of such a state exists (the closest
+  builds include #323 or the old #324), so it would mean a ~280-module solo build. The combined build covers it with all PRs; its
+  old head was covered alone-with-#323 by gate36's trial.
+
+restore (restore/): the 561 backups copied back, each hash checked (restore-log.txt: 561 restored, 0 failed); the Mathlib overlay
+  deleted (3346 symlinks + the NthRootLemmas olean c0a9cff0..., logged); restoreplan.py --delete against tree/snapshot-pre.txt:
+  133 extra files (= tree/new-oleans.txt; restore/extra-vs-new-oleans.txt empty) deleted with 17 emptied directories
+  (deleted-dirs.txt); 0 changed, 0 missing. The solo checks' restores and rebuilds are covered by the same backups (changed 0).
+  post: tree/snapshot-post.txt: 1230 files, 0 empty dirs, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f,
+  byte-identical to tree/snapshot-pre.txt. Backups removed afterwards.
+cleanup: the worktree removed and pruned; the backup directory, the tip export and the reference extracts removed after zipping.
+SHA256SUMS: every file here except itself (paths without "./"); ../int-all-open-evidence.zip holds exactly these paths plus SHA256SUMS.
