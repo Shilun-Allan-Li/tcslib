@@ -476,6 +476,18 @@ statement, with its own gate, and not worth it for the remaining 90% textual mat
 stay unchanged. **Prerequisite:** W2-V's own fill gate (the wave-1 fill gate), so that the cited
 shell is audited first. The task gets its own PR and gate.
 
+**Carried (Seyoon, 2026-11-16), after measurement.** The shell's hypothesis needs a plain
+machine `P` that reads the input natively and halts by `T (|x| + |u|)` with output `out x u` for
+every certificate of the right length. `Nondeterminism`'s `choiceCore` reads `x` from a copied
+work tape (it was built for the paired loader), and the public `NDTM.replayTM` does not stop when
+the choice word runs out. The public `exists_choiceVerifier_mem_P` is stated for arbitrary `N`, so
+no halting hypothesis is available. SH-1 would therefore need a new halting, native-input choice
+core with its run lemmas: an estimated +125 to +185 lines against about 100 deleted
+(`contSplitWord`, `cont_split_length`, `cont_split_answer`, `cont_split_bridge`,
+`choiceVerifier_no_split` and the body of `cont_choiceVerifier_mem_P`). That is about +25 to +85
+net, to retire one 4-line pair. Revisit only if a native-input bounded replay core is published
+for another consumer.
+
 ### UNIV-1 (optional): universe-polymorphic `counterLoopTMVia` and `phaseHostTM` (user, 2026-10-12)
 
 *Folds into MIG-0's universe decision (the contract structure's `Type`/`Type*` choice).*

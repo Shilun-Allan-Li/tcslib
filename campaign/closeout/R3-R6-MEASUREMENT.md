@@ -97,7 +97,7 @@ passed its 21 proofs). For MIG-3 and MIG-8, the exposed members are the ones #33
 |---|---|---|---|---|---|
 | MIG-3 | 14 (427) | 1 | 12 / 1, deleted | no (a private witness) | **Done** (#337, −444; the witness's inherited reads were repaired) |
 | MIG-8 | 14 (184) | 1 | 2 / 1, deleted | no | Dead chain **done** (#336). The merge half waits on SH-1. |
-| SH-1 | 5 (75) | 2 | 1 / 1 | no; one import (Nondeterminism ← CertShell) | Small; the next candidate, but it stacks on #336 (same file) |
+| SH-1 | 5 (75) | 2 | 1 / 1 | no; one import (Nondeterminism ← CertShell) | **Carried** (Seyoon, 2026-11-16) after a closer measurement: the shell needs a halting native-input choice core that does not exist, so about +25 to +85 net to retire one 4-line pair (backlog §SH-1) |
 | MIG-7 | 8 (126) | 6 | 5 / 5 | no; but an import of the Build stack into chapter-1 UniversalStartup | Ask, or carry |
 | CK-1, TC-1 | 2 each | 10 / 2 | CK-1 2 / 3, TC-1 2 / 1 | no | Hydroxyi's files (FYI line per ruling); trivial bodies, but every touched proof is exposed |
 | WL-1, SD-1 | 1–2 | 1–3 | 1 / 1, 1 / 3 | public move/rename | Ask (public name changes) |

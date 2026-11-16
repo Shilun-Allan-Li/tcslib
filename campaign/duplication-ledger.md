@@ -2145,3 +2145,10 @@ with the host dispatcher (kind 6, carried). Status: **retiring (gate 150 CLEAR; 
 Net −38 Lean lines; copy screen 119 → 105 (22 gone, 8 new among the one-bank update siblings).
 Remaining: (a) declined (no saving), (d)'s optional one-bank update merge, (e)–(h) as recorded.
 Status: **retiring (gate 151; PR #344 draft)**.
+
+**SH-1 carried (2026-11-16).** Measured before building: re-deriving `cont_choiceVerifier_mem_P`
+through `FinTM.exists_certificateShell` needs a new halting, native-input choice core, because
+the shell's plain machine must read the input natively and always halt, and the public
+`exists_choiceVerifier_mem_P` is stated for arbitrary `N`. That is about +25 to +85 net lines to
+retire the 4-line `contSplitWord`/`certSplitWord` pair. Seyoon ruled: carry (backlog §SH-1).
+Status: **carried**.
