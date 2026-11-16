@@ -1,0 +1,127 @@
+Integration cross-build after #332 and #333 merged: new tip T x #327 (seq-zk) x #324 (sc-compose), maintainer job, 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0 cdd38ac5 (PATH=$HOME/.elan/bin:$PATH; checks/lean-version.txt); one Lean process of ours
+  at a time, only on $SP/dl-oleans-2 (another job's runner and lean on $SP/dl-oleans ran throughout and were not touched); modules
+  built only by scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/lean_check_tree.sh) through
+  tools-used/review/runner.py (G26-N1 count `^\S+\.lean:\d+:\d+: error[:(]`), TCSLIB_OLEANS=$SP/dl-oleans-2; the probe through
+  tools-used/runner_full.py (lean -DmaxErrors=0, no -o); no lake command, no cache get; nothing pushed; no commit, branch or checkout
+  in /home/user/tcslib (only `git fetch`, `git worktree` and unreferenced `git commit-tree --no-gpg-sign` scratch commits). The shared
+  .lake/packages was not modified. (/home/user/tcslib's branch gained 12 records-only commits from the coordinator during the job,
+  8c42b40d -> 9902d727; `git diff` of TCSlib, TCSlib.lean, audits, scripts and the lake files between them is empty.)
+Method and tools: records briefs/pass-shelat-ch5-8/maintainer/int-stmt-331-333-2026-11-16/int-stmt-331-333-evidence.zip (SHA-256
+  9ffa41bbb1fb703bcd36ff15bc810a7ee09f3236445f81e1096eb63144617172), extracted into a fresh directory ($SP/ev-int331-x, removed after
+  zipping): 1141/1141 OK against evidence-SHA256SUMS, path set exact, its SHA256SUMS byte-equal to evidence-SHA256SUMS; and
+  briefs/pass-shelat-ch5-8/gates/39-seq-zk/landing-r1/gate39-le-evidence.zip (35e990e7...; all OK against its evidence-SHA256SUMS,
+  SHA256SUMS equal; extracted to $SP/ev-g39-x, removed after zipping) for the #327/#324 combined-build references.
+  tools-used/: unmodified copies of int-stmt-331-333's tools-used/ (stateplan, runner, runner_full, downorder, permod, snapshot,
+  buildsum, treecheck_ml, tipcensus, refunion2, restoreplan, mloverlay.sh, mathlibextra.sh, ...), plus from LE-gate39, unmodified:
+  backupq.py (pre-build backup) and restore_g39.sh. New: restore_x.sh = restore_g39.sh with only the restoreplan order path changed
+  to order-x1 (diff: the header comment and that one path); namecheck.py (name-clash check; decls2.py's parser copied verbatim);
+  logcheck.py (log/olean vs same-source reference records; added after the ENOSPC incident). Scripts actually run: build-x1/run.sh,
+  build-x1/run2.sh, finish-post-build.sh, finish-restore.sh.
+
+coordinator updates during the job: (1) before any build: the user also merged #333; T is the new tip containing both merges, X1 =
+  T x #327 x #324 is the final tree; no separate X2 and no #333 merge-tree check; instead T's code tree is compared with C2 and the
+  sorry total at T must be 237, at X1 229. (2) the ENOSPC incident (below).
+
+inputs (`git fetch origin cryptography/pass-shelat-ch2-4 stmt/gsw land/pass-shelat-seq-zk land/pass-shelat-sc-compose`):
+  T  = origin/cryptography/pass-shelat-ch2-4 = 8c42b40d789a798e39e9a111dabf3877303f6ae9 ("Records: #332 and #333 merged; ...").
+       First-parent: 822252ac (Merge PR #333) <- 86e6b789 (records merge of bc02efe6 = Merge PR #332). Both heads are ancestors.
+       No TCSlib/, TCSlib.lean or audits/ path differs between 822252ac and T, nor between bc02efe6 and 86e6b789.
+  heads = `git ls-remote origin refs/pull/N/head`: #333 486f44f8414c20a2d21e452c44de8b8c8d8513a0, #327
+       a94ba750b2f21ea5f2c3e58bc7959ad5ac9de871, #324 4bd2d80bfb58fab5243c66c9f1a697a30b533756 (and #332 94eae71b...); each equals
+       the fetched origin branch.
+T vs C2 (int-stmt-331-333's built tree 699f98462f1029e30a2c5d3850b717d8e46300da, commit 18777085): T:TCSlib, T:TCSlib.lean,
+  T:audits, T:scripts are the SAME tree/blob objects as C2's (8202baa7, 5700f187, e204e63c, 446881b4); lakefile, manifest and
+  toolchain unchanged; outside briefs/ T differs from C2 only in three plan .md files. So T's code = C2's code (built and passed in
+  int-stmt-331-333), no rebuild for T.
+
+scratch merges (landing/; author = committer = Claude <noreply@anthropic.com>, date 2026-11-16T00:00:00Z, unsigned, no ref, never pushed):
+  A  = T x #327: `git merge-tree --write-tree --messages` rc 0, no conflict, tree 0237abbaa991a70516a4ea2caeb97b1a387ff7a2,
+       commit d9884a4eaac86cad22ee3a84dbbddfa5bb10a89d (merge base 05d26fe5).
+  X1 = A x #324: rc 0, no conflict, tree 199ea4c629e2ddfac4c85991763c096b9b9ff41f, commit
+       ffde82d6533d5b3c3fc50b7ceb5a4178fa2322c3 (merge base 6ce4658d).
+  alt order (landing/merge-tree-alt-order.txt): T x #324 (rc 0, tree 87dc51c4, commit d45f5b6f) then x #327 (rc 0) gives the same
+       tree 199ea4c6.
+  checks/T-vs-X1-name-status.txt: 57 files, all under TCSlib/ or audits/; checks/blobs-vs-heads.txt: 41 EQ #327 + 16 EQ #324 (every
+       file equals its PR head's blob; no file touched by both PRs).
+name clash (checks/namecheck.txt, namecheck.py): added full names #332 6, #333 98, #327 196, #324 185; every pairwise intersection
+  EMPTY, both by full name and by last component. Names declared in more than one file: 12 at T and the same 12 at X1, all in
+  TCSlib/GraphTheory/Core/* (pre-existing, outside root TCSlib's closure: those modules are among the 34 with no build record), none
+  from any of the four PRs. (A real clash would also have failed root TCSlib, which imports all of them; it built rc 0.)
+
+worktree $SP/wt-int-x (sparse, non-cone /* !/briefs/, .lake/packages -> /home/user/tcslib/.lake/packages), detached at X1; clean
+  apart from the ignored .lake/ and a temporary IntProbe/ (axioms/probe-files-in-worktree.txt, removed); removed and pruned at the end.
+
+olean tree $SP/dl-oleans-2: pre tree/snapshot-pre.txt: 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f (the required value; byte-equal to int-stmt-331-333's).
+order/plan (order-x1/, order-tip/, plan-x1/, state/): downorder.py vs eff2dcd0 (the snapshot's base): X1 changed 181, down 704,
+  order 1342; T changed 124, down 650, order 1288. stateplan.py init over the snapshot: 1199 modules keyed at eff2dcd0
+  (state/state-init.json); checks/base-records-agree.txt: all 1199 agree with the int-317 base records (rc 0, snapshot olean,
+  eff2dcd0 source). stateplan.py plan at X1: order 1342; build 704 (561 snapshot modules with changed closure + 143 new); reuse 638.
+  The queue = order-x1/down.txt exactly, incl. root TCSlib and both audits/*/Checks.
+backup (tree/backed-up.txt, tree/new-oleans.txt; backupq.py): 561 snapshot oleans copied to $SP/dl-intx-backup, hash-verified
+  561/561; 143 new modules listed. Disk checked first (4.0 GB free; backup 749 MB).
+Mathlib overlay (build-mathlib-extra/): mloverlay.sh 3346 symlinks; mathlibextra.sh NthRootLemmas (mathlib 029db123, source
+  b371bf48...): rc 0, olean c0a9cff04c6707edac6980cf4d3c3cc8116ab8843e9ddfb82f6688aee8e0f54c (= int-stmt-331-333's). Removed at restore.
+
+ENOSPC incident (spurious-enospc/README.txt): first launch 08:54:34 UTC. At about 09:00 another job briefly filled the shared disk;
+  the runner stopped at queue position 71 KarpLiptonSearchFamily, rc 1 at 09:00:12, EMPTY log, 0-byte olean, 0-byte runner-rc.txt.
+  Per the maintainer: every record whose run overlapped 08:57-09:01 (positions 28-71, Advice .. KarpLiptonSearchFamily, 44 modules)
+  and the stopped_at line were removed from build-x1/results.jsonl and kept verbatim in spurious-enospc/records.jsonl (with the
+  original results file, the 44 logs and the 0-byte runner-rc); their 44 oleans were deleted from the tree (hashes and sizes in
+  spurious-enospc/deleted-oleans.txt). (Before deletion, logcheck: the 71 rc-0 records incl. the 43 spurious ones were each
+  byte-identical in olean AND log to a same-source reference record; only KarpLiptonSearchFamily had no matching olean.) The queue
+  was resumed (build-x1/run2.sh, 09:01:40) from position 28 with runner.py's start-module argument; disk was then watched
+  (lowest seen ~2.2 GB free).
+
+build X1 (build-x1/: results.jsonl = 28 kept + 676 resumed records, mods/*.log, per-module.tsv / permod.out, buildsum.txt,
+  statecheck.txt, refunion*.txt, logcheck.txt): runner rc 0; 704/704 rc 0; `error:` 0; `error(` 0; combined 0; substring "error" 0;
+  every log hash = its record; 91 sorry warnings, 452 warnings; 6249 s module time, 08:54:34-10:43:26 UTC (incl. the incident),
+  max RSS 4.52 GB.
+  #327's 41 modules: all rc 0, 0 errors both forms, 0 sorry; warnings only SequentialZK 1 (the disclosed unused hQ).
+  #324's 16 modules: all rc 0, 0 errors both forms, 0 sorry, 0 warnings.
+  Sorry warnings in the built set (non-PR, all tip admissions): TQBF 21, GSW Noise 12, RAMSimulation/Classes 9, UniqueGames 8, GSW
+  Scheme 6, GSW Gadget 5, GSW Eval 4, GSW Security 4, SpaceComplexity/Hierarchy 4, WordSize 3, MaxCutAlgorithm 2, Simulation 2,
+  NTimeDiagonalizer 2, SIS/Columns 2, GSW Symmetric 2, Yao 2, NonUniform 1, NDNormalForm 1, Savitch 1.
+  references (refunion2.py): all 704 byte-identical (source AND olean) to at least one reference record (LE-gate39 combined
+  records-final-b: 691 SAME; int-stmt-331-333 records-final 645; its build 2 (C2) 292, build 3 634); 0 same-source different-olean.
+  logcheck.py: 704 OK-REF (same olean AND same log/sorry/warnings as a same-source reference); flagged none.
+  state check (build-x1/statecheck.txt, stateplan.py check at X1 over order-x1/order.txt): 1342 modules OK, RESULT OK
+  (state/state-before-x1.json, state/state-after-x1.json; update took all 704).
+whole-tree check (tree-final/; treecheck_ml.py at X1, order-x1/order.txt 1342, records/records-final.jsonl = int-317 base records +
+  build-x1, run before the restore): every module rc 0 at the X1 source, every olean = its record (hence no truncated olean),
+  none missing, no stray olean, no empty dir: RESULT OK (4720 files = 1342 + 31 PFR + 3347 Mathlib overlay entries, attributed).
+  tree-final/zero-byte-files.txt: 0 zero-byte files under the tree.
+
+admissions (admissions/; tipcensus.py; 34 modules outside root TCSlib's closure have no record, as before; disagreeing 0):
+  T 8c42b40d: 237 (census-T-8c42b40d.txt from int-stmt-331-333's records; census-T-8c42b40d-all.txt with all record sets: same
+    per module), per module equal to int-stmt-331-333's census of C2 (= T's code). As expected.
+  X1 ffde82d6: 229 = 237 - 5 (Composability/SequentialZK 5 -> 0, #327) - 3 (SecureComputation/ComposeSecurity 3 -> 0, #324).
+    No other module changes; the 54 modules new at X1 (#327 39 + #324 15) all 0 (census-T-vs-X1-summary.txt, census-T-vs-X1.diff).
+    (The earlier expectation 202/194/229 was for the pre-#333 tip; with #333 merged, T = 202 + 35 = 237 and X1 = 194 + 35 = 229.)
+
+axioms (axioms/AxiomsX.lean.txt = `import TCSlib` + int-stmt-331-333's DepTrace `#admitted` unmodified; probe-X1/ by runner_full.py
+  at X1: rc 0, 0 errors, 0 warnings, 23 s; source removed afterwards):
+  ZK.seqRep, StatZK.seqRep, InteractiveProof.seqRep, InteractiveProofErr.seqRep, EfficientProverProofErr.seqRep (TCSlib.Cryptography.*):
+    [propext, Classical.choice, Quot.sound]; #admitted: 0 direct sorryAx users (closures 17511 / 16951 / 13491 / 16249 / 16259).
+  SecureComputation.HybridProtocol.hbcSecure_compose: [propext, Classical.choice, Quot.sound]; 0 sorryAx users (closure 17721).
+  SecureComputation.yaoProtocol_hbcSecure: [propext, sorryAx, Classical.choice, Quot.sound]; direct sorryAx users in its closure
+    (18264) exactly yaoHybrid_polyTime and yaoHybrid_simulators (Yao.lean, the 2 tip admissions "Yao 2"; not #324 targets).
+  BoolCircuit.DAGGate.getD_lt_depth: [propext, Quot.sound]; BoolCircuit.runWith_rel: [propext, Classical.choice, Quot.sound];
+    0 sorryAx users (= int-stmt-331-333).
+  GSW.eval_encrypts (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW): [propext, sorryAx, Classical.choice, Quot.sound];
+    its closure's (5807) only direct sorryAx user is eval_encrypts itself (a #333 statement target, as in int-stmt-331-333).
+
+restore (restore/; finish-restore.sh -> tools-used/restore_x.sh): backup hash failures 0; 561 restored (each hash-checked); 143 new
+  oleans deleted; Mathlib overlay deleted (3346 symlinks + NthRootLemmas c0a9cff0..., logged); restoreplan.py --delete: extra 0,
+  changed 0, missing 0, 20 emptied directories removed (deleted-dirs.txt). tree/snapshot-post.txt: 1230 files, 0 empty dirs,
+  SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to tree/snapshot-pre.txt (SNAPSHOT EQUAL;
+  restore/snapshot-hashes.txt). Re-verified afterwards: restoreplan.py without --delete (restore/verify-nodelete*: extra 0, changed 0,
+  missing 0) and a fresh snapshot restore/snapshot-recheck.txt byte-equal to snapshot-pre. (finish-restore.sh's `tee restore/
+  restore.out` could not open its file because restore/ is created by restore_x.sh itself; the same lines are in
+  restore/restoreplan.out, restore/snapshot-post.out and restore/restore-log.txt.)
+cleanup: backup directory removed after SNAPSHOT EQUAL; worktree removed and pruned; the two evidence extracts removed after zipping.
+  No file written outside $SP.
+SHA256SUMS: every file here except itself (paths without "./"); ../int-x-327-324-333-evidence.zip holds this directory
+  (int-x-327-324-333/...) with exactly these paths plus SHA256SUMS.
