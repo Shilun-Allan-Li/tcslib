@@ -181,7 +181,8 @@ and the distribution on the right as $\mathcal R_{\mathrm{BDH}}$.
 (checked at 130 dpi) shows an absolute value around the difference, as transcribed. This
 differs from `PairingCryptographyPlan.md` ("Where the papers' formulations differ", item 6),
 which says the decision advantage of §3.1 is written without one; that record should be
-corrected (the draft's choice is unaffected, since it takes the signed form as a deviation).
+corrected (the draft's choice is unaffected: it uses the absolute difference of acceptance
+probabilities, which is the same number).
 
 <a id="pdf-63c1c7b0817f-p005-b001"></a>
 <!-- pdf-source: page=5; block=1; confidence=0.95 -->
