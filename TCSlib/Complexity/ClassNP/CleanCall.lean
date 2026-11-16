@@ -140,8 +140,11 @@ private lemma mapState_workTapePos_eq {k : ℕ} {S S' : Type} {x : List Bool} (f
   funext i
   rw [Cfg.mapState_workTapePos]
 
-/-- Before the designated exit, the adapter takes the module's step and raises the release flag;
-the adapter's configurations are the module's with the flag paired onto the state. -/
+/-- Before the designated exit, the adapter takes the module's step and raises the release flag.
+
+**Proof sketch.** `Cfg.mapState` keeps the tapes and heads, so the flagged configuration reads
+the module's symbols, and the guard rules out the release branch: the adapter applies the
+module's action with its successor state flagged `true`. -/
 private lemma stopTM_step (C : FinTM Bool) (entry exit : C.State)
     {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)
     (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :
