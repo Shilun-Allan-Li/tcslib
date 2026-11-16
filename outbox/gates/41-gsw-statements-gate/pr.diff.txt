@@ -1,0 +1,1564 @@
+diff --git a/TCSlib.lean b/TCSlib.lean
+index d5a06e8a1..5700f1878 100644
+--- a/TCSlib.lean
++++ b/TCSlib.lean
+@@ -72,6 +72,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey
+ import TCSlib.Cryptography.Encryption.PublicKey
+ import TCSlib.Cryptography.Randomness
+ import TCSlib.Cryptography.Implications
++import TCSlib.Cryptography.AdvancedEncryption
+ 
+ import TCSlib.InformationTheory
+ 
+diff --git a/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean b/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
+index 4bd1332fe..d82454a40 100644
+--- a/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
++++ b/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
+@@ -50,6 +50,11 @@ and `LayeredDAG.lean`.
+   the value of an existing vertex.  These two facts drive every proof about the model.
+ * `BoolCircuit.DAGCircuit.values_getD_gate`, `BoolCircuit.DAGCircuit.depthAt_gate` — the
+   evaluation and depth recurrences at a gate vertex.
++* `BoolCircuit.DAGGate.getD_lt_depth` — every vertex a gate reads is shallower than the gate;
++  with the readers `DAGGate.depth_eq`, `DAGCircuit.depths_eq`, `DAGCircuit.depthAt_eq` and
++  `DAGCircuit.depth_eq`.
++* `BoolCircuit.runWith_rel` — two evaluators run over one gate list stay related vertex by
++  vertex when every gate preserves the relation (the relational host lemma).
+ * `BoolCircuit.DAGGate.eval_remap`, `BoolCircuit.runWith_remap_rel` — renaming vertices
+   commutes with evaluation, gate by gate and along a whole gate list.
+ * `BoolCircuit.gatesAcyclic_append`, `BoolCircuit.gatesAcyclic_cons` — acyclicity of
+@@ -550,6 +555,95 @@ theorem depthAt_gate {i : ℕ} (hi : i < C.gates.length) :
+ 
+ end DAGCircuit
+ 
++/-! ## Depth readers and the relational simulation of `runWith` -/
++
++/-- A gate's depth is one more than the maximum depth of the vertices it reads, vertex `v`'s
++depth being `ds.getD v 0` [AB09, Def 6.1, depth of a vertex]. -/
++theorem DAGGate.depth_eq (g : DAGGate) (ds : List ℕ) :
++    g.depth ds = 1 + (g.args.map fun a => ds.getD a 0).foldr max 0 := rfl
++
++/-- Every vertex a gate reads is strictly shallower than the gate:
++`ds.getD a 0 < g.depth ds` for `a ∈ g.args`.
++
++**Proof sketch.** By `DAGGate.depth_eq`, it suffices that `ds.getD a 0` is at most the
++`foldr max 0` of the mapped list when `a ∈ g.args`; induct on `g.args` with `le_max_left` /
++`le_max_right` and `List.mem_cons`. -/
++theorem DAGGate.getD_lt_depth (g : DAGGate) (ds : List ℕ) {a : ℕ} (ha : a ∈ g.args) :
++    ds.getD a 0 < g.depth ds := by
++  have key : ∀ l : List ℕ, a ∈ l → ds.getD a 0 ≤ (l.map fun a => ds.getD a 0).foldr max 0 := by
++    intro l hl
++    induction l with
++    | nil => cases hl
++    | cons b l ih =>
++      rw [List.map_cons, List.foldr_cons]
++      rcases List.mem_cons.mp hl with rfl | hl
++      · exact le_max_left _ _
++      · exact le_trans (ih hl) (le_max_right _ _)
++  rw [DAGGate.depth_eq]
++  have := key g.args ha
++  omega
++
++namespace DAGCircuit
++
++variable {n : ℕ} (C : DAGCircuit n)
++
++/-- The vertex-depth list runs `DAGGate.depth` from `n` zeros [AB09, Def 6.1]:
++`C.depths = runWith DAGGate.depth C.gates (List.replicate n 0)`. -/
++theorem depths_eq : C.depths = runWith DAGGate.depth C.gates (List.replicate n 0) := rfl
++
++/-- The depth of vertex `v` is entry `v` of the depth list, `0` out of range:
++`C.depthAt v = C.depths.getD v 0`. -/
++theorem depthAt_eq (v : ℕ) : C.depthAt v = C.depths.getD v 0 := rfl
++
++/-- The circuit depth is the depth of its output vertex [AB09, Def 6.1]:
++`C.depth = C.depthAt C.output`. -/
++theorem depth_eq : C.depth = C.depthAt C.output := rfl
++
++end DAGCircuit
++
++/-- **Relational indexed simulation of `runWith`.** Two evaluators run the same gate list from
++initial data related vertex by vertex by `R v`. If, at gate `i`, related data on the gate's
++inputs always produce related outputs at vertex `L + i`, then the two runs are related at
++every vertex `v < L + |gs|`, where `L` is the number of initial vertices. Technical host lemma
++with no textbook counterpart; `SecureComputation.runWith_sim` is the functional special case
++`R v a b ↔ b = W v a`.
++
++**Proof sketch.** Strong induction on the vertex, exactly as `runWith_sim`: input vertices
++are the initial relation (`runWith_getD_of_lt`); a gate vertex `L + i` reads both runs'
++prefixes (`runWith_getD_gate`), whose argument entries agree with the full runs
++(`runWith_getD_take`) and are related by the induction hypothesis, since acyclicity puts every
++argument below `L + i`. -/
++theorem runWith_rel {α β : Type} (fA : DAGGate → List α → α) (fB : DAGGate → List β → β)
++    (R : ℕ → α → β → Prop) (dA : α) (dB : β) (gs : List DAGGate)
++    (initA : List α) (initB : List β) (hlen : initB.length = initA.length)
++    (hinit : ∀ v < initA.length, R v (initA.getD v dA) (initB.getD v dB))
++    (hacyc : ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < initA.length + i)
++    (hgate : ∀ (i : ℕ) (h : i < gs.length) (vA : List α) (vB : List β),
++      vA.length = initA.length + i → vB.length = initA.length + i →
++      (∀ a ∈ (gs[i]).args, R a (vA.getD a dA) (vB.getD a dB)) →
++      R (initA.length + i) (fA gs[i] vA) (fB gs[i] vB)) :
++    ∀ v < initA.length + gs.length,
++      R v ((runWith fA gs initA).getD v dA) ((runWith fB gs initB).getD v dB) := by
++  intro v
++  induction v using Nat.strong_induction_on with
++  | _ v ih =>
++    intro hv
++    by_cases hlt : v < initA.length
++    · rw [runWith_getD_of_lt _ _ _ hlt, runWith_getD_of_lt _ _ _ (hlen ▸ hlt)]
++      exact hinit v hlt
++    · obtain ⟨i, rfl⟩ : ∃ i, v = initA.length + i := ⟨v - initA.length, by omega⟩
++      have hi : i < gs.length := by omega
++      have hB := runWith_getD_gate fB gs initB hi dB
++      have hA := runWith_getD_gate fA gs initA hi dA
++      rw [hlen] at hB
++      rw [hA, hB]
++      refine hgate i hi _ _ (by rw [length_runWith, List.length_take_of_le hi.le])
++        (by rw [length_runWith, List.length_take_of_le hi.le, hlen]) fun a ha => ?_
++      have ha' := hacyc i hi a ha
++      rw [runWith_getD_take _ gs initA hi.le ha',
++        runWith_getD_take _ gs initB hi.le (by omega)]
++      exact ih a ha' (by omega)
++
+ /-- The constant circuit on `n` inputs with output `b`: one constant gate
+ (`constGate b`), which is the output. -/
+ def constCircuit (n : ℕ) (b : Bool) : DAGCircuit n where
+diff --git a/TCSlib/Cryptography/AdvancedEncryption.lean b/TCSlib/Cryptography/AdvancedEncryption.lean
+new file mode 100644
+index 000000000..8d9744fc0
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption.lean
+@@ -0,0 +1,25 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Advanced encryption primitives
++
++Encryption primitives beyond private-key and public-key encryption.
++
++## Contents
++
++* `Homomorphic`: homomorphic encryption; leveled Gentry–Sahai–Waters encryption from LWE.
++
++## References
++
++* [GSW13] C. Gentry, A. Sahai, B. Waters, *Homomorphic Encryption from Learning with Errors:
++  Conceptually-Simpler, Asymptotically-Faster, Attribute-Based*, CRYPTO 2013; author version
++  dated 8 June 2013.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic.lean
+new file mode 100644
+index 000000000..73654d192
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic.lean
+@@ -0,0 +1,22 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Homomorphic encryption
++
++## Contents
++
++* `GSW`: leveled Gentry–Sahai–Waters encryption from LWE.
++
++## References
++
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; author version dated 8 June 2013.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean
+new file mode 100644
+index 000000000..6b149d886
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean
+@@ -0,0 +1,35 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Gadget
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Noise
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Security
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Symmetric
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Leveled GSW homomorphic encryption from LWE
++
++## Contents
++
++* `Gadget`: parameters, the gadget `G = I ⊗ gᵗ` and deterministic binary decomposition `G⁻¹`.
++* `Noise`: the key-agnostic invariant `tᵗC = x·tᵗG + e`, asymmetric multiplication, NAND,
++  sums and right-associative product chains.
++* `Scheme`: public-key GSW on the existing Regev/LWE key, fresh noise and decryption.
++* `Eval`: homomorphic evaluation of `BoolCircuit.DAGCircuit` and leveled correctness.
++* `Security`: concrete IND-CPA hybrids from DLWE and column leftover hashing.
++* `Symmetric`: batched secret-key GSW and its direct DLWE bound (optional unit).
++
++## References
++
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; author version dated 8 June 2013.
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, 17 February 2016, Section 6.1.3.
++* [AP14] J. Alperin-Sheriff, C. Peikert, ePrint 2014/094, version dated 13 June 2014, Section 3.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean
+new file mode 100644
+index 000000000..dbb748852
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean
+@@ -0,0 +1,207 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
++import TCSlib.Complexity.CircuitComplexity.DAGCircuit
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Homomorphic evaluation of the library's Boolean circuits, and leveled correctness
++
++## Main definitions
++
++* `homAnd`: `[] ↦ G`, `[C] ↦ C`, `C :: Cs ↦ C ⊡ homAnd Cs` (a product chain).
++* `homNot`: `G − homAnd`; `homOr`: `G − homAnd (map (G − ·))` (De Morgan).
++* `homGate`: the homomorphic counterpart of `BoolCircuit.DAGGate.eval`, gate kind by gate kind.
++* `evalValues`, `eval`: run `homGate` over a `BoolCircuit.DAGCircuit` with the existing
++  `BoolCircuit.runWith` host, and read the output vertex.
++
++## Main results
++
++* `homAnd_encrypts`, `homGate_encrypts`: per-gate noise `(N+1)·β` for fan-in at most two.
++* `eval_encrypts`: a fan-in-two circuit of depth `d` maps `β`-noisy bit encryptions to a
++  `(N+1)^d·β`-noisy encryption of its output [GSW13, Section 3.3, "Circuits"].
++* `decrypt_keygen_eval`: **leveled correctness** for depth `≤ L` whenever
++  `2·(ℓ·((N+1)^L·(m·B))) < ⌊q/2⌋`, for every key, input and coin.
++
++## References
++
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; author version dated 8 June 2013,
++  Section 3.3 ("Circuits": error `(N+1)^L · B` for NAND-depth `L`) and Section 3.4 (condition
++  `q/B > 8(N+1)^L`).
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
++  University Press, 2009, Definition 6.1 (the circuit model of `DAGCircuit`).
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, Section 6.1.3 (NAND as `1 − x₁x₂`).
++
++**Deviations.** The circuit model is the library's `DAGCircuit` (`∧`, `∨`, `¬` gates of
++fan-in at most two), not a NAND-only circuit: `∧` is one GSW product, `¬` is `G − ·`, `∨` is
++De Morgan through two negations, so every gate costs at most one product and the bound
++`(N+1)^depth · β` of [GSW13, Section 3.3] holds with the library's own `depth`. [GSW13]'s
++"NAND-depth" and the library's depth differ by at most a constant factor for a translated
++circuit. Correctness is every-coin under a worst-case bound, not with overwhelming
++probability. The relation to [GSW13, Section 3.4]'s `q/B > 8(N+1)^L`: here the decryption
++condition carries an extra factor `ℓ` (one for `q = 2^ℓ`) and the fresh noise is `m·B`.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open BoolCircuit
++open Encryption.PublicKey
++
++/-- Homomorphic conjunction of a list of ciphertexts: the gadget for the empty list, the
++ciphertext itself for a singleton, and a left-to-right product chain otherwise [Pei16,
++Section 6.1.3; AP14, Corollary 3.6]. The singleton case avoids a needless product. -/
++def homAnd (P : Parameters) : List (Ciphertext P) → Ciphertext P
++  | [] => gadget P
++  | [C] => C
++  | C :: C' :: Cs => mul P C (homAnd P (C' :: Cs))
++
++/-- The empty conjunction is the noiseless encryption `G` of `1`. -/
++theorem homAnd_nil (P : Parameters) : homAnd P [] = gadget P := rfl
++
++/-- A one-element conjunction is that ciphertext. -/
++theorem homAnd_singleton (P : Parameters) (C : Ciphertext P) : homAnd P [C] = C := rfl
++
++/-- A conjunction of at least two ciphertexts multiplies the head on the left. -/
++theorem homAnd_cons_cons (P : Parameters) (C C' : Ciphertext P) (Cs : List (Ciphertext P)) :
++    homAnd P (C :: C' :: Cs) = mul P C (homAnd P (C' :: Cs)) := rfl
++
++/-- Homomorphic negated conjunction `G − homAnd Cs`, matching the library's `¬` gate, which
++negates the conjunction of its inputs [Pei16, Section 6.1.3, NAND as `1 − x₁x₂`]. -/
++def homNot (P : Parameters) (Cs : List (Ciphertext P)) : Ciphertext P :=
++  gadget P - homAnd P Cs
++
++/-- `homNot P Cs` is the gadget minus the homomorphic conjunction. -/
++theorem homNot_eq (P : Parameters) (Cs : List (Ciphertext P)) :
++    homNot P Cs = gadget P - homAnd P Cs := rfl
++
++/-- Homomorphic disjunction by De Morgan: `G − homAnd (G − C₁, …, G − Cₖ)`. -/
++def homOr (P : Parameters) (Cs : List (Ciphertext P)) : Ciphertext P :=
++  gadget P - homAnd P (Cs.map fun C => gadget P - C)
++
++/-- `homOr P Cs` is the gadget minus the conjunction of the complements. -/
++theorem homOr_eq (P : Parameters) (Cs : List (Ciphertext P)) :
++    homOr P Cs = gadget P - homAnd P (Cs.map fun C => gadget P - C) := rfl
++
++/-- The homomorphic counterpart of `DAGGate.eval`: read each argument vertex's ciphertext
++(the noiseless `0` encryption of `false` out of range, matching `getD … false`) and apply
++`homAnd`, `homOr` or `homNot` by gate kind. -/
++def homGate (P : Parameters) (g : DAGGate) (cts : List (Ciphertext P)) : Ciphertext P :=
++  match g.kind with
++  | .and => homAnd P (g.args.map fun a => cts.getD a 0)
++  | .or => homOr P (g.args.map fun a => cts.getD a 0)
++  | .not => homNot P (g.args.map fun a => cts.getD a 0)
++
++/-- The homomorphic gate dispatches on the gate kind exactly as `DAGGate.eval_eq`. -/
++theorem homGate_eq (P : Parameters) (g : DAGGate) (cts : List (Ciphertext P)) :
++    homGate P g cts = match g.kind with
++      | .and => homAnd P (g.args.map fun a => cts.getD a 0)
++      | .or => homOr P (g.args.map fun a => cts.getD a 0)
++      | .not => homNot P (g.args.map fun a => cts.getD a 0) := rfl
++
++/-- The ciphertexts of all vertices: the input ciphertexts, then one per gate, computed by
++the existing `runWith` host with the homomorphic gate. -/
++def evalValues (P : Parameters) {k : ℕ} (Cc : DAGCircuit k) (cts : Fin k → Ciphertext P) :
++    List (Ciphertext P) :=
++  runWith (homGate P) Cc.gates (List.ofFn cts)
++
++/-- `evalValues P Cc cts` runs `homGate P` over the gates from the input ciphertexts. -/
++theorem evalValues_eq (P : Parameters) {k : ℕ} (Cc : DAGCircuit k)
++    (cts : Fin k → Ciphertext P) :
++    evalValues P Cc cts = runWith (homGate P) Cc.gates (List.ofFn cts) := rfl
++
++/-- **Homomorphic circuit evaluation** [GSW13, Section 3.3, "Circuits"; BV14, Definition 2.12
++(leveled evaluation)]: the ciphertext at the circuit's output vertex. -/
++def eval (P : Parameters) {k : ℕ} (Cc : DAGCircuit k) (cts : Fin k → Ciphertext P) :
++    Ciphertext P :=
++  (evalValues P Cc cts).getD Cc.output 0
++
++/-- `eval P Cc cts` reads the output vertex of `evalValues`. -/
++theorem eval_eq (P : Parameters) {k : ℕ} (Cc : DAGCircuit k) (cts : Fin k → Ciphertext P) :
++    eval P Cc cts = (evalValues P Cc cts).getD Cc.output 0 := rfl
++
++section Correctness
++
++variable (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
++
++/-- A homomorphic conjunction of `k` bit encryptions, each with noise at most `β`, encrypts
++the conjunction of the bits with noise at most `((k−1)·N + 1)·β` (natural subtraction, so
++the empty and one-element cases give `β`) [Pei16, Section 6.1.3; AP14, Corollary 3.6].
++
++**Proof sketch.** Induction following `homAnd`'s three equations: `encrypts_gadget` with
++`Encrypts.mono` for `[]`, the hypothesis for `[C]`, and `Encrypts.mul_bit` for `C :: C' :: Cs`,
++whose bound `N·β + ((k−2)·N+1)·β` equals `((k−1)·N+1)·β`. The message is `List.all` by
++`List.all_cons` and `Bool.toNat` of `&&` as a product. -/
++theorem homAnd_encrypts {bs : List Bool} {Cs : List (Ciphertext P)} {β : ℕ}
++    (hs : List.Forall₂ (fun b C => Encrypts P t (b.toNat : ℤ) β C) bs Cs) :
++    Encrypts P t ((bs.all id).toNat : ℤ) (((Cs.length - 1) * P.columns + 1) * β)
++      (homAnd P Cs) := by
++  sorry
++
++/-- **Per-gate noise.** A gate of fan-in at most two, whose argument vertices hold `β`-noisy
++encryptions of their values, produces a `(N+1)·β`-noisy encryption of its value [GSW13,
++Section 3.3, `NAND`: "the error is increased by a factor of at most `N + 1`"].
++
++**Proof sketch.** Case on `g.kind` through `homGate_eq` and `DAGGate.eval_eq`. With
++`bs = g.args.map (vals.getD · false)` and `Cs = g.args.map (cts.getD · 0)`,
++`List.forall₂_map_left_iff` and `List.forall₂_map_right_iff` give the hypothesis of
++`homAnd_encrypts`; `List.all_map` matches the messages; `length ≤ 2`
++bounds `((k−1)·N+1)·β ≤ (N+1)·β`. For `¬`, subtract from `encrypts_gadget` (`Encrypts.sub`,
++noise `0 + ·`). For `∨`, the complements `G − C` keep noise `β`, then one more subtraction;
++`Bool` De Morgan identifies the message. -/
++theorem homGate_encrypts (g : DAGGate) (hfan : g.args.length ≤ 2) (vals : List Bool)
++    (cts : List (Ciphertext P)) (β : ℕ)
++    (hargs : ∀ a ∈ g.args, Encrypts P t ((vals.getD a false).toNat : ℤ) β (cts.getD a 0)) :
++    Encrypts P t ((g.eval vals).toNat : ℤ) ((P.columns + 1) * β) (homGate P g cts) := by
++  sorry
++
++/-- **Depth-indexed noise growth.** For a circuit of fan-in at most two, if every input
++ciphertext encrypts its input bit with noise at most `β`, then every vertex `v` holds an
++encryption of its value with noise at most `(N+1)^{depthAt v}·β`; in particular the output
++ciphertext has noise at most `(N+1)^{depth}·β` [GSW13, Section 3.3, "the final ciphertext's
++error will be bounded by `(N + 1)^L · B`"].
++
++**Proof sketch.** Apply the shared `runWith_rel` to `DAGGate.eval` from `List.ofFn x` and
++`homGate P` from `List.ofFn cts`, with
++`R v b C := Encrypts P t b.toNat ((N+1)^{Cc.depthAt v}·β) C`. Inputs: `depthAt_input` gives
++depth `0`. Gate `i`: `DAGCircuit.depthAt_gate` writes the gate's depth as
++`gs[i].depth Cc.depths`; `DAGGate.getD_lt_depth` puts each argument at depth at most one less,
++so the arguments are `(N+1)^{d−1}·β`-noisy (`Encrypts.mono`, `Nat.pow_le_pow_right`), and
++`homGate_encrypts` multiplies by `N+1`. The output vertex is in range by `Cc.output_lt`;
++`DAGCircuit.eval_eq`, `values_eq` and `depth_eq` identify the two sides. -/
++theorem eval_encrypts {k : ℕ} (Cc : DAGCircuit k) (hfan : ∀ g ∈ Cc.gates, g.args.length ≤ 2)
++    (x : Fin k → Bool) (cts : Fin k → Ciphertext P) (β : ℕ)
++    (hin : ∀ i, Encrypts P t ((x i).toNat : ℤ) β (cts i)) :
++    Encrypts P t ((Cc.eval x).toNat : ℤ) ((P.columns + 1) ^ Cc.depth * β) (eval P Cc cts) := by
++  sorry
++
++/-- **Leveled correctness of public-key GSW** [GSW13, Sections 3.3–3.4; Pei16, Section 6.1.3].
++For every key-generation seed, every fan-in-two circuit of depth at most `L`, every input and
++every encryption coin, decrypting the homomorphic evaluation of the input encryptions gives
++the circuit's output, provided the noise law is `B`-bounded and
++`2·(ℓ·((N+1)^L·(m·B))) < ⌊q/2⌋`.
++
++**Proof sketch.** `encrypts_keygen_encrypt` gives input noise `m·B`; `eval_encrypts` gives
++output noise `(N+1)^{depth}·(m·B) ≤ (N+1)^L·(m·B)` (`Encrypts.mono`); `decrypt_of_encrypts`. -/
++theorem decrypt_keygen_eval (χ : LWE.Noise)
++    (rg : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      ((Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins)))
++    {k : ℕ} (Cc : DAGCircuit k) (hfan : ∀ g ∈ Cc.gates, g.args.length ≤ 2)
++    (x : Fin k → Bool) (R : Fin k → Matrix (Fin P.lwe.samples) (Fin P.columns) Bool)
++    (B L : ℕ) (hχ : χ.Bounded B) (hdepth : Cc.depth ≤ L)
++    (hsep : 2 * (P.width * ((P.columns + 1) ^ L * (P.lwe.samples * B))) <
++      P.lwe.modulus / 2) :
++    decrypt P (Regev.keygen P.lwe χ rg).2
++        (eval P Cc fun i => encrypt P (Regev.keygen P.lwe χ rg).1 (x i) (R i)) =
++      Cc.eval x := by
++  sorry
++
++end Correctness
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean
+new file mode 100644
+index 000000000..936362d5c
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean
+@@ -0,0 +1,204 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.LWE.Basic
++import TCSlib.Cryptography.TrapdoorFunctions.Lossy.Gadget
++import Mathlib.Data.Matrix.Mul
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The GSW gadget matrix and its binary decomposition
++
++## Main definitions
++
++* `GSW.Parameters`: an LWE parameter bundle with a gadget width `ℓ` satisfying `q ≤ 2^ℓ`.
++* `Parameters.columns`: the ciphertext width `N = (n+1)·ℓ` (a reducible abbreviation).
++* `gadget`: the block-diagonal gadget `G = I_{n+1} ⊗ gᵗ` with `g = (1,2,…,2^{ℓ-1})`,
++  an `(n+1) × N` matrix modulo `q`.
++* `digit`, `decomposeVec`, `decompose`: the deterministic binary decomposition `G⁻¹`,
++  little-endian inside each block, returning Boolean matrices.
++* `lift`: read a Boolean matrix as a `{0,1}` matrix modulo `q`.
++
++## Main results
++
++* `gadget_mulVec_decomposeVec`, `gadget_mul_decompose`: `G · G⁻¹(M) = M` [Pei16, (5.4.1)].
++* `decomposeVec_block_eq_false`: a zero coordinate decomposes to an all-zero block.
++* `errorSum_decomposeVec_le`: an error vector against the decomposition of a vector that is
++  zero outside one coordinate has magnitude at most `ℓ·β`.
++
++## References
++
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, Section 5.4.3 (gadget `g`, `G = I_n ⊗ gᵗ`, Equation (5.4.1)).
++* [GSW13] C. Gentry, A. Sahai, B. Waters, *Homomorphic Encryption from Learning with
++  Errors: Conceptually-Simpler, Asymptotically-Faster, Attribute-Based*, CRYPTO 2013;
++  author version dated 8 June 2013, Section 1.3.3 (`BitDecomp`, `Powersof2`) and
++  Section 3.2 (`G = BitDecomp⁻¹(I_N)`).
++* [AP14] J. Alperin-Sheriff, C. Peikert, *Faster Bootstrapping with Polynomial Error*,
++  CRYPTO 2014; ePrint 2014/094 version dated 13 June 2014, Section 3.1 (Equation (3.1)).
++
++**Deviations.** The width `ℓ` is any natural number with `q ≤ 2^ℓ`; [GSW13] fixes
++`ℓ = ⌊log₂ q⌋ + 1`, [AP14] and [Pei16] `ℓ = ⌈log₂ q⌉`, and BV14 `⌈log q⌉`. All of these
++satisfy the hypothesis. `G⁻¹` is deterministic binary decomposition, as in [GSW13]'s
++`BitDecomp`; [AP14, Claim 3.1]'s randomized subgaussian `G⁻¹` uses lattice sampling, which
++the campaign plan excludes. The gadget reuses the audited little-endian
++`TrapdoorFunctions.Lossy.gadget` and `Randomized.blocksEquiv` rather than a third copy.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++/-- GSW parameters [GSW13, Section 3.1, `Setup`; AP14, Section 3.2]: LWE numeric parameters
++(dimension `n`, sample count `m`, modulus `q ≥ 2`) and a gadget width `ℓ` large enough that
++every residue has an `ℓ`-bit representative. The noise law is a separate argument, as in
++the LWE layer, and the depth `L` is not a field: correctness theorems take it explicitly. -/
++structure Parameters where
++  /-- The LWE dimension, sample count and modulus. -/
++  lwe : LWE.Parameters
++  /-- The gadget width `ℓ`: the number of binary digits per residue. -/
++  width : ℕ
++  /-- Every residue modulo `q` fits in `ℓ` bits. -/
++  modulus_le : lwe.modulus ≤ 2 ^ width
++
++/-- The ciphertext width `N = (n+1)·ℓ` [GSW13, Section 3.1; AP14, Section 3.2]. A reducible
++abbreviation, so `Fin P.columns` is notation for `Fin ((n+1)*ℓ)`, the index type of the
++existing `Lossy.gadget`. -/
++abbrev Parameters.columns (P : Parameters) : ℕ := (P.lwe.dimension + 1) * P.width
++
++/-- `P.columns` is `(n+1)·ℓ`. -/
++theorem Parameters.columns_eq (P : Parameters) :
++    P.columns = (P.lwe.dimension + 1) * P.width := rfl
++
++/-- A GSW ciphertext is an `(n+1) × N` matrix modulo `q` [AP14, Section 3.2, ciphertext space
++`C = Z_q^{n × nℓ}`; Pei16, Section 6.1.3]. Reducible notation. -/
++abbrev Ciphertext (P : Parameters) : Type :=
++  Matrix (Fin (P.lwe.dimension + 1)) (Fin P.columns) (ZMod P.lwe.modulus)
++
++/-- `Ciphertext P` is the type of `(n+1) × N` matrices modulo `q`. -/
++theorem Ciphertext_eq (P : Parameters) :
++    Ciphertext P = Matrix (Fin (P.lwe.dimension + 1)) (Fin P.columns) (ZMod P.lwe.modulus) :=
++  rfl
++
++/-- The gadget matrix `G = I_{n+1} ⊗ gᵗ` modulo `q`: entry `(i, (j,k))` is `2^k` if `i = j`
++and `0` otherwise, column `(j,k)` sitting at position `j·ℓ + k` [Pei16, Section 5.4.3;
++AP14, Equation (3.1)]. It is the transpose of the audited integer gadget
++`Lossy.gadget ℓ (n+1)`, reduced modulo `q`. -/
++def gadget (P : Parameters) : Ciphertext P :=
++  fun i j => ((TrapdoorFunctions.Lossy.gadget P.width (P.lwe.dimension + 1) j i : ℤ) :
++    ZMod P.lwe.modulus)
++
++/-- Entry `(i,j)` of the gadget is the integer gadget's `(j,i)` entry cast modulo `q`. -/
++theorem gadget_apply (P : Parameters) (i : Fin (P.lwe.dimension + 1)) (j : Fin P.columns) :
++    gadget P i j =
++      ((TrapdoorFunctions.Lossy.gadget P.width (P.lwe.dimension + 1) j i : ℤ) :
++        ZMod P.lwe.modulus) := rfl
++
++/-- The `ℓ`-bit digit of a residue: its canonical representative in `[0,q)`, which is below
++`2^ℓ` by `P.modulus_le` [GSW13, Section 1.3.3, `BitDecomp` of one coordinate]. -/
++def digit (P : Parameters) (u : ZMod P.lwe.modulus) : Fin (2 ^ P.width) :=
++  ⟨u.val, lt_of_lt_of_le (ZMod.val_lt u) P.modulus_le⟩
++
++/-- The digit of `u` has value `u.val`. -/
++theorem digit_val (P : Parameters) (u : ZMod P.lwe.modulus) : (digit P u : ℕ) = u.val := rfl
++
++/-- `G⁻¹` on a vector [Pei16, Equation (5.4.1); GSW13, Section 1.3.3, `BitDecomp`]: the
++`N` bits whose block `j` is the little-endian binary expansion of `u j`'s representative.
++It is the inverse of the existing block equivalence `Randomized.blocksEquiv (n+1) ℓ`
++applied to the digit vector. -/
++def decomposeVec (P : Parameters) (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) :
++    Fin P.columns → Bool :=
++  (Randomized.blocksEquiv (P.lwe.dimension + 1) P.width).symm (fun j => digit P (u j))
++
++/-- `decomposeVec P u` is the inverse block equivalence applied to the digits of `u`. -/
++theorem decomposeVec_eq (P : Parameters) (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) :
++    decomposeVec P u =
++      (Randomized.blocksEquiv (P.lwe.dimension + 1) P.width).symm (fun j => digit P (u j)) :=
++  rfl
++
++/-- `G⁻¹` on a matrix, column by column [Pei16, Equation (5.4.1); AP14, Section 3.1,
++deterministic specialization]: column `c` of `decompose P M` is `decomposeVec P` of column
++`c` of `M`. The column index type is arbitrary. -/
++def decompose (P : Parameters) {ι : Type*}
++    (M : Matrix (Fin (P.lwe.dimension + 1)) ι (ZMod P.lwe.modulus)) :
++    Matrix (Fin P.columns) ι Bool :=
++  fun i c => decomposeVec P (fun j => M j c) i
++
++/-- Entry `(i,c)` of `decompose P M` is bit `i` of the decomposition of column `c`. -/
++theorem decompose_apply (P : Parameters) {ι : Type*}
++    (M : Matrix (Fin (P.lwe.dimension + 1)) ι (ZMod P.lwe.modulus))
++    (i : Fin P.columns) (c : ι) :
++    decompose P M i c = decomposeVec P (fun j => M j c) i := rfl
++
++/-- Read a Boolean matrix as its `{0,1}` matrix modulo `q`. Technical glue: GSW's short
++matrices (`R`, `G⁻¹(·)`) are stored as Booleans so their shortness holds by typing. -/
++def lift (P : Parameters) {κ ι : Type*} (X : Matrix κ ι Bool) : Matrix κ ι (ZMod P.lwe.modulus) :=
++  fun i j => ((X i j).toNat : ZMod P.lwe.modulus)
++
++/-- Entry `(i,j)` of `lift P X` is `(X i j).toNat` modulo `q`. -/
++theorem lift_apply (P : Parameters) {κ ι : Type*} (X : Matrix κ ι Bool) (i : κ) (j : ι) :
++    lift P X i j = ((X i j).toNat : ZMod P.lwe.modulus) := rfl
++
++/-- The digit map of the existing gadget recovers the residue digits of `u` from
++`decomposeVec P u` [Pei16, Section 5.4.3].
++
++**Proof sketch.** Read `Lossy.digits_eq` and `decomposeVec_eq`; the composite is
++`blocksEquiv (blocksEquiv.symm _)`, which `Equiv.apply_symm_apply` reduces to the digits. -/
++theorem digits_decomposeVec (P : Parameters)
++    (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) :
++    TrapdoorFunctions.Lossy.digits P.width (P.lwe.dimension + 1) (decomposeVec P u) =
++      fun j => digit P (u j) := by
++  sorry
++
++/-- `G · G⁻¹(u) = u` [Pei16, Section 5.4.3, relation `G · G⁻¹(u) = u (mod q)`].
++
++**Proof sketch.** Coordinate `j` of the left side is the cast of the integer
++`(Lossy.gadget ℓ (n+1))ᵗ · x` at `j`, where `x` is the decomposition read as integers.
++`Lossy.gadget_mulVec` evaluates it to the digit value, `digits_decomposeVec` and
++`digit_val` identify that with `(u j).val`, and `ZMod.natCast_zmod_val` casts back to `u j`.
++The integer-to-residue cast commutes with the finite sum by `Int.cast_sum`/`Int.cast_mul`. -/
++theorem gadget_mulVec_decomposeVec (P : Parameters)
++    (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) :
++    (gadget P).mulVec (fun i => ((decomposeVec P u i).toNat : ZMod P.lwe.modulus)) = u := by
++  sorry
++
++/-- `G · G⁻¹(M) = M` for every matrix with `n+1` rows [Pei16, Section 5.4.3; AP14,
++Equation (3.1)].
++
++**Proof sketch.** Compare column `c`: it is `G` times the lifted decomposition of column
++`c` of `M`, which is `gadget_mulVec_decomposeVec` read through `decompose_apply` and
++`lift_apply`. -/
++theorem gadget_mul_decompose (P : Parameters) {ι : Type*}
++    (M : Matrix (Fin (P.lwe.dimension + 1)) ι (ZMod P.lwe.modulus)) :
++    gadget P * lift P (decompose P M) = M := by
++  sorry
++
++/-- A coordinate equal to zero decomposes to an all-false block.
++
++**Proof sketch.** `Lossy.digits_val` writes the block-`j` digit of `decomposeVec P u` as
++`∑ₖ bitₖ · 2^k`; by `digits_decomposeVec` and `digit_val` it equals `(u j).val = 0`. A sum of
++nonnegative terms is zero only if every term is, and `2^k > 0`. -/
++theorem decomposeVec_block_eq_false (P : Parameters)
++    (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) (j : Fin (P.lwe.dimension + 1))
++    (hj : u j = 0) (k : Fin P.width) :
++    decomposeVec P u (finProdFinEquiv (j, k)) = false := by
++  sorry
++
++/-- If `u` vanishes outside coordinate `j₀`, any error vector with entries bounded by `β`
++has inner product with the decomposition of `u` at most `ℓ·β` in absolute value. This is
++the decryption-noise bound used for the `G⁻¹`-column decryptor.
++
++**Proof sketch.** Split the sum over `Fin ((n+1)ℓ)` through `finProdFinEquiv` into blocks.
++Every block `j ≠ j₀` vanishes by `decomposeVec_block_eq_false`. The surviving block has `ℓ`
++terms, each of magnitude at most `β`; apply `LWE.binaryErrorSum_bound` with `m := ℓ`. -/
++theorem errorSum_decomposeVec_le (P : Parameters)
++    (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) (j₀ : Fin (P.lwe.dimension + 1))
++    (hu : ∀ j, j ≠ j₀ → u j = 0) (e : Fin P.columns → ℤ) (β : ℕ)
++    (he : ∀ i, (e i).natAbs ≤ β) :
++    (∑ i, e i * ((decomposeVec P u i).toNat : ℤ)).natAbs ≤ P.width * β := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean
+new file mode 100644
+index 000000000..2fa1a82b5
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean
+@@ -0,0 +1,235 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Gadget
++import Mathlib.Algebra.BigOperators.Group.Finset.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The GSW noise invariant and its homomorphic operations
++
++## Main definitions
++
++* `Encrypts P t x β C`: `tᵗ C = x · tᵗ G + eᵗ (mod q)` for an integer error vector `e` with
++  every entry of magnitude at most `β`. This is the key-agnostic invariant of [AP14,
++  Definitions 3.2–3.3] with an explicit worst-case bound.
++* `mul`: `C₁ ⊡ C₂ = C₁ · G⁻¹(C₂)`; `nand`: `G − C₁ ⊡ C₂`; `chain`: the right-associative
++  product `C₁ ⊡ (C₂ ⊡ (⋯ ⊡ acc))`.
++
++## Main results
++
++* `encrypts_gadget`, `encrypts_zero`: `G` encrypts `1` and `0` encrypts `0`, both noiseless.
++* `Encrypts.add`, `.neg`, `.sub`, `.sum`, `.mono`: additive closure.
++* `Encrypts.mul`: **asymmetric** multiplication: the left operand's noise is multiplied by
++  `N` (a bound on `‖G⁻¹(C₂)‖`), the right operand's only by `|x₁|`.
++* `Encrypts.mul_bit`, `Encrypts.mul_le`: the bit-message and symmetric `(N+1)·max` corollaries.
++* `Encrypts.nand`: NAND of two bit encryptions with noise `N·β₁ + β₂ ≤ (N+1)·max`.
++* `encrypts_chain`: a right-associative chain of `k` bit encryptions times an accumulator has
++  noise `β_acc + k·N·β`, additive in `k`.
++
++## References
++
++* [AP14] J. Alperin-Sheriff, C. Peikert, *Faster Bootstrapping with Polynomial Error*,
++  CRYPTO 2014; ePrint 2014/094 version dated 13 June 2014, Section 3.2 (operations),
++  Definitions 3.2–3.3, Lemma 3.5, Corollary 3.6.
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, Section 6.1.3, Equations (6.1.5)–(6.1.6).
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; author version dated 8 June 2013,
++  Sections 1.3.1, 1.3.3, 3.3 (`Add`, `Mult`, `NAND`) and 3.4.
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  ePrint 2013/541, Claims 3.4.1–3.4.2.
++
++**Convention and deviations.** Ciphertexts and keys follow [AP14, Section 3.2] and
++[Pei16, Section 6.1.3]: `t` is a *left* approximate singular vector, `tᵗ C ≈ x · tᵗ G`, and
++multiplication is `C₁ · G⁻¹(C₂)`. Its error is `e₁ᵗ G⁻¹(C₂) + x₁ e₂ᵗ` [AP14, Lemma 3.5]: the
++**left** operand's error is expanded, the **right** operand's is scaled by the left message.
++[GSW13] and [BV14] use the transposed convention (`C · v ≈ μ v`, square `{0,1}` ciphertexts
++after `Flatten`), in which `C₁ · C₂` has error `μ₂ e₁ + C₁ e₂` [GSW13, Section 3.3]: there the
++*right* operand's error is expanded. The two conventions are mirror images; a chain with
++additive noise puts fresh ciphertexts on the left here, on the right in [BV14, Claim 3.4.2].
++Noise bounds are worst-case (`ℓ∞`, `ℕ`-valued), not [AP14]'s subgaussian parameters, so a
++`k`-fold chain grows like `k·N·β` rather than `√k`. [GSW13]'s NAND is `I_N − C₁·C₂` after
++`Flatten`; here it is `G − C₁·G⁻¹(C₂)`, with the same `(N+1)·B` bound [GSW13, Section 3.4].
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++/-- Homomorphic multiplication `C₁ ⊡ C₂ = C₁ · G⁻¹(C₂)` [AP14, Section 3.2; Pei16,
++Equation (6.1.6)]. Deterministic, right operand decomposed. -/
++def mul (P : Parameters) (C₁ C₂ : Ciphertext P) : Ciphertext P :=
++  C₁ * lift P (decompose P C₂)
++
++/-- `mul P C₁ C₂` is `C₁` times the lifted binary decomposition of `C₂`. -/
++theorem mul_eq (P : Parameters) (C₁ C₂ : Ciphertext P) :
++    mul P C₁ C₂ = C₁ * lift P (decompose P C₂) := rfl
++
++/-- Homomorphic NAND `G − C₁ ⊡ C₂` [GSW13, Section 3.3, `NAND`, gadget form; Pei16,
++Section 6.1.3, "`(x₁ NAND x₂) = 1 − x₁x₂`"]. -/
++def nand (P : Parameters) (C₁ C₂ : Ciphertext P) : Ciphertext P :=
++  gadget P - mul P C₁ C₂
++
++/-- `nand P C₁ C₂` is the gadget minus the homomorphic product. -/
++theorem nand_eq (P : Parameters) (C₁ C₂ : Ciphertext P) :
++    nand P C₁ C₂ = gadget P - mul P C₁ C₂ := rfl
++
++/-- The right-associative product chain `C₁ ⊡ (C₂ ⊡ (⋯ ⊡ (Cₖ ⊡ acc)))` [AP14, Corollary 3.6,
++with `acc = G`; Pei16, Section 6.1.3, "Bootstrapping": right-associative chains]. -/
++def chain (P : Parameters) (Cs : List (Ciphertext P)) (acc : Ciphertext P) : Ciphertext P :=
++  Cs.foldr (mul P) acc
++
++/-- The empty chain is its accumulator. -/
++theorem chain_nil (P : Parameters) (acc : Ciphertext P) : chain P [] acc = acc := rfl
++
++/-- A nonempty chain multiplies its head on the left of the remaining chain. -/
++theorem chain_cons (P : Parameters) (C : Ciphertext P) (Cs : List (Ciphertext P))
++    (acc : Ciphertext P) : chain P (C :: Cs) acc = mul P C (chain P Cs acc) := rfl
++
++/-- **The GSW noise invariant.** `C` encrypts the integer `x` under the key vector `t` with
++noise at most `β`: there is an integer error vector `e`, every entry of magnitude at most
++`β`, with `tᵗ C = x · tᵗ G + eᵗ` modulo `q` [AP14, Definitions 3.2–3.3; Pei16, Section 6.1.3,
++`sᵗ A ≈ x · sᵗ G`; BV14, Definition 3.1, transposed]. The predicate does not fix how `C` was
++produced, so it is shared by public-key, secret-key and evaluated ciphertexts. -/
++def Encrypts (P : Parameters) (t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) (x : ℤ)
++    (β : ℕ) (C : Ciphertext P) : Prop :=
++  ∃ e : Fin P.columns → ℤ, (∀ j, (e j).natAbs ≤ β) ∧
++    Matrix.vecMul t C = (x : ZMod P.lwe.modulus) • Matrix.vecMul t (gadget P) +
++      fun j => (e j : ZMod P.lwe.modulus)
++
++/-- `Encrypts P t x β C` holds exactly when some `β`-bounded integer error vector `e` gives
++`tᵗ C = x · tᵗ G + e`. -/
++theorem encrypts_iff (P : Parameters) (t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus)
++    (x : ℤ) (β : ℕ) (C : Ciphertext P) :
++    Encrypts P t x β C ↔ ∃ e : Fin P.columns → ℤ, (∀ j, (e j).natAbs ≤ β) ∧
++      Matrix.vecMul t C = (x : ZMod P.lwe.modulus) • Matrix.vecMul t (gadget P) +
++        fun j => (e j : ZMod P.lwe.modulus) := Iff.rfl
++
++section Closure
++
++variable (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
++
++/-- The gadget encrypts `1` with zero noise [AP14, Section 3.3, "`μG` … has error 0"].
++
++**Proof sketch.** Take `e = 0`; `1 • v + 0 = v`. -/
++theorem encrypts_gadget : Encrypts P t 1 0 (gadget P) := by
++  sorry
++
++/-- The zero matrix encrypts `0` with zero noise [AP14, Section 3.3].
++
++**Proof sketch.** Take `e = 0`; `Matrix.vecMul_zero` and `zero_smul`. -/
++theorem encrypts_zero : Encrypts P t 0 0 0 := by
++  sorry
++
++/-- Weakening the noise bound preserves the invariant.
++
++**Proof sketch.** Reuse the witness; `le_trans` on each entry. -/
++theorem Encrypts.mono {x : ℤ} {β β' : ℕ} {C : Ciphertext P} (h : Encrypts P t x β C)
++    (hβ : β ≤ β') : Encrypts P t x β' C := by
++  sorry
++
++/-- Homomorphic addition adds messages and noise bounds [AP14, Lemma 3.5, first claim;
++GSW13, Section 3.3, `Add`; BV14, Claim 3.4.1].
++
++**Proof sketch.** Witness `e₁ + e₂`. `Matrix.vecMul_add` splits `tᵗ(C₁+C₂)`; `add_smul` and
++`Int.cast_add` regroup; `Int.natAbs_add_le` bounds the entries. -/
++theorem Encrypts.add {x₁ x₂ : ℤ} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
++    (h₁ : Encrypts P t x₁ β₁ C₁) (h₂ : Encrypts P t x₂ β₂ C₂) :
++    Encrypts P t (x₁ + x₂) (β₁ + β₂) (C₁ + C₂) := by
++  sorry
++
++/-- Negation negates the message and keeps the noise bound.
++
++**Proof sketch.** Witness `-e`; `Matrix.vecMul_neg`, `neg_smul`, `Int.natAbs_neg`. -/
++theorem Encrypts.neg {x : ℤ} {β : ℕ} {C : Ciphertext P} (h : Encrypts P t x β C) :
++    Encrypts P t (-x) β (-C) := by
++  sorry
++
++/-- Subtraction subtracts messages and adds noise bounds.
++
++**Proof sketch.** `sub_eq_add_neg`, then `Encrypts.add` and `Encrypts.neg`. -/
++theorem Encrypts.sub {x₁ x₂ : ℤ} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
++    (h₁ : Encrypts P t x₁ β₁ C₁) (h₂ : Encrypts P t x₂ β₂ C₂) :
++    Encrypts P t (x₁ - x₂) (β₁ + β₂) (C₁ - C₂) := by
++  sorry
++
++/-- A finite sum of encryptions encrypts the sum of the messages with the sum of the noise
++bounds [AP14, Section 4.1, Equation (4.1), the outer homomorphic sum].
++
++**Proof sketch.** `Finset.induction_on`; the empty sum is `encrypts_zero`, and each insertion
++is `Encrypts.add`. -/
++theorem Encrypts.sum {ι : Type*} (s : Finset ι) (x : ι → ℤ) (β : ι → ℕ)
++    (C : ι → Ciphertext P) (h : ∀ i ∈ s, Encrypts P t (x i) (β i) (C i)) :
++    Encrypts P t (∑ i ∈ s, x i) (∑ i ∈ s, β i) (∑ i ∈ s, C i) := by
++  sorry
++
++/-- **Asymmetric homomorphic multiplication** [AP14, Lemma 3.5; Pei16, Equation (6.1.6);
++BV14, Claim 3.4.2, mirrored]. If `C₁` encrypts `x₁` with noise `β₁` and `C₂` encrypts `x₂`
++with noise `β₂`, then `C₁ ⊡ C₂` encrypts `x₁x₂` with noise at most `N·β₁ + |x₁|·β₂`. The left
++operand's noise is multiplied by `N`, the number of `{0,1}` entries in a column of `G⁻¹(C₂)`;
++the right operand's is multiplied only by the left message.
++
++**Proof sketch.** `Matrix.vecMul_vecMul` rewrites `tᵗ (C₁ X)` as `(tᵗ C₁) X` with
++`X = lift (G⁻¹ C₂)`. Substitute `h₁`: `(x₁ tᵗG + e₁ᵗ) X = x₁ tᵗ(G X) + e₁ᵗ X`. By
++`gadget_mul_decompose`, `G X = C₂`, so the first term is `x₁ tᵗ C₂ = x₁x₂ tᵗG + x₁ e₂ᵗ` by `h₂`.
++The witness is `j ↦ (∑ᵢ e₁ i · X i j) + x₁ · e₂ j`. The first summand is a binary subset sum of
++`N` entries bounded by `β₁`, bounded by `N·β₁` via `LWE.binaryErrorSum_bound`; the second has
++magnitude `|x₁|·|e₂ j| ≤ |x₁|·β₂` (`Int.natAbs_mul`). -/
++theorem Encrypts.mul {x₁ x₂ : ℤ} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
++    (h₁ : Encrypts P t x₁ β₁ C₁) (h₂ : Encrypts P t x₂ β₂ C₂) :
++    Encrypts P t (x₁ * x₂) (P.columns * β₁ + x₁.natAbs * β₂) (mul P C₁ C₂) := by
++  sorry
++
++/-- For a bit message on the left, multiplication has noise `N·β₁ + β₂` [GSW13, Section 3.3,
++`Mult`; Pei16, Section 6.1.3].
++
++**Proof sketch.** `Encrypts.mul` and `Encrypts.mono`, since `(b.toNat : ℤ).natAbs ≤ 1`. -/
++theorem Encrypts.mul_bit {b : Bool} {x₂ : ℤ} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
++    (h₁ : Encrypts P t (b.toNat : ℤ) β₁ C₁) (h₂ : Encrypts P t x₂ β₂ C₂) :
++    Encrypts P t ((b.toNat : ℤ) * x₂) (P.columns * β₁ + β₂) (GSW.mul P C₁ C₂) := by
++  sorry
++
++/-- Symmetric corollary: two bit-message operands with noise at most `β` give a product with
++noise at most `(N+1)·β` [GSW13, Section 3.4; Pei16, Section 6.1.3].
++
++**Proof sketch.** `Encrypts.mul_bit` and `N·β + β = (N+1)·β`. -/
++theorem Encrypts.mul_le {b₁ b₂ : Bool} {β : ℕ} {C₁ C₂ : Ciphertext P}
++    (h₁ : Encrypts P t (b₁.toNat : ℤ) β C₁) (h₂ : Encrypts P t (b₂.toNat : ℤ) β C₂) :
++    Encrypts P t ((b₁ && b₂).toNat : ℤ) ((P.columns + 1) * β) (GSW.mul P C₁ C₂) := by
++  sorry
++
++/-- **Homomorphic NAND** [GSW13, Sections 3.3–3.4, `NAND`, "the error is increased by a
++factor of at most `N + 1`"; Pei16, Section 6.1.3]. Bit encryptions with noise `β₁`, `β₂` give
++an encryption of `NAND(b₁,b₂)` with noise at most `N·β₁ + β₂`.
++
++**Proof sketch.** `encrypts_gadget`, `Encrypts.mul_bit`, `Encrypts.sub`; the message
++`1 − b₁b₂` equals `(!(b₁ && b₂)).toNat` by cases on the bits. -/
++theorem Encrypts.nand {b₁ b₂ : Bool} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
++    (h₁ : Encrypts P t (b₁.toNat : ℤ) β₁ C₁) (h₂ : Encrypts P t (b₂.toNat : ℤ) β₂ C₂) :
++    Encrypts P t ((!(b₁ && b₂)).toNat : ℤ) (P.columns * β₁ + β₂) (nand P C₁ C₂) := by
++  sorry
++
++/-- **Product chains grow additively** [AP14, Corollary 3.6, worst-case form; Pei16,
++Section 6.1.3, "any polynomial-length chain of homomorphic bit-multiplications on fresh
++ciphertexts, if done in a right-associative manner, incurs only polynomial error growth";
++BV14, Claim 3.4.2 and the proof of Lemma 3.6, mirrored]. If every `Cᵢ` encrypts the bit `bᵢ`
++with noise at most `β` and `acc` encrypts `x` with noise `β₀`, then
++`C₁ ⊡ (⋯ ⊡ (Cₖ ⊡ acc))` encrypts `(∏ bᵢ)·x` with noise at most `β₀ + k·N·β`.
++
++**Proof sketch.** Induction on the list. The step is `Encrypts.mul_bit` with the head on the
++left: noise `N·β + (previous)`, message `b · (∏ rest · x)`; reassociate the product and the
++sum `β₀ + (k+1)·N·β`. -/
++theorem encrypts_chain {bs : List Bool} {Cs : List (Ciphertext P)} {β β₀ : ℕ} {x : ℤ}
++    {acc : Ciphertext P}
++    (hs : List.Forall₂ (fun b C => Encrypts P t (b.toNat : ℤ) β C) bs Cs)
++    (hacc : Encrypts P t x β₀ acc) :
++    Encrypts P t (((bs.all id).toNat : ℤ) * x) (β₀ + Cs.length * (P.columns * β))
++      (chain P Cs acc) := by
++  sorry
++
++end Closure
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean
+new file mode 100644
+index 000000000..5761fd400
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean
+@@ -0,0 +1,215 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Noise
++import TCSlib.Cryptography.Encryption.PublicKey.Regev.Basic
++import TCSlib.Cryptography.Encryption.PublicKey.Regev.Experiments
++import Mathlib.Data.Fin.Tuple.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Public-key GSW: key generation, encryption, decryption and fresh-noise correctness
++
++## Main definitions
++
++* Key generation is the existing Regev key generation `Regev.keygen P.lwe χ`; GSW adds no
++  key material.
++* `secretVector`: the key vector `t = (−s, 1)`, with `tᵗ Ā = eᵗ` for the augmented public key.
++* `encrypt`: `C = Ā R + μ G`, with `Ā` the existing `Regev.augmented` public key and
++  `R ∈ {0,1}^{m×N}`.
++* `halfVector`, `decryptColumn`, `decrypt`: decrypt by the existing Regev decryptor applied
++  to the column `C · G⁻¹(⌊q/2⌋ e_{n+1})`.
++
++## Main results
++
++* `vecMul_secretVector_augmented`: `tᵗ Ā = eᵗ` [Pei16, Equation (6.1.7)].
++* `encrypts_encrypt`: a fresh encryption has noise at most `m·B`.
++* `decrypt_of_encrypts`: noise `β` with `2·(ℓ·β) < ⌊q/2⌋` decrypts correctly.
++* `decrypt_of_encrypts_dyadic`: at `q = 2^ℓ` the factor `ℓ` disappears.
++* `decrypt_keygen_encrypt`: every-coin correctness of the basic scheme.
++
++## References
++
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; author version dated 8 June 2013,
++  Section 3.1 (`SecretKeyGen`, `PublicKeyGen`, `Enc`, `Dec`).
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, Section 6.1.3 (Equation (6.1.7), "Fully homomorphic encryption").
++* [AP14] J. Alperin-Sheriff, C. Peikert, ePrint 2014/094 version dated 13 June 2014,
++  Section 3.2 (`GSW.Dec`) and Claim 3.4.
++* [BV14] Z. Brakerski, V. Vaikuntanathan, ePrint 2013/541, Section 3.1 (`NCCrypt.PubEnc`,
++  `NCCrypt.Dec`) and Lemma 3.2.
++
++**Deviations.** (1) Gadget form: `C = ĀR + μG` [Pei16, Section 6.1.3, with the sign of `R`
++flipped] instead of [GSW13]'s `Flatten(μ·I_N + BitDecomp(R·A))`; [GSW13, Section 3.2] notes
++`BitDecomp⁻¹(C) = μG + RA`, so the two carry the same information. (2) Rows are samples in the
++LWE layer, so `Ā` is the transpose-plus-value-row `Regev.augmented`, and `t = (−s, 1)` puts
++the `1` last (GSW13 puts it first). (3) Decryption: [GSW13] reads the row with `vᵢ = 2^i ∈
++(q/4, q/2]`, [AP14] the penultimate column (`2^{ℓ−2} ∈ [q/4, q/2)`), both with error `< q/8`
++and a custom rounding. Here the column `C · G⁻¹(⌊q/2⌋ e_{n+1})` is a Regev ciphertext of the
++message, so the audited `Regev.decrypt` and its strict nearest-codepoint rule are reused for
++every `q ≥ 2`; the price is a factor `≤ ℓ` in the decryption noise, which disappears for
++`q = 2^ℓ`. (4) Noise is a finite-seed bounded law, so correctness holds for every coin, not
++with overwhelming probability [BV14, Lemma 3.3]. The secret is uniform, as in the LWE layer.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open Encryption.PublicKey
++
++/-- The GSW key vector `t = (−s, 1) ∈ Z_q^{n+1}` [GSW13, Section 3.1, `SecretKeyGen`, with the
++`1` moved last; Pei16, Section 6.1.3, `s = (−s̄, 1)`]. -/
++def secretVector (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) :
++    Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus :=
++  Fin.snoc (α := fun _ => ZMod P.lwe.modulus) (-s) 1
++
++/-- `secretVector P s` is `−s` followed by `1`. -/
++theorem secretVector_eq (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) :
++    secretVector P s = Fin.snoc (α := fun _ => ZMod P.lwe.modulus) (-s) 1 := rfl
++
++/-- `tᵗ Ā = eᵗ`: the key vector annihilates the augmented LWE public key up to the row errors
++[Pei16, Equation (6.1.7); GSW13, Section 3.1, "Observe that `A · s = e`"].
++
++**Proof sketch.** Column `i` of `Regev.augmented` is the `i`-th sample's row followed by its
++value (`Regev.augmented_eq`, `Fin.sum_univ_castSucc`, `Fin.snoc_castSucc`, `Fin.snoc_last`). The
++inner product is `−⟨s, aᵢ⟩ + (⟨aᵢ, s⟩ + eᵢ)` by `LWE.noisyValues_apply`, which is `eᵢ`. -/
++theorem vecMul_secretVector_augmented (P : Parameters)
++    (A : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus))
++    (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (e : Fin P.lwe.samples → ℤ) :
++    Matrix.vecMul (secretVector P s) (Regev.augmented P.lwe (A, LWE.noisyValues P.lwe A s e)) =
++      fun i => (e i : ZMod P.lwe.modulus) := by
++  sorry
++
++/-- Public-key GSW encryption `C = Ā R + μ G` with `R ∈ {0,1}^{m×N}` [Pei16, Section 6.1.3,
++"An encryption of an integer `x` is a matrix `A = xG − ĀR`", sign of `R` flipped; GSW13,
++Section 3.1, `Enc`, gadget form]. The public key is a Regev/LWE public key `(A, b)`. -/
++def encrypt (P : Parameters)
++    (pk : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus))
++    (μ : Bool) (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) : Ciphertext P :=
++  Regev.augmented P.lwe pk * lift P R + (μ.toNat : ZMod P.lwe.modulus) • gadget P
++
++/-- `encrypt P pk μ R` is the augmented public key times the lifted `R`, plus `μ` times `G`. -/
++theorem encrypt_eq (P : Parameters)
++    (pk : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus))
++    (μ : Bool) (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
++    encrypt P pk μ R =
++      Regev.augmented P.lwe pk * lift P R + (μ.toNat : ZMod P.lwe.modulus) • gadget P := rfl
++
++/-- The target `w = ⌊q/2⌋ · e_{n+1}`: zero in the first `n` coordinates and the Regev bit
++codepoint for `true` in the last. Technical decryption glue. -/
++def halfVector (P : Parameters) : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus :=
++  Fin.snoc (α := fun _ => ZMod P.lwe.modulus) 0 (LWE.BitEncoding.codepoint P.lwe true)
++
++/-- `halfVector P` is `0` followed by `codepoint true = ⌊q/2⌋`. -/
++theorem halfVector_eq (P : Parameters) :
++    halfVector P =
++      Fin.snoc (α := fun _ => ZMod P.lwe.modulus) 0 (LWE.BitEncoding.codepoint P.lwe true) := rfl
++
++/-- The decryption column `C · G⁻¹(w)`. For a valid encryption of `μ` it is a Regev
++ciphertext of `μ` in augmented form [GSW13, Section 3.1, "Dec is a BitDecomp'd version of
++Regev's decryption procedure"; AP14, Section 3.2, `GSW.Dec`, generalized column]. -/
++def decryptColumn (P : Parameters) (C : Ciphertext P) :
++    Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus :=
++  C.mulVec (fun i => ((decomposeVec P (halfVector P) i).toNat : ZMod P.lwe.modulus))
++
++/-- `decryptColumn P C` is `C` applied to the lifted decomposition of `halfVector P`. -/
++theorem decryptColumn_eq (P : Parameters) (C : Ciphertext P) :
++    decryptColumn P C =
++      C.mulVec (fun i => ((decomposeVec P (halfVector P) i).toNat : ZMod P.lwe.modulus)) := rfl
++
++/-- GSW decryption: split the decryption column into its first `n` coordinates and its last
++coordinate, and apply the existing Regev decryptor [GSW13, Section 3.1, `Dec`; BV14,
++Section 3.1, `NCCrypt.Dec`, "standard Regev decryption"]. -/
++def decrypt (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
++    (C : Ciphertext P) : Bool :=
++  Regev.decrypt P.lwe s (Fin.init (decryptColumn P C), decryptColumn P C (Fin.last _))
++
++/-- `decrypt P s C` is Regev decryption of the split decryption column. -/
++theorem decrypt_eq (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
++    (C : Ciphertext P) :
++    decrypt P s C =
++      Regev.decrypt P.lwe s (Fin.init (decryptColumn P C), decryptColumn P C (Fin.last _)) :=
++  rfl
++
++/-- **Fresh-encryption noise.** With row errors bounded by `B`, a public-key encryption of `μ`
++encrypts `μ` under `t = (−s,1)` with noise at most `m·B` [GSW13, Section 3.1, "The error
++`⟨Rᵢ, e⟩` has magnitude at most `‖e‖₁`"; Pei16, Section 6.1.3].
++
++**Proof sketch.** `Matrix.vecMul_add`, `Matrix.vecMul_smul` and `Matrix.vecMul_vecMul` give
++`tᵗ C = (tᵗ Ā) R + μ tᵗ G`; `vecMul_secretVector_augmented` replaces `tᵗ Ā` by `eᵗ`. The
++witness is `j ↦ ∑ᵢ eᵢ · R i j`, bounded by `m·B` through `LWE.binaryErrorSum_bound`. -/
++theorem encrypts_encrypt (P : Parameters)
++    (A : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus))
++    (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (e : Fin P.lwe.samples → ℤ) (B : ℕ)
++    (he : ∀ i, (e i).natAbs ≤ B) (μ : Bool)
++    (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
++    Encrypts P (secretVector P s) (μ.toNat : ℤ) (P.lwe.samples * B)
++      (encrypt P (A, LWE.noisyValues P.lwe A s e) μ R) := by
++  sorry
++
++/-- Fresh-encryption noise for the actual key generator and a `B`-bounded noise law.
++
++**Proof sketch.** Read `Regev.keygen_fst`, `Regev.keygen_snd`, `LWE.sample_fst`,
++`LWE.sample_snd` and `Noise.bounded_iff`, then apply `encrypts_encrypt`. -/
++theorem encrypts_keygen_encrypt (P : Parameters) (χ : LWE.Noise)
++    (rg : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      ((Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins)))
++    (B : ℕ) (hχ : χ.Bounded B) (μ : Bool)
++    (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
++    Encrypts P (secretVector P (Regev.keygen P.lwe χ rg).2) (μ.toNat : ℤ) (P.lwe.samples * B)
++      (encrypt P (Regev.keygen P.lwe χ rg).1 μ R) := by
++  sorry
++
++/-- **Decryption from the invariant.** If `C` encrypts the bit `b` under `t = (−s,1)` with
++noise `β` and `2·(ℓ·β) < ⌊q/2⌋`, then `decrypt P s C = b` [GSW13, Section 3.1, "if
++`xᵢ = μ·vᵢ + e'` for some error `e'` of magnitude at most `q/8` … Dec … output[s] the correct
++value"; AP14, Claim 3.4; BV14, Lemma 3.2].
++
++**Proof sketch.** `Regev.decrypt_eq` reads `c.2 − ⟨s, c.1⟩`, which for the split column `v` is
++`⟨t, v⟩` (`Fin.sum_univ_castSucc`, `secretVector_eq`). `Matrix.dotProduct_mulVec` turns
++`⟨t, C x⟩` into `⟨tᵗC, x⟩` with `x = G⁻¹(w)` lifted; substituting the invariant gives
++`b·⟨t, G x⟩ + ⟨e, x⟩ = b·⟨t, w⟩ + ⟨e, x⟩` by `gadget_mulVec_decomposeVec`, and `⟨t, w⟩ = ⌊q/2⌋`
++because `w` vanishes off the last coordinate where `t` is `1`. So the residual is
++`codepoint b + ⟨e, x⟩`. `errorSum_decomposeVec_le` (with `j₀ = last`) bounds `|⟨e, x⟩| ≤ ℓ·β`,
++and `LWE.BitEncoding.decode_codepoint_add` with `B := ℓ·β` finishes. -/
++theorem decrypt_of_encrypts (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
++    (b : Bool) (β : ℕ) (C : Ciphertext P) (h : Encrypts P (secretVector P s) (b.toNat : ℤ) β C)
++    (hsep : 2 * (P.width * β) < P.lwe.modulus / 2) :
++    decrypt P s C = b := by
++  sorry
++
++/-- At a power-of-two modulus `q = 2^ℓ` with `ℓ ≥ 1`, noise `β` with `2β < q/2` decrypts
++correctly: `⌊q/2⌋ = 2^{ℓ−1}` has a single binary digit, so the decryption column is the last
++gadget column [AP14, Claim 3.4, dyadic case; GSW13, Section 3.1, `MPDec` remark].
++
++**Proof sketch.** As `decrypt_of_encrypts`, but the decomposition of `w` has exactly one `1`,
++at block `n+1` position `ℓ−1`; the error sum is a single entry of `e`, bounded by `β`. -/
++theorem decrypt_of_encrypts_dyadic (P : Parameters)
++    (hq : P.lwe.modulus = 2 ^ P.width) (hℓ : 0 < P.width)
++    (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (b : Bool) (β : ℕ) (C : Ciphertext P)
++    (h : Encrypts P (secretVector P s) (b.toNat : ℤ) β C)
++    (hsep : 2 * β < P.lwe.modulus / 2) :
++    decrypt P s C = b := by
++  sorry
++
++/-- **Basic correctness.** Every key-generation seed, message and encryption coin matrix
++decrypts correctly when the noise law is `B`-bounded and `2·(ℓ·(m·B)) < ⌊q/2⌋` [GSW13,
++Section 3.1; BV14, Lemmas 3.2–3.3, worst-case form].
++
++**Proof sketch.** `encrypts_keygen_encrypt`, then `decrypt_of_encrypts`. -/
++theorem decrypt_keygen_encrypt (P : Parameters) (χ : LWE.Noise)
++    (rg : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      ((Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins)))
++    (B : ℕ) (hχ : χ.Bounded B) (μ : Bool)
++    (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool)
++    (hsep : 2 * (P.width * (P.lwe.samples * B)) < P.lwe.modulus / 2) :
++    decrypt P (Regev.keygen P.lwe χ rg).2 (encrypt P (Regev.keygen P.lwe χ rg).1 μ R) = μ := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean
+new file mode 100644
+index 000000000..9a4eab94d
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean
+@@ -0,0 +1,217 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
++import TCSlib.Cryptography.Hashing.SIS.Columns
++import TCSlib.Cryptography.LWE.Experiments
++import Mathlib.Tactic.Simps.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Public-key GSW: IND-CPA security from decisional LWE (concrete hybrids)
++
++## Main definitions
++
++* `view`, `realView`, `uniformKeyView`: publish the key and one GSW encryption of a fixed bit.
++* `reduction`: the DLWE test that encrypts under its challenge key with its own coins.
++* `columnHashParameters`: the SIS-hash shape `(n+1) × m` of the augmented public key.
++
++## Main results
++
++* `real_uniformKey_advantage`: real-to-uniform-key advantage equals one DLWE advantage.
++* `uniformKey_uniform_advantage_le`: under a uniform key the view is within
++  `N · ε_LHL` of uniform, with `ε_LHL = Regev.extractionError`.
++* `distAdv_encrypt_le`: two fixed bits' views differ by at most two DLWE advantages plus
++  `2·N·ε_LHL` [GSW13, Section 3.2].
++* `distAdv_encrypt_le_of_width`: with `(n+1)·w + 2κ ≤ m` the statistical term is at most
++  `N · 2^{−κ}`.
++
++## References
++
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; author version dated 8 June 2013,
++  Section 3.2 and Lemma 1 ("the joint distribution `(A, R·A)` is computationally
++  indistinguishable from uniform"; "it suffices to take `m > 2n log q`").
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, Section 6.1.3 ("semantic security follows by a lossiness argument") and
++  Section 5.2.1 (Regev's hybrids).
++* [BV14] Z. Brakerski, V. Vaikuntanathan, ePrint 2013/541, Section 3.1, "Security".
++
++**Scope.** Concrete, fixed-bit, single-ciphertext statements with function-level
++distinguishers, exactly as the audited Regev PKE hybrids. The LWE instance has the GSW
++key's `m` rows and one common uniform secret. The asymptotic primitive bridge (`NUPPT`
++reductions, `BitPublicKeyScheme.SingleBitSecure`) is a separate unit after the Regev PKE
++bridge; multi-ciphertext security then follows from the existing shared-key hybrid
++`distAdv_multi_le_sum` (Encryption/PublicKey/EnsembleSecurity.lean:134).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open Encryption.PublicKey
++
++/-- The view `(pk, Enc_pk(μ; R))` [GSW13, Section 3.2, passive-view formulation]. -/
++@[simps! (config := { isSimp := false }) fst snd]
++def view (P : Parameters) (μ : Bool)
++    (pk : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus))
++    (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
++    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P :=
++  (pk, encrypt P pk μ R)
++
++/-- The view is the key paired with its GSW encryption. -/
++theorem view_eq (P : Parameters) (μ : Bool)
++    (pk : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus))
++    (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
++    view P μ pk R = (pk, encrypt P pk μ R) := rfl
++
++/-- The real view: an actual LWE public key and independent uniform binary `R` [GSW13,
++Section 3.1]. -/
++@[simps! (config := { isSimp := false }) fst snd]
++def realView (P : Parameters) (χ : LWE.Noise) (μ : Bool)
++    (r : (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      ((Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins))) ×
++        Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
++    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P :=
++  view P μ (LWE.sample P.lwe χ r.1) r.2
++
++/-- The real sampler applies `view` to the existing common-secret LWE sample. -/
++theorem realView_eq (P : Parameters) (χ : LWE.Noise) (μ : Bool)
++    (r : (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      ((Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins))) ×
++        Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
++    realView P χ μ r = view P μ (LWE.sample P.lwe χ r.1) r.2 := rfl
++
++/-- The first hybrid encrypts under an independent uniform key [GSW13, Section 3.2;
++Pei16, Section 6.1.3, "a uniformly random (malformed) public key"]. -/
++@[simps! (config := { isSimp := false }) fst snd]
++def uniformKeyView (P : Parameters) (μ : Bool)
++    (r : (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) ×
++        Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
++    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P :=
++  view P μ r.1 r.2
++
++/-- The uniform-key hybrid applies `view` to its uniform key seed. -/
++theorem uniformKeyView_eq (P : Parameters) (μ : Bool)
++    (r : (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) ×
++        Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
++    uniformKeyView P μ r = view P μ r.1 r.2 := rfl
++
++/-- The DLWE reduction: encrypt the fixed bit under the challenge key with independent
++binary coins, then run the view distinguisher with its own coins [GSW13, Section 3.2,
++Lemma 1, computational half]. -/
++def reduction {ρ : Type*} (P : Parameters) (μ : Bool)
++    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool)
++    (pk : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus))
++    (r : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool × ρ) : Bool :=
++  D (view P μ pk r.1) r.2
++
++/-- The reduction calls the distinguisher on exactly one simulated view. -/
++theorem reduction_eq {ρ : Type*} (P : Parameters) (μ : Bool)
++    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool)
++    (pk : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus))
++    (r : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool × ρ) :
++    reduction P μ D pk r = D (view P μ pk r.1) r.2 := rfl
++
++/-- The SIS-hash shape of the augmented public key: `n+1` rows, `m` binary columns, modulus
++`q`. The norm budget is unused by the unconditional extraction argument. Technical glue.
++
++**Disclosure.** Field-for-field equal to `Regev.hashParameters`; a GSW-local copy because
++GSW's types index matrices by `Fin (n+1)`, and reading `Regev.hashParameters` at the type level
++would unfold another file's definition (Rule 10). Alternative: Regev publishes a domain
++equivalence. Either needs a maintainer decision. -/
++def columnHashParameters (P : Parameters) : TCSlib.Cryptography.SIS.Parameters where
++  dimension := P.lwe.dimension + 1
++  columns := P.lwe.samples
++  modulus := P.lwe.modulus
++  sqNormBound := P.lwe.samples
++  modulus_ge_two := P.lwe.modulus_ge_two
++
++attribute [simps (config := { isSimp := false }) dimension columns modulus sqNormBound]
++  columnHashParameters
++
++/-- **Computational hybrid.** The real view and the uniform-key view are distinguished with
++exactly the DLWE advantage of the encryption reduction [GSW13, Section 3.2, Lemma 1; Pei16,
++Section 6.1.3].
++
++**Proof sketch.** As `Regev.real_uniformKey_advantage`: reassociate the independent key,
++coin-matrix and distinguisher seeds (`uprob_comp_equiv` with `Equiv.prodAssoc`) on both
++sides, then read `LWE.decisionAdvantage_eq` and `distAdv_def`. -/
++theorem real_uniformKey_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
++    (P : Parameters) (χ : LWE.Noise) (μ : Bool)
++    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool) :
++    distAdv (realView P χ μ) (uniformKeyView P μ) D =
++      LWE.decisionAdvantage P.lwe χ (reduction P μ D) := by
++  sorry
++
++/-- **Statistical hybrid.** Under a uniform key the view is within `N · ε_LHL` of a fully
++uniform key-and-ciphertext pair, where `ε_LHL = ½·√(q^{n+1}/2^m)` is the existing
++`Regev.extractionError` [GSW13, Section 3.2, "`R · A` is statistically uniform by the
++leftover hash lemma"; Pei16, Section 6.1.3].
++
++**Proof sketch.** Relabel the key by the bijection `Regev.augmented_bijective`. The ciphertext
++is `hashColumns (columnHashParameters P) N Ā R + μG` (`encrypt_eq`, `hashColumns_eq_mul`);
++translation by `μG` is a bijection of the ciphertext space, so after relabelling both samplers
++(`acceptProb_comp_equiv`) the gap is that of `(Ā, ĀR)` versus `(Ā, U)`. Apply
++`distAdv_hashColumns_uniform_le` and rewrite its bound with the `columnHashParameters` readers
++and `Regev.extractionError_eq`. -/
++theorem uniformKey_uniform_advantage_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
++    (P : Parameters) (μ : Bool)
++    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool) :
++    distAdv (uniformKeyView P μ)
++      (id : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++        (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → _) D ≤
++      P.columns * Regev.extractionError P.lwe := by
++  sorry
++
++/-- **Concrete IND-CPA bound for public-key GSW** [GSW13, Section 3.2 and Lemma 1; Pei16,
++Section 6.1.3]. The views of two fixed bits differ by at most two DLWE advantages plus
++`2·N·ε_LHL`.
++
++**Proof sketch.** Insert both uniform-key views and the common uniform view; the triangle
++inequality gives the two exact DLWE terms (`real_uniformKey_advantage`) and two statistical
++terms (`uniformKey_uniform_advantage_le`), as in `Regev.distAdv_encrypt_le`. -/
++theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
++    (P : Parameters) (χ : LWE.Noise) (μ₀ μ₁ : Bool)
++    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool) :
++    distAdv (realView P χ μ₀) (realView P χ μ₁) D ≤
++      LWE.decisionAdvantage P.lwe χ (reduction P μ₀ D) +
++      LWE.decisionAdvantage P.lwe χ (reduction P μ₁ D) +
++      2 * (P.columns * Regev.extractionError P.lwe) := by
++  sorry
++
++/-- With residue width `w` (`q ≤ 2^w`) and `m ≥ (n+1)·w + 2κ` rows, the statistical term is at
++most `N · 2^{−κ}` [GSW13, Section 3.2, "it suffices to take `m > 2n log q`", explicit
++repository budget].
++
++**Proof sketch.** `distAdv_encrypt_le` and `Regev.two_extractionError_le`, multiplying the
++latter by `N ≥ 0`. -/
++theorem distAdv_encrypt_le_of_width {ρ : Type*} [Fintype ρ] [Nonempty ρ]
++    (P : Parameters) (χ : LWE.Noise) (μ₀ μ₁ : Bool) (w κ : ℕ)
++    (hq : P.lwe.modulus ≤ 2 ^ w)
++    (hm : (P.lwe.dimension + 1) * w + 2 * κ ≤ P.lwe.samples)
++    (D : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → ρ → Bool) :
++    distAdv (realView P χ μ₀) (realView P χ μ₁) D ≤
++      LWE.decisionAdvantage P.lwe χ (reduction P μ₀ D) +
++      LWE.decisionAdvantage P.lwe χ (reduction P μ₁ D) +
++      P.columns * ((2 : ℝ)⁻¹) ^ κ := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean
+new file mode 100644
+index 000000000..ed3f713af
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean
+@@ -0,0 +1,111 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
++import TCSlib.Cryptography.LWE.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Secret-key GSW: batched encryption under one secret, and its DLWE security
++
++## Main definitions
++
++* `rowEquiv`: split `m = k·N` LWE rows into `k` blocks of `N`.
++* `symEncrypt`: `k` ciphertexts `Cᵢ = Āᵢ + μᵢ G` from one LWE challenge, block `i` of the
++  augmented sample matrix supplying `Āᵢ`; one common secret for all of them.
++
++## Main results
++
++* `encrypts_symEncrypt`: every secret-key ciphertext has noise at most `B` (not `m·B`).
++* `distAdv_symEncrypt_le`: two message vectors' batches differ by at most two DLWE
++  advantages with `k·N` rows; no leftover hashing.
++
++## References
++
++* [AP14] J. Alperin-Sheriff, C. Peikert, ePrint 2014/094 version dated 13 June 2014,
++  Section 3.2 (`GSW.Enc`: "a fresh ciphertext is just `μG` plus a matrix of `nℓ` independent
++  LWE samples").
++* [BV14] Z. Brakerski, V. Vaikuntanathan, ePrint 2013/541, Section 3.1 (`NCCrypt.SecEnc`:
++  "a secret-key encryption of `μ` is somewhat less noisy than a public-key encryption").
++* [Wu24] D. Wu, CS395T lecture notes, Spring 2024, Definition 20.5 (the batched direct
++  pattern of the existing symmetric Regev scheme).
++
++**Deviations.** The secret is uniform ([AP14] draws it from the error law, which needs a
++separate normal-form assumption excluded by plan decision D1). The batch of `k` ciphertexts
++uses one DLWE instance with exactly `k·N` rows, so multi-message security is part of the
++statement rather than a further hybrid. Row reindexing goes through the published equivalence
++`rowEquiv`, the domain-equivalence pattern used elsewhere for type-valued parameters.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open Encryption.PublicKey
++
++/-- Split `m = k·N` LWE rows into `k` blocks of `N` consecutive rows. Technical glue. -/
++def rowEquiv (P : Parameters) {k : ℕ} (hN : P.lwe.samples = k * P.columns) :
++    Fin k × Fin P.columns ≃ Fin P.lwe.samples :=
++  finProdFinEquiv.trans (finCongr hN.symm)
++
++/-- `rowEquiv P hN` is `finProdFinEquiv` followed by the cast along `hN`. -/
++theorem rowEquiv_eq (P : Parameters) {k : ℕ} (hN : P.lwe.samples = k * P.columns) :
++    rowEquiv P hN = finProdFinEquiv.trans (finCongr hN.symm) := rfl
++
++/-- Batched secret-key GSW encryption [AP14, Section 3.2, `GSW.Enc`; BV14, Section 3.1,
++`NCCrypt.SecEnc`, gadget form]: from an LWE challenge `(A, b)` with `k·N` rows, ciphertext `i`
++is the block-`i` columns of the augmented matrix plus `μᵢ G`. -/
++def symEncrypt (P : Parameters) {k : ℕ} (hN : P.lwe.samples = k * P.columns)
++    (c : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus))
++    (μ : Fin k → Bool) : Fin k → Ciphertext P :=
++  fun i => (Regev.augmented P.lwe c).submatrix id (fun j => rowEquiv P hN (i, j)) +
++    ((μ i).toNat : ZMod P.lwe.modulus) • gadget P
++
++/-- Ciphertext `i` is the reindexed block of the augmented challenge plus `μᵢ G`. -/
++theorem symEncrypt_apply (P : Parameters) {k : ℕ} (hN : P.lwe.samples = k * P.columns)
++    (c : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus))
++    (μ : Fin k → Bool) (i : Fin k) :
++    symEncrypt P hN c μ i = (Regev.augmented P.lwe c).submatrix id (fun j => rowEquiv P hN (i, j)) +
++      ((μ i).toNat : ZMod P.lwe.modulus) • gadget P := rfl
++
++/-- **Secret-key noise.** On a real LWE challenge with row errors bounded by `B`, every
++secret-key ciphertext encrypts its bit under `t = (−s,1)` with noise at most `B` [AP14,
++Section 3.2, "Notice that `sᵗC = eᵗ + μ·sᵗG`"; BV14, Section 3.1].
++
++**Proof sketch.** `Matrix.vecMul_add`, `Matrix.vecMul_smul`; the block of `tᵗ Ā` is
++`tᵗ Ā` read at the reindexed columns (`Matrix.vecMul` of a `submatrix`), equal to
++`e ∘ rowEquiv` by `vecMul_secretVector_augmented`. -/
++theorem encrypts_symEncrypt (P : Parameters) {k : ℕ} (hN : P.lwe.samples = k * P.columns)
++    (A : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus))
++    (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (e : Fin P.lwe.samples → ℤ) (B : ℕ)
++    (he : ∀ i, (e i).natAbs ≤ B) (μ : Fin k → Bool) (i : Fin k) :
++    Encrypts P (secretVector P s) ((μ i).toNat : ℤ) B
++      (symEncrypt P hN (A, LWE.noisyValues P.lwe A s e) μ i) := by
++  sorry
++
++/-- **Concrete IND-CPA bound for batched secret-key GSW** [AP14, Section 3.2, "The IND-CPA
++security of the scheme follows immediately from the assumed hardness of LWE"; Wu24,
++Lecture 21, the two-hybrid pattern]. For two message vectors, the distributions of the `k`
++ciphertexts under one uniform secret differ by at most two DLWE advantages with `k·N` rows.
++
++**Proof sketch.** As `Encryption.Symmetric.Regev.distAdv_encrypt_le`: each real batch is
++`symEncrypt` of the actual LWE sample; on the uniform side, `(A,b) ↦ symEncrypt P hN (A,b) μ`
++is a bijection onto `Fin k → Ciphertext P` (`Regev.augmented_bijective`, the column
++reindexing by `rowEquiv`, and translation by `μG`; both sides have `q^{(n+1)·k·N}` elements),
++so both ideal acceptance probabilities equal that of a uniform batch.
++Insert it between the two real experiments and use the triangle inequality. -/
++theorem distAdv_symEncrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
++    (P : Parameters) {k : ℕ} (hN : P.lwe.samples = k * P.columns) (χ : LWE.Noise)
++    (μ₀ μ₁ : Fin k → Bool) (D : (Fin k → Ciphertext P) → ρ → Bool) :
++    distAdv (fun r => symEncrypt P hN (LWE.sample P.lwe χ r) μ₀)
++        (fun r => symEncrypt P hN (LWE.sample P.lwe χ r) μ₁) D ≤
++      LWE.decisionAdvantage P.lwe χ (fun c r => D (symEncrypt P hN c μ₀) r) +
++      LWE.decisionAdvantage P.lwe χ (fun c r => D (symEncrypt P hN c μ₁) r) := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/Hashing/SIS.lean b/TCSlib/Cryptography/Hashing/SIS.lean
+index ed3e33460..a423c3b5a 100644
+--- a/TCSlib/Cryptography/Hashing/SIS.lean
++++ b/TCSlib/Cryptography/Hashing/SIS.lean
+@@ -9,6 +9,7 @@ import TCSlib.Cryptography.Hashing.SIS.Universality
+ import TCSlib.Cryptography.Hashing.SIS.CollisionOutput
+ import TCSlib.Cryptography.Hashing.SIS.Implementation
+ import TCSlib.Cryptography.Hashing.SIS.Asymptotic
++import TCSlib.Cryptography.Hashing.SIS.Columns
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -26,6 +27,7 @@ set_option autoImplicit false
+ * `CollisionOutput`: exact raw-output signed postprocessing and probability bounds.
+ * `Implementation`: the encoded polynomial-schedule binary matrix-hash evaluator.
+ * `Asymptotic`: negligible raw collisions under the independent SIS assumption.
++* `Columns`: leftover hashing of many binary columns under one matrix (a column hybrid).
+ 
+ No hardness is proved. The independent `SISAssumption`, efficient machine adapters and
+ the future generic CRH-owner bridge remain explicit consumer obligations.
+diff --git a/TCSlib/Cryptography/Hashing/SIS/Columns.lean b/TCSlib/Cryptography/Hashing/SIS/Columns.lean
+new file mode 100644
+index 000000000..a2daf152c
+--- /dev/null
++++ b/TCSlib/Cryptography/Hashing/SIS/Columns.lean
+@@ -0,0 +1,89 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Hashing.SIS.Universality
++import TCSlib.Cryptography.Foundations.Probability
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Leftover hashing of many independent columns under one public matrix
++
++## Main definitions
++
++* `hashColumns`: hash `N` independent binary columns with the same matrix, `A ↦ A R`.
++
++## Main results
++
++* `distAdv_hashColumns_uniform_le`: `(A, A R)` is within `N` times the single-column
++  leftover-hash error of `(A, U)` with `U` uniform.
++
++## References
++
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, Section 5.2.1 (leftover hashing in Regev encryption) and Section 6.1.3
++  ("`[Ā | ĀR]` is very close to uniformly distributed").
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; author version dated 8 June 2013,
++  Section 3.2, Lemma 1 (`(A, R·A)` close to uniform).
++* [Vad12] S. Vadhan, *Pseudorandomness*, 2012, Theorem 6.18.
++
++The bound is a column-by-column hybrid over the existing single-column
++`distAdv_hash_uniform_le`. It is not a matrix leftover-hash lemma: the family `R ↦ A R` is not
++universal on whole matrices, and no such claim is made. No SIS hardness is used.
++-/
++
++namespace TCSlib.Cryptography.Hashing.SIS
++
++open TCSlib.Cryptography.SIS (Parameters)
++
++/-- Hash `N` binary columns with one matrix: column `j` of `hashColumns P N A R` is
++`hash P A (R · j)`, so `hashColumns P N A R = A R` modulo `q` [Pei16, Section 6.1.3, `ĀR`]. -/
++def hashColumns (P : Parameters) (N : ℕ)
++    (A : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus))
++    (R : Matrix (Fin P.columns) (Fin N) Bool) :
++    Matrix (Fin P.dimension) (Fin N) (ZMod P.modulus) :=
++  fun i j => hash P A (fun c => R c j) i
++
++/-- Entry `(i,j)` of `hashColumns P N A R` is coordinate `i` of the hash of column `j`. -/
++theorem hashColumns_apply (P : Parameters) (N : ℕ)
++    (A : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus))
++    (R : Matrix (Fin P.columns) (Fin N) Bool) (i : Fin P.dimension) (j : Fin N) :
++    hashColumns P N A R i j = hash P A (fun c => R c j) i := rfl
++
++/-- `hashColumns` is matrix multiplication by the `{0,1}` lift of `R`.
++
++**Proof sketch.** Entrywise: `hash_eq` and the `mulVec`/`mul` entry formulas are the same sum. -/
++theorem hashColumns_eq_mul (P : Parameters) (N : ℕ)
++    (A : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus))
++    (R : Matrix (Fin P.columns) (Fin N) Bool) :
++    hashColumns P N A R = A * Matrix.of fun c j => ((R c j).toNat : ZMod P.modulus) := by
++  sorry
++
++/-- **Column hybrid for leftover hashing** [GSW13, Section 3.2, Lemma 1, statistical half;
++Pei16, Section 6.1.3]: any independently randomized test distinguishes `(A, A R)` from a
++uniform `(A, U)`, for uniform `A` and uniform binary `R` with `N` columns, with advantage at
++most `N` times the single-column error `½·√(q^{dimension}/2^{columns})`.
++
++**Proof sketch.** Hybrid `H_j`: the first `j` columns of the second component are uniform and
++the rest are hashes of independent binary columns; `H_0` is the real sampler and `H_N` the
++ideal one (after relabelling seeds by `uprob_comp_equiv`). `abs_sub_le_sum_hybrids` bounds the
++end-to-end gap by the sum of neighbouring gaps. The `j`-th gap equals the advantage, between
++`(A, hash A r)` and `(A, u)`, of the test that plants its challenge column at `j`, samples the
++other columns itself with coins carried in its own randomness, and runs `D`; this is
++`distAdv_hash_uniform_le`. The reduction's coins are a product of finite nonempty types. -/
++theorem distAdv_hashColumns_uniform_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
++    (P : Parameters) (N : ℕ)
++    (D : (Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
++      Matrix (Fin P.dimension) (Fin N) (ZMod P.modulus)) → ρ → Bool) :
++    distAdv (fun r : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
++        Matrix (Fin P.columns) (Fin N) Bool => (r.1, hashColumns P N r.1 r.2))
++      (id : (Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
++        Matrix (Fin P.dimension) (Fin N) (ZMod P.modulus)) → _) D ≤
++      N * ((1 / 2) * Real.sqrt ((P.modulus : ℝ) ^ P.dimension / (2 : ℝ) ^ P.columns)) := by
++  sorry
++
++end TCSlib.Cryptography.Hashing.SIS
