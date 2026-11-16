@@ -5647,6 +5647,13 @@ private lemma clProducerClock_native (C e c A d : ℕ) :
     Option.map_some, Option.getD_some]
   simp only [clProducerHorizon, List.replicate_add, List.replicate_one]
 
+/-- Equality to a fixed control word is decided by the public finite-word
+comparison constructor, after any polynomial field computation. -/
+private lemma clA5_pt_eq {f : List Bool → List Bool} (hf : PolyTimeComputable f) (w : List Bool) :
+    PolyTimeComputable (fun x => [decide (f x = w)]) := by
+  simpa only [Function.comp_def] using
+    (polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq w)).comp hf
+
 /-- One round of a counted iteration on `pairEncode cd w`: while the unary
 counter `cd` is nonempty, drop one counter bit and apply `f` to `w`; with an
 empty counter the payload is kept. -/
@@ -5657,10 +5664,9 @@ private def clA5CountStep (f : List Bool → List Bool) (p : List Bool) : List B
 /-- The counted round is polynomial-time whenever `f` is. -/
 private lemma clA5CountStep_native {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
     PolyTimeComputable (clA5CountStep f) := by
-  have htest : PolyTimeComputable (fun p => [decide ((pairFstD p).take 1 = [true])]) := by
-    simpa only [Function.comp_def] using
-      (polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq [true])).comp
-        (polyTimeComputable_take1.comp polyTimeComputable_pairFstD)
+  have htest : PolyTimeComputable (fun p => [decide ((pairFstD p).take 1 = [true])]) :=
+    clA5_pt_eq (by simpa only [Function.comp_def] using
+      polyTimeComputable_take1.comp polyTimeComputable_pairFstD) [true]
   have hrest : PolyTimeComputable (fun p => (pairFstD p).drop 1) := by
     simpa only [Function.comp_def] using polyTimeComputable_tail.comp polyTimeComputable_pairFstD
   have hpay := polyTimeComputable_ite htest (hf.comp polyTimeComputable_pairSndD)
@@ -5743,11 +5749,10 @@ private lemma clA5Iter_native {f s : List Bool → List Bool} {N : List Bool →
       _ = _ := by ring
   have hit := BinArith.polyTimeComputable_iterate (clA5CountStep_native hf) (hN.pairEncode hs)
     CN cN (2 * D + 2 + K * D ^ 2) (2 * (cN + cs)) hbound
-  have h := polyTimeComputable_pairSndD.comp hit
-  convert h using 1
-  funext x
-  simp only [Function.comp_apply]
-  rw [clA5CountStep_iterate, pairSndD_pairEncode, Nat.min_eq_right (hNx x)]
+  have hpay (x : List Bool) : pairSndD ((clA5CountStep f)^[CN * (x.length + 1) ^ cN]
+      (pairEncode (List.replicate (N x) true) (s x))) = f^[N x] (s x) := by
+    rw [clA5CountStep_iterate, pairSndD_pairEncode, Nat.min_eq_right (hNx x)]
+  simpa only [Function.comp_def, hpay] using polyTimeComputable_pairSndD.comp hit
 
 /-- The complete ordered last-visit table is produced from native original
 input with a total polynomial bound; no outer-loop seam remains assumed.
@@ -6348,13 +6353,6 @@ private lemma clA5_pt_and {p q : List Bool → Bool}
 /-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/
 private lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1) := by
   exact polyTimeComputable_take1
-
-/-- Equality to a fixed control word is decided by the public finite-word
-comparison constructor, after any polynomial field computation. -/
-private lemma clA5_pt_eq {f : List Bool → List Bool} (hf : PolyTimeComputable f) (w : List Bool) :
-    PolyTimeComputable (fun x => [decide (f x = w)]) := by
-  simpa only [Function.comp_def] using
-    (polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq w)).comp hf
 
 /-- A shrinking native step satisfies the orbit-size condition uniformly,
 so repeated sequential projections and tail scans need no random access. -/
