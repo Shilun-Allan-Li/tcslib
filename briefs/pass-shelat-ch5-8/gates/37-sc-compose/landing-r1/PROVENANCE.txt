@@ -1,0 +1,90 @@
+#324 (sc-compose) LE-gate37 (Gate 37 G37-01/02/03; Seyoon's ruling "re-point via import"), maintainer job, 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I; Lean 4.25.0; one Lean process at a time, only on $SP/dl-oleans; builds through scripts/lean_check_tree.sh via
+  tools-used/review/runner.py (G26-N1, both error forms); probes through tools-used/runner_full.py (lean -DmaxErrors=0, no -o);
+  no lake command; nothing pushed; no rebase; commit on the existing local branch in its worktree $SP/wt-land-sc-compose.
+  Done inside the combined-integration job (../int-all-open/, which supplies the olean tree, the worktree $SP/wt-int-all and
+  the combined commit): the coordinator's request arrived while the combined build was running, so (as instructed) that build
+  was finished first and #324's affected downstream was then rebuilt on the combined tree with the new head.
+Tools: legate37_edit.py, legate37_runs_fix.py (new); from the sc-compose final-r1 review (records
+  fills/sc-compose/final-r1/review-evidence.zip, c11ce8bb81d2ab7bf19259740f78c1dd2006d08e14e6672f9b257a131445a24b, 850/850 OK):
+  decls2.py, docaudit.py, doconly.py, doconly_sg.py, touched.py, frozencheck_lib.py, mkctl_sc.py, mkcensus_sc.py (unmodified);
+  from LE-gate36 (gates/36-sc-garble/landing-r1/gate36-le-evidence.zip, f77628dd1666d7c2d5eabefce813fa6aee731a496c3d26b89f57b219c201548a,
+  628/628 OK): runner_full.py, rule10_b.sh, upclosure.py, review/ (mkcollect.py, NmCollect.template.lean, mkseals_ab.py,
+  mkseals_coe.py, sealsum.py, ctlcheck2.py, archived-gate10-tools/, ...), unmodified (byte-equal to the sc-compose copies).
+
+landing (landing/): land/pass-shelat-sc-compose, parent a6eaebd78c48e7fdfd06263edb84b70bc00ec593 (= origin = refs/pull/324/head).
+  HEAD 4bd2d80bfb58fab5243c66c9f1a697a30b533756, tree 769bcea676ef7935fe3d4a5f6c1980ce10d983c1; author = committer = Claude
+  <noreply@anthropic.com>, SSH-signed by the environment default; subject as requested, message landing/commit-msg.txt (both
+  trailers); patch landing/patch/, diff landing/le-gate37.diff (10 files, landing/le-gate37.stat).
+  b49005592be4703d97affc844d88bb28a22a377e was the first commit of exactly the requested edit; its build failed (below) and
+  it was amended, before any use outside this job, into 4bd2d80b (never pushed; no ref keeps it).
+edit:
+  G37-01 Machines.lean: `import TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas` (after the last import);
+    ComposeMachines.encodeMsgs_append := TCSlib.Cryptography.CommitmentLemmas.encodeMsgs_append a b (namespace checked: the
+    file is in TCSlib.Cryptography.SecureComputation.ComposeMachines, the source in TCSlib.Cryptography.CommitmentLemmas,
+    CommitmentLemmas.lean:233). Acyclic: Machines' local closure 81 -> 128 modules, exactly +47, none under ComposeSecurity
+    (checks/closure/, upclosure.py asserts acyclicity).
+  G37-02 Bounds.lean imports Machines, so no import added: ComposeBound.length_encodeMsgs_le :=
+    TCSlib.Cryptography.CommitmentLemmas.length_encodeMsgs_le l c h (CommitmentLemmas.lean:241).
+    Each of the two docstrings gains one pure-insertion sentence: "It is the public `CommitmentLemmas.<name>`
+    (`ZeroKnowledge/CommitmentLemmas.lean`)." (The older parenthetical attributions are kept, as insertion-only was asked.)
+  REQUIRED FOLLOW-UP (deviation from "proof-only in the two lemmas"): the new import brings Asymptotic/CollectionsHelpers.lean
+    (TCSlib.Cryptography.splitCoins (a b : ℕ)) into Runs.lean's closure. Inside namespace
+    TCSlib.Cryptography.SecureComputation.HybridProtocol, the bare `splitCoins` then resolves through the enclosing namespace
+    TCSlib.Cryptography instead of the opened ComposeSim.splitCoins; even `open ComposeSim (splitCoins)` does not take
+    precedence (checks/name-resolution-probe.txt). Result at b4900559: Runs.lean 5 errors (build-first-attempt/: 6 modules,
+    Machines..Assembly rc 0, Runs rc 1). Fix (tools-used/legate37_runs_fix.py): the three bare uses outside namespace
+    ComposeSim, in the body of def composeCoins and in the statements of composeCoins_fst / composeCoins_snd, are written
+    `ComposeSim.splitCoins` -- the same constant they denoted before the import (CollectionsHelpers is not in Runs' closure at
+    the parent, checks/closure/runs-closure-parent.txt). So decls2 is NOT empty: it reports these 2 statements CHANGED (text
+    only; statements/decls2-vs-parent.tsv). If Gate 37 prefers another fix (e.g. renaming ComposeSim.splitCoins, or an
+    import that avoids CollectionsHelpers), the commit is local and unpushed.
+  G37-03 docstrings only: every LE-doc formula the sc-compose LE-doc cut at 240 characters with " …" now carries the complete
+    Lean conclusion (extraction as ledoc_sc.py: own conclusion, or for a def its _eq/_iff reader's), wrapped at 100: the 11
+    requested readers asmView_eq, asmW_eq (Assembly), runW_eq, ansW_eq, composePW_eq, composeVW_eq (Efficiency), goodRuns_iff
+    (Runs), sampleA_eq (SideA), sampleB_eq (SideB), phiV_eq (Sim), hybW_eq (Template), and -- so that no truncated formula is
+    left -- the 9 other declarations the LE-doc cut by the same rule: the defs GoodRuns, sampleA, sampleB (same formula as
+    their readers) and exists_main_msgs_le, exists_main_outV_le, exists_main_outP_le (Lengths), runMsg_composeCoins (Runs),
+    exists_tmplA_bound (SideA), exists_tmplB_bound (SideB). Lengths 254-1040 characters (landing/le-gate37-plan.tsv); every
+    cut text located once inside its own docstring; widths <= 100 (largest file Runs.lean 637 lines).
+checks:
+  - statements/decls2-vs-parent.tsv (decls2.py, the 16 unit files, parent vs head): exactly the 2 Runs statements above;
+    decls2.err empty. statements/header-check.txt (frozencheck_lib.compare, parent vs head, every edited file): 0 header
+    differences in 9 files; Runs.lean exactly the 2 above. The encodeMsgs_append / length_encodeMsgs_le headers (the text
+    before `:=`) are byte-identical; only ` by` and the tactic block after `:=` changed.
+  - checks/stripped-code-diff.txt (doc and module comments stripped, parent vs head): code changes only in Machines (the
+    import line and the encodeMsgs_append proof), Bounds (the length_encodeMsgs_le proof) and Runs (the three qualified
+    names); 0 code lines in the other 7 files. checks/doconly.txt (doconly_sg.py): code-identical True for those 7 files,
+    docstring counts unchanged everywhere, max width 100 (RESULT FAIL only because of the 3 code-changed files).
+  - statements/head/: touched-vs-parent 25 CHANGED (20 formulas + 2 lemmas + composeCoins, composeCoins_fst, composeCoins_snd),
+    172 UNCHANGED; docaudit (107f1e8c -> 4bd2d80b) 145 OK, 29 LABEL, 15 NO-FORMULA = the review's 14 (2 frozen targets +
+    12 `PolyTimeComputable …` Prop formulas) + polyTime_compose (its docstring was rewritten by the earlier LE-prose a6eaebd7,
+    a Prop formula; not touched here).
+  - checks/ellipsis-grep.txt: 11 `…` remain in the unit, none a truncated formula (0 occurrences of " …`"): worker prose with
+    elided arguments in other declarations' docstrings (segW_encodeMsgs, asmW_pairEncode, runW_ilayout, the def ansW,
+    mainW_ilayout, mainExec_composeCoins, phiV_view; Runs' `⟦f_A(…)⟧`/`⟦f_B(…)⟧`; Chain's list `[f 0, …, f (L−1)]`).
+build (build/; on the combined tree, worktree $SP/wt-int-all at the scratch merge 639d16d943d4bb4777c77ae8614cd8c2ed91f1bd =
+  the combined e2e26b9e + this head; queue build/queue.txt = the 16 unit modules and their downstream (ComposeSecurity facade,
+  YaoReal, SecureComputation, root TCSlib) + both audits/*/Checks, imports-first): 21/21 rc 0, 0 errors (both forms), substring
+  "error" 0, 0 sorry, 0 warnings, 204 s (03:24:21-03:27:44 UTC). The 10 edited modules have new sources; the other 11 are
+  byte-identical (source and olean) to the int-313-323-324 / sc-compose review / gate36 trial builds (../int-all-open/build/
+  refunion-matrix.tsv). Note: Machines and Bounds are also downstream of #326 (derand), so this is the combined environment,
+  not tip + #324 alone.
+Rule 10 (rule10/; tools-used/rule10_b.sh with mkctl_sc.py; owners Machines.lean and Bounds.lean at 639d16d9; probes under
+  G37Probe/ in the worktree, removed afterwards, rule10/probe-files-in-worktree.txt; runner_full writes no olean):
+  - collector G37Probe/CollectHead (mkcollect.py; probe-runs/ rc 0; 2478 CAT lines).
+  - seals strict A/B (mkseals_ab.py, B with SEAL_EVAL=1) and coe A/B (mkseals_coe.py), every run lean -DmaxErrors=0:
+    seals-{A,B,coe-A,coe-B}.tsv: all 8 probes rc 0, 0 errors, install and EOF records present (requests Machines 1826/1827/
+    1825/1826, Bounds 1828/1829/1827/1828).
+  - paired controls (mkctl_sc.py rows PolyExpr.eval, the FinDist CoeFun instance, HybridProtocol.answersA, ComposeMachines.padTo):
+    coe 8 probes, 8 sealed negatives: ctlcheck-coe.log ALL_OK True. strict 8 probes, 12 sealed negatives, each failing exactly
+    once; ALL_OK False only because ctlCoeReader also fails under the strict seal (harness effect, as in the sc-compose review;
+    rule10/controls-strict-attribution.txt). Unsealed controls all pass.
+axioms (axioms/; the combined probe ../int-all-open/axioms/AxiomsAll, run at 639d16d9): composeP_efficient, composeV_efficient,
+  hbcSecure_compose, polyTime_compose: [propext, Classical.choice, Quot.sound] (axioms/sc-compose-targets-axioms.txt);
+  yaoProtocol_hbcSecure's sorryAx trace: only yaoHybrid_polyTime, yaoHybrid_simulators (axioms/deptrace.txt).
+lint (lint/): campaign_style_lint.py TCSlib/Cryptography --check8b at 4bd2d80b (landing worktree): 92 FAIL / 101 WARN; FAIL/WARN
+  line set identical to the review's landing-head lint (lint/linediff-review-landing-head-vs-4bd2d80b.txt empty).
+PUSH: not done (not asked). New #324 head: 4bd2d80bfb58fab5243c66c9f1a697a30b533756.
+SHA256SUMS: every file here except itself (paths without "./"); ../gate37-le-evidence.zip holds exactly these paths plus SHA256SUMS.
