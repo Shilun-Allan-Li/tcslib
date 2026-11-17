@@ -77,6 +77,9 @@ requires it of the verifier (run-3 audit P9-1).
 ## Main results
 
 * `TCSlib.Cryptography.exec_length` — after `k` moves exactly `k` messages have been sent.
+* `TCSlib.Cryptography.Strategy.encodeMsgs_eq`, `Strategy.encodeMsgs_eq_flatMap`,
+  `Strategy.iterate_pairSndD_encodeMsgs`, `Strategy.msgAt_encodeMsgs` — the history encoding as a
+  fold and as a concatenation, its suffixes, and its `i`-th message.
 * `TCSlib.Cryptography.Strategy.ofNUPPT_efficient` — every uniform machine is an efficient
   strategy (non-vacuity of Def-116.b).
 * `TCSlib.Cryptography.Strategy.ReadsPrefix.mono`,
@@ -146,6 +149,49 @@ theorem pairFstD_encodeMsgs (h : List (List Bool)) : pairFstD (encodeMsgs h) = h
     rw [encodeMsgs_nil, List.headD_nil]
     exact List.eq_nil_of_length_eq_zero (Nat.le_zero.1 (length_pairFstD_le []))
   | cons m h => simp
+
+/-- The defining equation of `encodeMsgs`: the encoding of a history is the right fold of
+`pairEncode` from `[]`, `encodeMsgs h = h.foldr pairEncode []`. Framework glue, no textbook
+counterpart. -/
+theorem encodeMsgs_eq (h : List (List Bool)) : encodeMsgs h = h.foldr pairEncode [] := rfl
+
+/-- **The history encoding chunk by chunk:** the encoding of a history is the concatenation of
+its self-delimiting messages, `encodeMsgs l = l.flatMap fun m => pairEncode m []`.
+Framework glue, no textbook counterpart. -/
+protected theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+    encodeMsgs l = l.flatMap fun m => pairEncode m [] := by
+  induction l with
+  | nil => rw [encodeMsgs_nil, List.flatMap_nil]
+  | cons m l ih =>
+    rw [encodeMsgs_cons, List.flatMap_cons, ← ih, Turing.pairEncode_eq, Turing.pairEncode_eq,
+      List.append_nil]
+
+/-- **The suffixes of an encoded history:** `i` second projections of the encoding of a history
+leave the encoding of the history without its first `i` messages,
+`pairSndD^[i] (encodeMsgs hist) = encodeMsgs (hist.drop i)`. Framework glue, no textbook
+counterpart. -/
+protected theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
+    pairSndD^[i] (encodeMsgs hist) = encodeMsgs (hist.drop i) := by
+  induction i generalizing hist with
+  | zero => rw [Function.iterate_zero_apply, List.drop_zero]
+  | succ i ih =>
+    cases hist with
+    | nil =>
+      rw [Function.iterate_succ_apply, encodeMsgs_nil,
+        pairSndD_of_pairDecode_eq_none Turing.pairDecode_nil, ← encodeMsgs_nil, ih,
+        List.drop_nil, List.drop_nil]
+    | cons m h =>
+      rw [Function.iterate_succ_apply, encodeMsgs_cons, pairSndD_pairEncode, ih,
+        List.drop_succ_cons]
+
+/-- **The `i`-th message of an encoded history:** the first projection after `i` second
+projections reads message `i` (`[]` beyond the history),
+`pairFstD (pairSndD^[i] (encodeMsgs hist)) = hist.getD i []`. Framework glue, no textbook
+counterpart. -/
+protected theorem msgAt_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
+    pairFstD (pairSndD^[i] (encodeMsgs hist)) = hist.getD i [] := by
+  rw [Strategy.iterate_pairSndD_encodeMsgs, pairFstD_encodeMsgs, List.headD_eq_head?_getD,
+    List.head?_drop, List.getD_eq_getElem?_getD]
 
 /-- The strategy computed by a machine `A`: one activation at parameter `|x|` on
 `⟨⟨x, z⟩, messages⟩` with the whole random tape (`A.runAtL`); the coin polynomial is `A.coins`

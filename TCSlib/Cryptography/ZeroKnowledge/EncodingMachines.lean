@@ -61,6 +61,10 @@ functions proved polynomial-time here.
   self-bounded updates are polynomial-time (a state loop).
 * `TCSlib.Cryptography.EncodingMachines.unarySqrt_poly`, `divNum_poly`, `modNum_poly`,
   `unarySize_poly` — `Nat.sqrt`, division, remainder and `Nat.size` in unary.
+* `TCSlib.Cryptography.EncodingMachines.flatMap_range_ite`, `polyTimeComputable_flatMap_range`,
+  `iterSnd_poly`, `zeros_poly`, `padTo_poly`, `length_padTo`, `getD_padTo`, `padTo_of_length`
+  (with the zero padding `padTo` and its equation `padTo_eq`) — concatenation loops over a unary
+  range, iterated second projections and zero padding.
 
 ## References
 
@@ -690,5 +694,174 @@ theorem unarySize_poly {f : List Bool → ℕ}
   convert unaryLength_poly (hbits.comp hf) using 1
   funext x
   simp [Nat.size_eq_bits_len]
+
+/-! ### Concatenation loops, iterated projections and zero padding -/
+
+/-- **Emitting chunks below a bound:** emitting the chunk `E i` at the indices `i < L` of
+`List.range N` gives the concatenation of the `E i` over `i < min N L`:
+`(range N).flatMap (fun i => if i < L then E i else []) = (range (min N L)).flatMap E`
+(`flatMap_range_ite_eq` for arbitrary chunks). Framework glue, no textbook counterpart. -/
+protected theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
+    ∀ N, (List.range N).flatMap (fun i => if i < L then E i else []) =
+      (List.range (min N L)).flatMap E := by
+  intro N
+  induction N with
+  | zero => simp
+  | succ N ih =>
+    rw [List.range_succ, List.flatMap_append, ih, List.flatMap_singleton]
+    by_cases h : N < L
+    · rw [if_pos h, show min (N + 1) L = N + 1 by omega, show min N L = N by omega,
+        List.range_succ, List.flatMap_append, List.flatMap_singleton]
+    · rw [if_neg h, List.append_nil, show min (N + 1) L = min N L by omega]
+
+/-- **Concatenating a chunk over a unary range:** if the chunk `E z i` is a polynomial-time
+function of `⟨1^i, z⟩` and the count `n z` is a unary function, then
+`z ↦ E z 0 ++ ⋯ ++ E z (n z − 1)` is polynomial-time:
+`PolyTimeComputable fun z => (List.range (n z)).flatMap (E z)`. Framework glue, no textbook
+counterpart.
+
+**Proof sketch.** An instance of `Complexity.polyTimeComputable_iterateEmit` on the counter step
+`cstep` from `⟨[], z⟩`, whose `i`-th iterate is `⟨1^i, z⟩` (`cstep_iterate`; orbit bound
+`cstep_horbit`), emitting `E z i` while `i < n z` (`polyTimeComputable_ite` on `ltTest_poly`);
+the number of rounds is the polynomial bound `C (|z| + 1)^c` of the unary count
+(`PolyTimeComputable.output_length_le`), and the emitted chunks concatenate to the claimed list
+(`EncodingMachines.flatMap_range_ite`). -/
+protected theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+    (hE : PolyTimeComputable fun w => E (pairSndD w) (pairFstD w).length)
+    {n : List Bool → ℕ} (hn : PolyTimeComputable fun z => List.replicate (n z) true) :
+    PolyTimeComputable fun z => (List.range (n z)).flatMap (E z) := by
+  obtain ⟨C, c, hC⟩ := hn.output_length_le
+  have hnP : ∀ z, n z ≤ (PolyExpr.normal C c).eval z.length := fun z => by
+    have := hC z
+    rw [List.length_replicate] at this
+    rw [PolyExpr.eval_normal]
+    exact this
+  have htest : PolyTimeComputable fun w => [decide ((pairFstD w).length < n (pairSndD w))] :=
+    ltTest_poly (unaryLength_poly polyTimeComputable_pairFstD)
+      (hn.comp' polyTimeComputable_pairSndD)
+  have hemit := polyTimeComputable_ite htest hE (polyTimeComputable_const [])
+  have hL := polyTimeComputable_iterateEmit cstep_poly hemit (PolyExpr.normal C c)
+    (cbound (PolyExpr.normal C c)) (cstep_horbit _)
+  have hpre : PolyTimeComputable fun z => pairEncode [] z :=
+    (polyTimeComputable_const []).pairEncode polyTimeComputable_id
+  refine (hL.comp' hpre).congr fun z => ?_
+  have horb : ∀ i, cstep^[i] (pairEncode [] z) = pairEncode (List.replicate i true) z :=
+    fun i => by rw [cstep_iterate, List.append_nil]
+  have hN : n z ≤ (PolyExpr.normal C c).eval (pairEncode [] z).length + 1 :=
+    ((hnP z).trans ((PolyExpr.normal C c).eval_mono
+      (by rw [length_pairEncode]; omega))).trans (Nat.le_succ _)
+  simp only [horb, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
+    decide_eq_true_eq]
+  rw [EncodingMachines.flatMap_range_ite, min_eq_right hN]
+
+/-- **The iterated second projection is polynomial-time:** for a polynomial-time `s` and a unary
+count `i`, `PolyTimeComputable fun z => pairSndD^[i z] (s z)`. Framework glue, no textbook
+counterpart.
+
+**Proof sketch.** A counted loop (`polyTimeComputable_loopState`) from `s z` whose update on
+`⟨z, ⟨1^j, t⟩⟩` is the second projection of `t` truncated to `|s z|` bits
+(`truncate_poly`, `unaryLength_poly`). Peeling never lengthens a word
+(`length_pair_components_le`), so along the loop every state `pairSndD^[j] (s z)` is no longer
+than `s z` and the truncation is the identity there; every update is at most `|s z| ≤ C (|z|+1)^c`
+long (`PolyTimeComputable.output_length_le`), the self-bound the loop lemma asks for. -/
+protected theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+    {i : List Bool → ℕ} (hi : PolyTimeComputable fun z => List.replicate (i z) true) :
+    PolyTimeComputable fun z => pairSndD^[i z] (s z) := by
+  -- peeling never lengthens a word
+  have hlen : ∀ (w : List Bool) (j : ℕ), (pairSndD^[j] w).length ≤ w.length := by
+    intro w j
+    induction j with
+    | zero => exact le_rfl
+    | succ j ih =>
+      rw [Function.iterate_succ_apply']
+      exact ((Nat.le_add_left _ _).trans (length_pair_components_le _)).trans ih
+  -- the truncated update `⟨z, ⟨1^j, t⟩⟩ ↦ (pairSndD t).take |s z|`
+  have hupd : PolyTimeComputable fun w =>
+      (pairSndD (pairSndD (pairSndD w))).take (s (pairFstD w)).length :=
+    truncate_poly (polyTimeComputable_pairSndD.comp'
+        (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD))
+      (unaryLength_poly (hs.comp' polyTimeComputable_pairFstD))
+  -- the loop states are the iterated projections
+  have hclosed : ∀ (upd : List Bool → List Bool),
+      (∀ w, upd w = (pairSndD (pairSndD (pairSndD w))).take (s (pairFstD w)).length) →
+      ∀ z j, loopState upd s z j = pairSndD^[j] (s z) := by
+    intro upd hu z j
+    induction j with
+    | zero => rw [loopState_zero, Function.iterate_zero_apply]
+    | succ j ih =>
+      have hj := hlen (s z) (j + 1)
+      rw [Function.iterate_succ_apply'] at hj
+      rw [loopState_succ, hu, pairSndD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode, ih,
+        Function.iterate_succ_apply', List.take_of_length_le hj]
+  obtain ⟨C, c, hC⟩ := hs.output_length_le
+  have hsB : ∀ x, (s x).length ≤ (PolyExpr.normal C c).eval x.length := fun x => by
+    rw [PolyExpr.eval_normal]
+    exact hC x
+  have hupdB : ∀ x t, ((pairSndD (pairSndD (pairSndD (pairEncode x t)))).take
+      (s (pairFstD (pairEncode x t))).length).length ≤ (PolyExpr.normal C c).eval x.length := by
+    intro x t
+    rw [pairFstD_pairEncode]
+    exact (List.length_take_le _ _).trans (hsB x)
+  refine (polyTimeComputable_loopState hupd hs hi (PolyExpr.normal C c) hsB hupdB).congr
+    fun z => ?_
+  exact hclosed _ (fun _ => rfl) z (i z)
+
+/-- **`L` zeros from a unary length:** if `L` is a unary function, then
+`PolyTimeComputable fun x => List.replicate (L x) false` (the bit-extraction principle with the
+constant bit `0`). Framework glue, no textbook counterpart. -/
+protected theorem zeros_poly {L : List Bool → ℕ}
+    (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
+    PolyTimeComputable fun x => List.replicate (L x) false := by
+  refine polyTimeComputable_of_getD (F := fun x => List.replicate (L x) false) ?_ ?_
+  · refine (polyTimeComputable_const [false]).congr fun w => ?_
+    rw [List.getD_eq_getElem?_getD, List.getElem?_replicate]
+    split_ifs <;> rfl
+  · refine hL.congr fun x => ?_
+    rw [List.length_replicate]
+
+/-- **Zero padding** to length `L` (and truncation to `L`): `padTo L w = (w ++ 0^L).take L`, the
+word `w` cut or filled with zeros to exactly `L` bits. Framework glue, no textbook counterpart. -/
+protected def padTo (L : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate L false).take L
+
+/-- The defining equation of `padTo`: `padTo L w = (w ++ 0^L).take L`. Framework glue, no
+textbook counterpart. -/
+protected theorem padTo_eq (L : ℕ) (w : List Bool) :
+    EncodingMachines.padTo L w = (w ++ List.replicate L false).take L := rfl
+
+/-- **Padding to a unary length is polynomial-time:** for a polynomial-time `s` and a unary `L`,
+`PolyTimeComputable fun x => padTo (L x) (s x)` (`truncate_poly` after appending the zeros
+`EncodingMachines.zeros_poly`). Framework glue, no textbook counterpart. -/
+protected theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+    {L : List Bool → ℕ} (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
+    PolyTimeComputable fun x => EncodingMachines.padTo (L x) (s x) :=
+  (truncate_poly (hs.append (EncodingMachines.zeros_poly hL)) hL).congr fun x =>
+    (EncodingMachines.padTo_eq (L x) (s x)).symm
+
+/-- The padded word has length `L`: `|padTo L w| = L`. Framework glue, no textbook
+counterpart. -/
+protected theorem length_padTo (L : ℕ) (w : List Bool) :
+    (EncodingMachines.padTo L w).length = L := by
+  rw [EncodingMachines.padTo_eq, List.length_take, List.length_append, List.length_replicate]
+  omega
+
+/-- The bits of the padded word below `L` are the bits of `w` read with default `false`:
+`(padTo L w).getD i false = w.getD i false` for `i < L`. Framework glue, no textbook
+counterpart. -/
+protected theorem getD_padTo (L : ℕ) (w : List Bool) {i : ℕ} (hi : i < L) :
+    (EncodingMachines.padTo L w).getD i false = w.getD i false := by
+  rw [EncodingMachines.padTo_eq, List.getD_eq_getElem?_getD, List.getElem?_take_of_lt hi,
+    List.getElem?_append, List.getD_eq_getElem?_getD]
+  split_ifs with h
+  · rfl
+  · have hw : w[i]? = none := List.getElem?_eq_none_iff.2 (by omega)
+    rw [hw, List.getElem?_replicate]
+    split_ifs <;> rfl
+
+/-- Padding a word of the right length is the identity: `|w| = L → padTo L w = w`. Framework
+glue, no textbook counterpart. -/
+protected theorem padTo_of_length {L : ℕ} {w : List Bool} (h : w.length = L) :
+    EncodingMachines.padTo L w = w := by
+  rw [EncodingMachines.padTo_eq, List.take_append_of_le_length (by omega),
+    List.take_of_length_le (by omega)]
 
 end TCSlib.Cryptography.EncodingMachines

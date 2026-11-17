@@ -75,6 +75,8 @@ added for the permutation sampler, whose section moved to `Asymptotic/Permutatio
 * `TCSlib.Cryptography.StatClose.map`, `TCSlib.Cryptography.StatClose.prod`,
   `TCSlib.Cryptography.StatClose.trans`, `TCSlib.Cryptography.StatClose.comp_pushesUniform`
   — closure properties.
+* `TCSlib.Cryptography.StatClose.of_uprob_ne` — two samplers on the same seeds are close within
+  the probability that they differ (the coupling bound).
 * `TCSlib.Cryptography.pushesUniform_of_card_fiber` — equal fibres push uniform to uniform (C5).
 * `TCSlib.Cryptography.firstHit_uniform_of_some`, `TCSlib.Cryptography.uprob_firstHit_none`,
   `TCSlib.Cryptography.statClose_firstHit` — the first hit is uniform (C4).
@@ -162,6 +164,33 @@ theorem StatClose.symm {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose
 /-- A closeness bound may be weakened. -/
 theorem StatClose.mono {X : σ → γ} {Y : τ → γ} {δ δ' : ℝ} (h : StatClose X Y δ) (hδ : δ ≤ δ') :
     StatClose X Y δ' := fun T => (h T).trans hδ
+
+/-- **Two samplers on the same seeds are statistically close within the probability that they
+differ** (the coupling bound): `StatClose X Y Pr_s[X s ≠ Y s]`, i.e.
+`|Pr_s[T (X s)] − Pr_s[T (Y s)]| ≤ Pr_s[X s ≠ Y s]` for every test set `T`. Framework glue (its
+uses are [PS10, Theorem 107.3] in DDH and [PS10, Theorem 163.7] in Yao).
+
+**Proof sketch.** On a seed where `T (X s)` holds, either `X s = Y s` and `T (Y s)` holds, or the
+samplers differ there; so `Pr[T (X)] ≤ Pr[T (Y)] + Pr[X ≠ Y]` (`uprob_mono`, `uprob_or_le`), and
+symmetrically with `Pr[Y ≠ X] = Pr[X ≠ Y]` (`OneWay.uprob_congr`). -/
+theorem StatClose.of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
+    StatClose X Y (uprob fun s => X s ≠ Y s) := by
+  rw [statClose_iff]
+  intro T
+  have key : ∀ (X Y : σ → γ), uprob (fun s => T (X s)) ≤
+      uprob (fun s => T (Y s)) + uprob (fun s => X s ≠ Y s) := by
+    intro X Y
+    refine (uprob_mono fun s h => ?_).trans (uprob_or_le (fun s => T (Y s)) (fun s => X s ≠ Y s))
+    by_cases hxy : X s = Y s
+    · exact Or.inl (hxy ▸ h)
+    · exact Or.inr hxy
+  have h1 := key X Y
+  have h2 := key Y X
+  have hsymm : uprob (fun s => Y s ≠ X s) = uprob (fun s => X s ≠ Y s) :=
+    OneWay.uprob_congr fun s => ne_comm
+  rw [hsymm] at h2
+  rw [abs_sub_le_iff]
+  constructor <;> linarith
 
 /-- Closeness bounds add along a chain (triangle inequality). -/
 theorem StatClose.trans {X : σ → γ} {Y : τ → γ} {Z : υ → γ} {δ δ' : ℝ}

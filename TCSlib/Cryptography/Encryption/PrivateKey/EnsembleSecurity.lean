@@ -33,6 +33,8 @@ polynomially many ciphertexts are encoded as nested pairs.
 * `PrivateKeyScheme.not_multiMessageSecure_of_deterministic` uses a two-message
   distinguisher to rule out security for stateless deterministic schemes
   [PS10, Theorem 94.2].
+* `PrivateKeyScheme.encodeList_eq_flatMap` writes the tuple encoding as the concatenation of
+  the blocks `⟨c, []⟩`.
 
 ## References
 
@@ -139,6 +141,18 @@ theorem encodeList_cons (m : List Bool) (ms : List (List Bool)) :
 
 /-- Unfolding of the list encoding on the empty list: `encodeList [] = []`. -/
 theorem encodeList_nil : encodeList [] = [] := rfl
+
+/-- **The tuple encoding is a concatenation of blocks**: the nested-pair encoding of a list of
+words is the concatenation of the self-delimiting blocks `⟨c, []⟩`,
+`encodeList l = l.flatMap fun c => pairEncode c []`.
+Framework glue, no textbook counterpart. -/
+protected theorem encodeList_eq_flatMap (l : List (List Bool)) :
+    encodeList l = l.flatMap fun c => pairEncode c [] := by
+  induction l with
+  | nil => rw [encodeList_nil, List.flatMap_nil]
+  | cons c cs ih =>
+    rw [encodeList_cons, List.flatMap_cons, ih]
+    simp only [pairEncode_eq, List.append_nil, List.append_assoc]
 
 /-- Unfolding of the multi-message ciphertext sampler: the `encodeList` of the `q + 1`
 encryptions `Enc(1^n, ⟨k, m_i⟩; s_i)` under the key `k = Gen(1^n; r.1)`, `s_i = r.2 i`. -/

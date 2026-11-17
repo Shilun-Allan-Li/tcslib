@@ -42,6 +42,7 @@ result, stated in a later module.
 
 * `Games.buildComp_costBoundedBy`, `NUPPT.toComp_costBoundedBy`: the computation makes at most `q`
   queries.
+* `Games.OracleComp.exists_eq_pure_of_costBoundedBy_zero`: a computation of cost zero is a return.
 * `Games.buildComp_of_ret`: a final output is the computation at every budget.
 * `Games.buildComp_budget_eq`, `NUPPT.toCompOn_budget_eq`: a computation at budget `K ≥ j` that
   makes at most `j` queries is the computation at budget `j`.
@@ -174,6 +175,17 @@ theorem buildComp_costBoundedBy {spec : OracleSpec ι} (next : QueryLog spec →
       rw [buildComp_succ_of_query h]
       exact (OracleComp.costBoundedBy_query _ _ _ _ _).2
         ⟨Nat.le_add_left 1 q, fun y => buildComp_costBoundedBy next timeout q _⟩
+
+/-- **A computation of cost zero is a return:** if every query costs one and the budget is
+zero, `c.CostBoundedBy (fun _ => 1) 0 → ∃ a, c = pure a` (a query would need `1 ≤ 0`).
+Framework glue, no textbook counterpart. -/
+theorem OracleComp.exists_eq_pure_of_costBoundedBy_zero {ι α : Type} {spec : OracleSpec ι}
+    (c : OracleComp spec α) (h : c.CostBoundedBy (fun _ => 1) 0) : ∃ a, c = .pure a := by
+  cases c with
+  | pure a => exact ⟨a, rfl⟩
+  | query i x k =>
+    have hq := (OracleComp.costBoundedBy_query (fun _ => 1) i x k 0).1 h
+    omega
 
 /-- **Budget reduction for `buildComp`.** If the computation of `next` at budget `K` from the log
 `hist` makes at most `j ≤ K` queries on every path, it is the computation at budget `j`:

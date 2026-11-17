@@ -41,6 +41,7 @@ Honest sampling is the field `Collection.sample_spec`.
   security from one-wayness and a hard-core predicate.
 * `TCSlib.Cryptography.TrapdoorCollection.OneWay.exists_glPad_singleBitSecure` supplies
   the predicate and its evaluator through Goldreich–Levin under the width premise `henc`.
+* `TCSlib.Cryptography.pkPredictor_apply` reads the predictor's output on a guessed bit and coins.
 
 ## References
 
@@ -281,6 +282,15 @@ end TrapdoorCollection
 `flip`); this is `owpPredictor` with the pass-through component removed. -/
 def pkPredictor {α ρ : Type*} (D : α × Bool → ρ → Bool) (flip : Bool) : α → Bool × ρ → Bool :=
   fun y c => xor (if D (y, c.1) c.2 then c.1 else !c.1) flip
+
+/-- **The predictor's output**: on `y` with coins `c = (c₁, c₂)` (the guessed bit and the
+distinguisher's coins), `pkPredictor D flip` outputs `c₁` if `D` accepts `(y, c₁)` with coins `c₂`
+and `¬c₁` otherwise, negated when `flip`,
+`pkPredictor D flip y c = xor (if D (y, c.1) c.2 then c.1 else !c.1) flip`
+[PS10, Theorem 104.4, proof]. -/
+theorem pkPredictor_apply {α ρ : Type*} (D : α × Bool → ρ → Bool) (flip : Bool) (y : α)
+    (c : Bool × ρ) : pkPredictor D flip y c = xor (if D (y, c.1) c.2 then c.1 else !c.1) flip :=
+  rfl
 
 /-- The predictor is `owpPredictor` on `α × Unit`. -/
 private theorem predProb_pkPredictor_eq {α ρ : Type*} [Fintype α] [Fintype ρ] (f : α ≃ α)

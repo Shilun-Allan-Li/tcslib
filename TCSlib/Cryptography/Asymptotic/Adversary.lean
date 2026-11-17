@@ -70,6 +70,8 @@ by `ifEq`).
 * `TCSlib.Cryptography.ofFn_cast`, `TCSlib.Cryptography.ofFn_arrowCongr_finCongr` — a bit vector
   read across an equality of widths keeps its string.
 * `TCSlib.Cryptography.FunFamily.ofFn_blocks` — block `j` of a string is its `j`-th window.
+* `TCSlib.Cryptography.FunFamily.ofFn_blocks_symm_eq_flatMap` — the string of a tuple of blocks is
+  the concatenation of the block strings.
 * `TCSlib.Cryptography.invProbOpt_le_invProb`, `TCSlib.Cryptography.invProbOpt_some` — the
   bridges to the concrete `invProb`.
 * `TCSlib.Cryptography.invProbOpt_nonneg`, `TCSlib.Cryptography.invProbOpt_le_one` — bounds.
@@ -291,6 +293,34 @@ theorem FunFamily.ofFn_blocks (q ℓ : ℕ) (ω : Fin (q * ℓ) → Bool) (j : F
     show k + ℓ * j = j * ℓ + k
     rw [Nat.mul_comm]
     omega
+
+/-- **The string of a tuple of blocks is the concatenation of the block strings:** for
+`V : Fin q → Fin ℓ → Bool` and any `F : ℕ → List Bool` with `F i = ⟦V i⟧` for every `i < q`,
+`⟦(FunFamily.blocks q ℓ).symm V⟧ = (List.range q).flatMap F`. Framework glue (the block encoding
+of [PS10, Theorem 35.1] is cited at `FunFamily.blocks`).
+
+**Proof sketch.** Cut the string into `q` windows of `ℓ` bits (`List.ofFn_mul`). Position `j` of
+window `i` is position `i·ℓ + j`, which the inverse bijection reads as bit `j` of block `i`
+(`FunFamily.blocks_symm_apply`: quotient `i` and remainder `j` by `ℓ`), so window `i` is
+`⟦V i⟧ = F i`, and the windows over `Fin q` are the chunks over `List.range q`. -/
+theorem FunFamily.ofFn_blocks_symm_eq_flatMap {q ℓ : ℕ} (V : Fin q → Fin ℓ → Bool)
+    (F : ℕ → List Bool) (hF : ∀ i (h : i < q), F i = List.ofFn (V ⟨i, h⟩)) :
+    List.ofFn ((FunFamily.blocks q ℓ).symm V) = (List.range q).flatMap F := by
+  rw [List.ofFn_mul, List.flatMap_def, ← List.map_coe_finRange, List.map_map, List.ofFn_eq_map]
+  congr 1
+  refine List.map_congr_left fun i _ => ?_
+  rw [Function.comp_apply, hF i i.isLt]
+  congr 1
+  funext j
+  rw [FunFamily.blocks_symm_apply]
+  have hℓ : 0 < ℓ := Nat.pos_of_ne_zero (by rintro rfl; exact j.elim0)
+  congr 1
+  · refine Fin.ext ?_
+    simp only [Fin.coe_divNat]
+    rw [Nat.add_comm, Nat.add_mul_div_right _ _ hℓ, Nat.div_eq_of_lt j.2, Nat.zero_add]
+  · refine Fin.ext ?_
+    simp only [Fin.coe_modNat]
+    rw [Nat.add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt j.2]
 
 /-- **Block `i` of a string of `r` blocks of `k` bits and a tail** is segment `i`:
 `⟦j ↦ w (castAdd sl (finProdFinEquiv (i, j)))⟧ = coinBlock k i ⟦w⟧`.
