@@ -1,0 +1,14 @@
+open Lean Elab Command in
+/-- Maintainer pre-ship enumeration (read-only): the theorems whose names extend one of the given
+prefixes (as `prefix_…` or `prefix.…`), one line `ENUM <name>`. -/
+elab "#enum_lemmas " ids:ident* : command => do
+  let env ← getEnv
+  let mut out : Array String := #[]
+  for id in ids do
+    let p := id.getId.toString
+    for (c, ci) in env.constants.toList do
+      if let .thmInfo _ := ci then
+        let s := c.toString
+        if (s.startsWith (p ++ "_") || s.startsWith (p ++ ".")) && !c.isInternal then
+          out := out.push s!"ENUM {s}"
+  logInfo m!"{String.intercalate "\n" (out.qsort (· < ·)).toList}"
