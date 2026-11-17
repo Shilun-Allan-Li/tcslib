@@ -55,8 +55,8 @@ The closeout is done when all of the following hold (PLAN §4):
     - 13 module docstrings lack `## Main definitions`;
     - the 5 umbrella import files lack the standard `set_option` lines;
     - six findings are parser false positives on prose, such as "public `theorem theorem,`".
-  - **Open:** whether these are fixed before W7 or carried (see the maintainer's question to
-    Seyoon).
+  - **Carried by ruling** (Seyoon, 2026-11-17): all three kinds are listed in the carried
+    register's "Standards-lint items" section.
 - **Register:** `campaign/closeout/CARRIED-REGISTER.md`, final at stage 3. Deferred items: W8
   (Exercise 3.3), W9 (relativized hierarchies) and the ch2-4 merge items.
 - **Blueprint:** W5 (#361, gate 157). Validation is clean, and no undocumented declaration remains

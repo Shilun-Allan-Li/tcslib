@@ -40,6 +40,17 @@ place, why, and the first step if it is taken up later. Figures come from
 | **RN-1's `universalCapture_embed`** (UniversalStartup, new in #350) | Gate 154 G154-02 (2026-11-17) | Citing `Cfg.mapState_eq_of_fields` needs a CfgFacts import into chapter 1's UniversalStartup (not approved); about −2 lines |
 | **G147-01**, two stale historical notes in Nondeterminism | Seyoon, 2026-11-17 | Gate 153's seal: editing the docstrings of `ntime_expPow_subset_NEXP` and `EXP_eq_NEXP_of_P_eq_NP` exposes their direct `NTIME`/`NEXP` reads, and `NEXP` has no published reader. The notes still name two deleted lemmas; the W5/W6 docs pass may revisit them |
 
+## Standards-lint items in the chapter scope (carried by ruling, Seyoon 2026-11-17)
+
+Found by W6's lint (`campaign/gates/158-w6-final/evidence/lint/`). They are long-standing and
+disclosed to the final audit, not fixed.
+
+| Item | Where | Note |
+|---|---|---|
+| **Files over the 1,000-line limit** (policy §1) | NTimeDiagonalizer 8,466; Hierarchy 3,439; Inclusions 2,861; Ladner 2,739; QueryReshape 2,625; InputAccess 2,159; NTimeHierarchy 1,934; TQBF 1,866; Padding 1,769; WindowClock 1,677; Mult 1,474 | A split moves thousands of lines into new modules and needs a full replay. The first step, if taken up, is per-file split plans starting with NTimeDiagonalizer |
+| **Module docstrings without `## Main definitions`** | 13 modules (list in the lint output) | Documentation only |
+| **Umbrella import files without the standard `set_option` lines** | `ClassOracle`, `ClassPSPACE`, `Diagonalization`, `SpaceComplexity`, `TimeHierarchy` | Import-only files |
+
 ## Expected at `cryptography/pass-shelat-ch2-4`'s merge (not yet in the tree)
 
 `CH2-4-OVERLAP.md` gives the details. Nothing below exists on this branch yet; these items arise
