@@ -88,3 +88,5 @@ The second head `a1a7c6ec` repairs or withdraws each:
   dropped. Repairing the touched tails would need new `CA` table lemmas in Codec/Machine.
 - **G147-01: carried** (Seyoon). The two notes return to the base. Editing them seals two
   public proofs that read `NTIME`/`NEXP` directly, and `NEXP` has no reader.
+
+**Done (2026-11-17).** W6 CLEAR (gate 158, round 2); W7 merged as #364 (`5cb25d52`) after gate 159 CLEAR.
