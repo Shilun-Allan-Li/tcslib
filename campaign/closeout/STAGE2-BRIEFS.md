@@ -106,3 +106,10 @@ only).
 - **Fill B** delivered WS-1 and F6-1(b), with a report (`stage2-fill-B-report.md` on its branch).
   Its stops are `b3a_cfg` via `Cfg.ofWords` (VirtualInput's `vhostCfg` has no published
   equations) and the per-tape seam corollary.
+- **F6-1(b), gate 154's first run (2026-11-17):** the seal failed in Constructible's
+  `b3a_log_machine`, the consumer of `b3a_seam_space`. Re-pointing it made the proof count as
+  changed, which exposed its older direct reads of `FinTM.ComputesInSpace`, `embedEmitCfg`,
+  `Cfg.init`, `Cfg.mapState` and VirtualInput's `vhostCfg`. `vhostCfg` has no published equations.
+  `b3a_seam_space` is therefore kept as a one-line citation of the general
+  `seamCompTM_spaceUsed_le_add_ofCfg`, and `b3a_log_machine` stays at base. Stage 2 head
+  `4045f9a9` (17 files, +339/−516, net −177).
