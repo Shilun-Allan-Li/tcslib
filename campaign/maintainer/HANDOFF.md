@@ -7,7 +7,7 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-16; authoritative)
+## 0. Current state (2026-11-17; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. The latest merges are #337 (MIG-3, gate 148), #334 (R4-1, gate 145) and #336 (R3a, gate 147), 2026-11-16; their tip's adoption replay passed 328/328 and its output is the adopted snapshot `oleans-c56ab` (873 objects; `oleans-c68cb` is the fallback; campaign/status/2026-11-16-merge-334-336-337/). #335 (gate 146) then merged (`c2ad69cc`); its merged-tree replay built exactly the merge's Lean, and that output is the adopted snapshot `oleans-cc2ad` (873 objects; `oleans-c56ab` is the fallback; campaign/status/2026-11-16-merge-335/).
@@ -22,6 +22,8 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
+| (stage 2) / 154 | **Integrated, gate running.** Branch `closeout/stage2` at `a700a49f2f02ce63d53dbe7e39afc0b5b98015cf`, stacked on stage 1 (`a1a7c6ec`): fills A (RC-4 `NDTM.exists_first_halt`; UniversalK's input rewind on `inputRewindTM`), B (WS-1 `Action.apply_workTapes_of_ne`; F6-1(b) `seamCompTM_spaceUsed_le_add_ofCfg`) and C (RN-1 in CodeSimulator; MIG-7), plus the approved reader `Cfg.inWindow_iff` and ER's `xr_window_stepWith`. 17 files, net −187. ER's `xr_inRewindTM` carried. No PR until #349 merges. campaign/closeout/STAGE2-BRIEFS.md. |
+| #349 / 153 | **Staged for audit** (2026-11-17), draft at `a1a7c6ec39b515c6babc347e300a21566516a3a8` (second head; the first, `ceece3a0`, failed four seals). Closeout stage 1: TR-1, MIG-10 (+ approved `FinOracleTM.computesInTime_iff`), F6-1(c)/(d), SD-1, WL-1, TC-1, CC7-1 base half; CK-1, G147-01 and RS-1 carried. Net −5 lines. Replay 336/336; checks clean; screen 310 → 305. campaign/gates/153-stage1-promotions/. |
 | #345 / 152 | **Merged** (`b913bbc9`, 2026-11-16); snapshot `oleans-cb913b` adopted (status/2026-11-16-merge-345). Round 1 CLEAR (0/0/2 records errata). Was staged at `1dcbbe3171dd685600525d4f7cf71548889ecceb`. Closeout CC7-1 (design note `campaign/closeout/CC7-1-DESIGN.md`, approved with a stop rule): CodeSimulator's seven stage-front legs through the private `canonStageLeg_of` template, plus `canonStage_guard`, `canonStageBank_move` and a shared `phaseCut_leg`; net −211 lines (G152-01), copy screen 69 → 42. Replay 24/24; checks clean. campaign/gates/152-cc7-1-legs/. |
 | #344 / 151 | **Merged** (`fb6f2e31`, 2026-11-16); snapshot `oleans-cfb6f2` adopted (status/2026-11-16-merge-344). Round 1 CLEAR (0/0/0). Was dispatched 2026-11-16, draft at `974599a43484632ba38ab4dec4196790a6d0cb46`. Closeout C1E-1 trims (b, c, d) in `ClassNP/ExhaustiveReplay`: buffer-tape privates cite `FinTM.bufferTape_of_neg`/`_eq`, the replay exits share `xr_replay_prelude`, the ten bank inequalities become the file-local tactic `xr_bank_ne`; net −38 lines. Replay 4/4; checks clean. Independent of #343. campaign/gates/151-c1e-1-trims/. |
 | #343 / 150 | **Merged** (`f81872e2`, 2026-11-16); snapshot `oleans-cf8187` adopted (status/2026-11-16-merge-343). Round 1 CLEAR (0/0/0). Was dispatched 2026-11-16, draft at `0b12a1b30ad0fb8b800b67beb806766e6f266b86`. Closeout R4 kind 3: SAT/Hardness padding through `Build/EmitIterEmbed`; new field equations for `embedCfg` (EmitIterEmbed) and `emitCfg` (Wrappers), approved by Seyoon 2026-11-16 after a measured prototype; net +6 lines, 4 padding twin pairs retired. Replay 227/227 on `oleans-cc011`; checks clean (first head's seal failure repaired). campaign/gates/150-k3-padding/. |
@@ -70,7 +72,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 153. Use complete
+Hardness CfgFacts import stays separate. Next free gate 155. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 

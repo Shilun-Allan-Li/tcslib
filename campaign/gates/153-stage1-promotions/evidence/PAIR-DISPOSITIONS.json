@@ -1,0 +1,119 @@
+{
+ "base_summary": "declarations screened: 951; copy pairs (target reproduces >= half of source): 310; reproduced text: 94,921 chars",
+ "head_summary": "declarations screened: 946; copy pairs (target reproduces >= half of source): 305; reproduced text: 93,700 chars",
+ "population_base": [
+  "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean",
+  "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue.lean",
+  "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+  "TCSlib/Complexity/ClassNP/NTIME.lean",
+  "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+  "TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean",
+  "TCSlib/Complexity/Diagonalization/NotTimeConstructible.lean",
+  "TCSlib/Complexity/Diagonalization/Relativization.lean",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean",
+  "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+  "TCSlib/Complexity/TuringMachine/Build/InputDevice.lean",
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+  "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+  "TCSlib/Complexity/TuringMachine/Encoding.lean",
+  "TCSlib/Complexity/TuringMachine/Oracle.lean",
+  "TCSlib/Complexity/TuringMachine/OracleFinite.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean",
+  "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue.lean",
+  "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+  "TCSlib/Complexity/ClassNP/NTIME.lean",
+  "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+  "TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean",
+  "TCSlib/Complexity/Diagonalization/NotTimeConstructible.lean",
+  "TCSlib/Complexity/Diagonalization/Relativization.lean",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean",
+  "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+  "TCSlib/Complexity/TuringMachine/Build/InputDevice.lean",
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+  "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+  "TCSlib/Complexity/TuringMachine/Encoding.lean",
+  "TCSlib/Complexity/TuringMachine/Oracle.lean",
+  "TCSlib/Complexity/TuringMachine/OracleFinite.lean"
+ ],
+ "new": 1,
+ "gone": 6,
+ "net_directed_pairs": "310 -> 305",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "PathWalk.lean::walkLe_succ_iff",
+   "source": "PathWalk.lean::walkLe_succ",
+   "chars": 89,
+   "source_chars": 122,
+   "pct": 73,
+   "class": "moved",
+   "note": "WL-1: walkLe_succ_iff moved from ISCountMath into PathWalk (renamed binders); the same pair, now within one file."
+  },
+  {
+   "status": "GONE",
+   "target": "ISCountMath.lean::walkLe_succ_iff",
+   "source": "PathWalk.lean::walkLe_succ",
+   "chars": 89,
+   "source_chars": 122,
+   "pct": 73,
+   "class": "moved",
+   "note": "WL-1: the target moved to PathWalk (the NEW row above)."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::canonStageBlock_consumes",
+   "source": "CodeSimulator.lean::skipTable_consumes",
+   "chars": 209,
+   "source_chars": 342,
+   "pct": 61,
+   "class": "retired",
+   "note": "CC7-1 base half: both now cite the private skipAction_consumes for the per-record bound."
+  },
+  {
+   "status": "GONE",
+   "target": "NTimeHierarchy.lean::nh_accepts_of_halts",
+   "source": "Nondeterminism.lean::acceptsWithin_iff_of_halts",
+   "chars": 174,
+   "source_chars": 287,
+   "pct": 61,
+   "class": "retired",
+   "note": "TR-1: both are now one-line citations of Turing.FinNDTM.AcceptsWithin.iff_of_haltsWithin (NTIME)."
+  },
+  {
+   "status": "GONE",
+   "target": "CfgRecord.lean::recordStep_map_snapshot",
+   "source": "CfgRecord.lean::recordStep_scan_preserves",
+   "chars": 339,
+   "source_chars": 578,
+   "pct": 59,
+   "class": "generalized",
+   "note": "F6-1(d): the source is published as Turing.scanTM_run_preserves, general in the tape count; its text no longer meets the threshold against these same-file lemmas."
+  },
+  {
+   "status": "GONE",
+   "target": "CfgRecord.lean::recordStep_state_run",
+   "source": "CfgRecord.lean::recordStep_scan_preserves",
+   "chars": 290,
+   "source_chars": 578,
+   "pct": 50,
+   "class": "generalized",
+   "note": "F6-1(d): as above."
+  },
+  {
+   "status": "GONE",
+   "target": "CodeSimulator.lean::skipTable_consumes",
+   "source": "CodeSimulator.lean::canonStageBlock_consumes",
+   "chars": 209,
+   "source_chars": 417,
+   "pct": 50,
+   "class": "retired",
+   "note": "CC7-1 base half: as above, the other direction."
+  }
+ ]
+}
