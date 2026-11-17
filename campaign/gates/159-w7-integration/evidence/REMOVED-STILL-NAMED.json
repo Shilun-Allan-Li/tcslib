@@ -1,0 +1,4395 @@
+{
+ "main": "origin/main",
+ "head": "fdec251d1583ea827830a5bed58043b53f8819ea",
+ "changed_lean_files": 217,
+ "removed_declarations": 654,
+ "removed_still_named_on_head": 567,
+ "by_main_file": {
+  "TCSlib/Complexity/SpaceComplexity/Codec/Word.lean": 1,
+  "TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean": 1,
+  "TCSlib/Complexity/ClassPSPACE/TQBF.lean": 64,
+  "TCSlib/Complexity/FormulaKit/Gate.lean": 21,
+  "TCSlib/Complexity/FormulaKit/Emit.lean": 18,
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean": 2,
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean": 1,
+  "TCSlib/Complexity/ClassNP/Nondeterminism.lean": 8,
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean": 1,
+  "TCSlib/Complexity/CookLevin/Hardness.lean": 23,
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean": 1,
+  "TCSlib/Complexity/ClassNP/Reductions.lean": 4,
+  "TCSlib/Complexity/Diagonalization/Relativization.lean": 5,
+  "TCSlib/Complexity/ClassNP/SAT.lean": 12,
+  "TCSlib/Complexity/ClassNP/Tautology.lean": 1,
+  "TCSlib/Complexity/Randomized/BPLInPCount.lean": 1,
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean": 2,
+  "TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean": 1,
+  "TCSlib/Complexity/TuringMachine/Build/Catalog.lean": 358,
+  "TCSlib/Complexity/TuringMachine/Build/Primitives.lean": 17,
+  "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean": 12,
+  "TCSlib/Complexity/TuringMachine/Build/Loop.lean": 1,
+  "TCSlib/Complexity/TuringMachine/Oracle.lean": 1,
+  "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean": 2,
+  "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean": 3,
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean": 1,
+  "TCSlib/Complexity/TuringMachine/Build/StepClock.lean": 1,
+  "TCSlib/Complexity/TuringMachine/Build/Seam.lean": 1,
+  "TCSlib/Complexity/TuringMachine/UniversalStartup.lean": 3
+ },
+ "entries": {
+  "Complexity.Codec.bitsVal_lt_two_pow": {
+   "declared_on_main_in": "TCSlib/Complexity/SpaceComplexity/Codec/Word.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.Codec.bitsVal_lt_two_pow.md",
+    "blueprint/src/references/statements/Complexity.Codec.bitsVal_lt_two_pow.json"
+   ],
+   "count": 2
+  },
+  "Complexity.Codec.two_pow_bits_le": {
+   "declared_on_main_in": "TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.Codec.two_pow_bits_le.md",
+    "blueprint/src/references/statements/Complexity.Codec.two_pow_bits_le.json"
+   ],
+   "count": 2
+  },
+  "Complexity.ConfigCodec.Case": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.Case.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.Expect": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.Expect.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.GateKind": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.GateKind.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.Port": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.Port.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.acceptance": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.acceptance.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.acceptance_eval_iff": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.acceptance_eval_iff.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.acceptance_numVars_le": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.acceptance_numVars_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.adjacency": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.adjacency.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.adjacency_eval_iff": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.adjacency_eval_iff.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.adjacency_eval_of_ne": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.adjacency_eval_of_ne.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.adjacency_numVars_le": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.adjacency_numVars_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.card_port": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.ConfigCodec.card_port.md",
+    "blueprint/src/references/statements/Complexity.ConfigCodec.card_port.json"
+   ],
+   "count": 2
+  },
+  "Complexity.ConfigCodec.caseAction": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.caseAction.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.caseList": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.caseList.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.code": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.code.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.code_eq_iff": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.code_eq_iff.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.code_getD_headVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.code_getD_headVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.code_getD_inputVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.code_getD_inputVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.code_getD_stateVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.code_getD_stateVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.code_getD_summaryVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.code_getD_summaryVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.code_getD_workVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.code_getD_workVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.code_input_eq": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.code_input_eq.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.code_length": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.code_length.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.exists_serialize_length_le": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.exists_serialize_length_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.expectBit": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.expectBit.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.expectOf": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.expectOf.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.guard": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.guard.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.headOf": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.headOf.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.headVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.headVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.inputEquality": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.inputEquality.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.inputVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.inputVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.kindPred": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.kindPred.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.moveInput": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.moveInput.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.polyTimeComputable_code_initCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.polyTimeComputable_code_initCfg.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.polyTimeComputable_serialize_acceptance": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.polyTimeComputable_serialize_acceptance.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.polyTimeComputable_serialize_adjacency": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.polyTimeComputable_serialize_adjacency.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.polyTimeComputable_serialize_validity": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.polyTimeComputable_serialize_validity.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.portCount": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.portCount.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.portIndex": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.portIndex.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.portIndex_lt": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.ConfigCodec.portIndex_lt.md",
+    "blueprint/src/references/statements/Complexity.ConfigCodec.portIndex_lt.json"
+   ],
+   "count": 2
+  },
+  "Complexity.ConfigCodec.portOf": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.portOf.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.portOf_portIndex": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.ConfigCodec.portOf_portIndex.md",
+    "blueprint/src/references/statements/Complexity.ConfigCodec.portOf_portIndex.json"
+   ],
+   "count": 2
+  },
+  "Complexity.ConfigCodec.portWire": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.portWire.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.readSummary": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.readSummary.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.readSymbol": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.readSymbol.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.stateCount": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.stateCount.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.stateIndex": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.stateIndex.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.stateOffset": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.stateOffset.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.stateVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.stateVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.stateVar_none": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.ConfigCodec.stateVar_none.md",
+    "blueprint/src/references/statements/Complexity.ConfigCodec.stateVar_none.json"
+   ],
+   "count": 2
+  },
+  "Complexity.ConfigCodec.summaryOffset": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.summaryOffset.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.summaryVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.summaryVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.summaryWord": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.summaryWord.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.transition": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.transition.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.transitionGate": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.transitionGate.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.validity": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.validity.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.validity_eval_iff": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.validity_eval_iff.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.validity_numVars_le": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.validity_numVars_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.width": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.width.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.width_eq": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.ConfigCodec.width_eq.md",
+    "blueprint/src/references/statements/Complexity.ConfigCodec.width_eq.json"
+   ],
+   "count": 2
+  },
+  "Complexity.ConfigCodec.width_le": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.width_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.workFlags": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.workFlags.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.workOffset": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.workOffset.json"
+   ],
+   "count": 1
+  },
+  "Complexity.ConfigCodec.workVar": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBF.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.ConfigCodec.workVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.bitsOf": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.bitsOf.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.blockVar": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.blockVar.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.cost": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.cost.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.cost_append": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.cost_append.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.cost_append.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.cost_flatMap_le": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.cost_flatMap_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.cost_relabel": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.cost_relabel.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.cost_relabel.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.exactlyOne": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.exactlyOne.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.exactlyOne_cost_le": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.exactlyOne_cost_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.exactlyOne_eval": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.exactlyOne_eval.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.excludeClause": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.excludeClause.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.fragment": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.fragment.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.fragment_append": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.fragment_append.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.fragment_append.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.fragment_flatMap": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.fragment_flatMap.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.fragment_flatMap.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.gate": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.gate.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.gate_cost_le": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.gate_cost_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.gate_eval": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.gate_eval.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.gate_eval.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.numVars_le_of_forall_lt": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.numVars_le_of_forall_lt.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_flatMap_range": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_flatMap_range.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_fragment_gate": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.polyTimeComputable_fragment_gate.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_fragment_gate.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.polyTimeComputable_fragment_gate_select": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_fragment_gate_select.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_fragment_iff_serialize": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_fragment_iff_serialize.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_fragment_relabel": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_fragment_relabel.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_serialize_flatMap": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.polyTimeComputable_serialize_flatMap.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_serialize_flatMap.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.polyTimeComputable_serialize_relabel_add": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_serialize_relabel_add.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_unary_add": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.polyTimeComputable_unary_add.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_unary_add.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.polyTimeComputable_unary_div": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_unary_div.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_unary_le": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_unary_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_unary_mod": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_unary_mod.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_unary_mul": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_unary_mul.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.polyTimeComputable_unary_pow": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.polyTimeComputable_unary_pow.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_unary_pow.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.polyTimeComputable_unary_sub": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.polyTimeComputable_unary_sub.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.readBit": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.readBit.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.serialize_eq_fragment": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Emit.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.FormulaKit.serialize_eq_fragment.md",
+    "blueprint/src/references/statements/Complexity.FormulaKit.serialize_eq_fragment.json"
+   ],
+   "count": 2
+  },
+  "Complexity.FormulaKit.serialize_length_le": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.serialize_length_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.template": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.template.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.template_eval": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.template_eval.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.template_length_le": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.template_length_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.template_numVars_le": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.template_numVars_le.json"
+   ],
+   "count": 1
+  },
+  "Complexity.FormulaKit.template_widthAtMost": {
+   "declared_on_main_in": "TCSlib/Complexity/FormulaKit/Gate.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.FormulaKit.template_widthAtMost.json"
+   ],
+   "count": 1
+  },
+  "Complexity.LogProg.ISCount.logSpace_le_size_succ": {
+   "declared_on_main_in": "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.LogProg.ISCount.logSpace_le_size_succ.md",
+    "blueprint/src/references/statements/Complexity.LogProg.ISCount.logSpace_le_size_succ.json"
+   ],
+   "count": 2
+  },
+  "Complexity.LogProg.ISCount.walkLe_succ_iff": {
+   "declared_on_main_in": "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.LogProg.ISCount.walkLe_succ_iff.md",
+    "blueprint/src/references/statements/Complexity.LogProg.ISCount.walkLe_succ_iff.json"
+   ],
+   "count": 2
+  },
+  "Complexity.TQBFHard.wP_le": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.TQBFHard.wP_le.md",
+    "blueprint/src/references/statements/Complexity.TQBFHard.wP_le.json"
+   ],
+   "count": 2
+  },
+  "Complexity.a3n_prevalidation": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.a3n_prevalidation.md",
+    "blueprint/src/references/statements/Complexity.a3n_prevalidation.json"
+   ],
+   "count": 2
+  },
+  "Complexity.bits_succ_le": {
+   "declared_on_main_in": "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.bits_succ_le.md",
+    "blueprint/src/references/statements/Complexity.bits_succ_le.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5Clean_stop": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5Clean_stop.md",
+    "blueprint/src/references/statements/Complexity.clA5Clean_stop.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5Map_poly": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5Map_poly.md",
+    "blueprint/src/references/statements/Complexity.clA5Map_poly.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5Map_run": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5Map_run.md",
+    "blueprint/src/references/statements/Complexity.clA5Map_run.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5Pad_apply": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5Pad_apply.md",
+    "blueprint/src/references/statements/Complexity.clA5Pad_apply.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5Pad_seam": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5Pad_seam.md",
+    "blueprint/src/references/statements/Complexity.clA5Pad_seam.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5Stop_clean": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5Stop_clean.md",
+    "blueprint/src/references/statements/Complexity.clA5Stop_clean.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5Stop_step": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5Stop_step.md",
+    "blueprint/src/references/statements/Complexity.clA5Stop_step.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5_bridge_bound": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5_bridge_bound.md",
+    "blueprint/src/references/statements/Complexity.clA5_bridge_bound.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5_call_first_halt": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5_call_first_halt.md",
+    "blueprint/src/references/statements/Complexity.clA5_call_first_halt.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5_live_prefix": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5_live_prefix.md",
+    "blueprint/src/references/statements/Complexity.clA5_live_prefix.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clA5_pt_tail": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clA5_pt_tail.md",
+    "blueprint/src/references/statements/Complexity.clA5_pt_tail.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clCount_width": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clCount_width.md",
+    "blueprint/src/references/statements/Complexity.clCount_width.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clFill_run": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clFill_run.md",
+    "blueprint/src/references/statements/Complexity.clFill_run.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clNative_cleanCall": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clNative_cleanCall.md",
+    "blueprint/src/references/statements/Complexity.clNative_cleanCall.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clRepeatArgument_native": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clRepeatArgument_native.md",
+    "blueprint/src/references/statements/Complexity.clRepeatArgument_native.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clRepeatOutput_compute": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clRepeatOutput_compute.md",
+    "blueprint/src/references/statements/Complexity.clRepeatOutput_compute.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clRepeat_budget": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clRepeat_budget.md",
+    "blueprint/src/references/statements/Complexity.clRepeat_budget.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clRepeat_call": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clRepeat_call.md",
+    "blueprint/src/references/statements/Complexity.clRepeat_call.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clRepeat_complete": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clRepeat_complete.md",
+    "blueprint/src/references/statements/Complexity.clRepeat_complete.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clRepeat_frame": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clRepeat_frame.md",
+    "blueprint/src/references/statements/Complexity.clRepeat_frame.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clRepeat_initial": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clRepeat_initial.md",
+    "blueprint/src/references/statements/Complexity.clRepeat_initial.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clRepeat_round": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clRepeat_round.md",
+    "blueprint/src/references/statements/Complexity.clRepeat_round.json"
+   ],
+   "count": 2
+  },
+  "Complexity.clVisitStep_cleanCall": {
+   "declared_on_main_in": "TCSlib/Complexity/CookLevin/Hardness.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.clVisitStep_cleanCall.md",
+    "blueprint/src/references/statements/Complexity.clVisitStep_cleanCall.json"
+   ],
+   "count": 2
+  },
+  "Complexity.drop_pairEncode": {
+   "declared_on_main_in": "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.drop_pairEncode.md",
+    "blueprint/src/references/statements/Complexity.drop_pairEncode.json"
+   ],
+   "count": 2
+  },
+  "Complexity.e3_find_congr": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.e3_find_congr.md",
+    "blueprint/src/references/statements/Complexity.e3_find_congr.json"
+   ],
+   "count": 2
+  },
+  "Complexity.e3_find_eq": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.e3_find_eq.md",
+    "blueprint/src/references/statements/Complexity.e3_find_eq.json"
+   ],
+   "count": 2
+  },
+  "Complexity.e3_loop_bound": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.e3_loop_bound.md",
+    "blueprint/src/references/statements/Complexity.e3_loop_bound.json"
+   ],
+   "count": 2
+  },
+  "Complexity.e3_loop_result": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.e3_loop_result.md",
+    "blueprint/src/references/statements/Complexity.e3_loop_result.json"
+   ],
+   "count": 2
+  },
+  "Complexity.e3_split_of_body": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.e3_split_of_body.md",
+    "blueprint/src/references/statements/Complexity.e3_split_of_body.json"
+   ],
+   "count": 2
+  },
+  "Complexity.e3_step_inv": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.e3_step_inv.md",
+    "blueprint/src/references/statements/Complexity.e3_step_inv.json"
+   ],
+   "count": 2
+  },
+  "Complexity.e3_step_orbit": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.e3_step_orbit.md",
+    "blueprint/src/references/statements/Complexity.e3_step_orbit.json"
+   ],
+   "count": 2
+  },
+  "Complexity.fixedPair_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Reductions.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.fixedPair_computes.md",
+    "blueprint/src/references/statements/Complexity.fixedPair_computes.json"
+   ],
+   "count": 2
+  },
+  "Complexity.oracleRelabel": {
+   "declared_on_main_in": "TCSlib/Complexity/Diagonalization/Relativization.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Complexity.oracleRelabel.json"
+   ],
+   "count": 1
+  },
+  "Complexity.oracleRelabel_computesInTime": {
+   "declared_on_main_in": "TCSlib/Complexity/Diagonalization/Relativization.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.oracleRelabel_computesInTime.md",
+    "blueprint/src/references/statements/Complexity.oracleRelabel_computesInTime.json"
+   ],
+   "count": 2
+  },
+  "Complexity.oracleRelabel_runFrom": {
+   "declared_on_main_in": "TCSlib/Complexity/Diagonalization/Relativization.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.oracleRelabel_runFrom.md",
+    "blueprint/src/references/statements/Complexity.oracleRelabel_runFrom.json"
+   ],
+   "count": 2
+  },
+  "Complexity.oracleRelabel_step": {
+   "declared_on_main_in": "TCSlib/Complexity/Diagonalization/Relativization.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.oracleRelabel_step.md",
+    "blueprint/src/references/statements/Complexity.oracleRelabel_step.json"
+   ],
+   "count": 2
+  },
+  "Complexity.oracleRelabel_wellFormed": {
+   "declared_on_main_in": "TCSlib/Complexity/Diagonalization/Relativization.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.oracleRelabel_wellFormed.md",
+    "blueprint/src/references/statements/Complexity.oracleRelabel_wellFormed.json"
+   ],
+   "count": 2
+  },
+  "Complexity.prefixTM_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Reductions.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.prefixTM_computes.md",
+    "blueprint/src/references/statements/Complexity.prefixTM_computes.json"
+   ],
+   "count": 2
+  },
+  "Complexity.prefixTM_copy": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Reductions.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.prefixTM_copy.md",
+    "blueprint/src/references/statements/Complexity.prefixTM_copy.json"
+   ],
+   "count": 2
+  },
+  "Complexity.prefixTM_emit": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Reductions.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.prefixTM_emit.md",
+    "blueprint/src/references/statements/Complexity.prefixTM_emit.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satClean_stop": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satClean_stop.md",
+    "blueprint/src/references/statements/Complexity.satClean_stop.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satMap_poly": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satMap_poly.md",
+    "blueprint/src/references/statements/Complexity.satMap_poly.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satMap_run": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satMap_run.md",
+    "blueprint/src/references/statements/Complexity.satMap_run.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satPad_apply": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satPad_apply.md",
+    "blueprint/src/references/statements/Complexity.satPad_apply.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satPad_seam": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satPad_seam.md",
+    "blueprint/src/references/statements/Complexity.satPad_seam.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satRed_one": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satRed_one.md",
+    "blueprint/src/references/statements/Complexity.satRed_one.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satScan_run": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satScan_run.md",
+    "blueprint/src/references/statements/Complexity.satScan_run.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satScan_step": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satScan_step.md",
+    "blueprint/src/references/statements/Complexity.satScan_step.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satStop_clean": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satStop_clean.md",
+    "blueprint/src/references/statements/Complexity.satStop_clean.json"
+   ],
+   "count": 2
+  },
+  "Complexity.satStop_step": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.satStop_step.md",
+    "blueprint/src/references/statements/Complexity.satStop_step.json"
+   ],
+   "count": 2
+  },
+  "Complexity.sat_bridge_bound": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.sat_bridge_bound.md",
+    "blueprint/src/references/statements/Complexity.sat_bridge_bound.json"
+   ],
+   "count": 2
+  },
+  "Complexity.sat_live_prefix": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/SAT.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.sat_live_prefix.md",
+    "blueprint/src/references/statements/Complexity.sat_live_prefix.json"
+   ],
+   "count": 2
+  },
+  "Complexity.tautDual_segment_add": {
+   "declared_on_main_in": "TCSlib/Complexity/ClassNP/Tautology.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Complexity.tautDual_segment_add.md",
+    "blueprint/src/references/statements/Complexity.tautDual_segment_add.json"
+   ],
+   "count": 2
+  },
+  "Randomized.BPLInP.coreSum_eq_of_code_eq": {
+   "declared_on_main_in": "TCSlib/Complexity/Randomized/BPLInPCount.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Randomized.BPLInP.coreSum_eq_of_code_eq.md",
+    "blueprint/src/references/statements/Randomized.BPLInP.coreSum_eq_of_code_eq.json"
+   ],
+   "count": 2
+  },
+  "Randomized.PolyAmp.lt_two_pow_bits": {
+   "declared_on_main_in": "TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Randomized.PolyAmp.lt_two_pow_bits.md",
+    "blueprint/src/references/statements/Randomized.PolyAmp.lt_two_pow_bits.json"
+   ],
+   "count": 2
+  },
+  "Randomized.PolyAmp.two_pow_bits_le": {
+   "declared_on_main_in": "TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Randomized.PolyAmp.two_pow_bits_le.md",
+    "blueprint/src/references/statements/Randomized.PolyAmp.two_pow_bits_le.json"
+   ],
+   "count": 2
+  },
+  "Randomized.length_bits_eq": {
+   "declared_on_main_in": "TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Randomized.length_bits_eq.md",
+    "blueprint/src/references/statements/Randomized.length_bits_eq.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_MapState": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.a2_MapState.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.a2_call_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_call_heads.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_call_heads.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_call_prefix": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_call_prefix.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_call_prefix.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_call_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_call_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_call_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_fuel_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_fuel_heads.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_fuel_heads.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.a2_heads.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.a2_heads_halted": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_heads_halted.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_heads_halted.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_heads_join": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_heads_join.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_heads_join.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_heads_mono": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_heads_mono.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_heads_mono.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_heads_steps": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_heads_steps.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_heads_steps.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_loop_halted_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_loop_halted_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_loop_halted_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_loop_prepare": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_loop_prepare.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_loop_prepare.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_loop_round": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_loop_round.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_loop_round.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_loop_start_prefix": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_loop_start_prefix.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_loop_start_prefix.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_mapAct": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapAct.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.a2_mapCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.a2_mapCfg_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_mapCfg_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapCfg_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_mapEntered": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapEntered.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.a2_mapSetup_head_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_mapSetup_head_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapSetup_head_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_mapSetup_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_mapSetup_heads.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapSetup_heads.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_mapSetup_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_mapSetup_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapSetup_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_mapSetup_stationary": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_mapSetup_stationary.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapSetup_stationary.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_mapSetup_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_mapSetup_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapSetup_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_mapSumEquiv": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapSumEquiv.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.a2_mapTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.a2_mapVirtual": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapVirtual.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.a2_mapVirtual_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_mapVirtual_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapVirtual_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_mapVirtual_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_mapVirtual_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_mapVirtual_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_backA": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_backA.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_backA.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_backB": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_backB.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_backB.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_block": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_block.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_block.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_emit": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_emit.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_emit.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_finish": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_finish.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_finish.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_first": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_first.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_first.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_launch": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_launch.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_launch.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_move": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_move.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_move.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_parse": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_parse.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_parse.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_reject": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_reject.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_reject.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_setup": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_setup.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_setup.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_space": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_space.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_space.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_suffix": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_suffix.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_suffix.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_map_sum": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_map_sum.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_map_sum.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_segments": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_segments.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_segments.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.a2_source_radius": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.a2_source_radius.md",
+    "blueprint/src/references/statements/Turing.FinTM.a2_source_radius.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.catalogPayload_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.catalogPayload_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.catalogPayload_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.catalogPrefixTM_copy": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.catalogPrefixTM_copy.md",
+    "blueprint/src/references/statements/Turing.FinTM.catalogPrefixTM_copy.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.catalogRewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.catalogRewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.catalogRewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.catalog_redirectAction": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.catalog_redirectAction.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.catalog_redirectCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.catalog_redirectCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.catalog_redirectState": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.catalog_redirectState.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.catalog_redirect_apply": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.catalog_redirect_apply.md",
+    "blueprint/src/references/statements/Turing.FinTM.catalog_redirect_apply.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.catalog_redirect_loop": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.catalog_redirect_loop.md",
+    "blueprint/src/references/statements/Turing.FinTM.catalog_redirect_loop.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.catalog_redirect_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.catalog_redirect_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.catalog_redirect_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.catalog_redirect_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.catalog_redirect_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.catalog_redirect_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.dgSpan_add": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.dgSpan_add.md",
+    "blueprint/src/references/statements/Turing.FinTM.dgSpan_add.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_CatalogPolyControl": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_CatalogPolyControl.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_LoopHostState": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_LoopHostState.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_SplitBodyState": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_SplitBodyState.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_anyTrueTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_anyTrueTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_anyTrue_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_anyTrue_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_anyTrue_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_anyTrue_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_anyTrue_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_anyTrue_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_branch_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_branch_heads.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_branch_heads.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_branch_space": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_branch_space.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_branch_space.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogBuffer_erase": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogBuffer_erase.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogBuffer_erase.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogFind_congr": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogFind_congr.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogFind_congr.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogFirstEntry": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogFirstEntry.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogFirstEntry.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogMarker_cases": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogMarker_cases.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogMarker_cases.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPair_inverse": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPair_inverse.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPair_inverse.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPolyCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPolyCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_catalogPolyCopyCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPolyCopyCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_catalogPolyCost": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPolyCost.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_catalogPolyCost_le": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPolyCost_le.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPolyCost_le.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPolyMove": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPolyMove.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_catalogPolyMove_apply": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPolyMove_apply.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPolyMove_apply.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPolyTape": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPolyTape.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_catalogPolyTape_write": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPolyTape_write.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPolyTape_write.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPolyUnaryTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPolyUnaryTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_catalogPoly_advance": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPoly_advance.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPoly_advance.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPoly_copy": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPoly_copy.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPoly_copy.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPoly_emit": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPoly_emit.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPoly_emit.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPoly_loop": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPoly_loop.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPoly_loop.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPoly_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPoly_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPoly_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPoly_setup": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPoly_setup.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPoly_setup.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPoly_start": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPoly_start.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPoly_start.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPoly_unary_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPoly_unary_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPoly_unary_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPrefixCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPrefixCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_catalogPrefixTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPrefixTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_catalogPrefixTM_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPrefixTM_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPrefixTM_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPrefixTM_copy": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPrefixTM_copy.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPrefixTM_copy.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogPrefixTM_emit": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogPrefixTM_emit.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogPrefixTM_emit.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_catalogRewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_catalogRewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_catalogRewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_condHeads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_condHeads.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_cond_ledger": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_cond_ledger.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_cond_ledger.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_cond_space": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_cond_space.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_cond_space.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_cond_time": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_cond_time.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_cond_time.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_constTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_constTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_control_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_control_heads.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_control_heads.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counterBump": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterBump.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_counterCarry": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterCarry.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_counterCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_counterInc": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterInc.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_counterInc_bits": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counterInc_bits.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterInc_bits.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counterInc_length": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counterInc_length.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterInc_length.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counterInc_potential": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counterInc_potential.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterInc_potential.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counterTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_counterTape": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterTape.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_counterTape_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counterTape_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterTape_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counterTape_write": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counterTape_write.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counterTape_write.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_carry": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_carry.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_carry.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_carry_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_carry_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_carry_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_count": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_count.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_count.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_count_space": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_count_space.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_count_space.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_emit": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_emit.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_emit.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_emit_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_emit_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_emit_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_heads.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_heads.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_increment": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_increment.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_increment.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_space": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_space.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_space.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_counter_start": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_counter_start.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_counter_start.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_exists_loopFind_space": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_exists_loopFind_space.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_exists_loopFind_space.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_extractCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_extractCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_extractCfg_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_extractCfg_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_extractCfg_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_extract_block": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_extract_block.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_extract_block.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_extract_finish": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_extract_finish.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_extract_finish.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_extract_first": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_extract_first.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_extract_first.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_extract_replay": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_extract_replay.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_extract_replay.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_extract_replay_finish": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_extract_replay_finish.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_extract_replay_finish.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_extract_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_extract_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_extract_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_extract_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_extract_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_extract_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_extract_suffix": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_extract_suffix.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_extract_suffix.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_finSumEquiv": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_finSumEquiv.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_first_length": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_first_length.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_first_length.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_head_steps": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_head_steps.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_head_steps.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_idTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_idTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_idTM_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_idTM_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_idTM_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_incFixedTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_incFixedTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_incFixed_cases": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_incFixed_cases.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_incFixed_cases.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_incFixed_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_incFixed_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_incFixed_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_lenAction": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_lenAction.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_lenAction_apply": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_lenAction_apply.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_lenAction_apply.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_lenCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_lenCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_lenCfg_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_lenCfg_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_lenCfg_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_lenParse_block": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_lenParse_block.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_lenParse_block.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_lenParse_first": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_lenParse_first.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_lenParse_first.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_lenParse_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_lenParse_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_lenParse_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_lenStart": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_lenStart.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_lenStart.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_lenSuffix_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_lenSuffix_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_lenSuffix_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBodyCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBodyCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopBodyPadded": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBodyPadded.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopBodySource": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBodySource.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopBodySource_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBodySource_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBodySource_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBodyTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBodyTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopBody_capture": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBody_capture.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBody_capture.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBody_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBody_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBody_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBody_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBody_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBody_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBody_stop": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBody_stop.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBody_stop.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBorrowPos": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBorrowPos.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopBorrowPos_le": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBorrowPos_le.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBorrowPos_le.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBorrow_correct": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBorrow_correct.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBorrow_correct.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBorrow_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBorrow_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBorrow_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBorrow_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBorrow_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBorrow_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBorrow_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBorrow_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBorrow_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBuffer_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBuffer_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBuffer_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopBuffer_write": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopBuffer_write.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopBuffer_write.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopCall": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopCall.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopCall_frame": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopCall_frame.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopCall_frame.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopCall_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopCall_heads.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopCall_heads.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopCall_reframe": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopCall_reframe.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopCall_reframe.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopControlAction": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopControlAction.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopControl_apply": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopControl_apply.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopControl_apply.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopControl_idle": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopControl_idle.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopControl_idle.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopControl_payload": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopControl_payload.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopControl_payload.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopCopyTape": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopCopyTape.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopCopy_erase": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopCopy_erase.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopCopy_erase.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopCopy_final": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopCopy_final.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopCopy_final.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopCopy_initial": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopCopy_initial.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopCopy_initial.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopCopy_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopCopy_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopCopy_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopDebit": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopDebit.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopDebitCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopDebitCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopDebitTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopDebitTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopDebit_iterate_length": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopDebit_iterate_length.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopDebit_iterate_length.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopDebit_iterate_value": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopDebit_iterate_value.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopDebit_iterate_value.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopDebit_length": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopDebit_length.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopDebit_length.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopDebit_success": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopDebit_success.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopDebit_success.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopDebit_value": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopDebit_value.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopDebit_value.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopFlag_clear": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopFlag_clear.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFlag_clear.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopFrame": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFrame.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopFrame_counter": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopFrame_counter.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFrame_counter.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopFrame_flag": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopFrame_flag.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFrame_flag.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopFrame_payload": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopFrame_payload.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFrame_payload.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopFuelCaptured": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFuelCaptured.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopFuelCaptured_frame": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopFuelCaptured_frame.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFuelCaptured_frame.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopFuelCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFuelCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopFuelSource": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFuelSource.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopFuel_init": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopFuel_init.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFuel_init.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopFuel_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopFuel_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopFuel_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopHost_accept": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_accept.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_accept.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_anchor_return": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_anchor_return.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_anchor_return.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_body_capture": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_body_capture.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_body_capture.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_borrow": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_borrow.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_borrow.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_borrow_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_borrow_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_borrow_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_borrow_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_borrow_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_borrow_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_borrow_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_borrow_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_borrow_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_bound": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_bound.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopHost_contracts": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_contracts.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_contracts.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_frame_replay": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_frame_replay.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_frame_replay.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_fuel_capture": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_fuel_capture.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_fuel_capture.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_fuel_copy": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_fuel_copy.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_fuel_copy.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_fuel_return": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_fuel_return.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_fuel_return.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_fuel_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_fuel_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_fuel_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_fuel_setup": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_fuel_setup.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_fuel_setup.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_halt_return": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_halt_return.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_halt_return.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_init": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_init.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_init.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_input_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_input_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_input_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_payload_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_payload_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_payload_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_prepare": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_prepare.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_prepare.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_reject": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_reject.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_reject.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_release": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_release.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_release.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_replay": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_replay.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_replay.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_round": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_round.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_round.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopHost_start": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopHost_start.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopHost_start.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopReady": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopReady.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopReady_call": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopReady_call.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopReady_call.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopReplayCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopReplayCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopReplayTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopReplayTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopReplay_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopReplay_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopReplay_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopReplay_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopReplay_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopReplay_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopValue": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopValue.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loopValue_bits": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loopValue_bits.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopValue_bits.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loopWrite": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_loopWrite.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_loop_find_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_find_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_find_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loop_first_halt": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_first_halt.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_first_halt.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loop_fuel_width": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_fuel_width.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_fuel_width.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loop_input_move_le": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_input_move_le.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_input_move_le.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loop_input_run_le": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_input_run_le.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_input_run_le.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loop_live_prefix": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_live_prefix.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_live_prefix.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loop_orbit_inv": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_orbit_inv.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_orbit_inv.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loop_output_length_le": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_output_length_le.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_output_length_le.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loop_rewind_bounded": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_rewind_bounded.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_rewind_bounded.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_loop_silent_prefix": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_loop_silent_prefix.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_loop_silent_prefix.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_pairCountTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairCountTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_pairCount_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_pairCount_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairCount_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_pairDupTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairDupTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_pairDup_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_pairDup_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairDup_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_pairDup_double": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_pairDup_double.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairDup_double.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_pairExtractTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairExtractTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_pairExtract_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_pairExtract_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairExtract_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_pairValidTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairValidTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_pairValid_block": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_pairValid_block.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairValid_block.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_pairValid_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_pairValid_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairValid_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_pairValid_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_pairValid_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_pairValid_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_polyHeads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_polyHeads.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_polyHeads_bounds": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_polyHeads_bounds.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_polyHeads_bounds.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_poly_space": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_poly_space.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_poly_space.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_poly_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_poly_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_poly_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_rawStripTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_rawStripTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_rawStrip_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_rawStrip_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_rawStrip_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_rawStrip_copy": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_rawStrip_copy.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_rawStrip_copy.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_rawStrip_erase": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_rawStrip_erase.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_rawStrip_erase.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_rawStrip_finish": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_rawStrip_finish.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_rawStrip_finish.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_rawStrip_replay": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_rawStrip_replay.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_rawStrip_replay.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_rawStrip_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_rawStrip_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_rawStrip_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_rawStrip_trim": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_rawStrip_trim.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_rawStrip_trim.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_read_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_read_heads.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_read_heads.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_scanCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_scanCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_scanCfg_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_scanCfg_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_scanCfg_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_scanCopy_finish": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_scanCopy_finish.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_scanCopy_finish.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_scanCopy_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_scanCopy_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_scanCopy_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_scanCopy_suffix": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_scanCopy_suffix.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_scanCopy_suffix.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_scanStep_right": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_scanStep_right.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_scanStep_right.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_scanTrues_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_scanTrues_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_scanTrues_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_seamed_space": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_seamed_space.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_seamed_space.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_segment_heads": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_segment_heads.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_segment_heads.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_space_of_time": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_space_of_time.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_space_of_time.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_space_radius": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_space_radius.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_space_radius.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitAccept": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitAccept.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitBank": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitBank.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitBodyTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitBodyTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitBody_count": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitBody_count.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitBody_count.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitBody_envelope": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitBody_envelope.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitBody_envelope.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitBody_prepare": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitBody_prepare.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitBody_prepare.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitBody_restore": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitBody_restore.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitBody_restore.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitBody_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitBody_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitBody_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitBody_round": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitBody_round.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitBody_round.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitBody_start": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitBody_start.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitBody_start.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitCountAction": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitCountAction.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitCountCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitCountCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitCount_accept": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitCount_accept.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitCount_accept.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitCount_apply": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitCount_apply.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitCount_apply.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitCount_firstHalt": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitCount_firstHalt.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitCount_firstHalt.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitCount_over": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitCount_over.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitCount_over.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitCount_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitCount_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitCount_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitEmbed_cut": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitEmbed_cut.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitEmbed_cut.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitEmbed_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitEmbed_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitEmbed_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitEmitCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitEmitCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitEmitTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitEmitTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitEmit_double": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitEmit_double.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitEmit_double.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitEmit_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitEmit_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitEmit_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitEmit_separator": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitEmit_separator.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitEmit_separator.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitEmit_suffix": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitEmit_suffix.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitEmit_suffix.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitFind_eq": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitFind_eq.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitFind_eq.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitFind_none": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitFind_none.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitFind_none.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitLoop_bound": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitLoop_bound.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitLoop_bound.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitLoop_result": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitLoop_result.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitLoop_result.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitPoly_loop_end": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitPoly_loop_end.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPoly_loop_end.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitPos": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPos.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitPos_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitPos_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPos_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitPos_succ": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitPos_succ.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPos_succ.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitPrepareReady": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPrepareReady.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitPrepareScan": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPrepareScan.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitPrepareTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPrepareTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitPrepare_extra": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitPrepare_extra.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPrepare_extra.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitPrepare_first": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitPrepare_first.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPrepare_first.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitPrepare_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitPrepare_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPrepare_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitPrepare_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitPrepare_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPrepare_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitPrepare_scan": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitPrepare_scan.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitPrepare_scan.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitRestoreClean": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitRestoreClean.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitRestoreScan": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitRestoreScan.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitRestoreTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitRestoreTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitRestore_append": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitRestore_append.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitRestore_append.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitRestore_first": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitRestore_first.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitRestore_first.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitRestore_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitRestore_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitRestore_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitRestore_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitRestore_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitRestore_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitRestore_scan": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitRestore_scan.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitRestore_scan.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitRewindTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitRewindTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitSafe": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitSafe.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitSafe_add": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitSafe_add.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitSafe_add.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitSafe_join": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitSafe_join.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitSafe_join.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitSafe_one": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitSafe_one.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitSafe_one.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitScratch": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitScratch.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitScratch_erase": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitScratch_erase.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitScratch_erase.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitSolve_closed": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitSolve_closed.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitSolve_closed.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitSolve_of_body": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitSolve_of_body.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitSolve_of_body.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitSolve_source": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitSolve_source.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitSolve_source.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitSource_constant": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitSource_constant.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitSource_constant.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitSource_poly": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitSource_poly.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitSource_poly.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitStep": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitStep.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_splitStep_inv": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitStep_inv.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitStep_inv.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_splitStep_orbit": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_splitStep_orbit.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_splitStep_orbit.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_stripCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_stripCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_strip_linear": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_strip_linear.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_strip_linear.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_sum_add": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_sum_add.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_sum_add.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_timedBranchCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_timedBranchCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_timedCondTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_timedCondTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_timedControlCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_timedControlCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_timedPadTM": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_timedPadTM.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_timedReadyCfg": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.FinTM.f2_timedReadyCfg.json"
+   ],
+   "count": 1
+  },
+  "Turing.FinTM.f2_timed_branch_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_timed_branch_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_timed_branch_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_timed_capture": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_timed_capture.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_timed_capture.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_timed_control_init": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_timed_control_init.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_timed_control_init.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_timed_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_timed_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_timed_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_timed_start": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_timed_start.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_timed_start.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.f2_unary_sharp": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.f2_unary_sharp.md",
+    "blueprint/src/references/statements/Turing.FinTM.f2_unary_sharp.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.loop_rewind_bounded": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.loop_rewind_bounded.md",
+    "blueprint/src/references/statements/Turing.FinTM.loop_rewind_bounded.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapAction_apply": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapAction_apply.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapAction_apply.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapBuffer_rewind": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapBuffer_rewind.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapBuffer_rewind.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapCfg_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapCfg_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapCfg_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapParse_block": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapParse_block.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapParse_block.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapParse_first": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapParse_first.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapParse_first.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapPayload_finish": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapPayload_finish.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapPayload_finish.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapPayload_replay": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapPayload_replay.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapPayload_replay.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapPrefix_replay": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapPrefix_replay.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapPrefix_replay.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapStart": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapStart.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapStart.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.mapValidate": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.mapValidate.md",
+    "blueprint/src/references/statements/Turing.FinTM.mapValidate.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.pairDup_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.pairDup_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.pairDup_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.pairDup_double": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.pairDup_double.md",
+    "blueprint/src/references/statements/Turing.FinTM.pairDup_double.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.pairMap_computes": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.pairMap_computes.md",
+    "blueprint/src/references/statements/Turing.FinTM.pairMap_computes.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.scanCopy_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.scanCopy_run.md",
+    "blueprint/src/references/statements/Turing.FinTM.scanCopy_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweepInput_read": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweepInput_read.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweepInput_read.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweepPos_move": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweepPos_move.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweepPos_move.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweep_finish": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweep_finish.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweep_finish.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweep_grow_left_block": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweep_grow_left_block.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweep_grow_left_block.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweep_grow_right_block": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweep_grow_right_block.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweep_grow_right_block.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweep_init": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweep_init.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweep_init.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweep_init_block": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweep_init_block.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweep_init_block.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweep_prepare": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweep_prepare.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweep_prepare.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweep_run_to_halt": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweep_run_to_halt.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweep_run_to_halt.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.sweep_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.sweep_step.md",
+    "blueprint/src/references/statements/Turing.FinTM.sweep_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.FinTM.tapeRow_blank": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.FinTM.tapeRow_blank.md",
+    "blueprint/src/references/statements/Turing.FinTM.tapeRow_blank.json"
+   ],
+   "count": 2
+  },
+  "Turing.OracleTM.apply_workTapes_eq_of_ne": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Oracle.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.OracleTM.apply_workTapes_eq_of_ne.md",
+    "blueprint/src/references/statements/Turing.OracleTM.apply_workTapes_eq_of_ne.json"
+   ],
+   "count": 2
+  },
+  "Turing.catalogTape": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.catalogTape.json"
+   ],
+   "count": 1
+  },
+  "Turing.clearTM_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.clearTM_run.md",
+    "blueprint/src/references/statements/Turing.clearTM_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.compareTM_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.compareTM_run.md",
+    "blueprint/src/references/statements/Turing.compareTM_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.copyTM_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.copyTM_run.md",
+    "blueprint/src/references/statements/Turing.copyTM_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.counterPatch": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/statements/Turing.counterPatch.json"
+   ],
+   "count": 1
+  },
+  "Turing.counter_span_append": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.counter_span_append.md",
+    "blueprint/src/references/statements/Turing.counter_span_append.json"
+   ],
+   "count": 2
+  },
+  "Turing.incrementTM_run_overflow": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.incrementTM_run_overflow.md",
+    "blueprint/src/references/statements/Turing.incrementTM_run_overflow.json"
+   ],
+   "count": 2
+  },
+  "Turing.incrementTM_run_succ": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.incrementTM_run_succ.md",
+    "blueprint/src/references/statements/Turing.incrementTM_run_succ.json"
+   ],
+   "count": 2
+  },
+  "Turing.recordStep_scan_preserves": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.recordStep_scan_preserves.md",
+    "blueprint/src/references/statements/Turing.recordStep_scan_preserves.json"
+   ],
+   "count": 2
+  },
+  "Turing.recordStep_window": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.recordStep_window.md",
+    "blueprint/src/references/statements/Turing.recordStep_window.json"
+   ],
+   "count": 2
+  },
+  "Turing.record_tag_ne": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.record_tag_ne.md",
+    "blueprint/src/references/statements/Turing.record_tag_ne.json"
+   ],
+   "count": 2
+  },
+  "Turing.runFrom_one": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.runFrom_one.md",
+    "blueprint/src/references/statements/Turing.runFrom_one.json"
+   ],
+   "count": 2
+  },
+  "Turing.sc_shadow_pre": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/StepClock.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.sc_shadow_pre.md",
+    "blueprint/src/references/statements/Turing.sc_shadow_pre.json"
+   ],
+   "count": 2
+  },
+  "Turing.seam_ofWords_mapState": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.seam_ofWords_mapState.md",
+    "blueprint/src/references/statements/Turing.seam_ofWords_mapState.json"
+   ],
+   "count": 2
+  },
+  "Turing.transferTM_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.transferTM_run.md",
+    "blueprint/src/references/statements/Turing.transferTM_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.universalCapture_run": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.universalCapture_run.md",
+    "blueprint/src/references/statements/Turing.universalCapture_run.json"
+   ],
+   "count": 2
+  },
+  "Turing.universalCapture_step": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.universalCapture_step.md",
+    "blueprint/src/references/statements/Turing.universalCapture_step.json"
+   ],
+   "count": 2
+  },
+  "Turing.universalCapture_transfer": {
+   "declared_on_main_in": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+   "named_on_head_in": [
+    "blueprint/src/references/informalized/Turing.universalCapture_transfer.md",
+    "blueprint/src/references/statements/Turing.universalCapture_transfer.json"
+   ],
+   "count": 2
+  }
+ }
+}
