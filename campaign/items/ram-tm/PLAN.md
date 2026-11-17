@@ -23,9 +23,11 @@ must not delay the closeout's integration.
 3. **Tier 2**, in fills: the start-up, the instruction rows (grouped), the table invariant and
    the simulation induction, then the nondeterministic variant.
 
-**Base.** The proofs should use the campaign's machine library (`Build/*`, the contracts, the
-seams), which reaches `main` with W7. Two options: branch from the campaign tip now and rebase
-onto `main` after W7, or start after W7 from `main`.
+**Base and fillers (Seyoon, 2026-11-17):**
+- **Base:** start **after W7, from `main`**, which by then has the campaign's machine library.
+  Until then, only preparation: the statement re-check and the briefs.
+- **Fillers:** Codex, as delegated fills. The maintainer writes briefs per tier and stages them
+  on the exchange for Seyoon to dispatch, then reviews and lands each delivery with a gate.
 
 ## 1. What was deferred, and what exists
 
