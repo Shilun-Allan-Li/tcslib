@@ -1,19 +1,22 @@
 diff --git a/PairingCryptographyPlan.md b/PairingCryptographyPlan.md
-index 1146b1b63..8d31d6d39 100644
+index 1146b1b63..b7104571a 100644
 --- a/PairingCryptographyPlan.md
 +++ b/PairingCryptographyPlan.md
-@@ -452,3 +452,6 @@ Evidence: `briefs/pairings/statement-phase/evidence/` (summary in `EVIDENCE.md`
+@@ -452,3 +452,9 @@ Evidence: `briefs/pairings/statement-phase/evidence/` (summary in `EVIDENCE.md`
  | 2026-11-17 | **bb1-sim fill rulings (Seyoon), all as recommended:** **Q1** accept the `sidSpec_*` overlap with T4's private twins as **DL-57**, promoted to `IdentityBased/Defs.lean` (`IBEScheme.*`) in cleanup Stage 2; **Q2** maintainer landing edit **LE-bsf1** (docstring tags/formulas, "variant of" for `bb1RealAt`/`bb1RealLazy`, plus `bb1RealState_eq := rfl`); **Q3** wait for #340 and #346 to merge, then open the fill PR on the tip and run phase 2 on snapshot #5. | bb1 fill Q1–Q3 |
  | 2026-11-17 | **#340 (T1) and #346 (T4) merged (Seyoon)** as `7152e62f` and `3f540c22`. The merged Lean equals T44′ `bee027f0`, so Gate 44's audited replay was **adopted as olean snapshot #5** (map `fca1b6a3…`; `maintainer/olean-snapshot-5-adopt/`). `bb1_sidSecure` now reaches `sorryAx` only through T2 and T3, which the bb1-sim fill proves. Next: the bb1-sim fill PR on the tip (with LE-bsf1) and its phase 2 on #5. | #340, #346 merged |
  | 2026-11-17 | **bb1-sim fill phase 2 on snapshot #5: PASS; final verdict ACCEPT WITH LANDING EDITS (LE-bsf1 applied)** (`fills/bb1-sim/fill-final-r1/phase2.md`, zip `3843d02a…`). Landing head `land/pairings-bb1-sim` `7a98ba01` = tip `e1d39836` + 4 signed cherry-picks (range-diff 4/4 `=`) + LE-bsf1 (byte-identical to the proposed diff). decls2 69/0/0; reader pins hold; frozen 12/12. Replay 19/19 rc 0, state 1432 OK, #5 0/0/0; admissions 196 → 192 (exactly the four targets); **`bb1_sidSecure` standard, empty `sorryAx` trace**; seals 36/36 0 errors, controls ALL_OK (485 negatives); 0 foreign unfolds; lint unchanged. **Draft PR #357** opened into the records branch. Next: the bb1-sim gate (Codex). On merge, adopt `olean-replay-bb1sim` as snapshot #6 if the merge's Lean equals `7a98ba01` (map `b43812d0…`). | bb1 fill P2, #357 |
 +| 2026-11-17 | **Gate 48 (the bb1-sim gate, design ruling Q8) staged for Codex**, round 1, auditing #357 only at head `7a98ba01` with records pin `e6cdf4d4` (`gates/48-bb1-sim-fill/pack-r1.md`, `dispatch-r1.md`; exchange `82706564`, `outbox/gates/48-bb1-sim-fill-gate/`). #351/#352 are out of scope (DW-11). Merge-tree: #357 is clean with #347, #355 and the local 6a branches, with no shared path. **Merge-order note:** #355 extends `Games/Bridges/Experiments`, which #357's `Chain` imports, so whichever of #357 and #347+#355 merges second needs a re-replay before its snapshot can be adopted. Records slips found at staging: DL-57's line refs (`:78`/`:85` → `:77`/`:84`), and the ledger's DL-30–DL-57 rows, which had five cells under a four-column header; both fixed now (new header). `expect_sample_rel`'s docstring lacks a tag (it is #351's text, so it goes to DW-11). `rulings.md` Q8 is superseded by DW-11 for #351/#352. | G48 staged |
 +| 2026-11-17 | **Gate 48 round 1 dispatched (Seyoon)** to Codex: exchange `82706564`, records pin `e6cdf4d4`, #357 head `7a98ba01`. Findings come back in chat as `gate48-bb1-sim-findings.md`. | G48 dispatched |
 +| 2026-11-17 | **Gate 48 round 1 (Codex): HOLD**: 0 blockers, **1 major**, 0 minors, 0 notes (`gates/48-bb1-sim-fill/findings-r1.md`; evidence ZIP not received). No mathematical gap. Targets, readers, LE-bsf1, seals (36 + 16, 485 negatives per harness), replay, axioms and the other duplication checks all pass; BSF-F01–F08 graded (F04 regraded major pre-acceptance, closed by DL-57). **G48-01:** T2's local `h01` re-derives Mathlib's `abs_sub_le_of_nonneg_of_le`; the review's "no public counterpart" claim was wrong. **Ruling (Seyoon): accept as debt, DL-58**, repaid in cleanup Stage 2 (proof-only), as for G44-01. Ledger DL-58, a Stage 2 line, a dated correction in `fill-final-r1/review.md`, and `resolutions-r1.md` filed; #357's description now discloses DL-58. No code change, so the head stays `7a98ba01`. Next: Gate 48 round 2 on the ruling. | G48 r1 HOLD → DL-58 |
++| 2026-11-17 | **Gate 48 round 2 staged (Codex)**: the G48-01 resolution only, at the unchanged head `7a98ba01`, records `8780fb1d`. Exchange `5976f1a0`, `outbox/gates/48-bb1-sim-fill-gate-r2/` (pack-r2, findings-r1, resolutions-r1, records delta, the r2 PR description); dispatch in `gates/48-bb1-sim-fill/dispatch-r2.md`. | G48 r2 staged |
++| 2026-11-17 | **G48-01 ruling revised (Seyoon): fix it now, before Gate 48 round 2,** which was staged but not dispatched. Landing edit **LE-g48** on #357 deletes `bb1_sim_real`'s local `h01` and applies Mathlib's `abs_sub_le_of_nonneg_of_le` (proof-only, 3 lines), with a downstream re-replay on a copy of `olean-replay-bb1sim`. When it passes, DL-58 is marked repaid in #357 and drops out of Stage 2, and round 2 is re-staged on the new head (it replaces the pack at `5976f1a0`). | G48-01 → LE-g48 |
++| 2026-11-17 | **LE-g48 on #357** (`dfdc56f2` on `7a98ba01`; `gates/48-bb1-sim-fill/le-g48.md`, zip `ec54e109…`). It deletes `h01` and applies `abs_sub_le_of_nonneg_of_le` (+1/−3, proof-only). Replay of the 4 downstream modules on a copy of `olean-replay-bb1sim`: all rc 0, state 1432 OK, #5 0/0/0. Admissions 192. `bb1_sidSecure` is standard with an empty trace. coe-A on `BonehBoyenSecurity` has 2319 requests and 0 errors, the same set as phase 2. Lint unchanged. **DL-58 is marked repaid** and its Stage 2 line struck. The snapshot-#6 candidate is now `olean-replay-bb1sim-g48` (map `0858dccb…`). Gate 48 round 2 is re-staged on `dfdc56f2`, superseding the undispatched pack at `5976f1a0`. | LE-g48 |
 diff --git a/briefs/pairings/fills/bb1-sim/fill-final-r1/review.md b/briefs/pairings/fills/bb1-sim/fill-final-r1/review.md
-index 9dccc253a..cc50a391b 100644
+index 9dccc253a..62357b2fc 100644
 --- a/briefs/pairings/fills/bb1-sim/fill-final-r1/review.md
 +++ b/briefs/pairings/fills/bb1-sim/fill-final-r1/review.md
-@@ -217,6 +217,11 @@ My own searches covered:
+@@ -217,6 +217,13 @@ My own searches covered:
  They found **no undisclosed duplicate of a public lemma**:
  - T2's inline `h01` (`|x − y| ≤ 1` on `[0, 1]`) has no public counterpart; the nearest is
    `abs_prob_sub_le_of_agree`, a different statement.
@@ -22,24 +25,25 @@ index 9dccc253a..cc50a391b 100644
 +  > `abs_sub_le_of_nonneg_of_le` (pinned `Mathlib/Algebra/Order/Group/Abs.lean:119–124`), which the library already
 +  > uses in `LWE/BitNoise.lean:110`. My search did not cover Mathlib's generic `abs` lemmas. Seyoon accepted the overlap
 +  > as ledger row **DL-58**, repaid in cleanup Stage 2 (proof-only). The verdict above stands.
++  > **Update (2026-11-17):** Seyoon then asked for the fix now. Landing edit LE-g48 (`dfdc56f2`, on #357) deletes `h01`
++  > and applies the Mathlib lemma, so DL-58 is repaid (`gates/48-bb1-sim-fill/le-g48.md`).
  - `pair_pow_val_eq`, `F_target_eq`, `key_eq` and `exists_equiv_mul_pow` are compositions of
    `Pairing/Group` facts, as REPORT says.
  - T4's `drawStep_*` rows are about a different handler.
 diff --git a/briefs/pass-shelat-ch5-8/cleanup-stages.md b/briefs/pass-shelat-ch5-8/cleanup-stages.md
-index 3331891ac..8fc88410d 100644
+index 3331891ac..bd9aa9bb0 100644
 --- a/briefs/pass-shelat-ch5-8/cleanup-stages.md
 +++ b/briefs/pass-shelat-ch5-8/cleanup-stages.md
-@@ -24,6 +24,8 @@ items, including DL-50, are out of scope here.
+@@ -24,6 +24,7 @@ items, including DL-50, are out of scope here.
    `polyTimeComputable_r*`, with a reader if needed).
  - bb1-sim fill ruling Q1 (Seyoon, 2026-11-17): **DL-57** (promote `sidSpec_dom/rng_*` and `zeroBits_eq_cast` into
    `IdentityBased/Defs.lean` as `IBEScheme.*`; re-point the bb1-sim fill and T4's private copies).
-+- Gate 48 G48-01 (Seyoon, 2026-11-17): **DL-58** (replace `bb1_sim_real`'s inline `h01` by Mathlib's
-+  `abs_sub_le_of_nonneg_of_le`; proof-only).
++- ~~Gate 48 G48-01: **DL-58**~~ — repaid before merge by LE-g48 on #357 (`dfdc56f2`), so it is no longer Stage 2 work.
  - Delete the dead private copies and the public host lemmas left unused by DW-5.
  - Clear DW-9's 26 seal failures and `Uniform.lean`'s 4 inherited failures (SY-F07) through readers.
  - Sweep in small lint and doc nits, such as the `BobIO` unnecessary `simpa`.
 diff --git a/briefs/pass-shelat-ch5-8/duplication-ledger.md b/briefs/pass-shelat-ch5-8/duplication-ledger.md
-index 6337cca9d..b47b36c02 100644
+index 6337cca9d..8843d495d 100644
 --- a/briefs/pass-shelat-ch5-8/duplication-ledger.md
 +++ b/briefs/pass-shelat-ch5-8/duplication-ledger.md
 @@ -54,6 +54,11 @@ one copy public in the most upstream file and re-points the rest.
@@ -60,4 +64,4 @@ index 6337cca9d..b47b36c02 100644
  | DL-56 | `poly_rU`, `poly_rZ`, `poly_rW`, `poly_rS` (#346, `IdentityBased/BonehBoyenMachine/Words.lean:261` and neighbours; disclosed with an API obstruction; Gate 44 G44-01) | `Games.polyTimeComputable_rU`, `_rZ`, `_rW`, `_rS` for the same `InteractiveHandler` projections (`Games/Efficiency.lean:538–550`) | Accepted (Seyoon, 2026-11-17, Gate 44 G44-01) | **Cleanup Stage 2:** re-point the four to the `Games/Efficiency` facts, adding a reader there if the recorded obstruction needs one (proof-only). |
 -| DL-57 | `BB1Sim.sidSpec_rng_one`, `sidSpec_rng_two`, the related `sidSpec_dom_*` and `zeroBits_eq_cast` (bb1-sim fill, `IdentityBased/BonehBoyenSecurity/`; disclosed; fill review BSF-F04) | T4's private `BB1Machine.sidSpec_rng_one'`, `sidSpec_rng_two'` (#346, `BonehBoyenMachine/Oracles.lean:78`, `:85`) | Accepted (Seyoon, 2026-11-17, bb1-sim fill ruling Q1) | **Cleanup Stage 2:** promote these scheme-generic facts into `IdentityBased/Defs.lean` as `IBEScheme.*` and re-point both the fill's and T4's copies (proof-only). |
 +| DL-57 | `BB1Sim.sidSpec_rng_one`, `sidSpec_rng_two`, the related `sidSpec_dom_*` and `zeroBits_eq_cast` (bb1-sim fill, `IdentityBased/BonehBoyenSecurity/`; disclosed; fill review BSF-F04) | T4's private `BB1Machine.sidSpec_rng_one'`, `sidSpec_rng_two'` (#346, `BonehBoyenMachine/Oracles.lean:77`, `:84`) | Accepted (Seyoon, 2026-11-17, bb1-sim fill ruling Q1) | **Cleanup Stage 2:** promote these scheme-generic facts into `IdentityBased/Defs.lean` as `IBEScheme.*` and re-point both the fill's and T4's copies (proof-only). |
-+| DL-58 | `bb1_sim_real`'s local `h01` (`∀ x y : ℝ, 0 ≤ x → x ≤ 1 → 0 ≤ y → y ≤ 1 → \|x − y\| ≤ 1`; bb1-sim fill #357, `IdentityBased/BonehBoyenSecurity.lean:128–134`; undisclosed, Gate 48 G48-01) | Mathlib `abs_sub_le_of_nonneg_of_le` (`Mathlib/Algebra/Order/Group/Abs.lean:119–124`, additive form; already used in `LWE/BitNoise.lean:110`) | Accepted (Seyoon, 2026-11-17, Gate 48 ruling G48-01) | **Cleanup Stage 2:** delete `h01` and close the bad-coin branch with `abs_sub_le_of_nonneg_of_le` applied to the four `ProbComp.prob_nonneg`/`prob_le_one` bounds (proof-only). |
++| DL-58 | `bb1_sim_real`'s local `h01` (`∀ x y : ℝ, 0 ≤ x → x ≤ 1 → 0 ≤ y → y ≤ 1 → \|x − y\| ≤ 1`; bb1-sim fill #357, `IdentityBased/BonehBoyenSecurity.lean:128–134`; undisclosed, Gate 48 G48-01) | Mathlib `abs_sub_le_of_nonneg_of_le` (`Mathlib/Algebra/Order/Group/Abs.lean:119–124`, additive form; already used in `LWE/BitNoise.lean:110`) | **Repaid** (Seyoon, 2026-11-17: first accepted as debt, then fixed before Gate 48 round 2) | **Repaid in #357 by landing edit LE-g48** (`dfdc56f2`): `h01` deleted and the bad-coin branch closed with `abs_sub_le_of_nonneg_of_le` applied to the four `ProbComp.prob_nonneg`/`prob_le_one` bounds (proof-only). Nothing left for Stage 2. |

@@ -1,49 +1,68 @@
-# Gate 48 · the bb1-sim gate (#357) · round 2 · G48-01 resolution only
+# Gate 48 · the bb1-sim gate (#357) · round 2 · G48-01 fixed by LE-g48
 
 Round 1 (Codex) was **HOLD**: 0 blockers, 1 major (G48-01), 0 minors, 0 notes, and no mathematical gap
-(`findings-r1.md`). The maintainer's resolution is `resolutions-r1.md`. **The code is unchanged.**
+(`findings-r1.md`). The maintainer's resolution is `resolutions-r1.md`: **landing edit LE-g48**, the fix Codex proposed.
 
 | Item | Pin |
 |---|---|
-| PR #357 head | `7a98ba0140ce6334bef1f2a8d39c6dfceb6ccaff`, the same as round 1 (live `land/pairings-bb1-sim` checked at staging) |
+| PR #357 head, round 2 | `dfdc56f21898abe2d9d6cef83b0cfe57da87d28d` (round 1's head `7a98ba0140ce6334bef1f2a8d39c6dfceb6ccaff` + LE-g48) |
 | Records, round 1 | `e6cdf4d4eed898acd71d48bd60082140eb076cfe` |
-| Records, round 2 | `8780fb1d7dbbb230d26a15a5240baf4f7a113008` |
+| Records, round 2 | given in the dispatch prompt (the commit that files this pack) |
 | Round-1 pack | exchange `827065642ff5965c6f7c51c592f18b9f32dc2811`, `outbox/gates/48-bb1-sim-fill-gate/` |
 
-## 1. G48-01 (major): the resolution
-**Ruling (Seyoon, 2026-11-17): accept as debt.** The alternative offered was a landing edit plus a replay; Seyoon chose
-the debt route of the Gate 44 G44-01 precedent. The overlap is retained and recorded as follows:
-- **Ledger row DL-58** (`briefs/pass-shelat-ch5-8/duplication-ledger.md`):
-  - new declaration: `bb1_sim_real`'s local `h01` (`BonehBoyenSecurity.lean:128–134`);
-  - existing copy: Mathlib `abs_sub_le_of_nonneg_of_le` (`Mathlib/Algebra/Order/Group/Abs.lean:119–124`, additive form,
-    pinned `029db123`), already used in `LWE/BitNoise.lean:110`;
-  - status: accepted by Seyoon, 2026-11-17, ruling G48-01;
-  - repayment: **cleanup Stage 2**, delete `h01` and apply the Mathlib lemma to the four
-    `ProbComp.prob_nonneg`/`prob_le_one` bounds (proof-only).
-- **Stage 2 scope** (`briefs/pass-shelat-ch5-8/cleanup-stages.md`): one new line naming DL-58 beside DL-55–DL-57.
-- **The review's wrong claim** (`fills/bb1-sim/fill-final-r1/review.md`, § Duplication and reuse): the text is kept, and
-  a dated correction directly beneath it says the claim was wrong, why the search missed it (Mathlib's generic `abs`
-  lemmas were not covered), and names DL-58.
-- **The round-1 pack** (`pack-r1.md:254–255`) stays as filed; this round-2 pack supersedes its reuse claim.
-- **PR #357's description** now has a DL-58 bullet under "Overlap and reuse" and a "Gate 48" section stating round 1's
-  verdict (`pr357-description-r2.md`, as read back after the update).
-- **Decision log:** the row of 2026-11-17 in `PairingCryptographyPlan.md` ("Gate 48 round 1 (Codex): HOLD … DL-58").
+This folder supersedes an earlier round-2 pack at exchange `5976f1a0`, which was staged on Seyoon's first ruling
+(accept as debt, DL-58) and **never dispatched**. Seyoon then asked for the fix before round 2.
 
-`records-r1-r2.diff.txt` is `git diff e6cdf4d4 8780fb1d` restricted to those four records files. The ledger hunk also
-contains an earlier records-only fix made after the round-1 pin was taken and before this round: a five-column header
-inserted above DL-30 (rows DL-30 onward had five cells under a four-column header) and DL-57's line references
-corrected from `:78`/`:85` to `:77`/`:84`. Round 1's pack disclosed both slips.
+## 1. LE-g48 (G48-01)
+- **Commit** `dfdc56f2`, sole parent `7a98ba01`, SSH-signed with the records key (`SHA256:32dP45eS…2wc`, as
+  `7a98ba01`), message ending with the two trailers.
+- **Diff** (`le-g48.diff.txt`; `git diff 7a98ba01 dfdc56f2`): one file, `BonehBoyenSecurity.lean`, 1 line added and 3
+  removed. The local `have h01 … := fun x y _ _ _ _ => abs_sub_le_iff.2 ⟨by linarith, by linarith⟩` (2 lines) is
+  deleted. The bad-coin branch's `exact h01 _ _ (…) (…)` becomes
+  `exact abs_sub_le_of_nonneg_of_le (ProbComp.prob_nonneg _ _) (ProbComp.prob_le_one _ _)`; its continuation line
+  `(ProbComp.prob_nonneg _ _) (ProbComp.prob_le_one _ _)` is unchanged. `h01` occurred nowhere else: not in the
+  docstring, the proof sketch or a comment. The "bad coins: two probabilities differ by at most `1`" comment stays true.
+- **Records:** ledger row DL-58 is kept and marked **repaid by LE-g48**. Its Stage 2 line in `cleanup-stages.md` is
+  struck. The phase-1 review's wrong reuse claim keeps its text, with the dated correction and an update beneath it. The
+  plan's decision log records both rulings: first debt, then the fix. #357's description records LE-g48
+  (`pr357-description-r3.md`, as sent).
+- `records-r1-r2.diff.txt` is `git diff e6cdf4d4 <round-2 records>` over the ledger, `cleanup-stages.md`, the fill
+  review and the plan. The ledger hunk also contains an earlier records-only fix, disclosed in round 1's slips: a
+  five-column header above DL-30, and DL-57's line refs corrected to `:77`/`:84`.
 
-## 2. Question for the audit
-Does the resolution of G48-01 meet `policy.md` §1 for an accepted duplicate: Seyoon's explicit acceptance, the shared
-home (here Mathlib), and a recorded repayment point? Is G48-01 closed?
+## 2. Evidence at `dfdc56f2` (`le-g48.md`, `le-g48-evidence.zip`)
+- **Replay** on a `cp -al` copy of round 1's phase-2 output (`olean-replay-bb1sim` → `olean-replay-bb1sim-g48`). With
+  phase 2's state and order files, the plan builds 4 modules (`BonehBoyenSecurity` and the `IdentityBased`,
+  `AdvancedEncryption` and root `TCSlib` facades) and reuses 1428. All 4 built through the recipe's `runner.py` with
+  rc 0, 0 `error:`/`error(` and 0 `sorry`. Sources are bound to `dfdc56f2` 4/4.
+  - State check 1432/1432 OK; exactly the 4 rebuilt oleans have link count 1.
+  - Snapshot #5 and the phase-2 tree both rehash 0/0/0 before, after and at the end.
+  - Only `BonehBoyenSecurity`'s olean changed; the 3 facade oleans are byte-identical. New output map 1463 entries,
+    `0858dccbee016da1da450f2b2ca0d1f5094ee42646b9496d5278f2b45cb07caf`.
+- **Admissions:** 192, with the per-module census identical to phase 2's.
+- **Axioms** (phase 2's probe): `bb1_sim_real` and `bb1_sidSecure` use only `propext`, `Classical.choice` and
+  `Quot.sound`, and both `sorryAx` traces are empty. Still 76 constants, 0 non-standard. The log differs from phase 2's
+  only in two closure sizes: `bb1_sim_real` 15352 → 15349 and `bb1_sidSecure` 20373 → 20374.
+- **Rule 10:** canonical coe-A on `BonehBoyenSecurity` with phase 2's harness has 2319 requests and 0 errors. The
+  request set equals phase 2's exactly, because the removed `have` is not a constant. The seal's Lean log and the
+  collector log are byte-identical to phase 2's; the seal JSON differs only in rev, hashes and offsets. No other owner
+  changed, so the other 35 seals, the paired controls and the unfold scan carry over.
+- **Lint:** `style_lint` 0 findings. `campaign_style_lint --check8b` gives 92 FAIL / 104 WARN, with non-INFO lines
+  identical to phase 2's; the only INFO change is the file's line count, 225 → 223.
 
-## 3. What does not change
-The head is unchanged, so every round-1 pass stands: the four targets, the helpers and edge cases, the frozen checks,
-the ten readers, LE-bsf1, Rule 10, the unfold scan, the other duplication checks, sources, the replay and the axioms.
-Nothing is re-run and nothing needs re-auditing. Out of scope as before: #351/#352 (DW-11), Gates 40 and 44, and merge
-order and snapshot adoption (maintainer conditions).
+## 3. Questions for the audit
+1. Is G48-01 closed by LE-g48: is the edit exactly the stated proof-only change, does it use the Mathlib lemma
+   correctly, and does nothing else change?
+2. Does the evidence bind to `dfdc56f2` and support compilation, admissions, axioms and the seal? Is carrying over round
+   1's other seals, controls and unfold scan justified for this delta?
+3. Are the records (DL-58 marked repaid, the struck Stage 2 line, the review correction, the PR description) accurate?
+4. Is anything new undisclosed?
 
-## 4. Findings delivery
+## 4. What does not change
+Every round-1 pass stands for the unchanged 8 files and the rest of `BonehBoyenSecurity.lean`. Out of scope as before:
+#351/#352 (DW-11), Gates 40 and 44, and merge order and snapshot adoption (maintainer conditions; the snapshot-#6
+candidate is now `olean-replay-bb1sim-g48`).
+
+## 5. Findings delivery
 Return `gate48-bb1-sim-r2-findings.md` as Markdown in chat: findings G48-02 onward if any, counts by severity, and a
 verdict: CLEAR (zero blockers and zero majors) or HOLD.
