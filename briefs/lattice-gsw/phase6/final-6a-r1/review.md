@@ -279,3 +279,32 @@ Claude-Session trailers.
 
 **Not yet clear to merge.** Q1 (LE-ren recommended) and Q2 need rulings, and phase 2 (the Lean replays) is pending.
 No PR is opened yet.
+
+## Rulings (Seyoon, 2026-11-17; decision log "6a Q1–Q4")
+- **Q1 A:** apply LE-ren (G6A-F01). **Q2 A:** accept O1's five repairs (G6A-F02). **Q3 A:** one owner-side reader PR,
+  separately and before the fills (G6A-F03). **Q4 A:** keep N12 in the `args_lt` field form (G6A-F04).
+
+## Final verdict (phase 2, 2026-11-17): ACCEPT
+Phase 2 (`phase2.md`, evidence zip `efbca567…7b33`) passes P2-0 to P2-7 on both landing heads: 0 blockers, 0 majors,
+0 minors, 2 new infos (G6A-F14, G6A-F15). G6A-F01 is closed by LE-ren, and G6A-F05 is confirmed pre-existing.
+- **`land/gsw-6a-o1` `a57dcf77a06455145181a26f9163abc5944157b4`** (PR O1; signed pick of `413e9aa4`; tree Lean-equal to
+  `fd9a242f`; range-diff 1/1 `=`): 9/9 rebuilt rc 0, state 1424/1424; admissions +0; 141 constants, standard axioms;
+  seals `Combinators` 174 and `FormulaArith` 194 and the facade 3659 with 0 errors in all four variants, `TreeNCAC` 194
+  with the 2 pre-existing failures; controls ALL_OK (strict and coe), with rows exercising O1's two extra repairs; 0
+  foreign unfolds outside `TreeNCAC`'s 4 pre-existing; lint line sets unchanged. Replay kept as
+  `$SP/olean-replay-6a-o1`.
+- **`land/gsw-6a-statements` `66036926bcbffa9caf44f9e9469ca63bc555c374`** (stacked on O1; five signed picks, range-diff
+  5/5 `=`, `~1` Lean-equal to `31a37a04`; then **LE-ren**, byte-identical to `landing/LE-ren-proposed.diff`, no `rename`
+  reference left): 20/20 rebuilt rc 0, state 1435/1435; admissions **+98, exactly the 98 targets**; 544 constants
+  (548 − the 4 LE-ren ones), `sorryAx` in exactly the 98 targets and the 5 N2/N12–N13 dependents; decls2 267 ADDED / 0
+  / 0 against the tip; seals of the 16 files in four variants with 0 errors except `TreeNCAC`'s 2 (request sets = the
+  delivery's minus `rename`), root coe-A 13,991 requests with 0 errors; controls ALL_OK (92 sealed negatives per
+  harness) and the delivery's 30 paired controls 30/30; 0 foreign unfolds in the 13 new files; `style_lint` 0 in the
+  new files, lint line sets unchanged; 281 new names, 0 clashes. Replay kept as `$SP/olean-replay-6a-stmt`.
+- **Cross-merge** with #340 and #346: clean, no shared file, and no shared module except the import-only root, so no
+  cross-build is needed.
+- **Order and adoption:** PR O1 first (adopt `olean-replay-6a-o1` if the merge's Lean equals tree `ba964762`); then the
+  statement PR, retargeted to the records branch (adopt `olean-replay-6a-stmt` if its merge's Lean equals tree
+  `34e41f15`; otherwise re-replay its 20 modules). Gate 45 (Codex) audits both. The Q3 reader PR is independent.
+
+**Not yet clear to merge — Gate 45 (Codex) must audit both PRs; the draft PRs can be opened now (O1 first, the statement PR stacked on it).**
