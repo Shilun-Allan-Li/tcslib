@@ -45,6 +45,8 @@ are uniform over all coin streams.
 
 * `WordRAM.simTime`, `WordRAM.simSpace`: the two bounds.
 * `WordRAM.outputOf`: what the machine leaves on its output tape, in verdict or function mode.
+  Its equations `outputOf_false` and `outputOf_true`, and `simTime_eq` and `simSpace_eq`, are
+  the readers that other files use.
 
 ## Main results (statements gated 2026-10-14, `audits/stage2-statements-findings.md`; proofs pending)
 
@@ -79,6 +81,20 @@ def simSpace (A : ℕ) (SW : ℕ → ℕ) (n W f : ℕ) : ℕ :=
 one-bit verdict, as `Turing.FinTM.DecidesInTime` and `Turing.FinTM.DecidesInSpace` read it; in
 function mode (`fn = true`) the emitted word, as `Turing.FinTM.ComputesInSpace` reads it. -/
 def outputOf (fn v : Bool) (o : List Bool) : List Bool := if fn then o else [v]
+
+/-- The time bound, as an equation. -/
+theorem simTime_eq (A : ℕ) (TW : ℕ → ℕ) (n W t f : ℕ) :
+    simTime A TW n W t f = TW n + A * (t + 1) * (f * (W + 1) + W ^ 2 + n + 1) := rfl
+
+/-- The space bound, as an equation. -/
+theorem simSpace_eq (A : ℕ) (SW : ℕ → ℕ) (n W f : ℕ) :
+    simSpace A SW n W f = SW n + A * (f * (W + 1) + W + Complexity.logSpace n + 1) := rfl
+
+/-- In verdict mode the output is the one-bit verdict. -/
+theorem outputOf_false (v : Bool) (o : List Bool) : outputOf false v o = [v] := rfl
+
+/-- In function mode the output is the emitted word. -/
+theorem outputOf_true (v : Bool) (o : List Bool) : outputOf true v o = o := rfl
 
 /-- **Stage 2, deterministic form** (design §15a, §16b; backlog PROG-4). For every program `P` of
 the extended word RAM, every output mode `fn` and every word size `W` computable within `TW` and

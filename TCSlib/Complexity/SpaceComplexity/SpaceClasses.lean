@@ -34,6 +34,7 @@ claimed here.
 
 * `Complexity.space_poly_subset_PSPACE`, `Complexity.PSPACE_subset_NPSPACE`,
   `Complexity.LOGSPACE_subset_NL` — the definitional inclusions.
+* `Complexity.NL_eq` — `NL = NSPACE logSpace`.
 * `Complexity.LOGSPACE_subset_PSPACE` — `L ⊆ PSPACE`.
 * `Complexity.SPACE_succ_pow_subset_PSPACE` — the shifted polynomial bounds `(n + 1)^k` give
   polynomial space.
@@ -60,6 +61,9 @@ logarithmic space, over the received bound `Complexity.logSpace` (whose `+ 1`
 floor and missing `s ≥ log n` convention are recorded divergences — see
 `TCSlib.Complexity.SpaceComplexity.Basic`). -/
 def NL : Set (Language Bool) := NSPACE logSpace
+
+/-- `NL` is `NSPACE logSpace`, as an equation. -/
+theorem NL_eq : NL = NSPACE logSpace := rfl
 
 /-- **`coNL`** [AB09, §4.3.2]: the complements of `NL` languages, in the same
 complement form as `Complexity.coNP`. `NL = coNL` is the Immerman-Szelepcsényi
