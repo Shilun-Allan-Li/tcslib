@@ -1,0 +1,14 @@
+=== START Probes/SealACtl 2026-11-17T03:02:03Z
+BUILT Probes/SealACtl rc=1 errors=1 sorry=0 1.3s log=/home/user/s1/evidence/subagents/A/logs/Probes__SealACtl.log
+Probes/SealACtl.lean:17:81: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  Turing.pairEncode a b = List.flatMap (fun b => [b, b]) a ++ [false, true] ++ b
+FAIL(Probes/SealACtl): lean exited with status 1
+FAIL(Probes/SealACtl): error diagnostics reported
+FAIL(Probes/SealACtl): no fresh .olean produced
+
+=== END Probes/SealACtl rc=1 2026-11-17T03:02:19Z
+=== ALLDONE

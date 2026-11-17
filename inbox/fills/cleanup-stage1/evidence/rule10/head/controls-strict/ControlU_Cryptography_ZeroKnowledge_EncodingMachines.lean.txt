@@ -1,0 +1,18 @@
+import Lean
+import TCSlib.Cryptography.ZeroKnowledge.EncodingMachines
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace S1Controls
+
+theorem ctlPadTo : type_of% @TCSlib.Cryptography.EncodingMachines.padTo_eq := by
+  intros
+  rfl
+
+theorem ctlPadToReader : type_of% @TCSlib.Cryptography.EncodingMachines.padTo_eq :=
+  @TCSlib.Cryptography.EncodingMachines.padTo_eq
+
+end S1Controls
+

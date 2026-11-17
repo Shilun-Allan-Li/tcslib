@@ -1,0 +1,422 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import Lean
+import Mathlib.Data.List.OfFn
+import Mathlib.Data.List.GetD
+import Mathlib.Logic.Equiv.Prod
+import Mathlib.Data.Fintype.Basic
+/- G06-HARNESS INSTALL SealA_Cryptography_Foundations_BitLists -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealA_Cryptography_Foundations_BitLists"
+  let payload : String := ""
+  let expectedRequests : Nat := 0
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := ""
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut resolved : Array Lean.Name := #[]
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  let mut active : Nat := 0
+  let mut already : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=install spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let before ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    if before == .irreducible then
+      already := already + 1
+    else
+      let id := Lean.mkIdent n
+      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+      active := active + 1
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed for {spelling}"
+    resolved := resolved.push n
+    verified := verified + 1
+    Lean.logInfo m!"G06-NAME label={label} spelling={spelling} actual={n.toString} home={home} before={repr before} installed={repr installed}"
+  unless active + already == requests.size do throwError "G06-HARNESS {label}: installation count mismatch"
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  let maskExt := Lean.Meta.globalInstanceExtension
+  let maskEnv ← Lean.getEnv
+  let scopes := maskExt.ext.getState maskEnv
+  unless scopes.stateStack.length == 1 do
+    throwError "G06-HARNESS {label}: unfolding mask requires base scope"
+  let mut scopedNames : Std.HashSet Lean.Name := {}
+  for (_, payloads) in scopes.scopedEntries.map.toList do
+    for n in payloads do
+      scopedNames := scopedNames.insert n
+  let mut removed : Nat := 0
+  for n in resolved do
+    if scopedNames.contains n then
+      throwError "G06-HARNESS {label}: scoped unfolding payload intersects request {n}"
+    if Lean.Meta.isGlobalInstance maskEnv n then
+      removed := removed + 1
+  -- InstanceEntry's BEq checks only val, so compare every field explicitly.
+  let entryFields (e : Lean.Meta.InstanceEntry) :=
+    (e.keys, Lean.ExprStructEq.mk e.val, e.priority, e.globalName?, e.synthOrder, e.attrKind)
+  let lookupSnapshot (e : Lean.Environment) :=
+    let s := Lean.Meta.instanceExtension.getState e
+    (s.discrTree.toArray.map (fun (ks, entry) => (ks, entryFields entry)),
+      s.instanceNames.toArray.map (fun (n, entry) => (n, entryFields entry)), s.erased.toList)
+  let beforeLookup := lookupSnapshot env
+  Lean.modifyEnv fun current =>
+    maskExt.modifyState current fun membership =>
+      resolved.foldl (fun s n => s.erase n) membership
+  let maskedEnv ← Lean.getEnv
+  unless beforeLookup == lookupSnapshot maskedEnv do
+    throwError "G06-HARNESS {label}: typeclass lookup state changed"
+  for n in resolved do
+    if Lean.Meta.isGlobalInstance maskedEnv n then
+      throwError "G06-HARNESS {label}: unfolding membership after mask for {n}"
+  Lean.logInfo m!"G06-MASK label={label} phase=install requested={requests.size} verified={resolved.size} removed={removed} scope_depth=1 scoped_names={scopedNames.size} tc_state=preserved"
+  Lean.logInfo m!"G06-SEAL label={label} requested={requests.size} active={active} already_irreducible={already} verified={verified}"
+
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Bit lists and bit vectors
+
+Generic facts about lists, lists of bits and bit vectors `Fin n → Bool`, shared by the
+cryptographic developments: heads of suffixes, flattening singleton blocks, the bit of a one-bit
+vector, cancellation of exclusive-or, exclusive-or with a fixed vector as a permutation, and keys of
+an association list. They depend on Mathlib only.
+
+## Main definitions
+
+* `TCSlib.Cryptography.xorPerm v`: exclusive-or with the vector `v`, as a permutation.
+* `TCSlib.Cryptography.recordBits w o`: the `(w + 1)`-bit record of an optional `w`-bit vector.
+
+## Main results
+
+* `TCSlib.Cryptography.headD_drop`: the head of a suffix is an entry.
+* `TCSlib.Cryptography.headD_drop_ofFn`: the head of a suffix of a tuple's list is the tuple's
+  entry at that index.
+* `TCSlib.Cryptography.flatten_ofFn_one`, `flatten_ofFn_singleton`: flattening one-element blocks.
+* `TCSlib.Cryptography.headD_ofFn_one`: the bit of a one-bit vector is the head of its string.
+* `TCSlib.Cryptography.zipWith_xor_cancel_left`: `(a ⊕ c) ⊕ a = c`.
+* `TCSlib.Cryptography.xorPerm_apply`: `xorPerm v y = y ⊕ v`.
+* `TCSlib.Cryptography.mem_keys_of_lookup_isSome`: a key with a value in an association list is
+  one of its keys.
+* `TCSlib.Cryptography.ofFn_eq_map_range`, `ofFn_natAdd_eq_drop`, `decide_map_ofFn`: lists of
+  tuples as maps over ranges, tails of tuples, comparing optional tuples through their lists.
+* `TCSlib.Cryptography.length_flatten_map_const`, `length_flatten_map_range`: the length of a
+  concatenation of equal-length blocks.
+* `TCSlib.Cryptography.flatMap_range_drop`: reading the successive suffixes of a list.
+* `TCSlib.Cryptography.getD_ofFn`, `zipWith_xor_cancel_right`, `recordBits_none`,
+  `recordBits_some`, `length_recordBits`: in-range entries of a tuple's list, `(m ⊕ p) ⊕ p = m`, and
+  the readers of the record of an optional bit vector.
+
+## References
+
+Generic list facts; no textbook counterpart.
+-/
+
+namespace TCSlib.Cryptography
+
+/-- The head of a dropped list is the element at the dropping index:
+`(l.drop i).headD d = l.getD i d`. -/
+theorem headD_drop {α : Type*} (l : List α) (i : ℕ) (d : α) : (l.drop i).headD d = l.getD i d := by
+  rw [List.headD_eq_head?, List.head?_drop, List.getD_eq_getElem?_getD]
+
+/-- The head of the suffix of a tuple's list at an index is the tuple's entry there: for
+`f : Fin n → α`, `i : Fin n` and any default `d`, `((List.ofFn f).drop i.val).headD d = f i`
+(for bit vectors, `d = false` reads the `i`-th bit of the string `List.ofFn f`).
+
+**Proof sketch.** By `headD_drop` the left side is the entry `(List.ofFn f).getD i d`; since
+`i < n` it is the in-range entry `f i` (`List.getElem?_ofFn`). -/
+theorem headD_drop_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) (i : Fin n) (d : α) :
+    ((List.ofFn f).drop i.val).headD d = f i := by
+  simp only [headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos i.isLt,
+    Option.getD_some]
+
+/-- The entry of a tuple's list at an in-range index is the tuple's entry there: for
+`f : Fin n → α`, `i < n` and any default `d`, `(List.ofFn f).getD i d = f ⟨i, hi⟩`.
+Framework glue, no textbook counterpart (`headD_drop_ofFn` read through `headD_drop`). -/
+theorem getD_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) {i : ℕ} (hi : i < n) (d : α) :
+    (List.ofFn f).getD i d = f ⟨i, hi⟩ := by
+  rw [← headD_drop]
+  exact headD_drop_ofFn f ⟨i, hi⟩ d
+
+/-- **Flattening one-element blocks:** concatenating the one-bit blocks `g j` gives their bits,
+`(List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j 0` when the blocks have
+length `l = 1`.
+
+**Proof sketch.** Induction on the number `k` of blocks (`List.ofFn_succ`, `List.flatten_cons`). -/
+theorem flatten_ofFn_one {k l : ℕ} (hl : l = 1) (g : Fin k → Fin l → Bool) :
+    (List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j ⟨0, by omega⟩ := by
+  subst hl
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+    rw [List.ofFn_succ, List.flatten_cons, ih (fun j => g j.succ), List.ofFn_succ (n := k)]
+    simp
+
+/-- Flattening singletons: `(List.ofFn fun i => List.ofFn fun _ : Fin p => f i).flatten =
+List.ofFn f` when `p = 1` (`flatten_ofFn_one` with constant blocks). -/
+theorem flatten_ofFn_singleton {p : ℕ} (hp : p = 1) :
+    ∀ {k : ℕ} (f : Fin k → Bool),
+      (List.ofFn fun i => List.ofFn fun _ : Fin p => f i).flatten = List.ofFn f :=
+  fun f => flatten_ofFn_one hp fun i _ => f i
+
+/-- The bit of a one-bit output is the head of its string: `⟦f⟧.headD false = f 0`. -/
+theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
+  rw [List.ofFn_succ, List.headD_cons]
+
+/-- Exclusive-or with the same list twice cancels: `(a ⊕ c) ⊕ a = c` for `|a| = |c|`. -/
+theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
+    List.zipWith xor (List.zipWith xor a c) a = c := by
+  apply List.ext_getElem
+  · simp [h]
+  · intro i h₁ h₂
+    simp only [List.getElem_zipWith]
+    cases a[i] <;> cases c[i] <;> rfl
+
+/-- Exclusive-or with the same pad twice cancels on the right: `(m ⊕ p) ⊕ p = m` for every
+message `m` and every pad `p` at least as long, `|m| ≤ |p|` (`List.zipWith` stops at the shorter
+list). Framework glue, no textbook counterpart (the decryption step of the one-time-pad style
+encryptions). -/
+theorem zipWith_xor_cancel_right : ∀ (m p : List Bool), m.length ≤ p.length →
+    List.zipWith xor (List.zipWith xor m p) p = m
+  | [], _, _ => rfl
+  | _ :: _, [], h => absurd h (by rw [List.length_cons, List.length_nil]; omega)
+  | a :: m, b :: p, h => by
+    rw [List.zipWith_cons_cons, List.zipWith_cons_cons,
+      zipWith_xor_cancel_right m p (by rw [List.length_cons, List.length_cons] at h; omega)]
+    cases a <;> cases b <;> rfl
+
+section XorPerm
+
+variable {n : ℕ}
+
+/-- Exclusive-or with a fixed vector `v`, as a permutation of `{0,1}ⁿ`: `xorPerm v y = y ⊕ v`. -/
+def xorPerm (v : Fin n → Bool) : Equiv.Perm (Fin n → Bool) :=
+  Function.Involutive.toPerm (fun y i => xor (y i) (v i)) fun y => funext fun i => by
+    simp
+
+/-- `xorPerm v y = y ⊕ v`. -/
+theorem xorPerm_apply (v y : Fin n → Bool) : xorPerm v y = fun i => xor (y i) (v i) := rfl
+
+end XorPerm
+
+/-- A key with a value in an association list is one of its keys:
+`(T.lookup x).isSome → x ∈ T.map Prod.fst`.
+
+**Proof sketch.** Core's `List.lookup_isSome_iff` gives a pair `p ∈ T` with `x == p.1`, so `x`
+is the first component of an element of `T` (`List.mem_map`). -/
+theorem mem_keys_of_lookup_isSome {α β : Type} [DecidableEq α] (T : List (α × β)) (x : α)
+    (h : (T.lookup x).isSome = true) : x ∈ T.map Prod.fst := by
+  obtain ⟨p, hp, hx⟩ := List.lookup_isSome_iff.1 h
+  exact List.mem_map.2 ⟨p, hp, (beq_iff_eq.1 hx).symm⟩
+
+/-! ### Lists indexed by ranges, tails and blocks of lists -/
+
+/-- A list of `r` values is a map over `List.range r`: if `f i = g i` for every `i : Fin r`, then
+`List.ofFn f = (List.range r).map g` (both have `r` entries, entry `i` is `f i = g i`). -/
+theorem ofFn_eq_map_range {α : Type*} {r : ℕ} (f : Fin r → α) (g : ℕ → α)
+    (h : ∀ i : Fin r, f i = g i) : List.ofFn f = (List.range r).map g := by
+  refine List.ext_getElem (by rw [List.length_ofFn, List.length_map, List.length_range])
+    fun i h₁ h₂ => ?_
+  rw [List.getElem_ofFn, List.getElem_map, List.getElem_range]
+  exact h _
+
+/-- **The tail of a string:** `⟦j ↦ w (natAdd k j)⟧ = ⟦w⟧.drop k` (`List.ofFn_add`). -/
+theorem ofFn_natAdd_eq_drop {k sl : ℕ} (w : Fin (k + sl) → Bool) :
+    List.ofFn (fun j : Fin sl => w (Fin.natAdd k j)) = (List.ofFn w).drop k := by
+  rw [List.ofFn_add, List.drop_left' List.length_ofFn]
+
+/-- Comparing strings is comparing their lists:
+`decide (o.map ofFn = some ⟦c⟧) = decide (o = some c)` (`List.ofFn_inj`). -/
+theorem decide_map_ofFn {k : ℕ} (o : Option (Fin k → Bool)) (c : Fin k → Bool) :
+    decide (o.map List.ofFn = some (List.ofFn c)) = decide (o = some c) := by
+  cases o with
+  | none => simp
+  | some c' => simp [List.ofFn_inj]
+
+/-- Blocks of `k` entries, one per element: `|(l.map g).flatten| = |l|·k` when every `g x` has
+`k` entries (`List.length_flatten`, a sum of the constant `k`). -/
+theorem length_flatten_map_const {α β : Type*} (l : List α) (g : α → List β) (k : ℕ)
+    (hg : ∀ x, (g x).length = k) : (l.map g).flatten.length = l.length * k := by
+  rw [List.length_flatten, List.map_map, show (List.length ∘ g) = fun _ => k from funext hg,
+    List.map_const', List.sum_replicate_nat]
+
+/-- `r` blocks of `k` entries have `r·k` entries: `|((range r).map g).flatten| = r·k` when
+`g 0, …, g (r-1)` have `k` entries each (`List.length_flatten`, a sum of the constant `k`). -/
+theorem length_flatten_map_range {β : Type*} (k r : ℕ) (g : ℕ → List β)
+    (hg : ∀ i < r, (g i).length = k) : ((List.range r).map g).flatten.length = r * k := by
+  rw [List.length_flatten, List.map_map,
+    List.map_congr_left (f := List.length ∘ g) (g := fun _ => k)
+      fun i hi => hg i (List.mem_range.1 hi),
+    List.map_const', List.sum_replicate_nat, List.length_range]
+
+/-- **Reading the suffixes of a list within at least its length many steps:** if `F [] = []`
+and `F` reads only the first element of a nonempty suffix, `F (e :: t) = g e` for the members `e`
+of `l`, then `(List.range m).flatMap (fun i => F (l.drop i)) = l.flatMap g` for every
+`m ≥ |l|`.
+
+**Proof sketch.** Induction on `l`: the first suffix is `l` itself, read as `g e`; the others are
+the suffixes of the tail, within `m - 1` steps; the empty suffixes read `[]`. -/
+theorem flatMap_range_drop {β γ : Type*} (F : List β → List γ) (g : β → List γ)
+    (hnil : F [] = []) :
+    ∀ (l : List β), (∀ e ∈ l, ∀ t, F (e :: t) = g e) → ∀ m : ℕ, l.length ≤ m →
+      ((List.range m).flatMap fun i => F (l.drop i)) = l.flatMap g := by
+  intro l
+  induction l with
+  | nil =>
+    intro _ m _
+    rw [List.flatMap_nil]
+    refine List.flatMap_eq_nil_iff.2 fun i _ => ?_
+    rw [List.drop_nil, hnil]
+  | cons e t ih =>
+    intro hcons m hm
+    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by rw [List.length_cons] at hm; omega⟩
+    rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map, List.drop_zero,
+      hcons e List.mem_cons_self, List.flatMap_cons]
+    congr 1
+    simp only [List.drop_succ_cons]
+    exact ih (fun e' he' => hcons e' (List.mem_cons_of_mem _ he')) m'
+      (by rw [List.length_cons] at hm; omega)
+
+/-! ### Records of an optional bit vector -/
+
+/-- The record of an optional `w`-bit vector, a word of `w + 1` bits: a flag bit followed by the
+vector, `recordBits w (some c) = 1 :: ⟦c⟧`, or all zeros when there is none,
+`recordBits w none = 0 :: 0^w`. Framework glue, no textbook counterpart (the challenge record of
+the encrypt-then-tag and PRF-oracle handlers). -/
+def recordBits (w : ℕ) : Option (Fin w → Bool) → List Bool
+  | none => false :: List.replicate w false
+  | some c => true :: List.ofFn c
+
+/-- The record of no vector is the zero word: `recordBits w none = 0 :: 0^w`.
+Framework glue, no textbook counterpart. -/
+theorem recordBits_none (w : ℕ) : recordBits w none = false :: List.replicate w false := rfl
+
+/-- The record of a vector is the flag `1` followed by the vector:
+`recordBits w (some c) = 1 :: ⟦c⟧`. Framework glue, no textbook counterpart. -/
+theorem recordBits_some (w : ℕ) (c : Fin w → Bool) : recordBits w (some c) = true :: List.ofFn c :=
+  rfl
+
+/-- Every record has `w + 1` bits: `|recordBits w o| = w + 1`.
+Framework glue, no textbook counterpart. -/
+theorem length_recordBits (w : ℕ) (o : Option (Fin w → Bool)) :
+    (recordBits w o).length = w + 1 := by
+  cases o with
+  | none => rw [recordBits_none, List.length_cons, List.length_replicate]
+  | some c => rw [recordBits_some, List.length_cons, List.length_ofFn]
+
+end TCSlib.Cryptography
+/- G06-HARNESS EOF-VERIFY SealA_Cryptography_Foundations_BitLists -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealA_Cryptography_Foundations_BitLists"
+  let payload : String := ""
+  let expectedRequests : Nat := 0
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := ""
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=eof spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed at EOF for {spelling}"
+    if Lean.Meta.isGlobalInstance env n then
+      throwError "G06-HARNESS {label}: unfolding membership at EOF for {spelling}"
+    verified := verified + 1
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  Lean.logInfo m!"G06-MASK label={label} phase=eof requested={requests.size} verified={verified}"
+  Lean.logInfo m!"G06-SEAL-END label={label} requested={requests.size} verified={verified}"
+

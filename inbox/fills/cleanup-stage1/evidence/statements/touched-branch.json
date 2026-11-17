@@ -1,0 +1,6372 @@
+{
+ "base": "daa6e173cdd94cad1475b9a96eca613bce53ba61",
+ "head": "HEAD",
+ "files": {
+  "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "Complexity.IterateFind.copyTM",
+     "kind": "def",
+     "private": false,
+     "start": 72,
+     "decl_line": 72,
+     "end": 85,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.copyCfg",
+     "kind": "def",
+     "private": true,
+     "start": 86,
+     "decl_line": 88,
+     "end": 91,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.copy_step",
+     "kind": "lemma",
+     "private": true,
+     "start": 92,
+     "decl_line": 98,
+     "end": 120,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.copy_turn",
+     "kind": "lemma",
+     "private": true,
+     "start": 121,
+     "decl_line": 126,
+     "end": 147,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.copy_rewind",
+     "kind": "lemma",
+     "private": true,
+     "start": 148,
+     "decl_line": 154,
+     "end": 185,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.copy_finish",
+     "kind": "lemma",
+     "private": true,
+     "start": 186,
+     "decl_line": 187,
+     "end": 206,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.copy_clean",
+     "kind": "lemma",
+     "private": false,
+     "start": 207,
+     "decl_line": 213,
+     "end": 255,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.copyTMView",
+     "kind": "abbrev",
+     "private": false,
+     "start": 256,
+     "decl_line": 261,
+     "end": 265,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.copyTMView_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 266,
+     "decl_line": 267,
+     "end": 269,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.copy_clean_view",
+     "kind": "theorem",
+     "private": false,
+     "start": 270,
+     "decl_line": 274,
+     "end": 282,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostCtrl",
+     "kind": "def",
+     "private": false,
+     "start": 285,
+     "decl_line": 289,
+     "end": 296,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostCtrl_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 297,
+     "decl_line": 300,
+     "end": 309,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostRet",
+     "kind": "def",
+     "private": false,
+     "start": 310,
+     "decl_line": 313,
+     "end": 316,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostRet_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 317,
+     "decl_line": 318,
+     "end": 320,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostRet_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 321,
+     "decl_line": 322,
+     "end": 324,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostRet_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 325,
+     "decl_line": 326,
+     "end": 328,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostRet_three",
+     "kind": "theorem",
+     "private": false,
+     "start": 329,
+     "decl_line": 330,
+     "end": 332,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostRet_four",
+     "kind": "theorem",
+     "private": false,
+     "start": 333,
+     "decl_line": 334,
+     "end": 336,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostTM",
+     "kind": "abbrev",
+     "private": false,
+     "start": 337,
+     "decl_line": 342,
+     "end": 344,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.hostTM_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 345,
+     "decl_line": 347,
+     "end": 351,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.host_dispatch",
+     "kind": "theorem",
+     "private": false,
+     "start": 352,
+     "decl_line": 354,
+     "end": 362,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.host_branch",
+     "kind": "theorem",
+     "private": false,
+     "start": 363,
+     "decl_line": 366,
+     "end": 379,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.host_halt",
+     "kind": "theorem",
+     "private": false,
+     "start": 380,
+     "decl_line": 382,
+     "end": 391,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.IterateFind.host_dispatch_view",
+     "kind": "theorem",
+     "private": false,
+     "start": 392,
+     "decl_line": 399,
+     "end": 406,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "Complexity.IterateFind.host_branch_view",
+     "kind": "theorem",
+     "private": false,
+     "start": 407,
+     "decl_line": 415,
+     "end": 429,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "Complexity.IterateFind.host_halt_view",
+     "kind": "theorem",
+     "private": false,
+     "start": 430,
+     "decl_line": 437,
+     "end": 449,
+     "status": "ADDED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 23,
+   "head_count": 26
+  },
+  "TCSlib/Complexity/Randomized/PPT.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "Complexity.NUPPT",
+     "kind": "structure",
+     "private": false,
+     "start": 126,
+     "decl_line": 137,
+     "end": 154,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.timeBound",
+     "kind": "def",
+     "private": false,
+     "start": 159,
+     "decl_line": 160,
+     "end": 161,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.timeBound_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 162,
+     "decl_line": 163,
+     "end": 166,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinLen",
+     "kind": "def",
+     "private": false,
+     "start": 167,
+     "decl_line": 168,
+     "end": 169,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinLen_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 170,
+     "decl_line": 171,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.adviceLen",
+     "kind": "def",
+     "private": false,
+     "start": 173,
+     "decl_line": 174,
+     "end": 175,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.output",
+     "kind": "def",
+     "private": false,
+     "start": 176,
+     "decl_line": 179,
+     "end": 181,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.output_spec",
+     "kind": "theorem",
+     "private": false,
+     "start": 182,
+     "decl_line": 183,
+     "end": 187,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.computesFunInTime",
+     "kind": "theorem",
+     "private": false,
+     "start": 188,
+     "decl_line": 189,
+     "end": 191,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.polyTimeComputable_output",
+     "kind": "theorem",
+     "private": false,
+     "start": 192,
+     "decl_line": 194,
+     "end": 196,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.output_eq_of_computesInTime",
+     "kind": "theorem",
+     "private": false,
+     "start": 197,
+     "decl_line": 199,
+     "end": 202,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.output_length_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 203,
+     "decl_line": 205,
+     "end": 207,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.advInput",
+     "kind": "def",
+     "private": false,
+     "start": 208,
+     "decl_line": 210,
+     "end": 211,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.advInput_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 212,
+     "decl_line": 214,
+     "end": 216,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.length_advInput",
+     "kind": "theorem",
+     "private": false,
+     "start": 217,
+     "decl_line": 218,
+     "end": 220,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.Coins",
+     "kind": "abbrev",
+     "private": false,
+     "start": 221,
+     "decl_line": 223,
+     "end": 224,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.length_ofFn_coins",
+     "kind": "theorem",
+     "private": false,
+     "start": 225,
+     "decl_line": 228,
+     "end": 231,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "Complexity.NUPPT.runAt",
+     "kind": "def",
+     "private": false,
+     "start": 232,
+     "decl_line": 235,
+     "end": 237,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.runAtL",
+     "kind": "def",
+     "private": false,
+     "start": 238,
+     "decl_line": 240,
+     "end": 242,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.runAtL_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 243,
+     "decl_line": 245,
+     "end": 247,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.runAt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 248,
+     "decl_line": 249,
+     "end": 251,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinsCongr",
+     "kind": "def",
+     "private": false,
+     "start": 252,
+     "decl_line": 256,
+     "end": 258,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinsCongr_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 259,
+     "decl_line": 260,
+     "end": 263,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.runAt_coinsCongr",
+     "kind": "theorem",
+     "private": false,
+     "start": 264,
+     "decl_line": 266,
+     "end": 269,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinsEquivPoly",
+     "kind": "def",
+     "private": false,
+     "start": 270,
+     "decl_line": 274,
+     "end": 277,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinsEquivPoly_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 278,
+     "decl_line": 280,
+     "end": 283,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinsEquivPoly_symm_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 284,
+     "decl_line": 286,
+     "end": 289,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.runLit",
+     "kind": "def",
+     "private": false,
+     "start": 290,
+     "decl_line": 293,
+     "end": 294,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.runLit_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 295,
+     "decl_line": 296,
+     "end": 298,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.Uniform",
+     "kind": "def",
+     "private": false,
+     "start": 299,
+     "decl_line": 301,
+     "end": 302,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.uniform_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 303,
+     "decl_line": 305,
+     "end": 306,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.Uniform.advice_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 307,
+     "decl_line": 308,
+     "end": 309,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.Computes",
+     "kind": "def",
+     "private": false,
+     "start": 310,
+     "decl_line": 328,
+     "end": 330,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.computes_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 331,
+     "decl_line": 332,
+     "end": 335,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.Computes.runAt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 336,
+     "decl_line": 337,
+     "end": 340,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.ofPolyTime",
+     "kind": "def",
+     "private": false,
+     "start": 341,
+     "decl_line": 345,
+     "end": 358,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.output_ofPolyTime",
+     "kind": "theorem",
+     "private": false,
+     "start": 359,
+     "decl_line": 360,
+     "end": 367,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coins_ofPolyTime",
+     "kind": "theorem",
+     "private": false,
+     "start": 368,
+     "decl_line": 369,
+     "end": 372,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinsEquiv_ofPolyTime",
+     "kind": "def",
+     "private": false,
+     "start": 373,
+     "decl_line": 375,
+     "end": 379,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinsEquiv_ofPolyTime_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 380,
+     "decl_line": 381,
+     "end": 386,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.adv_ofPolyTime",
+     "kind": "theorem",
+     "private": false,
+     "start": 387,
+     "decl_line": 388,
+     "end": 391,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.advice_ofPolyTime",
+     "kind": "theorem",
+     "private": false,
+     "start": 392,
+     "decl_line": 393,
+     "end": 396,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.runAtL_ofPolyTime",
+     "kind": "theorem",
+     "private": false,
+     "start": 397,
+     "decl_line": 398,
+     "end": 404,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.ofPolyTimeUniform",
+     "kind": "def",
+     "private": false,
+     "start": 405,
+     "decl_line": 406,
+     "end": 409,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.ofPolyTimeUniform_uniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 410,
+     "decl_line": 411,
+     "end": 413,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.output_ofPolyTimeUniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 414,
+     "decl_line": 415,
+     "end": 418,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coins_ofPolyTimeUniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 419,
+     "decl_line": 420,
+     "end": 422,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform",
+     "kind": "def",
+     "private": false,
+     "start": 423,
+     "decl_line": 425,
+     "end": 428,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 429,
+     "decl_line": 430,
+     "end": 434,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.runAtL_ofPolyTimeUniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 435,
+     "decl_line": 437,
+     "end": 442,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.exists_uniform_computes",
+     "kind": "theorem",
+     "private": false,
+     "start": 443,
+     "decl_line": 448,
+     "end": 455,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.PPT",
+     "kind": "def",
+     "private": false,
+     "start": 458,
+     "decl_line": 460,
+     "end": 461,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.PPT.toNUPPT",
+     "kind": "def",
+     "private": false,
+     "start": 464,
+     "decl_line": 465,
+     "end": 466,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.PPT.toNUPPT_mk",
+     "kind": "theorem",
+     "private": false,
+     "start": 467,
+     "decl_line": 468,
+     "end": 469,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.PPT.uniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 470,
+     "decl_line": 471,
+     "end": 472,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.PPT.ofPolyTime",
+     "kind": "def",
+     "private": false,
+     "start": 473,
+     "decl_line": 475,
+     "end": 478,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.PPT.toNUPPT_ofPolyTime",
+     "kind": "theorem",
+     "private": false,
+     "start": 479,
+     "decl_line": 480,
+     "end": 482,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.nonempty",
+     "kind": "theorem",
+     "private": false,
+     "start": 485,
+     "decl_line": 486,
+     "end": 488,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.PPT.nonempty",
+     "kind": "theorem",
+     "private": false,
+     "start": 489,
+     "decl_line": 490,
+     "end": 493,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 58,
+   "head_count": 59
+  },
+  "TCSlib/Cryptography/Asymptotic/Adversary.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.coinBlock",
+     "kind": "def",
+     "private": false,
+     "start": 93,
+     "decl_line": 94,
+     "end": 95,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.coinBlock_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 96,
+     "decl_line": 97,
+     "end": 98,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.length_coinBlock",
+     "kind": "theorem",
+     "private": false,
+     "start": 99,
+     "decl_line": 100,
+     "end": 105,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.coinBlock_flatten",
+     "kind": "theorem",
+     "private": false,
+     "start": 106,
+     "decl_line": 111,
+     "end": 123,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.map_coinBlock_flatten",
+     "kind": "theorem",
+     "private": false,
+     "start": 124,
+     "decl_line": 127,
+     "end": 135,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.coinBlock_flatten_append",
+     "kind": "theorem",
+     "private": false,
+     "start": 136,
+     "decl_line": 141,
+     "end": 157,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeFin",
+     "kind": "def",
+     "private": false,
+     "start": 158,
+     "decl_line": 160,
+     "end": 162,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeFin_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 163,
+     "decl_line": 165,
+     "end": 168,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.padFin",
+     "kind": "def",
+     "private": false,
+     "start": 169,
+     "decl_line": 171,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.padFin_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 174,
+     "end": 178,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.padFin_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 179,
+     "decl_line": 180,
+     "end": 182,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeFin_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 183,
+     "decl_line": 184,
+     "end": 186,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.length_eq_of_decodeFin_eq_some",
+     "kind": "theorem",
+     "private": false,
+     "start": 187,
+     "decl_line": 188,
+     "end": 192,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeFin_eq_some_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 193,
+     "decl_line": 199,
+     "end": 211,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.padFin_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 212,
+     "decl_line": 213,
+     "end": 216,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.ofFn_padFin_of_length",
+     "kind": "theorem",
+     "private": false,
+     "start": 217,
+     "decl_line": 218,
+     "end": 222,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.ofFn_cast",
+     "kind": "theorem",
+     "private": false,
+     "start": 225,
+     "decl_line": 227,
+     "end": 231,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.ofFn_arrowCongr_finCongr",
+     "kind": "theorem",
+     "private": false,
+     "start": 232,
+     "decl_line": 234,
+     "end": 238,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.blocksEquivX",
+     "kind": "def",
+     "private": false,
+     "start": 241,
+     "decl_line": 244,
+     "end": 246,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.blocksEquivX_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 247,
+     "decl_line": 249,
+     "end": 251,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.blocksEquivX_symm_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 252,
+     "decl_line": 253,
+     "end": 255,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.FunFamily.blocks",
+     "kind": "def",
+     "private": false,
+     "start": 256,
+     "decl_line": 260,
+     "end": 262,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.FunFamily.blocks_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 263,
+     "decl_line": 264,
+     "end": 267,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.FunFamily.blocks_symm_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 268,
+     "decl_line": 269,
+     "end": 272,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.FunFamily.ofFn_blocks",
+     "kind": "theorem",
+     "private": false,
+     "start": 273,
+     "decl_line": 279,
+     "end": 296,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.FunFamily.ofFn_blocks_symm_eq_flatMap",
+     "kind": "theorem",
+     "private": false,
+     "start": 297,
+     "decl_line": 306,
+     "end": 324,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.ofFn_block_eq_coinBlock",
+     "kind": "theorem",
+     "private": false,
+     "start": 325,
+     "decl_line": 331,
+     "end": 348,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.inverter",
+     "kind": "def",
+     "private": false,
+     "start": 349,
+     "decl_line": 359,
+     "end": 362,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.inverter_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 363,
+     "decl_line": 365,
+     "end": 367,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.inverterLit",
+     "kind": "def",
+     "private": false,
+     "start": 368,
+     "decl_line": 370,
+     "end": 373,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.distinguisher",
+     "kind": "def",
+     "private": false,
+     "start": 374,
+     "decl_line": 376,
+     "end": 379,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.distinguisherL",
+     "kind": "def",
+     "private": false,
+     "start": 380,
+     "decl_line": 381,
+     "end": 383,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.distinguisherL_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 384,
+     "decl_line": 386,
+     "end": 388,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.predictor",
+     "kind": "def",
+     "private": false,
+     "start": 389,
+     "decl_line": 391,
+     "end": 394,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.inverterLit_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 395,
+     "decl_line": 396,
+     "end": 398,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.distinguisher_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 399,
+     "decl_line": 400,
+     "end": 402,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.predictor_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 403,
+     "decl_line": 404,
+     "end": 406,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.inverter_eq_some_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 407,
+     "decl_line": 408,
+     "end": 421,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.invProbOpt",
+     "kind": "def",
+     "private": false,
+     "start": 422,
+     "decl_line": 425,
+     "end": 428,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.invProbOpt_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 429,
+     "decl_line": 432,
+     "end": 435,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.invProbOpt_le_invProb",
+     "kind": "theorem",
+     "private": false,
+     "start": 436,
+     "decl_line": 438,
+     "end": 445,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.invProbOpt_some",
+     "kind": "theorem",
+     "private": false,
+     "start": 446,
+     "decl_line": 447,
+     "end": 454,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.invProbOpt_nonneg",
+     "kind": "theorem",
+     "private": false,
+     "start": 455,
+     "decl_line": 456,
+     "end": 459,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.invProbOpt_le_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 460,
+     "decl_line": 461,
+     "end": 464,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.computes_iff_uprob",
+     "kind": "theorem",
+     "private": false,
+     "start": 465,
+     "decl_line": 470,
+     "end": 481,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 44,
+   "head_count": 45
+  },
+  "TCSlib/Cryptography/Asymptotic/Sampling.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.StatClose",
+     "kind": "def",
+     "private": false,
+     "start": 111,
+     "decl_line": 126,
+     "end": 128,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.statClose_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 135,
+     "end": 138,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.abs_uprob_sub_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 139,
+     "decl_line": 140,
+     "end": 143,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.uprob_le_add",
+     "kind": "theorem",
+     "private": false,
+     "start": 144,
+     "decl_line": 146,
+     "end": 149,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.nonneg",
+     "kind": "theorem",
+     "private": false,
+     "start": 150,
+     "decl_line": 151,
+     "end": 153,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.refl",
+     "kind": "theorem",
+     "private": false,
+     "start": 154,
+     "decl_line": 155,
+     "end": 157,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.symm",
+     "kind": "theorem",
+     "private": false,
+     "start": 158,
+     "decl_line": 159,
+     "end": 163,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.mono",
+     "kind": "theorem",
+     "private": false,
+     "start": 164,
+     "decl_line": 165,
+     "end": 167,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.of_uprob_ne",
+     "kind": "theorem",
+     "private": false,
+     "start": 168,
+     "decl_line": 176,
+     "end": 194,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.trans",
+     "kind": "theorem",
+     "private": false,
+     "start": 195,
+     "decl_line": 196,
+     "end": 199,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.map",
+     "kind": "theorem",
+     "private": false,
+     "start": 200,
+     "decl_line": 203,
+     "end": 206,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.comp_equiv_left",
+     "kind": "theorem",
+     "private": false,
+     "start": 207,
+     "decl_line": 208,
+     "end": 212,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.comp_equiv_right",
+     "kind": "theorem",
+     "private": false,
+     "start": 213,
+     "decl_line": 214,
+     "end": 218,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.statClose_of_pushesUniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 219,
+     "decl_line": 221,
+     "end": 225,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.comp_pushesUniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 226,
+     "decl_line": 231,
+     "end": 236,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.abs_uexp_sub_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 237,
+     "decl_line": 239,
+     "end": 250,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.statClose_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 251,
+     "decl_line": 253,
+     "end": 258,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.abs_uprob_sub_le_prod",
+     "kind": "theorem",
+     "private": false,
+     "start": 259,
+     "decl_line": 266,
+     "end": 273,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.distAdv_le_of_statClose",
+     "kind": "theorem",
+     "private": false,
+     "start": 274,
+     "decl_line": 278,
+     "end": 283,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatClose.prod",
+     "kind": "theorem",
+     "private": false,
+     "start": 284,
+     "decl_line": 291,
+     "end": 301,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uexp_le_of_statClose",
+     "kind": "theorem",
+     "private": false,
+     "start": 304,
+     "decl_line": 313,
+     "end": 340,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.pushesUniform_of_card_fiber",
+     "kind": "theorem",
+     "private": false,
+     "start": 343,
+     "decl_line": 350,
+     "end": 364,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.card_fiber_eq_of_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 365,
+     "decl_line": 370,
+     "end": 382,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.pushesUniform_of_card_fiber_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 383,
+     "decl_line": 385,
+     "end": 389,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.bitsToNat",
+     "kind": "def",
+     "private": false,
+     "start": 392,
+     "decl_line": 393,
+     "end": 395,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.bitsToNat_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 396,
+     "decl_line": 398,
+     "end": 401,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.foldl_bits_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 402,
+     "decl_line": 405,
+     "end": 413,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.listToNat_lt",
+     "kind": "theorem",
+     "private": true,
+     "start": 414,
+     "decl_line": 415,
+     "end": 422,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.listToNat_inj",
+     "kind": "theorem",
+     "private": true,
+     "start": 423,
+     "decl_line": 424,
+     "end": 439,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.bitsToNat_lt",
+     "kind": "theorem",
+     "private": false,
+     "start": 440,
+     "decl_line": 441,
+     "end": 444,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.bitsToNat_injective",
+     "kind": "theorem",
+     "private": false,
+     "start": 445,
+     "decl_line": 446,
+     "end": 448,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.bitsEquiv",
+     "kind": "def",
+     "private": false,
+     "start": 449,
+     "decl_line": 451,
+     "end": 455,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.bitsEquiv_val",
+     "kind": "theorem",
+     "private": false,
+     "start": 456,
+     "decl_line": 457,
+     "end": 459,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uprob_bitsToNat_lt",
+     "kind": "theorem",
+     "private": false,
+     "start": 460,
+     "decl_line": 464,
+     "end": 476,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.two_pow_size_le_two_mul",
+     "kind": "theorem",
+     "private": false,
+     "start": 477,
+     "decl_line": 479,
+     "end": 485,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uniformFromBits",
+     "kind": "def",
+     "private": false,
+     "start": 486,
+     "decl_line": 487,
+     "end": 489,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uniformFromBits_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 490,
+     "decl_line": 492,
+     "end": 495,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uniformFromBits_eq_some_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 496,
+     "decl_line": 497,
+     "end": 504,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uniformFromBits_eq_none_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 505,
+     "decl_line": 506,
+     "end": 513,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uprob_uniformFromBits_eq_some",
+     "kind": "theorem",
+     "private": false,
+     "start": 514,
+     "decl_line": 515,
+     "end": 527,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uprob_uniformFromBits_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 528,
+     "decl_line": 529,
+     "end": 533,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uprob_comp_eq_sum_fiber",
+     "kind": "theorem",
+     "private": false,
+     "start": 534,
+     "decl_line": 536,
+     "end": 553,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.firstHit",
+     "kind": "def",
+     "private": false,
+     "start": 556,
+     "decl_line": 559,
+     "end": 561,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.firstHit_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 566,
+     "decl_line": 568,
+     "end": 571,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.firstHit_eq_none_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 572,
+     "decl_line": 573,
+     "end": 577,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.firstHit_eq_some_imp",
+     "kind": "theorem",
+     "private": false,
+     "start": 578,
+     "decl_line": 579,
+     "end": 588,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uprob_firstHit_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 591,
+     "decl_line": 593,
+     "end": 597,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.firstHit_uniform_of_some",
+     "kind": "theorem",
+     "private": false,
+     "start": 598,
+     "decl_line": 605,
+     "end": 642,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.statClose_firstHit",
+     "kind": "theorem",
+     "private": false,
+     "start": 643,
+     "decl_line": 656,
+     "end": 724,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.rejectionSample",
+     "kind": "def",
+     "private": false,
+     "start": 729,
+     "decl_line": 732,
+     "end": 734,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.rejectionSample_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 735,
+     "decl_line": 737,
+     "end": 740,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.rejectionSample_eq_none_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 741,
+     "decl_line": 742,
+     "end": 747,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.map_rejectionSample_eq_firstHit",
+     "kind": "theorem",
+     "private": false,
+     "start": 748,
+     "decl_line": 750,
+     "end": 759,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.rejectionSample_uniform_of_some",
+     "kind": "theorem",
+     "private": false,
+     "start": 760,
+     "decl_line": 769,
+     "end": 794,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uprob_rejectionSample_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 795,
+     "decl_line": 797,
+     "end": 804,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.uprob_rejectionSample_none_le_half_pow",
+     "kind": "theorem",
+     "private": false,
+     "start": 805,
+     "decl_line": 808,
+     "end": 822,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.one_sub_inv_pow_le_half",
+     "kind": "theorem",
+     "private": false,
+     "start": 823,
+     "decl_line": 828,
+     "end": 849,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.statClose_rejectionSample",
+     "kind": "theorem",
+     "private": false,
+     "start": 850,
+     "decl_line": 862,
+     "end": 895,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.statClose_getD_of_uniform_of_some",
+     "kind": "theorem",
+     "private": false,
+     "start": 898,
+     "decl_line": 913,
+     "end": 964,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 58,
+   "head_count": 59
+  },
+  "TCSlib/Cryptography/Authentication/Encoding.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Authentication.splitBits",
+     "kind": "def",
+     "private": false,
+     "start": 35,
+     "decl_line": 36,
+     "end": 38,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.ofFn_splitBits_fst",
+     "kind": "theorem",
+     "private": false,
+     "start": 41,
+     "decl_line": 43,
+     "end": 49,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.ofFn_splitBits_snd",
+     "kind": "theorem",
+     "private": false,
+     "start": 50,
+     "decl_line": 53,
+     "end": 58,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.atParam",
+     "kind": "def",
+     "private": false,
+     "start": 59,
+     "decl_line": 60,
+     "end": 61,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.atParam_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 62,
+     "decl_line": 63,
+     "end": 65,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 3,
+   "head_count": 5
+  },
+  "TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.acceptProb_distinguisherL_congr",
+     "kind": "theorem",
+     "private": false,
+     "start": 53,
+     "decl_line": 60,
+     "end": 76,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.encDist",
+     "kind": "def",
+     "private": false,
+     "start": 77,
+     "decl_line": 79,
+     "end": 82,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.SingleMessageSecure",
+     "kind": "def",
+     "private": false,
+     "start": 83,
+     "decl_line": 90,
+     "end": 93,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.singleMessageSecure_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 94,
+     "decl_line": 96,
+     "end": 100,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.encodeList",
+     "kind": "def",
+     "private": false,
+     "start": 101,
+     "decl_line": 103,
+     "end": 106,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.multiEncDist",
+     "kind": "def",
+     "private": false,
+     "start": 107,
+     "decl_line": 110,
+     "end": 114,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure",
+     "kind": "def",
+     "private": false,
+     "start": 115,
+     "decl_line": 122,
+     "end": 126,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.Deterministic",
+     "kind": "def",
+     "private": false,
+     "start": 127,
+     "decl_line": 130,
+     "end": 132,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.encDist_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 134,
+     "end": 137,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.encodeList_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 138,
+     "decl_line": 139,
+     "end": 141,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.encodeList_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 142,
+     "decl_line": 143,
+     "end": 144,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.encodeList_eq_flatMap",
+     "kind": "theorem",
+     "private": false,
+     "start": 145,
+     "decl_line": 149,
+     "end": 156,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.multiEncDist_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 157,
+     "decl_line": 159,
+     "end": 163,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.multiMessageSecure_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 164,
+     "decl_line": 167,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.firstTwo_encodeList_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 174,
+     "end": 179,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure.singleMessageSecure",
+     "kind": "theorem",
+     "private": false,
+     "start": 180,
+     "decl_line": 192,
+     "end": 220,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.firstTwoEqFun",
+     "kind": "def",
+     "private": false,
+     "start": 227,
+     "decl_line": 229,
+     "end": 231,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.polyTimeComputable_firstTwoEqFun",
+     "kind": "theorem",
+     "private": false,
+     "start": 232,
+     "decl_line": 234,
+     "end": 242,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.distinguisherL_firstTwoEq",
+     "kind": "theorem",
+     "private": false,
+     "start": 243,
+     "decl_line": 244,
+     "end": 250,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PrivateKeyScheme.not_multiMessageSecure_of_deterministic",
+     "kind": "theorem",
+     "private": false,
+     "start": 251,
+     "decl_line": 272,
+     "end": 351,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 19,
+   "head_count": 20
+  },
+  "TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Collection.PredEvaluator",
+     "kind": "structure",
+     "private": false,
+     "start": 60,
+     "decl_line": 66,
+     "end": 73,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Collection.HardCore.nonempty_predEvaluator",
+     "kind": "theorem",
+     "private": false,
+     "start": 74,
+     "decl_line": 77,
+     "end": 81,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpGenFun",
+     "kind": "def",
+     "private": false,
+     "start": 86,
+     "decl_line": 88,
+     "end": 93,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpGenFun_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 94,
+     "decl_line": 95,
+     "end": 103,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpEncFun",
+     "kind": "def",
+     "private": false,
+     "start": 104,
+     "decl_line": 106,
+     "end": 114,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpEncFun_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 115,
+     "decl_line": 116,
+     "end": 127,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpDecFun",
+     "kind": "def",
+     "private": false,
+     "start": 128,
+     "decl_line": 131,
+     "end": 138,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpDecFun_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 139,
+     "decl_line": 140,
+     "end": 155,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpGen",
+     "kind": "def",
+     "private": false,
+     "start": 156,
+     "decl_line": 157,
+     "end": 158,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpEnc",
+     "kind": "def",
+     "private": false,
+     "start": 159,
+     "decl_line": 160,
+     "end": 162,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.coins_tdpGen",
+     "kind": "theorem",
+     "private": false,
+     "start": 163,
+     "decl_line": 164,
+     "end": 167,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpGen_coinsEquiv",
+     "kind": "def",
+     "private": false,
+     "start": 168,
+     "decl_line": 170,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpGen_coinsEquiv_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 175,
+     "end": 178,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.coins_tdpEnc",
+     "kind": "theorem",
+     "private": false,
+     "start": 179,
+     "decl_line": 180,
+     "end": 184,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpEnc_coinsEquiv",
+     "kind": "def",
+     "private": false,
+     "start": 185,
+     "decl_line": 187,
+     "end": 190,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpEnc_coinsEquiv_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 191,
+     "decl_line": 193,
+     "end": 196,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpGen_runAt",
+     "kind": "theorem",
+     "private": false,
+     "start": 197,
+     "decl_line": 199,
+     "end": 210,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpEnc_runAt",
+     "kind": "theorem",
+     "private": false,
+     "start": 211,
+     "decl_line": 213,
+     "end": 225,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpDecFun_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 226,
+     "decl_line": 227,
+     "end": 233,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpBitScheme",
+     "kind": "def",
+     "private": false,
+     "start": 234,
+     "decl_line": 250,
+     "end": 274,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.pkPredictor",
+     "kind": "def",
+     "private": false,
+     "start": 279,
+     "decl_line": 283,
+     "end": 285,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.pkPredictor_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 286,
+     "decl_line": 291,
+     "end": 294,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.predProb_pkPredictor_eq",
+     "kind": "theorem",
+     "private": true,
+     "start": 295,
+     "decl_line": 296,
+     "end": 303,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.acceptProb_owpGen_unit",
+     "kind": "theorem",
+     "private": true,
+     "start": 304,
+     "decl_line": 305,
+     "end": 311,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.acceptProb_owpGenNot_unit",
+     "kind": "theorem",
+     "private": true,
+     "start": 312,
+     "decl_line": 313,
+     "end": 319,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.predProb_pkPredictor_false",
+     "kind": "theorem",
+     "private": false,
+     "start": 320,
+     "decl_line": 327,
+     "end": 333,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.predProb_pkPredictor_true",
+     "kind": "theorem",
+     "private": false,
+     "start": 334,
+     "decl_line": 336,
+     "end": 342,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.exists_pkPredictor",
+     "kind": "theorem",
+     "private": false,
+     "start": 343,
+     "decl_line": 347,
+     "end": 356,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.tdpSampled",
+     "kind": "def",
+     "private": true,
+     "start": 359,
+     "decl_line": 361,
+     "end": 364,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.tdpBitScheme_pkEncDist",
+     "kind": "theorem",
+     "private": true,
+     "start": 365,
+     "decl_line": 367,
+     "end": 386,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.tdpBitScheme_singleBitSecure",
+     "kind": "theorem",
+     "private": false,
+     "start": 387,
+     "decl_line": 422,
+     "end": 543,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure",
+     "kind": "theorem",
+     "private": false,
+     "start": 544,
+     "decl_line": 552,
+     "end": 561,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.TrapdoorCollection.OneWay.exists_glPad_singleBitSecure",
+     "kind": "theorem",
+     "private": false,
+     "start": 562,
+     "decl_line": 570,
+     "end": 579,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 32,
+   "head_count": 33
+  },
+  "TCSlib/Cryptography/Foundations/BitLists.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.headD_drop",
+     "kind": "theorem",
+     "private": false,
+     "start": 54,
+     "decl_line": 56,
+     "end": 58,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.headD_drop_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 59,
+     "decl_line": 65,
+     "end": 69,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.getD_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 70,
+     "decl_line": 73,
+     "end": 77,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.flatten_ofFn_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 78,
+     "decl_line": 83,
+     "end": 91,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.flatten_ofFn_singleton",
+     "kind": "theorem",
+     "private": false,
+     "start": 92,
+     "decl_line": 94,
+     "end": 98,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.headD_ofFn_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 99,
+     "decl_line": 100,
+     "end": 102,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.zipWith_xor_cancel_left",
+     "kind": "theorem",
+     "private": false,
+     "start": 103,
+     "decl_line": 104,
+     "end": 111,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.zipWith_xor_cancel_right",
+     "kind": "theorem",
+     "private": false,
+     "start": 112,
+     "decl_line": 116,
+     "end": 124,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.xorPerm",
+     "kind": "def",
+     "private": false,
+     "start": 129,
+     "decl_line": 130,
+     "end": 133,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.xorPerm_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 134,
+     "decl_line": 135,
+     "end": 136,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.mem_keys_of_lookup_isSome",
+     "kind": "theorem",
+     "private": false,
+     "start": 139,
+     "decl_line": 144,
+     "end": 148,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.ofFn_eq_map_range",
+     "kind": "theorem",
+     "private": false,
+     "start": 151,
+     "decl_line": 153,
+     "end": 159,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.ofFn_natAdd_eq_drop",
+     "kind": "theorem",
+     "private": false,
+     "start": 160,
+     "decl_line": 161,
+     "end": 164,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decide_map_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 165,
+     "decl_line": 167,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.length_flatten_map_const",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 175,
+     "end": 179,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.length_flatten_map_range",
+     "kind": "theorem",
+     "private": false,
+     "start": 180,
+     "decl_line": 182,
+     "end": 188,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.flatMap_range_drop",
+     "kind": "theorem",
+     "private": false,
+     "start": 189,
+     "decl_line": 196,
+     "end": 216,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.recordBits",
+     "kind": "def",
+     "private": false,
+     "start": 219,
+     "decl_line": 223,
+     "end": 226,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.recordBits_none",
+     "kind": "theorem",
+     "private": false,
+     "start": 227,
+     "decl_line": 229,
+     "end": 230,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.recordBits_some",
+     "kind": "theorem",
+     "private": false,
+     "start": 231,
+     "decl_line": 233,
+     "end": 235,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.length_recordBits",
+     "kind": "theorem",
+     "private": false,
+     "start": 236,
+     "decl_line": 238,
+     "end": 243,
+     "status": "ADDED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 15,
+   "head_count": 21
+  },
+  "TCSlib/Cryptography/Games.lean": {
+   "new_file": false,
+   "declarations": [],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 0
+  },
+  "TCSlib/Cryptography/Games/Bridges/Experiments.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.prob_sample_eq_uprob",
+     "kind": "theorem",
+     "private": false,
+     "start": 60,
+     "decl_line": 66,
+     "end": 70,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.expect_sample_eq_uexp",
+     "kind": "theorem",
+     "private": false,
+     "start": 71,
+     "decl_line": 74,
+     "end": 77,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.expect_sample_pair",
+     "kind": "theorem",
+     "private": false,
+     "start": 78,
+     "decl_line": 80,
+     "end": 87,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.prob_sample_pair",
+     "kind": "theorem",
+     "private": false,
+     "start": 88,
+     "decl_line": 89,
+     "end": 94,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.invProb_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 95,
+     "decl_line": 97,
+     "end": 103,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.predProb_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 104,
+     "decl_line": 106,
+     "end": 112,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.acceptGame",
+     "kind": "def",
+     "private": false,
+     "start": 113,
+     "decl_line": 115,
+     "end": 118,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.acceptGame_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 119,
+     "decl_line": 121,
+     "end": 125,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.acceptProb_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 126,
+     "decl_line": 128,
+     "end": 136,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.Bridge.distAdv_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 137,
+     "decl_line": 139,
+     "end": 143,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 9,
+   "head_count": 10
+  },
+  "TCSlib/Cryptography/Games/Efficiency/Strings.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.encodeLog_append_single",
+     "kind": "theorem",
+     "private": false,
+     "start": 61,
+     "decl_line": 63,
+     "end": 72,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.length_encodeLog_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 73,
+     "decl_line": 75,
+     "end": 84,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.length_le_length_encodeLog",
+     "kind": "theorem",
+     "private": false,
+     "start": 85,
+     "decl_line": 87,
+     "end": 94,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.length_encodeLog_le_append",
+     "kind": "theorem",
+     "private": false,
+     "start": 95,
+     "decl_line": 97,
+     "end": 105,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.fixLen",
+     "kind": "def",
+     "private": false,
+     "start": 108,
+     "decl_line": 109,
+     "end": 111,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.fixLen_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 112,
+     "decl_line": 113,
+     "end": 116,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.fixLen_of_length_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 117,
+     "decl_line": 118,
+     "end": 120,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.fixLen_of_length_ne",
+     "kind": "theorem",
+     "private": false,
+     "start": 121,
+     "decl_line": 122,
+     "end": 125,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.length_fixLen",
+     "kind": "theorem",
+     "private": false,
+     "start": 126,
+     "decl_line": 127,
+     "end": 131,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.fixLen_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 132,
+     "decl_line": 133,
+     "end": 137,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.exists_ofFn_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 138,
+     "decl_line": 139,
+     "end": 146,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.ofFn_getD_decodeFin",
+     "kind": "theorem",
+     "private": false,
+     "start": 147,
+     "decl_line": 149,
+     "end": 160,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.zeros_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 161,
+     "decl_line": 163,
+     "end": 166,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.eq_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 167,
+     "decl_line": 169,
+     "end": 173,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.lenEq_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 174,
+     "decl_line": 176,
+     "end": 181,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.fixLen_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 182,
+     "decl_line": 183,
+     "end": 190,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.selLen",
+     "kind": "def",
+     "private": false,
+     "start": 193,
+     "decl_line": 194,
+     "end": 198,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.selLen_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 199,
+     "decl_line": 201,
+     "end": 209,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.selLen_of_ge",
+     "kind": "theorem",
+     "private": false,
+     "start": 210,
+     "decl_line": 212,
+     "end": 218,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.selLen_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 219,
+     "decl_line": 221,
+     "end": 238,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.sumPoly",
+     "kind": "def",
+     "private": false,
+     "start": 239,
+     "decl_line": 240,
+     "end": 243,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.sumPoly_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 244,
+     "decl_line": 246,
+     "end": 249,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.sumPoly_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 250,
+     "decl_line": 251,
+     "end": 253,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.eval_le_sumPoly",
+     "kind": "theorem",
+     "private": false,
+     "start": 254,
+     "decl_line": 255,
+     "end": 263,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.selLen_le_sumPoly",
+     "kind": "theorem",
+     "private": false,
+     "start": 264,
+     "decl_line": 265,
+     "end": 274,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.entryPoly",
+     "kind": "def",
+     "private": false,
+     "start": 275,
+     "decl_line": 277,
+     "end": 279,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.entryPoly_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 280,
+     "decl_line": 281,
+     "end": 285,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.entry_le_entryPoly",
+     "kind": "theorem",
+     "private": false,
+     "start": 286,
+     "decl_line": 288,
+     "end": 300,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.le_length_layout",
+     "kind": "theorem",
+     "private": false,
+     "start": 301,
+     "decl_line": 302,
+     "end": 307,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonQ",
+     "kind": "def",
+     "private": false,
+     "start": 310,
+     "decl_line": 312,
+     "end": 317,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonQ_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 318,
+     "decl_line": 319,
+     "end": 326,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonR",
+     "kind": "def",
+     "private": false,
+     "start": 327,
+     "decl_line": 328,
+     "end": 330,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonR_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 331,
+     "decl_line": 332,
+     "end": 336,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonWord",
+     "kind": "def",
+     "private": false,
+     "start": 337,
+     "decl_line": 339,
+     "end": 341,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonWord_eq_ite",
+     "kind": "theorem",
+     "private": false,
+     "start": 342,
+     "decl_line": 343,
+     "end": 347,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonWord_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 348,
+     "decl_line": 360,
+     "end": 401,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonFun",
+     "kind": "def",
+     "private": false,
+     "start": 402,
+     "decl_line": 403,
+     "end": 405,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonFun_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 406,
+     "decl_line": 408,
+     "end": 413,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonFun_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 414,
+     "decl_line": 416,
+     "end": 421,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.canonFun_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 422,
+     "decl_line": 425,
+     "end": 449,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.actStep",
+     "kind": "def",
+     "private": false,
+     "start": 452,
+     "decl_line": 453,
+     "end": 455,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.actStep_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 456,
+     "decl_line": 457,
+     "end": 460,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.actAcc",
+     "kind": "def",
+     "private": false,
+     "start": 461,
+     "decl_line": 462,
+     "end": 464,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.actAcc_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 465,
+     "decl_line": 466,
+     "end": 469,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.actLoop",
+     "kind": "def",
+     "private": false,
+     "start": 470,
+     "decl_line": 473,
+     "end": 475,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.actLoop_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 476,
+     "decl_line": 479,
+     "end": 483,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.actLoop_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 484,
+     "decl_line": 486,
+     "end": 491,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.RunsTo",
+     "kind": "def",
+     "private": false,
+     "start": 492,
+     "decl_line": 494,
+     "end": 499,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.runsTo_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 500,
+     "decl_line": 501,
+     "end": 508,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.runsTo_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 509,
+     "decl_line": 510,
+     "end": 515,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.runsTo_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 516,
+     "decl_line": 518,
+     "end": 534,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.runsTo_stop",
+     "kind": "theorem",
+     "private": false,
+     "start": 535,
+     "decl_line": 537,
+     "end": 546,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.EffFill.exists_splitMachine",
+     "kind": "theorem",
+     "private": false,
+     "start": 549,
+     "decl_line": 559,
+     "end": 580,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 52,
+   "head_count": 53
+  },
+  "TCSlib/Cryptography/Games/Machines.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Games.Move",
+     "kind": "inductive",
+     "private": false,
+     "start": 68,
+     "decl_line": 70,
+     "end": 75,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.MachineCodec",
+     "kind": "structure",
+     "private": false,
+     "start": 76,
+     "decl_line": 79,
+     "end": 86,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.MachineCodec.encodeLog",
+     "kind": "def",
+     "private": false,
+     "start": 91,
+     "decl_line": 93,
+     "end": 95,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.MachineCodec.encodeLog_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 96,
+     "decl_line": 97,
+     "end": 99,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.MachineCodec.encodeLog_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 100,
+     "decl_line": 102,
+     "end": 106,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.buildComp",
+     "kind": "def",
+     "private": false,
+     "start": 109,
+     "decl_line": 112,
+     "end": 120,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.buildComp_zero_of_ret",
+     "kind": "theorem",
+     "private": false,
+     "start": 126,
+     "decl_line": 128,
+     "end": 131,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.buildComp_zero_of_query",
+     "kind": "theorem",
+     "private": false,
+     "start": 132,
+     "decl_line": 134,
+     "end": 137,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.buildComp_succ_of_ret",
+     "kind": "theorem",
+     "private": false,
+     "start": 138,
+     "decl_line": 140,
+     "end": 143,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.buildComp_succ_of_query",
+     "kind": "theorem",
+     "private": false,
+     "start": 144,
+     "decl_line": 148,
+     "end": 152,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.buildComp_of_ret",
+     "kind": "theorem",
+     "private": false,
+     "start": 153,
+     "decl_line": 155,
+     "end": 160,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.buildComp_costBoundedBy",
+     "kind": "theorem",
+     "private": false,
+     "start": 163,
+     "decl_line": 164,
+     "end": 178,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.OracleComp.exists_eq_pure_of_costBoundedBy_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 179,
+     "decl_line": 182,
+     "end": 189,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.buildComp_budget_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 190,
+     "decl_line": 198,
+     "end": 229,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toComp",
+     "kind": "def",
+     "private": false,
+     "start": 230,
+     "decl_line": 233,
+     "end": 236,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toComp_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 237,
+     "decl_line": 241,
+     "end": 247,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toComp_costBoundedBy",
+     "kind": "theorem",
+     "private": false,
+     "start": 248,
+     "decl_line": 249,
+     "end": 253,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toCompOn",
+     "kind": "def",
+     "private": false,
+     "start": 254,
+     "decl_line": 257,
+     "end": 261,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toCompOn_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 262,
+     "decl_line": 266,
+     "end": 272,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toCompOn_costBoundedBy",
+     "kind": "theorem",
+     "private": false,
+     "start": 273,
+     "decl_line": 274,
+     "end": 278,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toCompOn_budget_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 279,
+     "decl_line": 282,
+     "end": 289,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 20,
+   "head_count": 21
+  },
+  "TCSlib/Cryptography/Games/Tapes.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Games.expect_simulate_abs",
+     "kind": "theorem",
+     "private": false,
+     "start": 61,
+     "decl_line": 72,
+     "end": 88,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.expect_simulate_abs_inv",
+     "kind": "theorem",
+     "private": false,
+     "start": 89,
+     "decl_line": 96,
+     "end": 113,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.freshImpl",
+     "kind": "def",
+     "private": false,
+     "start": 122,
+     "decl_line": 125,
+     "end": 128,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.freshImpl_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 129,
+     "decl_line": 131,
+     "end": 135,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.extTape",
+     "kind": "def",
+     "private": false,
+     "start": 136,
+     "decl_line": 139,
+     "end": 141,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.extTape_of_lt",
+     "kind": "theorem",
+     "private": false,
+     "start": 142,
+     "decl_line": 144,
+     "end": 147,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.extTape_of_not_lt",
+     "kind": "theorem",
+     "private": false,
+     "start": 148,
+     "decl_line": 150,
+     "end": 153,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.extTape_update",
+     "kind": "theorem",
+     "private": false,
+     "start": 154,
+     "decl_line": 156,
+     "end": 162,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.tapeImpl",
+     "kind": "def",
+     "private": false,
+     "start": 163,
+     "decl_line": 167,
+     "end": 170,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.tapeImpl_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 171,
+     "decl_line": 174,
+     "end": 178,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.simulate_tapeImpl_congr",
+     "kind": "theorem",
+     "private": false,
+     "start": 179,
+     "decl_line": 185,
+     "end": 198,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.expect_simulate_tapeImpl",
+     "kind": "theorem",
+     "private": false,
+     "start": 199,
+     "decl_line": 209,
+     "end": 244,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ovr",
+     "kind": "def",
+     "private": false,
+     "start": 253,
+     "decl_line": 256,
+     "end": 259,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ovr_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 260,
+     "decl_line": 262,
+     "end": 264,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ovr_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 265,
+     "decl_line": 267,
+     "end": 270,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ovr_of_not_mem",
+     "kind": "theorem",
+     "private": false,
+     "start": 271,
+     "decl_line": 273,
+     "end": 282,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ovr_of_mem",
+     "kind": "theorem",
+     "private": false,
+     "start": 283,
+     "decl_line": 285,
+     "end": 298,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ovr_update",
+     "kind": "theorem",
+     "private": false,
+     "start": 299,
+     "decl_line": 302,
+     "end": 311,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ovr_append",
+     "kind": "theorem",
+     "private": false,
+     "start": 312,
+     "decl_line": 314,
+     "end": 321,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.expect_sample_ovr",
+     "kind": "theorem",
+     "private": false,
+     "start": 322,
+     "decl_line": 330,
+     "end": 343,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 20
+  },
+  "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble",
+     "kind": "structure",
+     "private": false,
+     "start": 67,
+     "decl_line": 75,
+     "end": 82,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.random",
+     "kind": "def",
+     "private": false,
+     "start": 85,
+     "decl_line": 89,
+     "end": 92,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.keyed",
+     "kind": "def",
+     "private": false,
+     "start": 93,
+     "decl_line": 96,
+     "end": 101,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.random_O",
+     "kind": "theorem",
+     "private": false,
+     "start": 102,
+     "decl_line": 103,
+     "end": 107,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.keyed_O",
+     "kind": "theorem",
+     "private": false,
+     "start": 108,
+     "decl_line": 109,
+     "end": 112,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.acceptProb_random_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 113,
+     "decl_line": 115,
+     "end": 120,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.acceptProb_random_eq_lazy",
+     "kind": "theorem",
+     "private": false,
+     "start": 121,
+     "decl_line": 132,
+     "end": 145,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleMove",
+     "kind": "inductive",
+     "private": false,
+     "start": 148,
+     "decl_line": 150,
+     "end": 155,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeOracleMove",
+     "kind": "def",
+     "private": false,
+     "start": 156,
+     "decl_line": 159,
+     "end": 166,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.pairDecode_true_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 167,
+     "decl_line": 169,
+     "end": 182,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeOracleMove_pairEncode_false",
+     "kind": "theorem",
+     "private": false,
+     "start": 183,
+     "decl_line": 186,
+     "end": 194,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeOracleMove_true_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 195,
+     "decl_line": 197,
+     "end": 201,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeOracleMove_pairEncode_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 202,
+     "decl_line": 204,
+     "end": 207,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeOracleMove_pairEncode_false_of_length_ne",
+     "kind": "theorem",
+     "private": false,
+     "start": 208,
+     "decl_line": 210,
+     "end": 216,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.decodeOracleMove_of_ne",
+     "kind": "theorem",
+     "private": false,
+     "start": 217,
+     "decl_line": 226,
+     "end": 235,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.encodeHist",
+     "kind": "def",
+     "private": false,
+     "start": 236,
+     "decl_line": 238,
+     "end": 240,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.encodeHist_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 241,
+     "decl_line": 242,
+     "end": 245,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.encodeHist_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 246,
+     "decl_line": 248,
+     "end": 252,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.buildTree",
+     "kind": "def",
+     "private": false,
+     "start": 253,
+     "decl_line": 257,
+     "end": 265,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.buildTree_zero_of_ret",
+     "kind": "theorem",
+     "private": false,
+     "start": 271,
+     "decl_line": 273,
+     "end": 276,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.buildTree_zero_of_query",
+     "kind": "theorem",
+     "private": false,
+     "start": 277,
+     "decl_line": 279,
+     "end": 282,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.buildTree_succ_of_ret",
+     "kind": "theorem",
+     "private": false,
+     "start": 283,
+     "decl_line": 285,
+     "end": 288,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.buildTree_succ_of_query",
+     "kind": "theorem",
+     "private": false,
+     "start": 289,
+     "decl_line": 292,
+     "end": 295,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.buildTree_boundedBy",
+     "kind": "theorem",
+     "private": false,
+     "start": 298,
+     "decl_line": 299,
+     "end": 314,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toOracleAdversary",
+     "kind": "def",
+     "private": false,
+     "start": 315,
+     "decl_line": 319,
+     "end": 322,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toOracleAdversary_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 323,
+     "decl_line": 327,
+     "end": 332,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.toOracleAdversary_boundedBy",
+     "kind": "theorem",
+     "private": false,
+     "start": 333,
+     "decl_line": 336,
+     "end": 341,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.eval_toOracleAdversary_padFin",
+     "kind": "theorem",
+     "private": false,
+     "start": 342,
+     "decl_line": 350,
+     "end": 361,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.Indist",
+     "kind": "def",
+     "private": false,
+     "start": 364,
+     "decl_line": 372,
+     "end": 375,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.indist_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 376,
+     "decl_line": 378,
+     "end": 382,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.Indist.refl",
+     "kind": "theorem",
+     "private": false,
+     "start": 383,
+     "decl_line": 386,
+     "end": 394,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.Indist.symm",
+     "kind": "theorem",
+     "private": false,
+     "start": 395,
+     "decl_line": 397,
+     "end": 409,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.Indist.trans",
+     "kind": "theorem",
+     "private": false,
+     "start": 410,
+     "decl_line": 415,
+     "end": 421,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.oracle_hybrid_lemma",
+     "kind": "theorem",
+     "private": false,
+     "start": 422,
+     "decl_line": 427,
+     "end": 431,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PRF",
+     "kind": "structure",
+     "private": false,
+     "start": 434,
+     "decl_line": 444,
+     "end": 450,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.prfAdv_toOracleAdversary_out",
+     "kind": "theorem",
+     "private": false,
+     "start": 451,
+     "decl_line": 458,
+     "end": 466,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.OracleEnsemble.Indist.negligible_prfAdv",
+     "kind": "theorem",
+     "private": false,
+     "start": 467,
+     "decl_line": 474,
+     "end": 482,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.prfAdv_toOracleAdversary",
+     "kind": "theorem",
+     "private": false,
+     "start": 483,
+     "decl_line": 486,
+     "end": 492,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PRF.negligible_prfAdv",
+     "kind": "theorem",
+     "private": false,
+     "start": 493,
+     "decl_line": 496,
+     "end": 500,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 38,
+   "head_count": 39
+  },
+  "TCSlib/Cryptography/ZeroKnowledge.lean": {
+   "new_file": false,
+   "declarations": [],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 0
+  },
+  "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unaryAdd_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 83,
+     "decl_line": 85,
+     "end": 90,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unaryMul_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 91,
+     "decl_line": 94,
+     "end": 102,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unarySub_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 103,
+     "decl_line": 106,
+     "end": 113,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unaryConst_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 114,
+     "decl_line": 115,
+     "end": 118,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unaryLength_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 119,
+     "decl_line": 121,
+     "end": 124,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unaryPolyOf_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 125,
+     "decl_line": 127,
+     "end": 133,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.leTest_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 134,
+     "decl_line": 136,
+     "end": 143,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.ltTest_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 144,
+     "decl_line": 146,
+     "end": 151,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.eqTest_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 152,
+     "decl_line": 154,
+     "end": 161,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unaryMin_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 162,
+     "decl_line": 164,
+     "end": 174,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.getBit_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 175,
+     "decl_line": 178,
+     "end": 186,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unaryOfTest_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 187,
+     "decl_line": 189,
+     "end": 194,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.cstep",
+     "kind": "def",
+     "private": false,
+     "start": 197,
+     "decl_line": 199,
+     "end": 200,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.cstep_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 201,
+     "decl_line": 202,
+     "end": 204,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.cstep_iterate",
+     "kind": "theorem",
+     "private": false,
+     "start": 205,
+     "decl_line": 206,
+     "end": 213,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.length_cstep_iterate_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 214,
+     "decl_line": 216,
+     "end": 227,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.cbound",
+     "kind": "def",
+     "private": false,
+     "start": 228,
+     "decl_line": 229,
+     "end": 231,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.cstep_horbit",
+     "kind": "theorem",
+     "private": false,
+     "start": 232,
+     "decl_line": 234,
+     "end": 239,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.firstIdx",
+     "kind": "def",
+     "private": false,
+     "start": 242,
+     "decl_line": 245,
+     "end": 248,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.firstIdx_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 251,
+     "decl_line": 252,
+     "end": 257,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.firstIdx_eq_of",
+     "kind": "theorem",
+     "private": false,
+     "start": 258,
+     "decl_line": 259,
+     "end": 265,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.firstIdx_eq_of_forall",
+     "kind": "theorem",
+     "private": false,
+     "start": 266,
+     "decl_line": 267,
+     "end": 272,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.firstIdx_lt_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 273,
+     "decl_line": 274,
+     "end": 279,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.firstIdx_eq_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 280,
+     "decl_line": 281,
+     "end": 288,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.q_firstIdx",
+     "kind": "theorem",
+     "private": false,
+     "start": 289,
+     "decl_line": 290,
+     "end": 295,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.firstIdx_min",
+     "kind": "theorem",
+     "private": false,
+     "start": 296,
+     "decl_line": 297,
+     "end": 305,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.firstIdx_congr",
+     "kind": "theorem",
+     "private": false,
+     "start": 306,
+     "decl_line": 307,
+     "end": 315,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.polyTimeComputable_firstIdx",
+     "kind": "theorem",
+     "private": false,
+     "start": 316,
+     "decl_line": 328,
+     "end": 368,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.flatMap_range_ite_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 371,
+     "decl_line": 372,
+     "end": 382,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.map_range_getD",
+     "kind": "theorem",
+     "private": false,
+     "start": 383,
+     "decl_line": 385,
+     "end": 391,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.polyTimeComputable_of_getD",
+     "kind": "theorem",
+     "private": false,
+     "start": 392,
+     "decl_line": 403,
+     "end": 432,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unarySqrt_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 435,
+     "decl_line": 438,
+     "end": 458,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.truncate_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 461,
+     "decl_line": 463,
+     "end": 469,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.polyTimeComputable_stateFind",
+     "kind": "theorem",
+     "private": false,
+     "start": 472,
+     "decl_line": 479,
+     "end": 489,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.loopState",
+     "kind": "def",
+     "private": false,
+     "start": 490,
+     "decl_line": 493,
+     "end": 496,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.loopState_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 497,
+     "decl_line": 498,
+     "end": 500,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.loopState_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 501,
+     "decl_line": 502,
+     "end": 505,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.start",
+     "kind": "def",
+     "private": false,
+     "start": 508,
+     "decl_line": 509,
+     "end": 510,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.step",
+     "kind": "def",
+     "private": false,
+     "start": 511,
+     "decl_line": 512,
+     "end": 514,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.acc",
+     "kind": "def",
+     "private": false,
+     "start": 515,
+     "decl_line": 516,
+     "end": 518,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.acc_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 519,
+     "decl_line": 521,
+     "end": 524,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.out",
+     "kind": "def",
+     "private": false,
+     "start": 525,
+     "decl_line": 526,
+     "end": 527,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.out_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 528,
+     "decl_line": 529,
+     "end": 532,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.start_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 533,
+     "decl_line": 534,
+     "end": 537,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.step_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 538,
+     "decl_line": 539,
+     "end": 543,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.acc_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 544,
+     "decl_line": 545,
+     "end": 551,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.out_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 552,
+     "decl_line": 553,
+     "end": 555,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.orbit_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 556,
+     "decl_line": 557,
+     "end": 565,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.polyTimeComputable_loopState",
+     "kind": "theorem",
+     "private": false,
+     "start": 568,
+     "decl_line": 580,
+     "end": 622,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.divNum",
+     "kind": "def",
+     "private": false,
+     "start": 625,
+     "decl_line": 627,
+     "end": 629,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.divNum_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 630,
+     "decl_line": 631,
+     "end": 645,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.modNum",
+     "kind": "def",
+     "private": false,
+     "start": 646,
+     "decl_line": 647,
+     "end": 648,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.modNum_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 649,
+     "decl_line": 650,
+     "end": 654,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.divNum_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 655,
+     "decl_line": 657,
+     "end": 676,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.modNum_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 677,
+     "decl_line": 678,
+     "end": 683,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.unarySize_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 686,
+     "decl_line": 689,
+     "end": 697,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.flatMap_range_ite",
+     "kind": "theorem",
+     "private": false,
+     "start": 700,
+     "decl_line": 704,
+     "end": 716,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.polyTimeComputable_flatMap_range",
+     "kind": "theorem",
+     "private": false,
+     "start": 717,
+     "decl_line": 729,
+     "end": 756,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.iterSnd_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 757,
+     "decl_line": 767,
+     "end": 808,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.zeros_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 809,
+     "decl_line": 812,
+     "end": 821,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.padTo",
+     "kind": "def",
+     "private": false,
+     "start": 822,
+     "decl_line": 824,
+     "end": 825,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.padTo_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 826,
+     "decl_line": 828,
+     "end": 830,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.padTo_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 831,
+     "decl_line": 834,
+     "end": 839,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.length_padTo",
+     "kind": "theorem",
+     "private": false,
+     "start": 840,
+     "decl_line": 842,
+     "end": 846,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.getD_padTo",
+     "kind": "theorem",
+     "private": false,
+     "start": 847,
+     "decl_line": 850,
+     "end": 859,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EncodingMachines.padTo_of_length",
+     "kind": "theorem",
+     "private": false,
+     "start": 860,
+     "decl_line": 862,
+     "end": 866,
+     "status": "ADDED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 56,
+   "head_count": 66
+  },
+  "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Strategy",
+     "kind": "structure",
+     "private": false,
+     "start": 110,
+     "decl_line": 117,
+     "end": 122,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.coinLen",
+     "kind": "def",
+     "private": false,
+     "start": 125,
+     "decl_line": 126,
+     "end": 127,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.coinLen_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 128,
+     "decl_line": 129,
+     "end": 130,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.Coins",
+     "kind": "abbrev",
+     "private": false,
+     "start": 131,
+     "decl_line": 132,
+     "end": 133,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.encodeMsgs",
+     "kind": "def",
+     "private": false,
+     "start": 134,
+     "decl_line": 136,
+     "end": 137,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.encodeMsgs_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 138,
+     "decl_line": 139,
+     "end": 140,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.encodeMsgs_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 141,
+     "decl_line": 142,
+     "end": 144,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.pairFstD_encodeMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 145,
+     "decl_line": 146,
+     "end": 152,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.encodeMsgs_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 153,
+     "decl_line": 156,
+     "end": 157,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.encodeMsgs_eq_flatMap",
+     "kind": "theorem",
+     "private": false,
+     "start": 158,
+     "decl_line": 161,
+     "end": 168,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.iterate_pairSndD_encodeMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 169,
+     "decl_line": 173,
+     "end": 186,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.msgAt_encodeMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 187,
+     "decl_line": 191,
+     "end": 195,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.ofNUPPT",
+     "kind": "def",
+     "private": false,
+     "start": 196,
+     "decl_line": 199,
+     "end": 202,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.ofNUPPT_next",
+     "kind": "theorem",
+     "private": false,
+     "start": 203,
+     "decl_line": 204,
+     "end": 207,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.Efficient",
+     "kind": "def",
+     "private": false,
+     "start": 208,
+     "decl_line": 223,
+     "end": 226,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.efficient_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 227,
+     "decl_line": 229,
+     "end": 232,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.ofNUPPT_efficient",
+     "kind": "theorem",
+     "private": false,
+     "start": 233,
+     "decl_line": 234,
+     "end": 236,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.Efficient.exists_uniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 237,
+     "decl_line": 238,
+     "end": 242,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.ReadsPrefix",
+     "kind": "def",
+     "private": false,
+     "start": 243,
+     "decl_line": 253,
+     "end": 255,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.ReadsPrefix.next_congr",
+     "kind": "theorem",
+     "private": false,
+     "start": 256,
+     "decl_line": 257,
+     "end": 262,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.ReadsPrefix.mono",
+     "kind": "theorem",
+     "private": false,
+     "start": 263,
+     "decl_line": 266,
+     "end": 273,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.moverIsV",
+     "kind": "def",
+     "private": false,
+     "start": 278,
+     "decl_line": 280,
+     "end": 282,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.moverIsV_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 283,
+     "decl_line": 285,
+     "end": 288,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.moverIsV_true",
+     "kind": "theorem",
+     "private": false,
+     "start": 289,
+     "decl_line": 290,
+     "end": 291,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.moverIsV_false",
+     "kind": "theorem",
+     "private": false,
+     "start": 292,
+     "decl_line": 293,
+     "end": 294,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.exec",
+     "kind": "def",
+     "private": false,
+     "start": 295,
+     "decl_line": 299,
+     "end": 306,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.exec_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 307,
+     "decl_line": 308,
+     "end": 310,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.exec_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 311,
+     "decl_line": 312,
+     "end": 317,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.exec_length",
+     "kind": "theorem",
+     "private": false,
+     "start": 318,
+     "decl_line": 319,
+     "end": 326,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.View",
+     "kind": "structure",
+     "private": false,
+     "start": 329,
+     "decl_line": 331,
+     "end": 340,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.View.encode",
+     "kind": "def",
+     "private": false,
+     "start": 341,
+     "decl_line": 343,
+     "end": 345,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.View.encode_mk",
+     "kind": "theorem",
+     "private": false,
+     "start": 346,
+     "decl_line": 348,
+     "end": 351,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.out",
+     "kind": "def",
+     "private": false,
+     "start": 352,
+     "decl_line": 354,
+     "end": 355,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Strategy.out_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 356,
+     "decl_line": 358,
+     "end": 360,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol",
+     "kind": "structure",
+     "private": false,
+     "start": 363,
+     "decl_line": 376,
+     "end": 385,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.ExecCoins",
+     "kind": "abbrev",
+     "private": false,
+     "start": 388,
+     "decl_line": 391,
+     "end": 393,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.ProverBounded",
+     "kind": "def",
+     "private": false,
+     "start": 394,
+     "decl_line": 407,
+     "end": 409,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.proverBounded_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 410,
+     "decl_line": 412,
+     "end": 416,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.ProverBounded.mono",
+     "kind": "theorem",
+     "private": false,
+     "start": 417,
+     "decl_line": 418,
+     "end": 421,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.withV",
+     "kind": "def",
+     "private": false,
+     "start": 422,
+     "decl_line": 424,
+     "end": 425,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.withV_V",
+     "kind": "theorem",
+     "private": false,
+     "start": 426,
+     "decl_line": 427,
+     "end": 428,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.withV_vCoinsEquiv",
+     "kind": "def",
+     "private": false,
+     "start": 429,
+     "decl_line": 432,
+     "end": 434,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.withV_vCoinsEquiv_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 435,
+     "decl_line": 437,
+     "end": 439,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.withV_P",
+     "kind": "theorem",
+     "private": false,
+     "start": 440,
+     "decl_line": 441,
+     "end": 442,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.withV_rounds",
+     "kind": "theorem",
+     "private": false,
+     "start": 443,
+     "decl_line": 444,
+     "end": 445,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.withV_verifierFirst",
+     "kind": "theorem",
+     "private": false,
+     "start": 446,
+     "decl_line": 447,
+     "end": 449,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.withV_self",
+     "kind": "theorem",
+     "private": false,
+     "start": 450,
+     "decl_line": 451,
+     "end": 454,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.transcriptWith",
+     "kind": "def",
+     "private": false,
+     "start": 455,
+     "decl_line": 457,
+     "end": 460,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.transcriptWith_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 461,
+     "decl_line": 467,
+     "end": 471,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.transcript",
+     "kind": "def",
+     "private": false,
+     "start": 472,
+     "decl_line": 473,
+     "end": 476,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.transcript_eq_transcriptWith",
+     "kind": "theorem",
+     "private": false,
+     "start": 477,
+     "decl_line": 479,
+     "end": 482,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.outV",
+     "kind": "def",
+     "private": false,
+     "start": 483,
+     "decl_line": 488,
+     "end": 490,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.outV_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 491,
+     "decl_line": 495,
+     "end": 497,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.outP",
+     "kind": "def",
+     "private": false,
+     "start": 498,
+     "decl_line": 499,
+     "end": 501,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.outP_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 502,
+     "decl_line": 504,
+     "end": 507,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.viewV",
+     "kind": "def",
+     "private": false,
+     "start": 508,
+     "decl_line": 510,
+     "end": 512,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.viewV_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 513,
+     "decl_line": 516,
+     "end": 519,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.viewV_withV",
+     "kind": "theorem",
+     "private": false,
+     "start": 520,
+     "decl_line": 522,
+     "end": 528,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.viewP",
+     "kind": "def",
+     "private": false,
+     "start": 529,
+     "decl_line": 531,
+     "end": 533,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.viewP_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 534,
+     "decl_line": 537,
+     "end": 540,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.execution",
+     "kind": "def",
+     "private": false,
+     "start": 541,
+     "decl_line": 543,
+     "end": 545,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.outV_eq_out",
+     "kind": "theorem",
+     "private": false,
+     "start": 546,
+     "decl_line": 547,
+     "end": 549,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.outP_eq_out",
+     "kind": "theorem",
+     "private": false,
+     "start": 550,
+     "decl_line": 551,
+     "end": 553,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.transcript_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 554,
+     "decl_line": 555,
+     "end": 557,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.outV_withV",
+     "kind": "theorem",
+     "private": false,
+     "start": 558,
+     "decl_line": 559,
+     "end": 565,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.outV_eq_getLast_of_moverIsV",
+     "kind": "theorem",
+     "private": false,
+     "start": 566,
+     "decl_line": 570,
+     "end": 577,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.uprob_outV_eq_uexp",
+     "kind": "theorem",
+     "private": false,
+     "start": 580,
+     "decl_line": 583,
+     "end": 589,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.exists_proverCoins_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 590,
+     "decl_line": 594,
+     "end": 608,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 64,
+   "head_count": 68
+  },
+  "TCSlib/Cryptography/ZeroKnowledge/InteractionWords.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Strategy.encodeMsgs_eq_encWords",
+     "kind": "theorem",
+     "private": false,
+     "start": 37,
+     "decl_line": 40,
+     "end": 43,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/InformationTheory/Entropy.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.InformationTheory.FinDist.shannonEntropy",
+     "kind": "def",
+     "private": false,
+     "start": 68,
+     "decl_line": 73,
+     "end": 75,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.shannonEntropy_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 76,
+     "decl_line": 77,
+     "end": 80,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.shannonEntropy_nonneg",
+     "kind": "theorem",
+     "private": false,
+     "start": 81,
+     "decl_line": 83,
+     "end": 86,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.shannonEntropy_uniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 87,
+     "decl_line": 92,
+     "end": 98,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.shannonEntropy_uniform_bits",
+     "kind": "theorem",
+     "private": false,
+     "start": 99,
+     "decl_line": 100,
+     "end": 104,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.maxProb",
+     "kind": "def",
+     "private": false,
+     "start": 107,
+     "decl_line": 108,
+     "end": 110,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.le_maxProb",
+     "kind": "theorem",
+     "private": false,
+     "start": 111,
+     "decl_line": 112,
+     "end": 114,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.maxProb_le_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 115,
+     "decl_line": 116,
+     "end": 118,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.maxProb_pos",
+     "kind": "theorem",
+     "private": false,
+     "start": 119,
+     "decl_line": 120,
+     "end": 126,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.minEntropy",
+     "kind": "def",
+     "private": false,
+     "start": 127,
+     "decl_line": 130,
+     "end": 132,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.le_minEntropy_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 139,
+     "end": 143,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.IsSource",
+     "kind": "def",
+     "private": false,
+     "start": 146,
+     "decl_line": 147,
+     "end": 149,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.isSource_iff_hasMinEntropy",
+     "kind": "theorem",
+     "private": false,
+     "start": 150,
+     "decl_line": 152,
+     "end": 155,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.IsSource.mono",
+     "kind": "theorem",
+     "private": false,
+     "start": 156,
+     "decl_line": 157,
+     "end": 160,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.IsFlatSource",
+     "kind": "def",
+     "private": false,
+     "start": 161,
+     "decl_line": 169,
+     "end": 171,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.isFlatSource_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 172,
+     "decl_line": 174,
+     "end": 178,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.IsFlatSource.isSource",
+     "kind": "theorem",
+     "private": false,
+     "start": 179,
+     "decl_line": 181,
+     "end": 189,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.flat",
+     "kind": "def",
+     "private": false,
+     "start": 190,
+     "decl_line": 191,
+     "end": 198,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.flat_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 199,
+     "decl_line": 201,
+     "end": 203,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.isFlatSource_flat",
+     "kind": "theorem",
+     "private": false,
+     "start": 204,
+     "decl_line": 205,
+     "end": 208,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.isSource_uniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 209,
+     "decl_line": 211,
+     "end": 215,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.mixture",
+     "kind": "def",
+     "private": false,
+     "start": 224,
+     "decl_line": 227,
+     "end": 235,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.mixture_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 236,
+     "decl_line": 238,
+     "end": 241,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.mixture_isSource",
+     "kind": "theorem",
+     "private": false,
+     "start": 242,
+     "decl_line": 246,
+     "end": 260,
+     "status": "ADDED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 21,
+   "head_count": 24
+  },
+  "TCSlib/InformationTheory/FinDist.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.InformationTheory.FinDist",
+     "kind": "structure",
+     "private": false,
+     "start": 51,
+     "decl_line": 52,
+     "end": 59,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.<anonymous instance #1>",
+     "kind": "instance",
+     "private": false,
+     "start": 64,
+     "decl_line": 64,
+     "end": 65,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.coe_mk",
+     "kind": "theorem",
+     "private": false,
+     "start": 66,
+     "decl_line": 68,
+     "end": 70,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.ext",
+     "kind": "theorem",
+     "private": false,
+     "start": 71,
+     "decl_line": 72,
+     "end": 74,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.le_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 75,
+     "decl_line": 76,
+     "end": 79,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.card_pos",
+     "kind": "theorem",
+     "private": false,
+     "start": 80,
+     "decl_line": 81,
+     "end": 88,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.<anonymous instance #2>",
+     "kind": "instance",
+     "private": false,
+     "start": 89,
+     "decl_line": 89,
+     "end": 90,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.uniform",
+     "kind": "def",
+     "private": false,
+     "start": 91,
+     "decl_line": 92,
+     "end": 99,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.uniform_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 100,
+     "decl_line": 101,
+     "end": 103,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.map",
+     "kind": "def",
+     "private": false,
+     "start": 104,
+     "decl_line": 105,
+     "end": 111,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.map_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 112,
+     "decl_line": 114,
+     "end": 116,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.prod",
+     "kind": "def",
+     "private": false,
+     "start": 117,
+     "decl_line": 118,
+     "end": 124,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.prod_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 125,
+     "decl_line": 127,
+     "end": 129,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.collision",
+     "kind": "def",
+     "private": false,
+     "start": 130,
+     "decl_line": 132,
+     "end": 133,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.collision_def",
+     "kind": "theorem",
+     "private": false,
+     "start": 134,
+     "decl_line": 135,
+     "end": 138,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.collision_nonneg",
+     "kind": "theorem",
+     "private": false,
+     "start": 139,
+     "decl_line": 140,
+     "end": 142,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.collision_uniform",
+     "kind": "theorem",
+     "private": false,
+     "start": 143,
+     "decl_line": 144,
+     "end": 149,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.inv_card_le_collision",
+     "kind": "theorem",
+     "private": false,
+     "start": 150,
+     "decl_line": 151,
+     "end": 159,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.HasMinEntropy",
+     "kind": "def",
+     "private": false,
+     "start": 160,
+     "decl_line": 163,
+     "end": 164,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.hasMinEntropy_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 165,
+     "decl_line": 167,
+     "end": 169,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.collision_le_of_hasMinEntropy",
+     "kind": "theorem",
+     "private": false,
+     "start": 170,
+     "decl_line": 174,
+     "end": 180,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.probTrue",
+     "kind": "def",
+     "private": false,
+     "start": 187,
+     "decl_line": 189,
+     "end": 191,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.probTrue_sub_probTrue",
+     "kind": "theorem",
+     "private": false,
+     "start": 192,
+     "decl_line": 194,
+     "end": 197,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.probTrue_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 198,
+     "decl_line": 199,
+     "end": 202,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.map_uniform_equiv",
+     "kind": "theorem",
+     "private": false,
+     "start": 209,
+     "decl_line": 212,
+     "end": 228,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.sum_map",
+     "kind": "theorem",
+     "private": false,
+     "start": 229,
+     "decl_line": 232,
+     "end": 245,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.probTrue_nonneg",
+     "kind": "theorem",
+     "private": false,
+     "start": 246,
+     "decl_line": 248,
+     "end": 251,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.probTrue_le_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 252,
+     "decl_line": 254,
+     "end": 257,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.uniform_prod",
+     "kind": "theorem",
+     "private": false,
+     "start": 258,
+     "decl_line": 261,
+     "end": 268,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.uniform_probTrue",
+     "kind": "theorem",
+     "private": false,
+     "start": 269,
+     "decl_line": 272,
+     "end": 277,
+     "status": "ADDED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 24,
+   "head_count": 30
+  },
+  "TCSlib/InformationTheory/Samples.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect",
+     "kind": "def",
+     "private": false,
+     "start": 53,
+     "decl_line": 54,
+     "end": 55,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 56,
+     "decl_line": 57,
+     "end": 58,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_const",
+     "kind": "theorem",
+     "private": false,
+     "start": 59,
+     "decl_line": 60,
+     "end": 62,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_add",
+     "kind": "theorem",
+     "private": false,
+     "start": 63,
+     "decl_line": 64,
+     "end": 67,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_const_mul",
+     "kind": "theorem",
+     "private": false,
+     "start": 68,
+     "decl_line": 69,
+     "end": 73,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_one_sub",
+     "kind": "theorem",
+     "private": false,
+     "start": 74,
+     "decl_line": 75,
+     "end": 78,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_le_expect",
+     "kind": "theorem",
+     "private": false,
+     "start": 79,
+     "decl_line": 80,
+     "end": 83,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_nonneg",
+     "kind": "theorem",
+     "private": false,
+     "start": 84,
+     "decl_line": 85,
+     "end": 87,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.probTrue_eq_expect",
+     "kind": "theorem",
+     "private": false,
+     "start": 88,
+     "decl_line": 90,
+     "end": 94,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.probTrue_not",
+     "kind": "theorem",
+     "private": false,
+     "start": 95,
+     "decl_line": 96,
+     "end": 102,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.probTrue_true",
+     "kind": "theorem",
+     "private": false,
+     "start": 103,
+     "decl_line": 104,
+     "end": 107,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_prod",
+     "kind": "theorem",
+     "private": false,
+     "start": 108,
+     "decl_line": 110,
+     "end": 114,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_le_add_of_le_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 115,
+     "decl_line": 121,
+     "end": 135,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.iid",
+     "kind": "def",
+     "private": false,
+     "start": 138,
+     "decl_line": 141,
+     "end": 149,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.iid_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 150,
+     "decl_line": 152,
+     "end": 154,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.expect_map",
+     "kind": "theorem",
+     "private": false,
+     "start": 163,
+     "decl_line": 166,
+     "end": 170,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.probTrue_map",
+     "kind": "theorem",
+     "private": false,
+     "start": 171,
+     "decl_line": 174,
+     "end": 177,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.map_apply_expect",
+     "kind": "theorem",
+     "private": false,
+     "start": 178,
+     "decl_line": 181,
+     "end": 188,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.map_map",
+     "kind": "theorem",
+     "private": false,
+     "start": 189,
+     "decl_line": 192,
+     "end": 198,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.InformationTheory.FinDist.map_prod_snd",
+     "kind": "theorem",
+     "private": false,
+     "start": 199,
+     "decl_line": 204,
+     "end": 215,
+     "status": "ADDED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 15,
+   "head_count": 20
+  }
+ }
+}

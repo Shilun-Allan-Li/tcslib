@@ -1,0 +1,11 @@
+Lean pool size: 1 (one Lean process at a time on the host, host-wide flock) for every phase:
+bootstrap, worktree checks, sweep, probes, seals, controls, scans. The parallelism ruling relayed
+on 2026-11-17 arrived during the head seal phase (not interrupted); no Lean phase followed it
+except the base re-scan (one probe).
+peak RSS of one Lean process (MiB): bootstrap 3606 ; sweep 3611
+rule10/base/seal-runs 2777
+rule10/head/seal-runs 2780
+rule10/base/collect-runs 2707
+rule10/head/collect-runs 2712
+statements/probe-runs 2671
+host: 4 CPUs, cgroup memory limit 14,338,760,704 B (13.35 GiB)

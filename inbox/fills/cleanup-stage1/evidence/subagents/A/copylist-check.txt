@@ -1,0 +1,80 @@
+Encryption/PrivateKey/FromPRF.lean:174 | private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+Encryption/PrivateKey/FromPRG.lean:147 | private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+SecureComputation/SpecialEncryption.lean:101 | private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+Encryption/PrivateKey/EncryptThenTag.lean:338 | private theorem zipWith_xor_xor_self' : ∀ (m p : List Bool), m.length ≤ p.length →
+Encryption/PrivateKey/EncryptThenTag/Lazy.lean:295 | theorem zipWith_xor_cancel : ∀ (m p : List Bool), m.length ≤ p.length →
+Encryption/PrivateKey/EncryptThenTag/Handler.lean:134 | def recBits (n : ℕ) : Option (Fin (ettCt.eval n) → Bool) → List Bool
+Encryption/PrivateKey/EncryptThenTag/Handler.lean:139 | theorem recBits_none (n : ℕ) : recBits n none = false :: List.replicate (ettCt.eval n) false 
+Encryption/PrivateKey/EncryptThenTag/Handler.lean:143 | theorem recBits_some (n : ℕ) (c : Fin (ettCt.eval n) → Bool) :
+Encryption/PrivateKey/EncryptThenTag/Handler.lean:147 | theorem length_recBits (n : ℕ) (o : Option (Fin (ettCt.eval n) → Bool)) :
+Encryption/PrivateKey/OracleFromPRF/Handler.lean:109 | def recBits (n : ℕ) : Option (Fin (ctP.eval n) → Bool) → List Bool
+Encryption/PrivateKey/OracleFromPRF/Handler.lean:114 | theorem recBits_none (n : ℕ) : recBits n none = false :: List.replicate (ctP.eval n) false :=
+Encryption/PrivateKey/OracleFromPRF/Handler.lean:117 | theorem recBits_some (n : ℕ) (c : Fin (ctP.eval n) → Bool) :
+Encryption/PrivateKey/OracleFromPRF/Handler.lean:121 | theorem length_recBits (n : ℕ) (o : Option (Fin (ctP.eval n) → Bool)) :
+Asymptotic/EnsemblesLemmas.lean:433 | theorem ofFn_blocks_symm {q ℓ : ℕ} (V : Fin q → Fin ℓ → Bool) (F : ℕ → List Bool)
+Asymptotic/OneWay.lean:380 | theorem ofFn_blocks_symm (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) :
+Hashing/FromDiscreteLog/Encoding.lean:45 | theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
+Hashing/FromDiscreteLog/Encoding.lean:55 | theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
+Authentication/MAC/FromPRF/Reduction.lean:140 |   have hw : List.ofFn w = List.ofFn (splitBits w).1 ++ List.ofFn (splitBits w).2 := by
+Authentication/MAC/FromPRF/Reduction.lean:145 |   have htake : (List.ofFn w).take a = List.ofFn (splitBits w).1 := by
+Authentication/MAC/FromPRF/Reduction.lean:147 |   have hdrop : (List.ofFn w).drop a = List.ofFn (splitBits w).2 := by
+Candidates/DDH.lean:145 | theorem statClose_of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
+Encryption/PublicKey/ElGamal.lean:1154 |   have hs := (statClose_of_uprob_ne (fun ω => decide (A ω)) (fun ω => decide (B ω))).abs_up
+SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:46 | theorem statClose_of_eq_off {σ γ : Type*} [Fintype σ] (X Y : σ → γ)
+SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:68 | theorem distAdv_le_of_eq_off {σ γ ρ : Type*} [Fintype σ] [Fintype ρ]
+Randomness/Learning/Sample.lean:58 | theorem foldr_pairEncode_nil (L : List (List Bool)) :
+SecureComputation/ComposeSecurity/Machines.lean:150 | theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+ZeroKnowledge/ThreeColoring/Machines.lean:912 | theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:503 | theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+ZeroKnowledge/ThreeColoring/Machines.lean:919 | theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) :
+ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:101 | theorem iterate_pairSndD_encodeMsgs : ∀ (k : ℕ) (hist : List (List Bool)),
+SecureComputation/ComposeSecurity/Machines.lean:137 | theorem msgAt_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
+ZeroKnowledge/ThreeColoring/Protocol.lean:112 | theorem msgAt_encodeMsgs (l : List (List Bool)) (i : ℕ) (hi : i < l.length) :
+SecureComputation/Yao/HybridProof/Lengths.lean:83 | theorem encodeMsgs_eq_encWords (L : List (List Bool)) :
+Composability/SequentialZK/Normalization.lean:40 | theorem encodeMsgs_eq_encWords (h : List (List Bool)) :
+SecureComputation/ComposeSecurity/Machines.lean:61 | theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
+ZeroKnowledge/ThreeColoring/Machines.lean:142 | theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
+ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:160 | theorem flatMap_range_ite (f : ℕ → List Bool) (L : ℕ) :
+SecureComputation/ComposeSecurity/Machines.lean:81 | theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+ZeroKnowledge/ThreeColoring/Machines.lean:159 | theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+SecureComputation/ComposeSecurity/Machines.lean:117 | theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+ZeroKnowledge/ThreeColoring/Machines.lean:190 | theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+ZeroKnowledge/ThreeColoring/Machines.lean:292 | theorem zeros_poly {L : List Bool → ℕ} (hL : PolyTimeComputable fun x => List.replicate (L 
+SecureComputation/ComposeSecurity/Machines.lean:223 | def padTo (L : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate L false).take L
+SecureComputation/ComposeSecurity/Machines.lean:226 | theorem padTo_eq (L : ℕ) (w : List Bool) : padTo L w = (w ++ List.replicate L false).take L :
+SecureComputation/ComposeSecurity/Machines.lean:232 | theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+SecureComputation/ComposeSecurity/Machines.lean:239 | theorem length_padTo (L : ℕ) (w : List Bool) : (padTo L w).length = L := by
+SecureComputation/ComposeSecurity/Assembly.lean:98 | theorem padTo_of_length {L : ℕ} {w : List Bool} (h : w.length = L) : padTo L w = w := by
+ZeroKnowledge/ThreeColoring/Machines.lean:303 | def padTo (L : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate L false).take L
+ZeroKnowledge/ThreeColoring/Machines.lean:306 | theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+ZeroKnowledge/ThreeColoring/Machines.lean:312 | theorem length_padTo (L : ℕ) (w : List Bool) : (padTo L w).length = L := by
+ZeroKnowledge/ThreeColoring/Machines.lean:316 | theorem getD_padTo (L : ℕ) (w : List Bool) {i : ℕ} (hi : i < L) :
+SecureComputation/ComposeSecurity/Machines.lean:244 | theorem ofFn_padFin (L : ℕ) (w : List Bool) : List.ofFn (padFin L w) = padTo L w := by
+ZeroKnowledge/ThreeColoring/Machines.lean:327 | theorem ofFn_padFin (L : ℕ) (w : List Bool) : List.ofFn (padFin L w) = padTo L w := by
+Pseudorandom/NextBit.lean:454 |       ofFn_prefixOf, headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn]
+Foundations/BitLists.lean:88 | theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
+ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:280 | theorem headD_ofFn_block {P Q : ℕ} (g : Fin (1 + P + Q) → Bool) :
+Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:88 | private theorem eq_const_headD {k : ℕ} (hk : k = 1) (v : Fin k → Bool) :
+Pseudorandom/Functions/Asymptotic/GGM/Run.lean:449 |   have hbit : ((List.ofFn x).drop d.i).headD false = x ⟨d.i, hi⟩ := by
+Pseudorandom/Functions/Asymptotic/GGM/Run.lean:435 | theorem step_eq (E : List Bool → List Bool)
+Asymptotic/HardCoreLoops.lean:260 | theorem orbit_eq (m : ℕ) {k : ℕ} (β : Fin k → Bool) (s : Fin k → Fin m → Bool) (i : 
+ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:61 | theorem getD_ofFn_lt' {α : Type*} {c : ℕ} (t : Fin c → α) {i : ℕ} (hi : i < c) (d : α)
+ZeroKnowledge/GraphIsomorphism/Proofs.lean:818 | theorem getD_ofFn_lt {c : ℕ} (t : Fin c → Bool) {i : ℕ} (hi : i < c) (d : Bool) :
+ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:110 | theorem getD_ofFn_lt {c : ℕ} (t : Fin c → Bool) {i : ℕ} (hi : i < c) (d : Bool) :
+ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:391 | theorem ofFn_getD_lt {n : ℕ} (f : Fin n → Bool) {i : ℕ} (hi : i < n) :
+SecureComputation/Yao.lean:614 | private theorem getD_ofFn' {α : Type} {k : ℕ} (f : Fin k → α) (i : Fin k) (d : α) :
+SecureComputation/Yao.lean:620 | theorem yaoBobTables_yaoMsg (n : ℕ) (xs r : List Bool) :
+ZeroKnowledge/ThreeColoring/Simulator.lean:861 |     rw [List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos hlt, Option.getD_some]
+ZeroKnowledge/ThreeColoring/Simulator.lean:813 | theorem statClose_colRealView (V' : Strategy) {n : ℕ} (G : Graph n) (c : Fin n → Fin 3)
+ZeroKnowledge/ThreeColoring/Language.lean:423 | private theorem ofFn_getD_tape {T k : ℕ} (r : Fin (T * k) → Bool) (t : Fin T) (j : Fin k) :
+ZeroKnowledge/Encoding.lean:359 |   rw [coinTable_apply, ← hm, List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos (Fin.isL
+ZeroKnowledge/Encoding.lean:352 | theorem coinTable_ofFn (n T k : ℕ) (r : Fin (n * T * k) → Bool) (i : Fin n) (t : Fin T)
+SecureComputation/Garbling.lean:202 | private theorem map_range_getD_ofFn {len : ℕ} (ass : Fin len → Bool) :
+SecureComputation/Garbling.lean:374 | theorem garbledValues_getD (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : Fin n → Bool) 
+SecureComputation/Garbling/CoinBlocks.lean:74 |     List.getElem_ofFn]
+SecureComputation/Garbling/CoinBlocks.lean:51 | theorem pushesUniform_bits_of_blocks {I : Type} [Fintype I] [DecidableEq I]
+Encryption/PublicKey/BitwiseCPA.lean:98 | private theorem ofFn_half {k n : ℕ} (hk : k = n) (b : Bool) (mm : Fin (k + k) → Bool) :
+Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:72 | private theorem ofFn_splitHalf_bit {k : ℕ} (hk : k = 1) (b : Bool) (mm : Fin (k + k) → Bool
+Encoding/BooleanVector.lean:142 | theorem expandPoly_encode {q : ℕ} [NeZero q] (M W : PolyExpr) (u raw : List Bool)
+Hashing/SIS/CollisionOutput.lean:188 | theorem collisionOutputPoly_pairEncode (P : TCSlib.Cryptography.SIS.Parameters)
+AdvancedEncryption/Homomorphic/GSW/Eval.lean:263 |         List.getD_eq_getElem _ _ (by rwa [List.length_ofFn]), List.getElem_ofFn,

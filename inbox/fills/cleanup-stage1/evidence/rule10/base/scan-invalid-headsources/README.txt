@@ -1,0 +1,1 @@
+The first base-mode run of the explicit-unfold scan read the clone's working tree (check-head sources) with base declaration spans; it is invalid and kept here only for the record. The valid base scan is ../scan/ (worktree at the check base 2081fe57, tree 01cc6259). The seals were not affected: mkseals reads git show <rev>:<path>.

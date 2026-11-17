@@ -1,0 +1,99 @@
+copy (path:line; under TCSlib/Cryptography/ unless TCSlib/...)	what it is	re-points to (Stage 1 target or existing form)	source
+TCSlib/Complexity/Randomized/Build/IterateFind.lean:373	hdisp (in computesFunInTime_find; issue-base line)	Complexity.IterateFind.host_dispatch_view (S1-01)	brief
+TCSlib/Complexity/Randomized/Build/IterateFind.lean:378	hbranch	Complexity.IterateFind.host_branch_view (S1-02)	brief
+TCSlib/Complexity/Randomized/Build/IterateFind.lean:390	hhalt	Complexity.IterateFind.host_halt_view (S1-03)	brief
+TCSlib/Complexity/Randomized/Build/IterateFindHost.lean:352, :364, :380	host_dispatch, host_branch, host_halt (unused originals)	DW-9: delete or restate	brief
+Encryption/PrivateKey/EncryptThenTag/Tools.lean:65	ETTGame.expect_simulate_abs	Games.expect_simulate_abs (S1-04)	brief
+Encryption/PrivateKey/EncryptThenTag/Tools.lean:88	ETTGame.expect_simulate_abs_inv	Games.expect_simulate_abs_inv	brief
+Encryption/PrivateKey/EncryptThenTag/Tools.lean:116, :122	ETTGame.freshImpl, freshImpl_apply	Games.freshImpl, Games.freshImpl_apply	brief
+Encryption/PrivateKey/EncryptThenTag/Tools.lean:130, :135	ETTGame.tapeImpl, tapeImpl_apply	Games.tapeImpl, Games.tapeImpl_apply	brief
+Encryption/PrivateKey/EncryptThenTag/Tools.lean:145	ETTGame.simulate_tapeImpl_congr	Games.simulate_tapeImpl_congr	brief
+Encryption/PrivateKey/EncryptThenTag/Tools.lean:167	ETTGame.expect_simulate_tapeImpl	Games.expect_simulate_tapeImpl	brief
+Encryption/PrivateKey/EncryptThenTag/Tools.lean:219, :224, :228, :234, :246, :262, :281	ETTGame.ovr, ovr_nil, ovr_cons, ovr_of_not_mem, ovr_of_mem, ovr_update, expect_sample_ovr	Games.ovr and readers, Games.expect_sample_ovr	brief
+Encryption/PrivateKey/EncryptThenTag/Lazy.lean:175	ETTGame.ovr_append (at κ = Fin (2n) → Bool)	Games.ovr_append	brief
+Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:211, :215, :221	AdaptiveCPA.extTape, extTape_of_lt, extTape_update	Games.extTape, Games.extTape_of_lt, Games.extTape_update	brief
+Authentication/MAC/FromPRF/Random.lean:125	consumer of ETTGame.expect_sample_ovr	Games.expect_sample_ovr	brief
+Encryption/PrivateKey/EncryptThenTag/Games.lean:356; Encryption/PrivateKey/EncryptThenTag/Lazy.lean:445	consumers of ETTGame.freshImpl (ettImpl_eq_freshImpl, ettLazy_eq)	follow ETTGame.freshImpl -> Games.freshImpl	found (consumer)
+Encryption/PrivateKey/EncryptThenTag/Reduction.lean:93	consumer of AdaptiveCPA.extTape (dTapes_eq)	follow AdaptiveCPA.extTape -> Games.extTape	found (consumer)
+Encryption/PrivateKey/EncryptThenTag/Machines.lean:95	private length_le_length_encodeLog	Games.EffFill.length_le_length_encodeLog (S1-05); delete	brief
+Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:108	private length_le_length_encodeLog	Games.EffFill.length_le_length_encodeLog; delete	brief
+Encryption/PrivateKey/FromPRF.lean:174	zipWith xor cancellation	zipWith_xor_cancel_right (S1-06)	brief
+Encryption/PrivateKey/FromPRG.lean:147	zipWith xor cancellation	zipWith_xor_cancel_right	brief
+SecureComputation/SpecialEncryption.lean:101	private zipWith_xor_xor_self	zipWith_xor_cancel_right	brief
+Encryption/PrivateKey/EncryptThenTag.lean:338	private zipWith_xor_xor_self'	zipWith_xor_cancel_right	brief
+Encryption/PrivateKey/EncryptThenTag/Lazy.lean:295	ETTGame.zipWith_xor_cancel	zipWith_xor_cancel_right	brief
+Encryption/PrivateKey/EncryptThenTag/Handler.lean:134, :139, :143, :147	recBits and its readers (recordBits (ettCt.eval n))	recordBits, recordBits_none/_some, length_recordBits (S1-07)	brief
+Encryption/PrivateKey/OracleFromPRF/Handler.lean:109, :114, :117, :121	recBits and its readers (recordBits (ctP.eval n))	recordBits and readers	brief
+Encryption/PrivateKey/EncryptThenTag/Machines.lean:348	ETTGame.eval_toOracleAdversary_len	NUPPT.eval_toOracleAdversary_padFin (S1-08), a = b = ℓ, a' = b' = ℓ'	brief
+Encryption/PrivateKey/OracleFromPRF/Reduction.lean:228	PRFGame.eval_toOracleAdversary_width	NUPPT.eval_toOracleAdversary_padFin, a = b = n, a' = b' = m	brief
+Authentication/MAC/FromPRF/Bound.lean:48	eval_toOracleAdversary_width₂	NUPPT.eval_toOracleAdversary_padFin, a = b = n, a' = m₁, b' = m₂	brief
+Asymptotic/EnsemblesLemmas.lean:433	EnsembleLemmas.ofFn_blocks_symm (through the alias)	FunFamily.ofFn_blocks_symm_eq_flatMap (S1-09); with the seven approved DL-35 changes (Stage 2 handover 1, CS1-Q2 and the seventh, ETTGame.dTape)	brief
+Hashing/FromDiscreteLog/Probability.lean:40	FromDiscreteLog.expect_sample_eq_uexp	Games.Bridge.expect_sample_eq_uexp (S1-10); needs the import of Games.Bridges.Experiments	brief
+Hashing/FromDiscreteLog/Encoding.lean:45, :55	public FromDiscreteLog copies	Authentication.ofFn_splitBits_fst / _snd (S1-11)	brief
+Authentication/MAC/FromPRF/Reduction.lean:140, :145, :147	decide_fnForge's hw, htake, hdrop (DL-44 F-02)	Authentication.ofFn_splitBits_fst / _snd	brief
+Authentication/Signatures/Lamport/MachineSpec.lean:259	inline hs : List.ofFn (splitBits a).2 = (List.ofFn a).drop n	Authentication.ofFn_splitBits_snd	FOUND (not in brief)
+Authentication/Signatures/HashAndSign/CollisionHandler.lean:464	inline hp : (List.ofFn a).take _ = List.ofFn (splitBits a).1	Authentication.ofFn_splitBits_fst	FOUND (not in brief)
+Authentication/Signatures/HashAndSign/OneQuery.lean:36	HashSignFill.eq_pure_of_cost_zero	Games.OracleComp.exists_eq_pure_of_costBoundedBy_zero (S1-12)	brief
+Authentication/Signatures/Lamport/Planted.lean:226	exists_pure_of_cost_zero	Games.OracleComp.exists_eq_pure_of_costBoundedBy_zero	brief
+Asymptotic/BlockEncryptor.lean:60	public TCSlib.Cryptography.encodeList_eq_flatMap	PrivateKeyScheme.encodeList_eq_flatMap (S1-14); its consumers Authentication/Signatures/Lamport/MachineSpec.lean:49, Authentication/Signatures/Lamport.lean:582, Encryption/PublicKey/HybridMachine.lean:216, :217, SecureComputation/Yao/HybridProof/SliceReconstruction.lean:274 follow	brief (+ consumers found)
+Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:65	public MultiMsg.encodeList_eq_flatMap	PrivateKeyScheme.encodeList_eq_flatMap	brief
+Encryption/PrivateKey/FromPRF.lean:251	private, unused (frozen-file exception of DL-46)	PrivateKeyScheme.encodeList_eq_flatMap	brief
+Pseudorandom/NextBit.lean:454	inline	headD_drop_ofFn (existing)	brief (S1-15 list)
+TCSlib/Cryptography/Foundations/BitLists.lean:88	headD_ofFn_one	headD_drop_ofFn	brief
+ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:280	headD_ofFn_block	headD_drop_ofFn	brief
+Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:88	private eq_const_headD	headD_drop_ofFn	brief
+Pseudorandom/Functions/Asymptotic/GGM/Run.lean:449	in step_eq (:435), the exact copy	headD_drop_ofFn	brief
+Asymptotic/HardCoreLoops.lean:260	orbit_eq	headD_drop_ofFn	brief
+ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:61	GI.getD_ofFn_lt'	getD_ofFn (S1-15)	brief
+ZeroKnowledge/GraphIsomorphism/Proofs.lean:818	GI.getD_ofFn_lt	getD_ofFn	brief
+ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:110	GIZK.getD_ofFn_lt	getD_ofFn	brief
+ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:391	ColProofs.ofFn_getD_lt	getD_ofFn	brief
+SecureComputation/Yao.lean:614, :620	private getD_ofFn', yaoBobTables_yaoMsg	getD_ofFn	brief
+ZeroKnowledge/ThreeColoring/Simulator.lean:861	inline in statClose_colRealView (:813)	getD_ofFn	brief
+ZeroKnowledge/ThreeColoring/Language.lean:423	private ofFn_getD_tape	getD_ofFn	brief
+ZeroKnowledge/Encoding.lean:359	inline in coinTable_ofFn (:352)	getD_ofFn	brief
+SecureComputation/Garbling.lean:202, :374	private map_range_getD_ofFn, garbledValues_getD	getD_ofFn	brief
+SecureComputation/Garbling/CoinBlocks.lean:74	inline in pushesUniform_bits_of_blocks (:51)	getD_ofFn	brief
+Encryption/PublicKey/BitwiseCPA.lean:98	private ofFn_half	getD_ofFn	brief
+Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:72	private ofFn_splitHalf_bit	getD_ofFn	brief
+Encoding/BooleanVector.lean:142	expandPoly_encode	getD_ofFn	brief
+Hashing/SIS/CollisionOutput.lean:188	collisionOutputPoly_pairEncode	getD_ofFn	brief
+SecureComputation/Yao/HybridProof/RowFromCoins.lean:416	inline chain in assignmentBit_of_perm (:408)	getD_ofFn	FOUND (not in brief)
+AdvancedEncryption/Homomorphic/GSW/Eval.lean:263; TCSlib/Complexity/CircuitComplexity/ copies; Complexity-side inline chains	forbidden now / CS1-Q12	later window; Complexity chains stay	brief
+Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:41	NMSim.length_ofFn_coins	NUPPT.length_ofFn_coins (S1-16)	brief
+SecureComputation/ObliviousTransfer/Simulators.lean:210	OT.length_ofFn_coins	NUPPT.length_ofFn_coins	brief
+Asymptotic/CollectionsHelpers.lean:112; Hashing/FromDiscreteLog.lean:97, :134	inline have (rw [List.length_ofFn, NUPPT.coinLen_eq])	NUPPT.length_ofFn_coins	FOUND (not in brief)
+Asymptotic/Collections.lean:796, :804	inline in rewrite arguments	NUPPT.length_ofFn_coins	FOUND (not in brief)
+SecureComputation/ObliviousTransfer/ViewB.lean:71, :101	OT.uprob_signedPredictor_false/_true	re-derived from exists_pkPredictor (Encryption/PublicKey/Trapdoor.lean:337 base, :347 head) through pkPredictor_apply (S1-17)	brief
+SecureComputation/ObliviousTransfer/Simulators.lean:52, :57	OT.splitLen, splitLen_symm_ofFn	(EnsembleLemmas.coinsEquiv h).symm, Asymptotic/EnsemblesLemmas.lean:141, :145 (no new form)	brief
+Randomness/Learning/Sample.lean:58	LearnPRF.foldr_pairEncode_nil (DL-45)	Strategy.encodeMsgs_eq / encodeMsgs_eq_flatMap (S1-18/S1-19)	brief
+SecureComputation/ComposeSecurity/Machines.lean:150	encodeMsgs_eq_flatMap	Strategy.encodeMsgs_eq_flatMap (S1-19)	brief
+ZeroKnowledge/ThreeColoring/Machines.lean:912	encodeMsgs_eq_flatMap	Strategy.encodeMsgs_eq_flatMap	brief
+ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:503	encodeMsgs_eq_flatMap	Strategy.encodeMsgs_eq_flatMap	brief
+ZeroKnowledge/ThreeColoring/Machines.lean:919	iterated pairSndD on encodeMsgs	Strategy.iterate_pairSndD_encodeMsgs (S1-20)	brief
+ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:101	iterated pairSndD on encodeMsgs (DL-38 ZK pair)	Strategy.iterate_pairSndD_encodeMsgs	brief
+SecureComputation/ComposeSecurity/Machines.lean:137	ComposeMachines.msgAt_encodeMsgs	Strategy.msgAt_encodeMsgs (S1-26)	brief
+ZeroKnowledge/ThreeColoring/Protocol.lean:112	msgAt_encodeMsgs (instance for i < |l|, through msgAt_eq)	Strategy.msgAt_encodeMsgs	brief
+SecureComputation/Yao/HybridProof/Lengths.lean:83	YaoHybridProof.encodeMsgs_eq_encWords	Strategy.encodeMsgs_eq_encWords (S1-21)	brief
+Composability/SequentialZK/Normalization.lean:40	SequentialZK.encodeMsgs_eq_encWords	Strategy.encodeMsgs_eq_encWords	brief
+SecureComputation/ComposeSecurity/Probability.lean:110	DL-49	EnsembleLemmas.negligible_polyExpr_mul (Asymptotic/EnsemblesLemmas.lean:377; a new import)	brief
+SecureComputation/ComposeSecurity/Accept.lean:52	appendCoins (DL-49)	EnsembleLemmas.coinsEquiv	brief
+SecureComputation/ComposeSecurity/Runs.lean:71	DL-49	FunFamily.ofFn_blocks_symm (Asymptotic/OneWay.lean:380)	brief
+Candidates/DDH.lean:145	Candidates.statClose_of_uprob_ne	StatClose.of_uprob_ne (S1-22); user Encryption/PublicKey/ElGamal.lean:1154 follows	brief
+SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:46, :68	statClose_of_eq_off (re-derived with StatClose.mono, uprob_mono), distAdv_le_of_eq_off	StatClose.of_uprob_ne	brief
+Randomness/Extraction/Rejection.lean:45, :65, :93, :98, :134, :343	FinDist facts	FinDist.map_uniform_equiv, sum_map, probTrue_nonneg, probTrue_le_one, uniform_prod, uniform_probTrue (S1-23)	brief
+Randomness/Extraction/Rejection.lean:81, :88, :104, :113, :122	FinDist facts	FinDist.expect_map, probTrue_map, map_apply_expect, map_map, map_prod_snd (S1-24)	brief
+Randomness/Extraction/Rejection.lean:395, :406, :413	mixture, mixture_apply, mixture_isSource	FinDist.mixture and readers (S1-25); consumers Randomness/Extraction.lean:168, :221, :247, :248, :325, :328 and Randomness/Learning/Law.lean:81, :82 follow	brief (+ consumers found)
+Randomness/Extraction/Rejection.lean:144	Rejection.tupleEquiv	Mathlib (Fin.consEquiv _).symm (no new form)	brief
+Encoding/DyadicUniform.lean:83, :148, :216	bitsToResidue_uniform, bitsToVector_uniform, bitsToMatrix_uniform (fibre count by hand)	re-provable from FinDist.map_uniform_equiv at Equiv.ofBijective (optional; near-copies)	FOUND (not in brief)
+SecureComputation/ComposeSecurity/Machines.lean:61; ZeroKnowledge/ThreeColoring/Machines.lean:142; ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:160	flatMap_range_ite	EncodingMachines.flatMap_range_ite (S1-27)	brief
+SecureComputation/ComposeSecurity/Machines.lean:81; ZeroKnowledge/ThreeColoring/Machines.lean:159	polyTimeComputable_flatMap_range	EncodingMachines.polyTimeComputable_flatMap_range	brief
+SecureComputation/ComposeSecurity/Machines.lean:117; ZeroKnowledge/ThreeColoring/Machines.lean:190	iterSnd_poly	EncodingMachines.iterSnd_poly	brief
+ZeroKnowledge/ThreeColoring/Machines.lean:292	zeros_poly	EncodingMachines.zeros_poly (CS1-W1)	brief
+SecureComputation/ComposeSecurity/Machines.lean:223, :226, :232, :239; SecureComputation/ComposeSecurity/Assembly.lean:98	padTo, padTo_eq, padTo_poly, length_padTo, padTo_of_length	EncodingMachines.padTo family	brief
+ZeroKnowledge/ThreeColoring/Machines.lean:303, :306, :312, :316	padTo, padTo_poly, length_padTo, getD_padTo	EncodingMachines.padTo family	brief
+SecureComputation/ComposeSecurity/Machines.lean:244; ZeroKnowledge/ThreeColoring/Machines.lean:327	ofFn_padFin	re-derived from ofFn_padFin_eq_take (Asymptotic/CollectionsLemmas.lean:95) and EncodingMachines.padTo_eq	brief
+Authentication/Signatures/Lamport/Averaging.lean:129	LamportReduction.expect_favourable_of_success (DL-43)	ProbComp.mul_prob_le_expect, added to Games/Probability.lean in Stage 2 (CS1-Q9)	brief
+Authentication/Signatures/HashAndSign/CodecReaders.lean:46; Authentication/Signatures/Lamport.lean:771	MachineCodec.ext_of_fields (moved verbatim to Games/Machines); lamport_codec_ext	the moved MachineCodec.ext_of_fields (CS1-Q3)	brief
+SecureComputation/Yao/HybridProof/OTAnswerWords.lean:41, :94	DL-52	HybridProtocol.length_answersB / length_answersA (SecureComputation/ComposeSecurity/Lengths.lean:60, :52)	brief
+Randomness/Learning/Sample.lean:88, :92	blk, length_blk (DL-45)	MultiMsg.histBlock, length_histBlock (Encryption/PrivateKey/FromPRF/ReductionMachine.lean:82, :91)	brief

@@ -1,0 +1,18 @@
+import Lean
+import TCSlib.Cryptography.Authentication.Encoding
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace S1Controls
+
+theorem ctlAtParam : type_of% @TCSlib.Cryptography.Authentication.atParam_eq := by
+  intros
+  rfl
+
+theorem ctlAtParamReader : type_of% @TCSlib.Cryptography.Authentication.atParam_eq :=
+  @TCSlib.Cryptography.Authentication.atParam_eq
+
+end S1Controls
+

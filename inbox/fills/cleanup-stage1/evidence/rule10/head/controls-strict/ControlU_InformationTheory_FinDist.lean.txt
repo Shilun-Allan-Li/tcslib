@@ -1,0 +1,18 @@
+import Lean
+import TCSlib.InformationTheory.FinDist
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace S1Controls
+
+theorem ctlProbTrue : type_of% @TCSlib.InformationTheory.FinDist.probTrue_eq := by
+  intros
+  rfl
+
+theorem ctlProbTrueReader : type_of% @TCSlib.InformationTheory.FinDist.probTrue_eq :=
+  @TCSlib.InformationTheory.FinDist.probTrue_eq
+
+end S1Controls
+

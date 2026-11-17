@@ -1,0 +1,97 @@
+Complexity.IterateFind.host_dispatch_view : ∀ (M : Fin 5 → Turing.FinTM Bool) (K : ℕ)
+  (hk : ∀ (i : Fin 5), (M i).k ≤ K + 1) (x w : List Bool),
+  Turing.MultiTapeTM.step (Turing.Cfg.ofWords (Sum.inl 0) (Turing.stateWord (K + 1) w)) =
+    Turing.Cfg.ofWords (Turing.ModuleHost.entry M 2) (Turing.stateWord (K + 1) w)
+'Complexity.IterateFind.host_dispatch_view' depends on axioms: [propext, Classical.choice, Quot.sound]
+Complexity.IterateFind.host_branch_view : ∀ (M : Fin 5 → Turing.FinTM Bool) (K : ℕ)
+  (hk : ∀ (i : Fin 5), (M i).k ≤ K + 1) (x : List Bool) (b : Bool) (w : List Bool),
+  w[0]? = Option.some b →
+    Turing.MultiTapeTM.step (Turing.Cfg.ofWords (Sum.inl 1) (Turing.stateWord (K + 1) w)) =
+      Turing.Cfg.ofWords (Turing.ModuleHost.entry M (if b = Bool.true then 4 else 3)) (Turing.stateWord (K + 1) w)
+'Complexity.IterateFind.host_branch_view' depends on axioms: [propext, Classical.choice, Quot.sound]
+Complexity.IterateFind.host_halt_view : ∀ (M : Fin 5 → Turing.FinTM Bool) (K : ℕ) (hk : ∀ (i : Fin 5), (M i).k ≤ K + 1)
+  (x w o : List Bool),
+  Turing.MultiTapeTM.step
+      (have __src := Turing.Cfg.ofWords (Sum.inl 2) (Turing.stateWord (K + 1) w);
+      { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+        workTapePos := __src.workTapePos, output := o }) =
+    have __src := Turing.Cfg.ofWords (Sum.inl 2) (Turing.stateWord (K + 1) w);
+    { state := Option.none, inputPos := __src.inputPos, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+      output := o }
+'Complexity.IterateFind.host_halt_view' depends on axioms: [propext, Classical.choice, Quot.sound]
+Complexity.NUPPT.length_ofFn_coins : ∀ (A : Complexity.NUPPT) (n : ℕ) (r : A.Coins n),
+  (List.ofFn r).length = A.coins.eval n
+'Complexity.NUPPT.length_ofFn_coins' depends on axioms: [propext, Classical.choice, Quot.sound]
+TCSlib.Cryptography.PrivateKeyScheme.encodeList_eq_flatMap : ∀ (l : List (List Bool)),
+  TCSlib.Cryptography.PrivateKeyScheme.encodeList l = List.flatMap (fun c => Turing.pairEncode c []) l
+'TCSlib.Cryptography.PrivateKeyScheme.encodeList_eq_flatMap' depends on axioms: [propext, Quot.sound]
+@TCSlib.Cryptography.pkPredictor_apply : ∀ {α : Type u_1} {ρ : Type u_2} (D : α × Bool → ρ → Bool) (flip : Bool) (y : α)
+  (c : Bool × ρ),
+  TCSlib.Cryptography.pkPredictor D flip y c = ((if D (y, c.1) c.2 = Bool.true then c.1 else !c.1) ^^ flip)
+'TCSlib.Cryptography.pkPredictor_apply' does not depend on any axioms
+@TCSlib.InformationTheory.FinDist.map_uniform_equiv : ∀ {α : Type u_1} [inst : Fintype α] {β : Type u_2}
+  [inst_1 : Fintype β] [inst_2 : DecidableEq β] [inst_3 : Nonempty α] [inst_4 : Nonempty β] (e : α ≃ β),
+  TCSlib.InformationTheory.FinDist.map (⇑e) (TCSlib.InformationTheory.FinDist.uniform α) =
+    TCSlib.InformationTheory.FinDist.uniform β
+'TCSlib.InformationTheory.FinDist.map_uniform_equiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.sum_map : ∀ {α : Type u_1} [inst : Fintype α] {β : Type u_2} [inst_1 : Fintype β]
+  [inst_2 : DecidableEq β] (p : TCSlib.InformationTheory.FinDist α) (f : α → β) (g : β → ℝ),
+  ∑ b, (TCSlib.InformationTheory.FinDist.map f p).prob b * g b = ∑ a, p.prob a * g (f a)
+'TCSlib.InformationTheory.FinDist.sum_map' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.probTrue_nonneg : ∀ {α : Type u_1} [inst : Fintype α]
+  (p : TCSlib.InformationTheory.FinDist α) (D : α → Bool), 0 ≤ p.probTrue D
+'TCSlib.InformationTheory.FinDist.probTrue_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.probTrue_le_one : ∀ {α : Type u_1} [inst : Fintype α]
+  (p : TCSlib.InformationTheory.FinDist α) (D : α → Bool), p.probTrue D ≤ 1
+'TCSlib.InformationTheory.FinDist.probTrue_le_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.uniform_prod : ∀ {α : Type u_1} [inst : Fintype α] {β : Type u_2} [inst_1 : Fintype β]
+  [inst_2 : Nonempty α] [inst_3 : Nonempty β],
+  (TCSlib.InformationTheory.FinDist.uniform α).prod (TCSlib.InformationTheory.FinDist.uniform β) =
+    TCSlib.InformationTheory.FinDist.uniform (α × β)
+'TCSlib.InformationTheory.FinDist.uniform_prod' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.uniform_probTrue : ∀ {α : Type u_1} [inst : Fintype α] [inst_1 : Nonempty α]
+  (D : α → Bool),
+  (TCSlib.InformationTheory.FinDist.uniform α).probTrue D = ↑{a | D a = Bool.true}.card * (↑(Fintype.card α))⁻¹
+'TCSlib.InformationTheory.FinDist.uniform_probTrue' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.expect_map : ∀ {α : Type u_1} {β : Type u_2} [inst : Fintype α] [inst_1 : Fintype β]
+  [inst_2 : DecidableEq β] (p : TCSlib.InformationTheory.FinDist α) (f : α → β) (g : β → ℝ),
+  (TCSlib.InformationTheory.FinDist.map f p).expect g = p.expect fun a => g (f a)
+'TCSlib.InformationTheory.FinDist.expect_map' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.probTrue_map : ∀ {α : Type u_1} {β : Type u_2} [inst : Fintype α] [inst_1 : Fintype β]
+  [inst_2 : DecidableEq β] (p : TCSlib.InformationTheory.FinDist α) (f : α → β) (D : β → Bool),
+  (TCSlib.InformationTheory.FinDist.map f p).probTrue D = p.probTrue fun a => D (f a)
+'TCSlib.InformationTheory.FinDist.probTrue_map' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.map_apply_expect : ∀ {α : Type u_1} {β : Type u_2} [inst : Fintype α]
+  [inst_1 : Fintype β] [inst_2 : DecidableEq β] (p : TCSlib.InformationTheory.FinDist α) (f : α → β) (b : β),
+  (TCSlib.InformationTheory.FinDist.map f p).prob b = p.expect fun a => if f a = b then 1 else 0
+'TCSlib.InformationTheory.FinDist.map_apply_expect' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.map_map : ∀ {α : Type u_1} {β : Type u_2} {γ : Type u_3} [inst : Fintype α]
+  [inst_1 : Fintype β] [inst_2 : Fintype γ] [inst_3 : DecidableEq β] [inst_4 : DecidableEq γ]
+  (p : TCSlib.InformationTheory.FinDist α) (f : α → β) (g : β → γ),
+  TCSlib.InformationTheory.FinDist.map g (TCSlib.InformationTheory.FinDist.map f p) =
+    TCSlib.InformationTheory.FinDist.map (fun a => g (f a)) p
+'TCSlib.InformationTheory.FinDist.map_map' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.map_prod_snd : ∀ {α : Type u_1} {β : Type u_2} {γ : Type u_3} [inst : Fintype α]
+  [inst_1 : Fintype β] [inst_2 : Fintype γ] [DecidableEq β] [inst_4 : DecidableEq γ] {δ : Type u_4} [inst_5 : Fintype δ]
+  [inst_6 : DecidableEq δ] (p : TCSlib.InformationTheory.FinDist α) (q : TCSlib.InformationTheory.FinDist β) (f : β → γ)
+  (g : α × γ → δ),
+  TCSlib.InformationTheory.FinDist.map g (p.prod (TCSlib.InformationTheory.FinDist.map f q)) =
+    TCSlib.InformationTheory.FinDist.map (fun z => g (z.1, f z.2)) (p.prod q)
+'TCSlib.InformationTheory.FinDist.map_prod_snd' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.mixture : {α : Type u_1} →
+  [inst : Fintype α] →
+    (w : ℝ) →
+      0 ≤ w →
+        w ≤ 1 →
+          TCSlib.InformationTheory.FinDist α → TCSlib.InformationTheory.FinDist α → TCSlib.InformationTheory.FinDist α
+'TCSlib.InformationTheory.FinDist.mixture' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.mixture_apply : ∀ {α : Type u_1} [inst : Fintype α] (w : ℝ) (hw0 : 0 ≤ w)
+  (hw1 : w ≤ 1) (p q : TCSlib.InformationTheory.FinDist α) (a : α),
+  (TCSlib.InformationTheory.FinDist.mixture w hw0 hw1 p q).prob a = w * p.prob a + (1 - w) * q.prob a
+'TCSlib.InformationTheory.FinDist.mixture_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.InformationTheory.FinDist.mixture_isSource : ∀ {α : Type u_1} [inst : Fintype α] (w : ℝ) (hw0 : 0 ≤ w)
+  (hw1 : w ≤ 1) (p q : TCSlib.InformationTheory.FinDist α) (k : ℝ),
+  TCSlib.InformationTheory.FinDist.IsSource k p →
+    TCSlib.InformationTheory.FinDist.IsSource k q →
+      TCSlib.InformationTheory.FinDist.IsSource k (TCSlib.InformationTheory.FinDist.mixture w hw0 hw1 p q)
+'TCSlib.InformationTheory.FinDist.mixture_isSource' depends on axioms: [propext, Classical.choice, Quot.sound]

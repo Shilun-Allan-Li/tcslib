@@ -1,0 +1,18 @@
+import Lean
+import TCSlib.Complexity.Randomized.Build.IterateFindHost
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace S1Controls
+
+theorem ctlCopyView : type_of% @Complexity.IterateFind.copyTMView_eq := by
+  intros
+  rfl
+
+theorem ctlCopyViewReader : type_of% @Complexity.IterateFind.copyTMView_eq :=
+  @Complexity.IterateFind.copyTMView_eq
+
+end S1Controls
+

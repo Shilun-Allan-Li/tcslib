@@ -1,0 +1,401 @@
+diff --git a/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean b/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
+index cf4597f4d..ebe98588f 100644
+--- a/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
++++ b/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
+@@ -46,6 +46,8 @@ load-bearing lemma of the Pass–shelat campaign, foundation decision D11 of
+ * `Complexity.IterateFind.copy_clean` — the copier's contract; `copy_clean_view`, the same for
+   `copyTMView`.
+ * `Complexity.IterateFind.host_dispatch`, `host_branch`, `host_halt` — the host's control steps.
++* `Complexity.IterateFind.host_dispatch_view`, `host_branch_view`, `host_halt_view` — the same
++  control steps for the typed view `Turing.ModuleHost.hostTMView`.
+ 
+ ## References
+ 
+@@ -387,4 +389,62 @@ theorem host_halt (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤
+   change (FinTM.controlAction 0 none).apply _ = _
+   rw [FinTM.controlAction_apply, moveInputPos_zero]
+ 
++/-- **The anchor's dispatch, for the typed view** (`host_dispatch` for
++`Turing.ModuleHost.hostTMView`): from the seam at `inl 0` holding `w`, one step of the typed view
++`H = hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (entry M 0)` reaches the seam at the
++verdict module's entry holding `w`,
++`H.tm.step (Cfg.ofWords (inl 0) (stateWord (K + 1) w)) =
++Cfg.ofWords (entry M 2) (stateWord (K + 1) w)`.
++Framework glue, no textbook counterpart (the host's control table). -/
++theorem host_dispatch_view (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
++    (x w : List Bool) :
++    (ModuleHost.hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (ModuleHost.entry M 0)).tm.step
++        (Cfg.ofWords (input := x) (.inl 0) (stateWord (K + 1) w)) =
++      Cfg.ofWords (ModuleHost.entry M 2) (stateWord (K + 1) w) := by
++  rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _ _ 0 (Cfg.ofWords_state _ _), hostCtrl_eq,
++    if_pos rfl, FinTM.controlAction_apply, moveInputPos_zero, Cfg.ofWords_def, Cfg.ofWords_def]
++
++/-- **The branch, for the typed view** (`host_branch` for `Turing.ModuleHost.hostTMView`): the
++branch state reads the first cell of tape 0, the verdict `b` of a word `w` with `w[0]? = some b`,
++and one step of the typed view
++`H = hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (entry M 0)` dispatches into the payload
++module (`b` true) or the step module (`b` false) at the seam holding `w`,
++`H.tm.step (Cfg.ofWords (inl 1) (stateWord (K + 1) w)) =
++Cfg.ofWords (entry M (if b then 4 else 3)) (stateWord (K + 1) w)`.
++Framework glue, no textbook counterpart (the host's control table). -/
++theorem host_branch_view (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
++    (x : List Bool) (b : Bool) (w : List Bool) (hw : w[0]? = some b) :
++    (ModuleHost.hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (ModuleHost.entry M 0)).tm.step
++        (Cfg.ofWords (input := x) (.inl 1) (stateWord (K + 1) w)) =
++      Cfg.ofWords (ModuleHost.entry M (if b then 4 else 3)) (stateWord (K + 1) w) := by
++  have hread : (Cfg.ofWords (input := x) (.inl 1 : ModuleHost.State (Fin 3) M)
++      (stateWord (K + 1) w)).workTapeSymbols 0 = some b := by
++    simp only [Cfg.workTapeSymbols_eq, Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos,
++      stateWord_eq, FinTM.bufferTape_eq]
++    simpa using hw
++  rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _ _ 1 (Cfg.ofWords_state _ _), hostCtrl_eq,
++    if_neg (by decide), if_pos rfl, hread, FinTM.controlAction_apply, moveInputPos_zero,
++    Cfg.ofWords_def, Cfg.ofWords_def]
++  cases b <;> rfl
++
++/-- **The halt, for the typed view** (`host_halt` for `Turing.ModuleHost.hostTMView`): from the
++seam at `inl 2` holding `w` with output `o`, one step of the typed view
++`H = hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (entry M 0)` reaches the same seam with
++control `none` and output `o`,
++`H.tm.step {Cfg.ofWords (inl 2) (stateWord (K + 1) w) with output := o} =
++{Cfg.ofWords (inl 2) (stateWord (K + 1) w) with state := none, output := o}`.
++Framework glue, no textbook counterpart (the host's control table). -/
++theorem host_halt_view (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
++    (x w o : List Bool) :
++    (ModuleHost.hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (ModuleHost.entry M 0)).tm.step
++        {Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} =
++      {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)
++        with state := none, output := o} := by
++  rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _
++    ({Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} :
++      Cfg (K + 1) Bool (ModuleHost.State (Fin 3) M) x) 2
++    (Cfg.ofWords_state (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)),
++    hostCtrl_eq, if_neg (by decide), if_neg (by decide),
++    FinTM.controlAction_apply, moveInputPos_zero]
++
+ end Complexity.IterateFind
+diff --git a/TCSlib/Complexity/Randomized/PPT.lean b/TCSlib/Complexity/Randomized/PPT.lean
+index dd437f164..36b6d77cb 100644
+--- a/TCSlib/Complexity/Randomized/PPT.lean
++++ b/TCSlib/Complexity/Randomized/PPT.lean
+@@ -109,6 +109,7 @@ one (Definitions 26.1 and 69.4) and are related by explicit lemmas, never unifie
+ * `Complexity.NUPPT.exists_uniform_computes` — every polynomial-time computable function is
+   computed with probability one by a PPT [PS10, Definition 24.6, non-vacuity].
+ * `Complexity.NUPPT.nonempty` — the class is inhabited.
++* `Complexity.NUPPT.length_ofFn_coins` — a coin string `r : A.Coins n` has `coins.eval n` entries.
+ 
+ ## References
+ 
+@@ -221,6 +222,13 @@ theorem length_advInput (n : ℕ) (y : List Bool) : (advInput n y).length = 2 *
+ [PS10, Definition 23.4, "each bit of the random tape is uniformly and independently chosen"]. -/
+ abbrev Coins (n : ℕ) : Type := Fin (A.coinLen n) → Bool
+ 
++/-- **The length of a coin string**: the list of the coins `r : A.Coins n` has length
++`coins.eval n`, `(List.ofFn r).length = A.coins.eval n`.
++Framework glue, no textbook counterpart. -/
++protected theorem length_ofFn_coins (n : ℕ) (r : A.Coins n) :
++    (List.ofFn r).length = A.coins.eval n := by
++  rw [List.length_ofFn, coinLen_eq]
++
+ /-- Activation at parameter `n` on argument `y` with coins `r`: machine input
+ `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. The sampler `r ↦ runAt n y r` on the uniform coin type
+ `Coins n` is the distribution `A(1^n, y)` of the text. -/
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean
+index 38ad023c9..471d15aea 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean
+@@ -33,6 +33,8 @@ polynomially many ciphertexts are encoded as nested pairs.
+ * `PrivateKeyScheme.not_multiMessageSecure_of_deterministic` uses a two-message
+   distinguisher to rule out security for stateless deterministic schemes
+   [PS10, Theorem 94.2].
++* `PrivateKeyScheme.encodeList_eq_flatMap` writes the tuple encoding as the concatenation of
++  the blocks `⟨c, []⟩`.
+ 
+ ## References
+ 
+@@ -140,6 +142,18 @@ theorem encodeList_cons (m : List Bool) (ms : List (List Bool)) :
+ /-- Unfolding of the list encoding on the empty list: `encodeList [] = []`. -/
+ theorem encodeList_nil : encodeList [] = [] := rfl
+ 
++/-- **The tuple encoding is a concatenation of blocks**: the nested-pair encoding of a list of
++words is the concatenation of the self-delimiting blocks `⟨c, []⟩`,
++`encodeList l = l.flatMap fun c => pairEncode c []`.
++Framework glue, no textbook counterpart. -/
++protected theorem encodeList_eq_flatMap (l : List (List Bool)) :
++    encodeList l = l.flatMap fun c => pairEncode c [] := by
++  induction l with
++  | nil => rw [encodeList_nil, List.flatMap_nil]
++  | cons c cs ih =>
++    rw [encodeList_cons, List.flatMap_cons, ih]
++    simp only [pairEncode_eq, List.append_nil, List.append_assoc]
++
+ /-- Unfolding of the multi-message ciphertext sampler: the `encodeList` of the `q + 1`
+ encryptions `Enc(1^n, ⟨k, m_i⟩; s_i)` under the key `k = Gen(1^n; r.1)`, `s_i = r.2 i`. -/
+ theorem multiEncDist_apply (S : PrivateKeyScheme) (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool)
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean b/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean
+index 51f7a1e7e..7b54ccf42 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean
+@@ -41,6 +41,7 @@ Honest sampling is the field `Collection.sample_spec`.
+   security from one-wayness and a hard-core predicate.
+ * `TCSlib.Cryptography.TrapdoorCollection.OneWay.exists_glPad_singleBitSecure` supplies
+   the predicate and its evaluator through Goldreich–Levin under the width premise `henc`.
++* `TCSlib.Cryptography.pkPredictor_apply` reads the predictor's output on a guessed bit and coins.
+ 
+ ## References
+ 
+@@ -282,6 +283,15 @@ end TrapdoorCollection
+ def pkPredictor {α ρ : Type*} (D : α × Bool → ρ → Bool) (flip : Bool) : α → Bool × ρ → Bool :=
+   fun y c => xor (if D (y, c.1) c.2 then c.1 else !c.1) flip
+ 
++/-- **The predictor's output**: on `y` with coins `c = (c₁, c₂)` (the guessed bit and the
++distinguisher's coins), `pkPredictor D flip` outputs `c₁` if `D` accepts `(y, c₁)` with coins `c₂`
++and `¬c₁` otherwise, negated when `flip`,
++`pkPredictor D flip y c = xor (if D (y, c.1) c.2 then c.1 else !c.1) flip`
++[PS10, Theorem 104.4, proof]. -/
++theorem pkPredictor_apply {α ρ : Type*} (D : α × Bool → ρ → Bool) (flip : Bool) (y : α)
++    (c : Bool × ρ) : pkPredictor D flip y c = xor (if D (y, c.1) c.2 then c.1 else !c.1) flip :=
++  rfl
++
+ /-- The predictor is `owpPredictor` on `α × Unit`. -/
+ private theorem predProb_pkPredictor_eq {α ρ : Type*} [Fintype α] [Fintype ρ] (f : α ≃ α)
+     (B : α → Bool) (D : α × Bool → ρ → Bool) (flip : Bool) :
+diff --git a/TCSlib/InformationTheory/Entropy.lean b/TCSlib/InformationTheory/Entropy.lean
+index 89f050a8e..dccabe2cf 100644
+--- a/TCSlib/InformationTheory/Entropy.lean
++++ b/TCSlib/InformationTheory/Entropy.lean
+@@ -35,6 +35,9 @@ This file adds the min-entropy *value* that [PS10] defines and proves the two ag
+ * `FinDist.IsSource k p`: `p` is a `k`-source (min-entropy at least `k`).
+ * `FinDist.IsFlatSource k p`: `p` is uniform on a set of `2^k` points.
+ * `FinDist.flat s`: the uniform distribution on a nonempty finite set `s`.
++* `FinDist.mixture w hw0 hw1 p q`: the mixture `w · p + (1 - w) · q` (reader
++  `FinDist.mixture_apply`); a mixture of two `k`-sources is a `k`-source
++  (`FinDist.mixture_isSource`).
+ 
+ ## Main results
+ 
+@@ -212,4 +215,49 @@ theorem isSource_uniform [Nonempty α] : IsSource (logb 2 (Fintype.card α)) (un
+ 
+ end FinDist
+ 
++/-! ### Mixtures of sources -/
++
++section Mixture
++
++variable {α : Type*} [Fintype α]
++
++/-- The **mixture** of `p` and `q` with weight `w ∈ [0, 1]`: the distribution that gives each
++point `a` the convex combination `w · p(a) + (1 - w) · q(a)` (sample `p` with probability `w`,
++`q` otherwise). Framework glue, no textbook counterpart. -/
++protected noncomputable def FinDist.mixture (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1)
++    (p q : FinDist α) : FinDist α where
++  prob a := w * p a + (1 - w) * q a
++  nonneg a := add_nonneg (mul_nonneg hw0 (p.nonneg a))
++    (mul_nonneg (sub_nonneg.2 hw1) (q.nonneg a))
++  sum_prob := by
++    rw [sum_add_distrib, ← mul_sum, ← mul_sum, p.sum_prob, q.sum_prob]
++    ring
++
++/-- **The point probability of a mixture** is its defining convex combination:
++`mixture w p q a = w · p(a) + (1 - w) · q(a)`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.mixture_apply (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1) (p q : FinDist α)
++    (a : α) : FinDist.mixture w hw0 hw1 p q a = w * p a + (1 - w) * q a :=
++  rfl
++
++/-- **A mixture of two `k`-sources is a `k`-source**: if every point has probability at most
++`2^(-k)` under `p` and under `q`, then so under every mixture of them,
++`IsSource k p → IsSource k q → IsSource k (mixture w p q)`, since a convex combination preserves
++the common bound. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.mixture_isSource (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1) (p q : FinDist α)
++    (k : ℝ) (hp : FinDist.IsSource k p) (hq : FinDist.IsSource k q) :
++    FinDist.IsSource k (FinDist.mixture w hw0 hw1 p q) := by
++  have hp' := (FinDist.hasMinEntropy_iff p k).1 (FinDist.isSource_iff_hasMinEntropy.1 hp)
++  have hq' := (FinDist.hasMinEntropy_iff q k).1 (FinDist.isSource_iff_hasMinEntropy.1 hq)
++  apply FinDist.isSource_iff_hasMinEntropy.2
++  apply (FinDist.hasMinEntropy_iff _ _).2
++  intro a
++  rw [FinDist.mixture_apply]
++  calc w * p a + (1 - w) * q a
++      ≤ w * (2 : ℝ) ^ (-k) + (1 - w) * (2 : ℝ) ^ (-k) :=
++        add_le_add (mul_le_mul_of_nonneg_left (hp' a) hw0)
++          (mul_le_mul_of_nonneg_left (hq' a) (sub_nonneg.2 hw1))
++    _ = (2 : ℝ) ^ (-k) := by ring
++
++end Mixture
++
+ end TCSlib.InformationTheory
+diff --git a/TCSlib/InformationTheory/FinDist.lean b/TCSlib/InformationTheory/FinDist.lean
+index 944d4a7e8..c0be07bdb 100644
+--- a/TCSlib/InformationTheory/FinDist.lean
++++ b/TCSlib/InformationTheory/FinDist.lean
+@@ -34,6 +34,9 @@ probability, the `ℓ¹`–`ℓ²` bound, the leftover hash lemma) are all diffe
+   `2 ^ (-k)`.
+ * `FinDist.collision_uniform`, `FinDist.inv_card_le_collision`: the uniform distribution
+   minimizes collision probability.
++* `FinDist.map_uniform_equiv`, `FinDist.sum_map`, `FinDist.uniform_prod`, `FinDist.probTrue_nonneg`,
++  `FinDist.probTrue_le_one`, `FinDist.uniform_probTrue`: pushforwards and products of uniform
++  laws, and the range and uniform value of an acceptance probability.
+ 
+ ## References
+ 
+@@ -197,4 +200,81 @@ theorem FinDist.probTrue_eq (p : FinDist α) (D : α → Bool) :
+     p.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), p a :=
+   rfl
+ 
++/-! ### Pushforwards, products and acceptance of the uniform law -/
++
++section Pushforward
++
++variable {β : Type*} [Fintype β]
++
++/-- **The uniform law is invariant under a bijection**: pushing the uniform distribution on `α`
++through an equivalence `e : α ≃ β` gives the uniform distribution on `β`, `map e U_α = U_β`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.map_uniform_equiv [DecidableEq β] [Nonempty α] [Nonempty β] (e : α ≃ β) :
++    (FinDist.uniform α).map e = FinDist.uniform β := by
++  classical
++  apply FinDist.ext
++  intro b
++  rw [FinDist.map_apply]
++  have hf : (univ : Finset α).filter (fun a => e a = b) = {e.symm b} := by
++    ext a
++    simp only [mem_filter, mem_univ, true_and, mem_singleton]
++    constructor
++    · intro h
++      exact e.injective (h.trans (e.apply_symm_apply b).symm)
++    · rintro rfl
++      exact e.apply_symm_apply b
++  rw [hf, sum_singleton, FinDist.uniform_apply, FinDist.uniform_apply,
++    Fintype.card_congr e]
++
++/-- **Summing over a pushforward**: a weighted sum over the pushforward of `p` along `f` is the
++sum of the composite over `p`, `∑ b, (map f p) b · g b = ∑ a, p a · g (f a)`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.sum_map [DecidableEq β] (p : FinDist α) (f : α → β) (g : β → ℝ) :
++    (∑ b, (p.map f) b * g b) = ∑ a, p a * g (f a) := by
++  classical
++  simp only [FinDist.map_apply, sum_mul, sum_filter]
++  rw [sum_comm]
++  apply sum_congr rfl
++  intro a _
++  rw [sum_eq_single (f a)]
++  · simp
++  · intro b _ hba
++    simp only [if_neg (Ne.symm hba), zero_mul]
++  · intro h
++    exact False.elim (h (mem_univ _))
++
++/-- **An acceptance probability is nonnegative**: `0 ≤ Pr_{x ← p}[D x = 1]`, i.e.
++`0 ≤ p.probTrue D`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.probTrue_nonneg (p : FinDist α) (D : α → Bool) : 0 ≤ p.probTrue D := by
++  rw [FinDist.probTrue_eq]
++  exact sum_nonneg fun a _ => p.nonneg a
++
++/-- **An acceptance probability is at most one**: `Pr_{x ← p}[D x = 1] ≤ 1`, i.e.
++`p.probTrue D ≤ 1`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.probTrue_le_one (p : FinDist α) (D : α → Bool) : p.probTrue D ≤ 1 := by
++  rw [FinDist.probTrue_eq, ← p.sum_prob]
++  exact sum_le_sum_of_subset_of_nonneg (filter_subset _ _) (fun a _ _ => p.nonneg a)
++
++/-- **The product of two uniform laws is uniform**: the independent pair of uniform samples of
++`α` and `β` is the uniform distribution on `α × β`, `U_α × U_β = U_{α × β}`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.uniform_prod [Nonempty α] [Nonempty β] :
++    (FinDist.uniform α).prod (FinDist.uniform β) = FinDist.uniform (α × β) := by
++  apply FinDist.ext
++  intro z
++  rw [FinDist.prod_apply, FinDist.uniform_apply, FinDist.uniform_apply,
++    FinDist.uniform_apply, Fintype.card_prod, Nat.cast_mul, mul_inv_rev]
++  ring
++
++/-- **Acceptance under the uniform law is a count**: the probability that `D` accepts a uniform
++sample of `α` is the number of accepted points divided by `|α|`,
++`Pr_{U_α}[D = 1] = |{a : D a = 1}| · |α|⁻¹`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.uniform_probTrue [Nonempty α] (D : α → Bool) :
++    (FinDist.uniform α).probTrue D =
++      ((Finset.univ.filter (fun a => D a = true)).card : ℝ) * (Fintype.card α : ℝ)⁻¹ := by
++  rw [FinDist.probTrue_eq]
++  simp only [FinDist.uniform_apply, sum_const, nsmul_eq_mul]
++
++end Pushforward
++
+ end TCSlib.InformationTheory
+diff --git a/TCSlib/InformationTheory/Samples.lean b/TCSlib/InformationTheory/Samples.lean
+index 35f4df3e6..d7cc2daa2 100644
+--- a/TCSlib/InformationTheory/Samples.lean
++++ b/TCSlib/InformationTheory/Samples.lean
+@@ -30,6 +30,8 @@ an iterated expectation.
+ * `FinDist.probTrue_not`: the complement rule `Pr[¬D] = 1 − Pr[D]`.
+ * `FinDist.expect_le_add_of_le_one`: a function with values at most `1` has expectation at most
+   `ε + Pr[f > ε]`, for `ε ≥ 0`.
++* `FinDist.expect_map`, `FinDist.probTrue_map`, `FinDist.map_apply_expect`, `FinDist.map_map`,
++  `FinDist.map_prod_snd`: expectations, probabilities and point masses under a pushforward.
+ 
+ ## References
+ 
+@@ -152,4 +154,65 @@ theorem iid_apply (p : FinDist α) (m : ℕ) (s : Fin m → α) :
+ 
+ end FinDist
+ 
++/-! ### Expectations and probabilities under a pushforward -/
++
++section Pushforward
++
++variable {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
++
++/-- **Expectation under a pushforward composes the function**: the expectation of `g` under the
++pushforward of `p` along `f` is the expectation of `g ∘ f` under `p`,
++`E_{map f p}[g] = E_p[g ∘ f]`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.expect_map [DecidableEq β] (p : FinDist α) (f : α → β) (g : β → ℝ) :
++    (p.map f).expect g = p.expect (fun a => g (f a)) := by
++  rw [FinDist.expect_eq, FinDist.expect_eq]
++  exact FinDist.sum_map p f g
++
++/-- **Acceptance under a pushforward composes the test**: the probability that `D` accepts a
++sample of the pushforward of `p` along `f` is the probability that `D ∘ f` accepts a sample of
++`p`, `Pr_{map f p}[D = 1] = Pr_p[D ∘ f = 1]`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.probTrue_map [DecidableEq β] (p : FinDist α) (f : α → β) (D : β → Bool) :
++    (p.map f).probTrue D = p.probTrue (fun a => D (f a)) := by
++  rw [FinDist.probTrue_eq_expect, FinDist.expect_map, FinDist.probTrue_eq_expect]
++
++/-- **A pushforward's mass is the expectation of an indicator**: the pushforward of `p` along
++`f` gives `b` the expectation under `p` of the indicator of `f a = b`,
++`map f p b = E_p[1_{f a = b}]`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.map_apply_expect [DecidableEq β] (p : FinDist α) (f : α → β) (b : β) :
++    (p.map f) b = p.expect (fun a => if f a = b then 1 else 0) := by
++  classical
++  rw [FinDist.map_apply, FinDist.expect_eq, sum_filter]
++  apply sum_congr rfl
++  intro a _
++  split_ifs <;> simp
++
++/-- **Successive pushforwards compose**: pushing `p` forward along `f` and then along `g` is
++pushing it forward along `g ∘ f`, `map g (map f p) = map (g ∘ f) p`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.map_map [DecidableEq β] [DecidableEq γ] (p : FinDist α) (f : α → β)
++    (g : β → γ) : (p.map f).map g = p.map (fun a => g (f a)) := by
++  classical
++  apply FinDist.ext
++  intro c
++  rw [FinDist.map_apply_expect, FinDist.expect_map, FinDist.map_apply_expect]
++
++/-- **A pushforward of the second coordinate commutes with pairing**: mapping the second
++coordinate of an independent pair by `f` before pairing, and then mapping the pair by `g`, is
++mapping the pair by `(x, y) ↦ g (x, f y)`,
++`map g (p × map f q) = map (fun z => g (z.1, f z.2)) (p × q)`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.map_prod_snd [DecidableEq β] [DecidableEq γ] {δ : Type*} [Fintype δ]
++    [DecidableEq δ] (p : FinDist α) (q : FinDist β) (f : β → γ) (g : α × γ → δ) :
++    (p.prod (q.map f)).map g = (p.prod q).map (fun z => g (z.1, f z.2)) := by
++  classical
++  apply FinDist.ext
++  intro d
++  rw [FinDist.map_apply_expect, FinDist.map_apply_expect, FinDist.expect_prod,
++    FinDist.expect_prod]
++  congr 1
++  funext a
++  exact FinDist.expect_map q f (fun c => if g (a, c) = d then 1 else 0)
++
++end Pushforward
++
+ end TCSlib.InformationTheory

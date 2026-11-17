@@ -1,0 +1,18 @@
+import Lean
+import TCSlib.Cryptography.ZeroKnowledge.InteractionWords
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace S1Controls
+
+theorem ctlEncodeMsgsW : type_of% @TCSlib.Cryptography.Strategy.encodeMsgs_eq := by
+  intros
+  rfl
+
+theorem ctlEncodeMsgsWReader : type_of% @TCSlib.Cryptography.Strategy.encodeMsgs_eq :=
+  @TCSlib.Cryptography.Strategy.encodeMsgs_eq
+
+end S1Controls
+

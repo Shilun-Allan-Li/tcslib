@@ -1,0 +1,18 @@
+import Lean
+import TCSlib.InformationTheory.Entropy
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace S1Controls
+
+theorem ctlMixture : type_of% @TCSlib.InformationTheory.FinDist.mixture_apply := by
+  intros
+  rfl
+
+theorem ctlMixtureReader : type_of% @TCSlib.InformationTheory.FinDist.mixture_apply :=
+  @TCSlib.InformationTheory.FinDist.mixture_apply
+
+end S1Controls
+

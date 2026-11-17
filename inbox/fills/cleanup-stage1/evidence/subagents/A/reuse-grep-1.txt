@@ -1,0 +1,91 @@
+### S1-09 ofFn_blocks_symm_eq_flatMap
+TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean:79:  rw [tableCoins_symm, ofFn_arrowCongr_finCongr, FunFamily.ofFn_blocks_symm, secretWord_eq]
+TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean:83:  rw [FunFamily.ofFn_blocks_symm, OneWay.flatten_ofFn_two]
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:138:  have h := FunFamily.ofFn_blocks_symm n n (FunFamily.blocks n n (tableSignature T m))
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:725:  have hσ := FunFamily.ofFn_blocks_symm n n (FunFamily.blocks n n σ)
+TCSlib/Cryptography/Candidates/Factoring.lean:231:`(List.ofFn w).take n`/`.drop n` (`FunFamily.ofFn_blocks_symm`, `List.ofFn_mul`) and
+TCSlib/Cryptography/Candidates/Factoring.lean:594:(`FunFamily.ofFn_blocks_symm`, `List.ofFn_succ`, `List.take_left`), so `A''` factors
+TCSlib/Cryptography/Asymptotic/OneWay.lean:380:theorem ofFn_blocks_symm (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) :
+TCSlib/Cryptography/Asymptotic/OneWay.lean:381:    List.ofFn ((blocks q ℓ).symm t) = (List.ofFn fun i => List.ofFn (t i)).flatten := by
+TCSlib/Cryptography/Asymptotic/OneWay.lean:449:(`ofFn_blocks_symm`, the hypothesis on `F`). -/
+TCSlib/Cryptography/Asymptotic/OneWay.lean:454:  rw [NUPPT.advInput_eq, hspec, prod_f, ofFn_blocks_symm]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:724:    List.ofFn ((FunFamily.blocks 2 ℓ).symm t) = List.ofFn (t 0) ++ List.ofFn (t 1) := by
+TCSlib/Cryptography/Asymptotic/OneWay.lean:725:  rw [FunFamily.ofFn_blocks_symm, OneWay.flatten_ofFn_two]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:746:`Fin.appendEquiv`, `uprob_comp_equiv`, `ofFn_blocks_symm`). Probability: `invProbAt_prod_eq`
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:84:  List.ofFn ((blocksEquiv k m).symm s)
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:86:/-- The defining equation of `blocksStr`: `blocksStr s = List.ofFn ((blocksEquiv k m).symm s)`. -/
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:89:      (List.ofFn ((blocksEquiv k m).symm s)) := rfl
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:433:theorem ofFn_blocks_symm {q ℓ : ℕ} (V : Fin q → Fin ℓ → Bool) (F : ℕ → List Bool)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:435:    List.ofFn ((blocks q ℓ).symm V) = (List.range q).flatMap F := by
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:812:string of `(blocks t ℓ).symm` (`ofFn_blocks_symm`). The reduction is
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:821:          (List.ofFn ((blocks (t.eval n) (sX.eval n)).symm cX) ++
+### S1-11 ofFn_splitBits
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean:140:  have hw : List.ofFn w = List.ofFn (splitBits w).1 ++ List.ofFn (splitBits w).2 := by
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean:145:  have htake : (List.ofFn w).take a = List.ofFn (splitBits w).1 := by
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean:147:  have hdrop : (List.ofFn w).drop a = List.ofFn (splitBits w).2 := by
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:259:  have hs : List.ofFn (splitBits a).2 = (List.ofFn a).drop n := by
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:464:    have hp : (List.ofFn a).take (H.domLen.eval n) = List.ofFn (splitBits a).1 :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:181:      (H.eval (atParam n (pairEncode i (List.ofFn (splitBits res.1).1)))))
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:195:        (H.eval (atParam n (pairEncode i (List.ofFn (splitBits res.1).1)))))
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:351:(padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn (splitBits a).1)))))
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:368:              (List.ofFn (splitBits a).1)))))
+TCSlib/Cryptography/Authentication/Encoding.lean:23:`ofFn_splitBits_fst`, `ofFn_splitBits_snd` read the two halves as the prefix and suffix words.
+TCSlib/Cryptography/Authentication/Encoding.lean:42:`List.ofFn (splitBits w).1 = (List.ofFn w).take a`. Framework glue, no textbook counterpart. -/
+TCSlib/Cryptography/Authentication/Encoding.lean:43:protected theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
+TCSlib/Cryptography/Authentication/Encoding.lean:44:    List.ofFn (splitBits w).1 = (List.ofFn w).take a := by
+TCSlib/Cryptography/Authentication/Encoding.lean:50:bits: `List.ofFn (splitBits w).2 = (List.ofFn w).drop a`. Framework glue, no textbook
+TCSlib/Cryptography/Authentication/Encoding.lean:52:protected theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
+TCSlib/Cryptography/Authentication/Encoding.lean:53:    List.ofFn (splitBits w).2 = (List.ofFn w).drop a := by
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean:28:* `ofFn_splitBits_fst`, `ofFn_splitBits_snd` read the words of two consecutive bit vectors.
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean:44:`List.ofFn (splitBits w).1 = (List.ofFn w).take a`. -/
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean:45:theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean:46:    List.ofFn (splitBits w).1 = (List.ofFn w).take a := by
+### S1-22 statClose_of_uprob_ne / of_uprob_ne
+TCSlib/Cryptography/Candidates/DDH.lean:145:theorem statClose_of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
+TCSlib/Cryptography/Candidates/DDH.lean:146:    StatClose X Y (uprob fun s => X s ≠ Y s) := by
+TCSlib/Cryptography/Asymptotic/Sampling.lean:78:* `TCSlib.Cryptography.StatClose.of_uprob_ne` — two samplers on the same seeds are close within
+TCSlib/Cryptography/Asymptotic/Sampling.lean:176:theorem StatClose.of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:177:    StatClose X Y (uprob fun s => X s ≠ Y s) := by
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1149:/-- Two events that agree outside `C` have probabilities within `Pr[C]` (`statClose_of_uprob_ne`
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1154:  have hs := (statClose_of_uprob_ne (fun ω => decide (A ω)) (fun ω => decide (B ω))).abs_uprob_sub_le
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1757:(`statClose_of_uprob_ne`). By `statClose_sampleBelowL` with `m = p − 1` and the count of the roots
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceSimulator.lean:130:    StatisticalSwitch.statClose_of_eq_off real _ (fun r => Bad r.1) δ hBad' fun r hr => by
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SimulationBound.lean:103:  apply StatisticalSwitch.statClose_of_eq_off _ _ Bad δ hBad
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:26:* `statClose_of_eq_off`: agreement outside `Bad` gives closeness at most `Pr[Bad]`.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:46:theorem statClose_of_eq_off {σ γ : Type*} [Fintype σ] (X Y : σ → γ)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:72:  distAdv_le_of_statClose X Y (statClose_of_eq_off X Y Bad δ hBad heq) D
+### S1-18/19 encodeMsgs_eq / flatMap / foldr_pairEncode_nil
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:27:The labelled sample is a fold of pairs, which is a flat concatenation (`foldr_pairEncode_nil`),
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:37:* `LearnPRF.foldr_pairEncode_nil`: a fold of pairs ending in `[]` is a concatenation.
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:54:`L.foldr pairEncode [] = L.flatMap (fun a => pairEncode a [])`.
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:58:theorem foldr_pairEncode_nil (L : List (List Bool)) :
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:59:    L.foldr pairEncode [] = L.flatMap fun a => pairEncode a [] := by
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:243:examples is the same concatenation (`foldr_pairEncode_nil`). -/
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:259:    MultiMsg.flatMap_range_blocks blk relabel hb _ hblocks, foldr_pairEncode_nil,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:34:* `ComposeMachines.encodeMsgs_append`, `encodeMsgs_eq_flatMap`, `encodeMsgs_slotMsgs`: the
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:150:theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:167:  rw [Compose.slotMsgs_eq, encodeMsgs_eq_flatMap, List.flatMap_map]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:495:at the pairs, `L` blocks of `R` (`encodeMsgs_eq_flatMap`, `flatMap_range_mul`, `slotFromB_mul_add`),
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:540:    rw [encodeMsgs_eq_flatMap, List.flatMap_map, flatMap_range_mul]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:610:    rw [encodeMsgs_eq_flatMap, List.flatMap_map, flatMap_range_mul]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean:52:`|encodeMsgs l| ≤ |l| (2c + 2)` (`encodeMsgs_eq_flatMap`, `BinArith.length_encWords_le`).
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean:141:    ← encodeMsgs_eq_flatMap, msgAt_encodeMsgs, Compose.getD_map_range hj, simV_pairEncode]
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:80:* `TCSlib.Cryptography.Strategy.encodeMsgs_eq`, `Strategy.encodeMsgs_eq_flatMap`,
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:156:theorem encodeMsgs_eq (h : List (List Bool)) : encodeMsgs h = h.foldr pairEncode [] := rfl
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:161:protected theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:912:theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:990:  rw [ofFn_eq_map_range f F fun t => h t t.isLt, encodeMsgs_eq_flatMap, List.flatMap_map]
+### S1-20 iterate_pairSndD_encodeMsgs
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:173:protected theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:919:theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:101:theorem iterate_pairSndD_encodeMsgs : ∀ (k : ℕ) (hist : List (List Bool)),
+### S1-26 msgAt_encodeMsgs
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:137:theorem msgAt_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:191:protected theorem msgAt_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:109:theorem msgAt_eq (w : List Bool) (i : ℕ) : msgAt w i = pairFstD (pairSndD^[i] w) := rfl
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:112:theorem msgAt_encodeMsgs (l : List (List Bool)) (i : ℕ) (hi : i < l.length) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:341:theorem lastMsg_poly : PolyTimeComputable fun w => pairFstD (pairSndD^[lastSteps w] w) :=
+### S1-21 encodeMsgs_eq_encWords
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:83:theorem encodeMsgs_eq_encWords (L : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/InteractionWords.lean:36:protected theorem encodeMsgs_eq_encWords (L : List (List Bool)) :
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:40:theorem encodeMsgs_eq_encWords (h : List (List Bool)) :

@@ -1,0 +1,58 @@
+zipWith_xor_cancel_right 0
+recordBits 0
+recordBits_none 0
+recordBits_some 0
+length_recordBits 0
+getD_ofFn 0
+ofFn_blocks_symm_eq_flatMap 0
+of_uprob_ne 0
+ofFn_splitBits_fst 1
+    HEAD:TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean:45:theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
+ofFn_splitBits_snd 1
+    HEAD:TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean:55:theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
+encodeMsgs_eq 0
+encodeMsgs_eq_flatMap 3
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:150:theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:912:theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:503:theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+iterate_pairSndD_encodeMsgs 2
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:101:theorem iterate_pairSndD_encodeMsgs : ∀ (k : ℕ) (hist : List (List Bool)),
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:919:theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) :
+msgAt_encodeMsgs 2
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:137:theorem msgAt_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:112:theorem msgAt_encodeMsgs (l : List (List Bool)) (i : ℕ) (hi : i < l.length) :
+encodeMsgs_eq_encWords 2
+    HEAD:TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:40:theorem encodeMsgs_eq_encWords (h : List (List Bool)) :
+    HEAD:TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:83:theorem encodeMsgs_eq_encWords (L : List (List Bool)) :
+flatMap_range_ite 4
+    HEAD:TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:190:private theorem flatMap_range_ite (m R : ℕ) :
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:61:theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:142:theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:160:theorem flatMap_range_ite (f : ℕ → List Bool) (L : ℕ) :
+polyTimeComputable_flatMap_range 3
+    HEAD:TCSlib/Complexity/FormulaKit/Emit.lean:127:theorem polyTimeComputable_flatMap_range (count : List Bool → ℕ)
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:81:theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:159:theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+iterSnd_poly 2
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:117:theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:190:theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+zeros_poly 4
+    HEAD:TCSlib/Cryptography/Games/Efficiency/Strings.lean:152:theorem zeros_poly {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:208:theorem zeros_poly : PolyTimeComputable fun w => List.replicate w.length false :=
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:153:theorem zeros_poly : PolyTimeComputable fun w => List.replicate w.length false :=
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:292:theorem zeros_poly {L : List Bool → ℕ} (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
+padTo 2
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:223:def padTo (L : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate L false).take L
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:303:def padTo (L : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate L false).take L
+padTo_eq 1
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:226:theorem padTo_eq (L : ℕ) (w : List Bool) : padTo L w = (w ++ List.replicate L false).take L :=
+padTo_poly 2
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:232:theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:306:theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+length_padTo 2
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:239:theorem length_padTo (L : ℕ) (w : List Bool) : (padTo L w).length = L := by
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:312:theorem length_padTo (L : ℕ) (w : List Bool) : (padTo L w).length = L := by
+getD_padTo 1
+    HEAD:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:316:theorem getD_padTo (L : ℕ) (w : List Bool) {i : ℕ} (hi : i < L) :
+padTo_of_length 1
+    HEAD:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean:98:theorem padTo_of_length {L : ℕ} {w : List Bool} (h : w.length = L) : padTo L w = w := by

@@ -1,0 +1,25 @@
+import Lean
+import TCSlib.Cryptography.Games.Tapes
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace S1Controls
+
+theorem ctlTapeImpl : type_of% @TCSlib.Cryptography.Games.tapeImpl_apply := by
+  intros
+  rfl
+
+theorem ctlTapeImplReader : type_of% @TCSlib.Cryptography.Games.tapeImpl_apply :=
+  @TCSlib.Cryptography.Games.tapeImpl_apply
+
+theorem ctlOvr : type_of% @TCSlib.Cryptography.Games.ovr_cons := by
+  intros
+  rfl
+
+theorem ctlOvrReader : type_of% @TCSlib.Cryptography.Games.ovr_cons :=
+  @TCSlib.Cryptography.Games.ovr_cons
+
+end S1Controls
+

@@ -1,0 +1,286 @@
+{
+ "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean": [
+  {
+   "after": 48,
+   "text": "* `Complexity.IterateFind.host_dispatch`, `host_branch`, `host_halt` — the host's control steps.",
+   "what": "insert +2",
+   "first": "* `Complexity.IterateFind.host_dispatch_view`, `host_branch_"
+  },
+  {
+   "after": 389,
+   "text": "",
+   "what": "insert +58",
+   "first": "/-- **The anchor's dispatch, for the typed view** (`host_dis"
+  }
+ ],
+ "TCSlib/Complexity/Randomized/PPT.lean": [
+  {
+   "after": 111,
+   "text": "* `Complexity.NUPPT.nonempty` — the class is inhabited.",
+   "what": "insert +1",
+   "first": "* `Complexity.NUPPT.length_ofFn_coins` — a coin string `r : "
+  },
+  {
+   "after": 222,
+   "text": "abbrev Coins (n : ℕ) : Type := Fin (A.coinLen n) → Bool",
+   "what": "insert +7",
+   "first": ""
+  }
+ ],
+ "TCSlib/Cryptography/Asymptotic/Adversary.lean": [
+  {
+   "after": 72,
+   "text": "* `TCSlib.Cryptography.FunFamily.ofFn_blocks` — block `j` of a string is its `j`-th window.",
+   "what": "insert +2",
+   "first": "* `TCSlib.Cryptography.FunFamily.ofFn_blocks_symm_eq_flatMap"
+  },
+  {
+   "after": 294,
+   "text": "",
+   "what": "insert +28",
+   "first": "/-- **The string of a tuple of blocks is the concatenation o"
+  }
+ ],
+ "TCSlib/Cryptography/Asymptotic/Sampling.lean": [
+  {
+   "after": 77,
+   "text": "  — closure properties.",
+   "what": "insert +2",
+   "first": "* `TCSlib.Cryptography.StatClose.of_uprob_ne` — two samplers"
+  },
+  {
+   "after": 164,
+   "text": "    StatClose X Y δ' := fun T => (h T).trans hδ",
+   "what": "insert +27",
+   "first": ""
+  }
+ ],
+ "TCSlib/Cryptography/Authentication/Encoding.lean": [
+  {
+   "after": 22,
+   "text": "`splitBits_fst`, `splitBits_snd` and `atParam_eq` expose the encoded values.",
+   "what": "insert +1",
+   "first": "`ofFn_splitBits_fst`, `ofFn_splitBits_snd` read the two halv"
+  },
+  {
+   "after": 39,
+   "text": "",
+   "what": "insert +18",
+   "first": "/-- The word of the first component of `splitBits w` is the "
+  }
+ ],
+ "TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean": [
+  {
+   "after": 35,
+   "text": "  [PS10, Theorem 94.2].",
+   "what": "insert +2",
+   "first": "* `PrivateKeyScheme.encodeList_eq_flatMap` writes the tuple "
+  },
+  {
+   "after": 141,
+   "text": "theorem encodeList_nil : encodeList [] = [] := rfl",
+   "what": "insert +12",
+   "first": ""
+  }
+ ],
+ "TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean": [
+  {
+   "after": 43,
+   "text": "  the predicate and its evaluator through Goldreich–Levin under the width premise `henc`.",
+   "what": "insert +1",
+   "first": "* `TCSlib.Cryptography.pkPredictor_apply` reads the predicto"
+  },
+  {
+   "after": 283,
+   "text": "  fun y c => xor (if D (y, c.1) c.2 then c.1 else !c.1) flip",
+   "what": "insert +9",
+   "first": ""
+  }
+ ],
+ "TCSlib/Cryptography/Foundations/BitLists.lean": [
+  {
+   "after": 24,
+   "text": "* `TCSlib.Cryptography.xorPerm v`: exclusive-or with the vector `v`, as a permutation.",
+   "what": "insert +1",
+   "first": "* `TCSlib.Cryptography.recordBits w o`: the `(w + 1)`-bit re"
+  },
+  {
+   "after": 41,
+   "text": "* `TCSlib.Cryptography.flatMap_range_drop`: reading the successive suffixes of a list.",
+   "what": "insert +3",
+   "first": "* `TCSlib.Cryptography.getD_ofFn`, `zipWith_xor_cancel_right"
+  },
+  {
+   "after": 64,
+   "text": "    Option.getD_some]",
+   "what": "insert +8",
+   "first": ""
+  },
+  {
+   "after": 98,
+   "text": "    cases a[i] <;> cases c[i] <;> rfl",
+   "what": "insert +13",
+   "first": ""
+  },
+  {
+   "after": 191,
+   "text": "",
+   "what": "insert +27",
+   "first": "/-! ### Records of an optional bit vector -/"
+  }
+ ],
+ "TCSlib/Cryptography/Games.lean": [
+  {
+   "after": 11,
+   "text": "import TCSlib.Cryptography.Games.Forwarding",
+   "what": "insert +1",
+   "first": "import TCSlib.Cryptography.Games.Tapes"
+  },
+  {
+   "after": 47,
+   "text": "  handlers read on lists, and hard-wiring a second input component (S2b layer).",
+   "what": "insert +2",
+   "first": "* `TCSlib.Cryptography.Games.Tapes`: simulation through a st"
+  }
+ ],
+ "TCSlib/Cryptography/Games/Bridges/Experiments.lean": [
+  {
+   "after": 36,
+   "text": "* `Games.Bridge.prob_sample_eq_uprob`: `Pr[x ← $ α : p x] = uprob p`.",
+   "what": "insert +1",
+   "first": "* `Games.Bridge.expect_sample_eq_uexp`: `𝔼[x ← $ α : f x] = "
+  },
+  {
+   "after": 68,
+   "text": "  rw [prob_eq_expect, expect_sample, uprob_eq_card_filter, sum_boole, inv_mul_eq_div]",
+   "what": "insert +7",
+   "first": ""
+  }
+ ],
+ "TCSlib/Cryptography/Games/Efficiency/Strings.lean": [
+  {
+   "after": 40,
+   "text": "* `EffFill.encodeLog_append_single`, `EffFill.ofFn_getD_decodeFin`.",
+   "what": "insert +1",
+   "first": "* `EffFill.length_le_length_encodeLog`: an encoded log has a"
+  },
+  {
+   "after": 81,
+   "text": "    have h2 := length_encodeLog_le codec E h fun e' he' => hE e' (List.mem_cons_of_mem e he')",
+   "what": "insert +10",
+   "first": "    omega"
+  }
+ ],
+ "TCSlib/Cryptography/Games/Machines.lean": [
+  {
+   "after": 44,
+   "text": "  queries.",
+   "what": "insert +1",
+   "first": "* `Games.OracleComp.exists_eq_pure_of_costBoundedBy_zero`: a"
+  },
+  {
+   "after": 177,
+   "text": "",
+   "what": "insert +11",
+   "first": "/-- **A computation of cost zero is a return:** if every que"
+  }
+ ],
+ "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean": [
+  {
+   "after": 42,
+   "text": "* `Complexity.NUPPT.toOracleAdversary_boundedBy` gives the query bound.",
+   "what": "insert +1",
+   "first": "* `Complexity.NUPPT.eval_toOracleAdversary_padFin`: an oracl"
+  },
+  {
+   "after": 340,
+   "text": "",
+   "what": "insert +20",
+   "first": "/-- **An oracle adversary read at equal widths:** for `a' = "
+  }
+ ],
+ "TCSlib/Cryptography/ZeroKnowledge.lean": [
+  {
+   "after": 7,
+   "text": "import TCSlib.Cryptography.ZeroKnowledge.Interaction",
+   "what": "insert +1",
+   "first": "import TCSlib.Cryptography.ZeroKnowledge.InteractionWords"
+  },
+  {
+   "after": 41,
+   "text": "  [PS10, §4.4] (Def-114.a – Def-116.b).",
+   "what": "insert +1",
+   "first": "* `InteractionWords` — the history encoding as a word list ("
+  }
+ ],
+ "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean": [
+  {
+   "after": 63,
+   "text": "  `unarySize_poly` — `Nat.sqrt`, division, remainder and `Nat.size` in unary.",
+   "what": "insert +4",
+   "first": "* `TCSlib.Cryptography.EncodingMachines.flatMap_range_ite`, "
+  },
+  {
+   "after": 693,
+   "text": "",
+   "what": "insert +169",
+   "first": "/-! ### Concatenation loops, iterated projections and zero p"
+  }
+ ],
+ "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean": [
+  {
+   "after": 79,
+   "text": "* `TCSlib.Cryptography.exec_length` — after `k` moves exactly `k` messages have been sent.",
+   "what": "insert +3",
+   "first": "* `TCSlib.Cryptography.Strategy.encodeMsgs_eq`, `Strategy.en"
+  },
+  {
+   "after": 148,
+   "text": "  | cons m h => simp",
+   "what": "insert +43",
+   "first": ""
+  }
+ ],
+ "TCSlib/InformationTheory/Entropy.lean": [
+  {
+   "after": 37,
+   "text": "* `FinDist.flat s`: the uniform distribution on a nonempty finite set `s`.",
+   "what": "insert +3",
+   "first": "* `FinDist.mixture w hw0 hw1 p q`: the mixture `w · p + (1 -"
+  },
+  {
+   "after": 214,
+   "text": "",
+   "what": "insert +45",
+   "first": "/-! ### Mixtures of sources -/"
+  }
+ ],
+ "TCSlib/InformationTheory/FinDist.lean": [
+  {
+   "after": 36,
+   "text": "  minimizes collision probability.",
+   "what": "insert +3",
+   "first": "* `FinDist.map_uniform_equiv`, `FinDist.sum_map`, `FinDist.u"
+  },
+  {
+   "after": 199,
+   "text": "",
+   "what": "insert +77",
+   "first": "/-! ### Pushforwards, products and acceptance of the uniform"
+  }
+ ],
+ "TCSlib/InformationTheory/Samples.lean": [
+  {
+   "after": 32,
+   "text": "  `ε + Pr[f > ε]`, for `ε ≥ 0`.",
+   "what": "insert +2",
+   "first": "* `FinDist.expect_map`, `FinDist.probTrue_map`, `FinDist.map"
+  },
+  {
+   "after": 154,
+   "text": "",
+   "what": "insert +61",
+   "first": "/-! ### Expectations and probabilities under a pushforward -"
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+import Lean
+import TCSlib.InformationTheory.Samples
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace S1Controls
+
+theorem ctlExpect : type_of% @TCSlib.InformationTheory.FinDist.expect_eq := by
+  intros
+  rfl
+
+theorem ctlExpectReader : type_of% @TCSlib.InformationTheory.FinDist.expect_eq :=
+  @TCSlib.InformationTheory.FinDist.expect_eq
+
+end S1Controls
+
