@@ -286,3 +286,101 @@ $B$, and its configuration at time $T$ has the next cleaning state, unchanged in
 position and output, and both tape families blank with all their heads at zero except
 that the stated tape index advances according to the cleaning successor.
 \end{lemma}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Machines --- Clean Sweep: further results}
+
+\begin{lemma}[Input head of the combined configuration]
+\lean{Complexity.LogProg.ccfg_inputPos}
+\label{Complexity.LogProg.ccfg_inputPos}
+\leanok
+\uses{Complexity.LogProg.CleanSt, Complexity.LogProg.ccfg}
+\difficulty{1}
+Let $x$ be a finite Boolean input and $k$ a natural number, and choose an optional
+control state of the cleaning machine, an input-head position $i_p\in\{0,\dots,|x|+1\}$,
+two families of $k$ work tapes with their head positions, and an output word. The
+configuration with $2k$ work tapes formed by placing the first family before the second
+has input-head position $i_p$.
+\end{lemma}
+
+\begin{lemma}[Work tapes of the combined configuration]
+\lean{Complexity.LogProg.ccfg_workTapes}
+\label{Complexity.LogProg.ccfg_workTapes}
+\leanok
+\uses{Complexity.LogProg.CleanSt, Complexity.LogProg.ccfg}
+\difficulty{1}
+Let $x$ be a finite Boolean input and $k$ a natural number, and choose an optional
+control state of the cleaning machine, an input-head position, $k$ work tapes $D_t$
+with head positions $D_p$, $k$ mark tapes $M_t$ with head positions $M_p$, and an output
+word. The $2k$ work tapes of the combined configuration are $D_t$ followed by $M_t$:
+tape $i<k$ is $D_t(i)$ and tape $k+i$ is $M_t(i)$.
+\end{lemma}
+
+\begin{lemma}[Work-head positions of the combined configuration]
+\lean{Complexity.LogProg.ccfg_workTapePos}
+\label{Complexity.LogProg.ccfg_workTapePos}
+\leanok
+\uses{Complexity.LogProg.CleanSt, Complexity.LogProg.ccfg}
+\difficulty{1}
+Let $x$ be a finite Boolean input and $k$ a natural number, and choose an optional
+control state of the cleaning machine, an input-head position, $k$ work tapes $D_t$
+with head positions $D_p$, $k$ mark tapes $M_t$ with head positions $M_p$, and an output
+word. The $2k$ work-head positions of the combined configuration are $D_p$ followed by
+$M_p$: head $i<k$ is at $D_p(i)$ and head $k+i$ is at $M_p(i)$.
+\end{lemma}
+
+\begin{lemma}[Output of the combined configuration]
+\lean{Complexity.LogProg.ccfg_output}
+\label{Complexity.LogProg.ccfg_output}
+\leanok
+\uses{Complexity.LogProg.CleanSt, Complexity.LogProg.ccfg}
+\difficulty{1}
+Let $x$ be a finite Boolean input and $k$ a natural number, and choose an optional
+control state of the cleaning machine, an input-head position, two families of $k$ work
+tapes with their head positions, and an output word $o$. The configuration with $2k$
+work tapes formed by placing the first family before the second has output $o$.
+\end{lemma}
+
+\begin{lemma}[Interval mark at the origin]
+\lean{Complexity.LogProg.markI_zero}
+\label{Complexity.LogProg.markI_zero}
+\leanok
+\uses{Complexity.LogProg.markI}
+\difficulty{1}
+For integers $a,b$, let $m_{a,b}$ be the tape content on $\mathbb{Z}$ that is true at
+$0$, false at every nonzero $z$ with $a\le z\le b$, and blank elsewhere. Then
+$m_{a,b}(0)$ is true.
+\end{lemma}
+
+\begin{lemma}[Interval mark inside the interval]
+\lean{Complexity.LogProg.markI_of_mem}
+\label{Complexity.LogProg.markI_of_mem}
+\leanok
+\uses{Complexity.LogProg.markI}
+\difficulty{1}
+For integers $a,b$, let $m_{a,b}$ be the tape content on $\mathbb{Z}$ that is true at
+$0$, false at every nonzero $z$ with $a\le z\le b$, and blank elsewhere. If $z\ne 0$ and
+$a\le z\le b$, then $m_{a,b}(z)$ is false.
+\end{lemma}
+
+\begin{lemma}[Interval mark outside the interval]
+\lean{Complexity.LogProg.markI_of_not_mem}
+\label{Complexity.LogProg.markI_of_not_mem}
+\leanok
+\uses{Complexity.LogProg.markI}
+\difficulty{1}
+For integers $a,b$, let $m_{a,b}$ be the tape content on $\mathbb{Z}$ that is true at
+$0$, false at every nonzero $z$ with $a\le z\le b$, and blank elsewhere. If $z\ne 0$ and
+$z$ does not satisfy $a\le z\le b$, then $m_{a,b}(z)$ is blank.
+\end{lemma}
+
+\begin{lemma}[Work-tape position bound, unfolded]
+\lean{Complexity.LogProg.PB_iff}
+\label{Complexity.LogProg.PB_iff}
+\leanok
+\uses{Complexity.LogProg.CleanSt, Complexity.LogProg.PB, Turing.Cfg}
+\difficulty{1}
+Let $B$ be an integer and let $g$ be a configuration of the cleaning machine with $2k$
+work tapes on a Boolean input $x$. Then $g$ satisfies the work-tape position bound $B$
+if and only if every work-tape head position $p_j$ of $g$ satisfies $\abs{p_j}\le B$.
+\end{lemma}

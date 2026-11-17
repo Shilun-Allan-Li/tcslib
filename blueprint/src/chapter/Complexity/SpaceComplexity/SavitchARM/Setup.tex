@@ -68,3 +68,19 @@ other registers zero and no answer. Every configuration before the final one sat
 the guard that the instruction meets its stated preconditions and every register value
 is at most $B$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Savitch ARM --- Setup: further results}
+
+\begin{theorem}[Register vector of the post-setup state]
+\lean{Complexity.LogProg.SavitchARM.setSt_toV}
+\label{Complexity.LogProg.SavitchARM.setSt_toV}
+\leanok
+\uses{Complexity.LogProg.SavitchARM.St.toV, Complexity.LogProg.SavitchARM.St.toV_zero, Complexity.LogProg.SavitchARM.St.upd_K, Complexity.LogProg.SavitchARM.St.upd_s, Complexity.LogProg.SavitchARM.St.upd_w, Complexity.LogProg.SavitchARM.rK, Complexity.LogProg.SavitchARM.rs, Complexity.LogProg.SavitchARM.rw, Complexity.LogProg.SavitchARM.setSt}
+\difficulty{2}
+For natural numbers $s$ and $w$, consider the register state of the Savitch machine in
+which the window radius is $s$, the code width is $w$, the code bound is $2^w$, and all
+other fields are zero. Its vector of $18$ register values is the all-zero vector updated
+to hold $s$ in the radius register, $w$ in the width register, and $2^w$ in the
+code-bound register.
+\end{theorem}

@@ -297,3 +297,200 @@ the machine in $A(T(n)+n+1)^2$ steps.
 The component $W$ of the square diagonal simulator is equal to the machine obtained by
 composing the preliminary machine with the universal machine using buffered composition.
 \end{theorem}
+
+\begin{definition}[Hennie--Stearns normal-form overhead]
+\lean{Complexity.TimeHierarchy.logOverhead}
+\label{Complexity.TimeHierarchy.logOverhead}
+\leanok
+For a natural number $t$, the normal-form overhead is
+\[\Psi(t) = (t+1)\bigl(\lfloor\log_2(t+1)\rfloor+1\bigr),\]
+where $\lfloor\log_2\rfloor$ denotes the floor of the binary logarithm.
+\end{definition}
+
+\begin{theorem}[Formula for the normal-form overhead]
+\lean{Complexity.TimeHierarchy.logOverhead_eq}
+\label{Complexity.TimeHierarchy.logOverhead_eq}
+\leanok
+\uses{Complexity.TimeHierarchy.logOverhead}
+\difficulty{1}
+For every natural number $t$, the Hennie--Stearns normal-form overhead $\Psi(t)$ equals
+$(t+1)\bigl(\lfloor\log_2(t+1)\rfloor+1\bigr)$.
+\end{theorem}
+
+\begin{definition}[Diagonal overhead of order $f\log f$]
+\lean{Complexity.TimeHierarchy.logDiagOverhead}
+\label{Complexity.TimeHierarchy.logDiagOverhead}
+\leanok
+For natural numbers $t$ and $n$, the logarithmic diagonal overhead is
+\[\Phi(t,n) = (t+n+1)\bigl(\lfloor\log_2(t+n+1)\rfloor+1\bigr),\]
+the $f\log f$ analogue of the quadratic overhead $(t+n+1)^2$.
+\end{definition}
+
+\begin{theorem}[Formula for the logarithmic diagonal overhead]
+\lean{Complexity.TimeHierarchy.logDiagOverhead_eq}
+\label{Complexity.TimeHierarchy.logDiagOverhead_eq}
+\leanok
+\uses{Complexity.TimeHierarchy.logDiagOverhead}
+\difficulty{1}
+For all natural numbers $t$ and $n$, the logarithmic diagonal overhead $\Phi(t,n)$ equals
+$(t+n+1)\bigl(\lfloor\log_2(t+n+1)\rfloor+1\bigr)$.
+\end{theorem}
+
+\begin{theorem}[Logarithmic diagonal overhead dominates time]
+\lean{Complexity.TimeHierarchy.le_logDiagOverhead}
+\label{Complexity.TimeHierarchy.le_logDiagOverhead}
+\leanok
+\uses{Complexity.TimeHierarchy.logDiagOverhead, Complexity.TimeHierarchy.logDiagOverhead_eq}
+\difficulty{3}
+For all natural numbers $t$ and $n$,
+$t \le (t+n+1)\bigl(\lfloor\log_2(t+n+1)\rfloor+1\bigr)$.
+\end{theorem}
+
+\begin{theorem}[Input padding at logarithmic overhead]
+\lean{Complexity.TimeHierarchy.logOverhead_add_le}
+\label{Complexity.TimeHierarchy.logOverhead_add_le}
+\leanok
+\uses{Complexity.TimeHierarchy.logDiagOverhead, Complexity.TimeHierarchy.logDiagOverhead_eq, Complexity.TimeHierarchy.logOverhead, Complexity.TimeHierarchy.logOverhead_eq}
+\difficulty{4}
+For all natural numbers $t$ and $n$,
+\[(t+1)\bigl(\lfloor\log_2(t+1)\rfloor+1\bigr) + n + 1 \;\le\;
+2\,(t+n+1)\bigl(\lfloor\log_2(t+n+1)\rfloor+1\bigr).\]
+\end{theorem}
+
+\begin{theorem}[Constant-factor absorption of the normal-form overhead]
+\lean{Complexity.TimeHierarchy.logOverhead_mul_le}
+\label{Complexity.TimeHierarchy.logOverhead_mul_le}
+\leanok
+\uses{Complexity.TimeHierarchy.logOverhead, Complexity.TimeHierarchy.logOverhead_eq}
+\difficulty{5}
+Let $\Psi(t) = (t+1)\bigl(\lfloor\log_2(t+1)\rfloor+1\bigr)$. For all natural numbers $c_0$
+and $T$,
+\[\Psi(c_0T) \le (c_0+1)\bigl(\lfloor\log_2(c_0+1)\rfloor+2\bigr)\,\Psi(T).\]
+\end{theorem}
+
+\begin{theorem}[Logarithmic diagonal overhead versus $f\log f$]
+\lean{Complexity.TimeHierarchy.logDiagOverhead_le_book}
+\label{Complexity.TimeHierarchy.logDiagOverhead_le_book}
+\leanok
+\uses{Complexity.TimeHierarchy.logDiagOverhead, Complexity.TimeHierarchy.logDiagOverhead_eq}
+\difficulty{4}
+Let $f$ and $n$ be natural numbers with $2 \le n \le f$. Then
+\[(f+n+1)\bigl(\lfloor\log_2(f+n+1)\rfloor+1\bigr) \le 12\, f\,\lfloor\log_2 f\rfloor.\]
+\end{theorem}
+
+\begin{theorem}[From $f\log f = o(g)$ to the diagonal bound]
+\lean{Complexity.TimeHierarchy.eventually_logDiagOverhead_le}
+\label{Complexity.TimeHierarchy.eventually_logDiagOverhead_le}
+\leanok
+\uses{Complexity.TimeHierarchy.logDiagOverhead, Complexity.TimeHierarchy.logDiagOverhead_le_book}
+\difficulty{4}
+Let $f,g:\mathbb{N}\to\mathbb{N}$ satisfy $n \le f(n)$ for every $n$, and suppose that for
+every natural number $A$ there is $N$ with $A\,f(n)\lfloor\log_2 f(n)\rfloor \le g(n)$ for all
+$n \ge N$ (with $\lfloor\log_2 0\rfloor = 0$). Then for every natural number $A$ there is $N$
+such that $A\,(f(n)+n+1)\bigl(\lfloor\log_2(f(n)+n+1)\rfloor+1\bigr) \le g(n)$ for all
+$n \ge N$.
+\end{theorem}
+
+\begin{definition}[Fixed two-work-tape representation scheme]
+\lean{Complexity.TimeHierarchy.code₂}
+\label{Complexity.TimeHierarchy.code₂}
+\leanok
+\uses{Turing.EffectiveMachineCode2, Turing.exists_effectiveMachineCode2}
+A fixed, arbitrarily chosen effective representation scheme for Turing machines with two
+work tapes over the binary alphabet: an encoding of such machines by binary strings
+together with a decoding map, such that decoding an encoded machine returns it and the
+serialization of the decoded machine is computable by a Turing machine.
+\end{definition}
+
+\begin{theorem}[Choice of the two-work-tape scheme]
+\lean{Complexity.TimeHierarchy.code₂_eq}
+\label{Complexity.TimeHierarchy.code₂_eq}
+\leanok
+\uses{Complexity.TimeHierarchy.code₂, Turing.exists_effectiveMachineCode2}
+\difficulty{1}
+The fixed two-work-tape representation scheme is, by definition, the scheme selected by
+the axiom of choice from the nonempty collection of effective representation schemes for
+binary Turing machines with two work tapes.
+\end{theorem}
+
+\begin{definition}[Two-tape self-simulation structure]
+\lean{Complexity.TimeHierarchy.twoTapeSelfSimulator}
+\label{Complexity.TimeHierarchy.twoTapeSelfSimulator}
+\leanok
+\uses{Complexity.TimeHierarchy.SelfSimulator, Complexity.TimeHierarchy.code₂, Complexity.TimeHierarchy.logOverhead, Complexity.TimeHierarchy.logOverhead_eq, Complexity.TimeHierarchy.logOverhead_mul_le, Turing.Code2TM.toFinTM, Turing.EffectiveCodeK.toFinTM, Turing.EffectiveMachineCode2.toK, Turing.EffectiveMachineCode2.toK_toFinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_iff, Turing.FinTM.two_work_tapes_binary, Turing.MachineCode2.decode_encode, Turing.MultiTapeTM.indicator, Turing.exists_code2TM, Turing.exists_selfUniversalK, Turing.pairEncode}
+A self-simulation structure with overhead function
+$\Psi(t) = (t+1)\bigl(\lfloor\log_2(t+1)\rfloor+1\bigr)$. Its simulating machine $W$ is a
+self-application universal machine for the fixed two-work-tape representation scheme, and
+its decoder sends a binary code $\alpha$ to the two-work-tape machine that the scheme decodes
+from $\alpha$. Thus, for each code $\alpha$ there is a constant $C$ such that whenever the
+decoded machine outputs a single bit $b$ on the paired input $\langle\alpha,w\rangle$ within
+$t$ steps, $W$ outputs $b$ on that input within $C(t+|\langle\alpha,w\rangle|+1)$ steps; and
+for every time bound $T$ and every $L\in\mathrm{DTIME}(T)$ there are a code $\alpha$ and a
+constant $c$ such that the decoded machine computes the indicator of $x\in L$ within
+$c\bigl(\Psi(T(|x|))+1\bigr)$ steps on every input $x$.
+\end{definition}
+
+\begin{theorem}[Machine of the two-tape self-simulator]
+\lean{Complexity.TimeHierarchy.twoTapeSelfSimulator_W}
+\label{Complexity.TimeHierarchy.twoTapeSelfSimulator_W}
+\leanok
+\uses{Complexity.TimeHierarchy.code₂, Complexity.TimeHierarchy.twoTapeSelfSimulator, Turing.EffectiveMachineCode2.toK, Turing.exists_selfUniversalK}
+\difficulty{1}
+The simulating machine of the two-tape self-simulation structure is the chosen
+self-application universal machine $U$ for the fixed two-work-tape representation scheme,
+viewed as a scheme for machines with $k=2$ work tapes: for every code $\alpha$ there is a
+constant $C>0$ such that, for every $w$, whenever the machine coded by $\alpha$ halts on
+$\langle\alpha,w\rangle$ with some output within $t$ steps, $U$ halts on
+$\langle\alpha,w\rangle$ with the same output within $C(t+1)$ steps using at most $C(s+1)$
+cells, where $s$ is the space used by the coded machine by time $t$; and every output of $U$
+on $\langle\alpha,w\rangle$ is an output of the coded machine on that input.
+\end{theorem}
+
+\begin{theorem}[Decoder of the two-tape self-simulator]
+\lean{Complexity.TimeHierarchy.twoTapeSelfSimulator_decode}
+\label{Complexity.TimeHierarchy.twoTapeSelfSimulator_decode}
+\leanok
+\uses{Complexity.TimeHierarchy.code₂, Complexity.TimeHierarchy.twoTapeSelfSimulator, Turing.Code2TM.toFinTM}
+\difficulty{1}
+For every binary string $\alpha$, the machine that the two-tape self-simulation structure
+assigns to $\alpha$ is the two-work-tape machine decoded from $\alpha$ by the fixed
+two-work-tape representation scheme, regarded as a finite Turing machine.
+\end{theorem}
+
+\begin{theorem}[Time hierarchy at overhead $f\log f$]
+\lean{Complexity.time_hierarchy_log}
+\label{Complexity.time_hierarchy_log}
+\leanok
+\uses{Complexity.DTIME, Complexity.TimeConstructible, Complexity.TimeHierarchy.DiagSimulator.mono, Complexity.TimeHierarchy.DiagSimulator.time_hierarchy, Complexity.TimeHierarchy.SelfSimulator.toDiagSimulator, Complexity.TimeHierarchy.le_logDiagOverhead, Complexity.TimeHierarchy.logDiagOverhead_eq, Complexity.TimeHierarchy.logOverhead_add_le, Complexity.TimeHierarchy.twoTapeSelfSimulator}
+\difficulty{3}
+Let $f,g:\mathbb{N}\to\mathbb{N}$ with $g$ time-constructible, and suppose that for every
+natural number $A$ there is $N$ such that
+\[A\,(f(n)+n+1)\bigl(\lfloor\log_2(f(n)+n+1)\rfloor+1\bigr) \le g(n)\quad\text{for all } n\ge N.\]
+Then $\mathrm{DTIME}(f)$ is a proper subset of $\mathrm{DTIME}(g+1)$, where $g+1$ denotes
+$n\mapsto g(n)+1$.
+\end{theorem}
+
+\begin{theorem}[Time Hierarchy Theorem]
+\lean{Complexity.time_hierarchy_book}
+\label{Complexity.time_hierarchy_book}
+\leanok
+\uses{Complexity.DTIME, Complexity.TimeConstructible, Complexity.TimeHierarchy.DiagSimulator.mono, Complexity.TimeHierarchy.DiagSimulator.time_hierarchy, Complexity.TimeHierarchy.SelfSimulator.toDiagSimulator, Complexity.TimeHierarchy.eventually_logDiagOverhead_le, Complexity.TimeHierarchy.le_logDiagOverhead, Complexity.TimeHierarchy.logOverhead_add_le, Complexity.TimeHierarchy.twoTapeSelfSimulator}
+\difficulty{2}
+Let $f,g:\mathbb{N}\to\mathbb{N}$ with $g$ time-constructible and $n\le f(n)$ for every $n$.
+Suppose $f(n)\log f(n) = o(g(n))$ in the sense that for every natural number $A$ there is $N$
+with $A\,f(n)\lfloor\log_2 f(n)\rfloor\le g(n)$ for all $n\ge N$ (with
+$\lfloor\log_2 0\rfloor = 0$). Then $\mathrm{DTIME}(f)$ is a proper subset of
+$\mathrm{DTIME}(g+1)$, where $g+1$ denotes $n\mapsto g(n)+1$.
+\end{theorem}
+
+\begin{theorem}[Time Hierarchy Theorem for a positive bound]
+\lean{Complexity.time_hierarchy_book_of_pos}
+\label{Complexity.time_hierarchy_book_of_pos}
+\leanok
+\uses{Complexity.DTIME, Complexity.TimeConstructible, Complexity.TimeHierarchy.DiagSimulator.mono, Complexity.TimeHierarchy.DiagSimulator.time_hierarchy_of_pos, Complexity.TimeHierarchy.SelfSimulator.toDiagSimulator, Complexity.TimeHierarchy.eventually_logDiagOverhead_le, Complexity.TimeHierarchy.le_logDiagOverhead, Complexity.TimeHierarchy.logOverhead_add_le, Complexity.TimeHierarchy.twoTapeSelfSimulator}
+\difficulty{2}
+Let $f,g:\mathbb{N}\to\mathbb{N}$ with $g$ time-constructible, $g(n)>0$ for every $n$, and
+$n\le f(n)$ for every $n$. Suppose that for every natural number $A$ there is $N$ with
+$A\,f(n)\lfloor\log_2 f(n)\rfloor\le g(n)$ for all $n\ge N$ (with $\lfloor\log_2 0\rfloor = 0$).
+Then $\mathrm{DTIME}(f)$ is a proper subset of $\mathrm{DTIME}(g)$.
+\end{theorem}

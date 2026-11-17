@@ -224,3 +224,108 @@ $\lfloor\log_2 n\rfloor+1\le n+1$. Moreover, there are a positive integer $c$ an
 finite Turing machine over the Boolean alphabet that, on every Boolean input $x$,
 outputs the binary digit list of $|x|+1$ and uses at most $c(|x|+1)$ work-tape cells.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Constructible: further results}
+
+\begin{theorem}[Space constructibility, unfolded]
+\lean{Complexity.spaceConstructible_iff}
+\label{Complexity.spaceConstructible_iff}
+\leanok
+\uses{Complexity.SpaceConstructible, Complexity.logSpace, Turing.FinTM, Turing.FinTM.ComputesInSpace}
+\difficulty{1}
+A function $S:\mathbb{N}\to\mathbb{N}$ is space constructible if and only if
+$\lfloor\log_2 n\rfloor+1\le S(n)$ for every $n\in\mathbb{N}$ (where the left side is
+read as $1$ when $n=0$), and there exist a positive natural number $c$ and a finite
+Turing machine over the Boolean alphabet that, on every Boolean input $x$, outputs the
+binary representation of $S(|x|)$ using at most $c\,S(|x|)$ work-tape cells.
+\end{theorem}
+
+\begin{definition}[Transition of the tail transducer]
+\lean{Complexity.scp_tailδ}
+\label{Complexity.scp_tailδ}
+\leanok
+Define the transition function of a one-pass transducer with Boolean state set
+$\{\mathrm{false},\mathrm{true}\}$ and Boolean input bits: from every state, on every
+input bit, the next state is $\mathrm{true}$, recording that the first bit has been read.
+\end{definition}
+
+\begin{definition}[Emission of the tail transducer]
+\lean{Complexity.scp_tailO}
+\label{Complexity.scp_tailO}
+\leanok
+Define the emission function of a one-pass transducer with Boolean state set: in state
+$\mathrm{false}$ it emits nothing on any input bit, and in state $\mathrm{true}$ it emits
+the input bit $b$ itself.
+\end{definition}
+
+\begin{theorem}[The tail transducer copies after the first bit]
+\lean{Complexity.scp_transduce_copy}
+\label{Complexity.scp_transduce_copy}
+\leanok
+\uses{Complexity.scp_tailO, Complexity.scp_tailδ, Complexity.transduce, Complexity.transduce_of_copy}
+\difficulty{1}
+Let $T$ be the one-pass transducer with Boolean states whose transition always moves to
+state $\mathrm{true}$ and which, in state $q$ on input bit $b$, emits $b$ when $q$ is
+$\mathrm{true}$ and emits nothing when $q$ is $\mathrm{false}$. For every Boolean word
+$l$, running $T$ on $l$ from state $\mathrm{true}$ outputs exactly $l$.
+\end{theorem}
+
+\begin{theorem}[The tail transducer computes the tail]
+\lean{Complexity.scp_transduce_tail}
+\label{Complexity.scp_transduce_tail}
+\leanok
+\uses{Complexity.scp_tailO, Complexity.scp_tailδ, Complexity.scp_transduce_copy, Complexity.transduce, Complexity.transduce_cons, Complexity.transduce_nil}
+\difficulty{3}
+Let $T$ be the one-pass transducer with Boolean states whose transition always moves to
+state $\mathrm{true}$ and which, in state $q$ on input bit $b$, emits $b$ when $q$ is
+$\mathrm{true}$ and emits nothing when $q$ is $\mathrm{false}$. For every Boolean word
+$x$, running $T$ on $x$ from state $\mathrm{false}$ outputs the tail of $x$, that is,
+$x$ with its first symbol removed (the empty word when $x$ is empty).
+\end{theorem}
+
+\begin{theorem}[Power bound for the tail length]
+\lean{Complexity.scp_tail_pow_le}
+\label{Complexity.scp_tail_pow_le}
+\leanok
+\difficulty{3}
+For every natural number $c$ and every Boolean word $x$, writing $\mathrm{tail}(x)$ for
+$x$ with its first symbol removed (the empty word when $x$ is empty), we have
+$(|\mathrm{tail}(x)|+1)^c\le |x|^c+1$.
+\end{theorem}
+
+\begin{theorem}[Value of the polynomial branch]
+\lean{Complexity.scp_value}
+\label{Complexity.scp_value}
+\leanok
+\difficulty{3}
+Let $c\ge 1$ be a natural number and let $x$ be a Boolean word, and write
+$\mathrm{tail}(x)$ for $x$ with its first symbol removed. Take the binary expansion of
+$1$ if $x$ is empty, and otherwise the binary expansion of the length
+$1+(|\mathrm{tail}(x)|+1)^c$ of the all-true word consisting of one true bit followed by
+$(|\mathrm{tail}(x)|+1)^c$ true bits. In both cases the result equals the binary
+expansion of $|x|^c+1$.
+\end{theorem}
+
+\begin{theorem}[Arithmetic time bound for the polynomial machine]
+\lean{Complexity.scp_time_arith}
+\label{Complexity.scp_time_arith}
+\leanok
+\difficulty{4}
+Let $c,c_L,t,n,P,N$ be natural numbers with $P\le N+1$ and $t\le n$. Then
+\[
+  (n+1)+t+2+(5c+5)P+P+2+(P+2)+(P+1)+2+c_L(P+2)\;\le\;(5c+20+3c_L)(N+n+1).
+\]
+\end{theorem}
+
+\begin{theorem}[Arithmetic space bound for the polynomial machine]
+\lean{Complexity.scp_space_arith}
+\label{Complexity.scp_space_arith}
+\leanok
+\difficulty{4}
+Let $c_M,c_D,c_1,K,n,N$ be natural numbers with $n\le N$. Then
+\[
+  c_M\bigl(c_D(n+1)+\max\{c_1(n+1),\,K(N+n+1)\}+1\bigr)+1
+  \;\le\;\bigl(c_M(c_D+c_1+2K+2)+1\bigr)(N+1).
+\]
+\end{theorem}

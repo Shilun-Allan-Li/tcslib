@@ -3710,3 +3710,21 @@ cells. In both classes, the polynomial bound has the form $c(n^d+1)$ for some na
 numbers $c,d$, and the nondeterministic machines must halt within some finite number of
 steps on every branch for each input.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Savitch: further results}
+
+\begin{theorem}[Savitch's theorem above logarithmic space]
+\lean{Complexity.savitch_of_logSpace_le}
+\label{Complexity.savitch_of_logSpace_le}
+\leanok
+\uses{Complexity.LogProg.AHalt.mono, Complexity.LogProg.SavitchARM.deepen_contract, Complexity.LogProg.arm_decides_SPACE, Complexity.NSPACE, Complexity.SPACE, Complexity.logSpace, Complexity.logSpace_eq}
+\difficulty{4}
+Let $S:\mathbb{N}\to\mathbb{N}$ satisfy $\lfloor\log_2 n\rfloor+1\le S(n)$ for every
+natural number $n$. Then every language of binary strings decidable by a finite
+nondeterministic Turing machine using at most $cS(n)$ space on inputs of length $n$, for
+some constant $c$, is also decidable by a finite deterministic Turing machine using at
+most $c'S(n)^2$ space on inputs of length $n$, for some constant $c'$; that is,
+$\mathrm{NSPACE}(S)\subseteq\mathrm{SPACE}(S^2)$. No space-constructibility of $S$ is
+assumed.
+\end{theorem}

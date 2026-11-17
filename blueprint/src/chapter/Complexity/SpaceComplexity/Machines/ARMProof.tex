@@ -248,3 +248,129 @@ before halting, the program's side conditions hold and, for each register $r$, t
 binary representation of its value plus one has length at most $K(\lfloor\log_2
 |x|\rfloor+1)$. Then $L$ is decidable in logarithmic space.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Machines --- ARMProof: further results}
+
+\begin{definition}[Instruction relabeled into a larger machine]
+\lean{Complexity.LogProg.Ins.embed}
+\label{Complexity.LogProg.Ins.embed}
+\leanok
+\uses{Complexity.LogProg.Ins}
+Let $\rho$ map the $m$ registers of a register machine into $m'$ registers, $\sigma$ map its
+$d$ oracle deciders into $d'$ deciders, $\iota$ map its labels $\Lambda$ into labels
+$\Lambda'$, let $\kappa:\{\mathrm{true},\mathrm{false}\}\to\Lambda'$ assign an exit label to
+each answer, and let $r_0$ be one of the $m'$ registers. The embedding of an instruction
+renames every register it mentions by $\rho$ (elementwise on a call's argument list), its
+decider by $\sigma$ and every target label by $\iota$, keeping the kind of instruction, except
+that the instruction ``halt with answer $b$'' becomes a zero test of $r_0$ whose two branches
+both jump to $\kappa(b)$.
+\end{definition}
+
+\begin{definition}[Register extension along a register map]
+\lean{Complexity.LogProg.RegExt}
+\label{Complexity.LogProg.RegExt}
+\leanok
+Let $\rho$ map $m$ registers into $m'$ registers, let $e$, $v'$ assign naturals to the $m'$
+registers and $v$ to the $m$ registers. Then $v'$ extends $v$ along $\rho$ with background $e$
+when $v'(\rho(r))=v(r)$ for every register $r$, and $v'(r')=e(r')$ for every register $r'$ not
+in the range of $\rho$.
+\end{definition}
+
+\begin{lemma}[Register writes preserve extensions]
+\lean{Complexity.LogProg.RegExt.update}
+\label{Complexity.LogProg.RegExt.update}
+\leanok
+\uses{Complexity.LogProg.RegExt}
+\difficulty{4}
+Let $\rho$ be an injective map from $m$ registers into $m'$ registers, let $e,v'$ assign
+naturals to the $m'$ registers and $v$ to the $m$ registers, and suppose $v'$ extends $v$ along
+$\rho$ with background $e$ (that is, $v'(\rho(r))=v(r)$ for all $r$ and $v'$ agrees with $e$
+off the range of $\rho$). Then for every register $r$ and every $n\in\mathbb N$, the assignment
+$v'$ with $\rho(r)$ set to $n$ extends $v$ with $r$ set to $n$, along $\rho$ with background
+$e$.
+\end{lemma}
+
+\begin{lemma}[Syntactic preconditions from the instruction]
+\lean{Complexity.LogProg.preS_of_ins}
+\label{Complexity.LogProg.preS_of_ins}
+\leanok
+\uses{Complexity.LogProg.ARM, Complexity.LogProg.PreS, Complexity.LogProg.ValidPair, Complexity.LogProg.ValidPlain}
+\difficulty{3}
+Let $A$ be a register machine with $m$ registers, $d$ oracle deciders and labels $\Lambda$, let
+$x$ be a Boolean input, $\ell$ a label, $v$ a register assignment and $a$ an optional answer.
+Suppose that if the instruction at $\ell$ is an equality test of registers $r,s$ then
+$r\ne s$; if it is an oracle call then its argument registers are pairwise distinct; if it
+compares a register with the payload of a plain input then $x$ has the form
+$\langle 1^n,w\rangle$ with $w$ not ending in $0$; and if it compares a register with
+either payload of a pair input then $x$ has the form $\langle 1^n,\langle u,w\rangle\rangle$
+with neither $u$ nor $w$ ending in $0$. Then the configuration $(\ell,v,a)$ satisfies the syntactic
+step preconditions of $A$ on $x$.
+\end{lemma}
+
+\begin{lemma}[Preconditions carry over to an embedded block]
+\lean{Complexity.LogProg.preS_embed}
+\label{Complexity.LogProg.preS_embed}
+\leanok
+\uses{Complexity.LogProg.Ins.embed, Complexity.LogProg.PreS}
+\difficulty{3}
+Let $A$ be a register machine with $m$ registers, $d$ deciders and labels $\Lambda$, and $D$ one
+with $m'$ registers, $d'$ deciders and labels $\Lambda'$. Let $\rho$ be an injective map of
+registers, $\sigma$ a map of deciders, $\iota$ a map of labels, $\kappa$ an exit label for each
+answer and $r_0$ a register of $D$, and suppose that for every label $\ell$ the instruction of
+$D$ at $\iota(\ell)$ is the instruction of $A$ at $\ell$ with registers renamed by $\rho$,
+deciders by $\sigma$, labels by $\iota$, and an answer $b$ replaced by a zero test of $r_0$
+jumping to $\kappa(b)$ on both branches. If the live configuration of $A$ at $\ell$ with
+registers $v$ satisfies $A$'s syntactic step preconditions on a Boolean input $x$, then for
+every register assignment $v'$ of $D$ the live configuration of $D$ at $\iota(\ell)$ with
+registers $v'$ satisfies $D$'s syntactic step preconditions on $x$.
+\end{lemma}
+
+\begin{lemma}[One step of an embedded block]
+\lean{Complexity.LogProg.astep_embed}
+\label{Complexity.LogProg.astep_embed}
+\leanok
+\uses{Complexity.LogProg.CallSpec, Complexity.LogProg.Ins.embed, Complexity.LogProg.RegExt, Complexity.LogProg.RegExt.update, Complexity.LogProg.astep, Complexity.LogProg.astep_call, Complexity.LogProg.astep_clr, Complexity.LogProg.astep_dec, Complexity.LogProg.astep_half, Complexity.LogProg.astep_inc, Complexity.LogProg.astep_jeq, Complexity.LogProg.astep_jeqFst, Complexity.LogProg.astep_jeqIn, Complexity.LogProg.astep_jeqSnd, Complexity.LogProg.astep_jodd, Complexity.LogProg.astep_jz, Complexity.LogProg.astep_ret, Complexity.LogProg.callSegs, Complexity.LogProg.callSegs_congr}
+\difficulty{5}
+Let $A$ be a register machine with $m$ registers, $d$ deciders and labels $\Lambda$, and $D$ one
+with $m'$ registers, $d'$ deciders and labels $\Lambda'$; let $\rho$ be an injective map of
+registers, $\sigma$ a map of deciders, $\iota$ a map of labels, $\kappa$ an exit label for each
+answer and $r_0$ a register of $D$, such that for every label $\ell$ the instruction of $D$ at
+$\iota(\ell)$ is the instruction of $A$ at $\ell$ with registers renamed by $\rho$, deciders by
+$\sigma$, labels by $\iota$, and an answer $b$ replaced by a zero test of $r_0$ jumping to
+$\kappa(b)$ on both branches. Let $\mathcal O$ be an oracle for the $d'$ deciders, $x$ a
+Boolean input, $\ell$ a label at which $A$ has neither of the two input-shape validation
+instructions, and let $v'$ extend $v$ along $\rho$ with background $e$ ($v'(\rho(r))=v(r)$
+for all $r$, $v'=e$ off the range of $\rho$). Then either one step of $A$ on $x$ with oracle
+$\mathcal O\circ\sigma$ from the live configuration $(\ell,v)$ leads to a live configuration
+$(\ell_2,v_2)$ and one step of $D$ on $x$ with oracle $\mathcal O$ from $(\iota(\ell),v')$
+leads to a live configuration $(\iota(\ell_2),v_2')$ where $v_2'$ extends $v_2$ along $\rho$
+with background $e$; or, for some answer $b$, that step of $A$ halts with answer $b$ and
+registers $v$, and that step of $D$ leads to the live configuration $(\kappa(b),v')$.
+\end{lemma}
+
+\begin{theorem}[A halting run of an embedded block]
+\lean{Complexity.LogProg.AHalt.embed}
+\label{Complexity.LogProg.AHalt.embed}
+\leanok
+\uses{Complexity.LogProg.AConf, Complexity.LogProg.AHalt, Complexity.LogProg.AReach, Complexity.LogProg.AReach.refl, Complexity.LogProg.AReach.step, Complexity.LogProg.Ins.embed, Complexity.LogProg.RegExt, Complexity.LogProg.arun, Complexity.LogProg.arun_halted, Complexity.LogProg.arun_succ, Complexity.LogProg.arun_zero, Complexity.LogProg.astep_embed}
+\difficulty{5}
+Let $A$ be a register machine with $m$ registers, $d$ deciders and labels $\Lambda$, and $D$ one
+with $m'$ registers, $d'$ deciders and labels $\Lambda'$; let $\rho$ be an injective map of
+registers, $\sigma$ a map of deciders, $\iota$ a map of labels, $\kappa$ an exit label for each
+answer and $r_0$ a register of $D$, such that for every label $\ell$ the instruction of $D$ at
+$\iota(\ell)$ is the instruction of $A$ at $\ell$ with registers renamed by $\rho$, deciders by
+$\sigma$, labels by $\iota$, and an answer $b$ replaced by a zero test of $r_0$ jumping to
+$\kappa(b)$ on both branches; and suppose $A$ contains no input-shape validation instruction.
+Let $\mathcal O$ be an oracle for the $d'$ deciders, $x$ a Boolean input, $G$ and $G'$
+predicates on configurations of $A$ and of $D$, and $e$ a background assignment for $D$'s
+registers, such that whenever a live configuration $(\ell,v)$ of $A$ satisfies $G$ and $v'$
+extends $v$ along $\rho$ with background $e$, the live configuration $(\iota(\ell),v')$ of $D$
+satisfies $G'$. If $A$ on $x$ with oracle $\mathcal O\circ\sigma$, started at the live
+configuration $(\ell,v)$, halts with answer $b$ with every configuration before halting
+satisfying $G$, and $v'$ extends $v$ along $\rho$ with background $e$, then there are
+assignments $v_2$ and $v_2'$ such that $(\ell_2,v_2)$ satisfies $G$ for some label $\ell_2$,
+$v_2'$ extends $v_2$ along $\rho$ with background $e$, and $D$ on $x$ with oracle $\mathcal O$
+runs from $(\iota(\ell),v')$ to the live configuration $(\kappa(b),v_2')$ with every
+configuration before the end satisfying $G'$.
+\end{theorem}

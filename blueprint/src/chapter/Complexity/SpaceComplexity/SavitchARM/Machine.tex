@@ -842,3 +842,19 @@ and code bound, searches pairs of codes, and performs the recursive reachability
 procedure using the move, copy, shift, doubling, subtraction, and halving loops
 specified by the labels.
 \end{definition}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Savitch ARM --- Machine: further results}
+
+\begin{theorem}[Savitch machine has no input-format checks]
+\lean{Complexity.LogProg.SavitchARM.A_noVal}
+\label{Complexity.LogProg.SavitchARM.A_noVal}
+\leanok
+\uses{Complexity.LogProg.SavitchARM.A, Complexity.LogProg.SavitchARM.Lb, Complexity.LogProg.SavitchARM.cpI, Complexity.LogProg.SavitchARM.dmI, Complexity.LogProg.SavitchARM.hvI, Complexity.LogProg.SavitchARM.mvI, Complexity.LogProg.SavitchARM.sbI, Complexity.LogProg.SavitchARM.shI}
+\difficulty{3}
+For every natural number $E$, every label $l$ of the Savitch register-machine program
+with parameter $E$ (which has $18$ registers), every register $r$, and every label $l'$,
+the instruction of the program at $l$ is neither the plain-input format check of
+register $r$ continuing to $l'$ nor the paired-input format check of register $r$
+continuing to $l'$. Consequently the program can halt only by returning an answer.
+\end{theorem}

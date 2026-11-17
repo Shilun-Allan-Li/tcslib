@@ -368,3 +368,20 @@ valuation agrees with $v$ except that registers $Q_3,Q_4$ are advanced to $v(Q_3
 and $v(Q_4)+2|u|$. Throughout the execution, the simulator's guard conditions hold and
 all registers remain at most $B$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Codec --- Run: further results}
+
+\begin{lemma}[Codec oracle as indicator of its languages]
+\lean{Complexity.Codec.orc_eq}
+\label{Complexity.Codec.orc_eq}
+\leanok
+\uses{Complexity.Codec.codecAs, Complexity.Codec.orc, Turing.MultiTapeTM.indicator}
+\difficulty{1}
+Let $L_0$ be the input-length language, consisting of the pair encodings
+$\langle u,\mathrm{bin}(i)\rangle$ with $i<|u|$, and let $L_1$ be the input-bit language,
+consisting of the pair encodings $\langle u,\mathrm{bin}(i)\rangle$ such that the $i$th bit
+of $u$ is $1$. The codec oracle, which answers queries for two decider indices, is the
+function sending an index $j\in\{0,1\}$ and a Boolean word $V$ to the indicator value of
+$V\in L_j$, that is, true exactly when $V\in L_j$.
+\end{lemma}

@@ -4740,3 +4740,50 @@ levels under the relation specified by query type $3$ at that radius, with inter
 codes bounded by $2^{(|x|+2)^{2E}}$. Throughout the run, every register value is at most
 $2^{((|x|+2)^{2E})((|x|+2)^{2E})}$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Savitch ARM --- Search: further results}
+
+\begin{theorem}[Initial-code oracle test]
+\lean{Complexity.LogProg.SavitchARM.initO_iff_orc}
+\label{Complexity.LogProg.SavitchARM.initO_iff_orc}
+\leanok
+\uses{Complexity.LogProg.SavitchARM.InitO, Turing.pairEncode}
+\difficulty{1}
+Let $\mathrm{orc}$ assign a truth value to each pair of an index in $\{0,1,2,3\}$ and a
+Boolean string, let $x$ be a Boolean string, and let $s,u\in\mathbb{N}$. Writing
+$\langle\cdot,\cdot\rangle$ for the pair encoding of Boolean strings and
+$\mathrm{bin}(n)$ for the binary expansion of $n$, the initial-code oracle test for
+$\mathrm{orc}$, $x$, $s$, $u$ holds if and only if
+$\mathrm{orc}\bigl(1,\langle x,\langle\mathrm{bin}(u),\mathrm{bin}(s)\rangle\rangle\bigr)$
+is true.
+\end{theorem}
+
+\begin{theorem}[Accepting-code oracle test]
+\lean{Complexity.LogProg.SavitchARM.accO_iff_orc}
+\label{Complexity.LogProg.SavitchARM.accO_iff_orc}
+\leanok
+\uses{Complexity.LogProg.SavitchARM.AccO, Turing.pairEncode}
+\difficulty{1}
+Let $\mathrm{orc}$ assign a truth value to each pair of an index in $\{0,1,2,3\}$ and a
+Boolean string, let $x$ be a Boolean string, and let $s,v\in\mathbb{N}$. Writing
+$\langle\cdot,\cdot\rangle$ for the pair encoding of Boolean strings and
+$\mathrm{bin}(n)$ for the binary expansion of $n$, the accepting-code oracle test for
+$\mathrm{orc}$, $x$, $s$, $v$ holds if and only if
+$\mathrm{orc}\bigl(2,\langle x,\langle\mathrm{bin}(v),\mathrm{bin}(s)\rangle\rangle\bigr)$
+is true.
+\end{theorem}
+
+\begin{theorem}[Register vector of the outer-search file]
+\lean{Complexity.LogProg.SavitchARM.outerSt_toV}
+\label{Complexity.LogProg.SavitchARM.outerSt_toV}
+\leanok
+\uses{Complexity.LogProg.SavitchARM.St.toV, Complexity.LogProg.SavitchARM.St.upd_M, Complexity.LogProg.SavitchARM.St.upd_U, Complexity.LogProg.SavitchARM.St.upd_V, Complexity.LogProg.SavitchARM.outerSt, Complexity.LogProg.SavitchARM.rM, Complexity.LogProg.SavitchARM.rU, Complexity.LogProg.SavitchARM.rV, Complexity.LogProg.SavitchARM.setSt}
+\difficulty{2}
+Let $s,w,u,v,M\in\mathbb{N}$. Let $\rho$ be the $18$-entry register vector of the
+Savitch register machine's setup file, in which every register is zero except the
+window radius ($s$), the code width ($w$) and the code bound ($2^w$). Then the register
+vector of the outer-search file, which is the setup file with source code $u$, target
+code $v$ and midpoint $M$, equals $\rho$ with the source-code entry replaced by $u$, then
+the target-code entry replaced by $v$, then the midpoint entry replaced by $M$.
+\end{theorem}

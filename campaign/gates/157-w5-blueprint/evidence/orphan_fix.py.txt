@@ -1,0 +1,48 @@
+"""W5: remove or retarget blueprint entries whose Lean declaration was removed or moved."""
+import glob, json, re
+orph = json.load(open('/home/user/tcslib-scratch/w5/orphans.json'))
+moved = {'Complexity.TQBFHard.wP_le': 'Complexity.Codec.wP_le',
+         'Complexity.Codec.bitsVal_lt_two_pow': 'Complexity.LogProg.bitsVal_lt_two_pow',
+         'Complexity.Codec.two_pow_bits_le': 'Complexity.LogProg.two_pow_bits_le',
+         'Complexity.LogProg.ISCount.logSpace_le_size_succ': 'Complexity.logSpace_le_size_succ',
+         'Complexity.LogProg.ISCount.walkLe_succ_iff': 'Complexity.walkLe_succ_iff',
+         'Complexity.oracleRelabel': 'Turing.OracleTM.relabel',
+         'Complexity.oracleRelabel_wellFormed': 'Turing.OracleTM.relabel_wellFormed',
+         'Complexity.oracleRelabel_step': 'Turing.OracleTM.relabel_step',
+         'Complexity.oracleRelabel_runFrom': 'Turing.OracleTM.relabel_runFrom',
+         'Complexity.oracleRelabel_computesInTime': 'Turing.OracleTM.relabel_computesInTime'}
+files = glob.glob('blueprint/src/chapter/**/*.tex', recursive=True)
+bound = set()
+for f in files:
+    for n in re.findall(r'^\\lean\{([^}]+)\}', open(f).read(), re.M): bound |= {x.strip() for x in n.split(',')}
+stale = {n for v in orph.values() for n in v}
+removed = stale - set(moved)
+delete = set(removed) | {o for o, n in moved.items() if n in bound}
+rename = {o: n for o, n in moved.items() if n not in bound}
+uses_map = dict(moved)
+ENV = re.compile(r'\\begin\{(definition|theorem|lemma|proposition|corollary)\}(\[[^\]]*\])?\n(.*?)\\end\{\1\}\n?', re.S)
+log = {'deleted': [], 'renamed': [], 'uses_rewritten': 0, 'uses_dropped': 0}
+for f in files:
+    s = open(f).read(); orig = s
+    def env(m):
+        body = m.group(3); lm = re.search(r'^\\lean\{([^}]+)\}', body, re.M)
+        if lm and lm.group(1).strip() in delete:
+            log['deleted'].append((f.split('chapter/')[1], lm.group(1))); return ''
+        if lm and lm.group(1).strip() in rename:
+            o = lm.group(1).strip(); n = rename[o]; log['renamed'].append((o, n))
+            return m.group(0).replace('\\lean{%s}' % o, '\\lean{%s}' % n).replace('\\label{%s}' % o, '\\label{%s}' % n)
+        return m.group(0)
+    s = ENV.sub(env, s)
+    def uses(m):
+        out = []
+        for x in [y.strip() for y in m.group(1).split(',')]:
+            if x in uses_map: out.append(uses_map[x]); log['uses_rewritten'] += 1
+            elif x in removed: log['uses_dropped'] += 1
+            else: out.append(x)
+        out = list(dict.fromkeys(out))
+        return ('\\uses{%s}' % ', '.join(out)) if out else ''
+    s = re.sub(r'\\uses\{([^}]*)\}', uses, s)
+    s = re.sub(r'\n\n\n+', '\n\n', s)
+    if s != orig: open(f, 'w').write(s)
+print(len(log['deleted']), 'deleted;', len(log['renamed']), 'renamed', log['renamed'], '; uses rewritten', log['uses_rewritten'], 'dropped', log['uses_dropped'])
+json.dump(log, open('/home/user/tcslib-scratch/w5/orphan_fix.log.json', 'w'), indent=1)

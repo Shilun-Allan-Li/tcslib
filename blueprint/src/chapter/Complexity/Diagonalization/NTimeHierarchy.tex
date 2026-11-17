@@ -86,3 +86,281 @@ time proportional to the input length plus one is decidable nondeterministically
 time proportional to the square of the input length plus one; moreover, some language in
 the latter class is not in the former.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Diagonalization --- NTime Hierarchy: further results}
+
+\begin{theorem}[Universal nondeterministic machine from a setup machine]
+\lean{Turing.un_universal_of_setup}
+\label{Turing.un_universal_of_setup}
+\leanok
+\uses{Turing.CodeNDTM.toFinNDTM, Turing.EffectiveNDMachineCode, Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.acceptsWithin_iff, Turing.FinTM.bufferTape, Turing.GuessRunPhase.State, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NDTM.HaltsWithin, Turing.NDTM.HaltsWithin.mono, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.embedSilentTM, Turing.exists_ndInterpreterCore, Turing.guessRunTM, Turing.guessRunTM_silent_spec, Turing.pairEncode, Turing.streamStartCfg}
+\difficulty{5}
+For binary strings $a,b$ write $\langle a,b\rangle$ for $a$ with every bit doubled, followed by
+$01$, followed by $b$; write $\mathrm{bits}(t)$ for the binary expansion of $t\in\mathbb{N}$; and
+say a nondeterministic machine accepts $x$ within $t$ steps if some choice word of length exactly
+$t$ leaves it halted on $x$ with output exactly $[1]$. Let $c$ be an effective code for
+finite-state nondeterministic binary machines with two work tapes. Assume the following setup
+property: for every $K\in\mathbb{N}$ and every tape index
+$j_R<K$ there are $k\in\mathbb{N}$, an injection $\iota$ of $\{0,\dots,K-1\}$ into
+$\{0,\dots,k-1\}$, a tape index outside the image of $\iota$, a deterministic $k$-work-tape
+binary machine $P$ with finitely many states and a state $p_{\mathrm{exit}}$, such that for
+every code $\alpha$ there is a constant $C_P$ for which, for all binary $x$ and all
+$t\in\mathbb{N}$, the run of $P$ on $\langle\langle\mathrm{bits}(t),\alpha\rangle,x\rangle$
+first enters $p_{\mathrm{exit}}$ after some $T_P\le C_P(t+1)$ steps, at which moment the input
+head is at position $1$, all work heads are at cell $0$, the output is empty, every work tape
+other than $\iota(j_R)$ is blank, and tape $\iota(j_R)$ is nonblank exactly on cells
+$0,\dots,t-1$. Then there is a finite nondeterministic binary machine $U$ such that for every
+code $\alpha$ some constant $C$ satisfies, for all binary $x$ and all $t$: every branch of $U$ on
+$\langle\langle\mathrm{bits}(t),\alpha\rangle,x\rangle$ halts within $C(t+1)$ steps, and $U$
+accepts that input within $C(t+1)$ steps if and only if the machine decoded from $\alpha$ by $c$
+accepts $x$ within $t$ steps.
+\end{theorem}
+
+\begin{lemma}[Flattening copies of a one-bit list]
+\lean{Turing.un_flatten}
+\label{Turing.un_flatten}
+\leanok
+\difficulty{3}
+For every $t\in\mathbb{N}$, concatenating $t$ copies of the one-element list $[1]$ yields the
+list consisting of $t$ ones.
+\end{lemma}
+
+\begin{lemma}[Buffered word is blank beyond its length]
+\lean{Turing.un_buffer_ge}
+\label{Turing.un_buffer_ge}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat}
+\difficulty{3}
+Let $w$ be a binary word and consider the tape that stores $w$ contiguously from cell $0$ and is
+blank at every other integer cell. Then for every integer $q\ge |w|$, cell $q$ of this tape is
+blank.
+\end{lemma}
+
+\begin{theorem}[Exact first halt of the header machine]
+\lean{Turing.un_canon_halt}
+\label{Turing.un_canon_halt}
+\leanok
+\uses{Turing.FinTM.bufferedCompTM, Turing.FinTM.pairExtractTM, Turing.FinTM.pairExtractTM_fst_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_state_ne_none_of_le, Turing.pairEncode, Turing.prefixCanonTM_eq, Turing.prefixCanon_run, Turing.prefixCanon_start, Turing.universalPrefixTM}
+\difficulty{5}
+For binary strings $u,v$ write $\langle u,v\rangle$ for $u$ with every bit doubled, followed by
+$01$, followed by $v$. Let $H$ be the deterministic machine that first runs the prefix parser (which, on
+$\langle u,y\rangle$, outputs $u$ by undoubling its doubled prefix) into a buffer tape, rewinds
+the buffer, and then runs, on the buffer as virtual input, the pair extractor that outputs the
+first component of a pair. Then for all binary strings $a,b,x$, the run of $H$ on input
+$\langle\langle a,b\rangle,x\rangle$ is halted after exactly
+$3\,\abs{\langle a,b\rangle}+4+(4\abs{a}+5)$ steps and is not halted after any smaller number of
+steps.
+\end{theorem}
+
+\begin{definition}[One step of the bank erase]
+\lean{Turing.un_bankAct}
+\label{Turing.un_bankAct}
+\leanok
+\uses{Turing.Action}
+Given $k\in\mathbb{N}$, a set $S$ of work-tape indices among $\{0,\dots,k-1\}$, a guide index
+$g$, a direction $m\in\{-1,0,+1\}$ and a target state $q'\in\{0,1,2\}$, this is the single
+machine action that leaves the input head in place, writes a blank on every tape in $S$, moves
+the heads of the tapes in $S$ and of the guide tape $g$ in direction $m$, leaves every other
+tape unwritten and stationary, emits no output, and moves to state $q'$.
+\end{definition}
+
+\begin{lemma}[Components of the bank erase step]
+\lean{Turing.un_bankAct_eq}
+\label{Turing.un_bankAct_eq}
+\leanok
+\uses{Turing.un_bankAct}
+\difficulty{3}
+Let $k\in\mathbb{N}$, let $S$ be a set of work-tape indices among $\{0,\dots,k-1\}$, let $g$ be a
+guide index, $m\in\{-1,0,+1\}$ a direction and $q'\in\{0,1,2\}$ a state, and consider the bank
+erase action with these parameters, which blanks the tapes in $S$, moves the tapes in $S$ and the
+guide in direction $m$, and enters $q'$. Then for every tape index $i$, the action writes a blank
+on tape $i$ if $i\in S$ and writes nothing otherwise, and it moves head $i$ by $m$ if $i\in S$ or
+$i=g$ and by $0$ otherwise.
+\end{lemma}
+
+\begin{definition}[Guided bank erase machine]
+\lean{Turing.un_bankTM}
+\label{Turing.un_bankTM}
+\leanok
+\uses{Turing.MultiTapeTM, Turing.un_bankAct}
+Given $k\in\mathbb{N}$, a set $S$ of work-tape indices among $\{0,\dots,k-1\}$ and a guide index
+$g$, this is the deterministic binary machine with $k$ work tapes and states $\{0,1,2\}$, starting
+in state $0$. In state $0$ it unconditionally blanks the tapes in $S$ and moves them and the guide
+one cell left, entering state $1$. In state $1$, if the guide tape shows a symbol it does the same
+and stays in state $1$; if the guide tape shows a blank it blanks the tapes in $S$, moves them and
+the guide one cell right, and enters state $2$. In state $2$ it does nothing and remains in state
+$2$ forever. No step moves the input head, touches any other tape, or emits output.
+\end{definition}
+
+\begin{theorem}[Run of the guided bank erase]
+\lean{Turing.un_bank_run}
+\label{Turing.un_bank_run}
+\leanok
+\uses{Turing.Action.apply, Turing.Action.apply_workTapes, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.Cfg.workTapeSymbols_eq, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.bufferTape_of_neg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_some, Turing.moveInputPos, Turing.moveInputPos_zero, Turing.un_bankAct, Turing.un_bankAct_eq, Turing.un_bankTM, Turing.un_buffer_ge}
+\difficulty{6}
+Let $k\in\mathbb{N}$, let $S$ be a set of work-tape indices among $\{0,\dots,k-1\}$ and $g\notin S$
+a guide index, and consider the guided bank erase machine with $k$ work tapes, states
+$\{0,1,2\}$, which from state $0$ blanks the tapes in $S$ and moves them and the guide left into
+state $1$, repeats this in state $1$ while the guide shows a symbol, on a blank guide cell blanks
+$S$ and moves $S$ and the guide right into state $2$, and idles forever in state $2$. Let
+$L\in\mathbb{N}$ and let $d$ be a configuration (on any input) in state $0$ such that, for every
+$i\in S\cup\{g\}$, tape $i$ holds a binary word $w_i$ of length $L$ stored from cell $0$ (blank
+elsewhere) and head $i$ is at cell $L$. Then after exactly $L+2$ steps from $d$ the machine is in
+state $2$, every tape in $S$ is entirely blank, the heads of the tapes in $S\cup\{g\}$ are at
+cell $0$, and every other component of $d$ (the guide's contents, all other tapes and heads,
+the input head and the output) is unchanged; moreover, the state is not $2$ after any fewer than
+$L+2$ steps.
+\end{theorem}
+
+\begin{theorem}[Sequential composition across a relabelled seam]
+\lean{Turing.un_step'}
+\label{Turing.un_step'}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.mapState_mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.seamCompTM, Turing.seamCompTM_step}
+\difficulty{2}
+Let $M_1$ and $M_2$ be deterministic binary machines with $k$ work tapes and state sets $S_1$
+(with decidable equality) and $S_2$, let $e\in S_1$ be an exit state, $s\in S_2$ an entry state
+and $q_2\in S_2$ a target state, and let $M_1;M_2$ be the seam composite with state set
+$S_1\sqcup S_2$, which runs $M_1$ on left states, runs $M_2$ on right states, and from the left
+state $e$ takes one silent stationary step to the right state $s$. Let $g:S_0\to S_1$ be a map,
+and let $c_0$, $c_2$, $c_3$ be configurations on a common input with states in $S_1$, $S_0$ and
+$S_2$ respectively. Suppose that running $M_1$ from $c_0$ for $T_1$ steps gives $c_2$ with its
+state relabelled by $g$, that this configuration is in state $e$, and that $M_1$ is not in state
+$e$ at any earlier step; and suppose that running $M_2$ for $T_2$ steps from $c_2$ with its state
+replaced by $s$ gives $c_3$, which is in state $q_2$, and that this run is not in state $q_2$ at
+any earlier step. Then running $M_1;M_2$ from $c_0$ (with left-tagged state) for $T_1+1+T_2$
+steps gives $c_3$ with right-tagged state, this configuration is in the right state $q_2$, and
+the composite run is not in the right state $q_2$ at any earlier step.
+\end{theorem}
+
+\begin{theorem}[Existence of the universal setup machine]
+\lean{Turing.un_setup}
+\label{Turing.un_setup}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.CounterLoopState, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.bufferTape_nil, Turing.FinTM.bufferTape_of_neg, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_workTapePos_cast, Turing.FinTM.bufferedSecondCfg_workTapes_cast, Turing.FinTM.pairExtractTM, Turing.FinTM.pairExtractTM_fst_run, Turing.FinTM.tapeBlocks_buffer, Turing.FinTM.tapeBlocks_right, Turing.InputRewindPhase, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq, Turing.MultiTapeTM.initCfg_with_q₀, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_with_q₀, Turing.RewindPhase, Turing.SweepPhase, Turing.clearTM, Turing.clearTM_run_ofCfg, Turing.counterLoopCfg, Turing.counterOverhead, Turing.counterOverhead_le, Turing.counterValue_bits, Turing.counterValue_eq, Turing.counter_cfg_eq, Turing.embedSilentCfg, Turing.embedSilentCfg_cap, Turing.embedSilentCfg_selected_pos, Turing.embedSilentCfg_selected_tape, Turing.embedSilentCfg_unselected, Turing.embedSilentRetTM, Turing.embedSilentRetTM_run, Turing.expandTM, Turing.expandTM_run_ofCfg, Turing.inputRewindTM, Turing.inputRewindTM_run, Turing.length_bits_le_self, Turing.length_pairEncode, Turing.pairEncode, Turing.prefixCanonTM_eq, Turing.prefixCanon_run, Turing.rewindTM, Turing.rewindTM_run_ofCfg, Turing.seamCompTM, Turing.seamCompTM_step, Turing.un_bankTM, Turing.un_bank_run, Turing.un_buffer_ge, Turing.un_canon_halt, Turing.un_flatten, Turing.un_step', Turing.universalPrefixTM}
+\difficulty{7}
+For binary strings $a,b$ write $\langle a,b\rangle$ for $a$ with every bit doubled, followed by
+$01$, followed by $b$, and write $\mathrm{bits}(t)$ for the binary expansion of $t\in\mathbb{N}$.
+For every $K\in\mathbb{N}$ and every tape index $j_R<K$ there exist $k\in\mathbb{N}$, an injection
+$\iota$ of $\{0,\dots,K-1\}$ into $\{0,\dots,k-1\}$, a tape index outside the image of $\iota$, a
+deterministic binary machine $P$ with $k$ work tapes and finitely many states (with decidable
+equality), and a state $p_{\mathrm{exit}}$ of $P$, with the following property. For every binary
+string $\alpha$ there is a constant $C_P$ such that for all binary $x$ and all $t\in\mathbb{N}$
+there are $T_P\le C_P(t+1)$ and a tape content that is nonblank exactly on cells $0,\dots,t-1$,
+such that the run of $P$ on input $\langle\langle\mathrm{bits}(t),\alpha\rangle,x\rangle$ is, after
+$T_P$ steps, in state $p_{\mathrm{exit}}$ with input head at position $1$, tape $\iota(j_R)$
+holding that content, every other work tape blank, every work head at cell $0$ and empty output,
+and is not in state $p_{\mathrm{exit}}$ after any fewer steps.
+\end{theorem}
+
+\begin{lemma}[Chaining equivalences along an interval]
+\lean{Complexity.nh_chain}
+\label{Complexity.nh_chain}
+\leanok
+\difficulty{3}
+Let $P$ be a predicate on $\mathbb{N}$ and let $a\le b$. If $P(n)\iff P(n+1)$ for every $n$ with
+$a\le n<b$, then $P(a)\iff P(b)$.
+\end{lemma}
+
+\begin{lemma}[Absorbing finitely many exceptions]
+\lean{Complexity.nh_absorb}
+\label{Complexity.nh_absorb}
+\leanok
+\difficulty{4}
+Let $f,g:\mathbb{N}\to\mathbb{N}$ and $N_0\in\mathbb{N}$, and suppose $f(n)\le g(n)$ for every
+$n\ge N_0$. Then there is a constant $F\in\mathbb{N}$ with $f(n)\le F\,(g(n)+1)$ for every
+$n\in\mathbb{N}$.
+\end{lemma}
+
+\begin{lemma}[Constant factors fold into NTIME]
+\lean{Complexity.nh_fold}
+\label{Complexity.nh_fold}
+\leanok
+\uses{Complexity.NTIME, Complexity.mem_NTIME_iff, Turing.FinNDTM.decidesInTime_iff}
+\difficulty{3}
+For $T:\mathbb{N}\to\mathbb{N}$ let $\mathrm{NTIME}(T)$ be the class of languages of binary strings
+decided by some finite nondeterministic binary machine within $c\,T(n)$ steps on inputs of
+length $n$, for some constant $c$. Then for every $T$ and every $F\in\mathbb{N}$,
+$\mathrm{NTIME}(n\mapsto F\,T(n))\subseteq\mathrm{NTIME}(T)$.
+\end{lemma}
+
+\begin{lemma}[Inclusion half of the hierarchy]
+\lean{Complexity.nh_inclusion}
+\label{Complexity.nh_inclusion}
+\leanok
+\uses{Complexity.NTIME, Complexity.NTIME.mono, Complexity.nh_absorb, Complexity.nh_fold}
+\difficulty{3}
+Let $f,g:\mathbb{N}\to\mathbb{N}$ be such that for every $A\in\mathbb{N}$ there is $N$ with
+$A\bigl(f(n+1)+f(n)+n+1\bigr)\le g(n)$ for all $n\ge N$. Then
+$\mathrm{NTIME}(f)\subseteq\mathrm{NTIME}(n\mapsto g(n)+1)$, where $\mathrm{NTIME}(T)$ is the class
+of languages of binary strings decided by some finite nondeterministic binary machine within
+$c\,T(n)$ steps on inputs of length $n$, for some constant $c$.
+\end{lemma}
+
+\begin{lemma}[Exponential bound below a squared exponent]
+\lean{Complexity.nh_top}
+\label{Complexity.nh_top}
+\leanok
+\difficulty{4}
+For every $C\in\mathbb{N}$ there is $T_0$ such that $C\cdot 2^{C(T+1)}\le 2^{T^2}$ for every
+$T\ge T_0$.
+\end{lemma}
+
+\begin{lemma}[Bottom threshold inequality]
+\lean{Complexity.nh_bottom}
+\label{Complexity.nh_bottom}
+\leanok
+\difficulty{3}
+For natural numbers $C_1,c_0,f_a,a$ with $C_1(c_0+1)\le a$, one has
+$C_1(c_0 f_a+1)\le (f_a+a+1)^2$.
+\end{lemma}
+
+\begin{lemma}[Middle threshold inequality]
+\lean{Complexity.nh_middle}
+\label{Complexity.nh_middle}
+\leanok
+\difficulty{4}
+Let $f,g:\mathbb{N}\to\mathbb{N}$ be such that for every $A\in\mathbb{N}$ there is $N$ with
+$A\bigl(f(n+1)+f(n)+n+1\bigr)\le g(n)$ for all $n\ge N$. Then for all $C,C_1,c_0\in\mathbb{N}$
+there is $N$ such that $C\bigl(C_1(c_0 f(n+1)+1)+1\bigr)\le g(n)$ for every $n\ge N$.
+\end{lemma}
+
+\begin{lemma}[Every code recurs at arbitrarily late stages]
+\lean{Complexity.nh_stage}
+\label{Complexity.nh_stage}
+\leanok
+\uses{Turing.NTimeDiag.ladder, Turing.NTimeDiag.le_ladder, Turing.NTimeDiag.stageCode, Turing.NTimeDiag.stageCode_frequently}
+\difficulty{2}
+Let $f:\mathbb{N}\to\mathbb{N}$ and define the ladder by $\ell_0=2$ and
+$\ell_{i+1}=2^{B_i^2}$ with $B_i=\bigl(f(\ell_i+1)+\ell_i+2\bigr)^2$; let the code of stage $i$ be
+the binary expansion (least significant bit first) of $j+1$ with its top bit removed, where $j$
+is the first component of $i$ under the standard unpairing of natural numbers. Then for every
+binary string $\alpha$ and every $N\in\mathbb{N}$ there is a stage $i$ with $N\le\ell_i$ whose
+code is $\alpha$.
+\end{lemma}
+
+\begin{lemma}[Acceptance truncates to an all-branch halting time]
+\lean{Complexity.nh_accepts_of_halts}
+\label{Complexity.nh_accepts_of_halts}
+\leanok
+\uses{Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.AcceptsWithin.iff_of_haltsWithin, Turing.FinNDTM.AcceptsWithin.mono, Turing.NDTM.HaltsWithin}
+\difficulty{3}
+Let $N$ be a finite nondeterministic binary machine, $x$ a binary input and $T,t\in\mathbb{N}$.
+Suppose every choice word of length $T$ leaves $N$ halted on $x$, and some choice word of length
+$t$ leaves $N$ halted on $x$ with output exactly $[1]$. Then some choice word of length $T$
+leaves $N$ halted on $x$ with output exactly $[1]$.
+\end{lemma}
+
+\begin{lemma}[Any acceptance by a decider implies membership]
+\lean{Complexity.nh_mem_of_accepts}
+\label{Complexity.nh_mem_of_accepts}
+\leanok
+\uses{Complexity.nh_accepts_of_halts, Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.DecidesInTime, Turing.FinNDTM.decidesInTime_iff}
+\difficulty{2}
+Let $N$ be a finite nondeterministic binary machine that decides a language $L$ of binary
+strings within time $T:\mathbb{N}\to\mathbb{N}$, meaning that on every input $x$ every choice word
+of length $T(\abs{x})$ leaves $N$ halted, and $x\in L$ exactly when some such word leaves it
+halted with output $[1]$. If for some binary $x$ and some $t\in\mathbb{N}$ a choice word of length
+$t$ leaves $N$ halted on $x$ with output exactly $[1]$, then $x\in L$.
+\end{lemma}

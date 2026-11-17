@@ -305,3 +305,16 @@ most $S(|y|)$ space. Then there are a natural number $c$ and a finite Turing mac
 over the Boolean alphabet that decides $L$ using at most $c(S(n)+1)$ space on inputs of
 length $n$.
 \end{theorem}
+
+\begin{theorem}[Components of a configuration core]
+\lean{Turing.MultiTapeTM.ConfigCount.core_eq}
+\label{Turing.MultiTapeTM.ConfigCount.core_eq}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM.ConfigCount.core}
+\difficulty{1}
+Let $c$ be a configuration of a Turing machine over the binary alphabet with $k$ work
+tapes and state set $S$, running on input $x$. The core of $c$ is the tuple consisting,
+in this order, of the current state of $c$ (or the halted marker), its input-head
+position, its $k$ work-tape contents, and its $k$ work-head positions; the output tape of
+$c$ is not recorded.
+\end{theorem}

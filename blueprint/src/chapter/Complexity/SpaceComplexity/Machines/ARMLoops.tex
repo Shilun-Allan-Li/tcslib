@@ -171,3 +171,34 @@ $v(r)2^{v(c)}$, all other registers unchanged, and no result. Every configuratio
 strictly before that endpoint satisfies the guard: it meets the instruction-specific
 safety condition and all register values are at most $B$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Machines --- ARMLoops: further results}
+
+\begin{theorem}[Bounded halting run of an embedded block]
+\lean{Complexity.LogProg.AHalt.embed_guardLe}
+\label{Complexity.LogProg.AHalt.embed_guardLe}
+\leanok
+\uses{Complexity.LogProg.AHalt, Complexity.LogProg.AHalt.embed, Complexity.LogProg.ARM, Complexity.LogProg.AReach, Complexity.LogProg.GuardLe, Complexity.LogProg.Ins.embed, Complexity.LogProg.RegExt, Complexity.LogProg.preS_embed}
+\difficulty{4}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, none of whose instructions is an input-format check, and let $D$ be a
+register machine with $m'$ registers, $d'$ deciders and label set $\Lambda'$. Let
+$\rho:\{0,\ldots,m-1\}\to\{0,\ldots,m'-1\}$ be injective, let $\sigma$ map deciders of $A$
+to deciders of $D$, let $\iota:\Lambda\to\Lambda'$, let $k$ assign an exit label of $D$
+to each Boolean, and let $r_0$ be a register of $D$; suppose that for every label $l$ of
+$A$, the instruction of $D$ at $\iota(l)$ is the instruction of $A$ at $l$ with registers
+renamed along $\rho$, deciders along $\sigma$, labels along $\iota$, and each answer $b$
+replaced by a jump to $k(b)$ (a zero test of $r_0$). Fix an oracle for the deciders of
+$D$, an input $x$, bounds $B\le B'$, and a register assignment $e$ of $D$ with every
+value at most $B'$. Suppose that $A$, querying decider $j$ through decider $\sigma(j)$ of
+the oracle, halts with answer $b$ from label $l$ with registers $v$ and no answer, every
+configuration before halting meeting the syntactic instruction preconditions and having
+all registers at most $B$. Then for every register assignment $v'$ of $D$ with
+$v'(\rho(r))=v(r)$ for all $r$ and $v'(r')=e(r')$ for every $r'$ outside the range of
+$\rho$, there is a register assignment $v_2'$ such that $v_2'$ agrees with $e$ outside the
+range of $\rho$, $v_2'(\rho(r))\le B$ for every register $r$ of $A$, and $D$ has a finite
+run from label $\iota(l)$ with registers $v'$ and no answer to label $k(b)$ with registers
+$v_2'$ and no answer, every configuration before the end meeting the syntactic
+instruction preconditions of $D$ on $x$ and having all registers at most $B'$.
+\end{theorem}

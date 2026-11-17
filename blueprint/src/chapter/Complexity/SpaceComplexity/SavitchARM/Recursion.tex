@@ -2391,3 +2391,20 @@ step oracle, $x$, and $s$. Every preterminal configuration satisfies the program
 and has all registers at most $2^{w^2}$; the final register vector agrees with $\mathrm{st}$
 except that its midpoint register is $M'$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Savitch ARM --- Recursion: further results}
+
+\begin{theorem}[Step relation as an oracle query]
+\lean{Complexity.LogProg.SavitchARM.rel_iff_orc}
+\label{Complexity.LogProg.SavitchARM.rel_iff_orc}
+\leanok
+\uses{Complexity.LogProg.SavitchARM.Rel, Turing.pairEncode}
+\difficulty{1}
+Let $\mathrm{orc}$ be a Boolean oracle with four decider indices $0,1,2,3$ on Boolean-word
+inputs, let $x$ be a Boolean word, and let $s,u,v$ be natural numbers. The step relation
+determined by $\mathrm{orc}$, $x$ and $s$ holds between $u$ and $v$ if and only if decider
+$3$ of $\mathrm{orc}$ accepts the nested pair encoding
+$\langle x,\langle \mathrm{bin}(u),\langle \mathrm{bin}(v),\mathrm{bin}(s)\rangle\rangle\rangle$,
+where $\mathrm{bin}(n)$ is the binary representation of $n$.
+\end{theorem}

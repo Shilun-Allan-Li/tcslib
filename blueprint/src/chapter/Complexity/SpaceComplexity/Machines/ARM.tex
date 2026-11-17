@@ -236,3 +236,238 @@ with state $(l,\mathrm{start})$, input head at the first position, each register
 containing the binary expansion of its assigned value, every work-tape head at position
 zero, and the specified output string.
 \end{definition}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Machines --- ARM: further results}
+
+\begin{lemma}[Running zero steps]
+\lean{Complexity.LogProg.arun_zero}
+\label{Complexity.LogProg.arun_zero}
+\leanok
+\uses{Complexity.LogProg.AConf, Complexity.LogProg.ARM, Complexity.LogProg.arun}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ assign a Boolean answer to each decider index $j<d$ and each
+bit string, and let $x$ be an input bit string. For every abstract configuration $a$ (an
+optional label, a vector of $m$ register values in $\mathbb{N}$, and an optional Boolean
+result), running $A$ with oracle $\mathcal{O}$ on input $x$ from $a$ for $0$ steps
+yields $a$.
+\end{lemma}
+
+\begin{lemma}[One step at an increment]
+\lean{Complexity.LogProg.astep_inc}
+\label{Complexity.LogProg.astep_inc}
+\leanok
+\uses{Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. If the instruction of $A$ at $l$ increments register $r$ and
+continues at $l'$, then one step of $A$ from $(l,v,\rho)$ yields
+$(l', v[r\mapsto v(r)+1], \rho)$, where $v[r\mapsto k]$ agrees with $v$ except that
+register $r$ holds $k$.
+\end{lemma}
+
+\begin{lemma}[One step at a decrement]
+\lean{Complexity.LogProg.astep_dec}
+\label{Complexity.LogProg.astep_dec}
+\leanok
+\uses{Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. If the instruction of $A$ at $l$ decrements register $r$ and
+continues at $l'$, then one step of $A$ from $(l,v,\rho)$ yields
+$(l', v[r\mapsto v(r)\dot{-}1], \rho)$, where $\dot{-}$ is truncated subtraction on
+$\mathbb{N}$ and $v[r\mapsto k]$ agrees with $v$ except that register $r$ holds $k$.
+\end{lemma}
+
+\begin{lemma}[One step at a clear]
+\lean{Complexity.LogProg.astep_clr}
+\label{Complexity.LogProg.astep_clr}
+\leanok
+\uses{Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. If the instruction of $A$ at $l$ clears register $r$ and
+continues at $l'$, then one step of $A$ from $(l,v,\rho)$ yields
+$(l', v[r\mapsto 0], \rho)$, where $v[r\mapsto 0]$ agrees with $v$ except that register
+$r$ holds $0$.
+\end{lemma}
+
+\begin{lemma}[One step at a halving]
+\lean{Complexity.LogProg.astep_half}
+\label{Complexity.LogProg.astep_half}
+\leanok
+\uses{Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. If the instruction of $A$ at $l$ halves register $r$ and
+continues at $l'$, then one step of $A$ from $(l,v,\rho)$ yields
+$(l', v[r\mapsto \lfloor v(r)/2\rfloor], \rho)$, where $v[r\mapsto k]$ agrees with $v$
+except that register $r$ holds $k$.
+\end{lemma}
+
+\begin{lemma}[One step at a zero test]
+\lean{Complexity.LogProg.astep_jz}
+\label{Complexity.LogProg.astep_jz}
+\leanok
+\uses{Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. If the instruction of $A$ at $l$ tests register $r$ for zero with
+branch targets $l_1$ and $l_0$, then one step of $A$ from $(l,v,\rho)$ yields
+$(l_1,v,\rho)$ if $v(r)=0$ and $(l_0,v,\rho)$ otherwise.
+\end{lemma}
+
+\begin{lemma}[One step at a parity test]
+\lean{Complexity.LogProg.astep_jodd}
+\label{Complexity.LogProg.astep_jodd}
+\leanok
+\uses{Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. If the instruction of $A$ at $l$ tests register $r$ for oddness
+with branch targets $l_1$ and $l_0$, then one step of $A$ from $(l,v,\rho)$ yields
+$(l_1,v,\rho)$ if $v(r)\bmod 2=1$ and $(l_0,v,\rho)$ otherwise.
+\end{lemma}
+
+\begin{lemma}[One step at an equality test]
+\lean{Complexity.LogProg.astep_jeq}
+\label{Complexity.LogProg.astep_jeq}
+\leanok
+\uses{Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. If the instruction of $A$ at $l$ compares registers $r$ and $s$
+with branch targets $l_1$ and $l_0$, then one step of $A$ from $(l,v,\rho)$ yields
+$(l_1,v,\rho)$ if $v(r)=v(s)$ and $(l_0,v,\rho)$ otherwise.
+\end{lemma}
+
+\begin{lemma}[One step at a decider call]
+\lean{Complexity.LogProg.astep_call}
+\label{Complexity.LogProg.astep_call}
+\leanok
+\uses{Complexity.LogProg.Mode, Complexity.LogProg.astep, Complexity.LogProg.callSegs, Complexity.LogProg.vword}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ assign a Boolean answer $\mathcal{O}_j(y)$ to each decider
+$j<d$ and bit string $y$, let $x$ be an input bit string, and let $l\in\Lambda$, register
+values $v$ and an optional result $\rho$ be given. Suppose the instruction of $A$ at $l$
+calls decider $j$ in mode $\mu$ on the argument registers $r_1,\dots,r_k$ with branch
+targets $l_1,l_0$, and let $y$ be the virtual input of this call: the segments are first
+$x$ with every bit doubled (whole mode) or the leading run of $1$s of $x$ undoubled
+(unary mode), followed by the binary words $\mathrm{bits}(v(r_1)),\dots,
+\mathrm{bits}(v(r_k))$, each doubled except the last, all joined by the separator $01$.
+Then one step of $A$ from $(l,v,\rho)$ yields $(l_1,v,\rho)$ if $\mathcal{O}_j(y)$ is
+true and $(l_0,v,\rho)$ otherwise.
+\end{lemma}
+
+\begin{lemma}[One step at a return]
+\lean{Complexity.LogProg.astep_ret}
+\label{Complexity.LogProg.astep_ret}
+\leanok
+\uses{Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. If the instruction of $A$ at $l$ returns the Boolean $b$, then
+one step of $A$ from $(l,v,\rho)$ yields the halted configuration with no label,
+registers $v$ and result $b$.
+\end{lemma}
+
+\begin{lemma}[One step at the plain-input check]
+\lean{Complexity.LogProg.astep_valP}
+\label{Complexity.LogProg.astep_valP}
+\leanok
+\uses{Complexity.LogProg.ValidPlain, Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. Suppose the instruction of $A$ at $l$ is the plain-input check
+(on any register) continuing at $l'$. Then one step of $A$ from $(l,v,\rho)$ yields
+$(l',v,\rho)$ if $x=\langle 1^n,w\rangle$ for some $n$ and some word $w$ that is empty or
+ends in $1$, where $\langle a,b\rangle$ is $a$ with every bit doubled, then $01$, then
+$b$; otherwise it yields the halted configuration with registers $v$ and result false.
+\end{lemma}
+
+\begin{lemma}[One step at the pair-input check]
+\lean{Complexity.LogProg.astep_valQ}
+\label{Complexity.LogProg.astep_valQ}
+\leanok
+\uses{Complexity.LogProg.ValidPair, Complexity.LogProg.astep}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. Suppose the instruction of $A$ at $l$ is the pair-input check
+(on any register) continuing at $l'$. Then one step of $A$ from $(l,v,\rho)$ yields
+$(l',v,\rho)$ if $x=\langle 1^n,\langle u,w\rangle\rangle$ for some $n$ and words $u,w$
+each empty or ending in $1$, where $\langle a,b\rangle$ is $a$ with every bit doubled,
+then $01$, then $b$; otherwise it yields the halted configuration with registers $v$ and
+result false.
+\end{lemma}
+
+\begin{lemma}[One step at a comparison with the plain payload]
+\lean{Complexity.LogProg.astep_jeqIn}
+\label{Complexity.LogProg.astep_jeqIn}
+\leanok
+\uses{Complexity.LogProg.astep, Complexity.LogProg.plainWord}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. Let $w$ be the suffix of $x$ left after deleting its leading run
+of $t$ ones and the next two bits. If the instruction of $A$ at $l$ compares register $r$
+with the plain payload, with branch targets $l_1,l_0$, then one step of $A$ from
+$(l,v,\rho)$ yields $(l_1,v,\rho)$ if the binary word $\mathrm{bits}(v(r))$ (least
+significant bit first) equals $w$, and $(l_0,v,\rho)$ otherwise.
+\end{lemma}
+
+\begin{lemma}[One step at a comparison with the first pair word]
+\lean{Complexity.LogProg.astep_jeqFst}
+\label{Complexity.LogProg.astep_jeqFst}
+\leanok
+\uses{Complexity.LogProg.astep, Complexity.LogProg.pairWords}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. Let $(u,w)$ be obtained by deleting from $x$ its leading run of
+ones and the next two bits and decoding the rest as a pair $\langle u,w\rangle$ ($u$ with
+every bit doubled, then $01$, then $w$), with $(u,w)$ both empty if decoding fails. If
+the instruction of $A$ at $l$ compares register $r$ with the first pair word, with branch
+targets $l_1,l_0$, then one step of $A$ from $(l,v,\rho)$ yields $(l_1,v,\rho)$ if the
+binary word $\mathrm{bits}(v(r))$ equals $u$, and $(l_0,v,\rho)$ otherwise.
+\end{lemma}
+
+\begin{lemma}[One step at a comparison with the second pair word]
+\lean{Complexity.LogProg.astep_jeqSnd}
+\label{Complexity.LogProg.astep_jeqSnd}
+\leanok
+\uses{Complexity.LogProg.astep, Complexity.LogProg.pairWords}
+\difficulty{1}
+Let $A$ be an abstract register machine with $m$ registers, $d$ deciders and label set
+$\Lambda$, let $\mathcal{O}$ be an oracle answering each decider on each bit string, let
+$x$ be an input bit string, and let $l\in\Lambda$, register values $v$ and an optional
+result $\rho$ be given. Let $(u,w)$ be obtained by deleting from $x$ its leading run of
+ones and the next two bits and decoding the rest as a pair $\langle u,w\rangle$ ($u$ with
+every bit doubled, then $01$, then $w$), with $(u,w)$ both empty if decoding fails. If
+the instruction of $A$ at $l$ compares register $r$ with the second pair word, with
+branch targets $l_1,l_0$, then one step of $A$ from $(l,v,\rho)$ yields $(l_1,v,\rho)$ if
+the binary word $\mathrm{bits}(v(r))$ equals $w$, and $(l_0,v,\rho)$ otherwise.
+\end{lemma}

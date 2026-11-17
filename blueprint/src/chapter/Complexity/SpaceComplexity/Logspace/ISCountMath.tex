@@ -15,17 +15,6 @@ For every nonzero natural number $m$, the binary size of $m$ is one greater than
 binary size of the integer quotient $m/2$.
 \end{lemma}
 
-\begin{lemma}[Logarithmic space bound]
-\lean{Complexity.LogProg.ISCount.logSpace_le_size_succ}
-\label{Complexity.LogProg.ISCount.logSpace_le_size_succ}
-\leanok
-\uses{Complexity.logSpace}
-\difficulty{4}
-For every natural number $n$, define its logarithmic space measure by $\log_2 n+1$,
-where $\log_2 n$ is the natural-number logarithm. This measure is at most the binary
-size of $n$ plus one.
-\end{lemma}
-
 \begin{lemma}[Binary size power bound]
 \lean{Complexity.LogProg.ISCount.lt_two_pow_size_succ}
 \label{Complexity.LogProg.ISCount.lt_two_pow_size_succ}
@@ -109,24 +98,11 @@ a number below $K$. If $L \le L'$, then the reachable set for $L$ is contained i
 reachable set for $L'$.
 \end{lemma}
 
-\begin{lemma}[One-step walk decomposition]
-\lean{Complexity.LogProg.ISCount.walkLe_succ_iff}
-\label{Complexity.LogProg.ISCount.walkLe_succ_iff}
-\leanok
-\uses{Complexity.WalkLe, Complexity.walkLe_refl, Complexity.walkLe_succ}
-\difficulty{5}
-Let $R$ be a binary relation on the natural numbers, and let $K,j,c,t$ be natural
-numbers. There is an $R$-walk of length at most $j+1$ from $c$ to $t$, with intermediate
-vertices less than $K$, if and only if either there is such a walk of length at most $j$
-from $c$ to $t$, or there is a number $w$ such that there is such a walk of length at
-most $j$ from $c$ to $w$, $R(w,t)$ holds, and $t<K$.
-\end{lemma}
-
 \begin{lemma}[Reachability after one additional step]
 \lean{Complexity.LogProg.ISCount.mem_succ_iff}
 \label{Complexity.LogProg.ISCount.mem_succ_iff}
 \leanok
-\uses{Complexity.LogProg.ISCount.Mem, Complexity.LogProg.ISCount.walkLe_succ_iff, Complexity.walkLe_succ}
+\uses{Complexity.LogProg.ISCount.Mem, Complexity.walkLe_succ_iff, Complexity.walkLe_succ}
 \difficulty{4}
 Let $K,L,t$ be natural numbers, let $R$ be a binary relation on the natural numbers, and
 let $I$ be a predicate on the natural numbers. A vertex $t$ is reachable in at most

@@ -76,3 +76,1098 @@ with type $o$, and at time $t$ the runner's first work tape agrees with the reco
 the resulting configuration and updated tag throughout the recorded field; its state is
 $e(o)$, and all other tape cells retain their initial contents.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Window Clock: further results}
+
+\begin{lemma}[Value of an all-ones binary word]
+\lean{Turing.cw_true_value}
+\label{Turing.cw_true_value}
+\leanok
+\difficulty{4}
+For every $W\in\mathbb{N}$, the natural number whose binary digits are $W$ ones equals $2^W-1$.
+\end{lemma}
+
+\begin{lemma}[Per-round cost bound]
+\lean{Turing.cw_round_cost}
+\label{Turing.cw_round_cost}
+\leanok
+\difficulty{3}
+Let $L,n,p\in\mathbb{N}$ with $p\le L$ and $n+2\le 2^p$. Then $L+n+1\le 2^{L+1}$.
+\end{lemma}
+
+\begin{lemma}[Clock budget arithmetic]
+\lean{Turing.cw_budget}
+\label{Turing.cw_budget}
+\leanok
+\uses{Turing.cw_round_cost}
+\difficulty{5}
+Let $q,k,n,s,p,L,B,C\in\mathbb{N}$ satisfy $L=k(2s+1)+p+k+4$, $n+2\le 2^p$ and $B\le
+2^{q+p+3k(2s+1)}$. Then \[C(B+1)(L+n+1)\le 2^{(C+q+8)(k(2s+1)+p+2)}-1.\]
+\end{lemma}
+
+\begin{lemma}[Single-exponential time envelope]
+\lean{Turing.cw_time_bound}
+\label{Turing.cw_time_bound}
+\leanok
+\difficulty{5}
+Let $c,L,W,A,D\in\mathbb{N}$ with $W\le cL$, and set $C=A+4c+D+10$. Then
+\[A(L+1)+\bigl(5(2^W-1)+2W+3\bigr)+(2W+2)+D\le C\cdot 2^{C(L+1)}.\]
+\end{lemma}
+
+\begin{lemma}[Linear head envelope with a linear clock]
+\lean{Turing.cw_head_bound}
+\label{Turing.cw_head_bound}
+\leanok
+\difficulty{3}
+Let $c,L,W,C\in\mathbb{N}$ with $W\le cL$. Then $C(L+W+1)\le C(c+1)(L+1)$.
+\end{lemma}
+
+\begin{lemma}[Total field length of a configuration record]
+\lean{Turing.cw_field_total}
+\label{Turing.cw_field_total}
+\leanok
+\uses{Turing.Cfg, Turing.cfgRecord, Turing.cfgRecord_length, Turing.joinFields_cfgRecord_length, Turing.joinFields_length, Turing.posWidth, Turing.recordLength_eq}
+\difficulty{4}
+Let $k\in\mathbb{N}$, let $x$ be a Boolean input, let $s\in\mathbb{N}$, let $d$ be a
+configuration with $k$ work tapes on input $x$, and let $\tau$ be a tag. Consider the
+configuration record of $d$ at radius $s$ with tag $\tau$: the $k+3$ fields consisting of the
+state, the input position in binary with as many digits as the bit length $w$ of $|x|+1$, the
+cells $-s,\dots,s$ of each work tape with head marks, and the tag. The sum of the lengths of
+these fields is $k(2s+1)+w+2$.
+\end{lemma}
+
+\begin{lemma}[An all-ones clock covers every round]
+\lean{Turing.cw_record_clock}
+\label{Turing.cw_record_clock}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.configBound, Turing.FinTM.configBound_le_two_pow, Turing.cfgRecord, Turing.cw_budget, Turing.cw_field_total, Turing.cw_true_value, Turing.posWidth, Turing.recordLength, Turing.recordLength_eq, Turing.record_pos_lt}
+\difficulty{4}
+Let $M$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes and state set
+$Q$, let $x$ be a Boolean input of length $n$, let $s,C\in\mathbb{N}$, let $d$ be a
+configuration of $M$ on $x$ and $\tau$ a tag. Let $w$ be the bit length of $n+1$, let
+$\ell=k(2s+1)+w+k+4$ be the record length, let $F$ be the total length of the fields of the
+configuration record of $d$ at radius $s$ with tag $\tau$, and set $c=C+|Q|+8$ and $W=cF$. Then
+$W\le c\ell$, and for every $N\le (|Q|+1)(n+2)3^{k(2s+1)}(2s+1)^k+1$ the value $2^W-1$ of the
+binary word of $W$ ones satisfies $CN(\ell+n+1)\le 2^W-1$.
+\end{lemma}
+
+\begin{definition}[One-step left move on a tape]
+\lean{Turing.cw_leftTM}
+\label{Turing.cw_leftTM}
+\leanok
+\uses{Turing.MultiTapeTM, Turing.tapeAction}
+For $k\in\mathbb{N}$ and a work tape $i<k$, the one-step left move on tape $i$ is the Turing
+machine with $k$ work tapes and Boolean states, starting in state false, whose every transition
+keeps the input head, writes nothing, moves the head of tape $i$ one cell to the left, leaves
+every other tape and the output untouched, and enters state true.
+\end{definition}
+
+\begin{lemma}[Run of the one-step left move]
+\lean{Turing.cw_left_run}
+\label{Turing.cw_left_run}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_one, Turing.MultiTapeTM.runFrom_zero, Turing.cw_leftTM, Turing.moveInputPos_zero, Turing.step_of_tapeAction_move}
+\difficulty{3}
+Let $k\in\mathbb{N}$, let $i<k$, and consider the Turing machine with $k$ work tapes and
+Boolean states whose every transition moves the head of tape $i$ one cell left, writes and
+emits nothing, keeps the input head, and enters state true. Let $d$ be a configuration of this
+machine whose state is false. Then after one step the configuration is $d$ with state true and
+the head of tape $i$ moved from position $p$ to $p-1$, and at time $0$ the state is not true.
+\end{lemma}
+
+\begin{lemma}[Reading a constant patch]
+\lean{Turing.cw_patch_rep}
+\label{Turing.cw_patch_rep}
+\leanok
+\uses{Turing.FinTM.bufferTape_nat, Turing.wordPatch, Turing.wordPatch_of_mem, Turing.wordPatch_of_not_mem}
+\difficulty{4}
+Let $\Gamma$ be an alphabet, let $\gamma$ be a tape over $\Gamma$ (a map from $\mathbb{Z}$ to
+cells that are blank or hold a letter), and let $p\in\mathbb{Z}$, $n\in\mathbb{N}$ and
+$e\in\Gamma$. The tape obtained from $\gamma$ by writing $n$ copies of $e$ in the cells
+$p,\dots,p+n-1$ holds $e$ at every cell $z$ with $p\le z<p+n$, and holds $\gamma(z)$ at every
+other cell $z$.
+\end{lemma}
+
+\begin{lemma}[Tape holding a constant word]
+\lean{Turing.cw_buffer_rep}
+\label{Turing.cw_buffer_rep}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.bufferTape_of_neg}
+\difficulty{4}
+Let $n\in\mathbb{N}$, let $e$ be a letter and let $z\in\mathbb{Z}$. The tape that holds the
+word $e^n$ in cells $0,\dots,n-1$ and is blank elsewhere holds $e$ at cell $z$ if $0\le z<n$,
+and is blank at $z$ otherwise.
+\end{lemma}
+
+\begin{lemma}[Joining adjacent constant patches]
+\lean{Turing.cw_join}
+\label{Turing.cw_join}
+\leanok
+\uses{Turing.wordPatch, Turing.wordPatch_append}
+\difficulty{2}
+Let $\gamma$ be a tape over an alphabet $\Gamma$, let $p\in\mathbb{Z}$, $e\in\Gamma$ and
+$n,l\in\mathbb{N}$. Writing $e^n$ onto $\gamma$ from cell $p$ and then $e^l$ from cell $p+n$
+gives the same tape as writing $e^{n+l}$ onto $\gamma$ from cell $p$.
+\end{lemma}
+
+\begin{lemma}[Constant mapped copy onto a destination tape]
+\lean{Turing.cw_copy_constant}
+\label{Turing.cw_copy_constant}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.SweepPhase, Turing.copyMapTM, Turing.copyMapTM_run_ofCfg, Turing.cw_patch_rep, Turing.wordPatch}
+\difficulty{5}
+Let $k\in\mathbb{N}$, let $\sigma\ne\delta$ be two work tapes among $k$, let $e$ be a letter
+and $w$ a word. Consider the mapped copy machine from tape $\sigma$ to tape $\delta$ that
+writes $e$ in place of every copied letter, and let $d$ be a configuration of it in its sweep
+state such that for every integer $-1\le z\le|w|$ the cell of tape $\sigma$ at offset $z$ from
+its head holds the $z$-th letter of $w$ (blank at $z=-1$ and $z=|w|$). Then after $2|w|+2$
+steps the machine is in its done state and its configuration is $d$ except that $e^{|w|}$ has
+been written on tape $\delta$ in the $|w|$ cells starting at its head; it is not done at any
+earlier time; and at every time up to $2|w|+2$ the heads of $\sigma$ and $\delta$ each lie in
+$[h-1,h+|w|]$, $h$ being that head's initial position, while every other head is at its initial
+position.
+\end{lemma}
+
+\begin{lemma}[Clearing a written patch blanks the tape]
+\lean{Turing.cw_clear_patch}
+\label{Turing.cw_clear_patch}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.SweepPhase, Turing.clearTM, Turing.clearTM_run_ofCfg, Turing.wordPatch, Turing.wordPatch_of_mem, Turing.wordPatch_of_not_mem}
+\difficulty{5}
+Let $k\in\mathbb{N}$, let $i$ be one of $k$ work tapes, let $w$ be a word, and let $d$ be a
+configuration whose tape $i$ is blank at every cell outside $[h,h+|w|)$, where $h$ is the head
+position of tape $i$ in $d$. Let $A$ be $d$ with state sweep and with $w$ written on tape $i$
+from cell $h$. Then the clear machine on tape $i$, run from $A$ for $2|w|+2$ steps, reaches $d$
+with state done and tape $i$ entirely blank; it is not in state done at any earlier time; and
+at every time up to $2|w|+2$ the head of tape $i$ lies in $[h-1,h+|w|]$ while every other head
+stays at its position in $d$.
+\end{lemma}
+
+\begin{definition}[Phases of the clock runner]
+\lean{Turing.cw_Idx}
+\label{Turing.cw_Idx}
+\leanok
+For $c,m\in\mathbb{N}$, the phases of the clock runner form the following finite set with
+decidable equality: for each pass $p<c$ and field $j<m$, the copy of field $j$ onto the clock,
+the skip past field $j$ on the record tape, the one-cell move back onto the clock's delimiter,
+and the skip back over field $j$ on the record tape; the skip past the written clock cells,
+indexed either by a pair $(p,j)$ or by a marker for the end of the last pass; the skip back
+over the clock word; the windowed runner; the clear of the clock, tagged by a Boolean recording
+a halted or a left exit; and the stop phase.
+\end{definition}
+
+\begin{definition}[Control sets of the clock runner's phases]
+\lean{Turing.cw_Ctrl}
+\label{Turing.cw_Ctrl}
+\leanok
+\uses{Turing.SeekPhase, Turing.SweepPhase, Turing.WindowExit, Turing.cw_Idx}
+Given a state set $P$ and $c,m\in\mathbb{N}$, each phase of the clock runner is assigned a
+control set: the sweep controls (sweep, rewind, done) for the field copies and the clears; the
+seek controls (run, gap, back, done) for the record skips, the clock skips, the record
+skip-backs and the clock skip-back; the Booleans for the one-cell left moves; $P$ for the
+windowed runner; and the three window exits (halted, left, exhausted) for the stop phase.
+\end{definition}
+
+\begin{definition}[Machines of the clock runner's phases]
+\lean{Turing.cw_rows}
+\label{Turing.cw_rows}
+\leanok
+\uses{Turing.MultiTapeTM, Turing.clearTM, Turing.copyMapTM, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_leftTM, Turing.skipBackTM, Turing.skipTM}
+Let $K\in\mathbb{N}$, let $e$ be a tape symbol, let $R$ be a Turing machine with $K+2$ work
+tapes and state set $P$, and let $c,m\in\mathbb{N}$. Each phase of the clock runner is assigned
+a machine on $K+2$ work tapes: each field copy runs the mapped copy from tape $0$ to tape $K+1$
+that writes $e$ in every cell; each record skip runs the skip on tape $0$; each clock skip runs
+the skip on tape $K+1$; each one-cell left move moves the head of tape $K+1$ one cell left;
+each record skip-back runs the skip back on tape $0$; the clock skip-back runs the skip back on
+tape $K+1$; the runner phase runs $R$; each clear runs the clear of tape $K+1$; and the stop
+phase is the stationary machine, started at the exit exhausted, that keeps its state and moves,
+writes and emits nothing.
+\end{definition}
+
+\begin{definition}[Continuation after a field's round]
+\lean{Turing.cw_next}
+\label{Turing.cw_next}
+\leanok
+\uses{Turing.SeekPhase, Turing.SweepPhase, Turing.cw_Ctrl, Turing.cw_Idx}
+Let $c,m\in\mathbb{N}$, $p<c$ and $j<m$. The continuation of the clock runner after the round
+of field $j$ in pass $p$ is the copy phase of field $j+1$ in pass $p$ with control sweep when
+$j+1<m$, and otherwise the skip back over field $j$ in pass $p$ with control run.
+\end{definition}
+
+\begin{definition}[Continuation after a record skip-back]
+\lean{Turing.cw_prev}
+\label{Turing.cw_prev}
+\leanok
+\uses{Turing.SeekPhase, Turing.SweepPhase, Turing.cw_Ctrl, Turing.cw_Idx}
+Let $c,m\in\mathbb{N}$, $p<c$ and $j<m$. The continuation of the clock runner after the skip
+back over field $j$ in pass $p$ is the skip back over field $j-1$ in pass $p$ with control run
+when $j>0$; otherwise the copy phase of field $0$ in pass $p+1$ with control sweep when
+$p+1<c$; and otherwise the final clock skip (after the last pass) with control run.
+\end{definition}
+
+\begin{definition}[Continuation after a clock skip]
+\lean{Turing.cw_afterSkip}
+\label{Turing.cw_afterSkip}
+\leanok
+\uses{Turing.SeekPhase, Turing.cw_Ctrl, Turing.cw_Idx}
+Let $c,m\in\mathbb{N}$. After the clock skip indexed by a pair $(p,j)$ with $p<c$ and $j<m$,
+the clock runner continues with the one-cell left move of $(p,j)$ in control false; after the
+final clock skip, which carries no pair, it continues with the skip back over the clock word in
+control run.
+\end{definition}
+
+\begin{definition}[Redirect table of the clock runner]
+\lean{Turing.cw_red}
+\label{Turing.cw_red}
+\leanok
+\uses{Turing.SeekPhase, Turing.SweepPhase, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_afterSkip, Turing.cw_next, Turing.cw_prev}
+Let $P$ be a state set with decidable equality, $p_{\mathrm{en}}\in P$ an entry state,
+$\mathrm{ex}$ a map from the window exits (halted, left, exhausted) to $P$, and
+$c,m\in\mathbb{N}$. The redirect table sends the copy of field $j$ in pass $p$ at done to the
+record skip of $(p,j)$ at run; that record skip at done to the clock skip indexed by $(p,j)$ at
+run; a clock skip at done to its continuation (the left move of $(p,j)$ at false, or after the
+last pass the clock skip-back at run); the left move of $(p,j)$ at true to the copy of field
+$j+1$ in pass $p$ at sweep if $j+1<m$, else to the skip back over field $j$ at run; the skip
+back over field $j$ in pass $p$ at done to the skip back over field $j-1$ at run if $j>0$, else
+to the copy of field $0$ in pass $p+1$ at sweep if $p+1<c$, else to the final clock skip at
+run; the clock skip-back at done to the runner at $p_{\mathrm{en}}$; the runner at
+$\mathrm{ex}(\text{halted})$, $\mathrm{ex}(\text{left})$ and $\mathrm{ex}(\text{exhausted})$ to
+the clear tagged true at sweep, the clear tagged false at sweep, and the stop phase at
+exhausted, respectively; and the clear tagged $b$ at done to the stop phase at halted if $b$ is
+true and at left otherwise. Every other phase and control is not redirected.
+\end{definition}
+
+\begin{definition}[The clock runner machine]
+\lean{Turing.cw_hostTM}
+\label{Turing.cw_hostTM}
+\leanok
+\uses{Turing.MultiTapeTM, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_red, Turing.cw_rows, Turing.phaseHostTM}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, with entry state $p_{\mathrm{en}}\in P$
+and a map $\mathrm{ex}$ from the window exits to $P$. The clock runner is the Turing machine
+with $K+2$ work tapes whose states are pairs of a phase and a control of that phase: at a pair
+that the clock runner's redirect table sends to another pair, it takes one stationary, silent
+step to that pair; at any other pair it takes the transition of the phase's machine (field
+copies, record and clock skips, left moves, skip-backs, the runner $R$, the clear of tape
+$K+1$, or the stationary stop machine), tagging the new control with the same phase. Its
+initial state is the stop phase at exhausted.
+\end{definition}
+
+\begin{definition}[Writer configurations]
+\lean{Turing.cw_cfg}
+\label{Turing.cw_cfg}
+\leanok
+\uses{Turing.Cfg, Turing.wordPatch}
+Let $K\in\mathbb{N}$, let $e$ be a tape symbol, let $d$ be a configuration with $K+2$ work
+tapes on an input $x$, let $q$ be a state, let $a,b\in\mathbb{Z}$ and $n\in\mathbb{N}$. The
+writer configuration has state $q$, the input head of $d$, the output of $d$, tape $K+1$ equal
+to that of $d$ with $n$ copies of $e$ written from the head position of tape $K+1$ in $d$,
+every other tape as in $d$, the head of tape $0$ moved by $a$ and the head of tape $K+1$ moved
+by $b$ from their positions in $d$, and every other head as in $d$.
+\end{definition}
+
+\begin{lemma}[Record and clock tapes are distinct]
+\lean{Turing.cw_zero_ne_last}
+\label{Turing.cw_zero_ne_last}
+\leanok
+\difficulty{3}
+For every $K\in\mathbb{N}$, the indices $0$ and $K+1$ of the work tapes $\{0,1,\dots,K+1\}$ are
+distinct.
+\end{lemma}
+
+\begin{lemma}[Clock tape of a writer configuration]
+\lean{Turing.cw_cfg_clockTape}
+\label{Turing.cw_cfg_clockTape}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg, Turing.wordPatch}
+\difficulty{1}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Then tape $K+1$ of $\omega(q,a,n,b)$ is tape $K+1$ of $d$ with $n$ copies of
+$e$ written in the cells starting at $h_{K+1}$.
+\end{lemma}
+
+\begin{lemma}[Clock cell of a writer configuration]
+\lean{Turing.cw_cfg_clock}
+\label{Turing.cw_cfg_clock}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg, Turing.cw_cfg_clockTape, Turing.cw_patch_rep}
+\difficulty{1}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Then for every $z\in\mathbb{Z}$, cell $z$ of tape $K+1$ in $\omega(q,a,n,b)$
+holds $e$ if $h_{K+1}\le z<h_{K+1}+n$, and otherwise holds the content of cell $z$ of tape
+$K+1$ in $d$.
+\end{lemma}
+
+\begin{lemma}[Other tapes of a writer configuration]
+\lean{Turing.cw_cfg_tape}
+\label{Turing.cw_cfg_tape}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg}
+\difficulty{1}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Then for every work tape $j\ne K+1$ and every cell $z$, cell $z$ of tape $j$
+in $\omega(q,a,n,b)$ equals cell $z$ of tape $j$ in $d$.
+\end{lemma}
+
+\begin{lemma}[Record head of a writer configuration]
+\lean{Turing.cw_cfg_pos₀}
+\label{Turing.cw_cfg_pos₀}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg}
+\difficulty{1}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Then the head of tape $0$ in $\omega(q,a,n,b)$ is at position $h_0+a$.
+\end{lemma}
+
+\begin{lemma}[Clock head of a writer configuration]
+\lean{Turing.cw_cfg_posL}
+\label{Turing.cw_cfg_posL}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg, Turing.cw_zero_ne_last}
+\difficulty{1}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Then the head of tape $K+1$ in $\omega(q,a,n,b)$ is at position $h_{K+1}+b$.
+\end{lemma}
+
+\begin{lemma}[Other heads of a writer configuration]
+\lean{Turing.cw_cfg_pos}
+\label{Turing.cw_cfg_pos}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg}
+\difficulty{1}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Then for every work tape $j$ with $j\ne 0$ and $j\ne K+1$, the head of tape
+$j$ in $\omega(q,a,n,b)$ is at position $h_j$.
+\end{lemma}
+
+\begin{lemma}[State renaming keeps the heads]
+\lean{Turing.cw_mapState_pos}
+\label{Turing.cw_mapState_pos}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState}
+\difficulty{1}
+Let $C$ be a configuration of a multi-tape Turing machine with state set $S$, and let $f:S\to
+S'$. The configuration obtained from $C$ by renaming its state through $f$ has the same
+work-tape head positions as $C$.
+\end{lemma}
+
+\begin{lemma}[State renaming keeps the tapes]
+\lean{Turing.cw_mapState_tapes}
+\label{Turing.cw_mapState_tapes}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState}
+\difficulty{1}
+Let $C$ be a configuration of a multi-tape Turing machine with state set $S$, and let $f:S\to
+S'$. The configuration obtained from $C$ by renaming its state through $f$ has the same
+work-tape contents as $C$.
+\end{lemma}
+
+\begin{lemma}[State renaming keeps input head and output]
+\lean{Turing.cw_mapState_io}
+\label{Turing.cw_mapState_io}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState}
+\difficulty{1}
+Let $C$ be a configuration of a multi-tape Turing machine with state set $S$, and let $f:S\to
+S'$. The configuration obtained from $C$ by renaming its state through $f$ has the same
+input-head position and the same output as $C$.
+\end{lemma}
+
+\begin{lemma}[Renaming the state of a writer configuration]
+\lean{Turing.cw_cfg_mapState}
+\label{Turing.cw_cfg_mapState}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.cw_cfg, Turing.cw_mapState_io, Turing.cw_mapState_pos, Turing.cw_mapState_tapes}
+\difficulty{3}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Then for every map $f$ on states, renaming the state of $\omega(q,a,n,b)$
+through $f$ gives $\omega(f(q),a,n,b)$.
+\end{lemma}
+
+\begin{lemma}[Unmoved writer configuration keeps the heads]
+\lean{Turing.cw_cfg_pos_zero}
+\label{Turing.cw_cfg_pos_zero}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg, Turing.cw_cfg_pos, Turing.cw_cfg_posL, Turing.cw_cfg_pos₀}
+\difficulty{4}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Then for every state $q$ and every $n\in\mathbb{N}$, the work-tape head
+positions of $\omega(q,0,n,0)$ are those of $d$.
+\end{lemma}
+
+\begin{lemma}[Trivial writer configuration is the start]
+\lean{Turing.cw_cfg_zero}
+\label{Turing.cw_cfg_zero}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg, Turing.cw_cfg_clock, Turing.cw_cfg_pos_zero, Turing.cw_cfg_tape}
+\difficulty{4}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. If the state of $d$ is $q$, then $\omega(q,0,0,0)=d$.
+\end{lemma}
+
+\begin{lemma}[Moving the record head of a writer configuration]
+\lean{Turing.cw_cfg_move₀}
+\label{Turing.cw_cfg_move₀}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg, Turing.cw_cfg_pos₀}
+\difficulty{4}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Let $q'$ be a state and $v,a'\in\mathbb{Z}$ with $v=h_0+a'$. Then the
+configuration obtained from $\omega(q,a,n,b)$ by setting the state to $q'$ and placing the head
+of tape $0$ at $v$ is $\omega(q',a',n,b)$.
+\end{lemma}
+
+\begin{lemma}[Moving the clock head of a writer configuration]
+\lean{Turing.cw_cfg_moveL}
+\label{Turing.cw_cfg_moveL}
+\leanok
+\uses{Turing.Cfg, Turing.cw_cfg, Turing.cw_cfg_pos, Turing.cw_cfg_posL, Turing.cw_cfg_pos₀}
+\difficulty{4}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Let $q'$ be a state and $v,b'\in\mathbb{Z}$ with $v=h_{K+1}+b'$. Then the
+configuration obtained from $\omega(q,a,n,b)$ by setting the state to $q'$ and placing the head
+of tape $K+1$ at $v$ is $\omega(q',a,n,b')$.
+\end{lemma}
+
+\begin{definition}[Head box around an origin]
+\lean{Turing.cw_box}
+\label{Turing.cw_box}
+\leanok
+For $k,r\in\mathbb{N}$ and an origin $o\in\mathbb{Z}^k$, a vector of head positions
+$\mathrm{pos}\in\mathbb{Z}^k$ lies in the box of radius $r$ around $o$ when
+$\abs{\mathrm{pos}_j-o_j}\le r$ for every $j<k$.
+\end{definition}
+
+\begin{lemma}[Box from record and clock head ranges]
+\lean{Turing.cw_box_of}
+\label{Turing.cw_box_of}
+\leanok
+\uses{Turing.cw_box}
+\difficulty{4}
+Let $K,r\in\mathbb{N}$, let $o,\mathrm{pos}\in\mathbb{Z}^{K+2}$, and let
+$\ell_0,u_0,\ell_1,u_1\in\mathbb{Z}$. Suppose $o_0+\ell_0\le \mathrm{pos}_0\le o_0+u_0$,
+$o_{K+1}+\ell_1\le\mathrm{pos}_{K+1}\le o_{K+1}+u_1$, $\mathrm{pos}_j=o_j$ for every
+$j\notin\{0,K+1\}$, and $-r\le\ell_0$, $u_0\le r$, $-r\le\ell_1$, $u_1\le r$. Then
+$\abs{\mathrm{pos}_j-o_j}\le r$ for every $j$.
+\end{lemma}
+
+\begin{lemma}[Box from one moving head]
+\lean{Turing.cw_box_row}
+\label{Turing.cw_box_row}
+\leanok
+\uses{Turing.cw_box}
+\difficulty{4}
+Let $k,r\in\mathbb{N}$, let $o,s,\mathrm{pos},\ell,u\in\mathbb{Z}^k$, and let $i<k$. Suppose
+$\ell_i\le\mathrm{pos}_i\le u_i$, $\mathrm{pos}_j=s_j$ for every $j\ne i$, $o_i-r\le\ell_i$ and
+$u_i\le o_i+r$, and $\abs{s_j-o_j}\le r$ for every $j$. Then $\abs{\mathrm{pos}_j-o_j}\le r$
+for every $j$.
+\end{lemma}
+
+\begin{lemma}[Writer configurations stay in the box]
+\lean{Turing.cw_cfg_box}
+\label{Turing.cw_cfg_box}
+\leanok
+\uses{Turing.Cfg, Turing.cw_box, Turing.cw_cfg, Turing.cw_cfg_pos, Turing.cw_cfg_posL, Turing.cw_cfg_pos₀}
+\difficulty{4}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Let $r\in\mathbb{N}$. If $\abs{a}\le r$ and $\abs{b}\le r$, then every
+work-tape head of $\omega(q,a,n,b)$ is within distance $r$ of its position in $d$.
+\end{lemma}
+
+\begin{lemma}[No redirect before a phase's anchor]
+\lean{Turing.cw_guard}
+\label{Turing.cw_guard}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_red, Turing.cw_rows}
+\difficulty{1}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+phase $i$, let $M_i$ be its machine and $\rho_i$ its row of the redirect table. Let $a$ be a
+configuration of $M_i$, $t\in\mathbb{N}$ and $v$ a control of phase $i$. Suppose the run of
+$M_i$ from $a$ is not in state $v$ at any time before $t$, and $\rho_i$ redirects no control
+other than $v$. Then at every time $u<t$, the control of that run is not redirected by
+$\rho_i$.
+\end{lemma}
+
+\begin{lemma}[One phase as a host segment]
+\lean{Turing.cw_seg}
+\label{Turing.cw_seg}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.Segment, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_hostTM, Turing.cw_mapState_pos, Turing.cw_red, Turing.cw_rows, Turing.phaseHostTM_run, Turing.segment_iff}
+\difficulty{5}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+phase $i$, let $M_i$ be its machine and $\rho_i$ its row of the redirect table. Let $i$ be a
+phase other than the stop phase, let $a,b$ be configurations of $M_i$ such that $M_i$ takes $a$
+to $b$ in $t$ steps, let $b$ have control $v$ with $\rho_i(v)=q$, suppose no control of the run
+at a time before $t$ is redirected by $\rho_i$, and let $B$ be a property of head vectors that
+holds at every time up to $t$ of the run. Then the run of $H$ from $a$ with its state tagged by
+phase $i$ reaches $b$ with its state replaced by $q$ after exactly $t+1$ steps, is in no exit
+state before time $t+1$, and its head vector satisfies $B$ at every time up to $t+1$.
+\end{lemma}
+
+\begin{lemma}[A one-head row as a host segment]
+\lean{Turing.cw_seg_row}
+\label{Turing.cw_seg_row}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.Segment, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_box_row, Turing.cw_cfg, Turing.cw_cfg_box, Turing.cw_cfg_mapState, Turing.cw_guard, Turing.cw_hostTM, Turing.cw_red, Turing.cw_rows, Turing.cw_seg}
+\difficulty{3}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$i$ be a phase other than the stop phase with machine $M_i$, let $s,v$ be controls of phase
+$i$, and let $q$ be a state of $H$ such that the redirect table sends $(i,v)$ to $q$ and
+redirects no other control of phase $i$. Let $a,a',b,b'\in\mathbb{Z}$, $n,t,r\in\mathbb{N}$, a
+tape $k_0$, $w\in\mathbb{Z}$ and $\ell,u\in\mathbb{Z}^{K+2}$. Suppose $M_i$ run from
+$\omega(s,a,n,b)$ for $t$ steps yields $\omega(s,a,n,b)$ with state $v$ and the head of tape
+$k_0$ at $w$, and that this configuration equals $\omega(v,a',n,b')$; that $M_i$ is not in
+state $v$ before time $t$; that at every time up to $t$ the head of tape $k_0$ lies in
+$[\ell_{k_0},u_{k_0}]$ and every other head is at its position in $\omega(s,a,n,b)$; that
+$h_{k_0}-r\le\ell_{k_0}$ and $u_{k_0}\le h_{k_0}+r$; and that $\abs{a}\le r$ and $\abs{b}\le
+r$. Then $H$ goes from $\omega((i,s),a,n,b)$ to $\omega(q,a',n,b')$ in $t+1$ steps within
+radius $r$.
+\end{lemma}
+
+\begin{lemma}[Copying a field onto the clock]
+\lean{Turing.cw_seg_copy}
+\label{Turing.cw_seg_copy}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.SeekPhase, Turing.Segment, Turing.SweepPhase, Turing.WindowExit, Turing.copyMapTM, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_box_of, Turing.cw_cfg, Turing.cw_cfg_clockTape, Turing.cw_cfg_mapState, Turing.cw_cfg_pos, Turing.cw_cfg_posL, Turing.cw_cfg_pos₀, Turing.cw_cfg_tape, Turing.cw_copy_constant, Turing.cw_guard, Turing.cw_hostTM, Turing.cw_join, Turing.cw_red, Turing.cw_seg, Turing.cw_zero_ne_last}
+\difficulty{5}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$p<c$, $j<m$, let $f$ be a word, $a\in\mathbb{Z}$ and $n,n',r\in\mathbb{N}$. Suppose that for
+every integer $-1\le z\le|f|$ the cell $h_0+a+z$ of tape $0$ in $d$ holds the $z$-th letter of
+$f$ (blank at $z=-1$ and $z=|f|$), that $n'=n+|f|$, $0\le a$, $a+|f|\le r$ and $n'+1\le r$.
+Then $H$ goes from $\omega(q_1,a,n,n)$ to $\omega(q_2,a,n',n)$ in $2|f|+3$ steps within radius
+$r$, where $q_1$ is the copy phase of field $j$ in pass $p$ with control sweep and $q_2$ is the
+record skip of $(p,j)$ with control run.
+\end{lemma}
+
+\begin{lemma}[Skipping a field on the record tape]
+\lean{Turing.cw_seg_skipS}
+\label{Turing.cw_seg_skipS}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.SeekPhase, Turing.Segment, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_cfg_move₀, Turing.cw_cfg_pos₀, Turing.cw_cfg_tape, Turing.cw_hostTM, Turing.cw_seg_row, Turing.cw_zero_ne_last, Turing.skipTM_run_ofCfg}
+\difficulty{3}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$p<c$, $j<m$, let $f$ be a word, $a,a',b\in\mathbb{Z}$ and $n,r\in\mathbb{N}$. Suppose that for
+every integer $0\le z\le|f|$ the cell $h_0+a+z$ of tape $0$ in $d$ holds the $z$-th letter of
+$f$ (blank at $z=|f|$), that $a'=a+|f|+1$, $0\le a$, $a'\le r$ and $\abs{b}\le r$. Then $H$
+goes from $\omega(q_1,a,n,b)$ to $\omega(q_2,a',n,b)$ in $|f|+2$ steps within radius $r$, where
+$q_1$ is the record skip of $(p,j)$ with control run and $q_2$ is the clock skip indexed by
+$(p,j)$ with control run.
+\end{lemma}
+
+\begin{lemma}[The word under the clock head]
+\lean{Turing.cw_skip_word}
+\label{Turing.cw_skip_word}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.cw_buffer_rep, Turing.cw_cfg, Turing.cw_cfg_clock, Turing.cw_cfg_posL}
+\difficulty{4}
+Let $K\in\mathbb{N}$, let $d$ be a configuration of a Turing machine with $K+2$ work tapes on
+some input, and let $e$ be a tape symbol. For a state $q$, integers $a,b$ and $n\in\mathbb{N}$,
+let $\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$,
+moving the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of
+$e$ on tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of
+tape $j$ in $d$. Suppose tape $K+1$ of $d$ is entirely blank, and let $N,b,l\in\mathbb{N}$ with
+$N=b+l$. Then for every integer $z\le l$ with either $z\ge 0$, or $b=0$ and $z\ge -1$, the cell
+of tape $K+1$ in $\omega(q,a,N,b)$ at offset $z$ from its head holds $e$ if $0\le z<l$ and is
+blank otherwise.
+\end{lemma}
+
+\begin{lemma}[Skipping the written clock cells]
+\lean{Turing.cw_seg_skipC}
+\label{Turing.cw_seg_skipC}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.SeekPhase, Turing.Segment, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_afterSkip, Turing.cw_box, Turing.cw_cfg, Turing.cw_cfg_moveL, Turing.cw_cfg_posL, Turing.cw_hostTM, Turing.cw_seg_row, Turing.cw_skip_word, Turing.skipTM_run_ofCfg}
+\difficulty{3}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$o$ be either a pair $(p,j)$ with $p<c$, $j<m$, or the marker for the end of the last pass.
+Suppose tape $K+1$ of $d$ is entirely blank, and let $a\in\mathbb{Z}$, $N,b,l,r\in\mathbb{N}$
+and $b'\in\mathbb{Z}$ with $N=b+l$, $b'=b+l+1$, $\abs{a}\le r$ and $b'\le r$. Then $H$ goes
+from $\omega(q_o,a,N,b)$ to $\omega(\sigma(o),a,N,b')$ in $l+2$ steps within radius $r$, where
+$q_o$ is the clock skip indexed by $o$ with control run, $\sigma(p,j)$ is the left move of
+$(p,j)$ with control false, and $\sigma$ of the end marker is the clock skip-back with control
+run.
+\end{lemma}
+
+\begin{lemma}[Moving back onto the clock delimiter]
+\lean{Turing.cw_seg_left}
+\label{Turing.cw_seg_left}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_zero, Turing.Segment, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_cfg_box, Turing.cw_cfg_mapState, Turing.cw_cfg_moveL, Turing.cw_cfg_posL, Turing.cw_guard, Turing.cw_hostTM, Turing.cw_leftTM, Turing.cw_left_run, Turing.cw_next, Turing.cw_red, Turing.cw_seg}
+\difficulty{4}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$p<c$, $j<m$, $a,b,b'\in\mathbb{Z}$ and $n,r\in\mathbb{N}$ with $b'=b-1$, $\abs{a}\le r$ and
+$1\le b\le r$. Then $H$ goes from $\omega(q,a,n,b)$ to $\omega(\nu(p,j),a,n,b')$ in $2$ steps
+within radius $r$, where $q$ is the left move of $(p,j)$ with control false and $\nu(p,j)$ is
+the copy phase of field $j+1$ in pass $p$ with control sweep if $j+1<m$, and otherwise the skip
+back over field $j$ in pass $p$ with control run.
+\end{lemma}
+
+\begin{lemma}[Restating a segment's length]
+\lean{Turing.cw_seg_time}
+\label{Turing.cw_seg_time}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.Segment}
+\difficulty{1}
+Let $M$ be a multi-tape Turing machine, $F$ a set of states, $B$ a property of head vectors,
+$A,A'$ configurations and $t,t'\in\mathbb{N}$ with $t=t'$. If the run of $M$ from $A$ reaches
+$A'$ after exactly $t$ steps, avoids $F$ before time $t$ and satisfies $B$ at every time up to
+$t$, then the same holds with $t'$ in place of $t$.
+\end{lemma}
+
+\begin{lemma}[A record field as a delimited word]
+\lean{Turing.cw_field}
+\label{Turing.cw_field}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.RecordAt, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldsTape_field, Turing.recordAt_iff}
+\difficulty{3}
+Let $K\in\mathbb{N}$, let $d$ be a configuration with $K$ work tapes, let $r$ be a work tape,
+and let $f_0,\dots,f_{\ell-1}$ be words such that tape $r$ holds, from its head position $h$,
+the fields $f_0,\dots,f_{\ell-1}$ separated by single blanks and delimited by blanks at offsets
+$-1$ and just after the layout. Let $i<\ell$ and $o_i=\sum_{j<i}(|f_j|+1)$. Then for every
+integer $-1\le z\le|f_i|$, the cell $h+o_i+z$ of tape $r$ holds the $z$-th letter of $f_i$, and
+is blank at $z=-1$ and at $z=|f_i|$.
+\end{lemma}
+
+\begin{lemma}[One field's round of the clock writer]
+\lean{Turing.cw_round}
+\label{Turing.cw_round}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.RecordAt, Turing.Segment, Turing.Segment.trans, Turing.SweepPhase, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_field, Turing.cw_hostTM, Turing.cw_next, Turing.cw_seg_copy, Turing.cw_seg_left, Turing.cw_seg_skipC, Turing.cw_seg_skipS, Turing.cw_seg_time, Turing.fieldOffset, Turing.fieldOffset_succ}
+\difficulty{5}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$p<c$, let $f_0,\dots,f_{m-1}$ be words, let $d$ be a configuration of $H$ whose tape $0$
+holds, from its head, the fields $f_0,\dots,f_{m-1}$ separated by single blanks and delimited
+by blanks on both sides, and whose tape $K+1$ is entirely blank, and write
+$o_j=\sum_{i<j}(|f_i|+1)$ for the offset of field $j$. Let $j<m$ and $n,r\in\mathbb{N}$ with
+$n+|f_j|+1\le r$ and $o_{j+1}\le r$. Then $H$ goes from $\omega(q,o_j,n,n)$ to
+$\omega(\nu(p,j),o_{j+1},n+|f_j|,n+|f_j|)$ in $4|f_j|+9$ steps within radius $r$, where $q$ is
+the copy phase of field $j$ in pass $p$ with control sweep and $\nu(p,j)$ is the copy phase of
+field $j+1$ in pass $p$ with control sweep if $j+1<m$, and otherwise the skip back over field
+$j$ in pass $p$ with control run.
+\end{lemma}
+
+\begin{lemma}[One pass of the clock writer]
+\lean{Turing.cw_pass}
+\label{Turing.cw_pass}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.RecordAt, Turing.SeekPhase, Turing.Segment, Turing.Segment.trans, Turing.SweepPhase, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_hostTM, Turing.cw_next, Turing.cw_round, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.length_joinFields_add_one}
+\difficulty{6}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$p<c$, let $f_0,\dots,f_{m-1}$ be words with $m\ge 1$, let $d$ be a configuration of $H$ whose
+tape $0$ holds, from its head, the fields $f_0,\dots,f_{m-1}$ separated by single blanks and
+delimited by blanks on both sides, and whose tape $K+1$ is entirely blank, and write
+$o_j=\sum_{i<j}(|f_i|+1)$ for the offset of field $j$. Let $N_0,r\in\mathbb{N}$ with
+$N_0+o_m+1\le r$. Then for every $j<m$ and all $n,n'\in\mathbb{N}$ with $n+j=N_0+o_j$ and
+$n'+m=N_0+o_m$, there is $t$ with $t+9o_j\le 9o_m$ such that $H$ goes from
+$\omega(q_j,o_j,n,n)$ to $\omega(q',o_m,n',n')$ in $t$ steps within radius $r$, where $q_j$ is
+the copy phase of field $j$ in pass $p$ with control sweep and $q'$ is the skip back over field
+$m-1$ in pass $p$ with control run.
+\end{lemma}
+
+\begin{lemma}[Skipping back over a record field]
+\lean{Turing.cw_seg_back}
+\label{Turing.cw_seg_back}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.SeekPhase, Turing.Segment, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_cfg_move₀, Turing.cw_cfg_pos₀, Turing.cw_cfg_tape, Turing.cw_hostTM, Turing.cw_prev, Turing.cw_seg_row, Turing.cw_zero_ne_last, Turing.skipBackTM_run_ofCfg}
+\difficulty{3}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$p<c$, $j<m$, let $f$ be a word, $a,a',b\in\mathbb{Z}$ and $n,r\in\mathbb{N}$. Suppose that for
+every integer $-1\le z\le|f|$ the cell $h_0+a'+z$ of tape $0$ in $d$ holds the $z$-th letter of
+$f$ (blank at $z=-1$ and $z=|f|$), that $a'=a-|f|-1$, $0\le a'$, $a\le r$, $\abs{b}\le r$ and
+$1\le r$. Then $H$ goes from $\omega(q,a,n,b)$ to $\omega(\pi(p,j),a',n,b)$ in $|f|+4$ steps
+within radius $r$, where $q$ is the skip back over field $j$ in pass $p$ with control run and
+$\pi(p,j)$ is the skip back over field $j-1$ in pass $p$ with control run if $j>0$; otherwise
+the copy phase of field $0$ in pass $p+1$ with control sweep if $p+1<c$; and otherwise the
+final clock skip (after the last pass) with control run.
+\end{lemma}
+
+\begin{lemma}[Rewinding the record tape]
+\lean{Turing.cw_rewind}
+\label{Turing.cw_rewind}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.RecordAt, Turing.SeekPhase, Turing.Segment, Turing.Segment.trans, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_field, Turing.cw_hostTM, Turing.cw_prev, Turing.cw_seg_back, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.fieldOffset_zero, Turing.length_joinFields_add_one}
+\difficulty{5}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$p<c$, let $f_0,\dots,f_{m-1}$ be words with $m>0$, let $d$ be a configuration of $H$ whose
+tape $0$ holds, from its head, the fields $f_0,\dots,f_{m-1}$ separated by single blanks and
+delimited by blanks on both sides, and write $o_j=\sum_{i<j}(|f_i|+1)$ for the offset of field
+$j$. Let $n,r\in\mathbb{N}$ and $b\in\mathbb{Z}$ with $o_m\le r$ and $\abs{b}\le r$. Then for
+every $j<m$ there is $t\le 4o_{j+1}$ such that $H$ goes from $\omega(q_j,o_{j+1},n,b)$ to
+$\omega(\pi(p,0),0,n,b)$ in $t$ steps within radius $r$, where $q_j$ is the skip back over
+field $j$ in pass $p$ with control run and $\pi(p,j)$ is the skip back over field $j-1$ in pass
+$p$ with control run if $j>0$; otherwise the copy phase of field $0$ in pass $p+1$ with control
+sweep if $p+1<c$; and otherwise the final clock skip (after the last pass) with control run.
+\end{lemma}
+
+\begin{lemma}[A pass followed by the record rewind]
+\lean{Turing.cw_pass_rewind}
+\label{Turing.cw_pass_rewind}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.RecordAt, Turing.Segment, Turing.Segment.trans, Turing.SweepPhase, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_hostTM, Turing.cw_pass, Turing.cw_prev, Turing.cw_rewind, Turing.fieldOffset, Turing.fieldOffset_zero}
+\difficulty{4}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$p<c$, let $f_0,\dots,f_{m-1}$ be words with $m>0$, let $d$ be a configuration of $H$ whose
+tape $0$ holds, from its head, the fields $f_0,\dots,f_{m-1}$ separated by single blanks and
+delimited by blanks on both sides, and whose tape $K+1$ is entirely blank, and write
+$o_j=\sum_{i<j}(|f_i|+1)$ for the offset of field $j$. Let $F,N_0,N_1,r\in\mathbb{N}$ with
+$o_m=F+m$, $N_1=N_0+F$ and $N_0+o_m+1\le r$. Then there is $t\le 13o_m$ such that $H$ goes from
+$\omega(q,0,N_0,N_0)$ to $\omega(\pi(p,0),0,N_1,N_1)$ in $t$ steps within radius $r$, where $q$
+is the copy phase of field $0$ in pass $p$ with control sweep and $\pi(p,j)$ is the skip back
+over field $j-1$ in pass $p$ with control run if $j>0$; otherwise the copy phase of field $0$
+in pass $p+1$ with control sweep if $p+1<c$; and otherwise the final clock skip (after the last
+pass) with control run.
+\end{lemma}
+
+\begin{lemma}[All passes of the clock writer]
+\lean{Turing.cw_passes}
+\label{Turing.cw_passes}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.RecordAt, Turing.SeekPhase, Turing.Segment, Turing.Segment.trans, Turing.SweepPhase, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_hostTM, Turing.cw_pass_rewind, Turing.cw_prev, Turing.fieldOffset}
+\difficulty{6}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$f_0,\dots,f_{m-1}$ be words with $m>0$, let $d$ be a configuration of $H$ whose tape $0$
+holds, from its head, the fields $f_0,\dots,f_{m-1}$ separated by single blanks and delimited
+by blanks on both sides, and whose tape $K+1$ is entirely blank, and write
+$o_j=\sum_{i<j}(|f_i|+1)$ for the offset of field $j$. Let $F,r\in\mathbb{N}$ with $o_m=F+m$
+and $c\,o_m+1\le r$. Then for every pass $p<c$ there is $t$ with $t+13p\,o_m\le 13c\,o_m$ such
+that $H$ goes from $\omega(q_p,0,pF,pF)$ to $\omega(q',0,cF,cF)$ in $t$ steps within radius
+$r$, where $q_p$ is the copy phase of field $0$ in pass $p$ with control sweep and $q'$ is the
+final clock skip (after the last pass) with control run.
+\end{lemma}
+
+\begin{lemma}[Skipping back over the clock word]
+\lean{Turing.cw_seg_clockBack}
+\label{Turing.cw_seg_clockBack}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.SeekPhase, Turing.Segment, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_cfg_clockTape, Turing.cw_cfg_moveL, Turing.cw_cfg_posL, Turing.cw_hostTM, Turing.cw_seg_row, Turing.cw_skip_word, Turing.skipBackTM_run_ofCfg}
+\difficulty{4}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$.
+Suppose tape $K+1$ of $d$ is entirely blank, and let $W,r\in\mathbb{N}$ with $W+1\le r$. Then
+$H$ goes from $\omega(q,0,W,W+1)$ to $\omega(q',0,W,0)$ in $W+4$ steps within radius $r$, where
+$q$ is the clock skip-back with control run and $q'$ is the runner phase at $p_{\mathrm{en}}$.
+\end{lemma}
+
+\begin{lemma}[Unchanged final output means silent run]
+\lean{Turing.cw_silence}
+\label{Turing.cw_silence}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.output_prefix, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_zero}
+\difficulty{4}
+Let $M$ be a multi-tape Turing machine, $d$ a configuration and $t\in\mathbb{N}$. If the output
+of the run of $M$ from $d$ after $t$ steps equals the output of $d$, then at every time $u\le
+t$ the output of the run equals the output of $d$.
+\end{lemma}
+
+\begin{lemma}[The clock writer's contract]
+\lean{Turing.cw_writer}
+\label{Turing.cw_writer}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecordAt, Turing.Segment, Turing.Segment.trans, Turing.SweepPhase, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_cfg, Turing.cw_cfg_zero, Turing.cw_hostTM, Turing.cw_passes, Turing.cw_seg_clockBack, Turing.cw_seg_skipC, Turing.cw_silence, Turing.fieldOffset, Turing.joinFields_length, Turing.length_joinFields_add_one, Turing.segment_iff}
+\difficulty{5}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$c>0$ and $m>0$, let $f_0,\dots,f_{m-1}$ be words, write $o_j=\sum_{i<j}(|f_i|+1)$ for the
+offset of field $j$, and let $F=\sum_{j<m}|f_j|$. Let $d$ be a configuration of $H$ in the copy
+phase of field $0$ in pass $0$ with control sweep, whose tape $0$ holds, from its head, the
+fields $f_0,\dots,f_{m-1}$ separated by single blanks and delimited by blanks on both sides,
+and whose tape $K+1$ is entirely blank, and let $r\in\mathbb{N}$ with $c\,o_m+2\le r$. Then
+there is $t\le 13c\,o_m+cF+6$ such that $H$ goes from $d$ to $\omega(q',0,cF,0)$ in $t$ steps
+within radius $r$, where $q'$ is the runner phase at $p_{\mathrm{en}}$, and the output of $H$
+at every time up to $t$ equals that of $d$.
+\end{lemma}
+
+\begin{lemma}[The windowed runner as a host segment]
+\lean{Turing.cw_seg_run}
+\label{Turing.cw_seg_run}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.Segment, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_hostTM, Turing.cw_red, Turing.cw_seg}
+\difficulty{3}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. Let $a$
+be a configuration of $R$, $t\in\mathbb{N}$, $y$ a window exit and $q$ a state of $H$. Suppose
+the run of $R$ from $a$ is in state $\mathrm{ex}(y)$ at time $t$ and in no state
+$\mathrm{ex}(y')$ before time $t$, that the redirect table sends the runner phase at
+$\mathrm{ex}(y)$ to $q$, and that $B$ is a property of head vectors holding at every time up to
+$t$ of the run of $R$. Then the run of $H$ from $a$ with its state tagged by the runner phase
+reaches the configuration of $R$ at time $t$ with its state replaced by $q$ after exactly $t+1$
+steps, is in no exit state before time $t+1$, and its head vector satisfies $B$ at every time
+up to $t+1$.
+\end{lemma}
+
+\begin{lemma}[Clearing the clock after the runner]
+\lean{Turing.cw_seg_clear}
+\label{Turing.cw_seg_clear}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.Segment, Turing.SweepPhase, Turing.WindowExit, Turing.cw_Ctrl, Turing.cw_Idx, Turing.cw_box, Turing.cw_box_row, Turing.cw_cfg, Turing.cw_cfg_clock, Turing.cw_cfg_posL, Turing.cw_cfg_pos_zero, Turing.cw_cfg_pos₀, Turing.cw_cfg_tape, Turing.cw_clear_patch, Turing.cw_guard, Turing.cw_hostTM, Turing.cw_mapState_io, Turing.cw_mapState_pos, Turing.cw_mapState_tapes, Turing.cw_red, Turing.cw_seg, Turing.cw_zero_ne_last, Turing.wordPatch}
+\difficulty{6}
+Let $K,c,m\in\mathbb{N}$, let $e$ be a tape symbol, and let $R$ be a Turing machine with $K+2$
+work tapes whose state set $P$ has decidable equality, together with an entry state
+$p_{\mathrm{en}}\in P$ and a map $\mathrm{ex}$ from the three window exits (halted, left,
+exhausted) to $P$. Let $H$ be the clock runner built from these data: the phase host on $K+2$
+work tapes whose phases are the clock writer's phases for $c$ passes over $m$ record fields
+(acting on the record tape $0$ and the clock tape $K+1$), the runner $R$, the clear of the
+clock tape, and a stationary stop phase; the states of the stop phase are called exits. For a
+configuration $d$ of $H$, a control $q$, integers $a,b$ and $n\in\mathbb{N}$, let
+$\omega(q,a,n,b)$ be the configuration obtained from $d$ by setting the state to $q$, moving
+the head of tape $0$ by $a$ and the head of tape $K+1$ by $b$, and writing $n$ copies of $e$ on
+tape $K+1$ starting at its head position in $d$; let $h_j$ denote the head position of tape $j$
+in $d$. Say that $H$ goes from $A$ to $B$ in $t$ steps within radius $r$ if the run of $H$ from
+$A$ reaches $B$ after exactly $t$ steps, is in no exit state at any time before $t$, and at
+every time up to $t$ keeps every work-tape head within distance $r$ of its position in $d$. Let
+$b$ be a Boolean, let $d$ be a configuration of $H$ whose tape $K+1$ is entirely blank, let
+$W,r\in\mathbb{N}$ with $W+1\le r$, let $w$ be a word with $|w|=W$, let $L\in\mathbb{Z}$, let
+$g$ assign a cell content to each integer, and let $y\in P$. Let $A$ be
+$\omega(p_{\mathrm{en}},0,W,0)$ with state $y$, with each cell $z$ of tape $0$ satisfying
+$h_0\le z<h_0+L$ replaced by $g(z-h_0)$, and with $w$ written on tape $K+1$ from $h_{K+1}$;
+then retag its state as the clear phase tagged $b$ with control sweep. Let $B$ be $d$ with the
+same replacement on tape $0$ and with state the stop phase at the exit halted if $b$ is true
+and left otherwise. Then $H$ goes from $A$ to $B$ in $2W+3$ steps within radius $r$.
+\end{lemma}
+
+\begin{lemma}[Run-time clauses from a segment]
+\lean{Turing.cw_finish}
+\label{Turing.cw_finish}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsed_le_of_abs_le, Turing.Segment, Turing.cw_box, Turing.cw_silence, Turing.segment_iff}
+\difficulty{2}
+Let $H$ be a Turing machine with $k$ work tapes, $F$ a set of states, $d,b$ configurations and
+$t,r\in\mathbb{N}$. Suppose the run of $H$ from $d$ reaches $b$ after exactly $t$ steps, is in
+no state of $F$ before time $t$, keeps every work-tape head within distance $r$ of its position
+in $d$ at every time up to $t$, and that $b$ has the same output as $d$. Then the run is in no
+state of $F$ before time $t$, every head stays within distance $r$ of its initial position up
+to time $t$, the output equals that of $d$ at every time up to $t$, and the number of work
+cells visited by time $t$ is at most $k(2r+1)$.
+\end{lemma}

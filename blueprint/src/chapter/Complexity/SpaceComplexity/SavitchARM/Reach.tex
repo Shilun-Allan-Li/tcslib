@@ -100,3 +100,33 @@ with $x$ and $s$ represent, respectively, the initial configuration and an accep
 configuration of $N$, and $v$ is reachable from $u$ through the encoded one-step
 configuration relation at recursive depth $w$, with intermediate codes less than $2^w$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Savitch ARM --- Reach: further results}
+
+\begin{theorem}[Bounded walks give bounded chains]
+\lean{Complexity.LogProg.SavitchARM.chain_of_walkLe}
+\label{Complexity.LogProg.SavitchARM.chain_of_walkLe}
+\leanok
+\uses{Complexity.WalkLe, Complexity.walkLe_succ_iff_head, Complexity.walkLe_zero_iff}
+\difficulty{5}
+Let $K\in\mathbb{N}$, let $R$ be a binary relation on $\mathbb{N}$, and let $c<K$. For
+all $j,t\in\mathbb{N}$, if $t$ is reachable from $c$ by a walk of at most $j$ edges of
+$R$ whose vertices after $c$ all lie below $K$, then there are $T\le j$ and a sequence
+$f:\mathbb{N}\to\mathbb{N}$ with $f(0)=c$, $f(T)=t$, $R(f(i),f(i+1))$ for every $i<T$,
+and $f(i)<K$ for every $i\le T$.
+\end{theorem}
+
+\begin{theorem}[Paths give midpoint reachability]
+\lean{Complexity.LogProg.SavitchARM.reach_of_reflTransGen}
+\label{Complexity.LogProg.SavitchARM.reach_of_reflTransGen}
+\leanok
+\uses{Complexity.LogProg.SavitchARM.Reach, Complexity.LogProg.SavitchARM.chain_of_walkLe, Complexity.LogProg.SavitchARM.reach_of_chain, Complexity.reach_iff_walkLe}
+\difficulty{4}
+Let $K\in\mathbb{N}$ and let $R$ be a binary relation on $\mathbb{N}$ such that
+$R(a,b)$ implies $a<K$ and $b<K$. Define midpoint reachability by: $u$ reaches $v$ at
+level $0$ if $u=v$ or $R(u,v)$, and $u$ reaches $v$ at level $i+1$ if there is $m<K$
+such that $u$ reaches $m$ and $m$ reaches $v$ at level $i$. If $u<K$ and $v$ is
+reachable from $u$ by zero or more $R$-steps, then $u$ reaches $v$ at every level $i$
+with $K\le 2^i$.
+\end{theorem}

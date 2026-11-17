@@ -335,3 +335,188 @@ instead satisfies the return relation: the combined machine is ready to rewind t
 input, the decider is halted, and the same tape, head-position, and output
 correspondence holds.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Machines --- Sim: further results}
+
+\begin{lemma}[Track position of a left boundary]
+\lean{Complexity.LogProg.trackPos_left}
+\label{Complexity.LogProg.trackPos_left}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.trackPos}
+\difficulty{1}
+For every list of segments and segment index $s$, the real head position (in register
+coordinates) assigned to the left-boundary track position of segment $s$ is $-1$.
+\end{lemma}
+
+\begin{lemma}[Track position of a cell]
+\lean{Complexity.LogProg.trackPos_cell}
+\label{Complexity.LogProg.trackPos_cell}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.trackPos}
+\difficulty{1}
+For every list of segments, segment index $s$, cell index $c\in\mathbb{N}$ and parity bit
+$p$, the real head position (in register coordinates) assigned to the cell track
+position $(c,p)$ of segment $s$ is $c$.
+\end{lemma}
+
+\begin{lemma}[Track position of a right boundary]
+\lean{Complexity.LogProg.trackPos_right}
+\label{Complexity.LogProg.trackPos_right}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.trackPos, Complexity.LogProg.wlen}
+\difficulty{1}
+For every list of segments and segment index $s$, the real head position (in register
+coordinates) assigned to the right-boundary track position of segment $s$ is the length
+of the word of segment $s$.
+\end{lemma}
+
+\begin{lemma}[Consistency at a left boundary]
+\lean{Complexity.LogProg.consistent_left_iff}
+\label{Complexity.LogProg.consistent_left_iff}
+\leanok
+\uses{Complexity.LogProg.Consistent, Complexity.LogProg.Seg}
+\difficulty{1}
+For every list of segments, segment index $s$, and Booleans $a$ (stored parity) and $b$
+(direction of the last track move), the left-boundary track position of segment $s$ is
+consistent with $a$ and $b$ if and only if $b$ is false, i.e. the last move went left.
+\end{lemma}
+
+\begin{lemma}[Consistency at a right boundary]
+\lean{Complexity.LogProg.consistent_right_iff}
+\label{Complexity.LogProg.consistent_right_iff}
+\leanok
+\uses{Complexity.LogProg.Consistent, Complexity.LogProg.Seg}
+\difficulty{1}
+For every list of segments, segment index $s$, and Booleans $a$ (stored parity) and $b$
+(direction of the last track move), the right-boundary track position of segment $s$ is
+consistent with $a$ and $b$ if and only if $b$ is true, i.e. the last move went right.
+\end{lemma}
+
+\begin{lemma}[Consistency at a cell]
+\lean{Complexity.LogProg.consistent_cell_iff}
+\label{Complexity.LogProg.consistent_cell_iff}
+\leanok
+\uses{Complexity.LogProg.Consistent, Complexity.LogProg.Seg, Complexity.LogProg.seg}
+\difficulty{1}
+For every list of segments, segment index $s$, cell index $c$, parity bit $p$, and
+Booleans $a$ (stored parity) and $b$ (direction), the cell track position $(c,p)$ of
+segment $s$ is consistent with $a$ and $b$ if and only if $p=a$ whenever segment $s$ is
+flagged as doubled.
+\end{lemma}
+
+\begin{lemma}[Input-head position in the leading segment]
+\lean{Complexity.LogProg.inPos_zero}
+\label{Complexity.LogProg.inPos_zero}
+\leanok
+\uses{Complexity.LogProg.CallSpec, Complexity.LogProg.TPos, Complexity.LogProg.callSegs, Complexity.LogProg.inPos, Complexity.LogProg.trackPos}
+\difficulty{1}
+Let a call specification with $m$ registers, an input bit string $x$, and an assignment
+$W$ of a bit string to each register determine the segments of the call's virtual input.
+For every track position $t$, the prescribed real input-head position while the virtual
+head is in segment $0$ at $t$ equals the register-coordinate position of $t$ in segment
+$0$ plus one, converted to a natural number (negative values becoming $0$).
+\end{lemma}
+
+\begin{lemma}[Input-head position beyond the leading segment]
+\lean{Complexity.LogProg.inPos_of_ne_zero}
+\label{Complexity.LogProg.inPos_of_ne_zero}
+\leanok
+\uses{Complexity.LogProg.CallSpec, Complexity.LogProg.TPos, Complexity.LogProg.callSegs, Complexity.LogProg.inPos, Complexity.LogProg.wlen}
+\difficulty{1}
+Let a call specification with $m$ registers, an input bit string $x$, and an assignment
+$W$ of a bit string to each register determine the segments of the call's virtual input.
+For every segment index $s\neq 0$ and every track position $t$, the prescribed real
+input-head position while the virtual head is in segment $s$ at $t$ equals the length of
+the word of segment $0$ plus one.
+\end{lemma}
+
+\begin{lemma}[Unfolding the simulation relation]
+\lean{Complexity.LogProg.simRel_iff}
+\label{Complexity.LogProg.simRel_iff}
+\leanok
+\uses{Complexity.LogProg.CSt, Complexity.LogProg.SimRel, Complexity.LogProg.TPos, Complexity.LogProg.TrackRel, Complexity.LogProg.callSegs, Complexity.LogProg.vword, Turing.Cfg}
+\difficulty{1}
+Let $c_0$ be a configuration of a machine with $m$ work tapes on input $x$, let $l$ be a
+program node, let a call specification and an assignment $W$ of words to the registers
+determine a virtual input, let $g$ be a configuration on $x$ of the compiled machine with
+$m+k_D$ work tapes, and let $d$ be a configuration with $k_D$ work tapes of a decider on
+the virtual input. Then $g$ and $d$ are in the simulation relation if and only if there
+exist a decider state $q$, a segment index $s\le m$, Booleans $a,b$ and a track position
+$t$ such that $g$ is in the simulation state for node $l$ with decider state $q$, segment
+$s$, parity $a$, direction $b$ and the first output bit of $d$ (if any), $d$ is in state
+$q$, and $g$, $d$ satisfy the track relation relative to $c_0$ at $s,a,b,t$.
+\end{lemma}
+
+\begin{lemma}[Unfolding the halting relation]
+\lean{Complexity.LogProg.haltRel_iff}
+\label{Complexity.LogProg.haltRel_iff}
+\leanok
+\uses{Complexity.LogProg.CSt, Complexity.LogProg.HaltRel, Complexity.LogProg.TPos, Complexity.LogProg.TrackRel, Complexity.LogProg.callSegs, Complexity.LogProg.vword, Turing.Cfg}
+\difficulty{1}
+Let $c_0$ be a configuration of a machine with $m$ work tapes on input $x$, let $l$ be a
+program node, let a call specification and an assignment $W$ of words to the registers
+determine a virtual input, let $g$ be a configuration on $x$ of the compiled machine with
+$m+k_D$ work tapes, and let $d$ be a configuration with $k_D$ work tapes of a decider on
+the virtual input. Then $g$ and $d$ are in the halting relation if and only if there
+exist a segment index $s\le m$, Booleans $a,b$ and a track position $t$ such that $g$ is
+in the first return state for node $l$ with segment $s$, direction $b$ and the first
+output bit of $d$ (false if $d$ has no output), $d$ has halted, and $g$, $d$ satisfy the
+track relation relative to $c_0$ at $s,a,b,t$.
+\end{lemma}
+
+\begin{lemma}[Position of a non-argument register]
+\lean{Complexity.LogProg.regPos_of_not_mem}
+\label{Complexity.LogProg.regPos_of_not_mem}
+\leanok
+\uses{Complexity.LogProg.TPos, Complexity.LogProg.regPos}
+\difficulty{1}
+Let $c_0$ be a configuration with $m$ work tapes (registers), and let a call specification
+with argument registers $r_1,\dots,r_k$ and an assignment of words to registers be given.
+For every segment index $s$ and track position $t$, if register $r$ is not among the
+arguments, then the prescribed head position of $r$ during the simulation at segment $s$
+and track position $t$ equals the head position of work tape $r$ in $c_0$.
+\end{lemma}
+
+\begin{lemma}[Position of an earlier argument register]
+\lean{Complexity.LogProg.regPos_of_lt}
+\label{Complexity.LogProg.regPos_of_lt}
+\leanok
+\uses{Complexity.LogProg.TPos, Complexity.LogProg.callSegs, Complexity.LogProg.regPos, Complexity.LogProg.wlen}
+\difficulty{1}
+Let $c_0$ be a configuration with $m$ registers on input $x$, and let a call specification
+with argument list $(r_1,\dots,r_k)$ and an assignment $W$ of words to registers be given,
+determining the segments of the call's virtual input. Let $r$ be an argument register
+whose first occurrence in the list is $r_i$, so that its segment is $i$. For every
+segment index $s>i$ and track position $t$, the prescribed head position of $r$ during
+the simulation at segment $s$ and track position $t$ is the length of the word of
+segment $i$, i.e. its right end.
+\end{lemma}
+
+\begin{lemma}[Position of a later argument register]
+\lean{Complexity.LogProg.regPos_of_gt}
+\label{Complexity.LogProg.regPos_of_gt}
+\leanok
+\uses{Complexity.LogProg.TPos, Complexity.LogProg.regPos}
+\difficulty{2}
+Let $c_0$ be a configuration with $m$ registers, and let a call specification with
+argument list $(r_1,\dots,r_k)$ and an assignment of words to registers be given. Let $r$
+be an argument register whose first occurrence in the list is $r_i$, so that its segment
+is $i$. For every segment index $s<i$ and track position $t$, the prescribed head
+position of $r$ during the simulation at segment $s$ and track position $t$ is $-1$,
+i.e. its left end.
+\end{lemma}
+
+\begin{lemma}[Position of the current argument register]
+\lean{Complexity.LogProg.regPos_of_eq}
+\label{Complexity.LogProg.regPos_of_eq}
+\leanok
+\uses{Complexity.LogProg.TPos, Complexity.LogProg.callSegs, Complexity.LogProg.regPos, Complexity.LogProg.trackPos}
+\difficulty{2}
+Let $c_0$ be a configuration with $m$ registers on input $x$, and let a call specification
+with argument list $(r_1,\dots,r_k)$ and an assignment $W$ of words to registers be given,
+determining the segments of the call's virtual input. Let $r$ be an argument register
+whose first occurrence in the list is $r_i$, and let $s=i$. For every track position $t$,
+the prescribed head position of $r$ during the simulation at segment $s$ and track
+position $t$ equals the register-coordinate position of $t$ in segment $s$.
+\end{lemma}
