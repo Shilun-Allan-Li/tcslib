@@ -10,48 +10,48 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.SpaceComplexity.Codec.
 \lean{Complexity.Codec.jLen}
 \label{Complexity.Codec.jLen}
 \leanok
-Let $j$ be the first element of the two-element index set $	ext{Fin}(2)$; thus $j=0$.
+Let $j$ be the first element of the two-element index set $\mathrm{Fin}(2) = \{0, 1\}$; thus $j=0$.
 \end{definition}
 
 \begin{definition}[Second index in a two-element set]
 \lean{Complexity.Codec.jBit}
 \label{Complexity.Codec.jBit}
 \leanok
-Let $j$ be the second element of the two-element index set $	ext{Fin}(2)$; thus $j=1$.
+Let $j$ be the second element of the two-element index set $\mathrm{Fin}(2) = \{0, 1\}$; thus $j=1$.
 \end{definition}
 
 \begin{definition}[Code modes]
 \lean{Complexity.Codec.CMode}
 \label{Complexity.Codec.CMode}
 \leanok
-Define a four-element type of code modes, with one mode for valid codes, one for the
-initial code, one for accepting codes, and one for step pairs.
+Define a five-element type of code modes, with one mode for valid codes, one for the
+initial code, one for accepting codes, one for step pairs, and one for codes whose work head
+lies on the boundary of the window (edge mode).
 \end{definition}
 
 \begin{definition}[Code-part labels]
 \lean{Complexity.Codec.CpId}
 \label{Complexity.Codec.CpId}
 \leanok
-Let $
-\mathcal{C}$ be the finite type whose 26 distinct elements are the labels “A,” “B,”
-“Q1s,” “Cap,” “Q2,” “N1,” “Tn,” “E,” “Ts,” “F,” “Tw,” “U,” “Q1f,” “E2,” “Ts2,” “F2,”
-“Tw2,” “U2,” “Q1f2,” “Tpos,” “Q3,” “Q4,” “Q1a,” “Q2a,” “Uc,” and “Tsc.”
+Let $\mathcal{C}$ be the finite type of copy-loop labels, whose 29 distinct elements are
+“A,” “B,” “Q1s,” “Cap,” “Q2,” “N1,” “Tn,” “E,” “Ts,” “F,” “Tw,” “U,” “Q1f,” “E2,” “Ts2,” “F2,”
+“Tw2,” “U2,” “Q1f2,” “Tpos,” “Q3,” “Q4,” “Q1a,” “Q2a,” “Uc,” “Tsc,” “Ue,” “Qe,” and “Te.”
 \end{definition}
 
 \begin{definition}[Six code labels]
 \lean{Complexity.Codec.ScId}
 \label{Complexity.Codec.ScId}
 \leanok
-Let $\mathrm{ScId}$ be the finite type consisting of six distinct labels, denoted $E$,
-$F$, $E_2$, $F_2$, $\mathrm{In}$, and $C$.
+Let $\mathrm{ScId}$ be the finite type of scale-loop labels, consisting of seven distinct
+labels, denoted $E$, $F$, $E_2$, $F_2$, $\mathrm{In}$, $C$, and $E_e$.
 \end{definition}
 
 \begin{definition}[Instruction code labels]
 \lean{Complexity.Codec.IcId}
 \label{Complexity.Codec.IcId}
 \leanok
-Let $\mathrm{IcId}$ be the finite type with five constructors, denoted $E$, $U$, $E_2$,
-$U_2$, and $C$.
+Let $\mathrm{IcId}$ be the finite type of increment-chain labels, with nine constructors,
+denoted $E$, $U$, $E_2$, $U_2$, $C$, $E_h$, $K_e$, $S_1$, and $S_2$.
 \end{definition}
 
 \begin{definition}[Data codec labels]
