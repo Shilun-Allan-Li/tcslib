@@ -1,11 +1,16 @@
 # bb1-machine · maintainer delivery review (r1)
 
-**Verdict (interim, phase 1 of 2): ACCEPT WITH LANDING EDITS, pending the phase-2 Lean checks.**
-- T4 `exists_bb1_distinguisher` is proved. The seven approved readers are pure verbatim insertions at the brief's positions, with the pinned hashes. Only the four permitted files change.
-- Phase 1 found 0 blockers, 0 majors, 1 minor (BM-F02) and 8 info findings.
-- One landing edit is proposed, LE-bb1m. It changes only `Oracles.lean` and does not change any proof: it drops an unused `have` (BM-F01) and puts the new public lemma's docstring in Lean argument order (BM-F02).
-- Without LE-bb1m the delivery would be a plain ACCEPT; BM-F01 and BM-F02 would then go to the cleanup ledger.
-- The verdict becomes final only after phase 2 (`PHASE2-PLAN.txt`, below).
+**Verdict (final, after phase 2): ACCEPT WITH LANDING EDITS.**
+- **The landing edit is in place.** LE-bb1m is #346's 7th commit (`89a18a82`, `Oracles.lean` only, +2/−8). It is identical to the proposed diff, it builds, and the request sets do not change. That closes BM-F01 and BM-F02.
+- **T4 `exists_bb1_distinguisher` is proved and standard.** The seven approved readers are pure verbatim insertions at the brief's positions, with the pinned hashes. Only the four permitted files change, which makes 8 files against the records tip.
+- **Findings:** 0 blockers, 0 majors, 1 minor (BM-F02, fixed by LE-bb1m) and 8 info findings. BM-F03 is closed by the `Oracles`-owned controls, and BM-F04 is superseded because phase 2 sealed the landing head.
+- **Phase 2** (`phase2/README.md`, `phase2/phase2-evidence.zip`). The final replay is on olean snapshot #4 (`463f2244`, the #352 merge), with prospective tree `2ec72515…` = tip `ca129d64` × #346.
+  - The build is 12/12 rc 0 with 0 `error:`/`error(`, and the full-closure state check is OK.
+  - Admissions go down by 1, exactly T4, with 22 → 21 over the issued closure.
+  - The axioms are as required.
+  - All 32 seals have 0 errors, with request sets identical to the worker's. The paired controls are ALL_OK, and so are the `Oracles` controls. The scan finds 0 foreign items, and lint has nothing new.
+  - The cross-build with #340 is clean: admissions go down by 2, T1 is standard, `bb1_sidSecure` reaches exactly T2 and T3, and the `Assumptions` coe A/B seals have 0 errors.
+- **The replay output is kept** at `$SP/olean-replay-346c`, with map SHA-256 `5e63b3cc…5404` once the overlay is removed. It can be adopted if #346 merges unchanged.
 
 ## Delivery and landing
 - **Delivery:** Claude, a lead with one sub-agent (`tools-agent`: evidence tooling only, no Lean).
@@ -193,4 +198,10 @@
 - `landing/`: the merge-tree, the dry-run rebase, the closures, the rebuild set, #340/#341, and `LE-bb1m-proposed.diff`.
 - `tools/`: `manifest_check.py`, `readers_check.py`, `frozen_t4.py`, `decls_scan.py`, `recount.py`, `ctl_recount.py`, `unfold_scan.py`, and an unmodified copy of `decls2.py`.
 
-**Not yet clear to merge — phase 2 (Lean checks on a free olean tree) is pending, and LE-bb1m and the T4 PR are not yet made**
+## Phase 2 result (2026-11-17)
+- **Every check from P2-0 to P2-12 passes.** I adapted the checklist to the olean snapshot procedure: replays instead of in-place builds, no restore, and the output is kept. Details, trees and figures are in `phase2/README.md`.
+- **The verdict rests on the replay on snapshot #4.** The earlier replays on #2, the full Rule 10 run and the #340 cross-build, and on #3 are supporting evidence.
+- **Findings are unchanged.** BM-F01 and BM-F02 are fixed by LE-bb1m in #346. BM-F03 is closed, with ALL_OK in both variants. BM-F04 is superseded. BM-F06 and BM-F08 stay with the cleanup ledger and the bb1-sim reader probe.
+- **Phase 2 found nothing new.** It has three disclosures: a container restart, which led to a full re-run of the interrupted phases; two snapshot advances during the job; and one harmless tool-path slip.
+
+**Clear to merge** (ready for Gate 44 together with #340)
