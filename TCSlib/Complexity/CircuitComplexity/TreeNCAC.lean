@@ -211,28 +211,6 @@ private theorem eval_node_map (b : Bool) (x : Fin n → Bool) (f : TreeCircuit n
         simp only [List.map_cons, TreeCircuit.eval, List.foldr_cons] at ih ⊢ <;>
         rw [hc, ih]
 
-/-- A depth bound on every image element bounds the image's depth. -/
-private theorem maxDepth_map_le (f : TreeCircuit n → TreeCircuit n) (m : ℕ) :
-    ∀ cs : List (TreeCircuit n), (∀ c ∈ cs, (f c).depth ≤ m) →
-      TreeCircuit.maxDepth (cs.map f) ≤ m
-  | [], _ => Nat.zero_le _
-  | c :: cs, h => by
-      have ih := maxDepth_map_le f m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
-      have hc := h c (List.mem_cons_self ..)
-      simp only [List.map_cons, TreeCircuit.maxDepth_cons]
-      omega
-
-/-- A fan-in bound on every image element bounds the image's fan-in. -/
-private theorem maxFaninL_map_le (f : TreeCircuit n → TreeCircuit n) (m : ℕ) :
-    ∀ cs : List (TreeCircuit n), (∀ c ∈ cs, (f c).maxFanin ≤ m) →
-      TreeCircuit.maxFaninL (cs.map f) ≤ m
-  | [], _ => Nat.zero_le _
-  | c :: cs, h => by
-      have ih := maxFaninL_map_le f m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
-      have hc := h c (List.mem_cons_self ..)
-      simp only [List.map_cons, TreeCircuit.maxFaninL_cons]
-      omega
-
 /-- `toBinary` computes the same function. -/
 theorem toBinary_eval : ∀ (c : TreeCircuit n) (x : Fin n → Bool), c.toBinary.eval x = c.eval x := by
   intro c
@@ -252,7 +230,8 @@ theorem toBinary_maxFanin_le : ∀ c : TreeCircuit n, c.toBinary.maxFanin ≤ 2 
   | hnode b cs ih =>
       simp only [TreeCircuit.toBinary]
       have h1 := TreeCircuit.maxFanin_balanced_le b (cs.map TreeCircuit.toBinary)
-      have h2 := maxFaninL_map_le TreeCircuit.toBinary 2 cs ih
+      have h2 : TreeCircuit.maxFaninL (cs.map TreeCircuit.toBinary) ≤ 2 :=
+        TreeCircuit.maxFaninL_le_of_forall (List.forall_mem_map.mpr ih)
       omega
 
 /-- The list form of `toBinary_size_le`, in the strengthened form the induction needs. -/
@@ -296,7 +275,7 @@ theorem toBinary_depth_le {w : ℕ} : ∀ c : TreeCircuit n, c.maxFanin ≤ w �
       have hfan : TreeCircuit.maxFaninL cs ≤ w := le_trans (le_max_right _ _) h
       have hB : TreeCircuit.maxDepth (cs.map TreeCircuit.toBinary)
           ≤ TreeCircuit.maxDepth cs * (Nat.clog 2 w + 1) :=
-        maxDepth_map_le _ _ cs fun c hc =>
+        TreeCircuit.maxDepth_le_of_forall <| List.forall_mem_map.mpr fun c hc =>
           le_trans (ih c hc (le_trans (TreeCircuit.maxFanin_le_maxFaninL hc) hfan))
             (Nat.mul_le_mul_right _ (TreeCircuit.depth_le_maxDepth hc))
       have hC : Nat.clog 2 cs.length ≤ Nat.clog 2 w := Nat.clog_mono_right 2 hlen

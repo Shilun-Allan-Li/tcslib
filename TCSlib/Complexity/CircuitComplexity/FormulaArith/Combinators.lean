@@ -441,7 +441,7 @@ literal: the result is `f i` or `(f i).neg`, of depth `(f i).depth ≤ D`
 (`depth_neg`, `Finset.le_sup`), and `c.depth = 0`.  A gate: `subst_node` and `depth_node` give
 `1 + maxDepth (cs.map (·.subst f))`; each child is bounded by `child.depth + D` (induction
 hypothesis) `≤ maxDepth cs + D` (`depth_le_maxDepth`), so the list maximum is too
-(`maxDepth_nil`/`maxDepth_cons`), and `depth_node` on `c` closes it. -/
+(`maxDepth_le_of_forall`, `List.forall_mem_map`), and `depth_node` on `c` closes it. -/
 theorem TreeCircuit.depth_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m) :
     (c.subst f).depth ≤ c.depth + Finset.univ.sup fun i => (f i).depth := by
   induction c using TreeCircuit.ind with
@@ -457,13 +457,10 @@ theorem TreeCircuit.depth_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → 
     -- each substituted child is at most `D` deeper than the deepest old child
     suffices h : TreeCircuit.maxDepth (cs.map fun c => c.subst f) ≤
         TreeCircuit.maxDepth cs + Finset.univ.sup fun i => (f i).depth by omega
-    induction cs with
-    | nil => rw [List.map_nil, TreeCircuit.maxDepth_nil]; exact Nat.zero_le _
-    | cons c cs ihl =>
-      rw [List.map_cons, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_cons]
-      have h1 := ih c (List.mem_cons_self ..)
-      have h2 := ihl fun d hd => ih d (List.mem_cons_of_mem _ hd)
-      omega
+    refine TreeCircuit.maxDepth_le_of_forall (List.forall_mem_map.mpr fun c hc => ?_)
+    have h1 := ih c hc
+    have h2 := TreeCircuit.depth_le_maxDepth hc
+    omega
 
 /-- **F2, fan-in.** Substitution has the fan-in of the formula or of a substituted formula:
 `(c.subst f).maxFanin ≤ max c.maxFanin (Finset.univ.sup fun i => (f i).maxFanin)`.  Glue
@@ -472,8 +469,8 @@ in `depth_subst_le`).
 
 **Proof sketch.** Induction on `c` as in `depth_subst_le`.  A literal becomes `f i` or
 `(f i).neg`, of fan-in `(f i).maxFanin` (`maxFanin_neg`, `Finset.le_sup`).  A gate keeps its
-arity (`subst_node`, `List.length_map`), and `maxFanin_node`, `maxFaninL_cons` and the
-induction hypothesis bound the children. -/
+arity (`subst_node`, `List.length_map`), and `maxFanin_node`, the induction hypothesis,
+`maxFanin_le_maxFaninL` and `maxFaninL_le_of_forall` bound the children. -/
 theorem TreeCircuit.maxFanin_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m) :
     (c.subst f).maxFanin ≤ max c.maxFanin (Finset.univ.sup fun i => (f i).maxFanin) := by
   induction c using TreeCircuit.ind with
@@ -490,13 +487,10 @@ theorem TreeCircuit.maxFanin_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n �
     -- each substituted child has fan-in at most that of an old child or of some `f i`
     suffices h : TreeCircuit.maxFaninL (cs.map fun c => c.subst f) ≤
         max (TreeCircuit.maxFaninL cs) (Finset.univ.sup fun i => (f i).maxFanin) by omega
-    induction cs with
-    | nil => rw [List.map_nil, TreeCircuit.maxFaninL_nil]; exact Nat.zero_le _
-    | cons c cs ihl =>
-      rw [List.map_cons, TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_cons]
-      have h1 := ih c (List.mem_cons_self ..)
-      have h2 := ihl fun d hd => ih d (List.mem_cons_of_mem _ hd)
-      omega
+    refine TreeCircuit.maxFaninL_le_of_forall (List.forall_mem_map.mpr fun c hc => ?_)
+    have h1 := ih c hc
+    have h2 := TreeCircuit.maxFanin_le_maxFaninL hc
+    omega
 
 /-! ### Constants and the fan-in-2 gadgets (F3) -/
 

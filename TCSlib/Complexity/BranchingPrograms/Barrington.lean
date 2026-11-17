@@ -390,18 +390,18 @@ private theorem IsFiveCycle.apply_ne {σ : Perm (Fin 5)} (h : IsFiveCycle σ) (i
   exact Finset.mem_univ i
 
 /-- On the orbit of `0` under a five-cycle, powers agree exactly modulo `5`:
-`IsFiveCycle σ → ((σ ^ a) 0 = (σ ^ b) 0 ↔ a ≡ b [MOD 5])` (`Equiv.Perm.IsCycle.pow_eq_pow_iff`,
-`pow_eq_pow_iff_modEq`).  Glue for C10 [Bar89, Lemma 1 proof, p003-b003]. -/
+`IsFiveCycle σ → ((σ ^ a) 0 = (σ ^ b) 0 ↔ a ≡ b [MOD 5])`.  The case `s = Finset.univ` of
+Mathlib's `Equiv.Perm.IsCycleOn.pow_apply_eq_pow_apply`: a cycle is a cycle on its support
+(`Equiv.Perm.IsCycle.isCycleOn`), which is all of `Fin 5` (`IsFiveCycle.apply_ne`).  Glue for C10
+[Bar89, Lemma 1 proof, p003-b003]. -/
 private theorem IsFiveCycle.pow_apply_eq_iff {σ : Perm (Fin 5)} (h : IsFiveCycle σ) {a b : ℕ} :
     (σ ^ a) 0 = (σ ^ b) 0 ↔ a ≡ b [MOD 5] := by
-  have h5 := h.orderOf_eq
-  constructor
-  · intro hab
-    have hmod := pow_eq_pow_iff_modEq.1 (h.isCycle.pow_eq_pow_iff.2 ⟨0, h.apply_ne 0, hab⟩)
-    rwa [h5] at hmod
-  · intro hab
-    rw [← h5] at hab
-    rw [pow_eq_pow_iff_modEq.2 hab]
+  have hs : {x | σ x ≠ x} = ((Finset.univ : Finset (Fin 5)) : Set (Fin 5)) := by
+    ext i; simp [h.apply_ne i]
+  have hc := h.isCycle.isCycleOn
+  rw [hs] at hc
+  have := hc.pow_apply_eq_pow_apply (Finset.mem_univ (0 : Fin 5)) (m := a) (n := b)
+  rwa [Finset.card_fin] at this
 
 /-- For a five-cycle `σ`, `conjugatorIndex σ i` is an exponent reaching `i` from `0`:
 `IsFiveCycle σ → (σ ^ conjugatorIndex σ i) 0 = i`.  Some `k < orderOf σ = 5` reaches `i`
