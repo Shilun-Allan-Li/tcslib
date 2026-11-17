@@ -156,7 +156,7 @@ $B\in\mathbb N$, there is an index $i>B$ such that $M_i$ is the finite-state ver
 \label{Complexity.ladner_indexed_deadline}
 \leanok
 \difficulty{3}
-For natural numbers $a,d,i,m$ with $d\le i$, $a\,2^d\le i$ and $m\ge 1$, we have
+For all natural numbers $a,d,i,m$ with $d\le i$, $a\,2^d\le i$ and $m\ge 1$, we have
 $a\,(m+1)^d\le i\,m^i$.
 \end{theorem}
 
@@ -252,9 +252,8 @@ output $1$ if and only if $x\in\mathrm{SAT}_H$, then $\mathrm{SAT}_H\in\mathsf{P
 \difficulty{6}
 Let $H$ be Ladner's delayed index function, $\mathrm{SAT}_H$ the corresponding padded SAT
 language, and $M_i$ the machine decoded from the binary digits of $i$. Suppose that for
-every index $i$ there is a Boolean string $x$ on which the statement ``$M_i$ halts within
-$i\,|x|^i$ steps with output $1$'' and the statement $x\in\mathrm{SAT}_H$ have different
-truth values. Then for every $C$ there is $N$ such that $C\le H(n)$ for all $n\ge N$.
+every index $i$ there is a Boolean string $x$ for which exactly one of the following holds:
+$M_i$ halts on $x$ within $i\,|x|^i$ steps with output $1$, or $x\in\mathrm{SAT}_H$. Then for every $C$ there is $N$ such that $C\le H(n)$ for all $n\ge N$.
 \end{theorem}
 
 \begin{theorem}[Delayed index is unbounded if the language is outside P]
@@ -676,8 +675,9 @@ binary expansions are these strings, in order.
 \lean{Complexity.ladner_shortWords}
 \label{Complexity.ladner_shortWords}
 \leanok
-For $a\in\mathbb N$, the short-word list consists, for $r=0,1,\dots,2^{a+1}-2$ in order, of
-the little-endian binary expansion of $r+1$ with its last (most significant) bit deleted.
+For every $a\in\mathbb N$, the short-word list of $a$ is the list whose entries are, for
+$r=0,1,\dots,2^{a+1}-2$ in order, the little-endian binary expansion of $r+1$ with its last
+(most significant) bit deleted.
 \end{definition}
 
 \begin{definition}[Stage selection from memo values]
@@ -865,7 +865,8 @@ $W_{\lfloor\log_2 n\rfloor}$ has length at most $2(n+1)$.
 \label{Complexity.ladner_square_le_power}
 \leanok
 \difficulty{4}
-For every $k\in\mathbb N$, $k^2\le 2^{k+1}$.
+For every natural number $k$, the square of $k$ is at most $2^{k+1}$, that is,
+$k^2\le 2^{k+1}$.
 \end{theorem}
 
 \begin{theorem}[Cubic bound on short indexed deadlines]
