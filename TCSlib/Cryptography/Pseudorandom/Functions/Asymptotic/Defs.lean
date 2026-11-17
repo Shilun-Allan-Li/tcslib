@@ -40,6 +40,7 @@ also gives verdict `false` (foundation decision D7 of `PassShelatChapter2-4Plan.
 * `TCSlib.Cryptography.acceptProb_random_eq_lazy` equates the two descriptions of a
   random function, by its table and by lazy sampling [PS10, §3.8.1].
 * `Complexity.NUPPT.toOracleAdversary_boundedBy` gives the query bound.
+* `Complexity.NUPPT.eval_toOracleAdversary_padFin`: an oracle adversary read at equal widths.
 * `TCSlib.Cryptography.OracleEnsemble.indist_iff` expresses the contract through
   negligible advantage. `TCSlib.Cryptography.oracle_hybrid_lemma` gives the
   finite hybrid bound for oracle ensembles.
@@ -337,6 +338,26 @@ theorem _root_.Complexity.NUPPT.toOracleAdversary_boundedBy (D : NUPPT) (n ℓ�
   (OracleAdversary.boundedBy_iff _ q).2 fun r => by
     rw [NUPPT.toOracleAdversary_eq]
     exact buildTree_boundedBy _ q []
+
+/-- **An oracle adversary read at equal widths:** for `a' = a` and `b' = b`, running
+`D.toOracleAdversary n a b q c` against `f` is running `D.toOracleAdversary n a' b' q c` against
+`f` with its inputs and outputs read at the widths `a'`, `b'`:
+`(D^{a,b} c).eval f = (D^{a',b'} c).eval (fun x => padFin b' ⟦f (padFin a ⟦x⟧)⟧)`, where `⟦·⟧` is
+`List.ofFn`. Framework glue, no textbook counterpart.
+
+**Proof sketch.** Substitute `a' = a` and `b' = b`; the readings are identities
+(`padFin_ofFn`). -/
+theorem _root_.Complexity.NUPPT.eval_toOracleAdversary_padFin (D : NUPPT) (n q : ℕ)
+    (c : D.Coins n) {a b a' b' : ℕ} (ha : a' = a) (hb : b' = b)
+    (f : (Fin a → Bool) → (Fin b → Bool)) :
+    (D.toOracleAdversary n a b q c).eval f =
+      (D.toOracleAdversary n a' b' q c).eval
+        (fun x => padFin b' (List.ofFn (f (padFin a (List.ofFn x))))) := by
+  subst ha hb
+  have e : (fun x => padFin b' (List.ofFn (f (padFin a' (List.ofFn x))))) = f := by
+    funext x
+    rw [padFin_ofFn, padFin_ofFn]
+  rw [e]
 
 /-! ### Oracle indistinguishability [PS10, Definition 96.1] -/
 

@@ -286,3 +286,71 @@ It contains:
   - the merge-tree log;
   - the helper inventory and `dup-searches.txt`;
 - `le/`: the four per-edit diffs.
+
+## Final verdict (phase 2)
+
+**ACCEPT: all checks pass, so the branch was pushed and draft PR #366 opened.** The full record is `phase2.md` beside
+this file. The evidence is `gsw-6a-fills-final-r1-phase2-evidence.zip`, SHA-256
+`68d89dff5a5fd7d30c0f077be898c046e3f6962d4eb73488b500d5428be482ee`, listed in `evidence-SHA256SUMS`.
+
+### The branch
+
+- `land/gsw-6a-fills` is at `ccca6f804552f72b400c09e7a3bd694371bdf568`, on the records tip `036d8239` (Lean-equal to
+  snapshot #6). It has 19 signed first-parent commits:
+  - the merges of #358, #359 and #360;
+  - #360 addendum 2 (LE-gf3 part 1, the four promotions);
+  - the in-house U1/U2, U3, U8 and U6 as content commits (U8 keeps LE-g45's `const_eval`);
+  - the 7 worker commits, cherry-picked with `-S` (range-diff 7/7 `=`; the patches reproduce `bb7efa82`);
+  - LE-gf1, LE-gf3 part 2, LE-gf2 and LE-gf4.
+- All four landing edits landed. **LE-gf4 compiles and is kept.** The edited files equal `bb7efa82` with the recorded
+  diff applied.
+
+### Replay on snapshot #6
+
+- 564 downstream modules were built: rc 0, 0 errors.
+- State check: RESULT OK over 1445 modules. Link count 1 for all 564 rebuilt modules.
+- Snapshot #6 rehash: 0/0/0 at the start, after the build and at the end.
+
+### Admissions
+
+- 0 in the 13 6a modules.
+- 192 in 44 modules library-wide, equal module by module to #6 (the build's per-module `sorry` warnings agree).
+
+### Axioms
+
+- All 98 targets are standard.
+- 859 census constants: none non-standard, and no `sorryAx` trace.
+- `layerNAND`, `layerNAND_gates`, `layerNAND_output` and `toNANDForm` are standard.
+
+### decls2 against the tip
+
+- 289 ADDED: #358/#359 268, #360 15, and the 6 LE-gf3 public names.
+- 1 REMOVED: the `eval_node_nil` move.
+- 0 CHANGED. LE-gf2 is a docstring change, so decls2 does not track it.
+
+### Rule 10
+
+- coe-A on 22 owners: 0 errors in the 6a owners. The failures are only the pre-existing ones, with identical
+  declarations (Adder 3, DAGTransform 11, TreeDAG 25, TreeNCAC 2, Hierarchy 2).
+- Root: 14,098 requests, 0 errors.
+- Paired controls for the 6 public lemmas: ALL_OK (attempt 2; attempt 1 had a control-statement defect and is kept).
+- Explicit-unfold scan: 0 new foreign unfolds against the tip.
+
+### Lint, duplication and disk
+
+- Lint: no new FAIL or WARN.
+- The duplication sweep of the 6 public lemmas and the 75 remaining private helpers finds no duplicate.
+- To keep the disk margin, `olean-replay-6a-fill12`, `-6a-fill86` and `-6a-readers` were deleted.
+
+### Disclosed
+
+- The stale frozen in-house docstrings (Defs, Eval and Barrington module text; NANDForm on N2) are left for a docstring
+  follow-up.
+- `NANDLayering` is 948 lines.
+- LE-gf3's real size is +72/−168, not the +68/−154 this review stated.
+- **The tip moved.** #347/#355 merged during the run (tip `acd66709`).
+  - The merge-tree is clean, but 3 tip-changed modules are in the rebuilt set.
+  - The coordinator's rebase request arrived after the build and the seals were complete, so the branch was finished
+    on #6 as instructed.
+  - Before merge, the branch must be rebased onto the new tip and re-replayed on snapshot #7.
+  - `olean-replay-6a-land` is not adoptable.

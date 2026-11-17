@@ -1,0 +1,41 @@
+# gsw-6b-statements: the statement rows of plan section r3 for 6b (§H5.8 O2, §H5.9-§H5.16), per unit (§H7 units table).
+# Columns: unit<TAB>row<TAB>file (under TCSlib/, new unless marked)<TAB>r3 name(s), as sketched<TAB>kind<TAB>note.
+# kind: target = a theorem admitted by `sorry` with its formula docstring, tag and proof sketch; proved = O2, proved,
+# never admitted; citation = state it and prove it now when its proof is one step from a public lemma after reading
+# the file's own definition (the LE-g45 precedent for const_eval), else admit it; either way REPORT says which;
+# reader-only = no theorem of its own: the definition's `_iff` reader is the statement (ruling Q-6B-1 A, default).
+# Names and shapes are fixed at the statement phase (brief, *Names and shapes*); REPORT maps every row to its final
+# declaration(s). Admissions at the final = base-sorries.txt (289 in 55 modules) + exactly the delivered targets.
+O2	G4	Cryptography/LWE/BitEncoding.lean (existing; O2 series)	decode_iff_mem_Ico	proved	with defs decodeLo, decodeHi and the readers decodeLo_eq, decodeHi_eq (r3 §H5.8; tools/o2check.py: 0 mismatches for 2 <= q <= 2000)
+U12	G1	Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean	Encrypts.select	target	selector step, additive 2N·β (BV14 Eq. (5)-(6), Lemma 3.6; AP14 Eq. (4.1), Lemma 4.1)
+U12	G2	Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean	encrypts_homEvalPBP	target	permutation program, noise length·2N·β (BV14 Lemma 3.6, worst case)
+U12	G3	Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean	encrypts_homEvalFormula	target	Barrington then G2, output coordinate σ 0 (BV14 Thm 3.5 with Lemma 3.6; Pei16 §6.1.3)
+U13	G5	Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean	vecMul_secretVector_eq_sum	target	binary subset sum of the public constants Gᵀc (AP14 §5.1; Pei16 §5.4.3)
+U13	G6	Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean	decryptFormula_eval	target	the decryption formula from F9 and O2 (BV14 Prop 3.4; BV11 Lemma 4.5)
+U13	G7	Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean	nandFormula_eval	target	BV14's f_{c1,c2}, one key block (BV14 Def 2.13; BV11 Def 3.7)
+U13	G8	Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean	depth_nandFormula_le	target	depth ≤ decDepth P + 1 (BV14 Lemma 4.4)
+U13	G8	Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean	maxFanin_nandFormula_le	target	fan-in two
+U13	G8	Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean	decDepth_le	target	closed form, constants (fix) at the statement phase
+U14	G9	Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean	encrypts_bootNAND	target	key-switching form, no hypothesis on C1, C2 (BV14 Thm 2.14, Lemma 4.4; BV11 Thm 3.1)
+U14	G10	Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean	decrypt_fheEval	target	pure FHE, NAND form, every depth; padding (a, a) and (G, G) (BV14 Thm 2.14 second part; BV11 Thm 3.2, Def 3.5)
+U14	G18	Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean	decrypt_fheEvalCircuit	target	every fan-in-2 circuit through N3-N4 (BV14 Thm 2.14; BV11 Def 3.5)
+U14	G11	Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean	encrypts_evalKey	citation	specializes phase-5 encrypts_encrypt (Scheme.lean:161) to evalKey (BV11 Def 3.8; BV14 Lemma 4.4)
+U14	G12	Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean	decrypt_keygen_fheEvalCircuit	target	honest keys, every circuit (BV14 Thm 3.7, worst case)
+U14	G13	Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean	bootNoise_le	target	closed form of bootNoise, constants (fix)
+U15	G14	Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean	distAdv_fheView_le	reader-only	restates weakCircularSecure_iff (Q-6B-1); under Q-6B-1 B a proved citation, never admitted
+U15	G15	Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean	distAdv_fheView_noEvk_le	target	over the evk-dropped projection of fheView, not realView (else it restates Security.lean:248 distAdv_encrypt_le); GSW13 §3.2; AP14 §5.3
+U16	L1	Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean	encrypts_levelKey	citation	specializes encrypts_encrypt / encrypts_keygen_encrypt (Scheme.lean:161/186) to levelKey; reconstruction disclosure (P6-Q19 B)
+U16	L2	Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean	encrypts_leveledEval	target	layered NAND form, depth ≤ L, every vertex at level d under s_d (BV14 Thm 2.14 first part; BV11 Thm 3.1, Def 3.6)
+U16	L3	Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean	decrypt_keygen_leveledEvalCircuit	target	honest keys, every fan-in-2 circuit of NAND depth ≤ L, public output level (BV14 Thm 3.7)
+U17	L4	Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean	distAdv_levelHybrid_le	target	one level, N positions, via distAdv_multi_le_sum over distAdv_encrypt_le (AP14 §5.3; GSW13 §3.2, Lemma 1)
+U17	L5	Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean	distAdv_leveledView_le	target	IND-CPA of leveled GSW-FHE from DLWE, top-down hybrid (BV14 Thm 2.14 first part, Thm 3.7; BV11 Thm 3.1)
+U18	G16	Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean	bootRatio_le_poly	target	explicit PolyExpr pBoot (BV14 Thm 3.7, worst-case analogue); LWE/Ratio.lean holds RatioBounded with its reader only
+U18	G17	Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean	decrypt_fheEval_of_ratio	target	pure and leveled correctness at a polynomial ratio (G12, L3); one lemma per scheme if that reads better (BV14 §3.4)
+U19	A1	Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean	indCPA_of_dlweAssumption	target	asymptotic IND-CPA of public-key GSW, evk-free view, from DLWEAssumption and ReductionEfficient (GSW13 §3.2; BV11 Def 3.1)
+U19	A2	Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean	fheView_negligible	reader-only	restates weakCircularSecureFamily_iff (Q-6B-1); under Q-6B-1 B a proved citation, never admitted
+U19	A3	Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean	leveledINDCPA_of_dlweAssumption	target	asymptotic IND-CPA of leveled GSW-FHE from DLWE and LeveledReductionEfficient (BV14 Thm 3.7; BV11 Thm 3.1)
+# Counts (rows; lemmas). U12: 3; 3 targets. U13: 4; 6 targets. U14: 6; 5 targets + 1 citation. U15: 2; 1 target + 1
+# reader-only. U16: 3; 2 targets + 1 citation. U17: 2; 2 targets. U18: 2; 2 targets (3 if G17 is split). U19: 3;
+# 2 targets + 1 reader-only. O2: 1 proved. Total: 25 r3 rows; 23 targets (24 if G17 is split), 2 citations (each
+# admitted only if its proof is not one step), 2 reader-only rows (Q-6B-1). Expected admissions at the final: 289 +
+# 23 to 26 declarations in 63 modules (the 55 at the base + the 8 new files that hold targets; LWE/Ratio holds none).

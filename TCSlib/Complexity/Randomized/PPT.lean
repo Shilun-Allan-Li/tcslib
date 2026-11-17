@@ -109,6 +109,7 @@ one (Definitions 26.1 and 69.4) and are related by explicit lemmas, never unifie
 * `Complexity.NUPPT.exists_uniform_computes` — every polynomial-time computable function is
   computed with probability one by a PPT [PS10, Definition 24.6, non-vacuity].
 * `Complexity.NUPPT.nonempty` — the class is inhabited.
+* `Complexity.NUPPT.length_ofFn_coins` — a coin string `r : A.Coins n` has `coins.eval n` entries.
 
 ## References
 
@@ -220,6 +221,13 @@ theorem length_advInput (n : ℕ) (y : List Bool) : (advInput n y).length = 2 * 
 /-- The coin type of `A` at parameter `n`: `coins.eval n` uniform bits
 [PS10, Definition 23.4, "each bit of the random tape is uniformly and independently chosen"]. -/
 abbrev Coins (n : ℕ) : Type := Fin (A.coinLen n) → Bool
+
+/-- **The length of a coin string**: the list of the coins `r : A.Coins n` has length
+`coins.eval n`, `(List.ofFn r).length = A.coins.eval n`.
+Framework glue, no textbook counterpart. -/
+protected theorem length_ofFn_coins (n : ℕ) (r : A.Coins n) :
+    (List.ofFn r).length = A.coins.eval n := by
+  rw [List.length_ofFn, coinLen_eq]
 
 /-- Activation at parameter `n` on argument `y` with coins `r`: machine input
 `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. The sampler `r ↦ runAt n y r` on the uniform coin type

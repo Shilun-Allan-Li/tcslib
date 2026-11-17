@@ -34,6 +34,7 @@ The four experiments are read through their published defining equations (`invPr
 ## Main results
 
 * `Games.Bridge.prob_sample_eq_uprob`: `Pr[x ← $ α : p x] = uprob p`.
+* `Games.Bridge.expect_sample_eq_uexp`: `𝔼[x ← $ α : f x] = uexp f`.
 * `Games.Bridge.prob_sample_pair`: sampling `α` then `β` is sampling `α × β`.
 * `Games.Bridge.invProb_eq`, `predProb_eq`, `acceptProb_eq`, `distAdv_eq`: the four concrete
   experiments as games.
@@ -66,6 +67,13 @@ theorem prob_sample_eq_uprob [Fintype α] [Nonempty α] (p : α → Prop) :
     prob (sample α) p = uprob p := by
   classical
   rw [prob_eq_expect, expect_sample, uprob_eq_card_filter, sum_boole, inv_mul_eq_div]
+
+/-- **Sampling and `uexp` agree:** the expectation of `f` over a uniform sample of the nonempty
+finite type `α` is the uniform average, `expect (sample α) f = uexp f`; the expectation form of
+`prob_sample_eq_uprob`. Framework glue, no textbook counterpart. -/
+protected theorem expect_sample_eq_uexp {α : Type} [Fintype α] [Nonempty α] (f : α → ℝ) :
+    expect (sample α) f = uexp f := by
+  rw [expect_sample, uexp_def, inv_mul_eq_div]
 
 /-- **Sampling a pair in sequence is sampling the product:** for every function `g` on pairs,
 its expectation over `a ← $ α; b ← $ β; (a, b)` equals its expectation over a uniform pair. -/

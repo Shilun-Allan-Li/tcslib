@@ -23,7 +23,8 @@ This is the register for `olean-snapshot-procedure.md`, the procedure beside thi
 | 3 | `cf7d28f7159b46033e8b8ae170954f9575e5d145` (merge of #351) | `e9dfbfddfd6ca253f9fd5ee6c3efe868f8614083794312c89d32032564fea53d` | 1422 (1453) | 2026-11-17 03:02 | superseded; oleans deleted at adoption of #4; map and manifest kept; evidence `olean-snapshot-3-adopt/` |
 | 4 | `463f224414ab7615e54104be353bfcda9dfceda7` (merge of #352) | `6607620d725049c90b34a51a2ab891f1520fd0f576aaf3f9d51301222cee41e7` | 1422 (1453) | 2026-11-17 | superseded; oleans deleted at adoption of #5; evidence `olean-snapshot-4-adopt/` |
 | 5 | `3f540c22360c869069a0fba684e23ce6f3cb20db` (merges of #340, #346) | `fca1b6a308ac1585fb5897fae95e8294b54be55e160119e4eca1702692b41ef9` | 1427 (1458) | 2026-11-17 | superseded; oleans deleted at adoption of #6; map and manifest kept; evidence `olean-snapshot-5-adopt/` |
-| 6 | `8060f6b767da9e43d1c1f6d32c55b97758b80bd8` (merge of #357) | `0858dccbee016da1da450f2b2ca0d1f5094ee42646b9496d5278f2b45cb07caf` | 1432 (1463) | 2026-11-17 | **current**; evidence `olean-snapshot-6-adopt/` |
+| 6 | `8060f6b767da9e43d1c1f6d32c55b97758b80bd8` (merge of #357) | `0858dccbee016da1da450f2b2ca0d1f5094ee42646b9496d5278f2b45cb07caf` | 1432 (1463) | 2026-11-17 | superseded; oleans deleted at adoption of #7; map and manifest kept; evidence `olean-snapshot-6-adopt/` |
+| 7 | `a1fa7b652f0c235b54fc067e09b669e983daaf71` (merge of #355, with #347; Lean = TS2 `13fc8060`) | `5105c5149901c5c4375083c1f6ad998b70c909905e4fbf430c9e96117a0f7300` | 1434 (1465) | 2026-11-17 | **current**; evidence `olean-snapshot-7-adopt/` |
 
 - **#1** was built from #0 by closure keys (`dl-oleans-2`): 715 modules built, 638 reused.
   - Every module had rc 0, with 0 `error:` and 0 `error(`.
