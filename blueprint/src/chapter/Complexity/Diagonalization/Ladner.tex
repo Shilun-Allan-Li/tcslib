@@ -892,3 +892,885 @@ $i<\ell(\ell(n))$ and $|x|\le\ell(n)$,
   D\,\bigl(|\mathrm{bin}(i)|+|x|+i\,|x|^i+1\bigr)^D\;\le\;D\,4^D\,(n+1)^{3D}.
 \]
 \end{theorem}
+
+\begin{theorem}[Absorbing a composition clock]
+\lean{Complexity.ladner_composition_clock}
+\label{Complexity.ladner_composition_clock}
+\leanok
+\difficulty{3}
+For all natural numbers $C,q,A,e,n$,
+\[
+  2C\,(n+1)^q+A\,(n+1)^e+2\;\le\;(2C+A+2)\,(n+1)^{\max(q,e)}.
+\]
+\end{theorem}
+
+\begin{theorem}[Floor logarithm via binary length]
+\lean{Complexity.ladner_log_eq_bits_length}
+\label{Complexity.ladner_log_eq_bits_length}
+\leanok
+\uses{Complexity.LogProg.length_bits_eq_log}
+\difficulty{3}
+For every $n\in\mathbb N$, $\lfloor\log_2 n\rfloor=|\mathrm{bin}(n)|-1$, where $\mathrm{bin}(n)$
+is the canonical little-endian binary expansion of $n$ (empty for $n=0$), $\lfloor\log_2 0\rfloor$
+is read as $0$, and subtraction is truncated at $0$.
+\end{theorem}
+
+\begin{theorem}[Binary floor logarithm is polynomial-time]
+\lean{Complexity.ladner_binary_log_FP}
+\label{Complexity.ladner_binary_log_FP}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_normBits, Complexity.BinArith.polyTimeComputable_sub, Complexity.BinArith.sub_pairEncode, Complexity.LogProg.bitsVal, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_lengthBits_FP, Complexity.ladner_log_eq_bits_length, Complexity.polyTimeComputable_const}
+\difficulty{3}
+For a Boolean string $w$ let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$ (high-order zeros allowed), and let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$. The map
+$w\mapsto\mathrm{bin}(\lfloor\log_2\mathrm{val}(w)\rfloor)$, with $\log_2 0$ read as $0$, is
+computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Exponential-time SAT decider from a linear verifier]
+\lean{Complexity.ladner_short_SAT_machine}
+\label{Complexity.ladner_short_SAT_machine}
+\leanok
+\uses{Complexity.P, Complexity.SAT, Complexity.exists_proj_decider, Complexity.mem_P_iff, Turing.FinTM, Turing.FinTM.DecidesInTime}
+\difficulty{4}
+Suppose there is a language $V\in\mathsf P$ such that for every Boolean string $x$, $x\in\mathrm{SAT}$ if and only if $xu\in V$ for some Boolean string $u$ with $|u|=|x|+1$. Then there are $a,d,b\in\mathbb N$ and a finite-state Boolean Turing machine $E$ that
+decides SAT within $b\,2^{m+1}\bigl(a\,(2m+2)^d+(2m+2)^2\bigr)$ steps on every input of length
+$m$.
+\end{theorem}
+
+\begin{theorem}[Short SAT search clock is polynomial]
+\lean{Complexity.ladner_short_SAT_envelope}
+\label{Complexity.ladner_short_SAT_envelope}
+\leanok
+\difficulty{4}
+For all natural numbers $a,b,d,n,m$ with $m\le\lfloor\log_2 n\rfloor$ (with $\log_2 0$ read as $0$),
+\[
+  b\,2^{m+1}\bigl(a\,(2m+2)^d+(2m+2)^2\bigr)\;\le\;2b\,(a\,2^d+4)\,(n+1)^{d+3}.
+\]
+\end{theorem}
+
+\begin{theorem}[Simulating polynomially prepared queries]
+\lean{Complexity.ladner_simulation_on_image}
+\label{Complexity.ladner_simulation_on_image}
+\leanok
+\uses{Complexity.PolyTimeComputable, Complexity.expCode, Complexity.ladner_composition_clock, Complexity.polyTimeComputable_iff, Turing.CodeTM.toFinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_iff, Turing.FinTM.exists_comp_on_image, Turing.pairEncode}
+\difficulty{5}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings and $\mathrm{bin}(t)$
+the binary expansion of $t$. Fix the uniform machine code, write $M_\alpha$ for the machine it
+decodes from a string $\alpha$, and let $D$ be its simulation degree: its universal simulator
+decides, on input $\langle\langle\mathrm{bin}(t),\alpha\rangle,x\rangle$, whether $M_\alpha$ halts
+on $x$ within $t$ steps with output $1$, using at most $D\,(|\alpha|+|x|+t+1)^D$ steps. Let
+$c,\iota$ be string functions and $\tau$ a map from strings to $\mathbb N$ such that
+$z\mapsto\langle\langle\mathrm{bin}(\tau(z)),c(z)\rangle,\iota(z)\rangle$ is polynomial-time
+computable, and suppose there are $A,e$ with
+$D\,(|c(z)|+|\iota(z)|+\tau(z)+1)^D\le A\,(|z|+1)^e$ for every string $z$. Then the map sending
+$z$ to the one-bit string that is $1$ exactly when $M_{c(z)}$ halts on $\iota(z)$ within
+$\tau(z)$ steps with output $1$ is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[SAT on logarithmically short images]
+\lean{Complexity.ladner_short_SAT_on_image}
+\label{Complexity.ladner_short_SAT_on_image}
+\leanok
+\uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.SAT, Complexity.ladner_composition_clock, Complexity.ladner_short_SAT_envelope, Complexity.ladner_short_SAT_machine, Complexity.polyTimeComputable_iff, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_iff, Turing.FinTM.decidesInTime_iff, Turing.FinTM.exists_comp_on_image, Turing.MultiTapeTM.indicator_of_mem, Turing.MultiTapeTM.indicator_of_not_mem}
+\difficulty{5}
+Suppose there is a language $V\in\mathsf P$ such that for every Boolean string $x$, $x\in\mathrm{SAT}$ if and only if $xu\in V$ for some Boolean string $u$ with $|u|=|x|+1$. Let $f$ be a polynomial-time computable string function with
+$|f(z)|\le\lfloor\log_2|z|\rfloor$ for every Boolean string $z$ (with $\log_2 0$ read as $0$).
+Then the map sending $z$ to the one-bit string that is $1$ exactly when $f(z)\in\mathrm{SAT}$ is
+computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Double-logarithm index test is polynomial-time]
+\lean{Complexity.ladner_index_lt_loglog_FP}
+\label{Complexity.ladner_index_lt_loglog_FP}
+\leanok
+\uses{Complexity.BinArith.lt_pairEncode, Complexity.BinArith.polyTimeComputable_lt, Complexity.BinArith.polyTimeComputable_normBits, Complexity.LogProg.bitsVal, Complexity.LogProg.bitsVal_bits, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_binary_log_FP, Complexity.ladner_lengthBits_FP}
+\difficulty{3}
+Let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$ and $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$). For polynomial-time computable string functions $f,g$, the map sending a
+string $S$ to the one-bit string that is $1$ exactly when $\mathrm{val}(f(S))<\ell(\ell(|g(S)|))$
+is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Query validity test is polynomial-time]
+\lean{Complexity.ladner_validQuery_FP}
+\label{Complexity.ladner_validQuery_FP}
+\leanok
+\uses{Complexity.BinArith.le_pairEncode, Complexity.BinArith.polyTimeComputable_le, Complexity.BinArith.polyTimeComputable_slot2, Complexity.BinArith.polyTimeComputable_slot3, Complexity.LogProg.bitsVal_bits, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_binary_log_FP, Complexity.ladner_index_lt_loglog_FP, Complexity.ladner_lengthBits_FP, Complexity.ladner_validQuery, Complexity.polyTimeComputable_and, Complexity.polyTimeComputable_pairFstD}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, and let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$). The map sending a string $S$ to the one-bit string that is $1$
+exactly when $\mathrm{val}(\pi_1(\pi_2(S)))<\ell(\ell(|\pi_1(S)|))$ and
+$|\pi_2(\pi_2(S))|\le\ell(|\pi_1(S)|)$ is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Guarded query preparation in polynomial time]
+\lean{Complexity.ladner_query_preparation}
+\label{Complexity.ladner_query_preparation}
+\leanok
+\uses{Complexity.BinArith.mul_pairEncode, Complexity.BinArith.polyTimeComputable_mul, Complexity.BinArith.polyTimeComputable_normBits, Complexity.BinArith.polyTimeComputable_powCap, Complexity.BinArith.polyTimeComputable_slot2, Complexity.BinArith.polyTimeComputable_slot3, Complexity.BinArith.powCap_pairEncode, Complexity.LogProg.bitsVal, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_lengthBits_FP, Complexity.ladner_queryCode, Complexity.ladner_queryDeadline, Complexity.ladner_queryInput, Complexity.ladner_queryPrep, Complexity.ladner_short_deadline, Complexity.ladner_validQuery, Complexity.ladner_validQuery_FP, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_iff, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_pairFstD, Turing.FinTM, Turing.FinTM.ComputesFunInTime}
+\difficulty{5}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, and $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$). For a string $S$ put $i=\mathrm{val}(\pi_1(\pi_2(S)))$ and
+$x=\pi_2(\pi_2(S))$, and let
+$Q(S)=\langle\langle\mathrm{bin}(i\,|x|^i),\mathrm{bin}(i)\rangle,x\rangle$ if
+$i<\ell(\ell(|\pi_1(S)|))$ and $|x|\le\ell(|\pi_1(S)|)$, and
+$Q(S)=\langle\langle\mathrm{bin}(0),\varepsilon\rangle,\varepsilon\rangle$ otherwise. Then there
+are a finite-state Boolean Turing machine $M$ and constants $C,q$ such that $M$ computes $Q$
+within $C\,(n+1)^q$ steps on every input of length $n$.
+\end{theorem}
+
+\begin{theorem}[Simulation budget of a guarded query]
+\lean{Complexity.ladner_query_budget}
+\label{Complexity.ladner_query_budget}
+\leanok
+\uses{Complexity.LogProg.bitsVal, Complexity.expCode, Complexity.ladner_numeric_envelope, Complexity.ladner_queryCode, Complexity.ladner_queryDeadline, Complexity.ladner_queryInput, Complexity.ladner_validQuery, Complexity.length_pairFstD_le, Complexity.pairFstD, Complexity.pairSndD}
+\difficulty{4}
+Let $D$ be the simulation degree of the fixed uniform machine code, so that its universal
+simulator answers a bounded-acceptance query with code $\alpha$, input $y$ and deadline $t$
+within $D\,(|\alpha|+|y|+t+1)^D$ steps. Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, and $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$). For a string $S$
+put $i=\mathrm{val}(\pi_1(\pi_2(S)))$ and $x=\pi_2(\pi_2(S))$; set
+$(\alpha,y,t)=(\mathrm{bin}(i),x,i\,|x|^i)$ if $i<\ell(\ell(|\pi_1(S)|))$ and
+$|x|\le\ell(|\pi_1(S)|)$, and $(\alpha,y,t)=(\varepsilon,\varepsilon,0)$ otherwise. Then
+$D\,(|\alpha|+|y|+t+1)^D\le D\,4^D\,(|S|+1)^{3D}$.
+\end{theorem}
+
+\begin{theorem}[Canonicalizing a memo table]
+\lean{Complexity.ladner_table_FP}
+\label{Complexity.ladner_table_FP}
+\leanok
+\uses{Complexity.BinArith.encWords, Complexity.BinArith.mapW_pairEncode, Complexity.BinArith.polyTimeComputable_mapW, Complexity.BinArith.polyTimeComputable_normBits, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_values, Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_pairSndD}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty. The map sending a string $T$ with memo values
+$v_0,\dots,v_{k-1}$ to the concatenation
+$\langle\mathrm{bin}(v_0),\varepsilon\rangle\langle\mathrm{bin}(v_1),\varepsilon\rangle\cdots
+\langle\mathrm{bin}(v_{k-1}),\varepsilon\rangle$ is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Counting memo entries in polynomial time]
+\lean{Complexity.ladner_values_length_FP}
+\label{Complexity.ladner_values_length_FP}
+\leanok
+\uses{Complexity.BinArith.countW_eq, Complexity.BinArith.polyTimeComputable_countW, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.ladner_lengthBits_FP, Complexity.ladner_values}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair); the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty. The map sending a string $T$ to the binary expansion of the number of memo
+values of $T$ is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Memo entries are at most the input length]
+\lean{Complexity.ladner_values_length_le}
+\label{Complexity.ladner_values_length_le}
+\leanok
+\uses{Complexity.BinArith.length_decWords_le, Complexity.ladner_values}
+\difficulty{1}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair); the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty. For every Boolean string $T$, the number of memo values of $T$ is at most $|T|$.
+\end{theorem}
+
+\begin{theorem}[Memo lookup is polynomial-time]
+\lean{Complexity.ladner_get_value_FP}
+\label{Complexity.ladner_get_value_FP}
+\leanok
+\uses{Complexity.BinArith.getW_pairEncode_bits, Complexity.BinArith.polyTimeComputable_getW, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_table_FP, Complexity.ladner_values, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty. For a string $S$ let $v$ be the list of memo values of
+$\pi_2(S)$, with $v_m$ read as $0$ when $m$ is out of range. The map
+$S\mapsto\mathrm{bin}(v_{|\pi_1(S)|})$ is computable in polynomial time.
+\end{theorem}
+
+\begin{definition}[Table-dependent padding syntax bit]
+\lean{Complexity.ladner_tableSyntax}
+\label{Complexity.ladner_tableSyntax}
+\leanok
+\uses{Complexity.ladner_parse, Complexity.ladner_values, Complexity.pairFstD, Complexity.pairSndD}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair); the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty. For a string $S$ let $v$ be the list of memo values of $\pi_2(S)$, with $v_m$
+read as $0$ when $m$ is out of range. The table syntax bit of $S$ is $0$ if $\pi_1(S)$ contains
+no $0$; otherwise, writing $\pi_1(S)=p\,0\,1^t$ with $p$ the prefix before the last $0$, it is $1$
+exactly when $t=|p|^{v_{|p|}}$.
+\end{definition}
+
+\begin{theorem}[Table-dependent padding syntax is polynomial-time]
+\lean{Complexity.ladner_tableSyntax_FP}
+\label{Complexity.ladner_tableSyntax_FP}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_slot3, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_get_value_FP, Complexity.ladner_padSyntax_FP, Complexity.ladner_tableSyntax, Complexity.ladner_values, Complexity.pairFstD, Complexity.pairFstD_pairEncode, Complexity.pairSndD, Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_pairFstD}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair); the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty. For a string $S$ let $v$ be the list of memo values of $\pi_2(S)$, with $v_m$
+read as $0$ out of range. The map sending $S$ to the one-bit string that is $1$ exactly when
+$\pi_1(S)=p\,0\,1^t$, with $p$ the prefix before the last $0$, and $t=|p|^{v_{|p|}}$, is
+computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Short-word guard against a memo table]
+\lean{Complexity.ladner_pad_guard_FP}
+\label{Complexity.ladner_pad_guard_FP}
+\leanok
+\uses{Complexity.BinArith.le_pairEncode, Complexity.BinArith.polyTimeComputable_le, Complexity.LogProg.bitsVal_bits, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_binary_log_FP, Complexity.ladner_lengthBits_FP, Complexity.ladner_values, Complexity.ladner_values_length_FP, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$); the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty. The map sending a string $S$ to the one-bit string that is $1$
+exactly when $|\pi_1(S)|\le\ell(k)$, where $k$ is the number of memo values of $\pi_2(S)$, is
+computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Short padded membership against a memo table]
+\lean{Complexity.ladner_short_pad_FP}
+\label{Complexity.ladner_short_pad_FP}
+\leanok
+\uses{Complexity.BinArith.iterate_pairSndD_nil, Complexity.BinArith.polyTimeComputable_slot2, Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.SAT, Complexity.ladner_pad_guard_FP, Complexity.ladner_pad_membership, Complexity.ladner_parse, Complexity.ladner_parseWord, Complexity.ladner_parse_FP, Complexity.ladner_parsed_length, Complexity.ladner_short_SAT_on_image, Complexity.ladner_tableSyntax, Complexity.ladner_tableSyntax_FP, Complexity.ladner_values, Complexity.ladner_values_length_le, Complexity.length_pairSndD_le, Complexity.padSAT, Complexity.pairFstD, Complexity.pairFstD_nil, Complexity.pairFstD_pairEncode, Complexity.pairSndD, Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_and, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_pairFstD}
+\difficulty{6}
+Suppose there is a language $V\in\mathsf P$ such that for every Boolean string $x$, $x\in\mathrm{SAT}$ if and only if $xu\in V$ for some Boolean string $u$ with $|u|=|x|+1$. Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$); the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; and for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range. For a string $S$ let $v$ be the list of memo
+values of $\pi_2(S)$ and $k$ its length. Then the map sending $S$ to the one-bit string that is
+$1$ exactly when $|\pi_1(S)|\le\ell(k)$ and $\pi_1(S)\in\mathrm{SAT}_v$ is computable in
+polynomial time.
+\end{theorem}
+
+\begin{theorem}[Context guard is polynomial-time]
+\lean{Complexity.ladner_ctxGuard_FP}
+\label{Complexity.ladner_ctxGuard_FP}
+\leanok
+\uses{Complexity.BinArith.beq_pairEncode, Complexity.BinArith.polyTimeComputable_beq, Complexity.BinArith.polyTimeComputable_slot2, Complexity.BinArith.polyTimeComputable_slot3, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_ctxGuard, Complexity.ladner_index_lt_loglog_FP, Complexity.ladner_lengthBits_FP, Complexity.ladner_values_length_FP, Complexity.polyTimeComputable_and, Complexity.polyTimeComputable_pairFstD}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, and let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$); the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty. The map sending a string $C$ to the one-bit string that
+is $1$ exactly when $|\pi_1(C)|$ equals the number of memo values of $\pi_2(\pi_2(C))$ and
+$\mathrm{val}(\pi_1(\pi_2(C)))<\ell(\ell(|\pi_1(C)|))$ is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Deleting the last bit is polynomial-time]
+\lean{Complexity.ladner_dropLast_FP}
+\label{Complexity.ladner_dropLast_FP}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_reverse, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.polyTimeComputable_tail}
+\difficulty{3}
+The map sending a Boolean string to the string obtained by deleting its last bit (and sending
+the empty string to itself) is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Single-word verdict is polynomial-time]
+\lean{Complexity.ladner_wordVerdict_FP}
+\label{Complexity.ladner_wordVerdict_FP}
+\leanok
+\uses{Complexity.BinArith.add_pairEncode, Complexity.BinArith.le_pairEncode, Complexity.BinArith.polyTimeComputable_add, Complexity.BinArith.polyTimeComputable_le, Complexity.BinArith.polyTimeComputable_slot2, Complexity.BinArith.polyTimeComputable_slot3, Complexity.BinArith.polyTimeComputable_xor, Complexity.LogProg.bitsVal, Complexity.LogProg.bitsVal_bits, Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.SAT, Complexity.ladnerMachine, Complexity.ladnerMachine_eq, Complexity.ladner_binary_log_FP, Complexity.ladner_ctxGuard, Complexity.ladner_ctxGuard_FP, Complexity.ladner_dropLast_FP, Complexity.ladner_lengthBits_FP, Complexity.ladner_queryCode, Complexity.ladner_queryDeadline, Complexity.ladner_queryInput, Complexity.ladner_queryPrep, Complexity.ladner_query_budget, Complexity.ladner_query_preparation, Complexity.ladner_short_pad_FP, Complexity.ladner_simulation_on_image, Complexity.ladner_validQuery, Complexity.ladner_values, Complexity.ladner_wordVerdict, Complexity.padSAT, Complexity.pairFstD, Complexity.pairFstD_pairEncode, Complexity.pairSndD, Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_and, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_iff, Complexity.polyTimeComputable_not, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD, Turing.FinTM.ComputesInTime, Turing.pairEncode}
+\difficulty{6}
+Suppose there is a language $V\in\mathsf P$ such that for every Boolean string $x$, $x\in\mathrm{SAT}$ if and only if $xu\in V$ for some Boolean string $u$ with $|u|=|x|+1$. Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; and for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range. Finally, for a string $C$ and $r\in\mathbb N$, the single-word verdict $V(C,r)$ is $1$ exactly when, with $x_r$ the binary expansion of $r+1$ with its last bit deleted, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $|\pi_1(C)|$, $i<\ell(\ell(|\pi_1(C)|))$, $|x_r|\le\ell(|\pi_1(C)|)$, and $M_i$ accepts $x_r$ within $i\,|x_r|^i$ steps if and only if $x_r\in\mathrm{SAT}_v$. Then the map
+sending a string $S$ to the one-bit string $V(\pi_1(S),|\pi_2(S)|)$ is computable in polynomial
+time.
+\end{theorem}
+
+\begin{theorem}[Candidate-scan step is polynomial-time]
+\lean{Complexity.ladner_testStep_FP}
+\label{Complexity.ladner_testStep_FP}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_slot2, Complexity.BinArith.polyTimeComputable_slot3, Complexity.BinArith.polyTimeComputable_slot4, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.append, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_testStep, Complexity.ladner_wordVerdict, Complexity.pairFstD, Complexity.pairFstD_pairEncode, Complexity.pairSndD, Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_and, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_headD, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_isNil, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_tail}
+\difficulty{4}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; and for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range. Further, for a string $C$ and $r\in\mathbb N$, the single-word verdict $V(C,r)$ is $1$ exactly when, with $x_r$ the binary expansion of $r+1$ with its last bit deleted, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $|\pi_1(C)|$, $i<\ell(\ell(|\pi_1(C)|))$, $|x_r|\le\ell(|\pi_1(C)|)$, and $M_i$ accepts $x_r$ within $i\,|x_r|^i$ steps if and only if $x_r\in\mathrm{SAT}_v$, and the scan step $\sigma$ sends a state $S$, with $C=\pi_1(S)$, $m=\pi_1(\pi_2(S))$, $k=\pi_1(\pi_2(\pi_2(S)))$ and $g=\pi_2(\pi_2(\pi_2(S)))$, to $S$ itself if $m$ is empty and otherwise to $\langle C,\langle m',\langle k1,\,g_0\wedge V(C,|k|)\rangle\rangle\rangle$, where $m'$ is $m$ without its first bit, $k1$ is $k$ followed by a $1$, and $g_0$ is the first bit of $g$ ($0$ if $g$ is empty). If the map
+$S\mapsto V(\pi_1(S),|\pi_2(S)|)$ is polynomial-time computable, then so is $\sigma$.
+\end{theorem}
+
+\begin{definition}[Doubling fuel for the query count]
+\lean{Complexity.ladner_queryFuel}
+\label{Complexity.ladner_queryFuel}
+\leanok
+\uses{Complexity.pairFstD}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$. For a string $C$, the query fuel $F(C)$ is the one-bit string $1$ if
+$\pi_1(C)$ is empty, and $\mathrm{bin}(|\pi_1(C)|)$ otherwise.
+\end{definition}
+
+\begin{theorem}[Length of the doubling fuel]
+\lean{Complexity.ladner_queryFuel_length}
+\label{Complexity.ladner_queryFuel_length}
+\leanok
+\uses{Complexity.LogProg.length_bits_eq_log, Complexity.ladner_queryFuel, Complexity.pairFstD}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, and let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$). For a string $C$ let $F(C)$ be $1$ if $\pi_1(C)$ is empty and
+$\mathrm{bin}(|\pi_1(C)|)$ otherwise. Then $|F(C)|=\ell(|\pi_1(C)|)+1$.
+\end{theorem}
+
+\begin{theorem}[Doubling fuel is linearly bounded]
+\lean{Complexity.ladner_queryFuel_power_le}
+\label{Complexity.ladner_queryFuel_power_le}
+\leanok
+\uses{Complexity.ladner_queryFuel, Complexity.ladner_queryFuel_length, Complexity.length_pairFstD_le}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$. For a string $C$ let $F(C)$ be $1$ if $\pi_1(C)$ is empty and
+$\mathrm{bin}(|\pi_1(C)|)$ otherwise. Then $2^{|F(C)|}\le 2(|C|+1)$.
+\end{theorem}
+
+\begin{definition}[Initial state of the query-count generation]
+\lean{Complexity.ladner_countInit}
+\label{Complexity.ladner_countInit}
+\leanok
+\uses{Complexity.ladner_queryFuel, Turing.pairEncode}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with first component
+$\pi_1$, and let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$. For a string $C$, with $F(C)$ the one-bit string $1$ if $\pi_1(C)$ is
+empty and $\mathrm{bin}(|\pi_1(C)|)$ otherwise, the initial count state is
+$\langle C,\langle F(C),\varepsilon\rangle\rangle$.
+\end{definition}
+
+\begin{definition}[One doubling round of the query count]
+\lean{Complexity.ladner_countStep}
+\label{Complexity.ladner_countStep}
+\leanok
+\uses{Complexity.pairFstD, Complexity.pairSndD, Turing.pairEncode}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair). For a state $S$ put $C=\pi_1(S)$, $r=\pi_1(\pi_2(S))$, $a=\pi_2(\pi_2(S))$ and
+$a'=a\,a\,1$. The doubling round returns $S$ if $r$ is empty, and otherwise returns
+$\langle C,\langle r',b\rangle\rangle$, where $r'$ is $r$ without its first bit and $b=a'$ if
+$|a'|\le 2(|C|+1)$, $b=a$ otherwise.
+\end{definition}
+
+\begin{theorem}[Count initialization is polynomial-time]
+\lean{Complexity.ladner_countInit_FP}
+\label{Complexity.ladner_countInit_FP}
+\leanok
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_countInit, Complexity.ladner_lengthBits_FP, Complexity.ladner_queryFuel, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_isNil, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_pairFstD}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$. The map sending a string $C$ to
+$\langle C,\langle F(C),\varepsilon\rangle\rangle$, where $F(C)$ is the one-bit string $1$ if
+$\pi_1(C)$ is empty and $\mathrm{bin}(|\pi_1(C)|)$ otherwise, is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[A doubling round is polynomial-time]
+\lean{Complexity.ladner_countStep_FP}
+\label{Complexity.ladner_countStep_FP}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_slot2, Complexity.BinArith.polyTimeComputable_slot3, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.append, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_countStep, Complexity.pairFstD, Complexity.pairFstD_pairEncode, Complexity.pairSndD, Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_isNil, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_lenLe, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_polyUnary, Complexity.polyTimeComputable_tail}
+\difficulty{4}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair). Let $\kappa$ be the doubling round: for a state $S$ with $C=\pi_1(S)$,
+$r=\pi_1(\pi_2(S))$, $a=\pi_2(\pi_2(S))$ and $a'=a\,a\,1$, $\kappa(S)=S$ if $r$ is empty, and
+otherwise $\kappa(S)=\langle C,\langle r',b\rangle\rangle$ with $r'$ equal to $r$ without its first
+bit, $b=a'$ if $|a'|\le 2(|C|+1)$ and $b=a$ otherwise. Then $\kappa$ is computable in polynomial
+time.
+\end{theorem}
+
+\begin{theorem}[Exact orbit of query-count generation]
+\lean{Complexity.ladner_count_orbit}
+\label{Complexity.ladner_count_orbit}
+\leanok
+\uses{Complexity.ladner_countInit, Complexity.ladner_countStep, Complexity.ladner_queryFuel, Complexity.ladner_queryFuel_power_le, Complexity.pairFstD_pairEncode, Complexity.pairSndD_pairEncode, Turing.pairEncode}
+\difficulty{5}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$. For a string $C$ let $F(C)$ be the one-bit string $1$ if $\pi_1(C)$ is
+empty and $\mathrm{bin}(|\pi_1(C)|)$ otherwise. Let $\kappa$ be the doubling round: for a state
+$S$ with $C=\pi_1(S)$, $r=\pi_1(\pi_2(S))$, $a=\pi_2(\pi_2(S))$ and $a'=a\,a\,1$, $\kappa(S)=S$ if
+$r$ is empty, and otherwise $\kappa(S)=\langle C,\langle r',b\rangle\rangle$ with $r'$ equal to $r$
+without its first bit, $b=a'$ if $|a'|\le 2(|C|+1)$ and $b=a$ otherwise. Then for every string $C$
+and every $j\in\mathbb N$,
+\[
+  \kappa^{j}\bigl(\langle C,\langle F(C),\varepsilon\rangle\rangle\bigr)
+  =\bigl\langle C,\bigl\langle F(C)_{\ge j},\,1^{\,2^{\min(j,|F(C)|)}-1}\bigr\rangle\bigr\rangle,
+\]
+where $F(C)_{\ge j}$ denotes $F(C)$ with its first $j$ bits removed.
+\end{theorem}
+
+\begin{theorem}[Linear size of query-count states]
+\lean{Complexity.ladner_count_size}
+\label{Complexity.ladner_count_size}
+\leanok
+\uses{Complexity.ladner_countInit, Complexity.ladner_countStep, Complexity.ladner_count_orbit, Complexity.ladner_queryFuel, Complexity.ladner_queryFuel_length, Complexity.ladner_queryFuel_power_le, Complexity.length_pairFstD_le, Turing.length_pairEncode}
+\difficulty{4}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$. For a string $C$ let $F(C)$ be the one-bit string $1$ if $\pi_1(C)$ is
+empty and $\mathrm{bin}(|\pi_1(C)|)$ otherwise. Let $\kappa$ be the doubling round: for a state
+$S$ with $C=\pi_1(S)$, $r=\pi_1(\pi_2(S))$, $a=\pi_2(\pi_2(S))$ and $a'=a\,a\,1$, $\kappa(S)=S$ if
+$r$ is empty, and otherwise $\kappa(S)=\langle C,\langle r',b\rangle\rangle$ with $r'$ equal to $r$
+without its first bit, $b=a'$ if $|a'|\le 2(|C|+1)$ and $b=a$ otherwise. Then for every string $C$
+and every $j\in\mathbb N$,
+$\bigl|\kappa^{j}(\langle C,\langle F(C),\varepsilon\rangle\rangle)\bigr|\le 8(|C|+1)$.
+\end{theorem}
+
+\begin{theorem}[Scan initialization is polynomial-time]
+\lean{Complexity.ladner_testInit_FP}
+\label{Complexity.ladner_testInit_FP}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_iterate, Complexity.BinArith.polyTimeComputable_slot3, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_countInit_FP, Complexity.ladner_countStep_FP, Complexity.ladner_count_orbit, Complexity.ladner_count_size, Complexity.ladner_queryCount, Complexity.ladner_queryFuel, Complexity.ladner_queryFuel_length, Complexity.ladner_testInit, Complexity.length_pairFstD_le, Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_id}
+\difficulty{4}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), and let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$). The map sending a string $C$ to
+$\langle C,\langle 1^{q},\langle\varepsilon,1\rangle\rangle\rangle$, where
+$q=2^{\ell(|\pi_1(C)|)+1}-1$, is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Exact orbit of the candidate scan]
+\lean{Complexity.ladner_test_orbit}
+\label{Complexity.ladner_test_orbit}
+\leanok
+\uses{Complexity.ladner_queryCount, Complexity.ladner_testInit, Complexity.ladner_testStep, Complexity.ladner_wordVerdict, Complexity.pairFstD_pairEncode, Complexity.pairSndD_pairEncode, Turing.pairEncode}
+\difficulty{5}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; and for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range. Further, for a string $C$ and $r\in\mathbb N$, the single-word verdict $V(C,r)$ is $1$ exactly when, with $x_r$ the binary expansion of $r+1$ with its last bit deleted, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $|\pi_1(C)|$, $i<\ell(\ell(|\pi_1(C)|))$, $|x_r|\le\ell(|\pi_1(C)|)$, and $M_i$ accepts $x_r$ within $i\,|x_r|^i$ steps if and only if $x_r\in\mathrm{SAT}_v$; the scan step $\sigma$ sends a state $S$, with $C=\pi_1(S)$, $m=\pi_1(\pi_2(S))$, $k=\pi_1(\pi_2(\pi_2(S)))$ and $g=\pi_2(\pi_2(\pi_2(S)))$, to $S$ itself if $m$ is empty and otherwise to $\langle C,\langle m',\langle k1,\,g_0\wedge V(C,|k|)\rangle\rangle\rangle$, where $m'$ is $m$ without its first bit, $k1$ is $k$ followed by a $1$, and $g_0$ is the first bit of $g$ ($0$ if $g$ is empty); and for a string $C$ put $q(C)=2^{\ell(|\pi_1(C)|)+1}-1$ and let $\iota(C)=\langle C,\langle 1^{q(C)},\langle\varepsilon,1\rangle\rangle\rangle$ be the initial scan state.
+Then for every string $C$ and every $j\in\mathbb N$,
+\[
+  \sigma^{j}(\iota(C))=\Bigl\langle C,\Bigl\langle 1^{\,q(C)-j},\Bigl\langle 1^{\min(j,q(C))},
+  \bigl[\,V(C,r)=1\text{ for all }r<\min(j,q(C))\,\bigr]\Bigr\rangle\Bigr\rangle\Bigr\rangle,
+\]
+where $q(C)-j$ is truncated at $0$ and $[\,Q\,]$ is the one-bit string that is $1$ exactly when
+$Q$ holds.
+\end{theorem}
+
+\begin{theorem}[Linear bound on the number of scan queries]
+\lean{Complexity.ladner_queryCount_le}
+\label{Complexity.ladner_queryCount_le}
+\leanok
+\uses{Complexity.ladner_queryCount, Complexity.ladner_shortWords, Complexity.ladner_shortWords_count, Complexity.length_pairFstD_le, Complexity.pairFstD}
+\difficulty{3}
+Let $\pi_1(C)$ be the first component of a Boolean string $C$ decoded as a self-delimiting pair
+(empty if $C$ is not a pair), and let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$). For every string $C$,
+$2^{\ell(|\pi_1(C)|)+1}-1\le 2(|C|+1)$.
+\end{theorem}
+
+\begin{theorem}[Linear size of candidate-scan states]
+\lean{Complexity.ladner_test_size}
+\label{Complexity.ladner_test_size}
+\leanok
+\uses{Complexity.ladner_queryCount, Complexity.ladner_queryCount_le, Complexity.ladner_testInit, Complexity.ladner_testStep, Complexity.ladner_test_orbit, Turing.length_pairEncode}
+\difficulty{4}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; and for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range. Further, for a string $C$ and $r\in\mathbb N$, the single-word verdict $V(C,r)$ is $1$ exactly when, with $x_r$ the binary expansion of $r+1$ with its last bit deleted, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $|\pi_1(C)|$, $i<\ell(\ell(|\pi_1(C)|))$, $|x_r|\le\ell(|\pi_1(C)|)$, and $M_i$ accepts $x_r$ within $i\,|x_r|^i$ steps if and only if $x_r\in\mathrm{SAT}_v$; the scan step $\sigma$ sends a state $S$, with $C=\pi_1(S)$, $m=\pi_1(\pi_2(S))$, $k=\pi_1(\pi_2(\pi_2(S)))$ and $g=\pi_2(\pi_2(\pi_2(S)))$, to $S$ itself if $m$ is empty and otherwise to $\langle C,\langle m',\langle k1,\,g_0\wedge V(C,|k|)\rangle\rangle\rangle$, where $m'$ is $m$ without its first bit, $k1$ is $k$ followed by a $1$, and $g_0$ is the first bit of $g$ ($0$ if $g$ is empty); and for a string $C$ put $q(C)=2^{\ell(|\pi_1(C)|)+1}-1$ and let $\iota(C)=\langle C,\langle 1^{q(C)},\langle\varepsilon,1\rangle\rangle\rangle$ be the initial scan state.
+Then for every string $C$ and every $j\in\mathbb N$, $|\sigma^{j}(\iota(C))|\le 12(|C|+1)$.
+\end{theorem}
+
+\begin{theorem}[The candidate scan computes the candidate bit]
+\lean{Complexity.ladner_candidate_readout}
+\label{Complexity.ladner_candidate_readout}
+\leanok
+\uses{Complexity.LogProg.bitsVal, Complexity.ladnerMachine, Complexity.ladner_candidate, Complexity.ladner_ctxGuard, Complexity.ladner_queryCount, Complexity.ladner_queryCount_le, Complexity.ladner_shortWords, Complexity.ladner_shortWords_complete, Complexity.ladner_testInit, Complexity.ladner_testOut, Complexity.ladner_testStep, Complexity.ladner_test_orbit, Complexity.ladner_values, Complexity.ladner_wordVerdict, Complexity.padSAT, Complexity.pairFstD, Complexity.pairSndD, Complexity.pairSndD_pairEncode, Turing.FinTM.ComputesInTime}
+\difficulty{5}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; and for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range. Further, for a string $C$ and $r\in\mathbb N$, the single-word verdict $V(C,r)$ is $1$ exactly when, with $x_r$ the binary expansion of $r+1$ with its last bit deleted, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $|\pi_1(C)|$, $i<\ell(\ell(|\pi_1(C)|))$, $|x_r|\le\ell(|\pi_1(C)|)$, and $M_i$ accepts $x_r$ within $i\,|x_r|^i$ steps if and only if $x_r\in\mathrm{SAT}_v$; the scan step $\sigma$ sends a state $S$, with $C=\pi_1(S)$, $m=\pi_1(\pi_2(S))$, $k=\pi_1(\pi_2(\pi_2(S)))$ and $g=\pi_2(\pi_2(\pi_2(S)))$, to $S$ itself if $m$ is empty and otherwise to $\langle C,\langle m',\langle k1,\,g_0\wedge V(C,|k|)\rangle\rangle\rangle$, where $m'$ is $m$ without its first bit, $k1$ is $k$ followed by a $1$, and $g_0$ is the first bit of $g$ ($0$ if $g$ is empty); for a string $C$ put $q(C)=2^{\ell(|\pi_1(C)|)+1}-1$ and let $\iota(C)=\langle C,\langle 1^{q(C)},\langle\varepsilon,1\rangle\rangle\rangle$ be the initial scan state; and
+the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$. Then for every string $C$: if $|\pi_1(C)|$ equals the number of memo values of
+$\pi_2(\pi_2(C))$ and $\mathrm{val}(\pi_1(\pi_2(C)))<\ell(\ell(|\pi_1(C)|))$, the one-bit string
+$\chi(C)$ equals $\pi_2(\pi_2(\pi_2(\sigma^{2(|C|+1)}(\iota(C)))))$; otherwise $\chi(C)=0$.
+\end{theorem}
+
+\begin{theorem}[The candidate test is polynomial-time]
+\lean{Complexity.ladner_candidate_FP}
+\label{Complexity.ladner_candidate_FP}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_iterate, Complexity.BinArith.polyTimeComputable_slot4, Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.SAT, Complexity.ladner_candidate, Complexity.ladner_candidate_readout, Complexity.ladner_ctxGuard_FP, Complexity.ladner_testInit_FP, Complexity.ladner_testOut, Complexity.ladner_testStep_FP, Complexity.ladner_test_size, Complexity.ladner_wordVerdict_FP, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_ite}
+\difficulty{4}
+Suppose there is a language $V\in\mathsf P$ such that for every Boolean string $x$, $x\in\mathrm{SAT}$ if and only if $xu\in V$ for some Boolean string $u$ with $|u|=|x|+1$. Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; and the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$. Then the map sending a
+string $C$ to the one-bit string $\chi(C)$ is computable in polynomial time.
+\end{theorem}
+
+\begin{definition}[Candidate context for a memo table]
+\lean{Complexity.ladner_selectCtx}
+\label{Complexity.ladner_selectCtx}
+\leanok
+\uses{Complexity.ladner_values, Turing.pairEncode}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings and $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$; the memo
+values of a string $T$ are the numbers whose binary expansions are the successive first
+components obtained by repeatedly splitting $T$ as a pair. For a string $T$ with $k$ memo values
+and $i\in\mathbb N$, the candidate context is $\langle 1^{k},\langle\mathrm{bin}(i),T\rangle\rangle$.
+\end{definition}
+
+\begin{definition}[Initial selection state]
+\lean{Complexity.ladner_selectInit}
+\label{Complexity.ladner_selectInit}
+\leanok
+\uses{Turing.pairEncode}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings. For a string $T$, the
+initial selection state is $\langle T,\langle\varepsilon,\langle\varepsilon,\varepsilon\rangle\rangle\rangle$,
+recording the table, an empty unary rank and an empty completion flag.
+\end{definition}
+
+\begin{definition}[One round of stage selection]
+\lean{Complexity.ladner_selectStep}
+\label{Complexity.ladner_selectStep}
+\leanok
+\uses{Complexity.ladner_candidate, Complexity.ladner_selectCtx, Complexity.ladner_values, Complexity.pairFstD, Complexity.pairSndD, Turing.pairEncode}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; and the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$. Finally,
+the selection round $\lambda$ acts on a state $S$ as follows: put $T=\pi_1(S)$, let $k$ be the number of memo values of $T$, and put $\rho=\pi_1(\pi_2(S))$ (the rank), $f=\pi_1(\pi_2(\pi_2(S)))$ (the flag) and $c=\ell(\ell(k))$ (the cap); then $\lambda(S)=S$ if $f$ is nonempty; otherwise, if $|\rho|<c$, $\lambda(S)$ is $\langle T,\langle\rho,\langle 1,\mathrm{bin}(|\rho|)\rangle\rangle\rangle$ when $\chi(\langle 1^{k},\langle\mathrm{bin}(|\rho|),T\rangle\rangle)=1$ and $\langle T,\langle\rho1,\langle\varepsilon,\varepsilon\rangle\rangle\rangle$ when it is $0$; and if $|\rho|\ge c$, $\lambda(S)=\langle T,\langle\rho,\langle 1,\mathrm{bin}(c)\rangle\rangle\rangle$.
+\end{definition}
+
+\begin{definition}[Output of a selection state]
+\lean{Complexity.ladner_selectOut}
+\label{Complexity.ladner_selectOut}
+\leanok
+\uses{Complexity.pairSndD}
+For a Boolean string $S$, with $\pi_2$ the second component of a self-delimiting pair (empty if
+the string is not a pair), the selection output is $\pi_2(\pi_2(\pi_2(S)))$, the recorded index of
+a completed selection state.
+\end{definition}
+
+\begin{theorem}[Candidate test on a prepared context]
+\lean{Complexity.ladner_candidate_selectCtx}
+\label{Complexity.ladner_candidate_selectCtx}
+\leanok
+\uses{Complexity.LogProg.bitsVal_bits, Complexity.ladnerMachine, Complexity.ladner_candidate, Complexity.ladner_selectCtx, Complexity.ladner_values, Complexity.padSAT, Complexity.pairFstD_pairEncode, Complexity.pairSndD_pairEncode, Turing.FinTM.ComputesInTime}
+\difficulty{1}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; and the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$. Let $T$ be a string whose
+memo values form the list $v$ of length $k$, and let $i\in\mathbb N$. Then
+$\chi(\langle 1^{k},\langle\mathrm{bin}(i),T\rangle\rangle)=1$ if and only if $i<\ell(\ell(k))$ and
+for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if
+and only if $x\in\mathrm{SAT}_v$.
+\end{theorem}
+
+\begin{theorem}[Characterization of the selected stage]
+\lean{Complexity.ladner_stage_spec}
+\label{Complexity.ladner_stage_spec}
+\leanok
+\uses{Complexity.ladner_candidate, Complexity.ladner_candidate_selectCtx, Complexity.ladner_selectCtx, Complexity.ladner_stage, Complexity.ladner_values}
+\difficulty{4}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$; and for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$. Let $T$ be a
+string whose memo values form the list $v$ of length $k$, and write $s=s(v)$. Then
+$s\le\ell(\ell(k))$; for every $i<s$,
+$\chi(\langle 1^{k},\langle\mathrm{bin}(i),T\rangle\rangle)=0$; and if $s<\ell(\ell(k))$ then
+$\chi(\langle 1^{k},\langle\mathrm{bin}(s),T\rangle\rangle)=1$.
+\end{theorem}
+
+\begin{theorem}[Selection initialization is polynomial-time]
+\lean{Complexity.ladner_selectInit_FP}
+\label{Complexity.ladner_selectInit_FP}
+\leanok
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_selectInit, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_id}
+\difficulty{1}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings. The map
+$T\mapsto\langle T,\langle\varepsilon,\langle\varepsilon,\varepsilon\rangle\rangle\rangle$ is
+computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[A selection round is polynomial-time]
+\lean{Complexity.ladner_selectStep_FP}
+\label{Complexity.ladner_selectStep_FP}
+\leanok
+\uses{Complexity.BinArith.countW_eq, Complexity.BinArith.polyTimeComputable_countW, Complexity.BinArith.polyTimeComputable_slot2, Complexity.BinArith.polyTimeComputable_slot3, Complexity.LogProg.bitsVal_bits, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.append, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_binary_log_FP, Complexity.ladner_candidate, Complexity.ladner_index_lt_loglog_FP, Complexity.ladner_lengthBits_FP, Complexity.ladner_selectCtx, Complexity.ladner_selectStep, Complexity.ladner_values, Complexity.ladner_values_length_FP, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_isNil, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_pairFstD}
+\difficulty{4}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; and the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$. Further, the selection round $\lambda$ acts on a state $S$ as follows: put $T=\pi_1(S)$, let $k$ be the number of memo values of $T$, and put $\rho=\pi_1(\pi_2(S))$ (the rank), $f=\pi_1(\pi_2(\pi_2(S)))$ (the flag) and $c=\ell(\ell(k))$ (the cap); then $\lambda(S)=S$ if $f$ is nonempty; otherwise, if $|\rho|<c$, $\lambda(S)$ is $\langle T,\langle\rho,\langle 1,\mathrm{bin}(|\rho|)\rangle\rangle\rangle$ when $\chi(\langle 1^{k},\langle\mathrm{bin}(|\rho|),T\rangle\rangle)=1$ and $\langle T,\langle\rho1,\langle\varepsilon,\varepsilon\rangle\rangle\rangle$ when it is $0$; and if $|\rho|\ge c$, $\lambda(S)=\langle T,\langle\rho,\langle 1,\mathrm{bin}(c)\rangle\rangle\rangle$. If the map
+$C\mapsto\chi(C)$ is polynomial-time computable, then so is $\lambda$.
+\end{theorem}
+
+\begin{theorem}[Exact orbit of stage selection]
+\lean{Complexity.ladner_select_orbit}
+\label{Complexity.ladner_select_orbit}
+\leanok
+\uses{Complexity.ladner_selectInit, Complexity.ladner_selectStep, Complexity.ladner_stage, Complexity.ladner_stage_spec, Complexity.ladner_values, Complexity.pairFstD_pairEncode, Complexity.pairSndD_pairEncode, Turing.pairEncode}
+\difficulty{5}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$; and for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$. Further, the selection round $\lambda$ acts on a state $S$ as follows: put $T=\pi_1(S)$, let $k$ be the number of memo values of $T$, and put $\rho=\pi_1(\pi_2(S))$ (the rank), $f=\pi_1(\pi_2(\pi_2(S)))$ (the flag) and $c=\ell(\ell(k))$ (the cap); then $\lambda(S)=S$ if $f$ is nonempty; otherwise, if $|\rho|<c$, $\lambda(S)$ is $\langle T,\langle\rho,\langle 1,\mathrm{bin}(|\rho|)\rangle\rangle\rangle$ when $\chi(\langle 1^{k},\langle\mathrm{bin}(|\rho|),T\rangle\rangle)=1$ and $\langle T,\langle\rho1,\langle\varepsilon,\varepsilon\rangle\rangle\rangle$ when it is $0$; and if $|\rho|\ge c$, $\lambda(S)=\langle T,\langle\rho,\langle 1,\mathrm{bin}(c)\rangle\rangle\rangle$.
+Then for every string $T$ with memo values $v$ and every $j\in\mathbb N$, writing $s=s(v)$,
+\[
+  \lambda^{j}\bigl(\langle T,\langle\varepsilon,\langle\varepsilon,\varepsilon\rangle\rangle\rangle\bigr)
+  =\begin{cases}
+    \langle T,\langle 1^{j},\langle\varepsilon,\varepsilon\rangle\rangle\rangle & \text{if } j\le s,\\
+    \langle T,\langle 1^{s},\langle 1,\mathrm{bin}(s)\rangle\rangle\rangle & \text{if } j>s.
+  \end{cases}
+\]
+\end{theorem}
+
+\begin{theorem}[Selected stage is at most the table length]
+\lean{Complexity.ladner_stage_length_le}
+\label{Complexity.ladner_stage_length_le}
+\leanok
+\uses{Complexity.ladner_stage, Complexity.ladner_stage_spec, Complexity.ladner_values, Complexity.ladner_values_length_le}
+\difficulty{2}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; and for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range. Further, for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$. For every Boolean string $T$ with memo
+values $v$, $s(v)\le|T|$.
+\end{theorem}
+
+\begin{theorem}[Linear size of selection states]
+\lean{Complexity.ladner_select_size}
+\label{Complexity.ladner_select_size}
+\leanok
+\uses{Complexity.ladner_selectInit, Complexity.ladner_selectStep, Complexity.ladner_select_orbit, Complexity.ladner_stage, Complexity.ladner_stage_length_le, Complexity.ladner_values, Turing.length_bits_le_self, Turing.length_pairEncode}
+\difficulty{4}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; and the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$. Further, the selection round $\lambda$ acts on a state $S$ as follows: put $T=\pi_1(S)$, let $k$ be the number of memo values of $T$, and put $\rho=\pi_1(\pi_2(S))$ (the rank), $f=\pi_1(\pi_2(\pi_2(S)))$ (the flag) and $c=\ell(\ell(k))$ (the cap); then $\lambda(S)=S$ if $f$ is nonempty; otherwise, if $|\rho|<c$, $\lambda(S)$ is $\langle T,\langle\rho,\langle 1,\mathrm{bin}(|\rho|)\rangle\rangle\rangle$ when $\chi(\langle 1^{k},\langle\mathrm{bin}(|\rho|),T\rangle\rangle)=1$ and $\langle T,\langle\rho1,\langle\varepsilon,\varepsilon\rangle\rangle\rangle$ when it is $0$; and if $|\rho|\ge c$, $\lambda(S)=\langle T,\langle\rho,\langle 1,\mathrm{bin}(c)\rangle\rangle\rangle$. Then for
+every string $T$ and every $j\in\mathbb N$,
+$\bigl|\lambda^{j}(\langle T,\langle\varepsilon,\langle\varepsilon,\varepsilon\rangle\rangle\rangle)\bigr|
+\le 12(|T|+1)$.
+\end{theorem}
+
+\begin{theorem}[Selection outputs the stage]
+\lean{Complexity.ladner_select_readout}
+\label{Complexity.ladner_select_readout}
+\leanok
+\uses{Complexity.ladner_selectInit, Complexity.ladner_selectOut, Complexity.ladner_selectStep, Complexity.ladner_select_orbit, Complexity.ladner_stage, Complexity.ladner_stage_length_le, Complexity.ladner_values, Complexity.pairSndD_pairEncode}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$; and for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$. Further, the selection round $\lambda$ acts on a state $S$ as follows: put $T=\pi_1(S)$, let $k$ be the number of memo values of $T$, and put $\rho=\pi_1(\pi_2(S))$ (the rank), $f=\pi_1(\pi_2(\pi_2(S)))$ (the flag) and $c=\ell(\ell(k))$ (the cap); then $\lambda(S)=S$ if $f$ is nonempty; otherwise, if $|\rho|<c$, $\lambda(S)$ is $\langle T,\langle\rho,\langle 1,\mathrm{bin}(|\rho|)\rangle\rangle\rangle$ when $\chi(\langle 1^{k},\langle\mathrm{bin}(|\rho|),T\rangle\rangle)=1$ and $\langle T,\langle\rho1,\langle\varepsilon,\varepsilon\rangle\rangle\rangle$ when it is $0$; and if $|\rho|\ge c$, $\lambda(S)=\langle T,\langle\rho,\langle 1,\mathrm{bin}(c)\rangle\rangle\rangle$.
+Then for every string $T$ with memo values $v$, the string
+$\pi_2(\pi_2(\pi_2(\lambda^{|T|+1}(\langle T,\langle\varepsilon,\langle\varepsilon,\varepsilon\rangle\rangle\rangle))))$
+equals $\mathrm{bin}(s(v))$.
+\end{theorem}
+
+\begin{theorem}[Stage selection is polynomial-time]
+\lean{Complexity.ladner_stage_FP}
+\label{Complexity.ladner_stage_FP}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_iterate, Complexity.BinArith.polyTimeComputable_slot4, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.ladner_candidate, Complexity.ladner_selectInit_FP, Complexity.ladner_selectStep_FP, Complexity.ladner_select_readout, Complexity.ladner_select_size, Complexity.ladner_stage, Complexity.ladner_values}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{val}(w)$ denote the value of a little-endian binary word $w$, $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; the candidate bit $\chi(C)$ of a string $C$ is $1$ exactly when, with $n=|\pi_1(C)|$, $i=\mathrm{val}(\pi_1(\pi_2(C)))$ and $v$ the memo values of $\pi_2(\pi_2(C))$, the list $v$ has length $n$, $i<\ell(\ell(n))$, and for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$; and for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$. If the map
+$C\mapsto\chi(C)$ is polynomial-time computable, then so is the map sending a string $T$ to
+$\mathrm{bin}(s(v))$, where $v$ is the list of memo values of $T$.
+\end{theorem}
+
+\begin{theorem}[A correct history yields the next delayed index]
+\lean{Complexity.ladner_stage_correct}
+\label{Complexity.ladner_stage_correct}
+\leanok
+\uses{Complexity.ladnerH, Complexity.ladnerH_eq, Complexity.ladnerMachine, Complexity.ladner_stage, Complexity.padSAT, Complexity.padSAT_congr, Turing.FinTM.ComputesInTime}
+\difficulty{4}
+Let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$) and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; and for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$. Let $H$ be Ladner's delayed index function, where $H(n)$ is the least $i<\ell(\ell(n))$ such that for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_H$, and $H(n)=\ell(\ell(n))$ if there is no such $i$; here $\mathrm{SAT}_H$ is the set of strings $\psi\,0\,1^{|\psi|^{H(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. Let $v=(v_0,\dots,v_{k-1})$ be a list of natural
+numbers with $v_m=H(m)$ for every $m<k$. Then $s(v)=H(k)$.
+\end{theorem}
+
+\begin{definition}[Initial memo state]
+\lean{Complexity.ladner_memoInit}
+\label{Complexity.ladner_memoInit}
+\leanok
+\uses{Turing.pairEncode}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings. For a Boolean string
+$z$, the initial memo state is $\langle 1^{|z|},\varepsilon\rangle$: the length of $z$ in unary
+together with an empty table.
+\end{definition}
+
+\begin{definition}[One memo-table extension]
+\lean{Complexity.ladner_memoStep}
+\label{Complexity.ladner_memoStep}
+\leanok
+\uses{Complexity.ladner_stage, Complexity.ladner_values, Complexity.pairFstD, Complexity.pairSndD, Turing.pairEncode}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; and for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$. The memo step sends a state $S$
+to $\langle\pi_1(S),\,\pi_2(S)\,\langle\mathrm{bin}(s(v)),\varepsilon\rangle\rangle$, where $v$ is
+the list of memo values of $\pi_2(S)$ and the second component is the concatenation of
+$\pi_2(S)$ with $\langle\mathrm{bin}(s(v)),\varepsilon\rangle$.
+\end{definition}
+
+\begin{theorem}[A memo step is polynomial-time]
+\lean{Complexity.ladner_memoStep_FP}
+\label{Complexity.ladner_memoStep_FP}
+\leanok
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.append, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_memoStep, Complexity.ladner_stage, Complexity.ladner_values, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD}
+\difficulty{1}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; and for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$. Further, the memo step $\mu$ sends a state $S$ to $\langle\pi_1(S),\,\pi_2(S)\,\langle\mathrm{bin}(s(v)),\varepsilon\rangle\rangle$ (concatenation inside the second component), where $v$ is the list of memo values of $\pi_2(S)$. If the map
+sending a string $T$ to $\mathrm{bin}(s(v))$, with $v$ the memo values of $T$, is polynomial-time
+computable, then so is $\mu$.
+\end{theorem}
+
+\begin{theorem}[Memo initialization is polynomial-time]
+\lean{Complexity.ladner_memoInit_FP}
+\label{Complexity.ladner_memoInit_FP}
+\leanok
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.pairEncode, Complexity.ladner_memoInit, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_unary}
+\difficulty{1}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings. The map
+$z\mapsto\langle 1^{|z|},\varepsilon\rangle$ is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[Exact orbit of the memo table]
+\lean{Complexity.ladner_memo_orbit}
+\label{Complexity.ladner_memo_orbit}
+\leanok
+\uses{Complexity.BinArith.decWords_encWords, Complexity.BinArith.encWords, Complexity.BinArith.encWords_append_singleton, Complexity.BinArith.encWords_nil, Complexity.LogProg.bitsVal, Complexity.LogProg.bitsVal_bits, Complexity.ladnerH, Complexity.ladner_memoInit, Complexity.ladner_memoStep, Complexity.ladner_stage, Complexity.ladner_stage_correct, Complexity.ladner_values, Complexity.pairFstD_pairEncode, Complexity.pairSndD_pairEncode, Turing.pairEncode}
+\difficulty{5}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$; and the memo step $\mu$ sends a state $S$ to $\langle\pi_1(S),\,\pi_2(S)\,\langle\mathrm{bin}(s(v)),\varepsilon\rangle\rangle$ (concatenation inside the second component), where $v$ is the list of memo values of $\pi_2(S)$. Let $H$ be Ladner's delayed index function, where $H(n)$ is the least $i<\ell(\ell(n))$ such that for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_H$, and $H(n)=\ell(\ell(n))$ if there is no such $i$; here $\mathrm{SAT}_H$ is the set of strings $\psi\,0\,1^{|\psi|^{H(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. Then for
+every Boolean string $z$ and every $j\in\mathbb N$,
+\[
+  \mu^{j}\bigl(\langle 1^{|z|},\varepsilon\rangle\bigr)
+  =\bigl\langle 1^{|z|},\,\langle\mathrm{bin}(H(0)),\varepsilon\rangle\langle\mathrm{bin}(H(1)),\varepsilon\rangle
+  \cdots\langle\mathrm{bin}(H(j-1)),\varepsilon\rangle\bigr\rangle.
+\]
+\end{theorem}
+
+\begin{theorem}[Quadratic size of memo states]
+\lean{Complexity.ladner_memo_size}
+\label{Complexity.ladner_memo_size}
+\leanok
+\uses{Complexity.BinArith.length_encWords_le, Complexity.ladnerH, Complexity.ladnerH_le, Complexity.ladner_memoInit, Complexity.ladner_memoStep, Complexity.ladner_memo_orbit, Turing.length_bits_le_self, Turing.length_pairEncode}
+\difficulty{4}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$; and the memo step $\mu$ sends a state $S$ to $\langle\pi_1(S),\,\pi_2(S)\,\langle\mathrm{bin}(s(v)),\varepsilon\rangle\rangle$ (concatenation inside the second component), where $v$ is the list of memo values of $\pi_2(S)$. Then for every
+Boolean string $z$ and every $j\le|z|+1$,
+$\bigl|\mu^{j}(\langle 1^{|z|},\varepsilon\rangle)\bigr|\le 4(|z|+1)^2$.
+\end{theorem}
+
+\begin{theorem}[The memo table yields the delayed index]
+\lean{Complexity.ladner_memo_readout}
+\label{Complexity.ladner_memo_readout}
+\leanok
+\uses{Complexity.BinArith.encWords, Complexity.BinArith.getW, Complexity.BinArith.getW_pairEncode_bits, Complexity.ladnerH, Complexity.ladner_memoInit, Complexity.ladner_memoStep, Complexity.ladner_memo_orbit, Turing.pairEncode}
+\difficulty{3}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair), let $\mathrm{bin}(n)$ denote the canonical little-endian binary expansion of $n$, $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$), and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$; the memo values of a string $T$ are the numbers whose little-endian binary expansions are the successive first components obtained by repeatedly splitting $T$ as a pair and continuing with the second component until the remainder is empty; for a list $v$ of natural numbers, $\mathrm{SAT}_v$ is the set of strings $\psi\,0\,1^{|\psi|^{v_{|\psi|}}}$ with $\psi\in\mathrm{SAT}$, where $v_m$ is read as $0$ when $m$ is out of range; for a list $v$ of natural numbers of length $k$, the stage value $s(v)$ is the least $i<\ell(\ell(k))$ such that for every Boolean string $x$ with $|x|\le\ell(k)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_v$, and $s(v)=\ell(\ell(k))$ if there is no such $i$; and the memo step $\mu$ sends a state $S$ to $\langle\pi_1(S),\,\pi_2(S)\,\langle\mathrm{bin}(s(v)),\varepsilon\rangle\rangle$ (concatenation inside the second component), where $v$ is the list of memo values of $\pi_2(S)$. Let $H$ be Ladner's delayed index function, where $H(n)$ is the least $i<\ell(\ell(n))$ such that for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_H$, and $H(n)=\ell(\ell(n))$ if there is no such $i$; here $\mathrm{SAT}_H$ is the set of strings $\psi\,0\,1^{|\psi|^{H(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. For
+strings $J,D$, let $\mathrm{get}(\langle J,D\rangle)$ be the first component of the string obtained
+from $D$ by applying $\pi_2$ exactly $|J|$ times (the entry of index $|J|$ of the encoded list $D$).
+Then for every Boolean string $z$,
+$\mathrm{get}\bigl(\mu^{|z|+1}(\langle 1^{|z|},\varepsilon\rangle)\bigr)=\mathrm{bin}(H(|z|))$.
+\end{theorem}
+
+\begin{definition}[Verifier for padded SAT]
+\lean{Complexity.ladner_verifier}
+\label{Complexity.ladner_verifier}
+\leanok
+\uses{Complexity.ladner_parse, Complexity.pairFstD, Complexity.pairSndD}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair). For a function $h:\mathbb N\to\mathbb N$ and a language $V$ of Boolean strings, the padded
+verifier language consists of the strings $S$ such that $\pi_1(S)=p\,0\,1^t$, with $p$ the prefix
+before the last $0$ of $\pi_1(S)$, where $t=|p|^{h(|p|)}$, $|\pi_2(S)|=|p|+1$ and
+$p\,\pi_2(S)\in V$.
+\end{definition}
+
+\begin{theorem}[The padded verifier is in P]
+\lean{Complexity.ladner_verifier_P}
+\label{Complexity.ladner_verifier_P}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_slot2, Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.append, Complexity.PolyTimeComputable.comp, Complexity.inter_mem_P, Complexity.ladner_padSyntax, Complexity.ladner_parse, Complexity.ladner_parseWord, Complexity.ladner_parse_FP, Complexity.ladner_syntax_FP, Complexity.ladner_verifier, Complexity.lenEq_preimage_mem_P, Complexity.mem_P_of_test, Complexity.pairFstD, Complexity.pairFstD_pairEncode, Complexity.pairSndD, Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD, Complexity.preimage_mem_P}
+\difficulty{5}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, with components $\pi_1(z),\pi_2(z)$ of a string $z$ (both empty if $z$ is not a pair). Let $h:\mathbb N\to\mathbb N$ be such that $x\mapsto\mathrm{bin}(h(|x|))$, the binary
+expansion of $h$ at the length of a Boolean string, is polynomial-time computable, and let
+$V\in\mathsf P$. Then the language of strings $S$ such that $\pi_1(S)=p\,0\,1^t$ with $p$ the
+prefix before the last $0$, $t=|p|^{h(|p|)}$, $|\pi_2(S)|=|p|+1$ and $p\,\pi_2(S)\in V$ belongs to
+$\mathsf P$.
+\end{theorem}
+
+\begin{theorem}[Padded membership via the verifier]
+\lean{Complexity.ladner_verifier_equiv}
+\label{Complexity.ladner_verifier_equiv}
+\leanok
+\uses{Complexity.SAT, Complexity.ladner_pad_membership, Complexity.ladner_parse, Complexity.ladner_parsed_length, Complexity.ladner_verifier, Complexity.padSAT, Complexity.pairFstD, Complexity.pairFstD_pairEncode, Complexity.pairSndD, Complexity.pairSndD_pairEncode, Turing.pairEncode}
+\difficulty{5}
+Let $\langle u,v\rangle$ be the self-delimiting pairing of Boolean strings, $h:\mathbb N\to\mathbb N$,
+and $\mathrm{SAT}_h$ is the set of strings $\psi\,0\,1^{|\psi|^{h(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. Let $V$ be a language such that for every Boolean string $x$, $x\in\mathrm{SAT}$ if and
+only if $xu\in V$ for some $u$ with $|u|=|x|+1$, and let $W$ be the set of strings
+$\langle y,u\rangle$ such that $y=p\,0\,1^t$ with $p$ the prefix before the last $0$ of $y$,
+$t=|p|^{h(|p|)}$, $|u|=|p|+1$ and $pu\in V$. Then for every Boolean string $y$,
+$y\in\mathrm{SAT}_h$ if and only if there is $u$ with $|u|\le|y|+1$ and $\langle y,u\rangle\in W$.
+\end{theorem}
+
+\begin{theorem}[Polynomial-time padding preserves NP membership]
+\lean{Complexity.ladner_padded_NP}
+\label{Complexity.ladner_padded_NP}
+\leanok
+\uses{Complexity.NP, Complexity.P, Complexity.PolyTimeComputable, Complexity.SAT, Complexity.ladner_verifier, Complexity.ladner_verifier_P, Complexity.ladner_verifier_equiv, Complexity.mem_NP_iff_exists_length_le, Complexity.padSAT}
+\difficulty{3}
+Let $h:\mathbb N\to\mathbb N$ be such that the map $x\mapsto\mathrm{bin}(h(|x|))$, sending a Boolean
+string to the binary expansion of $h$ at its length, is polynomial-time computable, and let
+$\mathrm{SAT}_h$ is the set of strings $\psi\,0\,1^{|\psi|^{h(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. Suppose there is a language $V\in\mathsf P$ such that for every Boolean string $x$, $x\in\mathrm{SAT}$ if and only if $xu\in V$ for some Boolean string $u$ with $|u|=|x|+1$. Then $\mathrm{SAT}_h\in\mathsf{NP}$.
+\end{theorem}
+
+\begin{definition}[Literal padded word]
+\lean{Complexity.ladner_padWord}
+\label{Complexity.ladner_padWord}
+\leanok
+For a function $h:\mathbb N\to\mathbb N$ and a Boolean string $x$, the padded word of $x$ is
+$x\,0\,1^{|x|^{h(|x|)}}$: the string $x$, a separator bit $0$, and $|x|^{h(|x|)}$ ones.
+\end{definition}
+
+\begin{theorem}[Bounded exponents give polynomial padding length]
+\lean{Complexity.ladner_bounded_pad_length}
+\label{Complexity.ladner_bounded_pad_length}
+\leanok
+\uses{Complexity.ladner_padWord}
+\difficulty{4}
+Let $h:\mathbb N\to\mathbb N$ and $C\in\mathbb N$ with $h(n)\le C$ for all $n$. Then for every
+Boolean string $x$, the padded word $x\,0\,1^{|x|^{h(|x|)}}$ has length at most
+$2(|x|+1)^{C+1}$.
+\end{theorem}
+
+\begin{theorem}[Unary powers for bounded exponents]
+\lean{Complexity.ladner_power_cases_FP}
+\label{Complexity.ladner_power_cases_FP}
+\leanok
+\uses{Complexity.BinArith.beq, Complexity.BinArith.beq_pairEncode, Complexity.BinArith.length_mulU, Complexity.BinArith.polyTimeComputable_beq, Complexity.BinArith.polyTimeComputable_mulU, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_unary, Turing.pairEncode}
+\difficulty{5}
+Let $h:\mathbb N\to\mathbb N$ be such that $x\mapsto\mathrm{bin}(h(|x|))$, the binary expansion of
+$h$ at the length of a Boolean string, is polynomial-time computable, and let $C\in\mathbb N$. Then
+there is a polynomial-time computable string function $f$ such that $f(x)=1^{|x|^{h(|x|)}}$ for
+every Boolean string $x$ with $h(|x|)\le C$.
+\end{theorem}
+
+\begin{theorem}[Bounded padding is polynomial-time]
+\lean{Complexity.ladner_bounded_pad_FP}
+\label{Complexity.ladner_bounded_pad_FP}
+\leanok
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.append, Complexity.ladner_padWord, Complexity.ladner_power_cases_FP, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_id}
+\difficulty{3}
+Let $h:\mathbb N\to\mathbb N$ be such that $x\mapsto\mathrm{bin}(h(|x|))$, the binary expansion of
+$h$ at the length of a Boolean string, is polynomial-time computable, and suppose $h(n)\le C$ for
+all $n$, for some constant $C$. Then the map $x\mapsto x\,0\,1^{|x|^{h(|x|)}}$ is computable in
+polynomial time.
+\end{theorem}
+
+\begin{theorem}[Padding preserves SAT membership]
+\lean{Complexity.ladner_padWord_membership}
+\label{Complexity.ladner_padWord_membership}
+\leanok
+\uses{Complexity.SAT, Complexity.ladner_padWord, Complexity.ladner_pad_membership, Complexity.ladner_parse_pad, Complexity.padSAT}
+\difficulty{1}
+Let $h:\mathbb N\to\mathbb N$ and $\mathrm{SAT}_h$ is the set of strings $\psi\,0\,1^{|\psi|^{h(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. For every Boolean string $x$,
+$x\,0\,1^{|x|^{h(|x|)}}\in\mathrm{SAT}_h$ if and only if $x\in\mathrm{SAT}$.
+\end{theorem}
+
+\begin{theorem}[Bounded padding reduces SAT to padded SAT]
+\lean{Complexity.ladner_bounded_pad_reduction}
+\label{Complexity.ladner_bounded_pad_reduction}
+\leanok
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeReducible, Complexity.SAT, Complexity.ladner_bounded_pad_FP, Complexity.ladner_padWord, Complexity.ladner_padWord_membership, Complexity.padSAT, Complexity.polyTimeReducible_iff}
+\difficulty{1}
+Let $h:\mathbb N\to\mathbb N$ be such that $x\mapsto\mathrm{bin}(h(|x|))$, the binary expansion of
+$h$ at the length of a Boolean string, is polynomial-time computable, and suppose $h(n)\le C$ for
+all $n$, for some constant $C$. Let $\mathrm{SAT}_h$ is the set of strings $\psi\,0\,1^{|\psi|^{h(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. Then SAT is polynomial-time many-one reducible to
+$\mathrm{SAT}_h$.
+\end{theorem}
+
+\begin{theorem}[The Ladner language is outside P]
+\lean{Complexity.ladner_outside_P}
+\label{Complexity.ladner_outside_P}
+\leanok
+\uses{Complexity.NP, Complexity.P, Complexity.P_eq_NP_of_NPHard_mem_P, Complexity.PolyTimeComputable, Complexity.SAT_H, Complexity.SAT_H_eq, Complexity.SAT_NPHard, Complexity.ladnerH, Complexity.ladner_bounded_pad_reduction, Complexity.mem_P_of_polyTimeReducible}
+\difficulty{3}
+Let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$) and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$. Let $H$ be Ladner's delayed index function, where $H(n)$ is the least $i<\ell(\ell(n))$ such that for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_H$, and $H(n)=\ell(\ell(n))$ if there is no such $i$; here $\mathrm{SAT}_H$ is the set of strings $\psi\,0\,1^{|\psi|^{H(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. Suppose $\mathsf P\ne\mathsf{NP}$, the map
+$x\mapsto\mathrm{bin}(H(|x|))$ (the binary expansion of $H$ at the length of a Boolean string) is
+polynomial-time computable, and $\mathrm{SAT}_H\in\mathsf P$ would imply that there is a constant
+$C$ with $H(n)\le C$ for all $n$. Then $\mathrm{SAT}_H\notin\mathsf P$.
+\end{theorem}
+
+\begin{theorem}[The Ladner language is not NP-complete]
+\lean{Complexity.ladner_not_complete}
+\label{Complexity.ladner_not_complete}
+\leanok
+\uses{Complexity.NP, Complexity.NPComplete, Complexity.NPComplete_iff, Complexity.NPHard, Complexity.P, Complexity.P_eq_NP_of_NPHard_mem_P, Complexity.PolyTimeComputable, Complexity.SAT, Complexity.SAT_H, Complexity.SAT_H_eq, Complexity.SAT_NPHard, Complexity.ladnerH, Complexity.padSAT}
+\difficulty{3}
+Let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$) and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$. Let $H$ be Ladner's delayed index function, where $H(n)$ is the least $i<\ell(\ell(n))$ such that for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_H$, and $H(n)=\ell(\ell(n))$ if there is no such $i$; here $\mathrm{SAT}_H$ is the set of strings $\psi\,0\,1^{|\psi|^{H(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. Suppose that $\mathsf P\ne\mathsf{NP}$; that the map
+$x\mapsto\mathrm{bin}(H(|x|))$, sending a Boolean string to the binary expansion of $H$ at its
+length, is polynomial-time computable; that $\mathrm{SAT}_H\notin\mathsf P$;
+that $\mathrm{SAT}_H\notin\mathsf P$ implies that for every $C$ there is $N$ with $C\le H(n)$ for
+all $n\ge N$; and that for every $h:\mathbb N\to\mathbb N$ with $x\mapsto\mathrm{bin}(h(|x|))$
+polynomial-time computable and such that for every $C$ there is $N$ with $C\le h(n)$ for all
+$n\ge N$, $\mathsf{NP}$-hardness of the language
+$\mathrm{SAT}_h$ of strings $\psi\,0\,1^{|\psi|^{h(|\psi|)}}$ with $\psi\in\mathrm{SAT}$ implies
+$\mathrm{SAT}\in\mathsf P$. Then $\mathrm{SAT}_H$ is not $\mathsf{NP}$-complete.
+\end{theorem}
+
+\begin{theorem}[The delayed index is polynomial-time]
+\lean{Complexity.ladnerH_polyTime}
+\label{Complexity.ladnerH_polyTime}
+\leanok
+\uses{Complexity.BinArith.polyTimeComputable_getW, Complexity.BinArith.polyTimeComputable_iterate, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.SAT_exists_linear_verifier, Complexity.ladnerH, Complexity.ladner_candidate_FP, Complexity.ladner_memoInit_FP, Complexity.ladner_memoStep_FP, Complexity.ladner_memo_readout, Complexity.ladner_memo_size, Complexity.ladner_stage_FP}
+\difficulty{3}
+Let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$) and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$. Let $H$ be Ladner's delayed index function, where $H(n)$ is the least $i<\ell(\ell(n))$ such that for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_H$, and $H(n)=\ell(\ell(n))$ if there is no such $i$; here $\mathrm{SAT}_H$ is the set of strings $\psi\,0\,1^{|\psi|^{H(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. Then the map sending a Boolean string $x$ to the binary
+expansion of $H(|x|)$ is computable in polynomial time.
+\end{theorem}
+
+\begin{theorem}[The Ladner language is in NP]
+\lean{Complexity.SAT_H_mem_NP}
+\label{Complexity.SAT_H_mem_NP}
+\leanok
+\uses{Complexity.NP, Complexity.SAT_H, Complexity.SAT_H_eq, Complexity.SAT_exists_linear_verifier, Complexity.ladnerH_polyTime, Complexity.ladner_padded_NP}
+\difficulty{2}
+Let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$) and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$. Let $H$ be Ladner's delayed index function, where $H(n)$ is the least $i<\ell(\ell(n))$ such that for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_H$, and $H(n)=\ell(\ell(n))$ if there is no such $i$; here $\mathrm{SAT}_H$ is the set of strings $\psi\,0\,1^{|\psi|^{H(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. Then $\mathrm{SAT}_H\in\mathsf{NP}$.
+\end{theorem}
+
+\begin{theorem}[Hard divergent padding puts SAT in P]
+\lean{Complexity.SAT_mem_P_of_padSAT_NPHard}
+\label{Complexity.SAT_mem_P_of_padSAT_NPHard}
+\leanok
+\uses{Complexity.NPHard, Complexity.P, Complexity.PolyTimeComputable, Complexity.SAT, Complexity.ladner_reduction_from_hardness, Complexity.ladner_reduction_shrinks, Complexity.ladner_shrinkStep_FP, Complexity.ladner_shrink_final_readout, Complexity.ladner_shrink_orbit_size, Complexity.ladner_shrink_progress, Complexity.ladner_shrinking_transfer, Complexity.padSAT}
+\difficulty{4}
+Let $h:\mathbb N\to\mathbb N$ be such that the map $x\mapsto\mathrm{bin}(h(|x|))$, sending a Boolean
+string to the binary expansion of $h$ at its length, is polynomial-time computable, and such that
+for every $C$ there is $N$ with $C\le h(n)$ for all $n\ge N$. Let $\mathrm{SAT}_h$ is the set of strings $\psi\,0\,1^{|\psi|^{h(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. If $\mathrm{SAT}_h$ is
+$\mathsf{NP}$-hard, then $\mathrm{SAT}\in\mathsf P$.
+\end{theorem}
+
+\begin{theorem}[The Ladner language is NP-intermediate]
+\lean{Complexity.SAT_H_intermediate}
+\label{Complexity.SAT_H_intermediate}
+\leanok
+\uses{Complexity.NP, Complexity.NPComplete, Complexity.P, Complexity.SAT_H, Complexity.SAT_H_mem_NP, Complexity.SAT_mem_P_of_padSAT_NPHard, Complexity.ladnerH_bounded_of_mem_P, Complexity.ladnerH_polyTime, Complexity.ladnerH_unbounded_of_not_mem_P, Complexity.ladner_not_complete, Complexity.ladner_outside_P}
+\difficulty{3}
+Let $\ell(n)=\lfloor\log_2 n\rfloor$ (with $\ell(0)=0$) and $M_i$ denote the machine decoded from the binary digits of $i$ by the fixed uniform machine code, where $M_i$ is said to accept $x$ within $t$ steps if it halts on $x$ within $t$ steps with output the single bit $1$. Let $H$ be Ladner's delayed index function, where $H(n)$ is the least $i<\ell(\ell(n))$ such that for every Boolean string $x$ with $|x|\le\ell(n)$, $M_i$ accepts $x$ within $i\,|x|^i$ steps if and only if $x\in\mathrm{SAT}_H$, and $H(n)=\ell(\ell(n))$ if there is no such $i$; here $\mathrm{SAT}_H$ is the set of strings $\psi\,0\,1^{|\psi|^{H(|\psi|)}}$ with $\psi\in\mathrm{SAT}$. If $\mathsf P\ne\mathsf{NP}$, then
+$\mathrm{SAT}_H\in\mathsf{NP}$, $\mathrm{SAT}_H\notin\mathsf P$, and $\mathrm{SAT}_H$ is not
+$\mathsf{NP}$-complete.
+\end{theorem}
+
+\begin{theorem}[Ladner's theorem]
+\lean{Complexity.ladner}
+\label{Complexity.ladner}
+\leanok
+\uses{Complexity.NP, Complexity.NPComplete, Complexity.P, Complexity.SAT_H, Complexity.SAT_H_intermediate}
+\difficulty{1}
+If $\mathsf P\ne\mathsf{NP}$, then there is a language $L\in\mathsf{NP}$ such that
+$L\notin\mathsf P$ and $L$ is not $\mathsf{NP}$-complete.
+\end{theorem}
