@@ -76,3 +76,5 @@ The `ps10-cite-check` delivery (exchange `69add654`; `ingests/ps10-cite-check-fi
 The plan had omitted the #248 historical seal ledger and the inherited-seal repairs deferred on 2026-11-10. Ruling: run a fresh canonical-seal inventory of all Pass–shelat-owned files at the tip now, reconcile it with the #248 ledger, and fold the fixes into **Stage 2**. Seal-B-only items (Yao and sc-garble `PolyExpr.eval`) and non-campaign files (`Complexity/TuringMachine/CodeSimulator.lean`) are listed, then handled by separate ruling.
 
 **Stage 2 handover, a seventh change for Seyoon to confirm:** removing the public `EnsembleLemmas.blocks` alias also needs the body of `ETTGame.dTape` (`EncryptThenTag/Handler.lean:178`) changed. It is of the same kind as the six approved under CS1-Q2.
+
+**Seventh change approved (Seyoon, 2026-11-17):** the body of `ETTGame.dTape` (`EncryptThenTag/Handler.lean:178`). Stage 2 makes all seven DL-35 changes, and its gate checks each one.
