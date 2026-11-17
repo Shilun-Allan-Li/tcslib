@@ -68,3 +68,6 @@ Seyoon asked for the cleanup to run in parallel with the GSW/IBE work "to the ex
 | CS1-Q10 | Near relatives that are not instances get no target; they stay as notes. |
 | CS1-Q11 | Promotion requests with no ledgered copy are declined for now. |
 | CS1-Q12 | DL-47: the Complexity-side inline chains stay as they are; only the Cryptography-side copies are re-pointed. |
+
+## PS10 citation fixes go into Stage 2 (2026-11-17)
+The `ps10-cite-check` delivery (exchange `69add654`; `ingests/ps10-cite-check-final-r1/REPORT.md`) found 40 content mismatches at 40 sites under 15 locators (Tier A: 19 under Theorem 180.1, 17 of them one recurring "step 4" label) and 21 advisory notes (Tier B). All 67 locators exist with the cited kind and page. The Tier A corrections, docstring-only, are part of Stage 2; the Tier B notes are applied where they change what a reader is told.
