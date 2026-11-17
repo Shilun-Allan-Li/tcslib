@@ -281,3 +281,148 @@ Run on 2026-11-17, 05:31–07:45 UTC. `$SP` is `/tmp/claude-0/-home-user-tcslib/
   sparse landing worktree.
 
 **Phase 2 done: both landing branches pass. PR O1 is ready for its draft PR; the statement PR follows, stacked on it.**
+
+## Re-replay on snapshot #5 (2026-11-17)
+**Verdict: both heads PASS again; nothing changes against snapshot #4 except what #340 and #346 add to the root.**
+#340 and #346 merged after phase 2, so neither replay output above could be adopted (P2-8.3). Both landing branches were
+re-cut onto the new records tip and replayed on olean snapshot #5, and the checks that the new base can affect were re-run.
+
+| | O1 | Statements with LE-ren |
+|---|---|---|
+| New head | **`a616adcac0760ab56b1b0a2a4869f4763843f9ab`** | **`73aedcdaaaffef7e69ab012d9b9195f150bae68d`** |
+| Old head (phase 2, on `84d144b5`) | `a57dcf77` | `66036926` |
+| Tree = `merge-tree e1d39836 × old head` | `a461632b`, equal | `2c243bb1`, equal |
+| Range-diff | 1/1 `=` | 6/6 `=` (5 picks and LE-ren) |
+| Rebuilt modules (rc 0, 0 `error:`/`error(`) | 9/9 | 20/20 |
+| State check | 1429/1429 OK | 1440/1440 OK |
+| Admissions | +0 | +98, EXACT (the 98 targets) |
+| Axioms probe | 141 constants, standard only; log byte-identical to #4 | 544 constants, `sorryAx` in the 98 targets + 5; log byte-identical to #4 |
+| coe-A seals of the new/changed owners | 4 owners, all SAME as #4 | 16 owners, all SAME as #4 |
+| Root coe-A | n/a | 14,074 requests, 15 chunks, 0 errors (#4: 13,991; the 83 added names are all homed in #340/#346 files) |
+| Lint | identical to #4 | identical to #4 |
+
+Run 07:41–09:45 UTC. `$SP` as above. Evidence: **`gsw-6a-final-r1-rereplay5-evidence.zip`** (`985cdc5c…0f1b`), under
+`gsw-6a-final-r1-rereplay5/`, with `PROVENANCE.txt` and `SHA256SUMS`; its own SHA-256 is in `evidence-SHA256SUMS`. The
+phase-2 zip is unchanged.
+- **Not done:** nothing was committed to the records branch, and these records files are left uncommitted. The two
+  landing branches were pushed and their draft PRs opened afterwards (PR numbers in the report, not here).
+- **Builds:** no `lake build` and no cache get. Modules ran through `scripts/lean_check_tree.sh` (`runner.py`); probes and
+  seals ran through `lean -DmaxErrors=0` without `-o` (`runner_full.py`). Python ran as `python3 -I`.
+- **Lean slots:** exactly one Lean process of this job at any time. Other agents held the other slots (up to 2), and the
+  machine never exceeded 3.
+- **Other directories:** the snapshot and the other agents' directories were not written. The old replays
+  `olean-replay-6a-o1` and `olean-replay-6a-stmt` (built on #4, root overlapping #340/#346) were deleted at the start.
+
+### S5-0 Tip and snapshot (`snapshot/`)
+- `git fetch`: the records tip is **`e1d39836ed4a69a34914c35f4c73c71de853dcc6`** ("Records: #340/#346 merged; olean
+  snapshot #5; GSW 6a phase 2 accept"). `git diff 3f540c22 e1d39836 -- '*.lean' lean-toolchain lake-manifest.json
+  lakefile.lean scripts audits` is empty, so the tip is Lean-equal to snapshot #5's T. At the end of the run the tip had
+  advanced to `3ef91b408b2a9303fa36c8ac696da532e4170ed0` with 4 records-only commits (bb1-sim fill phase 2, Gate 48, the
+  overnight ruling): 0 Lean/lake/scripts/audits paths and no series path changed, so the re-cut heads stay Lean-equal to
+  the merge with the current tip and were not re-cut again.
+- **Snapshot #5:** `snapmap.py verify` against `olean-snapshot.map-3f540c22.tsv` (SHA-256 `fca1b6a3…1ef9`, as
+  registered) gives **1458 files, 0 extra / 0 changed / 0 missing**, no symlinks and no empty directories, at the start,
+  after R1, after R2 and at the end. It was read only as the source of `cp -al`.
+- **Disk:** 4442 MB free at the start (4506 MB after deleting the #4 replays), 2994 MB at the lowest observed point (other jobs were writing too), 3618 MB at the end; never under 1.5 GB.
+
+### S5-1 Re-cut (`landing/`)
+- A sparse worktree at the tip (the 18 series paths) received `git cherry-pick -S` of `a57dcf77`, then the five picks
+  `5127c5cd..675371dc`, then LE-ren `66036926`, with the messages kept. The branches were then moved with
+  `git branch -f`, and the worktree was removed.
+  - `land/gsw-6a-o1` moved from `a57dcf77` to **`a616adca`**.
+  - `land/gsw-6a-statements` moved from `66036926` to **`73aedcda`** (picks `453fb1ab`, `c4870dd3`, `d8d0cf95`,
+    `06b7734a`, `d7a72780`; LE-ren `73aedcda`).
+- **Range-diff** (`range-diff.txt`): `84d144b5..a57dcf77` against `e1d39836..a616adca` gives 1/1 `=`;
+  `a57dcf77..66036926` against `a616adca..73aedcda` gives 6/6 `=`.
+- **Trees** (`trees.txt`):
+  - Each of the 7 new commits has the tree of `git merge-tree --write-tree e1d39836 <old commit>`. The O1 head has
+    `a461632b`, which also equals `merge-tree` with the worker's `413e9aa4`. `~1` has `541eb26b`, which equals
+    `merge-tree` with `ec36703b`. The head has `2c243bb1`.
+  - The full diffs against the base are patch-id-equal to the old ones: O1's 4 files and the statements' 18 paths.
+  - The 18 series paths and the 53 paths the tip changed since `84d144b5` are disjoint.
+- **Signatures** (`signatures.txt`): all 7 new commits carry an SSHSIG with key `SHA256:32dP45eS…2wc`, the same key as
+  the tip and the old heads. Authorship is kept.
+
+### S5-2 R1 (`r1/`)
+- `cp -al $SP/olean-snapshot $SP/olean-replay-6a-o1`; `mloverlay.sh` made 3346 symlinks; NthRootLemmas compiled to
+  **`c0a9cff0…`**.
+- `stateplan init` at `3f540c22` gives 1427 modules. `downorder.py` gives changed 4 and down 9. `fullorder.py` gives
+  1429. `plan` gives **9 to build and 1420 reused**, and the queue equals `down.txt`: the same 9 modules as on #4.
+- **Build** (07:44:55–07:46:06): **9/9 rc 0**, with `error:` 0, `error(` 0 and substring "error" 0. There are 0 warnings
+  and no log/record mismatch (`permod.tsv`).
+- **Accept:** `update` took 9. `check` gives **1429/1429 RESULT OK**, and again after R2. All 9 rebuilt oleans have
+  **link count 1** and object hash equal to the record.
+
+### S5-3 R2 (`r2/`)
+- `cp -al` of R1's output into `$SP/olean-replay-6a-stmt`, which carries the overlay and `c0a9cff0…`. It starts from
+  R1's checked state.
+- `downorder.py` against the O1 head gives changed 16 and down 20. `fullorder.py` gives 1440. `plan` gives **20 to
+  build and 1420 reused**, with queue = `down.txt`: the same 20 modules as on #4.
+- **Build** (07:46:57–07:48:34): **20/20 rc 0**, with 0/0 errors. There are 98 warnings, all `declaration uses
+  'sorry'`.
+- **Accept:** `update` took 20. `check` gives **1440/1440 RESULT OK**, and all 20 rebuilt oleans have link count 1.
+
+### S5-4 Re-checks
+- **Admissions** (`admissions/`; `admcheck.py` against `e1d39836`, with `touched.json` regenerated; its `files`
+  section is identical to phase 2's):
+  - R1 gives **+0**. R2 gives **+98, EXACT**: 98 targets, 98 admitted, 98 matched, 0 extra, 0 twice and 0 missing,
+    against the delivered `rowmap.txt` (SHA-256 `b3ac759e…`, equal to exchange `d7a9adb5`) minus `rename_eval` and
+    `depth_rename`.
+  - Both delta files are **identical to phase 2's** below their header line.
+  - The source token census, by a recorded tokenizer that is not phase 2's, has the same deltas: O1 +0, `~1` +105
+    tokens / +11 files, head +103.
+- **Axioms** (`probes/`; phase 2's `AxiomsO1.lean` on R1 and `AxiomsStmt.lean` on R2, unchanged):
+  - Both logs are **byte-identical** to the #4 runs, and so are both `axtrace.txt` summaries.
+  - O1 has 141 constants, standard only.
+  - The statements have 544 constants. `sorryAx` is in exactly the 98 targets and the 5 N2/N12–N13 dependents, and
+    there is no other non-standard axiom.
+- **Closure identity** (`carry/ownerkeys-*.tsv`; stateplan's closure key at the old and the new head):
+  - The keys are equal for **all 4 non-root O1 owners and all 16 non-root statement owners**, so each owner's local
+    source closure is byte-identical to the one phase 2 sealed.
+  - Only the root `TCSlib` differs, because its closure gained the 5 modules of #340/#346.
+- **Canonical coe-A seals, re-run** (`rule10/o1`, `rule10/stmt`; `SEAL_CHUNK=1000`; `carry/sealcmp-*.txt`):
+  - In all 20 owner records, the requested count, request name set, probe SHA-256, source SHA-256, closure-module count
+    and seal outcome are **SAME** as in phase 2's coe-A records.
+  - O1 gives `Combinators` 174, `FormulaArith` 194 and the facade 3659, with 0 errors. `TreeNCAC` (194) has 2 errors.
+  - The statements give the 16 owners of the R2-5 table with the same counts and 0 errors, except `TreeNCAC` (218),
+    which has 2 errors.
+  - The two `TreeNCAC` failures (`maxDepth_map_le`, `maxFaninL_map_le`; G6A-F05, pre-existing) have seal logs
+    byte-identical to #4, apart from the probe directory name (`carry/f05-*.txt`).
+- **Root coe-A, re-run** (`rule10/root`; one owner `TCSlib`, chunked): **14,074 requests, 0 errors**, in 15 chunk commands: 15 install and 15 EOF records, each `requested = verified` (sums 14,074), 5,210 s, 5.1 GB (`root-chunks.txt`). Against the #4 run (13,991; `carry/root-requests-vs-4.txt`): 0 names removed, the 13,991 common rows identical, and **83 names added, every one homed in a file #340/#346 changed** (`BonehBoyenMachine.Handler` 34, `.Words` 33, `.Draws` 12, `.Oracles` 1, `.Reduction` 1, `Pairing.Assumptions` 2). The root closure grew from 1432 to 1437 modules.
+- **Carried forward from #4, not re-run:**
+  - which checks: strict A/B and coe-B seals of the 20 owners, the paired controls (strict and coe), the delivery's
+    30 controls, and the explicit-unfold scans;
+  - justification: each of these is a function of the owner's source closure, the fixed Mathlib and toolchain, and the
+    unchanged tools (`tools/TOOLS.txt`: every reused tool is byte-equal to its copy in the phase-2 zip);
+  - the closure keys show that the source closures are byte-identical, and the coe-A re-run reproduces phase 2's
+    request sets, probes and outcomes exactly;
+  - the strict and coe-B request sets are derived from the same collector output, and the controls from those records,
+    so they are identical too;
+  - the only owner whose closure changed is the root, and root coe-A was re-run.
+- **Lint** (`lint/`):
+  - `campaign_style_lint TCSlib/Complexity --check8b` at the tip, O1 and the statement head gives 25 FAIL / 390 WARN
+    over 500, 502 and 513 files. All three outputs are byte-identical to phase 2's, and the FAIL/WARN line sets of
+    both heads equal the tip's.
+  - `style_lint` gives 0 findings in O1's 2 and the statements' 13 new files. The 11 findings over the 17 changed
+    files are identical at the tip. All four outputs are byte-identical to phase 2's.
+  - Sizes are unchanged, because the series blobs are identical.
+- **Clashes** (`clash/`; phase 1's `names.py` at `e1d39836` and the head):
+  - There are 281 new names, 18 of them private. 11 share a full name with a tip declaration in another file, all
+    O1's moves out of `TreeNCAC`, whose tip copies the head removes. There are **0 other clashes** and no new name is
+    declared twice.
+  - Against phase 2's name lists, only the names in #340/#346's 9 files differ.
+
+### S5-5 Replay outputs (kept)
+- **`$SP/olean-replay-6a-o1`** (R1; REV `a616adca`, tree `a461632b`):
+  - contents: snapshot #5's 1458 oleans, with 7 replaced and 2 added (9 with link count 1), plus NthRootLemmas and 3346
+    overlay symlinks;
+  - state check: 1429/1429 OK;
+  - adoptable on the O1 merge if the merge's Lean paths equal tree `a461632b` (P2-8.1, with the new tree).
+- **`$SP/olean-replay-6a-stmt`** (R2; REV `73aedcda`, tree `2c243bb1`):
+  - contents: 20 rebuilt oleans with link count 1;
+  - state check: 1440/1440 OK;
+  - adoptable on the statement merge if it follows O1 directly and the merge's Lean paths equal `2c243bb1` (P2-8.2).
+- Deleted: the sparse landing worktree and this job's scratch worktrees.
+
+**Re-replay done: both heads pass on snapshot #5, and the draft PRs can be opened (O1 first, the statement PR stacked
+on it). Gate 45 (Codex) audits both.**
