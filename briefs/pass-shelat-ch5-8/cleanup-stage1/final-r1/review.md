@@ -270,3 +270,37 @@
   - (b) Target the records branch now and merge after #347. Its diff shows #347's two commits until then.
 
 **Not yet clear to merge — rulings Q1–Q4 (and Gate 47) are needed, and phase 2 (the merged-tree replay on snapshot #4) has not run yet; no PR is opened**
+
+## Final verdict (phase 2)
+**Phase 2: PASS** (`phase2.md`; evidence `cleanup-stage1-final-r1-phase2-evidence.zip`, SHA-256 `854d6430fad819e469b126565c0e3200f43b86c8ac2f83d4b133ed75c6bfd9f3`). With the rulings Q1–Q4 in force, **#347 and #355 are ready for Gate 47.**
+- **Tree.** The replay ran on snapshot #5 (T `3f540c22`), not #4, because the tip `e1d39836` now holds #340 and #346.
+  - TS1 = tip × #347 × #355 = **`1eaf940b938bb52e3919f5569893b58522df599b`**. It is clean and identical in every merge order.
+  - It differs from this review's `5a2e818d` by exactly #340's and #346's 9 Lean files, which are blob-equal to T.
+  - TS1 against the tip is exactly the 23 PR files, +1,332/−296.
+- **Replay** (`$SP/olean-replay-cs1`):
+  - full order **1429** (1427 + the 2 new modules);
+  - rebuild **556**: the review's 551 plus #346's 5 new `BonehBoyenMachine/*` modules;
+  - **556/556 rc 0**, 0 `error:`/`error(`;
+  - state **1429/1429 RESULT OK**, before and after the probes;
+  - link count 1 on all 556;
+  - snapshot #5 verifies 0/0/0 before, after the build and after all Lean.
+- **Admissions:** 196 → 196, identical module by module. This matches #347's recorded effect (DW-5, unchanged per module) and Stage 1's (+0).
+- **Axioms:** Stage 1's 69 are standard, split 34/12/6/4/13. #347's 27 are standard. The census of all 1224 constants of the 21 owners is standard, with no `sorryAx`.
+- **Rule 10** (21 owners: Stage 1's 19 plus `ModuleHost` and `IterateFind`; canonical A/B strict/coe; also run at the tip for the 19 owners that exist there):
+  - 76/76 Stage 1 rows equal the worker's head, and 12/12 #347 rows equal DW-5's head.
+  - coe: 0 failures in the 80 touched declarations.
+  - Strict-only: 16 errors in six new `FinDist` declarations, which is the coercion (notation, DW-10 Q3).
+  - B-only: `PolyExpr.eval` (notation).
+  - Every other failure is **pre-existing and identical at the tip**: `IterateFindHost` 16 and `ModuleHost` 10 (DW-9), `Trapdoor` 3, `Entropy` coe 5 (CS1-F07).
+  - `IterateFind` goes 20 → 0 in all four variants, which is #347's effect.
+  - Controls: Stage 1 20/20 per variant, equal to the worker's; #347's readers 30/30 per variant; all ALL_OK.
+  - Unfold scan: 0 foreign in the touched declarations, and the pre-existing multiset of 29 is identical.
+- **Lint:** the only change against the tip is the removed `Trapdoor` WARN; `style_lint` gives 2 pre-existing findings.
+- **Gate 47's pack must disclose:**
+  - the tree TS1 and the 556-module rebuild;
+  - the pre-existing seal failures above, and the strict-only `FinDist` failures in six new declarations;
+  - DW-5's control harness at 10 probes / 30 negatives;
+  - that 6a is not in TS1, so whichever of 6a and Stage 1 merges second re-replays.
+- **Adoption:** adopt `olean-replay-cs1` only when a merge commit's Lean equals TS1, that is, with #347 and #355 both merged and nothing else changing Lean in between. Otherwise discard it.
+
+**Not yet clear to merge — Gate 47 (#347 + #355) has not run; phase 2 passes**

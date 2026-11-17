@@ -1,0 +1,83 @@
+# GSW 6a reader PR #360: addendum `vertexValue_eq`, `vertexDepth_eq` (Seyoon ruling 2026-11-17)
+
+**Status: committed locally and checked. NOT pushed: the fast-forward push to `land/gsw-6a-readers` was denied by
+the permission system. The PR #360 body is not updated, and the U6 follow-up has not started.**
+
+| | |
+|---|---|
+| Branch | `land/gsw-6a-readers` (sparse worktree `$SP/wt-rd2`) |
+| Old head (remote, confirmed) | `3ea428fd8b99ffe33cdfb8dbe8068d0eb000d032` |
+| New head (local only) | **`cc05f76c43cd2d2f565ff0dfaec1c85b47e06d25`**: one SSH-signed commit with the two trailers |
+| Diff | 1 file, **+10 / −0**: a pure insertion in `TCSlib/Complexity/CircuitComplexity/TreeDAG.lean` |
+
+## The readers
+Each reader is inserted directly after the definition it reads, in #360's style. Both are proved by `rfl`, with no
+deviation; neither is `@[simp]`.
+
+| File:line (new head) | Full name | Statement |
+|---|---|---|
+| `TreeDAG.lean:58` | `BoolCircuit.vertexValue_eq (gs) (x) (v)` | `vertexValue gs x v = (runWith DAGGate.eval gs (List.ofFn x)).getD v false` |
+| `TreeDAG.lean:67` | `BoolCircuit.vertexDepth_eq (n) (gs) (v)` | `vertexDepth n gs v = (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0` |
+
+Each docstring reads "Reader of `X`: `formula`.  Glue."
+
+```diff
+@@ -53,10 +53,20 @@ variable {n : ℕ}
+ def vertexValue (gs : List DAGGate) (x : Fin n → Bool) (v : ℕ) : Bool :=
+   (runWith DAGGate.eval gs (List.ofFn x)).getD v false
+ 
++/-- Reader of `vertexValue`:
++`vertexValue gs x v = (runWith DAGGate.eval gs (List.ofFn x)).getD v false`.  Glue. -/
++theorem vertexValue_eq (gs : List DAGGate) (x : Fin n → Bool) (v : ℕ) :
++    vertexValue gs x v = (runWith DAGGate.eval gs (List.ofFn x)).getD v false := rfl
++
+ /-- The depth of vertex `v` after running `gs` over `n` inputs. -/
+ def vertexDepth (n : ℕ) (gs : List DAGGate) (v : ℕ) : ℕ :=
+   (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0
+ 
++/-- Reader of `vertexDepth`:
++`vertexDepth n gs v = (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0`.  Glue. -/
++theorem vertexDepth_eq (n : ℕ) (gs : List DAGGate) (v : ℕ) :
++    vertexDepth n gs v = (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0 := rfl
++
+```
+
+## Checks
+All evidence is under `$SP/fill86/rd/ev/`.
+
+- **Clash scan** (`clash.txt`; the reader job's `clash.py` with the two new names):
+  - Revisions scanned:
+    - tip `54597efc6d55d6fe9af92208e9e28b3799daa324`
+    - #358 `a616adca`
+    - #359 `73aedcda`
+    - #357 `dfdc56f2` (its current head)
+    - #347 `daa6e173`
+    - #355 `d3c7cb00`
+    - #360 `3ea428fd`
+  - Result: 0 declarations share either last name component, and 0 exact clashes.
+- **Build** in `$SP/olean-replay-6a-readers` (`build/summary.txt`):
+  - `TreeDAG` rc 0 and `DAGTransform` rc 0, with 0 errors and 0 warnings.
+  - At #360's base, `DAGTransform` is the only reader-PR owner downstream of `TreeDAG`. Basic, DAGCircuit and Adder are
+    upstream, and TreeNCAC imports only Basic. So nothing else was rebuilt.
+- **Axioms** (`axioms.log`): both readers use no axioms (`[]`), and `getSimpTheorems` shows neither is simp.
+- **Rule 10, canonical coe-A seal on `TreeDAG`** (`rule10/`; `scripts/rule10_rd.sh`):
+  - Base: `3ea428fd` on `olean-snapshot`, read only. `TreeDAG.lean` is byte-equal at `8c5875fa` and `3ea428fd`.
+  - Head: `cc05f76c` on the reader tree.
+  - Requests are 141 in both, with identical rows.
+  - Errors are 25 in both, with the same 20 failing declarations and the same messages once line numbers are removed.
+  - These failures predate this change: `TreeDAG` was not an owner of #360 before, and its old proofs (`toDAG_*`,
+    `unfoldGate_*`, `toTree_*`, …) read foreign definitions. The two new readers are not among the failures.
+  - `touched`: 2 ADDED, every other declaration UNCHANGED.
+- **Lint:**
+  - `style_lint` on `TreeDAG.lean`: 1 finding at both base and head (the old `unfoldGate_size_le` sketch finding,
+    shifted by 10 lines).
+  - `campaign_style_lint --check8b` on `CircuitComplexity/`: only the INFO line count changes (696 → 706 lines, 39 → 41
+    public). There is no new FAIL or WARN.
+
+## Pending, blocked on the push
+- Push `cc05f76c` fast-forward to `land/gsw-6a-readers`, then update the PR #360 body to add the two readers, the new
+  head and the checks above.
+- The U6 follow-up:
+  - merge the new #360 head into `fill/gsw-6a-u8-u6`;
+  - replace `vertexDepth_eq_getD` with `vertexDepth_eq` (and `depth_runWith_eq` with a direct use if it becomes one);
+  - rebuild, then rerun the axiom probe, the seal and the lint.
