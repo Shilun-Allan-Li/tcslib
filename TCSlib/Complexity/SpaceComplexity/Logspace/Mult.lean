@@ -640,7 +640,9 @@ private lemma mult_contribution (x : List Bool) (v : Fin 13 → ℕ)
         exact AReach.refl _
       | true =>
         simp only [↓reduceIte, Bool.toNat_true]
-        exact AReach.single (good .add)
+        have h := AReach.single (A := multARM) (oracle := multOracle) (x := x) (G := MultGood x)
+          (good .add)
+        rwa [astep_inc (show multARM .add = _ from rfl)] at h
   · simp only [if_neg eq, Nat.add_zero, Function.update_eq_self]
     exact AReach.refl _
 
@@ -948,8 +950,10 @@ private lemma mult_next_column (x : List Bool) (v : Fin 13 → ℕ)
     register_update_le v 11 _ _ bound ((Nat.div_le_self _ _).trans (bound 11))
   have bi : ∀ r, vi r ≤ 4 * (x.length + 1) := register_update_le vh 7 _ _ bh columnBound
   apply AReach.step ⟨mult_preconditions x .carryHalf v none, bound⟩
+  rw [astep_half (show multARM .carryHalf = _ from rfl)]
   change MultReach x (some .nextColumn, vh, none) _
   apply AReach.step ⟨mult_preconditions x .nextColumn vh none, bh⟩
+  rw [astep_inc (show multARM .nextColumn = _ from rfl), show vh 7 = v 7 by simp [vh]]
   change MultReach x (some .nextResultTest, vi, none) _
   apply AReach.step ⟨mult_preconditions x .nextResultTest vi none, bi⟩
   simp only [astep_jeq (show multARM .nextResultTest = _ from rfl)]

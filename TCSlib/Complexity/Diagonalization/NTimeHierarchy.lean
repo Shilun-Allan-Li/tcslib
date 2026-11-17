@@ -1911,7 +1911,7 @@ private lemma nh_book_dom {f g : ℕ → ℕ} (hf : TimeConstructible f) (hmono 
   obtain ⟨N, hN⟩ := hfg (3 * A)
   refine ⟨N, fun n hn => ?_⟩
   have h1 : f n ≤ f (n + 1) := hmono (Nat.le_succ n)
-  have h2 : n + 1 ≤ f (n + 1) := hf.1 (n + 1)
+  have h2 : n + 1 ≤ f (n + 1) := ((timeConstructible_iff f).mp hf).1 (n + 1)
   calc A * (f (n + 1) + f n + n + 1) ≤ A * (3 * f (n + 1)) :=
         Nat.mul_le_mul_left A (by omega)
     _ = 3 * A * f (n + 1) := by ring
