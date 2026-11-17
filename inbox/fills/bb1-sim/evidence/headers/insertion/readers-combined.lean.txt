@@ -1,0 +1,131 @@
+/-- **Oracle `0` of the game on the game's query type**: `Init` on the query read as an identity,
+its answer read back on the game's answer type:
+`S.sidImpl b κ pp msk 0 x s =
+(S.sidImpl b κ pp msk 0 (cast x) s).bind fun p => pure (cast p.1, p.2)`. -/
+theorem sidImpl_zero_onSpec (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk 0 x s =
+      (S.sidImpl b κ pp msk 0
+        (cast (show (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) from rfl) x :
+          Fin (S.idLen.eval κ) → Bool) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+/-- **Oracle `2` of the game on the game's query type**: `Challenge` on the query read as two
+messages, its answer read back on the game's answer type:
+`S.sidImpl b κ pp msk 2 x s =
+(S.sidImpl b κ pp msk 2 (cast x) s).bind fun p => pure (cast p.1, p.2)`. -/
+theorem sidImpl_two_onSpec (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk 2 x s =
+      (S.sidImpl b κ pp msk 2
+        (cast (show (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
+          from rfl) x : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+/-- **Oracle `1` of the game, its query read as an identity**: the call on the game's query
+type is the call on the query read as an `idLen(κ)`-bit identity, with the answer kept on the
+game's answer type (the form for the `⊥` answers):
+`S.sidImpl b κ pp msk 1 x s = S.sidImpl b κ pp msk 1 (cast x) s`. -/
+theorem sidImpl_one_onQuery (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 1) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk 1 x s =
+      S.sidImpl b κ pp msk 1
+        (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl) x :
+          Fin (S.idLen.eval κ) → Bool) s := rfl
+
+/-- **Oracle `2` of the game, its query read as two messages**: the call on the game's query
+type is the call on the query read as two `msgLen(κ)`-bit messages, with the answer kept on the
+game's answer type (the form for the `⊥` answers):
+`S.sidImpl b κ pp msk 2 x s = S.sidImpl b κ pp msk 2 (cast x) s`. -/
+theorem sidImpl_two_onQuery (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk 2 x s =
+      S.sidImpl b κ pp msk 2
+        (cast (show (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
+          from rfl) x : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) s := rfl
+
+/-- **`KeyGen` for another identity, on the game's types**: with `ID*` recorded and the query
+`x`, read as an identity, different from it, the answer is `⟨1, d_ID⟩` with
+`d_ID ← KeyGen(msk, ID)`, read back on the game's answer type: for `cast x ≠ t`,
+`S.sidImpl b κ pp msk 1 x (some t, c) =
+(S.keyGen κ msk (cast x)).bind fun sk => pure (cast (decAnswer (some (encSK sk))), (some t, c))`. -/
+theorem sidImpl_keyGen_ne_onSpec (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool))
+    (h : (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl) x :
+      Fin (S.idLen.eval κ) → Bool) ≠ t) :
+    S.sidImpl b κ pp msk 1 x (some t, c) =
+      (S.keyGen κ msk (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl)
+        x)).bind fun sk =>
+        .pure (cast (show (Fin (S.skLen.eval κ + 1) → Bool) = (S.sidSpec κ).rng 1 from rfl)
+          (FixedLengthScheme.decAnswer (some (S.encSK κ sk))), (some t, c)) :=
+  S.sidImpl_keyGen_ne b κ pp msk _ t c h
+
+/-- **The first valid `Challenge`, on the game's types**: with `ID*` recorded, no challenge yet,
+and both messages of the query `x`, read as two messages, in the message space, the answer is
+`C ← Encrypt(params, ID*, M_b)`, read back on the game's answer type, and `C` is recorded: for
+`(M₀, M₁) = splitHalf (cast x)` with `M₀, M₁ ∈ M`, `S.sidImpl b κ pp msk 2 x (some t, none) =
+(S.enc κ pp t M_b).bind fun C => pure (cast (encCT C), (some t, some (encCT C)))`. -/
+theorem sidImpl_challenge_fresh_onSpec (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (h : S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (show (S.sidSpec κ).dom 2 =
+        (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) from rfl) x)).1 ∧
+      S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (show (S.sidSpec κ).dom 2 =
+        (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) from rfl) x)).2) :
+    S.sidImpl b κ pp msk 2 x (some t, none) =
+      (S.enc κ pp t (if b then (FixedLengthScheme.splitHalf (cast (show (S.sidSpec κ).dom 2 =
+          (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) from rfl) x)).2
+        else (FixedLengthScheme.splitHalf (cast (show (S.sidSpec κ).dom 2 =
+          (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) from rfl) x)).1)).bind fun c =>
+        .pure (cast (show (Fin (S.ctLen.eval κ) → Bool) = (S.sidSpec κ).rng 2 from rfl)
+          (S.encCT κ c), (some t, some (S.encCT κ c))) :=
+  S.sidImpl_challenge_fresh b κ pp msk _ t h
+/-- **`Setup` at the scheme's types**: `Setup` runs the generator and BB1's `Setup`, and returns
+`(⟨d, params⟩, ⟨d, (params, master-key)⟩)` as parameters and master key of `bb1Scheme G ℓ`:
+`Setup κ = (sample r).bind fun r => (BB1.setup _).bind fun k => pure (⟨desc r, k.1⟩, ⟨desc r, k⟩)`,
+the pair typed at `PP κ × MSK κ`. -/
+theorem bb1Scheme_setup_eq (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) :
+    (bb1Scheme G ℓ).setup κ =
+      (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+      (BB1.setup (G.group κ (G.desc κ r))).bind fun k =>
+        .pure (((⟨G.desc κ r, k.1⟩ : (bb1Scheme G ℓ).PP κ),
+          (⟨G.desc κ r, k⟩ : (bb1Scheme G ℓ).MSK κ)) :
+            (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) := rfl
+
+/-- **`KeyGen` at the scheme's types, followed by `f`**: for the master key `⟨d, (pp, mk)⟩` and an
+`ℓ(κ)`-bit identity `ID`, `KeyGen` is BB1's `KeyGen` on `idToZ ID`, its key tagged with `d`:
+`(KeyGen ⟨d, (pp, mk)⟩ ID).bind f = (BB1.keyGen pp mk (idToZ ID)).bind fun k => f ⟨d, k⟩`. -/
+theorem bb1Scheme_keyGen_bind (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (pp : BB1.Params (G.group κ d)) (mk : (G.group κ d).G)
+    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) {β : Type}
+    (f : (bb1Scheme G ℓ).SK κ → ProbComp β) :
+    ((bb1Scheme G ℓ).keyGen κ ⟨d, (pp, mk)⟩ id).bind f =
+      (BB1.keyGen pp mk (BB1.idToZ (G.group κ d) id)).bind fun k => f ⟨d, k⟩ := by
+  simp only [bb1Scheme_keyGen, OracleComp.bind_assoc, OracleComp.pure_bind]
+
+/-- **`Encrypt` at the scheme's types, followed by `f`**: for the parameters `⟨d, pp⟩`, an
+`ℓ(κ)`-bit identity `ID` and a `msgLen(κ)`-bit message `m`, `Encrypt` is BB1's `Encrypt` on
+`idToZ ID` and `decodeT m` (the message read at the width of `G_T`), its ciphertext tagged
+with `d`: `(Encrypt ⟨d, pp⟩ ID m).bind f = (BB1.encrypt pp (idToZ ID) (decodeT ⟦m⟧)).bind fun c =>
+f ⟨d, c⟩`. -/
+theorem bb1Scheme_enc_bind (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (pp : BB1.Params (G.group κ d)) (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
+    (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) {β : Type}
+    (f : (bb1Scheme G ℓ).CT κ → ProbComp β) :
+    ((bb1Scheme G ℓ).enc κ ⟨d, pp⟩ id m).bind f =
+      (BB1.encrypt pp (BB1.idToZ (G.group κ d) id)
+        (BB1.decodeT (G.group κ d) (padFin _ (List.ofFn m)))).bind fun c => f ⟨d, c⟩ := by
+  rw [padFin_ofFn]
+  simp only [bb1Scheme_enc, OracleComp.bind_assoc, OracleComp.pure_bind]
+
+/-- **The ciphertext encoding as a word**: `⟦encCT ⟨d, c⟩⟧` is the padded word `A ‖ B ‖ C_1`
+(`ctLen(κ)` bits). -/
+theorem ofFn_bb1Scheme_encCT (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (c : BB1.Ciphertext (G.group κ d)) :
+    List.ofFn ((bb1Scheme G ℓ).encCT κ ⟨d, c⟩) =
+      List.ofFn (padFin ((bb1Scheme G ℓ).ctLen.eval κ) (List.ofFn ((G.group κ d).encT c.a) ++
+        List.ofFn ((G.group κ d).encG c.b) ++ List.ofFn ((G.group κ d).encG c.c))) := rfl

@@ -1,0 +1,92 @@
+From 35c780c48c1921d45b3bb28f8302772755c28d08 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 17 Nov 2026 04:30:22 +0000
+Subject: [PATCH 4/4] fill bb1-sim: prove bb1_sim_real and bb1_sim_random (T2,
+ T3)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjgrzZvrwGghDJP61L
+---
+ .../IdentityBased/BonehBoyenSecurity.lean     | 48 ++++++++++++++++++-
+ 1 file changed, 46 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean
+index 08f5211fd..ca202b996 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean
+@@ -6,6 +6,11 @@ Authors: TCSlib contributors
+ import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
+ import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine
+ import TCSlib.Cryptography.Pairing.Assumptions
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Lazy
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Real
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Coupling
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Random
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Chain
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -47,6 +52,20 @@ the sum of two Decision BDH advantages; the paper's statement is concrete (`t' <
+ None: the simulator (`bb1SimImpl`, `bb1SimGame`) is defined beside the scheme, in
+ `AdvancedEncryption.IdentityBased.BonehBoyen`.
+ 
++## Contents
++
++Steps 1 and 2 are proved in helper modules:
++
++* `BonehBoyenSecurity.Lazy`: the simulator with its challenge coins drawn at the first valid
++  `Challenge`, and its eager step.
++* `BonehBoyenSecurity.Real`: the output of `Setup`, read; the real game with `h` recorded, and
++  with `h` drawn at the first `Init`.
++* `BonehBoyenSecurity.Coupling`: step M, the real game against the simulator call by call, on
++  good coins.
++* `BonehBoyenSecurity.Random`: on a random `T`, the simulator does not depend on the challenge
++  bit.
++* `BonehBoyenSecurity.Chain`: on good coins, the real game is the simulation on `P_BDH`.
++
+ ## Main results
+ 
+ * `bb1_sim_real`, `bb1_sim_random` — steps 1 and 2 (step 3, `exists_bb1_distinguisher`, is in
+@@ -89,7 +108,25 @@ acceptance probabilities differ only on the excluded coins, of probability
+ theorem bb1_sim_real (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ) :
+     advantage ((bb1Scheme G ℓ).sidGame A q b κ) (bb1SimGame G ℓ A q b true κ) ≤
+       uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < 2 ^ ℓ.eval κ) := by
+-  sorry
++  obtain ⟨o, hset, hR⟩ := BB1Sim.setup_out G ℓ κ
++  rw [advantage_eq, accept_eq, accept_eq, IBEScheme.sidGame_eq, hset, bb1SimGame_eq,
++    ProbComp.prob_bind, ProbComp.prob_bind]
++  -- average the pointwise bound `|F₀ r − F₁ r| ≤ 1[p < 2^ℓ]` over the generator's coins
++  calc _ ≤ ProbComp.expect (ProbComp.sample (G.gen.Coins κ))
++          (fun r => if (G.inst κ r).order < 2 ^ ℓ.eval κ then 1 else 0) :=
++        ProbComp.abs_expect_sub_le_expect _ fun r => ?_
++    _ = uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < 2 ^ ℓ.eval κ) := by
++        rw [← ProbComp.prob_eq_expect, Bridge.prob_sample_eq_uprob]
++  have h01 : ∀ x y : ℝ, 0 ≤ x → x ≤ 1 → 0 ≤ y → y ≤ 1 → |x - y| ≤ 1 := fun x y _ _ _ _ =>
++    abs_sub_le_iff.2 ⟨by linarith, by linarith⟩
++  by_cases hr : (G.inst κ r).order < 2 ^ ℓ.eval κ
++  -- bad coins: two probabilities differ by at most `1`
++  · rw [if_pos hr]
++    exact h01 _ _ (ProbComp.prob_nonneg _ _) (ProbComp.prob_le_one _ _)
++      (ProbComp.prob_nonneg _ _) (ProbComp.prob_le_one _ _)
++  -- good coins: the chain of `BB1Sim.prob_sidGame_coins`
++  · rw [if_neg hr]
++    exact (abs_eq_zero.2 (sub_eq_zero.2 (BB1Sim.prob_sidGame_coins G ℓ A q b κ o hR r hr))).le
+ 
+ /-- **Step 2: on `R_BDH` the simulation does not depend on the challenge bit** [BB04, proof of
+ Theorem 4.1, "when `T` is uniform and independent in `G_1` … `C` is independent of `b` in the
+@@ -103,7 +140,14 @@ bijection of `G_T`, so exchanging the sample of `T` with the rest of the game
+ outside the message space are refused in both games. -/
+ theorem bb1_sim_random (A : NUPPT) (q : ℕ) (κ : ℕ) :
+     advantage (bb1SimGame G ℓ A q false false κ) (bb1SimGame G ℓ A q true false κ) = 0 := by
+-  sorry
++  rw [advantage_eq, abs_eq_zero, sub_eq_zero, accept_eq, accept_eq, bb1SimGame_eq, bb1SimGame_eq]
++  simp only [ProbComp.prob_bind, Bool.false_eq_true, if_false]
++  refine congrArg _ (funext fun r => congrArg _ (funext fun g => congrArg _ (funext fun abc => ?_)))
++  -- `T` is drawn before `A`'s coins: exchange them, then compare the two bits for each `ρ`
++  conv_lhs => rw [ProbComp.expect_sample_comm]
++  conv_rhs => rw [ProbComp.expect_sample_comm]
++  exact congrArg _ (funext fun ρ => BB1Sim.expect_bb1SimImpl_random G ℓ κ _ _ _ _ _
++    (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ) (fun a => ProbComp.prob (.pure (a 0)) (· = true)))
+ 
+ /-- **BB1 is IND-sID-CPA secure under Decision BDH** [BB04, Theorem 4.1, at depth `ℓ = 1`]: if
+ the generator's groups have efficient operations, the arithmetic bundle holds, the order is at

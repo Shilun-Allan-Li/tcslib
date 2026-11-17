@@ -1,0 +1,40 @@
+[PASS] C0 source: /home/user/exch/s/inbox/fills/bb1-sim/evidence/headers/insertion/readers-combined.lean.txt sha256 7836f034f717062fe8713434e9f1a97d3bfee125621ea3a94a54c0d44343773a
+[PASS] C0 base Defs: 476 lines sha256 4e220eadd4bf71ea62372bc371a3e2062b9f213acc696dbb66994c1f64069dfd
+[PASS] C0 base anchor D1: anchor '  (OracleComp.bind_pure _).symm' at base line 430: True
+[PASS] C0 base BonehBoyen: 714 lines sha256 da875140806706f26c4cdbb5cf765f522144f3a5a885c5156a58b8c611cd25f4
+[PASS] C0 base anchor B1: anchor '  exists_congr fun _ => List.ofFn_inj.symm' at base line 412: True
+      approved readers: 10 ['bb1Scheme_enc_bind', 'bb1Scheme_keyGen_bind', 'bb1Scheme_setup_eq', 'ofFn_bb1Scheme_encCT', 'sidImpl_challenge_fresh_onSpec', 'sidImpl_keyGen_ne_onSpec', 'sidImpl_one_onQuery', 'sidImpl_two_onQuery', 'sidImpl_two_onSpec', 'sidImpl_zero_onSpec']
+[PASS] C1 block D1 (Defs): verbatim at head lines 431-517 (blank + approved 1-86), after anchor line 430
+[FAIL] C1 block B1 (BonehBoyen): 1 of 46 lines differ positionally in the window after anchor line 412
+        line 452: want '/-- **The ciphertext encoding as a word**: `⟦encCT ⟨d, c⟩⟧` is the padded word `A ‖ B ‖ C_1`'
+        line 452: have '/-- **The ciphertext encoding as a string**: `⟦encCT ⟨d, c⟩⟧` is the padded word `A ‖ B ‖ C_1`'
+[PASS] C2 reader bb1Scheme_setup_eq: once, verbatim, BonehBoyen.lean lines 414-424 (block B1, offset 0)
+[PASS] C2 reader bb1Scheme_keyGen_bind: once, verbatim, BonehBoyen.lean lines 426-435 (block B1, offset 12)
+[PASS] C2 reader bb1Scheme_enc_bind: once, verbatim, BonehBoyen.lean lines 437-450 (block B1, offset 23)
+[FAIL] C2 reader ofFn_bb1Scheme_encCT: TEXT DIFFERS (1 line(s)) in BonehBoyen.lean at lines 452-458
+        line 452: want '/-- **The ciphertext encoding as a word**: `⟦encCT ⟨d, c⟩⟧` is the padded word `A ‖ B ‖ C_1`'
+        line 452: have '/-- **The ciphertext encoding as a string**: `⟦encCT ⟨d, c⟩⟧` is the padded word `A ‖ B ‖ C_1`'
+[PASS] C2 reader sidImpl_zero_onSpec: once, verbatim, Defs.lean lines 432-444 (block D1, offset 0)
+[PASS] C2 reader sidImpl_two_onSpec: once, verbatim, Defs.lean lines 446-458 (block D1, offset 14)
+[PASS] C2 reader sidImpl_one_onQuery: once, verbatim, Defs.lean lines 460-469 (block D1, offset 28)
+[PASS] C2 reader sidImpl_two_onQuery: once, verbatim, Defs.lean lines 471-480 (block D1, offset 39)
+[PASS] C2 reader sidImpl_keyGen_ne_onSpec: once, verbatim, Defs.lean lines 482-497 (block D1, offset 50)
+[PASS] C2 reader sidImpl_challenge_fresh_onSpec: once, verbatim, Defs.lean lines 499-517 (block D1, offset 67)
+READERS ok=9 missing=[] duplicate=[] moved=[] textdiff=['ofFn_bb1Scheme_encCT']
+[PASS] C3 removal Defs: blocks ['D1'] removed: equals base byte for byte (sha256 4e220eadd4bf71ea62372bc371a3e2062b9f213acc696dbb66994c1f64069dfd)
+[PASS] C4 hash Defs: 563 lines sha256 97ecb6e02413d18fce255949ed4b3e777c8f653a59f0792b575be3ff24a6a9a0 (expected 563 97ecb6e02413d18fce255949ed4b3e777c8f653a59f0792b575be3ff24a6a9a0)
+[PASS] C5 diff-vs-base Defs: ADDED 87 REMOVED 0 CHANGED 0 in 1 hunk(s) (expected ADDED 87 REMOVED 0 CHANGED 0); inserted hunks are exactly the approved blocks
+      insert after base line 431: head lines 432-518
+DIFF_VS_EXPECTED Defs added=0 removed=0 changed=0
+[PASS] C6 diff-vs-expected Defs: head vs base+verbatim blocks: ADDED 0 REMOVED 0 CHANGED 0
+[FAIL] C3 removal BonehBoyen: blocks ['B1'] not located verbatim; removal not applicable
+[FAIL] C4 hash BonehBoyen: 760 lines sha256 6095449bed5a1507a7638f93e9e88697dc7608d09b5afe9c00fdb5c0ca1f64d3 (expected 760 88454d6fb0fa2c81419b189dbc633609357ee39b35ccbe90c810a0ad10891c26)
+[FAIL] C5 diff-vs-base BonehBoyen: ADDED 46 REMOVED 0 CHANGED 0 in 1 hunk(s) (expected ADDED 46 REMOVED 0 CHANGED 0); inserted hunks are NOT exactly the approved blocks
+      insert after base line 413: head lines 414-459
+DIFF_VS_EXPECTED BonehBoyen added=0 removed=0 changed=1
+[FAIL] C6 diff-vs-expected BonehBoyen: head vs base+verbatim blocks: ADDED 0 REMOVED 0 CHANGED 1
+      replace base/exp 452-452 head 452-452
+        - 452: '/-- **The ciphertext encoding as a word**: `⟦encCT ⟨d, c⟩⟧` is the padded word `A ‖ B ‖ C_1`'
+        + 452: '/-- **The ciphertext encoding as a string**: `⟦encCT ⟨d, c⟩⟧` is the padded word `A ‖ B ‖ C_1`'
+CHECKS 19/25 PASS
+RESULT FAIL

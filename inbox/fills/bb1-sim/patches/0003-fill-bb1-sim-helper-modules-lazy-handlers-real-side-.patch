@@ -1,0 +1,1027 @@
+From bcb9bcca9960f7efd3a4edebd49e775582d20080 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 17 Nov 2026 04:30:22 +0000
+Subject: [PATCH 3/4] fill bb1-sim: helper modules (lazy handlers, real side,
+ step M, T3 comparison, chain)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjgrzZvrwGghDJP61L
+---
+ .../BonehBoyenSecurity/Chain.lean             | 102 ++++++
+ .../BonehBoyenSecurity/Coupling.lean          | 187 +++++++++++
+ .../BonehBoyenSecurity/Lazy.lean              | 297 ++++++++++++++++++
+ .../BonehBoyenSecurity/Random.lean            |  94 ++++++
+ .../BonehBoyenSecurity/Real.lean              | 296 +++++++++++++++++
+ 5 files changed, 976 insertions(+)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Lazy.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Random.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Real.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean
+new file mode 100644
+index 000000000..e12d09575
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean
+@@ -0,0 +1,102 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Coupling
++import TCSlib.Cryptography.Games.Bridges.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# On good coins, the real BB1 game is the simulation on `P_BDH`
++
++Helper module of `AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean` (step 1 of
++[BB04, proof of Theorem 4.1] at depth `ℓ = 1`): "When the input 5-tuple is sampled from
++`P_BDH` (where `T = e(g, g)^{abc}`) then `A`'s view is identical to its view in a real attack
++game" [BB04, proof of Theorem 4.1, *Phase 2, Guess and the advantage*]. For generator coins `r`
++with `2^ℓ ≤ p`, the chain of design r1 §3.1 equates the real game's acceptance, conditioned on
++`r`, with the simulation game's on `P_BDH`:
++1. move the setup's `h` past `g_2` and the adversary's coins, and draw it at the first `Init`
++   (`expect_sample_sidImpl`: steps R1 and E-h);
++2. read `g_2` as `g^{b'}` (`BilinearGroup.pow_val_bijective_of_ne_one`, `expect_sample_equiv`);
++3. step M (`expect_simulate_bb1RealLazy`);
++4. draw the challenge coin `c` in advance (`expect_simulate_bb1SimLazy`, step E-c), and merge
++   `(a, b', c)` (`Bridge.expect_sample_pair`); the unused `T` drops out (`expect_const`).
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `BB1Sim.prob_sidGame_coins` — on good coins, the real game's acceptance, conditioned on the
++  generator's coins, is the simulation game's on `P_BDH`.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): the proof of
++  Theorem 4.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++  TCSlib.Cryptography.Composability
++
++namespace BB1Sim
++
++variable (G : BilinearGen) (ℓ : PolyExpr)
++
++/-- **On good coins, the real game is the simulation on `P_BDH`** [BB04, proof of Theorem 4.1,
++*Phase 2, Guess and the advantage*, "When the input 5-tuple is sampled from `P_BDH` … `A`'s view
++is identical to its view in a real attack game"]: let `o` be the setup's output map, read as in
++`setup_out`. For generator coins `r` with `2^{ℓ(κ)} ≤ p`, the real game after `r`
++(`g ∈ G^*`, `α`, `h`, `g_2`, `A`'s coins, the game's oracles on `o r g α h g_2`) and the
++simulation game after `r` on `P_BDH` (`g ∈ G^*`, `(a, b', c)`, `T`, `A`'s coins, the simulator
++on `(g, g^a, g^{b'}, g^c, e(g, g)^{a b' c})`) accept with the same probability.
++
++**Proof sketch.** Expand both probabilities into expectations (`prob_bind`) and fix `g` and
++`α = a`. Move `h` inside past `g_2` and `A`'s coins (`expect_sample_comm`) and draw it at the
++first `Init` (`expect_sample_sidImpl`). Read `g_2 = g^{b'}` (`expect_sample_equiv` along
++`pow_val_bijective_of_ne_one`), so that `o … h (g^{b'})` reads as `(g, g^a, g^{b'}, h)`
++(`setup_out`'s `RealReads`). Step M (`expect_simulate_bb1RealLazy`, with
++`natCast`-injectivity of identities from `2^ℓ ≤ p`) and E-c (`expect_simulate_bb1SimLazy`) give
++the simulator on `g^c`, `e(g, g)^{a b' c}` with `c` drawn in advance. On the simulation side,
++`T` is unused (`expect_const`) and `(a, b', c)` splits into three draws
++(`Bridge.expect_sample_pair`); `c` moves past `A`'s coins (`expect_sample_comm`). -/
++theorem prob_sidGame_coins (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ)
++    (o : (r : G.gen.Coins κ) → {x : (G.group κ (G.desc κ r)).G // x ≠ 1} →
++        ZMod (G.group κ (G.desc κ r)).order → (G.group κ (G.desc κ r)).G →
++        (G.group κ (G.desc κ r)).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ)
++    (hR : ∀ r g α h g2, RealReads G ℓ κ (G.desc κ r) g.1 α g2 h (o r g α h g2))
++    (r : G.gen.Coins κ) (hr : ¬ (G.inst κ r).order < 2 ^ ℓ.eval κ) :
++    ProbComp.prob ((ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
++      (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)).bind fun α =>
++      (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun h =>
++      (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun g2 =>
++      (ProbComp.sample (A.Coins κ)).bind fun ρ =>
++      (simulate ((bb1Scheme G ℓ).sidImpl b κ (o r g α h g2).1 (o r g α h g2).2)
++        (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ) (none, none)).bind
++        fun res => .pure (res.1 0)) (· = true) =
++    ProbComp.prob ((ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
++      (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order ×
++        ZMod (G.group κ (G.desc κ r)).order × ZMod (G.group κ (G.desc κ r)).order)).bind
++        fun abc =>
++      (ProbComp.sample (G.group κ (G.desc κ r)).GT).bind fun t =>
++      (ProbComp.sample (A.Coins κ)).bind fun ρ =>
++      (simulate (bb1SimImpl G ℓ b κ (G.desc κ r) g.1 (g.1 ^ abc.1.val) (g.1 ^ abc.2.1.val)
++          (g.1 ^ abc.2.2.val)
++          (if true then (G.group κ (G.desc κ r)).pair g.1 g.1 ^ (abc.1 * abc.2.1 * abc.2.2).val
++            else t))
++        (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ) (none, none)).bind
++        fun res => .pure (res.1 0)) (· = true) := by
++  sorry
++
++end BB1Sim
++
++end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean
+new file mode 100644
+index 000000000..9bbf55f6f
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean
+@@ -0,0 +1,187 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Real
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Step M of BB1's simulation: the real game against the simulator, call by call
++
++Helper module of `AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean` (step 1 of
++[BB04, proof of Theorem 4.1] at depth `ℓ = 1`). After `h` is drawn at the first `Init`
++(`BB1Sim.bb1RealLazy`) and the challenge coin `c` at the first valid `Challenge`
++(`BB1Sim.bb1SimLazy`), the real game and the simulator answer alike call by call, on states
++related by design r1 §3.1's relation `RelM`: the same recorded challenge, the same committed
++identity `ID*`, and `h = X^{−ID*} g^{α_1}` [BB04, proof of Theorem 4.1, *Setup*]. The real
++`KeyGen` exponent `r̃` and the simulated one `r` correspond by `r = r̃ + b/(ID − ID*)`
++[BB04, proof of Theorem 4.1, *Phase 1*], which needs `ID ≠ ID*` in `Z_p`: the generator's coins
++must give `2^ℓ ≤ p`. The challenge is `Encrypt` with `s = c`
++[BB04, proof of Theorem 4.1, *Challenge*].
++
++## Main definitions
++
++* `BB1Sim.RelM` — the relation of step M.
++
++## Main results
++
++* `BB1Sim.exists_equiv_mul_pow`, `BB1Sim.natCast_bitsToNat_injective`, `BB1Sim.key_eq`,
++  `BB1Sim.F_target_eq`, `BB1Sim.pair_pow_val_eq` — the group algebra of the coupling.
++* `BB1Sim.stepM_init_none`, …, `BB1Sim.stepM_challenge_fresh` — step M, call by call.
++* `BB1Sim.stepM_call` — the per-call hypothesis of `ProbComp.expect_simulate_rel`.
++* `BB1Sim.expect_simulate_bb1RealLazy` — step M: on good coins, the real game with `h` drawn at
++  `Init` simulates like the lazy simulator on `Y = g^{b'}` with `c` drawn at the challenge.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): the proof of
++  Theorem 4.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++  TCSlib.Cryptography.Composability
++
++namespace BB1Sim
++
++/-! ### The group algebra of the coupling -/
++
++section Algebra
++
++variable {wG wT : ℕ} (B : BilinearGroup wG wT)
++
++/-- **`h ↦ α_1` along `h = X^{−z} g^{α_1}`** [BB04, proof of Theorem 4.1, *Setup*]: for `g ≠ 1`
++and every `X`, there are bijections `e z : G ≃ Z_p`, one for each `z ∈ Z_p`, with
++`h = X^{(−z).val} · g^{(e z h).val}` for every `h`. -/
++theorem exists_equiv_mul_pow {g : B.G} (hg : g ≠ 1) (X : B.G) :
++    ∃ e : ZMod B.order → B.G ≃ ZMod B.order,
++      ∀ z h, h = X ^ (-z).val * g ^ (e z h).val := by
++  sorry
++
++/-- **Distinct `n`-bit identities are distinct in `Z_p` when `2^n ≤ p`**: reading `n`-bit strings
++as numbers modulo `p` is injective, `fun u => (bitsToNat u : ZMod p)`. Glue for
++[BB04, §4.4]'s condition on the identity length. -/
++theorem natCast_bitsToNat_injective {n p : ℕ} (hp : 2 ^ n ≤ p) :
++    Function.Injective fun u : Fin n → Bool => (bitsToNat u : ZMod p) := by
++  sorry
++
++/-- **The simulated key is a real key** [BB04, proof of Theorem 4.1, *Phase 1*, "let
++`r̃_j = r_j − b/(I_j − I^*_j)`"]: for `X = g^α`, `Y = g^{b'}`, `z ≠ z'` and
++`F(z) = X^z · (X^{−z'} g^{α_1})`, the real key `(Y^α F(z)^r, g^r)` with exponent `r` is the
++simulated key `(Y^{−α_1/(z − z')} F(z)^{r'}, Y^{−1/(z − z')} g^{r'})` with exponent
++`r' = r + b'/(z − z')`. -/
++theorem key_eq (g : B.G) (α b' z z' a₁ r : ZMod B.order) (hz : z ≠ z') :
++    (g ^ b'.val) ^ α.val *
++        ((g ^ α.val) ^ z.val * ((g ^ α.val) ^ (-z').val * g ^ a₁.val)) ^ r.val =
++      (g ^ b'.val) ^ (-a₁ / (z - z')).val *
++        ((g ^ α.val) ^ z.val * ((g ^ α.val) ^ (-z').val * g ^ a₁.val)) ^ (r + b' / (z - z')).val ∧
++    g ^ r.val = (g ^ b'.val) ^ (-1 / (z - z')).val * g ^ (r + b' / (z - z')).val := by
++  sorry
++
++/-- **`F(ID*) = g^{α_1}`** [BB04, proof of Theorem 4.1, *Challenge*, "Since
++`F_i(I^*_i) = g^{α_i}`"]: for `h = X^{−z} g^{α_1}`, `X^z · h = g^{α_1}`. -/
++theorem F_target_eq (g X : B.G) (z a₁ : ZMod B.order) :
++    X ^ z.val * (X ^ (-z).val * g ^ a₁.val) = g ^ a₁.val := by
++  sorry
++
++/-- **`e(g^α, g^{b'})^s = e(g, g)^{α b' s}`** [BB04, proof of Theorem 4.1, *Challenge*, "if
++`T = e(g, g)^{abc} = e(g_1, g_2)^c`"]: `B.pair (g^α) (g^{b'}) ^ s.val =
++B.pair g g ^ (α · b' · s).val`. -/
++theorem pair_pow_val_eq (g : B.G) (α b' s : ZMod B.order) :
++    B.pair (g ^ α.val) (g ^ b'.val) ^ s.val = B.pair g g ^ (α * b' * s).val := by
++  sorry
++
++end Algebra
++
++/-! ### The relation of step M -/
++
++section Rel
++
++variable (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
++
++/-- **Design r1 §3.1's relation `R`** [BB04, proof of Theorem 4.1, *Setup*]: the real state `u`
++(with `h`) and the simulator's state `v` (with `α_1`) record the same challenge and the same
++committed identity `ID*`, and `h = X^{−ID*} g^{α_1}`. -/
++def RelM (g X : (G.group κ d).G) (u : BB1RealState G ℓ κ d) (v : BB1SimState G ℓ κ d) : Prop :=
++  u.2 = v.2 ∧ Option.Rel (fun p q => p.1 = q.1 ∧
++    p.2 = X ^ (-BB1.idToZ (G.group κ d) p.1).val * g ^ q.2.val) u.1 v.1
++
++/-- `RelM … g X u v` holds iff `u.2 = v.2` and `u.1`, `v.1` are both `none`, or `some (t, h)` and
++`some (t, α_1)` with `h = X^{(−idToZ t).val} · g^{α_1.val}`. -/
++theorem relM_iff (g X : (G.group κ d).G) (u : BB1RealState G ℓ κ d) (v : BB1SimState G ℓ κ d) :
++    RelM G ℓ κ d g X u v ↔ u.2 = v.2 ∧ Option.Rel (fun p q => p.1 = q.1 ∧
++      p.2 = X ^ (-BB1.idToZ (G.group κ d) p.1).val * g ^ q.2.val) u.1 v.1 := Iff.rfl
++
++end Rel
++
++/-! ### Step M, call by call
++
++The real side is `bb1RealLazy` on parameters `o h` that the game reads as `(g, g^α, g^{b'}, h)`
++(`RealReads`); the simulator is `bb1SimLazy` on `X = g^α`, `Y = g^{b'}`, with the challenge coin
++`c ∈ Z_p` drawn at the first valid `Challenge`. Deterministic calls answer alike and keep the
++states; sampling calls give the premise of `ProbComp.expect_sample_rel` along their bijection. -/
++
++section StepM
++
++variable (G : BilinearGen) (ℓ : PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
++  (o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ)
++  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order)
++
++/-- **Step M, the per-call hypothesis of `ProbComp.expect_simulate_rel`** [BB04, proof of
++Theorem 4.1]: for `g ≠ 1`, good coins `2^{ℓ(κ)} ≤ p`, and parameters `o h` read as
++`(g, g^α, g^{b'}, h)`, from states related by `RelM`, a call of `bb1RealLazy … o` and of
++`bb1SimLazy` on `X = g^α`, `Y = g^{b'}` and `zt c = (g^c, e(g, g)^{α b' c})` give the same
++expectation to any `g₀`, `g₁` that agree at equal answers and related states.
++
++**Proof sketch.** By cases on the oracle and the states, with the rows `stepM_*`: deterministic
++rows answer alike and keep the related states (`expect_pure`); sampling rows meet the premise of
++`ProbComp.expect_sample_rel` along `e ID` (`Init`, `exists_equiv_mul_pow`),
++`r ↦ r + b'/(ID − ID*)` (`KeyGen`, `key_eq`, `natCast_bitsToNat_injective`) and the identity
++(`Challenge`, `F_target_eq`, `pair_pow_val_eq`). -/
++theorem stepM_call (hg : g ≠ 1) (hp : 2 ^ (bb1Scheme G ℓ).idLen.eval κ ≤ (G.group κ d).order)
++    (ho : ∀ h, RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) (i : Fin 3)
++    (x : ((bb1Scheme G ℓ).sidSpec κ).dom i) (u : BB1RealState G ℓ κ d)
++    (v : BB1SimState G ℓ κ d) (huv : RelM G ℓ κ d g (g ^ α.val) u v)
++    (g₀ : ((bb1Scheme G ℓ).sidSpec κ).rng i × BB1RealState G ℓ κ d → ℝ)
++    (g₁ : ((bb1Scheme G ℓ).sidSpec κ).rng i × BB1SimState G ℓ κ d → ℝ)
++    (hg₀₁ : ∀ y u' v', RelM G ℓ κ d g (g ^ α.val) u' v' → g₀ (y, u') = g₁ (y, v')) :
++    ProbComp.expect (bb1RealLazy G ℓ b κ d o i x u) g₀ =
++      ProbComp.expect (bb1SimLazy G ℓ b κ d g (g ^ α.val) (g ^ b'.val)
++        (fun c : ZMod (G.group κ d).order =>
++          (g ^ c.val, (G.group κ d).pair g g ^ (α * b' * c).val)) i x v) g₁ := by
++  sorry
++
++/-- **Step M** (design r1 §3.1) [BB04, proof of Theorem 4.1]: for `g ≠ 1`, good coins
++`2^{ℓ(κ)} ≤ p`, and parameters `o h` read as `(g, g^α, g^{b'}, h)`, the real game with `h` drawn
++at the first `Init` simulates like the simulator on `X = g^α`, `Y = g^{b'}` with the challenge
++coin `c` drawn at the first valid `Challenge`, for functions `F` of the output:
++`𝔼[F ∘ fst] (simulate (bb1RealLazy … o) c (none, none)) =
++𝔼[F ∘ fst] (simulate (bb1SimLazy … (fun c => (g^c, e(g, g)^{α b' c}))) c (none, none))`.
++
++**Proof sketch.** `ProbComp.expect_simulate_rel` with `RelM`, the per-call hypothesis
++`stepM_call`, functions of the output only, and `RelM` at the empty states. -/
++theorem expect_simulate_bb1RealLazy (hg : g ≠ 1)
++    (hp : 2 ^ (bb1Scheme G ℓ).idLen.eval κ ≤ (G.group κ d).order)
++    (ho : ∀ h, RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) {β : Type}
++    (c : OracleComp ((bb1Scheme G ℓ).sidSpec κ) β) (F : β → ℝ) :
++    ProbComp.expect (simulate (bb1RealLazy G ℓ b κ d o) c (none, none)) (fun p => F p.1) =
++      ProbComp.expect (simulate (bb1SimLazy G ℓ b κ d g (g ^ α.val) (g ^ b'.val)
++        (fun c : ZMod (G.group κ d).order =>
++          (g ^ c.val, (G.group κ d).pair g g ^ (α * b' * c).val))) c (none, none))
++        (fun p => F p.1) :=
++  ProbComp.expect_simulate_rel _ _ (RelM G ℓ κ d g (g ^ α.val))
++    (fun i x u v huv g₀ g₁ hg₀₁ => stepM_call G ℓ b κ d o g α b' hg hp ho i x u v huv g₀ g₁ hg₀₁)
++    c _ _ (fun _ _ _ _ => rfl) ⟨rfl, .none⟩
++
++end StepM
++
++end BB1Sim
++
++end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Lazy.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Lazy.lean
+new file mode 100644
+index 000000000..56c487a76
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Lazy.lean
+@@ -0,0 +1,297 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
++import TCSlib.Cryptography.Games.Hopping
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The BB1 simulator with its challenge coins drawn at the challenge
++
++Helper module of `AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean` (steps 1 and 2 of
++[BB04, proof of Theorem 4.1] at depth `ℓ = 1`). The simulator `bb1SimImpl` of
++`AdvancedEncryption/IdentityBased/BonehBoyen.lean` receives the challenge coins `(Z, T)` before
++the game starts, but uses them only at the first valid `Challenge` [BB04, proof of Theorem 4.1,
++*Challenge*]. `bb1SimLazy` is the same simulator with coins `zt u` drawn at that call, for a
++uniform `u` in any nonempty finite type `U`: step 1 draws `u = c ∈ Z_p` with
++`zt c = (g^c, e(g, g)^{a b' c})`, step 2 draws `u = T ∈ G_T` with `zt T = (Z, T)`. The two
++simulators simulate alike (`expect_simulate_bb1SimLazy`, an instance of
++`Games.expect_simulate_eager`).
++
++The module also reads the game's query and answer types from their published equations
++(`sidSpec_dom_zero`, …), so that its consumers never reduce `IBEScheme.inLens` or
++`IBEScheme.outLens`.
++
++## Main definitions
++
++* `BB1Sim.bb1SimLazyChal` — the simulator's `Challenge` with its coins drawn at the call.
++* `BB1Sim.bb1SimLazy` — the simulator's oracles with that `Challenge`.
++
++## Main results
++
++* `BB1Sim.bb1SimLazy_zero`, `bb1SimLazy_one`, `bb1SimLazy_two_fresh`, `bb1SimLazy_two_of_not` —
++  `bb1SimLazy` call by call, against `bb1SimImpl`.
++* `BB1Sim.bb1SimImpl_two_of_not` — away from the first valid `Challenge`, `bb1SimImpl` does not
++  read its coins.
++* `BB1Sim.expect_simulate_bb1SimLazy` — the lazy simulator simulates like `bb1SimImpl` with coins
++  drawn in advance.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): the algorithm
++  `B` in the proof of Theorem 4.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++  TCSlib.Cryptography.Composability
++
++namespace BB1Sim
++
++/-! ### The game's query and answer types, from published equations -/
++
++section Types
++
++variable (S : IBEScheme) (κ : ℕ)
++
++/-- `Init` queries are identities: `(S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool)`
++(`sidSpec_eq`, `bitSpec_dom`, `inLens_zero`). Glue for the game's types. -/
++theorem sidSpec_dom_zero : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) := by
++  rw [IBEScheme.sidSpec_eq, bitSpec_dom, IBEScheme.inLens_zero]
++
++/-- `KeyGen` queries are identities: `(S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool)`
++(`sidSpec_eq`, `bitSpec_dom`, `inLens_one`). Glue for the game's types. -/
++theorem sidSpec_dom_one : (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) := by
++  rw [IBEScheme.sidSpec_eq, bitSpec_dom, IBEScheme.inLens_one]
++
++/-- `Challenge` queries are two messages:
++`(S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)` (`sidSpec_eq`,
++`bitSpec_dom`, `inLens_two`). Glue for the game's types. -/
++theorem sidSpec_dom_two :
++    (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) := by
++  rw [IBEScheme.sidSpec_eq, bitSpec_dom, IBEScheme.inLens_two]
++
++/-- `Init` answers parameters: `(S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)`
++(`sidSpec_eq`, `bitSpec_rng`, `outLens_zero`). Glue for the game's types. -/
++theorem sidSpec_rng_zero : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool) := by
++  rw [IBEScheme.sidSpec_eq, bitSpec_rng, IBEScheme.outLens_zero]
++
++/-- `KeyGen` answers a bit and a key: `(S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool)`
++(`sidSpec_eq`, `bitSpec_rng`, `outLens_one`). Glue for the game's types. -/
++theorem sidSpec_rng_one : (S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool) := by
++  rw [IBEScheme.sidSpec_eq, bitSpec_rng, IBEScheme.outLens_one]
++
++/-- `Challenge` answers a ciphertext: `(S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool)`
++(`sidSpec_eq`, `bitSpec_rng`, `outLens_two`). Glue for the game's types. -/
++theorem sidSpec_rng_two : (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool) := by
++  rw [IBEScheme.sidSpec_eq, bitSpec_rng, IBEScheme.outLens_two]
++
++/-- The `⊥` word of a width equal to `m`, cast: `zeroBits n = cast e (zeroBits m)` for `n = m`.
++Glue for the game's types. -/
++theorem zeroBits_eq_cast {n m : ℕ} (hnm : n = m) (e : (Fin m → Bool) = (Fin n → Bool)) :
++    zeroBits n = cast e (zeroBits m) := by
++  subst hnm
++  rfl
++
++end Types
++
++/-! ### The lazy simulator -/
++
++section Lazy
++
++variable (G : BilinearGen) (ℓ : PolyExpr)
++
++open Classical in
++/-- **The simulator's `Challenge` with its coins drawn at the call** [BB04, proof of Theorem 4.1,
++*Challenge*]: with `ID*` recorded, no challenge yet, and both messages `M₀, M₁` encodings of
++`G_T`, draw `u ∈ U` and answer as `bb1SimChal` on the coins `zt u = (Z, T)`; otherwise answer
++as `bb1SimChal` on the coins `(1, 1)`, which it does not read there. -/
++noncomputable def bb1SimLazyChal (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    {U : Type} [Fintype U] [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT)
++    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
++    (s : BB1SimState G ℓ κ d) :
++    ProbComp ((Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) × BB1SimState G ℓ κ d) :=
++  if s.1.isSome ∧ s.2 = none ∧
++      ((∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf mm).1) ∧
++        ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf mm).2)
++  then (ProbComp.sample U).bind fun u => bb1SimChal G ℓ b κ d g X Y (zt u).1 (zt u).2 mm s
++  else bb1SimChal G ℓ b κ d g X Y 1 1 mm s
++
++/-- At the first valid `Challenge`, `bb1SimLazyChal` draws `u` and answers as `bb1SimChal` on
++`zt u`: for `s.1` some, `s.2 = none` and both messages encodings of `G_T`,
++`bb1SimLazyChal … zt mm s = (sample U).bind fun u => bb1SimChal … (zt u).1 (zt u).2 mm s`. -/
++theorem bb1SimLazyChal_fresh (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    {U : Type} [Fintype U] [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT)
++    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
++    (s : BB1SimState G ℓ κ d)
++    (h : s.1.isSome ∧ s.2 = none ∧
++      ((∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf mm).1) ∧
++        ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf mm).2)) :
++    bb1SimLazyChal G ℓ b κ d g X Y zt mm s =
++      (ProbComp.sample U).bind fun u => bb1SimChal G ℓ b κ d g X Y (zt u).1 (zt u).2 mm s := by
++  rw [bb1SimLazyChal, if_pos h]
++
++/-- Away from the first valid `Challenge`, `bb1SimLazyChal` answers as `bb1SimChal` on the
++coins `(1, 1)`: `bb1SimLazyChal … zt mm s = bb1SimChal … 1 1 mm s`. -/
++theorem bb1SimLazyChal_of_not (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    {U : Type} [Fintype U] [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT)
++    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
++    (s : BB1SimState G ℓ κ d)
++    (h : ¬ (s.1.isSome ∧ s.2 = none ∧
++      ((∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf mm).1) ∧
++        ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf mm).2))) :
++    bb1SimLazyChal G ℓ b κ d g X Y zt mm s = bb1SimChal G ℓ b κ d g X Y 1 1 mm s := by
++  rw [bb1SimLazyChal, if_neg h]
++
++/-- **The simulator with its challenge coins drawn at the challenge** [BB04, proof of
++Theorem 4.1]: the oracles `oracleImpl` of the simulator's `Init` (`bb1SimInit`) and `KeyGen`
++(`bb1SimKeyQ`) and of `bb1SimLazyChal`, with challenge bit `b` on `g, X, Y` and the coin map
++`zt : U → G × G_T`. -/
++noncomputable def bb1SimLazy (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    {U : Type} [Fintype U] [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT) :
++    QueryImpl ((bb1Scheme G ℓ).sidSpec κ) (BB1SimState G ℓ κ d) unifSpec :=
++  (bb1Scheme G ℓ).oracleImpl κ (bb1SimInit G ℓ κ d g X Y) (bb1SimKeyQ G ℓ κ d g X Y)
++    (bb1SimLazyChal G ℓ b κ d g X Y zt)
++
++/-- `bb1SimLazy` is `oracleImpl` of `bb1SimInit`, `bb1SimKeyQ` and `bb1SimLazyChal`. -/
++theorem bb1SimLazy_eq (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    {U : Type} [Fintype U] [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT) :
++    bb1SimLazy G ℓ b κ d g X Y zt =
++      (bb1Scheme G ℓ).oracleImpl κ (bb1SimInit G ℓ κ d g X Y) (bb1SimKeyQ G ℓ κ d g X Y)
++        (bb1SimLazyChal G ℓ b κ d g X Y zt) := rfl
++
++variable (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G) {U : Type} [Fintype U]
++  [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT)
++
++/-- `Init` of `bb1SimImpl` does not read the challenge coins:
++`bb1SimImpl … Z T 0 x s = bb1SimImpl … Z' T' 0 x s`. -/
++theorem bb1SimImpl_zero_coins (Z Z' : (G.group κ d).G) (T T' : (G.group κ d).GT)
++    (x : ((bb1Scheme G ℓ).sidSpec κ).dom 0) (s : BB1SimState G ℓ κ d) :
++    bb1SimImpl G ℓ b κ d g X Y Z T 0 x s = bb1SimImpl G ℓ b κ d g X Y Z' T' 0 x s := by
++  rw [bb1SimImpl_eq, bb1SimImpl_eq, IBEScheme.oracleImpl_zero_onSpec,
++    IBEScheme.oracleImpl_zero_onSpec]
++
++/-- `KeyGen` of `bb1SimImpl` does not read the challenge coins:
++`bb1SimImpl … Z T 1 x s = bb1SimImpl … Z' T' 1 x s`. -/
++theorem bb1SimImpl_one_coins (Z Z' : (G.group κ d).G) (T T' : (G.group κ d).GT)
++    (x : ((bb1Scheme G ℓ).sidSpec κ).dom 1) (s : BB1SimState G ℓ κ d) :
++    bb1SimImpl G ℓ b κ d g X Y Z T 1 x s = bb1SimImpl G ℓ b κ d g X Y Z' T' 1 x s := by
++  rw [bb1SimImpl_eq, bb1SimImpl_eq, IBEScheme.oracleImpl_one_onSpec,
++    IBEScheme.oracleImpl_one_onSpec]
++
++/-- `Init` of the lazy simulator is `Init` of `bb1SimImpl`:
++`bb1SimLazy … zt 0 x s = bb1SimImpl … 1 1 0 x s`. -/
++theorem bb1SimLazy_zero (x : ((bb1Scheme G ℓ).sidSpec κ).dom 0) (s : BB1SimState G ℓ κ d) :
++    bb1SimLazy G ℓ b κ d g X Y zt 0 x s = bb1SimImpl G ℓ b κ d g X Y 1 1 0 x s := by
++  rw [bb1SimLazy_eq, bb1SimImpl_eq, IBEScheme.oracleImpl_zero_onSpec,
++    IBEScheme.oracleImpl_zero_onSpec]
++
++/-- `KeyGen` of the lazy simulator is `KeyGen` of `bb1SimImpl`:
++`bb1SimLazy … zt 1 x s = bb1SimImpl … 1 1 1 x s`. -/
++theorem bb1SimLazy_one (x : ((bb1Scheme G ℓ).sidSpec κ).dom 1) (s : BB1SimState G ℓ κ d) :
++    bb1SimLazy G ℓ b κ d g X Y zt 1 x s = bb1SimImpl G ℓ b κ d g X Y 1 1 1 x s := by
++  rw [bb1SimLazy_eq, bb1SimImpl_eq, IBEScheme.oracleImpl_one_onSpec,
++    IBEScheme.oracleImpl_one_onSpec]
++
++/-- **The first valid `Challenge` of the lazy simulator** draws `u` and calls `bb1SimImpl` on the
++coins `zt u`: for `s.1` some, `s.2 = none`, and both messages of the query `x` (read as two
++messages) encodings of `G_T`,
++`bb1SimLazy … zt 2 x s = (sample U).bind fun u => bb1SimImpl … (zt u).1 (zt u).2 2 x s`. -/
++theorem bb1SimLazy_two_fresh (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB1SimState G ℓ κ d)
++    (h : s.1.isSome ∧ s.2 = none ∧
++      ((∃ u, List.ofFn ((G.group κ d).encT u) =
++          List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
++        ∃ u, List.ofFn ((G.group κ d).encT u) =
++          List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2)) :
++    bb1SimLazy G ℓ b κ d g X Y zt 2 x s =
++      (ProbComp.sample U).bind fun u =>
++        bb1SimImpl G ℓ b κ d g X Y (zt u).1 (zt u).2 2 x s := by
++  rw [bb1SimLazy_eq, IBEScheme.oracleImpl_two_onSpec, bb1SimLazyChal_fresh _ _ _ _ _ _ _ _ _ _ _
++    h, OracleComp.bind_assoc]
++  refine congrArg _ (funext fun u => ?_)
++  rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec]
++
++/-- **`Challenge` of the lazy simulator away from the first valid one** is `Challenge` of
++`bb1SimImpl` on the coins `(1, 1)`: `bb1SimLazy … zt 2 x s = bb1SimImpl … 1 1 2 x s`. -/
++theorem bb1SimLazy_two_of_not (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB1SimState G ℓ κ d)
++    (h : ¬ (s.1.isSome ∧ s.2 = none ∧
++      ((∃ u, List.ofFn ((G.group κ d).encT u) =
++          List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
++        ∃ u, List.ofFn ((G.group κ d).encT u) =
++          List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2))) :
++    bb1SimLazy G ℓ b κ d g X Y zt 2 x s = bb1SimImpl G ℓ b κ d g X Y 1 1 2 x s := by
++  rw [bb1SimLazy_eq, bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec,
++    IBEScheme.oracleImpl_two_onSpec, bb1SimLazyChal_of_not _ _ _ _ _ _ _ _ _ _ _ h]
++
++/-- **Away from the first valid `Challenge`, `bb1SimImpl` does not read its coins**, and keeps the
++recorded challenge: unless `s.1` is some, `s.2 = none` and both messages are encodings of `G_T`,
++`bb1SimImpl … Z T 2 x s = bb1SimImpl … 1 1 2 x s`, and every outcome has the challenge `s.2`.
++
++**Proof sketch.** Read both calls by `oracleImpl_two_onSpec`. Before `Init` both answer `⊥`
++(`bb1SimChal_none`); after a recorded challenge both repeat it (`bb1SimChal_repeat`); at a first
++`Challenge` with a message outside the message space both answer `⊥` (`bb1SimChal_invalid`,
++`bb1Scheme_msgSpace_iff`). -/
++theorem bb1SimImpl_two_of_not (Z : (G.group κ d).G) (T : (G.group κ d).GT)
++    (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB1SimState G ℓ κ d)
++    (h : ¬ (s.1.isSome ∧ s.2 = none ∧
++      ((∃ u, List.ofFn ((G.group κ d).encT u) =
++          List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
++        ∃ u, List.ofFn ((G.group κ d).encT u) =
++          List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2))) :
++    bb1SimImpl G ℓ b κ d g X Y Z T 2 x s = bb1SimImpl G ℓ b κ d g X Y 1 1 2 x s ∧
++      (bb1SimImpl G ℓ b κ d g X Y Z T 2 x s).AllOutputs fun p => p.2.2 = s.2 := by
++  sorry
++
++/-- **The first valid `Challenge` records a challenge**: for `s.1` some and `s.2 = none`, and
++both messages encodings of `G_T`, every outcome of `bb1SimImpl … Z T 2 x s` has a recorded
++challenge. -/
++theorem bb1SimImpl_two_fresh_allOutputs (Z : (G.group κ d).G) (T : (G.group κ d).GT)
++    (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB1SimState G ℓ κ d)
++    (h : s.1.isSome ∧ s.2 = none ∧
++      ((∃ u, List.ofFn ((G.group κ d).encT u) =
++          List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
++        ∃ u, List.ofFn ((G.group κ d).encT u) =
++          List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2)) :
++    (bb1SimImpl G ℓ b κ d g X Y Z T 2 x s).AllOutputs fun p => p.2.2.isSome := by
++  sorry
++
++/-- **`Init` and `KeyGen` keep the recorded challenge**: for `i ≠ 2`, every outcome of
++`bb1SimImpl … Z T i x s` has the challenge `s.2`. -/
++theorem bb1SimImpl_allOutputs_of_ne_two (Z : (G.group κ d).G) (T : (G.group κ d).GT)
++    (i : Fin 3) (hi : i ≠ 2) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i) (s : BB1SimState G ℓ κ d) :
++    (bb1SimImpl G ℓ b κ d g X Y Z T i x s).AllOutputs fun p => p.2.2 = s.2 := by
++  sorry
++
++/-- **The lazy simulator simulates like `bb1SimImpl` with its coins drawn in advance**: from a
++state with no recorded challenge (`s.2 = none`), for every computation `c` and every `F`,
++`𝔼[F] (simulate (bb1SimLazy … zt) c s) =
++𝔼_{u ← U} 𝔼[F] (simulate (bb1SimImpl … (zt u).1 (zt u).2) c s)`. Glue: an instance of
++`Games.expect_simulate_eager`, with the coins spent at the first valid `Challenge`.
++
++**Proof sketch.** Apply `Games.expect_simulate_eager` with `O := bb1SimLazy … zt`,
++`OE u := bb1SimImpl … (zt u)` and `used v := v.2` some. `Init` and `KeyGen` do not read the
++coins (`bb1SimLazy_zero`, `bb1SimLazy_one`, `bb1SimImpl_zero_coins`, `bb1SimImpl_one_coins`)
++and keep the recorded challenge (`bb1SimImpl_allOutputs_of_ne_two`). A `Challenge` other than
++the first valid one does not read them either and keeps the recorded challenge
++(`bb1SimLazy_two_of_not`, `bb1SimImpl_two_of_not`); the first valid one draws them
++(`bb1SimLazy_two_fresh`) and records a challenge (`bb1SimImpl_two_fresh_allOutputs`). -/
++theorem expect_simulate_bb1SimLazy {α : Type} (c : OracleComp ((bb1Scheme G ℓ).sidSpec κ) α)
++    (F : α × BB1SimState G ℓ κ d → ℝ) {s : BB1SimState G ℓ κ d} (hs : s.2 = none) :
++    ProbComp.expect (simulate (bb1SimLazy G ℓ b κ d g X Y zt) c s) F =
++      ProbComp.expect (ProbComp.sample U) fun u =>
++        ProbComp.expect (simulate (bb1SimImpl G ℓ b κ d g X Y (zt u).1 (zt u).2) c s) F := by
++  sorry
++
++end Lazy
++
++end BB1Sim
++
++end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Random.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Random.lean
+new file mode 100644
+index 000000000..70022f5ec
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Random.lean
+@@ -0,0 +1,94 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Lazy
++import TCSlib.Cryptography.Games.Relational
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The BB1 simulator on a random `T` does not depend on the challenge bit
++
++Helper module of `AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean` (step 2 of
++[BB04, proof of Theorem 4.1] at depth `ℓ = 1`): "when `T` is uniform and independent in `G_1`
++… `C` is independent of `b` in the adversary's view" [BB04, proof of Theorem 4.1, *Challenge*].
++`T` is used only at the first valid `Challenge`, so it can be drawn there
++(`expect_simulate_bb1SimLazy`, step E-T); at that call, `T ↦ M_1^{−1} M_0 T` turns the answer
++`M_0 · T` of the simulator with challenge bit `0` into the answer `M_1 · T'` of the one with
++challenge bit `1`, and every other call is the same for both bits.
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `BB1Sim.bb1SimLazy_random_call` — the lazy simulators with challenge bits `0` and `1` and
++  `T` drawn at the challenge give equal expectations, call by call.
++* `BB1Sim.expect_bb1SimImpl_random` — on a uniform `T`, the simulators with challenge bits `0`
++  and `1` simulate alike.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): the proof of
++  Theorem 4.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++  TCSlib.Cryptography.Composability
++
++namespace BB1Sim
++
++variable (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
++
++/-- **The challenge bit is hidden by a random `T`, call by call** [BB04, proof of Theorem 4.1,
++*Challenge*]: with `T` drawn at the first valid `Challenge` (`zt T = (Z, T)`), every call of the
++lazy simulators with challenge bits `0` and `1` gives the same expectation to every `F`:
++`𝔼[F] (bb1SimLazy false … i x s) = 𝔼[F] (bb1SimLazy true … i x s)`.
++
++**Proof sketch.** `Init` and `KeyGen` do not depend on the bit (`bb1SimLazy_zero`,
++`bb1SimLazy_one`, `bb1SimImpl_eq`, `IBEScheme.oracleImpl_zero_onSpec`,
++`IBEScheme.oracleImpl_one_onSpec`). A `Challenge` other than the first valid one answers `⊥` or
++repeats the recorded challenge (`bb1SimLazy_two_of_not`, `bb1SimChal_none`, `bb1SimChal_repeat`,
++`bb1SimChal_invalid`). At the first valid one, `ProbComp.expect_sample_rel` with `R := Eq` along
++`T ↦ decodeT(M_1)^{−1} decodeT(M_0) T` (`bb1SimLazy_two_fresh`, `bb1SimChal_fresh`,
++`ofFn_bb1SimCt`). -/
++theorem bb1SimLazy_random_call (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
++    (s : BB1SimState G ℓ κ d) (F : ((bb1Scheme G ℓ).sidSpec κ).rng i × BB1SimState G ℓ κ d → ℝ) :
++    ProbComp.expect (bb1SimLazy G ℓ false κ d g X Y (fun T : (G.group κ d).GT => (Z, T)) i x s) F =
++      ProbComp.expect
++        (bb1SimLazy G ℓ true κ d g X Y (fun T : (G.group κ d).GT => (Z, T)) i x s) F := by
++  sorry
++
++/-- **On a random `T`, the simulator does not depend on the challenge bit** [BB04, proof of
++Theorem 4.1, *Challenge*, "when `T` is uniform and independent in `G_1` … `C` is independent of
++`b` in the adversary's view"]: for every computation `c` and every `F` of its output,
++`𝔼_{T ← G_T} 𝔼[F ∘ fst] (simulate (bb1SimImpl false … Z T) c (none, none)) =
++𝔼_{T ← G_T} 𝔼[F ∘ fst] (simulate (bb1SimImpl true … Z T) c (none, none))`.
++
++**Proof sketch.** Draw `T` at the first valid `Challenge` on both sides
++(`expect_simulate_bb1SimLazy`, step E-T), then compare the lazy simulators call by call
++(`ProbComp.expect_simulate_congr` with `bb1SimLazy_random_call`). -/
++theorem expect_bb1SimImpl_random {β : Type} (c : OracleComp ((bb1Scheme G ℓ).sidSpec κ) β)
++    (F : β → ℝ) :
++    ProbComp.expect (ProbComp.sample (G.group κ d).GT) (fun T => ProbComp.expect
++        (simulate (bb1SimImpl G ℓ false κ d g X Y Z T) c (none, none)) (fun p => F p.1)) =
++      ProbComp.expect (ProbComp.sample (G.group κ d).GT) (fun T => ProbComp.expect
++        (simulate (bb1SimImpl G ℓ true κ d g X Y Z T) c (none, none)) (fun p => F p.1)) := by
++  rw [← expect_simulate_bb1SimLazy G ℓ false κ d g X Y (fun T : (G.group κ d).GT => (Z, T)) c _
++    rfl, ← expect_simulate_bb1SimLazy G ℓ true κ d g X Y (fun T : (G.group κ d).GT => (Z, T)) c _
++    rfl]
++  exact ProbComp.expect_simulate_congr _ _
++    (fun i x s F => bb1SimLazy_random_call G ℓ κ d g X Y Z i x s F) c _ _
++
++end BB1Sim
++
++end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Real.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Real.lean
+new file mode 100644
+index 000000000..8f336d2f7
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Real.lean
+@@ -0,0 +1,296 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Lazy
++import TCSlib.Cryptography.Games.Relational
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The real IND-sID-CPA game of BB1, with `h` drawn at `Init`
++
++Helper module of `AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean` (step 1 of
++[BB04, proof of Theorem 4.1] at depth `ℓ = 1`). The real game draws the parameter `h` in `Setup`,
++before the adversary commits to `ID*`; the simulator chooses `h = g_1^{−ID*} g^{α_1}` after the
++commitment. This module moves the real draw of `h` to the first `Init`:
++* `RealReads` and `setup_out` read the output of `Setup` without naming the parameters as a
++  value: a map `o` from the setup's coins to parameters and master key, and what the game's
++  oracles read from `o …` (the encoded parameters, the message space, the encoded keys and
++  ciphertexts);
++* `bb1RealAt o h` runs the game's oracles on the parameters `o h'` for the `h'` recorded with the
++  committed identity, and records `h` at the first `Init`; from the empty state it simulates like
++  the game's oracles on `o h` (`expect_simulate_sidImpl_bb1RealAt`, an instance of
++  `ProbComp.expect_simulate_rel`);
++* `bb1RealLazy o` draws `h` at the first `Init`; it simulates like `bb1RealAt o h` with `h` drawn
++  in advance (`expect_sample_bb1RealAt`, an instance of `Games.expect_simulate_eager`).
++
++## Main definitions
++
++* `BB1Sim.RealReads` — what the game's oracles read from the parameters and master key.
++* `BB1Sim.BB1RealState` — the game's state with `h` recorded beside the committed identity.
++* `BB1Sim.bb1RealAt`, `BB1Sim.bb1RealLazy` — the game's oracles with `h` recorded, and with `h`
++  drawn at the first `Init`.
++
++## Main results
++
++* `BB1Sim.setup_out` — the output of `Setup`, read.
++* `BB1Sim.expect_simulate_sidImpl_bb1RealAt` — step R1: the game's oracles simulate like
++  `bb1RealAt`.
++* `BB1Sim.expect_sample_bb1RealAt` — step E-h: `h` drawn at the first `Init`.
++* `BB1Sim.expect_sample_sidImpl` — both: the game with `h` drawn in advance simulates like
++  `bb1RealLazy`.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.1 (pp. 5–6): the system;
++  §4.2 (pp. 6–8): the proof of Theorem 4.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++  TCSlib.Cryptography.Composability
++
++namespace BB1Sim
++
++/-! ### The real parameters, from the setup's output -/
++
++section Setup
++
++variable (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ)
++
++/-- **What the real game's oracles read from its parameters and master key** `k`, for parameters
++`(g, g^α, Y, h)` and master key `Y^α` in the group described by `d` [BB04, §4.1]: the encoded
++parameters, the message space, the encoded keys of `KeyGen`, and the encoded ciphertexts of
++`Encrypt`. -/
++structure RealReads (d : List Bool) (g : (G.group κ d).G) (α : ZMod (G.group κ d).order)
++    (Y h : (G.group κ d).G) (k : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) : Prop where
++  /-- The encoded parameters: `d ‖ g ‖ g^α ‖ Y ‖ h`. -/
++  encPP : (bb1Scheme G ℓ).encPP κ k.1 = padFin ((bb1Scheme G ℓ).ppLen.eval κ)
++    (d ++ List.ofFn ((G.group κ d).encG g) ++ List.ofFn ((G.group κ d).encG (g ^ α.val)) ++
++      List.ofFn ((G.group κ d).encG Y) ++ List.ofFn ((G.group κ d).encG h))
++  /-- The message space: the encodings of `G_T`. -/
++  msgSpace : ∀ m, (bb1Scheme G ℓ).MsgSpace κ k.1 m ↔
++    ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m
++  /-- `KeyGen`, encoded, then `f`: the key word is `Y^α F(ID)^r ‖ g^r` with `r` uniform. -/
++  keyGen : ∀ id {β : Type} (f : (Fin ((bb1Scheme G ℓ).skLen.eval κ) → Bool) → ProbComp β),
++    ((bb1Scheme G ℓ).keyGen κ k.2 id).bind (fun sk => f ((bb1Scheme G ℓ).encSK κ sk)) =
++      (ProbComp.sample (ZMod (G.group κ d).order)).bind fun r =>
++        f (padFin ((bb1Scheme G ℓ).skLen.eval κ)
++          (List.ofFn ((G.group κ d).encG
++              (Y ^ α.val * BB1.F ⟨g, g ^ α.val, Y, h⟩ (BB1.idToZ (G.group κ d) id) ^ r.val)) ++
++            List.ofFn ((G.group κ d).encG (g ^ r.val))))
++  /-- `Encrypt`, encoded, then `f`: the ciphertext word is `M · e(g^α, Y)^s ‖ g^s ‖ F(ID)^s`
++  with `s` uniform, the message read at the width of `G_T`. -/
++  enc : ∀ t m {β : Type} (f : (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) → ProbComp β),
++    ((bb1Scheme G ℓ).enc κ k.1 t m).bind (fun ct => f ((bb1Scheme G ℓ).encCT κ ct)) =
++      (ProbComp.sample (ZMod (G.group κ d).order)).bind fun s =>
++        f (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
++          (List.ofFn ((G.group κ d).encT ((G.group κ d).pair (g ^ α.val) Y ^ s.val *
++              BB1.decodeT (G.group κ d) (padFin _ (List.ofFn m)))) ++
++            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
++            List.ofFn ((G.group κ d).encG
++              (BB1.F ⟨g, g ^ α.val, Y, h⟩ (BB1.idToZ (G.group κ d) t) ^ s.val))))
++
++/-- **The setup's output, read** [BB04, §4.1, *Setup*]: there is a map `o` from the setup's
++coins to parameters and master key of `bb1Scheme G ℓ` such that `Setup` draws `r`, `g ∈ G^*`,
++`α`, `h`, `g_2` and returns `o r g α h g_2`:
++`(Setup κ).bind F = 𝔼-free form (sample r).bind … (sample g_2).bind fun g_2 => F (o r g α h g_2)`
++for every continuation `F`, and the game's oracles read `o r g α h g_2` as the parameters
++`(g, g^α, g_2, h)` and the master key `g_2^α` of the group `desc(κ, r)` (`RealReads`).
++
++**Proof sketch.** `o` is the setup's output map, found by unification after reading `Setup`
++through `bb1Scheme_setup_eq` and `BB1.setup_eq`. The four readings: `ofFn_bb1Scheme_encPP`;
++`bb1Scheme_msgSpace_iff`; `bb1Scheme_keyGen_bind`, `BB1.keyGen_eq` and
++`ofFn_bb1Scheme_encSK`; `bb1Scheme_enc_bind`, `BB1.encrypt_eq` and `ofFn_bb1Scheme_encCT`
++(vectors with equal words are equal, `List.ofFn_injective`). -/
++theorem setup_out :
++    ∃ o : (r : G.gen.Coins κ) → {x : (G.group κ (G.desc κ r)).G // x ≠ 1} →
++        ZMod (G.group κ (G.desc κ r)).order → (G.group κ (G.desc κ r)).G →
++        (G.group κ (G.desc κ r)).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ,
++      (∀ {β : Type} (F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp β),
++        ((bb1Scheme G ℓ).setup κ).bind F =
++          (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++          (ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
++          (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)).bind fun α =>
++          (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun h =>
++          (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun g2 => F (o r g α h g2)) ∧
++      ∀ r g α h g2, RealReads G ℓ κ (G.desc κ r) g.1 α g2 h (o r g α h g2) := by
++  sorry
++
++end Setup
++
++/-! ### The game's oracles with `h` recorded -/
++
++section Real
++
++variable (G : BilinearGen) (ℓ : PolyExpr)
++
++/-- The real game's state with the parameter `h` recorded beside the committed identity, and
++the recorded challenge. -/
++abbrev BB1RealState (κ : ℕ) (d : List Bool) : Type :=
++  Option ((Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) × (G.group κ d).G) ×
++    Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)
++
++/-- **The game's oracles with `h` recorded** [BB04, §2.1]: with hidden bit `b`, on the
++parameters and master key `o h'` for the `h'` recorded with the committed identity (or `h`
++before `Init`), the call of `IBEScheme.sidImpl` on the state without `h'`; the first `Init`
++records `h` with the identity. -/
++noncomputable def bb1RealAt (b : Bool) (κ : ℕ) (d : List Bool)
++    (o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) (h : (G.group κ d).G) :
++    QueryImpl ((bb1Scheme G ℓ).sidSpec κ) (BB1RealState G ℓ κ d) unifSpec :=
++  fun i x u => ((bb1Scheme G ℓ).sidImpl b κ (o ((u.1.map Prod.snd).getD h)).1
++    (o ((u.1.map Prod.snd).getD h)).2 i x (u.1.map Prod.fst, u.2)).bind
++      fun p => .pure (p.1, (p.2.1.map fun t => (t, (u.1.map Prod.snd).getD h), p.2.2))
++
++/-- Before `Init`, `bb1RealAt o h` is the game's oracle on `o h`, recording `h` with the
++committed identity: `bb1RealAt … o h i x (none, c) = (sidImpl b κ (o h).1 (o h).2 i x
++(none, c)).bind fun p => pure (p.1, (p.2.1.map (·, h), p.2.2))`. -/
++theorem bb1RealAt_none (b : Bool) (κ : ℕ) (d : List Bool)
++    (o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) (h : (G.group κ d).G)
++    (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1RealAt G ℓ b κ d o h i x (none, c) =
++      ((bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2 i x (none, c)).bind
++        fun p => .pure (p.1, (p.2.1.map fun t => (t, h), p.2.2)) := rfl
++
++/-- After `Init`, `bb1RealAt o h` is the game's oracle on `o h'` for the recorded `h'`:
++`bb1RealAt … o h i x (some (t, h'), c) = (sidImpl b κ (o h').1 (o h').2 i x
++(some t, c)).bind fun p => pure (p.1, (p.2.1.map (·, h'), p.2.2))`. -/
++theorem bb1RealAt_some (b : Bool) (κ : ℕ) (d : List Bool)
++    (o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) (h : (G.group κ d).G)
++    (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
++    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (h' : (G.group κ d).G)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1RealAt G ℓ b κ d o h i x (some (t, h'), c) =
++      ((bb1Scheme G ℓ).sidImpl b κ (o h').1 (o h').2 i x (some t, c)).bind
++        fun p => .pure (p.1, (p.2.1.map fun t => (t, h'), p.2.2)) := rfl
++
++open Classical in
++/-- **The game's oracles with `h` drawn at the first `Init`** [BB04, §2.1]: the first `Init`
++draws `h ∈ G` and calls `bb1RealAt o h`; every other call is the call of `bb1RealAt o 1`, which
++reads the recorded `h'` after `Init` and no parameter before it. -/
++noncomputable def bb1RealLazy (b : Bool) (κ : ℕ) (d : List Bool)
++    (o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) :
++    QueryImpl ((bb1Scheme G ℓ).sidSpec κ) (BB1RealState G ℓ κ d) unifSpec :=
++  fun i x u => if u.1.isNone ∧ i = 0 then
++      (ProbComp.sample (G.group κ d).G).bind fun h => bb1RealAt G ℓ b κ d o h i x u
++    else bb1RealAt G ℓ b κ d o 1 i x u
++
++variable (b : Bool) (κ : ℕ) (d : List Bool)
++  (o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ)
++
++/-- The first `Init` of `bb1RealLazy` draws `h` and calls the game's oracle on `o h`:
++`bb1RealLazy … o 0 x (none, c) = (sample G).bind fun h => (sidImpl b κ (o h).1 (o h).2 0 x
++(none, c)).bind fun p => pure (p.1, (p.2.1.map (·, h), p.2.2))`. -/
++theorem bb1RealLazy_zero_none (x : ((bb1Scheme G ℓ).sidSpec κ).dom 0)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1RealLazy G ℓ b κ d o 0 x (none, c) =
++      (ProbComp.sample (G.group κ d).G).bind fun h =>
++        ((bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2 0 x (none, c)).bind
++          fun p => .pure (p.1, (p.2.1.map fun t => (t, h), p.2.2)) := by
++  rw [bb1RealLazy, if_pos ⟨rfl, rfl⟩]
++  rfl
++
++/-- Before `Init`, the other calls of `bb1RealLazy` are the game's oracles on `o 1`: for `i ≠ 0`,
++`bb1RealLazy … o i x (none, c) = (sidImpl b κ (o 1).1 (o 1).2 i x (none, c)).bind fun p =>
++pure (p.1, (p.2.1.map (·, 1), p.2.2))`. -/
++theorem bb1RealLazy_none_of_ne (i : Fin 3) (hi : i ≠ 0) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1RealLazy G ℓ b κ d o i x (none, c) =
++      ((bb1Scheme G ℓ).sidImpl b κ (o 1).1 (o 1).2 i x (none, c)).bind
++        fun p => .pure (p.1, (p.2.1.map fun t => (t, 1), p.2.2)) := by
++  rw [bb1RealLazy, if_neg fun h => hi h.2]
++  rfl
++
++/-- After `Init`, `bb1RealLazy` is the game's oracle on `o h` for the recorded `h`:
++`bb1RealLazy … o i x (some (t, h), c) = (sidImpl b κ (o h).1 (o h).2 i x (some t, c)).bind
++fun p => pure (p.1, (p.2.1.map (·, h), p.2.2))`. -/
++theorem bb1RealLazy_some (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
++    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (h : (G.group κ d).G)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1RealLazy G ℓ b κ d o i x (some (t, h), c) =
++      ((bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2 i x (some t, c)).bind
++        fun p => .pure (p.1, (p.2.1.map fun t => (t, h), p.2.2)) := by
++  rw [bb1RealLazy, if_neg fun h => absurd h.1 (by simp)]
++  rfl
++
++/-- **The game's oracles keep the committed identity**: for every scheme `S`, every outcome of
++`S.sidImpl b κ pp msk i x (some t, c)` has the committed identity `t`. -/
++theorem sidImpl_allOutputs_some (S : IBEScheme) (pp : S.PP κ) (msk : S.MSK κ) (i : Fin 3)
++    (x : (S.sidSpec κ).dom i) (t : Fin (S.idLen.eval κ) → Bool)
++    (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
++    (S.sidImpl b κ pp msk i x (some t, c)).AllOutputs fun p => p.2.1 = some t := by
++  sorry
++
++/-- **Before `Init`, `KeyGen` and `Challenge` do not read the parameters**: for every scheme `S`
++and `i ≠ 0`, `S.sidImpl b κ pp msk i x (none, c) = S.sidImpl b κ pp' msk' i x (none, c)`, and
++every outcome keeps the state `(none, c)`. -/
++theorem sidImpl_none_of_ne (S : IBEScheme) (pp pp' : S.PP κ) (msk msk' : S.MSK κ) (i : Fin 3)
++    (hi : i ≠ 0) (x : (S.sidSpec κ).dom i) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
++    S.sidImpl b κ pp msk i x (none, c) = S.sidImpl b κ pp' msk' i x (none, c) ∧
++      (S.sidImpl b κ pp msk i x (none, c)).AllOutputs fun p => p.2 = (none, c) := by
++  sorry
++
++/-- **Step R1** (design r1 §3.1): from the empty state, the game's oracles on `o h` simulate like
++`bb1RealAt o h`, for functions `F` of the output:
++`𝔼[F ∘ fst] (simulate (sidImpl b κ (o h).1 (o h).2) c (none, none)) =
++𝔼[F ∘ fst] (simulate (bb1RealAt … o h) c (none, none))`. Glue: an instance of
++`ProbComp.expect_simulate_rel` with `R s u :↔ s = (u.1.map Prod.fst, u.2) ∧ ∀ p ∈ u.1, p.2 = h`.
++
++**Proof sketch.** From related states, `bb1RealAt o h` reads the recorded `h' = h`, so its call
++is the game's call followed by recording `h` (`bb1RealAt_none`, `bb1RealAt_some`); its
++expectation is the game's call's (`expect_bind`, `expect_pure`), whose new states are related
++to the recorded ones. `ProbComp.expect_simulate_rel` concludes. -/
++theorem expect_simulate_sidImpl_bb1RealAt (h : (G.group κ d).G) {α : Type}
++    (c : OracleComp ((bb1Scheme G ℓ).sidSpec κ) α) (F : α → ℝ) :
++    ProbComp.expect (simulate ((bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2) c (none, none))
++        (fun p => F p.1) =
++      ProbComp.expect (simulate (bb1RealAt G ℓ b κ d o h) c (none, none)) (fun p => F p.1) := by
++  sorry
++
++/-- **Step E-h** (design r1 §3.1): `h` drawn in advance or at the first `Init` simulate alike:
++`𝔼_{h ← G} 𝔼[F] (simulate (bb1RealAt … o h) c (none, none)) =
++𝔼[F] (simulate (bb1RealLazy … o) c (none, none))`. Glue: an instance of
++`Games.expect_simulate_eager`, with `h` spent at the first `Init`.
++
++**Proof sketch.** Apply `Games.expect_simulate_eager` with `O := bb1RealLazy o`,
++`OE h := bb1RealAt o h` and `used u := u.1` some. After `Init` both read the recorded `h`
++(`bb1RealAt_some`, `bb1RealLazy_some`) and keep the identity (`sidImpl_allOutputs_some`). Before
++`Init`, `KeyGen` and `Challenge` read no parameter and keep the state (`sidImpl_none_of_ne`,
++`bb1RealLazy_none_of_ne`); the first `Init` draws `h` (`bb1RealLazy_zero_none`) and records an
++identity (`IBEScheme.sidImpl_zero_onSpec`, `IBEScheme.sidImpl_init_none`). -/
++theorem expect_sample_bb1RealAt {α : Type} (c : OracleComp ((bb1Scheme G ℓ).sidSpec κ) α)
++    (F : α × BB1RealState G ℓ κ d → ℝ) :
++    ProbComp.expect (ProbComp.sample (G.group κ d).G)
++        (fun h => ProbComp.expect (simulate (bb1RealAt G ℓ b κ d o h) c (none, none)) F) =
++      ProbComp.expect (simulate (bb1RealLazy G ℓ b κ d o) c (none, none)) F := by
++  sorry
++
++/-- **The real game with `h` drawn at the first `Init`** (steps R1 and E-h of design r1 §3.1):
++`𝔼_{h ← G} 𝔼[F ∘ fst] (simulate (sidImpl b κ (o h).1 (o h).2) c (none, none)) =
++𝔼[F ∘ fst] (simulate (bb1RealLazy … o) c (none, none))`. Glue.
++
++**Proof sketch.** `expect_simulate_sidImpl_bb1RealAt` for each `h`, then
++`expect_sample_bb1RealAt`. -/
++theorem expect_sample_sidImpl {α : Type} (c : OracleComp ((bb1Scheme G ℓ).sidSpec κ) α)
++    (F : α → ℝ) :
++    ProbComp.expect (ProbComp.sample (G.group κ d).G)
++        (fun h => ProbComp.expect
++          (simulate ((bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2) c (none, none))
++          (fun p => F p.1)) =
++      ProbComp.expect (simulate (bb1RealLazy G ℓ b κ d o) c (none, none)) (fun p => F p.1) := by
++  rw [← expect_sample_bb1RealAt]
++  exact congrArg _ (funext fun h => expect_simulate_sidImpl_bb1RealAt G ℓ b κ d o h c F)
++
++end Real
++
++end BB1Sim
++
++end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
