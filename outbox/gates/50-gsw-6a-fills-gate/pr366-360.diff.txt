@@ -1,0 +1,178 @@
+diff --git a/TCSlib/Complexity/CircuitComplexity/Adder.lean b/TCSlib/Complexity/CircuitComplexity/Adder.lean
+index 53e226200..459f20ef6 100644
+--- a/TCSlib/Complexity/CircuitComplexity/Adder.lean
++++ b/TCSlib/Complexity/CircuitComplexity/Adder.lean
+@@ -378,6 +378,14 @@ def carryBit (A B : ℕ → Bool) : ℕ → Bool
+   | 0 => false
+   | i + 1 => (A i && B i) || ((A i ^^ B i) && carryBit A B i)
+ 
++/-- Reader of `carryBit` at position `0`: `carryBit A B 0 = false`.  Glue. -/
++theorem carryBit_zero (A B : ℕ → Bool) : carryBit A B 0 = false := rfl
++
++/-- Reader of `carryBit` at position `i + 1`:
++`carryBit A B (i + 1) = ((A i && B i) || ((A i ^^ B i) && carryBit A B i))`.  Glue. -/
++theorem carryBit_succ (A B : ℕ → Bool) (i : ℕ) :
++    carryBit A B (i + 1) = ((A i && B i) || ((A i ^^ B i) && carryBit A B i)) := rfl
++
+ /-- Bit `i` of the sum of `A` and `B`: `A_i ⊕ B_i ⊕ carry i`. -/
+ def sumBit (A B : ℕ → Bool) (i : ℕ) : Bool :=
+   (A i ^^ B i) ^^ carryBit A B i
+diff --git a/TCSlib/Complexity/CircuitComplexity/Basic.lean b/TCSlib/Complexity/CircuitComplexity/Basic.lean
+index 81243c43e..6f1d2fcff 100644
+--- a/TCSlib/Complexity/CircuitComplexity/Basic.lean
++++ b/TCSlib/Complexity/CircuitComplexity/Basic.lean
+@@ -110,6 +110,10 @@ deriving DecidableEq, Repr, Hashable
+ def Lit.eval (l : Lit n) (x : Fin n → Bool) : Bool :=
+   if l.sign then x l.idx else !x l.idx
+ 
++/-- Reader of `Lit.eval`: `l.eval x = if l.sign then x l.idx else !x l.idx`.  Glue. -/
++theorem Lit.eval_eq (l : Lit n) (x : Fin n → Bool) :
++    l.eval x = if l.sign then x l.idx else !x l.idx := rfl
++
+ -- ----------------------------------------------------------------
+ -- Section 2: General (unconstrained) circuit
+ -- ----------------------------------------------------------------
+@@ -209,6 +213,18 @@ theorem TreeCircuit.one_le_size (c : TreeCircuit n) : 1 ≤ c.size := by
+ def TreeCircuit.maxFaninL (cs : List (TreeCircuit n)) : ℕ :=
+   cs.foldr (fun c acc => max c.maxFanin acc) 0
+ 
++/-- Reader of `TreeCircuit.depth` on a leaf: `(lit l).depth = 0`.  Glue. -/
++theorem TreeCircuit.depth_lit (l : Lit n) : (TreeCircuit.lit l).depth = 0 := by
++  simp [TreeCircuit.depth]
++
++/-- Reader of `TreeCircuit.size` on a leaf: `(lit l).size = 1`.  Glue. -/
++theorem TreeCircuit.size_lit (l : Lit n) : (TreeCircuit.lit l).size = 1 := by
++  simp [TreeCircuit.size]
++
++/-- Reader of `TreeCircuit.maxFanin` on a leaf: `(lit l).maxFanin = 0`.  Glue. -/
++theorem TreeCircuit.maxFanin_lit (l : Lit n) : (TreeCircuit.lit l).maxFanin = 0 := by
++  simp [TreeCircuit.maxFanin]
++
+ /-- A gate's depth is one more than its children's. -/
+ theorem TreeCircuit.depth_node (b : Bool) (cs : List (TreeCircuit n)) :
+     (TreeCircuit.node b cs).depth = 1 + TreeCircuit.maxDepth cs := by
+diff --git a/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean b/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
+index ba29d2cd6..1e327b89c 100644
+--- a/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
++++ b/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
+@@ -395,6 +395,12 @@ acyclicity condition `DAGCircuit.args_lt` for a bare gate list. -/
+ def GatesAcyclic (n : ℕ) (gs : List DAGGate) : Prop :=
+   ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < n + i
+ 
++/-- Reader of `GatesAcyclic`:
++`GatesAcyclic n gs ↔ ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < n + i`.  Glue. -/
++theorem gatesAcyclic_iff {n : ℕ} {gs : List DAGGate} :
++    GatesAcyclic n gs ↔ ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < n + i :=
++  Iff.rfl
++
+ /-- The empty gate list is acyclic. -/
+ theorem GatesAcyclic.nil {n : ℕ} : GatesAcyclic n [] := fun i h => absurd h (by simp)
+ 
+@@ -508,6 +514,12 @@ theorem size_eq : C.size = n + C.gates.length := rfl
+ def IsWellFormed : Prop :=
+   ∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)
+ 
++/-- Reader of `IsWellFormed`:
++`C.IsWellFormed ↔ ∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)`.  Glue. -/
++theorem isWellFormed_iff :
++    C.IsWellFormed ↔ ∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1) :=
++  Iff.rfl
++
+ /-- Well formed, with every gate reading at most two vertices.  [AB09, Def 6.1] -/
+ def IsFaninTwo : Prop :=
+   C.IsWellFormed ∧ ∀ g ∈ C.gates, g.args.length ≤ 2
+diff --git a/TCSlib/Complexity/CircuitComplexity/DAGTransform.lean b/TCSlib/Complexity/CircuitComplexity/DAGTransform.lean
+index d6312c3f9..5bf2df0c0 100644
+--- a/TCSlib/Complexity/CircuitComplexity/DAGTransform.lean
++++ b/TCSlib/Complexity/CircuitComplexity/DAGTransform.lean
+@@ -70,6 +70,16 @@ def GadgetCorrect (n c : ℕ) (Q : GateKind → ℕ → Prop) (P : DAGGate → P
+   ∀ g gs, GatesAcyclic n gs → (∀ a ∈ g.args, a < n + gs.length) → Q g.kind g.args.length →
+     GadgetSpec n c (g.args.length + 2) P g gs (emit g gs)
+ 
++/-- Reader of `GadgetCorrect`: `GadgetCorrect n c Q P emit ↔ ∀ g gs, GatesAcyclic n gs →
++(∀ a ∈ g.args, a < n + gs.length) → Q g.kind g.args.length →
++GadgetSpec n c (g.args.length + 2) P g gs (emit g gs)`.  Glue. -/
++theorem gadgetCorrect_iff {c : ℕ} {Q : GateKind → ℕ → Prop} {P : DAGGate → Prop}
++    {emit : DAGGate → List DAGGate → List DAGGate × ℕ} :
++    GadgetCorrect n c Q P emit ↔
++      ∀ g gs, GatesAcyclic n gs → (∀ a ∈ g.args, a < n + gs.length) → Q g.kind g.args.length →
++        GadgetSpec n c (g.args.length + 2) P g gs (emit g gs) :=
++  Iff.rfl
++
+ /-! ## The rewriting pass -/
+ 
+ /-- Rewrite one old gate: remap its inputs through `m`, then emit its gadget. -/
+diff --git a/TCSlib/Complexity/CircuitComplexity/TreeDAG.lean b/TCSlib/Complexity/CircuitComplexity/TreeDAG.lean
+index 1849bd140..a625f4ceb 100644
+--- a/TCSlib/Complexity/CircuitComplexity/TreeDAG.lean
++++ b/TCSlib/Complexity/CircuitComplexity/TreeDAG.lean
+@@ -53,10 +53,20 @@ variable {n : ℕ}
+ def vertexValue (gs : List DAGGate) (x : Fin n → Bool) (v : ℕ) : Bool :=
+   (runWith DAGGate.eval gs (List.ofFn x)).getD v false
+ 
++/-- Reader of `vertexValue`:
++`vertexValue gs x v = (runWith DAGGate.eval gs (List.ofFn x)).getD v false`.  Glue. -/
++theorem vertexValue_eq (gs : List DAGGate) (x : Fin n → Bool) (v : ℕ) :
++    vertexValue gs x v = (runWith DAGGate.eval gs (List.ofFn x)).getD v false := rfl
++
+ /-- The depth of vertex `v` after running `gs` over `n` inputs. -/
+ def vertexDepth (n : ℕ) (gs : List DAGGate) (v : ℕ) : ℕ :=
+   (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0
+ 
++/-- Reader of `vertexDepth`:
++`vertexDepth n gs v = (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0`.  Glue. -/
++theorem vertexDepth_eq (n : ℕ) (gs : List DAGGate) (v : ℕ) :
++    vertexDepth n gs v = (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0 := rfl
++
+ /-- Appending gates does not change the value of an existing vertex: if `v` is below
+ `n + gs.length` (an input or a gate of `gs`), its value under `gs ++ ext` equals its value
+ under `gs`. -/
+diff --git a/TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean b/TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean
+index 6877a419c..a22414d9d 100644
+--- a/TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean
++++ b/TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean
+@@ -114,14 +114,30 @@ theorem mem_language_iff (w : List Bool) :
+ def IsPolySize : Prop :=
+   ∃ a k : ℕ, ∀ n, (C.circuit n).size ≤ a * (n + 1) ^ k
+ 
++/-- Reader of `IsPolySize`: `C.IsPolySize ↔ ∃ a k, ∀ n, (C.circuit n).size ≤ a * (n + 1) ^ k`.
++Glue. -/
++theorem isPolySize_iff :
++    C.IsPolySize ↔ ∃ a k : ℕ, ∀ n, (C.circuit n).size ≤ a * (n + 1) ^ k :=
++  Iff.rfl
++
+ /-- Every gate of every circuit in the family has at most two inputs. -/
+ def HasFaninTwo : Prop :=
+   ∀ n, (C.circuit n).maxFanin ≤ 2
+ 
++/-- Reader of `HasFaninTwo`: `C.HasFaninTwo ↔ ∀ n, (C.circuit n).maxFanin ≤ 2`.  Glue. -/
++theorem hasFaninTwo_iff : C.HasFaninTwo ↔ ∀ n, (C.circuit n).maxFanin ≤ 2 :=
++  Iff.rfl
++
+ /-- The family has polylogarithmic depth `O(log^d n)` (constant depth when `d = 0`). -/
+ def HasPolylogDepth (d : ℕ) : Prop :=
+   ∃ b : ℕ, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d
+ 
++/-- Reader of `HasPolylogDepth`:
++`C.HasPolylogDepth d ↔ ∃ b, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d`.  Glue. -/
++theorem hasPolylogDepth_iff (d : ℕ) :
++    C.HasPolylogDepth d ↔ ∃ b : ℕ, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d :=
++  Iff.rfl
++
+ end TreeCircuitFamily
+ 
+ end BoolCircuit
+@@ -132,6 +148,13 @@ def Language.InTreeNC (d : ℕ) (L : Language Bool) : Prop :=
+   ∃ C : BoolCircuit.TreeCircuitFamily,
+     C.HasFaninTwo ∧ C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L
+ 
++/-- Reader of `Language.InTreeNC`: `L.InTreeNC d ↔ ∃ C : TreeCircuitFamily, C.HasFaninTwo ∧
++C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L`.  Glue. -/
++theorem Language.inTreeNC_iff (d : ℕ) (L : Language Bool) :
++    L.InTreeNC d ↔ ∃ C : BoolCircuit.TreeCircuitFamily,
++      C.HasFaninTwo ∧ C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L :=
++  Iff.rfl
++
+ /-- `L ∈ AC^d`: as `NC^d`, but gates may have unbounded fan-in.  [AB09, Def 6.25] -/
+ def Language.InTreeAC (d : ℕ) (L : Language Bool) : Prop :=
+   ∃ C : BoolCircuit.TreeCircuitFamily,
