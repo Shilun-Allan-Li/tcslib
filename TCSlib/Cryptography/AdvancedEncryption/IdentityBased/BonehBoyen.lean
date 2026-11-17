@@ -411,6 +411,52 @@ theorem bb1Scheme_msgSpace_iff (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d 
       ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m :=
   exists_congr fun _ => List.ofFn_inj.symm
 
+/-- **`Setup` at the scheme's types**: `Setup` runs the generator and BB1's `Setup`, and returns
+`(⟨d, params⟩, ⟨d, (params, master-key)⟩)` as parameters and master key of `bb1Scheme G ℓ`:
+`Setup κ = (sample r).bind fun r => (BB1.setup _).bind fun k => pure (⟨desc r, k.1⟩, ⟨desc r, k⟩)`,
+the pair typed at `PP κ × MSK κ`. -/
+theorem bb1Scheme_setup_eq (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) :
+    (bb1Scheme G ℓ).setup κ =
+      (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+      (BB1.setup (G.group κ (G.desc κ r))).bind fun k =>
+        .pure (((⟨G.desc κ r, k.1⟩ : (bb1Scheme G ℓ).PP κ),
+          (⟨G.desc κ r, k⟩ : (bb1Scheme G ℓ).MSK κ)) :
+            (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) := rfl
+
+/-- **`KeyGen` at the scheme's types, followed by `f`**: for the master key `⟨d, (pp, mk)⟩` and an
+`ℓ(κ)`-bit identity `ID`, `KeyGen` is BB1's `KeyGen` on `idToZ ID`, its key tagged with `d`:
+`(KeyGen ⟨d, (pp, mk)⟩ ID).bind f = (BB1.keyGen pp mk (idToZ ID)).bind fun k => f ⟨d, k⟩`. -/
+theorem bb1Scheme_keyGen_bind (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (pp : BB1.Params (G.group κ d)) (mk : (G.group κ d).G)
+    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) {β : Type}
+    (f : (bb1Scheme G ℓ).SK κ → ProbComp β) :
+    ((bb1Scheme G ℓ).keyGen κ ⟨d, (pp, mk)⟩ id).bind f =
+      (BB1.keyGen pp mk (BB1.idToZ (G.group κ d) id)).bind fun k => f ⟨d, k⟩ := by
+  simp only [bb1Scheme_keyGen, OracleComp.bind_assoc, OracleComp.pure_bind]
+
+/-- **`Encrypt` at the scheme's types, followed by `f`**: for the parameters `⟨d, pp⟩`, an
+`ℓ(κ)`-bit identity `ID` and a `msgLen(κ)`-bit message `m`, `Encrypt` is BB1's `Encrypt` on
+`idToZ ID` and `decodeT m` (the message read at the width of `G_T`), its ciphertext tagged
+with `d`: `(Encrypt ⟨d, pp⟩ ID m).bind f = (BB1.encrypt pp (idToZ ID) (decodeT ⟦m⟧)).bind fun c =>
+f ⟨d, c⟩`. -/
+theorem bb1Scheme_enc_bind (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (pp : BB1.Params (G.group κ d)) (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
+    (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) {β : Type}
+    (f : (bb1Scheme G ℓ).CT κ → ProbComp β) :
+    ((bb1Scheme G ℓ).enc κ ⟨d, pp⟩ id m).bind f =
+      (BB1.encrypt pp (BB1.idToZ (G.group κ d) id)
+        (BB1.decodeT (G.group κ d) (padFin _ (List.ofFn m)))).bind fun c => f ⟨d, c⟩ := by
+  rw [padFin_ofFn]
+  simp only [bb1Scheme_enc, OracleComp.bind_assoc, OracleComp.pure_bind]
+
+/-- **The ciphertext encoding as a word**: `⟦encCT ⟨d, c⟩⟧` is the padded word `A ‖ B ‖ C_1`
+(`ctLen(κ)` bits). -/
+theorem ofFn_bb1Scheme_encCT (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (c : BB1.Ciphertext (G.group κ d)) :
+    List.ofFn ((bb1Scheme G ℓ).encCT κ ⟨d, c⟩) =
+      List.ofFn (padFin ((bb1Scheme G ℓ).ctLen.eval κ) (List.ofFn ((G.group κ d).encT c.a) ++
+        List.ofFn ((G.group κ d).encG c.b) ++ List.ofFn ((G.group κ d).encG c.c))) := rfl
+
 /-- **BB1 is perfectly correct** [BB04, §4.1, "Indeed, for a valid ciphertext …"]: every
 honest run with a message of the message space decrypts to that message.
 
