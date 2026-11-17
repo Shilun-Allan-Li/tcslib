@@ -534,7 +534,14 @@ private theorem FiveCycleRecognizes.of_iff {B : BranchingProgram 5 n}
 recognizes `A₁ ∩ A₂` with output `σ`.  On `A₁ ∩ A₂` the yield is `τ₂⁻¹ τ₁⁻¹ τ₂ τ₁ =
 θ (sigma2⁻¹ sigma1⁻¹ sigma2 sigma1) θ⁻¹ = σ` (`isFiveCycle_commutator`, `conjugator_conj`); off it
 two of the four blocks are the identity and the other two cancel.  A named step of C13's
-sketch. -/
+sketch.
+
+**Proof sketch.** Write `θ` for the conjugator and `τᵢ = θ * sigmaᵢ * θ⁻¹`, five-cycles by
+`Equiv.Perm.cycleType_conj`, as are their inverses.  By `yield_append` the yield is the product of
+the four blocks' yields, and each block's yield is `τ` or `1` according to its recognized set.
+Split on `A₁ x` and `A₂ x`: if both hold the product `τ₂⁻¹ τ₁⁻¹ τ₂ τ₁` equals
+`θ (sigma2⁻¹ sigma1⁻¹ sigma2 sigma1) θ⁻¹`, which is `σ` by `conjugator_conj` (group identities);
+otherwise the surviving blocks are `τ⁻¹` and `τ` for the same `τ`, or none, and cancel. -/
 private theorem commutatorProgram_recognizes {P₁ P₂ : Perm (Fin 5) → BranchingProgram 5 n}
     {A₁ A₂ : (Fin n → Bool) → Prop}
     (h₁ : ∀ ρ, IsFiveCycle ρ → FiveCycleRecognizes (P₁ ρ) A₁ ρ)
@@ -593,7 +600,11 @@ private theorem length_commutatorProgram_le {P₁ P₂ : Perm (Fin 5) → Branch
 
 /-- Every Barrington program is nonempty: `0 < (barrington c σ).length`.  The proof of C14's
 `barrington_length_pos`, placed before C13, which needs it for Lemma 2 in the `∨` case.
-Induction on `c` (`TreeCircuit.ind`) by the readers of `barrington`. -/
+
+**Proof sketch.** Induction on `c` (`TreeCircuit.ind`) generalizing `σ`, by the readers of
+`barrington`: literals and constants have one instruction; a fan-in-1 node is its child's
+program; the `∧` and `∨` programs contain the first child's program as a block
+(`commutatorProgram_length_pos`; `length_complementLast` for the `∨` case's complements). -/
 private theorem barrington_length_pos_aux [NeZero n] (c : TreeCircuit n) (σ : Perm (Fin 5)) :
     0 < (barrington c σ).length := by
   refine TreeCircuit.ind (motive := fun c => ∀ σ, 0 < (barrington c σ).length) ?_ ?_ c σ
@@ -819,8 +830,8 @@ Lemma 2 (`yield_complementLast` needs a last instruction).
 programs contain a child's program (`commutatorProgram_eq`, `length_append`,
 `length_complementLast`). -/
 theorem barrington_length_pos [NeZero n] (c : TreeCircuit n) (σ : Perm (Fin 5)) :
-    0 < (barrington c σ).length :=
-  barrington_length_pos_aux c σ
+    0 < (barrington c σ).length := by
+  exact barrington_length_pos_aux c σ
 
 /-- **C15.** Every Barrington program is a permutation program: `(barrington c σ).IsPermutation`.
 Glue; [Bar89, Thm 1, p003-b002]: "a 5-PBP".
