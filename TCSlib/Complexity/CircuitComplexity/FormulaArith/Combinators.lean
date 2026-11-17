@@ -307,7 +307,21 @@ hypothesis is `cs.any (! ·.eval x) = !(cs.all (·.eval x))`, that is `!` of `ev
 `b = false` is symmetric. -/
 theorem TreeCircuit.neg_eval (c : TreeCircuit n) (x : Fin n → Bool) :
     c.neg.eval x = !c.eval x := by
-  sorry
+  induction c using TreeCircuit.ind with
+  | hlit l =>
+    obtain ⟨i, s⟩ := l
+    rw [TreeCircuit.neg_lit, TreeCircuit.eval_lit, TreeCircuit.eval_lit, Lit.eval_eq, Lit.eval_eq]
+    cases s <;> simp only [Bool.not_false, Bool.not_true, Bool.not_not, Bool.false_eq_true,
+      ↓reduceIte]
+  | hnode b cs ih =>
+    rw [TreeCircuit.neg_node]
+    cases b
+    · rw [Bool.not_false, TreeCircuit.eval_node_true, TreeCircuit.eval_node_false, List.all_map,
+        all_congr_mem (p := (fun c : TreeCircuit n => c.eval x) ∘ TreeCircuit.neg)
+          (q := fun c => !c.eval x) fun c hc => ih c hc, List.not_any_eq_all_not]
+    · rw [Bool.not_true, TreeCircuit.eval_node_false, TreeCircuit.eval_node_true, List.any_map,
+        any_congr_mem (p := (fun c : TreeCircuit n => c.eval x) ∘ TreeCircuit.neg)
+          (q := fun c => !c.eval x) fun c hc => ih c hc, List.not_all_eq_any_not]
 
 /-- **F1, depth.** De Morgan negation preserves the depth: `c.neg.depth = c.depth`.  Glue.
 
@@ -316,7 +330,18 @@ on both sides; the reader `depth_lit` is missing, see the census).  A gate: `neg
 `depth_node` reduce the claim to `maxDepth (cs.map neg) = maxDepth cs`, an induction on the
 list with `maxDepth_nil`/`maxDepth_cons` and the induction hypothesis on each child. -/
 theorem TreeCircuit.depth_neg (c : TreeCircuit n) : c.neg.depth = c.depth := by
-  sorry
+  induction c using TreeCircuit.ind with
+  | hlit l => rw [TreeCircuit.neg_lit, TreeCircuit.depth_lit, TreeCircuit.depth_lit]
+  | hnode b cs ih =>
+    rw [TreeCircuit.neg_node, TreeCircuit.depth_node, TreeCircuit.depth_node]
+    -- the list maximum is unchanged, child by child
+    induction cs with
+    | nil => rw [List.map_nil]
+    | cons c cs ihl =>
+      rw [List.map_cons, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_cons,
+        ih c (List.mem_cons_self ..)]
+      have := ihl fun d hd => ih d (List.mem_cons_of_mem _ hd)
+      omega
 
 /-- **F1, fan-in.** De Morgan negation preserves the fan-in: `c.neg.maxFanin = c.maxFanin`.
 Glue.
@@ -325,7 +350,19 @@ Glue.
 (`List.length_map`), and `maxFanin_node` with `maxFaninL_nil`/`maxFaninL_cons` and the
 induction hypothesis gives `maxFaninL (cs.map neg) = maxFaninL cs`. -/
 theorem TreeCircuit.maxFanin_neg (c : TreeCircuit n) : c.neg.maxFanin = c.maxFanin := by
-  sorry
+  induction c using TreeCircuit.ind with
+  | hlit l => rw [TreeCircuit.neg_lit, TreeCircuit.maxFanin_lit, TreeCircuit.maxFanin_lit]
+  | hnode b cs ih =>
+    rw [TreeCircuit.neg_node, TreeCircuit.maxFanin_node, TreeCircuit.maxFanin_node, List.length_map]
+    -- the children's maximum fan-in is unchanged, child by child
+    induction cs with
+    | nil => rw [List.map_nil]
+    | cons c cs ihl =>
+      rw [List.map_cons, TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_cons,
+        ih c (List.mem_cons_self ..)]
+      have := ihl fun d hd => ih d (List.mem_cons_of_mem _ hd)
+      simp only [List.length_cons] at this ⊢
+      omega
 
 mutual
 
@@ -377,7 +414,20 @@ under `fun i => (f i).eval x`.  A gate: `subst_node`, then `eval_node_true`/`eva
 on both sides, `List.all_map`/`List.any_map` and the induction hypothesis on each child. -/
 theorem TreeCircuit.subst_eval {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m)
     (x : Fin m → Bool) : (c.subst f).eval x = c.eval fun i => (f i).eval x := by
-  sorry
+  induction c using TreeCircuit.ind with
+  | hlit l =>
+    obtain ⟨i, s⟩ := l
+    rw [TreeCircuit.subst_lit, TreeCircuit.eval_lit, Lit.eval_eq]
+    cases s
+    · exact TreeCircuit.neg_eval (f i) x
+    · rfl
+  | hnode b cs ih =>
+    rw [TreeCircuit.subst_node]
+    cases b
+    · rw [TreeCircuit.eval_node_false, TreeCircuit.eval_node_false, List.any_map]
+      exact any_congr_mem fun c hc => ih c hc
+    · rw [TreeCircuit.eval_node_true, TreeCircuit.eval_node_true, List.all_map]
+      exact all_congr_mem fun c hc => ih c hc
 
 /-- **F2, depth.** Substitution adds at most the depth of the deepest substituted formula:
 `(c.subst f).depth ≤ c.depth + Finset.univ.sup fun i => (f i).depth`.  Glue (r3 §H5.7, F2).
@@ -394,7 +444,26 @@ hypothesis) `≤ maxDepth cs + D` (`depth_le_maxDepth`), so the list maximum is 
 (`maxDepth_nil`/`maxDepth_cons`), and `depth_node` on `c` closes it. -/
 theorem TreeCircuit.depth_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m) :
     (c.subst f).depth ≤ c.depth + Finset.univ.sup fun i => (f i).depth := by
-  sorry
+  induction c using TreeCircuit.ind with
+  | hlit l =>
+    have hD : (f l.idx).depth ≤ Finset.univ.sup fun i => (f i).depth :=
+      Finset.le_sup (f := fun i => (f i).depth) (Finset.mem_univ _)
+    rw [TreeCircuit.subst_lit, TreeCircuit.depth_lit, Nat.zero_add]
+    split
+    · exact hD
+    · rw [TreeCircuit.depth_neg]; exact hD
+  | hnode b cs ih =>
+    rw [TreeCircuit.subst_node, TreeCircuit.depth_node, TreeCircuit.depth_node]
+    -- each substituted child is at most `D` deeper than the deepest old child
+    suffices h : TreeCircuit.maxDepth (cs.map fun c => c.subst f) ≤
+        TreeCircuit.maxDepth cs + Finset.univ.sup fun i => (f i).depth by omega
+    induction cs with
+    | nil => rw [List.map_nil, TreeCircuit.maxDepth_nil]; exact Nat.zero_le _
+    | cons c cs ihl =>
+      rw [List.map_cons, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_cons]
+      have h1 := ih c (List.mem_cons_self ..)
+      have h2 := ihl fun d hd => ih d (List.mem_cons_of_mem _ hd)
+      omega
 
 /-- **F2, fan-in.** Substitution has the fan-in of the formula or of a substituted formula:
 `(c.subst f).maxFanin ≤ max c.maxFanin (Finset.univ.sup fun i => (f i).maxFanin)`.  Glue
@@ -407,7 +476,27 @@ arity (`subst_node`, `List.length_map`), and `maxFanin_node`, `maxFaninL_cons` a
 induction hypothesis bound the children. -/
 theorem TreeCircuit.maxFanin_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m) :
     (c.subst f).maxFanin ≤ max c.maxFanin (Finset.univ.sup fun i => (f i).maxFanin) := by
-  sorry
+  induction c using TreeCircuit.ind with
+  | hlit l =>
+    have hM : (f l.idx).maxFanin ≤ Finset.univ.sup fun i => (f i).maxFanin :=
+      Finset.le_sup (f := fun i => (f i).maxFanin) (Finset.mem_univ _)
+    rw [TreeCircuit.subst_lit, TreeCircuit.maxFanin_lit]
+    split
+    · exact le_max_of_le_right hM
+    · rw [TreeCircuit.maxFanin_neg]; exact le_max_of_le_right hM
+  | hnode b cs ih =>
+    rw [TreeCircuit.subst_node, TreeCircuit.maxFanin_node, TreeCircuit.maxFanin_node,
+      List.length_map]
+    -- each substituted child has fan-in at most that of an old child or of some `f i`
+    suffices h : TreeCircuit.maxFaninL (cs.map fun c => c.subst f) ≤
+        max (TreeCircuit.maxFaninL cs) (Finset.univ.sup fun i => (f i).maxFanin) by omega
+    induction cs with
+    | nil => rw [List.map_nil, TreeCircuit.maxFaninL_nil]; exact Nat.zero_le _
+    | cons c cs ihl =>
+      rw [List.map_cons, TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_cons]
+      have h1 := ih c (List.mem_cons_self ..)
+      have h2 := ihl fun d hd => ih d (List.mem_cons_of_mem _ hd)
+      omega
 
 /-! ### Constants and the fan-in-2 gadgets (F3) -/
 
@@ -438,7 +527,7 @@ theorem TreeCircuit.const_eval (b : Bool) (x : Fin n → Bool) :
 
 **Proof sketch.** `const_eq`, `depth_node` and `maxDepth_nil`. -/
 theorem TreeCircuit.depth_const (b : Bool) : (TreeCircuit.const b : TreeCircuit n).depth = 1 := by
-  sorry
+  rw [TreeCircuit.const_eq, TreeCircuit.depth_node, TreeCircuit.maxDepth_nil]
 
 /-- **F3, constant: fan-in.** The constant formula has fan-in zero:
 `(TreeCircuit.const b : TreeCircuit n).maxFanin = 0`.  Glue.
@@ -446,7 +535,8 @@ theorem TreeCircuit.depth_const (b : Bool) : (TreeCircuit.const b : TreeCircuit 
 **Proof sketch.** `const_eq`, `maxFanin_node`, `List.length_nil` and `maxFaninL_nil`. -/
 theorem TreeCircuit.maxFanin_const (b : Bool) :
     (TreeCircuit.const b : TreeCircuit n).maxFanin = 0 := by
-  sorry
+  rw [TreeCircuit.const_eq, TreeCircuit.maxFanin_node, List.length_nil, TreeCircuit.maxFaninL_nil,
+    Nat.max_self]
 
 /-- The binary conjunction `TreeCircuit.and2 a b = node true [a, b]`.  Glue. -/
 def TreeCircuit.and2 (a b : TreeCircuit n) : TreeCircuit n :=
@@ -506,7 +596,8 @@ theorem TreeCircuit.maj3_eq (a b c : TreeCircuit n) :
 **Proof sketch.** `and2_eq`, `eval_node_true`, and `List.all_cons`/`List.all_nil`. -/
 theorem TreeCircuit.and2_eval (a b : TreeCircuit n) (x : Fin n → Bool) :
     (TreeCircuit.and2 a b).eval x = (a.eval x && b.eval x) := by
-  sorry
+  rw [TreeCircuit.and2_eq, TreeCircuit.eval_node_true, List.all_cons, List.all_cons, List.all_nil,
+    Bool.and_true]
 
 /-- **F3, `and2`: depth `+1`.** `(TreeCircuit.and2 a b).depth ≤ max a.depth b.depth + 1`.
 Glue.
@@ -515,7 +606,9 @@ Glue.
 `omega` (it is an equality). -/
 theorem TreeCircuit.depth_and2_le (a b : TreeCircuit n) :
     (TreeCircuit.and2 a b).depth ≤ max a.depth b.depth + 1 := by
-  sorry
+  rw [TreeCircuit.and2_eq, TreeCircuit.depth_node, TreeCircuit.maxDepth_cons,
+    TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_nil]
+  omega
 
 /-- **F3, `and2`: fan-in two.**
 `(TreeCircuit.and2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin)`.  Glue.
@@ -524,14 +617,17 @@ theorem TreeCircuit.depth_and2_le (a b : TreeCircuit n) :
 `maxFaninL_nil`; then `omega`. -/
 theorem TreeCircuit.maxFanin_and2_le (a b : TreeCircuit n) :
     (TreeCircuit.and2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin) := by
-  sorry
+  rw [TreeCircuit.and2_eq, TreeCircuit.maxFanin_node, TreeCircuit.maxFaninL_cons,
+    TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_nil, List.length_cons, List.length_singleton]
+  omega
 
 /-- **F3, `or2`: value.** `(TreeCircuit.or2 a b).eval x = (a.eval x || b.eval x)`.  Glue.
 
 **Proof sketch.** `or2_eq`, `eval_node_false`, and `List.any_cons`/`List.any_nil`. -/
 theorem TreeCircuit.or2_eval (a b : TreeCircuit n) (x : Fin n → Bool) :
     (TreeCircuit.or2 a b).eval x = (a.eval x || b.eval x) := by
-  sorry
+  rw [TreeCircuit.or2_eq, TreeCircuit.eval_node_false, List.any_cons, List.any_cons, List.any_nil,
+    Bool.or_false]
 
 /-- **F3, `or2`: depth `+1`.** `(TreeCircuit.or2 a b).depth ≤ max a.depth b.depth + 1`.
 Glue.
@@ -539,7 +635,9 @@ Glue.
 **Proof sketch.** As `depth_and2_le`, through `or2_eq`. -/
 theorem TreeCircuit.depth_or2_le (a b : TreeCircuit n) :
     (TreeCircuit.or2 a b).depth ≤ max a.depth b.depth + 1 := by
-  sorry
+  rw [TreeCircuit.or2_eq, TreeCircuit.depth_node, TreeCircuit.maxDepth_cons,
+    TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_nil]
+  omega
 
 /-- **F3, `or2`: fan-in two.**
 `(TreeCircuit.or2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin)`.  Glue.
@@ -547,7 +645,9 @@ theorem TreeCircuit.depth_or2_le (a b : TreeCircuit n) :
 **Proof sketch.** As `maxFanin_and2_le`, through `or2_eq`. -/
 theorem TreeCircuit.maxFanin_or2_le (a b : TreeCircuit n) :
     (TreeCircuit.or2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin) := by
-  sorry
+  rw [TreeCircuit.or2_eq, TreeCircuit.maxFanin_node, TreeCircuit.maxFaninL_cons,
+    TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_nil, List.length_cons, List.length_singleton]
+  omega
 
 /-- **F3, `xor2`: value.** `(TreeCircuit.xor2 a b).eval x = (a.eval x ^^ b.eval x)`.  Glue.
 
@@ -555,7 +655,9 @@ theorem TreeCircuit.maxFanin_or2_le (a b : TreeCircuit n) :
 two Booleans. -/
 theorem TreeCircuit.xor2_eval (a b : TreeCircuit n) (x : Fin n → Bool) :
     (TreeCircuit.xor2 a b).eval x = (a.eval x ^^ b.eval x) := by
-  sorry
+  rw [TreeCircuit.xor2_eq, TreeCircuit.or2_eval, TreeCircuit.and2_eval, TreeCircuit.and2_eval,
+    TreeCircuit.neg_eval, TreeCircuit.neg_eval]
+  cases a.eval x <;> cases b.eval x <;> rfl
 
 /-- **F3, `xor2`: depth `+2`.** `(TreeCircuit.xor2 a b).depth ≤ max a.depth b.depth + 2`.
 Glue; the constant `2` is settled by the construction (one `∧` level, one `∨` level, and the
@@ -565,7 +667,12 @@ depth-preserving `neg`).
 `a.neg`, `b.neg`; then `omega`. -/
 theorem TreeCircuit.depth_xor2_le (a b : TreeCircuit n) :
     (TreeCircuit.xor2 a b).depth ≤ max a.depth b.depth + 2 := by
-  sorry
+  have h1 := TreeCircuit.depth_or2_le (TreeCircuit.and2 a b.neg) (TreeCircuit.and2 a.neg b)
+  have h2 := TreeCircuit.depth_and2_le a b.neg
+  have h3 := TreeCircuit.depth_and2_le a.neg b
+  rw [TreeCircuit.depth_neg] at h2 h3
+  rw [TreeCircuit.xor2_eq]
+  omega
 
 /-- **F3, `xor2`: fan-in two.**
 `(TreeCircuit.xor2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin)`.  Glue.
@@ -574,7 +681,12 @@ theorem TreeCircuit.depth_xor2_le (a b : TreeCircuit n) :
 `omega`. -/
 theorem TreeCircuit.maxFanin_xor2_le (a b : TreeCircuit n) :
     (TreeCircuit.xor2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin) := by
-  sorry
+  have h1 := TreeCircuit.maxFanin_or2_le (TreeCircuit.and2 a b.neg) (TreeCircuit.and2 a.neg b)
+  have h2 := TreeCircuit.maxFanin_and2_le a b.neg
+  have h3 := TreeCircuit.maxFanin_and2_le a.neg b
+  rw [TreeCircuit.maxFanin_neg] at h2 h3
+  rw [TreeCircuit.xor2_eq]
+  omega
 
 /-- **F3, `xor3`: value** (the full adder's sum bit).
 `(TreeCircuit.xor3 a b c).eval x = (a.eval x ^^ b.eval x ^^ c.eval x)`.  Glue (r3 §H5.7, F3).
@@ -582,7 +694,7 @@ theorem TreeCircuit.maxFanin_xor2_le (a b : TreeCircuit n) :
 **Proof sketch.** `xor3_eq` and `xor2_eval` twice. -/
 theorem TreeCircuit.xor3_eval (a b c : TreeCircuit n) (x : Fin n → Bool) :
     (TreeCircuit.xor3 a b c).eval x = (a.eval x ^^ b.eval x ^^ c.eval x) := by
-  sorry
+  rw [TreeCircuit.xor3_eq, TreeCircuit.xor2_eval, TreeCircuit.xor2_eval]
 
 /-- **F3, `xor3`: depth `+4`.**
 `(TreeCircuit.xor3 a b c).depth ≤ max a.depth (max b.depth c.depth) + 4`.  Glue; r3's `+4`
@@ -591,7 +703,10 @@ theorem TreeCircuit.xor3_eval (a b c : TreeCircuit n) (x : Fin n → Bool) :
 **Proof sketch.** `xor3_eq`, `depth_xor2_le` twice; then `omega`. -/
 theorem TreeCircuit.depth_xor3_le (a b c : TreeCircuit n) :
     (TreeCircuit.xor3 a b c).depth ≤ max a.depth (max b.depth c.depth) + 4 := by
-  sorry
+  have h1 := TreeCircuit.depth_xor2_le (TreeCircuit.xor2 a b) c
+  have h2 := TreeCircuit.depth_xor2_le a b
+  rw [TreeCircuit.xor3_eq]
+  omega
 
 /-- **F3, `xor3`: fan-in two.**
 `(TreeCircuit.xor3 a b c).maxFanin ≤ max 2 (max a.maxFanin (max b.maxFanin c.maxFanin))`.
@@ -600,7 +715,10 @@ Glue.
 **Proof sketch.** `xor3_eq` and `maxFanin_xor2_le` twice; then `omega`. -/
 theorem TreeCircuit.maxFanin_xor3_le (a b c : TreeCircuit n) :
     (TreeCircuit.xor3 a b c).maxFanin ≤ max 2 (max a.maxFanin (max b.maxFanin c.maxFanin)) := by
-  sorry
+  have h1 := TreeCircuit.maxFanin_xor2_le (TreeCircuit.xor2 a b) c
+  have h2 := TreeCircuit.maxFanin_xor2_le a b
+  rw [TreeCircuit.xor3_eq]
+  omega
 
 /-- **F3, `maj3`: value** (the full adder's carry bit, in the form of `carryBit`'s step).
 `(TreeCircuit.maj3 a b c).eval x = (a.eval x && b.eval x || c.eval x && (a.eval x ^^ b.eval x))`.
@@ -612,7 +730,9 @@ split on the three Booleans. -/
 theorem TreeCircuit.maj3_eval (a b c : TreeCircuit n) (x : Fin n → Bool) :
     (TreeCircuit.maj3 a b c).eval x =
       (a.eval x && b.eval x || c.eval x && (a.eval x ^^ b.eval x)) := by
-  sorry
+  rw [TreeCircuit.maj3_eq, TreeCircuit.or2_eval, TreeCircuit.and2_eval, TreeCircuit.and2_eval,
+    TreeCircuit.or2_eval]
+  cases a.eval x <;> cases b.eval x <;> cases c.eval x <;> rfl
 
 /-- **F3, `maj3`: depth `+3`.**
 `(TreeCircuit.maj3 a b c).depth ≤ max a.depth (max b.depth c.depth) + 3`.  Glue; r3's `+3`
@@ -621,7 +741,13 @@ theorem TreeCircuit.maj3_eval (a b c : TreeCircuit n) (x : Fin n → Bool) :
 **Proof sketch.** `maj3_eq`, `depth_or2_le` twice and `depth_and2_le` twice; then `omega`. -/
 theorem TreeCircuit.depth_maj3_le (a b c : TreeCircuit n) :
     (TreeCircuit.maj3 a b c).depth ≤ max a.depth (max b.depth c.depth) + 3 := by
-  sorry
+  have h1 := TreeCircuit.depth_or2_le (TreeCircuit.and2 a b)
+    (TreeCircuit.and2 c (TreeCircuit.or2 a b))
+  have h2 := TreeCircuit.depth_and2_le a b
+  have h3 := TreeCircuit.depth_and2_le c (TreeCircuit.or2 a b)
+  have h4 := TreeCircuit.depth_or2_le a b
+  rw [TreeCircuit.maj3_eq]
+  omega
 
 /-- **F3, `maj3`: fan-in two.**
 `(TreeCircuit.maj3 a b c).maxFanin ≤ max 2 (max a.maxFanin (max b.maxFanin c.maxFanin))`.
@@ -631,6 +757,12 @@ Glue.
 `omega`. -/
 theorem TreeCircuit.maxFanin_maj3_le (a b c : TreeCircuit n) :
     (TreeCircuit.maj3 a b c).maxFanin ≤ max 2 (max a.maxFanin (max b.maxFanin c.maxFanin)) := by
-  sorry
+  have h1 := TreeCircuit.maxFanin_or2_le (TreeCircuit.and2 a b)
+    (TreeCircuit.and2 c (TreeCircuit.or2 a b))
+  have h2 := TreeCircuit.maxFanin_and2_le a b
+  have h3 := TreeCircuit.maxFanin_and2_le c (TreeCircuit.or2 a b)
+  have h4 := TreeCircuit.maxFanin_or2_le a b
+  rw [TreeCircuit.maj3_eq]
+  omega
 
 end BoolCircuit
