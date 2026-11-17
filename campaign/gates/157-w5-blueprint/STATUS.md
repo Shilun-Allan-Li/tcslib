@@ -1,1 +1,1 @@
-**Gate 157 round 1 HOLD** (2026-11-17; G157-01 major repaired, G157-02 and G157-03 minors resolved; `resolutions.md`). Round 2 staged (`pack-r2.md`).
+**Gate 157 closed.** #361 (W5 blueprint) merged (`7149da27`, 2026-11-17) at the audited head `84e43bd7162c06cefd6581fb58a68ff71d96a37e`; round 1 HOLD (1 major, 2 minors, resolved), round 2 CLEAR (0/0/1, PR description corrected). No Lean change, so snapshot `oleans-c179c8` stays current. The 712 stale chapters 1–2 entries go to a later small PR (Seyoon).

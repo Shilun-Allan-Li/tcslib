@@ -22,6 +22,10 @@ Rebuilds and gates happen only between stages. Agreed plan:
 4. **Stage 4, wrap-up.** The blueprint (W5, delegated one module per worker), the final audit
    (W6) and the integration PR (W7).
 
+   **W5 done (2026-11-17):** #361 merged, gate 157 CLEAR in round 2. The chapter scope's
+   896 undocumented declarations were documented by in-session writers, and 71 stale entries were
+   removed. W6 (gate 158) was prepared on 2026-11-17 and is staged after the merge.
+
 ## Stage 1 checklist (approved by Seyoon on 2026-11-16: items 1–10 yes, item 11 dropped)
 
 **New or moved public declarations:**
