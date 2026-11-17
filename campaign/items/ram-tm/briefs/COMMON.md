@@ -57,14 +57,19 @@ later the tier 2 fills). Each brief adds its targets, owned file and route.
 - **Final checks** (record their exit codes):
   - the owned file elaborates with zero errors and no `sorry` warnings for the proved targets;
   - `#print axioms` for each proved target prints at most `propext`, `Classical.choice` and
-    `Quot.sound`, or, for a target that cites a still-admitted declaration, exactly that
-    dependency on `sorryAx` and nothing else. Run it through a scratch file, not in the
-    library;
+    `Quot.sound`, plus `sorryAx` only if the target reaches a still-admitted declaration. Run
+    it through a scratch file, not in the library;
+  - for every target whose axioms include `sorryAx`, a scratch **dependency walk** that lists
+    each reachable constant whose value uses `sorryAx`, as the chapters 3–4 probe
+    `CloseHeadlines` does (gate 160, G160-01). The list must contain only the admitted
+    declarations your brief names;
   - every module that imports the owned file elaborates with zero errors.
 
 ## REPORT.md checklist
 
 - [ ] The base, and each target: proved, or the frontier and the reason.
+- [ ] For each target that reaches `sorryAx`, the dependency walk's list of admitted
+      declarations.
 - [ ] Every new private declaration and its role. Every other-file definition reached, and the
       published equation used to read it. The existing facts you searched for before each
       helper.

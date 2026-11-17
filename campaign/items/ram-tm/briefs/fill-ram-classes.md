@@ -11,13 +11,20 @@ theorems. Their statements were audited on 2026-10-14 and rechecked against the 
 2026-11-17; they are frozen. **This fill proves all nine.** It is bound arithmetic and
 unfolding of class definitions through their published readers.
 
-They cite three declarations that are still admitted at the base:
-- `WordRAM.exists_simulation` and `WordRAM.exists_ndSimulation` (tier 2, `Simulation.lean`);
-- `WordRAM.wordSizeComputable_logSpace` and `wordSizeComputable_of_spaceConstructible` (tier 1,
-  `WordSize.lean`, a parallel fill).
+**Admitted dependencies** (corrected after gate 160, G160-01). The prescribed routes cite six
+declarations that are, or were, admitted:
 
-Use them as they are stated. Your proofs must contain no `sorry`. Their axiom prints show
-`sorryAx` only through these dependencies (`COMMON.md`, final checks).
+| Declaration | Home | Status |
+|---|---|---|
+| `WordRAM.exists_simulation`, `WordRAM.exists_ndSimulation` | `RAMSimulation/Simulation` | tier 2; **admitted** at your base |
+| `WordRAM.wordSizeComputable_logSpace`, `wordSizeComputable_of_spaceConstructible` | `RAMSimulation/WordSize` | tier 1; admitted at your base unless the dispatch prompt says tier 1 has landed |
+| `WordRAM.HaltsWithin.mono`, `WordRAM.HaltsWithin.touches_le` | `Programs/WordRAM/Extended` | tier 0; this fill is dispatched only after tier 0 has proved them, and the dispatch prompt names the base that includes them |
+
+Use them as they are stated. Your proofs must contain no `sorry`. A `#print axioms` that shows
+`sorryAx` cannot tell which admitted declaration was reached. So for each target, `REPORT.md`
+lists the admitted declarations its proof reaches. Run a scratch dependency walk that collects
+every constant reachable from the target whose value uses `sorryAx`. The chapters 3–4 probe
+`CloseHeadlines` does exactly this; adapt it. The list must be a subset of the table above.
 
 ## Targets (in `WordRAM`, all in the owned file)
 

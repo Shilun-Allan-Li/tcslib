@@ -6,10 +6,15 @@ gated on 2026-10-14. Routes A, B and D (the book's RAM TM, a single-tape target)
 for now; §2–§5 keep the analysis for later. This work goes on a future branch into `main` and
 must not delay the closeout's integration.
 
-## 0. The work: 14 admitted declarations in three tiers
+## 0. The work: 32 admitted declarations in four tiers
+
+**Scope widened (Seyoon, 2026-11-17, after gate 160's G160-01).** The 14 stage 2 admissions
+rest on the 18 of `Programs/WordRAM/Extended.lean`, the extended RAM's run calculus, so the work
+covers those too, as tier 0. They are the "Programs 18" of the chapters 3–4 census.
 
 | Tier | File | Declarations | Nature | Size estimate |
 |---|---|---|---|---|
+| 0 | `Programs/WordRAM/Extended` (18) | `XSteps.trans`, `xstep_map_base`, `XSteps.of_steps`, `XSteps.of_steps_proj`, `XInstr.card_touches_le`, `StepsIn.toSteps`, `Steps.exists_stepsIn`, `StepsIn.mono`, `StepsIn.trans`, `StepsIn.agreeOutside`, `stepsIn_straight`, `XStepsIn.toXSteps`, `XSteps.exists_xStepsIn`, `XStepsIn.of_stepsIn_proj`, `HaltsWithin.mono`, `.touches_le`, `.unique`, `.coin_irrel` | the run calculus: inductions on run length and footprint unions; needs the four vendored readers of #370 | 300–700 lines |
 | 1 | `RAMSimulation/WordSize` (3) | `WordSizeComputable.mono`, `wordSizeComputable_logSpace`, `wordSizeComputable_of_spaceConstructible` | small: monotonicity; machines for `bits(c·logSpace n)` and `bits(c·S n)` from existing length and constructibility rows | 100–300 lines |
 | 2 | `RAMSimulation/Simulation` (2) | `exists_simulation`, `exists_ndSimulation` | **the main work**: a phase host over `P`'s positions with one framed contract per instruction kind (find-by-key in the (address, word) table, two-tape add and subtract mod `2^W`, shift-and-add multiply, sign test, `half`, overwrite or append an entry, input seek, output append, and `coin` as a choice step), a start-up (word size, ruler, length copy, `initMem`), and the simulation induction over `XStepsIn` | several thousand lines; several fills |
 | 3 | `RAMSimulation/Classes` (9) | `mem_DTIME_of_decides`, `mem_P_of_decides`, `mem_P_of_decides_logWord`, `mem_SPACE_of_decides`, `mem_LOGSPACE_of_decides`, `computesInSpace_of_computes`, `mem_SPACE_mul_of_decides`, `mem_NSPACE_of_accepts`, `mem_NL_of_accepts` | corollaries of tier 2 and tier 1 plus bound arithmetic; can be proved first against tier 2's statements | 300–800 lines |
@@ -19,7 +24,8 @@ must not delay the closeout's integration.
    closeout. Check that every name cited in the proof sketches still exists with the cited
    contract; `phaseHostTM`, `exists_inputSeekTM`, `exists_inputLengthTM`, `embedSilentTM` and
    `Contract` do.
-2. **Tiers 1 and 3**, while tier 2 is still admitted. Tier 3 only cites tier 2's statements.
+2. **Tiers 0 and 1** in parallel. Then **tier 3**, after tier 0 has landed and the readers PR
+   (#370) has merged. Tier 3 only cites tier 2's statements.
 3. **Tier 2**, in fills: the start-up, the instruction rows (grouped), the table invariant and
    the simulation induction, then the nondeterministic variant.
 
