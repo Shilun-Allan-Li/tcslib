@@ -1,0 +1,19 @@
+BranchingProgram.Instr.wire_eval: [BoolCircuit.TreeCircuit.const_eval]
+BranchingProgram.Instr.depth_wire_le: [BoolCircuit.TreeCircuit.depth_const]
+BranchingProgram.Instr.maxFanin_wire_le: [BoolCircuit.TreeCircuit.maxFanin_const]
+BranchingProgram.wireComp_eval: [BoolCircuit.TreeCircuit.and2_eval]
+BranchingProgram.depth_wireComp_le: [BoolCircuit.TreeCircuit.depth_and2_le]
+BranchingProgram.compTree_eval: [BranchingProgram.yield_nil,
+ BoolCircuit.TreeCircuit.const_eval,
+ BranchingProgram.yield_append,
+ BoolCircuit.TreeCircuit.and2_eval]
+BranchingProgram.depth_compTree_le: [BoolCircuit.TreeCircuit.depth_const, BoolCircuit.TreeCircuit.depth_and2_le]
+BranchingProgram.maxFanin_compTree_le: [BoolCircuit.TreeCircuit.maxFanin_const,
+ BoolCircuit.TreeCircuit.maxFanin_and2_le]
+BranchingProgram.toFormula_eval: [BranchingProgram.yield_nil,
+ BoolCircuit.TreeCircuit.const_eval,
+ BranchingProgram.yield_append,
+ BoolCircuit.TreeCircuit.and2_eval]
+BranchingProgram.depth_toFormula_le: [BoolCircuit.TreeCircuit.depth_const, BoolCircuit.TreeCircuit.depth_and2_le]
+BranchingProgram.maxFanin_toFormula_le: [BoolCircuit.TreeCircuit.maxFanin_const,
+ BoolCircuit.TreeCircuit.maxFanin_and2_le]

@@ -1,0 +1,41 @@
+TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean:417:2: error: Type mismatch
+  rfl
+has type
+  ?m.55 = ?m.55
+but is expected to have type
+  (csaLayer [head✝¹, head✝]).length = 2 * ([head✝¹, head✝].length / 3) + [head✝¹, head✝].length % 3
+TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean:534:2: error: unsolved goals
+case nil
+n : ℕ
+x : Fin n → Bool
+Us : List (List (TreeCircuit n))
+hsum : ∀ (j : ℕ), (List.map (val x) (Nat.repeat csaLayer j Us)).sum = (List.map (val x) Us).sum
+hnil : val x [] = 0
+hlen : [].length ≤ 2
+⊢ 0 + 0 = 0
+TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean:599:47: error: don't know how to synthesize placeholder for argument `j`
+context:
+n : ℕ
+Us : List (List (TreeCircuit n))
+hj : ∀ (j : ℕ), ∀ c ∈ (Nat.repeat csaLayer j Us).flatten, c.maxFanin ≤ max 2 (TreeCircuit.maxFaninL Us.flatten)
+c : TreeCircuit n
+hc :
+  c ∈
+    ((Nat.repeat csaLayer (csaLevels Us.length) Us).getD 0 [],
+          (Nat.repeat csaLayer (csaLevels Us.length) Us).getD 1 []).1 ++
+      ((Nat.repeat csaLayer (csaLevels Us.length) Us).getD 0 [],
+          (Nat.repeat csaLayer (csaLevels Us.length) Us).getD 1 []).2
+⊢ ℕ
+TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean:584:50: error: unsolved goals
+n : ℕ
+Us : List (List (TreeCircuit n))
+hj : ∀ (j : ℕ), ∀ c ∈ (Nat.repeat csaLayer j Us).flatten, c.maxFanin ≤ max 2 (TreeCircuit.maxFaninL Us.flatten)
+⊢ TreeCircuit.maxFaninL
+      (((Nat.repeat csaLayer (csaLevels Us.length) Us).getD 0 [],
+            (Nat.repeat csaLayer (csaLevels Us.length) Us).getD 1 []).1 ++
+        ((Nat.repeat csaLayer (csaLevels Us.length) Us).getD 0 [],
+            (Nat.repeat csaLayer (csaLevels Us.length) Us).getD 1 []).2) ≤
+    max 2 (TreeCircuit.maxFaninL Us.flatten)
+FAIL(TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave): lean exited with status 1
+FAIL(TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave): error diagnostics reported
+FAIL(TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave): no fresh .olean produced

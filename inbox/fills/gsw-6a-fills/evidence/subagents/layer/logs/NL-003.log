@@ -1,0 +1,102 @@
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:436:66: error: unsolved goals
+n : ℕ
+inst✝ : NeZero n
+C : DAGCircuit n
+s : List DAGGate × List (List ℕ)
+v : ℕ
+hacy : GatesAcyclic (n + n) s.1
+hcol : ∀ col ∈ s.2, ∀ w ∈ col, w < n + n + s.1.length
+hnand : C.IsNANDForm → ∀ g ∈ s.1, g.IsNAND
+hn : 0 < n
+hL : ∀ (u k : ℕ), C.layerAt s.2 u k < n + n + s.1.length
+h1 : ∀ (w : ℕ), { kind := GateKind.not, args := [w] }.IsNAND
+hch :
+  ∀ (pre : List DAGGate) (g : DAGGate),
+    C.IsNANDForm → (∀ g ∈ pre, g.IsNAND) → ∀ {t a b : ℕ}, g ∈ (layerChain (n + n) (s.1 ++ pre) a b t).1 → g.IsNAND
+hd : ¬C.depth < C.depthAt v
+hv : ¬v < n
+g : DAGGate
+hgN : C.IsNANDForm → g.IsNAND
+hb0 :
+  ∀ (k : ℕ),
+    GatesAcyclic (n + n) (s.1 ++ [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a k) g.args }])
+hbN : ∀ (k : ℕ), C.IsNANDForm → { kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a k) g.args }.IsNAND
+h4 : ¬C.depth = C.depthAt v
+h5 : g.args = []
+h2 :
+  GatesAcyclic (n + n)
+    (s.1 ++ [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1)) g.args }] ++
+      [{ kind := GateKind.not, args := [0, n] }])
+⊢ n + n + s.1.length + 1 < n + n + (s.1.length + 2)
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:441:23: error: Application type mismatch: The argument
+  hg'
+has type
+  g' ∈
+    (layerChain (n + n)
+        (s.1 ++ [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1)) g.args }] ++
+              [{ kind := GateKind.not, args := [0, n] }, { kind := GateKind.not, args := [n + n + s.1.length + 1] }],
+            n + n + s.1.length + 2).1
+        (n + n + s.1.length)
+        (s.1 ++ [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1)) g.args }] ++
+              [{ kind := GateKind.not, args := [0, n] }, { kind := GateKind.not, args := [n + n + s.1.length + 1] }],
+            n + n + s.1.length + 2).2
+        (C.depth - C.depthAt v - 1)).1
+but is expected to have type
+  g' ∈ (layerChain (n + n) (s.1 ++ ?m.1035 hC g' hg') (?m.1038 hC g' hg') (?m.1039 hC g' hg') (?m.1037 hC g' hg')).1
+in the application
+  hch (?m.1035 hC g' hg') g' hC ?m.1030 hg'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:468:42: error: unsolved goals
+n : ℕ
+inst✝ : NeZero n
+C : DAGCircuit n
+s : List DAGGate × List (List ℕ)
+v : ℕ
+hacy : GatesAcyclic (n + n) s.1
+hcol : ∀ col ∈ s.2, ∀ w ∈ col, w < n + n + s.1.length
+hnand : C.IsNANDForm → ∀ g ∈ s.1, g.IsNAND
+hn : 0 < n
+hL : ∀ (u k : ℕ), C.layerAt s.2 u k < n + n + s.1.length
+h1 : ∀ (w : ℕ), { kind := GateKind.not, args := [w] }.IsNAND
+hch :
+  ∀ (pre : List DAGGate) (g : DAGGate),
+    C.IsNANDForm → (∀ g ∈ pre, g.IsNAND) → ∀ {t a b : ℕ}, g ∈ (layerChain (n + n) (s.1 ++ pre) a b t).1 → g.IsNAND
+hd : ¬C.depth < C.depthAt v
+hv : ¬v < n
+g : DAGGate
+hgN : C.IsNANDForm → g.IsNAND
+hb0 :
+  ∀ (k : ℕ),
+    GatesAcyclic (n + n) (s.1 ++ [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a k) g.args }])
+hbN : ∀ (k : ℕ), C.IsNANDForm → { kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a k) g.args }.IsNAND
+h4 : ¬C.depth = C.depthAt v
+h5 : ¬g.args = []
+hacy1 :
+  GatesAcyclic (n + n)
+    (s.1 ++ [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1)) g.args }] ++
+      [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt v)) g.args }])
+⊢ n + n + s.1.length + 1 < n + n + (s.1.length + 2)
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:469:23: error: Application type mismatch: The argument
+  hg'
+has type
+  g' ∈
+    (layerChain (n + n)
+        (s.1 ++ [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1)) g.args }] ++
+              [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt v)) g.args }],
+            n + n + s.1.length + 1).1
+        (n + n + s.1.length)
+        (s.1 ++ [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1)) g.args }] ++
+              [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt v)) g.args }],
+            n + n + s.1.length + 1).2
+        (C.depth - C.depthAt v - 1)).1
+but is expected to have type
+  g' ∈ (layerChain (n + n) (s.1 ++ ?m.1201 hC g' hg') (?m.1204 hC g' hg') (?m.1205 hC g' hg') (?m.1203 hC g' hg')).1
+in the application
+  hch (?m.1201 hC g' hg') g' hC ?m.1196 hg'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:591:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:604:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:614:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:622:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:638:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): lean exited with status 1
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): error diagnostics reported
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): no fresh .olean produced

@@ -1,0 +1,658 @@
+# pool log (gsw-6a-fills). nproc=4 MemTotal=16869134336 MemAvailable=16187801600 B; no cgroup limit (v1 limit 9223372036854771712)
+# start size = min(nproc=4, MemAvailable/4GB=4) = 4; chosen 3 to leave CPU for the agents' own tooling; floor MemAvailable>=2.5e9 per slot start
+2026-11-17T11:17:23Z SIZE 3 (initial)
+# note: the cache probe (11:16Z, rc=0, maxrss 1687736 KiB, logs/cache-probe.log) ran under slot0 before this header; its ACQUIRE/RELEASE lines were overwritten when the header was written
+2026-11-17T11:17:33+00:00	ACQUIRE	slot0	size=3	memavail=16178188288	bootstrap:TCSlib/Complexity/CircuitComplexity/Basic
+2026-11-17T11:17:33+00:00	ACQUIRE	slot1	size=3	memavail=16178188288	bootstrap:TCSlib/Complexity/CircuitComplexity/Formulas
+2026-11-17T11:17:33+00:00	ACQUIRE	slot2	size=3	memavail=16176955392	bootstrap:TCSlib/Complexity/Formulas/CNF
+2026-11-17T11:17:34+00:00	RELEASE	slot1	rc=0	maxrss_kb=785412	memavail=15874740224	bootstrap:TCSlib/Complexity/CircuitComplexity/Formulas
+2026-11-17T11:17:35+00:00	ACQUIRE	slot1	size=3	memavail=15796105216	bootstrap:TCSlib/Complexity/TuringMachine/UnaryTape
+2026-11-17T11:17:35+00:00	RELEASE	slot2	rc=0	maxrss_kb=1684760	memavail=15782293504	bootstrap:TCSlib/Complexity/Formulas/CNF
+2026-11-17T11:17:36+00:00	ACQUIRE	slot2	size=3	memavail=15766519808	bootstrap:TCSlib/Complexity/Formulas/CNFEncoding
+2026-11-17T11:17:36+00:00	RELEASE	slot1	rc=0	maxrss_kb=1293920	memavail=15765852160	bootstrap:TCSlib/Complexity/TuringMachine/UnaryTape
+2026-11-17T11:17:38+00:00	ACQUIRE	slot1	size=3	memavail=15705808896	bootstrap:TCSlib/Complexity/NPReductions/SATTo3SAT
+2026-11-17T11:17:38+00:00	RELEASE	slot2	rc=0	maxrss_kb=1756096	memavail=15766069248	bootstrap:TCSlib/Complexity/Formulas/CNFEncoding
+2026-11-17T11:17:39+00:00	ACQUIRE	slot2	size=3	memavail=15765028864	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Bin
+2026-11-17T11:17:42+00:00	RELEASE	slot2	rc=0	maxrss_kb=1693000	memavail=15827922944	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Bin
+2026-11-17T11:17:43+00:00	RELEASE	slot1	rc=0	maxrss_kb=1841996	memavail=15877390336	bootstrap:TCSlib/Complexity/NPReductions/SATTo3SAT
+2026-11-17T11:17:43+00:00	RELEASE	slot0	rc=0	maxrss_kb=1823788	memavail=16112685056	bootstrap:TCSlib/Complexity/CircuitComplexity/Basic
+2026-11-17T11:17:44+00:00	ACQUIRE	slot1	size=3	memavail=16155107328	bootstrap:TCSlib/Complexity/BranchingPrograms/Defs
+2026-11-17T11:17:44+00:00	ACQUIRE	slot0	size=3	memavail=16155107328	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGCircuit
+2026-11-17T11:17:44+00:00	ACQUIRE	slot2	size=3	memavail=16155107328	bootstrap:TCSlib/Complexity/TuringMachine/Configuration
+2026-11-17T11:17:46+00:00	RELEASE	slot1	rc=0	maxrss_kb=1704972	memavail=15625170944	bootstrap:TCSlib/Complexity/BranchingPrograms/Defs
+2026-11-17T11:17:46+00:00	ACQUIRE	slot1	size=3	memavail=15617847296	bootstrap:TCSlib/Complexity/BranchingPrograms/Eval
+2026-11-17T11:17:46+00:00	RELEASE	slot2	rc=0	maxrss_kb=1759812	memavail=15763668992	bootstrap:TCSlib/Complexity/TuringMachine/Configuration
+2026-11-17T11:17:47+00:00	ACQUIRE	slot2	size=3	memavail=15719661568	bootstrap:TCSlib/Complexity/CircuitComplexity/UnaryCode
+2026-11-17T11:17:47+00:00	RELEASE	slot0	rc=0	maxrss_kb=1726132	memavail=15869517824	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGCircuit
+2026-11-17T11:17:47+00:00	ACQUIRE	slot0	size=3	memavail=15833808896	bootstrap:TCSlib/Complexity/CircuitComplexity/PPoly
+2026-11-17T11:17:48+00:00	RELEASE	slot1	rc=0	maxrss_kb=1689460	memavail=15770230784	bootstrap:TCSlib/Complexity/BranchingPrograms/Eval
+2026-11-17T11:17:48+00:00	RELEASE	slot2	rc=0	maxrss_kb=1517320	memavail=15887572992	bootstrap:TCSlib/Complexity/CircuitComplexity/UnaryCode
+2026-11-17T11:17:48+00:00	ACQUIRE	slot1	size=3	memavail=15903973376	bootstrap:TCSlib/Complexity/CircuitComplexity/Universal
+2026-11-17T11:17:48+00:00	ACQUIRE	slot2	size=3	memavail=15903768576	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSat
+2026-11-17T11:17:49+00:00	RELEASE	slot0	rc=0	maxrss_kb=1697656	memavail=15611908096	bootstrap:TCSlib/Complexity/CircuitComplexity/PPoly
+2026-11-17T11:17:49+00:00	ACQUIRE	slot0	size=3	memavail=15620476928	bootstrap:TCSlib/Complexity/BranchingPrograms/Barrington
+2026-11-17T11:17:50+00:00	RELEASE	slot1	rc=0	maxrss_kb=1791964	memavail=15538216960	bootstrap:TCSlib/Complexity/CircuitComplexity/Universal
+2026-11-17T11:17:50+00:00	ACQUIRE	slot1	size=3	memavail=15546744832	bootstrap:TCSlib/Complexity/CircuitComplexity/TreeDAG
+2026-11-17T11:17:51+00:00	RELEASE	slot2	rc=0	maxrss_kb=1820932	memavail=15478079488	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSat
+2026-11-17T11:17:51+00:00	ACQUIRE	slot2	size=3	memavail=15477542912	bootstrap:TCSlib/Complexity/CircuitComplexity/LayeredCircuit
+2026-11-17T11:17:53+00:00	RELEASE	slot0	rc=0	maxrss_kb=1965832	memavail=15466512384	bootstrap:TCSlib/Complexity/BranchingPrograms/Barrington
+2026-11-17T11:17:53+00:00	ACQUIRE	slot0	size=3	memavail=15475167232	bootstrap:TCSlib/Complexity/TuringMachine/Deterministic
+2026-11-17T11:17:56+00:00	RELEASE	slot1	rc=0	maxrss_kb=1875556	memavail=15402389504	bootstrap:TCSlib/Complexity/CircuitComplexity/TreeDAG
+2026-11-17T11:17:56+00:00	ACQUIRE	slot1	size=3	memavail=15428440064	bootstrap:TCSlib/Complexity/CircuitComplexity/Adder
+2026-11-17T11:17:56+00:00	RELEASE	slot0	rc=0	maxrss_kb=1759136	memavail=15608635392	bootstrap:TCSlib/Complexity/TuringMachine/Deterministic
+2026-11-17T11:17:57+00:00	ACQUIRE	slot0	size=3	memavail=15629815808	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGHardFunctions
+2026-11-17T11:17:58+00:00	RELEASE	slot2	rc=0	maxrss_kb=1908832	memavail=15690960896	bootstrap:TCSlib/Complexity/CircuitComplexity/LayeredCircuit
+2026-11-17T11:17:58+00:00	ACQUIRE	slot2	size=3	memavail=15691030528	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGCircuitSat
+2026-11-17T11:18:02+00:00	RELEASE	slot0	rc=0	maxrss_kb=1885096	memavail=15535607808	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGHardFunctions
+2026-11-17T11:18:03+00:00	ACQUIRE	slot0	size=3	memavail=15567769600	bootstrap:TCSlib/Complexity/CircuitComplexity/HardWire
+2026-11-17T11:18:04+00:00	RELEASE	slot2	rc=0	maxrss_kb=1756648	memavail=15572258816	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGCircuitSat
+2026-11-17T11:18:04+00:00	ACQUIRE	slot2	size=3	memavail=15613767680	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGTransform
+2026-11-17T11:18:04+00:00	RELEASE	slot1	rc=0	maxrss_kb=1906060	memavail=15896952832	bootstrap:TCSlib/Complexity/CircuitComplexity/Adder
+2026-11-17T11:18:04+00:00	ACQUIRE	slot1	size=3	memavail=15711719424	bootstrap:TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic
+2026-11-17T11:18:05+00:00	RELEASE	slot0	rc=0	maxrss_kb=1720568	memavail=15774625792	bootstrap:TCSlib/Complexity/CircuitComplexity/HardWire
+2026-11-17T11:18:05+00:00	ACQUIRE	slot0	size=3	memavail=15774892032	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators
+2026-11-17T11:18:06+00:00	RELEASE	slot2	rc=0	maxrss_kb=1808936	memavail=15604428800	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGTransform
+2026-11-17T11:18:07+00:00	ACQUIRE	slot2	size=3	memavail=15625691136	bootstrap:TCSlib/Complexity/CircuitComplexity/StraightLine
+2026-11-17T11:18:10+00:00	RELEASE	slot0	rc=0	maxrss_kb=1876112	memavail=15565205504	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators
+2026-11-17T11:18:10+00:00	ACQUIRE	slot0	size=3	memavail=15549411328	bootstrap:TCSlib/Complexity/CircuitComplexity/LayeredPPoly
+2026-11-17T11:18:10+00:00	RELEASE	slot1	rc=0	maxrss_kb=2878416	memavail=15781187584	bootstrap:TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic
+2026-11-17T11:18:10+00:00	ACQUIRE	slot1	size=3	memavail=15740203008	bootstrap:TCSlib/Complexity/TuringMachine/Finite
+2026-11-17T11:18:11+00:00	RELEASE	slot2	rc=0	maxrss_kb=1840896	memavail=15784546304	bootstrap:TCSlib/Complexity/CircuitComplexity/StraightLine
+2026-11-17T11:18:11+00:00	ACQUIRE	slot2	size=3	memavail=15773892608	bootstrap:TCSlib/Complexity/CircuitComplexity/NANDForm
+2026-11-17T11:18:11+00:00	RELEASE	slot0	rc=0	maxrss_kb=1850340	memavail=15827353600	bootstrap:TCSlib/Complexity/CircuitComplexity/LayeredPPoly
+2026-11-17T11:18:12+00:00	ACQUIRE	slot0	size=3	memavail=15763156992	bootstrap:TCSlib/Complexity/CircuitComplexity/AdderLanguage
+2026-11-17T11:18:12+00:00	RELEASE	slot1	rc=0	maxrss_kb=1752832	memavail=15775559680	bootstrap:TCSlib/Complexity/TuringMachine/Finite
+2026-11-17T11:18:12+00:00	ACQUIRE	slot1	size=3	memavail=15795740672	bootstrap:TCSlib/Complexity/Uncomputability/Computable
+2026-11-17T11:18:13+00:00	RELEASE	slot2	rc=0	maxrss_kb=1778956	memavail=15741726720	bootstrap:TCSlib/Complexity/CircuitComplexity/NANDForm
+2026-11-17T11:18:13+00:00	ACQUIRE	slot2	size=3	memavail=15745638400	bootstrap:TCSlib/Complexity/CircuitComplexity/NANDLayering
+2026-11-17T11:18:14+00:00	RELEASE	slot0	rc=0	maxrss_kb=1810044	memavail=15685959680	bootstrap:TCSlib/Complexity/CircuitComplexity/AdderLanguage
+2026-11-17T11:18:14+00:00	ACQUIRE	slot0	size=3	memavail=15731888128	bootstrap:TCSlib/Complexity/TuringMachine/Simulation
+2026-11-17T11:18:14+00:00	RELEASE	slot1	rc=0	maxrss_kb=1719072	memavail=15774515200	bootstrap:TCSlib/Complexity/Uncomputability/Computable
+2026-11-17T11:18:14+00:00	ACQUIRE	slot1	size=3	memavail=15710470144	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGFanin
+2026-11-17T11:18:15+00:00	RELEASE	slot2	rc=0	maxrss_kb=1794164	memavail=15656534016	bootstrap:TCSlib/Complexity/CircuitComplexity/NANDLayering
+2026-11-17T11:18:15+00:00	ACQUIRE	slot2	size=3	memavail=15659544576	bootstrap:TCSlib/Complexity/TuringMachine/Sweep
+2026-11-17T11:18:18+00:00	RELEASE	slot2	rc=0	maxrss_kb=1806344	memavail=15566057472	bootstrap:TCSlib/Complexity/TuringMachine/Sweep
+2026-11-17T11:18:19+00:00	ACQUIRE	slot2	size=3	memavail=15570874368	bootstrap:TCSlib/Complexity/CircuitComplexity/TreeNCAC
+2026-11-17T11:18:20+00:00	RELEASE	slot0	rc=0	maxrss_kb=1797120	memavail=15612076032	bootstrap:TCSlib/Complexity/TuringMachine/Simulation
+2026-11-17T11:18:20+00:00	ACQUIRE	slot0	size=3	memavail=15632707584	bootstrap:TCSlib/Complexity/CircuitComplexity/SequentialCircuit
+2026-11-17T11:18:20+00:00	RELEASE	slot1	rc=0	maxrss_kb=1876240	memavail=15798878208	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGFanin
+2026-11-17T11:18:21+00:00	ACQUIRE	slot1	size=3	memavail=15732736000	bootstrap:TCSlib/Complexity/CircuitComplexity/LayeredDAG
+2026-11-17T11:18:21+00:00	RELEASE	slot2	rc=0	maxrss_kb=1829144	memavail=15846916096	bootstrap:TCSlib/Complexity/CircuitComplexity/TreeNCAC
+2026-11-17T11:18:21+00:00	ACQUIRE	slot2	size=3	memavail=15866384384	bootstrap:TCSlib/Complexity/CircuitComplexity/Encoding
+2026-11-17T11:18:23+00:00	RELEASE	slot0	rc=0	maxrss_kb=1834680	memavail=15589478400	bootstrap:TCSlib/Complexity/CircuitComplexity/SequentialCircuit
+2026-11-17T11:18:23+00:00	ACQUIRE	slot0	size=3	memavail=15589421056	bootstrap:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail
+2026-11-17T11:18:25+00:00	RELEASE	slot2	rc=0	maxrss_kb=1871716	memavail=15533797376	bootstrap:TCSlib/Complexity/CircuitComplexity/Encoding
+2026-11-17T11:18:25+00:00	ACQUIRE	slot2	size=3	memavail=15525531648	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget
+2026-11-17T11:18:27+00:00	RELEASE	slot0	rc=0	maxrss_kb=1825852	memavail=15558139904	bootstrap:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail
+2026-11-17T11:18:27+00:00	RELEASE	slot1	rc=0	maxrss_kb=1948584	memavail=15743651840	bootstrap:TCSlib/Complexity/CircuitComplexity/LayeredDAG
+2026-11-17T11:18:27+00:00	ACQUIRE	slot0	size=3	memavail=15752142848	bootstrap:TCSlib/Complexity/ClassP/DTIME
+2026-11-17T11:18:27+00:00	ACQUIRE	slot1	size=3	memavail=15751139328	bootstrap:TCSlib/Complexity/CircuitComplexity/NCAC
+2026-11-17T11:18:28+00:00	RELEASE	slot2	rc=0	maxrss_kb=1843676	memavail=15777005568	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget
+2026-11-17T11:18:28+00:00	ACQUIRE	slot2	size=3	memavail=15810744320	bootstrap:TCSlib/Complexity/CircuitComplexity/StraightLineSmall
+2026-11-17T11:18:29+00:00	RELEASE	slot0	rc=0	maxrss_kb=1720876	memavail=15709257728	bootstrap:TCSlib/Complexity/ClassP/DTIME
+2026-11-17T11:18:29+00:00	ACQUIRE	slot0	size=3	memavail=15686909952	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave
+2026-11-17T11:18:30+00:00	RELEASE	slot2	rc=0	maxrss_kb=1817172	memavail=15623507968	bootstrap:TCSlib/Complexity/CircuitComplexity/StraightLineSmall
+2026-11-17T11:18:30+00:00	ACQUIRE	slot2	size=3	memavail=15674544128	bootstrap:TCSlib/Complexity/CircuitComplexity/HardFunctions
+2026-11-17T11:18:31+00:00	RELEASE	slot1	rc=0	maxrss_kb=1828556	memavail=15784222720	bootstrap:TCSlib/Complexity/CircuitComplexity/NCAC
+2026-11-17T11:18:31+00:00	ACQUIRE	slot1	size=3	memavail=15765647360	bootstrap:TCSlib/Complexity/BranchingPrograms/BarringtonConverse
+2026-11-17T11:18:31+00:00	RELEASE	slot0	rc=0	maxrss_kb=1800704	memavail=15728250880	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave
+2026-11-17T11:18:32+00:00	ACQUIRE	slot0	size=3	memavail=15661559808	bootstrap:TCSlib/Complexity/CircuitComplexity/SizeClasses
+2026-11-17T11:18:33+00:00	RELEASE	slot2	rc=0	maxrss_kb=1866828	memavail=15616790528	bootstrap:TCSlib/Complexity/CircuitComplexity/HardFunctions
+2026-11-17T11:18:33+00:00	RELEASE	slot1	rc=0	maxrss_kb=1804576	memavail=15776718848	bootstrap:TCSlib/Complexity/BranchingPrograms/BarringtonConverse
+2026-11-17T11:18:33+00:00	ACQUIRE	slot1	size=3	memavail=15818539008	bootstrap:TCSlib/Complexity/CircuitComplexity/KarpLiptonSearch
+2026-11-17T11:18:33+00:00	ACQUIRE	slot2	size=3	memavail=15818326016	bootstrap:TCSlib/Complexity/ClassP/P
+2026-11-17T11:18:34+00:00	RELEASE	slot0	rc=0	maxrss_kb=1870964	memavail=15730454528	bootstrap:TCSlib/Complexity/CircuitComplexity/SizeClasses
+2026-11-17T11:18:34+00:00	ACQUIRE	slot0	size=3	memavail=15767777280	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction
+2026-11-17T11:18:35+00:00	RELEASE	slot2	rc=0	maxrss_kb=1775644	memavail=15718232064	bootstrap:TCSlib/Complexity/ClassP/P
+2026-11-17T11:18:35+00:00	ACQUIRE	slot2	size=3	memavail=15697088512	bootstrap:TCSlib/Complexity/TimeHierarchy/ClockMachine
+2026-11-17T11:18:35+00:00	RELEASE	slot1	rc=0	maxrss_kb=1847268	memavail=15616180224	bootstrap:TCSlib/Complexity/CircuitComplexity/KarpLiptonSearch
+2026-11-17T11:18:35+00:00	ACQUIRE	slot1	size=3	memavail=15662342144	bootstrap:TCSlib/Complexity/TuringMachine/CounterProg
+2026-11-17T11:18:39+00:00	RELEASE	slot2	rc=0	maxrss_kb=1849360	memavail=15483277312	bootstrap:TCSlib/Complexity/TimeHierarchy/ClockMachine
+2026-11-17T11:18:39+00:00	ACQUIRE	slot2	size=3	memavail=15483482112	bootstrap:TCSlib/Complexity/CircuitComplexity/Hierarchy
+2026-11-17T11:18:40+00:00	RELEASE	slot0	rc=0	maxrss_kb=1850004	memavail=15569620992	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction
+2026-11-17T11:18:40+00:00	ACQUIRE	slot0	size=3	memavail=15613800448	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram
+2026-11-17T11:18:42+00:00	RELEASE	slot2	rc=0	maxrss_kb=1882052	memavail=15607443456	bootstrap:TCSlib/Complexity/CircuitComplexity/Hierarchy
+2026-11-17T11:18:42+00:00	ACQUIRE	slot2	size=3	memavail=15623757824	bootstrap:TCSlib/Complexity/CircuitComplexity/UnaryLanguages
+2026-11-17T11:18:43+00:00	RELEASE	slot1	rc=0	maxrss_kb=1813984	memavail=15710027776	bootstrap:TCSlib/Complexity/TuringMachine/CounterProg
+2026-11-17T11:18:43+00:00	ACQUIRE	slot1	size=3	memavail=15657324544	bootstrap:TCSlib/Complexity/TuringMachine/CounterProgRun
+2026-11-17T11:18:44+00:00	RELEASE	slot0	rc=0	maxrss_kb=1870400	memavail=15771144192	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram
+2026-11-17T11:18:44+00:00	RELEASE	slot2	rc=0	maxrss_kb=1863592	memavail=15891542016	bootstrap:TCSlib/Complexity/CircuitComplexity/UnaryLanguages
+2026-11-17T11:18:44+00:00	ACQUIRE	slot0	size=3	memavail=15913893888	bootstrap:TCSlib/Complexity/BranchingPrograms/NC1
+2026-11-17T11:18:44+00:00	ACQUIRE	slot2	size=3	memavail=15913893888	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachine
+2026-11-17T11:18:46+00:00	RELEASE	slot0	rc=0	maxrss_kb=1940208	memavail=15531225088	bootstrap:TCSlib/Complexity/BranchingPrograms/NC1
+2026-11-17T11:18:46+00:00	ACQUIRE	slot0	size=3	memavail=15556608000	bootstrap:TCSlib/Complexity/TuringMachine/Composition
+2026-11-17T11:18:47+00:00	RELEASE	slot2	rc=0	maxrss_kb=1802656	memavail=15614185472	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachine
+2026-11-17T11:18:47+00:00	ACQUIRE	slot2	size=3	memavail=15614377984	bootstrap:TCSlib/Complexity/CircuitComplexity/FanOut
+2026-11-17T11:18:47+00:00	RELEASE	slot1	rc=0	maxrss_kb=1864280	memavail=15716487168	bootstrap:TCSlib/Complexity/TuringMachine/CounterProgRun
+2026-11-17T11:18:48+00:00	ACQUIRE	slot1	size=3	memavail=15708385280	bootstrap:TCSlib/Complexity/TuringMachine/CounterProgInput
+2026-11-17T11:18:49+00:00	RELEASE	slot0	rc=0	maxrss_kb=1773864	memavail=15600066560	bootstrap:TCSlib/Complexity/TuringMachine/Composition
+2026-11-17T11:18:50+00:00	ACQUIRE	slot0	size=3	memavail=15657320448	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit
+2026-11-17T11:18:50+00:00	RELEASE	slot1	rc=0	maxrss_kb=1796016	memavail=15700262912	bootstrap:TCSlib/Complexity/TuringMachine/CounterProgInput
+2026-11-17T11:18:50+00:00	ACQUIRE	slot1	size=3	memavail=15665393664	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule
+2026-11-17T11:18:51+00:00	RELEASE	slot2	rc=0	maxrss_kb=1843796	memavail=15753564160	bootstrap:TCSlib/Complexity/CircuitComplexity/FanOut
+2026-11-17T11:18:51+00:00	ACQUIRE	slot2	size=3	memavail=15652909056	bootstrap:TCSlib/Complexity/CircuitComplexity/UHalt
+2026-11-17T11:18:54+00:00	RELEASE	slot2	rc=0	maxrss_kb=1863332	memavail=15549812736	bootstrap:TCSlib/Complexity/CircuitComplexity/UHalt
+2026-11-17T11:18:54+00:00	ACQUIRE	slot2	size=3	memavail=15501545472	bootstrap:TCSlib/Complexity/ClassNP/PolyTime
+2026-11-17T11:18:55+00:00	RELEASE	slot0	rc=0	maxrss_kb=1896776	memavail=15570411520	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit
+2026-11-17T11:18:55+00:00	ACQUIRE	slot0	size=3	memavail=15570411520	bootstrap:TCSlib/Complexity/TimeHierarchy/ClockLoop
+2026-11-17T11:18:56+00:00	RELEASE	slot2	rc=0	maxrss_kb=1724004	memavail=15461740544	bootstrap:TCSlib/Complexity/ClassNP/PolyTime
+2026-11-17T11:18:56+00:00	ACQUIRE	slot2	size=3	memavail=15509712896	bootstrap:TCSlib/Complexity/TuringMachine/StateRenaming
+2026-11-17T11:18:58+00:00	RELEASE	slot0	rc=0	maxrss_kb=1817136	memavail=15603699712	bootstrap:TCSlib/Complexity/TimeHierarchy/ClockLoop
+2026-11-17T11:18:58+00:00	RELEASE	slot2	rc=0	maxrss_kb=1740216	memavail=15688871936	bootstrap:TCSlib/Complexity/TuringMachine/StateRenaming
+2026-11-17T11:18:58+00:00	ACQUIRE	slot0	size=3	memavail=15718211584	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/SingleTape
+2026-11-17T11:18:59+00:00	ACQUIRE	slot2	size=3	memavail=15631560704	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaFanOut
+2026-11-17T11:18:59+00:00	RELEASE	slot1	rc=0	maxrss_kb=1823600	memavail=15708692480	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule
+2026-11-17T11:19:00+00:00	ACQUIRE	slot1	size=3	memavail=15724572672	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate
+2026-11-17T11:19:03+00:00	RELEASE	slot2	rc=0	maxrss_kb=1857508	memavail=15524061184	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaFanOut
+2026-11-17T11:19:03+00:00	ACQUIRE	slot2	size=3	memavail=15517569024	bootstrap:TCSlib/Complexity/CircuitComplexity/StrictCircuit
+2026-11-17T11:19:09+00:00	RELEASE	slot1	rc=0	maxrss_kb=1903452	memavail=15455481856	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate
+2026-11-17T11:19:09+00:00	ACQUIRE	slot1	size=3	memavail=15500840960	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup
+2026-11-17T11:19:10+00:00	RELEASE	slot2	rc=0	maxrss_kb=1841796	memavail=15540731904	bootstrap:TCSlib/Complexity/CircuitComplexity/StrictCircuit
+2026-11-17T11:19:10+00:00	ACQUIRE	slot2	size=3	memavail=15553101824	bootstrap:TCSlib/Complexity/CookLevin/Snapshot
+2026-11-17T11:19:14+00:00	RELEASE	slot2	rc=0	maxrss_kb=1748384	memavail=15376191488	bootstrap:TCSlib/Complexity/CookLevin/Snapshot
+2026-11-17T11:19:14+00:00	ACQUIRE	slot2	size=3	memavail=15334715392	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau
+2026-11-17T11:19:14+00:00	RELEASE	slot0	rc=0	maxrss_kb=2005864	memavail=15763484672	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/SingleTape
+2026-11-17T11:19:14+00:00	ACQUIRE	slot0	size=3	memavail=15748423680	bootstrap:TCSlib/Complexity/TuringMachine/Build/Convention
+2026-11-17T11:19:16+00:00	RELEASE	slot0	rc=0	maxrss_kb=1735884	memavail=15549841408	bootstrap:TCSlib/Complexity/TuringMachine/Build/Convention
+2026-11-17T11:19:16+00:00	ACQUIRE	slot0	size=3	memavail=15547854848	bootstrap:TCSlib/Complexity/CircuitComplexity/StrictSize
+2026-11-17T11:19:18+00:00	RELEASE	slot2	rc=0	maxrss_kb=1846336	memavail=15572176896	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau
+2026-11-17T11:19:18+00:00	ACQUIRE	slot2	size=3	memavail=15547437056	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect
+2026-11-17T11:19:22+00:00	RELEASE	slot2	rc=0	maxrss_kb=1870432	memavail=15362400256	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect
+2026-11-17T11:19:22+00:00	RELEASE	slot1	rc=0	maxrss_kb=1988708	memavail=15812616192	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup
+2026-11-17T11:19:22+00:00	ACQUIRE	slot1	size=3	memavail=15845986304	bootstrap:TCSlib/Complexity/TuringMachine/Build/Embed
+2026-11-17T11:19:22+00:00	ACQUIRE	slot2	size=3	memavail=15845986304	bootstrap:TCSlib/Complexity/TuringMachine/Build/Wrappers
+2026-11-17T11:19:24+00:00	RELEASE	slot0	rc=0	maxrss_kb=1886780	memavail=15749844992	bootstrap:TCSlib/Complexity/CircuitComplexity/StrictSize
+2026-11-17T11:19:24+00:00	ACQUIRE	slot0	size=3	memavail=15719206912	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep
+2026-11-17T11:19:27+00:00	RELEASE	slot1	rc=0	maxrss_kb=1785752	memavail=15647199232	bootstrap:TCSlib/Complexity/TuringMachine/Build/Embed
+2026-11-17T11:19:28+00:00	RELEASE	slot2	rc=0	maxrss_kb=1783748	memavail=15799500800	bootstrap:TCSlib/Complexity/TuringMachine/Build/Wrappers
+2026-11-17T11:19:28+00:00	ACQUIRE	slot1	size=3	memavail=15967510528	bootstrap:TCSlib/Complexity/CircuitComplexity/Parity
+2026-11-17T11:19:28+00:00	ACQUIRE	slot2	size=3	memavail=16036999168	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare
+2026-11-17T11:19:28+00:00	RELEASE	slot0	rc=0	maxrss_kb=1889068	memavail=16064294912	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep
+2026-11-17T11:19:28+00:00	ACQUIRE	slot0	size=3	memavail=16055504896	bootstrap:TCSlib/Complexity/CircuitComplexity/Uniform
+2026-11-17T11:19:30+00:00	RELEASE	slot2	rc=0	maxrss_kb=1780396	memavail=15604588544	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare
+2026-11-17T11:19:30+00:00	ACQUIRE	slot2	size=3	memavail=15567003648	bootstrap:TCSlib/Complexity/CircuitComplexity/StrictFanOut
+2026-11-17T11:19:31+00:00	RELEASE	slot0	rc=0	maxrss_kb=1843804	memavail=15553118208	bootstrap:TCSlib/Complexity/CircuitComplexity/Uniform
+2026-11-17T11:19:31+00:00	ACQUIRE	slot0	size=3	memavail=15548923904	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfig
+2026-11-17T11:19:37+00:00	RELEASE	slot0	rc=0	maxrss_kb=1884740	memavail=15050203136	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfig
+2026-11-17T11:19:37+00:00	ACQUIRE	slot0	size=3	memavail=15048101888	bootstrap:TCSlib/Complexity/ClassNP/CounterProgPolyTime
+2026-11-17T11:19:37+00:00	RELEASE	slot2	rc=0	maxrss_kb=1895748	memavail=15175307264	bootstrap:TCSlib/Complexity/CircuitComplexity/StrictFanOut
+2026-11-17T11:19:38+00:00	ACQUIRE	slot2	size=3	memavail=15167029248	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger
+2026-11-17T11:19:39+00:00	RELEASE	slot0	rc=0	maxrss_kb=1821440	memavail=14827220992	bootstrap:TCSlib/Complexity/ClassNP/CounterProgPolyTime
+2026-11-17T11:19:40+00:00	ACQUIRE	slot0	size=3	memavail=14823026688	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceTableauFront
+2026-11-17T11:19:40+00:00	RELEASE	slot2	rc=0	maxrss_kb=1819352	memavail=14788866048	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger
+2026-11-17T11:19:41+00:00	ACQUIRE	slot2	size=3	memavail=14803574784	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum
+2026-11-17T11:19:42+00:00	RELEASE	slot2	rc=0	maxrss_kb=1780492	memavail=14691127296	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum
+2026-11-17T11:19:43+00:00	ACQUIRE	slot2	size=3	memavail=14675755008	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith
+2026-11-17T11:19:44+00:00	RELEASE	slot2	rc=0	maxrss_kb=1767572	memavail=14720856064	bootstrap:TCSlib/Complexity/CircuitComplexity/FormulaArith
+2026-11-17T11:19:44+00:00	RELEASE	slot0	rc=0	maxrss_kb=1911728	memavail=14770028544	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceTableauFront
+2026-11-17T11:19:44+00:00	ACQUIRE	slot0	size=3	memavail=14817013760	bootstrap:TCSlib/Complexity/BranchingPrograms
+2026-11-17T11:19:44+00:00	ACQUIRE	slot2	size=3	memavail=14817013760	bootstrap:TCSlib/Complexity/CircuitComplexity/BookModelBasics
+2026-11-17T11:19:46+00:00	RELEASE	slot0	rc=0	maxrss_kb=1934512	memavail=14566481920	bootstrap:TCSlib/Complexity/BranchingPrograms
+2026-11-17T11:19:47+00:00	RELEASE	slot2	rc=0	maxrss_kb=1917200	memavail=14661939200	bootstrap:TCSlib/Complexity/CircuitComplexity/BookModelBasics
+2026-11-17T11:19:47+00:00	ACQUIRE	slot0	size=3	memavail=14649552896	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachineParse
+2026-11-17T11:19:47+00:00	ACQUIRE	slot2	size=3	memavail=14648434688	bootstrap:TCSlib/Complexity/TuringMachine/Encoding
+2026-11-17T11:19:52+00:00	RELEASE	slot2	rc=0	maxrss_kb=1828656	memavail=14543245312	bootstrap:TCSlib/Complexity/TuringMachine/Encoding
+2026-11-17T11:19:52+00:00	RELEASE	slot0	rc=0	maxrss_kb=1841724	memavail=14633668608	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachineParse
+2026-11-17T11:19:52+00:00	ACQUIRE	slot0	size=3	memavail=14650613760	bootstrap:TCSlib/Complexity/TuringMachine/Build/Loop
+2026-11-17T11:19:52+00:00	ACQUIRE	slot2	size=3	memavail=14650613760	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit
+2026-11-17T11:20:00+00:00	RELEASE	slot2	rc=0	maxrss_kb=1916324	memavail=14137896960	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit
+2026-11-17T11:20:00+00:00	ACQUIRE	slot2	size=3	memavail=14137896960	bootstrap:TCSlib/Complexity/CircuitComplexity/LupanovGates
+2026-11-17T11:20:13+00:00	RELEASE	slot2	rc=0	maxrss_kb=2005544	memavail=13593493504	bootstrap:TCSlib/Complexity/CircuitComplexity/LupanovGates
+2026-11-17T11:20:13+00:00	ACQUIRE	slot2	size=3	memavail=13593292800	bootstrap:TCSlib/Complexity/ClassP/TimeConstructible
+2026-11-17T11:20:18+00:00	RELEASE	slot2	rc=0	maxrss_kb=1826992	memavail=13277556736	bootstrap:TCSlib/Complexity/ClassP/TimeConstructible
+2026-11-17T11:20:18+00:00	ACQUIRE	slot2	size=3	memavail=13273526272	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/Oblivious
+2026-11-17T11:20:31+00:00	RELEASE	slot2	rc=0	maxrss_kb=1921684	memavail=12899127296	bootstrap:TCSlib/Complexity/TuringMachine/Robustness/Oblivious
+2026-11-17T11:20:31+00:00	ACQUIRE	slot2	size=3	memavail=12952178688	bootstrap:TCSlib/Complexity/SpaceComplexity/Basic
+2026-11-17T11:20:33+00:00	RELEASE	slot2	rc=0	maxrss_kb=1777388	memavail=12882657280	bootstrap:TCSlib/Complexity/SpaceComplexity/Basic
+2026-11-17T11:20:33+00:00	ACQUIRE	slot2	size=3	memavail=12870762496	bootstrap:TCSlib/Complexity/SpaceComplexity/ConfigCount
+2026-11-17T11:20:37+00:00	RELEASE	slot2	rc=0	maxrss_kb=1859524	memavail=12797743104	bootstrap:TCSlib/Complexity/SpaceComplexity/ConfigCount
+2026-11-17T11:20:37+00:00	ACQUIRE	slot2	size=3	memavail=12684218368	bootstrap:TCSlib/Complexity/CircuitComplexity/PairEncode
+2026-11-17T11:20:39+00:00	RELEASE	slot2	rc=0	maxrss_kb=1797168	memavail=12558991360	bootstrap:TCSlib/Complexity/CircuitComplexity/PairEncode
+2026-11-17T11:20:40+00:00	RELEASE	slot1	rc=0	maxrss_kb=4019396	memavail=15254401024	bootstrap:TCSlib/Complexity/CircuitComplexity/Parity
+2026-11-17T11:20:40+00:00	ACQUIRE	slot1	size=3	memavail=15250804736	bootstrap:TCSlib/Complexity/Uncomputability/Diagonalization
+2026-11-17T11:20:40+00:00	ACQUIRE	slot2	size=3	memavail=15250804736	bootstrap:TCSlib/Complexity/TuringMachine/UniversalStartup
+2026-11-17T11:20:42+00:00	RELEASE	slot1	rc=0	maxrss_kb=1773916	memavail=14952222720	bootstrap:TCSlib/Complexity/Uncomputability/Diagonalization
+2026-11-17T11:20:43+00:00	ACQUIRE	slot1	size=3	memavail=14974562304	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec
+2026-11-17T11:20:46+00:00	RELEASE	slot2	rc=0	maxrss_kb=1832680	memavail=14872883200	bootstrap:TCSlib/Complexity/TuringMachine/UniversalStartup
+2026-11-17T11:20:46+00:00	ACQUIRE	slot2	size=3	memavail=14918688768	bootstrap:TCSlib/Complexity/TuringMachine/UniversalInterpreter
+2026-11-17T11:20:46+00:00	RELEASE	slot1	rc=0	maxrss_kb=1840936	memavail=14960742400	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec
+2026-11-17T11:20:47+00:00	ACQUIRE	slot1	size=3	memavail=14936969216	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect
+2026-11-17T11:20:47+00:00	RELEASE	slot0	rc=0	maxrss_kb=2329164	memavail=15800201216	bootstrap:TCSlib/Complexity/TuringMachine/Build/Loop
+2026-11-17T11:20:47+00:00	ACQUIRE	slot0	size=3	memavail=15777230848	bootstrap:TCSlib/Complexity/TuringMachine/Build/ModuleHost
+2026-11-17T11:20:52+00:00	RELEASE	slot0	rc=0	maxrss_kb=1826000	memavail=15428661248	bootstrap:TCSlib/Complexity/TuringMachine/Build/ModuleHost
+2026-11-17T11:20:53+00:00	ACQUIRE	slot0	size=3	memavail=15396069376	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine
+2026-11-17T11:20:53+00:00	RELEASE	slot1	rc=0	maxrss_kb=1907668	memavail=15532531712	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect
+2026-11-17T11:20:54+00:00	ACQUIRE	slot1	size=3	memavail=15547785216	bootstrap:TCSlib/Complexity/TimeHierarchy/CodePrefix
+2026-11-17T11:20:56+00:00	RELEASE	slot2	rc=0	maxrss_kb=1929892	memavail=15501352960	bootstrap:TCSlib/Complexity/TuringMachine/UniversalInterpreter
+2026-11-17T11:20:56+00:00	ACQUIRE	slot2	size=3	memavail=15533006848	bootstrap:TCSlib/Complexity/TuringMachine/Build/Primitives
+2026-11-17T11:20:57+00:00	RELEASE	slot1	rc=0	maxrss_kb=1816028	memavail=15696060416	bootstrap:TCSlib/Complexity/TimeHierarchy/CodePrefix
+2026-11-17T11:20:57+00:00	ACQUIRE	slot1	size=3	memavail=15681609728	bootstrap:TCSlib/Complexity/TuringMachine/CodeParser
+2026-11-17T11:21:00+00:00	RELEASE	slot1	rc=0	maxrss_kb=1823668	memavail=15458750464	bootstrap:TCSlib/Complexity/TuringMachine/CodeParser
+2026-11-17T11:21:00+00:00	ACQUIRE	slot1	size=3	memavail=15458750464	bootstrap:TCSlib/Complexity/CircuitComplexity/Lupanov
+2026-11-17T11:21:05+00:00	RELEASE	slot1	rc=0	maxrss_kb=1931172	memavail=15313903616	bootstrap:TCSlib/Complexity/CircuitComplexity/Lupanov
+2026-11-17T11:21:05+00:00	ACQUIRE	slot1	size=3	memavail=15357575168	bootstrap:TCSlib/Complexity/TuringMachine/UniversalBlock
+2026-11-17T11:21:10+00:00	RELEASE	slot0	rc=0	maxrss_kb=1940824	memavail=15330082816	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine
+2026-11-17T11:21:10+00:00	ACQUIRE	slot0	size=3	memavail=15325085696	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalRun
+2026-11-17T11:21:16+00:00	RELEASE	slot1	rc=0	maxrss_kb=1908012	memavail=15275847680	bootstrap:TCSlib/Complexity/TuringMachine/UniversalBlock
+2026-11-17T11:21:17+00:00	ACQUIRE	slot1	size=3	memavail=15277236224	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionSpec
+2026-11-17T11:21:21+00:00	RELEASE	slot1	rc=0	maxrss_kb=1883140	memavail=15148212224	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionSpec
+2026-11-17T11:21:21+00:00	ACQUIRE	slot1	size=3	memavail=15148212224	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes
+2026-11-17T11:21:22+00:00	RELEASE	slot0	rc=0	maxrss_kb=1911960	memavail=15239376896	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalRun
+2026-11-17T11:21:22+00:00	ACQUIRE	slot0	size=3	memavail=15273418752	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEval
+2026-11-17T11:21:24+00:00	RELEASE	slot0	rc=0	maxrss_kb=1813496	memavail=15138746368	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEval
+2026-11-17T11:21:24+00:00	ACQUIRE	slot0	size=3	memavail=15264460800	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Layout
+2026-11-17T11:21:24+00:00	RELEASE	slot1	rc=0	maxrss_kb=1858772	memavail=15311626240	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes
+2026-11-17T11:21:24+00:00	ACQUIRE	slot1	size=3	memavail=15311425536	bootstrap:TCSlib/Complexity/TuringMachine/CodeFormat
+2026-11-17T11:21:28+00:00	RELEASE	slot1	rc=0	maxrss_kb=1823752	memavail=15034023936	bootstrap:TCSlib/Complexity/TuringMachine/CodeFormat
+2026-11-17T11:21:28+00:00	ACQUIRE	slot1	size=3	memavail=15034023936	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup
+2026-11-17T11:21:31+00:00	RELEASE	slot0	rc=0	maxrss_kb=1899868	memavail=15075061760	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Layout
+2026-11-17T11:21:31+00:00	ACQUIRE	slot0	size=3	memavail=15074258944	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Program
+2026-11-17T11:21:35+00:00	RELEASE	slot1	rc=0	maxrss_kb=1844100	memavail=15014002688	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup
+2026-11-17T11:21:35+00:00	ACQUIRE	slot1	size=3	memavail=15008350208	bootstrap:TCSlib/Complexity/TuringMachine/Universal
+2026-11-17T11:21:36+00:00	RELEASE	slot0	rc=0	maxrss_kb=1818296	memavail=15005138944	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Program
+2026-11-17T11:21:36+00:00	ACQUIRE	slot0	size=3	memavail=15018774528	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauSpec
+2026-11-17T11:21:46+00:00	RELEASE	slot0	rc=0	maxrss_kb=1954840	memavail=14739693568	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauSpec
+2026-11-17T11:21:46+00:00	ACQUIRE	slot0	size=3	memavail=14739337216	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitter
+2026-11-17T11:21:51+00:00	RELEASE	slot2	rc=0	maxrss_kb=2494360	memavail=15262892032	bootstrap:TCSlib/Complexity/TuringMachine/Build/Primitives
+2026-11-17T11:21:51+00:00	ACQUIRE	slot2	size=3	memavail=15262892032	bootstrap:TCSlib/Complexity/CircuitComplexity/Advice
+2026-11-17T11:21:54+00:00	RELEASE	slot0	rc=0	maxrss_kb=1974248	memavail=15257722880	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitter
+2026-11-17T11:21:54+00:00	ACQUIRE	slot0	size=3	memavail=15262171136	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachineRun
+2026-11-17T11:21:56+00:00	RELEASE	slot2	rc=0	maxrss_kb=1952392	memavail=15309705216	bootstrap:TCSlib/Complexity/CircuitComplexity/Advice
+2026-11-17T11:21:57+00:00	ACQUIRE	slot2	size=3	memavail=15285293056	bootstrap:TCSlib/Complexity/TuringMachine/MathlibBridge
+2026-11-17T11:21:59+00:00	RELEASE	slot0	rc=0	maxrss_kb=1826468	memavail=15302090752	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachineRun
+2026-11-17T11:22:00+00:00	ACQUIRE	slot0	size=3	memavail=15302144000	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk
+2026-11-17T11:22:06+00:00	RELEASE	slot0	rc=0	maxrss_kb=1819576	memavail=15287521280	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk
+2026-11-17T11:22:06+00:00	RELEASE	slot2	rc=0	maxrss_kb=1917616	memavail=15328800768	bootstrap:TCSlib/Complexity/TuringMachine/MathlibBridge
+2026-11-17T11:22:06+00:00	ACQUIRE	slot0	size=3	memavail=15338754048	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine
+2026-11-17T11:22:06+00:00	ACQUIRE	slot2	size=3	memavail=15338754048	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Sim
+2026-11-17T11:22:06+00:00	RELEASE	slot1	rc=0	maxrss_kb=2151892	memavail=15891656704	bootstrap:TCSlib/Complexity/TuringMachine/Universal
+2026-11-17T11:22:07+00:00	ACQUIRE	slot1	size=3	memavail=15817986048	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterInstr
+2026-11-17T11:22:11+00:00	RELEASE	slot0	rc=0	maxrss_kb=1898380	memavail=15547764736	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine
+2026-11-17T11:22:11+00:00	ACQUIRE	slot0	size=3	memavail=15547764736	bootstrap:TCSlib/Complexity/Uncomputability/Halting
+2026-11-17T11:22:13+00:00	RELEASE	slot0	rc=0	maxrss_kb=1792596	memavail=15428554752	bootstrap:TCSlib/Complexity/Uncomputability/Halting
+2026-11-17T11:22:14+00:00	ACQUIRE	slot0	size=3	memavail=15414648832	bootstrap:TCSlib/Complexity/ClassNP/PolyTimePairing
+2026-11-17T11:22:14+00:00	RELEASE	slot1	rc=0	maxrss_kb=1947740	memavail=15600734208	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterInstr
+2026-11-17T11:22:14+00:00	ACQUIRE	slot1	size=3	memavail=15600734208	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer
+2026-11-17T11:22:16+00:00	RELEASE	slot2	rc=0	maxrss_kb=1876460	memavail=15571599360	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Sim
+2026-11-17T11:22:16+00:00	RELEASE	slot0	rc=0	maxrss_kb=1830704	memavail=15799988224	bootstrap:TCSlib/Complexity/ClassNP/PolyTimePairing
+2026-11-17T11:22:17+00:00	ACQUIRE	slot0	size=3	memavail=15794610176	bootstrap:TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed
+2026-11-17T11:22:17+00:00	ACQUIRE	slot2	size=3	memavail=15794610176	bootstrap:TCSlib/Complexity/TuringMachine/Build/WordTests
+2026-11-17T11:22:19+00:00	RELEASE	slot2	rc=0	maxrss_kb=1811456	memavail=15447142400	bootstrap:TCSlib/Complexity/TuringMachine/Build/WordTests
+2026-11-17T11:22:19+00:00	RELEASE	slot0	rc=0	maxrss_kb=1816940	memavail=15664738304	bootstrap:TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed
+2026-11-17T11:22:19+00:00	ACQUIRE	slot0	size=3	memavail=15695712256	bootstrap:TCSlib/Complexity/TuringMachine/Build/EmitIterBody
+2026-11-17T11:22:20+00:00	ACQUIRE	slot2	size=3	memavail=15645925376	bootstrap:TCSlib/Complexity/ClassNP/NP
+2026-11-17T11:22:24+00:00	RELEASE	slot2	rc=0	maxrss_kb=1847860	memavail=15424225280	bootstrap:TCSlib/Complexity/ClassNP/NP
+2026-11-17T11:22:24+00:00	ACQUIRE	slot2	size=3	memavail=15456235520	bootstrap:TCSlib/Complexity/ClassNP/Transducer
+2026-11-17T11:22:27+00:00	RELEASE	slot2	rc=0	maxrss_kb=1817436	memavail=15348555776	bootstrap:TCSlib/Complexity/ClassNP/Transducer
+2026-11-17T11:22:27+00:00	ACQUIRE	slot2	size=3	memavail=15347425280	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/CallReturn
+2026-11-17T11:22:28+00:00	RELEASE	slot0	rc=0	maxrss_kb=1991572	memavail=15552765952	bootstrap:TCSlib/Complexity/TuringMachine/Build/EmitIterBody
+2026-11-17T11:22:29+00:00	ACQUIRE	slot0	size=3	memavail=15561269248	bootstrap:TCSlib/Complexity/ClassNP/PolyTimePrefix
+2026-11-17T11:22:30+00:00	RELEASE	slot1	rc=0	maxrss_kb=1965200	memavail=15627943936	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer
+2026-11-17T11:22:30+00:00	ACQUIRE	slot1	size=3	memavail=15672836096	bootstrap:TCSlib/Complexity/CircuitComplexity/PPolyAdvice
+2026-11-17T11:22:31+00:00	RELEASE	slot2	rc=0	maxrss_kb=1846764	memavail=15591002112	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/CallReturn
+2026-11-17T11:22:31+00:00	ACQUIRE	slot2	size=3	memavail=15608303616	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Call
+2026-11-17T11:22:33+00:00	RELEASE	slot0	rc=0	maxrss_kb=1869808	memavail=15622656000	bootstrap:TCSlib/Complexity/ClassNP/PolyTimePrefix
+2026-11-17T11:22:33+00:00	ACQUIRE	slot0	size=3	memavail=15605878784	bootstrap:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop
+2026-11-17T11:22:36+00:00	RELEASE	slot0	rc=0	maxrss_kb=1891980	memavail=15668801536	bootstrap:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop
+2026-11-17T11:22:36+00:00	RELEASE	slot1	rc=0	maxrss_kb=1970716	memavail=15668600832	bootstrap:TCSlib/Complexity/CircuitComplexity/PPolyAdvice
+2026-11-17T11:22:36+00:00	ACQUIRE	slot0	size=3	memavail=15774310400	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterSteps
+2026-11-17T11:22:36+00:00	ACQUIRE	slot1	size=3	memavail=15774310400	bootstrap:TCSlib/Complexity/ClassNP/EXP
+2026-11-17T11:22:37+00:00	RELEASE	slot2	rc=0	maxrss_kb=1830924	memavail=15715287040	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Call
+2026-11-17T11:22:37+00:00	ACQUIRE	slot2	size=3	memavail=15734398976	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Compile
+2026-11-17T11:22:41+00:00	RELEASE	slot2	rc=0	maxrss_kb=1833228	memavail=15557050368	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Compile
+2026-11-17T11:22:41+00:00	ACQUIRE	slot2	size=3	memavail=15544467456	bootstrap:TCSlib/Complexity/TimeHierarchy/Diagonal
+2026-11-17T11:22:48+00:00	RELEASE	slot0	rc=0	maxrss_kb=1898888	memavail=15302262784	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterSteps
+2026-11-17T11:22:48+00:00	ACQUIRE	slot0	size=3	memavail=15327432704	bootstrap:TCSlib/Complexity/ClassNP/CoNP
+2026-11-17T11:22:50+00:00	RELEASE	slot0	rc=0	maxrss_kb=1808032	memavail=15189831680	bootstrap:TCSlib/Complexity/ClassNP/CoNP
+2026-11-17T11:22:50+00:00	ACQUIRE	slot0	size=3	memavail=15226228736	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Lib
+2026-11-17T11:22:51+00:00	RELEASE	slot2	rc=0	maxrss_kb=1934324	memavail=15286898688	bootstrap:TCSlib/Complexity/TimeHierarchy/Diagonal
+2026-11-17T11:22:51+00:00	ACQUIRE	slot2	size=3	memavail=15302791168	bootstrap:TCSlib/Complexity/ClassNP/PolyTimeBlockTests
+2026-11-17T11:22:53+00:00	RELEASE	slot0	rc=0	maxrss_kb=1857072	memavail=15218028544	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Lib
+2026-11-17T11:22:53+00:00	ACQUIRE	slot0	size=3	memavail=15224741888	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep
+2026-11-17T11:22:54+00:00	RELEASE	slot2	rc=0	maxrss_kb=1862712	memavail=15304966144	bootstrap:TCSlib/Complexity/ClassNP/PolyTimeBlockTests
+2026-11-17T11:22:54+00:00	ACQUIRE	slot2	size=3	memavail=15271858176	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterMain
+2026-11-17T11:22:59+00:00	RELEASE	slot0	rc=0	maxrss_kb=1894176	memavail=15106478080	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep
+2026-11-17T11:22:59+00:00	ACQUIRE	slot0	size=3	memavail=15106433024	bootstrap:TCSlib/Complexity/PolyHierarchy/Defs
+2026-11-17T11:23:01+00:00	RELEASE	slot0	rc=0	maxrss_kb=1807576	memavail=14983270400	bootstrap:TCSlib/Complexity/PolyHierarchy/Defs
+2026-11-17T11:23:02+00:00	ACQUIRE	slot0	size=3	memavail=15047327744	bootstrap:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority
+2026-11-17T11:23:04+00:00	RELEASE	slot1	rc=0	maxrss_kb=2260652	memavail=15435509760	bootstrap:TCSlib/Complexity/ClassNP/EXP
+2026-11-17T11:23:04+00:00	RELEASE	slot0	rc=0	maxrss_kb=1861336	memavail=15645773824	bootstrap:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority
+2026-11-17T11:23:04+00:00	ACQUIRE	slot1	size=3	memavail=15659835392	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerTab
+2026-11-17T11:23:04+00:00	ACQUIRE	slot0	size=3	memavail=15659835392	bootstrap:TCSlib/Complexity/ClassNP/Reductions
+2026-11-17T11:23:07+00:00	RELEASE	slot0	rc=0	maxrss_kb=1861692	memavail=15389794304	bootstrap:TCSlib/Complexity/ClassNP/Reductions
+2026-11-17T11:23:07+00:00	RELEASE	slot2	rc=0	maxrss_kb=1995080	memavail=15774412800	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterMain
+2026-11-17T11:23:07+00:00	ACQUIRE	slot2	size=3	memavail=15818592256	bootstrap:TCSlib/Complexity/CircuitComplexity/UHaltMachine
+2026-11-17T11:23:07+00:00	ACQUIRE	slot0	size=3	memavail=15818592256	bootstrap:TCSlib/Complexity/TimeHierarchy/Separation
+2026-11-17T11:23:08+00:00	RELEASE	slot1	rc=0	maxrss_kb=1897192	memavail=15676284928	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerTab
+2026-11-17T11:23:09+00:00	ACQUIRE	slot1	size=3	memavail=15645659136	bootstrap:TCSlib/Complexity/ClassNP/ExpPoly
+2026-11-17T11:23:09+00:00	RELEASE	slot2	rc=0	maxrss_kb=1950000	memavail=15748280320	bootstrap:TCSlib/Complexity/CircuitComplexity/UHaltMachine
+2026-11-17T11:23:09+00:00	ACQUIRE	slot2	size=3	memavail=15749484544	bootstrap:TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly
+2026-11-17T11:23:09+00:00	RELEASE	slot0	rc=0	maxrss_kb=1943312	memavail=15838322688	bootstrap:TCSlib/Complexity/TimeHierarchy/Separation
+2026-11-17T11:23:10+00:00	ACQUIRE	slot0	size=3	memavail=15786573824	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/FragDec
+2026-11-17T11:23:12+00:00	RELEASE	slot1	rc=0	maxrss_kb=1882708	memavail=15586050048	bootstrap:TCSlib/Complexity/ClassNP/ExpPoly
+2026-11-17T11:23:13+00:00	ACQUIRE	slot1	size=3	memavail=15585026048	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Clean
+2026-11-17T11:23:14+00:00	RELEASE	slot0	rc=0	maxrss_kb=1871128	memavail=15496847360	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/FragDec
+2026-11-17T11:23:14+00:00	ACQUIRE	slot0	size=3	memavail=15537070080	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Frag
+2026-11-17T11:23:15+00:00	RELEASE	slot1	rc=0	maxrss_kb=1864208	memavail=15537479680	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Clean
+2026-11-17T11:23:16+00:00	ACQUIRE	slot1	size=3	memavail=15533207552	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Bank
+2026-11-17T11:23:18+00:00	RELEASE	slot0	rc=0	maxrss_kb=1876112	memavail=15531098112	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Frag
+2026-11-17T11:23:18+00:00	ACQUIRE	slot0	size=3	memavail=15541895168	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain
+2026-11-17T11:23:18+00:00	RELEASE	slot1	rc=0	maxrss_kb=1833904	memavail=15688417280	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Bank
+2026-11-17T11:23:19+00:00	ACQUIRE	slot1	size=3	memavail=15650607104	bootstrap:TCSlib/Complexity/SpaceComplexity/ImplicitPoly
+2026-11-17T11:23:20+00:00	RELEASE	slot2	rc=0	maxrss_kb=2025676	memavail=15670996992	bootstrap:TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly
+2026-11-17T11:23:21+00:00	ACQUIRE	slot2	size=3	memavail=15614607360	bootstrap:TCSlib/Complexity/ClassNP/SAT
+2026-11-17T11:23:25+00:00	RELEASE	slot0	rc=0	maxrss_kb=1901532	memavail=15455936512	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain
+2026-11-17T11:23:25+00:00	ACQUIRE	slot0	size=3	memavail=15455936512	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Parse
+2026-11-17T11:23:25+00:00	RELEASE	slot1	rc=0	maxrss_kb=1900172	memavail=15623446528	bootstrap:TCSlib/Complexity/SpaceComplexity/ImplicitPoly
+2026-11-17T11:23:25+00:00	ACQUIRE	slot1	size=3	memavail=15598100480	bootstrap:TCSlib/Complexity/CircuitComplexity/PUniformP
+2026-11-17T11:23:28+00:00	RELEASE	slot1	rc=0	maxrss_kb=1859088	memavail=15322656768	bootstrap:TCSlib/Complexity/CircuitComplexity/PUniformP
+2026-11-17T11:23:28+00:00	ACQUIRE	slot1	size=3	memavail=15293374464	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerTableau
+2026-11-17T11:23:30+00:00	RELEASE	slot0	rc=0	maxrss_kb=1879620	memavail=15286145024	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Parse
+2026-11-17T11:23:30+00:00	ACQUIRE	slot0	size=3	memavail=15314845696	bootstrap:TCSlib/Complexity/ClassNP/TMSAT
+2026-11-17T11:23:35+00:00	RELEASE	slot1	rc=0	maxrss_kb=1935512	memavail=15188066304	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerTableau
+2026-11-17T11:23:36+00:00	ACQUIRE	slot1	size=3	memavail=15183736832	bootstrap:TCSlib/Complexity/ClassNP/PClosure
+2026-11-17T11:23:39+00:00	RELEASE	slot1	rc=0	maxrss_kb=1860736	memavail=15177859072	bootstrap:TCSlib/Complexity/ClassNP/PClosure
+2026-11-17T11:23:40+00:00	ACQUIRE	slot1	size=3	memavail=15153627136	bootstrap:TCSlib/Complexity/PolyHierarchy/Padding
+2026-11-17T11:23:42+00:00	RELEASE	slot1	rc=0	maxrss_kb=1866844	memavail=15095635968	bootstrap:TCSlib/Complexity/PolyHierarchy/Padding
+2026-11-17T11:23:42+00:00	ACQUIRE	slot1	size=3	memavail=15102803968	bootstrap:TCSlib/Complexity/PolyHierarchy/Normalize
+2026-11-17T11:23:45+00:00	RELEASE	slot0	rc=0	maxrss_kb=1996384	memavail=15216361472	bootstrap:TCSlib/Complexity/ClassNP/TMSAT
+2026-11-17T11:23:45+00:00	RELEASE	slot1	rc=0	maxrss_kb=1879148	memavail=15350284288	bootstrap:TCSlib/Complexity/PolyHierarchy/Normalize
+2026-11-17T11:23:45+00:00	ACQUIRE	slot0	size=3	memavail=15382052864	bootstrap:TCSlib/Complexity/PolyHierarchy/Levels
+2026-11-17T11:23:45+00:00	ACQUIRE	slot1	size=3	memavail=15381852160	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPoly
+2026-11-17T11:23:49+00:00	RELEASE	slot0	rc=0	maxrss_kb=1875496	memavail=15058796544	bootstrap:TCSlib/Complexity/PolyHierarchy/Levels
+2026-11-17T11:23:49+00:00	ACQUIRE	slot0	size=3	memavail=15083266048	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniform
+2026-11-17T11:23:50+00:00	RELEASE	slot1	rc=0	maxrss_kb=1995068	memavail=15066148864	bootstrap:TCSlib/Complexity/CircuitComplexity/PSubsetPPoly
+2026-11-17T11:23:51+00:00	ACQUIRE	slot1	size=3	memavail=15036456960	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Parse2
+2026-11-17T11:23:51+00:00	RELEASE	slot0	rc=0	maxrss_kb=1833728	memavail=15122407424	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniform
+2026-11-17T11:23:52+00:00	ACQUIRE	slot0	size=3	memavail=15061168128	bootstrap:TCSlib/Complexity/PolyHierarchy/Collapse
+2026-11-17T11:23:54+00:00	RELEASE	slot0	rc=0	maxrss_kb=1838644	memavail=14924247040	bootstrap:TCSlib/Complexity/PolyHierarchy/Collapse
+2026-11-17T11:23:55+00:00	ACQUIRE	slot0	size=3	memavail=14915244032	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP
+2026-11-17T11:23:58+00:00	RELEASE	slot0	rc=0	maxrss_kb=1892320	memavail=14966362112	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP
+2026-11-17T11:24:03+00:00	RELEASE	slot1	rc=0	maxrss_kb=1911528	memavail=15240343552	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/Parse2
+2026-11-17T11:24:03+00:00	ACQUIRE	slot0	size=3	memavail=15270305792	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp
+2026-11-17T11:24:07+00:00	RELEASE	slot2	rc=0	maxrss_kb=2346024	memavail=15803666432	bootstrap:TCSlib/Complexity/ClassNP/SAT
+2026-11-17T11:24:07+00:00	ACQUIRE	slot1	size=3	memavail=15803940864	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang
+2026-11-17T11:24:09+00:00	RELEASE	slot1	rc=0	maxrss_kb=1895032	memavail=15795351552	bootstrap:TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang
+2026-11-17T11:24:09+00:00	ACQUIRE	slot1	size=3	memavail=15794769920	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalNP
+2026-11-17T11:24:09+00:00	ACQUIRE	slot2	size=3	memavail=15794769920	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid
+2026-11-17T11:24:10+00:00	RELEASE	slot0	rc=0	maxrss_kb=1896424	memavail=15774703616	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp
+2026-11-17T11:24:11+00:00	ACQUIRE	slot0	size=3	memavail=15726551040	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARM
+2026-11-17T11:24:11+00:00	RELEASE	slot1	rc=0	maxrss_kb=1872656	memavail=15692959744	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitEvalNP
+2026-11-17T11:24:12+00:00	RELEASE	slot2	rc=0	maxrss_kb=1941748	memavail=15813529600	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid
+2026-11-17T11:24:13+00:00	ACQUIRE	slot1	size=3	memavail=15824056320	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReduction
+2026-11-17T11:24:13+00:00	ACQUIRE	slot2	size=3	memavail=15824056320	bootstrap:TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix
+2026-11-17T11:24:15+00:00	RELEASE	slot0	rc=0	maxrss_kb=1874648	memavail=15677272064	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARM
+2026-11-17T11:24:15+00:00	ACQUIRE	slot0	size=3	memavail=15660494848	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARMSim
+2026-11-17T11:24:15+00:00	RELEASE	slot2	rc=0	maxrss_kb=1901600	memavail=15678902272	bootstrap:TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix
+2026-11-17T11:24:15+00:00	RELEASE	slot1	rc=0	maxrss_kb=1903948	memavail=15894728704	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatReduction
+2026-11-17T11:24:15+00:00	ACQUIRE	slot1	size=3	memavail=15864700928	bootstrap:TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily
+2026-11-17T11:24:15+00:00	ACQUIRE	slot2	size=3	memavail=15864700928	bootstrap:TCSlib/Complexity/CircuitComplexity/KarpLipton
+2026-11-17T11:24:21+00:00	RELEASE	slot0	rc=0	maxrss_kb=1885556	memavail=15591591936	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARMSim
+2026-11-17T11:24:21+00:00	ACQUIRE	slot0	size=3	memavail=15595868160	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue
+2026-11-17T11:24:22+00:00	RELEASE	slot2	rc=0	maxrss_kb=1954300	memavail=15688531968	bootstrap:TCSlib/Complexity/CircuitComplexity/KarpLipton
+2026-11-17T11:24:23+00:00	ACQUIRE	slot2	size=3	memavail=15621533696	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARMRun
+2026-11-17T11:24:24+00:00	RELEASE	slot0	rc=0	maxrss_kb=1933392	memavail=15596306432	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue
+2026-11-17T11:24:24+00:00	ACQUIRE	slot0	size=3	memavail=15642869760	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerVerifier
+2026-11-17T11:24:26+00:00	RELEASE	slot2	rc=0	maxrss_kb=1843836	memavail=15498883072	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARMRun
+2026-11-17T11:24:26+00:00	ACQUIRE	slot2	size=3	memavail=15527165952	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableau
+2026-11-17T11:24:28+00:00	RELEASE	slot0	rc=0	maxrss_kb=1975804	memavail=15648002048	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerVerifier
+2026-11-17T11:24:28+00:00	RELEASE	slot2	rc=0	maxrss_kb=1919216	memavail=15648002048	bootstrap:TCSlib/Complexity/CircuitComplexity/UniformTableau
+2026-11-17T11:24:28+00:00	ACQUIRE	slot0	size=3	memavail=15690067968	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerSound
+2026-11-17T11:24:28+00:00	ACQUIRE	slot2	size=3	memavail=15690067968	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatNPHard
+2026-11-17T11:24:29+00:00	RELEASE	slot1	rc=0	maxrss_kb=1968368	memavail=15728840704	bootstrap:TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily
+2026-11-17T11:24:29+00:00	ACQUIRE	slot1	size=3	memavail=15694090240	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARMProof
+2026-11-17T11:24:31+00:00	RELEASE	slot2	rc=0	maxrss_kb=1931604	memavail=15659708416	bootstrap:TCSlib/Complexity/CircuitComplexity/CircuitSatNPHard
+2026-11-17T11:24:33+00:00	RELEASE	slot0	rc=0	maxrss_kb=1959220	memavail=15720960000	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerSound
+2026-11-17T11:24:33+00:00	ACQUIRE	slot0	size=3	memavail=15763415040	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerSoundInput
+2026-11-17T11:24:33+00:00	RELEASE	slot1	rc=0	maxrss_kb=1886564	memavail=15947890688	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARMProof
+2026-11-17T11:24:33+00:00	ACQUIRE	slot1	size=3	memavail=15926128640	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARMKit
+2026-11-17T11:24:35+00:00	RELEASE	slot1	rc=0	maxrss_kb=1829432	memavail=15847362560	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/ARMKit
+2026-11-17T11:24:35+00:00	ACQUIRE	slot1	size=3	memavail=15862034432	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdjBasic
+2026-11-17T11:24:35+00:00	ACQUIRE	slot2	size=3	memavail=15862034432	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/DblLang
+2026-11-17T11:24:36+00:00	RELEASE	slot0	rc=0	maxrss_kb=1949248	memavail=15810990080	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerSoundInput
+2026-11-17T11:24:36+00:00	ACQUIRE	slot0	size=3	memavail=15773765632	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerComplete
+2026-11-17T11:24:37+00:00	RELEASE	slot1	rc=0	maxrss_kb=1860872	memavail=15590420480	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdjBasic
+2026-11-17T11:24:37+00:00	ACQUIRE	slot1	size=3	memavail=15593443328	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformScan
+2026-11-17T11:24:39+00:00	RELEASE	slot2	rc=0	maxrss_kb=1908012	memavail=15547523072	bootstrap:TCSlib/Complexity/SpaceComplexity/Machines/DblLang
+2026-11-17T11:24:39+00:00	ACQUIRE	slot2	size=3	memavail=15543328768	bootstrap:TCSlib/Complexity/SpaceComplexity/UnaryLogspace
+2026-11-17T11:24:40+00:00	RELEASE	slot0	rc=0	maxrss_kb=1956680	memavail=15632556032	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerComplete
+2026-11-17T11:24:40+00:00	ACQUIRE	slot0	size=3	memavail=15666307072	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk
+2026-11-17T11:24:43+00:00	RELEASE	slot2	rc=0	maxrss_kb=1887176	memavail=15442526208	bootstrap:TCSlib/Complexity/SpaceComplexity/UnaryLogspace
+2026-11-17T11:24:43+00:00	ACQUIRE	slot2	size=3	memavail=15441924096	bootstrap:TCSlib/Complexity/SpaceComplexity/CounterProgSim
+2026-11-17T11:24:45+00:00	RELEASE	slot1	rc=0	maxrss_kb=2027288	memavail=15512518656	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformScan
+2026-11-17T11:24:45+00:00	ACQUIRE	slot1	size=3	memavail=15510872064	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerSigma
+2026-11-17T11:24:48+00:00	RELEASE	slot0	rc=0	maxrss_kb=2005324	memavail=15634272256	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk
+2026-11-17T11:24:48+00:00	RELEASE	slot1	rc=0	maxrss_kb=1931356	memavail=15671873536	bootstrap:TCSlib/Complexity/CircuitComplexity/MeyerSigma
+2026-11-17T11:24:48+00:00	RELEASE	slot2	rc=0	maxrss_kb=1955788	memavail=15957917696	bootstrap:TCSlib/Complexity/SpaceComplexity/CounterProgSim
+2026-11-17T11:24:48+00:00	ACQUIRE	slot0	size=3	memavail=15958192128	bootstrap:TCSlib/Complexity/SpaceComplexity/CounterProgSimRun
+2026-11-17T11:24:48+00:00	ACQUIRE	slot1	size=3	memavail=15958192128	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdj
+2026-11-17T11:24:48+00:00	ACQUIRE	slot2	size=3	memavail=15958192128	bootstrap:TCSlib/Complexity/CircuitComplexity/Meyer
+2026-11-17T11:24:54+00:00	RELEASE	slot2	rc=0	maxrss_kb=2006004	memavail=15524982784	bootstrap:TCSlib/Complexity/CircuitComplexity/Meyer
+2026-11-17T11:24:54+00:00	RELEASE	slot0	rc=0	maxrss_kb=1916952	memavail=15691141120	bootstrap:TCSlib/Complexity/SpaceComplexity/CounterProgSimRun
+2026-11-17T11:24:54+00:00	RELEASE	slot1	rc=0	maxrss_kb=1957672	memavail=15991492608	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdj
+2026-11-17T11:24:54+00:00	ACQUIRE	slot0	size=3	memavail=16045547520	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformCanon
+2026-11-17T11:24:54+00:00	ACQUIRE	slot1	size=3	memavail=16048959488	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceTableau
+2026-11-17T11:24:54+00:00	ACQUIRE	slot2	size=3	memavail=16048959488	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformExample
+2026-11-17T11:24:57+00:00	RELEASE	slot0	rc=0	maxrss_kb=1867916	memavail=15545982976	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformCanon
+2026-11-17T11:24:57+00:00	RELEASE	slot1	rc=0	maxrss_kb=1970988	memavail=15711444992	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceTableau
+2026-11-17T11:24:57+00:00	RELEASE	slot2	rc=0	maxrss_kb=1905944	memavail=15827886080	bootstrap:TCSlib/Complexity/CircuitComplexity/LogspaceUniformExample
+2026-11-17T11:24:57+00:00	ACQUIRE	slot0	size=3	memavail=15875887104	bootstrap:TCSlib/Complexity/CircuitComplexity
+2026-11-17T11:25:01+00:00	RELEASE	slot0	rc=0	maxrss_kb=3073536	memavail=15950073856	bootstrap:TCSlib/Complexity/CircuitComplexity
+2026-11-17T11:25:48+00:00	ACQUIRE	slot0	size=3	memavail=16074162176	layer:NL
+2026-11-17T11:25:51+00:00	RELEASE	slot0	rc=0	maxrss_kb=1794872	memavail=16025866240	layer:NL
+2026-11-17T11:25:52+00:00	ACQUIRE	slot0	size=3	memavail=16045735936	bp:Conv
+2026-11-17T11:25:53+00:00	ACQUIRE	slot1	size=3	memavail=15923924992	lead:NC1
+2026-11-17T11:25:53+00:00	ACQUIRE	slot2	size=3	memavail=15923924992	lead:ModSum
+2026-11-17T11:25:55+00:00	RELEASE	slot0	rc=1	maxrss_kb=1837296	memavail=15553019904	bp:Conv
+2026-11-17T11:25:56+00:00	RELEASE	slot1	rc=1	maxrss_kb=1964872	memavail=15744118784	lead:NC1
+2026-11-17T11:26:01+00:00	RELEASE	slot2	rc=1	maxrss_kb=1835356	memavail=16055283712	lead:ModSum
+2026-11-17T11:26:31+00:00	ACQUIRE	slot0	size=3	memavail=16109981696	lead:ModSum
+2026-11-17T11:26:31+00:00	ACQUIRE	slot1	size=3	memavail=16109981696	lead:NC1
+2026-11-17T11:26:33+00:00	RELEASE	slot1	rc=0	maxrss_kb=1975000	memavail=15861649408	lead:NC1
+2026-11-17T11:26:38+00:00	ACQUIRE	slot1	size=3	memavail=15883268096	bp:ConvImport
+2026-11-17T11:26:38+00:00	RELEASE	slot0	rc=1	maxrss_kb=1878240	memavail=15913009152	lead:ModSum
+2026-11-17T11:26:40+00:00	RELEASE	slot1	rc=0	maxrss_kb=1860404	memavail=16043483136	bp:ConvImport
+2026-11-17T11:26:57+00:00	ACQUIRE	slot0	size=3	memavail=16111026176	bp:ConvSeal
+2026-11-17T11:27:00+00:00	RELEASE	slot0	rc=1	maxrss_kb=1848488	memavail=16073076736	bp:ConvSeal
+2026-11-17T11:27:04+00:00	ACQUIRE	slot0	size=3	memavail=16096739328	bp:ConvSeal
+2026-11-17T11:27:07+00:00	RELEASE	slot0	rc=0	maxrss_kb=1847492	memavail=16023015424	bp:ConvSeal
+2026-11-17T11:27:08+00:00	ACQUIRE	slot0	size=3	memavail=16097599488	lead:ModSum
+2026-11-17T11:27:16+00:00	RELEASE	slot0	rc=1	maxrss_kb=1876640	memavail=16059138048	lead:ModSum
+2026-11-17T11:27:38+00:00	ACQUIRE	slot0	size=3	memavail=16115216384	lead:ModSum
+2026-11-17T11:27:41+00:00	RELEASE	slot0	rc=0	maxrss_kb=1869328	memavail=16091754496	lead:ModSum
+2026-11-17T11:28:02+00:00	ACQUIRE	slot0	size=3	memavail=16111656960	bp:ConvImport
+2026-11-17T11:28:05+00:00	RELEASE	slot0	rc=0	maxrss_kb=1857588	memavail=16071557120	bp:ConvImport
+2026-11-17T11:28:11+00:00	ACQUIRE	slot0	size=3	memavail=16114507776	bp:Conv
+2026-11-17T11:28:13+00:00	RELEASE	slot0	rc=0	maxrss_kb=1845952	memavail=16077832192	bp:Conv
+2026-11-17T11:28:20+00:00	ACQUIRE	slot0	size=3	memavail=16095457280	bp:ConvAxioms
+2026-11-17T11:28:22+00:00	RELEASE	slot0	rc=0	maxrss_kb=1778264	memavail=16062369792	bp:ConvAxioms
+2026-11-17T11:28:31+00:00	ACQUIRE	slot0	size=3	memavail=16125947904	bp:ConvTrace
+2026-11-17T11:28:33+00:00	RELEASE	slot0	rc=0	maxrss_kb=1799784	memavail=16077049856	bp:ConvTrace
+2026-11-17T11:28:42+00:00	ACQUIRE	slot0	size=3	memavail=16126169088	bp:ConvSeal
+2026-11-17T11:28:44+00:00	RELEASE	slot0	rc=0	maxrss_kb=1852160	memavail=16017371136	bp:ConvSeal
+2026-11-17T11:28:56+00:00	ACQUIRE	slot0	size=3	memavail=16094404608	lead:ModSum
+2026-11-17T11:28:56+00:00	ACQUIRE	slot1	size=3	memavail=16094404608	lead:NC1
+2026-11-17T11:28:58+00:00	RELEASE	slot1	rc=0	maxrss_kb=1975988	memavail=15768035328	lead:NC1
+2026-11-17T11:28:59+00:00	RELEASE	slot0	rc=0	maxrss_kb=1875500	memavail=16031191040	lead:ModSum
+2026-11-17T11:29:05+00:00	ACQUIRE	slot0	size=3	memavail=16061648896	fa:CS
+2026-11-17T11:29:10+00:00	RELEASE	slot0	rc=0	maxrss_kb=1841132	memavail=16054624256	fa:CS
+2026-11-17T11:30:03+00:00	ACQUIRE	slot0	size=3	memavail=16080257024	fa:CS
+2026-11-17T11:30:05+00:00	ACQUIRE	slot1	size=3	memavail=15875166208	u4-integration:TCSlib/Complexity/BranchingPrograms/BarringtonConverse
+2026-11-17T11:30:08+00:00	RELEASE	slot1	rc=0	maxrss_kb=1851200	memavail=15717072896	u4-integration:TCSlib/Complexity/BranchingPrograms/BarringtonConverse
+2026-11-17T11:30:08+00:00	ACQUIRE	slot1	size=3	memavail=15752327168	u4-integration:TCSlib/Complexity/BranchingPrograms/NC1
+2026-11-17T11:30:09+00:00	RELEASE	slot0	rc=1	maxrss_kb=1857820	memavail=15826538496	fa:CS
+2026-11-17T11:30:10+00:00	RELEASE	slot1	rc=0	maxrss_kb=1972684	memavail=15943811072	u4-integration:TCSlib/Complexity/BranchingPrograms/NC1
+2026-11-17T11:30:11+00:00	ACQUIRE	slot0	size=3	memavail=15997685760	u4-integration:TCSlib/Complexity/BranchingPrograms
+2026-11-17T11:30:12+00:00	RELEASE	slot0	rc=0	maxrss_kb=1935652	memavail=15978614784	u4-integration:TCSlib/Complexity/BranchingPrograms
+2026-11-17T11:30:40+00:00	ACQUIRE	slot0	size=3	memavail=16113266688	fa:CS
+2026-11-17T11:30:46+00:00	RELEASE	slot0	rc=0	maxrss_kb=1864828	memavail=16069124096	fa:CS
+2026-11-17T11:30:59+00:00	ACQUIRE	slot0	size=3	memavail=16088412160	fa:CS
+2026-11-17T11:31:04+00:00	RELEASE	slot0	rc=1	maxrss_kb=1846456	memavail=16050556928	fa:CS
+2026-11-17T11:31:08+00:00	ACQUIRE	slot0	size=3	memavail=16042627072	base-down:TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave
+2026-11-17T11:31:08+00:00	ACQUIRE	slot1	size=3	memavail=16042627072	base-down:TCSlib/Complexity/CircuitComplexity/NANDLayering
+2026-11-17T11:31:08+00:00	ACQUIRE	slot2	size=3	memavail=16042627072	base-down:TCSlib/Complexity/BranchingPrograms/BarringtonConverse
+2026-11-17T11:31:10+00:00	RELEASE	slot2	rc=0	maxrss_kb=1798744	memavail=15734992896	base-down:TCSlib/Complexity/BranchingPrograms/BarringtonConverse
+2026-11-17T11:31:10+00:00	RELEASE	slot0	rc=0	maxrss_kb=1796600	memavail=15743221760	base-down:TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave
+2026-11-17T11:31:10+00:00	ACQUIRE	slot0	size=3	memavail=15743221760	fa:CS
+2026-11-17T11:31:10+00:00	RELEASE	slot1	rc=0	maxrss_kb=1796776	memavail=15784165376	base-down:TCSlib/Complexity/CircuitComplexity/NANDLayering
+2026-11-17T11:31:10+00:00	ACQUIRE	slot1	size=3	memavail=15800299520	base-down:TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare
+2026-11-17T11:31:10+00:00	ACQUIRE	slot2	size=3	memavail=15796105216	base-down:TCSlib/Complexity/BranchingPrograms/NC1
+2026-11-17T11:31:12+00:00	RELEASE	slot1	rc=0	maxrss_kb=1778992	memavail=15496278016	base-down:TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare
+2026-11-17T11:31:12+00:00	RELEASE	slot2	rc=0	maxrss_kb=1942528	memavail=15500091392	base-down:TCSlib/Complexity/BranchingPrograms/NC1
+2026-11-17T11:31:12+00:00	ACQUIRE	slot1	size=3	memavail=15543283712	base-down:TCSlib/Complexity/BranchingPrograms
+2026-11-17T11:31:12+00:00	ACQUIRE	slot2	size=3	memavail=15543283712	base-down:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum
+2026-11-17T11:31:14+00:00	RELEASE	slot2	rc=0	maxrss_kb=1784496	memavail=15458222080	base-down:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum
+2026-11-17T11:31:14+00:00	RELEASE	slot1	rc=0	maxrss_kb=1933280	memavail=15482179584	base-down:TCSlib/Complexity/BranchingPrograms
+2026-11-17T11:31:14+00:00	ACQUIRE	slot1	size=3	memavail=15506722816	base-down:TCSlib/Complexity/CircuitComplexity/FormulaArith
+2026-11-17T11:31:15+00:00	RELEASE	slot0	rc=1	maxrss_kb=1855460	memavail=15691087872	fa:CS
+2026-11-17T11:31:16+00:00	RELEASE	slot1	rc=0	maxrss_kb=1768232	memavail=15834673152	base-down:TCSlib/Complexity/CircuitComplexity/FormulaArith
+2026-11-17T11:31:16+00:00	ACQUIRE	slot0	size=3	memavail=15896817664	base-down:TCSlib/Complexity/CircuitComplexity
+2026-11-17T11:31:19+00:00	RELEASE	slot0	rc=0	maxrss_kb=3072068	memavail=15781801984	base-down:TCSlib/Complexity/CircuitComplexity
+2026-11-17T11:31:29+00:00	ACQUIRE	slot0	size=3	memavail=16027021312	fa:CS
+2026-11-17T11:31:33+00:00	ACQUIRE	slot1	size=3	memavail=15838416896	check:evidence/rule10/probes-cp1-base/Collect
+2026-11-17T11:31:33+00:00	ACQUIRE	slot2	size=3	memavail=15836581888	check:evidence/rule10/probes-cp1-head/Collect
+2026-11-17T11:31:35+00:00	RELEASE	slot0	rc=0	maxrss_kb=1873408	memavail=15636463616	fa:CS
+2026-11-17T11:31:37+00:00	RELEASE	slot1	rc=0	maxrss_kb=1991444	memavail=15763636224	check:evidence/rule10/probes-cp1-base/Collect
+2026-11-17T11:31:37+00:00	RELEASE	slot2	rc=0	maxrss_kb=1999240	memavail=15986683904	check:evidence/rule10/probes-cp1-head/Collect
+2026-11-17T11:31:37+00:00	ACQUIRE	slot1	size=3	memavail=15990370304	run-A:evidence/rule10/probes-cp1-base/A/SealA_Complexity_BranchingPrograms_NC1
+2026-11-17T11:31:37+00:00	ACQUIRE	slot0	size=3	memavail=15990370304	run-A:evidence/rule10/probes-cp1-base/A/SealA_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:31:37+00:00	ACQUIRE	slot2	size=3	memavail=15990370304	run-A:evidence/rule10/probes-cp1-base/A/SealA_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:32:01+00:00	RELEASE	slot0	rc=0	maxrss_kb=1854628	memavail=15561912320	run-A:evidence/rule10/probes-cp1-base/A/SealA_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:32:01+00:00	RELEASE	slot2	rc=0	maxrss_kb=1838372	memavail=15792230400	run-A:evidence/rule10/probes-cp1-base/A/SealA_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:32:03+00:00	ACQUIRE	slot0	size=3	memavail=15841722368	run-A:evidence/rule10/probes-cp1-head/A/SealA_Complexity_BranchingPrograms_NC1
+2026-11-17T11:32:03+00:00	ACQUIRE	slot2	size=3	memavail=15841722368	run-A:evidence/rule10/probes-cp1-head/A/SealA_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:32:08+00:00	RELEASE	slot1	rc=0	maxrss_kb=2004788	memavail=15596711936	run-A:evidence/rule10/probes-cp1-base/A/SealA_Complexity_BranchingPrograms_NC1
+2026-11-17T11:32:08+00:00	ACQUIRE	slot1	size=3	memavail=15615406080	run-B:evidence/rule10/probes-cp1-base/B/SealB_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:32:27+00:00	RELEASE	slot2	rc=0	maxrss_kb=1897188	memavail=15499153408	run-A:evidence/rule10/probes-cp1-head/A/SealA_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:32:27+00:00	ACQUIRE	slot2	size=3	memavail=15538692096	layer:NL
+2026-11-17T11:32:30+00:00	RELEASE	slot2	rc=1	maxrss_kb=1815284	memavail=15506219008	layer:NL
+2026-11-17T11:32:31+00:00	ACQUIRE	slot2	size=3	memavail=15556218880	run-B:evidence/rule10/probes-cp1-base/B/SealB_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:32:31+00:00	RELEASE	slot1	rc=0	maxrss_kb=1862416	memavail=15715999744	run-B:evidence/rule10/probes-cp1-base/B/SealB_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:32:31+00:00	ACQUIRE	slot1	size=3	memavail=15741194240	run-A:evidence/rule10/probes-cp1-head/A/SealA_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:32:34+00:00	RELEASE	slot0	rc=0	maxrss_kb=2033840	memavail=15621042176	run-A:evidence/rule10/probes-cp1-head/A/SealA_Complexity_BranchingPrograms_NC1
+2026-11-17T11:32:34+00:00	ACQUIRE	slot0	size=3	memavail=15667818496	run-B:evidence/rule10/probes-cp1-base/B/SealB_Complexity_BranchingPrograms_NC1
+2026-11-17T11:32:56+00:00	RELEASE	slot2	rc=0	maxrss_kb=1837700	memavail=15462789120	run-B:evidence/rule10/probes-cp1-base/B/SealB_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:32:56+00:00	ACQUIRE	slot2	size=3	memavail=15514529792	fa:CS
+2026-11-17T11:32:57+00:00	RELEASE	slot1	rc=0	maxrss_kb=1924284	memavail=15582920704	run-A:evidence/rule10/probes-cp1-head/A/SealA_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:32:58+00:00	ACQUIRE	slot1	size=3	memavail=15589978112	run-B:evidence/rule10/probes-cp1-head/B/SealB_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:33:03+00:00	RELEASE	slot2	rc=0	maxrss_kb=1867352	memavail=15526264832	fa:CS
+2026-11-17T11:33:04+00:00	ACQUIRE	slot2	size=3	memavail=15551766528	run-B:evidence/rule10/probes-cp1-head/B/SealB_Complexity_BranchingPrograms_NC1
+2026-11-17T11:33:07+00:00	RELEASE	slot0	rc=0	maxrss_kb=2006540	memavail=15556767744	run-B:evidence/rule10/probes-cp1-base/B/SealB_Complexity_BranchingPrograms_NC1
+2026-11-17T11:33:07+00:00	ACQUIRE	slot0	size=3	memavail=15608758272	run-B:evidence/rule10/probes-cp1-head/B/SealB_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:33:25+00:00	RELEASE	slot1	rc=0	maxrss_kb=1898616	memavail=15466491904	run-B:evidence/rule10/probes-cp1-head/B/SealB_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:33:25+00:00	ACQUIRE	slot1	size=3	memavail=15499591680	run-coeA:evidence/rule10/probes-cp1-base/coeA/SealcoeA_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:33:35+00:00	RELEASE	slot0	rc=0	maxrss_kb=1919248	memavail=15508176896	run-B:evidence/rule10/probes-cp1-head/B/SealB_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:33:36+00:00	ACQUIRE	slot0	size=3	memavail=15562170368	run-coeA:evidence/rule10/probes-cp1-base/coeA/SealcoeA_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:33:39+00:00	RELEASE	slot2	rc=0	maxrss_kb=2027388	memavail=15605374976	run-B:evidence/rule10/probes-cp1-head/B/SealB_Complexity_BranchingPrograms_NC1
+2026-11-17T11:33:39+00:00	ACQUIRE	slot2	size=3	memavail=15628517376	run-coeA:evidence/rule10/probes-cp1-base/coeA/SealcoeA_Complexity_BranchingPrograms_NC1
+2026-11-17T11:33:51+00:00	RELEASE	slot1	rc=0	maxrss_kb=1846848	memavail=15585935360	run-coeA:evidence/rule10/probes-cp1-base/coeA/SealcoeA_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:33:51+00:00	ACQUIRE	slot1	size=3	memavail=15634104320	run-coeA:evidence/rule10/probes-cp1-head/coeA/SealcoeA_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:34:01+00:00	RELEASE	slot0	rc=0	maxrss_kb=1842692	memavail=15581016064	run-coeA:evidence/rule10/probes-cp1-base/coeA/SealcoeA_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:34:03+00:00	ACQUIRE	slot0	size=3	memavail=15626960896	layer:NL
+2026-11-17T11:34:07+00:00	RELEASE	slot0	rc=1	maxrss_kb=1822492	memavail=15492849664	layer:NL
+2026-11-17T11:34:08+00:00	ACQUIRE	slot0	size=3	memavail=15526330368	lead:StmtDump-head
+2026-11-17T11:34:10+00:00	RELEASE	slot0	rc=0	maxrss_kb=1971604	memavail=15466844160	lead:StmtDump-head
+2026-11-17T11:34:10+00:00	ACQUIRE	slot0	size=3	memavail=15482785792	run-coeA:evidence/rule10/probes-cp1-head/coeA/SealcoeA_Complexity_BranchingPrograms_NC1
+2026-11-17T11:34:13+00:00	RELEASE	slot2	rc=0	maxrss_kb=2005832	memavail=15508258816	run-coeA:evidence/rule10/probes-cp1-base/coeA/SealcoeA_Complexity_BranchingPrograms_NC1
+2026-11-17T11:34:13+00:00	ACQUIRE	slot2	size=3	memavail=15558684672	run-coeB:evidence/rule10/probes-cp1-base/coeB/SealcoeB_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:34:18+00:00	RELEASE	slot1	rc=0	maxrss_kb=1896848	memavail=15579029504	run-coeA:evidence/rule10/probes-cp1-head/coeA/SealcoeA_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:34:18+00:00	ACQUIRE	slot1	size=3	memavail=15608934400	run-coeB:evidence/rule10/probes-cp1-base/coeB/SealcoeB_Complexity_BranchingPrograms_NC1
+2026-11-17T11:34:37+00:00	RELEASE	slot2	rc=0	maxrss_kb=1846776	memavail=15515361280	run-coeB:evidence/rule10/probes-cp1-base/coeB/SealcoeB_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:34:37+00:00	ACQUIRE	slot2	size=3	memavail=15562633216	run-coeB:evidence/rule10/probes-cp1-base/coeB/SealcoeB_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:34:41+00:00	RELEASE	slot0	rc=0	maxrss_kb=2032868	memavail=15571451904	run-coeA:evidence/rule10/probes-cp1-head/coeA/SealcoeA_Complexity_BranchingPrograms_NC1
+2026-11-17T11:34:42+00:00	ACQUIRE	slot0	size=3	memavail=15604490240	run-coeA:evidence/rule10/probes-cp1-head/coeA/SealcoeA_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:34:48+00:00	RELEASE	slot1	rc=0	maxrss_kb=2008244	memavail=15597797376	run-coeB:evidence/rule10/probes-cp1-base/coeB/SealcoeB_Complexity_BranchingPrograms_NC1
+2026-11-17T11:34:48+00:00	ACQUIRE	slot1	size=3	memavail=15645569024	lead:StmtDump-base
+2026-11-17T11:34:51+00:00	RELEASE	slot1	rc=0	maxrss_kb=1970468	memavail=15541030912	lead:StmtDump-base
+2026-11-17T11:34:52+00:00	ACQUIRE	slot1	size=3	memavail=15585234944	layer:NL
+2026-11-17T11:34:56+00:00	RELEASE	slot1	rc=1	maxrss_kb=1824052	memavail=15527448576	layer:NL
+2026-11-17T11:35:00+00:00	RELEASE	slot2	rc=0	maxrss_kb=1839656	memavail=15690326016	run-coeB:evidence/rule10/probes-cp1-base/coeB/SealcoeB_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:35:07+00:00	RELEASE	slot0	rc=0	maxrss_kb=1922128	memavail=16015527936	run-coeA:evidence/rule10/probes-cp1-head/coeA/SealcoeA_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:35:07+00:00	ACQUIRE	slot0	size=3	memavail=16057536512	run-coeB:evidence/rule10/probes-cp1-head/coeB/SealcoeB_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:35:07+00:00	ACQUIRE	slot1	size=3	memavail=16057536512	run-coeB:evidence/rule10/probes-cp1-head/coeB/SealcoeB_Complexity_BranchingPrograms_NC1
+2026-11-17T11:35:07+00:00	ACQUIRE	slot2	size=3	memavail=16057536512	run-coeB:evidence/rule10/probes-cp1-head/coeB/SealcoeB_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:35:32+00:00	RELEASE	slot0	rc=0	maxrss_kb=1907156	memavail=15486341120	run-coeB:evidence/rule10/probes-cp1-head/coeB/SealcoeB_Complexity_BranchingPrograms_BarringtonConverse
+2026-11-17T11:35:32+00:00	RELEASE	slot2	rc=0	maxrss_kb=1921328	memavail=15760052224	run-coeB:evidence/rule10/probes-cp1-head/coeB/SealcoeB_Complexity_CircuitComplexity_FormulaArith_ModSum
+2026-11-17T11:35:32+00:00	ACQUIRE	slot0	size=3	memavail=15808483328	lead:AxiomProbe
+2026-11-17T11:35:33+00:00	ACQUIRE	slot2	size=3	memavail=15710879744	layer:NL
+2026-11-17T11:35:37+00:00	RELEASE	slot1	rc=0	maxrss_kb=2032360	memavail=15715262464	run-coeB:evidence/rule10/probes-cp1-head/coeB/SealcoeB_Complexity_BranchingPrograms_NC1
+2026-11-17T11:35:37+00:00	RELEASE	slot2	rc=0	maxrss_kb=1835968	memavail=15787446272	layer:NL
+2026-11-17T11:35:41+00:00	RELEASE	slot0	rc=0	maxrss_kb=1993712	memavail=16059117568	lead:AxiomProbe
+2026-11-17T11:35:51+00:00	ACQUIRE	slot0	size=3	memavail=16106700800	fa:CMP
+2026-11-17T11:35:53+00:00	RELEASE	slot0	rc=0	maxrss_kb=1811664	memavail=16065613824	fa:CMP
+2026-11-17T11:36:23+00:00	ACQUIRE	slot0	size=3	memavail=16090611712	fa:CMP
+2026-11-17T11:36:27+00:00	RELEASE	slot0	rc=1	maxrss_kb=1847588	memavail=16013053952	fa:CMP
+2026-11-17T11:36:33+00:00	ACQUIRE	slot0	size=3	memavail=16073052160	fa:CMP
+2026-11-17T11:36:37+00:00	RELEASE	slot0	rc=0	maxrss_kb=1867248	memavail=16041787392	fa:CMP
+2026-11-17T11:36:56+00:00	ACQUIRE	slot0	size=3	memavail=16081248256	run-unsealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_neg_unsealed
+2026-11-17T11:36:56+00:00	ACQUIRE	slot1	size=3	memavail=16081248256	run-unsealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_neg_unsealed
+2026-11-17T11:36:56+00:00	ACQUIRE	slot2	size=3	memavail=16079241216	run-unsealed:evidence/rule10/live/Live_BranchingPrograms_NC1_neg_unsealed
+2026-11-17T11:36:59+00:00	RELEASE	slot2	rc=0	maxrss_kb=1969660	memavail=15517061120	run-unsealed:evidence/rule10/live/Live_BranchingPrograms_NC1_neg_unsealed
+2026-11-17T11:37:00+00:00	RELEASE	slot0	rc=0	maxrss_kb=1839984	memavail=15747465216	run-unsealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_neg_unsealed
+2026-11-17T11:37:00+00:00	RELEASE	slot1	rc=0	maxrss_kb=1870444	memavail=15939072000	run-unsealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_neg_unsealed
+2026-11-17T11:37:00+00:00	ACQUIRE	slot0	size=3	memavail=15993081856	run-sealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_neg_A
+2026-11-17T11:37:00+00:00	ACQUIRE	slot1	size=3	memavail=15993081856	run-sealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_neg_coeA
+2026-11-17T11:37:00+00:00	ACQUIRE	slot2	size=3	memavail=15993081856	run-sealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_pos_A
+2026-11-17T11:37:28+00:00	RELEASE	slot1	rc=1	maxrss_kb=1887844	memavail=15463297024	run-sealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_neg_coeA
+2026-11-17T11:37:28+00:00	ACQUIRE	slot1	size=3	memavail=15668834304	run-sealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_pos_coeA
+2026-11-17T11:37:28+00:00	RELEASE	slot0	rc=1	maxrss_kb=1892844	memavail=15733243904	run-sealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_neg_A
+2026-11-17T11:37:28+00:00	ACQUIRE	slot0	size=3	memavail=15757934592	run-sealed:evidence/rule10/live/Live_BranchingPrograms_NC1_neg_A
+2026-11-17T11:37:28+00:00	RELEASE	slot2	rc=0	maxrss_kb=1896912	memavail=15944953856	run-sealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_pos_A
+2026-11-17T11:37:28+00:00	ACQUIRE	slot2	size=3	memavail=15972655104	run-sealed:evidence/rule10/live/Live_BranchingPrograms_NC1_pos_A
+2026-11-17T11:37:54+00:00	RELEASE	slot1	rc=0	maxrss_kb=1891396	memavail=15484805120	run-sealed:evidence/rule10/live/Live_BranchingPrograms_BarringtonConverse_pos_coeA
+2026-11-17T11:37:54+00:00	ACQUIRE	slot1	size=3	memavail=15528169472	run-sealed:evidence/rule10/live/Live_BranchingPrograms_NC1_neg_coeA
+2026-11-17T11:38:00+00:00	RELEASE	slot2	rc=0	maxrss_kb=2034084	memavail=15512059904	run-sealed:evidence/rule10/live/Live_BranchingPrograms_NC1_pos_A
+2026-11-17T11:38:00+00:00	ACQUIRE	slot2	size=3	memavail=15530754048	run-sealed:evidence/rule10/live/Live_BranchingPrograms_NC1_pos_coeA
+2026-11-17T11:38:01+00:00	RELEASE	slot0	rc=1	maxrss_kb=2034592	memavail=15675580416	run-sealed:evidence/rule10/live/Live_BranchingPrograms_NC1_neg_A
+2026-11-17T11:38:01+00:00	ACQUIRE	slot0	size=3	memavail=15675584512	run-sealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_neg_A
+2026-11-17T11:38:25+00:00	RELEASE	slot1	rc=1	maxrss_kb=2030512	memavail=15481778176	run-sealed:evidence/rule10/live/Live_BranchingPrograms_NC1_neg_coeA
+2026-11-17T11:38:25+00:00	ACQUIRE	slot1	size=3	memavail=15481778176	run-sealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_pos_A
+2026-11-17T11:38:26+00:00	RELEASE	slot0	rc=1	maxrss_kb=1919276	memavail=15539539968	run-sealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_neg_A
+2026-11-17T11:38:26+00:00	ACQUIRE	slot0	size=3	memavail=15567839232	run-sealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_neg_coeA
+2026-11-17T11:38:31+00:00	RELEASE	slot2	rc=0	maxrss_kb=2028732	memavail=15534841856	run-sealed:evidence/rule10/live/Live_BranchingPrograms_NC1_pos_coeA
+2026-11-17T11:38:31+00:00	ACQUIRE	slot2	size=3	memavail=15581806592	run-sealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_pos_coeA
+2026-11-17T11:38:49+00:00	RELEASE	slot1	rc=0	maxrss_kb=1917648	memavail=15471030272	run-sealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_pos_A
+2026-11-17T11:38:50+00:00	RELEASE	slot0	rc=1	maxrss_kb=1918600	memavail=15742013440	run-sealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_neg_coeA
+2026-11-17T11:38:50+00:00	ACQUIRE	slot0	size=3	memavail=15789809664	fa:CS
+2026-11-17T11:38:55+00:00	RELEASE	slot2	rc=0	maxrss_kb=1922260	memavail=15753326592	run-sealed:evidence/rule10/live/Live_CircuitComplexity_FormulaArith_ModSum_pos_coeA
+2026-11-17T11:38:55+00:00	RELEASE	slot0	rc=0	maxrss_kb=1874024	memavail=16020103168	fa:CS
+2026-11-17T11:38:56+00:00	ACQUIRE	slot0	size=3	memavail=16059842560	fa:SealCS
+2026-11-17T11:39:01+00:00	RELEASE	slot0	rc=1	maxrss_kb=1851912	memavail=16005226496	fa:SealCS
+2026-11-17T11:39:08+00:00	ACQUIRE	slot0	size=3	memavail=16023851008	fa:SealCS
+2026-11-17T11:39:13+00:00	RELEASE	slot0	rc=0	maxrss_kb=1869848	memavail=16059858944	fa:SealCS
+2026-11-17T11:39:13+00:00	ACQUIRE	slot0	size=3	memavail=16059858944	fa:SealCMP
+2026-11-17T11:39:16+00:00	RELEASE	slot0	rc=0	maxrss_kb=1878704	memavail=16073646080	fa:SealCMP
+2026-11-17T11:39:17+00:00	ACQUIRE	slot0	size=3	memavail=16076619776	layer:NL
+2026-11-17T11:39:21+00:00	RELEASE	slot0	rc=1	maxrss_kb=1846732	memavail=16016969728	layer:NL
+2026-11-17T11:39:22+00:00	ACQUIRE	slot0	size=3	memavail=16056111104	sweep-cp1:TCSlib/Complexity/CircuitComplexity/NANDLayering
+2026-11-17T11:39:22+00:00	ACQUIRE	slot1	size=3	memavail=16056111104	sweep-cp1:TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave
+2026-11-17T11:39:22+00:00	ACQUIRE	slot2	size=3	memavail=16056111104	sweep-cp1:TCSlib/Complexity/BranchingPrograms/BarringtonConverse
+2026-11-17T11:39:24+00:00	RELEASE	slot1	rc=0	maxrss_kb=1801084	memavail=15700074496	sweep-cp1:TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave
+2026-11-17T11:39:24+00:00	RELEASE	slot0	rc=0	maxrss_kb=1796572	memavail=15748464640	sweep-cp1:TCSlib/Complexity/CircuitComplexity/NANDLayering
+2026-11-17T11:39:24+00:00	ACQUIRE	slot0	size=3	memavail=15748648960	sweep-cp1:TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare
+2026-11-17T11:39:25+00:00	RELEASE	slot2	rc=0	maxrss_kb=1863948	memavail=15895732224	sweep-cp1:TCSlib/Complexity/BranchingPrograms/BarringtonConverse
+2026-11-17T11:39:25+00:00	ACQUIRE	slot1	size=3	memavail=15897841664	sweep-cp1:TCSlib/Complexity/BranchingPrograms/NC1
+2026-11-17T11:39:26+00:00	RELEASE	slot0	rc=0	maxrss_kb=1783508	memavail=15807205376	sweep-cp1:TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare
+2026-11-17T11:39:26+00:00	ACQUIRE	slot0	size=3	memavail=15786508288	sweep-cp1:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum
+2026-11-17T11:39:27+00:00	RELEASE	slot1	rc=0	maxrss_kb=1975844	memavail=15805558784	sweep-cp1:TCSlib/Complexity/BranchingPrograms/NC1
+2026-11-17T11:39:27+00:00	ACQUIRE	slot1	size=3	memavail=15842729984	sweep-cp1:TCSlib/Complexity/BranchingPrograms
+2026-11-17T11:39:29+00:00	RELEASE	slot0	rc=0	maxrss_kb=1871392	memavail=15763980288	sweep-cp1:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum
+2026-11-17T11:39:29+00:00	RELEASE	slot1	rc=0	maxrss_kb=1936864	memavail=15944466432	sweep-cp1:TCSlib/Complexity/BranchingPrograms
+2026-11-17T11:39:29+00:00	ACQUIRE	slot0	size=3	memavail=16000303104	sweep-cp1:TCSlib/Complexity/CircuitComplexity/FormulaArith
+2026-11-17T11:39:31+00:00	RELEASE	slot0	rc=0	maxrss_kb=1810220	memavail=15871930368	sweep-cp1:TCSlib/Complexity/CircuitComplexity/FormulaArith
+2026-11-17T11:39:31+00:00	ACQUIRE	slot0	size=3	memavail=15890964480	sweep-cp1:TCSlib/Complexity/CircuitComplexity
+2026-11-17T11:39:34+00:00	RELEASE	slot0	rc=0	maxrss_kb=3073960	memavail=15824044032	sweep-cp1:TCSlib/Complexity/CircuitComplexity
+2026-11-17T11:40:00+00:00	ACQUIRE	slot0	size=3	memavail=16061538304	layer:NL
+2026-11-17T11:40:02+00:00	ACQUIRE	slot1	size=3	memavail=15863279616	fa:CMP
+2026-11-17T11:40:06+00:00	RELEASE	slot0	rc=1	maxrss_kb=1851176	memavail=15768555520	layer:NL
+2026-11-17T11:40:07+00:00	RELEASE	slot1	rc=0	maxrss_kb=1864140	memavail=16024354816	fa:CMP
+2026-11-17T11:40:24+00:00	ACQUIRE	slot0	size=3	memavail=16077438976	layer:NL
+2026-11-17T11:40:24+00:00	ACQUIRE	slot1	size=3	memavail=15976923136	fa:SealCMP
+2026-11-17T11:40:29+00:00	RELEASE	slot1	rc=0	maxrss_kb=1906512	memavail=15746785280	fa:SealCMP
+2026-11-17T11:40:30+00:00	RELEASE	slot0	rc=1	maxrss_kb=1875200	memavail=16046317568	layer:NL
+2026-11-17T11:40:40+00:00	ACQUIRE	slot0	size=3	memavail=16096751616	layer:NL
+2026-11-17T11:40:49+00:00	RELEASE	slot0	rc=1	maxrss_kb=1889732	memavail=16073306112	layer:NL
+2026-11-17T11:40:55+00:00	ACQUIRE	slot0	size=3	memavail=16087846912	layer:NL
+2026-11-17T11:41:02+00:00	RELEASE	slot0	rc=0	maxrss_kb=1902240	memavail=16064876544	layer:NL
+2026-11-17T11:41:14+00:00	ACQUIRE	slot0	size=3	memavail=16094105600	layer:NL
+2026-11-17T11:41:21+00:00	RELEASE	slot0	rc=0	maxrss_kb=1906292	memavail=16055869440	layer:NL

@@ -1,0 +1,160 @@
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:178:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  f m
+in the target expression
+  prefixVal f m + false.toNat * 2 ^ m = prefixVal f w
+
+case succ.false
+f : ℕ → Bool
+w m✝ m : ℕ
+hwm : w ≤ m
+ih : prefixVal f m < 2 ^ w → prefixVal f m = prefixVal f w
+h : prefixVal f m + false.toNat * 2 ^ m < 2 ^ w
+h2 : 2 ^ w ≤ 2 ^ m
+hf : f m = false
+⊢ prefixVal f m + false.toNat * 2 ^ m = prefixVal f w
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:191:26: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern in the current goal
+
+case inr
+n : ℕ
+x : Fin n → Bool
+U : List (TreeCircuit n)
+w : ℕ
+h : prefixVal (fun j => (List.map (fun c => c.eval x) U).getD j false) U.length < 2 ^ w
+hU : w ≤ U.length
+⊢ prefixVal (fun j => (List.take w (List.map (fun c => c.eval x) U)).getD j false) w =
+    prefixVal (fun j => (List.map (fun c => c.eval x) U).getD j false) U.length
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:289:72: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  0 ≤ s ≤ 1
+  r ≥ 0
+  p ≥ 0
+  o ≥ 0
+  n ≥ 0
+  m ≥ 0
+  m + n ≥ 0
+  m + n - p ≤ -1
+  l ≥ 0
+  l - m - n ≥ 1
+  k ≥ 0
+  k - m - n ≤ 0
+  i - m - n ≥ 1
+  h ≥ 0
+  h - m - n ≤ 0
+  g ≥ 0
+  g - m - n ≥ 0
+  f ≥ 0
+  e ≥ 0
+  d ≥ 1
+  d - n ≥ 1
+  c ≥ 0
+  c - m - n + r ≤ 0
+  c - m - n + o ≤ 0
+  b ≥ 0
+  b - c ≥ 0
+  b - d ≤ 0
+  b - m - n + r ≥ 1
+  b - m - n + o ≥ 1
+where
+ b := ↑hi
+ c := ↑lo
+ d := ↑q
+ e := ↑(Nat.clog 2 M)
+ f := ↑(Nat.clog 2 q)
+ g := ↑M * ↑(q - 1)
+ h := ↑(val x (csaReduce Us).2)
+ i := ↑2 ^ w
+ k := ↑(val x (List.take w (csaReduce Us).2))
+ l := ↑(max M 1) * ↑q
+ m := ↑q * ↑(S / q)
+ n := ↑S % ↑q
+ o := ↑j * ↑q
+ p := ↑q * ↑j
+ r := ↑⋯.choose * ↑q
+ s := ↑M
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:290:57: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  0 ≤ s ≤ 1
+  r ≥ 0
+  p ≥ 0
+  o ≥ 0
+  n ≥ 0
+  m ≥ 0
+  m + n ≥ 0
+  l ≥ 0
+  l - m - n ≥ 1
+  k ≥ 0
+  k - m - n ≤ 0
+  i - m - n ≥ 1
+  h ≥ 0
+  h - m - n ≤ 0
+  g ≥ 0
+  g - m - n ≥ 0
+  f ≥ 0
+  e ≥ 0
+  d ≥ 1
+  d - m - n + p ≤ 0
+  d - n ≥ 1
+  c ≥ 0
+  c - m - n + r ≤ 0
+  c - m - n + o ≤ 0
+  b ≥ 0
+  b - c ≥ 0
+  b - d ≤ 0
+  b - m - n + r ≥ 1
+  b - m - n + o ≥ 1
+where
+ b := ↑hi
+ c := ↑lo
+ d := ↑q
+ e := ↑(Nat.clog 2 M)
+ f := ↑(Nat.clog 2 q)
+ g := ↑M * ↑(q - 1)
+ h := ↑(val x (csaReduce Us).2)
+ i := ↑2 ^ w
+ k := ↑(val x (List.take w (csaReduce Us).2))
+ l := ↑(max M 1) * ↑q
+ m := ↑q * ↑(S / q)
+ n := ↑S % ↑q
+ o := ↑j * ↑q
+ p := ↑q * ↑j
+ r := ↑⋯.choose * ↑q
+ s := ↑M
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:376:2: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  l ≥ 0
+  k ≥ 0
+  k - l ≥ 0
+  j ≥ 0
+  i ≥ 0
+  h ≥ 0
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  4*d - e ≥ -1
+  4*d - i + 2*j ≤ -10
+  4*d + 2*f - g ≥ -9
+  0 ≤ c ≤ 1
+  b ≥ 0
+  b + h - k ≥ 0
+where
+ b := ↑(Nat.clog 2 q)
+ c := ↑(TreeCircuit.maxDepth Us.flatten)
+ d := ↑(csaLevels M)
+ e := ↑(TreeCircuit.maxDepth (U ++ W))
+ f := ↑(Nat.clog 2 (w + 1))
+ g := ↑(TreeCircuit.maxDepth
+    (List.map (fun j => (geConst U W (j * q + lo)).and2 (geConst U W (j * q + hi)).neg) (List.range (max M 1))))
+ h := ↑(Nat.clog 2 (max M 1))
+ i := ↑(TreeCircuit.maxDepth
+    (List.map
+      (fun j =>
+        (geConst (List.take w (csaReduce Us).1) (List.take w (csaReduce Us).2) (j * q + lo)).and2
+          (geConst (List.take w (csaReduce Us).1) (List.take w (csaReduce Us).2) (j * q + hi)).neg)
+      (List.range (max M 1))))
+ j := ↑(Nat.clog 2 (Nat.clog 2 M + Nat.clog 2 q + 1))
+ k := ↑W.length
+ l := ↑U.length
+FAIL(TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum): lean exited with status 1
+FAIL(TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum): error diagnostics reported
+FAIL(TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum): no fresh .olean produced

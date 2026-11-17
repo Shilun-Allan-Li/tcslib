@@ -1,0 +1,24 @@
+TCSlib/Complexity/BranchingPrograms/NC1.lean:153:43: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  b * 2
+in the target expression
+  4 ^ b * 4 ^ (b * Nat.log 2 n) = 4 ^ b * (2 ^ (2 * b)) ^ Nat.log 2 n
+
+L : Language Bool
+h : InNC 1 L
+C : TreeCircuitFamily
+hF : C.HasFaninTwo
+hD : C.HasPolylogDepth 1
+hL : C.language = L
+b : ℕ
+hb : ∀ (n : ℕ), (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ 1
+hF' : ∀ (n : ℕ), (C.circuit n).maxFanin ≤ 2
+hσ1 : ⇑sigma1 ≠ id
+n : ℕ
+h0 : ¬n = 0
+this : NeZero n
+hd : (C.circuit n).depth ≤ b * (Nat.log 2 n + 1)
+h2 : 2 ^ Nat.log 2 n ≤ n + 1
+⊢ 4 ^ b * 4 ^ (b * Nat.log 2 n) = 4 ^ b * (2 ^ (2 * b)) ^ Nat.log 2 n
+FAIL(TCSlib/Complexity/BranchingPrograms/NC1): lean exited with status 1
+FAIL(TCSlib/Complexity/BranchingPrograms/NC1): error diagnostics reported
+FAIL(TCSlib/Complexity/BranchingPrograms/NC1): no fresh .olean produced

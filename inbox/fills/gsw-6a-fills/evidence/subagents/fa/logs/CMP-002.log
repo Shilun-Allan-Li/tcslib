@@ -1,0 +1,17 @@
+TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean:509:4: error: unsolved goals
+case inr
+n : ℕ
+U W : List (TreeCircuit n)
+c p : ℕ
+hD : 1 ≤ max 1 (TreeCircuit.maxDepth (U ++ W))
+h✝¹ : ¬c = 0
+h✝ : ¬2 ^ p < c
+j : ℕ
+hd✝ : TreeCircuit.const ((2 ^ p - c).testBit j) ∈ U ++ W ++ constBits p (2 ^ p - c)
+hd :
+  TreeCircuit.const ((2 ^ p - c).testBit j) ∈
+    List.map (fun j => TreeCircuit.const ((2 ^ p - c).testBit j)) (List.range p)
+⊢ 1 ≤ max 1 (TreeCircuit.maxDepth (U ++ W))
+FAIL(TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare): lean exited with status 1
+FAIL(TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare): error diagnostics reported
+FAIL(TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare): no fresh .olean produced

@@ -1,0 +1,1 @@
+2026-11-17T11:28:11Z Lead answer: APPROVED. Add import Mathlib.Data.Fintype.BigOperators after import Mathlib.Data.Fintype.Defs (already a root of the fetched cache, mathlib-roots.txt line 21). Disclose in report (reason: reuse Fintype.card_fun / Finset.card_le_univ / Pi Fintype instance).

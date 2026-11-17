@@ -1,0 +1,208 @@
+BoolCircuit.DAGCircuit.layerGates_acyclic	theorem	[]
+  : ∀ {n : Nat} [inst : NeZero.{0} n] (C : BoolCircuit.DAGCircuit n) (i : Nat)
+  (h : LT.lt.{0} i (List.length.{0} (BoolCircuit.DAGCircuit.layerGates C))) (a : Nat),
+  Membership.mem.{0, 0} (BoolCircuit.DAGGate.args (GetElem.getElem.{0, 0, 0} (BoolCircuit.DAGCircuit.layerGates C) i h))
+      a →
+    LT.lt.{0} a (HAdd.hAdd.{0, 0, 0} (HAdd.hAdd.{0, 0, 0} n n) i)
+BoolCircuit.DAGCircuit.layerNAND_depth	theorem	[]
+  : ∀ {n : Nat} [inst : NeZero.{0} n] (C : BoolCircuit.DAGCircuit n),
+  Eq.{1} (BoolCircuit.DAGCircuit.depth (BoolCircuit.DAGCircuit.layerNAND C)) (BoolCircuit.DAGCircuit.depth C)
+BoolCircuit.DAGCircuit.layerNAND_eval	theorem	[]
+  : ∀ {n : Nat} [inst : NeZero.{0} n] (C : BoolCircuit.DAGCircuit n),
+  BoolCircuit.DAGCircuit.IsNANDForm C →
+    ∀ (x : Fin n → Bool),
+      Eq.{1} (BoolCircuit.DAGCircuit.eval (BoolCircuit.DAGCircuit.layerNAND C) (BoolCircuit.litInput x))
+        (BoolCircuit.DAGCircuit.eval C x)
+BoolCircuit.DAGCircuit.layerNAND_isLayered	theorem	[]
+  : ∀ {n : Nat} [inst : NeZero.{0} n] (C : BoolCircuit.DAGCircuit n),
+  BoolCircuit.DAGCircuit.IsLayered (BoolCircuit.DAGCircuit.layerNAND C)
+BoolCircuit.DAGCircuit.layerNAND_isNANDForm	theorem	[]
+  : ∀ {n : Nat} [inst : NeZero.{0} n] (C : BoolCircuit.DAGCircuit n),
+  BoolCircuit.DAGCircuit.IsNANDForm C → BoolCircuit.DAGCircuit.IsNANDForm (BoolCircuit.DAGCircuit.layerNAND C)
+BoolCircuit.DAGCircuit.layerNAND_size_le	theorem	[]
+  : ∀ {n : Nat} [inst : NeZero.{0} n] (C : BoolCircuit.DAGCircuit n),
+  LE.le.{0} (BoolCircuit.DAGCircuit.size (BoolCircuit.DAGCircuit.layerNAND C))
+    (HAdd.hAdd.{0, 0, 0} (HMul.hMul.{0, 0, 0} 2 n)
+      (HMul.hMul.{0, 0, 0} (HAdd.hAdd.{0, 0, 0} (HMul.hMul.{0, 0, 0} 2 (BoolCircuit.DAGCircuit.depth C)) 1)
+        (BoolCircuit.DAGCircuit.size C)))
+BoolCircuit.DAGCircuit.layerOutput_lt	theorem	[]
+  : ∀ {n : Nat} [inst : NeZero.{0} n] (C : BoolCircuit.DAGCircuit n),
+  LT.lt.{0} (BoolCircuit.DAGCircuit.layerOutput C)
+    (HAdd.hAdd.{0, 0, 0} (HAdd.hAdd.{0, 0, 0} n n) (List.length.{0} (BoolCircuit.DAGCircuit.layerGates C)))
+BoolCircuit.FormulaArith.carryOut_eval	theorem	[]
+  : ∀ {n : Nat} (U W : List.{0} (BoolCircuit.TreeCircuit n)) (b : Nat) (x : Fin n → Bool),
+  Eq.{1} (BoolCircuit.TreeCircuit.eval (BoolCircuit.FormulaArith.carryOut U W b) x)
+    (BoolCircuit.carryBit (BoolCircuit.FormulaArith.bitAt x U) (BoolCircuit.FormulaArith.bitAt x W) b)
+BoolCircuit.FormulaArith.carryOut_eval_le	theorem	[]
+  : ∀ {n : Nat} {U W : List.{0} (BoolCircuit.TreeCircuit n)} {b : Nat},
+  LE.le.{0} (List.length.{0} U) b →
+    LE.le.{0} (List.length.{0} W) b →
+      ∀ (x : Fin n → Bool),
+        Eq.{1} (BoolCircuit.TreeCircuit.eval (BoolCircuit.FormulaArith.carryOut U W b) x)
+          (Decidable.decide
+            (LE.le.{0} (HPow.hPow.{0, 0, 0} 2 b)
+              (HAdd.hAdd.{0, 0, 0} (BoolCircuit.FormulaArith.val x U) (BoolCircuit.FormulaArith.val x W))))
+BoolCircuit.FormulaArith.csaLevels_le	theorem	[]
+  : ∀ (k : Nat), LE.le.{0} (BoolCircuit.FormulaArith.csaLevels k) (HMul.hMul.{0, 0, 0} 2 (Nat.clog 2 k))
+BoolCircuit.FormulaArith.csaReduce_val	theorem	[]
+  : ∀ {n : Nat} (x : Fin n → Bool) (Us : List.{0} (List.{0} (BoolCircuit.TreeCircuit n))),
+  Eq.{1}
+    (HAdd.hAdd.{0, 0, 0} (BoolCircuit.FormulaArith.val x (BoolCircuit.FormulaArith.csaReduce Us).1)
+      (BoolCircuit.FormulaArith.val x (BoolCircuit.FormulaArith.csaReduce Us).2))
+    (List.sum.{0} (List.map.{0, 0} (BoolCircuit.FormulaArith.val x) Us))
+BoolCircuit.FormulaArith.csaStep_val	theorem	[]
+  : ∀ {n : Nat} (x : Fin n → Bool) (A B C : List.{0} (BoolCircuit.TreeCircuit n)),
+  Eq.{1}
+    (HAdd.hAdd.{0, 0, 0} (HAdd.hAdd.{0, 0, 0} (BoolCircuit.FormulaArith.val x A) (BoolCircuit.FormulaArith.val x B))
+      (BoolCircuit.FormulaArith.val x C))
+    (HAdd.hAdd.{0, 0, 0} (BoolCircuit.FormulaArith.val x (BoolCircuit.FormulaArith.csaStep A B C).1)
+      (BoolCircuit.FormulaArith.val x (BoolCircuit.FormulaArith.csaStep A B C).2))
+BoolCircuit.FormulaArith.depth_carryOut_le	theorem	[]
+  : ∀ {n : Nat} (U W : List.{0} (BoolCircuit.TreeCircuit n)) (b : Nat),
+  LE.le.{0} (BoolCircuit.TreeCircuit.depth (BoolCircuit.FormulaArith.carryOut U W b))
+    (HAdd.hAdd.{0, 0, 0}
+      (HAdd.hAdd.{0, 0, 0} (Max.max.{0} 1 (BoolCircuit.TreeCircuit.maxDepth (HAppend.hAppend.{0, 0, 0} U W)))
+        (HMul.hMul.{0, 0, 0} 2 (Nat.clog 2 b)))
+      3)
+BoolCircuit.FormulaArith.depth_csaReduce_le	theorem	[]
+  : ∀ {n : Nat} (Us : List.{0} (List.{0} (BoolCircuit.TreeCircuit n))),
+  LE.le.{0}
+    (BoolCircuit.TreeCircuit.maxDepth
+      (HAppend.hAppend.{0, 0, 0} (BoolCircuit.FormulaArith.csaReduce Us).1 (BoolCircuit.FormulaArith.csaReduce Us).2))
+    (HAdd.hAdd.{0, 0, 0} (Max.max.{0} 1 (BoolCircuit.TreeCircuit.maxDepth (List.flatten.{0} Us)))
+      (HMul.hMul.{0, 0, 0} 4 (BoolCircuit.FormulaArith.csaLevels (List.length.{0} Us))))
+BoolCircuit.FormulaArith.depth_csaStep_le	theorem	[]
+  : ∀ {n : Nat} (A B C : List.{0} (BoolCircuit.TreeCircuit n)),
+  LE.le.{0}
+    (BoolCircuit.TreeCircuit.maxDepth
+      (HAppend.hAppend.{0, 0, 0} (BoolCircuit.FormulaArith.csaStep A B C).1 (BoolCircuit.FormulaArith.csaStep A B C).2))
+    (HAdd.hAdd.{0, 0, 0}
+      (Max.max.{0} 1 (BoolCircuit.TreeCircuit.maxDepth (HAppend.hAppend.{0, 0, 0} (HAppend.hAppend.{0, 0, 0} A B) C)))
+      4)
+BoolCircuit.FormulaArith.depth_geConst_le	theorem	[]
+  : ∀ {n : Nat} (U W : List.{0} (BoolCircuit.TreeCircuit n)) (c : Nat),
+  LE.le.{0} (BoolCircuit.TreeCircuit.depth (BoolCircuit.FormulaArith.geConst U W c))
+    (HAdd.hAdd.{0, 0, 0}
+      (HAdd.hAdd.{0, 0, 0} (Max.max.{0} 1 (BoolCircuit.TreeCircuit.maxDepth (HAppend.hAppend.{0, 0, 0} U W)))
+        (HMul.hMul.{0, 0, 0} 2
+          (Nat.clog 2 (HAdd.hAdd.{0, 0, 0} (Max.max.{0} (List.length.{0} U) (List.length.{0} W)) 1))))
+      7)
+BoolCircuit.FormulaArith.depth_modSumInterval_le	theorem	[]
+  : ∀ {M : Nat} (a : Fin M → Nat) (q lo hi : Nat),
+  LE.le.{0} (BoolCircuit.TreeCircuit.depth (BoolCircuit.FormulaArith.modSumInterval a q lo hi))
+    (BoolCircuit.FormulaArith.modSumDepth M q)
+BoolCircuit.FormulaArith.geConst_eval	theorem	[]
+  : ∀ {n : Nat} (U W : List.{0} (BoolCircuit.TreeCircuit n)) (c : Nat) (x : Fin n → Bool),
+  Eq.{1} (BoolCircuit.TreeCircuit.eval (BoolCircuit.FormulaArith.geConst U W c) x)
+    (Decidable.decide
+      (LE.le.{0} c (HAdd.hAdd.{0, 0, 0} (BoolCircuit.FormulaArith.val x U) (BoolCircuit.FormulaArith.val x W))))
+BoolCircuit.FormulaArith.maxFaninL_csaReduce_le	theorem	[]
+  : ∀ {n : Nat} (Us : List.{0} (List.{0} (BoolCircuit.TreeCircuit n))),
+  LE.le.{0}
+    (BoolCircuit.TreeCircuit.maxFaninL
+      (HAppend.hAppend.{0, 0, 0} (BoolCircuit.FormulaArith.csaReduce Us).1 (BoolCircuit.FormulaArith.csaReduce Us).2))
+    (Max.max.{0} 2 (BoolCircuit.TreeCircuit.maxFaninL (List.flatten.{0} Us)))
+BoolCircuit.FormulaArith.maxFaninL_csaStep_le	theorem	[]
+  : ∀ {n : Nat} (A B C : List.{0} (BoolCircuit.TreeCircuit n)),
+  LE.le.{0}
+    (BoolCircuit.TreeCircuit.maxFaninL
+      (HAppend.hAppend.{0, 0, 0} (BoolCircuit.FormulaArith.csaStep A B C).1 (BoolCircuit.FormulaArith.csaStep A B C).2))
+    (Max.max.{0} 2 (BoolCircuit.TreeCircuit.maxFaninL (HAppend.hAppend.{0, 0, 0} (HAppend.hAppend.{0, 0, 0} A B) C)))
+BoolCircuit.FormulaArith.maxFanin_carryOut_le	theorem	[]
+  : ∀ {n : Nat} (U W : List.{0} (BoolCircuit.TreeCircuit n)) (b : Nat),
+  LE.le.{0} (BoolCircuit.TreeCircuit.maxFanin (BoolCircuit.FormulaArith.carryOut U W b))
+    (Max.max.{0} 2 (BoolCircuit.TreeCircuit.maxFaninL (HAppend.hAppend.{0, 0, 0} U W)))
+BoolCircuit.FormulaArith.maxFanin_geConst_le	theorem	[]
+  : ∀ {n : Nat} (U W : List.{0} (BoolCircuit.TreeCircuit n)) (c : Nat),
+  LE.le.{0} (BoolCircuit.TreeCircuit.maxFanin (BoolCircuit.FormulaArith.geConst U W c))
+    (Max.max.{0} 2 (BoolCircuit.TreeCircuit.maxFaninL (HAppend.hAppend.{0, 0, 0} U W)))
+BoolCircuit.FormulaArith.maxFanin_modSumInterval_le	theorem	[]
+  : ∀ {M : Nat} (a : Fin M → Nat) (q lo hi : Nat),
+  LE.le.{0} (BoolCircuit.TreeCircuit.maxFanin (BoolCircuit.FormulaArith.modSumInterval a q lo hi)) 2
+BoolCircuit.FormulaArith.modSumDepth_le	theorem	[]
+  : ∀ (M q : Nat),
+  LE.le.{0} (BoolCircuit.FormulaArith.modSumDepth M q)
+    (HAdd.hAdd.{0, 0, 0}
+      (HAdd.hAdd.{0, 0, 0} (HMul.hMul.{0, 0, 0} 9 (Nat.clog 2 M))
+        (HMul.hMul.{0, 0, 0} 2
+          (Nat.clog 2 (HAdd.hAdd.{0, 0, 0} (HAdd.hAdd.{0, 0, 0} (Nat.clog 2 q) (Nat.clog 2 M)) 3))))
+      21)
+BoolCircuit.FormulaArith.modSumInterval_eval	theorem	[]
+  : ∀ {M : Nat} {a : Fin M → Nat} {q lo hi : Nat},
+  (∀ (i : Fin M), LT.lt.{0} (a i) q) →
+    LE.le.{0} lo hi →
+      LE.le.{0} hi q →
+        ∀ (x : Fin M → Bool),
+          Eq.{1} (BoolCircuit.TreeCircuit.eval (BoolCircuit.FormulaArith.modSumInterval a q lo hi) x)
+            (Decidable.decide
+              (And (LE.le.{0} lo (HMod.hMod.{0, 0, 0} (∑ i : Fin M, HMul.hMul.{0, 0, 0} (Bool.toNat (x i)) (a i)) q))
+                (LT.lt.{0} (HMod.hMod.{0, 0, 0} (∑ i : Fin M, HMul.hMul.{0, 0, 0} (Bool.toNat (x i)) (a i)) q) hi)))
+BranchingProgram.Instr.depth_wire_le	theorem	[]
+  : ∀ {w n : Nat} (ι : BranchingProgram.Instr w n) (i j : Fin w),
+  LE.le.{0} (BoolCircuit.TreeCircuit.depth (BranchingProgram.Instr.wire ι i j)) 1
+BranchingProgram.Instr.maxFanin_wire_le	theorem	[]
+  : ∀ {w n : Nat} (ι : BranchingProgram.Instr w n) (i j : Fin w),
+  LE.le.{0} (BoolCircuit.TreeCircuit.maxFanin (BranchingProgram.Instr.wire ι i j)) 2
+BranchingProgram.Instr.wire_eval	theorem	[]
+  : ∀ {w n : Nat} (ι : BranchingProgram.Instr w n) (i j : Fin w) (x : Fin n → Bool),
+  Eq.{1} (BoolCircuit.TreeCircuit.eval (BranchingProgram.Instr.wire ι i j) x)
+    (Decidable.decide (Eq.{1} (BranchingProgram.Instr.eval ι x i) j))
+BranchingProgram.compTree_eval	theorem	[]
+  : ∀ {w n : Nat} (B : BranchingProgram w n) (i j : Fin w) (x : Fin n → Bool),
+  Eq.{1} (BoolCircuit.TreeCircuit.eval (BranchingProgram.compTree (BranchingProgram.instrs B) i j) x)
+    (Decidable.decide (Eq.{1} (BranchingProgram.yield B x i) j))
+BranchingProgram.depth_compTree_le	theorem	[]
+  : ∀ {w n : Nat} (B : BranchingProgram w n) (i j : Fin w),
+  LE.le.{0} (BoolCircuit.TreeCircuit.depth (BranchingProgram.compTree (BranchingProgram.instrs B) i j))
+    (HAdd.hAdd.{0, 0, 0}
+      (HMul.hMul.{0, 0, 0} (HAdd.hAdd.{0, 0, 0} (Nat.clog 2 w) 2) (Nat.clog 2 (BranchingProgram.length B))) 1)
+BranchingProgram.depth_toFormula_le	theorem	[]
+  : ∀ {w n : Nat} (B : BranchingProgram w n) (F : Finset.{0} (Fin w → Fin w)),
+  LE.le.{0} (BoolCircuit.TreeCircuit.depth (BranchingProgram.toFormula B F))
+    (HAdd.hAdd.{0, 0, 0}
+      (HMul.hMul.{0, 0, 0} (HAdd.hAdd.{0, 0, 0} (Nat.clog 2 w) 2) (Nat.clog 2 (BranchingProgram.length B)))
+      (BranchingProgram.topDepth w))
+BranchingProgram.depth_wireComp_le	theorem	[]
+  : ∀ {w n : Nat} {F G : Fin w → Fin w → BoolCircuit.TreeCircuit n} {d : Nat},
+  (∀ (i j : Fin w), LE.le.{0} (BoolCircuit.TreeCircuit.depth (F i j)) d) →
+    (∀ (i j : Fin w), LE.le.{0} (BoolCircuit.TreeCircuit.depth (G i j)) d) →
+      ∀ (i k : Fin w),
+        LE.le.{0} (BoolCircuit.TreeCircuit.depth (BranchingProgram.wireComp F G i k))
+          (HAdd.hAdd.{0, 0, 0} (HAdd.hAdd.{0, 0, 0} d (Nat.clog 2 w)) 2)
+BranchingProgram.exists_fiveCycleRecognizes_of_dagCircuit	theorem	[]
+  : ∀ {n : Nat} [NeZero.{0} n] (C : BoolCircuit.DAGCircuit n),
+  BoolCircuit.DAGCircuit.IsFaninTwo C →
+    ∀ {σ : Equiv.Perm.{1} (Fin 5)},
+      BranchingProgram.IsFiveCycle σ →
+        ∃ (B : BranchingProgram 5 n),
+          And (BranchingProgram.IsPermutation B)
+            (And (LE.le.{0} (BranchingProgram.length B) (HPow.hPow.{0, 0, 0} 4 (BoolCircuit.DAGCircuit.depth C)))
+              (BranchingProgram.FiveCycleRecognizes B
+                (fun (x : Fin n → Bool) => Eq.{1} (BoolCircuit.DAGCircuit.eval C x) Bool.true) σ))
+BranchingProgram.maxFanin_compTree_le	theorem	[]
+  : ∀ {w n : Nat} (B : BranchingProgram w n) (i j : Fin w),
+  LE.le.{0} (BoolCircuit.TreeCircuit.maxFanin (BranchingProgram.compTree (BranchingProgram.instrs B) i j)) 2
+BranchingProgram.maxFanin_toFormula_le	theorem	[]
+  : ∀ {w n : Nat} (B : BranchingProgram w n) (F : Finset.{0} (Fin w → Fin w)),
+  LE.le.{0} (BoolCircuit.TreeCircuit.maxFanin (BranchingProgram.toFormula B F)) 2
+BranchingProgram.toFormula_eval	theorem	[]
+  : ∀ {w n : Nat} (B : BranchingProgram w n) (F : Finset.{0} (Fin w → Fin w)) (x : Fin n → Bool),
+  Eq.{1} (BoolCircuit.TreeCircuit.eval (BranchingProgram.toFormula B F) x)
+    (Decidable.decide (Membership.mem.{0, 0} F (BranchingProgram.yield B x)))
+BranchingProgram.wireComp_eval	theorem	[]
+  : ∀ {w n : Nat} {F G : Fin w → Fin w → BoolCircuit.TreeCircuit n} {f g : (Fin n → Bool) → Fin w → Fin w},
+  (∀ (x : Fin n → Bool) (i j : Fin w),
+      Eq.{1} (BoolCircuit.TreeCircuit.eval (F i j) x) (Decidable.decide (Eq.{1} (f x i) j))) →
+    (∀ (x : Fin n → Bool) (i j : Fin w),
+        Eq.{1} (BoolCircuit.TreeCircuit.eval (G i j) x) (Decidable.decide (Eq.{1} (g x i) j))) →
+      ∀ (i k : Fin w) (x : Fin n → Bool),
+        Eq.{1} (BoolCircuit.TreeCircuit.eval (BranchingProgram.wireComp F G i k) x)
+          (Decidable.decide (Eq.{1} (g x (f x i)) k))
+Language.InBWBP.inNC_one	theorem	[]
+  : ∀ {L : Language.{0} Bool}, Language.InBWBP L → Language.InNC 1 L
+Language.InNC.inPBP_five	theorem	[]
+  : ∀ {L : Language.{0} Bool}, Language.InNC 1 L → Language.InPBP 5 L
+Language.inNC_one_iff_inBWBP	theorem	[]
+  : ∀ (L : Language.{0} Bool), Iff (Language.InNC 1 L) (Language.InBWBP L)
+Language.inNC_one_iff_inPBP_five	theorem	[]
+  : ∀ (L : Language.{0} Bool), Iff (Language.InNC 1 L) (Language.InPBP 5 L)

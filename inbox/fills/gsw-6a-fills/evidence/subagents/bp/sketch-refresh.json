@@ -1,0 +1,72 @@
+[
+ {
+  "target": "module docstring",
+  "old": "All are statements of the 6a statement phase (targets admitted with `sorry`), except the readers.",
+  "new": "All are statements of the 6a statement phase (targets proved here), except the readers."
+ },
+ {
+  "target": "Instr.wire_eval",
+  "old": "**Proof sketch.** `Instr.wire_eq` and `Instr.eval_eq`; split on `ι.map0 i = j`, `ι.map1 i = j` and\n`x ι.var`.  The constants evaluate by `TreeCircuit.eval_node_true_iff`/`eval_node_false_iff` on\n`[]`, the literals by `TreeCircuit.eval_lit` and a reader of `Lit.eval` (missing at the base;\nproposed `Lit.eval_eq : l.eval x = if l.sign then x l.idx else !x l.idx`). -/",
+  "new": "**Proof sketch.** `Instr.wire_eq` and `Instr.eval_eq`; split on `ι.map0 i = j`, `ι.map1 i = j` and\n`x ι.var`.  The empty gates are the constants (`TreeCircuit.const_eq`) and evaluate by\n`TreeCircuit.const_eval`, the literals by `TreeCircuit.eval_lit` and the reader `Lit.eval_eq`. -/"
+ },
+ {
+  "target": "Instr.depth_wire_le",
+  "old": "**Proof sketch.** `Instr.wire_eq`; an empty gate has depth 1 (`TreeCircuit.depth_node`,\n`maxDepth_nil`) and a literal depth 0 (reader `TreeCircuit.depth_lit`, missing at the base and\nproposed). -/",
+  "new": "**Proof sketch.** `Instr.wire_eq`; an empty gate is a constant (`TreeCircuit.const_eq`) of depth 1\n(`TreeCircuit.depth_const`) and a literal has depth 0 (reader `TreeCircuit.depth_lit`). -/"
+ },
+ {
+  "target": "Instr.maxFanin_wire_le",
+  "old": "**Proof sketch.** `Instr.wire_eq`; an empty gate has fan-in 0 (`TreeCircuit.maxFanin_node`,\n`maxFaninL_nil`) and a literal fan-in 0 (reader `TreeCircuit.maxFanin_lit`, missing at the base\nand proposed). -/",
+  "new": "**Proof sketch.** `Instr.wire_eq`; an empty gate is a constant (`TreeCircuit.const_eq`) of fan-in 0\n(`TreeCircuit.maxFanin_const`) and a literal has fan-in 0 (reader `TreeCircuit.maxFanin_lit`). -/"
+ },
+ {
+  "target": "wireComp_eval",
+  "old": "**Proof sketch.** `wireComp_eq`, `TreeCircuit.balanced_eval`, `eval_node_false` (an `any` over\n`finRange w`) and `eval_node_true` on the pairs; by `hF`, `hG` the pair `j` is true iff\n`f x i = j ∧ g x j = k`, and exactly `j = f x i` can be (`List.mem_finRange`). -/",
+  "new": "**Proof sketch.** `wireComp_eq`, the pairs as `TreeCircuit.and2` (`and2_eq`),\n`TreeCircuit.balanced_eval` and `eval_node_false_iff` (some pair is true, `List.mem_map`); by\n`and2_eval`, `hF`, `hG` the pair `j` is true iff `f x i = j ∧ g x j = k`, and exactly `j = f x i`\ncan be (`List.mem_finRange`). -/"
+ },
+ {
+  "target": "depth_wireComp_le",
+  "old": "**Proof sketch.** `wireComp_eq` and `TreeCircuit.depth_balanced_le`: each `node true [F i j, G j k]`\nhas depth `≤ d + 1` (`depth_node`, `maxDepth_cons`), the list has length `w`\n(`List.length_map`, `List.length_finRange`), so the depth is `≤ (d + 1) + ⌈log₂ w⌉ + 1`. -/",
+  "new": "**Proof sketch.** `wireComp_eq` and `TreeCircuit.depth_balanced_le`: each pair\n`node true [F i j, G j k] = and2 (F i j) (G j k)` has depth `≤ d + 1` (`depth_and2_le`), so the list\nhas `maxDepth ≤ d + 1` (`maxDepth_le_of_forall`), and it has length `w` (`List.length_map`,\n`List.length_finRange`), so the depth is `≤ (d + 1) + ⌈log₂ w⌉ + 1`. -/"
+ },
+ {
+  "target": "compTree_eval",
+  "old": "**Proof sketch.** Strong induction on the length of an instruction list `l`, for the yield of\n`⟨l⟩`: the empty list by `compTree_nil` and `yield_nil`; one instruction by `compTree_singleton`,\n`Instr.wire_eval` and `yield_eq`; otherwise `compTree_cons_cons`, `wireComp_eval` with the\ninduction hypothesis for both halves, and `yield_append` on `l = l.take m ++ l.drop m`\n(`List.take_append_drop`, `append_instrs`). -/",
+  "new": "**Proof sketch.** The helper `compTree_eval_list`, for an arbitrary instruction list `l` and the\nyield of `⟨l⟩`, by well-founded recursion on the length of `l` (as `compTree` itself): the empty\nlist by `compTree_nil`, `const_eval` and `yield_nil`; one instruction by `compTree_singleton`,\n`Instr.wire_eval` and `yield_eq`; otherwise `compTree_cons_cons`, `wireComp_eval` with the\nrecursive calls for both halves, and `yield_append` on `⟨l⟩ = ⟨l.take m⟩ ++ ⟨l.drop m⟩`\n(`List.take_append_drop`, `append_instrs`); then `l = B.instrs`. -/"
+ },
+ {
+  "target": "depth_compTree_le",
+  "old": "**Proof sketch.** Strong induction on the length `l` of the instruction list (with `length_eq`):\n`compTree_nil`, `compTree_singleton` with `Instr.depth_wire_le` give depth `≤ 1`; for `l ≥ 2`,\n`compTree_cons_cons` and `depth_wireComp_le` with the induction hypothesis for both halves\n(`List.length_take`, `List.length_drop`), `Nat.clog_mono_right` and\n`Nat.clog_of_two_le` (`⌈log₂ l⌉ = ⌈log₂ ⌈l/2⌉⌉ + 1`). -/",
+  "new": "**Proof sketch.** `length_eq` and the helper `depth_compTree_list_le`, by well-founded recursion on\nthe length `l` of the instruction list: `compTree_nil` (`depth_const`), `compTree_singleton` with\n`Instr.depth_wire_le` give depth `≤ 1`; for `l ≥ 2`, `compTree_cons_cons` and `depth_wireComp_le`\nwith the recursive calls for both halves of length `≤ ⌈l/2⌉` (`List.length_take`,\n`List.length_drop`), `Nat.clog_mono_right` and `Nat.clog_of_two_le`\n(`⌈log₂ l⌉ = ⌈log₂ ⌈l/2⌉⌉ + 1`). -/"
+ },
+ {
+  "target": "maxFanin_compTree_le",
+  "old": "**Proof sketch.** Strong induction on the length as for `compTree_eval`: the leaves by\n`compTree_nil` (`maxFanin_node`) and `Instr.maxFanin_wire_le`; a composition circuit by\n`wireComp_eq`, `TreeCircuit.maxFanin_balanced_le` and `maxFanin_node` on the binary `∧` nodes. -/",
+  "new": "**Proof sketch.** The helper `maxFanin_compTree_list_le`, by well-founded recursion on the length\nas for `compTree_eval`: the leaves by `compTree_nil` (`maxFanin_const`) and\n`Instr.maxFanin_wire_le`; a composition circuit by the helper `maxFanin_wireComp_le`\n(`wireComp_eq`, `TreeCircuit.maxFanin_balanced_le` and `maxFanin_and2_le` on the binary `∧`\nnodes). -/"
+ },
+ {
+  "target": "toFormula_eval",
+  "old": "**Proof sketch.** `toFormula_eq`, `TreeCircuit.balanced_eval`, `eval_node_false` (an `any` over\n`F.toList`, `Finset.mem_toList`) and `eval_node_true` (an `all` over `finRange w`); by\n`compTree_eval` the conjunction for `f` holds iff `∀ i, B.yield x i = f i`, i.e.\n`B.yield x = f` (`funext`). -/",
+  "new": "**Proof sketch.** `toFormula_eq`, `TreeCircuit.balanced_eval`, `eval_node_false_iff` (some `f` of\n`F.toList`, `Finset.mem_toList`) and `eval_node_true_iff` (every `i` of `finRange w`); by\n`compTree_eval` the conjunction for `f` holds iff `∀ i, B.yield x i = f i`, i.e.\n`B.yield x = f` (`funext`). -/"
+ },
+ {
+  "target": "depth_toFormula_le",
+  "old": "(`Nat.clog_mono_right`, `Nat.clog_le_of_le_pow` with `w^w ≤ (2^⌈log₂ w⌉)^w`, `Nat.le_pow_clog`);\n`topDepth_eq` closes the arithmetic. -/",
+  "new": "(`Nat.clog_le_iff_le_pow` with `|F| ≤ w^w ≤ (2^⌈log₂ w⌉)^w`, `Fintype.card_fin`,\n`Nat.le_pow_clog`, `Nat.pow_le_pow_left`, `pow_mul`); the members' depth bounds pass to the lists\nby `maxDepth_le_of_forall`; `topDepth_eq` closes the arithmetic. -/"
+ },
+ {
+  "target": "maxFanin_toFormula_le",
+  "old": "**Proof sketch.** `toFormula_eq`, `TreeCircuit.maxFanin_balanced_le` twice, and\n`maxFanin_compTree_le` for the leaves (`maxFaninL` of a mapped list). -/",
+  "new": "**Proof sketch.** `toFormula_eq`, `TreeCircuit.maxFanin_balanced_le` twice, and\n`maxFanin_compTree_le` for the leaves (`maxFaninL` of a mapped list, by `maxFaninL_le_of_forall`).\n-/"
+ },
+ {
+  "target": "helper compTree_eval_list (new docstring part)",
+  "old": "/-- The composition tree of an instruction list `l` computes the yield of the program `⟨l⟩`:\n`(compTree l i j).eval x = decide ((⟨l⟩ : BranchingProgram w n).yield x i = j)`.  Glue. -/",
+  "new": "/-- The composition tree of an instruction list `l` computes the yield of the program `⟨l⟩`:\n`(compTree l i j).eval x = decide ((⟨l⟩ : BranchingProgram w n).yield x i = j)`.  Glue.\n\n**Proof sketch.** Well-founded recursion on `l.length`, following `compTree`.  Empty list:\n`compTree_nil`, `const_eq`/`const_eval` and `yield_nil`.  One instruction: `compTree_singleton`,\n`Instr.wire_eval`, and `yield_eq` with `List.foldl` on `[ι]`.  Otherwise (Step 1) `⟨l⟩` is\n`⟨l.take m⟩ ++ ⟨l.drop m⟩` (`append_instrs`, `List.take_append_drop`), so (Step 2)\n`compTree_cons_cons`, `yield_append` and `wireComp_eval` with the recursive calls close it. -/"
+ },
+ {
+  "target": "helper depth_compTree_list_le (new docstring part)",
+  "old": "/-- The composition tree of an instruction list `l` has depth logarithmic in `|l|`:\n`(compTree l i j).depth ≤ (Nat.clog 2 w + 2) * Nat.clog 2 l.length + 1`.  Glue. -/",
+  "new": "/-- The composition tree of an instruction list `l` has depth logarithmic in `|l|`:\n`(compTree l i j).depth ≤ (Nat.clog 2 w + 2) * Nat.clog 2 l.length + 1`.  Glue.\n\n**Proof sketch.** Well-founded recursion on `l.length`, following `compTree`.  The leaves have\ndepth `≤ 1` (`depth_const`, `Instr.depth_wire_le`).  For `L = |l| ≥ 2`: (Step 1)\n`⌈log₂ L⌉ = ⌈log₂ ⌈L/2⌉⌉ + 1` (`Nat.clog_of_two_le`); (Step 2) both halves have length\n`≤ ⌈L/2⌉` (`List.length_take`, `List.length_drop`), so by the recursive calls and\n`Nat.clog_mono_right` their wires have depth `≤ (⌈log₂ w⌉ + 2)·⌈log₂ ⌈L/2⌉⌉ + 1`; (Step 3)\n`depth_wireComp_le` adds `⌈log₂ w⌉ + 2`. -/"
+ }
+]

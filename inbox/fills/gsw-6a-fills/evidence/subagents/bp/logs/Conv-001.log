@@ -1,0 +1,31 @@
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:188:27: warning: This simp argument is unused:
+  eq_self_iff_true
+
+Hint: Omit it from the simp argument list.
+  simp only [h0, h1, hx, e̵q̵_̵s̵e̵l̵f̵_̵i̵f̵f̵_̵t̵r̵u̵e̵,̵ ̵if_true, if_false, ← TreeCircuit.const_eq, TreeCircuit.const_eval,
+  ̲  ̲ ̲ ̲ ̲ ̲TreeCircuit.eval_lit, Lit.eval_eq, Bool.false_eq_true, Bool.not_false, Bool.not_true,
+  ̲  ̲ ̲ ̲ ̲ ̲decide_true, decide_false]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:506:18: error: failed to synthesize
+  Fintype (Fin w → Fin w)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:506:50: error: failed to synthesize
+  Fintype (Fin w → Fin w)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:507:26: error(lean.unknownIdentifier): Unknown constant `Fintype.card_fun`
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:507:19: error: unsolved goals
+w n : ℕ
+B : BranchingProgram w n
+F : Finset (Fin w → Fin w)
+hin :
+  TreeCircuit.maxDepth
+      (List.map (fun f => TreeCircuit.balanced true (List.map (fun i => compTree B.instrs i (f i)) (List.finRange w)))
+        F.toList) ≤
+    (Nat.clog 2 w + 2) * Nat.clog 2 B.length + 1 + Nat.clog 2 w + 1
+⊢ sorry = w ^ w
+FAIL(TCSlib/Complexity/BranchingPrograms/BarringtonConverse): lean exited with status 1
+FAIL(TCSlib/Complexity/BranchingPrograms/BarringtonConverse): error diagnostics reported
+FAIL(TCSlib/Complexity/BranchingPrograms/BarringtonConverse): no fresh .olean produced

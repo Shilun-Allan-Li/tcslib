@@ -1,0 +1,62 @@
+# preflight 2026-11-17T11:13:00Z
+nproc 4
+cgroup.controllers: 
+== memory.max
+cat: /sys/fs/cgroup/memory.max: No such file or directory
+== memory.current
+cat: /sys/fs/cgroup/memory.current: No such file or directory
+== memory.events
+cat: /sys/fs/cgroup/memory.events: No such file or directory
+== memory.stat
+cat: /sys/fs/cgroup/memory.stat: No such file or directory
+== /proc/meminfo
+MemTotal:       16473764 kB
+MemFree:        14032524 kB
+MemAvailable:   15859392 kB
+Buffers:          162840 kB
+Cached:          1745428 kB
+== df -B1 / -T
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 25650585600 15632949248  63% /
+/dev/vda       270553174016 25650585600 15632949248  63% /
+/dev/vda       270553174016 25650585600 15632949248  63% /
+/dev/vda       270553174016 25650585600 15632949248  63% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 25049400  15266552  63% /
+/dev/vda       ext4 264212084 25049400  15266552  63% /
+/dev/vda       ext4 264212084 25049400  15266552  63% /
+== /proc/self/cgroup
+9:name=systemd:/
+8:pids:/process_api/cc-shell
+7:blkio:/
+6:freezer:/
+5:devices:/
+4:memory:/process_api/01a1e92f-3697-7712-953b-2461480e2ef5/claude-code-bash
+3:cpuset:/
+2:cpuacct:/
+1:cpu:/
+0::/
+blkio
+cpu
+cpuacct
+cpuset
+devices
+freezer
+memory
+pids
+systemd
+unified
+== cgroup v1 memory
+9223372036854771712
+== computation
+no cgroup memory limit found -> headroom = MemAvailable = 16254988288 B = 15.14 GiB (floor 4 GiB): PASS
+disk free 15632936960 B = 14.56 GiB (floor 12 GiB): PASS
+pool start = min(nproc=4, MemAvailable/4GB=4) = 4
+== cgroup v1 memory.usage_in_bytes
+2165506048
+cache 14299136
+rss 585728
+shmem 13000704
+total_cache 1962631168
+total_rss 203214848
+total_shmem 13000704

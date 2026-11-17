@@ -1,0 +1,50 @@
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:608:60: error: unsolved goals
+k y₀ y z : ℕ
+l : List ℕ
+ih : (∀ y ∈ z :: l, y = k) → y₀ ∈ z :: l → List.foldr max 0 (z :: l) = k
+h : ∀ y_1 ∈ y :: z :: l, y_1 = k
+h₀ : y₀ ∈ y :: z :: l
+⊢ y₀ = z ∨ y₀ ∈ l
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:851:73: error: Application type mismatch: The argument
+  hpre
+has type
+  (layerChain (n + n)
+        (if g.args = [] then
+            (s.1 ++
+                  [{ kind := GateKind.not,
+                      args := List.map (fun a => C.layerAt s.2 a (C.depthAt (n + j) - 1)) g.args }] ++
+                [{ kind := GateKind.not, args := [0, n] }, { kind := GateKind.not, args := [n + n + s.1.length + 1] }],
+              n + n + s.1.length + 2)
+          else
+            (s.1 ++
+                  [{ kind := GateKind.not,
+                      args := List.map (fun a => C.layerAt s.2 a (C.depthAt (n + j) - 1)) g.args }] ++
+                [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt (n + j))) g.args }],
+              n + n + s.1.length + 1)).1
+        (n + n + s.1.length)
+        (if g.args = [] then
+            (s.1 ++
+                  [{ kind := GateKind.not,
+                      args := List.map (fun a => C.layerAt s.2 a (C.depthAt (n + j) - 1)) g.args }] ++
+                [{ kind := GateKind.not, args := [0, n] }, { kind := GateKind.not, args := [n + n + s.1.length + 1] }],
+              n + n + s.1.length + 2)
+          else
+            (s.1 ++
+                  [{ kind := GateKind.not,
+                      args := List.map (fun a => C.layerAt s.2 a (C.depthAt (n + j) - 1)) g.args }] ++
+                [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt (n + j))) g.args }],
+              n + n + s.1.length + 1)).2
+        (C.depth - C.depthAt (n + j) - 1)).1 <+:
+    C.layerNAND.gates
+but is expected to have type
+  (layerChain ?m.1643 (?m.1649 ++ ?m.1638) ?m.1646 ?m.1647 ?m.1644).1 <+: ?m.1651
+in the application
+  List.IsPrefix.trans (List.IsPrefix.trans (List.prefix_append ?m.1649 ?m.1638) layerChain_isPrefix) hpre
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:975:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:988:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:998:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:1006:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:1022:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): lean exited with status 1
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): error diagnostics reported
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): no fresh .olean produced

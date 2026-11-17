@@ -1,0 +1,530 @@
+{
+ "base": "05999162b77c1f0fef64b07427e1a041a31b43d2",
+ "head": "HEAD",
+ "files": {
+  "TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BranchingProgram.Instr.wire",
+     "kind": "def",
+     "private": false,
+     "start": 69,
+     "decl_line": 76,
+     "end": 81,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.Instr.wire_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 82,
+     "decl_line": 85,
+     "end": 91,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.wireComp",
+     "kind": "def",
+     "private": false,
+     "start": 94,
+     "decl_line": 99,
+     "end": 101,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.wireComp_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 102,
+     "decl_line": 104,
+     "end": 108,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.compTree",
+     "kind": "def",
+     "private": false,
+     "start": 109,
+     "decl_line": 115,
+     "end": 120,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.compTree_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 126,
+     "decl_line": 128,
+     "end": 132,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.compTree_singleton",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 134,
+     "end": 136,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.compTree_cons_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 137,
+     "decl_line": 140,
+     "end": 145,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.toFormula",
+     "kind": "def",
+     "private": false,
+     "start": 148,
+     "decl_line": 154,
+     "end": 158,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.toFormula_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 159,
+     "decl_line": 161,
+     "end": 165,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.topDepth",
+     "kind": "def",
+     "private": false,
+     "start": 166,
+     "decl_line": 170,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.topDepth_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 174,
+     "end": 175,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.Instr.wire_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 178,
+     "decl_line": 184,
+     "end": 191,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.depth_wire_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 192,
+     "decl_line": 197,
+     "end": 203,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.maxFanin_wire_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 204,
+     "decl_line": 208,
+     "end": 214,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.wireComp_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 215,
+     "decl_line": 223,
+     "end": 244,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxDepth_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 245,
+     "decl_line": 247,
+     "end": 254,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFaninL_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 255,
+     "decl_line": 257,
+     "end": 264,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_wireComp_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 265,
+     "decl_line": 272,
+     "end": 288,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_wireComp_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 289,
+     "decl_line": 291,
+     "end": 303,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.compTree_eval_list",
+     "kind": "theorem",
+     "private": true,
+     "start": 304,
+     "decl_line": 312,
+     "end": 340,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.compTree_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 346,
+     "decl_line": 355,
+     "end": 358,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_compTree_list_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 359,
+     "decl_line": 368,
+     "end": 403,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_compTree_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 409,
+     "decl_line": 422,
+     "end": 426,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_compTree_list_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 427,
+     "decl_line": 429,
+     "end": 444,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_compTree_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 450,
+     "decl_line": 458,
+     "end": 461,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.toFormula_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 462,
+     "decl_line": 469,
+     "end": 488,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_toFormula_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 489,
+     "decl_line": 502,
+     "end": 531,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_toFormula_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 532,
+     "decl_line": 538,
+     "end": 548,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 23,
+   "head_count": 29
+  },
+  "TCSlib/Complexity/BranchingPrograms/NC1.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BranchingProgram.exists_fiveCycleRecognizes_of_dagCircuit",
+     "kind": "theorem",
+     "private": false,
+     "start": 59,
+     "decl_line": 73,
+     "end": 88,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "Language.InNC.inPBP_five",
+     "kind": "theorem",
+     "private": false,
+     "start": 93,
+     "decl_line": 110,
+     "end": 178,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "Language.InBWBP.inNC_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 179,
+     "decl_line": 195,
+     "end": 246,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "Language.inNC_one_iff_inBWBP",
+     "kind": "theorem",
+     "private": false,
+     "start": 247,
+     "decl_line": 252,
+     "end": 256,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "Language.inNC_one_iff_inPBP_five",
+     "kind": "theorem",
+     "private": false,
+     "start": 257,
+     "decl_line": 263,
+     "end": 267,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 5,
+   "head_count": 5
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BoolCircuit.FormulaArith.maskedConst",
+     "kind": "def",
+     "private": false,
+     "start": 62,
+     "decl_line": 66,
+     "end": 69,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maskedConst_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 70,
+     "decl_line": 72,
+     "end": 76,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumInterval",
+     "kind": "def",
+     "private": false,
+     "start": 77,
+     "decl_line": 84,
+     "end": 90,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumInterval_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 91,
+     "decl_line": 96,
+     "end": 112,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxDepth_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 113,
+     "decl_line": 115,
+     "end": 122,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFaninL_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 123,
+     "decl_line": 125,
+     "end": 132,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.prefixVal_testBit",
+     "kind": "theorem",
+     "private": true,
+     "start": 133,
+     "decl_line": 135,
+     "end": 140,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.val_maskedConst",
+     "kind": "theorem",
+     "private": true,
+     "start": 141,
+     "decl_line": 147,
+     "end": 171,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.prefixVal_eq_of_lt_two_pow",
+     "kind": "theorem",
+     "private": true,
+     "start": 172,
+     "decl_line": 174,
+     "end": 186,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.val_take_of_lt",
+     "kind": "theorem",
+     "private": true,
+     "start": 187,
+     "decl_line": 189,
+     "end": 199,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumInterval_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 200,
+     "decl_line": 221,
+     "end": 303,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumDepth",
+     "kind": "def",
+     "private": false,
+     "start": 304,
+     "decl_line": 309,
+     "end": 311,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumDepth_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 312,
+     "decl_line": 314,
+     "end": 318,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_modSumInterval_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 319,
+     "decl_line": 331,
+     "end": 382,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumDepth_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 383,
+     "decl_line": 393,
+     "end": 400,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_modSumInterval_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 401,
+     "decl_line": 408,
+     "end": 441,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 10,
+   "head_count": 16
+  }
+ }
+}
