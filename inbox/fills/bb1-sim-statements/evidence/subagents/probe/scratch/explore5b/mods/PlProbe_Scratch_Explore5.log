@@ -1,0 +1,50 @@
+IBEScheme.sidImpl_keyGen_ne : ∀ (S : IBEScheme) (b : Bool) (κ : Nat) (pp : S.PP κ) (msk : S.MSK κ)
+  (id t : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)),
+  @Ne (Fin (S.idLen.eval κ) → Bool) id t →
+    @Eq
+      (@TCSlib.Cryptography.Games.OracleComp Nat TCSlib.Cryptography.Games.unifSpec
+        (Prod
+          (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+            (S.sidSpec κ)
+            (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 1)
+              (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 1))))
+          (S.SidState κ)))
+      (S.sidImpl b κ pp msk
+        (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 1)
+          (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 1)))
+        id
+        (@Prod.mk (Option (Fin (S.idLen.eval κ) → Bool)) (Option (Fin (S.ctLen.eval κ) → Bool))
+          (@some (Fin (S.idLen.eval κ) → Bool) t) c))
+      (@TCSlib.Cryptography.Games.OracleComp.bind Nat TCSlib.Cryptography.Games.unifSpec (S.SK κ)
+        (Prod
+          (Fin
+              (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (S.skLen.eval κ)
+                (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) →
+            Bool)
+          (Prod (Option (Fin (S.idLen.eval κ) → Bool)) (Option (Fin (S.ctLen.eval κ) → Bool))))
+        (S.keyGen κ msk id) fun sk =>
+        @TCSlib.Cryptography.Games.OracleComp.pure Nat TCSlib.Cryptography.Games.unifSpec
+          (Prod
+            (Fin
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (S.skLen.eval κ)
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) →
+              Bool)
+            (Prod (Option (Fin (S.idLen.eval κ) → Bool)) (Option (Fin (S.ctLen.eval κ) → Bool))))
+          (@Prod.mk
+            (Fin
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (S.skLen.eval κ)
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) →
+              Bool)
+            (Prod (Option (Fin (S.idLen.eval κ) → Bool)) (Option (Fin (S.ctLen.eval κ) → Bool)))
+            (@TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer (S.skLen.eval κ)
+              (@some (Fin (S.skLen.eval κ) → Bool) (S.encSK κ sk)))
+            (@Prod.mk (Option (Fin (S.idLen.eval κ) → Bool)) (Option (Fin (S.ctLen.eval κ) → Bool))
+              (@some (Fin (S.idLen.eval κ) → Bool) t) c)))
+@TCSlib.Cryptography.Games.OracleComp.bind_assoc : ∀ {ι : Type} {spec : TCSlib.Cryptography.Games.OracleSpec ι}
+  {α β γ : Type} (c : @TCSlib.Cryptography.Games.OracleComp ι spec α)
+  (f : α → @TCSlib.Cryptography.Games.OracleComp ι spec β) (g : β → @TCSlib.Cryptography.Games.OracleComp ι spec γ),
+  @Eq (@TCSlib.Cryptography.Games.OracleComp ι spec γ)
+    (@TCSlib.Cryptography.Games.OracleComp.bind ι spec β γ (@TCSlib.Cryptography.Games.OracleComp.bind ι spec α β c f)
+      g)
+    (@TCSlib.Cryptography.Games.OracleComp.bind ι spec α γ c fun a =>
+      @TCSlib.Cryptography.Games.OracleComp.bind ι spec β γ (f a) g)

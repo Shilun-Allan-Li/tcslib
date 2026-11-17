@@ -1,0 +1,102 @@
+# overlap searches at the issue base bdcadd858cbe043e8c41e465a96e81feb1eecda1 (git grep over TCSlib/ and audits/; all branches step at the end)
+
+## git grep -nE 'expect_simulate_rel|prob_simulate_rel|expect_sample_rel|simulate_rel\b'
+
+## git grep -nE 'σ → τ → Prop'
+
+## git grep -nE '[Cc]oupl|[Bb]isim'
+TCSlib/BooleanAnalysis/GaussianSpace/Borell/Halfspace.lean:132:maps to the defining coupling. Linearity of projection commutes with its
+TCSlib/BooleanAnalysis/GaussianSpace/COVERAGE.md:56:| `IndicatorSmoothing.lean` | Proved exact integral approximation, mean preservation, and contraction of rotation variation | Existing Gaussian rotation coupling, product-measure conditioning, and the four-Gaussian coupling |
+TCSlib/BooleanAnalysis/GaussianSpace/COVERAGE.md:83:| Def. 11.42 | `rotationSensitivity` | Concrete definition, using the ellipse coupling in the proof of Thm. 11.43 |
+TCSlib/BooleanAnalysis/GaussianSpace/Halfspace.lean:350:vectors in the coupling. The projected linear combination commutes with
+TCSlib/BooleanAnalysis/GaussianSpace/IndicatorRegularity.lean:50:measurable indicator. Its mean and variance are the rotation coupling's
+TCSlib/BooleanAnalysis/GaussianSpace/IndicatorSmoothing.lean:19:* averagedGaussianIndicator: conditional averaging under the Gaussian rotation coupling.
+TCSlib/BooleanAnalysis/GaussianSpace/IndicatorSmoothing.lean:47:coupling. This is a concrete indicator approximation for the argument in
+TCSlib/BooleanAnalysis/GaussianSpace/IndicatorSmoothing.lean:50:This specialized indicator adapter uses the existing Gaussian laws and coupling;
+TCSlib/BooleanAnalysis/GaussianSpace/IndicatorSmoothing.lean:274:probability under a coupled pair of averaging noises.
+TCSlib/BooleanAnalysis/GaussianSpace/IndicatorSmoothing.lean:317:**Proof sketch.** Couple the averaging noises with the same rotation as the
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance.lean:56:coupling gives the source's mutually independent replacement family without imposing
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance.lean:83:**Proof sketch.** Couple the families independently and replace the coordinates one
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance.lean:104:    Invariance.independent_polynomial_coupling F X Y hIX hIY
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:30:* `Invariance.independent_input_coupling`: mutually independent copies of marginal laws.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:31:* `Invariance.independent_polynomial_coupling`: copies preserving polynomial output laws.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:158:all coordinate laws. This is the independent coupling in [OD14, §11.6, proof of (11.29)].
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:162:theorem independent_input_coupling
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:189:joint law. This is the independent-coupling transport used in
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:214:laws have the same distribution. [OD14, §11.6, independent coupling argument] -/
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:228:output laws. [OD14, §11.6, coupling in the invariance proof] -/
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:229:theorem independent_polynomial_coupling
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:241:  obtain ⟨κ, hκ, Z, hIZ, hL, hR⟩ := independent_input_coupling X Y hX hY
+TCSlib/BooleanAnalysis/GaussianSpace/InvarianceExtensions.lean:73:    Invariance.independent_polynomial_coupling F X Y hIX hIY
+TCSlib/BooleanAnalysis/GaussianSpace/Noise.lean:190:vector in the defining coupling, and linearity commutes with the endpoint map. -/
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/BooleanCharacteristic.lean:71:/-- The Fourier transform of the Boolean noise coupling factors over coordinates.
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/ContinuousBounds.lean:19:The two-frequency torus map and the existing Boolean noise coupling are reused.
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/HypercontractivePairing.lean:19:The Gaussian noise operator, its joint coupling and the existing Lp pairing bound are reused.
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/Kernel.lean:134:correlated Gaussian coupling. [OD14, §11.1, Gaussian noise inner product]
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/Kernel.lean:191:**Proof sketch.** Pull the integrand back through the defining coupling and use
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/LpBounds.lean:20:Gaussian measures, the correlated coupling and continuous torus approximants are reused.
+
+## git grep -nE 'Barthe|pRHL|CertiCrypt|EasyCrypt|BGZ09'
+
+## git grep -nE '\|expect [a-z]+ [a-z]+ - expect [a-z]+ [a-z]+\| ≤ expect'
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:516:    (hb : ∀ x, |f x - g x| ≤ h x) : |expect c f - expect c g| ≤ expect c h := by
+
+## git grep -nE 'abs_expect_sub_le'
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:618:(`abs_expect_sub_le`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:628:  abs_expect_sub_le _ fun k₁ => abs_ettAcc_rej_sub_le _ _ _ n (F n k₁) b hn (ettCt_eval n)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:515:private theorem abs_expect_sub_le_expect {β : Type} (c : ProbComp β) {f g h : β → ℝ}
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:531:(`abs_prob_ettImpl_rej_sub_le`); average over `R` (`abs_expect_sub_le_expect`) and bound the bad
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:533:coins (`abs_expect_sub_le`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:544:  refine abs_expect_sub_le _ fun r => ?_
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:545:  refine (abs_expect_sub_le_expect (h := fun R => prob (simulate (ettBad ins outs d n f R true b)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:374:average over `r` (`abs_expect_sub_le`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:397:  exact abs_expect_sub_le _ fun r =>
+TCSlib/Cryptography/Games/Probability.lean:48:  samples; `expect_sub`, `abs_expect_sub_le`: subtraction and pointwise closeness.
+TCSlib/Cryptography/Games/Probability.lean:392:theorem abs_expect_sub_le (c : ProbComp α) {f g : α → ℝ} {ε : ℝ}
+
+## git grep -nE '\^ \(.+ \+ .+\)\.val'
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1920:      natToList n ((v ^ (p / 4 + 1) : (ZMod p)ˣ) : ZMod p).val := by
+TCSlib/Cryptography/Candidates/Rabin.lean:2418:  (y ^ (p / 4 + 1) % p * (q * ((q : ZMod p)⁻¹).val) + y ^ (q / 4 + 1) % q * (p * ((p : ZMod q)⁻¹).val)) %
+TCSlib/Cryptography/Candidates/Rabin.lean:2623:    ((y ^ (p / 4 + 1) % p * (q * ((q : ZMod p)⁻¹).val) +
+TCSlib/Cryptography/Candidates/Rabin.lean:2624:        y ^ (q / 4 + 1) % q * (p * ((p : ZMod q)⁻¹).val) : ℕ) : ZMod p) = (y : ZMod p) ^ (p / 4 + 1) := by
+TCSlib/Cryptography/Candidates/Rabin.lean:2631:    ((y ^ (p / 4 + 1) % p * (q * ((q : ZMod p)⁻¹).val) +
+TCSlib/Cryptography/Candidates/Rabin.lean:2632:        y ^ (q / 4 + 1) % q * (p * ((p : ZMod q)⁻¹).val) : ℕ) : ZMod q) = (y : ZMod q) ^ (q / 4 + 1) := by
+TCSlib/Cryptography/Candidates/Rabin.lean:2658:    set S := (y : ZMod (p * q)).val ^ (p / 4 + 1) % p * (q * ((q : ZMod p)⁻¹).val) +
+TCSlib/Cryptography/Candidates/Rabin.lean:2659:        (y : ZMod (p * q)).val ^ (q / 4 + 1) % q * (p * ((p : ZMod q)⁻¹).val)
+TCSlib/Cryptography/SchnorrProtocol.lean:68:`g ^ (r + c·w).val = g^r.val * (g^w.val)^c.val`. -/
+
+## git grep -nE '\^ \(-.+\)\.val'
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:445:  ⟨g, X, Y, X ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val⟩
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:451:      ⟨g, X, Y, X ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val⟩ := rfl
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:460:  ⟨Y ^ (-α₁ / (BB1.idToZ (G.group κ d) id - BB1.idToZ (G.group κ d) t)).val *
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:462:    Y ^ (-1 / (BB1.idToZ (G.group κ d) id - BB1.idToZ (G.group κ d) t)).val * g ^ r.val⟩
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:470:      ⟨Y ^ (-α₁ / (BB1.idToZ (G.group κ d) id - BB1.idToZ (G.group κ d) t)).val *
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean:472:        Y ^ (-1 / (BB1.idToZ (G.group κ d) id - BB1.idToZ (G.group κ d) t)).val * g ^ r.val⟩ :=
+
+## git grep -nE 'Function\.Bijective fun [a-z]+ : ZMod'
+TCSlib/Cryptography/Pairing/Group.lean:225:    Function.Bijective fun a : ZMod B.order => B.pair x x ^ a.val := by
+
+## git grep -nE 'natCast_eq_natCast_iff|val_natCast_of_lt|natCast_inj'
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:695:  rw [← h7, ZMod.val_natCast_of_lt h4]
+TCSlib/Complexity/Randomized/MatchingMath.lean:411:  rw [ZMod.natCast_eq_natCast_iff', Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)] at h
+TCSlib/Complexity/Randomized/PrimalityMath.lean:317:    rw [(ZMod.natCast_eq_natCast_iff _ _ _).2 a.2.1, ZMod.natCast_zmod_val]
+TCSlib/Complexity/Randomized/PrimalityMath.lean:319:    rw [(ZMod.natCast_eq_natCast_iff _ _ _).2 a.2.2, Nat.cast_one]
+TCSlib/Complexity/Randomized/PrimalityMath.lean:407:      have := (ZMod.natCast_eq_natCast_iff' A B N).1 hAB
+TCSlib/Complexity/Randomized/ZeroPPIT.lean:262:    rw [eval_subCircuit hw.1 hw'.1, sub_eq_zero, ← hc₁, ← hc₂, ZMod.natCast_eq_natCast_iff',
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:884:(`Nat.Prime.dvd_of_dvd_pow`), different from `1` (`ZMod.val_natCast_of_lt`), of order `q`
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:902:      rwa [ZMod.val_natCast_of_lt hhp, ZMod.val_natCast_of_lt (by omega)] at h3
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1323:    have := (ZMod.natCast_eq_natCast_iff' _ _ p).1 hcast
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1436:`q` (`ZMod.val_mul`, `pow_mod_orderOf`, `ZMod.natCast_eq_natCast_iff'`). -/
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1514:    have := (ZMod.natCast_eq_natCast_iff' _ _ _).1 hcast
+TCSlib/Cryptography/NumberTheory/Primality.lean:323:    exact (ZMod.natCast_eq_natCast_iff _ _ _).2 hk₁
+TCSlib/Cryptography/NumberTheory/Primality.lean:331:      (ZMod.natCast_eq_natCast_iff _ _ _).2 hk₂, Nat.cast_one, one_pow]
+TCSlib/Cryptography/NumberTheory/Primality.lean:528:      rw [ZMod.natCast_eq_natCast_iff', Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]
+TCSlib/Cryptography/SchnorrProtocol.lean:100:    simpa using (ZMod.natCast_eq_natCast_iff _ _ q).mpr key1
+
+## git grep -nE 'theorem pow_val_|theorem natCast_inj'
+TCSlib/Cryptography/KeyExchange/Joux.lean:90:theorem pow_val_mul_mul (u : B.GT) (a b c : ZMod B.order) :
+TCSlib/Cryptography/Pairing/Group.lean:192:theorem pow_val_mul (x : B.G) (a b : ZMod B.order) : x ^ (a * b).val = x ^ (a.val * b.val) := by
+TCSlib/Cryptography/Pairing/Group.lean:197:theorem pow_val_mul_GT (y : B.GT) (a b : ZMod B.order) :
+TCSlib/Cryptography/Pairing/Group.lean:224:theorem pow_val_bijective {x : B.G} (hx : x ≠ 1) :
+
+## same names on every local and remote ref (git grep over each ref)

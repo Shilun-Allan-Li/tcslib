@@ -1,0 +1,36 @@
+bb1Scheme_PP : ∀ (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ),
+  (bb1Scheme G ℓ).PP κ = ((d : List Bool) × BB1.Params (G.group κ d))
+bb1Scheme_MSK : ∀ (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ),
+  (bb1Scheme G ℓ).MSK κ = ((d : List Bool) × BB1.Params (G.group κ d) × (G.group κ d).G)
+bb1Scheme_setup : ∀ (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ),
+  (bb1Scheme G ℓ).setup κ =
+    OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+      OracleComp.bind (BB1.setup (G.group κ (G.desc κ r))) fun k => OracleComp.pure (⟨G.desc κ r, k.1⟩, ⟨G.desc κ r, k⟩)
+bb1Scheme_keyGen : ∀ (G : BilinearGen) (ℓ : PolyExpr) (x : ℕ)
+  (msk : (d : List Bool) × BB1.Params (G.group x d) × (G.group x d).G) (id : Fin (ℓ.eval x) → Bool),
+  (bb1Scheme G ℓ).keyGen x msk id =
+    OracleComp.bind (BB1.keyGen msk.snd.1 msk.snd.2 (BB1.idToZ (G.group x msk.fst) id)) fun d =>
+      OracleComp.pure ⟨msk.fst, d⟩
+bb1Scheme_enc : ∀ (G : BilinearGen) (ℓ : PolyExpr) (x : ℕ) (pp : (d : List Bool) × BB1.Params (G.group x d))
+  (id : Fin (ℓ.eval x) → Bool) (m : Fin (G.wT.eval x) → Bool),
+  (bb1Scheme G ℓ).enc x pp id m =
+    OracleComp.bind (BB1.encrypt pp.snd (BB1.idToZ (G.group x pp.fst) id) (BB1.decodeT (G.group x pp.fst) m)) fun c =>
+      OracleComp.pure ⟨pp.fst, c⟩
+bb1Scheme_encCT : ∀ (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (c : (d : List Bool) × BB1.Ciphertext (G.group κ d))
+  (a : Fin ((G.wT.add ((PolyExpr.const 2).mul G.wG)).eval κ)),
+  (bb1Scheme G ℓ).encCT κ c a =
+    TCSlib.Cryptography.padFin ((G.wT.add ((PolyExpr.const 2).mul G.wG)).eval κ)
+      (List.ofFn ((G.group κ c.fst).encT c.snd.a) ++ List.ofFn ((G.group κ c.fst).encG c.snd.b) ++
+        List.ofFn ((G.group κ c.fst).encG c.snd.c))
+      a
+bb1Scheme_MsgSpace : ∀ (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (pp : (d : List Bool) × BB1.Params (G.group κ d))
+  (m : Fin (G.wT.eval κ) → Bool), (bb1Scheme G ℓ).MsgSpace κ pp m = ∃ u, (G.group κ pp.fst).encT u = m
+bb1Scheme_msgLen : ∀ (G : BilinearGen) (ℓ : PolyExpr), (bb1Scheme G ℓ).msgLen = G.wT
+IBEScheme.sidImpl_eq_oracleImpl : ∀ (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ),
+  S.sidImpl b κ pp msk = S.oracleImpl κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1) (S.sidImpl b κ pp msk 2)
+@Option.Rel : {α : Type u_1} → {β : Type u_2} → (α → β → Prop) → Option α → Option β → Prop
+@BilinearGroup.pow_val_mul_GT : ∀ {wG wT : ℕ} (B : BilinearGroup wG wT) (y : B.GT) (a b : ZMod B.order),
+  y ^ (a * b).val = y ^ (a.val * b.val)
+@ProbComp.expect_sample_equiv : ∀ {α β : Type} [inst : Fintype α] [inst_1 : Nonempty α] [inst_2 : Fintype β]
+  [inst_3 : Nonempty β] (e : α ≃ β) (g : β → ℝ),
+  ((ProbComp.sample α).expect fun a => g (e a)) = (ProbComp.sample β).expect g

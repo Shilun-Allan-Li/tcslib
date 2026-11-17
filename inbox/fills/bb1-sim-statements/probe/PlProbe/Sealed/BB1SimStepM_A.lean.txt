@@ -1,0 +1,605 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import PlProbe.BB1SimReaders
+import Lean
+set_option maxHeartbeats 0 in
+run_cmd do
+  let env ← Lean.getEnv
+  let mut k : Nat := 0
+  for (n, ci) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    unless ci.isDefinition do continue
+    if n == `Complexity.PolyExpr.eval && true then continue
+    let st ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    let isM := Lean.Meta.isMatcherCore env n
+    if st == .reducible && !isM then continue
+    if st == .irreducible then continue
+    Lean.Elab.Command.elabCommand
+      (← `(command| attribute [local irreducible] $(Lean.mkIdent n):ident))
+    k := k + 1
+  Lean.logInfo m!"DEVSEAL A sealed {k}"
+
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Probe (bb1-sim statement phase, Deliverable 3): step M of T2, read through readers
+
+Not for landing. A consumer of `IdentityBased/Defs.lean` and `IdentityBased/BonehBoyen.lean` (at
+T4's head) and of the candidate readers (`PlProbe.BB1SimReaders`, the owners' stand-in). It reads
+every foreign definition through published lemmas and readers only (Rule 10), and is checked
+natively and under the development seals A and B.
+
+* **P-1.** The game's oracles `S.sidImpl` at the game's query type, for any `S : IBEScheme`,
+  in each of the nine cases of the typed readers `sidImpl_*`.
+* **P-2.** Step M of design §3.1 (`S = bb1Scheme G ℓ`): every row of the step-M table, in the
+  pointwise form fed to `expect_simulate_rel` (deterministic rows: equal `pure` answers and
+  related states; sampling rows: the premise of `expect_sample_rel`). The real parameters come
+  from the setup's output (`setup_out`), read through `RealReads`.
+* **P-3.** T3's challenge row along `T ↦ decodeT(M₁)⁻¹ · decodeT(M₀) · T`.
+
+Group algebra enters P-2 as explicit hypotheses (equations in `B.G`, `B.GT`, `ZMod B.order`).
+-/
+
+namespace PlProbe.BB1Sim
+
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+  TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+/-! ### The game's query and answer types, from published equations -/
+
+section Types
+
+variable (S : IBEScheme) (κ : ℕ)
+
+/-- `Init` queries are identities (`sidSpec_eq`, `bitSpec_dom`, `inLens_zero`). -/
+theorem dom_zero : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_dom, IBEScheme.inLens_zero]
+
+/-- `KeyGen` queries are identities (`sidSpec_eq`, `bitSpec_dom`, `inLens_one`). -/
+theorem dom_one : (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_dom, IBEScheme.inLens_one]
+
+/-- `Challenge` queries are two messages (`sidSpec_eq`, `bitSpec_dom`, `inLens_two`). -/
+theorem dom_two :
+    (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_dom, IBEScheme.inLens_two]
+
+/-- `Init` answers parameters (`sidSpec_eq`, `bitSpec_rng`, `outLens_zero`). -/
+theorem rng_zero : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_rng, IBEScheme.outLens_zero]
+
+/-- `KeyGen` answers a bit and a key (`sidSpec_eq`, `bitSpec_rng`, `outLens_one`). -/
+theorem rng_one : (S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_rng, IBEScheme.outLens_one]
+
+/-- `Challenge` answers a ciphertext (`sidSpec_eq`, `bitSpec_rng`, `outLens_two`). -/
+theorem rng_two : (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_rng, IBEScheme.outLens_two]
+
+end Types
+
+/-! ### P-1: the game's oracles at the game's query type -/
+
+section P1
+
+variable (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+
+/-- P-1, `Init` before a commitment: answers the parameters, records the identity. -/
+theorem p1_init_none (x : (S.sidSpec κ).dom 0) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 0 x (none, c) =
+      .pure (cast (rng_zero S κ).symm (S.encPP κ pp), (some (cast (dom_zero S κ) x), c)) := by
+  rw [IBEScheme.sidImpl_zero_onSpec, IBEScheme.sidImpl_init_none, OracleComp.pure_bind]
+
+/-- P-1, `Init` after a commitment: answers the parameters, keeps the state. -/
+theorem p1_init_some (x : (S.sidSpec κ).dom 0) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 0 x (some t, c) =
+      .pure (cast (rng_zero S κ).symm (S.encPP κ pp), (some t, c)) := by
+  rw [IBEScheme.sidImpl_zero_onSpec, IBEScheme.sidImpl_init_some, OracleComp.pure_bind]
+
+/-- P-1, `KeyGen` before `Init`: `⊥` (the zero word of the game's answer width). -/
+theorem p1_keyGen_none (x : (S.sidSpec κ).dom 1) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 1 x (none, c) = .pure (zeroBits _, (none, c)) := by
+  rw [IBEScheme.sidImpl_one_onQuery, IBEScheme.sidImpl_keyGen_none]
+
+/-- P-1, `KeyGen` for the committed identity: `⊥`. -/
+theorem p1_keyGen_target (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool)) (ht : cast (dom_one S κ) x = t) :
+    S.sidImpl b κ pp msk 1 x (some t, c) = .pure (zeroBits _, (some t, c)) := by
+  subst ht
+  rw [IBEScheme.sidImpl_one_onQuery, IBEScheme.sidImpl_keyGen_target]
+
+/-- P-1, `KeyGen` for another identity: `⟨1, d_ID⟩` with `d_ID ← KeyGen(msk, ID)`. -/
+theorem p1_keyGen_ne (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool)) (ht : cast (dom_one S κ) x ≠ t) :
+    S.sidImpl b κ pp msk 1 x (some t, c) =
+      (S.keyGen κ msk (cast (dom_one S κ) x)).bind fun sk =>
+        .pure (cast (rng_one S κ).symm
+          (FixedLengthScheme.decAnswer (some (S.encSK κ sk))), (some t, c)) :=
+  IBEScheme.sidImpl_keyGen_ne_onSpec S b κ pp msk x t c ht
+
+/-- P-1, `Challenge` before `Init`: `⊥`. -/
+theorem p1_challenge_none (x : (S.sidSpec κ).dom 2)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 2 x (none, c) = .pure (zeroBits _, (none, c)) := by
+  rw [IBEScheme.sidImpl_two_onQuery, IBEScheme.sidImpl_challenge_none]
+
+/-- P-1, `Challenge` after a recorded challenge: repeats it. -/
+theorem p1_challenge_repeat (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (w : Fin (S.ctLen.eval κ) → Bool) :
+    S.sidImpl b κ pp msk 2 x (some t, some w) =
+      .pure (cast (rng_two S κ).symm w, (some t, some w)) := by
+  rw [IBEScheme.sidImpl_two_onSpec, IBEScheme.sidImpl_challenge_repeat, OracleComp.pure_bind]
+
+/-- P-1, the first valid `Challenge`: answers and records `C ← Encrypt(params, ID*, M_b)`. -/
+theorem p1_challenge_fresh (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (hv : S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).1 ∧
+      S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).2) :
+    S.sidImpl b κ pp msk 2 x (some t, none) =
+      (S.enc κ pp t (if b then (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).2
+        else (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).1)).bind fun ct =>
+        .pure (cast (rng_two S κ).symm (S.encCT κ ct), (some t, some (S.encCT κ ct))) :=
+  IBEScheme.sidImpl_challenge_fresh_onSpec S b κ pp msk x t hv
+
+/-- P-1, the first invalid `Challenge`: `⊥`. -/
+theorem p1_challenge_invalid (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (hv : ¬ (S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).1 ∧
+      S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).2)) :
+    S.sidImpl b κ pp msk 2 x (some t, none) = .pure (zeroBits _, (some t, none)) := by
+  rw [IBEScheme.sidImpl_two_onQuery, IBEScheme.sidImpl_challenge_invalid (h := hv)]
+
+end P1
+
+/-! ### The real parameters, from the setup's output -/
+
+section Setup
+
+variable (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ)
+
+/-- **What the real handler reads from its parameters and master key** `k`, for parameters
+`(g, g^α, Y, h)` and master key `Y^α` in the group described by `d`: the encoded parameters, the
+message space, the encoded keys of `KeyGen`, and the encoded ciphertexts of `Encrypt`. -/
+structure RealReads (d : List Bool) (g : (G.group κ d).G) (α : ZMod (G.group κ d).order)
+    (Y h : (G.group κ d).G) (k : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) : Prop where
+  /-- The encoded parameters: `d ‖ g ‖ g^α ‖ Y ‖ h`. -/
+  encPP : (bb1Scheme G ℓ).encPP κ k.1 = padFin ((bb1Scheme G ℓ).ppLen.eval κ)
+    (d ++ List.ofFn ((G.group κ d).encG g) ++ List.ofFn ((G.group κ d).encG (g ^ α.val)) ++
+      List.ofFn ((G.group κ d).encG Y) ++ List.ofFn ((G.group κ d).encG h))
+  /-- The message space: the encodings of `G_T`. -/
+  msgSpace : ∀ m, (bb1Scheme G ℓ).MsgSpace κ k.1 m ↔
+    ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m
+  /-- `KeyGen`, encoded, then `f`: the key word is `Y^α F(ID)^r ‖ g^r` with `r` uniform. -/
+  keyGen : ∀ id {β : Type} (f : (Fin ((bb1Scheme G ℓ).skLen.eval κ) → Bool) → ProbComp β),
+    ((bb1Scheme G ℓ).keyGen κ k.2 id).bind (fun sk => f ((bb1Scheme G ℓ).encSK κ sk)) =
+      (ProbComp.sample (ZMod (G.group κ d).order)).bind fun r =>
+        f (padFin ((bb1Scheme G ℓ).skLen.eval κ)
+          (List.ofFn ((G.group κ d).encG
+              (Y ^ α.val * BB1.F ⟨g, g ^ α.val, Y, h⟩ (BB1.idToZ (G.group κ d) id) ^ r.val)) ++
+            List.ofFn ((G.group κ d).encG (g ^ r.val))))
+  /-- `Encrypt`, encoded, then `f`: the ciphertext word is `M · e(g^α, Y)^s ‖ g^s ‖ F(ID)^s`
+  with `s` uniform, the message read at the width of `G_T`. -/
+  enc : ∀ t m {β : Type} (f : (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) → ProbComp β),
+    ((bb1Scheme G ℓ).enc κ k.1 t m).bind (fun ct => f ((bb1Scheme G ℓ).encCT κ ct)) =
+      (ProbComp.sample (ZMod (G.group κ d).order)).bind fun s =>
+        f (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+          (List.ofFn ((G.group κ d).encT ((G.group κ d).pair (g ^ α.val) Y ^ s.val *
+              BB1.decodeT (G.group κ d) (padFin _ (List.ofFn m)))) ++
+            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
+            List.ofFn ((G.group κ d).encG
+              (BB1.F ⟨g, g ^ α.val, Y, h⟩ (BB1.idToZ (G.group κ d) t) ^ s.val))))
+
+/-- **The setup's output, read**: there is a map `o` from the setup's coins to parameters and
+master key of `bb1Scheme G ℓ` such that `Setup` draws `r`, `g ∈ G^*`, `α`, `h`, `g_2` and
+returns `o r g α h g_2`, and the real handler reads `o r g α h g_2` as the parameters
+`(g, g^α, g_2, h)` and the master key `g_2^α` of the group `desc(κ, r)` (`RealReads`).
+
+**Proof sketch.** `o` is the setup's output map, found by unification after reading `Setup`
+through `bb1Scheme_setup_eq` and `BB1.setup_eq`. The four readings: `ofFn_bb1Scheme_encPP`;
+`bb1Scheme_msgSpace_iff`; `bb1Scheme_keyGen_bind`, `BB1.keyGen_eq` and
+`ofFn_bb1Scheme_encSK`; `bb1Scheme_enc_bind`, `BB1.encrypt_eq` and `ofFn_bb1Scheme_encCT`
+(vectors with equal words are equal, `List.ofFn_injective`). -/
+theorem setup_out :
+    ∃ o : (r : G.gen.Coins κ) → {x : (G.group κ (G.desc κ r)).G // x ≠ 1} →
+        ZMod (G.group κ (G.desc κ r)).order → (G.group κ (G.desc κ r)).G →
+        (G.group κ (G.desc κ r)).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ,
+      (∀ {β : Type} (F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp β),
+        ((bb1Scheme G ℓ).setup κ).bind F =
+          (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+          (ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
+          (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)).bind fun α =>
+          (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun h =>
+          (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun g2 => F (o r g α h g2)) ∧
+      ∀ r g α h g2, RealReads G ℓ κ (G.desc κ r) g.1 α g2 h (o r g α h g2) := by
+  refine ⟨?o, fun F => ?hF, ?hR⟩
+  case hF =>
+    rw [bb1Scheme_setup_eq]
+    simp only [OracleComp.bind_assoc, BB1.setup_eq, OracleComp.pure_bind]
+    rfl
+  case hR =>
+    intro r g α h g2
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · exact List.ofFn_injective (ofFn_bb1Scheme_encPP G ℓ κ _ _)
+    · exact fun m => bb1Scheme_msgSpace_iff G ℓ κ _ _ m
+    · intro id β f
+      rw [bb1Scheme_keyGen_bind, BB1.keyGen_eq, OracleComp.bind_assoc]
+      simp only [OracleComp.pure_bind]
+      refine congrArg _ (funext fun r => ?_)
+      rw [List.ofFn_injective (ofFn_bb1Scheme_encSK G ℓ κ _ _)]
+    · intro t m β f
+      rw [bb1Scheme_enc_bind, BB1.encrypt_eq, OracleComp.bind_assoc]
+      simp only [OracleComp.pure_bind]
+      refine congrArg _ (funext fun s => ?_)
+      rw [List.ofFn_injective (ofFn_bb1Scheme_encCT G ℓ κ _ _)]
+
+end Setup
+
+/-! ### P-2: step M, call by call
+
+The real side is the game's oracles at the stored `h` (`realAt`, design §3.1's `bb1RealAt`), with
+parameters and master key `o h` read through `RealReads` (as `setup_out` provides them); the
+simulator is `bb1SimImpl` on `X = g^α`, `Y = g^{b'}`. Each row is in the form fed to
+`expect_simulate_rel`: deterministic rows give equal `pure` answers and related states; sampling
+rows give the premise of `expect_sample_rel` along the row's bijection. -/
+
+section StepM
+
+variable (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+
+/-- The real state of step M: the committed identity with the parameter `h`, and the challenge. -/
+abbrev RealState : Type :=
+  Option ((Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) × (G.group κ d).G) ×
+    Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)
+
+/-- **Design §3.1's relation `R`**: the same recorded challenge, the same committed identity, and
+`h = X^{−ID*} g^{α₁}`. -/
+def RelM (g X : (G.group κ d).G) (u : RealState G ℓ κ d) (v : BB1SimState G ℓ κ d) : Prop :=
+  u.2 = v.2 ∧ Option.Rel (fun p q => p.1 = q.1 ∧
+    p.2 = X ^ (-BB1.idToZ (G.group κ d) p.1).val * g ^ q.2.val) u.1 v.1
+
+variable (b : Bool) (o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ)
+
+/-- **The real oracles at the stored `h`** (design §3.1's `bb1RealAt`, illustrative): the game's
+oracles with the parameters and master key `o h`, on states that carry `h`. -/
+noncomputable def realAt (h : (G.group κ d).G) :
+    QueryImpl ((bb1Scheme G ℓ).sidSpec κ) (RealState G ℓ κ d) unifSpec :=
+  fun i x u => ((bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2 i x (u.1.map Prod.fst, u.2)).bind
+    fun p => .pure (p.1, (p.2.1.map fun t => (t, h), p.2.2))
+
+/-- The `⊥` word of a width equal to `m`, cast: `zeroBits n = cast e (zeroBits m)` for `n = m`. -/
+theorem zeroBits_eq_cast {n m : ℕ} (hnm : n = m) (e : (Fin m → Bool) = (Fin n → Bool)) :
+    zeroBits n = cast e (zeroBits m) := by
+  subst hnm
+  rfl
+
+variable (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order)
+
+/-- **Step M, `Init` before a commitment** (sampling, along `e z : G ≃ Z_p` with
+`h = X^{−z} g^{e z h}`, at `z = ID`): the real call draws `h`, the simulator draws `α₁`; equal
+answers and related states along `e ID` (hypothesis `he`, the bijection `Z_p ≃ G` for `g ≠ 1`). -/
+theorem p2_init_none
+    (ho : ∀ h, RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) (Z : (G.group κ d).G)
+    (T : (G.group κ d).GT) (x : ((bb1Scheme G ℓ).sidSpec κ).dom 0)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool))
+    (e : ZMod (G.group κ d).order → (G.group κ d).G ≃ ZMod (G.group κ d).order)
+    (he : ∀ z h, h = (g ^ α.val) ^ (-z).val * g ^ (e z h).val) :
+    ∃ (f₀ : (G.group κ d).G → ((bb1Scheme G ℓ).sidSpec κ).rng 0 × RealState G ℓ κ d)
+      (f₁ : ZMod (G.group κ d).order → ((bb1Scheme G ℓ).sidSpec κ).rng 0 × BB1SimState G ℓ κ d),
+      ((ProbComp.sample (G.group κ d).G).bind fun h => realAt G ℓ κ d b o h 0 x (none, c)) =
+        (ProbComp.sample (G.group κ d).G).bind (fun h => .pure (f₀ h)) ∧
+      bb1SimImpl G ℓ b κ d g (g ^ α.val) (g ^ b'.val) Z T 0 x (none, c) =
+        (ProbComp.sample (ZMod (G.group κ d).order)).bind (fun α₁ => .pure (f₁ α₁)) ∧
+      ∀ h, (f₀ h).1 = (f₁ (e (BB1.idToZ (G.group κ d) (cast (dom_zero _ κ) x)) h)).1 ∧
+        RelM G ℓ κ d g (g ^ α.val) (f₀ h).2
+          (f₁ (e (BB1.idToZ (G.group κ d) (cast (dom_zero _ κ) x)) h)).2 := by
+  refine ⟨?f₀, ?f₁, ?h0, ?h1, ?hf⟩
+  case h0 =>
+    refine congrArg _ (funext fun h => ?_)
+    simp only [realAt, Option.map_none]
+    rw [p1_init_none, OracleComp.pure_bind]
+  case h1 =>
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_zero_onSpec, bb1SimInit_none, OracleComp.bind_assoc]
+    simp only [OracleComp.pure_bind]
+    rfl
+  case hf =>
+    intro h
+    refine ⟨?_, ⟨rfl, .some ⟨rfl, he _ h⟩⟩⟩
+    rw [(ho h).encPP, List.ofFn_injective (ofFn_bb1Scheme_encPP G ℓ κ d _), bb1SimParams_eq,
+      ← he _ h]
+
+/-- **Step M, `Init` after a commitment** (deterministic): both answer the recorded parameters;
+equal by `h = X^{−ID*} g^{α₁}`. -/
+theorem p2_init_some
+    (ho : ∀ h, RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) (Z : (G.group κ d).G)
+    (T : (G.group κ d).GT) (x : ((bb1Scheme G ℓ).sidSpec κ).dom 0)
+    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (h : (G.group κ d).G)
+    (α₁ : ZMod (G.group κ d).order) (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool))
+    (hh : h = (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val) :
+    ∃ a, realAt G ℓ κ d b o h 0 x (some (t, h), c) = .pure (a, (some (t, h), c)) ∧
+      bb1SimImpl G ℓ b κ d g (g ^ α.val) (g ^ b'.val) Z T 0 x (some (t, α₁), c) =
+        .pure (a, (some (t, α₁), c)) ∧
+      RelM G ℓ κ d g (g ^ α.val) (some (t, h), c) (some (t, α₁), c) := by
+  refine ⟨?a, ?h0, ?h1, ⟨rfl, .some ⟨rfl, hh⟩⟩⟩
+  case h0 =>
+    simp only [realAt, Option.map_some]
+    rw [p1_init_some, OracleComp.pure_bind]
+    rfl
+  case h1 =>
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_zero_onSpec, bb1SimInit_some, OracleComp.pure_bind,
+      (ho h).encPP, List.ofFn_injective (ofFn_bb1Scheme_encPP G ℓ κ d _), bb1SimParams_eq, ← hh]
+
+/-- **Step M, `KeyGen` before `Init`** (deterministic): both answer `⊥`. -/
+theorem p2_keyGen_none (Z : (G.group κ d).G) (T : (G.group κ d).GT) (h : (G.group κ d).G)
+    (x : ((bb1Scheme G ℓ).sidSpec κ).dom 1)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
+    ∃ a, realAt G ℓ κ d b o h 1 x (none, c) = .pure (a, (none, c)) ∧
+      bb1SimImpl G ℓ b κ d g (g ^ α.val) (g ^ b'.val) Z T 1 x (none, c) =
+        .pure (a, (none, c)) ∧
+      RelM G ℓ κ d g (g ^ α.val) (none, c) (none, c) := by
+  refine ⟨?a, ?h0, ?h1, ⟨rfl, .none⟩⟩
+  case h0 =>
+    simp only [realAt, Option.map_none]
+    rw [p1_keyGen_none, OracleComp.pure_bind]
+    rfl
+  case h1 =>
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_one_onSpec, bb1SimKeyQ_none, OracleComp.pure_bind,
+      zeroBits_eq_cast (IBEScheme.outLens_one _ κ) (rng_one _ κ).symm]
+
+/-- **Step M, `KeyGen` for `ID*`** (deterministic): both answer `⊥`. -/
+theorem p2_keyGen_target (Z : (G.group κ d).G) (T : (G.group κ d).GT)
+    (x : ((bb1Scheme G ℓ).sidSpec κ).dom 1) (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
+    (h : (G.group κ d).G) (α₁ : ZMod (G.group κ d).order)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool))
+    (hh : h = (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val)
+    (ht : cast (dom_one _ κ) x = t) :
+    ∃ a, realAt G ℓ κ d b o h 1 x (some (t, h), c) = .pure (a, (some (t, h), c)) ∧
+      bb1SimImpl G ℓ b κ d g (g ^ α.val) (g ^ b'.val) Z T 1 x (some (t, α₁), c) =
+        .pure (a, (some (t, α₁), c)) ∧
+      RelM G ℓ κ d g (g ^ α.val) (some (t, h), c) (some (t, α₁), c) := by
+  refine ⟨?a, ?h0, ?h1, ⟨rfl, .some ⟨rfl, hh⟩⟩⟩
+  case h0 =>
+    simp only [realAt, Option.map_some]
+    rw [p1_keyGen_target _ _ _ _ _ x t c ht, OracleComp.pure_bind]
+    rfl
+  case h1 =>
+    subst ht
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_one_onSpec, bb1SimKeyQ_target, OracleComp.pure_bind,
+      zeroBits_eq_cast (IBEScheme.outLens_one _ κ) (rng_one _ κ).symm]
+
+/-- **Step M, `KeyGen` for `ID ≠ ID*`** (sampling, along `r̃ ↦ r̃ + b'/(ID − ID*)`): the real key
+with exponent `r̃` is the simulated key with exponent `r̃ + b'/(ID − ID*)` (BB04's computation,
+hypothesis `hkey`); `ID − ID* ≠ 0` in `Z_p` (hypothesis `hinj`, good coins).
+
+**Proof sketch.** The real call is read by `p1_keyGen_ne` and `RealReads.keyGen` (a uniform `r̃`
+and the key word), the simulator's by `oracleImpl_one_onSpec` and `bb1SimKeyQ_ne` (a uniform
+`r`). At `r = r̃ + b'/(ID − ID*)` the key words agree: `ofFn_bb1Scheme_encSK`, `bb1SimKey_eq`,
+`BB1.F_eq`, `bb1SimParams_eq`, `h = X^{−ID*} g^{α₁}` and `hkey`. The states are unchanged. -/
+theorem p2_keyGen_ne
+    (ho : ∀ h, RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) (Z : (G.group κ d).G)
+    (T : (G.group κ d).GT) (x : ((bb1Scheme G ℓ).sidSpec κ).dom 1)
+    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (h : (G.group κ d).G)
+    (α₁ : ZMod (G.group κ d).order) (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool))
+    (hh : h = (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val)
+    (ht : cast (dom_one _ κ) x ≠ t)
+    (hinj : ∀ u v : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool, u ≠ v →
+      (bitsToNat u : ZMod (G.group κ d).order) ≠ bitsToNat v)
+    (hkey : ∀ z z' a₁ r : ZMod (G.group κ d).order, z ≠ z' →
+      (g ^ b'.val) ^ α.val *
+          ((g ^ α.val) ^ z.val * ((g ^ α.val) ^ (-z').val * g ^ a₁.val)) ^ r.val =
+        (g ^ b'.val) ^ (-a₁ / (z - z')).val *
+          ((g ^ α.val) ^ z.val * ((g ^ α.val) ^ (-z').val * g ^ a₁.val)) ^ (r + b' / (z - z')).val ∧
+      g ^ r.val = (g ^ b'.val) ^ (-1 / (z - z')).val * g ^ (r + b' / (z - z')).val) :
+    ∃ (f₀ : ZMod (G.group κ d).order → ((bb1Scheme G ℓ).sidSpec κ).rng 1 × RealState G ℓ κ d)
+      (f₁ : ZMod (G.group κ d).order → ((bb1Scheme G ℓ).sidSpec κ).rng 1 × BB1SimState G ℓ κ d),
+      realAt G ℓ κ d b o h 1 x (some (t, h), c) =
+        (ProbComp.sample (ZMod (G.group κ d).order)).bind (fun r => .pure (f₀ r)) ∧
+      bb1SimImpl G ℓ b κ d g (g ^ α.val) (g ^ b'.val) Z T 1 x (some (t, α₁), c) =
+        (ProbComp.sample (ZMod (G.group κ d).order)).bind (fun r => .pure (f₁ r)) ∧
+      ∀ r, (f₀ r).1 = (f₁ (Equiv.addRight (b' / (BB1.idToZ (G.group κ d)
+          (cast (dom_one _ κ) x) - BB1.idToZ (G.group κ d) t)) r)).1 ∧
+        RelM G ℓ κ d g (g ^ α.val) (f₀ r).2 (f₁ (Equiv.addRight (b' / (BB1.idToZ (G.group κ d)
+          (cast (dom_one _ κ) x) - BB1.idToZ (G.group κ d) t)) r)).2 := by
+  refine ⟨?f₀, ?f₁, ?h0, ?h1, ?hf⟩
+  case h0 =>
+    simp only [realAt, Option.map_some]
+    rw [p1_keyGen_ne _ _ _ _ _ x t c ht, OracleComp.bind_assoc]
+    simp only [OracleComp.pure_bind, Option.map_some]
+    rw [(ho h).keyGen _ fun w => .pure (cast (rng_one _ κ).symm
+      (FixedLengthScheme.decAnswer (some w)), (some (t, h), c))]
+  case h1 =>
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_one_onSpec, bb1SimKeyQ_ne (h := ht),
+      OracleComp.bind_assoc]
+    simp only [OracleComp.pure_bind]
+    rfl
+  case hf =>
+    intro r
+    refine ⟨?_, ⟨rfl, .some ⟨rfl, hh⟩⟩⟩
+    have hz : BB1.idToZ (G.group κ d) (cast (dom_one _ κ) x) ≠ BB1.idToZ (G.group κ d) t := by
+      rw [BB1.idToZ_eq, BB1.idToZ_eq]
+      exact hinj _ _ ht
+    obtain ⟨h0, h1⟩ := hkey _ _ α₁ r hz
+    rw [Equiv.coe_addRight, List.ofFn_injective (ofFn_bb1Scheme_encSK G ℓ κ d _), bb1SimKey_eq,
+      BB1.F_eq, BB1.F_eq, bb1SimParams_eq, hh]
+    dsimp only
+    rw [h0, h1]
+
+/-- **Step M, `Challenge` before `Init`** (deterministic): both answer `⊥`. -/
+theorem p2_challenge_none (Z : (G.group κ d).G) (T : (G.group κ d).GT) (h : (G.group κ d).G)
+    (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2)
+    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
+    ∃ a, realAt G ℓ κ d b o h 2 x (none, c) = .pure (a, (none, c)) ∧
+      bb1SimImpl G ℓ b κ d g (g ^ α.val) (g ^ b'.val) Z T 2 x (none, c) =
+        .pure (a, (none, c)) ∧
+      RelM G ℓ κ d g (g ^ α.val) (none, c) (none, c) := by
+  refine ⟨?a, ?h0, ?h1, ⟨rfl, .none⟩⟩
+  case h0 =>
+    simp only [realAt, Option.map_none]
+    rw [p1_challenge_none, OracleComp.pure_bind]
+    rfl
+  case h1 =>
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec, bb1SimChal_none, OracleComp.pure_bind,
+      zeroBits_eq_cast (IBEScheme.outLens_two _ κ) (rng_two _ κ).symm]
+
+/-- **Step M, `Challenge` repeated** (deterministic): both repeat the recorded challenge. -/
+theorem p2_challenge_repeat (Z : (G.group κ d).G) (T : (G.group κ d).GT)
+    (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
+    (h : (G.group κ d).G) (α₁ : ZMod (G.group κ d).order)
+    (w : Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)
+    (hh : h = (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val) :
+    ∃ a, realAt G ℓ κ d b o h 2 x (some (t, h), some w) = .pure (a, (some (t, h), some w)) ∧
+      bb1SimImpl G ℓ b κ d g (g ^ α.val) (g ^ b'.val) Z T 2 x (some (t, α₁), some w) =
+        .pure (a, (some (t, α₁), some w)) ∧
+      RelM G ℓ κ d g (g ^ α.val) (some (t, h), some w) (some (t, α₁), some w) := by
+  refine ⟨?a, ?h0, ?h1, ⟨rfl, .some ⟨rfl, hh⟩⟩⟩
+  case h0 =>
+    simp only [realAt, Option.map_some]
+    rw [p1_challenge_repeat, OracleComp.pure_bind]
+    rfl
+  case h1 =>
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec, bb1SimChal_repeat, OracleComp.pure_bind]
+
+/-- **Step M, the first invalid `Challenge`** (deterministic): both answer `⊥`; both message
+spaces are the encodings of `G_T` (`RealReads.msgSpace`, `bb1Scheme_msgSpace_iff`). -/
+theorem p2_challenge_invalid
+    (ho : ∀ h, RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) (Z : (G.group κ d).G)
+    (T : (G.group κ d).GT) (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2)
+    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (h : (G.group κ d).G)
+    (α₁ : ZMod (G.group κ d).order)
+    (hh : h = (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val)
+    (hv : ¬ ((∃ u, List.ofFn ((G.group κ d).encT u) =
+        List.ofFn (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).1) ∧
+      ∃ u, List.ofFn ((G.group κ d).encT u) =
+        List.ofFn (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).2)) :
+    ∃ a, realAt G ℓ κ d b o h 2 x (some (t, h), none) = .pure (a, (some (t, h), none)) ∧
+      bb1SimImpl G ℓ b κ d g (g ^ α.val) (g ^ b'.val) Z T 2 x (some (t, α₁), none) =
+        .pure (a, (some (t, α₁), none)) ∧
+      RelM G ℓ κ d g (g ^ α.val) (some (t, h), none) (some (t, α₁), none) := by
+  refine ⟨?a, ?h0, ?h1, ⟨rfl, .some ⟨rfl, hh⟩⟩⟩
+  case h0 =>
+    simp only [realAt, Option.map_some]
+    rw [p1_challenge_invalid _ _ _ _ _ x t
+      (fun hm => hv ⟨((ho h).msgSpace _).1 hm.1, ((ho h).msgSpace _).1 hm.2⟩),
+      OracleComp.pure_bind]
+    rfl
+  case h1 =>
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec, bb1SimChal_invalid, OracleComp.pure_bind,
+      zeroBits_eq_cast (IBEScheme.outLens_two _ κ) (rng_two _ κ).symm]
+    exact fun hm => hv ⟨(bb1Scheme_msgSpace_iff G ℓ κ d _ _).1 hm.1,
+      (bb1Scheme_msgSpace_iff G ℓ κ d _ _).1 hm.2⟩
+
+/-- **Step M, the first valid `Challenge`** (sampling, `s = c`, `e := Equiv.refl`): the real
+encryption with exponent `s` is the simulated challenge on `(g^s, e(g, g)^{αb's})`, by
+`F(ID*) = g^{α₁}` (hypothesis `hF`, from `h = X^{−ID*} g^{α₁}`) and `e(X, Y)^s = e(g, g)^{αb's}`
+(hypothesis `hT`).
+
+**Proof sketch.** The real call is read by `p1_challenge_fresh` (validity through
+`RealReads.msgSpace`) and `RealReads.enc` (a uniform `s` and the ciphertext word); the
+simulator's, for each `c`, by `oracleImpl_two_onSpec` and `bb1SimChal_fresh` (validity through
+`bb1Scheme_msgSpace_iff`). At `c = s` the words agree (`ofFn_bb1SimCt`, `hT`, commutativity of
+`G_T`, `BB1.F_eq`, `hF`, `pow_right_comm`), and both record that word. -/
+theorem p2_challenge_fresh
+    (ho : ∀ h, RealReads G ℓ κ d g α (g ^ b'.val) h (o h))
+    (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
+    (h : (G.group κ d).G) (α₁ : ZMod (G.group κ d).order)
+    (hh : h = (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val)
+    (hv : (∃ u, List.ofFn ((G.group κ d).encT u) =
+        List.ofFn (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).1) ∧
+      ∃ u, List.ofFn ((G.group κ d).encT u) =
+        List.ofFn (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).2)
+    (hF : ∀ z a₁ : ZMod (G.group κ d).order,
+      (g ^ α.val) ^ z.val * ((g ^ α.val) ^ (-z).val * g ^ a₁.val) = g ^ a₁.val)
+    (hT : ∀ s : ZMod (G.group κ d).order,
+      (G.group κ d).pair (g ^ α.val) (g ^ b'.val) ^ s.val =
+        (G.group κ d).pair g g ^ (α * b' * s).val) :
+    ∃ (f₀ : ZMod (G.group κ d).order → ((bb1Scheme G ℓ).sidSpec κ).rng 2 × RealState G ℓ κ d)
+      (f₁ : ZMod (G.group κ d).order → ((bb1Scheme G ℓ).sidSpec κ).rng 2 × BB1SimState G ℓ κ d),
+      realAt G ℓ κ d b o h 2 x (some (t, h), none) =
+        (ProbComp.sample (ZMod (G.group κ d).order)).bind (fun s => .pure (f₀ s)) ∧
+      ((ProbComp.sample (ZMod (G.group κ d).order)).bind fun cz =>
+        bb1SimImpl G ℓ b κ d g (g ^ α.val) (g ^ b'.val) (g ^ cz.val)
+          ((G.group κ d).pair g g ^ (α * b' * cz).val) 2 x (some (t, α₁), none)) =
+        (ProbComp.sample (ZMod (G.group κ d).order)).bind (fun cz => .pure (f₁ cz)) ∧
+      ∀ s, (f₀ s).1 = (f₁ (Equiv.refl _ s)).1 ∧
+        RelM G ℓ κ d g (g ^ α.val) (f₀ s).2 (f₁ (Equiv.refl _ s)).2 := by
+  refine ⟨?f₀, ?f₁, ?h0, ?h1, ?hf⟩
+  case h0 =>
+    simp only [realAt, Option.map_some]
+    rw [p1_challenge_fresh _ _ _ _ _ x t
+      ⟨((ho h).msgSpace _).2 hv.1, ((ho h).msgSpace _).2 hv.2⟩, OracleComp.bind_assoc]
+    simp only [OracleComp.pure_bind, Option.map_some]
+    rw [(ho h).enc t _ fun w => .pure (cast (rng_two _ κ).symm w, (some (t, h), some w))]
+  case h1 =>
+    refine congrArg _ (funext fun cz => ?_)
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec, bb1SimChal_fresh, OracleComp.pure_bind]
+    exact ⟨(bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.1, (bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.2⟩
+  case hf =>
+    intro s
+    rw [Equiv.refl_apply]
+    refine ⟨?_, ⟨?_, .some ⟨rfl, hh⟩⟩⟩ <;>
+    · rw [List.ofFn_injective (ofFn_bb1SimCt G ℓ κ d _ _ _ _), hT s, mul_comm, BB1.F_eq]
+      dsimp only
+      rw [hh, hF, pow_right_comm]
+
+end StepM
+
+/-! ### P-3: T3's challenge row -/
+
+section P3
+
+variable (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+
+/-- **T3, the first valid `Challenge`** (sampling over `T ∈ G_T`, `R := Eq`): the simulators
+with challenge bits `0` and `1` answer and record the same challenge along
+`T ↦ decodeT(M₁)⁻¹ · decodeT(M₀) · T` (`ofFn_bb1SimCt`, T4's readers only).
+
+**Proof sketch.** Both calls are read by `oracleImpl_two_onSpec` and `bb1SimChal_fresh` (validity
+through `bb1Scheme_msgSpace_iff`). Their words (`ofFn_bb1SimCt`) agree because
+`M₁ · (M₁⁻¹ · M₀ · T) = M₀ · T` (`mul_assoc`, `mul_inv_cancel_left`), and both record them. -/
+theorem p3_challenge_fresh (g X Y Z : (G.group κ d).G) (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2)
+    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
+    (hv : (∃ u, List.ofFn ((G.group κ d).encT u) =
+        List.ofFn (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).1) ∧
+      ∃ u, List.ofFn ((G.group κ d).encT u) =
+        List.ofFn (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).2) :
+    ∃ (f₀ f₁ : (G.group κ d).GT → ((bb1Scheme G ℓ).sidSpec κ).rng 2 × BB1SimState G ℓ κ d),
+      ((ProbComp.sample (G.group κ d).GT).bind fun T =>
+        bb1SimImpl G ℓ false κ d g X Y Z T 2 x (some (t, α₁), none)) =
+        (ProbComp.sample (G.group κ d).GT).bind (fun T => .pure (f₀ T)) ∧
+      ((ProbComp.sample (G.group κ d).GT).bind fun T =>
+        bb1SimImpl G ℓ true κ d g X Y Z T 2 x (some (t, α₁), none)) =
+        (ProbComp.sample (G.group κ d).GT).bind (fun T => .pure (f₁ T)) ∧
+      ∀ T, (f₀ T).1 = (f₁ (Equiv.mulLeft ((BB1.decodeT (G.group κ d) (padFin _ (List.ofFn
+          (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).2)))⁻¹ *
+          BB1.decodeT (G.group κ d) (padFin _ (List.ofFn
+            (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).1))) T)).1 ∧
+        (f₀ T).2 = (f₁ (Equiv.mulLeft ((BB1.decodeT (G.group κ d) (padFin _ (List.ofFn
+          (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).2)))⁻¹ *
+          BB1.decodeT (G.group κ d) (padFin _ (List.ofFn
+            (FixedLengthScheme.splitHalf (cast (dom_two _ κ) x)).1))) T)).2 := by
+  refine ⟨?f₀, ?f₁, ?h0, ?h1, ?hf⟩
+  case h0 =>
+    refine congrArg _ (funext fun T => ?_)
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec, bb1SimChal_fresh, OracleComp.pure_bind]
+    exact ⟨(bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.1, (bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.2⟩
+  case h1 =>
+    refine congrArg _ (funext fun T => ?_)
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec, bb1SimChal_fresh, OracleComp.pure_bind]
+    exact ⟨(bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.1, (bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.2⟩
+  case hf =>
+    intro T
+    rw [if_neg Bool.false_ne_true, if_pos rfl]
+    simp only [Equiv.coe_mulLeft]
+    refine ⟨?_, ?_⟩ <;>
+    · rw [List.ofFn_injective (ofFn_bb1SimCt G ℓ κ d _ _ _ _),
+        List.ofFn_injective (ofFn_bb1SimCt G ℓ κ d _ _ _ _), mul_assoc, mul_inv_cancel_left]
+
+end P3
+
+end PlProbe.BB1Sim

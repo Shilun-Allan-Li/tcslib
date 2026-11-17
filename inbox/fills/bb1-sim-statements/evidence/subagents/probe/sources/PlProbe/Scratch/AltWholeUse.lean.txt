@@ -1,0 +1,36 @@
+import PlProbe.Scratch.AltWhole
+
+/-!
+Failed alternative (consumer): P-1's `Init` case through the whole-function reader and through
+its pointwise form, then `oracleImpl_zero_onSpec`. Under the development seals the second
+rewrite cannot instantiate the handler `init := S.sidImpl b κ pp msk 0`, whose type
+`(S.sidSpec κ).dom 0 → …` is the handler type only through `inLens` (sealed).
+-/
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Composability
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+theorem altWhole_init_none (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (c : Option (Fin (S.ctLen.eval κ) → Bool))
+    (h0 : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool))
+    (h0' : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 0 x (none, c) =
+      .pure (cast h0'.symm (S.encPP κ pp), (some (cast h0 x), c)) := by
+  rw [IBEScheme.alt_sidImpl_eq_oracleImpl, IBEScheme.oracleImpl_zero_onSpec,
+    IBEScheme.sidImpl_init_none, OracleComp.pure_bind]
+
+theorem altPointwise_init_none (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (c : Option (Fin (S.ctLen.eval κ) → Bool))
+    (h0 : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool))
+    (h0' : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 0 x (none, c) =
+      .pure (cast h0'.symm (S.encPP κ pp), (some (cast h0 x), c)) := by
+  rw [IBEScheme.alt_sidImpl_apply_eq_oracleImpl, IBEScheme.oracleImpl_zero_onSpec,
+    IBEScheme.sidImpl_init_none, OracleComp.pure_bind]
+
+/-- The explicit instance of `oracleImpl_zero_onSpec` at the game's own handlers. -/
+theorem altExplicit (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (s : S.SidState κ) : True := by
+  have := IBEScheme.oracleImpl_zero_onSpec S κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1)
+    (S.sidImpl b κ pp msk 2) x s
+  trivial

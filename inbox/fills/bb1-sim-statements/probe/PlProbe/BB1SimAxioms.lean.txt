@@ -1,0 +1,54 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import PlProbe.BB1SimStepM
+
+/-!
+# Probe (bb1-sim statement phase, Deliverable 3): axioms
+
+`#print axioms` of every candidate reader and every probe lemma. Expected: `propext`,
+`Classical.choice`, `Quot.sound` only (or a subset).
+-/
+
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+#print axioms IBEScheme.sidImpl_zero_onSpec
+#print axioms IBEScheme.sidImpl_two_onSpec
+#print axioms IBEScheme.sidImpl_one_onQuery
+#print axioms IBEScheme.sidImpl_two_onQuery
+#print axioms IBEScheme.sidImpl_keyGen_ne_onSpec
+#print axioms IBEScheme.sidImpl_challenge_fresh_onSpec
+#print axioms bb1Scheme_setup_eq
+#print axioms bb1Scheme_keyGen_bind
+#print axioms bb1Scheme_enc_bind
+#print axioms ofFn_bb1Scheme_encCT
+
+#print axioms PlProbe.BB1Sim.dom_zero
+#print axioms PlProbe.BB1Sim.dom_one
+#print axioms PlProbe.BB1Sim.dom_two
+#print axioms PlProbe.BB1Sim.rng_zero
+#print axioms PlProbe.BB1Sim.rng_one
+#print axioms PlProbe.BB1Sim.rng_two
+#print axioms PlProbe.BB1Sim.p1_init_none
+#print axioms PlProbe.BB1Sim.p1_init_some
+#print axioms PlProbe.BB1Sim.p1_keyGen_none
+#print axioms PlProbe.BB1Sim.p1_keyGen_target
+#print axioms PlProbe.BB1Sim.p1_keyGen_ne
+#print axioms PlProbe.BB1Sim.p1_challenge_none
+#print axioms PlProbe.BB1Sim.p1_challenge_repeat
+#print axioms PlProbe.BB1Sim.p1_challenge_fresh
+#print axioms PlProbe.BB1Sim.p1_challenge_invalid
+#print axioms PlProbe.BB1Sim.setup_out
+#print axioms PlProbe.BB1Sim.zeroBits_eq_cast
+#print axioms PlProbe.BB1Sim.p2_init_none
+#print axioms PlProbe.BB1Sim.p2_init_some
+#print axioms PlProbe.BB1Sim.p2_keyGen_none
+#print axioms PlProbe.BB1Sim.p2_keyGen_target
+#print axioms PlProbe.BB1Sim.p2_keyGen_ne
+#print axioms PlProbe.BB1Sim.p2_challenge_none
+#print axioms PlProbe.BB1Sim.p2_challenge_repeat
+#print axioms PlProbe.BB1Sim.p2_challenge_invalid
+#print axioms PlProbe.BB1Sim.p2_challenge_fresh
+#print axioms PlProbe.BB1Sim.p3_challenge_fresh

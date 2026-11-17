@@ -1,0 +1,41 @@
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
+
+/-!
+Failed alternative (owner stand-in, unsealed): the whole-function reader of ruling Q7 and its
+pointwise form. Both prove owner-side; neither is usable by a consumer under the development
+seals (see `AltWholeUse.lean`).
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Composability
+
+namespace IBEScheme
+
+variable (S : IBEScheme)
+
+/-- Whole-function form (Q7, design §3.3). -/
+theorem alt_sidImpl_eq_oracleImpl (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ) :
+    S.sidImpl b κ pp msk =
+      S.oracleImpl κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1)
+        (S.sidImpl b κ pp msk 2) := by
+  funext i
+  match i with
+  | 0 => rfl
+  | 1 => rfl
+  | 2 => rfl
+
+/-- Pointwise form (Q7, the brief's fallback). -/
+theorem alt_sidImpl_apply_eq_oracleImpl (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (i : Fin 3) (x : (S.sidSpec κ).dom i) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk i x s =
+      S.oracleImpl κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1)
+        (S.sidImpl b κ pp msk 2) i x s := by
+  match i with
+  | 0 => rfl
+  | 1 => rfl
+  | 2 => rfl
+
+end IBEScheme
+
+end TCSlib.Cryptography.AdvancedEncryption.IdentityBased

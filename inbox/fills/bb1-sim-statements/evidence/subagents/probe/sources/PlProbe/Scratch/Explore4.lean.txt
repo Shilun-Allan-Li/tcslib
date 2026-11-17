@@ -1,0 +1,43 @@
+import PlProbe.Scratch.Owner1
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Composability
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased TCSlib.Cryptography.Pairing
+open TCSlib.Cryptography
+
+-- E9: first-order instantiation of an `S.PP κ` binder with a Σ-typed term
+theorem e9 (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (P : BB1.Params (G.group κ d))
+    (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool)
+    (hms : ∀ pp : (bb1Scheme G ℓ).PP κ, (bb1Scheme G ℓ).MsgSpace κ pp m ↔ True) :
+    ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m := by
+  have h := bb1Scheme_msgSpace_iff G ℓ κ d P m
+  rw [hms] at h
+  exact h.1 trivial
+
+-- E10: the typed setup reader, then a generic hypothesis on the output
+theorem e10 (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ)
+    (F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp Bool)
+    (hF : ∀ k, F k = .pure true) :
+    ((bb1Scheme G ℓ).setup κ).bind F = ((bb1Scheme G ℓ).setup κ).bind fun _ => .pure true := by
+  rw [scr_setup_typed]
+  simp only [OracleComp.bind_assoc, OracleComp.pure_bind]
+  simp only [hF]
+
+-- E11: the typed setup reader, then a generic hypothesis on the parameters only
+theorem e11 (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ)
+    (F : (bb1Scheme G ℓ).PP κ → ProbComp Bool)
+    (hF : ∀ pp, F pp = .pure true) :
+    ((bb1Scheme G ℓ).setup κ).bind (fun k => F k.1) =
+      ((bb1Scheme G ℓ).setup κ).bind fun _ => .pure true := by
+  rw [scr_setup_typed]
+  simp only [OracleComp.bind_assoc, OracleComp.pure_bind]
+  simp only [hF]
+
+-- E12: P-1 init_none through a Q7(B)-form reader
+theorem e12 (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (c : Option (Fin (S.ctLen.eval κ) → Bool))
+    (h0 : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool))
+    (h0' : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 0 x (none, c) =
+      .pure (cast h0'.symm (S.encPP κ pp), (some (cast h0 x), c)) := by
+  rw [IBEScheme.scr_sidImpl_zero_onSpec, IBEScheme.sidImpl_init_none, OracleComp.pure_bind]

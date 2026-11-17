@@ -1,0 +1,17 @@
+StmtScratch/MathlibSearch.lean:11:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+StmtScratch/MathlibSearch.lean:16:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+StmtScratch/MathlibSearch.lean:21:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+StmtScratch/MathlibSearch.lean:25:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+@ZMod.val_add : ∀ {n : ℕ} [NeZero n] (a b : ZMod n), (a + b).val = (a.val + b.val) % n
+@ZMod.val_natCast_of_lt : ∀ {n a : ℕ}, a < n → (↑a).val = a
+ZMod.natCast_eq_natCast_iff' : ∀ (a b c : ℕ), ↑a = ↑b ↔ a % c = b % c
+@pow_eq_pow_iff_modEq : ∀ {G : Type u_1} [inst : LeftCancelMonoid G] {x : G} {m n : ℕ},
+  x ^ n = x ^ m ↔ n ≡ m [MOD orderOf x]
+@orderOf_eq_prime : ∀ {G : Type u_1} [inst : Monoid G] {x : G} {p : ℕ} [hp : Fact (Nat.Prime p)],
+  x ^ p = 1 → x ≠ 1 → orderOf x = p
+@zpow_mod_orderOf : ∀ {G : Type u_1} [inst : Group G] (x : G) (z : ℤ), x ^ (z % ↑(orderOf x)) = x ^ z
+@pow_mod_orderOf : ∀ {G : Type u_1} [inst : Monoid G] (x : G) (n : ℕ), x ^ (n % orderOf x) = x ^ n
+@ZMod.val_neg_of_ne_zero : ∀ {n : ℕ} [nz : NeZero n] (a : ZMod n) [na : NeZero a], (-a).val = n - a.val
+@ZMod.neg_val : ∀ {n : ℕ} [NeZero n] (a : ZMod n), (-a).val = if a = 0 then 0 else n - a.val
+ZMod.val_injective : ∀ (n : ℕ) [NeZero n], Function.Injective ZMod.val
+StmtScratch/MathlibSearch.lean:38:8: error(lean.unknownIdentifier): Unknown constant `ZMod.natCast_self_eq_zero`

@@ -1,0 +1,109 @@
+IBEScheme.sidImpl_init_none : ∀ (S : IBEScheme) (b : Bool) (κ : Nat) (pp : S.PP κ) (msk : S.MSK κ)
+  (id : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)),
+  @Eq
+    (@TCSlib.Cryptography.Games.OracleComp Nat TCSlib.Cryptography.Games.unifSpec
+      (Prod
+        (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+          (S.sidSpec κ)
+          (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+            (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+        (S.SidState κ)))
+    (S.sidImpl b κ pp msk
+      (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+        (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0)))
+      id
+      (@Prod.mk (Option (Fin (S.idLen.eval κ) → Bool)) (Option (Fin (S.ctLen.eval κ) → Bool))
+        (@none (Fin (S.idLen.eval κ) → Bool)) c))
+    (@TCSlib.Cryptography.Games.OracleComp.pure Nat TCSlib.Cryptography.Games.unifSpec
+      (Prod
+        (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+          (S.sidSpec κ)
+          (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+            (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+        (S.SidState κ))
+      (@Prod.mk
+        (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+          (S.sidSpec κ)
+          (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+            (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+        (S.SidState κ) (S.encPP κ pp)
+        (@Prod.mk (Option (Fin (S.idLen.eval κ) → Bool)) (Option (Fin (S.ctLen.eval κ) → Bool))
+          (@some (Fin (S.idLen.eval κ) → Bool) id) c)))
+IBEScheme.sidImpl_zero_onSpec : ∀ (S : IBEScheme) (b : Bool) (κ : Nat) (pp : S.PP κ) (msk : S.MSK κ)
+  (x :
+    @TCSlib.Cryptography.Games.OracleSpec.dom (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+      (S.sidSpec κ)
+      (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+        (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+  (s : S.SidState κ),
+  @Eq
+    (@TCSlib.Cryptography.Games.OracleComp Nat TCSlib.Cryptography.Games.unifSpec
+      (Prod
+        (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+          (S.sidSpec κ)
+          (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+            (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+        (S.SidState κ)))
+    (S.sidImpl b κ pp msk
+      (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+        (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0)))
+      x s)
+    (@TCSlib.Cryptography.Games.OracleComp.bind Nat TCSlib.Cryptography.Games.unifSpec
+      (Prod
+        (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+          (S.sidSpec κ)
+          (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+            (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+        (S.SidState κ))
+      (Prod
+        (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+          (S.sidSpec κ)
+          (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+            (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+        (S.SidState κ))
+      (S.sidImpl b κ pp msk
+        (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+          (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0)))
+        (@cast
+          (@TCSlib.Cryptography.Games.OracleSpec.dom (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+            (S.sidSpec κ)
+            (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+              (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+          (@TCSlib.Cryptography.Games.OracleSpec.dom (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+            (S.sidSpec κ)
+            (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+              (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+          ⋯ x)
+        s)
+      fun p =>
+      @TCSlib.Cryptography.Games.OracleComp.pure Nat TCSlib.Cryptography.Games.unifSpec
+        (Prod
+          (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+            (S.sidSpec κ)
+            (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+              (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+          (S.SidState κ))
+        (@Prod.mk
+          (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+            (S.sidSpec κ)
+            (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+              (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+          (S.SidState κ)
+          (@cast (Fin (S.ppLen.eval κ) → Bool)
+            (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+              (S.sidSpec κ)
+              (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+                (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+            ⋯
+            (@Prod.fst
+              (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+                (S.sidSpec κ)
+                (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+                  (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+              (S.SidState κ) p))
+          (@Prod.snd
+            (@TCSlib.Cryptography.Games.OracleSpec.rng (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))))
+              (S.sidSpec κ)
+              (@OfNat.ofNat (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))) (nat_lit 0)
+                (@Fin.instOfNat (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3))) ⋯ (nat_lit 0))))
+            (S.SidState κ) p)))

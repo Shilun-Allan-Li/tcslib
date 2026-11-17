@@ -1,0 +1,42 @@
+import PlProbe.BB1SimReaders
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Composability
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased TCSlib.Cryptography.Pairing
+open TCSlib.Cryptography
+
+-- E5: the setup's output reached by rewriting; F applied to it, then a generic hypothesis
+theorem e5 (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ)
+    (F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp Bool)
+    (hF : ∀ k, F k = .pure true) :
+    ((bb1Scheme G ℓ).setup κ).bind F = ((bb1Scheme G ℓ).setup κ).bind fun _ => .pure true := by
+  rw [bb1Scheme_setup]
+  simp only [OracleComp.bind_assoc, OracleComp.pure_bind]
+  simp only [hF]
+
+-- E6: a generic statement over `pp : S.PP κ`, instantiated at the setup's output
+theorem e6 (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ)
+    (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool)
+    (hms : ∀ pp : (bb1Scheme G ℓ).PP κ, (bb1Scheme G ℓ).MsgSpace κ pp m ↔ True) :
+    ((bb1Scheme G ℓ).setup κ).bind (fun k => .pure (decide ((bb1Scheme G ℓ).MsgSpace κ k.1 m))) =
+      ((bb1Scheme G ℓ).setup κ).bind (fun _ => .pure true) := by
+  classical
+  rw [bb1Scheme_setup]
+  simp only [OracleComp.bind_assoc, OracleComp.pure_bind]
+  simp only [hms, decide_true]
+
+-- E7: P-1 init_none, as e2 (also checked natively)
+theorem e7 (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (c : Option (Fin (S.ctLen.eval κ) → Bool))
+    (h0 : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool))
+    (h0' : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 0 x (none, c) =
+      .pure (cast h0'.symm (S.encPP κ pp), (some (cast h0 x), c)) := by
+  rw [IBEScheme.sidImpl_eq_oracleImpl, IBEScheme.oracleImpl_zero_onSpec,
+    IBEScheme.sidImpl_init_none, OracleComp.pure_bind]
+
+-- E8: pointwise use: instantiate oracleImpl_zero_onSpec explicitly
+theorem e8 (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (s : S.SidState κ) : True := by
+  have := IBEScheme.oracleImpl_zero_onSpec S κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1)
+    (S.sidImpl b κ pp msk 2) x s
+  trivial

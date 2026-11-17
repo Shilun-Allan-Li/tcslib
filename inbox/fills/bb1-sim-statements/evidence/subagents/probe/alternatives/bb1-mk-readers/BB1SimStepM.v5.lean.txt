@@ -1,0 +1,216 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import PlProbe.BB1SimReaders
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Probe (bb1-sim statement phase, Deliverable 3): step M of T2, read through readers
+
+Not for landing. A consumer of `IdentityBased/Defs.lean` and `IdentityBased/BonehBoyen.lean` (at
+T4's head) and of the candidate readers (`PlProbe.BB1SimReaders`, the owners' stand-in). It reads
+every foreign definition through published lemmas and readers only (Rule 10), and is checked
+natively and under the development seals A and B.
+
+* **P-1.** The game's oracles `S.sidImpl` at the game's query type, for any `S : IBEScheme`,
+  in each of the nine cases of the typed readers `sidImpl_*`.
+* **P-2.** Step M of design §3.1 (`S = bb1Scheme G ℓ`): every row of the step-M table, in the
+  pointwise form fed to `expect_simulate_rel` (deterministic rows: equal `pure` answers and
+  related states; sampling rows: the premise of `expect_sample_rel`). The real parameters come
+  from the setup's output (`setup_out`), read through `RealReads`.
+* **P-3.** T3's challenge row along `T ↦ decodeT(M₁)⁻¹ · decodeT(M₀) · T`.
+
+Group algebra enters P-2 as explicit hypotheses (equations in `B.G`, `B.GT`, `ZMod B.order`).
+-/
+
+namespace PlProbe.BB1Sim
+
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+  TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+/-! ### The game's query and answer types, from published equations -/
+
+section Types
+
+variable (S : IBEScheme) (κ : ℕ)
+
+/-- `Init` queries are identities (`sidSpec_eq`, `bitSpec_dom`, `inLens_zero`). -/
+theorem dom_zero : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_dom, IBEScheme.inLens_zero]
+
+/-- `KeyGen` queries are identities (`sidSpec_eq`, `bitSpec_dom`, `inLens_one`). -/
+theorem dom_one : (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_dom, IBEScheme.inLens_one]
+
+/-- `Challenge` queries are two messages (`sidSpec_eq`, `bitSpec_dom`, `inLens_two`). -/
+theorem dom_two :
+    (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_dom, IBEScheme.inLens_two]
+
+/-- `Init` answers parameters (`sidSpec_eq`, `bitSpec_rng`, `outLens_zero`). -/
+theorem rng_zero : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_rng, IBEScheme.outLens_zero]
+
+/-- `KeyGen` answers a bit and a key (`sidSpec_eq`, `bitSpec_rng`, `outLens_one`). -/
+theorem rng_one : (S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_rng, IBEScheme.outLens_one]
+
+/-- `Challenge` answers a ciphertext (`sidSpec_eq`, `bitSpec_rng`, `outLens_two`). -/
+theorem rng_two : (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool) := by
+  rw [IBEScheme.sidSpec_eq, bitSpec_rng, IBEScheme.outLens_two]
+
+end Types
+
+/-! ### P-1: the game's oracles at the game's query type -/
+
+section P1
+
+variable (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+
+/-- P-1, `Init` before a commitment: answers the parameters, records the identity. -/
+theorem p1_init_none (x : (S.sidSpec κ).dom 0) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 0 x (none, c) =
+      .pure (cast (rng_zero S κ).symm (S.encPP κ pp), (some (cast (dom_zero S κ) x), c)) := by
+  rw [IBEScheme.sidImpl_zero_onSpec, IBEScheme.sidImpl_init_none, OracleComp.pure_bind]
+
+/-- P-1, `Init` after a commitment: answers the parameters, keeps the state. -/
+theorem p1_init_some (x : (S.sidSpec κ).dom 0) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 0 x (some t, c) =
+      .pure (cast (rng_zero S κ).symm (S.encPP κ pp), (some t, c)) := by
+  rw [IBEScheme.sidImpl_zero_onSpec, IBEScheme.sidImpl_init_some, OracleComp.pure_bind]
+
+/-- P-1, `KeyGen` before `Init`: `⊥` (the zero word of the game's answer width). -/
+theorem p1_keyGen_none (x : (S.sidSpec κ).dom 1) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 1 x (none, c) = .pure (zeroBits _, (none, c)) := by
+  rw [IBEScheme.sidImpl_one_onQuery, IBEScheme.sidImpl_keyGen_none]
+
+/-- P-1, `KeyGen` for the committed identity: `⊥`. -/
+theorem p1_keyGen_target (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool)) (ht : cast (dom_one S κ) x = t) :
+    S.sidImpl b κ pp msk 1 x (some t, c) = .pure (zeroBits _, (some t, c)) := by
+  subst ht
+  rw [IBEScheme.sidImpl_one_onQuery, IBEScheme.sidImpl_keyGen_target]
+
+/-- P-1, `KeyGen` for another identity: `⟨1, d_ID⟩` with `d_ID ← KeyGen(msk, ID)`. -/
+theorem p1_keyGen_ne (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool)) (ht : cast (dom_one S κ) x ≠ t) :
+    S.sidImpl b κ pp msk 1 x (some t, c) =
+      (S.keyGen κ msk (cast (dom_one S κ) x)).bind fun sk =>
+        .pure (cast (rng_one S κ).symm
+          (FixedLengthScheme.decAnswer (some (S.encSK κ sk))), (some t, c)) :=
+  IBEScheme.sidImpl_keyGen_ne_onSpec S b κ pp msk x t c ht
+
+/-- P-1, `Challenge` before `Init`: `⊥`. -/
+theorem p1_challenge_none (x : (S.sidSpec κ).dom 2)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 2 x (none, c) = .pure (zeroBits _, (none, c)) := by
+  rw [IBEScheme.sidImpl_two_onQuery, IBEScheme.sidImpl_challenge_none]
+
+/-- P-1, `Challenge` after a recorded challenge: repeats it. -/
+theorem p1_challenge_repeat (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (w : Fin (S.ctLen.eval κ) → Bool) :
+    S.sidImpl b κ pp msk 2 x (some t, some w) =
+      .pure (cast (rng_two S κ).symm w, (some t, some w)) := by
+  rw [IBEScheme.sidImpl_two_onSpec, IBEScheme.sidImpl_challenge_repeat, OracleComp.pure_bind]
+
+/-- P-1, the first valid `Challenge`: answers and records `C ← Encrypt(params, ID*, M_b)`. -/
+theorem p1_challenge_fresh (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (hv : S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).1 ∧
+      S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).2) :
+    S.sidImpl b κ pp msk 2 x (some t, none) =
+      (S.enc κ pp t (if b then (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).2
+        else (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).1)).bind fun ct =>
+        .pure (cast (rng_two S κ).symm (S.encCT κ ct), (some t, some (S.encCT κ ct))) :=
+  IBEScheme.sidImpl_challenge_fresh_onSpec S b κ pp msk x t hv
+
+/-- P-1, the first invalid `Challenge`: `⊥`. -/
+theorem p1_challenge_invalid (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (hv : ¬ (S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).1 ∧
+      S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (dom_two S κ) x)).2)) :
+    S.sidImpl b κ pp msk 2 x (some t, none) = .pure (zeroBits _, (some t, none)) := by
+  rw [IBEScheme.sidImpl_two_onQuery, IBEScheme.sidImpl_challenge_invalid (h := hv)]
+
+end P1
+
+/-! ### The real parameters, from the setup's output -/
+
+section Setup
+
+variable (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ)
+
+/-- **What the real handler reads from its parameters and master key** `k`, for parameters
+`(g, g^α, Y, h)` and master key `Y^α` in the group described by `d`: the encoded parameters, the
+message space, the encoded keys of `KeyGen`, and the encoded challenge of `Encrypt` for an
+identity `t` with `F(t) = g^{α₁}`, which is the simulator's ciphertext `(M · e(g^α, Y)^s, g^s,
+(g^s)^{α₁})` with `s` uniform. -/
+structure RealReads (d : List Bool) (g : (G.group κ d).G) (α : ZMod (G.group κ d).order)
+    (Y h : (G.group κ d).G) (k : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) : Prop where
+  /-- The encoded parameters: `d ‖ g ‖ g^α ‖ Y ‖ h`. -/
+  encPP : (bb1Scheme G ℓ).encPP κ k.1 = padFin ((bb1Scheme G ℓ).ppLen.eval κ)
+    (d ++ List.ofFn ((G.group κ d).encG g) ++ List.ofFn ((G.group κ d).encG (g ^ α.val)) ++
+      List.ofFn ((G.group κ d).encG Y) ++ List.ofFn ((G.group κ d).encG h))
+  /-- The message space: the encodings of `G_T`. -/
+  msgSpace : ∀ m, (bb1Scheme G ℓ).MsgSpace κ k.1 m ↔
+    ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m
+  /-- `KeyGen`, encoded: `Y^α F(ID)^r ‖ g^r` with `r` uniform. -/
+  keyGen : ∀ id, ((bb1Scheme G ℓ).keyGen κ k.2 id).bind
+      (fun sk => .pure ((bb1Scheme G ℓ).encSK κ sk)) =
+    (ProbComp.sample (ZMod (G.group κ d).order)).bind fun r =>
+      .pure (padFin ((bb1Scheme G ℓ).skLen.eval κ)
+        (List.ofFn ((G.group κ d).encG
+            (Y ^ α.val * BB1.F ⟨g, g ^ α.val, Y, h⟩ (BB1.idToZ (G.group κ d) id) ^ r.val)) ++
+          List.ofFn ((G.group κ d).encG (g ^ r.val))))
+  /-- `Encrypt`, encoded, for an identity `t` with `F(t) = g^{α₁}`. -/
+  enc : ∀ t m (α₁ : ZMod (G.group κ d).order),
+    BB1.F ⟨g, g ^ α.val, Y, h⟩ (BB1.idToZ (G.group κ d) t) = g ^ α₁.val →
+    ((bb1Scheme G ℓ).enc κ k.1 t m).bind (fun ct => .pure ((bb1Scheme G ℓ).encCT κ ct)) =
+      (ProbComp.sample (ZMod (G.group κ d).order)).bind fun s =>
+        .pure (bb1SimCt G ℓ κ d (g ^ s.val) ((G.group κ d).pair (g ^ α.val) Y ^ s.val) α₁ m)
+
+/-- **The setup's output, read**: there is a map `o` from the setup's coins to parameters and
+master key of `bb1Scheme G ℓ` such that `Setup` draws `r`, `g ∈ G^*`, `α`, `h`, `g_2` and
+returns `o r g α h g_2`, and the real handler reads `o r g α h g_2` as the parameters
+`(g, g^α, g_2, h)` and the master key `g_2^α` of the group `desc(κ, r)` (`RealReads`). -/
+theorem setup_out :
+    ∃ o : (r : G.gen.Coins κ) → {x : (G.group κ (G.desc κ r)).G // x ≠ 1} →
+        ZMod (G.group κ (G.desc κ r)).order → (G.group κ (G.desc κ r)).G →
+        (G.group κ (G.desc κ r)).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ,
+      (∀ {β : Type} (F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp β),
+        ((bb1Scheme G ℓ).setup κ).bind F =
+          (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+          (ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
+          (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)).bind fun α =>
+          (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun h =>
+          (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun g2 => F (o r g α h g2)) ∧
+      ∀ r g α h g2, RealReads G ℓ κ (G.desc κ r) g.1 α g2 h (o r g α h g2) := by
+  refine ⟨?o, fun F => ?hF, ?hR⟩
+  case hF =>
+    rw [bb1Scheme_setup_eq]
+    simp only [OracleComp.bind_assoc, BB1.setup_eq, OracleComp.pure_bind]
+    rfl
+  case hR =>
+    intro r g α h g2
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · exact List.ofFn_injective (ofFn_bb1Scheme_encPP G ℓ κ _ _)
+    · exact fun m => bb1Scheme_msgSpace_iff G ℓ κ _ _ m
+    · intro id
+      rw [bb1Scheme_keyGen_mk, BB1.keyGen_eq, OracleComp.bind_assoc]
+      simp only [OracleComp.bind_assoc, OracleComp.pure_bind]
+      refine congrArg _ (funext fun r => ?_)
+      rw [List.ofFn_injective (ofFn_bb1Scheme_encSK G ℓ κ _ _)]
+    · intro t m α₁ hF
+      rw [bb1Scheme_enc_mk, BB1.encrypt_eq, OracleComp.bind_assoc]
+      simp only [OracleComp.bind_assoc, OracleComp.pure_bind]
+      refine congrArg _ (funext fun s => ?_)
+      rw [bb1SimCt_eq, hF, mul_comm, ← pow_mul, ← pow_mul, mul_comm α₁.val]
+
+end Setup
+
+end PlProbe.BB1Sim

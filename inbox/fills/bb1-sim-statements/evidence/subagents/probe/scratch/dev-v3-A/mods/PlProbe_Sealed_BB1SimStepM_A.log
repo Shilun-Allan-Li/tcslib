@@ -1,0 +1,47 @@
+DEVSEAL A sealed 868
+PlProbe/Sealed/BB1SimStepM_A.lean:215:4: error: Tactic `rfl` failed: The left-hand side
+  (OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+        OracleComp.bind (ProbComp.sample { x // x ≠ 1 }) fun a =>
+          OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun a_1 =>
+            OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun a_2 =>
+              OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun a_3 =>
+                OracleComp.pure
+                  (⟨G.desc κ r, { g := ↑a, g1 := ↑a ^ a_1.val, g2 := a_3, h := a_2 }⟩,
+                    ⟨G.desc κ r, ({ g := ↑a, g1 := ↑a ^ a_1.val, g2 := a_3, h := a_2 }, a_3 ^ a_1.val)⟩)).bind
+    F
+is not definitionally equal to the right-hand side
+  OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+    OracleComp.bind (ProbComp.sample { x // x ≠ 1 }) fun g =>
+      OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun α =>
+        OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun h =>
+          OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun g2 => F (?o r g α h g2)
+
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+β✝ : Type
+F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp β✝
+⊢ (OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+          OracleComp.bind (ProbComp.sample { x // x ≠ 1 }) fun a =>
+            OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun a_1 =>
+              OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun a_2 =>
+                OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun a_3 =>
+                  OracleComp.pure
+                    (⟨G.desc κ r, { g := ↑a, g1 := ↑a ^ a_1.val, g2 := a_3, h := a_2 }⟩,
+                      ⟨G.desc κ r, ({ g := ↑a, g1 := ↑a ^ a_1.val, g2 := a_3, h := a_2 }, a_3 ^ a_1.val)⟩)).bind
+      F =
+    OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+      OracleComp.bind (ProbComp.sample { x // x ≠ 1 }) fun g =>
+        OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun α =>
+          OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun h =>
+            OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun g2 => F (?o r g α h g2)
+PlProbe/Sealed/BB1SimStepM_A.lean:218:4: error: `dsimp` made no progress
+PlProbe/Sealed/BB1SimStepM_A.lean:210:78: error: unsolved goals
+case o
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+⊢ (r : G.gen.Coins κ) →
+    { x // x ≠ 1 } →
+      ZMod (G.group κ (G.desc κ r)).order →
+        (G.group κ (G.desc κ r)).G → (G.group κ (G.desc κ r)).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ

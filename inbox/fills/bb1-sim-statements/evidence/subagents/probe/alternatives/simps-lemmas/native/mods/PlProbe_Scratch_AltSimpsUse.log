@@ -1,0 +1,47 @@
+PlProbe/Scratch/AltSimpsUse.lean:255:4: error: unsolved goals
+case refine_4
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+r : G.gen.Coins κ
+g : { x // x ≠ 1 }
+α : ZMod (G.group κ (G.desc κ r)).order
+h g2 : (G.group κ (G.desc κ r)).G
+t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool
+β : Type
+f : (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) → ProbComp β
+s : ZMod (G.group κ (G.desc κ r)).order
+⊢ f
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ (G.desc κ r)).encT
+                { a := ((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val * BB1.decodeT (G.group κ (G.desc κ r)) m,
+                    b := ↑g ^ s.val,
+                    c :=
+                      BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) ^
+                        s.val }.a) ++
+            List.ofFn
+              ((G.group κ (G.desc κ r)).encG
+                { a := ((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val * BB1.decodeT (G.group κ (G.desc κ r)) m,
+                    b := ↑g ^ s.val,
+                    c :=
+                      BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) ^
+                        s.val }.b) ++
+          List.ofFn
+            ((G.group κ (G.desc κ r)).encG
+              { a := ((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val * BB1.decodeT (G.group κ (G.desc κ r)) m,
+                  b := ↑g ^ s.val,
+                  c :=
+                    BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) ^
+                      s.val }.c))) =
+    f
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ (G.desc κ r)).encT
+                (((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val *
+                  BB1.decodeT (G.group κ (G.desc κ r)) (padFin (G.wT.eval κ) (List.ofFn m)))) ++
+            List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ s.val)) ++
+          List.ofFn
+            ((G.group κ (G.desc κ r)).encG
+              (BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) ^ s.val))))

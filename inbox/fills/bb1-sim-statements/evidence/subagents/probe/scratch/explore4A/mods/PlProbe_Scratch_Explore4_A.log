@@ -1,0 +1,28 @@
+DEVSEAL A sealed 868
+PlProbe/Scratch/Explore4_A.lean:32:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (bb1Scheme G ℓ).MsgSpace κ ?pp m
+in the target expression
+  (bb1Scheme G ℓ).MsgSpace κ ⟨d, P⟩ m ↔ ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m
+
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+d : List Bool
+P : BB1.Params (G.group κ d)
+m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool
+hms : ∀ (pp : (bb1Scheme G ℓ).PP κ), (bb1Scheme G ℓ).MsgSpace κ pp m ↔ True
+h : (bb1Scheme G ℓ).MsgSpace κ ⟨d, P⟩ m ↔ ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m
+⊢ ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m
+PlProbe/Scratch/Explore4_A.lean:52:2: error: `simp` made no progress
+PlProbe/Scratch/Explore4_A.lean:61:6: error(lean.unknownIdentifier): Unknown constant `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.scr_sidImpl_zero_onSpec`
+PlProbe/Scratch/Explore4_A.lean:60:69: error: unsolved goals
+S : IBEScheme
+b : Bool
+κ : ℕ
+pp : S.PP κ
+msk : S.MSK κ
+x : (S.sidSpec κ).dom 0
+c : Option (Fin (S.ctLen.eval κ) → Bool)
+h0 : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool)
+h0' : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
+⊢ S.sidImpl b κ pp msk 0 x (none, c) = OracleComp.pure (cast ⋯ (S.encPP κ pp), some (cast h0 x), c)

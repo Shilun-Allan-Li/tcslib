@@ -1,0 +1,36 @@
+import PlProbe.BB1SimReaders
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Composability
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased TCSlib.Cryptography.Pairing
+open TCSlib.Cryptography
+
+-- E1: anonymous constructor at PP (expected to fail under seal)
+example (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool) (P : BB1.Params (G.group κ d)) :
+    (bb1Scheme G ℓ).PP κ := ⟨d, P⟩
+
+-- E2: P-1 init_none
+theorem e2 (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (c : Option (Fin (S.ctLen.eval κ) → Bool))
+    (h0 : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool))
+    (h0' : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 0 x (none, c) =
+      .pure (cast h0'.symm (S.encPP κ pp), (some (cast h0 x), c)) := by
+  rw [IBEScheme.sidImpl_eq_oracleImpl, IBEScheme.oracleImpl_zero_onSpec,
+    IBEScheme.sidImpl_init_none, OracleComp.pure_bind]
+
+-- E3: reading the real enc through bb1Scheme_enc at the setup output
+theorem e3 (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (r : G.gen.Coins κ)
+    (F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp Bool) :
+    ((bb1Scheme G ℓ).setup κ).bind F =
+      (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+        (BB1.setup (G.group κ (G.desc κ r))).bind fun k => F (⟨G.desc κ r, k.1⟩, ⟨G.desc κ r, k⟩) := by
+  rw [bb1Scheme_setup]
+  simp only [OracleComp.bind_assoc, OracleComp.pure_bind]
+
+-- E4: the setup output map, extracted
+theorem e4 (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) :
+    ∃ out : (r : G.gen.Coins κ) → BB1.Params (G.group κ (G.desc κ r)) × (G.group κ (G.desc κ r)).G →
+      (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ,
+    (bb1Scheme G ℓ).setup κ = (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+        (BB1.setup (G.group κ (G.desc κ r))).bind fun k => .pure (out r k) :=
+  ⟨_, bb1Scheme_setup G ℓ κ⟩

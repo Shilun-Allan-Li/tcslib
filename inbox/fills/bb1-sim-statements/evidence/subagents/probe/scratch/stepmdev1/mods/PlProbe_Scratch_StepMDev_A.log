@@ -1,0 +1,26 @@
+DEVSEAL A sealed 868
+case refine_4.e_a
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+r : G.gen.Coins κ
+g : { x // x ≠ 1 }
+α : ZMod (G.group κ (G.desc κ r)).order
+h g2 : (G.group κ (G.desc κ r)).G
+t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool
+α₁ : ZMod (G.group κ (G.desc κ r)).order
+hF : BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) = ↑g ^ α₁.val
+s : ZMod (G.group κ (G.desc κ r)).order
+⊢ (bb1Scheme G ℓ).encCT κ
+      ⟨G.desc κ r,
+        { a := BB1.decodeT (G.group κ (G.desc κ r)) m * ((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val,
+          b := ↑g ^ s.val, c := (↑g ^ s.val) ^ α₁.val }⟩ =
+    (bb1Scheme G ℓ).encCT κ
+      ⟨G.desc κ r,
+        { a := BB1.decodeT (G.group κ (G.desc κ r)) m * ((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val,
+          b := ↑g ^ s.val, c := (↑g ^ s.val) ^ α₁.val }⟩
+PlProbe/Scratch/StepMDev_A.lean:199:8: warning: declaration uses 'sorry'
+PlProbe/Scratch/StepMDev_A.lean:232:6: warning: 'all_goals trace_state' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`

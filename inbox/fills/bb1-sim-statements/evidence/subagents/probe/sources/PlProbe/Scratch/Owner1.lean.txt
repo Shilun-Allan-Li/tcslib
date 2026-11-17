@@ -1,0 +1,25 @@
+import PlProbe.BB1SimReaders
+
+/-! Scratch owner stand-in (unsealed): candidate readers under test. -/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
+  TCSlib.Cryptography.Composability
+
+theorem scr_setup_typed (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) :
+    (bb1Scheme G ℓ).setup κ =
+      (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+      (BB1.setup (G.group κ (G.desc κ r))).bind fun k =>
+        .pure (((⟨G.desc κ r, k.1⟩ : (bb1Scheme G ℓ).PP κ), (⟨G.desc κ r, k⟩ : (bb1Scheme G ℓ).MSK κ)) :
+          (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) := rfl
+
+theorem scr_sidImpl_zero_onSpec (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk 0 x s =
+      (S.sidImpl b κ pp msk 0 (cast (show (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool)
+        from rfl) x) s).bind fun p => .pure (cast (show (S.sidSpec κ).rng 0 =
+          (Fin (S.ppLen.eval κ) → Bool) from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+end TCSlib.Cryptography.AdvancedEncryption.IdentityBased

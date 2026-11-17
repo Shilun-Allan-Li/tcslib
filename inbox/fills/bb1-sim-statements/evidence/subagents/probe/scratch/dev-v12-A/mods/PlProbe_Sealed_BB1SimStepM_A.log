@@ -1,0 +1,581 @@
+DEVSEAL A sealed 868
+PlProbe/Sealed/BB1SimStepM_A.lean:528:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val
+in the target expression
+  cast ⋯
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ d).encT
+                (BB1.decodeT (G.group κ d)
+                    (padFin (G.wT.eval κ)
+                      (List.ofFn
+                        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+                        else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))) *
+                  ((G.group κ d).pair g) g ^ (α * b' * s).val)) ++
+            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
+          List.ofFn ((G.group κ d).encG (((g ^ α.val) ^ (BB1.idToZ (G.group κ d) t).val * h) ^ s.val)))) =
+    cast ⋯
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ d).encT
+                (BB1.decodeT (G.group κ d)
+                    (padFin (G.wT.eval κ)
+                      (List.ofFn
+                        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+                        else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))) *
+                  ((G.group κ d).pair g) g ^ (α * b' * s).val)) ++
+            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
+          List.ofFn ((G.group κ d).encG ((g ^ s.val) ^ α₁.val))))
+
+case refine_1
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+d : List Bool
+b : Bool
+o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ
+g : (G.group κ d).G
+α b' : ZMod (G.group κ d).order
+ho : ∀ (h : (G.group κ d).G), RealReads G ℓ κ d g α (g ^ b'.val) h (o h)
+x : ((bb1Scheme G ℓ).sidSpec κ).dom 2
+t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+h : (G.group κ d).G
+α₁ : ZMod (G.group κ d).order
+hh : h = (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val
+hv :
+  (∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+    ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+hF : ∀ (z a₁ : ZMod (G.group κ d).order), (g ^ α.val) ^ z.val * ((g ^ α.val) ^ (-z).val * g ^ a₁.val) = g ^ a₁.val
+hT :
+  ∀ (s : ZMod (G.group κ d).order),
+    ((G.group κ d).pair (g ^ α.val)) (g ^ b'.val) ^ s.val = ((G.group κ d).pair g) g ^ (α * b' * s).val
+s : ZMod (G.group κ d).order
+⊢ cast ⋯
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ d).encT
+                (BB1.decodeT (G.group κ d)
+                    (padFin (G.wT.eval κ)
+                      (List.ofFn
+                        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+                        else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))) *
+                  ((G.group κ d).pair g) g ^ (α * b' * s).val)) ++
+            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
+          List.ofFn ((G.group κ d).encG (((g ^ α.val) ^ (BB1.idToZ (G.group κ d) t).val * h) ^ s.val)))) =
+    cast ⋯
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ d).encT
+                (BB1.decodeT (G.group κ d)
+                    (padFin (G.wT.eval κ)
+                      (List.ofFn
+                        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+                        else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))) *
+                  ((G.group κ d).pair g) g ^ (α * b' * s).val)) ++
+            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
+          List.ofFn ((G.group κ d).encG ((g ^ s.val) ^ α₁.val))))
+PlProbe/Sealed/BB1SimStepM_A.lean:528:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val
+in the target expression
+  some
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ d).encT
+                (BB1.decodeT (G.group κ d)
+                    (padFin (G.wT.eval κ)
+                      (List.ofFn
+                        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+                        else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))) *
+                  ((G.group κ d).pair g) g ^ (α * b' * s).val)) ++
+            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
+          List.ofFn ((G.group κ d).encG (((g ^ α.val) ^ (BB1.idToZ (G.group κ d) t).val * h) ^ s.val)))) =
+    some
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ d).encT
+                (BB1.decodeT (G.group κ d)
+                    (padFin (G.wT.eval κ)
+                      (List.ofFn
+                        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+                        else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))) *
+                  ((G.group κ d).pair g) g ^ (α * b' * s).val)) ++
+            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
+          List.ofFn ((G.group κ d).encG ((g ^ s.val) ^ α₁.val))))
+
+case refine_2
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+d : List Bool
+b : Bool
+o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ
+g : (G.group κ d).G
+α b' : ZMod (G.group κ d).order
+ho : ∀ (h : (G.group κ d).G), RealReads G ℓ κ d g α (g ^ b'.val) h (o h)
+x : ((bb1Scheme G ℓ).sidSpec κ).dom 2
+t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+h : (G.group κ d).G
+α₁ : ZMod (G.group κ d).order
+hh : h = (g ^ α.val) ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val
+hv :
+  (∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+    ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+hF : ∀ (z a₁ : ZMod (G.group κ d).order), (g ^ α.val) ^ z.val * ((g ^ α.val) ^ (-z).val * g ^ a₁.val) = g ^ a₁.val
+hT :
+  ∀ (s : ZMod (G.group κ d).order),
+    ((G.group κ d).pair (g ^ α.val)) (g ^ b'.val) ^ s.val = ((G.group κ d).pair g) g ^ (α * b' * s).val
+s : ZMod (G.group κ d).order
+⊢ some
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ d).encT
+                (BB1.decodeT (G.group κ d)
+                    (padFin (G.wT.eval κ)
+                      (List.ofFn
+                        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+                        else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))) *
+                  ((G.group κ d).pair g) g ^ (α * b' * s).val)) ++
+            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
+          List.ofFn ((G.group κ d).encG (((g ^ α.val) ^ (BB1.idToZ (G.group κ d) t).val * h) ^ s.val)))) =
+    some
+      (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn
+              ((G.group κ d).encT
+                (BB1.decodeT (G.group κ d)
+                    (padFin (G.wT.eval κ)
+                      (List.ofFn
+                        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+                        else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))) *
+                  ((G.group κ d).pair g) g ^ (α * b' * s).val)) ++
+            List.ofFn ((G.group κ d).encG (g ^ s.val)) ++
+          List.ofFn ((G.group κ d).encG ((g ^ s.val) ^ α₁.val))))
+PlProbe/Sealed/BB1SimStepM_A.lean:576:61: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ?a * ?b * ?c
+in the target expression
+  (cast ⋯
+          (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                          T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+              some (t, α₁),
+              some
+                (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                  (List.ofFn
+                        ((G.group κ d).encT
+                          (BB1.decodeT (G.group κ d)
+                              (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                            T)) ++
+                      List.ofFn ((G.group κ d).encG Z) ++
+                    List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).1,
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+              (List.ofFn
+                    ((G.group κ d).encT
+                      (BB1.decodeT (G.group κ d)
+                          (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                        T)) ++
+                  List.ofFn ((G.group κ d).encG Z) ++
+                List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+            some (t, α₁),
+            some
+              (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                          T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).2).1 =
+    (cast ⋯
+          (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                          (fun x_1 =>
+                              (BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                  BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                x_1)
+                            T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+              some (t, α₁),
+              some
+                (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                  (List.ofFn
+                        ((G.group κ d).encT
+                          (BB1.decodeT (G.group κ d)
+                              (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                            (fun x_1 =>
+                                (BB1.decodeT (G.group κ d)
+                                        (padFin (G.wT.eval κ)
+                                          (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                    BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                  x_1)
+                              T)) ++
+                      List.ofFn ((G.group κ d).encG Z) ++
+                    List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).1,
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+              (List.ofFn
+                    ((G.group κ d).encT
+                      (BB1.decodeT (G.group κ d)
+                          (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                        (fun x_1 =>
+                            (BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                BB1.decodeT (G.group κ d)
+                                  (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                              x_1)
+                          T)) ++
+                  List.ofFn ((G.group κ d).encG Z) ++
+                List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+            some (t, α₁),
+            some
+              (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                          (fun x_1 =>
+                              (BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                  BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                x_1)
+                            T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).2).1
+
+case refine_1
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+d : List Bool
+g X Y Z : (G.group κ d).G
+x : ((bb1Scheme G ℓ).sidSpec κ).dom 2
+t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+α₁ : ZMod (G.group κ d).order
+hv :
+  (∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+    ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+T : (G.group κ d).GT
+⊢ (cast ⋯
+          (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                          T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+              some (t, α₁),
+              some
+                (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                  (List.ofFn
+                        ((G.group κ d).encT
+                          (BB1.decodeT (G.group κ d)
+                              (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                            T)) ++
+                      List.ofFn ((G.group κ d).encG Z) ++
+                    List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).1,
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+              (List.ofFn
+                    ((G.group κ d).encT
+                      (BB1.decodeT (G.group κ d)
+                          (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                        T)) ++
+                  List.ofFn ((G.group κ d).encG Z) ++
+                List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+            some (t, α₁),
+            some
+              (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                          T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).2).1 =
+    (cast ⋯
+          (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                          (fun x_1 =>
+                              (BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                  BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                x_1)
+                            T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+              some (t, α₁),
+              some
+                (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                  (List.ofFn
+                        ((G.group κ d).encT
+                          (BB1.decodeT (G.group κ d)
+                              (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                            (fun x_1 =>
+                                (BB1.decodeT (G.group κ d)
+                                        (padFin (G.wT.eval κ)
+                                          (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                    BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                  x_1)
+                              T)) ++
+                      List.ofFn ((G.group κ d).encG Z) ++
+                    List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).1,
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+              (List.ofFn
+                    ((G.group κ d).encT
+                      (BB1.decodeT (G.group κ d)
+                          (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                        (fun x_1 =>
+                            (BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                BB1.decodeT (G.group κ d)
+                                  (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                              x_1)
+                          T)) ++
+                  List.ofFn ((G.group κ d).encG Z) ++
+                List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+            some (t, α₁),
+            some
+              (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                          (fun x_1 =>
+                              (BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                  BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                x_1)
+                            T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).2).1
+PlProbe/Sealed/BB1SimStepM_A.lean:576:61: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ?a * ?b * ?c
+in the target expression
+  (cast ⋯
+          (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                          T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+              some (t, α₁),
+              some
+                (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                  (List.ofFn
+                        ((G.group κ d).encT
+                          (BB1.decodeT (G.group κ d)
+                              (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                            T)) ++
+                      List.ofFn ((G.group κ d).encG Z) ++
+                    List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).1,
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+              (List.ofFn
+                    ((G.group κ d).encT
+                      (BB1.decodeT (G.group κ d)
+                          (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                        T)) ++
+                  List.ofFn ((G.group κ d).encG Z) ++
+                List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+            some (t, α₁),
+            some
+              (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                          T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).2).2 =
+    (cast ⋯
+          (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                          (fun x_1 =>
+                              (BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                  BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                x_1)
+                            T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+              some (t, α₁),
+              some
+                (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                  (List.ofFn
+                        ((G.group κ d).encT
+                          (BB1.decodeT (G.group κ d)
+                              (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                            (fun x_1 =>
+                                (BB1.decodeT (G.group κ d)
+                                        (padFin (G.wT.eval κ)
+                                          (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                    BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                  x_1)
+                              T)) ++
+                      List.ofFn ((G.group κ d).encG Z) ++
+                    List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).1,
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+              (List.ofFn
+                    ((G.group κ d).encT
+                      (BB1.decodeT (G.group κ d)
+                          (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                        (fun x_1 =>
+                            (BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                BB1.decodeT (G.group κ d)
+                                  (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                              x_1)
+                          T)) ++
+                  List.ofFn ((G.group κ d).encG Z) ++
+                List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+            some (t, α₁),
+            some
+              (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                          (fun x_1 =>
+                              (BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                  BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                x_1)
+                            T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).2).2
+
+case refine_2
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+d : List Bool
+g X Y Z : (G.group κ d).G
+x : ((bb1Scheme G ℓ).sidSpec κ).dom 2
+t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+α₁ : ZMod (G.group κ d).order
+hv :
+  (∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+    ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+T : (G.group κ d).GT
+⊢ (cast ⋯
+          (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                          T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+              some (t, α₁),
+              some
+                (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                  (List.ofFn
+                        ((G.group κ d).encT
+                          (BB1.decodeT (G.group κ d)
+                              (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                            T)) ++
+                      List.ofFn ((G.group κ d).encG Z) ++
+                    List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).1,
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+              (List.ofFn
+                    ((G.group κ d).encT
+                      (BB1.decodeT (G.group κ d)
+                          (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                        T)) ++
+                  List.ofFn ((G.group κ d).encG Z) ++
+                List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+            some (t, α₁),
+            some
+              (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                          T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).2).2 =
+    (cast ⋯
+          (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                          (fun x_1 =>
+                              (BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                  BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                x_1)
+                            T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+              some (t, α₁),
+              some
+                (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                  (List.ofFn
+                        ((G.group κ d).encT
+                          (BB1.decodeT (G.group κ d)
+                              (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                            (fun x_1 =>
+                                (BB1.decodeT (G.group κ d)
+                                        (padFin (G.wT.eval κ)
+                                          (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                    BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                  x_1)
+                              T)) ++
+                      List.ofFn ((G.group κ d).encG Z) ++
+                    List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).1,
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+              (List.ofFn
+                    ((G.group κ d).encT
+                      (BB1.decodeT (G.group κ d)
+                          (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                        (fun x_1 =>
+                            (BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                BB1.decodeT (G.group κ d)
+                                  (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                              x_1)
+                          T)) ++
+                  List.ofFn ((G.group κ d).encG Z) ++
+                List.ofFn ((G.group κ d).encG (Z ^ α₁.val))),
+            some (t, α₁),
+            some
+              (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+                (List.ofFn
+                      ((G.group κ d).encT
+                        (BB1.decodeT (G.group κ d)
+                            (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)) *
+                          (fun x_1 =>
+                              (BB1.decodeT (G.group κ d)
+                                      (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).2)))⁻¹ *
+                                  BB1.decodeT (G.group κ d)
+                                    (padFin (G.wT.eval κ) (List.ofFn (FixedLengthScheme.splitHalf (cast ⋯ x)).1)) *
+                                x_1)
+                            T)) ++
+                    List.ofFn ((G.group κ d).encG Z) ++
+                  List.ofFn ((G.group κ d).encG (Z ^ α₁.val))))).2).2

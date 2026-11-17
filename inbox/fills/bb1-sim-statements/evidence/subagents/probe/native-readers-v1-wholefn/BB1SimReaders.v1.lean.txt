@@ -1,0 +1,51 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Probe (bb1-sim statement phase, Deliverable 3): the candidate readers
+
+Not for landing. This module stands in for the owners `IdentityBased/Defs.lean` and
+`IdentityBased/BonehBoyen.lean` at T4's head: each candidate reader is stated and proved here as
+its owner would prove it (`rfl` or one line, reading the owner's own definitions), and the
+consumer probe `PlProbe.BB1SimStepM` uses it under the development seals. It is not sealed.
+
+## Main results
+
+* `IBEScheme.sidImpl_eq_oracleImpl` — the game's oracles are `oracleImpl` of their three
+  oracles (owner: `Defs.lean`).
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Composability
+
+namespace IBEScheme
+
+variable (S : IBEScheme)
+
+/-- **The game's oracles as three typed handlers**: the oracles of the IND-sID-CPA game are
+`oracleImpl` of their own three oracles,
+`S.sidImpl b κ pp msk = S.oracleImpl κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1)
+(S.sidImpl b κ pp msk 2)`, so that `oracleImpl_{zero,one,two}_onSpec` read them at the game's
+query type. -/
+theorem sidImpl_eq_oracleImpl (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ) :
+    S.sidImpl b κ pp msk =
+      S.oracleImpl κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1)
+        (S.sidImpl b κ pp msk 2) := by
+  funext i
+  match i with
+  | 0 => rfl
+  | 1 => rfl
+  | 2 => rfl
+
+end IBEScheme
+
+end TCSlib.Cryptography.AdvancedEncryption.IdentityBased

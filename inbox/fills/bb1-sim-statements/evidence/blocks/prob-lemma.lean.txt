@@ -1,0 +1,13 @@
+
+/-- **Averaging a pointwise bound:** expectations of functions within a pointwise bound of each
+other are within the expectation of the bound:
+`(∀ x, |f x - g x| ≤ h x) → |𝔼_c f - 𝔼_c g| ≤ 𝔼_c h`. -/
+theorem abs_expect_sub_le_expect (c : ProbComp α) {f g h : α → ℝ}
+    (hb : ∀ x, |f x - g x| ≤ h x) : |expect c f - expect c g| ≤ expect c h := by
+  rw [← expect_sub, abs_le]
+  constructor
+  · have := expect_mono c fun x => (neg_le_of_abs_le (hb x))
+    rw [show (fun x => -h x) = fun x => (-1) * h x from funext fun x => by ring,
+      expect_const_mul] at this
+    linarith
+  · exact expect_mono c fun x => le_of_abs_le (hb x)

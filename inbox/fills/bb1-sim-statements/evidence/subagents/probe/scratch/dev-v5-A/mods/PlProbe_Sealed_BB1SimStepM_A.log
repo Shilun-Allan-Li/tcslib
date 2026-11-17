@@ -1,0 +1,73 @@
+DEVSEAL A sealed 868
+PlProbe/Sealed/BB1SimStepM_A.lean:225:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (bb1Scheme G ℓ).encSK κ ⟨?m.171, ?m.172⟩
+in the target expression
+  ((OracleComp.pure
+          ⟨G.desc κ r✝,
+            {
+              d0 :=
+                g2 ^ α.val *
+                  BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r✝)) id) ^
+                    r.val,
+              d1 := ↑g ^ r.val }⟩).bind
+      fun sk => OracleComp.pure ((bb1Scheme G ℓ).encSK κ sk)) =
+    OracleComp.pure
+      (padFin ((bb1Scheme G ℓ).skLen.eval κ)
+        (List.ofFn
+            ((G.group κ (G.desc κ r✝)).encG
+              (g2 ^ α.val *
+                BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r✝)) id) ^
+                  r.val)) ++
+          List.ofFn ((G.group κ (G.desc κ r✝)).encG (↑g ^ r.val))))
+
+case refine_3
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+r✝ : G.gen.Coins κ
+g : { x // x ≠ 1 }
+α : ZMod (G.group κ (G.desc κ r✝)).order
+h g2 : (G.group κ (G.desc κ r✝)).G
+id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+r : ZMod (G.group κ (G.desc κ r✝)).order
+⊢ ((OracleComp.pure
+          ⟨G.desc κ r✝,
+            {
+              d0 :=
+                g2 ^ α.val *
+                  BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r✝)) id) ^
+                    r.val,
+              d1 := ↑g ^ r.val }⟩).bind
+      fun sk => OracleComp.pure ((bb1Scheme G ℓ).encSK κ sk)) =
+    OracleComp.pure
+      (padFin ((bb1Scheme G ℓ).skLen.eval κ)
+        (List.ofFn
+            ((G.group κ (G.desc κ r✝)).encG
+              (g2 ^ α.val *
+                BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r✝)) id) ^
+                  r.val)) ++
+          List.ofFn ((G.group κ (G.desc κ r✝)).encG (↑g ^ r.val))))
+PlProbe/Sealed/BB1SimStepM_A.lean:226:4: error: unsolved goals
+case refine_4
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+r : G.gen.Coins κ
+g : { x // x ≠ 1 }
+α : ZMod (G.group κ (G.desc κ r)).order
+h g2 : (G.group κ (G.desc κ r)).G
+t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool
+α₁ : ZMod (G.group κ (G.desc κ r)).order
+hF : BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) = ↑g ^ α₁.val
+s : ZMod (G.group κ (G.desc κ r)).order
+⊢ ((OracleComp.pure
+          ⟨G.desc κ r,
+            { a := BB1.decodeT (G.group κ (G.desc κ r)) m * ((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val,
+              b := ↑g ^ s.val, c := ↑g ^ (s.val * α₁.val) }⟩).bind
+      fun ct => OracleComp.pure ((bb1Scheme G ℓ).encCT κ ct)) =
+    OracleComp.pure
+      ((bb1Scheme G ℓ).encCT κ
+        ⟨G.desc κ r,
+          { a := BB1.decodeT (G.group κ (G.desc κ r)) m * ((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val,
+            b := ↑g ^ s.val, c := ↑g ^ (s.val * α₁.val) }⟩)

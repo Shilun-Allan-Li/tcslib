@@ -1,0 +1,40 @@
+DEVSEAL A sealed 868
+PlProbe/Scratch/Explore2_A.lean:27:28: error: Invalid `⟨...⟩` notation: The expected type `(bb1Scheme G ℓ).6 κ` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+PlProbe/Scratch/Explore2_A.lean:36:39: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  IBEScheme.oracleImpl ?S ?κ ?init ?key ?chal 0 ?x ?s
+in the target expression
+  S.oracleImpl κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1) (S.sidImpl b κ pp msk 2) 0 x (none, c) =
+    OracleComp.pure (cast ⋯ (S.encPP κ pp), some (cast h0 x), c)
+
+S : IBEScheme
+b : Bool
+κ : ℕ
+pp : S.PP κ
+msk : S.MSK κ
+x : (S.sidSpec κ).dom 0
+c : Option (Fin (S.ctLen.eval κ) → Bool)
+h0 : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool)
+h0' : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
+⊢ S.oracleImpl κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1) (S.sidImpl b κ pp msk 2) 0 x (none, c) =
+    OracleComp.pure (cast ⋯ (S.encPP κ pp), some (cast h0 x), c)
+PlProbe/Scratch/Explore2_A.lean:44:62: error: Invalid `⟨...⟩` notation: The expected type `(bb1Scheme G ℓ).6 κ` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+PlProbe/Scratch/Explore2_A.lean:44:81: error: Invalid `⟨...⟩` notation: The expected type `(bb1Scheme G ℓ).7 κ` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+PlProbe/Scratch/Explore2_A.lean:46:2: error: `simp` made no progress
+PlProbe/Scratch/Explore2_A.lean:54:6: error: Application type mismatch: The argument
+  bb1Scheme_setup G ℓ κ
+has type
+  (bb1Scheme G ℓ).setup κ =
+    OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+      OracleComp.bind (BB1.setup (G.group κ (G.desc κ r))) fun k => OracleComp.pure (⟨G.desc κ r, k.1⟩, ⟨G.desc κ r, k⟩)
+but is expected to have type
+  (bb1Scheme G ℓ).setup κ =
+    OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+      OracleComp.bind (BB1.setup (G.group κ (G.desc κ r))) fun k => OracleComp.pure (?m.28 r k)
+in the application
+  Exists.intro ?m.28 (bb1Scheme_setup G ℓ κ)

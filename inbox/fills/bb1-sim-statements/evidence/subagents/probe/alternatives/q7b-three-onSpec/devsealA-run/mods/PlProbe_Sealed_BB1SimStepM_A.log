@@ -1,0 +1,139 @@
+DEVSEAL A sealed 868
+PlProbe/Sealed/BB1SimStepM_A.lean:110:65: error: unsolved goals
+S : IBEScheme
+b : Bool
+κ : ℕ
+pp : S.PP κ
+msk : S.MSK κ
+x : (S.sidSpec κ).dom 1
+c : Option (Fin (S.ctLen.eval κ) → Bool)
+⊢ OracleComp.pure (cast ⋯ (zeroBits (S.outLens κ 1), none, c).1, (zeroBits (S.outLens κ 1), none, c).2) =
+    OracleComp.pure (cast ⋯ (zeroBits (S.skLen.eval κ + 1)), none, c)
+PlProbe/Sealed/BB1SimStepM_A.lean:117:67: error: unsolved goals
+S : IBEScheme
+b : Bool
+κ : ℕ
+pp : S.PP κ
+msk : S.MSK κ
+x : (S.sidSpec κ).dom 1
+c : Option (Fin (S.ctLen.eval κ) → Bool)
+⊢ OracleComp.pure
+      (cast ⋯ (zeroBits (S.outLens κ 1), some (cast ⋯ x), c).1, (zeroBits (S.outLens κ 1), some (cast ⋯ x), c).2) =
+    OracleComp.pure (cast ⋯ (zeroBits (S.skLen.eval κ + 1)), some (cast ⋯ x), c)
+PlProbe/Sealed/BB1SimStepM_A.lean:129:4: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (OracleComp.bind ?c ?f).bind ?g
+in the target expression
+  ((OracleComp.bind (S.keyGen κ msk (cast ⋯ x)) fun sk =>
+          OracleComp.pure (FixedLengthScheme.decAnswer (some (S.encSK κ sk)), some t, c)).bind
+      fun p => OracleComp.pure (cast ⋯ p.1, p.2)) =
+    OracleComp.bind (S.keyGen κ msk (cast ⋯ x)) fun sk =>
+      OracleComp.pure (cast ⋯ (FixedLengthScheme.decAnswer (some (S.encSK κ sk))), some t, c)
+
+S : IBEScheme
+b : Bool
+κ : ℕ
+pp : S.PP κ
+msk : S.MSK κ
+x : (S.sidSpec κ).dom 1
+t : Fin (S.idLen.eval κ) → Bool
+c : Option (Fin (S.ctLen.eval κ) → Bool)
+ht : cast ⋯ x ≠ t
+⊢ ((OracleComp.bind (S.keyGen κ msk (cast ⋯ x)) fun sk =>
+          OracleComp.pure (FixedLengthScheme.decAnswer (some (S.encSK κ sk)), some t, c)).bind
+      fun p => OracleComp.pure (cast ⋯ p.1, p.2)) =
+    OracleComp.bind (S.keyGen κ msk (cast ⋯ x)) fun sk =>
+      OracleComp.pure (cast ⋯ (FixedLengthScheme.decAnswer (some (S.encSK κ sk))), some t, c)
+PlProbe/Sealed/BB1SimStepM_A.lean:136:65: error: unsolved goals
+S : IBEScheme
+b : Bool
+κ : ℕ
+pp : S.PP κ
+msk : S.MSK κ
+x : (S.sidSpec κ).dom 2
+c : Option (Fin (S.ctLen.eval κ) → Bool)
+⊢ OracleComp.pure (cast ⋯ (zeroBits (S.outLens κ 2), none, c).1, (zeroBits (S.outLens κ 2), none, c).2) =
+    OracleComp.pure (cast ⋯ (zeroBits (S.ctLen.eval κ)), none, c)
+PlProbe/Sealed/BB1SimStepM_A.lean:155:4: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (OracleComp.bind ?c ?f).bind ?g
+in the target expression
+  ((OracleComp.bind
+          (S.enc κ pp t
+            (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+            else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))
+          fun c => OracleComp.pure (S.encCT κ c, some t, some (S.encCT κ c))).bind
+      fun p => OracleComp.pure (cast ⋯ p.1, p.2)) =
+    OracleComp.bind
+      (S.enc κ pp t
+        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2 else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))
+      fun ct => OracleComp.pure (cast ⋯ (S.encCT κ ct), some t, some (S.encCT κ ct))
+
+S : IBEScheme
+b : Bool
+κ : ℕ
+pp : S.PP κ
+msk : S.MSK κ
+x : (S.sidSpec κ).dom 2
+t : Fin (S.idLen.eval κ) → Bool
+hv :
+  S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast ⋯ x)).1 ∧
+    S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+⊢ ((OracleComp.bind
+          (S.enc κ pp t
+            (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2
+            else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))
+          fun c => OracleComp.pure (S.encCT κ c, some t, some (S.encCT κ c))).bind
+      fun p => OracleComp.pure (cast ⋯ p.1, p.2)) =
+    OracleComp.bind
+      (S.enc κ pp t
+        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ x)).2 else (FixedLengthScheme.splitHalf (cast ⋯ x)).1))
+      fun ct => OracleComp.pure (cast ⋯ (S.encCT κ ct), some t, some (S.encCT κ ct))
+PlProbe/Sealed/BB1SimStepM_A.lean:163:70: error: unsolved goals
+S : IBEScheme
+b : Bool
+κ : ℕ
+pp : S.PP κ
+msk : S.MSK κ
+x : (S.sidSpec κ).dom 2
+t : Fin (S.idLen.eval κ) → Bool
+hv :
+  ¬(S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast ⋯ x)).1 ∧
+      S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast ⋯ x)).2)
+⊢ OracleComp.pure (cast ⋯ (zeroBits (S.outLens κ 2), some t, none).1, (zeroBits (S.outLens κ 2), some t, none).2) =
+    OracleComp.pure (cast ⋯ (zeroBits (S.ctLen.eval κ)), some t, none)
+PlProbe/Sealed/BB1SimStepM_A.lean:221:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (bb1Scheme ?G ?ℓ).setup ?κ
+in the target expression
+  (r : G.gen.Coins κ) →
+    { x // x ≠ 1 } →
+      ZMod (G.group κ (G.desc κ r)).order →
+        (G.group κ (G.desc κ r)).G → (G.group κ (G.desc κ r)).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ
+
+case o
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+⊢ (r : G.gen.Coins κ) →
+    { x // x ≠ 1 } →
+      ZMod (G.group κ (G.desc κ r)).order →
+        (G.group κ (G.desc κ r)).G → (G.group κ (G.desc κ r)).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ
+PlProbe/Sealed/BB1SimStepM_A.lean:224:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+case refine_1
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+β✝ : Type
+F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp β✝
+⊢ OracleComp.bind ((bb1Scheme G ℓ).setup κ) F =
+    OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+      OracleComp.bind (ProbComp.sample { x // x ≠ 1 }) fun g =>
+        OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun α =>
+          OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun h =>
+            OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun g2 => F (sorry r g α h g2)
+PlProbe/Sealed/BB1SimStepM_A.lean:219:78: error: unsolved goals
+case refine_2
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+⊢ ∀ (r : G.gen.Coins κ) (g : { x // x ≠ 1 }) (α : ZMod (G.group κ (G.desc κ r)).order)
+    (h g2 : (G.group κ (G.desc κ r)).G), RealReads G ℓ κ (G.desc κ r) (↑g) α g2 h (sorry r g α h g2)

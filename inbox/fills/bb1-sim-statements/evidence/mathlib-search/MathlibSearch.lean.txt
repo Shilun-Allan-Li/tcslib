@@ -1,0 +1,38 @@
+import Mathlib.Data.ZMod.Basic
+import Mathlib.GroupTheory.OrderOfElement
+import Mathlib.GroupTheory.SpecificGroups.Cyclic
+
+/-! Mathlib-first search for the Q10 helpers (bb1-sim-statements, series 2): each statement in a
+generic form (a finite group `G` with `x ^ n = 1` or `|G| = p`), closed by `exact?`/`apply?`. -/
+
+-- (1) the additive exponent law
+example (G : Type) [Group G] (n : ℕ) [NeZero n] (x : G) (hx : x ^ n = 1) (a b : ZMod n) :
+    x ^ (a + b).val = x ^ a.val * x ^ b.val := by
+  exact?
+
+-- (2) the negation exponent law
+example (G : Type) [Group G] (n : ℕ) [NeZero n] (x : G) (hx : x ^ n = 1) (a : ZMod n) :
+    x ^ (-a).val = (x ^ a.val)⁻¹ := by
+  exact?
+
+-- (3) Z_p ≃ G for g ≠ 1
+example (G : Type) [Group G] [Fintype G] (p : ℕ) [Fact p.Prime] (hc : Fintype.card G = p)
+    (g : G) (hg : g ≠ 1) : Function.Bijective fun a : ZMod p => g ^ a.val := by
+  exact?
+
+-- (4) injectivity of natural casts below the order
+example (p : ℕ) (m n : ℕ) (hm : m < p) (hn : n < p) : (m : ZMod p) = n ↔ m = n := by
+  exact?
+
+-- name checks
+#check @ZMod.val_add
+#check @ZMod.val_natCast_of_lt
+#check @ZMod.natCast_eq_natCast_iff'
+#check @pow_eq_pow_iff_modEq
+#check @orderOf_eq_prime
+#check @zpow_mod_orderOf
+#check @pow_mod_orderOf
+#check @ZMod.val_neg_of_ne_zero
+#check @ZMod.neg_val
+#check @ZMod.val_injective
+#check @ZMod.natCast_self_eq_zero

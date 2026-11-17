@@ -1,0 +1,33 @@
+DEVSEAL A sealed 868
+PlProbe/Scratch/Explore3_A.lean:31:2: error: `simp` made no progress
+PlProbe/Scratch/Explore3_A.lean:38:52: error: failed to synthesize
+  Decidable ((bb1Scheme G ℓ).MsgSpace κ k.1 m)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+PlProbe/Scratch/Explore3_A.lean:42:2: error: `simp` made no progress
+PlProbe/Scratch/Explore3_A.lean:52:39: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  IBEScheme.oracleImpl ?S ?κ ?init ?key ?chal 0 ?x ?s
+in the target expression
+  S.oracleImpl κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1) (S.sidImpl b κ pp msk 2) 0 x (none, c) =
+    OracleComp.pure (cast ⋯ (S.encPP κ pp), some (cast h0 x), c)
+
+S : IBEScheme
+b : Bool
+κ : ℕ
+pp : S.PP κ
+msk : S.MSK κ
+x : (S.sidSpec κ).dom 0
+c : Option (Fin (S.ctLen.eval κ) → Bool)
+h0 : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool)
+h0' : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
+⊢ S.oracleImpl κ (S.sidImpl b κ pp msk 0) (S.sidImpl b κ pp msk 1) (S.sidImpl b κ pp msk 2) 0 x (none, c) =
+    OracleComp.pure (cast ⋯ (S.encPP κ pp), some (cast h0 x), c)
+PlProbe/Scratch/Explore3_A.lean:59:4: error: Application type mismatch: The argument
+  S.sidImpl b κ pp msk 2
+has type
+  (S.sidSpec κ).dom 2 → S.SidState κ → OracleComp unifSpec ((S.sidSpec κ).rng 2 × S.SidState κ)
+but is expected to have type
+  (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) →
+    S.SidState κ → ProbComp ((Fin (S.ctLen.eval κ) → Bool) × S.SidState κ)
+in the application
+  IBEScheme.oracleImpl_zero_onSpec S κ ?m.10 ?m.14 (S.sidImpl b κ pp msk 2)

@@ -1,0 +1,6 @@
+import PlProbe.BB1SimReaders
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+set_option pp.explicit true
+set_option pp.proofs false
+#check @IBEScheme.sidImpl_keyGen_ne
+#check @TCSlib.Cryptography.Games.OracleComp.bind_assoc

@@ -1,0 +1,246 @@
+DEVSEAL A sealed 868
+PlProbe/Scratch/AltSimpsUse_A.lean:224:4: error: Tactic `rfl` failed: The left-hand side
+  (OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+        OracleComp.bind (ProbComp.sample { x // x ≠ 1 }) fun a =>
+          OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun a_1 =>
+            OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun a_2 =>
+              OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun a_3 =>
+                OracleComp.pure
+                  (⟨G.desc κ r, { g := ↑a, g1 := ↑a ^ a_1.val, g2 := a_3, h := a_2 }⟩,
+                    ⟨G.desc κ r, ({ g := ↑a, g1 := ↑a ^ a_1.val, g2 := a_3, h := a_2 }, a_3 ^ a_1.val)⟩)).bind
+    F
+is not definitionally equal to the right-hand side
+  OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+    OracleComp.bind (ProbComp.sample { x // x ≠ 1 }) fun g =>
+      OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun α =>
+        OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun h =>
+          OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun g2 => F (?o r g α h g2)
+
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+β✝ : Type
+F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp β✝
+⊢ (OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+          OracleComp.bind (ProbComp.sample { x // x ≠ 1 }) fun a =>
+            OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun a_1 =>
+              OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun a_2 =>
+                OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun a_3 =>
+                  OracleComp.pure
+                    (⟨G.desc κ r, { g := ↑a, g1 := ↑a ^ a_1.val, g2 := a_3, h := a_2 }⟩,
+                      ⟨G.desc κ r, ({ g := ↑a, g1 := ↑a ^ a_1.val, g2 := a_3, h := a_2 }, a_3 ^ a_1.val)⟩)).bind
+      F =
+    OracleComp.bind (ProbComp.sample (G.gen.Coins κ)) fun r =>
+      OracleComp.bind (ProbComp.sample { x // x ≠ 1 }) fun g =>
+        OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun α =>
+          OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun h =>
+            OracleComp.bind (ProbComp.sample (G.group κ (G.desc κ r)).G) fun g2 => F (?o r g α h g2)
+PlProbe/Scratch/AltSimpsUse_A.lean:228:32: error: Application type mismatch: The argument
+  ofFn_bb1Scheme_encPP G ℓ κ ?m.123 ?m.124
+has type
+  List.ofFn ((bb1Scheme G ℓ).encPP κ ⟨?m.123, ?m.124⟩) =
+    List.ofFn
+      (padFin ((bb1Scheme G ℓ).ppLen.eval κ)
+        (?m.123 ++ List.ofFn ((G.group κ ?m.123).encG (BB1.Params.g ?m.124)) ++
+              List.ofFn ((G.group κ ?m.123).encG (BB1.Params.g1 ?m.124)) ++
+            List.ofFn ((G.group κ ?m.123).encG (BB1.Params.g2 ?m.124)) ++
+          List.ofFn ((G.group κ ?m.123).encG (BB1.Params.h ?m.124))))
+but is expected to have type
+  List.ofFn ((bb1Scheme G ℓ).encPP κ (?o r g α h g2).1) =
+    List.ofFn
+      (padFin ((bb1Scheme G ℓ).ppLen.eval κ)
+        (G.desc κ r ++ List.ofFn ((G.group κ (G.desc κ r)).encG ↑g) ++
+              List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ α.val)) ++
+            List.ofFn ((G.group κ (G.desc κ r)).encG g2) ++
+          List.ofFn ((G.group κ (G.desc κ r)).encG h)))
+in the application
+  List.ofFn_injective (ofFn_bb1Scheme_encPP G ℓ κ ?m.123 ?m.124)
+PlProbe/Scratch/AltSimpsUse_A.lean:229:21: error: Type mismatch
+  bb1Scheme_msgSpace_iff G ℓ κ ?m.127 ?m.128 m
+has type
+  (bb1Scheme G ℓ).MsgSpace κ ⟨?m.127, ?m.128⟩ m ↔ ∃ u, List.ofFn ((G.group κ ?m.127).encT u) = List.ofFn m
+but is expected to have type
+  (bb1Scheme G ℓ).MsgSpace κ (?o r g α h g2).1 m ↔ ∃ u, List.ofFn ((G.group κ (G.desc κ r)).encT u) = List.ofFn m
+PlProbe/Scratch/AltSimpsUse_A.lean:231:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  OracleComp.bind ((bb1Scheme ?G ?ℓ).keyGen ?κ ⟨?d, (?pp, ?mk)⟩ ?id) ?f
+in the target expression
+  (OracleComp.bind ((bb1Scheme G ℓ).keyGen κ (?o r g α h g2).2 id) fun sk => f ((bb1Scheme G ℓ).encSK κ sk)) =
+    OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun r_1 =>
+      f
+        (padFin ((bb1Scheme G ℓ).skLen.eval κ)
+          (List.ofFn
+              ((G.group κ (G.desc κ r)).encG
+                (g2 ^ α.val *
+                  BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) id) ^
+                    r_1.val)) ++
+            List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ r_1.val))))
+
+case refine_3
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+r : G.gen.Coins κ
+g : { x // x ≠ 1 }
+α : ZMod (G.group κ (G.desc κ r)).order
+h g2 : (G.group κ (G.desc κ r)).G
+id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+β : Type
+f : (Fin ((bb1Scheme G ℓ).skLen.eval κ) → Bool) → ProbComp β
+⊢ (OracleComp.bind ((bb1Scheme G ℓ).keyGen κ (?o r g α h g2).2 id) fun sk => f ((bb1Scheme G ℓ).encSK κ sk)) =
+    OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun r_1 =>
+      f
+        (padFin ((bb1Scheme G ℓ).skLen.eval κ)
+          (List.ofFn
+              ((G.group κ (G.desc κ r)).encG
+                (g2 ^ α.val *
+                  BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) id) ^
+                    r_1.val)) ++
+            List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ r_1.val))))
+PlProbe/Scratch/AltSimpsUse_A.lean:236:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  OracleComp.bind ((bb1Scheme ?G ?ℓ).enc ?κ ⟨?d, ?pp⟩ ?id ?m) ?f
+in the target expression
+  (OracleComp.bind ((bb1Scheme G ℓ).enc κ (?o r g α h g2).1 t m) fun ct => f ((bb1Scheme G ℓ).encCT κ ct)) =
+    OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun s =>
+      f
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+          (List.ofFn
+                ((G.group κ (G.desc κ r)).encT
+                  (((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val *
+                    BB1.decodeT (G.group κ (G.desc κ r)) (padFin (G.wT.eval κ) (List.ofFn m)))) ++
+              List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ s.val)) ++
+            List.ofFn
+              ((G.group κ (G.desc κ r)).encG
+                (BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) ^
+                  s.val))))
+
+case refine_4
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+r : G.gen.Coins κ
+g : { x // x ≠ 1 }
+α : ZMod (G.group κ (G.desc κ r)).order
+h g2 : (G.group κ (G.desc κ r)).G
+t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool
+β : Type
+f : (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) → ProbComp β
+⊢ (OracleComp.bind ((bb1Scheme G ℓ).enc κ (?o r g α h g2).1 t m) fun ct => f ((bb1Scheme G ℓ).encCT κ ct)) =
+    OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun s =>
+      f
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+          (List.ofFn
+                ((G.group κ (G.desc κ r)).encT
+                  (((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val *
+                    BB1.decodeT (G.group κ (G.desc κ r)) (padFin (G.wT.eval κ) (List.ofFn m)))) ++
+              List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ s.val)) ++
+            List.ofFn
+              ((G.group κ (G.desc κ r)).encG
+                (BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) ^
+                  s.val))))
+PlProbe/Scratch/AltSimpsUse_A.lean:219:78: error: unsolved goals
+case o
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+⊢ (r : G.gen.Coins κ) →
+    { x // x ≠ 1 } →
+      ZMod (G.group κ (G.desc κ r)).order →
+        (G.group κ (G.desc κ r)).G → (G.group κ (G.desc κ r)).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ
+PlProbe/Scratch/AltSimpsUse_A.lean:269:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (bb1Scheme ?G ?ℓ).keyGen ?x✝ ?msk ?id
+in the target expression
+  (OracleComp.bind
+      ((bb1Scheme G ℓ).keyGen κ
+        (⟨G.desc κ r, { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h }⟩,
+            ⟨G.desc κ r, ({ g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h }, g2 ^ α.val)⟩).2
+        id)
+      fun sk => f ((bb1Scheme G ℓ).encSK κ sk)) =
+    OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun r_1 =>
+      f
+        (padFin ((bb1Scheme G ℓ).skLen.eval κ)
+          (List.ofFn
+              ((G.group κ (G.desc κ r)).encG
+                (g2 ^ α.val *
+                  BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) id) ^
+                    r_1.val)) ++
+            List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ r_1.val))))
+
+case refine_3
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+r : G.gen.Coins κ
+g : { x // x ≠ 1 }
+α : ZMod (G.group κ (G.desc κ r)).order
+h g2 : (G.group κ (G.desc κ r)).G
+id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+β : Type
+f : (Fin ((bb1Scheme G ℓ).skLen.eval κ) → Bool) → ProbComp β
+⊢ (OracleComp.bind
+      ((bb1Scheme G ℓ).keyGen κ
+        (⟨G.desc κ r, { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h }⟩,
+            ⟨G.desc κ r, ({ g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h }, g2 ^ α.val)⟩).2
+        id)
+      fun sk => f ((bb1Scheme G ℓ).encSK κ sk)) =
+    OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun r_1 =>
+      f
+        (padFin ((bb1Scheme G ℓ).skLen.eval κ)
+          (List.ofFn
+              ((G.group κ (G.desc κ r)).encG
+                (g2 ^ α.val *
+                  BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) id) ^
+                    r_1.val)) ++
+            List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ r_1.val))))
+PlProbe/Scratch/AltSimpsUse_A.lean:274:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (bb1Scheme ?G ?ℓ).enc ?x✝ ?pp ?id ?m
+in the target expression
+  (OracleComp.bind
+      ((bb1Scheme G ℓ).enc κ
+        (⟨G.desc κ r, { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h }⟩,
+            ⟨G.desc κ r, ({ g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h }, g2 ^ α.val)⟩).1
+        t m)
+      fun ct => f ((bb1Scheme G ℓ).encCT κ ct)) =
+    OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun s =>
+      f
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+          (List.ofFn
+                ((G.group κ (G.desc κ r)).encT
+                  (((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val *
+                    BB1.decodeT (G.group κ (G.desc κ r)) (padFin (G.wT.eval κ) (List.ofFn m)))) ++
+              List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ s.val)) ++
+            List.ofFn
+              ((G.group κ (G.desc κ r)).encG
+                (BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) ^
+                  s.val))))
+
+case refine_4
+G : BilinearGen
+ℓ : PolyExpr
+κ : ℕ
+r : G.gen.Coins κ
+g : { x // x ≠ 1 }
+α : ZMod (G.group κ (G.desc κ r)).order
+h g2 : (G.group κ (G.desc κ r)).G
+t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool
+m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool
+β : Type
+f : (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) → ProbComp β
+⊢ (OracleComp.bind
+      ((bb1Scheme G ℓ).enc κ
+        (⟨G.desc κ r, { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h }⟩,
+            ⟨G.desc κ r, ({ g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h }, g2 ^ α.val)⟩).1
+        t m)
+      fun ct => f ((bb1Scheme G ℓ).encCT κ ct)) =
+    OracleComp.bind (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun s =>
+      f
+        (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+          (List.ofFn
+                ((G.group κ (G.desc κ r)).encT
+                  (((G.group κ (G.desc κ r)).pair (↑g ^ α.val)) g2 ^ s.val *
+                    BB1.decodeT (G.group κ (G.desc κ r)) (padFin (G.wT.eval κ) (List.ofFn m)))) ++
+              List.ofFn ((G.group κ (G.desc κ r)).encG (↑g ^ s.val)) ++
+            List.ofFn
+              ((G.group κ (G.desc κ r)).encG
+                (BB1.F { g := ↑g, g1 := ↑g ^ α.val, g2 := g2, h := h } (BB1.idToZ (G.group κ (G.desc κ r)) t) ^
+                  s.val))))

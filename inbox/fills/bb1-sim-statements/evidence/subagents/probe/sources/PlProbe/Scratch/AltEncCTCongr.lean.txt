@@ -1,0 +1,28 @@
+import PlProbe.BB1SimReaders
+
+/-!
+Failed alternative (consumer, under the development seals): the real challenge compared with the
+simulator's `bb1SimCt` by `congrArg` through `bb1SimCt_eq`, without a word reader for
+`bb1Scheme`'s `encCT` (the brief's first choice). `alt_bb1Scheme_enc_bind` is the `Encrypt` reader
+with the message read as `decodeT m` (owner-side, proved here in the unsealed stand-in style).
+The comparison fails: `bb1SimCt_eq`'s right side reads `decodeT _ m` at the width
+`(bb1Scheme G ℓ).msgLen.eval κ` (the group's `G_T` typed as `BilinearGroup _ (msgLen …)`), while
+`Encrypt`'s reads it at `G.wT.eval κ`; the two terms agree only through `bb1Scheme` (sealed).
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
+  TCSlib.Cryptography.Composability
+
+/-- `Encrypt` at the scheme's types, followed by `f`, the message read as `decodeT m`. -/
+theorem alt_bb1Scheme_enc_bind (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (pp : BB1.Params (G.group κ d)) (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
+    (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) {β : Type}
+    (f : (bb1Scheme G ℓ).CT κ → ProbComp β) :
+    ((bb1Scheme G ℓ).enc κ ⟨d, pp⟩ id m).bind f =
+      (BB1.encrypt pp (BB1.idToZ (G.group κ d) id) (BB1.decodeT (G.group κ d) m)).bind
+        fun c => f ⟨d, c⟩ := by
+  simp only [bb1Scheme_enc, OracleComp.bind_assoc, OracleComp.pure_bind]
+
+end TCSlib.Cryptography.AdvancedEncryption.IdentityBased

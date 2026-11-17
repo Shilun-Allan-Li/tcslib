@@ -1,0 +1,56 @@
+import PlProbe.Scratch.AltEncCTCongr
+import Lean
+set_option maxHeartbeats 0 in
+run_cmd do
+  let env ← Lean.getEnv
+  let mut k : Nat := 0
+  for (n, ci) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    unless ci.isDefinition do continue
+    if n == `Complexity.PolyExpr.eval && true then continue
+    let st ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    let isM := Lean.Meta.isMatcherCore env n
+    if st == .reducible && !isM then continue
+    if st == .irreducible then continue
+    Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $(Lean.mkIdent n):ident))
+    k := k + 1
+  Lean.logInfo m!"DEVSEAL A sealed {k}"
+
+
+/-! Consumer half of the failed `congrArg` alternative: the real ciphertext of the setup's output,
+encoded, is the simulator's `bb1SimCt` when `F(t) = g^{α₁}`. Sealed, the last step fails. -/
+
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+  TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+theorem altEncCTCongr (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) :
+    ∃ o : (r : G.gen.Coins κ) → {x : (G.group κ (G.desc κ r)).G // x ≠ 1} →
+        ZMod (G.group κ (G.desc κ r)).order → (G.group κ (G.desc κ r)).G →
+        (G.group κ (G.desc κ r)).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ,
+      (∀ {β : Type} (F : (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ → ProbComp β),
+        ((bb1Scheme G ℓ).setup κ).bind F =
+          (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+          (ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
+          (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)).bind fun α =>
+          (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun h =>
+          (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun g2 => F (o r g α h g2)) ∧
+      ∀ r g α h g2 t m (α₁ : ZMod (G.group κ (G.desc κ r)).order),
+        BB1.F ⟨g.1, g.1 ^ α.val, g2, h⟩ (BB1.idToZ (G.group κ (G.desc κ r)) t) = g.1 ^ α₁.val →
+        ((bb1Scheme G ℓ).enc κ (o r g α h g2).1 t m).bind
+            (fun ct => .pure ((bb1Scheme G ℓ).encCT κ ct)) =
+          (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)).bind fun s =>
+            .pure (bb1SimCt G ℓ κ (G.desc κ r) (g.1 ^ s.val)
+              ((G.group κ (G.desc κ r)).pair (g.1 ^ α.val) g2 ^ s.val) α₁ m) := by
+  refine ⟨?o, fun F => ?hF, ?hR⟩
+  case hF =>
+    rw [bb1Scheme_setup_eq]
+    simp only [OracleComp.bind_assoc, BB1.setup_eq, OracleComp.pure_bind]
+    rfl
+  case hR =>
+    intro r g α h g2 t m α₁ hF
+    rw [alt_bb1Scheme_enc_bind, BB1.encrypt_eq, OracleComp.bind_assoc]
+    simp only [OracleComp.pure_bind]
+    refine congrArg _ (funext fun s => ?_)
+    rw [bb1SimCt_eq, hF, pow_right_comm, mul_comm]
