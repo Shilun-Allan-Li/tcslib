@@ -4,7 +4,7 @@ The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/c797f6f2c4c69e2
 is staged on the exchange at `c797f6f2c4c69e261277cd033bf2441fe4811df8`.
 - It is on local branch `stage/bb1-sim-fill-exchange`: an SSH-signed commit on the exchange tip
   `860b45dcaf477cb70d5bcbc62c254b31f5e2ecf7` that adds only `outbox/fills/bb1-sim/` (34 files).
-- It is **not yet pushed**, so the link resolves only after the push.
+- It is pushed 2026-11-17.
 - Brief SHA-256: `d4d029a4083d1c6b31f0c5183927334f391434ce22165928a25dd135f8342c9a`.
 
 The worker is Claude (standing ruling: Claude for fills), a lead with up to 2 sub-agents. Seyoon dispatches.
@@ -18,12 +18,12 @@ The worker is Claude (standing ruling: Claude for fills), a lead with up to 2 su
 
 Both base commits are deterministic and unsigned; the pack's `tools/mkbase.sh` reproduces them.
 
-**Records pin.** `<RECORDS-PIN>`: the records commit that carries `briefs/pairings/fills/bb1-sim/issued-fill-r1/`. The
+**Records pin.** `fc0aa4e12977d7b79fb59f4d88a94412bdb90d3b`: the records commit that carries `briefs/pairings/fills/bb1-sim/issued-fill-r1/`. The
 maintainer writes its full hash here, and in the prompt below, after committing.
 
 **Before dispatch** (maintainer):
 1. Commit `briefs/pairings/fills/bb1-sim/issued-fill-r1/` to the records branch. Put that commit's full hash for
-   `<RECORDS-PIN>` in the **Records pin** line and in the prompt.
+   `fc0aa4e12977d7b79fb59f4d88a94412bdb90d3b` in the **Records pin** line and in the prompt.
 2. Push the exchange commit. If it is replayed onto a newer exchange tip, put the pushed hash in the pack link, the
    staging line and the prompt.
 3. Seyoon answers the open point in the README (patch base form; the pack implements (A)). If he chooses (B) or (C),
@@ -43,7 +43,7 @@ Mathlib). You may use up to 2 sub-agents on disjoint files.
    outbox/fills/bb1-sim/README.md, brief.md and
    fill-environment-addendum.md. Verify the pack with SHA256SUMS
    (shasum -a 256 -c, from its directory). You are the lead the brief
-   describes. The records of this issue are at commit <RECORDS-PIN> of
+   describes. The records of this issue are at commit fc0aa4e12977d7b79fb59f4d88a94412bdb90d3b of
    cryptography/pass-shelat-ch2-4
    (briefs/pairings/fills/bb1-sim/issued-fill-r1/, equal to the pack).
 2. In a separate clone, fetch by name cryptography/pass-shelat-ch2-4,
