@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.StateRenaming
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -120,6 +121,19 @@ theorem Cfg.ofWords_workTapePos {input : List Bool} (q : State) (w : Fin k → L
 theorem Cfg.ofWords_output {input : List Bool} (q : State) (w : Fin k → List Bool) :
     (Cfg.ofWords (input := input) q w).output = [] :=
   rfl
+
+/-- Renaming the state of a canonical word seam changes only its anchor. -/
+theorem Cfg.ofWords_mapState {State' : Type*} {input : List Bool} (f : State → State')
+    (q : State) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := input) q w).mapState f = Cfg.ofWords (f q) w := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, Cfg.ofWords_state, Option.map_some, Cfg.ofWords_state]
+  · rw [Cfg.mapState_inputPos, Cfg.ofWords_inputPos, Cfg.ofWords_inputPos]
+  · funext i z
+    rw [Cfg.mapState_workTapes, Cfg.ofWords_workTapes, Cfg.ofWords_workTapes]
+  · funext i
+    rw [Cfg.mapState_workTapePos, Cfg.ofWords_workTapePos, Cfg.ofWords_workTapePos]
+  · rw [Cfg.mapState_output, Cfg.ofWords_output, Cfg.ofWords_output]
 
 /-- Strip a marker suffix: the prefix of `v` before its **last** `true`, or
 `none` when `v` is all `false`. This is the Chapter-2 Exercise-2.1 marker

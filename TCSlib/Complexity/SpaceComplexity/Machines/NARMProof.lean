@@ -213,9 +213,7 @@ theorem narm_decides {L : Language Bool} [Fintype Λ] [DecidableEq Λ] (A : NARM
     logSpace (fun n => K * logSpace n) (K + cs * K2) (fun n => by simp [logSpace])
     (fun n => Nat.mul_le_mul_right _ (by omega)) (fun j n v hv => ?_) hcorr
   beta_reduce at hv ⊢
-  have hLn : logSpace n ≤ n + 1 := by
-    have := Nat.log_le_self 2 n
-    simp only [logSpace]; omega
+  have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
   have hVQ : v ≤ Q * (n + 1) ^ 1 + 0 := by
     have hW : K * logSpace n ≤ K * (n + 1) := Nat.mul_le_mul_left K hLn
     have e : Q * (n + 1) ^ 1 + 0 = (4 + 2 * m) * (n + 1) + 2 * m * (K * (n + 1)) := by

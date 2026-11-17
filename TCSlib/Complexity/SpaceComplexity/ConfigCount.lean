@@ -82,6 +82,12 @@ def core (c : Cfg k Bool S x) :
     Option S × Fin (x.length + 2) × (Fin k → ℤ → Option Bool) × (Fin k → ℤ) :=
   (c.state, c.inputPos, c.workTapes, c.workTapePos)
 
+/-- The core records exactly the state, input position, work tapes and work-head
+positions of a configuration, in that order; it omits the output tape. -/
+theorem core_eq (c : Cfg k Bool S x) :
+    core c = (c.state, c.inputPos, c.workTapes, c.workTapePos) := by
+  rfl
+
 /-- The core after a step depends only on the core before it. -/
 lemma core_step (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d) :
     core (tm.step c) = core (tm.step d) := by
@@ -365,23 +371,21 @@ theorem ComputesInTime.of_spaceUsed_le {M : FinTM Bool} {x w : List Bool} {t s :
   classical
   rw [computesInTime_iff] at h ⊢
   obtain ⟨hhalt, hout⟩ := h
-  have hex : ∃ T, (M.tm.runFrom (M.tm.initCfg x) T).state = none := ⟨t, hhalt⟩
-  set T := Nat.find hex with hTdef
-  have hT : (M.tm.runFrom (M.tm.initCfg x) T).state = none := Nat.find_spec hex
-  have hTt : T ≤ t := Nat.find_min' hex hhalt
-  have hmin : ∀ t' < T, (M.tm.runFrom (M.tm.initCfg x) t').state ≠ none :=
-    fun t' ht' => Nat.find_min hex ht'
+  obtain ⟨T, hTt, hmin, heq⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hhalt
+  have hT : (M.tm.runFrom (M.tm.initCfg x) T).state = none :=
+    (congrArg Cfg.state heq).trans hhalt
   -- bounds on heads and nonblank cells up to time `t`
   have hbound : ∀ t' ≤ t, ∀ i, |(M.tm.runFrom (M.tm.initCfg x) t').workTapePos i| ≤ s ∧
       ∀ z, (M.tm.runFrom (M.tm.initCfg x) t').workTapes i z ≠ none → |z| ≤ s := by
     intro t' ht' i
-    have hcard : (M.tm.visitedByTapeHead (M.tm.initCfg x) t i).card ≤ s :=
-      (M.tm.spaceUsedByTape_le_spaceUsed _ t i).trans hs
+    have hcard : (M.tm.visitedByTapeHead (M.tm.initCfg x) t i).card ≤ s := by
+      simpa only [MultiTapeTM.spaceUsedByTape_eq_card] using
+        (M.tm.spaceUsedByTape_le_spaceUsed _ t i).trans hs
     have hmem : ∀ z ∈ M.tm.visitedByTapeHead (M.tm.initCfg x) t i, |z| ≤ s := fun z hz =>
       ((M.tm.abs_pos_lt_card_visited x t i hz).trans_le (by exact_mod_cast hcard)).le
     refine ⟨hmem _ ?_, fun z hz => hmem z ?_⟩
-    · simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range]
-      exact ⟨t', by omega, rfl⟩
+    · exact (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mpr ⟨t', ht', rfl⟩
     · exact M.tm.visitedByTapeHead_mono _ ht' i (M.tm.mem_visited_of_ne_none x t' i z hz)
   -- injectivity of the code map on times before `T`
   have hinj : Set.InjOn (fun t' => coreCode s (M.tm.runFrom (M.tm.initCfg x) t'))
@@ -405,8 +409,8 @@ theorem ComputesInTime.of_spaceUsed_le {M : FinTM Bool} {x w : List Bool} {t s :
       M.tm.runFrom (M.tm.initCfg x) T := by
     rw [show M.configBound x.length s = T + (M.configBound x.length s - T) by omega,
       runFrom_add, runFrom_of_halt _ hT]
-  have hfin' : M.tm.runFrom (M.tm.initCfg x) t = M.tm.runFrom (M.tm.initCfg x) T := by
-    rw [show t = T + (t - T) by omega, runFrom_add, runFrom_of_halt _ hT]
+  have hfin' : M.tm.runFrom (M.tm.initCfg x) t = M.tm.runFrom (M.tm.initCfg x) T :=
+    heq.symm
   rw [hfin]
   exact ⟨hT, by rw [← hfin']; exact hout⟩
 

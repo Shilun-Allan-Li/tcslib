@@ -273,22 +273,32 @@ with a valid arrival tag at the endpoint. Completed outputs are preserved
 and a halted source stays absorbed; `t = 0` and the empty buffered word
 are instances, not exceptions.
 
-**Proof sketch.** Induct on `t` and chain `vhostEmitTM_step`, exactly as
-`Turing.FinTM.bufferedSecondCfg_run` chains its step lemma. -/
+**Proof sketch.** Use `vhostEmitTM_step` to show that times with a matching
+encoded source configuration and valid tag are closed under successor. The
+general invariant iterator propagates the initial correspondence to every time. -/
 theorem vhostEmitTM_runFrom (M : MultiTapeTM m Bool S) (c : Cfg m Bool S y)
     (b : Bool) (hb : FinTM.VirtualTag c.inputPos b) (p : Fin (x.length + 2))
     (pre : List Bool) (t : ℕ) :
     ∃ b', FinTM.VirtualTag (M.runFrom c t).inputPos b' ∧
       (vhostEmitTM M).runFrom (vhostCfg c b p pre) t =
         vhostCfg (M.runFrom c t) b' p pre := by
-  induction t with
-  | zero => exact ⟨b, hb, rfl⟩
-  | succ t ih =>
-    obtain ⟨b', hb', he⟩ := ih
-    obtain ⟨b'', hb'', he'⟩ := vhostEmitTM_step M _ b' hb' p pre
-    refine ⟨b'', ?_, ?_⟩
-    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb''
+  let P : Set ℕ := {u | ∃ tag, FinTM.VirtualTag (M.runFrom c u).inputPos tag ∧
+    (vhostEmitTM M).runFrom (vhostCfg c b p pre) u =
+      vhostCfg (M.runFrom c u) tag p pre}
+  have preserve : Set.MapsTo (fun u : ℕ => u + 1) P P := by
+    intro u hu
+    obtain ⟨tag, htag, he⟩ := hu
+    obtain ⟨tag', htag', he'⟩ := vhostEmitTM_step M _ tag htag p pre
+    refine ⟨tag', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using htag'
     · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
+  have initial : 0 ∈ P := by
+    refine ⟨b, ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_zero] using hb
+    · simp only [MultiTapeTM.runFrom_zero]
+  have endpoint := preserve.iterate t initial
+  change t ∈ P
+  simpa only [add_right_iterate, nsmul_eq_mul, mul_one, zero_add] using endpoint
 
 /-- Bank tape `i` of the forwarding host visits exactly the cells the
 source's tape `i` visits, at every horizon.

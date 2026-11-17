@@ -177,44 +177,45 @@ theorem arm_run (A : ARM m d Λ) (l₀ : Λ) (oracle : Fin d → List Bool → B
       fun l' v' hs hsim => inv_append A l₀ oracle D q0 B W _ _ hsim out b (cont l' v' hs)
     cases hA : A l with
     | inc r l' =>
-      exact step _ _ (by simp [astep, hA]) (sim_inc A l₀ oracle l l' r hA v out W (hb0 r))
+      exact step _ _ (by simp [astep_inc hA]) (sim_inc A l₀ oracle l l' r hA v out W (hb0 r))
     | dec r l' =>
-      exact step _ _ (by simp [astep, hA]) (sim_dec A l₀ oracle l l' r hA v out W (hlen r))
+      exact step _ _ (by simp [astep_dec hA]) (sim_dec A l₀ oracle l l' r hA v out W (hlen r))
     | clr r l' =>
-      exact step _ _ (by simp [astep, hA]) (sim_clr A l₀ oracle l l' r hA v out W (hlen r))
+      exact step _ _ (by simp [astep_clr hA]) (sim_clr A l₀ oracle l l' r hA v out W (hlen r))
     | half r l' =>
-      exact step _ _ (by simp [astep, hA]) (sim_half A l₀ oracle l l' r hA v out W (hlen r))
+      exact step _ _ (by simp [astep_half hA]) (sim_half A l₀ oracle l l' r hA v out W (hlen r))
     | jz r l₁ l₀' =>
-      exact step _ _ (by simp [astep, hA]) (sim_jz A l₀ oracle l l₁ l₀' r hA v out W hW0)
+      exact step _ _ (by simp [astep_jz hA]) (sim_jz A l₀ oracle l l₁ l₀' r hA v out W hW0)
     | jodd r l₁ l₀' =>
-      exact step _ _ (by simp [astep, hA]) (sim_jodd A l₀ oracle l l₁ l₀' r hA v out W hW0)
+      exact step _ _ (by simp [astep_jodd hA]) (sim_jodd A l₀ oracle l l₁ l₀' r hA v out W hW0)
     | jeq r s' l₁ l₀' =>
       have hrs : r ≠ s' := by simpa [Pre, hA] using hp0
-      exact step _ _ (by simp [astep, hA])
+      exact step _ _ (by simp [astep_jeq hA])
         (sim_jeq A l₀ oracle l l₁ l₀' r s' hrs hA v out W (hlen r))
     | jeqIn r l₁ l₀' =>
       have hx : ValidPlain x := by simpa [Pre, hA] using hp0
-      exact step _ _ (by simp [astep, hA]) (sim_jeqIn A l₀ oracle l l₁ l₀' r hA v out W (hlen r) hx)
+      exact step _ _ (by simp [astep_jeqIn hA])
+        (sim_jeqIn A l₀ oracle l l₁ l₀' r hA v out W (hlen r) hx)
     | jeqFst r l₁ l₀' =>
       have hx : ValidPair x := by simpa [Pre, hA] using hp0
-      exact step _ _ (by simp [astep, hA])
+      exact step _ _ (by simp [astep_jeqFst hA])
         (sim_jeqFst A l₀ oracle l l₁ l₀' r hA v out W (hlen r) hx)
     | jeqSnd r l₁ l₀' =>
       have hx : ValidPair x := by simpa [Pre, hA] using hp0
-      exact step _ _ (by simp [astep, hA])
+      exact step _ _ (by simp [astep_jeqSnd hA])
         (sim_jeqSnd A l₀ oracle l l₁ l₀' r hA v out W (hlen r) hx)
     | ret b' =>
-      exact haltW b' (sim_ret A l₀ oracle l b' hA v out W hW0) (halt b' (by simp [astep, hA]))
+      exact haltW b' (sim_ret A l₀ oracle l b' hA v out W hW0) (halt b' (by simp [astep_ret hA]))
     | valP r l' =>
       obtain ⟨s1, s2⟩ := sim_valP A l₀ oracle l l' r hA v out W hW0
       by_cases hv : ValidPlain x
-      · exact step _ _ (by simp [astep, hA, hv]) (s1 hv)
-      · exact haltW false (s2 hv) (halt false (by simp [astep, hA, hv]))
+      · exact step _ _ (by simp [astep_valP hA, hv]) (s1 hv)
+      · exact haltW false (s2 hv) (halt false (by simp [astep_valP hA, hv]))
     | valQ r l' =>
       obtain ⟨s1, s2⟩ := sim_valQ A l₀ oracle l l' r hA v out W hW0
       by_cases hv : ValidPair x
-      · exact step _ _ (by simp [astep, hA, hv]) (s1 hv)
-      · exact haltW false (s2 hv) (halt false (by simp [astep, hA, hv]))
+      · exact step _ _ (by simp [astep_valQ hA, hv]) (s1 hv)
+      · exact haltW false (s2 hv) (halt false (by simp [astep_valQ hA, hv]))
     | call j md args l₁ l₀' =>
       have hpc : args.Nodup ∧ CleanRun D (q0 j)
           (vword (callSegs ⟨j, md, args, l₁, l₀'⟩ x (fun r => Nat.bits (v r))))
@@ -222,7 +223,7 @@ theorem arm_run (A : ARM m d Λ) (l₀ : Λ) (oracle : Fin d → List Bool → B
         simpa [Pre, hA] using hp0
       have h1s := sim_call (x := x) A l₀ oracle l l₁ l₀' j md args hA v out
       obtain ⟨T, f1, f2, f3, hm⟩ := cont (if oracle j (vword (callSegs ⟨j, md, args, l₁, l₀'⟩ x
-        (fun r => Nat.bits (v r)))) then l₁ else l₀') v (by simp [astep, hA])
+        (fun r => Nat.bits (v r)))) then l₁ else l₀') v (by simp [astep_call hA])
       refine ⟨1 + T, by rw [rrun_add, h1s]; exact f1, by rw [rrun_add, h1s]; exact f2,
         by rw [rrun_add, h1s]; exact f3, fun t ht => ?_⟩
       rcases Nat.lt_or_ge t 1 with h | h

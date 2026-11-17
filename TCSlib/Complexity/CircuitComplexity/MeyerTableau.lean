@@ -412,12 +412,10 @@ theorem incFixed_enumWord (w v : ℕ) (hv : v + 1 < 2 ^ w) :
         show (2 * k + 1) / 2 = k by omega, show (2 * k + 1 + 1) / 2 = k + 1 by omega]
       simp [incFixed, ih k (by rw [pow_succ] at hv; omega)]
 
-/-- Increment overflows exactly on the all-`true` word. -/
-theorem incFixed_eq_none_iff (u : List Bool) : incFixed u = none ↔ u = List.replicate u.length true := by
-  induction u with
-  | nil => simp [incFixed]
-  | cons b u ih =>
-    cases b <;> simp [incFixed, ih, List.replicate_succ]
+/-- Increment overflows exactly on the all-`true` word: `Turing.incFixed_eq_none_iff_replicate`,
+kept under this name for this file's consumers. -/
+theorem incFixed_eq_none_iff (u : List Bool) : incFixed u = none ↔ u = List.replicate u.length true :=
+  incFixed_eq_none_iff_replicate u
 
 /-- Appending zeros at the high end keeps the value. -/
 theorem ctrVal_append_zeros (l : List Bool) (k : ℕ) :
@@ -433,8 +431,7 @@ theorem ctrVal_append_zeros (l : List Bool) (k : ℕ) :
 width-`w` word of `j`. -/
 theorem bits_pad (w j : ℕ) (hj : j < 2 ^ w) :
     Nat.bits j ++ List.replicate (w - (Nat.bits j).length) false = enumWord w j := by
-  have hlen : (Nat.bits j).length ≤ w := by
-    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hj
+  have hlen : (Nat.bits j).length ≤ w := Complexity.LogProg.length_bits_le hj
   have h := enumWord_ctrVal (Nat.bits j ++ List.replicate (w - (Nat.bits j).length) false)
   rw [ctrVal_append_zeros, ctrVal_bits] at h
   simp only [List.length_append, List.length_replicate] at h

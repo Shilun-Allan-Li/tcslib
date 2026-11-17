@@ -27,6 +27,8 @@ verifier.
 * `Complexity.transduce` — the string function of a transducer with transition `δ` and
   emission `o`.
 * `Complexity.transducerTM` — the machine running it.
+* `Complexity.transducerFinalTM` — the machine with a final emission: at the right end it
+  also emits one optional bit depending on the state reached.
 
 ## Main results
 
@@ -35,6 +37,8 @@ verifier.
 * `Complexity.transducerTM_computes` — the machine computes the transducer's function
   within `|x| + 1` steps.
 * `Complexity.polyTimeComputable_transduce` — hence it is in FP.
+* `Complexity.transducerFinalTM_computes`, `Complexity.polyTimeComputable_transduce_final` —
+  the same for a transducer with a final emission.
 
 ## References
 
@@ -125,8 +129,7 @@ theorem transducer_run [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)
       omega
     have hsym : cfg.inputSymbol = none := by
       rw [FinTM.inputSymbol_at cfg i hi hp]; simp [hix]
-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     rw [hq]
     simp only
@@ -181,5 +184,112 @@ theorem polyTimeComputable_transduce [Fintype σ] [DecidableEq σ] (δ : σ → 
   polyTimeComputable_of_linear
     ⟨transducerTM δ o q₀, 1, fun x => by
       simpa only [Nat.one_mul] using transducerTM_computes δ o q₀ x⟩
+
+/-! ### Transducers with a final emission -/
+
+/-- **The transducer machine with a final emission**: as `transducerTM`, but its halting
+transition at the right blank also emits `f q` for the control state `q` reached there. -/
+def transducerFinalTM [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)
+    (o : σ → Bool → Option Bool) (f : σ → Option Bool) (q₀ : σ) : FinTM Bool where
+  k := 0
+  State := σ
+  tm := {
+    q₀ := q₀
+    tr := fun q inp _ => match inp with
+      | some b => ⟨.pos, Fin.elim0, o q b, some (δ q b)⟩
+      | none => ⟨0, Fin.elim0, f q, none⟩ }
+
+/-- The final-emission machine in state `q` just before input bit `i`, having emitted `out`. -/
+private def finalCfg (x : List Bool) (q : σ) (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
+    Cfg 0 Bool σ x :=
+  ⟨some q, ⟨i + 1, by omega⟩, Fin.elim0, Fin.elim0, out⟩
+
+/-- Before the right end, one step consumes input bit `i` and appends its emission. -/
+private lemma transducerFinalTM_step [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)
+    (o : σ → Bool → Option Bool) (f : σ → Option Bool) (q₀ : σ)
+    (x : List Bool) (q : σ) (i : ℕ) (hi : i < x.length) (out : List Bool) :
+    (transducerFinalTM δ o f q₀).tm.step (finalCfg x q i hi.le out) =
+      finalCfg x (δ q x[i]) (i + 1) hi (out ++ (o q x[i]).toList) := by
+  have hin : (finalCfg x q i hi.le out).inputSymbol = some x[i] := by
+    rw [FinTM.inputSymbol_at _ i hi.le rfl, List.getElem?_eq_getElem hi]
+  rw [MultiTapeTM.step_of_some (q := q) rfl, hin]
+  apply Cfg.ext_zero_tapes
+  · rw [Action.apply_state]; rfl
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_pos_of_ne_right _ (show i + 1 ≠ x.length + 1 by omega)
+  · rw [Action.apply_output]; rfl
+
+/-- At the right end, one step halts and appends the final emission. -/
+private lemma transducerFinalTM_step_end [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)
+    (o : σ → Bool → Option Bool) (f : σ → Option Bool) (q₀ : σ)
+    (x : List Bool) (q : σ) (i : ℕ) (hi : i ≤ x.length) (he : i = x.length) (out : List Bool) :
+    ((transducerFinalTM δ o f q₀).tm.step (finalCfg x q i hi out)).state = none ∧
+      ((transducerFinalTM δ o f q₀).tm.step (finalCfg x q i hi out)).output =
+        out ++ (f q).toList := by
+  have hin : (finalCfg x q i hi out).inputSymbol = none := by
+    rw [FinTM.inputSymbol_at _ i hi rfl, List.getElem?_eq_none (by omega)]
+  rw [MultiTapeTM.step_of_some (q := q) rfl, hin, Action.apply_state, Action.apply_output]
+  exact ⟨rfl, rfl⟩
+
+/-- From bit `|pre|` of `x = pre ++ rest` in state `q`, the final-emission machine halts after
+`|rest| + 1` steps, having appended `transduce δ o q rest` and then `f (rest.foldl δ q)`.
+
+**Proof sketch.** Induction on the unread suffix: an input bit is one step appending its
+emission (`transducerFinalTM_step`); the right blank is the halting step appending the final
+emission (`transducerFinalTM_step_end`). -/
+private lemma transducerFinalTM_run [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)
+    (o : σ → Bool → Option Bool) (f : σ → Option Bool) (q₀ : σ) (x rest : List Bool) :
+    ∀ pre (hx : x = pre ++ rest) q out,
+      ((transducerFinalTM δ o f q₀).tm.runFrom
+        (finalCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).state = none ∧
+      ((transducerFinalTM δ o f q₀).tm.runFrom
+        (finalCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).output =
+          out ++ (transduce δ o q rest ++ (f (rest.foldl δ q)).toList) := by
+  induction rest with
+  | nil =>
+    intro pre hx q out
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one, transduce_nil,
+      List.nil_append, List.foldl_nil]
+    exact transducerFinalTM_step_end δ o f q₀ x q pre.length _ (by simp [hx]) out
+  | cons b rest ih =>
+    intro pre hx q out
+    have hi : pre.length < x.length := by simp [hx]
+    have hb : x[pre.length] = b := by simp [hx]
+    have hs := transducerFinalTM_step δ o f q₀ x q pre.length hi out
+    rw [hb] at hs
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs, transduce_cons, List.foldl_cons]
+    simpa only [List.length_append, List.length_singleton, List.append_assoc] using
+      ih (pre ++ [b]) (by simpa [List.append_assoc] using hx) (δ q b) (out ++ (o q b).toList)
+
+/-- **The final-emission machine computes its function** within `|x| + 1` steps: it outputs
+`transduce δ o q₀ x` followed by the final emission `f` of the state `x.foldl δ q₀` reached at
+the right end.
+
+**Proof sketch.** The initial configuration is the machine's configuration before bit `0`
+with empty output; the run lemma over the whole input gives the halt and the output. -/
+theorem transducerFinalTM_computes [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)
+    (o : σ → Bool → Option Bool) (f : σ → Option Bool) (q₀ : σ) :
+    (transducerFinalTM δ o f q₀).ComputesFunInTime
+      (fun x => transduce δ o q₀ x ++ (f (x.foldl δ q₀)).toList) fun n => n + 1 := by
+  refine (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_
+  apply (FinTM.computesInTime_iff _ _ _ _).mpr
+  have hi : (transducerFinalTM δ o f q₀).tm.initCfg x = finalCfg x q₀ 0 (Nat.zero_le _) [] := by
+    rw [MultiTapeTM.initCfg_eq]
+    apply Cfg.ext_zero_tapes
+    · rw [Cfg.init_state]; rfl
+    · rw [Cfg.init_inputPos]; rfl
+    · rw [Cfg.init_output]; rfl
+  rw [hi]
+  simpa only [List.length_nil, List.nil_append] using
+    transducerFinalTM_run δ o f q₀ x x [] (by simp) q₀ []
+
+/-- A one-pass transducer with a final emission computes a polynomial-time function:
+`x ↦ transduce δ o q₀ x ++ (f (x.foldl δ q₀)).toList` is in FP. -/
+theorem polyTimeComputable_transduce_final [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)
+    (o : σ → Bool → Option Bool) (f : σ → Option Bool) (q₀ : σ) :
+    PolyTimeComputable (fun x => transduce δ o q₀ x ++ (f (x.foldl δ q₀)).toList) :=
+  polyTimeComputable_of_linear ⟨transducerFinalTM δ o f q₀, 1, by
+    simpa only [Nat.one_mul] using transducerFinalTM_computes δ o f q₀⟩
 
 end Complexity

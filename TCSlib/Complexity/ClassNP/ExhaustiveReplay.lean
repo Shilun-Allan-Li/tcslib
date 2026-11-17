@@ -8,6 +8,8 @@ import TCSlib.Complexity.TuringMachine.NDCodes
 import TCSlib.Complexity.TuringMachine.ChoiceReplay
 import TCSlib.Complexity.TuringMachine.Build.StepClock
 import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.CfgFacts
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -46,23 +48,20 @@ namespace Turing
 /-! ### The construction of the exhaustive replay (the `xr_` privates)
 
 The semantic and arithmetic parts of the exhaustive replay, read through the published ND
-semantics only: no branch halts at depth `0`; a branch of length `|w|` stays within the
+semantics only (that no branch halts at depth `0` is the published
+`Turing.NDTM.not_haltsWithin_zero`): a branch of length `|w|` stays within the
 radius-`|w|` window; at an all-halting depth `L ≤ T` acceptance within `L` and within `T`
 agree; the first all-halting depth exists; the ledger's shape. Then two generic tools for the
 machine: the translation of work tapes (a branch started on blank tapes at displaced heads is
 the branch from `initCfg`, translated), and the first arrival at a stationary anchor (the
 phase host's guard for every leaf row of this file). -/
 
-/-- No branch of length `0` has halted: `Cfg.init` is live. -/
-private theorem xr_not_haltsWithin_zero (N : FinNDTM Bool) (z : List Bool) :
-    ¬ N.tm.HaltsWithin z 0 := by
-  intro h
-  have h0 := NDTM.haltsWithin_iff.mp h [] rfl
-  rw [NDTM.runWith_nil, NDTM.initCfg_eq, Cfg.init_state] at h0
-  exact Option.some_ne_none _ h0
-
 /-- One step from the radius-`s` window stays in the radius-`s + 1` window, with the output
-growing by at most one symbol. -/
+growing by at most one symbol.
+
+**Proof sketch.** The window part is `Turing.Cfg.InWindow.mono` for a halted configuration and
+`Turing.Cfg.InWindow.apply_of_lt` for a step, since every head is strictly inside radius `s + 1`;
+both read through `Turing.Cfg.inWindow_iff`. A step's action emits at most one symbol. -/
 private theorem xr_window_stepWith {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S)
     (b : Bool) (c : Cfg k Bool S x) (s : ℕ)
     (hpos : ∀ i, |c.workTapePos i| ≤ (s : ℤ))
@@ -71,31 +70,22 @@ private theorem xr_window_stepWith {k : ℕ} {S : Type} {x : List Bool} (tm : ND
     (∀ i, |(tm.stepWith b c).workTapePos i| ≤ ((s + 1 : ℕ) : ℤ)) ∧
     (∀ i (p : ℤ), ((s + 1 : ℕ) : ℤ) < |p| → (tm.stepWith b c).workTapes i p = none) ∧
     (tm.stepWith b c).output.length ≤ s + 1 := by
+  have hc : c.InWindow s := Cfg.inWindow_iff.mpr ⟨hpos, hblank⟩
   cases hq : c.state with
   | none =>
     rw [NDTM.stepWith_of_halt hq]
-    refine ⟨fun i => (hpos i).trans (by push_cast; omega), fun i p hp => hblank i p ?_, by omega⟩
-    push_cast at hp; linarith
+    exact ⟨(Cfg.inWindow_iff.mp (hc.mono (Nat.le_succ s))).1,
+      (Cfg.inWindow_iff.mp (hc.mono (Nat.le_succ s))).2, by omega⟩
   | some q =>
     rw [NDTM.stepWith_of_some hq]
-    refine ⟨fun i => ?_, fun i p hp => ?_, ?_⟩
-    · have h1 := workTapePos_apply_le (tm.tr b q c.inputSymbol c.workTapeSymbols) c i
-      have h2 := hpos i
-      rw [abs_le] at h1 h2 ⊢
-      push_cast
-      constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
-    · rw [Action.apply_workTapes]
-      have h2 := hpos i
-      have hp' : (s : ℤ) < |p| := by push_cast at hp; linarith
-      have hne : p ≠ c.workTapePos i := by
-        rintro rfl
-        exact absurd h2 (not_le.mpr hp')
-      rw [Function.update_of_ne hne]
-      exact hblank i p hp'
-    · rw [Action.apply_output, List.length_append]
-      have : (tm.tr b q c.inputSymbol c.workTapeSymbols).output.toList.length ≤ 1 := by
-        cases (tm.tr b q c.inputSymbol c.workTapeSymbols).output <;> simp
-      omega
+    have hw := Cfg.inWindow_iff.mp (hc.apply_of_lt (s' := s + 1)
+      (fun i => by have h := abs_le.mp (hpos i); rw [abs_lt]; push_cast; constructor <;> omega)
+      (Nat.le_succ s) (tm.tr b q c.inputSymbol c.workTapeSymbols))
+    refine ⟨hw.1, hw.2, ?_⟩
+    rw [Action.apply_output, List.length_append]
+    have : (tm.tr b q c.inputSymbol c.workTapeSymbols).output.toList.length ≤ 1 := by
+      cases (tm.tr b q c.inputSymbol c.workTapeSymbols).output <;> simp
+    omega
 
 /-- After a branch of length `|w|` from the initial configuration, every work head lies within
 `|w|` of its origin, every cell beyond radius `|w|` is blank, and the output has length at most
@@ -130,19 +120,12 @@ private theorem xr_window_runWith {k : ℕ} {S : Type} (tm : NDTM k Bool S) (z w
     simpa only [List.length_cons, Nat.add_assoc, Nat.add_comm 1] using this
 
 /-- At an all-halting depth `L ≤ T`, acceptance within `L` and within `T` agree: one direction
-is monotonicity, the other truncates an accepting word of length `T` at `L`. -/
+is monotonicity, the other truncates an accepting word of length `T` at `L`
+(`Turing.FinNDTM.AcceptsWithin.iff_of_haltsWithin`). -/
 private theorem xr_accepts_iff_of_halts (N : FinNDTM Bool) (z : List Bool) {L T : ℕ}
     (hL : N.tm.HaltsWithin z L) (hLT : L ≤ T) :
-    N.AcceptsWithin z L ↔ N.AcceptsWithin z T := by
-  refine ⟨fun h => h.mono hLT, fun h => ?_⟩
-  obtain ⟨w, hw, hhalt, hout⟩ := FinNDTM.acceptsWithin_iff.mp h
-  have htake : (w.take L).length = L := by rw [List.length_take, hw]; omega
-  have hstop := NDTM.haltsWithin_iff.mp hL (w.take L) htake
-  have hsplit : N.tm.runWith w (N.tm.initCfg z) = N.tm.runWith (w.take L) (N.tm.initCfg z) := by
-    conv_lhs => rw [← List.take_append_drop L w]
-    rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hstop]
-  rw [hsplit] at hout
-  exact FinNDTM.acceptsWithin_iff.mpr ⟨w.take L, htake, hstop, hout⟩
+    N.AcceptsWithin z L ↔ N.AcceptsWithin z T :=
+  (FinNDTM.AcceptsWithin.iff_of_haltsWithin hL hLT).symm
 
 /-- The first all-halting depth exists below any all-halting bound, is positive, and answers
 as the bound does: the deepening terminates by depth `T`, never at depth `0`. -/
@@ -156,7 +139,7 @@ private theorem xr_first_depth (N : FinNDTM Bool) (z : List Bool) (T : ℕ)
     fun L' hL' => Nat.find_min hex hL', xr_accepts_iff_of_halts N z (Nat.find_spec hex)
       (Nat.find_min' hex hT)⟩
   rcases Nat.eq_zero_or_pos (Nat.find hex) with h0 | h0
-  · exact absurd (h0 ▸ Nat.find_spec hex) (xr_not_haltsWithin_zero N z)
+  · exact absurd (h0 ▸ Nat.find_spec hex) (NDTM.not_haltsWithin_zero N.tm z)
   · exact h0
 
 /-- The ledger's shape, with two steps of slack for the dispatch and the answer:
@@ -195,26 +178,6 @@ private def xr_shift {k : ℕ} {S : Type} {x : List Bool} (δ : Fin k → ℤ) (
     Cfg k Bool S x :=
   ⟨c.state, c.inputPos, fun i p => c.workTapes i (p - δ i), fun i => c.workTapePos i + δ i,
     c.output⟩
-
-/-- Two configurations with the same input head read the same input symbol. -/
-private theorem xr_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
-    (c : Cfg k Bool S x) (c' : Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :
-    c.inputSymbol = c'.inputSymbol := by
-  by_cases h0 : c.inputPos.val = 0
-  · have hc : c.inputPos = 0 := by
-      apply Fin.ext
-      rw [h0]
-      simp
-    have hc' : c'.inputPos = 0 := by
-      apply Fin.ext
-      rw [← h, h0]
-      simp
-    rw [Cfg.inputSymbol_of_zero hc, Cfg.inputSymbol_of_zero hc']
-  · by_cases hend : c.inputPos.val = x.length + 1
-    · rw [Cfg.inputSymbol_of_end hend, Cfg.inputSymbol_of_end (by omega)]
-    · have hlt : c.inputPos.val - 1 < x.length := by have := c.inputPos.isLt; omega
-      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) hlt,
-        inputSymbolInner (c.inputPos.val - 1) (by omega) hlt]
 
 /-- A translated configuration reads the same work symbols. -/
 private theorem xr_workTapeSymbols_shift {k : ℕ} {S : Type} {x : List Bool} (δ : Fin k → ℤ)
@@ -261,7 +224,7 @@ private theorem xr_stepWith_shift {k : ℕ} {S : Type} {x : List Bool} (N : NDTM
   | some q =>
     rw [NDTM.stepWith_of_some hq,
       NDTM.stepWith_of_some (show (xr_shift δ c).state = some q from hq),
-      xr_inputSymbol_congr (xr_shift δ c) c rfl, xr_workTapeSymbols_shift, xr_apply_shift]
+      Cfg.inputSymbol_congr (xr_shift δ c) c rfl, xr_workTapeSymbols_shift, xr_apply_shift]
 
 /-- A branch commutes with translation: the branch along `w` from a translated configuration
 is the translated branch. -/
@@ -281,39 +244,18 @@ private theorem xr_runFrom_fixed {k : ℕ} {S : Type} {x : List Bool} (tm : Mult
   | zero => exact MultiTapeTM.runFrom_zero
   | succ n ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, hd]
 
-open MultiTapeTM in
-/-- One step of a run. -/
-private theorem xr_runFrom_one {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
-    (d : Cfg k Bool S x) : tm.runFrom d 1 = tm.step d := by
-  rw [runFrom_succ_eq_step', runFrom_zero]
-
 /-- Two steps of a run. -/
 private theorem xr_runFrom_two {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
     (d : Cfg k Bool S x) : tm.runFrom d 2 = tm.step (tm.step d) := by
-  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, xr_runFrom_one, xr_runFrom_one]
+  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_one, MultiTapeTM.runFrom_one]
 
-/-- **The first arrival at a stationary anchor.** If a run reaches `c'` in state `a` at time `T`
-and `a` is stationary, the first time the state is `a` is at most `T`, reaches `c'` too, and no
-earlier state is `a`: the phase host's guard, for free, from an exact-time run lemma. -/
-private theorem xr_firstArrival {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
-    (a : S) (hstat : ∀ d : Cfg k Bool S x, d.state = some a → tm.step d = d)
-    {c c' : Cfg k Bool S x} {T : ℕ} (h : tm.runFrom c T = c') (hc' : c'.state = some a) :
-    ∃ T' ≤ T, tm.runFrom c T' = c' ∧ ∀ u < T', (tm.runFrom c u).state ≠ some a := by
-  classical
-  have hT' : (tm.runFrom c T).state = some a := by rw [h]; exact hc'
-  have hex : ∃ u, (tm.runFrom c u).state = some a := ⟨T, hT'⟩
-  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_, fun u hu => Nat.find_min hex hu⟩
-  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
-  rw [xr_runFrom_fixed tm _ (hstat _ (Nat.find_spec hex))] at hsplit
-  exact hsplit.symm.trans h
 /-! #### The leaf rows
 
 This file's own rows, on `Bool` tapes, each exiting at a stationary anchor `done b`: the
 ruler-driven pass (the window clear's engine), the head rewind to a word's origin, the extension
 of a word by one `false`, the capture test (which also clears the captured output), the input
 rewind and the answer. Their run lemmas give exact times and exact configurations; the phase
-host's guard comes from `xr_firstArrival`. -/
+host's guard comes from `xr_firstArrival'`. -/
 
 /-- The control of the leaf rows. -/
 private inductive xr_St where
@@ -459,7 +401,7 @@ private theorem xr_back_run {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool x
     have hread : d.workTapeSymbols r = none := by
       rw [Cfg.workTapeSymbols_eq, hpos]
       simpa using hleft
-    rw [show (0 : ℕ) + 1 = 1 from rfl, xr_runFrom_one, MultiTapeTM.step_of_some hd,
+    rw [show (0 : ℕ) + 1 = 1 from rfl, MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hd,
       hnone b _ _ hread, xr_mv1_apply_none]
     congr 1
     · symm
@@ -685,35 +627,14 @@ private theorem xr_extendTM_run {K : ℕ} {x : List Bool} (r : Fin K) (u : List 
 
 /-! #### Buffer-tape facts needed by the rows (from the published equations only) -/
 
-/-- A stored word is blank at every negative cell. -/
-private theorem xr_bufferTape_neg (v : List Bool) (p : ℤ) (hp : p < 0) :
-    FinTM.bufferTape v p = none := by
-  induction v using List.reverseRecOn with
-  | nil => rw [FinTM.bufferTape_nil]
-  | append_singleton L b ih =>
-    rw [FinTM.bufferTape_append, Function.update_of_ne (by omega)]
-    exact ih
-
-/-- A stored word is blank at and beyond its length. -/
-private theorem xr_bufferTape_ge (v : List Bool) (p : ℤ) (hp : (v.length : ℤ) ≤ p) :
-    FinTM.bufferTape v p = none := by
-  obtain ⟨n, rfl⟩ : ∃ n : ℕ, p = n := ⟨p.toNat, by omega⟩
-  rw [FinTM.bufferTape_nat, List.getElem?_eq_none_iff]
-  omega
-
-/-- A stored word is blank exactly off `[0, |v|)`. -/
+/-- A stored word is blank exactly off `[0, |v|)` (`FinTM.bufferTape_eq`). -/
 private theorem xr_bufferTape_eq_none_iff (v : List Bool) (p : ℤ) :
     FinTM.bufferTape v p = none ↔ p < 0 ∨ (v.length : ℤ) ≤ p := by
-  constructor
-  · intro h
-    by_contra hc
-    push_neg at hc
-    obtain ⟨n, rfl⟩ : ∃ n : ℕ, p = n := ⟨p.toNat, by omega⟩
-    rw [FinTM.bufferTape_nat, List.getElem?_eq_none_iff] at h
+  rw [FinTM.bufferTape_eq]
+  split_ifs with h
+  · rw [List.getElem?_eq_none_iff]
     omega
-  · rintro (h | h)
-    · exact xr_bufferTape_neg v p h
-    · exact xr_bufferTape_ge v p h
+  · exact ⟨fun _ => Or.inl (by omega), fun _ => rfl⟩
 
 /-- A stored word is non-blank on `[0, |v|)`. -/
 private theorem xr_bufferTape_ne_none (v : List Bool) (i : ℕ) (hi : i < v.length) :
@@ -898,7 +819,7 @@ private theorem xr_passTM_run {K : ℕ} {x : List Bool} (j r : Fin K) (hjr : j �
     (by
       dsimp only
       rw [Function.update_of_ne (Ne.symm hjr), hr]
-      exact xr_bufferTape_neg u _ (by omega))
+      exact FinTM.bufferTape_of_neg u (by omega))
   refine ⟨f', ?_, ?_, ?_⟩
   · have hsplit : (xr_passTM K j r dir).runFrom d (2 * u.length + 2) =
         (xr_passTM K j r dir).runFrom
@@ -971,7 +892,7 @@ private theorem xr_test_tail {K : ℕ} {x : List Bool} (r : Fin K) (v : List Boo
     (fun b inp w s hs => by simp [xr_testTM, hs]) (fun b inp w hw => by simp [xr_testTM, hw])
     false 0 v.length d hd (by rw [hpos]; ring)
     (fun i hi => by rw [zero_add, hr]; exact xr_bufferTape_ne_none v i hi)
-    (by rw [hr]; exact xr_bufferTape_neg v _ (by omega)), hr, xr_clear_fun]
+    (by rw [hr]; exact FinTM.bufferTape_of_neg v (by omega)), hr, xr_clear_fun]
 
 /-- **The capture test's contract.** With the output `out` stored at the origin and the head at
 its end, `|out| + 2` steps clear it, return the head to `0`, change nothing else, and stop at
@@ -1090,7 +1011,7 @@ private theorem xr_testTM_run {K : ℕ} {x : List Bool} (r : Fin K) (out : List 
           dsimp only
           rw [Function.update_self, Function.update_self, FinTM.bufferTape_nil]
         rw [show (([] : List Bool) ++ [true]).length + 2 = 2 + 1 from rfl,
-          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
+          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, MultiTapeTM.runFrom_one,
           hstart, hstep2, MultiTapeTM.step_of_some rfl,
           show (xr_testTM K r).tr .aux _ _ =
             xr_act (xr_mv1 r none SignType.pos) (some (.done true)) by
@@ -1145,7 +1066,7 @@ private theorem xr_testTM_run {K : ℕ} {x : List Bool} (r : Fin K) (out : List 
         rw [show (L' ++ [b'] ++ [true]).length + 2 = 2 + 1 + (L'.length + 1) by
             simp only [List.length_append, List.length_singleton]; try omega,
           MultiTapeTM.runFrom_add (tm := xr_testTM K r) d (2 + 1) (L'.length + 1),
-          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
+          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, MultiTapeTM.runFrom_one,
           hstart, hstep2, hstep3,
           xr_test_tail r L' _ rfl (by dsimp only; rw [Function.update_self])
             (by dsimp only; rw [Function.update_self]), hdec]
@@ -1174,7 +1095,7 @@ private def xr_answerTM (K : ℕ) (b : Bool) : MultiTapeTM K Bool xr_St where
 private theorem xr_answerTM_run {K : ℕ} {x : List Bool} (b : Bool) (d : Cfg K Bool xr_St x)
     (q : xr_St) (hd : d.state = some q) :
     (xr_answerTM K b).runFrom d 1 = {d with state := none, output := d.output ++ [b]} := by
-  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hd]
+  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hd]
   apply Cfg.ext
   · exact Action.apply_state _ _
   · exact (Action.apply_inputPos _ _).trans (moveInputPos_zero _)
@@ -1506,6 +1427,26 @@ private theorem xr_replay_state {N : FinNDTM Bool} (z s : List Bool) (h : Fin N.
   rw [hrun, NDTM.withChoiceTape_state, xr_runWith_shift]
   rfl
 
+/-- **The replay's common start.** The shifted initial configuration with the choice word is live
+at `N`'s start state, the budget word is unshifted on the counter, and the replay phase runs as the
+silent embedding of the clock host's run. -/
+private theorem xr_replay_prelude {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD : List Bool)
+    (h : Fin N.k → ℤ) :
+    (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0).state =
+      some N.tm.q₀ ∧
+    (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      FinTM.bufferTape w (0 + p) = FinTM.bufferTape w p) ∧
+    ∀ u, (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u =
+      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
+        (C.H.runFrom (clockCfg (some (C.inj N.tm.q₀))
+          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
+          (FinTM.bufferTape w) 0) u) := by
+  refine ⟨?_, fun p _ _ => by rw [zero_add], fun u => ?_⟩
+  · rw [NDTM.withChoiceTape_state]
+    show (N.tm.initCfg z).state = _
+    rw [NDTM.initCfg_eq, Cfg.init_state]
+  · rw [xr_replayStart_eq, xr_replayTM, embedSilentTM_runFrom _ _ (xr_cap_not_mem N.k)]
+
 /-- **One replay, the `finish` exit.** If the branch along `s` first halts at `τ ≤ |s|`, and the
 budget word `w` has value `|s|`, the replay phase reaches, within `5τ + 2|w| + 2` steps and with no
 earlier exit, the exit `finish none` over `N`'s halted branch configuration, translated by `h`:
@@ -1528,24 +1469,12 @@ private theorem xr_replay_finish {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD :
       ∀ u < T, ∀ r,
         ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.finish r) ∧
         ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.timeout r) := by
-  have hq : (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0).state =
-      some N.tm.q₀ := by
-    rw [NDTM.withChoiceTape_state]
-    show (N.tm.initCfg z).state = _
-    rw [NDTM.initCfg_eq, Cfg.init_state]
-  have hct : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-      FinTM.bufferTape w (0 + p) = FinTM.bufferTape w p := fun p _ _ => by rw [zero_add]
+  obtain ⟨hq, hct, hE⟩ := xr_replay_prelude C z s w wD h
   obtain ⟨T, hT, w', hw', hrun, hguard⟩ := C.spec_finish _ _ hq w (FinTM.bufferTape w) 0 hct τ
     (by rw [hval]; exact hτ) (by rw [xr_replay_state z s h τ hτ]; exact hhalt)
     (fun u hu => by rw [xr_replay_state z s h u (by omega)]; exact hlive u hu)
   obtain ⟨p, hp, -, hrep⟩ := NDTM.replayTM_runFrom N.tm (xr_shift h (N.tm.initCfg z)) s τ hτ
   rw [xr_runWith_shift] at hrep
-  have hE : ∀ u, (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u =
-      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
-        (C.H.runFrom (clockCfg (some (C.inj N.tm.q₀))
-          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
-          (FinTM.bufferTape w) 0) u) := fun u => by
-    rw [xr_replayStart_eq, xr_replayTM, embedSilentTM_runFrom _ _ (xr_cap_not_mem N.k)]
   refine ⟨T, hT, p, hp, w', hw', ?_, fun u hu r => ?_⟩
   · rw [hE, hrun, hrep, xr_embed_eq, xr_wordPatch_buffer w w' hw', List.nil_append]
     rfl
@@ -1573,25 +1502,13 @@ private theorem xr_replay_timeout {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD 
       ∀ u < T, ∀ r,
         ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.finish r) ∧
         ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.timeout r) := by
-  have hq : (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0).state =
-      some N.tm.q₀ := by
-    rw [NDTM.withChoiceTape_state]
-    show (N.tm.initCfg z).state = _
-    rw [NDTM.initCfg_eq, Cfg.init_state]
-  have hct : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-      FinTM.bufferTape w (0 + p) = FinTM.bufferTape w p := fun p _ _ => by rw [zero_add]
+  obtain ⟨hq, hct, hE⟩ := xr_replay_prelude C z s w wD h
   obtain ⟨T, hT, w', hw', hrun, hguard⟩ := C.spec_timeout _ _ hq w (FinTM.bufferTape w) 0 hct
     (fun u hu => by rw [xr_replay_state z s h u (by omega)]; exact hlive u (by omega))
   rw [hval] at hT hrun
   obtain ⟨p, hp, -, hrep⟩ := NDTM.replayTM_runFrom N.tm (xr_shift h (N.tm.initCfg z)) s s.length
     le_rfl
   rw [xr_runWith_shift, List.take_length] at hrep
-  have hE : ∀ u, (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u =
-      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
-        (C.H.runFrom (clockCfg (some (C.inj N.tm.q₀))
-          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
-          (FinTM.bufferTape w) 0) u) := fun u => by
-    rw [xr_replayStart_eq, xr_replayTM, embedSilentTM_runFrom _ _ (xr_cap_not_mem N.k)]
   refine ⟨T, hT, p, hp, w', hw', ?_, fun u hu r => ?_⟩
   · rw [hE, hrun, hrep, xr_embed_eq, xr_wordPatch_buffer w w' hw', List.nil_append,
       NDTM.withChoiceTape_state]
@@ -1620,16 +1537,13 @@ private theorem xr_firstArrival' {k : ℕ} {S : Type} {x : List Bool} (tm : Mult
     (ha : A a) :
     ∃ T' ≤ T, tm.runFrom c T' = c' ∧
       ∀ u < T', ∀ a', (tm.runFrom c u).state = some a' → ¬ A a' := by
-  classical
-  have hT' : ∃ a', (tm.runFrom c T).state = some a' ∧ A a' := ⟨a, by rw [h]; exact hc', ha⟩
-  have hex : ∃ u, ∃ a', (tm.runFrom c u).state = some a' ∧ A a' := ⟨T, hT'⟩
-  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_,
-    fun u hu a' ha' hA => Nat.find_min hex hu ⟨a', ha', hA⟩⟩
-  obtain ⟨a'', ha'', hA''⟩ := Nat.find_spec hex
-  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
-  rw [xr_runFrom_fixed tm _ (hstat _ a'' ha'' hA'')] at hsplit
-  exact hsplit.symm.trans h
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    tm A c c' T
+    (by
+      rintro d ⟨q, hq, hA⟩
+      exact hstat d q hq hA)
+    ⟨a, hc', ha⟩ h
+  exact ⟨t, ht, he, fun u hu a' ha' hA => hcut u hu ⟨a', ha', hA⟩⟩
 
 /-- Every `done` anchor of a leaf row whose table is stationary there is stationary. -/
 private theorem xr_done_stationary {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St)
@@ -1651,26 +1565,13 @@ private theorem xr_cap_val (k : ℕ) : (xr_cap k).val = k + 2 := by
 private theorem xr_dep_val (k : ℕ) : (xr_dep k).val = k + 3 := by
   simp [xr_dep]
 
-private theorem xr_work_ne_choice {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_choice k := by
-  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_choice_val] at this; omega
-private theorem xr_work_ne_ctr {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_ctr k := by
-  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_ctr_val] at this; omega
-private theorem xr_work_ne_cap {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_cap k := by
-  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_cap_val] at this; omega
-private theorem xr_work_ne_dep {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_dep k := by
-  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_dep_val] at this; omega
-private theorem xr_choice_ne_ctr (k : ℕ) : xr_choice k ≠ xr_ctr k := by
-  intro h; have := congrArg Fin.val h; rw [xr_choice_val, xr_ctr_val] at this; omega
-private theorem xr_choice_ne_cap (k : ℕ) : xr_choice k ≠ xr_cap k := by
-  intro h; have := congrArg Fin.val h; rw [xr_choice_val, xr_cap_val] at this; omega
-private theorem xr_choice_ne_dep (k : ℕ) : xr_choice k ≠ xr_dep k := by
-  intro h; have := congrArg Fin.val h; rw [xr_choice_val, xr_dep_val] at this; omega
-private theorem xr_ctr_ne_cap (k : ℕ) : xr_ctr k ≠ xr_cap k := by
-  intro h; have := congrArg Fin.val h; rw [xr_ctr_val, xr_cap_val] at this; omega
-private theorem xr_ctr_ne_dep (k : ℕ) : xr_ctr k ≠ xr_dep k := by
-  intro h; have := congrArg Fin.val h; rw [xr_ctr_val, xr_dep_val] at this; omega
-private theorem xr_cap_ne_dep (k : ℕ) : xr_cap k ≠ xr_dep k := by
-  intro h; have := congrArg Fin.val h; rw [xr_cap_val, xr_dep_val] at this; omega
+/-- `xr_bank_ne` proves that two different banks of `E`'s tape indices are different, by
+comparing their values (`xr_work_val`, …, `xr_dep_val`). -/
+local macro "xr_bank_ne" : tactic =>
+  `(tactic| (apply Fin.ne_of_val_ne
+             simp only [xr_work_val, xr_choice_val, xr_ctr_val, xr_cap_val, xr_dep_val]
+             omega))
+
 private theorem xr_work_injective {k : ℕ} {j j' : Fin k} (h : xr_work k j = xr_work k j') :
     j = j' := by
   apply Fin.ext
@@ -1705,49 +1606,49 @@ private theorem xr_tapes_upd_work {k : ℕ} (wk : Fin k → ℤ → Option Bool)
     · subst hj; rw [Function.update_self, xr_tapes_work, Function.update_self]
     · rw [Function.update_of_ne (fun h => hj (xr_work_injective h)), xr_tapes_work, xr_tapes_work,
         Function.update_of_ne hj]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_choice j)), xr_tapes_choice, xr_tapes_choice]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_ctr j)), xr_tapes_ctr, xr_tapes_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_cap j)), xr_tapes_cap, xr_tapes_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_dep j)), xr_tapes_dep, xr_tapes_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_dep, xr_tapes_dep]
 
 private theorem xr_tapes_upd_choice {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
     (X : ℤ → Option Bool) :
     Function.update (xr_tapes wk ch ctr cp dp) (xr_choice k) X = xr_tapes wk X ctr cp dp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_choice j), xr_tapes_work, xr_tapes_work]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_work, xr_tapes_work]
   · rw [Function.update_self, xr_tapes_choice]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_ctr k)), xr_tapes_ctr, xr_tapes_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_cap k)), xr_tapes_cap, xr_tapes_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_dep k)), xr_tapes_dep, xr_tapes_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_dep, xr_tapes_dep]
 
 private theorem xr_tapes_upd_ctr {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
     (X : ℤ → Option Bool) :
     Function.update (xr_tapes wk ch ctr cp dp) (xr_ctr k) X = xr_tapes wk ch X cp dp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_ctr j), xr_tapes_work, xr_tapes_work]
-  · rw [Function.update_of_ne (xr_choice_ne_ctr k), xr_tapes_choice, xr_tapes_choice]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_choice, xr_tapes_choice]
   · rw [Function.update_self, xr_tapes_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_cap k)), xr_tapes_cap, xr_tapes_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_dep k)), xr_tapes_dep, xr_tapes_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_dep, xr_tapes_dep]
 
 private theorem xr_tapes_upd_cap {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
     (X : ℤ → Option Bool) :
     Function.update (xr_tapes wk ch ctr cp dp) (xr_cap k) X = xr_tapes wk ch ctr X dp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_cap j), xr_tapes_work, xr_tapes_work]
-  · rw [Function.update_of_ne (xr_choice_ne_cap k), xr_tapes_choice, xr_tapes_choice]
-  · rw [Function.update_of_ne (xr_ctr_ne_cap k), xr_tapes_ctr, xr_tapes_ctr]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_ctr, xr_tapes_ctr]
   · rw [Function.update_self, xr_tapes_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_cap_ne_dep k)), xr_tapes_dep, xr_tapes_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_dep, xr_tapes_dep]
 
 private theorem xr_tapes_upd_dep {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
     (X : ℤ → Option Bool) :
     Function.update (xr_tapes wk ch ctr cp dp) (xr_dep k) X = xr_tapes wk ch ctr cp X := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_dep j), xr_tapes_work, xr_tapes_work]
-  · rw [Function.update_of_ne (xr_choice_ne_dep k), xr_tapes_choice, xr_tapes_choice]
-  · rw [Function.update_of_ne (xr_ctr_ne_dep k), xr_tapes_ctr, xr_tapes_ctr]
-  · rw [Function.update_of_ne (xr_cap_ne_dep k), xr_tapes_cap, xr_tapes_cap]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_tapes_cap, xr_tapes_cap]
   · rw [Function.update_self, xr_tapes_dep]
 
 private theorem xr_heads_upd_work {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (j : Fin k)
@@ -1760,37 +1661,37 @@ private theorem xr_heads_upd_work {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp h
     · subst hj; rw [Function.update_self, xr_heads_work, Function.update_self]
     · rw [Function.update_of_ne (fun h => hj (xr_work_injective h)), xr_heads_work, xr_heads_work,
         Function.update_of_ne hj]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_choice j)), xr_heads_choice, xr_heads_choice]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_ctr j)), xr_heads_ctr, xr_heads_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_cap j)), xr_heads_cap, xr_heads_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_dep j)), xr_heads_dep, xr_heads_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_cap, xr_heads_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_dep, xr_heads_dep]
 
 private theorem xr_heads_upd_choice {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
     Function.update (xr_heads hk hch hctr hcp hdp) (xr_choice k) X =
       xr_heads hk X hctr hcp hdp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_choice j), xr_heads_work, xr_heads_work]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_heads_work, xr_heads_work]
   · rw [Function.update_self, xr_heads_choice]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_ctr k)), xr_heads_ctr, xr_heads_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_cap k)), xr_heads_cap, xr_heads_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_dep k)), xr_heads_dep, xr_heads_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_cap, xr_heads_cap]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_dep, xr_heads_dep]
 
 private theorem xr_heads_upd_cap {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
     Function.update (xr_heads hk hch hctr hcp hdp) (xr_cap k) X = xr_heads hk hch hctr X hdp := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_cap j), xr_heads_work, xr_heads_work]
-  · rw [Function.update_of_ne (xr_choice_ne_cap k), xr_heads_choice, xr_heads_choice]
-  · rw [Function.update_of_ne (xr_ctr_ne_cap k), xr_heads_ctr, xr_heads_ctr]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_heads_work, xr_heads_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_ctr, xr_heads_ctr]
   · rw [Function.update_self, xr_heads_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_cap_ne_dep k)), xr_heads_dep, xr_heads_dep]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_dep, xr_heads_dep]
 
 private theorem xr_heads_upd_dep {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
     Function.update (xr_heads hk hch hctr hcp hdp) (xr_dep k) X = xr_heads hk hch hctr hcp X := by
   apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_dep j), xr_heads_work, xr_heads_work]
-  · rw [Function.update_of_ne (xr_choice_ne_dep k), xr_heads_choice, xr_heads_choice]
-  · rw [Function.update_of_ne (xr_ctr_ne_dep k), xr_heads_ctr, xr_heads_ctr]
-  · rw [Function.update_of_ne (xr_cap_ne_dep k), xr_heads_cap, xr_heads_cap]
+  · intro j; rw [Function.update_of_ne (by xr_bank_ne), xr_heads_work, xr_heads_work]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_of_ne (by xr_bank_ne), xr_heads_cap, xr_heads_cap]
   · rw [Function.update_self, xr_heads_dep]
 
 /-- **The catalog rows' result tape.** A row that rewrites the cells `[0, |w|)` of a bank holding
@@ -1824,9 +1725,8 @@ private theorem xr_val_cons (b : Bool) (w : List Bool) :
   simp [xr_val, Nat.ofDigits_cons]
 
 private theorem xr_val_lt (w : List Bool) : xr_val w < 2 ^ w.length := by
-  have := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
-    (by intro x hx; obtain ⟨b, -, rfl⟩ := List.mem_map.mp hx; cases b <;> simp)
-  simpa [xr_val] using this
+  unfold xr_val
+  exact Complexity.LogProg.ofDigits_lt_two_pow w
 
 private theorem xr_val_inj :
     ∀ {w w' : List Bool}, w.length = w'.length → xr_val w = xr_val w' → w = w'
@@ -2058,25 +1958,16 @@ private theorem xr_phase_step {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool
       ⟨some q', c'.inputPos, c'.workTapes, c'.workTapePos, []⟩ := by
   have hstart : (⟨some ⟨i, s₀⟩, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) =
       (⟨some s₀, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z).mapState
-        (Sigma.mk i) := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state]; rfl
-    · rw [Cfg.mapState_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output]
+        (Sigma.mk i) :=
+    (Cfg.mapState_eq_of_fields (⟨some s₀, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z)
+      (Sigma.mk i) _ rfl rfl rfl rfl rfl).symm
   have hhost := (phaseHostTM_run (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C) i _
     c' T h s' hs' q' hred hguard).2
   rw [hstart]
   show (phaseHostTM (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C)).runFrom _
     (T + 1) = _
   rw [hhost]
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, hs']; rfl
-  · rw [Cfg.mapState_inputPos]
-  · funext j p; rw [Cfg.mapState_workTapes]
-  · funext j; rw [Cfg.mapState_workTapePos]
-  · rw [Cfg.mapState_output, hout]
+  exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hs']; rfl) rfl rfl rfl hout
 
 /-! #### One cycle: the phases of one replay, on the host
 
@@ -2165,7 +2056,7 @@ private theorem xr_copy_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool)
         xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape wL) (FinTM.bufferTape [])
           (FinTM.bufferTape wL),
         xr_heads h 0 0 0 0, []⟩ := by
-  obtain ⟨hcfg, hguard, -⟩ := copyTM_run_ofCfg (xr_dep N.k) (xr_ctr N.k) (xr_ctr_ne_dep N.k).symm wL
+  obtain ⟨hcfg, hguard, -⟩ := copyTM_run_ofCfg (xr_dep N.k) (xr_ctr N.k) (by xr_bank_ne) wL
     (⟨some SweepPhase.sweep, 1, xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u)
       (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ :
       Cfg (N.k + 2 + 2) Bool SweepPhase z) rfl
@@ -2204,16 +2095,7 @@ private theorem xr_replay_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Boo
   classical
   by_cases hb : (N.tm.runWith s (N.tm.initCfg z)).state = none
   · -- the branch halts: the `finish` exit at the first halting time
-    have hex : ∃ u, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state = none :=
-      ⟨s.length, by rw [List.take_length]; exact hb⟩
-    set τ := Nat.find hex with hτdef
-    have hτ : τ ≤ s.length := Nat.find_min' hex (by rw [List.take_length]; exact hb)
-    have hhalt : (N.tm.runWith (s.take τ) (N.tm.initCfg z)).state = none := Nat.find_spec hex
-    have hlive : ∀ u < τ, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state ≠ none :=
-      fun u hu => Nat.find_min hex hu
-    have hbτ : N.tm.runWith s (N.tm.initCfg z) = N.tm.runWith (s.take τ) (N.tm.initCfg z) := by
-      conv_lhs => rw [← List.take_append_drop τ s]
-      rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hhalt]
+    obtain ⟨τ, hτ, hhalt, hlive, hbτ⟩ := N.tm.exists_first_halt (N.tm.initCfg z) hb
     obtain ⟨T, hT, p, hp, w', hw', hrun, hguard⟩ :=
       xr_replay_finish C z s wL wL h (by rw [← hval]; rfl) τ hτ hhalt hlive
     refine ⟨T + 1, by omega, p, hp.trans hτ, w', hw', ?_⟩
@@ -2413,7 +2295,7 @@ private theorem xr_pass_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool)
       (∀ p : ℤ, (∃ i : ℕ, i ≤ wL.length ∧ p = hk j + i * (if n.val < 2 then -1 else 1)) →
         f p = none) ∧
       (∀ p, f p = none ∨ f p = wk j p) := by
-  obtain ⟨f, hrun, hblank, hkeep⟩ := xr_passTM_run (xr_work N.k j) (xr_dep N.k) (xr_work_ne_dep j)
+  obtain ⟨f, hrun, hblank, hkeep⟩ := xr_passTM_run (xr_work N.k j) (xr_dep N.k) (by xr_bank_ne)
     (xr_dir n) wL
     (⟨some xr_St.run, ip, xr_tapes wk ch ctr cp (FinTM.bufferTape wL),
       xr_heads hk hch hctr hcp 0, []⟩ : Cfg (N.k + 2 + 2) Bool xr_St z) rfl
@@ -2993,25 +2875,15 @@ private theorem xr_halt_fixed {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool
       Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z) _ 0 MultiTapeTM.runFrom_zero
     xr_St.start rfl ⟨(.halt, a, l), xr_St.start⟩ rfl
     (fun u hu => absurd hu (Nat.not_lt_zero u))).2
-  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] at hhost
+  rw [MultiTapeTM.runFrom_one] at hhost
   have hd' : (⟨some xr_St.start, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ :
       Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z).mapState (Sigma.mk (.halt, a, l)) =
-        d := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, hd]; rfl
-    · rw [Cfg.mapState_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output]
+        d :=
+    Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
   have hd'' : (⟨some xr_St.start, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ :
       Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z).mapState
-        (fun _ => (⟨(.halt, a, l), xr_St.start⟩ : Σ i, xr_PhSt C i)) = d := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, hd]; rfl
-    · rw [Cfg.mapState_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output]
+        (fun _ => (⟨(.halt, a, l), xr_St.start⟩ : Σ i, xr_PhSt C i)) = d :=
+    Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
   rw [hd', hd''] at hhost
   exact hhost
 

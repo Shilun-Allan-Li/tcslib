@@ -629,8 +629,7 @@ private theorem ic_verdictTM_run {K : ℕ} (summary : Fin K) {z : List Bool}
       ∀ u < 1, ∀ verdict : Bool,
         ((ic_verdictTM K summary).runFrom d u).state ≠ some (Sum.inr verdict) := by
   constructor
-  · rw [show 1 = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hd, Action.apply_state]
+  · rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hd, Action.apply_state]
     simp only [ic_verdictTM, hsummary]
     congr 2
     cases halted <;> simp only [Bool.false_and, Bool.true_and, Bool.false_eq_true,

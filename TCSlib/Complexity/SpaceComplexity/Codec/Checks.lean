@@ -12,7 +12,7 @@ set_option autoImplicit false
 /-!
 # The word-level checks of the code languages
 
-What the logspace deciders of the four code languages actually test, as predicates on the
+What the logspace deciders of the five code languages actually test, as predicates on the
 code words: the validity test `Complexity.Codec.ValidChk` of
 `TCSlib.Complexity.SpaceComplexity.Codec.Valid`, plus
 
@@ -21,7 +21,9 @@ code words: the validity test `Complexity.Codec.ValidChk` of
 * for an accepting code: header `(halted, accept)`;
 * for a step: the second word has the right length and final letter, and for one of the two
   choice bits its input position is the moved one and the sliding check of the two chunk
-  regions accepts under the local rule of that bit's action.
+  regions accepts under the local rule of that bit's action;
+* for an edge code: the head flag of some tape is set in the first or the last cell
+  (`Complexity.Codec.EdgeChk`).
 
 Each check recognizes exactly the code words of the corresponding configurations, and so
 decides membership in the code languages on well-shaped inputs.
@@ -30,14 +32,16 @@ Configuration-graph infrastructure; not a result of [AB09].
 
 ## Main definitions
 
-* `Complexity.Codec.InitChk`, `Complexity.Codec.AcceptChk`, `Complexity.Codec.StepChk`.
+* `Complexity.Codec.InitChk`, `Complexity.Codec.AcceptChk`, `Complexity.Codec.StepChk`,
+  `Complexity.Codec.EdgeChk`.
 * `Complexity.Codec.movePos`, `Complexity.Codec.inpOf`, `Complexity.Codec.aI`,
   `Complexity.Codec.Gs` — the arithmetic and finite data of a step check.
 
 ## Main results
 
-* `Complexity.Codec.initChk_iff`, `acceptChk_iff`, `stepChk_iff`.
-* `Complexity.Codec.validLang_iff`, `initLang_iff`, `acceptLang_iff`, `stepLang_iff` —
+* `Complexity.Codec.initChk_iff`, `acceptChk_iff`, `stepChk_iff`, `edgeChk_iff`.
+* `Complexity.Codec.validLang_iff`, `initLang_iff`, `acceptLang_iff`, `stepLang_iff`,
+  `edgeLang_iff` —
   membership of well-shaped inputs in terms of the checks.
 
 ## References
@@ -383,60 +387,137 @@ variable (N) in
 `validLang` is the validity test of `w`. -/
 theorem validLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ validLang N ↔ ValidChk (N := N) x.length s w := by
-  rw [validChk_iff]
+  rw [validChk_iff, mem_codeLang_iff bits_injective (mem_validLang_iff N)]
   constructor
-  · rintro ⟨x', c, s', h, C, hC, hc⟩
-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
-    obtain rfl := bits_injective h4
-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc⟩
+  · rintro ⟨c, rfl, C, hC, rfl⟩
+    exact ⟨C, hC, (bits_cfgCode s C).symm⟩
   · rintro ⟨C, hC, rfl⟩
-    exact ⟨x, cfgCode s C, s, by rw [bits_cfgCode], C, hC, rfl⟩
+    exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl⟩
 
 variable (N) in
-/-- **Initial codes through the check.** -/
+/-- **Initial codes through the check.** For every word `w`, not only for codes, the encoding of
+`x`, `w` and `bits s` is in the initial-code language exactly when `w` passes the initial-code
+check. -/
 theorem initLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ initLang N ↔ InitChk N x s w := by
-  rw [initChk_iff]
+  rw [initChk_iff, mem_codeLang_iff bits_injective (mem_initLang_iff N)]
   constructor
-  · rintro ⟨x', c, s', h, hc⟩
-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
-    obtain rfl := bits_injective h4
-    exact ((cfgWord_eq_bits_iff _ _ c).mp hc).symm
+  · rintro ⟨c, rfl, rfl⟩
+    exact bits_cfgCode s _
   · rintro rfl
-    exact ⟨x, cfgCode s (N.tm.initCfg x), s, by rw [bits_cfgCode], rfl⟩
+    exact ⟨cfgCode s (N.tm.initCfg x), bits_cfgCode s _, rfl⟩
 
 variable (N) in
-/-- **Accepting codes through the check.** -/
+/-- **Accepting codes through the check.** For every word `w`, not only for codes, the encoding of
+`x`, `w` and `bits s` is in the accepting-code language exactly when `w` passes the
+accepting-code check. -/
 theorem acceptLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ acceptLang N ↔ AcceptChk N x s w := by
-  rw [acceptChk_iff]
+  rw [acceptChk_iff, mem_codeLang_iff bits_injective (mem_acceptLang_iff N)]
   constructor
-  · rintro ⟨x', c, s', h, C, hC, hc, hst, hout⟩
-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
-    obtain rfl := bits_injective h4
-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc, hst, hout⟩
+  · rintro ⟨c, rfl, C, hC, rfl, hst, hout⟩
+    exact ⟨C, hC, (bits_cfgCode s C).symm, hst, hout⟩
   · rintro ⟨C, hC, rfl, hst, hout⟩
-    exact ⟨x, cfgCode s C, s, by rw [bits_cfgCode], C, hC, rfl, hst, hout⟩
+    exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl, hst, hout⟩
 
 variable (N) in
-/-- **Step pairs through the check.** -/
+/-- **Step pairs through the check.** For all words `w` and `w'`, the encoding of `x`, `w`, `w'`
+and `bits s` is in the step language exactly when the pair passes the step check. -/
 theorem stepLang_iff (x w w' : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (pairEncode w' (Nat.bits s))) ∈ stepLang N ↔
       StepChk N x s w w' := by
-  rw [stepChk_iff]
+  -- the tail `⟨w', bits s⟩` is the injective image of the pair `(w', s)`
+  have henc : Function.Injective fun t : List Bool × ℕ => pairEncode t.1 (Nat.bits t.2) :=
+    fun _ _ h => Prod.ext (pairEncode_inj h).1 (bits_injective (pairEncode_inj h).2)
+  have hL : ∀ y, y ∈ stepLang N ↔ ∃ (x : List Bool) (c : ℕ) (t : List Bool × ℕ),
+      y = pairEncode x (pairEncode (Nat.bits c) (pairEncode t.1 (Nat.bits t.2))) ∧
+      ∃ c', Nat.bits c' = t.1 ∧ ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow t.2 C ∧
+        cfgCode t.2 C = c ∧ ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧
+          Cfg.InWindow t.2 C' ∧ cfgCode t.2 C' = c' := fun y => (mem_stepLang_iff N y).trans
+    ⟨fun ⟨x, c, c', s, h, hP⟩ => ⟨x, c, (Nat.bits c', s), h, c', rfl, hP⟩,
+      fun ⟨x, c, t, h, c', hc', hP⟩ => ⟨x, c, c', t.2, by rw [hc']; exact h, hP⟩⟩
+  rw [stepChk_iff, mem_codeLang_iff henc hL x w (w', s)]
+  dsimp only
   constructor
-  · rintro ⟨x', c, c', s', h, C, hC, hc, C', hstep, hC', hc'⟩
-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
-    obtain ⟨rfl, h6⟩ := pairEncode_inj h4
-    obtain rfl := bits_injective h6
-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc, C', hstep, hC',
-      (cfgWord_eq_bits_iff _ C' c').mp hc'⟩
+  · rintro ⟨c, rfl, c', rfl, C, hC, rfl, C', hstep, hC', rfl⟩
+    exact ⟨C, hC, (bits_cfgCode s C).symm, C', hstep, hC', (bits_cfgCode s C').symm⟩
   · rintro ⟨C, hC, rfl, C', hstep, hC', rfl⟩
-    exact ⟨x, cfgCode s C, cfgCode s C', s, by rw [bits_cfgCode, bits_cfgCode], C, hC, rfl, C',
+    exact ⟨cfgCode s C, bits_cfgCode s C, cfgCode s C', bits_cfgCode s C', C, hC, rfl, C',
       hstep, hC', rfl⟩
+
+/-! ## Edge codes -/
+
+variable (N) in
+/-- **The edge-code check** on a word `w`: valid, and some tape `i` has its head flag set in the
+first cell (work position `-s`) or in the last (work position `s`). -/
+def EdgeChk (x : List Bool) (s : ℕ) (w : List Bool) : Prop :=
+  ValidChk (N := N) x.length s w ∧
+    ∃ i : Fin N.k, w.getD (hH N + 3 * (i : ℕ) + 2) false = true ∨
+      w.getD (W N * (2 * s) + (hH N + 3 * (i : ℕ) + 2)) false = true
+
+variable (N) in
+/-- The edge-code check holds of a word `w` exactly when `w` passes the validity check at radius
+`s` for inputs of length `|x|` and, for some work tape `i`, tape `i`'s head flag is set in chunk
+`0` or in chunk `2s` of `w`, the cells at `-s` and `+s`. -/
+lemma edgeChk_def (x : List Bool) (s : ℕ) (w : List Bool) :
+    EdgeChk N x s w ↔ ValidChk (N := N) x.length s w ∧
+      ∃ i : Fin N.k, w.getD (hH N + 3 * (i : ℕ) + 2) false = true ∨
+        w.getD (W N * (2 * s) + (hH N + 3 * (i : ℕ) + 2)) false = true := Iff.rfl
+
+/-- The head flag of tape `i` in cell `j` of a code word: letter `hH + 3i + 2` of chunk `j` is
+set exactly when the head of tape `i` is at work position `j - s`. -/
+lemma getD_cfgWord_head (s : ℕ) (C : Cfg N.k Bool N.State x) (j : ℕ) (hj : j < 2 * s + 1)
+    (i : Fin N.k) :
+    (cfgWord s C).getD (W N * j + (hH N + 3 * (i : ℕ) + 2)) false =
+      decide (C.workTapePos i = (j : ℤ) - s) := by
+  have hi : hH N + 3 * (i : ℕ) + 2 < W N := by have := i.isLt; rw [W_eq]; omega
+  rw [getD_cfgWord_chunk s C j _ hj hi, chunkBit_tape N _ i 2 (by omega), if_neg (by omega),
+    if_neg (by omega), cellOf_head]
+
+/-- **The edge-code check recognizes the codes with a head on the window's boundary.**
+
+**Proof sketch.** A valid word is the code word of a window-bounded `C` (`validChk_iff`). Its
+letter `hH + 3i + 2` of chunk `j` is the head flag of tape `i` at work position `j - s`
+(`getD_cfgWord_head`). Chunk `0` is position `-s`, chunk `2s` is position `s`, and `|p| = s`
+exactly when `p = -s` or `p = s`. -/
+theorem edgeChk_iff (s : ℕ) (w : List Bool) :
+    EdgeChk N x s w ↔ ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgWord s C = w ∧
+      ∃ i, |C.workTapePos i| = (s : ℤ) := by
+  have h0 : ∀ (C : Cfg N.k Bool N.State x) (i : Fin N.k),
+      (cfgWord s C).getD (hH N + 3 * (i : ℕ) + 2) false =
+        decide (C.workTapePos i = -(s : ℤ)) := by
+    intro C i
+    have := getD_cfgWord_head s C 0 (by omega) i
+    rw [Nat.mul_zero, Nat.zero_add] at this
+    rw [this]; congr 1; simp
+  have h2 : ∀ (C : Cfg N.k Bool N.State x) (i : Fin N.k),
+      (cfgWord s C).getD (W N * (2 * s) + (hH N + 3 * (i : ℕ) + 2)) false =
+        decide (C.workTapePos i = (s : ℤ)) := by
+    intro C i
+    rw [getD_cfgWord_head s C (2 * s) (by omega) i]; congr 1; push_cast; ring_nf
+  constructor
+  · rintro ⟨hval, i, hi⟩
+    obtain ⟨C, hC, rfl⟩ := (validChk_iff x s w).mp hval
+    refine ⟨C, hC, rfl, i, ?_⟩
+    rw [h0, h2, decide_eq_true_eq, decide_eq_true_eq] at hi
+    rcases hi with h | h <;> rw [h] <;> simp
+  · rintro ⟨C, hC, rfl, i, hi⟩
+    refine ⟨(validChk_iff x s _).mpr ⟨C, hC, rfl⟩, i, ?_⟩
+    rw [h0, h2, decide_eq_true_eq, decide_eq_true_eq]
+    rcases (abs_eq (by positivity)).mp hi with h | h
+    · exact Or.inr h
+    · exact Or.inl h
+
+variable (N) in
+/-- **Edge codes through the check.** For every word `w`, not only for codes, the encoding of
+`x`, `w` and `bits s` is in the edge-code language exactly when `w` passes the edge-code check. -/
+theorem edgeLang_iff (x w : List Bool) (s : ℕ) :
+    pairEncode x (pairEncode w (Nat.bits s)) ∈ edgeLang N ↔ EdgeChk N x s w := by
+  rw [edgeChk_iff, mem_codeLang_iff bits_injective (mem_edgeLang_iff N)]
+  constructor
+  · rintro ⟨c, rfl, C, hC, rfl, hi⟩
+    exact ⟨C, hC, (bits_cfgCode s C).symm, hi⟩
+  · rintro ⟨C, hC, rfl, hi⟩
+    exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl, hi⟩
 
 end Complexity.Codec

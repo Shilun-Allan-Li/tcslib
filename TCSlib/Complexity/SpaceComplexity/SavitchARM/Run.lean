@@ -175,16 +175,16 @@ theorem mulL_run (f : Bool) : ∀ (c : ℕ) (st : St), st.C = c → st.Z = 0 →
   | zero =>
     intro st hC hZ hbd hb
     refine step_of hbd ?_
-    regs [astep, A, hC, ↓reduceIte]
+    regs [astep_jz (show A E (.mulL f) = _ from rfl), hC, ↓reduceIte]
     refine reach_of_eq (AReach.refl _) ?_
     congr 3; ext <;> simp [hC]
   | succ c ih =>
     intro st hC hZ hbd hb
     have hP : st.P ≤ (c + 1) * st.P := Nat.le_mul_of_pos_left _ (by omega)
     refine step_of hbd ?_
-    regs [astep, A, hC, Nat.add_one_ne_zero, ↓reduceIte]
+    regs [astep_jz (show A E (.mulL f) = _ from rfl), hC, Nat.add_one_ne_zero, ↓reduceIte]
     refine step_of hbd ?_
-    regs [astep, A, hC, Nat.add_sub_cancel]
+    regs [astep_dec (show A E (.mulD f) = _ from rfl), hC, Nat.add_sub_cancel]
     have hbd1 : St.Bd B { st with C := c } := by simp only [St.Bd] at hbd ⊢; omega
     refine (cp_run (.mulP f) _ hbd1 hZ (by regs [cpDst, cpSrc]; omega)).trans ?_
     regs [cpDst, cpSrc, cpExit]
@@ -216,7 +216,7 @@ theorem mul_run (f : Bool) (st : St) (hC : st.C = 0) (hT : st.T = 0) (hZ : st.Z 
   have hbd2 : St.Bd B { st with C := 0, T := st.T + F * st.P } := by
     simp only [St.Bd] at hbd ⊢; rw [mul_comm]; omega
   refine step_of hbd2 ?_
-  regs [astep, A]
+  regs [astep_clr (show A E (.mulFin f) = _ from rfl)]
   have hbd3 : St.Bd B { st with C := 0, T := st.T + F * st.P, P := 0 } := by
     simp only [St.Bd] at hbd ⊢; rw [mul_comm]; omega
   refine reach_of_eq (mv_run (.mulT f) _ hbd3 (by regs [mvDst, mvSrc]; rw [mul_comm]; omega))

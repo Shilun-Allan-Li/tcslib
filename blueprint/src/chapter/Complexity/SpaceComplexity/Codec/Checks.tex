@@ -307,3 +307,74 @@ then the binary expansion of $s$, using the self-delimiting pairing described ab
 This string belongs to the language of encoded bounded-space one-step transitions of $N$
 if and only if the step-check predicate holds for $x,s,w,w'$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Codec --- Checks: further results}
+
+\begin{definition}[Edge-code check]
+\lean{Complexity.Codec.EdgeChk}
+\label{Complexity.Codec.EdgeChk}
+\leanok
+\uses{Complexity.Codec.ValidChk, Complexity.Codec.W, Complexity.Codec.hH}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet with $k$ work tapes, header width $h_H$ and chunk width $W=W(N)=h_H+3k+1$, let $x$ and $w$ be Boolean
+words and $s\in\mathbb N$. The edge-code check holds of $w$ when $w$ passes the validity check
+for inputs of length $|x|$ at window radius $s$, and some work tape $i<k$ has its head flag set
+in the first cell or in the last cell of $w$'s chunk region: the letter of $w$ at position
+$h_H+3i+2$ or at position $2sW+h_H+3i+2$ is $1$ (out-of-range letters read as $0$).
+\end{definition}
+
+\begin{lemma}[Unfolding the edge-code check]
+\lean{Complexity.Codec.edgeChk_def}
+\label{Complexity.Codec.edgeChk_def}
+\leanok
+\uses{Complexity.Codec.EdgeChk, Complexity.Codec.ValidChk, Complexity.Codec.W, Complexity.Codec.hH}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet with $k$ work tapes, header width $h_H$ and chunk width $W=W(N)=h_H+3k+1$, let $x$ and
+$w$ be Boolean words and $s\in\mathbb N$. The edge-code check holds of $w$ if and only if $w$
+passes the validity check for inputs of length $|x|$ at radius $s$ and there is a work tape
+$i<k$ such that the letter of $w$ at position $h_H+3i+2$ or at position $2sW+h_H+3i+2$ is $1$
+(out-of-range letters read as $0$).
+\end{lemma}
+
+\begin{lemma}[Head flags in a configuration word]
+\lean{Complexity.Codec.getD_cfgWord_head}
+\label{Complexity.Codec.getD_cfgWord_head}
+\leanok
+\uses{Complexity.Codec.W, Complexity.Codec.W_eq, Complexity.Codec.cellOf_head, Complexity.Codec.cfgWord, Complexity.Codec.chunkBit_tape, Complexity.Codec.getD_cfgWord_chunk, Complexity.Codec.hH, Turing.Cfg}
+\difficulty{3}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet with $k$ work tapes, header width $h_H$ and chunk width $W=W(N)=h_H+3k+1$.
+Let $x$ be a Boolean input, $s\in\mathbb N$, $C$ a configuration of $N$ on $x$, $j<2s+1$ and
+$i<k$. Then the letter at position $Wj+h_H+3i+2$ of the radius-$s$ code word of $C$ is $1$ if
+and only if the head of work tape $i$ in $C$ is at position $j-s$.
+\end{lemma}
+
+\begin{theorem}[Edge-code check characterizes edge configurations]
+\lean{Complexity.Codec.edgeChk_iff}
+\label{Complexity.Codec.edgeChk_iff}
+\leanok
+\uses{Complexity.Codec.EdgeChk, Complexity.Codec.W, Complexity.Codec.cfgWord, Complexity.Codec.getD_cfgWord_head, Complexity.Codec.hH, Complexity.Codec.validChk_iff, Turing.Cfg, Turing.Cfg.InWindow}
+\difficulty{5}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet with $k$ work tapes, header width $h_H$ and chunk width $W=W(N)=h_H+3k+1$,
+let $x$ be a Boolean input, $s\in\mathbb N$ and $w$ a Boolean word. The edge-code check
+(validity for inputs of length $|x|$ at radius $s$, plus a $1$ at position $h_H+3i+2$ or
+$2sW+h_H+3i+2$ of $w$ for some work tape $i$) holds of $w$ if and only if $w$ is the radius-$s$
+code word of some configuration $C$ of $N$ on $x$ that lies in the radius-$s$ window (every work
+head within distance $s$ of the origin and every work cell farther out blank) and has some work
+head at position $p$ with $\abs{p}=s$.
+\end{theorem}
+
+\begin{theorem}[Edge-code language through the check]
+\lean{Complexity.Codec.edgeLang_iff}
+\label{Complexity.Codec.edgeLang_iff}
+\leanok
+\uses{Complexity.Codec.EdgeChk, Complexity.Codec.bits_cfgCode, Complexity.Codec.cfgCode, Complexity.Codec.edgeChk_iff, Complexity.Codec.edgeLang, Complexity.Codec.mem_codeLang_iff, Complexity.Codec.mem_edgeLang_iff, Complexity.LogProg.bits_injective, Turing.pairEncode}
+\difficulty{4}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet with $k$ work tapes, header width $h_H$ and chunk width $W=W(N)=h_H+3k+1$,
+let $x,w$ be Boolean words and $s\in\mathbb N$. The word
+$\langle x,\langle w,\mathrm{bits}(s)\rangle\rangle$ belongs to the edge-code language of $N$
+(the triples $\langle x,\langle\mathrm{bits}(c),\mathrm{bits}(s)\rangle\rangle$ with $c$ the
+radius-$s$ code of a configuration of $N$ on $x$ in the radius-$s$ window having a work head at
+$-s$ or $s$) if and only if $w$ passes the edge-code check: it passes the validity check for
+inputs of length $|x|$ at radius $s$, and for some work tape $i$ the letter of $w$ at position
+$h_H+3i+2$ or $2sW+h_H+3i+2$ is $1$.
+\end{theorem}

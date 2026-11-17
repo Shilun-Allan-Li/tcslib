@@ -565,31 +565,11 @@ word consisting of exactly $C(|x|+1)^e$ copies of the bit $1$ is polynomial-time
 computable.
 \end{lemma}
 
-\begin{definition}[Constant-fill scanning machine]
-\lean{Complexity.clFillTM}
-\label{Complexity.clFillTM}
-\leanok
-\uses{Turing.FinTM}
-For a fixed bit $b$, a machine with no work tapes scans its input left to right and writes one copy of $b$ to the output for each input bit, halting silently at the right boundary; the empty input is covered by the boundary transition.
-\end{definition}
-
-\begin{lemma}[Run of the Constant-Fill Machine]
-\lean{Complexity.clFill_run}
-\label{Complexity.clFill_run}
-\leanok
-\uses{Complexity.clFillTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{4}
-Fix a bit $b$, an input word $x$, a natural number $i\le |x|$, and an output word $out$.
-Starting from the configuration with the machine in its running state, the input head at
-position $i+1$, no work tapes, and output $out$, after $|x|-i+1$ steps the machine is
-halted at the right boundary, with output $out$ followed by $|x|-i$ copies of $b$.
-\end{lemma}
-
 \begin{lemma}[Polynomial-time constant fill]
 \lean{Complexity.clNative_fill}
 \label{Complexity.clNative_fill}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clFillTM, Complexity.clFill_run, Turing.Cfg, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
+\uses{Complexity.PolyTimeComputable, Turing.Cfg, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
 For each fixed bit $b$, the function sending a binary word $x$ to the word consisting of
 $|x|$ copies of $b$ is polynomial-time computable.
@@ -650,22 +630,6 @@ host configuration gives exactly the host configuration of the stepped source, w
 host input position and output unchanged and each administrative tape updated by its
 specified write and movement.
 \end{lemma}
-
-\begin{definition}[Clocked reference runner]
-\lean{Complexity.clRefClockTM}
-\label{Complexity.clRefClockTM}
-\leanok
-\uses{Complexity.clRefAction, Turing.FinTM, Turing.FinTM.controlAction}
-For a source machine, the host machine carries one unary clock tape, one input buffer tape, and one tape per source work tape, and runs the embedded reference simulation while consuming one clock cell per source step. Exhaustion of the clock dispatches to a distinguished live return state; halting of the source alone does not dispatch. Its initial-configuration contract assumes a prepared configuration with the header installed.
-\end{definition}
-
-\begin{definition}[Configuration of the clocked runner]
-\lean{Complexity.clRefClockCfg}
-\label{Complexity.clRefClockCfg}
-\leanok
-\uses{Complexity.clRefCfg, Complexity.clRefClockTM, Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape}
-For a source configuration $c$, a position tag bit, a clock budget $T$, and an elapsed count $t$, the clocked-runner configuration embeds $c$ over the virtual input buffer, fills the clock tape with $T$ true cells and places its head at $t$, and has empty output, so source time is recorded separately from any future administrative cost.
-\end{definition}
 
 \begin{definition}[Little-endian binary increment]
 \lean{Complexity.clCountInc}
@@ -844,15 +808,6 @@ return state, and every natural number $t$, running the machine from that config
 for $t$ steps leaves the entire configuration unchanged.
 \end{lemma}
 
-\begin{lemma}[Strictly positive first return of the counter]
-\lean{Complexity.clCount_first}
-\label{Complexity.clCount_first}
-\leanok
-\uses{Complexity.clCountCarry, Complexity.clCountCarry_le, Complexity.clCountCfg, Complexity.clCountInc, Complexity.clCountTM, Complexity.clCount_idle_run, Complexity.clCount_run, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_zero}
-\difficulty{5}
-For every input word, input position, and stored word $w$, there is a time $t$ with $0 < t \le 2|w| + 2$ such that the increment machine, started in carry control at cell $0$, is never in the return control before $t$ and at time $t$ sits in the return control at cell $0$ with the stored word replaced by its increment.
-\end{lemma}
-
 \begin{lemma}[Equality of finite-word tape conventions]
 \lean{Complexity.clCountTape_eq}
 \label{Complexity.clCountTape_eq}
@@ -863,32 +818,6 @@ For every finite Boolean word $w$, the tape that is blank at negative cells and 
 the entries of $w$ at their corresponding nonnegative indices, blank when no entry
 exists, is equal as a function on the integer cells to the canonical buffer tape storing
 $w$.
-\end{lemma}
-
-\begin{definition}[Counter increment beside a retained reference]
-\lean{Complexity.clRefCountTM}
-\label{Complexity.clRefCountTM}
-\leanok
-\uses{Complexity.clCountTM, Turing.FinTM, Turing.FinTM.leftAction}
-For a source machine, the host is a machine that runs the four-state binary increment on its leftmost tape while retaining the entire virtual reference configuration, buffer tape, source tapes, and heads, in a disjoint bank; the finite control stores the source state and the boundary tag throughout the call.
-\end{definition}
-
-\begin{lemma}[First return of the retained-reference increment]
-\lean{Complexity.clRefCount_first}
-\label{Complexity.clRefCount_first}
-\leanok
-\uses{Complexity.clCountCfg, Complexity.clCountInc_bits, Complexity.clCountTM, Complexity.clCountTape_eq, Complexity.clCount_first, Complexity.clRefCfg, Complexity.clRefCountTM, Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.leftCfg, Turing.FinTM.leftCfg_run, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.runFrom}
-\difficulty{5}
-For every source configuration, tag bit, and counter value $n$, there is a strictly positive time $t$, at most twice the binary length of $n$ plus two, such that the counter-beside-reference host first reaches its return control exactly at $t$, at which point the counter tape holds the binary representation of $n+1$ with its head restored to zero, while the source configuration, tag, and every bank tape and head are untouched, and the represented source clock has not advanced.
-\end{lemma}
-
-\begin{lemma}[Binary width bound]
-\lean{Complexity.clCount_width}
-\label{Complexity.clCount_width}
-\leanok
-\difficulty{4}
-Let $n,w$ be natural numbers and suppose $n<2^w$. Then the binary representation of $n$
-has at most $w$ bits.
 \end{lemma}
 
 \begin{definition}[Component action of the counter bank]
@@ -1211,15 +1140,6 @@ and each counter updated by one exactly when its index is selected by the actual
 source-head displacement vector.
 \end{lemma}
 
-\begin{lemma}[Appending one bit to a buffer]
-\lean{Complexity.clBuffer_append_bit}
-\label{Complexity.clBuffer_append_bit}
-\leanok
-\uses{Complexity.clCountTape_eq, Complexity.clCountTape_write, Turing.FinTM.bufferTape}
-\difficulty{1}
-For every word $w$ and bit $b$, updating the canonical buffer tape of $w$ at cell $|w|$, its right blank, with $b$ yields the canonical buffer tape of $w$ extended by $b$; no other cell changes, including negative cells and the empty-buffer boundary.
-\end{lemma}
-
 \begin{definition}[Two fixed tape slots]
 \lean{Complexity.clTwo}
 \label{Complexity.clTwo}
@@ -1351,48 +1271,6 @@ $w$, source head at zero, record head at the new record length, input-head posit
 and empty output.
 \end{lemma}
 
-\begin{definition}[Relocating an action to fixed host slots]
-\lean{Complexity.clSlotAction}
-\label{Complexity.clSlotAction}
-\leanok
-\uses{Turing.Action}
-Given a partial selection from $l$ host tapes back to $k$ local tapes and a state embedding, an action on $k$ tapes is relocated to the host: each selected host tape receives the corresponding local write and move, every unselected host tape is stationary, and the input move, output emission, and embedded successor state are carried over.
-\end{definition}
-
-\begin{definition}[Relocated phase configuration]
-\lean{Complexity.clSlotCfg}
-\label{Complexity.clSlotCfg}
-\leanok
-\uses{Turing.Cfg}
-Given a partial selection from host tapes to local tapes, a state embedding, and retained contents and heads for the unselected host tapes, a local configuration is relocated to the host: selected tapes and heads come from the local configuration, unselected ones keep their retained values, and the input position and physical output are those of the local configuration.
-\end{definition}
-
-\begin{lemma}[Relocation commutes with one action]
-\lean{Complexity.clSlot_apply}
-\label{Complexity.clSlot_apply}
-\leanok
-\uses{Complexity.clSlotAction, Complexity.clSlotCfg, Turing.Action, Turing.Action.apply, Turing.Cfg}
-\difficulty{3}
-For every partial selection, state embedding, retained tapes and heads, action, and local configuration, applying the relocated action to the relocated configuration equals relocating the result of applying the action locally; writes, head motion, and final emission are preserved, and inactive host tapes and heads are fixed.
-\end{lemma}
-
-\begin{lemma}[Guarded relocation of a whole phase]
-\lean{Complexity.clSlot_run}
-\label{Complexity.clSlot_run}
-\leanok
-\uses{Complexity.clSlotAction, Complexity.clSlotCfg, Complexity.clSlot_apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
-\difficulty{5}
-Let a host machine agree, on every embedded control satisfying a guard, with the relocation of a smaller machine's transition through a tape injection whose selection is a left inverse. Then for every retained host contents and heads, every local start configuration, and every horizon $t$ such that all local controls strictly before $t$ satisfy the guard, the host run up to time $t$ equals the relocation of the local run; the guard is not needed at the endpoint itself.
-\end{lemma}
-
-\begin{definition}[Tape slots of one row-copy call]
-\lean{Complexity.clRowIndex}
-\label{Complexity.clRowIndex}
-\leanok
-\uses{Complexity.clTwo}
-For a selected counter coordinate $i$ among $l$ counters, the two tapes of a copy call are embedded as: the source slot is counter tape $i$, and the record slot is the final extra tape. The index is fixed in finite control for the whole field.
-\end{definition}
-
 \begin{definition}[Partial inverse of the row-copy slots]
 \lean{Complexity.clRowSelect}
 \label{Complexity.clRowSelect}
@@ -1400,15 +1278,6 @@ For a selected counter coordinate $i$ among $l$ counters, the two tapes of a cop
 \uses{Complexity.clPlacement, Complexity.clPlacement.ofInverse, Complexity.clTwo}
 For a selected counter coordinate $i$, the selection maps counter tape $i$ back to the copy call's source slot and the final record tape back to its record slot, and leaves every other counter tape unselected.
 \end{definition}
-
-\begin{lemma}[Row-copy selection inverts the injection]
-\lean{Complexity.clRow_inverse}
-\label{Complexity.clRow_inverse}
-\leanok
-\uses{Complexity.clRowIndex, Complexity.clRowSelect, Complexity.clTwo}
-\difficulty{2}
-For every selected counter coordinate $i$ and each of the two local copy tapes, the row-copy selection applied to the embedded slot returns that local tape, so both actual copy tapes are selected back to their local indices.
-\end{lemma}
 
 \begin{definition}[Row controller copying every counter]
 \lean{Complexity.clRowTM}
@@ -1535,7 +1404,7 @@ prefix of length $j$ has length at most $j(2W+2)$.
 \lean{Complexity.clElapsed_width}
 \label{Complexity.clElapsed_width}
 \leanok
-\uses{Complexity.clCount_width}
+\uses{Turing.length_bits_le_self}
 \difficulty{1}
 Let $n,t$ be natural numbers with $n\le t$. Then the binary representation of $n$ has at
 most $t$ bits.
@@ -1651,28 +1520,12 @@ For a source machine and a virtual input $y$, the serialized trajectory prefix a
 The recorder's finite control is a disjoint sum of five phases: row copying, carrying the source state, tag, and row-controller control; the clock test; the source-step release; the running counter update, carrying a tracking control; and the completed live return.
 \end{definition}
 
-\begin{definition}[Tracking tapes inside the recorder]
-\lean{Complexity.clRecTrackIndex}
-\label{Complexity.clRecTrackIndex}
-\leanok
-\uses{Complexity.clRecFields, Complexity.clTrackTM, Turing.FinTM}
-The tracking machine's tapes, two counter banks, the virtual input buffer, and the source tapes, are embedded into the recorder's tapes by skipping the record slot and the unary clock slot.
-\end{definition}
-
 \begin{definition}[Partial inverse for the tracking tapes]
 \lean{Complexity.clRecTrackSelect}
 \label{Complexity.clRecTrackSelect}
 \leanok
 \uses{Complexity.clPlacement, Complexity.clPlacement.comp, Complexity.clPlacement.refl, Complexity.clPlacement.sum, Complexity.clPlacement.trailing, Complexity.clRecFields, Complexity.clTrackTM, Turing.FinTM}
 The recorder's selection maps each counter-bank tape and each source-side tape back to its tracking-machine coordinate and leaves the record and clock slots unselected, so both administrative record tapes are preserved during tracking.
-\end{definition}
-
-\begin{definition}[Row-copy tapes inside the recorder]
-\lean{Complexity.clRecRowIndex}
-\label{Complexity.clRecRowIndex}
-\leanok
-\uses{Complexity.clRecFields, Complexity.clRowTM, Turing.FinTM}
-The row controller's tapes, the movement counters plus the record tape, are embedded into the recorder's tapes with the counters first and the record slot immediately after; the clock, buffer, and source tapes are skipped.
 \end{definition}
 
 \begin{definition}[Partial inverse for the row-copy tapes]
@@ -1682,24 +1535,6 @@ The row controller's tapes, the movement counters plus the record tape, are embe
 \uses{Complexity.clPlacement, Complexity.clPlacement.empty, Complexity.clPlacement.refl, Complexity.clPlacement.sum, Complexity.clRecFields, Complexity.clRowTM, Turing.FinTM}
 The recorder's selection maps each movement counter and the record slot back to its row-controller coordinate and leaves the clock, virtual-input buffer, and every source tape unselected.
 \end{definition}
-
-\begin{lemma}[Tracking selection inverts its injection]
-\lean{Complexity.clRecTrack_inverse}
-\label{Complexity.clRecTrack_inverse}
-\leanok
-\uses{Complexity.clRecTrackIndex, Complexity.clRecTrackSelect, Complexity.clTrackTM, Turing.FinTM}
-\difficulty{2}
-For every tracking-machine tape coordinate, the recorder's tracking selection applied to the embedded coordinate returns that coordinate.
-\end{lemma}
-
-\begin{lemma}[Row selection inverts its injection]
-\lean{Complexity.clRecRow_inverse}
-\label{Complexity.clRecRow_inverse}
-\leanok
-\uses{Complexity.clRecFields, Complexity.clRecRowIndex, Complexity.clRecRowSelect, Complexity.clRowTM, Turing.FinTM}
-\difficulty{2}
-For every row-controller tape coordinate, the recorder's row selection applied to the embedded coordinate returns that coordinate.
-\end{lemma}
 
 \begin{definition}[Slot of the unary clock]
 \lean{Complexity.clRecClockIndex}
@@ -1848,15 +1683,6 @@ two source configurations $c,c'$ on input $y$, two Boolean tags $b,b'$, two
 movement-count families $n,n'$, a record word, natural numbers $T,t$, and any tracking
 configuration $z$ on input $x$. The projections of $z$ into the recorder's tracking
 slots agree when formed from either recorder layout determined by these choices.
-\end{lemma}
-
-\begin{lemma}[Releasing a relocated subroutine]
-\lean{Complexity.clSlot_release}
-\label{Complexity.clSlot_release}
-\leanok
-\uses{Complexity.clSlotAction, Complexity.clSlotCfg, Complexity.clSlot_apply, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.step}
-\difficulty{4}
-Suppose a host control acts, on all reads, as the relocation of a smaller machine's transition at a fixed local state $q$, through a tape injection whose selection is a left inverse. Then one host step from the relocated configuration of any local configuration in state $q$, with its control replaced by that release control, equals the relocation of one local step. Executing the first action before observing any return guard handles equal entry and exit controls.
 \end{lemma}
 
 \begin{lemma}[One recorded source transition]
@@ -2273,14 +2099,6 @@ coordinates. For every natural number $j\le l$, the stored row prefix of length 
 equals the packed encoding of the first $j$ words in coordinate order.
 \end{lemma}
 
-\begin{definition}[Sequential field parser]
-\lean{Complexity.clReadFields}
-\label{Complexity.clReadFields}
-\leanok
-\uses{Turing.pairDecode}
-Given a count $n$ and a bit stream, the parser repeatedly decodes one self-delimiting field, returning after $n$ fields the list of decoded words together with the exact remaining suffix; malformed streams yield no result.
-\end{definition}
-
 \begin{definition}[Native two-tape field reader]
 \lean{Complexity.clReadTM}
 \label{Complexity.clReadTM}
@@ -2389,15 +2207,6 @@ steps. Suppose $finish$ has state $ret$, $start$ does not have state $ret$, and 
 configuration with state $ret$ is unchanged by one step. Then there is a positive time
 $t\le B$ such that the run reaches exactly $finish$ at time $t$, and no configuration at
 any earlier time has state $ret$.
-\end{lemma}
-
-\begin{lemma}[Guarded state embedding on unchanged tapes]
-\lean{Complexity.clMap_run}
-\label{Complexity.clMap_run}
-\leanok
-\uses{Complexity.clSlotCfg, Complexity.clSlot_run, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom}
-\difficulty{2}
-Suppose a host machine with the same tapes agrees, on every embedded control satisfying a guard, with a smaller machine's transition after relabeling states. Then for every start configuration and horizon $t$ whose strictly earlier controls all satisfy the guard, the host run equals the state-relabeled run of the smaller machine; all tape data is preserved exactly.
 \end{lemma}
 
 \begin{lemma}[Erasing the appended bit]
@@ -2539,14 +2348,6 @@ $|\mathrm{pre}|+2|w|+2$, the original input position, stream contents, and input
 unchanged, and empty physical output.
 \end{lemma}
 
-\begin{definition}[Tape slots of one row-load call]
-\lean{Complexity.clLoadIndex}
-\label{Complexity.clLoadIndex}
-\leanok
-\uses{Complexity.clTwo}
-For a target field coordinate $i$ among $l$ fields, the loader's two tapes are embedded with the shared stream first, the final extra tape, and the target field second, counter tape $i$.
-\end{definition}
-
 \begin{definition}[Partial inverse of the row-load slots]
 \lean{Complexity.clLoadSelect}
 \label{Complexity.clLoadSelect}
@@ -2554,15 +2355,6 @@ For a target field coordinate $i$ among $l$ fields, the loader's two tapes are e
 \uses{Complexity.clPlacement, Complexity.clPlacement.permute, Complexity.clRowSelect}
 For a target field coordinate $i$, the selection maps field tape $i$ back to the loader's target slot and the final stream tape back to its stream slot, leaving every other field tape unselected.
 \end{definition}
-
-\begin{lemma}[Row-load selection inverts the injection]
-\lean{Complexity.clLoad_inverse}
-\label{Complexity.clLoad_inverse}
-\leanok
-\uses{Complexity.clLoadIndex, Complexity.clLoadSelect, Complexity.clTwo}
-\difficulty{2}
-For every target field coordinate $i$ and each of the two local loader tapes, the row-load selection applied to the embedded slot returns that local tape, and the two selected tapes are physically distinct.
-\end{lemma}
 
 \begin{definition}[Sequential row loader]
 \lean{Complexity.clLoadTM}
@@ -2778,13 +2570,6 @@ earlier time $j<t$ and at time $t$ is in the return control with $x$ on its work
 both heads at their initial positions, and empty output.
 \end{lemma}
 
-\begin{definition}[Stream slot of the preparation copier]
-\lean{Complexity.clPrepareIndex}
-\label{Complexity.clPrepareIndex}
-\leanok
-During native preparation, the input copier's single work tape is embedded as the final stream slot of the field bank of $l + 1$ tapes.
-\end{definition}
-
 \begin{definition}[Partial inverse of the preparation slot]
 \lean{Complexity.clPrepareSelect}
 \label{Complexity.clPrepareSelect}
@@ -2974,23 +2759,6 @@ computable.
 In the recorder host's bank, the selection maps the first slots back to the active recorder tapes and leaves the four retained header fields and the native-input buffer unselected, protecting them from recorder actions.
 \end{definition}
 
-\begin{definition}[Injection into the recorder host]
-\lean{Complexity.clRecordIndex}
-\label{Complexity.clRecordIndex}
-\leanok
-\uses{Complexity.clRecTM, Turing.FinTM}
-Each active recorder tape is embedded into the host bank before the four retained header fields and the final input-buffer slot.
-\end{definition}
-
-\begin{lemma}[Recorder selection inverts its injection]
-\lean{Complexity.clRecord_inverse}
-\label{Complexity.clRecord_inverse}
-\leanok
-\uses{Complexity.clRecTM, Complexity.clRecordIndex, Complexity.clRecordSelect, Turing.FinTM}
-\difficulty{1}
-For every active recorder tape coordinate, the host selection applied to the embedded coordinate returns that coordinate, with no aliasing of the protected fields.
-\end{lemma}
-
 \begin{definition}[Prepared recorder host]
 \lean{Complexity.clRecordTM}
 \label{Complexity.clRecordTM}
@@ -3046,35 +2814,12 @@ prescribed input and retained fields are in their designated tape locations.
 For positive and negative counter coordinates and a stored row, together with two retained target count words, the four comparator words are, in order: the row's positive count, the second target word, the first target word, and the row's negative count, exactly the cross-sum interface of the banked comparator.
 \end{definition}
 
-\begin{definition}[Loader slots inside the search]
-\lean{Complexity.clMatchLoadIndex}
-\label{Complexity.clMatchLoadIndex}
-\leanok
-The row loader's $l + 1$ tapes are embedded into the search's $l + 5$ tapes with the candidate fields first and the record stream as the first administrative slot.
-\end{definition}
-
 \begin{definition}[Partial inverse of the search-loader slots]
 \lean{Complexity.clMatchLoadSelect}
 \label{Complexity.clMatchLoadSelect}
 \leanok
 \uses{Complexity.clPlacement, Complexity.clPlacement.empty, Complexity.clPlacement.refl, Complexity.clPlacement.sum}
 The search's selection maps each candidate field and the record stream back to their loader coordinates, and leaves the two target words, the query clock, and the flag tape unselected during loading.
-\end{definition}
-
-\begin{lemma}[Search-loader selection inverts its injection]
-\lean{Complexity.clMatchLoad_inverse}
-\label{Complexity.clMatchLoad_inverse}
-\leanok
-\uses{Complexity.clMatchLoadIndex, Complexity.clMatchLoadSelect}
-\difficulty{2}
-For every loader tape coordinate, the search's loading selection applied to the embedded slot returns that coordinate, with no aliasing.
-\end{lemma}
-
-\begin{definition}[Comparator slots inside the search]
-\lean{Complexity.clMatchCmpIndex}
-\label{Complexity.clMatchCmpIndex}
-\leanok
-For distinct positive and negative counter coordinates, the four comparator tapes are embedded as: the candidate's positive count field, the second target slot, the first target slot, and the candidate's negative count field; the injection is fixed, with no data-dependent or uncharged record lookup.
 \end{definition}
 
 \begin{definition}[Partial inverse of the search-comparator slots]
@@ -3084,15 +2829,6 @@ For distinct positive and negative counter coordinates, the four comparator tape
 \uses{Complexity.clPlacement, Complexity.clPlacement.ofInverse}
 The search's comparison selection maps the positive and negative candidate fields and the two target slots back to their comparator coordinates, and leaves the stream, clock, flag tape, and all other fields fixed.
 \end{definition}
-
-\begin{lemma}[Comparator selection inverts its injection]
-\lean{Complexity.clMatchCmp_inverse}
-\label{Complexity.clMatchCmp_inverse}
-\leanok
-\uses{Complexity.clMatchCmpIndex, Complexity.clMatchCmpSelect}
-\difficulty{2}
-For distinct positive and negative coordinates and each of the four comparator tapes, the search's comparison selection applied to the embedded slot returns that tape, so the call is a genuine four-tape comparison.
-\end{lemma}
 
 \begin{definition}[Control phases of the matcher]
 \lean{Complexity.clMatchState}
@@ -3482,15 +3218,6 @@ Let $x,w,$ and $out$ be finite Boolean words, and let $p$ be an input-head posit
 $x$. Starting with the replay machine in its start control, its work tape storing $w$
 with the head at cell $|w|$, and output $out$, after $2|w|+3$ steps it is halted, the
 head is at cell $|w|$, the buffer remains $w$, and the output is $out$ followed by $w$.
-\end{lemma}
-
-\begin{lemma}[Quantitative buffered composition]
-\lean{Complexity.clCompute_comp}
-\label{Complexity.clCompute_comp}
-\leanok
-\uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom_add}
-\difficulty{4}
-Let a machine compute output $y$ from input $x$ within time $a$, and a second machine compute $z$ from $y$ within time $b$. Then the buffered composition of the two machines computes $z$ from $x$ within time $2a + b + 2$; the second machine's contract is needed only on the actual intermediate word.
 \end{lemma}
 
 \begin{definition}[Selecting one physical tape]
@@ -3957,24 +3684,6 @@ order, of the codes for the last strictly earlier visits at time $t$, computed o
 all-false input of length $|x|+C(|x|+1)^e$.
 \end{lemma}
 
-\begin{lemma}[A machine for a polynomial-time function]
-\lean{Complexity.clNative_cleanCall}
-\label{Complexity.clNative_cleanCall}
-\leanok
-\uses{Complexity.PolyTimeComputable, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_installCallTM, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom, Turing.stateWord}
-\difficulty{4}
-Let $f$ be a polynomial-time computable function from binary words to binary words.
-There exist a finite Boolean Turing machine $W$, states $\mathrm{entry}$ and
-$\mathrm{exit}$ of $W$, and natural numbers $a,d$ with at least one work tape, such that
-for every physical input word $x$ and argument word $\mathrm{arg}$, there is a time $t$
-with $0<t\le a(|\mathrm{arg}|+1)^d$. At every integer time $j$ with $0<j<t$, the machine
-started on $x$ in state $\mathrm{entry}$ with $\mathrm{arg}$ on tape zero and all other
-work tapes empty is not in state $\mathrm{exit}$; at time $t$ its configuration is
-exactly the one with state $\mathrm{exit}$, $f(\mathrm{arg})$ on tape zero, all other
-work tapes empty, and the input head, work-tape heads, and output tape in their standard
-initial positions and contents.
-\end{lemma}
-
 \begin{definition}[Retained state of the visit producer]
 \lean{Complexity.clVisitState}
 \label{Complexity.clVisitState}
@@ -4033,149 +3742,6 @@ be a Boolean word, and let $t$ be a natural number. Iterating the producer step 
 times from the retained state encoding $x$, time zero, and an empty table yields the
 retained state encoding $x$, time $t$, and the table of the first $t$ visit rows for
 $M,C,e,x$.
-\end{lemma}
-
-\begin{lemma}[Polynomial-time clean implementation]
-\lean{Complexity.clVisitStep_cleanCall}
-\label{Complexity.clVisitStep_cleanCall}
-\leanok
-\uses{Complexity.clNative_cleanCall, Complexity.clVisitStep, Complexity.clVisitStep_native, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.stateWord}
-\difficulty{1}
-For every finite-state binary Turing machine $M$ and natural numbers $C,e$, there are a
-finite-state binary Turing machine $W$ with at least one work tape, entry and exit
-states of $W$, and natural numbers $a,d$, such that for every Boolean input word $x$ and
-argument word $u$, some time $t$ satisfies $0<t\le a(|u|+1)^d$. Starting from the
-configuration on input $x$ with $W$ in its entry state and with $u$ on the first work
-tape and all other work tapes blank, the run has not reached the exit state at any
-intermediate time $j$ with $0<j<t$, and at time $t$ it is exactly the configuration with
-$W$ in its exit state and the first tape holding the producer-step result on $u$, all
-other work tapes blank, and the same input-head position and empty output.
-\end{lemma}
-
-\begin{definition}[Unary-bounded repetition controller]
-\lean{Complexity.clRepeatTM}
-\label{Complexity.clRepeatTM}
-\leanok
-\uses{Complexity.clKeepLastPlacement, Complexity.clPlacedAction, Turing.FinTM, Turing.FinTM.controlAction}
-Given a clean-call machine with entry and exit controls, the repetition controller tests a protected unary clock, and for each live token executes one complete clean call on the shared argument bank, then dispatches back; a fresh begin phase executes the call's first transition before testing the positive return, so entry and exit controls may coincide. On a blank clock it completes silently.
-\end{definition}
-
-\begin{definition}[Repetition seam]
-\lean{Complexity.clRepeatCfg}
-\label{Complexity.clRepeatCfg}
-\leanok
-\uses{Complexity.clRepeatTM, Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.stateWord}
-For a controller state, an argument word, a clock budget $N$, and a logical cursor $j$, the repetition seam holds the clean argument bank at blank scratch with the state word installed, and the protected unary clock with its head at $j$; the physical output is empty.
-\end{definition}
-
-\begin{lemma}[Clean-call configuration in the clock frame]
-\lean{Complexity.clRepeat_frame}
-\label{Complexity.clRepeat_frame}
-\leanok
-\uses{Complexity.clKeepLastPlacement, Complexity.clPlacedCfg, Complexity.clRepeatCfg, Complexity.clRepeatTM, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.stateWord}
-\difficulty{3}
-Let $C$ be a finite Turing machine with states entry and exit, let $x,s$ be Boolean
-words, let $N,j$ be natural numbers, and let $q$ be a state of $C$. Place the work tapes
-of the seam configuration on input $x$ in state $q$ with state word $s$ into the first
-$C$ work-tape slots of the repetition controller, map its state to the corresponding
-lifted state, and retain the extra clock tape with its unary word of length $N$ and head
-at position $j$. The resulting configuration is exactly the repetition-controller
-configuration in lifted state $q$, with state word $s$, clock length $N$, and cursor
-$j$.
-\end{lemma}
-
-\begin{lemma}[One relocated clean call]
-\lean{Complexity.clRepeat_call}
-\label{Complexity.clRepeat_call}
-\leanok
-\uses{Complexity.clKeepLastPlacement, Complexity.clPlacedAction, Complexity.clPlacedCfg, Complexity.clPlaced_apply, Complexity.clPlaced_run, Complexity.clRepeatCfg, Complexity.clRepeatTM, Complexity.clRepeat_frame, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.ofWords, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.stateWord}
-\difficulty{5}
-Let $C$ be a finite Turing machine with states entry and exit, let $x,s,s'$ be Boolean
-words, and let $N,j,t$ be natural numbers with $t>0$. Suppose the run of $C$ from the
-seam configuration on input $x$, in state entry with state word $s$, is never in state
-exit at any time $r$ with $0<r<t$, and after exactly $t$ steps equals the seam
-configuration in state exit with state word $s'$. Then the repetition controller,
-started in its begin state with state word $s$, unary clock of length $N$ at cursor $j$,
-and empty output, reaches after exactly $t$ steps the configuration in the lifted exit
-state with state word $s'$, retaining the same clock and cursor.
-\end{lemma}
-
-\begin{lemma}[One clocked repetition round]
-\lean{Complexity.clRepeat_round}
-\label{Complexity.clRepeat_round}
-\leanok
-\uses{Complexity.clRepeatCfg, Complexity.clRepeatTM, Complexity.clRepeat_call, Turing.Action.apply, Turing.Cfg.ofWords, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero, Turing.stateWord}
-\difficulty{4}
-Let $C$ be a finite Turing machine with states entry and exit, let $x,s,s'$ be Boolean
-words, and let $N,j,t$ be natural numbers with $j<N$ and $t>0$. Suppose the run of $C$
-from the seam configuration in state entry with word $s$ avoids state exit at every time
-$r$ with $0<r<t$ and reaches the seam configuration in state exit with word $s'$ after
-exactly $t$ steps. Then the repetition controller, started in its test state with word
-$s$ and clock cursor $j$, reaches its test state with word $s'$ and cursor $j+1$ after
-exactly $t+2$ steps.
-\end{lemma}
-
-\begin{lemma}[Bounded repetition of clean calls]
-\lean{Complexity.clRepeat_complete}
-\label{Complexity.clRepeat_complete}
-\leanok
-\uses{Complexity.clRepeatCfg, Complexity.clRepeatTM, Complexity.clRepeat_round, Turing.Action.apply, Turing.Cfg.ofWords, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_nat, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.moveInputPos_zero, Turing.stateWord}
-\difficulty{5}
-Let $C$ be a finite Turing machine with states entry and exit, let $f$ be a function on
-Boolean words, let $x,s$ be Boolean words, and let $N,B$ be natural numbers. Suppose
-that for every $j<N$, the run of $C$ from the seam configuration in state entry with
-state word $f^j(s)$ reaches, in some time $t\le B$ with $t>0$, the seam configuration in
-state exit with state word $f(f^j(s))$, and is not in state exit at any time $r$ with
-$0<r<t$. Then the repetition controller has a run from its start state with word $s$ and
-a unary clock of length $N$ at cursor zero to its completed state with word $f^N(s)$ and
-clock cursor $N$, in some number of steps at most $N(B+2)+1$.
-\end{lemma}
-
-\begin{definition}[Argument words of a repetition]
-\lean{Complexity.clRepeatWords}
-\label{Complexity.clRepeatWords}
-\leanok
-\uses{Turing.FinTM, Turing.stateWord}
-For a clean-call machine, an initial state word, and a count $N$, the repetition argument words are the call's state word with blank scratch, followed by the unary clock of $N$ tokens in a separate protected field.
-\end{definition}
-
-\begin{lemma}[Initial repetition configuration]
-\lean{Complexity.clRepeat_initial}
-\label{Complexity.clRepeat_initial}
-\leanok
-\uses{Complexity.clRepeatCfg, Complexity.clRepeatTM, Complexity.clRepeatWords, Turing.Cfg.ofWords, Turing.FinTM}
-\difficulty{2}
-Let $C$ be a finite Turing machine with states entry and exit, let $x,s$ be Boolean
-words, and let $N$ be a natural number. The initial configuration of the repetition
-controller on input $x$, with state word $s$ on its argument tapes and a separate unary
-clock of length $N$, is the repetition configuration in its start phase with word $s$
-and clock cursor zero.
-\end{lemma}
-
-\begin{definition}[Repetition with physical state replay]
-\lean{Complexity.clRepeatOutputTM}
-\label{Complexity.clRepeatOutputTM}
-\leanok
-\uses{Complexity.clOutputTM, Complexity.clPreparedTM, Complexity.clRepeatTM, Turing.FinTM}
-The repetition-output machine loads its argument bank natively from self-delimiting input, runs the unary-bounded repetition to completion, and then physically replays the completed state word from the first scratch tape as its output.
-\end{definition}
-
-\begin{lemma}[Time bound for repeated iteration]
-\lean{Complexity.clRepeatOutput_compute}
-\label{Complexity.clRepeatOutput_compute}
-\leanok
-\uses{Complexity.clFields, Complexity.clFields_width, Complexity.clKeepLastPlacement, Complexity.clOutputAt_compute, Complexity.clPreparedCfg, Complexity.clPreparedTM, Complexity.clPrepared_idle, Complexity.clPrepared_run, Complexity.clRepeatCfg, Complexity.clRepeatOutputTM, Complexity.clRepeatTM, Complexity.clRepeatWords, Complexity.clRepeat_complete, Complexity.clRepeat_initial, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.MultiTapeTM.runFrom, Turing.seamCompTM, Turing.stateWord}
-\difficulty{5}
-Let $C$ be a finite Turing machine over the Boolean alphabet, with entry and exit states
-and at least one work tape. Suppose that for every input word $x$ and argument word $u$,
-there is a time $t\le a(|u|+1)^d$ with $t>0$ such that the call of $C$ from its entry
-configuration on $u$ avoids the exit state at every intermediate time $0<j<t$ and
-reaches the exit configuration containing $f(u)$ at time $t$. Let $s$ be a Boolean word,
-and let $N,W$ be natural numbers with every iterate $f^{[j]}(s)$ for $j\le N$ of length
-at most $W$. If $z$ denotes the packed repetition argument built from the call machine's
-state word for $s$ and a unary clock of length $N$, then the repetition-output machine
-computes $f^{[N]}(s)$ from $z$ within $2|z|+9+(k+1)(3|z|+7)+N(a(W+1)^d+2)+W$ steps,
-where $k$ is the number of work tapes of $C$.
 \end{lemma}
 
 \begin{lemma}[Length Bound for Packed Fields]
@@ -4237,29 +3803,6 @@ iterations of the producer step from the state encoding $x$, time zero, and an e
 table has length at most $(8+8k)(L+1)^2$.
 \end{lemma}
 
-\begin{lemma}[Polynomial repetition budget]
-\lean{Complexity.clRepeat_budget}
-\label{Complexity.clRepeat_budget}
-\leanok
-\difficulty{5}
-For natural numbers $L,N,k,K,a,d$ with $N\le L$, the quantity
-$2L+9+k(3L+7)+N\bigl(a(K(L+1)^2+1)^d+2\bigr)+K(L+1)^2$ is at most
-$(13+7k+a(K+1)^d+K)(L+1)^{2d+3}$.
-\end{lemma}
-
-\begin{lemma}[Polynomial-time repetition arguments]
-\lean{Complexity.clRepeatArgument_native}
-\label{Complexity.clRepeatArgument_native}
-\leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clFields, Complexity.clNative_fields, Complexity.clNative_linear, Complexity.clRepeatWords, Turing.FinTM, Turing.FinTM.computesFunInTime_const, Turing.stateWord}
-\difficulty{3}
-Let $C$ be a finite Turing machine over the Boolean alphabet, let $s$ be a Boolean-word
-function and $N$ a natural-number-valued function, and suppose both $s$ and the unary
-word function $x\mapsto 1^{N(x)}$ are polynomial-time computable. Then the function that
-sends $x$ to the packed encoding of the repetition arguments—using $s(x)$ as the state
-word and $1^{N(x)}$ as the separate clock word—is polynomial-time computable.
-\end{lemma}
-
 \begin{definition}[The producer's exact horizon]
 \lean{Complexity.clProducerHorizon}
 \label{Complexity.clProducerHorizon}
@@ -4281,7 +3824,7 @@ word of length $c\bigl(A(|x|+C(|x|+1)^e+1)^d+1\bigr)^2+1$ is polynomial-time com
 \lean{Complexity.clVisitRows_native}
 \label{Complexity.clVisitRows_native}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clFields, Complexity.clFields_width, Complexity.clHeaderTail, Complexity.clHeaderTail_native, Complexity.clNative_image, Complexity.clNative_linear, Complexity.clNative_pair, Complexity.clProducerClock_native, Complexity.clProducerHorizon, Complexity.clRepeatArgument_native, Complexity.clRepeatOutputTM, Complexity.clRepeatOutput_compute, Complexity.clRepeatWords, Complexity.clRepeat_budget, Complexity.clVisitRows, Complexity.clVisitState, Complexity.clVisitState_size, Complexity.clVisitStep, Complexity.clVisitStep_cleanCall, Complexity.clVisitStep_orbit, Complexity.polyTimeComputable_id, Turing.FinTM, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_const, Turing.pairDecode_pairEncode, Turing.pairEncode, Turing.stateWord}
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clFields, Complexity.clFields_width, Complexity.clHeaderTail, Complexity.clHeaderTail_native, Complexity.clNative_image, Complexity.clNative_linear, Complexity.clNative_pair, Complexity.clProducerClock_native, Complexity.clProducerHorizon, Complexity.clVisitRows, Complexity.clVisitState, Complexity.clVisitState_size, Complexity.clVisitStep, Complexity.clVisitStep_orbit, Complexity.polyTimeComputable_id, Turing.FinTM, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_const, Turing.pairDecode_pairEncode, Turing.pairEncode, Turing.stateWord}
 \difficulty{5}
 For every finite-state binary Turing machine $M$ and natural numbers $C,e,c,A,d$, the
 function that sends a Boolean word $x$ to the table of visit rows for $M,C,e,x$, with
@@ -4319,136 +3862,25 @@ computes the function sending each word $x$ to its packed records within $a(|x|+
 steps, and the resulting word has length at most $a(|x|+1)^r$ for every $x$.
 \end{lemma}
 
-\begin{lemma}[First halt in a padded run]
-\lean{Complexity.clA5_call_first_halt}
-\label{Complexity.clA5_call_first_halt}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.runFrom_zero}
-\difficulty{4}
-Let $M$ be a deterministic Turing machine with $k$ work tapes, Boolean tape symbols, and
-state set $S$. For a Boolean input word $x$, a configuration $c$, and $t\in\mathbb{N}$,
-suppose $c$ is live and the configuration reached after $t$ steps is halted. Then there
-is a time $u$ with $0<u\le t$ such that every configuration at time $v<u$ is live, and
-the configuration at time $u$ equals the one at time $t$.
-\end{lemma}
-
-\begin{definition}[Padding an action into a shared bank]
-\lean{Complexity.clA5PadAction}
-\label{Complexity.clA5PadAction}
-\leanok
-\uses{Turing.Action}
-An action on $k$ tapes is padded to a larger bank of $K$ tapes by keeping its input move, output emission, and successor state, applying its writes and moves on the first $k$ tapes, and leaving every additional tape stationary.
-\end{definition}
-
 \begin{definition}[Padded module over the shared bank]
 \lean{Complexity.clA5PadTM}
 \label{Complexity.clA5PadTM}
 \leanok
-\uses{Complexity.clA5PadAction, Turing.FinTM}
+\uses{Turing.FinTM}
 For a machine with $k \le K$ tapes, the padded machine on $K$ tapes runs the same control, reading only the first $k$ work symbols and padding each action; all modules can therefore share tape zero and one common bank.
 \end{definition}
-
-\begin{definition}[Padded configuration]
-\lean{Complexity.clA5PadCfg}
-\label{Complexity.clA5PadCfg}
-\leanok
-\uses{Turing.Cfg}
-The padded form of a configuration on $k$ tapes is the configuration on $K$ tapes that keeps its state, input position, and output, places its tapes and heads on the first $k$ slots, and leaves every additional tape genuinely blank with head zero.
-\end{definition}
-
-\begin{lemma}[Padding commutes with an action]
-\lean{Complexity.clA5Pad_apply}
-\label{Complexity.clA5Pad_apply}
-\leanok
-\uses{Complexity.clA5PadAction, Complexity.clA5PadCfg, Turing.Action, Turing.Action.apply, Turing.Cfg}
-\difficulty{3}
-Let $k,K\in\mathbb{N}$, let $S$ be a state set, let $x$ be a Boolean input word, and let
-$a$ be an action on $k$ work tapes and $c$ a configuration on those tapes over input
-$x$. Applying the action padded to $K$ tapes to the padded configuration gives exactly
-the padding of the configuration obtained by applying $a$ to $c$.
-\end{lemma}
 
 \begin{lemma}[Padded runs match source runs]
 \lean{Complexity.clA5Pad_run}
 \label{Complexity.clA5Pad_run}
 \leanok
-\uses{Complexity.clA5PadAction, Complexity.clA5PadCfg, Complexity.clA5PadTM, Complexity.clA5Pad_apply, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
+\uses{Complexity.clA5PadTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
 \difficulty{4}
 Let $M$ be a finite Boolean-alphabet Turing machine with $k$ work tapes, let
 $K\in\mathbb{N}$ satisfy $k\le K$, and let $c$ be a configuration of $M$ on a Boolean
 input word $x$. For every $t\in\mathbb{N}$, the padded machine's configuration after $t$
 steps from the padded $c$ is the padding of $M$'s configuration after $t$ steps from
 $c$.
-\end{lemma}
-
-\begin{lemma}[Padding canonical seam configurations]
-\lean{Complexity.clA5Pad_seam}
-\label{Complexity.clA5Pad_seam}
-\leanok
-\uses{Complexity.clA5PadCfg, Turing.Cfg.ofWords, Turing.FinTM.bufferTape, Turing.stateWord}
-\difficulty{3}
-Let $k,K\in\mathbb{N}$ with $0<k$, let $S$ be a state set, let $x$ be a Boolean input
-word, and let $q\in S$ and $w,o$ be Boolean words. Padding the configuration on input
-$x$ with state $q$, the word $w$ on tape zero, blank remaining tapes, and output $o$
-yields exactly the corresponding configuration on $K$ tapes with the same state word and
-output.
-\end{lemma}
-
-\begin{definition}[Release wrapper of a clean call]
-\lean{Complexity.clA5StopTM}
-\label{Complexity.clA5StopTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction}
-Given a machine with entry and exit controls, the wrapped machine carries one release flag: it executes the underlying transitions, raising the flag after the first step, and physically halts exactly when the flag is set and the control is the exit; an entry equal to the exit therefore still executes at least one step.
-\end{definition}
-
-\begin{definition}[Release-flag configuration]
-\lean{Complexity.clA5StopCfg}
-\label{Complexity.clA5StopCfg}
-\leanok
-\uses{Turing.Cfg}
-A configuration of the underlying machine embeds into the wrapped machine by pairing its control with a release flag; all physical fields, tapes, heads, input position, and output, are unchanged.
-\end{definition}
-
-\begin{lemma}[One Step of the Release Wrapper]
-\lean{Complexity.clA5Stop_step}
-\label{Complexity.clA5Stop_step}
-\leanok
-\uses{Complexity.clA5StopCfg, Complexity.clA5StopTM, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
-\difficulty{3}
-Let $C$ be a finite Boolean-alphabet Turing machine with designated entry and exit
-states, let $x$ be a Boolean input, and let $c$ be a configuration of $C$ on $x$. If $c$
-is live and, whenever the release flag is true, the control state of $c$ is not the
-designated exit state, then one step of the release wrapper on the configuration
-obtained by adding the flag $b$ to $c$ gives the configuration obtained by adding a true
-flag to the one-step successor of $c$ under $C$.
-\end{lemma}
-
-\begin{lemma}[Live prefixes of a run]
-\lean{Complexity.clA5_live_prefix}
-\label{Complexity.clA5_live_prefix}
-\leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
-\difficulty{2}
-Let $M$ be a deterministic Turing machine with $k$ work tapes, Boolean tape symbols, and
-state set $S$, let $x$ be a Boolean input word, and let $c$ be a configuration on $x$.
-If the run from $c$ is live at time $t$, then it is live at every time $u\le t$.
-\end{lemma}
-
-\begin{lemma}[Clean Call Halts Under the Release Wrapper]
-\lean{Complexity.clA5Stop_clean}
-\label{Complexity.clA5Stop_clean}
-\leanok
-\uses{Complexity.clA5StopCfg, Complexity.clA5StopTM, Complexity.clA5Stop_step, Complexity.clA5_live_prefix, Turing.Action.apply, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.controlAction, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.stateWord}
-\difficulty{5}
-Let $C$ be a finite Boolean-alphabet Turing machine, with entry and exit states, and let
-$x$, $arg$, $result$, and $out$ be Boolean words. Suppose a call from the seam
-configuration with entry state and tape word $arg$ reaches the seam configuration with
-exit state and tape word $result$, emitting exactly $out$, after a positive number $t$
-of steps. Suppose also that its state is not the exit state at any time strictly between
-$0$ and $t$. Then the release wrapper, started with its release flag false at the entry
-seam, reaches after $t+1$ steps a halted configuration with release flag true, exit
-state, tape word $result$, and output $out$.
 \end{lemma}
 
 \begin{definition}[Control of the five-module host]
@@ -4494,7 +3926,7 @@ Over one shared padded work bank, the host runs the five modules through their c
 \lean{Complexity.clA5Host_seam}
 \label{Complexity.clA5Host_seam}
 \leanok
-\uses{Complexity.CLA5HostState, Complexity.clA5HostRet, Complexity.clA5PadCfg, Complexity.clA5Pad_seam, Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.emitCfg, Turing.stateWord}
+\uses{Complexity.CLA5HostState, Complexity.clA5HostRet, Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.emitCfg, Turing.stateWord}
 \difficulty{3}
 Let five Boolean finite Turing machines be given, fix a shared bank of $K$ tapes and a
 module index $i$ whose machine has positive tape count. For any input word $x$, stored
@@ -4509,7 +3941,7 @@ tagged state $s$ when present or the module's resolved return state when absent.
 \lean{Complexity.clA5Host_call}
 \label{Complexity.clA5Host_call}
 \leanok
-\uses{Complexity.CLA5HostState, Complexity.clA5HostEntry, Complexity.clA5HostRet, Complexity.clA5HostTM, Complexity.clA5Host_seam, Complexity.clA5PadCfg, Complexity.clA5PadTM, Complexity.clA5Pad_run, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.emitCfg, Turing.emit_run, Turing.stateWord}
+\uses{Complexity.CLA5HostState, Complexity.clA5HostEntry, Complexity.clA5HostRet, Complexity.clA5HostTM, Complexity.clA5Host_seam, Complexity.clA5PadTM, Complexity.clA5Pad_run, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.emitCfg, Turing.emit_run, Turing.stateWord}
 \difficulty{5}
 Let $M_0,\ldots,M_4$ be five finite Boolean Turing machines, let $K$ bound each
 machine's number of work tapes, and fix a module $i$ with $0<(M_i).k$. Suppose that, on
@@ -4544,36 +3976,11 @@ $v<a+b$.
 A machine satisfies the clean contract for a result map, an emission map, and a budget when it has a positive tape count and, for every native input and argument word, it first halts at some positive time within the budget of the argument length, at the canonical seam holding the result word and having emitted exactly the prescribed chunk.
 \end{definition}
 
-\begin{lemma}[Release wrapper for clean computations]
-\lean{Complexity.clA5Clean_stop}
-\label{Complexity.clA5Clean_stop}
-\leanok
-\uses{Complexity.CLA5Clean, Complexity.clA5StopTM, Complexity.clA5Stop_clean, Complexity.clA5_call_first_halt, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.stateWord}
-\difficulty{3}
-Let $C$ be a finite Turing machine, let $entry,exit$ be states of $C$, and let $result$
-and $emit$ map binary words to binary words. Let $B:\mathbb{N}\to\mathbb{N}$ and suppose
-$C$ has a positive number of work tapes. Assume that for every binary input $x$ and
-argument word $arg$, there is a time $t\le B(|arg|)$ with $t>0$ such that at every time
-$v$ with $0<v<t$ the machine has not reached $exit$, and at time $t$ its configuration
-is the seam configuration with state $exit$, tape words encoding $result(arg)$, and
-output $emit(arg)$. Then the release wrapper of $C$ satisfies the clean contract for
-$result$ and $emit$ with budget $n\mapsto B(n)+1$.
-\end{lemma}
-
-\begin{lemma}[Polynomial bridge bound]
-\lean{Complexity.clA5_bridge_bound}
-\label{Complexity.clA5_bridge_bound}
-\leanok
-\difficulty{4}
-Let $c,A,d,n,\ell$ be natural numbers, and suppose that $\ell \le A(n+1)^d$. Then
-$c\bigl(A(n+1)^d+n+\ell+1\bigr)+1\le \bigl(c(2A+1)+1\bigr)(n+1)^{d+1}$.
-\end{lemma}
-
 \begin{lemma}[Clean installation of a polynomial-time function]
 \lean{Complexity.clA5Clean_install}
 \label{Complexity.clA5Clean_install}
 \leanok
-\uses{Complexity.CLA5Clean, Complexity.PolyTimeComputable, Complexity.clA5Clean_stop, Complexity.clA5StopTM, Complexity.clA5_bridge_bound, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_installCallTM, Turing.MultiTapeTM.output_length_le}
+\uses{Complexity.CLA5Clean, Complexity.PolyTimeComputable, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_installCallTM, Turing.MultiTapeTM.output_length_le}
 \difficulty{4}
 Every polynomial-time computable function $f$ on binary words has a finite Turing
 machine $M$ and natural numbers $A,d$ such that, for every binary input $x$ and argument
@@ -4586,7 +3993,7 @@ its output is empty.
 \lean{Complexity.clA5Clean_emit}
 \label{Complexity.clA5Clean_emit}
 \leanok
-\uses{Complexity.CLA5Clean, Complexity.PolyTimeComputable, Complexity.clA5Clean_stop, Complexity.clA5StopTM, Complexity.clA5_bridge_bound, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_emitCallTM, Turing.MultiTapeTM.output_length_le}
+\uses{Complexity.CLA5Clean, Complexity.PolyTimeComputable, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_emitCallTM, Turing.MultiTapeTM.output_length_le}
 \difficulty{4}
 Every polynomial-time computable function $f$ on binary words has a finite Turing
 machine $M$, natural numbers $A,d$, and a clean computation such that for every binary
@@ -4616,7 +4023,7 @@ $\mathrm{pre}$ followed by $g(\mathrm{arg})$.
 \lean{Complexity.clA5Copy_clean}
 \label{Complexity.clA5Copy_clean}
 \leanok
-\uses{Complexity.clA5StopTM, Complexity.clA5Stop_clean, Complexity.clA5_call_first_halt, Complexity.clInputTM, Complexity.clInput_first, Turing.Cfg.Halted, Turing.Cfg.init, Turing.Cfg.ofWords, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.stateWord}
+\uses{Complexity.clInputTM, Complexity.clInput_first, Turing.Cfg.Halted, Turing.Cfg.init, Turing.Cfg.ofWords, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{4}
 For every Boolean word $x$, let $D$ be the release-wrapped three-state input copier
 described by the machine construction. There is a time $t$ with $0<t\le 2|x|+3$ such
@@ -4666,7 +4073,7 @@ its heads are at their initial positions, and its output is empty.
 \lean{Complexity.clA5Modules}
 \label{Complexity.clA5Modules}
 \leanok
-\uses{Complexity.clA5StopTM, Complexity.clInputTM, Turing.FinTM}
+\uses{Complexity.clInputTM, Turing.FinTM}
 Given install, cursor, emission, and update machines, the five body modules are: the release-wrapped native input copier, the packed-record installer, the cursor installer, the emission module, and the cursor-update module.
 \end{definition}
 
@@ -4674,7 +4081,7 @@ Given install, cursor, emission, and update machines, the five body modules are:
 \lean{Complexity.clA5Modules_bound}
 \label{Complexity.clA5Modules_bound}
 \leanok
-\uses{Complexity.clA5Modules, Complexity.clA5StopTM, Complexity.clInputTM, Turing.FinTM}
+\uses{Complexity.clA5Modules, Complexity.clInputTM, Turing.FinTM}
 \difficulty{2}
 Let $S,J,E,I$ be finite Turing machines over the Boolean alphabet, with work-tape counts
 $k_S,k_J,k_E,k_I$. For each of the five modules formed from the release-wrapped input
@@ -4685,7 +4092,7 @@ copier and these four machines, the number of work tapes is at most $1+k_S+k_J+k
 \lean{Complexity.clA5Startup}
 \label{Complexity.clA5Startup}
 \leanok
-\uses{Complexity.clA5Copy_clean, Complexity.clA5Cursor_install, Complexity.clA5HostEntry, Complexity.clA5HostTM, Complexity.clA5Host_call, Complexity.clA5Host_clean, Complexity.clA5Modules, Complexity.clA5Modules_bound, Complexity.clA5Pack, Complexity.clA5Packed_install, Complexity.clA5StopTM, Complexity.clA5_guard_add, Complexity.clInputTM, Complexity.clPackedRecords, Complexity.clPackedRecords_machine, Turing.Cfg.init, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.stateWord}
+\uses{Complexity.clA5Copy_clean, Complexity.clA5Cursor_install, Complexity.clA5HostEntry, Complexity.clA5HostTM, Complexity.clA5Host_call, Complexity.clA5Host_clean, Complexity.clA5Modules, Complexity.clA5Modules_bound, Complexity.clA5Pack, Complexity.clA5Packed_install, Complexity.clA5_guard_add, Complexity.clInputTM, Complexity.clPackedRecords, Complexity.clPackedRecords_machine, Turing.Cfg.init, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.stateWord}
 \difficulty{5}
 For every finite Boolean-alphabet Turing machine $M$ and natural numbers $C,e,c,A,d$,
 there are finite machines $S,J$ and natural-number constants $a_S,d_S,a_J,d_J,a_H,d_H$
@@ -4730,84 +4137,11 @@ functions $x\mapsto[p(x)]$ and $x\mapsto[q(x)]$ are polynomial-time computable, 
 is $x\mapsto[p(x)\land q(x)]$.
 \end{lemma}
 
-\begin{definition}[Semantics of a one-way transducer]
-\lean{Complexity.clA5MapWord}
-\label{Complexity.clA5MapWord}
-\leanok
-For a finite state set with a step function, an optional per-bit emission, and an optional final emission, the transduction of a word processes each bit in order, appending its optional emitted bit and updating the state, and appends the optional final bit at the end; at most one bit is emitted per input bit.
-\end{definition}
-
-\begin{definition}[Finite one-way transducer machine]
-\lean{Complexity.clA5MapTM}
-\label{Complexity.clA5MapTM}
-\leanok
-\uses{Turing.FinTM}
-For a finite state set with step, emission, and finishing functions and a start state, the transducer is a machine with no work tapes that scans its input left to right, emits the per-bit outputs, and halts at the right boundary after the optional final emission.
-\end{definition}
-
-\begin{definition}[Scanner frame of the transducer]
-\lean{Complexity.clA5MapCfg}
-\label{Complexity.clA5MapCfg}
-\leanok
-\uses{Turing.Cfg}
-For an input word, a state, a scanned-prefix length, and an already-emitted output, the scanner frame is the configuration with the input head just past the prefix and no work tapes.
-\end{definition}
-
-\begin{lemma}[Run of a finite-state transducer]
-\lean{Complexity.clA5Map_run}
-\label{Complexity.clA5Map_run}
-\leanok
-\uses{Complexity.clA5MapCfg, Complexity.clA5MapTM, Complexity.clA5MapWord, Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{4}
-Let $S$ be a finite state set with decidable equality, let $\mathrm{next}$,
-$\mathrm{emit}$, and $\mathrm{finish}$ be respectively a state update, an optional
-per-bit output, and an optional final output, and choose a start state. For any bit
-strings $x$ and $r$, any prefix $p$ satisfying $x=p r$, any state $q$, and any already
-emitted bit string $o$, running the associated transducer machine from the configuration
-with input $x$, state $q$, input head just past $p$, and output $o$ for $|r|+1$ steps
-halts and leaves output equal to $o$ followed by the transduction of $r$ starting in
-state $q$.
-\end{lemma}
-
-\begin{lemma}[Polynomial-time transduction of finite-state words]
-\lean{Complexity.clA5Map_poly}
-\label{Complexity.clA5Map_poly}
-\leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clA5MapCfg, Complexity.clA5MapTM, Complexity.clA5MapWord, Complexity.clA5Map_run, Turing.Cfg.ext_zero_tapes, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
-\difficulty{3}
-Let $S$ be a finite state set with decidable equality, let
-$\mathrm{next}:S\times\{0,1\}\to S$ be a state update, let
-$\mathrm{emit}:S\times\{0,1\}\to\mathrm{Option}(\{0,1\})$ specify an optional output bit
-for each state and input bit, and let $\mathrm{finish}:S\to\mathrm{Option}(\{0,1\})$
-specify an optional final output bit. For every start state, the word function that
-processes the input bits in order using these rules and appends the final output is
-polynomial-time computable.
-\end{lemma}
-
-\begin{lemma}[Unary input length is native]
-\lean{Complexity.clA5_pt_unaryLength}
-\label{Complexity.clA5_pt_unaryLength}
-\leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clA5MapWord, Complexity.clA5Map_poly}
-\difficulty{3}
-The function sending a word to the unary word of true bits of the same length is polynomial-time computable, by the one-state transducer replacing every bit by true.
-\end{lemma}
-
-\begin{lemma}[Polynomial-time tail function]
-\lean{Complexity.clA5_pt_tail}
-\label{Complexity.clA5_pt_tail}
-\leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clA5MapWord, Complexity.clA5Map_poly}
-\difficulty{3}
-The function that removes the first bit of a bit word, returning the empty word when the
-input is empty, is polynomial-time computable.
-\end{lemma}
-
 \begin{lemma}[Polynomial-time first-bit truncation]
 \lean{Complexity.clA5_pt_head}
 \label{Complexity.clA5_pt_head}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clA5MapWord, Complexity.clA5Map_poly}
+\uses{Complexity.PolyTimeComputable}
 \difficulty{3}
 The function that takes a bit word to its prefix of length at most one is
 polynomial-time computable.
@@ -4828,7 +4162,7 @@ otherwise is polynomial-time computable.
 \lean{Complexity.clA5Iter_native}
 \label{Complexity.clA5Iter_native}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clFields, Complexity.clFields_width, Complexity.clNative_cleanCall, Complexity.clNative_image, Complexity.clRepeatArgument_native, Complexity.clRepeatOutputTM, Complexity.clRepeatOutput_compute, Complexity.clRepeatWords, Complexity.clRepeat_budget, Turing.FinTM.ComputesInTime.mono, Turing.stateWord}
+\uses{Complexity.PolyTimeComputable, Complexity.clFields, Complexity.clFields_width, Complexity.clNative_image, Turing.FinTM.ComputesInTime.mono, Turing.stateWord}
 \difficulty{5}
 Let $f$ and $s$ be polynomial-time computable functions on Boolean words, and let $N$ be
 a natural-valued function whose unary encoding is polynomial-time computable. Suppose
@@ -4854,7 +4188,7 @@ $f$ applied to $s(x)$ is polynomial-time computable.
 \lean{Complexity.clA5Drop_native}
 \label{Complexity.clA5Drop_native}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clA5Iter_shrinking, Complexity.clA5_pt_tail, Complexity.clNative_fill}
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clA5Iter_shrinking, Complexity.clNative_fill}
 \difficulty{3}
 Let $s$ and $u$ be polynomial-time computable functions from binary words to binary
 words. Then the function mapping $x$ to the suffix of $s(x)$ obtained by dropping the
@@ -5562,7 +4896,7 @@ $|x|+C(|x|+1)^e$.
 \lean{Complexity.clA5Div_native}
 \label{Complexity.clA5Div_native}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clA5MapWord, Complexity.clA5Map_poly, Complexity.clA5_pt_const}
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clA5_pt_const}
 \difficulty{4}
 Let $f$ be a function from binary words to natural numbers whose unary representation is
 polynomial-time computable. For every natural number $k$, the function that maps $x$ to

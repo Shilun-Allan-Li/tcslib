@@ -313,6 +313,14 @@ def bootCfg (c : Cfg S.k Bool S.State x) :
   hostCfg (some ((c.state.map ClockPhase.boot).getD ClockPhase.rew)) c.inputPos c.workTapes
     c.workTapePos (fun _ _ => none) (fun _ => 0) (bufferTape c.output) c.output.length []
 
+/-- A halted yardstick configuration is the rewind configuration with its output on the
+extra tape and with the attempt bank blank. -/
+theorem bootCfg_of_halt (c : Cfg S.k Bool S.State x) (hc : c.state = none) :
+    bootCfg (A := A) c =
+      hostCfg (some .rew) c.inputPos c.workTapes c.workTapePos (fun _ _ => none)
+        (fun _ => 0) (bufferTape c.output) c.output.length [] := by
+  simp only [bootCfg, hc, Option.map_none, Option.getD_none]
+
 /-- A boot step is a step of `S`, its emission appended to the yardstick tape.
 
 **Proof sketch.** The boot action is `S`'s action on its bank with its emission written on `Y`
@@ -480,6 +488,21 @@ def runCfg (a : Cfg A.k Bool A.State x) (j : ℤ) (sT : Fin S.k → ℤ → Opti
     (sP : Fin S.k → ℤ) : Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x :=
   hostCfg (some (.run a.state (capOf a.output))) a.inputPos sT sP a.workTapes a.workTapePos
     (yard m) j []
+
+/-- The attempt configuration of the initial machine has the initial control and input
+position, a blank attempt bank, and no captured output, at the given yardstick position. -/
+theorem runCfg_initCfg (j : ℤ) (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :
+    runCfg m (A.tm.initCfg x) j sT sP =
+      hostCfg (some (.run (some A.tm.q₀) none)) 1 sT sP (fun _ _ => none)
+        (fun _ => 0) (yard m) j [] := by
+  have hw : (A.tm.initCfg x).workTapes = (fun _ _ => none) := by
+    funext i z
+    rw [NDTM.initCfg_eq, Cfg.init_workTapes]
+  have hp : (A.tm.initCfg x).workTapePos = (fun _ => 0) := by
+    funext i
+    rw [NDTM.initCfg_eq, Cfg.init_workTapePos]
+  rw [runCfg, hw, hp]
+  simp only [NDTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, capOf]
 
 /-- Before the timeout, a host step is a step of `A` under the same coin.
 

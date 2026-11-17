@@ -83,7 +83,7 @@ theorem inner_spec (hx : x = pairEncode qs (CNF.serialize φ)) (hB1 : 2 ^ (qs.le
     · refine read_f (l := .nd1) rfl (stp_bd (by omega) (by omega) (by omega))
         (by show x.getD (2 * k) false = false; rw [hq0, hqk]) ?_
       refine step_of (stp_bd (by omega) (by omega) (by omega)) ?_
-      regs [astep, A]
+      regs [astep_inc (show A .nd2 = _ from rfl)]
       refine cont (st' := stp k S (2 * k + 1)) rfl ?_
       refine read_f (l := .nd3) rfl (stp_bd (by omega) (by omega) (by omega))
         (by show x.getD (2 * k + 1) false = false; rw [hq1, hqk]) ?_
@@ -116,7 +116,7 @@ theorem inner_spec (hx : x = pairEncode qs (CNF.serialize φ)) (hB1 : 2 ^ (qs.le
       have hv : Val qs φ k S ↔ Val qs φ (k + 1) (2 * S + 1) := by
         rw [val_all qs φ k S hk hqk]; exact ⟨fun h => h.2, fun h => ⟨h0, h⟩⟩
       refine step_of (stp_bd (by omega) (by omega) (by omega)) ?_
-      regs [astep, A, cond_false, if_true]
+      regs [astep_clr (show A (.qU true) = _ from rfl), cond_false, if_true]
       refine cont (st' := stp k S 0) rfl ?_
       rw [show decide (Val qs φ k S) = decide (Val qs φ (k + 1) (2 * S + 1)) from
         decide_eq_decide.mpr hv]
@@ -124,7 +124,7 @@ theorem inner_spec (hx : x = pairEncode qs (CNF.serialize φ)) (hB1 : 2 ^ (qs.le
     · -- existential, first child true
       have hv : Val qs φ k S := (val_ex qs φ k S hk hqk).mpr (Or.inl h0)
       refine step_of (stp_bd (by omega) (by omega) (by omega)) ?_
-      regs [astep, A, cond_true, if_true]
+      regs [astep_clr (show A (.qE true) = _ from rfl), cond_true, if_true]
       rw [decide_eq_true hv]
       exact fin_of (by sext [stp])
   · rw [decide_eq_false h0]
@@ -132,14 +132,16 @@ theorem inner_spec (hx : x = pairEncode qs (CNF.serialize φ)) (hB1 : 2 ^ (qs.le
     · -- universal, first child false
       have hv : ¬ Val qs φ k S := fun h => h0 ((val_all qs φ k S hk hqk).mp h).1
       refine step_of (stp_bd (by omega) (by omega) (by omega)) ?_
-      regs [astep, A, cond_false, Bool.false_eq_true, if_false]
+      regs [astep_clr (show A (.qU false) = _ from rfl), cond_false, Bool.false_eq_true,
+        if_false]
       rw [decide_eq_false hv]
       exact fin_of (by sext [stp])
     · -- existential, first child false: the second child decides
       have hv : Val qs φ k S ↔ Val qs φ (k + 1) (2 * S + 1) := by
         rw [val_ex qs φ k S hk hqk]; exact ⟨fun h => h.resolve_left h0, Or.inr⟩
       refine step_of (stp_bd (by omega) (by omega) (by omega)) ?_
-      regs [astep, A, cond_true, Bool.false_eq_true, if_false]
+      regs [astep_clr (show A (.qE false) = _ from rfl), cond_true, Bool.false_eq_true,
+        if_false]
       refine cont (st' := stp k S 0) rfl ?_
       rw [show decide (Val qs φ k S) = decide (Val qs φ (k + 1) (2 * S + 1)) from
         decide_eq_decide.mpr hv]
@@ -187,7 +189,7 @@ theorem truth_mem_PSPACE : {x : List Bool | (QBF.decode x).truth} ∈ PSPACE := 
   change AHalt A orc x (GuardLe A x B) (some .init, fun _ => 0, none) _
   rw [St.toV_zero]
   refine AHalt.step (gb_of (by simp only [St.Bd, St.zero]; omega) .init) ?_
-  regs [astep, A]
+  regs [astep_inc (show A .init = _ from rfl)]
   have hbd1 : St.Bd B { St.zero with S := 0 + 1 } := by simp only [St.Bd, St.zero]; omega
   refine (syn_run (x := x) (B := B) x.length (.inl none) { St.zero with S := 0 + 1 }
     (by simp [St.zero]) hbd1 (by omega)).halt ?_
@@ -201,12 +203,12 @@ theorem truth_mem_PSPACE : {x : List Bool | (QBF.decode x).truth} ∈ PSPACE := 
     have hB1 : 2 ^ (qs.length + 1) ≤ B := by
       rw [hB']; exact Nat.pow_le_pow_right (by norm_num) (by omega)
     refine AHalt.step (gb_of (by simp only [St.Bd]; omega) _) ?_
-    regs [astep, A, if_true]
+    regs [astep_clr (show A (.vend (Sum.inr 4)) = _ from rfl), if_true]
     refine AReach.halt (b := (some (.rt (decide (Val qs φ 0 1))), (stp 0 1 0).toV, none))
       (reach_of_eq ((cont (st' := stp 0 1 0) (by sext [stp]) (call_spec hx hB1 (by omega)
         qs.length 0 (by omega) 1 (by norm_num)))) rfl) ?_
     refine AHalt.step (gb_of (stp_bd (by omega) (by omega) (by omega)) _) ?_
-    simp only [astep, A, stp, St.toV_K]
+    simp only [astep_jz (show A (.rt (decide (Val qs φ 0 1))) = _ from rfl), stp, St.toV_K]
     regs [if_true]
     have hans : decide (Val qs φ 0 1) = decide (x ∈ {x : List Bool | (QBF.decode x).truth}) := by
       apply decide_eq_decide.mpr

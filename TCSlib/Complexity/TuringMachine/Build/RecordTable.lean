@@ -1296,9 +1296,8 @@ private def rt_findRound {Γ A : Type} {m : ℕ} (hm : 0 < m)
 /-- A fold scan rewrites every cell to itself, so its catalog write mask
 collapses to the original tape.
 
-**Proof sketch.** Specialize the public scan contract to the fold instance.
-The fold-result identity preserves the word; the supplied frame identifies
-each masked cell with the old tape. The cut and head bounds are inherited. -/
+**Proof sketch.** The fold keeps the word (`Turing.scanResult_fold`), so
+`Turing.scanTM_run_preserves` applies. -/
 private theorem rt_find_scan {Γ A : Type} {x : List Γ}
     (δ : A → Option Γ → A) (a : A) (w : List Γ)
     (d : Cfg 2 Γ (ScanPhase A) x) (hd : d.state = some (.fwd a))
@@ -1315,22 +1314,8 @@ private theorem rt_find_scan {Γ A : Type} {x : List Γ}
           ((scanTM 2 0 (scanFold (fun c γ => δ c (some γ))) scanKeep a).runFrom d u).workTapePos j ∈
             Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
         else ((scanTM 2 0 (scanFold (fun c γ => δ c (some γ))) scanKeep a).runFrom d u).workTapePos j =
-          d.workTapePos j) := by
-  obtain ⟨hr, hcut, hspace⟩ := scanTM_run_ofCfg (0 : Fin 2)
-    (scanFold (fun b γ => δ b (some γ))) scanKeep a w d hd hw
-  refine ⟨?_, hcut, hspace⟩
-  rw [scanResult_fold] at hr
-  rw [hr]
-  apply Cfg.ext <;> try rfl
-  funext j q
-  dsimp only
-  split_ifs with h
-  · obtain ⟨rfl, hlo, hhi⟩ := h
-    have hf := hw (q - d.workTapePos 0) (by omega) (by omega)
-    convert hf.symm using 1
-    congr 1
-    omega
-  · rfl
+          d.workTapePos j) :=
+  scanTM_run_preserves 0 _ _ a _ w d hd hw (scanResult_fold _ a w)
 
 /-- The fold over a nonfinal field includes its separator exactly once. -/
 private theorem rt_find_fold_cons {Γ A : Type} (δ : A → Option Γ → A)
@@ -1355,7 +1340,7 @@ private theorem rt_find_read {Γ A : Type} {m : ℕ} (hm : 0 < m)
   let b := (d.workTapes 0 (d.workTapePos 0)).isSome
   let z : Cfg 2 Γ (Option Bool) x := { d with state := some (some b) }
   have hz : (rt_findParts (m := m) δ a₀ .read).runFrom d 1 = z := by
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     rw [step_of_inputMoveAction _ d 0 hd (by rfl)]
     simp only [z, moveInputPos_zero]
     rfl
@@ -2317,7 +2302,7 @@ private theorem rt_boundary_run {Γ : Type*} {k : ℕ} {x : List Γ}
     workTapes := Function.update d.workTapes i
       (Function.update (d.workTapes i) (d.workTapePos i - 1) (some b))}
   have one : (rt_boundaryTM k i b).runFrom d 1 = a := by
-    change (rt_boundaryTM k i b).step d = a
+    rw [MultiTapeTM.runFrom_one]
     rw [step_of_tapeAction_move (rt_boundaryTM k i b) d (q' := 1) i 0 .neg hs
       (by simp [rt_boundaryTM])]
     simp [a, SignType.cast, sub_eq_add_neg]
@@ -2758,11 +2743,9 @@ private theorem rt_exists_boundTM :
       · simp [FinTM.bufferTape, show 0 ≤ p by omega,
           List.getElem?_eq_none (show x.length.bits.length ≤ p.toNat by omega)]
   obtain ⟨u, ub, ucut, uheads, urun⟩ := rt_succ_run (0 : Fin (K + 1)) x.length.bits c rfl framed
-  have monotone : x.length.bits.length ≤ (x.length + 1).bits.length := by
-    simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ x.length)
-  have short : x.length.bits.length ≤ x.length + 1 := by
-    rw [Nat.size_eq_bits_len, Nat.size_le]
-    exact lt_trans (Nat.lt_succ_self _) Nat.lt_two_pow_self
+  have monotone : x.length.bits.length ≤ (x.length + 1).bits.length :=
+    Complexity.LogProg.length_bits_mono (Nat.le_succ x.length)
+  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
   let B : ℤ := ((C + 20) * ((x.length + 1).bits.length + 1) : ℕ)
   have firstBound : (C * (x.length.bits.length + 1) : ℕ) ≤
       (C + 20) * ((x.length + 1).bits.length + 1) := by nlinarith
@@ -3191,11 +3174,8 @@ private theorem rt_writeReleased_run {Γ : Type*} {k : ℕ} {x : List Γ}
     exact abs_le.mpr ⟨by omega, by omega⟩
   · rw [h, sub_self, abs_zero]; exact_mod_cast Nat.zero_le _
 
-/-- Two adjacent framed word writes are one write of their concatenation.
-
-**Proof sketch.** Partition a cell into the first interval, the second, and
-its complement. The public list-append lookup equations identify both
-interior cases; the complement preserves the original cell. -/
+/-- Two adjacent framed word writes are one write of their concatenation: `Turing.wordPatch_append`
+read through `Turing.wordPatch_apply`. -/
 private theorem rt_adjacentWrites {Γ : Type*} (tape : ℤ → Option Γ) (o : ℤ)
     (u v : List Γ) :
     (fun q => if o + (u.length : ℤ) ≤ q ∧ q < o + u.length + (v.length : ℤ)
@@ -3205,20 +3185,7 @@ private theorem rt_adjacentWrites {Γ : Type*} (tape : ℤ → Option Γ) (o : �
     (fun q => if o ≤ q ∧ q < o + ((u ++ v).length : ℤ)
       then FinTM.bufferTape (u ++ v) (q - o) else tape q) := by
   funext q
-  simp only [List.length_append, Nat.cast_add]
-  by_cases first : o ≤ q ∧ q < o + (u.length : ℤ)
-  · rw [if_neg (by omega), if_pos first, if_pos (by omega)]
-    simp only [FinTM.bufferTape, if_pos (show 0 ≤ q - o by omega)]
-    exact (List.getElem?_append_left (show (q - o).toNat < u.length by omega)).symm
-  · rw [if_neg first]
-    by_cases second : o + (u.length : ℤ) ≤ q ∧ q < o + u.length + (v.length : ℤ)
-    · rw [if_pos second, if_pos (by omega)]
-      simp only [FinTM.bufferTape, if_pos (show 0 ≤ q - (o + u.length) by omega),
-        if_pos (show 0 ≤ q - o by omega),
-        List.getElem?_append_right (show u.length ≤ (q - o).toNat by omega)]
-      congr 1
-      omega
-    · rw [if_neg second, if_neg (by omega)]
+  simpa only [wordPatch_apply] using congrFun (wordPatch_append tape o u v) q
 
 /-- The endpoint of writing one contiguous word and advancing its tape head. -/
 private def rt_advanceCfg {k : ℕ} {Γ P : Type*} {x : List Γ}
@@ -4252,9 +4219,7 @@ private theorem rt_exists_boundFieldTM (Q T : Type) [DecidableEq Q] [DecidableEq
       (d.workTapePos (ι 0) + p - d.workTapePos (ι 0)) else _) = _
     rw [if_pos rfl]; congr 1; omega
   obtain ⟨move, moveCut, moveHeads⟩ := rt_moveWord_run (ι 0) dst different w b rfl frame
-  have short : (x.length + 1).bits.length ≤ x.length + 1 := by
-    rw [Nat.size_eq_bits_len, Nat.size_le]
-    exact Nat.lt_two_pow_self
+  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
   let B : ℤ := ((C + 10) * ((x.length + 1).bits.length + 1) : ℕ)
   have radA : ∀ u ≤ t, ∀ j,
       |((embedEmitTM ι R).runFrom a u).workTapePos j - d.workTapePos j| ≤ B := by

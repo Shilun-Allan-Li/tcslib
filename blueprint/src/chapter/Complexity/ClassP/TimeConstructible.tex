@@ -94,23 +94,6 @@ and the machine enters its rewind state. In both cases the input head moves by
 $d$ and nothing is written to the output.
 \end{definition}
 
-\begin{definition}[The four-state binary-counter machine]
-\lean{Complexity.counterTM}
-\label{Complexity.counterTM}
-\leanok
-\uses{Complexity.counterBump, Turing.FinTM}
-A finite Turing machine over the binary alphabet with one work tape and four
-states: \emph{count}, \emph{carry}, \emph{rewind}, and \emph{emit}. In the
-count state it performs a carry transition while also advancing the input head,
-or switches to the emit state when the input is exhausted. In the carry state
-it propagates an increment along the work tape (clearing $1$s rightward until
-it writes a $1$ over the first $0$ or blank). In the rewind state it moves the
-work head left until it finds the blank at cell $-1$, then steps right to cell
-$0$ and re-enters the count state. In the emit state it copies the work-tape
-word to the output, one bit per step moving right, and halts at the first
-blank.
-\end{definition}
-
 \begin{definition}[Tape of a finite binary word]
 \lean{Complexity.counterTape}
 \label{Complexity.counterTape}

@@ -100,6 +100,9 @@ def hH : ℕ := Fintype.card (Hd N)
 /-- The width of a chunk: header slot, three bits per work tape, a final `1`. -/
 def W : ℕ := hH N + 3 * N.k + 1
 
+/-- The chunk width: the header slot, three bits per work tape, and the closing `1`. -/
+lemma W_eq : W N = hH N + 3 * N.k + 1 := rfl
+
 /-- The position of a header datum in the one-hot header slot. -/
 noncomputable def hdNum (h : Hd N) : ℕ := (Fintype.equivFin (Hd N) h).val
 
@@ -268,8 +271,16 @@ def cellOf (s : ℕ) (C : Cfg N.k Bool N.State x) (j : ℕ) : CellV N :=
   (if j = 0 then some (C.state, sumIdx (outSummary C.output)) else none,
     fun i => (C.workTapes i ((j : ℤ) - s), decide (C.workTapePos i = (j : ℤ) - s)))
 
+/-- The head flag of tape `i` in cell `j`: whether the head of tape `i` is at work position
+`j - s`. -/
+lemma cellOf_head (s : ℕ) (C : Cfg N.k Bool N.State x) (j : ℕ) (i : Fin N.k) :
+    ((cellOf s C j).2 i).2 = decide (C.workTapePos i = (j : ℤ) - s) := rfl
+
 /-- The width of the input-position field on inputs of length `n`: `|bits (n + 1)|`. -/
 def wP (n : ℕ) : ℕ := (Nat.bits (n + 1)).length
+
+/-- The position-field width is the binary length of `n + 1`. -/
+lemma wP_eq (n : ℕ) : wP n = (Nat.bits (n + 1)).length := rfl
 
 /-- The binary word of `v` padded with `0`s to width `w`. -/
 def padBits (w v : ℕ) : List Bool := Nat.bits v ++ List.replicate (w - (Nat.bits v).length) false
@@ -447,14 +458,6 @@ theorem length_cfgWord_le (s : ℕ) (C : Cfg N.k Bool N.State x) :
         2 * logSpace x.length + 2 := by ring
   rw [e1, e2]
   omega
-
-/-- A word of `L` letters has value below `2 ^ L`. -/
-lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
-  induction w with
-  | nil => simp [bitsVal]
-  | cons b w ih =>
-    simp only [bitsVal, List.length_cons, pow_succ]
-    cases b <;> simp <;> omega
 
 /-- **The code is below `2 ^ (codeK N · (s + logSpace |x| + 1))`.** -/
 theorem cfgCode_lt (s : ℕ) (C : Cfg N.k Bool N.State x) :

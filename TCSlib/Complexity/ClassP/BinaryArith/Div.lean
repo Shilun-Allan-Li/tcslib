@@ -54,6 +54,10 @@ def div (z : List Bool) : List Bool := Nat.bits (bitsVal (pairFstD z) / bitsVal 
 /-- The remainder of the values of the two components of `z`, as a binary word. -/
 def mod (z : List Bool) : List Bool := Nat.bits (bitsVal (pairFstD z) % bitsVal (pairSndD z))
 
+/-- On every word, `mod` is the remainder of the values of its two components. -/
+theorem mod_eq (z : List Bool) :
+    mod z = Nat.bits (bitsVal (pairFstD z) % bitsVal (pairSndD z)) := rfl
+
 /-- `div` on encoded numbers is `/`. -/
 @[simp] theorem div_pairEncode (a b : ℕ) :
     div (pairEncode (Nat.bits a) (Nat.bits b)) = Nat.bits (a / b) := by simp [div, bitsVal_bits]

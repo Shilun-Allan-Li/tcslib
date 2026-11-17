@@ -53,6 +53,42 @@ def setupCfg (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     Fin.addCases (fun i => base.workTapePos (i.castAdd 3))
     (fun j => if j.val = 0 then b else if j.val = 1 then u else g), base.output⟩
 
+/-- The setup configuration is in state `q`. -/
+lemma setupCfg_state (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).state = q := rfl
+
+/-- The setup configuration has its input head at `p`. -/
+lemma setupCfg_inputPos (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).inputPos = p := rfl
+
+/-- The setup configuration keeps the base's witness tapes and holds the three explicit
+administrative tapes. -/
+lemma setupCfg_workTapes (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).workTapes =
+      Fin.addCases (fun i => base.workTapes (i.castAdd 3))
+        (fun j => if j.val = 0 then bt else if j.val = 1 then ut else gt) := rfl
+
+/-- The setup configuration keeps the base's witness heads and places the three explicit
+administrative heads. -/
+lemma setupCfg_workTapePos (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).workTapePos =
+      Fin.addCases (fun i => base.workTapePos (i.castAdd 3))
+        (fun j => if j.val = 0 then b else if j.val = 1 then u else g) := rfl
+
+/-- The setup configuration keeps the base's output. -/
+lemma setupCfg_output (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).output = base.output := rfl
+
 /-- Applying a controller write to one explicit setup tape. -/
 def setupWrite {A : Type} (t : ℤ → Option A) (z : ℤ)
     (w : Option (Option A)) : ℤ → Option A :=
@@ -157,10 +193,11 @@ private lemma setupCfg_reset (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
   have hs1 : (obliviousSchedule W a).tm.runFrom
       (setupCfg W a base (some .resetStart) p b u g bt ut gt) 1 =
       setupCfg W a base (some .resetScan) ⟨p.val - 1, by have := p.isLt; omega⟩ b u g bt ut gt := by
-    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using hs
+    simpa only [MultiTapeTM.runFrom_one] using hs
   rw [show p.val - 1 + 2 = 1 + (p.val - 1) + 1 by omega,
     MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hs1,
-    setupCfg_reset_scan W a base b u g bt ut gt _ (by have := p.isLt; omega)]
+    setupCfg_reset_scan W a base b u g bt ut gt _ (by have := p.isLt; omega),
+    MultiTapeTM.runFrom_one]
   change ((obliviousSchedule W a).tm.tr .resetScan _ _).apply _ = _
   simp only [obliviousSchedule, setupCfg_input, Fin.val_zero, if_true]
   rw [setupCfg_apply]
@@ -207,8 +244,7 @@ private lemma setupCfg_copy_left (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     funext z
     simp only [Function.update_apply, copyGuide, Int.natCast_zero]
     split_ifs <;> first | rfl | omega
-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step,
-    MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_one]
   change (obliviousSchedule W a).tm.step
       (((obliviousSchedule W a).tm.tr .copyLeft _ _).apply _) = _
   simp only [obliviousSchedule]
@@ -289,7 +325,7 @@ private lemma setupCfg_copy_return (W : FinTM Bool) (a : ℕ) {x : List OblSymbo
       setupCfg W a base (some .budgetStart) p b u 0 bt ut (copyGuide (n + 1)) := by
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     change ((obliviousSchedule W a).tm.tr .copyReturn _ _).apply _ = _
     have hr : (setupCfg W a base (some .copyReturn) p b u 0 bt ut (copyGuide (n + 1))).workTapeSymbols
         (Fin.natAdd W.k (2 : Fin 3)) = copyGuide (n + 1) 0 := by
@@ -359,7 +395,7 @@ private lemma setupCfg_budget_back (W : FinTM Bool) (a : ℕ) {x : List OblSymbo
     split <;> rw [setupCfg_apply] <;> simp_all [setupWrite, sub_eq_add_neg]
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
+    rw [MultiTapeTM.runFrom_one, step, if_pos rfl]
   | succ j ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step, step, if_neg (by omega)]
     simpa only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right] using ih
@@ -641,7 +677,7 @@ private lemma setupCfg_unary_rewind (W : FinTM Bool) (a : ℕ) {x : List OblSymb
       split <;> rw [setupCfg_apply] <;> simp_all [setupWrite, sub_eq_add_neg]
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
+    rw [MultiTapeTM.runFrom_one, step, if_pos rfl]
   | succ j ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step, step, if_neg (by omega)]
     simpa only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right] using ih
@@ -966,7 +1002,7 @@ private lemma setupCfg_start_center (W : FinTM Bool) (a : ℕ) {x : List OblSymb
     split <;> rw [setupCfg_apply] <;> simp_all [setupWrite]
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
+    rw [MultiTapeTM.runFrom_one, step, if_pos rfl]
   | succ j ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step, step, if_neg (by omega)]
     rw [show -((j + 1 : ℕ) : ℤ) + 1 = -(j : ℤ) by omega]
@@ -1065,15 +1101,18 @@ lemma setupCfg_finish (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x)
     (p : Fin (x.length + 2)) (b : ℤ) (bt : ℤ → Option OblSymbol) (B : ℕ) :
     (obliviousSchedule W a).tm.runFrom
-      (setupCfg W a base (some .macroCheck) p b 1 0 bt (unaryTape B) (guideTape (3 * B)))
+      (obliviousScheduleCfg W a
+        (setupCfg W a base (some .macroCheck) p b 1 0 bt (unaryTape B) (guideTape (3 * B))))
       (B * (6 * (3 * B) + 8) + 1) =
-      setupCfg W a base none p b (B + 1) 0 bt (unaryTape B) (guideTape (3 * B)) := by
+      obliviousScheduleCfg W a
+        (setupCfg W a base none p b (B + 1) 0 bt (unaryTape B) (guideTape (3 * B))) := by
   have h := macroCfg_finish W a
     (setupCfg W a base (some .macroCheck) p b 1 0 bt (unaryTape B) (guideTape (3 * B))) (3 * B) B
     (by simp [setupCfg])
     (fun j hj => by simpa [setupCfg] using unaryTape_unit B j hj)
     (by simpa [setupCfg] using unaryTape_end B)
-  simpa only [macroCfg_setup] using h
+  rw [obliviousScheduleCfg_eq_id, obliviousScheduleCfg_eq_id]
+  simpa only [macroCfg_setup, id_eq] using h
 
 /-- Initialization connects the arbitrary clock endpoint to the completely
 allocated macrostep configuration. The binary counter retains its full width. -/
@@ -1083,15 +1122,18 @@ lemma setupCfg_initializes (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     (hn : x.length + 1 ≤ (a + 1) * (v + 1)) :
     ∃ w', w'.length = w.length ∧
       (obliviousSchedule W a).tm.runFrom
-        (setupCfg W a base (some .resetStart) p (w.length + 1) 1 0
-          (clockTape w) (unaryTape 0) (fun _ => none))
+        (obliviousScheduleCfg W a (setupCfg W a base (some .resetStart) p (w.length + 1) 1 0
+          (clockTape w) (unaryTape 0) (fun _ => none)))
         ((p.val - 1 + 2) + ((2 * x.length + 4) +
           ((v + 1) * (2 * w.length + (a + 1) + 4) + (14 * ((a + 1) * (v + 1)) + 10)))) =
-        setupCfg W a base (some .macroCheck) ⟨x.length + 1, by omega⟩ (w.length + 1) 1 0
-          (clockTape w') (unaryTape ((a + 1) * (v + 1))) (guideTape (3 * ((a + 1) * (v + 1)))) := by
+        obliviousScheduleCfg W a (setupCfg W a base (some .macroCheck) ⟨x.length + 1, by omega⟩
+          (w.length + 1) 1 0 (clockTape w') (unaryTape ((a + 1) * (v + 1)))
+          (guideTape (3 * ((a + 1) * (v + 1))))) := by
   obtain ⟨w', hlen, hcounter⟩ := setupCfg_budget_all W a base ⟨x.length + 1, by omega⟩
     0 (copyGuide (x.length + 1)) v w 0 hv
   refine ⟨w', hlen, ?_⟩
+  rw [obliviousScheduleCfg_eq_id, obliviousScheduleCfg_eq_id]
+  simp only [obliviousSchedule_k, obliviousSchedule_State, id_eq]
   simp only [Nat.cast_zero, zero_add] at hcounter
   rw [MultiTapeTM.runFrom_add, setupCfg_reset, MultiTapeTM.runFrom_add, setupCfg_copy,
     MultiTapeTM.runFrom_add, hcounter]

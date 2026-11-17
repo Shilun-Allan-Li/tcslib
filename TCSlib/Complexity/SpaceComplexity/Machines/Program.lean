@@ -141,6 +141,12 @@ def callSegs {m d : ℕ} {Λ : Type} (cs : CallSpec m d Λ) (x : List Bool)
     (W : Fin m → List Bool) : List Seg :=
   cs.mode.seg0 x :: argSegs (cs.args.map W)
 
+/-- Two calls with the same mode and the same argument words have the same virtual input. -/
+lemma callSegs_congr {m d m' d' : ℕ} {Λ Λ' : Type} {cs : CallSpec m d Λ} {cs' : CallSpec m' d' Λ'}
+    {x : List Bool} {W : Fin m → List Bool} {W' : Fin m' → List Bool} (hmode : cs'.mode = cs.mode)
+    (hargs : cs'.args.map W' = cs.args.map W) : callSegs cs' x W' = callSegs cs x W := by
+  simp only [callSegs, hmode, hargs]
+
 /-- A call's virtual input has one segment per argument register plus the leading segment. -/
 @[simp] lemma length_callSegs {m d : ℕ} {Λ : Type} (cs : CallSpec m d Λ) (x : List Bool)
     (W : Fin m → List Bool) : (callSegs cs x W).length = cs.args.length + 1 := by
@@ -290,6 +296,25 @@ def compileTM (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : 
     MultiTapeTM (m + kD) Bool (CSt Λ SD m) where
   q₀ := .prog l₀
   tr := ctr P D q0
+
+/-- At a call node the compiled machine starts the simulation: it moves each argument head
+one cell left, leaves the input head and the decider block in place, emits nothing, and enters
+the simulation of the call's decider from its start state. -/
+lemma compileTM_tr_prog_call (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD)
+    (q0 : Fin d → SD) {l : Λ} {cs : CallSpec m d Λ} (hcall : P.call l = some cs)
+    (inp : Option Bool) (w : Fin (m + kD) → Option Bool) :
+    (compileTM P l₀ D q0).tr (.prog l) inp w =
+      ⟨0, Fin.append (fun r => (none, if r ∈ cs.args then -1 else 0)) dIdle, none,
+        some (.sim l (q0 cs.dec) 0 false true none)⟩ := by
+  simp only [compileTM, ctr, hcall]
+
+/-- The first return step moves the input head one cell left and nothing else, and enters the
+input rewind. -/
+lemma compileTM_tr_ret1 (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD)
+    (q0 : Fin d → SD) (l : Λ) (s : Fin (m + 1)) (dir res : Bool) (inp : Option Bool)
+    (w : Fin (m + kD) → Option Bool) :
+    (compileTM P l₀ D q0).tr (.ret1 l s dir res) inp w =
+      ⟨-1, fun _ => (none, 0), none, some (.ret2 l s dir res)⟩ := rfl
 
 /-- The compiled configuration of a program configuration: the program's registers, the
 decider block blank with heads at the origin. -/

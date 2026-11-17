@@ -262,7 +262,7 @@ theorem ret_sweep (c : Cfg M.k Bool M.State x) (q : M.State) (r : OutReg) (b : B
   intro j
   induction j generalizing L with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       ret_none M bits P c _ τO _ zO q r b (by simp)]
     simp
   | succ j ih =>

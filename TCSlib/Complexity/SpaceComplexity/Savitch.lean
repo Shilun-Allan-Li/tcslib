@@ -6,7 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.Constructible
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
-import TCSlib.Complexity.ClassNP.Transducer
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -17,251 +17,112 @@ set_option autoImplicit false
 
 [AB09, Theorem 4.14] ([Sav70]): for space-constructible `S`,
 `NSPACE(S(n)) ⊆ SPACE(S(n)²)` — nondeterministic space costs only a quadratic
-deterministic overhead, via the midpoint recursion `reach?(u, v, i)` over the
-configuration graph of `TCSlib.Complexity.SpaceComplexity.ConfigGraph`. The
+deterministic overhead, via Savitch's midpoint search `reach?(u, v, i)` over the
+machine's configurations, here realized by a register machine. The
 corollary `PSPACE = NPSPACE` ([AB09, §4.2.1]) closes the polynomial level.
-Phase P4.2 of `AroraBarakChapters3-4Plan.md`.
 
-**Status: partly filled (phase P4.2).** `Complexity.PSPACE_eq_NPSPACE` is
-proved, directly at the polynomial level, by the Savitch register machine of
-`TCSlib.Complexity.SpaceComplexity.SavitchARM` (`Complexity.NPSPACE_subset_PSPACE`);
-`Complexity.spaceConstructible_poly` is proved by a timed conditional over composed catalog
-rows; `Complexity.savitch` (general space-constructible `S`) remains sorried with a sketch
-naming its fill obligations. The `SpaceComplexity.lean` facade has carried this module since the
-P4.1 gate closed (root-wired while that gate was live).
+**Status.** Both results are proved. `Complexity.savitch_of_logSpace_le` proves the inclusion
+for every space bound `S ≥ logSpace`, and `Complexity.savitch` follows, since
+space-constructibility includes `logSpace ≤ S` and nothing else of it is used: the deepening
+register machine of
+`TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen` decides `L` with registers of
+`O((S n)²)` digits (`Complexity.LogProg.SavitchARM.deepen_contract`), and
+`Complexity.LogProg.arm_decides_SPACE` turns it into a deterministic decider in space
+`O(S · S)`. `Complexity.PSPACE_eq_NPSPACE` is proved directly, at the polynomial level, by the
+Savitch register machine of `TCSlib.Complexity.SpaceComplexity.SavitchARM`
+(`Complexity.NPSPACE_subset_PSPACE`). The polynomial bounds' constructibility,
+`Complexity.spaceConstructible_poly`, is in `TCSlib.Complexity.SpaceComplexity.Constructible`.
 
 ## Design
 
 * **The positive-bound convention is respected without side conditions**:
   `Complexity.SpaceConstructible` bundles `logSpace n ≤ S n`, so `S` and
-  `S · S` are everywhere positive and the P0-adopted convention
+  `S · S` are everywhere positive and the zero-bound convention
   (`TCSlib.Complexity.SpaceComplexity.ZeroSpace`) imposes no extra hypothesis.
-* **The recursion is realized iteratively**: `reach?`'s call stack becomes an
-  explicit stack of `O(S)`-bit frames (coded vertices and a midpoint cursor)
-  on a dedicated bank, walked by the loop combinator — the §12 layer
-  (`Build/Embed.lean`, `Build/Seam.lean`, `Build/Catalog.lean`) is the
-  intended engine, with the depth `O(S)` and frame size `O(S)` giving the
-  `O(S²)` ledger.
+* **The radius is found by iterative deepening, not computed**: instead of computing
+  `S(|x|)` from a constructibility witness, the machine runs Savitch's midpoint search at
+  radius `s = 1, 2, …` ([Sip13, §8.1, proof of Theorem 8.5]). At each radius it first asks
+  whether a configuration with a work head on the window's edge is reachable; if none is,
+  membership is reachability at that radius
+  (`Complexity.LogProg.SavitchARM.mem_iff_reach_of_noEdge`), and beyond the space bound none is
+  (`Complexity.LogProg.SavitchARM.noEdge_of_lt`), so for a machine deciding in space `c · S`
+  the search stops by radius `c · S(|x|) + 1`.
+* **The recursion is realized by a register machine**: the midpoint search is the Savitch
+  register machine (`Complexity.LogProg.SavitchARM.A`), whose explicit stack keeps every
+  register value at most `2 ^ (w · w)`, so within `O(w²)` binary digits, for a code width
+  `w = O(S n)`; the deepening machine holds it twice as a block of its own table
+  (`Complexity.LogProg.Ins.embed`).
+
+## Main definitions
+
+None: the module states theorems only.
 
 ## Main results
 
-* `Complexity.spaceConstructible_poly` — the polynomial bounds `n ^ c + 1` are
-  space-constructible (degree at least one). (Proved.)
-* `Complexity.savitch` — [AB09, Theorem 4.14]. (Sorried.)
-* `Complexity.PSPACE_eq_NPSPACE` — [AB09, §4.2.1]. (Proved.)
+* `Complexity.savitch_of_logSpace_le` — [AB09, Theorem 4.14] for every `S ≥ logSpace`.
+* `Complexity.savitch` — [AB09, Theorem 4.14].
+* `Complexity.PSPACE_eq_NPSPACE` — [AB09, §4.2.1].
 
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§4.2.1, Theorem 4.14; §4.1.2.)
 * [Sav70] W. J. Savitch, *Relationships between nondeterministic and
-  deterministic tape complexities*, JCSS 4(2), 1970. (Cited through [AB09];
-  no external text is required for this audit.)
+  deterministic tape complexities*, JCSS 4(2), 1970. (Cited through [AB09].)
+* [Sip13] M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage Learning,
+  2013. (§8.1, the proof of Theorem 8.5: the space bound found by trying `1, 2, …`.)
 -/
 
 namespace Complexity
 
 open Turing
 
-/-- The tail transducer's transition: one bit of state, "the first bit has been read". -/
-private def scp_tailδ : Bool → Bool → Bool := fun _ _ => true
+/-- **Savitch's theorem for every bound `S ≥ logSpace`** ([AB09, Theorem 4.14]; [Sav70]):
+nondeterministic space `S` sits inside deterministic space `S²` whenever `S ≥ logSpace`; no
+constructibility is needed, since the space bound is found by trying `1, 2, …` ([Sip13, §8.1,
+proof of Theorem 8.5]).
 
-/-- The tail transducer's emission: nothing on the first bit, the bit itself afterwards. -/
-private def scp_tailO : Bool → Bool → Option Bool := fun q b => if q then some b else none
-
-/-- After the first bit the tail transducer copies its input. -/
-private theorem scp_transduce_copy (l : List Bool) : transduce scp_tailδ scp_tailO true l = l :=
-  transduce_of_copy _ _ true (fun _ => rfl) (fun _ => rfl) l
-
-/-- From its start state the tail transducer computes `List.tail`. -/
-private theorem scp_transduce_tail (x : List Bool) :
-    transduce scp_tailδ scp_tailO false x = x.tail := by
-  cases x with
-  | nil => exact transduce_nil _ _ _
-  | cons b l =>
-    rw [transduce_cons]
-    simp only [scp_tailO, scp_tailδ, Bool.false_eq_true, if_false, Option.toList_none,
-      List.nil_append, scp_transduce_copy, List.tail_cons]
-
-/-- The unary intermediate is short: `(|x.tail| + 1) ^ c ≤ |x| ^ c + 1`. -/
-private theorem scp_tail_pow_le (c : ℕ) (x : List Bool) :
-    (x.tail.length + 1) ^ c ≤ x.length ^ c + 1 := by
-  cases x with
-  | nil => simp
-  | cons b l => simp
-
-/-- The conditional's value: for `1 ≤ c`, the branch function is `x ↦ (|x| ^ c + 1).bits`
-(`0 ^ c + 1 = 1` on the empty input; otherwise the count of `true :: 1ᴾ` with
-`P = (|x.tail| + 1) ^ c = |x| ^ c`). -/
-private theorem scp_value (c : ℕ) (hc : 1 ≤ c) (x : List Bool) :
-    (if decide (x = []) then Nat.bits 1
-      else Nat.bits (true :: List.replicate (1 * (x.tail.length + 1) ^ c) true).length) =
-      Nat.bits (x.length ^ c + 1) := by
-  cases x with
-  | nil =>
-    simp only [decide_true, if_true, List.length_nil]
-    rw [zero_pow (by omega), Nat.zero_add]
-  | cons b l =>
-    simp only [reduceCtorEq, decide_false, Bool.false_eq_true, if_false, List.length_cons,
-      List.length_replicate, Nat.one_mul, List.tail_cons]
-
-/-- The main branch's time, as arithmetic: with `P = (|x.tail| + 1) ^ c ≤ N + 1`, `N = |x| ^ c`,
-and `|x.tail| ≤ |x|`, the four phases' exact times sum to at most
-`(5c + 20 + 3c_L)(N + |x| + 1)`. -/
-private theorem scp_time_arith (c cL t n P N : ℕ) (hP : P ≤ N + 1) (ht : t ≤ n) :
-    n + 1 + t + 2 + (1 + 5 * c + 4) * P + P + 2 + (0 + 1 + P + 1) + (0 + 1 + P) + 2 +
-      cL * (0 + 1 + P + 1) ≤ (5 * c + 20 + 3 * cL) * (N + n + 1) := by
-  have h1 := Nat.mul_le_mul_left (1 + 5 * c + 4) hP
-  have h2 := Nat.mul_le_mul_left cL hP
-  nlinarith [h1, h2, Nat.zero_le (c * n), Nat.zero_le (cL * n), Nat.zero_le (cL * N),
-    Nat.zero_le (c * N)]
-
-/-- The conditional's time, as arithmetic: with `n ≤ N`, the bound
-`c_M (c_D (n + 1) + max (c₁ (n + 1)) (K (N + n + 1)) + 1) + 1` is at most `A (N + 1)` for
-`A = c_M (c_D + c₁ + 2K + 2) + 1`. -/
-private theorem scp_space_arith (cM cD c₁ K n N : ℕ) (hn : n ≤ N) :
-    cM * (cD * (n + 1) + max (c₁ * (n + 1)) (K * (N + n + 1)) + 1) + 1 ≤
-      (cM * (cD + c₁ + 2 * K + 2) + 1) * (N + 1) := by
-  have hmax : max (c₁ * (n + 1)) (K * (N + n + 1)) ≤ c₁ * (n + 1) + K * (N + n + 1) :=
-    max_le_add_of_nonneg (Nat.zero_le _) (Nat.zero_le _)
-  have e1 := Nat.mul_le_mul_left cD hn
-  have e2 := Nat.mul_le_mul_left c₁ hn
-  have e3 := Nat.mul_le_mul_left K hn
-  have hin : cD * (n + 1) + max (c₁ * (n + 1)) (K * (N + n + 1)) + 1 ≤
-      (cD + c₁ + 2 * K + 2) * (N + 1) := by
-    nlinarith [hmax, e1, e2, e3]
-  have h4 := Nat.mul_le_mul_left cM hin
-  nlinarith [h4, Nat.zero_le (cM * (cD + c₁ + 2 * K + 2))]
-
-/-- **Polynomial bounds are space-constructible**: for `1 ≤ c`, the normal-form bound
-`n ^ c + 1` is `Complexity.SpaceConstructible`. (Degree zero is excluded: `n ^ 0 + 1 = 2`
-fails the bundled `logSpace n ≤ S n` at large `n`; consumers route degree
-zero through monotonicity into degree one.)
-
-**Proof sketch.** Dominance: `logSpace n ≤ n + 1 ≤ n ^ c + 1`
-(`Complexity.logSpace_le_succ`, and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
-`x ↦ (|x| ^ c + 1).bits` as a timed conditional on `x = []`
-(`Turing.FinTM.computesFunInTime_cond`, with the decider
-`Turing.FinTM.computesFunInTime_ifEq [] [true] [false]`). On the empty input the constant
-writer emits `(1).bits`, which is the value since `0 ^ c + 1 = 1`. Otherwise four phases run by
-buffered composition (`Turing.FinTM.bufferedCompTM_computesInTime`), each at its exact time:
-1. a two-state transducer drops the first bit (`Complexity.transducerTM_computes`; from its
-   second state it copies, `Complexity.transduce_of_copy`);
-2. the unary generator `polyUnaryTM 1 c` writes `(|x| - 1 + 1) ^ c = |x| ^ c` ones;
-3. `prependTM [true]` adds one more;
-4. the length counter emits the binary length `|x| ^ c + 1`.
-The four times sum to `O(|x| ^ c + |x| + 1)`, because the unary word has length at most
-`|x| ^ c + 1`, so the conditional halts within `A (|x| ^ c + 1)` steps for a constant `A`
-(`|x| ≤ |x| ^ c`). Space follows from time: a `k`-tape machine visits at most `k (t + 1)`
-work-tape cells in `t` steps (`Turing.MultiTapeTM.spaceUsed_le_mul_succ`), which gives the
-space constant `k A + 1`. -/
-theorem spaceConstructible_poly (c : ℕ) (hc : 1 ≤ c) :
-    SpaceConstructible fun n => n ^ c + 1 := by
-  -- the published rows
-  obtain ⟨L, cL, hL⟩ := FinTM.computesFunInTime_lengthBits
-  obtain ⟨D, cD, hD⟩ := FinTM.computesFunInTime_ifEq [] [true] [false]
-  obtain ⟨K₁, c₁, hK₁⟩ := FinTM.computesFunInTime_const (Nat.bits 1)
-  let T := transducerTM scp_tailδ scp_tailO false
-  let U := FinTM.polyUnaryTM 1 c
-  let P := FinTM.prependTM [true]
-  let N := FinTM.bufferedCompTM (FinTM.bufferedCompTM (FinTM.bufferedCompTM T U) P) L
-  let f₂ : List Bool → List Bool := fun x =>
-    Nat.bits (true :: List.replicate (1 * (x.tail.length + 1) ^ c) true).length
-  -- the main branch, input by input: exact times of the four phases, composed
-  have hN : N.ComputesFunInTime f₂ fun n => (5 * c + 20 + 3 * cL) * (n ^ c + n + 1) := by
-    apply (FinTM.computesFunInTime_iff _ _ _).mpr
-    intro x
-    have hT : T.ComputesInTime x x.tail (x.length + 1) := by
-      have h := (FinTM.computesFunInTime_iff _ _ _).mp
-        (transducerTM_computes scp_tailδ scp_tailO false) x
-      rwa [scp_transduce_tail] at h
-    have hU := (FinTM.computesFunInTime_iff _ _ _).mp (FinTM.polyUnaryTM_computes 1 c) x.tail
-    have hP := (FinTM.computesFunInTime_iff _ _ _).mp (FinTM.prependTM_computes [true])
-      (List.replicate (1 * (x.tail.length + 1) ^ c) true)
-    have hL' := (FinTM.computesFunInTime_iff _ _ _).mp hL
-      ([true] ++ List.replicate (1 * (x.tail.length + 1) ^ c) true)
-    have h₁ := FinTM.bufferedCompTM_computesInTime T U hT hU
-    have h₂ := FinTM.bufferedCompTM_computesInTime _ P h₁ hP
-    have h₃ := FinTM.bufferedCompTM_computesInTime _ L h₂ hL'
-    apply h₃.mono
-    have hp := scp_tail_pow_le c x
-    have htl : x.tail.length ≤ x.length := by simp
-    simp only [List.length_replicate, Nat.one_mul, List.length_append, List.length_cons,
-      List.length_nil]
-    exact scp_time_arith c cL x.tail.length x.length _ _ hp htl
-  -- the decider for the empty input
-  have hD' : D.ComputesFunInTime (fun x => [decide (x = [])]) fun n => cD * (n + 1) := by
-    have hfun : (fun w : List Bool => if w = [] then [true] else [false]) =
-        fun x => [decide (x = [])] := by
-      funext w
-      by_cases hw : w = [] <;> simp [hw]
-    rw [← hfun]
-    exact hD
-  obtain ⟨M, cM, hM⟩ := FinTM.computesFunInTime_cond hD' hK₁ hN
-  -- the value
-  have hval : (fun x : List Bool => if decide (x = []) then Nat.bits 1 else f₂ x) =
-      fun x => Nat.bits (x.length ^ c + 1) := by
-    funext x
-    exact scp_value c hc x
-  rw [hval] at hM
-  -- time, then space from time
-  refine (spaceConstructible_iff _).mpr ⟨fun n => ?_,
-    M.k * (cM * (cD + c₁ + 2 * (5 * c + 20 + 3 * cL) + 2) + 1) + 1, by omega, M, ?_⟩
-  · have h1 := logSpace_le_succ n
-    have h2 : n ≤ n ^ c := Nat.le_self_pow (by omega) n
-    omega
-  · apply (FinTM.computesInSpace_iff _ _ _).mpr
-    intro x
-    refine ⟨_, (FinTM.computesFunInTime_iff _ _ _).mp hM x, ?_⟩
-    apply (MultiTapeTM.spaceUsed_le_mul_succ _ _ _).trans
-    have hB := scp_space_arith cM cD c₁ (5 * c + 20 + 3 * cL) x.length (x.length ^ c)
-      (Nat.le_self_pow (by omega) x.length)
-    calc M.k * (cM * (cD * (x.length + 1) + max (c₁ * (x.length + 1))
-            ((5 * c + 20 + 3 * cL) * (x.length ^ c + x.length + 1)) + 1) + 1)
-        ≤ M.k * ((cM * (cD + c₁ + 2 * (5 * c + 20 + 3 * cL) + 2) + 1) * (x.length ^ c + 1)) :=
-          Nat.mul_le_mul_left _ hB
-      _ ≤ (M.k * (cM * (cD + c₁ + 2 * (5 * c + 20 + 3 * cL) + 2) + 1) + 1) *
-            (x.length ^ c + 1) := by
-        rw [← Nat.mul_assoc]
-        exact Nat.mul_le_mul_right _ (Nat.le_succ _)
+**Proof sketch.** Let `N` decide `L` in space `c · S`. The deepening machine
+(`Complexity.LogProg.SavitchARM.deepen_contract`) answers `x ∈ L` with logspace deciders and
+registers of at most `C (c · S |x| + logSpace |x| + 1)²` binary digits. Since
+`logSpace ≤ S` and `S ≥ 1`, this is at most `C (c + 2)² · (S |x| · S |x|)`, and
+`Complexity.LogProg.arm_decides_SPACE` gives `L ∈ SPACE (S · S)`. -/
+theorem savitch_of_logSpace_le (S : ℕ → ℕ) (hS : ∀ n, logSpace n ≤ S n) :
+    NSPACE S ⊆ SPACE fun n => S n * S n := by
+  rintro L ⟨c, N, hN⟩
+  obtain ⟨m, d, Λ, _, _, D, l₀, As, hAs, C, hcorr⟩ := LogProg.SavitchARM.deepen_contract hN
+  have hS1 : ∀ n, 1 ≤ S n := fun n => le_trans (by rw [logSpace_eq]; omega) (hS n)
+  refine LogProg.arm_decides_SPACE D l₀ As hAs (fun n => S n * S n)
+    (fun n => (hS n).trans (Nat.le_mul_of_pos_right _ (hS1 n))) (C * (c + 2) ^ 2) (fun x => ?_)
+  refine (hcorr x).mono fun a ha => ⟨ha.1, fun r => (ha.2 r).trans ?_⟩
+  have h1 : c * S x.length + logSpace x.length + 1 ≤ (c + 2) * S x.length := by
+    have := hS x.length; have := hS1 x.length; nlinarith
+  calc C * (c * S x.length + logSpace x.length + 1) ^ 2
+      ≤ C * ((c + 2) * S x.length) ^ 2 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h1 2)
+    _ = C * (c + 2) ^ 2 * (S x.length * S x.length) := by ring
 
 /-- **Savitch's theorem** ([AB09, Theorem 4.14]; [Sav70]): for
 space-constructible `S`, nondeterministic space `S` sits inside deterministic
 space `S²`.
 
-**Proof sketch.** Let `N` decide `L` in space `c₀ · S`. Membership is
-acceptance within the vertex count
-(`Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound`), i.e.
-reachability, in the configuration graph restricted to the window
-`[-c₀·S n, c₀·S n]`, from the initial vertex to an accepting one
-(`Turing.NDTM.reflTransGen_cfgStep_iff` for the dictionary) within
-`V := N.configBound n (c₀·S n)` steps, where `log₂ V = O(S n)` (the
-`configBound` exponent arithmetic). The deterministic decider evaluates
-`reach?(u, v, i)` — is there a path of length at most `2^i` — by the midpoint
-recursion: enumerate midpoints `m` over the coded vertices and recurse on
-`(u, m, i - 1)` and `(m, v, i - 1)`, **reusing the space** of the first
-recursive call for the second ([AB09]'s crucial point). Realized iteratively:
-an explicit stack of at most `log₂ V + 1 = O(S n)` frames, each one coded
-vertex pair plus a midpoint cursor of `O(S n)` bits, held on a dedicated bank
-and walked with the catalog copy/compare/increment routines under the loop
-combinator; one extra bank runs the vertex-adjacency test (one
-transition-table application on decoded cores) and the base case. Space:
-frames × frame size `= O((S n)²)`, plus `O(S n)` administration — inside
-`SPACE (S·S)`'s constant absorption. The initial radius computation is the
-constructibility witness, whose own space is `O(S n)`. Named fill
-obligations: the frame-stack discipline (a §12 R1/R2 consumer — bank
-embedding for the stack bank, seam composition per frame transition), the
-midpoint enumerator, the adjacency tester, and the arithmetic packaging
-`O(S²) ≤ c' · (S n · S n)`. Positivity of the target bound is automatic
-(`S ≥ logSpace ≥ 1`). -/
+**Proof sketch.** Space-constructibility includes `logSpace ≤ S`, so this is
+`Complexity.savitch_of_logSpace_le`. There, the radius `S(|x|)` is never computed: the
+deterministic machine runs Savitch's midpoint search ([AB09]'s `reach?(u, v, i)`, reusing the
+space of the first recursive call for the second) over the configuration codes at radius
+`s = 1, 2, …`, first asking whether a configuration with a work head on the window's edge `±s`
+is reachable. If one is, the space bound exceeds `s` and it tries `s + 1`; if none is, every
+run stays inside the window, so membership is reachability of an accepting code at radius `s`,
+which it decides by the same search. The search stops by `s = c · S |x| + 1`, the code width is
+`O(S |x|)`, and the search's stack keeps every register within its square, so the space is
+`O((S |x|)²)`. -/
 theorem savitch (S : ℕ → ℕ) (hS : SpaceConstructible S) :
-    NSPACE S ⊆ SPACE fun n => S n * S n := by
-  sorry
+    NSPACE S ⊆ SPACE fun n => S n * S n :=
+  savitch_of_logSpace_le S ((spaceConstructible_iff S).mp hS).1
 
 /-- **`PSPACE = NPSPACE`** ([AB09, §4.2.1]; [AB09, Theorem 4.14] at polynomial
 space bounds): at the polynomial level, Savitch's quadratic overhead is absorbed.
 
-**Proof sketch.** `⊆` is `Complexity.PSPACE_subset_NPSPACE` (phase P4.1). `⊇` is
+**Proof sketch.** `⊆` is `Complexity.PSPACE_subset_NPSPACE`. `⊇` is
 `Complexity.NPSPACE_subset_PSPACE`, proved directly rather than through
 `Complexity.savitch`: for `N` deciding `L` in space `c (n ^ k + 1)`, take the radius
 `s = (n + 2) ^ E` and the code width `w = (n + 2) ^ (2E)` (`E` a constant of `N`, `k`, `c`),
@@ -273,9 +134,9 @@ most `2 ^ w`, every midpoint a code below `2 ^ w`). The Savitch register machine
 evaluates `REACH` by the midpoint recursion, **reusing the space** of the first recursive
 call for the second ([AB09]'s crucial point) through an explicit stack: saved endpoints as
 `w`-bit digits of one register, phase bits as binary digits of another, so every register
-holds at most `w · w` bits. Its deciders (input length and the initial, accepting and step
-code languages) are logspace, and `Complexity.LogProg.arm_decides_pspace_val` turns the
-machine into a polynomial-space decider. -/
+value stays at most `2 ^ (w · w)`, within `O(w²)` bits. Its deciders (input length and the
+initial, accepting and step code languages) are logspace, and
+`Complexity.LogProg.arm_decides_pspace_val` turns the machine into a polynomial-space decider. -/
 theorem PSPACE_eq_NPSPACE : PSPACE = NPSPACE :=
   Set.Subset.antisymm PSPACE_subset_NPSPACE NPSPACE_subset_PSPACE
 

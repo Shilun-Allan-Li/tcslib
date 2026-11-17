@@ -224,7 +224,7 @@ theorem rew (exact : Bool) {z : List Bool} (q : St) (key : Fin 2) (dest : St)
   induction h₀ with
   | zero =>
     intro _ hleft
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     rw [step_cf exact q p vt mt _ out 0 ⟨none, none, .pos, none, some dest⟩
       (by rw [htr]; simp [hleft])]
     simp [wr, moveInputPos_zero]
@@ -263,7 +263,7 @@ theorem app_walk (exact : Bool) {z : List Bool} (v : Bool) (p : Fin (z.length + 
     intro h mt hh
     simp only [Nat.add_zero] at hh
     subst hh
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     rw [step_cf exact (.app v) p _ mt _ out 0
       ⟨some (some v), some none, .neg, none, some (.rewV (some .g))⟩
       (by simp [tr, tp, FinTM.bufferTape_nat])]

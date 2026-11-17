@@ -123,7 +123,7 @@ theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool →
     subst hu'
     simp only [List.zip_nil_left, List.foldl_nil, List.length_nil, Nat.mul_zero, Nat.add_zero,
       Function.update_eq_self]
-    simpa [astep, htest, e] using
+    simpa [astep_jeq (htest st₀), e] using
       (AReach.single (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
         (a := (some (test st₀), v, none)) ⟨by simp [PreS, htest, hpl], hv⟩)
   | cons b u ih =>
@@ -143,14 +143,14 @@ theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool →
     have reads : AReach A oracle y (GuardLe A y B) (some (test st₀), v, none)
         (some (adv1 st₁ 0), v, none) := by
       apply AReach.step ⟨by simp [PreS, htest, hpl], hv⟩
-      simp only [astep, htest, if_neg hne]
+      simp only [astep_jeq (htest st₀), if_neg hne]
       apply AReach.step ⟨by simp [PreS, hrd1], hv⟩
-      simp only [astep, hrd1, vword_whole₁, hb]
+      simp only [astep_call (hrd1 st₀), vword_whole₁, hb]
       have e1 : (if b = true then rd2 st₀ true else rd2 st₀ false) = rd2 st₀ b := by
         cases b <;> rfl
       rw [e1]
       apply AReach.step ⟨by simp [PreS, hrd2], hv⟩
-      simp only [astep, hrd2, vword_whole₁, hb']
+      simp only [astep_call (hrd2 st₀ b), vword_whole₁, hb']
       have e2 : (if b' = true then adv1 (δ st₀ (b, true)) 0 else adv1 (δ st₀ (b, false)) 0) =
           adv1 st₁ 0 := by cases b' <;> rfl
       rw [e2]
@@ -261,7 +261,7 @@ theorem halvCount_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
           · subst hrt; simp [hrc, hn]
           · simp [hrc, hrt]
       rw [e]
-      simpa [astep, htest, hn] using
+      simpa [astep_jz htest, hn] using
         (AReach.single (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
           (a := (some test, v, none)) ⟨by simp [PreS, htest], hv⟩)
     · rw [hn] at hc
@@ -285,11 +285,11 @@ theorem halvCount_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
           · simp [hrc, hrt, v₂, v₁]
       rw [e] at rest
       apply AReach.step ⟨by simp [PreS, htest], hv⟩
-      simp only [astep, htest, hn, show n ≠ 0 by omega, ↓reduceIte]
+      simp only [astep_jz htest, hn, show n ≠ 0 by omega, ↓reduceIte]
       apply AReach.step ⟨by simp [PreS, hhalve], hv⟩
-      simp only [astep, hhalve, hn]
+      simp only [astep_half hhalve, hn]
       apply AReach.step ⟨by simp [PreS, hbump], b₁⟩
-      simp only [astep, hbump]
+      simp only [astep_inc hbump]
       have : Function.update v₁ c (v₁ c + 1) = v₂ := by simp [v₂, v₁, htc.symm]
       rw [this]
       exact rest
@@ -314,15 +314,15 @@ theorem le_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (y : Li
     by_cases hab : v a ≤ v b
     · have eq : v t = v a := by omega
       rw [if_pos hab, ← hm, Function.update_eq_self]
-      simpa [astep, htest₁, eq] using
+      simpa [astep_jeq htest₁, eq] using
         (AReach.single (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
           (a := (some test₁, v, none)) ⟨by simp [PreS, htest₁, hta], hv⟩)
     · have ne : v t ≠ v a := by omega
       have eq : v t = v b := by omega
       rw [if_neg hab, ← hm, Function.update_eq_self]
       apply AReach.step ⟨by simp [PreS, htest₁, hta], hv⟩
-      simp only [astep, htest₁, if_neg ne]
-      simpa [astep, htest₂, eq] using
+      simp only [astep_jeq htest₁, if_neg ne]
+      simpa [astep_jeq htest₂, eq] using
         (AReach.single (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
           (a := (some test₂, v, none)) ⟨by simp [PreS, htest₂, htb], hv⟩)
   | succ n ih =>
@@ -337,11 +337,11 @@ theorem le_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (y : Li
     rw [va, vb, show Function.update v₁ t (min (v a) (v b)) = Function.update v t (min (v a) (v b))
       by simp [v₁]] at rest
     apply AReach.step ⟨by simp [PreS, htest₁, hta], hv⟩
-    simp only [astep, htest₁, if_neg ne₁]
+    simp only [astep_jeq htest₁, if_neg ne₁]
     apply AReach.step ⟨by simp [PreS, htest₂, htb], hv⟩
-    simp only [astep, htest₂, if_neg ne₂]
+    simp only [astep_jeq htest₂, if_neg ne₂]
     apply AReach.step ⟨by simp [PreS, hbump], hv⟩
-    simp only [astep, hbump]
+    simp only [astep_inc hbump]
     exact rest
 
 end Complexity.Codec

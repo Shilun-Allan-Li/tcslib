@@ -83,15 +83,17 @@ theorem mem_ball_iff_rcode {s K : ℕ} (hK : 2 ^ (codeK N * (s + logSpace x.leng
   · rintro ⟨u, hu, hinit, hw⟩
     rw [InitM, mem_initLang] at hinit
     subst hinit
-    exact (walkLe_reach hu hw).mono fun a b hab => hab.2.2
+    exact rcode_iff_reflTransGen.mpr ((walkLe_reach hu hw).mono fun a b hab => hab.2.2)
   · intro ht
     have hpath : ∀ t, RCode N x s t → Relation.ReflTransGen
         (fun u v => u < K ∧ v < K ∧ StepRel N x s u v) (cfgCode s (N.tm.initCfg x)) t := by
       intro t ht
+      rw [rcode_iff_reflTransGen] at ht
       induction ht with
       | refl => exact Relation.ReflTransGen.refl
       | @tail b c hab hbc ih =>
-        exact ih.tail ⟨(rcode_lt hab).trans_le hK, (rcode_lt (hab.tail hbc)).trans_le hK, hbc⟩
+        exact ih.tail ⟨(rcode_lt (rcode_iff_reflTransGen.mpr hab)).trans_le hK,
+          (rcode_lt (rcode_iff_reflTransGen.mpr (hab.tail hbc))).trans_le hK, hbc⟩
     have h0 : cfgCode s (N.tm.initCfg x) < K := (cfgCode_lt s _).trans_le hK
     obtain ⟨j, hw⟩ := exists_walkLe (hpath t ht)
     exact ⟨_, h0, by rw [InitM, mem_initLang], walkLe_short ((rcode_lt ht).trans_le hK) h0 hw⟩
@@ -114,7 +116,7 @@ theorem card_ball_zero_code {s K : ℕ} (hK : 2 ^ (codeK N * (s + logSpace x.len
 
 /-- There is a reachable code (the initial one). -/
 theorem one_le_card_rset (s : ℕ) : 1 ≤ (rset N x s).card :=
-  Finset.card_pos.mpr ⟨_, mem_rset.mpr Relation.ReflTransGen.refl⟩
+  Finset.card_pos.mpr ⟨_, mem_rset.mpr (rcode_iff_reflTransGen.mpr Relation.ReflTransGen.refl)⟩
 
 /-- **No accepting code in the balls** `C_1, …, C_K` iff no reachable code is accepting. -/
 theorem noAcc_balls_iff {s K : ℕ} (hK : 2 ^ (codeK N * (s + logSpace x.length + 1)) ≤ K) :
@@ -131,7 +133,7 @@ theorem noAcc_balls_iff {s K : ℕ} (hK : 2 ^ (codeK N * (s + logSpace x.length 
 theorem mem_of_exists_acc {L : Language Bool} {sp : ℕ → ℕ} (hN : N.DecidesInSpace L sp)
     {s : ℕ} (h : ∃ t, RCode N x s t ∧ AccM N x s t) : x ∈ L := by
   obtain ⟨t, ht, hacc⟩ := h
-  exact mem_of_codePath hN x s _ t (by rw [mem_initLang]) ht hacc
+  exact mem_of_codePath hN x s _ t (by rw [mem_initLang]) (rcode_iff_reflTransGen.mp ht) hacc
 
 /-- **Equal counts at `s - 1` and `s` decide membership at radius `s`**: then `x ∈ L` iff some
 reachable code at radius `s` is accepting.

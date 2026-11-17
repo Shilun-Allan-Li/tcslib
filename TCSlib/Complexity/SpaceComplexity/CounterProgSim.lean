@@ -263,6 +263,7 @@ lemma pr_reach {l l' : Λ} {r : Fin R} (hP : P l = .pr r l') (ρ : Fin R → ℕ
       AReach (A P l₀ lm) o (pairEncode (List.replicate n true) (Nat.bits p))
         (G P l₀ lm B (pairEncode (List.replicate n true) (Nat.bits p)))
         (cf (.prL l) (ev ρ ps (o₀ + j) j)) (cf (.sim l') (ev ρ ps (o₀ + ρ r) (ρ r))) := by
+  have hL : A P l₀ lm (.prL l) = .jeq (rT R) (rg r) (.sim l') (.prC l) := by simp [A, hP]
   intro d
   induction d with
   | zero =>
@@ -271,7 +272,7 @@ lemma pr_reach {l l' : Λ} {r : Fin R} (hP : P l = .pr r l') (ρ : Fin R → ℕ
     refine AReach.step (G_ev _ _ _ _ _ hρ hps (by omega) (by omega)) ?_
     have : astep (A P l₀ lm) o (pairEncode (List.replicate n true) (Nat.bits p))
         (cf (.prL l) (ev ρ ps (o₀ + ρ r) (ρ r))) = cf (.sim l') (ev ρ ps (o₀ + ρ r) (ρ r)) := by
-      simp [astep, A, hP]
+      simp [astep_jeq hL]
     rw [this]; exact AReach.refl _
   | succ d ih =>
     intro j hj
@@ -280,17 +281,18 @@ lemma pr_reach {l l' : Λ} {r : Fin R} (hP : P l = .pr r l') (ρ : Fin R → ℕ
     refine AReach.step (hG _ _ _ (by omega) (by omega)) ?_
     have e1 : astep (A P l₀ lm) o (pairEncode (List.replicate n true) (Nat.bits p))
         (cf (.prL l) (ev ρ ps (o₀ + j) j)) = cf (.prC l) (ev ρ ps (o₀ + j) j) := by
-      simp [astep, A, hP, show j ≠ ρ r by omega]
+      simp [astep_jeq hL, show j ≠ ρ r by omega]
     rw [e1]
     refine AReach.step (hG _ _ _ (by omega) (by omega)) ?_
     have e2 : astep (A P l₀ lm) o (pairEncode (List.replicate n true) (Nat.bits p))
         (cf (.prC l) (ev ρ ps (o₀ + j) j)) = cf (.prB l) (ev ρ ps (o₀ + j) j) := by
-      simp only [astep, A, ev_rO, jeqIn_eq, show o₀ + j ≠ p by omega, ↓reduceIte]
+      simp only [astep_jeqIn (show A P l₀ lm (.prC l) = _ from rfl), ev_rO, jeqIn_eq,
+        show o₀ + j ≠ p by omega, ↓reduceIte]
     rw [e2]
     refine AReach.step (hG _ _ _ (by omega) (by omega)) ?_
-    simp only [astep, A, ev_rO, upd_rO]
+    simp only [astep_inc (show A P l₀ lm (.prB l) = _ from rfl), ev_rO, upd_rO]
     refine AReach.step (hG _ _ _ (by omega) (by omega)) ?_
-    simp only [astep, A, ev_rT, upd_rT]
+    simp only [astep_inc (show A P l₀ lm (.prT l) = _ from rfl), ev_rT, upd_rT]
     have := ih (j + 1) (by omega)
     rwa [show o₀ + j + 1 = o₀ + (j + 1) by ring]
 
@@ -308,6 +310,7 @@ lemma pr_halt {l l' : Λ} {r : Fin R} (hP : P l = .pr r l') (ρ : Fin R → ℕ)
         (cf (.prL l) (ev ρ ps (o₀ + j) j)) true := by
   have hG := fun q (oc tm : ℕ) (h1 : oc ≤ B) (h2 : tm ≤ B) => G_ev (n := n) (p := p) (P := P)
     (l₀ := l₀) (lm := lm) q ρ ps oc tm hρ hps h1 h2
+  have hL : A P l₀ lm (.prL l) = .jeq (rT R) (rg r) (.sim l') (.prC l) := by simp [A, hP]
   intro d
   induction d with
   | zero =>
@@ -315,12 +318,13 @@ lemma pr_halt {l l' : Λ} {r : Fin R} (hP : P l = .pr r l') (ρ : Fin R → ℕ)
     refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
     have e1 : astep (A P l₀ lm) o (pairEncode (List.replicate n true) (Nat.bits p))
         (cf (.prL l) (ev ρ ps (o₀ + j) j)) = cf (.prC l) (ev ρ ps (o₀ + j) j) := by
-      simp [astep, A, hP, show j ≠ ρ r by omega]
+      simp [astep_jeq hL, show j ≠ ρ r by omega]
     rw [e1]
     refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
     have e2 : astep (A P l₀ lm) o (pairEncode (List.replicate n true) (Nat.bits p))
         (cf (.prC l) (ev ρ ps (o₀ + j) j)) = cf (.ans true) (ev ρ ps (o₀ + j) j) := by
-      simp only [astep, A, ev_rO, jeqIn_eq, show o₀ + j = p by omega, ↓reduceIte]
+      simp only [astep_jeqIn (show A P l₀ lm (.prC l) = _ from rfl), ev_rO, jeqIn_eq,
+        show o₀ + j = p by omega, ↓reduceIte]
     rw [e2]
     exact AHalt.ret rfl (hG _ _ _ (by omega) (by omega))
   | succ d ih =>
@@ -328,17 +332,18 @@ lemma pr_halt {l l' : Λ} {r : Fin R} (hP : P l = .pr r l') (ρ : Fin R → ℕ)
     refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
     have e1 : astep (A P l₀ lm) o (pairEncode (List.replicate n true) (Nat.bits p))
         (cf (.prL l) (ev ρ ps (o₀ + j) j)) = cf (.prC l) (ev ρ ps (o₀ + j) j) := by
-      simp [astep, A, hP, show j ≠ ρ r by omega]
+      simp [astep_jeq hL, show j ≠ ρ r by omega]
     rw [e1]
     refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
     have e2 : astep (A P l₀ lm) o (pairEncode (List.replicate n true) (Nat.bits p))
         (cf (.prC l) (ev ρ ps (o₀ + j) j)) = cf (.prB l) (ev ρ ps (o₀ + j) j) := by
-      simp only [astep, A, ev_rO, jeqIn_eq, show o₀ + j ≠ p by omega, ↓reduceIte]
+      simp only [astep_jeqIn (show A P l₀ lm (.prC l) = _ from rfl), ev_rO, jeqIn_eq,
+        show o₀ + j ≠ p by omega, ↓reduceIte]
     rw [e2]
     refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
-    simp only [astep, A, ev_rO, upd_rO]
+    simp only [astep_inc (show A P l₀ lm (.prB l) = _ from rfl), ev_rO, upd_rO]
     refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
-    simp only [astep, A, ev_rT, upd_rT]
+    simp only [astep_inc (show A P l₀ lm (.prT l) = _ from rfl), ev_rT, upd_rT]
     have := ih (j + 1) (by omega)
     rwa [show o₀ + j + 1 = o₀ + (j + 1) by ring]
 
@@ -384,19 +389,22 @@ lemma sim_step (l : Λ) (ρ : Fin R → ℕ) (ps : ℕ) (out : List Bool) (tm : 
     have : s' = ⟨some l', ρ, ps, out⟩ := by rw [hs]; simp [CounterProg.step, hP]
     subst this
     refine Or.inr ⟨l', rfl, Or.inl ⟨hp, tm, htm, AReach.step hG0 ?_⟩⟩
+    have hins : A P l₀ lm (.sim l) = .jz (rP R) (.sim l') (.sim l') := by simp [A, hP]
     have : astep (A P l₀ lm) o y (cf (.sim l) (ev ρ ps out.length tm)) =
-        cf (.sim l') (ev ρ ps out.length tm) := by simp [astep, A, hP]
+        cf (.sim l') (ev ρ ps out.length tm) := by simp [astep_jz hins]
     rw [this]; exact AReach.refl _
   | out b l' =>
     have : s' = ⟨some l', ρ, ps, out ++ [b]⟩ := by rw [hs]; simp [CounterProg.step, hP]
     subst this
     simp only [List.length_append, List.length_singleton] at hout' ⊢
     refine Or.inr ⟨l', rfl, ?_⟩
+    have hins : A P l₀ lm (.sim l) = .jeqIn (rO R) (.ans (lm || b)) (.bump l') := by
+      simp [A, hP]
     by_cases heq : out.length = p
     · refine Or.inr ⟨by omega, AHalt.step hG0 ?_⟩
       have : astep (A P l₀ lm) o y (cf (.sim l) (ev ρ ps out.length tm)) =
           cf (.ans (lm || b)) (ev ρ ps out.length tm) := by
-        simp only [astep, A, hP, ev_rO, hy, jeqIn_eq, heq, ↓reduceIte]
+        simp only [astep_jeqIn hins, ev_rO, hy, jeqIn_eq, heq, ↓reduceIte]
       rw [this]
       have ha : ans lm (out ++ [b]) p = (lm || b) := by
         subst heq; cases lm <;> simp [ans, List.getD_eq_getElem?_getD]
@@ -405,33 +413,36 @@ lemma sim_step (l : Λ) (ρ : Fin R → ℕ) (ps : ℕ) (out : List Bool) (tm : 
     · refine Or.inl ⟨by omega, tm, htm, AReach.step hG0 ?_⟩
       have : astep (A P l₀ lm) o y (cf (.sim l) (ev ρ ps out.length tm)) =
           cf (.bump l') (ev ρ ps out.length tm) := by
-        simp only [astep, A, hP, ev_rO, hy, jeqIn_eq, heq, ↓reduceIte]
+        simp only [astep_jeqIn hins, ev_rO, hy, jeqIn_eq, heq, ↓reduceIte]
       rw [this]
       refine AReach.step (G_ev _ _ _ _ _ hρ hps hout htm) ?_
-      simp only [astep, A, ev_rO, upd_rO]
+      simp only [astep_inc (show A P l₀ lm (.bump l') = _ from rfl), ev_rO, upd_rO]
       exact AReach.refl _
   | inc r l' =>
     have : s' = ⟨some l', Function.update ρ r (ρ r + 1), ps, out⟩ := by
       rw [hs]; simp [CounterProg.step, hP]
     subst this
     refine Or.inr ⟨l', rfl, Or.inl ⟨hp, tm, htm, AReach.step hG0 ?_⟩⟩
-    simp only [astep, A, hP, ev_rg, upd_rg]
+    simp only [astep_inc (show A P l₀ lm (.sim l) = .inc (rg r) (.sim l') by simp [A, hP]),
+      ev_rg, upd_rg]
     exact AReach.refl _
   | dec r l' =>
     have : s' = ⟨some l', Function.update ρ r (ρ r - 1), ps, out⟩ := by
       rw [hs]; simp [CounterProg.step, hP]
     subst this
     refine Or.inr ⟨l', rfl, Or.inl ⟨hp, tm, htm, AReach.step hG0 ?_⟩⟩
-    simp only [astep, A, hP, ev_rg, upd_rg]
+    simp only [astep_dec (show A P l₀ lm (.sim l) = .dec (rg r) (.sim l') by simp [A, hP]),
+      ev_rg, upd_rg]
     exact AReach.refl _
   | jz r l0 l1 =>
     have : s' = ⟨some (if ρ r = 0 then l0 else l1), ρ, ps, out⟩ := by
       rw [hs]; simp [CounterProg.step, hP]
     subst this
     refine Or.inr ⟨_, rfl, Or.inl ⟨hp, tm, htm, AReach.step hG0 ?_⟩⟩
+    have hins : A P l₀ lm (.sim l) = .jz (rg r) (.sim l0) (.sim l1) := by simp [A, hP]
     by_cases hr : ρ r = 0
-    · simp only [astep, A, hP, ev_rg, hr, ↓reduceIte]; exact AReach.refl _
-    · simp only [astep, A, hP, ev_rg, hr, ↓reduceIte]; exact AReach.refl _
+    · simp only [astep_jz hins, ev_rg, hr, ↓reduceIte]; exact AReach.refl _
+    · simp only [astep_jz hins, ev_rg, hr, ↓reduceIte]; exact AReach.refl _
   | pr r l' =>
     have : s' = ⟨some l', ρ, ps, out ++ List.replicate (ρ r) true⟩ := by
       rw [hs]; simp [CounterProg.step, hP]
@@ -440,7 +451,8 @@ lemma sim_step (l : Λ) (ρ : Fin R → ℕ) (ps : ℕ) (out : List Bool) (tm : 
     refine Or.inr ⟨l', rfl, ?_⟩
     have e0 : astep (A P l₀ lm) o y (cf (.sim l) (ev ρ ps out.length tm)) =
         cf (.prL l) (ev ρ ps (out.length + 0) 0) := by
-      simp only [astep, A, hP, upd_rT, Nat.add_zero]
+      simp only [astep_clr (show A P l₀ lm (.sim l) = .clr (rT R) (.prL l) by simp [A, hP]),
+        upd_rT, Nat.add_zero]
     by_cases hle : out.length + ρ r ≤ p
     · refine Or.inl ⟨hle, ρ r, hρ r, AReach.step hG0 ?_⟩
       rw [e0]
@@ -483,9 +495,13 @@ lemma sim_step (l : Λ) (ρ : Fin R → ℕ) (ps : ℕ) (out : List Bool) (tm : 
       simp only [ev_rP, hb]
       refine AReach.step (G_ev _ _ _ _ _ hρ hps hout htm) ?_
       cases b
-      · simp only [Bool.false_eq_true, ↓reduceIte, astep, A, hP, ev_rP, upd_rP]
+      · simp only [Bool.false_eq_true, ↓reduceIte,
+          astep_inc (show A P l₀ lm (.rdF l) = .inc (rP R) (.sim lf) by simp [A, hP]), ev_rP,
+          upd_rP]
         exact AReach.refl _
-      · simp only [↓reduceIte, astep, A, hP, ev_rP, upd_rP]
+      · simp only [↓reduceIte,
+          astep_inc (show A P l₀ lm (.rdT l) = .inc (rP R) (.sim lt) by simp [A, hP]), ev_rP,
+          upd_rP]
         exact AReach.refl _
 
 end Step

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.ClassNP.EXP
+import TCSlib.Complexity.ClassNP.PolyTimePairing
 import TCSlib.Complexity.Uncomputability.Halting
 
 set_option maxHeartbeats 0
@@ -54,6 +55,13 @@ some polynomial-time computable `f` satisfies `x ∈ L ↔ f x ∈ L'` for every
 string `x`. -/
 def PolyTimeReducible (L L' : Language Bool) : Prop :=
   ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L'
+
+/-- The defining property of `PolyTimeReducible`: some polynomial-time `f` has
+`x ∈ L ↔ f x ∈ L'` for every `x`. -/
+theorem polyTimeReducible_iff (L L' : Language Bool) :
+    PolyTimeReducible L L' ↔
+      ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L' :=
+  Iff.rfl
 
 @[inherit_doc] scoped infix:50 " ≤ₚ " => PolyTimeReducible
 
@@ -124,9 +132,16 @@ theorem mem_P_of_polyTimeReducible {L L' : Language Bool}
 def NPHard (L : Language Bool) : Prop :=
   ∀ L' ∈ NP, L' ≤ₚ L
 
+/-- `L` is `NP`-hard exactly when every language in `NP` reduces to it in polynomial time. -/
+theorem NPHard_iff (L : Language Bool) :
+    NPHard L ↔ ∀ L' : Language Bool, L' ∈ NP → PolyTimeReducible L' L := Iff.rfl
+
 /-- **`NP`-completeness** [AB09, Definition 2.7]: `L` is in `NP` and `NP`-hard. -/
 def NPComplete (L : Language Bool) : Prop :=
   L ∈ NP ∧ NPHard L
+
+/-- `L` is `NP`-complete exactly when it is in `NP` and `NP`-hard. -/
+theorem NPComplete_iff (L : Language Bool) : NPComplete L ↔ L ∈ NP ∧ NPHard L := Iff.rfl
 
 /-- **If an `NP`-hard language is in `P`, then `P = NP`** [AB09, Theorem 2.8.2].
 
@@ -210,7 +225,14 @@ private lemma acceptCfg_apply (M : FinTM Bool) {x : List Bool}
   · rfl
 
 /-- The control transform commutes with every step, including a halt that
-emits the decision bit. Rejection maps to the stationary live loop. -/
+emits the decision bit. Rejection maps to the stationary live loop.
+
+**Proof sketch.** Case on the source state. A halted source does not move. If its last
+output bit is `false`, the image sits in the rejecting live state, and one step of the
+stationary loop (`acceptTM_loop` at duration one, read through `runFrom_one`) leaves it
+fixed; if the bit is `true`, the image is halted as well. For a live source, unfold one step
+of the transformed machine: it applies `acceptAction` of the source transition, which reads
+the same input and work symbols, and `acceptCfg_apply` commutes it with the transform. -/
 private lemma acceptCfg_step (M : FinTM Bool) {x : List Bool}
     (cfg : Cfg M.k Bool M.State x) :
     (acceptTM M).tm.step (acceptCfg M cfg) = acceptCfg M (M.tm.step cfg) := by
@@ -219,7 +241,8 @@ private lemma acceptCfg_step (M : FinTM Bool) {x : List Bool}
     rw [MultiTapeTM.step_of_halt hs]
     cases hb : cfg.output.getLast?.getD false with
     | false =>
-      exact acceptTM_loop M (acceptCfg M cfg) (by simp [acceptCfg, acceptState, hs, hb]) 1
+      exact (MultiTapeTM.runFrom_one _ _).symm.trans
+        (acceptTM_loop M (acceptCfg M cfg) (by simp [acceptCfg, acceptState, hs, hb]) 1)
     | true =>
       exact MultiTapeTM.step_of_halt (by simp [acceptCfg, acceptState, hs, hb])
   | some q =>
@@ -281,115 +304,10 @@ private lemma acceptTM_halts_iff (M : FinTM Bool) (p : List Bool → Bool)
       simp [acceptState, hp]
     · rfl
 
-/-- Emit the fixed prefix, then copy the input verbatim. No work tape is needed;
-the last finite state is the copy state. -/
-private def prefixTM (w : List Bool) : FinTM Bool where
-  k := 0
-  State := Fin (w.length + 1)
-  tm :=
-    { q₀ := 0
-      tr := fun q inp _ =>
-        if h : q.val < w.length then
-          ⟨0, fun i => i.elim0, some w[q.val], some ⟨q.val + 1, by omega⟩⟩
-        else match inp with
-          | some b => ⟨1, fun i => i.elim0, some b, some q⟩
-          | none => ⟨0, fun i => i.elim0, none, none⟩ }
-
-/-- A prefixing-machine configuration with the vacuous work fields suppressed. -/
-private def prefixCfg (w x : List Bool) (q : Option (Fin (w.length + 1)))
-    (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool (Fin (w.length + 1)) x :=
-  ⟨q, p, fun i => i.elim0, fun i => i.elim0, out⟩
-
-/-- After `i` prefix steps exactly the first `i` fixed bits have been emitted,
-and the input head has not moved. -/
-private lemma prefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.length),
-    (prefixTM w).tm.runFrom ((prefixTM w).tm.initCfg x) i =
-      prefixCfg w x (some ⟨i, by omega⟩) 1 (w.take i) := by
-  intro i
-  induction i with
-  | zero =>
-    intro hi
-    apply Cfg.ext_zero_tapes <;> simp [prefixCfg, prefixTM]
-  | succ i ih =>
-    intro hi
-    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
-    have hlt : i < w.length := by omega
-    simp only [MultiTapeTM.step, prefixCfg, prefixTM, dif_pos hlt, Action.apply]
-    apply Cfg.ext_zero_tapes
-    · rfl
-    · simp
-    · rw [List.take_succ, List.getElem?_eq_getElem hlt]
-
-/-- The copy phase emits one input bit per step and preserves the fixed prefix. -/
-private lemma prefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.length),
-    (prefixTM w).tm.runFrom
-      (prefixCfg w x (some ⟨w.length, by omega⟩) 1 w) i =
-      prefixCfg w x (some ⟨w.length, by omega⟩) ⟨i + 1, by omega⟩
-        (w ++ x.take i) := by
-  intro i
-  induction i with
-  | zero => intro hi; simp [prefixCfg]
-  | succ i ih =>
-    intro hi
-    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
-    have hsym : (prefixCfg w x (some ⟨w.length, by omega⟩)
-        ⟨i + 1, by omega⟩ (w ++ x.take i)).inputSymbol = some (x[i]'(by omega)) :=
-      inputSymbolInner i (by simp only [prefixCfg]; omega) (by omega)
-    change ((prefixTM w).tm.tr ⟨w.length, by omega⟩
-      (prefixCfg w x (some ⟨w.length, by omega⟩) ⟨i + 1, by omega⟩
-        (w ++ x.take i)).inputSymbol _).apply _ = _
-    rw [hsym]
-    simp only [prefixTM, Nat.lt_irrefl, ↓reduceDIte, Action.apply, prefixCfg]
-    apply Cfg.ext_zero_tapes
-    · rfl
-    · change moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) .pos = _
-      rw [moveInputPos_pos_of_ne_right _ (by simp; omega)]
-    · rw [List.take_succ, List.getElem?_eq_getElem (by omega), List.append_assoc]
-
-/-- Prefixing computes `w ++ x` in exactly the bound `|w| + |x| + 1`,
-including the final blank-reading halting step.
-
-**Proof sketch.** Concatenate the fixed-word emission run and the input-copy
-run; the input head then scans the right boundary, so one final step halts
-without emitting anything further. This also covers empty prefix and input. -/
-private lemma prefixTM_computes (w : List Bool) :
-    (prefixTM w).ComputesFunInTime (fun x => w ++ x) (fun n => w.length + n + 1) := by
-  intro x
-  apply (FinTM.computesInTime_iff _ _ _ _).mpr
-  dsimp only
-  rw [show w.length + x.length + 1 = w.length + (x.length + 1) by omega,
-    MultiTapeTM.runFrom_add, prefixTM_emit w x w.length (Nat.le_refl _)]
-  simp only [List.take_length]
-  rw [MultiTapeTM.runFrom_succ_eq_step', prefixTM_copy w x x.length (Nat.le_refl _)]
-  simp [prefixTM, prefixCfg, MultiTapeTM.step, Cfg.inputSymbol, Fin.ext_iff, Action.apply]
-
-/-- The fixed-code pairing machine has the audited budget
-`2|α| + |x| + 3`: two emissions per code bit, two for the delimiter, one per
-input bit, and one final blank-reading step. -/
-private lemma fixedPair_computes (α : List Bool) :
-    (prefixTM ((α.flatMap fun b => [b, b]) ++ [false, true])).ComputesFunInTime
-      (fun x => pairEncode α x) (fun n => 2 * α.length + n + 3) := by
-  have hlen : (α.flatMap fun b => [b, b]).length = 2 * α.length := by
-    induction α with
-    | nil => rfl
-    | cons b α ih =>
-      simp only [List.flatMap_cons, List.length_append, List.length_cons, List.length_nil, ih]
-      omega
-  intro x
-  have h := prefixTM_computes ((α.flatMap fun b => [b, b]) ++ [false, true]) x
-  have ht : ((α.flatMap fun b => [b, b]) ++ [false, true]).length + x.length + 1 =
-      2 * α.length + x.length + 3 := by
-    simp only [List.length_append, List.length_cons, List.length_nil, hlen]
-    omega
-  simpa only [pairEncode, ht] using h
-
 /-- The fixed-code pairing machine is polynomial-time computable. -/
 private lemma fixedPair_polyTime (α : List Bool) :
-    PolyTimeComputable (fun x => pairEncode α x) := by
-  refine ⟨prefixTM ((α.flatMap fun b => [b, b]) ++ [false, true]),
-    2 * α.length + 3, 1, fun x => (fixedPair_computes α x).mono ?_⟩
-  simp only [Nat.pow_one, Nat.add_mul, Nat.mul_add, Nat.mul_one]
-  omega
+    PolyTimeComputable (fun x => pairEncode α x) :=
+  polyTimeComputable_of_linear (FinTM.computesFunInTime_pairEncodeFixed α)
 
 
 /-- **`HALT` is `NP`-hard** [AB09, Exercise 2.8] — for **every** representation

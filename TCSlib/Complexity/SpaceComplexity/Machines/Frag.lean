@@ -126,7 +126,7 @@ lemma halfL_run (c : Cfg m Bool Λ x) (w : List Bool) :
         rw [hlen]; push_cast; ring
       have hrd : FinTM.bufferTape (w.take k ++ w[k] :: w.drop (k + 2))
           (((k + 1 : ℕ) : ℤ) - 1) = some w[k] := by
-        rw [hpos]; simp
+        rw [hpos, FinTM.bufferTape_nat, List.getElem?_append_right le_rfl, Nat.sub_self]; rfl
       rw [hrd]
       simp only [halfLAct]
       rw [apply_regAct]

@@ -35,12 +35,13 @@ Generic machine-construction infrastructure shared by loop-body assemblies
 
 ## Main definitions
 
-* `Turing.SafeRun`, `Turing.padAction`, `Turing.embedCfg`.
+* `Turing.SafeRun` (read through `Turing.safeRun_iff`), `Turing.padAction`, `Turing.embedCfg`.
 
 ## Main results
 
 * `Turing.runFrom_output_prefix`, `Turing.runFrom_output_extends`,
   `Turing.embed_run`.
+* The field equations of `Turing.embedCfg`: `embedCfg_state`, …, `embedCfg_output_eq`.
 
 ## References
 
@@ -68,41 +69,41 @@ def SafeRun (H : MultiTapeTM k Bool B) (avoid : B)
     (c : Cfg k Bool B x) (t : ℕ) (c' : Cfg k Bool B x) : Prop :=
   H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid
 
+/-- `SafeRun H avoid c t c' ↔ H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid`:
+the published reading of `Turing.SafeRun`. -/
+theorem safeRun_iff {H : MultiTapeTM k Bool B} {avoid : B} {c : Cfg k Bool B x} {t : ℕ}
+    {c' : Cfg k Bool B x} :
+    SafeRun H avoid c t c' ↔
+      H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid :=
+  Iff.rfl
+
 /-- The empty run is safe. -/
 theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}
     {c : Cfg k Bool B x} : SafeRun H avoid c 0 c :=
-  ⟨rfl, fun t' ht' => absurd ht' (by omega)⟩
+  safeRun_iff.mpr ⟨MultiTapeTM.runFrom_zero, fun t' ht' => absurd ht' (by omega)⟩
+
+/-- Safe runs are segments with one forbidden control state and a trivial head invariant. -/
+private theorem safeRun_iff_segment {H : MultiTapeTM k Bool B} {avoid : B}
+    {c c' : Cfg k Bool B x} {t : ℕ} :
+    SafeRun H avoid c t c' ↔ Segment H {some avoid} (fun _ => True) c c' t := by
+  simp only [SafeRun, segment_iff, Set.mem_singleton_iff, implies_true, and_true]
 
 /-- Prepend one non-avoided step to a safe run. -/
 theorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}
     {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)
     (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :
     SafeRun H avoid c (t + 1) c' := by
-  have hone : H.runFrom c 1 = c₁ := by
-    simp [runFrom, hstep]
-  refine ⟨?_, ?_⟩
-  · rw [show t + 1 = 1 + t by omega, runFrom_add, hone]
-    exact h.1
-  · intro t' ht'
-    cases t' with
-    | zero => simpa using hc
-    | succ u =>
-      rw [show u + 1 = 1 + u by omega, runFrom_add, hone]
-      exact h.2 u (by omega)
+  apply safeRun_iff_segment.mpr
+  simpa only [Nat.add_comm 1 t] using
+    (Segment.cons hstep (by simpa only [Set.mem_singleton_iff] using hc)
+      True.intro (safeRun_iff_segment.mp h))
 
 /-- Concatenate safe runs. -/
 theorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}
     {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)
     (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by
-  refine ⟨?_, ?_⟩
-  · rw [runFrom_add, h₁.1]
-    exact h₂.1
-  · intro t' ht'
-    by_cases hlt : t' < t₁
-    · exact h₁.2 t' hlt
-    · obtain ⟨u, rfl⟩ : ∃ u, t' = t₁ + u := ⟨t' - t₁, by omega⟩
-      rw [runFrom_add, h₁.1]
-      exact h₂.2 u (by omega)
+  exact safeRun_iff_segment.mpr
+    (Segment.trans (safeRun_iff_segment.mp h₁) (safeRun_iff_segment.mp h₂))
 
 /-! ### Output-prefix commutation
 
@@ -115,70 +116,39 @@ theorem step_output_prefix (H : MultiTapeTM k Bool B)
     (c : Cfg k Bool B x) (pre : List Bool) :
     H.step { c with output := pre ++ c.output } =
       { H.step c with output := pre ++ (H.step c).output } := by
-  obtain ⟨st, pos, tapes, tpos, out⟩ := c
-  cases st with
-  | none => rfl
-  | some q =>
-    have hws : (⟨some q, pos, tapes, tpos, pre ++ out⟩ : Cfg k Bool B x).workTapeSymbols =
-        (⟨some q, pos, tapes, tpos, out⟩ : Cfg k Bool B x).workTapeSymbols := rfl
-    simp [MultiTapeTM.step, Action.apply, Cfg.inputSymbol, hws, List.append_assoc]
+  exact MultiTapeTM.step_output_prepend H c pre
 
 /-- A run commutes with an output prefix. -/
 theorem runFrom_output_prefix (H : MultiTapeTM k Bool B)
     (c : Cfg k Bool B x) (pre : List Bool) (t : ℕ) :
     H.runFrom { c with output := pre ++ c.output } t =
       { H.runFrom c t with output := pre ++ (H.runFrom c t).output } := by
-  induction t generalizing c with
-  | zero => simp
-  | succ t ih =>
-    rw [runFrom_succ_eq_step, runFrom_succ_eq_step, step_output_prefix]
-    exact ih (H.step c)
+  exact MultiTapeTM.runFrom_output_prepend H c pre t
 
 /-- The output tape is append-only along a run. -/
 theorem runFrom_output_extends (H : MultiTapeTM k Bool B)
     (c : Cfg k Bool B x) (t : ℕ) :
     ∃ o, (H.runFrom c t).output = c.output ++ o := by
-  induction t generalizing c with
-  | zero => exact ⟨[], by simp⟩
-  | succ t ih =>
-    rw [runFrom_succ_eq_step]
-    obtain ⟨o, ho⟩ := ih (H.step c)
-    unfold MultiTapeTM.step at ho ⊢
-    cases hq : c.state with
-    | none =>
-      rw [hq] at ho
-      exact ⟨o, ho⟩
-    | some q =>
-      rw [hq] at ho
-      refine ⟨(H.tr q c.inputSymbol c.workTapeSymbols).output.toList ++ o, ?_⟩
-      rw [ho]
-      simp [Action.apply]
+  obtain ⟨o, ho⟩ := MultiTapeTM.output_prefix H c (Nat.zero_le t)
+  exact ⟨o, by simpa only [MultiTapeTM.runFrom_zero] using ho.symm⟩
 
 /-! ### Halted runs are stationary -/
 
 /-- A halted configuration never changes. -/
 theorem runFrom_of_halted (H : MultiTapeTM k Bool B)
     {c : Cfg k Bool B x} (h : c.state = none) (t : ℕ) : H.runFrom c t = c := by
-  induction t with
-  | zero => simp
-  | succ t ih =>
-    rw [runFrom_add, ih]
-    simp [runFrom, step_of_halt h]
+  exact MultiTapeTM.runFrom_of_halt (tm := H) c h
 
 /-- Every configuration strictly before a live endpoint is live. -/
 theorem state_isSome_of_runFrom (H : MultiTapeTM k Bool B)
     {c : Cfg k Bool B x} {t : ℕ} {qf : B}
     (hf : (H.runFrom c t).state = some qf) {j : ℕ} (hj : j ≤ t) :
     ∃ q, (H.runFrom c j).state = some q := by
+  have hl := MultiTapeTM.runFrom_state_ne_none_of_le H c t
+    (by rw [hf]; exact Option.some_ne_none _) j hj
   cases hq : (H.runFrom c j).state with
   | some q => exact ⟨q, rfl⟩
-  | none =>
-    exfalso
-    have hstat : H.runFrom c t = H.runFrom c j := by
-      obtain ⟨u, rfl⟩ : ∃ u, t = j + u := ⟨t - j, by omega⟩
-      rw [runFrom_add, runFrom_of_halted H hq]
-    rw [hstat, hq] at hf
-    exact Option.noConfusion hf
+  | none => exact False.elim (hl hq)
 
 /-! ### Tape-padding, state-injecting embedding
 
@@ -206,6 +176,16 @@ def embedCfg (hmk : m ≤ k) (inject : SS → B)
   workTapePos := fun i =>
     if h : (i : ℕ) < m then c.workTapePos ⟨i, h⟩ else 0
   output := c.output
+
+/-! The embedded configuration's fields, as equations (readers for consumers that may not unfold
+`embedCfg`): generated by `simps` without the `simp` attribute; the output field is
+`embedCfg_output_eq`. -/
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos] embedCfg
+
+/-- The embedded configuration keeps the module's output. -/
+theorem embedCfg_output_eq (hmk : m ≤ k) (inject : SS → B) (c : Cfg m Bool SS x) :
+    (embedCfg hmk inject c).output = c.output :=
+  rfl
 
 /-- Embedding a canonical seam gives a canonical seam with the padded word
 assignment. -/
@@ -256,11 +236,6 @@ theorem embedCfg_output (hmk : m ≤ k) (inject : SS → B)
     (c : Cfg m Bool SS x) (o : List Bool) :
     embedCfg hmk inject { c with output := o } =
       { embedCfg hmk inject c with output := o } := rfl
-
-/-- A one-step run is a step. -/
-theorem runFrom_one (H : MultiTapeTM k Bool B) (c : Cfg k Bool B x) :
-    H.runFrom c 1 = H.step c := by
-  simp [MultiTapeTM.runFrom]
 
 /-- One host step at a state behaving like the module's state `q` tracks one
 module step.

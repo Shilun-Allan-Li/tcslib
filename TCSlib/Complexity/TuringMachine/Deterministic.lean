@@ -34,6 +34,11 @@ Local modifications (see policy.md §2, vendored code):
   consumers read `spaceUsed` through an equation;
 * added `spaceUsedByTape_eq_card`, a tape's space as the number of cells its head visited, so
   that consumers read `spaceUsedByTape` through an equation.
+* added `MultiTapeTM.runFrom_one`, a one-step run as one machine step, beside the upstream
+  `runFrom_zero` and `runFrom_succ_eq_step`, so that every one-step site cites one public lemma
+  (dedup family RO-1; user, 2026-11-12).
+* added `MultiTapeTM.indicator_of_mem` and `MultiTapeTM.indicator_of_not_mem`, the two values of
+  `indicator`, so that consumers read it through equations.
 The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
@@ -218,6 +223,11 @@ lemma runFrom_succ_eq_step {cfg : Cfg k Symbol State input} {t : ℕ} :
 lemma runFrom_succ_eq_step' {cfg : Cfg k Symbol State input} {t : ℕ} :
     tm.runFrom cfg (t + 1) = tm.step (tm.runFrom cfg t) := by
   simp [runFrom, Function.iterate_succ_apply']
+
+/-- A one-step run from any configuration is exactly one machine step. -/
+theorem _root_.Turing.MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}
+    (tm : MultiTapeTM k Γ S) (c : Cfg k Γ S x) : tm.runFrom c 1 = tm.step c := by
+  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
 
 /-- Running `a + b` steps equals running `b` steps from the configuration reached after `a`. -/
 lemma runFrom_add (cfg : Cfg k Symbol State input) (a b : ℕ) :
@@ -469,10 +479,29 @@ open Classical in
 noncomputable def indicator {α : Type*} (L : Set α) : α → Bool :=
   fun x => if x ∈ L then true else false
 
+open Classical in
+/-- The defining equation of `indicator`: `indicator L = fun x => if x ∈ L then true else false`
+(classical decidability, as in the definition). -/
+theorem indicator_def {α : Type*} (L : Set α) :
+    (indicator L : α → Bool) =
+      (fun x => if x ∈ L then true else false :
+        α → Bool) := rfl
+
 /-- A set is decidable within the given input-indexed bounds when its Boolean indicator is. -/
 def DecidableInTimeAndSpace {α : Type*} (L : Set α) (enc : α ↪ List Bool)
     (t s : α → ℕ) : Prop :=
   ComputableInTimeAndSpace (indicator L) enc ⟨fun b => [b], by intro a b h; simpa using h⟩ t s
+
+/-- The indicator of a set is `true` at its members. -/
+theorem indicator_of_mem {α : Type*} {L : Set α} {x : α} (hx : x ∈ L) : indicator L x = true := by
+  classical
+  exact if_pos hx
+
+/-- The indicator of a set is `false` away from it. -/
+theorem indicator_of_not_mem {α : Type*} {L : Set α} {x : α} (hx : x ∉ L) :
+    indicator L x = false := by
+  classical
+  exact if_neg hx
 
 /-- The Turing machine `tm` halts after exactly `t` steps on input `input`
 if its state is `none` at step `t` and non-none at step `t - 1`.

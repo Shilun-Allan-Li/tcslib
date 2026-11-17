@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.CodeFormat
+import TCSlib.Complexity.TuringMachine.BufferWords
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 
@@ -755,7 +756,7 @@ private lemma succFieldTM_trace {m n : ℕ} {x : List Bool} (src dst : Fin m)
       subst t
       have hs : d.workTapeSymbols src = some false := by
         simpa [Cfg.workTapeSymbols, optStateBits] using hw 0 (by simp [optStateBits])
-      change (succFieldTM src dst copy).step d = _
+      rw [Nat.zero_add, MultiTapeTM.runFrom_one]
       rw [step_of_tapeAction_move (succFieldTM src dst copy) d
         (q' := SuccPhase.done false) src 0 .pos hq (by simp [succFieldTM, hs])]
       apply Cfg.ext <;> simp [succFieldCfg, afterTag, optStateBits]
@@ -1497,7 +1498,9 @@ private lemma seekTM_rank {k n : ℕ} {x : List Bool}
   · subst records
     have hz : rank.val = 0 := hlen.symm
     simp only [hz, ↓reduceDIte] at step
-    have he : (seekTM k).runFrom (seekCfg d (.state rank)) 1 = seekCfg d .done := step
+    have he : (seekTM k).runFrom (seekCfg d (.state rank)) 1 = seekCfg d .done := by
+      rw [MultiTapeTM.runFrom_one]
+      exact step
     simp only [seekCost, List.flatMap_nil, List.length_nil, Nat.mul_zero,
       Nat.cast_zero, add_zero, Function.update_eq_self]
     refine ⟨he, ?_, ?_⟩
@@ -1740,20 +1743,18 @@ private lemma seekTM_observe {k : ℕ} {x : List Bool}
       · simp [hj, ht]
   have run : (seekTM k).runFrom (seekCfg d .observe) 2 =
       seekCfg (seekShift d 0 2) (.state rank) := by
-    change (seekTM k).step ((seekTM k).step _) = _
-    rw [first, second]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, first, second]
   refine ⟨run, ?_, ?_⟩
   · intro u hu
     rcases (show u = 0 ∨ u = 1 by omega) with rfl | rfl
     · simp [seekCfg, Cfg.mapState, hq]
-    · change ((seekTM k).step _).state ≠ _
-      rw [first]
+    · rw [MultiTapeTM.runFrom_one, first]
       simp [seekCfg, Cfg.mapState, next, hq]
   · intro u hu
     rcases (show u = 0 ∨ u = 1 ∨ u = 2 by omega) with rfl | rfl | rfl
     · exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
     · rw [show (seekTM k).runFrom (seekCfg d .observe) 1 = seekCfg next (.advance rank)
-      from first]
+      from (MultiTapeTM.runFrom_one _ _).trans first]
       exact ⟨rfl, rfl, rfl, fun j hj => by simp [seekCfg, Cfg.mapState, next, hj]⟩
     · rw [run]
       refine ⟨rfl, rfl, rfl, ?_⟩
@@ -2025,16 +2026,10 @@ private lemma seekTM_lookup {k n : ℕ} {x : List Bool}
     omega
 
 /-- Read a unary state word at any valid cell, including its terminating
-false. This uses the canonical buffer convention directly. -/
+false: `Turing.FinTM.bufferTape_unary`. -/
 private lemma bufferTape_unary (q r : ℕ) (hr : r ≤ q) :
-    FinTM.bufferTape (List.replicate q true ++ [false]) r = some (decide (r < q)) := by
-  by_cases hlt : r < q
-  · rw [FinTM.bufferTape_nat, List.getElem?_append_left (by simpa only [List.length_replicate]
-    using hlt)]
-    simp [hlt]
-  · have he : r = q := by omega
-    subst r
-    simp [FinTM.bufferTape_nat]
+    FinTM.bufferTape (List.replicate q true ++ [false]) r = some (decide (r < q)) :=
+  FinTM.bufferTape_unary q r hr
 
 /-- The summary tape's cells: the summary at `0`, a blank at `1`, and the unary state word from
 `2` on. (`h1SummaryState`.) -/
@@ -2062,13 +2057,11 @@ lemma summaryCells_update (summary next : Option Bool) (word : List Bool) :
   · subst z; simp [summaryCells]
   · simp [summaryCells, hz]
 
-/-- The canonical buffer is blank off its finite support. -/
+/-- The canonical buffer is blank off its finite support:
+`Turing.FinTM.bufferTape_eq_none_of_not_mem`. -/
 private lemma bufferTape_outside (word : List Bool) (z : ℤ)
-    (hz : ¬(0 ≤ z ∧ z < word.length)) : FinTM.bufferTape word z = none := by
-  by_cases hn : 0 ≤ z
-  · simp only [FinTM.bufferTape, if_pos hn]
-    exact List.getElem?_eq_none_iff.mpr (by omega)
-  · simp [FinTM.bufferTape, hn]
+    (hz : ¬(0 ≤ z ∧ z < word.length)) : FinTM.bufferTape word z = none :=
+  FinTM.bufferTape_eq_none_of_not_mem word hz
 
 /-- Copying a complete new state word into the cleared state region yields
 exactly the next summary/state layout. -/
@@ -2585,21 +2578,11 @@ private lemma roundTM_prepare {k n : ℕ} {x : List Bool}
   simpa only [atKey, s0, d0, d4, Cfg.mapState, roundData, cost] using joined
 
 /-- Literal cells of the middle word of a canonical concatenated buffer.
-Both cuts use the same framed append-read lemma. -/
+`Turing.FinTM.bufferTape_append_mid`. -/
 private lemma bufferTape_reads (before word after : List Bool) :
     ∀ (r : ℕ) (hr : r < word.length),
-      FinTM.bufferTape (before ++ word ++ after) (before.length + r) = some (word[r]'hr) := by
-  have whole : ∀ (r : ℕ) (hr : r < (before ++ word ++ after).length),
-      FinTM.bufferTape (before ++ word ++ after) ((r : ℕ) : ℤ) =
-        some ((before ++ word ++ after)[r]'hr) := by
-    intro r hr
-    rw [FinTM.bufferTape_nat, List.getElem?_eq_getElem hr]
-  have first := reads_append (FinTM.bufferTape (before ++ word ++ after)) 0 before (word ++ after)
-    (by simpa only [zero_add, List.append_assoc] using whole)
-  have second := reads_append (FinTM.bufferTape (before ++ word ++ after)) before.length word
-    after
-    (by simpa only [zero_add] using first.2)
-  exact second.1
+      FinTM.bufferTape (before ++ word ++ after) (before.length + r) = some (word[r]'hr) :=
+  fun r hr => FinTM.bufferTape_append_mid before word after r hr
 
 /-- Execute the inherited fixed payload, return to the cleared state word,
 then install the complete successor. The exit still precedes head restoration.
@@ -2763,13 +2746,10 @@ private lemma roundTM_payload {k n : ℕ} {x : List Bool}
   simpa only [atKey, d0, d3, moving, copying, d1, d2, Cfg.mapState, roundData, cost] using combined
 
 /-- A canonical buffer's suffix, including its right blank and all cells
-beyond it. This is the optional-list lookup law at a nonnegative offset. -/
+beyond it: `Turing.FinTM.bufferTape_append_shift`. -/
 private lemma bufferTape_suffix (before word : List Bool) (z : ℤ) (hz : 0 ≤ z) :
-    FinTM.bufferTape (before ++ word) (before.length + z) = FinTM.bufferTape word z := by
-  have hp : (before.length : ℤ) + z = ((before.length + z.toNat : ℕ) : ℤ) := by omega
-  rw [hp, FinTM.bufferTape_nat, List.getElem?_append_right (Nat.le_add_right _ _),
-    Nat.add_sub_cancel_left]
-  simp [FinTM.bufferTape, hz]
+    FinTM.bufferTape (before ++ word) (before.length + z) = FinTM.bufferTape word z :=
+  FinTM.bufferTape_append_shift before word hz
 
 /-- Restore the table and successor-state heads after payload execution.
 The table scan reaches its right blank and the catalog reverse scan returns

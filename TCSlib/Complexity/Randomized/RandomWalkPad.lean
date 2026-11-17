@@ -151,14 +151,8 @@ theorem le_padDegree (n : ℕ) : n ≤ padDegree n := (Nat.lt_size_self n).le
 /-- The padding degree is at most `2n` for `n ≥ 1`. -/
 theorem padDegree_le (hn : 0 < n) : padDegree n ≤ 2 * n := by
   unfold padDegree
-  have hs : 0 < Nat.size n := Nat.size_pos.mpr hn
-  have h : 2 ^ (Nat.size n - 1) ≤ n := by
-    by_contra h
-    push_neg at h
-    exact absurd (Nat.size_le.mpr h) (by omega)
-  calc 2 ^ Nat.size n = 2 * 2 ^ (Nat.size n - 1) := by
-        rw [← pow_succ']; congr 1; omega
-    _ ≤ 2 * n := by omega
+  rw [← Nat.size_eq_bits_len]
+  exact Complexity.LogProg.two_pow_bits_le n hn
 
 instance (n : ℕ) : NeZero (padDegree n) := ⟨pow_ne_zero _ two_ne_zero⟩
 

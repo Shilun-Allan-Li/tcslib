@@ -295,3 +295,61 @@ Let $c$ be a configuration of an $m$-tape Turing machine on a fixed Boolean inpu
 suppose its state is absent, which denotes that the machine has halted. Then the state
 of the configuration obtained by the seam construction is also absent.
 \end{lemma}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Machines --- Program: further results}
+
+\begin{lemma}[Equal arguments give equal virtual inputs]
+\lean{Complexity.LogProg.callSegs_congr}
+\label{Complexity.LogProg.callSegs_congr}
+\leanok
+\uses{Complexity.LogProg.CallSpec, Complexity.LogProg.callSegs}
+\difficulty{1}
+Let $cs$ be a call specification for register programs with $m$ registers, $d$
+deciders and state set $\Lambda$, and let $cs'$ be one for $m'$ registers, $d'$ deciders
+and state set $\Lambda'$. Let $x$ be a Boolean input word, and let $W$ and $W'$ assign a
+Boolean word to each of the $m$, respectively $m'$, registers. If $cs'$ and $cs$ have
+the same virtual-input mode, and the list of words that $W'$ assigns to the argument
+registers of $cs'$ (in order) equals the list of words that $W$ assigns to the argument
+registers of $cs$, then the virtual-input segment lists of the two calls on $x$ (with
+register words $W'$ and $W$ respectively) are equal.
+\end{lemma}
+
+\begin{lemma}[Compiled transition at a call node]
+\lean{Complexity.LogProg.compileTM_tr_prog_call}
+\label{Complexity.LogProg.compileTM_tr_prog_call}
+\leanok
+\uses{Complexity.LogProg.CallSpec, Complexity.LogProg.RProg, Complexity.LogProg.compileTM, Complexity.LogProg.ctr, Complexity.LogProg.dIdle, Turing.MultiTapeTM}
+\difficulty{1}
+Let $P$ be a register program with $m$ registers and $d$ deciders over a state set
+$\Lambda$, let $\ell_0\in\Lambda$, let $D$ be a deterministic Turing machine over the
+Boolean alphabet with $k_D$ work tapes, and let $q_0$ assign a state of $D$ to each of
+the $d$ decider indices. Let $\ell\in\Lambda$ be a call node of $P$ with call
+specification $cs$. Then, whatever (possibly blank) symbols are read on the input tape
+and on the $m+k_D$ work tapes, the transition of the compiled machine of $P$ (start
+location $\ell_0$, decider $D$, start states $q_0$) from the program state $\ell$ keeps
+the input head in place, writes nothing on any work tape, moves the head of every
+register listed among the arguments of $cs$ one cell left while keeping all other
+register heads and all $k_D$ decider heads in place, emits no output, and enters the
+simulation state for the call at $\ell$ with decider state $q_0$ of the decider chosen
+by $cs$, segment index $0$, parity flag false, direction flag true, and no recorded
+answer.
+\end{lemma}
+
+\begin{lemma}[Compiled transition at the first return step]
+\lean{Complexity.LogProg.compileTM_tr_ret1}
+\label{Complexity.LogProg.compileTM_tr_ret1}
+\leanok
+\uses{Complexity.LogProg.RProg, Complexity.LogProg.compileTM, Turing.MultiTapeTM}
+\difficulty{1}
+Let $P$ be a register program with $m$ registers and $d$ deciders over a state set
+$\Lambda$, let $\ell_0\in\Lambda$, let $D$ be a deterministic Turing machine over the
+Boolean alphabet with $k_D$ work tapes, and let $q_0$ assign a state of $D$ to each of
+the $d$ decider indices. For every $\ell\in\Lambda$, segment index
+$s\in\{0,\ldots,m\}$, Boolean flags $\mathrm{dir}$ and $\mathrm{res}$, and any (possibly
+blank) symbols read on the input tape and the $m+k_D$ work tapes, the transition of the
+compiled machine from the first return state with data $(\ell,s,\mathrm{dir},\mathrm{res})$
+moves the input head one cell left, writes nothing and keeps every work-tape head in
+place, emits no output, and enters the input-rewind return state with the same data
+$(\ell,s,\mathrm{dir},\mathrm{res})$.
+\end{lemma}

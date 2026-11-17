@@ -42,6 +42,7 @@ import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.WindowClock
 import TCSlib.Complexity.SpaceComplexity.Savitch
 import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.SpaceComplexity.Padding
 import TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess
 import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
 import TCSlib.Complexity.SpaceComplexity.Logspace.QueryReshape
@@ -89,6 +90,8 @@ import TCSlib.Complexity.SpaceComplexity.SavitchARM.Recursion
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Setup
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window
 import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountMath
 import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountRegs
 import TCSlib.Complexity.SpaceComplexity.Machines.MARM
@@ -210,6 +213,9 @@ running counter program is simulated by an abstract register machine in
 - `SpaceComplexity.Savitch`: Savitch's theorem and `PSPACE = NPSPACE` (phase P4.2)
 - `SpaceComplexity.Hierarchy`: the space-bounded universal machine, Thm 4.8,
   `L ⊊ PSPACE`, Ex 3.2 (phase P4.3)
+- `SpaceComplexity.Padding`: the padded language `padLang` and its membership
+  characterization; padding transfers space bounds down (`mem_SPACE_padLang`, stated; its
+  proof is pending), for Ex 3.2
 - `SpaceComplexity.Logspace.{InputAccess, PreimageHost, QueryReshape}`: random access to a
   general input (a register-program read fragment; `id` implicitly logspace), the
   oracle-input simulator of Fig. 4.3 (logspace preimages along implicit functions), and the
@@ -230,6 +236,12 @@ running counter program is simulated by an abstract register machine in
 - `SpaceComplexity.SavitchARM.{Recursion, Setup, Search, Correct}`: the machine evaluates the
   midpoint recursion with an explicit stack; `NPSPACE ⊆ PSPACE` (Thm 4.14 at polynomial
   bounds, consumed by `PSPACE = NPSPACE` in `SpaceComplexity.Savitch`)
+- `SpaceComplexity.SavitchARM.Window`: windows without a known space bound; no reachable
+  edge code makes membership midpoint reachability at that radius, and none is reachable beyond
+  the space bound (iterative deepening for Thm 4.14 without constructibility, after
+  [Sip13, Thm 8.5])
+- `SpaceComplexity.SavitchARM.Deepen`: the deepening machine, Savitch's search run as a block
+  at radius `1, 2, …`; its contract gives Thm 4.14 for every `S ≥ logSpace`
 - `SpaceComplexity.Machines.{MARM, MARMCompile, MARMTime}`: abstract register machines with
   a monotone memory tape, their compilation, and their time bound by configuration counting
   (`marm_dtime`)

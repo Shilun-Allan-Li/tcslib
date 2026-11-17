@@ -251,8 +251,8 @@ private lemma mult_product_length (a b : ℕ) :
     (Nat.bits (a * b)).length ≤ (Nat.bits a).length + (Nat.bits b).length := by
   apply length_bits_le
   rw [pow_add]
-  have ha : a < 2 ^ (Nat.bits a).length := by simpa [Nat.size_eq_bits_len] using Nat.lt_size_self a
-  have hb : b < 2 ^ (Nat.bits b).length := by simpa [Nat.size_eq_bits_len] using Nat.lt_size_self b
+  have ha : a < 2 ^ (Nat.bits a).length := lt_two_pow_bits a
+  have hb : b < 2 ^ (Nat.bits b).length := lt_two_pow_bits b
   exact lt_of_le_of_lt (Nat.mul_le_mul_right b ha.le)
     (Nat.mul_lt_mul_of_pos_left hb (Nat.pow_pos (by omega)))
 
@@ -534,7 +534,10 @@ private noncomputable def multOracle : Fin 2 → List Bool → Bool :=
 private lemma mult_queries (x : List Bool) (i : ℕ) :
     multOracle 0 (pairEncode x (Nat.bits i)) = x.getD i false ∧
     multOracle 1 (pairEncode x (Nat.bits i)) = decide (i < x.length) := by
-  simp [multOracle, inputBitLang, inputLenLang, indicator_indexLang_pairEncode]
+  exact ⟨show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _ from
+      indicator_inputBitLang x i,
+    show MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _ from
+      indicator_inputLenLang x i⟩
 
 /-- All table instructions meet their syntactic side conditions for every input and
 register assignment: comparisons use distinct registers and calls use one register. -/
@@ -598,7 +601,14 @@ private lemma mult_scan (x w : List Bool) (inner : Bool) (v : Fin 13 → ℕ)
   simpa only [one_mul] using paths
 
 /-- A tested pair contributes its product exactly when its two indices name the current
-column. This path stops immediately after the possible increment, before the next loop step. -/
+column. This path stops immediately after the possible increment, before the next loop step.
+
+**Proof sketch.** One step through the column test `diagonal`. If the indices `v 10` and `v 7`
+differ, it goes to `nextB false` with the registers unchanged. Otherwise it reads the first
+operand's bit at `v 0`, and a `0` goes to `nextB false` with nothing added. A `1` reads the
+second operand's bit at `v 9`; a `0` there likewise adds nothing, and a `1` takes the `add`
+step, which increments register 11. Every step's precondition is `mult_preconditions` with
+the register bound. -/
 private lemma mult_contribution (x : List Bool) (v : Fin 13 → ℕ)
     (bound : ∀ r, v r ≤ 4 * (x.length + 1)) :
     MultReach x (some .diagonal, v, none)
@@ -608,11 +618,11 @@ private lemma mult_contribution (x : List Bool) (v : Fin 13 → ℕ)
   have good (s : MultState) : PreS multARM x (some s, v, none) ∧
       ∀ r, v r ≤ 4 * (x.length + 1) := ⟨mult_preconditions x s v none, bound⟩
   apply AReach.step (good .diagonal)
-  simp only [astep, multARM]
+  simp only [astep_jeq (show multARM .diagonal = _ from rfl)]
   by_cases eq : v 10 = v 7
   · rw [if_pos eq, if_pos eq]
     apply AReach.step (good .firstBit)
-    simp only [astep, multARM, vword_whole₁, (mult_queries x _).1]
+    simp only [astep_call (show multARM .firstBit = _ from rfl), vword_whole₁, (mult_queries x _).1]
     cases first : x.getD (v 0) false with
     | false =>
       simp only [Bool.false_eq_true, ↓reduceIte, Bool.toNat_false,
@@ -621,7 +631,8 @@ private lemma mult_contribution (x : List Bool) (v : Fin 13 → ℕ)
     | true =>
       simp only [↓reduceIte, Bool.toNat_true, Nat.one_mul]
       apply AReach.step (good .secondBit)
-      simp only [astep, multARM, vword_whole₁, (mult_queries x _).1]
+      simp only [astep_call (show multARM .secondBit = _ from rfl), vword_whole₁,
+        (mult_queries x _).1]
       cases second : x.getD (v 9) false with
       | false =>
         simp only [Bool.false_eq_true, ↓reduceIte, Bool.toNat_false,
@@ -629,7 +640,9 @@ private lemma mult_contribution (x : List Bool) (v : Fin 13 → ℕ)
         exact AReach.refl _
       | true =>
         simp only [↓reduceIte, Bool.toNat_true]
-        exact AReach.single (good .add)
+        have h := AReach.single (A := multARM) (oracle := multOracle) (x := x) (G := MultGood x)
+          (good .add)
+        rwa [astep_inc (show multARM .add = _ from rfl)] at h
   · simp only [if_neg eq, Nat.add_zero, Function.update_eq_self]
     exact AReach.refl _
 
@@ -654,7 +667,8 @@ private lemma mult_inner_loop (x : List Bool) (bit : Bool) (w : List Bool)
   | nil =>
     have ends : v 9 = v 5 := by simpa using endpos.symm
     simpa only [List.length_nil, Nat.mul_zero, Nat.add_zero, multRow,
-      Finset.range_zero, Finset.sum_empty, Function.update_eq_self, astep, multARM,
+      Finset.range_zero, Finset.sum_empty, Function.update_eq_self,
+      astep_jeq (show multARM .inner = _ from rfl),
       if_pos ends] using (AReach.single (A := multARM) (oracle := multOracle) (x := x)
         (a := (some .inner, v, none)) ⟨mult_preconditions x .inner v none, bound⟩)
   | cons u w ih =>
@@ -688,7 +702,8 @@ private lemma mult_inner_loop (x : List Bool) (bit : Bool) (w : List Bool)
     have adv₁ : MultReach x (some (.nextB false), va, none) (some (.nextB true), v₁, none) :=
       AReach.single ⟨mult_preconditions x _ va none, ba⟩
     have adv₂ : MultReach x (some (.nextB true), v₁, none) (some .nextDiagonal, v₂, none) := by
-      simpa [astep, multARM, v₁, v₂, Function.update_idem, Nat.add_assoc] using
+      simpa [astep_inc (show multARM (.nextB true) = _ from rfl), v₁, v₂, Function.update_idem,
+        Nat.add_assoc] using
         (AReach.single (A := multARM) (oracle := multOracle) (x := x)
           (a := (some (.nextB true), v₁, none)) ⟨mult_preconditions x _ v₁ none, b₁⟩)
     have adv₃ : MultReach x (some .nextDiagonal, v₂, none) (some .inner, vn, none) :=
@@ -717,7 +732,7 @@ private lemma mult_inner_loop (x : List Bool) (bit : Bool) (w : List Bool)
     rw [endpoints] at rest
     apply AReach.step ⟨mult_preconditions x .inner v none, bound⟩
     have hne : v 9 ≠ v 5 := by simp only [List.length_cons] at endpos; omega
-    simpa only [astep, multARM, if_neg hne] using
+    simpa only [astep_jeq (show multARM .inner = _ from rfl), if_neg hne] using
       pairStep.trans (adv₁.trans (adv₂.trans (adv₃.trans rest)))
 
 /-- Clear and restore the second pointer and diagonal index before an inner loop.
@@ -766,7 +781,7 @@ private lemma mult_outer_loop (x a b : List Bool) (v : Fin 13 → ℕ)
     refine ⟨v, bound, by simp, by simp, by simp [multRows], ?_, ?_⟩
     · intros; rfl
     · have he : v 0 = v 4 := by simpa using enda.symm
-      simpa only [astep, multARM, if_pos he] using
+      simpa only [astep_jeq (show multARM .outer = _ from rfl), if_pos he] using
         (AReach.single (A := multARM) (oracle := multOracle) (x := x)
           (a := (some .outer, v, none)) ⟨mult_preconditions x .outer v none, bound⟩)
   | cons t a ih =>
@@ -815,7 +830,8 @@ private lemma mult_outer_loop (x a b : List Bool) (v : Fin 13 → ℕ)
     have adv₁ : MultReach x (some (.nextA false), ve, none) (some (.nextA true), v₁, none) :=
       AReach.single ⟨mult_preconditions x _ ve none, be⟩
     have adv₂ : MultReach x (some (.nextA true), v₁, none) (some .nextP, v₂, none) := by
-      simpa [astep, multARM, v₁, v₂, Function.update_idem, Nat.add_assoc] using
+      simpa [astep_inc (show multARM (.nextA true) = _ from rfl), v₁, v₂, Function.update_idem,
+        Nat.add_assoc] using
         (AReach.single (A := multARM) (oracle := multOracle) (x := x)
           (a := (some (.nextA true), v₁, none)) ⟨mult_preconditions x _ v₁ none, b₁⟩)
     have adv₃ : MultReach x (some .nextP, v₂, none) (some .outer, vn, none) :=
@@ -845,7 +861,7 @@ private lemma mult_outer_loop (x a b : List Bool) (v : Fin 13 → ℕ)
       simp [vn, v₂, ve, Function.update_of_ne, r0, r8, r9, r10, r11]
     · apply AReach.step ⟨mult_preconditions x .outer v none, bound⟩
       have ne : v 0 ≠ v 4 := by simp only [List.length_cons] at enda; omega
-      simpa only [astep, multARM, if_neg ne] using
+      simpa only [astep_jeq (show multARM .outer = _ from rfl), if_neg ne] using
         starts.trans (inner.trans (adv₁.trans (adv₂.trans (adv₃.trans rest))))
 
 /-- Returning from a Boolean exit uses the received one-step halting rule. -/
@@ -859,11 +875,11 @@ private lemma mult_finish (x : List Bool) (v : Fin 13 → ℕ)
     (bound : ∀ r, v r ≤ 4 * (x.length + 1)) :
     MultHalt x (some .finalPosition, v, none) (decide (v 12 = v 1 ∧ v 11 = 0)) := by
   apply AHalt.step ⟨mult_preconditions x .finalPosition v none, bound⟩
-  simp only [astep, multARM]
+  simp only [astep_jeq (show multARM .finalPosition = _ from rfl)]
   by_cases hp : v 12 = v 1
   · rw [if_pos hp]
     apply AHalt.step ⟨mult_preconditions x .finalCarry v none, bound⟩
-    simp only [astep, multARM]
+    simp only [astep_jz (show multARM .finalCarry = _ from rfl)]
     by_cases hc : v 11 = 0 <;> simpa [hp, hc] using mult_return x (decide (v 11 = 0)) v bound
   · simpa [hp] using mult_return x false v bound
 
@@ -878,18 +894,20 @@ private lemma mult_parity (x : List Bool) (v : Fin 13 → ℕ) (bit : Bool)
   all_goals simp only [Bool.toNat_false, Bool.toNat_true]
   · rw [if_neg (by omega)]
     apply AHalt.step ⟨mult_preconditions x _ v none, bound⟩
-    simpa [astep, multARM, odd] using mult_return x false v bound
+    simpa [astep_jodd (show multARM (.parity false) = _ from rfl), odd] using
+      mult_return x false v bound
   · rw [if_pos (by omega)]
-    simpa [astep, multARM, odd] using
+    simpa [astep_jodd (show multARM (.parity false) = _ from rfl), odd] using
       (AReach.single (A := multARM) (oracle := multOracle) (x := x)
         (a := (some (.parity false), v, none)) ⟨mult_preconditions x _ v none, bound⟩)
   · rw [if_pos odd.symm]
-    simpa [astep, multARM, odd] using
+    simpa [astep_jodd (show multARM (.parity true) = _ from rfl), odd] using
       (AReach.single (A := multARM) (oracle := multOracle) (x := x)
         (a := (some (.parity true), v, none)) ⟨mult_preconditions x _ v none, bound⟩)
   · rw [if_neg (by omega)]
     apply AHalt.step ⟨mult_preconditions x _ v none, bound⟩
-    simpa [astep, multARM, odd] using mult_return x false v bound
+    simpa [astep_jodd (show multARM (.parity true) = _ from rfl), odd] using
+      mult_return x false v bound
 
 /-- At the result end the next bit is zero; otherwise the access bank reads it. -/
 private lemma mult_result_read (x : List Bool) (v : Fin 13 → ℕ)
@@ -897,7 +915,7 @@ private lemma mult_result_read (x : List Bool) (v : Fin 13 → ℕ)
     MultReach x (some .resultTest, v, none)
       (some (.parity (x.getD (v 12) false)), v, none) := by
   apply AReach.step ⟨mult_preconditions x .resultTest v none, bound⟩
-  simp only [astep, multARM]
+  simp only [astep_jeq (show multARM .resultTest = _ from rfl)]
   by_cases hp : v 12 = v 1
   · have hzero : x.getD (v 12) false = false := by
       simp [hp, length, List.getD_eq_getElem?_getD]
@@ -905,14 +923,21 @@ private lemma mult_result_read (x : List Bool) (v : Fin 13 → ℕ)
     exact AReach.refl _
   · rw [if_neg hp]
     cases hb : x.getD (v 12) false <;>
-      simpa only [astep, multARM, vword_whole₁, (mult_queries x _).1,
+      simpa only [astep_call (show multARM .resultRead = _ from rfl), vword_whole₁,
+        (mult_queries x _).1,
         hb, Bool.false_eq_true, ↓reduceIte] using
       (AReach.single (A := multARM) (oracle := multOracle) (x := x)
         (G := fun a => PreS multARM x a ∧ ∀ r, a.2.1 r ≤ 4 * (x.length + 1))
         (a := (some .resultRead, v, none)) ⟨mult_preconditions x _ v none, bound⟩)
 
 /-- Carry halving and bounded cursor advancement prepare the next column. The result
-pointer saturates at the input end rather than requiring equal operand/product lengths. -/
+pointer saturates at the input end rather than requiring equal operand/product lengths.
+
+**Proof sketch.** Three straight-line steps: `carryHalf` halves register 11, `nextColumn`
+increments the column register 7, and `nextResultTest` compares the result pointer `v 12` with
+the length register `v 1`. If they are equal, the run stops with the pointer unchanged, which
+is `min (v 12 + 1) (v 1)`. Otherwise one more step, `nextResult`, increments it. The register
+bounds follow from `register_update_le`. -/
 private lemma mult_next_column (x : List Bool) (v : Fin 13 → ℕ)
     (bound : ∀ r, v r ≤ 4 * (x.length + 1)) (position : v 12 ≤ v 1)
     (columnBound : v 7 + 1 ≤ 4 * (x.length + 1)) :
@@ -925,11 +950,13 @@ private lemma mult_next_column (x : List Bool) (v : Fin 13 → ℕ)
     register_update_le v 11 _ _ bound ((Nat.div_le_self _ _).trans (bound 11))
   have bi : ∀ r, vi r ≤ 4 * (x.length + 1) := register_update_le vh 7 _ _ bh columnBound
   apply AReach.step ⟨mult_preconditions x .carryHalf v none, bound⟩
+  rw [astep_half (show multARM .carryHalf = _ from rfl)]
   change MultReach x (some .nextColumn, vh, none) _
   apply AReach.step ⟨mult_preconditions x .nextColumn vh none, bh⟩
+  rw [astep_inc (show multARM .nextColumn = _ from rfl), show vh 7 = v 7 by simp [vh]]
   change MultReach x (some .nextResultTest, vi, none) _
   apply AReach.step ⟨mult_preconditions x .nextResultTest vi none, bi⟩
-  simp only [astep, multARM]
+  simp only [astep_jeq (show multARM .nextResultTest = _ from rfl)]
   have vp : vi 12 = v 12 := by simp [vi, vh]
   have vl : vi 1 = v 1 := by simp [vi, vh]
   rw [vp, vl]
@@ -939,7 +966,7 @@ private lemma mult_next_column (x : List Bool) (v : Fin 13 → ℕ)
     rw [show Function.update (Function.update v 11 (v 11 / 2)) 7 (v 7 + 1) = vi by rfl, he]
     exact AReach.refl _
   · rw [if_neg hp, min_eq_left (by omega)]
-    simpa only [astep, multARM, vp] using
+    simpa only [astep_inc (show multARM .nextResult = _ from rfl), vp] using
       (AReach.single (A := multARM) (oracle := multOracle) (x := x)
         (a := (some .nextResult, vi, none)) ⟨mult_preconditions x _ vi none, bi⟩)
 
@@ -965,7 +992,7 @@ private lemma mult_columns_run (x a b c : List Bool)
   | h remaining ih =>
     by_cases done : j = a.length + b.length
     · apply AHalt.step ⟨mult_preconditions x .column v none, bound⟩
-      simp only [astep, multARM, column, layout.2.2.2.2, if_pos done]
+      simp only [astep_jeq (show multARM .column = _ from rfl), column, layout.2.2.2.2, if_pos done]
       have finish := mult_finish x v bound
       have exactTest : (v 12 = v 1 ∧ v 11 = 0) ↔ MultRemaining a b c j := by
         rw [result, layout.1, size, carry, done]
@@ -1051,7 +1078,8 @@ private lemma mult_columns_run (x a b c : List Bool)
           simp only [agree, true_and]
         rw [← exactNext] at rest
         apply AHalt.step ⟨mult_preconditions x .column v none, bound⟩
-        simpa only [astep, multARM, column, layout.2.2.2.2, if_neg done] using
+        simpa only [astep_jeq (show multARM .column = _ from rfl), column, layout.2.2.2.2,
+          if_neg done] using
           reset.halt (operands.halt (reader.halt (parity.halt (next.halt rest))))
       · rw [if_neg (by rwa [esum])] at parity
         have reject : decide (MultRemaining a b c j) = false := by
@@ -1060,7 +1088,8 @@ private lemma mult_columns_run (x a b c : List Bool)
           exact fun h => agree h.1
         rw [reject]
         apply AHalt.step ⟨mult_preconditions x .column v none, bound⟩
-        simpa only [astep, multARM, column, layout.2.2.2.2, if_neg done] using
+        simpa only [astep_jeq (show multARM .column = _ from rfl), column, layout.2.2.2.2,
+          if_neg done] using
           reset.halt (operands.halt (reader.halt parity))
 
 /-- Source register, shared-copy stage, and successful exit for each last-bit check. -/
@@ -1100,7 +1129,7 @@ private lemma mult_last_bit (x : List Bool) (f : Fin 3) (v : Fin 13 → ℕ)
       mult_copy x (multCanonCopy f) va ba (by simp [spec, va, srcne])
   have down : MultReach x (some (.canonDown f false), vs, none) (some (.canonRead f), vd, none) := by
     by_cases last : f = 2
-    · simpa [astep, multARM, last, vs, vd] using
+    · simpa [astep_dec (show multARM (.canonDown 2 false) = _ from rfl), last, vs, vd] using
         (AReach.single (A := multARM) (oracle := multOracle) (x := x)
           (a := (some (.canonDown f false), vs, none)) ⟨mult_preconditions x _ vs none, bs⟩)
     · let vm := Function.update v 0 (v (multCanonSource f) - 1)
@@ -1108,17 +1137,19 @@ private lemma mult_last_bit (x : List Bool) (f : Fin 3) (v : Fin 13 → ℕ)
         register_update_le v 0 _ _ bound ((Nat.sub_le _ _).trans (bound _))
       have first : MultReach x (some (.canonDown f false), vs, none)
           (some (.canonDown f true), vm, none) := by
-        simpa [astep, multARM, last, vs, vm] using
+        simpa [astep_dec (show multARM (.canonDown f false) = _ from rfl), last, vs, vm] using
           (AReach.single (A := multARM) (oracle := multOracle) (x := x)
             (a := (some (.canonDown f false), vs, none)) ⟨mult_preconditions x _ vs none, bs⟩)
       apply first.trans
-      simpa [astep, multARM, last, vm, vd, Nat.sub_sub] using
+      simpa [astep_dec (show multARM (.canonDown f true) = _ from rfl), last, vm, vd,
+        Nat.sub_sub] using
         (AReach.single (A := multARM) (oracle := multOracle) (x := x)
           (a := (some (.canonDown f true), vm, none)) ⟨mult_preconditions x _ vm none, bm⟩)
   have read : MultReach x (some (.canonRead f), vd, none)
       (some (if x.getD (v (multCanonSource f) - (if f = 2 then 1 else 2)) false
         then multCanonNext f else .answer false), vd, none) := by
-    simpa only [astep, multARM, vword_whole₁, (mult_queries x _).1,
+    simpa only [astep_call (show multARM (.canonRead f) = _ from rfl), vword_whole₁,
+      (mult_queries x _).1,
       vd, Function.update_self, multCanonNext] using
       (AReach.single (A := multARM) (oracle := multOracle) (x := x)
         (a := (some (.canonRead f), vd, none)) ⟨mult_preconditions x _ vd none, bd⟩)
@@ -1127,7 +1158,15 @@ private lemma mult_last_bit (x : List Bool) (f : Fin 3) (v : Fin 13 → ℕ)
 
 /-- Canonical-field validation in continuation form. The only changed register is the
 scratch pointer. Empty fields represent zero; nonempty fields are accepted exactly when
-the physical last bit is true. The caller supplies the field-specific address equations. -/
+the physical last bit is true. The caller supplies the field-specific address equations.
+
+**Proof sketch.** One step through `canonTest f` (`emptyStep`). An empty field is canonical,
+and the run goes to `multCanonNext f` with the registers unchanged, where `success` finishes.
+Otherwise the scratch pointer (register 0) is set to the field's last address, and
+`mult_last_bit` reads that bit, which `lastRead` identifies with `w`'s last bit. By
+`mult_canonical_last`, a nonempty `w` is canonical exactly when that bit is true. If it is,
+the read continues to `multCanonNext f` and `success` finishes. If not, the run halts with
+`false` (`mult_return`), which is `answer` by `failure`. -/
 private lemma mult_validate_field (x w : List Bool) (f : Fin 3) (v : Fin 13 → ℕ)
     (answer : Bool) (bound : ∀ r, v r ≤ 4 * (x.length + 1))
     (emptyStep : astep multARM multOracle x (some (.canonTest f), v, none) =
@@ -1144,7 +1183,7 @@ private lemma mult_validate_field (x w : List Bool) (f : Fin 3) (v : Fin 13 → 
   rw [emptyStep]
   by_cases empty : w = []
   · rw [if_pos empty]
-    exact success (by simp [empty, Canon]) v bound (fun _ _ => rfl)
+    exact success (by rw [empty]; simpa [Nat.zero_bits] using canon_bits 0) v bound (fun _ _ => rfl)
   · rw [if_neg empty]
     let u := Function.update v 0 (v (multCanonSource f) - (if f = 2 then 1 else 2))
     have bu : ∀ r, u r ≤ 4 * (x.length + 1) :=
@@ -1201,7 +1240,8 @@ private lemma mult_canonical_run (x a b c : List Bool)
   have member : x ∈ multLang ↔ Canon a ∧ Canon b ∧ Canon c ∧ MultRemaining a b c 0 := by
     simpa [encoded, MultRemaining] using mult_acceptance a b c
   apply mult_validate_field x a 0 v _ bound
-  · simp [astep, multARM, multCanonNext, ready.endA, List.length_eq_zero_iff]
+  · simp [astep_jz (show multARM (.canonTest 0) = _ from rfl), multCanonNext, ready.endA,
+      List.length_eq_zero_iff]
   · intro nonempty
     have pos : 0 < a.length := List.length_pos_iff.mpr nonempty
     change x.getD (v 4 - 2) false = _
@@ -1215,7 +1255,8 @@ private lemma mult_canonical_run (x a b c : List Bool)
     have ra := mult_ready_frame ready fa
     change MultHalt x (some (.canonTest 1), va, none) _
     apply mult_validate_field x b 1 va _ ba
-    · simp [astep, multARM, multCanonNext, ra.endB, ra.startB, List.length_eq_zero_iff]
+    · simp [astep_jeq (show multARM (.canonTest 1) = _ from rfl), multCanonNext, ra.endB, ra.startB,
+        List.length_eq_zero_iff]
     · intro nonempty
       have pos : 0 < b.length := List.length_pos_iff.mpr nonempty
       change x.getD (va 5 - 2) false = _
@@ -1233,7 +1274,7 @@ private lemma mult_canonical_run (x a b c : List Bool)
       · have test : (vb 3 = vb 1) ↔ c = [] := by
           rw [rb.startC, rb.length, size]
           simp
-        simp only [astep, multARM, multCanonNext]
+        simp only [astep_jeq (show multARM (.canonTest 2) = _ from rfl), multCanonNext]
         simp only [show (2 : Fin 3) ≠ 0 by decide, show (2 : Fin 3) ≠ 1 by decide,
           ↓reduceIte, test]
       · intro nonempty
@@ -1275,10 +1316,10 @@ private lemma mult_sub_two (x : List Bool) (v : Fin 13 → ℕ) (r : Fin 13)
     MultReach x (some (labels false), v, none)
       (some done, Function.update v r (v r - 2), none) := by
   apply AReach.step ⟨mult_preconditions x _ v none, bound⟩
-  simp only [astep, code₀]
+  rw [astep_dec code₀]
   have nextBound := register_update_le v r (4 * (x.length + 1)) (v r - 1) bound
     ((Nat.sub_le _ _).trans (bound r))
-  simpa only [astep, code₁, Function.update_self, Function.update_idem, Nat.sub_sub,
+  simpa only [astep_dec code₁, Function.update_self, Function.update_idem, Nat.sub_sub,
     show (1 : ℕ) + 1 = 2 by rfl] using
     (AReach.single (A := multARM) (oracle := multOracle) (x := x)
       (a := (some (labels true), Function.update v r (v r - 1), none))
@@ -1329,7 +1370,7 @@ private lemma mult_prepare_run (x a b c : List Bool)
   have bh : ∀ r, vh r ≤ 4 * (x.length + 1) :=
     register_update_le vb 6 _ _ bb ((Nat.div_le_self _ _).trans (bb 3))
   have half : MultReach x (some .countHalf, vc, none) (some (.countDown false), vh, none) := by
-    simpa [astep, multARM, vc, vh] using
+    simpa [astep_half (show multARM .countHalf = _ from rfl), vc, vh] using
       (AReach.single (A := multARM) (oracle := multOracle) (x := x)
         (a := (some .countHalf, vc, none)) ⟨mult_preconditions x _ vc none, bc⟩)
   have arithmetic : vb 3 / 2 - 2 = a.length + b.length := by simp [vb, va, startC]; omega

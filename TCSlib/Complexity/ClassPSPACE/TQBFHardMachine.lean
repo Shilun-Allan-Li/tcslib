@@ -121,9 +121,7 @@ theorem reflTransGen_stepRel (x : List Bool) (s u : ℕ) {γ : List Bool}
     have hs := bits_injective h6
     subst hc₂ hs
     refine (ih c₁ h3).tail ?_
-    show pairEncode x (pairEncode (Nat.bits c₁) (pairEncode (Nat.bits c) (Nat.bits s))) ∈
-      stepLang N
-    rw [← h3]
+    rw [stepRel_iff_mem, ← h3]
     exact hst
 
 /-- **Acceptance as a block path** ([AB09, Claim 4.4(1)] in the form of the proof of

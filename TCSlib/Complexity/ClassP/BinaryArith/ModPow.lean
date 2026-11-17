@@ -61,34 +61,18 @@ theorem powMod_pairEncode (a n p : ℕ) (hp : p ≠ 0) :
 
 /-- One round of repeated squaring on `⟨p, ⟨E, ⟨b, acc⟩⟩⟩`: if the low bit of `E` is set,
 `acc := acc·b mod p`; then `b := b² mod p` and `E` loses its low bit. States with `E = []`
-or `p = 0` are fixed. -/
+or `p = 0` are fixed: the shared round `sqStep` with multiplication modulo `p`. -/
 def powStep (S : List Bool) : List Bool :=
-  if isNilB (pairFstD (pairSndD S)) || decide (bitsVal (pairFstD S) = 0) then S
-  else pairEncode (pairFstD S) (pairEncode ((pairFstD (pairSndD S)).drop 1)
-    (pairEncode (mod (pairEncode (mul (pairEncode (pairFstD (pairSndD (pairSndD S)))
-        (pairFstD (pairSndD (pairSndD S))))) (pairFstD S)))
-      (if (pairFstD (pairSndD S)).headD false then
-        mod (pairEncode (mul (pairEncode (pairSndD (pairSndD (pairSndD S)))
-          (pairFstD (pairSndD (pairSndD S))))) (pairFstD S))
-      else pairSndD (pairSndD (pairSndD S)))))
+  sqStep (fun z => mod (pairEncode (mul (pairSndD z)) (pairFstD z)))
+    (fun S => decide (bitsVal (pairFstD S) = 0)) S
 
 /-- A repeated-squaring round is polynomial-time. -/
-theorem polyTimeComputable_powStep : PolyTimeComputable powStep := by
-  have hs3 : PolyTimeComputable (fun S => pairFstD (pairSndD (pairSndD S))) :=
-    polyTimeComputable_pairFstD.comp polyTimeComputable_slot3
-  have hmm : ∀ {f g : List Bool → List Bool}, PolyTimeComputable f → PolyTimeComputable g →
-      PolyTimeComputable (fun S => mod (pairEncode (mul (pairEncode (f S) (g S))) (pairFstD S))) :=
-    fun hf hg => polyTimeComputable_mod.comp
-      ((polyTimeComputable_mul.comp (hf.pairEncode hg)).pairEncode polyTimeComputable_pairFstD)
-  unfold powStep
-  refine polyTimeComputable_ite (polyTimeComputable_or
-    (polyTimeComputable_isNil.comp polyTimeComputable_slot2)
-    (polyTimeComputable_isZero.comp polyTimeComputable_pairFstD)) polyTimeComputable_id ?_
-  exact polyTimeComputable_pairFstD.pairEncode
-    ((polyTimeComputable_tail.comp polyTimeComputable_slot2).pairEncode
-      ((hmm hs3 hs3).pairEncode (polyTimeComputable_ite
-        (polyTimeComputable_headD.comp polyTimeComputable_slot2) (hmm polyTimeComputable_slot4 hs3)
-        polyTimeComputable_slot4)))
+theorem polyTimeComputable_powStep : PolyTimeComputable powStep :=
+  polyTimeComputable_sqStep
+    (polyTimeComputable_mod.comp
+      ((polyTimeComputable_mul.comp polyTimeComputable_pairSndD).pairEncode
+        polyTimeComputable_pairFstD))
+    (polyTimeComputable_isZero.comp polyTimeComputable_pairFstD)
 
 /-- The input state `⟨p, ⟨n, ⟨a mod p, 1 mod p⟩⟩⟩` of the repeated-squaring loop. -/
 def powInit (z : List Bool) : List Bool :=
@@ -150,25 +134,32 @@ theorem powInv_step {z S : List Bool} (h : PowInv z S) :
   generalize pairFstD z = a at h ⊢
   obtain ⟨E, b, acc, rfl, hE, hb, hacc, hbl, haccl, hv⟩ := h
   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
-  by_cases hfix : (isNilB E || decide (bitsVal p = 0)) = true
+  by_cases hfix : E = [] ∨ bitsVal p = 0
   · have he : powStep (pairEncode p (pairEncode E (pairEncode b acc))) =
-        pairEncode p (pairEncode E (pairEncode b acc)) := by
-      simp only [powStep, pairFstD_pairEncode, pairSndD_pairEncode, hfix, if_true]
+        pairEncode p (pairEncode E (pairEncode b acc)) :=
+      sqStep_of_stop (by
+        simpa only [pairFstD_pairEncode, pairSndD_pairEncode, decide_eq_true_eq] using hfix)
     rw [he]
     refine ⟨⟨E, b, acc, rfl, hE, hb, hacc, hbl, haccl, hv⟩, fun hp hE0 => ?_⟩
-    simp only [isNilB, Bool.or_eq_true, decide_eq_true_eq] at hfix
     rcases hfix with h | h
     · simp [h] at hE0
     · omega
-  have hne : E ≠ [] := by simp [isNilB] at hfix; exact hfix.1
-  have hp : 0 < bitsVal p := by simp [isNilB] at hfix; exact Nat.pos_of_ne_zero hfix.2
+  have hne : E ≠ [] := fun h => hfix (Or.inl h)
+  have hp0 : bitsVal p ≠ 0 := fun h => hfix (Or.inr h)
+  have hp : 0 < bitsVal p := Nat.pos_of_ne_zero hp0
   obtain ⟨c, E', rfl⟩ := List.exists_cons_of_ne_nil hne
+  have hbb : mul (pairEncode b b) = Nat.bits (bitsVal b * bitsVal b) := by
+    rw [hb, mul_pairEncode, bitsVal_bits]
+  have hab : mul (pairEncode acc b) = Nat.bits (bitsVal acc * bitsVal b) := by
+    rw [hacc, hb, mul_pairEncode, bitsVal_bits, bitsVal_bits]
+  have hcons : ∀ (d : Bool) (w : List Bool), bitsVal (d :: w) = d.toNat + 2 * bitsVal w :=
+    fun d w => by rw [bitsVal_eq_headD]; rfl
   have hstep : powStep (pairEncode p (pairEncode (c :: E') (pairEncode b acc))) =
       pairEncode p (pairEncode E' (pairEncode (Nat.bits (bitsVal b * bitsVal b % bitsVal p))
         (if c then Nat.bits (bitsVal acc * bitsVal b % bitsVal p) else acc))) := by
-    rw [Bool.not_eq_true] at hfix
-    simp only [powStep, pairFstD_pairEncode, pairSndD_pairEncode, hfix, Bool.false_eq_true,
-      if_false, List.drop_succ_cons, List.drop_zero, List.headD_cons, mod, mul, bitsVal_bits]
+    rw [powStep, sqStep_cons _ _ _ _ _ _ _ (by
+      simpa only [pairFstD_pairEncode, decide_eq_false_iff_not] using hp0)]
+    simp only [pairFstD_pairEncode, pairSndD_pairEncode, mod_eq, hbb, hab, bitsVal_bits]
   rw [hstep]
   refine ⟨?_, fun _ _ => by simp⟩
   obtain ⟨hb1, hacc1, hmod⟩ := hv hp
@@ -186,11 +177,11 @@ theorem powInv_step {z S : List Bool} (h : PowInv z S) :
       cases c
       · have := (Nat.ModEq.refl (n := bitsVal p) (bitsVal acc)).mul hsq
         refine this.trans (congrArg (· % bitsVal p) ?_)
-        simp only [bitsVal, Bool.toNat_false, zero_add, pow_mul, ← pow_two]
+        simp only [hcons, Bool.toNat_false, zero_add, pow_mul, ← pow_two]
       · have := (Nat.mod_modEq (bitsVal acc * bitsVal b) (bitsVal p)).mul hsq
         simp only [if_true, bitsVal_bits]
         refine this.trans (congrArg (· % bitsVal p) ?_)
-        simp only [bitsVal, Bool.toNat_true, pow_add, pow_mul, ← pow_two]; ring
+        simp only [hcons, Bool.toNat_true, pow_add, pow_mul, ← pow_two]; ring
 
 /-- A state satisfying the repeated-squaring invariant has length at most `9(|z| + 1)`. -/
 theorem length_le_of_powInv {z S : List Bool} (h : PowInv z S) :
@@ -236,7 +227,8 @@ theorem polyTimeComputable_powMod : PolyTimeComputable powMod := by
     (fun S h h0 => by
       obtain ⟨E, b, acc, rfl, -⟩ := h
       simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_eq_zero_iff] at h0
-      subst h0; simp [powStep, isNilB])
+      subst h0
+      exact sqStep_of_stop (Or.inl (by simp only [pairFstD_pairEncode, pairSndD_pairEncode])))
     (1 * (z.length + 1) ^ 1) (powInit z) (powInv_init z)
     (by simp [powInit]; have := length_pairFstD_le (pairSndD z)
         have := length_pairSndD_le z; omega)
@@ -248,7 +240,8 @@ theorem polyTimeComputable_powMod : PolyTimeComputable powMod := by
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_eq_zero_iff] at hμ ⊢
   subst hμ
   obtain ⟨-, hacc1, hmod⟩ := hv (Nat.pos_of_ne_zero hp)
-  simp only [bitsVal, pow_zero, mul_one] at hmod
+  have hnil : bitsVal ([] : List Bool) = 0 := by simpa only [Nat.zero_bits] using bitsVal_bits 0
+  simp only [hnil, pow_zero, mul_one] at hmod
   rw [hacc, ← Nat.mod_eq_of_lt hacc1, hmod]
 
 /-! ### The gcd -/

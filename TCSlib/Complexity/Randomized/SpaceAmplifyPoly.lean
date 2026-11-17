@@ -111,9 +111,8 @@ theorem ps_start {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ 
   -- the input length
   have r1 := inputLength_loop A (ampOr N) x 0 0 .len .lenI (.cp0 .nt) rfl rfl
     (fun m _ => by
-      simp only [ampOr, ampAs, Matrix.cons_val_zero, inputLenLang]
-      rw [indicator_indexLang_pairEncode]
-      exact decide_eq_decide.mpr Iff.rfl)
+      simp only [ampOr, ampAs, Matrix.cons_val_zero]
+      exact indicator_inputLenLang x m)
     B (by omega) reg0.v (Reg.le_v (by simp only [Reg.Le, reg0]; omega)) (Nat.zero_le _)
   refine PSem.of_reach (AReach.mono r1 fun _ h => h.2) ?_
   refine PS.of_v (σ' := sreg n 0 0 0 0 0 0 0) (by reg_eq) ?_
@@ -239,27 +238,10 @@ theorem two_mul_pow_le {K n d : ℕ} (hK : 32 * (n + 1) ^ d ≤ K) :
 
 /-! ### Sizes -/
 
-/-- `2^{|bits n|} ≤ 2n + 1`. -/
-theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
-  rw [Nat.size_eq_bits_len]
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp
-  · have hs : 0 < n.size := Nat.size_pos.mpr hn
-    have := Nat.lt_size.mp (show n.size - 1 < n.size by omega)
-    have e : 2 ^ n.size = 2 * 2 ^ (n.size - 1) := by
-      rw [← pow_succ']; congr 1; omega
-    omega
-
-/-- `n < 2^{|bits n|}`. -/
-theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
-  rw [Nat.size_eq_bits_len]; exact Nat.lt_size_self n
-
 /-- `logSpace n ≤ ℓ`. -/
 theorem logSpace_le_ell (n : ℕ) : logSpace n ≤ ell n := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [logSpace, ell]
-  · have := Nat.log_lt_of_lt_pow (b := 2) (by omega) (lt_two_pow_bits n)
-    simp only [logSpace, ell]; omega
+  rw [ell, Nat.size_eq_bits_len]
+  exact logSpace_le_size_succ n
 
 /-- `K ≥ 32 (n + 1)^d` when `F ≥ d + 5`. -/
 theorem bigK_ge {F n d : ℕ} (hF : d + 5 ≤ F) : 32 * (n + 1) ^ d ≤ bigK F n := by
@@ -277,7 +259,7 @@ theorem bigK_ge {F n d : ℕ} (hF : d + 5 ≤ F) : 32 * (n + 1) ^ d ≤ bigK F n
 /-- `K ≤ 4^F (n + 1)^F`. -/
 theorem bigK_le (F n : ℕ) : bigK F n ≤ 4 ^ F * (n + 1) ^ F := by
   have h : 2 ^ ell n ≤ 4 * (n + 1) := by
-    have := two_pow_bits_le n; simp only [ell, pow_succ]; omega
+    have := two_pow_bits_le_two_mul_add_one n; simp only [ell, pow_succ]; omega
   calc bigK F n = (2 ^ ell n) ^ F := by rw [bigK, ← pow_mul, Nat.mul_comm]
     _ ≤ (4 * (n + 1)) ^ F := Nat.pow_le_pow_left h F
     _ = 4 ^ F * (n + 1) ^ F := mul_pow _ _ _
@@ -285,8 +267,7 @@ theorem bigK_le (F n : ℕ) : bigK F n ≤ 4 ^ F * (n + 1) ^ F := by
 /-- `ℓ ≤ n + 1`. -/
 theorem ell_le (n : ℕ) : ell n ≤ n + 1 := by
   have := lt_two_pow_bits n
-  have h : (Nat.bits n).length ≤ n := by
-    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr (Nat.lt_two_pow_self)
+  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
   simp only [ell]; omega
 
 /-- The register bound is polynomial. -/

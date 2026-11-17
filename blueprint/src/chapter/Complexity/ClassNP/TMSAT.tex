@@ -433,32 +433,11 @@ word $[1]$ if $x=w$ and to the one-bit word $[0]$ otherwise is polynomial-time
 computable.
 \end{lemma}
 
-\begin{lemma}[Nonempty fixed-width increment output]
-\lean{Complexity.tmsat_inc_nonempty}
-\label{Complexity.tmsat_inc_nonempty}
-\leanok
-\uses{Turing.incFixed}
-\difficulty{3}
-For every bit string $w$, if its fixed-width little-endian binary increment produces an
-output, that output is not the empty word.
-\end{lemma}
-
-\begin{lemma}[Overflow of fixed-width increment]
-\lean{Complexity.tmsat_inc_none}
-\label{Complexity.tmsat_inc_none}
-\leanok
-\uses{Turing.incFixed}
-\difficulty{3}
-For every bit string $w$, the fixed-width little-endian binary increment overflows
-exactly when every bit of $w$ is $1$, including the empty word as the all-ones word of
-length zero.
-\end{lemma}
-
 \begin{lemma}[All-ones test in polynomial time]
 \lean{Complexity.tmsat_pt_unary}
 \label{Complexity.tmsat_pt_unary}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.polyTimeComputable_of_linear, Complexity.tmsat_inc_none, Complexity.tmsat_inc_nonempty, Complexity.tmsat_pt_eq, Turing.FinTM.computesFunInTime_incFixed, Turing.incFixed}
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.polyTimeComputable_of_linear, Complexity.tmsat_pt_eq, Turing.FinTM.computesFunInTime_incFixed, Turing.incFixed}
 \difficulty{4}
 The function sending a bit string $x$ to the one-bit word whose bit is $1$ exactly when
 every bit of $x$ is $1$ is polynomial-time computable. The condition includes the empty

@@ -82,17 +82,6 @@ decoded from $\alpha$ halts on input $x$ after exactly $2^m$ steps with output
 $[\mathrm{true}]$.
 \end{theorem}
 
-\begin{lemma}[Overflow characterizes the all-ones word]
-\lean{Complexity.expcom_all_true}
-\label{Complexity.expcom_all_true}
-\leanok
-\uses{Turing.incFixed, Turing.incFixed_eq_none_iff_replicate}
-\difficulty{4}
-Let $w$ be a finite Boolean word, and consider its fixed-width binary increment, with
-overflow interpreted as the empty word. If the resulting word is empty, then every entry
-of $w$ is true.
-\end{lemma}
-
 \begin{definition}[Second decoded component]
 \lean{Complexity.expcom_tail}
 \label{Complexity.expcom_tail}
@@ -140,7 +129,7 @@ list with the empty list and then pairing that result with the empty list.
 \lean{Complexity.expcom_ok_iff}
 \label{Complexity.expcom_ok_iff}
 \leanok
-\uses{Complexity.expcom_all_true, Complexity.expcom_ok, Complexity.expcom_tail, Complexity.pairSndD, Turing.eq_pairEncode_of_pairDecode, Turing.incFixed, Turing.incFixed_replicate_true_append, Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.pairEncode}
+\uses{Complexity.expcom_ok, Complexity.expcom_tail, Complexity.pairSndD, Turing.eq_pairEncode_of_pairDecode, Turing.incFixed, Turing.incFixed_replicate_true_append, Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{5}
 A Boolean word $z$ passes the front-input validity test if and only if there exist
 Boolean words $\alpha,x$ and a natural number $n$ such that $z=\langle\alpha,\langle

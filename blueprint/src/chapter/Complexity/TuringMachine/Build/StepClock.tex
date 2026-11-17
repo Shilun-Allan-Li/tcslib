@@ -240,22 +240,6 @@ For every Boolean word $w$, the list returned by decrementing $w$, with the all-
 word of length $|w|$ used when decrementing is undefined, has length $|w|$.
 \end{theorem}
 
-\begin{theorem}[Decoding preserves the Boolean counter tape]
-\lean{Turing.sc_shadow_pre}
-\label{Turing.sc_shadow_pre}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.decodeSymbols, Turing.Cfg.decodeSymbols_state, Turing.Cfg.decodeSymbols_workTapePos, Turing.Cfg.decodeSymbols_workTapes, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_map_decode, Turing.FlagPhase, Turing.decodeBool}
-\difficulty{3}
-Let $e$ inject the Boolean alphabet into $\Gamma$, let $x$ be an input over $\Gamma$,
-let $ip$ be a valid input-head position, and let $out$ be an output word over $\Gamma$.
-Let $w$ be a Boolean word, and suppose the tape $ct:\mathbb Z\to\mathrm{Option}(\Gamma)$
-based at $cp\in\mathbb Z$ stores the encoded word $w$ at every offset $p$ with $-1\le
-p\le |w|$. Form the configuration $D$ with input-head position $ip$, output $out$,
-work-tape content $ct$, work-tape head position $cp$, and state $\mathrm{run}$. Decoding
-$D$ leaves its state equal to $\mathrm{run}$, and its decoded work tape at each of those
-offsets equals the buffer-tape content of $w$ there.
-\end{theorem}
-
 \begin{theorem}[Symbol lifting commutes with execution]
 \lean{Turing.sc_lift_run}
 \label{Turing.sc_lift_run}
@@ -287,7 +271,7 @@ decoded Boolean computation.
 \lean{Turing.sc_debit}
 \label{Turing.sc_debit}
 \leanok
-\uses{Turing.Action.mapState, Turing.Cfg, Turing.Cfg.decodeSymbols, Turing.Cfg.decodeSymbols_output, Turing.Cfg.decodeSymbols_workTapePos, Turing.Cfg.decodeSymbols_workTapes, Turing.Cfg.liftOver_state, Turing.Cfg.liftOver_workTapes, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_map, Turing.FlagPhase, Turing.MultiTapeTM, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_mapState_of_agreeOn, Turing.clockCfg, Turing.decFixed, Turing.decodeBool, Turing.decodeBool_eq_some, Turing.decrementTM, Turing.decrementTM_run_succ_ofCfg, Turing.decrementTM_run_underflow_ofCfg, Turing.embedEmitCfg, Turing.embedEmitTM, Turing.embedEmitTM_runFrom, Turing.lastEmb, Turing.sc_dec_patch_width, Turing.sc_dec_underflow_cost, Turing.sc_lastLayout, Turing.sc_lift_frame, Turing.sc_lift_run, Turing.sc_shadow_pre, Turing.wordPatch}
+\uses{Turing.Action.mapState, Turing.Cfg, Turing.Cfg.decodeSymbols, Turing.Cfg.decodeSymbols_output, Turing.Cfg.decodeSymbols_workTapePos, Turing.Cfg.decodeSymbols_workTapes, Turing.Cfg.liftOver_state, Turing.Cfg.liftOver_workTapes, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_map, Turing.FlagPhase, Turing.MultiTapeTM, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_mapState_of_agreeOn, Turing.clockCfg, Turing.decFixed, Turing.decodeBool, Turing.decodeBool_eq_some, Turing.decrementTM, Turing.decrementTM_run_succ_ofCfg, Turing.decrementTM_run_underflow_ofCfg, Turing.embedEmitCfg, Turing.embedEmitTM, Turing.embedEmitTM_runFrom, Turing.lastEmb, Turing.sc_dec_patch_width, Turing.sc_dec_underflow_cost, Turing.sc_lastLayout, Turing.sc_lift_frame, Turing.sc_lift_run, Turing.wordPatch}
 \difficulty{7}
 Let $k$ be a natural number, let $\Gamma,S,Q$ be types with decidable equality on
 $\Gamma$, let $x$ be a finite word over $\Gamma$, let $e$ inject the Boolean alphabet

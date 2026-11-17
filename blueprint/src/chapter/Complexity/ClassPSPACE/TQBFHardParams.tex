@@ -17,21 +17,11 @@ $|Q_N|$ for the number of its states. Its width coefficient is
 $4dW(N)+W(N)+12k(N)d+3k(N)+2|Q_N|+8$.
 \end{definition}
 
-\begin{theorem}[Bound on binary length]
-\lean{Complexity.TQBFHard.wP_le}
-\label{Complexity.TQBFHard.wP_le}
-\leanok
-\uses{Complexity.Codec.wP, Complexity.LogProg.length_bits_le}
-\difficulty{1}
-For every natural number $n$, the length of the binary representation of $n+1$ is at
-most $n+1$.
-\end{theorem}
-
 \begin{theorem}[Encoding length bounded by width]
 \lean{Complexity.TQBFHard.vlen_le_vwid}
 \label{Complexity.TQBFHard.vlen_le_vwid}
 \leanok
-\uses{Complexity.Codec.W, Complexity.Codec.wP, Complexity.TQBFHard.codeLen, Complexity.TQBFHard.vlen, Complexity.TQBFHard.vrad, Complexity.TQBFHard.vwid, Complexity.TQBFHard.wCoef, Complexity.TQBFHard.wP_le}
+\uses{Complexity.Codec.W, Complexity.Codec.wP, Complexity.TQBFHard.codeLen, Complexity.TQBFHard.vlen, Complexity.TQBFHard.vrad, Complexity.TQBFHard.vwid, Complexity.TQBFHard.wCoef, Complexity.Codec.wP_le}
 \difficulty{4}
 Let $N$ be a finite-state nondeterministic Turing machine over Boolean symbols, and let
 $d,c$ be natural numbers. For every natural number $n$, the configuration-code length at

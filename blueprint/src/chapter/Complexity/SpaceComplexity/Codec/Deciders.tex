@@ -97,7 +97,7 @@ is at most $n+1$.
 \lean{Complexity.Codec.one_run}
 \label{Complexity.Codec.one_run}
 \leanok
-\uses{Complexity.Codec.CA, Complexity.Codec.PreChk, Complexity.Codec.Reach, Complexity.Codec.Reach.trans, Complexity.Codec.Regs, Complexity.Codec.Regs.Bd, Complexity.Codec.Regs.val, Complexity.Codec.Shape1, Complexity.Codec.VAd, Complexity.Codec.W, Complexity.Codec.bitsVal_lt_two_pow, Complexity.Codec.bnd, Complexity.Codec.bnd_ge, Complexity.Codec.layR, Complexity.Codec.layout_run, Complexity.Codec.le_phase, Complexity.Codec.orc, Complexity.Codec.pairEncode_inj, Complexity.Codec.parse_run, Complexity.Codec.s_le_of_width, Complexity.Codec.two_pow_bits_le, Complexity.Codec.vScan, Complexity.Codec.vscan_run, Complexity.Codec.wP, Complexity.Codec.wP_le, Complexity.LogProg.AHalt, Complexity.LogProg.AReach.halt, Complexity.LogProg.GuardLe, Complexity.LogProg.bitsVal, Complexity.LogProg.bits_injective, Turing.length_pairEncode}
+\uses{Complexity.Codec.CA, Complexity.Codec.PreChk, Complexity.Codec.Reach, Complexity.Codec.Reach.trans, Complexity.Codec.Regs, Complexity.Codec.Regs.Bd, Complexity.Codec.Regs.val, Complexity.Codec.Shape1, Complexity.Codec.VAd, Complexity.Codec.W, Complexity.LogProg.bitsVal_lt_two_pow, Complexity.Codec.bnd, Complexity.Codec.bnd_ge, Complexity.Codec.layR, Complexity.Codec.layout_run, Complexity.Codec.le_phase, Complexity.Codec.orc, Complexity.Codec.pairEncode_inj, Complexity.Codec.parse_run, Complexity.Codec.s_le_of_width, Complexity.LogProg.two_pow_bits_le, Complexity.Codec.vScan, Complexity.Codec.vscan_run, Complexity.Codec.wP, Complexity.Codec.wP_le, Complexity.LogProg.AHalt, Complexity.LogProg.AReach.halt, Complexity.LogProg.GuardLe, Complexity.LogProg.bitsVal, Complexity.LogProg.bits_injective, Turing.length_pairEncode}
 \difficulty{7}
 Let $N$ be a finite-state nondeterministic Turing machine with Boolean input and let
 $\mathrm{mode}$ be one of the codec modes other than the step mode. For every bit string
@@ -208,4 +208,139 @@ For every finite nondeterministic Turing machine $N$ with Boolean input alphabet
 language of paired encodings of an input word $x$ and two binary words for natural
 numbers $c,s$, where $c$ is the code of $N$'s initial configuration on $x$ with window
 parameter $s$, is decidable in logarithmic space.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Codec --- Deciders: further results}
+
+\begin{theorem}[Logspace wrapper for one-code languages]
+\lean{Complexity.Codec.oneCode_mem}
+\label{Complexity.Codec.oneCode_mem}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.PreChk, Complexity.Codec.Regs, Complexity.Codec.Regs.Bd, Complexity.Codec.Regs.val, Complexity.Codec.Shape1, Complexity.Codec.Shape1.eq, Complexity.Codec.Shape1.width, Complexity.Codec.VAd, Complexity.Codec.ValidChk, Complexity.Codec.W, Complexity.Codec.bnd, Complexity.Codec.cfgCode, Complexity.Codec.codecAs, Complexity.Codec.codecAs_mem, Complexity.Codec.gd_mono, Complexity.Codec.indicator_eq_of_iff, Complexity.Codec.one_run, Complexity.Codec.orc, Complexity.Codec.orc_eq, Complexity.Codec.s_le_of_width, Complexity.Codec.shape_of_code, Complexity.Codec.vScan, Complexity.Codec.val_empty, Complexity.Codec.validChk_iff_pre, Complexity.Codec.wP, Complexity.LOGSPACE, Complexity.LogProg.AHalt, Complexity.LogProg.AHalt.mono, Complexity.LogProg.AReach.halt, Complexity.LogProg.GuardLe, Complexity.LogProg.arm_decides_poly, Complexity.LogProg.bitsVal, Turing.Cfg, Turing.MultiTapeTM.indicator, Turing.length_pairEncode, Turing.pairEncode}
+\difficulty{5}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet with $k$ work
+tapes, let $\mathrm{mode}$ be a mode of the $21$-register codec program other than the
+step-pair mode, and write $W=W(N)$ for the chunk width of configuration codes and $w_P(n)$ for
+the binary length of $n+1$. Let $L$ be a Boolean language, $P(x,c,s)$ a predicate on words and
+two naturals, and $\mathrm{Chk}(x,s,w)$ a predicate on words $x,w$ and a natural $s$, and
+assume: (i) $L$ consists exactly of the words
+$\langle x,\langle\mathrm{bits}(c),\mathrm{bits}(s)\rangle\rangle$ with $P(x,c,s)$;
+(ii) $P(x,c,s)$ implies that $c$ is the radius-$s$ code of some configuration of $N$ on $x$;
+(iii) $\langle x,\langle w,\mathrm{bits}(s)\rangle\rangle\in L$ if and only if
+$\mathrm{Chk}(x,s,w)$, for all $x,w,s$; (iv) $\mathrm{Chk}(x,s,w)$ implies that $w$ passes the
+validity check for inputs of length $|x|$ at radius $s$; and (v) for all words $y,x,w$, every
+$s$, every scan state $st$ and every register record $R$ such that
+$y=\langle x,\langle w,\mathrm{bits}(s)\rangle\rangle$ with
+$|\mathrm{bits}(s)|\le|\mathrm{bits}(|y|)|$, $|w|=W(2s+1)+w_P(|x|)+1$, the last letter of $w$
+is $1$, the little-endian value of the $w_P(|x|)$ letters after the first $W(2s+1)$ is at most
+$|x|+1$, $s\le 2|y|$, the validator component of $st$ is the validity scan of the first
+$W(2s+1)$ letters of $w$, every register of $R$ is at most $B_y=(8W+8)(|y|+1)$,
+$R_A=2|x|+2$, $R_S=s$, $R_T=0$ and $R_{\mathrm{Pos}}$ is that little-endian value, there is a
+Boolean $b$ with $\mathrm{Chk}(x,s,w)\iff b=\mathrm{true}$ such that the codec program in mode
+$\mathrm{mode}$, run on input $y$ with oracle calls answered by membership in its two codec
+decider languages and started at the end-of-scan label with state $st$ and registers $R$,
+halts with answer $b$ while every configuration before halting meets the program's syntactic
+preconditions and has all registers at most $B_y$. Then $L\in\mathrm{L}$ (logarithmic space).
+\end{theorem}
+
+\begin{definition}[Syntactic conditions on edge-tail instructions]
+\lean{Complexity.Codec.EdgeOK}
+\label{Complexity.Codec.EdgeOK}
+\leanok
+\uses{Complexity.Codec.Lab, Complexity.LogProg.Ins}
+A predicate on the instructions of a register program with $21$ registers, $2$ oracle deciders
+and the codec program's labels for a finite nondeterministic Turing machine $N$: an equality
+test between registers $r$ and $s$ satisfies it exactly when $r\ne s$; an oracle call
+satisfies it exactly when its list of argument registers has no repetitions; the three
+instructions comparing a register's binary expansion with a payload word of the input never
+satisfy it; and every other instruction always satisfies it.
+\end{definition}
+
+\begin{lemma}[Guard at an edge-tail label]
+\lean{Complexity.Codec.edge_gd}
+\label{Complexity.Codec.edge_gd}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.EdgeOK, Complexity.Codec.Lab, Complexity.Codec.gd_of, Complexity.LogProg.GuardLe, Complexity.LogProg.Ins, Complexity.LogProg.preS_of_ins}
+\difficulty{3}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, $y$ a Boolean
+word, $B$ a natural number, $\ell$ a label of the $21$-register codec program for $N$, and
+$v$ an assignment of naturals to the $21$ registers with $v(r)\le B$ for every $r$. If the
+codec program in edge-code mode has at $\ell$ an instruction $I$ such that every equality test
+in $I$ compares two distinct registers, every oracle call in $I$ has pairwise distinct argument
+registers, and $I$ is not one of the three input-comparison instructions, then the live
+configuration at $\ell$ with registers $v$ satisfies the bounded-run guard on input $y$: it
+meets the program's syntactic preconditions and all its registers are at most $B$.
+\end{lemma}
+
+\begin{theorem}[One round of the edge-code loop]
+\lean{Complexity.Codec.edge_round}
+\label{Complexity.Codec.edge_round}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CA_acc, Complexity.Codec.CA_eFar, Complexity.Codec.CA_eNext, Complexity.Codec.CA_eRd1, Complexity.Codec.CA_eRd2, Complexity.Codec.EdgeOK, Complexity.Codec.Reach, Complexity.Codec.Reach.single', Complexity.Codec.Reach.trans, Complexity.Codec.W, Complexity.Codec.W_eq, Complexity.Codec.cpDst_Qe, Complexity.Codec.cpDst_Te, Complexity.Codec.cpNext_Qe, Complexity.Codec.cpNext_Te, Complexity.Codec.cpSrc_Qe, Complexity.Codec.cpSrc_Te, Complexity.Codec.cp_run, Complexity.Codec.edge_gd, Complexity.Codec.getD_w, Complexity.Codec.hH, Complexity.Codec.orc, Complexity.Codec.orc_bit, Complexity.Codec.rQ1, Complexity.Codec.rQ3, Complexity.Codec.rS, Complexity.Codec.rT, Complexity.Codec.rU, Complexity.Codec.scDst_Ee, Complexity.Codec.scFactor_Ee, Complexity.Codec.scNext_Ee, Complexity.Codec.scSrc_Ee, Complexity.Codec.sc_run, Complexity.LogProg.AHalt, Complexity.LogProg.AHalt.ret, Complexity.LogProg.AHalt.step, Complexity.LogProg.AReach.halt, Complexity.LogProg.GuardLe, Complexity.LogProg.astep, Complexity.LogProg.astep_call, Complexity.LogProg.astep_clr, Complexity.LogProg.astep_dec, Complexity.LogProg.register_update_le, Complexity.LogProg.vword_whole₁, Turing.pairEncode}
+\difficulty{6}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet with $k$ work
+tapes, header width $h_H$ and chunk width $W=W(N)$. Let $x,w,r$ be Boolean words,
+$y=\langle x,\langle w,r\rangle\rangle$, and $s,B\in\mathbb N$ with $W(2s+1)\le|w|$,
+$2|x|+2+2W(2s+1)\le B$ and $s\le B$. Let $i<k$, $q\in\mathbb N$, and let $v$ assign naturals
+at most $B$ to the $21$ codec registers with $v(S)=s$, $v(T)=0$,
+$v(U)=2|x|+2+2(h_H+3i+2)$ and $v(Q_3)=q+1$. Write $f$ for the statement that the letter of $w$
+at position $h_H+3i+2$ or at position $2sW+h_H+3i+2$ is $1$ (out-of-range letters read as $0$).
+Run the edge-code mode of the codec program on input $y$, oracle calls answered by membership
+in its two decider languages, from the first flag-reading label with registers $v$, through
+configurations that meet the syntactic preconditions and have all registers at most $B$. If
+$f$ holds, the run halts with answer true; if $f$ fails, the run reaches the tape-counter test
+label with registers $v'$ such that all $v'(r)\le B$, $v'(S)=s$, $v'(T)=0$, $v'(U)=v(U)$ and
+$v'(Q_3)=q$.
+\end{theorem}
+
+\begin{theorem}[The edge-code loop over work tapes]
+\lean{Complexity.Codec.edge_loop}
+\label{Complexity.Codec.edge_loop}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CA_eTest, Complexity.Codec.CA_rej, Complexity.Codec.Reach, Complexity.Codec.Reach.single', Complexity.Codec.Reach.trans, Complexity.Codec.W, Complexity.Codec.W_eq, Complexity.Codec.edge_gd, Complexity.Codec.edge_round, Complexity.Codec.hH, Complexity.Codec.icCount_S1, Complexity.Codec.icCount_S2, Complexity.Codec.icL, Complexity.Codec.icL_zero, Complexity.Codec.icNext_S1, Complexity.Codec.icNext_S2, Complexity.Codec.icReg_S1, Complexity.Codec.icReg_S2, Complexity.Codec.ic_run, Complexity.Codec.orc, Complexity.Codec.rQ3, Complexity.Codec.rS, Complexity.Codec.rT, Complexity.Codec.rU, Complexity.LogProg.AHalt, Complexity.LogProg.AHalt.ret, Complexity.LogProg.AHalt.step, Complexity.LogProg.AReach.halt, Complexity.LogProg.GuardLe, Complexity.LogProg.astep_jz, Complexity.LogProg.register_update_le, Turing.pairEncode}
+\difficulty{6}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet with $k$ work
+tapes, header width $h_H$ and chunk width $W=W(N)$. Let $x,w,r$ be Boolean words,
+$y=\langle x,\langle w,r\rangle\rangle$, and $s,B\in\mathbb N$ with $W(2s+1)\le|w|$,
+$2|x|+2+2W(2s+1)\le B$ and $s\le B$. For all $m,i\in\mathbb N$ with $i+m+1=k$ and every
+assignment $v$ of naturals at most $B$ to the $21$ codec registers with $v(S)=s$, $v(T)=0$,
+$v(U)=2|x|+2+2(h_H+3i+2)$ and $v(Q_3)=m+1$: the edge-code mode of the codec program on input
+$y$, oracle calls answered by membership in its two decider languages, started at the first
+flag-reading label with registers $v$, halts, through configurations meeting the syntactic
+preconditions with all registers at most $B$, with answer true exactly when some work tape
+$i'$ with $i\le i'<k$ has a $1$ in $w$ at position $h_H+3i'+2$ or at position
+$2sW+h_H+3i'+2$ (out-of-range letters read as $0$).
+\end{theorem}
+
+\begin{theorem}[Tail of the edge-code mode]
+\lean{Complexity.Codec.edge_tail}
+\label{Complexity.Codec.edge_tail}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CA_eK, Complexity.Codec.CA_eStart_of_pos, Complexity.Codec.CA_eStart_of_zero, Complexity.Codec.CA_rej, Complexity.Codec.CA_vDone_edge, Complexity.Codec.Reach, Complexity.Codec.Reach.single', Complexity.Codec.Reach.trans, Complexity.Codec.Regs, Complexity.Codec.Regs.Bd, Complexity.Codec.Regs.Bd.val_le, Complexity.Codec.Regs.val, Complexity.Codec.Regs.val_A, Complexity.Codec.Regs.val_S, Complexity.Codec.Regs.val_T, Complexity.Codec.VAcc, Complexity.Codec.VAd, Complexity.Codec.W, Complexity.Codec.W_eq, Complexity.Codec.bnd, Complexity.Codec.bnd_ge, Complexity.Codec.cpDst_Ue, Complexity.Codec.cpNext_Ue, Complexity.Codec.cpSrc_Ue, Complexity.Codec.cp_run, Complexity.Codec.edge_gd, Complexity.Codec.edge_loop, Complexity.Codec.goto_eq, Complexity.Codec.hH, Complexity.Codec.icCount_Eh, Complexity.Codec.icCount_Ke, Complexity.Codec.icL, Complexity.Codec.icL_zero, Complexity.Codec.icNext_Eh, Complexity.Codec.icNext_Ke, Complexity.Codec.icReg_Eh, Complexity.Codec.icReg_Ke, Complexity.Codec.ic_run, Complexity.Codec.orc, Complexity.Codec.rA, Complexity.Codec.rQ3, Complexity.Codec.rU, Complexity.LogProg.AHalt, Complexity.LogProg.AHalt.ret, Complexity.LogProg.AHalt.step, Complexity.LogProg.AReach.halt, Complexity.LogProg.GuardLe, Complexity.LogProg.astep, Complexity.LogProg.astep_clr, Complexity.LogProg.astep_jz, Complexity.LogProg.register_update_le, Turing.length_pairEncode, Turing.pairEncode}
+\difficulty{5}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet with $k$ work
+tapes, header width $h_H$ and chunk width $W=W(N)$. Let $x,w,r$ be Boolean words,
+$y=\langle x,\langle w,r\rangle\rangle$, $s\in\mathbb N$, $st$ a validity-scan state and $R$
+a register record whose $21$ registers are all at most $B_y=(8W+8)(|y|+1)$, with
+$R_A=2|x|+2$, $R_S=s$, $R_T=0$, $s\le 2|y|$ and $W(2s+1)\le|w|$. Then the edge-code mode of the
+codec program on input $y$, oracle calls answered by membership in its two decider languages,
+started at the end-of-scan label with state $st$ and registers $R$, halts through
+configurations meeting the syntactic preconditions with all registers at most $B_y$, and its
+answer is true exactly when the validator component of $st$ is accepting (the scan found the
+word valid and every work tape has a head) and some work tape $i<k$ has a $1$ in $w$ at
+position $h_H+3i+2$ or at position $2sW+h_H+3i+2$ (out-of-range letters read as $0$).
+\end{theorem}
+
+\begin{theorem}[Edge codes form a logspace language]
+\lean{Complexity.Codec.edgeLang_mem}
+\label{Complexity.Codec.edgeLang_mem}
+\leanok
+\uses{Complexity.Codec.Shape1.eq, Complexity.Codec.edgeChk_def, Complexity.Codec.edgeLang, Complexity.Codec.edgeLang_iff, Complexity.Codec.edge_tail, Complexity.Codec.mem_edgeLang_iff, Complexity.Codec.oneCode_mem, Complexity.Codec.validChk_iff_pre, Complexity.LOGSPACE}
+\difficulty{3}
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet. The language of
+words $\langle x,\langle\mathrm{bits}(c),\mathrm{bits}(s)\rangle\rangle$ such that $c$ is the
+radius-$s$ code of a configuration of $N$ on input $x$ that lies in the radius-$s$ window
+(every work head within distance $s$ of the origin and every work cell farther out blank) and
+has some work head at position $-s$ or $s$ is decidable in logarithmic space.
 \end{theorem}

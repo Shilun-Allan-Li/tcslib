@@ -163,14 +163,14 @@ configuration as embedding $c$ first and then replacing the output with $o$.
 \end{theorem}
 
 \begin{theorem}[One-step run]
-\lean{Turing.runFrom_one}
-\label{Turing.runFrom_one}
+\lean{Turing.MultiTapeTM.runFrom_one}
+\label{Turing.MultiTapeTM.runFrom_one}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{1}
-For any machine $H$ with $k$ work tapes, Boolean symbols, and state set $B$, and any
-configuration $c$, the configuration reached after one step is $H$'s one-step successor
-of $c$.
+For any machine with $k$ work tapes, any symbol type and any state type, and any
+configuration $c$, the configuration reached after one step is the machine's one-step
+successor of $c$.
 \end{theorem}
 
 \begin{theorem}[Embedding a single machine step]

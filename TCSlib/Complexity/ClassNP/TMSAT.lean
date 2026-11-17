@@ -202,7 +202,7 @@ private lemma poly_emit {c C : ℕ} (x : List Bool) (q : ℕ)
   induction j with
   | zero =>
     intro hj o
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;> simp [MultiTapeTM.step, polyUnaryTM, polyCfg, Action.apply]
   | succ j ih =>
     intro hj o
@@ -225,7 +225,7 @@ private lemma poly_rewind {c C : ℕ} (x : List Bool) (q : ℕ)
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     change ((if _ then _ else _) : Action (c + 1) Bool (PolyControl c C)).apply _ = _
     simp only [Cfg.workTapeSymbols, polyCfg, Function.update_self,
       Nat.cast_zero, zero_sub, polyTape, show ¬(0 ≤ (-1 : ℤ) ∧ (-1 : ℤ) < q) by omega,
@@ -305,9 +305,10 @@ private lemma poly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < q) :
         rw [show polyCost q C 0 + 2 = 1 + (C + 1) + 1 by simp [polyCost]; omega,
           MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
           show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop 0) h' o) 1 =
-            polyCfg x q (.emit ⟨C, by omega⟩) h' o by simpa using hs,
+            polyCfg x q (.emit ⟨C, by omega⟩) h' o by
+              rw [MultiTapeTM.runFrom_one]; simpa using hs,
           poly_emit x q h' C (le_refl C),
-          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+          MultiTapeTM.runFrom_one]
         simpa [h'] using poly_advance (C := C) x q h'
           (o ++ List.replicate C true) (⟨0, hi⟩ : Fin (c + 1))
       · have hlow : ∀ k : Fin (c + 1), k.val ≤ i - 1 → h' k = 0 := by
@@ -341,8 +342,9 @@ private lemma poly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < q) :
         rw [show polyCost q C i + 2 = 1 + polyCost q C i + 1 by omega,
           MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
           show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop ⟨i, hi⟩) h' o) 1 =
-            polyCfg x q (.loop ⟨i - 1, by omega⟩) h' o by simpa using hs,
-          hinner', MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+            polyCfg x q (.loop ⟨i - 1, by omega⟩) h' o by
+              rw [MultiTapeTM.runFrom_one]; simpa using hs,
+          hinner', MultiTapeTM.runFrom_one]
         simpa [h'] using poly_advance (C := C) x q h'
           (o ++ List.replicate (C * q ^ i) true) (⟨i, hi⟩ : Fin (c + 1))
     induction r generalizing o with
@@ -455,7 +457,7 @@ private lemma poly_setup (c C : ℕ) (x : List Bool) (q : ℕ) : ∀ j (_hj : j 
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, polyUnaryTM, polyCfg, Cfg.workTapeSymbols, polyTape, Action.apply]
   | succ j ih =>
@@ -932,8 +934,7 @@ private lemma tmsat_take_double (x : List Bool) (i m : ℕ) (b : Bool)
     · rfl
     · funext j; simp [Action.apply, tmsatTakeCfg]
     · rfl
-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
-    MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
   change (tmsatTakeTM.tm.tr (if b then (2 : Fin 4) else (1 : Fin 4)) _ _).apply _ = _
   rw [tmsat_take_read, h₁]
   cases b <;>
@@ -963,8 +964,7 @@ private lemma tmsat_take_separator (x : List Bool) (i m : ℕ)
     · rfl
     · funext j; simp [Action.apply, tmsatTakeCfg]
     · rfl
-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
-    MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
   change (tmsatTakeTM.tm.tr (1 : Fin 4) _ _).apply _ = _
   rw [tmsat_take_read, h₁]
   change (⟨1, fun _ => (none, -1), none, some 3⟩ : Action 1 Bool (Fin 4)).apply _ = _
@@ -1048,7 +1048,13 @@ private lemma tmsat_take_payload (x pre b : List Bool) (hx : x = pre ++ b) (m : 
       rw [List.take_succ, List.getElem?_eq_getElem (by omega)]
 
 /-- On every constructed pair, prefix extraction takes at most input length
-plus one steps. Malformed-input behavior is never invoked by the assembly. -/
+plus one steps. Malformed-input behavior is never invoked by the assembly.
+
+**Proof sketch.** Write the input as `pre ++ b`, where `pre` is the doubled code with its
+separator (`2|a| + 2` cells). The machine reads `pre` in `2|a| + 2` steps, then copies
+`min |a| |b|` payload bits (`tmsat_take_payload`), and halts at the next step, when the width
+tape or the input runs out. That last step is read by cases on `|a| ≤ |b|`, with the minimum
+replaced by its value first. In all, at most `|pairEncode a b| + 1` steps. -/
 private lemma tmsat_take_computes (a b : List Bool) :
     tmsatTakeTM.ComputesInTime (pairEncode a b) (b.take a.length)
       ((pairEncode a b).length+1) := by
@@ -1079,17 +1085,17 @@ private lemma tmsat_take_computes (a b : List Bool) :
     change ((tmsatTakeTM.tm.tr (3 : Fin 4) _ _).apply _).state = none ∧
       ((tmsatTakeTM.tm.tr (3 : Fin 4) _ _).apply _).output = b.take a.length
     rw [tmsat_take_read]
-    have hend :
-      polyTape a.length ((a.length:ℤ)-min a.length b.length-1) = none ∨
-        x[pre.length+min a.length b.length]? = none := by
-      by_cases h : a.length ≤ b.length
-      · left; simp [Nat.min_eq_left h, polyTape]
-      · right; simp [Nat.min_eq_right (by omega : b.length ≤ a.length), hx]
-    rcases hend with hw | hr
-    · simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, hw, Action.apply,
-        List.take_eq_take_min]
-    · simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, hr, Action.apply,
-        List.take_eq_take_min]
+    -- `min a.length b.length` is replaced by its value first, so no `min` is left for the
+    -- simp set to reshape (a cast lemma such as `Nat.cast_min` would otherwise move it).
+    by_cases h : a.length ≤ b.length
+    · have hm : min a.length b.length = a.length := Nat.min_eq_left h
+      simp only [hm]
+      simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, polyTape, Action.apply]
+    · have hm : min a.length b.length = b.length := Nat.min_eq_right (by omega)
+      have hr : x[pre.length+b.length]? = none := by simp [hx]
+      simp only [hm]
+      simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, hr, Action.apply,
+        List.take_of_length_le (by omega : b.length ≤ a.length)]
   apply ht.mono
   dsimp [x]
   rw [universal_pair_length]

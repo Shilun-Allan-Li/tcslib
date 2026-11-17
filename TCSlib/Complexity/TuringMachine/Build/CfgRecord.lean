@@ -8,6 +8,7 @@ import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.Contract
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -69,6 +70,13 @@ module is admitted.
 
 * `Turing.cfgRecord_length` — a record has `k + 3` fields.
 * `Turing.Cfg.inWindow_init` — the initial configuration is in every window.
+* `Turing.scanTM_run_preserves` — a word-preserving scan changes only its control.
+* `Turing.Cfg.inWindow_iff` — the window predicate as an equation.
+* `Turing.Cfg.InWindow.mono`, `Turing.Cfg.InWindow.apply_iff` — windows grow with the
+  radius; one action keeps a window configuration in its window exactly when no head
+  crosses a boundary.
+* `Turing.Cfg.InWindow.apply_of_lt` — a step from a window configuration whose heads are
+  strictly inside a radius stays in that radius's window.
 * `Turing.cfgRecord_inj` — on windowed configurations, records agree exactly
   when configuration cores and tags do (proved; fill-C status update).
 * `Turing.recordValid_iff` — validity as a field-by-field shape condition
@@ -106,6 +114,64 @@ def Cfg.InWindow {k : ℕ} {Symbol State : Type} {x : List Symbol} (s : ℕ)
     (c : Cfg k Symbol State x) : Prop :=
   (∀ i, |c.workTapePos i| ≤ (s : ℤ)) ∧
   ∀ (i : Fin k) (z : ℤ), (s : ℤ) < |z| → c.workTapes i z = none
+
+/-- **The window predicate as an equation**: `c` lies in the radius-`s` window exactly when every
+work head is within `s` of the origin and every work cell farther than `s` is blank (the
+definition of `Turing.Cfg.InWindow`). [AB09, §4.1.1] -/
+theorem Cfg.inWindow_iff {k : ℕ} {Symbol State : Type} {x : List Symbol} {s : ℕ}
+    {c : Cfg k Symbol State x} :
+    c.InWindow s ↔ (∀ i, |c.workTapePos i| ≤ (s : ℤ)) ∧
+      ∀ (i : Fin k) (z : ℤ), (s : ℤ) < |z| → c.workTapes i z = none :=
+  Iff.rfl
+
+/-- **Windows grow with the radius**: a configuration in the radius-`s` window is in the
+radius-`s'` window whenever `s ≤ s'`. -/
+theorem Cfg.InWindow.mono {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
+    {c : Cfg k Symbol State x} (hc : c.InWindow s) (hs : s ≤ s') : c.InWindow s' :=
+  ⟨fun i => (hc.1 i).trans (by exact_mod_cast hs),
+    fun i z hz => hc.2 i z (lt_of_le_of_lt (by exact_mod_cast hs) hz)⟩
+
+/-- **One step from a window**: if `c` lies in the radius-`s` window, then applying an action `a`
+keeps it there exactly when, for every work tape `i`, the head is not at `-s` with `a` moving it
+left, and not at `s` with `a` moving it right. The write lands under the old head, which is inside
+the window, so it cannot create a nonblank cell outside.
+
+**Proof sketch.** Split the three possible moves. Interior positions stay inside; at each
+boundary only its outward move fails. Outside cells are unchanged by the point update. -/
+theorem Cfg.InWindow.apply_iff {k : ℕ} {Symbol State : Type} {x : List Symbol} {s : ℕ}
+    {c : Cfg k Symbol State x} (hc : c.InWindow s) (a : Action k Symbol State) :
+    (a.apply c).InWindow s ↔ ∀ i,
+      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
+      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
+  have heads (i : Fin k) : |c.workTapePos i + ((a.workTapes i).2 : ℤ)| ≤ (s : ℤ) ↔
+      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
+      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
+    have h := hc.1 i
+    rw [abs_le] at h ⊢
+    cases hm : (a.workTapes i).2 <;>
+      simp only [SignType.zero_eq_zero, SignType.neg_eq_neg_one, SignType.pos_eq_one,
+        SignType.coe_zero, SignType.coe_neg, SignType.coe_one, Int.reduceNeg, add_zero,
+        le_add_neg_iff_add_le, neg_add_le_iff_le_add, add_neg_le_iff_le_add,
+        SignType.neg_eq_self_iff, SignType.self_eq_neg_iff, reduceCtorEq, zero_ne_one, one_ne_zero,
+        and_false, and_true, true_and, and_self, not_false_eq_true, iff_true] at * <;>
+      omega
+  constructor
+  · intro h i
+    have hi := h.1 i
+    rw [Action.apply_workTapePos] at hi
+    exact (heads i).mp hi
+  · intro h
+    refine ⟨fun i => ?_, ?_⟩
+    · rw [Action.apply_workTapePos]
+      exact (heads i).mpr (h i)
+    intro i z hz
+    have hne : z ≠ c.workTapePos i := by
+      intro he
+      subst z
+      have := hc.1 i
+      omega
+    rw [Action.apply_workTapes_of_ne a c i hne]
+    exact hc.2 i z hz
 
 /-! ### The record alphabet -/
 
@@ -183,11 +249,11 @@ theorem cfgRecord_length {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) (c : C
 /-- Every native input position is strictly below the power of two specified by its width:
 `n + 2 ≤ 2 ^ posWidth n`. (Public since the specification API, user 2026-10-16.)
 
-**Proof sketch.** `posWidth n` is the bit length of `n + 1`, which is its `Nat.size`. -/
+**Proof sketch.** `posWidth n` is the bit length of `n + 1`, and every number is below two to
+the power of its bit length (`Complexity.LogProg.lt_two_pow_bits`). -/
 theorem record_pos_lt (n : ℕ) : n + 1 < 2 ^ posWidth n := by
   unfold posWidth
-  rw [Nat.size_eq_bits_len]
-  exact Nat.lt_size_self _
+  exact Complexity.LogProg.lt_two_pow_bits _
 
 /-- Decoding the fixed-width digits recovers any value below the width's power of two.
 
@@ -493,42 +559,20 @@ private theorem recordStep_seekPost_eq {K : ℕ} {Γ S : Type} {x : List Γ} (do
     rw [seekPost_workTapePos]
   · rw [seekPost_output]
 
-/-- A renamed configuration equals any target that shares its four data fields and carries
-the renamed state, read field by field through the renaming's published equations. -/
-private theorem recordStep_mapState_eq {K : ℕ} {Γ S S' : Type} {x : List Γ}
-    (c : Cfg K Γ S x) (f : S → S') (d : Cfg K Γ S' x)
-    (hs : c.state.map f = d.state) (hi : c.inputPos = d.inputPos)
-    (hw : c.workTapes = d.workTapes) (hp : c.workTapePos = d.workTapePos)
-    (ho : c.output = d.output) : c.mapState f = d := by
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, hs]
-  · rw [Cfg.mapState_inputPos, hi]
-  · funext j q
-    rw [Cfg.mapState_workTapes, hw]
-  · funext j
-    rw [Cfg.mapState_workTapePos, hp]
-  · rw [Cfg.mapState_output, ho]
-
 /-- Renaming the states of an explicit configuration record maps its state and keeps the
 other four fields, as a rewrite rule for the endpoint conversions below. -/
 private theorem recordStep_mapState_mk {K : ℕ} {Γ S S' : Type} {x : List Γ}
     (f : S → S') (st : Option S) (ip : Fin (x.length + 2))
     (wt : Fin K → ℤ → Option Γ) (wp : Fin K → ℤ) (o : List Γ) :
     (Cfg.mapState f ⟨st, ip, wt, wp, o⟩ : Cfg K Γ S' x) = ⟨st.map f, ip, wt, wp, o⟩ :=
-  recordStep_mapState_eq _ _ _ rfl rfl rfl rfl rfl
-
-/-- A one-step run is one machine step, by the published run equations. -/
-private theorem recordStep_runFrom_one {K : ℕ} {Γ S : Type} {x : List Γ}
-    (M : MultiTapeTM K Γ S) (d : Cfg K Γ S x) : M.runFrom d 1 = M.step d := by
-  have h := MultiTapeTM.runFrom_succ_eq_step' (tm := M) (cfg := d) (t := 0)
-  rwa [MultiTapeTM.runFrom_zero] at h
+  Cfg.mapState_eq_of_fields _ _ _ rfl rfl rfl rfl rfl
 
 /-- One round of unit length is one machine step, by the published orbit equation. -/
 private theorem recordStep_orbit_one_step {K : ℕ} {Γ S : Type} {x : List Γ}
     (M : MultiTapeTM K Γ S) (c : Cfg K Γ S x) (r : ℕ) :
     roundOrbit M (fun _ => 1) c (r + 1) = M.step (roundOrbit M (fun _ => 1) c r) := by
   rw [roundOrbit_succ]
-  exact recordStep_runFrom_one M _
+  exact MultiTapeTM.runFrom_one M _
 
 /-- **Offset congruence**: the `j`-th field offset reads only the lengths of the first `j`
 fields, so two field lists whose first `j` fields have equal lengths share it. Assembled
@@ -559,17 +603,6 @@ private theorem recordStep_fieldOffset_congr {Γ : Type*} (as : List (List Γ)) 
         simp only [List.take_succ_cons, List.map_cons, List.cons.injEq] at h
         rw [fieldOffset_cons_succ, fieldOffset_cons_succ, h.1, ih bs j h.2]
 
-/-- A tagged phase cannot be a verdict at a different index. -/
-private theorem record_tag_ne {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
-    (i : I) (v : Σ i, Ph i) (hi : i ≠ v.1) (c : Cfg K Γ (Ph i) x) :
-    (c.mapState (Sigma.mk i)).state ≠ some v := by
-  cases hs : c.state with
-  | none => simp [Cfg.mapState_state, hs]
-  | some s =>
-    intro h
-    have he : (⟨i, s⟩ : Σ i, Ph i) = v := by simpa [Cfg.mapState_state, hs] using h
-    exact hi (congrArg Sigma.fst he)
-
 /-- Package the tagged prefix and dispatched endpoint supplied by `phaseHostTM_run`.
 No transition or phase-host induction is repeated here. -/
 private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
@@ -585,7 +618,7 @@ private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Ty
   refine ⟨he, ?_, ?_⟩
   · intro u hu
     rw [hp u (by omega)]
-    exact ⟨record_tag_ne i yes hy _, record_tag_ne i no hn _⟩
+    exact ⟨Cfg.mapState_sigma_state_ne i yes hy _, Cfg.mapState_sigma_state_ne i no hn _⟩
   · intro u hu j
     by_cases ht : u ≤ t
     · rw [hp u ht, Cfg.mapState_workTapePos]
@@ -597,15 +630,13 @@ private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Ty
 /-- Width one is exactly the empty-input case, where no native movement is needed. -/
 private theorem recordStep_width_one (n : ℕ) : posWidth n = 1 ↔ n = 0 := by
   unfold posWidth
-  rw [Nat.size_eq_bits_len]
   constructor
   · intro h
-    have : ¬ 2 ≤ n + 1 := fun hn => by
-      have : 1 < Nat.size (n + 1) := Nat.lt_size.mpr (by simpa using hn)
-      omega
+    have := Complexity.LogProg.lt_two_pow_bits (n + 1)
+    rw [h, pow_one] at this
     omega
   · rintro rfl
-    exact Nat.size_one
+    exact congrArg List.length Nat.one_bits
 
 /-- Complementing a fixed-width counter exchanges its value with the distance from all ones.
 **Proof sketch.** The two low bits sum to one; the tail values have weight two. -/
@@ -695,39 +726,6 @@ private theorem recordStep_saved_digits (w : List Bool) (q : ℕ)
   have he := recordStep_word_of_value ((counterWord w (q + 1)).map not) (q + 1)
     (by simpa [counterWord_length] using hq) (by omega)
   simpa [counterWord_length] using he
-
-/-- A source transition leaves the window exactly when a head crosses a boundary.
-Writing at a head that was inside the window cannot create an exterior nonblank cell.
-**Proof sketch.** Split the three possible moves. Interior positions stay inside; at each
-boundary only its outward move fails. Outside cells are unchanged by the point update. -/
-private theorem recordStep_window {k : ℕ} {Q : Type} {x : List Bool}
-    (s : ℕ) (c : Cfg k Bool Q x) (hc : c.InWindow s) (a : Action k Bool Q) :
-    (a.apply c).InWindow s ↔ ∀ i,
-      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
-      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
-  have heads (i : Fin k) : |c.workTapePos i + ((a.workTapes i).2 : ℤ)| ≤ (s : ℤ) ↔
-      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
-      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
-    have h := hc.1 i
-    rw [abs_le] at h ⊢
-    cases hm : (a.workTapes i).2 <;> simp at * <;> omega
-  constructor
-  · intro h i
-    have hi := h.1 i
-    rw [Action.apply_workTapePos] at hi
-    exact (heads i).mp hi
-  · intro h
-    refine ⟨fun i => ?_, ?_⟩
-    · rw [Action.apply_workTapePos]
-      exact (heads i).mpr (h i)
-    intro i z hz
-    have hne : z ≠ c.workTapePos i := by
-      intro he
-      subst z
-      have := hc.1 i
-      omega
-    rw [Action.apply_workTapes, Function.update_of_ne hne]
-    exact hc.2 i z hz
 
 /-- Re-embedding the decoded bank with only its control and native position changed yields
 the host with those fields changed, through the published embedding and lift equations.
@@ -852,7 +850,7 @@ private theorem recordStep_read_run {Q T : Type} [DecidableEq Q] [DecidableEq T]
         {d with state := some (some (d.inputSymbol.bind (decodeBool (RecSym.digitEmb Q T))))} ∧
       (∀ u < 1, ∀ b, (recordStepRead.runFrom d u).state ≠ some (some b)) := by
   constructor
-  · rw [recordStep_runFrom_one]
+  · rw [MultiTapeTM.runFrom_one]
     rw [step_of_inputMoveAction recordStepRead d 0 hd rfl, moveInputPos_zero]
   · intro u hu b
     have : u = 0 := by omega
@@ -963,14 +961,14 @@ private theorem recordStep_probe_run {Γ : Type} {x : List Γ} (hx : 0 < x.lengt
     · have h2 : recordStepProbe.runFrom d 2 =
           recordStepProbe.step (recordStepProbe.step d) := by
         have h := MultiTapeTM.runFrom_succ_eq_step' (tm := recordStepProbe) (cfg := d) (t := 1)
-        rwa [recordStep_runFrom_one] at h
+        rwa [MultiTapeTM.runFrom_one] at h
       rw [h2, step1, step2]
     · intro u hu v
       have hu' : u = 0 ∨ u = 1 := by omega
       rcases hu' with rfl | rfl
       · rw [MultiTapeTM.runFrom_zero]
         simp [hd]
-      · rw [recordStep_runFrom_one, step1]
+      · rw [MultiTapeTM.runFrom_one, step1]
         simp [a]
     · rcases (recordStep_input_blank d).mp hblank with h0 | hR
       · have hpos : a.inputPos.val = 1 := by
@@ -1005,7 +1003,7 @@ private theorem recordStep_probe_run {Γ : Type} {x : List Γ} (hx : 0 < x.lengt
     have hR : d.inputPos.val ≠ x.length + 1 := fun h => hbound (Or.inr h)
     have his : d.inputSymbol.isSome = true := by cases h : d.inputSymbol <;> simp_all
     refine ⟨1, by omega, false, d.inputPos, ?_, ?_, by simp [hR], rfl, fun u _ => fixed u⟩
-    · rw [recordStep_runFrom_one]
+    · rw [MultiTapeTM.runFrom_one]
       rw [step_of_inputMoveAction recordStepProbe d (q' := .done false) 0 hd
         (by simp [recordStepProbe, his]), moveInputPos_zero]
     · intro u hu v
@@ -1684,7 +1682,7 @@ private theorem recordStep_state_run {k : ℕ} {Q T S : Type}
       | bwd a => rfl
       | done a => exact (hcut u hu a ha).elim)
   have hin : c.mapState (Sigma.mk i) = d :=
-    recordStep_mapState_eq _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
+    Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
   rw [hin] at phase
   have hend : (recordStepMachine M upd seek start finish).runFrom d 5 =
       {d with state := some out} := by
@@ -1744,50 +1742,39 @@ private theorem recordStep_phase_run {k : ℕ} {Q T S : Type}
     (fun h => hi false (congrArg Prod.fst h)) hh (fun j => by
       simpa only [hr, Cfg.mapState_workTapePos] using hh t le_rfl j)
 
-/-- A scan whose pure result retains its word changes only the accumulator state.
-This removes the identity rewrite in the public scan endpoint once for all read phases.
-**Proof sketch.** Read the scan row's contract through its field equations; inside its
-write interval use the entry word hypothesis, and outside use the unchanged frame. Keep
-its cut and head bounds. -/
-private theorem recordStep_scan_preserves {A Γ : Type} {x : List Γ}
-    (i : Fin 4) (δf δb : A → Γ → A × Γ) (a b : A) (w : List Γ)
-    (c : Cfg 4 Γ (ScanPhase A) x) (hc : c.state = some (.fwd a))
+/-- **A word-preserving scan changes only its control**: if the scan's pure result keeps the
+word (`scanResult δf δb a w = (b, w)`), the scan row ends at `{c with state := some (.done b)}`,
+with the row's first-visit cut and head bounds.
+
+**Proof sketch.** Specialize the public scan row `Turing.scanTM_run_ofCfg`. With the word kept,
+every cell of its write window holds the entry word's symbol (`hw`), and outside the window the
+tape is unchanged, so the rewritten tape is the original. The cut and head bounds are the row's. -/
+theorem scanTM_run_preserves {k : ℕ} {A Γ : Type} {x : List Γ}
+    (i : Fin k) (δf δb : A → Γ → A × Γ) (a b : A) (w : List Γ)
+    (c : Cfg k Γ (ScanPhase A) x) (hc : c.state = some (.fwd a))
     (hw : ∀ z : ℤ, -1 ≤ z → z ≤ (w.length : ℤ) →
       c.workTapes i (c.workTapePos i + z) = FinTM.bufferTape w z)
     (hf : scanResult δf δb a w = (b, w)) :
-    (scanTM 4 i δf δb a).runFrom c (2 * w.length + 2) =
+    (scanTM k i δf δb a).runFrom c (2 * w.length + 2) =
       {c with state := some (.done b)} ∧
     (∀ u < 2 * w.length + 2, ∀ v,
-      ((scanTM 4 i δf δb a).runFrom c u).state ≠ some (.done v)) ∧
+      ((scanTM k i δf δb a).runFrom c u).state ≠ some (.done v)) ∧
     (∀ j u, u ≤ 2 * w.length + 2 →
-      if j = i then ((scanTM 4 i δf δb a).runFrom c u).workTapePos j ∈
+      if j = i then ((scanTM k i δf δb a).runFrom c u).workTapePos j ∈
         Finset.Icc (c.workTapePos j - 1) (c.workTapePos j + (w.length : ℤ))
-      else ((scanTM 4 i δf δb a).runFrom c u).workTapePos j = c.workTapePos j) := by
-  obtain ⟨he, ht, hh⟩ := recordStep_contract_clauses_range
-    (scanTM_contract i δf δb a x) w c hc (by rw [scanTM_contract_pre]; exact hw)
-  rw [scanTM_contract_time, scanTM_contract_post] at he
-  simp only [scanTM_contract_time] at ht hh
-  refine ⟨he.trans ?_, ht, ?_⟩
-  · rw [hf]
-    apply Cfg.ext <;> try rfl
-    funext j z
-    dsimp only
-    split
-    next h =>
-      obtain ⟨rfl, hlo, hhi⟩ := h
-      simpa using (hw (z - c.workTapePos j) (by omega) (by omega)).symm
-    next => rfl
-  · intro j u hu
-    have h := hh j u hu
-    simp only [scanTM_contract_lo, scanTM_contract_hi] at h
-    by_cases hj : j = i
-    · rw [if_pos hj]
-      rw [if_pos hj, if_pos hj] at h
-      exact h
-    · rw [if_neg hj]
-      rw [if_neg hj, if_neg hj] at h
-      rw [Finset.mem_Icc] at h
-      exact le_antisymm h.2 h.1
+      else ((scanTM k i δf δb a).runFrom c u).workTapePos j = c.workTapePos j) := by
+  obtain ⟨hr, hcut, hspace⟩ := scanTM_run_ofCfg i δf δb a w c hc hw
+  refine ⟨?_, hcut, hspace⟩
+  rw [hr, hf]
+  apply Cfg.ext <;> try rfl
+  funext j q
+  dsimp only
+  split_ifs with h
+  · obtain ⟨rfl, hlo, hhi⟩ := h
+    have h' := hw (q - c.workTapePos j) (by omega) (by omega)
+    rw [add_sub_cancel] at h'
+    exact h'.symm
+  · rfl
 
 /-- Snapshots for reading the record: the record and frame stay intact, B and D carry
 specified globally delimited words, and only the record head is displaced. -/
@@ -1820,7 +1807,7 @@ compositions rewrite with at their seams. -/
 private theorem recordStep_mapState_snapshot {Γ A B P : Type} {x : List Γ}
     (d : Cfg 4 Γ P x) (q : A) (p : ℤ) (b e : List Γ) (f : A → B) :
     (recordStepSnapshot d q p b e).mapState f = recordStepSnapshot d (f q) p b e :=
-  recordStep_mapState_eq _ _ _ rfl rfl rfl rfl rfl
+  Cfg.mapState_eq_of_fields _ _ _ rfl rfl rfl rfl rfl
 
 /-- The first five read phases reach the position skip with both digit copies installed.
 The finite data correctly records the source state and the position width/zero tests.
@@ -1946,7 +1933,7 @@ private theorem recordStep_read_prefix {k : ℕ} {Q T S : Type}
       dsimp only [w]
       rw [recordStep_position_fold, hvalue]
       simp [result, binDigits]
-    obtain ⟨he, ht, hh⟩ := recordStep_scan_preserves 0 (scanFold recordStepPosFold) scanKeep
+    obtain ⟨he, ht, hh⟩ := scanTM_run_preserves 0 (scanFold recordStepPosFold) scanKeep
       (0, true) result w a rfl (by
         intro z hz hu
         simpa [a, recordStepSnapshot] using posword z hz hu) hfold
@@ -2157,7 +2144,7 @@ private theorem recordStep_read_fields {k : ℕ} {Q T S : Type}
         ((scanTM 4 0 f g a).runFrom (cfg (.fwd a) j) u).state ≠ some (.done v)) ∧
       (∀ u ≤ 2 * fs[j].length + 2, ∀ i,
         |((scanTM 4 0 f g a).runFrom (cfg (.fwd a) j) u).workTapePos i - d.workTapePos i| ≤ ((L + 1 : ℕ) : ℤ)) := by
-    obtain ⟨he, ht, hh⟩ := recordStep_scan_preserves 0 f g a b fs[j] (cfg (.fwd a) j) rfl
+    obtain ⟨he, ht, hh⟩ := scanTM_run_preserves 0 f g a b fs[j] (cfg (.fwd a) j) rfl
       (by intro z hz hu; simpa [cfg, recordStepSnapshot] using field j hj z hz hu) hp
     refine ⟨he, ht, ?_⟩
     intro u hu i
@@ -3643,7 +3630,7 @@ private theorem recordStep_observed_action {k : ℕ} {Q T : Type} {x : List Bool
     rw [action, MultiTapeTM.step_of_some hq]
   refine ⟨step, ?_, ?_⟩
   · rw [action, MultiTapeTM.outputSymbol_of_some hq]
-  · rw [← step, recordStep_window s c hc]
+  · rw [← step, hc.apply_iff]
     simp [recordStepOutside, data, recordStepReadData, not_exists, not_or]
 
 
@@ -5714,5 +5701,22 @@ theorem Cfg.inWindow_init {k : ℕ} {Symbol State : Type} (q₀ : State)
     (x : List Symbol) (s : ℕ) : (Cfg.init q₀ x : Cfg k Symbol State x).InWindow s :=
   ⟨fun i => by rw [Cfg.init_workTapePos]; simp,
    fun i z _ => by rw [Cfg.init_workTapes]⟩
+
+/-! ### One step from a window -/
+
+/-- **A step stays in a window when the heads are strictly inside it**: if `C` lies in the
+radius-`s` window, `s ≤ s'`, and every work head of `C` is strictly inside `[-s', s']`, then any
+action applied to `C` gives a configuration in the radius-`s'` window. At `s' = s + 1` every
+configuration of the radius-`s` window qualifies. [AB09, §4.1.1]
+
+**Proof sketch.** The radius-`s` window lies inside the radius-`s'` one
+(`Turing.Cfg.InWindow.mono`), and a head strictly inside `[-s', s']` is on neither boundary, so
+`Turing.Cfg.InWindow.apply_iff` at `s'` applies. -/
+theorem Cfg.InWindow.apply_of_lt {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
+    {C : Cfg k Symbol State x} (hC : C.InWindow s) (hlt : ∀ i, |C.workTapePos i| < (s' : ℤ))
+    (hs : s ≤ s') (a : Action k Symbol State) : (a.apply C).InWindow s' :=
+  ((hC.mono hs).apply_iff a).mpr fun i => by
+    have h := abs_lt.mp (hlt i)
+    exact ⟨fun h' => by have := h'.1; omega, fun h' => by have := h'.1; omega⟩
 
 end Turing

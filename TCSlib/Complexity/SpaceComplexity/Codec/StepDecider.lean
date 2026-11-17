@@ -69,63 +69,77 @@ theorem pm_run (y : List Bool) (I : SInfo N) (b f : Bool) (R : Regs) (hBd : R.Bd
   simp only [Regs.Bd] at hB0
   cases hm : (aI N I b).inputTape with
   | zero =>
+    have hst : CA N .step (.pm I b f .start) =
+        .jeq rPos rPos2 (pmNext N I b f true) (pmNext N I b f false) := by simp [CA, hm]
     refine Reach.single' (gd_of hv (by simp [PreS, CA, hm]; decide)) ?_
-    simp only [astep, CA, hm, Regs.val_Pos, Regs.val_Pos2]
+    simp only [astep_jeq hst, Regs.val_Pos, Regs.val_Pos2]
     rw [ite_bool]; rfl
   | pos =>
+    have hst : CA N .step (.pm I b f .start) = .jeq rPos rN1 (.pm I b f .eq) (.pm I b f .inc) := by
+      simp [CA, hm]
     by_cases hp : R.Pos = R.N1
     · have r1 : Reach N .step y B (.pm I b f .start) R.val (.pm I b f .eq) R.val :=
-        Reach.single' (gd_of hv (by simp [PreS, CA, hm]; decide)) (by simp [astep, CA, hm, hp])
+        Reach.single' (gd_of hv (by simp [PreS, CA, hm]; decide)) (by simp [astep_jeq hst, hp])
       refine r1.trans (Reach.single' (gd_of hv (by simp [PreS, CA]; decide)) ?_)
-      simp only [astep, CA, Regs.val_Pos, Regs.val_Pos2]
+      simp only [astep_jeq (show CA N .step (.pm I b f .eq) = _ from rfl), Regs.val_Pos,
+        Regs.val_Pos2]
       rw [ite_bool]
       simp [movePos, show R.N1 - 1 + 1 = R.N1 by omega, hp]
     · have r1 : Reach N .step y B (.pm I b f .start) R.val (.pm I b f .inc) R.val :=
-        Reach.single' (gd_of hv (by simp [PreS, CA, hm]; decide)) (by simp [astep, CA, hm, hp])
+        Reach.single' (gd_of hv (by simp [PreS, CA, hm]; decide)) (by simp [astep_jeq hst, hp])
       have hv1 : ({R with Pos := R.Pos + 1} : Regs).Bd B := by simp only [Regs.Bd]; omega
       have r2 : Reach N .step y B (.pm I b f .inc) R.val (.pm I b f .eq2)
           ({R with Pos := R.Pos + 1} : Regs).val :=
-        Reach.single' (gd_of hv (by simp [PreS, CA])) (by simp [astep, CA])
+        Reach.single' (gd_of hv (by simp [PreS, CA]))
+          (by simp [astep_inc (show CA N .step (.pm I b f .inc) = _ from rfl)])
       have r3 : Reach N .step y B (.pm I b f .eq2) ({R with Pos := R.Pos + 1} : Regs).val
           (.pm I b f (.decR (decide (R.Pos + 1 = R.Pos2))))
           ({R with Pos := R.Pos + 1} : Regs).val :=
         Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]; decide))
-          (by simp only [astep, CA, Regs.val_Pos, Regs.val_Pos2]
+          (by simp only [astep_jeq (show CA N .step (.pm I b f .eq2) = _ from rfl), Regs.val_Pos,
+            Regs.val_Pos2]
               by_cases h : R.Pos + 1 = R.Pos2 <;> simp [h])
       have r4 : Reach N .step y B (.pm I b f (.decR (decide (R.Pos + 1 = R.Pos2))))
           ({R with Pos := R.Pos + 1} : Regs).val (pmNext N I b f (decide (R.Pos + 1 = R.Pos2)))
           R.val :=
-        Reach.single' (gd_of hv1.val_le (by simp [PreS, CA])) (by simp [astep, CA])
+        Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]))
+          (by simp [astep_dec (show CA N .step (.pm I b f (.decR _)) = _ from rfl)])
       refine (r1.trans (r2.trans (r3.trans r4))).cast rfl |> fun h => ?_
       have : movePos (R.N1 - 1) R.Pos .pos = R.Pos + 1 := by
         simp [movePos, show R.N1 - 1 + 1 = R.N1 by omega, hp]
       rw [this]
       exact h
   | neg =>
+    have hst : CA N .step (.pm I b f .start) = .jz rPos (.pm I b f .eq) (.pm I b f .decN) := by
+      simp [CA, hm]
     by_cases hp : R.Pos = 0
     · have r1 : Reach N .step y B (.pm I b f .start) R.val (.pm I b f .eq) R.val :=
-        Reach.single' (gd_of hv (by simp [PreS, CA, hm])) (by simp [astep, CA, hm, hp])
+        Reach.single' (gd_of hv (by simp [PreS, CA, hm])) (by simp [astep_jz hst, hp])
       refine r1.trans (Reach.single' (gd_of hv (by simp [PreS, CA]; decide)) ?_)
-      simp only [astep, CA, Regs.val_Pos, Regs.val_Pos2]
+      simp only [astep_jeq (show CA N .step (.pm I b f .eq) = _ from rfl), Regs.val_Pos,
+        Regs.val_Pos2]
       rw [ite_bool]
       simp [movePos, hp]
     · have r1 : Reach N .step y B (.pm I b f .start) R.val (.pm I b f .decN) R.val :=
-        Reach.single' (gd_of hv (by simp [PreS, CA, hm])) (by simp [astep, CA, hm, hp])
+        Reach.single' (gd_of hv (by simp [PreS, CA, hm])) (by simp [astep_jz hst, hp])
       have hv1 : ({R with Pos := R.Pos - 1} : Regs).Bd B := by simp only [Regs.Bd]; omega
       have r2 : Reach N .step y B (.pm I b f .decN) R.val (.pm I b f .eq3)
           ({R with Pos := R.Pos - 1} : Regs).val :=
-        Reach.single' (gd_of hv (by simp [PreS, CA])) (by simp [astep, CA])
+        Reach.single' (gd_of hv (by simp [PreS, CA]))
+          (by simp [astep_dec (show CA N .step (.pm I b f .decN) = _ from rfl)])
       have r3 : Reach N .step y B (.pm I b f .eq3) ({R with Pos := R.Pos - 1} : Regs).val
           (.pm I b f (.incR (decide (R.Pos - 1 = R.Pos2))))
           ({R with Pos := R.Pos - 1} : Regs).val :=
         Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]; decide))
-          (by simp only [astep, CA, Regs.val_Pos, Regs.val_Pos2]
+          (by simp only [astep_jeq (show CA N .step (.pm I b f .eq3) = _ from rfl), Regs.val_Pos,
+            Regs.val_Pos2]
               by_cases h : R.Pos - 1 = R.Pos2 <;> simp [h])
       have r4 : Reach N .step y B (.pm I b f (.incR (decide (R.Pos - 1 = R.Pos2))))
           ({R with Pos := R.Pos - 1} : Regs).val (pmNext N I b f (decide (R.Pos - 1 = R.Pos2)))
           R.val :=
         Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]))
-          (by simp [astep, CA, show R.Pos - 1 + 1 = R.Pos by omega])
+          (by simp [astep_inc (show CA N .step (.pm I b f (.incR _)) = _ from rfl),
+            show R.Pos - 1 + 1 = R.Pos by omega])
       have : movePos (R.N1 - 1) R.Pos .neg = R.Pos - 1 := rfl
       rw [this]
       exact r1.trans (r2.trans (r3.trans r4))
@@ -147,19 +161,21 @@ theorem z_run (y x : List Bool) (σ : VSt N) (R : Regs) (hBd : R.Bd (bnd N y)) (
     have hR : ({R with Z := 0} : Regs) = R := by cases R; simp_all
     refine ⟨0, by omega, ?_⟩
     rw [hR]
-    exact Reach.single' (gd_of hv (by simp [PreS, CA])) (by simp [astep, CA, hZ])
+    exact Reach.single' (gd_of hv (by simp [PreS, CA]))
+      (by simp [astep_jz (show CA N .step (.zA σ) = _ from rfl), hZ])
   | some c =>
     rw [hin] at hZ
     have r1 : Reach N .step y (bnd N y) (.zA σ) R.val (.zB σ) R.val :=
       Reach.single' (gd_of hv (by simp [PreS, CA]))
-        (by cases c <;> simp [astep, CA, hZ, zcode])
+        (by cases c <;> simp [astep_jz (show CA N .step (.zA σ) = _ from rfl), hZ, zcode])
     have hv1 : ({R with Z := R.Z - 1} : Regs).Bd (bnd N y) := by
       have := hBd; simp only [Regs.Bd] at this ⊢; omega
     have r2 : Reach N .step y (bnd N y) (.zB σ) R.val (.zC σ) ({R with Z := R.Z - 1} : Regs).val :=
-      Reach.single' (gd_of hv (by simp [PreS, CA])) (by simp [astep, CA])
+      Reach.single' (gd_of hv (by simp [PreS, CA]))
+        (by simp [astep_dec (show CA N .step (.zB σ) = _ from rfl)])
     refine ⟨R.Z - 1, by cases c <;> simp [zcode] at hZ <;> omega, r1.trans (r2.trans ?_)⟩
     exact Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]))
-      (by cases c <;> simp [astep, CA, hZ, zcode])
+      (by cases c <;> simp [astep_jz (show CA N .step (.zC σ) = _ from rfl), hZ, zcode])
 
 /-- The answer of the step machine after the validity scan, from the scan state `st`, the
 input positions `p`, `p'`, and the two chunk regions `u`, `u'`. -/
@@ -205,10 +221,12 @@ theorem step_tail (y x w w' rest : List Bool)
         = false := by simp [stepAns, hacc]
     rw [this]
     have r1 : Reach N .step y B (.vDone st) R.val .rej R.val :=
-      Reach.single' (gd_of hv (by simp [PreS, CA, goto])) (by simp [astep, CA, goto, hacc])
+      Reach.single' (gd_of hv (by simp [PreS, CA, goto]))
+        (by simp [astep_jz (show CA N .step (.vDone st) = _ from rfl), hacc])
     exact AReach.halt r1 (hret _ _ _ hv rfl)
   have r1 : Reach N .step y B (.vDone st) R.val (.zA st.1) R.val :=
-    Reach.single' (gd_of hv (by simp [PreS, CA, goto])) (by simp [astep, CA, goto, hacc])
+    Reach.single' (gd_of hv (by simp [PreS, CA, goto]))
+      (by simp [astep_jz (show CA N .step (.vDone st) = _ from rfl), hacc])
   obtain ⟨z, hz, r2⟩ := z_run (N := N) y x st.1 R hBd R.Pos hZ
   set I : SInfo N := (st.1, inpOf x R.Pos)
   set R2 : Regs := {R with Z := z}

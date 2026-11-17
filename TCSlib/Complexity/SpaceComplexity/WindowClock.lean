@@ -115,10 +115,7 @@ theorem FinTM.configBound_le_two_pow (M : FinTM Bool) (n s : ℕ) :
       2 ^ (Fintype.card M.State + posWidth n + 3 * M.k * (2 * s + 1)) := by
   have hQ : Fintype.card M.State + 1 ≤ 2 ^ Fintype.card M.State :=
     Nat.lt_two_pow_self
-  have hn : n + 2 ≤ 2 ^ posWidth n := by
-    have h := Nat.lt_size_self (n + 1)
-    rw [← Nat.size_eq_bits_len] at h
-    exact h
+  have hn : n + 2 ≤ 2 ^ posWidth n := record_pos_lt n
   have h3 : 3 ^ (M.k * (2 * s + 1)) ≤ 2 ^ (2 * (M.k * (2 * s + 1))) :=
     calc 3 ^ (M.k * (2 * s + 1)) ≤ 4 ^ (M.k * (2 * s + 1)) :=
           Nat.pow_le_pow_left (by norm_num) _
@@ -275,7 +272,7 @@ private lemma cw_left_run {Γ : Type} {k : ℕ} {x : List Γ} (i : Fin k)
                workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } ∧
       (∀ u < 1, ((cw_leftTM k i).runFrom d u).state ≠ some true) := by
   constructor
-  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  · rw [MultiTapeTM.runFrom_one]
     have h := step_of_tapeAction_move (cw_leftTM k i) d i 0 .neg hd rfl
     simpa only [moveInputPos_zero, SignType.coe_neg_one, sub_eq_add_neg] using h
   · intro u hu

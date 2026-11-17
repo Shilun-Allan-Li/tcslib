@@ -168,8 +168,14 @@ theorem lang_mem (C : DAGCircuitFamily) (f : List Bool → List Bool)
       rw [indicator_eq_decide]; simpa using fun h => hv (valid_of_mem h)
     rw [hn]
     refine ⟨1, ?_, ?_, fun t ht => ?_⟩
-    · cases τ <;> simp only [Valid] at hv <;> simp [arun, astep, scan, hv]
-    · cases τ <;> simp only [Valid] at hv <;> simp [arun, astep, scan, hv]
+    · cases τ <;> simp only [Valid] at hv
+      · simp [arun, astep_valP (show scan .size .start = _ from rfl), hv]
+      · simp [arun, astep_valP (show scan (.type _) .start = _ from rfl), hv]
+      · simp [arun, astep_valQ (show scan .edge .start = _ from rfl), hv]
+    · cases τ <;> simp only [Valid] at hv
+      · simp [arun, astep_valP (show scan .size .start = _ from rfl), hv]
+      · simp [arun, astep_valP (show scan (.type _) .start = _ from rfl), hv]
+      · simp [arun, astep_valQ (show scan .edge .start = _ from rfl), hv]
     · obtain rfl : t = 0 := by omega
       exact ⟨by simp [PreS, scan]; cases τ <;> trivial, fun r => by simp [arun]⟩
 
@@ -306,8 +312,8 @@ lemma walk_lang (C : DAGCircuitFamily) (hcan : C.IsCanonical) (hA : C.HasLogspac
       exact hv ⟨x.length, _, by rw [← eq_replicate_of_descr_ne (hp x i hpx)], canon_bits i⟩
     rw [hn]
     refine ⟨1, ?_, ?_, fun t ht => ?_⟩
-    · simp [arun, astep, walk, hv]
-    · simp [arun, astep, walk, hv]
+    · simp [arun, astep_valP (show walk lm .start = _ from rfl), hv]
+    · simp [arun, astep_valP (show walk lm .start = _ from rfl), hv]
     · obtain rfl : t = 0 := by omega
       exact ⟨by simp [arun, PreS, walk], fun r => by simp [arun]⟩
 

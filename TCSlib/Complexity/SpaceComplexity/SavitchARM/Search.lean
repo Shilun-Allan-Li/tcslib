@@ -26,11 +26,13 @@ Infrastructure for [AB09, §4.2.1, proof of Theorem 4.14]; not itself a result o
 ## Main definitions
 
 * `Complexity.LogProg.SavitchARM.outerSt` — the register files of the outer search.
-* `Complexity.LogProg.SavitchARM.InitO`, `AccO` — the code tests read from the oracle.
+* `Complexity.LogProg.SavitchARM.InitO`, `AccO` — the code tests read from the oracle, with
+  their defining equations `initO_iff_orc`, `accO_iff_orc`.
 
 ## Main results
 
 * `Complexity.LogProg.SavitchARM.outerU_run` — the outer search.
+* `Complexity.LogProg.SavitchARM.outerSt_toV` — the outer search's register files, as registers.
 * `Complexity.LogProg.SavitchARM.savitch_halts` — the whole run.
 
 ## References
@@ -53,10 +55,22 @@ def outerSt (s w u v M : ℕ) : St := { setSt s w with U := u, V := v, M := M }
 def InitO (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u : ℕ) : Prop :=
   orc 1 (pairEncode x (pairEncode (Nat.bits u) (Nat.bits s))) = true
 
+/-- `InitO orc x s u` holds exactly when decider `1` accepts `⟨x, ⟨bits u, bits s⟩⟩`:
+`orc 1 (pairEncode x (pairEncode (bits u) (bits s))) = true`. -/
+theorem initO_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s u : ℕ} :
+    InitO orc x s u ↔ orc 1 (pairEncode x (pairEncode (Nat.bits u) (Nat.bits s))) = true :=
+  Iff.rfl
+
 /-- The accepting-code test read from the oracle: decider `2` accepts
 `⟨x, ⟨bits v, bits s⟩⟩`. -/
 def AccO (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s v : ℕ) : Prop :=
   orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true
+
+/-- `AccO orc x s v` holds exactly when decider `2` accepts `⟨x, ⟨bits v, bits s⟩⟩`:
+`orc 2 (pairEncode x (pairEncode (bits v) (bits s))) = true`. -/
+theorem accO_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s v : ℕ} :
+    AccO orc x s v ↔ orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true :=
+  Iff.rfl
 
 section Outer
 
@@ -76,6 +90,13 @@ variable {s w u v M : ℕ}
 @[simp] lemma outerSt_w : (outerSt s w u v M).w = w := rfl
 /-- The `s` register of an outer-search file. -/
 @[simp] lemma outerSt_s : (outerSt s w u v M).s = s := rfl
+
+/-- **The outer search's register files, as registers**: the setup's file with the candidate
+registers `U`, `V` and `M` written. -/
+theorem outerSt_toV (s w u v M : ℕ) : (outerSt s w u v M).toV =
+    Function.update (Function.update (Function.update (setSt s w).toV rU u) rV v) rM M := by
+  rw [St.upd_U, St.upd_V, St.upd_M]
+  rfl
 
 /-- The register files of the outer search are bounded by `2 ^ (w · w)`. -/
 lemma outerSt_bd (hsw : s ≤ w) (hu : u ≤ 2 ^ w) (hv : v ≤ 2 ^ w) (hM : M ≤ 2 ^ w) :
@@ -116,9 +137,10 @@ theorem outerV_run (hsw : s ≤ w) (u : ℕ) (hu : u < 2 ^ w) (b₀ : Bool)
     intro v M hk hM
     have hbd := outerSt_bd hsw hu.le (le_of_eq (by omega)) hM
     refine AHalt.step (gb_of hbd _) ?_
-    regs [astep, A, outerSt_V, outerSt_K, if_pos (show v = 2 ^ w by omega)]
+    regs [astep_jeq (show A E .OV = _ from rfl), outerSt_V, outerSt_K,
+      if_pos (show v = 2 ^ w by omega)]
     refine AHalt.step (gb_of hbd _) ?_
-    regs [astep, A]
+    regs [astep_clr (show A E .OVend = _ from rfl)]
     rw [decide_eq_false (by rintro ⟨v', h1, h2, -⟩; omega), Bool.false_or]
     exact hNU M hM
   | succ k ih =>
@@ -133,23 +155,24 @@ theorem outerV_run (hsw : s ≤ w) (u : ℕ) (hu : u < 2 ^ w) (b₀ : Bool)
             Reach (2 ^ w) (Rel orc x s) w u v') || b₀) := by
       intro hn M' hM'
       refine AHalt.step (gb_of (outerSt_bd hsw hu.le hv.le hM') _) ?_
-      regs [astep, A, outerSt_V]
+      regs [astep_inc (show A E .NV = _ from rfl), outerSt_V]
       have e := exists_shift (R₁ := fun m => AccO orc x s m)
         (R₂ := fun m => Reach (2 ^ w) (Rel orc x s) w u m) (a := v) (K := 2 ^ w) hn
       beta_reduce at e
       rw [← decide_eq_decide.mpr e]
       exact ih (v + 1) M' (by omega) hM'
     refine AHalt.step (gb_of hbd _) ?_
-    regs [astep, A, outerSt_V, outerSt_K, if_neg (show v ≠ 2 ^ w by omega)]
+    regs [astep_jeq (show A E .OV = _ from rfl), outerSt_V, outerSt_K,
+      if_neg (show v ≠ 2 ^ w by omega)]
     refine AHalt.step (gb_of hbd _) ?_
-    simp only [astep, A, vword_whole₂]
+    simp only [astep_call (show A E .OVc = _ from rfl), vword_whole₂]
     regs [outerSt_V, outerSt_s]
     by_cases ha : AccO orc x s v
     · have ha' : orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true := ha
       rw [if_pos ha']
       -- `root`: set `I := w` and run the recursion
       refine AHalt.step (gb_of hbd _) ?_
-      regs [astep, A]
+      regs [astep_clr (show A E .root = _ from rfl)]
       refine (cp_run .rootW _ (by simp only [St.Bd, outerSt, setSt, St.zero]; omega) rfl
         (by regs [cpDst, cpSrc]; simp only [outerSt, setSt, St.zero]; omega)).halt ?_
       regs [cpDst, cpSrc, cpExit]
@@ -161,14 +184,14 @@ theorem outerV_run (hsw : s ≤ w) (u : ℕ) (hu : u < 2 ^ w) (b₀ : Bool)
       have hbd' : St.Bd (2 ^ (w * w)) { outerSt s w u v M' with I := w } := by
         simp only [St.Bd, outerSt, setSt, St.zero]; omega
       refine AHalt.step (gb_of hbd' _) ?_
-      regs [astep, A, outerSt_U, outerSt_V, outerSt_w, if_true]
+      regs [astep_jeq (show A E (.rt _) = _ from rfl), outerSt_U, outerSt_V, outerSt_w, if_true]
       by_cases hr : Reach (2 ^ w) (Rel orc x s) w u v
       · simp only [hr, decide_true, ↓reduceIte]
         rw [decide_eq_true ⟨v, le_rfl, hv, ha, hr⟩, Bool.true_or]
         exact AHalt.ret rfl (gb_of hbd' _)
       · simp only [hr, decide_false, Bool.false_eq_true, ↓reduceIte]
         refine AHalt.step (gb_of hbd' _) ?_
-        regs [astep, A]
+        regs [astep_clr (show A E .rootF = _ from rfl)]
         exact shift (fun hh => hr hh.2) M' hM'
     · have ha' : ¬ orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true := ha
       rw [if_neg ha']
@@ -193,7 +216,8 @@ theorem outerU_run (hsw : s ≤ w) : ∀ k u M, u + k = 2 ^ w → M ≤ 2 ^ w �
     intro u M hk hM
     have hbd := outerSt_bd hsw (le_of_eq (by omega)) (Nat.zero_le _) hM
     refine AHalt.step (gb_of hbd _) ?_
-    regs [astep, A, outerSt_U, outerSt_K, if_pos (show u = 2 ^ w by omega)]
+    regs [astep_jeq (show A E .OU = _ from rfl), outerSt_U, outerSt_K,
+      if_pos (show u = 2 ^ w by omega)]
     rw [decide_eq_false (by rintro ⟨u', h1, h2, -⟩; omega)]
     exact AHalt.ret rfl (gb_of hbd _)
   | succ k ih =>
@@ -206,12 +230,13 @@ theorem outerU_run (hsw : s ≤ w) : ∀ k u M, u + k = 2 ^ w → M ≤ 2 ^ w �
           ∃ v < 2 ^ w, AccO orc x s v ∧ Reach (2 ^ w) (Rel orc x s) w u' v)) := by
       intro M' hM'
       refine AHalt.step (gb_of (outerSt_bd hsw hu.le (Nat.zero_le _) hM') _) ?_
-      regs [astep, A, outerSt_U]
+      regs [astep_inc (show A E .NU = _ from rfl), outerSt_U]
       exact ih (u + 1) M' (by omega) hM'
     refine AHalt.step (gb_of hbd _) ?_
-    regs [astep, A, outerSt_U, outerSt_K, if_neg (show u ≠ 2 ^ w by omega)]
+    regs [astep_jeq (show A E .OU = _ from rfl), outerSt_U, outerSt_K,
+      if_neg (show u ≠ 2 ^ w by omega)]
     refine AHalt.step (gb_of hbd _) ?_
-    simp only [astep, A, vword_whole₂]
+    simp only [astep_call (show A E .OUc = _ from rfl), vword_whole₂]
     regs [outerSt_U, outerSt_s]
     by_cases hi : InitO orc x s u
     · have hi' : orc 1 (pairEncode x (pairEncode (Nat.bits u) (Nat.bits s))) = true := hi

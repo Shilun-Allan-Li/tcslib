@@ -22,23 +22,6 @@ a timed configuration contract.
 
 \subsubsection{Polynomial split and the choice-word verifier}
 
-\begin{lemma}[Strict monotonicity of the padded length map]
-\lean{Complexity.certificate_split_strictMono}
-\label{Complexity.certificate_split_strictMono}
-\leanok
-\difficulty{2}
-For all natural numbers $C$ and $c$, the map $n \mapsto n + C\,(n+1)^c$ on the natural numbers is strictly increasing.
-\end{lemma}
-
-\begin{lemma}[Uniqueness of the certificate split]
-\lean{Complexity.certificate_split_unique}
-\label{Complexity.certificate_split_unique}
-\leanok
-\uses{Complexity.certificate_split_strictMono}
-\difficulty{3}
-Let $C, c$ be natural numbers and let $x, u, y, v$ be binary strings with $|u| = C\,(|x|+1)^c$ and $|v| = C\,(|y|+1)^c$. If the concatenations $x\,u$ and $y\,v$ are equal as strings, then $x = y$ and $u = v$.
-\end{lemma}
-
 \begin{lemma}[Failure of certificate split search]
 \lean{Complexity.certificateSplit_none_iff}
 \label{Complexity.certificateSplit_none_iff}
@@ -105,14 +88,6 @@ of length exactly $t$ leaves the machine halted on input $x$. Then $N$ accepts $
 within $t'$ steps if and only if it accepts $x$ within $t$ steps, where acceptance
 within a budget means that some choice string of exactly that length leaves the machine
 halted with output exactly the one-bit string $1$.
-\end{lemma}
-
-\begin{lemma}[The doubled coefficient covers the time bound]
-\lean{Complexity.choice_budget_le}
-\label{Complexity.choice_budget_le}
-\leanok
-\difficulty{3}
-For all natural numbers $a$, $c$ and $n$, the inequality $a\,(n^c + 1) \le 2a\,(n+1)^c$ holds.
 \end{lemma}
 
 \begin{lemma}[Certificates for the choice-word verifier]
@@ -1292,23 +1267,6 @@ $\mathrm{NP}=\bigcup_{c\in\mathbb{N}}\mathrm{NTIME}(n\mapsto n^c+1)$.
 
 \subsubsection{The exponential split layer}
 
-\begin{lemma}[Strict monotonicity of the exponential length map]
-\lean{Complexity.e3_split_strictMono}
-\label{Complexity.e3_split_strictMono}
-\leanok
-\difficulty{2}
-For all natural numbers $C$ and $c$, the map $n \mapsto n + C \cdot 2^{(n+1)^c}$ on the natural numbers is strictly increasing.
-\end{lemma}
-
-\begin{lemma}[Uniqueness of the exponential split]
-\lean{Complexity.e3_split_unique}
-\label{Complexity.e3_split_unique}
-\leanok
-\uses{Complexity.e3_split_strictMono}
-\difficulty{3}
-Let $C, c$ be natural numbers and $x, u, y, v$ binary strings with $|u| = C\cdot 2^{(|x|+1)^c}$ and $|v| = C \cdot 2^{(|y|+1)^c}$. If $x\,u = y\,v$ as strings, then $x = y$ and $u = v$.
-\end{lemma}
-
 \begin{definition}[Bounded search for the exponential split]
 \lean{Complexity.e3Split}
 \label{Complexity.e3Split}
@@ -1511,112 +1469,6 @@ split-emitter function in time $A(n+1)^{r+1}$ on every binary input of length $n
 the language of words $y$ for which there are binary strings $x,u$ with $y=xu$,
 $|u|=C\cdot 2^{(|x|+1)^c}$, and the computation of $N$ on input $x$ using choice string
 $u$ halts with output $1$ belongs to $\mathrm{P}$.
-\end{lemma}
-
-\begin{definition}[One round of the bounded unary search]
-\lean{Complexity.e3SplitStep}
-\label{Complexity.e3SplitStep}
-\leanok
-Given an input word $w$ and a search state $s$ (a unary candidate), one round appends a $1$ bit to $s$ when $|s| \le |w|$ and leaves $s$ unchanged once it is past the end of the input.
-\end{definition}
-
-\begin{definition}[Acceptance test of a search round]
-\lean{Complexity.e3SplitAccept}
-\label{Complexity.e3SplitAccept}
-\leanok
-For all natural numbers $C, c$, the round test on an input word $w$ and a search state $s$ returns true exactly when $|s| + C \cdot 2^{(|s|+1)^c} = |w|$.
-\end{definition}
-
-\begin{lemma}[Bound on one search round]
-\lean{Complexity.e3_step_inv}
-\label{Complexity.e3_step_inv}
-\leanok
-\uses{Complexity.e3SplitStep}
-\difficulty{2}
-Let $w$ and $s$ be finite binary words with $|s|\le |w|+1$. The word obtained by
-appending a $1$ to $s$ when $|s|\le |w|$, and otherwise leaving $s$ unchanged, has
-length at most $|w|+1$.
-\end{lemma}
-
-\begin{lemma}[Unary search orbit]
-\lean{Complexity.e3_step_orbit}
-\label{Complexity.e3_step_orbit}
-\leanok
-\uses{Complexity.e3SplitStep}
-\difficulty{3}
-For every binary string $w$ and natural number $i\le |w|+1$, iterating the search round
-$i$ times from the empty string yields the string consisting of $i$ copies of $1$.
-\end{lemma}
-
-\begin{lemma}[First-match search under predicate agreement]
-\lean{Complexity.e3_find_congr}
-\label{Complexity.e3_find_congr}
-\leanok
-\difficulty{3}
-Let $\alpha$ be a type, let $xs$ be a finite list of elements of $\alpha$, and let $p,q
-: \alpha \to \{\mathrm{false},\mathrm{true}\}$ agree on every element of $xs$. Then the
-first element of $xs$ satisfying $p$, if any, is the same as the first element
-satisfying $q$; equivalently, the two searches return the same optional element.
-\end{lemma}
-
-\begin{lemma}[Orbit search equals split search]
-\lean{Complexity.e3_find_eq}
-\label{Complexity.e3_find_eq}
-\leanok
-\uses{Complexity.e3Split, Complexity.e3SplitAccept, Complexity.e3SplitStep, Complexity.e3_find_congr, Complexity.e3_step_orbit}
-\difficulty{3}
-For natural numbers $C,c$ and a binary word $w$, consider the search over indices $i$
-from $0$ through $|w|$ for the first state that passes the round test, where the state
-at index $i$ is obtained by applying the search step $i$ times to the empty word. The
-resulting optional index equals the bounded search at length $|w|$ for the least $n\le
-|w|$ satisfying $n+C\cdot 2^{(n+1)^c}=|w|$, with failure returned if no such $n$ exists.
-\end{lemma}
-
-\begin{lemma}[Loop output agrees with split emitter]
-\lean{Complexity.e3_loop_result}
-\label{Complexity.e3_loop_result}
-\leanok
-\uses{Complexity.e3Split, Complexity.e3SplitAccept, Complexity.e3SplitStep, Complexity.e3SplitWord, Complexity.e3_find_eq, Complexity.e3_split_spec, Complexity.e3_step_orbit, Turing.pairEncode}
-\difficulty{3}
-For natural numbers $C,c$ and a binary word $w$, search the indices from $0$ through
-$|w|$ for the first state passing the round test, using the state obtained by that many
-iterations of the search step from the empty word. If an index $i$ is found, encode the
-prefix of $w$ of length equal to that state’s length together with the remaining suffix;
-if none is found, return the empty word. This result equals the word produced by the
-exponential split emitter on $w$.
-\end{lemma}
-
-\begin{lemma}[Polynomial loop bound]
-\lean{Complexity.e3_loop_bound}
-\label{Complexity.e3_loop_bound}
-\leanok
-\difficulty{3}
-For all natural numbers $b,A,r,n$, one has
-\[
-b\bigl(A(n+1)^{r+1}+1\bigr)(n+2)\le 2b(A+1)(n+1)^{r+2}.
-\]
-\end{lemma}
-
-\begin{lemma}[Polynomial-time split recovery]
-\lean{Complexity.e3_split_of_body}
-\label{Complexity.e3_split_of_body}
-\leanok
-\uses{Complexity.e3SplitAccept, Complexity.e3SplitStep, Complexity.e3SplitWord, Complexity.e3_loop_bound, Complexity.e3_loop_result, Complexity.e3_step_inv, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.exists_loopFindTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.stateWord}
-\difficulty{5}
-Let $C,c,A,r$ be natural numbers, let $M$ be a finite deterministic Turing machine over
-the binary alphabet, and let $q$ be one of its states. Suppose that on every binary
-input $w$, there is a time $t\le A(|w|+1)^{r+1}$ such that the machine started on $w$
-has not been in state $q$ at any earlier time and at time $t$ is in state $q$ with its
-first work tape empty and all other work tapes blank. Suppose also that for every pair
-of binary strings $w,s$ with $|s|\le |w|+1$, there is a positive time $t\le
-A(|w|+1)^{r+1}$ such that, starting from state $q$ on input $w$ with $s$ on the first
-work tape and all other work tapes blank, the machine does not return to state $q$ at
-any intermediate positive time. If $|s|+C\cdot 2^{(|s|+1)^c}=|w|$, it halts at time $t$
-with output equal to the self-delimiting encoding of the first $|s|$ bits of $w$ and the
-remaining bits; otherwise, at time $t$ it is in state $q$ with the first work tape
-containing the result of one search round on $w,s$ and all other work tapes blank. Then
-some finite deterministic Turing machine computes the split-emitter function in time
-$B(n+1)^{r+2}$ for every input length $n$, for some natural number $B$.
 \end{lemma}
 
 \begin{lemma}[Equality of Successive Prefixes]
@@ -2219,31 +2071,11 @@ For every fixed binary word $w$, the function that maps each binary word $x$ to 
 one-bit word recording whether $x=w$ is polynomial-time computable.
 \end{lemma}
 
-\begin{lemma}[Nonempty Output of Binary Increment]
-\lean{Complexity.a3n_inc_nonempty}
-\label{Complexity.a3n_inc_nonempty}
-\leanok
-\uses{Turing.incFixed}
-\difficulty{2}
-For every finite Boolean word $w$, if its fixed-width binary increment is defined, then
-the resulting word is nonempty.
-\end{lemma}
-
-\begin{lemma}[Characterization of Increment Overflow]
-\lean{Complexity.a3n_inc_none}
-\label{Complexity.a3n_inc_none}
-\leanok
-\uses{Turing.incFixed}
-\difficulty{3}
-For every binary word $w$, its fixed-width binary increment overflows if and only if $w$
-is the all-true word of length $|w|$, including the empty word.
-\end{lemma}
-
 \begin{lemma}[Polynomial-time all-ones test]
 \lean{Complexity.a3n_poly_unary}
 \label{Complexity.a3n_poly_unary}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.a3n_inc_none, Complexity.a3n_inc_nonempty, Complexity.a3n_poly_fixed_eq, Complexity.a3n_poly_linear, Turing.FinTM.computesFunInTime_incFixed, Turing.incFixed}
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.a3n_poly_fixed_eq, Complexity.a3n_poly_linear, Turing.FinTM.computesFunInTime_incFixed, Turing.incFixed}
 \difficulty{4}
 The function that maps each binary word $x$ to the one-bit word recording whether $x$
 consists entirely of ones is polynomial-time computable; equivalently, it tests whether
@@ -2320,18 +2152,6 @@ Suppose $V$ belongs to $\mathrm{P}$ and, for every word $x$, membership $x\in L$
 equivalent to the existence of a word $u$ of length $C(2^{|x|+1})^c$ such that $xu\in
 V$. Then the language of pair encodings of $x$ with the all-ones word of length
 $C2^{(|x|+1)^c}$, for $x\in L$, belongs to $\mathrm{NP}$.
-\end{lemma}
-
-\begin{lemma}[Bounds from successful pair decoding]
-\lean{Complexity.a3n_prevalidation}
-\label{Complexity.a3n_prevalidation}
-\leanok
-\uses{Complexity.a3n_pair_inverse, Complexity.e3_bits_length_bound, Turing.pairDecode, Turing.pairEncode}
-\difficulty{3}
-Let $C,c$ be natural numbers and let $w,x',u,x,\mathrm{pad}$ be binary words. Suppose
-decoding $w$ yields $(x',u)$ and decoding $x'$ yields $(x,\mathrm{pad})$. Then $|x|\le
-|w|$, and the length of the binary expansion of $C\,(2^{|x|+1})^c$ is at most
-$(|w|+1)^c$ plus the length of the binary expansion of $C$.
 \end{lemma}
 
 \begin{lemma}[Exponential envelope for a scaled expression]

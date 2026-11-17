@@ -39,6 +39,8 @@ Infrastructure for the register-machine description of space-bounded algorithms 
 ## Main results
 
 * `Complexity.LogProg.GuardLe.of_preS` — introducing the guard.
+* `Complexity.LogProg.AHalt.embed_guardLe` — a bounded halting run of a block, inside a
+  larger machine.
 * `Complexity.LogProg.reach_of_eq` — rewriting the end configuration of a run.
 * `Complexity.LogProg.move_run`, `move2_run`, `dmove_run`, `sub_run`, `halve_run` — the
   single loops.
@@ -66,6 +68,39 @@ variable {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool
 guard. -/
 lemma GuardLe.of_preS {a : AConf m Λ} (h : PreS A x a) (hv : ∀ r, a.2.1 r ≤ B) :
     GuardLe A x B a := ⟨h, hv⟩
+
+/-- **A bounded halting run of a block, inside a larger machine**: if `A`, its deciders read
+through `σ`, answers `b` from `l` with registers at most `B`, then a larger machine holding
+`A`'s table as a block (`Complexity.LogProg.Ins.embed`) runs from the image of `l` to the exit
+`k b` with registers at most `B' ≥ B`, provided its own registers (`e`, off `ρ`'s range) are at
+most `B'`. It ends with the block's registers at most `B` and its own registers unchanged.
+
+**Proof sketch.** `Complexity.LogProg.AHalt.embed`; the guard carries over because the
+syntactic preconditions do (`Complexity.LogProg.preS_embed`) and every register of the larger
+machine is either an image of one of `A`'s or one of its own. -/
+theorem AHalt.embed_guardLe {m' d' : ℕ} {Λ' : Type} {D : ARM m' d' Λ'} {ρ : Fin m → Fin m'}
+    {σ : Fin d → Fin d'} {ι : Λ → Λ'} {k : Bool → Λ'} {r₀ : Fin m'}
+    (hρ : Function.Injective ρ) (hD : ∀ l, D (ι l) = (A l).embed ρ σ ι k r₀)
+    (hA : ∀ l r l', A l ≠ .valP r l' ∧ A l ≠ .valQ r l') {oracle' : Fin d' → List Bool → Bool}
+    {B' : ℕ} (hBB : B ≤ B') {e : Fin m' → ℕ} (he : ∀ r', e r' ≤ B') {l : Λ} {v : Fin m → ℕ}
+    {b : Bool} (h : AHalt A (oracle' ∘ σ) x (GuardLe A x B) (some l, v, none) b)
+    {v' : Fin m' → ℕ} (hv : RegExt ρ e v v') :
+    ∃ v₂', (∀ r', (∀ r, ρ r ≠ r') → v₂' r' = e r') ∧ (∀ r, v₂' (ρ r) ≤ B) ∧
+      AReach D oracle' x (GuardLe D x B') (some (ι l), v', none) (some (k b), v₂', none) := by
+  have hG : ∀ l v v', GuardLe A x B (some l, v, none) → RegExt ρ e v v' →
+      GuardLe D x B' (some (ι l), v', none) := by
+    intro l v v' hg hv
+    refine ⟨preS_embed hρ hD hg.1, fun r' => ?_⟩
+    show v' r' ≤ B'
+    by_cases hr : ∃ r, ρ r = r'
+    · obtain ⟨r, rfl⟩ := hr
+      rw [hv.reg]
+      exact (hg.2 r).trans hBB
+    · push_neg at hr
+      rw [hv.ext r' hr]
+      exact he r'
+  obtain ⟨v₂, v₂', ⟨l₂, hg₂⟩, hv₂, hr⟩ := AHalt.embed hρ hD hA hG h hv
+  exact ⟨v₂', hv₂.ext, fun r => (hv₂.reg r).symm ▸ hg₂.2 r, hr⟩
 
 /-- A run whose end configuration is rewritten along an equation. -/
 lemma reach_of_eq {G : AConf m Λ → Prop} {a b b' : AConf m Λ} (h : AReach A oracle x G a b)
@@ -95,19 +130,19 @@ theorem move_run {l lx l1 l2 : Λ} {r t : Fin m} (hrt : r ≠ t)
         · subst hs'; simp [hs, hk]
         · simp [hs, hs']
     rw [e]
-    simp only [astep, h0, hk, ↓reduceIte]
+    simp only [astep_jz h0, hk, ↓reduceIte]
     exact AReach.refl _
   | succ k ih =>
     intro v hk hv hb
     refine AReach.step ⟨by simp [PreS, h0], hv⟩ ?_
-    simp only [astep, h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
+    simp only [astep_jz h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
     refine AReach.step ⟨by simp [PreS, h1], hv⟩ ?_
-    simp only [astep, h1, hk, Nat.add_sub_cancel]
+    simp only [astep_dec h1, hk, Nat.add_sub_cancel]
     refine AReach.step ⟨by simp [PreS, h2], fun s => ?_⟩ ?_
     · by_cases hs : s = r
       · subst hs; simp; omega
       · simp [hs]; exact hv s
-    simp only [astep, h2, Function.update_of_ne (Ne.symm hrt)]
+    simp only [astep_inc h2, Function.update_of_ne (Ne.symm hrt)]
     have hb2 : ∀ s, Function.update (Function.update v r k) t (v t + 1) s ≤ B := by
       intro s
       by_cases hs : s = t
@@ -150,22 +185,22 @@ theorem move2_run {l lx l1 l2 l3 : Λ} {r t t' : Fin m} (hrt : r ≠ t) (hrt' : 
     have e : Function.update (Function.update (Function.update v r 0) t (v t + v r)) t'
         (v t' + v r) = v := by upd_tac
     rw [e]
-    simp only [astep, h0, hk, ↓reduceIte]
+    simp only [astep_jz h0, hk, ↓reduceIte]
     exact AReach.refl _
   | succ k ih =>
     intro v hk hv hb hb'
     have hr := hv r
     refine AReach.step ⟨by simp [PreS, h0], hv⟩ ?_
-    simp only [astep, h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
+    simp only [astep_jz h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
     refine AReach.step ⟨by simp [PreS, h1], hv⟩ ?_
-    simp only [astep, h1, hk, Nat.add_sub_cancel]
+    simp only [astep_dec h1, hk, Nat.add_sub_cancel]
     have b1 := register_update_le _ r _ _ hv (show k ≤ B by omega)
     refine AReach.step ⟨by simp [PreS, h2], b1⟩ ?_
-    simp only [astep, h2]
+    simp only [astep_inc h2]
     have b2 := register_update_le _ t _ _ b1 (show Function.update v r k t + 1 ≤ B by
       simp [Ne.symm hrt]; omega)
     refine AReach.step ⟨by simp [PreS, h3], b2⟩ ?_
-    simp only [astep, h3]
+    simp only [astep_inc h3]
     have b3 := register_update_le _ t' _ _ b2 (show Function.update (Function.update v r k) t
         (Function.update v r k t + 1) t' + 1 ≤ B by
       simp [Ne.symm hrt', Ne.symm htt]; omega)
@@ -192,22 +227,22 @@ theorem dmove_run {l lx l1 l2 l3 : Λ} {r t : Fin m} (hrt : r ≠ t)
     refine AReach.step ⟨by simp [PreS, h0], hv⟩ ?_
     have e : Function.update (Function.update v r 0) t (v t + 2 * v r) = v := by upd_tac
     rw [e]
-    simp only [astep, h0, hk, ↓reduceIte]
+    simp only [astep_jz h0, hk, ↓reduceIte]
     exact AReach.refl _
   | succ k ih =>
     intro v hk hv hb
     have hr := hv r
     refine AReach.step ⟨by simp [PreS, h0], hv⟩ ?_
-    simp only [astep, h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
+    simp only [astep_jz h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
     refine AReach.step ⟨by simp [PreS, h1], hv⟩ ?_
-    simp only [astep, h1, hk, Nat.add_sub_cancel]
+    simp only [astep_dec h1, hk, Nat.add_sub_cancel]
     have b1 := register_update_le _ r _ _ hv (show k ≤ B by omega)
     refine AReach.step ⟨by simp [PreS, h2], b1⟩ ?_
-    simp only [astep, h2]
+    simp only [astep_inc h2]
     have b2 := register_update_le _ t _ _ b1 (show Function.update v r k t + 1 ≤ B by
       simp [Ne.symm hrt]; omega)
     refine AReach.step ⟨by simp [PreS, h3], b2⟩ ?_
-    simp only [astep, h3]
+    simp only [astep_inc h3]
     have b3 := register_update_le _ t _ _ b2 (show Function.update (Function.update v r k) t
         (Function.update v r k t + 1) t + 1 ≤ B by
       simp [Ne.symm hrt]; omega)
@@ -231,17 +266,17 @@ theorem sub_run {l lx l1 l2 : Λ} {q r : Fin m} (hqr : q ≠ r)
     refine AReach.step ⟨by simp [PreS, h0], hv⟩ ?_
     have e : Function.update (Function.update v q 0) r (v r - v q) = v := by upd_tac
     rw [e]
-    simp only [astep, h0, hk, ↓reduceIte]
+    simp only [astep_jz h0, hk, ↓reduceIte]
     exact AReach.refl _
   | succ k ih =>
     intro v hk hv
     refine AReach.step ⟨by simp [PreS, h0], hv⟩ ?_
-    simp only [astep, h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
+    simp only [astep_jz h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
     refine AReach.step ⟨by simp [PreS, h1], hv⟩ ?_
-    simp only [astep, h1, hk, Nat.add_sub_cancel]
+    simp only [astep_dec h1, hk, Nat.add_sub_cancel]
     have b1 := register_update_le _ q _ _ hv (show k ≤ B by have := hv q; omega)
     refine AReach.step ⟨by simp [PreS, h2], b1⟩ ?_
-    simp only [astep, h2]
+    simp only [astep_dec h2]
     have b2 := register_update_le _ r _ _ b1 (show Function.update v q k r - 1 ≤ B by
       simp [Ne.symm hqr]; have := hv r; omega)
     refine reach_of_eq (ih _ (by simp [hqr]) b2) ?_
@@ -264,18 +299,18 @@ theorem halve_run {l lx l1 l2 : Λ} {c r : Fin m} (hcr : c ≠ r)
     refine AReach.step ⟨by simp [PreS, h0], hv⟩ ?_
     have e : Function.update (Function.update v c 0) r (v r / 2 ^ v c) = v := by upd_tac
     rw [e]
-    simp only [astep, h0, hk, ↓reduceIte]
+    simp only [astep_jz h0, hk, ↓reduceIte]
     exact AReach.refl _
   | succ k ih =>
     intro v hk hv
     refine AReach.step ⟨by simp [PreS, h0], hv⟩ ?_
-    simp only [astep, h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
+    simp only [astep_jz h0, hk, Nat.add_one_ne_zero, ↓reduceIte]
     refine AReach.step ⟨by simp [PreS, h1], hv⟩ ?_
-    simp only [astep, h1, hk, Nat.add_sub_cancel]
+    simp only [astep_dec h1, hk, Nat.add_sub_cancel]
     have hb1 : ∀ s, Function.update v c k s ≤ B :=
       register_update_le _ _ _ _ hv (show k ≤ B by have := hv c; omega)
     refine AReach.step ⟨by simp [PreS, h2], hb1⟩ ?_
-    simp only [astep, h2]
+    simp only [astep_half h2]
     have hb2 : ∀ s, Function.update (Function.update v c k) r (Function.update v c k r / 2) s
         ≤ B := by
       intro s
@@ -343,7 +378,7 @@ theorem shl_run {l l1 l2 l3 l4 l5 l6 l7 l8 lx : Λ} {c r z : Fin m} (hcr : c ≠
         · subst hs'; simp [hs, hk]
         · simp [hs, hs']
     rw [e]
-    simp only [astep, a0, hk, ↓reduceIte]
+    simp only [astep_jz a0, hk, ↓reduceIte]
     exact AReach.refl _
   | succ k ih =>
     intro v hk hz hv hb
@@ -353,9 +388,9 @@ theorem shl_run {l l1 l2 l3 l4 l5 l6 l7 l8 lx : Λ} {c r z : Fin m} (hcr : c ≠
       calc 2 * v r ≤ v r * (2 ^ k * 2) := by rw [mul_comm]; exact Nat.mul_le_mul_left _ this
         _ ≤ B := hb
     refine AReach.step ⟨by simp [PreS, a0], hv⟩ ?_
-    simp only [astep, a0, hk, Nat.add_one_ne_zero, ↓reduceIte]
+    simp only [astep_jz a0, hk, Nat.add_one_ne_zero, ↓reduceIte]
     refine AReach.step ⟨by simp [PreS, a1], hv⟩ ?_
-    simp only [astep, a1, hk, Nat.add_sub_cancel]
+    simp only [astep_dec a1, hk, Nat.add_sub_cancel]
     have hv1 : ∀ s, Function.update v c k s ≤ B :=
       register_update_le _ _ _ _ hv (show k ≤ B by have := hv c; omega)
     refine (dmove_run hrz a2 a3 a4 a5 _ _ rfl hv1

@@ -59,15 +59,18 @@ lemma guessValidA_halts (x : List Bool) (G : AConf 1 (Fin 4) → Prop)
     NHalts guessValidA oracle x G (some 0, fun _ => 0, none) 3 := by
   have h3 : NHalts guessValidA oracle x G (some 3, fun _ => 0, none) 1 :=
     NHalts.det (i := .ret true) rfl false (hG _ _) (by
-      simpa [astep, NARM.detPart, guessValidA] using NHalts.halted _ _ 0)
+      simpa [astep_ret (show guessValidA.detPart false 3 = _ from rfl)] using
+        NHalts.halted _ _ 0)
   have h1 : NHalts guessValidA oracle x G (some 1, fun _ => 0, none) 2 := by
     refine NHalts.det (i := .valP 0 3) rfl false (hG _ _) ?_
     by_cases hv : ValidPlain x
-    · simpa [astep, NARM.detPart, guessValidA, hv] using h3
-    · simpa [astep, NARM.detPart, guessValidA, hv] using NHalts.halted _ _ 1
+    · simpa [astep_valP (show guessValidA.detPart false 1 = _ from rfl), hv] using h3
+    · simpa [astep_valP (show guessValidA.detPart false 1 = _ from rfl), hv] using
+        NHalts.halted _ _ 1
   have h2 : NHalts guessValidA oracle x G (some 2, fun _ => 0, none) 2 :=
     NHalts.det (i := .ret false) rfl false (hG _ _) (by
-      simpa [astep, NARM.detPart, guessValidA] using NHalts.halted _ _ 1)
+      simpa [astep_ret (show guessValidA.detPart false 2 = _ from rfl)] using
+        NHalts.halted _ _ 1)
   exact NHalts.choose (A := guessValidA) (l := 0) (l₁ := 1) (l₀ := 2) rfl (hG _ _) h1 h2
 
 /-- Some choice word of length `3` makes the guessing machine answer `true` iff the input is
@@ -79,13 +82,16 @@ lemma guessValidA_ans (x : List Bool) (oracle : Fin 0 → List Bool → Bool) :
     nans_det (i := .ret false) rfl false]
   by_cases hv : ValidPlain x
   · have e : astep (guessValidA.detPart false) oracle x (some 1, fun _ => 0, none) =
-        (some 3, fun _ => 0, none) := by simp [astep, NARM.detPart, guessValidA, hv]
+        (some 3, fun _ => 0, none) := by
+      simp [astep_valP (show guessValidA.detPart false 1 = _ from rfl), hv]
     rw [e, nans_det (i := .ret true) rfl false]
-    simp [astep, NARM.detPart, guessValidA, nans_halted, hv]
+    simp [astep_ret (show guessValidA.detPart false 3 = _ from rfl),
+      astep_ret (show guessValidA.detPart false 2 = _ from rfl), nans_halted, hv]
   · have e : astep (guessValidA.detPart false) oracle x (some 1, fun _ => 0, none) =
-        (none, fun _ => 0, some false) := by simp [astep, NARM.detPart, guessValidA, hv]
+        (none, fun _ => 0, some false) := by
+      simp [astep_valP (show guessValidA.detPart false 1 = _ from rfl), hv]
     rw [e]
-    simp [astep, NARM.detPart, guessValidA, nans_halted, hv]
+    simp [astep_ret (show guessValidA.detPart false 2 = _ from rfl), nans_halted, hv]
 
 /-- **The well-formed inputs are in `NL`, by guessing.** A sanity check of `narm_decides`. -/
 theorem validPlainLang_mem_NL : validPlainLang ∈ NL := by

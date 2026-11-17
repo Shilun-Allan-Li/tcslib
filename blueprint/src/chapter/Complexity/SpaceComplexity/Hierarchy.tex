@@ -54,3 +54,891 @@ The class of binary languages decidable by finite Turing machines using space bo
 a constant multiple of the input length plus one is not equal to the class of languages
 having polynomially bounded witnesses verifiable in polynomial time.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Hierarchy: further results}
+
+\begin{theorem}[Full-bank embedding of a configuration is trivial]
+\lean{Complexity.f6_full_embed}
+\label{Complexity.f6_full_embed}
+\leanok
+\uses{Turing.Cfg, Turing.embedEmitCfg, Turing.embedEmitCfg_eq}
+\difficulty{3}
+Let $m\in\mathbb{N}$ and let $c$ be a configuration of an $m$-tape machine on a binary input.
+Embedding $c$ into $m$ tapes along the identity map of tape indices, with an all-blank frame,
+all frame heads at $0$ and empty prior output, gives back $c$ itself.
+\end{theorem}
+
+\begin{theorem}[Run of a two-phase seamed machine]
+\lean{Complexity.f6_seam}
+\label{Complexity.f6_seam}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.seamCompTM, Turing.seamCompTM_step}
+\difficulty{1}
+Let $M_1,M_2$ be $k$-tape binary machines with control sets $S_1,S_2$ ($S_1$ with decidable
+equality), let $e\in S_1$ and $n,q_2\in S_2$, and let $\Sigma$ be the seamed composite on
+$S_1\sqcup S_2$ that runs $M_1$ and, from state $e$, takes one stationary silent dispatch step to
+state $n$ of $M_2$. Suppose $M_1$ run from $c_0$ for $T_1$ steps reaches $c_1$, which is in state
+$e$ while no earlier configuration is; and $M_2$ run from $c_1$ (control replaced by $n$) for
+$T_2$ steps reaches $c_3$, which is in state $q_2$ while no earlier configuration is. Then $\Sigma$
+started from $c_0$ (control injected on the left) is at time $T_1+1+T_2$ equal to $c_3$ with control
+injected on the right, that configuration is in the right copy of $q_2$, and no earlier
+configuration of $\Sigma$ is in that state.
+\end{theorem}
+
+\begin{theorem}[Self-startup machine followed by a halting step]
+\lean{Complexity.f6_native_halt}
+\label{Complexity.f6_native_halt}
+\leanok
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields, Turing.EffectiveMachineCode, Turing.FinTM.bufferTape, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq_mapState, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_one, Turing.MultiTapeTM.runFrom_state_ne_none_of_le, Turing.MultiTapeTM.runFrom_with_q₀, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step_of_some, Turing.exists_selfStartupTM, Turing.moveInputPos_zero, Turing.pairEncode, Turing.seamCompTM, Turing.seamCompTM_runFrom_right, Turing.seamCompTM_run_ofCfg, Turing.tableBitsK, Turing.unaryFin}
+\difficulty{5}
+Let $\mathcal{C}$ be an effective code scheme for one-work-tape binary Turing machines. There exist
+$K\in\mathbb{N}$, a finite control set $P$ and a $(K+3)$-tape binary machine $A$ with control set
+$P\sqcup\{\ast\}$ such that for every code word $\alpha$ there is $T\in\mathbb{N}$ with the
+following property for every binary word $w$. Let $N_\alpha$ be the machine decoded from $\alpha$.
+Run on the pairing $\langle\alpha,w\rangle$, $A$ is at time $T+2$ halted, with input head at
+position $1$, work tape $1$ holding the binary serialization of the transition table of $N_\alpha$
+from cell $0$, work tape $2$ holding the unary code of the initial state of $N_\alpha$ from cell
+$2$, every other work tape blank, every work head at $0$ and empty output; and $A$ is not halted at
+any time $u<T+2$.
+\end{theorem}
+
+\begin{theorem}[Budget-header scan writing a unary ruler]
+\lean{Complexity.f6_header}
+\label{Complexity.f6_header}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.init, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.RewindPhase, Turing.headerRulerTM, Turing.headerRulerTM_run, Turing.length_pairEncode, Turing.pairEncode}
+\difficulty{4}
+Let $K\in\mathbb{N}$ and let $u,v$ be binary words; put $z=\langle u,v\rangle$ (the self-delimiting
+pairing, whose header has length $2|u|+2$) and $\ell=2|u|+2$, and let $r$ be the last of $K+4$
+work tapes. Run the header-ruler machine acting on tape $r$ from the initial configuration on input
+$z$ with control $0$. After exactly $2\ell+3$ steps it is in its final rewind state, with input
+head at position $\ell+1$, tape $r$ holding $1^\ell$ from cell $0$ and blank elsewhere, every other
+work tape blank, all work heads at $0$ and empty output; and it is not in that state at any
+earlier time.
+\end{theorem}
+
+\begin{theorem}[Relabelling the control of an explicit configuration]
+\lean{Complexity.f6_mapState_mk}
+\label{Complexity.f6_mapState_mk}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields}
+\difficulty{1}
+Let $f:S\to S'$ be any map and consider the configuration with control $q$ (a state of $S$ or
+halted), input head position $i$, work-tape contents $w$, work-head positions $h$ and output $o$.
+Relabelling its control by $f$ gives the configuration with control $f(q)$ (halted if $q$ is
+halted) and the same $i$, $w$, $h$ and $o$.
+\end{theorem}
+
+\begin{theorem}[Ruler-hosted run of a halting startup machine]
+\lean{Complexity.f6_hosted}
+\label{Complexity.f6_hosted}
+\leanok
+\uses{Complexity.f6_full_embed, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields, Turing.Cfg.mapState_mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq, Turing.MultiTapeTM.runFrom, Turing.embedEmitCfg, Turing.embedEmitRetTM, Turing.embedEmitRetTM_run, Turing.exists_rulerHostTM, Turing.length_pairEncode, Turing.pairEncode, Turing.pairEncode_drop, Turing.rulerHostCfg, Turing.rulerHostCfg_fields}
+\difficulty{5}
+Let $K\in\mathbb{N}$ and let $M$ be a $(K+3)$-tape binary machine with finite control set $S$ and
+initial state $q_0$. There exist a finite control set $Q$, a $(K+4)$-tape binary machine $H$ with
+control $Q$, a map $\iota:S\times\{0,1\}\to Q$ and a constant $C$ such that the following holds.
+Let $u,y$ be binary words, $\beta$ contents for $K+3$ work tapes and $T\in\mathbb{N}$, and suppose
+$M$ started on $y$ is at time $T$ halted with input head $1$, work tapes $\beta$, all heads at $0$
+and empty output, and is live at every earlier time. Put $\ell=2|u|+2$ and let $H'$ be $H$ modified
+so that halting enters a live return state $\rho$. Started on input $\langle u,y\rangle$ from the
+configuration with control $\iota(q_0,0)$, input head $\ell+1$, last tape holding $1^\ell$ from
+cell $0$, other tapes blank, all heads at $0$ and empty output, $H'$ reaches at some time
+$t'\le C(\ell+1)T$ the configuration with control $\rho$, input head $\ell+1$, first $K+3$ tapes
+$\beta$, last tape $1^\ell$ from cell $0$, all heads at $0$ and empty output, and it is not in
+state $\rho$ at any time before $t'$.
+\end{theorem}
+
+\begin{theorem}[Skip, step-back and rewind on the ruler tape]
+\lean{Complexity.f6_ruler_moves}
+\label{Complexity.f6_ruler_moves}
+\leanok
+\uses{Complexity.f6_mapState_mk, Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq, Turing.MultiTapeTM.runFrom, Turing.RewindPhase, Turing.SeekPhase, Turing.rewindTM, Turing.rewindTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg, Turing.walkTM, Turing.walkTM_run_ofCfg}
+\difficulty{5}
+Let $K,\ell,N\in\mathbb{N}$, let $z$ be a binary input with $\ell+1<|z|+2$ and $N+1<|z|+2$, let $r$
+be the last of $K+4$ work tapes, let $\beta$ be contents of the other $K+3$ tapes, and for
+$j\in\mathbb{N}$ let $W_j$ denote the tape contents $\beta$ together with $1^j$ written from cell
+$0$ of tape $r$. All configurations below have empty output and input head at $\ell+1$ (in (iii),
+at $N+1$). (i) The skip machine on tape $r$, started in its running state with tapes $W_\ell$ and
+all heads at $0$, reaches its done state after exactly $\ell+1$ steps, and not earlier, with the
+head of $r$ at $\ell+1$ and everything else unchanged. (ii) The leftward walk machine on tape $r$
+over the empty word, started in its running state with tapes $W_\ell$ and the head of $r$ at
+$\ell+1$ (other heads at $0$), reaches its done state after exactly one step, and not earlier,
+with the head of $r$ at $\ell$ and everything else unchanged. (iii) The rewind machine on tape $r$,
+started in its start state with tapes $W_N$ and the head of $r$ at $N$ (other heads at $0$),
+reaches its done state after exactly $N+2$ steps, and not earlier, with all heads at $0$ and
+everything else unchanged.
+\end{theorem}
+
+\begin{theorem}[Code-header scan extending the ruler]
+\lean{Complexity.f6_scan}
+\label{Complexity.f6_scan}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.headerScanCfg_ruler, Turing.headerScanTM, Turing.headerScanTM_run, Turing.length_pairEncode, Turing.pairEncode}
+\difficulty{4}
+Let $K,\ell\in\mathbb{N}$, let $z$ be a binary input with $\ell+1<|z|+2$, let $u,v$ be binary
+words such that $z$ with its first $\ell$ symbols removed equals $\langle u,v\rangle$, and put
+$\ell_2=2|u|+2$. Let $r$ be the last of $K+4$ work tapes and $\beta$ contents of the others. Run
+the header-scan machine on tape $r$ from control $0$, input head $\ell+1$, tapes $\beta$ with
+$1^\ell$ written from cell $0$ of tape $r$, the head of $r$ at $\ell$ and the other heads at $0$,
+and empty output. After exactly $\ell_2$ steps it is in state $3$, with input head at
+$\ell+\ell_2+1$, tape $r$ holding $1^{\ell+\ell_2}$ from cell $0$ with its head at $\ell+\ell_2$, the
+other tapes and heads unchanged and empty output; and it is not in state $3$ at any earlier time.
+\end{theorem}
+
+\begin{theorem}[Preparation phase of the space-universal machine]
+\lean{Complexity.f6_prefix}
+\label{Complexity.f6_prefix}
+\leanok
+\uses{Complexity.f6_header, Complexity.f6_hosted, Complexity.f6_mapState_mk, Complexity.f6_native_halt, Complexity.f6_ruler_moves, Complexity.f6_scan, Complexity.f6_seam, Turing.Cfg.init, Turing.Cfg.mapState, Turing.Cfg.mapState_mapState, Turing.EffectiveMachineCode, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq_mapState, Turing.MultiTapeTM.initCfg_with_q₀, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_with_q₀, Turing.RewindPhase, Turing.SeekPhase, Turing.embedEmitRetTM, Turing.headerRulerTM, Turing.headerScanTM, Turing.length_pairEncode, Turing.pairEncode, Turing.pairEncode_drop, Turing.rewindTM, Turing.seamCompTM, Turing.skipTM, Turing.tableBitsK, Turing.unaryFin, Turing.walkTM}
+\difficulty{6}
+Let $\mathcal{C}$ be an effective code scheme for one-work-tape binary machines. There exist
+$K\in\mathbb{N}$, a finite control set $P$, a $(K+4)$-tape binary machine $A$ with control $P$, a
+state $\phi\in P$ and a constant $C$ such that for every code word $\alpha$ there is $T_0$ with the
+following property. For all binary words $u,x$, put $\ell=(2|u|+2)+(2|\alpha|+2)$ and
+$z=\langle u,\langle\alpha,x\rangle\rangle$, and let $N_\alpha$ be the machine decoded from
+$\alpha$. Then there is $T\le C(\ell+1)(T_0+2)+4\ell+11$ such that $A$ on input $z$ is at time $T$
+in state $\phi$, with input head at $\ell+1$, its last work tape holding $1^\ell$ from cell $0$,
+work tape $1$ holding the binary serialization of the transition table of $N_\alpha$ from cell $0$,
+work tape $2$ holding the unary code of the initial state of $N_\alpha$ from cell $2$, every other
+work tape blank, all heads at $0$ and empty output; and $A$ is not in state $\phi$ at any earlier
+time.
+\end{theorem}
+
+\begin{theorem}[Hosted simulation loop with per-tape space bound]
+\lean{Complexity.f6_loop}
+\label{Complexity.f6_loop}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape, Turing.MultiTapeTM.spaceUsedByTape_eq_card, Turing.MultiTapeTM.spaceUsedByTape_le_spaceUsed, Turing.MultiTapeTM.visitedByTapeHead, Turing.MultiTapeTM.visitedByTapeHead_mono, Turing.StepBlock.exists_forwardLoopTM, Turing.StepBlock.forwardLoopCfg, Turing.StepBlock.forwardLoopCfg_halt_iff, Turing.StepBlock.forwardLoop_forward, Turing.embedEmitCfg, Turing.embedEmitCfg_forwardLoop_init, Turing.embedEmitTM, Turing.embedEmitTM_runFrom, Turing.embedEmitTM_visitedByTapeHead, Turing.embedEmitTM_visitedByTapeHead_frame, Turing.exists_rulerHostTM, Turing.rulerHostCfg, Turing.tableBitsK}
+\difficulty{6}
+Let $K\in\mathbb{N}$. There exist a set $Q$, a finite control set $V$, a $(K+4)$-tape binary machine
+$H$ with control $V$, a state $e\in Q$ and a map $\iota:Q\times\{0,1\}\to V$ such that for every
+one-work-tape binary machine $M$ with finitely many states there is a constant $D$ with the
+following property. Let $x,z$ be binary words and $\ell>0$ with $|z|=\ell+|x|$ and $z$ with its
+first $\ell$ symbols removed equal to $x$, and let $t$ be a time at which $M$ started on $x$ is
+halted. Let $c$ be the configuration on input $z$ that presents, behind a header of length $\ell$
+and with a ruler tape holding $1^\ell$ from cell $0$ (head at $0$) as last tape, the forwarding-loop
+encoding (with entry state $e$) of the initial configuration of $M$ on $x$, placed on the first
+three of $K+3$ tapes. Then there is $t'$ such that $H$ started from $c$ is halted at time $t'$ with
+the same output as $M$ at time $t$, and each work tape of $H$ has visited at most $s+(2D+1)+\ell+3$
+cells by time $t'$, where $s$ is the number of work cells $M$ visits on $x$ up to time $t$.
+\end{theorem}
+
+\begin{theorem}[Prepared configuration equals the hosted loop start]
+\lean{Complexity.f6_last_ruler_layout}
+\label{Complexity.f6_last_ruler_layout}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.StepBlock.forwardLoopCfg, Turing.embedEmitCfg, Turing.embedEmitCfg_forwardLoop_init, Turing.rulerHostCfg, Turing.rulerHostCfg_fields, Turing.tableBitsK, Turing.unaryFin}
+\difficulty{4}
+Let $K,n,\ell\in\mathbb{N}$, let $M$ be a one-work-tape binary machine with states
+$\{0,\dots,n\}$, let $x,z$ be binary words with $|z|=\ell+|x|$, and let $\phi$, $e$ be states and
+$\iota$ a map from pairs (state, bit) to host states. Consider the $(K+4)$-tape configuration on
+$z$ with control $\phi$, input head $\ell+1$, last tape holding $1^\ell$ from cell $0$, work tape
+$1$ holding the binary serialization of the transition table of $M$, work tape $2$ holding the
+unary code of the initial state of $M$ from cell $2$, the other tapes blank, all heads at $0$ and
+empty output. Relabelling its control to $\iota(e,0)$ yields exactly the ruler-host presentation
+(header length $\ell$, ruler $1^\ell$ with head at $0$, control mapped by $q\mapsto\iota(q,0)$)
+of the forwarding-loop encoding, with entry state $e$, of the initial configuration of $M$ on $x$
+placed on the first three of $K+3$ tapes.
+\end{theorem}
+
+\begin{theorem}[Initialized runs commute with tape-count casts]
+\lean{Complexity.f6_cast_init_run}
+\label{Complexity.f6_cast_init_run}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
+\difficulty{2}
+Let $m,n\in\mathbb{N}$ with $m=n$, let $A$ be an $m$-tape binary machine, $z$ a binary input and
+$t\in\mathbb{N}$. Viewing $A$ as an $n$-tape machine through the equality $m=n$, its configuration
+at time $t$ on input $z$ is the configuration of $A$ at time $t$ on $z$, transported along $m=n$.
+\end{theorem}
+
+\begin{theorem}[Space is invariant under tape-count casts]
+\lean{Complexity.f6_cast_init_space}
+\label{Complexity.f6_cast_init_space}
+\leanok
+\uses{Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.spaceUsed}
+\difficulty{2}
+Let $m,n\in\mathbb{N}$ with $m=n$, let $A$ be an $m$-tape binary machine, $z$ a binary input and
+$t\in\mathbb{N}$. The number of work cells visited by time $t$ on input $z$ is the same for $A$ and
+for $A$ viewed as an $n$-tape machine through the equality $m=n$.
+\end{theorem}
+
+\begin{theorem}[Tape-count casts preserve the control state]
+\lean{Complexity.f6_cast_cfg_state}
+\label{Complexity.f6_cast_cfg_state}
+\leanok
+\uses{Turing.Cfg}
+\difficulty{2}
+Let $m,n\in\mathbb{N}$ with $m=n$ and let $c$ be an $m$-tape configuration on a binary input.
+Transporting $c$ to an $n$-tape configuration along $m=n$ does not change its control state.
+\end{theorem}
+
+\begin{theorem}[Tape-count casts commute with relabelling]
+\lean{Complexity.f6_cast_cfg_mapState}
+\label{Complexity.f6_cast_cfg_mapState}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState}
+\difficulty{2}
+Let $m,n\in\mathbb{N}$ with $m=n$, let $c$ be an $m$-tape configuration on a binary input with
+control set $P$, and let $f:P\to Q$. Transporting $c$ along $m=n$ and then relabelling its control
+by $f$ gives the same configuration as relabelling first and then transporting.
+\end{theorem}
+
+\begin{theorem}[Tape-count cast as a full-bank embedding]
+\lean{Complexity.f6_cast_cfg_embedding}
+\label{Complexity.f6_cast_cfg_embedding}
+\leanok
+\uses{Complexity.f6_full_embed, Turing.Cfg, Turing.embedEmitCfg}
+\difficulty{2}
+Let $m,n\in\mathbb{N}$ with $m=n$ and let $c$ be an $m$-tape configuration on a binary input.
+The transport of $c$ along $m=n$ equals the embedding of $c$ into $n$ tapes along the
+order-preserving inclusion $\{0,\dots,m-1\}\hookrightarrow\{0,\dots,n-1\}$, with an all-blank
+frame, frame heads at $0$ and empty prior output.
+\end{theorem}
+
+\begin{theorem}[Casting back a full-bank embedding]
+\lean{Complexity.f6_cast_back_embedding}
+\label{Complexity.f6_cast_back_embedding}
+\leanok
+\uses{Complexity.f6_full_embed, Turing.Cfg, Turing.embedEmitCfg}
+\difficulty{2}
+Let $m,n\in\mathbb{N}$ with $m=n$ and let $c$ be an $m$-tape configuration on a binary input.
+Embedding $c$ into $n$ tapes along the order-preserving inclusion
+$\{0,\dots,m-1\}\hookrightarrow\{0,\dots,n-1\}$ (blank frame, frame heads at $0$, empty prior output)
+and transporting the result back along $n=m$ returns $c$.
+\end{theorem}
+
+\begin{theorem}[Gluing the preparation phase to the hosted loop]
+\lean{Complexity.f6_final_seam}
+\label{Complexity.f6_final_seam}
+\leanok
+\uses{Complexity.f6_cast_back_embedding, Complexity.f6_cast_cfg_embedding, Complexity.f6_cast_cfg_mapState, Complexity.f6_cast_cfg_state, Complexity.f6_cast_init_run, Complexity.f6_cast_init_space, Complexity.f6_last_ruler_layout, Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape, Turing.StepBlock.forwardLoopCfg, Turing.embedEmitCfg, Turing.rulerHostCfg, Turing.startupLoopTM, Turing.startupLoopTM_runFrom, Turing.startupLoopTM_spaceUsed_le, Turing.tableBitsK, Turing.unaryFin}
+\difficulty{5}
+Let $K,n,\ell\in\mathbb{N}$; let $A$ and $H$ be $(K+4)$-tape binary machines with control sets $P$
+(with decidable equality) and $V$; let $\phi\in P$, a state $e$ and a map $\iota$ from pairs
+(state, bit) to $V$ be given; let $M$ be a one-work-tape binary machine with states
+$\{0,\dots,n\}$ and $x,z$ binary words with $|z|=\ell+|x|$. Let $d$ be the configuration on $z$ with
+control $\phi$, input head $\ell+1$, last tape $1^\ell$ from cell $0$, work tapes $1$ and $2$
+holding the serialized transition table of $M$ and the unary code of its initial state (from cell
+$2$), other tapes blank, heads at $0$ and empty output; and let $c$ be the ruler-host presentation
+(header length $\ell$, ruler $1^\ell$) of the forwarding-loop encoding with entry $e$ of the
+initial configuration of $M$ on $x$. Let $T,t,B,S\in\mathbb{N}$ with $S\ge 1$, and suppose $A$ on
+$z$ is equal to $d$ at time $T$ and not in state $\phi$ earlier, $A$ visits at most $B$ cells by time
+$T$, and $H$ started from $c$ visits at most $S$ cells on each tape by time $t$. Let $U$ be the
+startup--loop composite that runs $A$ and, on reaching $\phi$, switches to $H$ in state
+$\iota(e,0)$. Then $U$ on input $z$ is at time $T+1+t$ the configuration of $H$ from $c$ at time
+$t$ (control injected), and $U$ visits at most $B+(K+4)S$ cells by that time.
+\end{theorem}
+
+\begin{lemma}[Inclusion part of the space hierarchy]
+\lean{Complexity.sph_inclusion}
+\label{Complexity.sph_inclusion}
+\leanok
+\uses{Complexity.SPACE, Complexity.SPACE.mono_const, Complexity.SpaceConstructible, Complexity.logSpace_eq, Complexity.spaceConstructible_iff}
+\difficulty{4}
+Let $f,g:\mathbb{N}\to\mathbb{N}$ with $g$ space-constructible, and suppose that for every
+$A\in\mathbb{N}$ there is $N$ such that $A\,f(n)\le g(n)$ for all $n\ge N$. Then
+$\mathrm{SPACE}(f)\subseteq\mathrm{SPACE}(g)$.
+\end{lemma}
+
+\begin{lemma}[Diagonal code halting inside the space window]
+\lean{Complexity.sph_code_window}
+\label{Complexity.sph_code_window}
+\leanok
+\uses{Complexity.SpaceConstructible, Complexity.TimeHierarchy.code, Complexity.logSpace_eq, Complexity.spaceConstructible_iff, Turing.CodeTM.toFinTM, Turing.FinTM, Turing.FinTM.ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.of_spaceUsed_le, Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt, Turing.FinTM.DecidesInSpace, Turing.FinTM.computesFunInTime_iff, Turing.FinTM.configBound, Turing.FinTM.decidesInSpace_iff, Turing.FinTM.one_work_tape_binary_spaceUsed, Turing.MachineCode.decode_encode, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.exists_codeTM_spaceUsed, Turing.length_pairEncode, Turing.outSummary, Turing.outSummaryCode, Turing.pairEncode, Turing.summaryTag, Turing.windowRun, Turing.windowRun_summary_of_halts}
+\difficulty{6}
+Let $f,g:\mathbb{N}\to\mathbb{N}$ with $f$ space-constructible and such that for every $A$ there is
+$N$ with $A\,f(n)\le g(n)$ for all $n\ge N$. Let $U_0$ be a finite binary machine such that for every
+code word $\alpha$ of the fixed one-work-tape code scheme there is $C>0$ with: whenever the machine
+decoded from $\alpha$ halts on $\langle\alpha,w\rangle$ by time $t$ with output $y$ having visited at
+most $s$ cells, $U_0$ halts on $\langle\alpha,w\rangle$ at some time with output $y$ having visited
+at most $C(s+1)$ cells. Let $L$ be a binary language decided by a finite binary machine within space
+$c_0 f(n)$. For a machine $N$ with $k$ work tapes and state set $Q_N$ write
+$\mathrm{cb}_N(n,s)=(|Q_N|+1)(n+2)\,3^{k(2s+1)}(2s+1)^{k}$ for its configuration count. Then there are an input $x$ and the time
+$t=\mathrm{cb}_{U_0}(|x|,g(|x|))$ such that $U_0$ has halted on $x$ by time $t$ with output the
+single bit $\mathbf{1}_L(x)$, has visited at most $g(|x|)$ cells by time $t$, and the windowed run
+of $U_0$ on $x$ at radius $g(|x|)$ for $t+1$ rounds, starting from the initial configuration with
+output-summary tag $0$, stops with exit ``halted'', the configuration of $U_0$ at time $t$, and the
+output-summary code of the word consisting of the bit $\mathbf{1}_L(x)$. (The windowed run steps
+the machine while its next step stays within cells $[-s,s]$, stops ``halted'' at a halted
+configuration, stops ``left'' before a step leaving the window, and reports ``exhausted'' after
+the given number of rounds; the summary code is $0$ for empty output, $1$ for the output $[1]$ and
+$2$ otherwise.)
+\end{lemma}
+
+\begin{lemma}[Squares below powers of two]
+\lean{Complexity.sph_sq_le_two_pow}
+\label{Complexity.sph_sq_le_two_pow}
+\leanok
+\difficulty{3}
+For every natural number $L\ge 4$ we have $L^2\le 2^L$.
+\end{lemma}
+
+\begin{lemma}[Logarithm dominated by the identity]
+\lean{Complexity.sph_logSpace_dom}
+\label{Complexity.sph_logSpace_dom}
+\leanok
+\uses{Complexity.logSpace, Complexity.logSpace_eq, Complexity.sph_sq_le_two_pow}
+\difficulty{4}
+For every $A\in\mathbb{N}$ there is $N\in\mathbb{N}$ such that
+$A\,(\lfloor\log_2 n\rfloor+1)\le n+1$ for all $n\ge N$.
+\end{lemma}
+
+\begin{lemma}[Log space strictly inside PSPACE from the hierarchy]
+\lean{Complexity.sph_logspace_ssubset}
+\label{Complexity.sph_logspace_ssubset}
+\leanok
+\uses{Complexity.LOGSPACE, Complexity.LOGSPACE_eq, Complexity.LOGSPACE_subset_PSPACE, Complexity.PSPACE, Complexity.SPACE, Complexity.SpaceConstructible, Complexity.logSpace, Complexity.spaceConstructible_linear, Complexity.spaceConstructible_logSpace, Complexity.space_poly_subset_PSPACE, Complexity.sph_logSpace_dom}
+\difficulty{3}
+Assume that for all space-constructible $f,g:\mathbb{N}\to\mathbb{N}$ such that for every $A$ there
+is $N$ with $A\,f(n)\le g(n)$ for all $n\ge N$, we have $\mathrm{SPACE}(f)\subsetneq\mathrm{SPACE}(g)$.
+Then $\mathrm{L}\subsetneq\mathrm{PSPACE}$, where $\mathrm{L}$ is the class of languages decidable in
+space $O(\log_2 n+1)$ and $\mathrm{PSPACE}$ the class decidable in space $O(n^c+1)$ for some
+$c\in\mathbb{N}$.
+\end{lemma}
+
+\begin{definition}[One-step right move of the input head]
+\lean{Complexity.sphRightTM}
+\label{Complexity.sphRightTM}
+\leanok
+\uses{Turing.MultiTapeTM}
+For $k\in\mathbb{N}$ and a tape alphabet $\Gamma$, the $k$-tape machine over $\Gamma$ with control
+set $\{\mathrm{false},\mathrm{true}\}$ and initial state $\mathrm{false}$ whose transition, in every
+state and on every reading, moves the input head one cell to the right, writes nothing, leaves all
+work heads in place, emits nothing and enters state $\mathrm{true}$.
+\end{definition}
+
+\begin{lemma}[Run of the right-move machine]
+\lean{Complexity.sph_right_run}
+\label{Complexity.sph_right_run}
+\leanok
+\uses{Complexity.sphRightTM, Turing.Action.apply_workTapes, Turing.Cfg, Turing.Cfg.workTapeSymbols_eq, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_one, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step_of_some, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_rightBoundary}
+\difficulty{4}
+Let $k\in\mathbb{N}$, $\Gamma$ an alphabet, $x$ a word over $\Gamma$, and $d$ a $k$-tape configuration
+on $x$ of the machine that always moves its input head right and enters state $\mathrm{true}$,
+with $d$ in state $\mathrm{false}$. After one step the configuration is $d$ with state
+$\mathrm{true}$ and input head moved one cell right (staying put at the right end-marker
+$|x|+1$); this new input position is at least $1$; the configuration at time $0$ is not in state
+$\mathrm{true}$; and at times $0$ and $1$ the work-head positions equal those of $d$.
+\end{lemma}
+
+\begin{definition}[Single-symbol emitter]
+\lean{Complexity.sphEmitTM}
+\label{Complexity.sphEmitTM}
+\leanok
+\uses{Turing.MultiTapeTM}
+For $k\in\mathbb{N}$ and a symbol $b$ of an alphabet $\Gamma$, the $k$-tape machine over $\Gamma$
+with a single control state whose only transition emits $b$ to the output, writes nothing, moves no
+head (input or work) and halts.
+\end{definition}
+
+\begin{lemma}[Run of the single-symbol emitter]
+\lean{Complexity.sph_emit_run}
+\label{Complexity.sph_emit_run}
+\leanok
+\uses{Complexity.sphEmitTM, Turing.Action.apply_workTapes, Turing.Cfg, Turing.Cfg.workTapeSymbols_eq, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_one, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step_of_some, Turing.moveInputPos_zero}
+\difficulty{3}
+Let $k\in\mathbb{N}$, let $b$ be a symbol of an alphabet $\Gamma$, and let $d$ be a $k$-tape
+configuration, in the live state, of the machine that emits $b$ and halts without moving any head.
+After one step the configuration is $d$ halted with output equal to the output of $d$ followed by
+$b$, and at times $0$ and $1$ the work-head positions equal those of $d$.
+\end{lemma}
+
+\begin{definition}[Digit test on the record alphabet]
+\lean{Complexity.sphDigit}
+\label{Complexity.sphDigit}
+\leanok
+\uses{Turing.RecSym}
+Consider the record alphabet over a state set $Q$ and tags $\{0,1,2\}$, whose symbols are binary
+digits, simulated work cells with a head mark, state cells and tag cells. The digit test is the map
+from this alphabet to Booleans that is true exactly on binary-digit symbols.
+\end{definition}
+
+\begin{lemma}[Digit-fold characterizes embedded binary words]
+\lean{Complexity.sph_fold_valid}
+\label{Complexity.sph_fold_valid}
+\leanok
+\uses{Complexity.sphDigit, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecSym.digitEmb_apply}
+\difficulty{4}
+Let $y$ be a word over the record alphabet over a state set $Q$ and tags $\{0,1,2\}$, and let
+$a$ be a Boolean. The left fold of $y$ starting from $a$ with update
+$(b,\sigma)\mapsto b\wedge[\sigma\text{ is a binary digit}]$ returns true if and only if $a$ is true
+and $y$ is the image of some binary word under the symbolwise embedding of bits as digit symbols.
+\end{lemma}
+
+\begin{lemma}[Input validation phase]
+\lean{Complexity.sph_validation_run}
+\label{Complexity.sph_validation_run}
+\leanok
+\uses{Complexity.sphDigit, Complexity.sph_fold_valid, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.ScanPhase, Turing.inputFoldTM, Turing.inputFoldTM_run_ofCfg}
+\difficulty{3}
+Let $k\in\mathbb{N}$, let $y$ be a word over the record alphabet over $Q$ and tags $\{0,1,2\}$, and
+consider the $k$-tape input-fold machine that scans its input left to right with update
+$(b,\sigma)\mapsto b\wedge[\sigma\text{ is a binary digit}]$ from the value true and then returns.
+Let $d$ be a configuration on $y$ in the forward state with flag true and input head at $1$. Then
+there is a Boolean $b$ such that after exactly $2|y|+2$ steps the machine is in configuration $d$
+with control replaced by the done state carrying $b$; $b$ is true if and only if $y$ is the
+digit image of some binary word; no done state is reached earlier; and at every time up to
+$2|y|+2$ every work head is where it is in $d$.
+\end{lemma}
+
+\begin{definition}[Tape selection for the constructibility witness]
+\lean{Complexity.sphWitnessSel}
+\label{Complexity.sphWitnessSel}
+\leanok
+For $K_I,K_R,m\in\mathbb{N}$, the injective map $\{0,\dots,m-1\}\to\{0,\dots,K_I+K_R+m+1\}$ given by
+$i\mapsto K_I+K_R+2+i$, selecting the last $m$ of $K_I+K_R+m+2$ tapes.
+\end{definition}
+
+\begin{lemma}[Radius tape lies outside the witness tapes]
+\lean{Complexity.sph_witness_cap}
+\label{Complexity.sph_witness_cap}
+\leanok
+\uses{Complexity.sphWitnessSel}
+\difficulty{3}
+For all $K_I,K_R,m\in\mathbb{N}$, the tape index $1$ among $\{0,\dots,K_I+K_R+m+1\}$ is not in the image
+of the map $i\mapsto K_I+K_R+2+i$ on $\{0,\dots,m-1\}$.
+\end{lemma}
+
+\begin{lemma}[Computing the radius by the constructibility witness]
+\lean{Complexity.sph_radius_run}
+\label{Complexity.sph_radius_run}
+\leanok
+\uses{Complexity.sphWitnessSel, Complexity.sph_witness_cap, Turing.Cfg.InWindow.core_bounds, Turing.Cfg.liftSymbols, Turing.Cfg.liftSymbols_state, Turing.Cfg.liftSymbols_workTapePos, Turing.Cfg.mapState, Turing.FinTM, Turing.FinTM.ComputesInSpace, Turing.FinTM.bufferTape, Turing.FinTM.computesInSpace_iff, Turing.FinTM.computesInTime_iff, Turing.FinTM.inWindow_of_spaceUsed_le, Turing.MultiTapeTM.exists_first_halt, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.liftSymbols_runFrom, Turing.MultiTapeTM.liftSymbols_spaceUsed, Turing.MultiTapeTM.output_prefix, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape, Turing.MultiTapeTM.spaceUsedByTape_eq_card, Turing.MultiTapeTM.spaceUsedByTape_le_spaceUsed, Turing.MultiTapeTM.spaceUsed_eq_sum, Turing.MultiTapeTM.spaceUsed_mono, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecSym.digitEmb_apply, Turing.embedSilentCfg, Turing.embedSilentCfg_cap, Turing.embedSilentCfg_selected_pos, Turing.embedSilentCfg_unselected, Turing.embedSilentRetTM, Turing.embedSilentRetTM_run, Turing.embedSilentRetTM_visitedByTapeHead, Turing.embedSilentTM_spaceUsedByTape_cap, Turing.embedSilentTM_visitedByTapeHead, Turing.embedSilentTM_visitedByTapeHead_frame}
+\difficulty{5}
+Let $K_I,K_R,c\in\mathbb{N}$, let $Q$ be a set with decidable equality, $g:\mathbb{N}\to\mathbb{N}$,
+and let $G$ be a finite binary machine with $k_G$ work tapes that on every input $x$ computes the
+little-endian binary representation $\beta_x$ of $g(|x|)$ within $c\,g(|x|)$ visited cells. Let $x$
+be a binary word and put $k=K_I+K_R+k_G+2$; fix arbitrary contents $\tau_j$ and head positions
+$h_j$ of $k$ work tapes over the record alphabet and an output $o$. Let $R$ be the machine that runs
+$G$ (bits read as digit symbols) on the tapes $K_I+K_R+2,\dots,k-1$, copies its output onto tape
+$1$ and, when $G$ halts, enters a live return state; start it from the initial configuration of $G$
+on $x$ placed on those tapes, with the other tapes and heads given by $\tau,h$, tape $1$ empty and
+prior output $o$. Then there is $t$ such that: $R$ is in its return state at time $t$ and not
+earlier; at time $t$ tape $1$ holds the digits of $\beta_x$ from cell $0$ with its head at
+$|\beta_x|$; every tape other than $1$ and the selected ones keeps content $\tau_j$ and head $h_j$;
+the output is $o$ at all times up to $t$; at most $k\,(c\,g(|x|)+|\beta_x|+1)$ cells are visited by
+time $t$; and at every time up to $t$ each head position $p_j$ satisfies
+$|p_j|\le|h_j|+c\,g(|x|)+|\beta_x|$.
+\end{lemma}
+
+\begin{definition}[Empty tape selection]
+\lean{Complexity.sphEmptySel}
+\label{Complexity.sphEmptySel}
+\leanok
+For $k\in\mathbb{N}$, the unique injective map from the empty index set into $\{0,\dots,k-1\}$,
+used to run a machine with no work tapes inside a $k$-tape machine.
+\end{definition}
+
+\begin{lemma}[Input rewind framed on all work tapes]
+\lean{Complexity.sph_input_rewind_run}
+\label{Complexity.sph_input_rewind_run}
+\leanok
+\uses{Complexity.sphEmptySel, Turing.Cfg, Turing.Cfg.liftSymbols, Turing.Cfg.liftSymbols_state, Turing.InputRewindPhase, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.liftSymbols_runFrom, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.embedEmitCfg, Turing.embedEmitCfg_eq, Turing.embedEmitCfg_unselected, Turing.embedEmitTM, Turing.embedEmitTM_runFrom, Turing.inputRewindTM, Turing.inputRewindTM_run}
+\difficulty{5}
+Let $k\in\mathbb{N}$, $Q$ a set with decidable equality, $x$ a binary word, and let $d$ be a
+$k$-tape configuration over the record alphabet on the digit image of $x$, in the start state of
+the input rewind, with input head at a position $p\ge 1$. Let $R$ be the binary input-rewind
+machine with no work tapes, with bits read as digit symbols, run inside the $k$-tape machine on
+no work tapes. Then $R$ from $d$ is after $p+1$ steps in configuration $d$ with control set to the
+done state and input head at $1$; it is not in the done state at any earlier time; and the
+work-head positions equal those of $d$ at every time up to $p+1$.
+\end{lemma}
+
+\begin{definition}[Composite rewinding input head and radius tape]
+\lean{Complexity.sphRewindsTM}
+\label{Complexity.sphRewindsTM}
+\leanok
+\uses{Complexity.sphEmptySel, Complexity.sphRightTM, Turing.InputRewindPhase, Turing.MultiTapeTM, Turing.MultiTapeTM.liftSymbols, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RewindPhase, Turing.embedEmitTM, Turing.inputRewindTM, Turing.rewindTM, Turing.seamCompTM}
+For $k\in\mathbb{N}$, a set $Q$ with decidable equality and a tape index $\kappa<k$, the $k$-tape
+machine over the record alphabet obtained by seamed composition of three phases: the one-step right
+move of the input head; upon its state $\mathrm{true}$, the work-tape-free binary input rewind
+(bits read as digits) entered at its start state; upon that rewind's done state, the work-tape
+rewind of tape $\kappa$ entered at its start state.
+\end{definition}
+
+\begin{lemma}[Seamed runs preserve a common head window]
+\lean{Complexity.sph_seam_heads}
+\label{Complexity.sph_seam_heads}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.seamCompTM, Turing.seamCompTM_runFrom_left, Turing.seamCompTM_runFrom_right}
+\difficulty{4}
+Let $A$ and $B$ be $k$-tape machines over $\Gamma$ with control sets $P$ (with decidable equality)
+and $Q$, let $e\in P$ and $n\in Q$, and let $d,d'$ be configurations with $A$ from $d$ equal to $d'$
+at time $t$, $d'$ in state $e$, and no earlier configuration in state $e$. Let
+$p:\{0,\dots,k-1\}\to\mathbb{Z}$ and $r,v\in\mathbb{N}$. If every work head $j$ of $A$ from $d$ is
+within distance $r$ of $p(j)$ at all times $\le t$, and every work head $j$ of $B$ from $d'$ (control
+set to $n$) is within distance $r$ of $p(j)$ at all times $\le v$, then the seamed composite of $A$
+and $B$ (dispatching from $e$ to $n$) started from $d$ has every work head $j$ within distance $r$
+of $p(j)$ at all times $\le t+1+v$.
+\end{lemma}
+
+\begin{lemma}[Rewinding input head and radius tape]
+\lean{Complexity.sph_rewinds_run}
+\label{Complexity.sph_rewinds_run}
+\leanok
+\uses{Complexity.sphEmptySel, Complexity.sphRewindsTM, Complexity.sphRightTM, Complexity.sph_input_rewind_run, Complexity.sph_right_run, Complexity.sph_seam_heads, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields, Turing.FinTM.bufferTape, Turing.InputRewindPhase, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RewindPhase, Turing.embedEmitTM, Turing.inputRewindTM, Turing.moveInputPos, Turing.rewindTM, Turing.rewindTM_run_ofCfg, Turing.seamCompTM, Turing.seamCompTM_firstReturn_ofCfg, Turing.seamCompTM_run_ofCfg}
+\difficulty{5}
+Let $K_I,K_R,m\in\mathbb{N}$, $Q$ a set with decidable equality, $x$ and $w$ binary words, and
+let $d$ be a configuration with $k=K_I+K_R+m+2$ work tapes over the record alphabet on the digit
+image of $x$, in state $\mathrm{false}$ of the right-move phase, with tape $1$ holding the digits of
+$w$ from cell $0$ (blank elsewhere) and its head at $|w|$. Then there is $t$ such that the
+composite (right move, input rewind, rewind of tape $1$) started from $d$ is at time $t$ in the
+final rewind's done state with input head at $1$, the work tapes and output of $d$, the head of
+tape $1$ at $0$ and the other heads as in $d$; it is not in that state before $t$; and at every
+time up to $t$ every work head is within distance $|w|+1$ of its position in $d$.
+\end{lemma}
+
+\begin{lemma}[Fields of a selected configuration]
+\lean{Complexity.sph_select_fields}
+\label{Complexity.sph_select_fields}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.select, Turing.embedEmitCfg, Turing.embedEmitCfg_select, Turing.embedEmitCfg_selected_pos, Turing.embedEmitCfg_selected_tape}
+\difficulty{3}
+Let $\iota:\{0,\dots,m-1\}\hookrightarrow\{0,\dots,k-1\}$ be injective and let $d$ be a $k$-tape
+configuration; let $d|_\iota$ be the $m$-tape configuration selecting the tapes of $d$ along
+$\iota$. Then $d|_\iota$ has the same control and input head position as $d$; appending the output
+of $d|_\iota$ to that of $d$ returns the output of $d$; and for every $i$, tape $i$ and head $i$ of
+$d|_\iota$ are tape $\iota(i)$ and head $\iota(i)$ of $d$.
+\end{lemma}
+
+\begin{definition}[Tape selection for the record initializer]
+\lean{Complexity.sphInitSel}
+\label{Complexity.sphInitSel}
+\leanok
+Given $K_I,K_R,m\in\mathbb{N}$, the order-preserving inclusion of $\{0,\dots,K_I+1\}$ into
+$\{0,\dots,K_I+K_R+m+1\}$, selecting the first $K_I+2$ tapes.
+\end{definition}
+
+\begin{lemma}[Writing the initial configuration record]
+\lean{Complexity.sph_initial_record}
+\label{Complexity.sph_initial_record}
+\leanok
+\uses{Complexity.sphInitSel, Complexity.sph_select_fields, Turing.Cfg, Turing.Cfg.select, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.cfgRecord, Turing.embedEmitCfg, Turing.embedEmitCfg_select, Turing.embedEmitCfg_selected_pos, Turing.embedEmitCfg_selected_tape, Turing.embedEmitCfg_unselected, Turing.embedEmitTM, Turing.embedEmitTM_runFrom, Turing.exists_recordInitTM, Turing.fieldsTape, Turing.recordLength}
+\difficulty{5}
+Let $M$ be a finite binary machine with $k$ work tapes and let $K_R,m\in\mathbb{N}$. There exist
+$K_I$, a finite control set $P$, a $(K_I+K_R+m+2)$-tape machine $R$ over the record alphabet
+(record alphabet over the states of $M$ and tags $\{0,1,2\}$) with states $\mathrm{en},\mathrm{ex}\in P$, and a constant $C$ such that the
+following holds. Let $x$ be a binary word, $s\in\mathbb{N}$, $w$ a binary word whose little-endian
+value is $s$, and write $\lambda=k(2s+1)+\pi(|x|)+k+4$, with $\pi(n)$ the number of binary digits used for input positions for the record length. Let $d$ be a configuration on the
+digit image of $x$ in state $\mathrm{en}$ with input head $1$, such that tape $1$ holds the digits
+of $w$ at offsets $0,\dots,|w|-1$ from its head and blanks at offsets $-1$ and $|w|$, tape $0$ is
+blank at offsets $-1,\dots,\lambda$ from its head, and tapes $2,\dots,K_I+1$ are entirely blank.
+Then there is $t\le C(\lambda+|w|+s+|x|+1)$ such that $R$ from $d$ is not in state $\mathrm{ex}$
+before $t$, every work head stays within distance $C(\lambda+|w|+s+1)$ of its position in $d$ up to
+time $t$, and at time $t$ the configuration is $d$ with control $\mathrm{ex}$ and tape $0$, at
+offsets $0,\dots,\lambda-1$ from its head, overwritten by the field layout of the configuration
+record of the initial configuration of $M$ on $x$ at radius $s$ with tag $0$.
+\end{lemma}
+
+\begin{definition}[Tape selection for the window runner]
+\lean{Complexity.sphRunnerSel}
+\label{Complexity.sphRunnerSel}
+\leanok
+For $K_I,K_R,m\in\mathbb{N}$, the injective map $\{0,\dots,K_R\}\to\{0,\dots,K_I+K_R+m+1\}$ sending
+$0$ to $0$ and each $i\ge1$ to $K_I+1+i$, selecting the record tape and a contiguous scratch bank.
+\end{definition}
+
+\begin{lemma}[Clocked window runner on the full tape plan]
+\lean{Complexity.sph_runner_run}
+\label{Complexity.sph_runner_run}
+\leanok
+\uses{Complexity.sphRunnerSel, Complexity.sph_select_fields, Turing.Cfg, Turing.Cfg.InWindow, Turing.Cfg.select, Turing.FinTM, Turing.FinTM.configBound, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.WindowExit, Turing.cfgRecord, Turing.embedEmitCfg, Turing.embedEmitCfg_select, Turing.embedEmitCfg_selected_pos, Turing.embedEmitCfg_selected_tape, Turing.embedEmitCfg_unselected, Turing.embedEmitTM, Turing.embedEmitTM_runFrom, Turing.exists_configWindowRunnerTM, Turing.fieldsTape, Turing.recordAt_iff, Turing.recordLength, Turing.summaryTag, Turing.summaryTag_none, Turing.windowRun}
+\difficulty{5}
+Let $M$ be a finite binary machine with $k$ work tapes and state set $Q_M$, and write
+$\mathrm{cb}_M(n,s)=(|Q_M|+1)(n+2)\,3^{k(2s+1)}(2s+1)^{k}$ for its configuration count. There exist $K_R$, a finite control set $P$, a
+$(K_R+1)$-tape machine $R$ over the record alphabet (record alphabet over the states of $M$ and tags $\{0,1,2\}$), a state $\mathrm{en}$, an
+injective map $\mathrm{ex}$ from the three window exits (halted, left, exhausted) to $P$ avoiding
+$\mathrm{en}$, and a constant $C$ with the following property. Let $K_I,m,s\in\mathbb{N}$, $x$ a
+binary word, $c$ a configuration of $M$ on $x$ inside the radius-$s$ window and $\tau$ a tag; let
+$d$ be a $(K_I+K_R+m+2)$-tape configuration on the digit image of $x$ in state $\mathrm{en}$ whose
+tape $0$ carries at its head the configuration record of $c$ at radius $s$ with tag $\tau$, and
+whose tapes $K_I+2,\dots,K_I+K_R+1$ are blank. Let $H$ run $R$ on tape $0$ and tapes
+$K_I+2,\dots,K_I+K_R+1$, and let $\lambda$ be the record length. Then there are a time
+$t\le C\,2^{C(\lambda+1)}$ and an exit $\varepsilon$ such that $H$ from $d$ is in state
+$\mathrm{ex}(\varepsilon)$ at time $t$ and in no exit state earlier; every head stays within
+distance $C(\lambda+1)$ of its position in $d$ and the output stays that of $d$ up to time $t$;
+for every $N\le\mathrm{cb}_M(|x|,s)+1$ for which the windowed run of $M$ from $(c,\tau)$ at radius
+$s$ for $N$ rounds does not report exhaustion, $\varepsilon$ equals its exit; and if
+$\varepsilon$ is not exhaustion, there is $N$ for which that windowed run has exit $\varepsilon$
+and the configuration of $H$ at time $t$ is $d$ with control $\mathrm{ex}(\varepsilon)$ and tape
+$0$, at offsets $0,\dots,\lambda-1$ from its head, overwritten by the record of the configuration
+and tag returned by that windowed run.
+\end{lemma}
+
+\begin{definition}[Selection of the record tape]
+\lean{Complexity.sphRecordSel}
+\label{Complexity.sphRecordSel}
+\leanok
+For $k\in\mathbb{N}$, the map from the one-element index set to $\{0,\dots,k\}$ selecting tape $0$.
+\end{definition}
+
+\begin{lemma}[Final test of the stopped configuration record]
+\lean{Complexity.sph_test_run}
+\label{Complexity.sph_test_run}
+\leanok
+\uses{Complexity.sphRecordSel, Complexity.sph_select_fields, Turing.Cfg, Turing.Cfg.select, Turing.FinTM, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordAt, Turing.cfgRecord, Turing.embedEmitCfg, Turing.embedEmitCfg_eq, Turing.embedEmitCfg_select, Turing.embedEmitCfg_selected_pos, Turing.embedEmitCfg_unselected, Turing.embedEmitTM, Turing.embedEmitTM_runFrom, Turing.exists_recordTestTM, Turing.joinFields_cfgRecord_length, Turing.recordAt_iff, Turing.recordLength}
+\difficulty{4}
+Let $M$ be a finite binary machine with $k$ work tapes. There exist a finite control set $P$, a
+one-tape machine $R$ over the record alphabet (record alphabet over the states of $M$ and tags $\{0,1,2\}$), states
+$\mathrm{en},\mathrm{yes},\mathrm{no}\in P$ with $\mathrm{yes}\ne\mathrm{no}$, and a constant $C$
+such that the following holds. Let $k'\in\mathbb{N}$, $x$ a binary word, $s\in\mathbb{N}$, $c$ a
+configuration of $M$ on $x$, $\tau$ a tag and $d$ a $(k'+1)$-tape configuration over the record
+alphabet in state $\mathrm{en}$ whose tape $0$ carries at its head the record of $c$ at radius $s$
+with tag $\tau$; let $H$ run $R$ on tape $0$ alone, and let $\lambda$ be the record length. Then
+there is $t\le C(\lambda+1)$ such that $H$ from $d$ is in neither $\mathrm{yes}$ nor $\mathrm{no}$
+before $t$, every head stays within distance $C(\lambda+1)$ of its position in $d$ up to $t$, and
+at time $t$ the configuration is $d$ with control $\mathrm{yes}$ if $c$ is halted and $\tau=1$, and
+$\mathrm{no}$ otherwise.
+\end{lemma}
+
+\begin{definition}[Specification of the single-symbol emitter]
+\lean{Complexity.sphEmitContract}
+\label{Complexity.sphEmitContract}
+\leanok
+\uses{Complexity.sphEmitTM, Complexity.sph_emit_run, Turing.Contract, Turing.MultiTapeTM.runFrom_zero}
+For $k\in\mathbb{N}$, a symbol $b$ and an input word $x$, the run specification of the $k$-tape
+machine that emits $b$ and halts, entered at its single state with halting as its exit: the
+precondition is always true, the running time is $1$, the endpoint from $d$ is $d$ halted with $b$
+appended to its output, and the head envelope on every tape is the single position of that head in
+$d$.
+\end{definition}
+
+\begin{definition}[Opposite-bit verdict after a record test]
+\lean{Complexity.sphVerdictTM}
+\label{Complexity.sphVerdictTM}
+\leanok
+\uses{Complexity.sphEmitTM, Turing.MultiTapeTM, Turing.RecSym, Turing.seamCompTM₂}
+Given a $k$-tape machine $R$ over the record alphabet with states $\mathrm{yes}$ and $\mathrm{no}$,
+its opposite-bit verdict machine is the two-exit seamed composite that runs $R$ and, from $\mathrm{yes}$, runs the emitter of the digit
+$0$, while from $\mathrm{no}$ it runs the emitter of the digit $1$.
+\end{definition}
+
+\begin{lemma}[Run of the opposite-bit verdict]
+\lean{Complexity.sph_verdict_run}
+\label{Complexity.sph_verdict_run}
+\leanok
+\uses{Complexity.sphEmitContract, Complexity.sphEmitTM, Complexity.sphVerdictTM, Complexity.sph_emit_run, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields, Turing.Cfg.mapState_mapState, Turing.Contract, Turing.Contract.branch, Turing.Contract.mem_Icc_of_abs_le, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.seamCompTM₂_run_ofCfg}
+\difficulty{5}
+Let $R$ be a $k$-tape machine over the record alphabet with control set $P$ (decidable equality),
+$\mathrm{en},\mathrm{yes},\mathrm{no}\in P$ with $\mathrm{yes}\ne\mathrm{no}$, $d$ a configuration in
+state $\mathrm{en}$, $b$ a Boolean and $t,B\in\mathbb{N}$. Suppose $R$ from $d$ is at time $t$ equal
+to $d$ with control $\mathrm{yes}$ if $b$ and $\mathrm{no}$ otherwise, is in neither state earlier,
+and keeps every head within distance $B$ of its position in $d$ up to time $t$. Then the composite
+that runs $R$ and emits the digit $0$ after $\mathrm{yes}$ and the digit $1$ after $\mathrm{no}$,
+started from $d$, is at time $t+2$ halted with the input head, work tapes and work heads of $d$ and
+output equal to that of $d$ followed by the digit $\neg b$; and all its heads stay within distance
+$B$ of their positions in $d$ up to time $t+2$.
+\end{lemma}
+
+\begin{lemma}[Halted window record carries the true summary]
+\lean{Complexity.sph_summary}
+\label{Complexity.sph_summary}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.spaceUsed, Turing.outSummaryCode_eq_one_iff, Turing.summaryTag, Turing.windowRun, Turing.windowRun_stop_unique, Turing.windowRun_summary_of_halts}
+\difficulty{3}
+Let $M$ be a finite binary machine, $x,w$ binary words and $s,t,N\in\mathbb{N}$. Suppose $M$ has
+halted on $x$ by time $t$ with output $w$ and visits at most $s$ work cells by time $t$, and that
+the windowed run of $M$ on $x$ at radius $s$ for $N$ rounds, from the initial configuration with
+output-summary tag $0$, stops with exit ``halted''. Then the configuration it returns is halted,
+and the tag it returns equals $1$ if and only if $w$ is the one-bit word $[1]$. (The tag tracks
+the output summary: $0$ for empty output, $1$ for $[1]$, $2$ otherwise.)
+\end{lemma}
+
+\begin{lemma}[Seamed run avoids another left anchor]
+\lean{Complexity.sph_seam_avoids}
+\label{Complexity.sph_seam_avoids}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.seamCompTM, Turing.seamCompTM_runFrom_left, Turing.seamCompTM_runFrom_right}
+\difficulty{4}
+Let $A$ and $B$ be $k$-tape machines over $\Gamma$ with control sets $P$ (decidable equality) and
+$Q$, let $e,o\in P$ with $e\ne o$ and $n\in Q$, and let $d,d'$ be configurations with $A$ from $d$
+equal to $d'$ at time $t$, $d'$ in state $e$, and no configuration of $A$ from $d$ before time $t$
+in state $e$ or in state $o$. Then the seamed composite of $A$ and $B$, dispatching from $e$ to $n$
+and started from $d$, is never in the left copy of state $o$.
+\end{lemma}
+
+\begin{lemma}[Writing a field layout installs a record]
+\lean{Complexity.sph_written_record}
+\label{Complexity.sph_written_record}
+\leanok
+\uses{Turing.Cfg, Turing.RecordAt, Turing.fieldsTape, Turing.fieldsTape_of_length_le, Turing.fieldsTape_of_neg, Turing.joinFields, Turing.recordAt_iff}
+\difficulty{4}
+Let $d$ be a $(k+1)$-tape configuration, $q$ a control value, $\varphi$ a list of fields whose
+joined layout (fields separated by blanks) has length $L$, and suppose tape $0$ of $d$ is blank
+one cell to the left of its head and at offset $L$ from its head. Let $d'$ be $d$ with control $q$
+and with tape $0$, at offsets $0,\dots,L-1$ from its head, overwritten by the field layout of
+$\varphi$. Then $d'$ carries the record $\varphi$ at the head of tape $0$, that is, tape $0$ reads
+the layout from its head and is blank at offsets $-1$ and $L$.
+\end{lemma}
+
+\begin{definition}[Exit handling after the window runner]
+\lean{Complexity.sphRunnerTailTM}
+\label{Complexity.sphRunnerTailTM}
+\leanok
+\uses{Complexity.sphEmitTM, Turing.MultiTapeTM, Turing.RecSym, Turing.WindowExit, Turing.seamCompTM}
+Given a $k$-tape machine $R$ over the record alphabet with exit states $\mathrm{ex}(\varepsilon)$
+for the three window exits $\varepsilon\in\{$halted, left, exhausted$\}$ and a machine $V$ with an
+entry state, the seamed composite that runs $R$; from $\mathrm{ex}(\text{halted})$ continues with
+$V$; from $\mathrm{ex}(\text{left})$ runs the emitter of the digit $1$; and from
+$\mathrm{ex}(\text{exhausted})$ runs the emitter of the digit $1$.
+\end{definition}
+
+\begin{lemma}[Run of the runner with its exit handling]
+\lean{Complexity.sph_runner_tail_run}
+\label{Complexity.sph_runner_tail_run}
+\leanok
+\uses{Complexity.sphEmitTM, Complexity.sphRunnerTailTM, Complexity.sph_emit_run, Complexity.sph_seam_avoids, Complexity.sph_seam_heads, Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.WindowExit, Turing.seamCompTM, Turing.seamCompTM_runFrom_left, Turing.seamCompTM_runFrom_right, Turing.seamCompTM_run_ofCfg}
+\difficulty{5}
+Let $R$ be a $k$-tape machine over the record alphabet with control set $P$, let $\mathrm{ex}$ be an
+injective map from the three window exits (halted, left, exhausted) to $P$, let $V$ be a machine
+with entry state $n$, and let $d,d'$ be configurations, $t,B\in\mathbb{N}$ and $\varepsilon$ an
+exit such that $R$ from $d$ equals $d'$ at time $t$, $d'$ is in state $\mathrm{ex}(\varepsilon)$, no
+earlier configuration is in any exit state, $d'$ has the output of $d$, and every head stays
+within distance $B$ of its position in $d$ up to time $t$. Let $\psi$ be a predicate on Booleans
+and suppose that if $\varepsilon$ is ``halted'' then there are $v$ and $b$ such that $V$ from $d'$
+(control set to $n$) is halted at time $v$ with output that of $d'$ followed by the digit $b$,
+$\psi(b)$ holds, and every head stays within distance $B$ of its position in $d$ up to time $v$.
+Then for the composite that continues with $V$ after ``halted'' and emits the digit $1$ after
+``left'' or ``exhausted'', started from $d$, there are $v$ and $b$ such that it is halted at time
+$v$ with output that of $d$ followed by the digit $b$; $\psi(b)$ holds if $\varepsilon$ is
+``halted'', and $b$ is true otherwise; and every head stays within distance $B$ of its position in
+$d$ up to time $v$.
+\end{lemma}
+
+\begin{lemma}[Clocked simulation with opposite verdict]
+\lean{Complexity.sph_suffix}
+\label{Complexity.sph_suffix}
+\leanok
+\uses{Complexity.sphRecordSel, Complexity.sphRunnerSel, Complexity.sphRunnerTailTM, Complexity.sphVerdictTM, Complexity.sph_runner_run, Complexity.sph_runner_tail_run, Complexity.sph_summary, Complexity.sph_test_run, Complexity.sph_verdict_run, Complexity.sph_written_record, Turing.Cfg, Turing.Cfg.inWindow_init, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields, Turing.Cfg.mapState_mapState, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.configBound, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.cfgRecord, Turing.embedEmitTM, Turing.fieldsTape_of_length_le, Turing.fieldsTape_of_neg, Turing.joinFields_cfgRecord_length, Turing.recordAt_iff, Turing.recordLength, Turing.summaryTag, Turing.windowRun, Turing.windowRun_summary_of_halts}
+\difficulty{6}
+Let $M$ be a finite binary machine with $k$ work tapes and state set $Q_M$, and write
+$\mathrm{cb}_M(n,s)=(|Q_M|+1)(n+2)\,3^{k(2s+1)}(2s+1)^{k}$ for its configuration count. There exist $K_R$, a finite control set $P$, machines
+$D_{K_I,m}$ with $K_I+K_R+m+2$ tapes over the record alphabet (record alphabet over the states of $M$ and tags $\{0,1,2\}$) (one for every
+$K_I,m\in\mathbb{N}$), a state $\mathrm{en}\in P$ and a constant $C$ such that the following holds.
+Let $K_I,m,s\in\mathbb{N}$, $x$ a binary word, $\lambda$ the record length at radius $s$, and $d$ a
+configuration on the digit image of $x$ in state $\mathrm{en}$ whose tape $0$ carries at its head
+the configuration record of the initial configuration of $M$ on $x$ at radius $s$ with tag $0$,
+and whose tapes $K_I+2,\dots,K_I+K_R+1$ are blank. Then there are $t$ and a bit $b$ such that
+$D_{K_I,m}$ from $d$ is halted at time $t$ with output that of $d$ followed by the digit $b$, every
+head stays within distance $C(\lambda+1)$ of its position in $d$ up to time $t$, and for every
+binary word $w$: if $M$ has halted on $x$ with output $w$ by time $\mathrm{cb}_M(|x|,s)$ and visits
+at most $s$ cells by that time, then $b$ is true exactly when $w\ne[1]$.
+\end{lemma}
+
+\begin{lemma}[Record initialization followed by clocked simulation]
+\lean{Complexity.sph_record_suffix}
+\label{Complexity.sph_record_suffix}
+\leanok
+\uses{Complexity.sph_initial_record, Complexity.sph_seam_heads, Complexity.sph_suffix, Complexity.sph_written_record, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields, Turing.Cfg.mapState_mapState, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.bufferTape, Turing.FinTM.configBound, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.cfgRecord, Turing.joinFields_cfgRecord_length, Turing.recordAt_iff, Turing.recordLength, Turing.seamCompTM, Turing.seamCompTM_run_ofCfg}
+\difficulty{5}
+Let $M$ be a finite binary machine with $k$ work tapes and state set $Q_M$, write
+$\mathrm{cb}_M(n,s)=(|Q_M|+1)(n+2)\,3^{k(2s+1)}(2s+1)^{k}$ for its configuration count, and let $m\in\mathbb{N}$. There exist $K_I,K_R$, a
+finite control set $P$, a $(K_I+K_R+m+2)$-tape machine $D$ over the record alphabet (record alphabet over the states of $M$ and tags $\{0,1,2\}$),
+a state $\mathrm{en}$ and a constant $C$ such that the following holds. Let $x$ be a binary word,
+$s\in\mathbb{N}$, $w$ a binary word whose little-endian value is $s$, and write $\lambda=k(2s+1)+\pi(|x|)+k+4$, with $\pi(n)$ the number of binary digits used for input positions.
+Let $d$ be a configuration on the digit image of $x$ in state $\mathrm{en}$ with input head $1$, such
+that tape $1$ holds the digits of $w$ at offsets $0,\dots,|w|-1$ from its head and blanks at
+offsets $-1$ and $|w|$, and every tape $j<K_I+K_R+2$ with $j\ne1$ is entirely blank. Then there are
+$t$ and a bit $b$ such that $D$ from $d$ is halted at time $t$ with output that of $d$ followed by
+the digit $b$, every head stays within distance $C(\lambda+|w|+s+1)$ of its position in $d$ up to
+time $t$, and for every binary word $u$: if $M$ has halted on $x$ with output $u$ by time
+$\mathrm{cb}_M(|x|,s)$ and visits at most $s$ cells by that time, then $b$ is true exactly when
+$u\ne[1]$.
+\end{lemma}
+
+\begin{lemma}[Record and radius size is linear in the bound]
+\lean{Complexity.sph_record_size}
+\label{Complexity.sph_record_size}
+\leanok
+\uses{Complexity.LogProg.length_bits_le, Complexity.LogProg.succ_le_two_pow_log, Complexity.logSpace, Complexity.logSpace_eq, Turing.length_bits_le_self, Turing.posWidth, Turing.posWidth_eq, Turing.recordLength, Turing.recordLength_eq}
+\difficulty{4}
+Let $g:\mathbb{N}\to\mathbb{N}$ satisfy $\lfloor\log_2 n\rfloor+1\le g(n)$ for all $n$, and let
+$k,n\in\mathbb{N}$. Write $\pi(n)$ for the number of binary digits used for input positions on
+inputs of length $n$ and $\beta$ for the binary representation of $g(n)$. Then
+\[ \bigl(k(2g(n)+1)+\pi(n)+k+4\bigr)+|\beta|+g(n)+1\le(4k+9)\,g(n), \]
+where the bracketed term is the configuration-record length for $k$ tapes, input length $n$ and
+radius $g(n)$.
+\end{lemma}
+
+\begin{lemma}[Diagonalizer on validated binary inputs]
+\lean{Complexity.sph_valid_machine}
+\label{Complexity.sph_valid_machine}
+\leanok
+\uses{Complexity.logSpace, Complexity.logSpace_eq, Complexity.sphRewindsTM, Complexity.sphWitnessSel, Complexity.sph_radius_run, Complexity.sph_record_size, Complexity.sph_record_suffix, Complexity.sph_rewinds_run, Complexity.sph_seam_heads, Complexity.sph_witness_cap, Turing.Cfg.init, Turing.Cfg.liftSymbols, Turing.Cfg.liftSymbols_state, Turing.Cfg.liftSymbols_workTapePos, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields, Turing.Cfg.mapState_mapState, Turing.FinTM, Turing.FinTM.ComputesInSpace, Turing.FinTM.ComputesInTime, Turing.FinTM.bufferTape_nil, Turing.FinTM.configBound, Turing.InputRewindPhase, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RewindPhase, Turing.counterValue_bits, Turing.counterValue_eq, Turing.embedSilentCfg, Turing.embedSilentCfg_cap, Turing.embedSilentCfg_selected_pos, Turing.embedSilentCfg_selected_tape, Turing.embedSilentCfg_unselected, Turing.embedSilentRetTM, Turing.length_bits_le_self, Turing.recordLength, Turing.seamCompTM, Turing.seamCompTM_run_ofCfg}
+\difficulty{6}
+Let $M$ be a finite binary machine with $k$ work tapes and state set $Q_M$, write
+$\mathrm{cb}_M(n,s)=(|Q_M|+1)(n+2)\,3^{k(2s+1)}(2s+1)^{k}$ for its configuration count, let $g:\mathbb{N}\to\mathbb{N}$ satisfy
+$\lfloor\log_2 n\rfloor+1\le g(n)$ for all $n$, let $c\in\mathbb{N}$, and let $G$ be a finite binary
+machine that on every input $x$ computes the binary representation of $g(|x|)$ within $c\,g(|x|)$
+visited cells. There exist $k'$, a finite control set $P$, a $k'$-tape machine $D$ over the record
+alphabet (record alphabet over the states of $M$ and tags $\{0,1,2\}$), a state $\mathrm{en}$ and a constant $B$ such that for every binary word
+$x$ there are $t$ and a bit $b$ with the following properties: $D$ started in state $\mathrm{en}$
+on the digit image of $x$ is halted at time $t$ with output the single digit $b$; every work head
+position $p$ satisfies $|p|\le B\,g(|x|)$ at all times up to $t$; and for every binary word $w$, if
+$M$ has halted on $x$ with output $w$ by time $\mathrm{cb}_M(|x|,g(|x|))$ and visits at most
+$g(|x|)$ cells by that time, then $b$ is true exactly when $w\ne[1]$.
+\end{lemma}
+
+\begin{lemma}[Run specification from a bounded halting run]
+\lean{Complexity.sph_halt_contract}
+\label{Complexity.sph_halt_contract}
+\leanok
+\uses{Turing.Cfg, Turing.Contract, Turing.MultiTapeTM, Turing.MultiTapeTM.exists_first_halt, Turing.MultiTapeTM.runFrom}
+\difficulty{3}
+Let $M$ be a $k$-tape machine over $\Gamma$ with control set $P$, $n\in P$, $d$ a configuration
+and $t,B\in\mathbb{N}$ such that $M$ from $d$ is halted at time $t$ and every work head position
+$p$ satisfies $|p|\le B$ at all times up to $t$. Then there is a run specification for $M$ entered
+at $n$ with halting as its only exit (a precondition, an exact running time, an endpoint and a
+head envelope, such that from every configuration in state $n$ meeting the precondition, $M$
+reaches the endpoint at that time, first reaching an exit then, with heads inside the envelope)
+whose precondition holds exactly at $d$, whose endpoint at $d$ is the configuration of $M$ from
+$d$ at time $t$, and whose head envelope is $[-B,B]$ on every tape.
+\end{lemma}
+
+\begin{lemma}[Adding an input validator to a binary-input machine]
+\lean{Complexity.sph_validated_machine}
+\label{Complexity.sph_validated_machine}
+\leanok
+\uses{Complexity.sphDigit, Complexity.sphEmitContract, Complexity.sphEmitTM, Complexity.sph_halt_contract, Complexity.sph_validation_run, Turing.Cfg, Turing.Cfg.init, Turing.Cfg.mapState, Turing.Cfg.mapState_eq_of_fields, Turing.Contract, Turing.Contract.branch, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_with_q₀, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_with_q₀, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsed_le_of_abs_le, Turing.RecSym, Turing.RecSym.digitEmb, Turing.ScanPhase, Turing.inputFoldTM, Turing.seamCompTM₂}
+\difficulty{6}
+Let $k\in\mathbb{N}$, let $Q,P$ be finite sets with decidable equality, let $V$ be a $k$-tape
+machine over the record alphabet over $Q$ and tags $\{0,1,2\}$ with control set $P$ and state $n$,
+let $S:\mathbb{N}\to\mathbb{N}$, and let $\psi$ be a relation between binary words and Booleans.
+Suppose that for every binary word $x$ there are $t$ and $b$ such that $V$ started in state $n$ on
+the digit image of $x$ is halted at time $t$ with output the single digit $b$, every work head
+position $p$ satisfies $|p|\le S(|x|)$ at all times up to $t$, and $\psi(x,b)$ holds. Then there is
+a finite machine $D$ over the record alphabet such that for every word $y$ over that alphabet
+there are $t$ and $b$ with $D$ halted on $y$ by time $t$ with output the single digit $b$, at most
+$k\,(2S(|y|)+1)$ cells visited by time $t$, and $\psi(x,b)$ for every binary word $x$ whose digit
+image is $y$.
+\end{lemma}
+
+\begin{lemma}[Diagonal language against a fixed machine]
+\lean{Complexity.sph_diagonal_language}
+\label{Complexity.sph_diagonal_language}
+\leanok
+\uses{Complexity.SPACE, Complexity.SPACE.mono_const, Complexity.SpaceConstructible, Complexity.logSpace_eq, Complexity.mem_SPACE_iff, Complexity.spaceConstructible_iff, Complexity.sphEmitTM, Complexity.sph_emit_run, Complexity.sph_valid_machine, Complexity.sph_validated_machine, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.acceptsWithin_iff, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt, Turing.FinTM.computesInTime_iff, Turing.FinTM.configBound, Turing.FinTM.decidesInSpace_of_alphabetReduction, Turing.FinTM.toFinNDTM, Turing.FinTM.toFinNDTM_haltsWithin_and_accepts_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.toNDTM_initCfg, Turing.MultiTapeTM.toNDTM_runWith, Turing.RecSym.digitEmb, Turing.RecSym.digitEmb_apply}
+\difficulty{6}
+Let $M$ be a finite binary machine with $k$ work tapes and state set $Q_M$, write
+$\mathrm{cb}_M(n,s)=(|Q_M|+1)(n+2)\,3^{k(2s+1)}(2s+1)^{k}$ for its configuration count, and let $g:\mathbb{N}\to\mathbb{N}$ be
+space-constructible. Then there is a language $L\in\mathrm{SPACE}(g)$ such that for all binary
+words $x,w$: if $M$ has halted on $x$ with output $w$ by time $\mathrm{cb}_M(|x|,g(|x|))$ and visits
+at most $g(|x|)$ cells by that time, then $x\in L$ exactly when $w\ne[1]$.
+\end{lemma}
+
+\begin{lemma}[Linear space differs from NP via padding]
+\lean{Complexity.sph_linear_ne_NP_of_padding}
+\label{Complexity.sph_linear_ne_NP_of_padding}
+\leanok
+\uses{Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.pairEncode, Complexity.SPACE, Complexity.SpaceConstructible, Complexity.pairFstD, Complexity.pairFstD_pairEncode, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_polyUnary, Complexity.preimage_mem_NP, Complexity.spaceConstructible_linear, Complexity.spaceConstructible_poly, Turing.pairEncode}
+\difficulty{5}
+Assume that for all space-constructible $f,g:\mathbb{N}\to\mathbb{N}$ such that for every $A$ there
+is $N$ with $A\,f(n)\le g(n)$ for all $n\ge N$, we have $\mathrm{SPACE}(f)\subsetneq\mathrm{SPACE}(g)$.
+Assume moreover that for every binary language $L\in\mathrm{SPACE}(n^2+1)$ the padded language
+$\{\langle x,1^{(|x|+1)^2}\rangle : x\in L\}$, with $\langle\cdot,\cdot\rangle$ the self-delimiting
+pairing of binary words, belongs to $\mathrm{SPACE}(n+1)$. Then
+$\mathrm{SPACE}(n+1)\ne\mathrm{NP}$.
+\end{lemma}

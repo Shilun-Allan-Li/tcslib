@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -182,8 +183,7 @@ private lemma sl_pairSkip_two_steps {k : ℕ} {x : List Bool} (src : Fin k)
       { d with
         state := some (.after b₀)
         workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } := by
-    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, hs1]
+    rw [MultiTapeTM.runFrom_one, hs1]
   refine ⟨hrun1, ?_⟩
   have hr1 : ({ d with
       state := some (sl_PairPhase.after b₀)
@@ -456,8 +456,7 @@ private theorem sl_unarySplit_copy {k : ℕ} {x : List Bool} (src sm : Fin k) (h
     have hs := sl_split_step_exit src sm hne hstate
       (by rw [Cfg.workTapeSymbols_eq]; exact h0)
     have hrun1 : (sl_unarySplitTM k src sm).runFrom d 1 = (sl_unarySplitTM k src sm).step d := by
-      rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-        MultiTapeTM.runFrom_zero]
+      rw [MultiTapeTM.runFrom_one]
     refine ⟨?_, ?_, ?_⟩
     · rw [show ((0 : ℕ) : ℤ) = 0 from by norm_num, hrun1, hs]
       apply Cfg.ext <;> dsimp only <;> try rfl
@@ -616,8 +615,7 @@ private theorem sl_unarySplitTM_run {k : ℕ} {x : List Bool} (src sm : Fin k) (
       { d with
         state := some .mv2
         workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 1) } := by
-    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, hs1]
+    rw [MultiTapeTM.runFrom_one, hs1]
   have hrun2 : (sl_unarySplitTM k src sm).runFrom d 2 =
       { d with
         state := some .copy
@@ -841,15 +839,8 @@ private lemma sl_rewrap {k : ℕ} {x : List Bool} {S : Type} {i' : sl_Key}
     (hw : c.workTapes = c₂.workTapes) (hp : c.workTapePos = c₂.workTapePos)
     (ho : c.output = c₂.output) :
     c.mapState (fun _ => (⟨i', ent⟩ : (j : sl_Key) × sl_Ph j)) =
-      c₂.mapState (Sigma.mk i') := by
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, Cfg.mapState_state, hc, hstate, Option.map_some, Option.map_some]
-  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, hin]
-  · funext j p
-    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, hw]
-  · funext j
-    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, hp]
-  · rw [Cfg.mapState_output, Cfg.mapState_output, ho]
+      c₂.mapState (Sigma.mk i') :=
+  Cfg.mapState_const_eq_mapState_sigma c c₂ (by rw [hc]; rfl) hstate hin hw hp ho
 
 /-- A phase guard from a row's first-visit cut: strictly before the exit, every live control
 state of the phase leaves the dispatch table silent. -/
@@ -865,14 +856,8 @@ private lemma sl_guard {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (i : sl_Ke
 private lemma sl_tagged_ne_done {k : ℕ} {x : List Bool} (i : sl_Key) (hi : i ≠ .clearHead)
     (c : Cfg k Bool (sl_Ph i) x) :
     (c.mapState (Sigma.mk i)).state ≠
-      some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
-  rw [Cfg.mapState_state]
-  cases hc : c.state with
-  | none => simp
-  | some st =>
-    simp only [Option.map_some, ne_eq, Option.some.injEq]
-    intro hcon
-    exact hi (congrArg Sigma.fst hcon)
+      some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) :=
+  Cfg.mapState_sigma_state_ne i _ hi c
 
 /-- Phase 1, hosted: the skip over the suffix `s.drop r` of the source word, one dispatch into
 phase 2; no state of its window is the exit.

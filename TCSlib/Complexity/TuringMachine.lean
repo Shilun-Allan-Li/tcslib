@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.TuringMachine.Configuration
 import TCSlib.Complexity.TuringMachine.Deterministic
 import TCSlib.Complexity.TuringMachine.StateRenaming
+import TCSlib.Complexity.TuringMachine.CfgFacts
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Nondeterministic
 import TCSlib.Complexity.TuringMachine.NondeterministicSpace
@@ -34,6 +35,7 @@ import TCSlib.Complexity.TuringMachine.Build.VirtualInput
 import TCSlib.Complexity.TuringMachine.Build.Zone
 import TCSlib.Complexity.TuringMachine.Build.ZoneTape
 import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.OracleCall
 import TCSlib.Complexity.TuringMachine.SymbolLift
@@ -60,16 +62,19 @@ import TCSlib.Complexity.TuringMachine.Build.InputDevice
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
 import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
 import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+import TCSlib.Complexity.TuringMachine.Build.UniversalParts
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import TCSlib.Complexity.TuringMachine.Robustness.TwoTapes
 import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
 import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule
 import TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate
 import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSetup
 import TCSlib.Complexity.TuringMachine.Robustness.ObliviousLedger
 import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+import TCSlib.Complexity.TuringMachine.NatBits
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.TuringMachine.CodeParser
 import TCSlib.Complexity.TuringMachine.CodeFormat
@@ -77,6 +82,7 @@ import TCSlib.Complexity.TuringMachine.Codes2Tape
 import TCSlib.Complexity.TuringMachine.MathlibBridge
 import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.UniversalK
+import TCSlib.Complexity.TuringMachine.UniversalTlogT
 import TCSlib.Complexity.TuringMachine.SelfUniversal
 import TCSlib.Complexity.TuringMachine.UniversalInterpreter
 import TCSlib.Complexity.TuringMachine.UniversalBlock
@@ -113,6 +119,9 @@ for the local modifications.
   (vendored).
 * `StateRenaming` — transport of actions, configurations, and machines along maps
   of the state type; shared by the oracle embedding and the code normal form.
+* `CfgFacts` — four elementary configuration facts: the input read depends on the input head
+  only, a redirected live configuration is a phase's tagged configuration, a tagged configuration
+  is at no other phase's state, and equal-length chunks have the expected total length.
 * `Finite` — the bundled `FinTM` layer carrying `Fintype`/`DecidableEq` state instances;
   all headline definitions are stated over it.
 * `Nondeterministic` — binary-choice nondeterministic machines [AB09, §2.1.2]:
@@ -169,6 +178,8 @@ for the local modifications.
   with blank separators, the inner-packed encoding `zonedTape` and its invariants.
 * `Build/ZoneRebalance` — the rebalance and extension rows (§13d, G4), as contracts.
   Proved.
+* `Build/ZoneStep` — one track's step from the rows, as a contract, and the amortized
+  `O(T log T)` cost of a run ([AB09, §1.7]). Proved.
 * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
 * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a
@@ -214,6 +225,11 @@ for the local modifications.
   H2-F, `machine-library-design.md` §14): any `k`-tape table simulated in macro-step lockstep with
   its emissions forwarded, per-step cost bounded by the table's length, and a space ledger.
   Statement gate passed 2026-10-15; the contract is sorried.
+* `Build/UniversalParts` — the parts of the `k`-generic universal machines [AB09, §1.4.1,
+  Theorem 1.9]: the startup–loop seam with its run and space ledger from any seam endpoint, the
+  forwarding loop's readings at an initial configuration, the header ruler (a doubled-header scan
+  that extends a ruler, then the rewind) and the suffix-ruler layout. Proved; harvested from
+  `UniversalK` (the U2 harvest, 2026-11-06).
 * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
   the EXPCOM and Codes2Tape code schemes. Fills in progress; the module header carries its
@@ -250,9 +266,13 @@ for the local modifications.
   all-`true` word, in the form the timed conditional takes as its test. Proved.
 * `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
 * `Robustness/SingleTape` — one work tape suffices, quadratically [AB09, Claim 1.6].
+* `Robustness/TwoTapes` — two work tapes suffice, with logarithmic overhead, run by run
+  (Hennie–Stearns; the simulation is stated, and its proof is open).
 * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
 * `Robustness/Oblivious` — oblivious machines and the quadratic oblivious simulation
   [AB09, Remark 1.7, Exercise 1.5] (imports the `ClassP` definitions it needs).
+* `NatBits` — the elementary bounds on the binary length `|Nat.bits n|` (below `Encoding` and
+  `SpaceComplexity/Machines/Bin`; no TCSlib import).
 * `Encoding` — machines as strings [AB09, §1.4]: the code normal form `CodeTM`, the
   fixed canonical serialization, the representation-scheme laws `MachineCode`, and
   the effective scheme `EffectiveMachineCode` that the universal machine requires.
@@ -263,6 +283,8 @@ for the local modifications.
   scheme interface `EffectiveCodeK` with the one- and two-tape schemes as instances, the startup,
   the self-application universal machine with time and space ledgers, and the code-first
   evaluator, all proved.
+* `UniversalTlogT` — the efficient universal machine [AB09, Theorem 1.9] at `T log T`, per run
+  and with the converse, proved from `Robustness/TwoTapes`'s reduction and `UniversalK`.
 * `SelfUniversal` — the self-application universal machine `U₀` and its startup
   [AB09, Exercise 4.1], the universal machine of the space hierarchy's window route.
   Both are proved, as the `k = 1` cases of `UniversalK`'s statements.

@@ -6,34 +6,6 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.TuringMachine.Build.Zo
 
 \subsection*{Turing Machine --- Build --- Zone: Results}
 
-\begin{definition}[Bits encoding an optional Boolean]
-\lean{Turing.zoneCellBits}
-\label{Turing.zoneCellBits}
-\leanok
-For an optional Boolean $v$, associate the pair whose first coordinate records whether
-$v$ is present and whose second coordinate is its value when present, taking false when
-it is absent.
-\end{definition}
-
-\begin{definition}[Optional zone cell]
-\lean{Turing.zoneCellOf}
-\label{Turing.zoneCellOf}
-\leanok
-For Boolean values $p$ and $d$, define a partial Boolean cell that is absent when $p$ is
-false and equals $d$ when $p$ is true.
-\end{definition}
-
-\begin{theorem}[Reconstruction from cell bits]
-\lean{Turing.zoneCellOf_bits}
-\label{Turing.zoneCellOf_bits}
-\leanok
-\uses{Turing.zoneCellBits, Turing.zoneCellOf}
-\difficulty{4}
-For every optional Boolean cell value, encoding it by its presence bit and its Boolean
-value (using false when absent), and then reconstructing the optional value from those
-two bits, returns the original cell value.
-\end{theorem}
-
 \begin{definition}[Zone capacity]
 \lean{Turing.zoneCapacity}
 \label{Turing.zoneCapacity}
@@ -98,20 +70,6 @@ s/2\rfloor+1)\rfloor$. If $i<\ell$, return the list entry at index $s-2(2^i-1)$ 
 that index is within the list; otherwise return no value.
 \end{definition}
 
-\begin{definition}[Tape encoded by zone contents]
-\lean{Turing.zoneTape}
-\label{Turing.zoneTape}
-\leanok
-\uses{Turing.ZoneContents, Turing.zoneSlot}
-Given zone contents with $\ell$ zones, define a tape on integer coordinates as follows.
-At coordinates $0$ and $1$, return respectively whether the home cell is present and its
-Boolean value, using false when it is absent. For $c\ge2$, let $n=c-2$; read the
-right-zone slot selected by $\lfloor n/2\rfloor$, encoding its presence at even $n$ and
-its Boolean value at odd $n$. For $c<0$, let $n=-c-1$; read the left-zone slot selected
-by $\lfloor n/2\rfloor$, encoding its Boolean value at even $n$ and its presence at odd
-$n$. In either zone, an unavailable slot gives no tape value.
-\end{definition}
-
 \begin{definition}[Empty zone contents]
 \lean{Turing.ZoneContents.empty}
 \label{Turing.ZoneContents.empty}
@@ -120,28 +78,6 @@ $n$. In either zone, an unavailable slot gives no tape value.
 For each natural number $\ell$, define the empty zone configuration to have an absent
 home cell and empty lists in every left and right zone.
 \end{definition}
-
-\begin{theorem}[Tape contents of an empty zone]
-\lean{Turing.zoneTape_empty}
-\label{Turing.zoneTape_empty}
-\leanok
-\uses{Turing.ZoneContents.empty, Turing.zoneSlot, Turing.zoneTape}
-\difficulty{1}
-For any natural number $\ell$, the tape associated with empty zone contents has value
-$\mathrm{some}(\mathrm{false})$ at positions $0$ and $1$, and is undefined at every
-other integer position.
-\end{theorem}
-
-\begin{theorem}[Tape is blank outside the zones]
-\lean{Turing.zoneTape_blank_outside}
-\label{Turing.zoneTape_blank_outside}
-\leanok
-\uses{Turing.ZoneContents, Turing.zoneBase, Turing.zoneIndex, Turing.zoneIndex_eq_iff, Turing.zoneSlot, Turing.zoneTape}
-\difficulty{6}
-Let $z$ be zone contents with $\ell$ zones, and let $c$ be an integer satisfying
-$2b_\ell+1<|c|$, where $b_\ell$ is the base of the zone following the last represented zone. Then the tape value at cell $c$ is blank.
-the tape content at cell $c$ is blank.
-\end{theorem}
 
 \begin{definition}[Concatenated zone contents]
 \lean{Turing.zoneSide}
@@ -303,17 +239,6 @@ $0,\ldots,\ell-1$, with each list at index $i$ having length at most $2\cdot 2^i
 Replacing the home cell by any chosen optional Boolean value leaves both families of
 lists unchanged.
 \end{definition}
-
-\begin{theorem}[Tape values away from the home cells]
-\lean{Turing.zoneTape_homeWrite}
-\label{Turing.zoneTape_homeWrite}
-\leanok
-\uses{Turing.ZoneContents, Turing.zoneHomeWrite, Turing.zoneTape}
-\difficulty{1}
-Let $\ell$ be a natural number, let $z$ be zone contents with $\ell$ zones, and let $v$
-be an optional Boolean value. If $c$ is an integer with $c \ne 0$ and $c \ne 1$, then
-changing the home value of $z$ to $v$ leaves the tape value at position $c$ unchanged.
-\end{theorem}
 
 \begin{definition}[Move the head right]
 \lean{Turing.zoneMoveRight}
@@ -519,131 +444,3 @@ For every $j\in\mathbb{N}$, the sum over $0\le i<j$ of $4\bigl(2^{i+1}+i+2\bigr)
 most $16\cdot 2^j$.
 \end{theorem}
 
-\begin{definition}[Encoding a zone word]
-\lean{Turing.zoneStageWord}
-\label{Turing.zoneStageWord}
-\leanok
-Given a side and a word whose entries are either absent or Boolean values, encode each
-entry by two bits. For the right side, the pair records first whether the entry is
-present and then its value, taking an absent value to be false; for the other side,
-record the value first and presence second. Concatenate these pairs in the original
-order.
-\end{definition}
-
-\begin{theorem}[Zone stage word length]
-\lean{Turing.zoneStageWord_length}
-\label{Turing.zoneStageWord_length}
-\leanok
-\uses{Turing.zoneStageWord}
-\difficulty{4}
-For either choice of side and every finite word $w$ of optional Boolean symbols, the
-associated stage word has length $2|w|$.
-\end{theorem}
-
-\begin{theorem}[Entries of the encoded zone word]
-\lean{Turing.zoneStageWord_getElem}
-\label{Turing.zoneStageWord_getElem}
-\leanok
-\uses{Turing.zoneStageWord}
-\difficulty{5}
-Let $w$ be a finite list of optional Boolean values, and let $b$ be a Boolean choosing
-an encoding order. Each list entry is encoded by two Boolean entries: when $b$ is true,
-they are its presence indicator followed by its value, and when $b$ is false, they are
-its value followed by its presence indicator. An absent value is encoded using false for
-its value. For every position $p$, the encoded word has an entry there exactly when $w$
-has an entry at position $\lfloor p/2\rfloor$; the encoded entry is the first of that
-pair when $p$ is even and the second when $p$ is odd.
-\end{theorem}
-
-\begin{theorem}[Slot within a zone]
-\lean{Turing.zoneStageSlot}
-\label{Turing.zoneStageSlot}
-\leanok
-\uses{Turing.zoneBase, Turing.zoneBase_succ, Turing.zoneCapacity, Turing.zoneIndex, Turing.zoneIndex_eq_iff, Turing.zoneSlot}
-\difficulty{4}
-For each natural number $i$, set $B_i=2(2^i-1)$ and assign index $s$ the zone index
-$I(s)=\lfloor\log_2(s/2+1)\rfloor$, with integer division understood. Let $w$ assign a
-finite list of optional Boolean values to each of $\ell$ indices. For any index $i<\ell$
-and any natural number $p<2\cdot 2^i$, the entry at position $B_i+p$ in the slot
-assignment is exactly the entry at position $p$ of the list assigned by $w$ to index
-$i$, with an out-of-range list position interpreted as absent.
-\end{theorem}
-
-\begin{theorem}[Right zone window]
-\lean{Turing.zoneStage_rightWindow}
-\label{Turing.zoneStage_rightWindow}
-\leanok
-\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.ZoneContents, Turing.zoneBase, Turing.zoneCapacity, Turing.zoneStageSlot, Turing.zoneStageWord, Turing.zoneStageWord_getElem, Turing.zoneTape}
-\difficulty{5}
-Let $z$ be zone contents with $\ell$ zones, and let $c$ be an integer satisfying
-$2b_\ell+1<|c|$, where $b_\ell$ is the base of the zone following the last represented zone. Then the tape value at cell $c$ is blank.
-the right word at zone $i$ by the pair consisting of whether it is present followed by
-its default Boolean value. At the integer cell $2b_i+2+p$, where $b_i$ is the base of
-zone $i$, the tape content equals the content at position $p$ of this encoded word
-stored from position zero, with blank content beyond the word.
-\end{theorem}
-
-\begin{theorem}[Left zone window]
-\lean{Turing.zoneStage_leftWindow}
-\label{Turing.zoneStage_leftWindow}
-\leanok
-\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.ZoneContents, Turing.zoneBase, Turing.zoneCapacity, Turing.zoneStageSlot, Turing.zoneStageWord, Turing.zoneStageWord_getElem, Turing.zoneTape}
-\difficulty{5}
-Let $z$ be zone contents with $\ell$ zones, and let $c$ be an integer satisfying
-$2b_\ell+1<|c|$, where $b_\ell$ is the base of the zone following the last represented zone. Then the tape value at cell $c$ is blank.
-the left word at zone $i$ by the pair consisting of its default Boolean value followed
-by whether it is present. At the integer cell $-(2b_i)-1-p$, where $b_i$ is the base of
-zone $i$, the tape content equals the content at position $p$ of this encoded word
-stored from position zero, with blank content beyond the word.
-\end{theorem}
-
-\begin{theorem}[Zone window bounds]
-\lean{Turing.zoneStage_window_bounds}
-\label{Turing.zoneStage_window_bounds}
-\leanok
-\uses{Turing.zoneBase, Turing.zoneBase_succ, Turing.zoneCapacity}
-\difficulty{3}
-For a zone index $i$ and an integer $p$ with $-1\le p\le 2$ times the capacity of zone
-$i$, both $2b_i+2+p$ and $-(2b_i)-1-p$ lie in the integer interval from $-(2b_{i+1}+2)$
-to $2b_{i+1}+2$, where $b_j$ denotes the base of zone $j$.
-\end{theorem}
-
-\begin{theorem}[Bounded implementation of an inward zone shift]
-\lean{Turing.FinTM.exists_zoneShiftInTM}
-\label{Turing.FinTM.exists_zoneShiftInTM}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsedByTape, Turing.ZoneContents, Turing.zoneBase, Turing.zoneShiftIn, Turing.zoneTape}
-For each direction $s\in\{\mathrm{false},\mathrm{true}\}$, there are a finite-state
-Turing machine $Z$ over Boolean symbols and a constant $c\in\mathbb N$ such that $Z$ has
-two work tapes and the following holds. For all natural numbers $\ell,i$ with $1\le
-i<\ell$, every zone content $z$ with $\ell$ zones, every Boolean input word $x$, and
-every initial configuration $d$ whose state is the initial state of $Z$, whose first
-work tape stores the encoding of $z$, whose second stores $i$ copies of $\mathrm{true}$,
-whose work-tape heads are both at zero, and whose output is empty, there is a time $T\le
-c(2^i+i+1)$ at which the machine has halted, its first tape stores the encoding of the
-inward-shifted zone content, its second tape still stores $i$ copies of $\mathrm{true}$,
-both work-tape heads are at zero, its output is empty, and its input-head position is
-unchanged. At every time $t<T$ it is not halted; throughout times $t\le T$, the first
-work-tape head lies in $[-(2B+2),2B+2]$, where $B$ is the base of zone $i+1$; and the
-second tape visits at most $c(2^i+i+1)$ cells by time $T$.
-\end{theorem}
-
-\begin{theorem}[Bounded implementation of an outward zone shift]
-\lean{Turing.FinTM.exists_zoneShiftOutTM}
-\label{Turing.FinTM.exists_zoneShiftOutTM}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsedByTape, Turing.ZoneContents, Turing.zoneBase, Turing.zoneShiftOut, Turing.zoneTape}
-For each direction $s\in\{\mathrm{false},\mathrm{true}\}$, there are a finite-state
-Turing machine $Z$ over Boolean symbols and a constant $c\in\mathbb N$ such that $Z$ has
-two work tapes and the following holds. For all natural numbers $\ell,i$ with $1\le
-i<\ell$, every zone content $z$ with $\ell$ zones, every Boolean input word $x$, and
-every initial configuration $d$ whose state is the initial state of $Z$, whose first
-work tape stores the encoding of $z$, whose second stores $i$ copies of $\mathrm{true}$,
-whose work-tape heads are both at zero, and whose output is empty, there is a time $T\le
-c(2^i+i+1)$ at which the machine has halted, its first tape stores the encoding of the
-outward-shifted zone content, its second tape still stores $i$ copies of
-$\mathrm{true}$, both work-tape heads are at zero, its output is empty, and its
-input-head position is unchanged. At every time $t<T$ it is not halted; throughout times
-$t\le T$, the first work-tape head lies in $[-(2B+2),2B+2]$, where $B$ is the base of
-zone $i+1$; and the second tape visits at most $c(2^i+i+1)$ cells by time $T$.
-\end{theorem}

@@ -144,10 +144,8 @@ private theorem pre_scan (x : List Bool) : ∀ (rest : List Bool) (i : ℕ)
     have hin : c.inputSymbol = none := by
       rw [inputSymbol_at c i hi hp, ← List.head?_drop, hd]; rfl
     refine ⟨1, le_refl _, ?_, ?_⟩
-    · change (preTM.tm.step c).state = _
-      rw [preTM_step c _ hs, hin]; rfl
-    · change (preTM.tm.step c).output = _
-      rw [preTM_step c _ hs, hin]; simp [preTr, controlAction, scanPre]
+    · rw [MultiTapeTM.runFrom_one, preTM_step c _ hs, hin]; rfl
+    · rw [MultiTapeTM.runFrom_one, preTM_step c _ hs, hin]; simp [preTr, controlAction, scanPre]
   | [b], i, c, hd, hi, hs, hp => by
     have hlt : i < x.length := by
       have := congrArg List.length hd; simp at this; omega
@@ -222,8 +220,7 @@ private theorem pre_copy (x : List Bool) : ∀ (rest : List Bool) (i : ℕ)
   | [], i, c, hd, hi, hs, hp => by
     have hin : c.inputSymbol = none := by
       rw [inputSymbol_at c i hi hp, ← List.head?_drop, hd]; rfl
-    change (preTM.tm.step c).state = none ∧ (preTM.tm.step c).output = _
-    rw [preTM_step c _ hs, hin]
+    rw [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one, preTM_step c _ hs, hin]
     simp [preTr]
   | b :: r, i, c, hd, hi, hs, hp => by
     have hlt : i < x.length := by

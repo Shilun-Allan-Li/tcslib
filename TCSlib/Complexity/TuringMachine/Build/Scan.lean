@@ -435,7 +435,8 @@ private theorem scan_copy_trace {Symbol : Type*} {k : ℕ} {x : List Symbol}
     simp
     omega
   · have hs : (scanCopyF i d x.length).inputSymbol = none := by
-      simp [Cfg.inputSymbol, scanCopyF, scanWriteCfg]
+      apply Cfg.inputSymbol_of_end
+      simp [scanCopyF, scanWriteCfg]
     rw [step_of_tapeAction_move _ _ i (-1) .neg rfl (q' := .rewind)
       (by simp only [inputCopyTM, hs])]
     apply Cfg.ext
@@ -467,7 +468,8 @@ private theorem scan_copy_trace {Symbol : Type*} {k : ℕ} {x : List Symbol}
         simp [scanCopyR, scanWriteCfg, hj, Function.update_apply] <;> omega
     all_goals simp [scanCopyR, scanWriteCfg]
   · have hs : (scanCopyR i d 0).inputSymbol = none := by
-      simp [Cfg.inputSymbol, scanCopyR, scanWriteCfg]
+      apply Cfg.inputSymbol_of_zero
+      simp [scanCopyR, scanWriteCfg]
     rw [step_of_tapeAction_move _ _ i 1 .pos rfl (q' := .done)
       (by simp only [inputCopyTM, hs])]
     apply Cfg.ext
@@ -547,6 +549,17 @@ def inputFoldTM {Γ : Type*} {A : Type} (k : ℕ) (δ : A → Γ → A) (a₀ : 
       | none => inputMoveAction 1 (.done a)
     | .done a => inputMoveAction 0 (.done a)
 
+/-- In the backward phase a symbol read requests a left move and keeps the
+backward state. A blank read requests a right move and enters the live completed
+state. Both rows preserve the accumulator and ignore the work-tape reads. -/
+theorem inputFoldTM_tr_bwd {Γ : Type*} {A : Type} (k : ℕ)
+    (δ : A → Γ → A) (a₀ a : A) (inp : Option Γ) (work : Fin k → Option Γ) :
+    (inputFoldTM k δ a₀).tr (.bwd a) inp work =
+      (match inp with
+       | some _ => inputMoveAction (-1) (.bwd a)
+       | none => inputMoveAction 1 (.done a)) := by
+  rfl
+
 /-- The native fold's forward accumulator and input position after `r` reads. -/
 private def scanFoldF {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}
     (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x) (r : ℕ) :
@@ -594,7 +607,8 @@ private theorem scan_fold_trace {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}
       omega
     all_goals simp [scanFoldF]
   · have hs : (scanFoldF δ a₀ d x.length).inputSymbol = none := by
-      simp [Cfg.inputSymbol, scanFoldF]
+      apply Cfg.inputSymbol_of_end
+      simp [scanFoldF]
     rw [step_of_inputMoveAction _ _ (-1) rfl
       (q' := .bwd ((x.take x.length).foldl δ a₀)) (by simp only [inputFoldTM, hs])]
     apply Cfg.ext
@@ -618,7 +632,8 @@ private theorem scan_fold_trace {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}
       omega
     all_goals simp [scanFoldR]
   · have hs : (scanFoldR δ a₀ d 0).inputSymbol = none := by
-      simp [Cfg.inputSymbol, scanFoldR]
+      apply Cfg.inputSymbol_of_zero
+      simp [scanFoldR]
     rw [step_of_inputMoveAction _ _ 1 rfl
       (q' := .done (x.foldl δ a₀)) (by simp only [inputFoldTM, hs])]
     apply Cfg.ext

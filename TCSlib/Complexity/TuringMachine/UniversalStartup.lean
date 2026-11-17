@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Build.Embed
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -18,7 +19,9 @@ extracted code, embedding the virtual input head into the paired input's
 verbatim `x` region, and capturing the canonical table on a dedicated work
 tape before control transfers to the table interpreter. This file was split
 out mechanically from `Universal.lean` at the epoch-3→4 merge; its contents
-are the epoch-3 fill, batches B (WIP) and B2 (completion), unchanged.
+are the epoch-3 fill, batches B (WIP) and B2 (completion), except that the capture
+phase is now the bank-embedding library's returning silent embedding
+(`Turing.embedSilentRetTM`).
 
 ## Main definitions / Main results
 
@@ -233,10 +236,7 @@ private lemma universal_live_before {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) {s t : ℕ}
     (hst : s ≤ t) (ht : (tm.runFrom cfg t).state ≠ none) :
     (tm.runFrom cfg s).state ≠ none := by
-  intro hs
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hst
-  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs] at ht
-  exact ht hs
+  exact MultiTapeTM.runFrom_state_ne_none_of_le tm cfg t ht s hst
 
 /-- No prefix extraction step before the separator's second bit can halt. -/
 private lemma universalPrefix_live (α x : List Bool) (s : ℕ)
@@ -446,9 +446,21 @@ lemma universalInput_move {k : ℕ} {S : Type} (α : List Bool) {x : List Bool}
   · omega
 
 
+/-- The capture phase's tape selection: the source machine's work tapes are the host's first
+`n` tapes. -/
+private def universalCaptureSel (n : ℕ) : Fin n ↪ Fin (n + (1 + 3)) :=
+  ⟨Fin.castAdd (1 + 3), Fin.castAdd_injective _ _⟩
+
+/-- The capture phase's states inside the wrapper's: a live source state `q` is `.inl (some q)`,
+and the return anchor after the source halts is the live administrative state `.inl none`. -/
+private def universalCaptureTag (Q S : Type) : Q ⊕ Unit ↪ Option Q ⊕ S :=
+  (Equiv.optionEquivSumPUnit Q).symm.toEmbedding.trans Function.Embedding.inl
+
 /-- Capture a machine's emissions on an additional table tape, then transfer
 control to a four-tape interpreter. The interpreter sees the original physical
-input, not a virtual copy of it. Its other three tapes initially remain blank. -/
+input, not a virtual copy of it. Its other three tapes initially remain blank.
+The capture phase is the returning silent embedding `Turing.embedSilentRetTM` of the source
+on the first `M.k` tapes, with the table tape as its capture tape. -/
 def universalCaptureTM {S : Type} [Fintype S] [DecidableEq S]
     (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) : FinTM Bool where
   k := M.k + (1 + 3)
@@ -457,10 +469,8 @@ def universalCaptureTM {S : Type} [Fintype S] [DecidableEq S]
     { q₀ := .inl (some M.tm.q₀)
       tr := fun q inp work => match q with
         | .inl (some q) =>
-          let a := M.tm.tr q inp (fun i => work (Fin.castAdd 4 i))
-          ⟨a.inputTape, tapeBlocks a.workTapes
-            (a.output.map some, if a.output = none then 0 else .pos)
-            (fun _ => (none, 0)), none, some (.inl a.state)⟩
+          ((embedSilentRetTM (universalCaptureSel M.k) (Fin.natAdd M.k (Fin.castAdd 3 0))
+            M.tm).tr (.inl q) inp work).mapState (universalCaptureTag M.State S)
         | .inl none => controlAction 0 (some (.inr D.q₀))
         | .inr q => rightAction M.k Sum.inr
             (D.tr q inp (fun i => work (Fin.natAdd M.k i))) }
@@ -495,69 +505,62 @@ private lemma universalCapture_init {S : Type} [Fintype S] [DecidableEq S]
       refine Fin.addCases ?_ ?_ j <;> intro j <;>
         simp [universalCaptureCfg, tapeBlocks]
 
-/-- One live transition captures every emitted bit, including a bit emitted on
-the source machine's halting transition. Administrative states remain live.
+/-- A host tape that is neither a source tape nor the table tape is outside the selection. -/
+private lemma universalCapture_off (n : ℕ) (j : Fin (n + (1 + 3))) (hj : n ≤ j.val) :
+    j ∉ Set.range (universalCaptureSel n) := by
+  rintro ⟨i, rfl⟩
+  exact absurd hj (Nat.not_le.mpr i.isLt)
 
-**Proof sketch.** The original work block and physical input move in lockstep.
-An emission writes precisely the table's right blank and advances its head; the
-buffer-append identity gives its new contents. No real output is emitted, and
-the three later simulation tapes remain untouched. -/
-private lemma universalCapture_step {S : Type} [Fintype S] [DecidableEq S]
-    (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) {x : List Bool}
-    (cfg : Cfg M.k Bool M.State x) (hs : cfg.state ≠ none) :
-    (universalCaptureTM M D).tm.step (universalCaptureCfg M D cfg) =
-      universalCaptureCfg M D (M.tm.step cfg) := by
-  unfold MultiTapeTM.step
-  cases hq : cfg.state with
-  | none => exact False.elim (hs hq)
-  | some q =>
-    have hs' : (universalCaptureCfg M D cfg).state = some (.inl (some q)) := by
-      simp [universalCaptureCfg, hq]
-    rw [hs']
-    dsimp only [universalCaptureTM]
-    have hr : (fun i => (universalCaptureCfg M D cfg).workTapeSymbols
-        (Fin.castAdd 4 i)) = cfg.workTapeSymbols := by
-      funext i
-      simp [universalCaptureCfg, Cfg.workTapeSymbols, tapeBlocks]
-    have hi : (universalCaptureCfg M D cfg).inputSymbol = cfg.inputSymbol := rfl
-    rw [hr, hi]
-    let a := M.tm.tr q cfg.inputSymbol cfg.workTapeSymbols
-    change (⟨a.inputTape, tapeBlocks a.workTapes
-      (a.output.map some, if a.output = none then 0 else .pos)
-      (fun _ => (none, 0)), none, some (.inl a.state)⟩ :
-      Action (M.k + (1 + 3)) Bool _).apply _ = universalCaptureCfg M D (a.apply cfg)
-    refine Cfg.ext rfl rfl ?_ ?_ ?_
-    · funext i
-      refine Fin.addCases ?_ ?_ i
-      · intro j; simp [universalCaptureCfg, tapeBlocks, Action.apply]
-      · intro j
-        refine Fin.addCases ?_ ?_ j
-        · intro j
-          cases ho : a.output <;>
-            simp [universalCaptureCfg, tapeBlocks, Action.apply, ho, bufferTape_append]
-        · intro j; simp [universalCaptureCfg, tapeBlocks, Action.apply]
-    · funext i
-      refine Fin.addCases ?_ ?_ i
-      · intro j; simp [universalCaptureCfg, tapeBlocks, Action.apply]
-      · intro j
-        refine Fin.addCases ?_ ?_ j
-        · intro j
-          cases ho : a.output <;> simp [universalCaptureCfg, tapeBlocks, Action.apply, ho]
-        · intro j; simp [universalCaptureCfg, tapeBlocks, Action.apply]
-    · simp [universalCaptureCfg, tapeBlocks, Action.apply]
+/-- A source configuration on the capture wrapper's tapes: the silent embedding with a blank
+frame, an empty table prefix and an empty output. -/
+private abbrev universalCaptureEmb (M : FinTM Bool) {x : List Bool}
+    (cfg : Cfg M.k Bool M.State x) : Cfg (M.k + (1 + 3)) Bool M.State x :=
+  embedSilentCfg (universalCaptureSel M.k) (Fin.natAdd M.k (Fin.castAdd 3 0)) (fun _ _ => none)
+    (fun _ => 0) [] [] cfg
 
-/-- Lockstep capture through the first halting transition. -/
-private lemma universalCapture_run {S : Type} [Fintype S] [DecidableEq S]
+/-- **The capture configuration is the renamed embedded one.** A configuration with the data
+fields of the embedding of `cfg`, whose renamed state is `.inl cfg.state`, is the capture
+configuration of `cfg`.
+
+**Proof sketch.** Compare the five fields. On the work tapes and heads, split the host tapes into
+the three blocks of `Turing.tapeBlocks`: the source block is the embedding's selected tapes
+(`Turing.embedSilentCfg_selected_tape`), the table tape its capture tape
+(`Turing.embedSilentCfg_cap`), and the interpreter block its blank frame
+(`Turing.embedSilentCfg_unselected`). -/
+private lemma universalCapture_embed {S T : Type} [Fintype S] [DecidableEq S]
     (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) {x : List Bool}
-    (cfg : Cfg M.k Bool M.State x) (t : ℕ)
-    (h : ∀ s, s < t → (M.tm.runFrom cfg s).state ≠ none) :
-    (universalCaptureTM M D).tm.runFrom (universalCaptureCfg M D cfg) t =
-      universalCaptureCfg M D (M.tm.runFrom cfg t) := by
-  induction t with
-  | zero => rfl
-  | succ t ih =>
-    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => h s (by omega)),
-      universalCapture_step M D _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
+    (cfg : Cfg M.k Bool M.State x) (d : Cfg (M.k + (1 + 3)) Bool T x)
+    (f : T → Option M.State ⊕ S) (hs : d.state.map f = some (.inl cfg.state))
+    (hi : d.inputPos = (universalCaptureEmb M cfg).inputPos)
+    (hw : ∀ j, d.workTapes j = (universalCaptureEmb M cfg).workTapes j)
+    (hp : ∀ j, d.workTapePos j = (universalCaptureEmb M cfg).workTapePos j)
+    (ho : d.output = (universalCaptureEmb M cfg).output) :
+    d.mapState f = universalCaptureCfg M D cfg := by
+  have hcap := embedSilentCfg_cap (universalCaptureSel M.k) (Fin.natAdd M.k (Fin.castAdd 3 0))
+    (universalCapture_off M.k _ (Nat.le_add_right _ _)) (fun _ _ => none) (fun _ => 0) [] [] cfg
+  have hframe (j : Fin 3) := embedSilentCfg_unselected (universalCaptureSel M.k)
+    (Fin.natAdd M.k (Fin.castAdd 3 0)) (fun _ _ => none) (fun _ => 0) [] [] cfg
+    (Fin.natAdd M.k (Fin.natAdd 1 j)) (universalCapture_off M.k _ (Nat.le_add_right _ _))
+    (fun h => by have := congrArg Fin.val h; simp at this)
+  refine Cfg.ext (by rw [Cfg.mapState_state, hs]; rfl)
+    (by rw [Cfg.mapState_inputPos, hi, embedSilentCfg_inputPos]; rfl) ?_ ?_
+    (by rw [Cfg.mapState_output, ho, embedSilentCfg_output]; rfl)
+  · funext i z
+    rw [Cfg.mapState_workTapes, hw]
+    refine Fin.addCases (fun j => ?_) (fun j => Fin.addCases (fun j => ?_) (fun j => ?_) j) i
+    · exact (congrFun (embedSilentCfg_selected_tape _ _ _ _ _ _ cfg j) z).trans
+        (congrFun (tapeBlocks_left _ _ _ j) z).symm
+    · rw [Subsingleton.elim j 0, hcap.1, List.nil_append]
+      exact (congrFun (tapeBlocks_buffer _ _ _ 0) z).symm
+    · exact (congrFun (hframe j).1 z).trans
+        (congrFun (tapeBlocks_right _ _ (fun _ _ => none) j) z).symm
+  · funext i
+    rw [Cfg.mapState_workTapePos, hp]
+    refine Fin.addCases (fun j => ?_) (fun j => Fin.addCases (fun j => ?_) (fun j => ?_) j) i
+    · exact (embedSilentCfg_selected_pos _ _ _ _ _ _ cfg j).trans (tapeBlocks_left _ _ _ j).symm
+    · rw [Subsingleton.elim j 0, hcap.2, List.nil_append]
+      exact (tapeBlocks_buffer _ _ (fun _ => (0 : ℤ)) 0).symm
+    · exact (hframe j).2.trans (tapeBlocks_right _ _ (fun _ => (0 : ℤ)) j).symm
 
 /-- Capture and interpreter entry preserve the entire halted source configuration
 as inactive data, except that its output is now on the table tape. -/
@@ -567,25 +570,16 @@ def universalCapturedCfg {S : Type} [Fintype S] [DecidableEq S]
     Cfg (universalCaptureTM M D).k Bool (universalCaptureTM M D).State x :=
   { universalCaptureCfg M D cfg with state := some (.inr D.q₀) }
 
-/-- A halted source configuration transfers to the live interpreter entry state. -/
-private lemma universalCapture_transfer {S : Type} [Fintype S] [DecidableEq S]
-    (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) {x : List Bool}
-    (cfg : Cfg M.k Bool M.State x) (h : cfg.state = none) :
-    (universalCaptureTM M D).tm.step (universalCaptureCfg M D cfg) =
-      universalCapturedCfg M D cfg := by
-  unfold MultiTapeTM.step
-  simp only [universalCaptureCfg, h]
-  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ ?_
-  · rfl
-  · funext i; exact add_zero _
-  · rfl
-
 /-- Every completed source computation reaches the interpreter with the table
 captured in at most one extra transition.
 
-**Proof sketch.** Choose the first source halting time. Lockstep capture holds
-through that transition; one live administrative transition enters the interpreter.
-Absorbing source halting identifies this first halted configuration with the one
+**Proof sketch.** Choose the first source halting time `t`. The capture phase is the returning
+silent embedding of the source (`Turing.embedSilentRetTM`) with its states renamed into the
+wrapper's; the two tables agree on every live embedded state, so the renamed contract
+`Turing.embedSilentRetTM_run` transports through time `t`
+(`Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`), ending at the return anchor `.inl none` over
+the halted source's capture configuration. One administrative transition enters the
+interpreter. Absorbing source halting identifies this first halted configuration with the one
 at the supplied time bound, so all its fields (including parked input position)
 are retained, not merely its completed output. -/
 lemma universalCapture_start {S : Type} [Fintype S] [DecidableEq S]
@@ -595,17 +589,34 @@ lemma universalCapture_start {S : Type} [Fintype S] [DecidableEq S]
       (universalCaptureTM M D).tm.runFrom ((universalCaptureTM M D).tm.initCfg x) t =
         universalCapturedCfg M D (M.tm.runFrom (M.tm.initCfg x) T) := by
   classical
-  have hh : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, h⟩
-  let t := Nat.find hh
-  have ht : t ≤ T := Nat.find_min' hh h
-  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh
-  have he : M.tm.runFrom (M.tm.initCfg x) T = M.tm.runFrom (M.tm.initCfg x) t := by
-    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le ht
-    rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs]
+  obtain ⟨t, ht, hlive, hcut⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) h
+  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none :=
+    (congrArg Cfg.state hcut).trans h
+  have hq₀ : (M.tm.initCfg x).state = some M.tm.q₀ := by
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_state]
+  obtain ⟨-, hend, hfirst⟩ := embedSilentRetTM_run (universalCaptureSel M.k)
+    (Fin.natAdd M.k (Fin.castAdd 3 0)) (universalCapture_off M.k _ (Nat.le_add_right _ _)) M.tm
+    (fun _ _ => none) (fun _ => 0) [] [] (M.tm.initCfg x) t
+    (by rw [hq₀]; exact Option.some_ne_none _) hlive hs
+  have hrun := MultiTapeTM.runFrom_mapState_of_agreeOn _ (universalCaptureTM M D).tm
+    (universalCaptureTag M.State S) (· ≠ Sum.inr ())
+    (by rintro (q | ⟨⟩) hq inp work; exacts [rfl, absurd rfl hq]) _ t
+    (fun u hu q hq hqe => hfirst u hu (hqe ▸ hq))
   refine ⟨t + 1, by omega, ?_⟩
   rw [MultiTapeTM.runFrom_succ_eq_step', universalCapture_init,
-    universalCapture_run M D _ t (fun s hs => Nat.find_min hh hs),
-    universalCapture_transfer M D _ hs, he]
+    ← universalCapture_embed M D (M.tm.initCfg x)
+      ((universalCaptureEmb M (M.tm.initCfg x)).mapState Sum.inl) (universalCaptureTag M.State S)
+      (by rw [Cfg.mapState_state, embedSilentCfg_state, hq₀]; rfl)
+      (Cfg.mapState_inputPos _ _) (fun j => funext fun z => Cfg.mapState_workTapes _ _ j z)
+      (fun j => Cfg.mapState_workTapePos _ _ j) (Cfg.mapState_output _ _), ← hcut]
+  refine (congrArg (universalCaptureTM M D).tm.step (hrun.trans ((congrArg _ hend).trans
+    (universalCapture_embed M D _ _ _ (by rw [hs]; rfl) rfl (fun _ => rfl) (fun _ => rfl)
+      rfl)))).trans ?_
+  -- the administrative transition into the interpreter
+  rw [MultiTapeTM.step_of_some (q := (.inl none : Option M.State ⊕ S)) (by rw [← hs]; rfl)]
+  change (controlAction 0 (some (Sum.inr D.q₀ : Option M.State ⊕ S))).apply _ = _
+  rw [controlAction_apply, moveInputPos_zero]
+  rfl
 
 /-- Prefix-only startup with the actual canonical table on a work tape. The
 input suffix stays in place, unread during startup, and the interpreter receives

@@ -723,6 +723,32 @@ def clockStageCfg (W : FinTM Bool) (a : ℕ) {x : List Bool}
     Fin.addCases c.workTapePos (fun j => if j.val = 0 then c.output.length + 1 else if j.val = 1 then 1 else 0),
     []⟩
 
+/-- The clock stage runs the witness's state, and enters the reset once the witness halts. -/
+lemma clockStageCfg_state (W : FinTM Bool) (a : ℕ) {x : List Bool} (c : Cfg W.k Bool W.State x) :
+    (clockStageCfg W a c).state = some ((c.state.map OblPhase.clock).getD .resetStart) := rfl
+
+/-- The clock stage keeps the witness's input head position. -/
+lemma clockStageCfg_inputPos_val (W : FinTM Bool) (a : ℕ) {x : List Bool}
+    (c : Cfg W.k Bool W.State x) : (clockStageCfg W a c).inputPos.val = c.inputPos.val := rfl
+
+/-- The clock stage's tapes: the witness's tapes as bits, the clock tape holding the witness's
+output, a clock tape holding nothing, and a blank guide tape. -/
+lemma clockStageCfg_workTapes (W : FinTM Bool) (a : ℕ) {x : List Bool}
+    (c : Cfg W.k Bool W.State x) :
+    (clockStageCfg W a c).workTapes = Fin.addCases (fun i z => (c.workTapes i z).map OblSymbol.bit)
+      (fun j => if j.val = 0 then clockTape c.output else if j.val = 1 then clockTape [] else
+        fun _ => none) := rfl
+
+/-- The clock stage's heads: the witness's heads, then the three administrative heads. -/
+lemma clockStageCfg_workTapePos (W : FinTM Bool) (a : ℕ) {x : List Bool}
+    (c : Cfg W.k Bool W.State x) :
+    (clockStageCfg W a c).workTapePos = Fin.addCases c.workTapePos
+      (fun j => if j.val = 0 then c.output.length + 1 else if j.val = 1 then 1 else 0) := rfl
+
+/-- The clock stage emits nothing. -/
+lemma clockStageCfg_output (W : FinTM Bool) (a : ℕ) {x : List Bool} (c : Cfg W.k Bool W.State x) :
+    (clockStageCfg W a c).output = [] := rfl
+
 /-- The clock-stage input read agrees with the masked native read. -/
 private lemma clockStageCfg_input (W : FinTM Bool) (a : ℕ) {x : List Bool}
     (c : Cfg W.k Bool W.State x) :
@@ -829,7 +855,10 @@ private lemma clockStageCfg_run (W : FinTM Bool) (a : ℕ) (x : List Bool) (τ :
       clockStageCfg W a ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) t) := by
   intro t
   induction t with
-  | zero => intro _; exact clockStageCfg_init W a x
+  | zero =>
+    intro _
+    rw [Nat.zero_add, MultiTapeTM.runFrom_one, MultiTapeTM.runFrom_zero]
+    exact clockStageCfg_init W a x
   | succ t ih =>
     intro ht
     obtain ⟨q, hs⟩ := Option.ne_none_iff_exists'.mp (hlive t (by omega))
@@ -844,22 +873,24 @@ lemma clockStageCfg_captures (W : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
     ∃ τ ≤ b * (T x.length + 1), ∃ c : Cfg W.k Bool W.State x,
       c.state = none ∧ c.output = (T x.length).bits ∧
       (obliviousSchedule W a).tm.runFrom
-        ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) (τ + 1) = clockStageCfg W a c := by
+        ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) (τ + 1) =
+          obliviousScheduleCfg W a (clockStageCfg W a c) := by
   classical
-  have hm := maskedClock_computes W T b hW x
-  have hhalt := ((FinTM.computesInTime_iff _ _ _ _).mp hm).1
-  have hex : ∃ t, ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) t).state = none :=
-    ⟨_, hhalt⟩
-  let τ := Nat.find hex
-  have hs : ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ).state = none :=
-    Nat.find_spec hex
-  have ht : τ ≤ b * (T x.length + 1) := Nat.find_min' hex hhalt
-  have hlive : ∀ t < τ, ((maskedClock W false).tm.runFrom
-      ((maskedClock W false).tm.initCfg x) t).state ≠ none := fun _ h => Nat.find_min hex h
-  let c := (maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ
-  have hc : (maskedClock W false).ComputesInTime x c.output τ :=
-    (FinTM.computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
-  exact ⟨τ, ht, c, hs, hc.output_unique hm, clockStageCfg_run W a x τ hlive τ (le_refl _)⟩
+  have hspec := (FinTM.computesInTime_iff _ _ _ _).mp (maskedClock_computes W T b hW x)
+  obtain ⟨τ, hτ, hlive, hend⟩ := MultiTapeTM.exists_first_halt
+    (maskedClock W false).tm ((maskedClock W false).tm.initCfg x) hspec.1
+  let run := (maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ
+  let c : Cfg W.k Bool W.State x := by
+    simpa only [maskedClock_k, maskedClock_State] using run
+  have hstate : run.state = none := (congrArg Cfg.state hend).trans hspec.1
+  have hout : run.output = (T x.length).bits := (congrArg Cfg.output hend).trans hspec.2
+  refine ⟨τ, hτ, c, ?_, ?_, ?_⟩
+  · simpa only [c, maskedClock_k, maskedClock_State] using hstate
+  · simpa only [c, maskedClock_k, maskedClock_State] using hout
+  · rw [obliviousScheduleCfg_eq_id]
+    simpa only [c, run, maskedClock_k, maskedClock_State,
+      obliviousSchedule_k, obliviousSchedule_State, id_eq] using
+      clockStageCfg_run W a x τ hlive τ (le_refl _)
 
 /-- The fixed sweep guide has one marked origin and two structural boundaries. -/
 def guideTape (R : ℕ) (z : ℤ) : Option OblSymbol :=
@@ -1056,6 +1087,7 @@ private lemma macroCfg_cycle (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
       macroCfg W a base (some .macroCheck) (u + 1) 0 := by
   have hcheck : (obliviousSchedule W a).tm.runFrom
       (macroCfg W a base (some .macroCheck) u 0) 1 = macroCfg W a base (some .seekLeft) u 0 := by
+    rw [MultiTapeTM.runFrom_one]
     simpa only [hu, ↓reduceIte] using macroCfg_check W a base u 0
   have hseek : (obliviousSchedule W a).tm.runFrom
       (macroCfg W a base (some .seekLeft) u 0) (R + 2) =

@@ -50,9 +50,7 @@ private def iw_body : MultiTapeTM 1 Bool Bool where
 private theorem iw_one {k : ℕ} {S : Type} {z : List Bool} (M : MultiTapeTM k Bool S)
     (c : Cfg k Bool S z) (q : S) (hc : c.state = some q) :
     M.runFrom c 1 = (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by
-  calc
-    _ = M.step (M.runFrom c 0) := MultiTapeTM.runFrom_succ_eq_step'
-    _ = _ := by rw [MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hc]
+  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hc]
 
 /-- One successful copy step writes the scanned bit, advances both heads and emits nothing. -/
 private theorem iw_body_copy {z : List Bool} (c : Cfg 1 Bool Bool z) (b : Bool)
@@ -82,34 +80,28 @@ private theorem iw_body_blank {z : List Bool} (c : Cfg 1 Bool Bool z)
   simp only [iw_body, Bool.false_eq_true, if_false, hb,
     FinTM.controlAction_apply, moveInputPos_zero]
 
-/-- Overwrite a finite interval of a tape, leaving its exterior intact. -/
-private def iw_patch (tape : ℤ → Option Bool) (head : ℤ) (v : List Bool) :
-    ℤ → Option Bool := fun q =>
-  if head ≤ q ∧ q < head + (v.length : ℤ)
-    then FinTM.bufferTape v (q - head) else tape q
-
 /-- Appending a bit to the copied interval changes exactly its next cell.
 
 **Proof sketch.** At the next cell use the buffer's append equation. Inside the old interval
 that equation preserves the old symbol; outside the enlarged interval both tapes are framed. -/
 private theorem iw_patch_append (tape : ℤ → Option Bool) (head : ℤ)
     (v : List Bool) (b : Bool) :
-    iw_patch tape head (v ++ [b]) =
-      Function.update (iw_patch tape head v) (head + (v.length : ℤ)) (some b) := by
+    wordPatch tape head (v ++ [b]) =
+      Function.update (wordPatch tape head v) (head + (v.length : ℤ)) (some b) := by
   funext q
   by_cases he : q = head + (v.length : ℤ)
   · subst q
     rw [Function.update_self]
-    simp only [iw_patch, List.length_append, List.length_singleton, Nat.cast_add,
+    simp only [wordPatch_apply, List.length_append, List.length_singleton, Nat.cast_add,
       Nat.cast_one]
     rw [if_pos (by omega), FinTM.bufferTape_append, add_sub_cancel_left, Function.update_self]
   · rw [Function.update_of_ne he]
     by_cases hi : head ≤ q ∧ q < head + (v.length : ℤ)
-    · simp only [iw_patch, List.length_append, List.length_singleton, Nat.cast_add,
+    · simp only [wordPatch_apply, List.length_append, List.length_singleton, Nat.cast_add,
         Nat.cast_one]
       rw [if_pos hi, if_pos (by omega), FinTM.bufferTape_append,
         Function.update_of_ne (by omega)]
-    · simp only [iw_patch, List.length_append, List.length_singleton, Nat.cast_add,
+    · simp only [wordPatch_apply, List.length_append, List.length_singleton, Nat.cast_add,
         Nat.cast_one]
       rw [if_neg hi, if_neg (by omega)]
 
@@ -118,7 +110,7 @@ private def iw_prefix {z : List Bool} (c : Cfg 1 Bool Bool z) (p r : ℕ)
     (hr : p + r ≤ z.length) : Cfg 1 Bool Bool z where
   state := some false
   inputPos := ⟨p + 1 + r, by omega⟩
-  workTapes := fun _ => iw_patch (c.workTapes 0) (c.workTapePos 0) ((z.drop p).take r)
+  workTapes := fun _ => wordPatch (c.workTapes 0) (c.workTapePos 0) ((z.drop p).take r)
   workTapePos := fun _ => c.workTapePos 0 + (r : ℤ)
   output := c.output
 
@@ -132,7 +124,7 @@ private theorem iw_prefix_zero {z : List Bool} (c : Cfg 1 Bool Bool z) (p : ℕ)
   · funext i q
     have hz : i = 0 := Subsingleton.elim _ _
     subst i
-    simp [iw_prefix, iw_patch]
+    simp [iw_prefix, wordPatch_apply]
   · funext i
     have hz : i = 0 := Subsingleton.elim _ _
     subst i
@@ -216,15 +208,12 @@ private theorem iw_join_step {z : List Bool} (c : Cfg 2 Bool (CounterLoopState B
   rw [iw_one iw_machine c .escape hc]
   simp only [iw_machine, FinTM.controlAction_apply, moveInputPos_zero]
 
-/-- The all-true underflow word has exactly the counter loop's reported tape contents. -/
+/-- The all-true underflow word has exactly the counter loop's reported tape contents:
+`Turing.wordPatch_replicate`. -/
 private theorem iw_patch_true (ct : ℤ → Option Bool) (cp : ℤ) (width : ℕ) :
-    iw_patch ct cp (List.replicate width true) =
-      fun q => if cp ≤ q ∧ q < cp + (width : ℤ) then some true else ct q := by
-  funext q
-  simp only [iw_patch, List.length_replicate]
-  split_ifs with h
-  · rw [FinTM.bufferTape_eq, if_pos (by omega), List.getElem?_replicate_of_lt (by omega)]
-  · rfl
+    wordPatch ct cp (List.replicate width true) =
+      fun q => if cp ≤ q ∧ q < cp + (width : ℤ) then some true else ct q :=
+  wordPatch_replicate ct cp width true
 
 /-- The two-tape copier stops after the available window, with its counter width preserved.
 
@@ -242,7 +231,7 @@ private theorem iw_local {z : List Bool} (c : Cfg 1 Bool Bool z) (p : ℕ)
         counterLoopCfg (some .done)
           (iw_prefix c p n (by
             have := Nat.min_le_right (Nat.ofDigits 2 (w.map Bool.toNat)) (z.length - p)
-            omega)) (iw_patch ct cp v) cp ∧
+            omega)) (wordPatch ct cp v) cp ∧
       ∀ u < T,
         (iw_machine.runFrom (counterLoopCfg (some (.dec .run)) c ct cp) u).state ≠ some .done := by
   let d := Nat.ofDigits 2 (w.map Bool.toNat)
@@ -292,12 +281,12 @@ private theorem iw_local {z : List Bool} (c : Cfg 1 Bool Bool z) (p : ℕ)
       dsimp only [t]
       omega
     · rw [MultiTapeTM.runFrom_add, iw_join_step _ hex, hsame t le_rfl, hend, hfinal]
-      have hpatch : iw_patch ct cp (counterWord w (n + 1)) = fun q =>
+      have hpatch : wordPatch ct cp (counterWord w (n + 1)) = fun q =>
           if cp ≤ q ∧ q < cp + (w.length : ℤ) then
             FinTM.bufferTape (counterWord w (n + 1)) (q - cp)
           else ct q := by
         funext q
-        simp only [iw_patch, counterWord_length]
+        simp only [wordPatch_apply, counterWord_length]
       simp only [counter_cfg_eq, hpatch]
     · intro u hu
       by_cases hut : u < t
@@ -379,12 +368,12 @@ theorem exists_inputWindowCopyTM (k : ℕ) (j dst : Fin k) (hjd : j ≠ dst) :
     iw_local body p rfl hi hp w (c.workTapes j) (c.workTapePos j) hw y.length hn
   let start := counterLoopCfg (some (.dec .run)) body (c.workTapes j) (c.workTapePos j)
   let finish := counterLoopCfg (some .done) (iw_prefix body p y.length hbound)
-    (iw_patch (c.workTapes j) (c.workTapePos j) v) (c.workTapePos j)
+    (wordPatch (c.workTapes j) (c.workTapePos j) v) (c.workTapePos j)
   let out : Cfg k Bool (CounterLoopState Bool) z :=
     ⟨some .done, (iw_prefix body p y.length hbound).inputPos,
       Function.update (Function.update c.workTapes dst
-        (iw_patch (c.workTapes dst) (c.workTapePos dst) y)) j
-        (iw_patch (c.workTapes j) (c.workTapePos j) v),
+        (wordPatch (c.workTapes dst) (c.workTapePos dst) y)) j
+        (wordPatch (c.workTapes j) (c.workTapePos j) v),
       Function.update c.workTapePos dst (c.workTapePos dst + (y.length : ℤ)), c.output⟩
   have hstart : embedEmitCfg ι c.workTapes c.workTapePos [] start = c := by
     apply embedEmitCfg_eq
@@ -428,7 +417,12 @@ theorem exists_inputWindowCopyTM (k : ℕ) (j dst : Fin k) (hjd : j ≠ dst) :
   · simp only [he, out]
   · simp only [he, out, iw_prefix, y]
   · rw [he, ← hv]
-    rfl
+    show Function.update (Function.update c.workTapes dst
+        (wordPatch (c.workTapes dst) (c.workTapePos dst) y)) j
+        (wordPatch (c.workTapes j) (c.workTapePos j) v) = _
+    rw [show wordPatch (c.workTapes dst) (c.workTapePos dst) y = _ from
+        funext (wordPatch_apply _ _ _), show wordPatch (c.workTapes j) (c.workTapePos j) v = _ from
+        funext (wordPatch_apply _ _ _)]
   · simp only [he, out, y]
   · simp only [he, out]
   · intro u hu

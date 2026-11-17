@@ -36,6 +36,7 @@ argument exists once (`mem_of_codePath`); `mem_iff_codeChain` and the Savitch ma
 ## Main results
 
 * `Complexity.Codec.configBound_mono` — a helper.
+* `Complexity.Codec.stepRel_iff_mem` — `StepRel`'s defining equation.
 * `Complexity.Codec.mem_of_codePath` — a `StepRel`-path of any length from an initial to an
   accepting code gives membership.
 * `Complexity.Codec.mem_iff_codeChain` — the bridge lemma. [AB09, §4.1.1, Claim 4.4(1) in
@@ -69,6 +70,14 @@ lemma configBound_mono (N : FinNDTM Bool) (n : ℕ) {s s' : ℕ} (h : s ≤ s') 
 bits s⟩⟩⟩` is a step pair (a member of `Complexity.Codec.stepLang N`). -/
 def StepRel (N : FinNDTM Bool) (x : List Bool) (s : ℕ) (a b : ℕ) : Prop :=
   pairEncode x (pairEncode (Nat.bits a) (pairEncode (Nat.bits b) (Nat.bits s))) ∈ stepLang N
+
+/-- `Complexity.Codec.StepRel`'s defining equation: a step pair is a member of the step
+language. -/
+theorem stepRel_iff_mem {s a b : ℕ} :
+    StepRel N x s a b ↔
+      pairEncode x (pairEncode (Nat.bits a) (pairEncode (Nat.bits b) (Nat.bits s))) ∈
+        stepLang N :=
+  Iff.rfl
 
 /-- **A code path from an initial to an accepting code makes the input a member**: if `N`
 decides `L` (in any space bound), `u` is the initial code and `v` an accepting code at

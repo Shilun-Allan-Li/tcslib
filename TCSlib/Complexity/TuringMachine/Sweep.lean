@@ -155,6 +155,18 @@ def sweepRevCfg {A S : Type} {x : List A} (q : Option S)
     Cfg 1 A S x :=
   ⟨q, p, fun _ w => sweepTape (-z) l r (-w), fun _ => z, out⟩
 
+/-- The reverse-sweep configuration has the supplied control state. -/
+theorem sweepRevCfg_state {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).state = q := by
+  rfl
+
+/-- The reverse-sweep configuration has the supplied output word. -/
+theorem sweepRevCfg_output {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).output = out := by
+  rfl
+
 /-- Reflection converts the forward zipper identity into a left-moving step. -/
 lemma sweepRevCfg_left {A S : Type} {x : List A} (q : Option S) (q' : S)
     (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
@@ -362,7 +374,10 @@ lemma source_bounds {Γ : Type} (M : FinTM Γ) (x : List Γ) (t : ℕ) :
     (∀ i z, z < -(t : ℤ) ∨ (t : ℤ) < z →
       (M.tm.runFrom (M.tm.initCfg x) t).workTapes i z = none) := by
   induction t with
-  | zero => simp [MultiTapeTM.initCfg, Cfg.init]
+  | zero =>
+    simp only [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos,
+      Cfg.init_workTapes]
+    simp
   | succ t ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step']
     constructor
@@ -377,16 +392,10 @@ lemma source_bounds {Γ : Type} (M : FinTM Γ) (x : List Γ) (t : ℕ) :
       have hne : z ≠ (M.tm.runFrom (M.tm.initCfg x) t).workTapePos i := by
         have := ih.1 i
         omega
-      unfold MultiTapeTM.step
       cases hs : (M.tm.runFrom (M.tm.initCfg x) t).state with
-      | none => exact ih.2 i z hz'
+      | none => rw [MultiTapeTM.step_of_halt hs]; exact ih.2 i z hz'
       | some q =>
-        dsimp only [Action.apply]
-        cases hw : ((M.tm.tr q (M.tm.runFrom (M.tm.initCfg x) t).inputSymbol
-          (M.tm.runFrom (M.tm.initCfg x) t).workTapeSymbols).workTapes i).1
-        · exact ih.2 i z hz'
-        · dsimp only
-          rw [Function.update_of_ne hne]
-          exact ih.2 i z hz'
+        rw [MultiTapeTM.step_of_some hs, Action.apply_workTapes, Function.update_of_ne hne]
+        exact ih.2 i z hz'
 
 end Turing.FinTM

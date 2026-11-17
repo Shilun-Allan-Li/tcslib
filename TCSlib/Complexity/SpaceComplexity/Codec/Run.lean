@@ -56,6 +56,9 @@ lemma codecAs_mem (j : Fin 2) : codecAs j ∈ LOGSPACE := by
 noncomputable def orc : Fin 2 → List Bool → Bool :=
   fun j V => MultiTapeTM.indicator (codecAs j : Set (List Bool)) V
 
+/-- The oracle is the indicator of the codec's deciders. -/
+lemma orc_eq : orc = fun j V => MultiTapeTM.indicator (codecAs j : Set (List Bool)) V := rfl
+
 /-- The bit oracle reads the input. -/
 lemma orc_bit (y : List Bool) (a : ℕ) : orc jBit (pairEncode y (Nat.bits a)) = y.getD a false := by
   show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _

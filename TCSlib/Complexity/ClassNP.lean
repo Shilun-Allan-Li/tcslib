@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.ClassNP.PolyTime
 import TCSlib.Complexity.ClassNP.PolyTimePairing
 import TCSlib.Complexity.ClassNP.Transducer
+import TCSlib.Complexity.ClassNP.CleanCall
 import TCSlib.Complexity.ClassNP.CounterProgPolyTime
 import TCSlib.Complexity.ClassNP.PolyTimePrefix
 import TCSlib.Complexity.ClassNP.NP
@@ -40,6 +41,7 @@ The classes and reduction notions of [AB09, ch. 2] (see
   second pair component, constants, `x ↦ 1^|x|`, concatenation, the total pair
   projections, Boolean branching and length tests.
 * `Transducer` — one-pass transducers (Mealy machines) run in linear time.
+* `CleanCall` — clean modules: subroutine calls that first halt cleanly, and the stop adapter.
 * `CounterProgPolyTime` — counter programs halting in polynomially many steps compute
   polynomial-time functions.
 * `PolyTimePrefix` — take or drop a prefix of a pair's second component at the

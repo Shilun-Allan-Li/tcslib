@@ -146,7 +146,7 @@ theorem mem_acceptLang_iff {S : ℕ} {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (h
   rw [mem_acceptLang]
   constructor
   · rintro ⟨E, hE, hcE, hst, hout⟩
-    have h := BPLInP.coreSum_eq_of_code_eq hE hD (hcE.trans hcD.symm)
+    have h := ExpBFS.coreSum_eq_of_code_eq hE hD (hcE.trans hcD.symm)
     exact (accepting_congr (h.trans hDC)).mp ⟨hst, hout⟩
   · intro h
     exact ⟨D, hD, hcD, (accepting_congr hDC).mpr h⟩
@@ -163,7 +163,7 @@ theorem mem_stepLang_iff {S : ℕ} {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs 
   rw [mem_stepLang]
   constructor
   · rintro ⟨E, hE, hcE, E', ⟨b, rfl⟩, -, rfl⟩
-    have h := (BPLInP.coreSum_eq_of_code_eq hE hD (hcE.trans hcD.symm)).trans hDC
+    have h := (ExpBFS.coreSum_eq_of_code_eq hE hD (hcE.trans hcD.symm)).trans hDC
     refine ⟨b, ?_⟩
     rw [cfgCode, cfgWord_congr (NDTM.coreSum_stepWith _ b h)]
     rfl

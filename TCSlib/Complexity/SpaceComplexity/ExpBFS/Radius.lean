@@ -44,6 +44,8 @@ the book (the book assumes `S` space-constructible and computes the radius inste
 * `Complexity.ExpBFS.card_rset_le_succ` — the count does not drop when the radius grows.
 * `Complexity.ExpBFS.mem_iff_of_card_eq` — equal counts decide membership.
 * `Complexity.ExpBFS.card_rset_succ_of_le` — above the space bound the counts agree.
+* `Complexity.ExpBFS.winRun_iff`, `Complexity.ExpBFS.rcode_iff_reflTransGen` — the two
+  definitions as equations.
 
 ## References
 
@@ -59,39 +61,33 @@ variable {N : FinNDTM Bool} {x : List Bool}
 
 /-! ## Windows -/
 
-/-- The window grows with the radius. -/
+/-- The window grows with the radius (`Turing.Cfg.InWindow.mono`). -/
 lemma inWin_mono {s s' : ℕ} {C : Cfg N.k Bool N.State x} (h : Cfg.InWindow s C) (hs : s ≤ s') :
     Cfg.InWindow s' C :=
-  ⟨fun i => (h.1 i).trans (by exact_mod_cast hs),
-    fun i z hz => h.2 i z (lt_of_le_of_lt (by exact_mod_cast hs) hz)⟩
+  h.mono hs
 
 /-- One step from the window `[-s, s]` stays in the window `[-(s + 1), s + 1]`: heads move by
-one cell and write under themselves. -/
+one cell and write under themselves (`Turing.Cfg.InWindow.apply_of_lt`). -/
 lemma inWin_stepWith {s : ℕ} {C : Cfg N.k Bool N.State x} (h : Cfg.InWindow s C) (b : Bool) :
     Cfg.InWindow (s + 1) (N.tm.stepWith b C) := by
-  unfold NDTM.stepWith
   cases hs : C.state with
-  | none => exact inWin_mono h (by omega)
+  | none => rw [NDTM.stepWith_of_halt hs]; exact h.mono (by omega)
   | some q =>
-    refine ⟨fun i => ?_, fun i z hz' => ?_⟩
-    · have hp := h.1 i
-      have hmove := workTapePos_apply_le (N.tm.tr b q C.inputSymbol C.workTapeSymbols) C i
-      push_cast; rw [abs_le] at hp hmove ⊢; constructor <;> linarith [hp.1, hp.2,
-        hmove.1, hmove.2]
-    · have hp := h.1 i
-      have hzs : (s : ℤ) < |z| := by push_cast at hz'; linarith
-      rcases hwr : ((N.tm.tr b q C.inputSymbol C.workTapeSymbols).workTapes i).1 with _ | sym
-      · simp only [Action.apply, hwr]
-        exact h.2 i z hzs
-      · simp only [Action.apply, hwr]
-        have hzp : z ≠ C.workTapePos i := by
-          rintro rfl; exact absurd hp (not_le.mpr hzs)
-        rw [Function.update_of_ne hzp]
-        exact h.2 i z hzs
+    rw [NDTM.stepWith_of_some hs]
+    refine h.apply_of_lt (fun i => ?_) (by omega) _
+    have hp := abs_le.mp ((Cfg.inWindow_iff.mp h).1 i)
+    rw [abs_lt]; push_cast; constructor <;> omega
 
 /-- A choice word all of whose prefix configurations lie in the window `[-s, s]`. -/
 def WinRun (N : FinNDTM Bool) (x : List Bool) (s : ℕ) (w : List Bool) : Prop :=
   ∀ j ≤ w.length, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x))
+
+/-- A choice word `w` is a window run at radius `s` exactly when, for every `j ≤ |w|`, the
+configuration that `N` reaches on `x` after the first `j` choices of `w` lies in the window
+`[-s, s]` (`Turing.Cfg.InWindow s`). -/
+lemma winRun_iff {s : ℕ} {w : List Bool} :
+    WinRun N x s w ↔ ∀ j ≤ w.length, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x)) :=
+  Iff.rfl
 
 /-- The initial configuration is in every window. -/
 lemma inWin_init (s : ℕ) : Cfg.InWindow s (N.tm.initCfg x) := Cfg.inWindow_init _ x s
@@ -122,6 +118,12 @@ pairs at radius `s`. -/
 def RCode (N : FinNDTM Bool) (x : List Bool) (s u : ℕ) : Prop :=
   Relation.ReflTransGen (StepRel N x s) (cfgCode s (N.tm.initCfg x)) u
 
+/-- `Complexity.ExpBFS.RCode`'s defining equation: a reachable code is a step-pair path's end
+from the initial code. -/
+lemma rcode_iff_reflTransGen {s u : ℕ} :
+    RCode N x s u ↔ Relation.ReflTransGen (StepRel N x s) (cfgCode s (N.tm.initCfg x)) u :=
+  Iff.rfl
+
 /-- Equal codes of window configurations are equal vertices. -/
 lemma coreSum_eq_of_code_eq {s : ℕ} {C D : Cfg N.k Bool N.State x} (hC : Cfg.InWindow s C)
     (hD : Cfg.InWindow s D) (h : cfgCode s C = cfgCode s D) : NDTM.coreSum C = NDTM.coreSum D :=
@@ -147,7 +149,8 @@ theorem rcode_iff (s u : ℕ) :
     | refl => exact ⟨[], fun j _ => by simpa using inWin_init s, rfl⟩
     | tail _ hst ih =>
       obtain ⟨w, hw, hcode⟩ := ih
-      obtain ⟨C, hC, hcC, C', ⟨b, hb⟩, hC', hcC'⟩ := (mem_stepLang N x _ _ s).mp hst
+      obtain ⟨C, hC, hcC, C', ⟨b, hb⟩, hC', hcC'⟩ :=
+        (mem_stepLang N x _ _ s).mp (stepRel_iff_mem.mp hst)
       have hv : NDTM.coreSum (N.tm.runWith w (N.tm.initCfg x)) = NDTM.coreSum C :=
         coreSum_eq_of_code_eq hw.last hC (hcode.trans hcC.symm)
       have hv' : NDTM.coreSum (N.tm.runWith (w ++ [b]) (N.tm.initCfg x)) = NDTM.coreSum C' := by
@@ -164,7 +167,7 @@ theorem rcode_iff (s u : ℕ) :
       | succ j ih =>
         intro hj
         refine (ih (by omega)).tail ?_
-        rw [StepRel, mem_stepLang]
+        rw [stepRel_iff_mem, mem_stepLang]
         refine ⟨_, hw j (by omega), rfl, _, ⟨w[j]'(by omega), ?_⟩, hw (j + 1) hj, rfl⟩
         rw [List.take_succ, NDTM.runWith_append, List.getElem?_eq_getElem (by omega)]
         rfl

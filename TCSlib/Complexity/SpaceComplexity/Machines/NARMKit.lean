@@ -199,77 +199,81 @@ lemma NSem.inc {l l' : Λ} {r : Fin m} (hA : A l = .det (.inc r l')) {v : Fin m 
     (hG : G (some l, v, none))
     (h : NSem A oracle x G (some l', Function.update v r (v r + 1), none) P) :
     NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep] using h)
+  NSem.det hA hG (by simpa only [astep_inc (A := fun _ => .inc r l') rfl] using h)
 
 /-- A clear. -/
 lemma NSem.clr {l l' : Λ} {r : Fin m} (hA : A l = .det (.clr r l')) {v : Fin m → ℕ} {P : Prop}
     (hG : G (some l, v, none)) (h : NSem A oracle x G (some l', Function.update v r 0, none) P) :
     NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep] using h)
+  NSem.det hA hG (by simpa only [astep_clr (A := fun _ => .clr r l') rfl] using h)
 
 /-- A halving. -/
 lemma NSem.half {l l' : Λ} {r : Fin m} (hA : A l = .det (.half r l')) {v : Fin m → ℕ}
     {P : Prop} (hG : G (some l, v, none))
     (h : NSem A oracle x G (some l', Function.update v r (v r / 2), none) P) :
     NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep] using h)
+  NSem.det hA hG (by simpa only [astep_half (A := fun _ => .half r l') rfl] using h)
 
 /-- An equality test that succeeds. -/
 lemma NSem.jeq_pos {l l₁ l₀ : Λ} {r s : Fin m} (hA : A l = .det (.jeq r s l₁ l₀))
     {v : Fin m → ℕ} {P : Prop} (hG : G (some l, v, none)) (he : v r = v s)
     (h : NSem A oracle x G (some l₁, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, if_pos he] using h)
+  NSem.det hA hG (by simpa only [astep_jeq (A := fun _ => .jeq r s l₁ l₀) rfl, if_pos he] using h)
 
 /-- An equality test that fails. -/
 lemma NSem.jeq_neg {l l₁ l₀ : Λ} {r s : Fin m} (hA : A l = .det (.jeq r s l₁ l₀))
     {v : Fin m → ℕ} {P : Prop} (hG : G (some l, v, none)) (he : v r ≠ v s)
     (h : NSem A oracle x G (some l₀, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, if_neg he] using h)
+  NSem.det hA hG (by simpa only [astep_jeq (A := fun _ => .jeq r s l₁ l₀) rfl, if_neg he] using h)
 
 /-- A zero test that succeeds. -/
 lemma NSem.jz_pos {l l₁ l₀ : Λ} {r : Fin m} (hA : A l = .det (.jz r l₁ l₀))
     {v : Fin m → ℕ} {P : Prop} (hG : G (some l, v, none)) (he : v r = 0)
     (h : NSem A oracle x G (some l₁, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, if_pos he] using h)
+  NSem.det hA hG (by simpa only [astep_jz (A := fun _ => .jz r l₁ l₀) rfl, if_pos he] using h)
 
 /-- A zero test that fails. -/
 lemma NSem.jz_neg {l l₁ l₀ : Λ} {r : Fin m} (hA : A l = .det (.jz r l₁ l₀))
     {v : Fin m → ℕ} {P : Prop} (hG : G (some l, v, none)) (he : v r ≠ 0)
     (h : NSem A oracle x G (some l₀, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, if_neg he] using h)
+  NSem.det hA hG (by simpa only [astep_jz (A := fun _ => .jz r l₁ l₀) rfl, if_neg he] using h)
 
 /-- A parity test that succeeds. -/
 lemma NSem.jodd_pos {l l₁ l₀ : Λ} {r : Fin m} (hA : A l = .det (.jodd r l₁ l₀))
     {v : Fin m → ℕ} {P : Prop} (hG : G (some l, v, none)) (he : v r % 2 = 1)
     (h : NSem A oracle x G (some l₁, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, if_pos he] using h)
+  NSem.det hA hG (by simpa only [astep_jodd (A := fun _ => .jodd r l₁ l₀) rfl, if_pos he] using h)
 
 /-- A parity test that fails. -/
 lemma NSem.jodd_neg {l l₁ l₀ : Λ} {r : Fin m} (hA : A l = .det (.jodd r l₁ l₀))
     {v : Fin m → ℕ} {P : Prop} (hG : G (some l, v, none)) (he : ¬ v r % 2 = 1)
     (h : NSem A oracle x G (some l₀, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, if_neg he] using h)
+  NSem.det hA hG (by simpa only [astep_jodd (A := fun _ => .jodd r l₁ l₀) rfl, if_neg he] using h)
 
 /-- A `whole`-mode call on one register that answers `true`. -/
 lemma NSem.call_pos {l l₁ l₀ : Λ} {j : Fin d} {r : Fin m}
     (hA : A l = .det (.call j .whole [r] l₁ l₀)) {v : Fin m → ℕ} {P : Prop}
     (hG : G (some l, v, none)) (he : oracle j (pairEncode x (Nat.bits (v r))) = true)
     (h : NSem A oracle x G (some l₁, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, vword_whole₁, he, if_true] using h)
+  NSem.det hA hG (by
+    simpa only [astep_call (A := fun _ => .call j .whole [r] l₁ l₀) rfl, vword_whole₁, he,
+      if_true] using h)
 
 /-- A `whole`-mode call on one register that answers `false`. -/
 lemma NSem.call_neg {l l₁ l₀ : Λ} {j : Fin d} {r : Fin m}
     (hA : A l = .det (.call j .whole [r] l₁ l₀)) {v : Fin m → ℕ} {P : Prop}
     (hG : G (some l, v, none)) (he : oracle j (pairEncode x (Nat.bits (v r))) = false)
     (h : NSem A oracle x G (some l₀, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, vword_whole₁, he, Bool.false_eq_true, if_false] using h)
+  NSem.det hA hG (by
+    simpa only [astep_call (A := fun _ => .call j .whole [r] l₁ l₀) rfl, vword_whole₁, he,
+      Bool.false_eq_true, if_false] using h)
 
 /-- A decrement. -/
 lemma nsem_dec {l l' : Λ} {r : Fin m} (hA : A l = .det (.dec r l')) {v : Fin m → ℕ}
     {P : Prop} (hG : G (some l, v, none))
     (h : NSem A oracle x G (some l', Function.update v r (v r - 1), none) P) :
     NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep] using h)
+  NSem.det hA hG (by simpa only [astep_dec (A := fun _ => .dec r l') rfl] using h)
 
 /-- A `whole`-mode call on two registers that answers `true`. -/
 lemma nsem_call₂_pos {l l₁ l₀ : Λ} {j : Fin d} {r s : Fin m}
@@ -277,7 +281,9 @@ lemma nsem_call₂_pos {l l₁ l₀ : Λ} {j : Fin d} {r s : Fin m}
     (hG : G (some l, v, none))
     (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r)) (Nat.bits (v s)))) = true)
     (h : NSem A oracle x G (some l₁, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, vword_whole₂, he, if_true] using h)
+  NSem.det hA hG (by
+    simpa only [astep_call (A := fun _ => .call j .whole [r, s] l₁ l₀) rfl, vword_whole₂, he,
+      if_true] using h)
 
 /-- A `whole`-mode call on two registers that answers `false`. -/
 lemma nsem_call₂_neg {l l₁ l₀ : Λ} {j : Fin d} {r s : Fin m}
@@ -285,7 +291,9 @@ lemma nsem_call₂_neg {l l₁ l₀ : Λ} {j : Fin d} {r s : Fin m}
     (hG : G (some l, v, none))
     (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r)) (Nat.bits (v s)))) = false)
     (h : NSem A oracle x G (some l₀, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, vword_whole₂, he, Bool.false_eq_true, if_false] using h)
+  NSem.det hA hG (by
+    simpa only [astep_call (A := fun _ => .call j .whole [r, s] l₁ l₀) rfl, vword_whole₂, he,
+      Bool.false_eq_true, if_false] using h)
 
 /-- A `whole`-mode call on three registers that answers `true`. -/
 lemma nsem_call₃_pos {l l₁ l₀ : Λ} {j : Fin d} {r s t : Fin m}
@@ -294,7 +302,9 @@ lemma nsem_call₃_pos {l l₁ l₀ : Λ} {j : Fin d} {r s t : Fin m}
     (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r))
       (pairEncode (Nat.bits (v s)) (Nat.bits (v t))))) = true)
     (h : NSem A oracle x G (some l₁, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, vword_whole₃, he, if_true] using h)
+  NSem.det hA hG (by
+    simpa only [astep_call (A := fun _ => .call j .whole [r, s, t] l₁ l₀) rfl, vword_whole₃, he,
+      if_true] using h)
 
 /-- A `whole`-mode call on three registers that answers `false`. -/
 lemma nsem_call₃_neg {l l₁ l₀ : Λ} {j : Fin d} {r s t : Fin m}
@@ -303,13 +313,15 @@ lemma nsem_call₃_neg {l l₁ l₀ : Λ} {j : Fin d} {r s t : Fin m}
     (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r))
       (pairEncode (Nat.bits (v s)) (Nat.bits (v t))))) = false)
     (h : NSem A oracle x G (some l₀, v, none) P) : NSem A oracle x G (some l, v, none) P :=
-  NSem.det hA hG (by simpa only [astep, vword_whole₃, he, Bool.false_eq_true, if_false] using h)
+  NSem.det hA hG (by
+    simpa only [astep_call (A := fun _ => .call j .whole [r, s, t] l₁ l₀) rfl, vword_whole₃, he,
+      Bool.false_eq_true, if_false] using h)
 
 /-- An answer: some branch accepts iff the answer is `true`. -/
 lemma NSem.ret {l : Λ} {b : Bool} (hA : A l = .det (.ret b)) {v : Fin m → ℕ}
     (hG : G (some l, v, none)) : NSem A oracle x G (some l, v, none) (b = true) := by
   have hh : NSem A oracle x G (none, v, some b) (b = true) := NSem.halted v b
-  exact NSem.det hA hG (by simpa only [astep] using hh)
+  exact NSem.det hA hG (by simpa only [astep_ret (A := fun _ => .ret b) rfl] using hh)
 
 /-- **Semantics gives the decision interface**: if every branch from `a` terminates through
 `G` and some branch accepts iff `P`, then for some `N` every choice word of length `N` halts

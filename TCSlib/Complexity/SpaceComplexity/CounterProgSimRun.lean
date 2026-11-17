@@ -216,7 +216,7 @@ theorem UnaryLogspace.counterProg {R : ℕ} {Λ : Type} [Fintype Λ] [DecidableE
           cf (.sim l₀) (ev (CounterProg.init l₀ : CounterProg.St R Λ).regs
             (CounterProg.init l₀ : CounterProg.St R Λ).pos
             (CounterProg.init l₀ : CounterProg.St R Λ).out.length 0) := by
-        rw [← hev]; simp [astep, A, hval]
+        rw [← hev]; simp [astep_valP (show A P l₀ lm .start = _ from rfl), hval]
       rw [this]
       refine hrunA.mono fun a ⟨h1, h2⟩ => ⟨h1, fun r => (h2 r).trans ?_⟩
       have hn : n + 1 ≤ (pairEncode (List.replicate n true) (Nat.bits p)).length + 1 := by
@@ -237,8 +237,8 @@ theorem UnaryLogspace.counterProg {R : ℕ} {Λ : Type} [Fintype Λ] [DecidableE
         · exact hv (validPlain_of_mem_unaryIdx (p := fun n i => i < (g n).length) h)
       rw [hn]
       refine ⟨1, ?_, ?_, fun t ht => ?_⟩
-      · simp [arun, astep, A, hv]
-      · simp [arun, astep, A, hv]
+      · simp [arun, astep_valP (show A P l₀ lm .start = _ from rfl), hv]
+      · simp [arun, astep_valP (show A P l₀ lm .start = _ from rfl), hv]
       · obtain rfl : t = 0 := by omega
         exact ⟨by simp [arun, PreS, A], fun r => by simp [arun]⟩
   exact ⟨by simpa using key false, by simpa using key true⟩

@@ -784,7 +784,10 @@ theorem mem_LOGSPACE_preimage {f : List Bool → List Bool} (hf : ImplicitlyLogs
     omega
   have hJx : logSpace (2 * x.length + 2 + W) ≤ J * L := by
     have hw : W ≤ (f x).length + 2 :=
-      (LogProg.length_bits_le_log _).trans (by have := Nat.log_le_self 2 ((f x).length + 1); omega)
+      (LogProg.length_bits_le_log _).trans (by
+        have := Complexity.logSpace_le_succ ((f x).length + 1)
+        rw [Complexity.logSpace_eq] at this
+        omega)
     have hp : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by
       simpa only [pow_one] using
         Nat.pow_le_pow_right (show 1 ≤ x.length + 1 by omega) (show 1 ≤ e + 1 by omega)

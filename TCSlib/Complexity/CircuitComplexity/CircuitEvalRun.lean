@@ -220,7 +220,7 @@ theorem step_rej (exact : Bool) {z : List Bool} (q : St) (p : Fin (z.length + 2)
       LA.toAct im .rej) :
     ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).state = none ∧
     ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).output = [false] := by
-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+  rw [MultiTapeTM.runFrom_one,
     step_cf exact q p vt mt j [] im .rej h]
   simp [cf, LA.rej]
 
@@ -465,7 +465,7 @@ theorem good_run (exact : Bool) (code x z : List Bool)
               (cfC z (2 * code.length + 2) n n x (by omega)) 1 =
               cf z (some (.rewV none)) (ip z (2 * code.length + 2 + n) (by omega))
                 (FinTM.bufferTape (x.take n)) (onesFrom n n) ((n : ℤ) - 1) [] := by
-            rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, hstep]
+            rw [MultiTapeTM.runFrom_one, hstep]
           have hC : (evalTM exact).tm.runFrom (cfS z .n0 0 0 (Nat.zero_le _))
               (2 * code.length + 2 + (n + 1) + n + 1 + (n + 1) + r) =
               cfA z ⟨.skipN, x.take n, [], 0⟩ 0 (by simp) := by

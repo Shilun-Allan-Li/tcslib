@@ -141,11 +141,9 @@ def fTo : Option (Option Bool) → Bool → Option Bool
 /-- The field-code transducer. -/
 def fT (u : List Bool) : List Bool := transduce fTδ fTo (some none) u
 
-/-- In copying mode the transducer is the identity. -/
-theorem transduce_fT_copy (u : List Bool) : transduce fTδ fTo none u = u := by
-  induction u with
-  | nil => rfl
-  | cons b u ih => simp [transduce, fTδ, fTo, ih]
+/-- In copying mode the transducer is the identity (`Complexity.transduce_of_copy`). -/
+theorem transduce_fT_copy (u : List Bool) : transduce fTδ fTo none u = u :=
+  transduce_of_copy fTδ fTo none (fun _ => rfl) (fun _ => rfl) u
 
 /-- **The field-code transducer on a pair.** -/
 theorem fT_pairEncode (w r : List Bool) : fT (pairEncode w r) = fcode w ++ false :: false :: r := by

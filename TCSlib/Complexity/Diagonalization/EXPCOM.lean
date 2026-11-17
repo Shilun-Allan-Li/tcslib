@@ -37,18 +37,17 @@ of [BGS75, Theorem 1] stays recorded there as the fallback).
   layout (code before payload, chapter-1 phase-3 audit, Argument B), nested
   right so each component is recovered by one aligned-pair parse.
 * **The code scheme is a uniformly-timed scheme, not the hierarchy's
-  arbitrary one** (round-1 blocker): `Turing.EffectiveMachineCode` bounds no
-  decoding time — `canonizerTime` is arbitrary, and the round-1 audit built
+  arbitrary one**: `Turing.EffectiveMachineCode` bounds no
+  decoding time — `canonizerTime` is arbitrary, and there is
   a permitted scheme embedding an arbitrarily hard decidable language into
   `decode`, putting `EXPCOM` outside `EXP` and even separating its
   relativized `P` from `NP`. `EXPCOM` queries carry **variable** codes, so
   per-code constants (`∀ α, ∃ C` — `Turing.timed_universal`'s shape) cannot
   pay for them. The new `Turing.UniformMachineCode` packages the scheme with
   a simulator whose time is **one polynomial in the code, the input, and
-  the deadline jointly**; `EXPCOM` is defined over a scheme chosen from its
-  sorried existence (`Turing.exists_uniformMachineCode` — the
-  `TimeHierarchy.code` mirror, with the choice-over-a-sorried-existence
-  declared). The hierarchy's own `Complexity.TimeHierarchy.code` is
+  the deadline jointly**; `EXPCOM` is defined over a scheme chosen from the
+  existence theorem `Turing.exists_uniformMachineCode` (proved; the
+  `TimeHierarchy.code` mirror). The hierarchy's own `Complexity.TimeHierarchy.code` is
   unchanged: fixed-code arguments never needed uniformity.
 * **"Outputs `1` within `2ⁿ` steps"** is
   `Turing.FinTM.ComputesInTime x [true] (2 ^ n)`: halting is absorbing, so the
@@ -64,9 +63,9 @@ of [BGS75, Theorem 1] stays recorded there as the fallback).
 ## Main definitions
 
 * `Turing.UniformMachineCode` — an effective scheme with a uniformly timed
-  bounded-acceptance simulator (round-1 repair).
+  bounded-acceptance simulator.
 * `Complexity.expCode` — the chosen uniformly-timed scheme (noncomputable;
-  via the sorried existence).
+  chosen from `Turing.exists_uniformMachineCode`).
 * `Complexity.EXPCOM` — the oracle language, over `expCode`.
   [AB09, Example 3.6(3)]
 

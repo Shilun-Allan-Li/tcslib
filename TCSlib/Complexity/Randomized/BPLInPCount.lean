@@ -102,11 +102,6 @@ theorem inWin_run {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤
     Cfg.InWindow s (run w) := by
   simpa using NDTM.runWith_take_inWindow N.tm w ((hN x w).trans hs) w.length
 
-/-- Equal codes of window-bounded configurations give equal vertices. -/
-theorem coreSum_eq_of_code_eq {C D : Cfg N.k Bool N.State x} (hC : Cfg.InWindow s C)
-    (hD : Cfg.InWindow s D) (h : cfgCode s C = cfgCode s D) : NDTM.coreSum C = NDTM.coreSum D :=
-  coreSum_eq_of_cfgWord_eq hC hD (by rw [← bits_cfgCode, ← bits_cfgCode, h])
-
 /-- From a reachable code, the coin-`b` step relation points exactly at the code of the
 coin-`b` successor. -/
 theorem stepRel_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ s) (v : List Bool)
@@ -116,16 +111,17 @@ theorem stepRel_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length �
     rw [NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil]
   constructor
   · intro h
-    obtain ⟨C, hC, hcC, C', ⟨b', hb'⟩, -, hcC'⟩ := (mem_stepLang (fixCoin N b) x _ _ s).mp h
+    obtain ⟨C, hC, hcC, C', ⟨b', hb'⟩, -, hcC'⟩ :=
+      (mem_stepLang (fixCoin N b) x _ _ s).mp (stepRel_iff_mem.mp h)
     have hcore : NDTM.coreSum C = NDTM.coreSum (run v) :=
-      coreSum_eq_of_code_eq hC (inWin_run hN hs v) hcC
+      ExpBFS.coreSum_eq_of_code_eq hC (inWin_run hN hs v) hcC
     rw [← hcC', ← hb']
     change cfgCode s ((fixCoin N b).tm.stepWith b' C) = _
     rw [stepWith_fixCoin, hstep]
     exact congrArg bitsVal (cfgWord_congr (NDTM.coreSum_stepWith N.tm b hcore))
   · rintro rfl
-    refine (mem_stepLang (fixCoin N b) x _ _ s).mpr ⟨run v, inWin_run hN hs v, rfl,
-      run (v ++ [b]), ⟨b, ?_⟩, inWin_run hN hs _, rfl⟩
+    refine stepRel_iff_mem.mpr ((mem_stepLang (fixCoin N b) x _ _ s).mpr ⟨run v,
+      inWin_run hN hs v, rfl, run (v ++ [b]), ⟨b, ?_⟩, inWin_run hN hs _, rfl⟩)
     change (fixCoin N b).tm.stepWith b (run v) = _
     rw [stepWith_fixCoin, hstep]
 
@@ -137,7 +133,7 @@ theorem acceptLang_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.lengt
   rw [mem_acceptLang]
   constructor
   · rintro ⟨C, hC, hcC, hst, hout⟩
-    have hcore := coreSum_eq_of_code_eq hC (inWin_run hN hs v) hcC
+    have hcore := ExpBFS.coreSum_eq_of_code_eq hC (inWin_run hN hs v) hcC
     have h1 := congrArg (fun z => z.1.1) hcore
     have h2 := congrArg Prod.snd hcore
     simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core] at h1 h2
@@ -193,7 +189,7 @@ within some `T`, every branch halts within `V` steps. [AB09, §4.1.1, Claim 4.4(
 
 **Proof sketch.** Suppose a branch `w` of length `V` has not halted. The `V + 1` configurations
 after its prefixes have codes below `V`, so two prefixes `i < j` share a code, hence a vertex
-(`coreSum_eq_of_code_eq`). Repeating the segment between them keeps the vertex
+(`Complexity.ExpBFS.coreSum_eq_of_code_eq`). Repeating the segment between them keeps the vertex
 (`Turing.NDTM.coreSum_runWith`), so `w.take i` followed by `T` copies of the segment is a
 branch of length at least `T` whose state is that of `w.take i`, not halted (else `w` would
 have halted), contradicting halting within `T`. -/
@@ -217,7 +213,7 @@ theorem haltsWithin_of_codes {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x
     have hvlen : v.length = j - i := by simp [v, hw]; omega
     have hcore : NDTM.coreSum (run (u ++ v)) = NDTM.coreSum (run u) := by
       rw [huv]
-      exact (coreSum_eq_of_code_eq (inWin_run hN hs _) (inWin_run hN hs _) hcode).symm
+      exact (ExpBFS.coreSum_eq_of_code_eq (inWin_run hN hs _) (inWin_run hN hs _) hcode).symm
     have pump : ∀ m : ℕ, NDTM.coreSum (run (u ++ (List.replicate m v).flatten)) =
         NDTM.coreSum (run u) := by
       intro m

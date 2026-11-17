@@ -59,7 +59,7 @@ lemma len_t {l l₁ l₀ : Lb} {st : St} {c : AConf 7 Lb}
     (h : AReach A orc x (GuardLe A x B) (some l₁, st.toV, none) c) :
     AReach A orc x (GuardLe A x B) (some l, st.toV, none) c := by
   refine step_of hbd ?_
-  simp only [astep, hl, vword_whole₁]
+  rw [astep_call hl, vword_whole₁]
   rw [St.toV_P, orc_len, decide_eq_true hp, if_pos rfl]
   exact h
 
@@ -69,7 +69,7 @@ lemma len_f {l l₁ l₀ : Lb} {st : St} {c : AConf 7 Lb}
     (h : AReach A orc x (GuardLe A x B) (some l₀, st.toV, none) c) :
     AReach A orc x (GuardLe A x B) (some l, st.toV, none) c := by
   refine step_of hbd ?_
-  simp only [astep, hl, vword_whole₁]
+  rw [astep_call hl, vword_whole₁]
   rw [St.toV_P, orc_len, decide_eq_false hp, if_neg (by decide)]
   exact h
 
@@ -100,7 +100,7 @@ theorem syn_run : ∀ (n : ℕ) (q : SynSt) (st : St), st.P + n = x.length → s
     rw [hd, List.foldl_cons]
     cases b <;>
     · refine step_of hbd ?_
-      regs [astep, A, cond_true, cond_false]
+      regs [astep_inc (show A (.vs q _) = _ from rfl), cond_true, cond_false]
       exact this
 
 /-! ## The walk -/
@@ -138,7 +138,7 @@ lemma length_enc (hx : x = pairEncode qs (CNF.serialize φ)) : 2 * qs.length + 2
 theorem node_run (k S p : ℕ) (hk : 2 * k ≤ B) (hS : S ≤ B) (hp : p ≤ B) :
     Run x B .node (stp k S p) .nd1 (stp k S (2 * k)) := by
   refine step_of (stp_bd (by omega) hS hp) ?_
-  regs [astep, A]
+  regs [astep_clr (show A .node = _ from rfl)]
   refine cont (st' := stp k S 0) rfl ?_
   refine (cp_run .ndA _ (stp_bd (by omega) hS (by omega)) rfl
     (by simp only [cpDst, cpSrc]; regs; simp [stp]; omega)).trans ?_
@@ -158,7 +158,7 @@ increment `K`. Each step keeps the registers below `B` (`stp_bd`). -/
 theorem push_run (b : Bool) (k S p : ℕ) (hp : p ≤ B) (hS : 2 * S + 1 ≤ B) (hk : k + 1 ≤ B) :
     Run x B (.push b) (stp k S p) .node (stp (k + 1) (2 * S + b.toNat) 0) := by
   refine step_of (stp_bd (by omega) (by omega) hp) ?_
-  regs [astep, A]
+  regs [astep_clr (show A (.push b) = _ from rfl)]
   refine cont (st' := stp k S 0) rfl ?_
   refine (dm_run b _ (stp_bd (by omega) (by omega) (by omega)) (by simp [stp]; omega)).trans ?_
   refine cont (st' := ⟨k, 0, 0, 2 * S, 0, 0, 0⟩) (by sext [stp]) ?_
@@ -167,13 +167,13 @@ theorem push_run (b : Bool) (k S p : ℕ) (hp : p ≤ B) (hS : 2 * S + 1 ≤ B) 
   cases b
   · simp only [Bool.false_eq_true, if_false]
     refine step_of (by simp only [St.Bd]; omega) ?_
-    regs [astep, A]
+    regs [astep_inc (show A .incK = _ from rfl)]
     exact fin_of (by sext [stp])
   · simp only [if_true]
     refine step_of (by simp only [St.Bd]; omega) ?_
-    regs [astep, A]
+    regs [astep_inc (show A .incS = _ from rfl)]
     refine step_of (by simp only [St.Bd]; omega) ?_
-    regs [astep, A]
+    regs [astep_inc (show A .incK = _ from rfl)]
     exact fin_of (by sext [stp])
 
 /-- **A pop**: from `rt v` at depth `k + 1` with stack `2S + b`, the machine returns to depth
@@ -188,24 +188,24 @@ theorem pop_run (v b : Bool) (k S : ℕ) (hk : k + 1 ≤ B) (hS : 2 * S + 1 ≤ 
       (stp k S 0) := by
   have hb : b.toNat ≤ 1 := Bool.toNat_le b
   refine step_of (stp_bd hk (by omega) (by omega)) ?_
-  regs [astep, A]
+  regs [astep_jz (show A (.rt v) = _ from rfl)]
   simp only [stp, Nat.add_one_ne_zero, if_false]
   refine step_of (stp_bd hk (by omega) (by omega)) ?_
-  regs [astep, A]
+  regs [astep_dec (show A (.pop v) = _ from rfl)]
   refine cont (st' := stp k (2 * S + b.toNat) 0) (by sext [stp]) ?_
   refine step_of (stp_bd (by omega) (by omega) (by omega)) ?_
-  regs [astep, A]
+  regs [astep_jodd (show A (.par v) = _ from rfl)]
   have h2 : (2 * S + b.toNat) / 2 = S := by omega
   cases b
   · simp only [stp, Bool.toNat_false, add_zero, Nat.mul_mod_right, zero_ne_one, if_false]
     refine step_of (stp_bd (B := B) (k := k) (S := 2 * S) (p := 0) (by omega) (by omega)
       (by omega)) ?_
-    regs [astep, A]
+    regs [astep_half (show A (.popF v) = _ from rfl)]
     exact fin_of (by sext [stp])
   · simp only [stp, Bool.toNat_true, Nat.mul_add_mod, Nat.one_mod, if_true]
     refine step_of (stp_bd (B := B) (k := k) (S := 2 * S + 1) (p := 0) (by omega) (by omega)
       (by omega)) ?_
-    regs [astep, A]
+    regs [astep_half (show A (.popT v) = _ from rfl)]
     exact fin_of (by sext [stp])
 
 /-- **The quantifier lookup**: from `cp (qA v) 0` at depth `k`, the machine sets `P := 2K` and
@@ -244,12 +244,12 @@ theorem leaf_spec (hx : x = pairEncode qs (CNF.serialize φ)) (hB1 : 2 ^ (qs.len
   refine read_f (l := .nd1) rfl (stp_bd (by omega) (by omega) (by omega))
     (by show x.getD (2 * M) false = false; rw [getD_enc hx, ← hM]; simp) ?_
   refine step_of (stp_bd (by omega) (by omega) (by omega)) ?_
-  regs [astep, A]
+  regs [astep_inc (show A .nd2 = _ from rfl)]
   refine cont (st' := stp M S (2 * M + 1)) rfl ?_
   refine read_t (l := .nd3) rfl (stp_bd (by omega) (by omega) (by omega))
     (by show x.getD (2 * M + 1) false = true; rw [getD_enc hx, ← hM]; simp) ?_
   refine step_of (stp_bd (by omega) (by omega) (by omega)) ?_
-  regs [astep, A]
+  regs [astep_inc (show A .leaf = _ from rfl)]
   refine cont (st' := stp M S (2 * M + 2)) rfl ?_
   have hd : x.drop (stp M S (2 * M + 2)).P = CNF.serialize φ ++ [] := by
     rw [hx]; simp [stp, pairEncode_eq_dbl, List.drop_append, hM]

@@ -28,6 +28,7 @@ Infrastructure for [AB09, §4.2.1, proof of Theorem 4.14]; not itself a result o
 ## Main results
 
 * `Complexity.LogProg.SavitchARM.setup_run` — the setup.
+* `Complexity.LogProg.SavitchARM.setSt_toV` — the register file after the setup, as registers.
 * `Complexity.LogProg.SavitchARM.outerU_run` — the outer search answers whether an initial
   and an accepting code are joined by midpoint reachability at level `w`.
 
@@ -65,14 +66,16 @@ theorem ld_run : ∀ (k j : ℕ) (hj : j < E + 1) (st : St), j + k = E → st.X 
   | zero =>
     intro j hj st hk hX hbd hE hP
     refine step_of hbd ?_
-    regs [astep, A, dif_neg (show ¬ j < E by omega)]
+    regs [astep_inc (show A E (.ld ⟨j, hj⟩) = .inc rP .pw from
+      dif_neg (show ¬ j < E by omega))]
     refine reach_of_eq (AReach.refl _) ?_
     congr 3
     ext <;> simp; omega
   | succ k ih =>
     intro j hj st hk hX hbd hE hP
     refine step_of hbd ?_
-    regs [astep, A, dif_pos (show j < E by omega)]
+    regs [astep_inc (show A E (.ld ⟨j, hj⟩) = .inc rX (.ld ⟨j + 1, by omega⟩) from
+      dif_pos (show j < E by omega))]
     have hbd1 : St.Bd B { st with X := st.X + 1 } := by simp only [St.Bd] at hbd ⊢; omega
     refine reach_of_eq (ih (j + 1) (by omega) _ (by omega) (by simp [hX]) hbd1 hE hP) ?_
     rfl
@@ -91,7 +94,7 @@ theorem pw_run : ∀ (j : ℕ) (st : St), st.X = j → st.C = 0 → st.T = 0 →
   | zero =>
     intro st hX hC hT hZ hbd ha hb
     refine step_of hbd ?_
-    regs [astep, A, hX, if_true]
+    regs [astep_jz (show A E .pw = _ from rfl), hX, if_true]
     refine reach_of_eq (AReach.refl _) ?_
     congr 3
     ext <;> simp [hX]
@@ -104,9 +107,9 @@ theorem pw_run : ∀ (j : ℕ) (st : St), st.X = j → st.C = 0 → st.T = 0 →
       calc st.a = st.a ^ 1 := (pow_one _).symm
         _ ≤ st.a ^ (j + 1) := Nat.pow_le_pow_right ha (by omega)
     refine step_of hbd ?_
-    regs [astep, A, hX, Nat.add_one_ne_zero, if_false]
+    regs [astep_jz (show A E .pw = _ from rfl), hX, Nat.add_one_ne_zero, if_false]
     refine step_of hbd ?_
-    regs [astep, A, hX, Nat.add_sub_cancel]
+    regs [astep_dec (show A E .pwDec = _ from rfl), hX, Nat.add_sub_cancel]
     have hbd1 : St.Bd B { st with X := j } := by simp only [St.Bd] at hbd ⊢; omega
     refine (mul_run false { st with X := j } hC hT hZ hbd1 (by simp; omega)).trans ?_
     simp only [mvExit, Bool.false_eq_true, if_false]
@@ -122,6 +125,13 @@ theorem pw_run : ∀ (j : ℕ) (st : St), st.X = j → st.C = 0 → st.T = 0 →
 /-- **The register file after the setup**: radius `s`, width `w`, code bound `2 ^ w`, every
 other register clear. -/
 def setSt (s w : ℕ) : St := { St.zero with s := s, w := w, K := 2 ^ w }
+
+/-- **The register file after the setup, as registers**: `s`, `w` and `2 ^ w` in the radius,
+width and code-bound registers, every other register clear. -/
+theorem setSt_toV (s w : ℕ) : (setSt s w).toV =
+    Function.update (Function.update (Function.update (fun _ => 0) rs s) rw w) rK (2 ^ w) := by
+  rw [St.toV_zero, St.upd_s, St.upd_w, St.upd_K]
+  rfl
 
 /-- **The setup** [AB09, §4.2.1: the radius and the vertex-code width are computed first]:
 from `scan` with all registers clear, the machine reaches `OU` with radius
@@ -156,9 +166,9 @@ theorem setup_run (hE : 1 ≤ E)
   refine (mv_run .aN _ (by sbd) (by regs [mvDst, mvSrc]; omega)).trans ?_
   regs [mvDst, mvSrc, mvExit, zero_add]
   refine step_of (by sbd) ?_
-  regs [astep, A]
+  regs [astep_inc (show A E .incA1 = _ from rfl)]
   refine step_of (by sbd) ?_
-  regs [astep, A]
+  regs [astep_inc (show A E .incA2 = _ from rfl)]
   refine cont (st' := { St.zero with a := x.length + 2 }) (by ext <;> simp [St.zero]) ?_
   -- load `X = E`, `P = 1`
   refine (ld_run E 0 (by omega) _ (by omega) rfl (by sbd) (by omega) (by sbd)).trans ?_
@@ -172,9 +182,9 @@ theorem setup_run (hE : 1 ≤ E)
   refine (mv_run .wP _ (by sbd) (by regs [mvDst, mvSrc]; sbd)).trans ?_
   regs [mvDst, mvSrc, mvExit, zero_add]
   refine step_of (by sbd) ?_
-  regs [astep, A]
+  regs [astep_clr (show A E .clrA = _ from rfl)]
   refine step_of (by sbd) ?_
-  regs [astep, A, zero_add]
+  regs [astep_inc (show A E .kInit = _ from rfl), zero_add]
   -- `K := 2 ^ w`
   refine (cp_run .kW _ (by sbd) rfl (by regs [cpDst, cpSrc]; sbd)).trans ?_
   regs [cpDst, cpSrc, cpExit, zero_add]

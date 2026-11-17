@@ -69,6 +69,14 @@ length `n` — the function class FP implicit throughout [AB09, ch. 2]. -/
 def PolyTimeComputable (f : List Bool → List Bool) : Prop :=
   ∃ (M : FinTM Bool) (C c : ℕ), M.ComputesFunInTime f fun n => C * (n + 1) ^ c
 
+/-- The defining property of `PolyTimeComputable`: `f` is polynomial-time computable iff some
+finite binary-alphabet machine `M` computes it within `C · (n + 1)^c` steps,
+`PolyTimeComputable f ↔ ∃ M C c, M.ComputesFunInTime f (fun n => C * (n + 1) ^ c)`. -/
+theorem polyTimeComputable_iff (f : List Bool → List Bool) :
+    PolyTimeComputable f ↔
+      ∃ (M : FinTM Bool) (C c : ℕ), M.ComputesFunInTime f fun n => C * (n + 1) ^ c :=
+  Iff.rfl
+
 /-- The identity function is polynomial-time computable.
 
 **Proof sketch.** `Turing.FinTM.computesFunInTime_id` supplies a machine computing

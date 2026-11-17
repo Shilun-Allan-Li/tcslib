@@ -6,7 +6,7 @@ Authors: Seyoon Ragavan
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.FinRange
 import Mathlib.Data.Nat.Bits
-import Mathlib.Data.Nat.Size
+import TCSlib.Complexity.TuringMachine.NatBits
 import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 
@@ -72,13 +72,11 @@ self-delimiting pairing used by the universal machine.
 * `Turing.length_pairEncode`, `Turing.pairEncode_eq_dbl`, `Turing.pairDecode_eq_none`,
   `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairEncode_replicate_inj` — the shape of
   the pairing, shared by the machine-side developments.
-* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
 * `Turing.bits_two_pow_mul`, `Turing.bits_two_pow_eq_replicate` — the `Nat.bits` shift law
   `(2^j·m).bits = 0^j ++ m.bits` and its case `m = 1` (CH34-D4).
 * `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
   computable in linear time (the only code computation the `HALT` reduction needs).
-  Its witness's spec is `Turing.pairDiagTM_computes` (MIG-1; sorried until the fill
-  F-A).
+  Its witness's spec is `Turing.pairDiagTM_computes`.
 * `Turing.FinTM.toCodeTM_computesInTime_iff` — the code normal form halts with the same
   outputs at the same times (MIG-1).
 * `Turing.exists_codeTM` — every one-work-tape binary machine is equivalent to a
@@ -92,6 +90,7 @@ scheme (`Turing.exists_effectiveMachineCode`) is proved in
 `TCSlib.Complexity.TuringMachine.MathlibBridge`.
 * `Turing.pairEncode_eq`, `Turing.unaryFin_eq` — the two encodings as equations, the
   specification API (user, 2026-10-16).
+* `Turing.pairEncode_drop` — the payload after a pairing's header.
 * `Turing.signBits_neg`/`_zero`/`_pos`, `Turing.optBoolBits_none`/`_some_false`/`_some_true`,
   `Turing.optOptBoolBits_none`/`_some_none`/`_some_false`/`_some_true`,
   `Turing.optStateBits_none`/`_some` — the record fields' encoders, case by case (the ND inventory
@@ -118,6 +117,11 @@ def CodeTM.toFinTM (M : CodeTM) : FinTM Bool where
   k := 1
   State := Fin (M.numStates + 1)
   tm := M.tm
+
+/-- A coded machine's bundled form has one work tape, its canonical finite state type,
+and the same underlying machine. -/
+theorem CodeTM.toFinTM_eq (M : CodeTM) :
+    M.toFinTM = { k := 1, State := Fin (M.numStates + 1), tm := M.tm } := rfl
 
 /-- The bundled form of a coded machine has exactly one work tape. -/
 @[simp]
@@ -217,6 +221,12 @@ theorem length_pairEncode (x y : List Bool) :
   simp [pairEncode_eq_dbl]
   omega
 
+/-- No pair encoding is the empty word: `pairEncode x y` has length at least `2`. -/
+theorem pairEncode_ne_nil (x y : List Bool) : pairEncode x y ≠ [] := by
+  intro h
+  have := congrArg List.length h
+  simp [length_pairEncode] at this
+
 /-- A string that is not a pair is a doubled word followed by a malformed tail: the end
 of the string, a lone bit, or the aligned pair `10`.
 
@@ -246,6 +256,18 @@ theorem pairDecode_eq_none (z : List Bool) (h : pairDecode z = none) :
       · exact absurd rfl (h₃ r)
       · exact Or.inr (Or.inr ⟨r, rfl⟩)
       · exact absurd rfl (h₂ r)
+
+/-- **The payload after the header.** Dropping the header of length `2|u| + 2` from
+`pairEncode u x` leaves `x`.
+
+**Proof sketch.** The pairing is the header `pairEncode u []` followed by `x`, and that header
+has length `2|u| + 2` (`Turing.length_pairEncode`). -/
+theorem pairEncode_drop (u x : List Bool) : (pairEncode u x).drop (2 * u.length + 2) = x := by
+  have split : pairEncode u x = pairEncode u [] ++ x := by
+    rw [pairEncode_eq, pairEncode_eq, List.append_nil]
+  have width : (pairEncode u []).length = 2 * u.length + 2 := by
+    rw [length_pairEncode, List.length_nil, Nat.add_zero]
+  rw [split, ← width, List.drop_left]
 
 /-- A successfully decoded string is the pairing of its components.
 
@@ -285,11 +307,6 @@ lemma pairEncode_replicate_inj {n n' : ℕ} {u u' : List Bool}
   simp only [Prod.mk.injEq] at this
   obtain ⟨h1, h2⟩ := this
   exact ⟨by simpa using congrArg List.length h1, h2⟩
-
-/-- The binary expansion of `m` has at most `m` bits. -/
-lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
-  rw [Nat.size_eq_bits_len]
-  exact Nat.size_le.mpr Nat.lt_two_pow_self
 
 /-- **The `Nat.bits` shift law**: multiplying a positive `m` by `2 ^ j`
 prepends `j` low zero bits to its little-endian binary expansion,
@@ -340,6 +357,13 @@ def pairDiagTM : FinTM Bool where
         | _ => match inp with
           | some b => ⟨.pos, fun i => i.elim0, some b, some 5⟩
           | none => ⟨.zero, fun i => i.elim0, none, none⟩ }
+
+/-- The diagonal pairing machine uses zero work-tape space on every input at every time.
+It has no work tapes, so `Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero` applies.
+[AB09, §4.1] -/
+theorem pairDiagTM_spaceUsed (x : List Bool) (t : ℕ) :
+    pairDiagTM.tm.spaceUsed (pairDiagTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
 
 /-- A pairing-machine configuration, with its vacuous work-tape fields suppressed. -/
 private def pairDiagCfg (x : List Bool) (q : Option (Fin 6))
@@ -411,7 +435,7 @@ private lemma pairDiag_rewind (x out : List Bool) : ∀ j, (hj : j ≤ x.length)
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       pairDiag_step _ _ _ _ none (by simp [pairDiagCfg, Cfg.inputSymbol])]
     simp only [pairDiagTM, Option.toList_none, List.append_nil]
     rw [moveInputPos_pos_of_ne_right _ (by simp)]
@@ -462,7 +486,7 @@ private lemma pairDiag_separator (x out : List Bool) :
       pairDiagCfg x (some 4) ⟨x.length, by omega⟩ (out ++ [false, true]) := by
   rw [show 3 = (0 + 1) + 1 + 1 from rfl,
     MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    MultiTapeTM.runFrom_one]
   rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 0) out)]
   simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_some]
   rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 2) _)]
@@ -500,12 +524,13 @@ private lemma pairDiag_run (x : List Bool) :
 /-- **The diagonal pairing machine's time**. On input `α` the diagonal pairing machine halts within
 `4|α| + 5` steps with output `pairEncode α α`.
 
-**Proof sketch.** The `have h` of today's `computesFunInTime_pairEncode_diag`, from the private
-`pairDiag_run`: the doubling pass takes `2|α|` steps, the two separator steps and the first left
-move `3`, the rewind `|α| + 1`, the copy `|α|`, and the halting transition `1`. -/
+**Proof sketch.** The run lemma `pairDiag_run` gives the whole configuration at step `4|α| + 5`:
+the doubling pass takes `2|α|` steps, the two separator steps and the first left move `3`, the
+rewind `|α| + 1`, the copy `|α|`, and the halting transition `1`; that configuration is halted
+with output `pairEncode α α`. -/
 theorem pairDiagTM_computes (x : List Bool) :
-    pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5) := by
-  sorry
+    pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5) :=
+  (FinTM.computesInTime_iff _ _ _ _).mpr ⟨by rw [pairDiag_run]; rfl, by rw [pairDiag_run]; rfl⟩
 
 /-- The diagonal pairing `α ↦ pairEncode α α` — the self-application input of the
 `HALT` reduction [AB09, proof of Theorem 1.11] — is computable in linear time. This
@@ -526,12 +551,8 @@ pass), absorbed as `c * (n + 1)`. -/
 theorem computesFunInTime_pairEncode_diag :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun α => pairEncode α α) fun n => c * (n + 1) := by
-  refine ⟨pairDiagTM, 6, fun x => ?_⟩
-  have h : pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5) := by
-    refine ⟨_, ?_, ?_, rfl⟩
-    · rw [pairDiag_run]; rfl
-    · rw [pairDiag_run]; rfl
-  exact h.mono (by change 4 * x.length + 5 ≤ 6 * (x.length + 1); omega)
+  refine ⟨pairDiagTM, 6, (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_⟩
+  exact (pairDiagTM_computes x).mono (by omega)
 
 section Serialize
 
@@ -694,6 +715,39 @@ theorem CodeTM.one_le_spaceUsed (M : CodeTM) (x : List Bool) (t : ℕ) :
   exact (Finset.card_pos.mpr hne).trans_le
     (M.toFinTM.tm.spaceUsedByTape_le_spaceUsed _ t i₀)
 
+/-- **Renaming a machine's states preserves its computations.** Renaming the states of a bundled
+machine along an equivalence `e` gives a machine that halts on the same inputs at the same times,
+with the same outputs.
+
+**Proof sketch.** The renamed machine's initialized runs are the original runs with renamed
+states (`Turing.MultiTapeTM.relabelState_runFrom_init`), and renaming changes neither halting nor
+the output. -/
+theorem FinTM.computesInTime_relabelState {Symbol : Type} (M : FinTM Symbol) {Q : Type}
+    [Fintype Q] [DecidableEq Q] (e : M.State ≃ Q) (x output : List Symbol) (t : ℕ) :
+    (FinTM.mk (k := M.k) (State := Q) (M.tm.relabelState e)).ComputesInTime x output t ↔
+      M.ComputesInTime x output t := by
+  rw [FinTM.computesInTime_iff, FinTM.computesInTime_iff]
+  dsimp only
+  rw [MultiTapeTM.relabelState_runFrom_init, Cfg.mapState_state, Cfg.mapState_output,
+    Option.map_eq_none_iff]
+
+/-- **A machine's states as an initial segment of `ℕ`.** The states of a bundled machine are in
+bijection with `Fin (n + 1)` for `n = |State| - 1`: the state type is finite, and inhabited by the
+start state. Noncomputable, through `Fintype.equivFinOfCardEq`. -/
+noncomputable def FinTM.stateEquivFin {Symbol : Type} (M : FinTM Symbol) :
+    M.State ≃ Fin (Fintype.card M.State - 1 + 1) :=
+  Fintype.equivFinOfCardEq (by
+    have : 0 < Fintype.card M.State := Fintype.card_pos_iff.mpr ⟨M.tm.q₀⟩
+    omega)
+
+/-- `Turing.FinTM.stateEquivFin` is the bijection that `Fintype.equivFinOfCardEq` gives for the
+state count, which the start state makes positive (its defining equation). -/
+theorem FinTM.stateEquivFin_eq {Symbol : Type} (M : FinTM Symbol) :
+    M.stateEquivFin = Fintype.equivFinOfCardEq (by
+      have : 0 < Fintype.card M.State := Fintype.card_pos_iff.mpr ⟨M.tm.q₀⟩
+      omega) :=
+  rfl
+
 /-- **The space-faithful coding step.** Every one-work-tape binary machine `M` is equivalent
 to a coded machine `M'` that halts with the same outputs at the same times
 (`Turing.exists_codeTM`'s clause) **and uses the same space at every time**. This is the space
@@ -712,41 +766,21 @@ theorem exists_codeTM_spaceUsed (M : FinTM Bool) (hk : M.k = 1) :
       ∀ (x : List Bool) (t : ℕ),
         M'.toFinTM.tm.spaceUsed (M'.toFinTM.tm.initCfg x) t =
           M.tm.spaceUsed (M.tm.initCfg x) t := by
-  classical
   rcases M with @⟨k, Q, hQ, dQ, tm⟩
   dsimp only at hk
   subst k
-  letI : Fintype Q := hQ
-  letI : DecidableEq Q := dQ
-  have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
-    have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
-    omega
-  let e := Fintype.equivFinOfCardEq hcard
-  refine ⟨⟨Fintype.card Q - 1, tm.relabelState e⟩, ?_, ?_⟩
-  · intro x output t
-    simp only [CodeTM.toFinTM, FinTM.ComputesInTime, MultiTapeTM.ComputesInTimeAndSpace,
-      MultiTapeTM.relabelState_runFrom_init, Cfg.mapState, Option.map_eq_none_iff]
-    constructor
-    · rintro ⟨s, hhalt, hout, -⟩
-      exact ⟨_, hhalt, hout, rfl⟩
-    · rintro ⟨s, hhalt, hout, -⟩
-      exact ⟨_, hhalt, hout, rfl⟩
-  · intro x t
-    exact MultiTapeTM.relabelState_spaceUsed tm e x t
+  let M₀ : FinTM Bool := ⟨1, Q, tm⟩
+  exact ⟨⟨Fintype.card Q - 1, tm.relabelState M₀.stateEquivFin⟩,
+    M₀.computesInTime_relabelState M₀.stateEquivFin,
+    fun x t => MultiTapeTM.relabelState_spaceUsed tm M₀.stateEquivFin x t⟩
 
 /-- **The code normal form of a one-work-tape machine**. For a binary machine `M` with one work
 tape, the coded machine with `|Q| - 1` as its state index bound, whose transition function is `M`'s
-transported along the canonical bijection `Q ≃ Fin |Q|` (`Fintype.equivFinOfCardEq`; `Q` is
+transported along the canonical bijection `Q ≃ Fin |Q|` (`Turing.FinTM.stateEquivFin`; `Q` is
 inhabited by the start state). [AB09, §1.4] Noncomputable, through `Fintype.equivFinOfCardEq`. -/
 noncomputable def FinTM.toCodeTM : (M : FinTM Bool) → M.k = 1 → CodeTM
-  | @FinTM.mk _ _ Q hQ dQ tm, rfl =>
-    letI : Fintype Q := hQ
-    letI : DecidableEq Q := dQ
-    have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
-      have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
-      omega
-    let e := Fintype.equivFinOfCardEq hcard
-    ⟨Fintype.card Q - 1, tm.relabelState e⟩
+  | @FinTM.mk _ _ Q _hQ _dQ tm, rfl =>
+    ⟨Fintype.card Q - 1, tm.relabelState (FinTM.stateEquivFin ⟨1, Q, tm⟩)⟩
 
 /-- **The code normal form is equivalent**. For a one-work-tape binary machine `M`, its code normal
 form halts on `x` with output `w` within `t` steps if and only if `M` does. [AB09, §1.4]
@@ -759,14 +793,7 @@ theorem FinTM.toCodeTM_computesInTime_iff (M : FinTM Bool) (hk : M.k = 1)
   rcases M with @⟨k, Q, hQ, dQ, tm⟩
   dsimp only at hk
   subst k
-  simp only [FinTM.toCodeTM, CodeTM.toFinTM, FinTM.ComputesInTime,
-    MultiTapeTM.ComputesInTimeAndSpace, MultiTapeTM.relabelState_runFrom_init, Cfg.mapState,
-    Option.map_eq_none_iff]
-  constructor
-  · rintro ⟨s, hhalt, hout, -⟩
-    exact ⟨_, hhalt, hout, rfl⟩
-  · rintro ⟨s, hhalt, hout, -⟩
-    exact ⟨_, hhalt, hout, rfl⟩
+  exact FinTM.computesInTime_relabelState ⟨1, Q, tm⟩ _ x output t
 
 /-- Every one-work-tape binary machine is equivalent, input by input and step for
 step, to a coded machine.

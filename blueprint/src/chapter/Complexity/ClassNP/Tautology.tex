@@ -235,58 +235,6 @@ For every binary string $x$, the syntax scanner started in its exact-end state a
 $x$ if and only if $x$ is empty.
 \end{lemma}
 
-\begin{lemma}[Unary scanner partition]
-\lean{Complexity.taut_takeTrues_shape}
-\label{Complexity.taut_takeTrues_shape}
-\leanok
-\uses{Std.Sat.CNF.takeTrues}
-\difficulty{3}
-For every binary string $x$, if the leading-ones scanner returns the count $k$ and the
-suffix $s$ on $x$, then $x = 1^{k} \mathbin{+\!\!+} s$.
-\end{lemma}
-
-\begin{lemma}[Literal parsing reconstructs its input]
-\lean{Complexity.taut_parseLit_shape}
-\label{Complexity.taut_parseLit_shape}
-\leanok
-\uses{Complexity.taut_takeTrues_shape, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeLit}
-\difficulty{3}
-If the literal parser succeeds on a binary string $x$, returning a literal $\ell$ and
-a remainder $r$, then $x$ is exactly the serialization of $\ell$ followed by $r$.
-\end{lemma}
-
-\begin{lemma}[Clause parsing reconstructs its input]
-\lean{Complexity.taut_parseClause_shape}
-\label{Complexity.taut_parseClause_shape}
-\leanok
-\uses{Complexity.taut_parseLit_shape, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeClause}
-\difficulty{5}
-For every fuel value, if the fuel-indexed clause parser succeeds on a binary string
-$x$, returning a clause $C$ and a remainder $r$, then $x$ is exactly the serialization
-of $C$ (including its closing $0$) followed by $r$.
-\end{lemma}
-
-\begin{lemma}[Formula parsing reconstructs its input]
-\lean{Complexity.taut_parseClauses_shape}
-\label{Complexity.taut_parseClauses_shape}
-\leanok
-\uses{Complexity.taut_parseClause_shape, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseClauses, Std.Sat.CNF.serialize}
-\difficulty{5}
-For every fuel value, if the fuel-indexed formula parser succeeds on a binary string
-$x$, returning a formula $\varphi$ and a remainder $r$, then $x$ is exactly the
-serialization of $\varphi$ followed by $r$.
-\end{lemma}
-
-\begin{lemma}[Exact parsing is inverse serialization]
-\lean{Complexity.taut_parse_shape}
-\label{Complexity.taut_parse_shape}
-\leanok
-\uses{Complexity.taut_parseClauses_shape, Std.Sat.CNF.parse, Std.Sat.CNF.serialize}
-\difficulty{3}
-If the exact-consumption formula parser succeeds on a binary string $x$, returning
-the formula $\varphi$, then $x$ equals the serialization of $\varphi$.
-\end{lemma}
-
 \begin{lemma}[Syntax scan from the unary state]
 \lean{Complexity.taut_syntax_unary}
 \label{Complexity.taut_syntax_unary}
@@ -986,25 +934,25 @@ $c$ reaches $d$ after one step and does not visit the anchor state at any time s
 before then; hence it is an anchor-free segment of length $1$.
 \end{lemma}
 
-\begin{lemma}[Composition of anchor-free run segments]
-\lean{Complexity.tautDual_segment_add}
-\label{Complexity.tautDual_segment_add}
+\begin{lemma}[Anchor-free runs are contract segments]
+\lean{Complexity.tautDualSegment_iff_segment}
+\label{Complexity.tautDualSegment_iff_segment}
 \leanok
-\uses{Complexity.TautDualControl, Complexity.tautDualSegment, Turing.Cfg, Turing.MultiTapeTM.runFrom_add}
-\difficulty{4}
-Let $c,d,e$ be configurations of the dual transducer on a fixed binary input, and let
-$a,b\in\mathbb{N}$. If running the transducer for $a$ steps from $c$ reaches $d$ without
-being in the anchor state at any time before step $a$, and running it for $b$ steps from
-$d$ reaches $e$ without being in the anchor state at any time before step $b$, then
-running it for $a+b$ steps from $c$ reaches $e$ without being in the anchor state at any
-time before step $a+b$.
+\uses{Complexity.TautDualControl, Complexity.tautDualSegment, Turing.Cfg}
+\difficulty{1}
+For configurations $c, d$ of the dual transducer and a time $t$, running $t$ steps from
+$c$ reaches $d$ without visiting the anchor state before time $t$ exactly when $c$ to $d$
+is a segment of length $t$ of the general contract layer that forbids the anchor state and
+constrains no head. In particular, such runs compose: an anchor-free run of $a$ steps
+followed by one of $b$ steps is an anchor-free run of $a + b$ steps (the general segment
+concatenation).
 \end{lemma}
 
 \begin{lemma}[Silent scan of a suffix]
 \lean{Complexity.tautDual_scan}
 \label{Complexity.tautDual_scan}
 \leanok
-\uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
+\uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
 Let $r,x,\mathrm{pre},o$ be binary strings and let $q$ be a syntax-scanner state, with
 $x=\mathrm{pre}\mathbin{++}r$. Starting on input $x$ in scanning state $q$ with head
@@ -1018,7 +966,7 @@ state is not the anchor state.
 \lean{Complexity.tautDual_copy}
 \label{Complexity.tautDual_copy}
 \leanok
-\uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualBit, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
+\uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualBit, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
 Let $r$ be a binary string. For every binary input $x$, prefix $p$, output word $o$, and
 syntax-scanner state $q$ such that $x=p r$, the dual transducer, started in copying
@@ -1032,7 +980,7 @@ $q$. No configuration before the final step is in the anchor state.
 \lean{Complexity.tautDual_rewind}
 \label{Complexity.tautDual_rewind}
 \leanok
-\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.step, Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_pos_of_ne_right}
+\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.step, Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
 Let $x$ and $o$ be binary strings, let $f\in\{\mathrm{false},\mathrm{true}\}$, and let
 $p\in\mathbb{N}$ satisfy $p\le |x|$. Starting from the dual transducer configuration on
@@ -1058,7 +1006,7 @@ output $o$. The anchor state is not visited during this one-step segment.
 \lean{Complexity.tautDual_valid}
 \label{Complexity.tautDual_valid}
 \leanok
-\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_copy, Complexity.tautDual_copy_end, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
+\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_copy, Complexity.tautDual_copy_end, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
 \difficulty{5}
 Let $x$ be a binary string whose syntax scan from the formula state ends in the
 exact-end state. Starting in the scanning state with the formula scanner at position $1$
@@ -1071,7 +1019,7 @@ every time strictly before that, it is not in the anchor state.
 \lean{Complexity.tautDual_invalid}
 \label{Complexity.tautDual_invalid}
 \leanok
-\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
+\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
 \difficulty{4}
 Let $x$ be a binary string such that scanning it from the formula-level state does not
 end in the exact-end state. Starting the dual transducer in the formula-level scanning

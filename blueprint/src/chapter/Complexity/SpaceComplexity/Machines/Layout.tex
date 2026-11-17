@@ -330,3 +330,124 @@ word formed from these segments, if its input-head position is the virtual offse
 corresponding to $tp$, then the symbol under the input head equals the virtual symbol
 specified by $tp$ in segment $s$.
 \end{lemma}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Machines --- Layout: further results}
+
+\begin{lemma}[Rendered length of a doubled segment]
+\lean{Complexity.LogProg.rlen_of_doubled}
+\label{Complexity.LogProg.rlen_of_doubled}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.rlen}
+\difficulty{1}
+Let $(w,b)$ be a segment, consisting of a Boolean word $w$ and a flag $b$. If $b$ is
+true, then the rendered length of $(w,b)$ equals $2|w|$.
+\end{lemma}
+
+\begin{lemma}[Rendered length of a plain segment]
+\lean{Complexity.LogProg.rlen_of_plain}
+\label{Complexity.LogProg.rlen_of_plain}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.rlen}
+\difficulty{1}
+Let $(w,b)$ be a segment, consisting of a Boolean word $w$ and a flag $b$. If $b$ is
+false, then the rendered length of $(w,b)$ equals $|w|$.
+\end{lemma}
+
+\begin{lemma}[Word length of a selected segment]
+\lean{Complexity.LogProg.wlen_eq}
+\label{Complexity.LogProg.wlen_eq}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.seg, Complexity.LogProg.wlen}
+\difficulty{1}
+For every list of segments and every index $s$, the word length at index $s$ equals the
+length of the Boolean word of the segment at index $s$, where an out-of-range index
+selects the default segment consisting of the empty word with flag false.
+\end{lemma}
+
+\begin{lemma}[Validity of the left boundary]
+\lean{Complexity.LogProg.TPos.valid_left}
+\label{Complexity.LogProg.TPos.valid_left}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.TPos.Valid}
+\difficulty{1}
+For every list of segments and every segment index $s$, the left-boundary track
+position is a valid track position in segment $s$.
+\end{lemma}
+
+\begin{lemma}[Validity of the right boundary]
+\lean{Complexity.LogProg.TPos.valid_right}
+\label{Complexity.LogProg.TPos.valid_right}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.TPos.Valid}
+\difficulty{1}
+For every list of segments and every segment index $s$, the right-boundary track
+position is a valid track position in segment $s$.
+\end{lemma}
+
+\begin{lemma}[Validity of a cell position]
+\lean{Complexity.LogProg.TPos.valid_cell_iff}
+\label{Complexity.LogProg.TPos.valid_cell_iff}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.TPos.Valid, Complexity.LogProg.wlen}
+\difficulty{1}
+For every list of segments, segment index $s$, cell index $c\in\mathbb{N}$ and parity bit
+$p$, the cell track position $(c,p)$ is valid in segment $s$ if and only if $c$ is less
+than the length of the word of segment $s$.
+\end{lemma}
+
+\begin{lemma}[Cell offset in a doubled segment]
+\lean{Complexity.LogProg.cellOff_of_doubled}
+\label{Complexity.LogProg.cellOff_of_doubled}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.cellOff, Complexity.LogProg.seg}
+\difficulty{1}
+Let a list of segments, a segment index $s$, a cell index $c$ and a parity bit $p$ be
+given. If segment $s$ is flagged as doubled, then the rendered offset of copy $p$ of
+cell $c$ within segment $s$ is $2c+p$, identifying false with $0$ and true with $1$.
+\end{lemma}
+
+\begin{lemma}[Cell offset in a plain segment]
+\lean{Complexity.LogProg.cellOff_of_plain}
+\label{Complexity.LogProg.cellOff_of_plain}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.cellOff, Complexity.LogProg.seg}
+\difficulty{1}
+Let a list of segments, a segment index $s$, a cell index $c$ and a parity bit $p$ be
+given. If segment $s$ is flagged as plain (not doubled), then the rendered offset of
+cell $c$ within segment $s$ is $c$, regardless of $p$.
+\end{lemma}
+
+\begin{lemma}[Virtual position of a left boundary]
+\lean{Complexity.LogProg.vpos_left}
+\label{Complexity.LogProg.vpos_left}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.off, Complexity.LogProg.vpos}
+\difficulty{1}
+For every list of segments and segment index $s$, the virtual position of the left
+boundary of segment $s$ equals the offset of segment $s$ in the virtual word, namely the
+total rendered length of the preceding segments plus two for each preceding separator.
+\end{lemma}
+
+\begin{lemma}[Virtual position of a cell]
+\lean{Complexity.LogProg.vpos_cell}
+\label{Complexity.LogProg.vpos_cell}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.cellOff, Complexity.LogProg.off, Complexity.LogProg.vpos}
+\difficulty{1}
+For every list of segments, segment index $s$, cell index $c$ and parity bit $p$, the
+virtual position of the cell track position $(c,p)$ in segment $s$ equals the offset of
+segment $s$ plus one plus the rendered offset of copy $p$ of cell $c$ within segment
+$s$.
+\end{lemma}
+
+\begin{lemma}[Virtual position of a right boundary]
+\lean{Complexity.LogProg.vpos_right}
+\label{Complexity.LogProg.vpos_right}
+\leanok
+\uses{Complexity.LogProg.Seg, Complexity.LogProg.off, Complexity.LogProg.rlen, Complexity.LogProg.seg, Complexity.LogProg.vpos}
+\difficulty{1}
+For every list of segments and segment index $s$, the virtual position of the right
+boundary of segment $s$ equals the offset of segment $s$ plus one plus the rendered
+length of segment $s$.
+\end{lemma}

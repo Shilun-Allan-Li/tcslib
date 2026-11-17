@@ -12,7 +12,9 @@ import TCSlib.Complexity.TimeHierarchy.ClockLoop
 import TCSlib.Complexity.TimeHierarchy.CodePrefix
 import TCSlib.Complexity.TuringMachine.Composition
 import TCSlib.Complexity.TuringMachine.MathlibBridge
+import TCSlib.Complexity.TuringMachine.Robustness.TwoTapes
 import TCSlib.Complexity.TuringMachine.Universal
+import TCSlib.Complexity.TuringMachine.UniversalK
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -23,10 +25,14 @@ set_option autoImplicit false
 
 [AB09, Theorem 3.1]: if `f, g` are time-constructible functions with
 `f(n) log f(n) = o(g(n))`, then `DTIME(f) ⊊ DTIME(g)`. This file proves the theorem
-in the form supported by this development's universal machine:
+twice. First, through the universal machine `Turing.universal`, with quadratic overhead:
 
   if `g` is time constructible and `(f(n) + n + 1)² = o(g(n))`, then
   `DTIME(f) ⊊ DTIME(g + 1)`.
+
+Then in the book's form (`Complexity.time_hierarchy_book`), through the self-universal machine
+for two-work-tape codes and its `O(t log t)` overhead: if `g` is time constructible, `n ≤ f(n)`
+and `f(n) log f(n) = o(g(n))`, then `DTIME(f) ⊊ DTIME(g + 1)`.
 
 ## The diagonal language
 
@@ -48,8 +54,7 @@ and the inputs `x = pairEncode α 1^m`: the simulation of `M` on `x` finishes wi
 ## The parameterized argument
 
 The argument is stated once, over the simulator and its overhead; the received theorem is its
-instance at `diagSim` (user authorization, 2026-10-14; design note
-`audits/evidence/u2/U2-design.md` §3).
+instance at `diagSim`.
 
 * `diagLangOf W g` is the diagonal language of an arbitrary machine `W`. It lies in
   `DTIME (g + 1)` for every `W` (`diagLangOf_mem_DTIME`), because the clocked runner counts
@@ -70,38 +75,52 @@ instance at `diagSim` (user authorization, 2026-10-14; design note
 
 ## Divergences from [AB09, Theorem 3.1]
 
-* **Overhead `f²` instead of `f log f`.** The book's universal machine has
-  `O(T log T)` overhead ([AB09, Theorem 1.9 / §1.7]); this development's universal
-  machine is linear on coded machines but coded machines are one-work-tape binary
-  machines, and an arbitrary binary machine is normal-formed with quadratic slowdown
-  (`Turing.FinTM.one_work_tape_binary`, [AB09, Claims 1.5–1.6]). The hypothesis is
-  therefore `(f(n) + n + 1)² = o(g(n))`, written out as
-  `∀ A, ∃ N, ∀ n ≥ N, A · (f n + n + 1)² ≤ g n`. The `+ n + 1` absorbs the linear
-  cost of reading the input and the `+ 1` normalization of `DTIME` bounds. The
-  sharper `f log f` form is planned as another instance of the parameterized argument
-  (above): a two-work-tape universal machine with the Hennie–Stearns `O(T log T)` normal
-  form ([AB09, §1.7]; `AroraBarakChapters3-4Plan.md` §2.1). It is not available until those
-  exist.
-  Because of the `+ n + 1` term the hypothesis forces `g(n) = ω(n²)`, so finer
-  separations below the quadratic threshold — e.g. the book's illustration
-  `DTIME(n) ⊊ DTIME(n^1.5)` — are **not** derivable from this theorem; the best
-  linear-time separation it yields is roughly `DTIME(n) ⊊ DTIME(n^(2+ε))`.
-* **No time-constructibility hypothesis on `f`** — none is needed (the book assumes
-  it only for symmetry).
+* **Two overheads: the book's `f log f`, and the received `f²`.** The book's universal machine
+  has `O(T log T)` overhead ([AB09, Theorem 1.9 / §1.7]). The book form is the instance of the
+  parameterized argument (above) at the two-tape self-simulator `twoTapeSelfSimulator`: the
+  self-application universal machine for two-work-tape codes (`Turing.exists_selfUniversalK`
+  at `k = 2`), linear on coded machines, with the Hennie–Stearns normal form of overhead
+  `logOverhead t = (t + 1)(log₂(t + 1) + 1)` (`Turing.FinTM.two_work_tapes_binary`,
+  [AB09, §1.7]). Its hypothesis is `(f(n) + n + 1) log₂(f(n) + n + 1) = o(g(n))`, written out as
+  `∀ A, ∃ N, ∀ n ≥ N, A · (f n + n + 1)(log₂(f n + n + 1) + 1) ≤ g n`
+  (`Complexity.time_hierarchy_log`), and, under `n ≤ f(n)`, the book's
+  `f(n) log₂ f(n) = o(g(n))` (`Complexity.time_hierarchy_book`, with
+  `logDiagOverhead f n ≤ 12 · f · log₂ f` for `2 ≤ n ≤ f`, `logDiagOverhead_le_book`). The
+  received form, kept beside it, is the instance at `diagSim`, whose coded machines are
+  one-work-tape binary machines, normal-formed with quadratic slowdown
+  (`Turing.FinTM.one_work_tape_binary`, [AB09, Claims 1.5–1.6]); its hypothesis is
+  `(f(n) + n + 1)² = o(g(n))`, written out as `∀ A, ∃ N, ∀ n ≥ N, A · (f n + n + 1)² ≤ g n`
+  (`Complexity.time_hierarchy`). In both, the `+ n + 1` absorbs the linear cost of reading the
+  input and the `+ 1` normalization of `DTIME` bounds.
+* **Separations below the quadratic threshold.** Because of the `+ n + 1` term the received
+  hypothesis forces `g(n) = ω(n²)`, and the best linear-time separation it yields is roughly
+  `DTIME(n) ⊊ DTIME(n^(2+ε))`. The book form has no such threshold. The book's illustration
+  `DTIME(n) ⊊ DTIME(n^1.5)` is not derived here: it needs a time-constructibility witness for a
+  bound such as `n ⌊√n⌋`.
+* **`n ≤ f(n)` in place of time constructibility of `f`.** The book assumes both `f` and `g`
+  time constructible, `f` only for symmetry. The book form assumes only `n ≤ f(n)`, which every
+  time-constructible `f` satisfies: it absorbs the `+ n + 1` into `f(n)` and makes
+  `log₂ f(n) ≥ 1` for `n ≥ 2`. `log₂` is the floor logarithm `Nat.log 2`, which vanishes at
+  `f(n) ≤ 1`, hence, under `n ≤ f(n)`, only at `n ≤ 1`, where an eventual hypothesis says
+  nothing. The received form and `Complexity.time_hierarchy_log` need no hypothesis on `f`.
 * **`DTIME(g + 1)` instead of `DTIME(g)`.** `TimeConstructible g` permits `g 0 = 0`,
   and `DTIME` of a bound vanishing anywhere is empty
   (`Complexity.DTIME_eq_empty_of_exists_zero`); the `+ 1` repairs this degenerate
-  case only (for `n ≥ 1`, `g n ≥ n ≥ 1`).
+  case only (for `n ≥ 1`, `g n ≥ n ≥ 1`). For a bound that never vanishes the larger class
+  is the book's `DTIME(g)` (`Complexity.time_hierarchy_of_pos`,
+  `Complexity.time_hierarchy_book_of_pos`).
 * **Padding the input, not the code.** The book uses that every machine has
   infinitely many codes. Here the universal machine's constant depends on the code
-  string (`Turing.universal` — the canonizer time of the representation scheme is an
-  opaque bound), so the diagonal argument fixes one code `α` and pads the *input*
-  `pairEncode α 1^m`; the code is recovered from the input by `preTM`.
+  string (`Turing.universal`, `Turing.exists_selfUniversalK` — the canonizer time of the
+  representation scheme is an opaque bound), so the diagonal argument fixes one code `α` and
+  pads the *input* `pairEncode α 1^m`. The received instance recovers the code from the input
+  by `preTM`; the two-tape instance runs the coded machine on the very input that carries its
+  code (self-application).
 * **The clock counts the diagonal machine's own simulation steps**, via the clocked
   runner `Complexity.TimeHierarchy.clockTM`.
 * The separation is proved in the stronger *infinitely-often* form:
   `diagLang_not_mem_DTIME` needs `A · (T n + n + 1)² ≤ g n` only for infinitely many
-  `n`, for each `A`.
+  `n`, for each `A` (`DiagSimulator.diagLang_not_mem_DTIME`, for every overhead).
 
 ## Main definitions
 
@@ -113,6 +132,10 @@ instance at `diagSim` (user authorization, 2026-10-14; design note
   at the level of padded simulation and at the level of a universal machine with a normal
   form; `DiagSimulator.mono`, `SelfSimulator.toDiagSimulator` — weakening and input padding.
 * `Complexity.TimeHierarchy.oneTapeSelfSimulator`, `sqDiagSimulator` — the received instance.
+* `Complexity.TimeHierarchy.logOverhead`, `logDiagOverhead` — the overheads `(t+1)(log₂(t+1)+1)`
+  and `(t+n+1)(log₂(t+n+1)+1)`.
+* `Complexity.TimeHierarchy.code₂`, `twoTapeSelfSimulator` — the two-work-tape scheme and the
+  self-simulator at `logOverhead`, from `Turing.exists_selfUniversalK` at two work tapes.
 
 ## Main results
 
@@ -124,6 +147,15 @@ instance at `diagSim` (user authorization, 2026-10-14; design note
 * `Complexity.TimeHierarchy.diagLangOf_mem_DTIME`, `DiagSimulator.diagLang_not_mem_DTIME`,
   `DiagSimulator.time_hierarchy`, `DiagSimulator.time_hierarchy_of_pos` — the parameterized
   argument, of which the four results above are the instance at `sqDiagSimulator`.
+* `Complexity.time_hierarchy_book` — [AB09, Theorem 3.1] in the book's form: if `g` is time
+  constructible, `n ≤ f(n)` and `f(n) log₂ f(n) = o(g(n))`, then `DTIME(f) ⊊ DTIME(g + 1)`.
+* `Complexity.time_hierarchy_book_of_pos` — the same with `DTIME g` when `g` never vanishes.
+* `Complexity.time_hierarchy_log` — the same at `(f(n) + n + 1) log₂(f(n) + n + 1) = o(g(n))`,
+  with no hypothesis on `f`; the three are the instance of the parameterized argument at the
+  two-tape self-simulator `Complexity.TimeHierarchy.twoTapeSelfSimulator`, of overhead
+  `logOverhead`, padded to `logDiagOverhead` (`logOverhead_add_le`).
+* `Complexity.TimeHierarchy.logOverhead_mul_le`, `logDiagOverhead_le_book` — the arithmetic of
+  the book form: constant-factor absorption, and `logDiagOverhead f n ≤ 12 · f · log₂ f`.
 
 ## References
 
@@ -532,5 +564,243 @@ theorem time_hierarchy_of_pos {f g : ℕ → ℕ} (hg : TimeConstructible g) (hp
     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f n + n + 1) ^ 2 ≤ g n) :
     DTIME f ⊂ DTIME g :=
   sqDiagSimulator.time_hierarchy_of_pos le_sq_overhead hg hpos hfg
+
+end Complexity
+
+/-! ### The book form: overhead `f log f` -/
+
+namespace Complexity.TimeHierarchy
+
+open Turing Turing.FinTM
+
+/-- **The Hennie–Stearns normal-form overhead** [AB09, §1.7]:
+`logOverhead t = (t + 1)(log₂(t + 1) + 1)`, the time bound of
+`Turing.FinTM.two_work_tapes_binary` at a budget `t`, with `log₂` the floor logarithm
+`Nat.log 2`. -/
+def logOverhead (t : ℕ) : ℕ := (t + 1) * (Nat.log 2 (t + 1) + 1)
+
+/-- The formula of `logOverhead`: `logOverhead t = (t + 1) * (Nat.log 2 (t + 1) + 1)`, by
+definition. -/
+theorem logOverhead_eq (t : ℕ) : logOverhead t = (t + 1) * (Nat.log 2 (t + 1) + 1) := rfl
+
+/-- **The diagonal overhead of the book form** [AB09, Theorem 3.1, proof]:
+`logDiagOverhead t n = (t + n + 1)(log₂(t + n + 1) + 1)`, the `f log f` analogue of the
+received overhead `(t + n + 1)²`. -/
+def logDiagOverhead (t n : ℕ) : ℕ := (t + n + 1) * (Nat.log 2 (t + n + 1) + 1)
+
+/-- The formula of `logDiagOverhead`:
+`logDiagOverhead t n = (t + n + 1) * (Nat.log 2 (t + n + 1) + 1)`, by definition. -/
+theorem logDiagOverhead_eq (t n : ℕ) :
+    logDiagOverhead t n = (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) := rfl
+
+/-- The book form's overhead dominates the time [AB09, Theorem 3.1, proof]:
+`t ≤ logDiagOverhead t n` for all `t` and `n`. -/
+theorem le_logDiagOverhead (t n : ℕ) : t ≤ logDiagOverhead t n := by
+  rw [logDiagOverhead_eq]
+  have h : t + n + 1 ≤ (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) :=
+    Nat.le_mul_of_pos_right _ (Nat.succ_pos _)
+  omega
+
+/-- **Input padding at the book form's overhead** [AB09, Theorem 3.1, proof]:
+`logOverhead t + n + 1 ≤ 2 · logDiagOverhead t n`, the bound that turns the padded overhead of
+`SelfSimulator.toDiagSimulator` at `logOverhead` into `logDiagOverhead`.
+
+**Proof sketch.** `log₂` is monotone and `t + 1 ≤ t + n + 1`, so
+`logOverhead t ≤ logDiagOverhead t n`; and `n + 1 ≤ t + n + 1 ≤ logDiagOverhead t n`. -/
+theorem logOverhead_add_le (t n : ℕ) : logOverhead t + n + 1 ≤ 2 * logDiagOverhead t n := by
+  rw [logOverhead_eq, logDiagOverhead_eq]
+  have hlog : Nat.log 2 (t + 1) ≤ Nat.log 2 (t + n + 1) := Nat.log_mono_right (by omega)
+  have h1 : (t + 1) * (Nat.log 2 (t + 1) + 1) ≤ (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) :=
+    Nat.mul_le_mul (by omega) (by omega)
+  have h2 : t + n + 1 ≤ (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) :=
+    Nat.le_mul_of_pos_right _ (Nat.succ_pos _)
+  omega
+
+/-- **Constant-factor absorption** of the Hennie–Stearns overhead [AB09, §1.7]:
+`logOverhead (c₀ T) ≤ (c₀ + 1)(log₂(c₀ + 1) + 2) · logOverhead T`, so a decider within `c₀ T`
+normal-forms within a constant multiple of `logOverhead T`.
+
+**Proof sketch.** Let `m = log₂(c₀ + 1) + 1`, so `c₀ + 1 < 2^m`, and `T + 1 < 2^(log₂(T + 1) + 1)`.
+Then `c₀ T + 1 ≤ (c₀ + 1)(T + 1) < 2^(m + log₂(T + 1) + 1)`, so
+`log₂(c₀ T + 1) ≤ log₂(T + 1) + m` and `log₂(c₀ T + 1) + 1 ≤ (m + 1)(log₂(T + 1) + 1)`;
+multiply by `c₀ T + 1 ≤ (c₀ + 1)(T + 1)`. -/
+theorem logOverhead_mul_le (c₀ T : ℕ) :
+    logOverhead (c₀ * T) ≤ (c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2) * logOverhead T := by
+  rw [logOverhead_eq, logOverhead_eq]
+  set m := Nat.log 2 (c₀ + 1) + 1 with hm
+  set l := Nat.log 2 (T + 1) with hl
+  have hc : c₀ + 1 < 2 ^ m := Nat.lt_pow_succ_log_self (by norm_num) _
+  have hT : T + 1 < 2 ^ (l + 1) := Nat.lt_pow_succ_log_self (by norm_num) _
+  have h1 : c₀ * T + 1 ≤ (c₀ + 1) * (T + 1) := by nlinarith
+  have h2 : (c₀ + 1) * (T + 1) < 2 ^ m * 2 ^ (l + 1) :=
+    Nat.mul_lt_mul_of_lt_of_lt hc hT
+  have hlog : Nat.log 2 (c₀ * T + 1) < m + (l + 1) := by
+    refine Nat.log_lt_of_lt_pow (by omega) ?_
+    rw [pow_add]
+    exact lt_of_le_of_lt h1 h2
+  have h3 : Nat.log 2 (c₀ * T + 1) + 1 ≤ (m + 1) * (l + 1) := by nlinarith
+  calc (c₀ * T + 1) * (Nat.log 2 (c₀ * T + 1) + 1)
+      ≤ ((c₀ + 1) * (T + 1)) * ((m + 1) * (l + 1)) := Nat.mul_le_mul h1 h3
+    _ = (c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2) * ((T + 1) * (l + 1)) := by rw [hm]; ring
+
+/-- **The arithmetic of the book form** [AB09, Theorem 3.1]: for `2 ≤ n ≤ f`,
+`logDiagOverhead f n ≤ 12 · f · log₂ f`.
+
+**Proof sketch.** `f ≥ 2`, so `log₂ f ≥ 1`. From `n ≤ f`: `f + n + 1 ≤ 3f`, and
+`f + n + 1 ≤ 4f`, so `log₂(f + n + 1) ≤ log₂(4f) = log₂ f + 2` and
+`log₂(f + n + 1) + 1 ≤ log₂ f + 3 ≤ 4 log₂ f`. Multiply: at most `3f · 4 log₂ f`. -/
+theorem logDiagOverhead_le_book {f n : ℕ} (hn : 2 ≤ n) (hf : n ≤ f) :
+    logDiagOverhead f n ≤ 12 * (f * Nat.log 2 f) := by
+  rw [logDiagOverhead_eq]
+  have hf2 : 2 ≤ f := le_trans hn hf
+  have hlog1 : 1 ≤ Nat.log 2 f := Nat.le_log_of_pow_le (by norm_num) (by simpa using hf2)
+  have h3 : f + n + 1 ≤ f * 2 * 2 := by omega
+  have hlog : Nat.log 2 (f + n + 1) ≤ Nat.log 2 f + 2 := by
+    calc Nat.log 2 (f + n + 1) ≤ Nat.log 2 (f * 2 * 2) := Nat.log_mono_right h3
+      _ = Nat.log 2 f + 2 := by
+        rw [Nat.log_mul_base (by norm_num) (by omega),
+          Nat.log_mul_base (by norm_num) (by omega)]
+  have hA : f + n + 1 ≤ 3 * f := by omega
+  have hB : Nat.log 2 (f + n + 1) + 1 ≤ 4 * Nat.log 2 f := by omega
+  calc (f + n + 1) * (Nat.log 2 (f + n + 1) + 1) ≤ (3 * f) * (4 * Nat.log 2 f) :=
+        Nat.mul_le_mul hA hB
+    _ = 12 * (f * Nat.log 2 f) := by ring
+
+/-- The book form's hypothesis gives the diagonal one: if `n ≤ f n` and, for every `A`,
+eventually `A · f n log₂ f n ≤ g n`, then for every `A`, eventually
+`A · logDiagOverhead (f n) n ≤ g n` (`logDiagOverhead_le_book` at the constant `12 A`, for
+`n ≥ 2`). -/
+private theorem eventually_logDiagOverhead_le {f g : ℕ → ℕ} (hf : ∀ n, n ≤ f n)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f n * Nat.log 2 (f n)) ≤ g n) :
+    ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * logDiagOverhead (f n) n ≤ g n := by
+  intro A
+  obtain ⟨N, hN⟩ := hfg (12 * A)
+  refine ⟨max N 2, fun n hn => ?_⟩
+  calc A * logDiagOverhead (f n) n ≤ A * (12 * (f n * Nat.log 2 (f n))) :=
+        Nat.mul_le_mul_left A (logDiagOverhead_le_book (le_of_max_le_right hn) (hf n))
+    _ = 12 * A * (f n * Nat.log 2 (f n)) := by ring
+    _ ≤ g n := hN n (le_of_max_le_left hn)
+
+/-- **The fixed two-work-tape representation scheme** of the book form [AB09, §1.4] (any
+scheme works; `Turing.exists_effectiveMachineCode2` provides one). -/
+noncomputable def code₂ : EffectiveMachineCode2 := Classical.choice exists_effectiveMachineCode2
+
+/-- The definition of `code₂`: `code₂ = Classical.choice Turing.exists_effectiveMachineCode2`. -/
+theorem code₂_eq : code₂ = Classical.choice exists_effectiveMachineCode2 := rfl
+
+/-- **The two-tape self-simulator** [AB09, Theorem 3.1, proof; §1.4.1 and §1.7]: the
+self-application universal machine for the two-work-tape codes of `code₂`
+(`Turing.exists_selfUniversalK` at `k = 2`; `decode α` the machine `code₂.decode α`), with the
+Hennie–Stearns normal form, whose overhead is `logOverhead`.
+
+**Proof sketch.** *Simulation:* for each code `α`, `Turing.exists_selfUniversalK` gives a
+constant `C` such that whenever the machine coded by `α` (the same bundled machine in the
+`k`-tape view, `Turing.EffectiveMachineCode2.toK_toFinTM`) halts on `pairEncode α w` with `[b]`
+within `t` steps, the universal machine does so within
+`C (t + 1) ≤ C (t + |pairEncode α w| + 1)` steps. *Normal form:* a decider within `c₀ T`
+becomes a two-work-tape binary machine within `c₁ · logOverhead (c₀ T)`
+(`Turing.FinTM.two_work_tapes_binary`), then a coded machine `N` with the same runs
+(`Turing.exists_code2TM`), whose code `code₂.encode N` decodes back to `N`; and
+`c₁ · logOverhead (c₀ T) ≤ c₁ (c₀ + 1)(log₂(c₀ + 1) + 2) (logOverhead T + 1)`
+(`logOverhead_mul_le`). -/
+noncomputable def twoTapeSelfSimulator : SelfSimulator logOverhead where
+  W := Classical.choose (exists_selfUniversalK 2 code₂.toK)
+  decode α := (code₂.decode α).toFinTM
+  simulates α := by
+    obtain ⟨C, -, hC⟩ := Classical.choose_spec (exists_selfUniversalK 2 code₂.toK) α
+    refine ⟨C, fun w b t h => ?_⟩
+    have h' : (code₂.toK.toFinTM α).ComputesInTime (pairEncode α w) [b] t := by
+      rw [EffectiveMachineCode2.toK_toFinTM]; exact h
+    exact ((hC w).1 [b] t h').1.mono (Nat.mul_le_mul_left C (by omega))
+  normalForm T L := by
+    rintro ⟨c₀, M, hM⟩
+    obtain ⟨M₁, c₁, hk, h₁⟩ := two_work_tapes_binary M
+      (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) (fun n => c₀ * T n)
+      ((computesFunInTime_iff _ _ _).2 hM)
+    obtain ⟨N, hN⟩ := exists_code2TM M₁ hk
+    refine ⟨code₂.encode N, c₁ * ((c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2)), fun x => ?_⟩
+    show (code₂.decode (code₂.encode N)).toFinTM.ComputesInTime _ _ _
+    rw [code₂.toMachineCode2.decode_encode N]
+    apply ((hN x _ _).2 ((computesFunInTime_iff _ _ _).1 h₁ x)).mono
+    calc c₁ * ((c₀ * T x.length + 1) * (Nat.log 2 (c₀ * T x.length + 1) + 1))
+        = c₁ * logOverhead (c₀ * T x.length) := by rw [logOverhead_eq]
+      _ ≤ c₁ * ((c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2) * logOverhead (T x.length)) :=
+          Nat.mul_le_mul_left c₁ (logOverhead_mul_le c₀ _)
+      _ ≤ c₁ * ((c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2)) * (logOverhead (T x.length) + 1) := by
+          rw [Nat.mul_assoc c₁]
+          exact Nat.mul_le_mul_left c₁ (Nat.mul_le_mul_left _ (Nat.le_succ _))
+
+/-- The two-tape self-simulator's machine is the self-application universal machine of
+`code₂` at `k = 2`, by definition. -/
+theorem twoTapeSelfSimulator_W :
+    twoTapeSelfSimulator.W = Classical.choose (exists_selfUniversalK 2 code₂.toK) := rfl
+
+/-- The two-tape self-simulator's code `α` denotes the machine `code₂.decode α`, by
+definition. -/
+theorem twoTapeSelfSimulator_decode (α : List Bool) :
+    twoTapeSelfSimulator.decode α = (code₂.decode α).toFinTM := rfl
+
+end Complexity.TimeHierarchy
+
+namespace Complexity
+
+open TimeHierarchy
+
+/-- **The Time Hierarchy Theorem at overhead `f log f`** [AB09, Theorem 3.1], with the input
+length kept: if `g` is time constructible and
+`(f(n) + n + 1) log₂(f(n) + n + 1) = o(g(n))` — i.e. for every constant `A`, eventually
+`A · (f n + n + 1)(log₂(f n + n + 1) + 1) ≤ g n` — then `DTIME(f) ⊊ DTIME(g + 1)`. No
+hypothesis on `f` is needed; `Complexity.time_hierarchy_book` is the book's form.
+
+**Proof sketch.** The case `Φ = logDiagOverhead` of `DiagSimulator.time_hierarchy`, at the
+two-tape self-simulator `twoTapeSelfSimulator` padded by `SelfSimulator.toDiagSimulator`
+(overhead `logOverhead t + n + 1`) and weakened by `DiagSimulator.mono`
+(`logOverhead t + n + 1 ≤ 2 · logDiagOverhead t n`, `logOverhead_add_le`), with
+`t ≤ logDiagOverhead t n` (`le_logDiagOverhead`). *Inclusion:* `f n ≤ g n` eventually, the
+smaller lengths absorbed into the constant. *Strictness:* the diagonal language of the
+two-tape universal machine lies in `DTIME (g + 1)` (`diagLangOf_mem_DTIME`) but not in
+`DTIME f` (`DiagSimulator.diagLang_not_mem_DTIME`). -/
+theorem time_hierarchy_log {f g : ℕ → ℕ} (hg : TimeConstructible g)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N,
+      A * ((f n + n + 1) * (Nat.log 2 (f n + n + 1) + 1)) ≤ g n) :
+    DTIME f ⊂ DTIME (fun n => g n + 1) :=
+  (twoTapeSelfSimulator.toDiagSimulator.mono 2 logOverhead_add_le).time_hierarchy
+    le_logDiagOverhead hg fun A => (hfg A).imp fun _ hN n hn => by
+      rw [logDiagOverhead_eq]; exact hN n hn
+
+/-- **The Time Hierarchy Theorem** [AB09, Theorem 3.1], in the book's form: if `g` is time
+constructible, `n ≤ f(n)` for all `n`, and `f(n) log₂ f(n) = o(g(n))` — i.e. for every
+constant `A`, eventually `A · f n · log₂ f n ≤ g n` — then `DTIME(f) ⊊ DTIME(g + 1)`.
+
+Deviations from the book (see the module docstring): `n ≤ f(n)` in place of time
+constructibility of `f` (every time-constructible `f` satisfies it); `log₂` is the floor
+logarithm `Nat.log 2`, which vanishes at `f n ≤ 1`, hence only at `n ≤ 1` here, outside the
+eventual hypothesis; and the larger class is `DTIME (g + 1)`, which differs from `DTIME g` only
+in the degenerate case `g 0 = 0` (`Complexity.time_hierarchy_book_of_pos`).
+
+**Proof sketch.** For `n ≥ 2`, `n ≤ f n` gives
+`(f n + n + 1)(log₂(f n + n + 1) + 1) ≤ 12 · f n · log₂ f n` (`logDiagOverhead_le_book`), so
+the hypothesis at `12 A` gives `A · logDiagOverhead (f n) n ≤ g n` eventually; conclude as in
+`Complexity.time_hierarchy_log`, by `DiagSimulator.time_hierarchy` at the two-tape
+self-simulator `twoTapeSelfSimulator`. -/
+theorem time_hierarchy_book {f g : ℕ → ℕ} (hg : TimeConstructible g) (hf : ∀ n, n ≤ f n)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f n * Nat.log 2 (f n)) ≤ g n) :
+    DTIME f ⊂ DTIME (fun n => g n + 1) :=
+  (twoTapeSelfSimulator.toDiagSimulator.mono 2 logOverhead_add_le).time_hierarchy
+    le_logDiagOverhead hg (eventually_logDiagOverhead_le hf hfg)
+
+/-- **The Time Hierarchy Theorem for a positive bound** [AB09, Theorem 3.1], in the book's
+form: as `Complexity.time_hierarchy_book`, with the larger class exactly `DTIME g` when `g`
+never vanishes — the book's `DTIME(f) ⊊ DTIME(g)`.
+
+**Proof sketch.** As `Complexity.time_hierarchy_book`, through
+`DiagSimulator.time_hierarchy_of_pos` in place of `DiagSimulator.time_hierarchy`:
+`c (g n + 1) ≤ 2c · g n` when `g n ≥ 1`, so `DTIME (g + 1) = DTIME g`. -/
+theorem time_hierarchy_book_of_pos {f g : ℕ → ℕ} (hg : TimeConstructible g)
+    (hpos : ∀ n, 0 < g n) (hf : ∀ n, n ≤ f n)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f n * Nat.log 2 (f n)) ≤ g n) :
+    DTIME f ⊂ DTIME g :=
+  (twoTapeSelfSimulator.toDiagSimulator.mono 2 logOverhead_add_le).time_hierarchy_of_pos
+    le_logDiagOverhead hg hpos (eventually_logDiagOverhead_le hf hfg)
 
 end Complexity

@@ -3,11 +3,15 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.ClassP.BinaryArith.Iterate
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
 import TCSlib.Complexity.ClassNP.SAT
 import TCSlib.Complexity.ClassNP.TMSAT
 import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
 import TCSlib.Complexity.CookLevin.Snapshot
 import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -620,136 +624,59 @@ private lemma clNPVerifier {L : Language Bool} (hL : L ∈ NP) :
   obtain ⟨M, c, A, d, hc, hA, hd, ho, hM⟩ := clObliviousVerifier hV
   exact ⟨C, e, V, M, c, A, d, hcert, hc, hA, hd, ho, hM⟩
 
-/-- Linear catalog contracts in the polynomial-time normal form. This and
-the next two assembly lemmas locally repeat the public-catalog construction
-used in `ClassNP/TMSAT.lean`; no foreign private declaration is referenced. -/
+/-- Linear-time computation is polynomial-time, by
+`Complexity.polyTimeComputable_of_linear`. -/
 private lemma clNative_linear (f : List Bool → List Bool)
     (h : ∃ (M : FinTM Bool) (a : ℕ),
       M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f := by
-  obtain ⟨M, a, hM⟩ := h
-  exact ⟨M, a, 1, by simpa only [Nat.pow_one] using hM⟩
+  exact polyTimeComputable_of_linear h
 
-/-- Payload maps retain the first field, including its exact bytes. The
-linear scan and the computed payload both fit the displayed polynomial. -/
+/-- Threaded payload mapping preserves polynomial time, including malformed inputs,
+by `Complexity.PolyTimeComputable.pairMapSnd`. -/
 private lemma clNative_map {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun z => match pairDecode z with
       | some (a, b) => pairEncode a (g b)
       | none => []) := by
-  obtain ⟨G, C, e, hG⟩ := hg
-  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_pairMapSnd hG
-    (by intro m n h; exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) e))
-  refine ⟨M, a * (C + 1), e + 1, fun x => (hM x).mono ?_⟩
-  have hlin : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by
-    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
-      (show 1 ≤ e + 1 by omega)
-  have hp := Nat.mul_le_mul_left C
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (Nat.le_succ e))
-  calc
-    _ ≤ a * ((x.length + 1) ^ (e + 1) + C * (x.length + 1) ^ (e + 1)) :=
-      Nat.mul_le_mul_left a (Nat.add_le_add hlin hp)
-    _ = _ := by ring
+  have he : Complexity.pairMapSnd g = (fun z => match pairDecode z with
+      | some (a, b) => pairEncode a (g b)
+      | none => []) := funext (Complexity.pairMapSnd.eq_1 g)
+  rw [← he]
+  exact PolyTimeComputable.pairMapSnd hg
 
-/-- Two separately computed fields can be paired while preserving the
-original input needed by both computations.
-**Proof sketch.** Use the audited retained-request construction: compute
-the first field paired with an empty payload, retain the original input,
-then compute the second field from the retained input. Pair concatenation
-and projection remove the administrative layers. All scans and simulations
-are the native public catalog machines, with their proved runtime bounds. -/
+/-- Two separately computed polynomial-time fields can be paired on their shared
+input, by `Complexity.PolyTimeComputable.pairEncode`. -/
 private lemma clNative_pair {f g : List Bool → List Bool}
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
-  have hd := clNative_linear _ FinTM.computesFunInTime_pairDup
-  have hp := clNative_linear _ FinTM.computesFunInTime_pairFst
-  have hs := clNative_linear _ FinTM.computesFunInTime_pairSnd
-  have hc := clNative_linear _ FinTM.computesFunInTime_pairConcat
-  have hz := clNative_linear _ (FinTM.computesFunInTime_const [])
-  have hH := ((clNative_map hz).comp hd).comp hf
-  have hS := (clNative_map hH).comp hd
-  have hT := ((clNative_map (hg.comp hp)).comp hd).comp hS
-  convert hs.comp (hc.comp hT) using 1
-  funext x
-  simp only [Function.comp_apply, pairDecode_pairEncode, Option.map_some, Option.getD_some]
-  have he (a b c : List Bool) : pairEncode a b ++ c = pairEncode a (b ++ c) := by
-    simp [pairEncode, List.append_assoc]
-  rw [he, he]
-  simp [pairDecode_pairEncode]
+  exact PolyTimeComputable.pairEncode hf hg
 
-/-- Concatenating computed fields uses the validated native pair scanner. -/
+/-- Concatenating polynomial-time field computations preserves polynomial time,
+by `Complexity.PolyTimeComputable.append`. -/
 private lemma clNative_append {f g : List Bool → List Bool}
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => f x ++ g x) := by
-  simpa only [Function.comp_def, pairDecode_pairEncode] using
-    (clNative_linear _ FinTM.computesFunInTime_pairConcat).comp (clNative_pair hf hg)
+  exact PolyTimeComputable.append hf hg
 
-/-- The exact certificate polynomial is computed in unary, including zero
-coefficient and zero degree. Its value is never replaced by a majorant. -/
+/-- The exact unary polynomial `1^(C * (|x| + 1)^e)` is polynomial-time computable,
+by `Complexity.polyTimeComputable_polyUnary`. -/
 private lemma clNative_unary (C e : ℕ) :
     PolyTimeComputable (fun x => List.replicate (C * (x.length + 1) ^ e) true) := by
-  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_polyUnary C e
-  exact ⟨M, a, e + 1, hM⟩
+  exact polyTimeComputable_polyUnary C e
 
-/-- Replace each native input bit by a fixed bit, with no work tapes.
-The boundary transition halts silently, so length zero is included. -/
-private def clFillTM (b : Bool) : FinTM Bool where
-  k := 0
-  State := Unit
-  tm := {
-    q₀ := ()
-    tr := fun _ inp _ => match inp with
-      | none => ⟨0, fun i => Fin.elim0 i, none, none⟩
-      | some _ => ⟨.pos, fun i => Fin.elim0 i, some b, some ()⟩ }
-
-/-- After each scanned bit one output bit has been written. This is the
-native scan invariant, including the final silent halting transition. -/
-private lemma clFill_run (b : Bool) (x : List Bool) (i : ℕ) (hi : i ≤ x.length)
-    (out : List Bool) :
-    (clFillTM b).tm.runFrom
-      (⟨some (), ⟨i + 1, by omega⟩, fun j => Fin.elim0 j,
-        fun j => Fin.elim0 j, out⟩ : Cfg 0 Bool Unit x)
-      (x.length - i + 1) =
-      ⟨none, ⟨x.length + 1, by omega⟩, fun j => Fin.elim0 j,
-        fun j => Fin.elim0 j, out ++ List.replicate (x.length - i) b⟩ := by
-  induction h : x.length - i generalizing i out with
-  | zero =>
-    have he : i = x.length := by omega
-    subst i
-    simp [MultiTapeTM.runFrom, MultiTapeTM.step, clFillTM, Cfg.inputSymbol]
-    constructor <;> funext j <;> exact Fin.elim0 j
-  | succ r ih =>
-    have hil : i < x.length := by omega
-    have hs := inputSymbolInner (cfg :=
-      (⟨some (), ⟨i + 1, by omega⟩, fun j => Fin.elim0 j,
-        fun j => Fin.elim0 j, out⟩ : Cfg 0 Bool Unit x)) i (by simp [Nat.add_comm]) hil
-    rw [MultiTapeTM.runFrom_succ_eq_step]
-    have step : (clFillTM b).tm.step
-        (⟨some (), ⟨i + 1, by omega⟩, fun j => Fin.elim0 j,
-          fun j => Fin.elim0 j, out⟩ : Cfg 0 Bool Unit x) =
-        ⟨some (), ⟨i + 1 + 1, by omega⟩, fun j => Fin.elim0 j,
-          fun j => Fin.elim0 j, out ++ [b]⟩ := by
-      simp only [MultiTapeTM.step, clFillTM, hs, Action.apply]
-      refine Cfg.ext rfl ?_ (by funext j; exact Fin.elim0 j)
-        (by funext j; exact Fin.elim0 j) rfl
-      exact moveInputPos_pos_of_ne_right _ (by simp; omega)
-    rw [step]
-    simpa [List.replicate_succ, List.append_assoc] using
-      ih (i + 1) (by omega) (out ++ [b]) (by omega)
-
-/-- The all-false reference input is produced by an actual native scan,
-not by replacing the simulator's physical input with the instance. -/
+/-- Replacing every native input bit by a fixed bit is the one-state
+transduction emitting `b` on every bit (`polyTimeComputable_transduce`). -/
 private lemma clNative_fill (b : Bool) :
     PolyTimeComputable (fun x => List.replicate x.length b) := by
-  refine ⟨clFillTM b, 1, 1, fun x => ?_⟩
-  apply (FinTM.computesInTime_iff _ _ _ _).mpr
-  have h := clFill_run b x 0 (by omega) []
-  have hc : (clFillTM b).tm.initCfg x =
-      (⟨some (), ⟨0 + 1, by omega⟩, fun j => Fin.elim0 j,
-        fun j => Fin.elim0 j, []⟩ : Cfg 0 Bool Unit x) := by
-    refine Cfg.ext rfl rfl ?_ ?_ rfl <;> funext j <;> exact Fin.elim0 j
-  simp only [Nat.sub_zero, List.nil_append] at h
-  dsimp only
-  rw [Nat.one_mul, Nat.pow_one, hc, h]
-  exact ⟨rfl, rfl⟩
+  have hw (x : List Bool) :
+      transduce (fun (_ : Unit) _ => ()) (fun _ _ => some b) () x = List.replicate x.length b := by
+    induction x with
+    | nil => rw [transduce_nil, List.length_nil, List.replicate_zero]
+    | cons c r ih =>
+      rw [transduce_cons, ih, Option.toList_some, List.length_cons, List.replicate_succ,
+        List.singleton_append]
+  have h := polyTimeComputable_transduce (fun (_ : Unit) _ => ()) (fun _ _ => some b) ()
+  rwa [show transduce (fun (_ : Unit) _ => ()) (fun _ _ => some b) () =
+    fun x => List.replicate x.length b from funext hw] at h
 
 /-- Native exact preparation arithmetic for [AB09, Lemma 2.11]. The
 six fields retain the instance and the exact binary certificate length,
@@ -1029,15 +956,13 @@ private lemma clCount_carry (x : List Bool) (p : Fin (x.length + 2))
   induction bs with
   | nil =>
     intro pre
-    simp only [clCountCarry, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero, clCount_carry_step]
+    simp only [clCountCarry, Nat.zero_add, MultiTapeTM.runFrom_one, clCount_carry_step]
     simp [clCountInc]
   | cons b bs ih =>
     intro pre
     cases b with
     | false =>
-      simp only [clCountCarry, MultiTapeTM.runFrom_succ_eq_step,
-        MultiTapeTM.runFrom_zero, clCount_carry_step]
+      simp only [clCountCarry, Nat.zero_add, MultiTapeTM.runFrom_one, clCount_carry_step]
       simp [clCountInc]
     | true =>
       simp only [clCountCarry, MultiTapeTM.runFrom_succ_eq_step, clCount_carry_step,
@@ -1059,7 +984,7 @@ private lemma clCount_rewind (x : List Bool) (p : Fin (x.length + 2))
   induction j with
   | zero =>
     intro hj
-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clCountTM, clCountCfg, Cfg.workTapeSymbols,
         clCountTape, Action.apply]
@@ -1105,7 +1030,8 @@ private lemma clCount_run (x : List Bool) (p : Fin (x.length + 2)) (w : List Boo
 an arbitrary upper bound to be cut to the actual first return. -/
 private lemma clCount_idle {x : List Bool} (c : Cfg 1 Bool (Fin 4) x)
     (hc : c.state = some 0) : clCountTM.tm.step c = c := by
-  simp only [MultiTapeTM.step, hc, clCountTM,
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clCountTM,
     show (0 : Fin 4) ≠ 1 from by decide, show (0 : Fin 4) ≠ 2 from by decide, if_false]
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -1123,25 +1049,6 @@ including every negative cell and both empty-word boundaries. -/
 private lemma clCountTape_eq (w : List Bool) : clCountTape w = FinTM.bufferTape w := by
   funext z
   by_cases hz : z < 0 <;> simp [clCountTape, FinTM.bufferTape, hz, show 0 ≤ z ↔ ¬z < 0 by omega]
-
-/-- A counter below `2^w` occupies at most `w` bits. Together with the
-counter runtime bound, this charges one administrative increment by two
-binary scans plus two transitions, with no unary-position representation. -/
-private lemma clCount_width (n w : ℕ) (hn : n < 2 ^ w) : n.bits.length ≤ w := by
-  induction n using Nat.binaryRec' generalizing w with
-  | zero => simp
-  | bit b n hb ih =>
-    cases w with
-    | zero =>
-      have hz : Nat.bit b n = 0 := by simpa using hn
-      cases b <;> simp [Nat.bit_val] at hz
-      have h := hb (by omega)
-      contradiction
-    | succ w =>
-      rw [Nat.bits_append_bit n b hb, List.length_cons]
-      apply Nat.succ_le_succ
-      apply ih
-      cases b <;> simp [Nat.bit_val, Nat.pow_succ] at hn <;> omega
 
 /-- One simultaneous counter action. A stopped component is stationary.
 The product construction is locally adapted from the audited
@@ -1270,26 +1177,45 @@ private lemma clBank_finish {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
   funext i
   exact clBank_component x p (a i) (n i) W (hW i)
 
-/-- The all-returned bank is absorbing on the entire configuration. -/
+/-- The all-returned bank is absorbing on the entire configuration.
+
+**Proof sketch.** Each component return action fixes its one-tape configuration.
+Compare the bank's fields through the published action equations to retain its
+control, tapes, heads and output. -/
 private lemma clBank_idle {l : ℕ} {x : List Bool}
     (c : Cfg (clBankTM l).k Bool (clBankTM l).State x)
     (hc : c.state = some (fun _ => some (0 : Fin 4))) :
     (clBankTM l).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
-  refine Cfg.ext hc.symm (moveInputPos_zero _) ?_ ?_ ?_
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clBankTM, clBankPart, clCountTM,
+    show (0 : Fin 4) ≠ 1 from by decide, show (0 : Fin 4) ≠ 2 from by decide, if_false]
+  let d (i : Fin l) : Cfg 1 Bool (Fin 4) x :=
+    ⟨some 0, c.inputPos, (fun _ => c.workTapes i),
+      (fun _ => c.workTapePos i), c.output⟩
+  have hd (i : Fin l) : (FinTM.controlAction 0 (some (0 : Fin 4))).apply (d i) = d i := by
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Action.apply_state]
+    refine (congrArg some ?_).trans hc.symm
+    funext i
+    have hs := congrArg Cfg.state (hd i)
+    simpa only [Action.apply_state] using hs
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_zero _
   · funext i
-    simp [clBankTM, clBankPart, clCountTM, FinTM.controlAction, Action.apply]
+    have hw := congrArg (fun e : Cfg 1 Bool (Fin 4) x => e.workTapes 0) (hd i)
+    simpa only [Action.apply_workTapes, Cfg.workTapeSymbols_eq] using hw
   · funext i
-    simp [clBankTM, clBankPart, clCountTM, FinTM.controlAction, Action.apply]
-  · simp [clBankTM, Action.apply]
+    have hp := congrArg (fun e : Cfg 1 Bool (Fin 4) x => e.workTapePos 0) (hd i)
+    simpa only [Action.apply_workTapePos] using hp
+  · simp only [Action.apply_output, Option.toList_none, List.append_nil]
 
 /-- Cut the simultaneous bank at its observed first all-returned state.
 This duration may be zero when no displacement needs a counter update;
 the surrounding source-step/dispatch controller supplies positivity.
-**Proof sketch.** Minimize the all-returned occurrence before the common
-proved deadline. Absorption implies that its first occurrence already has
-the exact endpoint and restored heads. -/
+**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
+all-returned state and the proved deadline. Whole-configuration stationarity
+preserves the exact endpoint and restored heads at that first entry. -/
 private lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
     (a : Fin l → Bool) (n : Fin l → ℕ) (W : ℕ)
     (hW : ∀ i, (n i).bits.length ≤ W) :
@@ -1301,23 +1227,17 @@ private lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
         (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) t =
         clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits []) := by
   let start := clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])
-  have finish := clBank_finish x p a n W hW
-  have hex : ∃ t, t ≤ 2 * W + 2 ∧
-      ((clBankTM l).tm.runFrom start t).state = some (fun _ => some (0 : Fin 4)) :=
-    ⟨2 * W + 2, le_rfl, by rw [finish]; rfl⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
-  refine ⟨t, ht.1, ?_, ?_⟩
-  · intro j hj hs
-    have := Nat.find_min' hex (show j ≤ 2 * W + 2 ∧
-      ((clBankTM l).tm.runFrom start j).state = some (fun _ => some (0 : Fin 4)) from
-        ⟨by omega, hs⟩)
-    omega
-  · have hstay := Function.iterate_fixed (clBank_idle _ ht.2) (2 * W + 2 - t)
-    change (clBankTM l).tm.runFrom ((clBankTM l).tm.runFrom start t)
-      (2 * W + 2 - t) = (clBankTM l).tm.runFrom start t at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
-    exact hstay.symm.trans finish
+  let finishCfg := clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits [])
+  have finish : (clBankTM l).tm.runFrom start (2 * W + 2) = finishCfg :=
+    clBank_finish x p a n W hW
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    (clBankTM l).tm (fun q => q = (fun _ : Fin l => some (0 : Fin 4)))
+    start finishCfg (2 * W + 2)
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact clBank_idle c hq)
+    ⟨(fun _ => some (0 : Fin 4)), rfl, rfl⟩ finish
+  exact ⟨t, ht, fun j hj hs => hcut j hj ⟨_, hs, rfl⟩, he⟩
 
 /-- Actual source-head displacements. The input component is the clamped
 virtual displacement, not the source's requested (possibly blocked) move.
@@ -1653,7 +1573,7 @@ private lemma clCopy_pair (x : List Bool) (p : Fin (x.length + 2))
       clTwo, Fin.cases_zero, hr]
     simpa [clCopyCfg] using clCopy_write x 0 1 p pre.length (pre ++ b :: rest) record b 0
   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, h0]
+    MultiTapeTM.runFrom_one, h0]
   change (clCopyTM.tm.tr (1 : Fin 5) _ _).apply _ = _
   simp only [clCopyTM, show (1 : Fin 5) ≠ 0 by decide, ↓reduceIte,
     clCopyCfg, Cfg.workTapeSymbols, clTwo, Fin.cases_zero, hr, Option.getD_some]
@@ -1693,7 +1613,7 @@ private lemma clCopy_separator (x : List Bool) (p : Fin (x.length + 2))
       clTwo, Fin.cases_zero, hr]
     simpa [clCopyCfg, sub_eq_add_neg] using clCopy_write x 0 2 p w.length w record false .neg
   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, h0]
+    MultiTapeTM.runFrom_one, h0]
   change (clCopyTM.tm.tr (2 : Fin 5) _ _).apply _ = _
   simp only [clCopyTM, show (2 : Fin 5) ≠ 0 by decide,
     show (2 : Fin 5) ≠ 1 by decide, ↓reduceIte]
@@ -1712,7 +1632,7 @@ private lemma clCopy_rewind (x : List Bool) (p : Fin (x.length + 2))
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,
         Cfg.workTapeSymbols, clTwo, Action.apply]
@@ -1753,8 +1673,7 @@ private lemma clCopy_run (x : List Bool) (p : Fin (x.length + 2))
 /-- Returned record-copy configurations remain unchanged in their entirety. -/
 private lemma clCopy_idle {x : List Bool} (c : Cfg 2 Bool (Fin 5) x)
     (hc : c.state = some (4 : Fin 5)) : clCopyTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   change (FinTM.controlAction 0 (some (4 : Fin 5))).apply c = c
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -1763,7 +1682,10 @@ private lemma clCopy_idle {x : List Bool} (c : Cfg 2 Bool (Fin 5) x)
 /-- The exact recorded field is available at the copier's observed first
 positive return, with both the untouched source and the new record head
 specified. This permits a host to dispatch without knowing field length.
-**Proof sketch.** Choose the first completed-control occurrence below the exact copying bound. Since completion is absorbing on the whole configuration, its first occurrence already has the final record and restored source head. Initial and completed controls are distinct. -/
+**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
+completed control and the exact copying bound. Its first entry preserves the
+final record and restored source head. Distinct initial and completed controls
+make the selected time positive. -/
 private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))
     (w record : List Bool) :
     ∃ t ≤ 3 * w.length + 3, 0 < t ∧
@@ -1771,29 +1693,22 @@ private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))
       clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t =
         clCopyCfg x 4 p 0 w (record ++ pairEncode w []) := by
   have finish := clCopy_run x p w record
-  have hex : ∃ t, t ≤ 3 * w.length + 3 ∧
-      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) :=
-    ⟨3 * w.length + 3, le_rfl, by rw [finish]; rfl⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    clCopyTM.tm (fun q => q = (4 : Fin 5))
+    (clCopyCfg x 0 p 0 w record) (clCopyCfg x 4 p 0 w (record ++ pairEncode w []))
+    (3 * w.length + 3)
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact clCopy_idle c hq)
+    ⟨(4 : Fin 5), rfl, rfl⟩ finish
   have hp : 0 < t := by
-    by_contra h
+    by_contra hn
     have hz : t = 0 := by omega
-    have hs := ht.2
-    change (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) at hs
+    have hs := congrArg Cfg.state he
     rw [hz, MultiTapeTM.runFrom_zero] at hs
     have hh := congrArg (fun z => z.map Fin.val) hs
     norm_num [clCopyCfg] at hh
-  refine ⟨t, ht.1, hp, ?_, ?_⟩
-  · intro j hj hs
-    have := Nat.find_min' hex (show j ≤ 3 * w.length + 3 ∧
-      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state = some (4 : Fin 5) from ⟨by omega, hs⟩)
-    omega
-  · have hstay := Function.iterate_fixed (clCopy_idle _ ht.2) (3 * w.length + 3 - t)
-    change clCopyTM.tm.runFrom (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t)
-      (3 * w.length + 3 - t) = clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
-    exact hstay.symm.trans finish
+  exact ⟨t, ht, hp, fun j hj hs => hcut j hj ⟨(4 : Fin 5), hs, rfl⟩, he⟩
 
 /-- A concrete physical layout, with an exact selector and no aliased slot. -/
 private structure clPlacement (k l : ℕ) where
@@ -2008,6 +1923,7 @@ private lemma clPlaced_apply {k l : ℕ} {S H : Type} {x : List Bool}
       clPlacedCfg slots emb tapes heads (a.apply c) := by
   let constant : MultiTapeTM k Bool S := ⟨q, fun _ _ _ => a⟩
   have one := embedEmitTM_runFrom slots.index constant tapes heads [] {c with state := some q} 1
+  rw [MultiTapeTM.runFrom_one, MultiTapeTM.runFrom_one] at one
   change ((embedEmitTM slots.index constant).tr q c.inputSymbol _).apply
     (embedEmitCfg slots.index tapes heads [] {c with state := some q}) = _ at one
   have result := congrArg (Cfg.mapState emb) one
@@ -2178,8 +2094,7 @@ private lemma clRow_stored {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
 private lemma clRow_idle {l : ℕ} {x : List Bool}
     (c : Cfg (clRowTM l).k Bool (clRowTM l).State x)
     (hc : c.state = some (Fin.last l, (0 : Fin 5))) : (clRowTM l).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   simp only [clRowTM, Fin.val_last, Nat.lt_irrefl, dite_false]
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -2187,9 +2102,10 @@ private lemma clRow_idle {l : ℕ} {x : List Bool}
 
 /-- A row is completely stored at the actual first end-of-row return.
 The fixed positive field count makes that return strictly positive.
-**Proof sketch.** Minimize the completed-control occurrence below the
-proved copying bound. The completed controller is absorbing, so its
-first occurrence has the exact word and all the restored counter heads. -/
+**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
+completed control and the proved copying bound. Stationarity preserves the
+exact word and restored counter heads. The nonzero field count excludes an
+initial completed control and makes the selected time positive. -/
 private lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))
     (w : Fin l → List Bool) (record : List Bool) (W : ℕ)
     (hW : ∀ i, (w i).length ≤ W) :
@@ -2198,32 +2114,24 @@ private lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.len
         some (Fin.last l, (0 : Fin 5))) ∧
       (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t =
         clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l) := by
-  obtain ⟨B, hB, he⟩ := clRow_stored x p w record W hW
-  have hex : ∃ t, t ≤ B ∧ ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =
-      some (Fin.last l, (0 : Fin 5)) := ⟨B, le_rfl, by rw [he]; rfl⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
+  obtain ⟨B, hB, finish⟩ := clRow_stored x p w record W hW
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    (clRowTM l).tm (fun q => q = (Fin.last l, (0 : Fin 5)))
+    (clRowCfg x p 0 0 w record)
+    (clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l)) B
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact clRow_idle c hq)
+    ⟨(Fin.last l, 0), rfl, rfl⟩ finish
   have hp : 0 < t := by
     by_contra hn
     have hz : t = 0 := by omega
-    have hs := ht.2
-    change ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =
-      some (Fin.last l, (0 : Fin 5)) at hs
+    have hs := congrArg Cfg.state he
     rw [hz, MultiTapeTM.runFrom_zero] at hs
     have hh := congrArg (fun z => z.map (fun q => q.1.val)) hs
     simp [clRowCfg] at hh
     omega
-  refine ⟨t, ht.1.trans hB, hp, ?_, ?_⟩
-  · intro j hj hs
-    have := Nat.find_min' hex (show j ≤ B ∧
-      ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state =
-        some (Fin.last l, (0 : Fin 5)) from ⟨by omega, hs⟩)
-    omega
-  · have hstay := Function.iterate_fixed (clRow_idle _ ht.2) (B - t)
-    change (clRowTM l).tm.runFrom ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t)
-      (B - t) = (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
-    exact hstay.symm.trans he
+  exact ⟨t, ht.trans hB, hp, fun j hj hs => hcut j hj ⟨_, hs, rfl⟩, he⟩
 
 /-- A row's stored field lengths have their exact doubled-bit-plus-separator
 ledger, independently of the native copying runtime. -/
@@ -2253,7 +2161,7 @@ private lemma clRowPrefix_length {l : ℕ} (w : Fin l → List Bool) (W : ℕ)
 width theorem. This is a coarse bound for native scans, not an alternative
 representation: all stored movement counts remain canonical binary. -/
 private lemma clElapsed_width (n t : ℕ) (hn : n ≤ t) : n.bits.length ≤ t :=
-  clCount_width n t (lt_of_le_of_lt hn (Nat.lt_two_pow_self (n := t)))
+  (Turing.length_bits_le_self n).trans hn
 
 /-- A deterministic valid virtual-input tag, used only in the pure record
 specification. At an interior cell either tag gives the same displacement. -/
@@ -2986,7 +2894,7 @@ private lemma clCmp_rewind (x : List Bool) (p : Fin (x.length + 2))
     have hb : ∀ i, (clCmpCfg x p (.inr (.inl b)) w (-1)).workTapeSymbols i = none := by
       intro i
       simp [clCmpCfg, Cfg.workTapeSymbols]
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     change (clCmpTM.tm.tr (.inr (.inl b)) _ _).apply _ = _
     simp only [clCmpTM]
     have hb' : ∀ i, (clCmpCfg x p (.inr (.inl b)) w (((0 : ℕ) : ℤ) - 1)).workTapeSymbols i = none := hb
@@ -3024,8 +2932,7 @@ private lemma clCmp_run (x : List Bool) (p : Fin (x.length + 2))
 /-- Completed comparisons are absorbing on the entire configuration. -/
 private lemma clCmp_idle {x : List Bool} (c : Cfg 4 Bool clCmpTM.State x)
     (b : Bool) (hc : c.state = some (.inr (.inr b))) : clCmpTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   change (FinTM.controlAction 0 (some (.inr (.inr b)))).apply c = c
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -3033,9 +2940,10 @@ private lemma clCmp_idle {x : List Bool} (c : Cfg 4 Bool clCmpTM.State x)
 
 /-- The native comparator returns at its first observed completion, within
 its scan bound, with the correct arithmetic verdict and all four heads restored.
-**Proof sketch.** Cut the exact completed run at its first completed-state
-occurrence. Whole-configuration absorption preserves both the verdict and
-all read-only words. The disjoint initial phase excludes zero duration. -/
+**Proof sketch.** Apply the public fixed-stop first-entry theorem with both
+completed verdicts in its stop predicate. It preserves the exact arithmetic
+verdict and all read-only words. The disjoint initial phase excludes zero
+duration. -/
 private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))
     (w : Fin 4 → List Bool) (W : ℕ) (hW : ∀ i, (w i).length ≤ W) :
     ∃ t ≤ 2 * W + 2, 0 < t ∧ ∃ b,
@@ -3046,44 +2954,23 @@ private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))
         clCmpCfg x p (.inr (.inr b)) w 0 := by
   let b := clCmpVerdict (clCmpOrbit w (clCmpSize w))
   have finish := clCmp_run x p w
-  have hex : ∃ t, t ≤ 2 * clCmpSize w + 2 ∧
-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =
-        some (.inr (.inr b)) := ⟨2 * clCmpSize w + 2, le_rfl, by rw [finish]; rfl⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    clCmpTM.tm (fun q => ∃ d : Bool, q = .inr (.inr d))
+    (clCmpCfg x p (.inl (false, false, true)) w 0)
+    (clCmpCfg x p (.inr (.inr b)) w 0) (2 * clCmpSize w + 2)
+    (by
+      rintro c ⟨q, hq, d, rfl⟩
+      exact clCmp_idle c d hq)
+    ⟨.inr (.inr b), rfl, b, rfl⟩ finish
   have hw : clCmpSize w ≤ W := Finset.sup_le (fun i _ => hW i)
   have hp : 0 < t := by
     by_contra hn
     have hz : t = 0 := by omega
-    have hh := ht.2
-    change (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =
-      some (.inr (.inr b)) at hh
+    have hh := congrArg Cfg.state he
     rw [hz, MultiTapeTM.runFrom_zero] at hh
     cases hh
-  refine ⟨t, by omega, hp, b, clCmpVerdict_spec w, ?_, ?_⟩
-  · intro j hj d hd
-    have hstay := Function.iterate_fixed (clCmp_idle _ d hd) (2 * clCmpSize w + 2 - j)
-    change clCmpTM.tm.runFrom
-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j)
-      (2 * clCmpSize w + 2 - j) =
-        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega)] at hstay
-    have hh := congrArg Cfg.state (finish.symm.trans hstay)
-    rw [hd] at hh
-    have hbd : b = d := Sum.inr.inj (Sum.inr.inj (Option.some.inj hh))
-    have hs : (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =
-        some (.inr (.inr b)) := by rw [hbd]; exact hd
-    have := Nat.find_min' hex (show j ≤ 2 * clCmpSize w + 2 ∧
-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =
-        some (.inr (.inr b)) from ⟨by omega, hs⟩)
-    omega
-  · have hstay := Function.iterate_fixed (clCmp_idle _ b ht.2) (2 * clCmpSize w + 2 - t)
-    change clCmpTM.tm.runFrom
-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t)
-      (2 * clCmpSize w + 2 - t) =
-        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
-    exact hstay.symm.trans finish
+  exact ⟨t, by omega, hp, b, clCmpVerdict_spec w,
+    fun j hj d hd => hcut j hj ⟨.inr (.inr d), hd, d, rfl⟩, he⟩
 
 /-- Specializing stored positions to the public all-false schedule recovers
 the exact input and work coordinates, including the shifted input origin. -/
@@ -3183,7 +3070,7 @@ private lemma clRead_pair (x : List Bool) (p : Fin (x.length + 2))
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
+    MultiTapeTM.runFrom_one, first]
   change (clReadTM.tm.tr (.inl (some b)) _ _).apply _ = _
   simp only [clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, ↓reduceIte, r1]
   refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
@@ -3241,7 +3128,7 @@ private lemma clRead_separator (x : List Bool) (p : Fin (x.length + 2))
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
+    MultiTapeTM.runFrom_one, first]
   change (clReadTM.tm.tr (.inl (some false)) _ _).apply _ = _
   simp only [clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, ↓reduceIte, r1]
   simp only [Bool.true_eq_false, Option.some.injEq, if_false]
@@ -3260,7 +3147,7 @@ private lemma clRead_rewind (x : List Bool) (p : Fin (x.length + 2))
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo,
         Action.apply, funext_iff]
@@ -3325,8 +3212,9 @@ private lemma clRecords_length (M : FinTM Bool) (y : List Bool) (T : ℕ) :
     omega
 
 /-- Cut a proved bounded run to its first visit to a fresh absorbing return.
-**Proof sketch.** Minimize the return-control occurrence. Absorption makes
-its whole configuration identical to the known endpoint, not just its state. -/
+**Proof sketch.** Specialize the public fixed-stop first-entry theorem to the
+return control. It preserves the complete known endpoint; the initial-control
+exclusion makes the selected time positive. -/
 private lemma clFirst {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
     (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : ℕ)
     (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)
@@ -3334,26 +3222,19 @@ private lemma clFirst {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
     (hidle : ∀ c : Cfg k Bool S x, c.state = some ret → tm.step c = c) :
     ∃ t ≤ B, 0 < t ∧ (∀ j < t, (tm.runFrom start j).state ≠ some ret) ∧
       tm.runFrom start t = finish := by
-  have hex : ∃ t, t ≤ B ∧ (tm.runFrom start t).state = some ret :=
-    ⟨B, le_rfl, by rw [hrun]; exact hret⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    tm (fun q => q = ret) start finish B
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact hidle c hq)
+    ⟨ret, hret, rfl⟩ hrun
   have hp : 0 < t := by
     by_contra hn
     have hz : t = 0 := by omega
-    have hh := ht.2
-    change (tm.runFrom start t).state = some ret at hh
-    rw [hz, MultiTapeTM.runFrom_zero] at hh
-    exact hstart hh
-  refine ⟨t, ht.1, hp, ?_, ?_⟩
-  · intro j hj hs
-    have := Nat.find_min' hex (show j ≤ B ∧ (tm.runFrom start j).state = some ret
-      from ⟨by omega, hs⟩)
-    omega
-  · have stay := Function.iterate_fixed (hidle _ ht.2) (B - t)
-    change tm.runFrom (tm.runFrom start t) (B - t) = tm.runFrom start t at stay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1, hrun] at stay
-    exact stay.symm
+    have hs := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero, hret] at hs
+    exact hstart hs
+  exact ⟨t, ht, hp, fun j hj hs => hcut j hj ⟨ret, hs, rfl⟩, he⟩
 
 /-- Clearing the last occupied cell leaves exactly the shorter buffer.
 Locally harvested from the audited bridge's `emCall_erase_last` proof. -/
@@ -3400,7 +3281,7 @@ private lemma clWipe_forward (x : List Bool) (p : Fin (x.length + 2))
   | zero =>
     have he : j = word.length := by omega
     subst j
-    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [zero_add, MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo,
         Action.apply, funext_iff, sub_eq_add_neg]
@@ -3431,7 +3312,7 @@ private lemma clWipe_backward (x : List Bool) (p : Fin (x.length + 2))
   induction word using List.reverseRecOn with
   | nil =>
     rw [show ([] : List Bool).length + 1 = 1 by rfl,
-      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+      MultiTapeTM.runFrom_one]
     refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl
     · simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo]
     · funext i; fin_cases i <;>
@@ -3469,8 +3350,7 @@ private lemma clWipe_run (x : List Bool) (p : Fin (x.length + 2))
 /-- The reset return fixes the entire configuration. -/
 private lemma clWipe_idle {x : List Bool} (c : Cfg 2 Bool (Fin 3) x)
     (hc : c.state = some 2) : clWipeTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   change (FinTM.controlAction 0 (some (2 : Fin 3))).apply c = c
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -3513,12 +3393,17 @@ private lemma clFresh_run (x : List Bool) (p : Fin (x.length + 2))
 /-- The unrestricted loader's completed state is absorbing. -/
 private lemma clFresh_idle {x : List Bool} (c : Cfg 2 Bool clFreshTM.State x)
     (hc : c.state = some (.inr (.inr true))) : clFreshTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
-  change (FinTM.controlAction 0 (some (Sum.inr (.inr true)))).apply c = c
-  rw [FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+  let d : Cfg 2 Bool clReadTM.State x :=
+    ⟨some (.inr true), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
+  have hm : d.mapState Sum.inr = c :=
+    Cfg.mapState_eq_of_fields d Sum.inr c (by simpa only [d, Option.map_some] using hc.symm)
+      rfl rfl rfl rfl
+  rw [MultiTapeTM.step_of_some hc]
+  change ((seamCompTM clWipeTM.tm (2 : Fin 3) clReadTM.tm (.inl none)).tr
+    (.inr (.inr true)) c.inputSymbol c.workTapeSymbols).apply c = c
+  rw [seamCompTM_tr_inr]
+  change ((FinTM.controlAction 0 (some (.inr true))).mapState Sum.inr).apply c = c
+  rw [← hm, Cfg.mapState_apply, FinTM.controlAction_apply, moveInputPos_zero]
 
 /-- First-return loader interface without the inherited overwrite-length
 precondition; cleanup is explicit in the bound and in the transition table. -/
@@ -3728,8 +3613,7 @@ private lemma clLoad_complete {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
 private lemma clLoad_idle {l : ℕ} {x : List Bool}
     (c : Cfg (clLoadTM l).k Bool (clLoadTM l).State x)
     (hc : c.state = some (Fin.last l, .inl 0)) : (clLoadTM l).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   simp only [clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -3822,7 +3706,7 @@ private lemma clInput_backward (x w : List Bool) : ∀ j (hj : j ≤ x.length),
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clInputTM, clInputCfg, Cfg.inputSymbol, Action.apply,
         moveInputPos, funext_iff]
@@ -3869,8 +3753,7 @@ private lemma clInput_run (x : List Bool) :
 /-- Native-copy return is absorbing, so it can be used at its first visit. -/
 private lemma clInput_idle {x : List Bool} (c : Cfg 1 Bool (Fin 3) x)
     (hc : c.state = some 2) : clInputTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   change (FinTM.controlAction 0 (some (2 : Fin 3))).apply c = c
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -3970,13 +3853,13 @@ private lemma clPrepare_complete {l : ℕ} (w : Fin l → List Bool)
 private lemma clPrepare_idle {l : ℕ} {x : List Bool}
     (c : Cfg (clPrepareTM l).k Bool (clPrepareTM l).State x)
     (hc : c.state = some (.inr (Fin.last l, .inl 0))) : (clPrepareTM l).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   simp only [clPrepareTM, clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]
-  change (FinTM.controlAction 0 (some (Sum.inr (Fin.last l, .inl 0)))).apply c = c
-  rw [FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+  let d : Cfg (clLoadTM l).k Bool (clLoadTM l).State x :=
+    {c with state := some (Fin.last l, .inl 0)}
+  have hd : d.mapState Sum.inr = c :=
+    Cfg.mapState_eq_of_fields d Sum.inr c hc.symm rfl rfl rfl rfl
+  rw [← hd, Cfg.mapState_apply, FinTM.controlAction_apply, moveInputPos_zero]
 
 /-- The genuine preparatory seam is reached at a positive first return,
 including zero fields. Native input copying and dispatch ensure positivity. -/
@@ -4725,7 +4608,7 @@ private lemma clReplay_back (x : List Bool) (p : Fin (x.length + 2)) (w out : Li
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]
   | succ j ih =>
@@ -4756,7 +4639,7 @@ private lemma clReplay_forward (x : List Bool) (p : Fin (x.length + 2)) (w : Lis
     intro out
     have hj' : j = w.length := by omega
     subst j
-    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [zero_add, MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]
   | succ r ih =>
@@ -4929,26 +4812,49 @@ private lemma clPrepared_run (A : FinTM Bool) (w : Fin A.k → List Bool) (tail 
   exact run
 
 /-- An absorbing return in the prepared machine remains absorbing after
-native loading, with the complete retained-input frame fixed. -/
+native loading, with the complete retained-input frame fixed.
+
+**Proof sketch.** Reconstruct the supplied configuration as the forwarding
+embedding of its selected source tapes and unchanged ambient frame. The
+source return is fixed by its control-action contract. The embedding's
+one-step lockstep and the seam's right transition preserve that fixed point. -/
 private lemma clPrepared_idle (A : FinTM Bool) (ret : A.State)
     (htr : ∀ inp work, A.tm.tr ret inp work = FinTM.controlAction 0 (some ret))
     {x : List Bool} (c : Cfg (clPreparedTM A).k Bool (clPreparedTM A).State x)
     (hc : c.state = some (.inr ret)) : (clPreparedTM A).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
-  change (clPlacedAction (clKeepLastPlacement A.k) Sum.inr ret
-    (A.tm.tr ret c.inputSymbol (fun i => c.workTapeSymbols ((clKeepLastPlacement A.k).index i)))).apply c = c
-  rw [htr]
-  have ha : clPlacedAction (clKeepLastPlacement A.k) (Sum.inr : A.State → (clPreparedTM A).State) ret (FinTM.controlAction 0 (some ret)) =
-      FinTM.controlAction 0 (some (.inr ret)) := by
-    rw [clPlacedAction_eq]
-    unfold FinTM.controlAction
-    congr 1
+  let d : Cfg A.k Bool A.State x :=
+    ⟨some ret, c.inputPos, fun i => c.workTapes ((clKeepLastPlacement A.k).index i),
+      fun i => c.workTapePos ((clKeepLastPlacement A.k).index i), c.output⟩
+  let e := embedEmitCfg (clKeepLastPlacement A.k).index c.workTapes c.workTapePos [] d
+  have hm : e.mapState (Sum.inr : A.State → (clPreparedTM A).State) = c :=
+    embedEmitCfg_mapState_eq (clKeepLastPlacement A.k).index Sum.inr
+      c.workTapes c.workTapePos [] d c
+      (by simpa only [d, Option.map_some] using hc.symm) rfl (List.nil_append _)
+      (fun _ => ⟨rfl, rfl⟩) (fun _ _ => ⟨rfl, rfl⟩)
+  have he : e.state = some ret := by rw [embedEmitCfg_state]
+  have hi : (e.mapState (Sum.inr : A.State → (clPreparedTM A).State)).inputSymbol =
+      e.inputSymbol :=
+    Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])
+  have hw : (e.mapState (Sum.inr : A.State → (clPreparedTM A).State)).workTapeSymbols =
+      e.workTapeSymbols := by
     funext i
-    cases (clKeepLastPlacement A.k).select i <;> rfl
-  rw [ha, FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+    rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq,
+      Cfg.mapState_workTapePos, Cfg.mapState_workTapes]
+  have hd : A.tm.step d = d := by
+    rw [MultiTapeTM.step_of_some (show d.state = some ret from rfl), htr,
+      FinTM.controlAction_apply, moveInputPos_zero]
+  have hr : (embedEmitTM (clKeepLastPlacement A.k).index A.tm).step e =
+      embedEmitCfg (clKeepLastPlacement A.k).index c.workTapes c.workTapePos []
+        (A.tm.step d) := by
+    simpa only [MultiTapeTM.runFrom_one] using
+      embedEmitTM_runFrom (clKeepLastPlacement A.k).index A.tm
+        c.workTapes c.workTapePos [] d 1
+  rw [MultiTapeTM.step_of_some hc]
+  change ((seamCompTM (clPrepareTM A.k).tm (.inr (Fin.last A.k, .inl 0))
+    (embedEmitTM (clKeepLastPlacement A.k).index A.tm) A.tm.q₀).tr
+      (.inr ret) c.inputSymbol c.workTapeSymbols).apply c = c
+  rw [seamCompTM_tr_inr, ← hm, hi, hw, Cfg.mapState_apply,
+    ← MultiTapeTM.step_of_some he, hr, hd]
 
 /-- Native query argument words: blank candidate fields, retained record
 stream, two target counts, a unary strict-prefix clock, and blank flags. -/
@@ -5073,27 +4979,34 @@ private lemma clFields_width (ws : List (List Bool)) (w : List Bool) (hw : w ∈
 
 /-- The recorder's observed completed state is absorbing with its full
 retained input/header frame unchanged.
-**Proof sketch.** Unfold only the completed recorder transition and its relocation. Its action preserves every cell and head and selects the same return control. -/
+**Proof sketch.** Read the completed placed action through the placement and
+control-action equations. Exact slot selection reconstructs the retained frame,
+so its cells, heads, output and return control are unchanged. -/
 private lemma clRecord_idle (M : FinTM Bool) {x : List Bool}
     (c : Cfg (clRecordTM M).k Bool (clRecordTM M).State x)
     (hc : c.state = some (.inr (.inr (.inr (.inr (.inr ())))))) :
     (clRecordTM M).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   simp only [clRecordTM, clRecTM]
-  have ha : clPlacedAction (clRecordSelect M) (Sum.inr : (clRecTM M).State → (clRecordTM M).State) (.inr (.inr (.inr (.inr ())))) (FinTM.controlAction 0 (some (.inr (.inr (.inr (.inr ())))))) =
-      FinTM.controlAction 0 (some (.inr (.inr (.inr (.inr (.inr ())))))) := by
-    rw [clPlacedAction_eq]
-    unfold FinTM.controlAction
-    congr 1
-    funext i
-    refine Fin.addCases ?_ ?_ i
-    · intro i
-      refine Fin.addCases ?_ ?_ i <;> intro i <;> simp [clRecordSelect]
-    · intro i; simp [clRecordSelect]
-  rw [ha, FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+  let slots := clRecordSelect M
+  let q : (clRecTM M).State := .inr (.inr (.inr (.inr ())))
+  let d : Cfg (clRecTM M).k Bool (clRecTM M).State x :=
+    ⟨some q, c.inputPos, (fun i => c.workTapes (slots.index i)),
+      (fun i => c.workTapePos (slots.index i)), c.output⟩
+  have hd : clPlacedCfg slots (Sum.inr : (clRecTM M).State → (clRecordTM M).State)
+      c.workTapes c.workTapePos d = c := by
+    rw [clPlacedCfg_eq]
+    refine Cfg.ext hc.symm rfl ?_ ?_ rfl
+    · funext j
+      cases hs : slots.select j with
+      | none => simp only [hs]
+      | some i => simpa only [hs] using congrArg c.workTapes ((slots.exact i j).mp hs)
+    · funext j
+      cases hs : slots.select j with
+      | none => simp only [hs]
+      | some i => simpa only [hs] using congrArg c.workTapePos ((slots.exact i j).mp hs)
+  rw [← hd, clPlaced_apply, FinTM.controlAction_apply, moveInputPos_zero]
+  rfl
 
 /-- The actual trajectory tape can be returned as the entire physical
 output. This preserves effects-first reference recording and its silence. -/
@@ -5597,40 +5510,6 @@ private lemma clVisitRow_exact (M : FinTM Bool) (C e : ℕ) (x : List Bool) (t :
         clVisitCode (prevVisit M (x.length + C * (x.length + 1) ^ e) t τ))) := by
   simp [clVisitRow, clHeaderField, clHeaderTail, pairDecode_pairEncode]
 
-/-- A native polynomial computation has a reusable clean install call,
-with all scratch cells and all heads restored after each actual request.
-This is a component bridge, not the final packed-producer installation.
-**Proof sketch.** Instantiate the audited clean-call bridge with the actual native polynomial transducer. Bound its complete output by its runtime and absorb argument length into a positive-degree monomial. -/
-private lemma clNative_cleanCall {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
-    ∃ (W : FinTM Bool) (entry exit : W.State) (a d : ℕ), 0 < W.k ∧
-      ∀ x arg, ∃ t ≤ a * (arg.length + 1) ^ d,
-        0 < t ∧
-        (∀ j, 0 < j → j < t →
-          (W.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord W.k arg)) j).state ≠ some exit) ∧
-        W.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord W.k arg)) t =
-          Cfg.ofWords exit (stateWord W.k (f arg)) := by
-  obtain ⟨E, b, e, hE⟩ := hf
-  obtain ⟨W, entry, exit, c, hk, hcall⟩ := FinTM.exists_installCallTM E f _ hE
-  refine ⟨W, entry, exit, c * (2 * b + 1), e + 1, hk, ?_⟩
-  intro x arg
-  obtain ⟨t, ht, hp, hfirst, hr⟩ := hcall x arg
-  refine ⟨t, ht.trans ?_, hp, hfirst, hr⟩
-  have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hE arg)).2
-  have hlen : (f arg).length ≤ b * (arg.length + 1) ^ e := by
-    simpa only [ho] using E.tm.output_length_le arg (b * (arg.length + 1) ^ e)
-  have hpow := Nat.pow_le_pow_right (Nat.succ_pos arg.length) (Nat.le_succ e)
-  have htime := Nat.mul_le_mul_left b hpow
-  change b * (arg.length + 1) ^ e ≤ b * (arg.length + 1) ^ (e + 1) at htime
-  have harg : arg.length + 1 ≤ (arg.length + 1) ^ (e + 1) := by
-    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos arg.length)
-      (show 1 ≤ e + 1 by omega)
-  calc
-    _ ≤ c * ((2 * b + 1) * (arg.length + 1) ^ (e + 1)) := by
-      apply Nat.mul_le_mul_left
-      rw [Nat.add_mul, Nat.one_mul, Nat.mul_assoc]
-      omega
-    _ = _ := (Nat.mul_assoc _ _ _).symm
-
 /-- Producer-internal state retains the instance, unary query time and
 all already-completed last-visit rows. This is not the final emitter state. -/
 private def clVisitState (x : List Bool) (t : ℕ) (rows : List Bool) : List Bool :=
@@ -5679,251 +5558,6 @@ private lemma clVisitStep_orbit (M : FinTM Bool) (C e : ℕ) (x : List Bool) (t 
   | succ t ih =>
     rw [Function.iterate_succ_apply', ih, clVisitStep_state]
     rfl
-
-/-- The complete producer-internal row step has a clean reusable native
-call, with a positive first return and all scratch restored. It does not
-assert that the variable number of such calls has already been assembled. -/
-private lemma clVisitStep_cleanCall (M : FinTM Bool) (C e : ℕ) :
-    ∃ (W : FinTM Bool) (entry exit : W.State) (a d : ℕ), 0 < W.k ∧
-      ∀ x arg, ∃ t ≤ a * (arg.length + 1) ^ d,
-        0 < t ∧
-        (∀ j, 0 < j → j < t →
-          (W.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord W.k arg)) j).state ≠ some exit) ∧
-        W.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord W.k arg)) t =
-          Cfg.ofWords exit (stateWord W.k (clVisitStep M C e arg)) :=
-  clNative_cleanCall (clVisitStep_native M C e)
-/-- Unary-bounded repetition of one clean native call. The fresh begin
-phase executes its first transition before testing the positive return. -/
-private def clRepeatTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where
-  k := C.k + 1
-  State := Fin 3 ⊕ C.State
-  tm := {
-    q₀ := .inl 0
-    tr := fun q inp work => match q with
-      | .inl q =>
-        if q = 0 then
-          if work (Fin.natAdd C.k (0 : Fin 1)) = none then FinTM.controlAction 0 (some (.inl 2))
-          else ⟨0, Fin.addCases (fun _ => (none, 0)) (fun _ : Fin 1 => (none, .pos)),
-            none, some (.inl 1)⟩
-        else if q = 1 then
-          clPlacedAction (clKeepLastPlacement _) Sum.inr entry (C.tm.tr entry inp (fun i => work ((clKeepLastPlacement _).index i)))
-        else FinTM.controlAction 0 (some (.inl 2))
-      | .inr q => if q = exit then FinTM.controlAction 0 (some (.inl 0))
-          else clPlacedAction (clKeepLastPlacement _) Sum.inr q (C.tm.tr q inp (fun i => work ((clKeepLastPlacement _).index i))) }
-
-/-- Whole repetition seam: the clean argument bank and one protected unary
-clock, with its actual logical cursor. Every call starts with blank scratch. -/
-private def clRepeatCfg (C : FinTM Bool) (entry exit : C.State) (x : List Bool)
-    (q : (clRepeatTM C entry exit).State) (s : List Bool) (N j : ℕ) :
-    Cfg (clRepeatTM C entry exit).k Bool (clRepeatTM C entry exit).State x :=
-  ⟨some q, 1,
-    Fin.addCases (fun i => FinTM.bufferTape (stateWord C.k s i))
-      (fun _ : Fin 1 => FinTM.bufferTape (List.replicate N true)),
-    Fin.addCases (fun _ => 0) (fun _ : Fin 1 => (j : ℤ)), []⟩
-
-/-- Relocation of a clean call agrees with the protected-clock seam. -/
-private lemma clRepeat_frame (C : FinTM Bool) (entry exit : C.State)
-    (x s : List Bool) (N j : ℕ) (q : C.State) :
-    clPlacedCfg (clKeepLastPlacement _)
-      (Sum.inr : C.State → (clRepeatTM C entry exit).State)
-      (Fin.addCases (fun _ _ => none)
-        (fun _ : Fin 1 => FinTM.bufferTape (List.replicate N true)))
-      (Fin.addCases (fun _ => 0) (fun _ : Fin 1 => (j : ℤ)))
-      (Cfg.ofWords (input := x) q (stateWord C.k s)) =
-        clRepeatCfg C entry exit x (.inr q) s N j := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  all_goals
-    funext i
-    refine Fin.addCases ?_ ?_ i <;> intro i <;> simp [clRepeatCfg, Cfg.ofWords, clKeepLastPlacement]
-
-/-- One actual clean call is usable even if its exported entry equals its
-exit: the fresh begin phase executes the mandatory positive first step.
-**Proof sketch.** Execute that first source action directly, then relocate
-only the remaining positive-time prefix. The exported strict positive return
-guard excludes interception before the endpoint. The full clean endpoint
-restores every scratch cell and head and preserves the unary clock. -/
-private lemma clRepeat_call (C : FinTM Bool) (entry exit : C.State)
-    (x s s' : List Bool) (N j t : ℕ) (hp : 0 < t)
-    (hf : ∀ r, 0 < r → r < t →
-      (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k s)) r).state ≠ some exit)
-    (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k s)) t =
-      Cfg.ofWords exit (stateWord C.k s')) :
-    (clRepeatTM C entry exit).tm.runFrom (clRepeatCfg C entry exit x (.inl 1) s N j) t =
-      clRepeatCfg C entry exit x (.inr exit) s' N j := by
-  let src := Cfg.ofWords (input := x) entry (stateWord C.k s)
-  let tapes : Fin (C.k + 1) → ℤ → Option Bool := Fin.addCases (fun _ _ => none)
-    (fun _ : Fin 1 => FinTM.bufferTape (List.replicate N true))
-  let heads : Fin (C.k + 1) → ℤ := Fin.addCases (fun _ => 0) (fun _ : Fin 1 => (j : ℤ))
-  let frame := clPlacedCfg (x := x) (clKeepLastPlacement _)
-    (Sum.inr : C.State → (clRepeatTM C entry exit).State) tapes heads
-  have hframe : frame src = clRepeatCfg C entry exit x (.inr entry) s N j :=
-    clRepeat_frame C entry exit x s N j entry
-  have symbols : (fun i => (clRepeatCfg C entry exit x (.inl 1) s N j).workTapeSymbols
-      ((clKeepLastPlacement C.k).index i)) = src.workTapeSymbols := by
-    funext i
-    simp [clRepeatCfg, Cfg.workTapeSymbols, clKeepLastPlacement, src, Cfg.ofWords]
-  have srcstep : C.tm.step src = (C.tm.tr entry src.inputSymbol src.workTapeSymbols).apply src := rfl
-  have first : (clRepeatTM C entry exit).tm.step (clRepeatCfg C entry exit x (.inl 1) s N j) =
-      frame (C.tm.step src) := by
-    change ((clRepeatTM C entry exit).tm.tr (.inl (1 : Fin 3)) _ _).apply _ = _
-    simp only [clRepeatTM, show (1 : Fin 3) ≠ 0 by decide, if_false, if_true, symbols]
-    rw [srcstep]
-    calc
-      _ = (clPlacedAction (clKeepLastPlacement _) (Sum.inr : C.State → (clRepeatTM C entry exit).State) entry (C.tm.tr entry src.inputSymbol src.workTapeSymbols)).apply (frame src) := by
-        rw [hframe]
-        rfl
-      _ = _ := clPlaced_apply _ _ entry tapes heads _ src
-  have run := clPlaced_run C.tm (clRepeatTM C entry exit).tm (clKeepLastPlacement _) Sum.inr (by intro a b h; cases h; rfl) (fun q => q ≠ exit)
-    (by intro q hq inp work; exact if_neg hq) tapes heads
-    (C.tm.step src) (t - 1) (by
-      intro r hr q hq hqe
-      subst q
-      apply hf (r + 1) (by omega) (by omega)
-      simpa only [MultiTapeTM.runFrom_succ_eq_step] using hq)
-  have endSrc : C.tm.runFrom (C.tm.step src) (t - 1) =
-      Cfg.ofWords exit (stateWord C.k s') := by
-    rw [← MultiTapeTM.runFrom_succ_eq_step, Nat.sub_add_cancel hp]
-    exact he
-  rw [endSrc] at run
-  rw [show t = (t - 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, first]
-  exact run.trans (clRepeat_frame C entry exit x s' N j exit)
-
-/-- The unary clock advances once before each positive clean call. Both
-administrative dispatches are charged, including calls returning empty words.
-**Proof sketch.** Read and advance the occupied unary clock cell, execute the entire positive clean call, and perform one return dispatch. Both surrounding configurations are exact. -/
-private lemma clRepeat_round (C : FinTM Bool) (entry exit : C.State)
-    (x s s' : List Bool) (N j t : ℕ) (hj : j < N) (hp : 0 < t)
-    (hf : ∀ r, 0 < r → r < t →
-      (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k s)) r).state ≠ some exit)
-    (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k s)) t =
-      Cfg.ofWords exit (stateWord C.k s')) :
-    (clRepeatTM C entry exit).tm.runFrom (clRepeatCfg C entry exit x (.inl 0) s N j) (t + 2) =
-      clRepeatCfg C entry exit x (.inl 0) s' N (j + 1) := by
-  have hclock : FinTM.bufferTape (List.replicate N true) (j : ℤ) = some true := by
-    rw [FinTM.bufferTape_nat, List.getElem?_replicate_of_lt hj]
-  have tick : (clRepeatTM C entry exit).tm.step (clRepeatCfg C entry exit x (.inl 0) s N j) =
-      clRepeatCfg C entry exit x (.inl 1) s N (j + 1) := by
-    apply Cfg.ext <;>
-      simp [MultiTapeTM.step, clRepeatTM, clRepeatCfg, Cfg.workTapeSymbols, Action.apply,
-        hclock, funext_iff, -Fin.natAdd_eq_addNat]
-    all_goals
-      intro i
-      refine Fin.addCases ?_ ?_ i <;> intro i <;> simp
-  have back : (clRepeatTM C entry exit).tm.step
-      (clRepeatCfg C entry exit x (.inr exit) s' N (j + 1)) =
-      clRepeatCfg C entry exit x (.inl 0) s' N (j + 1) := by
-    change ((clRepeatTM C entry exit).tm.tr (.inr exit) _ _).apply _ = _
-    simp only [clRepeatTM, if_true]
-    rw [FinTM.controlAction_apply, moveInputPos_zero]
-    rfl
-  rw [show t + 2 = (t + 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, tick,
-    MultiTapeTM.runFrom_succ_eq_step', clRepeat_call C entry exit x s s' N (j + 1) t hp hf he, back]
-
-/-- Bounded repeated clean calls consume exactly the unary number of
-iterations, then return silently with the entire final state word.
-**Proof sketch.** Induct over the executed clock prefix. At each stage the
-actual clean-call contract supplies a positive first return; the native round
-charges it and both dispatches. The final blank clock executes one silent
-completion transition. Every call starts from the full restored seam. -/
-private lemma clRepeat_complete (C : FinTM Bool) (entry exit : C.State)
-    (f : List Bool → List Bool) (x s : List Bool) (N B : ℕ)
-    (hcall : ∀ j < N, ∃ t ≤ B, 0 < t ∧
-      (∀ r, 0 < r → r < t →
-        (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k (f^[j] s))) r).state ≠ some exit) ∧
-      C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k (f^[j] s))) t =
-        Cfg.ofWords exit (stateWord C.k (f (f^[j] s)))) :
-    ∃ t ≤ N * (B + 2) + 1,
-      (clRepeatTM C entry exit).tm.runFrom (clRepeatCfg C entry exit x (.inl 0) s N 0) t =
-        clRepeatCfg C entry exit x (.inl 2) (f^[N] s) N N := by
-  have hpref : ∀ j ≤ N, ∃ t ≤ j * (B + 2),
-      (clRepeatTM C entry exit).tm.runFrom (clRepeatCfg C entry exit x (.inl 0) s N 0) t =
-        clRepeatCfg C entry exit x (.inl 0) (f^[j] s) N j := by
-    intro j
-    induction j with
-    | zero => intro hj; exact ⟨0, by simp, rfl⟩
-    | succ j ih =>
-      intro hj
-      obtain ⟨a, ha, he⟩ := ih (by omega)
-      obtain ⟨b, hb, hp, hf, hr⟩ := hcall j (by omega)
-      refine ⟨a + (b + 2), ?_, ?_⟩
-      · rw [Nat.succ_mul]; omega
-      · rw [MultiTapeTM.runFrom_add, he, clRepeat_round C entry exit x _ _ N j b (by omega) hp hf hr,
-          Function.iterate_succ_apply']
-  obtain ⟨a, ha, he⟩ := hpref N le_rfl
-  refine ⟨a + 1, by omega, ?_⟩
-  rw [MultiTapeTM.runFrom_succ_eq_step', he]
-  change ((clRepeatTM C entry exit).tm.tr (.inl 0) _ _).apply _ = _
-  simp only [clRepeatTM, if_true, clRepeatCfg, Cfg.workTapeSymbols,
-    Fin.addCases_right, FinTM.bufferTape_nat, List.getElem?_replicate, Nat.lt_irrefl, if_false]
-  rw [FinTM.controlAction_apply, moveInputPos_zero]
-
-/-- Native repetition argument: the clean call's one state word, blank
-scratch, and the unary number of calls in a separate protected field. -/
-private def clRepeatWords (C : FinTM Bool) (s : List Bool) (N : ℕ) :
-    Fin (C.k + 1) → List Bool := Fin.addCases (stateWord C.k s) (fun _ : Fin 1 => List.replicate N true)
-
-/-- Exact prepared repetition seam for the generic native loader. -/
-private lemma clRepeat_initial (C : FinTM Bool) (entry exit : C.State)
-    (x s : List Bool) (N : ℕ) :
-    Cfg.ofWords (input := x) (clRepeatTM C entry exit).tm.q₀ (clRepeatWords C s N) =
-      clRepeatCfg C entry exit x (.inl 0) s N 0 := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  all_goals
-    funext i
-    refine Fin.addCases ?_ ?_ i <;> intro i <;> simp [Cfg.ofWords, clRepeatWords, clRepeatCfg]
-
-/-- Repetition followed by physical replay of its completed state word. -/
-private def clRepeatOutputTM (C : FinTM Bool) (entry exit : C.State) (hk : 0 < C.k) : FinTM Bool :=
-  clOutputTM (clPreparedTM (clRepeatTM C entry exit)) (.inr (.inl 2))
-    (Fin.castAdd 1 (Fin.castAdd 1 ⟨0, hk⟩))
-
-/-- Complete native repetition ledger, including actual input parsing,
-all positive calls, every clock/return dispatch and final state-word replay.
-**Proof sketch.** The native loader reaches the exact prepared clock/call
-bank. Each call's argument size is bounded along the actual orbit; its clean
-return supplies every scratch reset. Relocate the complete unary repetition,
-then replay the actual final state tape from its restored head zero. -/
-private lemma clRepeatOutput_compute (C : FinTM Bool) (entry exit : C.State) (hk : 0 < C.k)
-    (f : List Bool → List Bool) (a d : ℕ)
-    (hcall : ∀ x arg, ∃ t ≤ a * (arg.length + 1) ^ d, 0 < t ∧
-      (∀ j, 0 < j → j < t →
-        (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) j).state ≠ some exit) ∧
-      C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
-        Cfg.ofWords exit (stateWord C.k (f arg)))
-    (s : List Bool) (N W : ℕ) (hW : ∀ j ≤ N, (f^[j] s).length ≤ W) :
-    let arg := clFields (List.ofFn (clRepeatWords C s N)) ++ []
-    (clRepeatOutputTM C entry exit hk).ComputesInTime arg (f^[N] s)
-      (2 * arg.length + 9 + (C.k + 1) * (3 * arg.length + 7) +
-        N * (a * (W + 1) ^ d + 2) + W) := by
-  dsimp only
-  let arg := clFields (List.ofFn (clRepeatWords C s N)) ++ []
-  have hWords : ∀ i, (clRepeatWords C s N i).length ≤ arg.length := by
-    intro i
-    simpa [arg] using clFields_width (List.ofFn (clRepeatWords C s N))
-      (clRepeatWords C s N i) (List.mem_ofFn.mpr ⟨i, rfl⟩)
-  obtain ⟨b, hb, he⟩ := clRepeat_complete C entry exit f arg s N (a * (W + 1) ^ d) (by
-    intro j hj
-    obtain ⟨t, ht, hp, hf, hr⟩ := hcall arg (f^[j] s)
-    refine ⟨t, ht.trans ?_, hp, hf, hr⟩
-    exact Nat.mul_le_mul_left a (Nat.pow_le_pow_left
-      (Nat.add_le_add_right (hW j (by omega)) 1) d))
-  obtain ⟨u, hu, hr⟩ := clPrepared_run (clRepeatTM C entry exit) (clRepeatWords C s N)
-    [] arg.length hWords b
-  rw [clRepeat_initial, he] at hr
-  have hc := clOutputAt_compute (clPreparedTM (clRepeatTM C entry exit)) (.inr (.inl 2))
-    (Fin.castAdd 1 (Fin.castAdd 1 ⟨0, hk⟩)) arg (f^[N] s) (u + b) 0 _ hr rfl
-    (by simp [clPreparedTM, seamCompTM])
-    (fun c hc => clPrepared_idle (clRepeatTM C entry exit) (.inl 2)
-      (by intros; simp [clRepeatTM]) c hc) rfl
-    (by simp [clPreparedCfg, clKeepLastPlacement, clRepeatCfg, clRepeatTM, stateWord, Fin.addCases, hk])
-    (by simp [clPreparedCfg, clKeepLastPlacement, clRepeatCfg, clRepeatTM, Fin.addCases, hk]) (by omega)
-  apply hc.mono
-  have hlast := hW N le_rfl
-  change u ≤ 2 * arg.length + 4 + (C.k + 1) * (3 * arg.length + 7) at hu
-  change u + b + 0 + (f^[N] s).length + 4 ≤
-    2 * arg.length + 9 + (C.k + 1) * (3 * arg.length + 7) +
-      N * (a * (W + 1) ^ d + 2) + W
-  omega
 
 /-- A field list with bounded payloads has the exact doubled-bit/separator
 storage envelope. This is a size lemma, not a native-access shortcut. -/
@@ -5996,62 +5630,6 @@ private lemma clVisitState_size (M : FinTM Bool) (C e : ℕ) (x : List Bool)
   have hb : 2 * L + 2 * L + 4 + L * (M.k * (2 * L + 6)) ≤
       (8 + 8 * M.k) * (L + 1) ^ 2 := by ring_nf; omega
   omega
-/-- Scalar polynomial envelope for the entire native repetition. The
-quadratic state-size bound and the clean-call polynomial are both charged.
-**Proof sketch.** Substitute the quadratic orbit-word bound into the clean-call polynomial. Multiply by the actual unary number of calls, add preparation and replay, then dominate all terms by one monomial. -/
-private lemma clRepeat_budget (L N k K a d : ℕ) (hN : N ≤ L) :
-    2 * L + 9 + k * (3 * L + 7) + N * (a * (K * (L + 1) ^ 2 + 1) ^ d + 2) +
-      K * (L + 1) ^ 2 ≤
-      (13 + 7 * k + a * (K + 1) ^ d + K) * (L + 1) ^ (2 * d + 3) := by
-  have hpos : 1 ≤ (L + 1) ^ 2 := Nat.one_le_pow 2 _ (by omega)
-  have hw : K * (L + 1) ^ 2 + 1 ≤ (K + 1) * (L + 1) ^ 2 := by
-    rw [Nat.add_mul, Nat.one_mul]; omega
-  have hm : N * (a * (K * (L + 1) ^ 2 + 1) ^ d + 2) ≤
-      a * (K + 1) ^ d * (L + 1) ^ (2 * d + 1) + 2 * (L + 1) := by
-    calc
-      _ ≤ (L + 1) * (a * ((K + 1) * (L + 1) ^ 2) ^ d + 2) :=
-        Nat.mul_le_mul (by omega) (Nat.add_le_add_right
-          (Nat.mul_le_mul_left a (Nat.pow_le_pow_left hw d)) 2)
-      _ = _ := by rw [Nat.mul_pow, ← Nat.pow_mul, pow_succ]; ring
-  have hl : 2 * L + 9 + k * (3 * L + 7) + 2 * (L + 1) ≤
-      (13 + 7 * k) * (L + 1) := by ring_nf; omega
-  have h1 : L + 1 ≤ (L + 1) ^ (2 * d + 3) := by
-    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos L)
-      (show 1 ≤ 2 * d + 3 by omega)
-  have h2 : (L + 1) ^ 2 ≤ (L + 1) ^ (2 * d + 3) :=
-    Nat.pow_le_pow_right (Nat.succ_pos L) (by omega)
-  have hd : (L + 1) ^ (2 * d + 1) ≤ (L + 1) ^ (2 * d + 3) :=
-    Nat.pow_le_pow_right (Nat.succ_pos L) (by omega)
-  have hl' := Nat.mul_le_mul_left (13 + 7 * k) h1
-  have hk' := Nat.mul_le_mul_left K h2
-  have hd' := Nat.mul_le_mul_left (a * (K + 1) ^ d) hd
-  calc
-    _ ≤ (13 + 7 * k) * (L + 1) + a * (K + 1) ^ d * (L + 1) ^ (2 * d + 1) +
-        K * (L + 1) ^ 2 := by omega
-    _ ≤ (13 + 7 * k) * (L + 1) ^ (2 * d + 3) +
-        (a * (K + 1) ^ d) * (L + 1) ^ (2 * d + 3) + K * (L + 1) ^ (2 * d + 3) :=
-      Nat.add_le_add (Nat.add_le_add hl' hd') hk'
-    _ = _ := by ring
-
-/-- The exact native repetition argument is itself a native computation:
-one retained state field, blank call scratch, and the actual unary clock. -/
-private lemma clRepeatArgument_native (C : FinTM Bool) (s : List Bool → List Bool)
-    (N : List Bool → ℕ) (hs : PolyTimeComputable s)
-    (hN : PolyTimeComputable (fun x => List.replicate (N x) true)) :
-    PolyTimeComputable (fun x => clFields (List.ofFn (clRepeatWords C (s x) (N x)))) := by
-  let fs : List (List Bool → List Bool) := List.ofFn (fun i : Fin (C.k + 1) =>
-    fun x => clRepeatWords C (s x) (N x) i)
-  have hf : ∀ f ∈ fs, PolyTimeComputable f := by
-    intro f hf
-    obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hf
-    refine Fin.addCases ?_ ?_ i
-    · intro i
-      by_cases hi : i.val = 0
-      · simpa [clRepeatWords, stateWord, hi] using hs
-      · simpa [clRepeatWords, stateWord, hi] using clNative_linear _ (FinTM.computesFunInTime_const [])
-    · intro i; simpa [clRepeatWords] using hN
-  simpa only [fs, List.map_ofFn] using clNative_fields fs hf
-
 /-- The exact inherited horizon, expressed as a length function for the
 whole producer's initial unary clock. It is still distinct from emitter fuel. -/
 private def clProducerHorizon (C e c A d n : ℕ) : ℕ :=
@@ -6069,51 +5647,140 @@ private lemma clProducerClock_native (C e c A d : ℕ) :
     Option.map_some, Option.getD_some]
   simp only [clProducerHorizon, List.replicate_add, List.replicate_one]
 
+/-- Equality to a fixed control word is decided by the public finite-word
+comparison constructor, after any polynomial field computation. -/
+private lemma clA5_pt_eq {f : List Bool → List Bool} (hf : PolyTimeComputable f) (w : List Bool) :
+    PolyTimeComputable (fun x => [decide (f x = w)]) := by
+  simpa only [Function.comp_def] using
+    (polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq w)).comp hf
+
+/-- One round of a counted iteration on `pairEncode cd w`: while the unary
+counter `cd` is nonempty, drop one counter bit and apply `f` to `w`; with an
+empty counter the payload is kept. -/
+private def clA5CountStep (f : List Bool → List Bool) (p : List Bool) : List Bool :=
+  pairEncode ((pairFstD p).drop 1)
+    (if decide ((pairFstD p).take 1 = [true]) then f (pairSndD p) else pairSndD p)
+
+/-- The counted round is polynomial-time whenever `f` is. -/
+private lemma clA5CountStep_native {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
+    PolyTimeComputable (clA5CountStep f) := by
+  have htest : PolyTimeComputable (fun p => [decide ((pairFstD p).take 1 = [true])]) :=
+    clA5_pt_eq (by simpa only [Function.comp_def] using
+      polyTimeComputable_take1.comp polyTimeComputable_pairFstD) [true]
+  have hrest : PolyTimeComputable (fun p => (pairFstD p).drop 1) := by
+    simpa only [Function.comp_def] using polyTimeComputable_tail.comp polyTimeComputable_pairFstD
+  have hpay := polyTimeComputable_ite htest (hf.comp polyTimeComputable_pairSndD)
+    polyTimeComputable_pairSndD
+  have h := hrest.pairEncode hpay
+  simpa only [Function.comp_def] using h
+
+/-- One counted round on a unary counter `1^n` and payload `w`. -/
+private lemma clA5CountStep_pair (f : List Bool → List Bool) (n : ℕ) (w : List Bool) :
+    clA5CountStep f (pairEncode (List.replicate n true) w) =
+      pairEncode (List.replicate (n - 1) true) (if n = 0 then w else f w) := by
+  cases n <;> simp [clA5CountStep, List.replicate_succ]
+
+/-- `i` counted rounds from `1^n` apply `f` exactly `min i n` times. -/
+private lemma clA5CountStep_iterate (f : List Bool → List Bool) (i : ℕ) :
+    ∀ (n : ℕ) (w : List Bool), (clA5CountStep f)^[i] (pairEncode (List.replicate n true) w) =
+      pairEncode (List.replicate (n - i) true) (f^[min i n] w) := by
+  induction i with
+  | zero => intro n w; simp
+  | succ i ih =>
+    intro n w
+    rw [Function.iterate_succ_apply, clA5CountStep_pair, ih]
+    cases n with
+    | zero => simp
+    | succ m =>
+      rw [if_neg (Nat.succ_ne_zero m), Nat.add_sub_cancel, Nat.succ_sub_succ,
+        Nat.succ_min_succ, Function.iterate_succ_apply]
+
+/-- Any native transition with a quadratic orbit-size invariant can be
+iterated a native unary number of times in polynomial time.
+**Proof sketch.** Iterate the counted round `clA5CountStep f` from
+`⟨1^{N x}, s x⟩` a polynomial number `T(x) ≥ N x` of times
+(`BinArith.polyTimeComputable_iterate`): the counter makes the extra rounds
+inert, and the orbit stays polynomially long because `N x` and `|s x|` are
+polynomially bounded (`PolyTimeComputable.output_length_le`) and the orbit of `f`
+satisfies the supplied quadratic bound. Projecting the payload gives `f^[N x] (s x)`. -/
+private lemma clA5Iter_native {f s : List Bool → List Bool} {N : List Bool → ℕ}
+    (hf : PolyTimeComputable f) (hs : PolyTimeComputable s)
+    (hN : PolyTimeComputable (fun x => List.replicate (N x) true))
+    (K : ℕ) (hb : ∀ x j, j ≤ N x →
+      (f^[j] (s x)).length ≤ K * ((s x).length + N x + 1) ^ 2) :
+    PolyTimeComputable (fun x => f^[N x] (s x)) := by
+  obtain ⟨CN, cN, hNl⟩ := hN.output_length_le
+  obtain ⟨Cs, cs, hsl⟩ := hs.output_length_le
+  have hNx (x : List Bool) : N x ≤ CN * (x.length + 1) ^ cN := by
+    simpa only [List.length_replicate] using hNl x
+  -- one monomial `D·(|x|+1)^e` bounds the counter, the payload and `1`
+  have hpow (x : List Bool) (a : ℕ) (ha : a ≤ cN + cs) :
+      (x.length + 1) ^ a ≤ (x.length + 1) ^ (cN + cs) :=
+    Nat.pow_le_pow_right (Nat.succ_pos _) ha
+  have hsum (x : List Bool) : (s x).length + N x + 1 ≤
+      (2 * (CN + Cs) + 1) * (x.length + 1) ^ (cN + cs) := by
+    have h1 := Nat.mul_le_mul_left Cs (hpow x cs (by omega))
+    have h2 := Nat.mul_le_mul_left CN (hpow x cN (by omega))
+    have h3 : 1 ≤ (x.length + 1) ^ (cN + cs) := Nat.one_le_pow _ _ (Nat.succ_pos _)
+    have h4 := hsl x
+    have h5 := hNx x
+    nlinarith
+  let D := 2 * (CN + Cs) + 1
+  let L := fun x : List Bool => (x.length + 1) ^ (cN + cs)
+  have hbound (x : List Bool) (i : ℕ) (_ : i ≤ CN * (x.length + 1) ^ cN) :
+      ((clA5CountStep f)^[i] (pairEncode (List.replicate (N x) true) (s x))).length ≤
+        (2 * D + 2 + K * D ^ 2) * (x.length + 1) ^ (2 * (cN + cs)) := by
+    rw [clA5CountStep_iterate, length_pairEncode, List.length_replicate]
+    have hj := hb x (min i (N x)) (Nat.min_le_right _ _)
+    have hsq : ((s x).length + N x + 1) ^ 2 ≤ D ^ 2 * (x.length + 1) ^ (2 * (cN + cs)) := by
+      calc
+        _ ≤ (D * L x) ^ 2 := Nat.pow_le_pow_left (hsum x) 2
+        _ = _ := by simp only [L]; ring
+    have hLL : L x ≤ (x.length + 1) ^ (2 * (cN + cs)) :=
+      Nat.pow_le_pow_right (Nat.succ_pos _) (by omega)
+    have hN' : N x ≤ D * L x := by have := hsum x; simp only [L, D] at *; omega
+    have h1 : 1 ≤ (x.length + 1) ^ (2 * (cN + cs)) := Nat.one_le_pow _ _ (Nat.succ_pos _)
+    have hK := Nat.mul_le_mul_left K hsq
+    have hD := Nat.mul_le_mul_left D hLL
+    calc
+      _ ≤ 2 * (D * L x) + 2 + K * ((s x).length + N x + 1) ^ 2 := by omega
+      _ ≤ 2 * (D * (x.length + 1) ^ (2 * (cN + cs))) + 2 * (x.length + 1) ^ (2 * (cN + cs)) +
+          K * (D ^ 2 * (x.length + 1) ^ (2 * (cN + cs))) := by omega
+      _ = _ := by ring
+  have hit := BinArith.polyTimeComputable_iterate (clA5CountStep_native hf) (hN.pairEncode hs)
+    CN cN (2 * D + 2 + K * D ^ 2) (2 * (cN + cs)) hbound
+  have hpay (x : List Bool) : pairSndD ((clA5CountStep f)^[CN * (x.length + 1) ^ cN]
+      (pairEncode (List.replicate (N x) true) (s x))) = f^[N x] (s x) := by
+    rw [clA5CountStep_iterate, pairSndD_pairEncode, Nat.min_eq_right (hNx x)]
+  simpa only [Function.comp_def, hpay] using polyTimeComputable_pairSndD.comp hit
+
 /-- The complete ordered last-visit table is produced from native original
 input with a total polynomial bound; no outer-loop seam remains assumed.
-**Proof sketch.** Start with the retained instance and empty table. Obtain
-an actual clean call for the whole native row step, including its search,
-append and cleanup. Native field packing supplies that call's initial words
-and an exact `T+1` unary clock. Run the actual repetition controller, whose
-invariant bounds all intermediate state words quadratically in the encoded
-argument. Its ledger pays for parsing, every call and dispatch, and final
-physical output. Native projection then returns precisely the stored rows. -/
+**Proof sketch.** Start with the retained instance and empty table and
+iterate the native row step (`clVisitStep_native`) the inherited horizon's
+number of times (`clA5Iter_native`); the retained state stays quadratic in the
+instance and clock (`clVisitState_size`). Native projection then returns
+precisely the stored rows (`clVisitStep_orbit`). -/
 private lemma clVisitRows_native (M : FinTM Bool) (C e c A d : ℕ) :
     PolyTimeComputable (fun x => clVisitRows M C e x (clProducerHorizon C e c A d x.length + 1)) := by
-  obtain ⟨W, entry, exit, a, r, hk, hcall⟩ := clVisitStep_cleanCall M C e
-  let N := fun x : List Bool => clProducerHorizon C e c A d x.length + 1
-  let s := fun x => clVisitState x 0 []
-  have hs : PolyTimeComputable s := by
-    simpa [s, clVisitState] using clNative_pair polyTimeComputable_id
+  have hs : PolyTimeComputable (fun x => clVisitState x 0 []) := by
+    simpa [clVisitState] using clNative_pair polyTimeComputable_id
       (clNative_linear _ (FinTM.computesFunInTime_const (pairEncode [] [])))
-  have hN : PolyTimeComputable (fun x => List.replicate (N x) true) := clProducerClock_native C e c A d
-  let K := 8 + 8 * M.k
-  have hstate : PolyTimeComputable (fun x => clVisitState x (N x) (clVisitRows M C e x (N x))) := by
-    apply clNative_image (clRepeatArgument_native W s N hs hN) (clRepeatOutputTM W entry exit hk)
-      (13 + 7 * (W.k + 1) + a * (K + 1) ^ r + K) (2 * r + 3)
-    intro x
-    let arg := clFields (List.ofFn (clRepeatWords W (s x) (N x)))
-    have hn : N x ≤ arg.length := by
-      have hh := clFields_width (List.ofFn (clRepeatWords W (s x) (N x)))
-        (clRepeatWords W (s x) (N x) (Fin.natAdd W.k (0 : Fin 1)))
-        (List.mem_ofFn.mpr ⟨_, rfl⟩)
-      simpa only [clRepeatWords, Fin.addCases_right, List.length_replicate] using hh
-    have hx : x.length ≤ arg.length := by
-      have hh := clFields_width (List.ofFn (clRepeatWords W (s x) (N x)))
-        (clRepeatWords W (s x) (N x) (Fin.castAdd 1 ⟨0, hk⟩))
-        (List.mem_ofFn.mpr ⟨_, rfl⟩)
-      have hss : (s x).length ≤ arg.length := by
-        simpa only [clRepeatWords, Fin.addCases_left, stateWord, if_pos rfl] using hh
-      have hlen : x.length ≤ (s x).length := by simp [s, clVisitState, pairEncode]; omega
-      exact hlen.trans hss
-    have hsize := clVisitState_size M C e x (N x) arg.length hx hn
-    have hc := clRepeatOutput_compute W entry exit hk (clVisitStep M C e) a r hcall
-      (s x) (N x) (K * (arg.length + 1) ^ 2) hsize
-    dsimp only at hc
-    rw [List.append_nil, clVisitStep_orbit] at hc
-    exact hc.mono (clRepeat_budget arg.length (N x) (W.k + 1) K a r hn)
-  have h := (clHeaderTail_native 2).comp hstate
-  simpa [Function.comp_def, clHeaderTail, clVisitState, pairDecode_pairEncode, N] using h
+  have hstate := clA5Iter_native (N := fun x => clProducerHorizon C e c A d x.length + 1)
+    (clVisitStep_native M C e) hs (clProducerClock_native C e c A d) (8 + 8 * M.k)
+    (fun x j hj => by
+      have hx : x.length ≤ (clVisitState x 0 []).length +
+          (clProducerHorizon C e c A d x.length + 1) := by
+        simp only [clVisitState, length_pairEncode]; omega
+      exact clVisitState_size M C e x _ _ hx (Nat.le_add_left _ _) j hj)
+  have heq : (fun x => clVisitRows M C e x (clProducerHorizon C e c A d x.length + 1)) =
+      clHeaderTail 2 ∘ fun x => (clVisitStep M C e)^[clProducerHorizon C e c A d x.length + 1]
+        (clVisitState x 0 []) := by
+    funext x
+    rw [Function.comp_apply, clVisitStep_orbit]
+    simp [clHeaderTail, clVisitState, pairDecode_pairEncode]
+  rw [heq]
+  exact (clHeaderTail_native 2).comp hstate
 
 /-- Complete packed preparation data: the untouched exact arithmetic
 header, the inclusive chronological movement-count trajectory, and the
@@ -6158,163 +5825,42 @@ module host below is locally harvested from `ClassNP/SAT.lean`, with five
 phases: native copy, complete producer, cursor initialization, emission,
 and cursor update. All inherited A/A2/A3/A4 declarations remain frozen. -/
 
-/-- A padded halting run can be cut at its first halt without changing any
-endpoint field. This is the local instance of the engine's minimal-halt
-argument: use `Nat.find` and the absorbing-halt law. -/
-private lemma clA5_call_first_halt {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
-    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
-    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
-      tm.runFrom cfg u = tm.runFrom cfg t := by
-  classical
-  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩
-  have hu := Nat.find_spec h
-  have hle := Nat.find_min' h hhalt
-  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩
-  · by_contra hn
-    have hz : Nat.find h = 0 := by omega
-    rw [hz, MultiTapeTM.runFrom_zero] at hu
-    exact hstart hu
-  · symm
-    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]
-
-/-- Pad a callable module into a shared bank, keeping unused tapes stationary. -/
-private def clA5PadAction {k K : ℕ} {S : Type} (a : Action k Bool S) : Action K Bool S :=
-  ⟨a.inputTape, fun i => if h : i.val < k then a.workTapes ⟨i.val, h⟩ else (none, 0),
-    a.output, a.state⟩
-
-/-- All modules share tape zero; a positive source bank is padded on the right. -/
+/-- All modules share tape zero; a positive source bank is padded on the right by the public
+tape-padding layer (`Turing.padAction`). -/
 private def clA5PadTM (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K) : FinTM Bool where
   k := K
   State := M.State
   tm := { q₀ := M.tm.q₀
-          tr := fun q inp work => clA5PadAction (M.tm.tr q inp
-            (fun i => work ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩)) }
+          tr := fun q inp work => padAction hk (Option.map id)
+            (M.tm.tr q inp (fun i => work (Fin.castLE hk i))) }
 
-/-- Configuration embedding for the shared bank; the padding is genuinely blank. -/
-private def clA5PadCfg {k K : ℕ} {S : Type} {x : List Bool}
-    (c : Cfg k Bool S x) : Cfg K Bool S x :=
-  ⟨c.state, c.inputPos,
-    fun i => if h : i.val < k then c.workTapes ⟨i.val, h⟩ else fun _ => none,
-    fun i => if h : i.val < k then c.workTapePos ⟨i.val, h⟩ else 0, c.output⟩
-
-/-- Padding commutes with a transition, including writes at arbitrary cells.
-**Proof sketch.** Split each work index by membership in the source bank;
-the inactive branch neither writes nor moves. -/
-private lemma clA5Pad_apply {k K : ℕ} {S : Type} {x : List Bool}
-    (a : Action k Bool S) (c : Cfg k Bool S x) :
-    (clA5PadAction (K := K) a).apply (clA5PadCfg c) = clA5PadCfg (a.apply c) := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · funext i z
-    by_cases h : i.val < k <;> simp [clA5PadAction, clA5PadCfg, Action.apply, h]
-  · funext i
-    by_cases h : i.val < k <;> simp [clA5PadAction, clA5PadCfg, Action.apply, h]
-
-/-- The padded source observes exactly its original work symbols. -/
+/-- The padded source runs as the embedded source.
+**Proof sketch.** Step by step: a live configuration steps by `Turing.embed_step` (the padded
+table is the source table), and a halted one stays put on both sides. -/
 private lemma clA5Pad_run (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K)
     {x : List Bool} (c : Cfg M.k Bool M.State x) (t : ℕ) :
-    (clA5PadTM M K hk).tm.runFrom (clA5PadCfg c) t = clA5PadCfg (M.tm.runFrom c t) := by
+    (clA5PadTM M K hk).tm.runFrom (embedCfg hk id c) t = embedCfg hk id (M.tm.runFrom c t) := by
   apply MultiTapeTM.runFrom_comm_of_step
   intro c
   cases hs : c.state with
-  | none => simp [MultiTapeTM.step, clA5PadCfg, hs]
+  | none =>
+    rw [MultiTapeTM.step_of_halt hs, MultiTapeTM.step_of_halt
+      (by rw [embedCfg_state, hs, Option.map_none])]
   | some q =>
-    have hw : (fun i : Fin M.k => (clA5PadCfg (K := K) c).workTapeSymbols
-        ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩) = c.workTapeSymbols := by
-      funext i; simp [clA5PadCfg, Cfg.workTapeSymbols, i.isLt]
-    have hstate : (clA5PadCfg (K := K) c).state = some q := hs
-    simp only [MultiTapeTM.step, hstate, hs]
-    change (clA5PadAction (M.tm.tr q c.inputSymbol _)).apply _ = _
-    rw [hw]
-    exact clA5Pad_apply _ _
+    have hc : {embedCfg hk id c with state := some q} = embedCfg hk id c :=
+      Cfg.ext (by rw [embedCfg_state, hs, Option.map_some, id_eq]) rfl rfl rfl rfl
+    rw [← hc]
+    exact embed_step hk M.tm (clA5PadTM M K hk).tm id c q hs q (fun _ _ => rfl)
 
 /-- Positive tape count makes the padded seam the same canonical state word. -/
-private lemma clA5Pad_seam {k K : ℕ} {S : Type} {x : List Bool}
-    (hk : 0 < k) (q : S) (w out : List Bool) :
-    clA5PadCfg (K := K) ({Cfg.ofWords (input := x) q (stateWord k w) with output := out}) =
-      {Cfg.ofWords (input := x) q (stateWord K w) with output := out} := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · funext i z
-    by_cases hi : i.val < k
-    · simp [clA5PadCfg, Cfg.ofWords, stateWord, hi]
-    · have hn : i.val ≠ 0 := by omega
-      simp [clA5PadCfg, Cfg.ofWords, stateWord, hi, hn, FinTM.bufferTape]
-  · funext i
-    by_cases hi : i.val < k <;> simp [clA5PadCfg, Cfg.ofWords, hi]
-
-/-- Convert a first-positive-exit module into a halting source for `emit_run`.
-The Boolean release flag ensures even an entry equal to exit executes once. -/
-private def clA5StopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where
-  k := C.k
-  State := Bool × C.State
-  tm := { q₀ := (false, entry)
-          tr := fun q inp work =>
-            if q.1 = true ∧ q.2 = exit then FinTM.controlAction 0 none
-            else {C.tm.tr q.2 inp work with state := (C.tm.tr q.2 inp work).state.map (true, ·)} }
-
-/-- Release-flag embedding preserves all physical fields of a call. -/
-private def clA5StopCfg {k : ℕ} {S : Type} {x : List Bool}
-    (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool × S) x :=
-  ⟨c.state.map (b, ·), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
-
-/-- Before the designated positive exit, the stopped source takes the same
-physical step as the module and raises the release flag. -/
-private lemma clA5Stop_step (C : FinTM Bool) (entry exit : C.State)
-    {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)
-    (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :
-    (clA5StopTM C entry exit).tm.step (clA5StopCfg b c) = clA5StopCfg true (C.tm.step c) := by
-  cases hs : c.state with
-  | none => exact False.elim (hlive hs)
-  | some q =>
-    have hq : ¬(b = true ∧ q = exit) := by
-      rintro ⟨hb, rfl⟩; exact hg hb hs
-    simp only [MultiTapeTM.step, clA5StopCfg, hs, Option.map_some]
-    simp only [clA5StopTM, hq, ↓reduceIte]
-    rfl
-
-/-- Live endpoints force every earlier module state to be live. -/
-private lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
-    (ht : (tm.runFrom c t).state ≠ none) :
-    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
-  intro u hu hh
-  have he : tm.runFrom c t = tm.runFrom c u := by
-    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
-  exact ht (by rw [he]; exact hh)
-
-/-- Stop a clean call one silent step after its certified first positive exit.
-**Proof sketch.** Induct on prefixes, keeping the release flag false only at
-time zero. The supplied guard prevents early stopping; a final silent halt
-retains every canonical seam field and every emitted bit. -/
-private lemma clA5Stop_clean (C : FinTM Bool) (entry exit : C.State)
-    (x arg result out : List Bool) (t : ℕ) (ht : 0 < t)
-    (hg : ∀ v, 0 < v → v < t → (C.tm.runFrom
-      (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state ≠ some exit)
-    (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
-      {Cfg.ofWords exit (stateWord C.k result) with output := out}) :
-    (clA5StopTM C entry exit).tm.runFrom
-      (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1) =
-      {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out} := by
-  let c := Cfg.ofWords (input := x) entry (stateWord C.k arg)
-  have hl := clA5_live_prefix C.tm c t (by rw [show C.tm.runFrom c t = _ from he]; simp [Cfg.ofWords])
-  have hp : ∀ v, v ≤ t → (clA5StopTM C entry exit).tm.runFrom (clA5StopCfg false c) v =
-      clA5StopCfg (decide (v ≠ 0)) (C.tm.runFrom c v) := by
-    intro v
-    induction v with
-    | zero => intro _; rfl
-    | succ v ih =>
-      intro hv
-      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
-        clA5Stop_step C entry exit _ _ (hl v (by omega)) (by
-          intro hn
-          exact hg v (Nat.pos_of_ne_zero (of_decide_eq_true hn)) (by omega)),
-        MultiTapeTM.runFrom_succ_eq_step']
-      rfl
-  have hi : Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg) = clA5StopCfg false c := rfl
-  rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]
-  have hflag : decide (t ≠ 0) = true := by simp [Nat.ne_of_gt ht]
-  rw [hflag, show C.tm.runFrom c t = _ from he]
-  simp [MultiTapeTM.step, clA5StopTM, clA5StopCfg, Cfg.ofWords, FinTM.controlAction, Action.apply]
+private lemma clA5Pad_words {k K : ℕ} (hp : 0 < k) (w : List Bool) :
+    (fun i : Fin K => if h : (i : ℕ) < k then stateWord k w ⟨i, h⟩ else []) = stateWord K w := by
+  funext i
+  rw [stateWord_eq K]
+  by_cases hi : (i : ℕ) < k
+  · rw [dif_pos hi, stateWord_eq]
+  · have hn : (i : ℕ) ≠ 0 := by omega
+    rw [dif_neg hi, if_neg hn]
 
 /-- Five finite modules form the body: native input copy, full packed-record
 installation and cursor installation, then recurring emission and cursor update. -/
@@ -6350,19 +5896,32 @@ private def clA5HostTM (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k
 
 /-- Forwarding a padded clean configuration produces the host's canonical
 seam with precisely the supplied output prefix. Positive tape count is used
-only to identify the real tape-zero word. -/
-private lemma clA5Host_seam (M : Fin 5 → FinTM Bool) (K : ℕ) (i : Fin 5)
+only to identify the real tape-zero word.
+**Proof sketch.** Field by field, through the published readers of `emitCfg`, `embedCfg` and
+`Cfg.ofWords`; the padded word assignment is `stateWord K w` (`clA5Pad_words`). -/
+private lemma clA5Host_seam (M : Fin 5 → FinTM Bool) (K : ℕ) (i : Fin 5) (hk : (M i).k ≤ K)
     (hp : 0 < (M i).k) (x w pre out : List Bool) (q : (M i).State)
     (state : Option (M i).State) :
     emitCfg (fun s => (Sum.inr ⟨i, s⟩ : CLA5HostState M)) (clA5HostRet M i) pre
-      (clA5PadCfg (K := K) {Cfg.ofWords (input := x) q (stateWord (M i).k w)
+      (embedCfg hk id {Cfg.ofWords (input := x) q (stateWord (M i).k w)
         with state := state, output := out}) =
       {Cfg.ofWords (((state.map (fun s => (Sum.inr ⟨i, s⟩ : CLA5HostState M))).getD (clA5HostRet M i)))
         (stateWord K w) with output := pre ++ out} := by
-  have h := clA5Pad_seam (K := K) (x := x) hp q w out
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · exact congrArg (fun c : Cfg K Bool (M i).State x => c.workTapes) h
-  · exact congrArg (fun c : Cfg K Bool (M i).State x => c.workTapePos) h
+  have hw := clA5Pad_words (K := K) hp w
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_ <;> dsimp only
+  · rw [emitCfg_state, embedCfg_state, Option.map_id, id_eq, Cfg.ofWords_state]
+  · rw [emitCfg_inputPos, embedCfg_inputPos, Cfg.ofWords_inputPos, Cfg.ofWords_inputPos]
+  · funext j z
+    rw [emitCfg_workTapes, embedCfg_workTapes, ← hw]
+    by_cases hj : (j : ℕ) < (M i).k
+    · simp only [dif_pos hj, Cfg.ofWords_workTapes]
+    · simp only [dif_neg hj, Cfg.ofWords_workTapes, FinTM.bufferTape_nil]
+  · funext j
+    rw [emitCfg_workTapePos, embedCfg_workTapePos]
+    by_cases hj : (j : ℕ) < (M i).k
+    · simp only [dif_pos hj, Cfg.ofWords_workTapePos]
+    · simp only [dif_neg hj, Cfg.ofWords_workTapePos]
+  · rw [emitCfg_output, embedCfg_output_eq]
 
 /-- Run one clean module inside the body, forwarding exactly its output.
 **Proof sketch.** Padding preserves the source run. The audited `emit_run`
@@ -6384,20 +5943,26 @@ private lemma clA5Host_call (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M
       {Cfg.ofWords (clA5HostRet M i) (stateWord K result) with output := pre ++ out} := by
   let c := Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)
   let emb : (M i).State → CLA5HostState M := fun s => .inr ⟨i, s⟩
-  have hinit : emitCfg emb (clA5HostRet M i) pre (clA5PadCfg (K := K) c) =
+  have hinit : emitCfg emb (clA5HostRet M i) pre (embedCfg (hk i) id c) =
       {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} := by
-    simpa [emb, c, clA5HostEntry] using
-      clA5Host_seam M K i hp x arg pre [] (M i).tm.q₀ (some (M i).tm.q₀)
+    have h0 : ({Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)
+        with state := some (M i).tm.q₀, output := []} : Cfg (M i).k Bool (M i).State x) = c :=
+      Cfg.ext (Cfg.ofWords_state _ _).symm rfl rfl rfl (Cfg.ofWords_output _ _).symm
+    have h := clA5Host_seam M K i (hk i) hp x arg pre [] (M i).tm.q₀ (some (M i).tm.q₀)
+    rw [h0] at h
+    simpa [emb, clA5HostEntry] using h
   have hrun (v : ℕ) (hv : v ≤ t) :
       (clA5HostTM M K hk).tm.runFrom
         {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} v =
-        emitCfg emb (clA5HostRet M i) pre (clA5PadCfg ((M i).tm.runFrom c v)) := by
+        emitCfg emb (clA5HostRet M i) pre (embedCfg (hk i) id ((M i).tm.runFrom c v)) := by
     rw [← hinit]
     rw [emit_run (clA5PadTM (M i) K (hk i)).tm (clA5HostTM M K hk).tm emb (clA5HostRet M i)
       (by intros; rfl) pre _ v (by
-        intro u hu
-        rw [clA5Pad_run]
-        exact hg u (by omega))]
+        intro u hu hh
+        rw [clA5Pad_run] at hh
+        have hn : (embedCfg (hk i) id ((M i).tm.runFrom c u)).state = none := hh
+        rw [embedCfg_state, Option.map_eq_none_iff] at hn
+        exact hg u (by omega) hn)]
     rw [clA5Pad_run]
   constructor
   · intro v hv
@@ -6405,112 +5970,39 @@ private lemma clA5Host_call (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M
     have hl := hg v hv
     cases hs : ((M i).tm.runFrom c v).state with
     | none => exact False.elim (hl hs)
-    | some s => simp [emitCfg, clA5PadCfg, hs, emb]
+    | some s =>
+      rw [emitCfg_state, embedCfg_state, hs, Option.map_some, Option.map_some, Option.getD_some]
+      exact fun h => Sum.inr_ne_inl (Option.some_injective _ h)
   · rw [hrun t (Nat.le_refl _), show (M i).tm.runFrom c t = _ from he]
-    exact clA5Host_seam M K i hp x result pre out q none
+    exact clA5Host_seam M K i (hk i) hp x result pre out q none
 
 /-- Joining two guarded segments preserves the first-return guard when the
-intermediate seam is also outside the anchor. -/
+intermediate seam is also outside the anchor (`Turing.MultiTapeTM.avoid_add`). -/
 private lemma clA5_guard_add {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : ℕ)
     (ha : ∀ v < a, (tm.runFrom c v).state ≠ some anchor)
     (he : tm.runFrom c a = d)
     (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
-    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
-  intro v hv
-  by_cases h : v < a
-  · exact ha v h
-  · have hva : a ≤ v := by omega
-    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
-    exact hb (v - a) (by omega)
+    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor :=
+  MultiTapeTM.avoid_add tm anchor c d a b ha he hb
 
 /-- Uniform clean-module contract: a first halt with a prescribed replacement
-word and emitted chunk, over every untouched native input. -/
-private def CLA5Clean (M : FinTM Bool) (result emit : List Bool → List Bool) (B : ℕ → ℕ) : Prop :=
-  0 < M.k ∧ ∀ x arg : List Bool, ∃ t, 0 < t ∧ t ≤ B arg.length ∧
-    (∀ v < t, ¬(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v).Halted) ∧
-    M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) t =
-      {Cfg.ofWords M.tm.q₀ (stateWord M.k (result arg)) with state := none, output := emit arg}
-
-/-- Turn a clean-call bridge contract into the uniform first-halting form.
-**Proof sketch.** The release wrapper stops one step after the positive exit;
-minimal-halt cutting retains its entire clean configuration. -/
-private lemma clA5Clean_stop (C : FinTM Bool) (entry exit : C.State)
-    (result emit : List Bool → List Bool) (B : ℕ → ℕ) (hk : 0 < C.k)
-    (h : ∀ x arg : List Bool, ∃ t ≤ B arg.length, 0 < t ∧
-      (∀ v, 0 < v → v < t → (C.tm.runFrom
-        (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state ≠ some exit) ∧
-      C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
-        {Cfg.ofWords exit (stateWord C.k (result arg)) with output := emit arg}) :
-    CLA5Clean (clA5StopTM C entry exit) result emit (fun n => B n + 1) := by
-  refine ⟨hk, fun x arg => ?_⟩
-  obtain ⟨t, hb, ht, hg, he⟩ := h x arg
-  have hs := clA5Stop_clean C entry exit x arg (result arg) (emit arg) t ht hg he
-  obtain ⟨u, hu, hut, hguard, hend⟩ := clA5_call_first_halt (clA5StopTM C entry exit).tm
-    (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1)
-    (by simp [Cfg.ofWords]) (by rw [hs])
-  refine ⟨u, hu, by dsimp only; omega, hguard, ?_⟩
-  simpa only [clA5StopTM, Cfg.ofWords] using hend.trans hs
-
-/-- The bridge overhead is bounded by one monomial of degree one higher.
-**Proof sketch.** Output length is bounded by source time; `n+1` and both
-source-time terms fit the larger power. The last unit pays for stopping. -/
-private lemma clA5_bridge_bound (c A d n len : ℕ) (hlen : len ≤ A * (n + 1) ^ d) :
-    c * (A * (n + 1) ^ d + n + len + 1) + 1 ≤
-      (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1) := by
-  have hd := Nat.mul_le_mul_left A
-    (Nat.pow_le_pow_right (Nat.succ_pos n) (show d ≤ d + 1 by omega))
-  simp only [Nat.succ_eq_add_one] at hd
-  have hn : n + 1 ≤ (n + 1) ^ (d + 1) := by
-    simpa using Nat.pow_le_pow_right (Nat.succ_pos n) (show 1 ≤ d + 1 by omega)
-  have h1 : 1 ≤ (n + 1) ^ (d + 1) := by omega
-  calc
-    _ ≤ c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + 1 := by
-      apply Nat.add_le_add_right
-      apply Nat.mul_le_mul_left
-      simp only [Nat.add_mul, Nat.one_mul, Nat.mul_assoc, two_mul]
-      omega
-    _ ≤ c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + (n + 1) ^ (d + 1) := Nat.add_le_add_left h1 _
-    _ = _ := by ring
+word and emitted chunk, over every untouched native input (`Turing.FinTM.CleanModule`). -/
+private abbrev CLA5Clean (M : FinTM Bool) (result emit : List Bool → List Bool) (B : ℕ → ℕ) :
+    Prop :=
+  FinTM.CleanModule M result emit B
 
 /-- Every polynomial word computation has a clean first-halting install
 module with a polynomial budget on the argument length. -/
 private lemma clA5Clean_install {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
-    ∃ M A d, CLA5Clean M f (fun _ => []) (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
-  obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_installCallTM F f _ hF
-  -- The bridge's result length depends on the word, so enlarge it pointwise
-  -- to source time before putting it in the uniform argument-length budget.
-  have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
-    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
-  have hstop := clA5Clean_stop C entry exit f (fun _ => [])
-    (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
-      intro x arg
-      obtain ⟨t, ht, hp, hg, he⟩ := hc x arg
-      refine ⟨t, ht.trans (Nat.mul_le_mul_left c (by have := hlen arg; omega)), hp, hg, ?_⟩
-      exact he)
-  refine ⟨clA5StopTM C entry exit, c * (2 * A + 1) + 1, d + 1, hk, fun x arg => ?_⟩
-  obtain ⟨t, hp, ht, hg, he⟩ := hstop.2 x arg
-  exact ⟨t, hp, ht.trans (clA5_bridge_bound c A d arg.length _ (Nat.le_refl _)), hg, he⟩
+    ∃ M A d, CLA5Clean M f (fun _ => []) (fun n => A * (n + 1) ^ d) :=
+  exists_cleanInstall hf
 
 /-- The emit-mode counterpart preserves the argument and forwards the exact
 computed chunk. Its polynomial budget includes cleanup and the final halt. -/
 private lemma clA5Clean_emit {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
-    ∃ M A d, CLA5Clean M id f (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
-  obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_emitCallTM F f _ hF
-  have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
-    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
-  have hstop := clA5Clean_stop C entry exit id f
-    (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
-      intro x arg
-      obtain ⟨t, ht, hp, hg, he⟩ := hc x arg
-      exact ⟨t, ht.trans (Nat.mul_le_mul_left c (by have := hlen arg; omega)), hp, hg, he⟩)
-  refine ⟨clA5StopTM C entry exit, c * (2 * A + 1) + 1, d + 1, hk, fun x arg => ?_⟩
-  obtain ⟨t, hp, ht, hg, he⟩ := hstop.2 x arg
-  exact ⟨t, hp, ht.trans (clA5_bridge_bound c A d arg.length _ (Nat.le_refl _)), hg, he⟩
+    ∃ M A d, CLA5Clean M id f (fun n => A * (n + 1) ^ d) :=
+  exists_cleanEmit hf
 
 /-- Specialize a clean module to one call site in the finite host. -/
 private lemma clA5Host_clean (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
@@ -6527,42 +6019,57 @@ private lemma clA5Host_clean (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (
   obtain ⟨hguard, hend⟩ := clA5Host_call M K hk i h.1 x arg (f arg) (g arg) pre (M i).tm.q₀ t hg he
   exact ⟨t, hp, ht, hguard, hend⟩
 
+/-- A machine's initial configuration is its start state on the empty state word. -/
+private lemma clA5_initCfg {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S) (x : List Bool) :
+    tm.initCfg x = Cfg.ofWords (input := x) tm.q₀ (stateWord k []) := by
+  rw [MultiTapeTM.initCfg_eq]
+  apply Cfg.ext
+  · rw [Cfg.init_state, Cfg.ofWords_state]
+  · rw [Cfg.init_inputPos, Cfg.ofWords_inputPos]
+  · funext i z
+    simp only [Cfg.init_workTapes, Cfg.ofWords_workTapes, stateWord_eq, ite_self,
+      FinTM.bufferTape_nil]
+  · funext i
+    rw [Cfg.init_workTapePos, Cfg.ofWords_workTapePos]
+  · rw [Cfg.init_output, Cfg.ofWords_output]
+
+/-- A seam whose output is reset to empty is the seam itself. -/
+private lemma clA5_ofWords_out {k : ℕ} {S : Type} {x : List Bool} (q : S) (w : Fin k → List Bool) :
+    {Cfg.ofWords (input := x) q w with output := []} = Cfg.ofWords q w :=
+  Cfg.ext rfl rfl rfl rfl (Cfg.ofWords_output q w).symm
+
 /-- The inherited native input copier becomes a first-halting startup
 module without changing its stored word, heads, or silent output.
-**Proof sketch.** Consume the banked positive first return, add the proved
-release wrapper, then cut the absorbing endpoint at its first halt. -/
+**Proof sketch.** Consume the banked positive first return, stop it with the
+public release adapter (`Turing.FinTM.stopTM_runFrom_clean`), then cut the
+absorbing endpoint at its first halt. -/
 private lemma clA5Copy_clean (x : List Bool) :
-    let D := clA5StopTM clInputTM (0 : Fin 3) (2 : Fin 3)
+    let D := FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)
     ∃ t, 0 < t ∧ t ≤ 2 * x.length + 3 ∧
       (∀ j < t, ¬(D.tm.runFrom
         (Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k [])) j).Halted) ∧
       D.tm.runFrom (Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k [])) t =
-        {Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k x) with state := none} := by
+        {Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k x) with state := none, output := []} := by
   dsimp only
   obtain ⟨t, ht, hp, hf, he⟩ := clInput_first x
   have hi : clInputTM.tm.initCfg x =
-      Cfg.ofWords (input := x) (0 : Fin 3) (stateWord 1 []) := by
-    refine Cfg.ext rfl rfl ?_ rfl rfl
-    funext i z
-    simp [MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, stateWord, FinTM.bufferTape]
+      Cfg.ofWords (input := x) (0 : Fin 3) (stateWord 1 []) := clA5_initCfg clInputTM.tm x
   have hw : (fun _ : Fin 1 => x) = stateWord 1 x := by
-    funext i; have hi := Fin.eq_zero i; subst i; rfl
-  rw [hi, hw] at he
-  have hr := clA5Stop_clean clInputTM (0 : Fin 3) (2 : Fin 3) x [] x [] t hp
+    funext i
+    rw [stateWord_eq, if_pos (Fin.val_eq_zero i)]
+  rw [hi, hw, ← clA5_ofWords_out (2 : Fin 3) (stateWord 1 x)] at he
+  have hr := FinTM.stopTM_runFrom_clean clInputTM (0 : Fin 3) (2 : Fin 3) x [] x [] t hp
     (by
       intro j hj hjt
       change (clInputTM.tm.runFrom (Cfg.ofWords (input := x) (0 : Fin 3) (stateWord 1 [])) j).state ≠ some (2 : Fin 3)
       rw [← hi]
       exact hf j hjt) he
-  change (clA5StopTM clInputTM (0 : Fin 3) (2 : Fin 3)).tm.runFrom
-    (Cfg.ofWords (input := x) (false, (0 : Fin 3)) (stateWord 1 [])) (t + 1) =
-    {Cfg.ofWords (true, (2 : Fin 3)) (stateWord 1 x) with state := none, output := []} at hr
-  obtain ⟨u, hu, hub, hug, hue⟩ := clA5_call_first_halt
-    (clA5StopTM clInputTM (0 : Fin 3) (2 : Fin 3)).tm
-    (Cfg.ofWords (input := x) (false, (0 : Fin 3)) (stateWord 1 [])) (t + 1)
-    (by simp [Cfg.ofWords]) (by rw [hr])
-  refine ⟨u, hu, by omega, hug, ?_⟩
-  simpa only [clA5StopTM, Cfg.ofWords] using hue.trans hr
+  obtain ⟨u, hu, hub, hug, hue⟩ := MultiTapeTM.exists_first_halt_pos
+    (FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)).tm
+    (Cfg.ofWords (input := x) (FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)).tm.q₀
+      (stateWord (FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)).k [])) (t + 1)
+    (by rw [Cfg.ofWords_state]; exact Option.some_ne_none _) (by rw [hr])
+  exact ⟨u, hu, by omega, hug, hue.trans hr⟩
 
 /-- The final install call consumes the completed A4 producer itself. Its
 argument is the genuine retained native input; its result is the full header,
@@ -6588,7 +6095,7 @@ private lemma clA5Cursor_install :
 packed/cursor seam; the last two are the emission and cursor-update modules. -/
 private def clA5Modules (S J E I : FinTM Bool) : Fin 5 → FinTM Bool := fun i =>
   match i.val with
-  | 0 => clA5StopTM clInputTM (0 : Fin 3) (2 : Fin 3)
+  | 0 => FinTM.stopTM clInputTM (0 : Fin 3) (2 : Fin 3)
   | 1 => S
   | 2 => J
   | 3 => E
@@ -6598,7 +6105,7 @@ private def clA5Modules (S J E I : FinTM Bool) : Fin 5 → FinTM Bool := fun i =
 private lemma clA5Modules_bound (S J E I : FinTM Bool) :
     ∀ i, (clA5Modules S J E I i).k ≤ 1 + S.k + J.k + E.k + I.k := by
   intro i
-  fin_cases i <;> simp [clA5Modules, clA5StopTM, clInputTM] <;> omega
+  fin_cases i <;> simp [clA5Modules, FinTM.stopTM_k, clInputTM] <;> omega
 
 /-- The complete final-body startup, from native `initCfg`, is silent and
 ends at its first anchor with every administrative tape blank and head zero.
@@ -6632,26 +6139,27 @@ private lemma clA5Startup (M : FinTM Bool) (C e c A d : ℕ) :
   intro x
   obtain ⟨t0, hp0, ht0, hg0, he0⟩ := clA5Copy_clean x
   obtain ⟨g0, e0⟩ := clA5Host_call bank K (clA5Modules_bound S J E I) 0
-    (by simp [bank, clA5Modules, clA5StopTM, clInputTM]) x [] x [] []
-    (false, (0 : Fin 3)) t0 hg0 he0
-  have hi : H.tm.initCfg x =
-      Cfg.ofWords (clA5HostEntry bank 0) (stateWord K []) := by
-    refine Cfg.ext rfl rfl ?_ rfl rfl
-    funext i z
-    simp [MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, stateWord, FinTM.bufferTape]
+    (by simp [bank, clA5Modules, FinTM.stopTM_k, clInputTM]) x [] x [] [] _ t0 hg0 he0
+  have hi : H.tm.initCfg x = Cfg.ofWords (clA5HostEntry bank 0) (stateWord K []) :=
+    clA5_initCfg H.tm x
+  simp only [List.nil_append, clA5_ofWords_out] at g0 e0
   change H.tm.runFrom (Cfg.ofWords (input := x) (clA5HostEntry bank 0) (stateWord K [])) t0 =
     Cfg.ofWords (clA5HostEntry bank 1) (stateWord K x) at e0
   obtain ⟨t1, hp1, ht1, g1, e1⟩ := clA5Host_clean bank K (clA5Modules_bound S J E I) 1
     (clPackedRecords M C e c A d) (fun _ => []) (fun n => aS * (n + 1) ^ dS)
     (by simpa [bank, clA5Modules] using hS) x x []
+  simp only [List.nil_append, clA5_ofWords_out] at g1 e1
   change H.tm.runFrom (Cfg.ofWords (input := x) (clA5HostEntry bank 1) (stateWord K x)) t1 =
     Cfg.ofWords (clA5HostEntry bank 2) (stateWord K (clPackedRecords M C e c A d x)) at e1
   obtain ⟨t2, hp2, ht2, g2, e2⟩ := clA5Host_clean bank K (clA5Modules_bound S J E I) 2
     (pairEncode []) (fun _ => []) (fun n => aJ * (n + 1) ^ dJ)
     (by simpa [bank, clA5Modules] using hJ) x (clPackedRecords M C e c A d x) []
+  simp only [List.nil_append, clA5_ofWords_out] at g2 e2
+  have hpack : clA5Pack M C e c A d x 0 = pairEncode [] (clPackedRecords M C e c A d x) := by
+    rw [clA5Pack, List.replicate_zero]
   change H.tm.runFrom
     (Cfg.ofWords (input := x) (clA5HostEntry bank 2) (stateWord K (clPackedRecords M C e c A d x))) t2 =
-    Cfg.ofWords (.inl ()) (stateWord K (clA5Pack M C e c A d x 0)) at e2
+    Cfg.ofWords (.inl ()) (stateWord K (pairEncode [] (clPackedRecords M C e c A d x))) at e2
   have hb2 := Nat.mul_le_mul_left aJ
     (Nat.pow_le_pow_left (Nat.add_le_add_right (hlen x) 1) dJ)
   have e01 : H.tm.runFrom
@@ -6662,205 +6170,31 @@ private lemma clA5Startup (M : FinTM Bool) (C e c A d : ℕ) :
   refine ⟨t0 + t1 + t2, by omega, ?_, ?_⟩
   · rw [hi]
     exact clA5_guard_add H.tm (.inl ()) _ _ (t0 + t1) t2 g01 e01 g2
-  · rw [hi, MultiTapeTM.runFrom_add, e01, e2]
+  · rw [hi, MultiTapeTM.runFrom_add, e01, e2, hpack]
     rfl
 
 /-- A fixed word is emitted from finite control. -/
 private lemma clA5_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w) := by
-  exact clNative_linear _ (FinTM.computesFunInTime_const w)
+  exact polyTimeComputable_const w
 
-/-- Polynomial-time branches on the original input, using W3's captured
-single-bit decision. All three budgets fit their maximum degree.
-
-**Proof sketch.** Use the audited conditional constructor on the three witnessing machines. Bound each
-monomial by the common maximum exponent and absorb the constructor overhead into one
-coefficient. -/
+/-- Polynomial-time branching on a polynomial-time bit preserves polynomial time,
+by `Complexity.polyTimeComputable_ite`. -/
 private lemma clA5_pt_cond {p : List Bool → Bool} {f g : List Bool → List Bool}
     (hp : PolyTimeComputable (fun x => [p x]))
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => if p x then f x else g x) := by
-  obtain ⟨P, A, a, hP⟩ := hp
-  obtain ⟨F, B, b, hF⟩ := hf
-  obtain ⟨G, C, c, hG⟩ := hg
-  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_cond hP hF hG
-  let e := max a (max b c)
-  refine ⟨M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_⟩
-  have ha := Nat.mul_le_mul_left A
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show a ≤ e by exact Nat.le_max_left _ _))
-  have hb := Nat.mul_le_mul_left B
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show b ≤ e by omega))
-  have hc := Nat.mul_le_mul_left C
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show c ≤ e by omega))
-  have h1 : 1 ≤ (x.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)
-  simp only [Nat.succ_eq_add_one] at ha hb hc
-  calc
-    _ ≤ K * ((A + B + C + 1) * (x.length + 1) ^ e) :=
-      Nat.mul_le_mul_left K (by simp only [Nat.add_mul, Nat.one_mul]; omega)
-    _ = _ := by ring
-
+  exact polyTimeComputable_ite hp hf hg
 
 /-- Short-circuit conjunction preserves the order of two polynomial tests. -/
 private lemma clA5_pt_and {p q : List Bool → Bool}
     (hp : PolyTimeComputable (fun x => [p x]))
     (hq : PolyTimeComputable (fun x => [q x])) :
     PolyTimeComputable (fun x => [p x && q x]) := by
-  have h := clA5_pt_cond hp hq (clA5_pt_const [false])
-  convert h using 1
-  funext x
-  cases p x <;> rfl
+  exact polyTimeComputable_and hp hq
 
-/-- Pure semantics for a finite one-way word transducer with at most one
-emitted bit per input bit and one optional final bit. -/
-private def clA5MapWord {S : Type} (next : S → Bool → S)
-    (emit : S → Bool → Option Bool) (finish : S → Option Bool) : S → List Bool → List Bool
-  | q, [] => (finish q).toList
-  | q, b :: r => (emit q b).toList ++ clA5MapWord next emit finish (next q b) r
-
-/-- Finite one-way transducer for local word operations used by round-field
-assembly. It uses no work tapes and always halts at the right boundary. -/
-private def clA5MapTM {S : Type} [Fintype S] [DecidableEq S]
-    (next : S → Bool → S) (emit : S → Bool → Option Bool)
-    (finish : S → Option Bool) (start : S) : FinTM Bool where
-  k := 0
-  State := S
-  tm := {
-    q₀ := start
-    tr := fun q inp _ => match inp with
-      | some b => ⟨.pos, Fin.elim0, emit q b, some (next q b)⟩
-      | none => ⟨0, Fin.elim0, finish q, none⟩ }
-
-/-- Scanner frame with an explicit already-emitted prefix. -/
-private def clA5MapCfg {S : Type} (x : List Bool) (q : S) (i : ℕ)
-    (hi : i ≤ x.length) (out : List Bool) : Cfg 0 Bool S x :=
-  ⟨some q, ⟨i + 1, by omega⟩, Fin.elim0, Fin.elim0, out⟩
-
-/-- The finite transducer implements its recursive word semantics exactly.
-**Proof sketch.** Induct on the unread suffix. An input bit performs one
-transition and appends its optional emission; the right blank performs the
-final transition, including its optional last bit. -/
-private lemma clA5Map_run {S : Type} [Fintype S] [DecidableEq S]
-    (next : S → Bool → S) (emit : S → Bool → Option Bool)
-    (finish : S → Option Bool) (start : S) (x rest : List Bool) :
-    ∀ pre (hx : x = pre ++ rest) q out,
-      ((clA5MapTM next emit finish start).tm.runFrom
-        (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).state = none ∧
-      ((clA5MapTM next emit finish start).tm.runFrom
-        (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).output =
-          out ++ clA5MapWord next emit finish q rest := by
-  induction rest with
-  | nil =>
-    intro pre hx q out
-    simp only [List.append_nil] at hx
-    subst x
-    simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, clA5MapTM,
-      clA5MapCfg, Cfg.inputSymbol, Action.apply, clA5MapWord]
-  | cons b rest ih =>
-    intro pre hx q out
-    have hs : (clA5MapTM next emit finish start).tm.step
-        (clA5MapCfg x q pre.length (by simp [hx]) out) =
-        clA5MapCfg x (next q b) (pre ++ [b]).length (by simp [hx]) (out ++ (emit q b).toList) := by
-      have hin : (clA5MapCfg x q pre.length (by simp [hx]) out).inputSymbol = some b := by
-        rw [FinTM.inputSymbol_at _ pre.length (by simp [hx]) rfl]
-        simp [hx]
-      unfold MultiTapeTM.step
-      change (((clA5MapTM next emit finish start).tm.tr q _ _).apply _) = _
-      rw [hin]
-      refine Cfg.ext_zero_tapes rfl ?_ rfl
-      simpa using moveInputPos_pos_of_ne_right
-        (⟨pre.length + 1, by simp [hx] <;> omega⟩ : Fin (x.length + 2)) (by simp [hx] <;> omega)
-    simp only [List.length_cons]
-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
-    simpa only [clA5MapWord, List.append_assoc] using
-      ih (pre ++ [b]) (by simpa [List.append_assoc] using hx) (next q b) (out ++ (emit q b).toList)
-
-/-- Every finite mapper has the exact input-length-plus-one time bound. -/
-private lemma clA5Map_poly {S : Type} [Fintype S] [DecidableEq S]
-    (next : S → Bool → S) (emit : S → Bool → Option Bool)
-    (finish : S → Option Bool) (start : S) :
-    PolyTimeComputable (clA5MapWord next emit finish start) := by
-  refine ⟨clA5MapTM next emit finish start, 1, 1, fun x => ?_⟩
-  apply (FinTM.computesInTime_iff _ _ _ _).mpr
-  have hi : (clA5MapTM next emit finish start).tm.initCfg x =
-      clA5MapCfg x start 0 (Nat.zero_le _) [] := Cfg.ext_zero_tapes rfl rfl rfl
-  simpa only [Nat.pow_one, Nat.one_mul, hi, List.length_nil, List.nil_append] using
-    clA5Map_run next emit finish start x x [] (by simp) start []
-
-/-- Removing the first bit is a two-state finite transduction. -/
-private lemma clA5_pt_tail : PolyTimeComputable List.tail := by
-  let emit (q b : Bool) : Option Bool := if q then some b else none
-  have h := clA5Map_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false
-  have hc (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = x := by
-    induction x with
-    | nil => rfl
-    | cons b r ih => simp [clA5MapWord, emit, ih]
-  have he (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.tail := by
-    cases x <;> simp [clA5MapWord, emit, hc]
-  convert h using 1
-  funext x
-  exact (he x).symm
-
-/-- Extracting at most the first bit is also a two-state finite transduction. -/
+/-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/
 private lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1) := by
-  let emit (q b : Bool) : Option Bool := if q then none else some b
-  have h := clA5Map_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false
-  have hc (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = [] := by
-    induction x with
-    | nil => rfl
-    | cons b r ih => simp [clA5MapWord, emit, ih]
-  have he (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.take 1 := by
-    cases x <;> simp [clA5MapWord, emit, hc]
-  convert h using 1
-  funext x
-  exact (he x).symm
-
-/-- Equality to a fixed control word is decided by the public finite-word
-comparison constructor, after any polynomial field computation. -/
-private lemma clA5_pt_eq {f : List Bool → List Bool} (hf : PolyTimeComputable f) (w : List Bool) :
-    PolyTimeComputable (fun x => [decide (f x = w)]) := by
-  have he : PolyTimeComputable (fun x => if x = w then [true] else [false]) :=
-    clNative_linear _ (FinTM.computesFunInTime_ifEq w [true] [false])
-  convert he.comp hf using 1
-  funext x
-  by_cases h : f x = w <;> simp [Function.comp_def, h]
-
-/-- Any native transition with a quadratic orbit-size invariant can be
-iterated a native unary number of times in polynomial time.
-**Proof sketch.** The inherited positive clean-call bridge supplies each
-iteration. Its real unary host charges every call, dispatch, loader and replay.
-The actual encoded argument bounds both the initial word and the unary clock;
-the supplied orbit bound is therefore covered by the inherited loop ledger. -/
-private lemma clA5Iter_native {f s : List Bool → List Bool} {N : List Bool → ℕ}
-    (hf : PolyTimeComputable f) (hs : PolyTimeComputable s)
-    (hN : PolyTimeComputable (fun x => List.replicate (N x) true))
-    (K : ℕ) (hb : ∀ x j, j ≤ N x →
-      (f^[j] (s x)).length ≤ K * ((s x).length + N x + 1) ^ 2) :
-    PolyTimeComputable (fun x => f^[N x] (s x)) := by
-  obtain ⟨W, entry, exit, a, d, hk, hcall⟩ := clNative_cleanCall hf
-  apply clNative_image (clRepeatArgument_native W s N hs hN)
-    (clRepeatOutputTM W entry exit hk)
-    (13 + 7 * (W.k + 1) + a * (4 * K + 1) ^ d + 4 * K) (2 * d + 3)
-  intro x
-  let arg := clFields (List.ofFn (clRepeatWords W (s x) (N x)))
-  have hslen : (s x).length ≤ arg.length := by
-    simpa [arg, clRepeatWords, stateWord] using clFields_width
-      (List.ofFn (clRepeatWords W (s x) (N x))) (s x)
-      (List.mem_ofFn.mpr ⟨Fin.castAdd 1 ⟨0, hk⟩, by simp only [clRepeatWords, Fin.addCases_left, stateWord, Fin.val_mk, if_pos rfl, if_pos True.intro]⟩)
-  have hnlen : N x ≤ arg.length := by
-    simpa [arg, clRepeatWords, -Fin.natAdd_eq_addNat] using clFields_width
-      (List.ofFn (clRepeatWords W (s x) (N x))) (List.replicate (N x) true)
-      (List.mem_ofFn.mpr ⟨Fin.natAdd W.k (0 : Fin 1), by simp [clRepeatWords]⟩)
-  have horbit : ∀ j ≤ N x, (f^[j] (s x)).length ≤ 4 * K * (arg.length + 1) ^ 2 := by
-    intro j hj
-    calc
-      _ ≤ K * ((s x).length + N x + 1) ^ 2 := hb x j hj
-      _ ≤ K * (2 * (arg.length + 1)) ^ 2 := Nat.mul_le_mul_left K
-        (Nat.pow_le_pow_left (by omega) 2)
-      _ = _ := by ring
-  have h := clRepeatOutput_compute W entry exit hk f a d hcall (s x) (N x)
-    (4 * K * (arg.length + 1) ^ 2) horbit
-  dsimp only at h
-  rw [List.append_nil] at h
-  exact h.mono (clRepeat_budget arg.length (N x) (W.k + 1) (4 * K) a d hnlen)
+  exact polyTimeComputable_take1
 
 /-- A shrinking native step satisfies the orbit-size condition uniformly,
 so repeated sequential projections and tail scans need no random access. -/
@@ -6884,72 +6218,42 @@ private lemma clA5Iter_shrinking {f s : List Bool → List Bool} {N : List Bool 
   simp only [one_mul]
   omega
 
-/-- Removing a computed unary number of leading bits is an actual sequence
-of native tail calls. Each call is charged even after the word becomes empty. -/
+/-- Removing as many leading bits as the length of a computed word is polynomial-time.
+**Proof sketch.** Pair the length word first and the payload second, apply the public
+prefix remover, and read its result through its equation and the public pair projections. -/
 private lemma clA5Drop_native {s u : List Bool → List Bool}
     (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :
     PolyTimeComputable (fun x => (s x).drop (u x).length) := by
-  have h := clA5Iter_shrinking clA5_pt_tail hs ((clNative_fill true).comp hu)
-    (fun w => by simp [List.length_tail])
-  convert h using 1
-  funext x
-  symm
-  induction (u x).length with
-  | zero => rfl
-  | succ j ih =>
-    rw [Function.iterate_succ_apply', ih]
-    simp [List.tail_drop]
+  have h := polyTimeComputable_dropPrefixByLength.comp (hu.pairEncode hs)
+  have he : (PrefixByLength.drop ∘ (fun x => pairEncode (u x) (s x))) =
+      (fun x => (s x).drop (u x).length) := by
+    funext x
+    rw [Function.comp_apply, PrefixByLength.drop.eq_1,
+      pairFstD_pairEncode, pairSndD_pairEncode]
+  rw [he] at h
+  exact h
 
-/-- Both decoded field components are bounded by the complete source word,
-including malformed input and an empty default. This is a storage estimate.
-**Proof sketch.** Strong induction on input length handles each two-bit
-parser prefix; recursive branches consume two bits before the smaller call.
-This local induction avoids generating an imported public induction theorem. -/
+/-- Both decoded components are bounded by their complete source word, with empty
+defaults on malformed input.
+**Proof sketch.** Split the decode once. On success, reconstruct the encoded pair
+and apply `length_pair_components_le` through the public projection equations;
+failure gives two empty words. -/
 private lemma clA5Pair_sizes (w : List Bool) :
     (clHeaderField 0 w).length ≤ w.length ∧ (clHeaderTail 1 w).length ≤ w.length := by
-  have haux : ∀ n, ∀ w : List Bool, w.length = n → ∀ a b,
-      pairDecode w = some (a, b) → a.length + b.length ≤ w.length := by
-    intro n
-    induction n using Nat.strong_induction_on with
-    | h n ih =>
-      intro w hn a b he
-      cases w with
-      | nil => simp [pairDecode] at he
-      | cons c w =>
-        cases w with
-        | nil => cases c <;> simp [pairDecode] at he
-        | cons d rest =>
-          have hsmall : rest.length < n := by simp only [List.length_cons] at hn; omega
-          have ihrest := ih rest.length hsmall rest rfl
-          cases c <;> cases d
-          · cases hd : pairDecode rest with
-            | none => simp [pairDecode, hd] at he
-            | some p =>
-              have hp := ihrest p.1 p.2 hd
-              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
-              rcases he with ⟨rfl, rfl⟩
-              simp only [List.length_cons]
-              omega
-          · simp only [pairDecode, Option.some.injEq, Prod.mk.injEq] at he
-            rcases he with ⟨rfl, rfl⟩
-            simp only [List.length_nil, List.length_cons, zero_add]
-            omega
-          · simp [pairDecode] at he
-          · cases hd : pairDecode rest with
-            | none => simp [pairDecode, hd] at he
-            | some p =>
-              have hp := ihrest p.1 p.2 hd
-              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
-              rcases he with ⟨rfl, rfl⟩
-              simp only [List.length_cons]
-              omega
-  have h (w : List Bool) := haux w.length w rfl
+  change (((pairDecode w).map Prod.fst).getD []).length ≤ w.length ∧
+    (((pairDecode w).map Prod.snd).getD []).length ≤ w.length
   cases hd : pairDecode w with
-  | none => simp [clHeaderField, clHeaderTail, hd]
+  | none =>
+    simp only [Option.map_none, Option.getD_none, List.length_nil]
+    exact ⟨Nat.zero_le _, Nat.zero_le _⟩
   | some p =>
-    have hp := h w p.1 p.2 hd
-    simp only [clHeaderField, clHeaderTail, hd, Option.map_some, Option.getD_some]
-    omega
+    rcases p with ⟨a, b⟩
+    have heq := eq_pairEncode_of_pairDecode w a b hd
+    have hbound := length_pair_components_le w
+    have hab : 2 * a.length + b.length ≤ w.length := by
+      simpa only [heq, pairFstD_pairEncode, pairSndD_pairEncode] using hbound
+    simp only [Option.map_some, Option.getD_some]
+    constructor <;> omega
 
 /-- Variable field access is a genuine unary-counted sequence of the native
 pair-tail projection, followed by the native pair-first projection. -/
@@ -6976,15 +6280,17 @@ private lemma clA5Times_native {f : List Bool → ℕ}
   | succ k ih =>
     simpa only [Nat.succ_mul, List.replicate_add] using clNative_append ih hf
 
-/-- Unary comparison is charged subtraction followed by the actual finite
-empty-word test; no numeric oracle enters the transition table. -/
+/-- Unary comparison is polynomial-time by comparing the lengths of a reversed pair
+of the two unary words, using `Complexity.polyTimeComputable_lenLe`. -/
 private lemma clA5Le_native {f g : List Bool → ℕ}
     (hf : PolyTimeComputable (fun x => List.replicate (f x) true))
     (hg : PolyTimeComputable (fun x => List.replicate (g x) true)) :
     PolyTimeComputable (fun x => [decide (f x ≤ g x)]) := by
-  have h := clA5_pt_eq (clA5Drop_native hf hg) []
-  simpa only [List.length_replicate, List.drop_replicate, List.replicate_eq_nil_iff,
-    Nat.sub_eq_zero_iff_le] using h
+  have h := polyTimeComputable_lenLe.comp (hg.pairEncode hf)
+  convert h using 1
+  funext x
+  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+    List.length_replicate]
 
 /-- A fixed finite template is serialized natively whenever each of its
 finitely many unary wire indices is native. The variable-index cost is
@@ -7343,29 +6649,43 @@ private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
     clPreparedCfg clCmpTM arg (clFields (List.ofFn w)).length
       (clCmpTM.tm.runFrom (Cfg.ofWords (input := arg) clCmpTM.tm.q₀ w) (2 * clCmpSize w + 2)) at he
   have init : Cfg.ofWords (input := arg) clCmpTM.tm.q₀ w =
-      clCmpCfg arg 1 (.inl (false, false, true)) w 0 := rfl
+      clCmpCfg arg 1 (.inl (false, false, true)) w 0 := by
+    apply Cfg.ext
+    · exact Cfg.ofWords_state _ _
+    · exact Cfg.ofWords_inputPos _ _
+    · funext i
+      exact Cfg.ofWords_workTapes _ _ i
+    · funext i
+      exact Cfg.ofWords_workTapePos _ _ i
+    · exact Cfg.ofWords_output _ _
   rw [init, clCmp_run] at he
   let result := clPreparedCfg clCmpTM arg (clFields (List.ofFn w)).length (clCmpCfg arg 1 (.inr (.inr b)) w 0)
   have hend : A.tm.runFrom (A.tm.initCfg arg) (a + (2 * clCmpSize w + 2)) = result := he
   have idle (v : Bool) (cfg : Cfg A.k Bool A.State arg) (hc : cfg.state = some (ret v)) :
       A.tm.step cfg = cfg := clPrepared_idle clCmpTM (.inr (.inr v))
         (by intros; rfl) cfg hc
-  obtain ⟨t, ht, hp, hf, hr⟩ := clFirst A.tm _ result (ret b)
-    (a + (2 * clCmpSize w + 2)) hend rfl (by simp [A, clPreparedTM, seamCompTM, ret]) (idle b)
+  have resultState : result.state = some (ret b) := by
+    dsimp only [result, clPreparedCfg]
+    rw [clPlacedCfg_eq]
+    rfl
+  obtain ⟨t, ht, hcut, hr⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    A.tm (fun q => ∃ v : Bool, q = ret v) (A.tm.initCfg arg) result
+    (a + (2 * clCmpSize w + 2))
+    (by
+      rintro cfg ⟨q, hq, v, rfl⟩
+      exact idle v cfg hq)
+    ⟨ret b, resultState, b, rfl⟩ hend
   have guard : ∀ j < t, ∀ v, (A.tm.runFrom (A.tm.initCfg arg) j).state ≠ some (ret v) := by
     intro j hj v hv
-    have stay := Function.iterate_fixed (idle v _ hv) (t - j)
-    change A.tm.runFrom (A.tm.runFrom (A.tm.initCfg arg) j) (t - j) =
-      A.tm.runFrom (A.tm.initCfg arg) j at stay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega), hr] at stay
-    have hstate := congrArg Cfg.state stay
-    change some (ret b) = _ at hstate
-    rw [hv] at hstate
-    have hb : b = v := Sum.inr.inj (Sum.inr.inj (Sum.inr.inj (Option.some.inj hstate)))
-    exact hf j hj (by rw [hb]; exact hv)
+    exact hcut j hj ⟨ret v, hv, v, rfl⟩
   have actionid (act : Action A.k Bool A.State) : Action.mapState id act = act := by
-    delta Action.mapState
-    simp only [Option.map_id]
+    change Action.mk (act.mapState id).inputTape (act.mapState id).workTapes
+      (act.mapState id).output (act.mapState id).state = act
+    have hw : (act.mapState id).workTapes = act.workTapes := by
+      funext i
+      exact Action.mapState_workTapes id act i
+    rw [Action.mapState_inputTape, hw, Action.mapState_output,
+      Action.mapState_state, Option.map_id]
     rfl
   have run := MultiTapeTM.runFrom_mapState_of_agreeOn A.tm clA5CompareTM.tm (Function.Embedding.refl _)
     (fun q => ∀ v, q ≠ ret v) (by
@@ -7382,16 +6702,33 @@ private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
           | inr v => exact False.elim (hq v rfl))
     (A.tm.initCfg arg) t (by intro j hj q hq v heq; subst q; exact guard j hj v hq)
   have mapid (cfg : Cfg A.k Bool A.State arg) : cfg.mapState id = cfg := by
-    cases cfg
-    simp [Cfg.mapState]
+    exact Cfg.mapState_eq_of_fields cfg id cfg (congrFun Option.map_id cfg.state) rfl rfl rfl rfl
   change clA5CompareTM.tm.runFrom ((A.tm.initCfg arg).mapState id) t =
     (A.tm.runFrom (A.tm.initCfg arg) t).mapState id at run
   rw [mapid, hr, mapid] at run
-  have hi : A.tm.initCfg arg = clA5CompareTM.tm.initCfg arg := rfl
+  have hi : A.tm.initCfg arg = clA5CompareTM.tm.initCfg arg := by
+    rw [MultiTapeTM.initCfg_eq, MultiTapeTM.initCfg_eq]
+    rfl
   rw [hi] at run
   have finish : clA5CompareTM.tm.step result = {result with state := none, output := [b]} := by
+    have fields : result.state = some (ret b) ∧ result.output = [] := by
+      dsimp only [result, clPreparedCfg]
+      rw [clPlacedCfg_eq]
+      exact ⟨rfl, rfl⟩
+    rw [MultiTapeTM.step_of_some fields.1]
     change (Action.mk 0 (fun _ => (none, 0)) (some b) none).apply result = _
-    simp [Action.apply, show result.output = [] from rfl]
+    apply Cfg.ext
+    · rw [Action.apply_state]
+    · rw [Action.apply_inputPos, moveInputPos_zero]
+    · funext i
+      rw [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq,
+        Function.update_eq_self]
+    · funext i
+      rw [Action.apply_workTapePos]
+      change result.workTapePos i + (0 : ℤ) = result.workTapePos i
+      exact add_zero _
+    · rw [Action.apply_output, fields.2]
+      rfl
   have hb : b = decide (clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) := by
     apply Bool.eq_iff_iff.mpr
     simpa using clCmpVerdict_spec w
@@ -7815,12 +7152,11 @@ private lemma clA5Div_native {f : List Bool → ℕ}
       if h : q.val = k then 0 else ⟨q.val + 1, by omega⟩
     let emit (q : Fin (k + 1)) (_ : Bool) : Option Bool := if q.val = k then some true else none
     have he (x : List Bool) (q : Fin (k + 1)) :
-        clA5MapWord next emit (fun _ => none) q x =
-          List.replicate ((q.val + x.length) / (k + 1)) true := by
+        transduce next emit q x = List.replicate ((q.val + x.length) / (k + 1)) true := by
       induction x generalizing q with
-      | nil => simp [clA5MapWord, Nat.div_eq_of_lt q.isLt]
+      | nil => simp [transduce_nil, Nat.div_eq_of_lt q.isLt]
       | cons b r ih =>
-        rw [clA5MapWord, ih]
+        rw [transduce_cons, ih]
         by_cases h : q.val = k
         · have ha : q.val + (b :: r).length = (k + 1) + r.length := by simp [h]; omega
           rw [ha]
@@ -7828,7 +7164,7 @@ private lemma clA5Div_native {f : List Bool → ℕ}
         · have ha : q.val + (b :: r).length = q.val + 1 + r.length := by simp; omega
           rw [ha]
           simp [emit, next, h]
-    have h := (clA5Map_poly next emit (fun _ => none) 0).comp hf
+    have h := (polyTimeComputable_transduce next emit 0).comp hf
     convert h using 1
     funext x
     simp [Function.comp_apply, he]

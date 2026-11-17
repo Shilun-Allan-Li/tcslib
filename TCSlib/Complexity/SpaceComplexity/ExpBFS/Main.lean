@@ -66,8 +66,8 @@ variable {N : FinNDTM Bool} {x : List Bool}
 lemma orcN_len (N : FinNDTM Bool) (x : List Bool) :
     ∀ k ≤ x.length, orcN N 0 (pairEncode x (Nat.bits k)) = decide (k < x.length) := by
   intro k _
-  simp only [orcN, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
-  exact decide_eq_decide.mpr Iff.rfl
+  simp only [orcN, decs, Matrix.cons_val_zero]
+  exact indicator_inputLenLang x k
 
 /-- Decider `1` answers whether a code is the initial code. -/
 lemma ini_orcN (r u : ℕ) :
@@ -77,7 +77,7 @@ lemma ini_orcN (r u : ℕ) :
 
 /-- Decider `2` answers the step relation. -/
 lemma stp_orcN (r u v : ℕ) : stp (orcN N) x r u v = true ↔ Codec.StepRel N x r u v := by
-  simp [stp, orcN, decs, indicator_eq_decide, Codec.StepRel]
+  simp [stp, orcN, decs, indicator_eq_decide, Codec.stepRel_iff_mem]
 
 /-- Decider `3` answers whether a code is accepting. -/
 lemma acc_orcN (r u : ℕ) :
@@ -85,25 +85,31 @@ lemma acc_orcN (r u : ℕ) :
       pairEncode x (pairEncode (Nat.bits u) (Nat.bits r)) ∈ Codec.acceptLang N := by
   simp [orcN, decs, indicator_eq_decide]
 
-/-- **The codes reachable below `K` are the reachable codes**, once `K` bounds the codes. -/
+/-- **The codes reachable below `K` are the reachable codes**, once `K` bounds the codes.
+
+**Proof sketch.** `→`: a search path from the initial code is a path of the step relation
+(`stp_orcN`), so its end is reachable (`ExpBFS.rcode_iff_reflTransGen`). `←`: induct on a
+reachability path; each code on it is reachable, so it is below `K` (`ExpBFS.rcode_lt` and `hK`),
+and each step is a search step (`stp_orcN`). -/
 lemma cl_iff {r K : ℕ} (hK : 2 ^ (Codec.codeK N * (r + logSpace x.length + 1)) ≤ K) (v : ℕ) :
     Cl (orcN N) x r K v ↔ ExpBFS.RCode N x r v := by
   constructor
   · rintro ⟨u, -, hi, hpath⟩
     rw [ini_orcN] at hi
     subst hi
-    exact hpath.mono fun a b h => (stp_orcN r a b).mp h.1
+    exact ExpBFS.rcode_iff_reflTransGen.mpr (hpath.mono fun a b h => (stp_orcN r a b).mp h.1)
   · intro h
     refine ⟨_, (Codec.cfgCode_lt r _).trans_le hK, (ini_orcN r _).mpr rfl, ?_⟩
     have key : ∀ w, ExpBFS.RCode N x r w → Relation.ReflTransGen
         (fun a b => stp (orcN N) x r a b = true ∧ b < K)
         (Codec.cfgCode r (N.tm.initCfg x)) w := by
       intro w hw
+      rw [ExpBFS.rcode_iff_reflTransGen] at hw
       induction hw with
       | refl => exact Relation.ReflTransGen.refl
       | @tail b c hab hbc ih =>
         exact ih.tail ⟨(stp_orcN r b c).mpr hbc,
-          (ExpBFS.rcode_lt (hab.tail hbc)).trans_le hK⟩
+          (ExpBFS.rcode_lt (ExpBFS.rcode_iff_reflTransGen.mpr (hab.tail hbc))).trans_le hK⟩
     exact key v h
 
 open Classical in
@@ -141,7 +147,7 @@ theorem fscan_run : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K - S.U = j →
       rintro ⟨v, h1, h2, -⟩; omega
     rw [decide_eq_false hno]
     refine stepH_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs [hU, ↓reduceIte]
+    simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs [hU, ↓reduceIte]
     exact MHalt.ret rfl (g_of hbd ⟨le_rfl, by omega⟩ _)
   · have hlt : S.U < S.K := by omega
     have hsplit : (∃ v, S.U ≤ v ∧ v < S.K ∧ M (cell S.Bs v) = true ∧
@@ -167,10 +173,10 @@ theorem fscan_run : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K - S.U = j →
         (decide (∃ v, S.U + 1 ≤ v ∧ v < S.K ∧ M (cell S.Bs v) = true ∧
           orc 3 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits S.s))) = true)) := by
       refine stepH_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep]; regs
+      simp only [astep_inc (A := fun _ => Ins.inc _ _) rfl]; regs
       exact rest
     refine stepH_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs; rw [if_neg hU]
+    simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs; rw [if_neg hU]
     have hac := ac_run (orc := orc) (x := x) (B := B) (P := P) (K₀ := K₀) .fU S M hbd hT
       hT2 hZ (by simp [Site.idx]; omega) (by simp [Site.idx]; omega)
     simp only [Site.set, Site.idx, St.toV_U, Bool.false_or, Bool.false_eq_true, ↓reduceIte,
@@ -188,7 +194,7 @@ theorem fscan_run : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K - S.U = j →
     by_cases hb : M (cell S.Bs S.U) = true
     · simp only [hb, ↓reduceIte]
       refine stepH_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep, vword_whole₂]; regs
+      simp only [astep_call (A := fun _ => Ins.call _ _ _ _ _) rfl, vword_whole₂]; regs
       by_cases ha : orc 3 (pairEncode x (pairEncode (Nat.bits S.U) (Nat.bits S.s))) = true
       · simp only [ha, ↓reduceIte]
         rw [decide_eq_true ⟨S.U, le_rfl, hlt, hb, ha⟩]
@@ -410,7 +416,7 @@ theorem iter_run {L : Language Bool} {sp : ℕ → ℕ} (hN : N.DecidesInSpace L
     simp only [St.Bd, hS4, wkSt, St.zero, st3]; simp; omega
   refine (((hw1.trans hr1).trans hA2).trans (hw2.trans hr2)).halt ?_
   refine stepH_of rfl hbdE hp0 ?_
-  simp only [astep]; regs
+  simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs
   have hc1' : ({ S4 with U := S4.K, c := c2 } : St).c1 = c1 := rfl
   have hS4c1 : S4.c1 = c1 := rfl
   by_cases heq : c2 = c1

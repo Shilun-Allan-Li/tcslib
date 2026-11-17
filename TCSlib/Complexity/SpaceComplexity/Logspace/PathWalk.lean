@@ -39,6 +39,9 @@ length `n²`), so that it does not depend on `TCSlib.Complexity.SpaceComplexity.
 ## Main results
 
 * `Complexity.walkLe_short`, `Complexity.reach_iff_walkLe` — path shortening.
+* `Complexity.walkLe_zero_iff` — a walk of no edges stays put.
+* `Complexity.walkLe_succ_iff_head` — a longer walk stays put or begins with an edge.
+* `Complexity.walkLe_succ_iff` — a longer walk is a shorter one, or one followed by an edge.
 * `Complexity.eq_pathRaw_iff` — the layout of a raw instance.
 * `Complexity.pathAcc_iff` — what the machine checks is membership in `pathRawLang`.
 
@@ -65,6 +68,14 @@ def WalkLe : ℕ → ℕ → ℕ → Prop
   | j + 1, c, t => c = t ∨ ∃ v, v < n ∧ E c v ∧ WalkLe j v t
 
 variable {E n}
+
+/-- `Complexity.WalkLe` with no edge allowed: the endpoints are equal. -/
+lemma walkLe_zero_iff {c t : ℕ} : WalkLe E n 0 c t ↔ c = t := Iff.rfl
+
+/-- `Complexity.WalkLe` with at most `j + 1` edges, read at the front: the endpoints are equal,
+or an edge from `c` to some `v < n` is followed by a walk of at most `j` edges from `v` to `t`. -/
+lemma walkLe_succ_iff_head {j c t : ℕ} :
+    WalkLe E n (j + 1) c t ↔ c = t ∨ ∃ v, v < n ∧ E c v ∧ WalkLe E n j v t := Iff.rfl
 
 /-- Every vertex reaches itself. -/
 lemma walkLe_refl (j c : ℕ) : WalkLe E n j c c := by
@@ -189,6 +200,44 @@ lemma reach_iff_walkLe {c t : ℕ} (hc : c < n) (ht : t < n) :
     exact walkLe_short ht hc hj
   · exact walkLe_reach hc
 
+/-- **Walks extend at the end**: a walk of at most `j + 1` steps is a walk of at most `j`
+steps, or one followed by a step into a vertex below `n`.
+
+**Proof sketch.** `WalkLe` unfolds at the front (a walk is empty or a first step followed by
+a shorter walk), so induct on `j` generalizing the start `c`. For `j = 0` both sides are the
+empty walk or a single step. For `j + 1`, a walk that begins with a step `c → v` has its tail
+split by the induction hypothesis at `v`; conversely, a last step appended to a walk is
+pushed into the tail of that walk by the induction hypothesis (or, when the walk is empty, is
+itself a one-step walk). -/
+lemma walkLe_succ_iff (j c t : ℕ) : WalkLe E n (j + 1) c t ↔
+    WalkLe E n j c t ∨ ∃ w, WalkLe E n j c w ∧ E w t ∧ t < n := by
+  induction j generalizing c with
+  | zero =>
+    simp only [walkLe_succ_iff_head, walkLe_zero_iff]
+    constructor
+    · rintro (h | ⟨v, hv, he, rfl⟩)
+      · exact Or.inl h
+      · exact Or.inr ⟨c, rfl, he, hv⟩
+    · rintro (h | ⟨w, rfl, he, ht⟩)
+      · exact Or.inl h
+      · exact Or.inr ⟨t, ht, he, rfl⟩
+  | succ j ih =>
+    rw [walkLe_succ_iff_head (j := j + 1)]
+    constructor
+    · rintro (h | ⟨v, hv, he, hw⟩)
+      · exact Or.inl (walkLe_succ_iff_head.mpr (Or.inl h))
+      · rcases (ih v).mp hw with h | ⟨w, hw', hwt, ht⟩
+        · exact Or.inl (walkLe_succ_iff_head.mpr (Or.inr ⟨v, hv, he, h⟩))
+        · exact Or.inr ⟨w, walkLe_succ_iff_head.mpr (Or.inr ⟨v, hv, he, hw'⟩), hwt, ht⟩
+    · rintro (h | ⟨w, hw, hwt, ht⟩)
+      · rcases walkLe_succ_iff_head.mp h with h | ⟨v, hv, he, hw⟩
+        · exact Or.inl h
+        · exact Or.inr ⟨v, hv, he, walkLe_succ hw⟩
+      · rcases walkLe_succ_iff_head.mp hw with hw | ⟨v, hv, he, hw⟩
+        · subst hw
+          exact Or.inr ⟨t, ht, hwt, walkLe_refl _ t⟩
+        · exact Or.inr ⟨v, hv, he, (ih v).mpr (Or.inr ⟨w, hw, hwt, ht⟩)⟩
+
 end Walks
 
 /-! ## The layout of an instance -/
@@ -220,11 +269,6 @@ def DblAt (x : List Bool) (q : ℕ) (u : List Bool) : Prop :=
 /-- `PlainAt x r u`: the input `x` ends with `u`, from position `r`. -/
 def PlainAt (x : List Bool) (r : ℕ) (u : List Bool) : Prop :=
   (∀ i < u.length, x.getD (r + i) false = u.getD i false) ∧ x.length = r + u.length
-
-/-- Dropping the first component of a pair. -/
-private lemma drop_pairEncode (u w : List Bool) : (pairEncode u w).drop (2 * u.length + 2) = w := by
-  rw [pairEncode_eq_dbl, List.drop_left']
-  simp
 
 /-- **The layout at a position**: `x` carries `dbl u ++ [0, 1]` at `q` iff the suffix from
 `q` is a pair with first component `u`.
@@ -286,7 +330,7 @@ four fields at the positions `0`, `2n + 2`, `2n + 2 + 2|M| + 2` and
 `2n + 2 + 2|M| + 2 + 2|bits s| + 2`.
 
 **Proof sketch.** `dblAt_iff` three times and `plainAt_iff` once, peeling one pair at a
-time (`drop_pairEncode`, `List.drop_drop`). -/
+time (`Turing.pairEncode_drop`, `List.drop_drop`). -/
 lemma eq_pathRaw_iff (x : List Bool) (n : ℕ) (M : List Bool) (s t : ℕ) :
     x = pathRaw n M s t ↔
       DblAt x 0 (List.replicate n true) ∧ DblAt x (2 * n + 2) M ∧
@@ -296,27 +340,27 @@ lemma eq_pathRaw_iff (x : List Bool) (n : ℕ) (M : List Bool) (s t : ℕ) :
   · rintro rfl
     have d1 : (pathRaw n M s t).drop (2 * n + 2) =
         pairEncode M (pairEncode (Nat.bits s) (Nat.bits t)) := by
-      have := drop_pairEncode (List.replicate n true)
+      have := Turing.pairEncode_drop (List.replicate n true)
         (pairEncode M (pairEncode (Nat.bits s) (Nat.bits t)))
       simpa using this
     have d2 : (pathRaw n M s t).drop (2 * n + 2 + 2 * M.length + 2) =
         pairEncode (Nat.bits s) (Nat.bits t) := by
       rw [show 2 * n + 2 + 2 * M.length + 2 = (2 * n + 2) + (2 * M.length + 2) by omega,
-        ← List.drop_drop, d1, drop_pairEncode]
+        ← List.drop_drop, d1, Turing.pairEncode_drop]
     have d3 : (pathRaw n M s t).drop
         (2 * n + 2 + 2 * M.length + 2 + 2 * (Nat.bits s).length + 2) = Nat.bits t := by
       rw [show 2 * n + 2 + 2 * M.length + 2 + 2 * (Nat.bits s).length + 2 =
         (2 * n + 2 + 2 * M.length + 2) + (2 * (Nat.bits s).length + 2) by omega,
-        ← List.drop_drop, d2, drop_pairEncode]
+        ← List.drop_drop, d2, Turing.pairEncode_drop]
     refine ⟨(dblAt_iff _ _ _).mpr ?_, (dblAt_iff _ _ _).mpr ?_, (dblAt_iff _ _ _).mpr ?_,
       (plainAt_iff _ _ _).mpr ⟨?_, d3⟩⟩
     · simp only [List.drop_zero, Nat.zero_add, List.length_replicate]
       rw [show (pathRaw n M s t).drop (2 * n + 2) = _ from d1]; rfl
     · rw [d1, show 2 * n + 2 + 2 * M.length + 2 = (2 * n + 2) + (2 * M.length + 2) by omega,
-        ← List.drop_drop, d1, drop_pairEncode]
+        ← List.drop_drop, d1, Turing.pairEncode_drop]
     · rw [d2, show 2 * n + 2 + 2 * M.length + 2 + 2 * (Nat.bits s).length + 2 =
         (2 * n + 2 + 2 * M.length + 2) + (2 * (Nat.bits s).length + 2) by omega,
-        ← List.drop_drop, d2, drop_pairEncode]
+        ← List.drop_drop, d2, Turing.pairEncode_drop]
     · simp [pathRaw, length_pairEncode]; omega
   · rintro ⟨h1, h2, h3, h4⟩
     rw [dblAt_iff] at h1 h2 h3

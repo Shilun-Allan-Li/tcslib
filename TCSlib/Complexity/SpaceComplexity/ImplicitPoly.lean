@@ -376,7 +376,9 @@ theorem ImplicitlyLogspaceComputable.computesInSpace {f : List Bool → List Boo
     omega
   have hlogW : logSpace (2 * n + 2 + W) ≤ K2 * L := by
     have hWle : W ≤ F + 2 := by
-      have := Nat.log_le_self 2 (F + 1); omega
+      have := Complexity.logSpace_le_succ (F + 1)
+      rw [Complexity.logSpace_eq] at this
+      omega
     have hle : 2 * n + 2 + W ≤ (C + 2) * (n + 1) ^ (e + 1) + 2 := by
       have h1 : n + 1 ≤ (n + 1) ^ (e + 1) := by
         calc n + 1 = (n + 1) ^ 1 := by ring

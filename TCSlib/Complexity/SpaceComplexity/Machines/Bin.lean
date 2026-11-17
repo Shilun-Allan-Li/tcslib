@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Hydroxyi
 -/
-import Mathlib.Data.Nat.Size
+import TCSlib.Complexity.TuringMachine.NatBits
 import Mathlib.Data.Nat.Log
 import Mathlib.Tactic.Ring
 
@@ -17,7 +17,9 @@ set_option autoImplicit false
 Register-tape programs keep counters in little-endian binary, as the words `Nat.bits n`
 (least significant bit first, no redundant zeros). This file collects the word-level facts the
 counter machines need: the value of a word, injectivity of `Nat.bits`, the carry rule of
-the increment (`Complexity.LogProg.bits_succ`), and length bounds.
+the increment (`Complexity.LogProg.bits_succ`). The length bounds on `Nat.bits` (`length_bits_le`,
+`length_bits_mono`, `two_pow_bits_le`, …) live in `TCSlib.Complexity.TuringMachine.NatBits`, below
+both the machine and the register-program layers; this file imports it.
 
 ## Main definitions
 
@@ -30,8 +32,6 @@ the increment (`Complexity.LogProg.bits_succ`), and length bounds.
 * `Complexity.LogProg.bitsVal_lt_two_pow`, `Complexity.LogProg.eq_of_bitsVal_eq` — a word's
   value is below `2^{length}` and determines the word among words of its length.
 * `Complexity.LogProg.bits_succ` — `Nat.bits (n + 1) = incW (Nat.bits n)`.
-* `Complexity.LogProg.length_bits_le` — `|Nat.bits n| ≤ m` when `n < 2^m`;
-  `Complexity.LogProg.length_bits_mono` — `|Nat.bits n|` is monotone in `n`.
 
 ## References
 
@@ -118,19 +118,6 @@ lemma bits_succ (n : ℕ) : Nat.bits (n + 1) = incW (Nat.bits n) := by
         rw [Nat.bit1_bits, show 2 * m + 1 + 1 = 2 * (m + 1) + (false).toNat by simp; ring,
           bits_two_mul_add (m + 1) false (by omega), ih m (by omega)]
         rfl
-
-/-- The binary word of `n` has at most `m` letters when `n < 2^m`. -/
-lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
-  rw [Nat.size_eq_bits_len]
-  exact Nat.size_le.mpr h
-
-/-- Binary words of larger numbers are not shorter. -/
-lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
-  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]; exact Nat.size_le_size h
-
-/-- The binary word of `n` has at most `⌊log₂ n⌋ + 1` letters. -/
-lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
-  length_bits_le (Nat.lt_pow_succ_log_self (by norm_num) n)
 
 /-- Every letter of `Nat.bits n` is followed by more letters or is a `1`: the word has no
 trailing `0`. (The last letter is `true`.) -/

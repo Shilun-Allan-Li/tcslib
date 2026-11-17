@@ -136,8 +136,9 @@ private lemma fl_leaf_step {k : ℕ} {x : List Bool} (d : Cfg (k + 2) Bool (Opti
 /-- A full leaf run takes one step. -/
 private lemma fl_leaf_run {k : ℕ} {x : List Bool} (d : Cfg (k + 2) Bool (Option Bool) x)
     (live : Bool) (hd : d.state = some (some live)) :
-    (fl_leafTM k).runFrom d 1 = fl_flush (if live then some none else none) d :=
-  fl_leaf_step d live hd
+    (fl_leafTM k).runFrom d 1 = fl_flush (if live then some none else none) d := by
+  rw [MultiTapeTM.runFrom_one]
+  exact fl_leaf_step d live hd
 
 /-- Relabelling the forwarding configuration changes only its designated live control. -/
 private lemma fl_encode_map {k n : ℕ} {Q R : Type} {x : List Bool} (entry : Q)

@@ -342,3 +342,35 @@ binary input. Suppose $N$ decides $L$ using space bound $sp$, and suppose $sp(|x
 for some natural number $s$. Then the numbers of reachable configuration codes in
 windows $s$ and $s+1$ are equal.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Exp BFS --- Radius: further results}
+
+\begin{lemma}[Characterization of window runs]
+\lean{Complexity.ExpBFS.winRun_iff}
+\label{Complexity.ExpBFS.winRun_iff}
+\leanok
+\uses{Complexity.ExpBFS.WinRun, Turing.Cfg.InWindow, Turing.NDTM.initCfg, Turing.NDTM.runWith}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, let $x$
+be a Boolean input, let $s\in\mathbb{N}$, and let $w$ be a Boolean choice string. Then
+$w$ is a window run of $N$ on $x$ at radius $s$ if and only if, for every $j\le|w|$, the
+configuration that $N$ reaches from its initial configuration on $x$ after following
+the first $j$ choices of $w$ lies in the window of radius $s$: every work-head position
+has absolute value at most $s$, and every work-tape cell outside $[-s,s]$ is blank.
+\end{lemma}
+
+\begin{lemma}[Characterization of reachable codes]
+\lean{Complexity.ExpBFS.rcode_iff_reflTransGen}
+\label{Complexity.ExpBFS.rcode_iff_reflTransGen}
+\leanok
+\uses{Complexity.Codec.StepRel, Complexity.Codec.cfgCode, Complexity.ExpBFS.RCode, Turing.NDTM.initCfg}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, let $x$
+be a Boolean input, and let $s,u\in\mathbb{N}$. Then $u$ is a reachable code of $N$ on
+$x$ at radius $s$ if and only if $u$ is obtained from the radius-$s$ code of the initial
+configuration of $N$ on $x$ by zero or more steps of the encoded step relation at
+radius $s$, under which $a$ is related to $b$ exactly when the nested pair encoding of
+$x$ with the binary expansions of $a$, $b$ and $s$ belongs to the one-step
+configuration language of $N$.
+\end{lemma}

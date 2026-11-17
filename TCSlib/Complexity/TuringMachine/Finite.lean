@@ -226,6 +226,37 @@ theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol 
   rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
     MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
 
+/-- A run ending in a designated live stop state first enters the stop states by its deadline,
+and that first entry is already the final configuration, provided every stop configuration is
+fixed by one step.
+
+**Proof sketch.** Choose the least stop-state time with `Nat.find`. Minimality gives the
+strict earlier-time cut. The fixed-step hypothesis keeps every subsequent configuration equal
+to that first entry; `runFrom_add` then identifies it with the given final configuration. -/
+theorem exists_first_entry_of_fixed {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+    (stop : State → Prop) (c d : Cfg k Symbol State input) (T : ℕ)
+    (hfix : ∀ z : Cfg k Symbol State input,
+      (∃ q, z.state = some q ∧ stop q) → tm.step z = z)
+    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
+      tm.runFrom c t = d := by
+  classical
+  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q :=
+    ⟨T, by rw [hT]; exact hd⟩
+  let t := Nat.find hh
+  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
+  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
+  have hfixed : tm.step (tm.runFrom c t) = tm.runFrom c t := hfix _ hs
+  have hconst (n : ℕ) : tm.runFrom (tm.runFrom c t) n = tm.runFrom c t := by
+    induction n with
+    | zero => exact runFrom_zero
+    | succ n ih => rw [runFrom_succ_eq_step, hfixed]; exact ih
+  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
+  have he := tm.runFrom_add c t (T - t)
+  rw [Nat.add_sub_of_le ht, hT, hconst] at he
+  exact he.symm
+
 /-- **A new initial state changes no run** (the core specification API, user 2026-10-16; its
 gate, finding 1): the machine `{ tm with q₀ := q }` has `tm`'s transition table, so from every
 configuration it takes `tm`'s run, `({ tm with q₀ := q }).runFrom cfg t = tm.runFrom cfg t`.

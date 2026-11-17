@@ -58,7 +58,7 @@ lemma read_t {l l₁ l₀ : Lb} {st : St} {c : AConf 7 Lb}
     (h : AReach A orc x (GuardLe A x B) (some l₁, st.toV, none) c) :
     AReach A orc x (GuardLe A x B) (some l, st.toV, none) c := by
   refine step_of hbd ?_
-  simp only [astep, hl, vword_whole₁]
+  rw [astep_call hl, vword_whole₁]
   rw [St.toV_P, orc_bit, hb, if_pos rfl]
   exact h
 
@@ -68,7 +68,7 @@ lemma read_f {l l₁ l₀ : Lb} {st : St} {c : AConf 7 Lb}
     (h : AReach A orc x (GuardLe A x B) (some l₀, st.toV, none) c) :
     AReach A orc x (GuardLe A x B) (some l, st.toV, none) c := by
   refine step_of hbd ?_
-  simp only [astep, hl, vword_whole₁]
+  rw [astep_call hl, vword_whole₁]
   rw [St.toV_P, orc_bit, hb, if_neg (by decide)]
   exact h
 
@@ -111,12 +111,12 @@ theorem lc_run (s b : Bool) (rest : List Bool) : ∀ (n : ℕ) (st : St),
     have hl := lt_of_drop h1
     refine read_f (l := .lc s) rfl hbd (getD_of_drop h) ?_
     refine step_of hbd ?_
-    regs [astep, A]
+    regs [astep_inc (show A (.lcF s) = _ from rfl)]
     have hbd1 : St.Bd B { st with P := st.P + 1 } := by bdt
     refine read_b (l := .lb s) rfl hbd1 (getD_of_drop h1) ?_
     cases b <;>
     · refine step_of hbd1 ?_
-      regs [astep, A, cond_true, cond_false]
+      regs [astep_inc (show A (.lp s _) = _ from rfl), cond_true, cond_false]
       exact fin_of (by sext)
   | succ n ih =>
     intro st h hbd hx hV
@@ -126,10 +126,10 @@ theorem lc_run (s b : Bool) (rest : List Bool) : ∀ (n : ℕ) (st : St),
     have hl := lt_of_drop h0
     refine read_t (l := .lc s) rfl hbd (getD_of_drop h0) ?_
     refine step_of hbd ?_
-    regs [astep, A]
+    regs [astep_inc (show A (.lcT s) = _ from rfl)]
     have hbd1 : St.Bd B { st with V := st.V + 1 } := by bdt
     refine step_of hbd1 ?_
-    regs [astep, A]
+    regs [astep_inc (show A (.lcI s) = _ from rfl)]
     have hbd2 : St.Bd B { st with V := st.V + 1, P := st.P + 1 } := by bdt
     have := ih { st with V := st.V + 1, P := st.P + 1 } h1 hbd2 hx (by simp; omega)
     refine reach_of_eq this ?_
@@ -149,7 +149,7 @@ theorem lv_run (b : Bool) (st : St) (hbd : st.Bd B) (hT : st.T = 0) (hZ : st.Z =
   have hb0 := hbd
   simp only [St.Bd] at hb0
   refine step_of hbd ?_
-  regs [astep, A, Bool.false_eq_true, if_false]
+  regs [astep_clr (show A (.lv false b) = _ from rfl), Bool.false_eq_true, if_false]
   have e0 : { st with T := 0 } = st := by ext <;> simp [hT]
   rw [e0]
   refine (cp_run (.lK b) st hbd hZ (by simp only [cpDst, cpSrc]; regs; omega)).trans ?_
@@ -158,7 +158,7 @@ theorem lv_run (b : Bool) (st : St) (hbd : st.Bd B) (hT : st.T = 0) (hZ : st.Z =
   refine (sb_run b _ hbd1).trans ?_
   have hbd2 : St.Bd B { st with V := 0, C := st.C + st.K - st.V } := by bdt
   refine step_of hbd2 ?_
-  regs [astep, A]
+  regs [astep_jz (show A (.jzC b) = _ from rfl)]
   by_cases hk : st.C + st.K - st.V = 0
   · rw [if_pos hk]
     have ha : asg st.K st.S st.V = false := by
@@ -167,7 +167,7 @@ theorem lv_run (b : Bool) (st : St) (hbd : st.Bd B) (hT : st.T = 0) (hZ : st.Z =
     cases b <;> exact fin_of (by sext)
   · rw [if_neg hk]
     refine step_of hbd2 ?_
-    regs [astep, A]
+    regs [astep_dec (show A (.dc b) = _ from rfl)]
     set st3 : St := { st with V := 0, C := st.C + st.K - st.V - 1 } with hst3
     have hbd3 : St.Bd B st3 := by simp only [hst3]; bdt
     refine (cp_run (.lS b) st3 hbd3 (by simp [hst3, hZ])
@@ -184,16 +184,16 @@ theorem lv_run (b : Bool) (st : St) (hbd : st.Bd B) (hT : st.T = 0) (hZ : st.Z =
       rw [show st.K - st.V - 1 = st.K - 1 - st.V by omega]
       simp [show st.V < st.K by omega]
     refine step_of (st := { st3 with T := q, C := 0 }) hbd5 ?_
-    regs [astep, A]
+    regs [astep_jodd (show A (.od b) = _ from rfl)]
     by_cases ho : q % 2 = 1
     · rw [if_pos ho]
       refine step_of hbd5 ?_
-      regs [astep, A]
+      regs [astep_clr (show A (.ot b) = _ from rfl)]
       rw [ha, decide_eq_true ho]
       cases b <;> exact fin_of (by sext [hst3, hC])
     · rw [if_neg ho]
       refine step_of hbd5 ?_
-      regs [astep, A]
+      regs [astep_clr (show A (.of b) = _ from rfl)]
       rw [ha, decide_eq_false ho]
       cases b <;> exact fin_of (by sext [hst3, hC])
 
@@ -213,7 +213,7 @@ theorem lit_run (s : Bool) (v : ℕ) (b : Bool) (rest : List Bool) (st : St)
   have h0 : x.drop st.P = true :: (List.replicate v true ++ false :: b :: rest) := by
     simpa [CNF.serializeLit, List.replicate_succ] using h
   refine step_of hbd ?_
-  regs [astep, A]
+  regs [astep_inc (show A (.lt s) = _ from rfl)]
   have hbd1 : St.Bd B { st with P := st.P + 1 } := by bdt
   refine (lc_run s b rest v _ (drop_succ_of_drop h0) hbd1 hx (by simp; omega)).trans ?_
   have hbd2 : St.Bd B { st with P := st.P + 1 + v + 2, V := st.V + v } := by bdt
@@ -225,7 +225,7 @@ theorem lit_run (s : Bool) (v : ℕ) (b : Bool) (rest : List Bool) (st : St)
     congr 3
     sext
   · refine step_of hbd2 ?_
-    regs [astep, A, if_true]
+    regs [astep_clr (show A (.lv true b) = _ from rfl), if_true]
     exact fin_of (by sext [hV])
 
 /-- **A clause**: from `cl s` with the input at `P` reading the literals of `Cl` and the
@@ -290,7 +290,7 @@ theorem formula_run (rest : List Bool) : ∀ (φ : CNF ℕ) (st : St),
     simp only [CNF.serialize, List.flatMap_nil, List.nil_append, List.cons_append] at h
     refine read_f (l := .fm) rfl hbd (getD_of_drop h) ?_
     refine step_of hbd ?_
-    regs [astep, A]
+    regs [astep_clr (show A (.lend true) = _ from rfl)]
     exact fin_of rfl
   | cons Cl φ ih =>
     intro st h hbd hx hT hZ hC hV
@@ -303,14 +303,14 @@ theorem formula_run (rest : List Bool) : ∀ (φ : CNF ℕ) (st : St),
     simp only [List.length_append, List.length_cons, List.length_nil] at hl
     refine read_t (l := .fm) rfl hbd (getD_of_drop h0) ?_
     refine step_of hbd ?_
-    regs [astep, A]
+    regs [astep_inc (show A .fmT = _ from rfl)]
     have hbd1 : St.Bd B { st with P := st.P + 1 } := by bdt
     refine (clause_run _ Cl false _ h1 hbd1 hx hT hZ hC hV).trans ?_
     simp only [Bool.false_or]
     set P1 := st.P + 1 + (Cl.flatMap CNF.serializeLit).length with hP1
     have hbd2 : St.Bd B { st with P := P1 } := by bdt
     refine step_of hbd2 ?_
-    regs [astep, A]
+    regs [astep_inc (show A (.ce _) = _ from rfl)]
     have h2 : x.drop (P1 + 1) = CNF.serialize φ ++ rest := by
       have := drop_add_of_drop (u := Cl.flatMap CNF.serializeLit ++ [false]) (p := st.P + 1)
         (by simpa [List.append_assoc] using h1)
@@ -319,7 +319,7 @@ theorem formula_run (rest : List Bool) : ∀ (φ : CNF ℕ) (st : St),
     cases hc : CNF.Clause.eval (asg st.K st.S) Cl
     · simp only [Bool.false_eq_true, if_false, CNF.eval_cons, hc, Bool.false_and]
       refine step_of hbd3 ?_
-      regs [astep, A]
+      regs [astep_clr (show A (.lend false) = _ from rfl)]
       exact fin_of (by ext <;> simp)
     · simp only [if_true, CNF.eval_cons, hc, Bool.true_and]
       have := ih { st with P := P1 + 1 } h2 hbd3 hx hT hZ hC hV
