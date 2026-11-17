@@ -1183,7 +1183,7 @@ private lemma mult_validate_field (x w : List Bool) (f : Fin 3) (v : Fin 13 → 
   rw [emptyStep]
   by_cases empty : w = []
   · rw [if_pos empty]
-    exact success (by simp [empty, Canon]) v bound (fun _ _ => rfl)
+    exact success (by rw [empty]; simpa [Nat.zero_bits] using canon_bits 0) v bound (fun _ _ => rfl)
   · rw [if_neg empty]
     let u := Function.update v 0 (v (multCanonSource f) - (if f = 2 then 1 else 2))
     have bu : ∀ r, u r ≤ 4 * (x.length + 1) :=
