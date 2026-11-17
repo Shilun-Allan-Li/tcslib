@@ -1,7 +1,7 @@
 # Dispatch · Gate 49 round 1 (DW-11: #351, #352, #365)
 
 The Codex pack is staged on the exchange at
-[`@@EXCH@@`](https://github.com/Shilun-Allan-Li/tcslib/tree/@@EXCH@@/outbox/gates/49-dw11-small-items-gate),
+[`0d2bf0711bbb88e7fb5edf02b4699495d939c857`](https://github.com/Shilun-Allan-Li/tcslib/tree/0d2bf0711bbb88e7fb5edf02b4699495d939c857/outbox/gates/49-dw11-small-items-gate),
 folder `outbox/gates/49-dw11-small-items-gate/`. Seyoon dispatches.
 
 ## Prompt for Codex
@@ -11,12 +11,12 @@ You are an external Codex auditor for Gate 49 of the pairing campaign
 (DW-11, the combined small-items gate), round 1, in
 https://github.com/Shilun-Allan-Li/tcslib.
 
-1. Read exchange/pass-shelat-ch5-8 at @@EXCH@@.
+1. Read exchange/pass-shelat-ch5-8 at 0d2bf0711bbb88e7fb5edf02b4699495d939c857.
    Read outbox/gates/49-dw11-small-items-gate/README.md, pack-r1.md and
    bundle.md. Verify the pack using SHA256SUMS, and verification-r1.zip using
    the SHA256SUMS inside it.
 2. Audit three PRs together, using the pack, with campaign records
-   @@PIN@@
+   ab17e37feb00a677d69f6abd5ff7e427e3b9ef3c
    (cryptography/pass-shelat-ch2-4; the pin files the records copy of this
    pack):
    - #351 (merged as cf7d28f7159b46033e8b8ae170954f9575e5d145; head
@@ -78,14 +78,14 @@ The user dispatches and merges.
 
 ## State at staging
 
-- **Records pin:** `@@PIN@@`. It is the signed commit that files this directory (`pack-r1.md`, the diffs, the PR
+- **Records pin:** `ab17e37feb00a677d69f6abd5ff7e427e3b9ef3c`. It is the signed commit that files this directory (`pack-r1.md`, the diffs, the PR
   descriptions, `source-head-r1.json`, both ZIPs and `SHA256SUMS-r1`) on the records tip
   `b31b77f7f4127d9c6c6c0d6a1390de0dc8d71d43`, and it is pushed to `cryptography/pass-shelat-ch2-4`. This file was filled
   with the pin and the exchange hash in a later small commit; `SHA256SUMS-r1` does not cover it.
-- **Exchange:** `@@EXCH@@`. It is one SSH-signed commit on the exchange tip `@@EXCHBASE@@`, adding only
+- **Exchange:** `0d2bf0711bbb88e7fb5edf02b4699495d939c857`. It is one SSH-signed commit on the exchange tip `1e0647b99de8ee4d11722b5bad862fe40837a2ce ("stmt gsw-6b: checkpoint 1")`, adding only
   `outbox/gates/49-dw11-small-items-gate/`, and it is pushed to `exchange/pass-shelat-ch5-8` as a fast-forward.
-  - `SHA256SUMS` (`@@SUMS@@`) verifies @@NSUMS@@ from a fresh `git archive` of the commit.
-  - `verification-r1.zip` (`@@VZIP@@`) verifies 66/66 against its own `SHA256SUMS` from a fresh extract.
+  - `SHA256SUMS` (`b96e8a1c9bd31924107dbed007b0aead6879e6a13a56e00f5589f03d4b4dc9d5`) verifies 15/15 from a fresh `git archive` of the commit.
+  - `verification-r1.zip` (`5fd273987a7ead420576ebfeb41dee46351a528e916789f4123054cee60e6ed2`) verifies 66/66 against its own `SHA256SUMS` from a fresh extract.
   - Every section of `bundle.md` was checked equal to its source.
 - **PRs at staging:**
   - #351 and #352 are merged.
