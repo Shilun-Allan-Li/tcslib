@@ -106,6 +106,7 @@
     - `ofFn_decAnswer_some` is `decAnswer_some` plus Mathlib `List.ofFn_cons`, as disclosed;
     - `sidSpec_rng_one'`/`_two'` have no published IBE counterpart; the promotion request is recorded and not asked for this PR.
   - The new public `ofFn_padFin` (`ComposeSecurity/Machines.lean:244`, on the tip) maps to `padTo` and is not a restatement.
+  - **Correction (2026-11-17, Gate 44 G44-01).** This review checked the worker's delta only. It took the checkpoint helpers' overlap dispositions from the in-house REPORT, including its line "No duplicated proved material; nothing for the duplication ledger" (`inhouse-r1/REPORT.md:260`), without regrading them. That line is wrong for the checkpoint's `poly_rU`, `poly_rZ`, `poly_rW`, `poly_rS` (`Words.lean:261–271`), which re-prove `Games.polyTimeComputable_rU`/`_rZ`/`_rW`/`_rS` (`Games/Efficiency.lean:538–550`). They are disclosed, but no acceptance was recorded. Seyoon accepted them on 2026-11-17: ledger row **DL-56**, repaid in cleanup Stage 2. The REPORT carries a dated correction under the line, and the verdict above is unchanged. See `gates/44-pairing-fills/resolutions-r1.md`.
 - **Rule 10, by source reading** (my `unfold_scan.py` over `Oracles.lean` and T4's body):
   - It finds 184 theorem selectors and 0 foreign TCSlib or core/Mathlib definitions.
   - The other rows are local hypotheses, the `@[simps]` readers `bb1Scheme_{pp,sk,ct}Len`, `abs_sub_comm` (via `to_additive`), or tokenizer artefacts.

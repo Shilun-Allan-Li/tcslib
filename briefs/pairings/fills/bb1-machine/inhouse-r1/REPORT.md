@@ -259,6 +259,16 @@ Disclosed overlaps of definition or pattern, and near-alternatives:
 
 No duplicated proved material; nothing for the duplication ledger.
 
+> **Correction (2026-11-17, Gate 44 G44-01).** The line above is kept as filed, but its disposition is wrong for
+> disclosure 1. `poly_rU`, `poly_rZ`, `poly_rW` and `poly_rS` (`BonehBoyenMachine/Words.lean:261–271`) re-prove the
+> polynomial-time facts of the public `Games.polyTimeComputable_rU`, `_rZ`, `_rW`, `_rS` (`Games/Efficiency.lean:538–550`):
+> `BB1Machine.rU`, …, `rS` have the bodies of the `InteractiveHandler` projections, and the four proofs are the same
+> compositions. Disclosure 1 records the API obstruction (no published `_eq`
+> readers for those projections under Rule 10), but not an acceptance. Seyoon accepted the debt on 2026-11-17:
+> it is ledger row **DL-56** (`briefs/pass-shelat-ch5-8/duplication-ledger.md`), repaid in cleanup Stage 2
+> (`cleanup-stages.md`): re-point the four to the `Games/Efficiency` facts, adding a reader there if the obstruction
+> needs one (proof-only). Resolution: `briefs/pairings/gates/44-pairing-fills/resolutions-r1.md`.
+
 ## Limits
 
 - T4 is unproved pending the scope request; see above.

@@ -98,6 +98,15 @@ Disclosed overlaps of pattern or near-alternatives:
 
 No duplicated proved material; nothing for the duplication ledger.
 
+> **Correction (2026-11-17, Gate 44 G44-01).** The line above is kept as filed, but its disposition is wrong for
+> disclosure 5. The inline verdict identity (`Pairing/Assumptions.lean:199` at `916afc25`, `simp only [List.cons.injEq,
+> and_true, decide_eq_true_eq]`) re-derives the public `TrapdoorPredictor.decide_singleton_eq_true`
+> (`Encryption/PublicKey/TrapdoorPredictor.lean:144`, `decide ([b] = [true]) = b`), specialised to the solver-success
+> bit. Disclosure did not record acceptance. Seyoon accepted the debt on 2026-11-17: it is ledger row **DL-55**
+> (`briefs/pass-shelat-ch5-8/duplication-ledger.md`), repaid in cleanup Stage 2 (`cleanup-stages.md`): promote
+> `decide_singleton_eq_true` to a shared low-level home importable by both layers, then re-point `TrapdoorPredictor` and
+> T1's proof (proof-only). Resolution: `briefs/pairings/gates/44-pairing-fills/resolutions-r1.md`.
+
 ## Limits
 
 - Seals cover the changed owner only (as instructed). The downstream owners' sources are unchanged and their oleans

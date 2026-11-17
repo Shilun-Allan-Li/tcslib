@@ -1,0 +1,76 @@
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean
+index 370854585..2a3be1314 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean
+@@ -21,7 +21,11 @@ Helper module of `AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean` (step
+ `AdvancedEncryption/IdentityBased/BonehBoyen.lean` draws its exponents `α_1` and `r` uniformly
+ from `Z_p`. The reduction machine draws them from blocks of fresh coins instead, by the rejection
+ sampler `Candidates.sampleBelowL p (Nat.size p) n n` with `n = κ + wG(κ) + 1` and the fallback
+-`0` (`draw`), which is within `(1/2)^n` of uniform (`statClose_draw`). This file gives
++`0` (`draw`), which is within `(1/2)^n` of uniform (`statClose_draw`). The bounded sampler and
++its bound are the library's existing construction, `Candidates.sampleBelowL` and
++`Candidates.statClose_sampleBelowL` (`Cryptography/Candidates/DiscreteLog.lean`): for
++`0 < m < 2^n` its output on `n · n` uniform coins, with the fallback `0`, is within `(1/2)^n` of
++the uniform number below `m`. This file gives
+ * the simulator's oracles with the exponent supplied as an argument (`drawStep`), on the
+   query and answer lengths of the machine (`qLen`, `aLen`), with their case lemmas;
+ * the comparison of drawn and ideal exponents on a deterministic run: for a test with values
+@@ -55,7 +59,10 @@ sampler `Candidates.sampleBelowL p (Nat.size p) n n` with `n = κ + wG(κ) + 1`
+   (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): the simulator
+   in the proof of Theorem 4.1.
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+-  (Theorem 52.3, sampling `Z_q` by rejection; Definition 181.1, statistical closeness.)
++  (Definition 181.1, statistical closeness. Context only: §2.8, Theorem 52.3, the discrete-log
++  collection, whose proof remarks that its domain `Z_q` is easy to sample; it does not give
++  this sampler, its coin budget, its fallback or its bound, which are the library's
++  `Candidates.sampleBelowL` and `Candidates.statClose_sampleBelowL`.)
+ -/
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+@@ -127,9 +134,11 @@ def blockLen : PolyExpr := (PolyExpr.var.add G.wG).add (.const 1)
+ theorem blockLen_eval (κ : ℕ) : (blockLen G).eval κ = κ + G.wG.eval κ + 1 := by
+   rw [blockLen, PolyExpr.eval_add, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+ 
+-/-- **An exponent of `Z_p` drawn from `n · n` coins** [PS10, Theorem 52.3]: the rejection sampler
+-`sampleBelowL p (Nat.size p) n n` with the fallback `0`, read in `Z_p`, for the order `p` of the
+-group described by `d` and `n = blockLen G κ`. -/
++/-- **An exponent of `Z_p` drawn from `n · n` coins**: the library's bounded rejection sampler
++`Candidates.sampleBelowL p (Nat.size p) n n` (`Cryptography/Candidates/DiscreteLog.lean`, whose
++bound `Candidates.statClose_sampleBelowL` gives `statClose_draw`) with the fallback `0`, read in
++`Z_p`, for the order `p` of the group described by `d` and `n = blockLen G κ`. That `Z_p` is
++easy to sample is the remark in the proof of [PS10, Theorem 52.3] (§2.8), context only. -/
+ noncomputable def draw (κ : ℕ) (d : List Bool)
+     (w : Fin ((blockLen G).eval κ * (blockLen G).eval κ) → Bool) : ZMod (G.group κ d).order :=
+   ((Candidates.sampleBelowL (G.group κ d).order (Nat.size (G.group κ d).order)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean
+index e562056e3..ef54f7e62 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler.lean
+@@ -59,7 +59,10 @@ run is the run of `drawStep` with exponents read from a tape, through the encodi
+   (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): the algorithm
+   `B` in the proof of Theorem 4.1.
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+-  (Algorithm 43.2, the extended Euclidean algorithm; Theorem 52.3, sampling `Z_q`.)
++  (Algorithm 43.2, the extended Euclidean algorithm. Context only: §2.8, Theorem 52.3, the
++  discrete-log collection, whose proof remarks that its domain `Z_q` is easy to sample; it does
++  not give the bounded sampler or its bound, which are the library's `Candidates.sampleBelowL`
++  and `Candidates.statClose_sampleBelowL`, `Cryptography/Candidates/DiscreteLog.lean`.)
+ -/
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Words.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Words.lean
+index 7b87d999b..e26e3bd2c 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Words.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Words.lean
+@@ -57,7 +57,10 @@ seed by `Candidates.sampleBelowL` and writes it with `wG(κ) + 1` bits.
+   (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): the algorithm
+   `B` in the proof of Theorem 4.1.
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+-  (Algorithm 43.2, the extended Euclidean algorithm; Theorem 52.3, sampling `Z_q`.)
++  (Algorithm 43.2, the extended Euclidean algorithm. Context only: §2.8, Theorem 52.3, the
++  discrete-log collection, whose proof remarks that its domain `Z_q` is easy to sample; it does
++  not give the bounded sampler or its bound, which are the library's `Candidates.sampleBelowL`
++  and `Candidates.statClose_sampleBelowL`, `Cryptography/Candidates/DiscreteLog.lean`.)
+ -/
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
