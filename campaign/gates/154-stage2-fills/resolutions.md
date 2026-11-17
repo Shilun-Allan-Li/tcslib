@@ -19,8 +19,7 @@ The dispatched pack and evidence (head `f2d1ead7`) are preserved. Round 2 is a n
     - `SignType.cast` was the only definition passed as a rewrite rule.
   - **Procedure fixed:** WORKFLOW.md §4 now requires every flag, Core and Mathlib included, to be
     dispositioned this way. "Outside TCSlib" is not a disposition. SingleTape's two older
-    `SignType.cast` uses (in `encodeAction`-level proofs at lines 193 and 1217) are in unchanged
-    proofs.
+    `SignType.cast` uses (lines 193 and 1217) are in proofs this PR does not change.
 - **G154-02 (minor), accounting.** `universalCapture_embed` (UniversalStartup, new in #350) is an
   RN-1 member. It is now counted in `duplication-ledger.md` (RN-1 at closeout stage 2) and carried
   in `CARRIED-REGISTER.md`: citing `Cfg.mapState_eq_of_fields` needs a CfgFacts import into
