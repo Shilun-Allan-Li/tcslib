@@ -1,0 +1,1442 @@
+diff --git a/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean b/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
+index cf4597f4d..ebe98588f 100644
+--- a/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
++++ b/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
+@@ -46,6 +46,8 @@ load-bearing lemma of the Pass–shelat campaign, foundation decision D11 of
+ * `Complexity.IterateFind.copy_clean` — the copier's contract; `copy_clean_view`, the same for
+   `copyTMView`.
+ * `Complexity.IterateFind.host_dispatch`, `host_branch`, `host_halt` — the host's control steps.
++* `Complexity.IterateFind.host_dispatch_view`, `host_branch_view`, `host_halt_view` — the same
++  control steps for the typed view `Turing.ModuleHost.hostTMView`.
+ 
+ ## References
+ 
+@@ -387,4 +389,62 @@ theorem host_halt (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤
+   change (FinTM.controlAction 0 none).apply _ = _
+   rw [FinTM.controlAction_apply, moveInputPos_zero]
+ 
++/-- **The anchor's dispatch, for the typed view** (`host_dispatch` for
++`Turing.ModuleHost.hostTMView`): from the seam at `inl 0` holding `w`, one step of the typed view
++`H = hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (entry M 0)` reaches the seam at the
++verdict module's entry holding `w`,
++`H.tm.step (Cfg.ofWords (inl 0) (stateWord (K + 1) w)) =
++Cfg.ofWords (entry M 2) (stateWord (K + 1) w)`.
++Framework glue, no textbook counterpart (the host's control table). -/
++theorem host_dispatch_view (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
++    (x w : List Bool) :
++    (ModuleHost.hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (ModuleHost.entry M 0)).tm.step
++        (Cfg.ofWords (input := x) (.inl 0) (stateWord (K + 1) w)) =
++      Cfg.ofWords (ModuleHost.entry M 2) (stateWord (K + 1) w) := by
++  rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _ _ 0 (Cfg.ofWords_state _ _), hostCtrl_eq,
++    if_pos rfl, FinTM.controlAction_apply, moveInputPos_zero, Cfg.ofWords_def, Cfg.ofWords_def]
++
++/-- **The branch, for the typed view** (`host_branch` for `Turing.ModuleHost.hostTMView`): the
++branch state reads the first cell of tape 0, the verdict `b` of a word `w` with `w[0]? = some b`,
++and one step of the typed view
++`H = hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (entry M 0)` dispatches into the payload
++module (`b` true) or the step module (`b` false) at the seam holding `w`,
++`H.tm.step (Cfg.ofWords (inl 1) (stateWord (K + 1) w)) =
++Cfg.ofWords (entry M (if b then 4 else 3)) (stateWord (K + 1) w)`.
++Framework glue, no textbook counterpart (the host's control table). -/
++theorem host_branch_view (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
++    (x : List Bool) (b : Bool) (w : List Bool) (hw : w[0]? = some b) :
++    (ModuleHost.hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (ModuleHost.entry M 0)).tm.step
++        (Cfg.ofWords (input := x) (.inl 1) (stateWord (K + 1) w)) =
++      Cfg.ofWords (ModuleHost.entry M (if b then 4 else 3)) (stateWord (K + 1) w) := by
++  have hread : (Cfg.ofWords (input := x) (.inl 1 : ModuleHost.State (Fin 3) M)
++      (stateWord (K + 1) w)).workTapeSymbols 0 = some b := by
++    simp only [Cfg.workTapeSymbols_eq, Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos,
++      stateWord_eq, FinTM.bufferTape_eq]
++    simpa using hw
++  rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _ _ 1 (Cfg.ofWords_state _ _), hostCtrl_eq,
++    if_neg (by decide), if_pos rfl, hread, FinTM.controlAction_apply, moveInputPos_zero,
++    Cfg.ofWords_def, Cfg.ofWords_def]
++  cases b <;> rfl
++
++/-- **The halt, for the typed view** (`host_halt` for `Turing.ModuleHost.hostTMView`): from the
++seam at `inl 2` holding `w` with output `o`, one step of the typed view
++`H = hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (entry M 0)` reaches the same seam with
++control `none` and output `o`,
++`H.tm.step {Cfg.ofWords (inl 2) (stateWord (K + 1) w) with output := o} =
++{Cfg.ofWords (inl 2) (stateWord (K + 1) w) with state := none, output := o}`.
++Framework glue, no textbook counterpart (the host's control table). -/
++theorem host_halt_view (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
++    (x w o : List Bool) :
++    (ModuleHost.hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (ModuleHost.entry M 0)).tm.step
++        {Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} =
++      {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)
++        with state := none, output := o} := by
++  rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _
++    ({Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} :
++      Cfg (K + 1) Bool (ModuleHost.State (Fin 3) M) x) 2
++    (Cfg.ofWords_state (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)),
++    hostCtrl_eq, if_neg (by decide), if_neg (by decide),
++    FinTM.controlAction_apply, moveInputPos_zero]
++
+ end Complexity.IterateFind
+diff --git a/TCSlib/Complexity/Randomized/PPT.lean b/TCSlib/Complexity/Randomized/PPT.lean
+index dd437f164..36b6d77cb 100644
+--- a/TCSlib/Complexity/Randomized/PPT.lean
++++ b/TCSlib/Complexity/Randomized/PPT.lean
+@@ -109,6 +109,7 @@ one (Definitions 26.1 and 69.4) and are related by explicit lemmas, never unifie
+ * `Complexity.NUPPT.exists_uniform_computes` — every polynomial-time computable function is
+   computed with probability one by a PPT [PS10, Definition 24.6, non-vacuity].
+ * `Complexity.NUPPT.nonempty` — the class is inhabited.
++* `Complexity.NUPPT.length_ofFn_coins` — a coin string `r : A.Coins n` has `coins.eval n` entries.
+ 
+ ## References
+ 
+@@ -221,6 +222,13 @@ theorem length_advInput (n : ℕ) (y : List Bool) : (advInput n y).length = 2 *
+ [PS10, Definition 23.4, "each bit of the random tape is uniformly and independently chosen"]. -/
+ abbrev Coins (n : ℕ) : Type := Fin (A.coinLen n) → Bool
+ 
++/-- **The length of a coin string**: the list of the coins `r : A.Coins n` has length
++`coins.eval n`, `(List.ofFn r).length = A.coins.eval n`.
++Framework glue, no textbook counterpart. -/
++protected theorem length_ofFn_coins (n : ℕ) (r : A.Coins n) :
++    (List.ofFn r).length = A.coins.eval n := by
++  rw [List.length_ofFn, coinLen_eq]
++
+ /-- Activation at parameter `n` on argument `y` with coins `r`: machine input
+ `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. The sampler `r ↦ runAt n y r` on the uniform coin type
+ `Coins n` is the distribution `A(1^n, y)` of the text. -/
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index e2018d8af..38029707b 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -70,6 +70,8 @@ by `ifEq`).
+ * `TCSlib.Cryptography.ofFn_cast`, `TCSlib.Cryptography.ofFn_arrowCongr_finCongr` — a bit vector
+   read across an equality of widths keeps its string.
+ * `TCSlib.Cryptography.FunFamily.ofFn_blocks` — block `j` of a string is its `j`-th window.
++* `TCSlib.Cryptography.FunFamily.ofFn_blocks_symm_eq_flatMap` — the string of a tuple of blocks is
++  the concatenation of the block strings.
+ * `TCSlib.Cryptography.invProbOpt_le_invProb`, `TCSlib.Cryptography.invProbOpt_some` — the
+   bridges to the concrete `invProb`.
+ * `TCSlib.Cryptography.invProbOpt_nonneg`, `TCSlib.Cryptography.invProbOpt_le_one` — bounds.
+@@ -292,6 +294,34 @@ theorem FunFamily.ofFn_blocks (q ℓ : ℕ) (ω : Fin (q * ℓ) → Bool) (j : F
+     rw [Nat.mul_comm]
+     omega
+ 
++/-- **The string of a tuple of blocks is the concatenation of the block strings:** for
++`V : Fin q → Fin ℓ → Bool` and any `F : ℕ → List Bool` with `F i = ⟦V i⟧` for every `i < q`,
++`⟦(FunFamily.blocks q ℓ).symm V⟧ = (List.range q).flatMap F`. Framework glue (the block encoding
++of [PS10, Theorem 35.1] is cited at `FunFamily.blocks`).
++
++**Proof sketch.** Cut the string into `q` windows of `ℓ` bits (`List.ofFn_mul`). Position `j` of
++window `i` is position `i·ℓ + j`, which the inverse bijection reads as bit `j` of block `i`
++(`FunFamily.blocks_symm_apply`: quotient `i` and remainder `j` by `ℓ`), so window `i` is
++`⟦V i⟧ = F i`, and the windows over `Fin q` are the chunks over `List.range q`. -/
++theorem FunFamily.ofFn_blocks_symm_eq_flatMap {q ℓ : ℕ} (V : Fin q → Fin ℓ → Bool)
++    (F : ℕ → List Bool) (hF : ∀ i (h : i < q), F i = List.ofFn (V ⟨i, h⟩)) :
++    List.ofFn ((FunFamily.blocks q ℓ).symm V) = (List.range q).flatMap F := by
++  rw [List.ofFn_mul, List.flatMap_def, ← List.map_coe_finRange, List.map_map, List.ofFn_eq_map]
++  congr 1
++  refine List.map_congr_left fun i _ => ?_
++  rw [Function.comp_apply, hF i i.isLt]
++  congr 1
++  funext j
++  rw [FunFamily.blocks_symm_apply]
++  have hℓ : 0 < ℓ := Nat.pos_of_ne_zero (by rintro rfl; exact j.elim0)
++  congr 1
++  · refine Fin.ext ?_
++    simp only [Fin.coe_divNat]
++    rw [Nat.add_comm, Nat.add_mul_div_right _ _ hℓ, Nat.div_eq_of_lt j.2, Nat.zero_add]
++  · refine Fin.ext ?_
++    simp only [Fin.coe_modNat]
++    rw [Nat.add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt j.2]
++
+ /-- **Block `i` of a string of `r` blocks of `k` bits and a tail** is segment `i`:
+ `⟦j ↦ w (castAdd sl (finProdFinEquiv (i, j)))⟧ = coinBlock k i ⟦w⟧`.
+ 
+diff --git a/TCSlib/Cryptography/Asymptotic/Sampling.lean b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+index ff030e9f4..dc37bf470 100644
+--- a/TCSlib/Cryptography/Asymptotic/Sampling.lean
++++ b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+@@ -75,6 +75,8 @@ added for the permutation sampler, whose section moved to `Asymptotic/Permutatio
+ * `TCSlib.Cryptography.StatClose.map`, `TCSlib.Cryptography.StatClose.prod`,
+   `TCSlib.Cryptography.StatClose.trans`, `TCSlib.Cryptography.StatClose.comp_pushesUniform`
+   — closure properties.
++* `TCSlib.Cryptography.StatClose.of_uprob_ne` — two samplers on the same seeds are close within
++  the probability that they differ (the coupling bound).
+ * `TCSlib.Cryptography.pushesUniform_of_card_fiber` — equal fibres push uniform to uniform (C5).
+ * `TCSlib.Cryptography.firstHit_uniform_of_some`, `TCSlib.Cryptography.uprob_firstHit_none`,
+   `TCSlib.Cryptography.statClose_firstHit` — the first hit is uniform (C4).
+@@ -163,6 +165,33 @@ theorem StatClose.symm {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose
+ theorem StatClose.mono {X : σ → γ} {Y : τ → γ} {δ δ' : ℝ} (h : StatClose X Y δ) (hδ : δ ≤ δ') :
+     StatClose X Y δ' := fun T => (h T).trans hδ
+ 
++/-- **Two samplers on the same seeds are statistically close within the probability that they
++differ** (the coupling bound): `StatClose X Y Pr_s[X s ≠ Y s]`, i.e.
++`|Pr_s[T (X s)] − Pr_s[T (Y s)]| ≤ Pr_s[X s ≠ Y s]` for every test set `T`. Framework glue (its
++uses are [PS10, Theorem 107.3] in DDH and [PS10, Theorem 163.7] in Yao).
++
++**Proof sketch.** On a seed where `T (X s)` holds, either `X s = Y s` and `T (Y s)` holds, or the
++samplers differ there; so `Pr[T (X)] ≤ Pr[T (Y)] + Pr[X ≠ Y]` (`uprob_mono`, `uprob_or_le`), and
++symmetrically with `Pr[Y ≠ X] = Pr[X ≠ Y]` (`OneWay.uprob_congr`). -/
++theorem StatClose.of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
++    StatClose X Y (uprob fun s => X s ≠ Y s) := by
++  rw [statClose_iff]
++  intro T
++  have key : ∀ (X Y : σ → γ), uprob (fun s => T (X s)) ≤
++      uprob (fun s => T (Y s)) + uprob (fun s => X s ≠ Y s) := by
++    intro X Y
++    refine (uprob_mono fun s h => ?_).trans (uprob_or_le (fun s => T (Y s)) (fun s => X s ≠ Y s))
++    by_cases hxy : X s = Y s
++    · exact Or.inl (hxy ▸ h)
++    · exact Or.inr hxy
++  have h1 := key X Y
++  have h2 := key Y X
++  have hsymm : uprob (fun s => Y s ≠ X s) = uprob (fun s => X s ≠ Y s) :=
++    OneWay.uprob_congr fun s => ne_comm
++  rw [hsymm] at h2
++  rw [abs_sub_le_iff]
++  constructor <;> linarith
++
+ /-- Closeness bounds add along a chain (triangle inequality). -/
+ theorem StatClose.trans {X : σ → γ} {Y : τ → γ} {Z : υ → γ} {δ δ' : ℝ}
+     (h : StatClose X Y δ) (h' : StatClose Y Z δ') : StatClose X Z (δ + δ') := fun T =>
+diff --git a/TCSlib/Cryptography/Authentication/Encoding.lean b/TCSlib/Cryptography/Authentication/Encoding.lean
+index ddbe8e405..e9c982c67 100644
+--- a/TCSlib/Cryptography/Authentication/Encoding.lean
++++ b/TCSlib/Cryptography/Authentication/Encoding.lean
+@@ -20,6 +20,7 @@ set_option autoImplicit false
+ ## Main results
+ 
+ `splitBits_fst`, `splitBits_snd` and `atParam_eq` expose the encoded values.
++`ofFn_splitBits_fst`, `ofFn_splitBits_snd` read the two halves as the prefix and suffix words.
+ 
+ ## References
+ 
+@@ -37,6 +38,24 @@ def splitBits {a b : ℕ} (w : Fin (a + b) → Bool) : (Fin a → Bool) × (Fin
+ 
+ attribute [simps (config := { isSimp := false }) fst snd] splitBits
+ 
++/-- The word of the first component of `splitBits w` is the first `a` bits of the word of `w`:
++`List.ofFn (splitBits w).1 = (List.ofFn w).take a`. Framework glue, no textbook counterpart. -/
++protected theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
++    List.ofFn (splitBits w).1 = (List.ofFn w).take a := by
++  have hfst : (splitBits w).1 = fun i : Fin a => w (Fin.castAdd b i) :=
++    funext fun i => splitBits_fst w i
++  rw [hfst, List.ofFn_add (f := w), List.take_left' List.length_ofFn]
++  rfl
++
++/-- The word of the second component of `splitBits w` is the word of `w` after its first `a`
++bits: `List.ofFn (splitBits w).2 = (List.ofFn w).drop a`. Framework glue, no textbook
++counterpart. -/
++protected theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
++    List.ofFn (splitBits w).2 = (List.ofFn w).drop a := by
++  have hsnd : (splitBits w).2 = fun j : Fin b => w (Fin.natAdd a j) :=
++    funext fun j => splitBits_snd w j
++  rw [hsnd, List.ofFn_add (f := w), List.drop_left' List.length_ofFn]
++
+ /-- The parameter-tagged input `⟨1^n, w⟩` of a deterministic polynomial-time algorithm. -/
+ def atParam (n : ℕ) (w : List Bool) : List Bool := pairEncode (List.replicate n true) w
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean
+index 38ad023c9..471d15aea 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean
+@@ -33,6 +33,8 @@ polynomially many ciphertexts are encoded as nested pairs.
+ * `PrivateKeyScheme.not_multiMessageSecure_of_deterministic` uses a two-message
+   distinguisher to rule out security for stateless deterministic schemes
+   [PS10, Theorem 94.2].
++* `PrivateKeyScheme.encodeList_eq_flatMap` writes the tuple encoding as the concatenation of
++  the blocks `⟨c, []⟩`.
+ 
+ ## References
+ 
+@@ -140,6 +142,18 @@ theorem encodeList_cons (m : List Bool) (ms : List (List Bool)) :
+ /-- Unfolding of the list encoding on the empty list: `encodeList [] = []`. -/
+ theorem encodeList_nil : encodeList [] = [] := rfl
+ 
++/-- **The tuple encoding is a concatenation of blocks**: the nested-pair encoding of a list of
++words is the concatenation of the self-delimiting blocks `⟨c, []⟩`,
++`encodeList l = l.flatMap fun c => pairEncode c []`.
++Framework glue, no textbook counterpart. -/
++protected theorem encodeList_eq_flatMap (l : List (List Bool)) :
++    encodeList l = l.flatMap fun c => pairEncode c [] := by
++  induction l with
++  | nil => rw [encodeList_nil, List.flatMap_nil]
++  | cons c cs ih =>
++    rw [encodeList_cons, List.flatMap_cons, ih]
++    simp only [pairEncode_eq, List.append_nil, List.append_assoc]
++
+ /-- Unfolding of the multi-message ciphertext sampler: the `encodeList` of the `q + 1`
+ encryptions `Enc(1^n, ⟨k, m_i⟩; s_i)` under the key `k = Gen(1^n; r.1)`, `s_i = r.2 i`. -/
+ theorem multiEncDist_apply (S : PrivateKeyScheme) (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool)
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean b/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean
+index 51f7a1e7e..7b54ccf42 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean
+@@ -41,6 +41,7 @@ Honest sampling is the field `Collection.sample_spec`.
+   security from one-wayness and a hard-core predicate.
+ * `TCSlib.Cryptography.TrapdoorCollection.OneWay.exists_glPad_singleBitSecure` supplies
+   the predicate and its evaluator through Goldreich–Levin under the width premise `henc`.
++* `TCSlib.Cryptography.pkPredictor_apply` reads the predictor's output on a guessed bit and coins.
+ 
+ ## References
+ 
+@@ -282,6 +283,15 @@ end TrapdoorCollection
+ def pkPredictor {α ρ : Type*} (D : α × Bool → ρ → Bool) (flip : Bool) : α → Bool × ρ → Bool :=
+   fun y c => xor (if D (y, c.1) c.2 then c.1 else !c.1) flip
+ 
++/-- **The predictor's output**: on `y` with coins `c = (c₁, c₂)` (the guessed bit and the
++distinguisher's coins), `pkPredictor D flip` outputs `c₁` if `D` accepts `(y, c₁)` with coins `c₂`
++and `¬c₁` otherwise, negated when `flip`,
++`pkPredictor D flip y c = xor (if D (y, c.1) c.2 then c.1 else !c.1) flip`
++[PS10, Theorem 104.4, proof]. -/
++theorem pkPredictor_apply {α ρ : Type*} (D : α × Bool → ρ → Bool) (flip : Bool) (y : α)
++    (c : Bool × ρ) : pkPredictor D flip y c = xor (if D (y, c.1) c.2 then c.1 else !c.1) flip :=
++  rfl
++
+ /-- The predictor is `owpPredictor` on `α × Unit`. -/
+ private theorem predProb_pkPredictor_eq {α ρ : Type*} [Fintype α] [Fintype ρ] (f : α ≃ α)
+     (B : α → Bool) (D : α × Bool → ρ → Bool) (flip : Bool) :
+diff --git a/TCSlib/Cryptography/Foundations/BitLists.lean b/TCSlib/Cryptography/Foundations/BitLists.lean
+index 758ca630c..19da91091 100644
+--- a/TCSlib/Cryptography/Foundations/BitLists.lean
++++ b/TCSlib/Cryptography/Foundations/BitLists.lean
+@@ -22,6 +22,7 @@ an association list. They depend on Mathlib only.
+ ## Main definitions
+ 
+ * `TCSlib.Cryptography.xorPerm v`: exclusive-or with the vector `v`, as a permutation.
++* `TCSlib.Cryptography.recordBits w o`: the `(w + 1)`-bit record of an optional `w`-bit vector.
+ 
+ ## Main results
+ 
+@@ -39,6 +40,9 @@ an association list. They depend on Mathlib only.
+ * `TCSlib.Cryptography.length_flatten_map_const`, `length_flatten_map_range`: the length of a
+   concatenation of equal-length blocks.
+ * `TCSlib.Cryptography.flatMap_range_drop`: reading the successive suffixes of a list.
++* `TCSlib.Cryptography.getD_ofFn`, `zipWith_xor_cancel_right`, `recordBits_none`,
++  `recordBits_some`, `length_recordBits`: in-range entries of a tuple's list, `(m ⊕ p) ⊕ p = m`, and
++  the readers of the record of an optional bit vector.
+ 
+ ## References
+ 
+@@ -63,6 +67,14 @@ theorem headD_drop_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) (i : Fin n) (d
+   simp only [headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos i.isLt,
+     Option.getD_some]
+ 
++/-- The entry of a tuple's list at an in-range index is the tuple's entry there: for
++`f : Fin n → α`, `i < n` and any default `d`, `(List.ofFn f).getD i d = f ⟨i, hi⟩`.
++Framework glue, no textbook counterpart (`headD_drop_ofFn` read through `headD_drop`). -/
++theorem getD_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) {i : ℕ} (hi : i < n) (d : α) :
++    (List.ofFn f).getD i d = f ⟨i, hi⟩ := by
++  rw [← headD_drop]
++  exact headD_drop_ofFn f ⟨i, hi⟩ d
++
+ /-- **Flattening one-element blocks:** concatenating the one-bit blocks `g j` gives their bits,
+ `(List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j 0` when the blocks have
+ length `l = 1`.
+@@ -97,6 +109,19 @@ theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
+     simp only [List.getElem_zipWith]
+     cases a[i] <;> cases c[i] <;> rfl
+ 
++/-- Exclusive-or with the same pad twice cancels on the right: `(m ⊕ p) ⊕ p = m` for every
++message `m` and every pad `p` at least as long, `|m| ≤ |p|` (`List.zipWith` stops at the shorter
++list). Framework glue, no textbook counterpart (the decryption step of the one-time-pad style
++encryptions). -/
++theorem zipWith_xor_cancel_right : ∀ (m p : List Bool), m.length ≤ p.length →
++    List.zipWith xor (List.zipWith xor m p) p = m
++  | [], _, _ => rfl
++  | _ :: _, [], h => absurd h (by rw [List.length_cons, List.length_nil]; omega)
++  | a :: m, b :: p, h => by
++    rw [List.zipWith_cons_cons, List.zipWith_cons_cons,
++      zipWith_xor_cancel_right m p (by rw [List.length_cons, List.length_cons] at h; omega)]
++    cases a <;> cases b <;> rfl
++
+ section XorPerm
+ 
+ variable {n : ℕ}
+@@ -189,4 +214,31 @@ theorem flatMap_range_drop {β γ : Type*} (F : List β → List γ) (g : β →
+     exact ih (fun e' he' => hcons e' (List.mem_cons_of_mem _ he')) m'
+       (by rw [List.length_cons] at hm; omega)
+ 
++/-! ### Records of an optional bit vector -/
++
++/-- The record of an optional `w`-bit vector, a word of `w + 1` bits: a flag bit followed by the
++vector, `recordBits w (some c) = 1 :: ⟦c⟧`, or all zeros when there is none,
++`recordBits w none = 0 :: 0^w`. Framework glue, no textbook counterpart (the challenge record of
++the encrypt-then-tag and PRF-oracle handlers). -/
++def recordBits (w : ℕ) : Option (Fin w → Bool) → List Bool
++  | none => false :: List.replicate w false
++  | some c => true :: List.ofFn c
++
++/-- The record of no vector is the zero word: `recordBits w none = 0 :: 0^w`.
++Framework glue, no textbook counterpart. -/
++theorem recordBits_none (w : ℕ) : recordBits w none = false :: List.replicate w false := rfl
++
++/-- The record of a vector is the flag `1` followed by the vector:
++`recordBits w (some c) = 1 :: ⟦c⟧`. Framework glue, no textbook counterpart. -/
++theorem recordBits_some (w : ℕ) (c : Fin w → Bool) : recordBits w (some c) = true :: List.ofFn c :=
++  rfl
++
++/-- Every record has `w + 1` bits: `|recordBits w o| = w + 1`.
++Framework glue, no textbook counterpart. -/
++theorem length_recordBits (w : ℕ) (o : Option (Fin w → Bool)) :
++    (recordBits w o).length = w + 1 := by
++  cases o with
++  | none => rw [recordBits_none, List.length_cons, List.length_replicate]
++  | some c => rw [recordBits_some, List.length_cons, List.length_ofFn]
++
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Games.lean b/TCSlib/Cryptography/Games.lean
+index fb3115e91..1c987715a 100644
+--- a/TCSlib/Cryptography/Games.lean
++++ b/TCSlib/Cryptography/Games.lean
+@@ -9,6 +9,7 @@ import TCSlib.Cryptography.Games.Advantage
+ import TCSlib.Cryptography.Games.Hopping
+ import TCSlib.Cryptography.Games.Protocols
+ import TCSlib.Cryptography.Games.Forwarding
++import TCSlib.Cryptography.Games.Tapes
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -45,6 +46,8 @@ the interaction model `Strategy`.
+   messages and coin draws.
+ * `TCSlib.Cryptography.Games.Forwarding`: the forwarding handler, the call lemmas of interactive
+   handlers read on lists, and hard-wiring a second input component (S2b layer).
++* `TCSlib.Cryptography.Games.Tapes`: simulation through a state abstraction in law, coins drawn in
++  advance on tapes, and functions overridden by a table.
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/Games/Bridges/Experiments.lean b/TCSlib/Cryptography/Games/Bridges/Experiments.lean
+index 5346a5a4b..bd3da1d60 100644
+--- a/TCSlib/Cryptography/Games/Bridges/Experiments.lean
++++ b/TCSlib/Cryptography/Games/Bridges/Experiments.lean
+@@ -34,6 +34,7 @@ The four experiments are read through their published defining equations (`invPr
+ ## Main results
+ 
+ * `Games.Bridge.prob_sample_eq_uprob`: `Pr[x ← $ α : p x] = uprob p`.
++* `Games.Bridge.expect_sample_eq_uexp`: `𝔼[x ← $ α : f x] = uexp f`.
+ * `Games.Bridge.prob_sample_pair`: sampling `α` then `β` is sampling `α × β`.
+ * `Games.Bridge.invProb_eq`, `predProb_eq`, `acceptProb_eq`, `distAdv_eq`: the four concrete
+   experiments as games.
+@@ -67,6 +68,13 @@ theorem prob_sample_eq_uprob [Fintype α] [Nonempty α] (p : α → Prop) :
+   classical
+   rw [prob_eq_expect, expect_sample, uprob_eq_card_filter, sum_boole, inv_mul_eq_div]
+ 
++/-- **Sampling and `uexp` agree:** the expectation of `f` over a uniform sample of the nonempty
++finite type `α` is the uniform average, `expect (sample α) f = uexp f`; the expectation form of
++`prob_sample_eq_uprob`. Framework glue, no textbook counterpart. -/
++protected theorem expect_sample_eq_uexp {α : Type} [Fintype α] [Nonempty α] (f : α → ℝ) :
++    expect (sample α) f = uexp f := by
++  rw [expect_sample, uexp_def, inv_mul_eq_div]
++
+ /-- **Sampling a pair in sequence is sampling the product:** for every function `g` on pairs,
+ its expectation over `a ← $ α; b ← $ β; (a, b)` equals its expectation over a uniform pair. -/
+ theorem expect_sample_pair [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (g : α × β → ℝ) :
+diff --git a/TCSlib/Cryptography/Games/Efficiency/Strings.lean b/TCSlib/Cryptography/Games/Efficiency/Strings.lean
+index 0aa4831f4..a35c0a329 100644
+--- a/TCSlib/Cryptography/Games/Efficiency/Strings.lean
++++ b/TCSlib/Cryptography/Games/Efficiency/Strings.lean
+@@ -38,6 +38,7 @@ on strings. This file collects the string-level pieces they share (route note
+ ## Main results
+ 
+ * `EffFill.encodeLog_append_single`, `EffFill.ofFn_getD_decodeFin`.
++* `EffFill.length_le_length_encodeLog`: an encoded log has at least as many bits as entries.
+ * `EffFill.canonWord_eq`: the canonical decoder is `encodeBitMove ∘ decodeBitMove`.
+ * `EffFill.canonFun_poly`, `EffFill.fixLen_poly`, `EffFill.selLen_poly`, `EffFill.actLoop_poly`.
+ * `EffFill.runsTo_stop`: a run that stops evaluates the loop.
+@@ -81,6 +82,16 @@ theorem length_encodeLog_le {ι α : Type} {spec : OracleSpec ι} (codec : Machi
+     have h2 := length_encodeLog_le codec E h fun e' he' => hE e' (List.mem_cons_of_mem e he')
+     omega
+ 
++/-- **An encoded log has at least as many bits as entries:**
++`h.length ≤ (codec.encodeLog h).length`. Framework glue, no textbook counterpart. -/
++protected theorem length_le_length_encodeLog {ι α : Type} {spec : OracleSpec ι}
++    (codec : MachineCodec spec α) (h : QueryLog spec) : h.length ≤ (codec.encodeLog h).length := by
++  induction h with
++  | nil => rw [MachineCodec.encodeLog_nil, List.length_nil, List.length_nil]
++  | cons e h ih =>
++    rw [MachineCodec.encodeLog_cons, length_pairEncode, List.length_cons]
++    omega
++
+ /-- The encoding of a log ends with the encoding of each of its suffixes, so it is at least as
+ long: `|codec.encodeLog O| ≤ |codec.encodeLog (P ++ O)|`. -/
+ theorem length_encodeLog_le_append {ι α : Type} {spec : OracleSpec ι} (codec : MachineCodec spec α)
+diff --git a/TCSlib/Cryptography/Games/Machines.lean b/TCSlib/Cryptography/Games/Machines.lean
+index d738c0ed6..529f17b45 100644
+--- a/TCSlib/Cryptography/Games/Machines.lean
++++ b/TCSlib/Cryptography/Games/Machines.lean
+@@ -42,6 +42,7 @@ result, stated in a later module.
+ 
+ * `Games.buildComp_costBoundedBy`, `NUPPT.toComp_costBoundedBy`: the computation makes at most `q`
+   queries.
++* `Games.OracleComp.exists_eq_pure_of_costBoundedBy_zero`: a computation of cost zero is a return.
+ * `Games.buildComp_of_ret`: a final output is the computation at every budget.
+ * `Games.buildComp_budget_eq`, `NUPPT.toCompOn_budget_eq`: a computation at budget `K ≥ j` that
+   makes at most `j` queries is the computation at budget `j`.
+@@ -175,6 +176,17 @@ theorem buildComp_costBoundedBy {spec : OracleSpec ι} (next : QueryLog spec →
+       exact (OracleComp.costBoundedBy_query _ _ _ _ _).2
+         ⟨Nat.le_add_left 1 q, fun y => buildComp_costBoundedBy next timeout q _⟩
+ 
++/-- **A computation of cost zero is a return:** if every query costs one and the budget is
++zero, `c.CostBoundedBy (fun _ => 1) 0 → ∃ a, c = pure a` (a query would need `1 ≤ 0`).
++Framework glue, no textbook counterpart. -/
++theorem OracleComp.exists_eq_pure_of_costBoundedBy_zero {ι α : Type} {spec : OracleSpec ι}
++    (c : OracleComp spec α) (h : c.CostBoundedBy (fun _ => 1) 0) : ∃ a, c = .pure a := by
++  cases c with
++  | pure a => exact ⟨a, rfl⟩
++  | query i x k =>
++    have hq := (OracleComp.costBoundedBy_query (fun _ => 1) i x k 0).1 h
++    omega
++
+ /-- **Budget reduction for `buildComp`.** If the computation of `next` at budget `K` from the log
+ `hist` makes at most `j ≤ K` queries on every path, it is the computation at budget `j`:
+ `buildComp next t j hist = buildComp next t K hist`.
+diff --git a/TCSlib/Cryptography/Games/Tapes.lean b/TCSlib/Cryptography/Games/Tapes.lean
+new file mode 100644
+index 000000000..895f59a88
+--- /dev/null
++++ b/TCSlib/Cryptography/Games/Tapes.lean
+@@ -0,0 +1,346 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Hopping
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Simulation in law, coins in advance, and functions overridden by a table
++
++Generic facts on simulations of oracle computations, stated for arbitrary oracle specifications.
++They are the `Games` forms of the tools first proved for the encrypt-then-tag proof of
++[PS10, Theorem 170.4] (`Composability.ETTGame`, `EncryptThenTag/Tools.lean`), with the tape
++extension of `AdaptiveCPA.extTape` restated here.
++
++* **Simulation through a state abstraction, in law** (`Games.expect_simulate_abs`): if every
++  call of `impl₁` from the abstract image `f s` has the law of the call of `impl₂` from `s` with
++  its new state abstracted, so do whole simulations, along runs within a query budget.
++* **Coins in advance** (`Games.expect_simulate_tapeImpl`): an implementation that draws one fresh
++  coin `t` per query (`Games.freshImpl`) has the law of the implementation that reads the `j`-th
++  query's coin from a tape `T j` drawn in advance (`Games.tapeImpl`, `Games.extTape`), for
++  computations with at most `κ` queries.
++* **Functions overridden by a table** (`Games.ovr`): `ovr M R` is `R` with the values of the
++  table `M` written over it; resampling `R` at a point outside the table moves into the table
++  (`Games.expect_sample_ovr`).
++
++## Main definitions
++
++* `Games.freshImpl`, `Games.tapeImpl`: per-query coins drawn fresh, and read from tapes.
++* `Games.extTape`: a finite family of coins extended to every index.
++* `Games.ovr`: a function overridden by a finite table.
++
++## Main results
++
++* `Games.expect_simulate_abs`, `Games.expect_simulate_abs_inv`: simulation in law through a state
++  abstraction.
++* `Games.simulate_tapeImpl_congr`, `Games.expect_simulate_tapeImpl`: coins in advance.
++* `Games.extTape_of_lt`, `Games.extTape_of_not_lt`, `Games.extTape_update`: the tape extension.
++* `Games.ovr_nil`, `Games.ovr_cons`, `Games.ovr_of_not_mem`, `Games.ovr_of_mem`,
++  `Games.ovr_update`, `Games.ovr_append`, `Games.expect_sample_ovr`: tables over functions.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  Theorem 170.4 (book p. 170): the first consumer.
++-/
++
++namespace TCSlib.Cryptography.Games
++
++open ProbComp
++
++/-! ### Simulation through a state abstraction, in law -/
++
++section Abs
++
++variable {ι : Type} {spec : OracleSpec ι} {σ₁ σ₂ α : Type}
++
++/-- **Simulation through a state abstraction, in law, along runs with a query budget.** Let every
++call of `impl₂` from a state `s` with `cnt s < κ` raise `cnt` by at most one, and give every
++function `g` of the answer and the abstracted new state the expectation that the call of `impl₁`
++from `f s` gives it. Then for a computation `c` with at most `m` queries and `cnt s + m ≤ κ`,
++`𝔼[G] (simulate impl₁ c (f s)) = 𝔼[fun p => G (p.1, f p.2)] (simulate impl₂ c s)`.
++Framework glue, no textbook counterpart.
++
++**Proof sketch.** Induction on `c`. A query costs one unit, so it is asked from a state with
++`cnt s < κ`: rewrite the call of `impl₁` by the hypothesis, and on each possible outcome of the
++call of `impl₂` (where `cnt` grew by at most one) apply the induction hypothesis
++(`expect_congr_of_allOutputs`). -/
++protected theorem expect_simulate_abs (impl₁ : QueryImpl spec σ₁ unifSpec)
++    (impl₂ : QueryImpl spec σ₂ unifSpec) (f : σ₂ → σ₁) (cnt : σ₂ → ℕ) (κ : ℕ)
++    (h : ∀ i x s, cnt s < κ → ∀ g : spec.rng i × σ₁ → ℝ,
++      expect (impl₁ i x (f s)) g = expect (impl₂ i x s) fun p => g (p.1, f p.2))
++    (hcnt : ∀ i x s, cnt s < κ → (impl₂ i x s).AllOutputs fun p => cnt p.2 ≤ cnt s + 1)
++    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂)
++    (hs : cnt s + m ≤ κ) (G : α × σ₁ → ℝ) :
++    expect (simulate impl₁ c (f s)) G = expect (simulate impl₂ c s) fun p => G (p.1, f p.2) := by
++  induction c generalizing m s with
++  | pure a => rw [simulate_pure, simulate_pure, expect_pure, expect_pure]
++  | query i x k ih =>
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
++    have hm1 : 1 ≤ m := hm
++    rw [simulate_query, simulate_query, expect_bind, expect_bind, h i x s (by omega)]
++    refine expect_congr_of_allOutputs (hcnt i x s (by omega)) fun p _ => ?_
++    exact ih p.1 (m - 1) (hk p.1) p.2 (by omega)
++
++/-- **Simulation through a state abstraction, in law, along runs with a query budget and an
++invariant:** as `Games.expect_simulate_abs`, with the hypotheses only on the states satisfying
++an invariant `P` that every call of `impl₂` keeps: for `c` with at most `m` queries, `P s` and
++`cnt s + m ≤ κ`, `𝔼[G | simulate impl₁ c (f s)] = 𝔼[fun p => G (p.1, f p.2) | simulate impl₂ c s]`.
++Framework glue, no textbook counterpart.
++
++**Proof sketch.** As `Games.expect_simulate_abs`, carrying `P` through the possible outcomes. -/
++protected theorem expect_simulate_abs_inv (impl₁ : QueryImpl spec σ₁ unifSpec)
++    (impl₂ : QueryImpl spec σ₂ unifSpec) (f : σ₂ → σ₁) (P : σ₂ → Prop) (cnt : σ₂ → ℕ) (κ : ℕ)
++    (h : ∀ i x s, P s → cnt s < κ → ∀ g : spec.rng i × σ₁ → ℝ,
++      expect (impl₁ i x (f s)) g = expect (impl₂ i x s) fun p => g (p.1, f p.2))
++    (hcnt : ∀ i x s, P s → cnt s < κ →
++      (impl₂ i x s).AllOutputs fun p => P p.2 ∧ cnt p.2 ≤ cnt s + 1)
++    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂) (hP : P s)
++    (hs : cnt s + m ≤ κ) (G : α × σ₁ → ℝ) :
++    expect (simulate impl₁ c (f s)) G = expect (simulate impl₂ c s) fun p => G (p.1, f p.2) := by
++  induction c generalizing m s with
++  | pure a => rw [simulate_pure, simulate_pure, expect_pure, expect_pure]
++  | query i x k ih =>
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
++    have hm1 : 1 ≤ m := hm
++    rw [simulate_query, simulate_query, expect_bind, expect_bind, h i x s hP (by omega)]
++    refine expect_congr_of_allOutputs (hcnt i x s hP (by omega)) fun p hp => ?_
++    exact ih p.1 (m - 1) (hk p.1) p.2 hp.1 (by omega)
++
++end Abs
++
++/-! ### Coins drawn fresh and coins in advance -/
++
++section Tapes
++
++variable {ι : Type} {spec : OracleSpec ι} {σ τ α : Type}
++
++/-- **One fresh coin per query:** the query `x` to oracle `i` in state `s` draws a uniform
++`t ∈ τ`, then runs `K i x s t`: `freshImpl K i x s = (sample τ).bind (K i x s)`.
++Framework glue, no textbook counterpart. -/
++protected noncomputable def freshImpl [Fintype τ] [Nonempty τ]
++    (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ)) : QueryImpl spec σ unifSpec :=
++  fun i x s => (sample τ).bind (K i x s)
++
++/-- The reader of `Games.freshImpl`: `freshImpl K i x s = (sample τ).bind (K i x s)`.
++Framework glue, no textbook counterpart. -/
++protected theorem freshImpl_apply [Fintype τ] [Nonempty τ]
++    (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ)) (i : ι) (x : spec.dom i) (s : σ) :
++    Games.freshImpl K i x s = (sample τ).bind (K i x s) :=
++  rfl
++
++/-- **A family of `κ` coins, extended to every index** by an arbitrary value:
++`extTape T m = T ⟨m, hm⟩` for `hm : m < κ`, and `Classical.arbitrary C` otherwise.
++Framework glue, no textbook counterpart. -/
++protected noncomputable def extTape {C : Type} [Nonempty C] {κ : ℕ} (T : Fin κ → C) (m : ℕ) : C :=
++  if hm : m < κ then T ⟨m, hm⟩ else Classical.arbitrary C
++
++/-- Below `κ` the extended family is the family: `m < κ → extTape T m = T ⟨m, hm⟩`.
++Framework glue, no textbook counterpart. -/
++protected theorem extTape_of_lt {C : Type} [Nonempty C] {κ : ℕ} (T : Fin κ → C) {m : ℕ}
++    (hm : m < κ) : Games.extTape T m = T ⟨m, hm⟩ := by
++  rw [Games.extTape, dif_pos hm]
++
++/-- From `κ` on the extended family is the arbitrary value:
++`¬ m < κ → extTape T m = Classical.arbitrary C`. Framework glue, no textbook counterpart. -/
++protected theorem extTape_of_not_lt {C : Type} [Nonempty C] {κ : ℕ} (T : Fin κ → C) {m : ℕ}
++    (hm : ¬ m < κ) : Games.extTape T m = Classical.arbitrary C := by
++  rw [Games.extTape, dif_neg hm]
++
++/-- Changing one coordinate `j` of `T` changes its extension only at `j`:
++`m ≠ j → extTape (update T j r) m = extTape T m`. Framework glue, no textbook counterpart. -/
++protected theorem extTape_update {C : Type} [Nonempty C] {κ : ℕ} (T : Fin κ → C) (j : Fin κ)
++    (r : C) {m : ℕ} (hm : m ≠ j) : Games.extTape (Function.update T j r) m = Games.extTape T m := by
++  by_cases h : m < κ
++  · rw [Games.extTape_of_lt _ h, Games.extTape_of_lt _ h, Function.update_of_ne]
++    exact fun h' => hm (congrArg Fin.val h')
++  · rw [Games.extTape_of_not_lt _ h, Games.extTape_of_not_lt _ h]
++
++/-- **One coin per query, from tapes in advance:** the query `x` to oracle `i` in state `(s, j)`
++runs `K i x s (T j)` and advances the query counter `j`,
++`tapeImpl K T i x (s, j) = (K i x s (T j)).bind fun p => pure (p.1, (p.2, j + 1))`.
++Framework glue, no textbook counterpart. -/
++protected def tapeImpl (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ)) (T : ℕ → τ) :
++    QueryImpl spec (σ × ℕ) unifSpec :=
++  fun i x s => (K i x s.1 (T s.2)).bind fun p => .pure (p.1, (p.2, s.2 + 1))
++
++/-- The reader of `Games.tapeImpl`:
++`tapeImpl K T i x (s, j) = (K i x s (T j)).bind fun p => pure (p.1, (p.2, j + 1))`.
++Framework glue, no textbook counterpart. -/
++protected theorem tapeImpl_apply (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ))
++    (T : ℕ → τ) (i : ι) (x : spec.dom i) (s : σ) (j : ℕ) :
++    Games.tapeImpl K T i x (s, j) = (K i x s (T j)).bind fun p => .pure (p.1, (p.2, j + 1)) :=
++  rfl
++
++/-- **The run from the counter `j` ignores the tapes below `j`:** if `T m = T' m` for every
++`m ≥ j`, then `simulate (tapeImpl K T) c (s, j) = simulate (tapeImpl K T') c (s, j)`.
++Framework glue, no textbook counterpart.
++
++**Proof sketch.** Induction on the computation: a query at counter `j' ≥ j` reads `T j'` and
++moves to `j' + 1`. -/
++protected theorem simulate_tapeImpl_congr
++    (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ))
++    (T T' : ℕ → τ) (c : OracleComp spec α) (s : σ) (j : ℕ) (hT : ∀ m, j ≤ m → T m = T' m) :
++    simulate (Games.tapeImpl K T) c (s, j) = simulate (Games.tapeImpl K T') c (s, j) := by
++  induction c generalizing s j with
++  | pure a => rw [simulate_pure, simulate_pure]
++  | query i x k ih =>
++    rw [simulate_query, simulate_query, Games.tapeImpl_apply, Games.tapeImpl_apply,
++      hT j le_rfl, OracleComp.bind_assoc, OracleComp.bind_assoc]
++    congr 1
++    funext p
++    rw [OracleComp.pure_bind, OracleComp.pure_bind]
++    exact ih p.1 p.2 (j + 1) fun m hm => hT m (by omega)
++
++/-- **Coins in advance have the law of fresh coins:** for a computation with at most `m`
++queries, a counter `j` with `j + m ≤ κ`, and every function `G` of the output,
++`𝔼_{T ← τ^κ} 𝔼[G (simulate (tapeImpl K (extTape T)) c (s, j))] = 𝔼[G (simulate (freshImpl K) c s)]`.
++Framework glue, no textbook counterpart.
++
++**Proof sketch.** Induction on `c`, generalizing the counter, the state and the budget. A query
++costs one unit, so it reads the tape `T j` with `j < κ`; the continuation runs from `j + 1`, so
++it ignores `T j` (`Games.simulate_tapeImpl_congr`, `Games.extTape_update`), and
++`ProbComp.expect_sample_coord` replaces `T j` by the fresh coin of `freshImpl`
++(`expect_expect_sample` exchanges the tape with the call). -/
++protected theorem expect_simulate_tapeImpl [Fintype τ] [Nonempty τ]
++    (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ))
++    (κ : ℕ) (G : α → ℝ) (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m)
++    (s : σ) (j : ℕ) (hj : j + m ≤ κ) :
++    expect (sample (Fin κ → τ))
++        (fun T => expect (simulate (Games.tapeImpl K (Games.extTape T)) c (s, j)) fun p => G p.1) =
++      expect (simulate (Games.freshImpl K) c s) fun p => G p.1 := by
++  induction c generalizing m s j with
++  | pure a =>
++    simp only [simulate_pure, expect_pure]
++    exact expect_const _ _
++  | query i x k ih =>
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
++    have hm1 : 1 ≤ m := hm
++    have hjk : j < κ := by omega
++    let jj : Fin κ := ⟨j, hjk⟩
++    have hT : ∀ T : Fin κ → τ, Games.extTape T j = T jj :=
++      fun T => Games.extTape_of_lt T hjk
++    simp only [simulate_query, Games.tapeImpl_apply, Games.freshImpl_apply, OracleComp.bind_assoc,
++      OracleComp.pure_bind, expect_bind, hT]
++    refine (expect_sample_coord jj (fun t T => expect (K i x s t) fun p =>
++      expect (simulate (Games.tapeImpl K (Games.extTape T)) (k p.1) (p.2, j + 1))
++        fun q => G q.1) ?_).trans ?_
++    · intro t t' T
++      refine congrArg _ (funext fun p => ?_)
++      refine congrArg (fun c => expect c fun q => G q.1)
++        (Games.simulate_tapeImpl_congr K _ _ _ _ _ fun m' hm' => ?_)
++      exact Games.extTape_update T jj t' (by
++        intro h
++        have : m' = j := h
++        omega)
++    · refine congrArg _ (funext fun t => ?_)
++      rw [← expect_expect_sample]
++      refine congrArg _ (funext fun p => ?_)
++      exact ih p.1 (m - 1) (hk p.1) p.2 (j + 1) (by omega)
++
++end Tapes
++
++/-! ### Functions overridden by a table -/
++
++section Override
++
++variable {κ β : Type} [DecidableEq κ]
++
++/-- **A function overridden by a table:** `ovr M R` is `R` with the entries `(p, y)` of `M`
++written over it, the first entry of a key winning: `ovr [] R = R`,
++`ovr ((p, y) :: M) R = update (ovr M R) p y`. Framework glue, no textbook counterpart. -/
++protected def ovr : List (κ × β) → (κ → β) → κ → β
++  | [], R => R
++  | e :: M, R => Function.update (Games.ovr M R) e.1 e.2
++
++/-- The reader of `Games.ovr` on the empty table: `ovr [] R = R`.
++Framework glue, no textbook counterpart. -/
++protected theorem ovr_nil (R : κ → β) : Games.ovr ([] : List (κ × β)) R = R :=
++  rfl
++
++/-- The reader of `Games.ovr` on a nonempty table: `ovr ((p, y) :: M) R = update (ovr M R) p y`.
++Framework glue, no textbook counterpart. -/
++protected theorem ovr_cons (p : κ) (y : β) (M : List (κ × β)) (R : κ → β) :
++    Games.ovr ((p, y) :: M) R = Function.update (Games.ovr M R) p y :=
++  rfl
++
++/-- Outside the keys of the table, the overridden function is `R`:
++`p ∉ M.map Prod.fst → ovr M R p = R p`. Framework glue, no textbook counterpart. -/
++protected theorem ovr_of_not_mem {M : List (κ × β)} {p : κ} (hp : p ∉ M.map Prod.fst)
++    (R : κ → β) : Games.ovr M R p = R p := by
++  induction M with
++  | nil => rw [Games.ovr_nil]
++  | cons e M ih =>
++    obtain ⟨q, y⟩ := e
++    rw [List.map_cons, List.mem_cons, not_or] at hp
++    rw [Games.ovr_cons, Function.update_of_ne hp.1]
++    exact ih hp.2
++
++/-- On the keys of the table, the overridden function does not read `R`:
++`p ∈ M.map Prod.fst → ovr M R p = ovr M R' p`. Framework glue, no textbook counterpart. -/
++protected theorem ovr_of_mem {M : List (κ × β)} {p : κ} (hp : p ∈ M.map Prod.fst)
++    (R R' : κ → β) : Games.ovr M R p = Games.ovr M R' p := by
++  induction M with
++  | nil => rw [List.map_nil] at hp; exact absurd hp List.not_mem_nil
++  | cons e M ih =>
++    obtain ⟨q, y⟩ := e
++    rw [Games.ovr_cons, Games.ovr_cons]
++    by_cases hpq : p = q
++    · subst hpq
++      rw [Function.update_self, Function.update_self]
++    · rw [Function.update_of_ne hpq, Function.update_of_ne hpq]
++      rw [List.map_cons, List.mem_cons] at hp
++      exact ih (hp.resolve_left hpq)
++
++/-- Changing `R` at a point outside the table changes the overridden function there only:
++`p ∉ M.map Prod.fst → ovr M (update R p y) = update (ovr M R) p y`.
++Framework glue, no textbook counterpart. -/
++protected theorem ovr_update {M : List (κ × β)} {p : κ} (hp : p ∉ M.map Prod.fst) (R : κ → β)
++    (y : β) : Games.ovr M (Function.update R p y) = Function.update (Games.ovr M R) p y := by
++  induction M with
++  | nil => rw [Games.ovr_nil, Games.ovr_nil]
++  | cons e M ih =>
++    obtain ⟨q, z⟩ := e
++    rw [List.map_cons, List.mem_cons, not_or] at hp
++    rw [Games.ovr_cons, Games.ovr_cons, ih hp.2]
++    exact Function.update_comm hp.1 _ _ _
++
++/-- Writing a concatenation is writing its parts: `ovr (A ++ B) R = ovr A (ovr B R)`.
++Framework glue, no textbook counterpart. -/
++protected theorem ovr_append (A B : List (κ × β)) (R : κ → β) :
++    Games.ovr (A ++ B) R = Games.ovr A (Games.ovr B R) := by
++  induction A with
++  | nil => rw [List.nil_append, Games.ovr_nil]
++  | cons e A ih =>
++    obtain ⟨p, y⟩ := e
++    rw [List.cons_append, Games.ovr_cons, Games.ovr_cons, ih]
++
++/-- **Resampling a point outside the table moves it into the table:** for `p` not a key of `M`,
++`𝔼_R F (R p) (ovr M R) = 𝔼_y 𝔼_R F y (ovr ((p, y) :: M) R)`.
++Framework glue, no textbook counterpart.
++
++**Proof sketch.** `ProbComp.expect_sample_coord` at the coordinate `p` with
++`F' y R = F y (ovr ((p, y) :: M) R)`, which does not read `R p` (`Games.ovr_update`,
++`Function.update_idem`); at `y = R p` the new entry repeats `ovr M R p = R p`
++(`Games.ovr_of_not_mem`, `Function.update_eq_self`). -/
++protected theorem expect_sample_ovr [Fintype κ] [Fintype β] [Nonempty β] (M : List (κ × β))
++    {p : κ} (hp : p ∉ M.map Prod.fst) (F : β → (κ → β) → ℝ) :
++    expect (sample (κ → β)) (fun R => F (R p) (Games.ovr M R)) =
++      expect (sample β) fun y =>
++        expect (sample (κ → β)) fun R => F y (Games.ovr ((p, y) :: M) R) := by
++  have h := expect_sample_coord p (fun y R => F y (Games.ovr ((p, y) :: M) R)) fun y y' R => by
++    show F y (Games.ovr ((p, y) :: M) (Function.update R p y')) =
++      F y (Games.ovr ((p, y) :: M) R)
++    rw [Games.ovr_cons, Games.ovr_cons, Games.ovr_update hp, Function.update_idem]
++  refine Eq.trans ?_ h
++  refine congrArg _ (funext fun R => ?_)
++  show F (R p) (Games.ovr M R) = F (R p) (Games.ovr ((p, R p) :: M) R)
++  rw [Games.ovr_cons, ← Games.ovr_of_not_mem hp R, Function.update_eq_self]
++
++end Override
++
++end TCSlib.Cryptography.Games
+diff --git a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
+index 5a6bd3120..826ad37fd 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
+@@ -40,6 +40,7 @@ also gives verdict `false` (foundation decision D7 of `PassShelatChapter2-4Plan.
+ * `TCSlib.Cryptography.acceptProb_random_eq_lazy` equates the two descriptions of a
+   random function, by its table and by lazy sampling [PS10, §3.8.1].
+ * `Complexity.NUPPT.toOracleAdversary_boundedBy` gives the query bound.
++* `Complexity.NUPPT.eval_toOracleAdversary_padFin`: an oracle adversary read at equal widths.
+ * `TCSlib.Cryptography.OracleEnsemble.indist_iff` expresses the contract through
+   negligible advantage. `TCSlib.Cryptography.oracle_hybrid_lemma` gives the
+   finite hybrid bound for oracle ensembles.
+@@ -338,6 +339,26 @@ theorem _root_.Complexity.NUPPT.toOracleAdversary_boundedBy (D : NUPPT) (n ℓ
+     rw [NUPPT.toOracleAdversary_eq]
+     exact buildTree_boundedBy _ q []
+ 
++/-- **An oracle adversary read at equal widths:** for `a' = a` and `b' = b`, running
++`D.toOracleAdversary n a b q c` against `f` is running `D.toOracleAdversary n a' b' q c` against
++`f` with its inputs and outputs read at the widths `a'`, `b'`:
++`(D^{a,b} c).eval f = (D^{a',b'} c).eval (fun x => padFin b' ⟦f (padFin a ⟦x⟧)⟧)`, where `⟦·⟧` is
++`List.ofFn`. Framework glue, no textbook counterpart.
++
++**Proof sketch.** Substitute `a' = a` and `b' = b`; the readings are identities
++(`padFin_ofFn`). -/
++theorem _root_.Complexity.NUPPT.eval_toOracleAdversary_padFin (D : NUPPT) (n q : ℕ)
++    (c : D.Coins n) {a b a' b' : ℕ} (ha : a' = a) (hb : b' = b)
++    (f : (Fin a → Bool) → (Fin b → Bool)) :
++    (D.toOracleAdversary n a b q c).eval f =
++      (D.toOracleAdversary n a' b' q c).eval
++        (fun x => padFin b' (List.ofFn (f (padFin a (List.ofFn x))))) := by
++  subst ha hb
++  have e : (fun x => padFin b' (List.ofFn (f (padFin a' (List.ofFn x))))) = f := by
++    funext x
++    rw [padFin_ofFn, padFin_ofFn]
++  rw [e]
++
+ /-! ### Oracle indistinguishability [PS10, Definition 96.1] -/
+ 
+ /-- **Oracle indistinguishability** [PS10, Definition 96.1]: `{O_n} ≈ {O'_n}` iff for every
+diff --git a/TCSlib/Cryptography/ZeroKnowledge.lean b/TCSlib/Cryptography/ZeroKnowledge.lean
+index 240e07f1c..a10f4e96d 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge.lean
+@@ -5,6 +5,7 @@ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.ZeroKnowledge.Encoding
+ import TCSlib.Cryptography.ZeroKnowledge.Interaction
++import TCSlib.Cryptography.ZeroKnowledge.InteractionWords
+ import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
+ import TCSlib.Cryptography.ZeroKnowledge.Defs
+ import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism
+@@ -39,6 +40,7 @@ zero-knowledge theorems are statistical (D8, D10).
+   statements of the honest parties' string operations (Inf-4.1, Inf-4.2).
+ * `Interaction` — next-message strategies, executions, views, transcripts and outputs
+   [PS10, §4.4] (Def-114.a – Def-116.b).
++* `InteractionWords` — the history encoding as a word list (`BinArith.encWords`).
+ * `InteractiveProofs` — interactive proof systems, soundness error, witness relations and
+   interactive proofs with efficient prover [PS10, Definitions 116.1, 119.5, 191.11]; the
+   one-message witness protocol as the sanity theorem (Def-116.1, Def-117.a, Def-119.5,
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean b/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean
+index 2e01fd24c..cad8ea7d6 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean
+@@ -61,6 +61,10 @@ functions proved polynomial-time here.
+   self-bounded updates are polynomial-time (a state loop).
+ * `TCSlib.Cryptography.EncodingMachines.unarySqrt_poly`, `divNum_poly`, `modNum_poly`,
+   `unarySize_poly` — `Nat.sqrt`, division, remainder and `Nat.size` in unary.
++* `TCSlib.Cryptography.EncodingMachines.flatMap_range_ite`, `polyTimeComputable_flatMap_range`,
++  `iterSnd_poly`, `zeros_poly`, `padTo_poly`, `length_padTo`, `getD_padTo`, `padTo_of_length`
++  (with the zero padding `padTo` and its equation `padTo_eq`) — concatenation loops over a unary
++  range, iterated second projections and zero padding.
+ 
+ ## References
+ 
+@@ -691,4 +695,173 @@ theorem unarySize_poly {f : List Bool → ℕ}
+   funext x
+   simp [Nat.size_eq_bits_len]
+ 
++/-! ### Concatenation loops, iterated projections and zero padding -/
++
++/-- **Emitting chunks below a bound:** emitting the chunk `E i` at the indices `i < L` of
++`List.range N` gives the concatenation of the `E i` over `i < min N L`:
++`(range N).flatMap (fun i => if i < L then E i else []) = (range (min N L)).flatMap E`
++(`flatMap_range_ite_eq` for arbitrary chunks). Framework glue, no textbook counterpart. -/
++protected theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
++    ∀ N, (List.range N).flatMap (fun i => if i < L then E i else []) =
++      (List.range (min N L)).flatMap E := by
++  intro N
++  induction N with
++  | zero => simp
++  | succ N ih =>
++    rw [List.range_succ, List.flatMap_append, ih, List.flatMap_singleton]
++    by_cases h : N < L
++    · rw [if_pos h, show min (N + 1) L = N + 1 by omega, show min N L = N by omega,
++        List.range_succ, List.flatMap_append, List.flatMap_singleton]
++    · rw [if_neg h, List.append_nil, show min (N + 1) L = min N L by omega]
++
++/-- **Concatenating a chunk over a unary range:** if the chunk `E z i` is a polynomial-time
++function of `⟨1^i, z⟩` and the count `n z` is a unary function, then
++`z ↦ E z 0 ++ ⋯ ++ E z (n z − 1)` is polynomial-time:
++`PolyTimeComputable fun z => (List.range (n z)).flatMap (E z)`. Framework glue, no textbook
++counterpart.
++
++**Proof sketch.** An instance of `Complexity.polyTimeComputable_iterateEmit` on the counter step
++`cstep` from `⟨[], z⟩`, whose `i`-th iterate is `⟨1^i, z⟩` (`cstep_iterate`; orbit bound
++`cstep_horbit`), emitting `E z i` while `i < n z` (`polyTimeComputable_ite` on `ltTest_poly`);
++the number of rounds is the polynomial bound `C (|z| + 1)^c` of the unary count
++(`PolyTimeComputable.output_length_le`), and the emitted chunks concatenate to the claimed list
++(`EncodingMachines.flatMap_range_ite`). -/
++protected theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
++    (hE : PolyTimeComputable fun w => E (pairSndD w) (pairFstD w).length)
++    {n : List Bool → ℕ} (hn : PolyTimeComputable fun z => List.replicate (n z) true) :
++    PolyTimeComputable fun z => (List.range (n z)).flatMap (E z) := by
++  obtain ⟨C, c, hC⟩ := hn.output_length_le
++  have hnP : ∀ z, n z ≤ (PolyExpr.normal C c).eval z.length := fun z => by
++    have := hC z
++    rw [List.length_replicate] at this
++    rw [PolyExpr.eval_normal]
++    exact this
++  have htest : PolyTimeComputable fun w => [decide ((pairFstD w).length < n (pairSndD w))] :=
++    ltTest_poly (unaryLength_poly polyTimeComputable_pairFstD)
++      (hn.comp' polyTimeComputable_pairSndD)
++  have hemit := polyTimeComputable_ite htest hE (polyTimeComputable_const [])
++  have hL := polyTimeComputable_iterateEmit cstep_poly hemit (PolyExpr.normal C c)
++    (cbound (PolyExpr.normal C c)) (cstep_horbit _)
++  have hpre : PolyTimeComputable fun z => pairEncode [] z :=
++    (polyTimeComputable_const []).pairEncode polyTimeComputable_id
++  refine (hL.comp' hpre).congr fun z => ?_
++  have horb : ∀ i, cstep^[i] (pairEncode [] z) = pairEncode (List.replicate i true) z :=
++    fun i => by rw [cstep_iterate, List.append_nil]
++  have hN : n z ≤ (PolyExpr.normal C c).eval (pairEncode [] z).length + 1 :=
++    ((hnP z).trans ((PolyExpr.normal C c).eval_mono
++      (by rw [length_pairEncode]; omega))).trans (Nat.le_succ _)
++  simp only [horb, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
++    decide_eq_true_eq]
++  rw [EncodingMachines.flatMap_range_ite, min_eq_right hN]
++
++/-- **The iterated second projection is polynomial-time:** for a polynomial-time `s` and a unary
++count `i`, `PolyTimeComputable fun z => pairSndD^[i z] (s z)`. Framework glue, no textbook
++counterpart.
++
++**Proof sketch.** A counted loop (`polyTimeComputable_loopState`) from `s z` whose update on
++`⟨z, ⟨1^j, t⟩⟩` is the second projection of `t` truncated to `|s z|` bits
++(`truncate_poly`, `unaryLength_poly`). Peeling never lengthens a word
++(`length_pair_components_le`), so along the loop every state `pairSndD^[j] (s z)` is no longer
++than `s z` and the truncation is the identity there; every update is at most `|s z| ≤ C (|z|+1)^c`
++long (`PolyTimeComputable.output_length_le`), the self-bound the loop lemma asks for. -/
++protected theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
++    {i : List Bool → ℕ} (hi : PolyTimeComputable fun z => List.replicate (i z) true) :
++    PolyTimeComputable fun z => pairSndD^[i z] (s z) := by
++  -- peeling never lengthens a word
++  have hlen : ∀ (w : List Bool) (j : ℕ), (pairSndD^[j] w).length ≤ w.length := by
++    intro w j
++    induction j with
++    | zero => exact le_rfl
++    | succ j ih =>
++      rw [Function.iterate_succ_apply']
++      exact ((Nat.le_add_left _ _).trans (length_pair_components_le _)).trans ih
++  -- the truncated update `⟨z, ⟨1^j, t⟩⟩ ↦ (pairSndD t).take |s z|`
++  have hupd : PolyTimeComputable fun w =>
++      (pairSndD (pairSndD (pairSndD w))).take (s (pairFstD w)).length :=
++    truncate_poly (polyTimeComputable_pairSndD.comp'
++        (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD))
++      (unaryLength_poly (hs.comp' polyTimeComputable_pairFstD))
++  -- the loop states are the iterated projections
++  have hclosed : ∀ (upd : List Bool → List Bool),
++      (∀ w, upd w = (pairSndD (pairSndD (pairSndD w))).take (s (pairFstD w)).length) →
++      ∀ z j, loopState upd s z j = pairSndD^[j] (s z) := by
++    intro upd hu z j
++    induction j with
++    | zero => rw [loopState_zero, Function.iterate_zero_apply]
++    | succ j ih =>
++      have hj := hlen (s z) (j + 1)
++      rw [Function.iterate_succ_apply'] at hj
++      rw [loopState_succ, hu, pairSndD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode, ih,
++        Function.iterate_succ_apply', List.take_of_length_le hj]
++  obtain ⟨C, c, hC⟩ := hs.output_length_le
++  have hsB : ∀ x, (s x).length ≤ (PolyExpr.normal C c).eval x.length := fun x => by
++    rw [PolyExpr.eval_normal]
++    exact hC x
++  have hupdB : ∀ x t, ((pairSndD (pairSndD (pairSndD (pairEncode x t)))).take
++      (s (pairFstD (pairEncode x t))).length).length ≤ (PolyExpr.normal C c).eval x.length := by
++    intro x t
++    rw [pairFstD_pairEncode]
++    exact (List.length_take_le _ _).trans (hsB x)
++  refine (polyTimeComputable_loopState hupd hs hi (PolyExpr.normal C c) hsB hupdB).congr
++    fun z => ?_
++  exact hclosed _ (fun _ => rfl) z (i z)
++
++/-- **`L` zeros from a unary length:** if `L` is a unary function, then
++`PolyTimeComputable fun x => List.replicate (L x) false` (the bit-extraction principle with the
++constant bit `0`). Framework glue, no textbook counterpart. -/
++protected theorem zeros_poly {L : List Bool → ℕ}
++    (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
++    PolyTimeComputable fun x => List.replicate (L x) false := by
++  refine polyTimeComputable_of_getD (F := fun x => List.replicate (L x) false) ?_ ?_
++  · refine (polyTimeComputable_const [false]).congr fun w => ?_
++    rw [List.getD_eq_getElem?_getD, List.getElem?_replicate]
++    split_ifs <;> rfl
++  · refine hL.congr fun x => ?_
++    rw [List.length_replicate]
++
++/-- **Zero padding** to length `L` (and truncation to `L`): `padTo L w = (w ++ 0^L).take L`, the
++word `w` cut or filled with zeros to exactly `L` bits. Framework glue, no textbook counterpart. -/
++protected def padTo (L : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate L false).take L
++
++/-- The defining equation of `padTo`: `padTo L w = (w ++ 0^L).take L`. Framework glue, no
++textbook counterpart. -/
++protected theorem padTo_eq (L : ℕ) (w : List Bool) :
++    EncodingMachines.padTo L w = (w ++ List.replicate L false).take L := rfl
++
++/-- **Padding to a unary length is polynomial-time:** for a polynomial-time `s` and a unary `L`,
++`PolyTimeComputable fun x => padTo (L x) (s x)` (`truncate_poly` after appending the zeros
++`EncodingMachines.zeros_poly`). Framework glue, no textbook counterpart. -/
++protected theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
++    {L : List Bool → ℕ} (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
++    PolyTimeComputable fun x => EncodingMachines.padTo (L x) (s x) :=
++  (truncate_poly (hs.append (EncodingMachines.zeros_poly hL)) hL).congr fun x =>
++    (EncodingMachines.padTo_eq (L x) (s x)).symm
++
++/-- The padded word has length `L`: `|padTo L w| = L`. Framework glue, no textbook
++counterpart. -/
++protected theorem length_padTo (L : ℕ) (w : List Bool) :
++    (EncodingMachines.padTo L w).length = L := by
++  rw [EncodingMachines.padTo_eq, List.length_take, List.length_append, List.length_replicate]
++  omega
++
++/-- The bits of the padded word below `L` are the bits of `w` read with default `false`:
++`(padTo L w).getD i false = w.getD i false` for `i < L`. Framework glue, no textbook
++counterpart. -/
++protected theorem getD_padTo (L : ℕ) (w : List Bool) {i : ℕ} (hi : i < L) :
++    (EncodingMachines.padTo L w).getD i false = w.getD i false := by
++  rw [EncodingMachines.padTo_eq, List.getD_eq_getElem?_getD, List.getElem?_take_of_lt hi,
++    List.getElem?_append, List.getD_eq_getElem?_getD]
++  split_ifs with h
++  · rfl
++  · have hw : w[i]? = none := List.getElem?_eq_none_iff.2 (by omega)
++    rw [hw, List.getElem?_replicate]
++    split_ifs <;> rfl
++
++/-- Padding a word of the right length is the identity: `|w| = L → padTo L w = w`. Framework
++glue, no textbook counterpart. -/
++protected theorem padTo_of_length {L : ℕ} {w : List Bool} (h : w.length = L) :
++    EncodingMachines.padTo L w = w := by
++  rw [EncodingMachines.padTo_eq, List.take_append_of_le_length (by omega),
++    List.take_of_length_le (by omega)]
++
+ end TCSlib.Cryptography.EncodingMachines
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+index 12c9c57f0..44d05a506 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+@@ -77,6 +77,9 @@ requires it of the verifier (run-3 audit P9-1).
+ ## Main results
+ 
+ * `TCSlib.Cryptography.exec_length` — after `k` moves exactly `k` messages have been sent.
++* `TCSlib.Cryptography.Strategy.encodeMsgs_eq`, `Strategy.encodeMsgs_eq_flatMap`,
++  `Strategy.iterate_pairSndD_encodeMsgs`, `Strategy.msgAt_encodeMsgs` — the history encoding as a
++  fold and as a concatenation, its suffixes, and its `i`-th message.
+ * `TCSlib.Cryptography.Strategy.ofNUPPT_efficient` — every uniform machine is an efficient
+   strategy (non-vacuity of Def-116.b).
+ * `TCSlib.Cryptography.Strategy.ReadsPrefix.mono`,
+@@ -147,6 +150,49 @@ theorem pairFstD_encodeMsgs (h : List (List Bool)) : pairFstD (encodeMsgs h) = h
+     exact List.eq_nil_of_length_eq_zero (Nat.le_zero.1 (length_pairFstD_le []))
+   | cons m h => simp
+ 
++/-- The defining equation of `encodeMsgs`: the encoding of a history is the right fold of
++`pairEncode` from `[]`, `encodeMsgs h = h.foldr pairEncode []`. Framework glue, no textbook
++counterpart. -/
++theorem encodeMsgs_eq (h : List (List Bool)) : encodeMsgs h = h.foldr pairEncode [] := rfl
++
++/-- **The history encoding chunk by chunk:** the encoding of a history is the concatenation of
++its self-delimiting messages, `encodeMsgs l = l.flatMap fun m => pairEncode m []`.
++Framework glue, no textbook counterpart. -/
++protected theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
++    encodeMsgs l = l.flatMap fun m => pairEncode m [] := by
++  induction l with
++  | nil => rw [encodeMsgs_nil, List.flatMap_nil]
++  | cons m l ih =>
++    rw [encodeMsgs_cons, List.flatMap_cons, ← ih, Turing.pairEncode_eq, Turing.pairEncode_eq,
++      List.append_nil]
++
++/-- **The suffixes of an encoded history:** `i` second projections of the encoding of a history
++leave the encoding of the history without its first `i` messages,
++`pairSndD^[i] (encodeMsgs hist) = encodeMsgs (hist.drop i)`. Framework glue, no textbook
++counterpart. -/
++protected theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
++    pairSndD^[i] (encodeMsgs hist) = encodeMsgs (hist.drop i) := by
++  induction i generalizing hist with
++  | zero => rw [Function.iterate_zero_apply, List.drop_zero]
++  | succ i ih =>
++    cases hist with
++    | nil =>
++      rw [Function.iterate_succ_apply, encodeMsgs_nil,
++        pairSndD_of_pairDecode_eq_none Turing.pairDecode_nil, ← encodeMsgs_nil, ih,
++        List.drop_nil, List.drop_nil]
++    | cons m h =>
++      rw [Function.iterate_succ_apply, encodeMsgs_cons, pairSndD_pairEncode, ih,
++        List.drop_succ_cons]
++
++/-- **The `i`-th message of an encoded history:** the first projection after `i` second
++projections reads message `i` (`[]` beyond the history),
++`pairFstD (pairSndD^[i] (encodeMsgs hist)) = hist.getD i []`. Framework glue, no textbook
++counterpart. -/
++protected theorem msgAt_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
++    pairFstD (pairSndD^[i] (encodeMsgs hist)) = hist.getD i [] := by
++  rw [Strategy.iterate_pairSndD_encodeMsgs, pairFstD_encodeMsgs, List.headD_eq_head?_getD,
++    List.head?_drop, List.getD_eq_getElem?_getD]
++
+ /-- The strategy computed by a machine `A`: one activation at parameter `|x|` on
+ `⟨⟨x, z⟩, messages⟩` with the whole random tape (`A.runAtL`); the coin polynomial is `A.coins`
+ [PS10, §4.4, the interactive machine as a Turing machine with a random tape]. -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/InteractionWords.lean b/TCSlib/Cryptography/ZeroKnowledge/InteractionWords.lean
+new file mode 100644
+index 000000000..046627f13
+--- /dev/null
++++ b/TCSlib/Cryptography/ZeroKnowledge/InteractionWords.lean
+@@ -0,0 +1,44 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.ZeroKnowledge.Interaction
++import TCSlib.Complexity.ClassP.BinaryArith.Words
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The history encoding as a word list
++
++The string encoding `Strategy.encodeMsgs` of the received-messages component of a view
++[PS10, §4.4] is the word-list encoding `Complexity.BinArith.encWords` of the machine layer: both
++are the concatenation of the self-delimiting messages `⟨m, []⟩`. The bridge lives in its own
++module so that `ZeroKnowledge/Interaction.lean` does not import the binary-arithmetic machines.
++
++## Main definitions
++
++None; this module proves one bridge lemma.
++
++## Main results
++
++* `TCSlib.Cryptography.Strategy.encodeMsgs_eq_encWords` — `encodeMsgs L = BinArith.encWords L`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  §4.4.
++-/
++
++namespace TCSlib.Cryptography.Strategy
++
++/-- **The history encoding is the word-list encoding:** for every list of words `L`,
++`encodeMsgs L = Complexity.BinArith.encWords L` (both are `L.flatMap fun m => ⟨m, []⟩`).
++Framework glue, no textbook counterpart. -/
++protected theorem encodeMsgs_eq_encWords (L : List (List Bool)) :
++    encodeMsgs L = Complexity.BinArith.encWords L := by
++  rw [Strategy.encodeMsgs_eq_flatMap, Complexity.BinArith.encWords_def]
++
++end TCSlib.Cryptography.Strategy
+diff --git a/TCSlib/InformationTheory/Entropy.lean b/TCSlib/InformationTheory/Entropy.lean
+index 89f050a8e..dccabe2cf 100644
+--- a/TCSlib/InformationTheory/Entropy.lean
++++ b/TCSlib/InformationTheory/Entropy.lean
+@@ -35,6 +35,9 @@ This file adds the min-entropy *value* that [PS10] defines and proves the two ag
+ * `FinDist.IsSource k p`: `p` is a `k`-source (min-entropy at least `k`).
+ * `FinDist.IsFlatSource k p`: `p` is uniform on a set of `2^k` points.
+ * `FinDist.flat s`: the uniform distribution on a nonempty finite set `s`.
++* `FinDist.mixture w hw0 hw1 p q`: the mixture `w · p + (1 - w) · q` (reader
++  `FinDist.mixture_apply`); a mixture of two `k`-sources is a `k`-source
++  (`FinDist.mixture_isSource`).
+ 
+ ## Main results
+ 
+@@ -212,4 +215,49 @@ theorem isSource_uniform [Nonempty α] : IsSource (logb 2 (Fintype.card α)) (un
+ 
+ end FinDist
+ 
++/-! ### Mixtures of sources -/
++
++section Mixture
++
++variable {α : Type*} [Fintype α]
++
++/-- The **mixture** of `p` and `q` with weight `w ∈ [0, 1]`: the distribution that gives each
++point `a` the convex combination `w · p(a) + (1 - w) · q(a)` (sample `p` with probability `w`,
++`q` otherwise). Framework glue, no textbook counterpart. -/
++protected noncomputable def FinDist.mixture (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1)
++    (p q : FinDist α) : FinDist α where
++  prob a := w * p a + (1 - w) * q a
++  nonneg a := add_nonneg (mul_nonneg hw0 (p.nonneg a))
++    (mul_nonneg (sub_nonneg.2 hw1) (q.nonneg a))
++  sum_prob := by
++    rw [sum_add_distrib, ← mul_sum, ← mul_sum, p.sum_prob, q.sum_prob]
++    ring
++
++/-- **The point probability of a mixture** is its defining convex combination:
++`mixture w p q a = w · p(a) + (1 - w) · q(a)`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.mixture_apply (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1) (p q : FinDist α)
++    (a : α) : FinDist.mixture w hw0 hw1 p q a = w * p a + (1 - w) * q a :=
++  rfl
++
++/-- **A mixture of two `k`-sources is a `k`-source**: if every point has probability at most
++`2^(-k)` under `p` and under `q`, then so under every mixture of them,
++`IsSource k p → IsSource k q → IsSource k (mixture w p q)`, since a convex combination preserves
++the common bound. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.mixture_isSource (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1) (p q : FinDist α)
++    (k : ℝ) (hp : FinDist.IsSource k p) (hq : FinDist.IsSource k q) :
++    FinDist.IsSource k (FinDist.mixture w hw0 hw1 p q) := by
++  have hp' := (FinDist.hasMinEntropy_iff p k).1 (FinDist.isSource_iff_hasMinEntropy.1 hp)
++  have hq' := (FinDist.hasMinEntropy_iff q k).1 (FinDist.isSource_iff_hasMinEntropy.1 hq)
++  apply FinDist.isSource_iff_hasMinEntropy.2
++  apply (FinDist.hasMinEntropy_iff _ _).2
++  intro a
++  rw [FinDist.mixture_apply]
++  calc w * p a + (1 - w) * q a
++      ≤ w * (2 : ℝ) ^ (-k) + (1 - w) * (2 : ℝ) ^ (-k) :=
++        add_le_add (mul_le_mul_of_nonneg_left (hp' a) hw0)
++          (mul_le_mul_of_nonneg_left (hq' a) (sub_nonneg.2 hw1))
++    _ = (2 : ℝ) ^ (-k) := by ring
++
++end Mixture
++
+ end TCSlib.InformationTheory
+diff --git a/TCSlib/InformationTheory/FinDist.lean b/TCSlib/InformationTheory/FinDist.lean
+index 944d4a7e8..c0be07bdb 100644
+--- a/TCSlib/InformationTheory/FinDist.lean
++++ b/TCSlib/InformationTheory/FinDist.lean
+@@ -34,6 +34,9 @@ probability, the `ℓ¹`–`ℓ²` bound, the leftover hash lemma) are all diffe
+   `2 ^ (-k)`.
+ * `FinDist.collision_uniform`, `FinDist.inv_card_le_collision`: the uniform distribution
+   minimizes collision probability.
++* `FinDist.map_uniform_equiv`, `FinDist.sum_map`, `FinDist.uniform_prod`, `FinDist.probTrue_nonneg`,
++  `FinDist.probTrue_le_one`, `FinDist.uniform_probTrue`: pushforwards and products of uniform
++  laws, and the range and uniform value of an acceptance probability.
+ 
+ ## References
+ 
+@@ -197,4 +200,81 @@ theorem FinDist.probTrue_eq (p : FinDist α) (D : α → Bool) :
+     p.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), p a :=
+   rfl
+ 
++/-! ### Pushforwards, products and acceptance of the uniform law -/
++
++section Pushforward
++
++variable {β : Type*} [Fintype β]
++
++/-- **The uniform law is invariant under a bijection**: pushing the uniform distribution on `α`
++through an equivalence `e : α ≃ β` gives the uniform distribution on `β`, `map e U_α = U_β`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.map_uniform_equiv [DecidableEq β] [Nonempty α] [Nonempty β] (e : α ≃ β) :
++    (FinDist.uniform α).map e = FinDist.uniform β := by
++  classical
++  apply FinDist.ext
++  intro b
++  rw [FinDist.map_apply]
++  have hf : (univ : Finset α).filter (fun a => e a = b) = {e.symm b} := by
++    ext a
++    simp only [mem_filter, mem_univ, true_and, mem_singleton]
++    constructor
++    · intro h
++      exact e.injective (h.trans (e.apply_symm_apply b).symm)
++    · rintro rfl
++      exact e.apply_symm_apply b
++  rw [hf, sum_singleton, FinDist.uniform_apply, FinDist.uniform_apply,
++    Fintype.card_congr e]
++
++/-- **Summing over a pushforward**: a weighted sum over the pushforward of `p` along `f` is the
++sum of the composite over `p`, `∑ b, (map f p) b · g b = ∑ a, p a · g (f a)`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.sum_map [DecidableEq β] (p : FinDist α) (f : α → β) (g : β → ℝ) :
++    (∑ b, (p.map f) b * g b) = ∑ a, p a * g (f a) := by
++  classical
++  simp only [FinDist.map_apply, sum_mul, sum_filter]
++  rw [sum_comm]
++  apply sum_congr rfl
++  intro a _
++  rw [sum_eq_single (f a)]
++  · simp
++  · intro b _ hba
++    simp only [if_neg (Ne.symm hba), zero_mul]
++  · intro h
++    exact False.elim (h (mem_univ _))
++
++/-- **An acceptance probability is nonnegative**: `0 ≤ Pr_{x ← p}[D x = 1]`, i.e.
++`0 ≤ p.probTrue D`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.probTrue_nonneg (p : FinDist α) (D : α → Bool) : 0 ≤ p.probTrue D := by
++  rw [FinDist.probTrue_eq]
++  exact sum_nonneg fun a _ => p.nonneg a
++
++/-- **An acceptance probability is at most one**: `Pr_{x ← p}[D x = 1] ≤ 1`, i.e.
++`p.probTrue D ≤ 1`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.probTrue_le_one (p : FinDist α) (D : α → Bool) : p.probTrue D ≤ 1 := by
++  rw [FinDist.probTrue_eq, ← p.sum_prob]
++  exact sum_le_sum_of_subset_of_nonneg (filter_subset _ _) (fun a _ _ => p.nonneg a)
++
++/-- **The product of two uniform laws is uniform**: the independent pair of uniform samples of
++`α` and `β` is the uniform distribution on `α × β`, `U_α × U_β = U_{α × β}`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.uniform_prod [Nonempty α] [Nonempty β] :
++    (FinDist.uniform α).prod (FinDist.uniform β) = FinDist.uniform (α × β) := by
++  apply FinDist.ext
++  intro z
++  rw [FinDist.prod_apply, FinDist.uniform_apply, FinDist.uniform_apply,
++    FinDist.uniform_apply, Fintype.card_prod, Nat.cast_mul, mul_inv_rev]
++  ring
++
++/-- **Acceptance under the uniform law is a count**: the probability that `D` accepts a uniform
++sample of `α` is the number of accepted points divided by `|α|`,
++`Pr_{U_α}[D = 1] = |{a : D a = 1}| · |α|⁻¹`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.uniform_probTrue [Nonempty α] (D : α → Bool) :
++    (FinDist.uniform α).probTrue D =
++      ((Finset.univ.filter (fun a => D a = true)).card : ℝ) * (Fintype.card α : ℝ)⁻¹ := by
++  rw [FinDist.probTrue_eq]
++  simp only [FinDist.uniform_apply, sum_const, nsmul_eq_mul]
++
++end Pushforward
++
+ end TCSlib.InformationTheory
+diff --git a/TCSlib/InformationTheory/Samples.lean b/TCSlib/InformationTheory/Samples.lean
+index 35f4df3e6..d7cc2daa2 100644
+--- a/TCSlib/InformationTheory/Samples.lean
++++ b/TCSlib/InformationTheory/Samples.lean
+@@ -30,6 +30,8 @@ an iterated expectation.
+ * `FinDist.probTrue_not`: the complement rule `Pr[¬D] = 1 − Pr[D]`.
+ * `FinDist.expect_le_add_of_le_one`: a function with values at most `1` has expectation at most
+   `ε + Pr[f > ε]`, for `ε ≥ 0`.
++* `FinDist.expect_map`, `FinDist.probTrue_map`, `FinDist.map_apply_expect`, `FinDist.map_map`,
++  `FinDist.map_prod_snd`: expectations, probabilities and point masses under a pushforward.
+ 
+ ## References
+ 
+@@ -152,4 +154,65 @@ theorem iid_apply (p : FinDist α) (m : ℕ) (s : Fin m → α) :
+ 
+ end FinDist
+ 
++/-! ### Expectations and probabilities under a pushforward -/
++
++section Pushforward
++
++variable {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
++
++/-- **Expectation under a pushforward composes the function**: the expectation of `g` under the
++pushforward of `p` along `f` is the expectation of `g ∘ f` under `p`,
++`E_{map f p}[g] = E_p[g ∘ f]`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.expect_map [DecidableEq β] (p : FinDist α) (f : α → β) (g : β → ℝ) :
++    (p.map f).expect g = p.expect (fun a => g (f a)) := by
++  rw [FinDist.expect_eq, FinDist.expect_eq]
++  exact FinDist.sum_map p f g
++
++/-- **Acceptance under a pushforward composes the test**: the probability that `D` accepts a
++sample of the pushforward of `p` along `f` is the probability that `D ∘ f` accepts a sample of
++`p`, `Pr_{map f p}[D = 1] = Pr_p[D ∘ f = 1]`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.probTrue_map [DecidableEq β] (p : FinDist α) (f : α → β) (D : β → Bool) :
++    (p.map f).probTrue D = p.probTrue (fun a => D (f a)) := by
++  rw [FinDist.probTrue_eq_expect, FinDist.expect_map, FinDist.probTrue_eq_expect]
++
++/-- **A pushforward's mass is the expectation of an indicator**: the pushforward of `p` along
++`f` gives `b` the expectation under `p` of the indicator of `f a = b`,
++`map f p b = E_p[1_{f a = b}]`. Framework glue, no textbook counterpart. -/
++protected theorem FinDist.map_apply_expect [DecidableEq β] (p : FinDist α) (f : α → β) (b : β) :
++    (p.map f) b = p.expect (fun a => if f a = b then 1 else 0) := by
++  classical
++  rw [FinDist.map_apply, FinDist.expect_eq, sum_filter]
++  apply sum_congr rfl
++  intro a _
++  split_ifs <;> simp
++
++/-- **Successive pushforwards compose**: pushing `p` forward along `f` and then along `g` is
++pushing it forward along `g ∘ f`, `map g (map f p) = map (g ∘ f) p`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.map_map [DecidableEq β] [DecidableEq γ] (p : FinDist α) (f : α → β)
++    (g : β → γ) : (p.map f).map g = p.map (fun a => g (f a)) := by
++  classical
++  apply FinDist.ext
++  intro c
++  rw [FinDist.map_apply_expect, FinDist.expect_map, FinDist.map_apply_expect]
++
++/-- **A pushforward of the second coordinate commutes with pairing**: mapping the second
++coordinate of an independent pair by `f` before pairing, and then mapping the pair by `g`, is
++mapping the pair by `(x, y) ↦ g (x, f y)`,
++`map g (p × map f q) = map (fun z => g (z.1, f z.2)) (p × q)`.
++Framework glue, no textbook counterpart. -/
++protected theorem FinDist.map_prod_snd [DecidableEq β] [DecidableEq γ] {δ : Type*} [Fintype δ]
++    [DecidableEq δ] (p : FinDist α) (q : FinDist β) (f : β → γ) (g : α × γ → δ) :
++    (p.prod (q.map f)).map g = (p.prod q).map (fun z => g (z.1, f z.2)) := by
++  classical
++  apply FinDist.ext
++  intro d
++  rw [FinDist.map_apply_expect, FinDist.map_apply_expect, FinDist.expect_prod,
++    FinDist.expect_prod]
++  congr 1
++  funext a
++  exact FinDist.expect_map q f (fun c => if g (a, c) = d then 1 else 0)
++
++end Pushforward
++
+ end TCSlib.InformationTheory
