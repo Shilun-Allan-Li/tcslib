@@ -9,6 +9,7 @@ import TCSlib.Complexity.TuringMachine.ChoiceReplay
 import TCSlib.Complexity.TuringMachine.Build.StepClock
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.CfgFacts
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -56,7 +57,11 @@ the branch from `initCfg`, translated), and the first arrival at a stationary an
 phase host's guard for every leaf row of this file). -/
 
 /-- One step from the radius-`s` window stays in the radius-`s + 1` window, with the output
-growing by at most one symbol. -/
+growing by at most one symbol.
+
+**Proof sketch.** The window part is `Turing.Cfg.InWindow.mono` for a halted configuration and
+`Turing.Cfg.InWindow.apply_of_lt` for a step, since every head is strictly inside radius `s + 1`;
+both read through `Turing.Cfg.inWindow_iff`. A step's action emits at most one symbol. -/
 private theorem xr_window_stepWith {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S)
     (b : Bool) (c : Cfg k Bool S x) (s : ℕ)
     (hpos : ∀ i, |c.workTapePos i| ≤ (s : ℤ))
@@ -65,31 +70,22 @@ private theorem xr_window_stepWith {k : ℕ} {S : Type} {x : List Bool} (tm : ND
     (∀ i, |(tm.stepWith b c).workTapePos i| ≤ ((s + 1 : ℕ) : ℤ)) ∧
     (∀ i (p : ℤ), ((s + 1 : ℕ) : ℤ) < |p| → (tm.stepWith b c).workTapes i p = none) ∧
     (tm.stepWith b c).output.length ≤ s + 1 := by
+  have hc : c.InWindow s := Cfg.inWindow_iff.mpr ⟨hpos, hblank⟩
   cases hq : c.state with
   | none =>
     rw [NDTM.stepWith_of_halt hq]
-    refine ⟨fun i => (hpos i).trans (by push_cast; omega), fun i p hp => hblank i p ?_, by omega⟩
-    push_cast at hp; linarith
+    exact ⟨(Cfg.inWindow_iff.mp (hc.mono (Nat.le_succ s))).1,
+      (Cfg.inWindow_iff.mp (hc.mono (Nat.le_succ s))).2, by omega⟩
   | some q =>
     rw [NDTM.stepWith_of_some hq]
-    refine ⟨fun i => ?_, fun i p hp => ?_, ?_⟩
-    · have h1 := workTapePos_apply_le (tm.tr b q c.inputSymbol c.workTapeSymbols) c i
-      have h2 := hpos i
-      rw [abs_le] at h1 h2 ⊢
-      push_cast
-      constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
-    · rw [Action.apply_workTapes]
-      have h2 := hpos i
-      have hp' : (s : ℤ) < |p| := by push_cast at hp; linarith
-      have hne : p ≠ c.workTapePos i := by
-        rintro rfl
-        exact absurd h2 (not_le.mpr hp')
-      rw [Function.update_of_ne hne]
-      exact hblank i p hp'
-    · rw [Action.apply_output, List.length_append]
-      have : (tm.tr b q c.inputSymbol c.workTapeSymbols).output.toList.length ≤ 1 := by
-        cases (tm.tr b q c.inputSymbol c.workTapeSymbols).output <;> simp
-      omega
+    have hw := Cfg.inWindow_iff.mp (hc.apply_of_lt (s' := s + 1)
+      (fun i => by have h := abs_le.mp (hpos i); rw [abs_lt]; push_cast; constructor <;> omega)
+      (Nat.le_succ s) (tm.tr b q c.inputSymbol c.workTapeSymbols))
+    refine ⟨hw.1, hw.2, ?_⟩
+    rw [Action.apply_output, List.length_append]
+    have : (tm.tr b q c.inputSymbol c.workTapeSymbols).output.toList.length ≤ 1 := by
+      cases (tm.tr b q c.inputSymbol c.workTapeSymbols).output <;> simp
+    omega
 
 /-- After a branch of length `|w|` from the initial configuration, every work head lies within
 `|w|` of its origin, every cell beyond radius `|w|` is blank, and the output has length at most

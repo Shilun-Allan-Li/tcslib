@@ -75,7 +75,7 @@ lemma inWin_stepWith {s : ℕ} {C : Cfg N.k Bool N.State x} (h : Cfg.InWindow s 
   | some q =>
     rw [NDTM.stepWith_of_some hs]
     refine h.apply_of_lt (fun i => ?_) (by omega) _
-    have hp := abs_le.mp (h.1 i)
+    have hp := abs_le.mp ((Cfg.inWindow_iff.mp h).1 i)
     rw [abs_lt]; push_cast; constructor <;> omega
 
 /-- A choice word all of whose prefix configurations lie in the window `[-s, s]`. -/
