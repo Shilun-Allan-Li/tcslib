@@ -34,11 +34,32 @@ place, why, and the first step if it is taken up later. Figures come from
 | **F6-1(f)**, `oracleEmbed_updateTape` | Seyoon, 2026-11-16 | No second copy exists; goes with MIG-16 |
 | **CC7-1's per-record bound's base half** | — | Done in stage 1 (one private `skipAction_consumes`); listed here for completeness |
 | **MIG-6** (`Codes2Tape` by tape count) | Seyoon, 2026-11-16 | Redefines frozen two-tape code structures |
-| **R2c** | Seyoon (earlier) | Measured and carried |
+| **R2c**, the §12 sibling rows (12.2c item 5) | Seyoon, 2026-11-16 | Measured with the R2c scanner (`R2C-SCANNER.md`): retiring them would grow the files by 361 lines (to 4,643) and add 10 net screen pairs (19 new, 9 gone) |
 | **CK-1**, the codec deciders' check readers | Seyoon, 2026-11-17 | Gate 153's seal: touching `acceptLang_mem`/`initLang_mem` exposes older reads of Codec/Machine's `CA` table and `CMode` instance; a repair needs two new `CA_vDone_*` table lemmas. The two `_def` lemmas were dropped with it |
 | **IR-1's ExhaustiveReplay copy** (`xr_inRewindTM`) | Seyoon, 2026-11-17 | The public `inputRewindTM_run` needs the input head at position 1 or more, but the replay rewinds from position 0 too. Covering it needs a new zero-start lemma in Build/InputRewind, which grows the net count. The ER machine already runs on the generic `FinTM.timed_rewind`. UniversalK's copy is retired (stage 2, Fill A) |
 | **RN-1's `universalCapture_embed`** (UniversalStartup, new in #350) | Gate 154 G154-02 (2026-11-17) | Citing `Cfg.mapState_eq_of_fields` needs a CfgFacts import into chapter 1's UniversalStartup (not approved); about −2 lines |
 | **G147-01**, two stale historical notes in Nondeterminism | Seyoon, 2026-11-17 | Gate 153's seal: editing the docstrings of `ntime_expPow_subset_NEXP` and `EXP_eq_NEXP_of_P_eq_NP` exposes their direct `NTIME`/`NEXP` reads, and `NEXP` has no published reader. The notes still name two deleted lemmas; the W5/W6 docs pass may revisit them |
+
+## Carried by the refactor plan's register (REFACTOR-PLAN.md §3–§4; added after gate 158, G158-05)
+
+| Item | Ruling | Where | Reason | Pointer |
+|---|---|---|---|---|
+| **CH34-D3**: `exists_uniformMachineCode2` against EXPCOM's structure | Seyoon, 2026-11-16 ("Agreed") | `Diagonalization/EXPCOM`, its uniform machine code | Acknowledged as forced (B261). Unifying would redefine two frozen, audited structures (a statement change and its own gate) to save about 12 lines | REFACTOR-PLAN §3.1 |
+| **RW-1**: the rewind row's copies of Catalog's seek frame and skip-back table | user, 2026-10-18 (acknowledged); kept in the register at the closeout | `Build/Rewind` against `Build/Catalog` (`rw_cfg` against `catalogSeekCfg`; `rewindTM` against `skipBackTM` and the seek tables) | A record update over a different phase type and one shared 140-character table block; no proof copied. Retirement waits for Catalog's next edit | `duplication-ledger.md` RW-1 |
+| **`zfBFallback`**, CH34-D2's approved residual | user, 2026-10-11 (PR #19, gate closed 0/0/0) | `Codes2Tape` | The one adaptation left (23 → 1) after the format-parameterized parse layer; approved as a residual | ledger, CH34-D2 row |
+
+**Optional scope, not counted debt** (REFACTOR-PLAN §3.2; Seyoon, 2026-11-16: "leave out of the
+closeout, listed in the register as optional"):
+- the original Loop host's 110 pairs (P item 11);
+- the ch7 embedding-layer watch (MIG-5);
+- BL-W, WC-1, QF-1 and RC-1 to RC-3;
+- P item 12's clocks;
+- the SafeSegment sibling.
+
+## Blueprint follow-up outside the chapter scope
+
+- **712 stale chapters 1–2 entries** (gate 157, G157-03; Seyoon, 2026-11-17: delete in a later
+  small PR). They are deleted by draft PR #362, which awaits Seyoon's merge or audit decision.
 
 ## Standards-lint items in the chapter scope (carried by ruling, Seyoon 2026-11-17)
 
@@ -51,6 +72,19 @@ disclosed to the final audit, not fixed.
 | **Module docstrings without `## Main definitions`** | 13 modules (list in the lint output) | Documentation only |
 | **Umbrella import files without the standard `set_option` lines** | `ClassOracle`, `ClassPSPACE`, `Diagonalization`, `SpaceComplexity`, `TimeHierarchy` | Import-only files |
 
+**All 69 flags, classified after gate 158 (G158-06;** `evidence/lint/LINT-CLASSIFIED.json`**):**
+- **39 carried by the ruling above:** 15 option-line flags (the 5 umbrella files, three lines
+  each), 13 missing `## Main definitions` sections, 11 oversized files.
+- **8 false positives:** module prose that the lint parses as a declaration (for example
+  `NTimeHierarchy.lean:32`, "theorem at book strength").
+- **16 proof-sketch flags inflated by the signature.** The lint counts the signature as proof;
+  each body is at most 20 lines.
+- **6 genuine items, not covered by the ruling above; disposition pending Seyoon:**
+  - proofs over 20 lines without a proof sketch: `mult_contribution` (28), `mult_next_column`
+    (23), `mult_validate_field` (25) in `Logspace/Mult`; `compQ_length_le` (21) in
+    `Logspace/QueryReshape`; `searchDown_run` (21) in `Machines/NARMPSem`;
+  - `Machines/Parse.lean`'s module docstring has no `## Main results` section.
+
 ## Expected at `cryptography/pass-shelat-ch2-4`'s merge (not yet in the tree)
 
 `CH2-4-OVERLAP.md` gives the details. Nothing below exists on this branch yet; these items arise
@@ -60,7 +94,7 @@ to decide.
 | Item | Source | Note |
 |---|---|---|
 | **The clean-module layer, twice** | ch2-4's `Build/ModuleHost` (gate 03l) against this campaign's `ClassNP/CleanCall` and SAT's private host (R4-1, R4-2) | Both harvested SAT's private module layer to different homes. ModuleHost has Randomized and Cryptography users; CleanCall has SAT. One can cite the other later |
-| **Duplicate readers** | `encodeNat_def`/`encodeNat_eq`; `indicator_def` beside `indicator_of_mem`/`_not_mem` | Adopted in #354 so that ch2-4's merge is clean. These are small duplicate facts |
+| **Duplicate readers (already in the tree)** | `encodeNat_def`/`encodeNat_eq`; `indicator_def` beside `indicator_of_mem`/`_not_mem` | Adopted in #354 so that ch2-4's merge is clean. Unlike the clean-module layer above, these exist in the tree now; they are small duplicate facts |
 
 ## Done in the closeout (for contrast)
 

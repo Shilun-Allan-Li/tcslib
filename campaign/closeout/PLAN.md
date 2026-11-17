@@ -65,8 +65,10 @@ closing: **Exercise 3.3** (a language `B ∈ EXP` with `P^B ≠ NP^B`; the exist
 duplicating them. Everything else listed below stays deferred. **Both later deferred again (Seyoon, 2026-11-16):** Exercise 3.3 (W8), and the relativized hierarchies (W9) until after the other closeout work, possibly after integration. Confirm that closeout leaves these deferred (plan §1, backlog §3):
 - Chapter 3: Ex 3.1, 3.3, 3.4, 3.7–3.9; the relativized hierarchy statements; Remark 3.8 and
   §3.4.1 (expository);
-- Chapter 4: Def 4.19 (read-once certificates; Thm 4.20 is proved directly on NDTMs); Example
-  4.15; Ex 4.2, 4.4–4.6, 4.8, 4.9, 4.12;
+- Chapter 4: Def 4.19 (read-once certificates; Thm 4.20 is proved directly on NDTMs) and
+  Ex 4.7 (a certificate head moving both ways; added after gate 158, G158-07, from the scope
+  plan's deferral, distinct from the proved Example 4.7); Example 4.15; Ex 4.2, 4.4–4.6, 4.8, 4.9,
+  4.12;
 - the queued additive NL closure lemma (P4.4) and the B5a linear-headline H2.
 
 **D4 · Duplication debt at closeout.** **Ruled (Seyoon, 2026-11-16): refactor before integration,
