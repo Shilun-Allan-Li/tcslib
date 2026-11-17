@@ -114,13 +114,29 @@ theorem mem_language_iff (w : List Bool) :
 def IsPolySize : Prop :=
   ∃ a k : ℕ, ∀ n, (C.circuit n).size ≤ a * (n + 1) ^ k
 
+/-- Reader of `IsPolySize`: `C.IsPolySize ↔ ∃ a k, ∀ n, (C.circuit n).size ≤ a * (n + 1) ^ k`.
+Glue. -/
+theorem isPolySize_iff :
+    C.IsPolySize ↔ ∃ a k : ℕ, ∀ n, (C.circuit n).size ≤ a * (n + 1) ^ k :=
+  Iff.rfl
+
 /-- Every gate of every circuit in the family has at most two inputs. -/
 def HasFaninTwo : Prop :=
   ∀ n, (C.circuit n).maxFanin ≤ 2
 
+/-- Reader of `HasFaninTwo`: `C.HasFaninTwo ↔ ∀ n, (C.circuit n).maxFanin ≤ 2`.  Glue. -/
+theorem hasFaninTwo_iff : C.HasFaninTwo ↔ ∀ n, (C.circuit n).maxFanin ≤ 2 :=
+  Iff.rfl
+
 /-- The family has polylogarithmic depth `O(log^d n)` (constant depth when `d = 0`). -/
 def HasPolylogDepth (d : ℕ) : Prop :=
   ∃ b : ℕ, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d
+
+/-- Reader of `HasPolylogDepth`:
+`C.HasPolylogDepth d ↔ ∃ b, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d`.  Glue. -/
+theorem hasPolylogDepth_iff (d : ℕ) :
+    C.HasPolylogDepth d ↔ ∃ b : ℕ, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d :=
+  Iff.rfl
 
 end TreeCircuitFamily
 
@@ -131,6 +147,13 @@ end BoolCircuit
 def Language.InTreeNC (d : ℕ) (L : Language Bool) : Prop :=
   ∃ C : BoolCircuit.TreeCircuitFamily,
     C.HasFaninTwo ∧ C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L
+
+/-- Reader of `Language.InTreeNC`: `L.InTreeNC d ↔ ∃ C : TreeCircuitFamily, C.HasFaninTwo ∧
+C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L`.  Glue. -/
+theorem Language.inTreeNC_iff (d : ℕ) (L : Language Bool) :
+    L.InTreeNC d ↔ ∃ C : BoolCircuit.TreeCircuitFamily,
+      C.HasFaninTwo ∧ C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L :=
+  Iff.rfl
 
 /-- `L ∈ AC^d`: as `NC^d`, but gates may have unbounded fan-in.  [AB09, Def 6.25] -/
 def Language.InTreeAC (d : ℕ) (L : Language Bool) : Prop :=
