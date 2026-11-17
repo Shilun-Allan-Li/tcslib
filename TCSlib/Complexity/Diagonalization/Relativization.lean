@@ -485,7 +485,8 @@ theorem exists_finOracleTM_enumeration :
   have htable : decodeOracleTable j =
       (⟨k, Fin (Fintype.card Q), table.val, table.property⟩ : FinOracleTM Bool) :=
     decodeOracleTable_rank k (Fintype.card Q) table
-  rw [oracleEnumeration_pair, htable]
+  rw [oracleEnumeration_pair, htable, FinOracleTM.computesInTime_iff,
+    FinOracleTM.computesInTime_iff]
   exact OracleTM.relabel_computesInTime tm e O x output t
 
 /-- **Counting**: a list of fewer than `2 ^ n` words misses some word of length `n`

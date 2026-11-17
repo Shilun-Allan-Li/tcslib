@@ -276,7 +276,7 @@ theorem acceptLang_mem : acceptLang N ∈ LOGSPACE := by
   intro _ x w s st R _ hpre _ _ hst hR _ _ _ _
   refine ⟨decide (VAcc N st.1 ∧ st.1.2.1 = some (none, 1)), ?_,
     AHalt.ret rfl ⟨by simp [PreS, CA], hR.val_le⟩⟩
-  rw [decide_eq_true_eq, acceptChk_def, validChk_iff_pre, hst]
+  rw [decide_eq_true_eq, AcceptChk, validChk_iff_pre, hst]
   exact ⟨fun h => ⟨h.1.2, h.2⟩, fun h => ⟨⟨hpre, h.1⟩, h.2⟩⟩
 
 /-! ## The initial code -/
@@ -430,7 +430,7 @@ theorem initLang_mem : initLang N ∈ LOGSPACE := by
     (fun x _ _ hc => ⟨N.tm.initCfg x, hc⟩) (initLang_iff N) (fun _ _ _ h => h.1) ?_
   intro y x w s st R hsh hpre hs hw hst hR hA hS hT hPos
   refine ⟨_, ?_, init_tail y x w (Nat.bits s) hsh.eq R s st hR hA hS hT hs hw⟩
-  rw [decide_eq_true_eq, initChk_def, validChk_iff_pre, hst, InitScan, hPos]
+  rw [decide_eq_true_eq, InitChk, validChk_iff_pre, hst, InitScan, hPos]
   constructor
   · rintro ⟨⟨-, hv⟩, h2, h3, h4, h5⟩
     exact ⟨⟨hv, h2, h3⟩, h4, h5⟩

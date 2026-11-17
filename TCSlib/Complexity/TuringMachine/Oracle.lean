@@ -508,8 +508,11 @@ theorem relabel_wellFormed {S' : Type*} (M : OracleTM k Symbol State) (e : State
 /-- Renaming the states keeps the query string. -/
 theorem queryString_mapState {S' : Type*} (f : State → S') (cfg : Cfg (k + 1) Symbol State input) :
     queryString (cfg.mapState f) = queryString cfg := by
+  have hw : (cfg.mapState f).workTapes = cfg.workTapes := by
+    funext i z
+    rw [Cfg.mapState_workTapes]
   unfold queryString
-  simp only [Cfg.mapState_workTapes]
+  rw [hw]
 
 /-- **One oracle step commutes with relabelling**, including the query-answer step and absorbing
 halted configurations.

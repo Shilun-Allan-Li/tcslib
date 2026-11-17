@@ -2689,8 +2689,8 @@ absorb).
 uniqueness, explicit failure, pre-validation binary-length bound, and a
 native polynomial-time binary evaluator are proved in the `e3*` layer.
 The existing paired loader and choice core provide the completed verifier
-after split recovery; a split-of-body lemma then supplied the audited
-result-bearing loop and its polynomial time bound (since deleted as dead code).
+after split recovery; `e3_split_of_body` supplies the audited result-bearing
+loop and its full polynomial time bound from concrete round contracts.
 Coefficient zero is excluded for a decider and the degree-zero case is
 closed through the catalog's constant-width split. The sole remaining
 local admission below constructs the positive-degree native search body:
@@ -4177,9 +4177,9 @@ fixed `e` beyond a fixed threshold, small lengths absorbed into `DTIME`'s consta
 `L ∈ EXP`.
 
 **A3 completion.** `a3n_verifier_mem_P` evaluates the binary width on the
-parsed original input with an unconditional polynomial budget (a separate
-prevalidation lemma, later deleted as dead code, recorded the substring and
-bit-length bounds). Its grammar guards reject malformed pairs, and its separate
+parsed original input with an unconditional polynomial budget;
+`a3n_prevalidation` records the corresponding substring and bit-length
+bounds. Its grammar guards reject malformed pairs, and its separate
 all-true, pad-length, and certificate-length tests enforce both exact
 checks. `a3n_pad_mem_NP` applies the bounded paired characterization.
 `a3n_pad_emit` retains the original input while A2's binary countdown emits
