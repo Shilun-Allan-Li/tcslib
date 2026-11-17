@@ -91,3 +91,18 @@ only).
   Backlog MIG-7, about −130 lines. Measured: 8 members, 126 lines, 6 uses, 5/5 rule-10 exposure.
 
 **Dispatched (Seyoon, 2026-11-16):** fills A, B and C, each to its own outside worker (Claude, cloud), from base `ceece3a0`.
+
+## Intake notes (2026-11-17)
+
+- **Fill A** delivered RC-4 (`Turing.NDTM.exists_first_halt`) and UniversalK's half of IR-1, with
+  no report. Seyoon asked the maintainer to finish the two ExhaustiveReplay items:
+  - `xr_window_stepWith` (WS-1) is re-proved from `Cfg.InWindow.mono`/`apply_of_lt`. ExhaustiveReplay imports
+    `Build/CfgRecord` for this.
+  - `xr_inRewindTM` (IR-1) is **carried** (Seyoon): the public run lemma needs input position at
+    least 1, and the replay can start the rewind at 0.
+- **New public reader, approved (Seyoon, 2026-11-17):** `Turing.Cfg.inWindow_iff` in
+  `Build/CfgRecord` (`Iff.rfl`). Building or reading an `InWindow` in another file needs it,
+  both for ExhaustiveReplay and for Fill B's window proofs in TQBF and ExpBFS/Radius.
+- **Fill B** delivered WS-1 and F6-1(b), with a report (`stage2-fill-B-report.md` on its branch).
+  Its stops are `b3a_cfg` via `Cfg.ofWords` (VirtualInput's `vhostCfg` has no published
+  equations) and the per-tape seam corollary.
