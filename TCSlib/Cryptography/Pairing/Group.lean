@@ -63,6 +63,8 @@ only by the results whose reductions compute in the group.
 * `BilinearGroup.pow_val_add` — exponents add in `Z_p`: `x^{(a+b).val} = x^{a.val} x^{b.val}`.
 * `BilinearGroup.pow_val_neg` — negating an exponent inverts: `x^{(-a).val} = (x^{a.val})⁻¹`.
 * `BilinearGroup.pow_val_bijective_of_ne_one` — `a ↦ g^a` is a bijection `Z_p → G` for `g ∈ G^*`.
+* `pow_val_bijective_of_prime_card` — `a ↦ g^a` is a bijection `Z_p → M` for `g ≠ 1` in any finite
+  group `M` of prime order `p` (the generic form of the two bijections above).
 
 ## References
 
@@ -219,8 +221,7 @@ theorem pow_val_mul (x : B.G) (a b : ZMod B.order) : x ^ (a * b).val = x ^ (a.va
 /-- Exponents of `G_T` act through `Z_p`: `y ^ (a * b).val = y ^ (a.val * b.val)`. -/
 theorem pow_val_mul_GT (y : B.GT) (a b : ZMod B.order) :
     y ^ (a * b).val = y ^ (a.val * b.val) := by
-  rw [ZMod.val_mul, ← Nat.mod_add_div (a.val * b.val) B.order, pow_add, pow_mul, B.pow_order_GT,
-    one_pow, mul_one, Nat.mod_add_div]
+  rw [ZMod.val_mul, ← pow_mod_card y (a.val * b.val), B.card_GT]
 
 /-- **Non-degeneracy at every generator**: `e(x, x) ≠ 1` for every `x ∈ G^*` (from
 `e(g, g) ≠ 1` [BB04, §2.2, item 2], since every `x ∈ G^*` generates `G`).
