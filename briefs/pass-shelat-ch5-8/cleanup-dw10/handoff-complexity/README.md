@@ -99,3 +99,10 @@ location at the base. Line numbers are the record's.
 | `Complexity/TuringMachine/UniversalBlock` |  | 81 |  |  |  | 81 |
 | **Total** | 9 | 437 | 102 | 2 | 58 | 608 |
 
+
+## Addendum (2026-11-17): Gate 47 pre-dispatch sweep, B2
+
+The campaign's Stage 1 (#355, S1-27) proves `polyTimeComputable_flatMap_range` in `ZeroKnowledge/EncodingMachines.lean`;
+the Complexity side's `FormulaKit.polyTimeComputable_flatMap_range` (`Complexity/FormulaKit/Emit.lean:127`) has the same
+statement (pair order swapped) and is still `sorry`. After the campaign merges into `main`, the Complexity fix can cite or
+re-point to the proved twin (ledger DL-60, B2).

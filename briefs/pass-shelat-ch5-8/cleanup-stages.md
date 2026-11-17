@@ -24,6 +24,9 @@ items, including DL-50, are out of scope here.
   `polyTimeComputable_r*`, with a reader if needed).
 - bb1-sim fill ruling Q1 (Seyoon, 2026-11-17): **DL-57** (promote `sidSpec_dom/rng_*` and `zeroBits_eq_cast` into
   `IdentityBased/Defs.lean` as `IBEScheme.*`; re-point the bb1-sim fill and T4's private copies).
+- Gate 47 pre-dispatch sweep (Seyoon, 2026-11-17): **DL-59** (unify `Games.extTape`, `LazySampling.extendStream` and
+  `AdaptiveCPA.extTape` in `Games/Tapes`, with DL-40) and **DL-60** (B3 with DL-53: `padTo` vs `List.takeD`; B4 with
+  DL-49: re-point `pairFstD_encodeMsgs`/`pairSndD_encodeMsgs`). DL-60's B2 goes to the Complexity handoff.
 - ~~Gate 48 G48-01: **DL-58**~~ — repaid before merge by LE-g48 on #357 (`dfdc56f2`), so it is no longer Stage 2 work.
 - Delete the dead private copies and the public host lemmas left unused by DW-5.
 - Clear DW-9's 26 seal failures and `Uniform.lean`'s 4 inherited failures (SY-F07) through readers.
