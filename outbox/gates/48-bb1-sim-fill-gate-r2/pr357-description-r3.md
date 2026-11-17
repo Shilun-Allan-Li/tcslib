@@ -1,6 +1,6 @@
 This is the landing PR for the pairing fill `bb1-sim` (`PairingCryptographyPlan.md`). It proves **T2** `bb1_sim_real` and **T3** `bb1_sim_random` (`AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean`) and the two `Games/Relational.lean` targets `ProbComp.expect_simulate_rel` and `ProbComp.expect_sample_rel`. With T1 (#340) and T4 (#346) merged, **Boneh–Boyen BB1's selective-ID security `bb1_sidSecure` now uses only the standard axioms**, and its `sorryAx` trace is empty [BB04, Theorem 4.1].
 
-**Head:** `7a98ba0140ce6334bef1f2a8d39c6dfceb6ccaff`. **Base:** `cryptography/pass-shelat-ch2-4` (records tip `e1d39836`, whose Lean equals the #346 merge `3f540c22`). No stacking: #340 and #346 are merged.
+**Head:** `dfdc56f21898abe2d9d6cef83b0cfe57da87d28d`. **Base:** `cryptography/pass-shelat-ch2-4` (records tip `e1d39836`, whose Lean equals the #346 merge `3f540c22`). No stacking: #340 and #346 are merged.
 
 ## Scope (9 files, against the tip)
 - **`Games/Relational.lean`:** the bodies of `expect_simulate_rel` (induction on the computation, generalizing both states) and `expect_sample_rel` (one bijective coupling of a sample). Headers, statement prose and sketches are frozen and byte-identical; `prob_simulate_rel` is unchanged.
@@ -12,7 +12,7 @@ This is the landing PR for the pairing fill `bb1-sim` (`PairingCryptographyPlan.
 
   Removing the two blocks restores both files byte for byte (insertion pins `97ecb6e0…` for `Defs.lean`, 563 lines, and `88454d6f…` for `BonehBoyen.lean`, 760 lines).
 
-## Commits (5, all SSH-signed)
+## Commits (6, all SSH-signed)
 - The external worker's four commits (Claude; sub-agent A wrote `Coupling.lean`), maintainer-signed `git cherry-pick -S` copies of `23614c0a`, `3f430cae`, `622f5b03` and `c35595ae`: the readers, the `Relational` bodies, the helper modules, and T2/T3. `git range-diff` against the reproduced worker series is 4/4 `=`.
 - **LE-bsf1** (maintainer landing edit, ruling Q2), byte-identical to the phase-1 review's `le-bsf1-proposed.diff` (3 files: `Lazy`, `Real`, `Coupling`). It closes BSF-F02/F03 (checkpoint C1-F03/F04):
   - `BB1Sim.bb1RealState_eq … := rfl`, the reader of the public abbrev `BB1RealState` (policy §1);
@@ -20,10 +20,11 @@ This is the landing PR for the pairing fill `bb1-sim` (`PairingCryptographyPlan.
   - `bb1RealAt` and `bb1RealLazy` now say "a variant of the game of [BB04, §2.1]".
 
   No statement or proof changes apart from the one added declaration.
+- **LE-g48** `dfdc56f2` (Gate 48 G48-01, proof-only, 1 line added and 3 removed): `bb1_sim_real`'s local `h01` is deleted, and the bad-coin branch applies Mathlib's `abs_sub_le_of_nonneg_of_le` to the same four bounds.
 
 ## Overlap and reuse
 - **DL-57 (accepted by Seyoon, Q1; cleanup Stage 2).** The public `BB1Sim.sidSpec_rng_one`/`_two` (`BonehBoyenSecurity/Lazy.lean`) have the same statements and proofs as T4's **private** `BB1Machine.sidSpec_rng_one'`/`_two'` (`BonehBoyenMachine/Oracles.lean`). Stage 2 promotes the scheme-generic `sidSpec_dom_*`/`sidSpec_rng_*` and `zeroBits_eq_cast` into `IdentityBased/Defs.lean` as `IBEScheme.*` and re-points both users, proof-only. `sidImpl_allOutputs_some` and `sidImpl_none_of_ne` travel with the same promotion (BSF-F07).
-- **DL-58 (Gate 48 G48-01; accepted by Seyoon, 2026-11-17; cleanup Stage 2).** T2's local `h01` (`BonehBoyenSecurity.lean:128–134`, `|x − y| ≤ 1` for `x, y ∈ [0, 1]`) re-derives Mathlib's `abs_sub_le_of_nonneg_of_le`, which the library already uses in `LWE/BitNoise.lean:110`. Stage 2 deletes `h01` and applies the Mathlib lemma to the same four bounds, proof-only. The review's earlier "no public counterpart" claim was wrong and carries a dated correction.
+- **DL-58 (Gate 48 G48-01): repaid in this PR by LE-g48.** T2's local `h01` (`|x − y| ≤ 1` for `x, y ∈ [0, 1]`) re-derived Mathlib's `abs_sub_le_of_nonneg_of_le` (already used in `LWE/BitNoise.lean:110`). LE-g48 deletes it and uses the Mathlib lemma. The review's earlier "no public counterpart" claim was wrong and carries a dated correction.
 - The rest is reuse, as disclosed: T2 uses Mathlib's `CharP.natCast_injOn_Iio` directly (BS-F01), the averaging bound `abs_expect_sub_le_expect`, `Games.expect_simulate_eager`, `Bridge.expect_sample_pair` and the `Pairing/Group` helpers. Every `expect_simulate_rel`/`expect_simulate_eager` use is a single application; no new eager or relational lemma (DL-33). Gate 48's search across all cryptography files found no other undisclosed duplicate.
 - **`RealReads` has no paired control (BSF-F05, accepted):** it is a `Prop` structure whose readers are its projections; its constructor is sealed in `BonehBoyenSecurity` and the consumers' seals pass.
 
@@ -39,10 +40,11 @@ This is the landing PR for the pairing fill `bb1-sim` (`PairingCryptographyPlan.
 
 ## Review (`briefs/pairings/fills/bb1-sim/fill-final-r1/review.md`, `phase2.md`): ACCEPT WITH LANDING EDITS
 - **Phase 1 (static):** 0 blockers, 0 majors; minors BSF-F01 (the signed exchange final; process only), F02 and F03 (closed by LE-bsf1), F04 (closed by DL-57); infos F05–F08. The patch series reproduces, the readers are verbatim, and the worker's evidence recounts clean (36 head and 16 base seals with 0 errors, 485 sealed negatives per variant each failing once).
-- **Phase 2 (Lean on this head):** PASS (above). Final verdict: **ACCEPT WITH LANDING EDITS (LE-bsf1 applied)**.
+- **Phase 2 (Lean, at `7a98ba01`):** PASS (above). Final verdict: **ACCEPT WITH LANDING EDITS (LE-bsf1 applied)**.
+- **LE-g48 check (Lean, at `dfdc56f2`; `briefs/pairings/gates/48-bb1-sim-fill/le-g48.md`):** the 4 modules downstream rebuilt on a copy of the phase-2 output, all rc 0 with 0 errors and 0 `sorry`; state check 1432/1432 OK; snapshot #5 rehashes 0/0/0. Admissions stay at 192, and `bb1_sidSecure` is standard with an empty `sorryAx` trace. The coe-A seal on `BonehBoyenSecurity` has 0 errors and a request set identical to phase 2's. Lint is unchanged.
 
 ## Gate
-**Gate 48 (Codex), the bb1-sim gate**, audits it (the ten readers and the T2/T3 fill). #351 and #352 go to a later combined small-items gate (DW-11), not this one. Round 1 was HOLD: 0 blockers, 1 major (G48-01, now ruled as DL-58), with no mathematical gap. Round 2 checks the ruling at this unchanged head.
+**Gate 48 (Codex), the bb1-sim gate**, audits it (the ten readers and the T2/T3 fill). #351 and #352 go to a later combined small-items gate (DW-11), not this one. Round 1 (at `7a98ba01`) was HOLD: 0 blockers, 1 major (G48-01), with no mathematical gap. G48-01 is fixed by LE-g48; round 2 audits that fix at this head.
 
 Seyoon merges.
 

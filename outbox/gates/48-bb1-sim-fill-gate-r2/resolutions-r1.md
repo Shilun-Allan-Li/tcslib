@@ -1,4 +1,4 @@
-# Gate 48 · resolutions, round 1 · HOLD → ruling and ledger row (no code change)
+# Gate 48 · resolutions, round 1 · HOLD → landing edit LE-g48
 
 Codex's verdict is **HOLD**: 0 blockers, 1 major, 0 minors, 0 notes.
 - **Findings:** `findings-r1.md` (verbatim, filed by the maintainer; the evidence ZIP it mentions was not received).
@@ -18,7 +18,24 @@ Codex found **no mathematical gap**. Its confirmations:
 
 | Finding | Grade | Resolution | Evidence and pointer |
 |---|---|---|---|
-| G48-01 | **major** | **Accepted and ledgered** (Seyoon, 2026-11-17, ruling G48-01, choosing debt over a landing edit). `bb1_sim_real`'s local `h01` (`BonehBoyenSecurity.lean:128–134`) re-derives Mathlib's `abs_sub_le_of_nonneg_of_le` (`Mathlib/Algebra/Order/Group/Abs.lean:119–124` at the pinned `029db123`, additive form of the `@[to_additive]` lemma; already used in `LWE/BitNoise.lean:110`). It is retained, and the debt is repaid in cleanup Stage 2 as ledger row **DL-58**: delete `h01` and close the bad-coin branch with the Mathlib lemma applied to the four `ProbComp.prob_nonneg`/`prob_le_one` bounds (proof-only). The phase-1 review's reuse claim keeps its text, with a dated correction beneath it. The round-1 pack (`pack-r1.md:254–255`) stays as filed. The PR #357 description now discloses DL-58. **No code change**: the head stays `7a98ba01`, so every round-1 pass and all evidence carry over unchanged. | `briefs/pass-shelat-ch5-8/duplication-ledger.md` row DL-58; `cleanup-stages.md` § Stage 2 (the G48-01 line); `fills/bb1-sim/fill-final-r1/review.md` (correction under § Duplication and reuse); the plan's ruling row of 2026-11-17. |
+| G48-01 | **major** | **Fixed by landing edit LE-g48** on #357: commit `dfdc56f21898abe2d9d6cef83b0cfe57da87d28d` on `7a98ba01`, signed by the records key. In `bb1_sim_real` (`BonehBoyenSecurity.lean`), the local `h01` is deleted and the bad-coin branch reads `exact abs_sub_le_of_nonneg_of_le (ProbComp.prob_nonneg _ _) (ProbComp.prob_le_one _ _) (ProbComp.prob_nonneg _ _) (ProbComp.prob_le_one _ _)`, as Codex proposed. Proof-only: 1 line added, 3 removed, nothing else changes. *History:* Seyoon first ruled to accept the overlap as debt (DL-58, Stage 2), then asked for the fix before round 2, which had been staged at exchange `5976f1a0` but not dispatched. DL-58 stays in the ledger marked **repaid by LE-g48**; the Stage 2 line is struck. The phase-1 review's wrong reuse claim keeps its text with a dated correction and an update beneath it. #357's description now records LE-g48. | `le-g48.md`, `le-g48.diff.txt`, `le-g48-evidence.zip` (`ec54e109…`). Ledger DL-58; `cleanup-stages.md` (struck line); `fills/bb1-sim/fill-final-r1/review.md` (correction and update). |
 
-Then Gate 48 round 2 (Codex) at the same head `7a98ba01`, checking only the G48-01 resolution against policy §1
-(explicit acceptance, shared home, repayment point), as Gate 44 round 2 did for G44-01.
+**Checks at the new head `dfdc56f2`** (detail in `le-g48.md`):
+- The diff from `7a98ba01` is exactly the 3-line change; `h01` occurred nowhere else (not in the docstring or sketch).
+- **Replay** on a `cp -al` copy of #357's phase-2 output (`olean-replay-bb1sim` → `olean-replay-bb1sim-g48`): the plan
+  rebuilds 4 modules (`BonehBoyenSecurity`, `IdentityBased`, `AdvancedEncryption`, `TCSlib`) and reuses 1428. All 4 are
+  rc 0, with 0 errors and 0 `sorry`; sources are bound to `dfdc56f2`. State check 1432/1432 OK; the 4 rebuilt oleans have
+  link count 1; snapshot #5 and the phase-2 tree both rehash 0/0/0 before, after and at the end. Only
+  `BonehBoyenSecurity`'s olean changed; the 3 facade oleans are byte-identical. New output map (without `Mathlib/`):
+  1463 entries, `0858dccb…`.
+- **Admissions** 192, with the per-module census identical to phase 2's.
+- **Axioms:** `bb1_sim_real` and `bb1_sidSecure` use only the standard three, and both `sorryAx` traces are empty; still
+  76 constants, 0 non-standard. The log differs from phase 2's only in two closure sizes (15352 → 15349 and 20373 →
+  20374).
+- **Rule 10:** canonical coe-A on `BonehBoyenSecurity` has 2319 requests and 0 errors. The request set equals phase 2's
+  exactly, because the removed `have` was not a constant. The Lean and collector logs are byte-identical to phase 2's.
+  Every other owner is unchanged, so the other 35 seals and the paired controls carry over.
+- **Lint:** `style_lint` 0 findings. `campaign_style_lint --check8b` gives 92 FAIL / 104 WARN, with non-INFO lines
+  identical; the only INFO change is the file's line count, 225 → 223.
+
+Then Gate 48 round 2 (Codex) at `dfdc56f2`.
