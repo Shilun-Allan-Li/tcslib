@@ -13,6 +13,10 @@ chapters 3–4 campaign's `campaign/`, it stays off `main` when the branch is in
 - **Fills are Codex's, as delegated fills.** The maintainer writes a brief per tier, stages it on
   the exchange for Seyoon to dispatch, then lands each delivery as a gated PR. Seyoon dispatches
   the audits and merges.
+- **The local Codex workers work to and from the exchange branch** `exchange/pass-shelat-ch5-8`,
+  folder `arora-barak-ch3-4/` (Seyoon, 2026-11-17). They take a fill's bundle from
+  `outbox/fills/<fill-name>/` and push the delivery to `inbox/<fill-name>/`. They read the base
+  commit from the repository; they never push to it.
 
 **Rules.** `policy.md` and `workflow.md` at the root, then `campaign/maintainer/WORKFLOW.md`
 (inherited from chapters 3–4), `campaign/standards/TEMPLATE.md` and

@@ -3,10 +3,14 @@
 These rules bind every RAM fill (tier 1 `fill-ram-wordsize`, tier 3 `fill-ram-classes`, and
 later the tier 2 fills). Each brief adds its targets, owned file and route.
 
-## Repository and base
+## Repository, exchange and base
 
-- Repository: `https://github.com/Shilun-Allan-Li/tcslib`, the same repository as your exchange
-  checkout.
+- **You work to and from the exchange.** It is branch `exchange/pass-shelat-ch5-8` of
+  `https://github.com/Shilun-Allan-Li/tcslib`, folder `arora-barak-ch3-4/`.
+  - **Inputs:** your fill's bundle and README, in `arora-barak-ch3-4/outbox/fills/<fill-name>/`.
+  - **Output:** your delivery, in `arora-barak-ch3-4/inbox/<fill-name>/` (see "Delivery").
+  - Do not push anywhere else.
+- **Repository:** the same repository. Fetch the base commit from it read-only.
 - **Base:** the commit named in your brief, on branch `complexity/ram-simulation`. That branch
   is `main` after the chapters 3–4 integration (#364), with the maintainer tools
   (`devtools/seyoon/`) merged in. Work on a local branch off it, record the base in `REPORT.md`,

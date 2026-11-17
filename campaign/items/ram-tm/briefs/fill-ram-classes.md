@@ -47,12 +47,23 @@ at the base:
   - `NSPACE s = {L | ∃ c N, N.DecidesInSpace L (c * s ·)}`, where `FinNDTM.DecidesInSpace N L s`
     is `∀ x, ∃ T, N.tm.HaltsWithin x T ∧ (∀ w, w.length = T → spaceUsedWith w (initCfg x) ≤ s |x|) ∧ (x ∈ L ↔ N.AcceptsWithin x T)`.
 
-  Each class has published readers or iff lemmas in its home file (`ClassP/DTIME`, `ClassP/P`,
-  `SpaceComplexity/Basic`, `NSPACE`, `SpaceClasses`). Use them; do not unfold the definitions.
-- **The simulation's output** `outputOf fn v o` is `[v]` in verdict mode and `o` in function
-  mode. It is defined in `Simulation.lean`, a different file, so read it through an equation
-  lemma. If none exists, that is E-READER; report it. `simTime` and `simSpace` are in the same
-  case.
+  **Read them only through these published readers** (the last four rows were added for this
+  fill by PR #370, which your base includes):
+  - `Complexity.mem_P_iff`, `Turing.FinTM.decidesInTime_iff`;
+  - `Complexity.mem_SPACE_iff`, `Turing.FinTM.decidesInSpace_iff`,
+    `Turing.FinTM.computesInSpace_iff`, `Complexity.LOGSPACE_eq`;
+  - `Complexity.spaceConstructible_iff`, `Complexity.logSpace_eq`
+    (`1 ≤ logSpace n` follows by `rw [logSpace_eq]; omega`);
+  - **new:** `Complexity.mem_DTIME_iff`;
+  - **new:** `Complexity.mem_NSPACE_iff`, `Turing.FinNDTM.decidesInSpace_iff`;
+  - **new:** `Complexity.NL_eq`;
+  - **new:** `WordRAM.outputOf_false`, `WordRAM.outputOf_true`, `WordRAM.simTime_eq`,
+    `WordRAM.simSpace_eq`.
+
+  Do not unfold the definitions themselves.
+- **The simulation's output** `outputOf fn v o` is `[v]` in verdict mode (`outputOf_false`) and
+  `o` in function mode (`outputOf_true`). `simTime` and `simSpace` are read through `simTime_eq`
+  and `simSpace_eq`. All four are new readers in `Simulation.lean` (PR #370).
 - **Monotonicity:** `Turing.FinTM.ComputesInTime.mono` moves a halting time up.
   `HaltsWithin.mono` and `HaltsWithin.touches_le` (`Programs/WordRAM/Extended`) give a run fixed
   bounds `T |x|` and `F |x|`.
