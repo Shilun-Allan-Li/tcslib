@@ -57,27 +57,34 @@ campaigns, so I have not proposed one.
 **Duplicate readers.** If both reader pairs are kept, `encodeNat_def`/`encodeNat_eq` and the
 indicator readers add small duplicate facts.
 
-## What the campaign could do before W7 to ease ch2-4's merge (each needs approval)
+## Done ahead of the merge: closeout/ch24-compat (gate 155; Seyoon, 2026-11-17)
 
-1. **Adopt ch2-4's names where both sides published the same reader.** This is possible only
-   for readers this campaign added after its fork and before it lands in main. It is a rename of
-   our API. Saving: three trivial hunks and the duplicate facts.
-2. **Publish `exists_pairMapSnd_computesInTime` on our side** with ch2-4's exact statement,
-   proved on `pairMapSndTM`. This is new public API. ch2-4's Primitives hunk would then resolve
-   to "take ours", with no proof port on their side.
-3. **Settle `decidesInTime_iff`'s statement** with the ch2-4 maintainer before either branch
-   lands.
+Seyoon chose to put ch2-4's versions of the conflicting lemmas on this branch through a gated PR.
+The PR does not rename any of our lemmas or change our `decidesInTime_iff` statement.
 
-None of these is required. Without them, ch2-4's merge resolves eight trivial or small hunks, the
-SAT hunk, the DTIME reader and one proof port.
+- **Same reader on both sides:** `polyTimeComputable_iff` and `polyTimeReducible_iff` now use
+  ch2-4's exact text; the statements are unchanged up to formatting. The `emitCfg` field
+  equations are now ch2-4's five hand-written lemmas in place of the generated `simps` ones;
+  `workTapes` and `workTapePos` are stated as function equalities.
+- **Readers added beside ours:** `encodeNat_def`, `indicator_def`, `pairEncode_ne_nil` and
+  `safeRun_iff`, in ch2-4's exact text at ch2-4's positions. Our `encodeNat_eq`, indicator
+  readers, `pairEncode_drop` and `safeRun_iff_segment` move far enough away that git merges both
+  sides. `SafeRun.zero` now reads through `safeRun_iff`.
+- **Ported:** `exists_pairMapSnd_computesInTime`, with ch2-4's statement, proved on
+  `pairMapSndTM`. The proof goes through a private one-pair bound that `pairMapSndTM_computes` now
+  also cites.
 
-## Recommended verification (not run yet)
+Result, by trial merge: **ch2-4's merge drops from 11 Lean conflicts to 4.**
 
-The static scans cannot see a changed statement. The definitive check is a trial compile of the
-merged tree: campaign into main, then ch2-4, with the provisional resolutions above.
-`exists_pairMapSnd_computesInTime` stays `sorry` until it is ported. The compile covers about
-900 modules (the downstream closure plus main's own) through `leanelab-o.sh` within the pool,
-about 2 to 3 hours with three workers. This snapshot is for the trial only and would be discarded.
+- **Build/Primitives:** take ours. The lemma ch2-4 needs is already there with its statement.
+- **ClassNP/SAT:** take ours. `ModuleHost` stays, and the duplicate family above remains.
+- **ClassP/DTIME:** keep our `decidesInTime_iff`. Re-derive ch2-4's form in Randomized/SeedMajority.
+- **TuringMachine (umbrella):** keep both import and catalog lines.
+
+Outside these four files the new readers merge cleanly.
+
+A trial compile of the merged tree (campaign, then ch2-4) has not been run. Seyoon deferred it to
+merge time (2026-11-17). Only a compile can show whether a changed statement breaks ch2-4's code.
 
 ## Method
 
