@@ -35,8 +35,10 @@ place, why, and the first step if it is taken up later. Figures come from
 | **CC7-1's per-record bound's base half** | — | Done in stage 1 (one private `skipAction_consumes`); listed here for completeness |
 | **MIG-6** (`Codes2Tape` by tape count) | Seyoon, 2026-11-16 | Redefines frozen two-tape code structures |
 | **R2c** | Seyoon (earlier) | Measured and carried |
+| **CK-1**, the codec deciders' check readers | Seyoon, 2026-11-17 | Gate 153's seal: touching `acceptLang_mem`/`initLang_mem` exposes older reads of Codec/Machine's `CA` table and `CMode` instance; a repair needs two new `CA_vDone_*` table lemmas. The two `_def` lemmas were dropped with it |
+| **G147-01**, two stale historical notes in Nondeterminism | Seyoon, 2026-11-17 | Gate 153's seal: editing the docstrings of `ntime_expPow_subset_NEXP` and `EXP_eq_NEXP_of_P_eq_NP` exposes their direct `NTIME`/`NEXP` reads, and `NEXP` has no published reader. The notes still name two deleted lemmas; the W5/W6 docs pass may revisit them |
 
 ## Done in the closeout (for contrast)
 
-The waves R0–R4 and the R3/R6 items: gates 142–152 (#328–#345), stage 1 (#349, gate 153) and
+The waves R0–R4 and the R3/R6 items: gates 142–152 (#328–#345), stage 1 (#349, gate 153; CK-1 and G147-01 carried) and
 stage 2 (fills A–C). Per-family entries are in `duplication-ledger.md`.

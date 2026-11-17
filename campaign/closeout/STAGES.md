@@ -66,3 +66,18 @@ Rebuilds and gates happen only between stages. Agreed plan:
   uses two tapes.
 - Net −2 Lean lines across 19 files. The approved promotions add documented public lemmas, and
   the carried items were the larger savings.
+
+## Gate 153 seal repairs (2026-11-17)
+
+The first run (head `ceece3a0`) passed the replay (336/336) and failed the rule-10 seal in four files.
+The second head `a1a7c6ec` repairs or withdraws each:
+
+- **Oracle `queryString_mapState`:** now rewrites the work tapes at function level, so the dependent
+  condition's decidability instance is rewritten too.
+- **Relativization `exists_finOracleTM_enumeration` (MIG-10):** Seyoon approved a public reader,
+  `Turing.FinOracleTM.computesInTime_iff` (`Iff.rfl`, in `TuringMachine/OracleFinite`); the
+  proof cites it.
+- **CK-1: carried** (Seyoon). The deciders and Checks return to the base, and `acceptChk_def`/`initChk_def` are
+  dropped. Repairing the touched tails would need new `CA` table lemmas in Codec/Machine.
+- **G147-01: carried** (Seyoon). The two notes return to the base. Editing them seals two
+  public proofs that read `NTIME`/`NEXP` directly, and `NEXP` has no reader.
