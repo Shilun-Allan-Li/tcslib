@@ -1732,20 +1732,13 @@ private theorem nh_stage (f : ℕ → ℕ) (α : List Bool) (N : ℕ) :
 /-- **Truncation at the all-branch budget.** If every branch of `N` on `x` halts within `T`, an
 acceptance of `x` at any length is an acceptance within `T`.
 
-**Proof sketch.** At a length `t ≤ T`, pad (`Turing.FinNDTM.AcceptsWithin.mono`). At `t > T`, the
-accepting word runs as its length-`T` prefix, which has halted (`Turing.run_take_of_halted`, with
-absorption by `Turing.NDTM.runWith_append` and `Turing.NDTM.runWith_of_halt`), so it accepts. -/
+**Proof sketch.** At a length `t ≤ T`, pad (`Turing.FinNDTM.AcceptsWithin.mono`); at `t > T`,
+truncate (`Turing.FinNDTM.AcceptsWithin.iff_of_haltsWithin`). -/
 private theorem nh_accepts_of_halts {N : FinNDTM Bool} {x : List Bool} {T t : ℕ}
     (hT : N.tm.HaltsWithin x T) (ht : N.AcceptsWithin x t) : N.AcceptsWithin x T := by
   rcases le_or_gt t T with hle | hlt
   · exact ht.mono hle
-  · obtain ⟨w, hw, -, hout⟩ := FinNDTM.acceptsWithin_iff.mp ht
-    obtain ⟨hlen, hp, hr⟩ := run_take_of_halted (fun w => N.tm.runWith w (N.tm.initCfg x))
-      (fun c => c.state = none)
-      (fun w w' h => by simp only [NDTM.runWith_append w w' (N.tm.initCfg x),
-        NDTM.runWith_of_halt _ h])
-      (NDTM.haltsWithin_iff.mp hT) (w := w) (by omega)
-    exact FinNDTM.acceptsWithin_iff.mpr ⟨w.take T, hlen, hp, hr ▸ hout⟩
+  · exact (FinNDTM.AcceptsWithin.iff_of_haltsWithin hT hlt.le).mp ht
 
 /-- **A decider's language from an unbounded acceptance.** If `N` decides `L` within `T`, any
 acceptance of `x`, at any length, puts `x` in `L`.

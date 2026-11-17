@@ -1296,9 +1296,8 @@ private def rt_findRound {Γ A : Type} {m : ℕ} (hm : 0 < m)
 /-- A fold scan rewrites every cell to itself, so its catalog write mask
 collapses to the original tape.
 
-**Proof sketch.** Specialize the public scan contract to the fold instance.
-The fold-result identity preserves the word; the supplied frame identifies
-each masked cell with the old tape. The cut and head bounds are inherited. -/
+**Proof sketch.** The fold keeps the word (`Turing.scanResult_fold`), so
+`Turing.scanTM_run_preserves` applies. -/
 private theorem rt_find_scan {Γ A : Type} {x : List Γ}
     (δ : A → Option Γ → A) (a : A) (w : List Γ)
     (d : Cfg 2 Γ (ScanPhase A) x) (hd : d.state = some (.fwd a))
@@ -1315,22 +1314,8 @@ private theorem rt_find_scan {Γ A : Type} {x : List Γ}
           ((scanTM 2 0 (scanFold (fun c γ => δ c (some γ))) scanKeep a).runFrom d u).workTapePos j ∈
             Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
         else ((scanTM 2 0 (scanFold (fun c γ => δ c (some γ))) scanKeep a).runFrom d u).workTapePos j =
-          d.workTapePos j) := by
-  obtain ⟨hr, hcut, hspace⟩ := scanTM_run_ofCfg (0 : Fin 2)
-    (scanFold (fun b γ => δ b (some γ))) scanKeep a w d hd hw
-  refine ⟨?_, hcut, hspace⟩
-  rw [scanResult_fold] at hr
-  rw [hr]
-  apply Cfg.ext <;> try rfl
-  funext j q
-  dsimp only
-  split_ifs with h
-  · obtain ⟨rfl, hlo, hhi⟩ := h
-    have hf := hw (q - d.workTapePos 0) (by omega) (by omega)
-    convert hf.symm using 1
-    congr 1
-    omega
-  · rfl
+          d.workTapePos j) :=
+  scanTM_run_preserves 0 _ _ a _ w d hd hw (scanResult_fold _ a w)
 
 /-- The fold over a nonfinal field includes its separator exactly once. -/
 private theorem rt_find_fold_cons {Γ A : Type} (δ : A → Option Γ → A)

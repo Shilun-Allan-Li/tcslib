@@ -66,10 +66,8 @@ lemma pe_getD_snd (u v : List Bool) (j : ℕ) :
   pairEncode_getD_snd u v j
 
 /-- The second component of a pair is its suffix after `2|u| + 2` letters. -/
-lemma pe_drop (u v : List Bool) : (pairEncode u v).drop (2 * u.length + 2) = v := by
-  rw [pairEncode_eq_dbl, List.append_assoc, show 2 * u.length + 2 = (dbl u).length + 2 by simp,
-    List.drop_append]
-  simp
+lemma pe_drop (u v : List Bool) : (pairEncode u v).drop (2 * u.length + 2) = v :=
+  Turing.pairEncode_drop u v
 
 /-- A word whose last letter (default `true`) is `true` is canonical. -/
 lemma canon_of_getLastD {w : List Bool} (h : w.getLastD true = true) : Canon w :=

@@ -90,6 +90,7 @@ scheme (`Turing.exists_effectiveMachineCode`) is proved in
 `TCSlib.Complexity.TuringMachine.MathlibBridge`.
 * `Turing.pairEncode_eq`, `Turing.unaryFin_eq` — the two encodings as equations, the
   specification API (user, 2026-10-16).
+* `Turing.pairEncode_drop` — the payload after a pairing's header.
 * `Turing.signBits_neg`/`_zero`/`_pos`, `Turing.optBoolBits_none`/`_some_false`/`_some_true`,
   `Turing.optOptBoolBits_none`/`_some_none`/`_some_false`/`_some_true`,
   `Turing.optStateBits_none`/`_some` — the record fields' encoders, case by case (the ND inventory
@@ -219,6 +220,18 @@ theorem length_pairEncode (x y : List Bool) :
     (pairEncode x y).length = 2 * x.length + 2 + y.length := by
   simp [pairEncode_eq_dbl]
   omega
+
+/-- **The payload after the header.** Dropping the header of length `2|u| + 2` from
+`pairEncode u x` leaves `x`.
+
+**Proof sketch.** The pairing is the header `pairEncode u []` followed by `x`, and that header
+has length `2|u| + 2` (`Turing.length_pairEncode`). -/
+theorem pairEncode_drop (u x : List Bool) : (pairEncode u x).drop (2 * u.length + 2) = x := by
+  have split : pairEncode u x = pairEncode u [] ++ x := by
+    rw [pairEncode_eq, pairEncode_eq, List.append_nil]
+  have width : (pairEncode u []).length = 2 * u.length + 2 := by
+    rw [length_pairEncode, List.length_nil, Nat.add_zero]
+  rw [split, ← width, List.drop_left]
 
 /-- A string that is not a pair is a doubled word followed by a malformed tail: the end
 of the string, a lone bit, or the aligned pair `10`.

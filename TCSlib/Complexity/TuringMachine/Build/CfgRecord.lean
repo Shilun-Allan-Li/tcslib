@@ -70,6 +70,7 @@ module is admitted.
 
 * `Turing.cfgRecord_length` — a record has `k + 3` fields.
 * `Turing.Cfg.inWindow_init` — the initial configuration is in every window.
+* `Turing.scanTM_run_preserves` — a word-preserving scan changes only its control.
 * `Turing.Cfg.InWindow.mono`, `Turing.Cfg.InWindow.apply_iff` — windows grow with the
   radius; one action keeps a window configuration in its window exactly when no head
   crosses a boundary.
@@ -1731,50 +1732,39 @@ private theorem recordStep_phase_run {k : ℕ} {Q T S : Type}
     (fun h => hi false (congrArg Prod.fst h)) hh (fun j => by
       simpa only [hr, Cfg.mapState_workTapePos] using hh t le_rfl j)
 
-/-- A scan whose pure result retains its word changes only the accumulator state.
-This removes the identity rewrite in the public scan endpoint once for all read phases.
-**Proof sketch.** Read the scan row's contract through its field equations; inside its
-write interval use the entry word hypothesis, and outside use the unchanged frame. Keep
-its cut and head bounds. -/
-private theorem recordStep_scan_preserves {A Γ : Type} {x : List Γ}
-    (i : Fin 4) (δf δb : A → Γ → A × Γ) (a b : A) (w : List Γ)
-    (c : Cfg 4 Γ (ScanPhase A) x) (hc : c.state = some (.fwd a))
+/-- **A word-preserving scan changes only its control**: if the scan's pure result keeps the
+word (`scanResult δf δb a w = (b, w)`), the scan row ends at `{c with state := some (.done b)}`,
+with the row's first-visit cut and head bounds.
+
+**Proof sketch.** Specialize the public scan row `Turing.scanTM_run_ofCfg`. With the word kept,
+every cell of its write window holds the entry word's symbol (`hw`), and outside the window the
+tape is unchanged, so the rewritten tape is the original. The cut and head bounds are the row's. -/
+theorem scanTM_run_preserves {k : ℕ} {A Γ : Type} {x : List Γ}
+    (i : Fin k) (δf δb : A → Γ → A × Γ) (a b : A) (w : List Γ)
+    (c : Cfg k Γ (ScanPhase A) x) (hc : c.state = some (.fwd a))
     (hw : ∀ z : ℤ, -1 ≤ z → z ≤ (w.length : ℤ) →
       c.workTapes i (c.workTapePos i + z) = FinTM.bufferTape w z)
     (hf : scanResult δf δb a w = (b, w)) :
-    (scanTM 4 i δf δb a).runFrom c (2 * w.length + 2) =
+    (scanTM k i δf δb a).runFrom c (2 * w.length + 2) =
       {c with state := some (.done b)} ∧
     (∀ u < 2 * w.length + 2, ∀ v,
-      ((scanTM 4 i δf δb a).runFrom c u).state ≠ some (.done v)) ∧
+      ((scanTM k i δf δb a).runFrom c u).state ≠ some (.done v)) ∧
     (∀ j u, u ≤ 2 * w.length + 2 →
-      if j = i then ((scanTM 4 i δf δb a).runFrom c u).workTapePos j ∈
+      if j = i then ((scanTM k i δf δb a).runFrom c u).workTapePos j ∈
         Finset.Icc (c.workTapePos j - 1) (c.workTapePos j + (w.length : ℤ))
-      else ((scanTM 4 i δf δb a).runFrom c u).workTapePos j = c.workTapePos j) := by
-  obtain ⟨he, ht, hh⟩ := recordStep_contract_clauses_range
-    (scanTM_contract i δf δb a x) w c hc (by rw [scanTM_contract_pre]; exact hw)
-  rw [scanTM_contract_time, scanTM_contract_post] at he
-  simp only [scanTM_contract_time] at ht hh
-  refine ⟨he.trans ?_, ht, ?_⟩
-  · rw [hf]
-    apply Cfg.ext <;> try rfl
-    funext j z
-    dsimp only
-    split
-    next h =>
-      obtain ⟨rfl, hlo, hhi⟩ := h
-      simpa using (hw (z - c.workTapePos j) (by omega) (by omega)).symm
-    next => rfl
-  · intro j u hu
-    have h := hh j u hu
-    simp only [scanTM_contract_lo, scanTM_contract_hi] at h
-    by_cases hj : j = i
-    · rw [if_pos hj]
-      rw [if_pos hj, if_pos hj] at h
-      exact h
-    · rw [if_neg hj]
-      rw [if_neg hj, if_neg hj] at h
-      rw [Finset.mem_Icc] at h
-      exact le_antisymm h.2 h.1
+      else ((scanTM k i δf δb a).runFrom c u).workTapePos j = c.workTapePos j) := by
+  obtain ⟨hr, hcut, hspace⟩ := scanTM_run_ofCfg i δf δb a w c hc hw
+  refine ⟨?_, hcut, hspace⟩
+  rw [hr, hf]
+  apply Cfg.ext <;> try rfl
+  funext j q
+  dsimp only
+  split_ifs with h
+  · obtain ⟨rfl, hlo, hhi⟩ := h
+    have h' := hw (q - c.workTapePos j) (by omega) (by omega)
+    rw [add_sub_cancel] at h'
+    exact h'.symm
+  · rfl
 
 /-- Snapshots for reading the record: the record and frame stay intact, B and D carry
 specified globally delimited words, and only the record head is displaced. -/
@@ -1933,7 +1923,7 @@ private theorem recordStep_read_prefix {k : ℕ} {Q T S : Type}
       dsimp only [w]
       rw [recordStep_position_fold, hvalue]
       simp [result, binDigits]
-    obtain ⟨he, ht, hh⟩ := recordStep_scan_preserves 0 (scanFold recordStepPosFold) scanKeep
+    obtain ⟨he, ht, hh⟩ := scanTM_run_preserves 0 (scanFold recordStepPosFold) scanKeep
       (0, true) result w a rfl (by
         intro z hz hu
         simpa [a, recordStepSnapshot] using posword z hz hu) hfold
@@ -2144,7 +2134,7 @@ private theorem recordStep_read_fields {k : ℕ} {Q T S : Type}
         ((scanTM 4 0 f g a).runFrom (cfg (.fwd a) j) u).state ≠ some (.done v)) ∧
       (∀ u ≤ 2 * fs[j].length + 2, ∀ i,
         |((scanTM 4 0 f g a).runFrom (cfg (.fwd a) j) u).workTapePos i - d.workTapePos i| ≤ ((L + 1 : ℕ) : ℤ)) := by
-    obtain ⟨he, ht, hh⟩ := recordStep_scan_preserves 0 f g a b fs[j] (cfg (.fwd a) j) rfl
+    obtain ⟨he, ht, hh⟩ := scanTM_run_preserves 0 f g a b fs[j] (cfg (.fwd a) j) rfl
       (by intro z hz hu; simpa [cfg, recordStepSnapshot] using field j hj z hz hu) hp
     refine ⟨he, ht, ?_⟩
     intro u hu i

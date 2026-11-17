@@ -84,7 +84,7 @@ and `choice_budget_le` were removed in favour of `Turing.certificateLength_stric
 `Turing.append_split_unique` and `Turing.choiceBudget_le`, and `e3_split_strictMono` and
 `e3_split_unique` in favour of `Turing.expCertificateLength_strictMono` and
 `append_split_unique`; `acceptsWithin_iff_of_halts` now cites
-`Turing.run_take_of_halted`. Statements and every other proof are unchanged.
+`Turing.FinNDTM.AcceptsWithin.iff_of_haltsWithin`. Statements and every other proof are unchanged.
 -/
 
 namespace Complexity
@@ -161,20 +161,12 @@ private lemma choiceVerifier_no_split (N : FinNDTM Bool) (C c : ℕ) (y : List B
 
 /-- Once every branch has halted at `t`, extending the common budget changes
 neither existential acceptance nor the accepting output. The reverse implication
-uses the length-`t` prefix and all-branch halting, not just one halted branch. -/
+uses the length-`t` prefix and all-branch halting, not just one halted branch
+(`Turing.FinNDTM.AcceptsWithin.iff_of_haltsWithin`). -/
 private lemma acceptsWithin_iff_of_halts {N : FinNDTM Bool} {x : List Bool}
     {t t' : ℕ} (hhalt : N.tm.HaltsWithin x t) (hle : t ≤ t') :
-    N.AcceptsWithin x t' ↔ N.AcceptsWithin x t := by
-  constructor
-  · rintro ⟨w, hw, _, hout⟩
-    obtain ⟨hlen, hp, hr⟩ := run_take_of_halted (fun w => N.tm.runWith w (N.tm.initCfg x))
-      (fun c => c.state = none)
-      (fun w w' h => by
-        simp only [N.tm.runWith_append w w' (N.tm.initCfg x), NDTM.runWith_of_halt _ h])
-      hhalt (hle.trans_eq hw.symm)
-    exact ⟨w.take t, hlen, hp, hr ▸ hout⟩
-  · intro h
-    exact h.mono hle
+    N.AcceptsWithin x t' ↔ N.AcceptsWithin x t :=
+  FinNDTM.AcceptsWithin.iff_of_haltsWithin hhalt hle
 
 /-- Padding and truncation identify language membership with certificates for the
 specified verifier. This proves the logical correspondence separately from the

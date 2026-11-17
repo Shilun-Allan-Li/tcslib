@@ -68,6 +68,7 @@ deterministic embedding `DTIME ⊆ NTIME`.
 ## Main results
 
 * `Turing.FinNDTM.AcceptsWithin.mono` — acceptance is monotone in the branch length.
+* `Turing.FinNDTM.AcceptsWithin.iff_of_haltsWithin` — truncation at an all-branch halting time.
 * `Complexity.NTIME.mono` — `NTIME` is monotone in the time bound.
 * `Complexity.DTIME_subset_NTIME` — deterministic time is nondeterministic time.
   [AB09, §2.1.2]
@@ -122,6 +123,26 @@ theorem AcceptsWithin.mono {N : FinNDTM Bool} {x : List Bool} {t t' : ℕ}
   · rw [List.length_append, List.length_replicate, hw, Nat.add_sub_of_le hle]
   · rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hhalt]
     exact ⟨hhalt, hout⟩
+
+/-- **Truncation at an all-branch halting time**: if every branch of `N` on `x` of length `t`
+has halted, acceptance within any `t' ≥ t` is acceptance within `t`.
+
+**Proof sketch.** Backward is `Turing.FinNDTM.AcceptsWithin.mono`. Forward, an accepting word
+of length `t'` runs as its length-`t` prefix (`Turing.NDTM.runWith_append`), which has halted
+(`Turing.NDTM.haltsWithin_iff`), so the rest of the word is absorbed
+(`Turing.NDTM.runWith_of_halt`) and the prefix accepts. -/
+theorem AcceptsWithin.iff_of_haltsWithin {N : FinNDTM Bool} {x : List Bool} {t t' : ℕ}
+    (hhalt : N.tm.HaltsWithin x t) (hle : t ≤ t') :
+    N.AcceptsWithin x t' ↔ N.AcceptsWithin x t := by
+  refine ⟨fun h => ?_, fun h => h.mono hle⟩
+  obtain ⟨w, hw, -, hout⟩ := acceptsWithin_iff.mp h
+  have htake : (w.take t).length = t := by rw [List.length_take, hw]; omega
+  have hstop := NDTM.haltsWithin_iff.mp hhalt (w.take t) htake
+  have hsplit : N.tm.runWith w (N.tm.initCfg x) = N.tm.runWith (w.take t) (N.tm.initCfg x) := by
+    conv_lhs => rw [← List.take_append_drop t w]
+    rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hstop]
+  rw [hsplit] at hout
+  exact acceptsWithin_iff.mpr ⟨w.take t, htake, hstop, hout⟩
 
 /-- The machine `N` *decides* the language `L` within time `T`, nondeterministically:
 on every input `x`, every branch of length `T |x|` has halted

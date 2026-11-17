@@ -83,11 +83,9 @@ def dropOut : Bool → Bool → Option Bool
 the result is empty. -/
 def dropMarker (w : List Bool) : List Bool := transduce dropTr dropOut false w
 
-/-- In the copying state the transducer is the identity. -/
-theorem transduce_drop_true (p : List Bool) : transduce dropTr dropOut true p = p := by
-  induction p with
-  | nil => rfl
-  | cons b p ih => simp [transduce, dropTr, dropOut, ih]
+/-- In the copying state the transducer is the identity (`Complexity.transduce_of_copy`). -/
+theorem transduce_drop_true (p : List Bool) : transduce dropTr dropOut true p = p :=
+  transduce_of_copy dropTr dropOut true (fun _ => rfl) (fun _ => rfl) p
 
 /-- Stripping the marker `1ᵏ 0` returns the rest of the word. -/
 @[simp] theorem dropMarker_marker (k : ℕ) (p : List Bool) :

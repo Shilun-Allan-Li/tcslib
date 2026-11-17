@@ -54,6 +54,8 @@ oracle-machine bundle before they are defined" (`AroraBarakChapter1Plan.md` §2)
   the plain machine's.
 * `Turing.FinOracleTM.ComputesInTime.mono`, `Turing.FinOracleTM.ComputesInTime.output_unique`
   — time monotonicity and output determinism at the bundled layer (added 2026-10-11, B1).
+* `Turing.FinOracleTM.computesInTime_iff` — the bundled computation predicate is the
+  underlying machine's.
 
 ## References
 
@@ -97,6 +99,14 @@ tape — the bundled form of `Turing.OracleTM.ComputesInTime`, mirroring
 def ComputesInTime (M : FinOracleTM Symbol) (O : Language Symbol)
     (input output : List Symbol) (t : ℕ) : Prop :=
   M.tm.ComputesInTime O input output t
+
+/-- **The bundled computation predicate, read through the underlying machine**: `M` computes
+`output` from `input` within `t` steps with oracle `O` iff its underlying oracle machine does
+(the defining equation of `Turing.FinOracleTM.ComputesInTime`). [AB09, §3.4] -/
+theorem computesInTime_iff {M : FinOracleTM Symbol} {O : Language Symbol}
+    {input output : List Symbol} {t : ℕ} :
+    M.ComputesInTime O input output t ↔ M.tm.ComputesInTime O input output t :=
+  Iff.rfl
 
 /-- The machine `M`, with oracle `O`, decides the language `L` within time `T`: on
 every input `x` it halts within `T |x|` steps with output `[true]` if `x ∈ L` and
