@@ -22,6 +22,8 @@ items, including DL-50, are out of scope here.
 - Gate 44 G44-01 (Seyoon, 2026-11-17): **DL-55** (promote `decide_singleton_eq_true` to a shared low-level home; re-point
   `TrapdoorPredictor` and pairing T1) and **DL-56** (re-point #346's `poly_rU/rZ/rW/rS` to `Games/Efficiency`'s
   `polyTimeComputable_r*`, with a reader if needed).
+- bb1-sim fill ruling Q1 (Seyoon, 2026-11-17): **DL-57** (promote `sidSpec_dom/rng_*` and `zeroBits_eq_cast` into
+  `IdentityBased/Defs.lean` as `IBEScheme.*`; re-point the bb1-sim fill and T4's private copies).
 - Delete the dead private copies and the public host lemmas left unused by DW-5.
 - Clear DW-9's 26 seal failures and `Uniform.lean`'s 4 inherited failures (SY-F07) through readers.
 - Sweep in small lint and doc nits, such as the `BobIO` unnecessary `simpa`.
