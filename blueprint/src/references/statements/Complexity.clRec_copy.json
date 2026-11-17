@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.clRec_copy",
+ "key": "47b306e51bc687d7",
+ "kind": "lemma",
+ "title": "Copying a counter row",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean tape symbols and $M.k$ work tapes, and let $x$ and $y$ be finite Boolean words. For any configuration $c$ of $M$ on input $y$, Boolean tag $b$, family of natural numbers $n$ indexed by $F=2(1+M.k)$ fields, record word, and natural numbers $T,t,W$ such that the binary representation of every $n_i$ has length at most $W$, there is a number of steps $s\\le F(3W+4)+1$ after which the recorder, started from $c$ and the tag $b$, is in its clock-test control with the source configuration and the values $T,t$ unchanged, and with the record extended by the concatenation, in field order, of the self-delimiting encodings of the binary representations of the $n_i$.",
+ "hypotheses_covered": [
+  "Finite-state machine $M$ over Boolean symbols",
+  "Boolean input words $x,y$",
+  "Configuration $c$ of $M$ on input $y$",
+  "Boolean tag $b$",
+  "Family $n$ of natural numbers indexed by $F=2(1+M.k)$ fields",
+  "Record word",
+  "Natural numbers $T,t,W$",
+  "Each binary representation $(n_i).bits$ has length at most $W$"
+ ],
+ "confidence": "low",
+ "caveat": "The tape contents and head positions in the resulting configuration are specified by the formal definition of the recorder configuration; the available descriptions do not explain all of these fields well enough to render them fully in standard mathematical prose.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For every source configuration, tag, movement counts with binary representations of width at most $W$, record, clock budget, and logical time, there is a time $s \\le F(3W+4) + 1$, where $F$ is the field count, after which the recorder has appended the complete stored row of the counters to the record and dispatched into its clock-test phase; all source storage and the logical clock are unchanged throughout."
+}

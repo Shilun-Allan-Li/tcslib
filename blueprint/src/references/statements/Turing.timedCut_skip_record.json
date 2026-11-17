@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timedCut_skip_record",
+ "key": "353b8070564721fd",
+ "kind": "lemma",
+ "title": "Skipping one serialized record",
+ "statement": "Let $x$ be a binary input, let $n$ be a nonnegative integer, and let a base configuration, destination, bounded counter, binary table $T$, state tape, state-tape cursor, and action $a$ be given. Suppose $T$ is the concatenation of a prefix, the serialized record of $a$, and a suffix. Starting in the fixed-field-skipping phase with counter value $r$ and table cursor at the end of the prefix, after exactly the length of that record in steps the interpreter has its table cursor just past the record. Its state tape and state-tape cursor are unchanged; its control continues the skip request if $r>0$, with counter reduced by one, and otherwise enters the continuation specified by the destination.",
+ "hypotheses_covered": [
+  "A binary input $x$ and nonnegative integer $n$",
+  "A base configuration, destination, bounded counter, binary table, state tape, and state-tape cursor",
+  "An action $a$",
+  "Binary strings forming the stated decomposition of $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a complete serialized transition record --- eight fixed bits followed by a\nunary successor field and its terminator --- occupies the table starting at\nthe cursor, then the skipping phase of the stopped table interpreter traverses\nit in exactly its serialized length, decrementing the bounded record counter,\nor completing the skip request when the counter is zero, with the cursor moved\npast the record."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.chiS_flipSet",
+ "key": "d9f537d9378aa102",
+ "kind": "lemma",
+ "title": "Walsh character under a setwise flip",
+ "statement": "Let $n\\ge0$, let $T,S$ be subsets of the $n$ coordinates, and let $x$ be a Boolean vector of length $n$. If $x^S$ is obtained by flipping precisely the coordinates in $S$, then $\\chi_T(x^S)=(-1)^{|T\\cap S|}\\chi_T(x)$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$T$ and $S$ are subsets of the $n$ coordinates",
+  "$x$ is a Boolean vector of length $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. For $S\\subseteq[n]$, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for real cube functions $h$. For $S\\subseteq[n]$, let $x^S$ be the bit vector obtained by flipping exactly the coordinates in $S$. For all $S,T\\subseteq[n]$ and $x\\in\\{0,1\\}^n$, $\\chi_T(x^S)=(-1)^{|T\\cap S|}\\chi_T(x)$."
+}

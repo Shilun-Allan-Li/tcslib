@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.LayeredCircuit.layerVertex_value",
+ "key": "97f6ad39d33198a4",
+ "kind": "theorem",
+ "title": "Layer vertex values match circuit evaluation",
+ "statement": "Let $F$ be a finite layered Boolean circuit whose gates use only identity, NOT, and unbounded fan-in AND operations, and let $x$ assign a Boolean value to each of its $n$ inputs. For every layer $m<\\mathrm{depth}(F)+1$ and every node $u$ in that layer, the Boolean value produced by the gate list through layer $m$ at the index assigned to $u$ equals the value of $u$ when the layered circuit is evaluated on $x$.",
+ "hypotheses_covered": [
+  "$F$ is a layered circuit over $\\mathrm{Fin}\\,2$ with $n$ inputs and output type $\\mathrm{Unit}$",
+  "$F$ is finite",
+  "Every gate operation of $F$ is identity, NOT, or unbounded fan-in AND",
+  "$x$ assigns a Boolean value to each of the $n$ inputs",
+  "$m<\\mathrm{depth}(F)+1$",
+  "$u$ is a node in layer $m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

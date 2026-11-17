@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.Ends.forFrame",
+ "key": "c3e0ce81c8648210",
+ "kind": "theorem",
+ "title": "For-loop over a framed local list",
+ "statement": "Let $\text{lim}$ be execution limits, let $P$ be a program, let $l$ be a list of integers, and let $i,n,T$ be natural numbers, with memory $\u0000mu$, upper-bound expression $hi$, loop body $body$, and postcondition $Q$. Let $I(j,\u0000mu')$ be an invariant. Suppose $I(0,\u0000mu)$ holds. For each $j<n$, assume the body executes within its block-cost bound from the state with local frame obtained by setting position $i$ of $l$ to $j$ and memory $\u0000mu'$, ending with exactly that same local frame and memory satisfying $I(j+1)$. Assume $I(n,\u0000mu')$ implies $Q$ for the state with position $i$ of $l$ set to $n$. Also assume that whenever $j≤n$ and $I(j,\u0000mu')$ holds, $hi$ is safe and evaluates to $n$ in the state whose local frame sets position $i$ of $l$ to $j$. If $n$ is at most the word limit and $n(\text{cost}(hi)+\text{body block cost}+7)+\text{cost}(hi)+5≤T$, then the for-loop terminates within cost $T$ from the state with local frame $l$ and memory $\u0000mu$, ending in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "$I(0,μ)$ holds",
+  "For every $j<n$ and $μ'$ with $I(j,μ')$, the body ends within its block-cost bound from the state with frame $l$ modified at position $i$ to $j$ and memory $μ'$, preserving that local frame and yielding memory satisfying $I(j+1)$",
+  "For every $μ'$ with $I(n,μ')$, $Q$ holds in the state with frame $l$ modified at position $i$ to $n$ and memory $μ'$",
+  "For every $j≤n$ and $μ'$ with $I(j,μ')$, $hi$ is safe and evaluates to $n$ in the state with frame $l$ modified at position $i$ to $j$",
+  "$(n:ℤ)≤\\text{lim.word}$",
+  "$n(\\text{hi.cost}+\\text{body.blockCost}+7)+\\text{hi.cost}+5≤T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

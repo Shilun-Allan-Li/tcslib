@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.a2_map_launch",
+ "key": "3d8045a159940b0c",
+ "kind": "lemma",
+ "title": "Launch after decoding a paired input",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, and let $x,a,b$ be Boolean words such that decoding $x$ gives the pair $(a,b)$. Then there is a time $u \\le 5(|x|+1)$ at which the forward simulator on input $x$ is in the virtual configuration representing $M$ initialized on $b$, with boundary tag true, input-head position $|x|+1$, first buffer $a$, and output prefix the encoding of $(a,[])$. Moreover, at every time $v \\le u$, the forward and non-forward simulators on $x$ have identical configurations.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,a,b$ are Boolean words",
+  "decoding $x$ yields $(a,b)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

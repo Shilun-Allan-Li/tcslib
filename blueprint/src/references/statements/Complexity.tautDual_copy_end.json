@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.tautDual_copy_end",
+ "key": "f81cc0134cd59286",
+ "kind": "lemma",
+ "title": "End of the copying pass",
+ "statement": "For every binary input $x$, output word $o$, and syntax-scanner state $q$, the dual transducer run from the copying state carrying $q$ at position $|x|+1$ with output $o$ reaches after one step the rewind state with its flag true at position $|x|$, still with output $o$. The anchor state is not visited during this one-step segment.",
+ "hypotheses_covered": [
+  "$x$ is a binary input",
+  "$o$ is an output word",
+  "$q$ is a syntax-scanner state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$, output word $o$, and formula-scanner state $q$, the configuration\nreached by one step of the dual transducer from the copying state carrying $q$ at the\nright boundary position $|x| + 1$ with output $o$ is the rewind state with flag true\nat position $|x|$ with output still $o$, and the anchor state is not visited."
+}

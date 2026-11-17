@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.e3_find_eq",
+ "key": "e91e9f867e0b2210",
+ "kind": "lemma",
+ "title": "Orbit search equals split search",
+ "statement": "For natural numbers $C,c$ and a binary word $w$, consider the search over indices $i$ from $0$ through $|w|$ for the first state that passes the round test, where the state at index $i$ is obtained by applying the search step $i$ times to the empty word. The resulting optional index equals the bounded search at length $|w|$ for the least $n\\le |w|$ satisfying $n+C\\cdot 2^{(n+1)^c}=|w|$, with failure returned if no such $n$ exists.",
+ "hypotheses_covered": [
+  "Natural numbers $C,c$",
+  "A binary word $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all natural numbers $C, c$ and every word $w$, searching the indices $i \\le |w|$ for the first round state (the $i$-fold iterate from the empty state) that passes the round test returns exactly the result of the exponential split search at length $|w|$."
+}

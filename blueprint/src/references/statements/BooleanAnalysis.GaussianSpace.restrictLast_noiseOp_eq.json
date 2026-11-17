@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.restrictLast_noiseOp_eq",
+ "key": "ef77b1eca22f3b56",
+ "kind": "lemma",
+ "title": "Restriction after applying noise",
+ "statement": "Let $n$ be a natural number, let $\\rho\\in\\bbr$, and let $f:\\{0,1\\}^{n+1}\\to\\bbr$. Write $f_0,f_1$ for its restrictions to the last coordinate, and set $a_f=(f_0+f_1)/2$ and $d_f=(f_0-f_1)/2$. For either bit $b\\in\\{0,1\\}$, the restriction of the noise operator applied to $f$ satisfies\n\\[\n(T_\\rho f)_b=T_\\rho a_f+\\sigma(b)\\rho T_\\rho d_f,\n\\]\nwhere $\\sigma(0)=1$ and $\\sigma(1)=-1$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$\\rho$ is real",
+  "$f$ maps the Boolean cube of dimension $n+1$ to $\\bbr$",
+  "$b$ is a Boolean bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T_\\rho$ denote Boolean noise with real correlation $\\rho$, whose Fourier multiplier on a set of size $k$ is $\\rho^k$. For $f:\\{0,1\\}^{n+1}\\to\\mathbb R$, put $f_b(x)=f(x,b)$, $a_f=(f_0+f_1)/2$, and $d_f=(f_0-f_1)/2$, and let $s_0=1$, $s_1=-1$. For either bit $b$, $(T_\\rho f)_b=T_\\rho a_f+s_b\\rho T_\\rho d_f$ as functions on $\\{0,1\\}^n$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitPrepare_run",
+ "key": "936c809739b77d50",
+ "kind": "lemma",
+ "title": "Exact preparation run",
+ "statement": "Let $k$ be a nonnegative integer and let $w$ and $s$ be Boolean words. Starting with the preparation machine in state $(0,\\mathrm{false})$, with input head at position $1$, with $s$ stored on the first work tape and every other work tape blank, and with all work heads at position $0$, after exactly $2(|s|+1)$ steps the machine is in state $2$ with all work heads at position $0$, the input head at the saturated position for $s$, the first tape still storing $s$, and every scratch tape storing the unary word of length $|s|+1$. The Boolean flag in this final state is true exactly when $|w|<|s|$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w$ and $s$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $w$ and candidate $s$, exactly $2(\\abs{s}+1)$ silent steps\nof the preparation machine from the canonical anchored configuration whose\nstored words carry $s$ yield the prepared configuration, in which every\nscratch tape holds the unary word of length $\\abs{s}+1$ and every head is at\ndisplacement $0$."
+}

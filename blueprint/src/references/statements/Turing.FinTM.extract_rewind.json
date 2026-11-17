@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.extract_rewind",
+ "key": "8f4b7757e444e451",
+ "kind": "lemma",
+ "title": "Extractor buffer rewind",
+ "statement": "Let $x$ and $a$ be Boolean words, let $i \\le |x|$, and let $j \\le |a|$. For either choice of Boolean flags, the pair extractor started in rewind state with input head just past the first $i$ symbols of $x$, buffer $a$, work head at displacement $j-1$, and empty output reaches after exactly $j+1$ steps the configuration with replay state, the same input head and buffer, work head at $0$, and empty output.",
+ "hypotheses_covered": [
+  "Boolean flags first and second",
+  "Boolean words x and a",
+  "i ≤ |x|",
+  "j ≤ |a|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the extractor's rewind state with buffer $a$ and work head at\ndisplacement $j-1$, for any $j \\le \\abs{a}$, exactly $j+1$ steps return the\nwork head to displacement $0$ and enter the replay state, with the input\nposition, the buffer, and the (empty) output unchanged."
+}

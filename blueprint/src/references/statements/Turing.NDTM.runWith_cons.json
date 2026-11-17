@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.NDTM.runWith_cons",
+ "key": "5ad22f3c65f57827",
+ "kind": "lemma",
+ "title": "Runs under a leading choice bit",
+ "statement": "Let $M$ be a nondeterministic multi-tape Turing machine, let $b$ be a Boolean choice bit, let $w$ be a finite Boolean word, and let $c$ be a configuration of $M$ on a fixed input. Running $M$ from $c$ under the word consisting of $b$ followed by $w$ gives the same configuration as running it under $w$ from the configuration reached by one step under $b$.",
+ "hypotheses_covered": [
+  "A nondeterministic multi-tape Turing machine.",
+  "A Boolean bit $b$.",
+  "A finite Boolean word $w$.",
+  "A configuration $c$ on a fixed input."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a nondeterministic multi-tape Turing machine, $c$ a configuration of $M$ on some\ninput, $b \\in \\{0,1\\}$ a choice bit, and $w$ a choice word.  Running $M$ from $c$ under the\nword $b w$ gives the same configuration as running $M$ under $w$ from the configuration\nreached by one step of $M$ from $c$ under the choice bit $b$."
+}

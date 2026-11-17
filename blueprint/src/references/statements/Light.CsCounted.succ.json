@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.CsCounted.succ",
+ "key": "5564073680c81580",
+ "kind": "theorem",
+ "title": "Successor update of counted frequencies",
+ "statement": "Let $A$ be counting-sort arguments, let $kf\\colon\\mathbb{N}\\to\\mathbb{N}$ assign a key to each index, and let $i\\in\\mathbb{N}$. Suppose an integer-valued memory map $\\mu'$ has value $0$ at address $A.cnt$, and for every key $t<A.nb$ has at address $A.cnt+(t+1)$ the number of indices $j<i$ with $kf(j)=t$. Change the value at address $A.cnt+(kf(i)+1)$ to one more than the number of indices $j<i$ with $kf(j)=kf(i)$, leaving every other address unchanged. The resulting memory map has value $0$ at $A.cnt$, and at each address $A.cnt+(t+1)$ for $t<A.nb$ it stores the number of indices $j<i+1$ with $kf(j)=t$.",
+ "hypotheses_covered": [
+  "$A$ is counting-sort arguments",
+  "$kf\\colon\\mathbb{N}\\to\\mathbb{N}$",
+  "$i\\in\\mathbb{N}$",
+  "the memory value at $A.cnt$ is zero",
+  "for every $t<A.nb$, the memory value at $A.cnt+(t+1)$ counts indices $j<i$ with $kf(j)=t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $A$ be counting-sort arguments, let $kf\\colon\\mathbb{N}\\to\\mathbb{N}$ assign a key\nto each index, and let $i\\in\\mathbb{N}$. Suppose a memory state $\\mu'$ satisfies\n$\\mu'(A.cnt)=0$ and, for every key $t<A.nb$, its cell at address $A.cnt+(t+1)$ contains\nthe number of indices $j<i$ whose key is $t$. Then the state obtained from $\\mu'$ by\nsetting the cell at address $A.cnt+(kf(i)+1)$ to one more than the number of indices\n$j<i$ whose key is $kf(i)$, while leaving all other cells unchanged, satisfies these\nsame conditions for the first $i+1$ indices."
+}

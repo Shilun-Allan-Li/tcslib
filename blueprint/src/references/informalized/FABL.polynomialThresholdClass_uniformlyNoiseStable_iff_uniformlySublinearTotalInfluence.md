@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter05/PolynomialThresholdUniformStability.lean :: FABL.polynomialThresholdClass_uniformlyNoiseStable_iff_uniformlySublinearTotalInfluence -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Noise stability and sublinear influence
+
+**Claim.** For every natural number $k$, the class of Boolean functions with polynomial threshold representations of Fourier degree at most $k$ is uniformly noise stable if and only if it has uniformly sublinear total influence.
+
+**Proof.** **Noise stability implies uniformly sublinear influence.** Start with a noise modulus that tends to zero at zero and uniformly bounds the noise sensitivity. Use the influence modulus built from this noise modulus; its convergence to zero is supplied by `tendsto_influenceModulusOfNoiseModulus`. In dimensions at least two, the quantitative total-influence bound from noise sensitivity (`totalInfluence_le_two_div_one_sub_exp_neg_two_mul_dimension_mul_noiseModulus`) bounds total influence by a constant times dimension and the noise modulus evaluated at inverse dimension. If this resulting normalized bound is at most $1$, it gives the required estimate directly. If it exceeds $1$, use instead the universal bound that total influence lies between zero and the dimension (`totalInfluence_toReal_mem_Icc`). In dimensions zero and one, the same universal bound suffices.
+
+**Uniformly sublinear influence implies noise stability.** Begin with a dimension-dependent influence bound whose normalized factor tends to zero. The corresponding noise modulus tends to zero at zero by `tendsto_noiseModulusOfInfluenceModulus`. At noise parameter zero, noise sensitivity is zero, as follows from its Fourier-level expression (`noiseSensitivity_eq_sum_level`). For a positive noise parameter, apply the inverse-noise-floor estimate (`noiseSensitivity_le_inverseNoiseFloor_totalInfluenceBound`), using closure of the class under negating inputs and identifying variables (`polynomialThresholdClass_closedUnderNegatingInputVariables`, `polynomialThresholdClass_closedUnderIdentifyingInputVariables`) and the assumed influence bound. Substituting the chosen bound and cancelling the positive inverse noise floor yields precisely the prescribed noise modulus. These two constructions establish both implications.
+
+**Key facts.** `FABL.tendsto_influenceModulusOfNoiseModulus`, `FABL.totalInfluence_le_two_div_one_sub_exp_neg_two_mul_dimension_mul_noiseModulus`, `FABL.totalInfluence_toReal_mem_Icc`, `FABL.tendsto_noiseModulusOfInfluenceModulus`, `FABL.noiseSensitivity_eq_sum_level`, `FABL.noiseSensitivity_le_inverseNoiseFloor_totalInfluenceBound`, `FABL.polynomialThresholdClass_closedUnderNegatingInputVariables`, `FABL.polynomialThresholdClass_closedUnderIdentifyingInputVariables`.

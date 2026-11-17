@@ -1,0 +1,12 @@
+{
+ "lean_name": "BoolCircuit.AdjExample.leA",
+ "key": "5390bb594cb992a9",
+ "kind": "def",
+ "title": "Adjacent-value register program",
+ "statement": "For Boolean values $a$ and $b$, define a one-register program with one available decider and the eight states start, test, compare, increment, equality-check, return-$a$, return-$b$, and return-false. At start it validates the input as a unary prefix followed by a canonical binary payload; at test it calls the decider on the unary-prefix mode with register $0$ as its argument, branching to compare on acceptance and equality-check otherwise. At compare it tests whether the input payload equals the binary representation of register $0$, returning $a$ if so and otherwise incrementing the register and returning to test; at equality-check it makes the same payload comparison, returning $b$ if equal and false otherwise. The three return states halt with outputs $a$, $b$, and false, respectively.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

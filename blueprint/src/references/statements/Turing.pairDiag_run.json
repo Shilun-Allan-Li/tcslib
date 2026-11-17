@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.pairDiag_run",
+ "key": "21b9afbdf10b7a1e",
+ "kind": "lemma",
+ "title": "The Complete Pairing Run",
+ "statement": "For every bit string $x$, running the diagonal pairing machine from its initial configuration on $x$ for $4|x|+5$ steps yields a halted configuration with input head at position $|x|+1$ and output equal to the encoding of $x$ paired with itself: each bit of $x$ doubled, followed by $01$, followed by $x$.",
+ "hypotheses_covered": [
+  "$x$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit string $x$ of length $n$, running the six-state diagonal\npairing machine from its initial configuration on input $x$ for exactly\n$4n + 5$ steps yields a halted configuration with input head at position\n$n + 1$ whose output is the diagonal pair encoding $\\langle x, x\\rangle$\n(each bit of $x$ doubled, then the separator $01$, then $x$ verbatim)."
+}

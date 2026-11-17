@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.Lupanov.value_heap",
+ "key": "cea8169f1fb80da3",
+ "kind": "theorem",
+ "title": "Values of heap gates",
+ "statement": "Let $n,k$ be natural numbers with $k\\le n$, let $f:\\{0,1\\}^n\\to\\{0,1\\}$ and $x\\in\\{0,1\\}^n$, and let $bj,o,L$ be natural numbers with $o+L\\le n$. Suppose that for every $q$ with $1\\le q<2^{L+1}$, the gate at position $bj+(q-1)$ is the heap gate with parameters $n$, base $n+bj$, offset $o$, and index $q$. Also suppose $bj+(2^{L+1}-1)\\le\\mathrm{total}(n,k)$. Then for every $q$ with $1\\le q<2^{L+1}$, the value at vertex $n+bj+(q-1)$ is true exactly when the heap path of $x$ from offset $o$ at depth $\\lfloor\\log_2 q\\rfloor$ equals $q$.",
+ "hypotheses_covered": [
+  "$k\\le n$",
+  "$f$ is a Boolean function on $n$-bit inputs",
+  "$x$ is an $n$-bit input",
+  "$o+L\\le n$",
+  "For every $q$ with $1\\le q<2^{L+1}$, the gate at $bj+(q-1)$ equals the specified heap gate",
+  "$bj+(2^{L+1}-1)\\le\\mathrm{total}(n,k)$",
+  "In the conclusion, $1\\le q<2^{L+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

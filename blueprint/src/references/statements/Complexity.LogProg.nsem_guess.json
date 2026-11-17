@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.nsem_guess",
+ "key": "d99629ee0d9438a5",
+ "kind": "theorem",
+ "title": "Nondeterministic interval guess",
+ "statement": "Let $A$ be a nondeterministic register program with oracle, let $x$ be an input, and let $B$ be a register bound. Choose distinct registers $g,nr$ and states $test,ch,more,ex,rej$. Suppose the deterministic instruction at $test$ compares $g$ with $nr$, branching to $rej$ when they are equal and to $ch$ otherwise; at $ch$ the program may choose $ex$ or $more$; at $more$ it increments $g$ and returns to $test$; and at $rej$ it halts with answer false. Let $Q$ be a predicate on natural numbers, and let $v$ be an initial register assignment with every register at most $B$ and $v(g)\\le v(nr)$. If, for every $j$ with $v(g)\\le j<v(nr)$, the configuration at $ex$ with $g$ set to $j$ and all other registers unchanged terminates within the register bound and accepts exactly when $Q(j)$ holds, then the configuration at $test$ with assignment $v$ terminates within that bound and accepts exactly when some $j$ in that interval satisfies $Q(j)$.",
+ "hypotheses_covered": [
+  "Distinct registers $g$ and $nr$",
+  "Instruction at $test$ compares the two registers and branches to $rej$ on equality, otherwise to $ch$",
+  "Instruction at $ch$ chooses between $ex$ and $more$",
+  "Instruction at $more$ increments $g$ and returns to $test$",
+  "Instruction at $rej$ halts with answer false",
+  "A predicate $Q$ on natural numbers",
+  "An initial assignment $v$ with every register at most $B$",
+  "Initial value $v(g)\\le v(nr)$",
+  "For every $j$ with $v(g)\\le j<v(nr)$, the configuration at $ex$ with $g=j$ and other registers unchanged has the stated bounded termination and acceptance behavior"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

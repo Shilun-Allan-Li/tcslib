@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.tmsat_take_payload",
+ "key": "39dca4b3cc142385",
+ "kind": "lemma",
+ "title": "Copying a payload prefix",
+ "statement": "Let $x,p,b$ be bit strings and $m,j\\in\\mathbb N$. Suppose $x=p b$ and $j\\le\\min(m,|b|)$. Starting in state $3$ with the input head at $|p|$, unary work tape content $1^m$, work head at $m-1$, and empty output, after $j$ steps the extractor is in state $3$, with input head at $|p|+j$, the same work tape content, work head at $m-j-1$, and output equal to the first $j$ bits of $b$.",
+ "hypotheses_covered": [
+  "$x,p,b$ are bit strings",
+  "$m,j\\in\\mathbb N$",
+  "$x=p b$",
+  "$j\\le\\min(m,|b|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ and $b$ be bit strings, $x = pb$, $m \\in \\mathbb{N}$, and $j \\le \\min(m, |b|)$. Then running $E$ for $j$ steps from $\\Delta_x(3, |p|, m, m-1, \\varepsilon)$ yields $\\Delta_x(3, |p| + j, m, m - j - 1, b_{[:j]})$, where $b_{[:j]}$ is the first $j$ bits of $b$; here $E$ is the prefix-extraction machine (one work tape, states $\\{0,1,2,3\\}$) that counts the aligned data blocks $00$ and $11$ of a pair encoding $\\langle a,b\\rangle$ in unary on its work tape and then copies bits of $b$ to its output while moving its work head back along the counter, and $\\Delta_x(q,i,m,h,o)$ denotes the configuration of $E$ on input $x$ in state $q$, with the input head on input position $i$ (counting from $0$), the work tape holding $1^m$ in cells $0,\\dots,m-1$ and blanks elsewhere, the work head at $h$, and output $o$."
+}

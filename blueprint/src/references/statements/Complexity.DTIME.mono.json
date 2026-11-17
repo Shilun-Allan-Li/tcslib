@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.DTIME.mono",
+ "key": "f90a93c28af7e083",
+ "kind": "theorem",
+ "title": "Monotonicity of deterministic time",
+ "statement": "Let $T_1,T_2 : \\mathbb{N} \\to \\mathbb{N}$ satisfy $T_1(n) \\le T_2(n)$ for every $n$. Then $\\mathrm{DTIME}(T_1) \\subseteq \\mathrm{DTIME}(T_2)$.",
+ "hypotheses_covered": [
+  "Time bounds $T_1,T_2 : \\mathbb{N} \\to \\mathbb{N}$",
+  "For every $n$, $T_1(n) \\le T_2(n)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T_1, T_2 : \\mathbb{N} \\to \\mathbb{N}$ be time bounds with $T_1(n) \\le T_2(n)$ for\nevery $n$. Then $\\mathrm{DTIME}(T_1) \\subseteq \\mathrm{DTIME}(T_2)$: every language\nover the binary alphabet decided by some finite multi-tape machine within\n$c \\cdot T_1(n)$ steps on inputs of length $n$, for some constant $c$, is also decided\nby such a machine within $c \\cdot T_2(n)$ steps."
+}

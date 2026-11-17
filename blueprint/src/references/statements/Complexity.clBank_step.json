@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clBank_step",
+ "key": "589c7313b3abec89",
+ "kind": "lemma",
+ "title": "One bank step acts componentwise",
+ "statement": "Let $l\\in\\mathbb{N}$, let $x$ be a finite Boolean word, let $p$ be a valid input-head position for $x$, and choose a single-tape counter configuration $c_i$ for each $i<l$. One step of the bank from their product configuration equals the product configuration formed by taking one counter-machine step on each $c_i$.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb{N}$",
+  "finite Boolean word $x$",
+  "valid input-head position $p$ for $x$",
+  "family of single-tape counter configurations $c_i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input position and family of component configurations, one step of the counter bank equals the product of one single-tape counter step per component: tape contents and independently positioned heads are each updated by their own component, the physical input stays fixed, and all component outputs are suppressed."
+}

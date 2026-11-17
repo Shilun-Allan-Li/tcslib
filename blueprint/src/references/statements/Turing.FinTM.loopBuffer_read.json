@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.loopBuffer_read",
+ "key": "22ad529bb1f8f656",
+ "kind": "lemma",
+ "title": "Reading the Buffer Frontier",
+ "statement": "For all Boolean words $p$ and $b$, the buffer containing their concatenation, read at cell $|p|$, contains the first bit of $b$ if $b$ is nonempty, and is blank if $b$ is empty.",
+ "hypotheses_covered": [
+  "$p$ and $b$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all Boolean words $p$ and $b$, the buffer tape holding the concatenation of $p$ and\n$b$ (cells $0, \\dots$ hold the word, every other cell is blank) reads, at cell $|p|$,\nthe first bit of $b$, or blank when $b$ is empty."
+}

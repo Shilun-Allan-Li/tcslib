@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.jeqPairSnd_run",
+ "key": "05cafbf226eaa54e",
+ "kind": "lemma",
+ "title": "Run of the second-payload equality test",
+ "statement": "Let a register program and oracle be fixed, with register $r$ and control states as in the hypotheses. Suppose the specified transitions implement the second-payload comparison routine, and the stated control states are not oracle-call states. If the input is the self-delimiting encoding of a unary word $1^n$ followed by the encoding of two bit strings $u,w$, and register $r$ stores the canonical binary expansion of a natural number $a$, then the program, started in the comparison routine's initial state with input-head position $1$ and register head at $0$, reaches a configuration in the affirmative state exactly when $w$ is that binary expansion, and otherwise in the negative state. The register head is at $0$ in the final configuration, and at every earlier step the routine remains in a non-call state with that head between $-1$ and the length of the binary expansion.",
+ "hypotheses_covered": [
+  "Transition rule at the initial skip state",
+  "Transition rule at the comparison state",
+  "Transition rules at the return, rewind, and input-advance states",
+  "These states, including both skip states, are not oracle-call states",
+  "Transition rule at the second skip state",
+  "Transition rules for skipping the first payload and scanning the second payload",
+  "Transition rules for the two second-payload bit tests",
+  "Those states, the first-payload states, and the second skip state are not oracle-call states",
+  "Input has the specified nested pair encoding with unary prefix $1^n$ and payloads $u,w$",
+  "Register $r$ stores the canonical binary word of $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

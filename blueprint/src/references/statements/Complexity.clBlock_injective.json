@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clBlock_injective",
+ "key": "948de1f0190fbe13",
+ "kind": "lemma",
+ "title": "Injectivity of snapshot encoding",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, with $k$ work tapes, and let a binary code be given for its optional states. Encode each snapshot by concatenating the code for its state with the two-bit encodings of its input symbol and work-tape symbols. This encoding is injective: snapshots with the same encoded bit vector are equal.",
+ "hypotheses_covered": [
+  "A finite binary-alphabet machine $M$ with $k$ work tapes",
+  "A binary code for the optional states of $M`"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a fixed machine and a fixed binary code of its optional states, the snapshot block encoding is injective: distinct snapshots produce distinct bit blocks, because each individual field code is injective."
+}

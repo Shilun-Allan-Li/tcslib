@@ -1,0 +1,20 @@
+{
+ "lean_name": "Randomized.PIT.exists_of_runOk",
+ "key": "2be9858034bd5dc7",
+ "kind": "theorem",
+ "title": "Accepted Circuit Encoding and Evaluation",
+ "statement": "Let $n$ be a natural number, let $R$ be a finite bit string, let $P$ be a finite list of finite bit strings, and let $G$ be a finite bit string. If the run initialized from the context determined by $n$, $R$, and $P$, together with $G$, has a nonempty word that is done, then there is a finite list $gs$ of arithmetic gates on $n$ inputs such that $G$ is the encoding of $gs$, every gate at position $i$ refers only to gates at positions less than $i$, and the run equals the encoding of that context, the word consisting of the single bit $0$, and the list of gate values obtained by evaluating $gs$ modulo $\\mathrm{bitsVal}(R)+1$ with input values $i \\mapsto \\mathrm{bitsVal}(P_i)+1$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$R$ is a finite bit string",
+  "$P$ is a finite list of finite bit strings",
+  "$G$ is a finite bit string",
+  "the run initialized from the encoded context and $G$ has a nonempty word that is done"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

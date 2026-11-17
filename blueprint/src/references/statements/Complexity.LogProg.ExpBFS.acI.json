@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.acI",
+ "key": "837d5850f41f9d46",
+ "kind": "def",
+ "title": "Memory access routine",
+ "statement": "For each memory site, define a memory instruction at each phase of an access routine. The outward walk repeatedly tests register $r_T$: if it is zero, proceed to the memory operation; otherwise decrement $r_T$, increment $r_{T2}$, and move the memory head right before repeating. At the operation, set the current memory bit to $1$ at marking sites, and otherwise branch on that bit; then return by repeatedly testing and decrementing $r_{T2}$, moving left each time, and upon reaching zero continue to the site’s prescribed exit label for the resulting bit.",
+ "hypotheses_covered": [
+  "A memory site",
+  "A phase of the access routine"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

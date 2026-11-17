@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.FinTM.dg_turn_with_growth",
+ "key": "086dab0bf898aea6",
+ "kind": "lemma",
+ "title": "Rightward Crossing with Window Growth",
+ "statement": "Let $M$ be a finite-alphabet Turing machine with $k>0$ work tapes, choose a source symbol $a_0$, and let $c$ be a source configuration on the retracted input. Let $q$ be a source state, and suppose a table $s$ has the same optional symbols as the work-tape symbols scanned in $c$, while the source transition has a rightward crossing recorded by the head flags in $s$. For any integer frontier $z$ and left zipper list $l$, the simulator takes $k+2$ steps from the read phase to the reflected writing phase with the source transition's updated input-head position and output; the resulting right list is the reversed encoded right guard block appended to $l$, the left list consists of the boundary marker, and the work head stays between $z-1$ and $z+k$, inclusive.",
+ "hypotheses_covered": [
+  "finite source alphabet",
+  "decidable equality on the source alphabet",
+  "a finite Turing machine M with k>0 work tapes",
+  "a source symbol a₀",
+  "an enlarged-alphabet input word x",
+  "a source configuration c on the retracted input",
+  "a source state q",
+  "a table s whose optional symbols match c's scanned work-tape symbols",
+  "the rightward crossing condition evaluates to true",
+  "an integer frontier z",
+  "a left zipper list l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

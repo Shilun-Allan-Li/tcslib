@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.scanResult_shiftRight",
+ "key": "7b5df10dd86c3183",
+ "kind": "theorem",
+ "title": "Rightward scan transformation",
+ "statement": "Let $B$ and $\\Gamma$ be types, let $g:\\Gamma\\to B$ and $s:\\Gamma\\to B\\to\\Gamma$ be functions, let $b_0\\in B$, and let $w$ be a finite word over $\\Gamma$. A scan that, at each symbol, replaces it by the previous state and sets the state to the symbol’s $g$-value, followed by a scan that leaves the state and symbols unchanged, returns the state $(g(w))_{\\mathrm{last}}$ if $w$ is nonempty and $b_0$ otherwise, together with the word obtained by pairing each symbol of $w$ with its corresponding entry in $b_0::(g(w))$ and applying $s$ to each pair.",
+ "hypotheses_covered": [
+  "Types $B$ and $\\Gamma$",
+  "Functions $g:\\Gamma\\to B$ and $s:\\Gamma\\to B\\to\\Gamma$",
+  "Initial state $b_0\\in B$",
+  "Finite word $w$ over $\\Gamma$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

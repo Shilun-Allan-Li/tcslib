@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum",
+ "key": "3387beb376961555",
+ "kind": "theorem",
+ "title": "Expectation of Finite Sums",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate weights summing to $1$. For any finite set $s$ and any family of real-valued functions $F_i$ on the product outcome space, the expectation of their sum over $s$ equals the sum of their expectations: $\\mathbb E_P[\\sum_{i\\in s}F_i]=\\sum_{i\\in s}\\mathbb E_PF_i$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space",
+  "All coordinate weights are strictly positive and sum to $1$",
+  "$s$ is a finite index set",
+  "Each $F_i$ is real-valued on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, a finite index set $s$, and functions $F_j:\\Omega\\to\\mathbb R$. Then $\\mathbb E_P\\sum_{j\\in s}F_j=\\sum_{j\\in s}\\mathbb E_PF_j$."
+}

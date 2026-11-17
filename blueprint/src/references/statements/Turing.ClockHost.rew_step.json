@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.ClockHost.rew_step",
+ "key": "57f234b564b8d757",
+ "kind": "theorem",
+ "title": "First rewind step",
+ "statement": "Let $S$ be a deterministic Boolean Turing machine with $S.k$ work tapes and $A$ a nondeterministic Boolean Turing machine with $A.k$ work tapes. For every Boolean choice $b$, Boolean input $x$, natural number $m$, input-head position $ip \\in \\mathrm{Fin}(|x|+2)$, tape contents $sT,aT$ and head positions $sP,aP$ for the work tapes of $S$ and $A$, and integer $z$, one step of the host machine from phase $\\mathrm{rew}$, with yard tape storing $m$ true symbols from cell zero and its head at $z$, enters phase $\\mathrm{rew2}$, moves the input head according to the clamped left move, moves the yard head to $z-1$, and leaves the other work tapes and the output unchanged.",
+ "hypotheses_covered": [
+  "$S$ is a deterministic Boolean Turing machine",
+  "$A$ is a nondeterministic Boolean Turing machine",
+  "$loop$ is a Boolean parameter",
+  "$x$ is a Boolean input list",
+  "$m$ is a natural number",
+  "$b$ is a Boolean choice bit",
+  "$ip$ is an input-head position in $\\mathrm{Fin}(|x|+2)$",
+  "$sT$ and $aT$ specify work-tape contents for $S$ and $A$",
+  "$sP$ and $aP$ specify work-tape head positions for $S$ and $A$",
+  "$z$ is an integer yard-head position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.tmsat_flatMap_length",
+ "key": "153ebb824263cf33",
+ "kind": "lemma",
+ "title": "Length under list flattening",
+ "statement": "Let $A$ and $B$ be types, let $f$ assign to each $a\\in A$ a list over $B$ of length at least $1$, and let $l$ be any finite list over $A$. Then the length of $l$ is at most the length of the concatenation of the lists $f(a)$ as $a$ ranges through $l$.",
+ "hypotheses_covered": [
+  "For every $a\\in A$, the list $f(a)$ has length at least $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A$ and $B$ be types and let $f$ map every $a \\in A$ to a list $f(a)$ over $B$ of length at least $1$. Then for every list $(a_1,\\dots,a_k)$ over $A$, the concatenation $f(a_1)\\,f(a_2) \\cdots f(a_k)$ has length at least $k$."
+}

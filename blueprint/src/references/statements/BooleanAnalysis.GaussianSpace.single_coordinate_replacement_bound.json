@@ -1,0 +1,23 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.single_coordinate_replacement_bound",
+ "key": "2a34534c3fbf4fe2",
+ "kind": "theorem",
+ "title": "Error from replacing one polynomial input",
+ "statement": "Let $n,k$ be nonnegative integers, let $(\\Omega,\\mu)$ be a probability space, and let $F$ be a real coefficient family on subsets of $\\{0,\\ldots,n-1\\}$ whose coefficients vanish on sets of size greater than $k+1$. Fix a coordinate $i$, and let $X_j,Y_j:\\Omega\\to\\mathbb R$ be two coordinate families, each independent within itself, such that $X_j=Y_j$ as functions whenever $j\\ne i$. For every coordinate, both inputs satisfy the fourth-order invariance moment conditions: their first and third moments are zero, their second moment is one, and their fourth moment is at most $9$ (with finite fourth moment and almost-everywhere measurability). If $\\psi\\in C^4(\\mathbb R)$, $C\\ge0$, and $|\\psi^{(4)}(t)|\\le C$ for every real $t$, then $\\left|\\mathbb E[\\psi(F(X))]-\\mathbb E[\\psi(F(Y))]\\right|\\le \\frac{C}{12}9^{k+1}\\,\\mathrm{Inf}_i[F]^2$, where $F(X)(\\omega)=\\sum_S F(S)\\prod_{j\\in S}X_j(\\omega)$ and the influence is that of the Boolean-cube evaluation of $F$.",
+ "hypotheses_covered": [
+  "$n,k$ are nonnegative integers",
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$F$ has degree at most $k+1$",
+  "$i$ is a coordinate in $\\{0,\\ldots,n-1\\}$",
+  "$X$ and $Y$ are each independent coordinate families",
+  "Each coordinate of $X$ and $Y$ satisfies the fourth-order invariance moment conditions under $\\mu$",
+  "$X_j=Y_j$ as functions for every $j\\ne i$",
+  "$\\psi$ is four times continuously differentiable",
+  "$C\\ge0$",
+  "The absolute value of the fourth derivative of $\\psi$ is bounded by $C$ everywhere"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F(x)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}a_S\\prod_{j\\in S}x_j$ be a real multilinear polynomial and fix $i\\in\\{1,\\ldots,n\\}$. Suppose $F$ has degree at most $k+1$, and $X,Y$ are real input families on one probability space, each independent within itself, agreeing as functions at every coordinate other than $i$. Every input is measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. If $\\psi\\in C^4(\\mathbb R)$ and $C\\ge0$ bounds $|\\psi^{(4)}|$ everywhere, then $|\\mathbb E\\psi(F(X))-\\mathbb E\\psi(F(Y))|\\le(C/12)9^{k+1} I_i(F)^2$, where $I_i(F)=\\sum_{S\\ni i}a_S^2$."
+}

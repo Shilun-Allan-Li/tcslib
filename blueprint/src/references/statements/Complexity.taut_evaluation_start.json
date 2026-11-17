@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.taut_evaluation_start",
+ "key": "4400121c94069abf",
+ "kind": "lemma",
+ "title": "Startup of the evaluation phase",
+ "statement": "Let $x$ and $u$ be binary words, and suppose the exact-consumption parser for CNF formulas succeeds on $x$. Then there is a number of steps $t\\le 4(|\\langle x,u\\rangle|+2)$ such that the verifier started in its initial configuration on the paired input $\\langle x,u\\rangle$ reaches the formula-level evaluation state with no input bits consumed, work tape storing $u$ from cell $0$, work head at $0$, and empty output.",
+ "hypotheses_covered": [
+  "$x$ and $u$ are binary words",
+  "the CNF parser succeeds on $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary string on which the exact-consumption formula parser succeeds, and\nlet $u$ be any binary word. Then for some $t \\le 4(|\\mathrm{pair}(x,u)| + 2)$, running\nthe non-tautology verifier for $t$ steps from its initial configuration on\n$\\mathrm{pair}(x,u)$ reaches the formula-level evaluation state with no input bits\nconsumed, $u$ on the work tape from cell $0$, the work head at cell $0$, and empty\noutput."
+}

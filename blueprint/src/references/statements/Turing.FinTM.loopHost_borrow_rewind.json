@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_borrow_rewind",
+ "key": "a58721dfac8ad760",
+ "kind": "lemma",
+ "title": "Rewinding the counter head",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, choose Boolean forwarding and find modes, and let $x$ be a Boolean input word. Let $C$ be a base loop-host configuration on $x$, let $p$ be an input-head position, let $w$ be a Boolean word, and let $b$ be a Boolean success indicator. For every $j\\le |w|$, running the host for $j+1$ steps from phase $9$ when $b$ is true or phase $10$ when $b$ is false, with empty flag and payload tracks, counter track holding $w$ and head at $j-1$, ends with the counter head at zero and the same counter word. The final control is the released next-anchor call when $b$ is true and phase $11$ otherwise; the input position and all other tracks retain the values prescribed by the frame.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Boolean Turing machines",
+  "$a$ is a state of $B$",
+  "Forwarding and find modes are Boolean",
+  "$x$ is a Boolean input word",
+  "$C$ is a base loop-host configuration on $x$",
+  "$p$ is an input-head position for $x$",
+  "$w$ is a Boolean word",
+  "$b$ is Boolean",
+  "$j\\le |w|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a counter word, $b$ a success bit, and $j \\le |w|$. Running the loop host for\nexactly $j + 1$ steps from the rewind phase selected by $b$ on a frame whose counter\ntrack is the buffer tape of $w$ with head at cell $j - 1$ returns the counter head to\nzero and dispatches: success releases the next anchor call, underflow enters the\nexhaustion phase without yet emitting. All inactive residue is retained."
+}

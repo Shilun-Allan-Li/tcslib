@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.a3n_eq_parse",
+ "key": "e2188c41cfdd490e",
+ "kind": "lemma",
+ "title": "Parsing the Doubled Prefix",
+ "statement": "Let $y,u,v,pre,a$ be binary words and suppose $y=pre\\,\\langle u,v\\rangle$, where $\\langle u,v\\rangle$ is the encoding formed by doubling the bits of $u$, appending $01$, and then appending $v$. Starting from the comparator configuration in parser state at input position $|pre|+1$, with decoded work word $a$ and work head at position $|a|$, after $2|u|+2$ steps it is in rewind state at input position $|pre|+2|u|+3$, with decoded work word $a u$ and work head at position $|a u|-1$.",
+ "hypotheses_covered": [
+  "$y,u,v,pre,a$ are binary words",
+  "$y=pre\\,\\langle u,v\\rangle$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the comparator input has the form $y = p\\,e$ where $e$ is the self-delimiting encoding of a pair $(u, v)$. From the parser state at position $|p|+1$ with decoded word $a$, exactly $2|u|+2$ steps of the pair comparator reach the rewind state at position $|p|+2|u|+3$ with decoded word $a\\,u$."
+}

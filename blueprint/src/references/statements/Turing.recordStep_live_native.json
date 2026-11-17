@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.recordStep_live_native",
+ "key": "bde4b52c46683c93",
+ "kind": "theorem",
+ "title": "Live native-step simulation",
+ "statement": "Let $M$ be a deterministic machine with $k$ Boolean work tapes, let $\\mathrm{upd}$ update a tag from an optional output bit, and let a two-tape Boolean machine $\\mathrm{seek}$ satisfy the following bound $C$: for every Boolean word $w$ encoding an integer $p$ with $p\\le |x|+1$, whenever its first tape stores $w$ relative to its head, its second tape is blank, and its state is the designated start state, it reaches the designated finish state in at most $C(|w|+a+p+1)$ steps, where $a$ is its input-head position; before finishing it avoids that state, all work-head displacements are at most $C(|w|+1)$, and at finishing its input-head position is $p$ while its tapes, work-head positions, and output are unchanged. Let $x$ be a Boolean word, $c$ a configuration of $M$ on $x$, and $d$ a four-tape configuration over the recording alphabet on the input obtained by embedding each bit of $x$. Let $D$ be record data whose stored state is present, whose width flag equals the assertion that the binary width of $|x|+1$ is one, and suppose the third work tape of $d$ is blank everywhere. Then there are a bit $b$ and a time $t\\le 20(C+1)(\\mathrm{width}(|x|)+|x|+1)$ such that the record-step machine, started from the snapshot of $d$ with the read-exit state and with both buffer tapes containing the fixed-width binary digits of $c$'s input-head position, reaches the snapshot with the state and data prescribed by applying $M$'s transition to $D$ with native-right flag $b$ and input symbol read from $c$, with the input-position buffer retained and the second buffer empty. At every earlier time it avoids both verdict states, and throughout the run every work-head displacement from its initial position is at most $(C+1)(\\mathrm{width}(|x|)+1)$.",
+ "hypotheses_covered": [
+  "$k,Q,T,S$ are types and $M$ is a $k$-tape Boolean machine with state type $Q$",
+  "$\\mathrm{upd}:T\\to\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$\\mathrm{seek}$ is a two-tape Boolean machine with start and finish states and a constant $C$ satisfying the stated seek specification",
+  "$x$ is a Boolean list",
+  "$c$ is a configuration of $M$ on $x$",
+  "$d$ is a four-tape configuration over the recording alphabet on the embedded input",
+  "$D$ is record-step data with present state",
+  "the width flag of $D$ equals the assertion that the position width of $|x|$ is one",
+  "the third work tape of $d$ is blank at every integer position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

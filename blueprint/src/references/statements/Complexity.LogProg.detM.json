@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.detM",
+ "key": "2612dfb9442eac0a",
+ "kind": "abbrev",
+ "title": "Deterministic register-machine compilation",
+ "statement": "Let $A$ assign memory-capable instructions to program nodes, let $l_0$ be an initial node, let $D$ be a Boolean-alphabet machine with $k_D$ work tapes and states $SD$, let $q_0$ assign a state of $D$ to each of $d$ decider indices, and choose a Boolean parameter $\\beta$. The resulting machine is the compilation of the register program obtained from $A$ using parameter $\\beta$, together with $D$ and the given initial-state assignment; it has $m+k_D$ work tapes and the compiled state set.",
+ "hypotheses_covered": [
+  "Natural numbers $m,d,k_D$",
+  "Program-node and decider-state types $\\Lambda,SD$",
+  "A memory-instruction assignment $A\\colon\\Lambda\\to\\mathrm{MIns}(m,d,\\Lambda)$",
+  "An initial program node $l_0$",
+  "A Boolean-alphabet machine $D$ with $k_D$ work tapes and states $SD$",
+  "A state assignment $q_0\\colon\\mathrm{Fin}(d)\\to SD$",
+  "A Boolean parameter $\\beta$"
+ ],
+ "confidence": "low",
+ "caveat": "The payload does not define the register-program transformation or compilation operations used in this abbreviation, so their precise behavior cannot be stated from the supplied information.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.paddedVerifier_too_long",
+ "key": "7a210fca2fc156b5",
+ "kind": "lemma",
+ "title": "Rejection of Overlong Witnesses",
+ "statement": "Let $C,c,k\\in\\mathbb{N}$, let $V$ be a language of binary strings, and let $x,u$ be binary strings. If $|u\\,1\\,0^k|=(C+1)(|x|+1)^c$ and $C(|x|+1)^c<|u|$, then $x\\,u\\,1\\,0^k$ does not belong to the padded verifier language $V^{\\mathrm{pad}}_{C,c}$.",
+ "hypotheses_covered": [
+  "$C,c\\in\\mathbb{N}$",
+  "$V$ is a language of binary strings",
+  "$x,u$ are binary strings",
+  "$k\\in\\mathbb{N}$",
+  "$|u\\,1\\,0^k|=(C+1)(|x|+1)^c$",
+  "$C(|x|+1)^c<|u|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C, c \\in \\mathbb{N}$ and $V \\subseteq \\{0,1\\}^{*}$, and let\n$V^{\\mathrm{pad}}_{C,c}$ be the set of binary strings $y$ such that, for the least\n$n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist), the suffix $v$ of $y$ after\nits first $n$ bits contains a $1$, and the prefix $u$ of $v$ preceding its last\n$1$ satisfies $|u| \\le C(n+1)^c$ and $\\langle x, u\\rangle \\in V$, where $x$ is\nthe first $n$ bits of $y$ and $\\langle x, u\\rangle$ is the self-delimiting pair\nencoding ($x$ with every bit doubled, then $01$, then $u$). Let $x, u$ be binary\nstrings and $k \\in \\mathbb{N}$ with $|u\\,1\\,0^k| = (C+1)(|x|+1)^c$ and\n$C(|x|+1)^c < |u|$. Then $x\\,u\\,1\\,0^k \\notin V^{\\mathrm{pad}}_{C,c}$."
+}

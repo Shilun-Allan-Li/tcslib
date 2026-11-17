@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.splitSolve_closed",
+ "key": "97b2bb2c8c84d50c",
+ "kind": "lemma",
+ "title": "Polynomial-time split solver existence",
+ "statement": "For every pair of natural numbers $C,e$, there exist a finite Turing machine over the Boolean alphabet and a natural number $c$ such that, on every Boolean word $w$, the machine halts within $c(|w|+1)^{e+2}$ steps and outputs the pairing of the prefix of $w$ of length $i$ with the remaining suffix when $i$ is the least number satisfying $i+C(i+1)^e=|w|$; if there is no such $i$, it outputs the empty word.",
+ "hypotheses_covered": [
+  "natural parameters $C,e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all constants $C$ and $e$ there exist a machine $M$ and a constant $c$\ncomputing, within $c\\,(n+1)^{e+2}$ steps on inputs of length $n$, the\nfunction sending $w$ to the pair encoding of the split of $w$ at the least\n$i$ with $i + C\\,(i+1)^{e} = \\abs{w}$, and to the empty word when no such $i$\nexists."
+}

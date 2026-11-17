@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.universalInterpreter_first",
+ "key": "b1d52ece6b6f2413",
+ "kind": "lemma",
+ "title": "First step of the table interpreter",
+ "statement": "Let $x$ be a bit string, let $p$ be an input-head position on $x$, and let $T$ be a bit string. One step of the interpreter from its entry configuration with input head at $p$ and captured table $T$ yields the evaluation configuration over the initialization base at $p$, with control in the initial table-rewind phase, table cursor $|T|-1$ (using truncated subtraction), the state tape encoding state index $0$, and state cursor $1$.",
+ "hypotheses_covered": [
+  "A bit string $x$",
+  "An input-head position $p$ on $x$",
+  "A bit string $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "One step of the table interpreter from its entry configuration on a captured\ntable $T$ installs the two permanent markers --- the origin marker $0$ on the\nstate tape and the boundary bit $1$ on the marker tape --- and starts the\nunconditional table rewind: the result is the evaluation configuration over\nthe initialization base whose control is the initial table-rewind phase, with\ntable cursor $|T| - 1$, the unary state tape encoding the index $0$, and\nstate cursor $1$."
+}

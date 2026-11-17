@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.RoundContract.counterLoopEscape_traj",
+ "key": "8161455c8ac054af",
+ "kind": "theorem",
+ "title": "Trajectory of a Counter-Loop Escape",
+ "statement": "Let $k$ be a natural number, let $S$ and $\\Gamma$ have decidable equality, let $e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$ be an injection, let $M$ be a $k$-tape Turing machine, and let $a,ex\\in S$ with $ex\\ne a$. Let $R$ be a round contract for $M$ with anchor $a$ and escape set $\\{\\mathrm{some}(ex)\\}$, and fix an input $x$. For an index $i$, a Boolean word $w$, a natural number $r_0<v(w)$, and a configuration $d$ of the counter-loop machine, suppose the last tape of $d$ stores the encoded word $w$ at offsets $q$ for $-1\\le q\\le |w|$, as specified by the buffer convention; every round with index $r\\le r_0$ satisfies $R$'s round condition; and the endpoint of round $r_0$ has state $ex$. Then for every time $q$ up to the counter-loop contract's prescribed duration, there exist $r$ and $u$ such that either $r\\le r_0$ and $u$ is at most the duration of round $r$, or $r=r_0+1$ and $u=0$, and the first $k$ work-tape head positions at time $q$ equal those of the run of $M$ from the start of round $r$ at time $u$.",
+ "hypotheses_covered": [
+  "Types $S$ and $\\Gamma$ have decidable equality",
+  "An injection from the Boolean alphabet into $\\Gamma$",
+  "A $k$-tape machine $M$, anchor $a$, and state $ex$ distinct from $a$",
+  "A round contract for $M$ with anchor $a$ and escape set $\\{\\mathrm{some}(ex)\\}$",
+  "A fixed input $x$",
+  "The counter-loop contract precondition for $(i,w,r_0)$ and $d$: the specified encoded buffer contents on the last tape",
+  "$r_0$ is strictly less than the binary value of $w$",
+  "Every round with index $r\\le r_0$ satisfies the round condition",
+  "The endpoint of round $r_0$ has state $ex$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $k$ work tapes and state set $S$, and let\n$e:\\\\{\\mathrm{false},\\mathrm{true}\\}\\\\hookrightarrow\\Gamma$ be an embedding into its\nsymbol alphabet. Let $a,ex\\in S$ be distinct, let $R$ be a round contract for $M$\nanchored at $a$ with escape set $\\{\\mathrm{some}(ex)\\}$, and fix an input word $x$. For\nany index $i$, Boolean word $w$, and natural number $N$, consider an initial\nconfiguration $d$ in the decrement-running state that satisfies the counter-loop\ncontract precondition: its extra tape agrees with the embedded word $w$ at every offset\n$q$ with $-1\\le q\\le |w|$, $N$ is less than the binary value of $w$, the round\nprecondition holds for each round $r\\le N$, every round with $r<N$ returns to state $a$,\nand the endpoint of round $N$ has state $ex$. At every time $u$ up to the counter-loop\ncontract time, the positions of the original $k$ work-tape heads coincide with those at\nsome time $u'$ in some round $r$ of the original machine's orbit, where either $r\\le N$\nand $u'\\le$ the duration of round $r$, or $r=N+1$ and $u'=0$."
+}

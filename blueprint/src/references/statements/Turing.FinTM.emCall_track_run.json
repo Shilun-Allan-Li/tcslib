@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emCall_track_run",
+ "key": "1ff500f40513ec2e",
+ "kind": "lemma",
+ "title": "Exact tracked simulation",
+ "statement": "For every finite Boolean Turing machine $M$, Boolean input word $x$, and time $t\\in\\mathbb{N}$, the tracked machine started on $x$ and run for $1+2t$ steps reaches exactly the completed tracked configuration of the source machine after $t$ steps, with each tape's span bounded by the leftmost and rightmost head positions visited up to that time.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean input word",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine $M$, input $x$, and time $t$, running the tracked evaluator for $1 +\n2t$ steps from its initial configuration on $x$ equals the completed tracked\nconfiguration of the run of $M$ at time $t$ with the true leftmost and rightmost visited\nbounds, including after the source has halted."
+}

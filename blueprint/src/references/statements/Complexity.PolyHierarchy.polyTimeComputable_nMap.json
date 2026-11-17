@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.PolyHierarchy.polyTimeComputable_nMap",
+ "key": "d155ae0090f8d79b",
+ "kind": "theorem",
+ "title": "Polynomial-time tuple transformation",
+ "statement": "Let $f$ be a polynomial-time computable function on bit strings, and let $\\ell_1,\\ell_2$ be functions from bit strings to nonnegative integers such that the unary words of lengths $\\ell_1(y)$ and $\\ell_2(y)$ are polynomial-time computable from $y$. For each $i\\in\\mathbb N$, the following transformation is polynomial-time computable: given $z$, set $s=\\pi_1^{i+1}(z)$, where $\\pi_1$ is the total first projection of the pair encoding; then apply the $i$-fold tuple decoder to $z$ using the base map $(s,w)\\mapsto f(\\pi_1(w),\\operatorname{pad}(\\pi_1(s),\\pi_2(w)))$, decoder $(s,v)\\mapsto\\operatorname{pad}(\\pi_2(s),v)$, and side word $\\langle 1^{\\ell_1(s)},1^{\\ell_2(s)}\\rangle$.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "The unary word of length $\\ell_1(y)$ is polynomial-time computable for every input $y$",
+  "The unary word of length $\\ell_2(y)$ is polynomial-time computable for every input $y$",
+  "$i$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

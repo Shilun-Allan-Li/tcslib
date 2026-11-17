@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.condMutualInfo_message_dualProtocol_eq",
+ "key": "d730688cd9f18195",
+ "kind": "theorem",
+ "title": "Conditional information under duality",
+ "statement": "Let $n$ be a positive integer and $p$ a deterministic protocol on pairs of subsets of an $n$-element coordinate set. Let $X,X'$ be Boolean-valued functions on the hard-sample space, and let $Z,Z'$ be functions from that space to a special coordinate together with two Boolean vectors. Suppose for every hard sample $\\omega$ that $X'$ evaluated on the dual sample equals $X(\\omega)$, and that $Z'$ evaluated on the dual sample equals the coordinate-reversed and party-swapped recoding of $Z(\\omega)$. Then, under the hard-sample distribution conditioned on disjoint inputs, the conditional mutual information between $X'$ and the transcript of the dual protocol given $Z'$ equals the conditional mutual information between $X$ and the transcript of $p$ given $Z$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol on pairs of subsets of an $n$-element coordinate set",
+  "$X,X'$ are Boolean-valued functions on the hard-sample space",
+  "$Z,Z'$ take values in a special coordinate and two Boolean vectors",
+  "For every sample, $X'$ on its dual equals $X$ on the original sample",
+  "For every sample, $Z'$ on its dual equals the dual recoding of $Z$ on the original sample"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a protocol on the hard sample space, let $X, X' : \\Omega \\to \\{0,1\\}$ be two\nBoolean variables and let $Z, Z' : \\Omega \\to [n] \\times \\{0,1\\}^n \\times \\{0,1\\}^n$ be two\nconditioning variables on the hard sample $\\Omega = \\texttt{HardSample}\\,n$.  Suppose that\n$X'$ and $Z'$ evaluated on the dual sample are $X$ and the recoded $Z$ on the original\nsample, i.e.\\ $X'(\\sigma(\\omega)) = X(\\omega)$ and\n$Z'(\\sigma(\\omega)) = \\delta(Z(\\omega))$ for every $\\omega$, where $\\sigma$ is the\nhard-sample duality \\texttt{dualHardSample} and $\\delta$ the conditioning recoding\n\\texttt{dualConditioningValue}.  Then, under the disjoint-conditioned measure $\\mu_{\\mathcal D}$,\nthe conditional mutual information between $X'$ and the transcript of the dual protocol\n$\\bar p$ given $Z'$ equals that between $X$ and the transcript of $p$ given $Z$:\n\\[\n  I\\bigl[X' : M_{\\bar p} \\mid Z' ;\\ \\mu_{\\mathcal D}\\bigr]\n  \\;=\\;\n  I\\bigl[X : M_{p} \\mid Z ;\\ \\mu_{\\mathcal D}\\bigr],\n\\]\nwhere $M_p = \\texttt{message}\\,n\\,p$ denotes the transcript of $p$."
+}

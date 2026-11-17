@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.sat_guard_add",
+ "key": "28dbd55c67e65888",
+ "kind": "lemma",
+ "title": "Joining guarded run segments",
+ "statement": "Let $k\\in\\mathbb{N}$, let $S$ be a state type, let $x$ be a binary string, let $M$ be a $k$-work-tape Turing machine over the binary alphabet with states in $S$, let $q\\in S$, and let $c,d$ be configurations on input $x$. For $a,b\\in\\mathbb{N}$, suppose the state at every time $v<a$ in the run from $c$ is different from $q$, the run from $c$ reaches configuration $d$ at time $a$, and the state at every time $v<b$ in the run from $d$ is different from $q$. Then the state at every time $v<a+b$ in the run from $c$ is different from $q$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$",
+  "$S$ is a state type",
+  "$x$ is a binary string",
+  "$M$ is a $k$-work-tape machine over binary symbols with states in $S$",
+  "$q\\in S$",
+  "$c,d$ are configurations on input $x$",
+  "$a,b\\in\\mathbb{N}$",
+  "the run from $c$ avoids state $q$ at all times below $a$",
+  "the run from $c$ is at $d$ at time $a$",
+  "the run from $d$ avoids state $q$ at all times below $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine avoid a designated anchor state for $a$ steps from $c$, reach $d$\nat time $a$, and avoid the anchor for $b$ further steps from $d$. Then it avoids\nthe anchor at every time below $a + b$ from $c$."
+}

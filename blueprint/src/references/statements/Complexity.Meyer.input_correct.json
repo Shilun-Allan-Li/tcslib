@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Meyer.input_correct",
+ "key": "1f47eed2d1898505",
+ "kind": "theorem",
+ "title": "Correctness of the input simulation step",
+ "statement": "Let $C_w,c_w\\in\\mathbb{N}$, let $M$ be a finite Turing machine over the Boolean alphabet, and let $x$ be a finite Boolean input. Suppose an atom assignment is good for every bounded choice of time, work-tape address, and input address in the sense of the stated local checks. If $t+1<2^W$, the assignment correctly represents the computation through time $t$, and $d$ is an integer with $|d|\\le |x|+1$, then its represented input-tape symbol at offset $d$ after $t+1$ steps equals the symbol at offset $d$ in the actual computation of $M$ on $x$ after $t+1$ steps.",
+ "hypotheses_covered": [
+  "Natural-number parameters $C_w$ and $c_w$",
+  "A finite Turing machine $M$ over the Boolean alphabet",
+  "A Boolean input $x$",
+  "An atom assignment satisfying all bounded local checks",
+  "A natural number $t$ with $t+1<2^W$",
+  "Correct representation of the computation through time $t$",
+  "An integer offset $d$ with $|d|\\le |x|+1"
+ ],
+ "confidence": "low",
+ "caveat": "The exact predicates AllGood and Correct are complex definitions omitted from the supplied informal vocabulary; the statement summarizes their computational meaning, but that summary may not capture every formal detail.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

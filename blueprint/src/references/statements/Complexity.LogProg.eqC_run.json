@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.eqC_run",
+ "key": "0ae60680a14c43d4",
+ "kind": "lemma",
+ "title": "Run comparing two register words",
+ "statement": "Let $P$ be a register program with oracle, and let $r_1,r_2$ be distinct registers. Suppose the transitions at states $e_C,e_{By},e_{Bn}$ implement, respectively, the bitwise comparison of the two registers, the comparison continuation leading to yes state $yes$, and the comparison continuation leading to no state $no$; assume none of these three states is a call state. If the two registers initially store words $w_1,w_2$, then for any words $u_1,u_2,pre$ with $w_1=pre\\,u_1$ and $w_2=pre\\,u_2$, there are a time $T$ and an integer position $p$ such that $|pre|-1\\le p<|w_1|$, and the run from the comparison state with both heads at position $|pre|$ reaches state $e_{By}$ if $w_1=w_2$ and state $e_{Bn}$ otherwise, with both heads at position $p$. Before time $T$, the run remains in state $e_C$, with both heads at a common position $q$ satisfying $|pre|\\le q\\le |w_1|$.",
+ "hypotheses_covered": [
+  "Registers $r_1$ and $r_2$ are distinct",
+  "The transition at $e_C$ has the specified comparison behavior",
+  "The transitions at $e_{By}$ and $e_{Bn}$ have the specified continuation behavior",
+  "States $e_C,e_{By},e_{Bn}$ are not call states",
+  "Register $r_1$ stores $w_1$",
+  "Register $r_2$ stores $w_2$",
+  "$w_1=pre\\,u_1$",
+  "$w_2=pre\\,u_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

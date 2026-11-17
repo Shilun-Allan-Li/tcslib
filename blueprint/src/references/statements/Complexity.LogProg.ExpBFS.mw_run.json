@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.mw_run",
+ "key": "789a7b512aac36f7",
+ "kind": "theorem",
+ "title": "Repeated register addition run",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}$ be a Boolean-valued oracle on four indices and finite Boolean strings, and let $x$ be a Boolean string. Choose a phase $q$ among the first search, second search, and final scan, natural numbers $j,i$ with $i<K_0$ and $K_0-i=j$, a machine state $S$, and memory contents $M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Suppose the width register of $S$ is $i$ times its width factor, its scratch register is zero, every register is at most $B$, and $K_0$ times its width factor is at most $B$. From the configuration at copy-loop stage $0$ for index $i$ and phase $q$, with registers $S$, memory $M$, and memory head at $0$, the machine reaches the instruction to clear the width register with that register equal to $K_0$ times the original width factor, all other registers unchanged, memory still $M$, and memory head still at $0$; at every step strictly before the endpoint, the register side conditions hold, every register is at most $B$, and the memory head lies between $0$ and $P$, inclusive.",
+ "hypotheses_covered": [
+  "$K_0,B,P$ are natural numbers",
+  "$\\mathrm{orc}$ is a Boolean oracle on four indices and finite Boolean strings",
+  "$x$ is a Boolean string",
+  "$q$ is one of the first search, second search, or final scan phases",
+  "$i,j$ are natural numbers, $i<K_0$, and $K_0-i=j$",
+  "The width register of $S$ equals $i$ times its width factor",
+  "The scratch register of $S$ is zero",
+  "Every register of $S$ is at most $B$",
+  "$K_0$ times the width factor of $S$ is at most $B$",
+  "$M$ is memory contents, a map from integers to Booleans"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P\\in\\mathbb{N}$, let $\\mathcal{O}$ assign a Boolean answer to each of four\nindices and each finite bit string, and fix an input bit string $x$. Choose a phase $q$\nfrom the first search, second search, and final scan, and natural numbers $j,i$ with\n$i<K_0$ and $K_0-i=j$. Let $S$ be a register state whose word-width register is $iS.X$,\nwhose scratch register is $0$, whose registers are all at most $B$, and for which\n$K_0S.X\\le B$; let $M$ be any memory contents. Starting with the multiplication loop at\nphase $q$, index $i$, and loop stage $0$, with registers $S$, memory $M$, and head\nposition $0$, the machine reaches the state at the instruction to clear the width\nregister, with the width register changed to $K_0S.X$ and every other register\nunchanged, while memory remains $M$ and the head remains at $0$. At every earlier step\nof this run, all registers are at most $B$, the active deterministic instruction\nsatisfies its register side conditions, and the head position lies between $0$ and $P$,\ninclusive."
+}

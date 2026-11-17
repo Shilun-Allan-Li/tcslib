@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_concrete_coefficient",
+ "key": "4f03bc09129c2697",
+ "kind": "lemma",
+ "title": "Concrete Simulation Coefficient Bound",
+ "statement": "Let $c$ be an effective machine code with canonizer and let $\\alpha$ be a binary word. The following inequality holds, where $L$ is the length of the serialization of the machine decoded from $\\alpha$, $m$ is its number of states minus one, $q_0$ is its initial state index, and $T_c(n)$ is the canonizer's time bound at input length $n$:\n\\[\n3|\\alpha|+T_c(|\\alpha|)+L+2|\\mathrm{bin}(m)|+2q_0+16+\\bigl(3L+5(m+1)+20\\bigr)+14\\le 3|\\alpha|+14T_c(|\\alpha|)+50.\n\\]\nHere $\\mathrm{bin}(m)$ is the little-endian binary representation of $m$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code with canonizer",
+  "$\\alpha$ is a binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine representation scheme and let $\\\\alpha$ be a bit string.\nWrite $L$ for the length of the canonical serialization of the machine decoded from\n$\\\\alpha$, $m$ for one less than that machine's number of states, and $q_0$ for its\ninitial state. If $T_c(|\\\\alpha|)$ is the canonizer's time bound and $B=3L+5(m+1)+20$,\nthen $3|\\\\alpha|+T_c(|\\\\alpha|)+L+2|\\\\mathrm{bin}(m)|+2q_0+16+B+14\\\\le\n3|\\\\alpha|+14T_c(|\\\\alpha|)+50$, where $\\\\mathrm{bin}(m)$ is the binary representation\nof $m$."
+}

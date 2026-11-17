@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.e3_verifier_of_split",
+ "key": "aac146f7e43cfe83",
+ "kind": "lemma",
+ "title": "Polynomial-time decidability of the verifier language",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, and let $C,c,A,r$ be natural numbers. If a finite deterministic Turing machine computes the split-emitter function in time $A(n+1)^{r+1}$ on every binary input of length $n$, then the language of words $y$ for which there are binary strings $x,u$ with $y=xu$, $|u|=C\\cdot 2^{(|x|+1)^c}$, and the computation of $N$ on input $x$ using choice string $u$ halts with output $1$ belongs to $\u001cmathrm{P}$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$C,c,A,r$ are natural numbers",
+  "A finite deterministic machine computes the split-emitter function within time $A(n+1)^{r+1}$ for every input length $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine and $C, c$ natural numbers. If some deterministic machine computes the exponential split-emitter function within time $A(n+1)^{r+1}$ for constants $A, r$, then the exponential choice-word verifier language of $N$ with parameters $C, c$ belongs to $\\mathrm{P}$."
+}

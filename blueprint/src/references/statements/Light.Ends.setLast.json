@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Ends.setLast",
+ "key": "b1fd22cb1f41bf0a",
+ "kind": "theorem",
+ "title": "Bounded execution of an assignment",
+ "statement": "Let $\\mathrm{lim}$ be resource limits, $P$ a program, and $d$ a call depth. For local-value and memory maps $\\mathrm{loc},\\mu:\\mathbb{N}\\to\\mathbb{Z}$, an index $x$, an expression $e$, a time bound $T$, and a postcondition $Q$, suppose $Q$ holds of the state obtained by updating $\\mathrm{loc}$ at $x$ to the value of $e$ in the state $(\\mathrm{loc},\\mu)$ while leaving memory equal to $\\mu$. If $e$ is safe in $(\\mathrm{loc},\\mu)$ and its cost plus one is at most $T$, then assigning $e$ to $x$ from $(\\mathrm{loc},\\mu)$ ends within time $T$ in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "$Q$ holds after updating the local-value map at $x$ to the value of $e$ in $(\\mathrm{loc},\\mu)$, with memory unchanged",
+  "$e$ is safe in $(\\mathrm{loc},\\mu)$",
+  "the cost of $e$ plus one is at most $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,12 @@
+{
+ "lean_name": "Light.Stmt.size",
+ "key": "919465471fb03ea6",
+ "kind": "def",
+ "title": "Statement size measure",
+ "statement": "For a natural number $F$, define the size of a statement recursively as follows. The skip statement has size $0$; an assignment has size the expression size plus $2$; a store has size the sum of its address and value expression sizes plus $1$; a sequence has size the sum of its parts; a conditional has size the condition size plus the two branch sizes plus $1$; a while loop has size the condition size plus the body size plus $1$; and a procedure call has size the sum of its argument expression sizes, plus $2F+7$. Here expression size is $2$ for a variable, the length measure of the binary digits for a constant (where the empty list has length measure $1$ and each digit contributes $1$ plus $1$ if it is nonzero), the sum of the two operand sizes plus $1$ for a binary operation, and the operand size plus $1$ for a load; condition size is the sum of its two expression sizes plus $3$ for a strict comparison and plus $4$ for equality.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

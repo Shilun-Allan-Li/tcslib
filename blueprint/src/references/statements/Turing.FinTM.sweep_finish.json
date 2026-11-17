@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.sweep_finish",
+ "key": "5be3c14dff239e8c",
+ "kind": "lemma",
+ "title": "Completion of a simulated step",
+ "statement": "Let $M$ be a finite Turing machine over a finite alphabet $\\Gamma$, with $k$ work tapes and $0<k$, and let $x$ be an input word. Let $c$ be a configuration of $M$, let $q$ be a state, and let $a,z\\in\\mathbb{Z}$ and $n\\in\\mathbb{N}$. Suppose every work-tape head of $c$ lies strictly to the left of $a+n$, and every work tape is blank at coordinate $a+n$. Starting with the simulator in the right-extension phase, carrying state $q$ and the symbols read from $c$ at the heads for coordinate $a+n$, on the encoded tape formed from the reversed blocks for coordinates $a-1$ through $a+n-1$ followed by a boundary marker, run it for exactly $k+1+(n+2)k+1$ steps. The resulting simulator configuration is its canonical starting configuration for the source configuration obtained by applying to $c$ the transition prescribed by $M$ in state $q$, with an encoded zone of $n+2$ blocks starting at $a-1$ and frontier $z+k-1-(n+2)k$.",
+ "hypotheses_covered": [
+  "Finite alphabet $\\Gamma$ with decidable equality",
+  "Finite machine $M$ with finite state set and decidable equality",
+  "Positive number $k$ of work tapes",
+  "Input word $x$",
+  "Configuration $c$ of $M$",
+  "State $q$ of $M$",
+  "Integers $a,z$",
+  "Natural number $n$",
+  "Every work-tape head of $c$ is strictly below $a+n$",
+  "Every work tape of $c$ is blank at $a+n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $k \\ge 1$ work tapes and let $c$ be a configuration with a\nstate $q$ such that every work-tape head of $c$ is at a coordinate strictly less than\n$a+n$ and every work tape of $c$ is blank at $a+n$. From the configuration reached after\nthe forward sweep — the right-extension phase carrying $q$ and the read table for\ncoordinate $a+n$, with the read-marked encoded blocks for coordinates\n$a-1, \\dots, a+n-1$ on the tape between boundary markers — running exactly\n$k + 1 + (n+2)k + 1$ transitions writes the right guard block, performs the transition\nof $M$ from $q$ on the scanned input symbol and the collected work-tape symbols (moving\nthe input head and emitting output accordingly), sweeps backward applying that action to\nevery block, and reaches the canonical between-steps configuration of the resulting\nsource configuration with a zone of $n+2$ blocks starting at $a-1$."
+}

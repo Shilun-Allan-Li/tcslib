@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.setupCfg_initializes",
+ "key": "4c3896d568319b7f",
+ "kind": "lemma",
+ "title": "Initialization of the schedule configuration",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,v\\in\\mathbb{N}$, let $x$ be a word of schedule symbols, and choose a base configuration on $x$, a valid input-head position $p$, and a bit word $w$ whose little-endian value is $v$. Assume $|x|+1\\le (a+1)(v+1)$. Then there is a bit word $w'$ of the same length as $w$ such that, after exactly $(p-1+2)+(2|x|+4)+(v+1)(2|w|+(a+1)+4)+14(a+1)(v+1)+10$ steps from the reset-start setup with budget head at $|w|+1$, unary head at $1$ over the empty unary counter, and blank guide, the machine is in the macrostep-check phase with input head at $|x|+1$, budget head at $|w|+1$ over the captured clock tape for $w'$, unary head at $1$ over the unary tape with $(a+1)(v+1)$ markers, and guide head at $0$ over the guide of radius $3(a+1)(v+1)$.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over Booleans",
+  "a and v are natural numbers",
+  "x is a schedule-symbol word",
+  "base is a configuration on x",
+  "p is a valid input-head position",
+  "w is a bit word",
+  "the little-endian value of w equals v",
+  "|x|+1 ≤ (a+1)(v+1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a bit word of little-endian value $v$, and suppose the input satisfies\n$|x| + 1 \\le (a+1)(v+1)$, where $a$ is the padding parameter.  Consider a setup\nconfiguration in the reset-start phase with input head at an arbitrary position $p$,\nbudget head at cell $|w|+1$ over the captured clock tape of $w$, unary head at cell $1$\nover the unary tape with zero markers, and guide head at cell $0$ over the blank guide\ntape.  Then there is a bit word $w'$ with $|w'| = |w|$ such that after exactly\n\\[\n  \\bigl(\\max(p,1)+1\\bigr) + \\bigl(2|x| + 4\\bigr)\n  + (v+1)\\bigl(2|w| + (a+1) + 4\\bigr) + \\bigl(14\\,(a+1)(v+1) + 10\\bigr)\n\\]\nsteps the machine is in the macrostep-check phase with input head parked at position\n$|x|+1$, budget head at cell $|w|+1$ over the captured clock tape of $w'$, unary head\nat cell $1$ over the unary tape with $(a+1)(v+1)$ markers, and guide head at cell $0$\nover the completed guide of radius $3\\,(a+1)(v+1)$: the binary counter retains its full\nwidth throughout."
+}

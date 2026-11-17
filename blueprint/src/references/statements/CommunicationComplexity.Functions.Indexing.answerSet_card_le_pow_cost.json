@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.answerSet_card_le_pow_cost",
+ "key": "cf4bd73e10598529",
+ "kind": "lemma",
+ "title": "Bound on the number of answer vectors",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic one-way protocol for indexing on $n$-bit inputs. The number of distinct answer vectors of $p$ is at most $2^{c}$, where $c=\\lceil\\log_2 |\\mathrm{Message}(p)|\\rceil$ is its communication cost.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$p$ is a deterministic one-way protocol with a finite, nonempty message codebook"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A one-way protocol $p$ of cost $c$ realises at most $2^c$ distinct answer vectors:\n$\\abs{A} \\le 2^{p.\\mathrm{cost}}$."
+}

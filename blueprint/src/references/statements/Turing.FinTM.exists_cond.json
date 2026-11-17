@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.exists_cond",
+ "key": "fa3431919a58c194",
+ "kind": "theorem",
+ "title": "Conditional Machine Simulation",
+ "statement": "Let $D,M_1,M_2$ be finite Turing machines over the Boolean alphabet, and let $p$ map Boolean words to truth values. Suppose $D$ computes the one-symbol word $[p(x)]$ on every input $x$, halting after some finite number of steps. Then there is a finite Boolean Turing machine $M$ such that, for every pair of Boolean words $x,w$, $M$ halts on input $x$ with output $w$ after some finite number of steps if and only if the machine selected by $p(x)$—namely $M_1$ when $p(x)$ is true and $M_2$ otherwise—halts on $x$ with output $w$ after some finite number of steps.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $D,M_1,M_2$",
+  "A predicate $p$ on Boolean words",
+  "$D$ computes $[p(x)]$ on every input $x$ after some finite number of steps",
+  "Boolean words $x,w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $D$, $M_1$, $M_2$ be multi-tape Turing machines over the Boolean alphabet\nand let $p$ be a Boolean-valued predicate on Boolean words such that $D$\ncomputes the function $x \\mapsto [p(x)]$: on every input $x$ it eventually\nhalts with the single symbol $p(x)$ as its output.  Then there exists a\nmachine $M$ such that for all Boolean words $x$ and $w$: $M$ halts on input\n$x$ with output $w$ (within some number of steps) if and only if the branch\nmachine selected by $p(x)$ — namely $M_1$ when $p(x)$ is true and $M_2$ when\n$p(x)$ is false — halts on that same input $x$ with output $w$ (within some\nnumber of steps)."
+}

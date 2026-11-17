@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.Emod.reduce_ends",
+ "key": "1c89cf1a5ef46d66",
+ "kind": "theorem",
+ "title": "Bounded execution of remainder reduction",
+ "statement": "Let the machine limits be given, and let $P$ be a program and $d$ a call depth. For natural numbers $M,V,fr,a$ with $a\\le V$, assume $1\\le M$, the space limit is at most the word limit, $4V+4M+16$ is at most the word limit, and $fr+\\bigl(\\operatorname{Nat.log}(2,V+1)+2\\bigr)$ is at most the space limit. Let $r$ be the binary size of the quotient of $a$ by $M$, and suppose a memory function $\\mu'$ stores $M2^j$ at address $fr+j$ for every $j<r$ and agrees with a memory function $\\mu$ at every address below $fr$. From the state whose locals are $[x,M,fr,a,r,t]$ and whose memory is $\\mu'$, the remainder-reduction program has an execution of cost at most $24r+4$ ending in the state whose locals are $[x,M,fr,a\\bmod M,0,t]$ and whose memory is still $\\mu'$.",
+ "hypotheses_covered": [
+  "$a\\le V$",
+  "$1\\le M$",
+  "The space limit is at most the word limit",
+  "$4V+4M+16$ is at most the word limit",
+  "$fr+(\\operatorname{Nat.log}(2,V+1)+2)$ is at most the space limit",
+  "For every $j<r$, memory $\\mu'$ at address $fr+j$ equals $M2^j$, where $r$ is the binary size of the quotient of $a$ by $M$",
+  "$\\mu'$ agrees with $\\mu$ at every address below $fr$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

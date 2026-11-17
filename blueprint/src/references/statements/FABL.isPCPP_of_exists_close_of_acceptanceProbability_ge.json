@@ -1,0 +1,21 @@
+{
+ "lean_name": "FABL.isPCPP_of_exists_close_of_acceptanceProbability_ge",
+ "key": "82882b5c7da0f448",
+ "kind": "theorem",
+ "title": "PCPP from completeness and close acceptance",
+ "statement": "Let $A$ be a finite alphabet with decidable equality, let $n>0$, and let $V$ be a probabilistically checkable proof system for words in $A^n$. Let $P\\subseteq A^n$ be a property and let $r>0$. Suppose every word in $P$ has a proof accepted with probability $1$. Suppose also that for every $\\varepsilon\\in[0,1]$, every word $w$, and every proof, acceptance probability at least $1-r\\varepsilon$ implies that some word in $P$ is within relative Hamming distance $\\varepsilon$ of $w$. Then $V$ is a PCPP for $P$ with rate $r$: for each $\\varepsilon\\in[0,1]$, any word at relative Hamming distance greater than $\\varepsilon$ from every word in $P$ is rejected with probability greater than $r\\varepsilon$, for every proof.",
+ "hypotheses_covered": [
+  "The alphabet is finite",
+  "Equality on the alphabet is decidable",
+  "The input length $n$ is positive",
+  "$V$ is a PCPP system with a finite proof alphabet, verifier, and query bound",
+  "$P$ is a property of length-$n$ words",
+  "The rate $r$ is positive",
+  "Completeness: every word in $P$ has a proof accepted with probability $1$",
+  "For every $\\varepsilon\\in[0,1]$, word, and proof, acceptance probability at least $1-r\\varepsilon$ implies closeness to $P$ within relative Hamming distance $\\varepsilon$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\n% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

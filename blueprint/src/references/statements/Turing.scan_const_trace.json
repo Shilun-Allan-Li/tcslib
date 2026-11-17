@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.scan_const_trace",
+ "key": "53a539e6e8b10418",
+ "kind": "theorem",
+ "title": "Trace of the constant-word writer",
+ "statement": "Let $k\\in\\mathbb N$, let $x,w$ be finite words over a symbol type, choose a work-tape index $i<k$, and let $d$ be a configuration with write phases indexed by the length of $w$. If $d$ is initially in the writing state at position $0$, then at every time $t\\in\\mathbb N$ the writer's configuration equals the following piecewise trace: the forward writing configuration at time $t$ when $t\\le |w|$; the return configuration indexed by $2|w|+1-t$ when $|w|<t\\le 2|w|+1$; and the designated done configuration when $t>2|w|+1$.",
+ "hypotheses_covered": [
+  "natural number of work tapes $k$",
+  "symbol type",
+  "input word $x$ and word $w$",
+  "work-tape index $i<k$",
+  "initial configuration $d$",
+  "$d$ is in the writing state at position $0$",
+  "time $t\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

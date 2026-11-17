@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Codec.insym_run",
+ "key": "ee115372502af31d",
+ "kind": "theorem",
+ "title": "Input Symbol Simulation Run",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, and let $x$, $y$, and $r$ be finite Boolean words such that $y$ is the pair encoding of $x$ and $r$. For a register record $R$, suppose every register is at most $B=(8W(N)+8)(|y|+1)$, its position register is at most $|x|+1$, its $N_1$ register equals $|x|+1$, and its $T$, $Z$, $Q_3$, and $Q_4$ registers are zero. Then some $u\\le B$ exists such that the step-mode program, starting at label $\\mathrm{inZ}$ with register values given by $R$, reaches label $\\mathrm{clrQ1v}$ with values obtained by replacing $Z$ by the code of the input symbol at position $R.\\mathrm{Pos}$ in $x$, $U$ by $u$, and $Q_3,Q_4$ by $R.A,R.B$; throughout the run, the program's safety condition holds and every register remains at most $B$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$x,y,r$ are finite Boolean words",
+  "$y$ is the pair encoding of $x$ and $r$",
+  "Every register of $R$ is at most $(8W(N)+8)(|y|+1)$",
+  "The position register of $R$ is at most $|x|+1$",
+  "The $N_1$ register of $R$ equals $|x|+1$",
+  "The $T,Z,Q_3,Q_4$ registers of $R$ are zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

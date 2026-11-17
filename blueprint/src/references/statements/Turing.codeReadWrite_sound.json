@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.codeReadWrite_sound",
+ "key": "f9ae4bc96d8d3b53",
+ "kind": "lemma",
+ "title": "Soundness of write decoding",
+ "statement": "If the optional-write reader succeeds on a bit string $x$, returning an optional work-tape write $b$ and suffix $r$, then $x$ is the two-bit encoding of $b$ followed by $r$.",
+ "hypotheses_covered": [
+  "The optional-write reader returns b and r on input x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the optional-write reader succeeds on a bit string $x$, returning a value\n$b$ and a suffix $r$, then $x$ is exactly the two-bit dictionary code of $b$\nfollowed by $r$."
+}

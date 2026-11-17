@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.MachineFormat.canonSeam_avoids",
+ "key": "354f516170df6a20",
+ "kind": "lemma",
+ "title": "Avoiding a target state across a machine seam",
+ "statement": "Let $A$ and $B$ be deterministic Turing machines with $k$ work tapes over Boolean symbols, with state sets $S$ and $R$, respectively; choose a state $leave\\in S$, a state $enter\\in R$, and a target state in $S\\oplus R$. For a Boolean input $x$, configurations $d,e$ of $A$ on $x$, and times $t,v\\in\\mathbb N$, suppose $A$ runs from $d$ to $e$ in $t$ steps, $e$ is in state $leave$, and $leave$ is not visited at any earlier time. Suppose also that the configurations of this run, relabeled into the left side of $S\\oplus R$, never have the target state through time $t$, and that the run of $B$ from $e$ with its state replaced by $enter$, relabeled into the right side, avoids the target state for its first $v$ steps. Then the machine that runs $A$ until $leave$ and continues with $B$ from $enter$ avoids the target state for every time strictly less than $t+1+v$, when started from $d$ relabeled into the left side.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$, $S,R$ are types, and $S$ has decidable equality",
+  "$x$ is a Boolean word",
+  "$A,B$ are $k$-tape Boolean-symbol machines with states $S,R$",
+  "$leave\\in S$, $enter\\in R$, and a target state in $S\\oplus R$",
+  "$d,e$ are configurations of $A$ on input $x$ and $t,v\\in\\mathbb N$",
+  "$A$ runs from $d$ to $e$ in $t$ steps",
+  "$e$ has state $leave$",
+  "$leave$ is not visited before time $t$",
+  "the left-relabeled run avoids the target through time $t$",
+  "the right-relabeled run from $e$ with state replaced by $enter$ avoids the target for times below $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

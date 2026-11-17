@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.recordStep_phase_run",
+ "key": "00c29ed8a063102e",
+ "kind": "theorem",
+ "title": "One phase transition in the hosted run",
+ "statement": "Let $M$ be a $k$-tape Boolean machine with state set $Q$, let $\\mathrm{upd}:T\\to\\mathrm{Option}(\\mathrm{Bool})\\to T$, and let $\\mathrm{seek}$ be a two-tape Boolean machine with designated states $\\mathrm{start},\\mathrm{finish}\\in S$. Choose a record-stage index $i$ whose stage is not a verdict stage, and configurations $c,c'$ of the corresponding phase machine on an input $x$. Suppose that running its row machine from $c$ for $t$ steps gives $c'$, that $c'$ has phase state $s'$, and that the phase-transition function sends $s'$ to an outcome $o$. Suppose also that before time $t$ every phase state reached has no phase transition, and that through time $t$ every work-head position stays within radius $r$ of a specified base position on each of the four tapes. Then the hosted record-step machine runs from the configuration obtained by adjoining phase index $i$ to $c$ to the configuration obtained by replacing the state of $c'$ with $o$, in $t+1$ steps, without visiting either verdict state before the final time; throughout these steps all four work-head displacements from the specified base positions are at most $r$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number and $Q,T,S$ are types",
+  "$M$ is a $k$-tape Boolean machine with state type $Q",
+  "$\\mathrm{upd}:T\\to\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$\\mathrm{seek}$ is a two-tape Boolean machine with states $S$",
+  "$\\mathrm{start},\\mathrm{finish}\\in S$",
+  "$i$ is a record-step index whose stage is not any verdict stage",
+  "$x$ is a list over the recording alphabet",
+  "$c,c'$ are configurations of the row machine's corresponding phase on $x$",
+  "the row machine run from $c$ for $t$ steps equals $c'$",
+  "the state of $c'$ is $s'$",
+  "the phase transition at $s'$ equals some outcome $o$",
+  "at all times before $t$, every reached state has no phase transition",
+  "$r\\in\\mathbb N$ and every work-head displacement through time $t$ is at most $r$ from the given base positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

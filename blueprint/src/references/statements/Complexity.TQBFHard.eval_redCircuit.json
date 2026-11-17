@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.TQBFHard.eval_redCircuit",
+ "key": "331c110b1c8bd612",
+ "kind": "theorem",
+ "title": "Evaluation of the reduction circuit",
+ "statement": "Let $N$ be a nondeterministic Turing machine, let $d,c,C_V,c_V$ be natural numbers, and let $V$ be a deterministic Turing machine that, on every bit string $y$, halts within $C_V(|y|+1)^{c_V}$ steps and outputs the one-bit string whose bit is the predicate $P(y)=\\mathrm{predB}(N,d,c,w,d_c,y)$, where $w=4dW+W+12kd+3k+2|Q|+8$, $W=|H|+3k+1$, $H=Q\\times\\{0,1,2\\}$, and $d_c=c+1$. For every bit string $x$ and every Boolean sequence $\\tau$, the circuit with $\\mathrm{redM}(N,d,c,|x|)$ input bits produced from $x$ evaluates on the initial segment of $\\tau$ to $P(\\langle x,\\tau_{<\\mathrm{redM}(N,d,c,|x|)}\\rangle)$, where the segment is encoded as a finite bit string.",
+ "hypotheses_covered": [
+  "$V$ computes the one-bit output encoding of the reduction predicate on every input within $C_V(|y|+1)^{c_V}$ steps",
+  "$x$ is a finite bit string",
+  "$\\tau$ is a function from natural numbers to Booleans"
+ ],
+ "confidence": "low",
+ "caveat": "The formal predicate is defined through auxiliary machine encodings and block constructions, whose symbols are only partly introduced in the supplied definitions.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

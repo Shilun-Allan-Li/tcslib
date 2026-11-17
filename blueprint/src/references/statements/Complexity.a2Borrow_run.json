@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.a2Borrow_run",
+ "key": "d6e433e72d041b46",
+ "kind": "lemma",
+ "title": "Borrow scan computation",
+ "statement": "Let $x$ be a Boolean input word, let $p$ be any valid input-head position, and let $\\mathrm{out}$ and $u$ be Boolean words. For every pair of Boolean words $\\mathrm{pre},u$ used as the work-tape prefix and suffix, starting with the borrow-phase machine in its initial borrow state, its work head at cell $|\\mathrm{pre}|$, and tape contents $\\mathrm{pre}\\,u$, after $\\beta(u)+1$ steps it is in the borrow-result state carrying the success flag of the fixed-width decrement of $u$. Its work head is at position $|\\mathrm{pre}|+\\beta(u)-1$, its tape contains $\\mathrm{pre}$ followed by the decremented word, and its input position and output word remain $p$ and $\\mathrm{out}$, respectively; here $\\beta(u)$ is the number of initial zero bits of $u$.",
+ "hypotheses_covered": [
+  "Arbitrary output word",
+  "Arbitrary input word",
+  "Valid input-head position",
+  "Arbitrary counter word",
+  "Every prefix word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every counter word $u$ and every prefix $p$: starting in the borrow state with work head at cell $|p|$ over the word $p\\,u$, exactly $\\beta + 1$ steps of the countdown emitter, where $\\beta$ is the borrow position of $u$, reach the rewind state carrying the success flag of the decrement of $u$, with the work tape now holding $p$ followed by the decremented word."
+}

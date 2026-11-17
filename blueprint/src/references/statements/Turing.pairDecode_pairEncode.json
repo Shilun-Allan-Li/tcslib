@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.pairDecode_pairEncode",
+ "key": "cb78cb6184f509e0",
+ "kind": "lemma",
+ "title": "The parser inverts pair encoding",
+ "statement": "For any finite Boolean strings $x$ and $\\alpha$, parsing their pair encoding succeeds and returns exactly $(x,\\alpha)$.",
+ "hypotheses_covered": [
+  "$x$ and $\\alpha$ are finite Boolean strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $x$ and $\\alpha$, the aligned two-bit parser applied to\nthe pair encoding $\\langle x, \\alpha\\rangle$ (each bit of $x$ doubled, then\nthe separator $01$, then $\\alpha$ verbatim) succeeds and returns exactly the\npair $(x, \\alpha)$."
+}

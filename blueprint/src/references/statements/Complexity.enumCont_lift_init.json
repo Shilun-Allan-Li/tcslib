@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_lift_init",
+ "key": "8b343c15dfc91325",
+ "kind": "lemma",
+ "title": "Lifting an initial computation",
+ "statement": "Let $M$ and $B$ be finite Boolean-alphabet Turing machines, with $M$ using no more work tapes than $B$. Let $e$ map the states of $M$ to states of $B$, and suppose that at every embedded state and for every input/work-tape scan, $B$ takes the padded action of $M$, reading the corresponding initial work-tape block. If $M$ computes output $y$ from input $x$ in time $T$, then $B$, started in state $e(q_0)$ with all work tapes blank on input $x$, is halted at time $T$ and has output $y$.",
+ "hypotheses_covered": [
+  "Finite Boolean-alphabet machines $M,B$",
+  "$M.k\\le B.k$",
+  "A state map $e:M.State\\to B.State$",
+  "For all source states, input symbols, and host work-symbol assignments, the host transition is the padded source transition read from its first $M.k$ tapes",
+  "Boolean words $x,y$ and time $T$",
+  "$M$ computes $y$ from $x$ within $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a host machine simulates a source machine by padded transitions on an\ninitial tape block. If the source computes $y$ from input $x$ within $T$ steps,\nthen the host, started in the embedded initial state at the empty seam on $x$,\nis halted at time $T$ with output $y$; this holds even for a source with no work\ntapes."
+}

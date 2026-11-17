@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.hasDerivAt_neg_standardGaussianQuantile",
+ "key": "a8bf707d30eec40e",
+ "kind": "lemma",
+ "title": "Derivative of the negative Gaussian quantile",
+ "statement": "Let $\\Phi$ be the standard Gaussian distribution function, define $Q(\\alpha)=\\inf\\{t\\in\\mathbb R: \\alpha\\leq\\Phi(t)\\}$, and set $I(\\alpha)=\\varphi(Q(\\alpha))$, where $\\varphi$ is the standard Gaussian density. For $a\\in(0,1)$, the function $p\\mapsto -Q(p)$ is differentiable at $a$ with derivative $-1/I(a)$.",
+ "hypotheses_covered": [
+  "$a\\in(0,1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi$ and $\\varphi$ be the standard Gaussian distribution function and density, and put $Q=\\Phi^{-1}$ and $I(p)=\\varphi(Q(p))$ for $0<p<1$. For every $a\\in(0,1)$, the derivative of $p\\mapsto-Q(p)$ at $a$ is $-1/I(a)$."
+}

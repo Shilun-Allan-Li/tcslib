@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.CsCounted.start",
+ "key": "c290872d3bbeda6c",
+ "kind": "theorem",
+ "title": "Initial counter state",
+ "statement": "Let $A$ be counting-sort arguments, let $kf$ assign a natural-number key to each index, and let $\u001bmu'$ be an integer-valued memory map. If the first $A.nb+1$ counter cells are zero, then the cell at address $A.cnt$ contains $0$, and for each key $t<A.nb$, the cell at address $A.cnt+(t+1)$ contains the number of indices $i<0$ for which $kf(i)=t$.",
+ "hypotheses_covered": [
+  "The memory map is zero at every counter address $A.cnt+t$ for $t<A.nb+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $A$ be a set of counting-sort parameters, with key bound $A.nb$ and counter-array\nstart $A.cnt$, and let $kf:\\mathbb{N}\\to\\mathbb{N}$ assign a key to each index. If\n$\\mu':\\mathbb{N}\\to\\mathbb{Z}$ is zero at every counter position $A.cnt+t$ for\n$t<A.nb+1$, then $\\mu'(A.cnt)=0$ and, for every $t<A.nb$, the counter at position\n$A.cnt+(t+1)$ equals the number of indices $i<0$ whose key is $t$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.ExpPoly.mem_EXP",
+ "key": "e43a1192983c9895",
+ "kind": "theorem",
+ "title": "Exponential-Polynomial Time Lies in EXP",
+ "statement": "Let $T:\\mathbb{N}\\to\\mathbb{N}$ be exponential-polynomial, and let $L$ be a language of finite binary strings in $\\mathrm{DTIME}(T)$. Then $L\\in\\mathrm{EXP}$.",
+ "hypotheses_covered": [
+  "$T$ is exponential-polynomial",
+  "$L$ is a binary-string language",
+  "$L\\in\\mathrm{DTIME}(T)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T : \\mathbb{N} \\to \\mathbb{N}$ be exponential-polynomial, i.e.\\ $T(n) \\le 2^{K(n+1)^k}$\nfor all $n$ and some constants $K, k \\in \\mathbb{N}$, and let $L$ be a language over the\nbinary alphabet in $\\mathrm{DTIME}(T)$, i.e.\\ decided by some finite multi-tape Turing machine\nwithin $c \\cdot T(n)$ steps on inputs of length $n$, for some constant $c$. Then\n$L \\in \\mathrm{EXP}$, that is, $L \\in \\mathrm{DTIME}(2^{n^{c'}})$ for some constant\n$c' \\in \\mathbb{N}$."
+}

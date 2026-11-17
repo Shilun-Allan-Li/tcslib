@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.satPairCfg_work",
+ "key": "2b20fc0c106e4469",
+ "kind": "lemma",
+ "title": "Symbol under the capture tape head",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $x$ be a Boolean input word, and let $s$ be a configuration of $M$ on $x$. For any captured word $u$, optional administrative state $q$, natural number $i\\le |x|$, integer offset $j$, and output word $o$, the symbol under the last work-tape head in the corresponding canonical pairing configuration is the content of the buffer tape for $u$ at $j$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x$ is a Boolean word",
+  "$s$ is a configuration of $M$ on $x$",
+  "$u$ is a Boolean word",
+  "$q$ is an optional administrative state",
+  "$i$ is a natural number with $i\\le |x|$",
+  "$j\\in\\mathbb Z$",
+  "$o$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite machine, $u$ a captured word, and $j \\in \\mathbb{Z}$. In every\ncanonical pairing configuration over $M$ with captured word $u$ and capture head\nat offset $j$, the symbol under the last work head is the cell of the buffer tape\nof $u$ at $j$, that is, the $j$-th bit of $u$ when $0 \\le j < |u|$ and the blank\notherwise."
+}

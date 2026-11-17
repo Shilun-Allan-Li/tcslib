@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.rt_copy_run",
+ "key": "415664397eeb7e80",
+ "kind": "theorem",
+ "title": "Copying joined fields",
+ "statement": "For every type $\\Gamma$ and natural number $m$, there is a natural-number constant $C$ such that the following holds for every input word $x$, list of words $f_1,\\ldots,f_m$ over $\\Gamma$, and starting configuration $d$ of the specified two-tape machine. If tape 0 stores the joined fields throughout offsets $-1$ through the joined-fields length, tape 1 is blank throughout that interval, and the machine starts in its designated entry state, then it reaches its exit state at some time $t\\le C(L+1)$, where $L$ is the joined-fields length. The exit state is avoided at every earlier time, both work-tape heads remain within distance $C(L+1)$ of their initial positions throughout the run, and at the final time tape 1 stores the joined fields in the interval of length $L$ beginning at its initial head position while all other tape contents and configuration data are unchanged.",
+ "hypotheses_covered": [
+  "Type $\\Gamma$",
+  "Natural number $m$",
+  "Input word $x$ over $\\Gamma$",
+  "List of words $fs$ with length $m$",
+  "Starting configuration $d$",
+  "Initial state is the designated copy entry state",
+  "Tape 0 satisfies the joined-fields record condition on offsets $-1$ through $L$",
+  "Tape 1 is blank on offsets $-1$ through $L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

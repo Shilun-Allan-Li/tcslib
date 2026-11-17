@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_goto",
+ "key": "79dc27f5a1cdf968",
+ "kind": "theorem",
+ "title": "Run rule for a goto instruction",
+ "statement": "Let $P$ be a counter program on a binary input $x$, and let $\rho$ be a register assignment, $p$ an input position, and $\\\u001bell,\\ell'\\in\\Lambda$ labels. If the instruction at $\\ell$ is to jump to $\\ell'$, then for every output string $o$, the program reaches label $\\ell'$ with registers $\\rho$, input position $p$, and output $o$ within at most one step.",
+ "hypotheses_covered": [
+  "The instruction at $\\ell$ is $\\mathsf{goto}(\\ell')$",
+  "Arbitrary register assignment $\\rho$",
+  "Arbitrary input position $p$",
+  "The claim holds for every initial output string $o$",
+  "The step bound is one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$ and $\\ell$ a label whose\ninstruction is $\\mathsf{goto}\\ \\ell'$.  Then for all registers $\\rho$ and input\npositions $p$, from label $\\ell$ with registers $\\rho$ and $p$ symbols read the\nprogram reaches label $\\ell'$ with registers $\\rho$ and $p$ symbols read within\none step, without printing anything."
+}

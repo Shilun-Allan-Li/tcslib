@@ -1,0 +1,23 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.friedgut_kalai_sharp_threshold",
+ "key": "9bda58c1ab5c95c0",
+ "kind": "theorem",
+ "title": "Sharp Threshold for Transitive Increasing Boolean Functions",
+ "statement": "There is a constant $B>0$ such that for every $n\\ge2$ and every increasing, transitively symmetric function $f:\\{0,1\\}^n\\to\\{0,1\\}$ that is nonconstant, suppose $p_c,\\varepsilon\\in\\mathbb R$ satisfy $0<p_c\\le\\tfrac12$, the biased probability that $f=1$ at $p_c$ is $\\tfrac12$, and $0<\\varepsilon<\\tfrac14$. Set $\\displaystyle\\eta=B\\frac{\\log(1/\\varepsilon)\\log(1/p_c)}{\\log n}$. If $\\eta\\le\\tfrac12$, then the biased probability that $f=1$ at $p_c(1-\\eta)$ is at most $\\varepsilon$, and at $p_c(1+\\eta)$ it is at least $1-\\varepsilon$.",
+ "hypotheses_covered": [
+  "There exists $B\\in\\mathbb R$ with $B>0$",
+  "$n\\ge2$",
+  "$f:\\{0,1\\}^n\\to\\{0,1\\}$ is increasing",
+  "$f$ is transitively symmetric under coordinate permutations",
+  "$f$ is nonconstant",
+  "$p_c,\\varepsilon\\in\\mathbb R$",
+  "$0<p_c\\le\\tfrac12$",
+  "The biased probability that $f=1$ at $p_c$ equals $\\tfrac12$",
+  "$0<\\varepsilon<\\tfrac14$",
+  "$\\eta=B\\log(1/\\varepsilon)\\log(1/p_c)/\\log n$ satisfies $\\eta\\le\\tfrac12$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exists an absolute $B>0$ such that for every $n\\ge2$, nonconstant increasing transitively symmetric $f:\\{0,1\\}^n\\to\\{0,1\\}$, $0<p_c\\le1/2$ with $\\Pr_{p_c}(f=1)=1/2$, and $0<\\varepsilon<1/4$, the number $\\eta=B\\log(1/\\varepsilon)\\log(1/p_c)/\\log n$ satisfies: if $\\eta\\le1/2$, then $\\Pr_{p_c(1-\\eta)}(f=1)\\le\\varepsilon$ and $\\Pr_{p_c(1+\\eta)}(f=1)\\ge1-\\varepsilon$."
+}

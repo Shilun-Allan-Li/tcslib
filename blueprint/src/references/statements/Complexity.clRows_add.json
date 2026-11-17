@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clRows_add",
+ "key": "3f4a558318d33d9a",
+ "kind": "lemma",
+ "title": "Concatenation of Row Streams",
+ "statement": "For any natural number $l$, any family of rows $\\mathrm{row}(n,i)$ of Boolean words indexed by $n\\in\\mathbb N$ and $i<l$, and all natural numbers $n,m$, the stream of the first $n+m$ packed rows equals the stream of the first $n$ packed rows followed by the stream of the first $m$ packed rows of the shifted family $i\\mapsto\\mathrm{row}(n+i,i)$.",
+ "hypotheses_covered": [
+  "$l$ is a natural number",
+  "$\\mathrm{row}$ assigns a Boolean word to each time and each coordinate $i<l$",
+  "$n$ and $m$ are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every row family and all counts $n$ and $m$, the stream of the first $n + m$ rows is the stream of the first $n$ rows followed by the stream of $m$ rows of the shifted family; the literal suffix is preserved."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.f2_loop_find_run",
+ "key": "53e18ffe3f01a1a7",
+ "kind": "lemma",
+ "title": "Bounded Loop Search",
+ "statement": "Let $M$ be a multi-tape Turing machine with $k$ work tapes over Boolean symbols, let $(c_j)_{j\\in\\mathbb N}$ be a sequence of configurations on a fixed Boolean input, let $A(j)$ be a Boolean-valued acceptance test, and let $P(j)$ be a Boolean word for each $j$. For natural numbers $B,N$, suppose the configuration $c_N$ is halted with empty output, and for every $j<N$ there is a time at most $B$ such that either the run from $c_j$ halts with output $P(j)$ when $A(j)$ holds, or reaches exactly $c_{j+1}$ when $A(j)$ fails. Then the run from $c_0$ halts within $NB$ steps, with output $P(i)$ for the first index $i<N$ satisfying $A(i)$, if such an index exists, and with empty output if none exists.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A multi-tape Turing machine over Boolean symbols",
+  "A sequence of configurations on a fixed Boolean input",
+  "A Boolean-valued acceptance test on natural numbers",
+  "A Boolean word assigned to each natural number",
+  "Natural numbers $B$ and $N$",
+  "At index $N$, the configuration is halted and has empty output",
+  "For each $j<N$, a time $t\\le B$ exists satisfying the stated accepted or rejected round outcome"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

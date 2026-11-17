@@ -1,0 +1,22 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.reverse_bonami_beckner_two_function",
+ "key": "fcde167e119ffad1",
+ "kind": "theorem",
+ "title": "Two-function reverse hypercontractivity",
+ "statement": "Let $p,q,\\rho\\in\\mathbb R$ satisfy $p<1$, $q<1$, $0\\le\\rho\\le1$, and $\\rho^2\\le(1-p)(1-q)$. For all nonnegative real-valued functions $f,g$ on the Boolean cube, their uniform inner product after applying the noise operator to $g$ satisfies $\\langle f,T_\\rho g\\rangle\\ge M_p(f)M_q(g)$.",
+ "hypotheses_covered": [
+  "p, q, and ρ are real",
+  "p < 1",
+  "q < 1",
+  "0 ≤ ρ",
+  "ρ ≤ 1",
+  "ρ² ≤ (1 − p)(1 − q)",
+  "f and g are real-valued functions on the Boolean cube",
+  "f is nonnegative at every cube point",
+  "g is nonnegative at every cube point"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p,q<1$, $0\\le\\rho\\le1$, and $\\rho^2\\le(1-p)(1-q)$. For all $f,g:\\{0,1\\}^n\\to[0,\\infty)$, uniform expectation satisfies $\\E[fT_\\rho g]\\ge M_p(f)M_q(g)$. For nonnegative functions $u$, the extended mean is $M_r(u)=(\\E u^r)^{1/r}$ when $r>0$; the same formula applies for $r<0$ when $u$ is positive everywhere. For positive $u$, $M_0(u)=\\exp(\\E\\log u)$; if $r\\le0$ and $u$ has a zero, $M_r(u)=0$. All expectations are uniform. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clRead_run",
+ "key": "98b5413b513f6bd9",
+ "kind": "lemma",
+ "title": "Parsing a complete encoded field",
+ "statement": "For any Boolean input word $x$, valid input-head position $p$, Boolean lists $u,w,r,o$ with $|o| \\le |w|$, start the reader in its initial scanning control with stream $u ++ \\langle w,r\\rangle$, target $o$, stream head at $|u|$, and target head at zero. After $3|w|+3$ steps it is in the completed control, with target $w$, stream head at $|u|+2|w|+2$, target head at zero, and the stream unchanged.",
+ "hypotheses_covered": [
+  "Boolean input word and valid input-head position",
+  "arbitrary stream prefix, field word, stream tail, and old target",
+  "old target length at most field length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stream prefix $u$, field word $w$, stream tail, and old target of length at most $|w|$, running the reader for $3|w| + 3$ steps from the scanning control at stream cursor $|u|$ yields the completed control, in which exactly one encoded field is consumed, the target is $w$ with its head restored to zero, the whole stream is preserved, and the stream cursor sits just past the consumed field; the empty field takes three steps."
+}

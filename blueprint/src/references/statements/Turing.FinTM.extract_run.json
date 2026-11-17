@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.extract_run",
+ "key": "dbaddf6b0d5ce725",
+ "kind": "lemma",
+ "title": "Extractor run and output",
+ "statement": "Let $x$ and $r$ be Boolean words, and write $x=p r$ for a split into a prefix $p$ and suffix $r$. For any Boolean flags and any buffered Boolean word $a$, there is a time $t \\le 3|r|+2|a|+5$ at which the pair extractor, started in its initial extraction state with input head just past $p$, buffer $a$, work head at $|a|$, and empty output, is halted. Its output is $(a b)$ when the first flag is true, followed by $c$ when the second flag is true, if $r$ decodes as the pair $(b,c)$; if $r$ does not decode, its output is empty.",
+ "hypotheses_covered": [
+  "Boolean flags first and second",
+  "Boolean words x and r",
+  "A prefix p with x = p ++ r",
+  "Boolean buffer a"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any split $x = p s$ of the input and any buffered prefix $a$, there is a\ntime $t \\le 3\\abs{s} + 2\\abs{a} + 5$ such that after $t$ steps from the\nblock-start state at position $\\abs{p}$ the extractor has halted; if $s$\ndecodes under the self-delimiting pair code as $(b,c)$, the output is $a b$\n(when the first flag is set) followed by $c$ (when the second flag is set),\nand if $s$ is not a valid pair code the output is empty."
+}

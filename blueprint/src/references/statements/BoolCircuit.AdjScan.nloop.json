@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.nloop",
+ "key": "f67618da9e509986",
+ "kind": "lemma",
+ "title": "Initial scan-loop behavior",
+ "statement": "Fix a scan task, natural numbers $n,iv,tv,B$, bit strings $w,E$, an oracle $o$, and a bit string $rest$. Let $X(n,w)=\\langle 1^n,w\\rangle$, using the self-delimiting pair encoding. Suppose the oracle answers each query $X(n,\\operatorname{bits}(p))$ with the $p$th bit of $E$, defaulting to false; the target condition holds, meaning that for the edge task the two decoded words of $X(n,w)$ are $\\operatorname{bits}(iv)$ and $\\operatorname{bits}(tv)$, and for either other task its plain decoded word is $\\operatorname{bits}(tv)$; and $|E|\\le B$. Suppose also that $E=1^n 0::rest$, and that whenever $n\\le tv$, the scan machine halts from label $gA$ with registers $(n+1,n,0)$, respecting the bound $B$ on every register throughout, and returns the bit $ans$. Then for every $j\\le n$ with $j\\le tv$, the machine halts from label $nA$ with registers $(j,j,0)$, respecting the same register bound, and returns $nAns$ if $tv<n$, and otherwise returns $ans$.",
+ "hypotheses_covered": [
+  "A scan task, $n,iv,tv,B$, bit strings $w,E,rest$, and oracle $o$",
+  "Oracle queries on $X(n,\\operatorname{bits}(p))$ return the corresponding bit of $E$, defaulting to false",
+  "The target decoded-word condition for the selected task",
+  "$|E|\\le B$",
+  "$E$ begins with $1^n0$",
+  "If $n\\le tv$, the specified run from label $gA$ halts with answer $ans$ and all registers bounded by $B$",
+  "Conclusion ranges over $j\\le n$ and $j\\le tv$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

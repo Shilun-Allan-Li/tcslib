@@ -46,7 +46,7 @@ python3 scripts/build_dep_graph.py          # refresh dep_graph.json
 | `scripts/blueprint_enumerate.py` | **Plan.** From `dep_graph.json`, emit one work unit per module listing the documentable, not-yet-covered declarations (with docstring, signature, line range, and resolved `\uses`). |
 | `.claude/agents/blueprint-writer.md` | **Write.** One subagent per module turns a work unit into LaTeX entries in the module's chapter `.tex`. Writes prose only — never edits Lean, never writes proofs. |
 | `.claude/commands/blueprint-extract.md` (`/blueprint-extract`) | **Orchestrate.** Runs the planner, fans out `blueprint-writer` agents in parallel batches, then assembles + validates. |
-| `scripts/blueprint_assemble.py` | **Assemble.** Wire newly-created chapter files into `blueprint/src/chapter/main.tex`. |
+| `scripts/blueprint_assemble.py` | **Assemble.** Validate explicit module membership in `blueprint/organization.json`, generate textbook wrappers, and normalize presentation headings. |
 | `scripts/blueprint_validate.py` | **Validate.** Cross-check every `\lean`/`\uses` against `dep_graph.json`; report orphans, dangling refs, and per-area coverage. |
 
 ## Coverage policy
@@ -156,3 +156,47 @@ The underlying graph is also queryable directly via
 ```
 
 `blueprint/.work/` is regenerable and git-ignored.
+
+## Textbook organization
+
+`organization.json` is the ordered publication manifest. Stable part/chapter IDs are
+separate from their display titles. Every local module `.tex` in `src/chapter/`
+must have exactly one explicit chapter assignment. External-project directories
+remain dataset-only under `scripts/dataset_projects.py`; they cannot be assigned.
+New local modules require an editorial assignment before assembly succeeds.
+
+Module files begin with a descriptive `\section`, their internal headings start
+at `\subsection`, and introductory prose stays beside its declarations. Generic
+Overview/Declarations headings become contextual unnumbered subsections.
+`blueprint_stub.py` and the writer use this shape for future entries. Work units
+retain `chapter_title` for compatibility and add `section_title` and
+`organization_chapter` (null means an explicit assignment is still needed).
+
+The assembler owns `src/chapter/main.tex` and the reserved `src/chapter/textbook/`
+wrapper directory. It emits `\part` groups and one `\chapter` per wrapper,
+including existing module files in manifest order. Wrappers are never enumerated
+as new mathematical modules. Nested inputs are included at their original source
+position, omitted from the wrapper, and must belong to the same chapter. Cycles,
+multiple parents, cross-chapter nesting, missing files, duplicate IDs/membership,
+and unassigned files fail before assembly writes anything.
+
+```bash
+python3 scripts/blueprint_assemble.py --check
+python3 scripts/blueprint_assemble.py
+python3 scripts/blueprint_assemble.py --sizes > blueprint/organization-sizes.json
+python3 -m unittest tests.test_blueprint_organization tests.test_blueprint_publication
+```
+
+The initial migration is recorded in `organization-baseline.json`: the original
+recursively expanded input order, headings/counts by module, non-heading payload
+hashes, and declaration-environment hash multisets. It is a historical migration
+audit, not a freeze on subsequent authorized mathematical edits. Before such edits,
+verify the initial migration with:
+
+```bash
+python3 scripts/blueprint_assemble.py --verify-preservation blueprint/organization-baseline.json
+```
+
+See `ORGANIZATION.md` for initial sizes, validation baseline, render checks and
+deferred editorial work. Assembly does not restate prose, regenerate datasets,
+write caches, edit Lean, or refresh the dependency graph.

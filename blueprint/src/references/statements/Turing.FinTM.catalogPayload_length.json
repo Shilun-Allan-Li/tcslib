@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.catalogPayload_length",
+ "key": "6c3731acf4fc2ab7",
+ "kind": "lemma",
+ "title": "Length bound for the extracted payload",
+ "statement": "For every Boolean word $x$, take the second component returned by the aligned pair parser on $x$, or the empty word if parsing is undefined. Its length is at most the length of $x$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every word $x$, the second component extracted from $x$ under the\nself-delimiting pair code (taken empty when $x$ is malformed) has length at\nmost $\\abs{x}$."
+}

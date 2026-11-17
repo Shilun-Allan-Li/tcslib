@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.UTab.run_budget",
+ "key": "226a6fb7bbe21533",
+ "kind": "theorem",
+ "title": "Exact run from a bounded execution",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $w,e$ be finite binary lists, let $\\rho:\\{0,\\ldots,10\\}\\to\\mathbb{N}$ be register values, and let $p,B,C\\in\\mathbb{N}$. Suppose that for every output list $o$ there is a time $t\\le B$ at which the 11-register program associated with $M$, started at its initial label with all registers and the input position zero and output $o$, is halted with register values $\\rho$, input position $p$, and output $o$ followed by $e$. If $B\\le C$, then after exactly $C$ steps, starting from that initial configuration with empty output, the program is halted with register values $\\rho$, input position $p$, and output $e$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$w$ and $e$ are finite binary lists",
+  "$\\rho$ assigns a natural number to each of the 11 registers",
+  "$p,B,C\\in\\mathbb{N}$",
+  "For every output prefix $o$, some run time $t\\le B$ reaches the halted configuration with registers $\\rho$, input position $p$, and output $o$ followed by $e$",
+  "$B\\le C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

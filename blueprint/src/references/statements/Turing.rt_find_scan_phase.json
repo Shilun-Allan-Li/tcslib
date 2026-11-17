@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.rt_find_scan_phase",
+ "key": "4bb6dcf0a4e8e309",
+ "kind": "theorem",
+ "title": "Host behavior during a scan phase",
+ "statement": "Let $m>0$, let $\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$, choose $a_0\\in A$ and an acceptance predicate $\\mathrm{acc}:A\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and let $j$ be an index with $0\\le j<m$. Let $a\\in A$, let $w$ be a word over $\\Gamma$, and suppose a two-work-tape configuration $d$ has forward scan state $a$ and tape 0 contains the encoding of $w$ at all offsets from $-1$ through $|w|$. Let $q$ be a combined phase and control state such that the host's redirect from scan phase $j$ with completed accumulator equal to the result of folding $\\delta$ over $w$ from $a$ leads to $q$. For every $u\\le 2|w|+2$, the host machine started with $d$ in phase $j$ agrees with the standalone scan machine for $u$ steps, with its control state tagged by phase $j$. One further step takes the host configuration to $d$ with its state replaced by $q$.",
+ "hypotheses_covered": [
+  "$m>0$",
+  "$\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$",
+  "$a_0\\in A$",
+  "$\\mathrm{acc}:A\\to\\mathrm{Bool}$",
+  "$j$ is an index less than $m$",
+  "$a\\in A$ and $w$ is a word over $\\Gamma$",
+  "$d$ is a two-work-tape configuration on input $x$",
+  "$d$ has forward scan state $a$",
+  "Tape 0 matches the word encoding at offsets from $-1$ through $|w|$",
+  "The redirect from the completed scan state in phase $j$ yields $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

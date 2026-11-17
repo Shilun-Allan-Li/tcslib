@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Codec.ct_run",
+ "key": "03bed60fc7f95469",
+ "kind": "theorem",
+ "title": "Execution of the capacity-check routine",
+ "statement": "Fix a finite nondeterministic Turing machine $N$ over Boolean symbols and a computation mode. Let $y$ be an input word, $B$ a register bound, $w$ a Boolean word, and $v$ an initial assignment of natural numbers to the $21$ registers. Suppose every register value is at most $B$, the length register equals the position register plus the length of $w$, and, at each position $i<|w|$, the input bit at the position register plus $i$ equals the $i$th bit of $w$ (with false used for out-of-range reads). Then there is an assignment $v'$ such that every register remains at most $B$, the position register does not increase, and every register other than the position and capacity registers is unchanged. The specified register program has a guarded execution from the capacity-check routine and $v$ to the state determined by whether $|w|$ is at most the binary length of the capacity register's initial value and whether the last bit of $w$ (defaulting to true when $w$ is empty) is true: it continues to the designated next routine exactly when both conditions hold, and otherwise rejects.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine over Boolean symbols",
+  "A computation mode",
+  "An input word $y$",
+  "A natural-number bound $B$",
+  "A Boolean word $w$",
+  "An assignment $v$ of natural numbers to $21$ registers",
+  "Every initial register value is at most $B$",
+  "The length register equals the position register plus $|w|$",
+  "For every $i<|w|$, the input bit at the position register plus $i$ equals the $i$th bit of $w$, using false for out-of-range reads"
+ ],
+ "confidence": "low",
+ "caveat": "The Reach predicate and its guarded-execution condition depend on a large instruction table whose informal description is not supplied.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

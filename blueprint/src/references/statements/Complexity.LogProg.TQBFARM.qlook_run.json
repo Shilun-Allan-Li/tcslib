@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.qlook_run",
+ "key": "fcc56104b2623bf4",
+ "kind": "theorem",
+ "title": "Completing the quantifier lookup",
+ "statement": "Let $x$ be a finite bit string, let $B,k,S$ be natural numbers, and let $v$ be a Boolean. If $2k\\le B$ and $S\\le B$, then the seven-register program has a run, with its specified oracle, from the first copy phase of the return procedure carrying $v$ and register values $(k,S,0,0,0,0,0)$ to the quantifier-reading state carrying $v$ and register values $(k,S,2k,0,0,0,0)$. Every configuration strictly before the endpoint satisfies the program precondition and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$v$ is a Boolean",
+  "$k,S,B$ are natural numbers",
+  "$2k\\le B$",
+  "$S\\le B$",
+  "input bit string $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string and let $B,k,S$ be natural numbers. For either Boolean value\n$v$, if $2k\\le B$ and $S\\le B$, the fixed seven-register program, with its specified\noracle, can run from the first copy phase of the return procedure carrying $v$, at depth\n$k$ and stack value $S$, to the quantifier-reading state carrying $v$, with the same\ndepth and stack value and with input pointer $2k$. The scratch registers are zero at\nboth endpoints; throughout the run, every register remains at most $B$ and every\nconfiguration satisfies the program's precondition."
+}

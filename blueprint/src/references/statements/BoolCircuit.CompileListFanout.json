@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.CompileListFanout",
+ "key": "6454b1449f7381d1",
+ "kind": "structure",
+ "title": "Multiple-root fan-out conditions",
+ "statement": "Let $n$ be a natural number, let $G$ and $E$ be finite gate lists, and let $R$ be a list of natural-number roots. Every old vertex $v$ with $n\\le v<n+|G|$ has fan-out zero in $E$, and every vertex $v\\ge n$ has fan-out at most one in $E$. Each root $r$ in $R$ with $r\\ge n$ has fan-out zero, and every root is either below $n$ or at least $n+|G|$. Every vertex $v$ with $n+|G|\\le v<n+|G|+|E|$ that is not in $R$ has fan-out exactly one in $E$.",
+ "hypotheses_covered": [
+  "natural number n",
+  "old gate list G and extension gate list E",
+  "list of roots R",
+  "old vertices in [n,n+|G|) have fan-out zero in E",
+  "every vertex at least n has fan-out at most one in E",
+  "each listed root at least n has fan-out zero",
+  "each listed root is below n or at least n+|G|",
+  "new vertices in [n+|G|, n+|G|+|E|) not listed as roots have fan-out one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

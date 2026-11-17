@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.StepBlock.seekRouterTM",
+ "key": "2a1edb7f6bdf5ad6",
+ "kind": "def",
+ "title": "Seek router machine",
+ "statement": "For each natural number $k$, define a deterministic Turing machine with $k+2$ work tapes, Boolean symbols, and seek-control states, initially in the observe state. It computes the rank of the current input symbol together with the symbols under the first $k$ work-tape heads; it then advances the summary-tape head and examines its scanned symbol. If that symbol is true, it advances the summary-tape head again and requests the computed rank with the remaining rank set to $3^{k+1}-1$ and the Boolean flag false. If it is not true, it finishes when the computed rank is zero, and otherwise requests the rank one smaller with the flag true. In request and done states it leaves the input head stationary and keeps the same control state.",
+ "hypotheses_covered": [
+  "$k$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

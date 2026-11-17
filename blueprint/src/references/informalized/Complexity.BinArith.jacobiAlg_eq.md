@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean :: Complexity.BinArith.jacobiAlg_eq -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Correctness of the Jacobi algorithm
+
+**Claim.** For a bit string $z$ whose second decoded component represents an odd integer, the Jacobi algorithm outputs the binary representation of one plus the Jacobi symbol of the integers represented by the decoded components of $z$.
+
+**Proof.** Initialize the state with the two decoded components of $z$ and a neutral sign. The length bounds on the decoded components and the initialization identity for the sign show that this state satisfies the Jacobi invariant. Along the iteration, the invariant is preserved by one Jacobi step. Meanwhile, the Jacobi measure starts at most $2(|z|+1)$: each component has length at most $|z|$, so each represented integer is less than the corresponding power of two, and the stronger bound on the sum of the component lengths bounds their product's binary size by $|z|$. Since every positive measure decreases strictly and a zero measure fixes the state, the measure-iteration principle (Complexity.BinArith.iterate_measure_eq_zero) shows that after the prescribed number of steps the measure is zero; invariant preservation (Complexity.BinArith.iterate_invariant) supplies the invariant at that final state. Write that state as the encoding of $A,N,s$. Oddness of the second projection of $z$ implies $N$ is odd. Zero measure forces $A=0$, because the product has size zero and $N$ is positive. The invariant's equality then says that the sign encoded by $s$ is the Jacobi symbol of the original projections. The output routine tests whether $N=1$: in that case the sign determines whether the encoded output is $0$ or $2$; otherwise the Jacobi symbol with zero numerator is zero, and the output is $1$. In each case this is the binary representation of one plus the original Jacobi symbol, which is exactly the claimed algorithm output.
+
+**Key facts.** `Complexity.length_pairFstD_le`, `Complexity.length_pairSndD_le`, `Complexity.pairFstD_pairEncode`, `Complexity.pairSndD_pairEncode`, `Complexity.BinArith.jacInv_step`, `Complexity.BinArith.jacMeasure_step`, `Complexity.LogProg.bitsVal_lt_two_pow`, `Complexity.length_pair_components_le`, `Complexity.BinArith.iterate_measure_eq_zero`, `Complexity.BinArith.iterate_invariant`.

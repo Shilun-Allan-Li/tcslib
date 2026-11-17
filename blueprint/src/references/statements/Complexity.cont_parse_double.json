@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.cont_parse_double",
+ "key": "91e74eed18f25fe3",
+ "kind": "lemma",
+ "title": "Decoding one doubled bit",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let $y$, $pre$, $rest$, and $x$ be Boolean words with $y=pre \\, b b \\, rest$ for a bit $b$. Starting in parser state $0$ with input head at position $|pre|+1$, input buffer $x$, empty choice buffer, and the other loader tapes and output as prescribed by the loader configuration, after two steps the machine is in parser state $0$ with input head at position $|pre|+3$ and input buffer $x b$; its choice buffer remains empty and the other loader tapes and output are as prescribed by that resulting loader configuration.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the Boolean alphabet",
+  "$y$, $pre$, $rest$, and $x$ are Boolean words",
+  "$b$ is a Boolean bit",
+  "$y=pre \\, b b \\, rest$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine and suppose the physical input has the form $y = p\\,b\\,b\\,r$ for a bit $b$. From the initial parser state at position $|p|+1$ with input buffer $x$, exactly two steps of the pair-loader machine append $b$ to the input buffer and move to position $|p|+3$, leaving the choice buffer empty and the output silent."
+}

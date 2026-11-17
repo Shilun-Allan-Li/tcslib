@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.rademacher_mgf_le",
+ "key": "3849d14f0e2c14e4",
+ "kind": "lemma",
+ "title": "Exponential moment bound for a sign sum",
+ "statement": "Let $n\\in\\mathbb N$, let $a_i\\in\\mathbb R$ for $i\\in\\mathrm{Fin}\\,n$ satisfy $\\sum_i a_i^2=1$, and let $t\\in\\mathbb R$. For a uniform Boolean vector $X\\in\\{0,1\\}^n$, the exponential moment satisfies\n\\[\\mathbb E\\exp\\!\\left(t\\sum_i a_i\\sigma(X_i)\\right)\\leq\\exp(t^2/2),\\]\nwhere $\\sigma$ is the sign encoding.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "Real coefficients $a_i$ indexed by $\\mathrm{Fin}\\,n$",
+  "The sum of squared coefficients equals $1$",
+  "$t\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\in\\mathbb N$ and let $(a_i)_{i<n}$ be real coefficients with $\\sum_{i<n}a_i^2=1$.\nFor the linear form $L(x)=\\sum_{i<n}a_i(-1)^{x_i}$ on $\\{0,1\\}^n$, with uniform expectation $\\mathbb E[h]=2^{-n}\\sum_{x\\in\\{0,1\\}^n}h(x)$, every $t\\in\\mathbb R$ satisfies\n\\[\n\\mathbb E[e^{tL(x)}]\\le e^{t^2/2}.\n\\]"
+}

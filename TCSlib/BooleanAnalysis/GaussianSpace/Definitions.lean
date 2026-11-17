@@ -55,6 +55,18 @@ noncomputable def rotationSensitivity {n : ℕ} (A : Set (Fin n → ℝ)) (θ : 
     {z : (Fin n → ℝ) × (Fin n → ℝ) |
       ¬ (z.1 ∈ A ↔ (fun i => Real.cos θ * z.1 i + Real.sin θ * z.2 i) ∈ A)}).toReal
 
+/-- Rotation sensitivity is the real probability of disagreement between the
+original Gaussian vector and its rotated copy. [OD14, Def. 11.42] -/
+lemma rotationSensitivity_eq {n : ℕ} (A : Set (Fin n → ℝ)) (θ : ℝ) :
+    rotationSensitivity A θ =
+      (((Measure.pi fun _ : Fin n => standardGaussianMeasure).prod
+        (Measure.pi fun _ : Fin n => standardGaussianMeasure))
+        {z : (Fin n → ℝ) × (Fin n → ℝ) |
+          ¬ (z.1 ∈ A ↔ (fun i => Real.cos θ * z.1 i + Real.sin θ * z.2 i) ∈ A)}).toReal :=
+  (by
+  rfl
+)
+
 /-- The Gaussian surface area of a Borel set, with values in `[0,∞]`, is
 `sqrt (π/2)` times its infinitesimal rotation sensitivity. [OD14, Def. 11.48]
 We use an extended nonnegative lower limit to define it before proving existence of

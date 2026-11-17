@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/Adder.lean :: BoolCircuit.gatesAcyclic_adderGates -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Acyclicity of the Ripple-Carry Adder
+
+**Claim.** For every natural number $n$, the gate list formed by the ripple-carry construction, including its two initial constant gates, $n/3$ bit blocks, and two final gates, is acyclic.
+
+**Proof.** Split the adder list into the partial adder list and its two final gates. Acyclicity under concatenation says it suffices to prove acyclicity of the partial list and of the final gates with the index bound shifted by the partial list’s length (gatesAcyclic_append). The partial-list theorem gives the first part because $3\floor{n/3}\le n$ (gatesAcyclic_adderGatesUpTo). For the final gates, the carry and accumulator indices are below the bound $n+2+15\floor{n/3}$ (cinIdx_lt and accIdx_lt); the explicit final gate inputs then satisfy the required position bounds by arithmetic.
+
+**Key facts.** `BoolCircuit.gatesAcyclic_append`, `BoolCircuit.gatesAcyclic_adderGatesUpTo`, `BoolCircuit.cinIdx_lt`, `BoolCircuit.accIdx_lt`.

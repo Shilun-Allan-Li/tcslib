@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteTensorization.norm_tensorization",
+ "key": "1c7a40bcd02fedd9",
+ "kind": "theorem",
+ "title": "Tensorization of norm contractions",
+ "statement": "Let $n$ be a natural number, let each $\\Omega_i$ be finite, and let $w_i:\\Omega_i\\to\\mathbb R$ and $k_i:\\Omega_i\\times\\Omega_i\\to\\mathbb R$ be nonnegative. Let $p,q\\in\\mathbb R$ satisfy $1\\le p$ and $1<q$. Suppose that for every coordinate $i$ and every $h:\\Omega_i\\to\\mathbb R$, $\\left(\\sum_y w_i(y)\\left|\\sum_x k_i(y,x)h(x)\\right|^q\\right)^{1/q}\\le\\left(\\sum_xw_i(x)|h(x)|^p\\right)^{1/p}$. Then for every real-valued $f$ on $\\prod_i\\Omega_i$, $\\left(\\sum_y\\left(\\prod_iw_i(y_i)\\right)\\left|\\sum_x\\left(\\prod_i k_i(y_i,x_i)\\right)f(x)\\right|^q\\right)^{1/q}\\le\\left(\\sum_x\\left(\\prod_iw_i(x_i)\\right)|f(x)|^p\\right)^{1/p}$.",
+ "hypotheses_covered": [
+  "n is a natural number",
+  "Each coordinate set Ω_i is finite",
+  "Coordinate weights w_i are nonnegative",
+  "Coordinate kernels k_i are nonnegative",
+  "1 ≤ p",
+  "1 < q",
+  "The stated one-coordinate norm inequality holds for every coordinate and every real-valued function on that coordinate set",
+  "f is real-valued on the product of the coordinate sets"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Omega_i$ be finite sets, $w_i(a)\\ge0$ weights, and $k_i(y,x)\\ge0$ kernels for $i\\in[n]$. For $p\\ge1$ and $q>1$, suppose $\\|\\sum_xk_i(\\,\\cdot\\,,x)h(x)\\|_{q,w_i}\\le\\|h\\|_{p,w_i}$ for every coordinate $i$ and real $h$. Then the product operator $Tf(y)=\\sum_x\\prod_i k_i(y_i,x_i)f(x)$ satisfies $\\|Tf\\|_{q,w}\\le\\|f\\|_{p,w}$ for every real $f$ on $\\prod_i\\Omega_i$, with $w(x)=\\prod_iw_i(x_i)$ and $\\|h\\|_{s,w}=(\\sum_xw(x)|h(x)|^s)^{1/s}$."
+}

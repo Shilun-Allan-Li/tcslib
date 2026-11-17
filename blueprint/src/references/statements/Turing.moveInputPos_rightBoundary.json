@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.moveInputPos_rightBoundary",
+ "key": "4d4e8f6c08eba0f0",
+ "kind": "lemma",
+ "title": "Right move at the right boundary",
+ "statement": "For every $n\\in\\mathbb{N}$, moving the input head one position to the right from position $n+1$, the rightmost of the $n+2$ allowed positions, leaves it at position $n+1$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On an input of length $n$, attempting to move the input head right (by the sign $1$)\nfrom the rightmost position $n + 1$ results in no movement: the clamped move of $n + 1$\nby $1$ is again $n + 1$."
+}

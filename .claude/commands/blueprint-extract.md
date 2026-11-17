@@ -70,8 +70,9 @@ After all batches complete:
 ```bash
 cd BASE && python3 scripts/blueprint_assemble.py
 ```
-This appends `\input{chapter/...}` lines for any newly created chapter files. Report what
-was wired in.
+This assembles chapter wrappers in `blueprint/organization.json` order. Assign new
+local modules explicitly in that manifest first: unmapped modules fail assembly.
+Report the new membership and assembly result.
 
 ### 5. Validate
 ```bash

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.StepBlock.recordSkipTM_path",
+ "key": "6b6fb59b41908f2d",
+ "kind": "lemma",
+ "title": "Path of the Recording and Skip Machine",
+ "statement": "Let $k,n$ be natural numbers, let $x$ be a finite Boolean word, and let $d$ be a configuration of the recording machine with $k+2$ work tapes and Boolean symbols. Let $b$ assign a bit to each of the $4k+4$ record positions, and let $s$ be either an index in $\\\\{0,\\ldots,n-1\\}$ or absent. Suppose $d$ is in the recording machine's initial state, its table tape contains $b(i)$ at the cell offset by $i$ from its head for each record position $i$, and the cells immediately following the record contain the bit serialization of $s$. For every natural number $u\\le 4k+5+|\\operatorname{optStateBits}(s)|$, after $u$ steps of the recording-and-skip machine the input-head position, all work-tape contents, and output are unchanged; each work-tape head has moved by $\\min(u,4k+4)+\\max(u-(4k+5),0)$ on the table tape and by zero on every other tape. If $u<4k+5+|\\operatorname{optStateBits}(s)|$, the machine is not in the tagged successor phase with either done value.",
+ "hypotheses_covered": [
+  "Natural numbers $k,n$",
+  "Finite Boolean word $x$",
+  "Configuration $d$ with $k+2$ work tapes and record states",
+  "Bit assignment to the $4k+4$ record positions",
+  "Optional index $s\\in\\mathrm{Fin}(n)$",
+  "$d$ has the recording machine's initial state",
+  "Record cells on the table tape contain their assigned bits",
+  "Cells following the record contain the serialization of $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

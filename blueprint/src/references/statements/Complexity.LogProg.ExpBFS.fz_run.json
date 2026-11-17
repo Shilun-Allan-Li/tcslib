@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.fz_run",
+ "key": "c9a8cc676b7a89b2",
+ "kind": "theorem",
+ "title": "Reset Before the Final Scan",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $x$ be a finite Boolean word, let $\\mathrm{orc}$ assign a Boolean answer to each of four indices and each finite Boolean word, and let $M\\colon\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory marking. For every machine state $S$ whose 17 register values are each at most $B$, there is a finite run from the reset stage before the final scan, with registers given by $S$, memory $M$, and memory head at $0$, to the final-scan preparation stage, with the registers $U,V,w,K,B_s$ set to zero, all other registers unchanged, memory still $M$, and head still at $0$. At every time strictly before the endpoint, the register and instruction safety conditions hold, and the memory head lies between $0$ and $P$, inclusive.",
+ "hypotheses_covered": [
+  "Every register value in the machine state S is at most B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P$ be natural numbers, let an oracle assign Boolean answers to each of four\nindices and each Boolean word, let $x$ be a Boolean word, and let $M:\\mathbb\nZ\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory marking. For every machine state $S$\nwhose registers are all at most $B$, the machine reaches, in finitely many steps, the\nfinal-scan preparation state with the same memory marking and head at $0$, and with\n$U,V,w,K,B_s$ reset to zero while all other registers retain their values from $S$. At\nevery time strictly before arrival, all registers are at most $B$, the current\ninstruction's required safety condition holds, and the memory head lies between $0$ and\n$P$."
+}

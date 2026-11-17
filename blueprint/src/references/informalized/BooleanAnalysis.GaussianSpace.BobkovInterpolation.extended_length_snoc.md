@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Tensorization.lean :: BooleanAnalysis.GaussianSpace.BobkovInterpolation.extended_length_snoc -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Length under last-coordinate restriction
+
+**Claim.** For a function on the $n+1$-dimensional Boolean cube and an auxiliary tuple of functions, the squared contributions from all derivatives and auxiliary values at $(x,b)$ reorganize into the last-coordinate derivative term and the squared length of the restricted data; consequently the two displayed square roots are equal.
+
+**Proof.** Apply the derivative decomposition under last-coordinate restriction: the sum of squares of all $n+1$ derivatives at $(x,b)$ is the sum of squares of the first $n$ derivatives of the restriction, plus the square of the last-coordinate half-difference (`sum_sq_derivative_snoc`). Next, the squared length of the combined vector is the sum of squares of those first $n$ derivatives and the restricted auxiliary values (`sum_sq_lengthVector`). Substituting these identities makes the two radicands identical; the remaining rearrangement is the distributive and associative law for real addition.
+
+**Key facts.** `BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc`, `BooleanAnalysis.GaussianSpace.BobkovInterpolation.sum_sq_lengthVector`.

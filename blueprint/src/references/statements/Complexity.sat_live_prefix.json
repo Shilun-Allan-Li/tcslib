@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.sat_live_prefix",
+ "key": "a1497eb9509f6626",
+ "kind": "lemma",
+ "title": "Liveness of run prefixes",
+ "statement": "Let $k\\in\\mathbb{N}$, let $S$ be a state type, let $x$ be a binary string, let $M$ be a $k$-work-tape Turing machine over the binary alphabet with states in $S$, and let $c$ be a configuration on input $x$. If the machine has not halted after $t$ steps from $c$, then it has not halted after any $u\\le t$ steps from $c$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$",
+  "$S$ is a state type",
+  "$x$ is a binary string",
+  "$M$ is a $k$-work-tape machine over binary symbols with states in $S$",
+  "$c$ is a configuration on input $x$",
+  "the machine has not halted at time $t$ from $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a multi-tape machine is live (not halted) after $t$ steps from a\nconfiguration, then it is live after every earlier number of steps."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.StepBlock.seekTM_request",
+ "key": "db736ef9f1e3a9ff",
+ "kind": "lemma",
+ "title": "Request processing in the seek machine",
+ "statement": "Let $k,n$ be natural numbers, let $x$ be a finite Boolean input, let $d$ be a configuration of the record machine, and let $a$ be an action for $k$ work tapes and $n+1$ states. Let $rank$ and $rest$ be indices less than $3^{k+1}$, and let $last$ be a Boolean. Suppose the state of $d$ is the record machine's initial state and, at every position from the table head through the length of the action's Boolean encoding, the table tape contains that encoding. After the seek machine runs for the encoding length plus three steps from the request configuration, it reaches the configuration with the table head advanced by that length and control set to the successor of the request specified by $rank$, $rest$, and $last$. Before that time its state is never the terminal control state; throughout those steps, the input-head position, tape contents, output, and all work-tape head positions other than the table head remain unchanged.",
+ "hypotheses_covered": [
+  "$d$ is a configuration on a Boolean input",
+  "$a$ is an action for $k$ work tapes and $n+1$ states",
+  "$rank,rest<3^{k+1}$",
+  "$last$ is Boolean",
+  "$d$ has the record machine's initial state",
+  "the table tape contains the action encoding at every position in its encoded length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

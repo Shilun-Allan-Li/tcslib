@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.contDiff_one_integral_gaussianPDFReal_mean",
+ "key": "3b2822b69e88ca48",
+ "kind": "lemma",
+ "title": "Differentiability of a Gaussian average",
+ "statement": "Let $f:\\mathbb R\\to\\mathbb R$ be measurable and satisfy $|f(z)|\\le 1$ for every $z\\in\\mathbb R$. For every variance $v>0$, the function $m\\mapsto\\int_{\\mathbb R}p_v(m,z)f(z)\\,dz$ is continuously differentiable, where $p_v(m,z)$ is the density at $z$ of the Gaussian distribution with mean $m$ and variance $v$.",
+ "hypotheses_covered": [
+  "$f$ is measurable.",
+  "$|f(z)|\\le 1$ for every real $z$.",
+  "The variance $v$ is nonzero (equivalently, $v>0$)."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $v>0$ and $p_v(c,z)=(2\\pi v)^{-1/2}\\exp(-(z-c)^2/(2v))$. For measurable $f:\\mathbb R\\to\\mathbb R$ with $|f|\\le1$, the function $c\\mapsto\\int p_v(c,z)f(z)\\,dz$ is continuously differentiable on $\\mathbb R$."
+}

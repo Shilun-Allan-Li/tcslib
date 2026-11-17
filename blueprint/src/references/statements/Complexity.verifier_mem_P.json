@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.verifier_mem_P",
+ "key": "1105fa8db07d0ebf",
+ "kind": "lemma",
+ "title": "Polynomial-time indicators define a language in P",
+ "statement": "Let $V$ be a language of bit strings. If the function that sends each bit string $x$ to the one-bit string indicating whether $x\\in V$ is polynomial-time computable, then $V$ belongs to $\\mathsf{P}$.",
+ "hypotheses_covered": [
+  "V is a language of bit strings",
+  "the one-bit indicator function of V is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $V \\subseteq \\{0,1\\}^{*}$ be a language and let $\\mathbf{1}_V(x)$ be the bit\n$1$ if $x \\in V$ and $0$ otherwise. If the map sending a binary string $x$ to the\none-bit string $\\mathbf{1}_V(x)$ is polynomial-time computable, i.e.\\ some finite\nmulti-tape Turing machine over the binary alphabet computes it within $D(n+1)^d$\nsteps on every input of length $n$ for some constants $D, d$, then\n$V \\in \\mathsf{P}$."
+}

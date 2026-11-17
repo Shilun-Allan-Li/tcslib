@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitFind_eq",
+ "key": "375f8ccccf66e1f3",
+ "kind": "lemma",
+ "title": "Orbit search equals arithmetic search",
+ "statement": "For natural numbers $C,e$ and every Boolean word $w$, searching the indices from $0$ through $|w|$ for the first index at which the split acceptance test holds on the corresponding iterate of the split step gives the same result as the arithmetic search for the least $i\\in\\{0,\\ldots,|w|\\}$ satisfying $i+C(i+1)^e=|w|$, with no result when no such index exists.",
+ "hypotheses_covered": [
+  "$C,e\\in\\mathbb N$",
+  "$w$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $C$ and $e$ and every word $w$, searching the indices\n$0, \\dots, \\abs{w}$ for the first $i$ at which the split-acceptance test\nsucceeds on the $i$-th iterate of the split step returns exactly the\narithmetic split search at parameters $C$, $e$, and $\\abs{w}$, i.e.\\ the\nleast $i$ with $i + C\\,(i+1)^{e} = \\abs{w}$ when one exists and nothing\notherwise."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "LMN.TreeCircuit.exists_node_of_depth_ge_one",
+ "key": "b1c75529319c2364",
+ "kind": "lemma",
+ "title": "Positive depth implies an internal gate",
+ "statement": "Let $m$ be a natural number and let $c$ be a Boolean circuit on $m$ variables. If the depth of $c$ is at least $1$, then there are a Boolean gate type and a list of child circuits such that $c$ is the node formed from that gate type and those children.",
+ "hypotheses_covered": [
+  "$m$ is a natural number",
+  "$c$ is a Boolean circuit on $m$ variables",
+  "$1 \\leq \\mathrm{depth}(c)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a Boolean circuit whose depth is at least $1$. Then $c$ is not a literal: it\nis an internal gate, so there exist a Boolean flag $\\mathit{isAnd}$ and a list $cs$ of\nchild circuits for which $c$ is the node with gate type $\\mathit{isAnd}$ applied to the\nchildren $cs$."
+}

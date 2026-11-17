@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.depth3_second_stage_bound",
- "key": "dbcb7983b0ef185b",
+ "key": "a360a62dc9dd01c8",
  "kind": "lemma",
  "title": "Second-stage switching bound for an AND of DNFs",
  "statement": "Let $f:\\{0,1\\}^n\\to\\{0,1\\}$ be a Boolean function on $n\\ge 1$ variables, and write $D(h)$ for the decision-tree depth of a Boolean function $h$, i.e. the least depth of a decision tree computing it. Suppose $f$ is the conjunction $f=g_1\\wedge\\cdots\\wedge g_{s_2}$ of DNF formulas $g_1,\\dots,g_{s_2}$, meaning $f(x)=1$ exactly when $g_i(x)=1$ for every $i$. Fix a restriction $\\rho_1$ on the $n$ variables such that each restricted gate satisfies $D(g_i\\!\\restriction\\!\\rho_1)\\le l$, where $l\\ge 1$, and let $t$ be a natural number. Suppose $0<p_2\\le \\tfrac{1}{40l}$ (so in particular $p_2\\le 1$), and let $\\rho_2$ be a Bernoulli($p_2$) random restriction — each variable independently left free with probability $p_2$ and fixed to $0$ or $1$ with probability $(1-p_2)/2$ each. Writing $\\rho_1\\circ\\rho_2$ for the composite restriction that applies $\\rho_1$ first and then $\\rho_2$ on the coordinates left free by $\\rho_1$, we have\n\\[\n\\Pr_{\\rho_2}\\!\\big[\\, D\\big(f\\!\\restriction\\!(\\rho_1\\circ\\rho_2)\\big) > t \\,\\big]\\;\\le\\;\\left(\\tfrac12\\right)^{t}+\\exp\\!\\big(-n\\,p_2/3\\big).\n\\]",

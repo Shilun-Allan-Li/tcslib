@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.taut_syntax_unary",
+ "key": "7b9e1ef6a3bb60b0",
+ "kind": "lemma",
+ "title": "Syntax scan from the unary state",
+ "statement": "For every finite binary string $x$, let $(k,s)$ be the result of removing its maximal initial run of $1$s. The scan from the unary-index state accepts $x$ exactly when $s$ begins with $0$ followed by a bit $b$, and the scan from the clause-level state accepts the remaining suffix after those two bits; otherwise it rejects.",
+ "hypotheses_covered": [
+  "$x$ is a finite binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "For every binary string $x$, write $x = 1^k s$ where $s$ is the suffix left by the\nleading-ones scanner. The six-state formula syntax scan from the unary-index state\naccepts $x$ if and only if $s = 0\\,b\\,r$ for some bit $b$ and string $r$ and the scan\nfrom the clause-level state accepts $r$; if $s$ has fewer than two bits or starts\nwith $1$, the scan rejects."
+}

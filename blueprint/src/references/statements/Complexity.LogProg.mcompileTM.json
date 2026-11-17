@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.mcompileTM",
+ "key": "eda73758fc3195d6",
+ "kind": "def",
+ "title": "Compilation with an added memory tape",
+ "statement": "Let $A$ assign memory-capable instructions to program nodes, let $l_0$ be an initial node, let $D$ be a Boolean-alphabet machine with $k_D$ work tapes and state set $SD$, and let $q_0$ assign an initial state of $D$ to each of $d$ decider indices. The compiled machine has $m+k_D+1$ work tapes and states that record a program node and phase together with the decider's simulation data. It starts at $(l_0,\\mathrm{start})$; at each step it executes a memory instruction selected by the memory selector when one is available, and otherwise uses the compiled register-program and decider transition.",
+ "hypotheses_covered": [
+  "Natural numbers $m,d,k_D$",
+  "Program-node and decider-state types $\\Lambda,SD$",
+  "An instruction assignment $A\\colon\\Lambda\\to\\mathrm{MIns}(m,d,\\Lambda)$",
+  "An initial program node $l_0$",
+  "A Boolean-alphabet machine $D$ with $k_D$ work tapes and states $SD$",
+  "A state assignment $q_0\\colon\\mathrm{Fin}(d)\\to SD$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet uses the constructions `mop`, `liftAct`, `ctr`, and `armProg` without giving their defining descriptions, so the transition rule can only be summarized at a high level.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Randomized.Matching.inBPP_BipartitePerfectMatching",
+ "key": "fa98636f05582784",
+ "kind": "theorem",
+ "title": "Bipartite matching is in BPP",
+ "statement": "The language of encodings of bipartite graphs that have a perfect matching belongs to BPP under the given verifier model. Explicitly, there are a Boolean verifier $M$ and natural numbers $a,k$ such that the verifier is efficient according to that model, and for every input word $x$, if $x$ is in the language then a uniformly random string of $a(|x|+1)^k$ bits makes $M$ accept with probability at least $2/3$; if $x$ is not in the language, such a random string makes $M$ reject with probability at least $2/3$.",
+ "hypotheses_covered": [
+  "The language is the set of encodings of bipartite graphs with a perfect matching",
+  "There exist a Boolean verifier and natural numbers $a,k$",
+  "The verifier satisfies the efficiency predicate of the polynomial-time verifier model",
+  "For every input word in the language, acceptance probability is at least $2/3$ using $a(|x|+1)^k$ random bits",
+  "For every input word outside the language, rejection probability is at least $2/3$ using $a(|x|+1)^k$ random bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

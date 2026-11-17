@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.MultiTapeTM.step_output",
+ "key": "606917958f35db4e",
+ "kind": "lemma",
+ "title": "Output appended in one step",
+ "statement": "Let $M$ be a Turing machine and let $c$ be a configuration for an input string. After one step from $c$, the output string is the output string of $c$ with the symbol emitted by that step appended, if a symbol is emitted; if none is emitted, the output string is unchanged.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A machine with symbol alphabet and state set",
+  "An input string and configuration $c$ for that input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every multi-tape Turing machine $M$ and configuration $c$, the output\ncomponent after one step of $M$ from $c$ equals the output of $c$ followed by\nthe symbol emitted by that step, if any (and equals the output of $c$\nunchanged when no symbol is emitted)."
+}

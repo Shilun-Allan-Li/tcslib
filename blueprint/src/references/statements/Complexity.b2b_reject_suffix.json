@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2b_reject_suffix",
+ "key": "c0b99fa8b147d9fc",
+ "kind": "theorem",
+ "title": "Rejecting round suffix",
+ "statement": "Let $M_V,M_I,M_P$ be finite Turing machines over the Boolean alphabet, and let $x,u,v$ be Boolean words such that the fixed-width increment of $u$ is $v$ and $|v|=|u|$. Start the associated round-body machine in its clearing phase with its first work tape storing $u$, its second storing $x$ followed by $u$, all other tapes blank, input-head position $1$, and the specified initial work-head positions at zero. There is a positive time $T$ at which it reaches the test-anchor configuration with first tape storing $v$, all other tapes blank, input-head position $1$, and the specified work-head positions zero; at every earlier time it is neither in the test-anchor state nor in the test phase's true-verdict state. At every time through $T$, every work-tape head position has absolute value at most $|x|+|u|+1$.",
+ "hypotheses_covered": [
+  "$M_V,M_I,M_P$ are finite Turing machines over the Boolean alphabet",
+  "$x,u,v$ are Boolean words",
+  "The fixed-width increment of $u$ is $v$",
+  "$|v|=|u|$"
+ ],
+ "confidence": "low",
+ "caveat": "The exact phase-state and tape roles come from specialized machine constructions; the statement summarizes the specified configurations and bounds.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

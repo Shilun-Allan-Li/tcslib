@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.RoundContract.orbit_round",
+ "key": "feea7aa5d35ed34f",
+ "kind": "theorem",
+ "title": "Rounds Along a Round Orbit",
+ "statement": "Let $M$ be a $k$-tape Turing machine with state set $S$, let $a\\in S$, let $E$ be a set of optional states, and let $R$ be a round contract for $M$ with anchor $a$ and escape set $E$. Suppose $c$ starts in state $a$, the precondition holds at every orbit configuration with index $r<n$, and each round endpoint with $r+1<n$ returns to state $a$. Then for every $r<n$, the run from orbit configuration $r$ to orbit configuration $r+1$ is a round of duration prescribed by $R$, with endpoint in the anchor state or $E$, no halting, anchor, or escape state at strictly intermediate positive times, and all work-tape head positions within the coordinatewise bounds given by the minimum and maximum of the contract bounds at orbit indices below $n$ together with the head positions at orbit index $n$.",
+ "hypotheses_covered": [
+  "A $k$-tape machine $M$ with state set $S$",
+  "Anchor state $a$ and escape set $E$",
+  "A round contract $R$ for $M$, $a$, and $E$",
+  "The initial configuration $c$ has state $a$",
+  "The precondition holds at every orbit index $r<n$",
+  "Every round endpoint with $r+1<n$ has state $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape machine and let $R$ be a round contract with anchor $a$ and\nescape set $E$. Suppose $c$ starts in state $a$, the round precondition holds at each\norbit configuration with index $r<n$, and each round endpoint with $r+1<n$ returns to\n$a$. Then for every $r<n$, the transition from orbit configuration $r$ to orbit\nconfiguration $r+1$ is a round: it starts at $a$, has positive duration given by the\ncontract, ends at the anchor or in $E$, and has no intermediate state in\n$\\{\\text{halted},a\\}\\cup E$. Throughout that round, every work-head position lies in the\ncoordinatewise interval whose lower and upper bounds are the minima and maxima,\nrespectively, of the contract bounds at orbit indices below $n$ together with the head\npositions at orbit index $n$."
+}

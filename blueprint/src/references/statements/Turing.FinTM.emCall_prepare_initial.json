@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emCall_prepare_initial",
+ "key": "ede7f2c96adc69f0",
+ "kind": "lemma",
+ "title": "Initial prepared configuration",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $\\mathrm{emit}$ be a Boolean, and let $x$ and $\\mathrm{arg}$ be Boolean words. The embedded evaluator configuration obtained from the initial configuration of the right-boundary wrapper of the tracked evaluator of $M$ on $\\mathrm{arg}$, with the virtual-input tag set to true and its head at position $1$, equals the initial call configuration whose first work tape stores $\\mathrm{arg}$ and whose other work tapes are blank, with every work-tape head at the origin and empty output.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$\\mathrm{emit}$ is a Boolean",
+  "$x$ and $\\mathrm{arg}$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every mode, input word, and argument word $a$: the identity relocation of the\nprepared evaluator's entry configuration on $a$ equals the clean-call controller's\ncanonical entry seam, whose first work tape holds $a$ with all other tapes blank, heads\nat their origins, and empty output."
+}

@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.StepBlock.loopTM_run",
+ "key": "84672b7f410cf620",
+ "kind": "theorem",
+ "title": "Bounded Simulation of Repeated Steps",
+ "statement": "Let $k,n\\in\\mathbb N$, let $x$ be a finite binary input, let $M$ be a $k$-tape machine with binary work tapes and states indexed by $\\{0,\\ldots,n\\}$, and let $c$ be one of its configurations whose state is present. Let $d$ be a configuration of the round machine on $x$, at the live entry, representing $c$ and the transition table of $M$. Let $w$ be a finite binary word, let $ct:\\mathbb Z\\to\\{\\text{absent},0,1\\}$ be a tape and $cp\\in\\mathbb Z$ a head position, and suppose that for every integer $p$ with $-1\\le p\\le |w|$, the tape cell at $cp+p$ contains the symbol of $w$ at position $p$ (with positions outside the word blank). If the binary numeral whose digits are the bits of $w$ has value $t$, then there exist a time $T$, a configuration $e$, and a tape $ct'$ such that $T\\le t\\,50(L+1)+4t+2|w|+2$, where $L$ is the encoded transition-table length; moreover, whenever the original machine has halted by a time $t'\\le t$, one has $T\\le t'\\,50(L+1)+4t'+2|w|$. The configuration $e$ represents the configuration of $M$ after $t$ steps and has the same output as $d$. The tape $ct'$ agrees with $ct$ outside the interval of cells from $cp$ through $cp+|w|-1$. At time $T$, the counter-loop machine, started from the specified initial counter-loop configuration built from $d$, $ct$, and $cp$, is at the configuration built from $e$ and $ct'$, with state determined by whether $M$'s configuration after $t$ steps has a present state: it is the completed state if present, and the escape state otherwise. At every time $u<T$, its state is neither the completed state nor the escape state.",
+ "hypotheses_covered": [
+  "Natural parameters $k,n$",
+  "Finite binary input $x$",
+  "Machine $M$ with $k$ binary work tapes and states indexed by $\\{0,\\ldots,n\\}$",
+  "Configuration $c$ of $M$",
+  "The state of $c$ is present",
+  "Round-machine configuration $d$ on $x$",
+  "$d$ is at the live entry",
+  "$d$ represents $c$ and $M$'s transition table",
+  "Finite binary word $w$",
+  "Integer-indexed tape $ct$ with optional binary symbols",
+  "Integer head position $cp$",
+  "For every integer $p$ from $-1$ through $|w|$, $ct(cp+p)$ equals the buffered word symbol at $p$",
+  "Natural number $t$ equals the base-two value of the bits of $w$"
+ ],
+ "confidence": "high",
+ "caveat": "The tape hypothesis uses the stated buffered-word convention: positions outside the word, including the left boundary position, are blank.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

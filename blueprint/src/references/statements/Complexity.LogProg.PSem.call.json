@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.PSem.call",
+ "key": "6c107ddf85a161b3",
+ "kind": "lemma",
+ "title": "Semantics of a deterministic oracle call",
+ "statement": "Let $A$ be a nondeterministic register machine with $m$ registers and $d$ oracle deciders, let $x$ be a bit string, let $G$ be a predicate on configurations, and let $p$ be a rational number. Suppose that at a control state $l$, the machine executes a call to decider $j$ with mode $md$ and register list $args$, branching to $l_1$ on a positive answer and to $l_0$ on a negative answer. For a register valuation $v$, suppose $G$ holds of the configuration at $l$ with valuation $v$ and no answer yet, and that the configuration reached by this call—at $l_1$ or $l_0$ according to the oracle's answer on the virtual input formed from $x$ and the binary words of the listed registers—has probabilistic semantics $p$ under $G$. Then the configuration at $l$ with valuation $v$ and no answer yet also has probabilistic semantics $p$ under $G$.",
+ "hypotheses_covered": [
+  "The instruction at state $l$ is exactly the specified deterministic call.",
+  "The initial configuration satisfies the guard $G$.",
+  "The oracle-selected post-call configuration has probabilistic semantics $p$ under $G$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

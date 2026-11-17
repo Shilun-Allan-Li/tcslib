@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timedCapture_transfer",
+ "key": "36d9a5f4b50eb928",
+ "kind": "lemma",
+ "title": "Transfer from a halted configuration",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be one of its work tapes, let $x$ be a Boolean input word, and let $C$ be a configuration of $M$ on $x$. If $C$ is halted, then one step of the capture machine from the capture configuration associated with $C$ equals the interpreter-entry configuration associated with $C$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$c$ is a work-tape index of $M$",
+  "$x$ is a Boolean word",
+  "$C$ is a configuration of $M$ on $x$",
+  "$C$ is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the first-phase embedding of a halted configuration of the base machine,\none step of the capture wrapper transfers control to the interpreter entry,\nchanging no tape contents, head positions, or output."
+}

@@ -1,0 +1,12 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.scan",
+ "key": "87bbfd0fbaa13feb",
+ "kind": "def",
+ "title": "Adjacency Scan Program",
+ "statement": "For each task, the scan program is a register-machine program with three registers, one called decider, and the listed scan labels. It first validates a unary-prefix-and-payload input for size or type queries, or a unary-prefix input with two canonical binary payloads for edge queries; invalid inputs are rejected. It then counts the unary prefix in register $0$, incrementing register $1$ once per prefix symbol, and tests the corresponding payload against that count: the default hit answer determines the result if it matches, and otherwise the program advances the count and reads the next gate record. A failed read rejects; a matching record accepts immediately for size queries, checks the gate's two encoded kind bits for type queries, and for edge queries compares the first payload with the scanned argument values, accepting if one matches and continuing otherwise. The type check returns true exactly when the requested optional kind equals the kind decoded from those two bits; the scan's remaining labels implement the reads, counter updates, and these accept or reject decisions.",
+ "hypotheses_covered": [],
+ "confidence": "low",
+ "caveat": "The declaration is an explicit state-by-state transition table; the prose summarizes its control flow and does not reproduce every individual label transition.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Std.Sat.CNF.tautology_dual_iff",
+ "key": "2b13d9096bf96645",
+ "kind": "theorem",
+ "title": "Dual tautology and unsatisfiability",
+ "statement": "Let $\\varphi$ be a CNF formula over variables indexed by $\\mathbb{N}$, and form its DNF dual by negating each literal while preserving the clause lists as terms. This dual is true under every Boolean assignment to $\\mathbb{N}$ if and only if no such assignment makes $\\varphi$ true.",
+ "hypotheses_covered": [
+  "$\\varphi$ is a CNF formula over $\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi = (C_1, \\dots, C_k)$ be a CNF formula over variables indexed by $\\mathbb{N}$,\neach clause a finite list of literals $(v,b)$ with $v \\in \\mathbb{N}$ and\n$b \\in \\{0,1\\}$, and let $\\varphi^{\\ast}$ be the DNF formula whose terms are obtained from\n$C_1, \\dots, C_k$ by replacing every literal $(v,b)$ with $(v, \\neg b)$. Then\n$\\varphi^{\\ast}$ is a tautology, i.e.\\ for every assignment $a : \\mathbb{N} \\to \\{0,1\\}$\nsome term of $\\varphi^{\\ast}$ has all of its literals $(v,b)$ satisfying $a(v) = b$, if and\nonly if $\\varphi$ is unsatisfiable, i.e.\\ no assignment makes every clause of $\\varphi$\ncontain a literal $(v,b)$ with $a(v) = b$ [AB09, Section~2.6.1, Example~2.21]."
+}

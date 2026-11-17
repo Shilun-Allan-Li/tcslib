@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.obliviousCandidate_decides",
+ "key": "ddcc000d0f404235",
+ "kind": "lemma",
+ "title": "Quadratic time bound for the candidate",
+ "statement": "Let $W$ and $M$ be finite machines over the binary alphabet, let $L$ be a language of binary strings, let $a,b \\in \\mathbb{N}$, and let $T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every binary input $x$, $W$ outputs the binary expansion of $T(|x|)$ within $b(T(|x|)+1)$ steps; suppose also that $n\\le T(n)$ for every $n$, and that $M$ decides $L$ within $aT(n)$ steps. Then the candidate machine built from $W$, $M$, and $a$ decides $L$ within $\\bigl(18(a+1)^2+23(a+1)+3b+25\\bigr)(T(n)+1)^2$ steps.",
+ "hypotheses_covered": [
+  "Finite binary machines $W$ and $M$",
+  "A binary language $L$",
+  "$a,b\\in\\mathbb{N}$",
+  "A time function $T:\\mathbb{N}\\to\\mathbb{N}$",
+  "For every binary input $x$, $W$ computes the binary digits of $T(|x|)$ within $b(T(|x|)+1)$ steps",
+  "For every $n$, $n\\le T(n)$",
+  "$M$ decides $L$ within $aT(n)$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ compute on every input $x$ the binary expansion of $T(|x|)$ within\n$b\\,(T(|x|)+1)$ steps, suppose $n \\le T(n)$ for all $n$, and let $M$ decide the\nlanguage $L$ within time $a\\,T(n)$.  Then the candidate simulator built from\n$W$, $M$, and $a$ decides $L$ within time\n$\\bigl(18(a+1)^2 + 23(a+1) + 3b + 25\\bigr)\\,(T(n)+1)^2$."
+}

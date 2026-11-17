@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.universal_run_join",
+ "key": "1f0b1cb769c305c7",
+ "kind": "lemma",
+ "title": "Concatenation of machine runs",
+ "statement": "Let $M$ be a multi-tape Turing machine over the binary alphabet, and let $a,b,c$ be configurations on a common input. If running $M$ for $s$ steps from $a$ yields $b$, and running it for $t$ steps from $b$ yields $c$, then running it for $s+t$ steps from $a$ yields $c$.",
+ "hypotheses_covered": [
+  "$M$ is a multi-tape Turing machine over the binary alphabet",
+  "$a,b,c$ are configurations on a common input",
+  "$s,t$ are natural numbers",
+  "Running from $a$ for $s$ steps yields $b$",
+  "Running from $b$ for $t$ steps yields $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a multi-tape machine over $\\{0,1\\}$ and configurations $a$, $b$, $c$ on\na common input: if running the machine for $s$ steps from $a$ yields $b$,\nand running it for $t$ steps from $b$ yields $c$, then running it for\n$s + t$ steps from $a$ yields $c$."
+}

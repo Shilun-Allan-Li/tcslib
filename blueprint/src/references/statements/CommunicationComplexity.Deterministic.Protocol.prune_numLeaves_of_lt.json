@@ -1,15 +1,16 @@
 {
  "lean_name": "CommunicationComplexity.Deterministic.Protocol.prune_numLeaves_of_lt",
- "key": "13c76526c2d0cda2",
+ "key": "0cbd2f928fe07a17",
  "kind": "lemma",
  "title": "Leaf count after pruning a subprotocol",
- "statement": "Let $p$ be a deterministic two-party communication protocol and let $s$ be a subprotocol of $p$, that is, a rooted subtree of $p$. Write $L(q)$ for the number of leaves (output nodes) of a protocol $q$, and suppose that $L(s) < L(p)$. Then the protocol obtained by pruning $s$ out of $p$ has exactly $L(p) - L(s)$ leaves.",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, and let $s$ and $p$ be deterministic two-party communication protocols with inputs in $X$ and $Y$ and outputs in $\\alpha$. Suppose $s$ is a rooted subtree of $p$ and has strictly fewer leaves than $p$. Then pruning $s$ from $p$ yields a protocol with exactly $L(p)-L(s)$ leaves, where $L(q)$ denotes the number of leaves of protocol $q$.",
  "hypotheses_covered": [
-  "$s$ is a subprotocol (rooted subtree) of $p$",
-  "the number of leaves of $s$ is strictly less than the number of leaves of $p$"
+  "$s$ and $p$ are protocols with input types $X,Y$ and output type $\\alpha$",
+  "$s$ is a rooted subtree of $p$",
+  "$s$ has strictly fewer leaves than $p$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If $s.\\mathrm{numLeaves} < p.\\mathrm{numLeaves}$, then\n$(\\texttt{prune}\\;\\texttt{hsp}\\;\\texttt{hlt}).\\mathrm{numLeaves} = p.\\mathrm{numLeaves} - s.\\mathrm{numLeaves}$."
+ "replaced": "Let $p$ be a deterministic two-party communication protocol and let $s$ be a subprotocol\nof $p$, that is, a rooted subtree of $p$. Write $L(q)$ for the number of leaves (output\nnodes) of a protocol $q$, and suppose that $L(s) < L(p)$. Then the protocol obtained by\npruning $s$ out of $p$ has exactly $L(p) - L(s)$ leaves."
 }

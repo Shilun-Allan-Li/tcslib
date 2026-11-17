@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.exists_uniformMachineCode2",
+ "key": "1657b504e58c36aa",
+ "kind": "theorem",
+ "title": "Existence of a two-tape uniform machine code",
+ "statement": "There exists a code for deterministic Boolean machines with two work tapes, consisting of an encoder and a total decoder such that decoding an encoded machine followed by any number of $1$ bits returns that machine. The code also includes a finite-state Boolean machine that computes the canonical serialization of each decoded machine within its specified time bound, and a finite-state Boolean simulator with a natural number $d$. For every program string $\\alpha$, input string $x$, and time bound $t$, if the decoded machine computes output $[1]$ on $x$ at exactly time $t$, the simulator computes $[1]$ on $\\langle\\langle\\mathrm{bits}(t),\\alpha\\rangle,x\\rangle$ at exactly $d(|\\alpha|+|x|+t+1)^d$ steps; if it does not compute $[1]$ at exactly time $t$, the simulator computes $[0]$ on that input at exactly the same number of steps.",
+ "hypotheses_covered": [
+  "The encoded machines are deterministic Boolean machines with two work tapes and a positive finite number of states",
+  "The encoder maps machines to Boolean strings",
+  "The decoder is defined on every Boolean string",
+  "Decoding an encoded machine with any number of appended $1$ bits returns the original machine",
+  "A finite-state Boolean canonizer computes the canonical serialization of each decoded machine at its specified time bound",
+  "A finite-state Boolean simulator and one natural number $d$ serve uniformly for all $\\alpha$, $x$, and $t$",
+  "Acceptance means computing output $[1]$ at exactly time $t$",
+  "The simulator's output and running time are exact, with budget $d(|\\alpha|+|x|+t+1)^d$",
+  "The simulator input is $\\langle\\langle\\mathrm{bits}(t),\\alpha\\rangle,x\\rangle$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exists an effective code for finite-state deterministic Boolean machines with two\nwork tapes, together with a finite-state Boolean simulator and a natural number $d$,\nsuch that for every program $\\alpha$, input $x$, and time bound $t$, if the machine\ndecoded from $\\alpha$ computes output $[1]$ on $x$ in exactly $t$ steps, the simulator\noutputs $[1]$ on $\\langle\\langle\\alpha,x\\rangle,\\mathrm{bits}(t)\\rangle$ within\n$d(|\\alpha|+|x|+t+1)^d$ steps. If it does not compute $[1]$ on $x$ in exactly $t$ steps,\nthe simulator outputs $[0]$ within that same bound. The code has a total decoder and\nencoder invariant under appending any number of $1$ bits, and a machine computing the\ncanonical serialization of each decoded machine within its specified time bound."
+}

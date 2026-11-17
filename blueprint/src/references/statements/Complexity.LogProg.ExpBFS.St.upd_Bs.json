@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.St.upd_Bs",
+ "key": "36acebc795f22e8a",
+ "kind": "lemma",
+ "title": "Updating the memory base",
+ "statement": "Let a machine state have natural-number registers $(N,L_g,s,s_1,X,w,K,B_s,U,V,T,T_2,Z,C,ch,c,c_1)$, and let its register vector list these values in that order, indexed from $0$ to $16$. Replacing coordinate $7$ of the vector by a natural number $k$ gives the register vector of the state obtained by setting $B_s=k$ and leaving the other registers unchanged.",
+ "hypotheses_covered": [
+  "state has the listed natural-number registers",
+  "coordinate vector lists registers in the displayed order",
+  "replacement value k is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $st$ be a state with natural-number registers\n$N,Lg,s,s1,X,w,K,Bs,U,V,T,T2,Z,C,ch,c,c1$, and let $v(st)$ be the vector of these\nregisters in the displayed order. For every natural number $k$, changing coordinate $7$\nof $v(st)$ to $k$ gives the register vector of the state obtained by replacing $Bs$ with\n$k$ and leaving all other registers unchanged."
+}

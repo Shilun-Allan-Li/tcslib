@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.randomized_noise_contraction",
+ "key": "51cb1eb9551ea01c",
+ "kind": "theorem",
+ "title": "Randomized noise contraction",
+ "statement": "For every real $q>1$, there is a real number $c$ with $0<c\\le1$, and with $c=2/5$ whenever $q=4$ or $q=4/3$, such that for every $n$, every product $P$ of $n$ finite probability spaces with strictly positive atom masses, and every real-valued function $f$ on its outcome space, the $q$-moment norm of the randomization of the product noise operator with parameter $c$ applied to $f$ is at most the product $q$-moment norm of $f$: $\\|R(T_cf)\\|_q\\le\\|f\\|_{q,P}$.",
+ "hypotheses_covered": [
+  "q is real and 1 < q",
+  "There exists c with 0 < c",
+  "c ≤ 1",
+  "If q = 4 or q = 4/3, then c = 2/5",
+  "Every natural number n",
+  "P is a product of n finite probability spaces with strictly positive atom masses",
+  "f is a real-valued function on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $q>1$ there exists $0<c\\le1$, with $c=2/5$ if $q\\in\\{4,4/3\\}$, such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$ and every real $f$ on its outcome space, $(\\mathbb E_{x\\sim P}\\mathbb E_r|R_r(T_cf)(x)|^q)^{1/q}\\le\\|f\\|_{q,P}$, where $r$ is uniform on the Boolean cube. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $\\chi_S(r)=\\prod_{i\\in S}(-1)^{r_i}$ for $r\\in\\{0,1\\}^n$; $R_rh=\\sum_{S\\subseteq[n]}\\chi_S(r)h_S$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

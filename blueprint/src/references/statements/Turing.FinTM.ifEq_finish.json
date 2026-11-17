@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.ifEq_finish",
+ "key": "46d626d59eacb119",
+ "kind": "lemma",
+ "title": "Completion of the emission phase",
+ "statement": "Let $w_0,u,v,x$ be Boolean words and let $b$ be a Boolean, and write $z=u$ if $b$ is true and $z=v$ otherwise. For any configuration of the comparator machine for $w_0,u,v$ on input $x$ whose state is the initial state of the emission chain for $z$ and whose output is empty, after $|z|+1$ steps the machine is halted and its output is $z$.",
+ "hypotheses_covered": [
+  "Boolean words $w_0,u,v,x$",
+  "Boolean $b$",
+  "Configuration of the specified machine on input $x$",
+  "State is the initial state of the emission chain selected by $b$",
+  "Output is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix Boolean words $w_0$, $u$, $v$, an input word $x$, and a Boolean $b$, and\nwrite $z$ for the word $u$ if $b$ is true and $v$ if $b$ is false.  Let $c$ be\nany configuration of the fixed-word comparator machine for $w_0$, $u$, $v$ on\ninput $x$ whose state is the initial state of the emission chain for $z$ and\nwhose output is still empty.  Then after exactly $\\abs{z} + 1$ further steps\nthe machine has halted with output exactly $z$, independently of the position\nof the input head in $c$."
+}

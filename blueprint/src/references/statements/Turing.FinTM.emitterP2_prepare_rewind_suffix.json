@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_prepare_rewind_suffix",
+ "key": "dfabc2536a83504d",
+ "kind": "lemma",
+ "title": "Rewind of the Suffix Tape",
+ "statement": "Let $w,s,v$ be Boolean words, let $o$ be a bit, and let $p$ be an input-head position for $w$. For every natural number $j\\le |v|$, starting in phase $5$ with $s$ on the first two tapes, $v$ on the third tape, the first two work heads at the origin, and the suffix head at displacement $j-1$, the preparation machine reaches phase $6$ after exactly $j+1$ steps with the suffix head at the origin, preserving the words, flag, and input-head position.",
+ "hypotheses_covered": [
+  "Boolean words $w,s,v$",
+  "Bit $o$",
+  "Input-head position $p$ for $w$",
+  "Natural number $j$ with $j\\le |v|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $j$ be at most the length of the suffix word. From the preparation\nmachine's suffix-rewind phase with the suffix head at displacement $j - 1$,\nexactly $j+1$ steps yield the frame of the next phase with the suffix head at\nthe origin; all three words are preserved."
+}

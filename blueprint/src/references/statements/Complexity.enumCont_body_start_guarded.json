@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_body_start_guarded",
+ "key": "314791dce40e0c4e",
+ "kind": "lemma",
+ "title": "Guarded body initialization",
+ "statement": "Let $B$ be a finite Boolean Turing machine with at least one work tape, let $q_v,q_i$ be states of $B$, and let $x$ be a Boolean input word. Suppose that, from its initial configuration on $x$, with all work tapes blank, $B$ halts at time $T$ and outputs $w$ consecutive true bits. Then for some $t\\le 3T+|x|+3w+10$, the body machine with parameters $B,q_v,q_i$ and stopped flag false, started in its initial configuration on $x$, reaches the anchor on the seam carrying $w$ false bits on tape zero and blank contents on all other tapes; at every time $j<t$, its state is not the anchor state.",
+ "hypotheses_covered": [
+  "$B$ is a finite Boolean Turing machine",
+  "$B$ has at least one work tape",
+  "$q_v,q_i$ are states of $B$",
+  "$x$ is a Boolean word",
+  "$w,T$ are natural numbers",
+  "the run of $B$ from its initial configuration on $x$ halts at time $T$",
+  "that run outputs $w$ copies of true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $B$ be a source machine with at least one work tape that, from the empty\nseam on input $x$, halts within $T$ steps emitting $w$ true marks. Then within\n$3T + |x| + 3w + 10$ steps the active enumerator body reaches the anchor over\nthe all-false width-$w$ candidate seam, without visiting the anchor at any\nearlier time."
+}

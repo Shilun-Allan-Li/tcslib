@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.rulerHostCfg",
+ "key": "ce719647c63a8c2b",
+ "kind": "def",
+ "title": "Configuration with an added work tape",
+ "statement": "Let $m$ and $\\ell$ be natural numbers, let $S$ and $Q$ be types, and let $y$ and $z$ be Boolean lists with $|z|=\\ell+|y|$. Given a state $q\\in\\mathrm{Option}(Q)$, a configuration $c$ with $m$ work tapes on input $y$, a tape $r:\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$, and a head position $p\\in\\mathbb{Z}$, form a configuration with $m+1$ work tapes on input $z$: its state is $q$, its input-head position is shifted by $\\ell$, its work tapes are those of $c$ followed by $r$, its work-head positions are those of $c$ followed by $p$, and its output is the output of $c$.",
+ "hypotheses_covered": [
+  "Natural number $m$",
+  "Natural number $\\ell$",
+  "Types $S$ and $Q$",
+  "Boolean lists $y$ and $z$ satisfying $|z|=\\ell+|y|$",
+  "Optional state $q$ of type $Q$",
+  "Configuration $c$ with $m$ work tapes on input $y$ and state type $S$",
+  "Integer-indexed tape $r$ with optional Boolean contents",
+  "Integer head position $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

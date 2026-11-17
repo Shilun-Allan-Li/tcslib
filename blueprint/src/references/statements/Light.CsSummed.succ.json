@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.CsSummed.succ",
+ "key": "2ab80e533166f1c1",
+ "kind": "theorem",
+ "title": "Successor summed-counter invariant",
+ "statement": "Let $A$ be counting-sort arguments, let $kf$ assign a natural-number key to each item index, and let $r$ be a natural number. Suppose an integer-valued memory map $mu'$ has, for every $t\\le r$, the number of indices $i<A.n$ with $kf(i)<t$ at address $A.cnt+t$, and, for every $t<A.nb$ with $r\\le t$, the number of indices $i<A.n$ with $kf(i)=t$ at address $A.cnt+(t+1)$. After replacing the value at address $A.cnt+(r+1)$ by the number of indices $i<A.n$ with $kf(i)<r+1$, these two counter conditions hold at stage $r+1$.",
+ "hypotheses_covered": [
+  "The summed-counter conditions hold at stage $r$: for all $t\\le r$, address $A.cnt+t$ stores the count of keys below $t$; for all $t<A.nb$ with $r\\le t$, address $A.cnt+(t+1)$ stores the count of keys equal to $t$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $A$ describe the counter range, let $kf(j)$ be the key of item $j$, and suppose the\nsummed-counter conditions hold at stage $r$: for every $t\\le r$, the cell at offset $t$\ncontains the number of keys among the first $n$ items below $t$, and for every $t<N_b$\nwith $r\\le t$, the cell at offset $t+1$ contains the number of keys equal to $t$. After\nsetting the cell at offset $r+1$ to the number of keys below $r+1$, the summed-counter\nconditions hold at stage $r+1$."
+}

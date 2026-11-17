@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.cert_embed_call",
+ "key": "344b2a9c25f2e7ad",
+ "kind": "theorem",
+ "title": "Embedded machine call",
+ "statement": "Let $y$ be a Boolean input word, let $M$ be a deterministic Turing machine with $m$ work tapes over the Boolean alphabet and state set $S$, and let $\\iota$ inject the $m$ tape indices into the $k$ tape indices. Choose entry and exit states $\\mathrm{en},\\mathrm{ex}\\in S$, local tape-word assignments $L_0,L_1:\\mathrm{Fin}(m)\\to\\mathrm{List}(\\mathrm{Bool})$, and larger tape-word assignments $B_0,B_1:\\mathrm{Fin}(k)\\to\\mathrm{List}(\\mathrm{Bool})$. Suppose $B_0(\\iota(i))=L_0(i)$ and $B_1(\\iota(i))=L_1(i)$ for every $i<m$, and $B_1(j)=B_0(j)$ for every $j$ outside the image of $\\iota$. If the run of $M$ from the configuration with input $y$, state $\\mathrm{en}$, and tape words $L_0$ reaches the configuration with state $\\mathrm{ex}$ and tape words $L_1$ after $t$ steps, and its state is not $\\mathrm{ex}$ at any time $u<t$, then the machine obtained by embedding $M$ into the $k$ tapes while retaining its output tape reaches state $\\mathrm{ex}$ with tape words $B_1$ after $t$ steps, and its state is not $\\mathrm{ex}$ at any time $u<t$.",
+ "hypotheses_covered": [
+  "Boolean input word y",
+  "Machine M with m work tapes, Boolean alphabet, and state set S",
+  "Injection from m tape indices to k tape indices",
+  "Entry and exit states in S",
+  "Local initial and final tape-word assignments",
+  "Larger initial and final tape-word assignments",
+  "Initial agreement on embedded tapes",
+  "Final assignment equals initial assignment outside the injection's image",
+  "Local run reaches the exit configuration after t steps",
+  "Local run avoids the exit state at each time u<t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

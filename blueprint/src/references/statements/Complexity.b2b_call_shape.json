@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.b2b_call_shape",
+ "key": "44fa323c791ad230",
+ "kind": "theorem",
+ "title": "Shape of an embedded call configuration",
+ "statement": "Let $M_V,M_I,M_P$ be finite Turing machines over the Boolean alphabet, let $x,y,u$ be Boolean words, let $p$ be an input-head position for $x$, and let $c$ be a configuration on input $y$ for the hosted simulation of $M_V$. Suppose every work-tape cell of $c$ is blank, every work-tape head of $c$ is at the origin, and let $b$ be a Boolean tag. The configuration formed by embedding $c$ into the virtual-host representation with tag $b$, input-head position $p$, and empty prefix agrees with the trial configuration whose state is the hosted machine's initial state paired with $b$, whose input-head position is $p$, whose first buffer stores $u$, whose second buffer stores $y$, whose output buffer stores the output of $c$, and whose state component is the state of $c$ paired with $b$.",
+ "hypotheses_covered": [
+  "Natural tape counts and finite Boolean machines $M_V,M_I,M_P$",
+  "Boolean words $x,y,u$",
+  "An input-head position $p$ valid for $x$",
+  "A configuration $c$ of the hosted simulation on input $y$",
+  "All work-tape cells of $c$ are blank",
+  "All work-tape heads of $c$ are at the origin",
+  "A Boolean tag $b$"
+ ],
+ "confidence": "low",
+ "caveat": "The statement equates configurations built from several private constructions whose intended mathematical names and roles are not supplied; the prose describes the explicit fields while identifying the hosted simulation from the formal construction.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

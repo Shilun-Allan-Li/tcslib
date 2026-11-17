@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.AdjWalk.walk_lang",
+ "key": "7d4648e2193995a3",
+ "kind": "lemma",
+ "title": "Logspace decidability of indexed languages",
+ "statement": "Let $C$ be a family of directed acyclic circuits that is canonical at every input length and has polynomial size, with its size language, every gate-type language, and its edge language all decidable in logarithmic space. Let $\\ell$ be Boolean and let $p(x,i)$ be a predicate on bit strings and natural numbers. Assume that whenever $p(x,i)$ holds, the description string of $C$ on $x$ is nonempty. Also assume that for every $n,i$, the Boolean obtained by taking the disjunction of $\\ell$ with bit $i$ of the encoding of the length-$n$ circuit (using false when $i$ is outside the encoding) equals the truth value of $p(1^n,i)$. Then the language of paired encodings of $x$ and the binary representation of $i$ for which $p(x,i)$ holds is decidable in logarithmic space.",
+ "hypotheses_covered": [
+  "$C$ is a circuit family canonical at every input length",
+  "$C$ has polynomial size",
+  "the size language, each gate-type language, and edge language of $C$ are in logarithmic space",
+  "$\\ell$ is Boolean",
+  "$p$ is a predicate on bit strings and natural numbers",
+  "if $p(x,i)$ holds, the description string of $C$ on $x$ is nonempty",
+  "for every $n,i$, the specified circuit-encoding bit, disjoined with $\\ell$, equals the truth value of $p(1^n,i)$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied formal snippet leaves the definition of the circuit description string blank, so that hypothesis cannot be made more explicit from the given ground truth.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

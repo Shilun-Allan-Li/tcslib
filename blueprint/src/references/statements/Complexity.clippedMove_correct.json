@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clippedMove_correct",
+ "key": "a9679f82178b3394",
+ "kind": "lemma",
+ "title": "Clipped direction gives head displacement",
+ "statement": "For every natural number $n$, input-head position $p\\in\\{0,\\ldots,n+1\\}$, and direction $d\\in\\{-1,0,1\\}$, let the head move by $d$ with clamping at the two boundary positions, and let the clipped direction be $0$ for an attempted move outward at a boundary and $d$ otherwise. The resulting head position, shifted down by one, is $p-1$ plus the clipped direction.",
+ "hypotheses_covered": [
+  "natural number n",
+  "position p in Fin (n + 2)",
+  "direction d in the sign type"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input head position $p \\in \\{0, 1, \\dots, n+1\\}$ and every direction $d$,\nthe position reached by the native clamped input move of $p$ in direction $d$, shifted\ndown by one, equals $p - 1$ plus the clipped direction viewed as an integer."
+}

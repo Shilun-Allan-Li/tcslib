@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/HardWire.lean :: Language.InSIZE.of_hardwire -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Circuit size after hardwiring inputs
+
+**Claim.** Fixing the final input bits of a fan-in-two circuit family to assignments $\alpha_n$ yields a fan-in-two family of no greater size, recognizing the language defined by evaluating the original circuits on the input followed by those assignments.
+
+**Proof.** Form the family obtained by hardwiring $\alpha_n$ into each circuit $D_n$. Hardwiring preserves fan-in at most two (`BoolCircuit.DAGCircuit.hardwire_isFaninTwo`) and does not increase size (`BoolCircuit.DAGCircuit.hardwire_size_le`), so the new size is at most $p(n)$. The hardwired family's language is exactly the set of strings whose original circuit accepts the concatenation of the string and the fixed assignment (`BoolCircuit.DAGCircuitFamily.hardwire_language`). These properties witness membership in the stated size class.
+
+**Key facts.** `BoolCircuit.DAGCircuit.hardwire_isFaninTwo`, `BoolCircuit.DAGCircuit.hardwire_size_le`, `BoolCircuit.DAGCircuitFamily.hardwire_language`.

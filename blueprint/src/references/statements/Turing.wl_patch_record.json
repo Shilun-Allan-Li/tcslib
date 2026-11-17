@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.wl_patch_record",
+ "key": "4b8e94af59f58f31",
+ "kind": "theorem",
+ "title": "A patch records its field list",
+ "statement": "Let $K\\in\\mathbb{N}$, let $\\Gamma$ and $P$ be types, let $x$ be a word over $\\Gamma$, and let $d$ be a configuration with $K$ work tapes and state set $P$. Suppose tape $r$ of $d$ records the field list $f_s$ at every integer offset $p$ from its head position with $-1\\le p\\le L$, where $L$ is the length of the joined field word for $f_s$. If $g_s$ has the same joined-word length as $f_s$, then patching $d$ with state $q$ and fields $g_s$ makes tape $0$ record $g_s$ at every such offset from its head position.",
+ "hypotheses_covered": [
+  "A natural number $K$",
+  "Types $\\Gamma$ and $P$",
+  "A word $x$ over $\\Gamma$",
+  "A configuration $d$ with $K+1$ work tapes and states in $P$",
+  "A field list $f_s$ recorded on tape $0$ at all offsets from $-1$ through its joined-word length",
+  "A state $q\\in P$",
+  "A field list $g_s$ with the same joined-word length as $f_s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

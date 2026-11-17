@@ -1,0 +1,24 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.gloop",
+ "key": "059b18ed392cc5f1",
+ "kind": "lemma",
+ "title": "Gate-list scan and halt",
+ "statement": "Let $\\tau$ be a task, let $n,iv,tv,B$ be natural numbers, let $w,E$ be finite bit strings, and let $o$ be an oracle. Suppose that every oracle query on the encoded unary string of length $n$ paired with the binary expansion of $q$ returns the bit of $E$ at position $q$, taking out-of-range bits to be $0$. Suppose also that the task target condition holds for the input encoding the unary string of length $n$ paired with $w$, the length of $E$ is at most $B$, and $gs$ is a list of gates. For every decomposition in which the suffix of $E$ at position $p$ is the encoding of the list $gs$ followed by a remainder, if $c\\le tv$, $c+|gs|\\le B$, and $a\\le B$, then the scan started in its gate-reading state with registers $(p,c,a)$ and no answer yet halts with every register bounded by $B$. Its answer is the task-specific answer for the gate of $gs$ at offset $tv-c$ when $tv-c<|gs|$, and is false otherwise.",
+ "hypotheses_covered": [
+  "$\\tau$ is a task",
+  "$n,w,E,o$ are respectively a natural number, bit string, bit string, and oracle",
+  "$iv,tv$ are natural numbers",
+  "Oracle answers on encoded unary-length-$n$ inputs equal the corresponding bits of $E$, with out-of-range bits read as false",
+  "The target condition holds for the encoded unary-length-$n$ input paired with $w$ and indices $iv,tv$",
+  "$B$ is a natural number and $|E|\\le B$",
+  "$gs$ is a list of DAG gates",
+  "$p,c,a$ are natural numbers and the suffix of $E$ at $p$ is the encoding of $gs$ followed by a remainder",
+  "$c\\le tv$",
+  "$c+|gs|\\le B$",
+  "$a\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

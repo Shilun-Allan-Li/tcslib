@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.obliviousSchedule_borrow_run",
+ "key": "14589045e9b4014c",
+ "kind": "lemma",
+ "title": "Run of the borrow pass",
+ "statement": "Let $W$ be a finite binary machine, $a\\in\\mathbb{N}$, and let $x$ be a schedule-symbol input. Take a configuration whose budget tape has head at integer position $z$, whose contents are the bit symbols for a word $bs$ beginning at that position followed by a right-hand list $r$, and whose state is the borrow phase with carry $c$. After exactly $|bs|$ steps, the machine is in the borrow phase with the carry produced by processing $bs$ from initial carry $c$; its budget-tape head is at $z+|bs|$, and the tape contains the reversed list of rewritten bits to the left of that position followed by $r$. The resulting configuration agrees with the original base configuration on every other component and tape.",
+ "hypotheses_covered": [
+  "A finite binary machine $W$",
+  "$a\\in\\mathbb{N}$",
+  "A schedule-symbol input list $x$",
+  "A base configuration for the schedule machine on $x$",
+  "A carry bit $c$",
+  "A bit list $bs$",
+  "An integer tape-head position $z$",
+  "Finite lists $l,r$ of optional schedule symbols defining the budget-tape contents"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a binary machine, $a$ a padding constant, and let a bit word $w$ be laid\nout as bit symbols on the budget lane of the schedule controller, starting in the\nborrow phase with carry $c$.  Running the controller for exactly $|w|$ steps carries\nout the fixed-width borrow pass on $w$: the phase becomes borrow with the resulting\nborrow flag, the rewritten word is moved in reverse into the processed zone, the head\nhas advanced by $|w|$, and every other tape content and head position, including\ncopied input data in later decorations, is unchanged."
+}

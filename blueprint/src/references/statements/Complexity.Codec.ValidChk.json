@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Codec.ValidChk",
+ "key": "25a8693d92b98536",
+ "kind": "def",
+ "title": "Validity of a certificate string",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, and let $n,s$ be natural numbers and $w$ a finite Boolean string. The string is valid exactly when its length is $W(N)(2s+1)+wP(n)+1$, the scan of its prefix of length $W(N)(2s+1)$ is accepting, the binary value of the next $wP(n)$ bits is at most $n+1$, and the bit at index $W(N)(2s+1)+wP(n)$ is true (with out-of-range lookup interpreted as false).",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$n$ and $s$ are natural numbers",
+  "$w$ is a finite Boolean string"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the meanings of $W(N)$, $wP(n)$, or the binary-value function, so these quantities can only be named descriptively.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

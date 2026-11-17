@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.rt_copy_seam",
+ "key": "6daa25e9c28f1d6e",
+ "kind": "theorem",
+ "title": "Sequential composition across a state seam",
+ "statement": "Let $\\Gamma,S_1,S_2$ be types, let $k$ be a natural number, and let $x$ be an input word over $\\Gamma$. Let $M_1,M_2$ be machines with $k$ work tapes and state sets $S_1,S_2$, respectively, with decidable equality on $S_1$. Suppose $M_1$ runs from configuration $a$ to configuration $b$ in $t_1$ steps, with state $q_1$ at $b$ and no earlier occurrence of that state; suppose every work-tape head during this run stays within distance $B$ of a specified origin. Suppose also that $M_2$, started from $b$ with its state renamed to the entry state, reaches configuration $c$ in $t_2$ steps, with state $q_2$ at $c$ and no earlier occurrence of that state, and that its work-tape heads stay within distance $B$ of the same origin. Then the machine that switches from $M_1$ to $M_2$ at state $q_1$ reaches the state-renamed configuration $c$ after $t_1+1+t_2$ steps, does not reach state $q_2$ in the second component earlier, and keeps every work-tape head within distance $B$ of the origin through that time.",
+ "hypotheses_covered": [
+  "Types $\\Gamma,S_1,S_2$",
+  "Natural number $k$",
+  "Input word $x$ over $\\Gamma$",
+  "Decidable equality on $S_1$",
+  "Machines $M_1,M_2$ and states $q_1$, entry, and $q_2$",
+  "Configurations $a,b,c$ and step counts $t_1,t_2$",
+  "$M_1$ reaches $b$ after $t_1$ steps",
+  "State of $b$ is $q_1$",
+  "$M_1$ does not have state $q_1$ at any earlier time",
+  "$M_1$ head-displacement bound $B$ from origin",
+  "$M_2$ reaches $c$ from the entry-renamed $b$ after $t_2$ steps",
+  "State of $c$ is $q_2$",
+  "$M_2$ does not have state $q_2$ at any earlier time",
+  "$M_2$ head-displacement bound $B$ from the same origin"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

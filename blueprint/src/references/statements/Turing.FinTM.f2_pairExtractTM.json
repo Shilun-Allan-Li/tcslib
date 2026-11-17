@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_pairExtractTM",
+ "key": "7059516ae56055ef",
+ "kind": "def",
+ "title": "Pair-extraction machine",
+ "statement": "For each pair of Boolean parameters $(f,s)$, there is a deterministic Boolean Turing machine with one work tape and state set $\\mathrm{Option}(\\mathrm{Option}(\\{\\mathrm{false},\\mathrm{true}\\})\\oplus\\mathrm{Fin}(3))$, initially in the state representing no stored Boolean. Its transition function is the following: in the initial state it moves right through the input, storing the first symbol in its state, and halts if it encounters blank. With a stored Boolean $b$, it moves right on the next input symbol $c$: if $b=c$, it writes $b$ on the work tape and enters the initial state; if $b\\ne c$ and $b$ is true, it halts; if $b\\ne c$ and $b$ is false, it moves the work-tape head left and enters phase $0$. In phase $0$, it moves the work-tape head left over occupied cells, then right into phase $1$ at a blank cell. In phase $1$, it moves the work-tape head right over occupied cells, writing the scanned symbol to the output exactly when $f$ is true; at a blank cell it enters phase $2$. In phase $2$, if $s$ is true, it moves right along the input, emitting each scanned symbol, and halts on blank; if $s$ is false, it halts immediately. All transitions not specified as emitting a symbol emit nothing, and omitted successor states halt.",
+ "hypotheses_covered": [
+  "Boolean alphabet",
+  "Boolean parameters $f,s$",
+  "One work tape",
+  "State set $\\mathrm{Option}(\\mathrm{Option}(\\{\\mathrm{false},\\mathrm{true}\\})\\oplus\\mathrm{Fin}(3))$",
+  "Initial state represents no stored Boolean",
+  "Transition behavior for each state and scanned-symbol case"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

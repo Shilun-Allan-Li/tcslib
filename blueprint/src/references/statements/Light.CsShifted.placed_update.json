@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.CsShifted.placed_update",
+ "key": "4f386dc7dd9f770a",
+ "kind": "theorem",
+ "title": "Placement survives a counter update",
+ "statement": "Let $A$ be counting-sort arguments, let $it,kf:\\mathbb{N}\\to\\mathbb{N}$, and let $s$ be a natural number. Suppose a memory map $\\mu'$ places each item $j<A.n$ at address $A.dst+p_j$, where $p_j$ is the number of indices $i<A.n$ with $kf(i)<kf(j)$ plus the number of indices $i<j$ with $kf(i)=kf(j)$. For every $t\\le A.nb$, every integer $x$, and every $j<A.n$, changing the memory value at address $A.cnt+t$ to $x$ leaves the value at address $A.dst+p_j$ equal to $it(j)$.",
+ "hypotheses_covered": [
+  "$A,it,kf$ satisfy the counting-sort preconditions for some resource limits and memory map",
+  "$\\mu'$ has the shifted-state invariant at stage $s$",
+  "$t\\le A.nb$",
+  "$x$ is an integer",
+  "$j<A.n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let a count-sort instance have $n$ items, source and destination starting addresses\n$\\mathrm{src}$ and $\\mathrm{dst}$, key-cell address parameters\n$\\mathrm{key},\\mathrm{stride},\\mathrm{off}$, key bound $N_b$, and counter starting\naddress $\\mathrm{cnt}$. Let memory be a function from natural-number addresses to\nintegers, and let $\\mathrm{it}(i)$ and $\\mathrm{kf}(i)$ denote the item and its key at\nindex $i$. Assume the word size bounds the memory-space size, all source, destination,\nand counter ranges fit in memory, the source cells contain the items, and for every\n$i<n$ the address $\\mathrm{key}+\\mathrm{it}(i)\\,\\mathrm{stride}+\\mathrm{off}$ lies in\nmemory and contains key $\\mathrm{kf}(i)<N_b$. Assume the source, destination, and\ncounter ranges are pairwise disjoint, and every item key-cell address lies outside both\nthe destination and counter ranges. Suppose a memory $\\mu'$ places each item $j<n$ at\ndestination address $\\mathrm{dst}+p_j$, where $p_j$ is the number of indices $i<n$ with\n$\\mathrm{kf}(i)<\\mathrm{kf}(j)$ plus the number of indices $i<j$ with\n$\\mathrm{kf}(i)=\\mathrm{kf}(j)$; also suppose that for every $u\\le N_b$ with $s<u$,\ncounter cell $\\mathrm{cnt}+u$ contains the number of indices $i<n$ with\n$\\mathrm{kf}(i)<u$, and for every $u<s$, counter cell $\\mathrm{cnt}+u$ contains the\nnumber of indices $i<n$ with $\\mathrm{kf}(i)<u+1$. Then, for every $t\\le N_b$, every\ninteger $x$, and every $j<n$, changing memory cell $\\mathrm{cnt}+t$ to $x$ leaves item\n$j$ at address $\\mathrm{dst}+p_j$."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.b2_host_contract",
+ "key": "a56853f7edb46607",
+ "kind": "lemma",
+ "title": "Host Contract for Extracted Words",
+ "statement": "Let $S$ and $M$ be finite deterministic machines over the Boolean alphabet, let $V$ be a language of Boolean words, and let $x,v$ be Boolean words and $T,A,d$ natural numbers. Suppose the input-normalized machine derived from $S$ computes $v$ on $x$ in time $T$, and is live at every time $s<T$; suppose also that $M$ decides $V$ within time $A(m+1)^d$ on every input of length $m$. Set $H=2|x|+2+T+(|x|+|v|+2+(A(|x|+|v|+1)^d+1))$. Every Boolean choice word $w$ of length $H$ makes the host built from $S$ and $M$ halt on input $x$ with output the one-bit indicator of $x\\mathbin{+\u0000}u\\in V$ for some Boolean word $u$ of length $|v|$; conversely, for every such $u$, some choice word $w$ of length $H$ makes that host halt with that output.",
+ "hypotheses_covered": [
+  "Finite deterministic Boolean machines $S,M$",
+  "Language $V$ of Boolean words",
+  "Boolean words $x,v$",
+  "Natural numbers $T,A,d$",
+  "Input-normalized $S$ computes $v$ on $x$ within time $T$",
+  "Input-normalized $S$ is live at every time $s<T$",
+  "$M$ decides $V$ within time $A(m+1)^d$ for every input length $m$",
+  "Choice word $w$ has length $H$",
+  "In the converse direction, Boolean word $u$ has length $|v|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ and $M$ be deterministic machines, $V$ a language, and suppose the input-normalized scheduler on an input $x$ computes a word $v$ within $T$ steps while live earlier, and that $M$ decides $V$ within time $A(m+1)^d$ on inputs of length $m$. Set $H = 2|x| + 2 + T + (|x| + |v| + 2 + (A\\,(|x|+|v|+1)^d + 1))$. Then every choice word of length $H$ makes the reverse host built from $S$ and $M$ halt with output the indicator bit of $x\\,u \\in V$ for some guessed word $u$ of length $|v|$; and conversely, for every $u$ of length $|v|$ some choice word of length $H$ produces a halted run with output the indicator bit of $x\\,u \\in V$."
+}

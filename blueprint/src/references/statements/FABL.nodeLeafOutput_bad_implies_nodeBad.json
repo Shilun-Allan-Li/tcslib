@@ -1,0 +1,21 @@
+{
+ "lean_name": "FABL.nodeLeafOutput_bad_implies_nodeBad",
+ "key": "9f701ba3b3b64146",
+ "kind": "theorem",
+ "title": "Bad leaf output forces a bad decision",
+ "statement": "Let $n$ be a natural number, let $\\mathrm{target}$ be a sign-valued function on the $n$-dimensional sign cube, and let $J,P\\subseteq\\{1,\\ldots,n\\}$. Fix signs on the coordinates in $P$, and suppose the target is determined by the coordinates in $J$ and $|J\\setminus P|\\le0$. For any node decision, if the output obtained by replacing a constant decision with its corresponding leaf (and any other decision with no output) fails to compute the target on inputs agreeing with the fixed signs, then the node decision itself is incorrect (with a missing decision counted as bad).",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$\\mathrm{target}$ is a Boolean function on the $n$-dimensional sign cube",
+  "$J$ and $P$ are finite coordinate subsets",
+  "The fixed assignment specifies a sign on each coordinate in $P$",
+  "The target depends only on coordinates in $J$",
+  "$|J\\setminus P|\\le0$",
+  "A node decision is given",
+  "The leaf-output tree is bad"
+ ],
+ "confidence": "low",
+ "caveat": "The payload does not define the external notion “DependsOn”; the wording interprets it as being determined by the coordinates in $J$.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

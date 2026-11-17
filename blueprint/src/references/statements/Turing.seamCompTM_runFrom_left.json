@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.seamCompTM_runFrom_left",
+ "key": "faa283df01a7b231",
+ "kind": "theorem",
+ "title": "Composed run agrees with the first machine",
+ "statement": "Let $M_1$ and $M_2$ be deterministic machines with $k$ work tapes and a common input alphabet, with state sets $S_1$ and $S_2$. Form a machine on $S_1\\sqcup S_2$ that follows $M_1$ on left states, switches from the specified exit state to the specified entry state in one step without changing the tapes, and follows $M_2$ on right states. If a run of $M_1$ from configuration $c$ avoids the exit state at every time $t<T$, then for every $t\\le T$ the composed machine, started from $c$ with its state placed in the left component, is exactly the configuration reached by $M_1$ at time $t$, with its state placed in the left component.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ are machines with $k$ work tapes and common symbol alphabet",
+  "$exit\\in S_1$ and $entry\\in S_2$",
+  "$c$ is a configuration for $M_1$",
+  "At every time $t<T$, the run from $c$ does not have state $exit$",
+  "$t$ is a natural number with $t\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

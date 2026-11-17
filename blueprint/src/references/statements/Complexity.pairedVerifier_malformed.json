@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.pairedVerifier_malformed",
+ "key": "a4640071c0d70acf",
+ "kind": "lemma",
+ "title": "Malformed pairs are rejected",
+ "statement": "Let $C,c\\in\\mathbb{N}$, let $V$ be a language of finite bit strings, and let $y$ be a finite bit string. If the aligned pair parser is undefined on $y$, then $y$ does not belong to the paired verifier language defined by $C,c,$ and $V$.",
+ "hypotheses_covered": [
+  "$C,c\\in\\mathbb{N}$",
+  "$V$ is a language of finite bit strings",
+  "$y$ is a finite bit string",
+  "The aligned pair parser returns no pair on $y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C, c \\in \\mathbb{N}$ and $V \\subseteq \\{0,1\\}^{*}$. The aligned pair parser\nreads a binary string in two-bit blocks from the left, taking $00$ and $11$ as the\nbits $0$ and $1$ of a first component until the first block $01$, after which the\nremaining suffix is the second component; it fails on every other string. Let\n$V^{\\mathrm{pair}}_{C,c}$ be the set of strings that this parser decodes as a pair\n$(x, u)$ with $|u| = C(|x|+1)^c$ and $xu \\in V$. If $y$ is a binary string on\nwhich the parser fails, then $y \\notin V^{\\mathrm{pair}}_{C,c}$."
+}

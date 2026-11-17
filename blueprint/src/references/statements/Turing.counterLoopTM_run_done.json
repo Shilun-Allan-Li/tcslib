@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.counterLoopTM_run_done",
+ "key": "ba748f3d3efc6fce",
+ "kind": "theorem",
+ "title": "Boolean counter loop run to completion",
+ "statement": "Let $M$ be a deterministic machine with $k$ Boolean work tapes and state $a$, and let $exit$ be an optional state. Let $w$ be a Boolean word with binary value $d$, and suppose the extra tape initially agrees with the word buffer at cells $cp+p$ for every integer $p$ with $-1\\\\le p\\\\le |w|$. Given an initial configuration $c$ and a run-length function $\\\\tau$, suppose each round $r<d$ starts in state $a$, has positive length, and at every positive time strictly before its endpoint has a state different from $a$ and not equal to the designated exit; also suppose each next round configuration is in state $a$. If $T$ equals the sum of these round lengths plus $\\\\operatorname{overhead}(w,d+1)$, the Boolean counter-loop machine reaches its done configuration at time $T$, with the extra tape set to true on cells $cp$ through $cp+|w|-1$. Before time $T$ its state is neither done nor escape; through $T$ the extra head remains in $[cp-1,cp+|w|]$, and the first $k$ work-head positions at each time match a run of $M$ from some round configuration, with either $r<d$ and $u\\\\le\\\\tau(c_r)$ or $r=d$ and $u=0$.",
+ "hypotheses_covered": [
+  "Boolean-work-tape machine $M$ and state $a$",
+  "Optional exit state",
+  "Run-length function $\\\\tau$ and initial configuration $c$",
+  "Counter word $w$ and its binary value $d$",
+  "Initial extra-tape buffer agreement for all $-1\\\\le p\\\\le |w|$",
+  "For every $r<d$, each round starts and ends in state $a",
+  "Each round length is positive",
+  "Every strictly intermediate positive-time state avoids $a$ and the optional exit",
+  "The specified total time $T$ equals the round-length sum plus counter overhead"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

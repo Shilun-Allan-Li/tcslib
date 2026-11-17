@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.indexedFold_block",
+ "key": "85291c1b6d78c557",
+ "kind": "lemma",
+ "title": "Indexed transduction of a complete block",
+ "statement": "Let $k$ be a natural number, let $V,C$ be types, let $\\mathit{visit}_i:V\\times C\\to V\\times C$ be a local rule for each $i\\in\\{0,\\ldots,k-1\\}$, let $\\mathit{cell}$ assign an element of $C$ to each such index, and let $s$ be a table with values in $V$. Sweeping through the pairs $(i,\\mathit{cell}(i))$ in increasing index order yields the table whose value at each $i$ is the first component of $\\mathit{visit}_i(s(i),\\mathit{cell}(i))$, together with the same ordered block in which each cell is replaced by the second component of that local-rule value.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Types $V,C$",
+  "Family of local rules indexed by $\\{0,\\ldots,k-1\\}$",
+  "Function assigning a cell in $C$ to each index",
+  "Initial table $s$ with values in $V$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $k \\in \\mathbb{N}$, let $\\mathit{visit}_i \\colon V \\times C \\to V \\times\nC$ be a family of local rules indexed by $i \\in \\{0, \\dots, k-1\\}$, let\n$\\mathit{cell}$ assign a cell to each index, and let $s$ be an initial table.\nTransducing, with the table-valued indexed transducer started at $s$, the\nblock listing every index $i$ exactly once in increasing order tagged with\n$\\mathit{cell}(i)$, yields the table $i \\mapsto$ (new value of\n$\\mathit{visit}_i$ on $s(i)$ and $\\mathit{cell}(i)$) together with the block\nof rewritten tagged cells in the same order."
+}

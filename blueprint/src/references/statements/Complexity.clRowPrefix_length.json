@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clRowPrefix_length",
+ "key": "2d316edd2e866f6d",
+ "kind": "lemma",
+ "title": "Length Bound for a Stored Row Prefix",
+ "statement": "Let $l,W$ be natural numbers and let $w$ assign a Boolean word of length at most $W$ to each coordinate in $\\mathrm{Fin}(l)$. For every natural number $j$, the stored row prefix of length $j$ has length at most $j(2W+2)$.",
+ "hypotheses_covered": [
+  "natural numbers $l,W$",
+  "family $w$ of Boolean words indexed by $\\mathrm{Fin}(l)$",
+  "each word $w(i)$ has length at most $W$",
+  "arbitrary natural number $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For counter words of length at most $W$ and every count $j$, the stored row prefix of the first $j$ fields has length at most $j(2W + 2)$: each field costs its doubled bits plus the two separator bits, independently of the native copying runtime."
+}

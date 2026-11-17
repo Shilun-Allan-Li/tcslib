@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter08/AbelianGroups.lean :: FABL.ComplexFourierSystem.pmfComplexInner_conj_symm -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Conjugate symmetry of the probability inner product
+
+**Claim.** The complex conjugate of the probability-weighted inner product of $f$ and $g$ equals the inner product with the arguments interchanged.
+
+**Proof.** Expand the inner product as a finite sum. Complex conjugation distributes over the sum and over each product. The probability weights are real, so conjugation leaves them unchanged; conjugating the remaining factor $\overline{f(x)}g(x)$ gives $\overline{g(x)}f(x)$. Thus each summand becomes the corresponding summand in the inner product with $g$ and $f$ interchanged, and so do the sums.

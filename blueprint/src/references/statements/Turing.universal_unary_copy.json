@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.universal_unary_copy",
+ "key": "06d859d0c31cbd89",
+ "kind": "lemma",
+ "title": "Exact-Cost Unary State Copy",
+ "statement": "Let $x$ be a Boolean input word, let $B$ be a four-tape configuration, and let $q,q'$ be interpreter control states and $d$ a movement in $\\{-1,0,1\\}$. Suppose that in state $q$, whenever the table cell read is $1$, the interpreter moves the table and state heads right, writes $1$ at the state head, and remains in $q$; whenever the table cell read is $0$, it moves the table head by $d$, leaves the state tape unchanged, and enters $q'$. For natural numbers $n,j$ and Boolean lists $l,r$, if the table is $l$ followed by $n$ ones, then $0$, then $r$, running for exactly $n+1$ steps from state $q$ with table cursor $|l|$ and the unary state-$j$ tape at cursor $j+1$ yields state $q'$, table cursor $|l|+n+d$, and the unary state-$(j+n)$ tape at cursor $j+n+1$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean list",
+  "$B$ is a four-tape configuration on input $x$",
+  "$q,q'$ are interpreter control states",
+  "$d$ is a sign movement",
+  "the transition from $q$ on table read $1$ writes $1$, moves both heads right, and stays in $q$",
+  "the transition from $q$ on table read $0$ leaves the state tape unchanged, moves the table head by $d$, and enters $q'$",
+  "$n,j$ are natural numbers",
+  "$l,r$ are Boolean lists",
+  "the table has the specified concatenation form"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q$ be an interpreter control state that, on every combination of reads\nwith table read $1$, stays in $q$, writes a $1$ at the state cursor, and\nmoves both the table and state cursors right; and on every combination with\ntable read $0$ passes to a state $q'$ with a fixed table movement\n$d \\in \\{-1, 0, +1\\}$ and no other change.  Suppose the table is\n$l \\cdot 1^n \\cdot 0 \\cdot r$, the state tape is the intact unary encoding of\nan index $j$, the table cursor is $|l|$, and the state cursor is $j + 1$.\nThen exactly $n + 1$ interpreter steps reach $q'$ with table cursor\n$|l| + n + d$, state tape the intact unary encoding of $j + n$, and state\ncursor $j + n + 1$; all other data are unchanged.  This single gadget serves\nboth initial-state extraction and live successor-state replacement."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.borrow_run",
+ "key": "ec5d7df86192a049",
+ "kind": "lemma",
+ "title": "Borrowing steps in the clock computation",
+ "statement": "Let $K$ and $W$ be finite Turing machines over the Boolean alphabet, let $x$ be a finite Boolean input, let $c$ be a configuration of $W$ on $x$, let $q$ be a state of $W$, let $r$ be an output register, let $i,j\\in\\mathbb{N}$, let $\\mathrm{rest}$ be a finite Boolean word, and let $kt$ and $kh$ specify the contents and head positions of the work tapes of $K$. Start the clock machine for $K$ and $W$ with simulated configuration $c$, simulated state $q$, register $r$, counter-tape contents storing $i$ true symbols followed by $j$ false symbols and then $\\mathrm{rest}$, counter head at position $i$, the specified tapes of $K$, and empty output. After $j$ steps, its state is still the decrement state for $q,r$, its simulated configuration and $K$ tapes are unchanged, and the counter tape stores $i+j$ true symbols followed by $\\mathrm{rest}$ with its head at position $i+j$; its output remains empty.",
+ "hypotheses_covered": [
+  "Finite Boolean-alphabet machines $K,W$",
+  "A Boolean input $x$",
+  "A configuration $c$ of $W$ on $x$",
+  "A state $q$ of $W$",
+  "An output register $r$",
+  "Natural numbers $i,j$",
+  "A finite Boolean word $\\mathrm{rest}$",
+  "Specified contents $kt$ and head positions $kh$ for $K$'s work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

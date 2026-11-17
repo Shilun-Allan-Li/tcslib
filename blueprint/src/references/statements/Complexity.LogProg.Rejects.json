@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.Rejects",
+ "key": "a4306a726fd0a683",
+ "kind": "def",
+ "title": "Rejecting computation with register-position constraints",
+ "statement": "Let $P$ be a register program, let an oracle assign Boolean answers to each decider and Boolean-list input, and let $c_0,c$ be configurations on input $x$. For a register $r$ and integer position $p$, there must be a time $T$ such that the run from $c_0$ is halted at time $T$, its output is the output of $c$ followed by $0$, and its work-tape head positions agree with those of $c$ except that the head on register $r$ is at $p$. At every earlier time $t<T$, the run must be in a configuration of the specified form determined by $c$, some state and input-head position, $r$, and $p$, and that state must not be a call node.",
+ "hypotheses_covered": [
+  "A register program P",
+  "An oracle from Fin d to Boolean lists",
+  "Starting and target configurations c₀ and c on input x",
+  "A register r",
+  "An integer position p",
+  "Existence of a time T with the stated halting, output, and work-head-position conditions",
+  "At every time t<T, existence of a state and input-head position yielding the specified run configuration, with that state not a call node"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define rrun or xCfg, so the exact meaning of the specified intermediate configuration form is unavailable.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

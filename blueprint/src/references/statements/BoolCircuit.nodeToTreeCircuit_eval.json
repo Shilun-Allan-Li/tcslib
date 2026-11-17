@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.nodeToTreeCircuit_eval",
+ "key": "890dec0aa6ac606d",
+ "kind": "theorem",
+ "title": "Evaluation preserved by tree unrolling",
+ "statement": "Let $F$ be a Boolean layered circuit with input type $\text{Fin }n$, and assign to each non-input node an AND or OR flag. Suppose every gate has finite arity and computes the conjunction of its inputs when its flag is AND, and their disjunction otherwise. For every layer index $m<\text{depth}(F)+1$, every node $v$ in that layer, and every Boolean assignment $x$ to the inputs, the tree obtained by recursively unrolling $v$ evaluates to the same Boolean value as $v$ in $F$ under $x$.",
+ "hypotheses_covered": [
+  "$F$ is a Boolean layered circuit with input type $\text{Fin }n$",
+  "An AND-or-OR flag is specified for each gate's output node",
+  "Each gate has finite arity",
+  "Every gate computes the conjunction or disjunction of its inputs according to its flag",
+  "$m<\text{depth}(F)+1$",
+  "$v$ is a node at layer $m$",
+  "$x$ is a Boolean assignment to the inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a Boolean feedforward circuit whose inputs are indexed by $\\mathrm{Fin}\\,n$,\nand suppose each of its gates has finite arity and computes either the conjunction or\nthe disjunction of its inputs, according to a flag marking every non-input node as an\nAND node or an OR node. Then for every layer $m$ with $m \\le \\mathrm{depth}(F)$, every\nnode $v$ of layer $m$, and every input assignment $x : \\mathrm{Fin}\\,n \\to \\bbf_2$, the\nBoolean circuit obtained by tree-unrolling $v$, evaluated at $x$, equals the value that\n$v$ takes in $F$ under the assignment $x$."
+}

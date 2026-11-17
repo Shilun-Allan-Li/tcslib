@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.minterms_spec",
+ "key": "eb3b5c7cdcf0d946",
+ "kind": "theorem",
+ "title": "Specification of emitted minterms",
+ "statement": "Let $n$ be a nonnegative integer and let $f$ be any Boolean function on assignments to $n$ variables. Run the input-negation gates first, then emit one AND tree for each assignment on which $f$ is true, using as that tree's leaves the literals selected by the assignment. The resulting gates extend the input-negation gates and are acyclic; the output list has one vertex per satisfying assignment, each output vertex is less than $n$ plus the total number of resulting gates, and the value at each output equals the corresponding AND of minterm leaves evaluated after the input-negation gates. The total number of gates is at most $n$ plus the sum, over the satisfying assignments, of the tree cost of a list of $n$ leaves; every newly emitted gate is an AND gate with distinct inputs and at most two inputs.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f$ is a Boolean function on assignments to $n$ variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

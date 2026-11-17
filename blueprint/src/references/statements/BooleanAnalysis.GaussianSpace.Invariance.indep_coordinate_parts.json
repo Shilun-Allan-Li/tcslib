@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.Invariance.indep_coordinate_parts",
+ "key": "b4cb6910ae6fe0cb",
+ "kind": "lemma",
+ "title": "Independence from coordinate-free polynomial parts",
+ "statement": "Let $n$ be a nonnegative integer, let $(\\Omega,\\mu)$ be a measured space, and let $X_1,\\ldots,X_n$ be an independent family of real-valued functions, each measurable up to a null set. For a real coefficient family $F$ on subsets of the coordinates and a fixed coordinate $i$, form its coordinate-free part and its coordinate-derivative coefficient family as defined above. Then $X_i$ is independent of the pair consisting of the multilinear evaluations of those two coefficient families at $X$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$(\\Omega,\\mu)$ is a measurable space with a measure",
+  "The coordinate functions are independent",
+  "Each coordinate function is measurable up to a null set",
+  "$F$ is a real coefficient family on coordinate subsets",
+  "$i$ is a coordinate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F(x)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}a_S\\prod_{j\\in S}x_j$ be a real multilinear polynomial and fix $i\\in\\{1,\\ldots,n\\}$. Define $A_i(x)=\\sum_{S:i\\notin S}a_S\\prod_{j\\in S}x_j$ and $D_i(x)=\\sum_{S:i\\notin S}a_{S\\cup\\{i\\}}\\prod_{j\\in S}x_j$. If $(X_j)$ is an independent family of real functions on a measured space $(\\Omega,\\mu)$ and each $X_j$ is measurable up to a null set, then $X_i$ is independent of the joint pair $(A_i(X),D_i(X))$."
+}

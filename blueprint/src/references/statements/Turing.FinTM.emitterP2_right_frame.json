@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_right_frame",
+ "key": "bea857ff5ad29396",
+ "kind": "lemma",
+ "title": "Frame for a relocated length call",
+ "statement": "Let $k,l$ be natural numbers, let $S,H$ be types, let $e:S\\to H$ be a function, let $w,s,u,v$ be Boolean words, and let $q\\in S$. Embed the configuration on input $w$ whose state is $q$, whose input head is at position $1$, whose $l$ tapes store the standard assignment for $v$, whose work heads are at zero, and whose output is empty into the host with $k+l+1$ tapes. Give the host tapes outside the embedded bank the standard layout for candidate $s$ and width word $u$, with all heads at zero, and rename the state by $e$; the resulting configuration is exactly the configuration on input $w$ with state $e(q)$ and host layout consisting of candidate $s$, width word $u$, and suffix-length word $v$, with input head at $1$, all work heads at zero, and empty output.",
+ "hypotheses_covered": [
+  "Natural numbers $k,l$",
+  "Types $S,H$",
+  "Function $e:S\\to H$",
+  "Boolean words $w,s,u,v$",
+  "State $q\\in S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Relocating a canonical state-word configuration of the suffix-length-call\nmachine into the host layout --- with the candidate and width words\npreserved --- yields exactly the host's canonical configuration on the full\nword layout with the length word installed."
+}

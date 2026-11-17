@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.apply_regAct",
+ "key": "251a0c1141faddf2",
+ "kind": "lemma",
+ "title": "A register action on a configuration",
+ "statement": "Let $c$ be a configuration with $m$ Boolean work tapes, state set $\\Lambda$, and fixed input $x$. Given states $s,s'\\in\\Lambda$, a register $r\\in\\{0,\\ldots,m-1\\}$, a tape function $f:\\mathbb Z\\to\\mathrm{Option}(\\{\\mathrm{false},\\mathrm{true}\\})$, a position $p\\in\\mathbb Z$, a write instruction $w\\in\\mathrm{Option}(\\mathrm{Option}(\\{\\mathrm{false},\\mathrm{true}\\}))$, and movement $mv\\in\\{-1,0,1\\}$, applying the action that performs $w$ on register $r$, moves its head by $mv$, and enters $s'$ to the configuration obtained from $c$ by setting its state to $s$, register $r$'s tape to $f$, and its head position to $p$ gives the configuration with state $s'$, tape $f$ if $w$ is absent and otherwise $f$ updated at $p$ with the specified optional symbol, and head position $p+mv$. All other configuration data are unchanged.",
+ "hypotheses_covered": [
+  "A configuration $c$ for $m$ Boolean work tapes, state set $\\Lambda$, and input $x$",
+  "States $s,s'\\in\\Lambda$",
+  "Register $r\\in\\mathrm{Fin}(m)$",
+  "Tape function $f:\\mathbb Z\\to\\mathrm{Option}(\\mathrm{Bool})$",
+  "Position $p\\in\\mathbb Z$",
+  "Write instruction $w\\in\\mathrm{Option}(\\mathrm{Option}(\\mathrm{Bool}))$",
+  "Movement $mv\\in\\{-1,0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

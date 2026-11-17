@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Compiler.effects_frameCode",
+ "key": "eb0a150ec0b9a18e",
+ "kind": "theorem",
+ "title": "Effects of frame code",
+ "statement": "Suppose the initial memory holds $0$ at the zero address, the value $2\\cdot 4$ at the pool cell for offset $2\\cdot 4$, and values $i$ and $j$ at the two argument addresses. For every natural number $F$, executing the frame code produces the memory obtained by first setting the frame pointer to the stack address for index $4$, then executing the code that zeros the first $F$ local stack cells, and finally setting the next two stack cells to $i$ and $j$, in that order.",
+ "hypotheses_covered": [
+  "Initial zero cell contains the word value $0$",
+  "Initial pool cell for offset $2\\cdot 4$ contains $2\\cdot 4$",
+  "First argument cell contains $i$",
+  "Second argument cell contains $j$",
+  "$F$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

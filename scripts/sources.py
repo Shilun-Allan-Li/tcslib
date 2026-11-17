@@ -25,7 +25,7 @@ contract from three sides:
 .md is copied), registers the tag and matches the text against the dataset -- the
 `references` and `citations` stages of scripts/dataset_pipeline.py.  The citations land
 in the blueprint; `python3 scripts/dataset_pipeline.py --stages dataset,verify` then
-carries them into dataset/tcslib_theorems.jsonl.gz.
+carries them into the dataset manifest and gzip shards.
 """
 
 from __future__ import annotations

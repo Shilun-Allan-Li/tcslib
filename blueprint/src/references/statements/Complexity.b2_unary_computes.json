@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2_unary_computes",
+ "key": "994a64469ef3281a",
+ "kind": "lemma",
+ "title": "Transfer of a Unary Computation",
+ "statement": "Let $M$ be a finite deterministic machine over the binary alphabet, and let $x$ and $v$ be binary words and $t$ a natural number. If $M$ computes output $v$ within $t$ steps on the all-ones word of length $|x|$, then the input-normalized machine associated with $M$ computes output $v$ within $t$ steps on $x$.",
+ "hypotheses_covered": [
+  "$M$ is a finite deterministic machine over the binary alphabet",
+  "$x,v$ are binary words",
+  "$t$ is a natural number",
+  "$M$ computes $v$ within $t$ steps on the all-ones input of length $|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic machine over the binary alphabet and suppose $M$ computes an output $v$ within $t$ steps on the all-ones input of length $|x|$. Then the input-normalized variant of $M$ computes $v$ within $t$ steps on the input $x$ itself."
+}

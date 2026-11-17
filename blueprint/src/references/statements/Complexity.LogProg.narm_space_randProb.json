@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.narm_space_randProb",
+ "key": "a60b08f6fa233423",
+ "kind": "theorem",
+ "title": "Space and probability preservation under compilation",
+ "statement": "Let $m,d,k_D,N$ be nonnegative integers, let $\u001b[0mA$ be a nondeterministic register machine with $m$ registers and $d$ oracle indices, let $x$ be a bit string, let $\text{oracle}$ assign a Boolean answer to each oracle index and bit string, and let $D$ be a deterministic Turing machine with $k_D$ work tapes. Suppose the register machine halts after $N$ choice bits on every choice string of length $N$, with every configuration before halting satisfying the guard that each register has binary length at most $W$ and every oracle call is clean and uses at most $B$ work-tape cells per head position. Then there is a time bound $T$ such that the compiled nondeterministic Turing machine halts on every choice string of length $T$, uses at most $m(W+2)+k_D(2B+1)$ work-tape cells on each such run, and accepts within $T$ steps exactly when the register machine can produce result true after $N$ choices. Moreover, for each Boolean value $b$, the fraction of length-$T$ choice strings on which the compiled machine outputs exactly $b$ equals the fraction of length-$N$ choice strings on which the register machine's result is $b$.",
+ "hypotheses_covered": [
+  "Finite control-state and decider-state types with decidable equality",
+  "Register machine, initial state, oracle, deterministic decider, and initial decider states",
+  "Natural-number bounds $B$, $W$, and $N$",
+  "Every length-$N$ choice sequence halts, with all preceding configurations satisfying the guard"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on several specialized machine and guard definitions whose informal descriptions are not supplied; the prose summarizes their apparent mathematical roles.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

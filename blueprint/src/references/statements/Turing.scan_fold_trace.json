@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.scan_fold_trace",
+ "key": "46f0b6459e35a93a",
+ "kind": "theorem",
+ "title": "Trace of a left fold over the input",
+ "statement": "Let $k\\in\\mathbb N$, let $x$ be a finite word over $\\Gamma$, let $A$ be a state type, choose a function $\\delta:A\\times\\Gamma\\to A$, an initial state $a_0\\in A$, and a configuration $d$ of the fold machine on input $x$. Suppose $d$ is in the forward phase carrying $a_0$ and its input head is at position $1$. For every $t\\in\\mathbb N$, the machine's configuration after $t$ steps is the piecewise trace that equals the forward configuration formed using the fold of the first $t$ symbols for $t\\le |x|$, the backward configuration carrying the fold of all of $x$ and indexed by $2|x|+1-t$ for $|x|<t\\le 2|x|+1$, and the configuration in the done phase carrying the fold of all of $x$ for $t>2|x|+1$.",
+ "hypotheses_covered": [
+  "natural number of work tapes $k$",
+  "symbol type $\\Gamma$ and state type $A$",
+  "input word $x$",
+  "fold transition function $\\delta$",
+  "initial state $a_0$",
+  "initial configuration $d$",
+  "$d$ is in the forward phase carrying $a_0$",
+  "input-head position of $d$ is $1$",
+  "time $t\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

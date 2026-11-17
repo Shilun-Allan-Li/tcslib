@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_pairLenCheck",
+ "key": "1c226d0181b28d3f",
+ "kind": "theorem",
+ "title": "Polynomial-time pair-length check",
+ "statement": "For all natural numbers $C$ and $e$, there are a finite Turing machine $M$ and a constant $c\\in\\mathbb{N}$ such that, on every Boolean input $x$, $M$ halts within $c(|x|+1)^{e+1}$ steps and outputs a single bit. That bit is true exactly when the aligned pair parser returns components $(a,b)$ with $|b|\\le C(|a|+1)^e$; it is false if parsing fails.",
+ "hypotheses_covered": [
+  "Natural number $C$",
+  "Natural number $e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all constants $C$ and $e$ there exist a finite Turing machine $M$ and a\nconstant $c$ such that $M$ computes, within $c\\,(n+1)^{e+1}$ steps on inputs\nof length $n$, the one-bit function that on a word encoding the pair $(a,b)$\nunder the self-delimiting pair code outputs whether\n$\\abs{b} \\le C\\,(\\abs{a}+1)^{e}$, and on any malformed word outputs $0$."
+}

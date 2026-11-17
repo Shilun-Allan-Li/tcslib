@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clRow_stored",
+ "key": "aa67122b7f08d1d5",
+ "kind": "lemma",
+ "title": "Complete Row Construction",
+ "statement": "Let $l$ be a natural number, let $x$ be a Boolean input word with input-head position $p$, let $w_i$ be a Boolean word for each counter $i<l$, and let $r$ be a record word. Suppose every counter word has length at most $W$. There is a time $t\\le l(3W+4)$ at which the row controller, started with field index and copier control both zero, is at field index $l$ with copier control zero; its input position, counter-tape contents and head positions agree with their initial values, and its record is $r$ followed by the stored encodings of all $l$ counter words in order.",
+ "hypotheses_covered": [
+  "$l$ is a natural number",
+  "$x$ is a Boolean input word",
+  "$p$ is a valid input-head position for $x$",
+  "$w$ assigns a Boolean word to each of the $l$ counter indices",
+  "$r$ is a Boolean record word",
+  "$W$ is a natural number",
+  "each counter word has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, counter words of length at most $W$, and record, there is a time $t \\le l(3W+4)$ after which the row controller has appended the complete stored row, all $l$ self-delimiting fields in tape order, to the record, with every source counter unchanged and its head at zero."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitter_width_budget",
+ "key": "574417cfa15c67cf",
+ "kind": "lemma",
+ "title": "Output Width Time Budget",
+ "statement": "Let $f:\\mathbb{N}\\to\\mathbb{N}$, let $E$ be a finite Turing machine over the Boolean alphabet, and let $T_E:\\mathbb{N}\\to\\mathbb{N}$ be monotone. Suppose that on every Boolean input $r$, $E$ halts within $T_E(|r|)$ steps with output the binary representation of $f(|r|)$. For Boolean words $s$ and $w$ with $|s|\\le |w|+1$, $E$ computes that binary representation on input $s$ within $T_E(|s|)$ steps; its length is at most $T_E(|s|)$, and $T_E(|s|)\\le T_E(|w|+1)$.",
+ "hypotheses_covered": [
+  "A function $f:\\mathbb{N}\\to\\mathbb{N}$",
+  "A finite Turing machine $E$ over the Boolean alphabet",
+  "A monotone time bound $T_E$",
+  "$E$ computes the binary representation of $f(|r|)$ on every Boolean input $r$ within $T_E(|r|)$ steps",
+  "Boolean words $s,w$ with $|s|\\le |w|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine $E$ compute the binary width word $s \\mapsto\n\\mathrm{bits}(f(\\abs{s}))$ within a monotone time bound $T_E$. Then for any\ncandidate $s$ of length at most $\\abs{w}+1$: $E$ halts on $s$ with that\noutput within $T_E(\\abs{s})$ steps, the output's length is at most\n$T_E(\\abs{s})$, and $T_E(\\abs{s}) \\le T_E(\\abs{w}+1)$."
+}

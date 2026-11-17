@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.DAGCircuit.encode",
+ "key": "648b8eb68cb796d1",
+ "kind": "def",
+ "title": "Encoding a directed acyclic circuit",
+ "statement": "For a circuit with $n$ input vertices, its encoding concatenates the unary encoding of $n$, the list encoding of its gates, and the unary encoding of its output vertex. The gates are listed in topological order, each gate reads only vertices with index less than $n+i$ when it is the $i$th gate, and the output index is less than $n$ plus the number of gates.",
+ "hypotheses_covered": [
+  "The circuit has a natural-number input size $n$.",
+  "Each gate reads only vertices of index less than $n+i$ at gate position $i$.",
+  "The output index is less than $n$ plus the number of gates."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

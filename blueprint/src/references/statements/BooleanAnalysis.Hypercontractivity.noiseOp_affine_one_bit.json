@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.noiseOp_affine_one_bit",
+ "key": "53154481846365cd",
+ "kind": "lemma",
+ "title": "Noise on affine one-bit functions",
+ "statement": "For $\\rho,a\\in\\mathbb{R}$, define $f:\\{0,1\\}\\to\\mathbb{R}$ by $f(x)=1+a\\sigma(x)$, where $\\sigma(0)=1$ and $\\sigma(1)=-1$. Then the Fourier noise operator satisfies $(T_\\rho f)(x)=1+\\rho a\\sigma(x)$ for every $x\\in\\{0,1\\}$.",
+ "hypotheses_covered": [
+  "$\\rho\\in\\mathbb{R}$",
+  "$a\\in\\mathbb{R}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $\\rho,a\\in\\bbr$, let $f(b)=1+a(-1)^b$ on $\\{0,1\\}$. Then $T_\\rho f(b)=1+\\rho a(-1)^b$ for both bits $b$. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure."
+}

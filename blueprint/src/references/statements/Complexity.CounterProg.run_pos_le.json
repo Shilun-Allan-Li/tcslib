@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.run_pos_le",
+ "key": "090a8f9c53124790",
+ "kind": "theorem",
+ "title": "Bound on Input-Position Growth",
+ "statement": "Let $R\\in\\mathbb{N}$, let $\\Lambda$ be a set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, and fix an input bit string $x$. For every abstract state $s$ and every $t\\in\\mathbb{N}$, the read position after $t$ steps from $s$ is at most its initial read position plus $t$.",
+ "hypotheses_covered": [
+  "$R\\in\\mathbb{N}$ and $\\Lambda$ is a set of labels.",
+  "$P$ is a counter program over $R$ registers and labels in $\\Lambda$.",
+  "An input bit string $x$ is fixed.",
+  "An abstract state $s$ is specified.",
+  "$t\\in\\mathbb{N}$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, let $s$ be an abstract state\nof $P$ in which $\\mathrm{pos}(s)$ input symbols have been read, and let\n$t \\in \\mathbb{N}$.  Then after $t$ steps of $P$ on $x$ from $s$ the number of\ninput symbols read is at most $\\mathrm{pos}(s) + t$."
+}

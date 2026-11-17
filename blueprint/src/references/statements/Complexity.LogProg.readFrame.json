@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.readFrame",
+ "key": "77633549242206cc",
+ "kind": "def",
+ "title": "Read-frame configuration relation",
+ "statement": "Let $c$ and $d$ be configurations of an $m$-tape Turing machine with Boolean work-tape symbols and states in the disjoint union of read phases and optional Boolean values, and let $r,s$ be work-tape indices. The configuration $d$ is related to $c$ when there are a state label $l$, an input-head position $ip$, a tape content function $f$, and integers $p,q$ such that $d$ has state $l$, input-head position $ip$, tape $s$ replaced by $f$, head positions first updated at $s$ to $p$ and then at $r$ to $q$, and the same output as $c$; moreover, both $p$ and $q$ lie between $-1$ and the number of binary digits of the input length plus one, inclusive.",
+ "hypotheses_covered": [
+  "$c,d$ are configurations with $m$ work tapes, Boolean tape symbols, and the stated state type.",
+  "$r,s$ are work-tape indices.",
+  "The head position $p$ satisfies $-1\\le p\\le |\\mathrm{bits}(n+1)|$, where $n$ is the input length.",
+  "The head position $q$ satisfies $-1\\le q\\le |\\mathrm{bits}(n+1)|$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

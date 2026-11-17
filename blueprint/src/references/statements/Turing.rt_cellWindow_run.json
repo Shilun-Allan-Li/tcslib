@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.rt_cellWindow_run",
+ "key": "cb499cb583aeb59e",
+ "kind": "theorem",
+ "title": "Running the cell-window machine",
+ "statement": "Let $Q$ and $T$ be types with decidable equality, let $x$ be a Boolean input word, let $w$ be a Boolean word, and let $s$ be a natural number such that the binary value of $w$ is $s$. Suppose a configuration $a$ of the specified three-tape machine is in its sweep entry state; within the interval of offsets from $-1$ to $|w|$, tape 0 stores $w$ starting at its head, tape 2 is blank, and tape 1 is blank at every offset from $-1$ to $2s+1$. After encoding the digits as symbols and adjoining the machine's state tag, there is a time $t\\le 18(s+|w|)+32$ when the machine reaches its designated exit state, having avoided that state at every earlier time; up to and including time $t$, every work-tape head stays within distance $2s+|w|+3$ of its initial position. At time $t$, all configuration data except the state and work tapes agree with the encoded starting configuration, and tape 1 has been overwritten on the $2s+1$ cells beginning at its initial head position by $s$ blank-cell symbols, one marked cell symbol, and then $s$ blank-cell symbols; tape contents outside that interval are unchanged.",
+ "hypotheses_covered": [
+  "$Q,T$ have decidable equality",
+  "Boolean input word $x$",
+  "Boolean word $w$ and natural number $s$",
+  "Binary value of $w$ equals $s$",
+  "Initial configuration $a$ has the specified sweep entry state",
+  "Tape 0 stores $w$ at offsets $-1$ through $|w|$",
+  "Tape 2 is blank at offsets $-1$ through $|w|$",
+  "Tape 1 is blank at offsets $-1$ through $2s+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.sub_run",
+ "key": "76f8bc18aeab1bb7",
+ "kind": "theorem",
+ "title": "Register Subroutine Run",
+ "statement": "Let $A$ be a register program, let $q,r$ be distinct registers, and suppose its instructions at states $l,l_1,l_2$ are respectively: branch to $l_x$ when register $q$ is zero (with the other branch to $l_1$), decrement $q$ and go to $l_2$, then decrement $r$ and return to $l$. For every $k\\in\\mathbb N$ and register valuation $v$ with $v(q)=k$ and every register value at most $B$, there is a finite run from state $l$ to state $l_x$ that satisfies the guard requiring the program's side conditions and every register value to be at most $B$ at each earlier step. The final valuation sets $q$ to $0$, decreases $r$ by $k$ using truncated subtraction, and leaves all other registers unchanged; the final result is unset.",
+ "hypotheses_covered": [
+  "$q$ and $r$ are distinct registers",
+  "instruction at $l$ is the specified zero test",
+  "instruction at $l_1$ decrements $q$ and goes to $l_2$",
+  "instruction at $l_2$ decrements $r$ and returns to $l$",
+  "initial value of $q$ is $k$",
+  "all initial register values are at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

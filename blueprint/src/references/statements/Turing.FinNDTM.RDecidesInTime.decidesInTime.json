@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinNDTM.RDecidesInTime.decidesInTime",
+ "key": "fc5c896301122f16",
+ "kind": "theorem",
+ "title": "Decision from one-sided error",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $L$ be a language of binary strings, and let $T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every input $x$, every branch halts within $T(|x|)$ steps, output $1$ has probability at least $2/3$ when $x\\in L$, and every branch outputs $0$ when $x\\notin L$. Then every input's branches halt within that time, and $x\\in L$ exactly when some branch of length $T(|x|)$ halts with output exactly $1$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$L$ is a language of binary strings",
+  "$T$ maps natural numbers to natural numbers",
+  "For every input, every branch halts within $T$ of its length",
+  "On members, output $1$ has probability at least $2/3$",
+  "On nonmembers, every length-$T(|x|)$ choice word produces output $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

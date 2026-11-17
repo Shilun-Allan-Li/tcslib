@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.parallelTM_computes",
+ "key": "fe16891f4d7393fa",
+ "kind": "lemma",
+ "title": "Transverse coding preserves computation",
+ "statement": "Let $A$ be a finite alphabet, let $e:\\{\\mathsf{false},\\mathsf{true}\\}\\hookrightarrow A$ be an embedding, and let $P$ be a finite Turing machine over $A$. For binary words $x,w$ and $t\\in\\mathbb N$, if $P$ on the symbolwise image of $x$ halts after $t$ steps with output the symbolwise image of $w$, then the transverse binary realization of $P$ on $x$ halts after $t$ steps with output $w$.",
+ "hypotheses_covered": [
+  "$A$ is finite and has decidable equality",
+  "$P$ is a finite Turing machine over $A$",
+  "$e$ embeds the Booleans into $A$",
+  "$x,w$ are binary words",
+  "$t\\in\\mathbb N$",
+  "$P$ computes the symbolwise image of $w$ from the symbolwise image of $x$ in exactly $t$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a machine over a finite alphabet $A$, $e$ an embedding of the Booleans\ninto $A$, $x$ and $w$ binary words, and $t \\in \\mathbb{N}$. If, started on the\nsymbolwise embedding of $x$, the machine $P$ has halted after $t$ steps with output\nexactly the symbolwise embedding of $w$, then the transverse binary realization of\n$P$, started on $x$, has halted after the same $t$ steps with output exactly $w$."
+}

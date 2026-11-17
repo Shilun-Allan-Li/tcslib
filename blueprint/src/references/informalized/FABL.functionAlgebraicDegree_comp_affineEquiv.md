@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/F₂Polynomials/Affine.lean :: FABL.functionAlgebraicDegree_comp_affineEquiv -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Affine Invariance of Algebraic Degree
+
+**Claim.** Composing a Boolean function on the $n$-dimensional Boolean cube over $\mathbb F_2$ with an affine bijection of that cube preserves its algebraic degree.
+
+**Proof.** The degree of a function composed with any affine map is at most the degree of the original function (`functionAlgebraicDegree_comp_affineMap_le`). Applying this first to the affine bijection $L$ gives one inequality. Apply the same bound to the composite function and the inverse affine map $L^{-1}$. Since composing with $L^{-1}$ after $L$ recovers the original function, this gives the reverse inequality. The two bounds yield equality.
+
+**Key facts.** `FABL.functionAlgebraicDegree_comp_affineMap_le`.

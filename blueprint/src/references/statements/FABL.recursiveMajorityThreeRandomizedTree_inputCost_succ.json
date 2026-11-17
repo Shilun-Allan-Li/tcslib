@@ -1,0 +1,15 @@
+{
+ "lean_name": "FABL.recursiveMajorityThreeRandomizedTree_inputCost_succ",
+ "key": "59292a2f83155a15",
+ "kind": "theorem",
+ "title": "Successive input cost recurrence",
+ "statement": "For every depth $d\\in\\mathbb{N}$ and every sign input $x$ of length $3^{d+1}$, let $x_0,x_1,x_2$ be its three length-$3^d$ blocks, let $c_i$ be the randomized tree's expected query cost on $x_i$, and let $y_i$ be the recursive majority value on $x_i$. The expected query cost at depth $d+1$ equals \\[\\frac{(c_0+c_1+\\mathbf{1}_{y_0\\ne y_1}c_2)+(c_0+c_2+\\mathbf{1}_{y_0\\ne y_2}c_1)+(c_1+c_2+\\mathbf{1}_{y_1\\ne y_2}c_0)}{3},\\] where each indicator contributes its accompanying cost when its condition holds and contributes zero otherwise.",
+ "hypotheses_covered": [
+  "A natural number depth $d$",
+  "A sign input of length $3^{d+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

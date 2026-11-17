@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.Action.apply_workTapes",
+ "key": "e25fd0711daeb6fb",
+ "kind": "lemma",
+ "title": "Work tapes after applying an action",
+ "statement": "Let $a$ be an action for a machine with $k$ work tapes, let $c$ be a configuration, and let $i$ be a work-tape index. After applying $a$ to $c$, tape $i$ is the old tape updated at the cell under its head, with value the symbol prescribed by the action for that tape, or, if no symbol is prescribed, the symbol previously scanned there.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "An action $a$ and configuration $c$ for the same machine, symbol alphabet, and input",
+  "A work-tape index $i$ among the $k$ tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a$ be a one-step action of a multi-tape Turing machine with $k$ work\ntapes, let $c$ be a configuration of such a machine, and let $i$ be one of the\n$k$ work-tape indices.  After applying $a$ to $c$, the content of the $i$-th\nwork tape equals the old content updated at the cell under the $i$-th work\nhead, where the new cell value is the symbol that $a$ proposes to write there\nand, when $a$ declines to write on that tape, the symbol previously scanned:\nan explicit blank write erases the cell, while no write at all copies the\nscanned symbol back unchanged.  No finiteness or liveness hypothesis is\nrequired."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.bridge_seed",
+ "key": "bbc629ab00156750",
+ "kind": "lemma",
+ "title": "Seeding the main stack",
+ "statement": "Let $c$ be a program in the partial-recursive language and let $x$ be a Boolean string. Starting from the scanning state at input-head position $|x|+1$, with all stacks and the output empty, exactly three steps of the bridging machine lead to the backward-reading state at input-head position $|x|$. The main stack then contains the sentinel true-bit symbol followed by the list terminator; the other stacks and output remain empty.",
+ "hypotheses_covered": [
+  "A program $c$ in the partial-recursive language",
+  "A Boolean string $x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the bridge configuration of the bridging machine in the scanning state at the\nright endmarker of the embedded Boolean input $x$ (all stacks empty, empty output),\nexactly three steps lead to the backward-reading state with the input head at\nposition $\\abs{x}$ and the main stack holding just the sentinel true-bit symbol on\ntop of the list terminator, the other stacks empty and the output empty."
+}

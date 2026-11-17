@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Meyer.work_rule",
+ "key": "a553e6140034e3ab",
+ "kind": "theorem",
+ "title": "Work Tape Update Rule",
+ "statement": "Let $M$ be a finite-tape Turing machine over Booleans, let $x$ be a Boolean input, let $W$ be a natural number, and let $x_b$ be Boolean-valued data on natural numbers. Suppose the encoding satisfies every check for times and addresses below $2^W$, indices through $|x|+1$, and all checks, and is correct at time $t$. If $t+1<2^W$, $h$ is a work-tape index, and $d$ is an integer with $|d|+t+1\\le 2^W-1$, then the encoded symbol on tape $h$ at time $t+1$ and offset $d$ equals the result of applying the machine's work-tape update rule to the state and reads in its configuration after $t$ steps, using the time-$t$ encoded tape values as the old tape contents.",
+ "hypotheses_covered": [
+  "$M$ is a finite-tape Turing machine over Booleans",
+  "$x$ is a Boolean input",
+  "$W$ is a natural number",
+  "$x_b$ is Boolean-valued data",
+  "The encoding satisfies every check for all $t,a<2^W$ and $j\\le |x|+1$",
+  "The encoding is correct at time $t$",
+  "$t+1<2^W$",
+  "$h$ is a work-tape index",
+  "$d$ is an integer with $|d|+t+1\\le 2^W-1$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied definitions do not informally define the encoding or the work-tape update rule.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

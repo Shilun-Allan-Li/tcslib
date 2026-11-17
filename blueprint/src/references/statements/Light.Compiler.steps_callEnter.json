@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.steps_callEnter",
+ "key": "ff89f5f864aa1255",
+ "kind": "theorem",
+ "title": "Procedure call entry",
+ "statement": "Let $S$ be a compiler setting, and suppose a call statement with procedure index $p$, argument expressions $args$, and return-variable index $x$ starts at depth $d$, code position $pos$, stack base $q$, state $\u001bσ$, and word memory $m$. Assume the starting conditions hold, every argument expression is safe in $\u001bσ$, $d$ is less than the depth limit, and procedure $p$ has entry position $e$. Then there is a word memory $m_2$ such that the compiled machine takes exactly the call-size number of steps from $(pos,m)$ to position $e$ with memory $m_2$. This memory represents the callee state whose local frame consists of the argument values and whose ordinary memory is inherited from $\u001bσ$; its stack cell at index $q+F$ contains the return position $pos$ plus the call size; and it agrees with $m$ outside the cells writable from stack base $q+F$.",
+ "hypotheses_covered": [
+  "starting conditions for the call",
+  "all argument expressions are safe in the initial state",
+  "call depth is strictly below the depth limit",
+  "procedure entry list gives procedure $p$ the position $e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a compiler setting, $d$ a call depth, $p$ a procedure index, $args$ a list of\nargument expressions, $x$ a return-variable index, $σ$ a state, and $pos,q,m$ an initial\ncode position, stack base, and memory. Suppose the starting conditions hold for this\ncall, every argument expression is safe in $σ$, $d$ is less than the depth limit, and\nthe entry position for procedure $p$ is $e$. Then there is a memory $m_2$ such that the\nmachine takes exactly the call-size number of steps from position $pos$ and memory $m$\nto position $e$ and memory $m_2$; $m_2$ represents the callee state with argument values\nas its local frame and the original memory contents; the stack cell at index $q+F$\nstores the return position $pos+callSize(F,args)$; and $m_2$ agrees with $m$ outside the\ncells writable from stack base $q+F$."
+}

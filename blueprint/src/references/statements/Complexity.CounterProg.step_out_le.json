@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.CounterProg.step_out_le",
+ "key": "b63e248ccafdfe77",
+ "kind": "theorem",
+ "title": "Bound on one-step output growth",
+ "statement": "Let $R$ be a number of registers, let $\\Lambda$ be a set of labels, let $P$ be a counter program over them, let $x$ be a bit string, and let $s$ be an abstract state. For any $K\\in\\mathbb{N}$ such that every register value in $s$ is at most $K$, the output after one step of $P$ on $x$ from $s$ has length at most the length of the output of $s$ plus $K+1$.",
+ "hypotheses_covered": [
+  "A number $R$ of registers",
+  "A set $\\Lambda$ of labels",
+  "A counter program $P$ over these registers and labels",
+  "An input bit string $x$",
+  "An abstract state $s$",
+  "A natural number $K$ bounding every register value in $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, $K \\in \\mathbb{N}$, and $s$\nan abstract state of $P$ with output $o$ in which every register holds at most\n$K$.  Then the output after one step of $P$ on $x$ from $s$ has length at most\n$|o| + K + 1$."
+}

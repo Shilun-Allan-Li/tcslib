@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.rewind_scan_heads",
+ "key": "9746f0f85ff0982b",
+ "kind": "theorem",
+ "title": "Work-head positions during a leftward scan",
+ "statement": "Let $k \\in \\mathbb{N}$, let $S$ be a state set, let $x$ be a Boolean input, and let $M$ be a $k$-work-tape Turing machine over the Boolean alphabet with states in $S$. Suppose that for every input and work-tape symbols, in state $s$ the machine moves left and stays in $s$ when it scans an input symbol, and moves right and enters the optional destination state $d$ when it scans a blank; these transitions write nothing on the work tapes, move no work-tape heads, and emit no output. For every $j \\in \\mathbb{N}$ and configuration $c$ on $x$ in state $s$ with input-head position exactly $j$, if $j \\le |x|$, then for every $u \\le j+1$ the work-tape head positions after $u$ steps from $c$ equal those in $c$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A state set $S$",
+  "A Boolean input $x$",
+  "A machine over the Boolean alphabet with states in $S$",
+  "A scan state $s$",
+  "An optional destination state $d$",
+  "For every input and work symbols, the transition from $s$ is leftward to $s$ on a symbol and rightward to $d$ on a blank",
+  "A natural number $j$",
+  "A configuration $c$ on $x$ with state $s$",
+  "The input-head position of $c$ equals $j$",
+  "$j$ is at most the length of $x$",
+  "A step count $u \\le j+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

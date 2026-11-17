@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonDecider",
+ "key": "f72ba3ffd34567dd",
+ "kind": "lemma",
+ "title": "A bounded-time decider for decoding",
+ "statement": "For every machine format $F$, there exist a finite Turing machine $D$ over the Boolean alphabet and a natural number $a$ such that for each Boolean string $\\alpha$, some Boolean value $b$ is output as the single-symbol word $[b]$ within $a(|\\alpha|+1)^a$ steps. If $b$ is false, decoding $\\alpha$ returns the fallback code; if $b$ is true, the scan of $\\alpha$ succeeds and returns a suffix.",
+ "hypotheses_covered": [
+  "A machine format $F$",
+  "For every Boolean string $\\alpha$, there exists a Boolean value $b$",
+  "The machine computes output $[b]$ within $a(|\\alpha|+1)^a$ steps",
+  "False output implies decoding returns the fallback code",
+  "True output implies scanning succeeds with some suffix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

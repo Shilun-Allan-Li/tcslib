@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.PathHard.step_of",
+ "key": "5d944901701149fb",
+ "kind": "lemma",
+ "title": "Removing an Initial Program Step",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $o:\text{Fin}(5)\to\text{List}(\text{Bool})\to\text{Bool}$ be an oracle, let $y$ be a Boolean string, and let $st$ be a fifteen-register state with every register at most $B$. For any instruction $l$ and abstract configuration $c$, if there is a finite run from the configuration obtained by taking one step of the program at $l$ with registers $st$ and no result, to $c$, with the guard satisfied at every configuration before the endpoint, then there is such a guarded finite run from the configuration at $l$ with registers $st$ and no result to $c$.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$o$ is an oracle on five indices and Boolean strings",
+  "$y$ is a Boolean string",
+  "$st$ is a fifteen-register state",
+  "Every register of $st$ is at most $B$",
+  "There is a guarded finite run from the one-step successor of $(l,st,\\text{no result})$ to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let the mode be Boolean, let $o$ be an oracle on five\nindices and binary words, let $y$ be a binary word, and let $st$ be a register state\nwhose fifteen coordinates are all at most $B$. If there is a finite guarded run from the\nconfiguration obtained by taking one step of the specified register program from\ninstruction $l$ and state $st$ to a configuration $c$, then there is a finite guarded\nrun from instruction $l$ and state $st$ to $c$."
+}

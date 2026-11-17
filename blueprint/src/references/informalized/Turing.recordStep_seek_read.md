@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean :: Turing.recordStep_seek_read -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Seek and Read Phase Composition
+
+**Claim.** Under the stated bounded-seek hypothesis and blank-tape condition, the record-step machine reaches the specified seek-phase snapshot and then the specified complement-phase snapshot, without reaching either verdict earlier and while respecting the stated work-head radius bound.
+
+**Proof.** First form the seek-start snapshot, with the embedded word on the first selected tape and the second selected tape blank. Decode the two selected embedded tapes to Boolean tapes. The buffer decoding identity (`FinTM.bufferTape_map_decode`) verifies that the decoded first tape contains $w$ and that the second is blank. The assumed seek bound therefore supplies a first finish time, its input-position and tape-preservation conclusions, and its head-displacement bound. Transport this run to the embedded record-symbol machine using `recordStep_seek_transport`; the seek-bank embedding selects the appropriate two tapes. The phase-transition result for a record-step phase (`recordStep_phase_run`) then appends the transition from seek completion to the read phase, preserving the no-verdict and head-bound properties. Next, the read machine takes one step to read the current input symbol; `recordStep_read_run` identifies the resulting read state, and its native-frame property (`recordStep_native_frame`) ensures this step changes no work tape or work-head position. Apply `recordStep_phase_run` again to transition from reading to the complement phase. The input symbol in the record alphabet decodes to the original input symbol, as follows from symbol lifting (`Cfg.liftSymbols_inputSymbol`) and the embedded-symbol decoding rule (`decodeBool_apply`). Compose the two phase runs with the read step using the transitivity of bounded runs (`recordRun_trans`). The resulting time adds the seek duration and the three fixed transition/read steps, and the combined run retains the claimed verdict avoidance and head bound.
+
+**Key facts.** `Turing.FinTM.bufferTape_map`, `Turing.recordStep_seek_transport`, `Turing.recordStep_phase_run`, `Turing.recordStep_read_run`, `Turing.recordStep_native_frame`, `Turing.Cfg.liftSymbols_inputSymbol`, `Turing.decodeBool_apply`, `Turing.recordRun_trans`.

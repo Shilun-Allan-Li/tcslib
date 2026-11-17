@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.Contract.ofSegment",
+ "key": "0ddf51b08004e84a",
+ "kind": "def",
+ "title": "Contract from a computation segment",
+ "statement": "Let $M$ be a $k$-work-tape Turing machine with entry state $e$ and a designated set of exit states, and fix an input and an index type $I$. Suppose a precondition, running time, endpoint configuration, and lower and upper work-head bounds are specified for each index and starting configuration. If, whenever the starting configuration is in state $e$ and satisfies the precondition, the computation segment of the specified duration reaches the specified endpoint, avoids the exit set at all earlier times, and keeps every work-tape head between its specified bounds throughout the segment, and the endpoint state belongs to the exit set, then these data define a contract with those preconditions, times, endpoints, and bounds.",
+ "hypotheses_covered": [
+  "A natural number of work tapes",
+  "A symbol alphabet and state type",
+  "A machine M",
+  "An entry state",
+  "An exit set of optional states",
+  "An index type",
+  "A fixed input list",
+  "Precondition, time, endpoint, and lower and upper bound functions",
+  "A segment property for every indexed start in the entry state satisfying the precondition",
+  "Endpoint membership in the exit set for every such start"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

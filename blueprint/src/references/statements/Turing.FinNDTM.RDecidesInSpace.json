@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinNDTM.RDecidesInSpace",
+ "key": "e9329f2b2be9388f",
+ "kind": "def",
+ "title": "Bounded-error randomized space decision",
+ "statement": "A finite-state nondeterministic Turing machine $N$ decides a Boolean language $L$ in space bounded by $s$ if it uses space at most $s$ and, for every Boolean string $x$, there is a time bound $T$ within which it halts. If $x\\in L$, its probability of outputting true by time $T$ is at least $2/3$; if $x\\notin L$, every choice sequence of length $T$ yields the output false.",
+ "hypotheses_covered": [
+  "$N$ is a finite-state nondeterministic Turing machine over Boolean symbols",
+  "$L$ is a language of Boolean strings",
+  "$s$ is a natural-number-valued space bound",
+  "$N$ uses space bounded by $s$",
+  "For every input string, some natural-number time bound exists",
+  "Accepted inputs have true-output probability at least $2/3$ by that bound",
+  "Rejected inputs yield false output for every choice sequence of length equal to that bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

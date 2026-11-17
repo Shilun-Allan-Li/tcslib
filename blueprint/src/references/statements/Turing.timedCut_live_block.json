@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timedCut_live_block",
+ "key": "20f29765899d5972",
+ "kind": "lemma",
+ "title": "A Bounded Live Simulation Block",
+ "statement": "Let $M$ be a coded machine with serialization length $L$, let $\\\\alpha$ and $x$ be Boolean words, and let $c$ be a configuration of $M$ on input $x$ whose state is present. If $p\\\\in\\\\mathbb{N}$ satisfies $p\\\\le L$, then there are natural numbers $d,p'$, and a four-tape interpreter configuration $r$ on the paired input $\\\\langle\\\\alpha,x\\\\rangle$ such that $d\\\\le 3L+5(N+1)+20$, $p'\\\\le L$, the control state of $r$ is a pending-action state, the stopped interpreter reaches $r$ from the simulation configuration for $M,\\\\alpha,c,p$ in exactly $d$ steps, and one step of the ordinary interpreter from $r$ equals the simulation configuration for the result of one step of $M$ from $c$ with table cursor $p'$. Here $N$ is the state-count parameter of $M$.",
+ "hypotheses_covered": [
+  "coded machine $M$",
+  "Boolean word $\\\\alpha$",
+  "Boolean input word $x$",
+  "configuration $c$ of $M$ on input $x$",
+  "state of $c$ is present",
+  "natural number $p$ with $p\\\\le |M.\\\\mathrm{serialize}|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a coded machine with serialization of length $L$ and state count\n$N+1$, let $\\mathrm{src}$ be a non-halted configuration of $M$, and let the\ntable cursor $p$ satisfy $p \\le L$.  Then there exist a duration\n$d \\le 3L + 5(N+1) + 20$, a new cursor $p' \\le L$, and a configuration\n$\\mathrm{ready}$ whose control is a pending-action state, such that the\nstopped table interpreter runs from the interpreter checkpoint of\n$\\mathrm{src}$ to $\\mathrm{ready}$ in exactly $d$ steps, and one step of the\nunstopped interpreter from $\\mathrm{ready}$ is the interpreter checkpoint of\nthe configuration obtained by one step of $M$ from $\\mathrm{src}$, with table\ncursor $p'$."
+}

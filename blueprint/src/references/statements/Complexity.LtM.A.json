@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LtM.A",
+ "key": "a14bcd0234d60d14",
+ "kind": "def",
+ "title": "Unary less-than machine",
+ "statement": "Consider a two-register machine with one available decider and the eight labels start, test, compare, three intermediate labels, yes, and no. At start it validates the input as a unary-prefixed canonical binary word, rejecting invalid inputs; at test it calls the available decider on the unary prefix with register 1 as its argument, branching to no if the call accepts and to compare otherwise. At compare it accepts if the input's binary payload equals register 1; otherwise it increments register 1, then increments register 2 twice, and returns to test. The yes label accepts and the no label rejects.",
+ "hypotheses_covered": [
+  "Two registers",
+  "One available decider",
+  "The specified eight machine labels"
+ ],
+ "confidence": "high",
+ "caveat": "The prose describes the transition table and its instruction meanings; the behavior of the called decider is not otherwise specified.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.CPSim.G_ev",
+ "key": "04bfa2cd91a9e10f",
+ "kind": "lemma",
+ "title": "Bounded encoded simulation configurations are admissible",
+ "statement": "Let $R$ be a natural number, let $P$ be a counter program with $R$ registers and label set $\\Lambda$, and fix an initial label $l_0$, a Boolean flag $\\ell$, natural numbers $n,p,B$, a bit string $u$, and a function $o:\\{0,1\\}\\to\\{0,1\\}^*$. Suppose that for every natural number $h$, $o(0,\\langle 1^n,\\mathrm{bits}(h)\\rangle)$ is true exactly when $h<|u|$, and $o(1,\\langle 1^n,\\mathrm{bits}(h)\\rangle)$ equals the $h$-th bit of $u$, with false returned when that bit is out of range. For any label $q$ and register assignment $\\rho$ with $\\rho(r)\\le B$ for every register $r$, and any $p_*,o_*,t_*\\le B$, the configuration with label $q$, register values obtained by extending $\\rho$ with the values $p_*,o_*,t_*$, and no output bit satisfies the simulation invariant at input $\\langle 1^n,\\mathrm{bits}(p)\\rangle$ and bound $B$.",
+ "hypotheses_covered": [
+  "The output oracle $o$ returns the length test on encoded indices for every $h$",
+  "The output oracle $o$ returns the corresponding bit of $u$, defaulting to false out of range, for every $h$",
+  "Every register value of $\\rho$ is at most $B$",
+  "$p_*\\le B$",
+  "$o_*\\le B$",
+  "$t_*\\le B$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion uses a simulation invariant whose admissibility condition depends on the program instruction at the configuration label; the formal statement supplies that condition through definitions not informally described in the payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

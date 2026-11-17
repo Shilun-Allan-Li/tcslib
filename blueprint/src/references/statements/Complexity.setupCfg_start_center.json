@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.setupCfg_start_center",
+ "key": "3c1da03d042f4bfd",
+ "kind": "lemma",
+ "title": "Return to the Guide Origin",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,R,j\\in\\bbn$, and fix an input word and base configuration for the schedule machine built from $W$ and $a$. For any input-head position, budget-head position and tape, unary-head position and tape, and base configuration, starting in the start-center phase with guide head at $-j$ and guide tape of radius $R$, after $j+1$ steps the machine is in the macrostep-check phase with guide head at $0$; the resulting configuration is the setup configuration with all the same data and other head positions.",
+ "hypotheses_covered": [
+  "A finite Boolean-alphabet machine $W$",
+  "Natural parameters $a$, $R$, and $j$",
+  "An input word and base configuration",
+  "An input-head position",
+  "Integer budget-head position and budget tape",
+  "Integer unary-head position and unary tape",
+  "Guide-head position initially $-j$ and guide tape of radius $R$",
+  "Initial start-center phase"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\in \\bbn$: from a setup configuration in the start-center phase with guide\nhead at cell $-j$ over the completed guide of radius $R$, exactly $j+1$ steps reach the\norigin and enter the macrostep-check phase with guide head at cell $0$; all tapes and\nall other heads are unchanged."
+}

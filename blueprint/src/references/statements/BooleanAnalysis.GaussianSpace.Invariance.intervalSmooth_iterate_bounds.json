@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_iterate_bounds",
+ "key": "e3e4ee4c85165335",
+ "kind": "theorem",
+ "title": "Regularity and bounds for repeated interval averaging",
+ "statement": "Let $\\eta>0$, let $c\\ge0$, and let $\\psi:\\mathbb R\\to\\mathbb R$ be $c$-Lipschitz. For each natural number $m$, set $\\phi=S_\\eta^{m+1}\\psi$, the result of applying the translated interval average $m+1$ times. Then $\\phi$ is $m+1$ times continuously differentiable and $c$-Lipschitz, and for every $x\\in\\mathbb R$,\n\\[|\\phi(x)-\\psi(x)|\\le(m+1)c\\eta,\\qquad |\\phi^{(m+1)}(x)|\\le c(2/\\eta)^m.\\]",
+ "hypotheses_covered": [
+  "$\\eta>0$",
+  "$c\\ge0$",
+  "$\\psi$ is $c$-Lipschitz",
+  "Natural number $m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $\\eta>0$ and a real function $\\psi$, write $S_\\eta\\psi(x)=\\eta^{-1}\\int_0^\\eta\\psi(x+t)\\,dt$. If $\\psi$ is $c$-Lipschitz with $c\\ge0$ and $m\\ge0$ is an integer, put $\\phi=S_\\eta^{m+1}\\psi$, where the exponent denotes repeated application of $S_\\eta$. Then $\\phi$ is $C^{m+1}$ and $c$-Lipschitz, and for every real $x$, $|\\phi(x)-\\psi(x)|\\le(m+1)c\\eta$ and $|\\phi^{(m+1)}(x)|\\le c(2/\\eta)^m$."
+}

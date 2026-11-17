@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.clRef_apply",
+ "key": "6ac3147525fd86f8",
+ "kind": "lemma",
+ "title": "One-step embedded reference correspondence",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $l$ be a natural number, let $S$ be a state set, and let $\\mathrm{emb}$ map an optional source state and a Boolean tag to a state in $S$. For Boolean words $x,y$, a source configuration $c$ on virtual input $y$, and a tag $b$ satisfying the boundary conditions (tag false at the left boundary and true at the right boundary), choose a host input position $p$, administrative tape contents and head positions, an output word, and administrative tape operations. There exists a tag $b'$ satisfying the boundary conditions at the stepped source position such that applying the embedded reference action to the corresponding host configuration gives exactly the host configuration of the stepped source, with its host input position and output unchanged and each administrative tape updated by its specified write and movement.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $M$",
+  "natural number $l$",
+  "state set $S$ and embedding from optional source states and tags",
+  "Boolean words $x,y$",
+  "source configuration $c$ on virtual input $y$",
+  "valid boundary tag $b$ for $c$",
+  "host input position $p$",
+  "administrative tape contents and head positions",
+  "output word",
+  "administrative tape operations"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration over a virtual input, with a valid position tag bit $b$. Applying the embedded reference action to the embedded host configuration of $c$ yields exactly the embedded configuration of the stepped source configuration, for some valid new tag bit: each administrative tape is updated by its requested write and head move, while the host input position and the physical output are unchanged."
+}

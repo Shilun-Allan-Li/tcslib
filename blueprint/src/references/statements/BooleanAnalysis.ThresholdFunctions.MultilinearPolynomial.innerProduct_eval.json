@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.innerProduct_eval",
+ "key": "3d30ee6a8359527a",
+ "kind": "lemma",
+ "title": "Inner product against a polynomial",
+ "statement": "For any natural number $n$, any real coefficient family $p$ indexed by subsets of $\\{0,\\ldots,n-1\\}$, and any real-valued function $u$ on the Boolean cube, the uniform inner product of the polynomial represented by $p$ with $u$ equals $\\sum_{S\\subseteq\\{0,\\ldots,n-1\\}}p(S)\\widehat u(S)$, where $\\widehat u(S)$ is the Fourier--Walsh coefficient of $u$ at $S$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$p$ is a real coefficient family on subsets of the coordinate set",
+  "$u$ is a real-valued function on the Boolean cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. For $S\\subseteq[n]$, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for real cube functions $h$. Let $P(x)=\\sum_{S\\subseteq[n]}a_S\\chi_S(x)$ with real coefficients $a_S$. For every real cube function $u$, $\\mathbb E[Pu]=\\sum_{S\\subseteq[n]}a_S\\widehat u(S)$."
+}

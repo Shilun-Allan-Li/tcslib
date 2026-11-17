@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.length_pairFstD_le",
+ "key": "ef2e5c2051e6f650",
+ "kind": "theorem",
+ "title": "First projection length bound",
+ "statement": "For every finite bit string $z$, the total first projection of $z$ has length at most $|z|$.",
+ "hypotheses_covered": [
+  "A finite bit string $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\pi_1$ be the total first projection, which sends a bit string of the form $\\langle a,b\\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$, and any other bit string to the empty word. Then for every bit string $z$, $|\\pi_1(z)| \\le |z|$."
+}

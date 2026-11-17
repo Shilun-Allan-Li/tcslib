@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clA5Input_meaning",
+ "key": "e1e16f679ce4d5e6",
+ "kind": "lemma",
+ "title": "Meaning of the input clause group",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet with a binary code for its optional states. For natural numbers $m,t$, an assignment $a:\\mathbb{N}\\to\\{0,1\\}$, and a Boolean word $y$ of length $m$, suppose $a(j)=y_j$ for every $j<m$. Then the input clause group at time $t$ evaluates to true under $a$ if and only if the input slice of the raw block at time $t$ equals the two-bit code of the symbol of $y$ read at the machine's input-head position at time $t$, with blank symbols at the boundary positions.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machine $M$",
+  "binary code for optional states",
+  "natural numbers $m,t$",
+  "assignment $a:\\mathbb{N}\\to\\{0,1\\}$",
+  "Boolean word $y$",
+  "$|y|=m$",
+  "$a(j)=y_j$ for all $j<m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $y$ be a word of length $m$ and let the assignment $a$ agree with $y$ on the first $m$ variables. Then the input clause group at time $t$ evaluates to true under $a$ exactly when the input slice of the raw block at $t$ encodes the input symbol of $y$ at the oblivious input position of time $t$."
+}

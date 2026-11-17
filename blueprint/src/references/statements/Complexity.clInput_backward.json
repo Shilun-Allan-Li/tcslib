@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clInput_backward",
+ "key": "ecc64f07afe6719d",
+ "kind": "lemma",
+ "title": "Rewinding the input head",
+ "statement": "Let $x$ and $w$ be finite Boolean words, and let $j$ be a natural number with $j \\le |x|$. Starting in state $1$ with the input head at position $j$ and the work head at position $j-1$, with work tape storing $w$ and empty output, the copier reaches after $j+1$ steps the configuration in state $2$ with the input head at position $1$, the work head at position $0$, the work tape still storing $w$, and empty output.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$w$ is a finite Boolean word",
+  "$j$ is a natural number",
+  "$j \\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word $x$, copied word $w$, and prefix length $j \\le |x|$, running the copier in its rewind control with the input head at $j$ and work head at $j - 1$ for $j + 1$ steps returns both heads to their origins and enters the return control; the physical left boundary identifies the origin without an unbounded control counter."
+}

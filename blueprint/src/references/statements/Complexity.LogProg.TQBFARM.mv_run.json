@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.mv_run",
+ "key": "7811591293af3b0d",
+ "kind": "theorem",
+ "title": "Run of the register transfer loop",
+ "statement": "Let $x$ be a bit string, $B\\in\\mathbb{N}$, $b\\in\\{0,1\\}$, and let $st=(K,S,P,T,Z,C,V)$ be a seven-register state. If every register is at most $B$ and $S+T\\leq B$, the machine has a guarded run from label $mv(b,0)$ with state $st$ to label $incS$ when $b$ is true and $incK$ when $b$ is false, with state $(K,S+T,P,0,Z,C,V)$.",
+ "hypotheses_covered": [
+  "$b$ is a Boolean value",
+  "all seven registers are at most $B$",
+  "$S+T\\leq B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $b$ a Boolean value, and $st$ a state\nwith seven natural-number registers. Suppose each register of $st$ is at most $B$ and\nthe sum of its registers $S$ and $T$ is at most $B$. Then, from the initial\nconfiguration with input $x$, register values given by $st$, and control label at phase\nzero of the transfer loop with parameter $b$, the machine has a run that stays within\nthe guard requiring the register preconditions and all register values to be at most\n$B$, and reaches the configuration with control label “increment $S$” if $b$ is true and\n“increment $K$” otherwise, with $T=0$ and $S$ replaced by the sum of its previous values\nof $S$ and $T$, all other registers unchanged."
+}

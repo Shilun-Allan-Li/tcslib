@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.loopBodyImage",
+ "key": "707062edab8e6389",
+ "kind": "def",
+ "title": "Loop body configuration embedding",
+ "statement": "Let $body$ and $F$ be finite Boolean-alphabet machines, let $forward$ and $startup$ be Boolean flags, and let $pre$ be a finite Boolean string. Given an input $x$ and a configuration $d$ of the body machine on $x$ with its additional Boolean work tape, the loop body image is a configuration of the loop host on $x$. It maps body states into the host's body-call states, sets the controller phase to $6$ when $startup$ is true and $7$ otherwise, and uses the forward embedding construction when $forward$ is true and the capture construction otherwise.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machines $body$ and $F$",
+  "Boolean direction flag",
+  "Boolean startup flag",
+  "finite Boolean string $pre$",
+  "input $x$",
+  "configuration $d$ of the body machine on $x$ with $body.k+1+(1+F.k)$ work tapes"
+ ],
+ "confidence": "low",
+ "caveat": "The meanings of the forward embedding and capture configuration constructions are not included in the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

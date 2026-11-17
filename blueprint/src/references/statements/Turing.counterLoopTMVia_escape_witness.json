@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.counterLoopTMVia_escape_witness",
+ "key": "91e071f5b85a7122",
+ "kind": "theorem",
+ "title": "Counter loop escape witness",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes and distinct states $a$ and $ex$, and let $e:\\\\{0,1\\\\}\\\\hookrightarrow\\\\Gamma$ encode Boolean symbols. Let $w$ be a Boolean word and suppose the extra tape initially agrees with its encoded word buffer at cells $cp+p$ for every integer $p$ with $-1\\\\le p\\\\le |w|$. For an initial configuration $c$, run-length function $\\\\tau$, and property $P$ of the first $k$ work-head positions, choose $r_0$ strictly below the binary value of $w$. Suppose every round $r\\\\le r_0$ satisfies the round conditions for exit set $\\\\{some\\\\ ex\\\\}$ and property $P$, and the configuration after round $r_0$ is in state $ex$. Then after $\\\\sum_{r\\\\le r_0}\\\\tau(c_r)+\\\\operatorname{overhead}(w,r_0+1)$ steps, the counter-loop machine is in its escape configuration, with the extra tape on the word cells holding the encoded buffer of the counter word after $r_0+1$ decrements. Before the endpoint its state is never halting, done, or escape; through the endpoint the extra head remains in $[cp-1,cp+|w|]$, and at each time the first $k$ head positions match those of some run of $M$ from a round configuration, with either $r\\\\le r_0$ and $u\\\\le\\\\tau(c_r)$ or $r=r_0+1$ and $u=0$.",
+ "hypotheses_covered": [
+  "Boolean encoding $e$ into $\\\\Gamma$",
+  "Machine $M$ and distinct states $a$ and $ex$",
+  "Run-length function $\\\\tau$ and initial configuration $c$",
+  "Counter word $w$ and index $r_0$ strictly below its binary value",
+  "Initial extra-tape buffer agreement for all $-1\\\\le p\\\\le |w|$",
+  "Every round $r\\\\le r_0$ satisfies the round conditions",
+  "The configuration after round $r_0$ has state $ex$"
+ ],
+ "confidence": "low",
+ "caveat": "The payload stub-describes the underlying round and counter-loop constructions; the explicit witness and endpoint claims are rendered, but those constructions are summarized by role.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

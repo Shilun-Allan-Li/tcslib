@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.bddAbove_pairDeficit",
+ "key": "c1e809cde28eac41",
+ "kind": "lemma",
+ "title": "Bounded interpolation deficits",
+ "statement": "Let $P:\\mathbb R\\to\\mathbb R$ be continuous on $[0,1]$, and let $a,b\\in\\mathbb R$ satisfy $a+b,a-b\\in[0,1]$. For any $m\\ge 0$ and $u,v\\in\\mathbb R^m$, the interpolation deficits $\\Delta(t,c)$ are bounded above as $(t,c)$ ranges over $[0,1]\\times[0,\\infty)$.",
+ "hypotheses_covered": [
+  "$P$ is continuous on $[0,1]$",
+  "$a+b\\in[0,1]$",
+  "$a-b\\in[0,1]$",
+  "$m$ is a natural number",
+  "$u,v\\in\\mathbb R^m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a profile $P:\\mathbb R\\to\\mathbb R$, $a,b,t,c\\in\\mathbb R$, and $u,v\\in\\mathbb R^m$, define $L(t,c)=\\frac12\\bigl(\\sqrt{P(a+tb)^2+c+\\|u+tv\\|_2^2}+\\sqrt{P(a-tb)^2+c+\\|u-tv\\|_2^2}\\bigr)$. If $P$ is continuous on $[0,1]$ and $a\\pm b\\in[0,1]$, the set $\\{L(t,c)-L(1,c+b^2(1-t^2)):0\\le t\\le1,\\ c\\ge0\\}$ is bounded above."
+}

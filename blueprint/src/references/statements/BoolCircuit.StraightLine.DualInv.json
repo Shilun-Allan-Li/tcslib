@@ -1,0 +1,23 @@
+{
+ "lean_name": "BoolCircuit.StraightLine.DualInv",
+ "key": "9b2a6b1ba554c83a",
+ "kind": "structure",
+ "title": "Dual-rail circuit invariant",
+ "statement": "Let $n$ be a natural number, let $old$ be a finite list of gates, and let $s=(ss,rs)$ consist of a list of straight-line statements and a list of pairs of operands. The rail list has length $n+|old|$, and each statement reads only input variables or earlier lines. For every vertex index $v<n+|old|$, both operands in the pair $rs_v$ read only lines present in $ss$; for every Boolean input assignment, their evaluations are the value of vertex $v$ in the gate list $old$ and its Boolean complement, respectively. The statement list has length at most $2|old|$.",
+ "hypotheses_covered": [
+  "Natural number $n$",
+  "Finite list of gates $old$",
+  "Pair $s$ of a straight-line statement list and a rail-pair list",
+  "Rail list length is $n+|old|$",
+  "Each statement reads only inputs and earlier lines",
+  "For every index $v<n+|old|$, both rails read only lines present in the statement list",
+  "For every Boolean input assignment and every index $v<n+|old|$, the rails evaluate to the gate-list vertex value and its complement",
+  "Statement-list length is at most twice the gate-list length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

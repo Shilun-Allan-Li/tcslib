@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.foldCfg_run",
+ "key": "84d78e5f7670e4cc",
+ "kind": "lemma",
+ "title": "Lockstep Folding Simulation",
+ "statement": "Let $\\Gamma$ be a finite type with decidable equality, let $M$ be a finite Turing machine over $\\Gamma$, let $x$ be a word over $\\Gamma$, and let $t$ be a natural number. Running the folding simulator for $t+1$ steps from its initial configuration on the symbol-wise embedded input yields the folded configuration reached by running $M$ for $t$ steps from its initial configuration on $x$.",
+ "hypotheses_covered": [
+  "Γ is a finite type",
+  "Γ has decidable equality",
+  "M is a finite Turing machine over Γ",
+  "x is a list over Γ",
+  "t is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape machine over a finite alphabet $\\Gamma$ with decidable\nequality, $x$ an input over $\\Gamma$, and $t \\in \\bbn$.  Running the folding\nsimulator for $t+1$ steps from its initial configuration on the symbol-wise\nembedded input equals the folded configuration of running $M$ for $t$ steps from\nits initial configuration on $x$."
+}

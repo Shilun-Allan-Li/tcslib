@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.ClockHost.oneShot",
+ "key": "252474ef68429fea",
+ "kind": "theorem",
+ "title": "Output preservation in one clocked attempt",
+ "statement": "Let $S$ be a deterministic machine and $A$ a nondeterministic machine over Boolean symbols, let $x$ be a Boolean input word, and let $m\\in\\mathbb N$. For any work-tape contents and head positions for $S$, and any Boolean choice word $w$ of length $m+1$, the host machine with looping disabled, run from the corresponding run configuration based on $A$’s initial configuration with the yard tape head at $0$, halts; moreover, for every Boolean $v$, its output is exactly $[v]$ if and only if the run of $A$ under the first $m$ bits of $w$ halts and has output exactly $[v]$.",
+ "hypotheses_covered": [
+  "$S$ is a deterministic machine over Boolean symbols",
+  "$A$ is a nondeterministic machine over Boolean symbols",
+  "$x$ is a Boolean input word",
+  "$m\\in\\mathbb N$",
+  "$sT$ assigns Boolean tape contents to each work-tape cell of $S$",
+  "$sP$ assigns an integer head position to each work tape of $S$",
+  "$w$ is a Boolean word with length $m+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

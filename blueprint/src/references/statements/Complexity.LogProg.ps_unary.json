@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.ps_unary",
+ "key": "35f3ee523fded9ba",
+ "kind": "lemma",
+ "title": "Unary prefix phase",
+ "statement": "Let $x$ be a finite bit string, let $B$ be a natural number, let $K$ be a predicate on natural numbers, and let $\\sigma=(p,n,a,b,s,t,tmp,st,nx)$ be a nine-register state. Suppose $2|x|+2\\le B$, every register of $\\sigma$ is at most $B$, $p=2n$, and $p\\le |x|$. Assume that for every $n'\\ge n$, if $\\operatorname{UnaryRest}(x,n,n')$ holds, then the program started at label $m0$ with $p=2n'+2$ and vertex count $n'$ has property $K(n')$. Then the program started at label $u0$ in state $\\sigma$ terminates on every branch with all registers at most $B$, and has an accepting branch exactly when there is some $n'\\ge n$ for which $\\operatorname{UnaryRest}(x,n,n')$ and $K(n')$ both hold.",
+ "hypotheses_covered": [
+  "$2|x|+2\\le B$",
+  "$K$ is a predicate on natural numbers",
+  "$\\sigma$ is a nine-register state",
+  "Every register of $\\sigma$ is at most $B$",
+  "$p=2n$",
+  "$p\\le |x|$",
+  "For every $n'\\ge n$, if $\\operatorname{UnaryRest}(x,n,n')$, the indicated $m0$ computation has property $K(n')$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a finite bit string, let $B$ be a natural number with $2|x|+2\\le B$, let $K$\nbe a predicate on natural numbers, and let $\\sigma$ be a nine-register configuration\nwhose register values are all at most $B$. Suppose $\\sigma.p=2\\sigma.n$ and $\\sigma.p\\le\n|x|$. Assume that for every $n'\\ge\\sigma.n$, if from positions $2i$ and $2i+1$ the\nstring $x$ has bits $1,1$ for every $\\sigma.n\\le i<n'$, and has bits $0,1$ at positions\n$2n',2n'+1$, then the program started at label $m0$ with input pointer $2n'+2$ and\nvertex count $n'$ has property $K(n')$. Then the program started at label $u0$ with\nconfiguration $\\sigma$ terminates on every branch with all register values bounded by\n$B$, and has an accepting branch exactly when such an $n'\\ge\\sigma.n$ exists for which\nthe stated bit conditions and $K(n')$ hold."
+}

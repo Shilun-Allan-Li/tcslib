@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.pal_copy_step",
+ "key": "62519ca187da660b",
+ "kind": "lemma",
+ "title": "Single Copy-Phase Transition",
+ "statement": "Let $x$ be a binary word and let $t<|x|$. From state $0$, with the input head at position $t+1$, the first $t$ bits of $x$ copied onto the work tape, and the work head at cell $t$, one step of the three-state palindrome machine reaches state $0$ with the input head at position $t+2$, the first $t+1$ bits copied, and the work head at cell $t+1$. The output remains empty.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$t$ is a natural number",
+  "$t<|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word and $t < |x|$. From the configuration of the three-state\npalindrome machine on input $x$ in copy state with input head at cell $t+1$\n(scanning $x_t$), the first $t$ bits copied to the work tape, and work head at\ncell $t$, one transition writes $x_t$ at the work head and advances both heads:\nit yields the copy-state configuration with input head at $t+2$, the first $t+1$\nbits copied, and work head at $t+1$."
+}

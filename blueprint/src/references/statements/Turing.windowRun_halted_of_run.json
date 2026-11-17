@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.windowRun_halted_of_run",
+ "key": "d97efc8705a46e1d",
+ "kind": "theorem",
+ "title": "Window run through a halted configuration",
+ "statement": "Let $M$ be a Boolean-input Turing machine with $k$ work tapes, let $s$ be a natural-number window radius, and let $\\mathrm{upd}$ be an update rule on an accumulator type $T$ and an optional Boolean. Suppose $\\sigma$ assigns an accumulator to every Boolean word and satisfies $\\sigma(u\\mathbin{++}b)=\\mathrm{upd}(\\sigma(u),b)$ for every word $u$ and optional Boolean $b$, where appending an absent Boolean leaves $u$ unchanged. For every clock $N$, time $t$, and initial configuration $c$, if $t<N$, the run is halted at time $t$, and all configurations through time $t$ lie in the radius-$s$ window, then the window run with initial accumulator $\\sigma$ of the initial output halts and returns the configuration at time $t$ together with accumulator $\\sigma$ of its output.",
+ "hypotheses_covered": [
+  "Boolean-input machine $M$ with $k$ work tapes",
+  "window radius $s\\in\\mathbb{N}$",
+  "update rule $\\mathrm{upd}:T\\times\\{\\text{none or Boolean}\\to T$",
+  "accumulator map $\\sigma$ on Boolean words",
+  "update identity for every word and optional Boolean",
+  "clock $N\\in\\mathbb{N}$ and time $t\\in\\mathbb{N}$ with $t<N$",
+  "initial configuration $c$",
+  "run is halted at time $t$",
+  "configuration lies in the radius-$s$ window at each time $u\\le t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

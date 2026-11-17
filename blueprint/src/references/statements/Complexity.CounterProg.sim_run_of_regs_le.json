@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.CounterProg.sim_run_of_regs_le",
+ "key": "dcf2e282aa6f2a53",
+ "kind": "theorem",
+ "title": "Simulation under register bounds",
+ "statement": "Let $R\\in\\mathbb{N}$, let $\\Lambda$ be a finite set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, choose a start label $\\ell_0\\in\\Lambda$, and let $x$ be an input bit string. For every $B,t\\in\\mathbb{N}$ and abstract state $s$ with read position at most $|x|$, suppose that for every $j<t$ and every register $r$, the value of register $r$ after $j$ steps of $P$ on $x$ from $s$ is at most $B$. Then there exists $t'\\le t(2B+5)$ such that the compiled machine started at $\\ell_0$, run on input $x$ from the encoding of $s$, reaches the encoding of the state obtained after $t$ steps of $P$ on $x$ from $s$.",
+ "hypotheses_covered": [
+  "A natural-number register count $R$",
+  "A finite label set $\\Lambda$",
+  "A counter program $P$ over $R$ registers and $\\Lambda$",
+  "A chosen start label $\\ell_0\\in\\Lambda$",
+  "An input bit string $x$",
+  "Natural numbers $B$ and $t$",
+  "An abstract state $s$ with read position at most $|x|$",
+  "For every $j<t$, every register of the state reached after $j$ steps has value at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

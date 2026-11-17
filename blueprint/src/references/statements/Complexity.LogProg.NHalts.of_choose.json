@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.NHalts.of_choose",
+ "key": "16d1f8f4a09c359c",
+ "kind": "lemma",
+ "title": "Halting After a Choice",
+ "statement": "Let $A$ be a nondeterministic register machine, let an oracle and input bit string be fixed, and let $G$ be a predicate on configurations. If the instruction at control state $l$ chooses between $l_1$ and $l_0$, then for either choice bit $b$, halting within the stated bound from the configuration at $l$ implies halting within one fewer step from the selected successor configuration. Here the halting condition requires every choice sequence of the specified length to end in a halted configuration and every earlier live configuration to satisfy $G$.",
+ "hypotheses_covered": [
+  "The instruction at $l$ is a choice between $l_1$ and $l_0$",
+  "Choice bit $b$ selects the successor",
+  "The configuration at $l$ satisfies the halting condition for $N+1$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

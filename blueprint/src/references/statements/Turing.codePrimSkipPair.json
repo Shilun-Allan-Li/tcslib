@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.codePrimSkipPair",
+ "key": "72863fb3beb39fbf",
+ "kind": "lemma",
+ "title": "Primitive recursiveness of the two-bit skipper",
+ "statement": "For every predicate $v$ on pairs of Boolean values, the reader that consumes the first two bits when they satisfy $v$ and returns the remaining suffix, and otherwise fails, is primitive recursive.",
+ "hypotheses_covered": [
+  "A predicate on pairs of Boolean values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every fixed test $v$ on pairs of Booleans, the skipping reader that consumes the\nfirst two bits $a, b$ of a Boolean string and returns the remaining suffix when\n$v(a, b)$ holds --- rejecting otherwise, and rejecting strings with fewer than two\nbits --- is primitive recursive."
+}

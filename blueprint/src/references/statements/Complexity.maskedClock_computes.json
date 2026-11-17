@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.maskedClock_computes",
+ "key": "76670c38e46af91f",
+ "kind": "lemma",
+ "title": "Masked clock preserves computation bounds",
+ "statement": "Let $W$ be a finite machine over the Boolean alphabet, let $T:\\mathbb{N}\\to\\mathbb{N}$, and let $b\\in\\mathbb{N}$. Suppose that for every input word $x$, $W$ halts after exactly $T(|x|)$'s binary digits have been written, within $b(T(|x|)+1)$ steps, and uses exactly $b(T(|x|)+1)$ work cells. Then the machine obtained by masking scanned input symbols to false has the same guarantee on every input word $x$, with output the binary digits of $T(|x|)$ and exactly that time bound and space usage.",
+ "hypotheses_covered": [
+  "$W$ is a finite machine over the Boolean alphabet",
+  "$T$ maps natural numbers to natural numbers",
+  "$b$ is a natural number",
+  "For every input $x$, $W$ halts at the specified step, outputs the binary digits of $T(|x|)$, and uses exactly $b(T(|x|)+1)$ work cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a machine over the Boolean alphabet, $T : \\mathbb{N} \\to \\mathbb{N}$, and\n$b \\in \\mathbb{N}$. Suppose that on every input $x$, after $b \\cdot (T(\\abs{x}) + 1)$\nsteps $W$ has halted with output exactly the list of binary digits of $T(\\abs{x})$.\nThen the masked clock of $W$ (with mask the symbol $\\mathsf{false}$) satisfies the\nsame specification: on every input $x$ it halts within $b \\cdot (T(\\abs{x}) + 1)$\nsteps with output the binary digits of $T(\\abs{x})$."
+}

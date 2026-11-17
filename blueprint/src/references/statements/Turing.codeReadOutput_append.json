@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.codeReadOutput_append",
+ "key": "3d0fac8217a10b48",
+ "kind": "lemma",
+ "title": "Optional-output decoding",
+ "statement": "For every optional bit $b$ and every bit string $x$, reading the two-bit code for $b$—$00$ for no output, $10$ for output $0$, and $11$ for output $1$—followed by $x$ succeeds and returns $(b,x)$.",
+ "hypotheses_covered": [
+  "$b$ is an optional bit",
+  "$x$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every optional output bit $b$ (no output, output $0$, or output $1$) and\nevery bit string $x$, the optional-output reader applied to the two-bit\ndictionary code of $b$ ($00$, $10$, or $11$ respectively) followed by $x$\nsucceeds and returns $(b, x)$."
+}

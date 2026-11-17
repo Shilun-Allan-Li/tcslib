@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.rt_exists_boundTM",
+ "key": "cd15912a485c9fd7",
+ "kind": "theorem",
+ "title": "Bounded binary-writing machine",
+ "statement": "There are a natural number $K$, a finite state set $S$ with decidable equality, a machine $R$ with $K+1$ work tapes over the Boolean alphabet, designated states $entry,exit\\in S$, and a natural number $C$ such that the following holds for every Boolean word $x$ and configuration $d$ on input $x$. If $d$ is in state $entry$, its input head is at position $1$, and all work-tape cells are blank, then $R$ reaches a configuration equal to $d$ except that its state is $exit$ and tape $0$ stores the binary expansion of $|x|+1$ starting at that tape's initial head position. The machine reaches this configuration at some time $t\\le C(|x|+1)$, does not visit $exit$ earlier, and every work-tape head remains within distance $C(\\operatorname{bits}(|x|+1)+1)$ of its initial position through time $t$.",
+ "hypotheses_covered": [
+  "Finite state set $S$ with decidable equality exists",
+  "Input is a Boolean word",
+  "Initial state is $entry$",
+  "Input head starts at position $1$",
+  "All work-tape cells are blank",
+  "Time bound $C(|x|+1)$",
+  "No earlier visit to $exit$",
+  "Head displacement bound through time $t$",
+  "Final configuration and tape $0$ contents"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.codeReadOutput_sound",
+ "key": "662a4894bedf2c6a",
+ "kind": "lemma",
+ "title": "Optional-output reader soundness",
+ "statement": "For every bit string $x$, optional bit $b$, and bit string $r$, if the optional-output reader succeeds on $x$ with result $(b,r)$, then $x$ is the two-bit code for $b$—$00$ for no output, $10$ for output $0$, or $11$ for output $1$—followed by $r$.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$b$ is an optional bit",
+  "$r$ is a bit string",
+  "the optional-output reader succeeds on $x$ with result $(b,r)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the optional-output reader succeeds on a bit string $x$, returning a value\n$b$ and a suffix $r$, then $x$ is exactly the two-bit dictionary code of $b$\nfollowed by $r$."
+}

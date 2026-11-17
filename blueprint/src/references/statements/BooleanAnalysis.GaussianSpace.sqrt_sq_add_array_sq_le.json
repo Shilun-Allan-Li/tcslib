@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.sqrt_sq_add_array_sq_le",
+ "key": "ee30f9f6cbf55fae",
+ "kind": "lemma",
+ "title": "Approximation bound for repeated coordinates",
+ "statement": "Let $n,m\\in\\mathbb N$ with $m>0$, let $P\\in\\mathbb R$, let $d_{ij}$ be real numbers indexed by $1\\le i\\le n$ and $1\\le j\\le m$, let $g_i\\in\\mathbb R$, and let $e\\ge0$. If $|d_{ij}-g_i/\\sqrt m|\\le e$ for every $i,j$, then $\\sqrt{P^2+\\sum_{i=1}^n\\sum_{j=1}^m d_{ij}^2}\\le\\sqrt{P^2+\\sum_{i=1}^n g_i^2}+\\sqrt{nm}\\,e$.",
+ "hypotheses_covered": [
+  "natural numbers $n,m$",
+  "$m>0$",
+  "real scalar $P$",
+  "real array $(d_{ij})$ indexed by $i\\in\\mathrm{Fin}(n)$ and $j\\in\\mathrm{Fin}(m)$",
+  "real vector $(g_i)$ indexed by $i\\in\\mathrm{Fin}(n)$",
+  "$e\\ge0$",
+  "$|d_{ij}-g_i/\\sqrt m|\\le e$ for every $i,j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$, $m>0$, $P\\in\\mathbb R$, $d\\in\\mathbb R^{n\\times m}$, $g\\in\\mathbb R^n$, and $e\\ge0$. If $|d_{ij}-g_i/\\sqrt m|\\le e$ for every $i,j$, then $\\sqrt{P^2+\\sum_{i,j}d_{ij}^2}\\le\\sqrt{P^2+\\sum_i g_i^2}+\\sqrt{nm}\\,e$."
+}

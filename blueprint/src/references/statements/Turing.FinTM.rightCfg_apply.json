@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.rightCfg_apply",
+ "key": "321541e046662485",
+ "kind": "lemma",
+ "title": "Action application commutes with right embedding",
+ "statement": "Let $k,l \\in \\mathbb{N}$, let $S,S'$ be state sets, let $f:S\\to S'$ be a state map, let $x$ be a Boolean input, let $a$ be a one-step action for a machine with $l$ work tapes and states in $S$, and let $c$ be a configuration for that machine on $x$. For any contents and head positions on $k$ additional work tapes, applying the action extended to act on the last $l$ tapes and with states renamed by $f$ to the right embedding of $c$ gives the right embedding, with those additional tapes unchanged, of the result of applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "Natural numbers $k$ and $l$ of added and original work tapes",
+  "State sets $S$ and $S'$",
+  "A state map $f:S\\to S'$",
+  "A Boolean input $x$",
+  "An action $a$ for $l$ work tapes over the Boolean alphabet with states in $S$",
+  "A configuration $c$ for $l$ work tapes on $x$",
+  "Contents for the $k$ additional work tapes",
+  "Head positions for the $k$ additional work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : S \\to S'$ be a state renaming, $a$ a one-step action of a machine\nwith $l$ work tapes over the Boolean alphabet, $c$ a configuration of such a\nmachine on input $x$, and fix contents and head positions for $k$ inactive\nextra tapes.  Applying the right-block extension of $a$ along $f$ to the\nright-block embedding of $c$ with the given inactive data yields the\nright-block embedding, with the same inactive data, of the result of applying\n$a$ to $c$."
+}

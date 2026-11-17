@@ -1,0 +1,18 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/CircuitSatNPHard.lean :: BoolCircuit.dagCktSatLang_NPHard -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# NP-hardness of circuit satisfiability
+
+**Claim.** Every language in NP is polynomial-time many-one reducible to the language of valid encodings of satisfiable Boolean directed acyclic circuits with at most two inputs per gate.
+
+**Proof.** Let $L$ be any language in NP. Choose a polynomial-time verifier $V$ and constants $C,c$ so that $x\in L$ exactly when some certificate $u$ of length $C(|x|+1)^c$ makes $x\mathbin{++}u$ belong to $V$. Since $V\in P$, choose a machine $M$ deciding it in time bounded by $CV(m+1)^d$ for suitable constants $CV,d$.
+
+For a fixed input $x$, put $m=C(|x|+1)^c$ and choose the time bound $T=(CV(C+1)^d+1)(|x|+1)^{(c+1)d}$. This bound is positive and, by the verifier-time estimate (`verifier_time_le`), is at least the running time of $M$ on every string $x$ followed by an $m$-bit certificate. The circuit produced by tabulating $M$ for that time and fixing the input prefix to $x$ has $m$ free input bits. Its value on each assignment $v$ equals whether $M$ accepts $x$ followed by the certificate represented by $v`: the tabulated circuit computes whether an accepting output is emitted before time $T$ (`cfgTab_eval`), and the machine’s decision agrees with that condition (`decide_emits_eq_of_computesInTime`), using the time monotonicity theorem (`Turing.FinTM.ComputesInTime.mono`) to pass to the chosen bound. The circuit is fan-in two (`cfgTab_isFaninTwo`).
+
+Encode this circuit as the output of the reduction. The reduction is polynomial-time computable because tabulation-and-emission is polynomial-time computable (`Complexity.UTab.polyTimeComputable_tabEmit`) and its input preparation is polynomial-time computable by the unary polynomial builders and identity (`Complexity.polyTimeComputable_polyUnary`, `Complexity.polyTimeComputable_id`, and `Complexity.polyTimeComputable_tabInput`); polynomial-time computability is closed under composition (`Complexity.PolyTimeComputable.comp`). The tabulation output is indeed the encoding of the constructed circuit (`Complexity.UTab.tabEmit_eq`), so membership of that output in the circuit language is equivalent to the circuit being fan-in two and satisfiable (`BoolCircuit.encode_mem_dagCktSatLang_iff`, `BoolCircuit.mem_dagCktSat_iff`).
+
+If $x\in L$, take its accepting certificate $u$ and assign each circuit input the corresponding bit, padding outside the certificate with false. The certificate-length condition ensures this assignment represents $u` exactly (`BoolCircuit.ofFn_getD_eq`), so the circuit accepts. Conversely, if the circuit has a satisfying assignment $v$, its represented certificate has length $m$, and the circuit’s evaluation property implies that $M$ accepts the resulting input; hence that certificate witnesses $x\in L$. Thus the constructed map is a polynomial-time many-one reduction. Since $L$ was arbitrary, the target language is NP-hard.
+
+**Key facts.** `Complexity.mem_P_iff`, `Complexity.polyTimeComputable_polyUnary`, `Complexity.polyTimeComputable_tabInput`, `Complexity.polyTimeComputable_id`, `Complexity.UTab.polyTimeComputable_tabEmit`, `Complexity.PolyTimeComputable.comp`, `Complexity.UTab.tabEmit_eq`, `Complexity.cfgTab_eval`, `Complexity.verifier_time_le`, `Turing.FinTM.ComputesInTime.mono`, `Complexity.decide_emits_eq_of_computesInTime`, `Complexity.cfgTab_isFaninTwo`, `BoolCircuit.encode_mem_dagCktSatLang_iff`, `BoolCircuit.mem_dagCktSat_iff`, `BoolCircuit.ofFn_getD_eq`.

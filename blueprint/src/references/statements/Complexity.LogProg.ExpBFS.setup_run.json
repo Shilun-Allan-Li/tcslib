@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.setup_run",
+ "key": "59181d1f4ec10ff3",
+ "kind": "theorem",
+ "title": "Initial Setup Run",
+ "statement": "Let $K_0$ be a natural number, let $\\mathcal O$ assign a Boolean to each of four query indices and each finite bit string, let $x$ be a finite bit string, and let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory function. Suppose that for every $k\\le |x|$, the first oracle answers true on the encoding of $x$ paired with the binary representation of $k$ exactly when $k<|x|$, and suppose $|x|+2\\le B$. Then the machine has a finite run from the initial scan configuration with memory $M$ and head position $0$ to the first radius-copy phase, with every configuration satisfying the register and memory-head bounds in $G(x,B,P)$. At the endpoint the memory and head position are still $M$ and $0$, respectively, and all registers are zero except the logarithm-bound register, which equals $1+h(|x|)$, where $h(n)=0$ for $n=0$ and $h(n)=\\lfloor\\log_2 n\\rfloor+1$ for $n>0$.",
+ "hypotheses_covered": [
+  "$K_0\\in\\mathbb N$",
+  "an oracle family on four query indices and bit strings",
+  "a finite bit string $x$",
+  "a Boolean-valued memory function $M$",
+  "for every $k\\le |x|$, the first oracle query on the encoded pair returns true exactly when $k<|x|$",
+  "$|x|+2\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P\\in\\mathbb N$, let $x$ be a finite bit string, let $\\mathcal O$ be a family\nof four Boolean oracles on bit strings, and let $M:\\mathbb\nZ\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory tape. Suppose that for every $k\\le\n|x|$, the first oracle answers true on the encoding of $x$ paired with the binary\nrepresentation of $k$ exactly when $k<|x|$. If $|x|+2\\le B$, then the machine $A(K_0)$\nhas a finite run from the initial scan configuration, with all intermediate\nconfigurations satisfying the register and head-position bounds in $G(x,B,P)$, that\nreaches the configuration at the first radius-copy phase with every register zero except\nthat the logarithm register equals $1+\\mathrm{hv}(|x|)$; the memory tape remains $M$ and\nits head remains at $0$."
+}

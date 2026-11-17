@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.mealyRun_induction",
+ "key": "c9d80400a2c7f29f",
+ "kind": "theorem",
+ "title": "Induction for Mealy runs",
+ "statement": "Let $A$ be a state space, let $\\Gamma$ be an alphabet, and let $\\delta:A\\times\\Gamma\\to A\\times\\Gamma$ be a transition and output rule. Suppose a property $P(a,w,r)$ holds for every state $a$ when the input list is empty and the output pair is $(a,[])$. Suppose also that whenever $P(\\delta(a,\\gamma)_1,w,r)$ holds, it holds for the state $a$, the input list $\\gamma::w$, and output pair $(r_1,\\delta(a,\\gamma)_2::r_2)$. Then $P(a,w,\\operatorname{run}(a,w))$ holds for every state $a$ and finite input list $w$, where the run repeatedly applies $\\delta$ and records its outputs.",
+ "hypotheses_covered": [
+  "A state space and alphabet",
+  "A transition and output rule δ",
+  "A predicate on states, input lists, and output pairs",
+  "Base case for every state on the empty list",
+  "Step case for every state, symbol, list, and output pair",
+  "Arbitrary initial state and input list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

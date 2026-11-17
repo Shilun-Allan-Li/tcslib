@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.embedEmitRetTM_run",
+ "key": "3532307af22e92a5",
+ "kind": "theorem",
+ "title": "Run of the return-state simulation",
+ "statement": "Let $M$ be a machine with $m$ work tapes, and embed those tape indices into $k$ work tapes. Start its $k$-tape simulation from the configuration obtained by placing its tapes at the embedded indices, supplying arbitrary contents and head positions on the other tapes, prefixing its output by a fixed word, and renaming each original state into a left-summand state. Suppose the initial configuration is not halted, every configuration reached by $M$ at a time $t<T$ is not halted, and the configuration at time $T$ is halted. Then, at every time $t<T$, the simulation agrees with the embedded configuration of $M$ with its state renamed into the left summand; at time $T$ it agrees in all configuration data except that its state is the distinguished right-summand state; and at all times $t<T$ its state is not that distinguished state.",
+ "hypotheses_covered": [
+  "An embedding of the $m$ work-tape indices into the $k$ work-tape indices",
+  "A machine $M$, initial tape contents and head positions, an output prefix, and an $m$-tape configuration $c$",
+  "A natural number $T$",
+  "The initial state of $c$ is not halted",
+  "Every run configuration at time $t<T$ is not halted",
+  "The run configuration at time $T$ is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

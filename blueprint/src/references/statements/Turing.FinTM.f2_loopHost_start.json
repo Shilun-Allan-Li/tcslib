@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost_start",
+ "key": "3ccabef3f7596c55",
+ "kind": "lemma",
+ "title": "F2 Loop Host Startup",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, let $x$ and $s$ be Boolean words, and let $c$ be a configuration of $F$ on input $x$. Suppose that the run of $B$ from its initial configuration on $x$ does not visit $a$ at any time $u<t$, and that at time $t$ it is exactly the configuration with state $a$ and tape contents given by placing $s$ on tape $0$ and leaving the other tapes blank. Then after exactly $t+2$ steps, the loop host in the chosen mode, started in its ready configuration determined by $c$, is the call configuration for the body state and contents just described, with startup set to false, release set to true, no flag, and both the fuel word and fuel configuration inherited from $c$.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $B$ and $F$",
+  "A state $a$ of $B$",
+  "A Boolean mode",
+  "A Boolean input word $x$",
+  "A Boolean word $s$",
+  "A configuration $c$ of $F$ on input $x$",
+  "A natural number $t$",
+  "For every $u<t$, the run of $B$ at time $u$ is not in state $a$",
+  "At time $t$, the run equals the seam configuration for state $a$ and word $s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

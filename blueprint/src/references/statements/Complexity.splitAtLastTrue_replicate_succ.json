@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.splitAtLastTrue_replicate_succ",
+ "key": "e56c3de377f1e480",
+ "kind": "lemma",
+ "title": "Removing the last bit of an all-true word",
+ "statement": "For every natural number $n$, cutting the word of $n+1$ true bits at its last true bit returns the word of $n$ true bits.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a bit string $v$, let $\\mathrm{split}(v)$ be the prefix of $v$ preceding its last occurrence of $1$, undefined when $v$ contains no $1$. Then for every $n \\in \\mathbb{N}$, $\\mathrm{split}(1^{n+1})$ is defined and equals $1^n$, where $1^k$ is the word of $k$ ones."
+}

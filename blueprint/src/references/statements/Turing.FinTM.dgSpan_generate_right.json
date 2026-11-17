@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.dgSpan_generate_right",
+ "key": "4efbc8b6b2f849e8",
+ "kind": "lemma",
+ "title": "Rightward sweep span",
+ "statement": "Let $A$ and $Q$ be types, let $x$ and $w$ be finite words over $A$, let $M$ be a one-work-tape Turing machine, and let $s:\\text{Fin}(|w|+1)\\to Q$ be a state sequence. Suppose that for every $i<|w|$ and every input and scanned work symbol, the transition from state $s(i)$ is the action that writes $w_i$ and moves the work head one cell right, entering state $s(i+1)$. For any input-head position $p$, output word $o$, integer $z$, and zipper lists $l,r$, and any natural number $n\\le |w|$, after $n$ steps from the forward-sweep configuration with state $s(0)$ and frontier $z$, the machine is in state $s(n)$ with frontier $z+n$ and zipper lists $\\operatorname{reverse}(\\operatorname{map}(w[0:n],\\mathrm{some}))\\mathbin{+\u001f+}l$ and $r$ with its first $n$ entries removed; throughout these steps the work-head position lies in $[z,z+n]$.",
+ "hypotheses_covered": [
+  "$A,Q$ are types; $x,w$ are finite words over $A$.",
+  "$M$ is a one-work-tape Turing machine.",
+  "A state sequence is specified for indices $0$ through $|w|$.",
+  "For every $i<|w|$ and every input and scanned work symbol, the transition from state $s(i)$ writes $w_i$, moves right, and enters $s(i+1)$.",
+  "An input-head position, output word, integer frontier, and zipper lists are given.",
+  "$n\\le |w|$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

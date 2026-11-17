@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.ao_scan",
+ "key": "40e31298a018aa28",
+ "kind": "lemma",
+ "title": "Scan test for a suffix of ones",
+ "statement": "Let $x$ be a finite bit string and $b$ a bit. For all natural numbers $r,p$ such that $|x|=p+r$, run the fixed advice-ones machine for $2r+3$ steps on the self-delimiting encoding of $x$ followed by the one-bit string $[b]$, starting in state $0$ with its input head at position $2p+1$. The resulting configuration is halted and its output is the one-bit string whose value is true exactly when $b$ is true and every bit of $x$ at an index $j$ with $p\\le j<|x|$ is true.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "$b$ is a bit",
+  "$r,p$ are natural numbers",
+  "$|x|=p+r$"
+ ],
+ "confidence": "low",
+ "caveat": "The fixed advice-ones machine is not defined in the supplied statement; the claim is rendered in terms of its run and the explicitly supplied scan condition.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

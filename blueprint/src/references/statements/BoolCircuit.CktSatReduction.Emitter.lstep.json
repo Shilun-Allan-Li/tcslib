@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.CktSatReduction.Emitter.lstep",
+ "key": "2363848d725d422a",
+ "kind": "def",
+ "title": "Local phase transition",
+ "statement": "Define the local transition from an emitter phase and an optional input bit as follows. With no input bit, it halts without output. In the initial phase, a true bit continues in that phase and increments the tape index, while a false bit advances to gate reading; in gate reading, true advances to reading the first gate input and false halts with false output. The first input bit is stored in the next phase, and the second determines the gate kind and starts the first indexed gate phase. In that phase, false begins gate emission, while true halts without output at the last tape index and otherwise advances to the corresponding unindexed phase. In the unindexed phase, true remains there and increments the index; false returns to the indexed phase at the next index.",
+ "hypotheses_covered": [
+  "input phase is one of the defined emitter phases",
+  "input symbol is optional Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

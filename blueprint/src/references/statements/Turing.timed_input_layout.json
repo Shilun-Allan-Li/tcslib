@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.timed_input_layout",
+ "key": "ac6c530ac2c28982",
+ "kind": "lemma",
+ "title": "Layout of the nested input encoding",
+ "statement": "For bit strings $b,\\alpha,x$, the nested pair encoding $\\langle\\langle b,\\alpha\\rangle,x\\rangle$ is the physical clock prefix for $b$ followed by the pair encoding $\\langle\\alpha,x\\rangle$.",
+ "hypotheses_covered": [
+  "bit strings $b,\\alpha,x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $b$, $\\alpha$, $x$, the nested pair encoding\n$\\langle \\langle b, \\alpha\\rangle, x\\rangle$ equals the physical clock prefix\nof $b$ (each bit quadrupled, then the four cells $0011$) followed by the pair\nencoding $\\langle \\alpha, x\\rangle$."
+}

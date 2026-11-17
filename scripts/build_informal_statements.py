@@ -137,7 +137,7 @@ def build_payload(record: dict) -> dict:
 
 #: The account ran out of quota; nothing about the next call will be different.
 LIMIT_RE = re.compile(
-    r"(?i)(session limit|usage limit|quota|credit balance|out of credits|"
+    r"(?i)(session limit|usage limit|quota|spend cap|credit balance|out of credits|"
     r"upgrade to increase)"
 )
 
@@ -193,10 +193,10 @@ def definition_records(mode: str) -> list[dict]:
     return out
 
 
-def generate(agent: ClaudeAgent, record: dict) -> dict:
+def generate(agent: ClaudeAgent, record: dict, draft: dict | None = None) -> dict:
     """One declaration: generate, grade, and re-ask once if the rubric bites."""
     payload = build_payload(record)
-    result = agent.run("informalize_statement", payload)
+    result = draft if draft is not None else agent.run("informalize_statement", payload)
     problems = grade(result)
     if record.get("kind") in bd.DEF_KINDS:
         problems = [p for p in problems if p not in NOT_FOR_DEFINITIONS]
@@ -228,6 +228,7 @@ def main() -> int:
     ap.add_argument("--modules", nargs="+", metavar="MODULE",
                     help="only declarations of these modules (full name, dotted suffix or area)")
     ap.add_argument("--jobs", type=int, default=6, help="concurrent model calls")
+    ap.add_argument("--batch-size", type=int, default=1, help="independent statements per model call")
     ap.add_argument("--model", help="override the model")
     ap.add_argument("--force", action="store_true", help="ignore the cache")
     ap.add_argument("--sample", action="store_true",
@@ -366,11 +367,13 @@ def main() -> int:
     #: errors and leaving the run looking like a quality problem.
     halted = threading.Event()
 
-    def work(record: dict) -> None:
+    def work(record: dict, draft=None, failure=None) -> None:
         if halted.is_set():
             return
         try:
-            result = generate(agent, record)
+            if failure is not None:
+                raise failure
+            result = generate(agent, record, draft)
         except (AgentOutputError, AgentInvocationError) as error:
             detail = str(error)
             with lock:
@@ -407,8 +410,25 @@ def main() -> int:
             if n % 25 == 0:
                 print(f"  ... {n}/{len(todo)}")
 
+    from proofmatch.agents import bounded_batches
+    def work_batch(records):
+        if halted.is_set():
+            return
+        try:
+            drafts = agent.run_many("informalize_statement", [build_payload(r) for r in records])
+        except AgentInvocationError as error:
+            for record in records:
+                work(record, failure=error)
+        except AgentOutputError:
+            # A malformed batch gets the original independent task path.
+            for record in records:
+                work(record)
+        else:
+            for record, draft in zip(records, drafts):
+                work(record, draft)
+    batches = bounded_batches(todo, args.batch_size, lambda r: len(r["formal_statement"]))
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        list(pool.map(work, todo))
+        list(pool.map(work_batch, batches))
 
     print(f"\nclean {done['ok']}   rubric-flagged {done['flagged']}   failed {done['failed']}")
     if halted.is_set():

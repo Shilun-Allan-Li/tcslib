@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.sweepRevCfg_stay",
+ "key": "0e322007a07885a0",
+ "kind": "lemma",
+ "title": "Stationary backward sweep state change",
+ "statement": "Let $A$ be a symbol alphabet, $S$ a state set, and $x$ a finite word over $A$. For optional states $q,q'$, an input-head position $p$ among the $|x|+2$ valid positions, an integer frontier $z$, finite lists $l,r$ of possibly blank symbols from $A$, and an output word $out$, applying the action that leaves the input head stationary, makes no change to the work tape or its head position, emits no output, and sets the successor state to $q'$ to the backward-sweep configuration determined by $q,p,z,l,r,out$ gives the backward-sweep configuration with the same $p,z,l,r,out$ and state $q'$.",
+ "hypotheses_covered": [
+  "A symbol alphabet A and state set S",
+  "A finite input word x over A",
+  "Optional states q and q'",
+  "An input-head position among the |x|+2 valid positions",
+  "An integer frontier z",
+  "Finite lists l and r of possibly blank symbols",
+  "An output word out"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying a stationary phase-change action — no write, no head movement, no output — to a\nbackward-facing zipper configuration replaces only the control state and leaves the\ntape, input head, and output unchanged."
+}

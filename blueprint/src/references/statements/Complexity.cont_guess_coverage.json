@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.cont_guess_coverage",
+ "key": "1c31f0a4718ef8b4",
+ "kind": "lemma",
+ "title": "Coverage of Guessed Output Words",
+ "statement": "Let $M$ be a finite deterministic Turing machine over the binary alphabet, and let $x,v$ be finite Boolean words and $T$ a natural number; assume $M$ computes output $v$ on input $x$ in exactly $T$ steps. For every choice word $w$ of length $T$, there is a word $u$ of length $|v|$ such that the guessing-phase machine run under $w$ ends at the configuration formed from the $T$-step configuration of $M$ and the captured buffer $u$; conversely, every word $u$ of length $|v|$ occurs in such a configuration for some choice word $w$ of length $T$.",
+ "hypotheses_covered": [
+  "$M$ is a finite deterministic Turing machine over the binary alphabet",
+  "$x,v$ are finite Boolean words",
+  "$T$ is a natural number",
+  "$M$ computes $v$ from $x$ in exactly $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic machine over the binary alphabet that computes an output $v$ on input $x$ within $T$ steps. Then every choice word of length $T$ drives the guessing-phase machine of $M$ from its initial configuration on $x$ to the invariant configuration for the $T$-step run of $M$, with some captured word of length $|v|$; and conversely, every word $u$ with $|u| = |v|$ is the captured word of that configuration for some choice word of length $T$."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.embed_run",
+ "key": "0a249d5c2e77ab4f",
+ "kind": "theorem",
+ "title": "Embedding a computation run",
+ "statement": "Let $m\\le k$, let $M$ be a machine with $m$ work tapes, Boolean tape alphabet, and state set $S$, and let $H$ be a machine with $k$ work tapes, Boolean tape alphabet, and state set $B$. Let $\\iota:S\\to B$ and choose an exceptional state $e\\in S$. Suppose that, for every $q\\ne e$ and every tuple of scanned input and work-tape symbols, $H$ at state $\\iota(q)$ performs the action obtained from $M$ by retaining its tape operations and output, padding the extra work tapes with no operation, and mapping its optional successor state through $\\iota$. For any input, initial configuration $c$, and $t\\in\\mathbb N$, if at every time $j<t$ the run of $M$ from $c$ is in some state different from $e$, then the run of $H$ for $t$ steps from the configuration that maps the states through $\\iota$, preserves the first $m$ tapes and heads, and leaves the extra tapes blank at head position zero is the corresponding embedded configuration of the run of $M$ after $t$ steps.",
+ "hypotheses_covered": [
+  "$m\\le k$",
+  "$M$ has $m$ work tapes, Boolean alphabet, and state set $S$",
+  "$H$ has $k$ work tapes, Boolean alphabet, and state set $B$",
+  "A state map $\\iota:S\\to B$ and exceptional state $e\\in S$ are given",
+  "For every $q\\ne e$ and all scanned symbols, $H$'s transition at $\\iota(q)$ equals the padded, state-mapped transition of $M$",
+  "An initial configuration $c$ and time $t\\in\\mathbb N$ are given",
+  "At every $j<t$, the run of $M$ from $c$ has a state different from $e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

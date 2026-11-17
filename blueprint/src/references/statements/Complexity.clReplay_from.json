@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clReplay_from",
+ "key": "73236a59958f461b",
+ "kind": "lemma",
+ "title": "Replay from a Buffer Position",
+ "statement": "Let $x,w,$ and $out$ be finite Boolean words, let $p$ be an input-head position for $x$, and let $j$ be a natural number with $j\\le |w|$. Starting with the replay machine in its start control, its work tape storing $w$ with the head at cell $j$, and output $out$, after $j+|w|+3$ steps it is halted, the head is at cell $|w|$, the buffer remains $w$, and the output is $out$ followed by $w$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "input-head position $p$ for $x$",
+  "Boolean buffer word $w$",
+  "Boolean output prefix $out$",
+  "natural number $j$ with $j\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, buffer $w$, output prefix, and head position $j \\le |w|$, running the replay machine from its start control at cell $j$ for $j + |w| + 3$ steps appends exactly $w$ to the output and physically halts; only the prefix rewind, the full emission, and the halt are charged."
+}

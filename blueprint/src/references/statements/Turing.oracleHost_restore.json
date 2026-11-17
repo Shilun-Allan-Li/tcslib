@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.oracleHost_restore",
+ "key": "9e15fae371867aae",
+ "kind": "theorem",
+ "title": "Restoring the oracle configuration",
+ "statement": "Let $M$ be a Boolean oracle Turing machine and $C$ a Boolean multitape Turing machine with $c>0$ work tapes, and choose states $en,ex$ of $C$. Let $c_0$ be a configuration of $M$ on input $x$, with side tag $b$ and a Boolean verdict $v$. Suppose $c_0$ is nonhalting and its query-tape head position $p$ satisfies $p\\ge0$ when $b=\\mathrm{true}$ and $p\\le0$ when $b=\\mathrm{false}$. Starting from the host's dispatch encoding of the ready configuration whose query tape is that of $c_0$, whose head is at $p$, and whose argument tape contains the one-symbol word $[v]$, after $|p|+4$ steps the host is in the stable encoding of the configuration obtained from $c_0$ by setting its state to the positive-answer state of $M$ if $v$ is true and to its negative-answer state otherwise, for some side tag $b'$; the resulting query-tape head position satisfies the corresponding side condition for $b'$.",
+ "hypotheses_covered": [
+  "Boolean oracle machine M and Boolean multitape machine C",
+  "C has c>0 work tapes",
+  "chosen entry and exit states en, ex",
+  "configuration c₀ on input x",
+  "side tag and verdict",
+  "c₀ is nonhalting",
+  "orientation condition on c₀'s query-tape head position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

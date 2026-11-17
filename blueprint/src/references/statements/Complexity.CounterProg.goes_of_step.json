@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_of_step",
+ "key": "4f5fa05fa51103fd",
+ "kind": "theorem",
+ "title": "A one-step transition gives a bounded run",
+ "statement": "Let $P$ be a counter program on a binary input $x$, with initial label $\\ell$, register assignment $\\rho$, and input position $p$, and target label-or-halted-state $q$, register assignment $\\rho'$, input position $p'$, and output string $e$. Suppose that for every output string $o$, one step from the state with label $\\ell$, registers $\\rho$, input position $p$, and output $o$ yields the state with label-or-halted-state $q$, registers $\\rho'$, input position $p'$, and output $o$ followed by $e$. Then from that initial state the program reaches the specified target state within at most one step, appending $e$ to every initial output string.",
+ "hypotheses_covered": [
+  "For every output string $o$, the stated one-step transition equality holds",
+  "Initial label $\\ell$, registers $\\rho$, and input position $p$",
+  "Target label-or-halted-state $q$, registers $\\rho'$, input position $p'$, and appended output $e$",
+  "The step bound is one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, let $\\ell$ be a label,\n$\\ell'$ a label or the halted state, $\\rho, \\rho'$ register vectors, $p, p'$\ninput positions and $e$ a bit string.  If for every output $o$ one step of $P$\non $x$ maps the state with label $\\ell$, registers $\\rho$, $p$ symbols read and\noutput $o$ to the state with label $\\ell'$, registers $\\rho'$, $p'$ symbols read\nand output $o\\,e$, then from $(\\ell, \\rho, p)$ the program reaches\n$(\\ell', \\rho', p')$ within one step while appending $e$ to its output."
+}

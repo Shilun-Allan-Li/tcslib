@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.srcVertex",
+ "key": "36b7f0991b6a8c1f",
+ "kind": "def",
+ "title": "Vertex assigned to a source bit",
+ "statement": "Let $n,m,w$ be natural numbers, let $\u0013kappa$ be a type with a chosen element, let $F$ assign an output bit list to each element of $\u0013kappa$ and input bit list, and let $\u0013prog$ be a finite list of instructions. For instruction index $i$ and source $s$, the assigned vertex is its input index when $s$ is a valid input source, is $n$ or $n+1$ for the valid constant false or true source, respectively, and is the vertex assigned to the referenced earlier instruction and output bit when $s$ is a valid block source; every invalid source is assigned vertex $n$.",
+ "hypotheses_covered": [
+  "Natural numbers $n,m,w$",
+  "A type $\u0013kappa$ with a chosen element",
+  "A function $F : \u0013kappa \\to \\mathrm{List}(\\mathrm{Bool}) \\to \\mathrm{List}(\\mathrm{Bool})$",
+  "A finite instruction list",
+  "Instruction index $i$ and source $s$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not include the definitions of source validity or the vertex assigned to a program instruction, so their exact meanings cannot be stated from this payload alone.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

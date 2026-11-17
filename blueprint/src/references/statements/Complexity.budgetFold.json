@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.budgetFold",
+ "key": "f89a2c84abef0805",
+ "kind": "lemma",
+ "title": "Borrow pass as a left-to-right fold",
+ "statement": "For every incoming carry bit $c$ and finite bit word $b$, folding the one-bit borrow rule from left to right over $b$, starting in state $c$, returns the same final state and rewritten word as the borrow pass on $b$ starting with $c$.",
+ "hypotheses_covered": [
+  "Incoming carry bit",
+  "Finite bit word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every carry flag and every bit word, folding the one-bit borrow transducer over\nthe word is precisely the fixed-width borrow pass on that word."
+}

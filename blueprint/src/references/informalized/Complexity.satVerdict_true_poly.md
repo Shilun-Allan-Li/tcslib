@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/SAT.lean :: Complexity.satVerdict_true_poly -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: low -->
+
+# Polynomial-time 3SAT verifier verdict
+
+**Claim.** The function sending each Boolean word $z$ to the one-bit word containing the 3SAT-mode verifier verdict on $z$ is polynomial-time computable.
+
+**Proof.** First compute the decoded instance in polynomial time, then apply the polynomial-time width scan to it; closure under composition gives a polynomial-time width test (`Complexity.satWidthScan_poly`, `Complexity.sat_pipeline_poly`, and `Complexity.PolyTimeComputable.comp`). Combine this test with the polynomial-time safe-value computation using closure under conjunction (`Complexity.polyTimeComputable_and`). Use the syntax-validity test to select that conjunction when the syntax is valid, and the constant output $[\mathrm{true}]$ otherwise; then use the split-validity test to select this result or the constant output $[\mathrm{false}]$. These conditional operations preserve polynomial-time computability (`Complexity.polyTimeComputable_ite`, `Complexity.polyTimeComputable_const`, `Complexity.sat_pipeline_poly`). To identify the resulting function with the stated verdict, split into the cases where the split search fails or succeeds. On success, further split according to whether parsing the prefix fails or yields a formula. In the failure case the fallback decode and syntax guard give the same verdict. In the successful case, the parse representation theorem identifies the prefix with the serialization of the parsed formula (`Std.Sat.CNF.parse_repr`); serialization preserves parsing and decoding (`Std.Sat.CNF.parse_serialize`, `Std.Sat.CNF.decode_serialize`), and the width scan on a serialization agrees with the formula's width (`Complexity.satWidthScan_serialize`). The split encoding is recovered by the pair decode/encode identity (`Turing.pairDecode_pairEncode`), so the computed conjunction is exactly the 3SAT-mode verdict.
+
+**Key facts.** `Complexity.sat_pipeline_poly`, `Complexity.satWidthScan_poly`, `Complexity.PolyTimeComputable.comp`, `Complexity.satSafeValue_poly`, `Complexity.polyTimeComputable_and`, `Complexity.polyTimeComputable_ite`, `Complexity.polyTimeComputable_const`, `Turing.pairDecode_pairEncode`, `Std.Sat.CNF.syntaxOK_spec`, `Std.Sat.CNF.parse_repr`, `Std.Sat.CNF.parse_serialize`, `Std.Sat.CNF.decode_serialize`, `Complexity.satWidthScan_serialize`.
+
+**Caveat.** The upstream statements omit the detailed definitions of the pipeline and safe-value components; the proof's algebraic closure steps and serialization facts are clear, but the exact branch identification relies on those omitted definitions.

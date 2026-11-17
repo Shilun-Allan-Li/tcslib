@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.ndet_halt",
+ "key": "b3f64aab3bf1ccbe",
+ "kind": "theorem",
+ "title": "Halting behavior of a compiled nondeterministic program",
+ "statement": "Let $A$ be a nondeterministic register program, $l_0$ an initial label, $D$ a deterministic machine with $k_D$ work tapes, $q_0$ a choice of initial decider states, and $B,W$ natural-number bounds. Suppose the deterministic interpretation of $A$ with choices replaced by $0$, started at label $l$ with register values $v$ and no recorded answer, halts with answer $b_0$; suppose also that the associated precondition holds and that every register satisfies $|\\mathrm{bits}(v(r)+1)|\\le W$, where $|\\cdot|$ denotes word length. Then there are a natural number $S$ and a configuration $C_f$ such that every run of the compiled nondeterministic machine from the corresponding initial configuration using a choice word of length at most $S$ has register-head positions between $-1$ and $W$ and decider-tape head positions of absolute value at most $B$, and every choice word of length exactly $S$ reaches $C_f$, which is halted and has output equal to the initial output followed by $b_0$.",
+ "hypotheses_covered": [
+  "A, l₀, D, q₀, B, and W are given",
+  "l is a program label; v gives register values; out is the initial output word; b₀ is a Boolean answer",
+  "The deterministic interpretation from (l,v,no answer) halts with answer b₀",
+  "The precondition NPre holds at (l,v,no answer)",
+  "For every register r, the bit-word for v(r)+1 has length at most W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.redirect_apply",
+ "key": "f342671f496285ca",
+ "kind": "lemma",
+ "title": "Redirection commutes with an action",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit, let $x$ be a Boolean word, let $c$ be a configuration of $M$ on input $x$, and let $a$ be an action for $M$. Applying the action obtained by redirecting $a$ with the register set to the last bit of $c$'s output (empty if that output is empty) to the redirected image of $c$ gives the redirected image of the configuration obtained by applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "finite-state Boolean Turing machine M",
+  "bit b",
+  "Boolean word x",
+  "configuration c of M on x",
+  "action a for M"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state Turing machine over the Boolean alphabet with $k$ work tapes,\n$b$ a bit, $c$ a configuration of $M$ on an input $x$, $a$ an action of $M$, and $\\rho$\nthe last bit of the output of $c$ (empty if that output is empty). Applying the\nredirected action of $a$ with register $\\rho$ (the moves and writes of $a$, no emission,\nregister updated to $a$'s emitted bit if any, and on a halt of $a$ either halting when\nthe updated register equals $b$ or entering the loop state otherwise) to the redirected\nimage of $c$ (the tapes and heads of $c$, empty output, and state determined by $c$'s\nstate and the last bit of its output in the same way) gives the redirected image of the\nconfiguration obtained by applying $a$ to $c$."
+}

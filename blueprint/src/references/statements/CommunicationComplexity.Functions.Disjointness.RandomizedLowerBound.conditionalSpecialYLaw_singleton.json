@@ -1,17 +1,17 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialYLaw_singleton",
- "key": "28d42cf81d1e6859",
+ "key": "71d75baf40c31cdd",
  "kind": "theorem",
- "title": "Singleton mass of the conditional special-bit law",
- "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness inputs of length $n$, let $z$ be an achievable value of the variable $Z=(M,T,X_{<T},Y_{>T})$ for $p$, and let $b$ be a Boolean value. Write $\\mu_z$ for the hard-distribution measure conditioned on the fiber $\\{Z=z\\}$, and let $S$ be the map sending a sample to Bob's bit at its special coordinate. Taking the conditional law of Bob's special bit to be the pushforward $S_*\\mu_z$, its real-valued mass on the singleton $\\{b\\}$ equals the real-valued mass that $\\mu_z$ assigns to the preimage $S^{-1}(\\{b\\})$.",
+ "title": "Singleton mass of Bob's special-bit law",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on inputs of length $n$, let $z$ be an achievable value of its summary $Z=(M,T,X_{<T},Y_{>T})$, and let $b\\in\\{0,1\\}$. The conditional law of Bob's special bit on the fiber $Z=z$ assigns to $\\{b\\}$ the same real mass as the fiber measure assigns to the event that Bob's special bit equals $b$.",
  "hypotheses_covered": [
-  "n is a positive integer",
-  "p is a disjointness protocol",
-  "z is an achievable value of the Z variable for p",
-  "b is a Boolean"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic length-$n$ disjointness protocol",
+  "$z$ is an achievable summary value",
+  "$b$ is Boolean"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "On a positive-mass $Z=z$ fiber, Bob's conditional special-bit singleton mass is the corresponding preimage probability under the fiber measure."
+ "replaced": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness\ninputs of length $n$, let $z$ be an achievable value of the variable\n$Z=(M,T,X_{<T},Y_{>T})$ for $p$, and let $b$ be a Boolean value. Write $\\mu_z$ for the\nhard-distribution measure conditioned on the fiber $\\{Z=z\\}$, and let $S$ be the map\nsending a sample to Bob's bit at its special coordinate. Taking the conditional law of\nBob's special bit to be the pushforward $S_*\\mu_z$, its real-valued mass on the\nsingleton $\\{b\\}$ equals the real-valued mass that $\\mu_z$ assigns to the preimage\n$S^{-1}(\\{b\\})$."
 }

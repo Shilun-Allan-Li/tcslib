@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.abs_integral_sub_taylor_le",
+ "key": "5eb44c7039491f0d",
+ "kind": "theorem",
+ "title": "Expected scalar Taylor error",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, and let $X:\\Omega\\to\\mathbb R$ satisfy the fourth-order invariance moment conditions: it has finite fourth absolute moment, and its first, second, and third moments are $0,1,0$, respectively, with fourth moment at most $9$. Let $\\psi:\\mathbb R\\to\\mathbb R$ be four times continuously differentiable, and suppose $C\\ge0$ and $|\\psi^{(4)}(t)|\\le C$ for every $t\\in\\mathbb R$. Then for all $a,b\\in\\mathbb R$, \\[\\left|\\int_\\Omega\\psi(a+bX(\\omega))\\,d\\mu(\\omega)-\\left(\\psi(a)+\\frac{\\psi''(a)}2b^2\\right)\\right|\\le\\frac{3C}{8}b^4.\\]",
+ "hypotheses_covered": [
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$X$ satisfies the fourth-order invariance moment conditions, including finite fourth absolute moment, moments $0,1,0$ of orders one through three, and fourth moment at most $9$",
+  "$\\psi$ is four times continuously differentiable",
+  "$C\\ge0$",
+  "$|\\psi^{(4)}(t)|\\le C$ for every real $t$",
+  "$a,b\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $X$ be a real input on a probability space, measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. Let $\\psi\\colon\\mathbb R\\to\\mathbb R$ be $C^4$ and let $C\\ge0$ satisfy $|\\psi^{(4)}(t)|\\le C$ for all real $t$. For all real $a,b$, $|\\mathbb E\\psi(a+bX)-\\psi(a)-\\tfrac12\\psi^{(2)}(a)b^2|\\le(3C/8)b^4$."
+}

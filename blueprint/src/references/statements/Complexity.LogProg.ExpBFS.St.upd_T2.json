@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.St.upd_T2",
+ "key": "a15224599c318c98",
+ "kind": "lemma",
+ "title": "Updating the return walk counter",
+ "statement": "Let a machine state have natural-number registers $(N,L_g,s,s_1,X,w,K,B_s,U,V,T,T_2,Z,C,ch,c,c_1)$, and let its register vector list these values in that order, indexed from $0$ to $16$. Replacing coordinate $11$ of the vector by a natural number $k$ gives the register vector of the state obtained by setting $T_2=k$ and leaving the other registers unchanged.",
+ "hypotheses_covered": [
+  "state has the listed natural-number registers",
+  "coordinate vector lists registers in the displayed order",
+  "replacement value k is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine state be a tuple of seventeen natural-number registers, and let its\nregister vector list these registers in order, with the return walk counter in\ncoordinate $11$. Replacing that coordinate of the register vector by $k$ gives the\nregister vector of the state obtained by setting the return walk counter to $k$."
+}

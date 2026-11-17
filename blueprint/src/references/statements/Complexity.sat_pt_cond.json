@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.sat_pt_cond",
+ "key": "0810f1630fff7e0a",
+ "kind": "lemma",
+ "title": "Polynomial-time conditional function",
+ "statement": "Let $p$ be a Boolean predicate on binary strings, and let $f$ and $g$ be functions from binary strings to binary strings. Suppose that the one-bit function $x\\mapsto[p(x)]$ and both $f$ and $g$ are polynomial-time computable. Then the function that returns $f(x)$ when $p(x)$ holds and $g(x)$ otherwise is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$p$ is a Boolean-valued function on binary strings",
+  "$f$ and $g$ are functions from binary strings to binary strings",
+  "The one-bit output function for $p$ is polynomial-time computable",
+  "$f$ is polynomial-time computable",
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a Boolean predicate on binary strings and $f, g$ functions on binary\nstrings. If the single-bit function $x \\mapsto [p(x)]$ and both $f$ and $g$ are\npolynomial-time computable, then so is the function mapping $x$ to $f(x)$ when\n$p(x)$ holds and to $g(x)$ otherwise."
+}

@@ -1,0 +1,29 @@
+{
+ "lean_name": "Turing.FinTM.loopHostTM_spaceUsed_le_budget",
+ "key": "673c9ac9dd3ec2c8",
+ "kind": "theorem",
+ "title": "Loop host space bound",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, let $I(x,s)$ be a predicate on Boolean words, and let $g(x,s)$ and $A(x,s)$ be Boolean-word-valued functions, with $A(x,s)$ Boolean-valued. Let $s_0$ assign a Boolean word to each Boolean word, and let $R,T:\\mathbb N\\to\\mathbb N$. Suppose that on every input $x$, $F$ halts within $T(|x|)$ steps with output the binary expansion of $R(|x|)$; that $I(x,s_0(x))$ holds for every $x$; and that $I(x,s)$ implies $I(x,g(x,s))$. Suppose also that, for every $x$, the run of $B$ from its initial configuration on $x$ reaches the anchor state $a$ in some $t\\le T(|x|)$, has not visited $a$ at any earlier time, and at time $t$ is exactly the anchor configuration with $s_0(x)$ on tape zero and all other work tapes blank. Finally, suppose that for every $x,s$ with $I(x,s)$ there is a positive time $t\\le T(|x|)$ such that the run of $B$ from that anchor configuration has no intermediate anchor visit; if $A(x,s)$ holds, it halts at time $t$ with output $g(x,s)$, and otherwise it is at the anchor configuration with $g(x,s)$ on tape zero and all other work tapes blank. Then, for every input $x$ and time $t$, the loop host with body $B$, fuel machine $F$, anchor $a$, and the specified mode uses at most $23K(T(|x|)+1)$ work-tape cells through time $t$, where $K$ is its number of work tapes.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Boolean Turing machines",
+  "$a$ is a state of $B$",
+  "$I$ is a predicate on pairs of Boolean words",
+  "$g$ maps pairs of Boolean words to Boolean words",
+  "$A$ maps pairs of Boolean words to Booleans",
+  "$s_0$ maps Boolean words to Boolean words",
+  "$R,T:\\mathbb N\\to\\mathbb N$",
+  "$F$ computes the binary expansion of $R(|x|)$ within $T(|x|)$ steps on every input",
+  "$I(x,s_0(x))$ for every Boolean word $x$",
+  "$I(x,s)\\Rightarrow I(x,g(x,s))$ for all Boolean words $x,s$",
+  "For every $x$, the body reaches anchor $a$ by a time $t\\le T(|x|)$, has no earlier anchor visit, and is then at the specified anchor configuration",
+  "For every invariant pair $(x,s)$, a positive round length $t\\le T(|x|)$ exists with no intermediate anchor visit",
+  "An accepting round halts with output $g(x,s)$",
+  "A nonaccepting round returns to the specified anchor configuration for $g(x,s)$",
+  "$x$ is a Boolean input word and $t$ is a natural number",
+  "The mode parameter is Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

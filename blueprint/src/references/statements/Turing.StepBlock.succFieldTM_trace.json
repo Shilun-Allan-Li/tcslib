@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.StepBlock.succFieldTM_trace",
+ "key": "ff3540efa2c56f88",
+ "kind": "lemma",
+ "title": "Successor-field run at each intermediate time",
+ "statement": "Let $m,n$ be natural numbers, let $x$ be a finite Boolean input, let $src,dst$ be distinct work-tape indices, let $copy$ be a Boolean, and let $d$ be a configuration of the successor-field machine. Let $s$ be absent or a state index less than $n$. Suppose $d$ is in the tag state and the source tape, starting at its head position, contains the optional-state encoding of $s$. For every time $t$ no greater than the encoding length, the configuration after $t$ steps is $d$ if $t=0$. Otherwise it is the configuration obtained after the tag transition, with the prefix of length $t-1$ of the unary state encoding copied to the destination tape exactly when copying is enabled, and with state unary when $t$ is strictly less than the encoding length and done (carrying whether $s$ is present) otherwise.",
+ "hypotheses_covered": [
+  "$m,n$ are natural numbers",
+  "$x$ is a finite Boolean input",
+  "$src,dst$ are work-tape indices with $src\\ne dst$",
+  "$copy$ is Boolean",
+  "$d$ is a configuration of the successor-field machine",
+  "$s$ is absent or a state index less than $n$",
+  "$d$ is in the tag state",
+  "the source tape contains the optional-state encoding of $s$ from its head position",
+  "$t$ is at most the encoding length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

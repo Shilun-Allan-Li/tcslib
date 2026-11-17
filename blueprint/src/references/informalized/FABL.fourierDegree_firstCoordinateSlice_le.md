@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter03/LowDegreeSpectralConcentration.lean :: FABL.fourierDegree_firstCoordinateSlice_le -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Degree of a coordinate slice
+
+**Claim.** If a function on the n-dimensional cube has Fourier degree at most $k$, then either restriction obtained by fixing its first coordinate to a sign has Fourier degree at most $k$.
+
+**Proof.** Fix a frequency set $S$ in the remaining coordinates with $|S|>k$. Its tail frequency in the original cube has size $|S|$, and the frequency formed by adjoining the first coordinate has size $|S|+1$; in particular, both sizes exceed $k$. The degree criterion (`fourierDegree_le_iff`) therefore makes the Fourier coefficients of the original function at both frequencies vanish. The tail-frequency identity (`fourierCoeff_tailFrequency`) identifies the first vanishing coefficient with the average of the two slice coefficients, while the identity for the frequency containing the first coordinate (`fourierCoeff_insert_zero_tailFrequency`) identifies the second with half their difference. Since both the sum and difference of the two slice coefficients are zero, each slice coefficient is zero. Applying the degree criterion again proves the bound for either sign.
+
+**Key facts.** `FABL.fourierDegree_le_iff`, `FABL.zero_notMem_tailFrequency`, `FABL.card_tailFrequency`, `FABL.fourierCoeff_tailFrequency`, `FABL.fourierCoeff_insert_zero_tailFrequency`.

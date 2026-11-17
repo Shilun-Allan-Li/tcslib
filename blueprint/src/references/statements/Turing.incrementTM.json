@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.incrementTM",
+ "key": "3c81cf45bff93fe4",
+ "kind": "def",
+ "title": "Binary increment machine",
+ "statement": "For a natural number $k$ and a selected work tape $i$ among the $k$ tapes, define a machine with Boolean tape symbols and phases for running, rewinding with a Boolean flag, and finishing with that flag. It starts in the running phase: when the selected cell contains $1$, it writes $0$, moves that tape head right, and continues; when it contains $0$, it writes $1$, moves the head left, and begins rewinding with flag true; when it is blank, it moves left and begins rewinding with flag false. During rewinding it moves left over nonblank cells and, at the first blank, moves right and enters the finished phase; in the finished phase it remains there. Every transition leaves the input head and output unchanged and leaves all unselected work tapes unchanged.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$i$ is a selected index in the $k$ work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.f2_scanCopy_finish",
+ "key": "a4fdc47addc3f473",
+ "kind": "lemma",
+ "title": "Completion of a full input scan",
+ "statement": "Let $M$ be a Turing machine with no work tapes, let $q$ be a state, and suppose that in state $q$ its transition on any input symbol and work-tape reading copies the scanned input bit to the output, moves the input head right, and remains in state $q$, while on a blank input symbol it emits nothing and halts. Then for every Boolean word $x$ and output word $o$, after $|x|+1$ steps from the scan configuration at position zero in state $q$ with output $o$, the machine is in the halted scan configuration at position $|x|$, with output $o$ followed by $x$.",
+ "hypotheses_covered": [
+  "Machine $M$ has no work tapes",
+  "State $q$",
+  "For every input and work-tape reading, the transition in state $q$ has the specified behavior",
+  "Boolean word $x$",
+  "Output word $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

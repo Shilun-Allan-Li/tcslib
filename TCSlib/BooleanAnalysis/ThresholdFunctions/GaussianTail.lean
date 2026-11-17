@@ -49,6 +49,10 @@ namespace ThresholdFunctions
 noncomputable def standardGaussianMeasure : Measure ℝ :=
   gaussianReal 0 1
 
+/-- The standard Gaussian measure is the real Gaussian law with mean zero
+and variance one. -/
+lemma standardGaussianMeasure_eq : standardGaussianMeasure = gaussianReal 0 1 := rfl
+
 /-- The standard Gaussian probability density `φ`.
 
 [OD14, Notation 5.14] -/
@@ -80,6 +84,10 @@ O'Donnell's function on `[0, 1]`; the Chapter 5 results below use it near zero f
 [OD14, Def. 5.26] -/
 noncomputable def gaussianIsoperimetric (α : ℝ) : ℝ :=
   standardGaussianPDF (standardGaussianQuantile α)
+
+/-- The Gaussian isoperimetric profile is the Gaussian density at its quantile. -/
+lemma gaussianIsoperimetric_eq (α : ℝ) :
+    gaussianIsoperimetric α = standardGaussianPDF (standardGaussianQuantile α) := rfl
 
 /-- The closed form `φ(x) = exp(-x²/2) / sqrt(2π)` of the standard Gaussian density. -/
 lemma standardGaussianPDF_eq :

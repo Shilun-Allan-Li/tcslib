@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_good_spec",
+ "key": "304329cb8bcb6c35",
+ "kind": "lemma",
+ "title": "Structure of valid verifier inputs",
+ "statement": "Let $z$ be a bit string satisfying the validity guard. Write $Y$ for its instance part and $W$ for its certificate part; write $\\alpha$, $x$, $1^n$, and $1^t$ for the code, input, width, and clock fields extracted from $Y$, respectively, with $n$ and $t$ the lengths of the width and clock fields. Then $z=YW$, the length of $W$ is one more than the length of $Y$, and $Y=\\langle\\alpha,\\langle x,\\langle1^n,1^t\\rangle\\rangle\\rangle$.",
+ "hypotheses_covered": [
+  "$z$ is a bit string",
+  "The validity guard holds for $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\\langle z_{[:i]}, z_{[i:]}\\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\\pi_1, \\pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \\pi_1(s(z))$ and $W = \\pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\\pi_1(Y)$, $\\pi_1(\\pi_2(Y))$, $\\pi_1(\\pi_2(\\pi_2(Y)))$ and $\\pi_2(\\pi_2(\\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\\pi_2(Y)$ and $\\pi_2(\\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones. If $G(z)$ holds, then $z = YW$, $|W| = |Y| + 1$, and $Y = \\langle \\alpha, \\langle x, \\langle 1^n, 1^t\\rangle\\rangle\\rangle$, where $\\alpha$ and $x$ are the code and input fields, $n$ and $t$ are the lengths of the width and clock fields, and $1^k$ is the word of $k$ ones."
+}

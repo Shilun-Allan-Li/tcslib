@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.codeCanonical_machine",
+ "key": "4351a8e810d16236",
+ "kind": "lemma",
+ "title": "Machine computing canonical serialization",
+ "statement": "There exist a finite Turing machine over the Boolean alphabet and a function $T\\colon\\mathbb N\\to\\mathbb N$ such that, on every Boolean input string $x$, the machine halts after exactly $T(|x|)$ steps and outputs the serialization of the machine decoded from $x$.",
+ "hypotheses_covered": [
+  "existence of a finite Turing machine over the Boolean alphabet",
+  "existence of a time-bound function $T\\colon\\mathbb N\\to\\mathbb N$",
+  "computation on every Boolean input string $x$",
+  "halts at time $T(|x|)$",
+  "output is the serialization of the decoded machine"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite Turing machine over the two-letter Boolean alphabet and a time\nbound $T \\colon \\bbn \\to \\bbn$ such that on every Boolean string the machine halts\nwithin $T$ of the input's length, outputting the fixed serialization of the\none-work-tape binary machine that the string decodes to (malformed strings decoding\nto the trivial one-state halting machine)."
+}

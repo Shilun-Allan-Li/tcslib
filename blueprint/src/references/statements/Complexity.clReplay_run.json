@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clReplay_run",
+ "key": "81a57c06d4706550",
+ "kind": "lemma",
+ "title": "Complete Buffer Replay",
+ "statement": "Let $x,w,$ and $out$ be finite Boolean words, and let $p$ be an input-head position for $x$. Starting with the replay machine in its start control, its work tape storing $w$ with the head at cell $|w|$, and output $out$, after $2|w|+3$ steps it is halted, the head is at cell $|w|$, the buffer remains $w$, and the output is $out$ followed by $w$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "input-head position $p$ for $x$",
+  "Boolean buffer word $w$",
+  "Boolean output prefix $out$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, buffer $w$, and output prefix, running the replay machine from its start control at the buffer's right blank for $2|w| + 3$ steps appends exactly $w$ to the output and physically halts; the initial left move, full rewind, every emitted bit, and the halt are all charged."
+}

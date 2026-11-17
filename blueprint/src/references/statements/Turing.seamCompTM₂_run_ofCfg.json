@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.seamCompTM₂_run_ofCfg",
+ "key": "026bb988d24ea544",
+ "kind": "theorem",
+ "title": "Two-Stage Seam Composition Run",
+ "statement": "Let $M_0,M_1,M_2$ be machines with $k$ work tapes over a common alphabet and respective state sets $S_0,S_1,S_2$. Choose states $e_1,e_2\\in S_0$ with $e_1\\ne e_2$, and entry states $entry_1\\in S_1$ and $entry_2\\in S_2$. If a run of $M_0$ from configuration $c_0$ reaches $c_1$ after $T_0$ steps and avoids both states $e_1$ and $e_2$ at every earlier time, then the following two conclusions hold: if $c_1$ has state $e_1$, the twice seam-composed machine, run from $c_0$ with its state embedded in the leftmost component, agrees after the handoff and any $t$ further steps with the run of $M_1$ from $c_1$ with state replaced by $entry_1$, embedded in the middle component; if $c_1$ has state $e_2$, it agrees instead with the run of $M_2$ from $c_1$ with state replaced by $entry_2$, embedded in the rightmost component. In each case the claimed agreement holds for every natural number $t$, at time $T_0+1+t$.",
+ "hypotheses_covered": [
+  "$k$ work tapes and a common symbol alphabet and input",
+  "Machines $M_0,M_1,M_2$ with state sets $S_0,S_1,S_2$",
+  "States $e_1,e_2\\in S_0$ with $e_1\\ne e_2$",
+  "Entry states $entry_1,entry_2$",
+  "Configurations $c_0,c_1$ of $M_0$ and natural number $T_0$",
+  "The run from $c_0$ reaches $c_1$ at time $T_0$",
+  "Before time $T_0$, the run's state is neither $e_1$ nor $e_2$",
+  "Each conclusion is conditional on the corresponding endpoint state of $c_1$",
+  "The conclusions hold for every natural number $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

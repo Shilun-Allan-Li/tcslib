@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.certCore_run",
+ "key": "303746205ac5afb3",
+ "kind": "theorem",
+ "title": "Bounded certificate run",
+ "statement": "Let $P$ be a finite-state Turing machine with Boolean symbols and $k_P$ work tapes, and let $k$ be a natural number. Let $\\iota$ be an injection from the $1+k_P$ tape slots into the $k$ tape slots, and choose a slot $c$ outside its image. For Boolean words $x,y$, let $d$ be a configuration of $P$ on input $x$ with a nonhalting state. Choose a Boolean tag satisfying the boundary-tag condition at $d$’s input-head position, a position $p$ among the $|y|+2$ positions, and arbitrary contents and head positions for the $k$ tapes. If the run of $P$ from $d$ is halted at time $D$, then the certificate machine, started from the configuration built from these data, is halted at some time $t\\le D+4$; its output is the one-symbol word whose symbol is true exactly when the output of $P$ at time $D$ is the one-symbol word $[\\mathrm{true}]$.",
+ "hypotheses_covered": [
+  "$P$ is a finite-state Boolean Turing machine",
+  "An injection from $1+k_P$ tape slots into $k$ slots",
+  "A distinguished slot outside the injection's image",
+  "Boolean words $x,y$",
+  "A configuration $d$ of $P$ on input $x$ with nonhalting state",
+  "A Boolean tag satisfying the boundary-tag condition at $d$'s input-head position",
+  "A head position among the $|y|+2$ positions",
+  "Arbitrary contents and head positions for the $k$ tapes",
+  "A natural-number deadline $D$ at which the run from $d$ is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

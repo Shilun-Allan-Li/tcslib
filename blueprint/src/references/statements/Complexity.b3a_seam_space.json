@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.b3a_seam_space",
+ "key": "2f03375abe7bbddc",
+ "kind": "lemma",
+ "title": "Space bound for sequential machine composition",
+ "statement": "Let $S,T$ be sets, let $k\\in\\mathbb N$, and let $R,Q$ be machines with $k$ work tapes and Boolean symbols, with exit state $e_x\\in S$ for $R$ and entry state $e_y\\in T$ for $Q$. Suppose configurations $d,e$ of $R$ on a Boolean input satisfy $R^a(d)=e$, the state of $e$ is $e_x$, and no earlier run $R^u(d)$ for $u<a$ has state $e_x$. Then the machine that runs $R$ until its exit state and switches to $Q$ at entry state $e_y$, started from $d$ with its states relabeled into the left side of $S\\oplus T$, uses at most $\\operatorname{space}_R(d,a)+\\operatorname{space}_Q(e',b)$ space through time $a+1+b$, for every $b\\in\\mathbb N$, where $e'$ is $e$ with its state replaced by $e_y$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$ and $S,T$ are sets",
+  "$S$ has decidable equality",
+  "$R,Q$ are $k$-tape machines over Boolean symbols",
+  "$e_x\\in S$ and $e_y\\in T$",
+  "$d,e$ are configurations on the same Boolean input and $a,b\\in\\mathbb N$",
+  "$R^a(d)=e$",
+  "The state of $e$ is $e_x$",
+  "No $u<a$ has state $e_x$ in the run from $d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

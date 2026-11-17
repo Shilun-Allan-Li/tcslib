@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timedFrame_run",
+ "key": "ab613ac81f6ca80c",
+ "kind": "lemma",
+ "title": "Runs of the Framed Machine",
+ "statement": "Let $M$ be a finite Boolean-alphabet Turing machine, choose a clock tape among its work tapes, and let $x$ be a Boolean input word. For every six-tape configuration $c$, contents and head positions for the $M$ tapes, and number of steps $t$, running the capture machine from the framed configuration for $t$ steps yields the frame of the timed-interpreter run from $c$ for $t$ steps.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $M$",
+  "clock tape in $\\text{Fin}(M.k)$",
+  "Boolean input word $x$",
+  "six-tape configuration $c$",
+  "contents and head positions for the $M$ tapes",
+  "natural number of steps $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $t$, running the assembled capture machine $t$ steps from a framed\nconfiguration equals the frame of the $t$-step timed-interpreter run, with the\ninactive frame unchanged."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.universal_lookup_parts",
+ "key": "6886d556a133f895",
+ "kind": "lemma",
+ "title": "Transition table decomposition",
+ "statement": "Let $M$ be a machine in code normal form, let $q$ be one of its states, and let $u,w$ each be a blank symbol or a bit. The canonical serialization of $M$ consists of its header, followed by the serialized records of a list of exactly $q$ groups, each containing nine actions, followed by the serialized records of a list of actions whose length is the index of the read pair $(u,w)$, then the record for the action prescribed by $M$ in state $q$ on reads $(u,w)$, and finally a remaining bit string.",
+ "hypotheses_covered": [
+  "$M$ is in code normal form",
+  "$q$ is a state of $M$",
+  "$u$ and $w$ are each blank, $0$, or $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every coded machine $M$, state $q$ of $M$, and pair of reads (an input\nsymbol and a work symbol, each blank, $0$, or $1$), the canonical\nserialization of $M$ decomposes as: the header, then the concatenated\nserialized records of a list of exactly $q$ groups of nine actions each\n(the full groups of the states preceding $q$), then the concatenated\nserialized records of a list of actions whose length is the record index of\nthe read pair, then the serialized record of the action $M$ performs at $q$\non those reads, then a remainder."
+}

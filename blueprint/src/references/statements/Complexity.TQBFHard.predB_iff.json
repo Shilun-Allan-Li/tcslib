@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.TQBFHard.predB_iff",
+ "key": "8d7167ad7d0ef30d",
+ "kind": "theorem",
+ "title": "Characterization of the predicate bit",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean symbols, let $d,c,A,a$ be natural numbers, let $x$ be a finite Boolean string, and let $\\tau:\\mathbb{N}\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Suppose the configuration-code length $vlen(N,d,c,|x|)$ is at most the block width $vwid(A,a,|x|)$. Form the finite string whose entries are $\\tau(0),\\ldots,\\tau(3w^2+3w-1)$, where $w=vwid(A,a,|x|)$, and pair-encode it with $x$. The predicate bit on this encoded input is true if and only if both the initial-configuration check on the length-$vlen(N,d,c,|x|)$ prefix of the block of width $w$ starting at offset $w$, and the accepting-configuration check on the corresponding prefix of the block starting at offset $2w$, hold, and at least one of the following holds: for some $i<w$, the adjacent triples of width-$w$ blocks at levels $i$ and $i+1$ fail the selector relation; or the final two blocks at level $w$ satisfy the block-step relation.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine $N$ over Boolean symbols",
+  "Natural numbers $d,c,A,a$",
+  "A finite Boolean string $x$",
+  "A Boolean-valued sequence $\\tau$",
+  "$vlen(N,d,c,|x|)\\le vwid(A,a,|x|)$"
+ ],
+ "confidence": "low",
+ "caveat": "The initial, accepting, block-step, and selector relations are named in the payload but their underlying coding definitions are not informally specified; the statement describes their roles and offsets rather than expanding their full definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

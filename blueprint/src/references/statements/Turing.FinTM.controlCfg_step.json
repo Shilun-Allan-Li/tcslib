@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.controlCfg_step",
+ "key": "bf58ac5d1031fe53",
+ "kind": "lemma",
+ "title": "One-step simulation of the controller",
+ "statement": "Let $D$, $M_1$, and $M_2$ be finite Turing machines over the Boolean alphabet, and let $c$ be a configuration of $D$ on an input $x$ whose state is not the halting state. Then one step of the conditional-dispatch machine, started from the configuration encoding $c$, is the encoding of the configuration reached by taking one step of $D$ from $c$.",
+ "hypotheses_covered": [
+  "$D$, $M_1$, and $M_2$ are finite Boolean-alphabet machines",
+  "$c$ is a configuration of $D$ on input $x$",
+  "The state of $c$ is not the halting state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $D$, $M_1$, $M_2$ be machines over the Boolean alphabet and let $c$ be a\nconfiguration of $D$ on an input $x$ whose state is not the halting state.\nThen one step of the conditional-dispatch machine from the embedded controller\nconfiguration of $c$ equals the embedded controller configuration of one step\nof $D$ from $c$; in particular the register tracks the first symbol of the\nsimulated output, with no hypothesis on $c$'s output."
+}

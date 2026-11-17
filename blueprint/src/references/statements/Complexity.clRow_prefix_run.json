@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clRow_prefix_run",
+ "key": "e55f7a298e4c8c89",
+ "kind": "lemma",
+ "title": "Bounded Prefix Construction",
+ "statement": "Let $l$ be a natural number, let $x$ be a Boolean input word with input-head position $p$, let $w_i$ be a Boolean word for each counter $i<l$, and let $r$ be a record word. Suppose every counter word has length at most $W$. For each $j\\le l$, there is a time $t\\le j(3W+4)$ at which the row controller, started with its field index and copier control both zero, is in field index $j$ with copier control zero; its input position, counter-tape contents and head positions agree with their initial values, and its record is $r$ followed by the stored prefix of the first $j$ counter words.",
+ "hypotheses_covered": [
+  "$l$ is a natural number",
+  "$x$ is a Boolean input word",
+  "$p$ is a valid input-head position for $x$",
+  "$w$ assigns a Boolean word to each of the $l$ counter indices",
+  "$r$ is a Boolean record word",
+  "$W$ is a natural number",
+  "each counter word has length at most $W$",
+  "$j\\le l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, counter words all of length at most $W$, record, and count $j \\le l$, there is a time $t \\le j(3W + 4)$ after which the row controller, started at field zero, has appended exactly the stored prefix of the first $j$ fields to the record and sits at field index $j$ with every counter and head restored."
+}

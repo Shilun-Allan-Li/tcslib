@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/FiniteProbabilitySpace.lean :: CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_cond_fiber_real -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Measure decomposition by conditional fibers
+
+**Claim.** The real measure of a set $S$ is the sum over values $z$ of the real mass of the fiber $Z^\{-1\}(\{z\})$ multiplied by the real measure of $S$ under $μ$ conditioned on that fiber.
+
+**Proof.** The measure decomposition over fibers states that $μ$ is the sum, over $z$, of the measure of the fiber multiplied by the conditional measure given that fiber. Evaluate this identity on $S$ and convert the measures to real-valued masses. The finite sum and scalar multiplication evaluate pointwise, so each term becomes the product of the fiber's real mass and the conditional real mass of $S$. The finite-sum conversion from nonnegative extended reals to reals is valid because all measure terms are finite; distributing that conversion over each product gives the stated identity.

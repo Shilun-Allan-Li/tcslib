@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.clMatch_round",
+ "key": "ed373d6889916a3b",
+ "kind": "lemma",
+ "title": "One matcher round",
+ "statement": "Let $l,N,j,W$ be natural numbers, and let $pos,neg\\in\\mathrm{Fin}(l)$ be distinct. Let $x$ be a finite Boolean word, let $old,row:\\mathrm{Fin}(l)\\to\\{0,1\\}^*$ be rows of Boolean words, and let $target:\\mathrm{Fin}(2)\\to\\{0,1\\}^*$ be a pair of target words. For Boolean words $pre,tail$ and a list $flags$ of Boolean values, suppose $j<N$, every word $old(i)$ and $row(i)$ has length at most $W$, and both target words have length at most $W$. Then for some natural number $t\\le l(5W+7)+2W+5$, after $t$ steps the matcher is in the configuration with row $row$, stream $pre$ followed by the packed encoding of the fields of $row$ and then $tail$, cursor at the end of that packed encoding, clock position $j+1$, and flags equal to the original list followed by the comparison flag determined by $row$ and $target$ at $pos$ and $neg$.",
+ "hypotheses_covered": [
+  "$l$ is a natural number",
+  "$pos,neg\\in\\mathrm{Fin}(l)$",
+  "$pos\\ne neg$",
+  "$x$ is a Boolean word",
+  "$old,row:\\mathrm{Fin}(l)\\to\\mathrm{List}(\\mathrm{Bool})$",
+  "$target:\\mathrm{Fin}(2)\\to\\mathrm{List}(\\mathrm{Bool})$",
+  "$pre,tail$ are Boolean words",
+  "$N,j,W$ are natural numbers",
+  "$flags$ is a Boolean list",
+  "$j<N$",
+  "For every $i$, $|old(i)|\\le W$",
+  "For every $i$, $|row(i)|\\le W$",
+  "For every $i\\in\\mathrm{Fin}(2)$, $|target(i)|\\le W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For distinct coordinates, old and new candidate rows and target words of field length at most $W$, a stream exposing the packed new row, and a clock position $j < N$, there is a time $t \\le l(5W+7) + 2W + 5$ after which the matcher has consumed one clock token, loaded row $j$, compared cross-sums, appended exactly the comparison flag of that row, and advanced its cursor past the row; every reset, stream read, comparison, dispatch, and flag write is included in the bound."
+}

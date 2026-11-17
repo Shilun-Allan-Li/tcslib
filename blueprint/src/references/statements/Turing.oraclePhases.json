@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.oraclePhases",
+ "key": "0d719aab29449cea",
+ "kind": "def",
+ "title": "Oracle phase machine",
+ "statement": "Given a finite Boolean oracle machine $M$, a finite Boolean Turing machine $C$, a proof that $C$ has at least one work tape, and a state $e$ of $C$, define a multi-tape Boolean machine with $(m+2)+(c+1)+1$ work tapes, where $m$ and $c$ are the numbers of ordinary work tapes of $M$ and $C$. Its source phase is formed from the oracle source construction and the shadow machine for $M$'s empty-query behavior; its dispatch phase embeds the oracle dispatch machine; and its service phase copies between the specified slots, then embeds the virtual-host machine for $C$, initialized at state $e$ paired with true and using the done sweep phase as its seam state.",
+ "hypotheses_covered": [
+  "Finite Boolean oracle machine $M$",
+  "Finite Boolean Turing machine $C$",
+  "$C$ has at least one work tape",
+  "Chosen state $e$ of $C$"
+ ],
+ "confidence": "low",
+ "caveat": "Several constructions used to define the three phase machines are not included in the payload, so their detailed transition behavior cannot be rendered from the supplied statement.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

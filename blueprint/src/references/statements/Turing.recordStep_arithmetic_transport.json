@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.recordStep_arithmetic_transport",
+ "key": "1e807025f940d1fb",
+ "kind": "theorem",
+ "title": "Bounded Binary Arithmetic Transport",
+ "statement": "Let $Q,T$ be types with decidable equality, let $x$ be a Boolean word, let $increase$ be a Boolean, let $i$ be one of three digit-bank indices, and let $w,v$ be Boolean words. Suppose that applying fixed-width increment to $w$ when $increase$ is true, and fixed-width decrement otherwise, returns $v$, and that $v$ and $w$ have the same length. If a four-tape configuration $d$ is in the running state and its selected digit bank stores the encoded word $w$ relative to that tape's head position, then the corresponding embedded arithmetic machine reaches, within $2|w|+2$ steps, the configuration in the done-true state with that bank storing the encoding of $v$ and all other tape contents unchanged. Before that time it never has either done state, and throughout the run each tape head moves by at most $|w|+1$ from its initial position.",
+ "hypotheses_covered": [
+  "Types $Q,T$ with decidable equality",
+  "A Boolean input word $x$",
+  "A Boolean $increase$",
+  "An index $i$ among three digit-bank indices",
+  "Boolean words $w,v$",
+  "The selected fixed-width increment or decrement of $w$ equals $v$",
+  "The words $v,w$ have equal length",
+  "A four-tape configuration $d$ in the running state",
+  "The selected digit bank of $d$ stores the encoding of $w$ relative to its head position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satChain_vars",
+ "key": "3f9702b0ba2d97d5",
+ "kind": "lemma",
+ "title": "Variable bound for the clause-splitting chain",
+ "statement": "Let $h$ be a Boolean literal, $R$ a clause of literals indexed by natural numbers, and $n$ a natural number. If every variable index in the clause formed by adjoining $h$ to the front of $R$ is less than $n$, then every variable index in every clause produced by the chain is less than its returned cursor.",
+ "hypotheses_covered": [
+  "A head literal and a clause of natural-number variables",
+  "A natural-number starting cursor",
+  "Every input variable index is less than the starting cursor"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every variable index of the input clause (head plus remaining literals) is below\nthe starting cursor $n$, then every variable index occurring in the formula emitted\nby the chain construction is below the returned cursor."
+}

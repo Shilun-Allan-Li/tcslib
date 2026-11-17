@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.setupCfg_copy_prefix",
+ "key": "df3372ca938d3a9f",
+ "kind": "lemma",
+ "title": "Prefix of the guide-copying scan",
+ "statement": "Let $W$ be a finite Turing machine over Boolean symbols, let $a,j\\in\\mathbb{N}$, and let $x$ be a finite schedule-alphabet word with $j\\le |x|$. For any base configuration on $x$, integers $b,u$, and budget and unary tapes, starting in the first-copy phase with input head at position $1$, guide head at cell $0$, and guide tape equal to the partial guide with zero copied cells, after $j$ steps the machine is in the copy phase corresponding to $j$ copied symbols, with input head at position $j+1$, guide head at cell $j$, and guide tape equal to the partial guide with $j$ copied cells; the base data, budget tape and head, and unary tape and head are unchanged.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine W",
+  "natural parameter a",
+  "natural j with j ≤ |x|",
+  "schedule input x and base configuration",
+  "integers b and u",
+  "budget and unary tapes",
+  "initial first-copy phase",
+  "initial input-head position 1",
+  "initial guide-head coordinate 0",
+  "initial partial guide with zero copied cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $j \\le |x|$.  From a setup configuration in the first-copy phase with input head at\nposition $1$ and guide head at $0$ over the partial guide with $0$ copied cells,\nexactly $j$ steps lead to the copy phase for $j$ copied symbols with input head at\n$j+1$, guide head at $j$, and guide tape the partial guide with $j$ copied cells; the\nbudget and unary tapes and heads are unchanged.  In particular the input and guide\nheads make exactly the same number of right moves, and no data value influences a\nmovement."
+}

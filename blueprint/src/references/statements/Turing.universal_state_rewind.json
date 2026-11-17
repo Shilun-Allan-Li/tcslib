@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.universal_state_rewind",
+ "key": "006d0173040287e5",
+ "kind": "lemma",
+ "title": "Marker-Directed State Tape Rewind",
+ "statement": "Let $x$ be a Boolean input string, $b$ a four-tape interpreter configuration on $x$, $q,q'$ control states, $T$ a table with cursor $p$, and $\\sigma$ a state tape such that $\\sigma(0)=0$ and $\\sigma(j)\\ne0$ for every positive natural number $j$. Suppose that at control state $q$, whenever the state-tape read is $0$, every transition on any input and other work-tape reads is the administrative action that enters $q'$ and moves the state cursor right; whenever that read is not $0$, every such transition is the administrative action that remains in $q$ and moves the state cursor left. Then for every natural number $j$, starting in control state $q$ with tape $\\sigma$ and state cursor $j$, after $j+1$ interpreter steps the control is $q'$, the state cursor is $1$, and the table, tape, and all other configuration data are unchanged.",
+ "hypotheses_covered": [
+  "Boolean input string $x$",
+  "Base configuration $b$ of the four-tape interpreter on $x$",
+  "Control states $q,q'$",
+  "Table $T$ and integer cursor $p$",
+  "State tape $\\sigma$",
+  "Marker condition $\\sigma(0)=0$",
+  "For every positive natural $j$, $\\sigma(j)\\ne0$",
+  "Transition condition for all input and work reads when the state-tape read is $0$",
+  "Transition condition for all input and work reads when the state-tape read is not $0$",
+  "Natural number $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\sigma$ be a state tape whose cell $0$ reads the marker bit $0$ and none\nof whose cells at positive natural positions reads $0$ (they may be $1$ or\nblank).  Let $q$ be an interpreter control state such that, for every\ncombination of reads whose state-tape read is $0$, the transition at $q$ is\nthe administrative action passing to a fixed state $q'$ and moving the state\ncursor right, and for every combination whose state-tape read is not $0$ it\nis the administrative action staying in $q$ and moving the state cursor left,\nin both cases touching nothing else.  Then for every natural number $j$,\nstarting from the evaluation configuration in state $q$ with state tape\n$\\sigma$ and state cursor $j$, exactly $j + 1$ interpreter steps reach state\n$q'$ with state cursor $1$, leaving $\\sigma$, the table cursor, and all other\ndata unchanged.  The hypotheses are deliberately independent of whether the\ntraversed cells are erased blanks or retained unary symbols."
+}

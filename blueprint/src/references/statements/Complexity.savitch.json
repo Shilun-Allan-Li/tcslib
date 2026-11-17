@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.savitch",
+ "key": "eea34f17a4d1b848",
+ "kind": "theorem",
+ "title": "Savitch’s space inclusion",
+ "statement": "Let $S\\colon\\mathbb{N}\\to\\mathbb{N}$ satisfy $\\log_2 n+1\\le S(n)$ for every $n$, and suppose that for some positive integer $c$ there is a finite deterministic Turing machine that, on every binary input $x$, outputs the binary representation of $S(|x|)$ using at most $cS(|x|)$ work-tape cells. Then every language decidable by a finite nondeterministic Turing machine using at most a constant multiple of $S(n)$ work-tape cells is decidable by a finite deterministic Turing machine using at most a constant multiple of $S(n)^2$ work-tape cells.",
+ "hypotheses_covered": [
+  "$S\\colon\\mathbb{N}\\to\\mathbb{N}$",
+  "For every $n$, $\\log_2 n+1\\le S(n)$",
+  "There exists a positive integer $c$",
+  "A finite deterministic Turing machine outputs the binary representation of $S(|x|)$ on every binary input $x$",
+  "That machine uses at most $cS(|x|)$ work-tape cells",
+  "The input language is in $\\mathrm{NSPACE}(S)$, so some finite nondeterministic machine decides it within a constant multiple of $S(n)$ space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

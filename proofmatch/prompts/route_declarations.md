@@ -52,3 +52,8 @@ correspondence (or its absence) in mathematical terms.
 
 Return only JSON matching the supplied schema, with one entry per supplied
 declaration.
+
+If the profile has `document_part` and `document_parts`, this request contains
+one segment of a longer document. Judge the supplied segment only. Later
+segments are assessed separately and positive matches are combined; a result
+absent from this segment may still occur elsewhere.

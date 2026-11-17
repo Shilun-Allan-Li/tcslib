@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.b3a_log_machine",
+ "key": "b53ae04dcf190331",
+ "kind": "theorem",
+ "title": "A logarithmic-space machine for binary lengths",
+ "statement": "There exist a positive natural number $A$ and a finite-state machine $M$ over Boolean symbols such that, for every Boolean word $x$, $M$ halts with output the binary expansion of $\\lfloor\\log_2 |x|\\rfloor+1$ and uses at most $A(\\lfloor\\log_2 |x|\\rfloor+2)$ work-tape cells. Here the logarithmic expression is understood with the convention that its value is $1$ when $|x|=0$.",
+ "hypotheses_covered": [
+  "There exists $A\\in\\mathbb N$ with $0<A$",
+  "There exists a finite-state Boolean machine $M$",
+  "For every Boolean word $x$, the machine computes the specified output in some time",
+  "The output is the binary expansion of $\\operatorname{Nat.log}(2,|x|)+1$",
+  "Space use is at most $A(\\operatorname{Nat.log}(2,|x|)+2)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

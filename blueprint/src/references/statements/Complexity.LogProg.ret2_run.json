@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.ret2_run",
+ "key": "5dbc977dd3a62c09",
+ "kind": "lemma",
+ "title": "Input rewind after a return",
+ "statement": "Let $P$ be a register program with $m$ registers and $d$ deciders, let $D$ be a Boolean multi-tape Turing machine with $k_D$ work tapes, and let $x$ be a Boolean input. Suppose the call specification at node $l$ is $cs$. Starting from the compiled machine in its second return phase at $l$, with segment index $s$, direction bit $dir$, result bit $b$, arbitrary register and decider tapes, head positions, and output, take an input-head position $ip$ whose value is $j$, where $j\\le |x|$. Through every time $t\\le j+1$, all work-tape head positions remain unchanged; after $j+1$ steps the configuration has input-head position $1$, the same tapes, work-head positions and output, and state given by the return successor determined by $cs,l,s,dir,b$ and register index $0$.",
+ "hypotheses_covered": [
+  "$P,l_0,D,q_0$ are fixed",
+  "$l$ is a node and $cs$ is its call specification: $P.call(l)=some\\ cs$",
+  "$s$ is a segment index in $Fin(m+1)$",
+  "$dir,b$ are Boolean values",
+  "Register and decider tape contents and head positions, and output, are arbitrary",
+  "$ip\\in Fin(|x|+2)$ has value $j$",
+  "$j\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

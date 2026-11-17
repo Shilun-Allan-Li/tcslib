@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.foldMove_correct",
+ "key": "a94d63a0c439d072",
+ "kind": "lemma",
+ "title": "Correctness of the translated head move",
+ "statement": "For every integer $z$ and move direction $d\\in\\{-1,0,+1\\}$, let $\\varphi(z)=z$ if $z\\ge 0$ and $\\varphi(z)=-z-1$ otherwise, and let $\\sigma(z)$ record whether $z\\ge 0$. Translating $d$ using side $\\sigma(z)$ and origin flag indicating whether $\\varphi(z)=0$ gives a physical displacement and a new side such that adding the displacement to $\\varphi(z)$ gives $\\varphi(z+d)$, and the new side is $\\sigma(z+d)$.",
+ "hypotheses_covered": [
+  "$z$ is an integer",
+  "$d$ is a sign-valued move direction"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $z$ be an integer and $d \\in \\{-1,0,+1\\}$ a move direction; write $\\varphi(z)$\nfor the folded coordinate ($z$ when $z \\ge 0$, else $-z-1$) and $\\sigma(z)$ for the\nside of $z$ (whether $z \\ge 0$).  Then the translated move computed from $\\sigma(z)$,\nthe flag ``$\\varphi(z) = 0$'', and $d$ is correct in both components: adding its\nphysical displacement to $\\varphi(z)$ gives $\\varphi(z+d)$, and its returned side\nequals $\\sigma(z+d)$."
+}

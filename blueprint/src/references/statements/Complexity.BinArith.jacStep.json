@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.BinArith.jacStep",
+ "key": "1caf826458a81d13",
+ "kind": "def",
+ "title": "Jacobi-symbol state update",
+ "statement": "For a Boolean word $S$, the update leaves $S$ unchanged when the value of the first decoded component is zero. Otherwise, if the first bit of that component is true, it pairs the remainder of that component modulo the encoded value of the second component with a nested pair containing the original first component and the sign word, flipping the sign word exactly when the second bits of the two components after the first are both true. If the first bit is false, it drops that bit and pairs the resulting word with a nested pair containing the first component of the second decoded component; in this case it flips the sign word exactly when the second and third bits of that decoded component differ.",
+ "hypotheses_covered": [
+  "A Boolean word $S$"
+ ],
+ "confidence": "low",
+ "caveat": "The pair encoding, bit-value convention, and encoded remainder operation are not defined in the supplied statement.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

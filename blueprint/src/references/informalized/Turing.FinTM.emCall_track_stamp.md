@@ -1,0 +1,13 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Loop.lean :: Turing.FinTM.emCall_track_stamp -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Stamping extends the visited span
+
+**Claim.** Under the stated ordering and proximity hypotheses, one tracked-machine step from the intermediate stamping configuration gives the completed configuration with each span enlarged to include the current head position.
+
+**Proof.** The intermediate configuration differs from the completed tracked configuration only in its control state. Its transition has zero input-head movement, so the input position is unchanged (`moveInputPos_zero`). On each data tape, the transition leaves the tape contents and head position unchanged. On each marker tape, the transition writes a marker at the current head position. The span-marker identity says that this point update changes the represented interval from $[\ell,h]$ to $[\min(\ell,p),\max(h,p)]$ when $\ell
+e h$ is replaced by the stated bounds and the head is within one cell of them (`emCall_span_extend`); the hypotheses ensure the identity applies. The origin-marker tape and the output are unchanged, and the transition sets the control state to that of the completed configuration. Comparing these fields gives the claimed equality.
+
+**Key facts.** `Turing.moveInputPos_zero`, `Turing.FinTM.emCall_span_extend`.

@@ -1,0 +1,24 @@
+{
+ "lean_name": "Light.MergeSort.join_ends",
+ "key": "3199e350d3e92b66",
+ "kind": "theorem",
+ "title": "Merge sort join postcondition",
+ "statement": "Let $P$ contain the designated sorting, halving, merging, and copying procedures, and suppose the word bound is at least the space bound. Let $d,a,fr,h,n$ be natural numbers, let $r$ be an integer, and let $S_1,S_2$ be integer lists of lengths $h$ and $n-h$, respectively, with $h\\le n$ and $1\\le n$. Suppose the memory function $\\mu$ stores $S_1$ starting at $a$ and $S_2$ starting at $a+h$, with $a+n\\le fr$ and $fr+n\\le\\mathrm{space}$, and suppose $d<\\mathrm{depth}$. Then the join procedure, started with frame $(n,a,fr,h,r)$ and memory $\\mu$, has an execution of cost at most $56n+34$ ending in a state with memory $\\sigma'.\\mathrm{mem}$ for which there is a memory function $\\mu'$ that agrees with $\\mu$ outside the interval starting at $fr$ of length $n$, stores the merge of $S_1$ and $S_2$ starting at $a$, and agrees with $\\sigma'.\\mathrm{mem}$ outside the interval starting at $a$ of length $n$.",
+ "hypotheses_covered": [
+  "The program contains the specified sort, half, merge, and copy procedures at the designated indices",
+  "Space is bounded above by the word limit",
+  "$S_1$ has length $h$",
+  "$S_2$ has length $n-h$",
+  "$h\\le n$",
+  "$1\\le n$",
+  "$\\mu$ stores $S_1$ from address $a$",
+  "$\\mu$ stores $S_2$ from address $a+h$",
+  "$a+n\\le fr$",
+  "$fr+n\\le\\mathrm{space}$",
+  "$d<\\mathrm{depth}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

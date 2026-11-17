@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.inputPayload_head",
+ "key": "b5fd16348f6ea0ec",
+ "kind": "lemma",
+ "title": "Payload at the Virtual Input Head",
+ "statement": "Let $x$ be a binary word and let $c$ be a machine configuration on $x$. The virtual input payload at the integer coordinate one less than the configuration's input-head position equals the pair consisting of the symbol read by the input head and the boundary tag: tag $1$ at the left boundary, tag $2$ at the right boundary, and tag $0$ at every other input-head position.",
+ "hypotheses_covered": [
+  "Binary word x",
+  "Configuration c with a natural-number input-head position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every configuration of a binary machine on an input $x$ with input head at\nposition $p$, the virtual input payload of $x$ at coordinate $p - 1$ is exactly the\npair of the symbol read by the native input head and the boundary tag of that\nconfiguration; on the empty input both boundary tags are produced correctly."
+}

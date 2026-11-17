@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.Contract.lockstep_admissible_map",
+ "key": "72cd1eb8954ef5ce",
+ "kind": "theorem",
+ "title": "Admissibility under state mapping",
+ "statement": "Let $M,N$ be machines, let $E$ map configurations of $M$ to configurations of $N$, and let $c\\text{ost}$ assign a natural-number cost to each configuration of $M$. Let $C$ be a contract for $M$ with entry state $e$ and exit set $X$, and let $L$ be a lockstep relation between $M$ and $N$ using $E$, $c\\text{ost}$, and exit sets $X,X'$. Let $\\rho$ map states of $M$ to states of $N$, and suppose the state of $E(c)$ is obtained by applying $\\rho$ to the optional state of every configuration $c$. Let $b_-,b_+$ assign integer bounds to each configuration of $M$ and tape of $N$, and assume that for every configuration $c$, every time $v$ that is zero or satisfies $c$'s state is outside $X$ and $v\\le c\\text{ost}(c)$, and every tape of $N$, the head position after $v$ steps from $E(c)$ lies in $[b_-(c),b_+(c)]$. If $c$ is in state $e$ and satisfies $C$'s precondition for parameter $i$, then $E(c)$ is in state $\\rho(e)$, and it satisfies the precondition of the lockstep contract built from $C$ and $L$ at parameter $(i,c)$.",
+ "hypotheses_covered": [
+  "machines $M,N$ with their tape alphabets, state sets, and fixed inputs",
+  "configuration map $E$ from configurations of $M$ to configurations of $N$",
+  "natural-number cost function on configurations of $M$",
+  "contract $C$ for $M$ with entry state $e$ and exit set $X$",
+  "lockstep relation $L$ for $M,N,E$, the cost function, and exit sets $X,X'$",
+  "state map $\\rho$ from states of $M$ to states of $N$",
+  "for every configuration $c$, the state of $E(c)$ is the image under $\\rho$ of $c$'s optional state",
+  "integer lower and upper bound functions on configurations of $M$ and tapes of $N$",
+  "for every configuration, zero or an allowed within-cost time, and tape, the simulated head position lies within the specified bounds",
+  "parameter $i$",
+  "configuration $c$ is in the entry state $e$",
+  "$c$ satisfies $C$'s precondition for $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

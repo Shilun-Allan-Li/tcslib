@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer.lean :: Complexity.UTab.goes_tapes -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Traversal Across a Tape Layer
+
+**Claim.** Under the stated register and index hypotheses, starting at the beginning of tape cell layer position $\tau$ reaches the input-position phase with the same input position and the prescribed updated register record. The output is the concatenation of the encodings for the intervening instruction indices, and the execution uses at most the stated step bound.
+
+**Proof.** Induct on the number $d$ of remaining tape positions. If $d=0$, the equation $\tau+d=k$ gives $\tau=k$, so the starting label is already the input-position phase. The reflexive execution therefore has unchanged registers and input position, emits nothing, and takes zero steps; the claimed output range and bound are both zero. For the successor case, $d+1$, the equation $\tau+(d+1)=k$ ensures that $\tau<k$, so the start label is the template for cell $\tau$. The cell traversal result (`Complexity.UTab.goes_cells`) carries execution across this cell: it advances the current instruction index by $2T+1$, updates the previous-cell index as specified, reaches the start of cell $\tau+1$, emits the encodings for this cell's instruction range, and costs at most $(2T+3)(L_{\max}(M)+20)$ steps. Apply the induction hypothesis at $\tau+1$ to the resulting register record; the hypotheses on the circuit-input count, hard-wired length, step budget, first-instruction index, loop registers and scratch register persist, and the updated index satisfies the required formula. Concatenating the two executions uses the sequential composition property of `Goes` (`Complexity.CounterProg.Goes.trans`): outputs concatenate and the step bounds add. The updated register record is exactly the one obtained by adding $(d+1)(2T+1)$ and adjusting the previous-cell index. Finally, the range of instruction indices splits into the first block of length $2T+1$ followed by the remaining block (`Complexity.UTab.range'_add`), so the concatenated output is the claimed flat concatenation. The resulting cost is at most $(d+1)((2T+3)(L_{\max}(M)+20))$, as required.
+
+**Key facts.** `Complexity.UTab.goes_cells`, `Complexity.CounterProg.Goes.trans`, `Complexity.UTab.range'_add`.

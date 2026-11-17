@@ -1,0 +1,12 @@
+{
+ "lean_name": "FABL.deterministicGoldreichLevinRunUpToProgram",
+ "key": "aad3a85003086d17",
+ "kind": "def",
+ "title": "Deterministic Goldreich–Levin run-up program",
+ "statement": "Given a deterministic Goldreich–Levin input and a natural number $m$, define a deterministic query program recursively. At $m=0$, the program returns the state whose active family is the singleton containing the empty set and whose trace is empty. For $m=k+1$, it first runs the program for $k$; if $k$ is less than the input dimension and the resulting state has an active family, then it runs the stage program when that family has size at most the active cap, and otherwise returns a state with no active family and the existing trace. If $k$ is outside the input dimension or the resulting state has no active family, it returns that state unchanged.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

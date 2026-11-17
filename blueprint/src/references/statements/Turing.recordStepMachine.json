@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.recordStepMachine",
+ "key": "c1b4656817e5844f",
+ "kind": "def",
+ "title": "Record step machine",
+ "statement": "Given a natural number $k$, a Boolean Turing machine $M$ with $k$ work tapes and state set $Q$, a function $u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$, a Boolean Turing machine $S$ with two work tapes and state set $S$, and designated states $s_0,s_f\\in S$, the definition constructs a Turing machine with four work tapes, record symbols built from $Q$ and $T$, and control states encoding its processing stage and associated data and phase. The resulting machine is specified by the record-step transition rows, entry state, and next-state function determined by $M,u,S,s_0,s_f$; assume that $Q,T,S$ each have decidable equality.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$Q,T,S$ have decidable equality",
+  "$M$ is a $k$-work-tape Boolean Turing machine with state set $Q$",
+  "$u$ maps a tag and an optional Boolean symbol to a tag",
+  "$S$ is a two-work-tape Boolean Turing machine with state set $S$",
+  "$s_0,s_f$ are designated states in $S$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define the record-step rows, entry state, or next-state function, so their concrete transition behavior cannot be stated.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

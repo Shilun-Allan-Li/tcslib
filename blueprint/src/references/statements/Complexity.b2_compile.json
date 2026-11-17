@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.b2_compile",
+ "key": "b971384e34c57b9e",
+ "kind": "lemma",
+ "title": "Polynomial-time certificate compilation",
+ "statement": "Let $L$ and $V$ be languages of finite bit strings, and let $C,c$ be natural numbers. Suppose that for every bit string $x$, membership $x\\in L$ is equivalent to the existence of a bit string $u$ with $|u|=C(|x|+1)^c$ and the concatenation of $x$ and $u$ belonging to $V$. Suppose also that a finite deterministic machine $M$ decides $V$ in time $A(m+1)^d$ for all input lengths $m$, for natural numbers $A,d$. Then there exist natural numbers $K,r$ and a finite nondeterministic machine $N$ that decides $L$ in time $K(n+C(n+1)^c+1)^r$ for all input lengths $n$.",
+ "hypotheses_covered": [
+  "$L,V$ are languages of finite bit strings",
+  "$C,c$ are natural numbers",
+  "for every $x$, membership in $L$ is equivalent to a certificate $u$ of length $C(|x|+1)^c$ with $xu\\in V$",
+  "$M$ is a finite deterministic machine over bits",
+  "$A,d$ are natural numbers",
+  "$M$ decides $V$ within time $A(m+1)^d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L$ be a language over the binary alphabet such that $x \\in L$ exactly when some binary string $u$ with $|u| = C\\,(|x|+1)^c$ has $x\\,u \\in V$, and let $M$ be a deterministic machine deciding the verifier language $V$ within time $A(m+1)^d$. Then there are constants $K, r$ and a nondeterministic machine deciding $L$ within time $K\\,(n + C(n+1)^c + 1)^r$."
+}

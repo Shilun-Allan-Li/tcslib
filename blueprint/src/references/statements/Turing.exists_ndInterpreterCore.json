@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.exists_ndInterpreterCore",
+ "key": "e803e2b0af5c0d08",
+ "kind": "theorem",
+ "title": "Interpreter for Nondeterministic Machines",
+ "statement": "For every effective code system $c$ for two-work-tape nondeterministic binary machines, there are a natural number $K$, a finite state set $Q$, a deterministic binary machine $R$ with $K$ work tapes, a work-tape index $j$, and states $\\mathrm{entry},\\mathrm{accept},\\mathrm{reject}\\in Q$ with $\\mathrm{accept}\\ne\\mathrm{reject}$ such that the following holds. For every binary code $\\alpha$, there is a constant $C$ such that for every binary input $x$, time bound $t$, and choice string $s$ with $t\\le |s|$, let $z=\\langle\\langle\\operatorname{bits}(t),\\alpha\\rangle,x\\rangle$, let $N$ be the machine decoded from $\\alpha$, and let $e$ be the configuration obtained by running $N$ on $x$ for the first $t$ choices in $s$. Starting $R$ on input $z$ in state $\\mathrm{entry}$, with tape $j$ containing $s$ and all other work tapes blank, there is a time $T$ with $T\\le C(t+1)$ at which $R$ is in state $\\mathrm{accept}$ if and only if $e$ is halted with output $[1]$, and otherwise is in state $\\mathrm{reject}$; neither state occurs at any earlier time. Moreover, for every $t'\\le t$ such that the run of $N$ using the first $t'$ choices of $s$ is halted, $T\\le C(t'+|x|+|\\operatorname{bits}(t)|+1)$.",
+ "hypotheses_covered": [
+  "$c$ is an effective code system for two-work-tape nondeterministic binary machines",
+  "$K$ is a natural number",
+  "$Q$ is finite and has decidable equality",
+  "$R$ is a deterministic binary machine with $K$ work tapes",
+  "$j$ is a work-tape index and entry, accept, reject are states in $Q$",
+  "accept and reject are distinct",
+  "$\\alpha$ is any binary string",
+  "$x$ is any binary input, $t$ any natural number, and $s$ any binary string with $t\\le |s|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective code for a nondeterministic binary machine, there are a natural\nnumber $K$, a finite state type $Q$, a deterministic $K$-work-tape machine $R$ over the\nbinary alphabet, a tape index $j$, and states\n$\\mathrm{entry},\\mathrm{accept},\\mathrm{reject}\\in Q$ with\n$\\mathrm{accept}\\ne\\mathrm{reject}$, having the following property. For each binary\nstring $\\alpha$, there is a constant $C$ such that for every binary input $x$, time\nbound $t$, and choice string $s$ with $t\\le |s|$, set\n$z=\\langle\\langle\\operatorname{bits}(t),\\alpha\\rangle,x\\rangle$, let $N$ be the machine\ndecoded from $\\alpha$, initialize $R$ in state $\\mathrm{entry}$ on input $z$ with tape\n$j$ containing $s$ and all other work tapes blank, and let $e$ be the result of running\n$N$ for $t$ steps using the first $t$ bits of $s$ as choices. There is a time $T\\le\nC(t+1)$ at which $R$ enters $\\mathrm{accept}$ exactly when $e$ has halted with output\n$[1]$, and enters $\\mathrm{reject}$ otherwise; neither decision state occurs earlier.\nMoreover, whenever any prefix of length $t'\\le t$ makes $N$ halt, $T\\le\nC(t'+|x|+|\\operatorname{bits}(t)|+1)$."
+}

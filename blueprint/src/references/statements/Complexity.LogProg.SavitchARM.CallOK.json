@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.CallOK",
+ "key": "96a075ea77578187",
+ "kind": "def",
+ "title": "Recursive call correctness",
+ "statement": "Fix a natural number $E$, a four-decider Boolean-word function $\\mathrm{orc}$, a Boolean word $x$, and natural numbers $s,w$. For a natural number $i$, the call property says that every configuration satisfying the invariant for $s,w,i$ admits a midpoint $M'\\le 2^w$ such that the program starting at the recursive-call label reaches a configuration at the return label for the truth value of bounded reachability between its source and target at level $i$, with the midpoint register set to $M'$. This run is required to satisfy the specified guard with bound $2^{w^2}$.",
+ "hypotheses_covered": [
+  "Natural number $E$",
+  "Function $\\mathrm{orc}$ from four deciders and Boolean words to truth values",
+  "Boolean word $x$",
+  "Natural numbers $s,w$",
+  "Natural number level $i$",
+  "Every starting configuration satisfies the stated invariant"
+ ],
+ "confidence": "low",
+ "caveat": "The precise operational meanings of guarded reachability and the configuration encoding are not supplied, so the final sentence can only describe their role in the declaration.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

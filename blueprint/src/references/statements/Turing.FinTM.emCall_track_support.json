@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_track_support",
+ "key": "917d4c8f20e4d456",
+ "kind": "lemma",
+ "title": "Tape support lies within the visited span",
+ "statement": "For every finite Boolean Turing machine $M$, Boolean input word $x$, time $t\\in\\mathbb{N}$, work tape $i$, and cell $z\\in\\mathbb{Z}$, if $z$ lies outside the interval from the leftmost to the rightmost head position visited on tape $i$ through time $t$, then that cell is blank after $t$ steps of the run of $M$ on $x$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean input word",
+  "$t\\in\\mathbb{N}$",
+  "$i$ is a work tape of $M$",
+  "$z\\in\\mathbb{Z}$ lies outside the visited interval at time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine $M$, input $x$, time $t$, work tape $i$, and cell $z$ outside the\nvisited interval of tape $i$ at time $t$, the cell $z$ of tape $i$ after running $M$ for\n$t$ steps from its initial configuration on $x$ is blank."
+}

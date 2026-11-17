@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.UTab.goes_rZ",
+ "key": "4fb3391d1b3749ed",
+ "kind": "theorem",
+ "title": "Hard-wired input scan",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean input, let $w$, $pre$, and $rest$ be Boolean lists, let $z$ be a Boolean list, and let $e$ be an eleven-register configuration record. If $w = pre \\, ++ \\, (z \\, ++ \\, rest)$, then for every prior output list $o$, the counter program for $M$, started at label $rZ$, with registers given by $e$, input position $|pre|$, and output $o$, reaches label $rZ$ with the register record obtained from $e$ by increasing its hard-wired-bit count by $|z|$, input position $|pre|+|z|$, and output $o$ followed by the concatenation, for each bit $b$ of $z$ in order, of the code consisting of a true bit followed by the encoding of the constant gate for $b$. The run takes at most $|z|(L_{\u0000max}(M)+3)$ steps.",
+ "hypotheses_covered": [
+  "A finite-state Turing machine M with Boolean input",
+  "Boolean lists w, pre, and rest",
+  "Boolean list z",
+  "Register record e",
+  "Input decomposition w = pre ++ (z ++ rest)",
+  "Arbitrary initial output list o, as required by Goes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

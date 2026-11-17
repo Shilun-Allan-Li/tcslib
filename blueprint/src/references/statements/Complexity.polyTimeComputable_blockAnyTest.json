@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_blockAnyTest",
+ "key": "0641114cec8552b2",
+ "kind": "theorem",
+ "title": "Polynomial-Time Block Membership Test",
+ "statement": "Let $V$ be a language of finite bit strings whose Boolean membership indicator, output as a one-bit word, is polynomial-time computable. For any $a,k,a',k'\\in\\mathbb{N}$, the following function is polynomial-time computable: on input $z$, let $x$ and $y$ be the first and second components obtained by parsing $z$ as a pair (using the empty word for a component when parsing fails); divide $y$ into consecutive blocks of length $a(|x|+1)^k$, starting at its beginning, and form the one-bit output that is true exactly when at least one of the first $a'(|x|+1)^{k'}$ such blocks, paired with $x$, belongs to $V$.",
+ "hypotheses_covered": [
+  "$V$ is a language of finite bit strings",
+  "The one-bit membership indicator of $V$ is polynomial-time computable",
+  "$a,k,a',k'\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

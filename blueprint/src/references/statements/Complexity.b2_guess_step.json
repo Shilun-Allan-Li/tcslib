@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.b2_guess_step",
+ "key": "4cde709d3c07a319",
+ "kind": "lemma",
+ "title": "One step of the guessing phase",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be an $S$-configuration on $x$ with an active state. For any guessed word $u$ and choice bit $b$, one host step from the guessing-phase configuration associated to $c$ and $u$ yields the guessing-phase configuration associated to the next configuration of the input-normalized machine derived from $S$, with $b$ appended to $u$ precisely when that machine emits a symbol from $c$.",
+ "hypotheses_covered": [
+  "$S$ and $V$ are finite deterministic machines over Booleans",
+  "$x$ is a Boolean word",
+  "$c$ is an $S$-configuration on $x$",
+  "$c$ has an active state",
+  "$u$ is a Boolean word",
+  "$b$ is a Boolean choice bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $d$ a non-halted scheduler configuration on an input $x$, $u$ a guessed word and $b$ a choice bit. One step of the reverse host under $b$ maps the guessing-phase configuration for $(d,u)$ to the guessing-phase configuration for the stepped configuration of the input-normalized variant of $S$, with $b$ appended to the guessed word exactly when that machine emits at $d$."
+}

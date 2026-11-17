@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clBank_run",
+ "key": "76f0094bf87c5ad7",
+ "kind": "lemma",
+ "title": "Bank runs project to counter runs",
+ "statement": "Let $l\\in\\mathbb{N}$, let $x$ be a finite Boolean word, let $p$ be a valid input-head position for $x$, and choose a single-tape counter configuration $c_i$ for each $i<l$. For every $t\\in\\mathbb{N}$, the bank configuration after $t$ steps from their product configuration is the product configuration formed from the individual counter configurations after $t$ steps.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb{N}$",
+  "finite Boolean word $x$",
+  "valid input-head position $p$ for $x$",
+  "family of single-tape counter configurations $c_i$",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input position, family of component configurations, and duration $t$, running the counter bank for $t$ steps yields the product of the $t$-step runs of all components, so every counter trajectory is an exact projection of the one native bank run."
+}

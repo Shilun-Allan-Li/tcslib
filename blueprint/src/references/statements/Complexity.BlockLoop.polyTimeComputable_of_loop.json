@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.BlockLoop.polyTimeComputable_of_loop",
+ "key": "75e92877ef17a92f",
+ "kind": "theorem",
+ "title": "Polynomial time for a bounded loop",
+ "statement": "Let $g,e,\\mathrm{init},f$ be functions on bit strings, and suppose each of $g,e,\\mathrm{init}$ is polynomial-time computable. Fix $a',k',b\\in\\mathbb{N}$, and suppose that for every bit string $w$ and natural number $i$, the length of the $i$-th iterate of $g$ at $w$ is at most $b(|w|+1)$. If, for every bit string $z$, concatenating $e(g^{[i]}(\\mathrm{init}(z)))$ over $0\\le i<a'(|\\mathrm{init}(z)|+1)^{k'}+1$ gives $f(z)$, then $f$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$g,e,\\mathrm{init},f$ are functions on bit strings",
+  "$g,e,\\mathrm{init}$ are polynomial-time computable",
+  "$a',k',b$ are natural numbers",
+  "Every iterate satisfies the stated length bound for all $w,i$",
+  "The specified finite concatenation equals $f(z)$ for every $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

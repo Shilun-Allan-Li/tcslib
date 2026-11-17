@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.e3_choice_certificate",
+ "key": "e96bd00aa8b955ba",
+ "kind": "lemma",
+ "title": "Choice-word certificates for a decided language",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $L$ be a language of binary strings, and let $a,c$ be natural numbers. Suppose that on every input $x$, every choice word of length $a\\cdot 2^{|x|^c}$ makes $N$ halt, and that $x\\in L$ if and only if some such choice word makes $N$ halt with output exactly $1$. Then, for every binary string $x$, $x\\in L$ if and only if there is a binary string $u$ of length $a\\cdot 2^{(|x|+1)^c}$ such that $xu$ belongs to the choice-word verifier language for $N,a,c$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$L$ is a language of binary strings",
+  "$a,c$ are natural numbers",
+  "$N$ decides $L$ with time bound $n\\mapsto a\\cdot 2^{n^c}$",
+  "$x$ is a binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine deciding a language $L$ within time $a \\cdot 2^{n^c}$ on inputs of length $n$. For every binary string $x$: $x \\in L$ if and only if there is a string $u$ with $|u| = a \\cdot 2^{(|x|+1)^c}$ such that $x\\,u$ lies in the exponential choice-word verifier language of $N$ with parameters $a, c$."
+}

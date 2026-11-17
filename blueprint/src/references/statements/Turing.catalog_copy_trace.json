@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.catalog_copy_trace",
+ "key": "8c85ff3b3f852e1f",
+ "kind": "lemma",
+ "title": "Trace of the copying machine",
+ "statement": "Let $M$ be the copying machine, with distinct source and destination tape indices $s,d$. Let $w$ be a word and let $c$ be a configuration in the sweep phase. Suppose the source tape contains $w$ at every offset from $-1$ through $|w|$, relative to its head position, with blank cells outside the word. Then for every time $t$, the run from $c$ follows the piecewise trace consisting of the forward configuration at time $t$ for $t\\le |w|$, the rewind configuration indexed by $2|w|+1-t$ for $|w|<t\\le2|w|+1$, and the completed configuration thereafter. In the completed configuration the destination tape has the copied word as specified by the forward configuration at progress $|w|$.",
+ "hypotheses_covered": [
+  "Source and destination tape indices $s,d$",
+  "The indices are distinct",
+  "A word $w$ and initial configuration $c$",
+  "Initial configuration is in the sweep phase",
+  "Source tape agrees with the buffer for every offset $-1\\le p\\le |w|$",
+  "Time $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

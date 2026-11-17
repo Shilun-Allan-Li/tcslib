@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.maskedCfg_input",
+ "key": "41deedc4ece6a2c6",
+ "kind": "lemma",
+ "title": "Input symbol after masking",
+ "statement": "Let $k$ be a natural number, $A,S$ be types, $x$ a word over $A$, $z\\in A$, and $c$ a configuration on $x$. The symbol read by the input head after replacing the input by the constant word of $|x|$ copies of $z$ is the image of the symbol read by $c$ under the map sending every symbol to $z$ and preserving absence of a symbol.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$A,S$ are types",
+  "$x$ is a word over $A$",
+  "$z$ is a symbol in $A$",
+  "$c$ is a configuration on $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $z$ be a symbol and $c$ a configuration of a $k$-tape machine on an input word\n$x$. The symbol scanned by the input head of the masked configuration on\n$z^{\\abs{x}}$ is blank exactly when the symbol scanned in $c$ is blank, and equals\n$z$ whenever $c$ scans any nonblank symbol."
+}

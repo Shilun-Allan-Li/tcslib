@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.PSem.of_areach",
+ "key": "832b04a838edcfa6",
+ "kind": "theorem",
+ "title": "Probabilistic semantics from deterministic reachability",
+ "statement": "Let a nondeterministic register program, oracle, input, guard, reached state $l'$, register valuation $v'$, and rational $p$ be given. Suppose the configuration $(l',v',\text{no answer})$ has probabilistic semantics with acceptance probability $p$. Then, for every natural number $T$ and configuration $a$, if running the program with each choice resolved as false for $T$ steps takes $a$ to $(l',v',\text{no answer})$, and the guard holds at every configuration along that run before time $T$, the initial configuration $a$ has probabilistic semantics with acceptance probability $p$.",
+ "hypotheses_covered": [
+  "The reached configuration $(l',v',\\text{no answer})$ has probabilistic semantics with probability $p$",
+  "A natural number $T$",
+  "An arbitrary starting configuration $a$",
+  "The deterministic run with choices resolved as false reaches $(l',v',\\text{no answer})$ after $T$ steps",
+  "The guard holds at every run configuration at times $t<T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

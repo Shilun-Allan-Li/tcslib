@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile",
+ "key": "a77a21da9549db73",
+ "kind": "lemma",
+ "title": "Gaussian quantile recovery",
+ "statement": "For every real number $\\alpha$ with $0<\\alpha<1$, the standard Gaussian distribution function evaluated at its lower $\\alpha$-quantile equals $\\alpha$: $\\Phi(Q(\\alpha))=\\alpha$.",
+ "hypotheses_covered": [
+  "$\\alpha\\in\\mathbb R$",
+  "$0<\\alpha$",
+  "$\\alpha<1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi(t)=\\int_{-\\infty}^{t}e^{-x^2/2}/\\sqrt{2\\pi}\\,dx$, and let $Q(\\alpha)$ be $\\inf\\{t\\in\\mathbb R:\\alpha\\le\\Phi(t)\\}$ for $0<\\alpha<1$ and $0$ otherwise. For every $\\alpha\\in\\mathbb R$ with $0<\\alpha<1$, one has $\\Phi(Q(\\alpha))=\\alpha$."
+}

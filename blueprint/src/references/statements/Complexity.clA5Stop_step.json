@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Stop_step",
+ "key": "0dac7c87cc46ee0f",
+ "kind": "lemma",
+ "title": "One Step of the Release Wrapper",
+ "statement": "Let $C$ be a finite Boolean-alphabet Turing machine with designated entry and exit states, let $x$ be a Boolean input, and let $c$ be a configuration of $C$ on $x$. If $c$ is live and, whenever the release flag is true, the control state of $c$ is not the designated exit state, then one step of the release wrapper on the configuration obtained by adding the flag $b$ to $c$ gives the configuration obtained by adding a true flag to the one-step successor of $c$ under $C$.",
+ "hypotheses_covered": [
+  "$C$ is a finite Boolean-alphabet Turing machine, with states $entry$ and $exit$",
+  "$x$ is a Boolean input and $c$ is a configuration of $C$ on $x$",
+  "$b$ is a Boolean release flag",
+  "$c$ is live",
+  "If $b$ is true, the state of $c$ is not $exit$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every flag value and live configuration whose control is not the designated exit when the flag is set, one step of the release wrapper equals the module's physical step with the flag raised."
+}

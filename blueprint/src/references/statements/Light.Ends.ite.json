@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Ends.ite",
+ "key": "fcc12a9cf656ad93",
+ "kind": "theorem",
+ "title": "Bounded execution of a conditional",
+ "statement": "Fix a program environment, resource limits, and execution depth. Let $c$ be a safe condition in an initial state $\\sigma$, and let $s_1,s_2$ be statements. Suppose that if $c$ holds, then $s_1$ can execute from $\\sigma$ with cost at most $T'$ to a state satisfying $Q$, and if $c$ does not hold, then $s_2$ can do so. If $\\mathrm{cost}(c)+1+T'\\le T$, the conditional statement executes from $\\sigma$ with cost at most $T$ to a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "The condition $c$ is safe in the initial state $\\sigma$",
+  "If $c$ holds in $\\sigma$, the true branch has an execution of cost at most $T'$ ending in a state satisfying $Q$",
+  "If $c$ does not hold in $\\sigma$, the false branch has an execution of cost at most $T'$ ending in a state satisfying $Q$",
+  "$\\mathrm{cost}(c)+1+T'\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_loop",
+ "key": "8bfab0fb72f4190a",
+ "kind": "theorem",
+ "title": "A counter program count-down loop",
+ "statement": "Let $P$ be a counter program on a binary input $x$, with labels $h,d,c,z$ and register $r$. Suppose the instruction at $h$ tests $r$, going to $z$ if it is zero and to $d$ otherwise, and the instruction at $d$ decrements $r$ and goes to $c$. Let $K,b\\in\\mathbb{N}$, and for each $j\\in\\mathbb{N}$ let $\\sigma_j$ be a register assignment, $p_j$ an input position, and $e_j$ an output string. Assume $\\sigma_j(r)=K-j$ for every $j\\le K$, and that for every $j<K$, from label $c$ with register assignment obtained from $\\sigma_j$ by setting register $r$ to $K-j-1$ and input position $p_j$, the program reaches label $h$ with registers $\\sigma_{j+1}$ and input position $p_{j+1}$ within at most $b$ steps, appending $e_j$ to every initial output string. Then from label $h$ with registers $\\sigma_0$ and input position $p_0$, the program reaches label $z$ with registers $\\sigma_K$ and input position $p_K$ within at most $K(b+2)+1$ steps, appending the concatenation of $e_0,e_1,\\ldots,e_{K-1}$ to every initial output string.",
+ "hypotheses_covered": [
+  "The instruction at $h$ is a zero test on $r$, with zero destination $z$ and nonzero destination $d$",
+  "The instruction at $d$ decrements $r$ and goes to $c$",
+  "$K,b\\in\\mathbb{N}$",
+  "For every $j\\le K$, $\\sigma_j(r)=K-j$",
+  "For every $j<K$, the stated run from the modified $\\sigma_j$ at $c$ reaches $h$ with $\\sigma_{j+1}$ and $p_{j+1}$ within $b$ steps, appending $e_j$",
+  "The conclusion has step bound $K(b+2)+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, $r$ a register, and\n$h, d, c, z$ labels such that the instruction at $h$ is\n$\\mathsf{jz}(r, z, d)$ (go to $z$ if register $r$ is zero, else to $d$) and the\ninstruction at $d$ is $\\mathsf{dec}(r, c)$.  Let $K, b \\in \\mathbb{N}$, and for\neach $j \\in \\mathbb{N}$ let $\\sigma_j$ be a register vector, $p_j$ an input\nposition and $e_j$ a bit string, with $\\sigma_j(r) = K - j$ for all $j \\le K$.\nSuppose that for every $j < K$, from label $c$ with registers $\\sigma_j$ modified\nso that register $r$ holds $K - j - 1$, and $p_j$ symbols read, $P$ reaches label\n$h$ with registers $\\sigma_{j+1}$ and $p_{j+1}$ symbols read within $b$ steps\nwhile appending $e_j$ to its output.  Then from label $h$ with registers\n$\\sigma_0$ and $p_0$ symbols read, $P$ reaches label $z$ with registers\n$\\sigma_K$ and $p_K$ symbols read within $K(b+2)+1$ steps while appending the\nconcatenation $e_0 e_1 \\cdots e_{K-1}$."
+}

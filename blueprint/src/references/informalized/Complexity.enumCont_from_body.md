@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/EXP.lean :: Complexity.enumCont_from_body -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Enumerator from Body Contracts
+
+**Claim.** Under the stated startup and round hypotheses for the body machine, there are a constant $b$ and a finite machine $E$ that iterates through all width-$w$ binary representations, runs the body on each candidate, accepts when the corresponding input belongs to $V$, and otherwise advances the candidate, with the stated time bounds.
+
+**Proof.** First obtain a machine that computes a unary word of length $C(|x|+1)^c$ in polynomial time (`Turing.FinTM.computesFunInTime_polyUnary`). Let its time coefficient be $f$, and bound the work by $T(n)=G(n)+f(n+1)^{c+1}$. The body’s startup and round bounds are at most $G(n)$, hence at most $T(n)$. The required fuel for enumerating all $2^w$ candidates is the bit list for $2^w-1$; the identity that this is a list of $w$ true bits (`Complexity.enumCont_fuel_bits`) lets the unary-word machine supply that fuel within the bound $T$. The fixed-width increment preserves the width (`Complexity.enumCont_step_length`), so the loop invariant on candidate length is maintained. Apply the loop-configuration construction (`Turing.FinTM.exists_loopCfgTM`) with the all-false word as initial candidate, fixed-width increment as the update, and membership of $x$ followed by the candidate in $V$ as the acceptance test. It supplies a machine and a sequence of configurations, with startup and per-round times bounded in terms of $T(n)+1$, and a terminal rejecting configuration after the final candidate. The orbit identity (`Complexity.enumCont_orbit`) identifies the candidate at index $i$ with the width-$w$ binary representation of $i$. Since $1\le 2^w$, the final loop index $2^w-1$ has successor $2^w$; the construction’s terminal configuration therefore gives the stated halt and false output at index $2^w$. Finally, elementary arithmetic bounds $K(T(n)+1)$ by $K(f+1)(G(n)+(n+1)^{c+1}+1)$, where $K$ is the loop construction’s constant. Taking $b=K(f+1)$ yields both the startup bound and every per-round bound claimed.
+
+**Key facts.** `Turing.FinTM.computesFunInTime_polyUnary`, `Complexity.enumCont_fuel_bits`, `Complexity.enumCont_step_length`, `Turing.FinTM.exists_loopCfgTM`, `Complexity.enumCont_orbit`.

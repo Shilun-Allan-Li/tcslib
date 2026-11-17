@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.a2Borrow_rewind",
+ "key": "6f29fd4ea51fc3eb",
+ "kind": "lemma",
+ "title": "Rewind from a given tape cell",
+ "statement": "For every output word, input word $x$, valid input-head position $p$, binary word $u$, and Boolean flag $b$, and for every integer $j$ with $0\\le j\\le |u|$, starting in the specified rewind configuration with work head at cell $j-1$, counter $u$, and flag $b$, the countdown machine reaches after exactly $j+1$ steps the configuration with work head at cell zero, the counter unchanged, and the same flag $b$.",
+ "hypotheses_covered": [
+  "An output word",
+  "An input word $x$",
+  "A valid input-head position $p$",
+  "A binary word $u$",
+  "A Boolean flag $b$",
+  "$j\\in\\mathbb{N}$ with $j\\le |u|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every counter word $u$, every flag $b$ and every $j \\le |u|$: from the rewind state with work head at cell $j-1$, exactly $j+1$ steps of the countdown emitter reach the round-return state carrying $b$, with head at cell zero and the counter unchanged."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.a2_map_block",
+ "key": "b4c7959d02785b68",
+ "kind": "lemma",
+ "title": "Parsing an aligned pair of input bits",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $x,pre,rest$ be Boolean words, let $b,c$ be Booleans, and suppose $x=pre\\mathbin{++}[b,c]\\mathbin{++}rest$. Starting with the parsing state at input position $|pre|+1$, first buffer $a$, empty second buffer, first-buffer head at $|a|$, second-buffer head at $0$, and empty output, after two steps the machine is in the parsing state with the pair appended to the first buffer if $b=c$; if $b\\ne c$ and $b$ is true, it has halted with the first buffer unchanged; and if $b\\ne c$ and $b$ is false, it is in the copy state with the first-buffer head at $|a|-1$. In every case the input head is at position $|pre|+3$, the second buffer remains empty, and the output remains empty.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,pre,rest$ are Boolean words",
+  "$b,c$ are Boolean values",
+  "$x=pre\\mathbin{++}[b,c]\\mathbin{++}rest$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

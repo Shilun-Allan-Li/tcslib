@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.timed_computes",
+ "key": "fe4765d8c3f75c24",
+ "kind": "lemma",
+ "title": "Timed computation of a bounded answer",
+ "statement": "Let $c$ be an effective machine code, let $\\alpha$ and $x$ be finite Boolean strings, and let $t\\in\\mathbb{N}$. The timed universal machine, started on $\\langle\\langle\\operatorname{bin}(t),\\alpha\\rangle,x\\rangle$, halts after exactly $((S+B+14)(t+1)^2)$ steps and outputs $1$ followed by the decoded machine's output after $t$ steps if that machine has halted by then; otherwise, it outputs the single bit $0$. Here $S$ is the timed startup bound for $c,\\alpha$, and $B$ is the block bound for $c,\\alpha$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code",
+  "$\\alpha$ and $x$ are finite Boolean strings",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective machine coding scheme $c$, code string $\\alpha$, input $x$, and time\nbound $t$, the timed universal machine on the nested encoding\n$\\langle\\langle\\operatorname{bin}(t),\\alpha\\rangle,x\\rangle$ computes the bounded answer\nof the decoded machine started on $x$: it halts with output consisting of $1$ followed\nby the decoded machine's output after $t$ steps if that configuration is halted, and\notherwise outputs $0$. It does so in exactly $(S+B+14)(t+1)^2$ steps, where $S$ is the\nstartup bound and $B$ is the block bound for $c$ and $\\alpha$."
+}

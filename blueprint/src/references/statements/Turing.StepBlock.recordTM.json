@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.StepBlock.recordTM",
+ "key": "4876e3f2b5678c4b",
+ "kind": "def",
+ "title": "Record-reading Turing machine",
+ "statement": "For each natural number $k$, define a deterministic Turing machine with $k+2$ work tapes, Boolean tape symbols, and states consisting either of a halting state or of a cursor position together with a Boolean record of length $4k+4$. It starts with cursor position $0$ and an all-false record. In a nonhalting state, if the cursor is below $4k+4$, it reads the symbol under the designated table tape head (interpreting a blank as false), stores that bit at the cursor position, advances the cursor, and moves that tape head right. Once the cursor reaches the end of the record, it applies the encoded payload using the symbol under the designated summary tape head. In the halting state it makes no input-head movement.",
+ "hypotheses_covered": [
+  "$k$ is a natural number"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied material does not define the designated tape indices, the action constructors, or the payload and summary-symbol procedures, so those parts are described only by their roles in the displayed construction.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

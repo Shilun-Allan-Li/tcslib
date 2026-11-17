@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clA5Clean_emit",
+ "key": "8804001ecab211f4",
+ "kind": "lemma",
+ "title": "Clean emission of a polynomial-time function",
+ "statement": "Every polynomial-time computable function $f$ on binary words has a finite Turing machine $M$, natural numbers $A,d$, and a clean computation such that for every binary input $x$ and argument word, the computation first halts at a positive time no greater than $A(n+1)^d$, where $n$ is the argument length; at that time its tape words encode the unchanged argument and its output is exactly $f$ of the argument.",
+ "hypotheses_covered": [
+  "$f$ is a polynomial-time computable function on binary words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every polynomial-time computable string function $f$ has a first-halting clean module that preserves the argument word, emits exactly $f$ of the argument as output, and runs within a polynomial budget of the argument length, including cleanup and the final halt."
+}

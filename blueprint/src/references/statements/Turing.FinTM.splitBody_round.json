@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.splitBody_round",
+ "key": "ad744db3c79d9f7f",
+ "kind": "lemma",
+ "title": "One complete round of the split search",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $start$ be one of its states, let $w,s,out$ be Boolean words, and let $T\\in\\mathbb{N}$. Suppose that, from the source configuration with state $start$, unary work tapes of length $|s|+1$, heads at $0$, and empty output, the source machine on empty input reaches the halted configuration with those same work tapes and output $out$ after $T$ steps. Then there is a natural number $t$ with $0<t\\le T+5|s|+3|w|+20$ such that at every time $j$ with $0<j<t$ the round body, started on input $w$ from its anchor configuration with candidate $s$, is not in the anchor state. If $|s|+|out|=|w|$, the configuration at time $t$ is halted and its output is the encoding formed by doubling each bit of the prefix of $w$ of length $|s|$, then appending $01$, then appending the remaining suffix of $w$. Otherwise, the configuration at time $t$ is the anchor configuration with candidate $s$ extended by one bit $1$ when $|s|\\le |w|$, and with candidate $s$ unchanged when $|s|>|w|$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$start$ is a state of $M$",
+  "$w,s,out$ are Boolean words",
+  "$T\\in\\mathbb{N}$",
+  "The source run from the specified unary-tape initial configuration halts after $T$ steps with output $out$ and the same work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the source machine, started on the prepared bank for candidate $s$,\nreaches the halted bank with output $o$ after $T$ steps. Then there is a time\n$t$ with $0 < t \\le T + 5\\abs{s} + 3\\abs{w} + 20$ such that the round body,\nstarted from the canonical anchored configuration carrying $s$ on input $w$,\nnever revisits the anchor strictly between times $0$ and $t$, and at time\n$t$: if $\\abs{s} + \\abs{o} = \\abs{w}$ the body has halted with output the\npair encoding of the split of $w$ at position $\\abs{s}$; otherwise the body\nis back at the canonical anchored configuration carrying one split-search\nstep applied to $s$."
+}

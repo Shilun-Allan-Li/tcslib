@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clRec_track_inactive",
+ "key": "95d2a7aa77b636b8",
+ "kind": "lemma",
+ "title": "Inactive Tracking Projection",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $x,y$ be Boolean words, and choose two source configurations $c,c'$ on input $y$, two Boolean tags $b,b'$, two movement-count families $n,n'$, a record word, natural numbers $T,t$, and any tracking configuration $z$ on input $x$. The projections of $z$ into the recorder's tracking slots agree when formed from either recorder layout determined by these choices.",
+ "hypotheses_covered": [
+  "A finite-state Boolean Turing machine M",
+  "Boolean words x and y",
+  "Source configurations c and c' on input y",
+  "Boolean tags b and b'",
+  "Movement-count families n and n'",
+  "A record word",
+  "Natural numbers T and t",
+  "A tracking configuration z on input x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The retained inactive tapes and heads used when relocating a tracking configuration into the recorder depend only on the stored record and clock, so they agree for any two source configurations, tags, and movement counts; source writes and counter updates therefore do not disturb the frame."
+}

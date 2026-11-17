@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.UC_eq_false_iff",
+ "key": "468b3fc3ec33fca8",
+ "kind": "theorem",
+ "title": "False value of the diagonal function",
+ "statement": "Let $c$ be a machine representation scheme and let $\\alpha$ be a bit string. The diagonal function of $c$ has value false at $\\alpha$ if and only if the machine decoded from $\\alpha$, run on input $\\alpha$, halts within some finite number of steps with output exactly the one-bit string $[1]$.",
+ "hypotheses_covered": [
+  "machine representation scheme $c$",
+  "bit string $\\alpha$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a representation scheme for Turing machines in code normal form (one\nwork tape, binary alphabet; a total decoding of bit strings to machines,\ninverted by the encoding), and let $\\alpha$ be a bit string. Then the diagonal\nfunction of $c$ takes the value $\\mathrm{false}$ at $\\alpha$ --- i.e.\\\n$\\mathrm{UC}_c(\\alpha) = \\mathrm{false}$ --- if and only if there exists a\nnumber of steps $t$ within which the machine denoted by $\\alpha$ under $c$,\nrun on the input $\\alpha$ itself, halts with completed output the one-bit\nstring $[\\mathrm{true}]$."
+}

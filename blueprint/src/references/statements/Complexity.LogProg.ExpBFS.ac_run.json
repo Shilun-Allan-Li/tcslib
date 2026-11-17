@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.ac_run",
+ "key": "f2564d4c786192d6",
+ "kind": "theorem",
+ "title": "Memory access simulation",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathcal O$ assign a Boolean answer to each of four query indices and each finite Boolean word, and let $x$ be a finite Boolean word. Choose a site $st$, a machine state $S$, and a memory $M\\colon\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Assume every counter of $S$ is at most $B$, its outward-walk, return-walk, and scratch counters are zero, and the address $a$ given by the memory-region base plus the counter selected by $st$ is at most both $B$ and $P$. Starting in the access routine for $st$ with state $S$, memory $M$, and memory head at $0$, the machine reaches the exit specified by $st$ and the bit $st.set\\lor M(a)$, with state again $S$, head again at $0$, and memory changed only by setting cell $a$ to true when $st$ is a marking site. At every earlier configuration, all counters are at most $B$, the memory head lies between $0$ and $P$, register comparisons use distinct registers, input comparisons are made only on inputs with the required valid plain or paired form, and oracle calls use lists of distinct registers.",
+ "hypotheses_covered": [
+  "Natural numbers $K_0,B,P$",
+  "An oracle assigning Boolean answers for four query indices and Boolean words",
+  "A finite Boolean word $x$",
+  "A site $st$",
+  "A machine state $S$",
+  "A memory $M\\colon\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "Every counter of $S$ is at most $B$",
+  "The outward-walk, return-walk, and scratch counters of $S$ are zero",
+  "The selected address is at most $B$",
+  "The selected address is at most $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $K_0,B,P$ be natural numbers, let $\\mathcal O$ assign a Boolean answer to each of\nfour query types and each finite bit string, let $x$ be a finite bit string, and let\n$M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory. Choose a site $st$ from\nthe initial marking, relaxation-round reads or marking, count read, or final-scan read;\nit selects either the $U$ or $V$ counter, and is a marking site precisely for the\ninitial marking and the relaxation-round marking. Let $S$ be a machine state whose 17\nnatural-number counters are all at most $B$, with its outward-walk, return-walk, and\nscratch counters equal to zero, and suppose the memory address $a$, obtained by adding\nthe memory-region base in $S$ to the counter selected by $st$, satisfies $a\\le B$ and\n$a\\le P$. Starting in the access routine for $st$, with state $S$, memory $M$, and\nmemory head at $0$, the machine reaches the exit determined by $st$ and the Boolean\nvalue $st.set\\lor M(a)$; the final state is again $S$, the head is at $0$, and the final\nmemory is $M$ with cell $a$ set to true if $st$ is a marking site, and is $M$ otherwise.\nAt every earlier configuration in this run, all counters are at most $B$, the memory\nhead lies between $0$ and $P$, and the program's instruction-specific guard conditions\nhold."
+}

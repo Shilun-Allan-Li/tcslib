@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.mrunFrom_eq",
+ "key": "f69c1b84ed3b876e",
+ "kind": "lemma",
+ "title": "Simulation with Unused Memory",
+ "statement": "Let $A$ be a memory-augmented register program, let $l_0$ be its initial state, let $D$ be a decider machine, let $q_0$ assign an initial decider state to each decider, and fix a Boolean value $\\beta$. Let $c$ be a configuration of the deterministic compiled machine, let $M:\\mathbb Z\\to\\{0,1\\}$ be a memory tape, let $p\\in\\mathbb Z$ be its head position, and let $T$ be a natural number. Assume that at every time $t<T$, whenever the deterministic run from $c$ is in a state $q$, the program has no memory instruction at $q$. Then, for every $t\\le T$, the compiled memory-augmented machine started from the configuration obtained by adding memory tape $M$ with head at $p$ agrees with the deterministic run at time $t$, with that same memory tape and head position attached.",
+ "hypotheses_covered": [
+  "$A$ is a memory-augmented register program; $l_0$ is its initial state",
+  "$D$ is a decider machine and $q_0$ specifies its initial states",
+  "$\\beta$ is a Boolean value",
+  "$c$ is a deterministic compiled-machine configuration",
+  "$M$ is a Boolean tape indexed by the integers and $p$ is its head position",
+  "$T$ is a natural number",
+  "At each time $t<T$, every state occupied by the deterministic run has no memory instruction"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

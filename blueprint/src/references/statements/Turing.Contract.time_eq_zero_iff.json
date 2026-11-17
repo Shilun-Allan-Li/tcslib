@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.Contract.time_eq_zero_iff",
+ "key": "4a1ff034e8e69848",
+ "kind": "theorem",
+ "title": "Zero Running Time and Exit Membership",
+ "statement": "Let $M$ be a multi-tape Turing machine, let $C$ be a contract for $M$ with entry state $e$ and exit set $E$, and let $i$ and $d$ be a parameter and starting configuration. If $d$ is in state $e$ and satisfies the precondition of $C$ for $i$, then the prescribed running time is zero if and only if the state $e$ belongs to $E$.",
+ "hypotheses_covered": [
+  "$C$ is a contract for $M$ with entry state $e$ and exit set $E$",
+  "$i$ is a parameter and $d$ is a starting configuration",
+  "$d$ is in state $e$",
+  "$d$ satisfies the contract precondition for $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine and let $C$ be a contract for $M$. If a\nconfiguration $d$ starts in the contract entry state and satisfies the contract\nprecondition for parameter $i$, then $C.\\mathrm{time}(i,d)=0$ if and only if the entry\nstate belongs to the contract's exit set."
+}

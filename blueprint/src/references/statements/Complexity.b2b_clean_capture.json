@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.b2b_clean_capture",
+ "key": "cf3d377a8f581718",
+ "kind": "theorem",
+ "title": "Captured clean computation",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, and let $m$ be its number of work tapes. Let $k$ be a natural number, let $\\iota$ be an injection from the $2m$ tapes of the cleaning machine for $M$ into $k$ tapes, and choose a tape $c$ among those $k$ tapes that is not in the image of $\\iota$. For any background tape contents and head positions, and any Boolean words $x,y$ and natural numbers $t,s$, suppose $M$ halts with output $y$ on input $x$ after $t$ steps and uses at most $s$ cells of work-tape space through that time. Then there are a natural number $T$ and an input-head position $p$ such that the return machine, started with the cleaning machine’s initial configuration embedded through $\\iota$ and the reserved tape initialized to capture its output, reaches at time $T$ the configuration with input-head position $p$, output $y$, and return state. At every earlier time it is not in the return state; at every time through $T$ it is not halted and its output is empty. Throughout those times the head on tape $c$ lies between $0$ and $|y|$, inclusive; every tape in the image of $\\iota$ has its head within distance $s$ of the origin; and every other tape head remains at its prescribed background position.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "An injection from the $2m$ tapes of the cleaning machine into $k$ tapes",
+  "The reserved tape index is outside the injection's image",
+  "Arbitrary background tape contents and head positions",
+  "Boolean input and output words $x,y$",
+  "Natural numbers $t,s$",
+  "$M$ halts with output $y$ on input $x$ after $t$ steps",
+  "The work-tape space used by $M$ through time $t$ is at most $s$"
+ ],
+ "confidence": "low",
+ "caveat": "The captured endpoint is specified by the formal configuration construction: it uses the cleaning machine's configuration with output replaced by $y$, embedded into the background tapes, and with return state. The prose describes this construction by its mathematical role.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emLoopCall_empty",
+ "key": "91b2a67f029025fe",
+ "kind": "lemma",
+ "title": "Empty-prefix call identity",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be an anchor state of $B$, and choose a startup marker, a configuration $c$ of $B$ on a Boolean input, a release bit, an optional flag bit, a Boolean word, and a configuration of $F$ on that input. If the output of $c$ is empty, then the forwarding call with empty prefix equals the corresponding capturing call.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Turing machines over the Boolean alphabet",
+  "$a$ is a state of $B$",
+  "The startup marker and release bit are Boolean",
+  "$c$ is a configuration of $B$ on a Boolean input and has empty output",
+  "The flag is an optional Boolean",
+  "The word is Boolean",
+  "The fuel configuration is a configuration of $F$ on the same input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every startup marker, body configuration $c$ with empty output, release bit, flag\nbit, counter word, and fuel configuration, the forwarding call on $c$ with empty prefix\nequals the corresponding capturing call on $c$."
+}

@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter09/LevelWeightAsymptotics.lean :: FABL.rpow_twentyone_twentieth_isLittleO -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# A power is little-o of its argument
+
+**Claim.** As $\alpha\to0$ through positive values, $\alpha^{21/20}$ is little-$o$ of $\alpha$.
+
+**Proof.** The little-$o$ criterion reduces the claim to convergence to zero of the ratio $\alpha^{21/20}/\alpha$ on the positive side of zero, with the comparison function nonzero there. For $\alpha>0$, the real-power subtraction rule rewrites the ratio as $\alpha^{1/20}$. The identity function tends to zero on this one-sided neighborhood, and the positive-exponent power limit therefore gives $\alpha^{1/20}\to0$. This proves the required little-$o$ relation.

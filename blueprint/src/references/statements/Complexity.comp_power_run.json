@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.comp_power_run",
+ "key": "98cec3e5ed19a245",
+ "kind": "lemma",
+ "title": "Register update in the power loop",
+ "statement": "Let $C,e,B\\in\\mathbb{N}$, let $m,o\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $f$ map finite bit strings to finite bit strings, let $h$ be a finite bit string, let $k$ be an element of the finite set of natural numbers below $e+2$, and let $v$ be a vector of fourteen natural-number registers. Suppose every register value is at most $B$, registers $6,10,11$ are zero, register $8$ is positive, and, with $F=2C+3$ if $o$ is true and $F=C$ otherwise, both $v(7)v(8)^{k}$ and $Fv(7)v(8)^{k}$ are at most $B$. Then there is a run from the power-loop state with flags $o,k$, register vector $v$, and no answer yet, to length bound if $o$ is false and tail test if $o$ is true. Every configuration before the endpoint satisfies the program's admissibility condition and has all register values at most $B$; at the endpoint register $7$ is $Fv(7)v(8)^k$, and every other register retains its initial value.",
+ "hypotheses_covered": [
+  "$C,e,B$ are natural numbers",
+  "$m,o$ are Boolean values",
+  "$f$ maps finite bit strings to finite bit strings",
+  "$h$ is a finite bit string",
+  "$k<e+2$",
+  "$v$ assigns natural-number values to fourteen registers",
+  "Every register value of $v$ is at most $B$",
+  "Registers 6, 10, and 11 of $v$ are zero",
+  "Register 8 of $v$ is positive",
+  "$v(7)v(8)^k\\le B$",
+  "$Fv(7)v(8)^k\\le B$, where $F=2C+3$ if $o$ is true and $F=C$ otherwise"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B\\in\\mathbb N$, let\n$\\mathrm{mode},\\mathrm{outer}\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $f$ be a function\nfrom finite bit strings to finite bit strings, let $h$ be a finite bit string, let\n$k<e+2$, and let $v$ assign a natural number to each of fourteen registers. Suppose\nevery register value is at most $B$, registers $6$, $10$, and $11$ contain zero,\nregister $8$ is positive, and both $v(7)v(8)^k$ and $F(v(7)v(8)^k)$ are at most $B$,\nwhere $F=C$ when $\\mathrm{outer}$ is false and $F=2C+3$ when it is true. Then the\nspecified register program can run from its power-loop state indexed by $\\mathrm{outer}$\nand $k$, with register vector $v$ and no answer yet, to the length-bound state when\n$\\mathrm{outer}$ is false or the tail-check state when it is true; at that point\nregister $7$ contains $F(v(7)v(8)^k)$ and every other register retains its initial\nvalue. Every configuration before that endpoint satisfies the program's\ninstruction-specific admissibility conditions, and all register values in those\nconfigurations are at most $B$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.mvExit",
+ "key": "e8e051d58ff678ab",
+ "kind": "def",
+ "title": "Exit label of each move loop",
+ "statement": "For each move site, define its exit program label as follows: copying $n$ into $a$ exits to the first increment of $a$; copying $T$ into $P$ exits to the $w$-copy loop when the Boolean parameter is true and otherwise to the power test; copying $P$ into $w$ exits to clearing $a$; pushing an endpoint into $SE$ exits to the corresponding doubling loop; pushing $T$ into $SP$ exits to incrementing the phase when its Boolean parameter is true and otherwise to the descent loop; copying $M$ into $V$ exits to decrementing the level; the two phase-$0$ success copies exit successively to the second success copy and then to the level decrement; popping the last endpoint digit into $E$ exits to copying the remaining stack into $SE$; that remaining-stack copy exits to restoring the level; the phase-$0$ failure copies exit to the next midpoint and then to the midpoint loop; the phase-$1$ success copy exits to the root-return test; and the phase-$1$ failure copies exit to the next midpoint and then to the midpoint loop. The exit labels for the stack push and pop operations retain their Boolean parameter, and the level-restoration label also retains its Boolean parameter.",
+ "hypotheses_covered": [
+  "Input is a move site",
+  "Boolean parameters are retained in the specified exit labels",
+  "Boolean parameters select the stated conditional exits for multiplication and phase-stack push"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

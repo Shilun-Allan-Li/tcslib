@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.PathHard.le_run",
+ "key": "6731cf8473de1098",
+ "kind": "theorem",
+ "title": "Bounded comparison routine",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $o$ be an oracle on five deciders and bit strings, let $y$ be a bit string, and let $k$ be one of the two comparison labels. Suppose a fifteen-register state $st$ has all register values at most $B$ and its decoding-and-comparison scratch register is $0$. Starting with label the comparison routine for $k$ in phase $0$, register values $st$, and no result, the program reaches a configuration whose label is the success continuation if the comparison register selected by $k$ is at most the index register $i$, and otherwise is the failure continuation; the destination scratch register equals the minimum of that comparison-register value and $i$, with all other registers unchanged and no result. Every configuration strictly before the reached configuration satisfies the guard requiring all registers to be at most $B$ and the instruction-specific preconditions to hold.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$o$ is an oracle on five deciders and bit strings",
+  "$y$ is a bit string",
+  "$k$ is one of the two comparison labels",
+  "$st$ has all fifteen registers at most $B",
+  "the decoding-and-comparison scratch register $d$ equals $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix natural numbers $a,b,f,B$, a Boolean mode, an oracle assigning a Boolean answer to\neach of five deciders and each bit string, an input bit string, and one of the two\ncomparison phases. Suppose the initial register state has every value at most $B$ and\nits decoding-and-comparison scratch register is zero. Starting at phase $0$ of that\ncomparison routine reaches the appropriate success or failure continuation according as\nthe phase's comparison-register value is at most the index $i$ or is greater than $i$;\nat the reached state, the scratch register equals the minimum of that\ncomparison-register value and $i$. Every preceding configuration satisfies the program's\nguard requiring all registers to remain at most $B$ and all instruction-specific\npreconditions to hold."
+}

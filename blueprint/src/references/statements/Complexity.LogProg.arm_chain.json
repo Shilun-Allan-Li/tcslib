@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.arm_chain",
+ "key": "6766a8fce8abd605",
+ "kind": "theorem",
+ "title": "Register increment and decrement chains",
+ "statement": "Let $m,k,B\\in\\mathbb{N}$, let $A$ be a register program with $m$ registers and a state set $\\Lambda$, let $x$ be a bit string, and fix a register $r$, a direction (increment or decrement), and a sequence of states $(\\ell_i)_{i\\in\\mathbb{N}}$. Suppose that for each $i<k$, the instruction at state $\\ell_i$ increments $r$ and goes to $\\ell_{i+1}$ in the increment case, or decrements $r$ and goes to $\\ell_{i+1}$ in the decrement case. If the initial register values $v$ satisfy $v(s)\\le B$ for every register $s$, and additionally $v(r)+k\\le B$ in the increment case or $k\\le v(r)$ in the decrement case, then the program reaches the configuration with state $\\ell_k$, unchanged result field, and register values given by replacing $v(r)$ by $v(r)+k$ or by the truncated difference $v(r)-k$, respectively. Throughout this finite run, every configuration satisfies the program's side conditions and every register value is at most $B$.",
+ "hypotheses_covered": [
+  "A register program with m registers and state set Λ",
+  "An oracle on d indices and bit strings",
+  "Input bit string x",
+  "Register r and direction up",
+  "State sequence labels",
+  "Natural numbers k and B",
+  "Each state label i<k contains the specified increment/decrement instruction and next state",
+  "Initial register values v are all at most B",
+  "Increment case: v(r)+k≤B; decrement case: k≤v(r)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

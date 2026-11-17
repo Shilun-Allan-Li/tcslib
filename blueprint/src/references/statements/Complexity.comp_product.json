@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.comp_product",
+ "key": "4d7cb9c381d1c99d",
+ "kind": "lemma",
+ "title": "Product Loop Register Update",
+ "statement": "Let $C,e,B\\in\\mathbb{N}$, let $\\mathrm{mode}$ and $\\mathrm{outer}$ be Boolean values, let $f$ map finite Boolean strings to finite Boolean strings, let $h$ be a finite Boolean string, let $k\\in\\mathrm{Fin}(e+2)$, and let $v$ be a vector of fourteen natural-number registers. Suppose every register of $v$ is at most $B$, register $6$ is zero, $v(10)\\le v(8)$, and $v(7)+(v(8)-v(10))v(11)\\le B$. The computation can reach a configuration whose state is the product-clean state with its second flag false, whose register vector is obtained from $v$ by setting register $10$ to $v(8)$ and register $7$ to $v(7)+(v(8)-v(10))v(11)$, and whose result is still absent. Every configuration strictly before this endpoint satisfies the machine precondition and has all registers at most $B$.",
+ "hypotheses_covered": [
+  "$C,e,B\\in\\mathbb{N}$",
+  "Boolean values $\\mathrm{mode}$ and $\\mathrm{outer}$",
+  "$f$ maps finite Boolean strings to finite Boolean strings",
+  "$h$ is a finite Boolean string",
+  "$k\\in\\mathrm{Fin}(e+2)$",
+  "$v$ is a vector of fourteen natural-number registers",
+  "Every register of $v$ is at most $B$",
+  "Register $6$ of $v$ is zero",
+  "$v(10)\\le v(8)$",
+  "$v(7)+(v(8)-v(10))v(11)\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B\\in\\mathbb N$, let $\\mathrm{mode},\\mathrm{outer}$ be Boolean, let $f$ map\nfinite bit strings to finite bit strings, let $h$ be a bit string, let $k<e+2$, and let\n$v$ be a vector of fourteen natural-number registers. Suppose every register is at most\n$B$, register $6$ is zero, $v(10)\\le v(8)$, and $v(7)+(v(8)-v(10))v(11)\\le B$. Then the\nspecified machine, started in its product-test state with registers $v$ and no answer\nyet, reaches its product-clean state with the phase flag false, register $10$ set to\n$v(8)$, and register $7$ set to $v(7)+(v(8)-v(10))v(11)$; all other registers are\nunchanged, and every earlier configuration satisfies the machine's precondition and\nregister bound."
+}

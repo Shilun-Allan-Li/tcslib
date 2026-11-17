@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.decorateTM_oblivious",
+ "key": "1267749d3c192f77",
+ "kind": "lemma",
+ "title": "Decoration preserves obliviousness",
+ "statement": "Let $P$ be a finite Turing machine over an alphabet $A$, let $l$ be a natural number, choose a work-tape index $h$ of $P$, a finite data-state set $D$ with initial state $d_0$, and any visit function of the specified type. Suppose every transition of $P$ emits no output symbol, and suppose that for any two inputs of equal length and every time, the input-head positions and all work-tape head positions of $P$ agree. Then the decorated machine has this same property: for any two inputs of equal length and every time, its input-head positions and all its work-tape head positions agree.",
+ "hypotheses_covered": [
+  "$D$ is finite and has decidable equality",
+  "$P$ is a finite Turing machine over $A$",
+  "$l$ is a natural number",
+  "$h$ is a work-tape index of $P$",
+  "$d_0$ is an element of $D$",
+  "The visit function has the stated type",
+  "Every transition of $P$ emits no output symbol",
+  "$P$ is oblivious: equal-length inputs give equal input-head and work-tape head positions at every time"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a machine over an alphabet $A$ whose transition table never emits an\noutput symbol, and suppose $P$ is oblivious. Then for every choice of data\ntransducer — number of extra tapes, designated head, finite data-state set with\ninitial element, and visit function — the decorated machine is oblivious. The data\nstates, emitted answers, and data-selected writes may depend arbitrarily on the\nactual input; none of them can choose a head movement or terminate the schedule\nearly."
+}

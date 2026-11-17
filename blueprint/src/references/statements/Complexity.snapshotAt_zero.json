@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.snapshotAt_zero",
+ "key": "756fb15b4a552cd5",
+ "kind": "theorem",
+ "title": "Initial snapshot",
+ "statement": "Let $M$ be a finite binary Turing machine and let $x$ be a finite binary word. At time zero its snapshot consists of the initial state, the input symbol at position $1$ (the first bit of $x$, or blank if $x$ is empty), and a blank symbol under each work-tape head.",
+ "hypotheses_covered": [
+  "$M$ is a finite binary Turing machine",
+  "$x$ is a finite binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary multi-tape Turing machine with initial state $q_0$ and $k$ work tapes,\nand let $x \\in \\{0,1\\}^*$. Before any step is taken, $M$ on input $x$ is in state $q_0$, the\nsymbol under its input head is the first bit $x_1$ of $x$ (or the blank $\\sqcup$ if $x$ is\nempty), and every one of its $k$ work heads reads the blank $\\sqcup$."
+}

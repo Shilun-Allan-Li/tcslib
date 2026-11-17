@@ -1,0 +1,18 @@
+{
+ "lean_name": "FABL.tendsto_averageComplexity_or_at_critical",
+ "key": "fdcbef08ddc7a1b4",
+ "kind": "theorem",
+ "title": "Critical-Bias Average Complexity of OR",
+ "statement": "For each positive integer $n$, let $p_n=1-\\exp(-\\log(2)/n)$ and consider the OR function on $n$ signs, equal to $+1$ when every input is $+1$ and $-1$ otherwise. Under the product distribution in which each input is independently $-1$ with probability $p_n$, take the infimum of the expected number of coordinate queries over all finite randomized decision trees that compute this OR function with zero error. This infimum, divided by $n$, tends to $1/(2\\log 2)$ as $n\\to\\infty$.",
+ "hypotheses_covered": [
+  "$n$ ranges over nonnegative integers tending to infinity",
+  "The input has $n$ signs",
+  "The coordinate inputs are independent, with probability $p_n=1-\\exp(-\\log(2)/n)$ of being $-1$",
+  "The computed function is OR, returning $+1$ exactly when all inputs are $+1$",
+  "The complexity is the infimum expected query count over finite randomized decision trees computing the function exactly"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

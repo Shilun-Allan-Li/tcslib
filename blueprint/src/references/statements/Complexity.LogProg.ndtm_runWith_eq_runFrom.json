@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.ndtm_runWith_eq_runFrom",
+ "key": "6d2c2e9000e5d4ed",
+ "kind": "theorem",
+ "title": "Agreement of runs under a choice word",
+ "statement": "Let $N$ be a nondeterministic machine and $M$ a deterministic machine with the same number of work tapes, symbol alphabet, and state set. Let $X$ be a property of states, and suppose their transition actions agree for every choice bit and state not satisfying $X$. If the run of $M$ from a configuration $c$ is in a state not satisfying $X$ at every time $t<T$, then for every Boolean word $w$ of length at most $T$, running $N$ from $c$ using $w$ gives the same configuration as running $M$ from $c$ for $|w|$ steps.",
+ "hypotheses_covered": [
+  "N is a nondeterministic machine and M is a deterministic machine with K work tapes, common alphabet and state set",
+  "X is a predicate on states",
+  "For every choice bit b and state q not satisfying X, N's transition action equals M's",
+  "For every t<T, the state of M after t steps from c, if present, does not satisfy X",
+  "T is a natural number",
+  "w is a Boolean word with length at most T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

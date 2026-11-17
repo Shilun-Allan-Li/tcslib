@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.lc_run",
+ "key": "d7163ae1bc63d445",
+ "kind": "theorem",
+ "title": "Run for counting a unary variable index",
+ "statement": "Let $x$ be a finite bit string, $B,n$ natural numbers, $s,b$ Booleans, $rest$ a finite bit string, and $st$ a machine state. Suppose the suffix of $x$ beginning at position $st.P$ is $n$ true bits followed by a false bit, then $b$, then $rest$; every register of $st$ is at most $B$; $|x|\\le B$; and $st.V\\le st.P$. Then the machine has a guarded run from label $\\text{lc}(s)$ and state $st$ to label $\\text{lv}(s,b)$ and the state obtained by setting $P=st.P+n+2$ and $V=st.V+n$, leaving the other registers unchanged.",
+ "hypotheses_covered": [
+  "A finite input bit string $x$",
+  "A natural-number bound $B$",
+  "Booleans $s$ and $b$",
+  "A finite bit string $rest$",
+  "A natural number $n$",
+  "The suffix of $x$ at position $st.P$ is $n$ true bits, then false, then $b$, then $rest$",
+  "Every register of $st$ is at most $B$",
+  "$|x|\\le B$",
+  "$st.V\\le st.P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a finite bit string, $B$ a natural-number register bound, $s,b\\in\\{0,1\\}$,\nand $r$ a finite bit string. Suppose that, from input position $P$ in a machine state\n$t$, the remaining input consists of $n$ true bits, then a false bit, then $b$, followed\nby $r$; every register of $t$ is at most $B$, $|x|\\le B$, and the variable counter $V$\nis at most $P$. The machine reaches the literal-evaluation phase with the same values of\n$s$ and $b$, input position $P+n+2$, and variable counter $V+n$."
+}

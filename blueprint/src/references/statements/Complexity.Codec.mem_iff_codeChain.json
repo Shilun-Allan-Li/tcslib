@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.Codec.mem_iff_codeChain",
+ "key": "dc855e8077e53a38",
+ "kind": "theorem",
+ "title": "Membership characterized by a code chain",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input, let $L$ be a language of Boolean strings, and let $sp:\\mathbb{N}\\to\\mathbb{N}$. Assume that for every input $x$, the machine halts after some common number $T$ of steps on every choice string of length $T$, uses at most $sp(|x|)$ work-tape cells on every such run, and accepts exactly the inputs in $L$. For any Boolean string $x$ and natural number $s$ with $sp(|x|)\\le s$, we have $x\\in L$ if and only if there are a natural number $t$ and a sequence of natural numbers $(c_i)_{i\\ge0}$ such that $t\\le 3((|Q|+1)(|x|+2)3^{k(2s+1)}(2s+1)^k)$, the code $c_0$ describes the initial configuration of $N$ on $x$ within window $s$, each consecutive pair $c_i,c_{i+1}$ for $i<t$ describes a valid one-step transition between configurations within that window, the code $c_t$ describes a halted accepting configuration within that window, and $c_i<2^{(2W+2)(s+\\log_2(|x|)+2)}$ for every $i\\le t$. Here $k$ is the number of work tapes, $Q$ is the finite state set, and $W$ is the codec's fixed chunk width for $N$.",
+ "hypotheses_covered": [
+  "N decides L in space sp, with halting and space bounds holding uniformly for all choice strings of a fixed length on each input",
+  "A Boolean string x",
+  "A natural number s",
+  "The space bound satisfies sp(|x|) ≤ s"
+ ],
+ "confidence": "low",
+ "caveat": "The statement's machine configuration encodings and logarithmic-size convention are specialized; the paraphrase describes their role, while the formal statement fixes their exact definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -12,6 +12,11 @@ from proofmatch.models import Candidate, DocumentBlock, DocumentIndex
 
 
 class CompareTests(unittest.TestCase):
+    def test_proof_comparison_rejects_statement_only_input(self):
+        candidate = Candidate("T.foo", "T", "M", "Claim", "True", "", 0, 1, ())
+        with self.assertRaisesRegex(ValueError, "requires actual Lean proof text"):
+            compare_candidate(candidate, DocumentIndex("abcdef123456", (), ()), None, Budget())
+
     def test_comparison_rejects_prose_in_place_of_block_id(self):
         block = DocumentBlock(
             "pdf-a-p001-b001", 1, 1, "prose", "T", "text", 1

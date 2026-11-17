@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.exists_inputLengthTM",
+ "key": "2b610ed8665c542d",
+ "kind": "theorem",
+ "title": "Machine computing input length",
+ "statement": "There exist a natural number $K$, a finite state set, a deterministic Turing machine over the binary alphabet with $K+1$ work tapes, entry and exit states, and a constant $C$. From any configuration on a binary input $x$ with the machine in the entry state, input head at position $1$, tape $0$ blank on the interval from one cell before its head through the binary representation of $|x|$, and every other work tape entirely blank, the machine reaches its exit state at some time $t \\le C(|x|+1)$. It does not reach the exit state earlier, every work-tape head stays within distance $C(|x|+1)$ of its initial position through time $t$, and at time $t$ tape $0$ holds the binary representation of $|x|$ starting at its initial head position, with all other cells and configuration data unchanged.",
+ "hypotheses_covered": [
+  "A binary input word $x$",
+  "The initial state is the entry state and the input head is at position $1$",
+  "Tape $0$ is blank on the specified interval",
+  "Every other work tape is entirely blank",
+  "The time bound is $C(|x|+1)$",
+  "The exit state is not reached before time $t$",
+  "All work-tape head displacements through time $t$ are at most $C(|x|+1)$",
+  "The final tape and configuration contents are as specified"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

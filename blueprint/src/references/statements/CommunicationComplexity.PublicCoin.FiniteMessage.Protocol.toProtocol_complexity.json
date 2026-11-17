@@ -1,14 +1,14 @@
 {
  "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toProtocol_complexity",
- "key": "dfc1a4a2abb61c37",
+ "key": "aa773dc6be0b6dca",
  "kind": "theorem",
- "title": "Conversion to a binary public-coin protocol preserves communication complexity",
- "statement": "Let $\\Omega$ be a shared-randomness space and let $p$ be a public-coin finite-message protocol with Alice's private input in $X$, Bob's in $Y$, and output in $\\alpha$; that is, a deterministic finite-message protocol whose effective input types are $\\Omega \\times X$ for Alice and $\\Omega \\times Y$ for Bob, in which each message is an element of an arbitrary finite nonempty type $\\beta$ costing $\\lceil \\log_2 \\abs{\\beta} \\rceil$ bits. Then the binary public-coin protocol obtained from $p$ by encoding every $\\beta$-valued message as $\\lceil \\log_2 \\abs{\\beta} \\rceil$ bits has communication complexity exactly equal to that of $p$.",
+ "title": "Complexity Preservation Under Protocol Conversion",
+ "statement": "Let $\\Omega$, $X$, $Y$, and $\\alpha$ be types, and let $p$ be a public-coin finite-message protocol with shared randomness in $\\Omega$, Alice's input in $X$, Bob's input in $Y$, and output in $\\alpha$. The binary public-coin protocol obtained from $p$ by conversion has the same communication complexity as $p$.",
  "hypotheses_covered": [
-  "p is a public-coin finite-message protocol over Omega, X, Y, alpha (effective inputs Omega x X and Omega x Y)"
+  "A public-coin finite-message protocol $p$ with shared-randomness type $\\Omega$, input types $X$ and $Y$, and output type $\\alpha$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "For any protocol $p$, $(p.\\mathrm{toProtocol}).\\mathrm{complexity} = p.\\mathrm{complexity}$."
+ "replaced": "Let $\\Omega$ be a shared-randomness space and let $p$ be a public-coin finite-message\nprotocol with Alice's private input in $X$, Bob's in $Y$, and output in $\\alpha$; that\nis, a deterministic finite-message protocol whose effective input types are $\\Omega\n\\times X$ for Alice and $\\Omega \\times Y$ for Bob, in which each message is an element\nof an arbitrary finite nonempty type $\\beta$ costing $\\lceil \\log_2 \\abs{\\beta} \\rceil$\nbits. Then the binary public-coin protocol obtained from $p$ by encoding every\n$\\beta$-valued message as $\\lceil \\log_2 \\abs{\\beta} \\rceil$ bits has communication\ncomplexity exactly equal to that of $p$."
 }

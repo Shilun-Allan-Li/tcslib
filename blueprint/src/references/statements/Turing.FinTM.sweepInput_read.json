@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.sweepInput_read",
+ "key": "2aac81cf4df3878e",
+ "kind": "lemma",
+ "title": "Correct Decoding of the Scanned Input",
+ "statement": "Let $\\Gamma,S,S'$ be types, let $k$ be a natural number, let $x$ be a finite word over $\\Gamma$, and let $c$ be a configuration with $k$ work tapes on input $x$. Let $d$ be a one-work-tape configuration over the enlarged sweep alphabet on the symbol-wise encoded input, and suppose its input-head position equals the transported position of the input head of $c$. Then decoding the symbol scanned by $d$ gives exactly the symbol scanned by $c$.",
+ "hypotheses_covered": [
+  "$\\Gamma,S,S'$ are types",
+  "$k$ is a natural number",
+  "$x$ is a list over $\\Gamma$",
+  "$c$ is a configuration with $k$ work tapes on input $x$",
+  "$d$ is a configuration over the enlarged sweep alphabet on the encoded input",
+  "The input-head position of $d$ equals the transported input-head position of $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a $k$-work-tape machine on input $x$, and let $d$ be a\nconfiguration of any machine over the enlarged sweep alphabet on the symbol-wise encoded\ninput whose input head is at the transported position of $c$'s input head. Then decoding\nthe input symbol scanned by $d$ yields exactly the input symbol scanned by $c$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.stripCertificate_pad",
+ "key": "c76fe3f89bfbb4dd",
+ "kind": "lemma",
+ "title": "Stripping a padded string",
+ "statement": "For every binary string $u$ and every $k\\in\\mathbb{N}$, stripping the string formed by appending a $1$ and then $k$ zeros to $u$ returns $u$.",
+ "hypotheses_covered": [
+  "$u$ is a binary string",
+  "$k$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{strip}$ be the partial map on binary strings defined by:\n$\\mathrm{strip}(\\varepsilon)$ is undefined, and for a bit $b$ and a string $v$,\n$\\mathrm{strip}(bv) = b\\,\\mathrm{strip}(v)$ when $\\mathrm{strip}(v)$ is defined,\nwhile otherwise $\\mathrm{strip}(1v) = \\varepsilon$ and $\\mathrm{strip}(0v)$ is\nundefined. Then for every binary string $u$ (possibly empty, possibly containing\n$1$s) and every $k \\in \\mathbb{N}$, $\\mathrm{strip}(u\\,1\\,0^k) = u$."
+}

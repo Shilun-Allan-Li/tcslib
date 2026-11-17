@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.foldRead_tape",
+ "key": "94a36ea875819819",
+ "kind": "lemma",
+ "title": "Reading the folded tape",
+ "statement": "Let $t\\colon\\mathbb{Z}\\to\\operatorname{Option}(\\Gamma)$ be a tape content and let $z\\in\\mathbb{Z}$. Reading the folded tape at the folded position $\\varphi(z)$ on the side determined by whether $z\\ge 0$ returns exactly $t(z)$.",
+ "hypotheses_covered": [
+  "$t$ assigns an optional symbol in $\\Gamma$ to each integer cell",
+  "$z$ is an integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every tape content $t \\colon \\bbz \\to \\Gamma \\cup \\{\\square\\}$ over a base\nalphabet $\\Gamma$ and every integer $z$, reading the folded tape of $t$ at the\nphysical position $\\varphi(z)$ on the side of $z$ returns exactly the original\ncontent $t(z)$, where $\\varphi(z) = z$ for $z \\ge 0$ and $\\varphi(z) = -z-1$\notherwise."
+}

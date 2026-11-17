@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satDrop_computes",
+ "key": "a01a5fc7be12f114",
+ "kind": "lemma",
+ "title": "Running time and output of suffix extraction",
+ "statement": "For all Boolean words $u$ and $v$, the suffix-extraction machine, started on the pair encoding of $u$ and $v$, halts after exactly $3(|\\langle u,v\\rangle|+1)$ steps with output equal to the word obtained from $v$ by deleting its first $|u|$ bits.",
+ "hypotheses_covered": [
+  "Two Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all binary words $u$ and $v$, the suffix extractor run on\nthe pair encoding $\\mathrm{pair}(u,v)$ (every bit of $u$ doubled, then the separator $01$, then $v$) halts within $3(\\ell + 1)$ steps, where $\\ell$ is the length of\nthat paired input, and its output is the suffix of $v$ obtained by dropping its\nfirst $|u|$ bits."
+}

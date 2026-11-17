@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.ImplicitlyLogspaceComputable",
+ "key": "99f77761ab901e2f",
+ "kind": "def",
+ "title": "Implicit logarithmic-space computability",
+ "statement": "A function $f$ from Boolean strings to Boolean strings is implicitly logarithmic-space computable if there are natural numbers $C,c$ such that $|f(x)|\\le C(|x|+1)^c$ for every input $x$, and both of the following languages are in logarithmic space: the language of encodings of $(x,i)$ for which the $i$th output bit of $f(x)$ is true (taking an out-of-range bit to be false), and the language of encodings of $(x,i)$ for which $i<|f(x)|$.",
+ "hypotheses_covered": [
+  "A function from Boolean strings to Boolean strings",
+  "There exist natural numbers $C,c$ bounding output length by $C(|x|+1)^c$ for every input",
+  "The indexed language testing whether the defaulted $i$th output bit is true belongs to LOGSPACE",
+  "The indexed language testing whether the index is below the output length belongs to LOGSPACE"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

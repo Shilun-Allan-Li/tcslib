@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.catalogPoly_setup",
+ "key": "0b57be4d834c7702",
+ "kind": "lemma",
+ "title": "Setup rewind of the generator",
+ "statement": "Let $c,C,q$ be natural numbers, let $x$ be a Boolean input word, and let $j\\le q$. Starting in the setup state with every work head at position $j-1$ and empty output, after exactly $j+1$ steps the machine is in the outermost loop state, with every work head at position $0$ and the output empty.",
+ "hypotheses_covered": [
+  "$c,C$ are natural numbers",
+  "$x$ is a Boolean input word",
+  "$q$ is a natural number",
+  "$j\\le q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the generator's setup state with all work heads at displacement $j-1$,\nfor any $j \\le q$, exactly $j+1$ steps move all heads to displacement $0$ in\nlockstep and enter the outermost loop state, with empty output throughout."
+}

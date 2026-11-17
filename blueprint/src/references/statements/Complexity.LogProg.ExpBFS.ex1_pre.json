@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.ex1_pre",
+ "key": "282a5a62a21c240e",
+ "kind": "lemma",
+ "title": "Concatenation of Guarded Runs",
+ "statement": "Fix a memory machine, oracle, input, and guard predicate. If a configuration $a$ reaches $b$ in finitely many steps with the guard holding at every time strictly before arrival, and there exists $y$ such that $b$ reaches $f(y)$ with the guard holding at every time strictly before arrival and $Q(y)$, then there exists $y$ such that $a$ reaches $f(y)$ with the guard holding at every time strictly before arrival and $Q(y)$.",
+ "hypotheses_covered": [
+  "A guarded finite run from $a$ to $b$",
+  "There exists $y$ with a guarded finite run from $b$ to $f(y)$ and $Q(y)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the machine, oracle, input, and guard condition. If a configuration $a$ reaches $b$\nin finitely many steps while satisfying the guard at every time strictly before arrival,\nand there is some $y$ such that $b$ similarly reaches $f(y)$ and $Q(y)$ holds, then\nthere is a $y$ such that $a$ similarly reaches $f(y)$ and $Q(y)$ holds."
+}

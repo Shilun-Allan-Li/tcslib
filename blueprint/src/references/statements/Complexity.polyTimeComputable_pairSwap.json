@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_pairSwap",
+ "key": "f307f92a1b1e8ebb",
+ "kind": "theorem",
+ "title": "Swapping pair components is polynomial-time",
+ "statement": "Let $\\langle x,y\\rangle$ denote the bit string formed by doubling each bit of $x$, appending the separator $01$, and then appending $y$. The map that sends a bit string $z$ to the encoding of its total second projection followed by its total first projection is polynomial-time computable; either projection is the empty word when parsing fails.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\langle a,b\\rangle$ denote the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$), and let $\\pi_1$ and $\\pi_2$ be the total projections, which send $\\langle a,b\\rangle$ to $a$ and to $b$ respectively, and any bit string that is not a pair encoding to the empty word. Then the map $z \\mapsto \\langle \\pi_2(z), \\pi_1(z)\\rangle$ is polynomial-time computable."
+}

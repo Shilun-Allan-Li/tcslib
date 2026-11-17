@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.exists_loopCfgTM",
+ "key": "309efce49ed0f1b8",
+ "kind": "theorem",
+ "title": "Configuration-level loop machine",
+ "statement": "Let $B$ and $F$ be finite Turing machines over Boolean words, let $q$ be a state of $B$, let $I$ be a predicate on pairs of Boolean words, let $u$ map pairs of Boolean words to Boolean words, let $A$ map such pairs to Boolean values, let $s_0$ map Boolean words to Boolean words, and let $R,T : \\\\mathbb{N} \\\\to \\\\mathbb{N}$. Suppose $F$ computes the binary digits of $R(|x|)$ within $T(|x|)$ steps; $I(x,s_0(x))$ holds and is preserved when $s$ is replaced by $u(x,s)$; and the computation of $B$ on each input $x$ reaches the clean seam with word $s_0(x)$ within $T(|x|)$ steps without visiting $q$ earlier. For every $x,s$ satisfying $I(x,s)$, suppose a round from the clean seam with word $s$ takes positive time at most $T(|x|)$ and has no intermediate positive-time visit to $q$; if $A(x,s)$ is true, it halts with output $[\\\\mathrm{true}]$, and otherwise it reaches the clean seam with word $u(x,s)$. Then there are a finite Turing machine $E$ and a natural number $c$ such that, for every input $x$, there is a sequence of configurations $(C_i)_{i\\\\ge0}$ and a startup time at most $c(T(|x|)+1)$ reaching $C_0$, with empty output in $C_0,\\\\ldots,C_{R(|x|)}$, and with $C_{R(|x|)+1}$ halted and having output $[\\\\mathrm{false}]$. For each $i\\\\le R(|x|)$, within at most $c(T(|x|)+1)$ steps from $C_i$, the machine halts with output $[\\\\mathrm{true}]$ if $A(x,u^i(s_0(x)))$ holds, and otherwise reaches $C_{i+1}$.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Turing machines over Boolean words",
+  "$q$ is a state of $B$",
+  "$I$ is a predicate on pairs of Boolean words",
+  "$u$ maps pairs of Boolean words to Boolean words",
+  "$A$ maps pairs of Boolean words to Boolean values",
+  "$s_0$ maps Boolean words to Boolean words",
+  "$R,T$ map natural numbers to natural numbers",
+  "$F$ computes the binary digits of $R(|x|)$ within $T(|x|)$ steps",
+  "$I(x,s_0(x))$ holds for every $x",
+  "$I(x,s)$ implies $I(x,u(x,s))$ for every $x,s$",
+  "Startup on every $x$ reaches the clean seam with word $s_0(x)$ within $T(|x|)$ steps and avoids $q$ beforehand",
+  "For every invariant pair $(x,s)$, a round takes positive time at most $T(|x|)$, avoids intermediate positive-time visits to $q$, and either halts with output true when $A(x,s)$ or reaches the clean seam with word $u(x,s)$ otherwise"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a loop body with anchor, a fuel machine computing the binary digits of $R(|x|)$ in\ntime $T$, an invariant preserved from the initial word by the step function, a bounded\nanchor-free startup, and a per-round accept-or-advance contract with verdict output the\nsingle bit $\\mathrm{true}$ be given. Then there are a finite machine $E$ and a constant\n$c$ such that on every input $x$, $E$ has a family of round configurations: a startup of\nat most $c (T(|x|) + 1)$ steps reaching round zero, empty output at rounds $0, \\dots,\nR(|x|)$, a halted terminal at index $R(|x|) + 1$ with output the single bit\n$\\mathrm{false}$, and per-round segments of at most $c (T(|x|) + 1)$ steps that halt\nwith $\\mathrm{true}$ on acceptance and advance to the next round configuration\notherwise."
+}

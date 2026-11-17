@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.noise_degree_lower",
+ "key": "3e29c3b219d98262",
+ "kind": "lemma",
+ "title": "Noise lower bound for low-degree energy",
+ "statement": "Let $n,k\\in\\mathbb N$, and let $p$ be a real coefficient family on the subsets of $[n]$ that vanishes on every subset of size greater than $k$. For $0\\le\\rho\\le1$, the noise operator applied to the Boolean-cube function represented by $p$ satisfies\n\\[\n\\rho^{2k}\\sum_{S\\subseteq[n]}p(S)^2\\le \\mathbb E\\!\\left[(T_\\rho P_p)^2\\right],\n\\]\nwhere the expectation is uniform on the cube.",
+ "hypotheses_covered": [
+  "natural numbers n and k",
+  "p has degree at most k",
+  "0 ≤ ρ",
+  "ρ ≤ 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. Put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for $S\\subseteq[n]$ and real cube functions $h$. Let $P(x)=\\sum_{S\\subseteq[n]}a_S\\chi_S(x)$ with real coefficients; degree at most $k$ means $a_S=0$ for $|S|>k$. If $P$ has degree at most the integer $k\\ge0$ and $0\\le\\rho\\le1$, define $T_\\rho P=\\sum_S\\rho^{|S|}a_S\\chi_S$. Then $\\rho^{2k}\\sum_Sa_S^2\\le\\mathbb E[(T_\\rho P)^2]$, with natural powers including $0^0=1$."
+}

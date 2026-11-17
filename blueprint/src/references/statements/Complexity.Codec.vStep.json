@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Codec.vStep",
+ "key": "6ad5bd9e792d1c08",
+ "kind": "def",
+ "title": "Verifier state update",
+ "statement": "Let $N$ be a nondeterministic Turing machine with Boolean input alphabet, $st$ a verifier state, and $cv$ a cell value. The updated state has first flag false; its stored head state is $cv$'s when the old first flag is true and otherwise is retained. At each tape index, the Boolean value becomes the disjunction of its old value and the corresponding Boolean component of $cv$, while the optional-Boolean value becomes the corresponding component of $cv$ when that Boolean component is true and is otherwise retained. The next-to-last flag remains true only if it was previously true, the head state is present exactly when required by the old first flag, and no index has both its old Boolean value and its component of $cv$ true; the last flag remains true only if it was previously true and $cv$ has coordinated blank components.",
+ "hypotheses_covered": [
+  "A nondeterministic Turing machine with Boolean input alphabet",
+  "A verifier state",
+  "A cell value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

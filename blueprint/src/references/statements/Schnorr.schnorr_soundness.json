@@ -1,6 +1,6 @@
 {
  "lean_name": "Schnorr.schnorr_soundness",
- "key": "f4b62de289117c61",
+ "key": "1c41f10cce3876e1",
  "kind": "theorem",
  "title": "Special soundness of the Schnorr protocol",
  "statement": "Special soundness. Let $q$ be prime, let $g$ be an element of order $q$ in a commutative group $G$, and take the public key $\\mathit{pk} = g^{w}$ for some witness $w \\in \\bbz_q$. Suppose $a \\in G$, and suppose $c_1, c_2 \\in \\bbz_q$ are distinct challenges with responses $s_1, s_2 \\in \\bbz_q$ such that both transcripts $(a, c_1, s_1)$ and $(a, c_2, s_2)$ are accepted by the verifier for $\\mathit{pk}$. Then the extractor recovers the witness:\n\\[\n  \\frac{s_1 - s_2}{c_1 - c_2} \\;=\\; w \\quad\\text{in } \\bbz_q.\n\\]",

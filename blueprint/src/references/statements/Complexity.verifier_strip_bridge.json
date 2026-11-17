@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.verifier_strip_bridge",
+ "key": "002d05adf3ebb91f",
+ "kind": "lemma",
+ "title": "Equality of two stripping procedures",
+ "statement": "The partial function that returns the prefix before the last $1$ in a binary string, and is undefined when there is no $1$, equals the partial function that recursively strips a marked certificate by the same rule.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{strip}$ be the partial map on binary strings defined by:\n$\\mathrm{strip}(\\varepsilon)$ is undefined, and for a bit $b$ and a string $v$,\n$\\mathrm{strip}(bv) = b\\,\\mathrm{strip}(v)$ when $\\mathrm{strip}(v)$ is defined,\nwhile otherwise $\\mathrm{strip}(1v) = \\varepsilon$ and $\\mathrm{strip}(0v)$ is\nundefined. Let $\\mathrm{last}(v)$ be computed by reversing $v$, discarding the\nleading $0$s of the reversal, and, if a $1$ remains, deleting it and returning the\nreversal of what follows it, while $\\mathrm{last}(v)$ is undefined if no $1$\nremains. Then $\\mathrm{last}$ and $\\mathrm{strip}$ are equal as partial maps on\n$\\{0,1\\}^{*}$."
+}

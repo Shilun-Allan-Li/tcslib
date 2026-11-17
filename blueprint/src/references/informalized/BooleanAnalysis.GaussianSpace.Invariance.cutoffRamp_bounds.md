@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Cutoff.lean :: BooleanAnalysis.GaussianSpace.Invariance.cutoffRamp_bounds -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Cutoff ramp bounds
+
+**Claim.** For \eta>0, the cutoff ramp takes values in [0,1], equals 1 when x+\eta\le v, and equals 0 when v\le x.
+
+**Proof.** Fix $x$. Since the ramp is the maximum of $0$ and a minimum with $1$, it is at least $0$ and at most $1$. If $x+\eta\le v$, then $v-x\ge\eta$; dividing by the positive number $\eta$ gives $(v-x)/\eta\ge1$. The inner minimum is therefore $1$, and taking the maximum with $0$ leaves it equal to $1$. If instead $v\le x$, then $(v-x)/\eta\le0$. The inner minimum is at most this nonpositive quantity, so the maximum with $0$ is $0$.

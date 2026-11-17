@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clRow_frame",
+ "key": "89d9af115889b9c3",
+ "kind": "lemma",
+ "title": "Row Configuration from a Relocated Copier",
+ "statement": "Let $l$ be a natural number, let $x$ be a finite Boolean input word, let $p$ be an input-head position for $x$, let $i\\in\\mathrm{Fin}(l)$, let $q$ be a copier control, let $w$ be a family of $l$ Boolean words, and let $record$ be a Boolean word. Place the copier's source and record tapes in the row machine's slots for coordinate $i$ and the record, retaining every other counter word and placing its head at cell zero. The resulting configuration is exactly the row configuration at field $i$ and control $q$, with input position $p$, counter heads at zero, record head at $|record|$, and empty physical output.",
+ "hypotheses_covered": [
+  "natural number $l$",
+  "Boolean input word $x$",
+  "input-head position $p$ for $x$",
+  "coordinate $i\\in\\mathrm{Fin}(l)$",
+  "copier control $q\\in\\mathrm{Fin}(5)$",
+  "family $w$ of Boolean words indexed by $\\mathrm{Fin}(l)$",
+  "Boolean record word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, selected counter $i$, copier control, counter words, and record, relocating the two-tape copier configuration for counter $i$ into the row controller's slots, with all other counters retained, yields exactly the row seam at field $i$; every unselected counter retains its whole word, not just its current cell."
+}

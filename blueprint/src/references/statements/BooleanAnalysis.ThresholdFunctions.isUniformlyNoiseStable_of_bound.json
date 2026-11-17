@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.isUniformlyNoiseStable_of_bound",
+ "key": "50a0704bccd12142",
+ "kind": "lemma",
+ "title": "Uniform noise stability from a sensitivity bound",
+ "statement": "Let $B=(B_n)_{n\\in\\mathbb N}$ be a family of sets of real-valued functions on Boolean cubes, and suppose every function in every $B_n$ takes values in $\\{-1,1\\}$. Let $\\varepsilon:\\mathbb R\\to\\mathbb R$ be nonnegative for $0\\le\\delta\\le1/2$, with $\\varepsilon(\\delta)\\to0$ as $\\delta\\to0^+$, and suppose that $\\operatorname{NS}_{\\delta}(f)\\le\\varepsilon(\\delta)$ for every $n$, every $f\\in B_n$, and every $0<\\delta\\le1/2$. Then there exists a function $\\eta:\\mathbb R\\to\\mathbb R$ taking values in $[0,1]$ on $[0,1/2]$, tending to zero as $\\delta\\to0^+$, such that $\\operatorname{NS}_{\\delta}(f)\\le\\eta(\\delta)$ for all such $n,f$ and $0<\\delta\\le1/2$.",
+ "hypotheses_covered": [
+  "Every member of $B$ is $\\{-1,1\\}$-valued",
+  "$\\varepsilon(\\delta)\\ge0$ for $\\delta\\in[0,1/2]$",
+  "$\\varepsilon(\\delta)\\to0$ as $\\delta\\to0^+$",
+  "The sensitivity bound holds for every dimension, member, and $0<\\delta\\le1/2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $B=(B_n)_{n\\in\\mathbb N}$ be a family of sets of functions $\\{0,1\\}^{n}\\to\\{-1,1\\}$ and let $\\varepsilon:\\mathbb R\\to\\mathbb R$ satisfy $\\varepsilon(\\delta)\\geq0$ for $0\\leq\\delta\\leq1/2$, $\\lim_{\\delta\\to0^{+}}\\varepsilon(\\delta)=0$ and $\\operatorname{NS}_{\\delta}(f)\\leq\\varepsilon(\\delta)$ for every $n$, $f\\in B_n$ and $0<\\delta\\leq1/2$.\nThen $B$ is uniformly noise-stable: there exists $\\eta:\\mathbb R\\to\\mathbb R$ with $0\\leq\\eta(\\delta)\\leq1$ on $[0,1/2]$, $\\lim_{\\delta\\to0^{+}}\\eta(\\delta)=0$ and $\\operatorname{NS}_{\\delta}(f)\\leq\\eta(\\delta)$ for every such $n,f,\\delta$, where $\\operatorname{NS}_{\\delta}(f)=\\Pr[f(X)\\neq f(Y)]$, $X$ is uniform on the cube and $Y$ flips each coordinate independently with probability $\\delta$."
+}

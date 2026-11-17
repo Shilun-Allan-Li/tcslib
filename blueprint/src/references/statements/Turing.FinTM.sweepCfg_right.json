@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.sweepCfg_right",
+ "key": "717ace0f74f0969b",
+ "kind": "lemma",
+ "title": "One-Step Forward Sweep Update",
+ "statement": "Let $A$ be a type, let $x$ be a finite word over $A$, let $q$ be an optional state and $q'$ a state, and choose an input-head position $p$, an integer frontier $z$, finite left and right stacks $l,r$ of possibly blank symbols, an output word $out$, and possibly blank symbols $a,b$. Applying the action that writes $b$ at the scanned work-tape cell, moves the work head right, leaves the input head stationary, emits nothing, and enters $q'$ to the configuration represented by frontier $z$, stacks $l$ and $a::r$, and output $out$ gives exactly the configuration with state $q'$, frontier $z+1$, stacks $b::l$ and $r$, and unchanged input-head position and output.",
+ "hypotheses_covered": [
+  "$A$ and the state type $S$ are types",
+  "$x$ is a list over $A$",
+  "$q$ is an optional state and $q'$ is a state",
+  "$p$ is an input-head position for $x$",
+  "$z$ is an integer",
+  "$l,r$ are lists of possibly blank symbols",
+  "$out$ is a list over $A$",
+  "$a,b$ are possibly blank symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider the forward-sweep configuration of a one-work-tape machine with\n(optional) state $q$, input-head position $p$, frontier $z$, left stack $l$,\nright stack $a \\mathbin{::} r$, and output word $\\mathit{out}$. Applying to it\nthe local sweep action that writes the possibly-blank symbol $b$, moves the\nwork head right, and enters state $q'$ produces exactly the forward-sweep\nconfiguration with state $q'$, the same input-head position $p$ and output\n$\\mathit{out}$, frontier $z + 1$, left stack $b \\mathbin{::} l$, and right\nstack $r$."
+}

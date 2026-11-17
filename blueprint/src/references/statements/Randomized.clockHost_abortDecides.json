@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.clockHost_abortDecides",
+ "key": "8ebbbe943aeed24b",
+ "kind": "theorem",
+ "title": "Clocked Abort Decision from a Probabilistic Attempt",
+ "statement": "Let $S$ be a finite-state deterministic machine, $A$ a finite-state nondeterministic machine, $L$ a language of Boolean words, and $m,T_S:\\mathbb{N}\\to\\mathbb{N}$. Suppose $S$ computes the all-true word of length $m(|x|)$ on every input $x$ within $T_S(|x|)$ steps, and $n\\le m(n)$ for every $n$. Suppose also that for every $x,u,v$, if $|u|=m(|x|)$ and the attempt by $A$ on $x$ with witness $u$ halts with a single output bit $v$, then $v$ equals the Boolean indicator of whether $x\\in L$; and, for every $x$, a uniformly random Boolean word $u$ of length $m(|x|)$ yields that correct bit with probability at least $1/2$. Then the clocked host machine built from $S$ and $A$ with its looping option disabled decides $L$ within $T_S(n)+m(n)+2+(m(n)+1)$ steps: it halts on every witness, never outputs the incorrect bit, and outputs the correct bit with probability at least $1/2$.",
+ "hypotheses_covered": [
+  "$S$ is a finite-state deterministic Boolean machine",
+  "$A$ is a finite-state nondeterministic Boolean machine",
+  "$L$ is a language of Boolean words",
+  "$m,T_S$ are functions from natural numbers to natural numbers",
+  "$S$ computes the all-true word of length $m(|x|)$ within $T_S(|x|)$ steps for every input",
+  "$n\\le m(n)$ for every natural number $n$",
+  "Every length-$m(|x|)$ witness causing $A$ to halt with a single bit yields the membership indicator",
+  "A uniformly random length-$m(|x|)$ witness yields the membership indicator with probability at least $1/2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

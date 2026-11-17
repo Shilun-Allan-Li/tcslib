@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.arSpacePhase",
+ "key": "4c37cbd0fc902dbf",
+ "kind": "def",
+ "title": "Phases in the space simulation",
+ "statement": "Let $\\Gamma$ be a symbol alphabet with decidable equality, let $N$ and $k$ be nonnegative integers, let $Q$ be a state type, let $E$ embed the optional symbols of $\\Gamma$ into blocks of $N+1$ optional bits, and let $e$ embed bits into $\\Gamma$. Given a $k$-tape Turing machine over $\\Gamma$ with state set $Q$, an input bit string $x$, a configuration $c$ of that machine on the encoded input $e(x)$, and a configuration $d$ of the simulator on $x$, the predicate holds exactly when either $d$ is the encoded configuration corresponding to $c$, or $c$ has a state $q$ and $d$ is one of the simulator configurations obtained by reading the encoded tape contents, writing the encoded transition's tape symbols, or moving the heads according to that transition.",
+ "hypotheses_covered": [
+  "$\\Gamma$ has decidable equality",
+  "$N,k$ are nonnegative integers",
+  "$Q$ is a type",
+  "$E$ embeds optional $\\Gamma$ symbols into blocks",
+  "$e$ embeds bits into $\\Gamma$",
+  "$tm$ is a $k$-tape machine over $\\Gamma$ with state set $Q$",
+  "$x$ is a bit list",
+  "$c$ is a configuration on input $x$ mapped through $e$",
+  "$d$ is a simulator configuration on input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.exists_windowLoopTM",
+ "key": "4755a6e5e3d01188",
+ "kind": "theorem",
+ "title": "Simulating a bounded window run",
+ "statement": "Let $M$ be a finite-state deterministic Boolean machine, let $T$ be a finite set, and let $u:T\\times\\mathrm{Option}(\\{0,1\\})\\to T$ satisfy $u(\\tau,\\mathrm{none})=\\tau$. There exist a natural number $K$, a finite-state machine $L$ with $K+1$ work tapes, an entry state, an injective map assigning distinct stop states to the three window-exit outcomes, and a constant $C$. For every input $x$, window radius $s$, initial configuration $c$ whose work heads lie in $[-s,s]$ and whose tapes are blank outside that interval, and tag $\\tau$, a correctly encoded record of $(c,\\tau)$ on tape 0 together with blank remaining tapes allows $L$ to simulate the window-limited run of $M$ for any number $N$ of steps. It produces the record of the resulting configuration and updated tag, preserving the initial output tape, and runs in at most $C N(R+|x|+1)$ steps, where $R$ is the prescribed record length; if the window-limited run exhausts all $N$ steps, then $N$ is no greater than the simulation time, and the machine's status is the entry state. If the run instead halts or its next step leaves the window, its status is the corresponding distinct stop state, which it does not enter earlier. At every time, each work-tape head moves by at most $C(R+1)$ from its initial location.",
+ "hypotheses_covered": [
+  "finite-state Boolean machine $M$",
+  "finite tag set $T$",
+  "update rule leaves tag unchanged on no output",
+  "initial configuration lies within radius $s$ and tapes are blank outside",
+  "initial tag $\\tau$",
+  "encoded configuration record on tape 0",
+  "remaining work tapes blank",
+  "arbitrary simulation horizon $N$"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem quantifies over every intermediate time and includes exact record replacement at the endpoint; the prose summarizes the endpoint and uniform head-displacement guarantee.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

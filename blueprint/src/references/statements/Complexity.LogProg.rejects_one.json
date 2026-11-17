@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.rejects_one",
+ "key": "681260a9f2624307",
+ "kind": "lemma",
+ "title": "Immediate rejection at a non-call state",
+ "statement": "Let $P$ be a register program, let $c$ be a configuration, and let $r$ be a register with head position $p$. Suppose state $s$ is not a call state, and for every possible tuple of work-tape symbols the transition of the program's underlying machine at $s$, on the input symbol read at position $ip$, is the action that emits false and halts without moving any head or writing to any tape. Then, starting from the configuration obtained from $c$ by setting the state to $s$, the input head to $ip$, and register $r$'s head to $p$, the program rejects in one step in the sense that its halting configuration has output $c$'s output followed by false, has the specified adjusted head-position map, and all pre-final configurations are ordinary non-call program states.",
+ "hypotheses_covered": [
+  "State $s$ is not a call state",
+  "For every work-symbol tuple, the transition at $s$ on the input symbol at $ip$ is the specified rejecting halting action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

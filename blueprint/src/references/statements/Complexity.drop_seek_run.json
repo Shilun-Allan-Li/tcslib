@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.drop_seek_run",
+ "key": "1a7d249c026aeac7",
+ "kind": "lemma",
+ "title": "Seek procedure run",
+ "statement": "Let $h$ be a bit string, let $v$ assign a natural number to each of nine registers, and let $\\mathrm{mode}$ and $\\mathrm{suffix}$ be Boolean parameters. Suppose every register value is at most $4|h|+4$, register $2$ (if $\\mathrm{suffix}$ is true) or register $5$ (otherwise) equals register $0$ plus $(2$ if true, $4$ otherwise$)\\,\\mathrm{count}$, register $7+\\mathrm{count}\\le 4|h|+4$, and register $7\\le$ register $6$. If register $6<$ register $7+\\mathrm{count}$, the machine reaches the hit state with register $0$ increased by $(2$ if $\\mathrm{suffix}$ is true, $4$ otherwise$)(\\text{register }6-\\text{register }7)$ and register $7$ set to register $6$. Otherwise it reaches the answer-false state when $\\mathrm{suffix}$ is true, or the clear-pointer stage $4$ when it is false; in either case register $0$ becomes the initial value of register $2$ or $5$, respectively, and register $7$ becomes its initial value plus $\\mathrm{count}$. In both cases the result register remains unset, and throughout the run every intermediate configuration before the final one satisfies the machine's safety condition and has all register values at most $4|h|+4$.",
+ "hypotheses_covered": [
+  "Boolean parameters mode and suffix",
+  "Bit string h and natural number count",
+  "Initial register assignment v on nine registers",
+  "Every register value is at most 4|h|+4",
+  "Register 2 or 5 equals register 0 plus the specified multiple of count",
+  "Register 7 plus count is at most 4|h|+4",
+  "Register 7 is at most register 6"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

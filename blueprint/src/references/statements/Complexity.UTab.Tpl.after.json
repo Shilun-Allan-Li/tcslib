@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.UTab.Tpl.after",
+ "key": "06b53b9894212742",
+ "kind": "def",
+ "title": "Template continuation labels",
+ "statement": "For natural numbers $k,L$ and a finite binary Turing machine $M$, define the label following a template as follows. A cell template at phase $0,1,2,$ or $3$ maps, respectively, to the phase-$0$ copy label for $cA$, the head label for $cA$, the phase-$0$ copy label for $cB$, or the head label for $cB$, retaining its tape index and bit. A cell template at any phase at least $4$ maps to the phase-$0$ template for the next cell, or to the phase-$0$ input template if that next cell index is outside the $k$ work tapes. An input template at phase $p0$ maps to the phase-$0$ copy label for $iz$; at $zA$ or $zB$ it maps to $iPA$; at $uA$ or $uB$ it maps to $iPB$; and at $e1$ or $e2$ it maps to the phase-$0$ cleanup label for $pa$. A snapshot template maps to the phase-$0$ cleanup label for $lb$, and every other template maps to the stop label.",
+ "hypotheses_covered": [
+  "$k,L$ are natural numbers",
+  "$M$ is a finite binary Turing machine"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

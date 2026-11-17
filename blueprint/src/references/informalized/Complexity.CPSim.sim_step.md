@@ -1,0 +1,18 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/CounterProgSim.lean :: Complexity.CPSim.sim_step -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# One-Step Counter Program Simulation
+
+**Claim.** One counter-program step is simulated by the auxiliary program: the successor is either halted with unchanged output, reached in simulation state when its output remains within the target position, or detected as having passed that position, with the prescribed answer. Throughout the auxiliary path, the counter bounds and instruction preconditions hold.
+
+**Proof.** Start with the encoded auxiliary configuration. Its invariant holds by the encoding fact `G_ev`, which gives the counter bounds and instruction preconditions from the bounds on the original registers, input position, output length, and time coordinate. Now split on the instruction $P(l)$. A halt instruction makes the counter state halt without changing its output, and the auxiliary program returns false. A goto, increment, decrement, or zero-test moves directly to the corresponding simulation label; the encoding evaluates original registers correctly (`ev_rg`), so the auxiliary successor represents the counter-program successor. The encoded output counter and position coordinate have their stated values (`ev_rO`, `ev_rP`) wherever these are used below.
+
+For an output instruction, compare the current output length with $p$. If they are equal, the new bit is exactly at position $p$, so the auxiliary comparison takes the answer branch and halts with the required answer. If they are unequal, the output has not yet passed $p$; the auxiliary machine enters its bump state, increments the output counter, and returns to the simulation label. The output counter update preserves the intended encoding (`upd_rO`), and the intermediate configuration satisfies the invariant by `G_ev`.
+
+For a print instruction, the auxiliary machine clears its temporary register and enters the print loop. If the current output length plus the register's value is at most $p$, the print-loop reachability result shows that it emits the required run of ones and returns to the next simulation label (`pr_reach`). If that sum exceeds $p$, the print-loop halting result shows that it halts with the answer determined by the bit or length condition (`pr_halt`). The bound on the successor output supplies the required bound for these two results.
+
+For a read instruction, first query oracle index $0$ on the encoding of the input position. The oracle hypothesis says this query is positive exactly when the position is within the input. If it is outside, the counter program takes its end branch and the auxiliary machine reaches the corresponding simulation label. If it is inside, query index $1`; its stipulated answer is the input bit at that position. The auxiliary machine then reaches the false or true successor label accordingly, and increments the encoded position coordinate (`upd_rP`). In each case the singleton oracle argument list is valid, and the intermediate states retain the invariant. The oracle-call transition is exactly the stated unary-first call behavior (`astep_call₁`).
+
+**Key facts.** `Complexity.CPSim.G_ev`, `Complexity.CPSim.ev_rO`, `Complexity.CPSim.ev_rP`, `Complexity.CPSim.ev_rg`, `Complexity.CPSim.jeqIn_eq`, `Complexity.CPSim.pr_reach`, `Complexity.CPSim.pr_halt`, `Complexity.CPSim.upd_rO`, `Complexity.CPSim.upd_rP`, `Complexity.LogProg.AHalt.ret`, `Complexity.LogProg.AHalt.step`, `Complexity.LogProg.AReach.refl`, `Complexity.LogProg.AReach.step`, `Complexity.LogProg.astep_call₁`.

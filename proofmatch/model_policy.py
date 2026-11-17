@@ -41,6 +41,7 @@ _FAMILIES: tuple[tuple[str, int, str], ...] = (
     (r"(^|[-_/])fable([-_/]|$)", 4, "claude"),
     (r"(^|[-_/])mythos([-_/]|$)", 4, "claude"),
     # OpenAI (driven through the Codex CLI)
+    (r"(^|[-_/])gpt-6(\.\d+)?(-sol|-terra|-astra|-luna)?([-_/]|$)", 3, "codex"),
     (r"(^|[-_/])gpt-5(\.\d+)?(-codex)?-nano", 1, "codex"),
     (r"(^|[-_/])gpt-5(\.\d+)?(-codex)?-mini", 2, "codex"),
     (r"(^|[-_/])gpt-5(\.\d+)?(-codex)?(-max|-pro)?([-_/]|$)", 3, "codex"),

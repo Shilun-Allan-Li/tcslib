@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.valUAct",
+ "key": "649a2805af61acac",
+ "kind": "def",
+ "title": "Validation action",
+ "statement": "For an $m$-work-tape machine, a work-tape index $r$, states $v_0,v_1,v_S$, a parity bit $e$, and an optional Boolean $a$, define an action as follows. If $a$ is true, move the input head one position to the right, leave all work-tape heads stationary without writing, emit no output, and enter $v_0$ when $e$ is true or $v_1$ when $e$ is false. If $a$ is false and $e$ is true, leave both the input and work-tape heads stationary, make no writes, emit false, and halt; if $a$ is false and $e$ is false, move the input head one position to the right, leave all work-tape heads stationary without writing, emit no output, and enter $v_S$. If $a$ is absent, leave both the input and work-tape heads stationary, make no writes, emit false, and halt.",
+ "hypotheses_covered": [
+  "A natural number $m$ of work tapes",
+  "A work-tape index $r\\in\\{0,\\ldots,m-1\\}$",
+  "States $v_0,v_1,v_S\\in\\Lambda$",
+  "A Boolean parity bit $e$",
+  "An optional Boolean $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

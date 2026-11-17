@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5Decode_native",
+ "key": "4c5aab2038fe40b0",
+ "kind": "lemma",
+ "title": "Bounded binary-to-unary conversion",
+ "statement": "Let $f$ be a polynomial-time computable function from binary words to binary words, and let $N$ be a function from binary words to natural numbers whose unary representation is polynomial-time computable. Then the function that maps $x$ to the unary representation of the value of $f(x)$ when that value is at most $N(x)$, and to the empty word otherwise, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "The unary representation of $N(x)$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a binary-word producer and a unary bound producer are polynomial-time computable, then so is the function returning the unary value of the produced binary word when that value is at most the produced bound, and the empty word otherwise; all malformed requests retain the proved polynomial cost."
+}

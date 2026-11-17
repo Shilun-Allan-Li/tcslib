@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.dataCfg_seek_run",
+ "key": "8abfdbe495eadc9d",
+ "kind": "lemma",
+ "title": "Exact outward positioning scan",
+ "statement": "Let $W$ and $M$ be finite binary Turing machines, let $a,R\\in\\mathbb{N}$, and let a base schedule configuration, an integer $u$, an optional state $q$ of $M$, a bit $b$, read registers, data tapes, and an output word be given. Suppose the base guide tape is the fixed guide of radius $R$. Starting from the seek-left phase with unary head at $u$, guide head at $0$, blank neighbor registers, and the given state, bit, reads, data tapes, and output, exactly $R+2$ simulator steps reach the forward phase with guide head at $-R$, leaving the other listed data and the output unchanged.",
+ "hypotheses_covered": [
+  "$W,M$ are finite binary Turing machines",
+  "$a,R$ are natural numbers",
+  "a base schedule configuration is given",
+  "$u$ is an integer",
+  "$q$ is an optional state of $M$",
+  "$b$ is a Boolean bit",
+  "read registers, data tapes, and output word are given",
+  "base guide tape equals the guide of radius $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$.  Running the\nsimulator exactly $R + 2$ steps from the leftward-seek phase with guide head at\nthe origin and blank neighbor registers reaches the forward phase at $-R$ with\nblank neighbor registers, leaving the saved state, answer bit, reads, data\ntapes, and output unchanged."
+}

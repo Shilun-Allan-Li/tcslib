@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Output_of_nativeChunk",
+ "key": "c2d160e9936d95e2",
+ "kind": "lemma",
+ "title": "Polynomial-time tableau serialization",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $\\mathrm{code}$ be a binary code for its state alphabet, and let $C,e,c,A,d\\in\\mathbb{N}$. Suppose $\\mathrm{emit}$ is a polynomial-time computable function on bit strings. Assume that for every bit string $x$ and every cursor $i$ at most one more than the last round, its output on the packed records for $x$ and $i$ equals the prescribed clause-group chunk at round $i$, or the empty word when $i$ is past the last round. Then the function mapping $x$ to the serialization of the tableau formula at the producer horizon for $x$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "A finite Boolean-alphabet Turing machine $M$",
+  "A binary code for the machine's state alphabet",
+  "Natural parameters $C,e,c,A,d$",
+  "$\\mathrm{emit}$ is polynomial-time computable",
+  "For every $x,i$ with $i$ at most one more than the last round, the stated chunk-or-empty output condition holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let an emission function on body words be polynomial-time computable and agree, on every body word at a legal cursor $i$, with the chunk of round $i$ of the tableau group list, and with the empty word past the last round. Then the function sending an instance $x$ to the serialization of the pure Cook--Levin tableau of $x$ at the producer horizon is polynomial-time computable: startup, cursor updates, clean first returns, saturated silence, exact fuel, and one common polynomial budget are all discharged, and no satisfiability fact enters the word identity."
+}

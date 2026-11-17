@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.foldSafe_step",
+ "key": "8571bfbc17435199",
+ "kind": "lemma",
+ "title": "Preservation of simulator safety",
+ "statement": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing machine over $\\Gamma$, and let $x$ be an input word over the folded alphabet. If a configuration $c$ of the folding simulator of $M$ on $x$ satisfies the safety invariant—its state is not the fresh initial state, all work-head positions are nonnegative, and each nonnegative work-tape cell has its origin flag set exactly at position $0$—then the configuration after one simulator step also satisfies the safety invariant.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "Equality on $\\Gamma$ is decidable",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a word over the folded alphabet",
+  "$c$ is a configuration of the folding simulator on $x$",
+  "$c$ satisfies the safety invariant"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape machine over a finite alphabet with decidable equality and\nlet $c$ be a configuration of the folding simulator of $M$, on an arbitrary\nfolded-alphabet input, satisfying the safety invariant.  Then the configuration\nobtained after one step of the simulator also satisfies the safety invariant."
+}

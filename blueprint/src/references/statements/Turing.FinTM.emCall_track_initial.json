@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.emCall_track_initial",
+ "key": "fd77a78ce0d1b1ea",
+ "kind": "lemma",
+ "title": "Tracked-machine initialization",
+ "statement": "Let $M$ be a finite Turing machine over Booleans and let $x$ be a Boolean input word. After one step from its initial configuration on $x$, the tracked machine is in the completed tracked configuration of $M$'s initial configuration, with both marker banks marking the origin on every tape.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x$ is a Boolean list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine $M$ and input $x$, one step of the tracked evaluator from its initial\nconfiguration on $x$ equals the completed tracked configuration of the initial\nconfiguration of $M$ on $x$ with all visited bounds zero: both marker banks hold origin\nmarks, the data bank is blank, and the output is empty."
+}

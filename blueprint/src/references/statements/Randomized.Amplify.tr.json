@@ -1,0 +1,18 @@
+{
+ "lean_name": "Randomized.Amplify.tr",
+ "key": "7ff83a29fad261bb",
+ "kind": "def",
+ "title": "Amplified machine transition",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $r$ be a natural number, let $\\mathrm{dec}:\\mathbb{N}\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and let $b$ be a choice bit. The transition function of the amplified simulation acts on phases, an optional input symbol, and the work-tape contents as follows. In a run phase, it applies $N$'s transition for choice $b$ to the selected simulated run's state and work tapes, performs that action on the corresponding block of work tapes, and emits no output; if the simulated transition continues, it updates the accumulated output using the stated aggregation rule and remains in the run phase, while if it halts, it enters the rewind phase and increments the counter exactly when the accumulated output is true. In a rewind phase, if another simulation remains, it moves the input head left and enters the seek phase for that simulation; otherwise it stays still, outputs $\\mathrm{dec}(c)$, and halts. In a seek phase, on a blank input cell it moves right and starts the indicated simulation in $N$'s initial state with no accumulated output; on a present input symbol it moves left and remains in the seek phase.",
+ "hypotheses_covered": [
+  "finite nondeterministic Turing machine $N$ over Boolean symbols",
+  "natural number $r$",
+  "Boolean-valued function $\\mathrm{dec}$ on natural numbers",
+  "choice bit $b$",
+  "phase, optional input symbol, and work-tape contents"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

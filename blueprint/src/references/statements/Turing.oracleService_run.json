@@ -1,0 +1,29 @@
+{
+ "lean_name": "Turing.oracleService_run",
+ "key": "d5618361d0b59236",
+ "kind": "theorem",
+ "title": "Oracle service run",
+ "statement": "Let $C$ be a finite-state Boolean machine with $C.k$ work tapes, where $0<C.k$, and let $en$ and $ex$ be states of $C$. Let $\\iota$ be an embedding of $1+C.k$ tapes into a host machine with $k$ work tapes, and let $src$ be a host tape distinct from the embedded bank tape indexed by the first virtual bank index. Fix a Boolean input word $x$, a host configuration $d$ in sweep phase whose embedded tapes are all blank and whose embedded tape heads are all at cell $0$, and Boolean words $arg$ and $result$ and a natural number $t$. Suppose that for every integer $p$ with $-1\\le p\\le |arg|$, the content of $src$ at offset $p$ from its head is the content of the buffer storing $arg$ at cell $p$. If running $C$ from state $en$ with $arg$ on its first work tape and all other work tapes blank reaches the configuration with state $ex$ and $result$ on its first work tape, all other work tapes blank, after $t$ steps, and does not reach state $ex$ at any earlier time, then the composed machine, started from $d$ with its state mapped into the first component of the disjoint union, reaches after $2|arg|+3+t$ steps the configuration obtained by replacing the embedded first bank tape with the buffer storing $result$ and mapping the state into the second component with value $(ex,\\mathrm{true})$. At every earlier time $s<2|arg|+3+t$, its state is different from $(ex,\\mathrm{true})$ in the second component.",
+ "hypotheses_covered": [
+  "$C$ is a finite-state Boolean machine with $C.k$ work tapes",
+  "$0<C.k$",
+  "$en$ and $ex$ are states of $C$",
+  "$\\iota$ embeds $1+C.k$ virtual tapes into the $k$ host tapes",
+  "$src$ differs from the embedded tape indexed by the first virtual bank index",
+  "Boolean input word $x$",
+  "host configuration $d$ is in sweep phase",
+  "all embedded tapes are blank",
+  "all embedded tape heads are at cell $0$",
+  "for every integer $p$ with $-1\\le p\\le |arg|$, the source tape content at offset $p$ matches the buffer storing $arg$",
+  "the $t$-step run from $en$ with $arg$ on the first work tape ends in state $ex$ with $result$ on the first tape and all other tapes blank",
+  "no earlier run time $s<t$ reaches state $ex$",
+  "Boolean words $arg$ and $result$",
+  "natural number $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

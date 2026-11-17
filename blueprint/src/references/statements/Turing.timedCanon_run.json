@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.timedCanon_run",
+ "key": "bf496a35d1673456",
+ "kind": "lemma",
+ "title": "Timed canonizer run correspondence",
+ "statement": "Let $c$ be an effective machine code, let $b$, $\\alpha$, and $x$ be finite Boolean strings, and let $t\\in\\mathbb{N}$. After $4|b|+3|\\alpha|+8+t$ steps, the timed canonizer started on $\\langle\\langle b,\\alpha\\rangle,x\\rangle$ is in the buffered second-phase configuration formed from the canonizer's configuration after $t$ steps on $\\alpha$, together with some Boolean tag, input-head position $4|b|+2|\\alpha|+7$, buffer tapes containing $b$, and their heads at position $|b|$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code",
+  "$b$, $\\alpha$, and $x$ are finite Boolean strings",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine code, and let $b$, $\\alpha$, and $x$ be finite Boolean\nstrings. For every $t\\in\\mathbb{N}$, there is a Boolean tag $\\varepsilon$ such that\nafter $4|b|+3|\\alpha|+8+t$ steps on $\\langle\\langle b,\\alpha\\rangle,x\\rangle$, the timed\ncanonizer's configuration equals the buffered second-phase configuration formed from the\ncanonizer's configuration after $t$ steps on $\\alpha$, tag $\\varepsilon$, input-head\nposition $4|b|+2|\\alpha|+7$, copies of the buffer tape holding $b$, and corresponding\nheads at $|b|$."
+}

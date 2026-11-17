@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.arMoveCfg_run",
+ "key": "f317675ece9b63a5",
+ "kind": "lemma",
+ "title": "Running the move sweep",
+ "statement": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $N\\in\\mathbb{N}$, let $E$ inject optional $\\Gamma$-symbols into blocks of $N+1$ optional bits, and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an injection. For a finite Turing machine $M$ over $\\Gamma$, a binary word $x$, a configuration $c$ on its letterwise $e$-image, and an action $a$ of $M$, for every $r\\in\\mathbb{N}$ with $r\\le N+1$, running the binary simulator for $r+1$ steps from the move-sweep configuration at counter $r$ yields the encoded configuration of the result of applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite and has decidable equality",
+  "$N\\in\\mathbb{N}$",
+  "$E$ is an injection from optional symbols to blocks",
+  "$e$ is an injection from bits to $\\Gamma$",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a binary word",
+  "$c$ is a configuration on the letterwise $e$-image of $x$",
+  "$a$ is an action for $M$",
+  "$r\\in\\mathbb{N}$ satisfies $r\\le N+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every counter $r \\le N+1$, running the binary block-code simulator for $r+1$ steps\nfrom the move-sweep configuration (source configuration $c$, source action $a$) at\ncounter $r$ reaches the encoded configuration of the result of applying $a$ to $c$."
+}

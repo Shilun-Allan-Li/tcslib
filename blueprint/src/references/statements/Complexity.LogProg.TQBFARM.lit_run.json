@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.lit_run",
+ "key": "04f7d0e3aa9b9ec2",
+ "kind": "theorem",
+ "title": "Run through a serialized literal",
+ "statement": "Let $x$ be a bit string, $B,v\\in\\mathbb{N}$, $s,b\\in\\{0,1\\}$, and let $st=(K,S,P,T,Z,C,V)$ be a seven-register state. Suppose the suffix of $x$ starting at position $P$ is the serialization $1^{v+1}0b$ followed by a bit string $rest$, every register of $st$ is at most $B$, and $|x|\\leq B$. If the scratch registers $T,Z,C,V$ are zero, the machine has a guarded run from label $lt(s)$ with state $st$ to label $cl(s\\lor(\\mathrm{asg}(K,S,v)=b))$ with state $(K,S,P+v+3,T,Z,C,V)$.",
+ "hypotheses_covered": [
+  "$s,b$ are Boolean values",
+  "$v$ is a natural number",
+  "$rest$ is a bit string",
+  "the input suffix at position $P$ is the encoding of $(v,b)$ followed by $rest$",
+  "all seven registers are at most $B$",
+  "the input length is at most $B$",
+  "$T=Z=C=V=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $s,b$ bits, $v$ a natural number, $rest$\na bit string, and $st$ a seven-register state. Suppose the suffix of $x$ beginning at\nposition $st.P$ is the serialization of the literal $(v,b)$ followed by $rest$, every\nregister of $st$ is at most $B$, $|x|\\leq B$, and the scratch registers $T,Z,C,V$ are\nzero. Then the machine has a guarded run from state $\\mathrm{lt}(s)$ and register state\n$st$ to state $\\mathrm{cl}(s\\lor(\\mathrm{asg}(st.K,st.S,v)=b))$ with the same registers\nexcept that $P$ is increased by $v+3$."
+}

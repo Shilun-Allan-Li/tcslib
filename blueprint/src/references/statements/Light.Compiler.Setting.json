@@ -1,0 +1,26 @@
+{
+ "lean_name": "Light.Compiler.Setting",
+ "key": "18cf6aa31c9a1818",
+ "kind": "structure",
+ "title": "Compiler setting",
+ "statement": "A compiler setting for word size $W$ consists of size and layout data, a light program $P$, and a machine-code list. It includes a local-variable bound $F$, procedure entry positions, a dispatcher position, run limits, and a stack-cell count $Q$; the word size must satisfy the stated fit inequalities for the limits, stack, and dispatcher-sized pool, and the pool bound must satisfy $2(F+1)\\leq\\mathrm{disp}$. Every procedure body in $P$ must have compiled code at its entry followed by its return sequence, with the resulting code ending no later than the dispatcher, and every body must have width at most $F$; the dispatcher code must occur at the dispatcher position.",
+ "hypotheses_covered": [
+  "A word size $W$",
+  "A local-variable bound $F$",
+  "A list of procedure entry positions",
+  "A dispatcher position",
+  "Run limits",
+  "A stack-cell count $Q$",
+  "Word-fit inequalities for the limits, stack, and pool",
+  "The offset bound $2(F+1)\\leq\\mathrm{disp}$",
+  "A light program $P$",
+  "A machine-code list",
+  "Every procedure body has its compiled body and return sequence at its entry, ending by the dispatcher",
+  "Every procedure body has width at most $F$",
+  "The dispatcher code occurs at its designated position"
+ ],
+ "confidence": "low",
+ "caveat": "Several required auxiliary notions, including code placement, body width, and return-sequence size, are used but not defined in the payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

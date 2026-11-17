@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.oblAction_budget",
+ "key": "e9e23b82a21251ef",
+ "kind": "lemma",
+ "title": "Budget tape action",
+ "statement": "Let $S$ be a state type, $k \\in \\mathbb{N}$, $q \\in S$, $b$ an optional schedule symbol, and $d \\in \\{-1,0,1\\}$. The schedule action with successor state $q$, stationary input head, and the write-and-move instruction $(b,d)$ on the first of the three administrative tapes—leaving the other two and the first $k$ tapes untouched—equals the action that performs that same instruction only on the designated budget tape and enters state $q$.",
+ "hypotheses_covered": [
+  "A state type $S$",
+  "$k \\in \\mathbb{N}$",
+  "A state $q \\in S$",
+  "An optional schedule symbol $b$",
+  "A direction $d \\in \\{-1,0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider a machine with $k$ leading work tapes followed by three administrative tapes,\nof which the first is the budget tape.  For every state $q$, optional symbol $s$, and\ndirection $d$, the schedule action that enters $q$, keeps the input head fixed, writes\n$s$ with direction $d$ on the budget tape, and leaves the two remaining administrative\ntapes and all $k$ leading tapes untouched equals the single-lane action on the budget\ntape writing $s$, moving in direction $d$, and entering $q$."
+}

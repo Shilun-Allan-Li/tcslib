@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.inpSrcs",
+ "key": "bf4e82ad31cb409a",
+ "kind": "def",
+ "title": "Input source list",
+ "statement": "Let $M$ be a Turing machine with Boolean symbols, let $\\ell$ be a finite list of bit sources, and let $T,t,p\\in\\mathbb{N}$. The input source list at time $t$ and position $p$ consists, in order, of constants indicating whether $t=0$, $p=1$, $p=0$, $p=|\\ell|+1$, and $1\\le p\\le |\\ell|$; the source $\\ell_{p-1}$ when $1\\le p\\le |\\ell|$, and the false constant otherwise; the three input-history sources at positions $p-1,p,p+1$ with their respective time and boundary flags; the two instruction-history sources at position $p$ with indices $1$ and $2$; followed by the previous-snapshot sources at time $t$.",
+ "hypotheses_covered": [
+  "$M$ is a Turing machine with Boolean symbols",
+  "$\\ell$ is a finite list of bit sources",
+  "$T$ is a natural number",
+  "$t$ and $p$ are natural numbers"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the input-history, instruction-history, or previous-snapshot source constructions, so their outputs can only be specified by their roles and arguments.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

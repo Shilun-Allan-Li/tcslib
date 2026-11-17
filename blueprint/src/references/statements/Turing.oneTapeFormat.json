@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.oneTapeFormat",
+ "key": "5a532ad34a0e2c27",
+ "kind": "def",
+ "title": "One-work-tape code format",
+ "statement": "The one-work-tape format uses machines with Boolean symbols and $n+1$ states, with tables assigning an action to each state, possibly blank input symbol, and possibly blank work-tape symbol. It serializes a machine by pairing the bit representation of $n$ with the unary encoding of its initial state followed by its table bits; its table reader and skipper parse or erase the corresponding entries. The format has guard constant $81$, and every malformed string denotes the fixed fallback machine; assembling a machine records the chosen state count, serialization has the stated paired form, every machine can be assembled, the reader correctly recovers tables and the remaining suffix, erasing the read table agrees with skipping it, and every table has at least $81(n+1)$ bits.",
+ "hypotheses_covered": [
+  "A natural number $n$ indexing the state count",
+  "The one-work-tape format as defined in the statement"
+ ],
+ "confidence": "low",
+ "caveat": "The declaration defines a structure instance with several fields and laws; some referenced constructions, including the fallback machine and table readers, are not defined in the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

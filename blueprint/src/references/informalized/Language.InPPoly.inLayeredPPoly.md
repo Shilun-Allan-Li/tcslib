@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean :: Language.InPPoly.inLayeredPPoly -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: low -->
+
+# Polynomial Size in Layered Circuits
+
+**Claim.** A language recognized by a well-formed fan-in-two circuit family of polynomial size is recognized by a finite layered family using identity, NOT, and unbounded fan-in AND gates, also of polynomial size.
+
+**Proof.** Take a fan-in-two family $C$ witnessing polynomial size, with size at most $a(n+1)^k$. Fan-in two gives well-formedness (`BoolCircuit.DAGCircuitFamily.HasFaninTwo.isWellFormed`). First apply the De Morgan conversion to obtain a well-formed family $E$ with no OR gates. This conversion preserves evaluation (`BoolCircuit.DAGCircuit.deMorgan_eval`) and has size at most $n+|C_n|(|C_n|+2)$ (`BoolCircuit.DAGCircuit.deMorgan_size_le`). Writing $S=|C_n|$, the assumed polynomial bound implies $S+1\le(a+1)(n+1)^k$, so $|E_n|\le S(S+2)$ is bounded by a polynomial as well. Convert each $E_n$ to a layered circuit. Because it has no OR gates, this layered conversion uses only the permitted standard gates (`BoolCircuit.DAGCircuit.toLayered_onlyUsesGates`); the resulting family is finite (`BoolCircuit.DAGCircuit.toLayered_finite`) and its size is at most $(|E_n|+1)(|E_n|+|C_n|+1)$ as established by the conversion size bound (`BoolCircuit.DAGCircuit.toLayered_size_le`). In particular, using the bounds above, its size is at most $(S+1)^4$, hence at most $(a+1)^4(n+1)^{4k}$. The evaluation identities for De Morgan conversion and layered conversion (`BoolCircuit.DAGCircuit.deMorgan_eval`, `BoolCircuit.DAGCircuit.toLayered_eval₁`), together with the Boolean-to-numeric acceptance correspondence (`BoolCircuit.b2f_eq_one_iff`), show that the layered family recognizes exactly the original language. The layered polynomial-size characterization (`Language.inLayeredPPoly_iff`) then gives the conclusion.
+
+**Key facts.** `Language.inPPoly_iff`, `BoolCircuit.DAGCircuitFamily.HasFaninTwo.isWellFormed`, `BoolCircuit.DAGCircuit.deMorgan_isWellFormed`, `BoolCircuit.DAGCircuit.deMorgan_size_le`, `BoolCircuit.DAGCircuit.toLayered_finite`, `BoolCircuit.DAGCircuit.toLayered_onlyUsesGates`, `BoolCircuit.DAGCircuit.toLayered_size_le`, `BoolCircuit.DAGCircuit.deMorgan_eval`, `BoolCircuit.DAGCircuit.toLayered_eval₁`, `BoolCircuit.b2f_eq_one_iff`, `Language.inLayeredPPoly_iff`.
+
+**Caveat.** The supplied upstream statement for `toLayered_size_le` uses the original circuit size in the bound, while the proof derives a bound in terms of the converted circuit size. The account follows the proof's intended estimate, but the provided statement alone does not justify that estimate.

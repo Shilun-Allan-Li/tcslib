@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_unaryToken",
+ "key": "6c88b3e660a46dbe",
+ "kind": "theorem",
+ "title": "Linear-time unary-token encoding",
+ "statement": "There exist a finite Turing machine $M$ over the Boolean alphabet and a natural number $c$ such that, on every Boolean input $x$ of length $n$, $M$ halts within $c(n+1)$ steps and outputs the pair encoding of the maximal initial run of $1$ bits, including the first following $0$ if there is one, together with the remaining suffix. If the input consists entirely of $1$ bits, the token is the whole input and the remainder is empty.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite Turing machine $M$ and a constant $c$ such that $M$\ncomputes, within $c\\,(n+1)$ steps on inputs of length $n$, the function\nsplitting its input at the leading unary token --- the maximal leading run\nof ones with its terminating zero, if present --- and emitting the\nself-delimiting pair encoding of the token and the remainder."
+}

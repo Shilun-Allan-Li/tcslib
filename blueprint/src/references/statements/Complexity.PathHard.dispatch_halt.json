@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.PathHard.dispatch_halt",
+ "key": "d55b9ffb1a8bc222",
+ "kind": "theorem",
+ "title": "Halting of the Dispatch Procedure",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, and let $x$ and $\\beta$ be finite Boolean words. Start the procedure in its dispatch state with input the pair encoding of $x$ and $\\beta$, register values given by a fifteen-entry record whose entries are all at most $B$, and no answer recorded. It halts with the Boolean value that is true exactly when there is an edge from the record's source vertex to its target vertex, as defined by $N$, input $x$, and radius given by the record.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$N$ is a finite nondeterministic Turing machine with Boolean input symbols",
+  "$x,\\beta$ are finite Boolean words",
+  "All fifteen entries of the register record are at most $B$",
+  "The procedure is in mode false",
+  "The input is the pair encoding of $x$ and $\\beta$",
+  "The initial state is the dispatch state",
+  "The initial answer is absent",
+  "The returned Boolean is the decision of the edge relation for radius $s$, source $u$, and target $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $N$ be a finite nondeterministic Turing machine\nover bits, and let $x,\\beta$ be bit strings. For any state record $\\mathrm{st}$ whose\nfifteen natural-number entries are all at most $B$, the procedure started on the paired\ninput $\\langle x,\\beta\\rangle$ in its dispatch state, with registers given by\n$\\mathrm{st}$, halts with answer true exactly when the edge relation from vertex\n$\\mathrm{st}.u$ to vertex $\\mathrm{st}.i$ holds for $N$, input $x$, and radius\n$\\mathrm{st}.s$; every configuration strictly before halting has all register values at\nmost $B$."
+}

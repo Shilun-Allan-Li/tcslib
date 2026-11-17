@@ -46,7 +46,7 @@ local instance : IsProbabilityMeasure standardGaussianMeasure :=
 
 local instance {n : ℕ} (ρ : ℝ) :
     IsProbabilityMeasure (correlatedGaussianMeasure (n := n) ρ) := by
-  unfold correlatedGaussianMeasure
+  rw [correlatedGaussianMeasure_eq]
   exact Measure.isProbabilityMeasure_map (by fun_prop)
 
 /-- The bivariate Gaussian profile functional dominates the ordinary stability
@@ -66,7 +66,7 @@ theorem gaussianNoiseStability_le_bivariate_integral {n : ℕ}
   have hc : ρ ∈ Set.Icc (-1 : ℝ) 1 := ⟨by linarith [hρ.1], hρ.2.le⟩
   have hL2 : MemLp f 2 (Measure.pi fun _ : Fin n => standardGaussianMeasure) :=
     memLp_of_bounded (Filter.Eventually.of_forall hfrange) hf.aestronglyMeasurable 2
-  rw [gaussianNoiseStability, ← integral_correlatedGaussianMeasure hc hL2 hL2]
+  rw [gaussianNoiseStability_eq, ← integral_correlatedGaussianMeasure hc hL2 hL2]
   apply integral_mono (integrable_correlatedGaussianMeasure_mul hc hL2 hL2)
     (integrable_gaussianBivariateStability_comp (correlatedGaussianMeasure ρ) hc
       (hf.comp measurable_fst) (hf.comp measurable_snd)

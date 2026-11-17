@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.MultiTapeTM.ComputableInTimeAndSpace.mono",
+ "key": "a3fbead958145166",
+ "kind": "theorem",
+ "title": "Monotonicity of computability bounds",
+ "statement": "Suppose a function $f$ is computable between given injective encodings into binary words within time bound $t$ and space bound $s$. If $t(a)\\le t'(a)$ and $s(a)\\le s'(a)$ for every input $a$, then $f$ is computable with the same machine and encodings within bounds $t'$ and $s'$.",
+ "hypotheses_covered": [
+  "$f$ is a function between types $\\alpha$ and $\\beta$",
+  "The input and output encodings into binary words are injective",
+  "$t,s,t',s'$ are input-indexed natural-number bounds",
+  "$f$ is computable within bounds $t,s$",
+  "$t(a)\\le t'(a)$ for every $a$",
+  "$s(a)\\le s'(a)$ for every $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ be a function computable within input-indexed time bound $t$ and\nspace bound $s$ with respect to given binary encodings, and let $t'$ and $s'$\nbe bounds with $t(a) \\le t'(a)$ and $s(a) \\le s'(a)$ for every input $a$.\nThen $f$ is computable within the bounds $t'$ and $s'$ with respect to the\nsame encodings."
+}

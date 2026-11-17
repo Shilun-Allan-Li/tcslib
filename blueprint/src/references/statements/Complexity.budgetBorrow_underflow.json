@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.budgetBorrow_underflow",
+ "key": "469f7d808b7b3d3b",
+ "kind": "lemma",
+ "title": "Underflow occurs exactly at zero",
+ "statement": "For every finite bit word $b$, the borrow pass started with borrow bit $1$ ends with borrow bit $1$ if and only if the little-endian value of $b$ is zero.",
+ "hypotheses_covered": [
+  "Finite bit word",
+  "Initial borrow bit is true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit word $w$, the borrow pass entered with a set borrow flag ends with a set\nflag if and only if the little-endian value of $w$ is $0$; this holds also for words\npadded with high zero bits."
+}

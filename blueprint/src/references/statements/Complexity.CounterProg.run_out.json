@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.run_out",
+ "key": "1e043266e82f209d",
+ "kind": "theorem",
+ "title": "Output Is Extended by a Suffix",
+ "statement": "Let $R\\in\\mathbb{N}$, let $\\Lambda$ be a set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, and fix an input bit string $x$. For every abstract state $s$ and every $t\\in\\mathbb{N}$, there is a bit string $e$ such that the output after $t$ steps from $s$ is its initial output followed by $e$.",
+ "hypotheses_covered": [
+  "$R\\in\\mathbb{N}$ and $\\Lambda$ is a set of labels.",
+  "$P$ is a counter program over $R$ registers and labels in $\\Lambda$.",
+  "An input bit string $x$ is fixed.",
+  "An abstract state $s$ is specified.",
+  "$t\\in\\mathbb{N}$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, $s$ an abstract state of $P$\nwith output $o$, and $t \\in \\mathbb{N}$.  Then there is a bit string $e$ such\nthat the output after $t$ steps of $P$ on $x$ from $s$ is $o\\,e$."
+}

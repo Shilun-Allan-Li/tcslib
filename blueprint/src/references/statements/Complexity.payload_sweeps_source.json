@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.payload_sweeps_source",
+ "key": "fb017efc494accd9",
+ "kind": "lemma",
+ "title": "Backward sweep for a source action",
+ "statement": "Let $c$ be a configuration of a $k$-work-tape machine on a binary input $x$, let $a$ be an action, let $z\\in\\mathbb Z$, and let $n\\in\\mathbb N$. Folding the backward row transducer with the shift directions prescribed by $a$, over the reversed cached zone of written payloads of length $n$ starting at $z$ and with initial register equal to the written payloads at $z+n$, yields register equal to the written payloads at $z$ and the reversed uncached zone of length $n$ of the source payloads for the configuration obtained by applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A state type $S$",
+  "A binary input word $x$",
+  "A configuration $c$ on input $x$",
+  "An action $a$",
+  "An integer coordinate $z$",
+  "A natural-number length $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a binary machine, $\\alpha$ an action, $z$ a coordinate,\nand $n$ a width.  Folding the backward transducer with the shift directions of\n$\\alpha$, seeded with the written payloads of $c$ and $\\alpha$ at $z + n$, over the\nreversed cached zone of written payloads starting at $z$ yields the written payloads\nat $z$ together with the reversed uncached zone of the head-centered payloads of the\nconfiguration obtained by applying $\\alpha$ to $c$; the two finite transductions thus\nrealize one source action on the whole fixed layout."
+}

@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.sc_rounds",
+ "key": "a32e0ab61bac5c89",
+ "kind": "theorem",
+ "title": "Clocked rounds and head control",
+ "statement": "Let $e$ be an injection from $\\\\{\\\\mathrm{false},\\\\mathrm{true}\\\\}$ into an alphabet $\\\\Gamma$, let $M$ be a $k$-work-tape Turing machine with state set $S$, and let $\\\\mathrm{stopAt}:S\\\\to\\\\{\\\\mathrm{false},\\\\mathrm{true}\\\\}$. Fix an input word $x$, a configuration $c$ of $M$ on $x$, and a state $q\\\\in S$ such that $c$ has state $q$; let $w$ be a Boolean word, $ct:\\\\mathbb Z\\\\to\\\\mathrm{Option}(\\\\Gamma)$ a tape, and $cp\\\\in\\\\mathbb Z$. Assume that for every integer $p$ with $-1\\\\le p\\\\le |w|$, the tape cell $ct(cp+p)$ contains the symbol of $w$ at offset $p$ after encoding by $e$ (with blank cells represented by absence). Let $n\\\\in\\\\mathbb N$ be at most the integer represented by the binary digits of $w$, and suppose the run of $M$ from $c$ is not stopped at any time $v<n$. Then, after $\\\\mathrm{counterOverhead}(w,n)+n$ steps, the clocked machine reaches the clock configuration whose body component is the configuration of $M$ after $n$ steps, whose clock tape is patched with the encoded counter word for round $n$, and whose clock head is at $cp$. The run segment up to that time avoids the exit states before its endpoint and keeps the clock head in $[cp-1,cp+|w|]$ throughout. Moreover, at every time $u\\\\le \\\\mathrm{counterOverhead}(w,n)+n$, the clocked configuration consists of a clock state, the body configuration of $M$ at some time $v\\\\le n$, a tape, and a head position in $[cp-1,cp+|w|]$.",
+ "hypotheses_covered": [
+  "An injection from the Boolean alphabet into $\\\\Gamma$",
+  "A $k$-tape machine $M$ with state set $S$",
+  "A stopping predicate on $S$",
+  "An input word $x$ and a configuration $c$ on $x$",
+  "A state $q$ such that $c$ has state $q$",
+  "A Boolean word $w$",
+  "A tape $ct$ and base position $cp$",
+  "The tape agrees with the encoded buffer word at every offset from $-1$ through $|w|$",
+  "A natural number $n$ bounded by the integer represented by the binary digits of $w$",
+  "The run of $M$ from $c$ is not stopped at each time $v<n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

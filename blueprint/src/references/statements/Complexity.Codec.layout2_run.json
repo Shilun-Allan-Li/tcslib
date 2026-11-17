@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Codec.layout2_run",
+ "key": "d049c0abbaffb521",
+ "kind": "theorem",
+ "title": "Execution of the second layout stage",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, and let $y,x,w,w',r$ be Boolean words with $y$ equal to the nested pair encoding of $x$, the pair encoding of $w$, and the pair encoding of $w'$ with remainder $r$. Let $R$ be a register record and $s$ a natural number. Suppose every register of $R$ is at most $(8W(N)+8)(|y|+1)$, and that $R.B=2|x|+2|w|+4$, $R.P=2|x|+2|w|+2|w'|+6$, $R.S=s\\le 2|y|$, $R.Wp$ is the length of the binary representation of $|x|$, and $R.E2=R.F2=R.T=R.Pos2=0$. Then either $|w'|=W(N)(2s+1)+R.Wp+1$ and the bit of $w'$ at position $W(N)(2s+1)+R.Wp$ is true, in which case the step-mode program reaches the input-checking stage from the copying stage with registers set as follows: $E2=b+4W(N)s+2W(N)$, $F2=b+4W(N)s+2W(N)+2R.Wp$, $U=b+4W(N)s+2W(N)+2R.Wp+4$, $Q1=b+4W(N)s+2W(N)$, $Pos2$ equal to the value of the first $R.Wp$ bits of $w'$ after its first $W(N)(2s+1)$ bits are dropped, and $T=0$, where $b=2|x|+2|w|+4$; or this length-and-bit condition fails, and the step-mode program halts with answer false. In both cases, the run satisfies the register bound and safety condition at every time before its endpoint.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$y,x,w,w',r$ are Boolean words with the specified nested pair encoding",
+  "Every register of $R$ is bounded by $(8W(N)+8)(|y|+1)",
+  "$R.B=2|x|+2|w|+4$",
+  "$R.P=2|x|+2|w|+2|w'|+6$",
+  "$R.S=s$ and $s\\le 2|y|$",
+  "$R.Wp$ equals the binary-word length of $|x|$",
+  "$R.E2=R.F2=R.T=R.Pos2=0"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem's program labels, register meanings, and safety predicate are repository-specific and lack informal definitions in the supplied context, so the execution claim can only be rendered descriptively.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

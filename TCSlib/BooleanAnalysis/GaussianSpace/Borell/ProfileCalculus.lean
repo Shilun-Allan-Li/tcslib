@@ -87,7 +87,7 @@ private lemma hasDerivAt_quantile_conditional_integral (ρ t d : ℝ) {a : ℝ}
   have hd := (hasDerivAt_integral_Iic hi hc (standardGaussianQuantile a)).comp a
     (hasDerivAt_standardGaussianQuantile ha)
   convert hd using 1
-  dsimp [f, gaussianIsoperimetric]
+  dsimp [f, gaussianIsoperimetric_eq]
   field_simp [(standardGaussianPDF_pos (standardGaussianQuantile a)).ne']
 
 /-- The first partial derivative of the bivariate probability profile is a

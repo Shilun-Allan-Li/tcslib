@@ -1,0 +1,16 @@
+{
+ "lean_name": "Randomized.exists_FinNDTM_of_eff",
+ "key": "96557fe21d4374b4",
+ "kind": "theorem",
+ "title": "Efficient machine for randomized computation",
+ "statement": "Let $M$ map pairs of bit strings to a bit, and suppose the verifier that returns $M(x,r)$ is efficient in the specified polynomial-time model. For any natural numbers $a,k$, there are natural numbers $K,e$ and a finite nondeterministic Turing machine $N$ such that, for every input $x$, on every choice word of length exactly $K(|x|^e+1)$ the machine halts; its output is a one-bit word; and for each bit $b$, the probability that its output is $b$ equals the probability that $M(x,u)=b$ when $u$ is uniformly chosen from bit strings of length $a(|x|+1)^k$. Moreover, on every such choice word, the output equals $M(x,u)$ for some bit string $u$ of that length.",
+ "hypotheses_covered": [
+  "The verifier returning $M(x,r)$ is efficient in the specified polynomial-time model",
+  "$M$ is a map from pairs of bit strings to a bit",
+  "$a,k$ are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Randomized.eff_boolVerifier_of_test",
+ "key": "6bd26491afe9ee30",
+ "kind": "theorem",
+ "title": "Efficiency from a polynomial-time test",
+ "statement": "Let $M$ be a Boolean-valued function of two finite Boolean strings, and let $t$ be a Boolean-valued function on finite Boolean strings. Suppose the function that maps each string $z$ to the one-symbol output containing $t(z)$ is computable in polynomial time, and suppose $t(\\langle x,r\\rangle)=M(x,r)$ for every pair of strings, where $\\langle x,r\\rangle$ is formed by doubling each bit of $x$, appending the separator $01$, and then appending $r$. Then the verifier that accepts exactly when $M(x,r)$ is true is efficient in the polynomial-time verifier model.",
+ "hypotheses_covered": [
+  "$M$ maps pairs of finite Boolean strings to Boolean values",
+  "$t$ maps finite Boolean strings to Boolean values",
+  "the one-symbol-output function $z\\mapsto[t(z)]$ is polynomial-time computable",
+  "$t(\\langle x,r\\rangle)=M(x,r)$ for every pair of finite Boolean strings"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the verifier model or its efficiency predicate, so their intended meaning cannot be rendered more explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

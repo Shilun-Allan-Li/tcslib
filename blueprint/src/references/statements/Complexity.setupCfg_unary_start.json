@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_unary_start",
+ "key": "e8c82731a56bc49f",
+ "kind": "lemma",
+ "title": "Unary Counter Initialization",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet and let $a,N\\in\\bbn$. For any input word, base configuration, input-head position, budget-head position and tape, and guide-head position and tape, starting in the unary-start phase with unary head at $N+1$ and unary tape containing $N$ markers, after $N+2$ steps the machine is in the first rightward layout phase with unary head at $1$; the resulting configuration has all the same data and other head positions.",
+ "hypotheses_covered": [
+  "A finite Boolean-alphabet machine $W$",
+  "Natural parameters $a$ and $N$",
+  "An input word and base configuration",
+  "An input-head position",
+  "Integer budget-head position and budget tape",
+  "Guide-head position and guide tape",
+  "Initial unary-start phase, unary head at $N+1$, and unary tape with $N$ markers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From a setup configuration in the unary-start phase with unary head at cell $N+1$ over\nthe unary tape with $N$ markers, exactly $N+2$ steps rewind the entire newly\nconstructed unary segment and reach the first rightward layout phase with unary head at\ncell $1$; all tapes and all other heads are unchanged."
+}

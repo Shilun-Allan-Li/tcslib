@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clWipe_backward",
+ "key": "bb672e65df4a6a3a",
+ "kind": "lemma",
+ "title": "Backward erasing pass",
+ "statement": "Let $x$ be a Boolean word, let $p$ be an input-head position among the $|x|+2$ positions, let $s$ be an integer, and let $v$ be a Boolean stream word. For every Boolean word $w$, running the reset machine from its erasing control with the stream tape holding $v$ and its head at $s$, and the target tape holding $w$ with its head at $|w|-1$, for $|w|+1$ steps yields the configuration with the same input-head position and stream contents and head, the target tape blank with its head at zero, and the completed control.",
+ "hypotheses_covered": [
+  "Boolean word x",
+  "Input-head position p in Fin(|x|+2)",
+  "Boolean stream word v",
+  "Integer s",
+  "Boolean word w",
+  "Run duration |w|+1",
+  "Initial target head position |w|-1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stream, stream head, and target word $w$, running the reset machine in its erasing control at cell $|w| - 1$ for $|w| + 1$ steps erases every occupied target cell, including the first one, and returns the target head to zero in the completed control; the stream is neither read nor modified."
+}

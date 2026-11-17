@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_clean_complete",
+ "key": "6ad143fc72f68624",
+ "kind": "lemma",
+ "title": "Clean completion of a halting computation",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $c_0$ be a configuration on input $x$, and let $y$ be a Boolean word. If after $T$ steps from $c_0$ the machine is halted and its output is $y$, then there is a time $\\tau \\le 3T+|x|+|y|+8$ at which the clean wrapper, started from the captured logged configuration of $c_0$ with empty captured word and output, reaches the administrative configuration with the source work fields restored to those of $c_0$, the retained word $y$, halted control, input head at position $1$, capture head at position $0$, and empty output.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$c_0$ is a configuration on input $x$",
+  "$T$ is a natural number",
+  "the machine is halted after $T$ steps from $c_0$",
+  "the output after $T$ steps is $y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a machine $M$ halts within $T$ steps from configuration $c_0$ on input $x$ with\noutput $y$, then within $3T + |x| + |y| + 8$ steps the clean wrapper of $M$,\nstarted at the captured logged start of $c_0$, halts in the administrative\nconfiguration with $c_0$'s work fields restored, all histories blank, $y$\nretained on the last tape, the input head at cell one, the capture head at zero,\nand no physical output."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Meyer.st_true",
+ "key": "acdbbfe7259a5626",
+ "kind": "theorem",
+ "title": "State Answer Characterizes the Run",
+ "statement": "Let $M$ be a finite Turing machine with Boolean alphabet, let $x$ be a Boolean string, and let $\\mathrm{Ans}$ be a Boolean-valued function on selectors and two natural-number indices. Suppose that for every selector $s$ and natural numbers $t,a$ with $t<2^W$ and $a<2^W$, $\\mathrm{Ans}(s,t,a)$ equals the tabulated answer for $s$ on the configuration reached by $M$ on $x$ after $t$ steps, at index $a$. Then for every state-and-output-register pair $\\sigma$ and every $t<2^W$, $\\mathrm{Ans}(\\mathrm{st}(\\sigma),t,0)$ is true exactly when $\\sigma$ is the state and output-register summary of that configuration.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine with Boolean alphabet",
+  "$x$ is a Boolean string",
+  "$W$ is a natural number",
+  "$\\mathrm{Ans}$ is a Boolean-valued function on selectors and two natural-number indices",
+  "For all selectors $s$ and $t,a<2^W$, $\\mathrm{Ans}(s,t,a)$ agrees with the tabulated answer on the run configuration",
+  "$\\sigma$ is a state-and-output-register pair",
+  "$t<2^W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.incFixed_cases",
+ "key": "0c50bb2688b13bd5",
+ "kind": "lemma",
+ "title": "Cases for fixed-width increment",
+ "statement": "For every Boolean word $x$, either $x$ consists entirely of true values and its fixed-width increment is undefined, or there are a natural number $j$ and a Boolean word $r$ such that $x$ is $j$ true values followed by false and then $r$, and its increment is $j$ false values followed by true and then $r$.",
+ "hypotheses_covered": [
+  "Boolean word $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every word $x \\in \\{0,1\\}^*$, read least-significant bit first, satisfies\nexactly one of the following: $x$ consists entirely of ones and its\nfixed-width increment overflows (is undefined); or $x = 1^j 0 r$ for some\n$j \\ge 0$ and tail $r$, and the fixed-width increment of $x$ is $0^j 1 r$."
+}

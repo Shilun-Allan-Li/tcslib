@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_erase_run",
+ "key": "da1d84684d6274a0",
+ "kind": "lemma",
+ "title": "Complete erasure run",
+ "statement": "For Boolean words $w$ and $u$, after exactly $2(|u|+1)$ steps from the eraser configuration in state $0$ with $u$ on its tape and its head at displacement $0$, the machine is in state $2$ with a blank tape and its head at displacement $0$. The input remains $w$ and the output is empty.",
+ "hypotheses_covered": [
+  "Boolean words $w$ and $u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Erasing a complete administrative word $u$ costs exactly $2(\\abs{u}+1)$\nsteps of the eraser, after which the tape is blank, the head and native\ninput position are restored, and nothing has been emitted."
+}

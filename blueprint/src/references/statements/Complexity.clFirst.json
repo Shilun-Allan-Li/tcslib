@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clFirst",
+ "key": "f90ab3baa3d10f4f",
+ "kind": "lemma",
+ "title": "First Visit to an Absorbing Return State",
+ "statement": "Let a Turing machine run from a configuration $start$ to a configuration $finish$ in $B$ steps. Suppose $finish$ has state $ret$, $start$ does not have state $ret$, and every configuration with state $ret$ is unchanged by one step. Then there is a positive time $t\\le B$ such that the run reaches exactly $finish$ at time $t$, and no configuration at any earlier time has state $ret$.",
+ "hypotheses_covered": [
+  "A Turing machine and start and finish configurations",
+  "A distinguished state $ret$",
+  "A natural-number step bound $B$ and the run reaches $finish$ at exactly $B$ steps",
+  "The finish configuration has state $ret$",
+  "The start configuration does not have state $ret$",
+  "Every configuration with state $ret$ is fixed by one step"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine run from a start configuration to a finish configuration in $B$ steps, where the finish control is a distinguished absorbing return state, every configuration in that state is fixed by one step, and the start is not in the return state. Then there is a strictly positive time $t \\le B$ at which the run first reaches the return state, and the configuration at $t$ is already the exact finish configuration."
+}

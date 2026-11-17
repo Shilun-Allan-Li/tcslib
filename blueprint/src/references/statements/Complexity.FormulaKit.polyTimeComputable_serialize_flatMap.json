@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.FormulaKit.polyTimeComputable_serialize_flatMap",
+ "key": "747a2a9b3e2d8ae4",
+ "kind": "theorem",
+ "title": "Polynomial-Time Serialization of Indexed Formula Concatenation",
+ "statement": "Let $c$ assign a natural number to each bit string, and let $G(x,i)$ be a CNF formula over natural-number-indexed variables for each bit string $x$ and natural number $i$. If the function sending $x$ to the unary string of $c(x)$ ones is polynomial-time computable, and the function sending a pair encoding of bit strings $a,b$ to the fragment encoding of $G(a,|b|)$ is polynomial-time computable, then the function sending $x$ to the binary serialization of the CNF formula formed by concatenating $G(x,i)$ for all $i$ with $0\\le i<c(x)$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "A function from bit strings to natural numbers, $c$.",
+  "A function from a bit string and a natural number to CNF formulas, $G$.",
+  "The unary encoding of $c(x)$ is polynomial-time computable.",
+  "The function mapping a pair encoding of $a,b$ to the fragment encoding of $G(a,|b|)$ is polynomial-time computable."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

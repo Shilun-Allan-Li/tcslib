@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.lact_ok",
+ "key": "302764e1b7f7867b",
+ "kind": "theorem",
+ "title": "Validity conditions for a phase action",
+ "statement": "Let $\\phi$ be a phase with $\\text{main}(\\phi)=\\text{true}$, and let $s,v,m$ be optional Boolean symbols. The action prescribed by the phase and these symbols writes nothing on the value tape; its mark-tape write is either absent or writes a mark when $v$ is present. If it halts, it emits a symbol. If its next state is a read state for phase $\\phi'$, it emits nothing, has $\\text{main}(\\phi')=\\text{true}$, and either does not move the work heads or moves them right when $v$ is present; moreover, whenever $\\text{walk}(\\phi')$ is false, the current phase is not a walking phase and the work heads do not move. If its next state is a value-tape rewind state for a phase $\\phi'$, it emits nothing, has $\\text{main}(\\phi')=\\text{true}$ and $\\text{walk}(\\phi')=\\text{false}$, moves the work heads left, and has $v$ present. If its next state is an append state, it emits nothing, does not move the work heads or write on the mark tape, and the current phase is not a walking phase.",
+ "hypotheses_covered": [
+  "$\\phi$ is a phase",
+  "$\\text{main}(\\phi)=\\text{true}$",
+  "$s$, $v$, and $m$ are optional Boolean symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

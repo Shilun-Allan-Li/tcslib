@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_erase_scan",
+ "key": "fcd306d0c0f25b0b",
+ "kind": "lemma",
+ "title": "Forward scan of the eraser",
+ "statement": "For Boolean words $w$ and $u$ and every integer $j$ with $j\\le |u|$, after $j$ steps from the eraser configuration in state $0$ with $u$ on its tape and its head at displacement $0$, the machine remains in state $0$, the tape still contains $u$, and the head is at displacement $j$. The input remains $w$ and the output is empty.",
+ "hypotheses_covered": [
+  "Boolean words $w$ and $u$",
+  "Integer $j$ satisfying $j\\le |u|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\le \\abs{u}$, $j$ steps of the eraser from the start of the\nintact word $u$ move its head to displacement $j$, preserving the word and\nemitting nothing."
+}

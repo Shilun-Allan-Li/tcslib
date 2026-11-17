@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.bridge_simulate",
+ "key": "030b8a17666e37c8",
+ "kind": "lemma",
+ "title": "Simulation of compiled runs",
+ "statement": "Let $c$ be a program in the partial-recursive language, let $x$ be a bridge-alphabet input, let $p$ be a valid input-head position, and let $out$ be an output word. Suppose $a$ and $b$ are configurations of the compiled stack machine, $b$ is reachable from $a$, and the label of $a$ belongs to the label support of $c$'s compilation with the halt label adjoined. Then the label of $b$ also belongs to that support, and the bridging machine of $c$ can reach the bridge configuration associated with $b$ from the one associated with $a$, using the same input-head position and output word.",
+ "hypotheses_covered": [
+  "A program $c$ in the partial-recursive language",
+  "A bridge-alphabet input $x$",
+  "A valid input-head position $p$",
+  "An output word $out$",
+  "Compiled stack-machine configurations $a$ and $b$",
+  "Configuration $b$ is reachable from $a$",
+  "The label of $a$ belongs to the compilation's label support with the halt label adjoined"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a program in Mathlib's partial-recursive language, and let $a, b$ be\nconfigurations of the compiled stack machine such that $b$ is reachable from $a$\nand the label of $a$ lies in the label support of $c$'s compilation with the halt\nlabel adjoined.  Then the label of $b$ also lies in that support, and, for every\nfixed input head position and output string, the bridging machine of $c$ reaches,\nfrom the bridge configuration associated with $a$ (the optional execution state for\n$a$'s translated label and register value, over $a$'s stacks), the bridge\nconfiguration associated with $b$."
+}

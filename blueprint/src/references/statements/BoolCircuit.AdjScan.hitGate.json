@@ -1,0 +1,23 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.hitGate",
+ "key": "43918e6aeba62bf8",
+ "kind": "lemma",
+ "title": "Scan hit on a gate",
+ "statement": "Let $\\tau$ be a task, let $n,iv,tv,B$ be natural numbers, let $w,E$ be finite bit strings, and let $o$ be an oracle. Suppose that every oracle query on the encoded unary string of length $n$ paired with the binary expansion of $q$ returns the bit of $E$ at position $q$, taking out-of-range bits to be $0$. Suppose also that the task target condition holds for the input encoding the unary string of length $n$ paired with $w$, that $|E|\\le B$, and that the suffix of $E$ at position $p$ begins with $1$ followed by the encoding of a gate $g$ and a remainder. If $c\\le B$ and $a\\le B$, then the scan started in its gate-hit state with registers $(p,c,a)$ and no answer yet halts with every register bounded by $B$, answering true for a size task, answering whether the requested gate kind equals the kind of $g$ for a type task, and answering whether $iv$ is among the arguments of $g$ for an edge task.",
+ "hypotheses_covered": [
+  "$\\tau$ is a task",
+  "$n,w,E,o$ are respectively a natural number, bit string, bit string, and oracle",
+  "$iv,tv$ are natural numbers",
+  "Oracle answers on encoded unary-length-$n$ inputs equal the corresponding bits of $E$, with out-of-range bits read as false",
+  "The target condition holds for the encoded unary-length-$n$ input paired with $w$ and indices $iv,tv$",
+  "$B$ is a natural number and $|E|\\le B$",
+  "$g$ is a DAG gate",
+  "$p,c,a$ are natural numbers and the suffix of $E$ at $p$ is $1$ followed by the encoding of $g$ and a remainder",
+  "$c\\le B$",
+  "$a\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

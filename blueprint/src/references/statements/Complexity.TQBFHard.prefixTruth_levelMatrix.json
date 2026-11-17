@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.TQBFHard.prefixTruth_levelMatrix",
+ "key": "8658a231c3049bb8",
+ "kind": "theorem",
+ "title": "Quantified level matrix and midpoint relation",
+ "statement": "Let $w,r$ be natural numbers and let $E$ be a relation on pairs of finite Boolean strings. Define $\\operatorname{Mid}_0(A,B)$ to mean $E(A,B)$; define $\\operatorname{Mid}_{r+1}(A,B)$ to mean that some string $z$ of length $w$ satisfies both $\\operatorname{Mid}_r(A,z)$ and $\\operatorname{Mid}_r(z,B)$. For every position $p$, Boolean assignment $\\sigma$, and strings $A,B$ of length $w$, the quantified formula with prefix consisting of $r$ repetitions of $w$ existential, $w$ universal, and $w$ universal quantifiers, and with matrix given by the recursively defined level matrix starting at position $p$ with endpoints $A,B$, is true under assignment $\\sigma$ and starting index $p$ if and only if $\\operatorname{Mid}_r(A,B)$ holds.",
+ "hypotheses_covered": [
+  "Natural numbers $w,r$",
+  "A relation $E$ on pairs of finite Boolean strings",
+  "A natural-number position $p$",
+  "A Boolean assignment $\\sigma$",
+  "Strings $A,B$ with $|A|=w$ and $|B|=w$"
+ ],
+ "confidence": "low",
+ "caveat": "The recursive level matrix and selector definitions are provided formally but not informally in the payload; the sentence identifies their recursive role without expanding their block-selection formula.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

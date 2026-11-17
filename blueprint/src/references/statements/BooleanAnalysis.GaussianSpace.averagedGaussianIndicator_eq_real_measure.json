@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure",
+ "key": "7fc78851ece31384",
+ "kind": "lemma",
+ "title": "Averaged indicator as Gaussian measure",
+ "statement": "Let $n\\ge0$, let $A\\subseteq\\mathbb R^n$ be measurable, and let $\\theta\\in\\mathbb R$ and $x\\in\\mathbb R^n$. Then\n\\[\nu_\\theta(x)=\\gamma_n\\bigl(\\{y\\in\\mathbb R^n:\\cos\\theta\\,x+\\sin\\theta\\,y\\in A\\}\\bigr),\n\\]\nwhere $u_\\theta(x)=\\int 1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$ and $\\gamma_n$ is standard Gaussian measure.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A$ is measurable",
+  "$\\theta\\in\\mathbb R$",
+  "$x\\in\\mathbb R^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For $A\\subseteq\\mathbb R^n$ and $\\theta\\in\\mathbb R$, put $u_\\theta(x)=\\int1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$. If $A$ is measurable, then $u_\\theta(x)=\\gamma_n\\{y:\\cos\\theta\\,x+\\sin\\theta\\,y\\in A\\}$ for every real $\\theta$ and every $x$."
+}

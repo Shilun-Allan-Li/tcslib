@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.a2_copy_step",
+ "key": "fbe1895ad397b6e7",
+ "kind": "lemma",
+ "title": "One Input-Copy Step",
+ "statement": "For every Boolean word $x$ and every natural number $i<|x|$, one step from the copy-phase configuration with the first $i$ bits of $x$ on the work tape, input head at position $i+1$, and work head at position $i$ reaches the copy-phase configuration with the first $i+1$ bits copied, input head at position $i+2$, and work head at position $i+1$. The output remains empty.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "natural number $i$",
+  "$i<|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$ and every index $i < |x|$, one step of the countdown emitter from the copy configuration holding the first $i$ bits of $x$ appends the bit at index $i$ to the work tape and advances both heads, emitting nothing."
+}

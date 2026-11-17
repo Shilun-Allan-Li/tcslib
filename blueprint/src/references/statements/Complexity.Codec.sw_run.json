@@ -1,0 +1,28 @@
+{
+ "lean_name": "Complexity.Codec.sw_run",
+ "key": "7e6be3ae6dd9a2d6",
+ "kind": "theorem",
+ "title": "Bounded register-program scan",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine, let $y$ be a Boolean word of positive length, let $R$ be a register assignment, and let $p$ be a natural number. Write $B=(8W+8)(|y|+1)$, where $W$ is the chunk width determined by $N$. Suppose every register of $R$ is at most $B$, $R_L=|y|$, $R_P=p\\le |y|$, and $R_{Q1}=R_{Cap}=R_{Q2}=R_S=R_T=0$. Then either the suffix $y[p:]$ has canonical form (every nonempty such word ends in $1$) and length at most the binary expansion length of $|y|$, and there are $q_1,cap\\le B$ such that the codec program in the chosen mode reaches its next designated state with $Q1=q_1$, $Cap=cap$, $Q2=p$, and $S$ equal to the binary value of $y[p:]$, while satisfying its guard; or that suffix condition fails and the program halts with answer false while satisfying its guard throughout.",
+ "hypotheses_covered": [
+  "N is a finite nondeterministic Turing machine",
+  "mode is one of the codec modes",
+  "y is a Boolean list",
+  "R is a register assignment",
+  "p is natural",
+  "Every register of R is at most (8W+8)(|y|+1)",
+  "R_L=|y|",
+  "R_P=p",
+  "p≤|y|",
+  "R_Q1=0",
+  "R_Cap=0",
+  "R_Q2=0",
+  "R_S=0",
+  "R_T=0",
+  "1≤|y|"
+ ],
+ "confidence": "low",
+ "caveat": "The reachability and guard predicates depend on detailed register-program semantics; this paraphrase states the register changes, bound, and failure behavior, but does not expand those definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.HALT_NPHard",
+ "key": "4c419e6095df16f7",
+ "kind": "theorem",
+ "title": "NP-hardness of the halting language",
+ "statement": "For every machine representation scheme $c$, the language of bit strings $s$ for which the halting function of $c$ returns true is NP-hard: every language in NP is polynomial-time many-one reducible to it.",
+ "hypotheses_covered": [
+  "A machine representation scheme $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be any representation scheme for Turing machines: a total decoding of\nbit strings into coded one-work-tape machines together with an encoding, such\nthat a machine's code followed by any number of $1$s decodes back to that\nmachine. Let $\\mathrm{HALT}_c$ be the set of bit strings of the form\n$\\langle \\alpha, x \\rangle$ ($\\alpha$ with every bit doubled, then $01$, then\n$x$) such that the machine decoded from $\\alpha$ halts on input $x$. Then\n$\\mathrm{HALT}_c$ is $\\mathsf{NP}$-hard: every language in $\\mathsf{NP}$ is\npolynomial-time Karp reducible to $\\mathrm{HALT}_c$ [AB09, Exercise~2.8]."
+}

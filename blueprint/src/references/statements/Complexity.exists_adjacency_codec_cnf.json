@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.exists_adjacency_codec_cnf",
+ "key": "a466eeb755cf7c9a",
+ "kind": "theorem",
+ "title": "CNF Encodings of Machine Configurations",
+ "statement": "Let $M$ be a deterministic Turing machine over the binary alphabet, with a finite state set, and let $n,s$ be natural numbers. There is a positive integer $C$, independent of $n,s$, such that for every $n,s$ one can choose an encoding of configurations and CNF formulas $\\varphi_v,\\varphi_a,\\varphi_{\\mathrm{acc}}$ with these properties: every configuration encoding has length $C(s+n+1)$; for inputs of length $n$ whose work-tape heads and nonblank cells lie within distance $s$ of the origin, equal encodings imply equal inputs, and for a fixed input two configurations have equal encodings exactly when their states, input-head positions, work tapes, work-tape-head positions, and output summaries agree. The formula $\\varphi_v$, evaluated on any bit string of that encoding length (with variables beyond the string assigned false), accepts exactly the encodings of such configurations on inputs of length $n$. The formula $\\varphi_a$, evaluated on the concatenation of two configuration encodings, accepts exactly when the first configuration's one-step successor under $M$ has the same state, input-head position, work tapes, and work-tape-head positions as the second; it rejects every such pair whose inputs differ. The formula $\\varphi_{\\mathrm{acc}}$ accepts a configuration encoding exactly when the configuration is halted and its output is precisely the one-bit string $1$. The variable counts of $\\varphi_v$ and $\\varphi_{\\mathrm{acc}}$ are at most $C(s+n+1)$, and that of $\\varphi_a$ is at most $2C(s+n+1)$. Each of their binary CNF encodings has length at most $C(s+n+2)^C$.",
+ "hypotheses_covered": [
+  "$M$ is a deterministic Turing machine over the binary alphabet",
+  "$M$ has a finite state set",
+  "$C$ is a positive natural number, uniform in $n,s$",
+  "$n,s$ are arbitrary natural numbers",
+  "The configuration code has length $C(s+n+1)$",
+  "For length-$n$ inputs, window-bounded equal codes imply equal inputs",
+  "For one fixed input, code equality is equivalent to equality of core configuration data and output summary",
+  "$\\varphi_v$ recognizes exactly window-bounded configuration codes on length-$n$ inputs",
+  "$\\varphi_a$ recognizes exactly one-step core adjacency on a fixed input",
+  "$\\varphi_a$ rejects paired codes from distinct length-$n$ inputs",
+  "$\\varphi_{\\mathrm{acc}}$ recognizes halted configurations with output $[1]$",
+  "Variable-count bounds for all three formulas",
+  "Serialized-length bounds for all three formulas"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

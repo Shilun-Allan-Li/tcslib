@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.bridge_step",
+ "key": "4fb4b03af724656b",
+ "kind": "lemma",
+ "title": "One-Step Unfolding of the Bridging Machine",
+ "statement": "For every partial-recursive program $c$, bridge-alphabet word $x$, valid input-head position $p$, stack assignment $st$, output word $out$, and bridging-machine control state $q$, one step from the bridge configuration determined by $q,p,st,out$ equals the result of applying the bridging machine's transition action for $q$, the symbol under the input head, and the symbols under the four work-tape heads to that configuration.",
+ "hypotheses_covered": [
+  "A partial-recursive program $c$",
+  "A bridge-alphabet word $x$",
+  "A valid input-head position $p$ for $x$",
+  "A stack assignment $st$",
+  "An output word $out$",
+  "A bridging-machine control state $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "One step of the bridging machine from a bridge configuration in a live control state\nis computed by applying the action that its transition table prescribes for that\nstate, the symbol under the input head, and the symbols under the four work-tape\nheads."
+}

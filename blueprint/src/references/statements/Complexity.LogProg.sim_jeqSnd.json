@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.sim_jeqSnd",
+ "key": "e5ff65edf980757b",
+ "kind": "lemma",
+ "title": "Simulation of a second-segment equality test",
+ "statement": "Let $m$ be the number of registers, let $\\Lambda$ be a set of program states, and let $A$ assign an instruction to each state. Fix an initial state $l_*$, an oracle on Boolean words, an input word $x$, register values $v\\colon\\{0,\\ldots,m-1\\}\\to\\mathbb{N}$, an output word, and an integer $W$. Suppose the instruction at $l$ tests whether register $r$ equals the second component of the pair decoded from $x$, with successor states $l_1$ and $l_0'$, and suppose the binary representation of $v(r)$ has length at most $W$ and $x$ is a valid pair input. Then the compiled program, starting in state $l$ with those register values and output, reaches the configuration with state $l_1$ if the binary representation of $v(r)$ equals that decoded second component, and state $l_0'$ otherwise; throughout the run before that configuration, no call state is visited and every register head position lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "The instruction assignment $A$ and initial state $l_*$",
+  "The oracle on words and its index set",
+  "The tested state $l$, successor states $l_1,l_0'$, and register $r$",
+  "The instruction at $l$ is the second-component equality test on register $r$",
+  "Register values $v$ and output word",
+  "Integer bound $W$",
+  "The binary word for $v(r)$ has length at most $W$",
+  "Input $x$ is a valid pair input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

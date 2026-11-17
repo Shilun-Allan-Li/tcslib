@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.StepBlock.recordTM_effect",
+ "key": "9e2caeec6d37883b",
+ "kind": "lemma",
+ "title": "Effect of the Record Machine",
+ "statement": "Let $k,n\\in\\mathbb N$, let $x$ be a finite binary input, and let $d$ be a configuration of a $(k+2)$-work-tape machine with record states, while $c$ is a configuration of a $k$-work-tape machine and $a$ is one of its actions. Let $b$ be a Boolean record of width $4k+4$. Suppose $d$ starts in the record machine's initial state, the record tape contains $b$ at each of the next $4k+4$ cells from its head, and $b$ is the prefix of length $4k+4$ of the binary encoding of $a$. Suppose also that $d$ and $c$ have the same input-head position, their first $k$ work tapes and head positions agree, and the summary tape of $d$ currently reads the output summary of $c$. After $4k+5$ steps, the record machine is halted; its input-head position, first $k$ work tapes and their head positions, and summary-tape symbol agree with those obtained by applying $a$ to $c$, while its output list is unchanged from $d$. It does not halt at any earlier time; the encoded action has length at least $4k+5$; and at every time $u\\le 4k+5$, the original work-tape heads have moved by their prescribed action displacements only at the final time, every work-tape head has moved by at most $1$ on the first $k$ tapes and at most $4k+4$ on the other two, the input head has moved by at most $1$, the record-tape head has advanced by $\\min(u,4k+4)$, and the summary-tape head has not moved.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb N$",
+  "binary input $x$",
+  "configuration $d$ of the $(k+2)$-tape record machine",
+  "configuration $c$ of the $k$-tape machine",
+  "action $a$ for $c$",
+  "record $b$ indexed by the $4k+4$ positions",
+  "$d$ starts in the record machine's initial state",
+  "the record tape contains $b$ at each offset from the record head",
+  "$b$ is the length-$4k+4$ prefix of the encoding of $a$",
+  "$d$ and $c$ have equal input-head positions",
+  "the first $k$ work-tape contents agree",
+  "the first $k$ work-tape head positions agree",
+  "the summary tape reads the output summary of $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

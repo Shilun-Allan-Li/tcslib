@@ -1,0 +1,28 @@
+{
+ "lean_name": "Complexity.UTab.goes_instr_inv",
+ "key": "ad5e54b03e495ae8",
+ "kind": "theorem",
+ "title": "Execution of a template",
+ "statement": "Let $M$ be a finite Turing machine with Boolean symbols, let $x$ be a Boolean word, and let $k$ be the number of its work tapes. For a template $\\theta$ for $M$, suppose its successor label is the label immediately before the program instructions that implement $\\theta$. Let $t,S,p\\in\\mathbb{N}$ and let $e$ be a register record such that the template's initial-step flag is true exactly when $t=0$, $e.q=0$ when $t=0$, and $e.q=e.i-S$ when $t\\ne 0$, with $S\\le e.i$ whenever $t\\ne 0$. Starting at the label for $\\theta$ with register values given by $e$, input position $p$, and any output prefix, the counter program reaches the successor label in at most $K$ steps, leaves the input position unchanged, and appends the word obtained by executing the template's operations using the register values in $e$; the final register record is $e$ with $i$ replaced by $e.i+1$ and $q$ replaced by $0$ if $t=0$ and by $e.i+1-S$ otherwise, where $K$ is the maximum length of a template program plus three.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine with Boolean symbols",
+  "$x$ is a Boolean input word",
+  "$\\theta$ is a template for $M$",
+  "the successor label of $\\theta$ equals the label immediately before its template instructions",
+  "$t,S$ are natural numbers",
+  "$e$ is a register record",
+  "the template's initial-step flag equals the truth of $t=0$",
+  "$e.q=0$ when $t=0$",
+  "$e.q=e.i-S$ when $t\\ne0$",
+  "$S\\le e.i$ when $t\\ne0$",
+  "$p$ is a natural input position",
+  "the bound is $K=L+3$, with $L$ the maximum template program length",
+  "the execution property holds for every output prefix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

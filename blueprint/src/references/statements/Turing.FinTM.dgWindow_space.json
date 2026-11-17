@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.dgWindow_space",
+ "key": "b3517d770480411a",
+ "kind": "lemma",
+ "title": "Window width is bounded by space used",
+ "statement": "Let $\\Gamma$ be an alphabet, let $M$ be a finite Turing machine, and let $x$ be an input word. Suppose that at time $t$, for some integer start coordinate $a$ and natural width $n$, the window is positive in width, contains every work-head position at time $t$ and throughout the history up to $t$, has blank tape cells outside it at time $t$, and every coordinate in it has been visited by a work-tape head by time $t$. If $n\\le 2t+1$, then $n$ is at most the total space used by $M$ on input $x$ through time $t$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is an alphabet; $M$ is a finite Turing machine; $x$ is an input word.",
+  "$t,n$ are natural numbers and $a$ is an integer.",
+  "There is a positive-width window of width $n$.",
+  "At time $t$, every work-head position lies in $[a,a+n)$.",
+  "At time $t$, every work-tape cell outside $[a,a+n)$ is blank.",
+  "Every coordinate in $[a,a+n)$ has been visited by some work-tape head by time $t$.",
+  "$n\\le 2t+1$.",
+  "At every time through $t$, every work-head position lies in $[a,a+n)$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

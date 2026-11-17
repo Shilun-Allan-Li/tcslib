@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.compile_correct",
+ "key": "6d889b1a52d34452",
+ "kind": "theorem",
+ "title": "Correctness of the compiled simulation",
+ "statement": "Let $P$ be a register program with $m$ registers and $d$ oracle deciders, let $D$ be a decider machine with $k_D$ work tapes, and choose an initial program state, an initial decider state for each oracle, an oracle, integer lower and upper register-head bounds $lo,hi$, and a natural-number space bound $B$. Let $x$ be the input and $N$ a natural number. Suppose that throughout the first $N+1$ configurations of the register-program run from its initial configuration on $x$, every register head lies between its bounds. Suppose also that at every time $t<N$, the current configuration satisfies the call conditions: each call's argument list has no repetitions, the input head is at position $1$, every argument register contains its represented word from cell $0$ with head at $0$ and word length within the prescribed bounds, and the corresponding decider run on the encoded virtual input halts with the oracle's answer, clears its work tapes, returns their heads to $0$, and keeps every decider head within distance $B$ of $0$. Then the compiled machine, started on $x$, reaches after some time $T$ exactly the compiled configuration corresponding to the register-program configuration at time $N$. At every time up to $T$, its original-register heads satisfy the bounds $lo,hi$, and each decider-tape head has absolute position at most $B$.",
+ "hypotheses_covered": [
+  "Finite register-state set $\\Lambda$",
+  "Finite decider-state set $SD$",
+  "The program $P$, start state, decider $D$, and initial decider states $q_0$",
+  "The oracle and register-head bounds $lo,hi$",
+  "The decider space bound $B$ and simulation horizon $N$",
+  "The register-head box bound at all times $t\\le N$",
+  "The call conditions at all times $t<N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

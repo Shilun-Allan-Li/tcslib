@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.ups_ycol",
+ "key": "abf9636786b170a7",
+ "kind": "lemma",
+ "title": "Column symmetry check",
+ "statement": "Let $x$ be a Boolean word, $B$ a natural number, and $q$ a rational number. Suppose $\\sigma.n-\\sigma.w=dd$, every field of the register state $\\sigma$ is at most $B$, $2\\sigma.n+2+2\\sigma.n^2\\le B$, $\\sigma.u<\\sigma.n$, and $\\sigma.w\\le\\sigma.n$. If the encoded adjacency relation is symmetric between row $\\sigma.u$ and every column $w'$ with $\\sigma.w\\le w'<\\sigma.n$, then for all $p,a,b\\le B$, the program at state $yn$ with $w$ reset to $\\sigma.n$ and $p,a,b$ set to those values has probabilistic semantics with acceptance probability $q$. If this column-symmetry condition does not hold, then $q=0$ and the program at state $y2$ with register state $\\sigma$ has probabilistic semantics with acceptance probability $q$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$B$ is natural",
+  "$q$ is rational",
+  "$dd$ is natural",
+  "$\\sigma.n-\\sigma.w=dd$",
+  "Every field of $\\sigma$ is at most $B$",
+  "$2\\sigma.n+2+2(\\sigma.n)^2\\le B$",
+  "$\\sigma.u<\\sigma.n$",
+  "$\\sigma.w\\le\\sigma.n$",
+  "If the stated symmetry condition holds, then for every $p,a,b\\le B$ the specified state-$yn$ configuration has probabilistic semantics with acceptance probability $q$",
+  "If the symmetry condition fails, then $q=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a Boolean word, $B$ a natural number, $q$ a rational number, and $dd$ a\nnatural number. Suppose the register record $\\sigma$ satisfies $\\sigma.n-\\sigma.w=dd$,\nevery register is at most $B$, $2\\sigma.n+2+2\\sigma.n^2\\le B$, $\\sigma.u<\\sigma.n$, and\n$\\sigma.w\\le\\sigma.n$. If the encoded adjacency relation is symmetric for every column\n$w'$ from $\\sigma.w$ up to but not including $\\sigma.n$ in row $\\sigma.u$, then for all\n$p,a,b\\le B$, the program at state $yn$ with $w$ reset to $\\sigma.n$ and $p,a,b$ set to\nthose values has probabilistic semantics with acceptance probability $q$. If that\ncolumn-symmetry condition fails, then $q=0$ implies the program at state $y2$ with\nrecord $\\sigma$ has probabilistic semantics with acceptance probability $q$."
+}

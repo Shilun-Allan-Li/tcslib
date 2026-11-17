@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satClean_stop",
+ "key": "01f4fb44de633a5e",
+ "kind": "lemma",
+ "title": "Stopping wrapper for a bridge computation",
+ "statement": "Let $C$ be a finite Turing machine over the Boolean alphabet, with a positive number of work tapes and designated states $e_0$ and $e_1$. Let $r$ and $s$ map Boolean words to Boolean words, and let $B$ map natural numbers to natural numbers. Suppose that for every Boolean input $x$ and argument $a$, there is a time $t$ with $0<t\\le B(|a|)$ such that, at every positive time $v<t$, the run of $C$ on input $x$, started in state $e_0$ with $a$ on the first work tape and all other work tapes blank, is not in state $e_1$; at time $t$ its configuration is the canonical configuration in state $e_1$ with $r(a)$ on the first work tape, all other work tapes blank, and output $s(a)$. Then the wrapper that simulates $C$ and halts silently upon reaching $e_1$ after at least one step satisfies the clean-module contract with result function $r$, emission function $s$, and budget $n\\mapsto B(n)+1$.",
+ "hypotheses_covered": [
+  "$C$ is a finite Turing machine over the Boolean alphabet with designated entry and exit states",
+  "$C$ has a positive number of work tapes",
+  "The result and emission functions map Boolean words to Boolean words",
+  "$B$ maps natural numbers to natural numbers",
+  "For every Boolean input and argument, there exists a time $t$ with $0<t\\le B(|a|)$",
+  "At every positive time before $t$, the run is not in the designated exit state",
+  "At time $t$, the run is in the specified canonical exit configuration with prescribed output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine $C$ with entry and exit states satisfy a first-positive-exit\nbridge contract: on every input and argument it reaches, within budget $B$, the\nexit over the state word of the result with the prescribed emission, avoiding\nthe exit at intermediate positive times. Then the call-stopping wrapper of $C$\nsatisfies the uniform clean-module contract with budget $B + 1$."
+}

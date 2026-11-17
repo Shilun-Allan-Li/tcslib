@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.codeReadSymbols_sound",
+ "key": "829d09637d6a105f",
+ "kind": "lemma",
+ "title": "Soundness of the symbol row reader",
+ "statement": "Let $A$ be a type, with a reader and writer for values in $A$ such that every successful read of a bit string as $a$ with suffix $r$ implies that the string is the encoding of $a$ followed by $r$. For every bit string $x$, function $f$ from blank, $0$, and $1$ to $A$, and suffix $r$, if the three-entry symbol row reader applied to $x$ returns $(f,r)$, then $x$ is the concatenation of the encodings of $f(\\text{blank})$, $f(0)$, and $f(1)$ in that order, followed by $r$.",
+ "hypotheses_covered": [
+  "A type A",
+  "A field reader and writer",
+  "Every successful read factors as the written value followed by the returned suffix",
+  "A bit string x",
+  "A function f from blank, 0, and 1 to A",
+  "A suffix r",
+  "The symbol row reader succeeds on x and returns (f,r)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a field reader and a field writer for values in a type $A$ be such that\nevery successful read on a string exhibits that string as the written value\nfollowed by the returned suffix.  Then whenever the three-symbol row reader\nsucceeds on a bit string $x$, returning a row $f$ and a suffix $r$, the string\n$x$ is exactly the concatenation of the written values $f(\\mathrm{blank})$,\n$f(0)$, $f(1)$ followed by $r$."
+}

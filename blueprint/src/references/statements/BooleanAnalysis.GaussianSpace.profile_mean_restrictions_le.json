@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.profile_mean_restrictions_le",
+ "key": "debd29f037112909",
+ "kind": "lemma",
+ "title": "Profile inequality for restricted means",
+ "statement": "Let $n$ be a natural number and let $f:\\{0,1\\}^{n+1}\\to\\bbr$ take values in $[0,1]$. For $b\\in\\{0,1\\}$, let $f_b(x)=f(x,b)$ and let $d(x)=\\tfrac12(f_0(x)-f_1(x))$. If $U$ is the Gaussian profile that equals $\\varphi(\\Phi^{-1}(p))$ for $0<p<1$ and $0$ otherwise, then\n\\[\nU(\\mathbb E f)\\le\\frac{\\sqrt{U(\\mathbb E f_0)^2+(\\mathbb E d)^2}+\\sqrt{U(\\mathbb E f_1)^2+(\\mathbb E d)^2}}{2},\n\\]\nwhere all expectations are uniform on the corresponding Boolean cube.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$f$ maps the Boolean cube of dimension $n+1$ to $\\bbr$",
+  "$0\\le f(x)\\le1$ for every input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ be the standard Gaussian distribution function and density, and let $\\overline I(p)=\\varphi(\\Phi^{-1}(p))$ for $0<p<1$, with $\\overline I(p)=0$ elsewhere. Let $f:\\{0,1\\}^{n+1}\\to[0,1]$, put $f_b(x)=f(x,b)$ for $b\\in\\{0,1\\}$, and set $d=(f_0-f_1)/2$. Then $\\overline I(\\mathbb E f)\\le\\bigl(\\sqrt{\\overline I(\\mathbb E f_0)^2+(\\mathbb E d)^2}+\\sqrt{\\overline I(\\mathbb E f_1)^2+(\\mathbb E d)^2}\\bigr)/2$."
+}

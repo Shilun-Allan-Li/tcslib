@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_clean_restore",
+ "key": "9a8d584f745193b7",
+ "kind": "lemma",
+ "title": "Captured restoration bound",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $c_0$ be a configuration on input $x$, let $p$ be an input-head position, and let $t$ be a natural number. Suppose the machine is not halted at any time $j<t$ when started from $c_0$. Then there is a time $r \\le 2t+1$ at which the clean wrapper, started in its captured restoration checkpoint for the time-$t$ configuration and its recorded history, reaches the administrative configuration whose source work fields are restored to those of $c_0$, whose retained word is the output after $t$ steps, whose control is in restoration phase, whose input head is at $p$, whose capture head is at the length of that output, and whose output is empty.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$c_0$ is a configuration on input $x$",
+  "$p$ is an input-head position",
+  "$t$ is a natural number",
+  "for every $j<t$, the configuration reached after $j$ steps from $c_0$ is not halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the source $M$ is live for $t$ steps from $c_0$, then within $2t + 1$ steps the\nclean wrapper's captured restoration, started at the checkpoint of the time-$t$\nconfiguration with its history, reaches the administrative configuration in which\nthe original source work fields of $c_0$ are restored, the time-$t$ output is\nretained on the last tape, and the capture head stands at the end of that word."
+}

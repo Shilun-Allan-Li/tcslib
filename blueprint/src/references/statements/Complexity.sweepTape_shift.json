@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.sweepTape_shift",
+ "key": "0f523ed4269d70ac",
+ "kind": "lemma",
+ "title": "Shift invariance of the tape representation",
+ "statement": "Let $A$ be an alphabet, $z\\in\\mathbb{Z}$, and let $l,w,r$ be finite lists of possibly blank symbols from $A$. The tape represented by frontier $z$, left list $l$, and right list $w$ followed by $r$ is the same tape as that represented by frontier $z+|w|$, left list $w$ in reverse order followed by $l$, and right list $r$.",
+ "hypotheses_covered": [
+  "$A$ is a type of symbols",
+  "$z$ is an integer",
+  "$l,w,r$ are finite lists of optional symbols from $A$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Present a tape as a zipper with frontier $z \\in \\bbz$, a list $l$ of the (possibly\nblank) cells to the left of $z$ listed nearest-first, and a list of the cells at and to\nthe right of $z$.  If the right list decomposes as $w \\mathbin{+\\!\\!+} r$, then the\nsame tape is presented by the zipper with frontier $z + |w|$, left list\n$\\mathrm{reverse}(w) \\mathbin{+\\!\\!+} l$, and right list $r$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.snapshotAt_inputSymbol",
+ "key": "6f7e84b2a3eb8f00",
+ "kind": "theorem",
+ "title": "Input symbol at the scheduled position",
+ "statement": "Let $M$ be an oblivious finite binary Turing machine, let $x$ be a finite binary word, and let $t\\in\\mathbb{N}$. The symbol under the input head of $M$ on $x$ after $t$ steps equals the symbol of $x$ at the input-head position reached after $t$ steps on the all-zero word of length $|x|$; this symbol is blank when that position is $0$ or exceeds $|x|$.",
+ "hypotheses_covered": [
+  "$M$ is oblivious",
+  "$x$ is a finite binary word",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary multi-tape Turing machine that is oblivious, meaning that on any two\ninputs of the same length its input-head and work-head positions after $t$ steps agree for\nevery $t$. Let $x = x_1 \\cdots x_n \\in \\{0,1\\}^n$ and $t \\in \\mathbb{N}$, number the input\ncells $0, 1, \\dots, n+1$ with cell $i \\in \\{1, \\dots, n\\}$ holding the $i$-th input bit, and\nlet $p$ be the position of the input head after $t$ steps of $M$ on the all-zeros input\n$0^n$. Then the symbol under the input head after $t$ steps of $M$ on $x$ is the blank\n$\\sqcup$ if $p = 0$ or $p > n$, and is the bit $x_p$ otherwise."
+}

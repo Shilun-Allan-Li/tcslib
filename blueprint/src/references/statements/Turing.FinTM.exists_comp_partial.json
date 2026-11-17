@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.exists_comp_partial",
+ "key": "57bca6be40e526c7",
+ "kind": "theorem",
+ "title": "Partial Sequential Composition",
+ "statement": "For any two finite Turing machines $M_1,M_2$ over the Boolean alphabet, there is a finite Boolean Turing machine $M$ such that, for all Boolean words $x,w$, $M$ halts on input $x$ with output $w$ after some finite number of steps if and only if there is a Boolean word $y$ for which $M_1$ halts on input $x$ with output $y$ after some finite number of steps and $M_2$ halts on input $y$ with output $w$ after some finite number of steps.",
+ "hypotheses_covered": [
+  "Two finite Turing machines $M_1,M_2$ over the Boolean alphabet",
+  "Boolean words $x,w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any two multi-tape Turing machines $M_1$ and $M_2$ over the Boolean\nalphabet — with no totality or time hypotheses — there exists a machine $M$\nsuch that for all Boolean words $x$ and $w$: $M$ halts on input $x$ with\noutput $w$ (within some number of steps) if and only if there is a Boolean\nword $y$ such that $M_1$ halts on input $x$ with output $y$ and $M_2$ halts on\ninput $y$ with output $w$.  In particular, if $M_1$ diverges on $x$, or halts\nbut $M_2$ diverges on its output, then $M$ diverges on $x$."
+}

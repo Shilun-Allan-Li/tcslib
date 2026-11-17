@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.astep_rd",
+ "key": "929b837819a33495",
+ "kind": "lemma",
+ "title": "One-step oracle read",
+ "statement": "Let $n$ be a natural number, let $w,E$ be bit strings, let $o$ be an oracle, and let $\u001b[0m\\tau$ be a task. Suppose that on every encoding of a natural number $p$, the oracle returns the $p$th bit of $E$, defaulting to false beyond its end. If the scan instruction at label $l$ is a read instruction with successor labels $l_1,l_0$, then one machine step from label $l$ with registers $(p,c,a)$ leaves the registers unchanged and moves to $l_1$ if the $p$th bit of $E$ (default false) is true, and to $l_0$ otherwise.",
+ "hypotheses_covered": [
+  "Oracle answers on encoded natural numbers equal the corresponding E bit, defaulting to false",
+  "Task τ",
+  "Natural number n",
+  "Bit strings w and E",
+  "scan τ l equals the read instruction with labels l₁,l₀",
+  "Register values p, c, a"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

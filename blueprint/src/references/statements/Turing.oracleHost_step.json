@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.oracleHost_step",
+ "key": "64a6e1f05cd3c96c",
+ "kind": "theorem",
+ "title": "Oracle host simulation step",
+ "statement": "Let $M$ be a finite Boolean oracle Turing machine with $k$ ordinary work tapes, and let $C$ be a finite Boolean Turing machine with at least one work tape. Choose states $en,ex$ of $C$, an oracle language $O\\subseteq\\{0,1\\}^*$, a function $\\tau:\\mathbb{N}\\to\\mathbb{N}$, and $a\\in\\mathbb{N}$. Suppose that for every Boolean word $z$, when $C$ starts in state $en$ with $z$ on tape $0$ and every other tape empty, there is a time $t\\le a(\\tau(|z|)+|z|+2)$ with $t>0$ such that it has not visited state $ex$ at any earlier time, and at time $t$ its configuration is the initial configuration in state $ex$ with the one-symbol word indicating whether $z\\in O$ on tape $0$ and all other tapes empty. Now let $x$ be any Boolean input, let $c$ be any configuration of $M$ on input $x$, let $side\\in\\{\\mathrm{false},\\mathrm{true}\\}$, and let $r\\in\\mathbb{N}$. Assume the query-tape head position is nonnegative when $side=\\mathrm{true}$ and nonpositive when $side=\\mathrm{false}$, its absolute value is at most $r$, the query string has length at most $r$, and query-tape cell $r$ is blank. Then, for some $u\\le (2a+13)(r+1)+(2a+13)\\tau(|Q|)$ if $c$ is in the query state, and $u\\le(2a+13)(r+1)$ otherwise, the constructed host machine run from the stable encoding of $(c,side)$ reaches the stable encoding of $(M$'s one-step successor from $c$ relative to $O$, $side')$ for some $side'\\in\\{\\mathrm{false},\\mathrm{true}\\}$, where $Q$ is the query string on the query tape of $c$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean oracle Turing machine",
+  "$C$ is a finite Boolean Turing machine and $C.k>0$",
+  "$en,ex$ are states of $C$",
+  "$O$ is a language over Boolean words",
+  "$\\tau:\\mathbb{N}\\to\\mathbb{N}$",
+  "$a\\in\\mathbb{N}$",
+  "For every Boolean word $z$, the computation from the specified initial configuration reaches $ex$ at some positive time within the given bound, does not reach $ex$ earlier, and has the specified output configuration",
+  "$x$ is a Boolean input; $c$ is a configuration of $M$ on $x",
+  "$side$ gives the specified sign condition on the query-tape head position",
+  "The absolute query-tape head position is at most $r$",
+  "The query string length is at most $r$",
+  "Query-tape cell $r$ is blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.Compiler.Verdict",
+ "key": "87ff828a26784ba7",
+ "kind": "structure",
+ "title": "WordRAM verdict condition",
+ "statement": "For a word width $W$, program $code$, Boolean value $dec$, integer $r$, initial memory $m$, and configuration $cfg$, the execution of $code$ from $cfg$ must terminate with the verdict determined by $dec$ and $r$. The configuration’s result register must contain the $W$-bit encoding of $r$, and its memory must agree with $m$ outside the result and decision registers.",
+ "hypotheses_covered": [
+  "Word width $W$",
+  "program $code$",
+  "Boolean value $dec$",
+  "integer $r$",
+  "initial memory $m$",
+  "configuration $cfg$",
+  "execution terminates with the verdict determined by $dec$ and $r$",
+  "the result register contains the $W$-bit encoding of $r$",
+  "memory agrees with the initial memory outside the result and decision registers"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not define the execution step, verdict encoding, integer-to-bit-vector encoding, or memory-agreement relation.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

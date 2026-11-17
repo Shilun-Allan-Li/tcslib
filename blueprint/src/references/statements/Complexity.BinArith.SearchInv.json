@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.BinArith.SearchInv",
+ "key": "2c8a4f55e77e4528",
+ "kind": "def",
+ "title": "Search invariant",
+ "statement": "For a natural number $n$ and a Boolean list $S$, the search invariant holds exactly when there are natural numbers $c,d$ and a Boolean $b$ such that $S$ is the pair encoding of the binary expansion of $c$ and the pair encoding of the binary expansion of $d$ with the one-element list containing $b$, and\n$2^{\\lceil\\log_2(2n)\\rceil}<c\\leq \\operatorname{lovaszPrime}(n)$, $2\\leq d\\leq c$, no natural number $m$ with $2\\leq m<d$ divides $c$, and $b=\\mathrm{true}$ implies $c=\\operatorname{lovaszPrime}(n)$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$S$ is a Boolean list"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied material does not define the pair encoding or the function $\\operatorname{lovaszPrime}$, so these constructions must retain their stated names.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

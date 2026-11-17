@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_finish",
+ "key": "ad1cb142a3627c9e",
+ "kind": "lemma",
+ "title": "Finishing the width-split round",
+ "statement": "Let $C$ and $D$ be Boolean Turing machines with positive numbers of work tapes, and choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$. For Boolean words $w,s,u,v$ and a bit $ok$ such that $ok=\\mathrm{true}$ implies $|s|\\le |w|$, there is a time $t\\le 2|u|+2|v|+2|s|+|w|+12$ such that, starting from the configuration in the left-erasure phase with verdict $ok$ and tape words laid out as the candidate $s$ and bank words $u,v$, the controller is not in its anchor state at any time $j<t$. If $ok=\\mathrm{true}$, it has halted by time $t$ with output the pair encoding of the prefix of $w$ of length $|s|$ and the remaining suffix; if $ok=\\mathrm{false}$, at time $t$ it is in the anchor state with tape words laid out as the candidate obtained by appending one $1$ bit to $s$ when $|s|\\le |w|$ (and otherwise leaving $s$ unchanged), and with both banks empty.",
+ "hypotheses_covered": [
+  "$C,D$ are Boolean Turing machines",
+  "$0<C.k$ and $0<D.k$",
+  "$c_e,c_x$ are states of $C$; $d_e,d_x$ are states of $D$",
+  "$w,s,u,v$ are Boolean words",
+  "$ok$ is a Boolean bit",
+  "If $ok=\\mathrm{true}$, then $|s|\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a verdict bit be given, true only if the candidate's length is at most\n$\\abs{w}$. Then there is a time\n$t \\le 2\\abs{u} + 2\\abs{v} + 2\\abs{s} + \\abs{w} + 12$ after which the\ncontroller, from the first erasure seam, has erased both installed words\nand: on a true verdict, halted with output the pair encoding of the split\nof $w$ at position $\\abs{s}$; on a false verdict, returned to the canonical\nanchored seam carrying one split-search step applied to $s$. No strictly\ninterior configuration is at the anchor."
+}

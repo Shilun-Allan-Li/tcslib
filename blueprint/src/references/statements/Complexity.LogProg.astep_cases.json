@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.astep_cases",
+ "key": "84df13e39627de66",
+ "kind": "lemma",
+ "title": "Possible outcomes of one abstract step",
+ "statement": "Let $m,d$ be natural numbers, let $\\Lambda$ be a type, let $x$ be a finite bit string, let $A$ assign to each control state an instruction with $m$ registers, $d$ oracle indices, and states in $\\Lambda$, and let $o$ be a Boolean oracle on indices in $\\{0,\\ldots,d-1\\}$ and finite bit strings. For any control state $l$, register assignment $v:\\{0,\\ldots,m-1\\}\\to\\mathbb N$, and stored answer $res\\in\\{\\mathrm{none},\\mathrm{true},\\mathrm{false}\\}$, one abstract step from $(l,v,res)$ either yields an active configuration $(l',v',res)$ for some state $l'$ and register assignment $v'$, or yields a halted configuration $(\\mathrm{none},v,\\mathrm{some}(b))$ for some Boolean answer $b$.",
+ "hypotheses_covered": [
+  "Natural numbers m and d",
+  "A type Λ",
+  "A finite bit string x",
+  "A program A mapping states to instructions with m registers, d oracle indices, and states in Λ",
+  "A Boolean oracle on indices in Fin d and finite bit strings",
+  "A control state l",
+  "A register assignment v : Fin m → ℕ",
+  "A stored answer res : Option Bool"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

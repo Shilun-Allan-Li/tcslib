@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satDrop_copy",
+ "key": "cba8deffc807a5a2",
+ "kind": "lemma",
+ "title": "Copying the Remaining Suffix",
+ "statement": "Let $x$ and $r$ be Boolean words. For every pair of words $p,o$ such that $x=p\\mathbin{++}r$, the suffix-extraction machine, started in state $5$ at the clamped input offset $|p|$, with a unary counter of length $n$ and its head at $n$, and with output $o$, reaches after $|r|+1$ steps the halting configuration at the clamped offset $|x|$, with the same counter and head and output $o\\mathbin{++}r$.",
+ "hypotheses_covered": [
+  "Boolean words $x,r$",
+  "arbitrary natural number $n$",
+  "arbitrary prefix $p$ and output word $o$",
+  "decomposition $x=p\\mathbin{++}r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the native input decompose as $x = p \\mathbin{+\\!\\!+} r$ with the suffix\nextractor in its copy state at clamped offset $|p|$. Then exactly $|r| + 1$ steps\nemit every bit of $r$ and halt on the right blank, with the counter untouched."
+}

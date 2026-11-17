@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.f2_catalogPoly_loop",
+ "key": "bc88d9f4193d2f6c",
+ "kind": "lemma",
+ "title": "Loop phase output and head advance",
+ "statement": "Let $c,C,q$ be natural numbers with $q>0$, let $x$ be a Boolean word, and let $i<c+1$. Suppose $h\\colon\\{0,\\ldots,c\\}\\to\\mathbb Z$ satisfies $h(k)=0$ whenever $k\\le i$. For natural numbers $r,j$ with $j+r=q$ and any Boolean output word $o$, start in state $\\mathrm{loop}(i)$ with tape-head positions obtained from $h$ by setting position $i$ to $j$. After $r(\\mathrm{cost}(q,C,i)+2)+q+2$ steps, the machine is in state $\\mathrm{advance}(i+1)$ with head positions $h$ and output $o$ followed by $rCq^i$ copies of true.",
+ "hypotheses_covered": [
+  "$c,C,q\\in\\mathbb N$",
+  "$q>0$",
+  "$x$ is a Boolean word",
+  "$i<c+1$",
+  "$h(k)=0$ for every $k\\le i$",
+  "$r,j\\in\\mathbb N$ and $j+r=q$",
+  "$o$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

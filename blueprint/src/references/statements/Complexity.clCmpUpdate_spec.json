@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clCmpUpdate_spec",
+ "key": "51608711c86c13c2",
+ "kind": "lemma",
+ "title": "Comparator invariant under one-column update",
+ "statement": "Let $q$ be a triple of Boolean registers, with two carry bits and an equality flag, and let $w_0,w_1,w_2,w_3$ be finite little-endian binary words. The comparator invariant for $q$ on the four words holds if and only if it holds after one column update on the four word tails, using their first bits (or zero when a word is empty) as the scanned column.",
+ "hypotheses_covered": [
+  "A triple $q$ of Boolean comparator registers",
+  "Four finite little-endian binary words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every comparator registers $q$ and four words, the comparator invariant on the full words holds exactly when it holds for the updated registers on the four tails: equal sums are equivalent to equal low bits together with equal remaining high sums, and unequal low bits have opposite parity, which no later column can repair."
+}

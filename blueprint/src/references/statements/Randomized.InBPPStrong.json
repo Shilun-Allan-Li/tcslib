@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.InBPPStrong",
+ "key": "32f5459591aa58f1",
+ "kind": "def",
+ "title": "Strong bounded-error randomized recognition",
+ "statement": "A language $L$ of Boolean strings has strong randomized polynomial-time recognition with parameter $d$ if there are a Boolean-valued verifier $M$, natural numbers $a,k$, and an efficient verifier induced by $M$, such that for every input $x$, if $x\\in L$, then with a polynomially bounded number of fair random bits the probability that $M$ accepts is at least $1-(1/2)^{(|x|+1)^d+1}$; if $x\\notin L$, the probability that it rejects is at least the same bound.",
+ "hypotheses_covered": [
+  "There exists a verifier on pairs of Boolean strings",
+  "There exist natural numbers a and k",
+  "The verifier induced by M is efficient",
+  "For every input string x, acceptance probability has the stated lower bound when x belongs to L",
+  "For every input string x, rejection probability has the stated lower bound when x does not belong to L",
+  "The random-bit length is polyLen(a,k,|x|)"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define the efficiency predicate, polyLen, or randProb, so their precise meanings cannot be made self-contained from this payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

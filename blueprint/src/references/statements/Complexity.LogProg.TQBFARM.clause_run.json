@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.clause_run",
+ "key": "023cb18839caae06",
+ "kind": "theorem",
+ "title": "Clause evaluation during a run",
+ "statement": "Let $x$ be a Boolean word, $B$ a natural number, $rest$ a Boolean word, $Cl$ a clause over natural-number variables, $s$ a Boolean value, and $st$ a machine state. Suppose the suffix of $x$ beginning at position $st.P$ is the serialized literals of $Cl$, followed by false and then $rest$. Suppose every register of $st$ is at most $B$, $|x|\\le B$, and $st.T=st.Z=st.C=st.V=0$. The machine can reach state $ce\\bigl(s\\lor \\operatorname{eval}(Cl,\\operatorname{asg}(st.K,st.S))\\bigr)$ from state $cl(s)$, with all registers unchanged except that the input pointer becomes $st.P+|Cl\\text{'s serialized literals}|$.",
+ "hypotheses_covered": [
+  "The suffix of $x$ at position $st.P$ is the serialized literals of $Cl$ followed by false and $rest$",
+  "Every register of $st$ is at most $B$",
+  "$|x|\\le B$",
+  "$st.T=0$",
+  "$st.Z=0$",
+  "$st.C=0$",
+  "$st.V=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string and $B$ a natural number. For every suffix $rest$, clause $Cl$,\nbit $s$, and machine state $st$, suppose the suffix of $x$ starting at position $st.P$\nis the serialized literals of $Cl$ followed by a false bit and then $rest$. Suppose also\nthat each of the seven registers of $st$ is at most $B$, $|x|\\le B$, and\n$st.T=st.Z=st.C=st.V=0$. Then the machine reaches state\n$\\mathrm{ce}(s\\lor\\operatorname{eval}(Cl,\\operatorname{asg}(st.K,st.S)))$ from state\n$\\mathrm{cl}(s)$, ending with the same registers except that the input pointer has\nadvanced by the length of the serialized literals of $Cl$. All configurations before the\nend satisfy the run's validity conditions and register bound $B$."
+}

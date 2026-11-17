@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/F₂Polynomials/FourierToF₂Polynomial.lean :: FABL.functionAlgebraicDegree_booleanFunctionF₂Encoding_le_fourierDegree_viaPolynomial -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Algebraic Degree Bounded by Fourier Degree
+
+**Claim.** For a Boolean function in the sign encoding, the algebraic degree of its \mathbb F_2-encoded function is at most its Fourier degree.
+
+**Proof.** First, the algebraic degree of any \mathbb F_2-valued function is at most the numerical degree of its real embedding (the algebraic-degree bound for the Boolean real embedding, `functionAlgebraicDegree_le_functionNumericalDegree_booleanRealEmbedding`). For the given Boolean function, its Fourier-to-\mathbb F_2 polynomial is exactly the real embedding of its \mathbb F_2-encoding (`fourierToF₂Polynomial_booleanFunction`). Finally, the numerical degree of the Fourier-to-\mathbb F_2 polynomial equals the Fourier degree (`functionNumericalDegree_fourierToF₂Polynomial`). Combining these inequalities and this equality gives the result.
+
+**Key facts.** `FABL.functionAlgebraicDegree_le_functionNumericalDegree_booleanRealEmbedding`, `FABL.fourierToF₂Polynomial_booleanFunction`, `FABL.functionNumericalDegree_fourierToF₂Polynomial`.

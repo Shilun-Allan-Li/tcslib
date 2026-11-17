@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter05/GaussianMillsRatio.lean :: FABL.tendsto_standardGaussianDensity_div_atTop -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Density divided by its argument
+
+**Claim.** As $x$ tends to $+\infty$, the standard Gaussian density evaluated at $x$ and divided by $x$ tends to $0$.
+
+**Proof.** The standard Gaussian density tends to $0$ as $x\to+\infty$ (\texttt{FABL.tendsto\_standardGaussianDensity\_mills\_atTop}). Also, $1/x\to0$ as $x\to+\infty$. The quotient is the product of these two functions, so its limit is the product of their limits, namely $0$.
+
+**Key facts.** `FABL.tendsto_standardGaussianDensity_mills_atTop`.

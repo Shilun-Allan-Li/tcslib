@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_borrow_step",
+ "key": "528d6794aa6a2278",
+ "kind": "lemma",
+ "title": "One Borrow Step",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, and choose Boolean parameters `forward` and `findMode`, an input word $x$, a base configuration of the loop host on $x$, an input-head position $p$, and Boolean words $u$ and $v$. From controller phase $8$, with flag and payload tapes blank, counter tape storing $uv$, counter head at $|u|$, payload head at $0$, and empty output, one step leads to the following configuration: if $v$ is empty, phase $10$ with counter storing $u$ and head at $|u|-1$; if $v$ begins with true, phase $9$ with counter storing $u\\,\\mathrm{false}\\,v'$ and head at $|u|-1$; and if $v$ begins with false, phase $8$ with counter storing $u\\,\\mathrm{true}\\,v'$ and head at $|u|+1$, where $v'$ is the remaining suffix. In each case the other frame data are unchanged, the flag and payload tapes remain blank, and the output remains empty.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$",
+  "anchor state $a$ of $B$",
+  "Boolean parameters `forward` and `findMode`",
+  "input word $x$",
+  "base loop-host configuration",
+  "input-head position $p$",
+  "Boolean words $u,v$",
+  "initial state is controller phase 8",
+  "initial flag and payload tapes are blank",
+  "initial counter tape stores $uv$",
+  "counter head is at $|u|$",
+  "payload head is at $0$",
+  "initial output is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ and $r$ be Boolean words. One step of the loop host from its borrow phase on a\nframe whose counter track is the buffer tape of $p$ followed by $r$ with counter head at\n$|p|$ behaves as the standalone decrement machine: an empty $r$ enters the underflow-\nrewind phase moving left; a leading $\\mathrm{true}$ writes $\\mathrm{false}$ and enters\nthe success-rewind phase moving left; a leading $\\mathrm{false}$ writes $\\mathrm{true}$\nand continues the borrow moving right. Only the counter track changes."
+}

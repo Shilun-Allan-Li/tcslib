@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/SymbolLift.lean :: Turing.MultiTapeTM.liftSymbols_step_over -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Lifting a Step Over a Configuration
+
+**Claim.** Under input-symbol independence and the assumption that transitions never write a blank, stepping the symbol-lifted Boolean configuration over the given configuration agrees with lifting the result of stepping the Boolean machine over that configuration.
+
+**Proof.** Split on whether the Boolean configuration is halted. In the halted case, lifting preserves its empty state, and both steps leave their configurations unchanged (`Turing.MultiTapeTM.step_of_halt`). Now suppose its state is $q$. By the definition of lifting over $D$, each work-tape head either retains the symbol from $D$ when that symbol decodes to the Boolean symbol on $c$, or uses the lifted Boolean tape content otherwise. In either case, decoding the symbol seen at that head recovers the symbol seen on $c$: in the second case this follows by considering whether the Boolean cell is blank or contains a Boolean symbol. Thus the lifted transition receives the same work-tape symbols as the original transition. Its input symbol may differ, but the hypothesis that the transition is independent of the input symbol makes its action equal to the action on $c$’s input symbol. Compare the resulting configurations field by field. The state and output agree, and the input-head positions agree because both transitions use the same movement. For a work tape with no write action, the tape contents agree immediately. If the transition writes, the no-blank hypothesis ensures the written option is a present symbol. At the head cell, the definition of lifting over selects $D$’s symbol precisely when its decoded value is that Boolean symbol; the decoder identity (`Turing.decodeBool_eq_some`) then shows that this selected symbol is the image under $e$ of the written Boolean symbol. Away from the head cell, the update leaves the existing contents in place, so the lifted-over definitions agree there too. The work-head positions agree because the movements match. These fieldwise equalities establish the claimed configuration equality.
+
+**Key facts.** `Turing.MultiTapeTM.step_of_halt`, `Turing.decodeBool_eq_some`.

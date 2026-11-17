@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensity",
+ "key": "1480f8311bab5f81",
+ "kind": "lemma",
+ "title": "Derivative of a product Gaussian density",
+ "statement": "Let $I$ be a finite index set, let $v\\ge0$, and let $c,z\\in\\mathbb R^I$. The function $m\\mapsto\\prod_{i\\in I}p_v(m_i,z_i)$ is differentiable at $c$, with derivative the linear functional $h\\mapsto\\sum_{i\\in I}\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$, where $p_v$ is the Gaussian density of variance $v$ and division by zero is interpreted as zero.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$v\\ge0$",
+  "$c,z\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. For every $c,z\\in\\mathbb R^I$, the derivative at $c$ of $m\\mapsto G_v(m,z)$ is $A_v(c,z)$."
+}

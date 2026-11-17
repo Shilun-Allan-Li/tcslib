@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCursor_orbit",
+ "key": "fd0ab2aa7359cc8e",
+ "kind": "lemma",
+ "title": "Saturating Cursor Orbit",
+ "statement": "Let $R$ be a natural number, let $P$ assign a finite Boolean word to each natural number, and let $F$ map finite Boolean words to finite Boolean words. Suppose that for every $j\\le R+1$, applying $F$ to $P(j)$ gives $P(\\min(j+1,R+1))$. Then for every natural number $i$, applying $F$ repeatedly $i$ times to $P(0)$ gives $P(\\min(i,R+1))$.",
+ "hypotheses_covered": [
+  "$R$ is a natural number",
+  "$P$ maps natural numbers to finite Boolean words",
+  "$F$ maps finite Boolean words to finite Boolean words",
+  "For every $j\\le R+1$, $F(P(j))=P(\\min(j+1,R+1))$",
+  "$i$ is an arbitrary natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $R$ be a bound, let a packing map assign a word to each cursor value, and suppose a step function sends the packed word of $i$ to the packed word of $\\min(i+1, R+1)$ for every $i \\le R+1$. Then for all $i$, iterating the step function $i$ times from the packed word of $0$ yields the packed word of $\\min(i, R+1)$: the cursor reaches each legal round and then stalls at the one-past-last value."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.apply_moves",
+ "key": "0b51ee186ec3b6bf",
+ "kind": "lemma",
+ "title": "Effect of register-only head moves",
+ "statement": "Let a configuration with input $x$ have state $st$, input-head position $ip$, register tapes $rt$ and head positions $rp$, decider tapes $dt$ and head positions $dp$, and output $out$. Given an input-head movement $mv_I$ and a movement sign $f(r)$ for each register $r$, an action that makes those moves, leaves all tape contents unchanged, emits no output, and enters state $st'$ sends the configuration to one with state $st'$, input-head position moved by the clamped move $mv_I$, register-head positions $rp(r)+f(r)$, and the decider tapes and all other listed data unchanged.",
+ "hypotheses_covered": [
+  "$m,d,k_D$ are natural numbers; $\\Lambda,SD$ are state types",
+  "$x$ is a finite bit string",
+  "$st$ is an optional program state and $st'$ is a program state",
+  "$ip$ is a valid input-head position",
+  "$rt,dt$ are tape-content functions and $rp,dp$ are head-position functions",
+  "$out$ is an output bit string",
+  "$mv_I$ is an input-head movement sign",
+  "$f$ assigns a movement sign to each register"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

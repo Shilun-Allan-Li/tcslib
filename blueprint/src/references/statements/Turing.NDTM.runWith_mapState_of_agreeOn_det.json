@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.NDTM.runWith_mapState_of_agreeOn_det",
+ "key": "3bfe0e6607f9a6df",
+ "kind": "theorem",
+ "title": "Deterministic runs under state renaming",
+ "statement": "Let $S$ and $H$ be state sets, let $\\Gamma$ be an alphabet, and let $k$ be the number of work tapes. Suppose $M_{\\mathrm{src}}$ is a deterministic multi-tape machine over $\\Gamma$ with state set $S$, and $M_{\\mathrm{host}}$ is a nondeterministic multi-tape machine over $\\Gamma$ with state set $H$. Let $e:S\\hookrightarrow H$ be an embedding and $G\\subseteq S$. Assume that for every choice bit, every $q\\in G$, and every input and work-tape reading, the host transition at $e(q)$ equals the deterministic source transition at $q$ with its successor state renamed by $e$. For a source configuration $c$ on input $x$ and a choice word $w$, suppose every state reached by the deterministic source run after $u$ steps belongs to $G$ whenever $u<|w|$ and that run has a state. Then the host run from $e(c)$ under $w$ equals the deterministic source configuration after $|w|$ steps, with its state renamed by $e$.",
+ "hypotheses_covered": [
+  "deterministic source machine and nondeterministic host machine over Γ, each with k work tapes",
+  "state sets S and H",
+  "embedding e:S→H",
+  "subset G of source states",
+  "transition agreement for every choice bit, good source state, input reading, and work-tape reading",
+  "source configuration c and choice word w",
+  "every nonhalting deterministic source state after u steps for u<|w| is in G"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

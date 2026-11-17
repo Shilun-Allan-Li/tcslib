@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.sq_expect_abs_le_mul_fourierWeightUpTo",
+ "key": "b20b82de98eea64d",
+ "kind": "lemma",
+ "title": "Bound on the mean absolute polynomial value",
+ "statement": "Let $n,k\\in\\mathbb N$, let $p$ be a real coefficient family indexed by subsets of $[n]$, and let $f:\\{0,1\\}^n\\to\\mathbb R$. Suppose $p(S)=0$ whenever $|S|>k$, and $f(x)$ is the threshold sign of $\\sum_{S\\subseteq[n]}p(S)\\chi_S(x)$, with sign $1$ at nonnegative values and $-1$ at negative values. Then, for uniform expectation on the cube, $\\bigl(\\mathbb E|\\sum_{S\\subseteq[n]}p(S)\\chi_S(x)|\\bigr)^2\\le\\bigl(\\sum_{S\\subseteq[n]}p(S)^2\\bigr)\\bigl(\\sum_{|S|\\le k}\\widehat f(S)^2\\bigr)$.",
+ "hypotheses_covered": [
+  "$n,k\\in\\mathbb N$",
+  "$p$ is a real coefficient family indexed by subsets of $[n]$",
+  "$p(S)=0$ for every $S$ with $|S|>k$",
+  "$f:\\{0,1\\}^n\\to\\mathbb R$ is the threshold sign of the polynomial defined by $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n,k\\in\\mathbb N$, define $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ on $\\{0,1\\}^n$ for $S\\subseteq\\{1,\\ldots,n\\}$, and let $p(x)=\\sum_Sa_S\\chi_S(x)$ have real coefficients with $a_S=0$ whenever $|S|>k$.\nSuppose $f:\\{0,1\\}^n\\to\\mathbb R$ satisfies $f(x)=\\operatorname{sgn}(p(x))$, where $\\operatorname{sgn}(t)=1$ for $t\\ge0$ and $-1$ for $t<0$, and put $\\widehat f(S)=\\mathbb E_x[f(x)\\chi_S(x)]$ using uniform expectation.\nThen\n\\[\n \\bigl(\\mathbb E_x|p(x)|\\bigr)^2\n \\le\\left(\\sum_Sa_S^2\\right)\\left(\\sum_{|S|\\le k}\\widehat f(S)^2\\right).\n\\]"
+}

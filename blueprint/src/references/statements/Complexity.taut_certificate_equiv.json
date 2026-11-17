@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.taut_certificate_equiv",
+ "key": "bcbf8343f4784f68",
+ "kind": "lemma",
+ "title": "Certificate Characterization of Non-Tautologies",
+ "statement": "For every binary string $x$, $x$ lies outside the language of tautologies if and only if there is a binary word $u$ of length exactly $|x|+1$ such that the DNF decoded from $x$ evaluates to false under the assignment that reads variable $v$ from the $v$-th bit of $u$ and assigns false when $v\\ge |u|$.",
+ "hypotheses_covered": [
+  "$x$ is a binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary string $x$, $x$ lies outside $\\mathrm{TAUTOLOGY}$ if and only if\nthere exists a binary word $u$ of length exactly $|x| + 1$ such that the DNF decoded\nfrom $x$ evaluates to false under the assignment $\\alpha_u$ that reads variable $v$\noff the $v$-th bit of $u$ (false for $v \\ge |u|$)."
+}

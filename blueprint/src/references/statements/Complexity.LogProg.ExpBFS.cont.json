@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.cont",
+ "key": "a4792cd27636daa9",
+ "kind": "lemma",
+ "title": "Reachability under equal register states",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathsf{orc}$ assign a Boolean to each of four query types and each finite bit string, and let $x$ be a finite bit string. For machine states $st$ and $st'$, if $st=st'$ and there is a finite run satisfying the guard from the configuration with control state $l$, register vector encoded by $st'$, memory $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and head position $p\\in\\mathbb Z$ to a configuration $c$, then there is such a run from the configuration with the same control state, memory, and head position and register vector encoded by $st$, to $c$.",
+ "hypotheses_covered": [
+  "$K_0,B,P\\in\\mathbb N$",
+  "Oracle with four query types and finite bit-string inputs",
+  "Finite bit-string input $x$",
+  "States $st,st'$ with $st=st'$",
+  "Memory $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "Head position $p\\in\\mathbb Z$",
+  "A guarded finite run exists from the configuration encoded by $st'$ to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the machine, oracle, input, register bound, and memory bound. For states $S,S'$ of\nthe machine's register system, if $S=S'$, then every guarded finite run from the\nconfiguration with control state $\\ell$, register values encoded by $S'$, memory\ncontents $M$, and memory head at $p$ to a configuration $c$ is also such a run from the\nconfiguration with the same control state, memory, and head position but register values\nencoded by $S$."
+}

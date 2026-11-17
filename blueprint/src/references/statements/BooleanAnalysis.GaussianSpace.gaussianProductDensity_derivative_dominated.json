@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.gaussianProductDensity_derivative_dominated",
+ "key": "0c85067a86221b35",
+ "kind": "lemma",
+ "title": "Common envelope for density and derivative",
+ "statement": "Let $I$ be finite, let $v\\ge0$ with $v\\ne0$, and let $M\\ge0$. There is a nonnegative Lebesgue-integrable function $b:\\mathbb R^I\\to\\mathbb R$ such that, for every $m,z\\in\\mathbb R^I$ with $|m_i|\\le M$ for all $i$, both the absolute value of the product Gaussian density at $(m,z)$ and the operator norm of its mean derivative at $(m,z)$ are at most $b(z)$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$v\\ge0$ and $v\\ne0$",
+  "$M\\ge0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. If $v>0$ and $M\\ge0$, there exists a nonnegative Lebesgue-integrable $b:\\mathbb R^I\\to\\mathbb R$ such that $|G_v(m,z)|\\le b(z)$ and $\\|A_v(m,z)\\|\\le b(z)$ for all $z$ and all $m$ with $|m_i|\\le M$ for every $i$, with operator norm for the maximum norm."
+}

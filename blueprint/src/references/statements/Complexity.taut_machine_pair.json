@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.taut_machine_pair",
+ "key": "b1752419a481f44c",
+ "kind": "lemma",
+ "title": "Verifier correctness on encoded pairs",
+ "statement": "Let $x$ and $u$ be binary words with $|u|=|x|+1$. Then the non-tautology verifier computes, on their pair encoding, the one-bit output that is the negation of the truth value of the DNF decoded from $x$ under the certificate assignment determined by $u$, within $10(|\\mathrm{pair}(x,u)|+1)$ steps.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$u$ is a binary word",
+  "$|u|=|x|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ and $u$ be binary words with $|u| = |x| + 1$. The non-tautology verifier, run on\n$\\mathrm{pair}(x, u)$, halts within $10(|\\mathrm{pair}(x,u)| + 1)$ steps with output\nthe single bit that negates the truth value of the DNF decoded from $x$ under the\nassignment $\\alpha_u$ reading variable $v$ off the $v$-th bit of $u$ (false beyond\n$|u|$)."
+}

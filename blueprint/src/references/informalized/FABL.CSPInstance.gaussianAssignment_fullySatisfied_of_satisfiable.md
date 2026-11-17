@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter07/LinearCSPAlgorithms.lean :: FABL.CSPInstance.gaussianAssignment_fullySatisfied_of_satisfiable -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Gaussian Assignment Satisfies Every Constraint
+
+**Claim.** For a satisfiable Max-\mathbb{F}_2-r-Lin instance, the Gaussian assignment satisfies every constraint.
+
+**Proof.** Satisfiability gives an assignment satisfying every constraint, by the equivalence between optimum value one and existence of a fully satisfying assignment (`satisfiable_iff_exists_fullySatisfied`). The correspondence between the instance’s constraints and its linear rows (`satisfiesRows_linearRows_iff`) therefore gives a solution satisfying all rows in `problem.linearRows`. The solver’s completeness property says that whenever a system of rows has a satisfying assignment, `solveF₂Rows` returns one satisfying all those rows (`solveF₂Rows_satisfies_of_exists`). Applying the row-to-constraint correspondence once more shows that the solver’s output, which is the Gaussian assignment, fully satisfies the instance.
+
+**Key facts.** `FABL.CSPInstance.satisfiable_iff_exists_fullySatisfied`, `FABL.CSPInstance.satisfiesRows_linearRows_iff`, `FABL.solveF₂Rows_satisfies_of_exists`.

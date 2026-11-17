@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.cmpPlain_run",
+ "key": "7fafe947c127e2a7",
+ "kind": "lemma",
+ "title": "Plain-word comparison run",
+ "statement": "Let $P$ be a register program with oracle, let $r$ be a register, and let $j_C$ and $j_{RB}(b)$ be states. Suppose that at $j_C$ every transition is the specified comparison action using register $r$, and that $j_C$ is not a call state. Let $c$ be a configuration in which register $r$ contains the word $w_r$ starting at cell $0$. Let $w_i$ be an input word and $q_0$ a nonnegative integer such that, for every $k\\ge 0$, the input symbol at offset $q_0+k$ is the $k$-th symbol of $w_i$ (or is absent when $k\\ge |w_i|$), and suppose $q_0+|w_i|\\le |x|+1$. For every decomposition $w_i=p u_1$ and $w_r=p u_2$, and every input-head position $ip$ satisfying $ip=q_0+|p|$, there exist natural numbers $T,k$ and an input-head position $ip_k$ with $ip_k=q_0+k$, $|p|\\le k\\le |w_r|$, and $k\\le |w_i|$, such that after $T$ steps from state $j_C$, input-head position $ip$, and register-head position $|p|$, the machine is in state $j_{RB}(b)$, at input-head position $ip_k$ and register-head position $k-1$, where $b$ is true exactly when $w_i=w_r$. At every earlier time $t<T$, it is in state $j_C$ with some input-head position and register-head position $q$ satisfying $0\\le q\\le |w_r|$.",
+ "hypotheses_covered": [
+  "The transition rule at the comparison state for all input and work-tape readings",
+  "The comparison state is not a call state",
+  "Register r contains the buffered word w_r",
+  "Input word w_i and offset q₀",
+  "Input-symbol agreement for every offset k",
+  "The bound q₀ + |w_i| ≤ |x| + 1",
+  "Decompositions w_i = p u₁ and w_r = p u₂",
+  "Input-head position ip has value q₀ + |p|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

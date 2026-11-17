@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.CounterProg.step_regs_le",
+ "key": "d6276a78cc2704db",
+ "kind": "theorem",
+ "title": "Register growth in one step",
+ "statement": "Let $R$ be the number of registers, let $\\Lambda$ be a set of labels, and let $P$ assign an instruction to each label. For any input bit string $x$, state $s$, and register $r$, the value of register $r$ after one step of $P$ on $x$ is at most its value in $s$ plus one.",
+ "hypotheses_covered": [
+  "A counter program with $R$ registers and labels in $\\Lambda$",
+  "An input bit string $x$",
+  "A state $s$",
+  "A register $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, $x$ an input bit\nstring, $s$ an abstract state with registers $\\rho$, and $r$ a register. If $\\rho'$ denotes the\nregisters of the state reached from $s$ by one step of $P$ on $x$, then\n$\\rho'(r) \\le \\rho(r) + 1$."
+}

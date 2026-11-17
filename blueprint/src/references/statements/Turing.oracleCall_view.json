@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.oracleCall_view",
+ "key": "478be32d0040ac7a",
+ "kind": "theorem",
+ "title": "Configuration after an oracle call",
+ "statement": "Let $C$ be a finite Turing machine with $k>0$ work tapes, let $\\iota$ be an injection from $1+k$ virtual tape indices into the $k'$ work-tape indices of a configuration $d$ over input $x$, and suppose every tape indexed by $\\iota(j)$ is blank in $d$ and its head is at cell $0$. For a state $q$ of $C$ and Boolean word $z$, embedding the virtual-host configuration initialized with $z$ on its first work tape, empty contents on its other work tapes, boundary tag true, the input-head position of $d$, and the output of $d$ as its output prefix yields the configuration obtained from $d$ by setting its state to $(q,\\mathrm{true})$ and replacing the tape at index $\\iota(\\text{first virtual bank index})$ by the buffer containing $z$; all other configuration data remains as in $d$.",
+ "hypotheses_covered": [
+  "C is a finite Turing machine over Boolean symbols",
+  "C has a positive number of work tapes",
+  "An injection maps the 1 + C.k virtual tape indices into d's work-tape indices",
+  "d is a configuration over Boolean input x with state in C.State × Bool",
+  "Every injected tape is blank in d",
+  "Every injected work-tape head is at cell 0",
+  "q is a state of C",
+  "z is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

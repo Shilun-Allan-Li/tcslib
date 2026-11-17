@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.arm_decides_pspace",
+ "key": "66acedbd867cf910",
+ "kind": "theorem",
+ "title": "Polynomial-space oracle register computations",
+ "statement": "Let $L$ be a language of bit strings, let $A$ be a register program with $m$ registers and finitely many states, and let $\\ell_0$ be its initial state. Suppose there are $d$ oracle languages $A_0,\\ldots,A_{d-1}$, each decidable in polynomial space, and natural numbers $C_0,c_0$. If, on every input $x$, the run from $\\ell_0$ with all registers zero halts with the correct membership answer for $L$, and every configuration before halting satisfies the program's side conditions and has each register's binary length after adding one at most $C_0(|x|+1)^{c_0}$, then $L$ is decidable in polynomial space.",
+ "hypotheses_covered": [
+  "L is a language of bit strings",
+  "A has m registers and a finite state set Λ",
+  "The initial state ℓ₀",
+  "There are d oracle languages indexed by Fin d",
+  "Every oracle language belongs to PSPACE",
+  "C₀ and c₀ are natural numbers",
+  "For every input x, the run halts with the membership indicator for L(x)",
+  "Every configuration before halting satisfies PreS",
+  "For each register, the binary length of its value plus one is at most C₀*(input length+1)^c₀"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

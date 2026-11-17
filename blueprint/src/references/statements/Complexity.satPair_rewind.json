@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.satPair_rewind",
+ "key": "83600737ba7b0891",
+ "kind": "lemma",
+ "title": "Rewinding the Captured Word",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $x$ be an input, and let $s$ be any configuration of $M$ on $x$. For a Boolean word $u$ and $n\\in\\mathbb{N}$ with $n\\le |u|$, starting from the pairing configuration that preserves $s$, has control state $3$, input head at its initial position, capture tape containing $u$ with its head at offset $n-1$, and empty output, after exactly $n+1$ steps the machine is in the corresponding configuration with control state $4$, capture head at offset $0$, and all other fields unchanged.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x$ is a Boolean input",
+  "$s$ is a configuration of $M$ on $x$",
+  "$u$ is a Boolean word",
+  "$n\\in\\mathbb{N}$",
+  "$n\\le |u|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n \\le |u|$: from the canonical pairing configuration in the\ncapture-rewind state with the capture head at offset $n - 1$ and empty output,\nexactly $n + 1$ steps return the head to the origin and enter the replay state,\nwith all other fields unchanged."
+}

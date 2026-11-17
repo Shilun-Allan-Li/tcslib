@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.maskedClock_oblivious",
+ "key": "34e10b2872215866",
+ "kind": "lemma",
+ "title": "Obliviousness of the masked clock",
+ "statement": "Let $A$ be an alphabet, $W$ a finite Turing machine over $A$, and $z\\in A$. The machine obtained from $W$ by replacing every nonblank symbol read on the input tape by $z$ before applying $W$’s transition function is oblivious: for any two inputs of equal length and every time $t\\in\\mathbb N$, its input-head positions and all its work-tape head positions agree. No halting assumption is required.",
+ "hypotheses_covered": [
+  "A is a type",
+  "W is a finite Turing machine over A",
+  "z is a symbol in A"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine $W$ over an alphabet $A$ and every symbol $z \\in A$, the masked\nclock of $W$ with mask $z$ is oblivious: on any two inputs of the same length its\ninput-head position and all of its work-head positions agree at every time. No\nhalting hypothesis is required."
+}

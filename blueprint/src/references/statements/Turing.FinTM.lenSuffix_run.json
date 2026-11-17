@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.lenSuffix_run",
+ "key": "f11c02020a834829",
+ "kind": "lemma",
+ "title": "Suffix Length Comparison",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be a configuration of $M$ on input $x$. For every decomposition $x=ps$ into Boolean words and every natural number $r$ with $r\\le |c.output|$, the captured-length checker, started from the configuration built from $c$ in its suffix-comparison state at input position $|p|$ with counter $r$, reaches a halted configuration within at most $|s|+1$ steps, with output the single Boolean indicating whether $|s|\\le r$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$x$ is decomposed as $p$ followed by $s$",
+  "$r$ is a natural number",
+  "$r$ is at most the length of $c$'s output",
+  "The running time is bounded by $|s|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For a split $x = p s$ of the input and a counter $r$ at most the captured\nword's length, from the checker's comparison state at position $\\abs{p}$\nthere is a time $t \\le \\abs{s} + 1$ such that after $t$ steps the checker has\nhalted with output the single bit recording whether $\\abs{s} \\le r$; the\nempty suffix succeeds even with counter $0$."
+}

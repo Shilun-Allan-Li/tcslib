@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.write_zone",
+ "key": "52ed069b21fba0b0",
+ "kind": "lemma",
+ "title": "Backward sweep over a tape zone",
+ "statement": "Let $c$ be a configuration of a $k$-work-tape machine, let $\\alpha$ be an action, and let $j\\in\\mathbb{Z}$ and $n\\in\\mathbb{N}$. A right-to-left sweep through the reversed zone of $n$ read-marked blocks, initialized with the head flags at coordinate $j+n$, finishes with the head flags at coordinate $j$ and produces the reversed zone of unread blocks from the configuration obtained by applying $\\alpha$ to $c$.",
+ "hypotheses_covered": [
+  "A configuration $c$ of a $k$-work-tape machine",
+  "An action $\\alpha$ for the same machine",
+  "Integer starting coordinate $j$",
+  "Natural zone length $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a $k$-work-tape machine, $\\alpha$ an action of that\nmachine, $j \\in \\mathbb{Z}$, and $n \\in \\mathbb{N}$. The backward sweep for $\\alpha$\nover the reversed concatenation of the $n$ read-marked blocks at coordinates\n$j, \\dots, j+n-1$, started from the table of head flags at coordinate $j+n$, ends in the\ntable of head flags at $j$ and produces the reversed unread blocks of the configuration\nobtained by applying $\\alpha$ to $c$."
+}

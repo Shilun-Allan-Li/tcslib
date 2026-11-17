@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.oracleOffQuery",
+ "key": "7da25f77b7edcbc9",
+ "kind": "theorem",
+ "title": "Simulation away from oracle queries",
+ "statement": "Let $M$ be an oracle Turing machine with $m$ ordinary work tapes over the Boolean alphabet, let $O$ be a language of Boolean words, and let $P$ be a Turing machine with $k$ work tapes and state set $H$. Suppose $\\\\iota$ is an injection from the $m+2$ tape indices of the shadow simulation into the $k$ tapes of $P$, and $emb$ is an injection from pairs $(q,b)$, where $q$ is a state of $M$ and $b\\in\\{\\mathrm{false},\\mathrm{true}\\}$, into $H$. Fix arbitrary contents and head positions for the tapes of $P$. Assume that, for every such pair with $q$ different from the query state, every scanned input symbol, and every tuple of scanned work-tape symbols, the transition of $P$ at state $emb(q,b)$ agrees with the state-renamed transition of the shadow simulation of $M$ with the empty oracle. Let $c$ be a configuration of $M$ on a Boolean input, and suppose its query-tape head position is nonnegative if $b$ is true and nonpositive if $b$ is false. If the empty-oracle computation from $c$ is outside the query state at every time $s<t$, then there is a Boolean tag $b'$ such that the query-tape head position after $t$ steps of $M$ relative to $O$ is nonnegative when $b'$ is true and nonpositive when $b'$ is false, and the configuration of $P$ after $t$ steps from the encoded configuration of $c$ with tag $b$ equals the encoding of the configuration of $M$ after $t$ steps relative to $O$ with tag $b'$.",
+ "hypotheses_covered": [
+  "$M$ is an oracle Turing machine with $m$ ordinary work tapes over the Boolean alphabet",
+  "$O$ is a language of Boolean words",
+  "$P$ is a $k$-tape Turing machine with state set $H",
+  "$\\iota$ injects the $m+2$ shadow-simulation tape indices into the $k$ tapes",
+  "$emb$ injects pairs of an $M$-state and a Boolean tag into $H$",
+  "Arbitrary contents and head positions are fixed for the tapes of $P$",
+  "Transition agreement holds for all non-query state-tag pairs and all scanned input and work-tape symbols",
+  "$c$ is a configuration of $M$ on a Boolean input",
+  "The initial query-tape head position is nonnegative for true $b$ and nonpositive for false $b$",
+  "At every integer time $s<t$, the empty-oracle computation from $c$ is outside the query state",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

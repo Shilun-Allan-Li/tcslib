@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.clMatch_compare",
+ "key": "2e7e636a3621a313",
+ "kind": "lemma",
+ "title": "Bounded signed comparison",
+ "statement": "Let $l\\in\\mathbb{N}$, let $pos,neg\\in\\{0,\\ldots,l-1\\}$ be distinct, and choose a Boolean input word, row of Boolean words, two target words, Boolean stream, integer cursor, and natural numbers $N,j,W$. Suppose every row word and target word has length at most $W$. Then there are a natural number $t\\le 2W+3$ and a bit $b$ such that $b$ is true exactly when the value of the row's positive word plus the second target word equals the value of the first target word plus the row's negative word; after $t$ steps from the comparison control, the matcher is in the clock-test control, has advanced its clock to $j+1$, and has appended $b$ to the flags, with the other displayed data unchanged.",
+ "hypotheses_covered": [
+  "Natural number $l$",
+  "Distinct coordinates $pos$ and $neg$ in the range of length $l$",
+  "Boolean input word",
+  "Arbitrary row of Boolean words",
+  "Arbitrary pair of target words",
+  "Arbitrary Boolean stream",
+  "Integer cursor",
+  "Natural numbers $N,j,W$",
+  "Every row word has length at most $W$",
+  "Every target word has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For distinct positive and negative coordinates, a candidate row and target words of length at most $W$, and any stream, cursor, clock data, and flags, there is a time $t \\le 2W + 3$ and a bit $b$, true exactly when the row's positive count plus the second target equals the first target plus the row's negative count, such that the matcher completes the comparison, restores all four word heads, stores $b$ on the flag tape, and advances the clock; cross-sum equality, not the raw words, determines the flag."
+}

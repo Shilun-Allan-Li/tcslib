@@ -1,0 +1,15 @@
+{
+ "lean_name": "RestrictionFourier.isPmOne_boolToSign",
+ "key": "a5f77bc0ba7c54fc",
+ "kind": "lemma",
+ "title": "Sign encoding takes values in $\\{\\pm1\\}$",
+ "statement": "For every function $g:\\{0,1\\}^n\\to\\{0,1\\}$, the real-valued function obtained by mapping false to $1$ and true to $-1$ after applying $g$ takes values only in $\\{-1,1\\}$.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A function $g:\\{0,1\\}^n\\to\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $g : \\{0,1\\}^n \\to \\{0,1\\}$ be a Boolean-valued function, and let $\\sigma$ denote\nthe sign encoding of a bit, $\\sigma(\\mathtt{false}) = 1$ and $\\sigma(\\mathtt{true}) =\n-1$. Then the real-valued function $x \\mapsto \\sigma(g(x))$ takes only the values $1$\nand $-1$ at every point $x$ of the cube."
+}

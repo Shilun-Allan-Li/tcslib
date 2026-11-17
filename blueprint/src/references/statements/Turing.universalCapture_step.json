@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalCapture_step",
+ "key": "722eff3c74e8973d",
+ "kind": "lemma",
+ "title": "One captured transition",
+ "statement": "Let $M$ be a finite-state machine over the Boolean alphabet, let $D$ be a four-work-tape machine over the Boolean alphabet with finite state set and decidable state equality, and let $c$ be a configuration of $M$ on input $x$. If $c$ is not halted, one step of the capture wrapper from the first-phase configuration associated to $c$ equals the first-phase configuration associated to the result of one step of $M$ from $c$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state machine over the Boolean alphabet",
+  "$D$ is a four-work-tape Boolean machine with finite state set and decidable state equality",
+  "$c$ is a configuration of $M$ on the finite Boolean input $x$",
+  "$c$ is not halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a machine $M$ on input $x$ whose control state\nis live (not halted).  Then one transition of the output-capture wrapper of\n$M$ and a four-tape interpreter $D$, applied to the first-phase embedding of\n$c$, equals the first-phase embedding of the configuration obtained from $c$\nby one transition of $M$.  In particular any bit emitted by that transition\nof $M$ --- including a bit emitted on $M$'s halting transition --- is\nappended on the table tape, and the wrapper itself remains live."
+}

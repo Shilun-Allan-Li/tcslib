@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.Contract.spaceUsedByTape_le",
+ "key": "3659ae8984abf5cd",
+ "kind": "theorem",
+ "title": "Space Bound from a Head Envelope",
+ "statement": "Let $M$ be a machine and $C$ a contract for $M$. For any data value $i$, configuration $d$, and work-tape index $j$, the number of distinct cells visited by tape $j$ from time zero through time $C$’s assigned time is at most the natural-number part of $C$’s upper bound plus one minus its lower bound for that tape; for an integer $z$, this natural-number part is $\\\\max(z,0)$.",
+ "hypotheses_covered": [
+  "$C$ is a contract for $M$",
+  "$i$ is a data value",
+  "$d$ is a configuration",
+  "$j$ is a work-tape index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine and let $C$ be a contract for $M$. For any\nparameter $i$ and starting configuration $d$ whose state is the contract entry state and\nwhich satisfies the contract precondition, and any work-tape index $j$, the number of\ndistinct cells visited by head $j$ from time $0$ through time $C.\\mathrm{time}(i,d)$ is\nat most $\\max(C.\\mathrm{hi}(i,d,j)+1-C.\\mathrm{lo}(i,d,j),0)$."
+}

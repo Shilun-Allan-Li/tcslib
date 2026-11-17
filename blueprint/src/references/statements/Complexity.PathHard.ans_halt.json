@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.PathHard.ans_halt",
+ "key": "eff4f79e8b627577",
+ "kind": "lemma",
+ "title": "Halting from an answer state",
+ "statement": "Let $a,b,f,B\\in\\mathbb{N}$, let $m\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $o$ be an oracle on five Boolean words, and let $y$ be a Boolean word. For any register record $st$ whose fifteen entries are at most $B$ and either Boolean $r$, the machine $A(a,b,f,m)$ on input $y$, started at its answer-$r$ state with register values $st$ and no result recorded, halts with result $r$; at every earlier time its configuration satisfies the guard requiring its prescribed precondition and all register values to be at most $B$.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$o$ is an oracle on five Boolean words",
+  "$y$ is a Boolean word",
+  "Every one of the fifteen entries of $st$ is at most $B$",
+  "$r$ is a Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $o$ be an oracle on\nfive Boolean-word inputs, and let $y$ be a Boolean word. If a state $st$ has all fifteen\nregister values at most $B$, then for either Boolean $r$, the machine $A(a,b,f,m)$ on\ninput $y$, started in the state labeled by answer $r$ with register vector $st$ and no\nrecorded result, halts with result $r$; at every earlier time its configuration\nsatisfies the guard requiring the prescribed precondition and all registers to be at\nmost $B$."
+}

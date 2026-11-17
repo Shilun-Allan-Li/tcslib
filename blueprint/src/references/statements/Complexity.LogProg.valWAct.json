@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.valWAct",
+ "key": "0795ffb8d0b1082e",
+ "kind": "def",
+ "title": "Work-tape validation action",
+ "statement": "For an input word $x$, a register index $r$ among $m$ registers, states $vWF,vWT,rw_1$, and a remembered bit that may be absent, the action on an observed symbol $a$ is as follows. If $a$ is a bit $b$, it is $xAct(r,1,0,vWT)$ when $b=1$ and $xAct(r,1,0,vWF)$ when $b=0$. If $a$ is absent, it is the rejection action when the remembered bit is $0$, and otherwise it is $xAct(r,0,0,rw_1)$.",
+ "hypotheses_covered": [
+  "An input word $x$ of Booleans",
+  "A natural number $m$ of registers",
+  "A register index $r$ among those $m$ registers",
+  "States $vWF,vWT,rw_1$ in the state type",
+  "A remembered bit that may be absent",
+  "An observed symbol that may be absent"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

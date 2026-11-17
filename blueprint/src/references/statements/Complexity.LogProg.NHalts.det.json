@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.NHalts.det",
+ "key": "4e91910fa540f662",
+ "kind": "lemma",
+ "title": "Halting after a deterministic instruction",
+ "statement": "Let $A$ be a nondeterministic register program, with fixed oracle, input, and configuration predicate $G$. Suppose the instruction at state $l$ is the deterministic instruction $i$, and let $\\beta$ be either Boolean value. If $(l,v,r)$ satisfies $G$, and every choice word of length $N$ from the configuration obtained by applying $i$ at $(l,v,r)$ leads to a halted configuration while all its earlier nonhalted configurations satisfy $G$, then every choice word of length $N+1$ from $(l,v,r)$ has those same halting and intermediate-configuration properties.",
+ "hypotheses_covered": [
+  "A nondeterministic register program $A$, oracle, input, and predicate $G$",
+  "State $l$ and deterministic instruction $i$, with the instruction at $l$ equal to $i$",
+  "A Boolean value $\\beta$",
+  "A register valuation $v$, result value $r$, and natural number $N$",
+  "$G$ holds of the configuration $(l,v,r)$",
+  "The length-$N$ halting and intermediate-$G$ property holds from the configuration obtained by the deterministic step using $\\beta$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

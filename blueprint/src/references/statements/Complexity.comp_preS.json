@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.comp_preS",
+ "key": "0cb56f1929ac18a8",
+ "kind": "lemma",
+ "title": "Machine instruction admissibility",
+ "statement": "For all natural numbers $C,e$, every Boolean value $m$, every finite bit string $h$, and every configuration $a$ consisting of an optional state, fourteen natural-number register values, and an optional Boolean result, the instruction specified at its active state satisfies its admissibility condition: a register-equality instruction compares distinct registers; an input-word comparison is used only when the input has the required plain or nested canonical encoding; and an oracle call uses a list of pairwise distinct argument registers.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$m$ is a Boolean value",
+  "$h$ is a finite bit string",
+  "$a$ is a configuration with an optional state, fourteen natural-number register values, and an optional Boolean result"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all natural numbers $C,e$, Boolean values $\\mathrm{mode}$, every finite bit string\n$h$, and every configuration $a$ of the specified fourteen-register machine, the\nmachine's instruction at the active state satisfies its precondition: any\nregister-equality test compares distinct registers, an input-word comparison is made\nonly on an input of the required plain or paired canonical form, and any oracle call\nuses pairwise distinct argument registers."
+}

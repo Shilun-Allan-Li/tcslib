@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.emCall_eval_initial",
+ "key": "9a0e5297fcd813f1",
+ "kind": "lemma",
+ "title": "Initial Evaluator Configuration",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, and let $w$ and $s$ be Boolean words. The evaluator configuration formed from the initial configuration of $M$ on $s$, with true boundary tag and physical input-head position $1$, equals the configuration on physical input $w$ whose initial evaluator state is active, whose first work tape stores $s$, and whose other work tapes are blank.",
+ "hypotheses_covered": [
+  "M is a finite-state Boolean Turing machine",
+  "w and s are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every physical input $w$ and argument word $s$, the evaluator configuration built\nfrom the initial configuration of $M$ on $s$, with initial tag and physical input head\nat one, equals the canonical seam configuration of the capture-wrapped evaluator whose\nfirst work tape holds $s$, all other work tapes blank, all heads at their origins, and\noutput empty."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clRec_cost_bound",
+ "key": "c81f12a6fecb946d",
+ "kind": "lemma",
+ "title": "Quadratic recording-work bound",
+ "statement": "For every finite Turing machine $M$ over the Boolean alphabet and every natural number $T$, let $F$ be the number of movement-count fields per stored row, with one positive and one negative counter for each head, including the input head. Then $(T+1)(F(3T+4)+2T+7) \\le (4F+7)(T+1)^2$.",
+ "hypotheses_covered": [
+  "finite Turing machine over the Boolean alphabet $M$",
+  "natural number $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine and horizon $T$, the complete stored-row ledger $(T+1)(F(3T+4) + 2T + 7)$, where $F$ is the field count, is at most $(4F + 7)(T+1)^2$, so native recording work is polynomial in the source horizon, separately from the formula output size."
+}

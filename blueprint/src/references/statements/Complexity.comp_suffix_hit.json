@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.comp_suffix_hit",
+ "key": "a3ff4abdf112ead9",
+ "kind": "lemma",
+ "title": "Suffix Hit Halting Result",
+ "statement": "Let $C,e,B$ be natural numbers, let $\text{mode}$ be a Boolean flag, let $f$ map finite Boolean words to finite Boolean words, let $h$ be a finite Boolean word, and let $v$ assign a natural number to each of $14$ registers. Suppose every register value is at most $B$. Starting in the suffix-hit state with register vector $v$ and no answer recorded, the machine halts with answer true if $\text{mode}$ is true, and otherwise with the bit of $h$ at position $v_0$, using false when that position is beyond the end; every configuration before halting satisfies the program's step-validity condition and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$C,e,B\\in\\mathbb N$",
+  "Boolean flag $\\text{mode}$",
+  "$f$ maps finite Boolean words to finite Boolean words",
+  "$h$ is a finite Boolean word",
+  "$v$ assigns natural values to the 14 registers",
+  "Every register value is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B$ be natural numbers, let $\\mathrm{mode}$ be a Boolean flag, let $f$ map bit\nstrings to bit strings, let $h$ be a bit string, and let $v$ assign a natural number to\neach of the 14 registers, with every register value at most $B$. Starting in the\nsuffix-hit state, the specified counter machine halts with answer true if\n$\\mathrm{mode}$ is true, and otherwise with the bit of $h$ at the position in register\n$0$, using false if that position is beyond the end. The machine's step-validity\ncondition holds and every register remains at most $B$ throughout the run."
+}

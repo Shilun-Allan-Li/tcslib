@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.PolyTimeComputable.output_length_le",
+ "key": "a981a1e09192128c",
+ "kind": "theorem",
+ "title": "Polynomial bound on output length",
+ "statement": "Let $f$ be a polynomial-time computable function from bit strings to bit strings. There exist $C,c\\in\\mathbb{N}$ such that, for every bit string $x$, $|f(x)|\\le C(|x|+1)^c$.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : \\{0,1\\}^* \\to \\{0,1\\}^*$ be polynomial-time computable, i.e.\\ some finite binary\nTuring machine computes $f$ within $C_0(n+1)^{c_0}$ steps on every input of length $n$, for\nsome constants $C_0, c_0 \\in \\mathbb{N}$. Then there are constants $C, c \\in \\mathbb{N}$ such\nthat $|f(x)| \\le C(|x|+1)^c$ for every bit string $x$."
+}

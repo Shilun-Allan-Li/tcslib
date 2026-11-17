@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satDrop_dispatch",
+ "key": "1bed03bc94089f95",
+ "kind": "lemma",
+ "title": "Dispatch to the Copy Phase",
+ "statement": "For any Boolean input word $x$ and natural numbers $p,n$, one step of the suffix-extraction machine from state $4$, at the clamped input offset $p$, with a unary counter of length $n$ whose head is at $n$ and empty output, yields state $5$ at the same clamped input offset, with the counter and head unchanged and output still empty.",
+ "hypotheses_covered": [
+  "Boolean word $x$",
+  "natural numbers $p,n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input and $p, n \\in \\mathbb{N}$. From the skip state at clamped\noffset $p$, with a unary counter of length $n$ whose head is at the first blank\n$n$ and empty output, one step of the suffix extractor yields the configuration in\nthe copy state with every other field unchanged; in particular the input head does\nnot move past the first unconsumed payload bit."
+}

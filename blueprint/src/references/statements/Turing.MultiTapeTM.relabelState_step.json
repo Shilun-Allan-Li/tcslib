@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.MultiTapeTM.relabelState_step",
+ "key": "320937ecb0882605",
+ "kind": "lemma",
+ "title": "State relabelling commutes with one step",
+ "statement": "Let $M$ be a multi-tape Turing machine with $k$ work tapes, let $e$ be a bijection from its state set to another state set, let $x$ be an input word, and let $c$ be a configuration of $M$ on $x$. Taking one step of the relabelled machine from the configuration obtained by applying $e$ to the state of $c$ gives the same configuration as taking one step of $M$ from $c$ and then applying $e$ to its state.",
+ "hypotheses_covered": [
+  "A multi-tape Turing machine with $k$ work tapes",
+  "A bijection between its state set and another state set",
+  "An input word",
+  "A configuration on that input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine with $k$ work tapes and state set $S$,\nlet $e$ be a bijection from $S$ to another state set, and let $c$ be a\nconfiguration of $M$ on a fixed input word.  Then one step of the machine\nobtained by relabelling the states of $M$ along $e$, taken from the\nconfiguration $c$ with state renamed along $e$, equals the configuration\nobtained by one step of $M$ from $c$ with state renamed along $e$.  The\nequality includes the case of a halted $c$, where both sides leave the\nconfiguration unchanged."
+}

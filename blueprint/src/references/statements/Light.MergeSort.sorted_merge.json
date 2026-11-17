@@ -1,0 +1,23 @@
+{
+ "lean_name": "Light.MergeSort.sorted_merge",
+ "key": "829363271cf80f33",
+ "kind": "theorem",
+ "title": "Sorted merge preserves sortedness",
+ "statement": "Let $\\mu,\\mu_1,\\mu_2,\\mu_3,\\mu_4$ be integer-valued memory functions, and let $L,S_1,S_2$ be integer lists. Choose natural numbers $a,fr,h,m$ with $h\\le |L|$. Suppose $S_1$ is a permutation of the first $h$ entries of $L$ and is nondecreasing, and that changing $\\mu$ to $\\mu_1$ preserves all cells below $fr$ outside the interval starting at $a$ whose length is the length of that prefix. Suppose $S_2$ is a permutation of the remaining entries of $L$ and is nondecreasing, and changing $\\mu_1$ to $\\mu_2$ preserves all cells below $fr$ outside the interval starting at $a+h$ whose length is the length of that suffix. Suppose $\\mu_2$ and $\\mu_3$ agree outside the interval starting at $fr$ of length $m$, the memory $\\mu_4$ stores the merge of $S_1$ and $S_2$ starting at $a$, and $\\mu_3$ and $\\mu_4$ agree outside the interval starting at $a$ of length $|L|$. Then $\\mu_4$ witnesses that $L$ is sorted at $a$ below $fr$ relative to the original memory $\\mu$: a permutation of $L$ is stored there in nondecreasing order, and the required cells below $fr$ outside that interval are preserved.",
+ "hypotheses_covered": [
+  "$h\\le |L|$",
+  "$S_1$ is a permutation of $L$'s prefix of length $h$",
+  "$S_1$ is pairwise nondecreasing",
+  "$\\mu$ and $\\mu_1$ agree below $fr$ outside the prefix interval at $a$",
+  "$S_2$ is a permutation of $L$'s suffix after the first $h$ entries",
+  "$S_2$ is pairwise nondecreasing",
+  "$\\mu_1$ and $\\mu_2$ agree below $fr$ outside the suffix interval at $a+h$",
+  "$\\mu_2$ and $\\mu_3$ agree outside the interval at $fr$ of length $m$",
+  "$\\mu_4$ stores the merge of $S_1$ and $S_2$ starting at $a$",
+  "$\\mu_3$ and $\\mu_4$ agree outside the interval at $a$ of length $|L|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

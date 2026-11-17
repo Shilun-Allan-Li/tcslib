@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.hasDerivAt_integral_gaussianPDFReal_mean",
+ "key": "7ccbe809ef824f83",
+ "kind": "lemma",
+ "title": "Derivative of a bounded Gaussian average",
+ "statement": "Let $f:\\mathbb R\\to\\mathbb R$ be measurable and satisfy $|f(z)|\\le1$ for every $z\\in\\mathbb R$. For any positive variance $v$ and real $c$, the function $m\\mapsto\\int_{\\mathbb R}p_v(m,z)f(z)\\,dz$ has derivative at $m=c$ equal to $\\int_{\\mathbb R}\\frac{z-c}{v}p_v(c,z)f(z)\\,dz$, where $p_v(m,z)$ is the Gaussian density with mean $m$ and variance $v$.",
+ "hypotheses_covered": [
+  "$f$ is measurable",
+  "$|f(z)|\\le1$ for every real $z$",
+  "$v$ is a nonzero nonnegative real, hence positive",
+  "$c\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $v>0$ and $p_v(c,z)=(2\\pi v)^{-1/2}\\exp(-(z-c)^2/(2v))$. Let $f:\\mathbb R\\to\\mathbb R$ be measurable with $|f(z)|\\le1$ for all $z$. For every $c\\in\\mathbb R$, the derivative at $c$ of $m\\mapsto\\int p_v(m,z)f(z)\\,dz$ is $\\int((z-c)/v)p_v(c,z)f(z)\\,dz$."
+}

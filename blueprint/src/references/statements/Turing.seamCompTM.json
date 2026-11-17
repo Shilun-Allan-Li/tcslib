@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.seamCompTM",
+ "key": "cd3898737dfc67c6",
+ "kind": "def",
+ "title": "Machine composition across an exit state",
+ "statement": "Let $M_1$ and $M_2$ be deterministic Turing machines with the same input alphabet and number of work tapes, with state sets $S_1$ and $S_2$. Given an exit state $e\\in S_1$ and an entry state $b\\in S_2$, form a machine with state set $S_1\\sqcup S_2$ that starts in the initial state of $M_1$. In a state from $S_1$ other than $e$, it performs the transition of $M_1$, retaining its input movement, work-tape actions, and output, and places any successor state in the $S_1$ summand. At $e$, it leaves the input and work tapes in place, emits nothing, and enters $b$ in the $S_2$ summand; in the $S_2$ summand it performs $M_2$'s transitions with successor states placed in that summand.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "Machines $M_1$ and $M_2$ over a common symbol alphabet",
+  "State sets $S_1$ and $S_2$",
+  "A decidable equality on $S_1$",
+  "An exit state $e$ of $M_1$",
+  "An entry state $b$ of $M_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

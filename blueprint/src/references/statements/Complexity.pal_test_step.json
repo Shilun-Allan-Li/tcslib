@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.pal_test_step",
+ "key": "921785c473cbf94e",
+ "kind": "lemma",
+ "title": "Matching test phase transition",
+ "statement": "Let $x$ be a binary word and let $i<|x|$, and suppose the bit of the reversal of $x$ at position $i$ equals the bit of $x$ at position $i$. One step from the test configuration with input head at position $i+1$, work head at integer position $|x|-1-i$, and the first $|x|$ bits copied yields the test configuration with input head at position $i+2$ and work head at integer position $|x|-1-(i+1)$, with the same copied work tape and empty output.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$i<|x|$",
+  "The reversal bit at position $i$ equals the bit of $x$ at position $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word of length $n$ and $i < n$, and suppose the $i$-th bit of\nthe reversal $x^{R}$ equals the $i$-th bit of $x$. From the test-state\nconfiguration of the palindrome machine on input $x$ with input head at cell\n$i+1$, all $n$ bits copied, and work head at the integer cell $n-1-i$, one\ntransition advances the opposing heads: the input head moves right to cell $i+2$\nand the work head moves left to cell $n-1-(i+1)$, with state and work tape\nunchanged."
+}

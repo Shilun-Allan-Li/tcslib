@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.restriction_contribution_le",
+ "key": "edad65463f3285d2",
+ "kind": "lemma",
+ "title": "Bound for a restricted contribution",
+ "statement": "Let $n$ be a natural number, let $f:\\{0,1\\}^{n+1}\\to\\mathbb R$, and choose $b\\in\\{0,1\\}$. Let $f_b$ be the restriction to last coordinate $b$, let $d(x)=(f(x,0)-f(x,1))/2$, and let $U$ be the Gaussian profile equal to $\\varphi(\\Phi^{-1}(p))$ for $0<p<1$ and zero otherwise. If $U(\\mathbb E f_b)\\le B(f_b)$, where expectation is uniform on the cube and $B(g)=\\mathbb E_x\\sqrt{U(g(x))^2+\\sum_i(D_i g(x))^2}$, then $\\sqrt{U(\\mathbb E f_b)^2+(\\mathbb E d)^2}\\le\\mathbb E_x\\sqrt{U(f(x,b))^2+\\sum_{i<n+1}(D_i f(x,b))^2}$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$f$ is a real-valued function on the Boolean cube of dimension $n+1$",
+  "$b$ is a Boolean value",
+  "$U(\\mathbb E f_b)\\le B(f_b)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a real function $h$ on a uniform Boolean cube, put $B(h)=\\mathbb E\\sqrt{\\overline I(h)^2+\\sum_i(D_i h)^2}$, where $D_i$ is the coordinate half-difference and $\\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. For $f:\\{0,1\\}^{n+1}\\to\\mathbb R$, put $f_b(x)=f(x,b)$ and $d=(f_0-f_1)/2$. If $\\overline I(\\mathbb E f_b)\\le B(f_b)$, then $\\sqrt{\\overline I(\\mathbb E f_b)^2+(\\mathbb E d)^2}\\le\\mathbb E_x\\sqrt{\\overline I(f(x,b))^2+\\sum_{i<n+1}(D_i f(x,b))^2}$."
+}

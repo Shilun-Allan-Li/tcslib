@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.sat_pt_numVars",
+ "key": "15ff21c53cf122b1",
+ "kind": "lemma",
+ "title": "Polynomial-Time Unary Variable Count",
+ "statement": "The function sending each bit string $x$ to the unary string consisting of one $1$ for each variable counted by the variable count of the formula decoded from $x$ is polynomial-time computable.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a binary string $x$, let $\\varphi_x$ be the CNF formula decoded from $x$ and\n$N(\\varphi_x)$ its variable bound (one more than the largest variable index\noccurring in $\\varphi_x$, or $0$ if no variable occurs). The function sending\nevery binary string $x$ to the unary word $1^{N(\\varphi_x)}$ is polynomial-time\ncomputable, on all strings including malformed ones."
+}

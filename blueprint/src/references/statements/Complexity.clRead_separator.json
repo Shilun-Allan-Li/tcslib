@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clRead_separator",
+ "key": "359de8ecd9eb3227",
+ "kind": "lemma",
+ "title": "Consuming the separator",
+ "statement": "For any Boolean input word $x$, valid input-head position $p$, Boolean lists $u,r,w$, start the reader in its initial scanning control with stream $u ++ [\\mathrm{false},\\mathrm{true}] ++ r$, target $w$, stream head at $|u|$, and target head at $|w|$. After two steps it is in the rewind control, with the stream unchanged and its head at $|u|+2$, and target head at $|w|-1$ (natural-number subtraction).",
+ "hypotheses_covered": [
+  "Boolean input word and valid input-head position",
+  "arbitrary stream prefix, tail, and target word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stream prefix followed by the false-true separator and a tail, and target word, two reader steps yield the rewinding control, with the separator consumed, the stream cursor advanced past it to the next field, and the target head moved once left, without writing the separator and without changing the stream or target words."
+}

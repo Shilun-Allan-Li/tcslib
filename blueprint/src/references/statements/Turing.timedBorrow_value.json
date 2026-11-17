@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.timedBorrow_value",
+ "key": "ca3965c1a6e8763d",
+ "kind": "lemma",
+ "title": "Borrow subtraction decrements value",
+ "statement": "For every Boolean word of positive little-endian value, subtracting an incoming borrow flag set to true produces a word whose little-endian value plus one equals the original word's value.",
+ "hypotheses_covered": [
+  "The input is a Boolean word",
+  "The little-endian value of the word is positive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a word has positive little-endian value, then the value of the word\nobtained by subtracting a set borrow flag is exactly one less than the value\nof the original word."
+}

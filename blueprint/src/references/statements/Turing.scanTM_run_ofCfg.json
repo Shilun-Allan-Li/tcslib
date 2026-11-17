@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.scanTM_run_ofCfg",
+ "key": "b07589cbe9bb8094",
+ "kind": "theorem",
+ "title": "Configuration trace of a two-pass scan",
+ "statement": "Let $k\\in\\mathbb N$, let $\\Gamma$ be a symbol type, let $A$ be a state type, let $x,w$ be finite words over $\\Gamma$, choose a work-tape index $i<k$, two transducers $\\delta_f,\\delta_b:A\\times\\Gamma\\to A\\times\\Gamma$, an initial state $a_0$, and a configuration $d$ of the scan machine on input $x$. Suppose $d$ is in forward state $a_0$ and, on tape $i$, every cell at offset $p$ from its head contains the corresponding symbol of $w$ for $-1\\le p\\le |w|$, with cells outside the word blank. After $2|w|+2$ steps, the machine is in the done state carrying the final state of the two-pass transducer scan, and tape $i$ contains that scan's output in the $|w|$ cells starting at its original head position; every other tape cell retains its original content. At every earlier time $t<2|w|+2$ the state is not done, and throughout these steps tape $i$'s head stays between one cell left of its initial position and the cell $|w|$ to its right, while all other tape heads remain fixed.",
+ "hypotheses_covered": [
+  "natural number of work tapes $k$",
+  "symbol type and state type",
+  "input word $x$ and scanned word $w$",
+  "work-tape index $i<k$",
+  "forward and backward transition functions",
+  "initial transducer state $a_0$",
+  "initial configuration $d$",
+  "initial state of $d$ is the forward state carrying $a_0$",
+  "tape $i$ initially agrees with the buffered word at every offset from $-1$ through $|w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

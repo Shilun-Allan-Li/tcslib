@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.b2_guess_coverage",
+ "key": "f46ebc15ebc39ca3",
+ "kind": "lemma",
+ "title": "Coverage of scheduler guesses",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, and let $x,v$ be Boolean words and $T$ a natural number. Suppose the input-normalized machine derived from $S$ halts on $x$ after exactly $T$ steps with output $v$, and remains active at every earlier time. Then every choice word $w$ of length $T$ drives the host from the initial guessing-phase configuration to the guessing-phase configuration of the scheduler's time-$T$ state with some guessed word $u$ of length $|v|$; conversely, every Boolean word $u$ of length $|v|$ occurs this way for some choice word of length $T$.",
+ "hypotheses_covered": [
+  "$S$ and $V$ are finite deterministic machines over Booleans",
+  "$x$ and $v$ are Boolean words",
+  "$T$ is a natural number",
+  "The input-normalized $S$ halts on $x$ after exactly $T$ steps with output $v$",
+  "The input-normalized $S$ is active at every time $s<T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines and suppose the input-normalized scheduler on an input $x$ computes an output $v$ within $T$ steps while remaining live at all earlier times. Then every choice word of length $T$ drives the reverse host from the start-of-guessing configuration to the completed-scheduler guessing configuration with some guessed word of length $|v|$, and every word of length $|v|$ arises this way from some choice word of length $T$."
+}

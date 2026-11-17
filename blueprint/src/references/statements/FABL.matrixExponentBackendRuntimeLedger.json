@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.matrixExponentBackendRuntimeLedger",
+ "key": "9a61a6542d209823",
+ "kind": "theorem",
+ "title": "Runtime and exponent bounds",
+ "statement": "Let $\u001b[?]$ be a positive rational matrix exponent, let a linear solver backend have a certificate with exponent at least $2$ and the stated runtime guarantee, and let $n,k$ be natural numbers and $\u001b[?] \u001b[?] (0,1/2]$ a learning parameter. For any list of labeled sign-cube samples of length $N$, where $d=k-\text{cutoff}$ (natural subtraction), $N=2^d(M+F)$, $M$ is the number of degree-at-most-$d$ monomials on $n$ coordinates, and $F$ is the prescribed Fourier-estimation failure-bit count, the learner's work is at most $C(n+1)^{\text{cutoff}}$, where $C$ is the coefficient specified by the backend certificate at degree $d$ and the corresponding dimension and row coefficients. Moreover, the maximum of the solver exponent $\u001b[?] (k-\text{cutoff})$ and the cutoff is strictly less than $\u001b[?]/(\u001b[?]+1)\u001b[?]+1$.",
+ "hypotheses_covered": [
+  "Positive rational matrix exponent ω",
+  "Certificate has 2 ≤ ω",
+  "Certificate satisfies the stated solver-work bound for all finite systems meeting its size bounds",
+  "Natural numbers n and k",
+  "Learning parameter δ in (0, 1/2]",
+  "A sample function on the specified finite index set"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on several auxiliary complexity quantities and a backend certificate whose detailed definitions are not fully supplied in prose; the displayed names have been replaced with descriptions, but the exact coefficient formulas are intricate.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

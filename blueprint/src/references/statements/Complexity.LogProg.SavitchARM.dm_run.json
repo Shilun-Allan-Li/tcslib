@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.dm_run",
+ "key": "093a90483a477aee",
+ "kind": "theorem",
+ "title": "Phase-stack doubling loop",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean-valued oracle on four indices and Boolean words, let $x$ be a Boolean word, let $b$ be a Boolean value, and let $\\mathrm{st}$ be a register state. Suppose every register is at most $B$ and $T+2\\,SP\\leq B$. The machine reaches the move site that copies the phase stack back from phase $0$ of the doubling loop for $b$, with $SP=0$ and $T$ increased by twice its original $SP$; all other registers are unchanged and the result is unset. Every configuration before the final one satisfies the guard requiring valid instructions and registers at most $B$.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb{N}$",
+  "$\\mathrm{orc}$ is a Boolean-valued oracle on four indices and Boolean words",
+  "$x$ is a Boolean word",
+  "$b$ is a Boolean value",
+  "$\\mathrm{st}$ is a register state",
+  "every register of $\\mathrm{st}$ is at most $B$",
+  "$T+2\\,SP\\leq B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean oracle on four indices and\nBoolean words, let $x$ be a Boolean word, let $b$ be a Boolean value, and let\n$\\mathrm{st}$ be a register state. If every register of $\\mathrm{st}$ is at most $B$ and\n$T+2\\,SP\\leq B$, the machine can run from the initial phase of the doubling loop to the\nmove site that copies the phase stack back, leaving $SP=0$ and replacing $T$ by its\noriginal value plus twice its original $SP$, with all other registers unchanged and the\nanswer unset. Every configuration along the run satisfies the guard requiring valid\ninstructions and all registers at most $B$."
+}

@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.laneCfg_setup",
+ "key": "33590500635782cc",
+ "kind": "lemma",
+ "title": "Budget-lane focusing in a setup configuration",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\\in\\bbn$, and let $x$ be a finite word over the schedule alphabet. Take a base configuration on $x$ with $W.k+3$ work tapes and control phases parameterized by the state set of $W$ and by $a$. For optional control phases $q,q'$, an input-head position $p$, integers $b,u,g,z$, tape contents $bt,ut,gt:\\bbz\\to\\mathrm{Option}(\\mathrm{OblSymbol})$, and finite lists $l,r$ of possibly blank schedule symbols, focusing the first of the three additional work tapes in the setup configuration determined by $q,p,b,u,g,bt,ut,gt$ at frontier $z$ with lists $l,r$ and state $q'$ gives the setup configuration determined by $q',p,z,u,g$, the zipper tape determined by $z,l,r$, and $ut,gt$.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over the Boolean alphabet",
+  "$a$ is a natural number",
+  "$x$ is a finite word over the schedule alphabet",
+  "The base configuration is on $x$ and has $W.k+3$ work tapes with the specified control-phase type",
+  "$q$ and $q'$ are optional control phases",
+  "$p$ is an input-head position among the $|x|+2$ positions",
+  "$b,u,g,z$ are integers",
+  "$bt,ut,gt$ are functions from integers to possibly blank schedule symbols",
+  "$l,r$ are finite lists of possibly blank schedule symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Take a setup configuration and focus its budget lane: replace the state by $q'$, the\nbudget tape by the zipper tape with frontier $z$, left list $l$, and right list $r$,\nand move the budget head to $z$, keeping every other tape and head.  The result is\nagain a setup configuration, with the same base configuration, input head, unary and\nguide data, state $q'$, budget head $z$, and budget tape given by that zipper."
+}

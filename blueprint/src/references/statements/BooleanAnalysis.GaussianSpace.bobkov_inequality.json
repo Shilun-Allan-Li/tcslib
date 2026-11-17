@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.bobkov_inequality",
+ "key": "27027441c2c96524",
+ "kind": "theorem",
+ "title": "Bobkov inequality on the Boolean cube",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ take values in $[0,1]$. Then the closed Gaussian profile evaluated at the uniform expectation of $f$ is at most its Bobkov functional: $\\overline I(\\mathbb E f)\\le B(f)$.",
+ "hypotheses_covered": [
+  "A Boolean function on the n-dimensional Boolean cube",
+  "The function takes values in [0,1]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor a real function $f$ on the uniform Boolean cube $\\{0,1\\}^n$, write $D_i f(x)=(f(x^{i\\leftarrow0})-f(x^{i\\leftarrow1}))/2$ and $B(f)=\\mathbb E\\sqrt{\\overline I(f)^2+\\sum_i(D_i f)^2}$, where $\\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. For every $n\\ge0$ and $f:\\{0,1\\}^n\\to[0,1]$, $\\overline I(\\mathbb E f)\\le B(f)$."
+}

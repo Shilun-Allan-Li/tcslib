@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.expect_neg",
+ "key": "6c9e1282cab66660",
+ "kind": "lemma",
+ "title": "Negation commutes with expectation",
+ "statement": "Let $n$ be a nonnegative integer and let $f\\colon\\{0,1\\}^n\\to\\mathbb R$. The uniform expectation of the pointwise negative of $f$ is the negative of its uniform expectation: $\\E_x[-f(x)]=-\\E_x[f(x)]$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f$ is a real-valued function on $\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\in\\mathbb N$ and $f:\\{0,1\\}^n\\to\\mathbb R$.\nThen $\\mathbb E[-f]=-\\mathbb E[f]$, where $(-f)(x)=-f(x)$ and\n$\\mathbb E[h]=2^{-n}\\sum_{x\\in\\{0,1\\}^n}h(x)$."
+}

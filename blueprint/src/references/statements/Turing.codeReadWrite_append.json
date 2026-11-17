@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.codeReadWrite_append",
+ "key": "72ed1563c13ed931",
+ "kind": "lemma",
+ "title": "Write decoding after encoding",
+ "statement": "For every optional work-tape write $b$ and every bit string $x$, the optional-write reader applied to the two-bit encoding of $b$ followed by $x$ succeeds and returns $b$ and $x$.",
+ "hypotheses_covered": [
+  "An optional work-tape write b and a bit-string suffix x are specified"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every optional work-tape write $b$ (write nothing, write the blank symbol,\nwrite $0$, or write $1$) and every bit string $x$, the optional-write reader\napplied to the two-bit dictionary code of $b$ ($00$, $01$, $10$, or $11$\nrespectively) followed by $x$ succeeds and returns $(b, x)$."
+}

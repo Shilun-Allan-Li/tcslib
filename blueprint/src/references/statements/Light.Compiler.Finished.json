@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.Compiler.Finished",
+ "key": "6ebacb3f303a5f26",
+ "kind": "structure",
+ "title": "Completed execution of a statement",
+ "statement": "Fix a word size $W$, compiler setting $S$, statement $s$, resulting state $\\sigma'$, natural numbers $c,\\mathrm{pos},q$, and memory maps $m,m'$. A completed execution consists of a run of the compiled code from position $\\mathrm{pos}$ to the position immediately after its code, taking $n$ machine steps with $n\\leq 2\\,\\mathrm{disp}\\,c$; the final memory represents $\\sigma'$ in the same frame, and cells outside those writable by a statement in frame $q$ are unchanged.",
+ "hypotheses_covered": [
+  "A word size $W$ and compiler setting $S$",
+  "A statement $s$ and resulting state $\\sigma'$",
+  "Natural numbers $c,\\mathrm{pos},q,n$",
+  "Initial and final memory maps $m,m'$",
+  "The compiled-code run reaches $\\mathrm{pos}+\\mathrm{size}(s)$",
+  "Step bound $n\\leq 2\\,\\mathrm{disp}\\,c$",
+  "The final memory represents $\\sigma'$ in frame $q$",
+  "Memory agrees outside the cells writable by a statement in frame $q$"
+ ],
+ "confidence": "low",
+ "caveat": "The meanings of the run relation, representation relation, and writable-cell set are not defined in the payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

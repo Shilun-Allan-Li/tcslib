@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.RippleCarry.adderGatesUpTo_spec",
+ "key": "603eb82751200d2a",
+ "kind": "theorem",
+ "title": "Ripple-carry circuit specification",
+ "statement": "Let $n$ be a natural number, let $x$ assign a Boolean value to each of the $n$ input positions, and let $k,i$ be natural numbers with $3k\\le n$ and $i\\le k$. After running the circuit consisting of the initial two constant gates followed by $i$ bit blocks on the input list of $x$, the resulting list has length $n+2+15i$. Its value at the carry index is the carry bit after $i$ positions for the input streams beginning at offsets $0$ and $k$. Its value at the accumulator index is true exactly when, at every position below $i$, the sum bit from the streams beginning at offsets $0$ and $k$ agrees with the input stream beginning at offset $2k$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$x$ assigns Boolean values to the $n$ input positions",
+  "$k$ and $i$ are natural numbers",
+  "$3k\\le n$",
+  "$i\\le k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

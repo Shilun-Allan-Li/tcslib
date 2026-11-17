@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.macroCfg_check",
+ "key": "771ee028d0622f92",
+ "kind": "lemma",
+ "title": "Counter Test Step",
+ "statement": "Let $W$ be a finite Boolean Turing machine, let $a$ be a natural number, let $x$ be a list of schedule symbols, let $B$ be a base controller configuration, and let $u,g$ be integers. From the counter-test phase, one schedule step enters the leftward-seek phase exactly when the base unary-counter tape contains a unit marker at position $u$; otherwise the controller halts. In either case, the unary-counter and guide heads remain at $u$ and $g$, respectively.",
+ "hypotheses_covered": [
+  "$W$ is a finite Boolean Turing machine",
+  "$a$ is a natural number",
+  "$x$ is a list of schedule symbols",
+  "$B$ is a base controller configuration",
+  "$u,g$ are integers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every macrostep configuration in the counter-test phase with unary head $u$ and\nguide head $g$: if the base's unary tape holds a unit marker at $u$, one step of the\nschedule controller enters the leftward-seek phase; otherwise it halts.  In both\ncases every head stays in place."
+}

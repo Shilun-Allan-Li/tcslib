@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.clockCfg",
+ "key": "d8c92f4125d9c56b",
+ "kind": "def",
+ "title": "Configuration with an added clock tape",
+ "statement": "Let $c$ be a configuration with $k$ work tapes over an alphabet $\\Gamma$ and state type $S$, on input $x$. Given a state value $q$ (possibly absent), a tape $ct:\\mathbb{Z}\\to\\mathrm{Option}(\\Gamma)$, and a head position $cp\\in\\mathbb{Z}$, the clock configuration has $k+1$ work tapes: it preserves the input-head position, the original tapes and their head positions, and the output of $c$, while appending $ct$ as the additional tape with head position $cp$ and using $q$ as its state.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$",
+  "$\\Gamma,S,Q$ are types",
+  "$x$ is an input word over $\\Gamma$",
+  "$q$ is an optional state in $Q$",
+  "$c$ is a $k$-tape configuration with symbol type $\\Gamma$ and state type $S$ on input $x$",
+  "$ct:\\mathbb{Z}\\to\\mathrm{Option}(\\Gamma)$",
+  "$cp\\in\\mathbb{Z}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

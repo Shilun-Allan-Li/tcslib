@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clLastIndex_max",
+ "key": "de4be7c251ff60b0",
+ "kind": "lemma",
+ "title": "Last match as a filtered maximum",
+ "statement": "Let $P\\colon\\mathbb{N}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ and $n\\in\\mathbb{N}$. The last index below $n$ at which $P$ is true, or no value if there is none, equals the maximum of the set of indices below $n$ at which $P$ is true, with the maximum undefined for the empty set.",
+ "hypotheses_covered": [
+  "A Boolean-valued predicate on the natural numbers",
+  "A natural-number bound $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every predicate $P$ and bound $n$, the tracker's candidate below $n$ equals the maximum of the indices below $n$ satisfying $P$; in particular the empty candidate set at time zero is certified."
+}

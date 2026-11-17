@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clRec_prefix",
+ "key": "54538097eb33fdd9",
+ "kind": "lemma",
+ "title": "Recorder invariant through a finite horizon",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $x$ and $y$ be Boolean words, and let $T$ be a natural number. For every natural number $j\\le T$, there are a natural number $s\\le j\\bigl(F(3T+4)+2T+7\\bigr)$ and a Boolean tag $b$, where $F=2(1+M.k)$, such that the source machine's input-head position at time $j$ satisfies the boundary-tag condition for $b$, and the recorder run for $s$ steps from its prepared initial configuration equals the configuration encoding the source machine's configuration at time $j$, the movement counts at time $j$, the record accumulated through time $j$, and logical time $j$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over the Boolean alphabet",
+  "$x$ and $y$ are Boolean words",
+  "$T$ is a natural number",
+  "$j$ is a natural number with $j\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For every source machine, physical input, virtual input $y$, horizon $T$, and logical time $j \\le T$, there is a time $s \\le j\\,(F(3T+4) + 2T + 7)$, where $F$ is the field count, after which the recorder, started from the prepared blank seam, holds on its record tape exactly the stored rows of times $0,\\dots,j-1$, carries the movement counts and source configuration of time $j$ with a valid tag, and is ready to store the current row. The invariant concerns actual tape contents, not merely a running schedule."
+}

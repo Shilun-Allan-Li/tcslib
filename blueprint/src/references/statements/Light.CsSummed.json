@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.CsSummed",
+ "key": "e376a1e98d7b161c",
+ "kind": "structure",
+ "title": "Summed key counts",
+ "statement": "Let $A$ specify the number of items and the counter region, let $kf$ assign a key to each item index, let $r$ be a natural number, and let $\\mu'$ be a memory map from natural-number addresses to integers. For every natural number $t\\le r$, the cell at address $A.cnt+t$ contains the number of indices $i<A.n$ whose key is less than $t$. For every natural number $t<A.nb$ with $r\\le t$, the cell at address $A.cnt+(t+1)$ contains the number of indices $i<A.n$ whose key equals $t$.",
+ "hypotheses_covered": [
+  "$A$ is a count-sort argument record, including item count $A.n$, key bound $A.nb$, and counter-region base address $A.cnt$",
+  "$kf$ assigns a natural-number key to each natural-number index",
+  "$r$ is a natural number",
+  "$\\mu'$ maps natural-number addresses to integers",
+  "For every $t\\le r$, the memory value at address $A.cnt+t$ is the number of indices $i<A.n$ with $kf(i)<t$",
+  "For every $t<A.nb$ with $r\\le t$, the memory value at address $A.cnt+(t+1)$ is the number of indices $i<A.n$ with $kf(i)=t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

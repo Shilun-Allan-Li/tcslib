@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.a3n_pad_emit",
+ "key": "02ffbd45c5bb1ddc",
+ "kind": "lemma",
+ "title": "Polynomial-Time Padded Pair Emission",
+ "statement": "For all natural numbers $C$ and $c$, there exist a finite Turing machine over the Boolean alphabet and a natural number $K$ such that, on every input word $x$, the machine outputs the self-delimiting pair encoding of $x$ and the all-ones word of length $C(2^{|x|+1})^c$. On inputs of length $n$, it does so within $K\\bigl(n+C(2^{3(n+1)})^c+1\\bigr)^{c+2}$ steps.",
+ "hypotheses_covered": [
+  "$C$ is a natural number",
+  "$c$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all natural numbers $C$ and $c$ there exist a deterministic machine and a constant $K$ computing, on every input $x$, the pair encoding of $x$ with the all-ones pad of length $C \\cdot 2^{(|x|+1)^c}$, within $K\\,(n + C\\cdot 2^{(3(n+1))^c} + 1)^{c+2}$ steps on inputs of length $n$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.certificateSplit_spec",
+ "key": "ee71a87d9275f74a",
+ "kind": "lemma",
+ "title": "Specification of certificate split search",
+ "statement": "Let $C,c,m,n$ be natural numbers. The bounded certificate split search at length $m$ returns $n$ if and only if $n+(C+1)(n+1)^c=m$.",
+ "hypotheses_covered": [
+  "$C,c,m,n\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $C, c, m \\in \\mathbb{N}$ let $\\mathrm{split}_{C,c}(m)$ be the least\n$n \\le m$ with $n + (C+1)(n+1)^c = m$, and undefined if there is none. Then for\nall $C, c, m, n \\in \\mathbb{N}$, $\\mathrm{split}_{C,c}(m) = n$ if and only if\n$n + (C+1)(n+1)^c = m$."
+}

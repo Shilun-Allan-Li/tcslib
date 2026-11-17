@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Codec.sDone_step",
+ "key": "f945395a2f7d6003",
+ "kind": "theorem",
+ "title": "Correctness of the step scan",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean symbols, let $x$ be a Boolean word, let $s$ be a natural number, and let $C$ be a configuration of $N$ on input $x$ whose work-tape heads and nonblank cells lie within distance $s$ of the origin. Let $a$ be an action and let $A'$ be a Boolean word of length $W_N(2s+1)$. The scan’s acceptance flag is true exactly when $A'$ is the encoded sequence of cells of the configuration obtained by applying $a$ to $C$ across the window of width $2s+1$, and the resulting configuration still has all work-tape heads and nonblank cells within distance $s$ of the origin.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$x$ is a Boolean word",
+  "$s$ is a natural number",
+  "$C$ is a machine configuration on input $x$",
+  "All work-tape head positions of $C$ have absolute value at most $s$",
+  "Every work-tape cell of $C$ outside the interval $[-s,s]$ is blank",
+  "$a$ is an action",
+  "$A'$ is a Boolean word of length $W_N(2s+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

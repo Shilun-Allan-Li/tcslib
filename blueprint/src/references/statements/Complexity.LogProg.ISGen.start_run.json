@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.start_run",
+ "key": "e47659600042af22",
+ "kind": "theorem",
+ "title": "Initialization of the Counting Run",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $x$ be a finite bit string, let $\\mathcal{O}$ assign a Boolean answer to each of four query types and each bit string, and let $Q$ be a proposition. Suppose that for every $k\\le |x|$, the answer to query type $0$ on the encoding of $x$ with the binary representation of $k$ is true exactly when $k<|x|$. Suppose also that $2^{\\operatorname{size}(|x|)+1}\\le B$. If, from the initial round state with the logarithm register set to $\\operatorname{size}(|x|)+1$ and all other registers zero, every sequence of choices terminates while every register stays at most $B$, and the machine accepts exactly when $Q$ holds, then the same properties hold from the initial scan state with all registers zero.",
+ "hypotheses_covered": [
+  "Oracle type 0 answers correctly for every k at most the input length",
+  "The register bound satisfies 2^(size(|x|)+1) ≤ B",
+  "The initial round configuration has the specified logarithm register and all other registers zero",
+  "The run satisfies the termination, register-bound, and acceptance condition Q"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $x$ be a finite bit string, let $Q$ be a proposition, and\nlet $\\mathcal{O}$ assign a Boolean answer to each of four query types and each bit\nstring. Suppose that for every natural number $k\\le |x|$, the answer to a query of type\n$0$ on the encoding of $x$ together with the binary representation of $k$ is true\nexactly when $k<|x|$. Suppose also that $2^{\\operatorname{size}(|x|)+1}\\le B$. If the\nprogram terminates on every sequence of choices from its initial round state, with its\nlogarithm register set to $\\operatorname{size}(|x|)+1$ and all other registers zero,\nwhile keeping every register at most $B$, and accepts exactly when $Q$ holds, then it\nhas these same termination, register-bound, and acceptance properties from its initial\nscan state with all registers zero."
+}

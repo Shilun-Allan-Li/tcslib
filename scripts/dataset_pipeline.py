@@ -1,5 +1,5 @@
 r"""One harness for the whole dataset build: from Lean sources (+ reference texts) to
-dataset/tcslib_theorems.jsonl.gz with every column populated -- incrementally.
+dataset/tcslib_theorems.manifest.json and shards with every column populated -- incrementally.
 
 The dataset is never rebuilt from nothing.  Every LLM product is cached per declaration
 (statement prose under references/statements/, ratings and citations in the blueprint
@@ -49,7 +49,7 @@ subset with --stages):
                          statement from its \statementsource else the Lean prose, its
                          informal proof from its \proofsource else the note --
                          informal_sources.py) -> dataset_splice --merge into
-                         dataset/tcslib_theorems.jsonl + .gz.
+                         dataset/tcslib_theorems.manifest.json and gzip shards.
   verify       [no LLM]  dataset_check --strict (schema, leaks, stubs, row loss, carried-over
                          rows, optional sampled Lean compile), dataset_hygiene,
                          statement_quality, blueprint_validate --strict.
@@ -106,6 +106,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import gzip
+import fcntl
 import json
 import os
 import shutil
@@ -116,6 +117,8 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
+from scripts import dataset_projects as dp
+
 from proofmatch.dataset_io import open_dataset, resolve_dataset  # noqa: E402
 from proofmatch.model_policy import (  # noqa: E402
     BACKENDS, DEFAULT_MODELS, check_model, default_model, backend as resolve_backend,
@@ -123,7 +126,6 @@ from proofmatch.model_policy import (  # noqa: E402
 
 SCRIPTS = BASE / "scripts"
 DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
-DATASET_GZ = BASE / "dataset" / "tcslib_theorems.jsonl.gz"
 DEP_GRAPH = BASE / "dep_graph.json"
 REFERENCES = BASE / "blueprint" / "src" / "references"
 WORK_ROOT = BASE / ".proofmatch-work"
@@ -186,9 +188,15 @@ class Runner:
         self.state_path.write_text(json.dumps(self.state, indent=2), encoding="utf-8")
 
     def mark(self, stage: str, status: str, **extra) -> None:
-        self.state[stage] = dict(status=status, at=dt.datetime.now().isoformat(timespec="seconds"),
-                                 **extra)
-        self.save()
+        # Independent stages may run concurrently (e.g. PDF cleanup and ratings).
+        # Reload under a lock so one runner cannot overwrite another's status.
+        with open(STATE_DIR / "state.lock", "w") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            if self.state_path.exists():
+                self.state = json.loads(self.state_path.read_text(encoding="utf-8"))
+            self.state[stage] = dict(status=status, at=dt.datetime.now().isoformat(timespec="seconds"),
+                                     **extra)
+            self.save()
 
     def run(self, stage: str, cmd: list[str], *, check: bool = True, env: dict | None = None,
             log_name: str | None = None) -> int:
@@ -243,34 +251,25 @@ def dataset_modules(path: Path) -> dict[str, int]:
 def root_import_closure() -> set[str]:
     """Modules reachable from TCSlib.lean through TCSlib imports (what `lake build` builds)."""
     seen: set[str] = set()
-    stack = ["TCSlib"]
+    stack = list(dp.projects())
+    import_re = __import__("re").compile(r"^(?:public\s+|private\s+)?import\s+(\S+)")
     while stack:
         module = stack.pop()
         if module in seen:
             continue
         seen.add(module)
-        rel = module[len("TCSlib."):] if module.startswith("TCSlib.") else ""
-        path = BASE / "TCSlib.lean" if module == "TCSlib" else BASE / "TCSlib" / (rel.replace(".", "/") + ".lean")
+        path = dp.source_path(module)
         if not path.exists():
             continue
         for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
-            if line.startswith("import TCSlib"):
-                stack.append(line.split()[1])
+            m = import_re.match(line)
+            if m and dp.is_internal(m.group(1)):
+                stack.append(m.group(1))
     return seen
 
 
 def module_matches(module: str, wanted) -> bool:
-    """`TCSlib.A.B` matches `TCSlib.A.B`, `A.B`, `B` (dotted suffix) or `A` (an area prefix).
-    Mirrors build_dataset.module_matches (not imported: scripts/proofmatch.py shadows the
-    package once scripts/ is on sys.path)."""
-    for w in wanted:
-        w = w.strip()
-        if not w:
-            continue
-        full = w if w.startswith("TCSlib.") else "TCSlib." + w
-        if module == full or module.endswith("." + w) or module.startswith(full + "."):
-            return True
-    return False
+    return dp.module_matches(module, wanted)
 
 
 def modules_of_names(names: list[str]) -> list[str]:
@@ -288,18 +287,18 @@ def modules_of_names(names: list[str]) -> list[str]:
 def stage_graph(r: Runner) -> None:
     if r.args.build:
         r.run("graph", ["lake", "build"], log_name="lake-build")
+    if r.args.build or r.args.refresh_graph or r.args.project_root:
         r.py("graph", "build_dep_graph.py")
     if not DEP_GRAPH.exists():
         raise StageFailed("dep_graph.json is missing; run with --build (lake build + build_dep_graph.py)")
     graph_mtime = DEP_GRAPH.stat().st_mtime
-    newer = [p for p in (BASE / "TCSlib").rglob("*.lean") if p.stat().st_mtime > graph_mtime]
+    newer = [p for p in dp.source_modules().values() if p.stat().st_mtime > graph_mtime]
     if newer:
         print(f"  WARNING: {len(newer)} Lean file(s) are newer than dep_graph.json "
-              f"(e.g. {newer[0].relative_to(BASE)}); pass --build to refresh the graph")
+              f"(e.g. {dp.display_path(newer[0])}); pass --build to refresh the graph")
     graph = json.load(open(DEP_GRAPH))["modules"]
     reachable = root_import_closure()
-    on_disk = {"TCSlib." + str(p.relative_to(BASE / "TCSlib").with_suffix("")).replace("/", ".")
-               for p in (BASE / "TCSlib").rglob("*.lean")}
+    on_disk = set(dp.source_modules())
     unbuilt = sorted(on_disk - set(graph))
     not_built = [m for m in unbuilt if m in reachable]
     unimported = [m for m in unbuilt if m not in reachable]
@@ -470,21 +469,35 @@ def stage_blueprint(r: Runner) -> None:
         r.mark("blueprint", "estimated")
         return
     r.py("blueprint", "blueprint_stub.py", *stub_argv)
+    r.py("blueprint", "blueprint_sync_deps.py", "--apply", *r.selection())
     r.py("blueprint", "blueprint_assemble.py")
     r.py("blueprint", "blueprint_validate.py", check=False)
     r.mark("blueprint", "ok")
 
 
+def export_dataset(r: Runner, stage: str, destination: Path, proof_flags=()) -> None:
+    flags = [*proof_flags, *r.selection()]
+    if r.args.dry_run:
+        r.py(stage, "build_dataset.py", *flags, "--out", str(destination), log_name=f"{stage}-pass1")
+        return
+    from scripts.dataset_extraction_cache import ensure_extraction, publish_mirror
+    dp.projects.cache_clear()
+    output = ensure_extraction(
+        BASE, dp.projects(), STATE_DIR / "extractions", flags,
+        lambda path: r.py(stage, "build_dataset.py", *flags, "--out", str(path), log_name=f"{stage}-pass1"))
+    publish_mirror(output, destination)
+
+
 def pass1(r: Runner, stage: str) -> None:
-    r.py(stage, "build_dataset.py", "--no-proof", "--out", str(PASS1), *r.selection(),
-         log_name=f"{stage}-pass1")
+    # Proof matching requires actual proof text; prose work needs statements only.
+    export_dataset(r, stage, PASS1, [] if stage == "citations" else ["--no-proof"])
 
 
 def stage_statements(r: Runner) -> None:
     model = r.stage_model("statements")
     pass1(r, "statements")
     common = ["--dataset", str(PASS1), "--model", model, "--jobs", str(r.args.jobs),
-              "--definitions", "stubs", *r.selection()]
+              "--batch-size", str(r.args.batch_size), "--definitions", "stubs", *r.selection()]
     if r.args.allow_weak_models:
         common.append("--allow-weak-models")
     # A builder change (imports, instances, context) alters every formal statement
@@ -498,6 +511,7 @@ def stage_statements(r: Runner) -> None:
     if r.args.estimate:
         r.mark("statements", "estimated", model=model)
         return
+    rc = 0
     if r.confirm("statements", f"write the outstanding informal statements of records whose statement nothing cites, on {model}"):
         extra = ["--limit", str(r.args.limit)] if r.args.limit else []
         rc = r.py("statements", "build_informal_statements.py", *common, *extra, check=False)
@@ -505,6 +519,8 @@ def stage_statements(r: Runner) -> None:
             print("  WARNING: some statements failed to generate; cached ones are kept")
     r.py("statements", "blueprint_restate.py", "--apply-only")
     r.py("statements", "dataset_hygiene.py", "--strict", check=False)
+    if rc:
+        raise StageFailed("statements: generation was incomplete; successful statements were cached and applied")
     r.mark("statements", "ok", model=model)
 
 
@@ -518,12 +534,15 @@ def stage_difficulty(r: Runner) -> None:
     if r.args.estimate:
         r.mark("difficulty", "estimated", model=model)
         return
+    rc = 0
     if r.confirm("difficulty", f"rate the outstanding proofs on {model}"):
         extra = ["--limit", str(r.args.limit)] if r.args.limit else []
         rc = r.py("difficulty", "rate_difficulty.py", *common, *extra, check=False)
         if rc != 0:
             print("  WARNING: some ratings failed; the rest are applied")
     r.py("difficulty", "blueprint_difficulty_apply.py")
+    if rc:
+        raise StageFailed("difficulty: rating was incomplete; successful ratings were cached and applied")
     r.mark("difficulty", "ok", model=model)
 
 
@@ -605,14 +624,17 @@ def stage_citations(r: Runner, new_docs: list[Path]) -> None:
         return
     env = dict(r.env, PROOFMATCH_MODEL=model, PROOFMATCH_COMPARE_MODEL=model)
     done = []
+    failed = []
     for doc in docs:
-        cmd = [sys.executable, str(SCRIPTS / "proofmatch.py"), "match", str(doc), "--dataset", str(PASS1)]
+        cmd = [sys.executable, str(SCRIPTS / "proofmatch.py"), "match", str(doc), "--dataset", str(PASS1), "--jobs", str(r.args.jobs)]
         if r.args.max_cost:
             cmd += ["--max-cost", str(r.args.max_cost)]
-        r.run("citations", cmd + ["--dry-run"], env=env, check=False)
+        if not r.args.yes:
+            r.run("citations", cmd + ["--dry-run"], env=env, check=False)
         if r.confirm("citations", f"match {doc.name} against the dataset on {model}"):
             rc = r.run("citations", cmd, env=env, check=False)
             if rc != 0:
+                failed.append(doc.name)
                 print(f"  WARNING: match of {doc.name} exited {rc}; its review (if any) is in "
                       f"{WORK_ROOT.relative_to(BASE)}")
             else:
@@ -621,13 +643,14 @@ def stage_citations(r: Runner, new_docs: list[Path]) -> None:
         # Tie docstring tags to the documents the new citations point at.
         r.py("citations", "reference_coverage.py", "--dataset", str(PASS1),
              "--rebuild-registry", check=False)
+    if failed:
+        raise StageFailed(f"citations: matching failed for {failed}; completed matches are saved")
     r.mark("citations", "ok", docs=done, model=model)
 
 
 def stage_informalize(r: Runner) -> None:
     model = r.stage_model("informalize")
-    if not PASS1.exists() or r.args.dry_run:
-        pass1(r, "informalize")
+    pass1(r, "informalize")
     # The gate: a NEW theorem whose docstring cites a text nobody attached gets no proof
     # note until the text is attached (--source TAG=PATH) or the omission is acknowledged.
     if not r.args.without_sources and not r.args.estimate:
@@ -637,24 +660,28 @@ def stage_informalize(r: Runner) -> None:
                 "Attach them (--source TAG=PATH, then rerun from `references`) so they get "
                 "citations, or pass --without-sources to write informalized proof notes "
                 "for them instead.  Details: dataset/.pipeline/coverage.json")
-    common = ["--dataset", str(PASS1), "--model", model, "--jobs", str(r.args.jobs), *r.selection()]
+    common = ["--dataset", str(PASS1), "--model", model, "--jobs", str(r.args.jobs),
+              "--batch-size", str(r.args.batch_size), *r.selection()]
     if r.args.allow_weak_models:
         common.append("--allow-weak-models")
     r.py("informalize", "informalize_proofs.py", *common, "--estimate")
     if r.args.estimate:
         r.mark("informalize", "estimated", model=model)
         return
+    rc = 0
     if r.confirm("informalize", f"write proof notes for the outstanding proofs nothing cites, on {model}"):
         extra = ["--limit", str(r.args.limit)] if r.args.limit else []
         rc = r.py("informalize", "informalize_proofs.py", *common, *extra, check=False)
         if rc != 0:
             print("  WARNING: some notes failed to generate; the rest are kept")
+    if rc:
+        raise StageFailed("informalize: generation was incomplete; successful proof notes were cached")
     r.mark("informalize", "ok", model=model)
 
 
 def stage_dataset(r: Runner) -> None:
     """Build the selected (or all built) records and merge them into the shipped dataset."""
-    r.py("dataset", "build_dataset.py", "--out", str(BUILT), *r.selection())
+    export_dataset(r, "dataset", BUILT)
     argv = [str(BUILT), "--merge", "--dataset", str(DATASET),
             "--report", str(STATE_DIR / "merge.json")]
     if r.selected:
@@ -665,6 +692,9 @@ def stage_dataset(r: Runner) -> None:
         print("  [estimate] dataset: merge reported below, nothing written")
         argv.append("--dry-run")
     r.py("dataset", "dataset_splice.py", *argv)
+    if not r.args.estimate and not r.args.dry_run:
+        # dataset_splice refreshes the shards and the ignored local gzip mirror.
+        r.py("dataset", "dataset_shards.py", "--verify")
     r.mark("dataset", "estimated" if r.args.estimate else "ok", selected=r.selected)
 
 
@@ -733,6 +763,13 @@ def check_env(args) -> int:
     rows.append((".lake build artifacts (the dependency graph is read from .ilean files)", True,
                  f"{n_ilean} .ilean files" if n_ilean else None,
                  "run `lake build` once (or the pipeline with --build)"))
+    for name, root in dp.projects().items():
+        if name == "TCSlib":
+            continue
+        count = len(list((root / ".lake/build/lib/lean" / name).rglob("*.ilean")))
+        rows.append((f"{name} compiled artifacts ({root})", True,
+                     f"{count} .ilean files; {(root / 'lean-toolchain').read_text().strip()}" if count else None,
+                     "compile this project in its own pinned environment"))
     rows.append(("dep_graph.json", True,
                  dt.datetime.fromtimestamp(DEP_GRAPH.stat().st_mtime).strftime("%Y-%m-%d")
                  if DEP_GRAPH.exists() else None, "pipeline --build regenerates it"))
@@ -799,6 +836,11 @@ def main() -> int:
     ap.add_argument("--rematch", action="store_true",
                     help="citations: match every ingested document again, including those "
                          "the blueprint already cites (default: only texts never matched)")
+    ap.add_argument("--project-root", action="append", default=[], metavar="NAME=PATH",
+                    help="register an independently compiled Lean project (repeatable); "
+                         "refreshes its graph without changing TCSlib's dependencies")
+    ap.add_argument("--refresh-graph", action="store_true",
+                    help="refresh all registered projects from existing .ilean artifacts; no Lean build")
     ap.add_argument("--build", action="store_true",
                     help="graph: run `lake build` and rebuild dep_graph.json first")
     ap.add_argument("--backend", choices=("auto", *BACKENDS), default="auto",
@@ -816,6 +858,8 @@ def main() -> int:
                     help="statements: regenerate cached prose whose cache key matches no "
                          "known build instead of trusting it")
     ap.add_argument("--jobs", type=int, default=4, help="concurrent model calls per stage")
+    ap.add_argument("--batch-size", type=int, default=1,
+                    help="independent prose tasks per model call; each retains its validation and cache")
     ap.add_argument("--limit", type=int, help="cap each LLM stage at this many items (pilot)")
     ap.add_argument("--max-cost", type=str, help="proofmatch --max-cost for references/citations")
     ap.add_argument("--previous", type=Path, default=None,
@@ -835,6 +879,9 @@ def main() -> int:
                     help="check the toolchain this machine needs (Python, Lean, the model CLI, "
                          "PDF tools) and exit")
     args = ap.parse_args()
+
+    if args.project_root:
+        dp.register(args.project_root)
 
     args.model = args.model or default_model(None if args.backend == "auto" else args.backend)
     args.backend = resolve_backend(args.model, None if args.backend == "auto" else args.backend)
@@ -865,7 +912,7 @@ def main() -> int:
             if current.suffix == ".gz":
                 shutil.copy2(current, snapshot)
             else:
-                with open(current, "rb") as src, gzip.open(snapshot, "wb") as dst:
+                with open_dataset(DATASET) as src, gzip.open(snapshot, "wt", encoding="utf-8") as dst:
                     shutil.copyfileobj(src, dst)
         args.previous = STATE_DIR / "previous.jsonl"   # resolve_dataset() finds the .gz
 

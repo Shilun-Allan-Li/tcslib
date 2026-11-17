@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.MReach.of_areach",
+ "key": "79a6ea7a7b3193e3",
+ "kind": "lemma",
+ "title": "Lifting a register-machine run to memory",
+ "statement": "Let $A$ be a machine with memory, let $x$ be an input, let $\\beta$ be a Boolean value, let $G$ be a predicate on register-machine configurations, and let $\\mu$ be a memory tape and head position. Form a register machine by keeping each deterministic instruction of $A$ and replacing every other instruction by a return of $\\beta$. If this register machine reaches $a'$ from $a$ in finitely many steps while $G$ holds at every configuration strictly before reaching $a'$, and the control state of $a'$ is not halted, then $A$ reaches $(a',\\mu)$ from $(a,\\mu)$ without changing the memory, with $G$ holding of the register-machine component and the memory remaining equal to $\\mu$ at every configuration strictly before reaching the endpoint.",
+ "hypotheses_covered": [
+  "The deterministic part of $A$ retains deterministic instructions and replaces all others by return of $\\beta$",
+  "The resulting register machine reaches $a'$ from $a$ with $G$ at every earlier configuration",
+  "The control-state component of $a'$ is not halted",
+  "The initial memory is $\\mu$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

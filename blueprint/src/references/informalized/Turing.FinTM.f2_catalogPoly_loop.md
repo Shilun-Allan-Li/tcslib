@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Catalog.lean :: Turing.FinTM.f2_catalogPoly_loop -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Loop phase output and head advance
+
+**Claim.** Under the stated hypotheses, starting in $\mathrm{loop}(i)$ with head positions $h$ modified to put head $i$ at $j$ reaches state $\mathrm{advance}(i+1)$ with head positions $h$ and output extended by $rCq^i$ true symbols after $r(\mathrm{cost}(q,C,i)+2)+q+2$ steps.
+
+**Proof.** The proof first establishes a single-block statement: for each $j<q$, a run of $\mathrm{cost}(q,C,i)+2$ steps from $\mathrm{loop}(i)$ with head $i$ at $j$ returns to $\mathrm{loop}(i)$ with that head at $j+1$, appending $Cq^i$ true symbols. The head reads true because its position lies in the tape's interval of true cells. If $i=0$, the loop enters the emit phase; the output-block result (`f2_catalogPoly_emit`) emits $C$ symbols and returns to advance, and the one-step advance result (`f2_catalogPoly_advance`) starts the next loop position. If $i>0$, the loop moves into rewind, whose run result (`f2_catalogPoly_rewind`) resets the lower head to zero and advances the selected head; apply the strong induction hypothesis at index $i-1$. The lower heads are zero by hypothesis, and the identity $q(Cq^{i-1})=Cq^i$ gives the block length. A final advance step restores the selected head's position to its specified value and enters the loop at $i$. The cost recurrence matches these steps. Now induct on $r$. At $r=0$, the head begins at $q$, so the loop sees a blank cell, moves left into rewind, and the rewind result restores head $i$ to zero after $q+1$ more steps; this gives the stated terminal configuration. For $r+1$, first apply the single-block statement to move the head from $j$ to $j+1$ and append one block, then apply the induction hypothesis to the remaining $r$ blocks. The run-addition identity (`runFrom_add`) combines the durations, and concatenating the repeated blocks gives $r+1$ copies of the block length. The step/run identities (`runFrom_succ_eq_step`, `runFrom_zero`) justify the one-step endpoints used in these decompositions.
+
+**Key facts.** `Turing.FinTM.f2_catalogPolyMove_apply`, `Turing.FinTM.f2_catalogPoly_advance`, `Turing.FinTM.f2_catalogPoly_emit`, `Turing.FinTM.f2_catalogPoly_rewind`, `Turing.MultiTapeTM.runFrom_add`, `Turing.MultiTapeTM.runFrom_succ_eq_step`, `Turing.MultiTapeTM.runFrom_zero`.

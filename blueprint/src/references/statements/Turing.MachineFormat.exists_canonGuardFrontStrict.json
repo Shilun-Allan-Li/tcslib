@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonGuardFrontStrict",
+ "key": "c0a58cb626ac7c8a",
+ "kind": "lemma",
+ "title": "Strict Guard-Checking Machine",
+ "statement": "For every machine format $F$, there exist a finite-state Turing machine $C$ over the Boolean alphabet, with at least four work tapes, an entry state, an injective map from $\\\\{0,1\\\\}$ to its states, and a constant $a\\\\in\\\\mathbb N$, such that the following holds. Whenever bit strings $x,bits,rest$ satisfy that the aligned pair parser applied to $x$ returns $(bits,rest)$, there is a time $t\\\\le a(|x|+1)$ at which, starting on input $x$ in the entry state with all work tapes blank, the machine is in the exit state indexed by whether $B_F(\\\\operatorname{val}(bits)+1)\\\\le |rest|$, where $B_F=\\\\max(\\\\operatorname{guard}(F),(4k+5)3^{k+1})$ and $\\\\operatorname{val}(bits)$ is the least-significant-bit-first binary value of $bits$. At that time its output is empty, its input-head position is $2|bits|+3$ if the inequality holds and $|x|+1$ otherwise, and every work tape except tape $1$ contains its prescribed ready word with its head at cell zero; moreover, no earlier time $u<t$ is in either exit state.",
+ "hypotheses_covered": [
+  "machine format $F$",
+  "$C$ has at least four work tapes",
+  "exit-state map is injective",
+  "$a$ is a natural number",
+  "$x,bits,rest$ are Boolean words",
+  "the pair parser on $x$ returns $(bits,rest)$",
+  "time bound $t\\\\le a(|x|+1)$",
+  "initial input is $x$, entry state, and all tapes blank",
+  "final state is the exit state selected by the guard inequality",
+  "empty output",
+  "conditional input-head position",
+  "no earlier visit to either exit state",
+  "all work tapes except tape 1 have the prescribed contents and head at zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

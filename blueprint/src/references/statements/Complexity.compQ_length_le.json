@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.compQ_length_le",
+ "key": "eac8da0103d09ba6",
+ "kind": "theorem",
+ "title": "Polynomial output-length bound",
+ "statement": "Let $f$ map finite bit strings to finite bit strings, and let $C,c$ be natural numbers. If every bit string $x$ satisfies $|f(x)|\\le C(|x|+1)^c$, then for every bit string $w$, the output of the following partial decoding and transformation has length at most $(2C+3)(|w|+1)^{c+1}$: parse $w$ as a pair $(x,b)$; if parsing succeeds and $b$ is the binary expansion of its value, return the encoding of $(f(x),b)$, and otherwise return the empty string.",
+ "hypotheses_covered": [
+  "$f$ is a function from bit strings to bit strings",
+  "$C,c$ are natural numbers",
+  "For every bit string $x$, $|f(x)|\\le C(|x|+1)^c$",
+  "$w$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

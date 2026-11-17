@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.sourcePayload_support",
+ "key": "276f163a79990aee",
+ "kind": "lemma",
+ "title": "Support of source payloads",
+ "statement": "Let $M$ be a finite binary Turing machine, let $x$ be a binary word, and let $t,B\\in\\mathbb{N}$ satisfy $t\\le B$ and $|x|+1\\le B$. For every integer $z$ with $z<-3B$ or $3B<z$ and every coordinate among the $k+1$ source tapes, the head-centered source payload of the configuration reached after $t$ steps from the initial configuration of $M$ on $x$ is the blank payload.",
+ "hypotheses_covered": [
+  "M is a finite binary Turing machine",
+  "x is a binary word",
+  "t and B are natural numbers",
+  "t ≤ B",
+  "|x| + 1 ≤ B",
+  "z < -3B or 3B < z",
+  "i is a coordinate among the k+1 source tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary machine, $x$ an input, and $t, B$ natural numbers with $t \\le B$\nand $|x| + 1 \\le B$.  Then for every integer coordinate $z$ with $z < -3B$ or\n$z > 3B$ and every virtual tape coordinate, the head-centered payload of the\nconfiguration reached by running $M$ for $t$ steps from its initial configuration on\n$x$ is the blank payload.  This bound uses the initialized run, not arbitrary starting\nconfigurations."
+}

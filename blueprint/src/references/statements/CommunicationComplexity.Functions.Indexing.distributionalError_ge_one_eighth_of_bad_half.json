@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.distributionalError_ge_one_eighth_of_bad_half",
+ "key": "f288d224409d0038",
+ "kind": "theorem",
+ "title": "Many bad inputs force distributional error",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic one-way protocol for the Index function on $n$-bit strings and indices in $[n]$, with Boolean output. Call a string bad if no answer vector produced by any message of $p$ lies at Hamming distance less than $n/4$ from it. If at least $2^{n-1}$ strings are bad, then the probability that $p$ errs on a uniformly chosen pair consisting of an $n$-bit string and an index in $[n]$ is at least $1/8$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$p$ is a deterministic one-way protocol with finite nonempty message set and Boolean output",
+  "At least $2^{n-1}$ of Alice's $n$-bit strings have no protocol answer vector at Hamming distance less than $n/4$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a deterministic one-way protocol for $\\mathrm{IND}_n$.  If at least $2^{n-1}$ of\nAlice's $2^n$ inputs are bad for $p$ (no answer vector of $p$ lies within Hamming distance\n$n/4$), then the distributional error of $p$ on $\\mathrm{IND}_n$ under the uniform\ndistribution on pairs $(x, i)$ is at least $1/8$."
+}

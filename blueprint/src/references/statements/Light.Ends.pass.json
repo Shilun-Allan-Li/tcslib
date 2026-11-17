@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.Ends.pass",
+ "key": "0b5a97575bc633fd",
+ "kind": "theorem",
+ "title": "Correctness of an indexed store pass",
+ "statement": "Fix execution limits and a program, natural numbers $c,x,y,n,T$, an expression $e$, integer-valued functions $f$ and $loc$, an initial memory $\\mu$, a destination $dst$, and a state predicate $Q$. For every $j<n$, suppose $e$ is safe in the state whose locations are $loc$ updated to give variable $c$ value $j$ and whose memory is obtained by writing the first $j$ values of $f$ starting at $dst$, and that $e$ evaluates there to $f(j)$. Suppose $Q$ holds in the state with variable $c$ set to $n$ and memory containing the first $n$ values of $f$ at $dst$; the space limit is at most the word limit; $dst+n$ is at most the space limit; $loc(x)=n$; $loc(y)=dst$; $x\\ne c$ and $y\\ne c$; and $n(\\operatorname{cost}(e)+12)+6\\le T$. Then the indexed store pass using counter $c$, length expression $x$, destination expression $y$, and value expression $e$ executes from locations $loc$ and memory $\\mu$ within cost $T$, ending in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "For every $j<n$, $e$ is safe and evaluates to $f(j)$ in the specified state",
+  "$Q$ holds in the specified final state",
+  "Space limit is at most word limit",
+  "$dst+n$ is at most the space limit",
+  "$loc(x)=n$",
+  "$loc(y)=dst$",
+  "$x\\ne c$",
+  "$y\\ne c$",
+  "$n(\\operatorname{cost}(e)+12)+6\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c,x,y,n,T,d$ be natural numbers, let $e$ be an expression, let $f$ and\n$\\mathrm{loc}$ be integer-valued functions on the natural numbers, let $\\mu$ be an\ninitial memory function, let $\\mathrm{dst}$ be a natural number, and let $Q$ be a\npredicate on states. Fix limits and a program. For each $j<n$, suppose $e$ is safe in\nthe state whose local variable $c$ has value $j$ and whose memory is obtained by writing\nthe first $j$ values of $f$ starting at address $\\mathrm{dst}$, and suppose evaluating\n$e$ in that state gives $f(j)$. Suppose also that $Q$ holds in the state with local\nvariable $c$ set to $n$ and memory obtained by writing the first $n$ values of $f$\nstarting at $\\mathrm{dst}$; the memory-space limit is at most the word limit;\n$\\mathrm{dst}+n$ is at most the memory-space limit; $\\mathrm{loc}(x)=n$ and\n$\\mathrm{loc}(y)=\\mathrm{dst}$; $x\\ne c$ and $y\\ne c$; and $n(\\mathrm{cost}(e)+12)+6\\le\nT$. Then the program that initializes local variable $c$ to zero and, while\n$c<\\mathrm{loc}(x)$, stores the value of $e$ at address $\\mathrm{loc}(y)+c$ and\nincrements $c$ has an execution from the state with locals $\\mathrm{loc}$ and memory\n$\\mu$ whose cost is at most $T$ and whose final state satisfies $Q$."
+}

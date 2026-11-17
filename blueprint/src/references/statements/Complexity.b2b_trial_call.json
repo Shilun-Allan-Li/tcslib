@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.b2b_trial_call",
+ "key": "2ce97788eef43c42",
+ "kind": "theorem",
+ "title": "Hosted Call Trial",
+ "statement": "Let $M_V$, $M_I$, and $M_P$ be Boolean finite-state Turing machines, let $x$ and $u$ be Boolean words, let $b$ be a Boolean value, and let $s$ be a natural number. Suppose the cleaned simulation of $M_V$, started in its initial cleaning state on input $x\\mathbin{++}u$, halts with output $b$, leaves all its work tapes blank with their heads at position $0$, and keeps every work-tape head within distance $s$ of $0$ throughout the run. Then the call-phase machine, started with input-head position $1$, the first tape storing $u$, the second storing $x\\mathbin{++}u$, and the call simulation in its initial state, reaches a configuration with input-head position $1$, the first two tapes still storing $u$ and $x\\mathbin{++}u$, the third tape storing the one-symbol word $[b]$, and its third-tape head at position $1$. It does not enter its designated exit state earlier, and throughout the run every work-tape head has absolute position at most $|x|+|u|+s+1$.",
+ "hypotheses_covered": [
+  "$M_V$, $M_I$, and $M_P$ are Boolean finite-state Turing machines",
+  "$x$ and $u$ are Boolean words",
+  "$b$ is a Boolean value",
+  "$s$ is a natural number",
+  "The cleaned simulation of $M_V$ on $x\\mathbin{++}u$ halts with output $b$",
+  "At halt, all work tapes of the cleaned simulation are blank and all heads are at $0$",
+  "Throughout the cleaned simulation, every work-tape head has absolute position at most $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

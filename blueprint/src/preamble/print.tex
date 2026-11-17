@@ -1,13 +1,13 @@
 % Those macros are used for the print version of the blueprint.
 % This file is not meant to be built. Build src/web.tex or src/print.text instead.
 
-\declaretheorem[numberwithin=chapter]{theorem}
-\declaretheorem[sibling=theorem]{proposition}
-\declaretheorem[sibling=theorem]{corollary}
-\declaretheorem[sibling=theorem]{remark}
-\declaretheorem[sibling=theorem]{lemma}
-\declaretheorem[sibling=theorem]{definition}
-\declaretheorem[sibling=theorem]{example}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
 
 % We neutralise the Plastex commands
 \newcommand{\proves}[1]{}
@@ -24,3 +24,11 @@
  {\clist_map_inline:nn{#1}{\vphantom{\ref{##1}}}%
   \ignorespaces}
 \ExplSyntaxOff
+
+% Textbook chapters contain many module sections: leave room for numbers such
+% as 57.22 in the contents, with subsections aligned under their section titles.
+\makeatletter
+\renewcommand*\l@section{\@dottedtocline{1}{1.5em}{4em}}
+\renewcommand*\l@subsection{\@dottedtocline{2}{5.5em}{4.5em}}
+\makeatother
+\hypersetup{hidelinks}

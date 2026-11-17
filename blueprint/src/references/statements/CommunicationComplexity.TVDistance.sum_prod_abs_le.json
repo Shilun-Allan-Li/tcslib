@@ -1,0 +1,19 @@
+{
+ "lean_name": "CommunicationComplexity.TVDistance.sum_prod_abs_le",
+ "key": "148e3060e9319d6c",
+ "kind": "lemma",
+ "title": "Product weight gap bound",
+ "statement": "Let $\\alpha$ and $\\beta$ be finite sets, and let $a,c:\\alpha\\to\\bbr$ and $b,d:\\beta\\to\\bbr$. Suppose $b(y)\\ge 0$ for every $y$, $c(x)\\ge 0$ for every $x$, and $\\sum_y b(y)=\\sum_x c(x)=1$. Then\n\\[\n\\sum_{(x,y)\\in\\alpha\\times\\beta}\\abs{a(x)b(y)-c(x)d(y)}\\leq \\sum_{x\\in\\alpha}\\abs{a(x)-c(x)}+\\sum_{y\\in\\beta}\\abs{b(y)-d(y)}.\n\\]",
+ "hypotheses_covered": [
+  "Finite sets $\\alpha$ and $\\beta$",
+  "Real-valued functions $a,c$ on $\\alpha$ and $b,d$ on $\\beta$",
+  "$b$ is nonnegative",
+  "$c$ is nonnegative",
+  "$b$ sums to $1$",
+  "$c$ sums to $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha$ and $\\beta$ be finite types, and let $a, c : \\alpha \\to \\bbr$ and\n$b, d : \\beta \\to \\bbr$ be real-valued weight functions. Suppose $b$ and $c$ are\nnonnegative and each sums to one, i.e.\\ $b(y) \\ge 0$ for all $y$, $c(x) \\ge 0$ for all\n$x$, $\\sum_{y \\in \\beta} b(y) = 1$ and $\\sum_{x \\in \\alpha} c(x) = 1$. Then the $\\ell^1$\ngap between the two product weight functions is at most the sum of the marginal $\\ell^1$\ngaps:\n\\[\n\\sum_{(x,y) \\in \\alpha \\times \\beta} \\abs{a(x)\\,b(y) - c(x)\\,d(y)}\n\\;\\le\\; \\sum_{x \\in \\alpha} \\abs{a(x) - c(x)} + \\sum_{y \\in \\beta} \\abs{b(y) - d(y)}.\n\\]"
+}

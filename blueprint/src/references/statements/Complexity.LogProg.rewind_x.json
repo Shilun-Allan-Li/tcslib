@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.rewind_x",
+ "key": "19d482cad8e11ac0",
+ "kind": "lemma",
+ "title": "Rewinding the input head",
+ "statement": "Let $P$ be a register program with $m$ registers and $d$ deciders, let $x$ be a Boolean input, and let $\\mathcal O$ be an oracle assigning a Boolean answer to each decider and Boolean word. Suppose the ordinary transitions at states $rw_1$ and $rw_2$ always act as follows: at $rw_1$ the input head moves left and the machine enters $rw_2$; at $rw_2$, it moves left and stays in $rw_2$ when the input symbol is present, and moves right and enters $nx$ when the input symbol is absent. Suppose neither $rw_1$ nor $rw_2$ is a call state. From a configuration whose state is $rw_1$, whose input-head position is $ip$, and whose register $r$ head is at integer position $p$, there is a time $T$ when the register head is still at $p$, the state is $nx$, and the input-head position is $1$. At every earlier time $t<T$, the configuration has some state and input-head position, the register $r$ head is still at $p$, and that state is not a call state.",
+ "hypotheses_covered": [
+  "$P$ and the oracle are fixed",
+  "$c$ is a configuration; $r$ is a register; $p$ is an integer; $rw_1,rw_2,nx$ are states",
+  "At $rw_1$, every transition is the specified left move entering $rw_2$",
+  "At $rw_2$, every transition on a present input symbol is the specified left move staying in $rw_2$, and on an absent symbol is the specified right move entering $nx$",
+  "Neither $rw_1$ nor $rw_2$ is a call state",
+  "$ip\\in Fin(|x|+2)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

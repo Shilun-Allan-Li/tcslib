@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_agree_run",
+ "key": "c8e39537c145d092",
+ "kind": "lemma",
+ "title": "Agreement of runs before an anchor visit",
+ "statement": "Let $M$ and $N$ be deterministic machines with $k$ work tapes over the Boolean alphabet and state set $S$, and designate a state $q_a$. Suppose their transitions agree in every state other than $q_a$, for every input symbol and every tuple of work-tape readings. For any configuration $c$ on input $x$ and any $t\\in\\mathbb N$, if the run of $N$ from $c$ is never in state $q_a$ at any time $j<t$, then the two machines' configurations after $t$ steps from $c$ are equal.",
+ "hypotheses_covered": [
+  "A natural number of work tapes and state set $S$",
+  "Two machines $M,N$ over the Boolean alphabet",
+  "A designated state $q_a$",
+  "Their transition functions agree at every state other than $q_a$, for all readings",
+  "A configuration $c$ on input $x",
+  "A duration $t\\in\\mathbb N$",
+  "At every time $j<t$, the run of $N$ from $c$ is not in state $q_a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If two transition tables agree at every control state other than a designated\nanchor state, then their runs from a common configuration coincide for every\nduration during which the second machine's run has not yet visited the anchor."
+}

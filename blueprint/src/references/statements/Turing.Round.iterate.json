@@ -1,0 +1,28 @@
+{
+ "lean_name": "Turing.Round.iterate",
+ "key": "1ab13aa9cd98f1e1",
+ "kind": "theorem",
+ "title": "Concatenating successive rounds",
+ "statement": "Let $M$ be a multi-tape Turing machine, $a$ a state, $E$ a set of optional states, and $P$ a property of work-tape head positions. Let $\\tau$ assign a natural-number duration to each configuration, and let $c$ be a configuration. Assume that the optional state corresponding to $a$ is not in $E$, and that $P$ holds at the work-tape head positions of $c$. Define $c_r$ by starting at $c$ and, $r$ times, running the machine for the duration assigned by $\\tau$ to the current configuration. For every $r<n$, assume that $c_r$ is in state $a$, that its assigned duration is positive, and that running it for that duration reaches $c_{r+1}$, whose state is either $a$ or belongs to $E$; at each strictly intermediate positive time the state is neither halted nor in $E$ nor equal to $a$, and $P$ holds at every time from the start through the endpoint. Then running the machine from $c$ for the sum of these $n$ durations reaches $c_n$; at every time strictly before the endpoint its state is not in $E$, and $P$ holds at every time from the start through the endpoint.",
+ "hypotheses_covered": [
+  "$M$ is a multi-tape Turing machine",
+  "$a$ is a state",
+  "$E$ is a set of optional states",
+  "$P$ is a property of work-tape head positions",
+  "$\\tau$ assigns a natural-number duration to each configuration",
+  "$c$ is a configuration",
+  "The optional state corresponding to $a$ is not in $E$",
+  "$P$ holds at the initial work-tape head positions",
+  "$n$ is a natural number",
+  "For every $r<n$, the orbit configuration is in state $a",
+  "For every $r<n$, its assigned duration is positive",
+  "For every $r<n$, running it for that duration reaches the next orbit configuration",
+  "The endpoint state is either $a$ or belongs to $E$",
+  "At each strictly intermediate positive time, the state is neither halted nor in $E$ nor equal to $a$",
+  "$P$ holds throughout every round, including its endpoints"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

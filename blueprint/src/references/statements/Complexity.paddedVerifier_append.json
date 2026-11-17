@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.paddedVerifier_append",
+ "key": "cab5a1a3e3de633a",
+ "kind": "lemma",
+ "title": "Exact-boundary padded verifier characterization",
+ "statement": "Let $C,c\\in\\mathbb{N}$, let $V$ be a language of binary strings, and let $x,v$ be binary strings with $|v|=(C+1)(|x|+1)^c$. Then $xv$ belongs to the padded verifier for $C,c,V$ if and only if there is a binary string $u$ such that stripping the certificate from $v$ yields $u$, $|u|\\le C(|x|+1)^c$, and the self-delimiting pair encoding of $x$ and $u$ belongs to $V$.",
+ "hypotheses_covered": [
+  "$C,c$ are natural numbers",
+  "$V$ is a language of binary strings",
+  "$x,v$ are binary strings",
+  "$|v|=(C+1)(|x|+1)^c"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C, c \\in \\mathbb{N}$ and $V \\subseteq \\{0,1\\}^{*}$, and let\n$V^{\\mathrm{pad}}_{C,c}$ be the set of binary strings $y$ such that, for the least\n$n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist), the suffix $v$ of $y$ after\nits first $n$ bits contains a $1$, and the prefix $u$ of $v$ preceding its last\n$1$ satisfies $|u| \\le C(n+1)^c$ and $\\langle x, u\\rangle \\in V$, where $x$ is\nthe first $n$ bits of $y$ and $\\langle x, u\\rangle$ is the self-delimiting pair\nencoding ($x$ with every bit doubled, then $01$, then $u$). Then for all binary\nstrings $x$ and $v$ with $|v| = (C+1)(|x|+1)^c$, the concatenation $xv$ lies in\n$V^{\\mathrm{pad}}_{C,c}$ if and only if $v$ contains a $1$ and the prefix $u$ of\n$v$ preceding its last $1$ satisfies $|u| \\le C(|x|+1)^c$ and\n$\\langle x, u\\rangle \\in V$."
+}

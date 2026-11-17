@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.b2_finish",
+ "key": "21284e54c61d7158",
+ "kind": "lemma",
+ "title": "Timed completion of verification",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let $x$ and $u$ be Boolean words, and let $c$ be a configuration of $S$ on input $x$ whose state is empty. Suppose that, on input $x$ followed by $u$, machine $V$ is halted after $T$ steps and has output the one-bit word $[b]$, for some bit $b$. Then every Boolean choice word $w$ of length $|x|+|u|+2+(T+1)$ makes the host machine, started from the guessing-phase configuration determined by $c$ and $u$, halt with output $[b]$.",
+ "hypotheses_covered": [
+  "$S$ and $V$ are finite deterministic Turing machines over Booleans",
+  "$x$ and $u$ are Boolean words",
+  "$c$ is a configuration of $S$ on input $x$",
+  "$c$ has empty state",
+  "$b$ is a Boolean bit",
+  "$T$ is a natural number",
+  "$V$ is halted after $T$ steps on input $x$ followed by $u$, with output $[b]$",
+  "$w$ is a Boolean word of length $|x|+|u|+2+(T+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $d$ a halted scheduler configuration on an input $x$, $u$ a guessed word, and suppose $V$ computes the single-bit output $b$ on $x\\,u$ within $T$ steps. Then for every choice word $w$ with $|w| = |x\\,u| + 2 + (T+1)$, running the host under $w$ from the guessing-phase configuration for $(d,u)$ halts with output exactly the one-bit string $b$."
+}

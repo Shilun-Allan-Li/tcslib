@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.oracleShadowAction",
+ "key": "17b27c7d57f9171f",
+ "kind": "def",
+ "title": "Oracle shadow action",
+ "statement": "Given $n\\geq 0$, an index $i<n$, an action of an $n$-work-tape machine over Boolean symbols with state set $S$, a Boolean $b$, and an optional Boolean marker, define an action for a machine with $n+1$ work tapes and state set $S\\times\\{\\mathrm{false},\\mathrm{true}\\}$. It preserves the input-head movement, output, and successor-state presence; appends a work-tape instruction that writes nothing and moves in the same direction as tape $i$; and, for a successor state $q$, sets its Boolean component to true exactly when the marker is true and tape $i$'s movement is not left, and otherwise to $b$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$i$ is an index among the $n$ work tapes",
+  "$a$ is an action over Boolean symbols and state set $S$",
+  "$b$ is a Boolean",
+  "the marker is an optional Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

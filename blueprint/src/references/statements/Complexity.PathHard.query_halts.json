@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.PathHard.query_halts",
+ "key": "d210464df2a3d9a6",
+ "kind": "theorem",
+ "title": "Halting of the query algorithm",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input alphabet, let $c_0$ be a natural number, let $y$ be a finite Boolean string, and let $mode$ be a Boolean. The register program with parameters $a=codeK(N)(c_0+1)$ and $b=codeK(N)+2$, using the oracle that decides the five languages specified for $N$, halts from its initial state with all fifteen registers zero and no answer recorded, and its answer is membership of $y$ in the query language for $N,c_0,$ and $mode$. At every configuration before halting, the program satisfies its guard: its preconditions hold and every register is at most $|y|+8nV(codeK(N),c_0,|y|^2)+8$.",
+ "hypotheses_covered": [
+  "finite nondeterministic Turing machine N with Boolean input symbols",
+  "natural number c₀",
+  "finite Boolean string y",
+  "Boolean mode",
+  "specified program parameters a=codeK(N)(c₀+1) and b=codeK(N)+2",
+  "oracle determined by the five languages for N",
+  "initial state lenQ, all registers zero, no answer recorded",
+  "guard holds at every pre-halting configuration, including the stated register bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite nondeterministic Turing machine, let $c_0$ be a natural number, let\n$y$ be a bit string, and choose either bit-query mode or length-query mode. The\nspecified register program, started with every register zero at its initial state, halts\nwith the answer given by the corresponding query language for the reduction of $y$;\nthroughout its computation, its registers satisfy the prescribed bound $|y|+8n+8$, where\n$n$ is the number of vertices used in that reduction."
+}

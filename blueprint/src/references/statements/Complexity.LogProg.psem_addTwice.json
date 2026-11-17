@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.psem_addTwice",
+ "key": "e85a2c6d5f2ffad7",
+ "kind": "theorem",
+ "title": "Two additions in a probabilistic program",
+ "statement": "Let $A$ be a nondeterministic register program with $m$ natural-number registers, state set $\\Lambda$, and oracle, and fix an input $x$ and register bound $B$. Let $k,y,p$ be register indices with $k\\ne y$, $k\\ne p$, and $p\\ne y$. Suppose the instruction at $test$ compares registers $k$ and $y$, going to $ex$ when they are equal and to $i_1$ otherwise; $i_1,i_2,i_3$ successively increment register $p$, with $i_3$ also incrementing $k$ and returning to $test$. For any rational $q$ and register valuation $v$ bounded by $B$, assume $v(k)\\le v(y)$ and $v(p)+2(v(y)-v(k))\\le B$. If, for the configuration at $ex$ with register $p$ increased by $2(v(y)-v(k))$ and register $k$ set to $v(y)$, the probabilistic semantics has acceptance probability $q$, then the configuration at $test$ with valuation $v$ has the same semantics and acceptance probability.",
+ "hypotheses_covered": [
+  "The program $A$, oracle, input $x$, and bound $B$ are fixed",
+  "$k,y,p$ are register indices",
+  "$k\\ne y$",
+  "$k\\ne p$",
+  "$p\\ne y$",
+  "The specified instructions at $test,i_1,i_2,i_3$",
+  "$q$ is rational",
+  "$v$ is a register valuation",
+  "Every register value of $v$ is at most $B$",
+  "$v(k)\\le v(y)$",
+  "$v(p)+2(v(y)-v(k))\\le B$",
+  "The specified configuration at $ex$ has probabilistic semantics with acceptance probability $q$ under bound $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

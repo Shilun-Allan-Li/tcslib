@@ -1,0 +1,28 @@
+{
+ "lean_name": "Complexity.CPSim.sim_step",
+ "key": "ca12a601fd3491bf",
+ "kind": "lemma",
+ "title": "One-Step Counter Program Simulation",
+ "statement": "Let $P$ be a counter program with $R$ registers and labels in a set $\\Lambda$. Fix a starting label $l_0\\in\\Lambda$, a Boolean $lm$, natural numbers $n,p,B$, a bit string $u$, and an oracle $o$ with two indices. Suppose that for every $h\\in\\mathbb N$, the oracle answers whether $h<|u|$ at index $0$ and returns the bit of $u$ at position $h$ (or $0$ if that position is beyond the end) at index $1$, when queried on the encoding of $(1^n,\\mathrm{bits}(h))$. Let $l\\in\\Lambda$, let $\\rho$ assign a natural number to each of the $R$ registers, and let $ps,tm\\in\\mathbb N$ and $out$ be a bit string, with $|out|\\le p$, every value of $\\rho$ at most $B$, and $ps,|out|,tm\\le B$. Let $s'$ be the one-step successor of the state with label $l$, registers $\\rho$, input position $ps$, and output $out$, on input $u$; suppose every register value and the input position and output length in $s'$ are at most $B$. Then either $s'$ is halted with output $out$, and the associated simulation halts with answer false, or $s'$ has a label $l'$. In the latter case, if $|s'.out|\\le p$, the simulation reaches the configuration for $s'$ at label $l'$ with some time-register value at most $B$; if $|s'.out|>p$, it halts with answer $\\mathbf{1}_{p<|s'.out|}$ when $lm$ is true, and otherwise with the bit of $s'.out$ at position $p$, taking that bit to be $0$ if absent. In both cases, every earlier simulation configuration satisfies the following invariant: each counter is at most $B$, every equality test between two registers compares distinct registers, input-word comparisons are made only on valid encodings of the required form, and each oracle call uses distinct argument registers.",
+ "hypotheses_covered": [
+  "Counter program with $R$ registers and labels in $\\Lambda$",
+  "Fixed starting label $l_0$ and Boolean mode $lm$",
+  "Natural numbers $n,p,B$ and bit string $u$",
+  "Index-$0$ oracle returns whether $h<|u|$ on each specified encoded query",
+  "Index-$1$ oracle returns the bit at position $h$, defaulting to $0$, on each specified encoded query",
+  "Initial label $l$",
+  "Initial register assignment $\\rho$ with every register value at most $B$",
+  "Initial input position $ps\\le B$",
+  "Initial output $out$ with $|out|\\le p$ and $|out|\\le B$",
+  "Initial time-register value $tm\\le B$",
+  "$s'$ is the one-step successor on input $u$",
+  "Every register value, input position, and output length in $s'$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora",
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

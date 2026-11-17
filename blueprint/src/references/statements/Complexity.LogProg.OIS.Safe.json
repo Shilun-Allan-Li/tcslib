@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.Safe",
+ "key": "fa9b8fe6cb3e2e20",
+ "kind": "def",
+ "title": "Safety conditions for simulator configurations",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean tape symbols, and let $x$ be a finite Boolean string. For natural numbers $F,S$, a simulator configuration $d$ on input $x$ is safe if every work-head position lies between its prescribed lower bound (with parameter $S$) and upper bound (with parameters $S$ and the length of the binary expansion of $F+1$); and whenever $d$ is in a state whose program entry is a call, the input-head position is $1$, the head on the distinguished tape is at $0$, and that tape contains the buffer representation of some natural number $i\\leq F$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-tape Turing machine with Boolean tape symbols",
+  "$x$ is a finite Boolean string",
+  "$F,S$ are natural numbers",
+  "For every tape position, its head coordinate is between the specified lower and upper bounds",
+  "For every state and call instruction matching the program, the specified head-position and buffer conditions hold"
+ ],
+ "confidence": "low",
+ "caveat": "The statement uses the program, distinguished tape, and buffer-tape construction, whose definitions are not included in the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

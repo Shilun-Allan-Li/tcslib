@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.tmsat_request_poly",
+ "key": "c3917c6269c45d56",
+ "kind": "lemma",
+ "title": "Polynomial-time request assembly",
+ "statement": "The map sending a bit string $z$ to its timed request is polynomial-time computable. To define it, split $z$ at the least $i$ satisfying $i+(i+1)=|z|$ and pair-encode the two resulting parts; if there is no such $i$, use the empty word. Parse this encoding and its nested fields using the total pair projections, which return the empty word when parsing fails. If all required pair parses succeed and the width and clock fields consist only of ones, output the pair encoding whose first component is the pair of the little-endian binary representation of the clock-field length and the code field, and whose second component is the pair of the input field and the prefix of the padded certificate field of length equal to the width-field length; otherwise output the fixed encoding $\\langle\\langle\\varepsilon,\\varepsilon\\rangle,\\varepsilon\\rangle$.",
+ "hypotheses_covered": [
+  "$z$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\\langle z_{[:i]}, z_{[i:]}\\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\\pi_1, \\pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \\pi_1(s(z))$ and $W = \\pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\\pi_1(Y)$, $\\pi_1(\\pi_2(Y))$, $\\pi_1(\\pi_2(\\pi_2(Y)))$ and $\\pi_2(\\pi_2(\\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\\pi_2(Y)$ and $\\pi_2(\\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones, and the timed request of $z$ is $\\langle\\langle \\mathrm{bin}(t), \\alpha\\rangle, \\langle x, W_{[:n]}\\rangle\\rangle$ when $G(z)$ holds, where $\\alpha$ and $x$ are the code and input fields, $n$ and $t$ the lengths of the width and clock fields, $W_{[:n]}$ the first $n$ bits of $W$, and $\\mathrm{bin}(t)$ the little-endian binary representation of $t$; otherwise it is the fixed request $\\langle\\langle\\varepsilon,\\varepsilon\\rangle,\\varepsilon\\rangle$. The map sending $z$ to its timed request is polynomial-time computable."
+}

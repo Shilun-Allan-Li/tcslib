@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.roundTM_visited",
+ "key": "b60ad2e6198d0f77",
+ "kind": "theorem",
+ "title": "Simulation of one transition",
+ "statement": "Let $k,n$ be nonnegative integers, let $x$ be a finite binary input, and let $\\mathrm{tr}$ be a transition rule for a machine with $k$ work tapes and states indexed by $\\{0,\\ldots,n\\}$. Suppose a configuration $c$ is in state $q$, and let $d$ be a configuration of the machine that simulates one transition, with its state at the entry phase and its work tapes and head positions related to those of $c$ as prescribed by the representation relation. Write $a$ for the action selected by $\\mathrm{tr}$ from state $q$, the symbol under the input head of $c$, and the symbols under its work-tape heads. Then there is an integer $T$ with $0<T\\le 50(L+1)$, where $L$ is the length of the binary encoding of the transition table, such that after $T$ steps the simulating machine is at the exit phase determined by whether $a$ has a successor state, and its configuration represents the result of applying $a$ to $c$. At every intermediate time $u$ with $0<u<T$, its state is neither the entry nor the halt anchor; its output is unchanged through time $T$. Each original work-tape head visits only its position in $c$ or its position after applying $a$, and each of the two additional work-tape heads visits only positions in the interval $[-50(L+1),50(L+1)]$.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb{N}$",
+  "finite binary input $x$",
+  "transition rule $\\mathrm{tr}$ on the specified state, input-symbol, and work-symbol types",
+  "configuration $c$ and state $q$",
+  "$c$ is in state $q$",
+  "simulating configuration $d$",
+  "$d$ is at the entry phase",
+  "the representation relation between $c$ and $d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

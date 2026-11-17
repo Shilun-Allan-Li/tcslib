@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Tensorization.lean :: BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_le -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Noise Contraction of the Extended Functional
+
+**Claim.** Under the continuity, nonnegativity, two-point inequality, range, and noise assumptions in the statement, applying the noise operator to the function and all additional functions cannot increase the extended functional.
+
+**Proof.** Proceed by induction on the dimension, allowing the number of additional functions to vary. In dimension zero the noise operator is the identity (`noiseOp_dim_zero`), so the inequality is equality. For the induction step, split off the last coordinate. The extended functional after noise is expressed as an expectation of pair lengths (`extendedFunctional_noise_pair`). At each lower-dimensional point, the two slice values of the noisy function lie in $[0,1]$ (`noise_restriction_endpoints_mem`), and $\rho\in[0,1]$. The pair-length contraction inequality therefore bounds the pointwise pair length by its value at interpolation parameter $1$ and clock $b^2$ (`pairLength_contraction`). Taking expectations preserves this pointwise inequality (`expect_mono`). The resulting expectation is the average of the two noisy restricted functionals by the noisy last-coordinate splitting identity (`expect_pairLength_one`). The original functional is likewise the average of its two restrictions (`extendedFunctional_restrictLast`). Apply the induction hypothesis separately to each restriction, using the same difference function as an extra coordinate and the corresponding restriction of each $g_j$. Their range assumptions follow by evaluating the original range condition at the point obtained by appending that slice bit. Adding the two inequalities and dividing by $2$ proves the induction step.
+
+**Key facts.** `BooleanAnalysis.Hypercontractivity.noiseOp_dim_zero`, `BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_pair`, `BooleanAnalysis.GaussianSpace.noise_restriction_endpoints_mem`, `BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_contraction`, `BooleanAnalysis.ThresholdFunctions.expect_mono`, `BooleanAnalysis.GaussianSpace.BobkovInterpolation.expect_pairLength_one`, `BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_restrictLast`.

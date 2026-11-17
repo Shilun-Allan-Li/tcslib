@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.Contract",
+ "key": "122c800bd680deaf",
+ "kind": "structure",
+ "title": "Machine execution contract",
+ "statement": "Let $M$ be a $k$-work-tape Turing machine, let $e$ be an entry state, let $E$ be a set of possible states (including the halting state), let $I$ be a type of data, and fix an input string $x$. A contract assigns to each $i\\in I$ and configuration $d$ a precondition, a running time, an endpoint, and integer lower and upper bounds for each work-tape head. Whenever $d$ starts in state $e$ and satisfies the precondition, running $M$ for the assigned time reaches the assigned endpoint, whose state lies in $E$; before that time the run's state is outside $E$, and at every time up to and including the assigned time each work-tape head lies between its assigned bounds.",
+ "hypotheses_covered": [
+  "A $k$-work-tape Turing machine $M$",
+  "Entry state $e$",
+  "Set $E$ of possible states",
+  "Data type $I$ and fixed input string $x$",
+  "Initial configuration has state $e$ and satisfies the precondition",
+  "Run reaches the assigned endpoint at the assigned time",
+  "Endpoint state belongs to $E$",
+  "State remains outside $E$ at every earlier time",
+  "Each work-tape head stays within its assigned bounds at every time through the endpoint"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

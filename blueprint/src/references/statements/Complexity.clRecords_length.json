@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clRecords_length",
+ "key": "43ee97d6e7397cfa",
+ "kind": "lemma",
+ "title": "Length of the trajectory prefix",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $y$ be a Boolean word, and let $T$ be a natural number. For every natural number $t\\le T+1$, the serialized trajectory prefix consisting of the first $t$ rows has length at most $t$ times the number of movement-count fields times $2T+2$; the number of fields is twice the number of heads, including the input head.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $M$",
+  "Boolean word $y$",
+  "natural number $T$",
+  "natural number $t$ with $t\\le T+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, virtual input $y$, horizon $T$, and count $t \\le T + 1$, the serialized trajectory prefix of the first $t$ rows has length at most $t$ times the field count times $2T + 2$: every stored count has width at most the horizon and every field is exactly a doubled payload plus its separator."
+}

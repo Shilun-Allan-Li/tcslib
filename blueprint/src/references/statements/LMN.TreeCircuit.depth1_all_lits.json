@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.TreeCircuit.depth1_all_lits",
+ "key": "ef3b9916da865651",
+ "kind": "lemma",
+ "title": "Children of a shallow gate are literals",
+ "statement": "Let $m\\in\\mathbb N$, choose an AND or OR gate, and let $cs$ be a list of Boolean circuit trees on $m$ variables. If the circuit formed by applying that gate to the children in $cs$ has depth at most $1$, then every child in $cs$ is a literal.",
+ "hypotheses_covered": [
+  "Natural number m",
+  "Gate type is AND or OR",
+  "List cs of circuit trees on m variables",
+  "The circuit formed from the gate and cs has depth at most 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a number of variables $m$, a gate type $isAnd \\in \\{\\mathrm{true},\n\\mathrm{false}\\}$, and a list $cs$ of Boolean circuits on $m$ variables, and form the\ncircuit $\\mathrm{node}(isAnd, cs)$ whose root gate is applied to the children in $cs$.\nIf this circuit has depth at most $1$, then every child $c$ in $cs$ is a literal; that\nis, there exists a literal $l$ with $c = \\mathrm{lit}(l)$."
+}

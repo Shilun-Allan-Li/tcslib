@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_bank_step",
+ "key": "4904390a0869085e",
+ "kind": "lemma",
+ "title": "One bank segment within a linear time bound",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $\\mathit{emit}\\in\\{\\mathrm{false},\\mathrm{true}\\}$, and let $x,\\mathit{arg},\\mathit{cap}$ be Boolean words. For every time $T$ and source tape $i$, there exists $t\\le 6T+8$ such that the clean-call machine, started in the bank frame with the first $i$ banks blank and in the cleaner-entry state for bank $i$, reaches the frame with the first $i+1$ banks blank and in the cleaner-entry state for bank $i+1$.",
+ "hypotheses_covered": [
+  "finite-state Boolean machine $M$",
+  "Boolean mode $\\mathit{emit}$",
+  "Boolean input, argument, and capture words $x,\\mathit{arg},\\mathit{cap}$",
+  "time $T\\in\\mathbb N$",
+  "source tape index $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every mode, input, argument and capture words, time $T$, and source tape $i$, there\nis a time $t \\le 6T + 8$ such that the clean-call controller, run for $t$ steps from the\ncleanup frame with $i$ cleaned banks in the cleaner-entry state for bank $i$, reaches\nthe cleanup frame with $i + 1$ cleaned banks in the cleaner-entry state for bank $i +\n1$; the dispatch happens at the cleaner's observed return."
+}

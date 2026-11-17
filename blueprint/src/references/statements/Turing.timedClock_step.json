@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timedClock_step",
+ "key": "dfa0c2854a175463",
+ "kind": "lemma",
+ "title": "One clock-phase step",
+ "statement": "Let $B$ be a six-tape timed-interpreter configuration on a Boolean input word, let $q,q'$ be timed control states, let $b$ be a Boolean word, let $p$ be an integer, and let $d\\in\\{-1,0,1\\}$. Suppose that for every scanned input symbol and every tuple of work-tape reads whose clock-tape read is the symbol stored at position $p$ of the buffer tape for $b$, the transition in control $q$ is the administrative action that enters $q'$, moves the clock head by $d$, and makes no write or output. Then one step from the configuration obtained by setting $B$'s control to $q$ and its clock lane to the buffer tape for $b$ with head at $p$ equals the configuration obtained by setting that control to $q'$ and moving the clock head to $p+d$, with the other fields retained.",
+ "hypotheses_covered": [
+  "$B$ is a configuration of the six-tape timed interpreter on a Boolean input word",
+  "$q$ and $q'$ are timed control states",
+  "$b$ is a Boolean word",
+  "$p$ is an integer",
+  "$d$ is a sign in $\\{-1,0,1\\}$",
+  "for every input read and work-tape read tuple with clock read equal to the buffer-tape content at $p$, the transition in state $q$ is the stated administrative clock move to $q'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose that, whenever the clock lane reads its designated symbol, the timed\ninterpreter's transition in control $q$ is a pure clock move by\n$d \\in \\{-1,0,1\\}$ (no writes, no emission) into a control $q'$.  Then one\nstep from the clock-phase configuration moves only the clock head by $d$ and\nenters $q'$."
+}

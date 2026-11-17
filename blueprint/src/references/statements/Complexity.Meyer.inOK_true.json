@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Meyer.inOK_true",
+ "key": "faf17abea59ad524",
+ "kind": "theorem",
+ "title": "Correctness of the input consistency check",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $x$ be a Boolean input word, let $W$ be natural, and let $Ans$ assign a Boolean to each selector and pair of natural numbers. Suppose that for every selector and every $t,a$ with $t<2^W$ and $a<2^W$, $Ans$ agrees with the answer obtained by running $M$ on $x$ for $t$ steps and querying selector parameter $a$. If $t+1<2^W$, $|x|+2<2^W$, and an integer $e$ satisfies $-(|x|+1)\\le e\\le |x|$, then the input consistency predicate, evaluated using these encoded answers at time $t$, input length $|x|$, parameters $t,a$, the integer-coordinate encoding of $e$, and Boolean $b$, returns true on the machine's state and scanned symbols after $t$ steps on $x$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Boolean Turing machine",
+  "$x$ is a Boolean word",
+  "$W$ is natural",
+  "$Ans$ maps each selector and pair of natural numbers to a Boolean",
+  "$Ans$ agrees with the machine's query answers for all $t,a<2^W$",
+  "$t+1<2^W$",
+  "$|x|+2<2^W$",
+  "$e$ is an integer with $-(|x|+1)\\le e\\le |x|$",
+  "$a$ and $b$ are natural and Boolean parameters, respectively"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion depends on the specific tableau encoding and input-consistency predicate defined in the formal snippet; the available informal descriptions do not explain those encodings.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

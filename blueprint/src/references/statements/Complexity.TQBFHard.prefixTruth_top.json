@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.TQBFHard.prefixTruth_top",
+ "key": "ea9d5e9fa17e02d6",
+ "kind": "theorem",
+ "title": "Top-Level Prefix Characterization",
+ "statement": "Let $w,R\\in\\mathbb{N}$, let $E$ be a relation on finite Boolean words, let $I$ and $J$ be predicates on such words, and let $\\sigma$ be an infinite Boolean assignment. The quantified formula with three consecutive blocks of $w$ existential quantifiers followed by $R$ levels of the prefix specified by the recursive pattern “existential block, universal block, universal block” is true from position $0$, with matrix requiring $I$ on the block read at positions $w$ through $2w-1$, $J$ on the block read at positions $2w$ through $3w-1$, and the recursively defined level matrix from position $3w$, if and only if there are Boolean words $A,B$ of length $w$ for which $I(A)$ and $J(B)$ hold and $\\mathrm{Mid}_w(E,R,A,B)$ holds. Here $\\mathrm{Mid}_w(E,0,A,B)$ means $E(A,B)$, and $\\mathrm{Mid}_w(E,r+1,A,B)$ means that some word $z$ of length $w$ satisfies both $\\mathrm{Mid}_w(E,r,A,z)$ and $\\mathrm{Mid}_w(E,r,z,B)$.",
+ "hypotheses_covered": [
+  "Natural numbers $w$ and $R$",
+  "A relation $E$ on finite Boolean words",
+  "Predicates $I$ and $J$ on finite Boolean words",
+  "An infinite Boolean assignment $\\sigma$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

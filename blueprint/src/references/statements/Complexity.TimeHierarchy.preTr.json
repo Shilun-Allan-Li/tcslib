@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.preTr",
+ "key": "992edf0faaea5030",
+ "kind": "def",
+ "title": "Preprocessing transition rule",
+ "statement": "For the zero-work-tape Boolean machine, the transition rule is as follows. In state $scan0$, on reading bit $b$, it moves right, outputs $b$, and enters $scan1(b)$; on a blank it moves right and enters $rwStart$. In state $scan1(b)$, on reading bit $b'$, it moves right, outputs $b'$, and enters $scan0$ if $b=b'$, or $rwStart$ otherwise; on a blank it moves right and enters $rwStart$. In $rwStart$ it moves left into $rwScan$; in $rwScan$ it moves left on a bit and moves right into $copy$ on a blank. In $copy$ it moves right and outputs each bit it reads, and halts on a blank.",
+ "hypotheses_covered": [
+  "Input is an optional Boolean symbol",
+  "The work-tape index type is empty",
+  "Current state is a preprocessing state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

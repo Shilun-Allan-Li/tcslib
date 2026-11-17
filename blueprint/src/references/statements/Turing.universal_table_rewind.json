@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.universal_table_rewind",
+ "key": "4af9513e7d76cbbc",
+ "kind": "lemma",
+ "title": "Exact-Cost Table Rewind",
+ "statement": "Let $x$ be a Boolean input word, let $B$ be a four-tape configuration for the universal interpreter on input $x$, and choose a Boolean flag, an index in $\\{0,\\ldots,8\\}$, a Boolean table word $T$, a state tape $\\sigma\\colon\\mathbb Z\\to\\{0,1,\\mathrm{blank}\\}$, and a state-head position $s\\in\\mathbb Z$. For every natural number $j$ with $j\\le |T|$, running the interpreter for exactly $j+1$ steps from the configuration in rewind phase with table cursor $j-1$ and state tape $\\sigma$ at position $s$ yields the configuration in count-parsing phase with the same flag and index, table cursor $0$, and state tape $\\sigma$ still at position $s$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean list",
+  "$B$ is a four-tape configuration on input $x$",
+  "the initial phase has a Boolean flag and an index below $9$",
+  "$T$ is a Boolean list",
+  "$\\sigma$ is an integer-indexed optional Boolean state tape",
+  "$s$ is an integer state-head position",
+  "$j$ is a natural number satisfying $j\\le |T|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider the table interpreter in its table-rewind phase (carrying a Boolean\nflag and a record index that it merely preserves), in an evaluation\nconfiguration over a table $T$ with table cursor $j - 1$ for some\n$j \\le |T|$, and with an arbitrary state tape $\\sigma$ and state cursor $s$.\nThen exactly $j + 1$ interpreter steps bring it to the count-parsing phase\nwith the same flag and index and with the table cursor at $0$; the state\ntape, state cursor, and all other data are unchanged."
+}

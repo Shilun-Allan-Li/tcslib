@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_erase_left",
+ "key": "50c84f6042e391f7",
+ "kind": "lemma",
+ "title": "Erasing the width word",
+ "statement": "Let $C$ and $D$ be finite Boolean Turing machines with positive numbers of work tapes, and choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$. For any input word $w$, candidate word $s$, installed words $u,v$, and verdict bit $ok$, there is a time $t\\le 2(|u|+1)$ at which the controller, started in erasure state $0$ for the left bank with these words installed, is in erasure state $2$ with verdict $ok$, the left-bank word erased, and the candidate and right-bank word unchanged; at every time $j\\le t$, its state is not the anchor.",
+ "hypotheses_covered": [
+  "$C,D$ are finite Boolean Turing machines",
+  "$0<C.k$ and $0<D.k$",
+  "$c_e,c_x$ are states of $C$; $d_e,d_x$ are states of $D$",
+  "$w,s,u,v$ are Boolean words",
+  "$ok$ is a Boolean verdict"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any verdict bit, there is a time $t \\le 2(\\abs{u}+1)$ after which the\ncontroller, from its first erasure seam, has blanked the installed width\nword $u$ while retaining the verdict in control and preserving every other\ntape; the trace avoids the anchor."
+}

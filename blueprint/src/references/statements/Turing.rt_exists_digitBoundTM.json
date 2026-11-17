@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.rt_exists_digitBoundTM",
+ "key": "cee8cbb69cd04dd2",
+ "kind": "theorem",
+ "title": "Embedded digit-writing machine",
+ "statement": "For any types $Q$ and $T$ with decidable equality, there are a natural number $K$, a finite state set $S$ with decidable equality, a machine $R$ with $K+1$ work tapes over symbols encoding digits, marked work cells, states, or tags, designated states $entry,exit\\in S$, and a natural number $C$. For every $k$, embedding $\\iota:\\{0,\\ldots,K\\}\\hookrightarrow\\{0,\\ldots,k-1\\}$, Boolean word $x$, and initial configuration $a$ of $R$ on input $x$, suppose $a$ is in state $entry$, its input head is at position $1$, all its work-tape cells are blank, and its output is empty. For any surrounding tapes, head positions, and output prefix, embed this computation into the $k$-tape machine; then at some time $t\\le C(|x|+1)$ it reaches the corresponding embedded configuration with state $exit$ and the binary expansion of $|x|+1$ written on tape $\\iota(0)$ from its initial head position. It does not visit $exit$ earlier, and every work-tape head remains within distance $C(\\operatorname{bits}(|x|+1)+1)$ of its initial position through time $t$.",
+ "hypotheses_covered": [
+  "$Q,T$ have decidable equality",
+  "Finite state set $S$ with decidable equality exists",
+  "Embedding of $K+1$ tape indices into $k$ tape indices",
+  "Boolean input word $x$",
+  "Initial state is $entry$",
+  "Input head starts at position $1$",
+  "All work tapes of $a$ are blank",
+  "Output of $a$ is empty",
+  "Arbitrary surrounding tape contents and head positions",
+  "Arbitrary output prefix",
+  "Time bound $C(|x|+1)$",
+  "No earlier visit to $exit$",
+  "Head displacement bound through time $t$",
+  "Specified embedded final configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

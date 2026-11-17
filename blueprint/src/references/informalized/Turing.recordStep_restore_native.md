@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean :: Turing.recordStep_restore_native -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Native Transition Restoration
+
+**Claim.** Under the seek-machine specification and blank-tape and input-position hypotheses, the recording machine restores the recorded native input position, clears the auxiliary tape, and reaches the controller stage selected by the recorded transition within the stated time and head-distance bounds, without reaching either verdict state early.
+
+**Proof.** Let $e$ embed Boolean symbols in the recording alphabet and put $w=\mathrm{binDigits}(W,d.\mathrm{inputPos})$. The input position is less than $2^W$: this follows from $q+1<2^W$ in either case of the recorded native direction. Hence $w$ has length $W$ and binary value $d.\mathrm{inputPos}$ (`record_digits_value`). Applying the digit-restoration result first takes the machine from the complementing phase to restoration with $w$ stored on tape 3; this contributes at most $4W+6$ steps and head displacement at most $W+1$ (`recordStep_restore_digits`).
+
+Next, the tape-3 word is a valid embedded copy of $w$, tape 2 is blank, and the seek machine's input-position bound holds because the configuration's input head lies within the input's permitted range. The seek specification therefore supplies a run to its finish state, with input head at the binary value of $w$, unchanged tapes, work heads, and output, no earlier visit to finish, and head displacement at most $C(W+1)$. Transporting this run to the recording machine preserves the relevant tape contents and head bounds (`recordStep_seek_transport`). The controller then advances to the clearing stage. Clearing tape 3 takes $2W+2$ steps, empties it, avoids its done phase until the endpoint, and moves heads by at most $W+1$ (`recordStep_clear_snapshot`, `recordStep_clear_heads`). At that point the controller selects the clearing stage or state-writing stage according to whether the recorded transition attempts to cross a work-tape edge. Concatenating these three runs gives the claimed endpoint and avoids both verdict states (`recordStep_phase_run`, `recordRun_trans`). Each segment's head bound is at most $(C+1)(W+1)$, so the combined run has that bound (`recordRun_mono`). The time estimate follows by adding the seek bound, the restoration bound, the clearing length, and the intervening controller steps.
+
+**Key facts.** `Turing.recordStep_restore_digits`, `Turing.record_digits_value`, `Turing.recordStep_seek_transport`, `Turing.recordStep_clear_snapshot`, `Turing.recordStep_clear_heads`, `Turing.recordStep_phase_run`, `Turing.recordRun_mono`, `Turing.recordRun_trans`.

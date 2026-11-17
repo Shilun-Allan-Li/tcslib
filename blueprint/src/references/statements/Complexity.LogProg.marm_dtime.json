@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.LogProg.marm_dtime",
+ "key": "8264905916bb3440",
+ "kind": "theorem",
+ "title": "Time bound for memory register programs",
+ "statement": "Let $m,d$ be natural numbers, let $\\Lambda$ be a finite state set with decidable equality, and let $L$ be a language of Boolean words. Let $A$ be a memory register program with $m$ registers, $d$ oracle languages, and states in $\\Lambda$, and fix an initial state $l_0\\in\\Lambda$. Suppose each oracle language $A_j$ belongs to $\\mathrm{LOGSPACE}$ for every $j<d$, and let $W,P\\colon\\mathbb{N}\\to\\mathbb{N}$. Assume that for every Boolean word $x$, the run of $A$ from state $l_0$, with all registers zero, no result, blank memory and memory head at $0$, and with membership in $A_j$ supplied as oracle $j$, halts with the characteristic bit of $L$ at $x$. At every time strictly before halting, assume the deterministic-part configuration satisfies the program precondition, each register value $v$ has a binary representation of $v+1$ of length at most $W(|x|)$, and the absolute memory-head position is at most $P(|x|)$. Then there are a finite-state Turing machine $M$ and a natural number $C$ such that, for every $x$, $M$ outputs the characteristic bit of $L$ at $x$ within $2^{C(W(|x|)+\\mathrm{logSpace}(|x|)+1)}(P(|x|)+1)^2$ steps.",
+ "hypotheses_covered": [
+  "$m,d$ are natural numbers",
+  "$\\Lambda$ is finite and has decidable equality",
+  "$L$ is a language of Boolean words",
+  "$A$ is a memory register program with $m$ registers, $d$ oracle languages, and state set $\\Lambda$",
+  "$l_0$ is an initial state",
+  "each oracle language $A_j$ belongs to $\\mathrm{LOGSPACE}$ for every $j<d$",
+  "$W,P\\colon\\mathbb{N}\\to\\mathbb{N}$",
+  "for every Boolean word $x$, the specified run halts with the characteristic bit of $L$",
+  "before halting, the deterministic-part configuration satisfies the program precondition",
+  "before halting, each register value $v$ has binary representation of $v+1$ of length at most $W(|x|)$",
+  "before halting, the absolute memory-head position is at most $P(|x|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $m,d$ be natural numbers, let $\\Lambda$ be a finite state set with decidable\nequality, let $L$ be a language of Boolean words, and let $A$ be a memory register\nprogram with $m$ registers, $d$ oracle languages, and states in $\\Lambda$. Fix an\ninitial state $l_0\\in\\Lambda$, languages $A_j$ for $j<d$ that all belong to\n$\\mathrm{LOGSPACE}$, and functions $W,P\\colon\\mathbb{N}\\to\\mathbb{N}$. Suppose that for\nevery Boolean word $x$, the run of $A$ from state $l_0$, with all registers zero, no\nresult, blank memory and memory head at $0$, using membership in $A_j$ as oracle $j$,\nhalts with result equal to the characteristic bit of $L$ at $x$. At every time strictly\nbefore halting, suppose the deterministic-part configuration satisfies the program's\nprecondition, each register value $v$ has binary representation of $v+1$ of length at\nmost $W(|x|)$, and the absolute value of the memory-head position is at most $P(|x|)$.\nThen there are a finite-state Turing machine $M$ and a natural number $C$ such that, for\nevery $x$, $M$ outputs the characteristic bit of $L$ at $x$ within\n$2^{C(W(|x|)+\\mathrm{logSpace}(|x|)+1)}(P(|x|)+1)^2$ steps."
+}

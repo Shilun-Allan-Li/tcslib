@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Compiler.Start.room_succ",
+ "key": "b9686ebbf85cf822",
+ "kind": "theorem",
+ "title": "Stack room at the next depth",
+ "statement": "Let a compiler setting have frame size $F$, stack capacity $Q$, and depth limit $D$. If a statement starts at depth $d$ and stack position $q$ in a configuration satisfying the start conditions, and $d<D$, then $q+2F+1+(F+1)(D-(d+1))\\le Q$.",
+ "hypotheses_covered": [
+  "A compiler setting with frame size $F$, stack capacity $Q$, and depth limit $D$",
+  "A start configuration for a statement at depth $d$ and stack position $q$",
+  "$d<D$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a setting, and suppose a start configuration for a statement $s$ at depth\n$d$, code position $\\mathrm{pos}$, and stack position $q$ satisfies the start\nconditions. If $d<S.\\mathrm{lim}.\\mathrm{depth}$, then\n$q+S.F+1+S.F+(S.F+1)(S.\\mathrm{lim}.\\mathrm{depth}-(d+1))\\le S.Q$."
+}

@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.ups_unary",
+ "key": "e1ff107459aa78cf",
+ "kind": "lemma",
+ "title": "Unary input initialization",
+ "statement": "Let $x$ be a Boolean word, $B$ a natural number, $q$ a rational number, $d$ a natural number, and $\u001b[?]$ a register state $\u001b[?]$ with fields $p,n,a,b,cur,t,tmp,st,nx,q_0,L,u,w,e,f$. Suppose $|x|-p=d$, every register field is at most $B$, $2|x|+2\\le B$, $p=2n$, and $p\\le |x|$. Assume that for every $n'\\ge n$ for which the bits of $x$ at positions $2i,2i+1$ are both $1$ for all $n\\le i<n'$, and the bits at positions $2n',2n'+1$ are $0,1$, respectively, the program started at state $m0$ with the same register state except with $p=2n'+2$ and $n=n'$ has probabilistic semantics with acceptance probability $q$. If there is no such $n'$, assume $q=0$. Then the program started at state $u0$ with the given register state has probabilistic semantics with acceptance probability $q$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$B$ is a natural number",
+  "$q$ is rational",
+  "$d$ is natural",
+  "$\\sigma$ is a register state",
+  "$|x|-\\sigma.p=d$",
+  "Every field of $\\sigma$ is at most $B$",
+  "$2|x|+2\\le B$",
+  "$\\sigma.p=2\\sigma.n$",
+  "$\\sigma.p\\le |x|$",
+  "For each $n'\\ge\\sigma.n$ satisfying the unary-block and terminator conditions, the specified state-$m0$ configuration has probabilistic semantics with acceptance probability $q$",
+  "If no such $n'$ exists, then $q=0$"
+ ],
+ "confidence": "high",
+ "caveat": "The formal statement's variable named q is the rational probability; the register field q is distinct. The prose denotes that register field by $q_0$.",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $q$ a rational number, and let $d$ be a\nnatural number and $\\sigma$ a register state. Suppose that $|x|-\\sigma.p=d$, every\nregister of $\\sigma$ is at most $B$, $2|x|+2\\le B$, $\\sigma.p=2\\sigma.n$, and\n$\\sigma.p\\le |x|$. Assume that for every $n'\\ge\\sigma.n$ such that each pair of bits of\n$x$ at positions $2i,2i+1$ is $11$ for $\\sigma.n\\le i<n'$, and the pair at positions\n$2n',2n'+1$ is $01$, the program started at its initialization stage with pointer\n$2n'+2$ and vertex count $n'$ has semantics with acceptance probability $q$. If there is\nno such $n'$, assume $q=0$. Then the program started in its initial stage in state\n$\\sigma$ has semantics with acceptance probability $q$."
+}

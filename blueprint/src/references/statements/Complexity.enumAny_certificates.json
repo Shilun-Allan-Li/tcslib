@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.enumAny_certificates",
+ "key": "baf11cc2be2d9a8d",
+ "kind": "lemma",
+ "title": "Certificates Among Enumerated Ranks",
+ "statement": "Let $V\\subseteq\\{0,1\\}^*$ be a language, and let $x$ be a binary word and $w\\in\\mathbb{N}$. Testing the $2^w$ consecutive ranks starting at zero, accepting rank $i$ exactly when $x$ concatenated with the width-$w$ little-endian binary word of $i$ belongs to $V$, returns true if and only if there is a binary word $u$ of length $w$ such that $x$ concatenated with $u$ belongs to $V$.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$w\\in\\mathbb{N}$",
+  "$V$ is a language over the binary alphabet"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $V$ be a language over the binary alphabet, $x$ a string, and $w$ a width.\nTesting all $2^w$ ranks with the acceptance function ``the indicator of $V$ accepts\n$x$ concatenated with the width-$w$ binary word of the rank'' returns true if and\nonly if there exists $u$ with $|u| = w$ and $x \\mathbin{+\\!\\!+} u \\in V$."
+}

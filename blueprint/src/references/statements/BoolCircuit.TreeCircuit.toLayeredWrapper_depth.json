@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolCircuit.TreeCircuit.toLayeredWrapper_depth",
+ "key": "569a47f084d3ef11",
+ "kind": "theorem",
+ "title": "Depth of the layered embedding",
+ "statement": "Let $C$ be a Boolean circuit tree on $n$ variables. Its layered feedforward embedding has depth exactly one more than the depth of $C$.",
+ "hypotheses_covered": [
+  "$C$ is a Boolean circuit tree on $n$ variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a Boolean circuit on $n$ variables, with depth $\\mathrm{depth}(C)$ equal to\nthe length of the longest root-to-leaf path in $C$. Embedding $C$ as a layered\nfeedforward circuit — in which layer $0$ carries the $n$ input variables and each higher\nlayer carries a single wire — produces a circuit whose depth equals $\\mathrm{depth}(C) +\n1$."
+}

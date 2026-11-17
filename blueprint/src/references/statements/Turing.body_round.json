@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.body_round",
+ "key": "7f531b29157bf5b8",
+ "kind": "theorem",
+ "title": "One round of the emitted iteration body",
+ "statement": "Let $E$ and $G$ be finite Turing machines over the Boolean alphabet, with states $e_e,e_x$ for $E$ and $g_e,g_x$ for $G$, and suppose each machine has at least one work tape. Let $s,e_s,g_s$ be Boolean words. Suppose $E$, started in state $e_e$ with $s$ on its first work tape and all other work tapes empty, reaches state $e_x$ after $t_E>0$ steps with output $e_s$, and does not enter state $e_x$ at any positive time before $t_E$. Suppose likewise that $G$, started in state $g_e$ with $s$ on its first work tape and all other work tapes empty, reaches state $g_x$ after $t_G>0$ steps with first-tape word $g_s$ and all other work tapes empty, and does not enter state $g_x$ at any positive time before $t_G$. Then the emitted iteration body, started at its anchor state with $s$ on the first of its $\u001b[?m\u001b[?m$ work tapes and all others empty, reaches its anchor state after $t_E+1+t_G+1$ steps with first-tape word $g_s$, all other work tapes empty, and output $e_s$; it does not enter the anchor state at any positive time before then.",
+ "hypotheses_covered": [
+  "$E,G$ are finite Boolean-alphabet Turing machines",
+  "Specified states $e_e,e_x$ of $E$ and $g_e,g_x$ of $G$",
+  "$E$ and $G$ each have a positive number of work tapes",
+  "$s,e_s,g_s$ are Boolean words",
+  "$t_E>0$",
+  "$E$ reaches the specified configuration after $t_E$ steps",
+  "$E$ does not reach $e_x$ at positive times before $t_E$",
+  "$t_G>0$",
+  "$G$ reaches the specified configuration after $t_G$ steps",
+  "$G$ does not reach $g_x$ at positive times before $t_G$"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem's conclusion specifies a word assignment indexed by the maximum of the machines' tape counts; the displayed statement above should use that maximum explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

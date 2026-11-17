@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.Meets.append",
+ "key": "29202755f6973842",
+ "kind": "theorem",
+ "title": "Appending a program preserves a call bound",
+ "statement": "Let $P$ and $P'$ be programs, let $p,d,T$ be natural numbers, let $\\mathrm{vals}$ be a finite list of integers, let $\\mu : \\mathbb{N}\\to\\mathbb{Z}$ be a memory function, and let $R$ be a predicate on an integer and a memory function. If program $p$ in $P$, called on inputs $\\mathrm{vals}$ with initial memory $\\mu$ and depth parameter $d$, can execute within cost $T$ and produce an output and final memory satisfying $R$, then the same call in the concatenated program $P$ followed by $P'$ can do so as well.",
+ "hypotheses_covered": [
+  "A program $P$ and an appended program $P'$",
+  "Natural-number procedure index $p$, depth parameter $d$, and cost bound $T$",
+  "Finite list of integer inputs $\\mathrm{vals}$",
+  "Initial memory function $\\mu : \\mathbb{N}\\to\\mathbb{Z}$",
+  "Postcondition $R$ on the output and final memory",
+  "The call meets the cost bound and postcondition in $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

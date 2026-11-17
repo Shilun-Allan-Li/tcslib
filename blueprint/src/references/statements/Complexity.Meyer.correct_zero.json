@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Meyer.correct_zero",
+ "key": "ead1b71b5179d0eb",
+ "kind": "theorem",
+ "title": "Correctness at the Initial Time",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape alphabet, let $x$ be a finite Boolean input word, let $W\\in\\mathbb{N}$, and let $xb:\\mathbb{N}\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Suppose every local checker condition holds for every time $t<2^W$, address $a<2^W$, position $j\\le |x|+1$, and checker. Also suppose $xb(j)=x_j$ for every $j<|x|$. Then at time zero the encoded state and output register agree with the machine's initial configuration; every encoded work-tape symbol at offset $d$ agrees with the initial work tape whenever $|d|\\le 2^W-1$; and every encoded input symbol at offset $d$ agrees with the initial input tape whenever $|d|\\le |x|+1$.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machine $M$",
+  "Natural number width $W$",
+  "Boolean input word $x$",
+  "Boolean-valued function $xb$",
+  "All local checker conditions for $t<2^W$, $a<2^W$, $j\\le |x|+1$, and every checker",
+  "Agreement $xb(j)=x_j$ for every $j<|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

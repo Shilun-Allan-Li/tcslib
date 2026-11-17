@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clNPVerifier",
+ "key": "a2b2e96c05e5026d",
+ "kind": "lemma",
+ "title": "Verifier parameters for an NP language",
+ "statement": "Let $L$ be a language in $\u0005bb{NP}$. There exist natural numbers $C,e,c,A,d$, a Boolean language $V$, and a finite Turing machine $M$ over the Boolean alphabet such that, for every binary word $x$, membership $x\\in L$ is equivalent to the existence of a word $u$ of length exactly $C(|x|+1)^e$ with $xu\\in V$. The numbers $c,A,d$ are positive, $M$ is oblivious, and $M$ decides $V$ within $c\\bigl(A(n+1)^d+1\\bigr)^2$ steps on inputs of length $n$.",
+ "hypotheses_covered": [
+  "$L$ belongs to $\\mathsf{NP}$",
+  "$C,e$ are natural numbers",
+  "$c,A,d$ are positive natural numbers",
+  "$M$ is a finite Boolean Turing machine",
+  "$M$ is oblivious",
+  "$M$ decides $V$ within the stated time bound",
+  "the certificate has length exactly $C(|x|+1)^e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L$ be a language in $\\mathrm{NP}$. Then there exist certificate parameters $C$ and $e$, a verifier language $V$, a finite oblivious machine $M$, and constants $c, A, d > 0$ such that a string $x$ belongs to $L$ exactly when some certificate $u$ of length $C(|x|+1)^e$ makes the concatenation of $x$ and $u$ belong to $V$, and $M$ decides $V$ within time $c\\,(A(n+1)^d+1)^2$ on inputs of length $n$. Neither certificate parameter is enlarged by the normalization."
+}

@@ -7,12 +7,28 @@ Authors: Owen McGinty
 import TCSlib.BooleanAnalysis.GaussianSpace.Noise
 import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Affine
 import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Bivariate
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.CorrelatedIntegration
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Curvature
 import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Definitions
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Endpoints
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.FunctionalContinuity
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.FunctionalDifferentiation
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Generator
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.GeneratorIntegration
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.GeneratorSign
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Halfspace
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Indicator
 import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Integration
 import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Interpolation
-import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Indicator
-import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Halfspace
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Jensen
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.MehlerDifferentiation
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.NoiseBounds
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.ProfileBounds
 import TCSlib.BooleanAnalysis.GaussianSpace.Borell.ProfileCalculus
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.ProfileSmoothness
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.Regularization
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.SpatialDifferentiation
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell.TimeDifferentiation
 import TCSlib.BooleanAnalysis.GaussianSpace.Rotation
 import TCSlib.BooleanAnalysis.ThresholdFunctions.Gaussian
 
@@ -25,14 +41,30 @@ set_option autoImplicit false
 
 ## Contents
 
-* `Borell.Affine`: affine changes of Gaussian stability and expectation.
-* `Borell.Bivariate`: the two-volume profile and its scalar Gaussian law.
-* `Borell.Definitions`: diagonal and two-volume Gaussian halfspace profiles.
-* `Borell.Integration`: Gaussian integration by parts under integrability hypotheses.
-* `Borell.Interpolation`: comparison with the bivariate profile functional.
-* `Borell.Indicator`: joint membership and rotation disagreement identities.
-* `Borell.Halfspace`: Gaussian projections and exact homogeneous halfspace stability.
-* `Borell.ProfileCalculus`: derivatives of the two-volume Gaussian profile.
+* `Borell.Affine`: affine changes of stability and expectation.
+* `Borell.Bivariate`: the two-volume probability profile and its regularity.
+* `Borell.CorrelatedIntegration`: Gaussian integration by parts for correlated endpoints.
+* `Borell.Curvature`: the profile curvature factorization and its sign.
+* `Borell.Definitions`: diagonal and two-volume halfspace profiles.
+* `Borell.Endpoints`: the time-zero and infinite-time interpolation limits.
+* `Borell.FunctionalContinuity`: L1 continuity and closure of Gaussian Jensen inequalities.
+* `Borell.FunctionalDifferentiation`: differentiation of an integrated bivariate profile.
+* `Borell.Generator`: the Ornstein–Uhlenbeck equation for Gaussian averaging.
+* `Borell.GeneratorIntegration`: the integration-by-parts curvature identity.
+* `Borell.GeneratorSign`: positivity of the integrated profile-weighted generator.
+* `Borell.Halfspace`: Gaussian projections and homogeneous halfspace stability.
+* `Borell.Indicator`: joint membership and disagreement formulas.
+* `Borell.Integration`: scalar and coordinate Gaussian integration by parts.
+* `Borell.Interpolation`: comparison of ordinary stability with the profile functional.
+* `Borell.Jensen`: the Gaussian Jensen inequality by semigroup interpolation.
+* `Borell.MehlerDifferentiation`: correlation differentiation under the Mehler integral.
+* `Borell.NoiseBounds`: uniform first and second bounds for Gaussian smoothing.
+* `Borell.ProfileBounds`: profile derivative bounds on clipped probability squares.
+* `Borell.ProfileCalculus`: scalar derivatives of the Gaussian profile.
+* `Borell.ProfileSmoothness`: joint derivatives of the profile and its slope.
+* `Borell.Regularization`: Gaussian smoothing and removal of probability clipping.
+* `Borell.SpatialDifferentiation`: gradient and Hessian commutation with Gaussian averaging.
+* `Borell.TimeDifferentiation`: the time derivative of the interpolation functional.
 
 ## Main definitions
 
@@ -40,10 +72,10 @@ set_option autoImplicit false
 
 ## Main results
 
-Exact homogeneous halfspace stability, the half-volume profile identity, and
-the balanced and rotation-sensitivity reductions to general-volume Borell.
-The general-volume `borell` inequality remains the central proof obligation;
-its three corollaries depend on that obligation.
+General-volume Borell noise stability, exact homogeneous halfspace stability,
+the half-volume profile identity, and the balanced and rotation-sensitivity
+corollaries. The general inequality follows from Gaussian Jensen, proved by
+Ornstein–Uhlenbeck interpolation and L1 approximation.
 
 ## References
 
@@ -51,6 +83,8 @@ its three corollaries depend on that obligation.
   2014; May 2021 arXiv edition, §11.3, Borell's Isoperimetric Theorem.
 * [Bor85] C. Borell, Geometric bounds on the Ornstein–Uhlenbeck velocity process,
   Zeitschrift für Wahrscheinlichkeitstheorie und verwandte Gebiete 70 (1985), 1–13.
+* [MN15] E. Mossel and J. Neeman, *Robust optimality of Gaussian noise stability*,
+  Journal of the European Mathematical Society 17 (2015), 433–482, §2.
 -/
 
 open MeasureTheory
@@ -73,11 +107,11 @@ lemma gaussianHalfspaceStability_zero {α : ℝ} (hα : α ∈ Set.Icc (0 : ℝ)
     gaussianHalfspaceStability 0 α = α ^ 2 := by
   by_cases h0 : α ≤ 0
   · have : α = 0 := le_antisymm h0 hα.1
-    simp [this, gaussianHalfspaceStability]
+    simp [this, gaussianHalfspaceStability_eq]
   by_cases h1 : 1 ≤ α
   · have : α = 1 := le_antisymm hα.2 h1
-    simp [this, gaussianHalfspaceStability]
-  rw [gaussianHalfspaceStability, if_neg h0, if_neg h1]
+    simp [this, gaussianHalfspaceStability_eq]
+  rw [gaussianHalfspaceStability_eq, if_neg h0, if_neg h1]
   simp only [zero_mul, zero_pow (by decide : 2 ≠ 0), sub_zero, Real.sqrt_one, one_mul,
     zero_add]
   change (standardGaussianMeasure.prod standardGaussianMeasure).real
@@ -97,11 +131,11 @@ lemma gaussianHalfspaceStability_one {α : ℝ} (hα : α ∈ Set.Icc (0 : ℝ) 
     gaussianHalfspaceStability 1 α = α := by
   by_cases h0 : α ≤ 0
   · have : α = 0 := le_antisymm h0 hα.1
-    simp [this, gaussianHalfspaceStability]
+    simp [this, gaussianHalfspaceStability_eq]
   by_cases h1 : 1 ≤ α
   · have : α = 1 := le_antisymm hα.2 h1
-    simp [this, gaussianHalfspaceStability]
-  rw [gaussianHalfspaceStability, if_neg h0, if_neg h1]
+    simp [this, gaussianHalfspaceStability_eq]
+  rw [gaussianHalfspaceStability_eq, if_neg h0, if_neg h1]
   simp only [one_pow, sub_self, Real.sqrt_zero, zero_mul, one_mul, add_zero, and_self]
   rw [show {z : ℝ × ℝ | z.1 ≤ standardGaussianQuantile α} =
     Set.Iic (standardGaussianQuantile α) ×ˢ Set.univ from Set.ext (fun z => by simp)]
@@ -116,12 +150,13 @@ lemma gaussianHalfspaceStability_one {α : ℝ} (hα : α ∈ Set.Icc (0 : ℝ) 
 the two defining threshold events coincide. -/
 theorem gaussianHalfspaceStability_half (ρ : ℝ) :
     gaussianHalfspaceStability ρ (1 / 2) = gaussianQuadrantProbability ρ := by
-  rw [gaussianHalfspaceStability, if_neg (by norm_num), if_neg (by norm_num),
+  rw [gaussianHalfspaceStability_eq, if_neg (by norm_num), if_neg (by norm_num),
     standardGaussianQuantile_eq standardGaussianCDF_zero]
   rfl
 
 /-- Halfspaces maximize Gaussian noise stability among measurable unit-interval
-functions of fixed mean. [OD14, §11.3, Borell's Isoperimetric Theorem; Bor85]
+functions of fixed mean. [OD14, §11.3, Borell's Isoperimetric Theorem; Bor85;
+MN15, §2, semigroup proof]
 
 **Proof sketch.** Bound the ordinary stability by the bivariate Gaussian profile
 functional, using its pointwise domination of the product. The remaining Gaussian
@@ -136,7 +171,7 @@ theorem borell {n : ℕ} (ρ : ℝ) (hρ : ρ ∈ Set.Ioo (0 : ℝ) 1)
         (∫ x, f x ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure)) := by
   refine (gaussianNoiseStability_le_bivariate_integral ρ hρ f hf hfrange).trans ?_
   rw [← gaussianBivariateStability_diag]
-  sorry
+  exact gaussianBivariateStability_jensen hρ f hf hfrange
 
 /-- An unbiased bounded Gaussian function has stability at most the homogeneous
 halfspace value. [OD14, §11.3, volume-one-half Borell]

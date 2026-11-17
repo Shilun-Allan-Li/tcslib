@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.arReadCfg_dispatch",
+ "key": "950f54bce04912b1",
+ "kind": "lemma",
+ "title": "Dispatch from reading to writing",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $E$ inject the symbols of $\\Gamma$ together with blank into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into $\\Gamma$. For a machine $M$ over $\\Gamma$, a binary input $x$, a configuration $c$ of $M$ on the letterwise $e$-image of $x$, and a state $q$ of $M$, one step of the binary block-code simulator from the read-sweep configuration of $c$ at counter $N+1$ is the write-sweep configuration for the action prescribed by $M$ at state $q$, using the input and work-tape symbols scanned by $c$, with write counter $N$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "$E$ is an embedding of symbols and blank into blocks of $N+1$ optional bits",
+  "$e$ embeds the binary alphabet into $\\Gamma$",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a binary input",
+  "$c$ is a configuration of $M$ on the letterwise $e$-image of $x$",
+  "$q$ is a state of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a Turing machine over a finite alphabet $\\Gamma$, $c$ a configuration of $M$\non the letterwise $e$-image of a binary string, and $q$ a source state. One transition\nof the binary block-code simulator applied to the read-sweep configuration of $c$ at\nthe full counter $N+1$ (all blocks buffered) yields the write-sweep configuration at\ncounter $N$ for the action produced by the transition function of $M$ on the state $q$,\nthe input symbol scanned by $c$, and the work-tape symbols scanned by $c$: the buffers\nare decoded, the input head moves and any emission is bit-decoded and emitted, and each\nwork head steps left onto the last entry of its block."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.recordStep_restrict",
+ "key": "fcdaf505fb528a5d",
+ "kind": "theorem",
+ "title": "Restriction to embedded Boolean tapes",
+ "statement": "Let $K,m$ be natural numbers, let $\\Gamma,S$ be types with decidable equality, let $R$ be an $m$-work-tape Boolean Turing machine with states in $S$, let $e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$ be an embedding, and let $\\iota:\\{0,\\ldots,m-1\\}\\hookrightarrow\\{0,\\ldots,K-1\\}$ be an embedding. For a Boolean input word $x$, consider a $K$-tape configuration $d$ over $\\Gamma$ on the input obtained by applying $e$ to every bit of $x$. Assume every symbol stored anywhere on each tape indexed by $\\iota$ lies in the image of $e$. Then $d$ is exactly the configuration formed by embedding the decoded Boolean configuration into the selected tapes via $\\iota$, leaving all other tapes and head positions as in $d$, and prefixing the decoded configuration's output by $d$'s output.",
+ "hypotheses_covered": [
+  "$K,m\\in\\mathbb N$",
+  "$\\Gamma,S$ have decidable equality",
+  "$R$ is an $m$-tape Boolean machine with state type $S$",
+  "$e$ embeds the Boolean alphabet into $\\Gamma$",
+  "$\\iota$ embeds the $m$ tape indices into the $K$ tape indices",
+  "$x$ is a Boolean word",
+  "$d$ is a $K$-tape configuration over $\\Gamma$ on the symbol-embedded input",
+  "every symbol on every selected tape lies in the image of $e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

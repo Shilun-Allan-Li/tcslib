@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Ends.whileConst",
+ "key": "2109b57e41bb7cd0",
+ "kind": "theorem",
+ "title": "Bounded loop with fixed iteration cost",
+ "statement": "Let a program, depth bound, condition $c$, body statement $s$, initial state $\\sigma$, time bound $T\\in\\mathbb N$, postcondition $Q$, invariant predicates $I_i$ on states for natural numbers $i$, and natural numbers $n,b$ be given. If $I_0$ holds at $\\sigma$, then for every $i<n$, every state satisfying $I_i$ has a safe condition that holds and admits an execution of $s$ within time $b$ to a state satisfying $I_{i+1}$. If every state satisfying $I_n$ has a safe condition that does not hold and satisfies $Q$, and $n(\\operatorname{cost}(c)+1+b)+\\operatorname{cost}(c)+1\\le T$, then the loop with condition $c$ and body $s$ ends in a state satisfying $Q$ within time $T$.",
+ "hypotheses_covered": [
+  "The invariant $I_0$ holds at the initial state",
+  "For every $i<n$ and state satisfying $I_i$, the condition is safe and holds, and the body reaches a state satisfying $I_{i+1}$ within $b$",
+  "For every state satisfying $I_n$, the condition is safe and false and $Q$ holds",
+  "The stated total loop cost bound is at most $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

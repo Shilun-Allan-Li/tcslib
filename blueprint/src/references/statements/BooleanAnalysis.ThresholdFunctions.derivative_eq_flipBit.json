@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.derivative_eq_flipBit",
+ "key": "260551f4fb176547",
+ "kind": "lemma",
+ "title": "Discrete derivative through a bit flip",
+ "statement": "Let $n$ be a nonnegative integer, let $f:\\{0,1\\}^n\\to\\mathbb R$, let $i$ be a coordinate, and let $x\\in\\{0,1\\}^n$. If $x^i$ denotes the point obtained by flipping coordinate $i$ of $x$, then $D_i f(x)=\\frac{f(x)-f(x^i)}{2}\\,\\sigma(x_i)$, where $D_i f(x)=\\frac{f(x_{i\\leftarrow0})-f(x_{i\\leftarrow1})}{2}$ and $\\sigma$ is the sign encoding of a bit.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$i$ is a coordinate in $\\{1,\\ldots,n\\}$ (equivalently, an element of $\\mathrm{Fin}\\,n$)",
+  "$f:\\{0,1\\}^n\\to\\mathbb R$",
+  "$x\\in\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. For a real cube function $h$, write $D_i h(x)=\\tfrac12(h(x_{i\\leftarrow0})-h(x_{i\\leftarrow1}))$, where $x_{i\\leftarrow b}$ replaces bit $i$ by $b$. For every coordinate $i$ and point $x$, $D_i h(x)=\\tfrac12(h(x)-h(x^{\\{i\\}}))(-1)^{x_i}$, where $x^{\\{i\\}}$ flips bit $i$."
+}

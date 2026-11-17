@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.f2_counter_carry_step",
+ "key": "caab9a309d5350b3",
+ "kind": "lemma",
+ "title": "One counter carry step",
+ "statement": "Let $x$, $u$, and $b$ be finite Boolean lists, and let $p$ be an input-head position among the $|x|+2$ positions for input $x$. Starting in state $1$ with the input head at $p$, the work-tape head at position $|u|$, tape contents given by the counter tape for $u$ concatenated with $b$, and empty output, one counter-machine step yields the following configuration: if the first entry of $b$ is true, the state remains $1$, the work-tape head moves to $|u|+1$, and the tape becomes the counter tape for $u$ followed by false and then the tail of $b$; otherwise the state becomes $2$, the work-tape head moves to $|u|-1$, and the tape becomes the counter tape for $u$ followed by true and then the tail of $b$. In both cases the input head remains at $p$ and the output remains empty.",
+ "hypotheses_covered": [
+  "Finite Boolean lists $x$, $u$, and $b$",
+  "Input-head position $p$ among the $|x|+2$ positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

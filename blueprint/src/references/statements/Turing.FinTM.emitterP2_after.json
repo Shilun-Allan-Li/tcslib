@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_after",
+ "key": "f2a5c08b81717010",
+ "kind": "lemma",
+ "title": "One-step extension of an anchor-free run",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet on input $w$, let $a$ be an anchor state, and let $c$ be a configuration. Suppose that at time $t$ the run from $c$ is the seam configuration with state $q$ and tape words $(w_i)_{i<k}$, and that no configuration from time $0$ through time $t$ is in state $a$. If the transition from $q$, for every scanned input symbol and tuple of work-tape symbols, is the silent action that leaves the input head and work tapes fixed and enters state $r$, where neither $q$ nor $r$ is $a$, then at time $t+1$ the run is the seam configuration with state $r$ and the same tape words, and no configuration through time $t+1$ is in state $a$.",
+ "hypotheses_covered": [
+  "Boolean multi-tape machine, input $w$, anchor state $a$, and starting configuration $c$",
+  "Duration $t$ and seam configuration at time $t$ with state $q$ and tape words",
+  "Anchor-free run at all times from $0$ through $t$",
+  "Transition from $q$ is the specified silent stationary action for every scanned-symbol tuple",
+  "$q\\ne a$ and $r\\ne a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If an anchor-free run of length $t$ ends on a canonical word seam in a\nnon-anchor state whose transition is the silent dispatch to another\nnon-anchor state, then the run of length $t+1$ ends on the same word seam\nin the new state and is still anchor-free."
+}

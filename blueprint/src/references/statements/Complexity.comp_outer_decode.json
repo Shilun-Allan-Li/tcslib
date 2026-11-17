@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.comp_outer_decode",
+ "key": "70db197cf82c83d8",
+ "kind": "lemma",
+ "title": "Outer decoding run or rejection",
+ "statement": "Let $C,e$ be natural numbers, let $m$ be a Boolean, let $f$ map finite Boolean words to finite Boolean words, and let $z,t$ be finite Boolean words. Write $h=\u0000z,t\u0000$, where the pairing doubles each bit of $z$, appends the separator $01$, and then appends $t$; set $a=2|z|+2$, $c=(2C+3)(|h|+1)^{e+1}$, and $B=8(2C+3)(|h|+1)^{e+1}$. Start with input $h$, state tail test with its flag true, no result, and register values $a,|h|,a,2|z|,0,0,0,c,|h|+1,0,0,0,0,0$ in registers $0$ through $13$, respectively. If $t$ is canonical and $|t|$ is at most the length of the binary representation of $c$, there is a finite run to state scan with its inner flag true and no result; every configuration before the endpoint satisfies the program's state precondition and has all register values at most $B$, and at the endpoint the register values are $0,|h|,a,2|z|,0,\\mathrm{bitsVal}(t),0,0,|h|+1,0,0,0,0,0$. Otherwise, there is a finite run to a halted configuration with result false, every configuration before the endpoint satisfying that same state precondition and register bound.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$m$ is a Boolean",
+  "$f$ maps finite Boolean words to finite Boolean words",
+  "$z,t$ are finite Boolean words",
+  "Input is the paired word $h$ formed from $z,t$",
+  "Initial state is tail test with true flag",
+  "Initial result is absent",
+  "Initial register values are specified",
+  "Conditional: $t$ is canonical and its length is at most the binary representation length of $c$",
+  "Every configuration before the endpoint satisfies the state precondition and register bound $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $C,e$ be natural numbers, let $m$ be a Boolean parameter, let $f$ map bit strings to\nbit strings, and let $z$ and $t$ be bit strings. Set $h=\\langle z,t\\rangle$, $a=2|z|+2$,\n$c=(2C+3)(|h|+1)^{e+1}$, and let the initial register vector have register $0$ equal to\n$a$, registers $1$ and $2$ equal to $|h|$, register $3$ equal to $2|z|$, register $7$\nequal to $c$, register $8$ equal to $|h|+1$, and all other registers zero. If $t$ is\ncanonical and $|t|$ is at most the length of the binary representation of $c$, the\nprogram has a bounded safe run from state “tail test” to state “scan,” where register\n$5$ is the value of the bit string $t$ and the register vector otherwise has the\nspecified values. If either condition fails, it has a bounded safe run from that initial\nconfiguration to a halted configuration with answer false. The register bound in both\ncases is $8(2C+3)(|h|+1)^{e+1}$."
+}

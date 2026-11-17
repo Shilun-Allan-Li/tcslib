@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.stripLastTM_computes",
+ "key": "fece335640a597b7",
+ "kind": "theorem",
+ "title": "Running Time of the Last-True Stripper",
+ "statement": "The fixed Boolean finite Turing machine computes the following function in time $150(n+1)$ on every Boolean word $x$ of length $n$: if $x$ parses as a self-delimiting pair $(a,v)$ and $v$ has a last true bit, output the encoding of $(a,u)$, where $u$ is the prefix of $v$ strictly before that last true bit; otherwise output the empty word. Here the pair parser reads aligned doubled bits until the separator $01$, and the pair encoding doubles the bits of the first component, appends $01$, and then appends the second component.",
+ "hypotheses_covered": [
+  "Input is any Boolean word",
+  "Running time is evaluated at $150(|x|+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

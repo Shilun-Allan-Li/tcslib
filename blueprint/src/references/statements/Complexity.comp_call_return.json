@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.comp_call_return",
+ "key": "97568e272d226b45",
+ "kind": "lemma",
+ "title": "Oracle call outcome",
+ "statement": "Let $C,e,B$ be natural numbers, let $m$ be a Boolean, let $f$ map Boolean words to Boolean words, and let $h$ be a Boolean word. Let $v$ assign a natural number at most $B$ to each of the fourteen registers, and let $l$ be a computation state, with oracle index $j$ among four indices and register $r$ among the fourteen registers. Suppose the instruction at $l$ calls oracle $j$ in whole-input mode with the single argument register $r$, branching to the positive-answer state on true and the negative-answer state on false. Then the abstract machine halts from state $l$, register assignment $v$, and no recorded answer, with result equal to the oracle's answer on the encoding of $h$ paired with the binary word for $v(r)$; throughout the run, the prescribed configuration invariant holds.",
+ "hypotheses_covered": [
+  "$C,e,B$ are natural numbers",
+  "$m$ is a Boolean",
+  "$f$ maps Boolean words to Boolean words",
+  "$h$ is a Boolean word",
+  "$v$ assigns each of fourteen registers a natural number at most $B$",
+  "$l$ is a computation state",
+  "$j$ is one of four oracle indices",
+  "$r$ is one of fourteen register indices",
+  "the instruction at $l$ is a whole-input call to $j$ with argument list consisting of $r$ and the stated answer branches"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For natural numbers $C,e,B$, a Boolean mode, a function $f$ on bit strings, an input bit\nstring $h$, a register assignment $v:\text{Fin}(14)\to\bbn$ bounded by $B$, a machine state\n$l$, and indices $j:\text{Fin}(4)$ and $r:\text{Fin}(14)$, suppose the machine instruction\nat $l$ is a whole-input oracle call to $j$ using the single register $r$, with its two\nsuccessor states the positive and negative answer states. Then the machine halts from\nstate $l$ with registers $v$ and no answer recorded, returning the oracle’s answer on\nthe paired input $\bigl\\langle h,\\mathrm{bits}(v(r))\\bigr\\rangle$, while satisfying its\nprescribed configuration invariant throughout the run."
+}

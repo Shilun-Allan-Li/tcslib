@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.snapshotAt_workSymbol",
+ "key": "5e4c0c75fc79030a",
+ "kind": "theorem",
+ "title": "Work symbol from the last visit",
+ "statement": "Let $M$ be an oblivious finite binary Turing machine, let $x$ be a finite binary word, let $t\\in\\mathbb{N}$, and choose one of its work tapes $\\tau$. Consider the times $s<t$ when that tape's head is at the position it occupies at time $t$ on the all-zero input of length $|x|$. If there is no such time, the symbol under the tape head at time $t$ on input $x$ is blank; otherwise, using the greatest such time $s$, that symbol equals the symbol left in the tape cell by the step at time $s$ (which is the previously scanned symbol if the machine was halted or made no write).",
+ "hypotheses_covered": [
+  "$M$ is oblivious",
+  "$x$ is a finite binary word",
+  "$t\\in\\mathbb{N}$",
+  "$\\tau$ is a work-tape index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary multi-tape Turing machine with finite state set $Q$, transition function\n$\\delta$ and $k$ work tapes indexed by $\\mathbb{Z}$, which is oblivious: on any two inputs of\nthe same length its input-head and work-head positions after $t$ steps agree for every $t$.\nLet $x \\in \\{0,1\\}^n$, $t \\in \\mathbb{N}$ and $\\tau \\in \\{0, \\dots, k-1\\}$, and let $w(s)$ be\nthe position of the head of work tape $\\tau$ after $s$ steps of $M$ on $0^n$. If no $s < t$\nhas $w(s) = w(t)$, then the symbol under head $\\tau$ after $t$ steps of $M$ on $x$ is the\nblank $\\sqcup$. Otherwise let $s$ be the largest such time and let $q \\in Q \\cup \\{\\bot\\}$\n(with $\\bot$ meaning halted), $a$ and $b = (b_0, \\dots, b_{k-1})$ be the state, the\ninput-head symbol and the work-head symbols after $s$ steps of $M$ on $x$; then the symbol\nunder head $\\tau$ after $t$ steps of $M$ on $x$ is $b_\\tau$ if $q = \\bot$, and otherwise is\nthe symbol that $\\delta(q, a, b)$ writes on tape $\\tau$, or $b_\\tau$ if that transition\nwrites nothing on tape $\\tau$."
+}

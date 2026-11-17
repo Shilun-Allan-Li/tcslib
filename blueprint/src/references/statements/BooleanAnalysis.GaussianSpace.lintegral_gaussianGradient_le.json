@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.lintegral_gaussianGradient_le",
+ "key": "d0179b227dc77a02",
+ "kind": "lemma",
+ "title": "Gaussian gradient bound from rotational variation",
+ "statement": "Let $n\\ge 0$, let $f:\\mathbb R^n\\to\\mathbb R$ be Fréchet differentiable everywhere with derivative $L(x):\\mathbb R^n\\to\\mathbb R$ at $x$, and suppose that $x\\mapsto L(x)$ is continuous. Let $C\\in[0,\\infty]$. If for every real $\\theta>0$ the Gaussian integral of $\\sqrt{\\pi/2}\\,|f(\\cos\\theta\\,z_1+\\sin\\theta\\,z_2)-f(z_1)|/\\theta$ over independent standard Gaussian vectors $z_1,z_2\\in\\mathbb R^n$ is at most $C$, then $\\int \\sqrt{\\sum_{i=1}^n (L(x)e_i)^2}\\,d\\gamma_n(x)\\le C$, as a nonnegative extended integral.",
+ "hypotheses_covered": [
+  "$n\\ge 0$",
+  "$f:\\mathbb R^n\\to\\mathbb R$ has derivative $L(x)$ at every $x$",
+  "The derivative map $x\\mapsto L(x)$ is continuous",
+  "$C\\in[0,\\infty]$",
+  "For every $\\theta>0$, the extended Gaussian integral of the normalized rotational variation is at most $C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$ and $X,Y$ independent with that law. Let $f:\\mathbb R^n\\to\\mathbb R$ be differentiable everywhere with derivative $L(x)$, and put $|L(x)|_2=\\sqrt{\\sum_i(L(x)e_i)^2}$, where $e_i$ is the canonical basis. Assume $L$ is continuous and $C\\in[0,\\infty]$. If $\\mathbb E(\\sqrt{\\pi/2}\\,|f(\\cos\\theta\\,X+\\sin\\theta\\,Y)-f(X)|/\\theta)\\le C$ for every $\\theta>0$, then $\\mathbb E|L(X)|_2\\le C$, with all expectations nonnegative extended integrals."
+}

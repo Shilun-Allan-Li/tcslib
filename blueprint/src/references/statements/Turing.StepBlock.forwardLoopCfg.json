@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.StepBlock.forwardLoopCfg",
+ "key": "72541eeb7633bcdb",
+ "kind": "def",
+ "title": "Forward-loop initial configuration",
+ "statement": "Let $k,n\\in\\mathbb{N}$, let $Q$ be a state type, let $x$ be a Boolean input word, let $M$ be a $k$-tape machine with Boolean work symbols and states in $\\text{Fin}(n+1)$, and let $c$ be a configuration of that machine on $x$. For an entry state $q\\in Q$, the forward-loop configuration has state $q$ when $c$ has a state and is otherwise halted; it preserves the input-head position, the original work tapes and their head positions, and the output. It adds two work tapes with head positions zero: one containing the designated encoding of $M$'s transition table, and one containing the designated summary initialized with no output and the unary encoding of $c$'s state when present.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb{N}$",
+  "$Q$ is a type",
+  "Boolean input word $x$",
+  "$q\\in Q$",
+  "$M$ is a $k$-tape machine with Boolean symbols and states in $\\text{Fin}(n+1)$",
+  "$c$ is a configuration of $M$ on input $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not define the transition-table encoding, the summary cells, or the unary state encoding.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

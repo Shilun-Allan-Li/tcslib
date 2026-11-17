@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.runWith_fullAdderGates",
+ "key": "7756b6d3ef2ab182",
+ "kind": "theorem",
+ "title": "Outputs of a full-adder circuit",
+ "statement": "Let $v$ be a Boolean list of length $L$, and let $a,b,c<L$ be indices into it. Successively evaluate the full-adder gate list with input indices $a,b,c$ and base index $L$, appending each gate's output to $v$. The resulting list is $v$ followed, in order, by $v_a\\lor v_b$, $v_a\\land v_b$, $\\neg(v_a\\land v_b)$, $v_a\\mathbin{\\mathrm{xor}}v_b$, $(v_a\\mathbin{\\mathrm{xor}}v_b)\\lor v_c$, $(v_a\\mathbin{\\mathrm{xor}}v_b)\\land v_c$, $\\neg((v_a\\mathbin{\\mathrm{xor}}v_b)\\land v_c)$, $(v_a\\mathbin{\\mathrm{xor}}v_b)\\mathbin{\\mathrm{xor}}v_c$, and $(v_a\\land v_b)\\lor((v_a\\mathbin{\\mathrm{xor}}v_b)\\land v_c)$, where $v_j$ denotes the Boolean value at index $j$.",
+ "hypotheses_covered": [
+  "A Boolean list $v$",
+  "The length of $v$ is $L$",
+  "The indices $a,b,c$ are each less than $L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

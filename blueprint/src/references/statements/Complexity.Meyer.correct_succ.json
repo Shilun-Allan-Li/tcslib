@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Meyer.correct_succ",
+ "key": "0738829b8363539e",
+ "kind": "theorem",
+ "title": "Correctness advances by one step",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean symbols, let $x$ be a finite Boolean input, let $A$ be a Boolean answer table, and let $x_b$ be a Boolean sequence. Suppose every local check passes under the numerical valuation determined by $M,A,W,x,x_b$ for all times and work indices below $2^W$, all input indices at most $|x|+1$, and every check type. If the table correctly describes the machine at time $t$, in the sense that it gives every state-and-output answer, every work-tape symbol at offsets satisfying $|d|+t\\le 2^W-1$, and every input symbol at offsets satisfying $|d|\\le |x|+1$, and if $t+1<2^W$, then the table correctly describes the machine at time $t+1$ in the same sense.",
+ "hypotheses_covered": [
+  "A finite-tape Turing machine with Boolean symbols",
+  "A finite Boolean input",
+  "A Boolean answer table",
+  "A Boolean sequence",
+  "Every local check passes for all times and work indices below $2^W$, input indices at most $|x|+1$, and check types",
+  "Correct state-and-output answers at time $t$",
+  "Correct work-tape answers for offsets with $|d|+t\\le 2^W-1$",
+  "Correct input answers for offsets with $|d|\\le |x|+1$",
+  "The bound $t+1<2^W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,19 +1,19 @@
 {
  "lean_name": "BoolCircuit.NAndCircuit.toCNF_width_bounded",
- "key": "6e6dcb0e2ec9cfcd",
+ "key": "1e19822dbf978a3d",
  "kind": "theorem",
- "title": "Width bound for the CNF of an AND of OR-clauses",
- "statement": "Fix $n \\in \\bbn$, let $cs$ be a list of normal-form OR circuits on $n$ variables, and let $w \\in \\bbn$. Suppose every circuit in $cs$ is an OR-clause on some list of literals whose variable indices are pairwise distinct and whose length is at most $w$. Form the normal-form AND circuit that conjoins all the members of $cs$, and convert that circuit to a CNF formula by turning each OR-clause into a clause (a disjunction of its literals). Then this CNF formula has width at most $w$; equivalently, each of its clauses contains at most $w$ literals.",
+ "title": "Width bound for the resulting CNF",
+ "statement": "Let $n$ and $w$ be natural numbers, and let $cs$ be a list of normal-form OR circuits on $n$ variables. Suppose every member of $cs$ is a base OR-clause with pairwise distinct variable indices, and the list defining each such clause has length at most $w$. Then the CNF obtained from the AND-node over $cs$ has width at most $w$.",
  "hypotheses_covered": [
-  "n variables",
-  "cs is a list of normal-form OR circuits on n variables",
-  "w is a natural-number bound",
-  "each circuit in cs is an OR-clause (not a node)",
-  "each clause's literals have pairwise distinct variable indices",
-  "each clause has at most w literals"
+  "$n$ is a natural number",
+  "$w$ is a natural number",
+  "$cs$ is a list of normal-form OR circuits on $n$ variables",
+  "Every member of $cs$ is a base OR-clause",
+  "Each clause's circuit literals have pairwise distinct variable indices",
+  "Each clause's defining literal list has length at most $w$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If every OR-clause child has at most $w$ literals (with distinct indices), then the CNF\n$(\\texttt{NAndCircuit}.\\mathrm{node}\\,cs).\\mathrm{toCNF}$ has width at most $w$."
+ "replaced": "Fix $n \\in \\bbn$, let $cs$ be a list of normal-form OR circuits on $n$ variables, and\nlet $w \\in \\bbn$. Suppose every circuit in $cs$ is an OR-clause on some list of literals\nwhose variable indices are pairwise distinct and whose length is at most $w$. Form the\nnormal-form AND circuit that conjoins all the members of $cs$, and convert that circuit\nto a CNF formula by turning each OR-clause into a clause (a disjunction of its\nliterals). Then this CNF formula has width at most $w$; equivalently, each of its\nclauses contains at most $w$ literals."
 }

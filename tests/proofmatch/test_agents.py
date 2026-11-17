@@ -208,6 +208,34 @@ class CodexBackendTests(unittest.TestCase):
         _, _, error = parse_codex_events('{"type":"turn.failed","error":{"message":"quota"}}')
         self.assertIn("quota", error)
 
+    def test_successful_turn_supersedes_recoverable_startup_error(self):
+        startup = '{"type":"item.completed","item":{"type":"error","message":"managed policy fallback"}}'
+        completed = '{"type":"turn.completed","usage":{"input_tokens":12}}'
+        self.assertIsNone(parse_codex_events(startup + "\n" + completed)[2])
+        failed = '{"type":"turn.failed","error":{"message":"quota"}}'
+        self.assertIn("quota", parse_codex_events(startup + "\n" + failed)[2])
+
+    def test_batch_answers_are_matched_by_index_and_duplicates_are_rejected(self):
+        schema = {"type": "object", "additionalProperties": False, "required": ["answer"],
+                  "properties": {"answer": {"type": "integer"}}}
+        for rows, fails in [
+            ([{"index": 1, "result": {"answer": 12}}, {"index": 0, "result": {"answer": 10}}], False),
+            ([{"index": 0, "result": {"answer": 10}}, {"index": 0, "result": {"answer": 12}}], True),
+            ([{"index": 0, "result": {"answer": 10}}], True),
+        ]:
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self._resources(root, schema)
+                def runner(command, **kwargs):
+                    return subprocess.CompletedProcess(command, 0, _envelope({"results": rows}))
+                agent = Agent(root, runner=runner, model="claude-opus-4-8")
+                if fails:
+                    with self.assertRaises(AgentOutputError):
+                        agent.run_many("cleanup", [{"task": "a"}, {"task": "b"}])
+                else:
+                    self.assertEqual(agent.run_many("cleanup", [{"task": "a"}, {"task": "b"}]),
+                                     [{"answer": 10}, {"answer": 12}])
+
     def test_strict_schema_makes_optionals_nullable_and_strips_them_back(self):
         schema = {
             "type": "object", "additionalProperties": False, "required": ["a"],

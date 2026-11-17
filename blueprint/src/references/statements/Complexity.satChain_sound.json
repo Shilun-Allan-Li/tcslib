@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satChain_sound",
+ "key": "e31aa3a2647dfe53",
+ "kind": "lemma",
+ "title": "Soundness of the clause-splitting chain",
+ "statement": "Let $h$ be a Boolean literal, $R$ a clause of Boolean literals indexed by natural numbers, $n$ a natural number, and $a$ a truth assignment to the natural numbers. If the CNF formula produced by the clause-splitting chain from $h$, $R$, and $n$ is satisfied by $a$, then the clause formed by adjoining $h$ to the front of $R$ is satisfied by $a$.",
+ "hypotheses_covered": [
+  "A head literal and a clause of natural-number variables",
+  "A natural-number cursor",
+  "A truth assignment",
+  "The generated CNF evaluates to true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a$ be a truth assignment satisfying the formula emitted by the chain\nconstruction on a head literal, remaining clause, and cursor. Then $a$ satisfies\nthe original clause (head followed by the remaining literals). No freshness\nhypothesis is needed in this direction."
+}

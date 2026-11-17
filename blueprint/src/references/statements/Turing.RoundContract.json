@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.RoundContract",
+ "key": "414905170043b067",
+ "kind": "structure",
+ "title": "Round contract",
+ "statement": "Let $M$ be a $k$-work-tape Turing machine with state set $S$, anchor state $a$, escape set $E\\subseteq \\{\\mathrm{None}\\}\\cup\\{\\mathrm{Some}(s):s\\in S\\}$, index type $I$, and fixed input $x$. A round contract consists of a precondition, a time, an endpoint configuration, and lower and upper integer bounds for each work-tape head, all depending on an index and a starting configuration. Whenever a starting configuration is in state $a$ and satisfies the precondition, its time is positive, the machine reaches the specified endpoint after exactly that many steps, and the endpoint state is either $a$ or an element of $E$. At every positive time strictly before the endpoint, the machine's state is neither halted nor in the anchor-or-escape stopping set; at every time up to and including the endpoint, each work-tape head position lies between its specified lower and upper bounds, inclusive.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A symbol alphabet and state set",
+  "A machine $M$",
+  "An anchor state $a$",
+  "An escape set $E$ of optional states",
+  "An index type $I$",
+  "A fixed input list $x$",
+  "Precondition, time, endpoint, and integer lower and upper bound functions",
+  "For every indexed starting configuration in state $a$ satisfying the precondition, the time is positive",
+  "The computation reaches the specified endpoint at exactly that time",
+  "The endpoint state is the anchor or belongs to the escape set",
+  "At each positive intermediate time strictly before the endpoint, the state is outside the round stopping set",
+  "For every work tape and every time up to and including the endpoint, the head position lies in the inclusive specified bounds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

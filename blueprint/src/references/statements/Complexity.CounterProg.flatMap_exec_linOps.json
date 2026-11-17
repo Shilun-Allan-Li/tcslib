@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.CounterProg.flatMap_exec_linOps",
+ "key": "2ab9a63df1fc9249",
+ "kind": "theorem",
+ "title": "Unary output from a linear expression",
+ "statement": "For any register values $\\rho$ and linear expression $e$, concatenating the outputs of the micro-operations associated with $e$ gives the unary bit string consisting of $e$ ones, where $e$ is evaluated at $\\rho$.",
+ "hypotheses_covered": [
+  "Register values $\\rho$",
+  "Linear expression $e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\rho : \\{0,\\dots,R-1\\} \\to \\mathbb{N}$ be register values and $(L, c)$ a\nlinear expression with $L = (r_1, \\dots, r_k)$.  Concatenating the strings\nprinted under $\\rho$ by the micro-operations $\\mathsf{pr}(r_1), \\dots,\n\\mathsf{pr}(r_k)$ followed by $c$ copies of $\\mathsf{out}(1)$, where\n$\\mathsf{pr}(r)$ prints $1^{\\rho(r)}$ and $\\mathsf{out}(1)$ prints $1$, gives\nexactly the unary string $1^{v}$ with $v = \\rho(r_1) + \\dots + \\rho(r_k) + c$."
+}

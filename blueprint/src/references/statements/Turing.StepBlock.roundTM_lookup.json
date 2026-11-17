@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.StepBlock.roundTM_lookup",
+ "key": "0b61a21e9181edfd",
+ "kind": "lemma",
+ "title": "Lookup within one machine round",
+ "statement": "Let $k,n\\in\\mathbb{N}$, let $x$ be a finite binary input, let $c$ be a configuration of a $k$-tape machine with states indexed by $\\{0,\\ldots,n\\}$, let $q$ be such a state, and let $\\mathrm{tr}$ be a transition table assigning an action to each state, input symbol (or blank), and tuple of scanned work-tape symbols. Let $a$ be the action prescribed by this table at $q$ and the symbols scanned in $c$. There are binary words $b,t$ and a time $T$ such that the serialization of the entire transition table is $b$ followed by the serialization of $a$ followed by $t$, $q\\le |b|$, and $T\\le 5$ times the length of the serialized table plus $4$; moreover, the round machine runs from the lookup configuration with the table stored on its table tape, the output summary and unary encoding of $q$ on its summary tape, both tape heads at $0$, and output prefix unchanged, to the state-tail configuration after $T$ steps, with the stated round-window property at every earlier step.",
+ "hypotheses_covered": [
+  "Natural numbers $k,n$",
+  "Finite binary input $x$",
+  "Configuration $c$ with $k$ work tapes and states in $\\mathrm{Fin}(n+1)$",
+  "Transition table on every state, input-symbol option, and work-read tuple",
+  "State index $q\\in\\mathrm{Fin}(n+1)$",
+  "Arbitrary output prefix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

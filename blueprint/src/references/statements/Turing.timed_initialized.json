@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.timed_initialized",
+ "key": "e7a7e0b7acfd8106",
+ "kind": "lemma",
+ "title": "Timed interpreter startup",
+ "statement": "Let $c$ be an effective machine coding scheme, and let $bs$, $\\alpha$, and $x$ be Boolean words. There exist a time $t$, work-tape contents, and work-tape head positions for the auxiliary tapes such that $t \\le 4|bs|+S_c(\\alpha)$, where $S_c(\\alpha)$ is the timed startup bound for $c$ and $\\alpha$, and the timed universal machine on input $\\langle\\langle bs,\\alpha\\rangle,x\\rangle$ is then in the configuration obtained by lifting the decoded machine's initial configuration on $x$ to the timed interpreter, with clock word $bs$ and table cursor $2|\\operatorname{bin}(N)|+2+q+1$. Here $N$ is the decoded machine's state-count parameter and $q$ is its initial-state index.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine coding scheme",
+  "$bs$, $\\alpha$, and $x$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine coding scheme, and let $b,\\alpha,x$ be bit strings. The\ntimed universal machine, started on $\\langle\\langle b,\\alpha\\rangle,x\\rangle$, reaches\nafter some $t\\le 4|b|+S$ steps a framed configuration of the timed interpreter, where\n$S$ is the code-only startup bound for $c,\\alpha$. This configuration is the lift, with\nclock word $b$, of the interpreter checkpoint for the decoded machine's initial\nconfiguration on $x$, with its table cursor at $2|\\operatorname{bin}(m)|+2+q_0+1$, where\n$m$ is the decoded machine's state-count parameter and $q_0$ its initial state."
+}

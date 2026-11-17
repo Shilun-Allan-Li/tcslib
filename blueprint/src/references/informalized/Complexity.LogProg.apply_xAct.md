@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean :: Complexity.LogProg.apply_xAct -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Updating the Input and Register Heads
+
+**Claim.** Applying the action that moves the input and register heads and enters state $s'$ to the configuration formed from $c$ with state $s$, input position $ip$, and register head $r$ at $p$ gives the configuration with state $s'$, input position moved by $mv_I$, and register head at $p+mv_R$, leaving all other data unchanged.
+
+**Proof.** Expand the definitions of the action and the modified configuration. The successor state is $s'$ by construction, and the input position is updated by the prescribed input-head move$. For each work tape, the action writes nothing, so its contents are unchanged. At the selected register $r$, the head position advances from $p$ by $mv_R$; at every other register, its movement is zero, so its position is unchanged. The output also remains unchanged because the action has no output. These componentwise equalities give the stated configuration.

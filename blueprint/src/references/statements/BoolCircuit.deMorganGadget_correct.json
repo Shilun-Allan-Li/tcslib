@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.deMorganGadget_correct",
+ "key": "70287248bae7ca58",
+ "kind": "theorem",
+ "title": "Correctness of the De Morgan gadget",
+ "statement": "Fix natural numbers $n$ and $K$. For every gate $g$ and finite list $G$ of gates, assume that each argument of the $i$th gate of $G$ is less than $n+i$, and each argument of $g$ is less than $n+|G|$. Assume also that if $g$ is a NOT gate then it has exactly one argument, and that the number of arguments of $g$ is at most $K$. The De Morgan construction applied to $g$ after $G$ produces a gate list extending $G$ and an output vertex whose index is less than $n$ plus the length of the resulting list. The resulting list is acyclic, and on every Boolean input the output vertex has the value of $g$ evaluated on the values obtained by running $G$ on that input. The resulting list has length at most $|G|+|g\text{'s argument list}|+2$, the output depth is at most three plus the maximum depth of the vertices read by $g$ (taking this maximum to be zero when there are no arguments), and every added gate is well formed, is not an OR gate, and has at most $\\max(1,K)$ arguments.",
+ "hypotheses_covered": [
+  "Natural numbers $n$ and $K$",
+  "The original gate list is acyclic relative to the $n$ input vertices",
+  "Every argument of $g$ has index less than $n$ plus the original gate-list length",
+  "If $g$ is a NOT gate, it has exactly one argument",
+  "The number of arguments of $g$ is at most $K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.recordStepNext",
+ "key": "0d7a7edd232596f5",
+ "kind": "def",
+ "title": "Successor control for recording stages",
+ "statement": "Given a natural number $k$, types $Q,T,S$, a Boolean-symbol multi-tape Turing machine $M$ with $k$ work tapes, start and finish states in $S$, a record-step index, and decidable equality on $S$, define a partial successor function from the phase associated with that index to an optional next index-phase pair. The successor is determined by the stage and phase cases: completed scans and sweeps advance through the recording procedure, update the stored data when required, and may select a verdict; the seek and restore stages continue only at the specified finish state, and phases not matching a case have no successor.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Types $Q,T,S$",
+  "Decidable equality on $S$",
+  "A Boolean-symbol multi-tape machine $M$ with $k$ work tapes",
+  "Start and finish states in $S$",
+  "A record-step index",
+  "A phase associated with the index"
+ ],
+ "confidence": "low",
+ "caveat": "The definition is an extensive transition table; this summary describes its overall structure but does not enumerate every stage-specific transition.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ps_sphase",
+ "key": "d41f9a964fce24bb",
+ "kind": "lemma",
+ "title": "Existential phase search",
+ "statement": "Let $x$ be a finite bit string, $B$ a natural number, let $K(j)$ be a proposition for each natural number $j$, and let $\u001bσ=(p,n,a,b,s,t,tmp,st,nx)$ be a program register state. Suppose every register of $\u001bσ$ is at most $B$, $s=0$, $tmp=0$, and $p+2n+2\\le B$. Assume that for every $j<n$, if the binary word of $j$ is doubled at position $p$ in $x$, then the program started at the target stage with source register $j$, pointer $p+2|\\mathrm{bits}(j)|+2$, and scratch register zero terminates with all registers bounded by $B$ and has an accepting computation exactly when $K(j)$ holds. Then the program started at the existential-search stage in state $\u001bσ$ terminates with all registers bounded by $B$ and has an accepting computation exactly when there exists $j<n$ for which the binary word of $j$ is doubled at position $p$ in $x$ and $K(j)$ holds.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "$B$ is a natural number",
+  "$K$ is a predicate on natural numbers",
+  "all nine registers of $\\u001bσ$ are at most $B$",
+  "$s=0$",
+  "$tmp=0$",
+  "$p+2n+2\\le B$",
+  "for every $j<n$, the stated doubled-word condition implies the target-stage configuration has the specified termination, register bound, and acceptance semantics"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, let $K(j)$ be a proposition for each\nnatural number $j$, and let $σ$ be a register configuration whose nine register values\nare all at most $B$. Suppose the source register is $0$, the scratch register is $0$,\nand $p+2n+2\\le B$. If for every $j<n$, whenever the segment of $x$ beginning at $p$\nconsists of the binary word for $j$ with each bit repeated twice followed by the\nseparator $01$, the fixed program started at its next stage with source register $j$,\npointer $p+2|\\mathrm{bits}(j)|+2$, and scratch register $0$ terminates within the\nregister bound and accepts exactly when $K(j)$ holds, then starting at the\nexistential-search stage with configuration $σ$ terminates within the register bound and\naccepts exactly when there exists $j<n$ for which that doubled-block condition and\n$K(j)$ both hold."
+}

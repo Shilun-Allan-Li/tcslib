@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.pal_test_start",
+ "key": "249ebc67623721ab",
+ "kind": "lemma",
+ "title": "Transition into the test phase",
+ "statement": "For every binary word $x$, one step of the three-state palindrome machine from the configuration in state $1$, with the input head at position $0$, the work head at integer position $|x|$, and the first $|x|$ bits copied, yields the configuration in state $2$ with the input head at position $1$, the work head at integer position $|x|-1$, the same copied work tape, and empty output.",
+ "hypotheses_covered": [
+  "$x$ is a binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word of length $n$. From the configuration of the three-state\npalindrome machine on input $x$ in rewind state with the input head on the left\nboundary blank (cell $0$), all $n$ bits copied, and work head at cell $n$, one\ntransition switches to the test state, moves the input head right to cell $1$,\nand moves the work head left to the integer cell $n-1$ (which is $-1$ when $x$ is\nempty), leaving the work tape unchanged."
+}

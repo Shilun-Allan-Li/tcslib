@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.compareTM",
+ "key": "d27f562cd5952d06",
+ "kind": "def",
+ "title": "Tape Comparison Machine",
+ "statement": "Given a natural number $k$, two work-tape indices $\\mathrm{fst},\\mathrm{snd}<k$, and a symbol alphabet with decidable equality, define a machine with run, flagged rewind, and flagged done states. In the run state, if both heads scan symbols, it moves both right when the symbols agree and otherwise moves both left and enters rewind with flag false; if both scan blank, it moves both left and enters rewind with flag true; if exactly one scans blank, it moves both left and enters rewind with flag false. In rewind it moves both heads left while the first scans a symbol; when the first scans blank, it moves both right and enters done carrying the flag. In done it stays in that state without moving or writing.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$\\mathrm{fst}$ and $\\mathrm{snd}$ are work-tape indices less than $k$",
+  "The symbol alphabet has decidable equality"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

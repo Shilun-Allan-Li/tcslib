@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.rt_exists_scratchTemplateTM",
+ "key": "0854b0ad9a1326be",
+ "kind": "theorem",
+ "title": "Bounded scratch-template construction",
+ "statement": "For finite types $Q$ and $T$ with decidable equality, there are a natural number $K$, a finite state set $P$ with decidable equality, a machine $R$ with $K+2$ work tapes over symbols encoding digits, marked work cells, states, or tags, designated states $entry,exit\\in P$, and a natural number $C$. For every $k$, embedding $\\iota:\\{0,\\ldots,K+1\\}\\hookrightarrow\\{0,\\ldots,k-1\\}$, Boolean word $x$, natural number $s$, and Boolean word $ws$ whose binary value is $s$, consider a configuration $d$ on the encoded input. If it begins in state $entry$ with input head at position $1$, tape $\\iota(1)$ holds $ws$ in the prescribed buffer format on positions from $-1$ through $|ws|$ relative to its head, tape $\\iota(0)$ is blank on positions from $-1$ through the length of the joined record template for $x$ and $s$, and all embedded tapes with index at least $2$ are blank, then the embedded machine reaches a configuration equal to $d$ except that its state is $exit$ and tape $\\iota(0)$ contains the joined record template on that interval. It does so by some time at most $C$ times the sum of the template length, $|ws|$, $|x|$, and $1$; it does not visit $exit$ earlier, and every work-tape head stays within distance $C$ times the sum of the template length, $|ws|$, and $1$ of its initial position throughout.",
+ "hypotheses_covered": [
+  "$Q,T$ are finite and have decidable equality",
+  "Finite state set $P$ with decidable equality exists",
+  "Embedding of $K+2$ tape indices into $k$ tape indices",
+  "Boolean word $x$",
+  "Natural number $s$ and Boolean word $ws$ with binary value $s$",
+  "Initial state is $entry$",
+  "Input head starts at position $1$",
+  "Tape $\\iota(1)$ has the prescribed buffer contents on the stated interval",
+  "Tape $\\iota(0)$ is blank on the stated interval",
+  "Embedded tapes with indices at least $2$ are blank",
+  "Time bound in terms of template length, $|ws|$, and $|x|$",
+  "No earlier visit to $exit$",
+  "Head displacement bound through time $t$",
+  "Final state and template contents on tape $\\iota(0)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

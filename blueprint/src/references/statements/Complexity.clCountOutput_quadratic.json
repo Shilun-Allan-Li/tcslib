@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCountOutput_quadratic",
+ "key": "c5168f8e060bb534",
+ "kind": "lemma",
+ "title": "Quadratic time bound for a movement count",
+ "statement": "Let $M$ be a finite-state machine with Boolean tape symbols, let $i$ be one of the coordinates in its record fields, let $y$ be a finite Boolean word, let $T$ be a natural number, and let $keep$ assign a finite Boolean word to each of four indices. Form an input by packing, in order, the fields determined by the machine's record words for $y$ and $T$, together with the four words supplied by $keep$. The specified count-output machine halts on this input with output the little-endian binary representation of the $i$-th movement count after $T$ steps of $M$ on $y$, and its space usage at time $B(|x|+1)^2$ is some natural number, where $x$ is the formed input and $B=10+10(k+4)+8r+7$, with $k$ the number of work tapes of the record machine built from $M$ and $r$ the number of record fields.",
+ "hypotheses_covered": [
+  "Finite-state Boolean machine $M$",
+  "Coordinate $i$ in the record-field index set",
+  "Boolean word $y$",
+  "Natural-number horizon $T$",
+  "Four retained Boolean words supplied by $keep$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, counter coordinate, virtual input $y$, horizon $T$, and retained fields, the count-output machine computes the binary representation of the selected movement count at time $T$ from the packed layout, and its time bound is the quadratic envelope in the encoded argument length that also covers the full trajectory output."
+}

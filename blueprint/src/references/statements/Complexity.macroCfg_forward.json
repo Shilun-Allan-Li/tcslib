@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.macroCfg_forward",
+ "key": "7eb50119e92d23ad",
+ "kind": "lemma",
+ "title": "One step of the forward scan",
+ "statement": "Let $W$ be a finite binary Turing machine, let $a,R\\in\\mathbb{N}$, let $x$ be an input word over the schedule alphabet, and let $u,g\\in\\mathbb{Z}$. For a base configuration of the schedule machine on $x$, suppose its guide tape is the fixed guide of radius $R$. From the forward phase with guide head at $g$, one step enters the backward phase and moves the guide head to $g-1$ if $g=R+1$; otherwise it remains in the forward phase and moves the guide head to $g+1$.",
+ "hypotheses_covered": [
+  "$W$ is a finite binary Turing machine",
+  "$a,R$ are natural numbers",
+  "$x$ is an input word over the schedule alphabet",
+  "$u,g$ are integers",
+  "$\\mathrm{base}$ is a schedule-machine configuration on $x$",
+  "the base guide tape is the fixed guide of radius $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$.  From the forward\nphase with guide head at $g$, one step of the schedule controller turns into the\nbackward phase and moves the guide head left exactly when $g = R + 1$, and otherwise\nstays in the forward phase and moves the guide head right."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.embed_step",
+ "key": "5e71b5678cd0e1e3",
+ "kind": "theorem",
+ "title": "Embedding a single machine step",
+ "statement": "Let $m\\le k$, let $M$ have $m$ work tapes and state set $S$, and let $H$ have $k$ work tapes and state set $B$, both with Boolean tape alphabet. Let $\\iota:S\\to B$, and suppose configuration $c$ of $M$ is in state $q$. For any $b\\in B$, assume that for every tuple of scanned input and work-tape symbols, the transition of $H$ at state $b$ is the padded, state-mapped action prescribed by $M$ at state $q$. Then one step of $H$ from the embedded configuration obtained by replacing its state with $b$ equals the embedding of the configuration reached by one step of $M$ from $c$.",
+ "hypotheses_covered": [
+  "$m\\le k$",
+  "$M$ has $m$ work tapes, Boolean alphabet, and state set $S$",
+  "$H$ has $k$ work tapes, Boolean alphabet, and state set $B$",
+  "A state map $\\iota:S\\to B$ is given",
+  "Configuration $c$ has state $q$",
+  "A state $b\\in B$ is given",
+  "For all scanned input and work-tape symbols, $H$'s transition at $b$ equals the padded, state-mapped transition of $M$ at $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

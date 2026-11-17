@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.Codec.le_loop",
+ "key": "c7f49db17533853e",
+ "kind": "theorem",
+ "title": "Register minimum loop",
+ "statement": "Let $A$ be a register program with $m$ registers, let an oracle assign a Boolean answer to each of $d$ indices and bit strings, and let $y$ be a bit string. Choose pairwise distinct registers $t,a,b$ and states $\\mathrm{test}_1,\\mathrm{test}_2,\\mathrm{bump},\\mathrm{yes},\\mathrm{no}$ so that the program branches from $\\mathrm{test}_1$ to $\\mathrm{yes}$ when register $t$ equals register $a$, and otherwise to $\\mathrm{test}_2$; from $\\mathrm{test}_2$ it branches to $\\mathrm{no}$ when $t=b$, and otherwise to $\\mathrm{bump}$; and at $\\mathrm{bump}$ it increments $t$ and returns to $\\mathrm{test}_1$. If the initial register values $v$ are all at most $B$, and $v(t)\\le v(a)$ and $v(t)\\le v(b)$, then the program reaches the state selected by whether $v(a)\\le v(b)$, with register $t$ replaced by $\\min(v(a),v(b))$ and every other register unchanged; throughout the run, the program satisfies the guard requiring its register values to remain at most $B$ and its configurations to satisfy the program's precondition.",
+ "hypotheses_covered": [
+  "A is a register program with m registers",
+  "oracle has d indices and returns Boolean answers on bit strings",
+  "y is a bit string",
+  "t, a, b are pairwise distinct registers",
+  "A(test₁) compares t with a, branching to yes on equality and test₂ otherwise",
+  "A(test₂) compares t with b, branching to no on equality and bump otherwise",
+  "A(bump) increments t and returns to test₁",
+  "B is a natural-number register bound",
+  "v is an initial register valuation",
+  "every register value v(r) ≤ B",
+  "v(t) ≤ v(a)",
+  "v(t) ≤ v(b)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

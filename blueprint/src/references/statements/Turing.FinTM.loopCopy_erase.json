@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.loopCopy_erase",
+ "key": "0274c21377016960",
+ "kind": "lemma",
+ "title": "Clearing a copied cell",
+ "statement": "Let $p$ and $r$ be Boolean words and let $b$ be a bit. The tape that is blank on the first $|p|$ cells and otherwise agrees with the buffer tape storing $p$ followed by $b$ and then $r$, when changed to be blank at cell $|p|$, is the tape that is blank on the first $|p|+1$ cells and otherwise agrees with the buffer tape storing $p$ followed by $b$ and then $r$.",
+ "hypotheses_covered": [
+  "Boolean word $p$",
+  "Boolean word $r$",
+  "bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all Boolean words $p$ and $r$ and every bit $b$, blanking cell $|p|$ of the\npartially cleared copying tape with processed prefix $p$ and suffix $b$ followed by $r$\nyields the partially cleared copying tape with processed prefix $p$ extended by $b$ and\nsuffix $r$."
+}

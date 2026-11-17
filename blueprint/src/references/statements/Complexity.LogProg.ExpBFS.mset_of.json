@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.mset_of",
+ "key": "db15b0dc538479d6",
+ "kind": "lemma",
+ "title": "Preservation across setting a memory bit",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}:\\{0,\\ldots,3\\}\\times\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be an oracle, and let $x$ be a Boolean word. Suppose the machine instruction at state $l$ sets the memory bit at the head to true and continues at $l'$. Let $st$ be a register state with every one of its 17 counters at most $B$, let $M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be the memory contents, and suppose the head position $p$ satisfies $0\\le p\\le P$. If the machine can reach a configuration $c$ from state $l'$ with state $st$, memory updated to true at $p$, and head at $p$, with every configuration strictly before the endpoint satisfying the guard, then it can reach the same $c$ from state $l$ with state $st$, original memory $M$, and head at $p$, again satisfying the guard at every configuration strictly before the endpoint. The guard requires that all register values are at most $B$, the head position lies in $[0,P]$, and the current instruction meets its operand conditions.",
+ "hypotheses_covered": [
+  "$K_0,B,P\\in\\mathbb{N}$",
+  "Oracle on four indices and Boolean words",
+  "Boolean input word $x$",
+  "Instruction at $l$ is a memory-set instruction continuing at $l'$",
+  "All 17 counters of $st$ are at most $B$",
+  "Memory map $M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "$0\\le p\\le P$",
+  "Reachability from the post-instruction configuration while maintaining the guard before the endpoint"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P$ be natural numbers, let\n$\\mathrm{orc}:\\mathrm{Fin}(4)\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{Bool}$ be an\noracle, and let $x$ be a Boolean word. Suppose a machine instruction at control state\n$l$ sets the memory bit at the head to true and continues at $l'$. Let $st$ be a\nregister state whose 17 counters are all at most $B$, let the head position $p$ satisfy\n$0\\le p\\le P$, and suppose $c$ is reachable from the configuration at $l'$ with the\nmemory updated to true at $p$ and the head at $p$, while maintaining the guard at every\nearlier step. Then $c$ is reachable from the configuration at $l$ with the original\nmemory and head position $p$, while maintaining that guard at every earlier step."
+}

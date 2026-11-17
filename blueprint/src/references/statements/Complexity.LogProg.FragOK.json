@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.FragOK",
+ "key": "033be95690044869",
+ "kind": "def",
+ "title": "Valid fragment execution",
+ "statement": "Let $P$ be a register program with $m$ registers and $d$ deciders, let $oracle$ assign a Boolean answer to each decider and Boolean word, let $c$ be a machine configuration on input $x$, and choose an initial state $s_0$, a register $r$, a tape position $p\\in\\mathbb Z$, a proposition $good$, and a next state $next$. The fragment is valid if both of the following implications hold: if $good$, there is a time $T$ at which the run from the configuration formed by setting the state to $s_0$, the input-head position to $1$, and register $r$'s work-head position to $p$ reaches the corresponding configuration with state $next$; at every earlier time $t<T$, the run is in a configuration of that same form for some state and input-head position, and that state is not a call state. If $good$ is false, there is a time $T$ at which that run has halted, its output is the original output followed by $0$, and its work-head positions are the original positions except that register $r$'s position is $p$; at every earlier time, the same form of configuration and absence of a call state hold.",
+ "hypotheses_covered": [
+  "A register program with $m$ registers and $d$ deciders",
+  "An oracle assigning Boolean answers to deciders on Boolean words",
+  "A configuration $c$ on input $x$",
+  "An initial state $s_0$",
+  "A register $r$ among the $m$ registers",
+  "A work-tape position $p\\in\\mathbb Z$",
+  "A proposition $good$",
+  "A next state $next$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet omits the definitions of the run, configuration-update, and fragment-action functions, so their operational details cannot be expanded beyond the stated run equations.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

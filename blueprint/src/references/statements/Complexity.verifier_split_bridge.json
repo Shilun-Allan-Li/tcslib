@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.verifier_split_bridge",
+ "key": "193084b6670bcd3d",
+ "kind": "lemma",
+ "title": "Equality of two split searches",
+ "statement": "For all $C,c\\in\\mathbb{N}$, the partial functions on natural numbers given by the least $i\\le m$ satisfying $i+(C+1)(i+1)^c=m$, when such an $i$ exists, and undefined otherwise, are equal.",
+ "hypotheses_covered": [
+  "$C\\in\\mathbb{N}$",
+  "$c\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $D, e, m \\in \\mathbb{N}$ let $\\mathrm{solve}_{D,e}(m)$ be the least $i \\le m$\nwith $i + D(i+1)^e = m$, undefined if there is none, and for $C, c, m \\in \\mathbb{N}$\nlet $\\mathrm{split}_{C,c}(m)$ be the least $n \\le m$ with\n$n + (C+1)(n+1)^c = m$, undefined if there is none. Then for all\n$C, c \\in \\mathbb{N}$, the partial functions $\\mathrm{solve}_{C+1,c}$ and\n$\\mathrm{split}_{C,c}$ on $\\mathbb{N}$ are equal."
+}

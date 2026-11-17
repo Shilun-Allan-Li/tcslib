@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.sim_call",
+ "key": "7c9753d89fc3d1c0",
+ "kind": "theorem",
+ "title": "Simulation of Procedure Calls",
+ "statement": "Let $S$ be a compiler setting, let $d,p,x,k$ be natural numbers, let $\u001b[0m\\sigma,\u001b[0m\\sigma'$ be program states, and let $\u001b[0m\\mathrm{args}$ be a finite list of expressions. Suppose every argument expression is safe in $\u001b[0m\\sigma$, procedure $p$ has body $\u001b[0m\\mathrm{body}$ in $S$, and $d$ is less than the depth limit. If $\u001b[0m\\mathrm{body}$ simulates execution from depth $d+1$ and the state whose variable values are the argument values (with missing arguments set to zero) and whose memory is that of $\u001b[0m\\sigma$, to $\u001b[0m\\sigma'$ in $k$ steps, then the call to $p$ with arguments $\u001b[0m\\mathrm{args}$, assigning its result to variable $x$, simulates execution from $\u001b[0m\\sigma$ to the state obtained by updating variable $x$ to $\u001b[0m\\sigma'.\u001b[0m\\mathrm{loc}(0)$ and using memory $\u001b[0m\\sigma'.\u001b[0m\\mathrm{mem}$, in $\u001b[0m\\sum_{e\\in\\mathrm{args}}\\mathrm{cost}(e)+2+k$ steps.",
+ "hypotheses_covered": [
+  "Every argument expression is safe in the initial state",
+  "Procedure p is defined with body body in the setting",
+  "The current depth is below the depth limit",
+  "The body simulates from depth d+1, with the argument frame and initial memory, to the given state in k steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a program setting, and consider a call to procedure $p$ with argument\nexpressions $\\mathrm{args}$, assigning the returned value to local variable $x$, from\nstate $\\sigma$ at depth $d$. Suppose every argument expression is safe in $\\sigma$,\nprocedure $p$ has body $\\mathrm{body}$ in $S$, and $d$ is less than the depth limit. If\nexecuting that body at depth $d+1$, from the state whose locals are the argument values\n(with missing arguments taken to be zero) and whose memory is $\\sigma.\\mathrm{mem}$,\nsimulates execution to $\\sigma'$ in $k$ steps, then the call simulates execution to the\nstate obtained by assigning $\\sigma'.\\mathrm{loc}(0)$ to local $x$ and using memory\n$\\sigma'.\\mathrm{mem}$, in $(\\sum_{e\\in\\mathrm{args}}\\mathrm{cost}(e))+2+k$ steps."
+}

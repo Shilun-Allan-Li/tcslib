@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.GadgetCorrect",
+ "key": "b1c9b03f204c2a46",
+ "kind": "def",
+ "title": "Correctness of a gate gadget",
+ "statement": "For natural numbers $n,c$, a predicate $Q$ on gate kinds and input arities, a predicate $P$ on gates, and an emitter that assigns an output vertex and a list of gates to each gate and existing gate list, gadget correctness means the following: for every gate $g$ and gate list $G$ that is acyclic on $n$ inputs, if every argument of $g$ is a vertex among the $n$ inputs and the vertices of $G$, and $Q$ holds for the kind of $g$ and its number of arguments, then the emitter's result satisfies the gadget specification with depth overhead $c$, size allowance $\\operatorname{arity}(g)+2$, and new-gate predicate $P$.",
+ "hypotheses_covered": [
+  "Natural numbers $n$ and $c$",
+  "Predicates $Q$ on gate kind and arity, and $P$ on gates",
+  "An emitter from a gate and gate list to a gate list and output vertex",
+  "Acyclicity of the existing gate list",
+  "Every gate argument is less than $n+|G|$",
+  "$Q$ holds for the gate kind and argument count"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied declaration does not include the definition of the gadget specification, so its precise required properties cannot be stated from this payload alone.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

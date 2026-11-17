@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.hasFDerivAt_averagedGaussianIndicator",
+ "key": "78789b57a44fef71",
+ "kind": "lemma",
+ "title": "Derivative of an averaged Gaussian indicator",
+ "statement": "Let $n\\in\\mathbb N$, let $A\\subseteq\\mathbb R^n$ be measurable, and let $u\\in\\mathbb R$ satisfy $\\sin u\\ne0$. For $x\\in\\mathbb R^n$, define $F(x)=\\int 1_A(\\cos u\\,x+\\sin u\\,y)\\,d\\gamma_n(y)$, where $\\gamma_n$ is standard Gaussian measure. The function $F$ is differentiable at every $x$, and its derivative is the linear functional obtained by composing multiplication by $\\cos u$ with the integral, over $z\\in\\mathbb R^n$ with respect to Lebesgue measure, of $1_A(z)$ times the derivative in the mean vector $c$ of the product Gaussian density $\\prod_{i=1}^n p_{\\sin^2u}(c_i,z_i)$, evaluated at $c=\\cos u\\,x$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$A\\subseteq\\mathbb R^n$ is measurable",
+  "$u\\in\\mathbb R$",
+  "$\\sin u\\ne0$",
+  "$x\\in\\mathbb R^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For $A\\subseteq\\mathbb R^n$ and $\\theta\\in\\mathbb R$, put $u_\\theta(x)=\\int1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$. If $A$ is measurable and $\\sin u\\ne0$, $u_u$ is differentiable at every $x\\in\\mathbb R^n$, with $D u_u(x)[h]=\\cos u\\int1_A(z)\\,\\partial_c[\\prod_i p_{\\sin^2u}(c_i,z_i)]_{c=\\cos u\\,x}[h]\\,dz$, where $p_v$ is the Gaussian density and $\\partial_c$ is differentiation in the mean vector."
+}

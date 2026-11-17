@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.UTab.cfgTab_encode",
+ "key": "c1dddd8cb3547083",
+ "kind": "theorem",
+ "title": "Configuration tableau encoding",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean work-tape symbols, let $n,T\\in\\mathbb{N}$, and let $z$ be a finite Boolean string. The Boolean encoding of the configuration-tableau circuit for $M$, with $n$ circuit inputs, hard-wired string $z$, and time bound $T$, consists of $n$ initial ones followed by zero, then the encoded preamble (false and true constant gates, the gates for the bits of $z$, and the prescribed false constant gates), the encodings of all tableau-program instructions in order, and a final zero followed by a unary string. The length of that final unary string is the value of the linear expression for the current snapshot’s encoded output bit, evaluated on the register values at time $T+1$ with loop counter zero.",
+ "hypotheses_covered": [
+  "A finite-state Turing machine over Boolean symbols",
+  "Natural number input width n",
+  "Finite Boolean string z",
+  "Natural number time bound T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

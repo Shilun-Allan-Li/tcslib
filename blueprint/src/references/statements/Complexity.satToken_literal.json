@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satToken_literal",
+ "key": "f490d5abe40a7501",
+ "kind": "lemma",
+ "title": "Token split of a serialized literal",
+ "statement": "For every literal $\\ell=(v,b)$ and bit string $r$, splitting the encoding of $\\ell$ followed by $r$ gives the token $1^{v+1}0$ and the suffix beginning with the polarity bit $b$, followed by $r$.",
+ "hypotheses_covered": [
+  "literal $\\ell=(v,b)$ over natural-number variable indices",
+  "remainder bit string $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every literal $\\ell = (v, b)$ and remainder $r$, the unary token splitter\napplied to the serialization of $\\ell$ followed by $r$ returns the token\n$1^{v+1}0$ together with the suffix $b :: r$: the delimiter is consumed and the\npolarity bit remains the first bit of the returned suffix."
+}

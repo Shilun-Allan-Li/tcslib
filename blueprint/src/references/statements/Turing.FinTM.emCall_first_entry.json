@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emCall_first_entry",
+ "key": "8a60208337fbf3f4",
+ "kind": "lemma",
+ "title": "First visit to an absorbing stop state",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $w$ be an input word, and let $\text{stop}$ be a decidable predicate on its states. Suppose every configuration whose state satisfies $\text{stop}$ is fixed by one step of $M$. If the run from a configuration $c$ reaches a configuration $d$ in a stop state at time $T$, then there is a time $t\\le T$ at which the run equals $d$ and no stop state has been visited at any earlier time $j<t$.",
+ "hypotheses_covered": [
+  "Boolean-alphabet multi-tape Turing machine M",
+  "Boolean input word w",
+  "decidable predicate stop on states",
+  "every configuration in a stop state is fixed by one step",
+  "configuration c",
+  "configuration d has a stop state",
+  "run from c at time T equals d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let a set of stop\ncontrol states be absorbing (a step from any configuration in a stop state changes\nnothing), and suppose the run from a configuration $c$ reaches a configuration $d$ in a\nstop state at time $T$. Then there is a time $t \\le T$ such that no stop state is\nvisited strictly before $t$ and the run from $c$ at time $t$ equals $d$."
+}

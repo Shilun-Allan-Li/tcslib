@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.CounterProg.run_succ",
+ "key": "4d0371232e9ed4a7",
+ "kind": "theorem",
+ "title": "Successive run decomposition",
+ "statement": "Let $R$ be a number of registers, let $\\Lambda$ be a set of labels, let $P$ be a counter program over them, and let $x$ be a bit string. For every abstract state $s$ and every $t\\in\\mathbb{N}$, the state reached after $t+1$ steps from $s$ equals the state reached after $t$ steps from the state obtained by one step of $P$ on $x$ from $s$.",
+ "hypotheses_covered": [
+  "A number $R$ of registers",
+  "A set $\\Lambda$ of labels",
+  "A counter program $P$ over these registers and labels",
+  "An input bit string $x$",
+  "An abstract state $s$",
+  "A step count $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, $x$ an input bit\nstring, $s$ an abstract state and $t \\in \\mathbb{N}$. Running $t + 1$ steps from $s$ equals\nrunning $t$ steps from the state obtained by one step of $P$ on $x$ from $s$:\n$\\mathrm{run}_{P,x}(s, t + 1) = \\mathrm{run}_{P,x}(\\mathrm{step}_{P,x}(s), t)$."
+}

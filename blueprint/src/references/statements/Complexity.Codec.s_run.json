@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.Codec.s_run",
+ "key": "b08338266155ef6e",
+ "kind": "theorem",
+ "title": "Paired scan execution",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine, let $y$ be a bit string, let $B$ be a natural-number register bound, and let $I$ be a simulator state with two Boolean flags $f_0,f_1$. Suppose $u,u'$ are bit strings of equal length, the register valuation $v$ has every register at most $B$, and its registers $E,Q_3,Q_4$ satisfy $v(E)=v(Q_3)+2|u|$ and $v(Q_4)+2|u|\u0003le B$. Suppose also that, for every $i<|u|$, the input bits at positions $v(Q_3)+2i$ and $v(Q_4)+2i$ in $y$ (taken to be false when out of range) equal the $i$th bits of $u$ and $u'$, respectively (also taken false when out of range). Then the coded simulator has a finite execution from the paired scan-test state, with valuation $v$, to the paired scan-finish state whose simulator state is obtained by folding the paired transition rule for $I$ over the zipped lists $u,u'$, and whose valuation agrees with $v$ except that registers $Q_3,Q_4$ are advanced to $v(Q_3)+2|u|$ and $v(Q_4)+2|u|$. Throughout the execution, the simulator's guard conditions hold and all registers remain at most $B$.",
+ "hypotheses_covered": [
+  "Finite nondeterministic Turing machine N over Boolean symbols",
+  "Bit string y",
+  "Natural register bound B",
+  "Simulator state I and Boolean flags f₀,f₁",
+  "Bit strings u,u′ have equal length",
+  "Initial register valuation v is bounded by B",
+  "v(E) = v(Q₃) + 2|u|",
+  "v(Q₄) + 2|u| ≤ B",
+  "For each i < |u|, the designated y bit equals the i-th bit of u, with out-of-range bits false",
+  "For each i < |u|, the other designated y bit equals the i-th bit of u′, with out-of-range bits false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

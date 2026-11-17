@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.universal_skip_groups",
+ "key": "cbb821b749ddfe9b",
+ "kind": "lemma",
+ "title": "Skipping Consecutive Record Groups",
+ "statement": "Let $x$ be a Boolean input string, $b$ a four-tape interpreter configuration on $x$, $i$ a record index from $0$ through $8$, and $T$ a table decomposed as $T=lGr$, where $G$ is the concatenation of the serialized records in a list of groups, each group containing exactly nine actions. For any natural number $n$, let the state tape have a marker at position $0$ and unary cells in the window from $j+1$ through $j+g$, where $j$ is the number of already consumed unary cells and $g$ is the number of groups; then, after $g+|G|+1$ interpreter steps from the record-group phase at table cursor $|l|$ and state cursor $j+1$, the interpreter is in the state-rewind phase remembering $i$, with table cursor $|l|+|G|$, state tape corresponding to $j+g$ consumed cells and no remaining unary cells, and state cursor $j+g+1$.",
+ "hypotheses_covered": [
+  "Boolean input string $x$",
+  "Base configuration $b$ of the four-tape interpreter on $x$",
+  "Record index $i$ is an index from $0$ through $8$",
+  "Table $T$",
+  "List of action groups, with every group having length nine",
+  "Lists $l,r$ and natural number $j$",
+  "Table decomposition $T=l++G++r$, where $G$ concatenates the groups' serialized records"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement does not assume the state tape has unary cells in the indicated window; it specifies the tape explicitly as the function $z\\mapsto 0$ at $0$, $1$ when $j<z\\le j+g$, and blank elsewhere. It also does not quantify over $n$.",
+ "rubric": [],
+ "replaced": "Suppose the table is $l \\cdot G \\cdot r$, where $G$ concatenates the\nserialized transition records of $g$ groups of one-work-tape machine\nactions, each group containing exactly nine records, and suppose the state\ntape is the state window with $j$ erased and $g$ remaining unary cells,\nwith state cursor $j + 1$.  From the interpreter's record-group phase\ncarrying a read index $i \\in \\{0, \\dots, 8\\}$, with table cursor $|l|$,\nexactly $g + |G| + 1$ interpreter steps reach the state-rewind phase\nremembering $i$, with table cursor $|l| + |G|$, state tape the state window\nwith $j + g$ erased and no remaining unary cells, and state cursor\n$j + g + 1$: each remaining unary state symbol is erased at the cost of one\nstep plus a nine-record skip, and the terminating blank costs one further\nstep."
+}

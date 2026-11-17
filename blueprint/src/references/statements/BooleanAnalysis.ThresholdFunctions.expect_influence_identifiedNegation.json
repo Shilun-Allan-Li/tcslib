@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.expect_influence_identifiedNegation",
+ "key": "02a63ea492f9b518",
+ "kind": "lemma",
+ "title": "Influence after coordinate identification",
+ "statement": "Let $n,m\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\mathbb R$, let $\\pi:[n]\\to[m]$, and fix $j\\in[m]$. For each $z\\in\\{0,1\\}^n$, define $g_z(w)=f((z_i\\oplus w_{\\pi(i)})_{i=1}^n)$, where $\\oplus$ is addition modulo two. The uniform average over $z$ of the influence of coordinate $j$ on $g_z$ equals $\\frac14\\mathbb E_x[(f(x)-f(x^{F_j}))^2]$, where $F_j=\\{i\\in[n]:\\pi(i)=j\\}$, $x^{F_j}$ is obtained by flipping the coordinates in $F_j$, and $x$ is uniform on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "$n,m\\in\\mathbb N$",
+  "$f:\\{0,1\\}^n\\to\\mathbb R$",
+  "$\\pi:[n]\\to[m]$",
+  "$j\\in[m]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $n,m\\in\\mathbb N$, $f:\\{0,1\\}^{n}\\to\\mathbb R$, a map $\\pi:\\{1,\\ldots,n\\}\\to\\{1,\\ldots,m\\}$ and $j\\in\\{1,\\ldots,m\\}$, define $g_z(w)=f(z\\oplus(w_{\\pi(i)})_{i=1}^{n})$, where $\\oplus$ is coordinatewise addition modulo $2$, and write $x^{A}$ for the vector obtained by flipping the coordinates in $A$; then\n\\[\n\\mathbb E_{z}\\!\\left[\\operatorname{Inf}_j(g_z)\\right]\n=\\mathbb E_x\\!\\left[\\frac{(f(x)-f(x^{\\pi^{-1}(\\{j\\})}))^2}{4}\\right],\n\\qquad\n\\operatorname{Inf}_j(h)=\\mathbb E_w\\!\\left[\\frac{(h(w)-h(w^{\\{j\\}}))^2}{4}\\right].\n\\]\nEach expectation is uniform on the full Boolean cube of its variable's dimension."
+}

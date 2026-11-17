@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.grounds_run",
+ "key": "b87bf75d9a67f0e1",
+ "kind": "theorem",
+ "title": "Grounding a counting round",
+ "statement": "Fix natural numbers $E,B$, an oracle $\\mathcal O:[4]\\times\\{0,1\\}^*\\to\\{0,1\\}$, a Boolean word $x$, a proposition $Q$, and a phase $ph\\in\\{\\mathrm{false},\\mathrm{true}\\}$. For every $j\\in\\mathbb N$ with $j<E+1$ and every counting state $\\sigma$ whose register values are all at most $B$, suppose $\\sigma.e+2j(if\\ ph\\ then\\sigma.s\\ else\\sigma.lg)\\le B$. If, for every $k'\\le B$, the counting procedure started in round state $0$ with phase $ph$, with $e$ increased by $2j(if\\ ph\\ then\\sigma.s\\ else\\sigma.lg)$ and $k=k'$, terminates on every sequence of choices while keeping every register at most $B$ and accepts exactly when $Q$ holds, then the procedure started in round state $j$ with phase $ph$ and registers $\\sigma$ has that same termination, register-bound, and acceptance property.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb N$",
+  "An oracle on four query types and finite Boolean words",
+  "A finite Boolean input word $x$",
+  "A proposition $Q$",
+  "A Boolean phase $ph$",
+  "$j\\in\\mathbb N$ and $j<E+1$",
+  "Every register of $\\sigma$ is at most $B$",
+  "$\\sigma.e+2j(if\\ ph\\ then\\sigma.s\\ else\\sigma.lg)\\le B$",
+  "For every $k'\\le B$, the specified procedure from round state $0$ terminates on every sequence of choices, keeps registers at most $B$, and accepts exactly when $Q$ holds"
+ ],
+ "confidence": "low",
+ "caveat": "The statement’s central semantic predicate is supplied only through a large machine definition; the paraphrase describes its operational meaning but cannot name that procedure independently of the formal context.",
+ "rubric": [],
+ "replaced": "Let $E,B$ be natural numbers, let $\\mathcal O$ be an oracle with four query types on\nfinite Boolean words, let $x$ be a finite Boolean word, and let $Q$ be a proposition.\nFor either Boolean phase $ph$, every natural number $j<E+1$, and every register state\n$\\sigma$ whose registers are all at most $B$, suppose $\\sigma.e+2j(if\\ ph\\ then\\\n\\sigma.s\\ else\\ \\sigma.lg)\\le B$. If, for every $k'\\le B$, the procedure from round\nstate $0$ with phase $ph$, with $e$ increased by $2j(if\\ ph\\ then\\ \\sigma.s\\ else\\\n\\sigma.lg)$ and $k=k'$, terminates on every sequence of choices while keeping every\nregister at most $B$, and accepts exactly when $Q$ holds, then the same semantic\nproperty holds from round state $j$ with phase $ph$ and registers $\\sigma$."
+}

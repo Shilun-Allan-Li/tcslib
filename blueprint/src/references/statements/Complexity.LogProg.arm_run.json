@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.arm_run",
+ "key": "a66126f28530b127",
+ "kind": "theorem",
+ "title": "Simulation of a halting register computation",
+ "statement": "Fix a Boolean input $x$, an arithmetic register program $A$, its initial state $l_0$, an oracle, a multi-tape machine $D$, a choice of initial state for $D$ for each oracle index, and bounds $B,W\\in\\mathbb{N}$. Suppose that an $N$-step register computation from state $l$ and valuation $v$, with no answer yet, has halted with answer $b$. Assume that at every earlier step its configuration satisfies the register-program precondition for $D$ and the chosen oracle, and each register value plus one has binary length at most $W$. Then the tape machine compiled from $A$ can run from the initial tape configuration encoding $x,l,v$ and any output word $out$ to a halting configuration whose output is $out$ followed by $b$, with every work-tape head position between $-1$ and $W$ inclusive; its invariant holds at every earlier step.",
+ "hypotheses_covered": [
+  "Fixed Boolean input $x$",
+  "Register program $A$ and initial state $l_0$",
+  "Oracle, multi-tape machine $D$, and oracle-indexed initial states for $D$",
+  "Natural-number bounds $B,W$",
+  "Natural number $N$, initial state $l$, register valuation $v$, output word $out$, and Boolean answer $b$",
+  "The $N$-step register computation is halted at time $N$ and its answer is $b$",
+  "At each time less than $N$, the precondition for the program, machine, and oracle holds",
+  "At each time less than $N$, every register value plus one has binary length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

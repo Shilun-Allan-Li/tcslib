@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.Contract.seq_traj",
+ "key": "b2ba6b1617441c9b",
+ "kind": "lemma",
+ "title": "Trajectory of Sequential Machine Composition",
+ "statement": "Let $M_1$ and $M_2$ be multi-tape Turing machines with the same number of work tapes and symbol alphabet, with state sets $S_1$ and $S_2$. Fix an entry state $e_1$ and an exit state $f_1$ of $M_1$, an entry state $e_2$ of $M_2$, and a contract $C_1$ for $M_1$ whose entry is $e_1$ and whose exit set is exactly $some(f_1)$. For a parameter $i$ and a configuration $d$ of the machine with state set $S_1\\oplus S_2$, suppose $d$ is in state $(e_1,\\mathrm{inl})$ and replacing its state by $e_1$ gives a configuration satisfying $C_1$'s precondition for $i$. At every time $u$ up to and including the contract running time, the composed machine's run from $d$ equals the $M_1$ run from that state-replaced configuration with states mapped into the left summand, and the latter run has a nonempty state. For every $v$, the composed run at the contract running time plus one plus $v$ equals the $M_2$ run from the contract endpoint with its state replaced by $e_2$, mapped into the right summand; that state-replaced endpoint is in state $e_2$.",
+ "hypotheses_covered": [
+  "$M_1$ and $M_2$ have the same number of work tapes and symbol alphabet",
+  "$e_1$ and $f_1$ are states of $M_1$; $e_2$ is a state of $M_2$",
+  "$C_1$ is a contract for $M_1$ with entry $e_1$ and exit set exactly $some(f_1)$",
+  "$d$ is a configuration of the composed machine and is in state $(e_1,\\mathrm{inl})$",
+  "Replacing the state of $d$ by $e_1$ satisfies $C_1$'s precondition for $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "Let $M_1$ and $M_2$ be multi-tape Turing machines with the same number of work tapes and\nsymbol alphabet, with state sets $S_1$ and $S_2$. Suppose a contract for $M_1$, entered\nat $e_1\\in S_1$ and exiting at $e_1'\\in S_1$, has precondition, running time, endpoint,\nand head envelope as specified by the contract. For any parameter $i$ and configuration\n$d$ whose state is $(e_1,\\mathrm{inl})$, assume the configuration obtained by replacing\nevery state of $d$ by $e_1$ satisfies the contract precondition. Up to and including the\ncontract running time, the composed machine follows the $M_1$ trajectory with states\nembedded in $S_1\\oplus S_2$, and that trajectory never halts; after one additional step,\nits trajectory is the $M_2$ trajectory from the contract endpoint with every nonhalting\nstate replaced by the entry state $e_2\\in S_2$, embedded in $S_1\\oplus S_2$. In\nparticular, that modified endpoint has state $e_2$."
+}

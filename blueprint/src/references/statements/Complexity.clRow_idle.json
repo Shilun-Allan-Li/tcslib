@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clRow_idle",
+ "key": "3e317185515f9162",
+ "kind": "lemma",
+ "title": "Idle End-of-Row State",
+ "statement": "For any natural number $l$, Boolean input word $x$, and configuration $c$ of the row controller with $l$ counter tapes and one record tape, if its state is the end-of-row state with copier control $0$, then one step of the controller leaves $c$ unchanged.",
+ "hypotheses_covered": [
+  "$l$ is a natural number",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of the row controller for $l$",
+  "the state of $c$ is $(\\mathrm{Fin.last}(l),0)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every configuration of the row controller whose control is the end-of-row state with copier control zero is left entirely unchanged by one step."
+}

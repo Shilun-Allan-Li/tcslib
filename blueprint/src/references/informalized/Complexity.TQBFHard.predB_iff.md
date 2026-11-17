@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean :: Complexity.TQBFHard.predB_iff -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Characterization of the Predicate Bit
+
+**Claim.** Under the stated width bound, the predicate bit on the pair-encoded input is true exactly when the initial and accepting block checks both hold and either some adjacent level fails the selector relation or the final pair of blocks satisfies the step relation.
+
+**Proof.** Set $w=vwid(A,a,|x|)$, $L=vlen(N,d,c,|x|)$, and $s=vrad(d,c,|x|)$, and let $M=3w^2+3w$. Write $\sigma=(\tau(0),\ldots,\tau(M-1))$ and $y=\operatorname{pairEncode}(x,\sigma)$. Pair decoding recovers $x$ and $\sigma$ (`pairFstD_pairEncode`, `pairSndD_pairEncode`). By the drop-and-take identity (`ofFn_drop_take`), any width-$w$ block of $\sigma$ starting at offset $o$ agrees with `readBlock` at that offset, whenever the block lies within the length-$M$ string. Since $L\le w$, taking the first $L$ entries of such a block gives exactly the corresponding configuration-code prefix. Consequently the initial and accepting indicator tests are respectively equivalent to the two asserted block predicates (`indicator_eq_true_iff`). The same block identifications show that the base test is equivalent to the final block-step predicate: its equality alternative compares the last two blocks, and its language alternative tests the corresponding truncated configuration prefixes. For the level tests, fix $j<w$. The five relevant windows of `lvlQ` begin at offsets $3wj+kw$ for $k=1,2,3,4,5$, by the same drop-and-take identity. These are precisely the blocks used in the selector test: the blocks at levels $j$ and $j+1$ appear in the positions defining `Sel`. Thus `selT (lvlQ ...)` is true exactly when that selector relation holds. Taking the disjunction of failures over $j<w$ yields the existential failure condition. Finally, the defining Boolean expression for the predicate is true exactly when its two checks are true and at least one of the base or level alternatives is true; the preceding equivalences give the claimed characterization.
+
+**Key facts.** `Complexity.pairFstD_pairEncode`, `Complexity.pairSndD_pairEncode`, `Complexity.TQBFHard.ofFn_drop_take`, `Complexity.TQBFHard.indicator_eq_true_iff`.

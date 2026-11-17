@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.taut_membership_of_verifier",
+ "key": "0370a98006a56b55",
+ "kind": "lemma",
+ "title": "Polynomial-time verifier for tautology complements",
+ "statement": "Let $V$ be the language of binary strings $z$ for which there is an index $i$ satisfying $|z|=i+(i+1)$ such that the DNF formula decoded from the first $i$ bits of $z$ evaluates to false under the assignment given by the remaining $i+1$ bits, with all variables beyond those bits assigned false. If $V$ belongs to $\text{P}$, then the language of binary strings whose decoded DNF formula is a tautology belongs to coNP.",
+ "hypotheses_covered": [
+  "The verifier language belongs to P"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $V$ be the set of binary strings $z$ with $|z| = i + (i + 1)$ for some $i$ such\nthat the DNF decoded from the first $i$ bits of $z$ is false under the assignment\nreading variable $v$ off the $v$-th of the remaining bits (false beyond them). If $V$\nbelongs to $\\mathrm{P}$, then $\\mathrm{TAUTOLOGY}$ belongs to coNP."
+}

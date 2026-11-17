@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/Tautology.lean :: Complexity.taut_machine_pair -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Verifier Correctness on Encoded Pairs
+
+**Claim.** For binary words $x,u$ with $|u|=|x|+1$, the verifier on their pair encoding computes the negation of the DNF value decoded from $x$ under the assignment determined by $u$, within $10(|\mathrm{pair}(x,u)|+1)$ steps.
+
+**Proof.** Split according to whether parsing $x$ fails or returns a formula. If parsing fails, the malformed-input result (`Complexity.taut_machine_malformed`) gives output true in $2|x|+3$ steps. The computation-time monotonicity fact (`Turing.FinTM.ComputesInTime.mono`) extends this to the stated bound, using the pair-encoding length formula (`Turing.universal_pair_length`); failed parsing decodes to the fallback formula, whose DNF value is false, so the output is the required negation. If parsing returns $\varphi$, the representation theorem (`Std.Sat.CNF.parse_repr`) identifies $x$ with the serialization of $\varphi$. Each literal index in $\varphi$ is bounded by its variable count (`Complexity.taut_literal_lt`), and the decoded-variable-count bound (`Std.Sat.CNF.numVars_decode_le`), together with `Std.Sat.CNF.decode_serialize`, places that count below $|u|$. Parsing a serialization succeeds (`Std.Sat.CNF.parse_serialize`), so the evaluation-start result (`Complexity.taut_evaluation_start`) brings the machine from its initial configuration to formula evaluation. The serialized-formula result (`Complexity.taut_formula_run`) then halts with the negation of the DNF value of $\varphi$. Concatenate these runs using `Turing.MultiTapeTM.runFrom_add` and characterize the resulting computation by `Turing.FinTM.computesInTime_iff`. Finally, serialization decodes back to $\varphi$ at the DNF level (`Std.Sat.DNF.decode_cnf_serialize`), and the two time bounds fit the required total by the pair-encoding length formula.
+
+**Key facts.** `Complexity.taut_machine_malformed`, `Turing.FinTM.ComputesInTime.mono`, `Turing.universal_pair_length`, `Std.Sat.CNF.parse_repr`, `Complexity.taut_literal_lt`, `Std.Sat.CNF.numVars_decode_le`, `Std.Sat.CNF.decode_serialize`, `Std.Sat.CNF.parse_serialize`, `Complexity.taut_evaluation_start`, `Complexity.taut_formula_run`, `Turing.MultiTapeTM.runFrom_add`, `Turing.FinTM.computesInTime_iff`, `Std.Sat.DNF.decode_cnf_serialize`.

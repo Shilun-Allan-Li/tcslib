@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_budget_start",
+ "key": "e070dd2b3c46ff4b",
+ "kind": "lemma",
+ "title": "Rewind to the budget origin",
+ "statement": "Let $W$ be a finite Turing machine over Boolean symbols, let $a\\in\\mathbb{N}$, and let $x$ be a finite schedule-alphabet word. For any base configuration on $x$, input-head position, integers $u,g$, Boolean word $w$, and unary-counter and guide tapes, starting in budget-start phase with the budget head at $|w|+1$ over the captured clock tape for $w$, after exactly $|w|+2$ steps the machine is in append phase with counter $0$ and budget head at cell $1$; the base data, input-head position, unary tape and head, guide tape and head, and captured clock tape are unchanged.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine W",
+  "natural parameter a",
+  "schedule input x and base configuration",
+  "input-head position p",
+  "integers u and g",
+  "Boolean word w",
+  "unary and guide tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From a setup configuration in the budget-start phase with budget head at cell $|w|+1$\n(one cell beyond the captured clock tape of the bit word $w$), exactly $|w|+2$ steps\nreach the first append phase with budget head at cell $1$; the cost depends only on the\nwidth of $w$, not on its bits, and all tapes and all other heads are unchanged."
+}

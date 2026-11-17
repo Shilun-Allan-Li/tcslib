@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.timedPrefix_write",
+ "key": "6be17dce95f3ae57",
+ "kind": "lemma",
+ "title": "Clock-Bit Writing Step",
+ "statement": "Let $b_s,\\alpha,x,$ and $c$ be finite Boolean strings, let $b$ be a bit, and let $p$ be a natural number with $p<|\\langle\\langle b_s,\\alpha\\rangle,x\\rangle|$. When the prefix parser is in the fourth clock phase for $b$, with input head at position $p+1$, clock string $c$, and empty output, one step advances the input head to position $p+2$, appends $b$ to the clock string, returns to the first clock phase, and leaves the output empty.",
+ "hypotheses_covered": [
+  "Boolean strings $b_s,\\alpha,x,c$",
+  "A bit $b$",
+  "A natural number $p$ strictly less than $|\\langle\\langle b_s,\\alpha\\rangle,x\\rangle|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In the fourth phase of a clock bit $b$, one step of the prefix parser advances\nthe input head one cell and appends the single bit $b$ to the clock string\nstored on its work tape, returning to the first clock phase with no output."
+}

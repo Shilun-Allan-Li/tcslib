@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.splitSafe_one",
+ "key": "fdbd00de3f01766d",
+ "kind": "lemma",
+ "title": "A single anchor-free step",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $a$ be a control state, and let $c,d$ be configurations. If one step of $M$ carries $c$ to $d$ and neither configuration has state $a$, then the run from $c$ after one step is $d$ and avoids $a$ at times $0$ and $1$.",
+ "hypotheses_covered": [
+  "Boolean multi-tape machine $M$",
+  "anchor state $a$",
+  "configurations $c,d$",
+  "one step of $M$ carries $c$ to $d$",
+  "$c$ is not in state $a$",
+  "$d$ is not in state $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If one machine step carries $c$ to $d$ and neither $c$ nor $d$ is in the\nanchor state, then the one-step run from $c$ ends at $d$ and is anchor-free."
+}

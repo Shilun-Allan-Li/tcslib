@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clPrepare_first",
+ "key": "b866944203da43c7",
+ "kind": "lemma",
+ "title": "First Arrival at the Prepared Configuration",
+ "statement": "Let $l,W\\in\\mathbb{N}$, let $w_0,\\ldots,w_{l-1}$ be Boolean words of length at most $W$, and let $\\mathrm{tail}$ be any Boolean word; let $x$ be the packed encoding of the row followed by the trailer. There is a time $t\\le 2|x|+3+l(3W+7)$ with $t>0$ such that the preparation machine started on $x$ has the specified loading configuration at time $t$, and at every earlier time $j<t$ its state is not the loader's final-counter entry state.",
+ "hypotheses_covered": [
+  "Natural numbers $l,W$",
+  "A family of $l$ Boolean words, each of length at most $W$",
+  "An arbitrary Boolean trailer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every row of field words of length at most $W$ and trailer, there is a strictly positive time, within the preparation ledger $2|x| + 3 + l(3W+7)$, at which the preparation machine first reaches the prepared seam with all fields parsed; native input copying and the dispatch ensure positivity even with zero fields."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Codec.pm_run",
+ "key": "420345840bb3fd7a",
+ "kind": "theorem",
+ "title": "Simulation of a head movement",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input alphabet, let $y$ be a finite Boolean word, and let $I$ be a simulated state together with the recorded head and tape information. For Boolean flags $b,f$, define the register bound $B=(8W_N+8)(|y|+1)$, and let $R$ be a register file in which every register is at most $B$, with $1\\le R.N1$, $R.Pos\\le R.N1$, and $R.N1+1\\le B$. In step mode, the program reaches its next phase with register file unchanged; that phase is selected according as moving the input head from position $R.Pos$, with boundary parameter $R.N1-1$ and movement prescribed by $I$ and $b$, yields position $R.Pos2$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$y$ is a finite Boolean word",
+  "$I$ is a simulated state together with recorded head and tape information",
+  "$b$ and $f$ are Boolean flags",
+  "Every register of $R$ is at most $(8W_N+8)(|y|+1)$",
+  "$1\\le R.N1$",
+  "$R.Pos\\le R.N1$",
+  "$R.N1+1\\le (8W_N+8)(|y|+1)$"
+ ],
+ "confidence": "low",
+ "caveat": "The reachability predicate includes the execution guard requiring the intermediate configurations to satisfy the program's precondition and register bound; its explicit operational definitions are not included in the supplied vocabulary.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

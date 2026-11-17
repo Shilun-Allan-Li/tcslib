@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.enumCont_body_round_guarded",
+ "key": "7e61d99b518c7ebb",
+ "kind": "lemma",
+ "title": "Guarded body round",
+ "statement": "Let $B$ be a finite Boolean Turing machine with at least one work tape, let $q_v,q_i$ be states of $B$, and let $x,s$ be Boolean words. Suppose that from the seam configuration on input $x$ with state $q_v$ and word assignment placing $s$ on tape zero, $B$ halts within $T_v$ steps with output $[b]$, and from the corresponding configuration with state $q_i$, it halts within $T_i$ steps with output equal to the fixed-width increment of $s$, using the empty word if that increment overflows. Then there is an integer $t$ with $0<t\\le 3T_v+3T_i+2|x|+3|s|+22$ such that, in the body machine with stopped flag false started at its anchor on the seam carrying $s$, no strictly intermediate positive-time configuration is at the anchor; at time $t$, if $b$ is true the machine is halted with output $[\\mathrm{true}]$, and if $b$ is false it is at the anchor on the seam carrying the increment of $s$, with $s$ itself used when the increment overflows.",
+ "hypotheses_covered": [
+  "$B$ is a finite Boolean Turing machine",
+  "$B$ has at least one work tape",
+  "$q_v,q_i$ are states of $B$",
+  "$x,s$ are Boolean words",
+  "$b$ is a Boolean",
+  "$T_v,T_i$ are natural-number time bounds",
+  "the verification run from the seam with state $q_v$ halts at time $T_v$ and outputs $[b]$",
+  "the increment run from the seam with state $q_i$ halts at time $T_i$ and outputs the fixed-width increment of $s$, or the empty word on overflow"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $B$ be a source machine with at least one work tape whose verification call\non candidate $s$ halts within $T_v$ steps with single-bit verdict $b$, and whose\nincrement call halts within $T_i$ steps emitting the fixed-width increment\noutput. Then there is a time $t$ with\n$0 < t \\le 3T_v + 3T_i + 2|x| + 3|s| + 22$ such that the active enumerator body,\nstarted at the anchor over the seam with candidate $s$, does not visit the\nanchor at any strictly intermediate positive time, and at time $t$ either halts\nwith output true (when $b$ is true) or stands at the anchor over the seam\ncarrying the stalled increment of $s$ (when $b$ is false)."
+}

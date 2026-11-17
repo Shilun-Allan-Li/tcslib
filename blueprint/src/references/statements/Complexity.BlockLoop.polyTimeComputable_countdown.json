@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.BlockLoop.polyTimeComputable_countdown",
+ "key": "d9b273fa7ed9f696",
+ "kind": "theorem",
+ "title": "Polynomial time for countdown output",
+ "statement": "Let $g,e,x,r,f$ be functions on bit strings, with $g$ the block-loop step determined by $\\mathrm{upd},\\mathrm{nxt}$ and $e$ the corresponding output function determined by $\\mathrm{out}$. Fix a bit string $h_0$ and natural numbers $a',k',c$. Suppose the functions $s\\mapsto\\mathrm{upd}(\\pi_1(s),\\pi_2(\\pi_2(s)))$, $s\\mapsto\\mathrm{nxt}(\\pi_1(s),\\pi_2(\\pi_2(s)))$, $\\mathrm{out}$, $x$, and $r$ are polynomial-time computable, where $\\pi_1,\\pi_2$ are the total projections from the self-delimiting pair parser. Suppose also that for every nonempty bit string $h$ and every bit string $q$, $2|\\mathrm{upd}(h,q)|+|\\mathrm{nxt}(h,q)|\\le 2|h|+|q|+2+c$. If, for every bit string $z$, concatenating the outputs $e(g^{[i]}(\\langle h_0,\\langle 1^{a'(|x(z)|+1)^{k'}},r(z)\\rangle\\rangle))$ over all integers $i$ with $0\\le i<a'(|x(z)|+1)^{k'}+1$ gives $f(z)$, then $f$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$g,e,x,r,f$ are bit-string functions",
+  "$g$ is the step determined by $\\mathrm{upd},\\mathrm{nxt}$",
+  "$e$ is the output function determined by $\\mathrm{out}$",
+  "$h_0$ is a bit string",
+  "$a',k',c$ are natural numbers",
+  "The parsed-update function is polynomial-time computable",
+  "The parsed-next function is polynomial-time computable",
+  "$\\mathrm{out}$, $x$, and $r$ are polynomial-time computable",
+  "The stated length-growth inequality holds for every nonempty $h$ and every $q$",
+  "The specified finite concatenation equals $f(z)$ for every $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

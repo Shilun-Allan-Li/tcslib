@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.universal_skip_unary",
+ "key": "b8845d83d6e12e93",
+ "kind": "lemma",
+ "title": "Exact-Cost Skip of a Unary Field",
+ "statement": "Let $x$ be a Boolean input string, $b$ a four-tape interpreter configuration on $x$, $d$ a destination control index or no destination, $r$ a remaining-record count from $0$ through $8$, and $T$ a table decomposed as $T=l1^n0r'$. Starting in the unary-skipping phase with registers $d,r$, table cursor $|l|$, state tape $\\sigma$, and state cursor $s$, after $n+1$ interpreter steps the cursor is $|l|+n+1$ and the control is the continuation for $d$ if $r=0$, or the fixed-field skipping phase with count $r-1$ and field index $0$ otherwise; the state tape and cursor are unchanged.",
+ "hypotheses_covered": [
+  "Boolean input string $x$",
+  "Base configuration $b$ of the four-tape interpreter on $x$",
+  "Destination $d$ is an optional index from $0$ through $8$",
+  "Remaining-record count $r$ is an index from $0$ through $8$",
+  "Table $T$ and state tape $\\sigma$ with state cursor $s$",
+  "Natural number $n$",
+  "Lists $l,r'$",
+  "Table decomposition $T=l++1^n++[0]++r'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table is $l \\cdot 1^n \\cdot 0 \\cdot r$.  From the table\ninterpreter's unary-skipping phase, carrying a destination and a count of\nremaining records in $\\{0, \\dots, 8\\}$, with table cursor $|l|$, exactly\n$n + 1$ interpreter steps advance the cursor to $|l| + n + 1$ and pass\ncontrol to the continuation after a skip request for the destination when\nthe remaining count is $0$, and to the fixed-field skipping phase with the\ncount decremented and a cleared field register otherwise; the state tape,\nstate cursor, and all other data are unchanged."
+}

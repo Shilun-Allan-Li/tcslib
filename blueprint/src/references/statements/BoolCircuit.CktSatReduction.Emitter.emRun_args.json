@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.CktSatReduction.Emitter.emRun_args",
+ "key": "e1ed0b6d61fc5561",
+ "kind": "theorem",
+ "title": "Emission while reading gate arguments",
+ "statement": "Let $k$ be one of the gate kinds AND, OR, or NOT, let $z\\in\\mathbb N$, and let $a_1,\\ldots,a_m\\in\\mathbb N$ with $0\\le m\\le 2$. Encode each natural number $a$ as $1^a0$, and encode the list $(a_1,\\ldots,a_m)$ recursively by encoding the empty list as $0$ and a nonempty list $(a,a_2,\\ldots,a_m)$ as $1$ followed by the encoding of $a$ and then the encoding of the remaining list. For every Boolean string $r$, an emitter started in its argument-reading phase for gate kind $k$, with output index $z$ and both argument counters zero, reads this list encoding followed by $r$ and emits the serialized Tseitin formula for the gate with kind $k$, arguments $(a_1,\\ldots,a_m)$, and output index $z$, followed by the output of an emitter started in its gate phase with output index $z+1$, both argument counters zero, and input $r$. Here a literal $(v,b)$ is serialized as $1^{v+1}0b$, a clause as the concatenation of its literal serializations followed by $0$, and a formula as, for each clause in order, $1$ followed by that clause’s serialization.",
+ "hypotheses_covered": [
+  "Gate kind is AND, OR, or NOT",
+  "Output index $z$ is a natural number",
+  "Argument list contains natural numbers and has length at most two",
+  "Remainder $r$ is a Boolean string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

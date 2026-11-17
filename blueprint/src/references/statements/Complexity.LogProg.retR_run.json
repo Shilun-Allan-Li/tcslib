@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.retR_run",
+ "key": "846ac51697c198ca",
+ "kind": "lemma",
+ "title": "Restoring a register head",
+ "statement": "Let $P$ be a register program with $m$ registers and $d$ deciders, let $D$ be a Boolean multi-tape Turing machine with $k_D$ work tapes, and let $x$ be a Boolean input. Suppose node $l$ has call specification $cs$, and the register selected by argument position $a$ is $rr$. Let register $rr$ contain the finite word $w$ according to the buffer-tape convention. Assume its initial head position lies between $-1$ and $|w|$, inclusive; if it is at $-1$, assume the target lies to the left, and if it is at $|w|$, assume the target lies to the right. Starting in the non-scanning register-return phase for argument position $a$, there is a time $T$ at which the machine has advanced to the return successor for argument position $a+1$, with the head of register $rr$ at zero and all other register head positions unchanged. At every time $t\\le T$, each register head either remains at its initial position or, for register $rr$, lies between $-1$ and the maximum of its initial position and $0$; the decider tape head positions remain unchanged throughout.",
+ "hypotheses_covered": [
+  "$P,l_0,D,q_0$ are fixed; $x$ is a Boolean input",
+  "$P.call(l)=some\\ cs$",
+  "$s\\in Fin(m+1)$ and $dir,b$ are Boolean values",
+  "$a,rr\\in Fin(m)$ and $cs.args.getD(a,a)=rr$",
+  "$w$ is a Boolean word; register $rr$ contains its buffer tape",
+  "$rt,dt,dp,out,ip,rp$ are supplied register and decider tapes, head positions, output, input-head position, and register head positions",
+  "$-1\\le rp(rr)\\le |w|$",
+  "If $rp(rr)=-1$, the target is to the left; if $rp(rr)=|w|$, the target is to the right"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

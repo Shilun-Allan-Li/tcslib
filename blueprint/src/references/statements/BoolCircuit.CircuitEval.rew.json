@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.rew",
+ "key": "6e97aa73fbec65a5",
+ "kind": "theorem",
+ "title": "Erasing a finite tape segment",
+ "statement": "Let $z$ be a Boolean word, let $q$ and $d$ be machine states, and choose one of the two work tapes, indexed by $k$. Suppose that for every input symbol and every pair of scanned work-tape symbols, the transition in state $q$ leaves the input head, output, and tapes unchanged, moves both work heads left when tape $k$ is occupied, and moves both right and enters state $d$ when tape $k$ is blank. If tape $k$ is occupied at every integer cell $c$ with $0\\le c<h_0$, and blank at cell $-1$, then starting with both work heads at $h_0-1$ in state $q$, after $h_0+1$ steps the machine is in state $d$ with both work heads at zero; the input position, tapes, and output are unchanged. This holds for every natural number $h_0$ and either setting of the exactness parameter.",
+ "hypotheses_covered": [
+  "$z$ is a Boolean word",
+  "$q,d$ are machine states",
+  "$k$ is one of the two work-tape indices",
+  "the transition-function condition holds for every input symbol and scanned-tape tuple",
+  "tape $k$ is occupied at every natural-number cell below $h_0$",
+  "tape $k$ is blank at cell $-1$",
+  "$h_0\\in\\mathbb N$",
+  "the exactness parameter is Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

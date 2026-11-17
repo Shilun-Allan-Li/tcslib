@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.synStep",
+ "key": "21d10fd6db7527a7",
+ "kind": "def",
+ "title": "Syntax automaton transition",
+ "statement": "Define a transition on syntax states for each input bit. From the optional-value component, an unrecorded bit is stored; after a stored false, a false clears the stored value and a true enters state $0$; after a stored true, a true clears it and a false enters state $5$. From one of the six finite states, apply the six-state transition: from state $0$, move to $1$ on $1$ and to $4$ on $0$; from state $1$, move to $2$ on $1$ and to $0$ on $0$; from state $2$, move to $2$ on $1$ and to $3$ on $0$; from state $3$, move to $1$ on either bit; and from states $4$ or $5$, move to state $5$ on either bit.",
+ "hypotheses_covered": [
+  "Input syntax state",
+  "Input bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

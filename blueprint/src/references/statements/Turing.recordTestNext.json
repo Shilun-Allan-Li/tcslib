@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.recordTestNext",
+ "key": "3e4c863390620af2",
+ "kind": "def",
+ "title": "Successor map for record tests",
+ "statement": "For a natural number $k$, a type $Q$, and a record-test index, define a partial successor map from its assigned phase type to a record-test index and its phase. A completed state scan moves to the forward index carrying the scanned optional state and $j=0$. A completed forward scan increments $j$ while $j+1<k+2$, and otherwise moves to the tag index carrying the same state and begins its forward scan; a completed tag scan moves to the backward index carrying the scanned Boolean and $j=k+1$. A completed backward phase decrements $j$ while $j\\ne0$, and at $j=0$ moves to the verdict index with the same Boolean. All other state, forward, tag, and backward phases have no successor, and verdict indices have no successor in any phase.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$Q$ is a type",
+  "The input is a record-test index with the bounds and parameters specified by its constructor"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

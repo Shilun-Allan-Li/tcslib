@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.enumAny_iff",
+ "key": "fd26043064e1351d",
+ "kind": "lemma",
+ "title": "Characterization of a Consecutive Rank Test",
+ "statement": "Given any Boolean acceptance function $a$ on $\\mathbb{N}$ and natural numbers $i$ and $\\mathrm{count}$, the test of the $\\mathrm{count}$ consecutive ranks starting at $i$ returns true if and only if there is a rank $j$ with $i\\le j<i+\\mathrm{count}$ and $a(j)=\\mathrm{true}$.",
+ "hypotheses_covered": [
+  "$a:\\mathbb{N}\\to\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "$i,\\mathrm{count}\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Testing $\\mathrm{count}$ consecutive ranks starting at $i$ against an acceptance\nfunction returns true if and only if some rank $j$ with\n$i \\le j < i + \\mathrm{count}$ accepts."
+}

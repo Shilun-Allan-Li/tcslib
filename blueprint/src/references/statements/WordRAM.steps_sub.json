@@ -1,0 +1,16 @@
+{
+ "lean_name": "WordRAM.steps_sub",
+ "key": "b6f676672e23391c",
+ "kind": "theorem",
+ "title": "One subtraction step",
+ "statement": "Let $W$ be a word width, let $P$ be a program, and let $m:\\mathbb{Z}\\to\\{0,1\\}^W$ be a memory. Suppose the program beginning at position $p$ has a prefix whose first instruction is subtraction of the contents of registers $j$ and $k$ into register $i$, and suppose $m(j)$ and $m(k)$ are the $W$-bit encodings of integers $a$ and $b$. Then one step from position $p$ yields position $p+1$ and memory obtained by replacing register $i$ with the $W$-bit encoding of $a-b$.",
+ "hypotheses_covered": [
+  "The program at position $p$ begins with the specified subtraction instruction",
+  "Register $j$ contains the $W$-bit encoding of $a$",
+  "Register $k$ contains the $W$-bit encoding of $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

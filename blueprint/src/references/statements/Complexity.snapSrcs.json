@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.snapSrcs",
+ "key": "93be93c8eb4fa21a",
+ "kind": "def",
+ "title": "Snapshot source list",
+ "statement": "Let $M$ be a finite Turing machine with Boolean symbols, let $\\ell$ be a finite list of bit sources, and let $T,t$ be natural numbers. The source list at time $t$ is, in order, the constant indicating whether $t=0$; the constant false if $t=0$, and otherwise bit $\\mathrm{snapWidth}(M)$ of the snapshot block at time $t-1$; bits $1$ and $2$ of the input block indexed by $M,\\ell,T,t$ and $|\\ell|+1$; for each of the $k$ machine states, in order, bits $3$ and $4$ of the cell block indexed by $M,\\ell,T,t$, that state, and $2T$; and the previous-snapshot sources at time $t$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine with Boolean symbols",
+  "$\\ell$ is a finite list of bit sources",
+  "$T$ is a natural number",
+  "$t$ is a natural number"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied material does not define the snapshot-width, index, or previous-snapshot-source constructions, so their meanings cannot be rendered more explicitly from the given information.",
+ "rubric": [
+  "anaphora",
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

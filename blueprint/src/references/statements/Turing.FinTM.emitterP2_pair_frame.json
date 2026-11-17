@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_pair_frame",
+ "key": "716323d678469fc8",
+ "kind": "lemma",
+ "title": "Embedded Comparator Configuration",
+ "statement": "Let $k,l$ be positive natural numbers, let $H$ be a type, choose a state map $e:\\text{Fin}(3)\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to H$, Boolean words $w,s,u,v$, a phase $q\\in\\text{Fin}(3)$, and a bit $b$. Embedding the comparator configuration on input $w$, with words $u,v$, both work heads at the origin, and state $(q,b)$ into the two designated host slots, using the prescribed background layout on all other tapes, then applying $e$ to its state, gives the canonical host configuration with state $e(q)$ and layout consisting of candidate $s$, word $u$ in the first bank's designated tape, and word $v$ in the second bank's designated tape.",
+ "hypotheses_covered": [
+  "Natural numbers $k,l$ with $0<k$ and $0<l$",
+  "Type $H$",
+  "State map $e:\\text{Fin}(3)\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to H$",
+  "Boolean words $w,s,u,v$",
+  "Phase $q\\in\\text{Fin}(3)$",
+  "Bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Relocating a comparator configuration at zero displacement through the\ncomparator-pair selection yields the host's canonical configuration whose\nlayout holds the two whole compared words together with the unchanged\ncandidate, every module scratch tape being blank."
+}

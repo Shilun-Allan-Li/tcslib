@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.ClockHost.p0_marks",
+ "key": "c46330ef6ce05ff7",
+ "kind": "theorem",
+ "title": "Run during the first leftward reset sweep",
+ "statement": "Let $S$ be a deterministic machine, $A$ a nondeterministic machine, and $x$ a Boolean input word; let $m\\in\\mathbb N$, choose an input-head position and work-tape contents and head positions for both machines, and let $w$ be a Boolean choice word of length at most $m$. If the yard-tape head starts at $z=|w|-1$, then running the host machine from phase $p0$ under $w$ leaves it in phase $p0$, with input-head position given by $|w|$ clamped left moves from its starting position, each of $A$’s work-tape heads advanced by $|w|$, the yard-tape head at $-1$, and the other listed tape data and output unchanged.",
+ "hypotheses_covered": [
+  "$S$ is a deterministic machine over Boolean symbols",
+  "$A$ is a nondeterministic machine over Boolean symbols",
+  "$x$ is a Boolean input word",
+  "$m\\in\\mathbb N$",
+  "$ip$ is an input-head position for $x$",
+  "$sT$ and $aT$ specify Boolean work-tape contents for $S$ and $A$",
+  "$sP$ and $aP$ specify integer work-tape head positions for $S$ and $A$",
+  "$w$ is a Boolean word with length at most $m$",
+  "$z\\in\\mathbb Z$ and $z=|w|-1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

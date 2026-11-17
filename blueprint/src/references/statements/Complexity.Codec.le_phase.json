@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Codec.le_phase",
+ "key": "643b112181831127",
+ "kind": "theorem",
+ "title": "Comparison phase outcome",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input, let $y$ be a bit string, and let $R$ be a vector of 21 natural-number registers whose values are all at most $(8W(N)+8)(|y|+1)$. Suppose register $T$ has value $0$. If the value of register $\\mathrm{Pos}$ is at most that of register $N_1$, the constructed register machine reaches its designated next phase—$E2$ in step mode and the clearing phase otherwise—without changing the register valuation, while satisfying the bound and the machine's precondition throughout. If $\\mathrm{Pos}>N_1$, it instead halts with answer $0$, also satisfying those conditions throughout its run.",
+ "hypotheses_covered": [
+  "N is a finite nondeterministic Turing machine with Boolean input",
+  "y is a bit string",
+  "R is a register vector",
+  "all 21 registers of R are bounded by (8W(N)+8)(|y|+1)",
+  "R.T = 0",
+  "mode is one of valid, init, accept, or step"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.NHalts.choose",
+ "key": "bd049442188d2ba7",
+ "kind": "lemma",
+ "title": "Halting after a nondeterministic choice",
+ "statement": "Let $A$ be a nondeterministic register program, with fixed oracle, input, and configuration predicate $G$. Suppose its instruction at state $l$ chooses between states $l_1$ and $l_0$. If the current configuration $(l,v,r)$ satisfies $G$, and every choice word of length $N$ from each of $(l_1,v,r)$ and $(l_0,v,r)$ leads to a halted configuration while all its earlier nonhalted configurations satisfy $G$, then every choice word of length $N+1$ from $(l,v,r)$ has those same halting and intermediate-configuration properties.",
+ "hypotheses_covered": [
+  "A nondeterministic register program $A$, oracle, input, and predicate $G$",
+  "States $l,l_1,l_0$ with the instruction at $l$ choosing between $l_1$ and $l_0$",
+  "A register valuation $v$, result value $r$, and natural number $N$",
+  "$G$ holds of the configuration $(l,v,r)$",
+  "The length-$N$ halting and intermediate-$G$ property holds from both successor configurations"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

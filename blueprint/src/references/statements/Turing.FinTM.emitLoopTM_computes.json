@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.FinTM.emitLoopTM_computes",
+ "key": "ea4ed1330b125362",
+ "kind": "theorem",
+ "title": "Correctness and running time of the emitting loop",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines and let $a$ be a state of $B$. Let $I$ be a relation on pairs of Boolean words, let $g,h$ be functions on pairs of Boolean words, and let $s_0$ and $R,T$ be functions as follows: $g(x,s)$ is the next round word, $h(x,s)$ is the output of a round, and $s_0(x)$ is the initial round word. Suppose $F$ computes the function $x\\mapsto \\operatorname{bits}(R(|x|))$ within time $T$, $I(x,s_0(x))$ holds for every $x$, and $I(x,s)$ implies $I(x,g(x,s))$. Assume that for each input $x$, the run of $B$ from its initial configuration reaches the seam at state $a$ with word $s_0(x)$ within $T(|x|)$ steps, without visiting $a$ at any earlier time. Also assume that whenever $I(x,s)$ holds, there is a positive duration at most $T(|x|)$ in which $B$, started at the seam with word $s$, avoids $a$ at all strictly intermediate positive times and ends at the seam with word $g(x,s)$ and output $h(x,s)$. Then the emitting loop machine computes, on every input $x$, the concatenation of the $R(|x|)+1$ round outputs $h(x,g_x^{[i]}(s_0(x)))$ for $0\\le i\\le R(|x|)$, within time $10(T(|x|)+1)(R(|x|)+2)$, where $g_x(s)=g(x,s)$ and $g_x^{[i]}$ denotes $i$-fold iteration.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$ and anchor state $a$",
+  "Invariant relation $I$",
+  "Round update and output functions $g,h$",
+  "Initial-word function $s_0$ and bounds $R,T$",
+  "Fuel machine computes $x\\mapsto\\operatorname{bits}(R(|x|))$ within time $T$",
+  "Initial invariant holds for every input",
+  "Invariant is preserved by each round update",
+  "Initial run reaches the specified seam within $T(|x|)$ steps without an earlier visit to $a$",
+  "Each invariant round has a positive duration at most $T(|x|)$",
+  "Each round avoids $a$ at strictly intermediate positive times",
+  "Each round ends at the updated seam with its prescribed output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

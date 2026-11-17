@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Codec.one_run",
+ "key": "bf9407152f28cde7",
+ "kind": "theorem",
+ "title": "Initial execution of the codec program",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine with Boolean input and let $\\mathrm{mode}$ be one of the codec modes other than the step mode. For every bit string $y$, at least one of the following holds. Either there are bit strings $x,w$ and a natural number $s$ such that $y=\\langle x,\\langle w,\\mathrm{bits}(s)\\rangle\\rangle$, $|\\mathrm{bits}(s)|\\leq |\\mathrm{bits}(|y|)|$, and, writing $W$ for the chunk width, $w$ has length $W(2s+1)+|\\mathrm{bits}(|x|)|+1$, has a $1$ at position $W(2s+1)+|\\mathrm{bits}(|x|)|$, and the value of the following $|\\mathrm{bits}(|x|)|$ bits is at most $|x|+1$; moreover there are a scan state $st$ and register values $R$ such that $st$ is the scan of the first $W(2s+1)$ bits of $w$, every register of $R$ is at most $(8W+8)(|y|+1)$, and $R_A=2|x|+2$, $R_S=s$, $R_T=0$, and $R_{Pos}$ is the value of those following bits. The codec register program, started at its length-scan label with all registers zero and run with its two membership oracles on input $y$, can reach its completion label with state $st$ and registers $R$, while throughout the run its configuration satisfies the program’s precondition and every register remains at most $(8W+8)(|y|+1)$. Or else every representation $y=\\langle x,\\langle w,\\mathrm{bits}(s)\\rangle\\rangle$ satisfying the stated bit-length bound fails the stated length, marker-bit, or payload-value checks, and the same program, from the same initial configuration and under the same register bound and precondition, halts with answer false.",
+ "hypotheses_covered": [
+  "$N$ is a finite-state nondeterministic Turing machine on Boolean input",
+  "$\\mathrm{mode}$ is not the step mode",
+  "$y$ is an arbitrary finite bit string"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on specialized scan-state, register-program, oracle, and guarded-reachability constructions; the prose spells out the claimed conditions, but these constructions are unusually technical.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

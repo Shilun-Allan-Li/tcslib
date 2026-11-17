@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.recordStep_read_prefix",
+ "key": "bfcc731d0621b4f2",
+ "kind": "theorem",
+ "title": "Reading a Recorded Prefix",
+ "statement": "Let $M$ be a $k$-work-tape Turing machine on Boolean symbols with state set $Q$, let $T$ be a tag set, let $u:T\\times\\{\\text{blank},0,1\\}\\to T$ be a tag update rule, and let $S$ be the state set of a two-work-tape seeking machine with designated states $s_0,s_1$. For a Boolean input $x$, configuration $c$ of $M$ on $x$, tag $\\tau\\in T$, and four-work-tape record-alphabet configuration $d$, suppose the control of $d$ is the entry control and tape $0$ of $d$ agrees, at every offset from $-1$ through the joined-record length, with the field encoding of $c$ and $\\tau$; suppose also that all other work tapes of $d$ are blank. If $w$ is the binary-digit encoding of the input-head position of $c$, the record-processing machine has a run of exactly $6|w|+17$ steps from $d$ to the snapshot whose control is at the position-skip stage, whose position-field head is shifted by $2$, and whose two buffers both contain $w$. Before the final step the run visits neither verdict state, and every work-tape head remains within distance $L+1$ of its initial position, where $L$ is the length of the joined field encoding.",
+ "hypotheses_covered": [
+  "M is a k-work-tape Boolean Turing machine",
+  "u is a tag update rule",
+  "seek is a two-work-tape machine with designated start and finish states",
+  "x is a Boolean input; c is a configuration on x; τ is a tag",
+  "d is a four-work-tape record-alphabet configuration with entry control",
+  "tape 0 of d satisfies RecordAt for cfgRecord(s,c,τ)",
+  "every other work tape of d is blank"
+ ],
+ "confidence": "low",
+ "caveat": "The statement uses the record encoding, entry control, and snapshot constructions defined in the formal snippet; the parameter s is implicit in the record hypothesis.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

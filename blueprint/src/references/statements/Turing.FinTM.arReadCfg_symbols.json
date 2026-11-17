@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.arReadCfg_symbols",
+ "key": "f7aa17c5b08b15fd",
+ "kind": "lemma",
+ "title": "Symbols scanned during the read sweep",
+ "statement": "Let $\\Gamma$ be an alphabet, let $E$ inject the symbols of $\\Gamma$ together with blank into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into $\\Gamma$. For a binary input $x$, a configuration $c$ on the letterwise $e$-image of $x$, a state $q$, and a valid counter $j<N+1$, the symbol scanned on each work tape $i$ in the read-sweep configuration at counter $j$ is the entry at offset $j$ in the block code of the symbol scanned on tape $i$ by $c$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is an alphabet",
+  "$E$ is an embedding of symbols and blank into blocks of $N+1$ optional bits",
+  "$e$ embeds the binary alphabet into $\\Gamma$",
+  "$x$ is a binary input",
+  "$c$ is a configuration on the letterwise $e$-image of $x$",
+  "$q$ is a state",
+  "$j$ is a valid counter with $j<N+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a counter $j \\le N$, the work-tape symbols scanned by the read-sweep configuration\nof a source configuration $c$ at counter $j$ are, on each tape $i$, the entry at offset\n$j$ of the code of the symbol scanned by $c$ on tape $i$."
+}

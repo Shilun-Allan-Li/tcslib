@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/CodeSimulator.lean :: Turing.MachineFormat.canonPreserveInstall -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Installing a computed function at a tape seam
+
+**Claim.** A machine computing $f$ can be incorporated into a finite Boolean machine that, on input $x$ and with $\mathrm{arg}$ initially on tape $0$, installs $f(\mathrm{arg})$ on tape $1$ within a constant multiple of the computation, input, and output lengths, with a first arrival at its exit state.
+
+**Proof.** First obtain the strict installation machine from `canonStrictInstall`: it has an entry and exit state, uses at least one work tape, computes the required result within the stated bound, and does not reach its exit state early. The construction adds a fresh tape as destination. It first runs a copy machine that transfers the argument from tape $0$ to this destination, leaving tape $0$ as the input to the computation; the copy takes at most $3|\mathrm{arg}|+3$ steps and first reaches its completion state at the end (`copyTM_run`). The embedded computation machine then runs on its original tapes, with the destination tape carried along unchanged. The tape embedding preserves the run step by step (`embedEmitTM_runFrom`), and the word correspondence between embedded tapes and the original machine's tapes is exactly the configuration identification supplied by `canonEmbedWords`. Thus, after the computation, the destination contains $f(\mathrm{arg})$, and the other tapes agree with the desired installed assignment. The seam composition runs the copy phase until its completion state, takes one transition to enter the computation phase, and then follows that phase (`seamCompTM_run_ofCfg`). Its first-arrival property follows from the corresponding first-return result for seam composition (`seamCompTM_firstReturn_ofCfg`), using that the computation phase itself does not reach its exit early. Finally, the copy bound plus the computation bound is bounded by $(a+4)(T(|\mathrm{arg}|)+|\mathrm{arg}|+|f(\mathrm{arg})|+1)$; the input $x$ is untouched throughout.
+
+**Key facts.** `Turing.MachineFormat.canonStrictInstall`, `Turing.copyTM_run`, `Turing.MachineFormat.canonEmbedWords`, `Turing.embedEmitTM_runFrom`, `Turing.seamCompTM_run_ofCfg`, `Turing.seamCompTM_firstReturn_ofCfg`.

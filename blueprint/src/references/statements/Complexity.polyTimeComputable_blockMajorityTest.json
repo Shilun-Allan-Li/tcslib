@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_blockMajorityTest",
+ "key": "87e150c26139822c",
+ "kind": "theorem",
+ "title": "Polynomial-Time Block Majority Test",
+ "statement": "Let $V$ be a language of finite bit strings whose Boolean membership indicator, output as a one-bit word, is polynomial-time computable. For any $a,k,a',k'\\in\\mathbb{N}$, the following function is polynomial-time computable: on input $z$, let $x$ be the first component obtained by parsing $z$ as a pair (using the empty word if parsing fails), and test the first $N=a'(|x|+1)^{k'}$ blocks of length $a(|x|+1)^k$ in the parsed second component, treating an unavailable block as the empty word. The output is true exactly when strictly more than half of these $N$ blocks, paired with $x$, belong to $V$.",
+ "hypotheses_covered": [
+  "$V$ is a language of finite bit strings",
+  "The one-bit membership indicator of $V$ is polynomial-time computable",
+  "$a,k,a',k'\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

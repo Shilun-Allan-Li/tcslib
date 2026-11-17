@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.UTab.cellS_toBitSrc",
+ "key": "315f90b80cdfea5f",
+ "kind": "theorem",
+ "title": "Cell source translation",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet with $k$ work tapes, and let $N,T,t,r$ be natural numbers, $\tau$ a work-tape index, and $\rho$ an assignment of natural numbers to the eleven registers. Let $\u001b$ be a list of bit sources of length $N$. Suppose the instruction register gives the index of cell $(t,\tau,r)$, the preceding-cell register gives the index of cell $(t-1,\tau,r)$ whenever $t\\ne 0$, and the first-instruction register equals $t$ times the configuration stride. Then translating the cell source list for time $t$ and position $r$ through $\rho$ yields exactly the bit-source list for cell $(t,\\tau,r)$, with the specified constants and neighbor, current-cell, and snapshot sources in their prescribed order.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$N,T,t,r$ are natural numbers",
+  "$\u001b$ is a list of bit sources with length $N$",
+  "$\u001b$ is a work-tape index in $\\mathrm{Fin}(M.k)$",
+  "$\u001b$ assigns natural numbers to the eleven registers",
+  "The instruction register equals the index of cell $(t,\\tau,r)$",
+  "If $t\\ne0$, the preceding-cell register equals the index of cell $(t-1,\\tau,r)$",
+  "The first-instruction register equals $t$ times the configuration stride"
+ ],
+ "confidence": "low",
+ "caveat": "The register assignment, tape index, and source list were rendered with the same placeholder symbol due to a formatting issue; they are distinct objects, denoted respectively by $\\rho$, $\\tau$, and $\\ell$.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

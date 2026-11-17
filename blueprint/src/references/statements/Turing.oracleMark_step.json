@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.oracleMark_step",
+ "key": "c9bc444e1416866b",
+ "kind": "theorem",
+ "title": "Oracle bookmark marking step",
+ "statement": "Let $x$ be a Boolean word, let $f:\\bbz\\to\\mathrm{Option}(\\{0,1\\})$ be a tape content, let $p\\in\\bbz$ be nonzero, choose a Boolean side, an input-head position, and an output word. One step of the oracle-dispatch machine from the configuration in bookmark state with tape $0$ equal to $f$, its other tapes initialized as specified by the local configuration, and the first two tape heads at $p$, produces the marked configuration: its state is the corresponding origin state, tape $0$ remains $f$, tape $1$ has its origin marker updated at $p$ to false, tape $2$ has the side marker at cell $0$, the first two heads remain at $p$, and the remaining heads, input-head position, and output are as specified.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$f:\\bbz\\to\\mathrm{Option}(\\{0,1\\})$",
+  "$p\\ne0$",
+  "A Boolean side is given",
+  "An input-head position for $x$ is given",
+  "An output word is given"
+ ],
+ "confidence": "low",
+ "caveat": "The local and marked configurations are auxiliary encodings; the prose spells out their relevant tape and head contents.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

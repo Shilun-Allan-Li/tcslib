@@ -1,0 +1,30 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.count_run",
+ "key": "cf9e3f2654782f01",
+ "kind": "theorem",
+ "title": "Marked-Code Counting Run",
+ "statement": "Fix natural numbers $K_0,B,P$, an oracle $\\mathrm{orc}:\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and a finite bit string $x$. For a Boolean $\\varphi$, a natural number $j$, a register state $S$, and a memory function $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$, suppose that $S.K-S.U=j$ (with truncated natural-number subtraction), $S.U\\le S.K$, $S.T=S.T_2=S.Z=0$, and $S.c+(S.K-S.U)\\le S.K$. Suppose also that every register of $S$ is at most $B$, that $S.B_s+S.K\\le B$, $S.B_s+S.K\\le P$, and $S.K+1\\le B$. Then the machine has a finite run from the count-search configuration with registers $S$, memory $M$, and memory-head position $0$ to the branch for $\\varphi$, with $U=S.K$ and $c$ equal to its initial value plus the number of integers $v$ in $[S.U,S.K)$ for which $M(S.B_s+v)=\\mathrm{true}$. Every other register retains its initial value, and the safety guard holds at every configuration before the endpoint.",
+ "hypotheses_covered": [
+  "$K_0,B,P$ are natural numbers",
+  "$\\mathrm{orc}$ is an oracle from four query types and finite bit strings to Boolean answers",
+  "$x$ is a finite bit string",
+  "$\\varphi$ is Boolean",
+  "$j$ is a natural number",
+  "$S$ is a register state",
+  "$M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "$S.K-S.U=j$, with truncated natural-number subtraction",
+  "$S.U\\le S.K$",
+  "$S.T=S.T_2=S.Z=0$",
+  "$S.c+(S.K-S.U)\\le S.K$",
+  "Every register of $S$ is at most $B$",
+  "$S.B_s+S.K\\le B$",
+  "$S.B_s+S.K\\le P$",
+  "$S.K+1\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Fix a machine parameter $K_0$, an oracle, an input, and natural-number bounds $B$ and\n$P$. Let $varphi$ be a Boolean, $j$ a natural number, $S$ a register state, and $M$ a\nmemory function. Suppose $S.K-S.U=j$, $S.U\\leq S.K$, $S.T=S.T2=S.Z=0$, and\n$S.c+(S.K-S.U)\\leq S.K$, where subtraction is truncated subtraction on natural numbers.\nAssume also that every register in $S$ is at most $B$, that $S.Bs+S.K\\leq B$ and\n$S.Bs+S.K\\leq P$, and that $S.K+1\\leq B$. Starting from the count-search state with\nregisters $S$ and memory $M$ at head position $0$, the machine reaches the branch\ndetermined by $varphi$, with register $U$ equal to $S.K$ and register $c$ increased by\nthe number of indices $v$ in the half-open interval $[S.U,S.K)$ for which the memory bit\nat position $S.Bs+v$ is true; all other registers equal their values in $S$, and the run\nsatisfies the specified safety guard at every preceding step."
+}

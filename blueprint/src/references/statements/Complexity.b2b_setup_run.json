@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.b2b_setup_run",
+ "key": "6b9b026ba8706ed9",
+ "kind": "theorem",
+ "title": "Setup Run and Head Bound",
+ "statement": "Let $M_V$, $M_I$, and $M_P$ be Boolean Turing machines, let $x$ be a Boolean word, and let $Q,t,s$ be natural numbers. Suppose $M_P$ halts on $x$ after $t$ steps with output consisting of $Q$ true symbols, and uses at most $s$ work-tape cells by that time. Then the host machine built from these three machines reaches, at some time $T$, a configuration in its loop phase with the counter decrement phase active, input-head position $1$, and its first word tape storing $Q$ false symbols and its last tape storing $Q$ true symbols. At every time $u\\le T$, the absolute position of every work-tape head is at most $s+Q+1$.",
+ "hypotheses_covered": [
+  "$M_V$, $M_I$, and $M_P$ are Boolean finite-state Turing machines",
+  "$x$ is a Boolean word",
+  "$Q,t,s$ are natural numbers",
+  "$M_P$ halts on $x$ after $t$ steps with output $Q$ copies of true",
+  "$M_P$ uses at most $s$ work-tape cells by time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

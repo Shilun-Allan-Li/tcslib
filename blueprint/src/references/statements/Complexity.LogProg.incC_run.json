@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.incC_run",
+ "key": "3cd11984208dc0a9",
+ "kind": "lemma",
+ "title": "Run of the increment carry-in phase",
+ "statement": "Let $P$ be a register program with oracle, and suppose its transition at label $c_C$ is the carry-in action for incrementing register $r$, with the next state determined by the scanned bit; suppose also that $c_C$ is not an oracle-call label. For any configuration $c$ and Boolean words $w$ and $pre$, there are a time $T$ and an integer head position $p$ such that $-1\\le p<|pre\\mathbin{+\u001b}incW(w)|$, and the run from state $c_C$, with tape $pre\\mathbin{+\u001b}w$ and head at $|pre|$, reaches state $c_B$ with tape $pre\\mathbin{+\u001b}incW(w)$ and head at $p$. At every earlier time, the state is $c_C$, the tape is some word $f$, and the head position $q$ satisfies $|pre|\\le q\\le |pre\\mathbin{+\u001b}w|$.",
+ "hypotheses_covered": [
+  "Program $P$, its oracle, register $r$, labels $c_C$ and $c_B$",
+  "Transition at $c_C$ is the specified carry-in action",
+  "$c_C$ is not an oracle-call label",
+  "Configuration $c$",
+  "Arbitrary Boolean words $w$ and $pre$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

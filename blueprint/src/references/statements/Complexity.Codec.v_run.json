@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.Codec.v_run",
+ "key": "5fd479df5f280078",
+ "kind": "theorem",
+ "title": "Bounded Run of the Verifier",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, let the codec mode be fixed, and let $y,u,u'$ be finite Boolean words and $B\\in\\mathbb N$. Suppose $|u'|=|u|$, the starting verifier accumulator is $st$, and the starting register values $v$ satisfy $v(r)\\le B$ for every register $r$, $v(E)=v(Q1)+2|u|$, and $v(Q2)+2|u|\\le B$. Suppose also that for every $i<|u|$, the bits of $y$ at positions $v(Q1)+2i$ and $v(Q2)+2i$ are respectively the $i$th bits of $u$ and $u'$, with out-of-range bits interpreted as false. Then the codec program has a finite run, staying at every time strictly before its endpoint in configurations satisfying its precondition and register bound $B$, from label $vTest(st)$ with registers $v$ to label $vDone$ with verifier state obtained by processing the zipped pairs of $u$ and $u'$ from $st$; the final registers are $v$ with $Q1$ and $Q2$ updated respectively to $v(Q1)+2|u|$ and $v(Q2)+2|u|$.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine with Boolean tape symbols",
+  "A fixed codec mode",
+  "Finite Boolean words $y,u,u'$",
+  "A natural-number register bound $B$",
+  "The length equality $|u'|=|u|$",
+  "A starting verifier accumulator $st$",
+  "Starting register values $v$",
+  "The bound $v(r)\\le B$ for every register",
+  "The equality $v(E)=v(Q1)+2|u|$",
+  "The bound $v(Q2)+2|u|\\le B$",
+  "The first queried-bit agreement for every $i<|u|$",
+  "The second queried-bit agreement for every $i<|u|$"
+ ],
+ "confidence": "low",
+ "caveat": "The claim uses specialized codec-program notions of precondition and reachability; these have been paraphrased as a bounded run.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

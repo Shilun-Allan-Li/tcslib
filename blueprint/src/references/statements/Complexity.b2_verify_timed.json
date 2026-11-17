@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.b2_verify_timed",
+ "key": "2f41abd535e4abaa",
+ "kind": "lemma",
+ "title": "Timed Verifier Completion",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the binary alphabet, let $x,y$ be binary inputs, let $b$ be a bit, and let $T\\in\\mathbb{N}$. Suppose $V$, started in its initial configuration on $y$, halts within the specified time $T$ with output exactly the one-bit word $[b]$. Choose any input-head position for $x$, any contents for the work tapes of $S$, any work-head positions for $S$, and any choice word $w$ of length $T+1$. Running the host under $w$ from the verifier-phase configuration initialized from $V$ on $y$ halts with output exactly $[b]$.",
+ "hypotheses_covered": [
+  "Finite deterministic binary machines $S$ and $V$",
+  "Binary inputs $x$ and $y$",
+  "A bit $b$",
+  "A time bound $T\\in\\mathbb{N}$",
+  "$V$ computes output $[b]$ on $y$ in time $T$",
+  "An input-head position for $x$",
+  "Arbitrary contents of the scheduler work tapes",
+  "Arbitrary scheduler work-head positions",
+  "A choice word $w$ with length $T+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines and suppose $V$ computes the single-bit output $b$ on a word $y$ within $T$ steps. For every choice word $w$ with $|w| = T + 1$, running the host under $w$ from the verifier-phase start on $y$ halts with output exactly the one-bit string $b$."
+}

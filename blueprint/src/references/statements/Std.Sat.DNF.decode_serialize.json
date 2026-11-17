@@ -1,0 +1,14 @@
+{
+ "lean_name": "Std.Sat.DNF.decode_serialize",
+ "key": "7372d1f84a73b62e",
+ "kind": "theorem",
+ "title": "Decoding inverts DNF serialization",
+ "statement": "For every DNF formula $\\psi$ over variables indexed by $\\mathbb{N}$, decoding the binary serialization of $\\psi$ returns $\\psi$.",
+ "hypotheses_covered": [
+  "$\\psi$ is a DNF formula over $\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every DNF formula $\\psi$ over variables indexed by $\\mathbb{N}$, decoding its binary\nencoding as a DNF formula returns $\\psi$. Here a DNF formula $(T_1,\\dots,T_k)$, each term a\nlist of literals $(v,b)$ with $v \\in \\mathbb{N}$ and $b \\in \\{0,1\\}$, is encoded as\n$1\\,\\mathrm{enc}(T_1)\\cdots1\\,\\mathrm{enc}(T_k)\\,0$, a term as the concatenation of its\nliteral encodings $1^{v+1}0b$ followed by $0$; and a bit string $x$ is decoded as the DNF\nformula whose terms are the literal lists obtained by parsing $x$, with recursion fuel\n$|x|$, according to the grammar\n$\\langle\\text{formula}\\rangle ::= 0 \\mid 1\\,\\langle\\text{clause}\\rangle\\,\\langle\\text{formula}\\rangle$,\n$\\langle\\text{clause}\\rangle ::= 0 \\mid \\langle\\text{literal}\\rangle\\,\\langle\\text{clause}\\rangle$,\n$\\langle\\text{literal}\\rangle ::= 1^{k+1}\\,0\\,b$ (the literal $(k,b)$) when this parse\nconsumes all of $x$, and as the formula with no terms otherwise."
+}

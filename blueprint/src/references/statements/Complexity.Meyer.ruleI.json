@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.Meyer.ruleI",
+ "key": "5cad361da0cc59d5",
+ "kind": "def",
+ "title": "Input-tape cell update rule",
+ "statement": "For a finite-tape Turing machine $M$ with Boolean input symbols, an optional state $q$, read data $\\rho$, an integer offset $d$, and input-tape contents $f:\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$, define the updated cell symbol as follows. If $q$ is absent, use $f(d)$. If $q$ is present, retain $f(d)$ when the input symbol read is blank and the transition's input-tape movement leads to a blank cell; otherwise use $f(d+m)$, where $m$ is that transition's input-tape movement.",
+ "hypotheses_covered": [
+  "A finite-tape Turing machine M with Boolean input symbols",
+  "An optional state q",
+  "Read data ρ",
+  "An integer offset d",
+  "Input-tape contents f from integers to optional Booleans"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

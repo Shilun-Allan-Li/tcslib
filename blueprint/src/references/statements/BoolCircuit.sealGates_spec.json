@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.sealGates_spec",
+ "key": "6b6f1625f2b2c9a9",
+ "kind": "theorem",
+ "title": "Specification of gate sealing",
+ "statement": "Let $n$ be a natural number, let $L$ be a list of vertex indices, let $G$ be a list of gates, and let $o$ be a vertex index. Suppose $G$ is acyclic, $o<n+|G|$, and every index in $L$ is less than $n+|G|$. Sealing the indices in $L$ starting from $(G,o)$ produces a gate list and output index such that the new list extends $G$ by gates with distinct arguments and the prescribed argument count (one for a NOT gate and two otherwise), the new list is acyclic, the new output is a valid vertex, and its value agrees with the value of vertex $o$ in $G$ on every Boolean input in $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "$G$ is acyclic relative to $n$",
+  "$o<n+|G|$",
+  "Every index in $L$ is less than $n+|G|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

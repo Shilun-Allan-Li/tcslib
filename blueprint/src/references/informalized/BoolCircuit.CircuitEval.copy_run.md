@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean :: BoolCircuit.CircuitEval.copy_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Copying an input segment
+
+**Claim.** Under the stated decomposition and bounds, running the machine for $r$ steps from the copy configuration at offset $2|\mathrm{code}|+2+h$ yields the copy configuration at offset $2|\mathrm{code}|+2+(h+r)$, with the value tape containing the first $h+r$ bits of $x$.
+
+**Proof.** Induct on the number $r$ of copy steps, with the starting length $h$ arbitrary. For $r=0$, the initial and final configurations coincide. For the induction step, the bounds imply $h<|x|$ and $h<n$, so the next input bit exists and is $x[h]$. The decomposition $z=\mathrm{dbl}(\mathrm{code})\mathbin{++}[0,1]\mathbin{++}x$ places that bit at input offset $2|\mathrm{code}|+2+h$. The input-symbol rule identifies it as the symbol currently read (`Turing.FinTM.inputSymbol_at`). In the copy state, since the mark tape has a mark at the current position, the transition writes this bit on the value tape, clears the mark there, advances the input head and work head, and stays in the copy state (`step_cf`). The resulting value tape contains the first $h+1$ bits of $x$, by the list identity for appending the next bit to the buffered prefix (`Turing.FinTM.bufferTape_append`); the mark tape and head position likewise agree with the copy configuration at offset $2|\mathrm{code}|+2+(h+1)$. Apply the induction hypothesis to the remaining $r$ steps. The run decomposition across one initial step is given by the successor-run identity (`Turing.MultiTapeTM.runFrom_succ_eq_step`); the final configuration is independent of the chosen bound witness because equal offsets define equal copy configurations (`BoolCircuit.CircuitEval.cfC_congr`). The doubled-prefix length identity supplies the offset arithmetic (`Turing.length_dbl`), and the input head advances by one without reaching the right boundary (`Turing.moveInputPos_pos_of_ne_right`).
+
+**Key facts.** `Turing.length_dbl`, `Turing.FinTM.inputSymbol_at`, `BoolCircuit.CircuitEval.step_cf`, `Turing.FinTM.bufferTape_append`, `Turing.moveInputPos_pos_of_ne_right`, `Turing.MultiTapeTM.runFrom_succ_eq_step`, `BoolCircuit.CircuitEval.cfC_congr`.

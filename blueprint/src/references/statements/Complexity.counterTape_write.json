@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.counterTape_write",
+ "key": "3e64eb74a437d8bb",
+ "kind": "lemma",
+ "title": "Writing at a binary prefix boundary",
+ "statement": "For finite binary words $p$ and $b$ and a bit $\beta$, overwrite position $|p|$ of the tape containing their concatenation with $\beta$. The resulting tape is the tape of the word formed by appending $\beta$ to $p$ and then appending the tail of $b$ (the word obtained by removing its first bit, or the empty word if $b$ is empty).",
+ "hypotheses_covered": [
+  "$p$ and $b$ are finite binary words",
+  "$\beta$ is a bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ and $b$ be binary words, lay their concatenation on the nonnegative\ncells of a tape, and let $\\beta$ be a bit. Overwriting cell $|p|$ with $\\beta$\nyields exactly the tape of the word obtained by following $p$ with $\\beta$ and\nthen the tail of $b$ (all bits of $b$ after its first). In particular, when $b$\nis empty the stored word is extended by one cell; all other cells, including\nthe negative ones, are unchanged."
+}

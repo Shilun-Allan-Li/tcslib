@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.HALT_not_computable",
+ "key": "b413bcbd28f5cd1c",
+ "kind": "theorem",
+ "title": "Uncomputability of the halting function",
+ "statement": "For every effective machine representation scheme $c$, no finite-state Boolean Turing machine computes the function sending each bit string $s$ to the one-bit string whose bit is the value of the halting function of $c$ at $s$.",
+ "hypotheses_covered": [
+  "An effective machine representation scheme $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective coding scheme for Turing machines, i.e.\\ one admitting a\nuniversal evaluator machine, and let $\\mathrm{HALT}_c$ be its halting function:\ntrue on a bit string $s$ exactly when $s$ is the pairing encoding\n$\\langle \\alpha, x \\rangle$ of two bit strings and the machine denoted by\n$\\alpha$ under $c$ produces some output on input $x$ within some finite number of\nsteps, and false otherwise. Then no Turing machine computes the function mapping\n$s$ to the one-bit string carrying $\\mathrm{HALT}_c(s)$ [AB09, Theorem 1.11]."
+}

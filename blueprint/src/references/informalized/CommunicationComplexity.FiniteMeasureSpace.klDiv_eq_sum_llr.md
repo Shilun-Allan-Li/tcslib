@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/KLDivergence.lean :: CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Finite-space KL divergence formula
+
+**Claim.** For finite measures $μ$ and $ν$ on a finite discrete space, the KL divergence is infinite if some point has zero $ν-mass$ but nonzero $μ-mass$; otherwise it is the real-valued sum of point masses times log-likelihood ratios, with the total-mass correction shown in the statement.
+
+**Proof.** Split according to whether there is a point $ω$ with $ν(\{ω\})=0$ and $μ(\{ω\})≠0$. In that case, absolute continuity $μ≪ν$ is impossible: on finite discrete spaces, absolute continuity is equivalent to requiring that every $ν-null$ singleton is also $μ-null$ (FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons). The KL divergence is infinite when absolute continuity fails, giving the first branch. Otherwise, the absence of such a point implies the singleton condition and hence $μ≪ν$. Apply the finite-space KL formula under absolute continuity (klDiv_eq_sum_llr_of_ac) to obtain the stated sum.
+
+**Key facts.** `CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons`, `CommunicationComplexity.klDiv_eq_sum_llr_of_ac`.

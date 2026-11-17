@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopFrame_payload",
+ "key": "1913efd73fd76700",
+ "kind": "lemma",
+ "title": "Payload tape in a loop frame",
+ "statement": "Let $B$ and $F$ be finite Turing machines over the Boolean alphabet, with state sets $Q_B,Q_F$ and respectively $b,f$ work tapes. Use the state set $Q_F \\sqcup (\\{0,1\\}\\times(Q_B\\times\\{0,1\\})\\sqcup\\{0,1,\\ldots,13\\})$ for a host machine, and let $x$ be a finite Boolean input. Take a base configuration on $b+1+(1+f)+1$ work tapes with this host state set, and choose any optional host state, valid input-head position, three tape-content functions from $\\mathbb{Z}$ to optional Boolean symbols (for the flag, counter, and payload tapes), integer counter and payload head positions, and Boolean output word. Form the loop-frame configuration by placing the flag tape at index $b$, the counter tape at index $b+1$, and the payload tape at index $b+1+(1+f)$, with the flag head at $0$ and the other two heads at their chosen positions, and using the chosen state, input-head position, and output. The symbol scanned by the last work tape of this configuration is the payload tape's content at the chosen payload-head position.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $B,F$ with state sets and work-tape counts $b,f$",
+  "Host state set $Q_F \\sqcup (\\{0,1\\}\\times(Q_B\\times\\{0,1\\})\\sqcup\\{0,1,\\ldots,13\\})$",
+  "Finite Boolean input $x$",
+  "Base configuration with $b+1+(1+f)+1$ work tapes and host state set",
+  "An optional host state",
+  "A valid input-head position for $x$",
+  "Flag, counter, and payload tape-content functions",
+  "Integer counter and payload head positions",
+  "A Boolean output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

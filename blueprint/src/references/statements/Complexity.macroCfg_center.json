@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.macroCfg_center",
+ "key": "09d4d7b81a78fb61",
+ "kind": "lemma",
+ "title": "Return Scan Step",
+ "statement": "Let $W$ be a finite Boolean Turing machine, let $a,R$ be natural numbers, let $B$ be a base controller configuration, and let $u,g$ be integers. Suppose the base guide tape is the fixed guide of radius $R$. One schedule step from the return-to-center phase with unary-counter head at $u$ and guide head at $g$ enters the counter-test phase and advances the unary-counter head to $u+1$ when $g=0$; otherwise it remains in the return-to-center phase and moves the guide head to $g+1$.",
+ "hypotheses_covered": [
+  "$W$ is a finite Boolean Turing machine",
+  "$a,R$ are natural numbers",
+  "$B$ is a base controller configuration",
+  "$u,g$ are integers",
+  "The base guide tape equals the fixed guide of radius $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$.  From the\nreturn-to-center phase with guide head at $g$, one step of the schedule controller\ncommits exactly at the origin: when $g = 0$ it enters the counter-test phase and\nadvances the unary head by one, and otherwise it stays in the return phase and moves\nthe guide head right."
+}

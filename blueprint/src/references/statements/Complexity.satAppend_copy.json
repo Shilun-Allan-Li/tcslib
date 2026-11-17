@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satAppend_copy",
+ "key": "475eda583d52a4e8",
+ "kind": "lemma",
+ "title": "Appending the remaining suffix",
+ "statement": "Let $x$, $w$, and $r$ be Boolean words, and suppose $x=p r$ for a Boolean word $p$, where juxtaposition denotes concatenation. Starting in the appender's copy state with input head at the clamped position corresponding to $|p|$, work tape holding $w p$, and work head at position $|w p|$, after exactly $|r|+1$ steps the machine is in its copy state with input head at the clamped position corresponding to $|x|$, work tape holding $w x$, and work head at position $|w x|-1$.",
+ "hypotheses_covered": [
+  "Boolean words $x,w,r$",
+  "there exists a prefix $p$ with $x=pr$",
+  "initial state is the copy state",
+  "initial input-head position is the clamped offset $|p|$",
+  "initial tape word is $wp$",
+  "initial work-head position is $|wp|$",
+  "number of steps is $|r|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the native input decompose as $x = p \\mathbin{+\\!\\!+} r$, with the appender\nin its copy state at clamped input offset $|p|$ and work tape holding\n$w \\mathbin{+\\!\\!+} p$ with the head at its right blank. Then exactly $|r| + 1$\nsteps append the remaining suffix $r$ to the work tape and enter the work-tape\nrewind with the head on the last occupied cell of $w \\mathbin{+\\!\\!+} x$."
+}

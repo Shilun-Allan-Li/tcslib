@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.oracleLocalCfg",
+ "key": "941f10b4abb850fc",
+ "kind": "def",
+ "title": "Oracle local configuration",
+ "statement": "Given a Boolean input list $x$, a tape-content function $f:\\mathbb Z\\to\\mathrm{Option}(\\mathrm{Bool})$, an integer $p$, a dispatch state $q$, an input-head position among the $|x|+2$ positions, and an output list, define a four-work-tape configuration in state $q$ with that input-head position and output. Its first tape has contents $f$, its second has the fixed origin contents, and its last two tapes are blank; the first two heads are at $p$ and the other two are at $0$.",
+ "hypotheses_covered": [
+  "A Boolean input list $x$",
+  "A function $f:\\mathbb Z\\to\\mathrm{Option}(\\mathrm{Bool})$",
+  "An integer $p$",
+  "A dispatch state $q$",
+  "An input-head position in $\\mathrm{Fin}(|x|+2)$",
+  "A Boolean output list"
+ ],
+ "confidence": "low",
+ "caveat": "The fixed origin contents are referenced in the definition but are not defined in the supplied payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

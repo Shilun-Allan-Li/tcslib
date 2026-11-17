@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/LearningAndTesting/LowDegreeJuntaLearning.lean :: FABL.functionAlgebraicDegree_coordinatePullback_le -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Degree Under Coordinate Pullback
+
+**Claim.** If $e:\mathrm{Fin}(s)\hookrightarrow\mathrm{Fin}(r)$ is an injection, then evaluating a Boolean function on the coordinates selected by $e$ produces a function whose algebraic degree is at most the original degree.
+
+**Proof.** Expand the original function as its algebraic-normal-form sum, using `anfEval_anfCoeff`, and evaluate that expansion on the selected coordinates. Each monomial indexed by $S$ becomes the monomial indexed by the image $e(S)$; the product over the image agrees with the original product because $e$ is injective. Thus the pullback is a finite sum of terms, each its coefficient at $S$ times the monomial on $e(S)$.
+
+A zero coefficient gives a zero term, of degree zero (`functionAlgebraicDegree_zero`). A nonzero coefficient equals one in $\mathbb F_2$, leaving just the image monomial. Its degree is $|e(S)|=|S|$ (`functionAlgebraicDegree_anfMonomial` and preservation of cardinality under an injective map). The nonzero coefficient condition implies $|S|$ is at most the original degree (`algebraicDegree_le_iff`). Hence every term has degree at most that degree, and the finite-sum degree bound (`functionAlgebraicDegree_finset_sum_le`) proves the claim.
+
+**Key facts.** `FABL.anfEval_anfCoeff`, `FABL.functionAlgebraicDegree_zero`, `FABL.functionAlgebraicDegree_anfMonomial`, `FABL.algebraicDegree_le_iff`, `FABL.functionAlgebraicDegree_finset_sum_le`.

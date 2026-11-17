@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.inner_spec",
+ "key": "9ac0a194c992b13f",
+ "kind": "theorem",
+ "title": "Inductive specification for quantified formulas",
+ "statement": "Let $x$ be a finite bit string, $B$ a natural number, $qs$ a finite bit string, and $\u0000varphi$ a CNF formula over natural-number variables. Suppose $x$ is the pairing of $qs$ with the serialization of $\u0000varphi$, $2^{|qs|+1}\\le B$, and $|x|\\le B$. For every natural number $k<|qs|$, if for every $S<2^{k+2}$ the machine has a guarded run from label $\text{node}$ and state $(k+1,S,0,0,0,0,0)$ to label $\text{rt}(\\operatorname{decide}(\\operatorname{Val}(qs,\\varphi,k+1,S)))$ and the same register state, then for every $S<2^{k+1}$ it has a guarded run from label $\text{node}$ and state $(k,S,0,0,0,0,0)$ to label $\text{rt}(\\operatorname{decide}(\\operatorname{Val}(qs,\\varphi,k,S)))$ and the same register state.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "$B$ is a natural number",
+  "$qs$ is a finite bit string",
+  "$\\varphi$ is a CNF formula over natural-number variables",
+  "$x$ equals the pairing of $qs$ and the serialization of $\\varphi$",
+  "$2^{|qs|+1}\\le B$",
+  "$|x|\\le B$",
+  "$k<|qs|$",
+  "At depth $k+1$, for every $S<2^{k+2}$, the stated guarded run exists"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a finite bit string, $B$ a natural-number register bound, $q$ a finite bit\nstring, and $\\varphi$ a CNF formula over natural-number variables. Suppose $x$ is the\npairing of $q$ with the encoding of $\\varphi$, $2^{|q|+1}\\le B$, and $|x|\\le B$. For\nevery $k<|q|$, if the machine satisfies its quantified-formula run specification at\ndepth $k+1$, then it satisfies that specification at depth $k$."
+}

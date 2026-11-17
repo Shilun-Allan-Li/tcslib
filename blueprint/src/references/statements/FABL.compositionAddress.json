@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.compositionAddress",
+ "key": "32d446922f1ab24f",
+ "kind": "def",
+ "title": "Composition query address",
+ "statement": "Let $n>0$, let $V$ be a Boolean proof-checking system with input length $n$, proof length $m$, and $r$ query positions, and let $K$ be a positive integer. Given a seedwise three-CNF reduction for $V$ with $K$ clauses, a seed of $V$ and a coordinate among the $r+K$ local variables determine an address in the disjoint union of the $n$ input positions and the $m+K|S|$ composed-proof positions, where $S$ is the finite seed set of the verifier. For a coordinate among the first $r$ positions, this address is the outer verifier’s query address (using input position $0$ when that query is absent), with proof addresses shifted into the original proof block; for a coordinate among the final $K$ positions, it is the auxiliary position indexed by that coordinate and the seed’s index in $S$, after the original proof block.",
+ "hypotheses_covered": [
+  "$n>0$",
+  "$V$ is a Boolean PCPP system with input length $n$, proof length $m$, and $r$ query positions",
+  "$K$ is a natural number",
+  "a seedwise three-CNF reduction for $V$ with parameter $K$",
+  "a verifier seed",
+  "a coordinate in $\\mathrm{Fin}(r+K)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

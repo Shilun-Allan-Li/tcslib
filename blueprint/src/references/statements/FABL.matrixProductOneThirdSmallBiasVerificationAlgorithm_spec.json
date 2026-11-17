@@ -1,0 +1,16 @@
+{
+ "lean_name": "FABL.matrixProductOneThirdSmallBiasVerificationAlgorithm_spec",
+ "key": "0367f012334c987d",
+ "kind": "theorem",
+ "title": "One-third bias verification guarantees",
+ "statement": "Let $n$ be a positive integer, let $f$ be a function from the Boolean cube $\\{\\pm1\\}^n$ to $\\{\\pm1\\}$, and let $A,B,C$ be $n\\times n$ matrices over $\\mathbb F_2$. Form the input with output dimension $n$ and bias $1/3$, and run the associated seeded verification algorithm against target $f$. Its output and cost have the law obtained by choosing a uniform Boolean seed of length twice the input's field degree and returning the verification result with cost $(0,0,r+6n^2+4n+1)$, where $r$ is that field degree. The input bias is $1/3$, and the uniform pushforward of its seed map is small-bias with this parameter; the seed length equals the specified random-bit count, which is at most four times the specified logarithmic scale and is asymptotically $O$ of that scale. The verifier's local work is at most $11(n+1)^2$ and is asymptotically $O((n+1)^2)$. For every seed and coordinate $i$, the seed map agrees with the corresponding output of the executable small-bias generator, and computing that output uses at most $16(i+1)(r+1)^2$ work. If $C=AB$, the acceptance probability is $1$; if $C\\ne AB$, it is at most $2/3$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$f:\\{\\pm1\\}^n\\to\\{\\pm1\\}$",
+  "$A,B,C$ are $n\\times n$ matrices over $\\mathbb F_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

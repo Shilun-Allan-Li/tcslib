@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.loopBuffer_write",
+ "key": "6a253baa2405dd22",
+ "kind": "lemma",
+ "title": "Updating a Buffered Word",
+ "statement": "For all Boolean words $p$ and $b$ and bits $u,v$, changing cell $|p|$ of the buffer containing $p$ followed by $u$ and then $b$ to $v$ gives the buffer containing $p$ followed by $v$ and then $b$.",
+ "hypotheses_covered": [
+  "$p$ and $b$ are Boolean words",
+  "$u$ and $v$ are Boolean bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all Boolean words $p$ and $b$ and bits $u$ and $v$: updating cell $|p|$ of the\nbuffer tape that holds $p$ followed by $u$ followed by $b$, writing the bit $v$ there,\nproduces exactly the buffer tape that holds $p$ followed by $v$ followed by $b$."
+}

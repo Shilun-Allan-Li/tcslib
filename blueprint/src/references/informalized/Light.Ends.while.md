@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Programs/Light/Logic.lean :: Light.Ends.while -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# A Bounded Loop from an Invariant
+
+**Claim.** Given an invariant chain from $I_0$ at the initial state through $I_n$, with each of the first $n$ iterations safely taking the loop body from $I_i$ to $I_{i+1}$ within budget $b_i$, and with the loop condition safely false and $Q$ true at $I_n$, the loop terminates within the stated summed cost and satisfies $Q$.
+
+**Proof.** Prove an auxiliary claim by induction on the number $j$ of remaining iterations: from any state satisfying $I_i$, when $i+j=n$, the loop finishes within the sum of the costs assigned to iterations $i$ through $n-1$, followed by the final condition check. For $j=0$, the relation forces $i=n$. The terminal hypothesis gives a safe condition that is false and ensures $Q$; the loop's false-condition execution rule therefore gives an execution that leaves the state unchanged and costs $\operatorname{cost}(c)+1$. This is the empty iteration sum plus the final check. For the successor case, the relation implies $i<n$, so the iteration hypothesis supplies a safe, true condition and an execution of the body from the current state to a state satisfying $I_{i+1}$, at cost at most $b_i$. Apply the induction hypothesis to that next state with $j$ remaining iterations. The loop's true-condition rule combines the body execution and the remaining loop execution, adding the current condition-check cost, the body cost, and the later loop cost. The finite sum for $j+1$ splits into the current summand and the sum for the remaining $j$ iterations; together with the induction bounds this is at most the required sum. Finally take $i=0$ and $j=n$ and use $I_0$ at the initial state. The resulting sum is exactly the stated bound, since its summand records both the condition and body cost for each iteration and the subsequent condition check.

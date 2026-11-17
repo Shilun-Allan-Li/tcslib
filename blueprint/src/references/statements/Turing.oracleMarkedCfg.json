@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.oracleMarkedCfg",
+ "key": "a349a376350ac5fd",
+ "kind": "def",
+ "title": "Marked oracle configuration",
+ "statement": "Let $x$ be a finite Boolean input, let $f\\colon\\mathbb{Z}\\to\\mathrm{Option}(\\{\\mathrm{false},\\mathrm{true}\\})$ be a tape, let $p\\in\\mathbb{Z}$, let $s$ be a Boolean, let $i$ be an input-head position, and let $w$ be a finite Boolean output word. The specified four-work-tape configuration has state labelled by the origin marker for side $s$, input-head position $i$, head positions $(p,p,1,0)$, and output $w$. Its tapes are, in order, $f$; the fixed origin tape with cell $p$ set to false; a blank tape except for cell $0$, which contains $s$; and a blank tape.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Boolean-valued partial tape $f$ on the integers",
+  "Integer position $p$",
+  "Boolean side $s$",
+  "Input-head position $i$ among the $|x|+2$ positions",
+  "Finite Boolean output word $w$"
+ ],
+ "confidence": "low",
+ "caveat": "The definition of the fixed tape named `oracleOrigin` is not included, so its other cell contents cannot be described more specifically.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.taut_eval_congr",
+ "key": "7520513bfd353984",
+ "kind": "lemma",
+ "title": "DNF evaluation depends only on bounded variables",
+ "statement": "Let $\\psi$ be a DNF formula and let $a,b:\\mathbb{N}\\to\\{0,1\\}$ be assignments that agree at every index $v<N(\\psi)$, where $N(\\psi)$ is the variable count of the list of terms of $\\psi$. Then $\\psi$ has the same value under $a$ and $b$.",
+ "hypotheses_covered": [
+  "$\\psi$ is a DNF formula",
+  "$a,b$ are assignments from natural-number indices to Boolean values",
+  "the assignments agree for every $v$ strictly below the variable count of the terms of $\\psi$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\psi$ be a DNF formula and let $a, b : \\mathbb{N} \\to \\{0,1\\}$ be assignments\nwith $a(v) = b(v)$ for every $v$ below the variable bound of $\\psi$ (one more than its\nlargest variable index). Then $\\psi$ evaluates to the same truth value under $a$ and\nunder $b$."
+}

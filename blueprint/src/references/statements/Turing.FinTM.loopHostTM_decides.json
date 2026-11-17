@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.loopHostTM_decides",
+ "key": "d2506594a5f83800",
+ "kind": "theorem",
+ "title": "Loop host decides bounded acceptance",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, let $I$ be a predicate on pairs of Boolean words, $g$ a state-update function, $A$ a Boolean acceptance test, and $s_0$ an initial-word function. Let $R,T:\\mathbb{N}\\to\\mathbb{N}$. Assume $F$ computes the binary digits of $R(|x|)$ on each input $x$ within time $T(|x|)$; $I(x,s_0(x))$ holds for every $x$ and is preserved by $g$; and for each $x$, the run of $B$ from its initial configuration reaches the seam configuration at state $a$ with tape words assigned by $s_0(x)$ within some time $t\\le T(|x|)$, without having state $a$ at any earlier time. Also assume that for every $x,s$ with $I(x,s)$, there is a time $t$ with $0<t\\le T(|x|)$ such that the run of $B$ from the seam configuration at $a$ with tape words assigned by $s$ has no state-$a$ visit at any time $t'$ with $0<t'<t$; at time $t$, if $A(x,s)$ is true the run is halted with output $[\\mathrm{true}]$, and otherwise it is the seam configuration at $a$ with tape words assigned by $g(x,s)$. Then the loop host in decision mode computes, on every Boolean input $x$, the one-bit word whose bit is true exactly when $A(x,g^{[i]}(s_0(x)))$ holds for some $0\\le i\\le R(|x|)$, in time $10(T(|x|)+1)(R(|x|)+2)$.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$ and anchor state $a$ of $B$",
+  "Predicate $I$, update function $g$, acceptance test $A$, and initial-word function $s_0$",
+  "Bounds $R,T:\\mathbb{N}\\to\\mathbb{N}$",
+  "$F$ computes binary digits of $R(|x|)$ within time $T(|x|)$ for every input",
+  "$I(x,s_0(x))$ holds for every input",
+  "$I$ is preserved by $g$",
+  "For every input, a bounded initial run reaches the specified seam configuration without an earlier visit to $a$",
+  "For every invariant state, a positive bounded round run avoids intermediate visits to $a$",
+  "Each accepting round run halts with output $[\\mathrm{true}]$",
+  "Each nonaccepting round run reaches the seam configuration for $g(x,s)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

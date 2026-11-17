@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.wb_run",
+ "key": "d05e91b6d012b267",
+ "kind": "theorem",
+ "title": "Bounded return walk",
+ "statement": "For the designated machine with parameter $K_0$, oracle $\\mathrm{orc}:\\{0,\\ldots,3\\}\\times\\{0,1\\}^*\\to\\{0,1\\}$, input $x$, and natural bounds $B,P$, let $st$ be a memory access site, $b$ a Boolean, $k$ a natural number, $S$ a machine state, $M:\\mathbb Z\\to\\{0,1\\}$ a memory marking, and $p\\in\\mathbb Z$. If $S.T_2=k$, every register of $S$ is at most $B$, $0\\le p-k$, and $p\\le P$, then the machine has a finite run from the return-walk configuration at $st$ carrying bit $b$, with state $S$, marking $M$, and head position $p$, to the configuration at the corresponding exit with state $S$ except that $T_2$ is set to zero, the same marking, and head position $p-k$. At every configuration strictly before the endpoint, the register-instruction precondition holds, every register is at most $B$, and the memory head lies between $0$ and $P$.",
+ "hypotheses_covered": [
+  "A natural parameter $K_0$ and the designated machine with that parameter",
+  "Oracle from four indices and Boolean strings to Booleans",
+  "Input $x$ and natural bounds $B,P$",
+  "Memory access site $st$",
+  "Boolean $b$",
+  "Natural number $k$",
+  "Machine state $S$ with $S.T_2=k$",
+  "Memory marking $M:\\mathbb Z\\to\\{0,1\\}$",
+  "Integer head position $p$ with $0\\le p-k$ and $p\\le P$",
+  "Every register of $S$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the designated machine $A(K_0)$, oracle\n$\\mathrm{orc}:\\mathrm{Fin}(4)\\to\\{0,1\\}^*\\to\\{0,1\\}$, input $x$, and natural bounds\n$B,P$. For every memory access site $st$, bit $b$, walk length $k$, register state $S$,\nmemory marking $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and head position $p$,\nif $S.T2=k$, every register of $S$ is at most $B$, $0\\le p-k$, and $p\\le P$, then the\nmachine can run from the configuration at the return-walk phase for $st,b$, with state\n$S$, marking $M$, and head $p$, to the configuration at the corresponding exit with the\nsame marking, state $S$ except that $T2$ is set to zero, and head position $p-k$. Every\nconfiguration before the endpoint satisfies the guard: its register-instruction\nprecondition holds and all register values are at most $B$, while its memory head lies\nbetween $0$ and $P$."
+}

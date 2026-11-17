@@ -1,0 +1,27 @@
+{
+ "lean_name": "FABL.DNFFormula.SwitchingTrace",
+ "key": "8a4126c8b9462585",
+ "kind": "inductive",
+ "title": "Switching traces for DNF formulas",
+ "statement": "Let $\\varphi$ be a DNF formula on $n$ coordinates, let $\\rho$ assign each coordinate one of the states free, fixed at $1$, or fixed at $-1$, and let $k\\in\\mathbb{N}$. A switching trace of index $k+1$ is either specified by a compatible term chosen canonically from $\\varphi$ under $\\rho$ and a set of $k+1$ of its free literal positions, or specified by a compatible canonical term under $\\rho$, an index $i<k$, and a vector $x\\in\\mathbb{F}_2^n$ such that the term has exactly $i+1$ free literal positions and becomes incompatible after the coordinates at all those positions are fixed according to $x$; in the latter case the trace also includes a switching trace of index $k-i$ under the resulting coordinate restriction.",
+ "hypotheses_covered": [
+  "A DNF formula on n coordinates",
+  "A coordinate restriction assigning each coordinate free, fixed at 1, or fixed at -1",
+  "The trace index is k+1 for k a natural number",
+  "In the final constructor, at least one term is compatible with the restriction",
+  "In the final constructor, the selected positions are among the canonical term's free literal positions",
+  "The selected positions have cardinality k+1",
+  "In the recursive constructor, at least one term is compatible with the original restriction",
+  "The recursive index i is a natural number less than k",
+  "The recursive constructor includes a vector x in F₂ⁿ",
+  "The canonical term has exactly i+1 free literal positions",
+  "The canonical term is incompatible after all its free-literal coordinates are fixed according to x",
+  "The recursive constructor includes a tail trace of index k-i under the updated restriction"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

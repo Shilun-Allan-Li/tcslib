@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/HardWire.lean :: Language.InPPoly.of_hardwire -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial size under hardwiring
+
+**Claim.** Hardwiring the final input bits of each circuit family to a fixed assignment preserves polynomial size and fan-in at most two, so the resulting language belongs to the polynomial-size circuit class.
+
+**Proof.** Apply the hardwiring construction to each circuit $D_n$, fixing its final $a(n)$ inputs to $\alpha_n$. The resulting family has fan-in at most two by the hardwiring preservation theorem (`Language.InSIZE.of_hardwire`), and its size at length $n$ is at most the original size, hence at most $c(n+1)^k$. The same theorem identifies the language of this family with the strings accepted by $D_{|w|}$ on $w$ followed by $\alpha_{|w|}$. Thus the defining witnesses for polynomial size are the coefficients $c,k$ and this hardwired family.
+
+**Key facts.** `Language.InSIZE.of_hardwire`.

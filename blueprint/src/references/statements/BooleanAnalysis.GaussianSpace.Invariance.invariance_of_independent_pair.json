@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.Invariance.invariance_of_independent_pair",
+ "key": "70da203f228a1567",
+ "kind": "theorem",
+ "title": "Fourth-derivative invariance bound",
+ "statement": "Let $n,k\\in\\mathbb N$, let $(\\Omega,\\mu)$ be a probability space, and let $F$ be a multilinear coefficient family on $n$ coordinates of degree at most $k$. Suppose the $2n$ real random variables $Z_{L,i},Z_{R,i}$ are mutually independent and each satisfies the invariance moment conditions: its mean and third moment are zero, its second moment is one, and its fourth moment is at most $9$, with finite fourth moment. If $\\psi\\in C^4(\\mathbb R)$ and $C\\ge0$ bounds $|\\psi^{(4)}|$ everywhere, then\n\\[\n\\left|\\mathbb E_\\mu\\psi(F(Z_L))-\\mathbb E_\\mu\\psi(F(Z_R))\\right|\\le \\frac C{12}\\,9^k\\sum_{i=1}^n \\mathrm{Inf}_i[F]^2,\n\\]\nwhere $F(Z)(\\omega)=\\sum_{S\\subseteq[n]}F(S)\\prod_{i\\in S}Z_i(\\omega)$ and $\\mathrm{Inf}_i[F]$ is the influence of the Walsh-basis function defined by the same coefficients.",
+ "hypotheses_covered": [
+  "$n,k$ are natural numbers",
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$F$ is a multilinear coefficient family of degree at most $k$",
+  "The $2n$ random variables indexed by the two coordinate copies are mutually independent",
+  "Each random variable satisfies the invariance moment conditions",
+  "$\\psi$ has four continuous derivatives",
+  "$C\\ge0$",
+  "The absolute value of the fourth derivative of $\\psi$ is bounded everywhere by $C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F(x)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}a_S\\prod_{i\\in S}x_i$ be a real multilinear polynomial of degree at most $k$; let $I_i(F)=\\sum_{S\\ni i}a_S^2$. Let $(Z_{L,i},Z_{R,i})_{i=1}^n$ be a mutually independent family of $2n$ real inputs on a probability space, each measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. If $\\psi\\in C^4(\\mathbb R)$ and $C\\ge0$ bounds $|\\psi^{(4)}|$ everywhere, then $|\\mathbb E\\psi(F(Z_L))-\\mathbb E\\psi(F(Z_R))|\\le(C/12)9^k\\sum_i I_i(F)^2$."
+}

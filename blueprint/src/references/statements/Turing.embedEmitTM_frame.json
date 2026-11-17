@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.embedEmitTM_frame",
+ "key": "483cd869a78f730c",
+ "kind": "theorem",
+ "title": "Frame preservation under tape embedding",
+ "statement": "Let $x$ be an input word, let $M$ be a deterministic machine with $m$ work tapes, and let $\\iota : \\{0,\\ldots,m-1\\} \\hookrightarrow \\{0,\\ldots,k-1\\}$ be an embedding of tape indices. Choose initial contents $T_j : \\mathbb{Z} \\to \\mathrm{Option}(\\mathrm{Symbol})$ and head positions $h_j \\in \\mathbb{Z}$ for each of the $k$ tapes, an output prefix $p$, an $m$-tape configuration $c$ on input $x$, and $t \\in \\mathbb{N}$. After $t$ steps of the $k$-tape machine obtained from $M$, starting with $M$'s tapes embedded by $\\iota$, the other tapes still have contents $T_j$ and head positions $h_j$; the input-head position agrees with the position after $t$ steps of $M$ from $c$, and the output is $p$ followed by the output after those $t$ steps of $M$.",
+ "hypotheses_covered": [
+  "An input word $x$",
+  "An embedding of the $m$ work-tape indices into the $k$ work-tape indices",
+  "A machine $M$ with $m$ work tapes",
+  "Initial contents for each of the $k$ work tapes",
+  "Initial head positions for each of the $k$ work tapes",
+  "An output prefix",
+  "An $m$-tape configuration $c$ on input $x$",
+  "A natural number $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

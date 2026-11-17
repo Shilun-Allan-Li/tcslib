@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.call_spec",
+ "key": "86472bfe7b74c6ee",
+ "kind": "theorem",
+ "title": "Recursive Reachability Call Specification",
+ "statement": "Let $E,s,w$ be natural numbers, let $\u001b{orc}$ be a Boolean oracle with four indices and Boolean-word inputs, and let $x$ be a finite Boolean word. If $s\\le w$, then for every natural number $i\\le w$ and every register state $\u001b{st}$ satisfying the level-$i$ invariant for $s,w$, there is a natural number $M'\\le 2^w$ such that the program $A(E)$ has a finite execution from label $\u001b{cl}$, starting with register vector $\u001b{st}$ and no answer, to the return label whose Boolean value is the truth value of level-$i$ reachability from $\u001b{st}.U$ to $\u001b{st}.V$ with bound $2^w$ and relation determined by the step oracle, $x$, and $s$. Every preterminal configuration satisfies the program guard and has all registers at most $2^{w^2}$; the final register vector agrees with $\u001b{st}$ except that its midpoint register is $M'$.",
+ "hypotheses_covered": [
+  "$E,s,w$ are natural numbers",
+  "$\u001b{orc}$ is a Boolean oracle indexed by the four-element set and taking Boolean words as inputs",
+  "$x$ is a finite Boolean word",
+  "$s\\le w$",
+  "$i$ is a natural number with $i\\le w$",
+  "$\u001b{st}$ satisfies $\\mathrm{Inv}(s,w,i)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,s,w\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean oracle on four families of\nbinary words, and let $x$ be a binary word. If $s\\le w$, then for every level $i\\le w$\nand every state satisfying the level-$i$ invariant, there is a midpoint register value\n$M'\\le 2^w$ such that the program $A(E)$ has a finite execution from label\n$\\mathrm{cl}$, starting with the given register vector and no answer, to the return\nlabel whose Boolean value is the truth value of reachability at level $i$ between the\nstate's source and target codes, with bound $2^w$ and the step-oracle relation for $x$\nand $s$; the final state agrees with the initial one except that its midpoint register\nis $M'$. Every configuration strictly before the final time satisfies the safety\nconditions and has all registers at most $2^{w^2}$."
+}

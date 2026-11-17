@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.LogProg.back_run",
+ "key": "6d6c4d5ddcd29645",
+ "kind": "lemma",
+ "title": "Bounds during a tape-cleaning return phase",
+ "statement": "Let $M$ be a $k$-tape Boolean Turing machine, let $q_0$ be a state, and fix an input, a tape index $i$, an input-head position, an initial output, and an integer bound $B$. For an integer $a$, suppose there are a natural number $n$ and tape contents and head positions $D_t,M_t,D_p$ such that $-D_p(i)=n$, $a\\le D_p(i)$, tape $M_t(i)$ has its origin mark at $0$ and is blank outside $[a,a-1]$, and every initial head position in $D_p$ has absolute value at most $B$. Starting the cleaned machine in cleaning phase \\emph{back} for tape $i$, every configuration through time $n+1$ has every work-tape head position of absolute value at most $B$. At time $n+1$, its state is the next cleaning phase for tape $i$ (or halted if there is no next tape), its first bank of tape contents is unchanged, and both banks' head positions at tape $i$ are reset to $0$ while the second bank's tape $i$ is blank; all other tape contents and positions and the input head and output are unchanged.",
+ "hypotheses_covered": [
+  "Natural number $k$ and Boolean machine $M$",
+  "State $q_0$",
+  "Fixed input bit string",
+  "Tape index $i$",
+  "Input-head position and initial output",
+  "Integer bound $B$",
+  "Integer $a$",
+  "Natural number $n$",
+  "Initial tape contents $D_t,M_t$ and head positions $D_p$",
+  "$-D_p(i)=n$",
+  "$a\\le D_p(i)$",
+  "$M_t(i)$ equals the origin-mark tape specified by $a$ and $a-1$",
+  "Every $D_p$ head position has absolute value at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

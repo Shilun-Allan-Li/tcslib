@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.abs_productHessian_mul_le",
+ "key": "151404b310cd0051",
+ "kind": "lemma",
+ "title": "Quadratic majorant for a Hessian score",
+ "statement": "Let $\\iota$ be a set, let $c,z\\colon\\iota\\to\\mathbb R$, and let $v>0$. For any $i,j\\in\\iota$ and any $a\\in\\mathbb R$ with $|a|\\le1$, one has\n\\[\\left|\\left(\\frac{(z_i-c_i)(z_j-c_j)}{v^2}-\\frac{\\delta_{ij}}{v}\\right)a\\right|\\le\\frac{(z_i-c_i)^2+(z_j-c_j)^2}{2v^2}+\\frac1v,\\]\nwhere $\\delta_{ij}=1$ if $i=j$ and $0$ otherwise.",
+ "hypotheses_covered": [
+  "$\\iota$ is a set.",
+  "$c,z\\colon\\iota\\to\\mathbb R$.",
+  "$v$ is a nonzero nonnegative real, hence positive.",
+  "$i,j\\in\\iota$.",
+  "$a\\in\\mathbb R$ and $|a|\\le1$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be a set, $c,z\\in\\mathbb R^I$, $v>0$, $i,j\\in I$, and $a\\in\\mathbb R$ with $|a|\\le1$. Then $|(((z_i-c_i)(z_j-c_j)/v^2-\\delta_{ij}/v)a)|\\le((z_i-c_i)^2+(z_j-c_j)^2)/(2v^2)+1/v$, where $\\delta_{ij}=1$ if $i=j$ and zero otherwise."
+}

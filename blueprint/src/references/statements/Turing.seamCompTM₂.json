@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.seamCompTM₂",
+ "key": "88b2dcb9233731d1",
+ "kind": "def",
+ "title": "Two-seam machine composition",
+ "statement": "Let $M_0,M_1,M_2$ be deterministic Turing machines with a common input alphabet and the same number of work tapes, with state sets $S_0,S_1,S_2$. Choose exit states $e_1,e_2\\in S_0$ and entry states $b_1\\in S_1,b_2\\in S_2$. The resulting machine, with states $(S_0\\sqcup S_1)\\sqcup S_2$, first composes $M_0$ with $M_1$ by sending state $e_1$ to $b_1$, then composes that machine with $M_2$ by sending the state corresponding to $e_2$ in the $S_0$ summand to $b_2$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "Machines $M_0,M_1,M_2$ over a common symbol alphabet",
+  "State sets $S_0,S_1,S_2$",
+  "Decidable equality on $S_0$ and $S_1$",
+  "Exit states $e_1,e_2$ of $M_0$",
+  "Entry state $b_1$ of $M_1$",
+  "Entry state $b_2$ of $M_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clCopy_run",
+ "key": "81ddd6aca87e53bf",
+ "kind": "lemma",
+ "title": "Exact record-copy run",
+ "statement": "For every Boolean input word $x$, every valid input-head position $p$, and all Boolean words $w$ and $r$, running the two-tape copier for $3|w|+3$ steps from the configuration in state $0$, with source head at cell $0$ and record $r$, yields the configuration in state $4$ with the same input-head position, source head at cell $0$, source word $w$, and record $r$ followed by the self-delimiting encoding of $w$ with empty payload.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Valid input-head position $p$",
+  "Boolean source word $w$",
+  "Boolean record $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, source word $w$, and record, running the copier for $3|w| + 3$ steps from the start yields the completed control, in which the record is extended by exactly the self-delimiting pair encoding of $w$ with empty payload and the source head is restored to zero; the empty field still takes three positive transitions."
+}

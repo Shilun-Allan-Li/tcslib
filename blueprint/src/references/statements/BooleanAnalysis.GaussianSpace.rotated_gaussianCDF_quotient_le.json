@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.rotated_gaussianCDF_quotient_le",
+ "key": "b6aa9b70150f3c28",
+ "kind": "lemma",
+ "title": "Gaussian CDF rotation quotient bound",
+ "statement": "Let $t,y\\in\\mathbb R$ and let $0<\\theta<1$. For the standard Gaussian distribution function $\\Phi$ and density $\\varphi$, $$\\frac{\\left|\\Phi\\left(\\frac{t-\\sin(\\theta)y}{\\cos(\\theta)}\\right)-\\Phi(t)\\right|}{\\theta}\\le 2\\varphi(0)(|t|+|y|).$$",
+ "hypotheses_covered": [
+  "$t,y$ are real numbers",
+  "$0<\\theta$",
+  "$\\theta<1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ denote the standard Gaussian distribution function and density. For $t,y\\in\\mathbb R$, define $q_{t,y}(\\theta)=\\Phi((t-\\sin\\theta\\,y)/\\cos\\theta)-\\Phi(t)$. For all $t,y\\in\\mathbb R$ and $0<\\theta<1$, $|q_{t,y}(\\theta)|/\\theta\\le2\\varphi(0)(|t|+|y|)$."
+}

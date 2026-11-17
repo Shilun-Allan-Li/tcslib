@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_width",
+ "key": "69ef1355691ae043",
+ "kind": "lemma",
+ "title": "Width call inside the controller",
+ "statement": "Let $C,D$ be finite Turing machines over the Boolean alphabet with positive numbers of work tapes, choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$, and let $w,s,u,v$ be Boolean words. Suppose $t>0$, and the run of $C$ from its seam on input $w$ with $s$ on its first tape avoids $c_x$ at every time strictly between $0$ and $t$ and reaches $c_x$ at time $t$ with $u$ on its first tape. Then the combined controller, started in its width-start phase with $s$ on the candidate tape and width tape and $v$ on the first length-bank tape, reaches its width phase carrying $c_x$ at time $t$, with $u$ on the first width-bank tape and the other words unchanged. No configuration from time $0$ through time $t$ has the anchor state.",
+ "hypotheses_covered": [
+  "C and D are finite Boolean-alphabet Turing machines",
+  "C and D each have a positive number of work tapes",
+  "ce and cx are states of C",
+  "de and dx are states of D",
+  "w, s, u, and v are Boolean words",
+  "t is a positive natural number",
+  "C avoids cx at every time strictly between 0 and t from its stated seam configuration",
+  "C reaches cx with u on its first tape at time t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the width machine, started on its canonical seam carrying the candidate\ncopy, reaches its exit seam with result word $u$ in $t > 0$ steps with no\ninterior exit-state visit, then $t$ controller steps from the width-start\nseam install $u$ in the width bank while retaining the original candidate\nand prepared suffix; the trace avoids the anchor."
+}

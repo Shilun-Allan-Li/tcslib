@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.emit_run",
+ "key": "2a432e1ba693f483",
+ "kind": "theorem",
+ "title": "Forwarding a run",
+ "statement": "Let $M$ and $H$ be machines with $k$ work tapes and Boolean tape alphabet, with state sets $S$ and $H_0$, respectively. Let $\\iota:S\\to H_0$, choose $r\\in H_0$, and suppose that at every state $\\iota(s)$ and every tuple of scanned symbols, the transition of the second machine is the forwarding transform of the transition of the first. For any Boolean input, prefix $p$, initial configuration $c_0$, and $t\\in\\mathbb N$, if the run of $M$ from $c_0$ is not halted at any time $t'<t$, then the run of the second machine for $t$ steps from the forwarded image of $c_0$ equals the forwarded image of the run of $M$ after $t$ steps.",
+ "hypotheses_covered": [
+  "$M,H$ have $k$ work tapes and Boolean alphabet, with state sets $S,H_0$",
+  "A map $\\iota:S\\to H_0$ and state $r\\in H_0$",
+  "For every state and scanned-symbol tuple, the transition agreement holds",
+  "A Boolean input and prefix $p$",
+  "An initial configuration $c_0$ and time $t\\in\\mathbb N$",
+  "For every $t'<t$, the run of $M$ from $c_0$ is not halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ and $N$ be Turing machines over the Boolean alphabet with $k$ work tapes each and\nstate sets $S$ and $H$, and let $\\iota : S \\to H$ and $r \\in H$. Suppose that for every\n$s \\in S$, every (possibly blank) input symbol $\\sigma$ and every tuple $w$ of $k$\nwork-tape symbols, the transition of $N$ at $(\\iota(s), \\sigma, w)$ is the forwarding\ntransform of the transition of $M$ at $(s, \\sigma, w)$: the same head moves, writes and\nemission, with the successor mapped through $\\iota$ and a halt replaced by entering $r$.\nLet $p$ be a Boolean word, $c_0$ a configuration of $M$ on an input $x$, and\n$t \\in \\mathbb{N}$ such that $M$ run from $c_0$ is not halted at any time $t' < t$; then\nrunning $N$ for $t$ steps from the forwarding image of $c_0$ yields the forwarding image\nof the configuration $M$ reaches after $t$ steps from $c_0$, where the forwarding image of\na configuration $c$ has state $\\iota(q)$ (or $r$ if $c$ is halted), the input head, work\ntapes and work heads of $c$, and output $p$ followed by the output of $c$."
+}

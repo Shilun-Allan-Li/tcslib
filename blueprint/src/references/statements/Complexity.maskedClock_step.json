@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.maskedClock_step",
+ "key": "c224b66df13ff8c9",
+ "kind": "lemma",
+ "title": "Masked machine step correspondence",
+ "statement": "Let $A$ be an alphabet, $W$ a finite Turing machine over $A$, $z\\in A$, $x$ a finite input word, and $c$ a configuration of $W$ on $x$. Regard $c$ as a configuration on the constant word consisting of $|x|$ copies of $z$, preserving its state, input-head position, work tapes and heads, and output. Then masking the result of one step of the masked machine from $c$ gives exactly the result of one step of $W$ from the masked configuration of $c$, including when $c$ is halted.",
+ "hypotheses_covered": [
+  "A is a type",
+  "W is a finite Turing machine over A",
+  "z is a symbol in A",
+  "x is a finite word over A",
+  "c is a configuration on x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a machine over an alphabet $A$, let $z \\in A$, and let $c$ be a\nconfiguration of the masked clock of $W$ on an input word $x$. Masking the result of\none step of the masked clock at $c$ yields the same configuration as performing one\nstep of $W$ at the masked configuration of $c$; this includes the absorbing case in\nwhich $c$ is already halted."
+}

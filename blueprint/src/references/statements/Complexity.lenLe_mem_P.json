@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.lenLe_mem_P",
+ "key": "d984b31db19db8ae",
+ "kind": "theorem",
+ "title": "Decoded length comparison is in polynomial time",
+ "statement": "Let $z$ be a finite binary string, and let its two total decoded components be the components returned by the aligned pair parser, or both the empty string if parsing fails. The language of strings for which the second component has length at most the first component's length belongs to $\\mathsf{P}$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\pi_1$ and $\\pi_2$ be the total projections on bit strings, which send a bit string of the form $\\langle a,b\\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and to $b$ respectively, and send every other bit string to the empty word. Then the language $\\{z \\in \\{0,1\\}^* : |\\pi_2(z)| \\le |\\pi_1(z)|\\}$ belongs to $\\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time."
+}

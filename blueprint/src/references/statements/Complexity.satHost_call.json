@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.satHost_call",
+ "key": "98c0926f2defdb5c",
+ "kind": "lemma",
+ "title": "Running a Module in the Host",
+ "statement": "Let six finite Boolean Turing machines be given, padded to a common work-tape count $K$; choose a module index $i\\in\\{0,1,2,3,4,5\\}$ whose machine has positive work-tape count. Let $x,\\mathrm{arg},\\mathrm{result},\\mathrm{out},\\mathrm{pre}$ be Boolean words and $q$ a state of module $i$. Suppose the module started on input $x$ at its entry configuration with argument word on tape zero and all other tapes blank stays unhalted at every time $v<t$, and at time $t$ reaches its halted configuration with state component absent, tape zero holding $\\mathrm{result}$, all other tapes blank, and output $\\mathrm{out}$. Then the host started at module $i$'s entry on input $x$, with the same argument word and output prefix $\\mathrm{pre}$, never reaches the loop-anchor state at any time $v<t$; at time $t$ it is in module $i$'s return state with tape zero holding $\\mathrm{result}$, all other tapes blank, and output $\\mathrm{pre}\\,\\mathrm{out}$.",
+ "hypotheses_covered": [
+  "$M$ is a family of six finite Boolean Turing machines",
+  "$K\\in\\mathbb N$",
+  "each machine's work-tape count is at most $K$",
+  "$i\\in\\{0,1,2,3,4,5\\}$",
+  "module $i$ has positive work-tape count",
+  "$x,\\mathrm{arg},\\mathrm{result},\\mathrm{out},\\mathrm{pre}$ are Boolean words",
+  "$q$ is a state of module $i$",
+  "$t\\in\\mathbb N$",
+  "the module is unhalted at every time $v<t$ from its canonical argument configuration",
+  "at time $t$ the module reaches the specified halted configuration with output $\\mathrm{out}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the $i$-th module (with positive tape count), started at its own entry over\nthe state word of an argument, stay live before time $t$ and halt at time $t$\nover the state word of a result with output $o$. Then the host, started at that\nmodule's entry over the same argument with output prefix $p$: (i) never visits\nthe loop anchor before time $t$, and (ii) at time $t$ reaches the module's\nreturn state over the state word of the result with output\n$p \\mathbin{+\\!\\!+} o$."
+}

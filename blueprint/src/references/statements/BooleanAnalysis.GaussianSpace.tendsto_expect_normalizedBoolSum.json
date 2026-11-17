@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.tendsto_expect_normalizedBoolSum",
+ "key": "be3f2cca1d8d2102",
+ "kind": "lemma",
+ "title": "Gaussian limit for Lipschitz functions of cube sums",
+ "statement": "Let $c\\ge0$ and let $\\psi:\\mathbb R\\to\\mathbb R$ be $c$-Lipschitz. For each positive integer $m$, choose a uniformly random vector $X\\in\\{0,1\\}^{m+1}$ and encode each coordinate by $1$ for $0$ and $-1$ for $1$. The expectation of $\\psi$ applied to the sum of these signs divided by $\\sqrt{m+1}$ tends, as $m\\to\\infty$, to the expectation of $\\psi$ under the standard Gaussian probability measure on $\\mathbb R$.",
+ "hypotheses_covered": [
+  "$c\\in\\mathbb R$ with $c\\ge0$",
+  "$\\psi:\\mathbb R\\to\\mathbb R$ is $c$-Lipschitz"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $c\\ge0$ and $c$-Lipschitz $\\psi:\\mathbb R\\to\\mathbb R$, $2^{-(m+1)}\\sum_{x\\in\\{0,1\\}^{m+1}}\\psi((m+1)^{-1/2}\\sum_i(-1)^{x_i})\\to\\mathbb E\\psi(Z)$ as $m\\to\\infty$, where $Z$ is standard Gaussian."
+}

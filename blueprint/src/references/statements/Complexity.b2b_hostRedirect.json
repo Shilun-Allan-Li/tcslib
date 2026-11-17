@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.b2b_hostRedirect",
+ "key": "389f2dec027c51c4",
+ "kind": "def",
+ "title": "Host phase redirects",
+ "statement": "Given Boolean-alphabet machines $M_V$, $M_I$, and $M_P$, define a redirect map between host phase states as follows: the setup exit goes to the origin phase at its start state with flag true; the origin exit goes to the counter sweep; the counter exit goes to the zero phase's run state; the zero phase's false-flag exit goes to the rewind start; and the rewind exit goes to the loop's decrement run state. The loop's completed state redirects to the last phase's test anchor, while its escape state goes to the true answer phase; the last phase's verdict exit goes to the answer phase carrying that verdict. All other phase-state pairs have no redirect.",
+ "hypotheses_covered": [
+  "Boolean-alphabet machine $M_V$",
+  "Boolean-alphabet machine $M_I$",
+  "Boolean-alphabet machine $M_P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emitter_binary_check",
+ "key": "2e325f906651e3ff",
+ "kind": "lemma",
+ "title": "Binary representation and width equation",
+ "statement": "Let $f:\\mathbb{N}\\to\\mathbb{N}$ and let $w,s$ be Boolean words with $|s|\\le |w|$. The binary digit words of $f(|s|)$ and of the length of the suffix of $w$ after its first $|s|$ entries are equal if and only if $|s|+f(|s|)=|w|$.",
+ "hypotheses_covered": [
+  "function $f:\\mathbb{N}\\to\\mathbb{N}$",
+  "Boolean words $w,s$",
+  "$|s|\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a candidate $s$ with $\\abs{s} \\le \\abs{w}$, the binary representation of\n$f(\\abs{s})$ equals the binary representation of the length of the suffix of\n$w$ after position $\\abs{s}$ if and only if $\\abs{s} + f(\\abs{s}) = \\abs{w}$;\nthis includes the case of two empty words."
+}

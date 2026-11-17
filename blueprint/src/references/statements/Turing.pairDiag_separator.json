@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.pairDiag_separator",
+ "key": "3cf7c7e36cd53cfb",
+ "kind": "lemma",
+ "title": "Separator Emission and Turnaround",
+ "statement": "For every bit string $x$ and output string $w$, running the machine for three steps from state $0$, with input head at the right boundary position $|x|+1$ and output $w$, yields state $4$, with input head at position $|x|$ and output $w$ followed by $01$.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$w$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string and $w$ an output string.  Running the six-state\ndiagonal pairing machine for exactly $3$ steps from the configuration in its\ninitial control state with input head at the right boundary position\n$|x| + 1$ and output $w$ yields the configuration in its rewind state\n(state $4$) with input head at position $|x|$ and output $w$ followed by the\nseparator pair $01$."
+}

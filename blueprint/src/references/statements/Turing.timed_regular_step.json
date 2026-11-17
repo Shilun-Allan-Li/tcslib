@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timed_regular_step",
+ "key": "e71cf471508ad15a",
+ "kind": "lemma",
+ "title": "One-Step Replay on Regular States",
+ "statement": "Let $x$ be a Boolean input, let $c$ be a four-tape configuration of the table interpreter on $x$, and let $w$ be a Boolean clock word. If $c$ is live and its control is not a state carrying a decoded transition record, then one step of the timed interpreter from the six-tape lift of $c$ with clock word $w$ equals the six-tape lift, with the same clock word, of one step of the stopped table interpreter from $c$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$c$ is a four-tape configuration on $x$",
+  "$w$ is a Boolean clock word",
+  "$c$ is live",
+  "the control of $c$ is not a decoded-record application state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every live four-tape configuration whose control is not a pending-action\nstate, one step of the timed interpreter from its six-tape lift (with any\nclock word) equals the lift of one step of the stopped table interpreter, with\nthe same clock word."
+}

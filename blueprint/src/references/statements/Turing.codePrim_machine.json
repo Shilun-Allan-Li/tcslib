@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.codePrim_machine",
+ "key": "b541c86ce13ff67f",
+ "kind": "lemma",
+ "title": "Machines for primitive recursive string functions",
+ "statement": "If $f$ is a primitive recursive function from Boolean strings to Boolean strings, then there are a finite Turing machine over the Boolean alphabet and a time bound $T\\colon\\mathbb{N}\\to\\mathbb{N}$ such that, for every Boolean-string input $x$, the machine halts after exactly $T(|x|)$ steps with output $f(x)$.",
+ "hypotheses_covered": [
+  "A function from Boolean strings to Boolean strings",
+  "The function is primitive recursive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every primitive recursive function $f$ on Boolean strings is computed by an actual\nmachine: there exist a finite Turing machine over the two-letter Boolean alphabet\nand a time bound $T \\colon \\bbn \\to \\bbn$ such that on every input $x$ the machine\nhalts within $T(\\abs{x})$ steps with $f(x)$ on its output tape.  No growth or\neffectivity condition is imposed on $T$."
+}

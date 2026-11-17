@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.regPos",
+ "key": "28c68c875180650f",
+ "kind": "def",
+ "title": "Work-tape register position",
+ "statement": "Let $c_0$ be a configuration with $m$ work tapes, let a call specification select an ordered list of registers, let $W$ assign a bit string to each register, and let $s$ and $t$ be a segment index and track position. For register $r$, its position is the position in $c_0$ if $r$ is not selected. If it is selected, write $j$ for its index in the selected list plus one: its position is the length of segment $j$ when $j<s$, is $-1$ when $s<j$, and is the track position at segment $s$ when $s=j$.",
+ "hypotheses_covered": [
+  "A configuration c₀ with m work tapes and input x",
+  "A call specification with m registers",
+  "A register-word assignment W",
+  "A natural-number segment index s",
+  "A track position t",
+  "A register r among the m registers"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not provide the definitions of segment length or track position, so their precise conventions cannot be stated here.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

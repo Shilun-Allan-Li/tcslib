@@ -1,0 +1,22 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.Internal.LAok",
+ "key": "2b04163cad458afa",
+ "kind": "def",
+ "title": "Admissible transition labels",
+ "statement": "Let $w$ be a Boolean, let $v_c$ be an optional Boolean, and let $\\ell$ be a transition label with optional value-tape and mark-tape writes, a work-head move, an optional emitted Boolean, and an optional next state. The label is admissible precisely when it makes no value-tape write and either makes no mark-tape write or writes a marked true value while $v_c$ is present. If there is no next state, an emitted Boolean must be present; if the next state is a first-read state carrying phase $\\phi'$, no Boolean is emitted, $\\mathrm{main}(\\phi')$ holds, the head is stationary or moves positively with $v_c$ present, and if $\\mathrm{walk}(\\phi')$ is false then $w$ is false and the head is stationary. If the next state is a value-rewind state carrying a phase $\\phi'$, no Boolean is emitted, $\\mathrm{main}(\\phi')$ holds, $\\mathrm{walk}(\\phi')$ is false, the head moves negatively, and $v_c$ is present; if the next state is an append state, no Boolean is emitted, the head is stationary, no mark-tape write is made, and $w$ is false. Every other next state is inadmissible.",
+ "hypotheses_covered": [
+  "Boolean parameter $w$",
+  "Optional Boolean parameter $v_c$",
+  "No value-tape write",
+  "Mark-tape write is absent or writes true while $v_c$ is present",
+  "Output is present when there is no next state",
+  "First-read next-state conditions",
+  "Value-rewind next-state conditions",
+  "Append next-state conditions",
+  "All other next states are inadmissible"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not define the phase predicates $\\mathrm{main}$ and $\\mathrm{walk}$, so their meanings cannot be stated from the supplied material.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

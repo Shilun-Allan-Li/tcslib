@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Stmt.Runs.ite_pos",
+ "key": "fa7a011145cfccf7",
+ "kind": "theorem",
+ "title": "True branch of a conditional run",
+ "statement": "Let $L$ be resource limits, $c$ a condition, $s,t$ statements, $\\sigma$ a state, and $R$ a predicate on states. If $s$ is block-safe from $\\sigma$ and its resulting state satisfies $R$, if $c$ holds in $\\sigma$, and if $c$ is safe under $L$ in $\\sigma$, then the conditional with branches $s,t$ is block-safe from $\\sigma$ and its resulting state satisfies $R$.",
+ "hypotheses_covered": [
+  "The true branch $s$ runs safely from $\\sigma$ to $R$ under $L$",
+  "The condition holds in $\\sigma$",
+  "The condition is safe under $L$ in $\\sigma$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{lim}$ be a set of word, space, and depth bounds; let $\\sigma$ be a program\nstate; let $R$ be a property of states; and let $c$ be a condition with two statements\n$s,t$ as its branches. A statement runs safely from a state to $R$ when it is block-safe\nthere and its resulting state satisfies $R$. If $s$ runs safely from $\\sigma$ to $R$,\nthe condition is safe at $\\sigma$, and the condition is true at $\\sigma$, then the\nconditional statement with branches $s,t$ runs safely from $\\sigma$ to $R$."
+}

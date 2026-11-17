@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.csCount_ends",
+ "key": "76047a55132374d5",
+ "kind": "theorem",
+ "title": "Counting-sort counting-loop execution",
+ "statement": "Let $P$ be a program, let $d\\in\\mathbb{N}$, let $\\mathrm{lim}$ specify word, space, and depth limits, and take counting-sort parameters $A$, initial memory $\\mu$, item and key functions $\\mathrm{it},kf:\\mathbb{N}\\to\\mathbb{N}$, and an initial state $\\sigma$. Suppose the counting-sort preconditions hold. Suppose further that for some integer $\\mathrm{entry}$, $\\sigma$ is the state formed from the standard counting-sort argument frame with index $\\mathrm{entry}$, arbitrary integer counter and place variables, and a memory $\\mu'$ that agrees with $\\mu$ outside the destination and counter intervals; moreover, every counter cell $\\mathrm{cnt}+t$ for $t<\\mathrm{nb}+1$ contains zero. Then the counting loop has an execution from $\\sigma$ of cost at most $30n+6$ whose final state has index $n$, still agrees with $\\mu$ outside those intervals, has counter cell $\\mathrm{cnt}$ equal to zero, and has cell $\\mathrm{cnt}+(t+1)$ equal to the number of indices $i<n$ with $kf(i)=t$ for every $t<\\mathrm{nb}$.",
+ "hypotheses_covered": [
+  "The counting-sort preconditions hold",
+  "The initial state has the standard argument frame with index $\\mathrm{entry}$ and arbitrary counter and place values",
+  "Initial memory agrees with $\\mu$ outside destination and counter intervals",
+  "Every counter cell with offset $t<\\mathrm{nb}+1$ is zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

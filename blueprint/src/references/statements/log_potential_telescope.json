@@ -1,0 +1,16 @@
+{
+ "lean_name": "log_potential_telescope",
+ "key": "b3e3b76cb2145c8a",
+ "kind": "lemma",
+ "title": "Telescoping log potential",
+ "statement": "For any natural numbers $N,T$, any real learning rate $\\eta$, and any loss sequence $\\ell$ for $N$ experts over $T$ rounds, the successive changes in the logarithm of the potential sum to the total change: $\\sum_{t\\in\\mathrm{Fin}\\,T}\\bigl(\\log W_{t+1}-\\log W_t\\bigr)=\\log W_T-\\log W_0$, where $W_t$ is the sum of the Hedge weights at time $t$.",
+ "hypotheses_covered": [
+  "$N,T$ are natural numbers",
+  "$\\eta\\in\\bbr$",
+  "$\\ell$ is a loss sequence for $N$ experts over $T$ rounds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\eta \\in \\bbr$ and let $\\ell$ be a loss sequence for $N$ experts over $T$ rounds,\nwith potential $W_t = \\texttt{potential}\\ \\eta\\ \\ell\\ t$.  Then the one-step changes of the\nlog potential telescope:\n\\[\n  \\sum_{t=0}^{T-1} \\bigl(\\log W_{t+1} - \\log W_t\\bigr) \\;=\\; \\log W_T - \\log W_0 .\n\\]"
+}

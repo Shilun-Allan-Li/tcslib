@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Diagonalization/Relativization.lean :: Complexity.stage_flip -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Acceptance and Unary Witness Exclusion
+
+**Claim.** Machine $N_i$, with the union of all stage-positive sets as its oracle, accepts the unary input of length $n_i$ within $n_i^i+i$ steps and outputs $[\mathrm{true}]$ if and only if that unary input does not belong to the unary witness language.
+
+**Proof.** By the stage-transfer result, the machine's run with the union oracle agrees, up to the stated time bound, with its run using only the stage-$i$ positive-set oracle. Thus acceptance is equivalent to the predicate that $N_i$ accepts relative to that stage oracle. The characterization of unary strings in the witness language says that the unary input belongs to it exactly when some string of length $n_i$ lies in the union oracle. Suppose first that the machine accepts and such a string $y$ exists. By the entry property of the union oracle, $y$ first enters the positive sets at some stage $s+1$, and its length is the fresh length chosen at stage $s$. If $s<i$, the later-stage growth bound makes this length smaller than $n_i$; if $s>i$, it makes this length larger than $n_i$. Both contradict $|y|=n_i$. Hence $s=i$. The new-string property then says that $N_i$ does not accept relative to the stage-$i$ oracle, contradicting the assumed acceptance. Conversely, suppose the unary input is not in the witness language, but the machine accepts. The witness chosen at stage $i$ has length $n_i$, so it itself gives a unary string of length $n_i$. Since it was chosen outside the list of queries made during the stage-$i$ run, it is absent from the stage-$i$ positive set and, by the assumed absence of any length-$n_i$ witness in the union, cannot already be present in the union. But if the machine accepts, the stage rule leaves the positive set unchanged; this contradicts the fact that the witness is inserted at the next stage. Therefore acceptance and exclusion are equivalent.
+
+**Key facts.** `Complexity.stage_transfer`, `Complexity.mem_unaryWitnessLang_replicate`, `Complexity.exists_entry`, `Complexity.entry_length`, `Complexity.stage_later`, `Complexity.stage_new`, `Complexity.stageWit_spec`.

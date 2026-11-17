@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_clock_le",
+ "key": "0a2b13a3d3c74b70",
+ "kind": "lemma",
+ "title": "Additional squared length bound",
+ "statement": "For a profile $P:\\mathbb R\\to\\mathbb R$, real numbers $a,b,t$, and vectors $u,v\\in\\mathbb R^m$, let $L(t,c)$ be their symmetric average length. For every $c\\ge0$, $L(t,c)\\le\\sqrt c+L(t,0)$.",
+ "hypotheses_covered": [
+  "$m$ is a natural number",
+  "$P$ is a real-valued function on the reals",
+  "$a,b,t$ are real numbers",
+  "$u,v$ are vectors in $\\mathbb R^m$",
+  "$c\\ge0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a profile $P:\\mathbb R\\to\\mathbb R$, $a,b,t,c\\in\\mathbb R$, and $u,v\\in\\mathbb R^m$, define $L(t,c)=\\frac12\\bigl(\\sqrt{P(a+tb)^2+c+\\|u+tv\\|_2^2}+\\sqrt{P(a-tb)^2+c+\\|u-tv\\|_2^2}\\bigr)$. For any real $t$ and $c\\ge0$, $L(t,c)\\le\\sqrt c+L(t,0)$."
+}

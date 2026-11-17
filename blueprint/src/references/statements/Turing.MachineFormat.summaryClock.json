@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.MachineFormat.summaryClock",
+ "key": "70f3bcc167e99d50",
+ "kind": "def",
+ "title": "Summary clock",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes, Boolean symbols, and state set $Q$, and let $x$ be a finite Boolean input. Define a Boolean-valued summary from a configuration $c$, an optional Boolean summary $s$, and a natural time bound. At time zero its value is true exactly when $c$ is halted and $s$ is the Boolean value true; at one more than time $t$, its value is the summary at time $t$ of the successor configuration after one step of $M$, using as the updated summary the result of combining $s$ with the optional symbol emitted by that step (retaining $s$ if no symbol is emitted, setting the result to true when the first emitted symbol is true, and setting it to false otherwise).",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$Q$ is a state type",
+  "$M$ is a machine with $k$ work tapes, Boolean symbols, and states in $Q$",
+  "$x$ is a finite Boolean input",
+  "the time bound is a natural number",
+  "the configuration is for input $x$",
+  "the summary is an optional Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

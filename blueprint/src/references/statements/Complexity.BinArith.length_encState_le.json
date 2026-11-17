@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.BinArith.length_encState_le",
+ "key": "399b3e1de14e6332",
+ "kind": "theorem",
+ "title": "Encoded state length bound",
+ "statement": "Let $z$ be a finite bit string and let $s=(R,d,m,rc)$ consist of a list of rows of natural numbers and three natural numbers. Decode the first component of $z$ using the aligned pair parser, taking the empty word if parsing fails, and let its binary value be $p$. Suppose $R$ has length $m\text{,}$ has at most $|z|$ rows, each row has length at most $|z|$, every entry of every row is less than $p+2^{|z|}+2$, $d<p+2^{|z|}+2$, and $rc\text{≤}m$. Then the bit string obtained by encoding $p$ and the state $s$ has length at most $64(|z|+1)^3$.",
+ "hypotheses_covered": [
+  "$z$ is a finite bit string",
+  "$s=(R,d,m,rc)$ is a state of lists and natural numbers",
+  "$R$ has length $m$",
+  "$R$ has at most $|z|$ rows",
+  "Each row of $R$ has length at most $|z|$",
+  "Every entry of every row is less than $p+2^{|z|}+2$",
+  "$d<p+2^{|z|}+2$",
+  "$rc≤m$",
+  "$p$ is the binary value of the decoded first component of $z$, using the empty word if parsing fails"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

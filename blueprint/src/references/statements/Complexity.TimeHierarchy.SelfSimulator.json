@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.SelfSimulator",
+ "key": "e77f972e1f4de105",
+ "kind": "structure",
+ "title": "Self-simulation structure",
+ "statement": "For a function $\\Psi : \\mathbb{N} \\to \\mathbb{N}$, a self-simulation structure consists of a finite Boolean Turing machine $W$ and a decoder assigning a finite Boolean Turing machine to each binary string $\\alpha$. For each code $\\alpha$, there is a constant $C$ such that whenever the machine decoded from $\\alpha$ computes a one-bit output $b$ on the paired input $\\langle\\alpha,w\\rangle$ within $t$ steps, $W$ computes the same output on that input within $C(t+|\\langle\\alpha,w\\rangle|+1)$ steps. Moreover, for every time bound $T$ and every $L \\in \\mathrm{DTIME}(T)$, there are a code $\\alpha$ and a constant $c$ such that, on every input $x$, the machine decoded from $\\alpha$ computes the indicator of membership in $L$ within $c(\\Psi(T(|x|))+1)$ steps.",
+ "hypotheses_covered": [
+  "A function $\\Psi : \\mathbb{N} \\to \\mathbb{N}$",
+  "A finite Boolean Turing machine $W$",
+  "A decoder from binary strings to finite Boolean Turing machines",
+  "For each code $\\alpha$, existence of a constant $C$ for the stated self-simulation bound",
+  "An arbitrary time bound $T : \\mathbb{N} \\to \\mathbb{N}$",
+  "A language $L$ belonging to $\\mathrm{DTIME}(T)$",
+  "Existence of a code $\\alpha$ and constant $c$ giving the stated bound on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

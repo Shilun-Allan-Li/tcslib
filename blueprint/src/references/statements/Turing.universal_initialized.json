@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.universal_initialized",
+ "key": "c89871431797743c",
+ "kind": "lemma",
+ "title": "Universal machine startup configuration",
+ "statement": "Let $c$ be an effective machine-coding scheme, and let $\\alpha$ and $x$ be finite Boolean strings. There exist a time $t$ and contents and head positions for the canonizer’s work tapes such that $t$ is at most the startup bound for $c$ and $\\alpha$, and after $t$ steps the universal machine started on the paired encoding of $\\alpha$ and $x$ is in the right-block extension of the decoded machine’s initial configuration on $x$. In that configuration, the interpreter’s table cursor is at $2\\ell+q_0+3$, where $\\ell$ is the length of the binary representation of the decoded machine’s number of states and $q_0$ is its initial state index.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-coding scheme",
+  "$\\alpha$ and $x$ are finite Boolean strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-coding scheme, and let $\\alpha$ and $x$ be finite\nBoolean strings. There exist a time $t$ no greater than the startup bound determined by\n$c$ and $\\alpha$, together with contents and head positions for the canonizer’s tapes,\nsuch that after $t$ steps the universal machine, started on the pair encoding of\n$\\alpha$ and $x$, is the right-block extension of the interpreter configuration for the\ndecoded machine’s initial configuration on $x$. The interpreter configuration has its\ntable cursor at $2\\ell+q_0+3$, where $\\ell$ is the length of the binary representation\nof the decoded machine’s number of states and $q_0$ is its initial state index."
+}

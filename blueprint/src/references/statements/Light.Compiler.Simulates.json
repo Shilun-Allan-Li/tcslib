@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Compiler.Simulates",
+ "key": "3acc5bd025fbc9c2",
+ "kind": "def",
+ "title": "Statement simulation",
+ "statement": "Fix a word size $W$, a compiler setting $S$, a natural number $d$, a statement $s$, states $\\sigma$ and $\\sigma'$, and a natural number $c$. The statement $s$ is simulated from $\\sigma$ to $\\sigma'$ with parameters $d$ and $c$ if, for every code position $pos$, frame index $q$, and memory map $m : \\mathbb{Z} \\to \\mathrm{BitVec}(W)$ for which $\\mathrm{Start}(S,d,s,\\sigma,pos,q,m)$ holds, there are a memory map $m' : \\mathbb{Z} \\to \\mathrm{BitVec}(W)$ and a natural number $n$ such that $\\mathrm{Finished}(S,s,\\sigma',c,pos,q,m,m',n)$ holds.",
+ "hypotheses_covered": [
+  "A natural number word size $W$ and compiler setting $S$",
+  "A natural number $d$ and statement $s$",
+  "States $\\sigma$ and $\\sigma'$",
+  "A natural number $c$",
+  "For every code position $pos$, frame index $q$, and word-valued memory map $m$, if the start predicate holds, there exist a word-valued memory map $m'$ and natural number $n$ for which the finished predicate holds"
+ ],
+ "confidence": "low",
+ "caveat": "The payload does not define the predicates $\\mathrm{Start}$ and $\\mathrm{Finished}$, so their precise execution semantics cannot be stated from the provided information.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

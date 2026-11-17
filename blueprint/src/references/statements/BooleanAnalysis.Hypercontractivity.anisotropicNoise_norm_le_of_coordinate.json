@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.anisotropicNoise_norm_le_of_coordinate",
+ "key": "5975c620893242ac",
+ "kind": "theorem",
+ "title": "Anisotropic noise contraction",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses, let $q\\in\\mathbb R$, let $r_i\\in\\mathbb R$ be a rate for each coordinate, and let $T_{\\boldsymbol r}$ denote the anisotropic noise operator and $N_{i,r_i}$ the noise operator on coordinate $i$. If $\\|N_{i,r_i}g\\|_{q,P}\\leq\\|g\\|_{q,P}$ for every coordinate $i$ and every real-valued function $g$ on the product, then $\\|T_{\\boldsymbol r}f\\|_{q,P}\\leq\\|f\\|_{q,P}$ for every real-valued function $f$ on the product.",
+ "hypotheses_covered": [
+  "A product of n finite probability spaces with strictly positive atom masses and coordinate weights summing to one",
+  "Real exponent q",
+  "A real rate r_i for each coordinate i",
+  "For every coordinate i and real-valued function g, the coordinate noise operator N_{i,r_i} does not increase the real moment norm",
+  "Real-valued function f on the product"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $q\\in\\mathbb R$, and rates $r_i\\in\\mathbb R$. If $\\|N_{i,r_i}g\\|_{q,P}\\le\\|g\\|_{q,P}$ for every coordinate $i$ and every real $g:\\Omega\\to\\mathbb R$, then $\\|T_{\\boldsymbol r}f\\|_{q,P}\\le\\|f\\|_{q,P}$ for every real $f$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_{\\boldsymbol s}h=\\sum_{S\\subseteq[n]}(\\prod_{i\\in S}s_i)h_S$ for real coordinate rates $s_i$; $N_{i,a}h=E_{[n]\\setminus\\{i\\}}h+a(h-E_{[n]\\setminus\\{i\\}}h)$; $\\|h\\|_{q,P}:=(\\mathbb E_P|h|^q)^{1/q}$ as a totalized moment expression for every real $q$, with $1/0=0$, $0^0=1$, and $0^b=0$ for $b\\ne0$."
+}

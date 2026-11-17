@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.Compiler.compileProgram_correct",
+ "key": "f8180de9a7af5fbf",
+ "kind": "theorem",
+ "title": "Correctness of program compilation",
+ "statement": "Let $P$ be a program, let $\text{lim}$ specify word, space, and depth limits, let $p_0$ be a procedure index, and let $\text{dec}$ be a Boolean. Suppose that the main call to procedure $p_0$, executed in $P$ at depth $0$ from the state whose local values are $(0,i,j)$ and whose memory is $\u0000\\mu$, reaches a state $\u0000\\sigma'$ with cost $c$. Suppose the word width $W$ satisfies $2(2\\,\\text{lim.word}+2)<2^W$, $2\\,\\text{lim.space}<2^W$, $4Q<2^W$ for $Q=\\mathrm{stackCells}(P,\\text{lim})$, and $2N<2^W$ for $N=\\mathrm{dispPos}(P,\\text{dec})$. Suppose also that the initial word-RAM memory represents $\u0000\\mu$ in every nonnegative cell, every value of $\u0000\\mu$ has absolute value at most $\\text{lim.word}$, and its two argument cells contain $i$ and $j$, respectively, with $|i|,|j|\\le\\text{lim.word}$. Then running the compiled program from position $0$ for $\\mathrm{ramSteps}(P,\\text{dec},c)$ steps returns true exactly when $\\text{dec}$ is false or $0<\\sigma'.\\mathrm{loc}(0)$. Moreover, some resulting word-RAM memory represents the final memory of $\u0000\\sigma'$ in every nonnegative cell, has $\u0000\\sigma'.\\mathrm{loc}(0)$ in its result cell, preserves both argument cells, and agrees with the initial memory at every address below $-\\mathrm{lowCell}(P,\\text{dec},\\text{lim})$ or at least $\\text{lim.space$.}",
+ "hypotheses_covered": [
+  "The main call executes at depth 0 from local values $(0,i,j)$ and memory $\\mu$, reaching $\\sigma'$ with cost $c$.",
+  "The word-width fit inequality $2(2\\,\\text{lim.word}+2)<2^W$.",
+  "The space fit inequality $2\\,\\text{lim.space}<2^W$.",
+  "The stack fit inequality $4Q<2^W$, where $Q=\\mathrm{stackCells}(P,\\text{lim})$.",
+  "The dispatcher fit inequality $2N<2^W$, where $N=\\mathrm{dispPos}(P,\\text{dec})$.",
+  "The initial memory represents $\\mu$ in every nonnegative cell, and $|\\mu(a)|\\le\\text{lim.word}$ for every natural-number address $a$.",
+  "The argument cells contain $i$ and $j$, and $|i|,|j|\\le\\text{lim.word}$. "
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $P$ be a program, let $\text{lim}$ be its limits, and let $i,j\\\\in\\\\mathbb{Z}$,\n$\\\\mu:\\\\mathbb{N}\\\\to\\\\mathbb{Z}$, and $\\\\sigma'$ be a state. Suppose the light\nexecution of the main call to procedure $p_0$, starting at depth $0$ with local\nvariables $(0,i,j)$ and memory $\\\\mu$, ends in $\\\\sigma'$ with cost $c$. Suppose also\nthat the word size $W$ satisfies the compiler's fit conditions for the dispatcher\nposition and stack capacity, and that the initial word RAM memory represents $\\\\mu$ with\nevery memory value bounded in absolute value by $\\\\text{lim.word}$, and contains $i$ and\n$j$ in the two argument cells, each bounded in absolute value by $\\\\text{lim.word}$.\nThen running the compiled program from position $0$ for the prescribed number of steps\nyields the verdict that is true exactly when either $\\\\text{dec}$ is false or the result\n$\\\\sigma'.loc(0)$ is positive; moreover, there is a final word RAM memory whose ordinary\ncells represent the final light memory, whose result cell contains $\\\\sigma'.loc(0)$,\nwhose argument cells are unchanged, and which agrees with the initial memory at every\naddress below the negative low-cell bound or at least the space limit."
+}

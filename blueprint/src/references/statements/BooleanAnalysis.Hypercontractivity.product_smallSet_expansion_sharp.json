@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_smallSet_expansion_sharp",
+ "key": "7c45091a02090922",
+ "kind": "theorem",
+ "title": "Sharp product small-set expansion",
+ "statement": "Let $n\\in\\mathbb{N}$, let $P$ be a finite product probability space with $n$ coordinates, and let $0<\\lambda<1/2$. Suppose every coordinate atom has probability at least $\\lambda$, and let $q>2$ and $\\rho\\ge 0$ satisfy $\\rho\\le r_q(\\lambda)^2$, where $r_q(\\lambda)=\\sqrt{\\sinh(u/q)/\\sinh\\bigl(u/(q/(q-1))\\bigr)}$ and $u=\\log((1-\\lambda)/\\lambda)$. Then for every event $A$ in the outcome space, $\\operatorname{Stab}_\\rho(\\mathbf{1}_A)\\le\\Pr_P(A)^{2-2/q}$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb{N}$ and a finite product probability space $P$ with $n$ coordinates",
+  "$0<\\lambda<1/2$",
+  "Every coordinate atom has probability at least $\\lambda$",
+  "$q>2$",
+  "$\\rho\\ge 0$ and $\\rho\\le r_q(\\lambda)^2$",
+  "An event $A$ in the outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$ with every coordinate atom at least $0<\\lambda<1/2$, and let $q>2$. Define $r_q(\\lambda)=\\sqrt{\\frac{\\sinh(\\log((1-\\lambda)/\\lambda)/q)}{\\sinh(\\log((1-\\lambda)/\\lambda)/(q/(q-1)))}}$; if $0\\le\\rho\\le r_q(\\lambda)^2$, then $\\operatorname{Stab}_\\rho(\\mathbf1_A)\\le\\Pr_P(A)^{2-2/q}$ for every event $A\\subseteq\\Omega$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\operatorname{Stab}_a(h)=\\mathbb E_P[hT_a h]$; $\\Pr_P(A)=\\mathbb E_P\\mathbf1_A$, where $\\mathbf1_A$ is $1$ on $A$ and $0$ elsewhere. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

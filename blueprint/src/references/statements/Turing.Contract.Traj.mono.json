@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.Contract.Traj.mono",
+ "key": "2b8bcf26ba9b8e57",
+ "kind": "theorem",
+ "title": "Monotonicity of trajectory properties",
+ "statement": "Let $C$ be a contract, and let $R,R'$ be predicates on its data, starting configurations, and work-head position vectors. If $R$ holds throughout every eligible trajectory of $C$ and $R(i,d,p)$ implies $R'(i,d,p)$ for every datum $i$, configuration $d$, and head-position vector $p$, then $R'$ also holds throughout every eligible trajectory of $C$.",
+ "hypotheses_covered": [
+  "C satisfies trajectory property R",
+  "R implies R′ for every datum, configuration, and head-position vector"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a contract for a machine with $k$ work tapes, and let $R$ and $R'$ be\npredicates on data, configurations, and work-head positions. If $C$ satisfies $R$ along\nevery run covered by the contract, and $R$ implies $R'$ for every data value,\nconfiguration, and head-position tuple, then $C$ also satisfies $R'$ along every such\nrun."
+}

@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/FiniteProbabilitySpace.lean :: CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Singleton decomposition of measure
+
+**Claim.** For every subset $S$ of a finite discrete measurable space, its real measure equals the sum of the singleton masses of the points it contains.
+
+**Proof.** Let $T$ be the finite set of points of $S$. Its underlying set is exactly $S$. The measure of a finite set is the sum of the measures of its singleton subsets (MeasureTheory.sum_measureReal_singleton). Thus $μ.real(S)$ is the sum of singleton masses over $T$. Rewriting this finite sum over all points of $Ω$, with zero contribution outside $S$, gives the claimed expression.

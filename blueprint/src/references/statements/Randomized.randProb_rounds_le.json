@@ -1,0 +1,23 @@
+{
+ "lean_name": "Randomized.randProb_rounds_le",
+ "key": "1dc8d8d102cfeae0",
+ "kind": "theorem",
+ "title": "Repeated-round halting probability bound",
+ "statement": "Let $M$ be a nondeterministic Turing machine with $k$ work tapes, Boolean input and work-tape symbols, and state set $\\mathrm{St}$, and let $\\mathrm{Ready}$ be a predicate on configurations for a fixed Boolean input $x$. Fix a round length $R\\in\\mathbb N$ and a rational $a\\ge 0$. Suppose that from every ready configuration, every choice word of length $R$ leads either to a halted configuration or to another ready configuration; and suppose that from every ready configuration, the probability of halting after a uniformly chosen length-$R$ choice word is at most $a$. Then for every $j\\in\\mathbb N$ and every ready configuration $c$, the probability that the machine halts after a uniformly chosen choice word of length $Rj$ is at most $a^j$.",
+ "hypotheses_covered": [
+  "Machine has $k$ work tapes and Boolean symbols",
+  "State set has decidable equality",
+  "Fixed Boolean input $x$",
+  "Ready-configuration predicate",
+  "Round length $R\\in\\mathbb N$",
+  "Rational bound $a$ satisfies $0\\le a$",
+  "Every length-$R$ run from a ready configuration halts or ends ready",
+  "Halting probability in each round from any ready configuration is at most $a$",
+  "$j\\in\\mathbb N$",
+  "Initial configuration $c$ is ready"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.readFrame_reg",
+ "key": "1f31a9b6f08f7242",
+ "kind": "theorem",
+ "title": "Register update preserves the read frame",
+ "statement": "Let $x$ be a finite Boolean input and let $c$ be a configuration with $m$ work tapes. Suppose $r$ and $s$ are distinct tape indices and the head on tape $r$ is at position $0$. For any state labels $l,l'$, valid input-head position $ip$, natural number $k$, tape content $f:\\mathbb Z\\to\\{\\mathrm{none},\\mathrm{false},\\mathrm{true}\\}$, and integer $p$ with $-1\\le p\\le \\operatorname{length}(\text{binary representation of }|x|+1)$, updating tape $s$ and its head to $f$ and $p$ after the read configuration yields a configuration in the read frame of $c$: the output and other tape contents are preserved, and the heads on tapes $r,s$ lie between $-1$ and that same length, inclusive.",
+ "hypotheses_covered": [
+  "A Boolean input list $x$ and a configuration $c$",
+  "Tape indices $r,s$ with $r\\ne s$",
+  "The head on tape $r$ is at position $0$",
+  "Arbitrary state labels $l,l'$",
+  "An arbitrary valid input-head position $ip$",
+  "An arbitrary natural number $k$",
+  "An arbitrary tape content $f$",
+  "An integer $p$ with $-1\\le p\\le \\operatorname{length}(\text{binary representation of }|x|+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

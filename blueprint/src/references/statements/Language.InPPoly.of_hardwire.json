@@ -1,0 +1,17 @@
+{
+ "lean_name": "Language.InPPoly.of_hardwire",
+ "key": "887e0b96a19d0ea6",
+ "kind": "theorem",
+ "title": "Hardwiring preserves polynomial size",
+ "statement": "Let $a : \\mathbb{N} \\to \\mathbb{N}$, and for each input length $n$ let $D_n$ be a Boolean circuit on $n+a(n)$ input bits. For each $n$, fix an assignment $\\alpha_n$ to the final $a(n)$ input bits. Suppose every $D_n$ is well-formed with fan-in at most two, and there are natural numbers $c,k$ such that the size of $D_n$ is at most $c(n+1)^k$ for every $n$. Then the language of strings $w$ accepted by $D_{|w|}$ when given $w$ followed by the fixed assignment $\\alpha_{|w|}$ has polynomial circuit size with fan-in at most two.",
+ "hypotheses_covered": [
+  "A circuit $D_n$ is given for each $n$, with $n+a(n)$ inputs",
+  "A fixed Boolean assignment $\\alpha_n$ to the additional $a(n)$ inputs is given for each $n$",
+  "Every $D_n$ is well-formed with fan-in at most two",
+  "There are natural numbers $c,k$ with $\\mathrm{size}(D_n) \\le c(n+1)^k$ for every $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

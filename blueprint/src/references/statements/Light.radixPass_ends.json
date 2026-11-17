@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.radixPass_ends",
+ "key": "82b9f27044eb27e6",
+ "kind": "theorem",
+ "title": "Correctness and Stability of a Radix Pass",
+ "statement": "Let a resource-limited program have procedures at positions $pc$ and $pp$ containing the counting-sort and copy routines, respectively. Let $A$ describe a radix pass on $w$ indices stored from address $perm$, with keys $kd(i)$ at addresses $key+i\\,stride+off$, all below $nb$; let $\\pi$ be a permutation list of these indices, and let $\\mu$ be the initial memory. Assume $\\pi$ has length $w$, all its entries are below $w$, it is stored at $perm$, each key cell contains $kd(i)<nb$, the key cells precede $perm$, the counters start at $cnt$ after the index and scratch regions, the counter region of length $nb+1$ lies within the $R$ cells from $perm$, and $perm+R$ is within the space limit; also assume the space limit is at most the word bound. Suppose the input variables give $w$, $perm$, $key$, $stride$, $off$, $nb$, and $cnt$ safely, the recursion depth is below the depth limit, and $84w+58nb+72$ plus the costs of those five expressions is at most $T$. Then the radix-pass program has an execution of cost at most $T$ after which only the designated unused variable may have changed, all memory outside the $R$ cells from $perm$ is unchanged, each counter at $cnt+t$ for $t\\le nb$ equals the number of indices $i<w$ with $kd(\\pi_i)<t$, and the indices stored from $perm$ form a stable permutation of $\\pi$ ordered by nondecreasing $kd$ values.",
+ "hypotheses_covered": [
+  "Counting-sort and copy procedures occupy pc and pp",
+  "Radix-pass preconditions on input length, indices, key locations and values, counters, and memory space",
+  "Space limit is at most the word bound",
+  "Input expressions safely give the radix-pass parameters",
+  "Recursion depth is below the depth limit",
+  "Specified running-time bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

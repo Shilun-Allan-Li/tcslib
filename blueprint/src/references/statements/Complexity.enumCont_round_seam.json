@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.enumCont_round_seam",
+ "key": "c1e549f622d06ce2",
+ "kind": "lemma",
+ "title": "Canonical Candidate Seam",
+ "statement": "Let $M_V$ be a finite machine over Boolean symbols, let $x$ and $s$ be Boolean words, and let $b$ be a Boolean phase. The buffered composition of the assembly machine with $M_V$, started from the assembly machine's configuration on input $x$ with phase $b$ and word $s$ on its work tape, equals the configuration on input $x$ whose state is the first-phase state corresponding to $b$, whose tape zero stores $s$, whose other work tapes are blank with heads at zero, whose input head is at position one, and whose output is empty.",
+ "hypotheses_covered": [
+  "A finite Boolean machine $M_V$",
+  "Boolean words $x$ and $s$",
+  "A Boolean phase $b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any verifier machine $MV$, words $x, s$, and assembly phase: the buffered\ncomposition's first-phase configuration over the assembly machine prepared with\ncandidate $s$ equals the canonical configuration in which control sits in the\nchosen assembly phase, tape zero carries $s$, and all other tapes (composition\nbuffer and verifier work) are blank."
+}

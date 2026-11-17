@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.exists_certificateShell",
+ "key": "92cfcaa968c36218",
+ "kind": "theorem",
+ "title": "Polynomial-Length Certificate Decider",
+ "statement": "Let $P$ be a finite Turing machine over the Boolean alphabet, let $j$ be one of its work-tape indices, let $C,c\\in\\mathbb{N}$, let $\\mathrm{out}$ assign a Boolean word to each pair of Boolean words, and let $T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every pair of Boolean words $x,u$ with $|u|=C(|x|+1)^c$, the run of $P$ on input $x$, initialized with $u$ on tape $j$ and all other work tapes blank, halts after $T(|x|+|u|)$ steps with output $\\mathrm{out}(x,u)$. Then there are a finite Boolean Turing machine $V$ and natural numbers $b,e$ such that $V$ decides the language of words $y$ admitting a decomposition $y=xu$ with $|u|=C(|x|+1)^c$ and $\\mathrm{out}(x,u)=[\\mathrm{true}]$, within $b((|y|+1)^e+T(|y|))$ steps.",
+ "hypotheses_covered": [
+  "A finite Turing machine $P$ over the Boolean alphabet",
+  "A work-tape index $j$ of $P$",
+  "Natural numbers $C,c$",
+  "A function $\\mathrm{out}$ from pairs of Boolean words to Boolean words",
+  "A time bound $T:\\mathbb{N}\\to\\mathbb{N}$",
+  "For every $x,u$ with $|u|=C(|x|+1)^c$, $P$ on input $x$ with $u$ on tape $j$ and other tapes blank halts after $T(|x|+|u|)$ steps with output $\\mathrm{out}(x,u)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

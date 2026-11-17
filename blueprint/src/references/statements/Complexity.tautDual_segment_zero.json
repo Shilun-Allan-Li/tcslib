@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.tautDual_segment_zero",
+ "key": "25320b0a003d5477",
+ "kind": "lemma",
+ "title": "Empty Anchor-Free Segment",
+ "statement": "For every binary input $x$ and every configuration $c$ of the dual transducer on $x$, the run from $c$ reaches $c$ after zero steps and has no anchor-state visit at any time strictly before then. Thus it is an anchor-free segment of length $0$.",
+ "hypotheses_covered": [
+  "$c$ is a configuration of the dual transducer on a binary input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every configuration $c$ of the dual transducer, running it for $0$ steps from $c$\nreaches $c$ without visiting the anchor state strictly before, so $c$ to $c$ is a\nsegment of length $0$."
+}

@@ -1,0 +1,30 @@
+{
+ "lean_name": "Complexity.UTab.goes_cell_one",
+ "key": "3e344660c0d8b0bd",
+ "kind": "theorem",
+ "title": "Simulation of a Work-Cell Template",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean input, and let $x,z$ be finite Boolean words. Let $n,T,t,p,r$ be natural numbers, let $\\tau$ be a work-tape index, let $\\mathrm{ph}\\in\\{0,1,2,3,4\\}$, and let $e$ be an eleven-register assignment. Write $S=M.k(2T+1)+(z.length+n)+3$. Assume $r<2T+1$, $t\\le T$, the registers of $e$ satisfy $e_{\\mathrm{nc}}=n$, $e_z=z.length$, $e_i=tS+\\tau(2T+1)+r$, $e_q=0$ when $t=0$ and $e_q=e_i-S$ otherwise, and $e_{\\mathrm{lb}}=tS$. Also assume that the truth values of $\\mathrm{ph}\\ne0$, $\\mathrm{ph}=2$, and $\\mathrm{ph}\\ne4$ agree respectively with those of $1\\le r$, $r=T$, and $r+1<2T+1$. Starting at the label for the work cell indexed by $\\tau$ and phase $\\mathrm{ph}$, with time-zero flag determined by $t=0$, registers $e$, input position $p$, and any prior output word, the counter program reaches the label following that cell template. Its registers are those of $e$ with $i$ replaced by $e_i+1$ and $q$ by $0$ if $t=0$, or by $e_i+1-S$ otherwise; it appends the instruction bits for position $e_i$, in at most $L_{\\max}(M)+3$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine with Boolean symbols",
+  "$x$ and $z$ are finite Boolean words",
+  "$n,T,t,p,r$ are natural numbers",
+  "$\\tau$ is a work-tape index in the finite set of work tapes of $M$",
+  "$\\mathrm{ph}\\in\\{0,1,2,3,4\\}$",
+  "$r<2T+1$",
+  "$t\\le T$",
+  "$e_{\\mathrm{nc}}=n$",
+  "$e_z=z.length$",
+  "$e_i=\\mathrm{cellIdx}(t,\\tau,r)$",
+  "$e_q=0$ if $t=0$, and $e_q=e_i-\\mathrm{Str}(M,n,z,T)$ otherwise",
+  "$e_{\\mathrm{lb}}=t\\,\\mathrm{Str}(M,n,z,T)$",
+  "the truth values of $\\mathrm{ph}\\ne0$ and $1\\le r$ agree",
+  "the truth values of $\\mathrm{ph}=2$ and $r=T$ agree",
+  "the truth values of $\\mathrm{ph}\\ne4$ and $r+1<2T+1$ agree"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

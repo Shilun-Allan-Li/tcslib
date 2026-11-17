@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.tautDual_scan",
+ "key": "03f6616049b8389e",
+ "kind": "lemma",
+ "title": "Silent scan of a suffix",
+ "statement": "Let $r,x,\\mathrm{pre},o$ be binary strings and let $q$ be a syntax-scanner state, with $x=\\mathrm{pre}\\mathbin{+\u001b[0m+}r$. Starting on input $x$ in scanning state $q$ with head at position $|\\mathrm{pre}|+1$ and output $o$, the dual transducer reaches scanning state equal to the scanner transition folded over $r$ from $q$, at position $|x|+1$ with output still $o$, after exactly $|r|$ steps. At every earlier time in this segment, its state is not the anchor state.",
+ "hypotheses_covered": [
+  "Binary strings $r,x,\\mathrm{pre},o$",
+  "A syntax-scanner state $q$",
+  "The decomposition $x=\\mathrm{pre}\\mathbin{+\u001b[0m+}r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input be $x = p \\mathbin{+\\!\\!+} r$, let $q$ be a formula-scanner state, and\nlet $o$ be an output word. Started in the scanning state carrying $q$ at head position\n$|p| + 1$ with output $o$, the dual transducer reaches the scanning state carrying the\nfold of the scanner transition over $r$ from $q$, at position $|x| + 1$ with output\nstill $o$, in exactly $|r|$ steps and without visiting the anchor state before then."
+}

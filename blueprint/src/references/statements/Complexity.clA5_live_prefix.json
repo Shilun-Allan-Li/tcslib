@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clA5_live_prefix",
+ "key": "3bbb1d8f7799fbf7",
+ "kind": "lemma",
+ "title": "Live prefixes of a run",
+ "statement": "Let $M$ be a deterministic Turing machine with $k$ work tapes, Boolean tape symbols, and state set $S$, let $x$ be a Boolean input word, and let $c$ be a configuration on $x$. If the run from $c$ is live at time $t$, then it is live at every time $u\\le t$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$S$ is a type",
+  "$x$ is a Boolean input word",
+  "$M$ is a $k$-work-tape Turing machine over Boolean symbols with states in $S$",
+  "$c$ is a configuration on input $x$",
+  "$t$ is a natural number",
+  "The run from $c$ is live at time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine, configuration, and time $t$ whose configuration at $t$ is live, every configuration at a time $u \\le t$ is live as well, since halting is absorbing."
+}

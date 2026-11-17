@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.dataCfg_written",
+ "key": "77c5134215ddb9fa",
+ "kind": "lemma",
+ "title": "Origin writes decode to the source writes",
+ "statement": "Let $M$ be a finite binary Turing machine, let $c$ be a configuration of $M$ on a binary input word, and let data tapes encode the head-centered payload vectors of $c$. For every lane and coordinate, after the write at coordinate $0$ prescribed by the totalized action of $M$ at $c$—with each work-lane write encoded as a data cell with blank cached neighbor and the input lane left unwritten—the decoded current payload equals the payload after the action's writes at the old origin and before any head movement.",
+ "hypotheses_covered": [
+  "$M$ is a finite binary Turing machine",
+  "$c$ is a configuration of $M$ on a binary input word",
+  "data tapes decode to the source payloads of $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary machine and $c$ a configuration of $M$, and suppose the\ncurrent payloads of the data tapes decode to the head-centered payload vectors\nof $c$.  After writing at the origin of each work lane the symbol optionally\nwritten by the totalized action of $M$ at $c$ (with blank cached neighbor, the\ninput lane untouched), the current payloads decode to the written payload\nvectors of $c$ under that action."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clFresh_run",
+ "key": "6b3554f69764114d",
+ "kind": "lemma",
+ "title": "Bounded reset and field loading",
+ "statement": "For every Boolean input word $x$, valid input-head position $p$, stream prefix $\\mathrm{pre}$, field word $w$, stream tail, and old target word, there is a time $t\\le 2|\\mathrm{old}|+3|w|+6$ at which the unrestricted loader, started in its reset control with stream contents $\\mathrm{pre}\\,\\langle w,\\mathrm{tail}\\rangle$, stream head at $|\\mathrm{pre}|$, and target contents $\\mathrm{old}$ with head at zero, reaches the completed reading control. At that time the target contains exactly $w$ with its head at zero, the stream head is at $|\\mathrm{pre}|+2|w|+2$, and the input position, stream contents, and empty physical output are as specified by the corresponding reader configuration.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Valid input-head position $p$ among $|x|+2$ positions",
+  "Stream prefix $\\mathrm{pre}$",
+  "Field word $w$",
+  "Stream tail",
+  "Old target word $\\mathrm{old}$",
+  "Existence of a time $t\\le 2|\\mathrm{old}|+3|w|+6$",
+  "At time $t$, equality with the specified completed reader configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stream prefix $u$, field word $w$, stream tail, and old target, there is a time $t \\le 2\\,(\\text{old length}) + 3|w| + 6$ after which the unrestricted loader, started at the reset phase with stream cursor $|u|$, holds exactly $w$ on its target with head zero and stream cursor just past the consumed field; the native input and physical output are unchanged, and the stream moves only during reading."
+}

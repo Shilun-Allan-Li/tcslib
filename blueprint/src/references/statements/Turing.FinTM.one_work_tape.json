@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.one_work_tape",
+ "key": "e95b9c0e70a2a9be",
+ "kind": "theorem",
+ "title": "Simulation with one work tape",
+ "statement": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing machine over $\\Gamma$, let $f$ map words over $\\Gamma$ to words over $\\Gamma$, and let $T\\colon\\mathbb N\\to\\mathbb N$. If $M$ computes $f$ in time $T$, then there are a finite alphabet $\\Gamma'$ with decidable equality, an injection $e\\colon\\Gamma\\hookrightarrow\\Gamma'$, a finite Turing machine $M'$ over $\\Gamma'$, and a constant $c\\in\\mathbb N$ such that $M'$ has exactly one work tape and computes $f$ on symbolwise encoded inputs via $e$ within $c(T(n)+1)^2$ steps on inputs of length $n$.",
+ "hypotheses_covered": [
+  "finite alphabet $\\Gamma$",
+  "decidable equality on $\\Gamma$",
+  "finite Turing machine $M$ over $\\Gamma$",
+  "word function $f$ over $\\Gamma$",
+  "time bound $T\\colon\\mathbb N\\to\\mathbb N$",
+  "$M$ computes $f$ in time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In-model analogue of [AB09, Claim 1.6]. Let $\\Gamma$ be a finite alphabet and let $M$ be\na Turing machine over $\\Gamma$ (read-only input tape, write-only output tape, any number\nof work tapes) that computes a function $f$ on words over $\\Gamma$ within time\n$T : \\mathbb{N} \\to \\mathbb{N}$, i.e.\\ on every input $x$ the run of $M$ has halted\nafter $T(\\abs{x})$ steps with output $f(x)$. Then there exist a finite alphabet\n$\\Gamma'$, an embedding $e : \\Gamma \\hookrightarrow \\Gamma'$, a machine $M'$ over\n$\\Gamma'$ with exactly one work tape, and a constant $c \\in \\mathbb{N}$ such that, on\nevery symbol-wise encoded input $e(x)$, the run of $M'$ has halted after\n$c \\cdot (T(\\abs{x}) + 1)^2$ steps with output the symbol-wise encoding $e(f(x))$."
+}

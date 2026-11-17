@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.universal_skip_record",
+ "key": "dd5f199318447ff0",
+ "kind": "lemma",
+ "title": "Exact-Cost Skip of One Record",
+ "statement": "Let $x$ be a Boolean input string, $b$ a four-tape interpreter configuration on $x$, $d$ a destination control index or no destination, $r$ a remaining-record count from $0$ through $8$, and $T$ a table decomposed as $T=l\\rho r'$, where $\\rho$ is the serialized record of an action of a one-work-tape binary machine. From the fixed-field skipping phase with registers $d,r$, field index $0$, table cursor $|l|$, state tape $\\sigma$, and state cursor $s$, after $|\\rho|$ interpreter steps the table cursor is $|l|+|\\rho|$ and the control is the continuation for $d$ if $r=0$, or the fixed-field skipping phase with remaining count $r-1$ and field index $0$ otherwise; the state tape and state cursor are unchanged.",
+ "hypotheses_covered": [
+  "Boolean input string $x$",
+  "Base configuration $b$ of the four-tape interpreter on $x$",
+  "Destination $d$ is an optional index from $0$ through $8$",
+  "Remaining-record count $r$ is an index from $0$ through $8$",
+  "Table $T$ and state tape $\\sigma$ with state cursor $s$",
+  "Action $a$ of a one-work-tape binary machine with $n+1$ states",
+  "Lists $l,r'$",
+  "Table decomposition $T=l++\\operatorname{record}(a)++r'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table is $l \\cdot \\rho \\cdot r$, where $\\rho$ is the serialized\ntransition record of a one-work-tape machine action over $\\{0,1\\}$ (its\neight fixed action bits followed by its self-delimiting unary successor\nfield).  From the interpreter's fixed-field skipping phase, carrying a\ndestination and a count of remaining records in $\\{0, \\dots, 8\\}$, with\nfield register $0$ and table cursor $|l|$, exactly $|\\rho|$ interpreter\nsteps advance the cursor to $|l| + |\\rho|$ and pass control to the\ncontinuation after a skip request for the destination when the remaining\ncount is $0$, and to the fixed-field skipping phase with the count\ndecremented and a cleared field register otherwise; the state tape, state\ncursor, and all other data are unchanged."
+}

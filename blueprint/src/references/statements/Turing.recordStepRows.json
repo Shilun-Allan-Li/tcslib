@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.recordStepRows",
+ "key": "e3af8ac7ce4f43e1",
+ "kind": "def",
+ "title": "Record-step machine construction",
+ "statement": "Let $k$ be a natural number, let $Q$, $T$, and $S$ be types with decidable equality on $Q$ and $T$, let $M$ be a deterministic Turing machine with $k$ work tapes, Boolean symbols, and state set $Q$, and let $u:T\\to\\mathrm{Option}(\\mathrm{Bool})\\to T$ be a tag-update function. Let $N$ be a deterministic Turing machine with two work tapes, Boolean symbols, and state set $S$, and let $i$ be a record-step index for $k$, $Q$, and $T$. The construction assigns to these data a deterministic Turing machine with four work tapes, record symbols formed from $Q$ and $T$, and control phases determined by $i$; its transition behavior is defined by cases on the stage and stored record data.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$Q$, $T$, and $S$ are types",
+  "$Q$ and $T$ have decidable equality",
+  "$M$ is a Boolean-symbol Turing machine with $k$ work tapes and state set $Q$",
+  "$u:T\\to\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$N$ is a Boolean-symbol Turing machine with two work tapes and state set $S$",
+  "$i$ is a record-step index for $k$, $Q$, and $T$"
+ ],
+ "confidence": "low",
+ "caveat": "The definition specifies a large case-by-case machine using auxiliary constructions whose behavior is not described in the supplied definitions.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

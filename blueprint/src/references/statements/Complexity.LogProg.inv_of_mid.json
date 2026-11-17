@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.inv_of_mid",
+ "key": "74e46c379702e68a",
+ "kind": "lemma",
+ "title": "Invariant at call-free bounded configurations",
+ "statement": "Let a register program, its initial label, an oracle, a decider machine, and a starting-state assignment be fixed, together with natural numbers $B,W$ and a configuration $c$ on a Boolean input. If no active state of $c$ is an oracle-call state and every register head position lies between $-1$ and $W$, then every register head position lies between $-1$ and $W$, and each active oracle call satisfies the following conditions: its argument registers are distinct, the input head is at position $1$, and each argument register stores its represented word contiguously from cell zero with its head at zero, with the word length bounded below by $1$ and above by $W$. Moreover, the decider selected by that call, started on the virtual input assembled from the call specification and the represented register words, halts with the oracle's answer as its sole output, leaves all work tapes blank and their heads at zero, and keeps every work-tape head within distance $B$ of zero throughout the run.",
+ "hypotheses_covered": [
+  "No active state of the configuration is an oracle-call state",
+  "Every register head position is between $-1$ and $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

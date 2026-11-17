@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.a3_copy_run",
+ "key": "1bd1a037f7b061c6",
+ "kind": "lemma",
+ "title": "Copy phase from blank tapes",
+ "statement": "Let $C$ be a finite binary Turing machine with at least one work tape, let $entry,exit$ be states of $C$, and let $x$ be a binary word. For any $i\\in\\mathbb{N}$ with $i\\le |x|$, the wrapper machine started on $x$ reaches after $i$ steps a copy-phase configuration with input head at position $i+1$, tape zero containing the prefix of $x$ of length $i$, and its head at position $i$; all other work tapes and heads are blank and at zero, respectively, and the output is empty.",
+ "hypotheses_covered": [
+  "Finite binary machine $C$",
+  "$C$ has at least one work tape",
+  "States $entry,exit$ of $C$",
+  "Binary word $x$",
+  "Natural number $i$ with $i\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $i \\le |x|$, running the decider wrapper for $i$ steps from its\ninitial configuration on $x$ reaches the copy-phase configuration with the first\n$i$ input bits on tape zero and both active heads just past them."
+}

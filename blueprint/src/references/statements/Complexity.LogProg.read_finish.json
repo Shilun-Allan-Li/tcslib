@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.read_finish",
+ "key": "1e0986342ea86770",
+ "kind": "theorem",
+ "title": "Completion of the reading routine",
+ "statement": "Let $x$ be a finite Boolean input and let $c$ be a configuration with $m$ work tapes. Suppose $r$ and $s$ are distinct tape indices, tape $r$ of $c$ contains the binary representation of $i$, and its head is at position $0$. Then there is a number $T$ such that the reading program, started in its initial reading phase with tape $s$ holding the binary representation of $\\min(i,|x|)$ and input-head position $\\min(i,|x|)+1$, reaches the terminal state corresponding to the $i$th symbol of $x$ (or no symbol if that index is out of range), with input-head position $1$ and tape $s$'s head at position $0$. Every configuration at a time $n<T$ lies in the read frame of $c$.",
+ "hypotheses_covered": [
+  "A finite Boolean input $x$ and a configuration $c$",
+  "Distinct tape indices $r,s$",
+  "Tape $r$ of $c$ contains the binary representation of $i$",
+  "The head on tape $r$ is at position $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

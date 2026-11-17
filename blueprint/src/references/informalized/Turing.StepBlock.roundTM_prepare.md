@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/StepBlock.lean :: Turing.StepBlock.roundTM_prepare -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Preparing the Record Phase
+
+**Claim.** Starting with the summary tape holding the unary encoding of $q$ at position $q+2$ and the table head at $p$, the round machine reaches the record-phase initial configuration with the same table and summary, the summary tape empty and its head at $0$, in $3q+16$ steps. The run satisfies the round-span property.
+
+**Proof.** The proof divides the run into four phases. First, the summary head skips the one-cell summary at the origin and the unary word, reaching the blank after it; this takes two machine steps, including the phase change. It then returns across the unary word to its beginning, taking $q+4$ steps including the phase change. The skip and return run results certify that these scans finish at the stated head positions and do not enter their done states early. Next, the clearing machine sweeps across and erases the unary word, then returns to the origin. Since the word has length $q+1$, this takes $2(q+1)+2$ steps including the change of phase. The clearing result gives the final tape contents; in particular, `summaryCells_clear` identifies them with the empty-word summary cells. Finally, the summary head moves two places left to position $0$, taking three steps including the transition into the record phase. Throughout the scans and clearing, the original input head and first $k$ tape heads remain fixed, so `roundWindow_frame` preserves the round window; the initial and intermediate tape layouts satisfy that window by `roundData_window`. The phase-joining result `roundTM_phase` turns each subrun into a round-span segment, and `RoundSpan.add` concatenates the four segments. Because `unaryFin q` has length $q+1$, their costs sum to $2+(q+4)+(2(q+1)+2)+3=3q+16$.
+
+**Key facts.** `Turing.MultiTapeTM.inputPos_runFrom_of_inputTape_eq_zero`, `Turing.StepBlock.RoundSpan.add`, `Turing.StepBlock.mirror_ne_summary`, `Turing.StepBlock.roundData_stateCell`, `Turing.StepBlock.roundData_window`, `Turing.StepBlock.summaryCells_clear`, `Turing.StepBlock.roundTM_phase`, `Turing.StepBlock.roundWindow_frame`, `Turing.clearTM_run_ofCfg`, `Turing.skipBackTM_run_ofCfg`, `Turing.skipTM_run_ofCfg`, `Turing.StepBlock.twoMoveTM_run`.

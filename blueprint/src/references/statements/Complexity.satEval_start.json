@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satEval_start",
+ "key": "7ca0c0112351fc9b",
+ "kind": "lemma",
+ "title": "Evaluator Startup Bound",
+ "statement": "Let $M$ be a finite Boolean Turing machine, and let $w,u$ be Boolean words and $T\\in\\mathbb N$. Suppose that $M$ computes output $u$ on input $w$ in time $T$. Then there are a saved configuration of $M$ on $w$ and a time $s\\in\\mathbb N$ with $s\\le T+|w|+|u|+5$ such that the evaluator built over $M$, started on $w$ in its initial configuration, reaches after $s$ steps its canonical configuration at input position $0$, with certificate $u$ and head at $0$, in formula phase with formula bit true, clause bit false and skip flag cleared.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$w,u$ are Boolean words",
+  "$T\\in\\mathbb N$",
+  "$M$ computes output $u$ on input $w$ in time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the extractor machine $M$ compute the certificate $u$ on input $w$ within $T$\nsteps. Then within $T + |w| + |u| + 5$ steps from its initial configuration, the\nevaluator built over $M$ reaches the canonical evaluation configuration: some saved\nbank of $M$, the certificate $u$ on the last tape with head at $0$, the input head\nat $0$, formula phase with formula bit true, and empty output."
+}

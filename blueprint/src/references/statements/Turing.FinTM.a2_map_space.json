@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.a2_map_space",
+ "key": "3efa7c391844fecf",
+ "kind": "lemma",
+ "title": "Space bound for the mapped computation",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $x$ and $y$ be Boolean words, and let $t,D,S$ be natural numbers. Suppose that at every time $u\\le t$, the positions of each of the simulator’s first two work-tape heads lie in $[-D,D]$. Suppose also that, for every work tape of $M$, the cells visited by the corresponding simulator tape through time $t$ are among the cells visited by that tape of $M$ when initialized on $y$. If the computation of $M$ initialized on $y$ uses at most $S$ cells through time $t$, then the simulator initialized on $x$ uses at most $S+2(2D+1)$ cells through time $t$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x$ and $y$ are Boolean words",
+  "$t,D,S$ are natural numbers",
+  "At every time $u\\le t$, both designated simulator work-tape head positions lie in $[-D,D]$",
+  "For each work tape of $M$, the corresponding simulator tape’s visited cells through time $t$ are contained in the visited cells of that tape of $M$ initialized on $y$",
+  "The computation of $M$ initialized on $y$ uses at most $S$ cells through time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

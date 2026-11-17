@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.xorFuel_eval",
+ "key": "868ac847050a8dae",
+ "kind": "theorem",
+ "title": "Evaluation of the XOR reduction",
+ "statement": "Let $n,k$ be nonnegative integers, let $x$ be an assignment of Boolean values to the $n$ variables, and let $ps$ be a list of pairs of Boolean circuit trees on those variables with $|ps|\\le k$. Suppose that in every pair the second circuit evaluates under $x$ to the negation of the first. Then the first circuit returned by the fuel-bounded XOR reduction evaluates to the iterated exclusive OR of the first circuits in $ps$, and the returned pair consists of circuits whose values under $x$ are complements.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$x$ assigns a Boolean value to each of the $n$ variables",
+  "$k$ is a natural number",
+  "$ps$ is a list of pairs of circuit trees on $n$ variables",
+  "$|ps|\\le k$",
+  "In every pair in $ps$, the second circuit's value under $x$ is the negation of the first circuit's value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

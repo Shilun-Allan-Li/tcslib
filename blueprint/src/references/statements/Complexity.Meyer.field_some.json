@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Meyer.field_some",
+ "key": "7acf3395ab946320",
+ "kind": "theorem",
+ "title": "Simulation of reading a field",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $y$ be a Boolean word, and let $f$ and $bits$ be a Boolean and a bit vector of length equal to the number of selector types of $M$. Suppose $rest,w,r,w_C,w_O$ are Boolean words, $p$ is natural with $1\\le p$, the suffix of $y$ from position $p-1$ is $rest$, and reading a field from $rest$ returns $(w,r)$. After $2|w|+2$ steps of the tabulating machine for $M$, started in state $fA(f,bits)$ at input position $\\min(p,|y|+1)$ with auxiliary words $[],w_C,w_O$, its entire configuration is the configuration at input position $\\min(p+2|w|+2,|y|+1)$ with state $cpy(bits)$ if $f$ is true and $fA(true,bits)$ otherwise, auxiliary words $w_C,w_O$ changed to $w_C,w_O\\mathbin{+\begin{bmatrix}w\\end{bmatrix}}$ if $f$ is true, and to $w_C\\mathbin{+\begin{bmatrix}w\\end{bmatrix}},w_O$ otherwise; the output remains empty and the original machine's work tapes remain blank.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Boolean Turing machine",
+  "$y$ is a Boolean word",
+  "$f$ is a Boolean",
+  "$bits$ has length equal to the number of selector types of $M$",
+  "$rest,w,r,w_C,w_O$ are Boolean words",
+  "$p$ is natural and $1\\le p$",
+  "the suffix of $y$ from position $p-1$ is $rest$",
+  "reading a field from $rest$ returns $(w,r)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

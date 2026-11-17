@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clTrajectory_native",
+ "key": "789cf4494d20f241",
+ "kind": "lemma",
+ "title": "Polynomial-time production of native trajectories",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $y$ and $T$ be functions from Boolean words to Boolean words and to natural numbers, respectively. If both $y$ and the function sending $x$ to the unary word of length $T(x)$ are polynomial-time computable, then the function sending $x$ to the serialized trajectory of $M$ on input $y(x)$ through time $T(x)$ inclusive is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$y$ maps Boolean words to Boolean words",
+  "$T$ maps Boolean words to natural numbers",
+  "$y$ is polynomial-time computable",
+  "the function mapping $x$ to the unary word of length $T(x)$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a reference-input producer and a unary-horizon producer are polynomial-time computable, then the function sending an input $x$ to the inclusive serialized trajectory of the source over the produced reference input, with the produced horizon plus one rows, is polynomial-time computable; no recomputed semantics or unbounded numeric conversion is used."
+}

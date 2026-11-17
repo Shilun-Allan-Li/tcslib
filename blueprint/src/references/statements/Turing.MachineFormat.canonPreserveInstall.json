@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.MachineFormat.canonPreserveInstall",
+ "key": "c3a1fdf1213afa8f",
+ "kind": "lemma",
+ "title": "Installing a computed function at a tape seam",
+ "statement": "Let $F$ be a machine format, let $M$ be a finite Turing machine over Boolean symbols, let $f$ map Boolean words to Boolean words, and let $T$ map natural numbers to natural numbers. Suppose that on every input word $arg$, $M$ halts within $T(|arg|)$ steps with output $f(arg)$. Then there exist a finite Boolean Turing machine $C$, a destination work tape $dst$, entry and exit states, and a natural number $a$, with $dst$ having index $1$, such that for every input word $x$ and argument word $arg$, starting $C$ in its entry state with $arg$ on tape $0$ and all other tapes empty, it reaches within $a(T(|arg|)+|arg|+|f(arg)|+1)$ steps a configuration in the exit state whose tape words are the initial assignment with $f(arg)$ installed on tape $dst$. The exit state is not reached at any earlier time.",
+ "hypotheses_covered": [
+  "$F$ is a machine format",
+  "$M$ is a finite Boolean Turing machine",
+  "$f:\\{0,1\\}^*\\to\\{0,1\\}^*$",
+  "$T:\\mathbb N\\to\\mathbb N$",
+  "$M$ computes $f$ within time $T$ on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

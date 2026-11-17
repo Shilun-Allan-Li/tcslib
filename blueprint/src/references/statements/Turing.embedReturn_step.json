@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.embedReturn_step",
+ "key": "ffa3525e9128c0fc",
+ "kind": "lemma",
+ "title": "Step under return embedding",
+ "statement": "Let $k$ be a natural number, let $N$ be a $k$-work-tape machine with state set $S$, and let $R$ be such a machine with state set $S \\sqcup \\{\\ast\\}$. Suppose that, at every state in the left summand, $R$'s transition is the return embedding of $N$'s transition, and that at the added state its transition makes no tape changes or output, stays in that state, and does not move either the input head or any work-tape head. Then, for every configuration $c$ of $N$, taking one step of $R$ from the return embedding of $c$ gives the return embedding of the configuration obtained by taking one step of $N$.",
+ "hypotheses_covered": [
+  "A natural number $k$",
+  "A $k$-work-tape machine $N$ with state set $S$",
+  "A $k$-work-tape machine $R$ with state set $S$ disjoint-unioned with a singleton",
+  "For every state, input symbol, and tuple of work-tape symbols, $R$'s transition at the corresponding left-summand state equals the return embedding of $N$'s transition",
+  "For every input symbol and tuple of work-tape symbols, the transition at the added state makes no changes, emits no symbol, and stays in that state",
+  "A configuration $c$ of $N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

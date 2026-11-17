@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.rt_findParts",
+ "key": "7ef0c1ad9e67f1dc",
+ "kind": "def",
+ "title": "Find-machine component machines",
+ "statement": "Let $\\Gamma$ and $A$ be types, let $m$ be a natural number, let $\\delta:A\\to\\mathrm{Option}(\\Gamma)\\to A$, and choose an initial element $a_0\\in A$. For each find-machine phase, define a two-work-tape Turing machine over $\\Gamma$ with that phase's control-state type: the read phase records whether the first work-tape cell is occupied, each scan phase performs a forward scan using the state update $a\\mapsto\\delta(a,\\mathrm{some}(\\gamma))$ while preserving scanned symbols, each skip phase advances along the first tape, and the exit phase remains at its singleton control state.",
+ "hypotheses_covered": [
+  "Types $\\Gamma$ and $A$",
+  "Natural number $m$",
+  "Function $\\delta:A\\to\\mathrm{Option}(\\Gamma)\\to A$",
+  "Initial element $a_0\\in A$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.clockHost_zDecides",
+ "key": "d00734b019c515f3",
+ "kind": "theorem",
+ "title": "Clocked Zero-Error Decision with Expected-Time Bound",
+ "statement": "Let $S$ be a finite-state deterministic machine, $A$ a finite-state nondeterministic machine, $L$ a language of Boolean words, and $m,T_S:\\mathbb{N}\\to\\mathbb{N}$. Suppose $S$ computes the all-true word of length $m(|x|)$ on every input $x$ within $T_S(|x|)$ steps, and $n\\le m(n)$ for every $n$. Suppose every length-$m(|x|)$ witness on which an attempt by $A$ on $x$ halts with a single output bit yields the correct membership indicator, and that for every $x$ the probability that a uniformly random length-$m(|x|)$ witness does not yield such a bit is at most $3/4$. Then the clocked host machine built from $S$ and $A$ with its looping option enabled has cumulative nonhalting probability at most $T_S(n)+m(n)+2+16(m(n)+1)$: for every natural number $K$, the sum over $t<K$ of the probability that it has not halted after $t$ steps is at most this bound. Every witness on which it halts produces exactly the one-bit membership indicator of $L$.",
+ "hypotheses_covered": [
+  "$S$ is a finite-state deterministic Boolean machine",
+  "$A$ is a finite-state nondeterministic Boolean machine",
+  "$L$ is a language of Boolean words",
+  "$m,T_S$ are functions from natural numbers to natural numbers",
+  "$S$ computes the all-true word of length $m(|x|)$ within $T_S(|x|)$ steps for every input",
+  "$n\\le m(n)$ for every natural number $n$",
+  "Every length-$m(|x|)$ witness yielding a single output bit from an attempt by $A$ gives the membership indicator",
+  "The probability that a uniformly random length-$m(|x|)$ witness yields no bit is at most $3/4$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

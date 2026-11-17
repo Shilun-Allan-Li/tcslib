@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clLoad_complete",
+ "key": "18afa244aa2972e0",
+ "kind": "lemma",
+ "title": "Completion of the row load",
+ "statement": "Let $l$ be a natural number, let $x$ be a binary input word, and let $p$ be an input-head position among its $|x|+2$ positions. Suppose $old$ and $new$ assign a binary word to each of the $l$ fields, with every old word of length at most $U$ and every new word of length at most $W$. For any prefix and trailer, the row loader started at field zero with the old fields and stream consisting of the prefix, the packed new fields, and the trailer reaches, in some time $t\\le l(2U+3W+7)$, the configuration with all fields equal to the new fields, the field index at $l$, and the stream cursor immediately after the packed new fields; the input position and stream contents are as specified by these configurations.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb N$",
+  "$x$ is a binary word",
+  "$p$ is an input-head position for $x$",
+  "old and new assign words to the $l$ fields",
+  "each old word has length at most $U$",
+  "each new word has length at most $W$",
+  "$pre$ and $tail$ are binary words",
+  "$U,W\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, old fields of length at most $U$, new fields of length at most $W$, and stream prefix and trailer, there is a time $t \\le l\\,(2U + 3W + 7)$ after which the row loader holds exactly the new row on its field tapes, with every field head restored, the full record stream retained, and the stream cursor immediately after the packed row; the load is a native call, not indexed list access."
+}

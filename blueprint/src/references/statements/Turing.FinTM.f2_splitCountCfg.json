@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitCountCfg",
+ "key": "3ffe7628799340cc",
+ "kind": "def",
+ "title": "Split-count configuration construction",
+ "statement": "Let $k$ be a nonnegative integer, let $S$ and $H$ be types, and let $e:S\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to H$ and $r:\\{\\mathrm{false},\\mathrm{true}\\}\\to H$ be functions. For finite Boolean strings $w$ and $s$, and a configuration $c$ with $k$ work tapes, Boolean symbols, state set $S$, and empty input, define $o$ to be the truth value of $|w|<|s|+|c.\\mathrm{output}|$. The resulting configuration has $k+1$ work tapes, state set $H$, input $w$, state $e(q,o)$ if $c$ has state $q$ and $r(o)$ if $c$ has no state, input-head position given by the split-position construction for $w$ and $|s|+|c.\\mathrm{output}|$, first work tape given by the buffer construction for $s$, remaining work tapes and their head positions inherited from $c$, new first work-tape head at $0$, and empty output.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$",
+  "types $S$ and $H$",
+  "functions $e:S\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to H$ and $r:\\{\\mathrm{false},\\mathrm{true}\\}\\to H$",
+  "finite Boolean strings $w$ and $s$",
+  "configuration $c$ with $k$ work tapes, Boolean symbols, state set $S$, and empty input"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not include definitions of the split-position and buffer constructions, so their exact mathematical meanings cannot be stated self-containedly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

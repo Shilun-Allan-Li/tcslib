@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Codec.vscan_run",
+ "key": "5e10fdeecab94fe7",
+ "kind": "theorem",
+ "title": "Execution of the configuration scan",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input and work-tape symbols, and fix any codec mode. Let $y,x,w,r$ be finite bit strings with $y$ equal to the self-delimiting pair encoding of $x$ and the pair encoding of $w$ with $r$. Let $R$ be a register assignment whose 21 register values are all at most $B=(8W_N+8)(|y|+1)$, and suppose its registers $A$ and $E$ have values $2|x|+2$ and $2|x|+2+4W_Ns+2W_N$, respectively. If $W_N(2s+1)\u001c|w|$, then there is an accumulator state whose scan component equals the result of scanning the first $W_N(2s+1)$ bits of $w$, and the codec program in the chosen mode can reach its completion state from the register state obtained by clearing $Q_1$, while keeping every register at most $B$ throughout the run; at completion, registers $Q_1$ and $Q_2$ both equal the original value of $E$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "A codec mode is fixed",
+  "$y,x,w,r$ are finite bit strings and $s$ is a natural number",
+  "$y$ is the prescribed nested pair encoding of $x,w,r$",
+  "Every register value in $R$ is at most $(8W_N+8)(|y|+1)$",
+  "Register $A$ equals $2|x|+2$",
+  "Register $E$ equals $2|x|+2+4W_Ns+2W_N$",
+  "$W_N(2s+1)\\le |w|$"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement specifies a reachability relation through a large program definition not informally supplied. The displayed inequality is rendered as $W_N(2s+1)\\le |w|$.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

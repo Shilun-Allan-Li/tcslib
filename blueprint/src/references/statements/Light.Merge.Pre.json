@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.Merge.Pre",
+ "key": "d4a0472ab40d6d50",
+ "kind": "structure",
+ "title": "Merge preconditions",
+ "statement": "Let $L$ and $R$ be lists of integers, let $\u001b[?]$ be a memory map from natural-number addresses to integers, and let $a,b,d$ be natural-number addresses. Suppose the memory-space limit is at most the word-size limit, $L$ and $R$ occupy memory segments beginning at $a$ and $b$, respectively, and the regions beginning at $a$, $b$, and $d$ have lengths $|L|$, $|R|$, and $|L|+|R|$, respectively, all ending within the space limit. Suppose also that each input region is apart from the destination region.",
+ "hypotheses_covered": [
+  "space limit is at most word-size limit",
+  "left list is a segment of memory at its start address",
+  "right list is a segment of memory at its start address",
+  "left input region ends within space limit",
+  "right input region ends within space limit",
+  "destination region ends within space limit",
+  "left region is apart from destination region",
+  "right region is apart from destination region"
+ ],
+ "confidence": "low",
+ "caveat": "The payload omits the definitions of Seg and Apart, so their exact meanings cannot be rendered from the supplied information.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

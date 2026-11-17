@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.mem_NP_iff_exists_length_le",
+ "key": "4226ca159cf05ab1",
+ "kind": "theorem",
+ "title": "NP certificates of bounded length",
+ "statement": "A language $L$ over the binary alphabet belongs to $\\mathsf{NP}$ if and only if there are natural numbers $C,c$ and a language $V\\in\\mathsf{P}$ such that, for every binary string $x$, $x\\in L$ exactly when there is a binary string $u$ with $|u|\\le C(|x|+1)^c$ for which $\\langle x,u\\rangle\\in V$. Here $\\langle x,u\\rangle$ is formed by doubling each bit of $x$, appending the separator $01$, and then appending $u$.",
+ "hypotheses_covered": [
+  "$L$ is a language over the binary alphabet"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a language $L \\subseteq \\{0,1\\}^{*}$, the following are equivalent:\n(i) $L \\in \\mathsf{NP}$, i.e.\\ there are $C', c' \\in \\mathbb{N}$ and a language\n$V' \\in \\mathsf{P}$ such that for every binary string $x$, $x \\in L$ if and only if\nsome $u$ with $|u| = C'(|x|+1)^{c'}$ has $xu \\in V'$;\n(ii) there are $C, c \\in \\mathbb{N}$ and a language $V \\in \\mathsf{P}$ such that\nfor every binary string $x$, $x \\in L$ if and only if some binary string $u$ with\n$|u| \\le C(|x|+1)^c$ has $\\langle x, u\\rangle \\in V$, where\n$\\langle x, u\\rangle$ is the self-delimiting pair encoding consisting of $x$ with\nevery bit doubled, then the separator $01$, then $u$ verbatim."
+}

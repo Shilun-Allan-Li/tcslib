@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.RoundContract.orbit_anchor",
+ "key": "dcd937cbf12c1dd7",
+ "kind": "theorem",
+ "title": "Anchor States Along a Round Orbit",
+ "statement": "Let $M$ be a multi-tape Turing machine with state set $S$, let $a\\in S$, and let $R$ be a round contract for $M$ at anchor $a$. If $c$ starts in state $a$, the precondition holds at every orbit configuration with index $r<n$, and each round endpoint with $r+1<n$ returns to state $a$, then every orbit configuration with index $r<n$ is in state $a$.",
+ "hypotheses_covered": [
+  "A round contract $R$ for machine $M$ with anchor $a$",
+  "The initial configuration $c$ has state $a$",
+  "The precondition holds at every orbit index $r<n$",
+  "Every round endpoint with $r+1<n$ has state $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape machine, let $a$ be a state, and let $R$ be a round contract for\n$M$ anchored at $a$. If a configuration $c$ starts in state $a$, the round precondition\nholds at every orbit configuration with index $r<n$, and every round endpoint with\n$r+1<n$ returns to state $a$, then every orbit configuration with index $r<n$ is in\nstate $a$."
+}

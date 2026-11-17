@@ -1,0 +1,18 @@
+{
+ "lean_name": "FABL.goldreichLevinQueryProgram_correct_of_mem_support_of_not_hasFailure",
+ "key": "77d173501f98a1d8",
+ "kind": "theorem",
+ "title": "Correctness when no estimate fails",
+ "statement": "Let $n$ be a nonnegative integer, let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$, and let $0<\\tau\\le1$. For any outcome in the support of the Goldreich–Levin query program run against $f$, if its estimate trace contains no inaccurate record (each record's estimate differs from the corresponding restricted Fourier weight by less than $\\tau^2/4$), then the outcome's state is correct: its active family exists, contains every $U$ with $\\tau\\le|\\widehat f(U)|$, contains only sets with $\\tau/2<|\\widehat f(U)|$, and has cardinality at most both $\\lceil4/\\tau^2\\rceil$ and $4/\\tau^2$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f$ maps the Boolean cube to $\\{-1,1\\}$",
+  "$0<\\tau\\le1$",
+  "The outcome belongs to the support of the program's output distribution",
+  "The outcome's trace has no record whose estimate differs from the associated restricted Fourier weight by at least $\\tau^2/4$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

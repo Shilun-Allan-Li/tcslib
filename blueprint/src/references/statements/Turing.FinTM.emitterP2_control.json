@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_control",
+ "key": "0b263e16ede59394",
+ "kind": "lemma",
+ "title": "Silent dispatch on a word seam",
+ "statement": "Let $M$ be a deterministic Turing machine with $k$ work tapes over the Boolean alphabet, and let $q,r$ be states such that, for every input symbol and every tuple of work-tape symbols, the transition from $q$ is the action that leaves the input head and every work head stationary, writes nothing, emits no output, and enters $r$. For every Boolean input word $w$ and every family of words assigned to the $k$ work tapes, one step from the seam configuration in state $q$ yields the seam configuration in state $r$ with the same tape words.",
+ "hypotheses_covered": [
+  "M is a k-work-tape Boolean-alphabet machine",
+  "q and r are states of M",
+  "for every input and work-tape reading, M transitions from q by a stationary, silent, no-write action to r",
+  "w is a Boolean input word",
+  "words is an arbitrary family of k Boolean tape words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a control state's transition is the unconditional silent dispatch to a\nstate $r$, then one step from the canonical word-seam configuration in that\nstate yields the canonical word-seam configuration in state $r$ with every\nother component unchanged."
+}

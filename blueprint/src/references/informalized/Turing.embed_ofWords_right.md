@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean :: Turing.embed_ofWords_right -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Embedding a Right-Call Configuration
+
+**Claim.** When $G$ has at least one work tape, embedding the configuration with state $g$ and standard word assignment for $G$ into a machine with $\max(E.k,G.k)$ work tapes using the right-call state injection gives the configuration with the corresponding right-call state and the same standard word assignment.
+
+**Proof.** By the configuration embedding formula (`Turing.embedCfg_ofWords`), the embedded state is the image of $g$, and each tape word is the original word when its index is below $G.k$, otherwise the empty word. The input, head positions, and output are already those of the standard word configuration. It remains to check the tape words. Fix a tape index $i$. If $i<G.k$, then the standard assignment on that tape is $s$ exactly when $i=0$, and is empty otherwise; the target assignment agrees. If $i\not<G.k$, then $i\ne0$, since $G.k>0$, so both assignments are empty. Thus every configuration component agrees.
+
+**Key facts.** `Turing.embedCfg_ofWords`.

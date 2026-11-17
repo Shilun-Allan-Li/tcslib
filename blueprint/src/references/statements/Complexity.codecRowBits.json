@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.codecRowBits",
+ "key": "38ecc2d6e8178764",
+ "kind": "def",
+ "title": "Bits of an encoding row",
+ "statement": "Given a configuration encoding row, assign a Boolean value to each tagged bit position as follows. At an input coordinate use the corresponding input bit; at an input-head or state coordinate use $1$ exactly when that coordinate is the row's selected position or state. For a work-tape coordinate, the first and second slots indicate, respectively, that the cell contains false or true, and the third indicates that the work-tape head is at that cell. At an output-summary coordinate, the bit is $1$ exactly when the row's summary is dead for the first coordinate or accepting for the second.",
+ "hypotheses_covered": [
+  "The row has machine $M$ and parameters $n,s$ as in the encoding-row definition"
+ ],
+ "confidence": "high",
+ "caveat": "The statement uses the three work-tape slots and two summary coordinates in the order specified by the definition.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.sim_jeqFst",
+ "key": "411e2438aae1dffe",
+ "kind": "lemma",
+ "title": "Simulation of First-Component Equality",
+ "statement": "Let $m,d$ be natural numbers, let $\\Lambda$ be a type of labels, and let $A$ assign an instruction to each label, with initial label $l_0$. Let an oracle assign a Boolean answer to each decider in a set of $d$ deciders and each bit string, and let $x$ be a valid nested pair encoding. Suppose $l,l_1,l_0'\\in\\Lambda$, $r$ is one of the $m$ registers, and the instruction at $l$ tests whether the binary expansion of register $r$ equals the first component of the inner pair, branching to $l_1$ on equality and to $l_0'$ otherwise. For any register valuation $v$, output word, and integer bound $W$ such that the length of the binary expansion of $v(r)$ is at most $W$, the compiled program simulates this instruction from the configuration with input $x$, label $l$, valuation $v$, and the given output word to the configuration with the same input, valuation, and output, and with label $l_1$ exactly when the binary expansion of $v(r)$ equals the first inner component extracted from $x$, and label $l_0'$ otherwise. At every intermediate configuration before the endpoint, no oracle call is pending and every work-tape head position lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "Natural numbers m and d",
+  "Type of labels Λ",
+  "Instruction map A and initial label l₀",
+  "Oracle assigning Boolean answers by decider and bit string",
+  "Input x satisfying ValidPair",
+  "Labels l, l₁, and l₀′",
+  "Register r among the m registers",
+  "Instruction identity A(l) = jeqFst(r,l₁,l₀′)",
+  "Register valuation v",
+  "Output word",
+  "Integer bound W",
+  "Length of Nat.bits(v(r)) is at most W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

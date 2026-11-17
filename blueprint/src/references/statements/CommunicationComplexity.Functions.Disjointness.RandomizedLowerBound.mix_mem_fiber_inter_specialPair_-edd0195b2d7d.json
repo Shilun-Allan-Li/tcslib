@@ -1,17 +1,20 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mem_fiber_inter_specialPair_of_mem_specialX_specialY",
- "key": "9b7bc30e9f924751",
+ "key": "1229636920410a97",
  "kind": "theorem",
- "title": "Mixing preserves the fiber and sets the special pair",
- "statement": "Fix a deterministic communication protocol $p$ for disjointness on $n$ coordinates, a value $z$ of the statistic $Z = (M, T, X_{<T}, Y_{>T})$ recorded by the protocol (its transcript, the special coordinate, Alice's input bits before the special coordinate, and Bob's input bits after it), and two bits $b_X, b_Y$. Let $\\omega_X$ and $\\omega_Y$ be hard-distribution samples that both lie in the fiber $Z = z$, and suppose that Alice's bit at the special coordinate of $\\omega_X$ equals $b_X$ while Bob's bit at the special coordinate of $\\omega_Y$ equals $b_Y$. Then the mixed sample — taking Alice's input from $\\omega_X$ and Bob's input from $\\omega_Y$ — again lies in the fiber $Z = z$, and its pair of special-coordinate bits is $(b_X, b_Y)$.",
+ "title": "Mixing preserves the fiber and special pair",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for set disjointness on $n$ coordinates, let $z$ be an achievable value of $Z$, and let $\\omega_X,\\omega_Y$ be hard samples. Suppose both samples lie in the fiber of $Z=z$, Alice’s special-coordinate bit in $\\omega_X$ is $b_X$, and Bob’s special-coordinate bit in $\\omega_Y$ is $b_Y$. Then the sample formed by mixing Alice’s input from $\\omega_X$ with Bob’s input from $\\omega_Y$ also lies in the fiber of $Z=z$, and its special-coordinate bit pair is $(b_X,b_Y)$.",
  "hypotheses_covered": [
-  "omega_X lies in the Z=z fiber",
-  "Alice's special bit of omega_X equals b_X",
-  "omega_Y lies in the Z=z fiber",
-  "Bob's special bit of omega_Y equals b_Y"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol for set disjointness on $n$ coordinates",
+  "$z$ is an achievable value of $Z$",
+  "$\\omega_X$ lies in the fiber of $Z=z$",
+  "$\\omega_Y$ lies in the fiber of $Z=z$",
+  "Alice’s special-coordinate bit in $\\omega_X$ equals $b_X$",
+  "Bob’s special-coordinate bit in $\\omega_Y$ equals $b_Y"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If two samples are in a $Z=z$ fiber, and the first has Alice special bit \\texttt{bX} while the second has Bob special bit \\texttt{bY}, then their mix is in the same fiber with special pair $(bX, bY)$."
+ "replaced": "Fix a deterministic communication protocol $p$ for disjointness on $n$ coordinates, a\nvalue $z$ of the statistic $Z = (M, T, X_{<T}, Y_{>T})$ recorded by the protocol (its\ntranscript, the special coordinate, Alice's input bits before the special coordinate,\nand Bob's input bits after it), and two bits $b_X, b_Y$. Let $\\omega_X$ and $\\omega_Y$\nbe hard-distribution samples that both lie in the fiber $Z = z$, and suppose that\nAlice's bit at the special coordinate of $\\omega_X$ equals $b_X$ while Bob's bit at the\nspecial coordinate of $\\omega_Y$ equals $b_Y$. Then the mixed sample — taking Alice's\ninput from $\\omega_X$ and Bob's input from $\\omega_Y$ — again lies in the fiber $Z = z$,\nand its pair of special-coordinate bits is $(b_X, b_Y)$."
 }

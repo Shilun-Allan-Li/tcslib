@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.sat_bridge_bound",
+ "key": "088b7fda4224a47d",
+ "kind": "lemma",
+ "title": "Polynomial bridge bound",
+ "statement": "For all natural numbers $c,A,d,n,\\mathrm{len}$ satisfying $\\mathrm{len}\\le A(n+1)^d$, one has\n\\[\nc\\bigl(A(n+1)^d+n+\\mathrm{len}+1\\bigr)+1\\le \\bigl(c(2A+1)+1\\bigr)(n+1)^{d+1}.\n\\]",
+ "hypotheses_covered": [
+  "$c,A,d,n,\\mathrm{len}$ are natural numbers",
+  "$\\mathrm{len}\\le A(n+1)^d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all naturals $c, A, d, n$ and any length\n$\\mathrm{len} \\le A\\,(n+1)^d$:\n\\[\nc\\,\\bigl(A\\,(n+1)^d + n + \\mathrm{len} + 1\\bigr) + 1\n\\;\\le\\; \\bigl(c\\,(2A + 1) + 1\\bigr)\\,(n+1)^{d+1},\n\\]\ni.e.\\ the bridge overhead is bounded by one monomial of degree one higher."
+}

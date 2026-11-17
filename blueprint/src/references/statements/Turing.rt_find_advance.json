@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.rt_find_advance",
+ "key": "3b646565b2439d26",
+ "kind": "theorem",
+ "title": "Advance through a scanned field",
+ "statement": "Let $m>0$, let $\u0000\u0000\u0000\u0000$, $a_0$, and $\u0000\u0000\u0000\u0000$ be fixed, and let $j$ be an index less than $m$. Let $a,b$ be states, let $w$ be a word, and let $d$ be a configuration in the forward scan state with state value $a$. Suppose tape $0$, relative to its head, contains the buffer for $w$ at every integer position from $-1$ through $|w|$. Suppose the phase redirect from scanning field $j$ in the completed state obtained by folding $w$ from $a$ leads to the skip phase carrying $b$, and that the completed skip phase carrying $b$ redirects to a phase-control state $q$. After $3|w|+5$ steps of the round machine, the configuration is the original one with tape $0$'s head advanced by $|w|+1$, and with state mapped to $q$. At every earlier time $u<3|w|+5$, its state is neither the read state with no stored Boolean value nor the exit state.",
+ "hypotheses_covered": [
+  "$m>0$",
+  "The transition function $\u0000\u0000\u0000\u0000$, initial state $a_0$, and acceptance predicate $\u0000\u0000\u0000\u0000$",
+  "$j$ is an index less than $m$",
+  "States $a,b$ and word $w$",
+  "Configuration $d$ is in the forward scan state with value $a$",
+  "Tape $0$ agrees with the buffer for $w$ at positions $-1\\le p\\le |w|$ relative to its head",
+  "The scan redirect on the fold of $w$ from $a$ maps to skip phase $(j,b)$ in the run state",
+  "The skip redirect for $(j,b)$ in the done state maps to $q$",
+  "The asserted run time is $3|w|+5$",
+  "For all $u<3|w|+5$, neither excluded endpoint state occurs"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem's hypotheses and conclusion are interpretable, but several parameter names are malformed in the generated prose.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

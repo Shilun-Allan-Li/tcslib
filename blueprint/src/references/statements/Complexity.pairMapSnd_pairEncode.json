@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.pairMapSnd_pairEncode",
+ "key": "eeff9e740c469c1b",
+ "kind": "theorem",
+ "title": "Payload map on an encoded pair",
+ "statement": "For any function $g$ from finite bit strings to finite bit strings and any finite bit strings $a$ and $b$, applying the threaded payload map of $g$ to the encoding $\\langle a,b\\rangle$ gives $\\langle a,g(b)\\rangle$.",
+ "hypotheses_covered": [
+  "$g$ is a function from finite bit strings to finite bit strings",
+  "$a,b$ are finite bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $g$ be a function from bit strings to bit strings, let $\\langle a,b\\rangle$ denote the self-delimiting pair encoding of bit strings $a,b$ (every bit of $a$ doubled, then $01$, then $b$), and let $\\sigma_g$ be the threaded payload map of $g$, which decodes a bit string $z$ as a pair $\\langle a,b\\rangle$ and outputs $\\langle a, g(b)\\rangle$, or outputs the empty word if $z$ is not a pair encoding. Then $\\sigma_g(\\langle a,b\\rangle) = \\langle a, g(b)\\rangle$ for all bit strings $a$ and $b$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.arTape_ext",
+ "key": "414c65eb878d8ff7",
+ "kind": "lemma",
+ "title": "Extensionality along block coordinates",
+ "statement": "Let $N\\in\\mathbb{N}$, and let $u,v:\\mathbb{Z}\\to\\{0,1,\\text{blank}\\}$ be tapes. If $u$ and $v$ agree at every position $(N+1)z+j$, for every $z\\in\\mathbb{Z}$ and $j\\in\\{0,\\ldots,N\\}$, then $u=v$.",
+ "hypotheses_covered": [
+  "$N\\in\\mathbb{N}$",
+  "$u,v$ are tapes from integers to optional bits",
+  "Agreement at every position $(N+1)z+j$ for all integer $z$ and offsets $j\\in\\{0,\\ldots,N\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix $N \\in \\mathbb{N}$. Two binary tapes $u, v : \\mathbb{Z} \\to \\{0,1\\} \\cup\n\\{\\text{blank}\\}$ that agree at every position of the form $(N+1)z + j$ with\n$z \\in \\mathbb{Z}$ and $j \\in \\{0,\\dots,N\\}$ are equal."
+}

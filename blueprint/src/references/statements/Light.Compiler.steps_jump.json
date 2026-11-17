@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Compiler.steps_jump",
+ "key": "551141850bef58ab",
+ "kind": "theorem",
+ "title": "Negative branch jump",
+ "statement": "Suppose the code at position $\\mathrm{pos}$ begins with a branch instruction that jumps to $l$ when the tested register is negative. If that register contains the word encoding $-1$ and $-1$ lies in the signed range $-2^{W-1}\\le -1<2^{W-1}$, then one machine step takes the program counter from $\\mathrm{pos}$ to $l$ without changing memory.",
+ "hypotheses_covered": [
+  "Code at pos begins with a branch-on-negative instruction targeting l",
+  "Tested register contains the word encoding −1",
+  "−1 satisfies −2^W ≤ 2(−1) < 2^W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

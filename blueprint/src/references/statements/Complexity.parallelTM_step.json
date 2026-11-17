@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.parallelTM_step",
+ "key": "0317a70053012279",
+ "kind": "lemma",
+ "title": "One-step correspondence of configurations",
+ "statement": "Let $A$ be a finite alphabet, let $e$ embed the Booleans into $A$, let $P$ be a finite Turing machine over $A$, let $x$ be a binary word, and let $c$ be a configuration of $P$ on the symbolwise image of $x$. One step of the transverse binary realization from the encoded configuration of $c$ equals the encoding of the configuration obtained by taking one step of $P$ from $c$.",
+ "hypotheses_covered": [
+  "$A$ is finite and has decidable equality",
+  "$e$ embeds the Booleans into $A$",
+  "$P$ is a finite Turing machine over $A$",
+  "$x$ is a binary word",
+  "$c$ is a configuration on the symbolwise image of $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a machine over a finite alphabet $A$, $e$ an embedding of the Booleans\ninto $A$, and $c$ a configuration of $P$ on the symbolwise embedding of a binary word\n$x$. Then one step of the transverse binary realization of $P$ at the encoded\nconfiguration of $c$ equals the encoded configuration of one step of $P$ at $c$: both\nthe read and the write of a logical cell happen simultaneously across its fixed\ncollection of tracks, and the halted case is absorbing on both sides."
+}

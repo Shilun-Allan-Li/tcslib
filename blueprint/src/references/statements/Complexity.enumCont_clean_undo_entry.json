@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_clean_undo_entry",
+ "key": "2d2088ee8953eaa0",
+ "kind": "lemma",
+ "title": "Dispatch into captured restoration",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $c$ be a configuration on input $x$, and let $h$ be a finite history list. If $c$ is halted, then one step of the clean wrapper from the captured logged configuration of $c$ with history $h$ equals the captured restoration checkpoint for $c$ and $h$, with $c$'s output retained on the capture tape and empty physical output.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$c$ is a configuration on input $x$",
+  "$h$ is a finite history list",
+  "$c$ is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the source configuration $c$ is halted, then one silent step of the clean\nwrapper from the captured logged configuration of $c$ with history $h$ parks\nevery history head on the last entry and enters the captured restoration phase at\nthe checkpoint for $c$ and $h$, retaining $c$'s output on the capture tape."
+}

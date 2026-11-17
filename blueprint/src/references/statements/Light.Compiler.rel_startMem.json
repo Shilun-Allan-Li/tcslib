@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.Compiler.rel_startMem",
+ "key": "6bb38abd88f6b690",
+ "kind": "theorem",
+ "title": "Relation after initialization",
+ "statement": "Let $W$ be a natural number and let a compiler size configuration have frame width $F$, dispatch position $D$, and space limit $S$. Suppose $3\\le F$ and $8\\le D$. Let $\\mu$ assign an integer to each natural-number address, and let $i,j\\in\\mathbb Z$. If the initial machine memory at every address $a<S$ is the $W$-bit encoding of $\\mu(a)$, and the two argument registers contain the $W$-bit encodings of $i$ and $j$, respectively, then after the initialization program is run, the machine is related at stack index $4$ to the light state with memory $\\mu$ and local-variable values $0,i,j$ at indices $0,1,2$, and zero at every other index. Here the compiler size configuration includes the requirement that its word size fits its stated limits, pool, and stack.",
+ "hypotheses_covered": [
+  "A natural-number word size and a compiler size configuration with frame width, dispatch position, limits, and stack count",
+  "The frame width is at least 3",
+  "The dispatch position is at least 8",
+  "A function from natural-number addresses to integers",
+  "The integers i and j",
+  "Initial memory agrees with the W-bit encoding of μ(a) at every address below the space limit",
+  "The first argument register contains the W-bit encoding of i",
+  "The second argument register contains the W-bit encoding of j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

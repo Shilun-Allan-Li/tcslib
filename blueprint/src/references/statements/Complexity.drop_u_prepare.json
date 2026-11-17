@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.drop_u_prepare",
+ "key": "ea411df027f2bce3",
+ "kind": "lemma",
+ "title": "Prepare the inner word",
+ "statement": "Let $\\mathrm{mode}$ be Boolean, let $h$ be a bit string, and let $zlen$, $ulen$, and $q$ be natural numbers satisfying $2zlen+2\\le |h|$, $2ulen+2\\le zlen$, and $q\\le 2|h|$. Starting with the machine in copy stage $4$ with pointer $4ulen+4$, the second register equal to $|h|$, query register $q$, tail register $2zlen+2$, and all other registers zero, the machine reaches scan stage $2$ with those pointer, query, and tail values changed to zero, $q$, and $2zlen+2$, respectively; the second register remains $|h|$, the retained register becomes $4ulen+4$, and the inner register becomes $4ulen$. The result remains unset, and every intermediate configuration before the final one satisfies the machine's safety condition and has all register values at most $4|h|+4$.",
+ "hypotheses_covered": [
+  "Boolean mode",
+  "Bit string h",
+  "Natural numbers zlen, ulen, and q",
+  "2zlen+2 is at most |h|",
+  "2ulen+2 is at most zlen",
+  "q is at most 2|h|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

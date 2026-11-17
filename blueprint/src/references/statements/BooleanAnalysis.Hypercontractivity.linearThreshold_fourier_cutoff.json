@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.linearThreshold_fourier_cutoff",
+ "key": "20f2f9fad472a76f",
+ "kind": "lemma",
+ "title": "Fourier cutoff for linear threshold functions",
+ "statement": "There is a real constant $B\\ge1$ such that, for every natural number $n$ and every function $f:\\{0,1\\}^n\\to\\mathbb R$ taking only the values $-1$ and $1$ and admitting a degree-at-most-one polynomial threshold representation, the following holds for every $\\varepsilon$ with $0<\\varepsilon\\le\\tfrac12$: there is a natural number $k$ such that $k\\le B/\\varepsilon^2$ and the Fourier weight on levels strictly above $k$ is at most $\\varepsilon$.",
+ "hypotheses_covered": [
+  "There exists a real constant $B$ with $B\\ge1$",
+  "$n$ is a natural number",
+  "$f$ is a real-valued function on the $n$-dimensional Boolean cube",
+  "$f(x)\\in\\{-1,1\\}$ for every cube point $x$",
+  "$f$ admits a polynomial threshold representation of degree at most one",
+  "$\\varepsilon\\in(0,1/2]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThere exists an absolute $B\\ge1$ such that for every linear threshold function $f:\\{0,1\\}^n\\to\\{-1,1\\}$ and $0<\\varepsilon\\le1/2$, there is $k\\in\\mathbb N$ with $k\\le B/\\varepsilon^2$ and $\\sum_{|S|>k}\\widehat f(S)^2\\le\\varepsilon$ under the uniform cube law."
+}

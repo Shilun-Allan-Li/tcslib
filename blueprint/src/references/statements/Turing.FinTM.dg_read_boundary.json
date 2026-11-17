@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.dg_read_boundary",
+ "key": "11c1432bb2fc9acf",
+ "kind": "lemma",
+ "title": "Transition at a Read Boundary",
+ "statement": "Let $M$ be a finite-alphabet multi-tape Turing machine with $k$ work tapes, let $a_0$ be a source-alphabet symbol, let $q$ be a state, let $s$ assign each tape an optional symbol and a Boolean flag, and let $v$ be an optional symbol of the enlarged sweep alphabet. When the simulator is in its read phase and its work head scans the boundary marker, its transition is the stationary phase-change action to the right-growth phase if some tape whose flag in $s$ is true moves right under the source transition computed from the retracted input symbol and the symbols in $s$; otherwise, its transition is the simulator's transition from the right-growth phase with counter $k$ on that same boundary marker.",
+ "hypotheses_covered": [
+  "finite source alphabet",
+  "decidable equality on the source alphabet",
+  "a finite Turing machine M",
+  "a source-alphabet symbol a₀",
+  "a source state q",
+  "a read table s",
+  "an optional enlarged-alphabet input symbol"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

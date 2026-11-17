@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.dataCfg_backward_turn",
+ "key": "ddf96b5b4cc7a4af",
+ "kind": "lemma",
+ "title": "Turning at the backward boundary",
+ "statement": "Let $W$ and $M$ be finite binary Turing machines, let $a$ be a natural number, and let $x$ be a finite word over the schedule alphabet. Let $c$ be a schedule configuration, $u\\in\\mathbb{Z}$, $R\\in\\mathbb{N}$, a finite data register $d$, data-tape contents $T$, and output word $o$. Assume the guide tape of $c$ is the fixed guide of radius $R$. One step from the backward phase at guide position $-R-1$ enters the return-center phase at position $-R$, leaving the base configuration, $u$, data register, data tapes, and output unchanged.",
+ "hypotheses_covered": [
+  "Finite binary machines $W,M$",
+  "Natural number parameter $a$",
+  "Finite schedule-alphabet word $x$",
+  "Base schedule configuration $c$",
+  "Integer $u$ and natural radius $R$",
+  "Data register $d$, data-tape contents $T$, and output word $o$",
+  "Guide tape of $c$ equals the radius-$R$ guide"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$.  From the\nbackward phase with guide head at $-R - 1$, one simulator step enters the return\nphase at position $-R$ and leaves the finite data register, data tapes, and\noutput unchanged."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.norm_integral_gaussianProductDensityDerivative_smul_le",
+ "key": "0803e15115ae8917",
+ "kind": "lemma",
+ "title": "Bound for an integrated Gaussian density derivative",
+ "statement": "Let $I$ be a finite index set, and let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\leq1$ for every $z$. Let $v\\geq0$ with $v\\ne0$, and let $c\\in\\mathbb R^I$. The norm of the integral of $f(z)$ times the product Gaussian density derivative with mean $c$ and variance $v$, integrated against Lebesgue measure on $\\mathbb R^I$, is at most\n\\[\n|I|\\left(1+\\frac1v\\right).\n\\]",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$f:\\mathbb R^I\\to\\mathbb R$ is measurable",
+  "$|f(z)|\\leq1$ for all $z$",
+  "$v\\geq0$",
+  "$v\\ne0$",
+  "$c\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$ and $c\\in\\mathbb R^I$, then $\\|\\int f(z)A_v(c,z)\\,dz\\|\\le|I|(1+1/v)$, in operator norm for the maximum norm."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.transferTM_run",
+ "key": "d6874bbf9b673163",
+ "kind": "theorem",
+ "title": "Bounded Tape Transfer Run",
+ "statement": "Let $k\\in\\mathbb{N}$, let $\\mathrm{src}$ and $\\mathrm{dst}$ be distinct indices among the $k$ work tapes, let $x$ be a Boolean input, and assign a Boolean word $w_i$ to each tape $i$, with $w_{\\mathrm{dst}}$ empty. There is a natural number $T\\leq 3|w_{\\mathrm{src}}|+3$ such that the transfer machine, started in its sweep phase with these tape words, has not reached its done phase at any time $t<T$. At time $T$ it is in the done phase, with the source tape emptied and the original source word placed on the destination tape; all other tape words are unchanged.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$",
+  "$\\mathrm{src},\\mathrm{dst}\\in\\mathrm{Fin}(k)$",
+  "$\\mathrm{src}\\ne\\mathrm{dst}$",
+  "$x$ is a Boolean input",
+  "$w$ assigns a Boolean word to each of the $k$ tapes",
+  "the destination tape word is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "FABL.queryCount_recursiveMajorityThreeTree_succ",
+ "key": "8416f61c8c1ef221",
+ "kind": "theorem",
+ "title": "Recursive majority tree query count",
+ "statement": "Let $d$ be a nonnegative integer, let $o\\\\in\\\\{0,1,2\\\\}$, choose three seeds for depth $d$, and let $x$ be a sign assignment on $3^{d+1}$ coordinates. The query count of the depth-$d+1$ recursive majority tree is given by the following rule: if $o=0$, it is the query count of the first depth-$d$ tree on block $0$, plus that of the second on block $1$, plus zero when the recursive majority values on blocks $0$ and $1$ agree and otherwise the query count of the third tree on block $2$. If $o=1$, use blocks $0$ and $2$ first and, only when their recursive majority values differ, add the query count of the second seed's tree on block $1$. If $o=2$, use blocks $1$ and $2$ first and, only when their recursive majority values differ, add the query count of the first seed's tree on block $0$.",
+ "hypotheses_covered": [
+  "d is a natural number",
+  "order is an index in {0,1,2}",
+  "Three depth-d recursive majority seeds are given",
+  "x is a sign assignment on 3^(d+1) coordinates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.shl_run",
+ "key": "6c26a52c82b5f35c",
+ "kind": "theorem",
+ "title": "Register doubling by a logarithmic loop",
+ "statement": "Let $A$ be an instruction program on $m$ registers, with configurations consisting of a control state, register values in $\bbn$, and an optional Boolean result; let an oracle assign a Boolean answer to each of $d$ deciders on Boolean-string inputs. Suppose the transitions from states $l,l_1,\\ldots,l_8$ are respectively: test whether register $c$ is zero (branching to $l_x$ if so and $l_1$ otherwise); decrement $c$ and go to $l_2$; test whether $r$ is zero (branching to $l_6$ if so and $l_3$ otherwise); decrement $r$ and go to $l_4$; increment $z$ and go to $l_5$; increment $z$ and return to $l_2$; test whether $z$ is zero (branching to $l$ if so and $l_7$ otherwise); decrement $z$ and go to $l_8$; and increment $r$ and return to $l_6$. Assume $c,r,z$ are pairwise distinct registers. For every $k\trin\bbn$ and register assignment $v$ with $v(c)=k$, $v(z)=0$, every register value at most $B$, and $v(r)2^{v(c)}\trin B$, this program reaches the configuration with state $l_x$, register $c$ set to zero, register $r$ set to $v(r)2^{v(c)}$, all other registers unchanged, and no result. Every configuration strictly before that endpoint satisfies the guard: it meets the instruction-specific safety condition and all register values are at most $B$.",
+ "hypotheses_covered": [
+  "The instruction program $A$, oracle, input, and bound $B$",
+  "The specified nine transitions from states $l,l_1,\\ldots,l_8$",
+  "The registers $c,r,z$ are pairwise distinct",
+  "$k\\in\\bbn$",
+  "Initial assignment satisfies $v(c)=k$",
+  "Initial assignment satisfies $v(z)=0$",
+  "Every initial register value is at most $B$",
+  "$v(r)2^{v(c)}\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

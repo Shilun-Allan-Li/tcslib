@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clGroups_index",
+ "key": "010dd890a3424020",
+ "kind": "lemma",
+ "title": "Indexed lookup reconstructs a list",
+ "statement": "For every list $G$ of conjunctive normal form formulas over natural-number variables, mapping the indices $0,1,\\ldots,|G|-1$ to the corresponding entries of $G$, with the empty formula as the default for an out-of-range lookup, yields $G$ itself.",
+ "hypotheses_covered": [
+  "$G$ is a list of conjunctive normal form formulas over natural-number variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every list $L$ of CNF formulas, the list obtained by looking up the entries of $L$ at indices $0,\\dots,|L|-1$, with the empty formula as default for out-of-range lookups, is $L$ itself; the default is never used at a legal index."
+}

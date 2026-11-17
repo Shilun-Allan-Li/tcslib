@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.b2_verify_run",
+ "key": "c73c34fccddbc06d",
+ "kind": "lemma",
+ "title": "Relocated Verifier Run",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the binary alphabet, let $x,y$ be binary inputs, and let $c$ be a configuration of $V$ on $y$. Suppose a Boolean tag correctly marks the boundary whenever the virtual input head of $c$ is at either endpoint. Choose any input-head position for $x$, any contents for the work tapes of $S$, any work-head positions for $S$, and any finite choice word $w$. Suppose that at every time $s<|w|$, the configuration reached by $V$ after $s$ steps from $c$ is not halted. Then there is a Boolean tag correctly marking the boundary for the input-head position after $|w|$ steps such that running the host under $w$ from the corresponding verifier-phase configuration yields exactly the verifier-phase configuration formed from the $|w|$-step run of $V$, with the chosen scheduler data unchanged.",
+ "hypotheses_covered": [
+  "Finite deterministic binary machines $S$ and $V$",
+  "Binary inputs $x$ and $y$",
+  "A configuration $c$ of $V$ on $y$",
+  "An initial Boolean tag satisfying the virtual boundary condition",
+  "An input-head position for $x$",
+  "Arbitrary contents of the scheduler work tapes",
+  "Arbitrary scheduler work-head positions",
+  "A finite choice word $w$",
+  "The verifier is not halted at every time $s<|w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $d$ a verifier configuration with a valid boundary tag, and $w$ a choice word such that the verifier is live at every time before $|w|$. Running the host under $w$ from the verifier-phase configuration for $d$ yields the verifier-phase configuration for the $|w|$-step verifier run, with a valid tag; the choices are ignored."
+}

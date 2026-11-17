@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.CsPlaced.start",
+ "key": "1d87c2a36f89c11b",
+ "kind": "theorem",
+ "title": "Initial Counting-Sort Placement State",
+ "statement": "Let $A$ be counting-sort arguments, let $kf$ assign a key to each item index, and let $\\mu'$ be an integer-valued memory map. Suppose that for every $t\\le A.nb$, the cell at address $A.cnt+t$ contains the number of indices $i<A.n$ whose key is less than $t$, and that for every $t<A.nb$ with $A.nb\\le t$, the cell at address $A.cnt+(t+1)$ contains the number of indices $i<A.n$ whose key equals $t$. Then for every $t<A.nb$, the cell at address $A.cnt+t$ contains the number of indices $i<A.n$ whose key is less than $t$, and for every $j<0$, the destination cell at the stable sorting position of item $j$ contains that item.",
+ "hypotheses_covered": [
+  "Summed-count condition for each t ≤ A.nb",
+  "Equal-key count condition for each t < A.nb with A.nb ≤ t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $A$ be a collection of counting-sort parameters, let $it,kf:\\mathbb{N}\\to\\mathbb{N}$\nbe functions, and let $\\mu'$ be an integer-valued memory state. If, for every $t\\le\nA.nb$, the cell at address $A.cnt+t$ contains the number of indices below $A.n$ whose\nkey is less than $t$, and for every $t<A.nb$ with $A.nb\\le t$, the cell at address\n$A.cnt+(t+1)$ contains the number of indices below $A.n$ whose key equals $t$, then for\nevery $t<A.nb$ the cell at address $A.cnt+t$ contains the number of indices below $A.n$\nwhose key is less than $t$. Moreover, every item position computed from the keys of\nindices below $0$ has its destination cell equal to the corresponding item value."
+}

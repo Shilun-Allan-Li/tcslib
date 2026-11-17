@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.loop_run",
+ "key": "fa67fb977c0bd9d9",
+ "kind": "theorem",
+ "title": "Bounded computation over successive rounds",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $x$ be a finite Boolean input, and let $c_j$ be a configuration on that input for each natural number $j$. Let $a$ be a Boolean-valued predicate on the natural numbers, and let $B,N$ be natural numbers. Suppose that $c_j$ has empty output for every $j\\le N$, that from $c_N$ the machine halts within $B$ steps with output the single bit $0$, and that for each $j<N$, if $a(j)$ is true then from $c_j$ the machine halts within $B$ steps with output the single bit $1$, while if $a(j)$ is false then within $B$ steps it reaches exactly $c_{j+1}$. Then from $c_0$ the machine halts within $(N+1)B$ steps, with output the single bit indicating whether $a(j)$ is true for at least one $j<N$.",
+ "hypotheses_covered": [
+  "$M$ is a multi-tape Turing machine with Boolean symbols",
+  "$x$ is a finite Boolean input",
+  "$c$ assigns a configuration on input $x$ to each natural number",
+  "$a$ is a Boolean-valued predicate on the natural numbers",
+  "$B,N$ are natural numbers",
+  "$c_j$ has empty output for every $j\\le N$",
+  "From $c_N$ the machine halts within $B$ steps with output $[0]$",
+  "For each $j<N$, if $a(j)$ is true, from $c_j$ it halts within $B$ steps with output $[1]$",
+  "For each $j<N$, if $a(j)$ is false, from $c_j$ it reaches exactly $c_{j+1}$ within $B$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $c_0, \\dots, c_N$\nbe configurations of $M$ on a common input, all with empty output, and let $a$ be a\nBoolean predicate on round indices. Assume that from $c_N$ the machine halts within $B$\nsteps with output the single bit $\\mathrm{false}$, and that for each $j < N$, within $B$\nsteps the machine either halts from $c_j$ with output the single bit $\\mathrm{true}$\n(when $a(j)$ holds) or reaches $c_{j+1}$ (when $a(j)$ fails). Then from $c_0$ the\nmachine halts within $(N+1) \\cdot B$ steps, and its output is the single bit recording\nwhether $a(j)$ holds for some $j < N$."
+}

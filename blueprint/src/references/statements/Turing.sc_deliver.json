@@ -1,0 +1,28 @@
+{
+ "lean_name": "Turing.sc_deliver",
+ "key": "6998ea4012078747",
+ "kind": "theorem",
+ "title": "Delivery by the clocked machine",
+ "statement": "Let $e:\\\\{\\mathrm{false},\\mathrm{true}\\}\\\\hookrightarrow\\Gamma$ be an embedding, let $M$ be a machine with $k$ work tapes over $\\Gamma$ and state set $S$, and let $\\mathrm{stopAt}:S\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Fix an input word $x$, a configuration $c$ of $M$, a state $q\\in S$, Boolean words $w,w'$, a tape content $ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$, an integer head position $cp$, and natural numbers $\\tau,B,T$. Suppose $w'$ and $w$ have the same length, $T\\le B$, the state obtained by applying $\\mathrm{exit}$ to the state of $M$ after $\\tau$ steps belongs to the finish-or-timeout exit set, and the clocked machine started from the configuration with state $\\mathrm{dec}(q,\\mathrm{run})$, underlying configuration $c$, and clock tape $(ct,cp)$ reaches after $T$ steps the configuration with state $\\mathrm{exit}$ applied to the state of $M$ after $\\tau$ steps, underlying configuration $M$ after $\\tau$ steps, and clock tape obtained by patching $ct$ at $cp$ with the encoded word $e(w')$. Assume this run avoids finish and timeout states before time $T$, its clock head remains between $cp-1$ and $cp+|w|$ through time $T$, and at every time $u\\le T$ its original work-tape contents and head positions, input-head position, and output agree with those of $M$ at some time $v\\le\\tau$. Then there are a time $T'\\le B$ and a Boolean word $w''$ of length $|w|$ such that the clocked machine reaches the corresponding configuration patched with $e(w'')$ at time $T'$, avoids finish and timeout states at every earlier time, and at each time $u\\le T'$ its original work tapes, input position, and output agree with those of $M$ at some time $v\\le\\tau$, while its clock head remains between $cp-1$ and $cp+|w|$.",
+ "hypotheses_covered": [
+  "Embedding of the Boolean alphabet into Γ",
+  "Machine M with k work tapes and stopping predicate stopAt",
+  "Input x and starting configuration c",
+  "State q and Boolean words w and w'",
+  "Clock tape content ct and head position cp",
+  "Natural numbers τ, B, and T",
+  "Equality of the lengths of w' and w",
+  "Bound T ≤ B",
+  "Specified exit state belongs to the finish-or-timeout exit set",
+  "Clocked run reaches the stated patched configuration at time T",
+  "Run avoids finish and timeout states before T",
+  "Clock head lies in [cp−1, cp+|w|] through T",
+  "At every time through T, there is a corresponding run configuration of M at some time v ≤ τ preserving original work-tape contents and positions, input position, and output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

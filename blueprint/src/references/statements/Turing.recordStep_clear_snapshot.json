@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.recordStep_clear_snapshot",
+ "key": "02dce126b5ef8b47",
+ "kind": "theorem",
+ "title": "Clear-Tape Snapshot and Head Bounds",
+ "statement": "Let $d$ be a configuration of a four-work-tape machine, let $p$ be an integer, let $b,e,w$ be finite words over its symbol alphabet, and let $j_0$ be one of the four tapes. Suppose $j_0$ is tape $1$ or tape $3$, with $b=w$ if $j_0=1$ and $e=w$ if $j_0=3$. Start the tape-clearing machine on the snapshot of $d$ in phase `sweep`, with offset $p$ and buffers $b,e$. After $2|w|+2$ steps, the resulting configuration is the snapshot in phase `done` with offset $p$, with the destination buffer emptied and the other buffer unchanged. At every earlier step $u<2|w|+2$ the state is not `done`; at every step $u\\le 2|w|+2$, the destination head lies in the integer interval from its position in $d$ minus $1$ through that position plus $|w|$, while every other head remains at its initial snapshot position.",
+ "hypotheses_covered": [
+  "A four-work-tape configuration $d$",
+  "Integer offset $p$",
+  "Words $b,e,w$ over the symbol alphabet",
+  "Destination tape $j_0\\in\\{0,1,2,3\\}$",
+  "Destination is tape $1$ or tape $3$",
+  "If destination is tape $1$, then $b=w$",
+  "If destination is tape $3$, then $e=w$",
+  "Specified initial snapshot and phase",
+  "Exact run length $2|w|+2$",
+  "No earlier state is `done`",
+  "Head interval bound for the destination at every step through the run",
+  "Other heads stay fixed relative to the initial snapshot"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

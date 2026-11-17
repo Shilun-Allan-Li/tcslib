@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost_borrow",
+ "key": "91338a7c5614d403",
+ "kind": "lemma",
+ "title": "Borrow operation and running-time bound",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, choose find mode, and let $x$ be an input word. For any host configuration used as a base, input-head position, and Boolean word $w$, the borrow position $b(w)$ satisfies $2b(w)+2\\le 2|w|+2$. Starting from the specified host frame in control phase 8, with the counter tape storing $w$ and the other designated tapes blank, after $2b(w)+2$ steps the frame is in the return call state with the anchor and release flag true if the debit operation on $w$ reports a carry; otherwise it is in control phase 11. The counter tape then stores the debited word, and the designated head positions and output are reset as specified by the frame.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B$ and $F$",
+  "Anchor state of $B$",
+  "Find-mode bit",
+  "Input word $x$",
+  "Base host configuration",
+  "Input-head position",
+  "Boolean word $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

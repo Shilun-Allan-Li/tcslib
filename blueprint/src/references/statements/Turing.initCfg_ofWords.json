@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.initCfg_ofWords",
+ "key": "1fc87e056db57fd8",
+ "kind": "lemma",
+ "title": "Initial configuration with blank work tapes",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, with initial state $q_0$, and let $x$ be a Boolean input word. Its initial configuration on $x$ equals the configuration in state $q_0$ with empty work words on every tape.",
+ "hypotheses_covered": [
+  "A natural number of work tapes",
+  "A multi-tape machine over the Boolean alphabet with a state type",
+  "A Boolean input word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic Turing machine with $k$ work tapes over the Boolean alphabet,\nwith start state $q_0$, and let $x$ be a Boolean input word. Then the initial\nconfiguration of $M$ on $x$ equals the seam configuration $\\mathrm{seam}(q_0, w)$\nwith $w_i = \\varepsilon$ the empty word for every work tape $i$; that is, the\nconfiguration in state $q_0$ with the input head on the first input cell, every work\ntape entirely blank with its head at cell $0$, and empty output."
+}

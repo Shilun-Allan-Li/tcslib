@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.Contract.Frames.trans",
+ "key": "38ad03befaa00803",
+ "kind": "theorem",
+ "title": "Frames under contract composition",
+ "statement": "Let $M$ be a machine and let $C_1$ be a contract from entry state $e_1$ to the sole exit state $e_2$, and $C_2$ a contract from $e_2$ to an exit set $X$, on the same input with the same work tapes. Suppose a map from the data for $C_1$ to the data for $C_2$ makes every eligible endpoint of $C_1$ satisfy the corresponding precondition of $C_2$, and the run under $C_1$ avoids $X$ strictly before its prescribed endpoint. If the two contracts preserve tape contents outside their respective frame sets, then the composed contract preserves tape contents outside the union of the first frame set and the second frame set evaluated at the linked datum and the first endpoint.",
+ "hypotheses_covered": [
+  "C₁ has sole exit state e₂",
+  "C₂ starts at e₂ and has exit set X",
+  "Both contracts use the same machine, input, and work tapes",
+  "A data map links each eligible C₁ endpoint to a C₂ precondition",
+  "The C₁ run avoids X at every time strictly before its duration",
+  "C₁ satisfies its frame property for fp₁",
+  "C₂ satisfies its frame property for fp₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with state set $S$, and let $C_1$ be a contract from entry state\n$e_1$ to the sole exit state $e_2$, while $C_2$ is a contract from $e_2$ to an exit set\n$X$, on the same input and with the same $k$ work tapes. Suppose a parameter map\n$\\mathrm{link}$ makes the endpoint of $C_1$ satisfy the precondition of $C_2$, and that\nbefore the end of $C_1$ the run has not reached any state in $X$. If $C_1$ and $C_2$\npreserve their work-tape contents outside frame sets $fp_1$ and $fp_2$, respectively,\nthen the composed contract preserves those contents outside the union of $fp_1$ and\n$fp_2$ evaluated at the linked parameter and the endpoint of $C_1$."
+}

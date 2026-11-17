@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.phaseHostTM_run",
+ "key": "f10a084f07b02d79",
+ "kind": "theorem",
+ "title": "Runs of a phase-hosted machine",
+ "statement": "Let $k$ be a natural number, let $\\Gamma$ and $I$ be types, let $\\mathrm{Ph}(i)$ be a state type for each $i\\in I$, let $M_i$ be a $k$-work-tape machine with state type $\\mathrm{Ph}(i)$, and let $q_0$ be a state tagged by an element of $I$. Suppose $c,c'$ are configurations of $M_i$ on input $x$, $T\\in\\mathbb{N}$, and running $M_i$ from $c$ for $T$ steps yields $c'$. If $s'$ is the state of $c'$ and the reduction rule sends $(i,s')$ to $q'$, and if at every time $u<T$ the run of $M_i$ from $c$ is in a state $s$ for which the reduction rule sends $(i,s)$ to no state, then for every $u\\le T$ the phase-hosted machine's run from the configuration $c$ tagged by $i$ agrees with the run of $M_i$ from $c$ tagged by $i$, and after $T+1$ steps it is $c'$ with its state replaced by $q'$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$; symbol alphabet $\\Gamma$ and phase index type $I$",
+  "A phase state type $\\mathrm{Ph}(i)$ and machine $M_i$ for every $i\\in I$",
+  "An initial tagged state $q_0$ and reduction rule on phase states",
+  "Input $x$ and configurations $c,c'$ of $M_i$ on $x$",
+  "$T\\in\\mathbb{N}$ and $M_i$ reaches $c'$ from $c$ in $T$ steps",
+  "$s'$ is the state of $c'$",
+  "The reduction rule sends $(i,s')$ to $q'$",
+  "At every $u<T$, if the run of $M_i$ from $c$ at time $u$ has state $s$, the reduction rule sends $(i,s)$ to no state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

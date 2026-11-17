@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.wr_timeout_dispatch",
+ "key": "7e5dc5d39da44c78",
+ "kind": "theorem",
+ "title": "Timeout dispatch after the first hit",
+ "statement": "Let $H$ be a $k$-tape Turing machine with state set $Q$, let $S$ be a finite type, and let $\\tau : \\mathrm{Option}(S) \\to Q$ be a timeout-state map. If the run of $H$ from a configuration $a$ is in state $\\tau(r)$ after $t$ steps for some $r$, and no run at any earlier time $u<t$ is in any state $\\tau(r')$, then the timeout runner, started from $a$ with its state tagged as the running phase, is after $t+1$ steps exactly the configuration reached by $H$ after $t$ steps, with its state replaced by the halted runner phase.",
+ "hypotheses_covered": [
+  "$S$ is finite",
+  "$Q$ has decidable equality",
+  "The run of $H$ from $a$ is in state $\\tau(r)$ at time $t$",
+  "At every time $u<t$, the run is not in any state $\\tau(r')$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

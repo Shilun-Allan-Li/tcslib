@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satStreamRun_add",
+ "key": "eb113c91f7c407e9",
+ "kind": "lemma",
+ "title": "Composition of Streaming Runs",
+ "statement": "For every bit string $x$, natural numbers $m,n$, and streaming seam state $s$, running $m+n$ rounds from $s$ gives the same final state and output as first running $m$ rounds from $s$ and then running $n$ rounds from the resulting state, with the two emitted bit strings concatenated in that order.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$m,n$ are natural numbers",
+  "$s$ is a streaming seam state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Running $m + n$ streaming rounds from a state equals running $m$ rounds, then $n$\nfurther rounds from the intermediate state, with the two output words\nconcatenated."
+}

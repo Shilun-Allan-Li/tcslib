@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emCall_finish_erase",
+ "key": "28c1ea5a5118c477",
+ "kind": "lemma",
+ "title": "Finalizer erasure phase",
+ "statement": "Fix a mode, a Boolean input word $x$, an input-head position $p$ among the $|x|+2$ allowed positions, an argument tape content $A$, an output word $o$, and a captured Boolean word $w$. Start the two-tape finalizer in state $4$, with argument tape $A$ and head at $0$, capture tape storing $w$ from cell $0$ and head at $|w|-1$, and output $o$. After exactly $|w|+1$ steps it is in state $5$, with the argument tape still $A$, the capture tape blank everywhere, both work heads at $0$, and output still $o$.",
+ "hypotheses_covered": [
+  "mode bit emit",
+  "Boolean input word x",
+  "input-head position p in Fin (|x|+2)",
+  "arbitrary argument tape content A",
+  "arbitrary output word o",
+  "captured word w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the finalizer run in a fixed mode with a remaining captured word $p$. Starting from\nits erasure state with the capture head at cell $|p| - 1$ (and, in install mode, the\nargument head moving along with it), after exactly $|p| + 1$ steps it is in its final\nsilent state with the capture tape completely blank and both heads at the origin, the\noutput untouched."
+}

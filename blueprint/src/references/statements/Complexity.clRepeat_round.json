@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clRepeat_round",
+ "key": "0cce7bc8b94d8eed",
+ "kind": "lemma",
+ "title": "One clocked repetition round",
+ "statement": "Let $C$ be a finite Turing machine with states entry and exit, let $x,s,s'$ be Boolean words, and let $N,j,t$ be natural numbers with $j<N$ and $t>0$. Suppose the run of $C$ from the seam configuration in state entry with word $s$ avoids state exit at every time $r$ with $0<r<t$ and reaches the seam configuration in state exit with word $s'$ after exactly $t$ steps. Then the repetition controller, started in its test state with word $s$ and clock cursor $j$, reaches its test state with word $s'$ and cursor $j+1$ after exactly $t+2$ steps.",
+ "hypotheses_covered": [
+  "A finite Turing machine $C$ and states entry and exit",
+  "Boolean words $x,s,s'$",
+  "Natural numbers $N,j,t$",
+  "$j<N$",
+  "$0<t$",
+  "The source run avoids exit at every time $0<r<t$",
+  "After $t$ steps, the source run equals the specified exit seam configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a clean call runs from the entry over a state word to its exit over a new state word in a strictly positive time $t$, never showing the exit strictly before $t$, and let the clock cursor be $j < N$. Then the controller, started at its test phase, advances the clock by one token, executes the entire positive clean call, and performs one return dispatch, reaching the test phase over the new state word at cursor $j + 1$ in exactly $t + 2$ steps; calls returning empty words are included."
+}

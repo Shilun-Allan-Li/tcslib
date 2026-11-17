@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.ups_walk",
+ "key": "2a5f526544cdb709",
+ "kind": "theorem",
+ "title": "Walk reachability probability",
+ "statement": "Let $x$ be a Boolean word, let $n$ be a natural number, and suppose the encoded adjacency relation is symmetric on vertices below $n$. Let $t\\in\\mathrm{Fin}(n)$, and suppose $2|x|+2\\le B$ and $2n+2+2n^2\\le |x|$. For every natural number $k$, register state $\\sigma$, and vertex $v\\in\\mathrm{Fin}(n)$ such that $\\sigma.L-\\sigma.st=k$, every field of $\\sigma$ is at most $B$, $\\sigma.n=n$, $\\sigma.cur=v$, $\\sigma.t=t$, and $\\sigma.st\\le\\sigma.L$, the program started at state $w0$ with register state $\\sigma$ has probabilistic semantics with acceptance probability equal to the probability that a uniformly chosen length-$k$ walk on the padded regular multigraph reaches $t$ from $v$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word and $n$ is natural",
+  "The encoded adjacency relation is symmetric on vertices below $n$",
+  "$t\\in\\mathrm{Fin}(n)$",
+  "$2|x|+2\\le B$",
+  "$2n+2+2n^2\\le |x|$",
+  "$k$ is natural",
+  "$\\sigma.L-\\sigma.st=k$",
+  "Every field of $\\sigma$ is at most $B$",
+  "$\\sigma.n=n$",
+  "$\\sigma.cur=v$ as natural-number values",
+  "$\\sigma.t=t$",
+  "$\\sigma.st\\le\\sigma.L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a Boolean word and $n$ a natural number such that the encoded adjacency\nrelation is symmetric on vertices below $n$. For any target vertex\n$t\\in\\mathrm{Fin}(n)$, bound $B$, and natural numbers $k$ and register record $\\sigma$,\nsuppose $2|x|+2\\le B$, $2n+2+2n^2\\le |x|$, $\\sigma.L-\\sigma.st=k$, every register of\n$\\sigma$ is at most $B$, $\\sigma.n=n$, $\\sigma.cur$ is the natural-number value of some\nvertex $v\\in\\mathrm{Fin}(n)$, $\\sigma.t=t$, and $\\sigma.st\\le\\sigma.L$. Then the program\nstarted at state $w0$ with record $\\sigma$ has a terminating probabilistic semantics,\nwith all register values bounded by $B$, whose probability of reaching the target in a\nuniformly random walk of length $k$ on the padded graph is the graph's $k$-step hit\nprobability from $v$ to $t$."
+}

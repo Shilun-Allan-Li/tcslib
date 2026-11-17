@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.update_eq_ite_flipBit",
+ "key": "0bde998b2af85fe8",
+ "kind": "lemma",
+ "title": "Coordinate update and bit flip",
+ "statement": "Let $n$ be a nonnegative integer, let $x\\in\\{0,1\\}^n$, let $i$ be a coordinate, and let $b\\in\\{0,1\\}$. Replacing the $i$th coordinate of $x$ by $b$ gives $x$ if $x_i=b$, and gives the vector obtained by flipping the $i$th bit of $x$ otherwise.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$x\\in\\{0,1\\}^n$",
+  "$i$ is a coordinate in $[n]$",
+  "$b\\in\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$, $x\\in\\{0,1\\}^n$, $i\\in[n]$, and $b\\in\\{0,1\\}$. Replacing $x_i$ by $b$ leaves $x$ unchanged if $x_i=b$ and otherwise gives the vector obtained by flipping bit $i$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_halt",
+ "key": "c08c4e06dd616699",
+ "kind": "theorem",
+ "title": "Run rule for a halt instruction",
+ "statement": "Let $P$ be a counter program on a binary input $x$, and let $\\rho$ be a register assignment, $p$ an input position, and $\\ell\\in\\Lambda$ a label. If the instruction at $\\ell$ is to halt, then for every output string $o$, the program reaches the halted state with registers $\\rho$, input position $p$, and output $o$ within at most one step.",
+ "hypotheses_covered": [
+  "The instruction at $\\ell$ is $\\mathsf{halt}$",
+  "Arbitrary register assignment $\\rho$",
+  "Arbitrary input position $p$",
+  "The claim holds for every initial output string $o$",
+  "The step bound is one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$ and $\\ell$ a label whose\ninstruction is $\\mathsf{halt}$.  Then for all registers $\\rho$ and input\npositions $p$, from label $\\ell$ with registers $\\rho$ and $p$ symbols read the\nprogram reaches the halted state, with registers still $\\rho$ and still $p$\nsymbols read, within one step and without printing anything."
+}

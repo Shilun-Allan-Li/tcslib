@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.sweepTape_right",
+ "key": "16f7529e2033460a",
+ "kind": "lemma",
+ "title": "Writing and moving right on the zipper",
+ "statement": "Let $A$ be an alphabet, $z$ an integer, and $l,r$ finite possibly blank-symbol stacks; let $a,b$ be possibly blank symbols. Updating the tape with frontier $z$, left stack $l$, and right stack $a::r$ at position $z$ to have value $b$ gives the same tape function as the two-stack tape with frontier $z+1$, left stack $b::l$, and right stack $r$.",
+ "hypotheses_covered": [
+  "An alphabet $A$",
+  "An integer frontier $z$",
+  "Finite possibly blank-symbol stacks $l,r$",
+  "Possibly blank symbols $a,b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $z$ be an integer, let $l$ and $r$ be finite lists of possibly-blank\nsymbols over an alphabet $A$, and let $a$, $b$ be possibly-blank symbols.\nOverwriting position $z$ with $b$ in the two-stack zipper tape with frontier\n$z$, left stack $l$, and right stack $a \\mathbin{::} r$ yields exactly the\nzipper tape with frontier $z + 1$, left stack $b \\mathbin{::} l$, and right\nstack $r$: the written cell transfers from the right stack to the left stack."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.comp_run",
+ "key": "7a980d32ba40ba20",
+ "kind": "lemma",
+ "title": "Bounded Computation of the Encoded Language",
+ "statement": "Let $C,e\\in\\mathbb{N}$, let $\\mathrm{mode}$ be Boolean, and let $f$ map finite Boolean strings to finite Boolean strings. Suppose that for every finite Boolean string $x$, $|f(x)|\\le C(|x|+1)^e$. For every finite Boolean string $h$, the computation started in its counting state with all fourteen registers zero and no result yet halts with the indicator of the following language on $h$: strings encoding a pair $(z,p)$, where $p$ is the binary expansion of a natural number, such that, on decoding $z$ as a pair $(x,b)$, the binary expansion of the natural number represented by $b$ equals $b$, and either $p$ is less than the length of the encoding of $(f(x),b)$ when $\\mathrm{mode}$ is true, or the bit of that encoding at index $p$ is true when $\\mathrm{mode}$ is false. Throughout the run, every configuration strictly before halting satisfies the machine precondition and has all registers at most $8(2C+3)(|h|+1)^{e+1}$.",
+ "hypotheses_covered": [
+  "$C,e\\in\\mathbb{N}$",
+  "$\\mathrm{mode}$ is Boolean",
+  "$f$ maps finite Boolean strings to finite Boolean strings",
+  "For every finite Boolean string $x$, $|f(x)|\\le C(|x|+1)^e$",
+  "$h$ is a finite Boolean string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e\\in\\mathbb N$, let $\\mathrm{mode}$ be Boolean, and let $f$ map finite bit\nstrings to finite bit strings. Suppose $|f(x)|\\le C(|x|+1)^e$ for every bit string $x$.\nFor every input bit string $h$, the specified machine, started in its counting state\nwith all fourteen registers zero and no answer yet, halts with the indicator value of\nthe specified language on $h$; throughout the run, every earlier configuration satisfies\nthe machine's precondition and has all registers at most $8(2C+3)(|h|+1)^{e+1}$."
+}

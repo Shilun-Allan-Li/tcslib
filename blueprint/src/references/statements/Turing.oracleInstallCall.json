@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.oracleInstallCall",
+ "key": "ab25ce41630a5055",
+ "kind": "theorem",
+ "title": "Bounded-time oracle call implementation",
+ "statement": "Let $D$ be a finite Boolean Turing machine, $O$ a language of Boolean words, and $\\tau:\\bbn\\to\\bbn$ a time bound. If $D$ decides $O$ within time $\\tau$, then there exist a finite Boolean Turing machine $C$, states $en,ex$ of $C$, and $a\\in\\bbn$ such that $C$ has at least one work tape, $en\\ne ex$, and, for every Boolean word $z$, starting with $z$ on tape $0$ and all other tapes blank, $C$ reaches state $ex$ for the first time at some positive step $t\\le a(\\tau(|z|)+|z|+2)$; at that step all tapes are blank except that tape $0$ contains the one-symbol word recording whether $z\\in O$.",
+ "hypotheses_covered": [
+  "$D$ is a finite Boolean Turing machine",
+  "$O$ is a language of Boolean words",
+  "$\\tau:\\bbn\\to\\bbn$",
+  "$D$ decides $O$ within time $\\tau$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

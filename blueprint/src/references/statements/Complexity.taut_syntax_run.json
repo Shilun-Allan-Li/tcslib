@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.taut_syntax_run",
+ "key": "6504576dbc7925c9",
+ "kind": "lemma",
+ "title": "Complete Syntax Pass",
+ "statement": "Let $a$ and $u$ be binary strings. For every binary string $x$, prefix $p$, syntax-scanner state $s$, and equality $x=p\\mathbin{+\u001c+}\\langle a,u\\rangle$, start the verifier on $x$ in the syntax state carrying $s$, with $|p|$ input bits consumed, empty work tape, and work head at $0$. After $2|a|+2$ steps, it has consumed $|p|+2|a|+2$ bits, with empty work tape and work head at $0$; its state is certificate-copy if scanning $a$ from $s$ ends in the exact-end state, and otherwise it is verdict with bit $1$.",
+ "hypotheses_covered": [
+  "$a$ and $u$ are binary strings",
+  "$x$ and $p$ are binary strings",
+  "$s$ is a syntax-scanner state",
+  "$x=p$ followed by the pair encoding of $a,u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a, u, p$ be binary words, $x = p \\mathbin{+\\!\\!+} \\mathrm{pair}(a, u)$, and $s$ a\nformula-scanner state. Started in the syntax state carrying $s$ with $|p|$ input bits\nconsumed, empty work tape, head $0$, and empty output, the non-tautology verifier\nafter exactly $2|a| + 2$ steps has consumed $|p| + 2|a| + 2$ bits, with work tape and\noutput still empty, and is in the certificate-copy state if folding the scanner\ntransition over $a$ from $s$ ends in the exact-end state, and in the verdict state\nwith bit $1$ otherwise."
+}

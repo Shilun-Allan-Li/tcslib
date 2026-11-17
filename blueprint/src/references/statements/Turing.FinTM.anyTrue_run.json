@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.anyTrue_run",
+ "key": "a2e8c1a964200cc4",
+ "kind": "lemma",
+ "title": "Run of the marker-existence scanner",
+ "statement": "Let $x$ and $r$ be Boolean words. For every word $p$ such that $x=pr$, there is a time $t\\le |r|+1$ at which the marker-existence scanner, started on input $x$ in its initial state, with its input head positioned just after the prefix $p$ and with empty output, is halted and has output the one-bit word that is true exactly when $r$ contains a true bit.",
+ "hypotheses_covered": [
+  "Boolean words $x$ and $r$",
+  "A prefix $p$ satisfying $x=pr$",
+  "The starting scan configuration uses state $()$, position $|p|$, and empty output",
+  "There exists a time $t\\le |r|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any split $x = p s$ of the input, there is a time $t \\le \\abs{s} + 1$\nsuch that after $t$ steps from the scan configuration at position $\\abs{p}$\nwith empty output, the marker-existence scanner has halted with output the\nsingle bit recording whether $s$ contains a $1$."
+}

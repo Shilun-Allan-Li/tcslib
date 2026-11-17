@@ -22,7 +22,7 @@ set_option autoImplicit false
 
 ## Main results
 
-Definitions only. `Noise` supplies the statement layer. Gaussian measures and
+Definitions and their equation accessors. `Noise` supplies the statement layer. Gaussian measures and
 the existing indicator-averaging and rotation constructions are reused.
 
 ## References
@@ -47,6 +47,14 @@ noncomputable def correlatedGaussianMeasure {n : ℕ} (ρ : ℝ) :
     (Measure.pi fun _ : Fin n => standardGaussianMeasure)).map
       (fun z => (z.1, fun i => ρ * z.1 i + Real.sqrt (1 - ρ ^ 2) * z.2 i))
 
+/-- The correlated Gaussian law is the pushforward of independent Gaussian endpoints. -/
+lemma correlatedGaussianMeasure_eq {n : ℕ} (ρ : ℝ) :
+    correlatedGaussianMeasure (n := n) ρ =
+  ((Measure.pi fun _ : Fin n => standardGaussianMeasure).prod
+    (Measure.pi fun _ : Fin n => standardGaussianMeasure)).map
+      (fun z => (z.1, fun i => ρ * z.1 i + Real.sqrt (1 - ρ ^ 2) * z.2 i)) := rfl
+
+
 /-- The Gaussian noise operator averages a function over the second endpoint of
 a correlated pair with its first endpoint fixed. [OD14, Def. 11.12]
 It uses the existing standard Gaussian law; integrability is required explicitly
@@ -56,6 +64,13 @@ noncomputable def gaussianNoise {n : ℕ} (ρ : ℝ)
   ∫ y : Fin n → ℝ, f (fun i => ρ * x i + Real.sqrt (1 - ρ ^ 2) * y i)
     ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure)
 
+/-- Gaussian noise is integration over the affine second Gaussian endpoint. -/
+lemma gaussianNoise_eq {n : ℕ} (ρ : ℝ) (f : (Fin n → ℝ) → ℝ) (x : Fin n → ℝ) :
+    gaussianNoise ρ f x =
+  ∫ y : Fin n → ℝ, f (fun i => ρ * x i + Real.sqrt (1 - ρ ^ 2) * y i)
+    ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure) := rfl
+
+
 /-- Gaussian noise stability is the expected product at correlated Gaussian
 endpoints, expressed using the noise operator. [OD14, Def. 11.18]
 The intended domain is Gaussian L² and correlations in `[-1,1]`. -/
@@ -63,5 +78,12 @@ noncomputable def gaussianNoiseStability {n : ℕ} (ρ : ℝ)
     (f : (Fin n → ℝ) → ℝ) : ℝ :=
   ∫ x : Fin n → ℝ, f x * gaussianNoise ρ f x
     ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure)
+
+/-- Gaussian stability is the Gaussian integral of the function times its noise average. -/
+lemma gaussianNoiseStability_eq {n : ℕ} (ρ : ℝ) (f : (Fin n → ℝ) → ℝ) :
+    gaussianNoiseStability ρ f =
+  ∫ x : Fin n → ℝ, f x * gaussianNoise ρ f x
+    ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure) := rfl
+
 
 end BooleanAnalysis.GaussianSpace

@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.satRed_move",
+ "key": "5c11a97bf3289b26",
+ "kind": "lemma",
+ "title": "One silent transition on a canonical frame",
+ "statement": "Let $x$ be a Boolean word and let $q,q'$ be states among the $35$ states. Choose input positions $i,i'\\le |x|$, counter length $n$, a second-tape content function $B$, head positions $a,b,a',b'\\in\\mathbb{Z}$, output word $o$, and signs $m,d_0,d_1\\in\\{-1,0,1\\}$. Suppose the clamped input-head move from position $i$ to position $i'$ is $m$, the counter and second-tape heads move respectively from $a$ to $a'$ and from $b$ to $b'$, and the machine's transition in state $q$ on input symbol $x[i]$ and the symbols under those work-tape heads is silent, writes nothing, and enters state $q'$. Then one step from the canonical frame in state $q$ yields the canonical frame in state $q'$ at position $i'$, with unchanged counter length and tape contents and unchanged output.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "states $q,q'$ among the 35 states",
+  "input positions $i,i'\\le |x|$",
+  "counter length $n$",
+  "second-tape content function $B$",
+  "head positions $a,b,a',b'$",
+  "output word $o$",
+  "signs $m,d_0,d_1\\in\\{-1,0,1\\}$",
+  "specified clamped input-head move",
+  "specified work-tape head displacements",
+  "specified silent transition on the current input and work-tape symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the transducer's transition at the current state, input symbol, and work\nsymbols is a silent action with no writes, then one machine step from the\ncanonical reduction frame changes only the control state and the three head\npositions, as prescribed; the counter length, buffer, and output are unchanged."
+}

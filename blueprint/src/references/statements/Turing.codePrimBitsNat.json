@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.codePrimBitsNat",
+ "key": "f31d0499fdee0ebf",
+ "kind": "lemma",
+ "title": "Primitive Recursiveness of Binary Evaluation",
+ "statement": "The function that assigns to each finite Boolean string its binary value, reading the string from least significant bit to most significant bit, is primitive recursive. A string $b_0b_1\\cdots b_{k-1}$ is assigned the value $\\sum_{j<k} b_j2^j$, where each Boolean is interpreted as $0$ or $1$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The function evaluating a Boolean string as a natural number written with the\nleast-significant bit first (the fold of the bit-append operation\n$(b, n) \\mapsto 2n + b$ over the string, starting from $0$) is primitive recursive."
+}

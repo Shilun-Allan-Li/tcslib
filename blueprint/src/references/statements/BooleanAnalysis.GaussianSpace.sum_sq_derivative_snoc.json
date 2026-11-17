@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc",
+ "key": "279afe5cfb3be812",
+ "kind": "lemma",
+ "title": "Squared derivatives under last-coordinate restriction",
+ "statement": "Let $n\\ge 0$, let $f:\\{0,1\\}^{n+1}\\to\\mathbb R$, let $b\\in\\{0,1\\}$, and let $x\\in\\{0,1\\}^n$. The sum of the squares of all coordinate half-differences of $f$ at $(x,b)$ equals the sum of the squares of the coordinate half-differences of the restriction $f_b(z)=f(z,b)$ at $x$, plus the square of the last-coordinate half-difference of $f$ at $x$:\n\\[\\sum_{i=0}^{n}(D_i f(x,b))^2=\\sum_{i=0}^{n-1}(D_i f_b(x))^2+\\left(\\frac{f(x,0)-f(x,1)}{2}\\right)^2.\\]",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$f:\\{0,1\\}^{n+1}\\to\\mathbb R$",
+  "$b\\in\\{0,1\\}$",
+  "$x\\in\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f:\\{0,1\\}^{n+1}\\to\\mathbb R$, $f_b(x)=f(x,b)$, and $d=(f_0-f_1)/2$. Then $\\sum_{i<n+1}(D_i f(x,b))^2=\\sum_{i<n}(D_i f_b(x))^2+d(x)^2$ for every $x,b$, with $D_i$ the coordinate half-difference."
+}

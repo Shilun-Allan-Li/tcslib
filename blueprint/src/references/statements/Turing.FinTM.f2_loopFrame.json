@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopFrame",
+ "key": "679815a95ca3b760",
+ "kind": "def",
+ "title": "Loop frame configuration",
+ "statement": "Let $B$ and $F$ be finite Turing machines over the Boolean alphabet, let $x$ be a Boolean input, and let a base configuration on $x$ have $B.k+1+(1+F.k)+1$ work tapes and states from $F$’s state set or from $(\text{Bool}\times(B.\text{State}\times\text{Bool}))\times\text{Fin}(14)$. Choose an optional state $q$ from this combined state set, an input-head position $p$ among the $|x|+2$ positions, three work-tape contents $f,c,u:\bbr\to\text{Option}(\text{Bool})$, head positions $h_c,h_u\\in\bbr$, and an output string $o$ of Booleans. The resulting configuration has state $q$, input-head position $p$, and output $o$; its tapes at indices $B.k$, $B.k+1$, and $B.k+1+(1+F.k)$ have contents $f,c,u$ and head positions $0,h_c,h_u$, respectively, while every other tape and head position agrees with the base configuration.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $B$ and $F$",
+  "Boolean input $x$",
+  "Base configuration on $x$ with the specified number of work tapes and combined state set",
+  "Optional state $q$ in the combined state set",
+  "Input-head position $p$ among the $|x|+2$ positions",
+  "Three Boolean work-tape contents $f,c,u$",
+  "Counter and payload head positions $h_c,h_u$",
+  "Boolean output string $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.rt_find_entry",
+ "key": "9fe009dd1ba8de48",
+ "kind": "theorem",
+ "title": "Finding a Field in Joined Data",
+ "statement": "Let $m>0$, let $\\Gamma$ and $A$ be types, let $\\delta:A\\to\\mathrm{Option}(\\Gamma)\\to A$, and choose $a_0\\in A$ and $acc:A\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Let $fs$ be a list of exactly $m$ nonempty finite lists over $\\Gamma$, and let $d$ be a two-work-tape configuration on input $x$ in state $none$. Suppose the first work tape of $d$, at every offset from $-1$ through the length of the joined encoding of $fs$, agrees with that encoding. Then the find machine has a positive time $t\\le 7(|joinFields(fs)|+1)$ at which it reaches the otherwise unchanged configuration except that the first work-tape head is advanced by $fieldOffset(fs,j)$, where $j=m-1$ if $acc$ accepts the fold of $\\delta$ over the joined fields starting at $a_0$, and $j=m$ otherwise. At every time $u$ with $0<u<t$, its state is neither the initial read state nor the exit state; at time $t$ it is in the exit state if the fold is accepted, and otherwise in the initial read state.",
+ "hypotheses_covered": [
+  "Positive natural number m",
+  "Types Γ and A, transition function δ, initial value a₀, and acceptance predicate acc",
+  "List fs has length m and every field is nonempty",
+  "Two-work-tape configuration d on input x starts in state none",
+  "First work tape agrees with the joined-field encoding at offsets −1 through its full length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $m>0$, let $\\Gamma$ and $A$ be types, let $\\delta:A\\to\\mathrm{Option}(\\Gamma)\\to A$,\nchoose $a_0\\in A$ and an acceptance predicate\n$acc:A\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and let $fs$ be a list of exactly $m$\nnonempty finite lists over $\\Gamma$. Let $d$ be a two-work-tape configuration on input\n$x$ in state $none$, and suppose its first work tape agrees with the encoding of the\nfields joined by blank separators at every offset from $-1$ through the full\njoined-string length. Then the find machine reaches, after some positive number\n$t\\leq7(|joinFields(fs)|+1)$ of steps, a configuration with the same input, tape\ncontents, output, and other head position as $d$, with its first work-tape head advanced\nby the sum of the lengths plus one of the first $j$ fields, where $j=m-1$ if $acc$\naccepts the fold of $\\delta$ over the joined fields starting from $a_0$, and $j=m$\notherwise. At every intermediate time $u$ with $0<u<t$, its state is neither the initial\nread state nor the exit state; at time $t$ it is in the exit state when the fold is\naccepted and otherwise back in the initial read state."
+}

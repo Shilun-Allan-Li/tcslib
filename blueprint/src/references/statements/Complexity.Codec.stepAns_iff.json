@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Codec.stepAns_iff",
+ "key": "25364f19b903bb03",
+ "kind": "lemma",
+ "title": "Boolean Step Test Characterization",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean symbols, let $x,w,w'$ be Boolean lists, and let $s\\in\\mathbb{N}$. Assume that $w$ has the prescribed configuration-code length, its designated terminal bit is true, and the integer encoded in its input-position field is at most $|x|+1$. Assume also that $w'$ has the prescribed code length and its designated terminal bit is true. Then the Boolean step test on the configuration portion and input-position fields of $w,w'$ equals true if and only if the step-check predicate holds: $w$ is a valid configuration code, $w'$ has the required length and terminal bit, and some nondeterministic choice gives the prescribed input-head position update and passes the local tape-update check between the configuration portions of $w$ and $w'$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean symbols",
+  "$x,w,w'$ are Boolean lists",
+  "$s\\in\\mathbb{N}$",
+  "$w$ has prescribed length $W(N)(2s+1)+wP(|x|)+1$",
+  "the designated terminal bit of $w$ is true",
+  "the integer represented by the input-position field of $w$ is at most $|x|+1$",
+  "$w'$ has prescribed length $W(N)(2s+1)+wP(|x|)+1$",
+  "the designated terminal bit of $w'$ is true"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion expands several codec predicates only by their roles; the definitions of the cell encoding and local scan check are not given informal descriptions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

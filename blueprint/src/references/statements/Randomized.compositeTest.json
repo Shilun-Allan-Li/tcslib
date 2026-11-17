@@ -1,0 +1,12 @@
+{
+ "lean_name": "Randomized.compositeTest",
+ "key": "563c05c8b283ba46",
+ "kind": "def",
+ "title": "Two-round composite test",
+ "statement": "Given a Boolean string $z$, decode its first component and let $N$ be the binary expansion of its binary value; append three true bits to that first component to form $u$. Return true if the encoded comparison says $N<2$, return false if it says $N=2$, and return true if the first bit of the decoded first component is false. Otherwise, split the second component using the encoded prefix length determined by the pair $(u,\\cdot)$, pair-encode each of the resulting two strings with $N$, and return the negation of the conjunction of the two liar-round predicates on those encodings.",
+ "hypotheses_covered": [],
+ "confidence": "low",
+ "caveat": "The precise effects of the encoded comparison, prefix-length, pairing, and decoding operations are not supplied, so this wording follows their roles and composition in the definition without asserting further semantics.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

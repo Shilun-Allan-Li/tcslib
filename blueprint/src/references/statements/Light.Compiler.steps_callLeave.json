@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Compiler.steps_callLeave",
+ "key": "9f909f9d8981a2d8",
+ "kind": "theorem",
+ "title": "Return from a procedure call",
+ "statement": "Let a compiled program have word size $W$, and let its memory $m$ represent a light-program state $\\sigma$ at stack depth $q+F+1$. Suppose the code at position $\\mathrm{pos}$ begins with the procedure epilogue, the return-address cell at stack position $q+F$ contains the word encoding $\\mathrm{ret}$, $\\mathrm{ret}<\\mathrm{disp}$, $q+F+1\\le Q$, and $0<F$. Then after $5+2(\\mathrm{ret}+1)$ machine steps, the program can reach program counter $\\mathrm{ret}$ with a memory $m'$ whose frame pointer contains the word encoding the stack position $q$ and whose return register contains the word encoding $\\sigma.loc(0)$. The memories $m$ and $m'$ agree at every address outside the union of the frame-pointer address and the scratch-address set for $F$.",
+ "hypotheses_covered": [
+  "A compiler setting with word size W",
+  "Initial memory represents state σ at stack depth q+F+1",
+  "Code at pos begins with the epilogue",
+  "Return-address cell at stack position q+F encodes ret",
+  "ret < disp",
+  "q+F+1 ≤ Q",
+  "0 < F"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

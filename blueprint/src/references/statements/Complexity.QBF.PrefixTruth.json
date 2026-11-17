@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.QBF.PrefixTruth",
+ "key": "51ab0f27b4c7535c",
+ "kind": "def",
+ "title": "Truth of a Quantifier Prefix",
+ "statement": "Let $P$ be a property of Boolean assignments $sigma : \\mathbb{N} \\to \\{\\mathrm{false},\\mathrm{true}\\}$. The prefix is true at an assignment when its quantifiers can be evaluated in order starting at variable index $i$: an existential quantifier requires some Boolean value for the current variable, while a universal quantifier requires every Boolean value; after either choice, the assignment is updated at index $i$ and evaluation continues at index $i+1$. An empty prefix is true exactly when $P$ holds of the assignment.",
+ "hypotheses_covered": [
+  "A predicate on Boolean assignments",
+  "A list of existential and universal quantifiers",
+  "An initial Boolean assignment",
+  "An initial natural-number variable index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.universalCanon_complete",
+ "key": "9a8e050c2520c10b",
+ "kind": "lemma",
+ "title": "Completion of the canonizer",
+ "statement": "Let $c$ be an effective machine-coding scheme, and let $\\alpha$ and $x$ be finite Boolean words. After exactly $3|\\alpha|+4+T_c(|\\alpha|)$ steps on the paired input $\\langle\\alpha,x\\rangle$, where $T_c$ is the canonizer’s time bound, the prefix-parser–canonizer composition has halted, has output the serialization of the machine decoded from $\\alpha$, and has its input head at position $2|\\alpha|+3$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-coding scheme",
+  "$\\alpha$ and $x$ are finite Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-coding scheme, and let $T_c(n)$ denote the time bound of\nits canonizer. For any Boolean words $\\alpha$ and $x$, after exactly\n$3|\\alpha|+4+T_c(|\\alpha|)$ steps on the self-delimiting encoding of $(\\alpha,x)$, the\nbuffered composition of the prefix parser and the canonizer has halted, has output the\nserialization of the machine decoded from $\\alpha$, and has its input head at position\n$2|\\alpha|+3$."
+}

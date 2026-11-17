@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timed_clock_success",
+ "key": "85133291c0889d2c",
+ "kind": "lemma",
+ "title": "Executing a transition with positive budget",
+ "statement": "Let $x$ be a finite Boolean input word, let $cfg$ be a four-tape configuration over $x$, let $bs$ be a finite Boolean clock word, let $bits$ assign a Boolean to each index below $8$, and let $halt$ be a Boolean flag. Suppose $cfg$ has the pending-action control carrying $bits$ and $halt$, and the little-endian value of $bs$ is positive. After exactly $2|bs|+4$ steps from the six-tape lift of $cfg$ with clock word $bs$, the timed interpreter reaches the lift of one step of the four-tape interpreter from $cfg$, with clock word the fixed-width subtraction of an incoming borrow from $bs$.",
+ "hypotheses_covered": [
+  "A finite Boolean input word $x$",
+  "A four-tape configuration over $x$ whose control is the specified pending-action state",
+  "A finite Boolean clock word $bs$ with positive little-endian value",
+  "A Boolean action-bit function indexed below 8",
+  "A Boolean halt flag"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the clock word $w$ has positive little-endian value, then from the six-tape\nlift of a pending-action configuration, exactly $2|w| + 4$ steps of the timed\ninterpreter decrement the budget once and apply the retained action: the\nresult is the lift of one step of the unstopped table interpreter, with clock\nword the borrow subtraction of $w$."
+}

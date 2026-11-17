@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.NDTM.runWith_eq_fixChoice_runFrom",
+ "key": "af28a1907dbe13de",
+ "kind": "theorem",
+ "title": "Agreement with a fixed-choice run",
+ "statement": "Let $M$ be a nondeterministic multi-tape Turing machine, let $b$ be a Boolean choice bit, let $w$ be a finite Boolean word, and let $c$ be a configuration on a fixed input. Suppose that at every time $j<|w|$, if the run of the machine that always uses choice $b$ from $c$ has state $q$, then the two transitions of $M$ at state $q$ agree for every input symbol and tuple of work-tape symbols. Then running $M$ from $c$ under $w$ gives the same configuration as running the machine with choice fixed to $b$ for $|w|$ steps.",
+ "hypotheses_covered": [
+  "A nondeterministic multi-tape Turing machine $M$.",
+  "A Boolean choice bit $b$.",
+  "A finite Boolean word $w$.",
+  "A configuration $c$ on a fixed input.",
+  "For every $j<|w|$ and state $q$ reached by the fixed-choice run at time $j$, the two transition functions agree at $q$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_copy_scan",
+ "key": "b40bf4fc2f4b43d4",
+ "kind": "lemma",
+ "title": "Copy scan of a captured suffix",
+ "statement": "Let $L>0$, let a machine have $L+1$ work tapes, let $q_c,q_r$ be states, and let $f$ be a Boolean map. Suppose that in state $q_c$ the machine reads the last tape: on a symbol $b$ it writes $f(b)$ on tape zero, blanks the last tape, moves both heads right, and remains in $q_c$; on a blank it makes no writes, moves both heads left, and enters $q_r$. For Boolean words $\\mathit{pre},\\mathit{old},\\mathit{rest}$, start with the heads at position $|\\mathit{pre}|$, tape zero storing $\\mathit{pre}$ followed by $\\mathit{old}$, and the last tape storing $\\mathit{rest}$ starting at position $|\\mathit{pre}|$ with all earlier cells blank. After $|\\mathit{rest}|+1$ steps the machine is in state $q_r$, the last tape is blank, tape zero stores $\\mathit{pre}$ followed by the image of $\\mathit{rest}$ under $f$ and then the suffix of $\\mathit{old}$ after its first $|\\mathit{rest}|$ symbols, and both heads are at position $|\\mathit{pre}|+|\\mathit{rest}|-1$.",
+ "hypotheses_covered": [
+  "$L>0$",
+  "A machine with $L+1$ work tapes",
+  "States $q_c,q_r$ and Boolean map $f$",
+  "The specified transition rule in state $q_c$ for a symbol on the last tape",
+  "The specified transition rule in state $q_c$ for a blank on the last tape",
+  "Boolean words $\\mathit{pre},\\mathit{old},\\mathit{rest}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider a machine with at least two work tapes whose copy state, at a two-ended\nconfiguration, overwrites the tape-zero cell with $f$ applied to the captured\nsymbol, blanks the captured cell, and advances both heads, exiting left into a\nrewind state at the captured right blank. Starting with tape zero holding\n$\\mathit{pre} \\mathbin{+\\!\\!+} \\mathit{old}$, the capture tape holding\n$\\mathit{rest}$ beyond $|\\mathit{pre}|$ already-erased cells, and both heads at\n$|\\mathit{pre}|$: after $|\\mathit{rest}| + 1$ steps the machine is in the rewind\nstate, tape zero holds $\\mathit{pre}$, then $f$ mapped over $\\mathit{rest}$, then\nthe remainder of $\\mathit{old}$ beyond position $|\\mathit{rest}|$, the capture\ntape is blank, and both heads stand at $|\\mathit{pre}| + |\\mathit{rest}| - 1$."
+}

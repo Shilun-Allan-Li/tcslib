@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_fourierCoeff_odd",
+ "key": "cd9acea73d18c528",
+ "kind": "theorem",
+ "title": "Exact odd majority coefficients",
+ "statement": "Let $m\\in\\mathbb N$ and let $S\\subseteq[2m+1]$ have odd cardinality. Set $r=(|S|-1)/2$, where the quotient is an integer. For the majority function on $\\{0,1\\}^{2m+1}$, whose value is $1$ when more than $m$ coordinates are false and $-1$ otherwise, its Fourier--Walsh coefficient at $S$ is\n\\[\\widehat M_m(S)=(-1)^r\\frac{\\binom{m}{r}}{\\binom{2m}{2r}}\\frac{\\binom{2m}{m}}{2^{2m}}.\\]",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb N$",
+  "$S\\subseteq[2m+1]$",
+  "$|S|$ is odd"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $m\\in\\mathbb N$, put $n=2m+1$, and define $M_m:\\{\\pm1\\}^n\\to\\mathbb R$ by\n$M_m(x)=1$ when more than $m$ coordinates equal $1$, and $M_m(x)=-1$ otherwise.\nFor $S\\subseteq\\{1,\\ldots,n\\}$ define\n$\\widehat M_m(S)=2^{-n}\\sum_{x\\in\\{\\pm1\\}^n}M_m(x)\\prod_{i\\in S}x_i$.\nIf $S\\subseteq\\{1,\\ldots,n\\}$ has cardinality $2r+1$ for an integer $r\\ge0$, then\n\\[\n \\widehat M_m(S)=(-1)^r\\frac{\\binom mr}{\\binom{2m}{2r}}\n                  \\frac{\\binom{2m}{m}}{2^{2m}}.\n\\]"
+}

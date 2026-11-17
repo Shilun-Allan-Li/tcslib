@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Exec.loc_eq_of_notMem_assigns",
+ "key": "8ff558260b5b3438",
+ "kind": "theorem",
+ "title": "Unchanged unassigned locations",
+ "statement": "Fix resource limits and a program. For any imperative statement, states $\\sigma$ and $\\sigma'$, cost $c$, and natural-number variable index $y$, if the statement executes from $\\sigma$ to $\\sigma'$ with cost $c$ and $y$ does not occur in its assigned-variable list, then $\\sigma'.loc(y)=\\sigma.loc(y)$.",
+ "hypotheses_covered": [
+  "Fixed resource limits",
+  "A fixed program",
+  "An imperative statement executes from $\\sigma$ to $\\sigma'$ with cost $c$",
+  "$y$ is a natural-number variable index",
+  "$y$ is absent from the statement's assigned-variable list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "Let $\u0001$ be a statement, and let $\u0002$ and $\u0003$ be states. If $\u0001$ executes from $\u0002$ to $\u0003$\nwith cost $c$, then every natural-number location $y$ absent from the list of locations\nassigned by $\u0001$ has the same value in both states: $\u0003.\u0004(y)=\u0002.\u0004(y)$."
+}

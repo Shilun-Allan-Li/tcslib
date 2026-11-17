@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.counter_body",
+ "key": "9426a8e19f32dd54",
+ "kind": "lemma",
+ "title": "Simulation of a counter-loop body",
+ "statement": "Let $k$ be a natural number, let $S$ and $\\Gamma$ be types with decidable equality, and let $e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$ be an embedding. Let $M$ be a deterministic Turing machine over $\\Gamma$ with $k$ work tapes and state set $S$, and choose $a\\in S$ and an optional exit state $\\mathrm{exit}\\in\\mathrm{Option}(S)$. For an input word $x$, let $c$ be a configuration of $M$ with state $a$, and let $ct:\\mathbb{Z}\\to\\mathrm{Option}(\\Gamma)$ and $cp\\in\\mathbb{Z}$ specify the contents and head position of an added counter tape; choose $t,\\mathrm{width}\\in\\mathbb{N}$ with $0<t$. Suppose that for every integer time $u$ with $0<u<t$, the run of $M$ from $c$ has a state $s$ satisfying $s\\ne a$ and $\\mathrm{exit}\\ne\\mathrm{some}(s)$. Then after $t$ steps, the counter-loop machine formed from $M$, $e$, $a$, and $\\mathrm{exit}$ has the configuration obtained by embedding the configuration of $M$ after $t$ steps and redirecting its optional state: states equal to $a$ enter the decrement phase, states equal to $\\mathrm{exit}$ enter the escape phase, and other states remain in the body phase; the added counter tape and its head position are still $ct$ and $cp$. Moreover, at every time $u<t$ the counter-loop machine is in neither its done nor escape state, its added counter head lies in $[cp-1,cp+\\mathrm{width}]$ at every time $u\\le t$, and there is some $u\\le t$ at which all its original $k$ work-tape head positions agree with those of $M$ after $u$ steps from $c$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number; $S$ and $\\Gamma$ have decidable equality",
+  "$e$ embeds the Boolean alphabet into $\\Gamma$",
+  "$M$ is a $k$-work-tape machine over $\\Gamma$ with state set $S$",
+  "$a\\in S$ and $\\mathrm{exit}\\in\\mathrm{Option}(S)$",
+  "$c$ is a configuration on input $x$ and has state $a$",
+  "$ct:\\mathbb{Z}\\to\\mathrm{Option}(\\Gamma)$ and $cp\\in\\mathbb{Z}$",
+  "$\\mathrm{width},t\\in\\mathbb{N}$ and $0<t$",
+  "For every $u$ with $0<u<t$, the run of $M$ from $c$ is in a state $s$ with $s\\ne a$ and $\\mathrm{exit}\\ne\\mathrm{some}(s)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

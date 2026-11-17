@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.AdjWalk.walk_halts",
+ "key": "83b0fd3c9dfbfe5a",
+ "kind": "theorem",
+ "title": "Termination of the circuit walk",
+ "statement": "Let $C$ be a family of directed acyclic circuits, and suppose the circuit for input length $n$ is canonical: each gate's argument list is strictly increasing, and its output vertex is the last vertex. For any Boolean parameter $\\ell$ and natural number $i$, the walk on the paired encoding of the unary word $1^n$ and the binary representation of $i$, started in its start state with all four registers zero and no answer yet, eventually halts with answer $\\ell\\lor b$ if $i$ is less than the circuit's encoding length, where $b$ is bit $i$ of that encoding (taking a missing bit to be false); otherwise it halts with answer false. At every time strictly before it halts, each register is at most the length of the circuit encoding.",
+ "hypotheses_covered": [
+  "$C$ is a circuit family",
+  "the circuit for length $n$ is canonical",
+  "$\\ell$ is Boolean",
+  "$i$ is a natural number",
+  "initial state is start, registers are zero, and answer is unset"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

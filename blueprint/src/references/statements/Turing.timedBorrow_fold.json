@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.timedBorrow_fold",
+ "key": "f1398df60915e9ce",
+ "kind": "lemma",
+ "title": "Borrow subtraction as a fold",
+ "statement": "For every incoming Boolean borrow flag and Boolean word, sweeping the word from left to right with the local rule that sends a carry $c$ and bit $b$ to carry $c \\wedge \\lnot b$ and output bit $b \\oplus c$ yields the same final carry and output word as the fixed-width borrow subtraction.",
+ "hypotheses_covered": [
+  "The incoming borrow flag is Boolean",
+  "The input word is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The fixed-width borrow subtraction equals the left fold of the local rule\nsending a carry flag $c$ and a bit $b$ to the new carry $c \\wedge \\lnot b$ and\nthe output bit $b \\oplus c$."
+}

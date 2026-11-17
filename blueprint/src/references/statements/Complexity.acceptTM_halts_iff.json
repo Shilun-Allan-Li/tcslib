@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.acceptTM_halts_iff",
+ "key": "7b3f0231d24a8173",
+ "kind": "lemma",
+ "title": "Recognizer halting characterizes acceptance",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $p$ assign a Boolean value to every finite binary string, and suppose that for every input $y$, the machine $M$ computes the one-bit output $[p(y)]$ in some finite time. For every binary string $x$, the halting recognizer of $M$ halts on $x$ within some finite time, with some output, if and only if $p(x)=\\mathrm{true}$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$p$ maps finite binary strings to Boolean values",
+  "For every input $y$, $M$ computes the one-bit output $[p(y)]$ in some finite time",
+  "$x$ is a finite binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state binary-alphabet Turing machine and\n$p : \\{0,1\\}^{*} \\to \\{0,1\\}$ a predicate such that on every input $x$ the\nmachine $M$ eventually halts with the single bit $p(x)$ as its output. Let\n$M^{\\mathrm{acc}}$ be the halting recognizer of $M$, which simulates $M$ with\noutput suppressed while recording the last bit $M$ emits (initially $0$), halts\nwhen $M$ halts with recorded bit $1$, and otherwise enters a loop state in which\nit does nothing forever. Then for every input $x$, $M^{\\mathrm{acc}}$ halts on\n$x$ (for some output $w$ and some $t$, it halts within $t$ steps with output $w$)\nif and only if $p(x) = 1$."
+}

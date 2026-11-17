@@ -4,10 +4,15 @@
 > `complexity/arora-barak-ch3-4`)? Start at
 > [`campaign/maintainer/START-HERE.md`](campaign/maintainer/START-HERE.md). It and
 > `campaign/maintainer/WORKFLOW.md` take precedence over the generic workflow below. In
-> particular, elaborate only with `devtools/seyoon/leanelab.sh` (the current cap is below), never
-> `lake build`. The latest state is in `campaign/maintainer/HANDOFF.md` §0. The user's latest
-> machine-wide Lean cap is **five** (2026-11-06); this maintainer currently budgets three slots
-> while the Pass–Shelat chat uses two.
+> particular, elaborate only with `devtools/seyoon/leanelab.sh`, never `lake build`. Lean
+> processes may run in parallel within the pool of `WORKFLOW.md` §2 (Seyoon, 2026-11-17): on a
+> cloud machine min(nproc, MemAvailable / 4 GB), shared through the wrappers' slot locks; at most 3
+> on a local host. The latest state is in `campaign/maintainer/HANDOFF.md` §0.
+> **Campaign builds:** verification runs through `scripts/lean_check_tree.sh` against an olean
+> snapshot kept at the branch tip, with merged-tree replays per PR — see
+> [`workflow.md`](workflow.md) §6 and §6.1. Never `lake build` on campaign branches.
+> **External jobs** (audits, fills, statement drafts) are staged on a campaign's exchange branch
+> and dispatched by pasteable prompt; routes and the delivery payload are in `workflow.md` §4.1.
 
 This directory contains a coordinated multi-agent system for writing Lean 4 proofs incrementally, using **sorry-driven development** to avoid token-limit failures.
 

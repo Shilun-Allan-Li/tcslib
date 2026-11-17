@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.timed_control_init",
+ "key": "95d9f624ff289402",
+ "kind": "lemma",
+ "title": "Initial state of the conditional controller",
+ "statement": "Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, and let $x$ be a Boolean word. The timed conditional controller's initial configuration on $x$ is exactly its decider-phase configuration corresponding to $D$'s initial configuration on $x$.",
+ "hypotheses_covered": [
+  "$D,M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet, and\nconsider the timed conditional controller for them, with a decider block, a branch\nblock and a capture tape as work tapes. For every input $x$, the initial configuration of\nthe controller on $x$ equals the decider-phase configuration of $D$'s initial\nconfiguration on $x$: $D$'s initial state, the initial input-head position, every work\ntape of all three blocks blank with its head at cell $0$, and empty output."
+}

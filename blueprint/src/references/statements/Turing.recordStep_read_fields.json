@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.recordStep_read_fields",
+ "key": "68fbd37af0058df0",
+ "kind": "theorem",
+ "title": "Reading Fields from a Recorded Configuration",
+ "statement": "Let $M$ be a Turing machine with $k$ work tapes, Boolean work symbols, and state set $Q$, let $T$ be a tag set, and let $u:T\\times\\operatorname{Option}(\\{0,1\\})\\to T$ be a tag update function. Let $S$ be the state set of a two-work-tape Turing machine with designated states $s_0,s_1$. For a Boolean input $x$, a configuration $c$ of $M$ on $x$, a tag $\\tau\\in T$, and $s\\in\\mathbb N$, assume every work-tape head of $c$ is within distance $s$ of the origin and every work-tape cell outside that range is blank. If $d$ is a four-work-tape configuration over the record alphabet whose tape $0$, at every offset from $-1$ through the length of the joined encoding of $c$ and $\\tau$, contains that encoding, then the record-processing machine has a run of at most $10(k+3)(L+1)$ steps, where $L$ is the length of that joined encoding. The run starts from the specified snapshot with control at the position-skip stage and both buffers containing the binary digits of the input-head position, and ends at the specified read-exit snapshot, whose recorded data is read from $c$ together with the tag $\\tau$; before its final step it avoids both verdict states, and throughout it every work-tape head remains within distance $L+1$ of its initial position.",
+ "hypotheses_covered": [
+  "$M$ has $k$ work tapes, Boolean symbols, and state set $Q$",
+  "$T$ is a tag type and $u:T\\times\\operatorname{Option}(\\{0,1\\})\\to T$",
+  "$S$ is the state set of a two-work-tape machine; designated start and finish states are given",
+  "$x$ is a Boolean input, $c$ is a configuration on $x$, $\\tau\\in T$, and $s\\in\\mathbb N$",
+  "All work-tape heads of $c$ are within distance $s$ of the origin and cells beyond that range are blank",
+  "$d$ is a four-work-tape configuration over the record alphabet",
+  "Tape $0$ of $d$ agrees with the joined encoding of $c$ and $\\tau$ at all offsets from $-1$ through the encoding length"
+ ],
+ "confidence": "low",
+ "caveat": "The exact start and end configurations are defined by private constructions; the prose describes their stated control data and run bounds without reproducing those definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_prefix_weight_le",
+ "key": "4159e41d19740a1f",
+ "kind": "lemma",
+ "title": "Cumulative majority Fourier weight comparison",
+ "statement": "Let $m\\in\\mathbb N$. For every $j\\in\\mathbb N$ with $j\\leq2(m+1)+2$, the cumulative Fourier weight through levels below $j$ of majority on $\\{0,1\\}^{2(m+1)+1}$ is at most that of majority on $\\{0,1\\}^{2m+1}$:\n\\[\\sum_{k=0}^{j-1}W_k[M_{m+1}]\\leq\\sum_{k=0}^{j-1}W_k[M_m],\\]\nwhere $W_k[f]$ is the sum of squared Fourier--Walsh coefficients over subsets of size $k$.",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb N$",
+  "$j\\in\\mathbb N$",
+  "$j\\leq2(m+1)+2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For each $q\\in\\mathbb N$, define $M_q:\\{\\pm1\\}^{2q+1}\\to\\mathbb R$ to equal $1$ when\nmore than $q$ coordinates equal $1$, and $-1$ otherwise; for\n$S\\subseteq\\{1,\\ldots,2q+1\\}$ define\n$\\widehat M_q(S)=2^{-(2q+1)}\\sum_{x\\in\\{\\pm1\\}^{2q+1}}M_q(x)\\prod_{i\\in S}x_i$, and for\n$k\\in\\mathbb N$ define $W_k(M_q)=\\sum_{|S|=k}\\widehat M_q(S)^2$.\nFor every $m,j\\in\\mathbb N$ satisfying $j\\le2(m+1)+2$,\n\\[\n \\sum_{k=0}^{j-1}W_k(M_{m+1})\\le\\sum_{k=0}^{j-1}W_k(M_m),\n\\]\nwhere both sums are zero when $j=0$."
+}

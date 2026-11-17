@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.emitterSplit_of_body",
+ "key": "f2dc36de286bdff6",
+ "kind": "lemma",
+ "title": "Split solver from a round contract",
+ "statement": "Let $f,T_E:\\mathbb{N}\\to\\mathbb{N}$, let $B$ be a finite-state Boolean Turing machine with $k$ work tapes, let $q$ be one of its states, and let $A\\in\\mathbb{N}$. Suppose that for every Boolean word $w$, the machine started on $w$ reaches the configuration at state $q$ with all work tapes blank within $A(T_E(|w|+1)+|w|+2)$ steps, and is not in state $q$ at any earlier step. Suppose also that for every $w$ and every candidate word $s$ with $|s|\\le |w|+1$, there is a positive number of steps $t\\le A(T_E(|w|+1)+|w|+2)$ such that the run from state $q$ on $w$ with $s$ on the first work tape and the other work tapes blank does not visit $q$ at any intermediate step strictly between steps $0$ and $t$. If $|s|+f(|s|)=|w|$, that run halts at step $t$ with output the self-delimiting encoding of the prefix of $w$ of length $|s|$ and the remaining suffix; otherwise it reaches state $q$ with the candidate updated by the split step. Then there are a finite-state Boolean Turing machine $M$ and a natural number $c$ such that, on every input $w$, $M$ outputs the encoding of the split of $w$ at the least $i\\le |w|$ satisfying $i+f(i)=|w|$, or the empty word if no such $i$ exists, and halts after exactly $c(|w|+1)(T_E(|w|+1)+|w|+2)$ steps.",
+ "hypotheses_covered": [
+  "$f,T_E$ map natural numbers to natural numbers",
+  "$B$ is a finite-state Boolean Turing machine",
+  "$q$ is a state of $B$",
+  "$A$ is a natural number",
+  "For each input $w$, startup reaches the anchor configuration within the stated bound",
+  "The startup run avoids state $q$ at every earlier step",
+  "For each $w,s$ with $|s|\\le |w|+1$, a round takes a positive number of steps no greater than the stated bound",
+  "A round avoids state $q$ strictly between its initial and final steps",
+  "When $|s|+f(|s|)=|w|$, the round halts with the encoded split at $|s|$",
+  "When the equality fails, the round returns to state $q$ with the stepped candidate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a body machine with an anchor state satisfy a startup contract and a\nround contract with common envelope $A\\,(T_E(n+1) + n + 2)$, where the round\nfrom a candidate $s$ of length at most $n+1$ either halts with the encoded\nsplit of the input at $\\abs{s}$ when $\\abs{s} + f(\\abs{s})$ equals the input\nlength, or returns to the anchor with the stepped candidate, never visiting\nthe anchor strictly inside. Then there exist a machine $M$ and a constant\n$c$ computing, within $c\\,(n+1)(T_E(n+1) + n + 2)$ steps, the function\nsending $w$ to the pair encoding of the split of $w$ at the least $i$ with\n$i + f(i) = \\abs{w}$, and to the empty word when no such $i$ exists."
+}

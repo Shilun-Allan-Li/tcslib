@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.lane_run",
+ "key": "a0f185a49769e633",
+ "kind": "lemma",
+ "title": "Machine execution of a finite transduction",
+ "statement": "Let $M$ be a $k$-tape machine, let $i$ be a designated tape, and let $R,C$ be sets of transducer states and letters. Let $\\mathrm{state}:R\\to S$, $\\mathrm{symbol}:C\\to A$, and $\\mathrm{visit}:R\\times C\\to R\\times C$ be maps. Suppose that for every $s\\in R$, $c\\in C$, input symbol, and tuple $ws$ of work-tape symbols whose entry at tape $i$ is $\\mathrm{symbol}(c)$, the machine transition from state $\\mathrm{state}(s)$ is precisely the action that moves right on tape $i$, writes $\\mathrm{symbol}(c')$ there, enters state $\\mathrm{state}(s')$, keeps the input head stationary, leaves other work tapes unchanged, and emits no output, where $(s',c')=\\mathrm{visit}(s,c)$. For any base configuration, list $as$ of letters, initial transducer state $s$, integer $z$, and lists $l,r$ of possibly blank symbols, running $M$ for $|as|$ steps from the lane configuration with state $\\mathrm{state}(s)$, frontier $z$, left list $l$, and right list consisting of the encoded letters of $as$ followed by $r$ yields the lane configuration with final transducer state obtained by processing $as$ from $s$, frontier $z+|as|$, left list equal to the reverse of the encoded rewritten word prepended to $l$, and right list $r$.",
+ "hypotheses_covered": [
+  "The transition rule holds for all transducer states $s$, letters $c$, input symbols, and work-symbol tuples $ws$ with $ws(i)=\\mathrm{symbol}(c)$",
+  "The machine, designated tape, encoding maps, transducer rule, base configuration, word, initial state, frontier, and lists are arbitrary parameters"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a $k$-tape machine, a designated lane, an encoding of transducer states into\nmachine states, an encoding of transducer letters into tape symbols, and a local\ntransducer step be given.  Suppose that from every encoded transducer state, whenever\nthe lane reads an encoded letter, the machine performs exactly the single-lane action\nthat writes the encoded output letter of the local step, moves right, and enters the\nencoded updated transducer state.  Then running the machine for exactly $\\ell$ steps\nfrom a single-lane configuration whose unprocessed list begins with an encoded word of\nlength $\\ell$ yields the single-lane configuration in which the transducer has been\nfolded over the whole word: the state is the encoded final transducer state, the\ncoordinate has advanced by $\\ell$, the encoded output word has been moved in reverse\nonto the processed list, and no inactive tape has changed."
+}

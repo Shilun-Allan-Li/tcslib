@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Meyer.pcfg_step",
+ "key": "9019c08e0d57439e",
+ "kind": "theorem",
+ "title": "Step of the encoded simulator",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $y$ be a Boolean input word, let $st$ be a state of the simulator constructed from $M$, and let $w_X,w_C,w_O$ be Boolean words. For a natural number $p$ with $1\\le p\\le |y|+1$, form the simulator configuration with state $st$, input-head position clipped to the valid range, auxiliary tapes containing these three words, and all original work tapes blank. Its next configuration is exactly the result of applying the simulator transition for state $st$, input symbol $y[p-1]?$ (with no symbol when that index is out of range), and the symbols scanned at the right ends of the three auxiliary words, with every original work-tape symbol blank.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$y$ is a Boolean word",
+  "$st$ is a simulator state for $M$",
+  "$p$ is a natural number",
+  "$1\\le p$",
+  "$p\\le |y|+1$",
+  "$w_X,w_C,w_O$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

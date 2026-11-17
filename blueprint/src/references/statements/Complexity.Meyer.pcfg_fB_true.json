@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Meyer.pcfg_fB_true",
+ "key": "2b6b16bee63977ce",
+ "kind": "theorem",
+ "title": "True Branch from the Second Field State",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $y$ be a Boolean input word, and let $p$ satisfy $1\\le p\\le |y|$. Suppose the symbol of $y$ at zero-based position $p-1$ is true. For any Boolean flags $f,b$, bit vector, and auxiliary words $w_X,w_C,w_O$, one step of the constructed machine from state $fB$ produces state $fA$ with flag $f$ and the same bit vector, while advancing the input head to position $p+1$. If $f$ is true, it appends $b$ to $w_O$ and leaves $w_C$ unchanged; if $f$ is false, it appends $b$ to $w_C$ and leaves $w_O$ unchanged. The word $w_X$ is unchanged in either case.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$y$ is a Boolean word",
+  "$1\\le p$",
+  "$p\\le |y|$",
+  "The symbol at position $p-1$ is true",
+  "$f,b$ are Boolean flags",
+  "A bit vector of the prescribed length is given",
+  "Three Boolean words $w_X,w_C,w_O$ are given"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

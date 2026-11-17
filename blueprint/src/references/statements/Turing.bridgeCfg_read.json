@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.bridgeCfg_read",
+ "key": "c67deb0fc9ead6da",
+ "kind": "lemma",
+ "title": "Top Symbol on a Bridge Tape",
+ "statement": "Let $c$ be a partial recursive program, let $x$ be a finite input string over the bridge alphabet, and let $q$ be an optional control state of its bridging machine. For any valid input-head position $p$, stack assignment $st$, output string, and compiled-machine stack name $k$, the symbol read by the corresponding work-tape head is the top symbol of $st(k)$ embedded in the bridge alphabet, or blank if $st(k)$ is empty.",
+ "hypotheses_covered": [
+  "A partial recursive program $c$",
+  "A finite input string over the bridge alphabet",
+  "An optional control state $q$",
+  "A valid input-head position $p$",
+  "An assignment of compiled-machine stacks",
+  "An output string",
+  "A compiled-machine stack name $k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In a bridge configuration with stack assignment $st$, the symbol read on the work\ntape assigned to a stack name $k$ is the embedded top of $st(k)$, or blank when\n$st(k)$ is empty."
+}

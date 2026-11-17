@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.f2_lenAction_apply",
+ "key": "0acacfb056cd8de2",
+ "kind": "lemma",
+ "title": "Effect of a length-counting action",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean input, and let $c$ be a configuration of $M$ on $x$. Choose optional states $q,q'$, natural numbers $i,j,r,s$ with $i,j\\le |x|$, signs $m,d\\in\\{-1,0,1\\}$, and an optional bit $b$. Suppose moving the input head from position $i+1$ by $m$ gives position $j+1$, and $(r-1)+d=s-1$. Then applying the length-counting action that moves the input head by $m$, moves the extra work-tape head by $d$, emits $b$ if present, and enters state $q'$, to the length-counting configuration built from $c$ at input position $i$, state $q$, and extra-tape position $r$, gives the corresponding configuration at input position $j$, state $q'$, and extra-tape position $s$, with output equal to the one-bit word $b$ if present and empty otherwise.",
+ "hypotheses_covered": [
+  "Finite Boolean-alphabet Turing machine M",
+  "Boolean input x",
+  "Configuration c of M on x",
+  "Optional states q and q'",
+  "Natural numbers i, j, r, s",
+  "Bounds i ≤ |x| and j ≤ |x|",
+  "Signs m and d",
+  "Optional Boolean b",
+  "Input-head movement equality from i+1 to j+1",
+  "Extra work-head position equality (r−1)+d = s−1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

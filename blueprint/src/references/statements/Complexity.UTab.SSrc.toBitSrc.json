@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.UTab.SSrc.toBitSrc",
+ "key": "93015fdeb1c4ad7e",
+ "kind": "def",
+ "title": "Conversion to circuit bit sources",
+ "statement": "Let $k\\in\\mathbb N$, let $\\rho$ assign a natural number to each of the eleven registers, and let $s$ be a tableau-bit source. Its corresponding circuit bit source is given as follows: a constant remains that Boolean constant; $z$ becomes input bit $\\rho(8)$; $u$ becomes input bit $\\rho(1)+\\rho(9)$; a previous-configuration bit $(d,j)$ becomes block bit $j$ of block $\\rho(4)+d-1$; a current-configuration bit $j$ becomes block bit $j$ of block $\\rho(3)-1$; a position bit $j$ becomes block bit $j$ of block $\\rho(5)-1$; and an end-of-tape bit $(\\tau,j)$ becomes block bit $j$ of block $\\rho(5)+(\\tau+1)(2\\rho(2)+1)-1$. All arithmetic in block indices is natural-number arithmetic, with subtraction truncated at zero.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$\\rho$ assigns natural numbers to the eleven registers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

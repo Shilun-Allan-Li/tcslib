@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.adjust_index",
+ "key": "01fa7ce31b8283bf",
+ "kind": "theorem",
+ "title": "Bounded simulation of a tape-head move",
+ "statement": "Let $M$ be a Boolean multitape Turing machine with $k$ work tapes, let $x$ and $v$ be input words, and let $c$ be a configuration of $M$ on input $v$ whose state is $s$. Suppose its input-head position is obtained by moving a position $p$ by sign $m\\in\\{-1,0,1\\}$, and every work-tape head of $c$ lies between $-S$ and $S$. Then there is a number of steps $T$ such that the compiled program, started from the encoding of $c$ on input $x$ with its extra register storing the binary expansion of $p-1$ and its phase set according to the head movement and whether $p$ is an endpoint, reaches an encoding representing the corresponding configuration of $M$. At every earlier step $n<T$, all work-head positions stay between the stated lower bound and the upper bound determined by $S$ and the binary length of $|v|+1$; whenever the compiled program is at a query state, its input head is at position $1$, its extra-register head is at position $0$, and that register contains the binary expansion of some integer at most $|v|$.",
+ "hypotheses_covered": [
+  "$c$ is a configuration of $M$ on input $v$",
+  "$c$ is in state $s$",
+  "$p$ is a valid input-head position and $m$ is a sign movement",
+  "the input position of $c$ equals the clamped move of $p$ by $m$",
+  "every work-tape head of $c$ lies in $[-S,S]"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on the specialized encoding and safety predicates; the available descriptions do not define them, so the simulation clauses are rendered in words.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

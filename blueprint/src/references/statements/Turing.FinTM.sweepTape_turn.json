@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.sweepTape_turn",
+ "key": "3ad08cdc9e6b5d90",
+ "kind": "lemma",
+ "title": "Reflection of the zipper tape",
+ "statement": "For an alphabet $A$, an integer frontier $z$, and finite lists $l,r$ of possibly blank symbols, the tape represented by frontier $z$ and stacks $l,r$ equals the tape represented by frontier $-(z-1)$ and stacks $r,l$, evaluated at the reflected coordinate: for every $w\\in\\mathbb{Z}$, the first tape's content at $w$ is the second tape's content at $-w$.",
+ "hypotheses_covered": [
+  "An alphabet $A$",
+  "An integer $z$",
+  "Finite lists $l,r$ of possibly blank symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $z$ be an integer and let $l$ and $r$ be finite lists of possibly-blank\nsymbols over an alphabet $A$. The two-stack zipper tape with frontier $z$,\nleft stack $l$, and right stack $r$ coincides, as a function on $\\mathbb{Z}$,\nwith the coordinate reflection $w \\mapsto$ (zipper tape with frontier\n$-(z - 1)$, left stack $r$, and right stack $l$, read at $-w$): reversing the\nscanning direction exchanges the two stacks."
+}

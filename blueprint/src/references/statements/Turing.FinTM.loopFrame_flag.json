@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loopFrame_flag",
+ "key": "73d7c6486b7db9bd",
+ "kind": "lemma",
+ "title": "Flag track read at the origin",
+ "statement": "For any two Boolean finite Turing machines, input word, base configuration of the loop host, control state, input-head position, flag, counter, and payload tapes, counter and payload head positions, and output word, the symbol scanned on the flag track in the resulting controller frame is the value of the flag tape at cell $0$.",
+ "hypotheses_covered": [
+  "Two Boolean finite Turing machines",
+  "An input word",
+  "A base loop-host configuration",
+  "A control state",
+  "An input-head position",
+  "Flag, counter, and payload tape contents",
+  "Counter and payload head positions",
+  "An output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every controller frame of the loop host with flag tape $f$, the symbol scanned on\nthe flag track of the frame is exactly $f(0)$, independently of all inactive residue."
+}

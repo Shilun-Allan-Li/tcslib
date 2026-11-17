@@ -1,17 +1,18 @@
 {
  "lean_name": "BoolCircuit.NOrCircuit.toDNF_width_bounded",
- "key": "a244b67608ac3461",
+ "key": "f3b15f00844c52a5",
  "kind": "theorem",
- "title": "Width bound for the DNF of a disjunction of AND-clauses",
- "statement": "Let $cs$ be a finite list of normal-form AND circuits on $n$ variables, and let $w \\in \\bbn$. Suppose every circuit in $cs$ is a base clause — a list of literals whose variable indices are pairwise distinct — and that each such clause contains at most $w$ literals. Then the DNF obtained from the normal-form OR circuit whose disjuncts are the circuits in $cs$, by converting each AND-clause into a term, has width at most $w$; that is, every term in it has at most $w$ literals.",
+ "title": "Width bound for an OR of clauses",
+ "statement": "Let $n$ and $w$ be natural numbers, and let $cs$ be a finite list of normal-form AND circuits on $n$ variables. Suppose each circuit in $cs$ is a base clause with pairwise distinct variable indices and has at most $w$ literals. Then the DNF of the OR circuit with children $cs$ has width at most $w$.",
  "hypotheses_covered": [
-  "cs is a list of normal-form AND circuits on n variables",
-  "w is a natural number",
-  "each circuit in cs is a base clause with pairwise distinct variable indices",
-  "each such clause has at most w literals"
+  "$n$ and $w$ are natural numbers",
+  "$cs$ is a list of normal-form AND circuits",
+  "Every circuit in $cs$ is a base clause",
+  "The variable indices in each clause are pairwise distinct",
+  "Each clause has length at most $w$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If every AND-clause child has at most $w$ literals (with distinct indices), then the DNF\n$(\\texttt{NOrCircuit}.\\mathrm{node}\\,cs).\\mathrm{toDNF}$ has width at most $w$."
+ "replaced": "Let $cs$ be a finite list of normal-form AND circuits on $n$ variables, and let $w \\in\n\\bbn$. Suppose every circuit in $cs$ is a base clause — a list of literals whose\nvariable indices are pairwise distinct — and that each such clause contains at most $w$\nliterals. Then the DNF obtained from the normal-form OR circuit whose disjuncts are the\ncircuits in $cs$, by converting each AND-clause into a term, has width at most $w$; that\nis, every term in it has at most $w$ literals."
 }

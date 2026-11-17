@@ -31,7 +31,7 @@ require TCSlib from git "https://github.com/Shilun-Allan-Li/tcslib" @ "main"
 
 ## The theorem dataset
 
-`dataset/tcslib_theorems.jsonl.gz` pairs every blueprint-bound theorem with a
+`dataset/tcslib_theorems.manifest.json` and its gzip shards pair every blueprint-bound theorem with a
 self-contained informal statement, a standalone formal statement, a flattened proof file,
 a difficulty rating and its provenance (textbook citation or an informalized account of
 the proof).  After formalizing something, put the text it came from under

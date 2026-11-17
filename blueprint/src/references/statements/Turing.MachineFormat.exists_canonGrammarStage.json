@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonGrammarStage",
+ "key": "ee35d60f86538acb",
+ "kind": "lemma",
+ "title": "A machine for the grammar-checking stage",
+ "statement": "For every machine format $F$, there exist a natural number $m$, a finite state set $S$ with decidable equality, a deterministic Turing machine $G$ with $m$ work tapes over the Boolean alphabet, an entry state, an injective assignment of exit states to Boolean values, a natural number $a$, and a designated work-tape index $header$. For every input $x$ that parses as $bits$ and $rest$, with $bits$ the canonical binary representation of its value and $|rest|\\ge \\max\\{guard,(4k+5)3^{k+1}\\}(v+1)$, where $k$ is the work-tape count of $F$ and $v$ is the value of $bits$, and for every configuration $d$ on input $x$ whose state is the entry state, output is empty, input-head position is $2|bits|+3$, designated tape contains $bits$ with its head at zero, and all other tapes are blank with heads at zero, there is a time $t\\le a(|x|+1)^a$ such that $G$ has empty output and is in the exit state assigned to whether the grammar check succeeds. No exit state is visited before time $t$.",
+ "hypotheses_covered": [
+  "A machine format $F$",
+  "Existence of a tape count $m$, finite state set $S$ with decidable equality, machine $G$, entry state, injective Boolean exit assignment, time constant $a$, and designated tape index",
+  "The input parses as $bits$ and $rest$",
+  "The bit string $bits$ is canonical for its binary value",
+  "The suffix satisfies the specified guard bound",
+  "The initial configuration has the specified state, empty output, input-head position, designated tape contents and head, and blank contents and zero heads on other tapes",
+  "A time bound of $a(|x|+1)^a$",
+  "The reached state indicates success of the grammar check, output remains empty, and no exit state was visited earlier"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

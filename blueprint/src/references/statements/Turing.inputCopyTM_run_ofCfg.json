@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.inputCopyTM_run_ofCfg",
+ "key": "4057985a90568845",
+ "kind": "theorem",
+ "title": "Execution of the input-copy machine",
+ "statement": "Let $x$ be a word over an arbitrary alphabet, choose a work tape $i$ among $k$ tapes, and let $d$ be a configuration on input $x$ whose state is the forward-scan state and whose input head is at position $1$. After $2|x|+2$ steps, the input-copy machine is in its done state, and tape $i$ contains a copy of $x$ in the cells from the initial head position through the next $|x|-1$ cells, while all other tape cells retain their contents; before that time it is never in the done state. At every time up to and including $2|x|+2$, the head on tape $i$ lies between one cell left of its initial position and $|x|$ cells to its right, inclusive, and every other tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "A symbol alphabet and a word $x$ over it",
+  "A natural number $k$ of work tapes",
+  "A tape index $i<k$",
+  "A configuration $d$ on input $x$",
+  "The initial state of $d$ is the forward-scan state",
+  "The input head of $d$ is at position $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

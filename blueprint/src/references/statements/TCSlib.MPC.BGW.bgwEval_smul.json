@@ -1,0 +1,22 @@
+{
+ "lean_name": "TCSlib.MPC.BGW.bgwEval_smul",
+ "key": "99233476dec2c3d7",
+ "kind": "theorem",
+ "title": "Scalar multiplication of circuit shares",
+ "statement": "Let $F$ be a field with decidable equality, let $\\iota$ be an input-index type, let $d\\in\\mathbb N$, let $R$ be a degree-$d$ resharer, and let $A$ be a finite set of parties. For every party-indexed input assignment $\\mathrm{inp}$, scalar $c\\in F$, and circuit $a$, the BGW evaluation of the circuit obtained by multiplying $a$ by $c$ assigns to each party $j$ the value $c$ times the BGW evaluation of $a$ at $j$.",
+ "hypotheses_covered": [
+  "F is a field",
+  "F has decidable equality",
+  "ι is an input-index type",
+  "d is a natural number",
+  "R is a degree-d resharer",
+  "A is a finite set of parties",
+  "inp is a party-indexed input assignment",
+  "c is a field element",
+  "a is an arithmetic circuit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a field, let $a$ be an arithmetic circuit, and let $c\\in F$. At every party,\nBGW evaluation of the circuit obtained by multiplying $a$ by the public scalar $c$\nequals $c$ times that party's BGW evaluation of $a$."
+}

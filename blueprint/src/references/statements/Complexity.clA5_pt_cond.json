@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5_pt_cond",
+ "key": "ac8ba9f70e654c57",
+ "kind": "lemma",
+ "title": "Polynomial-time conditional function",
+ "statement": "Let $p$ be a Boolean-valued function on Boolean strings, and let $f,g$ be functions from Boolean strings to Boolean strings. If $x\\mapsto[p(x)]$, $f$, and $g$ are polynomial-time computable, then the function that returns $f(x)$ when $p(x)$ is true and $g(x)$ otherwise is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$p$ maps Boolean strings to Boolean values",
+  "$f,g$ map Boolean strings to Boolean strings",
+  "$x\\mapsto[p(x)]$ is polynomial-time computable",
+  "$f$ is polynomial-time computable",
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a single-bit test $p$ and two string functions $f$ and $g$ are polynomial-time computable, then so is the function returning $f$ of the input when the test holds and $g$ of the input otherwise; the three budgets fit one common maximal degree."
+}

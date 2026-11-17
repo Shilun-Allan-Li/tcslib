@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.inputInsensitive_oblivious",
+ "key": "e80a1e9edee8978b",
+ "kind": "lemma",
+ "title": "Input-Insensitive Machines Are Oblivious",
+ "statement": "Let $A$ be an alphabet, let $z\\in A$, and let $P$ be a finite-state-set Turing machine over $A$. Suppose that for every state $q$, optional input symbol $s$, and tuple $w$ of work-tape reads, the transition of $P$ on input symbol obtained from $s$ by replacing each present symbol by $z$ is the same as its transition on $s$. Then for any two inputs of equal length and every time $t$, the input-head positions and the tuples of work-tape head positions of the configurations reached after $t$ steps are equal.",
+ "hypotheses_covered": [
+  "Alphabet A and distinguished symbol z ∈ A",
+  "Finite-state-set machine P over A",
+  "Transition invariance for every state, optional input symbol, and work-tape read tuple"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a machine over an alphabet $A$ and let $z \\in A$. Suppose the transition\ntable of $P$ is insensitive to nonblank input contents: for every state $q$, scanned\ninput symbol $s$, and tuple of work-tape reads $w$, the transition of $P$ on the read\nobtained from $s$ by replacing any nonblank symbol with $z$ coincides with the\ntransition of $P$ on $s$ itself. Then $P$ is oblivious."
+}

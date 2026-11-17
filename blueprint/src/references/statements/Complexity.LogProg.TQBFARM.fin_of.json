@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.fin_of",
+ "key": "7d071362d8834504",
+ "kind": "lemma",
+ "title": "Reachability from Equal Register States",
+ "statement": "Let $x$ be a Boolean input word, $B$ a natural-number bound, $l$ an instruction label, and $\text{st},\text{st}'$ machine states with $\text{st}=\text{st}'$. Starting at label $l$ with register values given by $\text{st}$ and no answer, the machine can reach label $l$ with register values given by $\text{st}'$ and no answer, along a finite run in which every configuration before the endpoint satisfies the machine guard and has every register at most $B$.",
+ "hypotheses_covered": [
+  "The machine states satisfy st = st′."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any input bit string $x$, bound $B$, instruction label $l$, and register states\n$\\mathrm{st},\\mathrm{st}'$ with $\\mathrm{st}=\\mathrm{st}'$, the machine can reach the\nconfiguration with label $l$, the register values of $\\mathrm{st}'$, and no answer,\nstarting from the configuration with label $l$, the register values of $\\mathrm{st}$,\nand no answer. Every configuration before the final step satisfies the machine's\npreconditions and has all register values at most $B$."
+}

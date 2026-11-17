@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.f2_seamed_space",
+ "key": "9cee15e3baa9de79",
+ "kind": "lemma",
+ "title": "Space bound from bounded computation segments",
+ "statement": "Let $M$ be a finite Turing machine over $\\\\{0,1\\\\}$ with $k$ work tapes, let $x$ be a Boolean input word, and let $(c_j)_{j\\\\in\\\\mathbb N}$ be configurations of $M$ on $x$. Suppose $N,B,H,$ and $r$ are natural numbers with $r\\\\le B$, the computation from the initial configuration reaches $c_0$ after $r$ steps, and for every $j<N$ and every tape the head position in $c_j$ lies between $-H$ and $H$. Suppose also that $c_N$ is halted, its tape-head positions lie between $-(H+B)$ and $H+B$, and for each $j<N$ there is a $u\\\\le B$ such that the run from $c_j$ is halted after $u$ steps or reaches $c_{j+1}$ after $u$ steps. Then, for every $t\\\\in\\\\mathbb N$, the total space used from the initial configuration through step $t$ is at most $k(2(H+B)+1)$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$x$ is a Boolean input word",
+  "$(c_j)$ is a sequence of configurations on $x$",
+  "$N,B,H,r$ are natural numbers",
+  "$r\\\\le B$",
+  "The run from the initial configuration reaches $c_0$ after $r$ steps",
+  "For every $j<N$, every tape head in $c_j$ lies in $[-H,H]$",
+  "$c_N$ is halted",
+  "Every tape head in $c_N$ lies in $[-(H+B),H+B]$",
+  "For every $j<N$, some $u\\\\le B$ makes the run from $c_j$ halt or reach $c_{j+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

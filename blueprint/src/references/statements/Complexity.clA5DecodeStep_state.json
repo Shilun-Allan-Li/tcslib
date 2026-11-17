@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5DecodeStep_state",
+ "key": "31b838ccfe05ee22",
+ "kind": "lemma",
+ "title": "Decoding state advances by one",
+ "statement": "For every binary word $w$ and every natural number $j$, one decoding step applied to the state for $w$ at count $j$ gives the state for $w$ at count $j+1$.",
+ "hypotheses_covered": [
+  "$w$ is a binary word",
+  "$j$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary target $w$ and count $j$, one decoding step on the state at $(w, j)$ yields exactly the state at $(w, j+1)$; no decoded value is used as a loop clock, the supplied unary budget being the only repetition count."
+}

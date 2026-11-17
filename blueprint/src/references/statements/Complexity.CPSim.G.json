@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.CPSim.G",
+ "key": "672a0e858c160ca0",
+ "kind": "def",
+ "title": "Bounded simulation configurations",
+ "statement": "Let $R$ be a natural number, let $\\Lambda$ be a type of labels, let $P$ assign a counter-program instruction to each label, and fix an initial label $l_0$ and a Boolean $lm$. Let $n,B$ be natural numbers, let $u$ be a finite Boolean list, and let $o$ assign a Boolean to each pair consisting of one of two indices and a finite Boolean list. Assume that for every natural number $h$, $o$ at index $0$ on the encoding of the pair $(1^n,\\operatorname{bits}(h))$ is true exactly when $h<|u|$, and $o$ at index $1$ on that encoding equals the entry of $u$ at position $h$, defaulting to false. Define the configurations $a$ that, on input $y$, are related to $y$ by the machine's pre-simulation relation and whose every register value is at most $B$.",
+ "hypotheses_covered": [
+  "$R$ is a natural number",
+  "$\\Lambda$ is a type",
+  "$P$ assigns an instruction to each label",
+  "an initial label $l_0$",
+  "a Boolean $lm$",
+  "$n$ and $B$ are natural numbers",
+  "$u$ is a finite Boolean list",
+  "$o$ has the stated two-index Boolean type",
+  "the specified condition for $o$ at index 0 holds for every $h$",
+  "the specified condition for $o$ at index 1 holds for every $h$"
+ ],
+ "confidence": "low",
+ "caveat": "The precise meaning of the pre-simulation relation and pair encoding is not supplied; the statement describes their role without expanding those imported definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

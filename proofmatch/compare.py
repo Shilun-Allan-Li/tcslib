@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+import hashlib
+import json
+from pathlib import Path
+from concurrent.futures import CancelledError
 
 from proofmatch.agents import COMPARE_MODEL, ClaudeAgent
 from proofmatch.budget import Budget, StageEstimate, token_cost
 from proofmatch.models import Candidate, ComparisonVerdict, DocumentIndex
+from proofmatch.artifacts import atomic_json
 
 
 def choose_comparison_direction(
@@ -68,8 +73,13 @@ def compare_candidate(
     document: DocumentIndex,
     agent: ClaudeAgent,
     budget: Budget,
+    *,
+    cache_dir: Path | None = None,
+    stop_event=None,
 ) -> ComparisonVerdict:
-    budget.require(estimate_comparison(candidate, document))
+    if not candidate.proof.strip():
+        raise ValueError(f"{candidate.lean_name}: proof comparison requires actual Lean proof text; "
+                         "rebuild the matching dataset with proofs enabled")
     selected = [
         block
         for block in document.blocks
@@ -77,9 +87,7 @@ def compare_candidate(
     ]
     pdf_tokens = sum((len(block.markdown) + 3) // 4 for block in selected)
     lean_tokens = candidate.proof_tokens + (len(candidate.formal_statement) + 3) // 4
-    result = agent.run(
-        "compare",
-        {
+    payload = {
             "direction": choose_comparison_direction(pdf_tokens, lean_tokens),
             "document_blocks": [
                 {
@@ -96,8 +104,25 @@ def compare_candidate(
                 "informal_statement": candidate.statement,
                 "proof": candidate.proof,
             },
-        },
-    )
+        }
+    cache = None
+    if cache_dir is not None:
+        resources = getattr(agent, 'resource_root', Path(__file__).parent)
+        material = json.dumps({'payload': payload, 'model': getattr(agent, 'model', COMPARE_MODEL),
+                               'backend': getattr(agent, 'backend', ''),
+                               'prompt': (resources / 'prompts/compare.md').read_text(),
+                               'schema': (resources / 'schemas/compare.json').read_text()},
+                              ensure_ascii=False, sort_keys=True)
+        cache = cache_dir / (hashlib.sha256(material.encode()).hexdigest() + '.json')
+    hit = cache is not None and cache.is_file()
+    if hit:
+        result = json.loads(cache.read_text())
+    else:
+        if stop_event is not None and stop_event.is_set():
+            raise CancelledError('Comparison dispatch stopped after an earlier failure')
+        budget.require(estimate_comparison(candidate, document))
+        print(f'  compare: {candidate.lean_name} (requesting)', flush=True)
+        result = agent.run('compare', payload)
     verdict = verdict_from_agent(result)
     if verdict.lean_name != candidate.lean_name:
         raise ValueError(
@@ -116,6 +141,9 @@ def compare_candidate(
         )
     if not verdict.document_blocks and verdict.verdict != "not_in_text":
         raise ValueError("comparison must cite at least one document block")
+    if cache is not None and not hit:
+        atomic_json(cache, result)
+    print(f'  compare: {candidate.lean_name} ({"cached" if hit else "saved"})', flush=True)
     return verdict
 
 

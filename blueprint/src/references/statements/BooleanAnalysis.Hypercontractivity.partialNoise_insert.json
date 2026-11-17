@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.partialNoise_insert",
+ "key": "e6a20053a4b26f90",
+ "kind": "theorem",
+ "title": "Insertion of a Partial-Noise Coordinate",
+ "statement": "Let $P$ be a finite product probability space with strictly positive coordinate weights, let $J$ be a set of coordinates, let $r_i\\in\\mathbb R$ be rates, and let $f$ be a real-valued function on the product space. For any coordinate $i\\notin J$, applying partial noise with coordinate set $J\\cup\\{i\\}$ equals applying the one-coordinate noise operator at $i$ with rate $r_i$ to the result of applying partial noise with coordinate set $J$.",
+ "hypotheses_covered": [
+  "Finite product probability space with strictly positive coordinate weights",
+  "Coordinate set $J$",
+  "Real rates $r_i$",
+  "Real-valued function $f$",
+  "Coordinate $i\\notin J$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $J\\subseteq[n]$, rates $r_i\\in\\mathbb R$, $i\\notin J$, and $f:\\Omega\\to\\mathbb R$. For $T_{J,\\boldsymbol r}f=\\sum_S(\\prod_{j\\in S\\cap J}r_j)f_S$, $T_{J\\cup\\{i\\},\\boldsymbol r}f=N_{i,r_i}(T_{J,\\boldsymbol r}f)$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $N_{i,a}h=E_{[n]\\setminus\\{i\\}}h+a(h-E_{[n]\\setminus\\{i\\}}h)$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.mult_last_bit",
+ "key": "4318b374942c4e03",
+ "kind": "lemma",
+ "title": "Final-bit processing",
+ "statement": "For every bit string $x$, every $f\\in\\{0,1,2\\}$, and every register assignment $v$ bounded by $4(|x|+1)$, the fixed multiplication program, started in the clearing state for field $f$, reaches a configuration with register $0$ set to $v(s_f)-c_f$, where $(s_0,s_1,s_2)=(4,5,1)$ and $(c_0,c_1,c_2)=(2,2,1)$. If the bit of $x$ at that position is $1$ (with out-of-range bits treated as $0$), the resulting state is the next canonical-field test; otherwise it is the rejecting answer state. Every earlier configuration satisfies the program's instruction side conditions and register bound.",
+ "hypotheses_covered": [
+  "Bit string x",
+  "Field index f in Fin 3",
+  "Register assignment v",
+  "All registers are bounded by 4(|x|+1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

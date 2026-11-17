@@ -1,0 +1,16 @@
+{
+ "lean_name": "Randomized.zeropVerifier_spec",
+ "key": "fdeebe9b0e7c1089",
+ "kind": "theorem",
+ "title": "Zero polynomial verifier specification",
+ "statement": "Let $x$ be a finite Boolean string, and let $L$ be the language of Boolean strings encoding well-formed arithmetic circuits over the integers whose output polynomial is identically zero. On a uniformly random Boolean string $r$ of length $2400(|x|+1)^2$, the verifier accepts with probability at least $2/3$ if $x\\notin L$; if $x\\in L$, it rejects for every such $r$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean string",
+  "If $x\\notin L$, the acceptance probability is at least $2/3$ over uniformly random strings of length $2400(|x|+1)^2$",
+  "If $x\\in L$, the verifier rejects on every Boolean string of that length"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on a particular circuit encoding and verifier construction; the prose describes their mathematical role but not the encoding details.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

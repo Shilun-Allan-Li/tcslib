@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.norm_fderiv_averagedGaussianIndicator_le",
+ "key": "fce6adca7bfac674",
+ "kind": "lemma",
+ "title": "Derivative bound for a Gaussian indicator average",
+ "statement": "Let $n$ be a natural number, let $A\\subseteq\\mathbb R^n$ be measurable, and let $u\\in\\mathbb R$ satisfy $\\sin u\\ne0$. For every $x\\in\\mathbb R^n$, the derivative at $x$ of the Gaussian conditional indicator average with angle $u$ has norm at most\n\\[\nn\\left(1+\\frac{1}{\\sin^2 u}\\right).\n\\]",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A\\subseteq\\mathbb R^n$ is measurable",
+  "$u\\in\\mathbb R$",
+  "$\\sin u\\ne0$",
+  "$x\\in\\mathbb R^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For $A\\subseteq\\mathbb R^n$ and $\\theta\\in\\mathbb R$, put $u_\\theta(x)=\\int1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$. If $A$ is measurable and $\\sin u\\ne0$, then $\\|D u_u(x)\\|\\le n(1+1/\\sin^2u)$ for every $x\\in\\mathbb R^n$, with operator norm for the maximum norm."
+}

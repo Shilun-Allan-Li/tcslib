@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Ends.setVal",
+ "key": "23a7b2c9b34c64aa",
+ "kind": "theorem",
+ "title": "Assignment with a postcondition",
+ "statement": "Let a limit record, program, execution depth, local-memory function $\\mu$, budget $T$, postcondition $Q$, local function $\\mathrm{loc}$, index $x$, expression $e$, and integer $z$ be given. If $Q$ holds of the state with local function obtained by updating $\\mathrm{loc}$ at $x$ to $z$ and memory $\\mu$, and $e$ is safe in the state $(\\mathrm{loc},\\mu)$ and evaluates there to $z$, with $\\mathrm{cost}(e)+1\\le T$, then assigning $e$ to position $x$ can execute from $(\\mathrm{loc},\\mu)$ with cost at most $T$ and yield a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "Q holds after updating local position x to z, with memory μ.",
+  "Expression e is safe in (loc, μ) and evaluates there to z.",
+  "cost(e)+1 ≤ T."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

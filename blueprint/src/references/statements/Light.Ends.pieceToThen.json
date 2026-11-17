@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Ends.pieceToThen",
+ "key": "6fc9e749464ff55e",
+ "kind": "theorem",
+ "title": "Sequential composition with refreshed locals",
+ "statement": "Let $\u0000\\mathrm{lim}$ be a set of resource limits, $P$ a program, $d$ a call depth, and $s_1,s_2$ statements. Let $l$ be a list of integers, $\u0000\\mu:\u0000\\bbn\\to\\bbz$ a memory function, and $T,T_1$ natural-number time bounds. Suppose $s_1$ can execute from the state whose local function is the zero-padded frame of $l$ and whose memory is $\u0000\\mu$, in at most $T_1$ steps, to a state satisfying $R$. Suppose further that for every local function $\u0000\\mathrm{loc}'$, memory function $\u0000\\mu'$, and state satisfying $R$, $s_2$ can execute from the state with local function obtained by refreshing the entries indexed by $xs$ in $l$ from $\u0000\\mathrm{loc}'$ and memory $\u0000\\mu'$, in at most $T-T_1$ steps, to a state satisfying $Q$. If every local assigned by $s_1$ is among the indices in $xs$ and $T_1\\le T$, then the sequential composition $s_1;s_2$ can execute from the original state in at most $T$ steps to a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "First execution of $s_1$ from the framed state with memory $\\mu$ ends within $T_1$ and satisfies $R$.",
+  "For every local function and memory function, any state satisfying $R$ permits $s_2$ to end within $T-T_1$ from the refreshed framed state and satisfy $Q$.",
+  "The assignment indices of $s_1$ are contained in $xs$.",
+  "$T_1\\le T$. "
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.macroCfg_setup",
+ "key": "6c5fda109bc08b96",
+ "kind": "lemma",
+ "title": "Macrostep Retargeting of a Setup Configuration",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a$ be a natural number, let $x$ be a word over the schedule alphabet, and let $c$ be a configuration with $k+3$ work tapes on input $x$. For optional phases $q,q'$, an input-head position $p$, integers $b,u,g,u',g'$, and tape-content functions $\\beta,\\mu,\\gamma : \\mathbb{Z} \\to \\text{Option}(\\text{schedule alphabet})$, first form the setup configuration from $c$ with phase $q$, input-head position $p$, tape heads at $b,u,g$, and contents $\\beta,\\mu,\\gamma$ on the last three tapes. Applying the macrostep construction to this configuration with phase $q'$ and unary-counter and guide head positions $u',g'$ gives exactly the setup configuration based on $c$ with phase $q'$, input-head position $p$, tape heads at $b,u',g'$, and the same tape contents and output.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over the Boolean alphabet",
+  "$a$ is a natural number",
+  "$x$ is a word over the schedule alphabet",
+  "$c$ is a configuration with $k+3$ work tapes on input $x$",
+  "$q,q'$ are optional control phases",
+  "$p$ is an input-head position in $\\mathrm{Fin}(x.\\mathrm{length}+2)$",
+  "$b,u,g,u',g'$ are integers",
+  "$\\beta,\\mu,\\gamma$ map integers to optional schedule symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Modifying a setup configuration by changing only its phase to $q'$ and its unary and\nguide head positions to $u'$ and $g'$ --- keeping every tape, the budget head, and the\ninput head fixed --- again yields a setup configuration with the same remaining data."
+}

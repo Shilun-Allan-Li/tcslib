@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.CounterProg.Goes.congr",
+ "key": "f8957f640018196a",
+ "kind": "theorem",
+ "title": "Changing run endpoints",
+ "statement": "Let $P$ be a counter program with $R$ natural-number registers and labels in $\\Lambda$, run on a binary input $x$. Suppose that for every output word $o$, some run of at most $b$ steps from label $\\ell$, register assignment $\\rho$, input position $p$, and output $o$ reaches label-or-halt state $\\ell'$, assignment $\\rho'$, position $p'$, and output $o$ followed by $e$. If $\\rho=\\sigma$, $\\rho'=\\sigma'$, $p=q$, $p'=q'$, $e=e'$, and $b\\le b'$, then for every $o$ some run of at most $b'$ steps from $\\ell,\\sigma,q,o$ reaches $\\ell',\\sigma',q'$ with output $o$ followed by $e'$.",
+ "hypotheses_covered": [
+  "A counter program $P$ with $R$ natural-number registers and label set $\\Lambda$",
+  "A binary input $x$",
+  "A run relation from $\\ell,\\rho,p$ to $\\ell',\\rho',p'$ appending $e$ within bound $b$",
+  "Register equalities $\\rho=\\sigma$ and $\\rho'=\\sigma'$",
+  "Position equalities $p=q$ and $p'=q'$",
+  "Output-word equality $e=e'$",
+  "Bound inequality $b\\le b'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$.  Suppose that from label\n$\\ell$ with registers $\\rho$ and $p$ input symbols read, $P$ reaches $\\ell'$ (a\nlabel or the halted state) with registers $\\rho'$ and $p'$ symbols read within\n$b$ steps while appending $e$ to its output, and that $\\rho = \\sigma$,\n$\\rho' = \\sigma'$, $p = q$, $p' = q'$, $e = e'$ and $b \\le b'$.  Then from label\n$\\ell$ with registers $\\sigma$ and $q$ symbols read, $P$ reaches $\\ell'$ with\nregisters $\\sigma'$ and $q'$ symbols read within $b'$ steps while appending\n$e'$."
+}

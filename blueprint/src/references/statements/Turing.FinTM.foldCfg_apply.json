@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.foldCfg_apply",
+ "key": "ffdbd7fea4214ed6",
+ "kind": "lemma",
+ "title": "Folding Commutes with an Action",
+ "statement": "Let $\\Gamma$ be a type with decidable equality, let $S$ be a type, let $k$ be a natural number, let $x$ be a word over $\\Gamma$, let $c$ be a configuration with $k$ work tapes and state set $S$ on input $x$, and let $a$ be an action over $\\Gamma$ with state set $S$. Applying to the folded configuration of $c$ the translated action formed from each work head's current side and the folded symbol under that head yields exactly the folded configuration obtained by applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "Γ has decidable equality",
+  "S is a type",
+  "k is a natural number",
+  "x is a list over Γ",
+  "c is a configuration with k work tapes and state set S on x",
+  "a is an action with k work tapes over Γ and state set S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Gamma$ be an alphabet with decidable equality, $a$ an action of a\n$k$-work-tape machine over $\\Gamma$ with state set $S$, and $c$ a configuration of\nsuch a machine on an input $x$.  Applying to the folded configuration of $c$ the\ntranslated action --- formed from each work head's current side and the physical\ncells under the folded heads --- yields the folded configuration of the result of\napplying $a$ to $c$."
+}

@@ -11,10 +11,10 @@ __pycache__/
 *.bak*
 blueprint/src/*.log
 blueprint/src/*.aux
-# The raw dataset passed GitHub's 100MB file limit (100.84MB) and is byte-identical
-# to its own gzip, so only the ~14MB .gz copy is committed. Readers go through
-# proofmatch/dataset_io.py, which falls back to the .gz when the .jsonl is absent.
+# Complete mirrors exceed GitHub's file limit. Commit the manifest and shards;
+# readers use proofmatch/dataset_io.py when complete local mirrors are absent.
 dataset/tcslib_theorems.jsonl
+dataset/tcslib_theorems.jsonl.gz
 
 # --- policy-cleanup working area (process artifacts, not library content) ---
 # scripts/{decl_snapshot,decl_snapshot_diff,policy_build,style_lint,code_diff}.py write here:
@@ -32,5 +32,5 @@ have2lemma/.out/
 # Dataset pipeline state (scripts/dataset_pipeline.py): pass-1 builds, logs, snapshots.
 dataset/.pipeline/
 
-# --- the local dispatch exchange (uploads, downloads, archive); never committed ---
-exchange/
+# Complete compressed mirror; published data is in verified repository-sized shards.
+dataset/local/

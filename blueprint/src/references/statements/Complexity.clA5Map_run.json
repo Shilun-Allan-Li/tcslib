@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.clA5Map_run",
+ "key": "c8d9debdd150056a",
+ "kind": "lemma",
+ "title": "Run of a finite-state transducer",
+ "statement": "Let $S$ be a finite state set with decidable equality, let $\\mathrm{next}$, $\\mathrm{emit}$, and $\\mathrm{finish}$ be respectively a state update, an optional per-bit output, and an optional final output, and choose a start state. For any bit strings $x$ and $r$, any prefix $p$ satisfying $x=p r$, any state $q$, and any already emitted bit string $o$, running the associated transducer machine from the configuration with input $x$, state $q$, input head just past $p$, and output $o$ for $|r|+1$ steps halts and leaves output equal to $o$ followed by the transduction of $r$ starting in state $q$.",
+ "hypotheses_covered": [
+  "Finite state set",
+  "Decidable equality on states",
+  "State update function",
+  "Optional per-bit emission function",
+  "Optional final emission function",
+  "Start state",
+  "Input strings $x$ and $r$",
+  "Prefix $p$ with $x=pr$",
+  "Arbitrary current state $q$",
+  "Arbitrary existing output $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every finite transducer, input split into a prefix and an unread suffix, state, and emitted output, running the machine for the suffix length plus one steps halts, and its output is exactly the prior emitted output followed by the recursive transduction of the suffix from the current state."
+}

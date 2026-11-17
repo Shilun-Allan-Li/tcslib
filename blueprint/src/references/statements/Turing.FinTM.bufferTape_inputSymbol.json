@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.bufferTape_inputSymbol",
+ "key": "a069796b6986a3b2",
+ "kind": "lemma",
+ "title": "Buffer tape and input symbol",
+ "statement": "Let $c$ be a configuration of a machine with $k$ work tapes, Boolean input word $w$, and state set $S$. If the input head is at position $p$, then the buffer tape storing $w$, read at integer cell $p-1$, contains exactly the optional symbol read by the input head of $c$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$S$ is a type of states",
+  "$w$ is a Boolean word",
+  "$c$ is a configuration with $k$ work tapes, Boolean alphabet, state set $S$, and input $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a machine with $k$ work tapes over the Boolean\nalphabet whose input is the word $w$, and let $p \\in \\{0,\\dots,\\abs{w}+1\\}$\nbe its input-head position.  Cell $p - 1$ of the buffer tape storing $w$\nholds exactly the symbol scanned by the input head of $c$: the corresponding\ninput symbol at interior positions, and a blank at the two boundary\npositions."
+}

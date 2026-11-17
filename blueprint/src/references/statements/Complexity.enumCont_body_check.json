@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_body_check",
+ "key": "8d86236c5a26938c",
+ "kind": "lemma",
+ "title": "Increment-result branch check",
+ "statement": "Let $B$ be a finite Boolean machine, let $q_v,q_i$ be designated states, let $stop$ be a Boolean parameter, and let $x,s,v$ be Boolean words. From administrative state $4$, with tape zero containing $s$, the last tape containing $v$, the other tapes blank, both endpoint heads at $0$, and empty output, one step preserves the entire tape and head configuration and transfers control to the anchor state $0$ if $v$ is empty, and to state $5$ otherwise.",
+ "hypotheses_covered": [
+  "A finite Boolean machine $B",
+  "Designated states $q_v,q_i$ and Boolean parameter $stop$",
+  "Boolean words $x,s,v$",
+  "Initial administrative state $4$",
+  "Tape zero and last tape contain the specified word tapes; intermediate tapes are blank",
+  "Endpoint heads are at $0$ and output is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "One step of the enumerator body from the increment-check state, at the two-ended\nconfiguration with candidate $s$ and captured increment result $v$, preserves\nall tapes and transfers control to the anchor when $v$ is empty (overflow) and\nto the result-copy state otherwise."
+}

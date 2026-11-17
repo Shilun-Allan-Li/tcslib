@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clBank_part",
+ "key": "b76c3c5dd6406b70",
+ "kind": "lemma",
+ "title": "Component action of the counter bank",
+ "statement": "Let $l\\in\\mathbb{N}$, let $x$ be a finite Boolean word, let $p$ be a valid input-head position for $x$, and choose a single-tape counter configuration $c_i$ for each $i<l$. At coordinate $i$, the bank component action computed from the product configuration agrees with the stationary halting action if $c_i$ is halted, and otherwise agrees with the counter machine's transition on the state and scanned work-tape symbol of $c_i$, using its scanned input symbol as well.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb{N}$",
+  "finite Boolean word $x$",
+  "valid input-head position $p$ for $x$",
+  "family of single-tape counter configurations $c_i$",
+  "coordinate $i<l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input position, every family of component configurations, and every coordinate $i$, the bank's component action at $i$ computed from the product configuration equals the one-tape counter transition of component $i$ on its own scanned symbol, or the stationary action when component $i$ has stopped."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Compiler.Decides",
+ "key": "0b4447e4aa2ae0f1",
+ "kind": "def",
+ "title": "Bounded decision by a program",
+ "statement": "Let $C$ be a list of word-RAM instructions, and let $F$, $p_0$, $s$, and $\\ell$ be natural numbers, $m$ an integer-addressed memory of $W$-bit words, and $P$ a proposition. The program decides $P$ if there exist a final memory $m'$ and a natural number $n\\le s$ such that $m$ and $m'$ agree outside the scratch locations for $F$, and: if $P$ holds, the program takes exactly $n$ steps from position $p_0$ with memory $m$ to position $p_0+s$ with memory $m'$; if $P$ fails, it takes exactly $n$ steps from that same initial configuration to position $\\ell$ with memory $m'$.",
+ "hypotheses_covered": [
+  "$C$ is a list of word-RAM instructions",
+  "$F,p_0,s,\\ell$ are natural numbers",
+  "$m$ is an integer-addressed memory of $W$-bit words",
+  "$P$ is a proposition",
+  "There exist $m'$ and $n\\le s$",
+  "$m$ and $m'$ agree outside the scratch set for $F$",
+  "The two conditional execution conclusions hold"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

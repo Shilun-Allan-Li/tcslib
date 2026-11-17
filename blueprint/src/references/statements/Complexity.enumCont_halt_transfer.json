@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_halt_transfer",
+ "key": "b28a421742489ec9",
+ "kind": "lemma",
+ "title": "Transfer of halted runs",
+ "statement": "Let $k$ be a natural number, let $S$ be a state set, let $x$ be a Boolean input word, and let $M$ and $N$ be deterministic machines with $k$ work tapes and Boolean symbols, with $q_a\\in S$. Suppose their transition actions agree in every state other than $q_a$, and in state $q_a$ machine $N$ takes the control action that stays on the input head and returns to $q_a$ without writing, moving work heads, or emitting output. If the run of $N$ from a configuration $c$ is halted after $T$ steps, then the run of $M$ from $c$ has the same configuration after $T$ steps, and at every time $j\\le T$ its state is not $q_a$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number; state set $S$; Boolean input word $x$",
+  "Machines $M,N$ each have $k$ work tapes and Boolean symbols",
+  "Anchor state $q_a\\in S$",
+  "Transition tables agree for every state $q\\ne q_a$ and all scanned inputs/work symbols",
+  "At $q_a$, $N$ takes the stationary, silent control action returning to $q_a$ for all scanned inputs/work symbols",
+  "Starting configuration $c$ and time $T\\in\\mathbb N$",
+  "The run of $N$ from $c$ is halted at time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let two transition tables agree away from an anchor state, which the second\n(stopped) table turns into a silent self-loop. If the stopped run from $c$ is\nhalted at time $T$, then the active run from $c$ equals the stopped run at time\n$T$, and the active run never visits the anchor at any time up to $T$."
+}

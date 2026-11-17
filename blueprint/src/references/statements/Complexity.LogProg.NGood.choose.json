@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.NGood.choose",
+ "key": "1f13b3e68c1fc13a",
+ "kind": "lemma",
+ "title": "Goodness After a Nondeterministic Choice",
+ "statement": "Let $N$ be a nondeterministic Turing machine, let $C$ be a configuration, let $T$ be a natural number, and let $\\mathrm{box}$ and $Q$ be properties of configurations. Suppose $\\mathrm{box}(C)$ holds, and that for each choice bit $b$, one step from $C$ under $b$ yields $C_b$, from which all runs of length at most $T$ end in configurations satisfying $\\mathrm{box}$, while every run of length exactly $T$ ends in a halted configuration satisfying $Q$. Then all runs from $C$ of length at most $T+1$ end in configurations satisfying $\\mathrm{box}$, and every run of length exactly $T+1$ ends in a halted configuration satisfying $Q$.",
+ "hypotheses_covered": [
+  "$\\mathrm{box}(C)$ holds",
+  "For every choice bit $b$, one step from $C$ under $b$ yields $C_b$",
+  "For each $b$, all runs from $C_b$ of length at most $T$ satisfy $\\mathrm{box}$",
+  "For each $b$, all runs from $C_b$ of length exactly $T$ halt and satisfy $Q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

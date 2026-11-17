@@ -1,16 +1,16 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.two_mul_integral_xDistance_sq_le_integral_xFiberKL_disjointSpecialYFalse",
- "key": "16a0b45c7db086a6",
+ "key": "8509af7a4b27b361",
  "kind": "theorem",
- "title": "Integrated Pinsker bound for Alice's special bit",
- "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the disjointness problem on inputs that are subsets of an $n$-element set. For a hard sample $\\omega$, let $Z(\\omega)$ be the record consisting of the transcript produced by running $p$ on the induced input pair, the special coordinate $T$, Alice's input bits at the coordinates strictly below $T$ (padded by $\\mathrm{false}$ elsewhere), and Bob's input bits at the coordinates strictly above $T$. Write $\\nu_{Z(\\omega)}$ for the conditional law of Alice's special bit $X_T$ given the value of $Z(\\omega)$ — the pushforward, under the ambient uniform law on hard samples restricted to the fibre $\\{Z = Z(\\omega)\\}$, of the map $\\omega \\mapsto X_T$ — and let $U$ denote the uniform distribution on a single bit. Let $\\mu$ be the hard distribution conditioned both on the induced input pair being disjoint and on Bob's bit at the special coordinate being $\\mathrm{false}$. Then\n\\[\n2\\int \\mathrm{TV}\\!\\bigl(\\nu_{Z(\\omega)},\\, U\\bigr)^{2}\\, d\\mu(\\omega)\\ \\le\\ \\int D_{\\mathrm{KL}}\\!\\bigl(\\nu_{Z(\\omega)}\\,\\big\\|\\,U\\bigr)\\, d\\mu(\\omega),\n\\]\nwhere $\\mathrm{TV}$ is the total variation distance and $D_{\\mathrm{KL}}$ the Kullback–Leibler divergence.",
+ "title": "Integrated total variation and divergence bound",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic protocol for disjointness on inputs of length $n$. For each achievable statistic value $z$ recording the protocol transcript, the special coordinate, Alice’s bits before it, and Bob’s bits after it, let $\\nu_z$ be the law of Alice’s special-coordinate bit under the uniform hard-sample measure restricted to the fiber of $z$. Under the hard-sample measure conditioned on disjoint inputs and on Bob’s special-coordinate bit being false, the expected squared total variation distance between $\\nu_{Z(\\omega)}$ and the uniform law on one bit, multiplied by $2$, is at most the expected Kullback–Leibler divergence of $\\nu_{Z(\\omega)}$ from that uniform law.",
  "hypotheses_covered": [
-  "$n$ a positive integer",
-  "$p$ a deterministic disjointness protocol on inputs that are subsets of an $n$-element set",
-  "conclusion integrates against the hard distribution conditioned on disjointness and on Bob's special bit being false"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol on length-$n$ disjointness inputs",
+  "The integrations use the measure conditioned on disjoint inputs and on Bob’s special bit being false"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Integrated Alice Pinsker bound over the $D ∧ Y_{T}=false$ conditioned measure."
+ "replaced": "\nFix a positive integer $n$ and a deterministic communication protocol $p$ for the\ndisjointness problem on inputs that are subsets of an $n$-element set. For a hard sample\n$\\omega$, let $Z(\\omega)$ be the record consisting of the transcript produced by running\n$p$ on the induced input pair, the special coordinate $T$, Alice's input bits at the\ncoordinates strictly below $T$ (padded by $\\mathrm{false}$ elsewhere), and Bob's input\nbits at the coordinates strictly above $T$. Write $\\nu_{Z(\\omega)}$ for the conditional\nlaw of Alice's special bit $X_T$ given the value of $Z(\\omega)$ — the pushforward, under\nthe ambient uniform law on hard samples restricted to the fibre $\\{Z = Z(\\omega)\\}$, of\nthe map $\\omega \\mapsto X_T$ — and let $U$ denote the uniform distribution on a single\nbit. Let $\\mu$ be the hard distribution conditioned both on the induced input pair being\ndisjoint and on Bob's bit at the special coordinate being $\\mathrm{false}$. Then\n\\[\n2\\int \\mathrm{TV}\\!\\bigl(\\nu_{Z(\\omega)},\\, U\\bigr)^{2}\\, d\\mu(\\omega)\\ \\le\\ \\int\nD_{\\mathrm{KL}}\\!\\bigl(\\nu_{Z(\\omega)}\\,\\big\\|\\,U\\bigr)\\, d\\mu(\\omega),\n\\]\nwhere $\\mathrm{TV}$ is the total variation distance and $D_{\\mathrm{KL}}$ the\nKullback–Leibler divergence."
 }

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Randomized.PIT.absStep",
+ "key": "9f677d6700c87816",
+ "kind": "def",
+ "title": "One circuit-evaluation step",
+ "statement": "For a number of input variables $n$, a modulus $k$, and an assignment $a:\\mathbb{N}\\to\\mathbb{N}$, define a transition on a pair consisting of a bit list and a list of gate values as follows. If the bit list begins with true, parse the remaining bits as a gate and a leftover bit list; when parsing succeeds and every referenced node index is smaller than the current number of gate values, return the leftover bits together with the old values followed by the gate’s value modulo $k$. If parsing fails or a reference is not below that number, return the empty bit list and retain the values; an empty input stays empty, the singleton false list stays unchanged, and any other list beginning with false returns the empty bit list, always retaining the values.",
+ "hypotheses_covered": [
+  "Natural numbers n and k",
+  "Assignment a from natural numbers to natural numbers",
+  "Input is a bit list paired with a list of natural-number gate values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

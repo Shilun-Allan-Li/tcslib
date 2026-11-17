@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/RecordTable.lean :: Turing.rt_find_fold_cons -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Fold Across Joined Fields
+
+**Claim.** Folding the joined fields $u,v,fs$ from $a$ is the same as first folding the symbols of $u$ as present symbols, applying the transition once to a blank, and then folding the joined fields $v,fs$.
+
+**Proof.** The joined list of $u,v,fs$ consists of the symbols of $u$ tagged as present, followed by one blank, followed by the joined list of $v,fs$ (`joinFields_cons_cons`). Folding over a concatenation is the same as folding the first portion and then continuing from its resulting state. The symbols of $u$ therefore produce the stated fold of $u$; the separator applies $none$ once; and the remaining portion performs the fold over the joined tail.
+
+**Key facts.** `Turing.joinFields_cons_cons`.

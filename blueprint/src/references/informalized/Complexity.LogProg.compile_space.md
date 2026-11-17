@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean :: Complexity.LogProg.compile_space -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Space Bound for Compiled Computation
+
+**Claim.** If the register program halts with output $w$ at time $N$ and the register-head and call hypotheses hold, then the compiled finite machine halts with output $w$ and uses at most the stated sum of register-range sizes and decider-tape space.
+
+**Proof.** The simulation correctness theorem (`compile_correct`) supplies a time $T$ at which the compiled configuration is the seam of the register-program configuration at time $N$, and bounds every compiled register head by $lo,hi$ and every decider head in absolute value by $B$ throughout the run. At time $T$, the register-program halting state and output transfer across the seam, so the compiled finite machine halts with output $w$; the characterization of finite-machine computation (`FinTM.computesInTime_iff`) identifies this as computation in time $T$.
+
+Apply the visited-range space estimate (`spaceUsed_le_of_ranges`) with bounds $lo(r),hi(r)$ on the original registers and $-B,B$ on each of the $k_D$ decider tapes. Summing the resulting tape-length bounds gives the register contribution $\sum_r(hi(r)-lo(r)+1)$ and the decider contribution $k_D(2B+1)$, as required.
+
+**Key facts.** `Complexity.LogProg.compile_correct`, `Turing.FinTM.computesInTime_iff`, `Complexity.LogProg.spaceUsed_le_of_ranges`.

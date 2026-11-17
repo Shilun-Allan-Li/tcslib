@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.Contract.mapState_traj",
+ "key": "34d3697e7a79a3b1",
+ "kind": "lemma",
+ "title": "Trajectory under State Embedding",
+ "statement": "Let $M$ and $N$ be machines with the same number of work tapes and input alphabet, with state sets $S$ and $H$, and let $C$ be a contract for $M$ with entry state $e$ and exit set $X$. Let $\\\\mathrm{emb}:S\\\\hookrightarrow H$ be an injective map, and let $\\\\mathrm{good}$ be a property of states in $S$. Suppose that whenever $q$ is good, the transition of $N$ at $\\\\mathrm{emb}(q)$ is the transition of $M$ at $q$ with its successor state mapped by $\\\\mathrm{emb}$. Suppose also that, for every data value $i$ and admissible start configuration $c$ in state $e$, every state visited by $M$ at a time strictly less than $C$’s assigned time is good. Then for every $i$ and every configuration $d$ of $N$ whose state is $\\\\mathrm{emb}(e)$, if the configuration obtained from $d$ by replacing its state with $e$ satisfies $C$’s precondition, the run of $N$ from $d$ agrees, at every time up to and including that assigned time, with the run of $M$ from the state-replaced configuration after mapping its state by $\\\\mathrm{emb}$.",
+ "hypotheses_covered": [
+  "$C$ is a contract for $M$ with entry state $e$ and exit set $X$",
+  "$N$ has the same number of work tapes and input alphabet as $M$",
+  "$\\\\mathrm{emb}:S\\\\hookrightarrow H$ is an embedding",
+  "$\\\\mathrm{good}$ is a predicate on $S$",
+  "Transitions of $N$ at embedded good states equal the state-mapped transitions of $M$",
+  "Every state visited strictly before contract time from an admissible entry start is good",
+  "$d$ is a configuration of $N$ with state $\\\\mathrm{emb}(e)$",
+  "The state-replaced configuration satisfies the contract precondition for $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a contract for a machine $M$ with entry state $\\mathrm{entry}$ and exit set\n$X$, and let $N$ be another machine whose states include an injective image of the\nstates of $M$, given by $\\mathrm{emb}$. Suppose that whenever $q$ satisfies\n$\\mathrm{good}$, the transition of $N$ at $\\mathrm{emb}(q)$ is the state-relabeling by\n$\\mathrm{emb}$ of the transition of $M$ at $q$. Suppose also that every state visited by\n$M$ strictly before the contract time, from any admissible start configuration in entry\nstate, satisfies $\\mathrm{good}$. For any configuration $d$ of $N$ with state\n$\\mathrm{emb}(\\mathrm{entry})$, and any index $i$ for which the constant-state\nrelabeling of $d$ to state $\\mathrm{entry}$ satisfies $C$’s precondition, the run of $N$\nfrom $d$ agrees through every time $u$ at most that contract’s time with the\nstate-embedded run of $M$ from the relabeled configuration."
+}

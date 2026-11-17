@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.lpMean_exponent_mono",
+ "key": "3e84f36b96c24ea5",
+ "kind": "lemma",
+ "title": "Monotonicity of extended power means",
+ "statement": "Let $n$ be a natural number, let $a,b\\in\\mathbb{R}$ satisfy $a\\le b\\le1$, and let $f:\\{0,1\\}^n\\to\\mathbb{R}$ be nonnegative. Then $M_a(f)\\le M_b(f)$, where $M_p$ is the extended power mean under the uniform measure.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$a\\le b$",
+  "$b\\le1$",
+  "$f(x)\\ge0$ for every cube point $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a\\le b\\le1$ and $f:\\{0,1\\}^n\\to[0,\\infty)$. Then $M_a(f)\\le M_b(f)$. For nonnegative functions $u$, the extended mean is $M_r(u)=(\\E u^r)^{1/r}$ when $r>0$; the same formula applies for $r<0$ when $u$ is positive everywhere. For positive $u$, $M_0(u)=\\exp(\\E\\log u)$; if $r\\le0$ and $u$ has a zero, $M_r(u)=0$. All expectations are uniform."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.obliviousSourceMove_correct",
+ "key": "62e543b8bd55b86c",
+ "kind": "lemma",
+ "title": "Correctness of virtual head movements",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be a configuration of $M$ on input $x$. The vector of virtual head directions selected from the state of $c$ and the head-centered payloads at offset $0$ equals the shift vector of the totalized action of $M$ at $c$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean input word",
+  "$c$ is a configuration of $M$ on input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary machine $M$ and every configuration $c$ of $M$ on an input $x$, the\nvector of virtual head directions selected by the controller from the control state of\n$c$ and the head-centered payloads at offset $0$ equals the shift vector of the\ntotalized action of $M$ at $c$; in particular native input clamping and source work\nhead movement are reproduced exactly."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.srcVertex_lt",
+ "key": "50e79e035cac1a8a",
+ "kind": "theorem",
+ "title": "Source vertices precede the instruction block",
+ "statement": "Let $K$ be a nonempty set of instruction kinds, let $m,w,n$ be natural numbers, and let $F:K\\to\\{0,1\\}^*\\to\\{0,1\\}^*$ assign an output bit string to each kind and input bit string. A program is a finite list of instructions, each with a kind in $K$ and an ordered list of bit sources. For a kind $k$, let $W(k)$ be the sum, over the first $w$ output positions, of one plus the number of gates in the circuit compiled from the Boolean function giving that output bit of $F(k,\\cdot)$ on $m$ input bits (an out-of-range output position is read as zero). For an index $i$ no greater than the program length, set $B_i=n+2+\\sum_{r<i}W(k_r)$, where $k_r$ is the kind of instruction $r$. For every bit source $s$, its assigned vertex is strictly less than $B_i$: a valid input source $k$ is assigned vertex $k$, a valid constant is assigned vertex $n$ or $n+1$ according as it is false or true, and a valid reference to output position $j$ of an earlier instruction $i'$ is assigned vertex $B_{i'}$ plus that position's offset in the corresponding output circuits; an invalid source is assigned vertex $n$.",
+ "hypotheses_covered": [
+  "A nonempty set $K$ of instruction kinds",
+  "Natural numbers $m,w,n$",
+  "A function $F$ from kinds and input bit strings to output bit strings",
+  "A finite program of instructions with kinds and ordered bit sources",
+  "An index $i$ at most the program length",
+  "A bit source $s"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on circuit gadgets and output-position offsets; these are described from their defining construction to make the bound self-contained.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

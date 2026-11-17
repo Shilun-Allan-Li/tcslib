@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.gaussian_isoperimetric",
+ "key": "a20fd462aefcc622",
+ "kind": "theorem",
+ "title": "Gaussian isoperimetric inequality",
+ "statement": "Let $n$ be a nonnegative integer, let $A\\subseteq\\mathbb R^n$ be measurable, and let $\\alpha\\in(0,1)$ equal the standard Gaussian measure of $A$. Then the Gaussian profile $U(\\alpha)$, converted to an extended nonnegative real, is at most the Gaussian surface area of $A$, defined by the lower limit of its scaled rotation sensitivities as the rotation angle tends to zero from above.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A$ is measurable",
+  "$\\alpha\\in(0,1)$",
+  "The standard Gaussian measure of $A$ has real value $\\alpha$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$, let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$, and let $G,G\\prime$ be independent vectors with law $\\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\\gamma_n\\otimes\\gamma_n)\\{(g,h):\\mathbf1_A(g)\\ne\\mathbf1_A(\\cos t\\,g+\\sin t\\,h)\\}$. Write $P_\\gamma(A)=\\liminf_{t\\to0^+}\\bigl[\\sqrt{\\pi/2}\\,s_A(t)/t\\bigr]_+$ in $[0,\\infty]$, where $[x]_+=\\max(x,0)$. For every measurable $A\\subseteq\\mathbb R^n$ of Gaussian volume $\\alpha\\in(0,1)$, $\\varphi(\\Phi^{-1}(\\alpha))\\le P_\\gamma(A)$, where $\\varphi$ and $\\Phi$ are the standard Gaussian density and distribution function."
+}

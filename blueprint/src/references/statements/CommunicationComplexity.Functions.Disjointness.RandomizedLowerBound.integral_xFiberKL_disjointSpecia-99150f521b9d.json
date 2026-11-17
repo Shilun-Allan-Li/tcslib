@@ -1,17 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_sum_zVariable",
- "key": "33ef07ca0b08fe7e",
+ "key": "1a7e1c091c3166f9",
  "kind": "theorem",
- "title": "Fiber decomposition of the averaged Alice KL cost",
- "statement": "Fix a positive integer $n$ and a deterministic protocol $p$ for set disjointness on subsets of $\\{1,\\dots,n\\}$. Let $\\mu$ denote the hard distribution over samples, conditioned both on the two generated input sets being disjoint and on Bob's bit at the special coordinate being $\\mathrm{false}$. Let $Z$ be the statistic sending each sample $\\omega$ to the tuple consisting of the transcript of $p$ on its input pair, the special coordinate, Alice's input bits strictly before that coordinate, and Bob's input bits strictly after it; the map $Z$ takes only finitely many values. For each such value $z$, let $\\mathrm{KL}(z)$ be the real-valued Kullback–Leibler divergence, from the uniform distribution on one bit, of the conditional law of Alice's special bit given $Z = z$. Then the $\\mu$-average of the KL cost, evaluated along $Z$, splits as a finite fiber-weighted sum:\n\\[\n\\int \\mathrm{KL}\\bigl(Z(\\omega)\\bigr)\\, d\\mu(\\omega)\n  \\;=\\; \\sum_{z}\\, \\mu\\bigl(Z^{-1}(z)\\bigr)\\,\\mathrm{KL}(z),\n\\]\nwhere $z$ ranges over all values of $Z$ and $\\mu\\bigl(Z^{-1}(z)\\bigr)$ is the $\\mu$-measure of the fiber $\\{\\omega : Z(\\omega) = z\\}$.",
+ "title": "Fiber decomposition of average KL",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic protocol for length-$n$ disjointness, and let $\u0005cZ$ be the finite range of the statistic consisting of the protocol transcript, the special coordinate, Alice’s bits strictly before it, and Bob’s bits strictly after it. Under the hard distribution conditioned on disjoint inputs and Bob’s special bit being false, the expected KL divergence from the uniform law on one bit of Alice’s special-bit law conditioned on each statistic value equals the sum over $z\u0005cin\u0005cZ$ of the measure of the fiber at $z$ times that divergence, where each fiberwise law is formed by conditioning the ambient uniform sample measure on that fiber.",
  "hypotheses_covered": [
-  "n is a positive integer",
-  "p is a deterministic disjointness protocol on subsets of an n-element set",
-  "the averaging measure is the hard distribution conditioned on disjointness and on Bob's special bit being false",
-  "Z (the z-variable) ranges over its finite value type"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol for length-$n$ disjointness"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "The averaged Alice fiber KL cost under $D ∧ Y_{T}=false$, as a finite sum over $Z$ values."
+ "replaced": "Fix a positive integer $n$ and a deterministic protocol $p$ for set disjointness on\nsubsets of $\\{1,\\dots,n\\}$. Let $\\mu$ denote the hard distribution over samples,\nconditioned both on the two generated input sets being disjoint and on Bob's bit at the\nspecial coordinate being $\\mathrm{false}$. Let $Z$ be the statistic sending each sample\n$\\omega$ to the tuple consisting of the transcript of $p$ on its input pair, the special\ncoordinate, Alice's input bits strictly before that coordinate, and Bob's input bits\nstrictly after it; the map $Z$ takes only finitely many values. For each such value $z$,\nlet $\\mathrm{KL}(z)$ be the real-valued Kullback–Leibler divergence, from the uniform\ndistribution on one bit, of the conditional law of Alice's special bit given $Z = z$.\nThen the $\\mu$-average of the KL cost, evaluated along $Z$, splits as a finite\nfiber-weighted sum:\n\\[\n\\int \\mathrm{KL}\\bigl(Z(\\omega)\\bigr)\\, d\\mu(\\omega)\n  \\;=\\; \\sum_{z}\\, \\mu\\bigl(Z^{-1}(z)\\bigr)\\,\\mathrm{KL}(z),\n\\]\nwhere $z$ ranges over all values of $Z$ and $\\mu\\bigl(Z^{-1}(z)\\bigr)$ is the\n$\\mu$-measure of the fiber $\\{\\omega : Z(\\omega) = z\\}$."
 }

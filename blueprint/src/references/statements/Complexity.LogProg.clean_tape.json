@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.clean_tape",
+ "key": "3d9c80131fb9994c",
+ "kind": "lemma",
+ "title": "Cleaning One Tape",
+ "statement": "Let $M$ be a $k$-tape Turing machine with Boolean symbols, choose its initial state $q_0$, a Boolean input $x$, a tape index $i<k$, an input-head position, an output word, an integer bound $B$, integer endpoints $a\\le b$, and tape contents $D_t,M_t$ with head positions $D_p$. Suppose $a\\le0\\le b$, $-B\\le a-1$, $b+1\\le B$, and $a\\le D_p(i)\\le b$. Suppose that writing false at the scanned cell of the $i$th tape of $M_t$ when it does not already contain true, and otherwise leaving it unchanged, produces the tape that has true at the origin, false on the interval from $a$ to $b$, and blank elsewhere. Also suppose the nonblank cells of $D_t(i)$ lie in $[a,b]$, and every head position in $D_p$ has absolute value at most $B$. Then the cleaning machine, started in the cleaning phase for tape $i$ at its marking stage with these tapes and positions, reaches some time $T$ by which every work-tape head position at every time $t\\le T$ has absolute value at most $B$, and its configuration at time $T$ has the next cleaning state, unchanged input-head position and output, and both tape families blank with all their heads at zero except that the stated tape index advances according to the cleaning successor.",
+ "hypotheses_covered": [
+  "machine M with k Boolean work tapes, initial state q₀, and state type S",
+  "Boolean input x; tape index i<k; input-head position and output word",
+  "integer bound B and endpoints a,b",
+  "a≤0 and 0≤b",
+  "−B≤a−1 and b+1≤B",
+  "D_p(i) lies in [a,b]",
+  "specified write-or-leave-unchanged transformation of M_t(i) equals the marked interval tape",
+  "nonblank support of D_t(i) lies in [a,b]",
+  "every head position D_p(j) has absolute value at most B"
+ ],
+ "confidence": "high",
+ "caveat": "The conclusion is stated via the defined cleaning successor; the formal equality also updates the two tape families and both head-position families at index i.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

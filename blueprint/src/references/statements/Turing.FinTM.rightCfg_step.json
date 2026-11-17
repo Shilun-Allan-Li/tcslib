@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.rightCfg_step",
+ "key": "e978c8af3fc30539",
+ "kind": "lemma",
+ "title": "One-step simulation on the right block",
+ "statement": "Let $k,l$ be nonnegative integers, let $S,S'$ be state sets, and let $x$ be a finite Boolean input. Let $M$ have $l$ work tapes and state set $S$, and let $M'$ have $k+l$ work tapes and state set $S'$. Suppose $f:S\\to S'$ is such that, for every state $q\\in S$, input symbol (possibly blank), and tuple of symbols on the $k+l$ work tapes, the transition of $M'$ at $f(q)$ is the right-block extension along $f$ of the transition of $M$ using the symbols on the last $l$ tapes. Then for every configuration $c$ of $M$ and every choice of contents and head positions for the first $k$ tapes, one step of $M'$ from the configuration combining those data with $c$ on the last $l$ tapes equals the configuration formed by combining the same data with one step of $M$ from $c$.",
+ "hypotheses_covered": [
+  "$k,l$ are nonnegative integers",
+  "$S,S'$ are state sets",
+  "$x$ is a finite Boolean input",
+  "$M$ has $l$ work tapes over Bool and state set $S$",
+  "$M'$ has $k+l$ work tapes over Bool and state set $S'$",
+  "$f:S\\to S'$",
+  "For every $q$, input symbol, and $(k+l)$-tuple of work-tape symbols, the transition rule of $M'$ at $f(q)$ equals the right-block extension of the corresponding transition of $M$, using the last $l$ symbols",
+  "$c$ is a configuration of $M$ on input $x$",
+  "Arbitrary contents and head positions are specified for the first $k$ tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $l$ work tapes and $M'$ a machine with $k + l$ work\ntapes, both over the Boolean alphabet, and let $f$ be a map from the states\nof $M$ to the states of $M'$ such that on every renamed state $f(q)$, for\nevery scanned input symbol and every tuple of scanned work symbols, the\ntransition of $M'$ is the right-block extension along $f$ of the transition\nof $M$ from $q$ on that input symbol and the symbols scanned on the last $l$\ntapes.  Then for every configuration $c$ of $M$ on input $x$ and all inactive\ncontents and head positions for the first $k$ tapes --- which may hold\narbitrary data from an earlier phase --- one step of $M'$ from the\nright-block embedding of $c$ equals the right-block embedding of one step of\n$M$ from $c$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satStreamBound_size",
+ "key": "d6d80f8c20fa06ba",
+ "kind": "lemma",
+ "title": "Size Bound for Encoded Seam Words",
+ "statement": "Let $x$ be a Boolean word and let $s$ be a streaming seam state whose consumed length is at most $|x|$ and whose fresh-variable cursor is at most $|x|$ plus its consumed length. Then the fresh-variable cursor is at most $2|x|$, and the encoded seam word has length at most $6|x|+8$.",
+ "hypotheses_covered": [
+  "Boolean word $x$",
+  "Streaming seam state $s$ satisfies the consumed-length and fresh-cursor bounds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a seam state satisfies the length invariant on an input $x$, then its fresh\ncursor is at most $2\\,|x|$ and its encoded seam word has length at most\n$6\\,|x| + 8$."
+}

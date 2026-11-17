@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.reaches_right",
+ "key": "a85971506be403c9",
+ "kind": "lemma",
+ "title": "One-step rightward head movement",
+ "statement": "Let $P$ be a register program with $m$ work tapes, input $x$, oracle $O$, and register $r$. Suppose state $s$ is not a call state, and for every tuple of work-tape symbols its transition in state $s$, when the input symbol at position $q$ is read, moves the input head one position to the right, leaves all work-tape contents and head positions unchanged, emits no output, and enters state $s'$. For $q\\le |x|$, any initial configuration with state $s$, input-head position $q$, and work-tape head $r$ at position $p$ reaches in one program step the same configuration data with state $s'$ and input-head position $q+1$.",
+ "hypotheses_covered": [
+  "State $s$ is not a call state",
+  "$q\\le |x|$",
+  "For every work-symbol tuple, the transition at state $s$ on the input symbol at position $q$ is the specified rightward move with no work-tape changes or output and successor state $s'$",
+  "Initial input-head position is $q$ and register $r$'s work-tape head is at position $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

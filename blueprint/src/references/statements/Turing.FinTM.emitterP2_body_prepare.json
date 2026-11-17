@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_prepare",
+ "key": "f982a2fa86aaea25",
+ "kind": "lemma",
+ "title": "Preparation inside the controller",
+ "statement": "Let $C$ and $D$ be finite Turing machines over the Boolean alphabet, with positive numbers of work tapes, and choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$. For any Boolean input word $w$ and candidate word $s$, there is a time $t\\le 5(|s|+|w|+3)$ at which the controller, started in its preparation phase with $s$ on the candidate tape and all other tapes blank, is in preparation phase $8$ with flag equal to the truth value of $|w|<|s|$, and has $s$ on both the candidate tape and the first width-bank tape and the suffix of $w$ after its first $|s|$ bits on the first length-bank tape, with all other tapes blank. No configuration from time $0$ through time $t$ has the anchor state.",
+ "hypotheses_covered": [
+  "C and D are finite Boolean-alphabet Turing machines",
+  "C has a positive number of work tapes",
+  "D has a positive number of work tapes",
+  "ce and cx are states of C",
+  "de and dx are states of D",
+  "w is a Boolean word",
+  "s is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any input $w$ and candidate $s$, there is a time\n$t \\le 5(\\abs{s} + \\abs{w} + 3)$ such that the controller, from its\npreparation seam carrying $s$, reaches the seam holding the candidate, its\ncopy, and the native suffix of $w$ after position $\\abs{s}$, with the\npast-the-end flag recording $\\abs{w} < \\abs{s}$; the trace avoids the\nanchor."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.indexedFold",
+ "key": "b551a1d2f900d5c0",
+ "kind": "lemma",
+ "title": "Indexed transduction of a duplicate-free list",
+ "statement": "Let $I,V,C$ be types, with decidable equality on $I$. Let $\\mathit{visit}_i:V\\times C\\to V\\times C$ be a local rule for each $i\\in I$, let $\\mathit{cell}:I\\to C$, let $\\mathit{is}$ be a list of elements of $I$ with no repetitions, and let $s:I\\to V$ be an initial table. Sweeping through the list of pairs $(i,\\mathit{cell}(i))$ for $i$ in $\\mathit{is}$ yields the table that replaces $s(i)$ by the first component of $\\mathit{visit}_i(s(i),\\mathit{cell}(i))$ for indices in $\\mathit{is}$ and leaves other entries unchanged; the output list pairs each such index with the second component of that same local-rule value.",
+ "hypotheses_covered": [
+  "Types $I,V,C$",
+  "Decidable equality on $I$",
+  "Family of local rules $\\mathit{visit}_i:V\\times C\\to V\\times C$",
+  "Function $\\mathit{cell}:I\\to C$",
+  "List $\\mathit{is}$ of indices with no repetitions",
+  "Initial table $s:I\\to V$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathit{visit}_i \\colon V \\times C \\to V \\times C$ be a family of local\nrules indexed by a type $I$ with decidable equality, let\n$\\mathit{cell} \\colon I \\to C$ assign a cell to each index, and let\n$\\mathit{is}$ be a list of indices with no duplicates. Transducing, with the\ntable-valued indexed transducer started at table $s$, the block that lists\neach $i \\in \\mathit{is}$ tagged with $\\mathit{cell}(i)$, yields: the table\nthat at every index $i$ occurring in $\\mathit{is}$ holds the new value of\n$\\mathit{visit}_i$ applied to the \\emph{original} entry $s(i)$ and\n$\\mathit{cell}(i)$, and elsewhere agrees with $s$; together with the block in\nwhich each tagged cell is replaced by its rewritten value, likewise computed\nfrom the original table. Because no index repeats, each local rule sees the\nuntouched table entry."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.CounterProg.step_some",
+ "key": "5e209fa496e43abc",
+ "kind": "theorem",
+ "title": "Step from a running configuration",
+ "statement": "Let $R$ be the number of work tapes, let $\\Lambda$ be a finite set of labels, let $P$ assign an instruction to each label, let $x$ be an input bit string, and let $\\ell_0 \\in \\Lambda$. For any compiled control state $q$, valid input-head position $p$, work tapes $T_i : \\mathbb{Z} \\to \\{0,1,\\sqcup\\}$, work-head positions $h_i \\in \\mathbb{Z}$, and output string $w$, a configuration with control state $q$ takes one machine step to the result of applying the compiled transition action determined by $q$, the symbol under the input head, and the symbols under the work-tape heads.",
+ "hypotheses_covered": [
+  "A finite label set $\\Lambda$",
+  "A counter program $P$ over $R$ registers",
+  "A start label $\\ell_0 \\in \\Lambda$",
+  "An input bit string $x$",
+  "A compiled control state $q$",
+  "An input-head position among the $|x|+2$ valid positions",
+  "Work tapes and their head positions",
+  "An output bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Lambda$ be a finite set of labels, $P$ a counter program over $R$ registers with labels in\n$\\Lambda$, $\\ell_0 \\in \\Lambda$, and $x$ an input bit string. Let $C$ be a configuration on input\n$x$ of the machine of $P$ started at $\\ell_0$ which is in some control state $q$ (not halted),\nwith work tapes $(T_i)$ and work heads $(h_i)$. Then one step of that machine maps $C$ to the\nresult of applying to $C$ the action that the compiled transition table of $P$ assigns to $q$,\nthe symbol under the input head of $C$, and the work-tape symbols $(T_i(h_i))_i$."
+}

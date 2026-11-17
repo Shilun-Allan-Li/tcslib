@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_first_anchor",
+ "key": "7c37e22e6822d11a",
+ "kind": "lemma",
+ "title": "First visit to an anchor state",
+ "statement": "Let $M$ and $M_0$ be machines with the same number of work tapes and state set, and let $q_a$ be a state. Suppose their transition rules agree at every state other than $q_a$, and that $M_0$ at $q_a$ makes a stationary, silent transition back to $q_a$. For a configuration $c$ and time $T$, if the run of $M_0$ from $c$ is in state $q_a$ at time $T$, then some $t\\le T$ has the property that the run of $M$ is never in state $q_a$ at any earlier time and its configuration at time $t$ equals the configuration of $M_0$ at time $T$.",
+ "hypotheses_covered": [
+  "Machines $M,M_0$ with the same number of work tapes and state set",
+  "Anchor state $q_a$",
+  "Transition rules agree at every state other than $q_a$",
+  "At $q_a$, $M_0$ makes the specified stationary silent self-loop",
+  "Configuration $c$ and natural number $T$",
+  "The run of $M_0$ from $c$ is in state $q_a$ at time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let two transition tables agree away from an anchor state, which the second\n(stopped) table turns into a silent self-loop. If the stopped run from $c$\nstands at the anchor at time $T$, then there is a time $t \\le T$ such that the\nactive run never visits the anchor before $t$ and its time-$t$ configuration\nequals the stopped run's time-$T$ configuration."
+}

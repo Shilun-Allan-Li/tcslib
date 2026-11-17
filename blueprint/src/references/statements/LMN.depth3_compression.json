@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.depth3_compression",
- "key": "982b93b1005b9d03",
+ "key": "0f59ec93de1fbab2",
  "kind": "theorem",
  "title": "One-step depth-3 compression under a random restriction",
  "statement": "Fix $n \\ge 1$, and let $D_1,\\dots,D_{s_2}$ be DNF formulas on $n$ variables, each of width at most $w$ with $w \\ge 1$, subject to the two syntactic conditions that within every term any two literals on the same variable coincide (so no term repeats a variable with opposite polarities) and that no term lists the same literal twice. Let $l \\in \\bbn$, and let $p \\in \\bbr$ satisfy $0 < p \\le 1/(40w)$ and $p \\le 1$. Draw a Bernoulli$(p)$ random restriction $\\rho$ on the $n$ variables. Then with probability at least\n\\[\n  1 - s_2\\!\\left(\\left(\\tfrac{1}{2}\\right)^{l} + \\exp\\!\\left(-\\,\\tfrac{np}{3}\\right)\\right)\n\\]\nthere exists a CNF formula $\\Psi$ of width at most $l$ that computes the conjunction of the restricted gates: writing $D_i\\!\\restriction_\\rho$ for the function $x \\mapsto D_i(\\rho.\\mathrm{extend}\\,x)$ obtained by fixing the coordinates set by $\\rho$ and leaving the free coordinates to $x$, one has $\\Psi(x) = \\bigwedge_{i=1}^{s_2} \\bigl(D_i\\!\\restriction_\\rho\\bigr)(x)$ for every assignment $x$.",

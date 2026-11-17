@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.UTab.Front.prog",
+ "key": "c5856510efcf8c7a",
+ "kind": "def",
+ "title": "Counter program for front computation",
+ "statement": "For natural numbers $C$ and $d$, this defines a program with five registers and labels $\\mathrm{Lb}(C,d)$. Its instructions at each label are as follows: at $rN$ it reads the next input bit, going to $e0$ on exhaustion or on bit $0$, and to $rN1$ on bit $1$; $rN1$ increments register $0$ and goes to $rN2$, which prints $1$ and returns to $rN$. At $e0$ it prints $0$ and goes to $e1$, which increments register $0$ and starts loading register $1$. The labels $ldA(i)$ increment register $1$ while $i<C+1$, advancing $i$; once that condition fails, the program goes to $ldD(0)$. The labels $ldD(i)$ increment register $4$ while $i<d$, advancing $i$; once that condition fails, the program goes to $dh$. At $dh$, it goes to $fin$ if register $4$ is zero and to $dd$ otherwise; $dd$ decrements register $4$ and goes to $mh$. At $mh$, it goes to $bh$ if register $1$ is zero and to $md$ otherwise; $md$ decrements register $1$ and goes to $xh$. At $xh$, it goes to $th$ if register $0$ is zero and to $xd$ otherwise; $xd$ decrements register $0$, then $x1$ increments register $2$, and $x2$ increments register $3$ before returning to $xh$. At $th$, it goes to $mh$ if register $3$ is zero and to $tdl$ otherwise; $tdl$ decrements register $3$, then $t1$ increments register $0$ before returning to $th$. At $bh$, it goes to $dh$ if register $2$ is zero and to $bd$ otherwise; $bd$ decrements register $2$, and $b1$ increments register $1$ before returning to $bh$. Finally, $fin$ prints a unary block of length equal to the value of register $1$ and goes to $fin2$, which prints $0$ and goes to $fin3$, where the program halts.",
+ "hypotheses_covered": [
+  "Natural numbers C and d",
+  "Five registers",
+  "Labels Lb(C,d)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.lenParse_run",
+ "key": "8783c023490ef4ad",
+ "kind": "lemma",
+ "title": "Bounded parse-and-compare run",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be a configuration of $M$ on input $x$. For every pair of Boolean words $p,s$ with $x=ps$, and every natural number $r$ at most the length of $c$’s output, the captured-length checker, started from the configuration built from $c$ with input head just past the prefix $p$, counter $r$, and its parser in the comparison phase, reaches a halted configuration within at most $|s|+1$ steps. Its output is the single bit $1$ exactly when the pair parser decodes $s$ as a pair whose second component has length at most $r$; otherwise its output is the single bit $0$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean word and $c$ is a configuration of $M$ on input $x$",
+  "$p,s$ are Boolean words with $x=ps$",
+  "$r$ is a natural number at most the length of $c$’s output",
+  "The running time is bounded by $|s|+1$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a split $x = p s$ of the input and a counter $r$ at most the captured\nword's length, from the checker's block-start parse state at position\n$\\abs{p}$ there is a time $t \\le \\abs{s} + 1$ after which the checker has\nhalted with a one-bit output: if $s$ decodes under the self-delimiting pair\ncode as $(a,b)$, the bit records whether $\\abs{b} \\le r$, and if $s$ is\nmalformed the bit is $0$."
+}

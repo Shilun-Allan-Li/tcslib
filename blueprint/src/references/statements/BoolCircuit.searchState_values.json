@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.searchState_values",
+ "key": "5969824985598043",
+ "kind": "theorem",
+ "title": "Values produced by the search construction",
+ "statement": "Let $n,j\\in\\mathbb{N}$, let $x$ be a Boolean assignment to the $n$ input bits, and for each $r\\in\\mathbb{N}$ let $D_r$ be a Boolean circuit on $n+r$ inputs in which every gate has distinct arguments, every negation gate has exactly one argument, and every gate has at most two arguments. Define $b_0$ to be the empty list and, for $r\\ge1$, define $b_r$ by appending to $b_{r-1}$ the value of $D_r$ on the input consisting of $x$, the bits of $b_{r-1}$, and a final true bit. Evaluating the gates of the search construction after $j$ stages on $x$, the value at vertex $n$ is true, and the values at its listed output vertices, in order, are exactly $b_j$.",
+ "hypotheses_covered": [
+  "Each $D_r$ has distinct arguments at every gate",
+  "Each negation gate of $D_r$ has exactly one argument",
+  "Each gate of $D_r$ has at most two arguments",
+  "$x$ is a Boolean assignment to the $n$ input bits",
+  "$j\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

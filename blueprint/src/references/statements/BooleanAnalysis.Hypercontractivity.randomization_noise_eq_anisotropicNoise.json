@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.randomization_noise_eq_anisotropicNoise",
+ "key": "cf74d579c9e37b5a",
+ "kind": "theorem",
+ "title": "Randomized product noise identity",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses, let $c\\in\\mathbb R$, let $f$ be real-valued on its outcome space, and choose $r\\in\\{0,1\\}^n$. Define coordinate rates $s_i=c$ when $r_i=0$ and $s_i=-c$ when $r_i=1$. As functions on the outcome space, randomizing the product noise of $f$ at rate $c$ gives the anisotropic product noise with rates $s_i$: $R_r(T_cf)=T_{\\boldsymbol{s}}f$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space with strictly positive atom masses",
+  "$c\\in\\mathbb R$",
+  "$f$ is a real-valued function on the outcome space",
+  "$r\\in\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $c\\in\\mathbb R$, $f:\\Omega\\to\\mathbb R$, and $r\\in\\{0,1\\}^n$. Then $R_r(T_cf)=T_{\\boldsymbol s}f$ for $s_i=c(-1)^{r_i}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\chi_S(r)=\\prod_{i\\in S}(-1)^{r_i}$ for $r\\in\\{0,1\\}^n$; $R_rh=\\sum_{S\\subseteq[n]}\\chi_S(r)h_S$; $T_{\\boldsymbol s}h=\\sum_{S\\subseteq[n]}(\\prod_{i\\in S}s_i)h_S$ for real coordinate rates $s_i$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

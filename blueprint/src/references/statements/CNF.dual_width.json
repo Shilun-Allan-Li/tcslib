@@ -1,0 +1,15 @@
+{
+ "lean_name": "CNF.dual_width",
+ "key": "21509cff573875bd",
+ "kind": "lemma",
+ "title": "Width under De Morgan dualization",
+ "statement": "Let $n$ be a natural number and let $\\psi$ be a CNF formula on $n$ variables. The width of its De Morgan dual DNF, defined as the maximum number of literals in a term and as $0$ when there are no terms, equals the width of $\\psi$, defined as the maximum number of literals in a clause and as $0$ when there are no clauses.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$\\psi$ is a CNF formula on $n$ variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\psi$ be a CNF formula over $n$ variables, and let $\\psi^{*}$ be its De Morgan dual\nDNF, obtained by negating every literal so that each clause becomes a term. Then\n$\\psi^{*}$ and $\\psi$ have the same width; that is, the maximum term-length of\n$\\psi^{*}$ equals the maximum clause-width of $\\psi$."
+}

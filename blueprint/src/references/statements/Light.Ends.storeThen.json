@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Ends.storeThen",
+ "key": "a0cb32ed73a0c41d",
+ "kind": "theorem",
+ "title": "Store followed by a bounded computation",
+ "statement": "Let a program, depth bound, initial location map $\\ell:\\mathbb N\\to\\mathbb Z$, memory map $\\mu:\\mathbb N\\to\\mathbb Z$, expressions $a,e$, statement $s$, time bound $T\\in\\mathbb N$, and postcondition $Q$ be given. If $s$ can execute from the state with locations $\\ell$ and memory updated at address $a(\\ell,\\mu)$ to value $e(\\ell,\\mu)$, within time $T-(\\operatorname{cost}(a)+\\operatorname{cost}(e)+1)$, and end in a state satisfying $Q$, and if $a,e$ are safe in the original state and $a(\\ell,\\mu)$ is a valid address, then storing $e$ at address $a$ and executing $s$ from the original state ends in a state satisfying $Q$ within time $T$, provided $\\operatorname{cost}(a)+\\operatorname{cost}(e)+1\\le T$.",
+ "hypotheses_covered": [
+  "The following statement $s$ has a $Q$-satisfying execution within the remaining time from memory updated at the evaluated address and value",
+  "The address and value expressions are safe in the original state",
+  "The evaluated address is valid",
+  "The store cost is at most $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

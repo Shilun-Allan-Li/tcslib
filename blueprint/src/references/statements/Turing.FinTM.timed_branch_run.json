@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.timed_branch_run",
+ "key": "b47b04c23001f63f",
+ "kind": "lemma",
+ "title": "Evolution in the selected branch phase",
+ "statement": "Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, let $x$ be a Boolean word, and let $b$ be a bit. For any configuration $c$ of the two-branch machine on $x$, any contents and head positions for the $D$-tape block, and any $t\\in\\mathbb N$, running the timed conditional controller for $t$ steps from the corresponding branch-phase configuration yields the branch-phase configuration formed from the two-branch machine's configuration after $t$ steps from $c$, with the $D$-tape block and captured bit $b$ unchanged.",
+ "hypotheses_covered": [
+  "$D,M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of the two-branch machine on $x$",
+  "arbitrary contents and head positions are specified for the $D$-tape block",
+  "$b$ is a bit",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet with\n$k_D$, $k_1$, $k_2$ work tapes, consider the timed conditional controller for them, and\nfor a bit $\\beta$ consider the two-branch union machine that runs $M_1$ or $M_2$ on\ndisjoint blocks of $k_1$ and $k_2$ work tapes and starts in the initial state of $M_1$ if\n$\\beta$ is $\\mathrm{true}$ and of $M_2$ otherwise. Let $c$ be a configuration of the\nunion machine on an input $x$, $\\tau$ and $h$ contents and head positions for $k_D$\ntapes, and $t \\in \\mathbb{N}$. Then running the controller for $t$ steps from the\nbranch-phase configuration of $(c, \\tau, h, \\beta)$ (the state, input head, output and\nwork tapes of $c$ on the branch block, $\\tau$ and $h$ on the decider block, and the bit\n$\\beta$ in cell $0$ of the capture tape with that head at cell $0$) yields the\nbranch-phase configuration of $(c', \\tau, h, \\beta)$, where $c'$ is the configuration the\nunion machine reaches after $t$ steps from $c$."
+}

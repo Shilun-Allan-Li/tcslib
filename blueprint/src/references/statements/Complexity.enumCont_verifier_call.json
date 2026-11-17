@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_verifier_call",
+ "key": "a9cd42bcda714e33",
+ "kind": "lemma",
+ "title": "Time bound for a prepared verifier call",
+ "statement": "Let $M_V$ be a finite Turing machine deciding a language $V$ over Boolean words within time $T_V$, and let $x,s$ be Boolean words. From the canonical seam configuration with $s$ on the designated work tape and input $x$, the buffered composition of the assembly machine with $M_V$ reaches, in some $t\\le T_V(|x|+|s|)+2(|x|+|s|)+4$ steps, a halted configuration whose output is the one-symbol word containing the indicator of $x$ concatenated with $s$ belonging to $V$.",
+ "hypotheses_covered": [
+  "A finite Boolean Turing machine $M_V$",
+  "A language $V$ and time bound $T_V$",
+  "$M_V$ decides $V$ within time $T_V$",
+  "Boolean words $x$ and $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a machine $MV$ decides a language $V$ within time $T_v$, then from the\ncanonical candidate seam with candidate $s$ on input $x$, the buffered\ncomposition of the assembly machine with $MV$ halts within\n$T_v(|x| + |s|) + 2(|x| + |s|) + 4$ steps, with single-bit output the indicator\nof $x \\mathbin{+\\!\\!+} s \\in V$."
+}

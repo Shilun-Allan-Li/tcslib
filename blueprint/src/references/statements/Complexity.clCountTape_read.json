@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clCountTape_read",
+ "key": "86fc3e7125e3c6c5",
+ "kind": "lemma",
+ "title": "Reading at the Prefix Boundary",
+ "statement": "For bit lists $u$ and $v$, the tape holding their concatenation, read at the integer cell indexed by the length of $u$, returns the first bit of $v$ if one exists, and otherwise returns blank.",
+ "hypotheses_covered": [
+  "$u$ and $v$ are bit lists"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For bit lists $u$ and $v$, the tape holding $u$ followed by $v$ reads, at cell $|u|$, the first bit of $v$, or a blank when $v$ is empty."
+}

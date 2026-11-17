@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.recordTM_execute",
+ "key": "089a3561ae305584",
+ "kind": "lemma",
+ "title": "Execution of a Recorded Action",
+ "statement": "Let $k,n\\in\\mathbb N$, let $x$ be a finite binary input, let $d$ be a configuration of the $(k+2)$-work-tape record machine, let $a$ be an action for a $k$-work-tape machine with states indexed by $\\{0,\\ldots,n\\}$, and let $b$ be a Boolean record of width $4k+4$. Suppose $d$ starts in the record machine's initial state, the record tape contains $b$ at each of the next $4k+4$ cells from its head, and $b$ is the length-$4k+4$ prefix of the binary encoding of $a$. After $4k+5$ steps, the record machine's configuration equals the one obtained by first setting the action's successor state to halting, pairing that action with the current symbol on the summary tape to form the payload action, and applying that payload action to the configuration whose record state stores the full record and whose record-tape head is advanced by $4k+4$.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb N$",
+  "binary input $x$",
+  "configuration $d$ of the $(k+2)$-tape record machine",
+  "action $a$ with states indexed by $\\{0,\\ldots,n\\}$",
+  "record $b$ indexed by the $4k+4$ positions",
+  "$d$ starts in the record machine's initial state",
+  "the record tape contains $b$ at each offset from the record head",
+  "$b$ is the length-$4k+4$ prefix of the encoding of $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

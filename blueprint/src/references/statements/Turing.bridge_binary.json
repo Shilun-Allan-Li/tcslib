@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.bridge_binary",
+ "key": "76a21010e932d4bd",
+ "kind": "lemma",
+ "title": "Binary computation by a finite machine",
+ "statement": "Let $c$ be a program in the partial-recursive language and $f$ a function from Boolean strings to Boolean strings. Suppose that for every Boolean string $x$, evaluating $c$ on the singleton list containing the sentinel numeric code of $x$ returns the singleton list containing the sentinel numeric code of $f(x)$. Then there exist a finite Turing machine over the Boolean alphabet and a function $T:\\mathbb{N}\\to\\mathbb{N}$ such that on every input $x$ the machine halts with output $f(x)$ after exactly $T(|x|)$ steps.",
+ "hypotheses_covered": [
+  "A program $c$ in the partial-recursive language",
+  "A function $f$ from Boolean strings to Boolean strings",
+  "For every $x$, evaluation of $c$ on the singleton list containing the sentinel code of $x$ returns the singleton list containing the sentinel code of $f(x)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a program in Mathlib's partial-recursive language and $f$ a function on\nBoolean strings such that evaluating $c$ on the singleton list holding the sentinel\nnumeric code of each string $x$ yields exactly the singleton list holding the code\nof $f(x)$.  Then there exist a finite Turing machine over the two-letter Boolean\nalphabet and a time bound $T \\colon \\bbn \\to \\bbn$ such that the machine computes\n$f$, halting within $T(\\abs{x})$ steps on every input $x$."
+}

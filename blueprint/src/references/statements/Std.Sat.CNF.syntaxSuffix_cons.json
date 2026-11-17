@@ -1,0 +1,16 @@
+{
+ "lean_name": "Std.Sat.CNF.syntaxSuffix_cons",
+ "key": "618701c9e3bdc822",
+ "kind": "theorem",
+ "title": "Syntax suffix under a leading bit",
+ "statement": "For a state $q\\in\\{0,1,2,3,4,5\\}$ and a bit string $x$, define the suffix condition as follows: in state $0$, $x$ encodes a CNF formula; in state $1$, it is a clause encoding followed by a formula encoding; in state $2$, it has the form $1^v0b$ followed by a clause encoding and a formula encoding, for some $v\\in\\mathbb N$ and $b\\in\\{0,1\\}$; in state $3$, it is a bit followed by a clause encoding and a formula encoding; in state $4$, it is empty; and in state $5$, the condition is false. For every such state $q$, bit $b$, and finite bit string $x$, the condition holds for $b$ followed by $x$ exactly when it holds for $x$ in the state reached from $q$ by the transition rule: on input $1$, states $0,1,2,3$ go respectively to $1,2,2,1$; on input $0$, they go respectively to $4,0,3,1$; either input from states $4$ or $5$ leads to $5$.",
+ "hypotheses_covered": [
+  "$q$ is one of the six states $0,1,2,3,4,5$",
+  "$b$ is a bit",
+  "$x$ is a finite bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

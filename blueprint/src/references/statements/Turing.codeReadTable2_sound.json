@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.codeReadTable2_sound",
+ "key": "51a92a044444c1d7",
+ "kind": "lemma",
+ "title": "Soundness of the two-tape table reader",
+ "statement": "For every $n\\in\\mathbb N$, bit string $x$, transition table $t$ on states $0,\\ldots,n$ and the three possible scanned symbols on the input tape and each of two work tapes, and suffix $r$, if the table reader with parameter $n$ applied to $x$ returns $(t,r)$, then $x$ is the serialization of $t$ followed by $r$. The serialization lists the actions in state and scanned-symbol order, with each action recording the input-head movement, both work-tape writes and movements, the optional output bit, and the optional successor state.",
+ "hypotheses_covered": [
+  "A natural-number parameter n",
+  "A bit string x",
+  "A transition table t of the specified type",
+  "A suffix r",
+  "The table reader succeeds on x and returns (t,r)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

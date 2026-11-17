@@ -1,0 +1,32 @@
+{
+ "lean_name": "Complexity.UTab.goes_tapes",
+ "key": "fb1a50f6cb2774e8",
+ "kind": "theorem",
+ "title": "Traversal across a tape layer",
+ "statement": "Let $M$ be a finite Turing machine with $k$ work tapes, let $x$ be a finite binary string, let $n,T,t\\in\\mathbb N$, and let $z$ be a finite binary string. Suppose $1\\le T$ and $t\\le T$. For any $d,\\tau\\in\\mathbb N$ and register record $e$, assume $\\tau+d=k$, $e$ records $n$ as its circuit-input count, $|z|$ as its hard-wired input length, and $T$ as its step budget, and that its current instruction index is $t\\,\\mathrm{Str}(M,n,z,T)+\\tau(2T+1)$, its previous-cell index is $0$ when $t=0$ and otherwise the current index minus $\\mathrm{Str}(M,n,z,T)$, its first-instruction-of-step index is $t\\,\\mathrm{Str}(M,n,z,T)$, and its inner-loop and scratch registers are both zero. Then, for every input position $p\\in\\mathbb N$, the counter program started at the beginning of the cell indexed by $\\tau$ reaches the input-position phase with the same input position and register record obtained from $e$ by adding $d(2T+1)$ to the current instruction index and updating the previous-cell index to $0$ if $t=0$, or otherwise to the new instruction index minus $\\mathrm{Str}(M,n,z,T)$. During this run it appends the concatenation of the instruction encodings for indices from the original current index through the next $d(2T+1)-1$ indices, and the run takes at most $d(2T+3)(L_{\\max}(M)+20)$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine with Boolean symbols",
+  "$x$ is a finite Boolean input string",
+  "$n,T,t\\in\\mathbb N$ and $z$ is a finite Boolean string",
+  "$1\\le T$",
+  "$t\\le T$",
+  "$d,\\tau\\in\\mathbb N$",
+  "$e$ is a register record",
+  "$\\tau+d=M.k$",
+  "$e.nc=n$",
+  "$e.z=|z|$",
+  "$e.t=T$",
+  "$e.i=t\\,\\mathrm{Str}(M,n,z,T)+\\tau(2T+1)$",
+  "$e.q=0$ if $t=0$, otherwise $e.q=e.i-\\mathrm{Str}(M,n,z,T)$",
+  "$e.lb=t\\,\\mathrm{Str}(M,n,z,T)$",
+  "$e.ll=0$",
+  "$e.tmp=0$",
+  "$p\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

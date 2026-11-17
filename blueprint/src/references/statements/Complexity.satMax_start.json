@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satMax_start",
+ "key": "79c0d0c6c0950d70",
+ "kind": "lemma",
+ "title": "Startup of the maximum-pass machine",
+ "statement": "For every CNF formula $\\varphi$ over variables indexed by natural numbers, there is a time $t\\le 3|\\mathrm{enc}(\\varphi)|+5$ at which the intercepted maximum-pass machine, started on the serialization of $\\varphi$, is in the streaming entry state with input head and both work-tape heads at zero, counter tape of unary length $N(\\varphi)$, buffer tape consisting of its permanent marker at offset $-1$ and blank elsewhere, and empty output.",
+ "hypotheses_covered": [
+  "A CNF formula over natural-number-indexed variables",
+  "A time $t$ bounded by $3|\\mathrm{enc}(\\varphi)|+5$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a CNF formula with serialization $\\mathrm{ser}(\\varphi)$ and\nits variable bound $N(\\varphi)$ (one more than the largest variable index occurring in $\\varphi$, or $0$ if no variable occurs). There is a time $t \\le 3\\,|\\mathrm{ser}(\\varphi)| + 5$ at which the\nintercepted maximum-pass machine, started on $\\mathrm{ser}(\\varphi)$, is in its\nstreaming entry state with the counter tape holding $1^{N(\\varphi)}$, the buffer\nempty apart from its permanent marker, the input head and both work heads at $0$,\nand empty output. This is the same endpoint as for the unmodified\nclause-splitting transducer."
+}

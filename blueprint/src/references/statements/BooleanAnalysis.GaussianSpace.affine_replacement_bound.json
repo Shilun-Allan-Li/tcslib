@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.affine_replacement_bound",
+ "key": "21b44e6cbf930790",
+ "kind": "theorem",
+ "title": "Comparison of scalar affine input laws",
+ "statement": "Let $(\\Omega,\\mu)$ and $(\\Xi,\\nu)$ be probability spaces, and let $X\\colon\\Omega\\to\\mathbb R$ and $Y\\colon\\Xi\\to\\mathbb R$ each satisfy the fourth-order invariance moment conditions: they are measurable up to null sets with finite fourth absolute moments, have means zero, second moments one, third moments zero, and fourth moments at most $9$. Let $\\psi\\colon\\mathbb R\\to\\mathbb R$ be four times continuously differentiable, and suppose $C\\ge0$ and $|\\psi^{(4)}(t)|\\le C$ for every real $t$. For all $a,b\\in\\mathbb R$,\n\\[\\left|\\mathbb E_\\mu[\\psi(a+bX)]-\\mathbb E_\\nu[\\psi(a+bY)]\\right|\\le\\frac{3C}{4}b^4.\\]",
+ "hypotheses_covered": [
+  "$(\\Omega,\\mu)$ and $(\\Xi,\\nu)$ are measurable probability spaces.",
+  "$X$ satisfies the fourth-order invariance moment conditions under $\\mu$.",
+  "$Y$ satisfies the fourth-order invariance moment conditions under $\\nu$.",
+  "$\\psi\\colon\\mathbb R\\to\\mathbb R$ is four times continuously differentiable.",
+  "$C\\ge0$.",
+  "$|\\psi^{(4)}(t)|\\le C$ for every real $t$.",
+  "$a,b\\in\\mathbb R$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $X$ and $Y$ be real inputs on possibly different probability spaces, each measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. Let $\\psi\\colon\\mathbb R\\to\\mathbb R$ be $C^4$ and let $C\\ge0$ satisfy $|\\psi^{(4)}(t)|\\le C$ for all real $t$. For every real $a,b$, $|\\mathbb E\\psi(a+bX)-\\mathbb E\\psi(a+bY)|\\le(3C/4)b^4$."
+}

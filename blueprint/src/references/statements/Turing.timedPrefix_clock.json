@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.timedPrefix_clock",
+ "key": "bfe80379ab42df2e",
+ "kind": "lemma",
+ "title": "Clock extraction after partial scan",
+ "statement": "Let $b_s,\\alpha,x$ be Boolean words. For every integer $j$ with $j\\le |b_s|$, after $4j$ steps of the prefix parser on $\\langle\\langle b_s,\\alpha\\rangle,x\\rangle$, its state is the first clock-reading phase, its input head is at position $4j+1$, its work tape stores the prefix of $b_s$ of length $j$, and its output is empty.",
+ "hypotheses_covered": [
+  "Boolean words $b_s,\\alpha,x$",
+  "Integer $j$ satisfies $j\\le |b_s|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\le |b|$, running the prefix parser $4j$ steps from its initial\nconfiguration on the nested pair encoding\n$\\langle \\langle b, \\alpha\\rangle, x\\rangle$ stores exactly the first $j$\nclock bits on its work tape, leaves the output empty, and places the input\nhead just past the $4j$ consumed cells, still in the first clock phase."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Randomized.InRPStrong",
+ "key": "29035fe79855b6ea",
+ "kind": "def",
+ "title": "Strong one-sided randomized recognition",
+ "statement": "Let $E$ be a verifier model, let $d$ be a natural number, and let $L$ be a language of Boolean lists. There must exist a Boolean verifier $M$ and natural numbers $a,k$ such that the verifier induced by $M$ is efficient according to $E$. For every Boolean list $x$, if $x\\in L$, then $M$ accepts a uniformly random string of the prescribed random-bit length with probability at least $1-\\left(\\frac12\\right)^{(|x|+1)^d+1}$; if $x\\notin L$, then $M$ rejects every string of that length.",
+ "hypotheses_covered": [
+  "$E$ is a verifier model",
+  "$d$ is a natural number",
+  "$L$ is a language of Boolean lists",
+  "There exist a Boolean verifier and natural numbers $a,k$",
+  "The verifier induced by $M$ is efficient according to $E$",
+  "For each member $x$ of $L$, the acceptance probability meets the stated lower bound",
+  "For each nonmember $x$ of $L$, every random string of the prescribed length is rejected"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

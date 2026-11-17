@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_ifEq",
+ "key": "5a91c02877f4301d",
+ "kind": "theorem",
+ "title": "Fixed-word equality test in linear time",
+ "statement": "For all fixed Boolean words $w_0,u,v$, there are a finite Turing machine $M$ over the Boolean alphabet and a constant $c\\in\\mathbb{N}$ such that, on every Boolean input $w$, $M$ outputs $u$ if $w=w_0$ and outputs $v$ otherwise, and halts within $c(|w|+1)$ steps.",
+ "hypotheses_covered": [
+  "$w_0,u,v$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all fixed Boolean words $w_0$, $u$, $v$ there exist a multi-tape Turing\nmachine $M$ over the Boolean alphabet and a constant $c$ such that $M$ computes\nin time $c \\cdot (n + 1)$ the function sending a Boolean word $w$ to $u$ when\n$w = w_0$ and to $v$ otherwise."
+}

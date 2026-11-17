@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.OracleTM.runFrom_ofMultiTapeTM",
+ "key": "c9be85f4a52f575a",
+ "kind": "theorem",
+ "title": "Lockstep simulation of a plain machine",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes, let $O$ be a language over its symbol alphabet, and let $c$ be a configuration of $M$. For every $t\\in\\mathbb{N}$, running the oracle machine associated to $M$ for $t$ steps from the embedded configuration of $c$, with oracle $O$, gives the embedding of the configuration reached by running $M$ for $t$ steps from $c$.",
+ "hypotheses_covered": [
+  "A machine with $k$ work tapes",
+  "An oracle language $O$ over the symbol alphabet",
+  "A configuration $c$",
+  "A natural-number step count $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_0$ be a plain multi-tape machine with $k$ work tapes, let $O$ be any\noracle language, let $c$ be a configuration of $M_0$, and let\n$t \\in \\mathbb{N}$.  Running the oracle machine obtained by embedding $M_0$\nfor $t$ steps relative to $O$ from the embedding of $c$ yields the embedding\nof the configuration obtained by running $M_0$ for $t$ steps from $c$."
+}

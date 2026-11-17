@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteNorms.weighted_lowDegree_omission_le",
+ "key": "d744f35600cdd32f",
+ "kind": "theorem",
+ "title": "Weighted low-degree omission bound",
+ "statement": "Let $\\alpha$ be a finite set, let $E(S)\\ge 0$ for every subset $S\\subseteq\\alpha$, let $J\\subseteq\\alpha$, let $k\\in\\mathbb N$, and let $0\\le\\rho\\le 1$. Then $\\rho^k\\sum_{\\substack{S\\subseteq\\alpha\\\\|S|\\le k,\\ S\\nsubseteq J}}E(S)\\le\\sum_{i\\in\\alpha\\setminus J}\\sum_{S\\subseteq\\alpha,\\ i\\in S}\\rho^{|S|}E(S)$.",
+ "hypotheses_covered": [
+  "$\\alpha$ is finite",
+  "$E(S)\\ge0$ for every $S\\subseteq\\alpha$",
+  "$J\\subseteq\\alpha$",
+  "$k\\in\\mathbb N$",
+  "$0\\le\\rho\\le1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha$ be finite, let $E(S)\\ge0$ for every $S\\subseteq\\alpha$, let $J\\subseteq\\alpha$, $k\\in\\mathbb N$, and $0\\le\\rho\\le1$. Then $\\rho^k\\sum_{|S|\\le k,\\ S\\nsubseteq J}E(S)\\le\\sum_{i\\notin J}\\sum_{S\\ni i}\\rho^{|S|}E(S)$."
+}

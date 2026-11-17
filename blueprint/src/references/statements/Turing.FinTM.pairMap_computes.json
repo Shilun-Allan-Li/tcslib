@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.pairMap_computes",
+ "key": "620fe3da13d8c64a",
+ "kind": "lemma",
+ "title": "Time bound for the threaded-map controller",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $f$ map Boolean words to Boolean words, and let $T$ be a time bound. If $M$ computes $f(x)$ within $T(|x|)$ steps for every Boolean word $x$, then the threaded-map controller built over $M$ computes, on every input $x$, the word obtained by pairing the first component $a$ of the decoded pair with $f(x)$ when decoding succeeds, and the empty word when decoding fails, within $4(T(|x|)+|x|+3)$ steps.",
+ "hypotheses_covered": [
+  "$M$ computes the total function $f$ within time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ compute the total function $f$ within time $T$. Then the threaded-map\ncontroller built over $M$ computes, within $4(T(n) + n + 3)$ steps on inputs\nof length $n$, the function sending a word $x$ that decodes under the\nself-delimiting pair code with first component $a$ to the pair encoding of\n$(a, f(x))$, and any malformed word to the empty word."
+}

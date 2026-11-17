@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.codeReadState_sound",
+ "key": "8b329162ffa37ffb",
+ "kind": "lemma",
+ "title": "Soundness of the successor reader",
+ "statement": "For every bound $n\\in\\mathbb N$, bit string $x$, optional state $s\\in\\{\text{none}\\}\\cup\\{0,\\ldots,n-1\\}$, and suffix $r$, if the successor-state reader with bound $n$ applied to $x$ returns $s$ and $r$, then $x$ is the encoding of $s$ followed by $r$. The encoding is $0$ for no state and, for state $i$, a $1$ followed by $i$ ones and a $0$.",
+ "hypotheses_covered": [
+  "A natural-number bound n",
+  "A bit string x",
+  "An optional state s in Fin n",
+  "A suffix r",
+  "The successor-state reader succeeds on x and returns (s,r)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the successor-state reader with bound $n$ succeeds on a bit string $x$,\nreturning a field $s$ and a suffix $r$, then $x$ is exactly the encoding of $s$\n(a single $0$ for halt, or a $1$ followed by the unary code of a live state\nbelow $n$) followed by $r$."
+}

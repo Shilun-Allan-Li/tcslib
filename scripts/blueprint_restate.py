@@ -507,6 +507,8 @@ def rewrite_file(tex: Path, docs: dict[str, str], report: list) -> str | None:
 #: A blueprint title lives inside `\begin{env}[...]`, so a bare `]` would end it
 #: early and an unbalanced brace would swallow the entry.
 def safe_title(title: str) -> str | None:
+    if not Q.typesets(title):
+        return None
     title = " ".join((title or "").split()).rstrip(".")
     if not title or title.count("{") != title.count("}"):
         return None
@@ -538,15 +540,19 @@ def title_span(line: str, pos: int) -> tuple[int, int] | None:
     return None
 
 
-def apply_cached(tex: Path, entries: dict[str, dict], report: list) -> str | None:
+def apply_cached(tex: Path, entries: dict[str, dict], report: list,
+                 *, persist: bool = True) -> str | None:
     """Replace each entry's body and title with its regenerated statement.
 
     The prose it displaces is stashed in the cache entry the first time, so the
-    stage is idempotent *and* reversible: re-running after a statement stops
-    passing the typesetting guard puts the blueprint's own words back, instead
-    of leaving the last bad version sitting in the document.
+    stage is reversible when a safe, non-placeholder backup exists. A rejected
+    cache must never overwrite prose that has already been repaired by hand.
+    With persist=False, cache backups are not written (the --check path).
     """
-    lines = tex.read_text(encoding="utf-8").splitlines()
+    # splitlines() silently eats form feeds and other corrupted characters.
+    lines = tex.read_bytes().decode("utf-8").split("\n")
+    if lines and lines[-1] == "":
+        lines.pop()
     out: list[str] = []
     i = 0
     changed = False
@@ -592,12 +598,12 @@ def apply_cached(tex: Path, entries: dict[str, dict], report: list) -> str | Non
         binding = group[0] if group else (bindings[0] if bindings else None)
         end_line = lines[i] if i < len(lines) else r"\end{theorem}"
         entry = entries.get(binding) if binding else None
+        unsafe = []
         if entry and len(group) > 1:
             unsafe = [b for b in group if not Q.typesets(entries[b].get("statement", ""))]
             if unsafe:
                 for b in unsafe:
                     report.append((tex.name, b, "latex-unsafe"))
-                entry = None
             else:
                 entry = dict(entry)
                 entry["statement"] = "\n\n".join(
@@ -606,18 +612,23 @@ def apply_cached(tex: Path, entries: dict[str, dict], report: list) -> str | Non
                 entry["title"] = ""          # keep the group's own title
                 for b in group[1:]:
                     entries[b].setdefault("replaced", "\n".join(prose))
-                    cache.cache_path(b).write_text(
-                        json.dumps(entries[b], ensure_ascii=False, indent=1) + "\n",
-                        encoding="utf-8",
-                    )
+                    if persist:
+                        cache.cache_path(b).write_text(
+                            json.dumps(entries[b], ensure_ascii=False, indent=1) + "\n",
+                            encoding="utf-8",
+                        )
                     report.append((tex.name, b, "applied"))
-        if entry and not Q.typesets(entry.get("statement", "")):
+        if entry and (unsafe or not Q.typesets(entry.get("statement", ""))):
             # A statement that will not typeset must never reach the document.
-            report.append((tex.name, binding, "latex-unsafe"))
-            if "replaced" in entry:
+            if binding not in unsafe:
+                report.append((tex.name, binding, "latex-unsafe"))
+            if (not Q.typesets("\n".join(prose)) and entry.get("replaced")
+                    and Q.typesets(entry["replaced"])
+                    and "dataset-pipeline: stub" not in entry["replaced"]):
                 # This entry was applied by an earlier run; put the blueprint's
                 # own prose back rather than leaving the bad statement behind.
                 prose = entry["replaced"].split("\n")
+                changed = True
                 report.append((tex.name, binding, "reverted"))
             entry = None
         out.extend(meta)
@@ -625,10 +636,11 @@ def apply_cached(tex: Path, entries: dict[str, dict], report: list) -> str | Non
             if "replaced" not in entries[binding]:
                 entries[binding]["replaced"] = "\n".join(prose)
                 path = cache.cache_path(binding)
-                path.write_text(
-                    json.dumps(entries[binding], ensure_ascii=False, indent=1) + "\n",
-                    encoding="utf-8",
-                )
+                if persist:
+                    path.write_text(
+                        json.dumps(entries[binding], ensure_ascii=False, indent=1) + "\n",
+                        encoding="utf-8",
+                    )
             out.append(wrap(entry["statement"].strip()))
             changed = True
             new_title = safe_title(entry.get("title", ""))
@@ -673,7 +685,7 @@ def main() -> int:
         entries = cache.load_all()
         print(f"\n{len(entries)} regenerated statements cached")
         for tex in sorted(CHAPTER_DIR.rglob("*.tex")):
-            new = apply_cached(tex, entries, report)
+            new = apply_cached(tex, entries, report, persist=not args.check)
             if new is None:
                 continue
             if args.check:

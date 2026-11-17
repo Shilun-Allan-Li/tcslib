@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.badInput_card_ge_half_of_small_cost",
+ "key": "5bc33eee44d52fc7",
+ "kind": "lemma",
+ "title": "Small cost yields many bad inputs",
+ "statement": "Let $n$ be a positive integer with $n\\ge 300$, and let $p$ be a deterministic one-way protocol for indexing on $n$-bit inputs. If its cost is at most $\\lfloor n/10\\rfloor$, then at least $2^{n-1}$ inputs $x\\in\\{0,1\\}^n$ are bad for $p$, meaning that no answer vector of $p$ has Hamming distance less than $n/4$ from $x$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$n\\ge 300$",
+  "$p$ is a deterministic one-way protocol for indexing on $n$-bit inputs",
+  "The protocol cost is at most $\\lfloor n/10\\rfloor$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $n \\ge 300$ and the deterministic one-way protocol $p$ for $\\mathrm{IND}_n$ has cost at most\n$\\lfloor n/10 \\rfloor$, then at least $2^{n-1}$ of the $2^n$ inputs $x \\in \\{0,1\\}^n$ are bad\nfor $p$ (no answer vector of $p$ lies within Hamming distance $n/4$ of $x$)."
+}

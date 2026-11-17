@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.comp_lookup_run",
+ "key": "a9cae871d23574c7",
+ "kind": "lemma",
+ "title": "Encoded output lookup run",
+ "statement": "Let $C,e,p,B$ be natural numbers, let $m$ be a Boolean mode, let $f$ map finite bit strings to finite bit strings, let $x,b$ be finite bit strings, and let $v$ assign a natural number to each of fourteen registers. Suppose every register value is at most $B$, register $0$ is $0$, register $3$ is twice the length of the encoding of $(x,b)$, register $4$ is $4|x|+4$, register $11$ is twice the length of $f(x)$, register $13$ is $0$, and register $5$ is $p$. Suppose also that the encoding of $(f(x),b)$ has length at most $B$. Then, from the seek state on the nested encoding of $(x,b)$ with binary index $p$, register vector $v$, and no answer, the computation halts with answer equal to the Boolean that is true exactly when $p$ is less than the length of the encoding of $(f(x),b)$ if $m$ is true, and otherwise equal to the bit at position $p$ of that encoding, with out-of-range positions interpreted as false. Every configuration before halting satisfies the program’s instruction-side conditions and register bound $B$.",
+ "hypotheses_covered": [
+  "$C,e,p,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$f$ maps finite bit strings to finite bit strings",
+  "$x,b$ are finite bit strings",
+  "$v$ assigns natural-number values to fourteen registers",
+  "Every register value is at most $B$",
+  "Register $0$ equals $0$",
+  "Register $3$ equals twice the length of the encoding of $(x,b)$",
+  "Register $4$ equals $4|x|+4$",
+  "Register $11$ equals twice the length of $f(x)$",
+  "Register $13$ equals $0$",
+  "Register $5$ equals $p$",
+  "The encoding of $(f(x),b)$ has length at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e$ be natural numbers, let $m$ be a Boolean mode, let $f$ be a function on bit\nstrings, let $x,b$ be bit strings, let $p,B$ be natural numbers, and let $v$ assign\nnatural-number counters to the fourteen registers. Suppose every counter is at most $B$,\nand the counters satisfy: register $0$ is $0$; register $3$ is twice the length of the\nencoding of $(x,b)$; register $4$ is $4|x|+4$; register $11$ is twice $|f(x)|$; register\n$13$ is $0$; and register $5$ is $p$. Also suppose the encoding of $(f(x),b)$ has length\nat most $B$. Then the specified computation, started on the nested encoding of $(x,b)$\nwith binary index $p$, in its seek state with counters $v$ and no answer yet, halts with\nanswer true exactly when $p$ is less than the length of the encoding of $(f(x),b)$ if\n$m$ is true; otherwise it halts with the bit at position $p$ of that encoding, using\nfalse for an out-of-range position. Every configuration before halting satisfies the\nmachine's instruction-side conditions and register bound $B$."
+}

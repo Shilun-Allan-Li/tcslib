@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.tautDual_segment_add",
+ "key": "83f37d5333f291c7",
+ "kind": "lemma",
+ "title": "Composition of anchor-free run segments",
+ "statement": "Let $c,d,e$ be configurations of the dual transducer on a fixed binary input, and let $a,b\\in\\mathbb{N}$. If running the transducer for $a$ steps from $c$ reaches $d$ without being in the anchor state at any time before step $a$, and running it for $b$ steps from $d$ reaches $e$ without being in the anchor state at any time before step $b$, then running it for $a+b$ steps from $c$ reaches $e$ without being in the anchor state at any time before step $a+b$.",
+ "hypotheses_covered": [
+  "Configurations $c,d,e$ on a fixed binary input",
+  "Natural-number step counts $a,b$",
+  "The first run segment reaches $d$ in $a$ steps and avoids the anchor state at all earlier times",
+  "The second run segment reaches $e$ in $b$ steps and avoids the anchor state at all earlier times"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c, d, e$ be configurations of the dual transducer. If running $a$ steps from $c$\nreaches $d$ without visiting the anchor state before time $a$, and running $b$ steps\nfrom $d$ reaches $e$ without visiting the anchor before time $b$, then running $a + b$\nsteps from $c$ reaches $e$ without visiting the anchor before time $a + b$."
+}

@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/EXP.lean :: Complexity.enumMachine_contracts -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: low -->
+
+# Enumerator Configuration and Time Contracts
+
+**Claim.** Given the stated parameters and a machine deciding $V$ within $T_V$, there are a constant $b$ and a finite Boolean machine $E$ whose configurations enumerate the width-$w$ candidates, with the stated startup, terminal, and per-candidate time contracts.
+
+**Proof.** Choose machines computing the unary word of $C(|x|+1)^c$ true bits and incrementing a fixed-width word, using the supplied polynomial-time bounds (`Turing.FinTM.computesFunInTime_polyUnary`, `Turing.FinTM.computesFunInTime_incFixed`). Combine the verifier, incrementer, and unary-word generator into source machines with their work tapes embedded in a common machine (`enumCont_sources`). The machine that builds the initial width-$w$ counter is bounded by `enumCont_body_start_guarded`; lifting the unary-word computation into the common machine (`enumCont_lift_init`) gives the required initialized representation and startup estimate. The guarded assembly construction (`enumCont_from_body`) then turns these initialization and round procedures into a machine with a family of candidate configurations, an endpoint, and a per-round bound. For each candidate word $s$, the verifier call (`enumCont_verifier_call`) decides whether $x\mathbin{++}s$ belongs to $V$, while the increment call (`enumCont_increment_call`) computes the next counter. The lift-call result (`enumCont_lift_call`) embeds both computations into the common machine. The guarded round bound (`enumCont_body_round_guarded`) combines their runs into a round that either halts with true for an accepted candidate or advances to the next candidate. Applying the guarded assembly construction yields the desired configuration contracts. Finally, the polynomial estimates `hP1` and `hP2` bound the counter length, the increment cost, and the startup overhead by a constant multiple of $T_V(|x|+w)+(|x|+w+1)^{c+1}$. Absorbing the remaining constant factors into $b$ proves all the asserted bounds.
+
+**Key facts.** `Turing.FinTM.computesFunInTime_polyUnary`, `Turing.FinTM.computesFunInTime_incFixed`, `Complexity.enumCont_body_start_guarded`, `Complexity.enumCont_lift_init`, `Complexity.enumCont_from_body`, `Complexity.enumCont_verifier_call`, `Complexity.enumCont_increment_call`, `Complexity.enumCont_lift_call`, `Complexity.enumCont_body_round_guarded`.
+
+**Caveat.** The provided upstream statements for `enumCont_sources` and `enumCont_body_round_guarded` are truncated, so the precise construction of the common source machine and the full guarded-round conclusion cannot be detailed from the supplied material.

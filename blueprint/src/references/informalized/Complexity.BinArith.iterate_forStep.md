@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassP/BinaryArith/Loops.lean :: Complexity.BinArith.iterate_forStep -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Iteration of the encoded loop step
+
+**Claim.** After applying the loop step $i$ times to the pair encoding of $c$ and $d$, the result is the pair encoding of $c$ with its first $i$ bits deleted and of $d$ with $f$ applied $\min(i,|c|)$ times.
+
+**Proof.** Induct on $i$. At zero steps the encoded pair is unchanged, as required. For the successor step, apply the loop step once to the induction hypothesis and divide into two cases.
+
+If $|c|\le i$, the remaining suffix $c.drop\ i$ is empty. The loop step therefore leaves the encoded pair unchanged, while both iteration counts in the desired formula have reached $|c|$. The induction hypothesis gives the result.
+
+If $|c|>i$, the remaining suffix is nonempty. The pair decoding identities (\(\texttt{Complexity.pairFstD\_pairEncode}\) and \(\texttt{Complexity.pairSndD\_pairEncode}\)) recover its two components, so the loop step deletes one more bit from the first component and applies $f$ once to the second. In this case the minimum iteration count increases from $i$ to $i+1$. Deleting from the suffix and composing one more application of $f$ give exactly the asserted pair encoding.
+
+**Key facts.** `Complexity.pairFstD_pairEncode`, `Complexity.pairSndD_pairEncode`.

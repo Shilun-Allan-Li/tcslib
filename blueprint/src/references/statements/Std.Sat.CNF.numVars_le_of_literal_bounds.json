@@ -1,0 +1,16 @@
+{
+ "lean_name": "Std.Sat.CNF.numVars_le_of_literal_bounds",
+ "key": "c604bf336ed05542",
+ "kind": "theorem",
+ "title": "Variable count from literal bounds",
+ "statement": "Let $\\varphi$ be a CNF formula over variables indexed by $\\mathbb{N}$, and let $n\\in\\mathbb{N}$. If every literal $(v,b)$ in every clause of $\\varphi$ satisfies $v+1\\le n$, then the variable count $N(\\varphi)$ is at most $n$.",
+ "hypotheses_covered": [
+  "$\\varphi$ is a CNF formula over natural-number variables",
+  "$n\\in\\mathbb{N}$",
+  "Every literal in every clause satisfies $v+1\\le n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a CNF formula over variables indexed by $\\mathbb{N}$ and let\n$n \\in \\mathbb{N}$. If every literal $(v,b)$ of every clause of $\\varphi$ satisfies\n$v + 1 \\le n$, then $N(\\varphi) \\le n$, where the variable count $N(\\varphi)$ is one plus\nthe largest variable index occurring in a literal of $\\varphi$, or $0$ if $\\varphi$ contains\nno literal."
+}

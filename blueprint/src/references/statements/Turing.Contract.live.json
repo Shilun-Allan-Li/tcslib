@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.Contract.live",
+ "key": "580e86439a6ee6c6",
+ "kind": "theorem",
+ "title": "Nonhalting before the exit time",
+ "statement": "Let $C$ be a contract for a machine with entry state $entry$, let $i$ be a datum, and let $d$ be a starting configuration whose state is $entry$ and which satisfies $C$'s precondition for $i$. At every natural time $u$ strictly less than $C$'s assigned time for $(i,d)$, the machine's state is not halted.",
+ "hypotheses_covered": [
+  "$C$ is a contract",
+  "$i$ is a datum",
+  "The starting configuration $d$ has state $entry$",
+  "$d$ satisfies the $C$ precondition for $i$",
+  "$u$ is a natural number strictly less than the assigned time"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a contract for a machine, and consider a configuration $d$ in its entry state\nthat satisfies the precondition for a parameter $i$. At every natural time $u$ strictly\nless than the specified duration $C$ assigns to $(i,d)$, the machine's state is not\nhalted."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.capture_apply",
+ "key": "159104bdc57c94f5",
+ "kind": "lemma",
+ "title": "Capture Transform Commutes with Applying an Action",
+ "statement": "Let $S,H$ be sets, let $emb:S\\to H$ be a map, let $ret\\in H$, let $pre$ and $out_0$ be Boolean words, and let $c$ be a configuration of a Boolean machine with $k$ work tapes on input $input$. For every action $a$ of that machine, applying the capture transform of $a$ to the capture image of $c$ gives the capture image of the configuration obtained by applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "Sets $S$ and $H",
+  "A map $emb:S\\to H$",
+  "A designated state $ret\\in H$",
+  "Boolean words $pre$ and $out_0$",
+  "A Boolean input word $input$",
+  "A configuration $c$ with $k$ work tapes and states in $S$",
+  "An action $a$ with $k$ work tapes and states in $S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ and $H$ be sets of states, $\\iota : S \\to H$, $r \\in H$, and $p$, $o$ Boolean\nwords. For every action $a$ and every configuration $c$ of a Boolean Turing machine with\n$k$ work tapes and state set $S$ on an input $x$, applying the capture transform of $a$\nto the capture image of $c$ gives the capture image of the configuration obtained by\napplying $a$ to $c$. Here the capture transform of $a$ performs $a$ on the input and the\nfirst $k$ of $k+1$ work tapes, writes $a$'s emitted bit (if any) on the last tape and\nmoves that head right, emits nothing, and maps the successor through $\\iota$ with a halt\nreplaced by $r$; and the capture image of $c$ has state $\\iota(q)$ (or $r$ if $c$ is\nhalted), the input head and work tapes of $c$ on the first $k$ tapes, the word $p$\nfollowed by the output of $c$ stored from cell $0$ of the last tape with that head just\npast its end, and output $o$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clRepeatArgument_native",
+ "key": "0bd2497bd31101c7",
+ "kind": "lemma",
+ "title": "Polynomial-time repetition arguments",
+ "statement": "Let $C$ be a finite Turing machine over the Boolean alphabet, let $s$ be a Boolean-word function and $N$ a natural-number-valued function, and suppose both $s$ and the unary word function $x\\mapsto 1^{N(x)}$ are polynomial-time computable. Then the function that sends $x$ to the packed encoding of the repetition arguments—using $s(x)$ as the state word and $1^{N(x)}$ as the separate clock word—is polynomial-time computable.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $C$",
+  "Boolean-word function $s$",
+  "natural-number-valued function $N$",
+  "$s$ is polynomial-time computable",
+  "$x\\mapsto 1^{N(x)}$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If an initial-state producer and a unary-count producer are polynomial-time computable, then so is the function packing the repetition argument: the produced state word, blank call scratch, and the produced unary clock."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satMax_prefix",
+ "key": "40740d352e56acee",
+ "kind": "lemma",
+ "title": "Counter replay prefix",
+ "statement": "Let $x$ be a Boolean word, let $n\\in\\mathbb{N}$, and let $B:\\mathbb{Z}\\to\\{0,1\\}\\cup\\{\\text{blank}\\}$ be any buffer tape. For every $r\\le n$, after $r$ steps from the streaming entry state with input head and both work-tape heads at zero, counter tape of unary length $n$, buffer tape $B$, and empty output, the intercepted maximum-pass machine remains in the streaming entry state; the input and buffer tape are unchanged, the counter head is at $r$, and the output consists of $r$ true bits.",
+ "hypotheses_covered": [
+  "An input Boolean word $x$",
+  "A natural number $n$",
+  "An arbitrary buffer tape $B$",
+  "A natural number $r$ with $r\\le n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $r \\le n$: from the streaming entry frame with counter length $n$,\nexactly $r$ transitions of the intercepted machine copy the first $r$ unary\ncounter cells to the output, moving only the counter head; no native input or\nbuffer movement occurs during the replay."
+}

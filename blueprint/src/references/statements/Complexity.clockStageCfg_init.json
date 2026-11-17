@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clockStageCfg_init",
+ "key": "6bf5c10d0ee37614",
+ "kind": "lemma",
+ "title": "Initialization of the clock stage",
+ "statement": "Let $W$ be a finite-state binary machine, $a$ a natural number, and $x$ a Boolean word. One step of the length-only schedule machine from its initial configuration on the bit-encoded input equals the clock-stage configuration associated with the initial configuration of the machine that replaces each nonblank input symbol by false before applying $W$'s transition function.",
+ "hypotheses_covered": [
+  "finite-state binary machine W",
+  "natural number a",
+  "Boolean input word x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a binary machine, $a$ a padding constant, and $x$ a binary input.  One step\nof the schedule controller from its initial configuration on the block-encoded input\nequals the clock-stage configuration of the initial configuration on $x$ of the masked\nclock machine obtained from $W$; this single transition installs both sentinels and\nstarts the clock."
+}

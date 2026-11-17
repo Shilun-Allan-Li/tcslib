@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.sim_valP",
+ "key": "1ef6c761fbc92d39",
+ "kind": "lemma",
+ "title": "Simulation of a valid unary–payload input",
+ "statement": "Let $A$ be a register-program instruction map, let $l_0,l,l'$ be program states, let $r$ be a register, and suppose the instruction at $l$ is the validation instruction for register $r$ with successor $l'$. For any oracle, register values $v$, output word, and integer $W\\ge 0$, if the input is a valid encoding of a unary prefix paired with a canonical binary payload, the program simulates from the initial configuration with state $l$ to the corresponding configuration with state $l'$; if the input is not valid, it halts with the Boolean answer false. Here canonical means that a nonempty payload ends in $1$, and the empty payload is allowed.",
+ "hypotheses_covered": [
+  "Instruction map $A$ and initial program state $l_0$",
+  "Oracle on the $d$ deciders",
+  "Program states $l,l'$",
+  "Register $r$",
+  "The instruction at $l$ is the specified validation instruction",
+  "Register values $v$",
+  "Output word",
+  "Integer space bound $W\\ge 0$",
+  "Validity or invalidity of the input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

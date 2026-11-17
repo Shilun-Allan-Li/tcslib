@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.queryTM",
+ "key": "3083b5568822a694",
+ "kind": "def",
+ "title": "Oracle machine constructed from a finite machine",
+ "statement": "Given a finite Turing machine over the Boolean alphabet, with $k$ work tapes and state set $Q$, form an oracle Turing machine with $k$ ordinary work tapes and one additional query tape. Its state set is the disjoint union of $Q$ and three new states: a query state, a positive-answer state, and a negative-answer state. The initial state is the original machine’s initial state; transitions in states from $Q$ are obtained from the original machine’s transitions by the specified action-capturing construction, while the positive- and negative-answer states enact the corresponding oracle-answer steps and the query state has no successor transition. The three distinguished states are pairwise distinct.",
+ "hypotheses_covered": [
+  "The input is a finite Turing machine over Bool, with a finite state set and decidable equality."
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the action-capturing or oracle-answer constructions, so their exact transition behavior cannot be rendered more explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

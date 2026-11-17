@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satToken_shape",
+ "key": "a5b4da734415f6bb",
+ "kind": "lemma",
+ "title": "Shape of the unary token split",
+ "statement": "For every Boolean word $x$, write $(k,y)$ for the length and residual word obtained by removing the longest initial run of true bits. The unary token split of $x$ is the pair whose first component is $k$ true bits followed by the first bit of $y$, if any, and whose second component is $y$ with its first bit removed; moreover, $y$ is empty or begins with false.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary string $x$: the unary token splitter returns the leading run of\nones together with at most one following bit as the token, and the rest as the\nsuffix; moreover the residue after the leading run never starts with another\none."
+}

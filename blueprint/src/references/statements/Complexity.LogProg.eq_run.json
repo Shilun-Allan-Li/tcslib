@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.eq_run",
+ "key": "aeaf7dab47020893",
+ "kind": "lemma",
+ "title": "Execution of the Equality Program",
+ "statement": "Let $P$ be a register program with oracle, let $r_1$ and $r_2$ be distinct registers, and let $e_C,e_{B_y},e_{B_n},y,n$ be states. Assume the transition function at these three states satisfies the specified equality-check and branching action rules, respectively, for every input symbol and tuple of scanned work-tape symbols, and assume the program makes no oracle call at any of these states. If registers $r_1,r_2$ initially store the buffer tapes for the binary words of natural numbers $a,b$, then there is a time $T$ at which execution from the configuration with state $e_C$ and both heads at cell $0$ reaches the same configuration with state $y$ when $a=b$ and state $n$ otherwise. At every earlier time $t<T$, the configuration has some state $s$, both heads at a common cell $q$, no oracle call is made at $s$, and $-1\\le q\\le \\ell$, where $\\ell$ is the length of the binary word for $a$.",
+ "hypotheses_covered": [
+  "The registers $r_1$ and $r_2$ are distinct.",
+  "At state $e_C$, the transition function equals the specified equality-check action for all input symbols and scanned-symbol tuples.",
+  "At state $e_{B_y}$, the transition function equals the specified positive-branch action for all input symbols and scanned-symbol tuples.",
+  "At state $e_{B_n}$, the transition function equals the specified negative-branch action for all input symbols and scanned-symbol tuples.",
+  "There is no oracle call at states $e_C$, $e_{B_y}$, or $e_{B_n}$.",
+  "Register $r_1$ initially stores the buffer tape for the binary word of $a$.",
+  "Register $r_2$ initially stores the buffer tape for the binary word of $b$."
+ ],
+ "confidence": "low",
+ "caveat": "The action constructions named in the hypotheses are not defined in the supplied context, so their operational details cannot be rendered more explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

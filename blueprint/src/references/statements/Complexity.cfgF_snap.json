@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.cfgF_snap",
+ "key": "051837df5e5e80e5",
+ "kind": "theorem",
+ "title": "Snapshot update rule",
+ "statement": "Let $M$ be a finite-state binary Turing machine with $k$ work tapes, let $w$ be a binary input, and fix $t\\in\\mathbb N$ and a finite list of bits $l$. Suppose the first bit records whether $t=0$; when $t\\ne0$, the second bit records whether the tableau had already accepted by time $t-1$. Suppose the remaining designated bits encode the input symbol and each work-tape symbol in the configuration at time $t$, by presence and value, and, when $t\\ne0$, the snapshot field decodes to the machine's snapshot at time $t-1$. Then the snapshot update rule applied to $l$ yields the snapshot encoding at time $t$ followed by the acceptance indicator at time $t$.",
+ "hypotheses_covered": [
+  "first bit equals the indicator of t=0",
+  "when t≠0, second bit equals the acceptance indicator at time t−1",
+  "input-symbol presence and value bits encode the time-t input symbol",
+  "for each work tape, presence and value bits encode its time-t symbol",
+  "when t≠0, decoded prior snapshot equals the run snapshot at time t−1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

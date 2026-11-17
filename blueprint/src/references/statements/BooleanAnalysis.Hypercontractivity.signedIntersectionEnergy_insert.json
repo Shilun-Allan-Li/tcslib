@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy_insert",
+ "key": "494df73e0fdd387a",
+ "kind": "theorem",
+ "title": "Insertion recurrence for intersection energy",
+ "statement": "Let $S$ be a finite set, let $i$ be an element not in $S$, and let $g$ be a real-valued function on the finite subsets of the ambient set. For finite $T$, define $E_T(g)=\\\\sum_{A,B\\\\subseteq T}(-1)^{|T|-|A|}(-1)^{|T|-|B|}g(A\\\\cap B)$. Then $E_{S\\\\cup\\\\{i\\\\}}(g)=E_S(T\\\\mapsto g(T\\\\cup\\\\{i\\\\}))-E_S(g)$.",
+ "hypotheses_covered": [
+  "$S$ is finite",
+  "$i\\\\notin S$",
+  "$g$ is a real-valued function on finite subsets of the ambient set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a finite set $S$, an element $i\\notin S$, and a real function $g$ on finite subsets, put $E_T(g)=\\sum_{A,B\\subseteq T}(-1)^{|T|-|A|}(-1)^{|T|-|B|}g(A\\cap B)$. Then $E_{S\\cup\\{i\\}}(g)=E_S(T\\mapsto g(T\\cup\\{i\\}))-E_S(g)$."
+}

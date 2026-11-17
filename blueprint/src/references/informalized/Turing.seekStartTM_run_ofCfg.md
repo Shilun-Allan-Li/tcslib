@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Catalog.lean :: Turing.seekStartTM_run_ofCfg -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Seeking the Start of a Field Sequence
+
+**Claim.** Under the stated tape-content, running-state, and nonblank-current-cell hypotheses, the seeking machine reaches the done phase after $L+4$ steps with the selected head at the start of the field sequence. It is not done earlier, and the selected head stays within the asserted interval while every other work-tape head remains fixed.
+
+**Proof.** Write $L$ for the total field offset. The proof builds a sequence of candidate configurations indexed by the number $r$ of cells moved left from the initial head position. For $0\le r\le L+2$, the candidate head is at the initial position minus $r$; its phase is `run` at $r=0$, and afterward is `gap` precisely when the cell immediately to the right is blank. Beyond that range the candidate is placed in the `back` phase at the position one cell left of the field’s start. The initial candidate is the given configuration: its state is `run`, and its head position and remaining data coincide by the configuration definition.
+
+The tape-content hypothesis makes the symbol read at offset corresponding to $r$ equal to the specified field-sequence content. Cells lying before the sequence are blank, which follows directly from the definition of `fieldsTape`. The initial scanned cell is nonblank by hypothesis. Also, two consecutive cells within the field sequence cannot both be blank (`fieldsTape_no_double_blank`). Together these facts show that the phase choice is correct at every ordinary leftward step: a blank cell encountered during the run has a nonblank cell just to its right, so the machine crosses the separator and resumes `run` rather than stopping prematurely. Each such transition moves the selected head left by one and updates the phase according to the cell just read. The step identity for these candidate configurations is supplied by the catalogued seek-step fact (`catalog_seek_step`).
+
+At the two cells just beyond the start of the sequence, the tape is blank; the phase is therefore `gap`. The machine then moves right once into `back`, and on the following step moves right once more into `done`. This accounts for the extra steps beyond the $L+2$ leftward advances and places the final head at the start of the sequence. In the done phase the machine takes a stationary input-move transition, so the endpoint remains fixed; zero input movement preserves the input position (`moveInputPos_zero`), and the input-move step formula identifies the resulting configuration (`step_of_inputMoveAction`). Finally, the general pass-contract lemma (`catalog_pass_contract`) applies to this candidate path: it yields the endpoint at time $L+4$, proves that no earlier configuration is done, and carries the head-position bounds and the fixed positions of every other work-tape head through the run.
+
+**Key facts.** `Turing.fieldsTape_no_double_blank`, `Turing.catalog_seek_step`, `Turing.moveInputPos_zero`, `Turing.step_of_inputMoveAction`, `Turing.catalog_pass_contract`.

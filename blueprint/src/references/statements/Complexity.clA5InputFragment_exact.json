@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clA5InputFragment_exact",
+ "key": "ec8619c6e3fe6ae2",
+ "kind": "lemma",
+ "title": "Exact input-fragment reconstruction",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let its state type have a binary code, and let $C,e,c,A,d$, an input word $x$, a cursor $j$, and a time $t$ be given. If $t$ is at most $c\\,(A(n+C(n+1)^e+1)^d+1)^2$ for $n=|x|$, then the input fragment at time $t$ extracted from the packed encoding of $x$ with cursor $j$ equals the serialized input clause group at time $t$ for the all-false reference input of length $n+C(n+1)^e$.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machine $M$",
+  "binary code for optional states",
+  "natural parameters $C,e,c,A,d$",
+  "input word $x$",
+  "cursor $j$",
+  "time $t$",
+  "$t$ is at most the producer horizon for $|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, state code, parameters, instance $x$, cursor $j$, and time $t$ at most the producer horizon, the stored-coordinate input fragment equals the serialized fragment of the pure input clause group at time $t$ over the reference length."
+}

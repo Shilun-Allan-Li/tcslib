@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitRestore_append",
+ "key": "9e937dfc30719bdf",
+ "kind": "lemma",
+ "title": "Cleanup scan completion step",
+ "statement": "Let $k$ be a nonnegative integer and let $w$ and $s$ be Boolean words. One cleanup-machine step from the scan configuration at count $|s|$ yields the configuration in state $(1,\\mathrm{false})$ with all scratch tapes blank, the first tape storing the word obtained by appending one $1$ to $s$ if $|s|\\le |w|$ and otherwise leaving $s$ unchanged, the input head at the saturated position for $|s|$, and all work heads at displacement $|s|-1$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w$ and $s$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "One step of the cleanup machine from the end of its scan phase clears the\nfinal extra scratch cell and appends a $1$ to the candidate exactly when the\ncandidate's length is at most the input length; the result is the cleaned\nconfiguration holding one split-search step applied to the candidate."
+}

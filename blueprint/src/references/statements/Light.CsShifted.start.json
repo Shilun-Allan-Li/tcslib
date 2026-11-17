@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.CsShifted.start",
+ "key": "26baa455699e7e72",
+ "kind": "theorem",
+ "title": "Initial shifted-state invariant",
+ "statement": "Let $A$ specify the number $n$ of items, the key bound $nb$, and the destination and counter regions, and let $it$ and $kf$ give the item and key at each index. If every item $j<n$ is stored at its stable sorting position—the number of indices $i<n$ with $kf(i)<kf(j)$ plus the number of indices $i<j$ with $kf(i)=kf(j)$—then every item remains at that position, and for every $t\\le nb$ the counter cell at address $A.cnt+t$ contains the number of indices $i<n$ with $kf(i)<t$.",
+ "hypotheses_covered": [
+  "The placement invariant holds for every item index j < A.n."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $A$ describe $n$ items with keys $kf(j)$ and key bound $N_b$. If, for every $t<N_b$,\nthe counter cell at offset $t$ contains the number of indices among the first $n$ items\nwhose keys are below $t$, plus the number of those indices whose key equals $t$, and\nevery item $j<n$ occupies its sorted position $p(j)$—the number of keys below $kf(j)$\namong all $n$ items plus the number of equal-key indices through $j$—then the\nshifted-state conditions hold at stage $N_b$: all items occupy those sorted positions,\nall counter cells at offsets $t\\le N_b$ contain the number of keys below $t$, and the\nwaiting-cell condition for $t<N_b$ holds vacuously."
+}

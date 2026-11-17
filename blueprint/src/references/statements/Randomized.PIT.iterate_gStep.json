@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.PIT.iterate_gStep",
+ "key": "3ad2909bec961dca",
+ "kind": "theorem",
+ "title": "Iteration of the gate-evaluation machine",
+ "statement": "Fix an input width $n$, a bit string $R$, and a list $P$ of bit strings. For every number of steps $T$, work string $w$, and list of natural-number values $vs$, iterating the encoded gate-evaluation machine for $T$ steps from the state with context determined by $n,R,P$ and data $(w,vs)$ gives the encoded state with that same context and data equal to the two components obtained by iterating the abstract decoding-and-evaluation step for $T$ steps from $(w,vs)$, using modulus $\\operatorname{val}(R)+1$ and point assignment $i\\mapsto \\operatorname{val}(P_i)+1$.",
+ "hypotheses_covered": [
+  "input width $n\\in\\mathbb{N}$",
+  "bit string $R$",
+  "list $P$ of bit strings",
+  "step count $T\\in\\mathbb{N}$",
+  "bit string $w$",
+  "list $vs$ of natural-number values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

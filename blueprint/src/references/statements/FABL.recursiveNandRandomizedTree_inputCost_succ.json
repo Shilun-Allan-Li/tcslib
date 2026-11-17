@@ -1,0 +1,15 @@
+{
+ "lean_name": "FABL.recursiveNandRandomizedTree_inputCost_succ",
+ "key": "6f043333e7f4838d",
+ "kind": "theorem",
+ "title": "Recursive NAND input-cost recurrence",
+ "statement": "Let $d\\in\\mathbb{N}$ and let $x\\in\\{\\pm1\\}^{2^{d+1}}$. Write $x^{(0)}$ and $x^{(1)}$ for the two consecutive blocks of $2^d$ coordinates of $x$. For each $k$, let $F_k$ be the recursively defined NAND function on $2^k$ signs, where $F_0(y)=y$ and $F_{k+1}(y)$ is $1$ if both block values $F_k(y^{(0)})$ and $F_k(y^{(1)})$ are $-1$, and is $-1$ otherwise; let $C_k(y)$ be the expected number of queries made on input $y$ by the randomized tree at level $k$. Then\n\\[\nC_{d+1}(x)=\\frac12\\Bigl(C_d(x^{(0)})+\\begin{cases}0,&F_d(x^{(0)})=1,\\\\ C_d(x^{(1)}),&F_d(x^{(0)})\\ne1,\\end{cases}+C_d(x^{(1)})+\\begin{cases}0,&F_d(x^{(1)})=1,\\\\ C_d(x^{(0)}),&F_d(x^{(1)})\\ne1.\\end{cases}\\Bigr).\n\\]",
+ "hypotheses_covered": [
+  "$d\\in\\mathbb{N}$",
+  "$x\\in\\{\\pm1\\}^{2^{d+1}}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

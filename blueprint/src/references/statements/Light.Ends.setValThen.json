@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Ends.setValThen",
+ "key": "79f123a652ae9f93",
+ "kind": "theorem",
+ "title": "Assignment followed by a program",
+ "statement": "Let a limit record, program, execution depth, memory function $\\mu$, budget $T$, postcondition $Q$, local function $\\mathrm{loc}$, index $x$, expression $e$, statement $s$, and integer $z$ be given. If $s$ can execute from the state obtained by updating local position $x$ to $z$ in $(\\mathrm{loc},\\mu)$, with cost at most $T-(\\mathrm{cost}(e)+1)$, and its final state satisfies $Q$, and if $e$ is safe in $(\\mathrm{loc},\\mu)$ and evaluates there to $z$, with $\\mathrm{cost}(e)+1\\le T$, then assigning $e$ to position $x$ and then executing $s$ can execute from $(\\mathrm{loc},\\mu)$ with cost at most $T$ and final state satisfying $Q$.",
+ "hypotheses_covered": [
+  "The continuation s executes from the state with local position x set to z and memory μ, within budget T − (cost(e)+1), and ends in a state satisfying Q.",
+  "Expression e is safe in (loc, μ) and evaluates there to z.",
+  "cost(e)+1 ≤ T."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

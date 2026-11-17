@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.satPad_seam",
+ "key": "c72897ae5a1258f5",
+ "kind": "lemma",
+ "title": "Padding canonical seam configurations",
+ "statement": "Let $k,K$ be natural numbers with $0<k$, let $S$ be a state type, let $x$ be a Boolean input word, and let $q\\in S$ and $w,o$ be Boolean words. Padding the configuration on $x$ formed from state $q$ and the tape-word assignment that places $w$ on tape $0$ and leaves the other tapes empty, with output set to $o$, to $K$ work tapes gives the configuration on $x$ formed from the same state and word assignment over $K$ tapes, with output $o$.",
+ "hypotheses_covered": [
+  "$k,K$ are natural numbers",
+  "$0<k$",
+  "$S$ is a type",
+  "$x$ is a Boolean word",
+  "$q\\in S$",
+  "$w,o$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a positive source tape count, padding the canonical configuration built from\na state word (data word on tape zero, other tapes blank) yields the canonical\nconfiguration over the larger tape count built from the same state word, with\nthe same output."
+}

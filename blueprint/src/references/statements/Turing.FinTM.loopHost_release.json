@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_release",
+ "key": "1c19b965b8adcb1d",
+ "kind": "lemma",
+ "title": "Release the first anchor",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose the forward and find-mode settings, and let $x$ be a Boolean input word. For any body configuration $c$ on $x$, Boolean word $w$, and fuel configuration $f$ on $x$, one step of the loop host from the startup call on the halted version of $c$, with release clear and stop flag false, equals the non-startup call on $c$ with its state set to $a$, release set, and no stop flag, retaining $w$ and $f$.",
+ "hypotheses_covered": [
+  "Boolean finite machines B and F",
+  "anchor state a of B",
+  "forward setting",
+  "find-mode setting",
+  "Boolean input x",
+  "body configuration c on x",
+  "Boolean word w",
+  "fuel configuration f on x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a body configuration, $w$ a counter word, and $f$ a fuel configuration. One\nstep of the loop host from the startup call on $c$ with control removed, release clear,\nand flag $\\mathrm{false}$ yields the active (non-startup) call on $c$ with control the\nanchor, release set, and no flag, changing no body, counter, or fuel data."
+}

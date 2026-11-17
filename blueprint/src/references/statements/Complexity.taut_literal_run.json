@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.taut_literal_run",
+ "key": "e37270a369ebb811",
+ "kind": "lemma",
+ "title": "Evaluation of a serialized literal",
+ "statement": "Let $\\ell=(v,b)$ be a literal, let $r,u,x,\\mathrm{pre}$ be binary words, and let $c$ be a Boolean value. Suppose $v<|u|$ and $x$ is the concatenation of $\\mathrm{pre}$ with the pair encoding of the literal encoding of $\\ell$ followed by $r$, together with $u$. Starting with $|\\mathrm{pre}|$ input bits consumed, in the clause-level evaluation state with accumulator $c$, work word $u$, and work head at $0$, the verifier is after exactly $3v+7$ steps in the clause-level evaluation state with accumulator $c\\wedge[\\alpha_u(v)=b]$, with $|\\mathrm{pre}|+2|\\mathrm{enc}(\\ell)|$ input bits consumed, work word $u$, work head at $0$, and empty output.",
+ "hypotheses_covered": [
+  "$v<|u|$",
+  "$x=\\mathrm{pre}\\,\\Vert\\,\\mathrm{pair}(\\mathrm{enc}(\\ell)\\,\\Vert\\,r,u)$",
+  "$\\ell,r,u,x,\\mathrm{pre}$ are binary-word/literal data as stated",
+  "$c$ is a Boolean accumulator"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\ell = (v, b)$ be a literal and $u$ a word with $v < |u|$, and let the input be\n$x = p \\mathbin{+\\!\\!+} \\mathrm{pair}(\\sigma \\mathbin{+\\!\\!+} r, u)$ where $\\sigma$ is the\nserialization of $\\ell$. Started in the clause-level evaluation state with accumulator\n$c$, $|p|$ bits consumed, work word $u$, and head $0$, the non-tautology verifier after\nexactly $3v + 7$ steps is in the clause-level state with accumulator\n$c \\wedge (\\alpha_u(v) = b)$, where $\\alpha_u$ reads $v$ off the $v$-th bit of $u$, with\n$|p| + 2|\\sigma|$ bits consumed and head $0$."
+}

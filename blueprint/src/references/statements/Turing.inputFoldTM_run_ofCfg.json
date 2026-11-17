@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.inputFoldTM_run_ofCfg",
+ "key": "9676bec93a73fd8f",
+ "kind": "theorem",
+ "title": "Execution of the input-fold machine",
+ "statement": "Let $\\Gamma$ be an alphabet, let $A$ be a set, let $k$ be a natural number, and let $x$ be a word over $\\Gamma$. Given a state update rule $\\delta:A\\to\\Gamma\\to A$, an initial value $a_0\\in A$, and a configuration $d$ on input $x$ in state $(\\mathrm{fwd},a_0)$ with its input head at position $1$, after $2|x|+2$ steps the machine is in state $(\\mathrm{done},\\operatorname{foldl}(\\delta,a_0,x))$, with all other configuration data unchanged. Before that time it is never in any done state, and throughout the execution every work-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "An alphabet $\\Gamma$ and a type $A$",
+  "A natural number $k$ of work tapes",
+  "A word $x$ over $\\Gamma$",
+  "A state update rule $\\delta:A\\to\\Gamma\\to A$",
+  "An initial value $a_0\\in A$",
+  "A configuration $d$ on input $x$",
+  "The initial state of $d$ is $(\\mathrm{fwd},a_0)$",
+  "The input head of $d$ is at position $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.capture_run",
+ "key": "78363dc3936e0620",
+ "kind": "theorem",
+ "title": "Lockstep Run Under Output Capture",
+ "statement": "Let $M$ be a Boolean Turing machine with $k$ work tapes and states $S$, and let $N$ be a Boolean Turing machine with $k+1$ work tapes and states $H$. Fix a map $emb:S\\to H$, a state $ret\\in H$, and suppose that for every state $s\\in S$, input symbol $inp$ (possibly absent), and assignment $w$ of symbols to the $k+1$ work-tape heads, the transition of $N$ at $(emb(s),inp,w)$ is the capture transform of the transition of $M$ at $(s,inp,w|_{k})$, using the first $k$ entries of $w$. For every Boolean input word, prefix word $pre$, output word $out_0$, initial configuration $c_0$ of $M$, and $t\\in\\mathbb N$, if $M$ is not halted at any time $t'<t$ when run from $c_0$, then running $N$ for $t$ steps from the capture image of $c_0$ equals the capture image of the configuration reached by running $M$ for $t$ steps from $c_0$.",
+ "hypotheses_covered": [
+  "A Boolean Turing machine $M$ with $k$ work tapes and state set $S$",
+  "A Boolean Turing machine $N$ with $k+1$ work tapes and state set $H$",
+  "A map $emb:S\\to H$",
+  "A return state $ret\\in H$",
+  "The transition-agreement hypothesis for all $s$, optional input symbols, and $k+1$-tape head-symbol assignments",
+  "Boolean input word",
+  "Prefix word $pre$ and initial output word $out_0$",
+  "Initial configuration $c_0$",
+  "A natural number $t$",
+  "Nonhalting of $M$ at every time $t'<t$ from $c_0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a Turing machine over the Boolean alphabet with $k$ work tapes and state set\n$S$, let $N$ be one with $k+1$ work tapes and state set $H$, and let $\\iota : S \\to H$\nand $r \\in H$. Suppose that for every $s \\in S$, every (possibly blank) input symbol\n$\\sigma$ and every tuple $(w_0, \\dots, w_k)$ of work-tape symbols, the transition of $N$\nat $(\\iota(s), \\sigma, w_0, \\dots, w_k)$ is the capture transform of the transition of\n$M$ at $(s, \\sigma, w_0, \\dots, w_{k-1})$: $M$'s action on the input and first $k$ tapes,\nits emitted bit (if any) written on the last tape followed by a right move, no output,\nand a halt replaced by entering $r$. Let $p$, $o$ be Boolean words, $c_0$ a\nconfiguration of $M$ on an input $x$, and $t \\in \\mathbb{N}$ such that $M$ run from $c_0$\nis not halted at any time $t' < t$; then running $N$ for $t$ steps from the capture image\nof $c_0$ yields the capture image of the configuration $M$ reaches after $t$ steps from\n$c_0$, where the capture image of a configuration $c$ has state $\\iota(q)$ (or $r$ if $c$\nis halted), the input head and work tapes of $c$ on the first $k$ tapes, the word $p$\nfollowed by the output of $c$ stored from cell $0$ of the last tape with that head just\npast its end, and output $o$."
+}

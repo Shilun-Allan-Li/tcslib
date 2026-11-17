@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.exists_selfUniversalK",
+ "key": "a29cf32ba6ed8ce7",
+ "kind": "theorem",
+ "title": "Self-simulation with time and space bounds",
+ "statement": "For every natural number $k$ and every effective coding system that assigns a $k$-work-tape Boolean machine with a finite state set to each Boolean string $\\alpha$, there is a finite-state deterministic Boolean machine $U$ such that, for each $\\alpha$, some positive integer $C$ works for every Boolean string $w$. Whenever the machine assigned to $\\alpha$ produces output $o$ on $\\langle\\alpha,w\\rangle$ and halts at exactly time $t$, $U$ produces the same output on that input at exactly time $C(t+1)$, using at most $C(s+1)$ work-tape cells if the assigned machine uses exactly $s$ cells by time $t$. Conversely, every output that $U$ produces on $\\langle\\alpha,w\\rangle$ is produced by the machine assigned to $\\alpha$ after some finite number of steps.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "An effective code system assigns a $k$-work-tape Boolean machine with finitely many states to each Boolean string $\\alpha$",
+  "For each $\\alpha$, a positive integer $C$ is chosen independently of $w$, the output, and the simulated time",
+  "The simulated machine computes the specified output on the paired input at exactly time $t$",
+  "The simulator's time is exactly $C(t+1)$",
+  "The simulator's space is at most $C$ times one plus the simulated machine's space at time $t$",
+  "Any output computed by the simulator is computed by the assigned machine at some time"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every natural number $k$ and effective code system assigning each binary string\n$\\alpha$ a $k$-work-tape binary machine with finitely many indexed states, there exists\na finite-state deterministic binary machine $U$ such that, for each $\\alpha$, some\npositive integer $C$ works for every binary input $w$. Whenever the machine assigned to\n$\\alpha$ halts on $\\langle\\alpha,w\\rangle$ at time $t$ with output $o$, $U$ halts on\nthat same input with output $o$ at time $C(t+1)$, and by then uses at most $C(s+1)$\nwork-tape cells if the simulated machine used at most $s$ by time $t$. Conversely, any\noutput produced by $U$ on $\\langle\\alpha,w\\rangle$ is produced by the machine assigned\nto $\\alpha$ after some finite number of steps."
+}

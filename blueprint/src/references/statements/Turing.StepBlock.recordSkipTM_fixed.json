@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.StepBlock.recordSkipTM_fixed",
+ "key": "3186b5ffe9a5d5c1",
+ "kind": "lemma",
+ "title": "Fixed-width recording and skip run",
+ "statement": "Let $k\\in\\mathbb{N}$, let $x$ be a finite Boolean word, and let $d$ be a configuration with $k+2$ work tapes, Boolean tape symbols, and record states. Let $\\mathrm{bits}$ assign a bit to each of the $4k+4$ record positions. Suppose $d$ is in the initial state of the recording machine and, for every record position $i$, the table tape at the current table-head position plus $i$ contains $\\mathrm{bits}(i)$. For each $u\\le 4k+4$, running the record-and-skip machine for $u$ steps from the state-renamed configuration gives the state-renamed configuration that has read the first $u$ record bits (with the prescribed read configuration); after $4k+5$ steps, it gives the read configuration at full width, with its state renamed to the successor phase tagged as true.",
+ "hypotheses_covered": [
+  "Natural number k",
+  "Finite Boolean word x",
+  "Configuration d with k+2 tapes and record states",
+  "Bit assignment on the 4k+4 record positions",
+  "d has the initial recording-machine state",
+  "Each specified table-tape cell contains its assigned bit"
+ ],
+ "confidence": "high",
+ "caveat": "The phrase “read configuration” names the configuration construction supplied in the formal statement.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

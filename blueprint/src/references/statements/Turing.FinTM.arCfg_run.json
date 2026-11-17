@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.arCfg_run",
+ "key": "032caefeaffe1bc5",
+ "kind": "lemma",
+ "title": "Simulation over multiple cycles",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $E$ injectively code optional $\u001b[0m\u001b[0m\\Gamma$ symbols as blocks of $N+1$ optional bits, and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an embedding. For a finite-state $k$-tape machine $M$, a binary input $x$, a configuration $c$ of $M$ on the letterwise $e$-image of $x$, and $t\\in\\mathbb{N}$, running the binary block-code simulator for $(3(N+1)+2)t$ steps from the encoding of $c$ yields the encoding of the configuration reached after $t$ steps of $M$ from $c$.",
+ "hypotheses_covered": [
+  "Finite alphabet $\\Gamma$",
+  "Natural number $N$",
+  "Injective code $E$ of optional $\u001b[0m\u001b[0m\\Gamma$ symbols into $(N+1)$-entry optional-bit blocks",
+  "Bit embedding $e:\\{0,1\\}\\hookrightarrow\\Gamma$",
+  "Finite-state machine $M$ over $\\Gamma$ with $k$ work tapes",
+  "Binary input $x$",
+  "Configuration $c$ of $M$ on the letterwise $e$-image of $x$",
+  "Natural number of steps $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a Turing machine over a finite alphabet $\\Gamma$ and $c$ a configuration of\n$M$ on the letterwise $e$-image of a binary string. For every $t \\in \\mathbb{N}$,\nrunning the binary block-code simulator for $(3(N+1)+2)\\cdot t$ steps from the encoded\nconfiguration of $c$ yields the encoded configuration of the configuration reached by\n$M$ after $t$ steps from $c$."
+}

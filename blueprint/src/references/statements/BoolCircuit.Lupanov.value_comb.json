@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.Lupanov.value_comb",
+ "key": "3c65e7517b4bacce",
+ "kind": "theorem",
+ "title": "Value of a combining gate",
+ "statement": "Let $n$ be a natural number, let $f$ be a Boolean function on the Boolean inputs indexed below $n$, let $k$ be a natural number with $k\\le n$, and let $x$ be such an input. For every natural number $p<2^{n-k}$, the value at vertex $n+o_C(n,k)+p$ of the gate list constructed from $f$ and $k$ equals the conjunction of the following two Boolean conditions: the heap-path integer of $x$ at depth $n-k$ equals $2^{n-k}+p$, and the binary digit at position $H_x(n-k,k)-2^k$ of the code of $f$ for $k,p$ is true. Here $H_x(o,l)$ is defined by $H_x(o,0)=1$ and $H_x(o,l+1)=2H_x(o,l)+x(o+l)$, with $x$ taken to be false outside its input indices.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$f$ is a Boolean function on inputs indexed below $n$",
+  "$k$ is a natural number",
+  "$k\\le n$",
+  "$x$ is a Boolean input on indices below $n$",
+  "$p<2^{n-k}$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion refers to the specific gate-list construction and code defined upstream, whose supplied informal descriptions are placeholders; the statement identifies these objects by their roles but cannot fully specify those constructions from the provided definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

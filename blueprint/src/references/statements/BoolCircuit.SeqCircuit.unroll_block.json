@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.SeqCircuit.unroll_block",
+ "key": "01e96b30f600b1b1",
+ "kind": "theorem",
+ "title": "Values within an unrolled stage",
+ "statement": "Let a sequential circuit be unrolled for $T$ steps on input $x$, and let $k\\le T$. Suppose that at stage $k$ every register vertex has the value prescribed by the sequential circuit's state at time $k$. Then for every vertex index $a<n+r+g$, the value at its placed vertex in the unrolled circuit equals the value at index $a$ when the combinational circuit is evaluated on the input together with the time-$k$ register state; here $g$ is the number of combinational gates.",
+ "hypotheses_covered": [
+  "A sequential circuit",
+  "A natural number $T$",
+  "An input $x$ of length $n$",
+  "A natural number $k$ with $k\\le T$",
+  "At each register vertex placed at stage $k$, the unrolled circuit's value equals that register's state at time $k$",
+  "A vertex index $a<n+r+g$, where $g$ is the number of combinational gates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

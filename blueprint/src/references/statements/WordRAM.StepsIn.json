@@ -1,0 +1,18 @@
+{
+ "lean_name": "WordRAM.StepsIn",
+ "key": "f642f1939e976d5d",
+ "kind": "def",
+ "title": "Base-machine steps within an address set",
+ "statement": "Let $W$ be a word width, let $P$ be a finite program of base instructions, and let $K$ be a set of integer addresses. Two configurations are related by $n$ steps within $K$ if they are equal when $n=0$, and if, for $n+1$, one step from the first configuration returns a configuration $c_1$, the addresses touched by the instruction at its program counter are all in $K$, and $c_1$ is related to the second configuration by $n$ steps within $K$. A program counter beyond the end of $P$ selects reject for this address check.",
+ "hypotheses_covered": [
+  "Word width $W$",
+  "Finite base program $P$",
+  "Address set $K$",
+  "Step count $n$",
+  "Endpoint configurations $c,c'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Stop_clean",
+ "key": "57f139c1d1f9aefe",
+ "kind": "lemma",
+ "title": "Clean Call Halts Under the Release Wrapper",
+ "statement": "Let $C$ be a finite Boolean-alphabet Turing machine, with entry and exit states, and let $x$, $arg$, $result$, and $out$ be Boolean words. Suppose a call from the seam configuration with entry state and tape word $arg$ reaches the seam configuration with exit state and tape word $result$, emitting exactly $out$, after a positive number $t$ of steps. Suppose also that its state is not the exit state at any time strictly between $0$ and $t$. Then the release wrapper, started with its release flag false at the entry seam, reaches after $t+1$ steps a halted configuration with release flag true, exit state, tape word $result$, and output $out$.",
+ "hypotheses_covered": [
+  "$C$ is a finite Boolean-alphabet Turing machine, with states $entry$ and $exit$",
+  "$x,arg,result,out$ are Boolean words",
+  "$t$ is a natural number with $0<t$",
+  "The underlying run reaches the specified exit seam and output at time $t$",
+  "The underlying run's state differs from $exit$ at each time $v$ with $0<v<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a clean call runs from its entry over an argument word to its exit over a result word with some emitted output, in positive time $t$, never showing the exit strictly between $0$ and $t$. Then the release wrapper, started unreleased at the entry, halts physically at time $t + 1$ with exactly the result's canonical seam, the same emitted output, and no further transition."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.simTo_of_reaches",
+ "key": "7cd09cc30e1463d8",
+ "kind": "lemma",
+ "title": "Reachability implies bounded simulation",
+ "statement": "Let $A$ be an instruction program on $m$ registers, with control states in $\\Lambda$, and let an oracle answer Boolean queries to $d$ deciders. Fix an initial state $l_0$, Boolean input $x$, states $l,l'\\in\\Lambda$, register values $v:\\{0,\\ldots,m-1\\}\\to\\bbn$, output word $o$, register $r$, and integer $W\\ge 0$. Form the initial and final configurations with states $l$ and $l'$, respectively, phase at its start, input head at position one, every register tape storing the binary expansion of its assigned value with head at zero, and output $o$. If the program reaches the final configuration from the initial one and, at every strictly earlier time, is at an ordinary (non-call) state with register $r$'s head at position zero, then the run is a simulation to the final configuration in which every strictly earlier configuration is an ordinary state and every register head position lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "The register program $A$, oracle, and initial control state $l_0$",
+  "States $l,l'\\in\\Lambda$",
+  "Initial register assignment $v$",
+  "Output word $o$",
+  "Register $r$",
+  "Integer bound $W$ with $0\\le W$",
+  "The stated reachability property, including ordinary states and register-$r$ head position zero at all earlier times"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

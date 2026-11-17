@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.bridge_back",
+ "key": "444a61716eb11fdc",
+ "kind": "lemma",
+ "title": "Backward input loading",
+ "statement": "Let $c$ be a program in the partial-recursive language and $x$ a Boolean string. For every natural number $j\\le |x|$, the bridging machine reaches, after some finite number of steps, the configuration whose input head is at the left boundary, whose main stack contains the stack word of all of $x$, whose control is the execution state at the translated initial statement of the compilation with empty register, and whose output is empty. The starting configuration has the input head at position $j$, is in the backward-reading state, has the stack word of the suffix of $x$ beginning at $j$ on its main stack, and has all other stacks and the output empty.",
+ "hypotheses_covered": [
+  "A program $c$ in the partial-recursive language",
+  "A Boolean string $x$",
+  "A natural number $j\\le |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a program in Mathlib's partial-recursive language and $x$ a Boolean input\nstring.  For every position $j \\le \\abs{x}$: from the bridge configuration of the\nbridging machine of $c$ in the backward-reading state, with input head at position\n$j$ and the main stack holding the stack word of the suffix of $x$ from position $j$\nonward (other stacks empty, empty output), the machine reaches the configuration\nwith the input head at the left endmarker whose main stack holds the stack word of\nall of $x$ and whose control is the execution state at the translated initial\nstatement of $c$'s compilation, with empty register."
+}

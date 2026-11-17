@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satStream_parseLit",
+ "key": "6d7cffd323241acb",
+ "kind": "lemma",
+ "title": "Literal parser round trip",
+ "statement": "For every literal $\\ell$ over natural-number variable indices and every bit string $r$, parsing the encoding of $\\ell$ followed by $r$ returns the literal $\\ell$ together with the remainder $r$.",
+ "hypotheses_covered": [
+  "literal $\\ell$ over natural-number variable indices",
+  "remainder bit string $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every literal $\\ell$ and remainder word $r$, the literal parser applied to the\nserialization of $\\ell$ followed by $r$ succeeds and returns exactly $(\\ell, r)$."
+}

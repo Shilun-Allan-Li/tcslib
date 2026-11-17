@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Tensorization.lean :: BooleanAnalysis.Hypercontractivity.tensorize_reverse_bonami_beckner -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Reverse norm tensorization
+
+**Claim.** If $0<q<p$, $0\le\rho\le1$, and the reverse norm inequality $M_q(T_\rho u)\ge M_p(u)$ holds for every nonnegative one-bit function, then it holds for every nonnegative function on every finite Boolean cube.
+
+**Proof.** Since $0<q<p$, we also have $p>0$. Proceed by induction on the dimension. In dimension zero, the noise operator is the identity, and each positive power mean of a nonnegative function on the one-point cube equals its value there; thus the two sides agree. For the induction step, write a point of the $(k+1)$-cube as $(x,y)$, with $x$ in the $k$-cube and $y$ in the one-bit cube, and set $F(x,y)=T_\rho( f_y)(x)$, where $f_y(x)=f(x,y)$. Noise preserves nonnegativity when $0\le\rho\le1$, so $F$ is nonnegative. The noise operator’s last-coordinate slicing identity identifies $T_\rho f(x,y)$ with applying one-bit noise in $y$ to $F(x,\cdot)$; collapsing the last coordinate of the $q$-mean therefore expresses the left side as the $q$-mean in $x$ of the one-bit $q$-means of $F$. Apply the assumed one-bit inequality for each fixed $x$, then monotonicity of the outer $q$-mean, to bound this below by the $q$-mean in $x$ of the one-bit $p$-means. The mixed reverse Minkowski inequality bounds that quantity below by the $p$-mean in $y$ of the $q$-means in $x$. By the induction hypothesis, each such $q$-mean in $x$ is at least the $p$-mean of the corresponding slice $f_y$; monotonicity of the outer $p$-mean preserves this bound. Finally, commutation of the two iterated $p$-means and collapse of the last coordinate identify the result with the $p$-mean of $f$.
+
+**Key facts.** `BooleanAnalysis.Hypercontractivity.noiseOp_dim_zero`, `BooleanAnalysis.Hypercontractivity.lpMean_dim_zero`, `BooleanAnalysis.Hypercontractivity.lpMean_collapse_last`, `BooleanAnalysis.Hypercontractivity.noiseOp_snoc_slice`, `BooleanAnalysis.Hypercontractivity.noiseOp_nonneg`, `BooleanAnalysis.Hypercontractivity.lpMean_mono`, `BooleanAnalysis.Hypercontractivity.lpMean_nonneg`, `BooleanAnalysis.Hypercontractivity.reverse_minkowski_mixed`, `BooleanAnalysis.Hypercontractivity.lpMean_comm`.

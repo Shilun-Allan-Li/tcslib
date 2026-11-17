@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.PathHard.cp_run",
+ "key": "4b81a95d3cfbdca6",
+ "kind": "theorem",
+ "title": "Execution of a Copy Site",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $o$ be an oracle taking an index from a five-element set and a Boolean word, and let $y$ be a Boolean word. For a copy-site label $k$ and a register record $st$, suppose every register value is at most $B$ and the value in the destination register specified by $k$ is at most the value in its source register. Then the machine reaches the next label specified by $k$ from the copy-site label, starting with register values $st$ and no answer recorded; the final register vector is obtained by replacing the destination value with the source value and leaving every other value unchanged, and the guard holds at every step before the endpoint.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "Boolean mode $m$",
+  "Oracle on five indices and Boolean words",
+  "Boolean input word $y$",
+  "Copy-site label $k$",
+  "Register record $st$",
+  "Every entry of $st$ is at most $B$",
+  "Destination value for $k$ is at most its source value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $\\mathrm{mode}$ be Boolean, let $o$ be an oracle\non five indices and Boolean words, let $y$ be a Boolean word, let $k$ be a copy site,\nand let $\\mathrm{st}$ be a register record. Suppose every entry of $\\mathrm{st}$ is at\nmost $B$, and the value in the destination register of $k$ is at most the value in its\nsource register. Then the machine reaches its next label from the copy-site label in the\nconfiguration with registers $\\mathrm{st}$ and no answer recorded, ending with the\ndestination register replaced by the source register's value and all other registers\nunchanged; the guard holds throughout."
+}

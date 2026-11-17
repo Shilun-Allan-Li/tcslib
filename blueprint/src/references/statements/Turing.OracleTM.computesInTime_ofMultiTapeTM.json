@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.OracleTM.computesInTime_ofMultiTapeTM",
+ "key": "402f9657a97390fe",
+ "kind": "theorem",
+ "title": "Oracle simulation of a plain machine",
+ "statement": "Let $tm$ be a deterministic Turing machine with $k$ work tapes, let $O$ be an oracle language, and let $x,y$ be words and $t$ a natural number. The oracle machine obtained by embedding $tm$ computes $y$ on input $x$ within $t$ steps relative to $O$ if and only if the run of $tm$ from its initial configuration on $x$ is halted after $t$ steps and has output $y$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A state type and symbol type",
+  "A deterministic machine $tm$ with $k$ work tapes",
+  "An oracle language $O$",
+  "Words $x$ and $y",
+  "A natural number $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_0$ be a plain multi-tape machine with $k$ work tapes, let $O$ be any\noracle language, let $x$ and $y$ be words, and let $t \\in \\mathbb{N}$.  The\noracle machine obtained by embedding $M_0$ computes $y$ on input $x$ within\n$t$ steps relative to $O$ if and only if, after running $M_0$ for $t$ steps\nfrom its initial configuration on $x$, the machine has halted and its output\ntape holds exactly $y$.  In particular, the input/output behavior and time\nbounds of the embedded machine do not depend on the oracle."
+}

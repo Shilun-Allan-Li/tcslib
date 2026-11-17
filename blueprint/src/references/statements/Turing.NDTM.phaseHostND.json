@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.NDTM.phaseHostND",
+ "key": "ec05a582a7550277",
+ "kind": "def",
+ "title": "Nondeterministic phase host",
+ "statement": "Let $I$ be a type, let each $i \\in I$ have a state type $\\mathrm{Ph}(i)$, and let $M_i$ be a nondeterministic Turing machine with $k$ work tapes over alphabet $\\Gamma$ and state type $\\mathrm{Ph}(i)$. Given an initial state $q_0$ in the dependent sum of these state types and a function that may redirect each phase state to another dependent-sum state, the phase host has state type $\\sum_{i\\in I}\\mathrm{Ph}(i)$ and initial state $q_0$. At a state $(i,q)$, if the redirect function returns a state, the host makes no writes or output, leaves all heads stationary, and moves to that state; otherwise it performs the transition of $M_i$ for the given choice bit, input symbol, and work-head symbols, embedding any successor state in phase $i$.",
+ "hypotheses_covered": [
+  "A type of phase indices $I$",
+  "A state type $\\mathrm{Ph}(i)$ for each phase",
+  "A family of machines $M_i$ with $k$ work tapes and alphabet $\\Gamma$",
+  "An initial dependent-sum state $q_0$",
+  "A redirection function to optional dependent-sum states"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Codec.parse_run",
+ "key": "4067a6cde10dd0ed",
+ "kind": "theorem",
+ "title": "Parsing run of the codec program",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine with Boolean input and let $\\mathrm{mode}$ be any codec mode other than the step mode. For every bit string $y$, either there exist bit strings $x,w$ and natural numbers $s,q_1,c$ such that $y=\\langle x,\\langle w,\\mathrm{bits}(s)\\rangle\\rangle$, $|\\mathrm{bits}(s)|\\leq |\\mathrm{bits}(|y|)|$, $q_1,c\\leq (8W+8)(|y|+1)$, and the codec register program, started at its length-scan label with all registers zero and run with its two membership oracles on input $y$, reaches the label for halving the auxiliary counter. At that point its registers satisfy $L=|y|$, $P=2|x|+2|w|+4$, $A=2|x|+2$, $Q_1=q_1$, $Cap=c$, $Q_2=2|x|+2|w|+4$, and $S=s$; or no such encoded representation of $y$ exists, and the program, from the same initial configuration, halts with answer false. In both cases, the execution respects its configuration precondition and every register is bounded by $(8W+8)(|y|+1)$ throughout.",
+ "hypotheses_covered": [
+  "$N$ is a finite-state nondeterministic Turing machine on Boolean input",
+  "$\\mathrm{mode}$ is not the step mode",
+  "$y$ is an arbitrary finite bit string"
+ ],
+ "confidence": "low",
+ "caveat": "The statement relies on specialized register-program, oracle, and guarded-reachability constructions, so the informal phrasing of those execution notions is necessarily compressed.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

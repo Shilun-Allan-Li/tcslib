@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.timedPrefix_complete",
+ "key": "421c01d477969fb7",
+ "kind": "lemma",
+ "title": "Completed prefix parsing",
+ "statement": "For Boolean words $b_s,\\alpha,x$, after $4|b_s|+2|\\alpha|+6$ steps of the prefix parser on $\\langle\\langle b_s,\\alpha\\rangle,x\\rangle$, the machine is halted, its input head is at position $4|b_s|+2|\\alpha|+7$, its work tape stores $b_s$, and its output is $\\alpha$.",
+ "hypotheses_covered": [
+  "Boolean words $b_s,\\alpha,x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Running the prefix parser $4|b| + 2|\\alpha| + 6$ steps from its initial\nconfiguration on the nested pair encoding\n$\\langle \\langle b, \\alpha\\rangle, x\\rangle$ halts it with the full clock $b$\nstored on the work tape, output exactly $\\alpha$, and the input head parked at\nthe start of the suffix region holding $x$; both delimiters are consumed, also\nwhen $b$ or $\\alpha$ is empty."
+}

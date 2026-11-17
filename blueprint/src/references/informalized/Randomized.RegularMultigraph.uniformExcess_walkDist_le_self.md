@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/RandomWalkMixing.lean :: Randomized.RegularMultigraph.uniformExcess_walkDist_le_self -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Uniform Excess Under the Walk
+
+**Claim.** For a probability function $p$ on the vertices, applying the $k$-step walk cannot increase its uniform excess.
+
+**Proof.** The $k$-step transition matrix has nonnegative entries and each column sums to $1$. Thus the uniform-excess contraction lemma applies with common lower bound $0$, whose contraction factor is $1$. It follows that applying the walk cannot increase uniform excess.
+
+**Key facts.** `Randomized.RegularMultigraph.sum_transProb_left`, `Randomized.RegularMultigraph.transProb_nonneg`, `Randomized.uniformExcess_le_of_minorant`.
+
+**Caveat.** The formal theorem proves the stated uniform-excess inequality; the exercise-style informal statement also mentions total-variation distance, which is not part of this declaration.

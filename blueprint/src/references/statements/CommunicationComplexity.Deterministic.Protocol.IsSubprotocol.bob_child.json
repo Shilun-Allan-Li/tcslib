@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.bob_child",
+ "key": "3694c1de825d676b",
+ "kind": "lemma",
+ "title": "Bob node children are subprotocols",
+ "statement": "Let $X,Y,\text{ and }\u001b[0m\\alpha$ be types, let $f:Y\\to\\{0,1\\}$, and let $P$ assign a protocol over these types to each bit. For every bit $b$, the child protocol $P(b)$ is a subprotocol of the Bob node determined by $f$ and $P$.",
+ "hypotheses_covered": [
+  "A function from Bob's input type $Y$ to a bit",
+  "A protocol-valued function on the two bits",
+  "An arbitrary bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : Y \\to \\{0,1\\}$ be a Bob decision function and let $P$ assign a protocol $P(b)$\nto each bit $b$. Then for every bit $b$, the child $P(b)$ is a subprotocol of the Bob\nnode $\\texttt{bob}\\; f\\; P$."
+}

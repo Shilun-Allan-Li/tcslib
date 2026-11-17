@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.KarpLipton.mem_innerLang_pair",
+ "key": "9a445ec354bde49d",
+ "kind": "theorem",
+ "title": "Pair membership in the inner language",
+ "statement": "Let $C,c$ be natural numbers, let $V$ be a language of bit strings, and let $x,U$ be bit strings. Write $B=C(|x|+1)^c$, and say that a query $(d,y,e)$ succeeds when the encoding of $d$ paired with the encoding of $y$ and $e$ belongs to the circuit-satisfiability language. The encoding of $x$ paired with $U$ belongs to the language of strings $w$ such that every bit string $t$ has the encoding of $w$ paired with $t$ outside the bad language if and only if, for every three bit strings $u,j,p$, all of the following bad cases are absent: $|u|=B$, $|j|\\le B$, and $|p|\\le B$, together with either (i) the query with data $U$ after marker removal, input the encoding of $x$ paired with $u$, and certificate consisting of $B$ ones followed by zero fails; (ii) $|p|=B$, that query with certificate beginning with zero followed by $p$ succeeds, and the encoding of $x$ paired with $u$, then paired with $p$, is outside $V$; or (iii) $|j|+|p|+1=B$, the query with certificate consisting of $|j|$ ones followed by $1,0,p$ succeeds, and both queries with certificates consisting of $|j|$ ones followed respectively by $0,p,0$ and $0,p,1$ fail.",
+ "hypotheses_covered": [
+  "$C,c$ are natural numbers",
+  "$V$ is a language of bit strings",
+  "$x,U$ are bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

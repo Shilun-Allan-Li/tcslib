@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emitterToken_separator",
+ "key": "d951f2302ef81fd4",
+ "kind": "lemma",
+ "title": "Separator emission",
+ "statement": "Let $x$ and $o$ be Boolean words, and let $i$ be an integer with $i\\le |x|$. Starting from the scan configuration on input $x$ in state $3$ at position $i$ with output $o$, two steps of the unary token machine reach state $5$ at the same position, with output $o$ followed by the bits $0,1$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Boolean prior output word $o$",
+  "position $i\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$, position $i \\le \\abs{x}$, and prior output $o$, two\ntransitions of the token encoder from its separator phase at position $i$\nyield the suffix-copying state at the same position $i$, with output $o$\nfollowed by the pair delimiter bits $0,1$."
+}

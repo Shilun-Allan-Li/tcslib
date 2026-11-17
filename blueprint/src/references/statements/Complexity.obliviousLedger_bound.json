@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.obliviousLedger_bound",
+ "key": "2a5f0a7b34455faf",
+ "kind": "lemma",
+ "title": "Arithmetic bound for the schedule cost",
+ "statement": "Let $a,b,u,n,\\tau,\\mathrm{width}\\in\\mathbb{N}$ satisfy $n\\le u$, $\\tau\\le b(u+1)$, and $\\mathrm{width}\\le b(u+1)$. Then \\[\\tau+3n+18+(u+1)\\bigl(2\\,\\mathrm{width}+(a+1)+4\\bigr)+22(a+1)(u+1)+18\\bigl((a+1)(u+1)\\bigr)^2\\le\\bigl(18(a+1)^2+23(a+1)+3b+25\\bigr)(u+1)^2.\\]",
+ "hypotheses_covered": [
+  "$a,b,u,n,\\tau,\\mathrm{width}\\in\\mathbb{N}$",
+  "$n\\le u$",
+  "$\\tau\\le b(u+1)$",
+  "$\\mathrm{width}\\le b(u+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a, b, u, n, \\tau, w \\in \\bbn$ satisfy $n \\le u$, $\\tau \\le b\\,(u+1)$, and\n$w \\le b\\,(u+1)$.  Then\n\\[\n  \\tau + 3n + 18 + (u+1)\\bigl(2w + (a+1) + 4\\bigr)\n  + 22\\,(a+1)(u+1) + 18\\,\\bigl((a+1)(u+1)\\bigr)^2\n  \\;\\le\\;\n  \\bigl(18\\,(a+1)^2 + 23\\,(a+1) + 3b + 25\\bigr)\\,(u+1)^2 .\n\\]\nThe left-hand side gathers, as abstract summands, the costs of a clock run of length\n$\\tau$, an input reset over $n$ cells, the fixed overheads, $u+1$ budget rounds over a\nword of width $w$, and the allocation and sweep stages measured in the unary budget\n$(a+1)(u+1)$; the inequality itself is a statement of pure natural-number arithmetic."
+}

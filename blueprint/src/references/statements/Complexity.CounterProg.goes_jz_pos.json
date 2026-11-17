@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_jz_pos",
+ "key": "bd927592a0560a20",
+ "kind": "theorem",
+ "title": "Zero test on a nonzero register",
+ "statement": "Let $P$ be a counter program on a binary input $x$, with label $\\ell$, register $r$, labels $\\ell_0,\\ell_1$, register assignment $\\rho$, and input position $p$. Suppose the instruction at $\\ell$ branches to $\\ell_0$ when register $r$ is zero and to $\\ell_1$ otherwise, and suppose $\\rho(r)\\ne 0$. Then for every output string $o$, within at most one step the program reaches $\\ell_1$ with registers $\\rho$, input position $p$, and output $o$.",
+ "hypotheses_covered": [
+  "The instruction at $\\ell$ is a zero test on register $r$ with destinations $\\ell_0,\\ell_1$",
+  "The register value satisfies $\\rho(r)\\ne 0$",
+  "Arbitrary register assignment $\\rho$",
+  "Arbitrary input position $p$",
+  "The claim holds for every initial output string $o$",
+  "The step bound is one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, $r$ a register and $\\ell$ a\nlabel whose instruction is $\\mathsf{jz}(r, \\ell_0, \\ell_1)$, ``go to $\\ell_0$ if\nregister $r$ is zero, else to $\\ell_1$''.  If the registers $\\rho$ satisfy\n$\\rho(r) \\ne 0$, then for every input position $p$, from label $\\ell$ with\nregisters $\\rho$ and $p$ symbols read the program reaches label $\\ell_1$ with\nregisters $\\rho$ and $p$ symbols read within one step, printing nothing."
+}

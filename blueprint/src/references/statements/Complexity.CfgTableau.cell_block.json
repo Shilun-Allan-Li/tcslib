@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.CfgTableau.cell_block",
+ "key": "2f8527a005ac1995",
+ "kind": "theorem",
+ "title": "Correctness of a Cell Block",
+ "statement": "Let $M$ be a finite-state binary Turing machine with $k$ work tapes, let $\\ell$ be a list of bit sources, and let $T,N$ be the parameters determining the tableau layout. For a binary input $w$, a block sequence, time $t\\le T$, tape $\\tau$, and cell index $r<2T+1$, suppose that every block whose index is strictly less than the index assigned to cell $(t,\\tau,r)$ equals the expected tableau block at that index. Then evaluating the padded local source list for this cell against the input and blocks, and applying the cell update rule, yields exactly the expected encoding of cell $(t,\\tau,r)$.",
+ "hypotheses_covered": [
+  "Finite-state binary Turing machine $M$",
+  "Source list $\\ell$",
+  "Tableau parameters $N,T$",
+  "Input word $w$ and block sequence",
+  "Time $t\\le T$",
+  "Work-tape index $\\tau$",
+  "Cell index $r<2T+1$",
+  "Every block at index strictly before the target cell index equals its expected tableau block"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

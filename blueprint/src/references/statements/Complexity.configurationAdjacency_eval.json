@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.configurationAdjacency_eval",
+ "key": "e3071f44c596b9cc",
+ "kind": "theorem",
+ "title": "Evaluation of the Adjacency Formula",
+ "statement": "Let $M$ be a finite-state Turing machine with $k$ work tapes, and let $n,s,C\\in\\mathbb N$ with $C\\ge |Q|+6k+5$, where $Q$ is its state set. Let $x$ be a Boolean input of length $n$, and let $c,d$ be configurations of $M$ on $x$ whose work-tape heads lie within distance $s$ of the origin and whose work tapes are blank outside that interval. Evaluating the adjacency formula on the concatenation of the encodings of $c$ and $d$ gives true exactly when the core data of the successor of $c$ under one machine step, together with its output summary, equals the corresponding data of $d$.",
+ "hypotheses_covered": [
+  "M is a finite-state Turing machine with Boolean tape symbols",
+  "n, s, and C are natural numbers",
+  "C is at least the number of states of M plus 6k+5",
+  "x is a Boolean input of length n",
+  "c and d are configurations of M on x",
+  "each work-tape head position of c and d has absolute value at most s",
+  "each work tape of c and d is blank at every cell whose absolute position exceeds s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

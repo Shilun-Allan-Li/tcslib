@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.UTab.Front.goes_incChain",
+ "key": "3242dae4ec8ab07f",
+ "kind": "lemma",
+ "title": "Increment-chain execution",
+ "statement": "Let $C,d,K$ be natural numbers, let $\\ell_i$ be a label for each natural number $i$, and let $r$ be one of the five registers. Suppose that for every $i<K$, the instruction at $\\ell_i$ increments register $r$ and proceeds to $\\ell_{i+1}$. For any initial register assignment and input position, for every $i\\le K$, starting at $\\ell_0$ reaches $\\ell_i$ with register $r$ increased by $i$, all other registers unchanged, and the same input position, appending no output, in at most $i$ steps, uniformly for every output string already printed.",
+ "hypotheses_covered": [
+  "$C,d,K\\in\\mathbb N$",
+  "a label assignment $i\\mapsto\\ell_i$",
+  "a register $r$ among the five registers",
+  "each instruction at $\\ell_i$ for $i<K$ increments $r$ and proceeds to $\\ell_{i+1}$",
+  "arbitrary initial register assignment and input position",
+  "$i\\le K$",
+  "arbitrary binary input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

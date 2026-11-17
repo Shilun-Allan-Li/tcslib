@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clockTape_zipper",
+ "key": "8c9d1b9011f653da",
+ "kind": "lemma",
+ "title": "Captured clock tape as a zipper",
+ "statement": "For every bit word $w$, its captured clock tape equals the tape formed by a zipper with frontier at coordinate $1$, left list consisting of the origin marker, and right list consisting of the symbols of $w$ encoded as bit symbols.",
+ "hypotheses_covered": [
+  "$w$ is an arbitrary finite bit word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit word $w$, the captured clock tape of $w$ (origin sentinel at cell $0$,\nthe bits of $w$ on cells $1,\\dots,|w|$, blanks elsewhere) equals the zipper tape with\nfrontier at cell $1$, left list consisting of the single origin sentinel, and right\nlist the bits of $w$, each encoded as a budget-bit symbol."
+}

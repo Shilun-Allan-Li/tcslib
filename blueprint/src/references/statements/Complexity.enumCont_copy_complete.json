@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.enumCont_copy_complete",
+ "key": "cb1a5865d2cc30f1",
+ "kind": "lemma",
+ "title": "Complete copy and rewind",
+ "statement": "Let $L>0$, let a machine have $L+1$ work tapes, and let $q_c,q_r,q_a$ be states and $f$ a Boolean map. Suppose that in state $q_c$ the machine reads the last tape: on a symbol $b$ it writes $f(b)$ on tape zero, blanks the last tape, moves both heads right, and remains in $q_c$; on a blank it makes no writes, moves both heads left, and enters $q_r$. Suppose that in state $q_r$ it reads tape zero: on a symbol it makes no writes, moves both heads left, and remains in $q_r$; on a blank it makes no writes, moves both heads right, and enters $q_a$. For words $\\mathit{old}$ and $v$ with $|\\mathit{old}|\\le |v|$, starting with the two heads at zero, tape zero storing $\\mathit{old}$, and the last tape storing $v$, after $2|v|+2$ steps the machine is in state $q_a$, tape zero stores the word obtained by applying $f$ to each symbol of $v$, the last tape is blank, and both heads are at zero.",
+ "hypotheses_covered": [
+  "$L>0$",
+  "A machine with $L+1$ work tapes",
+  "States $q_c,q_r,q_a$ and Boolean map $f$",
+  "The specified transition rule in state $q_c$ for a symbol on the last tape",
+  "The specified transition rule in state $q_c$ for a blank on the last tape",
+  "The specified transition rule in state $q_r$ for a symbol on tape zero",
+  "The specified transition rule in state $q_r$ for a blank on tape zero",
+  "Boolean words $\\mathit{old}$ and $v$",
+  "$|\\mathit{old}|\\le |v|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a machine with copy and rewind states as in the two preceding scans: if the\ncaptured word $v$ is at least as long as the old tape-zero word, then from a\ntwo-ended configuration with both heads at zero, exactly $2|v| + 2$ steps replace\ntape zero entirely by $f$ mapped over $v$, blank the capture tape, and return\nboth heads to zero in the arrival state."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCmp_forward_step",
+ "key": "275dafe6c0dab913",
+ "kind": "lemma",
+ "title": "One comparator step scans the next column",
+ "statement": "Let $x$ be a finite Boolean input word, let $p$ be a valid input-head position for $x$, and let $w_0,w_1,w_2,w_3$ be finite Boolean words. For any $j\\in\\mathbb{N}$ strictly less than the maximum of their lengths, one step of the four-tape comparator from the configuration whose control is the state after $j$ columns and whose four tape heads are at position $j$ gives the configuration with control after $j+1$ columns and all four tape heads at position $j+1$, leaving the input-head position and tape contents unchanged.",
+ "hypotheses_covered": [
+  "A finite Boolean input word $x$.",
+  "A valid input-head position $p$ for $x$.",
+  "Four finite Boolean words.",
+  "A natural number $j$.",
+  "$j$ is strictly less than the maximum length of the four words."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, four words, and position $j$ strictly below the common width, one comparator step from the scanning control after $j$ columns yields exactly the next column: the control is the orbit value after $j+1$ columns and all four heads have moved right."
+}

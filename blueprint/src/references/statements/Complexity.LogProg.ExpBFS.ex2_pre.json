@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.ex2_pre",
+ "key": "78679d844438f8d5",
+ "kind": "lemma",
+ "title": "Concatenation of Guarded Runs with Two Outputs",
+ "statement": "Fix a memory machine, oracle, input, and guard predicate. If a configuration $a$ reaches $b$ in finitely many steps with the guard holding at every time strictly before arrival, and there exist $y,z$ such that $b$ reaches $f(y,z)$ with the guard holding at every time strictly before arrival and $Q(y,z)$, then there exist $y,z$ such that $a$ reaches $f(y,z)$ with the guard holding at every time strictly before arrival and $Q(y,z)$.",
+ "hypotheses_covered": [
+  "A guarded finite run from $a$ to $b$",
+  "There exist $y,z$ with a guarded finite run from $b$ to $f(y,z)$ and $Q(y,z)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the machine, oracle, input, and guard condition. If a configuration $a$ reaches $b$\nin finitely many steps while satisfying the guard at every time strictly before arrival,\nand there are $y,z$ such that $b$ similarly reaches $f(y,z)$ and $Q(y,z)$ holds, then\nthere are $y,z$ such that $a$ similarly reaches $f(y,z)$ and $Q(y,z)$ holds."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.Invariance.lipschitz_expectation_bound_at_scale",
+ "key": "52136934a2b20c90",
+ "kind": "theorem",
+ "title": "Lipschitz comparison at a smoothing scale",
+ "statement": "Let $(\\Omega,\\mu)$ and $(\\Xi,\\nu)$ be probability spaces, and let $U\\in L^4(\\mu)$ and $V\\in L^4(\\nu)$. Suppose $B\\ge0$ and, for every $C^4$ function $\\phi:\\mathbb R\\to\\mathbb R$ and every $C\\ge0$ such that $|\\phi^{(4)}(t)|\\le C$ for all $t\\in\\mathbb R$, assume\n\\[\n\\left|\\int \\phi(U)\\,d\\mu-\\int \\phi(V)\\,d\\nu\\right|\\le CB.\n\\]\nThen for every $c\\ge0$, every $c$-Lipschitz function $\\psi:\\mathbb R\\to\\mathbb R$, and every $\\eta>0$,\n\\[\n\\left|\\int \\psi(U)\\,d\\mu-\\int \\psi(V)\\,d\\nu\\right|\\le 8c\\eta+\\frac{8c}{\\eta^3}B.\n\\]",
+ "hypotheses_covered": [
+  "Probability spaces $(\\Omega,\\mu)$ and $(\\Xi,\\nu)$",
+  "$U\\in L^4(\\mu)$ and $V\\in L^4(\\nu)$",
+  "$B\\ge0$",
+  "For every $C^4$ function $\\phi$ and every $C\\ge0$ bounding $|\\phi^{(4)}|$ everywhere, the stated integral difference is at most $CB$",
+  "$c\\ge0$",
+  "$\\psi$ is $c$-Lipschitz",
+  "$\\eta>0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $U\\in L^4(\\mu)$ and $V\\in L^4(\\nu)$ be real inputs on probability spaces, and let $B\\ge0$. Suppose that for every $\\phi\\in C^4(\\mathbb R)$ and $C\\ge0$ bounding $|\\phi^{(4)}|$ everywhere, $|\\mathbb E_\\mu\\phi(U)-\\mathbb E_\\nu\\phi(V)|\\le CB$. For every $c\\ge0$, $c$-Lipschitz function $\\psi\\colon\\mathbb R\\to\\mathbb R$, and $\\eta>0$, $|\\mathbb E_\\mu\\psi(U)-\\mathbb E_\\nu\\psi(V)|\\le8c\\eta+(8c/\\eta^3)B$."
+}

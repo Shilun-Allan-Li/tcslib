@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.Amplify.rewind_good",
+ "key": "444d843a84ef5093",
+ "kind": "theorem",
+ "title": "Space bound during rewind",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean inputs, let $x$ be an input, and let $r,S$ be natural numbers. Suppose every choice word, when run on $N$ from its initial configuration on $x$, visits at most $S$ work-tape cells in total. For every $i\\in\\mathbb N$, every $j$ with $0\\le j\\le r$ such that $j+i=r$, every counter $c$ with $0\\le c\\le r+1$, and every augmented configuration $C$ in rewind phase at $(j,c)$ with all later blocks blank and their heads at $0$, if every work-tape head of $C$ is within distance $S$ of cell $0$, then after running the amplified machine from $C$ under any choice word, every work-tape head remains within distance $S$ of cell $0$.",
+ "hypotheses_covered": [
+  "Every choice word on $N$ from its initial configuration on $x$ uses at most $S$ work-tape cells in total",
+  "$j+i=r$",
+  "$j$ ranges from $0$ to $r$",
+  "$c$ ranges from $0$ to $r+1$",
+  "$C$ is in rewind phase at $(j,c)$, has empty output, and all later blocks are blank with head position $0$",
+  "Every work-tape head of $C$ has absolute position at most $S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

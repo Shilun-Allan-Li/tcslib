@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.lpMean_collapse_last",
+ "key": "c34985e5e51159ed",
+ "kind": "lemma",
+ "title": "Collapsing nested power means",
+ "statement": "Let $n\\in\\mathbb N$, let $p>0$, and let $f:\\{0,1\\}^{n+1}\\to\\mathbb R$. For $x\\in\\{0,1\\}^n$, define $g(x)$ to be the uniform power mean of the two values $f(x,b)$ as $b$ ranges over $\\{0,1\\}$. Then the uniform power mean of $f$ on $\\{0,1\\}^{n+1}$ equals the uniform power mean of $g$ on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$p$ is real and $p>0$",
+  "$f$ is real-valued on $\\{0,1\\}^{n+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p>0$ and $f:\\{0,1\\}^{n+1}\\to\\bbr$, and write $M_{p,z}$ for the uniform power mean $(\\E_z|\\cdot|^p)^{1/p}$. Then $M_{p,(x,b)}f(x,b)=M_{p,x}\\bigl(M_{p,b}f(x,b)\\bigr)$, where $x\\in\\{0,1\\}^n$ and $b\\in\\{0,1\\}$."
+}

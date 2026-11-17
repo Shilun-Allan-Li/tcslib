@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.rt_find_read",
+ "key": "331ce2e4cfd11363",
+ "kind": "theorem",
+ "title": "Initial read phase",
+ "statement": "Let $m>0$, let $\\delta:A\\times(\\Gamma\\cup\\{\\text{blank}\to A$ be the state update function, and let $a_0\\in A$ and $\\mathrm{acc}:A\\to\\{\\mathrm{false},\\mathrm{true}\\}$. For a two-work-tape configuration $d$ on input $x$ whose control state is the initial read control, after one step of the constructed machine its control is the read phase with a bit recording whether tape 0 has a symbol under its head. After two steps its control is the initial forward scan state on tape 0 if that cell is occupied, and is the exit state if it is blank; in both equalities all other configuration data are as in $d$.",
+ "hypotheses_covered": [
+  "$m>0$",
+  "$\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$",
+  "$a_0\\in A$",
+  "$\\mathrm{acc}:A\\to\\mathrm{Bool}$",
+  "$d$ is a two-work-tape configuration on input $x$",
+  "$d$ has control state $(\\mathrm{read},\\mathrm{none})$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

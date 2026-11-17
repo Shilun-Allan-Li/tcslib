@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/RecordTable.lean :: Turing.rt_copy_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Copying Joined Fields
+
+**Claim.** For each fixed number $m$ of fields, there is a constant $C$ such that, from the designated entry state with the joined fields on tape 0 and a blank destination interval on tape 1, the machine copies the joined fields to tape 1 in time at most $C(L+1)$. It avoids its exit earlier, keeps both heads within that same linear bound, and leaves the other configuration data and tape contents unchanged.
+
+**Proof.** Proceed by strong induction on the number $m$ of fields. For $m\le 1$, use the base-case copying result (`rt_copy_run_base`). For the inductive step, write $m=n+2$ and split the fields as $u$ followed by a nonempty tail. The joined-field layout theorem (`joinFields_cons_cons`) describes the first field, its separator, and the joined tail. The field-buffer theorem (`fieldsTape_field`) therefore supplies the buffer for $u$ at the source head. Copy $u$ to tape 1 using `copyTM_run_ofCfg`, then advance both heads past it and its separator using two applications of `skipTM_run_ofCfg`. The machine is now in the recursive entry state, with the tail correctly aligned on tape 0 and the corresponding destination region still blank. Apply the induction hypothesis to copy the tail. The tail's output together with the copied first field and separator forms the complete joined-field copy; the field-slicing identity (`rt_fields_slice`) verifies the alignment and the equality of these contents. Finally, return both heads over the first field using two applications of `skipBackTM_run_ofCfg`. The run-seam theorem (`rt_copy_seam`) combines the six phases in order, preserving first-exit behavior and the head-radius bounds. The total time is the recursive time plus $6|u|+15$, which is bounded by $(C+20)(L+1)$ after increasing the induction constant. The final configuration equality follows from the joined-field decomposition and the head-position updates; all tape positions and contents outside the destination copy remain as specified.
+
+**Key facts.** `Turing.rt_copy_run_base`, `Turing.joinFields_cons_cons`, `Turing.fieldsTape_field`, `Turing.copyTM_run_ofCfg`, `Turing.skipTM_run_ofCfg`, `Turing.rt_fields_slice`, `Turing.skipBackTM_run_ofCfg`, `Turing.rt_copy_seam`.

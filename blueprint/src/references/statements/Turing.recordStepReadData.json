@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.recordStepReadData",
+ "key": "3f686609229a2d37",
+ "kind": "def",
+ "title": "Record Step Read Data",
+ "statement": "Let $x$ be a Boolean input list, $c$ a configuration with $k$ work tapes and state set $Q$, and $s,r\\in\\mathbb{N}$. The constructed record stores $c$'s state, whether the positional width of $x$ is one, and whether the shifted input-head position is zero. For each work tape $i$, it stores the symbol under that tape's head if $i<r$ and otherwise stores blank; it also records whether each tape index $i<r$ has its head at $-s$ or at $s$. The tag, native-right flag, and input-symbol fields are left at their default values.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$Q,T$ are types",
+  "$x$ is a list of Booleans",
+  "$s,r$ are natural numbers",
+  "$c$ is a configuration with $k$ Boolean work tapes and state set $Q$, on input $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied context does not define the positional-width function, so its Boolean test is rendered descriptively.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

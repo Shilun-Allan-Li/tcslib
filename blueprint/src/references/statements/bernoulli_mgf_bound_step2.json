@@ -1,0 +1,15 @@
+{
+ "lean_name": "bernoulli_mgf_bound_step2",
+ "key": "348bb69519e2fdd9",
+ "kind": "lemma",
+ "title": "Derivative of the auxiliary derivative expression",
+ "statement": "Let $L,x\\in\\mathbb{R}$ and suppose $1-L+Le^{-x}>0$. The function $y\\mapsto -L+\\frac{y}{4}+\\frac{Le^{-y}}{1-L+Le^{-y}}$ has derivative at $x$ equal to $\\frac14-\\frac{L(1-L)e^{-x}}{(1-L+Le^{-x})^2}$.",
+ "hypotheses_covered": [
+  "$L,x\\in\\mathbb{R}$",
+  "$1-L+Le^{-x}>0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L, x \\in \\bbr$ and suppose $1 - L + L\\,e^{-x} > 0$. Then the function\n\\[\n  \\varphi'(x) \\;=\\; -L + \\frac{x}{4} + \\frac{L\\,e^{-x}}{1 - L + L\\,e^{-x}}\n\\]\n(the derivative from \\texttt{bernoulli\\_mgf\\_bound\\_step1}) is differentiable at $x$ with\nderivative\n\\[\n  \\varphi''(x) \\;=\\; \\frac{1}{4} - \\frac{L\\,(1 - L)\\,e^{-x}}{\\bigl(1 - L + L\\,e^{-x}\\bigr)^2}.\n\\]\nThis is the $\\varphi''$ computation used in the proof of \\texttt{bernoulli\\_mgf\\_bound}."
+}

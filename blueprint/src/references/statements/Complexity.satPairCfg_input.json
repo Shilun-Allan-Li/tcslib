@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.satPairCfg_input",
+ "key": "edb213811b4b7d91",
+ "kind": "lemma",
+ "title": "Input symbol in a canonical pairing configuration",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $x$ be a Boolean input word, and let $s$ be a configuration of $M$ on $x$. For any captured word $u$, optional administrative state $q$, natural number $i\\le |x|$, integer offset $j$, and output word $o$, the symbol scanned on the input tape in the corresponding canonical pairing configuration is the symbol of $x$ at index $i$, or no symbol if $i=|x|$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x$ is a Boolean word",
+  "$s$ is a configuration of $M$ on $x$",
+  "$u$ is a Boolean word",
+  "$q$ is an optional administrative state",
+  "$i$ is a natural number with $i\\le |x|$",
+  "$j\\in\\mathbb Z$",
+  "$o$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite machine, $x$ an input, and $i \\le |x|$. In every canonical\npairing configuration over $M$ on input $x$ at input position $i$, the symbol read\nby the input head is the $i$-th bit of $x$ when $i < |x|$, and the blank when\n$i = |x|$."
+}

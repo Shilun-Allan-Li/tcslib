@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.arTail_zero",
+ "key": "d7fada1e31848065",
+ "kind": "lemma",
+ "title": "Initial write-sweep family",
+ "statement": "Let $N\u0005in\u0005mathbb{N}$, let $E$ inject the symbols of an alphabet $\u0005Gamma$ together with blank into blocks of $N+1$ optional bits, let $t:\u0005bb{Z}\u0005to\u0005mathrm{Option}\u0005Gamma$ be a tape, and let $p\u0005in\u0005bb{Z}$ and $w\u0005in\u0005mathrm{Option}\u0005Gamma$. At counter $0$, the write-sweep block family is the blockwise coding of the tape that agrees with $t$ except that its value at $p$ is $w$.",
+ "hypotheses_covered": [
+  "Natural number $N$",
+  "Block-code injection $E$",
+  "Tape $t$",
+  "Write position $p$",
+  "Symbol or blank $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "At counter $0$ (after the write is complete) the partially rewritten block family for\ntape $t$, write position $p$, and new symbol $w$ is the blockwise coding of the updated\ntape that agrees with $t$ everywhere except that position $p$ now holds $w$."
+}

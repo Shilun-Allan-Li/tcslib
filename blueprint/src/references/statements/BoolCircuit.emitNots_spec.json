@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.emitNots_spec",
+ "key": "02cfea77e5c76f24",
+ "kind": "theorem",
+ "title": "Correctness of negation-gate emission",
+ "statement": "Let $n$ be a natural number, let $a_1,\u001b[0m\\ldots,a_m$ be a list of vertex indices, and let $G$ be a list of Boolean gates such that every gate reads only earlier vertices: gate $i$ reads indices less than $n+i$. Suppose every $a_j<n+|G|$. Then the procedure that appends one negation gate for each listed index returns a gate list and corresponding output indices with the following properties: the new gate list extends $G$, is acyclic, and has length $|G|+m$; there are $m$ distinct output indices, each between $n+|G|$ and strictly less than $n$ plus the new gate-list length. On every Boolean input to the original $n$ vertices, these outputs are the negations of the values at $a_1,\u001b[0m\\ldots,a_m$ in the original gate list. Each output has depth at most one plus the maximum original depth of the listed vertices (with maximum taken as $0$ for an empty list), and every appended gate is a well-formed negation gate.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "The original gate list is acyclic",
+  "Each listed index is less than $n$ plus the original gate-list length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

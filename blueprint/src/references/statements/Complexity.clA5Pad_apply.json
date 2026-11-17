@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Pad_apply",
+ "key": "3c94d1292cd49c8a",
+ "kind": "lemma",
+ "title": "Padding commutes with an action",
+ "statement": "Let $k,K\\in\\mathbb{N}$, let $S$ be a state set, let $x$ be a Boolean input word, and let $a$ be an action on $k$ work tapes and $c$ a configuration on those tapes over input $x$. Applying the action padded to $K$ tapes to the padded configuration gives exactly the padding of the configuration obtained by applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "Natural tape counts $k,K$",
+  "A state set $S$",
+  "A Boolean input word $x$",
+  "An action on $k$ work tapes",
+  "A configuration on $k$ work tapes over input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every action and configuration on the source tapes, applying the padded action to the padded configuration equals padding the result of the original application, including writes at arbitrary cells; inactive slots neither write nor move."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.enumInc_word",
+ "key": "8cf3a484870ae9d8",
+ "kind": "lemma",
+ "title": "Increment of a width-constrained binary word",
+ "statement": "Let $w$ and $i$ be natural numbers with $i<2^w$. The fixed-width increment of the width-$w$ little-endian binary word representing $i$ is the width-$w$ word representing $i+1$ if $i+1<2^w$, and has no result otherwise.",
+ "hypotheses_covered": [
+  "Natural numbers $w$ and $i$",
+  "The bound $i<2^w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $i < 2^w$, the fixed-width increment of the width-$w$ binary word of $i$ equals\nthe width-$w$ word of $i+1$ when $i + 1 < 2^w$, and reports overflow otherwise.\nThis includes width zero."
+}

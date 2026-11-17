@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.sweep_prepare",
+ "key": "54294fc54006fc97",
+ "kind": "lemma",
+ "title": "Preparation for a simulated step",
+ "statement": "Let $M$ be a finite-state machine with $k>0$ work tapes over a finite alphabet, and let $c$ be a configuration whose state is $q$. Suppose $a\\\\le c_i$ for every work-tape head position $c_i$, and every work tape is blank at coordinate $a-1$. For any natural number $n$ and integer $z$, after $k+1+(n+1)k+1$ steps from the canonical sweep configuration for $c$ with zone starting at $a$ and of size $n$, the simulator is in the right-extension phase carrying $q$ and the read table at coordinate $a+n$. Its tape has the encoded blocks with left-neighbour head flags for the zone of size $n+1$ starting at $a-1$, reversed and followed by a boundary marker on the left stack, and a boundary marker on the right stack; the input-head position and encoded output are preserved.",
+ "hypotheses_covered": [
+  "$M$ has a finite state set and decidable state equality",
+  "$k>0$",
+  "$c$ is a configuration of $M$",
+  "$c$ has state $q$",
+  "Every work-tape head position is at least $a$",
+  "Every work tape is blank at $a-1$",
+  "$n$ is a natural number",
+  "$z$ is an integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $k \\ge 1$ work tapes and let $c$ be a configuration of $M$ in\na non-halted state $q$ such that every work-tape head of $c$ is at a coordinate at least\n$a$ and every work tape of $c$ is blank at $a-1$. From the canonical between-steps\nconfiguration for $c$ with a zone of $n$ blocks starting at $a$, running the simulator\nfor exactly $k + 1 + (n+1)k + 1$ transitions extends the zone by a blank block at\n$a-1$, performs the forward sweep over all $n+1$ blocks — collecting the scanned symbol\nof every source tape into the control and recording left-neighbour head flags in the\ncells — and ends in the right-extension phase carrying $q$ and the completed read table\nfor coordinate $a+n$, with the read-marked encoded blocks enclosed by boundary markers\non the tape and the input head and encoded output preserved."
+}

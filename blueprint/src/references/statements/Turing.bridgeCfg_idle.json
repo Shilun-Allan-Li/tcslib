@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.bridgeCfg_idle",
+ "key": "13e5be7493048631",
+ "kind": "lemma",
+ "title": "Idle action on a bridge configuration",
+ "statement": "For any compiled program, bridge input, optional control states $q,q'$, valid input-head position, assignment of stacks to the four stack names, and output word, applying the idle action with successor state $q'$ to the bridge configuration with state $q$ gives the bridge configuration with state $q'$ and the same input-head position, stack assignment, and output.",
+ "hypotheses_covered": [
+  "A compiled program $c$",
+  "A bridge input word $x$",
+  "Optional bridge states $q,q'$",
+  "A valid input-head position $p$",
+  "An assignment $st$ of stacks to the four stack names",
+  "An output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying the idle action with a successor state $q'$ to a bridge configuration\nchanges only the control state to $q'$, leaving the input head, all stacks, and the\noutput unchanged."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.cfgProg_blocks",
+ "key": "28cdf90c2c8c53b3",
+ "kind": "theorem",
+ "title": "Configuration program blocks",
+ "statement": "Let $M$ be a finite-state Turing machine with $k$ work tapes, and let $n,T$ be natural numbers. Let $\\ell$ be a list of bit sources, each of which is either an input bit with index less than $n$, a Boolean constant, or a bit of a block with index less than $0$ and bit index less than the configuration width; let $x$ be any Boolean list. For every index $i$ within the configuration program, its computed block is the configuration expansion at index $i$, evaluated on the input obtained by evaluating each source in $\\ell$ against $x$ and the empty list of prior blocks.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over Boolean symbols",
+  "$T,n$ are natural numbers",
+  "Every source in $\\ell$ is valid for input width $n$, configuration width, and instruction index $0$",
+  "$x$ is a Boolean list",
+  "$i$ is less than the configuration program length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "TCSlib.Shamir.correct",
+ "key": "d9385b30571c9408",
+ "kind": "theorem",
+ "title": "Correctness of Shamir sharing",
+ "statement": "Let $F$ be a field and let $k>0$. In the Shamir scheme over $F$, parties are the nonzero elements of $F$, and sharing a secret $\\mathrm{sec}$ with randomness $q$ gives each party the value at its label of the polynomial $\\mathrm{sec}+Xq$, where $q$ has degree less than $k-1$. Reconstruction from a set $A$ of parties evaluates at zero the polynomial interpolating their shares; for every set $A$ with at least $k$ elements, every secret, and every randomness value, this reconstruction returns the secret.",
+ "hypotheses_covered": [
+  "$F$ is a field",
+  "$k>0$",
+  "The authorized party sets have cardinality at least $k$",
+  "The claim holds for every secret and every randomness value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

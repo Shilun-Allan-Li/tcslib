@@ -1,18 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.condKLDiv_specialX_zVariable_eq_mutualInfo_zVariable",
- "key": "5e98e0390ece7ee4",
+ "key": "9fab513c8e35abe5",
  "kind": "theorem",
- "title": "Conditional KL to the uniform bit equals mutual information",
- "statement": "Fix a length $n \\ge 1$ and a deterministic two-party protocol $p$ for the disjointness problem on inputs of that length, and equip the hard-distribution sample space with the law obtained by conditioning on the generated input pair being disjoint and, in addition, on Bob's bit $Y_T$ at the special coordinate $T$ being $\\mathrm{false}$. Write $X_T$ for Alice's bit at the special coordinate, and let $Z = (M, T, X_{<T}, Y_{>T})$ be the random variable that records the protocol transcript $M$ produced by running $p$, the special coordinate $T$, Alice's input bits strictly before $T$, and Bob's input bits strictly after $T$. Then the average over $Z$ of the Kullback–Leibler divergence between the conditional law of $X_T$ given $Z$ and the uniform distribution on a single bit equals the mutual information $I(X_T \\, ; Z)$.",
+ "title": "Conditional KL and mutual information",
+ "statement": "Let $n$ be a positive integer and $p$ a deterministic protocol on pairs of subsets of an $n$-element coordinate set. Under the hard-sample distribution conditioned on disjoint inputs and on Bob’s special-coordinate bit being false, the conditional Kullback–Leibler divergence of Alice’s special-coordinate bit, given the summary consisting of the transcript, special coordinate, Alice’s bits strictly before it, and Bob’s bits strictly after it, from the uniform law on one bit equals the mutual information between that bit and the summary.",
  "hypotheses_covered": [
-  "n is a positive natural number (length of the disjointness inputs)",
-  "p is a deterministic disjointness protocol on inputs of length n",
-  "the ambient law is the hard distribution conditioned on the input pair being disjoint and on Bob's special bit Y_T being false",
-  "reference law for the KL divergence is the uniform distribution on one bit",
-  "Z is the variable (transcript, special coordinate, Alice's bits before T, Bob's bits after T)"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol on pairs of subsets of an $n$-element coordinate set"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Since $X_{T}$ is uniform under $D ∧ Y_{T}=false$, the conditional KL average to the uniform bit law is the mutual information between $X_{T}$ and the full $Z=(M,T,X_{<T},Y_{>T})$ variable."
+ "replaced": "Fix a length $n \\ge 1$ and a deterministic two-party protocol $p$ for the disjointness\nproblem on inputs of that length, and equip the hard-distribution sample space with the\nlaw obtained by conditioning on the generated input pair being disjoint and, in\naddition, on Bob's bit $Y_T$ at the special coordinate $T$ being $\\mathrm{false}$. Write\n$X_T$ for Alice's bit at the special coordinate, and let $Z = (M, T, X_{<T}, Y_{>T})$ be\nthe random variable that records the protocol transcript $M$ produced by running $p$,\nthe special coordinate $T$, Alice's input bits strictly before $T$, and Bob's input bits\nstrictly after $T$. Then the average over $Z$ of the Kullback–Leibler divergence between\nthe conditional law of $X_T$ given $Z$ and the uniform distribution on a single bit\nequals the mutual information $I(X_T \\, ; Z)$."
 }

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clockStageCfg_work",
+ "key": "f03c2b6b216e7bc0",
+ "kind": "lemma",
+ "title": "Decoded work tape reads",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a$ be a natural number, and let $x$ be a finite Boolean input. For every configuration $c$ of $W$ on $x$, decoding the symbol under the head of each of the first $W.k$ work tapes in the clock-stage configuration of $c$ gives exactly the possibly blank symbol under the corresponding work-tape head in $c$.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Booleans",
+  "$a$ is a natural number",
+  "$x$ is a finite Boolean input",
+  "$c$ is a configuration of $W$ on $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $W$ be a binary machine, $a$ a padding constant, and $c$ a configuration of $W$.\nDecoding the bit symbols read on the $k$ leading work tapes of the clock-stage\nconfiguration of $c$ recovers exactly the work-tape reads of $c$."
+}

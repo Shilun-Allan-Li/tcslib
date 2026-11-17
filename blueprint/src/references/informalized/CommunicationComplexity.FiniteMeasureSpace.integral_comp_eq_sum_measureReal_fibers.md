@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/FiniteProbabilitySpace.lean :: CommunicationComplexity.FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Integral by fibers
+
+**Claim.** For a finite discrete measurable space $Ω$, a finite-valued map $Z$, and a real function $f$, the integral of $f∘Z$ is the sum over values of the mass of each fiber times the corresponding value of $f$.
+
+**Proof.** Push the measure $μ$ forward along $Z$. The change-of-variables formula for measurable maps identifies the integral of $f∘Z$ against $μ$ with the integral of $f$ against the pushforward measure. Since the target is finite, the integral is a finite sum: its term at $z$ is the pushforward mass of $\{z\}$ multiplied by $f(z)$. By the defining formula for pushforward measure, that mass is $μ(Z^\{-1\}(\{z\}))$. Substitution gives the claimed identity.

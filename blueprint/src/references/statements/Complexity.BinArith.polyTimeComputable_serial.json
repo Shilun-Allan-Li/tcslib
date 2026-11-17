@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.BinArith.polyTimeComputable_serial",
+ "key": "7e0f71a21527a67b",
+ "kind": "theorem",
+ "title": "Finite-state serial output is polynomial-time computable",
+ "statement": "Let $\\sigma$ be a finite set with decidable equality, let $\\delta:\\sigma\\times\\{0,1\\}^2\\to\\sigma$ be a state transition function, let $o:\\sigma\\times\\{0,1\\}^2\\to\\{0,1\\}$ be an output function, and fix an initial state $s\\in\\sigma$. For each bit string $z$, decode its two components, pad them on the right with zeros as needed, and form $|z|+2$ ordered pairs of bits. Starting from $s$, apply $o$ to the current state and each successive bit pair to produce the output bit, then update the state using $\\delta$; the resulting bit-string function is polynomial-time computable.",
+ "hypotheses_covered": [
+  "The state type is finite",
+  "Equality on the state type is decidable",
+  "A transition function from a state and two bits to a state",
+  "An output function from a state and two bits to a bit",
+  "A fixed initial state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.catalogRewind",
+ "key": "96bb848536aea1ff",
+ "kind": "lemma",
+ "title": "Bounded input rewind",
+ "statement": "Let $k$ be a nonnegative integer, let $S$ be a state set, and let $x$ be a Boolean input word. Suppose a machine with $k$ work tapes has states $\\mathrm{start}$ and $\\mathrm{scan}$ and a destination state that may be absent. From $\\mathrm{start}$, every transition moves the input head left and enters $\\mathrm{scan}$, regardless of the scanned symbols; in $\\mathrm{scan}$, every transition on an input bit moves left and stays in $\\mathrm{scan}$, while a transition on a blank input cell moves right and enters the destination state. Then from every configuration $c$ in state $\\mathrm{start}$, there is a number of steps $r \\leq c$'s input-head position plus $2$ after which the state is the destination and the input-head position is $1$.",
+ "hypotheses_covered": [
+  "A number $k$ of work tapes",
+  "State set $S$ and Boolean input word $x$",
+  "Transitions from start always move left and enter scan",
+  "In scan, transitions on bits move left and stay in scan",
+  "In scan, transitions on a blank move right and enter the optional destination",
+  "Initial configuration has state start"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a machine has a start state that unconditionally moves the input head\nleft into a scanning state, and the scanning state keeps moving left on\nsymbols and exits right into a destination state on the left blank. Then from\nany configuration $c$ in the start state there is a time\n$r \\le i + 2$, where $i$ is the current input position, after which the\nmachine is in the destination state with the input head back at the first\ncell, all tapes and the output unchanged."
+}

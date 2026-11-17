@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.sat3_verifier_equiv",
+ "key": "5f3b846241835bf2",
+ "kind": "lemma",
+ "title": "3SAT verifier certificates",
+ "statement": "For every finite Boolean word $x$, its decoded formula has width at most three and is satisfiable if and only if there is a Boolean word $u$ of length $|x|+1$ such that the verifier in 3SAT mode accepts the concatenation of $x$ and $u$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A binary string $x$ belongs to $\\mathrm{3SAT}$ if and only if there exists a\ncertificate $u$ with $|u| = |x| + 1$ such that $x \\mathbin{+\\!\\!+} u$ belongs to the\n3SAT-mode verifier language. The width condition depends only on the instance $x$,\nso the same certificate as for $\\mathrm{SAT}$ suffices."
+}

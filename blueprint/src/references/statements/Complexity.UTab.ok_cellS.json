@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.UTab.ok_cellS",
+ "key": "91c95661a0548699",
+ "kind": "theorem",
+ "title": "Validity of cell sources",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $\\rho$ assign a natural number to each of eleven registers, let $W\\in\\mathbb{N}$, and let $t_0,r_{\\mathrm{lo}},r_T,r_{\\mathrm{hi}}$ be Boolean values. Suppose that $\\rho(r_Q)\\ge1$ whenever $t_0$ is false and $r_{\\mathrm{lo}}$ is true, that $\\rho(r_I)\\ge1$ whenever $r_{\\mathrm{lo}}$ is true, and that $\\rho(r_{LB})\\ge1$ whenever $t_0$ is false. Then every source in the cell source list of width $W$ determined by these Boolean values is valid for $\\rho$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over the Boolean alphabet",
+  "$\\rho$ assigns natural numbers to eleven registers",
+  "$W$ is a natural number",
+  "$t_0,r_{\\mathrm{lo}},r_T,r_{\\mathrm{hi}}$ are Boolean values",
+  "if $t_0$ is false and $r_{\\mathrm{lo}}$ is true, then $\\rho(r_Q)\\ge1$",
+  "if $r_{\\mathrm{lo}}$ is true, then $\\rho(r_I)\\ge1$",
+  "if $t_0$ is false, then $\\rho(r_{LB})\\ge1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $\\rho$ assign a\nnatural number to each of the eleven registers, let $W\\in\\mathbb{N}$, and let\n$t_0,r_{\\mathrm{lo}},r_T,r_{\\mathrm{hi}}$ be Booleans. Suppose that $\\rho(r_Q)\\geq1$\nwhenever $t_0$ is false and $r_{\\mathrm{lo}}$ is true, that $\\rho(r_I)\\geq1$ whenever\n$r_{\\mathrm{lo}}$ is true, and that $\\rho(r_{LB})\\geq1$ whenever $t_0$ is false. Then\nevery source in the cell source list of width $W$ determined by these Booleans is valid\nfor $\\rho$."
+}

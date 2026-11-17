@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonGuardFront",
+ "key": "51148bf4d82209be",
+ "kind": "lemma",
+ "title": "A machine for the canonical guard check",
+ "statement": "For every machine format $F$, there exist a finite Boolean-alphabet Turing machine $C$, three pairwise distinct states called entry, yes, and no, and a natural number $a$, with at least four work tapes, such that for any Boolean strings $\\alpha$, $bits$, and $rest$ for which $\\alpha$ parses as $bits$ and $rest$, the machine started on $\\alpha$ with its entry state and blank work tapes reaches, at some time $t\\le a(|\\alpha|+1)$, the yes state if $\\max\\{guard,(4k+5)3^{k+1}\\}(v+1)\\le |rest|$ and the no state otherwise, where $k$ is the work-tape count of $F$ and $v$ is the binary value of $bits$. It has produced no output; its input-head position is $2|bits|+3$ in the yes case and $|\\alpha|+1$ in the no case. Every work tape except tape $1$ is at position zero and contains the canonical count word for $bits$ on tape $0$, the canonical offset word for $bits$ on tape $2$, and the empty word on all remaining tapes.",
+ "hypotheses_covered": [
+  "A machine format $F$",
+  "Existence of a finite Boolean-alphabet machine, distinct entry/yes/no states, and a natural number $a$",
+  "The machine has at least four work tapes",
+  "The three states are pairwise distinct",
+  "The input parses as $bits$ and $rest$",
+  "There exists a time bounded by $a(|\\alpha|+1)$ with the specified state, output, input-head position, and work-tape conditions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

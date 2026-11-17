@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.obliviousSchedule_ready",
+ "key": "ae218bd3ebe81144",
+ "kind": "lemma",
+ "title": "Readiness for the first macrostep",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,b\\in\\mathbb{N}$, and let $T\\colon\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every Boolean input $y$, $W$ halts after exactly $b(T(|y|)+1)$ steps and outputs the little-endian binary expansion of $T(|y|)$, and suppose that $n\\le T(n)$ for every $n\\in\\mathbb{N}$. For every Boolean input $x$, there is a time $t$ at which the schedule machine, started on the tagged encoding of $x$, is in the macrostep-check state, its unary-counter head is at position $1$, its guide head is at position $0$, its unary-counter tape has $(a+1)(T(|x|)+1)$ markers, and its guide tape has radius $3(a+1)(T(|x|)+1)$.",
+ "hypotheses_covered": [
+  "W is a finite machine over Booleans",
+  "a and b are natural numbers",
+  "T is a natural-valued function",
+  "For every Boolean input y, W halts and outputs the binary digits of T(|y|) after exactly b(T(|y|)+1) steps",
+  "n ≤ T(n) for every natural n",
+  "x is a Boolean input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ compute on every input $x$ the binary expansion of $T(|x|)$ within\n$b\\,(T(|x|)+1)$ steps, and suppose $n \\le T(n)$ for all $n$.  Then for every\nword $x$ there is a time $t$ at which the schedule controller built from $W$ and\n$a$, run on the embedded input, is in the counter-test phase with unary head at\n$1$, guide head at the origin, unary counter tape with $(a+1)(T(|x|)+1)$\nmarkers, and guide tape of radius $3(a+1)(T(|x|)+1)$."
+}

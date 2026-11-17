@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.BlockLoop.flatMap_emit_orbit",
+ "key": "215d5ae1037a0353",
+ "kind": "theorem",
+ "title": "Orbit emission over a finite range",
+ "statement": "Let $g$ and $\\mathrm{out}$ be maps on finite bit strings, let $P,Q:\\mathbb{N}\\to\\{0,1\\}^*$, and let $K,N$ be natural numbers with $K<N$. Suppose that for every $i\\le K$, the $i$th iterate of $g$ from $s_0$ is the pair encoding of $P(i)$ and the pair encoding of the string of $K-i$ ones with $Q(i)$; suppose also that every iterate with index greater than $K$ equals the completed-block string, and that $P(i)$ is nonempty for all $i\\le K$. Then concatenating the emissions at iterates indexed from $0$ through $N-1$ gives precisely $\\mathrm{out}$ applied to the pair encoding of $P(K)$ and the pair encoding of the empty string with $Q(K)$.",
+ "hypotheses_covered": [
+  "Maps $g,\\mathrm{out}:\\{0,1\\}^*\\to\\{0,1\\}^*$",
+  "Functions $P,Q:\\mathbb{N}\\to\\{0,1\\}^*$",
+  "Natural numbers $K,N$",
+  "For every $i\\le K$, $g^i(s_0)=\\langle P(i),\\langle 1^{K-i},Q(i)\\rangle\\rangle$",
+  "For every $i$ with $K<i$, $g^i(s_0)$ is the completed-block string",
+  "$K<N$",
+  "For every $i\\le K$, $P(i)$ is nonempty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

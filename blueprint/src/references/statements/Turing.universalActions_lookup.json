@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalActions_lookup",
+ "key": "1ad26c5210f07a49",
+ "kind": "lemma",
+ "title": "Lookup in a state transition block",
+ "statement": "Let $M$ be a coded one-work-tape machine and let $q$ be one of its states. For any input read and work-tape read, each either blank, $0$, or $1$, the list of transition actions for $q$ has length $9$, and its entry at index $3r_{\\mathrm{in}}+r_{\\mathrm{work}}$ is the action prescribed by $M$ for those reads, where the blank, $0$, and $1$ have indices $0$, $1$, and $2$, respectively.",
+ "hypotheses_covered": [
+  "$M$ is a coded machine",
+  "$q$ is a state of $M$",
+  "the input read is an optional Boolean symbol",
+  "the work-tape read is an optional Boolean symbol"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every coded machine $M$, state $q$ of $M$, and pair of reads (an input\nsymbol and a work symbol, each blank, $0$, or $1$): the list of the nine\nactions of $q$ has length $9$, and its entry at the record index of the\nread pair (three times the serialization index of the input read plus the\nserialization index of the work read) is exactly the action $M$ performs at\n$q$ on those reads."
+}

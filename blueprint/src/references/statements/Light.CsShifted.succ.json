@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.CsShifted.succ",
+ "key": "7ba0ab22e5d47b3d",
+ "kind": "theorem",
+ "title": "Predecessor shifted counting-sort invariant",
+ "statement": "Let $A$ describe $n$ items, source and destination regions, key-cell addresses, a key bound $N_b$, and a counter region; let $it,kf:\\mathbb{N}\\to\\mathbb{N}$ and let $\\mu,\\mu':\\mathbb{N}\\to\\mathbb{Z}$ be memory maps. Assume the space bound is at most the word bound, the source, destination, and counter regions fit in memory and are pairwise disjoint, and for every $i<n$ the source contains $it(i)$, its key cell lies in memory and outside the destination and counter regions, that cell contains $kf(i)$, and $kf(i)<N_b$. If $s<N_b$ and the state in memory $\\mu'$ has every item at its stable sorting position, every counter at offset $t$ with $s+1<t\\le N_b$ equal to the number of keys below $t$, and every counter at offset $t<s+1$ equal to the number of keys below $t+1$, then changing the counter at offset $s+1$ to the number of keys below $s+1$ gives a state in which every item remains at its stable sorting position, counters at offsets $t>s$ through $N_b$ equal the number of keys below $t$, and counters at offsets $t<s$ equal the number of keys below $t+1$.",
+ "hypotheses_covered": [
+  "The space bound is at most the word bound",
+  "Source, destination, and counter regions fit in memory",
+  "Source, destination, and counter regions are pairwise disjoint",
+  "For every item index below $n$, its source cell contains that item",
+  "Each item's key cell lies in memory and outside the destination and counter regions",
+  "Each item's key cell contains its key, which is below $N_b$",
+  "$s<N_b$",
+  "The stage-$s+1$ shifted-state conditions hold"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A$ describe $n$ items, their keys, the key bound $N_b$, and a counter range, and\nlet $\u001b[?]$ be a memory. Assume the count-sort layout conditions: memory-space is bounded\nby word size; source, destination, and counter ranges lie within memory space; source\ncells contain the indexed items; each item's in-bounds key cell contains its key; all\nkeys are below $N_b$; the source, destination, and counter ranges are pairwise disjoint;\nand each key cell lies outside the destination and counter ranges. Let $s<N_b$, and\nsuppose all items occupy their sorted positions, each counter cell above stage $s+1$ and\nat most $N_b$ contains the number of keys below its offset, and each counter cell below\n$s+1$ contains the number of keys below its offset plus one. After setting the counter\ncell at offset $s+1$ to the number of keys below $s+1$, the shifted-state conditions\nhold at stage $s$: all items remain placed, counter cells above $s$ and at most $N_b$\ncontain the number of keys below their offset, and counter cells below $s$ contain the\nnumber of keys below the next offset."
+}

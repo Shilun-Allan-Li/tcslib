@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.PathHard.red_mem_iff",
+ "key": "38ab2f31d123e8b7",
+ "kind": "theorem",
+ "title": "Correctness of the path reduction",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine, let $L$ be a language of bit strings, and let $c_0$ be a natural number. Suppose that on every input $x$, all choice sequences of some common length $T$ halt, every such computation uses at most $c_0(\\lfloor\\log_2(|x|)\\rfloor+1)$ work-tape cells, and $N$ accepts $x$ exactly when $x\\in L$. Then, for every bit string $x$, $x\\in L$ if and only if the reduction string constructed from $N,c_0,x$ encodes a path from vertex $0$ to vertex $1$ in the associated raw graph.",
+ "hypotheses_covered": [
+  "finite nondeterministic Turing machine N",
+  "language L",
+  "natural number c₀",
+  "for every input, existence of a common halting time T",
+  "all choice sequences of length T halt",
+  "space bound c₀ times logSpace of the input length",
+  "acceptance by N is equivalent to membership in L",
+  "arbitrary bit string x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

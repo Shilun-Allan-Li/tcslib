@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emCall_right_scan",
+ "key": "8fc3fd87f788f0d8",
+ "kind": "lemma",
+ "title": "Completion of the Rightward Scan",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be a configuration of $M$ on input $x$. For natural numbers $r$ and $j$ with $j\\le |x|$ and $j+r=|x|$, running the right-boundary wrapper for $r+1$ steps from the scan configuration with its control bit set and input head at position $j+1$ yields the halted scan configuration built from $c$ with input head at position $|x|+1$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$r,j$ are natural numbers",
+  "$j\\le |x|$",
+  "$j+r=|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a completed source configuration on an input $x$ and let $j$ and $r$ satisfy\n$j + r = |x|$. Running the right-boundary wrapper for exactly $r + 1$ steps from the\nlive scan configuration at position $j$ halts it silently at the right-boundary scan\nconfiguration at position $|x|$, never confusing a blank work cell with the input end."
+}

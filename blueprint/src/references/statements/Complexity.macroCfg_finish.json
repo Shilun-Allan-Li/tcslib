@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.macroCfg_finish",
+ "key": "7161719244439c83",
+ "kind": "lemma",
+ "title": "Termination after the unary budget",
+ "statement": "Let $W$ be a finite binary Turing machine, let $a,R,B\\in\\mathbb{N}$, and let $x$ be an input word over the schedule alphabet. For a base configuration of the schedule machine on $x$, suppose its guide tape is the fixed guide of radius $R$, its unary tape contains unit markers at every coordinate $j+1$ for $j<B$, and its unary cell at coordinate $B+1$ is blank. Starting in the macrostep-check phase with unary head at $1$ and guide head at $0$, after exactly $B(6R+8)+1$ steps the machine is halted, with unary head at $B+1$ and guide head at $0$.",
+ "hypotheses_covered": [
+  "$W$ is a finite binary Turing machine",
+  "$a,R,B$ are natural numbers",
+  "$x$ is an input word over the schedule alphabet",
+  "$\\mathrm{base}$ is a schedule-machine configuration on $x$",
+  "the base guide tape is the fixed guide of radius $R$",
+  "for every natural $j<B$, the unary tape contains a unit marker at coordinate $j+1$",
+  "the unary cell at coordinate $B+1$ is blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$, its unary tape holds\nunit markers at all coordinates $1, 2, \\dots, B$, and the unary cell at coordinate\n$B + 1$ is blank.  Then running the schedule controller for $B\\,(6R + 8) + 1$ steps\nfrom the counter-test phase with unary head at $1$ and guide head at the origin ends\nin the halted phase with unary head at $B + 1$ and guide head at the origin: the\nschedule finishes after exactly the budgeted macrosteps plus one final counter test."
+}

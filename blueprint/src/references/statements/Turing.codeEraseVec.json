@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.codeEraseVec",
+ "key": "928cae06e6de0cbf",
+ "kind": "lemma",
+ "title": "Erasure law for the vector reader",
+ "statement": "For any type $A$, any field reader that maps a bit string to either failure or a value in $A$ together with a remaining suffix, any length $n$, and any bit string $x$, discarding the vector parsed by the length-$n$ reader gives the same result as applying $n$ times the skipper that discards each field's value and retains its suffix.",
+ "hypotheses_covered": [
+  "$A$ is a type",
+  "$r$ is a field reader from bit strings to optional values in $A$ paired with suffixes",
+  "$n$ is a natural number",
+  "$x$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every field reader with values in a type $A$, every length $n$, and every\nbit string $x$: discarding the parsed vector from the length-$n$ vector reader\nequals iterating the value-discarding version of the field reader $n$ times."
+}

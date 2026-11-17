@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.codeReadVec_append",
+ "key": "97f10b72befadeda",
+ "kind": "lemma",
+ "title": "Vector decoding after encoding",
+ "statement": "Suppose a reader and writer for values in a type $A$ satisfy the following property: reading the encoding of any value followed by any suffix returns that value and suffix. Then, for every natural number $n$, every vector $f$ of $n$ values in $A$, and every bit string $x$, reading the concatenated encodings of $f(0),\\ldots,f(n-1)$ followed by $x$ succeeds and returns $f$ and $x$.",
+ "hypotheses_covered": [
+  "Reading any encoded value followed by any suffix returns that value and suffix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a field reader and a field writer for values in a type $A$ be given such\nthat reading from any written value followed by any suffix returns exactly that\nvalue and suffix.  Then for every $n$, every vector $f$ indexed by\n$\\{0, \\dots, n-1\\}$, and every bit string $x$, the length-$n$ vector reader\napplied to the concatenation of the written entries $f(0), \\dots, f(n-1)$ in\norder, followed by $x$, succeeds and returns $(f, x)$."
+}

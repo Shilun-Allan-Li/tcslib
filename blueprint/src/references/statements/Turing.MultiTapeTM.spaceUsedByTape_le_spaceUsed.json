@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.MultiTapeTM.spaceUsedByTape_le_spaceUsed",
+ "key": "eb68963536b77d4d",
+ "kind": "lemma",
+ "title": "Per-tape space is at most total space",
+ "statement": "Let $M$ be a multi-tape Turing machine, $c$ a configuration, $t\\in\\mathbb{N}$, and $i$ a work-tape index. The number of distinct cells visited by tape $i$ through step $t$ is at most the total space used through step $t$.",
+ "hypotheses_covered": [
+  "$M$ is a multi-tape Turing machine",
+  "$c$ is a configuration",
+  "$t\\in\\mathbb{N}$",
+  "$i$ is a work-tape index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every multi-tape Turing machine $M$, configuration $c$, step count $t$,\nand work-tape index $i$, the number of cells touched by the head of tape $i$\nup to step $t$ is at most the total space used by $M$ from $c$ up to step $t$."
+}

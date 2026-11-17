@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.powTable_ends",
+ "key": "c586cf73fb7e9754",
+ "kind": "theorem",
+ "title": "Power table construction",
+ "statement": "Let a program be run under machine limits with memory size $S$, word bound $W$, and recursion depth bound, starting at depth $d$. Let $\\mu$ be an initial memory, let $\\mathrm{dst},L,b$ be natural numbers, and let $e,p$ be integers and $t$ a list of integers. If $S\\le W$, the segment of length $L$ starting at $\\mathrm{dst}$ fits in memory, and $(b^j)$ is at most $W$ for every $j\\le L$, then the power-table procedure can execute within time $17L+8$ and leave a memory $\\mu'$ whose segment at $\\mathrm{dst}$ is $(1,b,b^2,\\ldots,b^{L-1})$, with every location outside that segment unchanged.",
+ "hypotheses_covered": [
+  "The machine limits $\\mathrm{lim}$, program $P$, and depth $d$ are fixed",
+  "$\\mu$ is an initial memory",
+  "$\\mathrm{dst},L,b$ are natural numbers",
+  "$e,p$ are integers",
+  "$t$ is a list of integers",
+  "$S\\le W$",
+  "$\\mathrm{dst}+L\\le S$",
+  "For every $j\\le L$, $b^j\\le W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

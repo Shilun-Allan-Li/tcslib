@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clFill_run",
+ "key": "40e5f4cb07a7047e",
+ "kind": "lemma",
+ "title": "Run of the Constant-Fill Machine",
+ "statement": "Fix a bit $b$, an input word $x$, a natural number $i\\le |x|$, and an output word $out$. Starting from the configuration with the machine in its running state, the input head at position $i+1$, no work tapes, and output $out$, after $|x|-i+1$ steps the machine is halted at the right boundary, with output $out$ followed by $|x|-i$ copies of $b$.",
+ "hypotheses_covered": [
+  "A bit $b$",
+  "A Boolean input word $x$",
+  "A natural number $i$ with $i\\le |x|$",
+  "An initial output word $out$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a fixed bit $b$, an input $x$, a position $i \\le |x|$, and a current output word $w$, running the constant-fill machine for $|x| - i + 1$ steps from the configuration scanning position $i$ with output $w$ halts at the right boundary with output $w$ extended by $|x| - i$ copies of $b$."
+}

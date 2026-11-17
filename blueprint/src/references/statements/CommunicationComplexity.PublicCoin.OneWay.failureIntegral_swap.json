@@ -1,6 +1,6 @@
 {
  "lean_name": "CommunicationComplexity.PublicCoin.OneWay.failureIntegral_swap",
- "key": "73c83f3fb3af8c75",
+ "key": "46d8e19ab28b6db3",
  "kind": "lemma",
  "title": "Exchanging the order of integration for the failure probability",
  "statement": "Let $X \\times Y$ be a finite set equipped with a probability measure $\\mu$, let $p$ be a one-way public-coin protocol with inputs in $X$ and $Y$, outputs in $\\alpha$, and shared randomness ranging over coin tapes of length $m$, and let $f : X \\times Y \\to \\alpha$ be a target function. Write $\\mathrm{rrun}(p, x, y, \\omega)$ for the output produced by running $p$ on inputs $x$ and $y$ under coin tape $\\omega$, and let $\\nu$ be the measure carried by the coin tapes of length $m$. Then\n\\[\n  \\int \\mu\\bigl(\\{(x,y) : \\mathrm{rrun}(p,x,y,\\omega) \\neq f(x,y)\\}\\bigr)\\,d\\nu(\\omega)\n  \\;=\\;\n  \\int \\nu\\bigl(\\{\\omega : \\mathrm{rrun}(p,x,y,\\omega) \\neq f(x,y)\\}\\bigr)\\,d\\mu(x,y),\n\\]\nwhere each measure is read as a real number. That is, integrating the $\\mu$-probability of failure over the choice of coin tape yields the same value as integrating the $\\nu$-probability of failure over the choice of input pair.",

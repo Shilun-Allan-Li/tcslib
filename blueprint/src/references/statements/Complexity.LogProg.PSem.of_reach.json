@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.PSem.of_reach",
+ "key": "c26ba0bcc51e8e76",
+ "kind": "theorem",
+ "title": "Probabilistic semantics from a deterministic path",
+ "statement": "Let a nondeterministic register program, oracle, input, guard, starting configuration $a$, reached state $l'$, register valuation $v'$, and rational $p$ be given. Suppose there is a finite run of the program with each choice resolved as false that starts at $a$, reaches $(l',v',\text{no answer})$, and satisfies the guard at every configuration before reaching it. If $(l',v',\text{no answer})$ has probabilistic semantics with acceptance probability $p$, then $a$ has probabilistic semantics with acceptance probability $p$.",
+ "hypotheses_covered": [
+  "There is a deterministic reachability path from $a$ to $(l',v',\\text{no answer})$ using the program with choices resolved as false",
+  "The guard holds at every configuration along that path before its endpoint",
+  "The reached configuration has probabilistic semantics with probability $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

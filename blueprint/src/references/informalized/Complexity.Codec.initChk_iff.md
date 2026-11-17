@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean :: Complexity.Codec.initChk_iff -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Initial Configuration Code Characterization
+
+**Claim.** A Boolean word satisfies the initial-check conditions for $N$, $x$, and $s$ exactly when it is the configuration code of the initial configuration of $N$ on $x$ with window parameter $s$.
+
+**Proof.** First, the initial configuration lies within the window of radius $s$ (`Cfg.inWindow_init`). Thus the valid-code characterization (`validChk_iff`) lets us write any word passing the validity check as the code of some in-window configuration $C$. The scan of a configuration code records its state and output summary and passes the validity checks (`vScan_cfgWord`). The initial-state check therefore identifies $C$'s state as the initial state and its output summary as empty; injectivity of the output-summary index (`sumIdx_injective`) and the empty-summary characterization (`outSummary_eq_empty_iff`) give $C.output=[]$. The position-field check, using the input-field description (`cfgWord_pos`) and the fact that padding preserves the represented natural number (`bitsVal_padBits`), identifies $C$'s input-head position with the initial position. The scan's blankness condition forces all work-tape cells in the window to be blank, and the separate center-head check forces every work-tape head to be at zero. Outside the window the in-window hypothesis already gives blank cells. Hence $C$ and the initial configuration have identical core data, so their codes agree by `cfgWord_congr`; this proves the forward implication. Conversely, take the word to be the code of the initial configuration. The scan theorem gives its required state, validity, and blankness properties. Its input-position field represents the initial position by `cfgWord_pos` and `bitsVal_padBits`, and the center bit is true when there is at least one work tape because the initial heads are at zero; if there are no work tapes, the disjunct holds directly. These establish every initial-check condition.
+
+**Key facts.** `Turing.Cfg.inWindow_init`, `Complexity.Codec.validChk_iff`, `Complexity.Codec.vScan_cfgWord`, `Complexity.Codec.sumIdx_injective`, `Turing.outSummary_eq_empty_iff`, `Complexity.Codec.cfgWord_pos`, `Complexity.Codec.bitsVal_padBits`, `Complexity.Codec.cfgWord_congr`.

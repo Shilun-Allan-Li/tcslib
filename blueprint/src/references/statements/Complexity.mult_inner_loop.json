@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.mult_inner_loop",
+ "key": "3816480c58c59c3a",
+ "kind": "lemma",
+ "title": "Inner multiplication loop",
+ "statement": "Let $x$ and $w$ be bit strings, let $b\\in\\{0,1\\}$, and let $v$ assign natural-number values to the thirteen registers. Suppose every register is at most $4(|x|+1)$, $v(5)=v(9)+2|w|$, the bit of $x$ at position $v(0)$ (taken to be $0$ if out of range) is $b$, and for each $q<|w|$ the bit at position $v(9)+2q$ equals the $q$th bit of $w$ (again using $0$ out of range). Also suppose $v(10)+|w|\\le 4(|x|+1)$ and $v(11)+R\\le 4(|x|+1)$, where $R=\\sum_{q<|w|,\\ v(10)+q=v(7)} b\\,w_q$ and bits are identified with $0$ or $1$. Then the fixed multiplication program reaches the state preceding the next outer-loop step, with registers $9$, $10$, and $11$ respectively increased by $2|w|$, $|w|$, and $R$, all other registers unchanged, and no answer recorded. Every earlier configuration on this run satisfies the program's instruction side conditions and register bound.",
+ "hypotheses_covered": [
+  "Bit string x",
+  "Bit b and bit string w",
+  "Register assignment v",
+  "All registers are bounded by 4(|x|+1)",
+  "v(5)=v(9)+2|w|",
+  "Input bit at v(0) equals b, with out-of-range bits treated as 0",
+  "For every q<|w|, input bit at v(9)+2q equals w_q, with out-of-range bits treated as 0",
+  "v(10)+|w|≤4(|x|+1)",
+  "v(11)+R≤4(|x|+1), with R the specified row contribution"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

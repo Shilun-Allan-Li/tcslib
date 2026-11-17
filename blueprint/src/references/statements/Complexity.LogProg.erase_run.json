@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.erase_run",
+ "key": "2c47bfe581eed420",
+ "kind": "lemma",
+ "title": "Tape Erasure Run and Head Bound",
+ "statement": "Let $M$ be a Boolean multi-tape Turing machine with initial state $q_0$, let $i$ be a work-tape index, let the input-head position be $ip$, and let the output word be $out$. For integers $a,b,B$ with $a\\le 0$ and $-B\\le a-1$, a tape content function $f$, and any $n\\in\\mathbb N$, suppose the data tapes $D_t$, their head positions $D_p$, and the mark tapes $M_t$ satisfy $D_p(i)-(a-1)=n$, $D_p(i)\\le b$, $D_t(i)$ agrees with $f$ on cells at most $D_p(i)$ and is blank above them, $M_t(i)$ has the prescribed origin and interval marks from $a$ through $D_p(i)$, and every data-tape head position has absolute value at most $B$. Starting from the cleaning machine's erase phase at index $i$ with these tapes and head positions, every configuration through time $n+1$ has all work-tape head positions bounded in absolute value by $B$. At time $n+1$, the machine is in the back phase at index $i$; the selected data tape contains $f$ through cell $a-1$ and is blank above, its head is at $a$, and its mark tape has the prescribed marks through cell $a-1$ with head at $a$; all other tapes, the input-head position, and the output are unchanged.",
+ "hypotheses_covered": [
+  "$a\\le 0$.",
+  "$-B\\le a-1$.",
+  "$n$ is a natural number.",
+  "The data-head position satisfies $D_p(i)-(a-1)=n$.",
+  "The selected data-head position satisfies $D_p(i)\\le b$.",
+  "The selected data-tape content is the truncation of $f$ above $D_p(i)$.",
+  "The selected mark tape is the prescribed marked interval from $a$ to $D_p(i)$, with the origin marked.",
+  "Every data-tape head position has absolute value at most $B$."
+ ],
+ "confidence": "low",
+ "caveat": "The precise mark convention is supplied only by the referenced definition of the mark function; the statement describes its role but not its full case definition.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

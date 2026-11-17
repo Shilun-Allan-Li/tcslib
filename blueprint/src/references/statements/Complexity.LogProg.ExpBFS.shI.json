@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.shI",
+ "key": "168379ff01913a8f",
+ "kind": "def",
+ "title": "Shift-loop instruction by phase",
+ "statement": "For a natural number $K_0$, given a register $r$ among $0$ through $16$, an exit label, a function assigning a label to each of the nine shift-loop phases, and a phase $j\\in\\{0,\\ldots,8\\}$, define the instruction as follows: phase $0$ tests whether register $13$ is zero, branching to the exit if so and phase $1$ otherwise; phase $1$ decrements register $13$ and proceeds to phase $2; phase $2$ tests whether $r$ is zero, branching to phase $6$ if so and phase $3$ otherwise; phase $3$ decrements $r$ and proceeds to phase $4$; phases $4$ and $5$ each increment register $0$, proceeding respectively to phase $5$ and back to phase $2$; phase $6$ tests whether register $0$ is zero, branching to phase $0$ if so and phase $7$ otherwise; phase $7$ decrements register $0$ and proceeds to phase $8; and phase $8$ increments $r$ and returns to phase $6$.",
+ "hypotheses_covered": [
+  "Natural-number parameter $K_0$",
+  "Register $r$ among 17 registers",
+  "Exit label",
+  "Label assigned to each of nine phases",
+  "Selected phase among nine phases"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

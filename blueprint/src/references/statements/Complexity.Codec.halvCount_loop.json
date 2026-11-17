@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Codec.halvCount_loop",
+ "key": "f4c058d748d30dc0",
+ "kind": "theorem",
+ "title": "Register halving loop count",
+ "statement": "Let $A$ be a register program with state set $\u0003Lambda$, let $\u0003oracle$ be an oracle, and let $y$ be an input bit string. Choose distinct registers $t$ and $c$ and states $\u0003test$, $\u0003halve$, $\u0003bump$, and $\u0003done$, such that the instructions at these states respectively test whether register $t$ is zero (proceeding to $\u0003done$ if so and otherwise to $\u0003halve$), replace $t$ by $\u0003floor(t/2)$ and proceed to $\u0003bump$, and increment $c$ and return to $\u0003test$. If all registers initially have values at most $B$ and the initial value of $c$ plus the binary length of the initial value of $t$ is at most $B$, then the program reaches $\u0003done$ with $t=0$ and $c$ equal to its initial value plus that binary length; every configuration before reaching $\u0003done$ satisfies the execution guard for bound $B$.",
+ "hypotheses_covered": [
+  "A register program $A$ with state set $\u0003Lambda$",
+  "An oracle and input bit string $y$",
+  "Distinct registers $t,c$",
+  "States test, halve, bump, and done with the specified instructions",
+  "A natural number bound $B$",
+  "Initial register valuation $v$ with every register at most $B$",
+  "Initial value of $c$ plus binary length of initial value of $t$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

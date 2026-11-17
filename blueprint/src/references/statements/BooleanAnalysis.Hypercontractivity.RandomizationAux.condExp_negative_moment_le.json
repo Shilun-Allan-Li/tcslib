@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_negative_moment_le",
+ "key": "ee2c2770056a7888",
+ "kind": "theorem",
+ "title": "Conditional reflected-moment contraction",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses, let $J$ be a set of coordinates, let $f$ be a real-valued function on the product space, and let $q,c\\in\\mathbb R$ satisfy $0<q$ and $0\\le c\\le1$. Suppose that $|1-cz|^q\\le |1+z|^q-q(1+c)z$ for every real $z$. Then the product expectation of $|E_Jf-c(f-E_Jf)|^q$ is at most the product expectation of $|f|^q$, where $E_J$ denotes conditional expectation over coordinates outside $J$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$P$ is a finite product probability space with positive coordinate weights summing to one",
+  "$J$ is a set of coordinates",
+  "$f$ is real-valued on the product space",
+  "$q>0$",
+  "$0\\le c\\le1$",
+  "For every real $z$, $|1-cz|^q\\le |1+z|^q-q(1+c)z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $J\\subseteq[n]$, $f:\\Omega\\to\\mathbb R$, $q>0$, and $0\\le c\\le1$. If $|1-cz|^q\\le|1+z|^q-q(1+c)z$ for every real $z$, then $\\mathbb E_P|E_Jf-c(f-E_Jf)|^q\\le\\mathbb E_P|f|^q$."
+}

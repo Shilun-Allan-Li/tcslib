@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.satStreamPos_read",
+ "key": "81d55d92ec741317",
+ "kind": "lemma",
+ "title": "Reading at a clamped offset",
+ "statement": "Let $x$ be a finite binary string, let $k$ be a natural number, let $S$ be a type of machine states, and let $c$ be a configuration of a $k$-tape Turing machine on input $x$. For any $i \\in \\mathbb{N}$, if the input-head position of $c$ is the clamped position corresponding to $i$, then the symbol read by the head is the optional entry $x[i]?$.",
+ "hypotheses_covered": [
+  "A finite binary string $x$",
+  "A natural number $k$ of work tapes",
+  "A state type $S$",
+  "A configuration $c$ on input $x$",
+  "An offset $i \\in \\mathbb{N}$",
+  "The input-head position of $c$ equals the clamped position for $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a configuration's input position equals the clamped offset $i$ on input $x$,\nthen its input symbol is the optional $i$-th entry of $x$ (blank beyond the\nboundary)."
+}

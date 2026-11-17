@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.ncompileFinNDTM",
+ "key": "565d017ce4b53727",
+ "kind": "def",
+ "title": "Finite compilation of a nondeterministic register program",
+ "statement": "Let $m$, $d$, and $k_D$ be nonnegative integers, and let $\u0001\font\u0001$ be a type of program labels and $\u0002\font\u0002$ a type of states for a deterministic Turing machine $D$ with $k_D$ work tapes over the Boolean alphabet. Suppose the label and state types are finite and have decidable equality. For a nondeterministic register program $A$ with $m$ registers and $d$ deciders, an initial label $l_0$, and a choice of initial state $q_0(j)$ for each decider $j$, the compilation produces a finite nondeterministic Turing machine over the Boolean alphabet with $m+k_D$ work tapes and state set $CSt(\\Lambda \\times Ph, SD, m)$, whose underlying machine is the compiled machine $ncompileTM(A,l_0,D,q_0)$.",
+ "hypotheses_covered": [
+  "finite type of program labels with decidable equality",
+  "finite type of deterministic machine states with decidable equality",
+  "nondeterministic register program with $m$ registers and $d$ deciders",
+  "initial program label",
+  "deterministic Boolean-alphabet Turing machine with $k_D$ work tapes",
+  "initial-state assignment for each of the $d$ deciders"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not define $CSt$, $Ph$, or $ncompileTM$, so their mathematical meaning cannot be stated precisely from the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

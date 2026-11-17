@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clRecord_prepare_frame",
+ "key": "2a589321cb7c4f7d",
+ "kind": "lemma",
+ "title": "Prepared recorder configuration",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x,y$ be Boolean words, let $T$ be a natural number, and let $\\mathrm{keep}$ assign a Boolean word to each of four slots. The configuration obtained by replacing the loader's control with the recorder's initial state is exactly the recorder configuration at time zero, initialized on virtual input $y$, with all movement counters zero, empty record, clock parameter $T$, and retained words $\\mathrm{keep}$.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $M$",
+  "Boolean words $x,y$",
+  "natural number $T$",
+  "assignment of a Boolean word to each of four retained slots"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, input word, virtual input $y$, horizon $T$, and retained fields, the loader's completed configuration over the parsed recorder words, with its control replaced by the recorder's start, equals the host configuration around the recorder's prepared seam at logical time zero; source initialization, counters, clock, and record bank are all fixed by the established prepared-seam identity."
+}

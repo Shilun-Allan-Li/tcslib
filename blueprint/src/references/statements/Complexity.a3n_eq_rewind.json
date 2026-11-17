@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.a3n_eq_rewind",
+ "key": "4b339a21764607e5",
+ "kind": "lemma",
+ "title": "Rewinding the Work-Tape Head",
+ "statement": "For every binary input $y$, binary word $u$, valid input-head position $p$ for $y$, and natural number $j\\le |u|$, starting from the comparator configuration in rewind state with comparison flag true, work word $u$, work head at position $j-1$, and input-head position $p$, after $j+1$ steps it is in comparison state with flag true, the same input-head position and work word, and work head at position zero.",
+ "hypotheses_covered": [
+  "$y$ is a binary input",
+  "$u$ is a binary word",
+  "$p$ is a valid input-head position for $y$",
+  "$j$ is a natural number",
+  "$j\\le |u|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input, every decoded word $u$, every position and every $j \\le |u|$: from the rewind state with work head at cell $j - 1$, exactly $j+1$ steps of the pair comparator reach the comparison state with work head at cell zero and all data unchanged."
+}
