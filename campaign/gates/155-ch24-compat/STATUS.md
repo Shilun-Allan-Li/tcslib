@@ -1,1 +1,1 @@
-**Gate 155 round 1 CLEAR** (2026-11-17; 0 blockers, 0 majors, 0 minors, 8 notes; `findings.md`) at `718dddc66d5d4dad7ea25f299a01931be6c42658`. #354 is clear to merge; Seyoon merges. On merge: adopt the replay output `oleans-cl155-c0ac28` if the merge's Lean equals the replayed tree (prospective tree `e2782773`).
+**Gate 155 closed.** #354 merged (`fe5fba6e`, 2026-11-17) at the audited head `718dddc66d5d4dad7ea25f299a01931be6c42658`; round 1 CLEAR (0/0/0). Snapshot `oleans-cfe5fb` adopted (campaign/status/2026-11-17-merge-354/).
