@@ -201,12 +201,12 @@ theorem modSumInterval_eval {M : ℕ} {a : Fin M → ℕ} {q lo hi : ℕ} (ha : 
   have hq2 : ∀ i, a i < 2 ^ Nat.clog 2 q := fun i =>
     (ha i).trans_le (Nat.le_pow_clog (by norm_num) q)
   have hSle : S ≤ M * (q - 1) := by
-    calc S ≤ ∑ _i : Fin M, (q - 1) := Finset.sum_le_sum fun i _ => by
-            have := ha i
-            have := Bool.toNat_le (x i)
-            calc (x i).toNat * a i ≤ 1 * a i := Nat.mul_le_mul_right _ (Bool.toNat_le (x i))
-              _ ≤ q - 1 := by omega
-      _ = M * (q - 1) := by rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
+    have h := Finset.sum_le_card_nsmul Finset.univ (fun i => (x i).toNat * a i) (q - 1)
+      fun i _ => by
+        have := ha i
+        calc (x i).toNat * a i ≤ 1 * a i := Nat.mul_le_mul_right _ (Bool.toNat_le (x i))
+          _ ≤ q - 1 := by omega
+    rwa [Finset.card_univ, Fintype.card_fin, smul_eq_mul] at h
   -- Step 2: the carry-save reduction keeps the sum
   have hsum : val x (csaReduce Us).1 + val x (csaReduce Us).2 = S := by
     rw [csaReduce_val, hUs, List.map_ofFn, List.sum_ofFn, hS]
