@@ -60,6 +60,8 @@ machines, the control states and their table, the return map and the start state
 * `Turing.ModuleHost.State`, `Turing.ModuleHost.entry` — the host's state type and the entry
   state of a module (`state_eq`, `entry_eq`).
 * `Turing.ModuleHost.hostTM` — the host (`hostTM_k`, `hostTM_tm_q₀`, `hostTM_step_inl`).
+* `Turing.ModuleHost.hostTMView` — the host with its tape count and state type explicit
+  (`hostTMView_eq`, `hostTMView_q₀`, `hostTMView_step_inl`, `host_call_view`, `host_clean_view`).
 
 ## Main results
 
@@ -668,5 +670,100 @@ theorem host_clean_envelope {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
   refine ⟨t, hp, ht, hguard, hend, fun v hv j => ?_⟩
   have hB : (t : ℤ) ≤ B arg.length := by exact_mod_cast ht
   exact (host_call_envelope M K hk ctrl ret q₀ i x arg pre t v hv j).trans hB
+
+/-! ### The typed view of the host
+
+A consumer that does not unfold `hostTM` cannot see that its tape count is `K` and its state
+type is `State C M`, so it cannot type the host's seam configurations. The typed view
+`hostTMView` names both fields explicitly and keeps the host's machine; the readers below
+restate the host's contracts for it, each proved by the original contract. -/
+
+/-- **The typed view of the host**: the finite machine with `K` work tapes, state type
+`State C M` and the underlying machine of `hostTM M K hk ctrl ret q₀`,
+`hostTMView M K hk ctrl ret q₀ = ⟨K, State C M, (hostTM M K hk ctrl ret q₀).tm⟩`. It is the host
+itself (`hostTMView_eq`), with its tape count and state type explicit. -/
+abbrev hostTMView {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
+    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
+    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
+    (ret : Fin n → State C M) (q₀ : State C M) : FinTM Bool where
+  k := K
+  State := State C M
+  tm := (hostTM M K hk ctrl ret q₀).tm
+
+/-- The typed view is the host: `hostTMView M K hk ctrl ret q₀ = hostTM M K hk ctrl ret q₀`. -/
+theorem hostTMView_eq {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
+    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
+    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
+    (ret : Fin n → State C M) (q₀ : State C M) :
+    hostTMView M K hk ctrl ret q₀ = hostTM M K hk ctrl ret q₀ :=
+  rfl
+
+/-- The typed view starts in the supplied start state:
+`(hostTMView M K hk ctrl ret q₀).tm.q₀ = q₀`. -/
+theorem hostTMView_q₀ {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
+    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
+    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
+    (ret : Fin n → State C M) (q₀ : State C M) :
+    (hostTMView M K hk ctrl ret q₀).tm.q₀ = q₀ :=
+  rfl
+
+/-- **A control step of the typed view** (`hostTM_step_inl` for `hostTMView`): at a
+configuration in the control state `inl c`, one step applies the consumer's action,
+`(hostTMView M K hk ctrl ret q₀).tm.step cfg = (ctrl c cfg.inputSymbol cfg.workTapeSymbols).apply
+cfg`. -/
+theorem hostTMView_step_inl {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
+    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
+    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
+    (ret : Fin n → State C M) (q₀ : State C M) {x : List Bool}
+    (cfg : Cfg K Bool (State C M) x) (c : C) (hc : cfg.state = some (.inl c)) :
+    (hostTMView M K hk ctrl ret q₀).tm.step cfg =
+      (ctrl c cfg.inputSymbol cfg.workTapeSymbols).apply cfg :=
+  hostTM_step_inl M K hk ctrl ret q₀ cfg c hc
+
+/-- **A module call inside the typed view** (`host_call` for `hostTMView`): if module `i` (with
+`0 < (M i).k`), run from the seam at its start state with argument `arg`, is live before time
+`t` and at time `t` is halted at the seam holding `result` with output `out`, then the typed
+view, run from its seam at the entry state of module `i` holding `arg` with output prefix `pre`,
+visits no control state before `t`, and
+`(hostTMView M K hk ctrl ret q₀).tm.runFrom {Cfg.ofWords (entry M i) (stateWord K arg) with
+output := pre} t = {Cfg.ofWords (ret i) (stateWord K result) with output := pre ++ out}`. -/
+theorem host_call_view {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n → FinTM Bool)
+    (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
+    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
+    (ret : Fin n → State C M) (q₀ : State C M)
+    (i : Fin n) (hp : 0 < (M i).k) (x arg result out pre : List Bool)
+    (q : (M i).State) (t : ℕ)
+    (hg : ∀ v < t, ¬((M i).tm.runFrom
+      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) v).Halted)
+    (he : (M i).tm.runFrom
+      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) t =
+      {Cfg.ofWords q (stateWord (M i).k result) with state := none, output := out}) :
+    (∀ v < t, ∀ c : C, ((hostTMView M K hk ctrl ret q₀).tm.runFrom
+      {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).state
+        ≠ some (.inl c)) ∧
+    (hostTMView M K hk ctrl ret q₀).tm.runFrom
+      {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} t =
+      {Cfg.ofWords (ret i) (stateWord K result) with output := pre ++ out} :=
+  host_call M K hk ctrl ret q₀ i hp x arg result out pre q t hg he
+
+/-- **A clean module call inside the typed view** (`host_clean` for `hostTMView`): if module `i`
+is `Clean` with result map `f`, emitted chunk `g` and budget `B`, then the typed view, run from
+its seam at the entry state of module `i` holding `arg` with output `pre`, reaches at some time
+`t` with `0 < t ≤ B |arg|` the seam in the return state `ret i` holding `f arg`, with output
+`pre ++ g arg`, and visits no control state before `t`. -/
+theorem host_clean_view {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
+    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
+    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
+    (ret : Fin n → State C M) (q₀ : State C M)
+    (i : Fin n) (f g : List Bool → List Bool) (B : ℕ → ℕ)
+    (h : Clean (M i) f g B) (x arg pre : List Bool) :
+    ∃ t, 0 < t ∧ t ≤ B arg.length ∧
+      (∀ v < t, ∀ c : C, ((hostTMView M K hk ctrl ret q₀).tm.runFrom
+        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).state
+          ≠ some (.inl c)) ∧
+      (hostTMView M K hk ctrl ret q₀).tm.runFrom
+        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} t =
+        {Cfg.ofWords (ret i) (stateWord K (f arg)) with output := pre ++ g arg} :=
+  host_clean M K hk ctrl ret q₀ i f g B h x arg pre
 
 end Turing.ModuleHost

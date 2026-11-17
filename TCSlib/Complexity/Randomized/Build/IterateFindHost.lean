@@ -36,13 +36,15 @@ load-bearing lemma of the Pass–shelat campaign, foundation decision D11 of
 
 ## Main definitions
 
-* `Complexity.IterateFind.copyTM` — the input copier.
+* `Complexity.IterateFind.copyTM` — the input copier; `copyTMView`, the copier with its tape
+  count, state type and start state explicit (`copyTMView_eq`).
 * `Complexity.IterateFind.hostCtrl`, `hostRet`, `hostTM` — the host's control table over its
   three control states, the return states of the five modules, and the host.
 
 ## Main results
 
-* `Complexity.IterateFind.copy_clean` — the copier's contract.
+* `Complexity.IterateFind.copy_clean` — the copier's contract; `copy_clean_view`, the same for
+  `copyTMView`.
 * `Complexity.IterateFind.host_dispatch`, `host_branch`, `host_halt` — the host's control steps.
 
 ## References
@@ -248,6 +250,32 @@ lemma copy_clean (x : List Bool) :
       simp [copyCfg, Cfg.ofWords, stateWord]
     · funext i
       simp [copyCfg, Cfg.ofWords]
+
+/-- **The typed view of the input copier**: the finite machine with one work tape, state type
+`Fin 2`, start state `0` and the copier's transition function,
+`copyTMView = ⟨1, Fin 2, ⟨0, copyTM.tm.tr⟩⟩`. It is the copier itself (`copyTMView_eq`), with its
+tape count, state type and start state explicit, so that a consumer can type the copier's
+configurations without unfolding `copyTM`. -/
+abbrev copyTMView : FinTM Bool where
+  k := 1
+  State := Fin 2
+  tm := { q₀ := 0, tr := copyTM.tm.tr }
+
+/-- The typed view of the copier is the copier: `copyTMView = copyTM`. -/
+theorem copyTMView_eq : copyTMView = copyTM :=
+  rfl
+
+/-- **The typed copier's contract** (`copy_clean` for `copyTMView`): from the empty seam over
+native input `x`, the typed copier is live before time `2|x| + 2` and
+`copyTMView.tm.runFrom (Cfg.ofWords 0 (stateWord 1 [])) (2|x| + 2) =
+{Cfg.ofWords 0 (stateWord 1 x) with state := none}`. -/
+theorem copy_clean_view (x : List Bool) :
+    (∀ v < 2 * x.length + 2,
+      ¬(copyTMView.tm.runFrom (Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 [])) v).Halted) ∧
+    copyTMView.tm.runFrom (Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 []))
+        (2 * x.length + 2) =
+      {Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 x) with state := none} :=
+  copy_clean x
 
 
 /-! ### The host -/
