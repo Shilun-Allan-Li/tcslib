@@ -223,6 +223,26 @@ Each campaign records its standing defaults in its decision log.
   to `inbox/fills/<unit>/` on the exchange: checkpoints as `fill <unit>: checkpoint <n>`,
   then `fill <unit>: final`. The exchange history pins the delivery, so no ZIP is needed.
 
+**Lean parallelism** (user ruling, 2026-11-17). The "one Lean process at a time" rule is
+for **local** hosts: the maintainer's container and a local checkout on the user's machine,
+which share their CPU and memory with other work. There, run one Lean process per olean
+tree. **Cloud workers** (Claude or Codex in the cloud) may run as many Lean processes in
+parallel as is sensible for their machine:
+* size the pool from the machine: at most `nproc` processes, and few enough that at least
+  about 2 GB (or 15%) of memory stays available; start from
+  `min(nproc, MemAvailable / 4 GB)` and back off under memory pressure, giving heavy
+  modules (for example `Complexity/ClassP/BinaryArith/DetMod`) room of their own;
+* build in dependency order: start a module only when every module it imports has its
+  olean, and never let two processes compile the same module or write the same file;
+* seals, controls, axiom probes and statement probes may run in parallel across owners,
+  each in its own probe file and output directory;
+* sub-agents share one pool (a counting semaphore) instead of a single host lock, and
+  record the pool size and peak memory in their evidence.
+
+Everything else is unchanged: never `lake build` the library, never run an unfiltered
+`lake exe cache get`, only the lead fetches the cache, and each module is still compiled
+through `scripts/lean_check_tree.sh`.
+
 **The delivery payload.** A delivery contains:
 * `REPORT.md`;
 * `patches/`: the whole `git format-patch <base>..<branch>` series, with `COMMITS.tsv`
@@ -329,8 +349,9 @@ instead:
    closure), do not adopt: rerun the PR's replay on the new tip first. Better, before
    merging: when two open PRs share downstream modules, merge the one with the larger
    rebuild first, then re-replay the other (it rebuilds only its own closure).
-5. **Housekeeping:** one Lean process per module; never interrupt a running build; one
-   tree at a time; pause if free disk falls below about 1 GB; discard replay outputs that
+5. **Housekeeping:** one Lean process per module; never interrupt a running build; on a
+   local host, one Lean process per tree at a time (cloud workers: §4.1, *Lean
+   parallelism*); pause if free disk falls below about 1 GB; discard replay outputs that
    will not be adopted once their evidence is recorded.
 
 ## 7. Relationship to the other documents
