@@ -429,6 +429,93 @@ theorem oracleImpl_two_onSpec {σ : Type} (κ : ℕ)
           from rfl).symm p.1, p.2) :=
   (OracleComp.bind_pure _).symm
 
+/-- **Oracle `0` of the game on the game's query type**: `Init` on the query read as an identity,
+its answer read back on the game's answer type:
+`S.sidImpl b κ pp msk 0 x s =
+(S.sidImpl b κ pp msk 0 (cast x) s).bind fun p => pure (cast p.1, p.2)`. -/
+theorem sidImpl_zero_onSpec (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk 0 x s =
+      (S.sidImpl b κ pp msk 0
+        (cast (show (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) from rfl) x :
+          Fin (S.idLen.eval κ) → Bool) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+/-- **Oracle `2` of the game on the game's query type**: `Challenge` on the query read as two
+messages, its answer read back on the game's answer type:
+`S.sidImpl b κ pp msk 2 x s =
+(S.sidImpl b κ pp msk 2 (cast x) s).bind fun p => pure (cast p.1, p.2)`. -/
+theorem sidImpl_two_onSpec (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk 2 x s =
+      (S.sidImpl b κ pp msk 2
+        (cast (show (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
+          from rfl) x : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+/-- **Oracle `1` of the game, its query read as an identity**: the call on the game's query
+type is the call on the query read as an `idLen(κ)`-bit identity, with the answer kept on the
+game's answer type (the form for the `⊥` answers):
+`S.sidImpl b κ pp msk 1 x s = S.sidImpl b κ pp msk 1 (cast x) s`. -/
+theorem sidImpl_one_onQuery (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 1) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk 1 x s =
+      S.sidImpl b κ pp msk 1
+        (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl) x :
+          Fin (S.idLen.eval κ) → Bool) s := rfl
+
+/-- **Oracle `2` of the game, its query read as two messages**: the call on the game's query
+type is the call on the query read as two `msgLen(κ)`-bit messages, with the answer kept on the
+game's answer type (the form for the `⊥` answers):
+`S.sidImpl b κ pp msk 2 x s = S.sidImpl b κ pp msk 2 (cast x) s`. -/
+theorem sidImpl_two_onQuery (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (s : S.SidState κ) :
+    S.sidImpl b κ pp msk 2 x s =
+      S.sidImpl b κ pp msk 2
+        (cast (show (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
+          from rfl) x : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) s := rfl
+
+/-- **`KeyGen` for another identity, on the game's types**: with `ID*` recorded and the query
+`x`, read as an identity, different from it, the answer is `⟨1, d_ID⟩` with
+`d_ID ← KeyGen(msk, ID)`, read back on the game's answer type: for `cast x ≠ t`,
+`S.sidImpl b κ pp msk 1 x (some t, c) =
+(S.keyGen κ msk (cast x)).bind fun sk => pure (cast (decAnswer (some (encSK sk))), (some t, c))`. -/
+theorem sidImpl_keyGen_ne_onSpec (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool))
+    (h : (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl) x :
+      Fin (S.idLen.eval κ) → Bool) ≠ t) :
+    S.sidImpl b κ pp msk 1 x (some t, c) =
+      (S.keyGen κ msk (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl)
+        x)).bind fun sk =>
+        .pure (cast (show (Fin (S.skLen.eval κ + 1) → Bool) = (S.sidSpec κ).rng 1 from rfl)
+          (FixedLengthScheme.decAnswer (some (S.encSK κ sk))), (some t, c)) :=
+  S.sidImpl_keyGen_ne b κ pp msk _ t c h
+
+/-- **The first valid `Challenge`, on the game's types**: with `ID*` recorded, no challenge yet,
+and both messages of the query `x`, read as two messages, in the message space, the answer is
+`C ← Encrypt(params, ID*, M_b)`, read back on the game's answer type, and `C` is recorded: for
+`(M₀, M₁) = splitHalf (cast x)` with `M₀, M₁ ∈ M`, `S.sidImpl b κ pp msk 2 x (some t, none) =
+(S.enc κ pp t M_b).bind fun C => pure (cast (encCT C), (some t, some (encCT C)))`. -/
+theorem sidImpl_challenge_fresh_onSpec (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (h : S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (show (S.sidSpec κ).dom 2 =
+        (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) from rfl) x)).1 ∧
+      S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (show (S.sidSpec κ).dom 2 =
+        (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) from rfl) x)).2) :
+    S.sidImpl b κ pp msk 2 x (some t, none) =
+      (S.enc κ pp t (if b then (FixedLengthScheme.splitHalf (cast (show (S.sidSpec κ).dom 2 =
+          (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) from rfl) x)).2
+        else (FixedLengthScheme.splitHalf (cast (show (S.sidSpec κ).dom 2 =
+          (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) from rfl) x)).1)).bind fun c =>
+        .pure (cast (show (Fin (S.ctLen.eval κ) → Bool) = (S.sidSpec κ).rng 2 from rfl)
+          (S.encCT κ c), (some t, some (S.encCT κ c))) :=
+  S.sidImpl_challenge_fresh b κ pp msk _ t h
+
 /-- The codec of the adversary: the three oracles and a one-bit guess. -/
 def sidCodec (κ : ℕ) : MachineCodec (S.sidSpec κ) (Fin 1 → Bool) :=
   bitCodec (S.inLens κ) (S.outLens κ) 1

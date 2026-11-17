@@ -6,6 +6,11 @@ Authors: TCSlib contributors
 import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
 import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine
 import TCSlib.Cryptography.Pairing.Assumptions
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Lazy
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Real
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Coupling
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Random
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Chain
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -47,6 +52,20 @@ the sum of two Decision BDH advantages; the paper's statement is concrete (`t' <
 None: the simulator (`bb1SimImpl`, `bb1SimGame`) is defined beside the scheme, in
 `AdvancedEncryption.IdentityBased.BonehBoyen`.
 
+## Contents
+
+Steps 1 and 2 are proved in helper modules:
+
+* `BonehBoyenSecurity.Lazy`: the simulator with its challenge coins drawn at the first valid
+  `Challenge`, and its eager step.
+* `BonehBoyenSecurity.Real`: the output of `Setup`, read; the real game with `h` recorded, and
+  with `h` drawn at the first `Init`.
+* `BonehBoyenSecurity.Coupling`: step M, the real game against the simulator call by call, on
+  good coins.
+* `BonehBoyenSecurity.Random`: on a random `T`, the simulator does not depend on the challenge
+  bit.
+* `BonehBoyenSecurity.Chain`: on good coins, the real game is the simulation on `P_BDH`.
+
 ## Main results
 
 * `bb1_sim_real`, `bb1_sim_random` — steps 1 and 2 (step 3, `exists_bb1_distinguisher`, is in
@@ -75,35 +94,69 @@ the input 5-tuple is sampled from `P_BDH` … `A`'s view is identical to its vie
 game"], except on the generator's coins where `p < 2^ℓ`, where distinct identities may collide
 in `Z_p`.
 
-**Proof sketch.** Fix coins with `2^ℓ ≤ p`, so `idToZ` is injective on `ℓ`-bit strings
-(`bitsToNat_lt`, `bitsToNat_injective`). Couple the two games: the real `Setup` draws
-`(g, α, h, g_2)`, the simulation `(g, a, b', c)` and, at `Init`, `α_1`. Map `α ↦ a`,
-`g_2 ↦ g^{b'}` and `h ↦ g_1^{−ID*} g^{α_1}` (a bijection in `α_1` for each `ID*`, so `h` is uniform
-and independent; `expect_sample_equiv`). Answers to `Init` agree. For `ID ≠ ID*` the simulated
-key with exponent `r` is the real key with exponent `r̃ = r − b'/(ID − ID*)`, a bijection of
-`Z_p` (the paper's computation, `pow_val_mul`, `bilinear_pow`). The challenge is `Encrypt` with
-`s = c`, since `F(ID*) = g^{α_1}` and `e(g, g)^{ab'c} = e(g_1, g_2)^c`. The state machines agree
-step by step (`simulate` with matched implementations, `Games.expect_simulate_congr`), so the
-acceptance probabilities differ only on the excluded coins, of probability
-`Pr_r[p < 2^ℓ]`. -/
+**Proof sketch.** Read `Setup` through `BB1Sim.setup_out` and condition both games on the
+generator's coins `r` (`prob_bind`). On coins with `p < 2^ℓ` the two conditional acceptances are
+probabilities, so they differ by at most `1`; averaging this pointwise bound
+(`ProbComp.abs_expect_sub_le_expect`) gives `Pr_r[p < 2^ℓ]` (`Bridge.prob_sample_eq_uprob`). On
+coins with `2^ℓ ≤ p` they are equal (`BB1Sim.prob_sidGame_coins`), by coupling the two games:
+* the real `Setup` draws `h` before `ID*` exists; move it past `g_2` and the adversary's coins and
+  draw it at the first `Init` (`ProbComp.expect_simulate_rel` with `h` recorded beside `ID*`, then
+  `Games.expect_simulate_eager`);
+* map `α ↦ a` and read `g_2` as `g^{b'}` (`pow_val_bijective_of_ne_one`, `expect_sample_equiv`);
+* the real game and the simulator then agree call by call on states related by
+  `h = g_1^{−ID*} g^{α_1}` (`ProbComp.expect_simulate_rel`, `ProbComp.expect_sample_rel`): at
+  `Init`, `h ↦ α_1` is a bijection for each `ID*`, so `h` is uniform and the answers agree; for
+  `ID ≠ ID*`, which stay distinct in `Z_p` because `idToZ` is injective on `ℓ`-bit strings
+  (`bitsToNat_lt`, `bitsToNat_injective`, `CharP.natCast_injOn_Iio`), the simulated key with
+  exponent `r` is the real key with exponent `r̃ = r − b'/(ID − ID*)`, a bijection of `Z_p` (the
+  paper's computation, `pow_val_add`, `pow_val_neg`, `pow_val_mul`); the challenge is `Encrypt`
+  with `s = c`, since `F(ID*) = g^{α_1}` and `e(g, g)^{ab'c} = e(g_1, g_2)^c` (`bilinear_pow`);
+* finally the challenge coin `c` is drawn in advance (`Games.expect_simulate_eager`) and
+  `(a, b', c)` merges into one draw (`Bridge.expect_sample_pair`); the unused `T` drops out. -/
 theorem bb1_sim_real (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ) :
     advantage ((bb1Scheme G ℓ).sidGame A q b κ) (bb1SimGame G ℓ A q b true κ) ≤
       uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < 2 ^ ℓ.eval κ) := by
-  sorry
+  obtain ⟨o, hset, hR⟩ := BB1Sim.setup_out G ℓ κ
+  rw [advantage_eq, accept_eq, accept_eq, IBEScheme.sidGame_eq, hset, bb1SimGame_eq,
+    ProbComp.prob_bind, ProbComp.prob_bind]
+  -- average the pointwise bound `|F₀ r − F₁ r| ≤ 1[p < 2^ℓ]` over the generator's coins
+  calc _ ≤ ProbComp.expect (ProbComp.sample (G.gen.Coins κ))
+          (fun r => if (G.inst κ r).order < 2 ^ ℓ.eval κ then 1 else 0) :=
+        ProbComp.abs_expect_sub_le_expect _ fun r => ?_
+    _ = uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < 2 ^ ℓ.eval κ) := by
+        rw [← ProbComp.prob_eq_expect, Bridge.prob_sample_eq_uprob]
+  by_cases hr : (G.inst κ r).order < 2 ^ ℓ.eval κ
+  -- bad coins: two probabilities differ by at most `1`
+  · rw [if_pos hr]
+    exact abs_sub_le_of_nonneg_of_le (ProbComp.prob_nonneg _ _) (ProbComp.prob_le_one _ _)
+      (ProbComp.prob_nonneg _ _) (ProbComp.prob_le_one _ _)
+  -- good coins: the chain of `BB1Sim.prob_sidGame_coins`
+  · rw [if_neg hr]
+    exact (abs_eq_zero.2 (sub_eq_zero.2 (BB1Sim.prob_sidGame_coins G ℓ A q b κ o hR r hr))).le
 
 /-- **Step 2: on `R_BDH` the simulation does not depend on the challenge bit** [BB04, proof of
 Theorem 4.1, "when `T` is uniform and independent in `G_1` … `C` is independent of `b` in the
 adversary's view"].
 
-**Proof sketch.** In the `R_BDH` game, `T` is uniform in `G_T` and is used only in the first
-component `M_b · T` of the challenge. For each fixed run up to the challenge, `T ↦ M_b · T` is a
-bijection of `G_T`, so exchanging the sample of `T` with the rest of the game
-(`expect_expect_sample`) and reindexing it by `T ↦ M_b^{−1} M_{1−b} · T`
-(`expect_sample_equiv`) turns the game with `b = 0` into the game with `b = 1`. Challenges
-outside the message space are refused in both games. -/
+**Proof sketch.** In the `R_BDH` game, `T` is uniform in `G_T` and is used only at the first
+valid `Challenge`, in the first component `M_b · T` of the challenge. Exchange the sample of `T`
+with the adversary's coins (`expect_sample_comm`) and draw it at that call
+(`BB1Sim.expect_simulate_bb1SimLazy`, an instance of `expect_simulate_eager`). The simulators
+with `b = 0` and `b = 1` then agree call by call (`ProbComp.expect_simulate_congr`): every other
+call is the same for both bits, and at the first valid `Challenge` the bijection
+`T ↦ M_1^{−1} M_0 · T` of `G_T` turns the answer `M_0 · T` into `M_1 · T'`
+(`ProbComp.expect_sample_rel`). Challenges outside the message space are refused in both games.
+So the acceptance probabilities are equal (`advantage_eq`). -/
 theorem bb1_sim_random (A : NUPPT) (q : ℕ) (κ : ℕ) :
     advantage (bb1SimGame G ℓ A q false false κ) (bb1SimGame G ℓ A q true false κ) = 0 := by
-  sorry
+  rw [advantage_eq, abs_eq_zero, sub_eq_zero, accept_eq, accept_eq, bb1SimGame_eq, bb1SimGame_eq]
+  simp only [ProbComp.prob_bind, Bool.false_eq_true, if_false]
+  refine congrArg _ (funext fun r => congrArg _ (funext fun g => congrArg _ (funext fun abc => ?_)))
+  -- `T` is drawn before `A`'s coins: exchange them, then compare the two bits for each `ρ`
+  conv_lhs => rw [ProbComp.expect_sample_comm]
+  conv_rhs => rw [ProbComp.expect_sample_comm]
+  exact congrArg _ (funext fun ρ => BB1Sim.expect_bb1SimImpl_random G ℓ κ _ _ _ _ _
+    (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ) (fun a => ProbComp.prob (.pure (a 0)) (· = true)))
 
 /-- **BB1 is IND-sID-CPA secure under Decision BDH** [BB04, Theorem 4.1, at depth `ℓ = 1`]: if
 the generator's groups have efficient operations, the arithmetic bundle holds, the order is at
