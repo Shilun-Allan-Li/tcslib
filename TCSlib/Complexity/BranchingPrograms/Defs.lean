@@ -223,14 +223,18 @@ shows `l.foldl (fun f ι => ι.eval x ∘ f) g = l.foldl (fun f ι => ι.eval x 
 (composition is associative, `Function.comp_assoc`), which with `g = B₁.yield x` closes the goal. -/
 theorem yield_append (B₁ B₂ : BranchingProgram w n) (x : Fin n → Bool) :
     (B₁ ++ B₂).yield x = B₂.yield x ∘ B₁.yield x := by
-  sorry
+  rw [yield_eq, yield_eq B₂, yield_eq B₁, append_instrs, List.foldl_append]
+  -- the auxiliary induction of the sketch is core's `List.foldl_hom` for `f ↦ f ∘ B₁.yield x`
+  exact List.foldl_hom (fun f => f ∘ B₁.instrs.foldl (fun f ι => ι.eval x ∘ f) id) (init := id)
+    (g₁ := fun f (ι : Instr w n) => ι.eval x ∘ f) (g₂ := fun f (ι : Instr w n) => ι.eval x ∘ f)
+    (fun _ _ => rfl)
 
 /-- **C1.** The empty program yields the identity: `(⟨[]⟩ : BranchingProgram w n).yield x = id`
 [Bar89, §1, p001-b002].
 
 **Proof sketch.** `yield_eq` and `List.foldl_nil`. -/
 theorem yield_nil (x : Fin n → Bool) : (⟨[]⟩ : BranchingProgram w n).yield x = id := by
-  sorry
+  rw [yield_eq, List.foldl_nil]
 
 /-- **C2.** Conjugating every map by `θ` conjugates the yield:
 `(B.conj θ).yield x = θ ∘ B.yield x ∘ θ.symm` [Bar89, Lemma 1 proof, p003-b003].
@@ -241,7 +245,26 @@ generalized to an arbitrary start map `g` (the claim becomes `foldl … (θ ∘ 
 inner `θ.symm ∘ θ` by `Equiv.symm_comp_self`. -/
 theorem yield_conj (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) (x : Fin n → Bool) :
     (B.conj θ).yield x = θ ∘ B.yield x ∘ θ.symm := by
-  sorry
+  rw [conj_eq, yield_eq, yield_eq]
+  -- the induction of the sketch is core's `List.foldl_hom` for `g ↦ θ ∘ g ∘ θ.symm`; in each
+  -- step the conjugated instruction's map is `θ ∘ ι.eval x ∘ θ.symm` (`Instr.eval_eq` and core's
+  -- `apply_ite`), and the inner `θ.symm ∘ θ` cancels
+  have h := List.foldl_hom (fun g : Fin w → Fin w => θ ∘ g ∘ θ.symm) (l := B.instrs) (init := id)
+    (g₁ := fun f ι => ι.eval x ∘ f)
+    (g₂ := fun f ι => (⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩ : Instr w n).eval x ∘ f)
+    (fun g ι => by
+      have hc := apply_ite (fun f : Fin w → Fin w => θ ∘ f ∘ θ.symm) (x ι.var = true) ι.map1
+        ι.map0
+      dsimp only at hc ⊢
+      rw [Instr.eval_eq, Instr.eval_eq]
+      dsimp only
+      rw [← hc]
+      funext y
+      simp only [Function.comp_apply, Equiv.symm_apply_apply])
+  dsimp only at h
+  rw [Function.id_comp, Equiv.self_comp_symm] at h
+  rw [← h]
+  exact List.foldl_map
 
 /-- **C2.** Conjugation keeps the length: `(B.conj θ).length = B.length`
 [Bar89, Lemma 1, p003-b003: "of the same length as `B`"].
@@ -249,7 +272,7 @@ theorem yield_conj (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) (x : Fin
 **Proof sketch.** `length_eq`, `conj_eq` and `List.length_map`. -/
 theorem length_conj (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) :
     (B.conj θ).length = B.length := by
-  sorry
+  simp only [length_eq, conj_eq, List.length_map]
 
 /-- **C2.** Lengths add under concatenation: `(B₁ ++ B₂).length = B₁.length + B₂.length`
 [Bar89, Thm 1 proof, p004-b002].
@@ -257,7 +280,7 @@ theorem length_conj (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) :
 **Proof sketch.** `length_eq`, `append_instrs` and `List.length_append`. -/
 theorem length_append (B₁ B₂ : BranchingProgram w n) :
     (B₁ ++ B₂).length = B₁.length + B₂.length := by
-  sorry
+  simp only [length_eq, append_instrs, List.length_append]
 
 /-- **C3.** Lemma 2's step post-composes the yield with `σ⁻¹`: for a nonempty program,
 `(B.complementLast σ).yield x = σ.symm ∘ B.yield x` [Bar89, Lemma 2 proof, p003-b004:
@@ -271,7 +294,15 @@ reduce both sides to the last step: the new last map is `σ.symm ∘ ι.eval x` 
 theorem yield_complementLast (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w))
     (hB : 0 < B.length) (x : Fin n → Bool) :
     (B.complementLast σ).yield x = σ.symm ∘ B.yield x := by
-  sorry
+  obtain ⟨instrs⟩ := B
+  rcases List.eq_nil_or_concat' instrs with rfl | ⟨l, ι, rfl⟩
+  · exact absurd hB (Nat.lt_irrefl 0)
+  · -- the last step: the new last map is `σ.symm ∘ ι.eval x`
+    rw [complementLast_concat, yield_eq, yield_eq]
+    simp only [List.foldl_append, List.foldl_cons, List.foldl_nil]
+    rw [Instr.eval_eq, Instr.eval_eq]
+    dsimp only
+    cases x ι.var <;> rfl
 
 /-- **C3.** Lemma 2's step keeps the length: `(B.complementLast σ).length = B.length`
 [Bar89, Lemma 2, p003-b004: "in length `l`"].
@@ -280,7 +311,10 @@ theorem yield_complementLast (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w)
 identity, and `complementLast_concat` replaces one instruction (`List.length_append`). -/
 theorem length_complementLast (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w)) :
     (B.complementLast σ).length = B.length := by
-  sorry
+  obtain ⟨instrs⟩ := B
+  rcases List.eq_nil_or_concat' instrs with rfl | ⟨l, ι, rfl⟩
+  · rw [complementLast_nil]
+  · simp only [complementLast_concat, length_eq, List.length_append, List.length_singleton]
 
 /-- **C4.** Reader of `IsPermutation` [Bar89, §1, p002-b001]:
 `B.IsPermutation ↔ ∀ ι ∈ B.instrs, Function.Bijective ι.map0 ∧ Function.Bijective ι.map1`.
@@ -295,7 +329,10 @@ programs, so is `B₁ ++ B₂`.  Glue for [Bar89, Thm 1 proof, p004-b002].
 **Proof sketch.** `isPermutation_iff`, `append_instrs` and `List.mem_append`. -/
 theorem IsPermutation.append {B₁ B₂ : BranchingProgram w n} (h₁ : B₁.IsPermutation)
     (h₂ : B₂.IsPermutation) : (B₁ ++ B₂).IsPermutation := by
-  sorry
+  rw [isPermutation_iff] at h₁ h₂ ⊢
+  intro ι hι
+  rw [append_instrs, List.mem_append] at hι
+  exact hι.elim (h₁ ι) (h₂ ι)
 
 /-- **C4.** Conjugation keeps a permutation program a permutation program:
 `B.IsPermutation → (B.conj θ).IsPermutation`.  Glue for [Bar89, Lemma 1 proof, p003-b003].
@@ -304,7 +341,13 @@ theorem IsPermutation.append {B₁ B₂ : BranchingProgram w n} (h₁ : B₁.IsP
 a composition of bijections (`Function.Bijective.comp`, `Equiv.bijective`). -/
 theorem IsPermutation.conj {B : BranchingProgram w n} (h : B.IsPermutation)
     (θ : Equiv.Perm (Fin w)) : (B.conj θ).IsPermutation := by
-  sorry
+  rw [isPermutation_iff] at h ⊢
+  rw [conj_eq]
+  intro ι hι
+  simp only [List.mem_map] at hι
+  obtain ⟨ι₀, hι₀, rfl⟩ := hι
+  exact ⟨θ.bijective.comp ((h ι₀ hι₀).1.comp θ.symm.bijective),
+    θ.bijective.comp ((h ι₀ hι₀).2.comp θ.symm.bijective)⟩
 
 /-- **C4.** Lemma 2's step keeps a permutation program a permutation program:
 `B.IsPermutation → (B.complementLast σ).IsPermutation`.  Glue for
@@ -315,7 +358,21 @@ theorem IsPermutation.conj {B : BranchingProgram w n} (h : B.IsPermutation)
 (`Function.Bijective.comp`). -/
 theorem IsPermutation.complementLast {B : BranchingProgram w n} (h : B.IsPermutation)
     (σ : Equiv.Perm (Fin w)) : (B.complementLast σ).IsPermutation := by
-  sorry
+  obtain ⟨instrs⟩ := B
+  rcases List.eq_nil_or_concat' instrs with rfl | ⟨l, ι, rfl⟩
+  · rw [complementLast_nil]
+    exact h
+  · rw [isPermutation_iff] at h
+    rw [complementLast_concat, isPermutation_iff]
+    intro ι' hι'
+    rcases List.mem_append.1 hι' with hl | hl
+    · -- an unchanged instruction of `l`
+      exact h ι' (List.mem_append_left _ hl)
+    · -- the new last instruction `⟨ι.var, σ.symm ∘ ι.map0, σ.symm ∘ ι.map1⟩`
+      rw [List.mem_singleton] at hl
+      subst hl
+      have hι := h ι (List.mem_append_right _ (List.mem_singleton.2 rfl))
+      exact ⟨σ.symm.bijective.comp hι.1, σ.symm.bijective.comp hι.2⟩
 
 /-- **C4.** A permutation program yields a bijection on every input:
 `B.IsPermutation → Function.Bijective (B.yield x)`.  Glue for [Bar89, §1, p002-b001].
@@ -325,7 +382,17 @@ theorem IsPermutation.complementLast {B : BranchingProgram w n} (h : B.IsPermuta
 `isPermutation_iff`, so the composite stays bijective (`Function.Bijective.comp`). -/
 theorem IsPermutation.bijective_yield {B : BranchingProgram w n} (h : B.IsPermutation)
     (x : Fin n → Bool) : Function.Bijective (B.yield x) := by
-  sorry
+  rw [isPermutation_iff] at h
+  rw [yield_eq]
+  -- the induction of the sketch is core's `List.foldlRecOn` with motive `Function.Bijective`
+  -- each step: `Instr.eval_eq` picks `map1` or `map0`, both bijective
+  refine List.foldlRecOn (motive := Function.Bijective) B.instrs _ Function.bijective_id
+    fun g hg ι hι => ?_
+  dsimp only
+  rw [Instr.eval_eq]
+  split
+  · exact (h ι hι).2.comp hg
+  · exact (h ι hι).1.comp hg
 
 end BranchingProgram
 

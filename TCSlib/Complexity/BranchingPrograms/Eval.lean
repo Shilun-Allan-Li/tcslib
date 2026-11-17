@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Logic.Equiv.Basic
 import TCSlib.Complexity.BranchingPrograms.Defs
 
@@ -98,7 +99,7 @@ theorem evalWith_eq [AddCommMonoid α] (sel : β → α → α → α) (inp : Fi
 **Proof sketch.** `evalWith_eq` and `List.foldl_nil`. -/
 theorem evalWith_nil [AddCommMonoid α] (sel : β → α → α → α) (inp : Fin n → β)
     (V : Fin w → α) : (⟨[]⟩ : BranchingProgram w n).evalWith sel inp V = V := by
-  sorry
+  rw [evalWith_eq, List.foldl_nil]
 
 /-- **C5.** The host runs a concatenation in program order:
 `(B₁ ++ B₂).evalWith sel inp V = B₂.evalWith sel inp (B₁.evalWith sel inp V)`.  Glue (reader of
@@ -108,7 +109,8 @@ the fold).
 theorem evalWith_append [AddCommMonoid α] (sel : β → α → α → α) (inp : Fin n → β)
     (B₁ B₂ : BranchingProgram w n) (V : Fin w → α) :
     (B₁ ++ B₂).evalWith sel inp V = B₂.evalWith sel inp (B₁.evalWith sel inp V) := by
-  sorry
+  rw [evalWith_eq, evalWith_eq sel inp B₂, evalWith_eq sel inp B₁, append_instrs,
+    List.foldl_append]
 
 /-- **C6.** For a permutation instruction each sum of the push form has exactly one term, and the
 step is BV14's pull form: `ι.stepWith sel inp V i = sel (inp ι.var) (V (σ₀⁻¹ i)) (V (σ₁⁻¹ i))`
@@ -126,7 +128,18 @@ theorem Instr.stepWith_of_isPermutation [AddCommMonoid α] (sel : β → α → 
     ι.stepWith sel inp V i =
       sel (inp ι.var) (V ((Equiv.ofBijective _ (ι.isPermutation_iff.1 hι).1).symm i))
         (V ((Equiv.ofBijective _ (ι.isPermutation_iff.1 hι).2).symm i)) := by
-  sorry
+  -- for a bijection `f`, the push-form sum at `i` has the single term `j = f⁻¹ i`
+  have key : ∀ (f : Fin w → Fin w) (hf : Function.Bijective f),
+      ∑ j ∈ univ.filter (fun j => f j = i), V j = V ((Equiv.ofBijective f hf).symm i) := by
+    intro f hf
+    have hs : univ.filter (fun j => f j = i) = {(Equiv.ofBijective f hf).symm i} := by
+      ext j
+      rw [Finset.mem_filter, Finset.mem_singleton, ← Equiv.ofBijective_apply f hf,
+        Equiv.apply_eq_iff_eq_symm_apply]
+      exact ⟨fun h => h.2, fun h => ⟨Finset.mem_univ j, h⟩⟩
+    rw [hs, Finset.sum_singleton]
+  rw [Instr.stepWith_apply, key _ (ι.isPermutation_iff.1 hι).1,
+    key _ (ι.isPermutation_iff.1 hι).2]
 
 /-- **C7.** **Step-indexed relational host lemma**: two runs of the host on the same program,
 possibly with different selectors, inputs and value types, that are related by `R 0` at the
@@ -148,7 +161,37 @@ theorem evalWith_rel [AddCommMonoid α] [AddCommMonoid α'] (sel : β → α →
       R (t + 1) ((B.instrs[t]'(ht.trans_eq B.length_eq)).stepWith sel inp U)
         ((B.instrs[t]'(ht.trans_eq B.length_eq)).stepWith sel' inp' U')) :
     R B.length (B.evalWith sel inp V) (B.evalWith sel' inp' V') := by
-  sorry
+  -- the folds over the first `k` instructions are related by `R k`
+  have hrun : ∀ k (hk : k ≤ B.instrs.length),
+      R k ((B.instrs.take k).foldl (fun U ι => ι.stepWith sel inp U) V)
+        ((B.instrs.take k).foldl (fun U ι => ι.stepWith sel' inp' U) V') := by
+    intro k
+    induction k with
+    | zero => intro _; rw [List.take_zero, List.foldl_nil, List.foldl_nil]; exact h0
+    | succ k ih =>
+      intro hk
+      have hlt : k < B.instrs.length := hk
+      rw [List.take_succ_eq_append_getElem hlt, List.foldl_append, List.foldl_append,
+        List.foldl_cons, List.foldl_nil, List.foldl_cons, List.foldl_nil]
+      exact hstep k (B.length_eq ▸ hlt) _ _ (ih hlt.le)
+  have h := hrun B.instrs.length le_rfl
+  rw [List.take_length] at h
+  rw [evalWith_eq, evalWith_eq, length_eq]
+  exact h
+
+/-- One instruction of the Boolean host on a one-hot vector: with the selector
+`sel b u v = if b then v else u`, `ι.stepWith sel x (Pi.single s 1) = Pi.single (ι.eval x s) 1`.
+Glue for C8 [BV14, Eq. (4), p013-b002, generalized from permutations]; split on `x ι.var`. -/
+private theorem stepWith_single (ι : Instr w n) (x : Fin n → Bool) (s : Fin w) :
+    ι.stepWith (fun b (u v : ℕ) => if b then v else u) x (Pi.single s 1) =
+      Pi.single (ι.eval x s) 1 := by
+  funext i
+  -- each push-form sum of a one-hot vector is `Finset.sum_pi_single'`
+  rw [Instr.stepWith_apply, Finset.sum_pi_single', Finset.sum_pi_single', Pi.single_apply,
+    Instr.eval_eq]
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  cases x ι.var <;> simp only [Bool.false_eq_true, ↓reduceIte] <;>
+    exact if_congr eq_comm rfl rfl
 
 /-- **C8.** Boolean semantics for **general** maps: with values in `ℕ` and the selector
 `sel b u v = if b then v else u`, the host started at the one-hot vector of `s` ends at the
@@ -167,6 +210,12 @@ is `Pi.single (fold f s) 1`), using `evalWith_eq` and `yield_eq`. -/
 theorem evalWith_single (B : BranchingProgram w n) (x : Fin n → Bool) (s : Fin w) :
     B.evalWith (fun b (u v : ℕ) => if b then v else u) x (Pi.single s 1) =
       Pi.single (B.yield x s) 1 := by
-  sorry
+  rw [evalWith_eq, yield_eq]
+  -- the induction of the sketch is core's `List.foldl_hom` for `f ↦ Pi.single (f s) 1`, whose
+  -- step is `stepWith_single`
+  exact List.foldl_hom (fun f : Fin w → Fin w => (Pi.single (f s) 1 : Fin w → ℕ)) (init := id)
+    (g₁ := fun f (ι : Instr w n) => ι.eval x ∘ f)
+    (g₂ := fun U ι => ι.stepWith (fun b (u v : ℕ) => if b then v else u) x U)
+    (fun f ι => stepWith_single ι x (f s))
 
 end BranchingProgram
