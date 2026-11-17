@@ -63,6 +63,8 @@ only by the results whose reductions compute in the group.
 * `BilinearGroup.pow_val_add` — exponents add in `Z_p`: `x^{(a+b).val} = x^{a.val} x^{b.val}`.
 * `BilinearGroup.pow_val_neg` — negating an exponent inverts: `x^{(-a).val} = (x^{a.val})⁻¹`.
 * `BilinearGroup.pow_val_bijective_of_ne_one` — `a ↦ g^a` is a bijection `Z_p → G` for `g ∈ G^*`.
+* `pow_val_bijective_of_prime_card` — `a ↦ g^a` is a bijection `Z_p → M` for `g ≠ 1` in any finite
+  group `M` of prime order `p` (the generic form of the two bijections above).
 
 ## References
 
@@ -136,6 +138,27 @@ structure BilinearGroup (wG wT : ℕ) where
 attribute [instance] BilinearGroup.commGroupG BilinearGroup.commGroupGT BilinearGroup.fintypeG
   BilinearGroup.fintypeGT BilinearGroup.decEqG BilinearGroup.decEqGT
 
+/-- **`a ↦ g^a` is a bijection `Z_p → M`** for every `g ≠ 1` in a finite group `M` of prime order
+`p`: if `|M| = p` is prime and `g ≠ 1`, then `Function.Bijective fun a : ZMod p => g ^ a.val`.
+The one statement behind `BilinearGroup.pow_val_bijective` (on `G_T`) and
+`BilinearGroup.pow_val_bijective_of_ne_one` (on `G`).
+
+Glue lemma, with no counterpart in [BB04]: elementary group theory, assembled from Mathlib
+(`orderOf_eq_prime`, `pow_injOn_Iio_orderOf`). Mathlib's closest statement,
+`IsCyclic.unique_zpow_zmod`, gives the unique exponent in `ZMod (Fintype.card M)` of each element
+for a generator `g`, not this bijectivity on `ZMod p`.
+
+**Proof sketch.** By Lagrange, `g^p = 1`, so `g ≠ 1` has order exactly `p`. Hence `n ↦ g^n` is
+injective on `{0, …, p - 1}`, which contains every `a.val`, so `a ↦ g^{a.val}` is injective on
+`Z_p`. Both sides have `p` elements, so it is a bijection. -/
+theorem pow_val_bijective_of_prime_card {M : Type*} [Group M] [Fintype M] {p : ℕ}
+    [Fact p.Prime] (hM : Fintype.card M = p) {g : M} (hg : g ≠ 1) :
+    Function.Bijective fun a : ZMod p => g ^ a.val := by
+  have ho : orderOf g = p := orderOf_eq_prime (by rw [← hM]; exact pow_card_eq_one) hg
+  rw [Fintype.bijective_iff_injective_and_card]
+  refine ⟨fun a b hab => ZMod.val_injective p ?_, by rw [ZMod.card, hM]⟩
+  exact pow_injOn_Iio_orderOf (ho ▸ ZMod.val_lt a) (ho ▸ ZMod.val_lt b) hab
+
 namespace BilinearGroup
 
 variable {wG wT : ℕ} (B : BilinearGroup wG wT)
@@ -193,14 +216,12 @@ theorem pow_order_GT (y : B.GT) : y ^ B.order = 1 := by
 /-- Exponents of `G` act through `Z_p`: `x^{(ab mod p)} = (x^a)^b` read in `Z_p`, i.e.
 `x ^ (a * b).val = x ^ (a.val * b.val)` for `a, b ∈ Z_p`. -/
 theorem pow_val_mul (x : B.G) (a b : ZMod B.order) : x ^ (a * b).val = x ^ (a.val * b.val) := by
-  rw [ZMod.val_mul, ← Nat.mod_add_div (a.val * b.val) B.order, pow_add, pow_mul, B.pow_order,
-    one_pow, mul_one, Nat.mod_add_div]
+  rw [ZMod.val_mul, ← pow_mod_card x (a.val * b.val), B.card_G]
 
 /-- Exponents of `G_T` act through `Z_p`: `y ^ (a * b).val = y ^ (a.val * b.val)`. -/
 theorem pow_val_mul_GT (y : B.GT) (a b : ZMod B.order) :
     y ^ (a * b).val = y ^ (a.val * b.val) := by
-  rw [ZMod.val_mul, ← Nat.mod_add_div (a.val * b.val) B.order, pow_add, pow_mul, B.pow_order_GT,
-    one_pow, mul_one, Nat.mod_add_div]
+  rw [ZMod.val_mul, ← pow_mod_card y (a.val * b.val), B.card_GT]
 
 /-- **Non-degeneracy at every generator**: `e(x, x) ≠ 1` for every `x ∈ G^*` (from
 `e(g, g) ≠ 1` [BB04, §2.2, item 2], since every `x ∈ G^*` generates `G`).
@@ -226,20 +247,13 @@ for uniform `z ∈ Z_p` is uniform on `G_T` (the identification of [BB04, §3.1]
 `a ↦ e(x, x)^{a.val}` is injective on `Z_p`; both sides have `p` elements (`card_GT`). -/
 theorem pow_val_bijective {x : B.G} (hx : x ≠ 1) :
     Function.Bijective fun a : ZMod B.order => B.pair x x ^ a.val := by
-  have ho : orderOf (B.pair x x) = B.order :=
-    orderOf_eq_prime (B.pow_order_GT _) (B.pair_ne_one hx)
-  rw [Fintype.bijective_iff_injective_and_card]
-  refine ⟨fun a b hab => ZMod.val_injective _ ?_, by rw [ZMod.card, B.card_GT]⟩
-  have h := pow_eq_pow_iff_modEq.1 hab
-  rw [ho] at h
-  exact Nat.ModEq.eq_of_lt_of_lt h (ZMod.val_lt a) (ZMod.val_lt b)
+  exact pow_val_bijective_of_prime_card B.card_GT (B.pair_ne_one hx)
 
 /-- **The additive exponent law in `G`**: exponents of `G` add in `Z_p`,
 `x ^ (a + b).val = x ^ a.val * x ^ b.val` for `a, b ∈ Z_p`. -/
 theorem pow_val_add (x : B.G) (a b : ZMod B.order) :
     x ^ (a + b).val = x ^ a.val * x ^ b.val := by
-  rw [ZMod.val_add, ← pow_add, ← Nat.mod_add_div (a.val + b.val) B.order, pow_add, pow_mul,
-    B.pow_order, one_pow, mul_one, Nat.mod_add_div]
+  rw [ZMod.val_add, ← pow_add, ← pow_mod_card x (a.val + b.val), B.card_G]
 
 /-- **The negation exponent law in `G`**: negating an exponent in `Z_p` inverts the power,
 `x ^ (-a).val = (x ^ a.val)⁻¹` for `a ∈ Z_p`. -/
@@ -251,12 +265,7 @@ theorem pow_val_neg (x : B.G) (a : ZMod B.order) : x ^ (-a).val = (x ^ a.val)⁻
 proofs, as an `Equiv` by `Equiv.ofBijective`). -/
 theorem pow_val_bijective_of_ne_one {g : B.G} (hg : g ≠ 1) :
     Function.Bijective fun a : ZMod B.order => g ^ a.val := by
-  have ho : orderOf g = B.order := orderOf_eq_prime (B.pow_order _) hg
-  rw [Fintype.bijective_iff_injective_and_card]
-  refine ⟨fun a b hab => ZMod.val_injective _ ?_, by rw [ZMod.card, B.card_G]⟩
-  have h := pow_eq_pow_iff_modEq.1 hab
-  rw [ho] at h
-  exact Nat.ModEq.eq_of_lt_of_lt h (ZMod.val_lt a) (ZMod.val_lt b)
+  exact pow_val_bijective_of_prime_card B.card_G hg
 
 end BilinearGroup
 

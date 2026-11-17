@@ -146,3 +146,7 @@ The plan had omitted the #248 historical seal ledger and the inherited-seal repa
 - **Q6 (changed): the lattice campaign is ours** (Seyoon: "any issues on the lattice side are also our responsibility").
   DL-54 (`reidx` move into `Combinators`) is done by us, after the 6a landing merges; it is tracked with the lattice
   campaign, not handed off.
+
+**Gate 49 additions to S2-A (2026-11-17):** G49-01 (reword `Games/Relational.lean`'s module docstring: the per-call
+hypothesis preserves equality of compatible test expectations, not a relation-supported coupling; dated correction to
+bb1-sim design r1 §2.2) and G49-02 (`expect_sample_rel`: `[BGZ09, §4.1, rule R-Rand]` with an adaptation note).
