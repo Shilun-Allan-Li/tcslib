@@ -774,7 +774,7 @@ not in the exit state at any earlier time.
 \begin{theorem}[A released call first stops at its exit time]
 \lean{Turing.NTimeDiag.qy_release_first_stop}
 \leanok
-\uses{Turing.Cfg.Stopped, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.Cfg.ofWords_state, Turing.Cfg.stopped_iff, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_state_ne_none_of_le, Turing.MultiTapeTM.runFrom_zero, Turing.seamReleaseTM, Turing.stateWord}
+\uses{Turing.Cfg.Stopped, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.Cfg.ofWords_state, Turing.Cfg.stopped_iff, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_state_ne_none_of_le, Turing.MultiTapeTM.runFrom_zero, Turing.seamReleaseTM, Turing.seamReleaseTM_runFrom_pos, Turing.stateWord}
 \difficulty{4}
 Let $C$ be a finite deterministic $k$-tape machine over bits with states $\mathit{entry}$ and
 $\mathit{exit}$, and let $x, a, b$ be binary words. Write $\mathrm{seam}(q, w)$ for the
@@ -929,7 +929,7 @@ and empty output, and whose counter tape is $T(\mathrm{ctr})$ with head $P(\math
 \begin{theorem}[Hosted unary expansion]
 \lean{Turing.NTimeDiag.qy_expandHost}
 \leanok
-\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_embed, Turing.NTimeDiag.qy_embed_state, Turing.NTimeDiag.qy_expand_start, Turing.NTimeDiag.qy_patch_end, Turing.counterOverhead, Turing.counter_cfg_eq, Turing.embedEmitTM, Turing.expandTM}
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_embed, Turing.NTimeDiag.qy_embed_state, Turing.NTimeDiag.qy_expand_start, Turing.NTimeDiag.qy_patch_end, Turing.counterOverhead, Turing.counter_cfg_eq, Turing.embedEmitTM, Turing.expandTM, Turing.expandTM_run_ofCfg}
 \difficulty{5}
 Consider the expansion machine with pattern $1$: a counter loop that, given a binary counter of
 value $d$, writes $1$ on its body tape $d$ times from the head. Embed it along an injection
