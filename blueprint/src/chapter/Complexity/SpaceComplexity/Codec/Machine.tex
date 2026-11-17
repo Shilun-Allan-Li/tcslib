@@ -490,3 +490,432 @@ instructions are precisely those in the definition: the program scans and valida
 encoded inputs, performs register updates and decider calls, and returns a Boolean
 answer according to the selected mode.
 \end{definition}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Codec --- Machine: further results}
+
+Throughout, $N$ is a nondeterministic Turing machine over the Boolean alphabet with $k$
+work tapes and state set $Q$, and $\mathcal{A}^m_N$ is the codec register machine of $N$
+in mode $m$: an abstract register machine with $21$ registers (among them $A$, $S$, $T$,
+$U$, $Q_1$, $Q_3$, $Z$), a length oracle and a bit oracle for its input, and an
+instruction at every label. The statements below give its instructions at the labels of
+the edge-code tail, together with the parameters of the copy, scale and increment loops
+that tail uses.
+
+\begin{lemma}[Accepting label returns true]
+\lean{Complexity.Codec.CA_acc}
+\label{Complexity.Codec.CA_acc}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and $m$ any mode.
+In the codec register machine $\mathcal{A}^m_N$ of $N$ in mode $m$, the instruction at the
+accepting label $\mathsf{acc}$ halts with answer $\mathsf{true}$.
+\end{lemma}
+
+\begin{lemma}[Rejecting label returns false]
+\lean{Complexity.Codec.CA_rej}
+\label{Complexity.Codec.CA_rej}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and $m$ any mode.
+In the codec register machine $\mathcal{A}^m_N$ of $N$ in mode $m$, the instruction at the
+rejecting label $\mathsf{rej}$ halts with answer $\mathsf{false}$.
+\end{lemma}
+
+\begin{lemma}[End of the validity scan in edge mode]
+\lean{Complexity.Codec.CA_vDone_edge}
+\label{Complexity.Codec.CA_vDone_edge}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.VAcc, Complexity.Codec.VAd, Complexity.Codec.goto}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and let $\sigma$ be
+a state of the validity scan of $N$ (a scan state together with a chunk pointer and
+buffer). In the codec register machine of $N$ in edge-code mode, the instruction at the
+label $\mathsf{vDone}(\sigma)$ is an unconditional jump to $\mathsf{eStart}$ if the
+underlying scan state of $\sigma$ is accepting for the validity scan, and to
+$\mathsf{rej}$ otherwise.
+\end{lemma}
+
+\begin{lemma}[Unconditional jump as a zero test]
+\lean{Complexity.Codec.goto_eq}
+\label{Complexity.Codec.goto_eq}
+\leanok
+\uses{Complexity.Codec.Lab, Complexity.Codec.goto, Complexity.Codec.rZ}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and $\ell$ a label
+of its codec register machine. The unconditional jump to $\ell$ is the instruction that
+tests whether register $Z$ is zero and goes to $\ell$ in both cases.
+\end{lemma}
+
+\begin{lemma}[Edge tail start without work tapes]
+\lean{Complexity.Codec.CA_eStart_of_zero}
+\label{Complexity.Codec.CA_eStart_of_zero}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet with no work tapes
+($k = 0$), and let $m$ be any mode. In the codec register machine $\mathcal{A}^m_N$, the
+instruction at the label $\mathsf{eStart}$ halts with answer $\mathsf{false}$.
+\end{lemma}
+
+\begin{lemma}[Edge tail start with work tapes]
+\lean{Complexity.Codec.CA_eStart_of_pos}
+\label{Complexity.Codec.CA_eStart_of_pos}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode, Complexity.Codec.rU}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet with $k \neq 0$
+work tapes, and let $m$ be any mode. In the codec register machine $\mathcal{A}^m_N$, the
+instruction at the label $\mathsf{eStart}$ sets register $U$ to $0$ and then goes to the
+copy loop at site $\mathsf{Ue}$.
+\end{lemma}
+
+\begin{lemma}[Clearing the tape counter]
+\lean{Complexity.Codec.CA_eK}
+\label{Complexity.Codec.CA_eK}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode, Complexity.Codec.icL, Complexity.Codec.rQ3}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and $m$ any mode.
+In the codec register machine $\mathcal{A}^m_N$, the instruction at the label
+$\mathsf{eK}$ sets register $Q_3$ to $0$ and then goes to the entry label of the
+increment chain at site $\mathsf{Ke}$ (its first step, or its exit label if the chain has
+length zero).
+\end{lemma}
+
+\begin{lemma}[Reading the first-cell head flag]
+\lean{Complexity.Codec.CA_eRd1}
+\label{Complexity.Codec.CA_eRd1}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode, Complexity.Codec.jBit, Complexity.Codec.rU}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and $m$ any mode.
+In the codec register machine $\mathcal{A}^m_N$, the instruction at the label
+$\mathsf{eRd1}$ queries the bit oracle on the whole input at the position held in
+register $U$, going to $\mathsf{acc}$ if the oracle answers yes and to $\mathsf{eFar}$
+otherwise.
+\end{lemma}
+
+\begin{lemma}[Preparing the last-cell address]
+\lean{Complexity.Codec.CA_eFar}
+\label{Complexity.Codec.CA_eFar}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode, Complexity.Codec.rQ1}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and $m$ any mode.
+In the codec register machine $\mathcal{A}^m_N$, the instruction at the label
+$\mathsf{eFar}$ sets register $Q_1$ to $0$ and then goes to the copy loop at site
+$\mathsf{Qe}$.
+\end{lemma}
+
+\begin{lemma}[Reading the last-cell head flag]
+\lean{Complexity.Codec.CA_eRd2}
+\label{Complexity.Codec.CA_eRd2}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode, Complexity.Codec.jBit, Complexity.Codec.rQ1}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and $m$ any mode.
+In the codec register machine $\mathcal{A}^m_N$, the instruction at the label
+$\mathsf{eRd2}$ queries the bit oracle on the whole input at the position held in
+register $Q_1$, going to $\mathsf{acc}$ if the oracle answers yes and to
+$\mathsf{eNext}$ otherwise.
+\end{lemma}
+
+\begin{lemma}[Decrementing the tape counter]
+\lean{Complexity.Codec.CA_eNext}
+\label{Complexity.Codec.CA_eNext}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode, Complexity.Codec.rQ3}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and $m$ any mode.
+In the codec register machine $\mathcal{A}^m_N$, the instruction at the label
+$\mathsf{eNext}$ decrements register $Q_3$ (truncated at $0$) and then goes to
+$\mathsf{eTest}$.
+\end{lemma}
+
+\begin{lemma}[Testing the tape counter]
+\lean{Complexity.Codec.CA_eTest}
+\label{Complexity.Codec.CA_eTest}
+\leanok
+\uses{Complexity.Codec.CA, Complexity.Codec.CMode, Complexity.Codec.icL, Complexity.Codec.rQ3}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet and $m$ any mode.
+In the codec register machine $\mathcal{A}^m_N$, the instruction at the label
+$\mathsf{eTest}$ goes to $\mathsf{rej}$ if register $Q_3$ is zero, and otherwise to the
+entry label of the increment chain at site $\mathsf{S1}$ (its first step, or its exit
+label if the chain has length zero).
+\end{lemma}
+
+\begin{lemma}[Destination of copy site Ue]
+\lean{Complexity.Codec.cpDst_Ue}
+\label{Complexity.Codec.cpDst_Ue}
+\leanok
+\uses{Complexity.Codec.cpDst, Complexity.Codec.rU}
+\difficulty{1}
+In the codec register machine, the copy loop at site $\mathsf{Ue}$ (which increments its
+destination register until it equals its source register) has destination register $U$.
+\end{lemma}
+
+\begin{lemma}[Source of copy site Ue]
+\lean{Complexity.Codec.cpSrc_Ue}
+\label{Complexity.Codec.cpSrc_Ue}
+\leanok
+\uses{Complexity.Codec.cpSrc, Complexity.Codec.rA}
+\difficulty{1}
+In the codec register machine, the copy loop at site $\mathsf{Ue}$ (which increments its
+destination register until it equals its source register) has source register $A$, the
+register holding the end of the input field.
+\end{lemma}
+
+\begin{lemma}[Exit of copy site Ue]
+\lean{Complexity.Codec.cpNext_Ue}
+\label{Complexity.Codec.cpNext_Ue}
+\leanok
+\uses{Complexity.Codec.W_eq, Complexity.Codec.cpNext}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the copy loop at site $\mathsf{Ue}$ exits to step $0$ of the
+increment chain at site $\mathsf{Eh}$.
+\end{lemma}
+
+\begin{lemma}[Destination of copy site Qe]
+\lean{Complexity.Codec.cpDst_Qe}
+\label{Complexity.Codec.cpDst_Qe}
+\leanok
+\uses{Complexity.Codec.cpDst, Complexity.Codec.rQ1}
+\difficulty{1}
+In the codec register machine, the copy loop at site $\mathsf{Qe}$ (which increments its
+destination register until it equals its source register) has destination register
+$Q_1$.
+\end{lemma}
+
+\begin{lemma}[Source of copy site Qe]
+\lean{Complexity.Codec.cpSrc_Qe}
+\label{Complexity.Codec.cpSrc_Qe}
+\leanok
+\uses{Complexity.Codec.cpSrc, Complexity.Codec.rU}
+\difficulty{1}
+In the codec register machine, the copy loop at site $\mathsf{Qe}$ (which increments its
+destination register until it equals its source register) has source register $U$.
+\end{lemma}
+
+\begin{lemma}[Exit of copy site Qe]
+\lean{Complexity.Codec.cpNext_Qe}
+\label{Complexity.Codec.cpNext_Qe}
+\leanok
+\uses{Complexity.Codec.cpNext}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the copy loop at site $\mathsf{Qe}$ exits to the copy loop at
+site $\mathsf{Te}$.
+\end{lemma}
+
+\begin{lemma}[Destination of copy site Te]
+\lean{Complexity.Codec.cpDst_Te}
+\label{Complexity.Codec.cpDst_Te}
+\leanok
+\uses{Complexity.Codec.cpDst, Complexity.Codec.rT}
+\difficulty{1}
+In the codec register machine, the copy loop at site $\mathsf{Te}$ (which increments its
+destination register until it equals its source register) has destination register $T$.
+\end{lemma}
+
+\begin{lemma}[Source of copy site Te]
+\lean{Complexity.Codec.cpSrc_Te}
+\label{Complexity.Codec.cpSrc_Te}
+\leanok
+\uses{Complexity.Codec.cpSrc, Complexity.Codec.rS}
+\difficulty{1}
+In the codec register machine, the copy loop at site $\mathsf{Te}$ (which increments its
+destination register until it equals its source register) has source register $S$, the
+register holding the radius.
+\end{lemma}
+
+\begin{lemma}[Exit of copy site Te]
+\lean{Complexity.Codec.cpNext_Te}
+\label{Complexity.Codec.cpNext_Te}
+\leanok
+\uses{Complexity.Codec.cpNext}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the copy loop at site $\mathsf{Te}$ exits to the scale loop at
+site $\mathsf{Ee}$.
+\end{lemma}
+
+\begin{lemma}[Source of scale site Ee]
+\lean{Complexity.Codec.scSrc_Ee}
+\label{Complexity.Codec.scSrc_Ee}
+\leanok
+\uses{Complexity.Codec.rT, Complexity.Codec.scSrc}
+\difficulty{1}
+In the codec register machine, the scale loop at site $\mathsf{Ee}$ (which, while its
+source register is nonzero, decrements it and adds a fixed factor to its destination
+register) has source register $T$.
+\end{lemma}
+
+\begin{lemma}[Destination of scale site Ee]
+\lean{Complexity.Codec.scDst_Ee}
+\label{Complexity.Codec.scDst_Ee}
+\leanok
+\uses{Complexity.Codec.rQ1, Complexity.Codec.scDst}
+\difficulty{1}
+In the codec register machine, the scale loop at site $\mathsf{Ee}$ (which, while its
+source register is nonzero, decrements it and adds a fixed factor to its destination
+register) has destination register $Q_1$.
+\end{lemma}
+
+\begin{lemma}[Factor of scale site Ee]
+\lean{Complexity.Codec.scFactor_Ee}
+\label{Complexity.Codec.scFactor_Ee}
+\leanok
+\uses{Complexity.Codec.W, Complexity.Codec.scFactor}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet with $k$ work tapes
+and state set $Q$, and let $W = 3(\abs{Q}+1) + 3k + 1$ be its chunk width. In the codec
+register machine of $N$, the scale loop at site $\mathsf{Ee}$ adds $4W$ to its
+destination register per unit removed from its source register.
+\end{lemma}
+
+\begin{lemma}[Exit of scale site Ee]
+\lean{Complexity.Codec.scNext_Ee}
+\label{Complexity.Codec.scNext_Ee}
+\leanok
+\uses{Complexity.Codec.scNext}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the scale loop at site $\mathsf{Ee}$ exits to the label
+$\mathsf{eRd2}$, which reads the last-cell head flag.
+\end{lemma}
+
+\begin{lemma}[Register of increment site Eh]
+\lean{Complexity.Codec.icReg_Eh}
+\label{Complexity.Codec.icReg_Eh}
+\leanok
+\uses{Complexity.Codec.icReg, Complexity.Codec.rU}
+\difficulty{1}
+In the codec register machine, the increment chain at site $\mathsf{Eh}$ (a fixed number
+of successive increments of one register) increments register $U$.
+\end{lemma}
+
+\begin{lemma}[Length of increment site Eh]
+\lean{Complexity.Codec.icCount_Eh}
+\label{Complexity.Codec.icCount_Eh}
+\leanok
+\uses{Complexity.Codec.hH, Complexity.Codec.icCount}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet with state set $Q$,
+and let $h_H = 3(\abs{Q}+1)$ be its number of header data (pairs of an optional state
+and an element of $\{0,1,2\}$). In the codec register machine of $N$, the increment chain
+at site $\mathsf{Eh}$ performs $2(h_H + 2)$ increments.
+\end{lemma}
+
+\begin{lemma}[Exit of increment site Eh]
+\lean{Complexity.Codec.icNext_Eh}
+\label{Complexity.Codec.icNext_Eh}
+\leanok
+\uses{Complexity.Codec.icNext}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the increment chain at site $\mathsf{Eh}$ exits to the label
+$\mathsf{eK}$, which clears the tape counter.
+\end{lemma}
+
+\begin{lemma}[Register of increment site Ke]
+\lean{Complexity.Codec.icReg_Ke}
+\label{Complexity.Codec.icReg_Ke}
+\leanok
+\uses{Complexity.Codec.icReg, Complexity.Codec.rQ3}
+\difficulty{1}
+In the codec register machine, the increment chain at site $\mathsf{Ke}$ (a fixed number
+of successive increments of one register) increments register $Q_3$, the tape counter.
+\end{lemma}
+
+\begin{lemma}[Length of increment site Ke]
+\lean{Complexity.Codec.icCount_Ke}
+\label{Complexity.Codec.icCount_Ke}
+\leanok
+\uses{Complexity.Codec.icCount}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet with $k$ work
+tapes. In the codec register machine of $N$, the increment chain at site $\mathsf{Ke}$
+performs $(k \mathbin{\dot-} 1) + 1$ increments, where $\dot-$ is truncated subtraction
+on $\mathbb{N}$; this equals $k$ whenever $k \neq 0$.
+\end{lemma}
+
+\begin{lemma}[Exit of increment site Ke]
+\lean{Complexity.Codec.icNext_Ke}
+\label{Complexity.Codec.icNext_Ke}
+\leanok
+\uses{Complexity.Codec.icNext}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the increment chain at site $\mathsf{Ke}$ exits to the label
+$\mathsf{eRd1}$, which reads the first-cell head flag.
+\end{lemma}
+
+\begin{lemma}[Register of increment site S1]
+\lean{Complexity.Codec.icReg_S1}
+\label{Complexity.Codec.icReg_S1}
+\leanok
+\uses{Complexity.Codec.icReg, Complexity.Codec.rU}
+\difficulty{1}
+In the codec register machine, the increment chain at site $\mathsf{S1}$ (a fixed number
+of successive increments of one register) increments register $U$.
+\end{lemma}
+
+\begin{lemma}[Length of increment site S1]
+\lean{Complexity.Codec.icCount_S1}
+\label{Complexity.Codec.icCount_S1}
+\leanok
+\uses{Complexity.Codec.icCount}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the increment chain at site $\mathsf{S1}$ performs $3$
+increments.
+\end{lemma}
+
+\begin{lemma}[Exit of increment site S1]
+\lean{Complexity.Codec.icNext_S1}
+\label{Complexity.Codec.icNext_S1}
+\leanok
+\uses{Complexity.Codec.W_eq, Complexity.Codec.icNext}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the increment chain at site $\mathsf{S1}$ exits to step $0$ of
+the increment chain at site $\mathsf{S2}$, so that the two chains together advance by
+$2 \cdot 3$ input positions.
+\end{lemma}
+
+\begin{lemma}[Register of increment site S2]
+\lean{Complexity.Codec.icReg_S2}
+\label{Complexity.Codec.icReg_S2}
+\leanok
+\uses{Complexity.Codec.icReg, Complexity.Codec.rU}
+\difficulty{1}
+In the codec register machine, the increment chain at site $\mathsf{S2}$ (a fixed number
+of successive increments of one register) increments register $U$.
+\end{lemma}
+
+\begin{lemma}[Length of increment site S2]
+\lean{Complexity.Codec.icCount_S2}
+\label{Complexity.Codec.icCount_S2}
+\leanok
+\uses{Complexity.Codec.icCount}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the increment chain at site $\mathsf{S2}$ performs $3$
+increments.
+\end{lemma}
+
+\begin{lemma}[Exit of increment site S2]
+\lean{Complexity.Codec.icNext_S2}
+\label{Complexity.Codec.icNext_S2}
+\leanok
+\uses{Complexity.Codec.icNext}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the Boolean alphabet. In the codec
+register machine of $N$, the increment chain at site $\mathsf{S2}$ exits to the label
+$\mathsf{eRd1}$, which reads the first-cell head flag.
+\end{lemma}
