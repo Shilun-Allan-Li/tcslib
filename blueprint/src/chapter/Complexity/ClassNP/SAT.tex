@@ -227,140 +227,6 @@ satisfiable if and only if there is a Boolean word $u$ of length $|x|+1$ such th
 verifier in 3SAT mode accepts the concatenation of $x$ and $u$.
 \end{lemma}
 
-\begin{lemma}[Unary scanner partition]
-\lean{Complexity.sat_takeTrues_repr}
-\label{Complexity.sat_takeTrues_repr}
-\leanok
-\uses{Std.Sat.CNF.takeTrues}
-\difficulty{3}
-For every binary string $x$, if the leading-ones scanner returns the count $k$ and
-suffix $s$, then $x = 1^{k} \mathbin{+\!\!+} s$: the scanner partitions its input
-into the counted run of ones and the remaining suffix.
-\end{lemma}
-
-\begin{lemma}[Literal parsing reconstructs its input]
-\lean{Complexity.sat_parseLit_repr}
-\label{Complexity.sat_parseLit_repr}
-\leanok
-\uses{Complexity.sat_takeTrues_repr, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeLit}
-\difficulty{3}
-If the literal parser succeeds on a binary string $x$, returning a literal $\ell$
-and a remainder $r$, then $x$ is exactly the serialization of $\ell$ followed by
-$r$.
-\end{lemma}
-
-\begin{lemma}[Clause parsing reconstructs its input]
-\lean{Complexity.sat_parseClause_repr}
-\label{Complexity.sat_parseClause_repr}
-\leanok
-\uses{Complexity.sat_parseLit_repr, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeClause}
-\difficulty{5}
-If the fuel-indexed clause parser succeeds on a binary string $x$, returning a
-clause $C$ and a remainder $r$, then $x$ is exactly the serialization of $C$
-(including its terminator) followed by $r$.
-\end{lemma}
-
-\begin{lemma}[Formula parsing reconstructs its input]
-\lean{Complexity.sat_parseClauses_repr}
-\label{Complexity.sat_parseClauses_repr}
-\leanok
-\uses{Complexity.sat_parseClause_repr, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseClauses, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
-\difficulty{5}
-If the fuel-indexed formula parser succeeds on a binary string $x$, returning a
-formula $\varphi$ and a remainder $r$, then $x$ is exactly the serialization of
-$\varphi$ — every clause marker and the final terminator — followed by $r$.
-\end{lemma}
-
-\begin{lemma}[Exact parsing is inverse serialization]
-\lean{Complexity.sat_parse_repr}
-\label{Complexity.sat_parse_repr}
-\leanok
-\uses{Complexity.sat_parseClauses_repr, Std.Sat.CNF.parse, Std.Sat.CNF.serialize}
-\difficulty{3}
-If the exact-consumption CNF parser succeeds on a binary string $x$, returning the
-formula $\varphi$, then $x$ equals the serialization of $\varphi$.
-\end{lemma}
-
-\begin{definition}[LL(1) grammar transition]
-\lean{Complexity.satSyntaxStep}
-\label{Complexity.satSyntaxStep}
-\leanok
-The transition function of the six-state CNF syntax automaton over $\{0,1\}$ is
-defined on the positions formula, clause, unary index, polarity, exact end, and
-error as follows. At formula level a $1$ leads to clause level and a $0$ to exact
-end; at clause level a $1$ leads to the index position and a $0$ back to formula
-level; the index position stays on $1$ and moves to polarity on $0$; polarity
-returns to clause level on either bit; exact end and error move to error on every
-bit.
-\end{definition}
-
-\begin{definition}[Residual grammar of the syntax scanner]
-\lean{Complexity.satSyntaxSuffix}
-\label{Complexity.satSyntaxSuffix}
-\leanok
-\uses{Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
-For each of the six scanner positions, the residual grammar of that position is
-the set of binary strings that may legally remain to be read: at formula level,
-the serializations of CNF formulas; at clause level, a serialized clause followed
-by a serialized formula; at index level, a unary run $1^v$ followed by $0$, a
-polarity bit, a serialized clause, and a serialized formula; at polarity level,
-one arbitrary bit followed by a serialized clause and a serialized formula; at
-exact end, only the empty string; at the error position, no string at all.
-\end{definition}
-
-\begin{lemma}[One grammar bit per transition]
-\lean{Complexity.satSyntaxSuffix_cons}
-\label{Complexity.satSyntaxSuffix_cons}
-\leanok
-\uses{Complexity.satSyntaxStep, Complexity.satSyntaxSuffix, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit}
-\difficulty{5}
-For every scanner position $q$, bit $b$, and binary string $x$: the string
-$b :: x$ lies in the residual grammar of $q$ if and only if $x$ lies in the residual
-grammar of the position reached from $q$ on reading $b$.
-\end{lemma}
-
-\begin{lemma}[Acceptance at end of input]
-\lean{Complexity.satSyntaxSuffix_nil}
-\label{Complexity.satSyntaxSuffix_nil}
-\leanok
-\uses{Complexity.satSyntaxSuffix, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
-\difficulty{2}
-The empty string lies in the residual grammar of a scanner position $q$ if and only
-if $q$ is the exact-end position.
-\end{lemma}
-
-\begin{lemma}[The scan recognizes the residual grammar]
-\lean{Complexity.satSyntaxSuffix_run}
-\label{Complexity.satSyntaxSuffix_run}
-\leanok
-\uses{Complexity.satSyntaxStep, Complexity.satSyntaxSuffix, Complexity.satSyntaxSuffix_cons, Complexity.satSyntaxSuffix_nil}
-\difficulty{3}
-For every scanner position $q$ and binary string $x$: $x$ lies in the residual
-grammar of $q$ if and only if folding the grammar transition over $x$ starting at
-$q$ ends in the exact-end position.
-\end{lemma}
-
-\begin{definition}[Boolean syntax pass]
-\lean{Complexity.satSyntax}
-\label{Complexity.satSyntax}
-\leanok
-\uses{Complexity.satSyntaxStep}
-The Boolean result of the complete syntax scan of a binary string: fold the
-six-state grammar transition over the whole string starting at the formula position
-and test whether the exact-end position is reached.
-\end{definition}
-
-\begin{lemma}[Syntax scan agrees with the parser]
-\lean{Complexity.satSyntax_spec}
-\label{Complexity.satSyntax_spec}
-\leanok
-\uses{Complexity.satSyntax, Complexity.satSyntaxSuffix_run, Complexity.sat_parse_repr, Std.Sat.CNF.parse, Std.Sat.CNF.parse_serialize, Std.Sat.CNF.serialize}
-\difficulty{4}
-For every binary string $x$, the Boolean syntax scan of $x$ returns true exactly
-when the exact-consumption CNF parser succeeds on $x$. This holds on every string,
-including the empty input, unfinished literals, and strings with trailing garbage.
-\end{lemma}
-
 \begin{definition}[Generic one-way scanner machine]
 \lean{Complexity.satScanTM}
 \label{Complexity.satScanTM}
@@ -373,49 +239,11 @@ transition, and upon reaching the right boundary emits the single bit given by t
 accepting predicate at the final state and halts.
 \end{definition}
 
-\begin{definition}[Scanner configuration]
-\lean{Complexity.satScanCfg}
-\label{Complexity.satScanCfg}
-\leanok
-\uses{Turing.Cfg}
-For an input word $x$, a control state $q$, and a position $i \le |x|$, the
-scanner configuration is the configuration of a zero-work-tape machine on input
-$x$ in control state $q$, with the input head just before position $i$ and empty
-output.
-\end{definition}
-
-\begin{lemma}[One Scanner Step]
-\lean{Complexity.satScan_step}
-\label{Complexity.satScan_step}
-\leanok
-\uses{Complexity.satScanCfg, Complexity.satScanTM, Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{4}
-Let $S$ be a finite state set with decidable equality, let $\delta:S\times\{0,1\}\to S$
-be a transition function, and let $a:S\to\{0,1\}$ be an accepting predicate. For a
-Boolean input word $x$, a state $q\in S$, and an index $i<|x|$, one step of the scanner
-from the configuration with state $q$, head at position $i$, and empty output reaches
-the configuration with state $\delta(q,x_i)$, head at position $i+1$, and empty output.
-\end{lemma}
-
-\begin{lemma}[Complete scan of an input suffix]
-\lean{Complexity.satScan_run}
-\label{Complexity.satScan_run}
-\leanok
-\uses{Complexity.satScanCfg, Complexity.satScanTM, Complexity.satScan_step, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step}
-\difficulty{4}
-Let $S$ be a finite set with decidable equality, let $\delta:S\times\{0,1\}\to S$ be a
-transition function, let $s_0\in S$ be a starting state, and let $A:S\to\{0,1\}$ be an
-acceptance predicate. For all Boolean words $x$ and $r$, every prefix $p$ satisfying
-$x=p\mathbin{+\!\!+}r$, and every state $q\in S$, the scanner started on $x$ in state $q$
-with its input head just after $p$ is halted after $|r|+1$ steps and has output
-$[A(\operatorname{foldl}(\delta,q,r))]$.
-\end{lemma}
-
 \begin{lemma}[Running time of a finite-state scanner]
 \lean{Complexity.satScan_computes}
 \label{Complexity.satScan_computes}
 \leanok
-\uses{Complexity.satScanCfg, Complexity.satScanTM, Complexity.satScan_run, Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
+\uses{Complexity.satScanTM, Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
 Let $S$ be a finite set with decidable equality, let $\delta:S\times\{0,1\}\to S$ be a
 transition function, let $s_0\in S$ be a starting state, and let $A:S\to\{0,1\}$ be an
@@ -1758,17 +1586,6 @@ from the canonical frame in state $q$ yields the canonical frame in state $q'$ a
 position $i'$, with unchanged counter length and tape contents and unchanged output.
 \end{lemma}
 
-\begin{lemma}[One step equals one-step iteration]
-\lean{Complexity.satRed_one}
-\label{Complexity.satRed_one}
-\leanok
-\uses{Complexity.satRedTM, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
-\difficulty{1}
-For every Boolean input word $x$ and every configuration of the transducer on $x$,
-running the machine for one step gives the same configuration as applying its one-step
-transition.
-\end{lemma}
-
 \begin{lemma}[Counter rewind to the destination state]
 \lean{Complexity.satRed_counterBack}
 \label{Complexity.satRed_counterBack}
@@ -1804,7 +1621,7 @@ $\max(n,j+v)$, and the second tape, its head, and the output are unchanged.
 \lean{Complexity.satRed_maxLiteral}
 \label{Complexity.satRed_maxLiteral}
 \leanok
-\uses{Complexity.satRedAction, Complexity.satRedAction_apply, Complexity.satRedCfg, Complexity.satRedCfg_input, Complexity.satRedCounter_write, Complexity.satRedTM, Complexity.satRed_counterBack, Complexity.satRed_maxOnes, Complexity.satRed_move, Complexity.satRed_one, Std.Sat.CNF.serializeLit, Turing.Action.apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
+\uses{Complexity.satRedAction, Complexity.satRedAction_apply, Complexity.satRedCfg, Complexity.satRedCfg_input, Complexity.satRedCounter_write, Complexity.satRedTM, Complexity.satRed_counterBack, Complexity.satRed_maxOnes, Complexity.satRed_move, Std.Sat.CNF.serializeLit, Turing.Action.apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{6}
 Let $x$ be a Boolean word containing the serialization of the literal $(v,\mathrm{pol})$
 between a prefix and suffix, where $v\in\mathbb{N}$ and $\mathrm{pol}$ is a Boolean
@@ -1865,7 +1682,7 @@ output are unchanged.
 \lean{Complexity.satRed_maxFormula}
 \label{Complexity.satRed_maxFormula}
 \leanok
-\uses{Complexity.satClauseVars, Complexity.satRedCfg, Complexity.satRedTM, Complexity.satRed_maxClause, Complexity.satRed_move, Complexity.satRed_one, Complexity.sat_numVars_cons, Std.Sat.CNF.numVars, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
+\uses{Complexity.satClauseVars, Complexity.satRedCfg, Complexity.satRedTM, Complexity.satRed_maxClause, Complexity.satRed_move, Complexity.sat_numVars_cons, Std.Sat.CNF.numVars, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
 \difficulty{5}
 Let $x$ be a Boolean word and let $\varphi$ be a CNF formula over natural-number-indexed
 variables. If $x$ is a concatenation of a prefix, the serialization of $\varphi$, and a
@@ -1892,7 +1709,7 @@ every integer offset except offset $-1$, where it contains the bit $0$.
 \lean{Complexity.satRed_init}
 \label{Complexity.satRed_init}
 \leanok
-\uses{Complexity.satRedAction, Complexity.satRedAction_apply, Complexity.satRedBuffer, Complexity.satRedBuffer_empty, Complexity.satRedCfg, Complexity.satRedCounter, Complexity.satRedTM, Complexity.satRed_move, Complexity.satRed_one, Turing.Action.apply, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.satRedAction, Complexity.satRedAction_apply, Complexity.satRedBuffer, Complexity.satRedBuffer_empty, Complexity.satRedCfg, Complexity.satRedCounter, Complexity.satRedTM, Complexity.satRed_move, Turing.Action.apply, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
 For every Boolean input word $x$, running the transducer for two steps from its initial
 configuration on $x$ yields the configuration in state $2$, with the input head at the
@@ -2582,76 +2399,11 @@ strings. Then the function sending $x$ to the concatenation $f(x)g(x)$ is
 polynomial-time computable.
 \end{lemma}
 
-\begin{definition}[Word-transducer semantics]
-\lean{Complexity.satMapWord}
-\label{Complexity.satMapWord}
-\leanok
-Given a state set $S$, a transition $\delta$, a per-bit optional emission
-$\varepsilon$, and an optional final emission $\phi$, the transducer semantics is
-the word function defined by recursion on the input: on the empty word from state
-$q$ it returns the final emission $\phi(q)$ (zero or one bit), and on a bit $b$
-followed by a word $r$ from state $q$ it returns the emission $\varepsilon(q, b)$
-followed by the semantics of $r$ from state $\delta(q, b)$.
-\end{definition}
-
-\begin{definition}[Finite word-transducer machine]
-\lean{Complexity.satMapTM}
-\label{Complexity.satMapTM}
-\leanok
-\uses{Turing.FinTM}
-Given a finite state set $S$ with a transition $\delta$, a per-bit optional
-emission, an optional final emission, and a start state, the word-transducer
-machine is the finite Turing machine with no work tapes that, on each input bit,
-applies $\delta$, emits the per-bit optional output, and moves right, and at the
-right boundary emits the optional final bit and halts.
-\end{definition}
-
-\begin{definition}[Transducer configuration]
-\lean{Complexity.satMapCfg}
-\label{Complexity.satMapCfg}
-\leanok
-\uses{Turing.Cfg}
-For an input word $x$, a control state $q$, a position $i \le |x|$, and an output
-word $o$, the transducer configuration is the configuration of a zero-work-tape
-machine on input $x$ with control state $q$, input head just before position $i$,
-and already-emitted output $o$.
-\end{definition}
-
-\begin{lemma}[Machine execution matches transducer semantics]
-\lean{Complexity.satMap_run}
-\label{Complexity.satMap_run}
-\leanok
-\uses{Complexity.satMapCfg, Complexity.satMapTM, Complexity.satMapWord, Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{5}
-Let $S$ be a finite state set with decidable equality, let $\delta:S\times\{0,1\}\to S$
-be a transition function, let $\varepsilon:S\times\{0,1\}\to\{0,1\}\cup\{\text{no
-output}\}$ be a per-bit emission rule, let $\phi:S\to\{0,1\}\cup\{\text{no output}\}$ be
-a final emission rule, and choose a start state. For Boolean words $x$ and $r$, suppose
-$x=p\mathbin{+\!\!+}r$ for a word $p$; for every state $q$ and already-emitted word $o$,
-the associated transducer machine, started on input $x$ in state $q$ with its input head
-at position $|p|$ and output $o$, is halted after $|r|+1$ steps and has output $o$
-followed by the transducer semantics on $q$ and $r$.
-\end{lemma}
-
-\begin{lemma}[Polynomial-time transducer semantics]
-\lean{Complexity.satMap_poly}
-\label{Complexity.satMap_poly}
-\leanok
-\uses{Complexity.PolyTimeComputable, Complexity.satMapCfg, Complexity.satMapTM, Complexity.satMapWord, Complexity.satMap_run, Turing.Cfg.ext_zero_tapes, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
-\difficulty{3}
-Let $S$ be a finite state set with decidable equality, let $\delta:S\times\{0,1\}\to S$
-be a transition function, let $\varepsilon:S\times\{0,1\}\to\{0,1\}\cup\{\text{no
-output}\}$ be a per-bit emission rule, let $\phi:S\to\{0,1\}\cup\{\text{no output}\}$ be
-a final emission rule, and choose a start state $q_0\in S$. The word function that emits
-according to $\varepsilon$ on each input bit, updates its state by $\delta$, and emits
-according to $\phi$ at the end is polynomial-time computable.
-\end{lemma}
-
 \begin{lemma}[Polynomial-Time Unary Length]
 \lean{Complexity.sat_pt_unaryLength}
 \label{Complexity.sat_pt_unaryLength}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.satMapWord, Complexity.satMap_poly}
+\uses{Complexity.PolyTimeComputable}
 \difficulty{3}
 The function that maps each binary string $x$ to the string of $|x|$ ones is
 polynomial-time computable.
@@ -2661,7 +2413,7 @@ polynomial-time computable.
 \lean{Complexity.sat_pt_tail}
 \label{Complexity.sat_pt_tail}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.satMapWord, Complexity.satMap_poly}
+\uses{Complexity.PolyTimeComputable}
 \difficulty{3}
 The function that removes the first bit from a binary string, returning the empty string
 when the input is empty, is polynomial-time computable.
@@ -2671,7 +2423,7 @@ when the input is empty, is polynomial-time computable.
 \lean{Complexity.sat_pt_head}
 \label{Complexity.sat_pt_head}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.satMapWord, Complexity.satMap_poly}
+\uses{Complexity.PolyTimeComputable}
 \difficulty{3}
 The function sending each bit string to its prefix of length at most one is
 polynomial-time computable.
@@ -3393,139 +3145,27 @@ followed by $x$, with the input head at its initial position, the work head at z
 the output empty.
 \end{lemma}
 
-\begin{definition}[Padded action]
-\lean{Complexity.satPadAction}
-\label{Complexity.satPadAction}
-\leanok
-\uses{Turing.Action}
-The embedding of an action over $k$ work tapes into an action over $K \ge k$
-work tapes: the extra tapes are neither written nor moved.
-\end{definition}
-
 \begin{definition}[Padded machine]
 \lean{Complexity.satPadTM}
 \label{Complexity.satPadTM}
 \leanok
-\uses{Complexity.satPadAction, Turing.FinTM}
+\uses{Turing.FinTM}
 The embedding of a finite machine with $k$ work tapes into one with $K \ge k$
 work tapes by padding every transition; all modules of the streaming host share
 tape zero, with each source bank padded on the right.
 \end{definition}
 
-\begin{definition}[Padded configuration]
-\lean{Complexity.satPadCfg}
-\label{Complexity.satPadCfg}
-\leanok
-\uses{Turing.Cfg}
-The embedding of a configuration over $k$ work tapes into one over $K \ge k$
-work tapes: the padding tapes are genuinely blank with heads at the origin.
-\end{definition}
-
-\begin{lemma}[Padding commutes with an action]
-\lean{Complexity.satPad_apply}
-\label{Complexity.satPad_apply}
-\leanok
-\uses{Complexity.satPadAction, Complexity.satPadCfg, Turing.Action, Turing.Action.apply, Turing.Cfg}
-\difficulty{3}
-Let $k$ and $K$ be natural numbers, let $S$ be a set of states, and let $x$ be a finite
-Boolean input word. For every action $a$ on $k$ work tapes and configuration $c$ on
-those tapes with input $x$, applying the action padded to $K$ tapes to the configuration
-padded to $K$ tapes gives the same configuration as padding to $K$ tapes the result of
-applying $a$ to $c$.
-\end{lemma}
-
 \begin{lemma}[Padding commutes with machine runs]
 \lean{Complexity.satPad_run}
 \label{Complexity.satPad_run}
 \leanok
-\uses{Complexity.satPadAction, Complexity.satPadCfg, Complexity.satPadTM, Complexity.satPad_apply, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
+\uses{Complexity.satPadTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
 \difficulty{4}
 Let $M$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes, and
 let $K\ge k$. For every Boolean input word, every configuration $c$ of $M$ on that
 input, and every $t\in\mathbb{N}$, running the machine padded to $K$ work tapes for $t$
 steps from the padded configuration equals the padding to $K$ tapes of the $t$-step run
 of $M$ from $c$.
-\end{lemma}
-
-\begin{lemma}[Padding canonical seam configurations]
-\lean{Complexity.satPad_seam}
-\label{Complexity.satPad_seam}
-\leanok
-\uses{Complexity.satPadCfg, Turing.Cfg.ofWords, Turing.FinTM.bufferTape, Turing.stateWord}
-\difficulty{3}
-Let $k,K$ be natural numbers with $0<k$, let $S$ be a state type, let $x$ be a Boolean
-input word, and let $q\in S$ and $w,o$ be Boolean words. Padding the configuration on
-$x$ formed from state $q$ and the tape-word assignment that places $w$ on tape $0$ and
-leaves the other tapes empty, with output set to $o$, to $K$ work tapes gives the
-configuration on $x$ formed from the same state and word assignment over $K$ tapes, with
-output $o$.
-\end{lemma}
-
-\begin{definition}[Call-stopping wrapper]
-\lean{Complexity.satStopTM}
-\label{Complexity.satStopTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction}
-Given a machine $C$ with designated entry and exit states, the wrapper machine
-whose states carry an additional Boolean release flag: it simulates $C$, raising
-the flag after the first step, and halts silently as soon as the flag is raised
-and the control is at the designated exit. The flag ensures that even an entry
-equal to the exit executes at least once.
-\end{definition}
-
-\begin{definition}[Release-flag embedding]
-\lean{Complexity.satStopCfg}
-\label{Complexity.satStopCfg}
-\leanok
-\uses{Turing.Cfg}
-The embedding of a configuration of a machine into the call-stopping wrapper
-with a given release-flag value; all physical fields (tapes, heads, output) are
-preserved.
-\end{definition}
-
-\begin{lemma}[Step of the call-stopping wrapper]
-\lean{Complexity.satStop_step}
-\label{Complexity.satStop_step}
-\leanok
-\uses{Complexity.satStopCfg, Complexity.satStopTM, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
-\difficulty{3}
-Let $C$ be a finite Turing machine over the Boolean alphabet, with designated states
-$\mathrm{entry}$ and $\mathrm{exit}$. For a Boolean input word $x$, a configuration $c$
-of $C$ on $x$, and a flag $b\in\{0,1\}$, suppose that $c$ is live and that $c$ is not in
-state $\mathrm{exit}$ whenever $b=1$. One step of the wrapper machine, from the
-configuration formed by adjoining flag $b$ to $c$, yields the configuration formed by
-adjoining flag $1$ to the result of one step of $C$ from $c$.
-\end{lemma}
-
-\begin{lemma}[Liveness of run prefixes]
-\lean{Complexity.sat_live_prefix}
-\label{Complexity.sat_live_prefix}
-\leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
-\difficulty{3}
-Let $k\in\mathbb{N}$, let $S$ be a state type, let $x$ be a binary string, let $M$ be a
-$k$-work-tape Turing machine over the binary alphabet with states in $S$, and let $c$ be
-a configuration on input $x$. If the machine has not halted after $t$ steps from $c$,
-then it has not halted after any $u\le t$ steps from $c$.
-\end{lemma}
-
-\begin{lemma}[Halting After a Clean Call]
-\lean{Complexity.satStop_clean}
-\label{Complexity.satStop_clean}
-\leanok
-\uses{Complexity.satStopCfg, Complexity.satStopTM, Complexity.satStop_step, Complexity.sat_live_prefix, Turing.Action.apply, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.controlAction, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.stateWord}
-\difficulty{5}
-Let $C$ be a finite Turing machine over the Boolean alphabet, with designated entry and
-exit states, and let $x$, $\mathrm{arg}$, $\mathrm{result}$, and $\mathrm{out}$ be
-Boolean words. Starting from the configuration on input $x$ with entry state and tape
-contents given by the state word of $\mathrm{arg}$, suppose $t>0$, the machine's state
-is not the exit state at any time $v$ with $0<v<t$, and at time $t$ it is in the
-configuration with exit state, tape contents given by the state word of
-$\mathrm{result}$, and output $\mathrm{out}$. Then the call-stopping wrapper, started on
-input $x$ with release flag down, entry state, and tape contents given by the state word
-of $\mathrm{arg}$, reaches after $t+1$ steps a halted configuration with release flag
-raised, exit state, tape contents given by the state word of $\mathrm{result}$, and
-output $\mathrm{out}$.
 \end{lemma}
 
 \begin{definition}[Host state space]
@@ -3584,7 +3224,7 @@ clean-call contracts restore the shared scratch before each next call.
 \lean{Complexity.satHost_seam}
 \label{Complexity.satHost_seam}
 \leanok
-\uses{Complexity.SatHostState, Complexity.satHostRet, Complexity.satPadCfg, Complexity.satPad_seam, Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.emitCfg, Turing.stateWord}
+\uses{Complexity.SatHostState, Complexity.satHostRet, Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.emitCfg, Turing.stateWord}
 \difficulty{3}
 Let $M$ be a family of six finite Boolean Turing machines, let $K\in\mathbb{N}$, and let
 $i\in\{0,1,2,3,4,5\}$ index a machine with positive work-tape count. For Boolean words
@@ -3601,7 +3241,7 @@ output $\mathrm{pre}\,\mathrm{out}$.
 \lean{Complexity.satHost_call}
 \label{Complexity.satHost_call}
 \leanok
-\uses{Complexity.SatHostState, Complexity.satHostEntry, Complexity.satHostRet, Complexity.satHostTM, Complexity.satHost_seam, Complexity.satPadCfg, Complexity.satPadTM, Complexity.satPad_run, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.emitCfg, Turing.emit_run, Turing.stateWord}
+\uses{Complexity.SatHostState, Complexity.satHostEntry, Complexity.satHostRet, Complexity.satHostTM, Complexity.satHost_seam, Complexity.satPadTM, Complexity.satPad_run, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.emitCfg, Turing.emit_run, Turing.stateWord}
 \difficulty{5}
 Let six finite Boolean Turing machines be given, padded to a common work-tape count $K$;
 choose a module index $i\in\{0,1,2,3,4,5\}$ whose machine has positive work-tape count.
@@ -3644,42 +3284,11 @@ which $M$, started at its entry over the state word of the argument, first halts
 emitted exactly the prescribed chunk, with the native input untouched.
 \end{definition}
 
-\begin{lemma}[Stopping wrapper for a bridge computation]
-\lean{Complexity.satClean_stop}
-\label{Complexity.satClean_stop}
-\leanok
-\uses{Complexity.SatClean, Complexity.satStopTM, Complexity.satStop_clean, Complexity.sat_call_first_halt, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.stateWord}
-\difficulty{4}
-Let $C$ be a finite Turing machine over the Boolean alphabet, with a positive number of
-work tapes and designated states $e_0$ and $e_1$. Let $r$ and $s$ map Boolean words to
-Boolean words, and let $B$ map natural numbers to natural numbers. Suppose that for
-every Boolean input $x$ and argument $a$, there is a time $t$ with $0<t\le B(|a|)$ such
-that, at every positive time $v<t$, the run of $C$ on input $x$, started in state $e_0$
-with $a$ on the first work tape and all other work tapes blank, is not in state $e_1$;
-at time $t$ its configuration is the canonical configuration in state $e_1$ with $r(a)$
-on the first work tape, all other work tapes blank, and output $s(a)$. Then the wrapper
-that simulates $C$ and halts silently upon reaching $e_1$ after at least one step
-satisfies the clean-module contract with result function $r$, emission function $s$, and
-budget $n\mapsto B(n)+1$.
-\end{lemma}
-
-\begin{lemma}[Polynomial bridge bound]
-\lean{Complexity.sat_bridge_bound}
-\label{Complexity.sat_bridge_bound}
-\leanok
-\difficulty{3}
-For all natural numbers $c,A,d,n,\mathrm{len}$ satisfying $\mathrm{len}\le A(n+1)^d$,
-one has
-\[
-c\bigl(A(n+1)^d+n+\mathrm{len}+1\bigr)+1\le \bigl(c(2A+1)+1\bigr)(n+1)^{d+1}.
-\]
-\end{lemma}
-
 \begin{lemma}[Polynomial-time clean installation]
 \lean{Complexity.satClean_install}
 \label{Complexity.satClean_install}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.SatClean, Complexity.satClean_stop, Complexity.satStopTM, Complexity.sat_bridge_bound, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_installCallTM, Turing.MultiTapeTM.output_length_le}
+\uses{Complexity.PolyTimeComputable, Complexity.SatClean, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_installCallTM, Turing.MultiTapeTM.output_length_le}
 \difficulty{4}
 For every polynomial-time computable function $f$ from Boolean words to Boolean words,
 there exist a finite Turing machine $M$ and natural numbers $A,d$ such that $M$ has at
@@ -3695,7 +3304,7 @@ starting configuration, apart from the first tape now containing $f(z)$.
 \lean{Complexity.satClean_emit}
 \label{Complexity.satClean_emit}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.SatClean, Complexity.satClean_stop, Complexity.satStopTM, Complexity.sat_bridge_bound, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_emitCallTM, Turing.MultiTapeTM.output_length_le}
+\uses{Complexity.PolyTimeComputable, Complexity.SatClean, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_emitCallTM, Turing.MultiTapeTM.output_length_le}
 \difficulty{4}
 For every polynomial-time computable function $f$ from Boolean words to Boolean words,
 there exist a finite Turing machine $M$ and natural numbers $A,d$ such that $M$ has at

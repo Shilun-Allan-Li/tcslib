@@ -293,17 +293,6 @@ a head flag equal to a given mark, and a cleared left-neighbour flag. With the m
 it is the initialized origin block; with the mark cleared it is a fresh guard block.
 \end{definition}
 
-\begin{lemma}[Blank unread block]
-\lean{Turing.FinTM.tapeRow_blank}
-\label{Turing.FinTM.tapeRow_blank}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.blankRow, Turing.FinTM.headAt, Turing.FinTM.tapeRow}
-\difficulty{2}
-Let $c$ be a configuration of a machine with $k$ work tapes, and let $j\in\mathbb Z$.
-Suppose that no work-tape head is at $j$ and every work tape contains a blank at $j$.
-Then the unread block encoding coordinate $j$ is the blank block with its mark cleared.
-\end{lemma}
-
 \begin{lemma}[Length of a single block]
 \lean{Turing.FinTM.tapeRow_length}
 \label{Turing.FinTM.tapeRow_length}
@@ -337,57 +326,6 @@ coordinate, let $j\in\mathbb Z$, and let $n,m$ be nonnegative integers. The zone
 $n+m$ blocks starting at $j$ is the concatenation of the zone of $n$ blocks starting at
 $j$ and the zone of $m$ blocks starting at $j+n$.
 \end{lemma}
-
-\begin{definition}[Transport of input-head positions]
-\lean{Turing.FinTM.sweepPos}
-\label{Turing.FinTM.sweepPos}
-\leanok
-\uses{Turing.FinTM.SweepAlphabet}
-For an input word $x$ over $\Gamma$, the transport of an input-head position on $x$ (one
-of $\abs{x}+2$ positions, including the two endmarkers) to the numerically identical
-position on the symbol-wise encoded input, which has the same length.
-\end{definition}
-
-\begin{lemma}[Input movement commutes with position transport]
-\lean{Turing.FinTM.sweepPos_move}
-\label{Turing.FinTM.sweepPos_move}
-\leanok
-\uses{Turing.FinTM.sweepPos, Turing.moveInputPos}
-\difficulty{2}
-Let $\Gamma$ be an alphabet, let $x$ be a finite word over $\Gamma$, let $k$ be a
-natural number, and let $p$ be one of the $|x|+2$ input-head positions. For every
-direction $d\in\{-1,0,1\}$, transporting the position after moving the head by $d$ gives
-the same position as moving by $d$ after transport.
-\end{lemma}
-
-\begin{lemma}[Correct Decoding of the Scanned Input]
-\lean{Turing.FinTM.sweepInput_read}
-\label{Turing.FinTM.sweepInput_read}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.SweepAlphabet, Turing.FinTM.sweepInput, Turing.FinTM.sweepPos}
-\difficulty{4}
-Let $\Gamma,S,S'$ be types, let $k$ be a natural number, let $x$ be a finite word over
-$\Gamma$, and let $c$ be a configuration with $k$ work tapes on input $x$. Let $d$ be a
-one-work-tape configuration over the enlarged sweep alphabet on the symbol-wise encoded
-input, and suppose its input-head position equals the transported position of the input
-head of $c$. Then decoding the symbol scanned by $d$ gives exactly the symbol scanned by
-$c$.
-\end{lemma}
-
-\begin{definition}[Canonical between-steps configuration]
-\lean{Turing.FinTM.sweepStart}
-\label{Turing.FinTM.sweepStart}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.SweepAlphabet, Turing.FinTM.SweepState, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepPos, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepSymbol, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone}
-The canonical simulator configuration representing a source configuration $c$ between
-simulated steps, parametrised by a start coordinate $j$, a block count $n$, and an
-absolute cell $z$. The control is in the left-extension phase carrying the state of $c$
-(halted when $c$ is halted); the input head is at the transported position of $c$'s
-input head; the output holds the symbol-wise encoding of $c$'s output. The work-tape
-head scans a boundary marker at cell $z$; the cells above it hold the encoded blocks for
-coordinates $j, j+1, \dots, j+n-1$ in ascending order, closed by a second boundary
-marker, and all remaining cells are blank.
-\end{definition}
 
 \begin{lemma}[Writing at the zipper frontier]
 \lean{Turing.FinTM.sweepTape_write}
@@ -434,38 +372,6 @@ with left list $b$ followed by the tail of $r$, right list $l$, input-head posit
 and output $out$.
 \end{lemma}
 
-\begin{lemma}[Initialization writes the marked blank block]
-\lean{Turing.FinTM.sweep_init_block}
-\label{Turing.FinTM.sweep_init_block}
-\leanok
-\uses{Turing.Action.apply, Turing.FinTM, Turing.FinTM.SweepAlphabet, Turing.FinTM.blankRow, Turing.FinTM.sweepCfg, Turing.FinTM.sweepCfg_right_any, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTM, Turing.FinTM.sweep_generate, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
-\difficulty{4}
-Let $M$ be a finite-state machine with $k$ work tapes over a finite alphabet. For any
-input word $x$, input-head position $p$, integer frontier $z$, output word $o$, and two
-lists $l,r$ of possibly blank symbols of the simulator alphabet, start the simulator in
-the initialization state with counter $0$ in the zipper configuration determined by
-these data. After exactly $k$ steps, it is in the initialization state with counter $k$,
-frontier $z+k$, left stack equal to the reverse of the encoded marked blank block
-followed by $l$, and right stack equal to $r$ with its first $k$ entries removed; the
-input-head position and output word are unchanged.
-\end{lemma}
-
-\begin{lemma}[Left extension of an encoded block]
-\lean{Turing.FinTM.sweep_grow_left_block}
-\label{Turing.FinTM.sweep_grow_left_block}
-\leanok
-\uses{Turing.Action.apply, Turing.FinTM, Turing.FinTM.SweepAlphabet, Turing.FinTM.blankRow, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_left_any, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTM, Turing.FinTM.sweep_generate, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
-\difficulty{4}
-Let $M$ be a finite Turing machine over a finite alphabet $\Gamma$, let $q$ be one of
-its states, and let $x$ be a word over the simulator alphabet. For any valid input-head
-position $p$, output word, integer frontier $z$, and finite zipper stacks $l,r$, running
-the simulator for exactly $k$ steps from the backward-facing configuration in the
-left-extension phase with counter $0$ yields the backward-facing configuration in that
-phase with counter $k$, frontier $z-k$, left stack equal to the encoded unmarked blank
-block prepended to $l$, and right stack obtained by dropping the first $k$ entries of
-$r$; the input-head position and output word are unchanged.
-\end{lemma}
-
 \begin{definition}[Right guard block]
 \lean{Turing.FinTM.rightRow}
 \label{Turing.FinTM.rightRow}
@@ -476,23 +382,6 @@ tape $i$ carries index $i$, no payload, a cleared head flag, and a left-neighbou
 equal to the Boolean recorded for tape $i$ in $s$ — the head flag of the last scanned
 block.
 \end{definition}
-
-\begin{lemma}[Right extension of an encoded block]
-\lean{Turing.FinTM.sweep_grow_right_block}
-\label{Turing.FinTM.sweep_grow_right_block}
-\leanok
-\uses{Turing.Action.apply, Turing.FinTM, Turing.FinTM.SweepAlphabet, Turing.FinTM.rightRow, Turing.FinTM.sweepCfg, Turing.FinTM.sweepCfg_right_any, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTM, Turing.FinTM.sweep_generate, Turing.MultiTapeTM.runFrom}
-\difficulty{4}
-Let $M$ be a finite Turing machine over a finite alphabet $\Gamma$, let $q$ be one of
-its states, and let $s$ assign to each of its $k$ work tapes a possibly blank symbol and
-a Boolean. For any simulator input word, valid input-head position, output word, integer
-frontier $z$, and finite zipper stacks $l,r$, running the simulator for exactly $k$
-steps from the forward-facing configuration in the right-extension phase with counter
-$0$ yields the configuration in that phase with counter $k$, still carrying $q$ and $s$,
-with frontier $z+k$, left stack equal to the reversed encoded guard block determined by
-$s$ prepended to $l$, and right stack obtained by dropping the first $k$ entries of $r$.
-The input-head position and output word are unchanged.
-\end{lemma}
 
 \begin{lemma}[Identity Transduction]
 \lean{Turing.FinTM.sweepFold_id}
@@ -518,19 +407,6 @@ output word, and possibly blank symbol $b$, applying the action that writes $b$ 
 leaves the work head stationary produces the backward-sweep configuration with state
 $q'$, input-head position $p$, frontier $z$, left list $l$, and right list $b::r.tail$,
 with the output unchanged.
-\end{lemma}
-
-\begin{lemma}[Initialization reaches the canonical start]
-\lean{Turing.FinTM.sweep_init}
-\label{Turing.FinTM.sweep_init}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.SweepAlphabet, Turing.FinTM.SweepState, Turing.FinTM.blankRow, Turing.FinTM.headAt, Turing.FinTM.sweepAct, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepFold_id, Turing.FinTM.sweepPos, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_write, Turing.FinTM.sweepStart, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTM, Turing.FinTM.sweepTape, Turing.FinTM.sweep_init_block, Turing.FinTM.sweep_run_reverse, Turing.FinTM.sweep_turn_left, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{5}
-Let $M$ be a finite-state machine with $k$ work tapes over a finite alphabet, and let
-$x$ be an input word. After exactly $2k+2$ steps, the single-tape simulator started on
-the symbol-wise encoded input is in the canonical configuration representing the initial
-configuration of $M$ on $x$: its zone consists of one block starting at coordinate $0$,
-and its work head is at coordinate $-1$.
 \end{lemma}
 
 \begin{lemma}[Stationary sweep configuration update]
@@ -563,57 +439,6 @@ state to $q'$ to the backward-sweep configuration determined by $q,p,z,l,r,out$ 
 the backward-sweep configuration with the same $p,z,l,r,out$ and state $q'$.
 \end{lemma}
 
-\begin{lemma}[Preparation for a simulated step]
-\lean{Turing.FinTM.sweep_prepare}
-\label{Turing.FinTM.sweep_prepare}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.SweepAlphabet, Turing.FinTM.blankRow, Turing.FinTM.headAt, Turing.FinTM.readState, Turing.FinTM.readVisit, Turing.FinTM.read_zone, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepCfg_stay, Turing.FinTM.sweepFold, Turing.FinTM.sweepPos, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepStart, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTM, Turing.FinTM.sweepTape_read, Turing.FinTM.sweep_grow_left_block, Turing.FinTM.sweep_run, Turing.FinTM.sweep_turn_right, Turing.FinTM.tapeRow, Turing.FinTM.tapeRow_blank, Turing.FinTM.tapeZone, Turing.FinTM.tapeZone_length, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
-\difficulty{6}
-Let $M$ be a finite-state machine with $k>0$ work tapes over a finite alphabet, and let
-$c$ be a configuration whose state is $q$. Suppose $a\le c_i$ for every work-tape head
-position $c_i$, and every work tape is blank at coordinate $a-1$. For any natural number
-$n$ and integer $z$, after $k+1+(n+1)k+1$ steps from the canonical sweep configuration
-for $c$ with zone starting at $a$ and of size $n$, the simulator is in the
-right-extension phase carrying $q$ and the read table at coordinate $a+n$. Its tape has
-the encoded blocks with left-neighbour head flags for the zone of size $n+1$ starting at
-$a-1$, reversed and followed by a boundary marker on the left stack, and a boundary
-marker on the right stack; the input-head position and encoded output are preserved.
-\end{lemma}
-
-\begin{lemma}[Completion of a simulated step]
-\lean{Turing.FinTM.sweep_finish}
-\label{Turing.FinTM.sweep_finish}
-\leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.SweepAlphabet, Turing.FinTM.SweepCell, Turing.FinTM.SweepState, Turing.FinTM.headAt, Turing.FinTM.readState, Turing.FinTM.rightRow, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepFold, Turing.FinTM.sweepInput_read, Turing.FinTM.sweepPos, Turing.FinTM.sweepPos_move, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_stay, Turing.FinTM.sweepStart, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTM, Turing.FinTM.sweepTape_read, Turing.FinTM.sweep_grow_right_block, Turing.FinTM.sweep_run_reverse, Turing.FinTM.sweep_turn_left, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.FinTM.tapeZone_append, Turing.FinTM.tapeZone_length, Turing.FinTM.writeVisit, Turing.FinTM.write_zone, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos}
-\difficulty{6}
-Let $M$ be a finite Turing machine over a finite alphabet $\Gamma$, with $k$ work tapes
-and $0<k$, and let $x$ be an input word. Let $c$ be a configuration of $M$, let $q$ be a
-state, and let $a,z\in\mathbb{Z}$ and $n\in\mathbb{N}$. Suppose every work-tape head of
-$c$ lies strictly to the left of $a+n$, and every work tape is blank at coordinate
-$a+n$. Starting with the simulator in the right-extension phase, carrying state $q$ and
-the symbols read from $c$ at the heads for coordinate $a+n$, on the encoded tape formed
-from the reversed blocks for coordinates $a-1$ through $a+n-1$ followed by a boundary
-marker, run it for exactly $k+1+(n+2)k+1$ steps. The resulting simulator configuration
-is its canonical starting configuration for the source configuration obtained by
-applying to $c$ the transition prescribed by $M$ in state $q$, with an encoded zone of
-$n+2$ blocks starting at $a-1$ and frontier $z+k-1-(n+2)k$.
-\end{lemma}
-
-\begin{lemma}[One source step in a bounded burst]
-\lean{Turing.FinTM.sweep_step}
-\label{Turing.FinTM.sweep_step}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.sweepStart, Turing.FinTM.sweepTM, Turing.FinTM.sweep_finish, Turing.FinTM.sweep_prepare, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step}
-\difficulty{3}
-Let $M$ be a finite-state machine with $k>0$ work tapes over a finite alphabet, and let
-$c$ be a configuration with state $q$. Suppose every work-tape head lies in $[a,a+n)$,
-and every work tape is blank at both $a-1$ and $a+n$. For any natural number $n$ and
-integer $z$, after exactly $(2n+5)k+4$ steps from the canonical sweep configuration for
-$c$ with a zone of $n$ blocks starting at $a$, the simulator reaches the canonical sweep
-configuration for the one-step successor of $c$, with a zone of $n+2$ blocks starting at
-$a-1$ and frontier $z-k$.
-\end{lemma}
-
 \begin{definition}[Exact simulation time]
 \lean{Turing.FinTM.sweepTime}
 \label{Turing.FinTM.sweepTime}
@@ -643,27 +468,11 @@ For all natural numbers $k,t$, the recursively defined time function satisfies
 $\sigma_k(t)\leq (9k+6)(t+1)^2$.
 \end{lemma}
 
-\begin{lemma}[Simulation up to the first halt]
-\lean{Turing.FinTM.sweep_run_to_halt}
-\label{Turing.FinTM.sweep_run_to_halt}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.SweepAlphabet, Turing.FinTM.source_bounds, Turing.FinTM.sweepStart, Turing.FinTM.sweepTM, Turing.FinTM.sweepTime, Turing.FinTM.sweep_init, Turing.FinTM.sweep_step, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step'}
-\difficulty{5}
-Let $M$ be a finite-state machine with $k>0$ work tapes over a finite alphabet, let $x$
-be an input word, and let $\sigma_k$ be defined by $\sigma_k(0)=2k+2$ and
-$\sigma_k(t+1)=\sigma_k(t)+(4t+7)k+4$. Suppose the run of $M$ from its initial
-configuration on $x$ is nonhalting at every time $t<\tau$. Then for every $t\le\tau$,
-the single-tape simulator after $\sigma_k(t)$ steps from its initial configuration on
-the encoded input is in the canonical configuration representing the source machine's
-configuration at time $t$, with a zone of $2t+1$ blocks starting at coordinate $-t$ and
-work head at coordinate $-tk-1$.
-\end{lemma}
-
 \begin{theorem}[Simulation with one work tape]
 \lean{Turing.FinTM.one_work_tape}
 \label{Turing.FinTM.one_work_tape}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesFunInTimeVia, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.SweepAlphabet, Turing.FinTM.computesInTime_iff, Turing.FinTM.sweepTM, Turing.FinTM.sweepTime, Turing.FinTM.sweepTime_le, Turing.FinTM.sweep_run_to_halt, Turing.FinTM.unusedTapeTM, Turing.FinTM.unusedTape_computes, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_output_eq_of_halt}
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesFunInTimeVia, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.SweepAlphabet, Turing.FinTM.computesInTime_iff, Turing.FinTM.sweepTM, Turing.FinTM.sweepTime, Turing.FinTM.sweepTime_le, Turing.FinTM.unusedTapeTM, Turing.FinTM.unusedTape_computes, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_output_eq_of_halt}
 \difficulty{5}
 Let $\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing
 machine over $\Gamma$, let $f$ map words over $\Gamma$ to words over $\Gamma$, and let
@@ -868,21 +677,6 @@ exactly when $T$ reaches $d$ from $c$ after $t$ steps and, at every time $u\le t
 work-tape head position lies between $lo$ and $hi$, inclusive.
 \end{definition}
 
-\begin{lemma}[Concatenation of bounded computation spans]
-\lean{Turing.FinTM.dgSpan_add}
-\label{Turing.FinTM.dgSpan_add}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.DGSpan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom_add}
-\difficulty{4}
-Let a one-work-tape Turing machine have configurations $c,d,e$, and let $s,t$ be natural
-numbers and $\mathrm{lo},\mathrm{hi}$ integers. Suppose that the computation from $c$
-reaches $d$ after $s$ steps and its work-head position stays in
-$[\mathrm{lo},\mathrm{hi}]$ at every time through $s$; also suppose that the computation
-from $d$ reaches $e$ after $t$ steps and its work-head position stays in the same
-interval at every time through $t$. Then the computation from $c$ reaches $e$ after
-$s+t$ steps, with its work-head position in that interval at every time through $s+t$.
-\end{lemma}
-
 \begin{lemma}[One-step span bound]
 \lean{Turing.FinTM.dgSpan_one}
 \label{Turing.FinTM.dgSpan_one}
@@ -978,7 +772,7 @@ hi'$, the same run reaches $d$ and all those head positions lie between $lo'$ an
 \lean{Turing.FinTM.dg_init}
 \label{Turing.FinTM.dg_init}
 \leanok
-\uses{Turing.Action.apply, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.blankRow, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_add, Turing.FinTM.dgSpan_generate_right, Turing.FinTM.dgSpan_mono, Turing.FinTM.dgSpan_one, Turing.FinTM.dgStart, Turing.FinTM.dgTM, Turing.FinTM.dg_sweep_reverse_prefix, Turing.FinTM.headAt, Turing.FinTM.sweepAct, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepFold_id, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_write, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTM, Turing.FinTM.sweepTape, Turing.FinTM.sweep_run_reverse, Turing.FinTM.sweep_turn_left, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Turing.Action.apply, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.blankRow, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_generate_right, Turing.FinTM.dgSpan_mono, Turing.FinTM.dgSpan_one, Turing.FinTM.dgStart, Turing.FinTM.dgTM, Turing.FinTM.dg_sweep_reverse_prefix, Turing.FinTM.headAt, Turing.FinTM.sweepAct, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepFold_id, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_write, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTM, Turing.FinTM.sweepTape, Turing.FinTM.sweep_run_reverse, Turing.FinTM.sweep_turn_left, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
 Let $\Gamma$ be a finite alphabet, let $M$ be a finite Turing machine over $\Gamma$ with
 $k$ work tapes, choose $a_0\in\Gamma$, and let $x$ be any word over the enlarged sweep
@@ -1037,7 +831,7 @@ entries removed. The work-tape head stays between $z-k$ and $z$, inclusive, thro
 \lean{Turing.FinTM.dg_collect}
 \label{Turing.FinTM.dg_collect}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.dgPos, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_add, Turing.FinTM.dgSpan_one, Turing.FinTM.dgStart, Turing.FinTM.dgTM, Turing.FinTM.dg_read, Turing.FinTM.dg_sweep_prefix, Turing.FinTM.headAt, Turing.FinTM.readState, Turing.FinTM.readVisit, Turing.FinTM.sweepAct, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepSymbol, Turing.FinTM.sweep_turn_right, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.FinTM.tapeZone_length, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.dgPos, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_one, Turing.FinTM.dgStart, Turing.FinTM.dgTM, Turing.FinTM.dg_read, Turing.FinTM.dg_sweep_prefix, Turing.FinTM.headAt, Turing.FinTM.readState, Turing.FinTM.readVisit, Turing.FinTM.sweepAct, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepSymbol, Turing.FinTM.sweep_turn_right, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.FinTM.tapeZone_length, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{5}
 Let $\Gamma$ be a finite alphabet, let $M$ be a finite Turing machine over $\Gamma$ with
 $k$ work tapes, and choose a symbol $a_0\in\Gamma$. Let $x$ be a word over the enlarged
@@ -1111,7 +905,7 @@ simulator's work-head position lies between $z-1$ and $z$, inclusive.
 \lean{Turing.FinTM.dg_turn_with_growth}
 \label{Turing.FinTM.dg_turn_with_growth}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.dgCross, Turing.FinTM.dgInput_read, Turing.FinTM.dgPos, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_add, Turing.FinTM.dgSpan_mono, Turing.FinTM.dgSpan_one, Turing.FinTM.dgTM, Turing.FinTM.dg_read_boundary, Turing.FinTM.dg_right_span, Turing.FinTM.dg_turn, Turing.FinTM.rightRow, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepCfg_stay, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTape_read, Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.dgCross, Turing.FinTM.dgInput_read, Turing.FinTM.dgPos, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_mono, Turing.FinTM.dgSpan_one, Turing.FinTM.dgTM, Turing.FinTM.dg_read_boundary, Turing.FinTM.dg_right_span, Turing.FinTM.dg_turn, Turing.FinTM.rightRow, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepCfg_stay, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTape_read, Turing.MultiTapeTM.step}
 \difficulty{5}
 Let $M$ be a finite-alphabet Turing machine with $k>0$ work tapes, choose a source
 symbol $a_0$, and let $c$ be a source configuration on the retracted input. Let $q$ be a
@@ -1160,7 +954,7 @@ step its work-tape head remains at $z$.
 \lean{Turing.FinTM.dg_end_with_growth}
 \label{Turing.FinTM.dg_end_with_growth}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.dgCross, Turing.FinTM.dgLeftRow, Turing.FinTM.dgRev_write_optional, Turing.FinTM.dgSpan_add, Turing.FinTM.dgSpan_one, Turing.FinTM.dgTM, Turing.FinTM.dg_left_span, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_stay, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTape_read, Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.dgCross, Turing.FinTM.dgLeftRow, Turing.FinTM.dgRev_write_optional, Turing.FinTM.dgSpan_one, Turing.FinTM.dgTM, Turing.FinTM.dg_left_span, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_stay, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTape_read, Turing.MultiTapeTM.step}
 \difficulty{5}
 Let $\Gamma$ be a finite alphabet and let $M$ be a finite Turing machine over $\Gamma$
 with $k>0$ work tapes. Choose $a_0\in\Gamma$, a state $q$, an input symbol (possibly
@@ -1202,7 +996,7 @@ where each Boolean is identified with its natural-number value $0$ or $1$.
 \lean{Turing.FinTM.dg_step}
 \label{Turing.FinTM.dg_step}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.SweepCell, Turing.FinTM.dgCost, Turing.FinTM.dgCross, Turing.FinTM.dgPos, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_add, Turing.FinTM.dgSpan_mono, Turing.FinTM.dgStart, Turing.FinTM.dgTM, Turing.FinTM.dg_collect, Turing.FinTM.dg_end_with_growth, Turing.FinTM.dg_end_without_growth, Turing.FinTM.dg_new_left_row, Turing.FinTM.dg_sweep_reverse_prefix, Turing.FinTM.dg_turn_with_growth, Turing.FinTM.dg_turn_without_growth, Turing.FinTM.dg_write, Turing.FinTM.headAt, Turing.FinTM.readState, Turing.FinTM.rightRow, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepSymbol, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.FinTM.tapeZone_append, Turing.FinTM.tapeZone_length, Turing.FinTM.writeVisit, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGState, Turing.FinTM.SweepAlphabet, Turing.FinTM.SweepCell, Turing.FinTM.dgCost, Turing.FinTM.dgCross, Turing.FinTM.dgPos, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_mono, Turing.FinTM.dgStart, Turing.FinTM.dgTM, Turing.FinTM.dg_collect, Turing.FinTM.dg_end_with_growth, Turing.FinTM.dg_end_without_growth, Turing.FinTM.dg_new_left_row, Turing.FinTM.dg_sweep_reverse_prefix, Turing.FinTM.dg_turn_with_growth, Turing.FinTM.dg_turn_without_growth, Turing.FinTM.dg_write, Turing.FinTM.headAt, Turing.FinTM.readState, Turing.FinTM.rightRow, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepSymbol, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.FinTM.tapeZone_append, Turing.FinTM.tapeZone_length, Turing.FinTM.writeVisit, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{6}
 Let $M$ be a finite-alphabet Turing machine with $k>0$ work tapes, choose a source
 symbol $a_0$, and let $c$ be a source configuration on the retracted input with state
@@ -1297,7 +1091,7 @@ $r$ and $\ell$ are true and $0$ otherwise. Then $C\le (4t+7)k+4$.
 \lean{Turing.FinTM.dg_simulate}
 \label{Turing.FinTM.dg_simulate}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGWindow, Turing.FinTM.SweepAlphabet, Turing.FinTM.dgCost, Turing.FinTM.dgCost_le, Turing.FinTM.dgCross, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_add, Turing.FinTM.dgSpan_mono, Turing.FinTM.dgStart, Turing.FinTM.dgTM, Turing.FinTM.dgWindow_init, Turing.FinTM.dgWindow_step, Turing.FinTM.dg_init, Turing.FinTM.dg_step, Turing.FinTM.headAt, Turing.FinTM.sweepTime, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.DGSpan, Turing.FinTM.DGWindow, Turing.FinTM.SweepAlphabet, Turing.FinTM.dgCost, Turing.FinTM.dgCost_le, Turing.FinTM.dgCross, Turing.FinTM.dgRetract, Turing.FinTM.dgSpan_mono, Turing.FinTM.dgStart, Turing.FinTM.dgTM, Turing.FinTM.dgWindow_init, Turing.FinTM.dgWindow_step, Turing.FinTM.dg_init, Turing.FinTM.dg_step, Turing.FinTM.headAt, Turing.FinTM.sweepTime, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{6}
 Let $M$ be a finite-alphabet Turing machine with $k>0$ work tapes, choose a source
 symbol $a_0$, and let $x$ be a finite word over the enlarged sweep alphabet. Fix a time

@@ -108,19 +108,6 @@ empty or when the unary numeral is missing its terminating $0$ or is not smaller
 the bound.
 \end{lemma}
 
-\begin{lemma}[Primitive recursiveness of the record skipper]
-\lean{Turing.codePrimSkipAction}
-\label{Turing.codePrimSkipAction}
-\leanok
-\uses{Turing.codePrimSkipPair, Turing.codePrimSkipState, Turing.codeSkipAction}
-\difficulty{3}
-The two-argument skipping reader for one five-field transition record is primitive
-recursive jointly in the state bound $n$ and the string.  The record consists of
-four two-bit fields --- the first, third, and fourth checked against a reserved
-block, the second unconstrained --- followed by a halt-or-successor field whose
-unary index must be smaller than $n + 1$.
-\end{lemma}
-
 \begin{lemma}[Iteration of a partial reader]
 \lean{Turing.codeSkipRepeat_iter}
 \label{Turing.codeSkipRepeat_iter}
@@ -157,20 +144,6 @@ The Boolean-valued function on finite Boolean strings that returns true exactly 
 every entry is true is primitive recursive.
 \end{lemma}
 
-\begin{lemma}[Primitive recursiveness of the erased parser]
-\lean{Turing.codePrimScan}
-\label{Turing.codePrimScan}
-\leanok
-\uses{Turing.codePrimAll, Turing.codePrimBits, Turing.codePrimBitsNat, Turing.codePrimPair, Turing.codePrimRepeat, Turing.codePrimSkipAction, Turing.codePrimSkipFin, Turing.codeScan}
-\difficulty{4}
-The erased machine-code parser is primitive recursive.  On a Boolean string this
-parser recovers a state count $n$ from the aligned doubled-bit region, rejects
-unless those bits are exactly the canonical binary expansion of $n$, rejects when
-fewer than $81(n+1)$ bits remain, skips a unary initial state below $n + 1$ and then
-$9(n+1)$ five-field transition records, and accepts precisely when the leftover
-suffix consists entirely of true bits, returning that suffix.
-\end{lemma}
-
 \begin{lemma}[Primitive Recursiveness of Suffix Removal]
 \lean{Turing.codePrimDrop}
 \label{Turing.codePrimDrop}
@@ -189,19 +162,6 @@ string after its first $n$ entries have been removed is primitive recursive.
 The function that takes a finite Boolean string $xs$ and a natural number $n$ and
 returns the prefix of $xs$ of length $\max(\operatorname{length}(xs)-n,0)$ is primitive
 recursive.
-\end{lemma}
-
-\begin{lemma}[Primitive recursiveness of the canonizing function]
-\lean{Turing.codePrimCanonical}
-\label{Turing.codePrimCanonical}
-\leanok
-\uses{Turing.CodeTM.serialize, Turing.codeCanonical, Turing.codeFallback, Turing.codePrimPrefix, Turing.codePrimScan}
-\difficulty{2}
-The canonizing string function is primitive recursive.  This function maps a Boolean
-string $xs$ to the prefix consumed by the erased machine-code parser when that
-parser accepts (namely the first $\abs{xs} - s$ bits, where $s$ is the length of the
-leftover all-true suffix), and to the fixed serialization of the trivial one-state
-halting machine when the parser rejects.
 \end{lemma}
 
 \begin{definition}[Bridge alphabet]

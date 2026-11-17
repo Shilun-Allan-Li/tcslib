@@ -151,22 +151,11 @@ visited by $M_2$ from the state-renamed configuration with state $a$ and the oth
 of $c_1$ through time $T_2$.
 \end{lemma}
 
-\begin{lemma}[State Renaming of a Word Configuration]
-\lean{Turing.seam_ofWords_mapState}
-\label{Turing.seam_ofWords_mapState}
-\leanok
-\uses{Turing.Cfg.mapState, Turing.Cfg.ofWords}
-\difficulty{1}
-Let $f$ map a state set $S_1$ to a state set $S_3$, let $q\in S_1$, and let $w$ be a
-family of $k$ Boolean words. Renaming the state of the word configuration for $q$ and
-$w$ by $f$ gives the word configuration for $f(q)$ and $w$.
-\end{lemma}
-
 \begin{theorem}[Run of a composed machine]
 \lean{Turing.seamCompTM_run}
 \label{Turing.seamCompTM_run}
 \leanok
-\uses{Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.seamCompTM, Turing.seamComp_run_general, Turing.seam_ofWords_mapState}
+\uses{Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.seamCompTM, Turing.seamComp_run_general}
 \difficulty{3}
 Let $M_1$ and $M_2$ be deterministic machines with $k$ work tapes over the Boolean
 alphabet, with state sets $S_1$ and $S_2$, and let $x$ be a Boolean input word. Form a
@@ -185,7 +174,7 @@ configuration with state $(right,q_2)$ and work tapes $w_2$ after $T_1+1+T_2$ st
 \lean{Turing.seamCompTM_firstReturn}
 \label{Turing.seamCompTM_firstReturn}
 \leanok
-\uses{Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.seamCompTM, Turing.seamComp_firstReturn_general, Turing.seam_ofWords_mapState}
+\uses{Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.seamCompTM, Turing.seamComp_firstReturn_general}
 \difficulty{3}
 Let $k\in\mathbb N$, let $x$ be a Boolean input word, and let $M_1,M_2$ be deterministic
 $k$-work-tape machines over Boolean symbols, with state sets $S_1,S_2$ and a decidable
@@ -204,7 +193,7 @@ any time $t<T_1+1+T_2$ when started from state $s$ with words $w_0$.
 \lean{Turing.seamCompTM_visitedByTapeHead}
 \label{Turing.seamCompTM_visitedByTapeHead}
 \leanok
-\uses{Turing.Cfg.ofWords, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.visitedByTapeHead, Turing.seamCompTM, Turing.seamComp_visited_general, Turing.seam_ofWords_mapState}
+\uses{Turing.Cfg.ofWords, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.visitedByTapeHead, Turing.seamCompTM, Turing.seamComp_visited_general}
 \difficulty{1}
 Let $M_1$ and $M_2$ be machines with $k$ work tapes and Boolean input $x$, with states
 in $S_1$ and $S_2$, respectively. Suppose that starting $M_1$ in state $start$ with

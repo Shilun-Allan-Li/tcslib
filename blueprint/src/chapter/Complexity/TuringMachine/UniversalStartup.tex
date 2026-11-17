@@ -165,42 +165,11 @@ doubled-bit prefix parser with that canonizer: the word emitted by the parser
 its input served from that buffer while the physical input head stays put.
 \end{definition}
 
-\begin{lemma}[Canonizer after prefix extraction]
-\lean{Turing.universalCanon_start}
-\label{Turing.universalCanon_start}
-\leanok
-\uses{Turing.EffectiveMachineCode, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg_init, Turing.FinTM.bufferedFirstCfg_rewind, Turing.FinTM.bufferedFirstCfg_run, Turing.FinTM.bufferedSecondCfg, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universalCanonTM, Turing.universalPrefixTM, Turing.universalPrefix_live, Turing.universalPrefix_start, Turing.universal_pair_length}
-\difficulty{4}
-Let $c$ be an effective machine-coding scheme and let $\alpha$ and $x$ be finite Boolean
-words. After exactly $3|\alpha|+4$ steps of the prefix-parser–canonizer composition on
-$\langle\alpha,x\rangle$, the configuration has the canonizer in its initial
-configuration on input $\alpha$, its input head at position $2|\alpha|+3$, and its
-boundary tag true. The prefix parser’s work tapes are blank with their heads at zero,
-and the composition’s buffer stores $\alpha$ with its head at position zero; the output
-is empty.
-\end{lemma}
-
-\begin{lemma}[Canonizer run in the buffered composition]
-\lean{Turing.universalCanon_run}
-\label{Turing.universalCanon_run}
-\leanok
-\uses{Turing.EffectiveMachineCode, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universalCanonTM, Turing.universalCanon_start, Turing.universalPrefixTM, Turing.universal_pair_length}
-\difficulty{4}
-Let $c$ be an effective machine-coding scheme, let $\alpha$ and $x$ be finite Boolean
-words, and let $t$ be a natural number. After exactly $3|\alpha|+4+t$ steps of the
-prefix-parser–canonizer composition on $\langle\alpha,x\rangle$, there is a Boolean flag
-$b$ such that the resulting configuration has the canonizer’s state, output, and work
-tapes from its run on $\alpha$ after $t$ steps, with its input head at position
-$2|\alpha|+3$. The composition’s buffer stores $\alpha$ on its tape, places its buffer
-head at the canonizer’s input-head position minus one, and leaves the prefix parser’s
-work tapes blank with their heads at zero.
-\end{lemma}
-
 \begin{lemma}[Completion of the canonizer]
 \lean{Turing.universalCanon_complete}
 \label{Turing.universalCanon_complete}
 \leanok
-\uses{Turing.CodeTM.serialize, Turing.EffectiveMachineCode, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.universalCanonTM, Turing.universalCanon_run}
+\uses{Turing.CodeTM.serialize, Turing.EffectiveMachineCode, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.universalCanonTM}
 \difficulty{3}
 Let $c$ be an effective machine-coding scheme, and let $\alpha$ and $x$ be finite
 Boolean words. After exactly $3|\alpha|+4+T_c(|\alpha|)$ steps on the paired input
@@ -337,33 +306,6 @@ built from $M$ and $D$ on input $x$ is equal to the first-phase configuration as
 with the initial configuration of $M$ on $x$.
 \end{lemma}
 
-\begin{lemma}[One captured transition]
-\lean{Turing.universalCapture_step}
-\label{Turing.universalCapture_step}
-\leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM, Turing.MultiTapeTM.step, Turing.universalCaptureCfg, Turing.universalCaptureTM}
-\difficulty{5}
-Let $M$ be a finite-state machine over the Boolean alphabet, let $D$ be a four-work-tape
-machine over the Boolean alphabet with finite state set and decidable state equality,
-and let $c$ be a configuration of $M$ on input $x$. If $c$ is not halted, one step of
-the capture wrapper from the first-phase configuration associated to $c$ equals the
-first-phase configuration associated to the result of one step of $M$ from $c$.
-\end{lemma}
-
-\begin{lemma}[Lockstep capture of a live run]
-\lean{Turing.universalCapture_run}
-\label{Turing.universalCapture_run}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.universalCaptureCfg, Turing.universalCaptureTM, Turing.universalCapture_step}
-\difficulty{3}
-Let $M$ be a finite-state machine over the Boolean alphabet, let $D$ be a four-work-tape
-machine over the Boolean alphabet with finite state set and decidable state equality,
-and let $c$ be a configuration of $M$ on input $x$. If $M$ is not halted after any $s<t$
-steps from $c$, then after $t$ steps the capture wrapper of $M$ and $D$, started from
-the first-phase configuration associated to $c$, is the first-phase configuration
-associated to the configuration reached by $M$ after $t$ steps.
-\end{lemma}
-
 \begin{definition}[Interpreter-entry configuration]
 \lean{Turing.universalCapturedCfg}
 \label{Turing.universalCapturedCfg}
@@ -377,24 +319,11 @@ configuration is thereby preserved as inactive data, with its output stored
 on the table tape.
 \end{definition}
 
-\begin{lemma}[Transfer to the interpreter]
-\lean{Turing.universalCapture_transfer}
-\label{Turing.universalCapture_transfer}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM, Turing.MultiTapeTM.step, Turing.moveInputPos_zero, Turing.universalCaptureCfg, Turing.universalCaptureTM, Turing.universalCapturedCfg}
-\difficulty{3}
-Let $M$ be a finite-state machine over the Boolean alphabet, let $D$ be a four-work-tape
-machine over the Boolean alphabet with finite state set and decidable state equality,
-and let $c$ be a configuration of $M$ on input $x$. If $c$ is halted, one step of the
-capture wrapper from the first-phase configuration associated to $c$ equals the
-interpreter-entry configuration associated to $c$.
-\end{lemma}
-
 \begin{lemma}[Entry into the interpreter after halting]
 \lean{Turing.universalCapture_start}
 \label{Turing.universalCapture_start}
 \leanok
-\uses{Turing.FinTM, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.universalCaptureTM, Turing.universalCapture_init, Turing.universalCapture_run, Turing.universalCapture_transfer, Turing.universalCapturedCfg}
+\uses{Turing.FinTM, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.universalCaptureTM, Turing.universalCapture_init, Turing.universalCapturedCfg}
 \difficulty{5}
 Let $M$ be a finite-state machine over the Boolean alphabet, let $D$ be a four-work-tape
 machine over the Boolean alphabet with finite state set and decidable state equality,

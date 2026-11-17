@@ -90,19 +90,6 @@ followed by a unary index that must be smaller than $n$ and is returned as the
 live successor state, in each case together with the unconsumed suffix.
 \end{definition}
 
-\begin{definition}[Transition-record reader]
-\lean{Turing.codeReadAction}
-\label{Turing.codeReadAction}
-\leanok
-\uses{Turing.Action, Turing.codeReadOutput, Turing.codeReadSign, Turing.codeReadState, Turing.codeReadWrite}
-Given a state-count parameter $n$, a reader for one transition record of a
-one-work-tape machine over the binary alphabet with $n + 1$ states.  It reads,
-in order: an input-head movement, an optional work-tape write, a work-head
-movement, an optional output bit, and a successor-state field over $n + 1$
-states, failing as soon as any of the five fields fails, and assembles the
-results into a single transition record together with the unconsumed suffix.
-\end{definition}
-
 \begin{definition}[Symbol-indexed row reader]
 \lean{Turing.codeReadSymbols}
 \label{Turing.codeReadSymbols}
@@ -142,23 +129,6 @@ parser.
 The fixed fallback coded machine: a machine with a single state that
 immediately halts without moving any head, writing to the work tape, or
 producing output.
-\end{definition}
-
-\begin{definition}[Machine parser]
-\lean{Turing.codeParse}
-\label{Turing.codeParse}
-\leanok
-\uses{Turing.CodeTM, Turing.codeBitsNat, Turing.codeReadAction, Turing.codeReadFin, Turing.codeReadSymbols, Turing.codeReadVec, Turing.pairDecode}
-The partial parser for the fixed serialization of coded machines.  On a bit
-string it: reads a doubled-bit header (each data bit repeated twice, terminated
-by the separator $01$) and requires the recovered word to be the canonical
-little-endian binary representation of its value $n$; rejects unless the
-remaining input has length at least $81(n+1)$; reads a unary initial state
-smaller than $n + 1$; reads the full transition table, namely for each of the
-$n + 1$ states a three-by-three grid of transition records indexed by the input
-and work symbols in blank/$0$/$1$ order; and finally requires every remaining
-bit to be $1$.  On success it returns the coded machine with $n + 1$ states
-assembled from these data.
 \end{definition}
 
 \begin{definition}[Total decoder]
@@ -227,19 +197,6 @@ applied to the encoding of $s$ followed by $x$ succeeds and returns $(s,x)$. Her
 encoding is $0$ for no state and, for state $i$, a $1$ followed by $i$ ones and a $0$.
 \end{lemma}
 
-\begin{lemma}[Record reader is a prefix inverse]
-\lean{Turing.codeReadAction_append}
-\label{Turing.codeReadAction_append}
-\leanok
-\uses{Turing.Action, Turing.actionBits, Turing.codeReadAction, Turing.codeReadOutput_append, Turing.codeReadSign_append, Turing.codeReadState_append, Turing.codeReadWrite_append}
-\difficulty{4}
-For every transition record $a$ of a one-work-tape binary machine with $n + 1$
-states and every bit string $x$, the transition-record reader applied to the
-serialization of $a$ (the dictionary codes of its input-head movement,
-work-tape write, work-head movement, and output, followed by its
-successor-state field) concatenated with $x$ succeeds and returns $(a, x)$.
-\end{lemma}
-
 \begin{lemma}[Symbol row reader is a prefix inverse]
 \lean{Turing.codeReadSymbols_append}
 \label{Turing.codeReadSymbols_append}
@@ -277,17 +234,6 @@ For every natural number $n$, interpreting its canonical least-significant-bit-f
 binary expansion as a binary numeral gives $n$.
 \end{lemma}
 
-\begin{lemma}[Lower bound on record length]
-\lean{Turing.codeAction_length}
-\label{Turing.codeAction_length}
-\leanok
-\uses{Turing.Action, Turing.actionBits, Turing.optBoolBits, Turing.optOptBoolBits, Turing.optStateBits, Turing.signBits, Turing.unaryFin}
-\difficulty{4}
-Every serialized transition record of a one-work-tape binary machine with
-$n + 1$ states has length at least $9$: its four two-bit dictionary fields
-contribute eight bits, and its successor-state field is nonempty.
-\end{lemma}
-
 \begin{lemma}[Length bound for concatenated words]
 \lean{Turing.codeFlatMap_length}
 \label{Turing.codeFlatMap_length}
@@ -297,44 +243,6 @@ Let $A$ be a type, $x$ a finite list of elements of $A$, $f$ a function from $A$
 strings, and $c$ a natural number. If every element occurring in $x$ maps to a bit
 string of length at least $c$, then the concatenation of the images has length at least
 $c$ times the length of $x$.
-\end{lemma}
-
-\begin{lemma}[Lower bound on table length]
-\lean{Turing.codeTable_length}
-\label{Turing.codeTable_length}
-\leanok
-\uses{Turing.CodeTM, Turing.actionBits, Turing.codeAction_length, Turing.codeFlatMap_length}
-\difficulty{4}
-For every coded machine with state-count parameter $n$ (so $n + 1$ states), the
-concatenation of the serialized transition records over all states and all nine
-input/work symbol pairs has length at least $81(n+1)$.
-\end{lemma}
-
-\begin{lemma}[Table reader is a prefix inverse]
-\lean{Turing.codeReadTable_append}
-\label{Turing.codeReadTable_append}
-\leanok
-\uses{Turing.CodeTM, Turing.actionBits, Turing.codeReadAction, Turing.codeReadAction_append, Turing.codeReadSymbols, Turing.codeReadSymbols_append, Turing.codeReadVec, Turing.codeReadVec_append}
-\difficulty{2}
-Let $M$ be a coded machine with state-count parameter $n$.  Applying the table
-reader --- the length-$(n+1)$ vector reader whose entries are three-by-three
-grids of transition records indexed by the input and work symbols --- to the
-concatenated serializations of all of $M$'s transition records (states in
-order, input and work symbols each in blank/$0$/$1$ order) followed by any bit
-string $x$ succeeds, returning the function that assigns to each state, input
-symbol, and work symbol the corresponding transition of $M$, together with $x$
-untouched.
-\end{lemma}
-
-\begin{lemma}[Parser round-trip under padding]
-\lean{Turing.codeParse_serialize_pad}
-\label{Turing.codeParse_serialize_pad}
-\leanok
-\uses{Turing.CodeTM, Turing.CodeTM.serialize, Turing.codeBitsNat_bits, Turing.codeParse, Turing.codeReadFin_append, Turing.codeReadTable_append, Turing.codeTable_length, Turing.pairDecode_pairEncode, Turing.pairEncode}
-\difficulty{5}
-For every coded machine $M$ and every $m \in \mathbb{N}$, the machine parser
-applied to the canonical serialization of $M$ followed by $m$ additional
-$1$-bits succeeds and returns exactly $M$.
 \end{lemma}
 
 \begin{lemma}[Decoder round-trip under padding]
@@ -366,18 +274,6 @@ then it consists of exactly $n$ ones, followed by a zero and then $r$.
 For every natural number $n$, bit string $x$, index $i\in\{0,\ldots,n-1\}$, and bit
 string $r$, if the range-checked unary index reader of bound $n$ succeeds on $x$ with
 result $(i,r)$, then $x$ consists of $i$ ones followed by a zero, and then $r$.
-\end{lemma}
-
-\begin{lemma}[Soundness of the doubled-bit header parser]
-\lean{Turing.codePairDecode_sound}
-\label{Turing.codePairDecode_sound}
-\leanok
-\uses{Turing.pairDecode, Turing.pairEncode}
-\difficulty{5}
-If the doubled-bit header parser succeeds on a bit string $x$, returning a data
-word $a$ and a suffix $r$, then $x$ is exactly the doubled-bit encoding of $a$
---- each bit of $a$ repeated twice, then the separator $01$ --- followed by
-$r$.  This includes the case of an empty data word.
 \end{lemma}
 
 \begin{lemma}[Soundness of the movement reader]
@@ -426,18 +322,6 @@ followed by $r$. The encoding is $0$ for no state and, for state $i$, a $1$ foll
 $i$ ones and a $0$.
 \end{lemma}
 
-\begin{lemma}[Soundness of the record reader]
-\lean{Turing.codeReadAction_sound}
-\label{Turing.codeReadAction_sound}
-\leanok
-\uses{Turing.Action, Turing.actionBits, Turing.codeReadAction, Turing.codeReadOutput_sound, Turing.codeReadSign_sound, Turing.codeReadState_sound, Turing.codeReadWrite_sound}
-\difficulty{4}
-If the transition-record reader with state-count parameter $n$ succeeds on a
-bit string $x$, returning a record $a$ and a suffix $r$, then $x$ is exactly
-the serialization of $a$ --- the codes of its five fields concatenated in order
---- followed by $r$.
-\end{lemma}
-
 \begin{lemma}[Soundness of the symbol row reader]
 \lean{Turing.codeReadSymbols_sound}
 \label{Turing.codeReadSymbols_sound}
@@ -464,26 +348,6 @@ is the encoding of $a$ followed by $r$. Then, for every natural number $n$, if t
 reader for vectors of length $n$ succeeds on a bit string $x$, returning a vector $f$
 and suffix $r$, then $x$ is the concatenation, in order, of the encodings of
 $f(0),\ldots,f(n-1)$ followed by $r$.
-\end{lemma}
-
-\begin{lemma}[All-true strings are replicates]
-\lean{Turing.codeAllTrue_eq}
-\label{Turing.codeAllTrue_eq}
-\leanok
-\difficulty{3}
-A bit string all of whose bits are $1$ is equal to the constant-$1$ string of
-its own length.
-\end{lemma}
-
-\begin{lemma}[Soundness of the machine parser]
-\lean{Turing.codeParse_sound}
-\label{Turing.codeParse_sound}
-\leanok
-\uses{Turing.CodeTM, Turing.CodeTM.serialize, Turing.codeAllTrue_eq, Turing.codeBitsNat, Turing.codePairDecode_sound, Turing.codeParse, Turing.codeReadAction_sound, Turing.codeReadFin_sound, Turing.codeReadSymbols_sound, Turing.codeReadVec_sound, Turing.pairEncode}
-\difficulty{5}
-If the machine parser accepts a bit string $x$, returning a coded machine $M$,
-then $x$ is the canonical serialization of $M$ followed by some number of
-$1$-bits.
 \end{lemma}
 
 \begin{definition}[Two-bit skipper]
@@ -603,18 +467,6 @@ optional values in $B$, binding through the continuation applied to the suffix e
 first discarding the value and then binding through the continuation.
 \end{lemma}
 
-\begin{lemma}[Erasure law for the record reader]
-\lean{Turing.codeEraseAction}
-\label{Turing.codeEraseAction}
-\leanok
-\uses{Turing.codeEraseOutput, Turing.codeEraseSign, Turing.codeEraseState, Turing.codeEraseWrite, Turing.codeErase_bind, Turing.codeReadAction, Turing.codeSkipAction}
-\difficulty{4}
-For every state-count parameter $n$ and bit string $x$: discarding the parsed
-record from the transition-record reader with parameter $n$ yields exactly the
-transition-record skipper with parameter $n$, which validates the four
-dictionary fields and the successor field without constructing the record.
-\end{lemma}
-
 \begin{lemma}[Erasure law for symbol-indexed rows]
 \lean{Turing.codeEraseSymbols}
 \label{Turing.codeEraseSymbols}
@@ -639,18 +491,6 @@ discarding the vector parsed by the length-$n$ reader gives the same result as a
 $n$ times the skipper that discards each field's value and retains its suffix.
 \end{lemma}
 
-\begin{definition}[Suffix-retaining machine parser]
-\lean{Turing.codeParseFull}
-\label{Turing.codeParseFull}
-\leanok
-\uses{Turing.CodeTM, Turing.codeBitsNat, Turing.codeReadAction, Turing.codeReadFin, Turing.codeReadSymbols, Turing.codeReadVec, Turing.pairDecode}
-A variant of the machine parser following exactly the same grammar ---
-doubled-bit canonical state count, minimum-length guard, unary initial state,
-full transition table, and an all-$1$ remainder --- but returning the decoded
-coded machine together with the unconsumed all-$1$ suffix, rather than the
-machine alone.
-\end{definition}
-
 \begin{definition}[Erased suffix scanner]
 \lean{Turing.codeScan}
 \label{Turing.codeScan}
@@ -663,40 +503,6 @@ transition records, and an all-$1$ remainder --- but validates the fields
 without constructing any machine, returning only the unconsumed all-$1$
 suffix.
 \end{definition}
-
-\begin{lemma}[Parser as projection of the suffix-retaining parser]
-\lean{Turing.codeParse_full}
-\label{Turing.codeParse_full}
-\leanok
-\uses{Turing.codeParse, Turing.codeParseFull}
-\difficulty{3}
-For every bit string $x$, the result of the machine parser on $x$ equals the
-result of the suffix-retaining machine parser on $x$ with the suffix component
-discarded: both fail together, and on success they return the same machine.
-\end{lemma}
-
-\begin{lemma}[Scanner as projection of the suffix-retaining parser]
-\lean{Turing.codeScan_full}
-\label{Turing.codeScan_full}
-\leanok
-\uses{Turing.Action, Turing.CodeTM, Turing.codeBitsNat, Turing.codeEraseAction, Turing.codeEraseFin, Turing.codeEraseSymbols, Turing.codeEraseVec, Turing.codeErase_bind, Turing.codeParseFull, Turing.codeReadAction, Turing.codeReadSymbols, Turing.codeScan}
-\difficulty{5}
-For every bit string $x$, the result of the erased suffix scanner on $x$ equals
-the result of the suffix-retaining machine parser on $x$ with the machine
-component discarded: both fail together, and on success the scanner returns
-exactly the unconsumed suffix that the parser would return.
-\end{lemma}
-
-\begin{lemma}[Soundness of the suffix-retaining parser]
-\lean{Turing.codeParseFull_sound}
-\label{Turing.codeParseFull_sound}
-\leanok
-\uses{Turing.CodeTM, Turing.CodeTM.serialize, Turing.codeBitsNat, Turing.codePairDecode_sound, Turing.codeParseFull, Turing.codeReadAction_sound, Turing.codeReadFin_sound, Turing.codeReadSymbols_sound, Turing.codeReadVec_sound, Turing.pairEncode}
-\difficulty{5}
-If the suffix-retaining machine parser succeeds on a bit string $x$, returning
-a coded machine $M$ and a suffix $t$, then $x$ is exactly the canonical
-serialization of $M$ followed by $t$.
-\end{lemma}
 
 \begin{definition}[Canonical serialization of a string]
 \lean{Turing.codeCanonical}
