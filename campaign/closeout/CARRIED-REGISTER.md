@@ -1,4 +1,4 @@
-# Carried-debt register at the chapters 3–4 closeout (draft, 2026-11-16)
+# Carried-debt register at the chapters 3–4 closeout (final at stage 3, 2026-11-17)
 
 This is stage 3's record (`STAGES.md`). It lists every measured family the closeout leaves in
 place, why, and the first step if it is taken up later. Figures come from
@@ -40,7 +40,19 @@ place, why, and the first step if it is taken up later. Figures come from
 | **RN-1's `universalCapture_embed`** (UniversalStartup, new in #350) | Gate 154 G154-02 (2026-11-17) | Citing `Cfg.mapState_eq_of_fields` needs a CfgFacts import into chapter 1's UniversalStartup (not approved); about −2 lines |
 | **G147-01**, two stale historical notes in Nondeterminism | Seyoon, 2026-11-17 | Gate 153's seal: editing the docstrings of `ntime_expPow_subset_NEXP` and `EXP_eq_NEXP_of_P_eq_NP` exposes their direct `NTIME`/`NEXP` reads, and `NEXP` has no published reader. The notes still name two deleted lemmas; the W5/W6 docs pass may revisit them |
 
+## Expected at `cryptography/pass-shelat-ch2-4`'s merge (not yet in the tree)
+
+`CH2-4-OVERLAP.md` gives the details. Nothing below exists on this branch yet; these items arise
+when ch2-4 merges into `main` after this campaign. Their home and ownership are for both campaigns
+to decide.
+
+| Item | Source | Note |
+|---|---|---|
+| **The clean-module layer, twice** | ch2-4's `Build/ModuleHost` (gate 03l) against this campaign's `ClassNP/CleanCall` and SAT's private host (R4-1, R4-2) | Both harvested SAT's private module layer to different homes. ModuleHost has Randomized and Cryptography users; CleanCall has SAT. One can cite the other later |
+| **Duplicate readers** | `encodeNat_def`/`encodeNat_eq`; `indicator_def` beside `indicator_of_mem`/`_not_mem` | Adopted in #354 so that ch2-4's merge is clean. These are small duplicate facts |
+
 ## Done in the closeout (for contrast)
 
 The waves R0–R4 and the R3/R6 items: gates 142–152 (#328–#345), stage 1 (#349, gate 153; CK-1 and G147-01 carried) and
-stage 2 (fills A–C). Per-family entries are in `duplication-ledger.md`.
+stage 2 (fills A–C; #350, gate 154), the ch2-4 compatibility PR (#354, gate 155) and the `main`
+sync (W4; #356, gate 156). Per-family entries are in `duplication-ledger.md`.

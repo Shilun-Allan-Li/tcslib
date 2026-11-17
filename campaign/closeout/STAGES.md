@@ -16,6 +16,9 @@ Rebuilds and gates happen only between stages. Agreed plan:
    MIG-24, U-1/MIG-2, MIG-9, DT-1, F7-1(b), SG1 kind 6 and item 13, SH-1, MIG-8's merge half, and
    the MIG migration rows outside the closeout (including MIG-16 and F6-1(f) with it). Then sync
    `main` (W4) with a full replay as its gate.
+   **Done (2026-11-17):** the register is final (`CARRIED-REGISTER.md`), and W4 merged as #356
+   (gate 156, records-only), with snapshot `oleans-c179c8`. Before W4, #354 (gate 155) adopted
+   `cryptography/pass-shelat-ch2-4`'s readers ahead of that branch's merge (`CH2-4-OVERLAP.md`).
 4. **Stage 4, wrap-up.** The blueprint (W5, delegated one module per worker), the final audit
    (W6) and the integration PR (W7).
 
