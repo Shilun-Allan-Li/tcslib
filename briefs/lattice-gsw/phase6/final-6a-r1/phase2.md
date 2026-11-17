@@ -426,3 +426,187 @@ phase-2 zip is unchanged.
 
 **Re-replay done: both heads pass on snapshot #5, and the draft PRs can be opened (O1 first, the statement PR stacked
 on it). Gate 45 (Codex) audits both.**
+
+## Re-replay on snapshot #6 (2026-11-17)
+**Verdict: both merge trees PASS on snapshot #6. Every GSW olean is byte-identical to its snapshot-#5 / LE-g45b
+counterpart, and the only differences are what #357 adds to the root closure.**
+**Not adoptable as they stand:** #347 and #355 merged while this ran (tip `2be7eb20`), and their Lean changes reach
+`CircuitComplexity`, `ComputationalModels` and the root, so both PRs re-replay on snapshot #7 before merge (S6-6).
+#357 merged after the snapshot-#5 re-replay and LE-g45/LE-g45b, so neither earlier output can be adopted. This run
+replays the merge-condition trees on olean snapshot #6 (`8060f6b7`). No branch was re-cut (S6-1).
+
+| | R1' = tip × #358 (O1) | R2' = tip × #358 × #359 (statements, LE-g45b head) |
+|---|---|---|
+| PR head | `a616adcac0760ab56b1b0a2a4869f4763843f9ab` | `d154c8830fc8ffc52671b41992e7dbef61e30959` |
+| Merge tree (replay target) | **`f7247ea3edff8d96fb53ff1912cabd792f780743`** | **`901bf528f11571286883c52f2515f83c281dcc82`** |
+| Rebuilt modules (rc 0, 0 `error:`/`error(`) | 9/9 (the same 9 as on #5) | 20/20 (the same 20) |
+| `sorry` warnings | 0 | 97 (exactly the 97 targets) |
+| State check | 1434/1434 OK | 1445/1445 OK |
+| Rebuilt oleans | link count 1; all 9 byte-identical to #5's R1 | link count 1; all 20 byte-identical to LE-g45b's |
+| Admissions against the tip | +0 | +97, EXACT against LE-g45's target list |
+| Axiom probes | `AxiomsO1` log byte-identical to #5 | `AxiomsStmt`, `AxiomsG45` logs byte-identical to LE-g45b |
+| coe-A seals | 4 owners, all SAME as #5 | 16 owners: 14 SAME as #5, 2 (`Barrington`, `Combinators`) SAME as LE-g45b |
+| Root coe-A | n/a | 14,082 requests, 15 chunks, 0 errors (#5: 14,074; the 8 added names are all homed in #357 files) |
+| Lint | identical to #5 | identical to #5 / LE-g45b |
+| Output map (`mapnoml.py`, no `Mathlib/`) | 1465 entries, `76bd72cbe9845619091540273cd6ab68d8d0d8e33fd2be093511fbd469f4a261` | 1476 entries, `3d0a4bb299ea7aedaa8f9895616f91975f9ca6167fb4001a2cb4bb3ee20cb7db` |
+
+Run 16:24–18:06 UTC. `$SP` as above. Evidence: **`gsw-6a-final-r1-rereplay6-evidence.zip`** (`81c11830…8f1a`), under
+`gsw-6a-final-r1-rereplay6/`, with `PROVENANCE.txt` and `SHA256SUMS`; its own SHA-256 is in `evidence-SHA256SUMS`. The
+earlier zips are unchanged.
+- **Not done:** nothing was committed or pushed, and no branch or PR was changed. These records files are left
+  uncommitted.
+- **Builds:** no `lake build` and no cache get. Modules ran through `scripts/lean_check_tree.sh` (`runner.py`); probes and
+  seals ran through `lean -DmaxErrors=0` without `-o` (`runner_full.py`). Python ran as `python3 -I`.
+- **Lean slots:** one Lean process of this job at a time, each started only after `pgrep -c -x lean` read under 3
+  (59 readings before the 59 Lean processes: 0 running 8 times, 1 running 39 times, 2 running 12 times; no wait was needed). Only this job's PIDs were ever signalled (S6-5).
+- **Other directories:** the snapshot and the kept replays (`-6a-stmt-g45b`, `-6a-readers`, `-6a-fill12`, `-6a-fill86`)
+  were not written. At the start, after checking that no process had a file or working directory in them and that their
+  evidence is committed (the #5 zip in `8c5875fa`, LE-g45's zip in `659542ec`), `olean-replay-6a-o1`, `-6a-stmt` and
+  `-6a-stmt-g45` were deleted (52 MB of their own; the rest was hard links).
+
+### S6-0 Tip and snapshot (`landing/`, `snapshot/`)
+- `git fetch`: the records tip is **`6f13855029e918d4a0c19d17efbc35eedbb902f8`**, 11 records-only commits after
+  snapshot #6's T `8060f6b7`. `git diff 8060f6b7 6f138550 -- '*.lean' lean-toolchain lake-manifest.json lakefile.lean
+  scripts audits` is empty, so the tip is Lean-equal to T.
+- **Snapshot #6:** `snapmap.py verify` against `olean-snapshot.map-8060f6b7.tsv` (`0858dccb…7caf`, as registered) gives
+  **1463 files, 0 extra / 0 changed / 0 missing**, no symlinks and no empty directories, at the start, after R1', after
+  R2' and at the end. It was read only as the source of `cp -al`.
+- **Disk:** 2471 MB free at the start (2522 MB after deleting the three old replays), 8450 MB at the end. Another job's export took it to 43 MB at 16:47 (S6-5), and to 1598 MB at 17:37; this job's own files stayed under 0.33 GB.
+
+### S6-1 Merge trees, no re-cut (`landing/trees.txt`)
+- Both PR branches are still on `e1d39836`: merge-base(tip, #358) = merge-base(tip, #359) = `e1d39836`, and #359 is
+  #358 plus 8 commits.
+- Since `e1d39836` the tip changed 115 paths, 9 of them Lean (#357's: `BonehBoyen`, `BonehBoyenSecurity` and its 5 new
+  children `Chain`, `Coupling`, `Lazy`, `Random`, `Real`, `IdentityBased/Defs`, `Games/Relational`). None of them is
+  one of the 19 series paths, and #357 does not touch `TCSlib.lean`.
+- **R1'** = `git merge-tree --write-tree 6f138550 a616adca`: rc 0, tree **`f7247ea3`**. Against the tip it differs in
+  exactly O1's 4 files; against the #358 head it differs in exactly #357's 9 Lean files; the 19 series paths are
+  blob-equal to the #358 head.
+- **R2'** = `git merge-tree --write-tree M1 d154c883`, where M1 is an unreferenced, unsigned `commit-tree` commit
+  (`c09a12ea`, tree `f7247ea3`, parents tip and #358) standing for the #358 merge commit: rc 0, tree **`901bf528`**.
+  The direct `git merge-tree --write-tree 6f138550 d154c883` gives the same tree. Against the tip it differs in exactly
+  the 19 series paths; against the #359 head in exactly #357's 9 Lean files.
+- **No re-cut:** both merges are clean and GitHub merges with merge commits, so the replay targets are these two trees.
+  `land/gsw-6a-o1` and `land/gsw-6a-statements` were not moved.
+- Exports (`git archive` of `TCSlib TCSlib.lean audits scripts lakefile.lean lake-manifest.json lean-toolchain`, as in
+  LE-g45/LE-g45b, `.lake/packages` symlinked): R1' 1586 files, R2' 1597, tip 1584, each 0 extra / 0 missing / 0
+  changed (`exportcheck.py`).
+
+### S6-2 R1' (`r1/`)
+- `cp -al $SP/olean-snapshot $SP/olean-replay-6a-o1-s6`; `mloverlay.sh` made 3346 symlinks; NthRootLemmas compiled to
+  **`c0a9cff0…`**.
+- `stateplan init` at `8060f6b7` gives 1432 modules. `downorder.py` (`8060f6b7` → `f7247ea3`) gives changed 4 and down
+  9. `fullorder.py` gives 1434. `plan` gives **9 to build and 1425 reused**, and the queue equals `down.txt`: the same 9
+  modules as on #4 and #5.
+- **Build** (16:33:03–16:35:05): **9/9 rc 0**, with `error:` 0, `error(` 0 and substring "error" 0. There are 0
+  warnings, so no `sorry`, and no log/record mismatch (`permod.tsv`). `warncmp`: 9/9 SAME as #5's R1 logs.
+- **Accept:** `update` took 9. `check` gives **1434/1434 RESULT OK**, again after R2' and at the end. All 9 rebuilt
+  oleans have **link count 1** and object hash equal to the record.
+- **The 9 oleans are byte-identical to #5's R1** (`linkcheck.txt` against the #5 zip). Against snapshot #6 the output
+  map has 1461 equal, 2 changed (`CircuitComplexity`, `TreeNCAC`) and 2 added (`FormulaArith`, `Combinators`); the
+  other 5 rebuilt modules came out byte-identical to the snapshot's.
+
+### S6-3 R2' (`r2/`)
+- `cp -al` of R1' into `$SP/olean-replay-6a-stmt-s6`, which carries the overlay and `c0a9cff0…`; R1''s checked state.
+- `downorder.py` (`f7247ea3` → `901bf528`) gives changed 17 and down 20. `fullorder.py` gives 1445. `plan` gives **20 to
+  build and 1425 reused**, with queue = `down.txt`: the same 20 modules as on #5 and in LE-g45.
+- **Build** (16:35:57–16:37:08): **20/20 rc 0**, with 0/0 errors and substring "error" 0. There are **97 warnings, all
+  `declaration uses 'sorry'`** (Defs 11, Eval 5, Barrington 11, BarringtonConverse 11, NC1 5, NANDForm 6, NANDLayering
+  7, Combinators 23, CarrySave 7, Compare 7, ModSum 4). `warncmp`: 20/20 SAME as LE-g45b/LE-g45's logs.
+- **Accept:** `update` took 20. `check` gives **1445/1445 RESULT OK**, and all 20 rebuilt oleans have link count 1.
+- **The 20 oleans are byte-identical to LE-g45b's** (`olean-replay-6a-stmt-g45b`). The output map against LE-g45b's
+  map (`fa206774…`): 1467 equal, 4 changed and 5 added, all of them #357's modules (snapshot #6's oleans); nothing else.
+
+### S6-4 Checks
+- **Admissions** (`admcheck.py` against the tip `6f138550`; `touched.json` regenerated against the tip, its `files`
+  section identical to #5's for O1 and the root and to LE-g45b's for the 17 statement files):
+  - R1' gives **+0**; the delta file is identical to #5's below the header line.
+  - R2' gives **+97, EXACT**: the delivered `rowmap.txt` (`b3ac759e…`) minus `rename_eval`, `depth_rename` and
+    `const_eval` (LE-g45's list) gives 97 targets, 97 admitted, 97 matched, 0 extra, 0 twice and 0 missing. The delta
+    file is identical to LE-g45b's below the header line.
+- **Axioms** (`probes/`; phase 2's `AxiomsO1.lean` on R1'; LE-g45's `AxiomsStmt.lean` and `AxiomsG45.lean` on R2', all
+  unchanged):
+  - All three logs are **byte-identical** to the references (#5's R1 for O1, LE-g45b's head for the other two), and so
+    are both `axtrace.txt` summaries. Nothing differs, not even a closure size: the probes print constants and axioms
+    of the GSW modules only, whose oleans are byte-identical.
+  - O1: 141 constants, standard only.
+  - Statements: 545 constants; `sorryAx` in exactly the 97 targets and the 5 N2/N12–N13 dependents; no other
+    non-standard axiom; `eval_node_nil` and `const_eval` `[propext, Classical.choice, Quot.sound]`.
+- **Closure keys** (`carry/ownerkeys-*.tsv`): the 4 O1 owners have equal keys at `a616adca` and `f7247ea3`. All 17
+  non-root statement owners (the 16 plus `Hierarchy`) have equal keys at `d154c883` and `901bf528`; against #5's
+  `73aedcda`, 13 of the 17 differ (all but `Defs`, `Eval`, `NANDForm`, `NANDLayering`), all through LE-g45/LE-g45b's
+  edits to `Combinators`, `Barrington` and `Hierarchy`. Only the
+  root differs from both, through #357's 5 new modules (closure 1427 → 1432 for O1, 1438 → 1443 for the statements).
+- **Canonical coe-A seals** (`tools/rule10_g6a6.sh`, collector and `mkseals_coe.py` as on #5; `SEAL_CHUNK=1000`;
+  `carry/sealcmp-*.txt`):
+  - **O1** (R1'): `Combinators` 174, `FormulaArith` 194, the facade 3659, all 0 errors; `TreeNCAC` 194 with the 2
+    pre-existing G6A-F05 errors (`maxDepth_map_le`, `maxFaninL_map_le`). All 4 records are **SAME** as #5's (requests,
+    names, probe and source SHA-256, closure modules, outcome), and all 4 seal logs are byte-identical to #5's.
+  - **Statements** (R2', the same 16 owners): the same counts as on #5 (`Defs` 0 … the facade 3726,
+    `ComputationalModels` 1106), 0 errors except `TreeNCAC` (218, the same 2 F05 errors). 14 records are **SAME** as #5's
+    and 14 seal logs byte-identical. `Barrington` (119) and `Combinators` (174) have equal requests, names, closure
+    modules and outcome, but a different probe and source SHA-256: their sources changed in LE-g45/LE-g45b. Against
+    LE-g45b's head records both are **SAME** in every field, and their logs are identical apart from the probe
+    directory name (`G6aSeal` / `G45Seal`).
+  - **`Hierarchy`** (extra owner, since LE-g45 changed it): 355 requests, 2 errors in `Language.InTreeSize.inSIZE`,
+    **SAME** as LE-g45's head record, log identical apart from the probe prefix. LE-g45 recorded these 2 errors at its
+    base and head alike (pre-existing).
+  - The request sets are equal to the #5 records for all 20 owners. No root addition from #357 reaches a non-root
+    owner, since no owner's closure contains a #357 module.
+- **Root coe-A** (`rule10/root`; owner `TCSlib`, chunked): **14,082 requests, 0 errors**, in 15 chunk commands: 15 install and 15 EOF records, each `requested = verified` (sums 14,082), 3,823 s, max RSS 5.2 GB (`root-chunks.txt`). Against the #5 run (14,074; `carry/root-requests-vs-5.txt`): 0 names removed, the 14,074 common rows identical, and **8 names added, every one homed in a #357 file** (`BonehBoyenSecurity.Real` 3, `.Lazy` 3, `.Coupling` 2). The root closure grew from 1437 to 1442 modules (#357's 5 new modules).
+- **Lint** (`lint/`; scripts blob-identical at tip, R1' and R2'):
+  - `campaign_style_lint TCSlib/Complexity --check8b` gives 25 FAIL / 390 WARN over 500 (tip), 502 (R1') and 513 (R2')
+    files. The tip and R1' outputs are byte-identical to #5's, and R2''s to LE-g45b's; the FAIL/WARN line sets of both
+    trees equal the tip's.
+  - `style_lint`: 0 findings in O1's 2 and the statements' 13 new files; the 11 findings over the 17 changed files are
+    identical at the tip. All four outputs are byte-identical to #5's. With `Hierarchy` added (18 files), the 13
+    findings are the same set at the tip and R2' (the 2 extra are the pre-existing `Hierarchy:17` false positives).
+- **Clashes:** not re-run with `names.py`. The root `TCSlib`, which imports every module of both #357 and the series,
+  compiled with 0 errors in R2', so no declaration name is declared twice across them.
+
+### S6-5 Disk incident (`log/aborted-1/`)
+- At 16:45–16:47 another job's unscoped export (`$SP/6b-stage`, 2.3 GB) took free disk from 2.3 GB to **43 MB** while
+  this
+  job's statement seals ran (the first, the `BranchingPrograms` facade, had finished at 16:45:33; the second was
+  stopped). This job's processes held under 0.3 GB.
+- This job stopped its own seal chain (its driver, `gated_full.sh`, `runner_full.py` and its one `lean` process) and
+  moved the partial statement series aside. Nothing had been written to a replay tree since R2''s accept at 16:37
+  (seals and probes never use `-o`).
+- Free disk was back at 2.3 GB once the other job removed its export. The statement, `Hierarchy` and root series were
+  then rerun from scratch through `gated_full_s6.sh`, which adds a disk guard (wait while free disk is under 1536 MB).
+  The O1 seals (finished 16:45:08 with 756 MB free) and every earlier step were kept; their outputs are complete and
+  match the references byte for byte.
+- At the end, both replay trees rehash against their output maps (`replayverify.py`), and both state checks pass.
+
+### S6-6 Replay outputs (kept) and adoption
+- **`$SP/olean-replay-6a-o1-s6`** (R1', tree `f7247ea3`):
+  - contents: snapshot #6's 1463 oleans, with 2 replaced and 2 added (9 rebuilt with link count 1), plus NthRootLemmas
+    and 3346 overlay symlinks;
+  - output map (no `Mathlib/`): 1465 entries, SHA-256 **`76bd72cbe9845619091540273cd6ab68d8d0d8e33fd2be093511fbd469f4a261`**;
+  - state check 1434/1434 OK;
+  - **adoptable on the #358 merge** if `git diff --name-only <merge> f7247ea3 -- '*.lean' lean-toolchain
+    lake-manifest.json lakefile.lean` is empty (the recipe's step-3 diff), with the recipe's step-6 checks.
+- **`$SP/olean-replay-6a-stmt-s6`** (R2', tree `901bf528`):
+  - contents: R1' plus the 20 rebuilt oleans (link count 1);
+  - output map: 1476 entries, SHA-256 **`3d0a4bb299ea7aedaa8f9895616f91975f9ca6167fb4001a2cb4bb3ee20cb7db`**;
+  - state check 1445/1445 OK;
+  - **adoptable on the #359 merge** if it follows the #358 merge with nothing else Lean in between and the step-3 diff
+    against `901bf528` is empty.
+- **Superseded at the end of the run.** A re-fetch at 18:03 found the records tip at
+  **`2be7eb209ae89c9dfe5ba7b63b115ae486ff9ffd`**: #347 and #355 merged during the run ("snapshot #7 adoption pending"),
+  changing 23 Lean paths (21 M, 2 A; `landing/tip-advance-lean.txt`). None is a series path, and both PRs still merge
+  cleanly (`merge-tree` gives `36740243` and `2dedb4c9`), but the merge trees' Lean paths now differ from `f7247ea3` and
+  `901bf528` in those 23 paths, so **neither output can be adopted on a merge made from the current tip**.
+  - In R2''s rebuild set, 17 modules have none of the 23 in their closure (`landing/tip-advance-closure.txt`);
+    `CircuitComplexity` reaches `TuringMachine/Build/ModuleHost`, `ComputationalModels` reaches `Randomized/PPT`, and
+    the root reaches 21 of them.
+  - So #358 and #359 must re-replay on snapshot #7 once it is adopted. The 17 GSW modules outside the advance keep their
+    closure keys and their oleans are expected to be reused byte-identically; `CircuitComplexity`, `ComputationalModels`
+    and the root rebuild, and their coe-A seals (and the root's) re-run.
+- `olean-replay-6a-stmt-g45b` is no longer adoptable (built on #5 without #357); it is kept, as instructed.
+- Deleted: the three exports (`wtx-tip` and `wtx-r1` at 17:40 when free disk read 1637 MB, `wtx-r2` at the end) and this
+  job's scratch copies (the extracted #5 zip, `tmp/`).
+
+**Re-replay done: #358 and #359 pass on snapshot #6, with every GSW olean, probe log, admission and seal record equal to
+the snapshot-#5/LE-g45b references. Because #347 and #355 merged during the run, merge-time adoption needs a further
+re-replay on snapshot #7.**
