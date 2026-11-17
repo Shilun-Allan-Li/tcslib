@@ -513,3 +513,43 @@ no configuration for input $x$ whose work-tape heads lie within distance $s$ of 
 origin, whose work tapes are blank outside that window, and whose code at window size
 $s$ is $c$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Codec --- Word: further results}
+
+\begin{lemma}[Chunk width formula]
+\lean{Complexity.Codec.W_eq}
+\label{Complexity.Codec.W_eq}
+\leanok
+\uses{Complexity.Codec.W, Complexity.Codec.hH}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols and $k$
+work tapes, and let $h$ be the number of header data of $N$, that is, of pairs
+consisting of an optional control state of $N$ and one of the three output-summary
+indices. Then the chunk width of the configuration code for $N$ equals $h+3k+1$.
+\end{lemma}
+
+\begin{lemma}[Head flag of an encoded cell]
+\lean{Complexity.Codec.cellOf_head}
+\label{Complexity.Codec.cellOf_head}
+\leanok
+\uses{Complexity.Codec.cellOf, Turing.Cfg}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols and $k$
+work tapes, let $x$ be a Boolean input string, let $C$ be a configuration of $N$ on $x$,
+let $s,j\in\mathbb{N}$, and let $i<k$ index a work tape. In the cell value that the
+configuration code at window radius $s$ assigns to cell $j$ of $C$, the head flag
+recorded for work tape $i$ is true if and only if the head of work tape $i$ in $C$ is at
+the integer position $j-s$.
+\end{lemma}
+
+\begin{lemma}[Width of the input-position field]
+\lean{Complexity.Codec.wP_eq}
+\label{Complexity.Codec.wP_eq}
+\leanok
+\uses{Complexity.Codec.wP}
+\difficulty{1}
+For every natural number $n$, the width of the input-position field of the
+configuration code on inputs of length $n$ equals the number of digits in the binary
+expansion of $n+1$.
+\end{lemma}

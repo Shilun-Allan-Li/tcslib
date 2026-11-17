@@ -401,3 +401,45 @@ previous remainder plus one.
 \difficulty{4}
 For natural numbers $n$ and $i$ with $i\le n^2$, one has $i/n=n$ if and only if $i=n^2$.
 \end{lemma}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Logspace --- Path Walk: further results}
+
+\begin{lemma}[Walks with no edges]
+\lean{Complexity.walkLe_zero_iff}
+\label{Complexity.walkLe_zero_iff}
+\leanok
+\uses{Complexity.WalkLe}
+\difficulty{1}
+Let $E$ be a binary relation on $\mathbb{N}$, let $n\in\mathbb{N}$, and let
+$c,t\in\mathbb{N}$. Then $t$ is reachable from $c$ by a walk of at most $0$ edges of $E$
+whose vertices after $c$ all lie below $n$ if and only if $c=t$.
+\end{lemma}
+
+\begin{lemma}[First-edge decomposition of bounded walks]
+\lean{Complexity.walkLe_succ_iff_head}
+\label{Complexity.walkLe_succ_iff_head}
+\leanok
+\uses{Complexity.WalkLe}
+\difficulty{1}
+Let $E$ be a binary relation on $\mathbb{N}$, let $n\in\mathbb{N}$, and let
+$j,c,t\in\mathbb{N}$. Call $t$ reachable from $c$ within $j$ edges if there is a walk
+from $c$ to $t$ using at most $j$ edges of $E$ whose vertices after $c$ all lie below
+$n$. Then $t$ is reachable from $c$ within $j+1$ edges if and only if either $c=t$, or
+there is a vertex $v<n$ with $E(c,v)$ such that $t$ is reachable from $v$ within $j$
+edges.
+\end{lemma}
+
+\begin{lemma}[Last-edge decomposition of bounded walks]
+\lean{Complexity.walkLe_succ_iff}
+\label{Complexity.walkLe_succ_iff}
+\leanok
+\uses{Complexity.WalkLe, Complexity.walkLe_refl, Complexity.walkLe_succ, Complexity.walkLe_succ_iff_head, Complexity.walkLe_zero_iff}
+\difficulty{5}
+Let $E$ be a binary relation on $\mathbb{N}$, let $n\in\mathbb{N}$, and let
+$j,c,t\in\mathbb{N}$. Call $t$ reachable from $c$ within $j$ edges if there is a walk
+from $c$ to $t$ using at most $j$ edges of $E$ whose vertices after $c$ all lie below
+$n$. Then $t$ is reachable from $c$ within $j+1$ edges if and only if either $t$ is
+reachable from $c$ within $j$ edges, or there is a vertex $w$ reachable from $c$ within
+$j$ edges such that $E(w,t)$ and $t<n$.
+\end{lemma}

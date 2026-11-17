@@ -67,3 +67,20 @@ the code $c_t$ describes a halted accepting configuration within that window, an
 $c_i<2^{(2W+2)(s+\log_2(|x|)+2)}$ for every $i\le t$. Here $k$ is the number of work
 tapes, $Q$ is the finite state set, and $W$ is the codec's fixed chunk width for $N$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Codec --- Bridge: further results}
+
+\begin{theorem}[Encoded step relation as language membership]
+\lean{Complexity.Codec.stepRel_iff_mem}
+\label{Complexity.Codec.stepRel_iff_mem}
+\leanok
+\uses{Complexity.Codec.StepRel, Complexity.Codec.stepLang, Turing.pairEncode}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, let $x$
+be a Boolean string, and let $s,a,b\in\mathbb{N}$. Then the encoded step relation of $N$
+on $x$ at radius $s$ holds from $a$ to $b$ if and only if the nested pair encoding
+$\langle x,\langle\mathrm{bin}(a),\langle\mathrm{bin}(b),\mathrm{bin}(s)\rangle\rangle\rangle$
+of $x$ with the binary expansions of $a$, $b$ and $s$ belongs to the one-step
+configuration language of $N$.
+\end{theorem}
