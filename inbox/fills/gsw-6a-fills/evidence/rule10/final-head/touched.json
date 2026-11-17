@@ -1,0 +1,1594 @@
+{
+ "base": "05999162b77c1f0fef64b07427e1a041a31b43d2",
+ "head": "HEAD",
+ "files": {
+  "TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BranchingProgram.Instr.wire",
+     "kind": "def",
+     "private": false,
+     "start": 69,
+     "decl_line": 76,
+     "end": 81,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.Instr.wire_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 82,
+     "decl_line": 85,
+     "end": 91,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.wireComp",
+     "kind": "def",
+     "private": false,
+     "start": 94,
+     "decl_line": 99,
+     "end": 101,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.wireComp_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 102,
+     "decl_line": 104,
+     "end": 108,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.compTree",
+     "kind": "def",
+     "private": false,
+     "start": 109,
+     "decl_line": 115,
+     "end": 120,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.compTree_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 126,
+     "decl_line": 128,
+     "end": 132,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.compTree_singleton",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 134,
+     "end": 136,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.compTree_cons_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 137,
+     "decl_line": 140,
+     "end": 145,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.toFormula",
+     "kind": "def",
+     "private": false,
+     "start": 148,
+     "decl_line": 154,
+     "end": 158,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.toFormula_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 159,
+     "decl_line": 161,
+     "end": 165,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.topDepth",
+     "kind": "def",
+     "private": false,
+     "start": 166,
+     "decl_line": 170,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.topDepth_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 174,
+     "end": 175,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BranchingProgram.Instr.wire_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 178,
+     "decl_line": 184,
+     "end": 191,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.depth_wire_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 192,
+     "decl_line": 197,
+     "end": 203,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.maxFanin_wire_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 204,
+     "decl_line": 208,
+     "end": 214,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.wireComp_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 215,
+     "decl_line": 223,
+     "end": 244,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxDepth_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 245,
+     "decl_line": 247,
+     "end": 254,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFaninL_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 255,
+     "decl_line": 257,
+     "end": 264,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_wireComp_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 265,
+     "decl_line": 272,
+     "end": 288,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_wireComp_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 289,
+     "decl_line": 291,
+     "end": 303,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.compTree_eval_list",
+     "kind": "theorem",
+     "private": true,
+     "start": 304,
+     "decl_line": 312,
+     "end": 340,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.compTree_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 346,
+     "decl_line": 355,
+     "end": 358,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_compTree_list_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 359,
+     "decl_line": 368,
+     "end": 403,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_compTree_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 409,
+     "decl_line": 422,
+     "end": 426,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_compTree_list_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 427,
+     "decl_line": 433,
+     "end": 448,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_compTree_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 454,
+     "decl_line": 462,
+     "end": 465,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.toFormula_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 466,
+     "decl_line": 473,
+     "end": 492,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_toFormula_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 493,
+     "decl_line": 506,
+     "end": 535,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_toFormula_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 536,
+     "decl_line": 542,
+     "end": 552,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 23,
+   "head_count": 29
+  },
+  "TCSlib/Complexity/BranchingPrograms/NC1.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BranchingProgram.exists_fiveCycleRecognizes_of_dagCircuit",
+     "kind": "theorem",
+     "private": false,
+     "start": 59,
+     "decl_line": 73,
+     "end": 88,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "Language.InNC.inPBP_five",
+     "kind": "theorem",
+     "private": false,
+     "start": 93,
+     "decl_line": 110,
+     "end": 178,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "Language.InBWBP.inNC_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 179,
+     "decl_line": 195,
+     "end": 246,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "Language.inNC_one_iff_inBWBP",
+     "kind": "theorem",
+     "private": false,
+     "start": 247,
+     "decl_line": 252,
+     "end": 256,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "Language.inNC_one_iff_inPBP_five",
+     "kind": "theorem",
+     "private": false,
+     "start": 257,
+     "decl_line": 263,
+     "end": 267,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 5,
+   "head_count": 5
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BoolCircuit.FormulaArith.val",
+     "kind": "def",
+     "private": false,
+     "start": 57,
+     "decl_line": 60,
+     "end": 62,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.val_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 63,
+     "decl_line": 65,
+     "end": 67,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxDepth_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 68,
+     "decl_line": 70,
+     "end": 77,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFaninL_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 78,
+     "decl_line": 80,
+     "end": 87,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.prefixVal_eq_of_false",
+     "kind": "theorem",
+     "private": true,
+     "start": 88,
+     "decl_line": 90,
+     "end": 96,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.val_eq_prefixVal_getD",
+     "kind": "theorem",
+     "private": true,
+     "start": 97,
+     "decl_line": 100,
+     "end": 114,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaStep",
+     "kind": "def",
+     "private": false,
+     "start": 117,
+     "decl_line": 123,
+     "end": 131,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaStep_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 132,
+     "decl_line": 135,
+     "end": 145,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.prefixVal_fullAdder",
+     "kind": "theorem",
+     "private": true,
+     "start": 146,
+     "decl_line": 149,
+     "end": 167,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaStep_val",
+     "kind": "theorem",
+     "private": false,
+     "start": 168,
+     "decl_line": 183,
+     "end": 211,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_getD_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 212,
+     "decl_line": 214,
+     "end": 221,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_getD_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 222,
+     "decl_line": 224,
+     "end": 232,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_csaStep_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 233,
+     "decl_line": 246,
+     "end": 274,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFaninL_csaStep_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 275,
+     "decl_line": 284,
+     "end": 310,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLayer",
+     "kind": "def",
+     "private": false,
+     "start": 313,
+     "decl_line": 317,
+     "end": 320,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLayer_cons_cons_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 321,
+     "decl_line": 323,
+     "end": 326,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLayer_of_length_le_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 327,
+     "decl_line": 329,
+     "end": 336,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevelsAux",
+     "kind": "def",
+     "private": true,
+     "start": 337,
+     "decl_line": 339,
+     "end": 342,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevelsAux_fuel",
+     "kind": "theorem",
+     "private": true,
+     "start": 343,
+     "decl_line": 344,
+     "end": 362,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevels",
+     "kind": "def",
+     "private": false,
+     "start": 363,
+     "decl_line": 366,
+     "end": 368,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevels_of_le_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 369,
+     "decl_line": 370,
+     "end": 376,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevels_of_two_lt",
+     "kind": "theorem",
+     "private": false,
+     "start": 377,
+     "decl_line": 379,
+     "end": 386,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaReduce",
+     "kind": "def",
+     "private": false,
+     "start": 387,
+     "decl_line": 392,
+     "end": 395,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaReduce_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 396,
+     "decl_line": 399,
+     "end": 403,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.sum_csaLayer",
+     "kind": "theorem",
+     "private": true,
+     "start": 404,
+     "decl_line": 406,
+     "end": 415,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.length_csaLayer",
+     "kind": "theorem",
+     "private": true,
+     "start": 416,
+     "decl_line": 418,
+     "end": 429,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.length_repeat_csaLayer",
+     "kind": "theorem",
+     "private": true,
+     "start": 430,
+     "decl_line": 432,
+     "end": 438,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.iterate_csaLevels_le_two",
+     "kind": "theorem",
+     "private": true,
+     "start": 439,
+     "decl_line": 441,
+     "end": 450,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.mem_flatten_of_mem_getD",
+     "kind": "theorem",
+     "private": true,
+     "start": 451,
+     "decl_line": 453,
+     "end": 460,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_csaLayer_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 461,
+     "decl_line": 469,
+     "end": 491,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_csaLayer_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 492,
+     "decl_line": 499,
+     "end": 521,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaReduce_val",
+     "kind": "theorem",
+     "private": false,
+     "start": 522,
+     "decl_line": 536,
+     "end": 563,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_csaReduce_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 564,
+     "decl_line": 576,
+     "end": 599,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFaninL_csaReduce_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 600,
+     "decl_line": 607,
+     "end": 629,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevels_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 630,
+     "decl_line": 641,
+     "end": 662,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 21,
+   "head_count": 35
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BoolCircuit.FormulaArith.bitAt",
+     "kind": "def",
+     "private": false,
+     "start": 54,
+     "decl_line": 57,
+     "end": 59,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.bitAt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 60,
+     "decl_line": 62,
+     "end": 64,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxDepth_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 65,
+     "decl_line": 67,
+     "end": 74,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFaninL_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 75,
+     "decl_line": 77,
+     "end": 84,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.prefixVal_eq_of_false",
+     "kind": "theorem",
+     "private": true,
+     "start": 85,
+     "decl_line": 87,
+     "end": 93,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.eval_getD_const",
+     "kind": "theorem",
+     "private": true,
+     "start": 94,
+     "decl_line": 96,
+     "end": 101,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.val_eq_prefixVal_bitAt",
+     "kind": "theorem",
+     "private": true,
+     "start": 102,
+     "decl_line": 104,
+     "end": 112,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_getD_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 113,
+     "decl_line": 115,
+     "end": 122,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_getD_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 123,
+     "decl_line": 125,
+     "end": 133,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.carryOut",
+     "kind": "def",
+     "private": false,
+     "start": 134,
+     "decl_line": 140,
+     "end": 147,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.carryOut_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 148,
+     "decl_line": 152,
+     "end": 161,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.carryBit_eq_true_iff",
+     "kind": "theorem",
+     "private": true,
+     "start": 162,
+     "decl_line": 171,
+     "end": 202,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.carryOut_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 203,
+     "decl_line": 216,
+     "end": 246,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.carryOut_eval_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 247,
+     "decl_line": 257,
+     "end": 269,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_carryOut_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 270,
+     "decl_line": 282,
+     "end": 317,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_carryOut_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 318,
+     "decl_line": 325,
+     "end": 348,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.constBits",
+     "kind": "def",
+     "private": false,
+     "start": 351,
+     "decl_line": 353,
+     "end": 355,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.constBits_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 356,
+     "decl_line": 358,
+     "end": 361,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.prefixVal_testBit",
+     "kind": "theorem",
+     "private": true,
+     "start": 362,
+     "decl_line": 364,
+     "end": 368,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.geConst",
+     "kind": "def",
+     "private": false,
+     "start": 369,
+     "decl_line": 375,
+     "end": 385,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.geConst_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 386,
+     "decl_line": 390,
+     "end": 401,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.geConst_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 402,
+     "decl_line": 417,
+     "end": 490,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_geConst_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 491,
+     "decl_line": 502,
+     "end": 526,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_geConst_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 527,
+     "decl_line": 533,
+     "end": 553,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 15,
+   "head_count": 24
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BoolCircuit.FormulaArith.maskedConst",
+     "kind": "def",
+     "private": false,
+     "start": 62,
+     "decl_line": 66,
+     "end": 69,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maskedConst_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 70,
+     "decl_line": 72,
+     "end": 76,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumInterval",
+     "kind": "def",
+     "private": false,
+     "start": 77,
+     "decl_line": 84,
+     "end": 90,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumInterval_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 91,
+     "decl_line": 96,
+     "end": 112,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxDepth_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 113,
+     "decl_line": 115,
+     "end": 122,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFaninL_le_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 123,
+     "decl_line": 125,
+     "end": 132,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.prefixVal_testBit",
+     "kind": "theorem",
+     "private": true,
+     "start": 133,
+     "decl_line": 135,
+     "end": 140,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.val_maskedConst",
+     "kind": "theorem",
+     "private": true,
+     "start": 141,
+     "decl_line": 147,
+     "end": 171,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.prefixVal_eq_of_lt_two_pow",
+     "kind": "theorem",
+     "private": true,
+     "start": 172,
+     "decl_line": 174,
+     "end": 186,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.val_take_of_lt",
+     "kind": "theorem",
+     "private": true,
+     "start": 187,
+     "decl_line": 189,
+     "end": 199,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumInterval_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 200,
+     "decl_line": 221,
+     "end": 303,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumDepth",
+     "kind": "def",
+     "private": false,
+     "start": 304,
+     "decl_line": 309,
+     "end": 311,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumDepth_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 312,
+     "decl_line": 314,
+     "end": 318,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_modSumInterval_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 319,
+     "decl_line": 331,
+     "end": 382,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumDepth_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 383,
+     "decl_line": 393,
+     "end": 400,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_modSumInterval_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 401,
+     "decl_line": 408,
+     "end": 441,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 10,
+   "head_count": 16
+  },
+  "TCSlib/Complexity/CircuitComplexity/NANDLayering.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BoolCircuit.DAGCircuit.IsLayered",
+     "kind": "def",
+     "private": false,
+     "start": 102,
+     "decl_line": 106,
+     "end": 109,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.isLayered_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 110,
+     "decl_line": 112,
+     "end": 116,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.decidableIsLayered",
+     "kind": "instance",
+     "private": false,
+     "start": 117,
+     "decl_line": 117,
+     "end": 121,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.litInput",
+     "kind": "def",
+     "private": false,
+     "start": 122,
+     "decl_line": 125,
+     "end": 126,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.litInput_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 127,
+     "decl_line": 128,
+     "end": 129,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.litInput_castAdd",
+     "kind": "theorem",
+     "private": false,
+     "start": 130,
+     "decl_line": 131,
+     "end": 133,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.litInput_natAdd",
+     "kind": "theorem",
+     "private": false,
+     "start": 134,
+     "decl_line": 135,
+     "end": 137,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.layerChain",
+     "kind": "def",
+     "private": false,
+     "start": 140,
+     "decl_line": 148,
+     "end": 153,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.layerChain_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 154,
+     "decl_line": 155,
+     "end": 157,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.layerChain_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 158,
+     "decl_line": 161,
+     "end": 167,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerAt",
+     "kind": "def",
+     "private": false,
+     "start": 168,
+     "decl_line": 170,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerAt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 174,
+     "end": 176,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerColumn",
+     "kind": "def",
+     "private": false,
+     "start": 177,
+     "decl_line": 189,
+     "end": 208,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerColumn_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 209,
+     "decl_line": 212,
+     "end": 242,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerFold",
+     "kind": "def",
+     "private": false,
+     "start": 243,
+     "decl_line": 245,
+     "end": 247,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerFold_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 248,
+     "decl_line": 250,
+     "end": 252,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerGates",
+     "kind": "def",
+     "private": false,
+     "start": 253,
+     "decl_line": 257,
+     "end": 258,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerGates_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 259,
+     "decl_line": 260,
+     "end": 262,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerOutput",
+     "kind": "def",
+     "private": false,
+     "start": 263,
+     "decl_line": 265,
+     "end": 267,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerOutput_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 268,
+     "decl_line": 269,
+     "end": 271,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.layerChain_isPrefix",
+     "kind": "theorem",
+     "private": true,
+     "start": 272,
+     "decl_line": 273,
+     "end": 278,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.length_layerChain_fst",
+     "kind": "theorem",
+     "private": true,
+     "start": 279,
+     "decl_line": 281,
+     "end": 286,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.mem_layerChain_fst",
+     "kind": "theorem",
+     "private": true,
+     "start": 287,
+     "decl_line": 289,
+     "end": 300,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.layerChain_acyclic",
+     "kind": "theorem",
+     "private": true,
+     "start": 301,
+     "decl_line": 305,
+     "end": 321,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerAt_lt",
+     "kind": "theorem",
+     "private": true,
+     "start": 322,
+     "decl_line": 325,
+     "end": 333,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerColumn_struct",
+     "kind": "theorem",
+     "private": true,
+     "start": 334,
+     "decl_line": 345,
+     "end": 434,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerFold_struct",
+     "kind": "theorem",
+     "private": true,
+     "start": 435,
+     "decl_line": 443,
+     "end": 463,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerGates_acyclic",
+     "kind": "theorem",
+     "private": false,
+     "start": 466,
+     "decl_line": 484,
+     "end": 489,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerOutput_lt",
+     "kind": "theorem",
+     "private": false,
+     "start": 490,
+     "decl_line": 498,
+     "end": 504,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND",
+     "kind": "def",
+     "private": false,
+     "start": 514,
+     "decl_line": 514,
+     "end": 519,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerGates_isNAND",
+     "kind": "theorem",
+     "private": true,
+     "start": 524,
+     "decl_line": 526,
+     "end": 530,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.foldr_max_eq_of_forall",
+     "kind": "theorem",
+     "private": true,
+     "start": 531,
+     "decl_line": 534,
+     "end": 539,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_depthAt_snoc",
+     "kind": "theorem",
+     "private": true,
+     "start": 540,
+     "decl_line": 543,
+     "end": 552,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_values_snoc",
+     "kind": "theorem",
+     "private": true,
+     "start": 553,
+     "decl_line": 556,
+     "end": 564,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_single",
+     "kind": "theorem",
+     "private": true,
+     "start": 565,
+     "decl_line": 568,
+     "end": 576,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_values_lit",
+     "kind": "theorem",
+     "private": true,
+     "start": 577,
+     "decl_line": 579,
+     "end": 588,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.layerChain_col",
+     "kind": "theorem",
+     "private": true,
+     "start": 589,
+     "decl_line": 593,
+     "end": 610,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_link",
+     "kind": "theorem",
+     "private": true,
+     "start": 611,
+     "decl_line": 615,
+     "end": 630,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerColumn_sem",
+     "kind": "theorem",
+     "private": true,
+     "start": 631,
+     "decl_line": 648,
+     "end": 823,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerFold_sem",
+     "kind": "theorem",
+     "private": true,
+     "start": 824,
+     "decl_line": 833,
+     "end": 857,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 858,
+     "decl_line": 871,
+     "end": 878,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_isLayered",
+     "kind": "theorem",
+     "private": false,
+     "start": 879,
+     "decl_line": 888,
+     "end": 902,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_isNANDForm",
+     "kind": "theorem",
+     "private": false,
+     "start": 903,
+     "decl_line": 910,
+     "end": 913,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_depth",
+     "kind": "theorem",
+     "private": false,
+     "start": 914,
+     "decl_line": 919,
+     "end": 925,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_size_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 926,
+     "decl_line": 939,
+     "end": 944,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 28,
+   "head_count": 45
+  }
+ }
+}

@@ -1,0 +1,342 @@
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:695:31: error: unexpected token '('; expected '⟩'
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:694:36: error: Insufficient number of fields for `⟨...⟩` constructor: Constructor `And.intro` has 2 explicit field, but only 1 was provided
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:694:65: error: Type mismatch
+  depthAt_input C.layerNAND
+has type
+  ?m.576 < n + n → C.layerNAND.depthAt ?m.576 = 0
+but is expected to have type
+  C.layerNAND.depthAt v = 0
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:692:2: error: unsolved goals
+case pos
+n : ℕ
+inst✝ : NeZero n
+C : DAGCircuit n
+s : List DAGGate × List (List ℕ)
+v : ℕ
+hv : v < n + C.gates.length
+hlen : s.2.length = v
+hpre :
+  (if C.depth = 0 then (s.1, s.2 ++ [[v]])
+      else
+        ((layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v (n + n + s.1.length)
+              (C.depth - 1)).1,
+          s.2 ++
+            [v ::
+                (n + n + s.1.length) ::
+                  (layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v (n + n + s.1.length)
+                      (C.depth - 1)).2])).1 <+:
+    C.layerNAND.gates
+hsem :
+  ∀ u < v,
+    C.depthAt u ≤ C.depth →
+      ∀ (k : ℕ),
+        C.depthAt u ≤ k →
+          k ≤ C.depth →
+            C.layerNAND.depthAt (C.layerAt s.2 u k) = k ∧
+              (C.IsNANDForm →
+                ∀ (x : Fin n → Bool),
+                  (C.layerNAND.values (litInput x)).getD (C.layerAt s.2 u k) false = (C.values x).getD u false)
+hn : 0 < n
+P : ℕ → ℕ → Prop :=
+  fun w k =>
+    C.layerNAND.depthAt w = k ∧
+      (C.IsNANDForm → ∀ (x : Fin n → Bool), (C.layerNAND.values (litInput x)).getD w false = (C.values x).getD v false)
+hcol : ∀ (col : List ℕ) (k : ℕ), C.layerAt (s.2 ++ [col]) v k = col.getD (k - C.depthAt v) 0
+hU : ∀ (w : ℕ), ∃ k, ∀ a ∈ { kind := GateKind.not, args := [w] }.args, C.layerNAND.depthAt a = k
+hfin :
+  ∀ (pre : List DAGGate) (a b t : ℕ),
+    (layerChain (n + n) (s.1 ++ pre) a b t).1 <+: C.layerNAND.gates →
+      P a (C.depthAt v) →
+        P b (C.depthAt v + 1) →
+          (∀ g ∈ pre, ∃ k, ∀ a ∈ g.args, C.layerNAND.depthAt a = k) →
+            C.depth = C.depthAt v + t + 1 →
+              (C.depthAt v ≤ C.depth →
+                  ∀ (k : ℕ),
+                    C.depthAt v ≤ k →
+                      k ≤ C.depth →
+                        P (C.layerAt (s.2 ++ [a :: b :: (layerChain (n + n) (s.1 ++ pre) a b t).2]) v k) k) ∧
+                ∀ g ∈ (layerChain (n + n) (s.1 ++ pre) a b t).1, g ∈ s.1 ∨ ∃ k, ∀ a ∈ g.args, C.layerNAND.depthAt a = k
+h1 : ¬C.depth < C.depthAt v
+h2 : v < n
+hv0 : P v (C.depthAt v)
+⊢ (C.depthAt v ≤ C.depth →
+      ∀ (k : ℕ),
+        C.depthAt v ≤ k →
+          k ≤ C.depth →
+            C.layerNAND.depthAt
+                  (C.layerAt
+                    (if C.depth = 0 then (s.1, s.2 ++ [[v]])
+                      else
+                        ((layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v (n + n + s.1.length)
+                              (C.depth - 1)).1,
+                          s.2 ++
+                            [v ::
+                                (n + n + s.1.length) ::
+                                  (layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v
+                                      (n + n + s.1.length) (C.depth - 1)).2])).2
+                    v k) =
+                k ∧
+              (C.IsNANDForm →
+                ∀ (x : Fin n → Bool),
+                  (C.layerNAND.values (litInput x)).getD
+                      (C.layerAt
+                        (if C.depth = 0 then (s.1, s.2 ++ [[v]])
+                          else
+                            ((layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v
+                                  (n + n + s.1.length) (C.depth - 1)).1,
+                              s.2 ++
+                                [v ::
+                                    (n + n + s.1.length) ::
+                                      (layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v
+                                          (n + n + s.1.length) (C.depth - 1)).2])).2
+                        v k)
+                      false =
+                    (C.values x).getD v false)) ∧
+    ∀
+      g ∈
+        (if C.depth = 0 then (s.1, s.2 ++ [[v]])
+          else
+            ((layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v (n + n + s.1.length)
+                  (C.depth - 1)).1,
+              s.2 ++
+                [v ::
+                    (n + n + s.1.length) ::
+                      (layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v (n + n + s.1.length)
+                          (C.depth - 1)).2])).1,
+      g ∈ s.1 ∨ ∃ k, ∀ a ∈ g.args, C.layerNAND.depthAt a = k
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:657:91: error: unsolved goals
+case neg
+n : ℕ
+inst✝ : NeZero n
+C : DAGCircuit n
+s : List DAGGate × List (List ℕ)
+v : ℕ
+hv : v < n + C.gates.length
+hlen : s.2.length = v
+hpre :
+  (if v < n then
+        if C.depth = 0 then (s.1, s.2 ++ [[v]])
+        else
+          ((layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v (n + n + s.1.length)
+                (C.depth - 1)).1,
+            s.2 ++
+              [v ::
+                  (n + n + s.1.length) ::
+                    (layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v (n + n + s.1.length)
+                        (C.depth - 1)).2])
+      else
+        if C.depth = C.depthAt v then
+          (s.1 ++
+              [{ kind := GateKind.not,
+                  args :=
+                    List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1))
+                      (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }],
+            s.2 ++ [[n + n + s.1.length]])
+        else
+          have gs₁ :=
+            s.1 ++
+              [{ kind := GateKind.not,
+                  args :=
+                    List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1))
+                      (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }];
+          have tw :=
+            if (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args = [] then
+              (gs₁ ++
+                  [{ kind := GateKind.not, args := [0, n] },
+                    { kind := GateKind.not, args := [n + n + s.1.length + 1] }],
+                n + n + s.1.length + 2)
+            else
+              (gs₁ ++
+                  [{ kind := GateKind.not,
+                      args :=
+                        List.map (fun a => C.layerAt s.2 a (C.depthAt v))
+                          (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }],
+                n + n + s.1.length + 1);
+          ((layerChain (n + n) tw.1 (n + n + s.1.length) tw.2 (C.depth - C.depthAt v - 1)).1,
+            s.2 ++
+              [(n + n + s.1.length) ::
+                  tw.2 :: (layerChain (n + n) tw.1 (n + n + s.1.length) tw.2 (C.depth - C.depthAt v - 1)).2])).1 <+:
+    C.layerNAND.gates
+hsem :
+  ∀ u < v,
+    C.depthAt u ≤ C.depth →
+      ∀ (k : ℕ),
+        C.depthAt u ≤ k →
+          k ≤ C.depth →
+            C.layerNAND.depthAt (C.layerAt s.2 u k) = k ∧
+              (C.IsNANDForm →
+                ∀ (x : Fin n → Bool),
+                  (C.layerNAND.values (litInput x)).getD (C.layerAt s.2 u k) false = (C.values x).getD u false)
+hn : 0 < n
+P : ℕ → ℕ → Prop :=
+  fun w k =>
+    C.layerNAND.depthAt w = k ∧
+      (C.IsNANDForm → ∀ (x : Fin n → Bool), (C.layerNAND.values (litInput x)).getD w false = (C.values x).getD v false)
+hcol : ∀ (col : List ℕ) (k : ℕ), C.layerAt (s.2 ++ [col]) v k = col.getD (k - C.depthAt v) 0
+hU : ∀ (w : ℕ), ∃ k, ∀ a ∈ { kind := GateKind.not, args := [w] }.args, C.layerNAND.depthAt a = k
+hfin :
+  ∀ (pre : List DAGGate) (a b t : ℕ),
+    (layerChain (n + n) (s.1 ++ pre) a b t).1 <+: C.layerNAND.gates →
+      P a (C.depthAt v) →
+        P b (C.depthAt v + 1) →
+          (∀ g ∈ pre, ∃ k, ∀ a ∈ g.args, C.layerNAND.depthAt a = k) →
+            C.depth = C.depthAt v + t + 1 →
+              (C.depthAt v ≤ C.depth →
+                  ∀ (k : ℕ),
+                    C.depthAt v ≤ k →
+                      k ≤ C.depth →
+                        P (C.layerAt (s.2 ++ [a :: b :: (layerChain (n + n) (s.1 ++ pre) a b t).2]) v k) k) ∧
+                ∀ g ∈ (layerChain (n + n) (s.1 ++ pre) a b t).1, g ∈ s.1 ∨ ∃ k, ∀ a ∈ g.args, C.layerNAND.depthAt a = k
+h1 : ¬C.depth < C.depthAt v
+h2 : ¬v < n
+⊢ (C.depthAt v ≤ C.depth →
+      ∀ (k : ℕ),
+        C.depthAt v ≤ k →
+          k ≤ C.depth →
+            C.layerNAND.depthAt
+                  (C.layerAt
+                    (if v < n then
+                        if C.depth = 0 then (s.1, s.2 ++ [[v]])
+                        else
+                          ((layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v
+                                (n + n + s.1.length) (C.depth - 1)).1,
+                            s.2 ++
+                              [v ::
+                                  (n + n + s.1.length) ::
+                                    (layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v
+                                        (n + n + s.1.length) (C.depth - 1)).2])
+                      else
+                        if C.depth = C.depthAt v then
+                          (s.1 ++
+                              [{ kind := GateKind.not,
+                                  args :=
+                                    List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1))
+                                      (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }],
+                            s.2 ++ [[n + n + s.1.length]])
+                        else
+                          have gs₁ :=
+                            s.1 ++
+                              [{ kind := GateKind.not,
+                                  args :=
+                                    List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1))
+                                      (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }];
+                          have tw :=
+                            if (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args = [] then
+                              (gs₁ ++
+                                  [{ kind := GateKind.not, args := [0, n] },
+                                    { kind := GateKind.not, args := [n + n + s.1.length + 1] }],
+                                n + n + s.1.length + 2)
+                            else
+                              (gs₁ ++
+                                  [{ kind := GateKind.not,
+                                      args :=
+                                        List.map (fun a => C.layerAt s.2 a (C.depthAt v))
+                                          (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }],
+                                n + n + s.1.length + 1);
+                          ((layerChain (n + n) tw.1 (n + n + s.1.length) tw.2 (C.depth - C.depthAt v - 1)).1,
+                            s.2 ++
+                              [(n + n + s.1.length) ::
+                                  tw.2 ::
+                                    (layerChain (n + n) tw.1 (n + n + s.1.length) tw.2
+                                        (C.depth - C.depthAt v - 1)).2])).2
+                    v k) =
+                k ∧
+              (C.IsNANDForm →
+                ∀ (x : Fin n → Bool),
+                  (C.layerNAND.values (litInput x)).getD
+                      (C.layerAt
+                        (if v < n then
+                            if C.depth = 0 then (s.1, s.2 ++ [[v]])
+                            else
+                              ((layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v
+                                    (n + n + s.1.length) (C.depth - 1)).1,
+                                s.2 ++
+                                  [v ::
+                                      (n + n + s.1.length) ::
+                                        (layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v
+                                            (n + n + s.1.length) (C.depth - 1)).2])
+                          else
+                            if C.depth = C.depthAt v then
+                              (s.1 ++
+                                  [{ kind := GateKind.not,
+                                      args :=
+                                        List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1))
+                                          (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }],
+                                s.2 ++ [[n + n + s.1.length]])
+                            else
+                              have gs₁ :=
+                                s.1 ++
+                                  [{ kind := GateKind.not,
+                                      args :=
+                                        List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1))
+                                          (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }];
+                              have tw :=
+                                if (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args = [] then
+                                  (gs₁ ++
+                                      [{ kind := GateKind.not, args := [0, n] },
+                                        { kind := GateKind.not, args := [n + n + s.1.length + 1] }],
+                                    n + n + s.1.length + 2)
+                                else
+                                  (gs₁ ++
+                                      [{ kind := GateKind.not,
+                                          args :=
+                                            List.map (fun a => C.layerAt s.2 a (C.depthAt v))
+                                              (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }],
+                                    n + n + s.1.length + 1);
+                              ((layerChain (n + n) tw.1 (n + n + s.1.length) tw.2 (C.depth - C.depthAt v - 1)).1,
+                                s.2 ++
+                                  [(n + n + s.1.length) ::
+                                      tw.2 ::
+                                        (layerChain (n + n) tw.1 (n + n + s.1.length) tw.2
+                                            (C.depth - C.depthAt v - 1)).2])).2
+                        v k)
+                      false =
+                    (C.values x).getD v false)) ∧
+    ∀
+      g ∈
+        (if v < n then
+            if C.depth = 0 then (s.1, s.2 ++ [[v]])
+            else
+              ((layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v (n + n + s.1.length)
+                    (C.depth - 1)).1,
+                s.2 ++
+                  [v ::
+                      (n + n + s.1.length) ::
+                        (layerChain (n + n) (s.1 ++ [{ kind := GateKind.not, args := [n + v] }]) v (n + n + s.1.length)
+                            (C.depth - 1)).2])
+          else
+            if C.depth = C.depthAt v then
+              (s.1 ++
+                  [{ kind := GateKind.not,
+                      args :=
+                        List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1))
+                          (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }],
+                s.2 ++ [[n + n + s.1.length]])
+            else
+              have gs₁ :=
+                s.1 ++
+                  [{ kind := GateKind.not,
+                      args :=
+                        List.map (fun a => C.layerAt s.2 a (C.depthAt v - 1))
+                          (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }];
+              have tw :=
+                if (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args = [] then
+                  (gs₁ ++
+                      [{ kind := GateKind.not, args := [0, n] },
+                        { kind := GateKind.not, args := [n + n + s.1.length + 1] }],
+                    n + n + s.1.length + 2)
+                else
+                  (gs₁ ++
+                      [{ kind := GateKind.not,
+                          args :=
+                            List.map (fun a => C.layerAt s.2 a (C.depthAt v))
+                              (C.gates.getD (v - n) { kind := GateKind.not, args := [] }).args }],
+                    n + n + s.1.length + 1);
+              ((layerChain (n + n) tw.1 (n + n + s.1.length) tw.2 (C.depth - C.depthAt v - 1)).1,
+                s.2 ++
+                  [(n + n + s.1.length) ::
+                      tw.2 :: (layerChain (n + n) tw.1 (n + n + s.1.length) tw.2 (C.depth - C.depthAt v - 1)).2])).1,
+      g ∈ s.1 ∨ ∃ k, ∀ a ∈ g.args, C.layerNAND.depthAt a = k
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): lean exited with status 1
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): error diagnostics reported
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): no fresh .olean produced

@@ -23,3 +23,4 @@ Semantic part (on C' = C.layerNAND, gates through layerNAND_gates; F v's gates a
   the length part and size_eq.
 2026-11-17T11:35:41Z N12, N13 proved (structural helpers, no layerNAND use); file compiles rc 0 (NL-005), 5 sorry targets left
 2026-11-17T11:41:36Z all 7 targets proved (NL-011 rc 0, 0 sorry); file too long, compacting next
+2026-11-17T11:54:04Z FINAL: all 7 targets proved; NL-019 rc 0, 0 warnings; 944 lines (base 388), width<=100; seal probe SealNL-002 ok, control fails once; axioms AxNL-002 (sorryAx only via N1 in N7/N8/N10; layerNAND/_gates/_output clean)

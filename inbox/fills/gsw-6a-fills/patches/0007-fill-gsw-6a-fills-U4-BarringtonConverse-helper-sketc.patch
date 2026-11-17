@@ -1,0 +1,31 @@
+From bb7efa82af89141535e7a4adc49c6d97aef85de8 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 17 Nov 2026 11:57:48 +0000
+Subject: [PATCH 7/7] fill gsw-6a-fills: U4 BarringtonConverse, helper sketch
+
+Add a proof sketch to the private helper maxFanin_compTree_list_le
+(a 20-line declaration). Docstring only.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjAYrSdr2naBsFrkNr
+---
+ TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean b/TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean
+index ba15a9de..1b8e0e14 100644
+--- a/TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean
++++ b/TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean
+@@ -425,7 +425,11 @@ theorem depth_compTree_le (B : BranchingProgram w n) (i j : Fin w) :
+   exact depth_compTree_list_le B.instrs i j
+ 
+ /-- The composition tree of an instruction list `l` has fan-in 2:
+-`(compTree l i j).maxFanin ≤ 2`.  Glue. -/
++`(compTree l i j).maxFanin ≤ 2`.  Glue.
++
++**Proof sketch.** Well-founded recursion on `l.length`, as for `compTree_eval_list`: the leaves by
++`compTree_nil` (`TreeCircuit.const_eq`, `maxFanin_const`) and `Instr.maxFanin_wire_le`, a split by
++`compTree_cons_cons` and `maxFanin_wireComp_le` with the recursive calls on both halves. -/
+ private theorem maxFanin_compTree_list_le :
+     ∀ (l : List (Instr w n)) (i j : Fin w), (compTree l i j).maxFanin ≤ 2
+   | [], i, j => by

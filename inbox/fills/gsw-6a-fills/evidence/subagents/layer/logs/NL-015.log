@@ -1,0 +1,149 @@
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:730:11: error: Application type mismatch: The argument
+  h.right
+has type
+  C.IsNANDForm →
+    ∀ (x : Fin n → Bool), (C.layerNAND.values (litInput x)).getD (C.layerAt s.2 a k) false = (C.values x).getD a false
+but is expected to have type
+  C.IsNANDForm →
+    ∀ (x : Fin n → Bool),
+      (C.layerNAND.values (litInput x)).getD (C.layerAt s.2 a k) false = (C.values x).getD (n + j) false
+in the application
+  ⟨h.left, h.right⟩
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:746:53: error: Type mismatch
+  (hlev k hk hkD a ha).left.right hC x
+has type
+  (C.layerNAND.values (litInput x)).getD (C.layerAt s.2 a k) false = (C.values x).getD (n + j) false
+but is expected to have type
+  ((fun a => (C.layerNAND.values (litInput x)).getD a false) ∘ fun a => C.layerAt s.2 a k) a = (C.values x).getD a false
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:791:36: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  0 ≤ i ≤ 1
+  h ≥ 0
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  d - e ≥ 2
+  c ≥ 0
+  b ≥ 0
+  b - c ≤ -1
+  a ≥ 0
+  a - b ≥ 1
+where
+ a := ↑C.gates.length
+ b := ↑j
+ c := ↑s.2.length
+ d := ↑C.depth
+ e := ↑(List.foldr max 0 (List.map (fun a => C.depths.getD a 0) g.args))
+ f := ↑s.1.length
+ h := ↑(C.layerNAND.depthAt (n + n + s.1.length + 1))
+ i := ↑(C.layerNAND.depthAt (n + n + s.1.length + 2))
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:796:86: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ?a + (?b + ?c)
+in the target expression
+  (!(C.layerNAND.values (litInput x)).getD (n + n + s.1.length + 1) false) = (C.values x).getD (n + j) false
+
+n : ℕ
+inst✝ : NeZero n
+C : DAGCircuit n
+s : List DAGGate × List (List ℕ)
+hn : 0 < n
+hU : ∀ (w : ℕ), ∃ k, ∀ a ∈ { kind := GateKind.not, args := [w] }.args, C.layerNAND.depthAt a = k
+j : ℕ
+hv : n + j < n + C.gates.length
+hlen : s.2.length = n + j
+hsem :
+  ∀ u < n + j,
+    C.depthAt u ≤ C.depth →
+      ∀ (k : ℕ),
+        C.depthAt u ≤ k →
+          k ≤ C.depth →
+            C.layerNAND.depthAt (C.layerAt s.2 u k) = k ∧
+              (C.IsNANDForm →
+                ∀ (x : Fin n → Bool),
+                  (C.layerNAND.values (litInput x)).getD (C.layerAt s.2 u k) false = (C.values x).getD u false)
+P : ℕ → ℕ → Prop :=
+  fun w k =>
+    C.layerNAND.depthAt w = k ∧
+      (C.IsNANDForm →
+        ∀ (x : Fin n → Bool), (C.layerNAND.values (litInput x)).getD w false = (C.values x).getD (n + j) false)
+hcol : ∀ (col : List ℕ) (k : ℕ), C.layerAt (s.2 ++ [col]) (n + j) k = col.getD (k - C.depthAt (n + j)) 0
+hfin :
+  ∀ (pre : List DAGGate) (a b t : ℕ),
+    (layerChain (n + n) (s.1 ++ pre) a b t).1 <+: C.layerNAND.gates →
+      P a (C.depthAt (n + j)) →
+        P b (C.depthAt (n + j) + 1) →
+          (∀ g ∈ pre, ∃ k, ∀ a ∈ g.args, C.layerNAND.depthAt a = k) →
+            C.depth = C.depthAt (n + j) + t + 1 →
+              (C.depthAt (n + j) ≤ C.depth →
+                  ∀ (k : ℕ),
+                    C.depthAt (n + j) ≤ k →
+                      k ≤ C.depth →
+                        P (C.layerAt (s.2 ++ [a :: b :: (layerChain (n + n) (s.1 ++ pre) a b t).2]) (n + j) k) k) ∧
+                ∀ g ∈ (layerChain (n + n) (s.1 ++ pre) a b t).1, g ∈ s.1 ∨ ∃ k, ∀ a ∈ g.args, C.layerNAND.depthAt a = k
+h1 : ¬C.depth < C.depthAt (n + j)
+h2 : ¬n + j < n
+hj : j < C.gates.length
+g : DAGGate
+hδ : C.depthAt (n + j) = 1 + List.foldr max 0 (List.map (fun a => C.depths.getD a 0) g.args)
+harg : ∀ a ∈ g.args, a < n + j ∧ C.depthAt a < C.depthAt (n + j)
+hval :
+  C.IsNANDForm → ∀ (x : Fin n → Bool), (C.values x).getD (n + j) false = !g.args.all fun a => (C.values x).getD a false
+hlev :
+  ∀ (k : ℕ),
+    (∀ a ∈ g.args, C.depthAt a ≤ k) →
+      k ≤ C.depth → ∀ a ∈ g.args, P (C.layerAt s.2 a k) k ∧ C.layerNAND.depthAt (C.layerAt s.2 a k) = k
+hgate :
+  ∀ (gs : List DAGGate) (k : ℕ),
+    gs ++ [{ kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a k) g.args }] <+: C.layerNAND.gates →
+      g.args ≠ [] →
+        (∀ a ∈ g.args, C.depthAt a ≤ k) →
+          k ≤ C.depth →
+            C.layerNAND.depthAt (n + n + gs.length) = k + 1 ∧
+              (C.IsNANDForm →
+                ∀ (x : Fin n → Bool),
+                  (C.layerNAND.values (litInput x)).getD (n + n + gs.length) false = (C.values x).getD (n + j) false)
+hbu :
+  ∀ (k : ℕ),
+    (∀ a ∈ g.args, C.depthAt a ≤ k) →
+      k ≤ C.depth →
+        ∃ k',
+          ∀ b ∈ { kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a k) g.args }.args,
+            C.layerNAND.depthAt b = k'
+hδ1 : 1 ≤ C.depthAt (n + j)
+hk1 : ∀ a ∈ g.args, C.depthAt a ≤ C.depthAt (n + j) - 1
+b0 : DAGGate := { kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt (n + j) - 1)) g.args }
+hpre :
+  (layerChain (n + n)
+        (s.1 ++ [b0] ++
+          [{ kind := GateKind.not, args := [0, n] }, { kind := GateKind.not, args := [n + n + s.1.length + 1] }])
+        (n + n + s.1.length) (n + n + s.1.length + 2) (C.depth - C.depthAt (n + j) - 1)).1 <+:
+    C.layerNAND.gates
+hb0 : b0 = { kind := GateKind.not, args := List.map (fun a => C.layerAt s.2 a (C.depthAt (n + j) - 1)) g.args }
+hbase : s.1 ++ [b0] <+: C.layerNAND.gates → C.depthAt (n + j) ≤ C.depth → P (n + n + s.1.length) (C.depthAt (n + j))
+h4 : ¬C.depth = C.depthAt (n + j)
+h5 : g.args = []
+hp' :
+  s.1 ++ [b0] ++ [{ kind := GateKind.not, args := [0, n] }] ++
+      [{ kind := GateKind.not, args := [n + n + s.1.length + 1] }] <+:
+    C.layerNAND.gates
+hp1 : s.1 ++ [b0] ++ [{ kind := GateKind.not, args := [0, n] }] <+: C.layerNAND.gates
+e1 : (s.1 ++ [b0]).length = s.1.length + 1
+d1 : C.layerNAND.depthAt (n + n + (s.1.length + 1)) = 1 + 0
+d2 : C.layerNAND.depthAt (n + n + (s.1.length + 1 + (0 + 1))) = C.layerNAND.depthAt (n + n + s.1.length + 1) + 1
+v2 :
+  C.IsNANDForm →
+    ∀ (y : Fin (n + n) → Bool),
+      (C.layerNAND.values y).getD (n + n + (s.1.length + 1 + (0 + 1))) false =
+        !(C.layerNAND.values y).getD (n + n + s.1.length + 1) false
+hC : C.IsNANDForm
+x : Fin n → Bool
+hl :
+  (C.layerNAND.values (litInput x)).getD 0 false = (C.values x).getD 0 false ∧
+    (C.layerNAND.values (litInput x)).getD n false = !(C.values x).getD 0 false
+v1 :
+  (C.layerNAND.values (litInput x)).getD (n + n + (s.1.length + 1)) false =
+    !((C.values x).getD 0 false && !(C.values x).getD 0 false)
+⊢ (!(C.layerNAND.values (litInput x)).getD (n + n + s.1.length + 1) false) = (C.values x).getD (n + j) false
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): lean exited with status 1
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): error diagnostics reported
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): no fresh .olean produced

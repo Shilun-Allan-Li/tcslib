@@ -1,0 +1,97 @@
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:315:64: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  i ≥ 0
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  d - g ≤ 0
+  c ≥ 0
+  c + d - e ≥ 1
+  c + d - f ≥ 1
+  c + d - i ≤ -2
+where
+ c := ↑N
+ d := ↑gs.length
+ e := ↑a
+ f := ↑b
+ g := ↑((layerChain N (gs ++ [{ kind := GateKind.not, args := [a] }, { kind := GateKind.not, args := [N + gs.length] }])
+            b (N + gs.length + 1) s).1,
+        (N + gs.length + 1) ::
+          (layerChain N
+              (gs ++ [{ kind := GateKind.not, args := [a] }, { kind := GateKind.not, args := [N + gs.length] }]) b
+              (N + gs.length + 1) s).2).1.length
+ i := ↑?m.146
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:315:81: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  i ≥ 0
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  d - g ≤ 0
+  c ≥ 0
+  c + d - e ≥ 1
+  c + d - f ≥ 1
+  c + d - i ≤ -2
+where
+ c := ↑N
+ d := ↑gs.length
+ e := ↑a
+ f := ↑b
+ g := ↑((layerChain N (gs ++ [{ kind := GateKind.not, args := [a] }, { kind := GateKind.not, args := [N + gs.length] }])
+            b (N + gs.length + 1) s).1,
+        (N + gs.length + 1) ::
+          (layerChain N
+              (gs ++ [{ kind := GateKind.not, args := [a] }, { kind := GateKind.not, args := [N + gs.length] }]) b
+              (N + gs.length + 1) s).2).1.length
+ i := ↑?m.147
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:366:67: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  j ≥ 0
+  i ≥ 0
+  h ≥ 0
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  d - 2*h + 2*i ≤ 1
+  c ≥ 1
+  2*c + d + e - f ≥ 1
+  2*c + d + e - g ≥ 1
+  2*c + d + e - j ≤ 0
+where
+ c := ↑n
+ d := ↑p
+ e := ↑s.1.length
+ f := ↑a
+ g := ↑b
+ h := ↑C.depth
+ i := ↑t
+ j := ↑?m.405
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:366:84: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  j ≥ 0
+  i ≥ 0
+  h ≥ 0
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  d - 2*h + 2*i ≤ 1
+  c ≥ 1
+  2*c + d + e - f ≥ 1
+  2*c + d + e - g ≥ 1
+  2*c + d + e - j ≤ 0
+where
+ c := ↑n
+ d := ↑p
+ e := ↑s.1.length
+ f := ↑a
+ g := ↑b
+ h := ↑C.depth
+ i := ↑t
+ j := ↑?m.406
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): lean exited with status 1
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): error diagnostics reported
+FAIL(TCSlib/Complexity/CircuitComplexity/NANDLayering): no fresh .olean produced

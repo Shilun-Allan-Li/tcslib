@@ -425,7 +425,11 @@ theorem depth_compTree_le (B : BranchingProgram w n) (i j : Fin w) :
   exact depth_compTree_list_le B.instrs i j
 
 /-- The composition tree of an instruction list `l` has fan-in 2:
-`(compTree l i j).maxFanin ≤ 2`.  Glue. -/
+`(compTree l i j).maxFanin ≤ 2`.  Glue.
+
+**Proof sketch.** Well-founded recursion on `l.length`, as for `compTree_eval_list`: the leaves by
+`compTree_nil` (`TreeCircuit.const_eq`, `maxFanin_const`) and `Instr.maxFanin_wire_le`, a split by
+`compTree_cons_cons` and `maxFanin_wireComp_le` with the recursive calls on both halves. -/
 private theorem maxFanin_compTree_list_le :
     ∀ (l : List (Instr w n)) (i j : Fin w), (compTree l i j).maxFanin ≤ 2
   | [], i, j => by

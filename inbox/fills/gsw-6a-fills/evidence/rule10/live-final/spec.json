@@ -1,0 +1,20 @@
+[
+ {"owner": "TCSlib.Complexity.BranchingPrograms.BarringtonConverse", "def": "BranchingProgram.yield",
+  "stmt": "(B : BranchingProgram 3 2) (x : Fin 2 → Bool) : B.yield x = B.instrs.foldl (fun f ι => ι.eval x ∘ f) id",
+  "neg": "rfl", "pos": "BranchingProgram.yield_eq B x"},
+ {"owner": "TCSlib.Complexity.BranchingPrograms.NC1", "def": "BoolCircuit.DAGCircuit.IsWellFormed",
+  "stmt": "(C : BoolCircuit.DAGCircuit 2) : C.IsWellFormed ↔ ∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)",
+  "neg": "Iff.rfl", "pos": "BoolCircuit.DAGCircuit.isWellFormed_iff C"},
+ {"owner": "TCSlib.Complexity.CircuitComplexity.NANDLayering", "def": "BoolCircuit.DAGCircuit.IsNANDForm",
+  "stmt": "(C : BoolCircuit.DAGCircuit 2) : C.IsNANDForm ↔ ∀ g ∈ C.gates, g.IsNAND",
+  "neg": "Iff.rfl", "pos": "BoolCircuit.DAGCircuit.isNANDForm_iff C"},
+ {"owner": "TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave", "def": "BoolCircuit.prefixVal",
+  "stmt": "(f : ℕ → Bool) (i : ℕ) : BoolCircuit.prefixVal f (i + 1) = BoolCircuit.prefixVal f i + (f i).toNat * 2 ^ i",
+  "neg": "rfl", "pos": "BoolCircuit.prefixVal_succ f i"},
+ {"owner": "TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare", "def": "BoolCircuit.carryBit",
+  "stmt": "(A B : ℕ → Bool) (i : ℕ) : BoolCircuit.carryBit A B (i + 1) = ((A i && B i) || ((A i ^^ B i) && BoolCircuit.carryBit A B i))",
+  "neg": "rfl", "pos": "BoolCircuit.carryBit_succ A B i"},
+ {"owner": "TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum", "def": "BoolCircuit.FormulaArith.val",
+  "stmt": "(x : Fin 2 → Bool) (U : List (BoolCircuit.TreeCircuit 2)) : BoolCircuit.FormulaArith.val x U = BoolCircuit.bitsVal (U.map fun c => c.eval x)",
+  "neg": "rfl", "pos": "BoolCircuit.FormulaArith.val_eq x U"}
+]

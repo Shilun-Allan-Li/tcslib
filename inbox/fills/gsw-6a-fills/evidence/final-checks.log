@@ -1,0 +1,57 @@
+== head bb7efa82af89141535e7a4adc49c6d97aef85de8 2026-11-17T11:58:01Z
+RESULT modules=9 ok=9 not_ok=0
+# sweep at head bb7efa82af89141535e7a4adc49c6d97aef85de8: module, rc, errors (G26-N1), error lines, sorry warnings, declarations, sha256 of `git show HEAD:<file>`, sha256 of the checked source, BOUND
+TCSlib/Complexity/CircuitComplexity/NANDLayering	rc=0	errors=0	error_lines=0	sorry=0	decls=	1f5d09c4f9783eb462e1abdcd1aefe9b0240666bdc226e8e06b94aa12487d136	1f5d09c4f9783eb462e1abdcd1aefe9b0240666bdc226e8e06b94aa12487d136	BOUND
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse	rc=0	errors=0	error_lines=0	sorry=0	decls=	19afcd31b7d5082be87ce6a77e11378699ab60d9940f763ca1b2f00404993774	19afcd31b7d5082be87ce6a77e11378699ab60d9940f763ca1b2f00404993774	BOUND
+TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave	rc=0	errors=0	error_lines=0	sorry=0	decls=	c844bcb492e181a8c6c9fe4e9ea2fd3c161703919d0105405c2a6a6897e4b424	c844bcb492e181a8c6c9fe4e9ea2fd3c161703919d0105405c2a6a6897e4b424	BOUND
+TCSlib/Complexity/BranchingPrograms/NC1	rc=0	errors=0	error_lines=0	sorry=0	decls=	f19cebbdc1a7334618f5beb75857acef51cc91ed13f3f90b6bfb69f4b28de57e	f19cebbdc1a7334618f5beb75857acef51cc91ed13f3f90b6bfb69f4b28de57e	BOUND
+TCSlib/Complexity/BranchingPrograms	rc=0	errors=0	error_lines=0	sorry=0	decls=	eb3b2700e88e5d05b88c737fb34371187e8b3a100cba24a5cca80beb87d28709	eb3b2700e88e5d05b88c737fb34371187e8b3a100cba24a5cca80beb87d28709	BOUND
+TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare	rc=0	errors=0	error_lines=0	sorry=0	decls=	1ec6577ed8de0f0cbf772221ff1f1a29e43634dabdb481e1ecf8d95eab1d8fd8	1ec6577ed8de0f0cbf772221ff1f1a29e43634dabdb481e1ecf8d95eab1d8fd8	BOUND
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum	rc=0	errors=0	error_lines=0	sorry=0	decls=	b1acd8b5d7b5cac6da3cffdf53e701b3eb9621d585b35cd2f8061a869927dfe3	b1acd8b5d7b5cac6da3cffdf53e701b3eb9621d585b35cd2f8061a869927dfe3	BOUND
+TCSlib/Complexity/CircuitComplexity/FormulaArith	rc=0	errors=0	error_lines=0	sorry=0	decls=	0cdc9004710fc0220762b59fdab54937d999cbe81ac7737c277f36561be6e7dd	0cdc9004710fc0220762b59fdab54937d999cbe81ac7737c277f36561be6e7dd	BOUND
+TCSlib/Complexity/CircuitComplexity	rc=0	errors=0	error_lines=0	sorry=0	decls=	5356732e92a06d9e317dbecb9a10e3f322fcb4d01df90b6996a987f56f0d8251	5356732e92a06d9e317dbecb9a10e3f322fcb4d01df90b6996a987f56f0d8251	BOUND
+RESULT modules=9 bad=0
+
+RESULT declarations=74 modules=12 mismatches=0
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:0
+TCSlib/Complexity/BranchingPrograms/NC1.lean:0
+TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean:0
+TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean:0
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:0
+TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:0
+RESULT ADDED=0 CHANGED=0 REMOVED=0
+rc=0	maxrss_kb=1974704	seconds=2.76	log=/home/user/w6/evidence/stmt/StmtDump-head-final.log
+STMTDUMP IDENTICAL
+RESULT files=6 differences=0 PASS
+0
+rc=0	maxrss_kb=1999828	seconds=14.33	log=/home/user/w6/evidence/axioms/AxiomProbe-final.log
+G6A-F14 BoolCircuit.DAGCircuit.layerNAND: EMPTY TRACE
+G6A-F14 BoolCircuit.DAGCircuit.layerNAND_gates: EMPTY TRACE
+G6A-F14 BoolCircuit.DAGCircuit.layerNAND_output: EMPTY TRACE
+RESULT traces=57 bad=0
+ .../BranchingPrograms/BarringtonConverse.lean      | 337 ++++++++++--
+ TCSlib/Complexity/BranchingPrograms/NC1.lean       | 159 +++++-
+ .../CircuitComplexity/FormulaArith/CarrySave.lean  | 438 +++++++++++++--
+ .../CircuitComplexity/FormulaArith/Compare.lean    | 382 +++++++++++--
+ .../CircuitComplexity/FormulaArith/ModSum.lean     | 288 +++++++++-
+ .../Complexity/CircuitComplexity/NANDLayering.lean | 609 ++++++++++++++++++++-
+ 6 files changed, 2043 insertions(+), 170 deletions(-)
+
+style_lint: 25 FAIL, 390 WARN over 513 files
+campaign line-set diff lines: 0
+unit	file	base_lines	head_lines	delta	r3_estimate	base_maxwidth	head_maxwidth	diff_added	diff_removed
+U4	TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean	304	553	249	250-400	100	100	293	44
+U5	TCSlib/Complexity/BranchingPrograms/NC1.lean	135	266	131	180-320	100	100	145	14
+U7	TCSlib/Complexity/CircuitComplexity/NANDLayering.lean	388	947	559	150-250 (up to ~300)	100	100	584	25
+U9	TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean	297	665	368	250-400	98	99	403	35
+U10	TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean	238	556	318	150-250	100	100	350	32
+U11	TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean	196	444	248	150-250	100	100	268	20
+RESULT total_delta=1873 limit_violations=0
+RESULT private_helpers=52 helper_doc_violations=0 long_proofs=32 missing_sketches=0
+RESULT new_names=52 clashes=0
+RESULT head=bb7efa82af89141535e7a4adc49c6d97aef85de8 branch_head=bb7efa82af89141535e7a4adc49c6d97aef85de8
+7
+records tip fetched 2026-11-17T12:00:22Z: 8c83367204e515af54ce9d0fe2012344094a3909
+head: bb7efa82af89141535e7a4adc49c6d97aef85de8
+git merge-tree --write-tree HEAD 8c83367204e515af54ce9d0fe2012344094a3909: rc=0
+2fe59876b35f821ba444bfced15090f3d5777069
