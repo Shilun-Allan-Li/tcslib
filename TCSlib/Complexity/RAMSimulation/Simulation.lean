@@ -82,11 +82,13 @@ one-bit verdict, as `Turing.FinTM.DecidesInTime` and `Turing.FinTM.DecidesInSpac
 function mode (`fn = true`) the emitted word, as `Turing.FinTM.ComputesInSpace` reads it. -/
 def outputOf (fn v : Bool) (o : List Bool) : List Bool := if fn then o else [v]
 
-/-- The time bound, as an equation. -/
+/-- The time bound, as an equation:
+`simTime A TW n W t f = TW n + A·(t + 1)·(f·(W + 1) + W² + n + 1)`. -/
 theorem simTime_eq (A : ℕ) (TW : ℕ → ℕ) (n W t f : ℕ) :
     simTime A TW n W t f = TW n + A * (t + 1) * (f * (W + 1) + W ^ 2 + n + 1) := rfl
 
-/-- The space bound, as an equation. -/
+/-- The space bound, as an equation:
+`simSpace A SW n W f = SW n + A·(f·(W + 1) + W + logSpace n + 1)`. -/
 theorem simSpace_eq (A : ℕ) (SW : ℕ → ℕ) (n W f : ℕ) :
     simSpace A SW n W f = SW n + A * (f * (W + 1) + W + Complexity.logSpace n + 1) := rfl
 

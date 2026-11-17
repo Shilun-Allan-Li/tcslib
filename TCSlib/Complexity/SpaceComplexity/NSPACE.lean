@@ -84,8 +84,10 @@ def DecidesInSpace (N : FinNDTM Bool) (L : Language Bool) (s : ℕ → ℕ) : Pr
       N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ s x.length) ∧
     (x ∈ L ↔ N.AcceptsWithin x T)
 
-/-- **Deciding in nondeterministic space, unfolded**: the three clauses of
-`Turing.FinNDTM.DecidesInSpace` as an equivalence. -/
+/-- **Deciding in nondeterministic space, unfolded**: `N` decides `L` in space `s` exactly when
+for every input `x` there is a budget `T` such that every branch of length `T` has halted,
+every choice word of length exactly `T` visits at most `s |x|` work-tape cells, and `x ∈ L`
+holds exactly when some branch accepts within `T`. -/
 theorem decidesInSpace_iff (N : FinNDTM Bool) (L : Language Bool) (s : ℕ → ℕ) :
     N.DecidesInSpace L s ↔ ∀ x : List Bool, ∃ T : ℕ,
       N.tm.HaltsWithin x T ∧
