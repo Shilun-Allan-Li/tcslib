@@ -1,0 +1,145 @@
+diff --git a/TCSlib/Complexity/BranchingPrograms/Barrington.lean b/TCSlib/Complexity/BranchingPrograms/Barrington.lean
+index d1d6aa925..3bdf3d8f5 100644
+--- a/TCSlib/Complexity/BranchingPrograms/Barrington.lean
++++ b/TCSlib/Complexity/BranchingPrograms/Barrington.lean
+@@ -390,18 +390,18 @@ private theorem IsFiveCycle.apply_ne {σ : Perm (Fin 5)} (h : IsFiveCycle σ) (i
+   exact Finset.mem_univ i
+ 
+ /-- On the orbit of `0` under a five-cycle, powers agree exactly modulo `5`:
+-`IsFiveCycle σ → ((σ ^ a) 0 = (σ ^ b) 0 ↔ a ≡ b [MOD 5])` (`Equiv.Perm.IsCycle.pow_eq_pow_iff`,
+-`pow_eq_pow_iff_modEq`).  Glue for C10 [Bar89, Lemma 1 proof, p003-b003]. -/
++`IsFiveCycle σ → ((σ ^ a) 0 = (σ ^ b) 0 ↔ a ≡ b [MOD 5])`.  The case `s = Finset.univ` of
++Mathlib's `Equiv.Perm.IsCycleOn.pow_apply_eq_pow_apply`: a cycle is a cycle on its support
++(`Equiv.Perm.IsCycle.isCycleOn`), which is all of `Fin 5` (`IsFiveCycle.apply_ne`).  Glue for C10
++[Bar89, Lemma 1 proof, p003-b003]. -/
+ private theorem IsFiveCycle.pow_apply_eq_iff {σ : Perm (Fin 5)} (h : IsFiveCycle σ) {a b : ℕ} :
+     (σ ^ a) 0 = (σ ^ b) 0 ↔ a ≡ b [MOD 5] := by
+-  have h5 := h.orderOf_eq
+-  constructor
+-  · intro hab
+-    have hmod := pow_eq_pow_iff_modEq.1 (h.isCycle.pow_eq_pow_iff.2 ⟨0, h.apply_ne 0, hab⟩)
+-    rwa [h5] at hmod
+-  · intro hab
+-    rw [← h5] at hab
+-    rw [pow_eq_pow_iff_modEq.2 hab]
++  have hs : {x | σ x ≠ x} = ((Finset.univ : Finset (Fin 5)) : Set (Fin 5)) := by
++    ext i; simp [h.apply_ne i]
++  have hc := h.isCycle.isCycleOn
++  rw [hs] at hc
++  have := hc.pow_apply_eq_pow_apply (Finset.mem_univ (0 : Fin 5)) (m := a) (n := b)
++  rwa [Finset.card_fin] at this
+ 
+ /-- For a five-cycle `σ`, `conjugatorIndex σ i` is an exponent reaching `i` from `0`:
+ `IsFiveCycle σ → (σ ^ conjugatorIndex σ i) 0 = i`.  Some `k < orderOf σ = 5` reaches `i`
+diff --git a/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean b/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
+index 3ba96b1c7..f1bb1e985 100644
+--- a/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
++++ b/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
+@@ -441,7 +441,7 @@ literal: the result is `f i` or `(f i).neg`, of depth `(f i).depth ≤ D`
+ (`depth_neg`, `Finset.le_sup`), and `c.depth = 0`.  A gate: `subst_node` and `depth_node` give
+ `1 + maxDepth (cs.map (·.subst f))`; each child is bounded by `child.depth + D` (induction
+ hypothesis) `≤ maxDepth cs + D` (`depth_le_maxDepth`), so the list maximum is too
+-(`maxDepth_nil`/`maxDepth_cons`), and `depth_node` on `c` closes it. -/
++(`maxDepth_le_of_forall`, `List.forall_mem_map`), and `depth_node` on `c` closes it. -/
+ theorem TreeCircuit.depth_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m) :
+     (c.subst f).depth ≤ c.depth + Finset.univ.sup fun i => (f i).depth := by
+   induction c using TreeCircuit.ind with
+@@ -457,13 +457,10 @@ theorem TreeCircuit.depth_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n →
+     -- each substituted child is at most `D` deeper than the deepest old child
+     suffices h : TreeCircuit.maxDepth (cs.map fun c => c.subst f) ≤
+         TreeCircuit.maxDepth cs + Finset.univ.sup fun i => (f i).depth by omega
+-    induction cs with
+-    | nil => rw [List.map_nil, TreeCircuit.maxDepth_nil]; exact Nat.zero_le _
+-    | cons c cs ihl =>
+-      rw [List.map_cons, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_cons]
+-      have h1 := ih c (List.mem_cons_self ..)
+-      have h2 := ihl fun d hd => ih d (List.mem_cons_of_mem _ hd)
+-      omega
++    refine TreeCircuit.maxDepth_le_of_forall (List.forall_mem_map.mpr fun c hc => ?_)
++    have h1 := ih c hc
++    have h2 := TreeCircuit.depth_le_maxDepth hc
++    omega
+ 
+ /-- **F2, fan-in.** Substitution has the fan-in of the formula or of a substituted formula:
+ `(c.subst f).maxFanin ≤ max c.maxFanin (Finset.univ.sup fun i => (f i).maxFanin)`.  Glue
+@@ -472,8 +469,8 @@ in `depth_subst_le`).
+ 
+ **Proof sketch.** Induction on `c` as in `depth_subst_le`.  A literal becomes `f i` or
+ `(f i).neg`, of fan-in `(f i).maxFanin` (`maxFanin_neg`, `Finset.le_sup`).  A gate keeps its
+-arity (`subst_node`, `List.length_map`), and `maxFanin_node`, `maxFaninL_cons` and the
+-induction hypothesis bound the children. -/
++arity (`subst_node`, `List.length_map`), and `maxFanin_node`, the induction hypothesis,
++`maxFanin_le_maxFaninL` and `maxFaninL_le_of_forall` bound the children. -/
+ theorem TreeCircuit.maxFanin_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m) :
+     (c.subst f).maxFanin ≤ max c.maxFanin (Finset.univ.sup fun i => (f i).maxFanin) := by
+   induction c using TreeCircuit.ind with
+@@ -490,13 +487,10 @@ theorem TreeCircuit.maxFanin_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n 
+     -- each substituted child has fan-in at most that of an old child or of some `f i`
+     suffices h : TreeCircuit.maxFaninL (cs.map fun c => c.subst f) ≤
+         max (TreeCircuit.maxFaninL cs) (Finset.univ.sup fun i => (f i).maxFanin) by omega
+-    induction cs with
+-    | nil => rw [List.map_nil, TreeCircuit.maxFaninL_nil]; exact Nat.zero_le _
+-    | cons c cs ihl =>
+-      rw [List.map_cons, TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_cons]
+-      have h1 := ih c (List.mem_cons_self ..)
+-      have h2 := ihl fun d hd => ih d (List.mem_cons_of_mem _ hd)
+-      omega
++    refine TreeCircuit.maxFaninL_le_of_forall (List.forall_mem_map.mpr fun c hc => ?_)
++    have h1 := ih c hc
++    have h2 := TreeCircuit.maxFanin_le_maxFaninL hc
++    omega
+ 
+ /-! ### Constants and the fan-in-2 gadgets (F3) -/
+ 
+diff --git a/TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean b/TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean
+index a22414d9d..c687a1fe7 100644
+--- a/TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean
++++ b/TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean
+@@ -211,28 +211,6 @@ private theorem eval_node_map (b : Bool) (x : Fin n → Bool) (f : TreeCircuit n
+         simp only [List.map_cons, TreeCircuit.eval, List.foldr_cons] at ih ⊢ <;>
+         rw [hc, ih]
+ 
+-/-- A depth bound on every image element bounds the image's depth. -/
+-private theorem maxDepth_map_le (f : TreeCircuit n → TreeCircuit n) (m : ℕ) :
+-    ∀ cs : List (TreeCircuit n), (∀ c ∈ cs, (f c).depth ≤ m) →
+-      TreeCircuit.maxDepth (cs.map f) ≤ m
+-  | [], _ => Nat.zero_le _
+-  | c :: cs, h => by
+-      have ih := maxDepth_map_le f m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
+-      have hc := h c (List.mem_cons_self ..)
+-      simp only [List.map_cons, TreeCircuit.maxDepth_cons]
+-      omega
+-
+-/-- A fan-in bound on every image element bounds the image's fan-in. -/
+-private theorem maxFaninL_map_le (f : TreeCircuit n → TreeCircuit n) (m : ℕ) :
+-    ∀ cs : List (TreeCircuit n), (∀ c ∈ cs, (f c).maxFanin ≤ m) →
+-      TreeCircuit.maxFaninL (cs.map f) ≤ m
+-  | [], _ => Nat.zero_le _
+-  | c :: cs, h => by
+-      have ih := maxFaninL_map_le f m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
+-      have hc := h c (List.mem_cons_self ..)
+-      simp only [List.map_cons, TreeCircuit.maxFaninL_cons]
+-      omega
+-
+ /-- `toBinary` computes the same function. -/
+ theorem toBinary_eval : ∀ (c : TreeCircuit n) (x : Fin n → Bool), c.toBinary.eval x = c.eval x := by
+   intro c
+@@ -252,7 +230,8 @@ theorem toBinary_maxFanin_le : ∀ c : TreeCircuit n, c.toBinary.maxFanin ≤ 2
+   | hnode b cs ih =>
+       simp only [TreeCircuit.toBinary]
+       have h1 := TreeCircuit.maxFanin_balanced_le b (cs.map TreeCircuit.toBinary)
+-      have h2 := maxFaninL_map_le TreeCircuit.toBinary 2 cs ih
++      have h2 : TreeCircuit.maxFaninL (cs.map TreeCircuit.toBinary) ≤ 2 :=
++        TreeCircuit.maxFaninL_le_of_forall (List.forall_mem_map.mpr ih)
+       omega
+ 
+ /-- The list form of `toBinary_size_le`, in the strengthened form the induction needs. -/
+@@ -296,7 +275,7 @@ theorem toBinary_depth_le {w : ℕ} : ∀ c : TreeCircuit n, c.maxFanin ≤ w 
+       have hfan : TreeCircuit.maxFaninL cs ≤ w := le_trans (le_max_right _ _) h
+       have hB : TreeCircuit.maxDepth (cs.map TreeCircuit.toBinary)
+           ≤ TreeCircuit.maxDepth cs * (Nat.clog 2 w + 1) :=
+-        maxDepth_map_le _ _ cs fun c hc =>
++        TreeCircuit.maxDepth_le_of_forall <| List.forall_mem_map.mpr fun c hc =>
+           le_trans (ih c hc (le_trans (TreeCircuit.maxFanin_le_maxFaninL hc) hfan))
+             (Nat.mul_le_mul_right _ (TreeCircuit.depth_le_maxDepth hc))
+       have hC : Nat.clog 2 cs.length ≤ Nat.clog 2 w := Nat.clog_mono_right 2 hlen
