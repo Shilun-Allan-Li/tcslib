@@ -22,11 +22,13 @@ staged; the next free number is 47"). Two stacked draft PRs are audited together
   clean and identical in five merge orders (phase 2 §1; recomputed here from git objects). TS1 against `e1d39836` is exactly
   the 23 files of the two PRs, +1,332/−296. Every TS1 path is blob-equal to #355's head except `Games.lean`, the union of
   the tip's `Relational` entry and #355's `Tapes` entry. **All Lean evidence in this pack is bound to TS1.**
-- **Records pin:** `95da6120f0b3b3c80e3078b1d497cbc93aa15fc4`, the tip of `origin/cryptography/pass-shelat-ch2-4` after
-  `git fetch` at staging (2026-11-17 11:24 UTC; "Records: #357 merged (BB1 complete); snapshot #6 adoption pending"). It
-  descends from `e1d39836`. **Since phase 2 the records branch merged #357** (`8060f6b7`): the pin's Lean differs from
-  `e1d39836`'s in exactly #357's 9 files. So pin × #355 is tree `1a1548572d49879ee262d704da431180aefb3a39`, which is TS1
-  plus those 9 files, each blob-equal to #357's head `dfdc56f2` (`checks/mergetrees.txt`). TS1 is the audited tree; the
+- **Records pin:** `659542ecd9413b504d30da8c937b9805e6c1f71f` ("Records: LE-g45b on #359; Gate 47 sweep rulings (DL-59,
+  DL-60)"), on `cryptography/pass-shelat-ch2-4`. It is a records-only advance (0 Lean, toolchain, manifest or lakefile
+  paths) from `95da6120`, the tip at first staging, and it carries Seyoon's rulings on this pack's duplication sweep
+  (DL-59, DL-60) and the adoption of olean snapshot #6. It descends from `e1d39836`. **Since phase 2 the records branch
+  merged #357** (`8060f6b7`): the pin's Lean differs from `e1d39836`'s in exactly #357's 9 files. So pin × #355 is tree
+  `20d1101ade46ba26919f01e30f7ee9422495669b`, which is TS1 plus those 9 files, each blob-equal to #357's head `dfdc56f2`
+  (`checks/mergetrees.txt`). TS1 is the audited tree; the
   re-replay that the #357 merge makes necessary is a maintainer merge condition (§ *Merge interaction*). Every record this
   pack cites is read at the pin; this pack's own files are filed after it.
 - **Lean base.** Snapshot #5 (T `3f540c22`, map `fca1b6a3…`), whose Lean equals `e1d39836`'s; phase 2 replayed TS1 on it.
@@ -139,9 +141,16 @@ Lines are base → TS1 (`checks/sizes.txt`, `source-head-r1.json`).
    needs a recorded acceptance and a ledger row with its repayment), G45-01 and G48-01 (an undisclosed re-proof or
    restatement of a public TCSlib or Mathlib lemma graded **major**).
 8. **The ledger rows this PR pair promotes or touches** (`records/duplication-ledger.md`): DL-35, DL-38–DL-49, DL-51,
-   DL-53; DL-55, DL-56 (Stage 2 items ruled after dispatch, carried in the addendum) and DL-57 (Stage 2, `cleanup-stages.md`); DL-58 repaid in #357 (nothing left).
+   DL-53, **DL-59, DL-60** (item 10); DL-55, DL-56 (Stage 2 items ruled after dispatch, carried in the addendum) and DL-57 (Stage 2, `cleanup-stages.md`); DL-58 repaid in #357 (nothing left).
 9. **Signing** (BS-F08 precedent): Claude cloud sessions on this account share one commit-signing key, so a signature attests
    a session on the account, not the maintainer; provenance rests on the pinned hashes, the range-diff and the cherry-picks.
+10. **Gate 47 pre-dispatch sweep rulings** (Seyoon, 2026-11-17; records `659542ec`: `duplication-ledger.md` DL-59/DL-60,
+    `cleanup-stages.md` Stage 2, the plan's decision-log row "Gate 47 pre-dispatch sweep rulings", the Complexity
+    handoff README's addendum). On the maintainer's sweep (§ *Duplication sweep*): **B1 accepted as DL-59**, to be repaid
+    in Stage 2 together with DL-40 by keeping one family in `Games/Tapes` (stated at `Type*`) and re-pointing LazySampling's
+    `extendStream*`, `AdaptiveCPA.extTape` and #355's users proof-only; **B2–B7 ledgered as DL-60**: B3 extends DL-53 (Stage
+    2: state `padTo` through `List.takeD` or re-point to it), B4 extends DL-49 (Stage 2: re-point the two special cases),
+    B2 goes to the Complexity handoff, B5–B7 are analogues, disclosure only. #355's code is unchanged.
 
 ## Questions for the audit
 
@@ -183,14 +192,19 @@ Lines are base → TS1 (`checks/sizes.txt`, `source-head-r1.json`).
    CS1-F01 copies, CS1-C1-F02/F06, `prfAdv_prfReduction`, the fourteen DL-35 changes one per site, DL-55, DL-56, the
    CS1-F09 relatives). Is it complete for every ledger row in Stage 1's scope (DL-38's opportunistic folds have no
    `path:line`, as the review notes)?
-6. **Ledger rows.** Do DL-35, DL-38–DL-49, DL-51, DL-53 (and the DL-49 extension) state the promoted forms and their
+6. **Ledger rows.** Do DL-35, DL-38–DL-49, DL-51, DL-53 (and the DL-49 extension), DL-59 and DL-60 state the promoted forms and their
    Stage 2 repayments correctly?
 
 **C. Duplication (an undisclosed or unaccepted duplicate of a public lemma is a major)**
-1. The maintainer's sweep (`checks/dup-sweep.txt`, § *Duplication sweep* below) lists every overlap found; part A is covered
-   by the records, **part B is not in the ledger at staging**. Confirm or refute each; grade B1–B7; find any other.
-2. In particular **B1**: `Games.extTape`/`extTape_update` against the public `extendStream`/`extendStream_update_of_ne`
-   (`Pseudorandom/Functions/LazySampling.lean:196/235`).
+1. The maintainer's sweep (`checks/dup-sweep.txt`, § *Duplication sweep* below) lists every overlap found. Part A was
+   covered by the records already; part B was found by the sweep and **ruled before dispatch** (DL-59 for B1, DL-60 for
+   B2–B7). Confirm or refute each overlap, and find any other the sweep missed.
+2. **Do DL-59 and DL-60 satisfy `policy.md` § *Duplication*** ("every instance of duplicated proved material must be
+   human-approved … naming where and when it is paid back") and the G44-01 standard (a recorded acceptance and a ledger
+   row with its repayment)? In particular **B1**: `Games.extTape`/`extTape_of_lt`/`extTape_update` against the public
+   `extendStream`/`extendStream_def`/`extendStream_update_of_ne` (`Pseudorandom/Functions/LazySampling.lean:196/201/235`),
+   undisclosed by the delivery and accepted after the sweep found it: is DL-59's acceptance and Stage 2 repayment (one
+   family in `Games/Tapes`, with DL-40) adequate, and is DL-60's "disclosure only" right for B5–B7?
 
 **D. Evidence** (§ *The replays*): the TS1 replay (556/556 rc 0, state 1429 OK, snapshot #5 0/0/0), its binding to the
 heads (TS1 recomputed; every TS1 path blob-equal to #355 or the union facade), admissions 196 = 196 per module, the axiom
@@ -306,7 +320,7 @@ searches (`dup/stmt-*.txt`); each hit read and classified. Grep and reading only
 | S1-01–03 `host_*_view` | E1's in-proof `hdisp`/`hbranch`/`hhalt` (`IterateFind.lean:373/378/390`, added by #347); view forms of `host_dispatch`/`_branch`/`_halt` (`IterateFindHost.lean:354/366/382`) | DW-9; `repoint.tsv` rows 2–4 |
 | #347 `host_call_view`, `host_clean_view`, `hostTMView_step_inl`, `copy_clean_view` | `host_call`, `host_clean`, `hostTM_step_inl` (`ModuleHost.lean:518/622/480`), `copy_clean` (`IterateFindHost.lean:213`), restated at the views by design | DW-5 / SR-02, disclosed in #347 |
 | S1-04 `Games.*` (17 of 20) | public `ETTGame` copies `EncryptThenTag/Tools.lean:65–281`, `Lazy.lean:175` | DL-40 |
-| S1-04 `extTape`, `_of_lt`, `_update` | public `AdaptiveCPA.extTape`, `_of_lt`, `_update` (`AdaptiveCPA/Hybrid.lean:211/215/221`) | DL-40 (see B1) |
+| S1-04 `extTape`, `_of_lt`, `_update` | public `AdaptiveCPA.extTape`, `_of_lt`, `_update` (`AdaptiveCPA/Hybrid.lean:211/215/221`) | DL-40, DL-59 (see B1) |
 | S1-05, S1-06, S1-07, S1-08 | private `length_le_length_encodeLog` ×2; `ETTGame.zipWith_xor_cancel` (`Lazy.lean:295`) + 4 private; `ETTGame.recBits`/`PRFGame.recBits` families; ETT/PRF/MAC `eval_toOracleAdversary_*` (instances) | DL-40, DL-44 |
 | S1-09 | `EnsembleLemmas.ofFn_blocks_symm` (`EnsemblesLemmas.lean:433`, through the alias); relatives `FunFamily.ofFn_blocks_symm` (`OneWay.lean:380`, flatten form), `Runs.lean:71` | DL-35, DL-38, DL-49 |
 | S1-10 | public `expect_sample_eq_uexp` (`Hashing/FromDiscreteLog/Probability.lean:40`), same statement | DL-41 |
@@ -320,9 +334,11 @@ searches (`dup/stmt-*.txt`); each hit read and classified. Grep and reading only
 | S1-23–25 | public `Rejection.*` (`Randomness/Extraction/Rejection.lean`), same statements | DL-39 (CS1-Q1) |
 | S1-27 | `ComposeSecurity/Machines`, `ThreeColoring/Machines` copies; `padL`/`padStr`/`padSq`/zero-word families; relatives `flatMap_range_ite_eq_flatten_ofFn`, `QuasiPolyHierarchy.flatMap_range_ite` | DL-49, DL-53; addendum (CS1-F09) |
 
-**B. Not in the ledger at staging** (reported to the maintainer before dispatch; the ledger at the pin has none of them):
+**B. Found by the sweep, not in the ledger at first staging (`95da6120`); ruled before dispatch** (Seyoon, 2026-11-17;
+records `659542ec`; item 10 of *Rulings*). Each item names its ledger row and repayment:
 
-- **B1 (strongest). `Games.extTape`, `extTape_of_lt`, `extTape_update` (S1-04, `Games/Tapes.lean:139/144/156`) restate the
+- **B1 → DL-59 (accepted; Stage 2 with DL-40: one family in `Games/Tapes` at `Type*`, re-point `extendStream*`,
+  `AdaptiveCPA.extTape` and #355's users). `Games.extTape`, `extTape_of_lt`, `extTape_update` (S1-04, `Games/Tapes.lean:139/144/156`) restate the
   public `extendStream`, `extendStream_def`, `extendStream_update_of_ne`** (`Pseudorandom/Functions/LazySampling.lean:196,
   201, 235`; Garg §3.4, commit `736c85c8`, 2026-10-14; audited at Gate 04). Same definition body (`extendStream` is
   universe-polymorphic, `{O : Type*}`; `extTape` has `{C : Type}`); `extTape_update (hm : m ≠ j)` is
@@ -330,36 +346,39 @@ searches (`dup/stmt-*.txt`); each hit read and classified. Grep and reading only
   named in DL-40, the brief, the reuse table, `repoint.tsv`, the addendum or either review. DL-40's listed copy
   `AdaptiveCPA.extTape` (2026-11-11) is itself a later copy of `extendStream`. Neither module is in the other's import
   closure.
-- **B2.** S1-27 `EncodingMachines.polyTimeComputable_flatMap_range` has the same statement (up to the order of the pair
+- **B2 → DL-60 (Complexity handoff: the `sorry` twin can cite the proved form after the campaign merge).** S1-27 `EncodingMachines.polyTimeComputable_flatMap_range` has the same statement (up to the order of the pair
   components fed to the chunk function) as the public **admitted** `Complexity.FormulaKit.polyTimeComputable_flatMap_range`
   (`Complexity/FormulaKit/Emit.lean:127`, `sorry` at TS1). Disclosed only in the worker's reuse table ("not an E-DUP; noted
   for a future Complexity fill").
-- **B3.** The S1-27 `padTo` family and Batteries `List.takeD` (`padTo L w = takeD L w false` as lists) with Mathlib
+- **B3 → DL-60, extending DL-53 (Stage 2: state `padTo` through `List.takeD` or re-point to it).** The S1-27 `padTo` family and Batteries `List.takeD` (`padTo L w = takeD L w false` as lists) with Mathlib
   `takeD_length`, `takeD_eq_take`, `takeD_left'` (`Mathlib/Data/List/TakeDrop.lean:111–125`): noted as a relative in the
   reuse table only. The public bridge `CollectionsLemmas.ofFn_padFin_eq_take` (`:95`; restated as
   `Universal.ofFn_getD_eq_take`, `Universal.lean:265`) makes `padTo` literally `padL`; DL-53 covers `padL` but names
   neither the bridge nor `takeD`. Complexity relative: `CircuitEvalCorrect.ofFn_getD_eq_take` (`:589`).
-- **B4.** Specializations already public: `Strategy.pairFstD_encodeMsgs` (`Interaction.lean:146`) is S1-26 at `i = 0`;
+- **B4 → DL-60, extending DL-49 (Stage 2: re-point the two special cases).** Specializations already public: `Strategy.pairFstD_encodeMsgs` (`Interaction.lean:146`) is S1-26 at `i = 0`;
   `GI.pairSndD_encodeMsgs` (`EfficiencyRep.lean:93`) is S1-20 at `i = 1`.
-- **B5.** `GGM.take_ofFn_splitHalves`/`drop_ofFn_splitHalves` (`GGM/Evaluator.lean:72/79`): the `splitHalves` analogue of
+- **B5 → DL-60 (analogue; disclosure only).** `GGM.take_ofFn_splitHalves`/`drop_ofFn_splitHalves` (`GGM/Evaluator.lean:72/79`): the `splitHalves` analogue of
   S1-11 over `Fin (2 * n)`; not an instance.
-- **B6.** Complexity-side private `unary_chunks` (`ClassP/BinaryArith/Unary.lean:150`): a relative of S1-27
+- **B6 → DL-60 (analogue; disclosure only).** Complexity-side private `unary_chunks` (`ClassP/BinaryArith/Unary.lean:150`): a relative of S1-27
   `flatMap_range_ite`, of the kind the addendum records for `QuasiPolyHierarchy`.
-- **B7.** `AdaptiveCPA.expect_tapeImpl` (`AdaptiveCPA/Hybrid.lean:244`) and the QueryTree analogues `evalLazy_congr`,
+- **B7 → DL-60 (analogue; disclosure only).** `AdaptiveCPA.expect_tapeImpl` (`AdaptiveCPA/Hybrid.lean:244`) and the QueryTree analogues `evalLazy_congr`,
   `uprob_evalLazy` (`LazySampling.lean:167/393`): relatives of the Tapes family in other models.
 
-The maintainer may resolve B before dispatch (acceptance and ledger rows, or a landing edit); any resolution is then a
-records change after the pin. **If this pack is dispatched unchanged, B1–B7 are disclosed but not accepted** (G44-01).
+No code changed for B1–B7: #355's head is still `d3c7cb00`. B1 was not disclosed by the delivery, the brief, the reuse
+table, `repoint.tsv`, the addendum or either review; it was found by this sweep and accepted afterwards. Question C2 asks
+whether that acceptance meets `policy.md`.
 
 ## Known dispositions and slips (not findings)
 
-- **The records branch moved after phase 2** (#357 merged, `8060f6b7`): TS1 is no longer the prospective merge tree; pin ×
-  #355 is `1a154857` (TS1 + #357's 9 files, blob-equal). `olean-replay-cs1` is therefore not adoptable as it stands; the
-  Pairing plan's #357 row (at the pin) records that "#347/#355 TS1 … re-replays on #6 before its merge-time adoption; the
-  audit evidence stands".
-- **#355's description is stale on phase 2**: "Still to do: Phase 2 … about 551 modules" (phase 2 ran, 556 on snapshot #5,
-  PASS). **#347's description** cites DW-5's own 706/1342 build on `2da7e0f3`, not the TS1 replay. Both were read at
-  staging (`pr347-description.md`, `pr355-description.md`; REST `updated_at` 2026-11-16T22:16:25Z and 2026-11-17T07:38:19Z).
+- **The records branch moved after phase 2** (#357 merged, `8060f6b7`; **olean snapshot #6 adopted** at T `8060f6b7`,
+  map `0858dccb…`, `maintainer/olean-snapshot-6-adopt/`): TS1 is no longer the prospective merge tree; pin × #355 is
+  `20d1101a` (TS1 + #357's 9 files, blob-equal). `olean-replay-cs1` is not adoptable (the snapshot-#6 decision-log row
+  lists it as no longer adoptable); #347/#355 re-replay on #6 before merge. The audit evidence stands on TS1.
+- **PR descriptions, corrected at staging.** As first read, #355's description said "Still to do: Phase 2 … about 551
+  modules" (phase 2 had run: 556 modules on snapshot #5, PASS), and #347's cited only DW-5's own 706/1342 build on
+  `2da7e0f3`. Both bodies were edited on 2026-11-17 (16:08–16:09 UTC) to cite phase 2 and TS1, snapshot #6 and the
+  re-replay, and Gate 47 with DL-59/DL-60; nothing else in them changed. `pr347-description.md` and
+  `pr355-description.md` are the edited bodies (REST `updated_at` 2026-11-17T16:08:30Z and 16:09:01Z).
 - **Trailers.** The review's landing plan expected maintainer trailers on the cherry-picks ("range-diff 5/5, with trailers
   only"); the picks keep the worker's messages verbatim (worker session trailer), so the range-diff is 5/5 `=`, which is
   what #355's description says. Committer and author are both "Claude" (BS-F08).
@@ -373,7 +392,8 @@ records change after the pin. **If this pack is dispatched unchanged, B1–B7 ar
 - **CS1-C1-F10** (`Tapes` docstring bullet for `freshImpl_apply`, `tapeImpl_apply`) and CS1-C1-F05/F07 (optional) were not
   taken; F10 goes to Stage 2's doc sweep.
 - **Sizes**: `Sampling` 965 and `EncodingMachines` 867 lines (over the 600 target, under 1,000).
-- **#359 moved during staging** (`73aedcda` → `ad9c4fc7`, LE-g45, pushed 11:23 UTC); the merge checks use `ad9c4fc7`.
+- **#359 moved during staging** (`73aedcda` → `ad9c4fc7` LE-g45 → `d154c883` LE-g45b); the merge checks use
+  `d154c8830fc8ffc52671b41992e7dbef61e30959`.
 
 ## Merge interaction (maintainer merge conditions, not audit items)
 
@@ -382,21 +402,22 @@ three-way steps) and `checks/downstream.txt` (import graph of each merged tree):
 
 | Other side | Head | × #347 / × #355 | pin × #355, then × other (= other first) | Shared paths | Modules downstream of both |
 |---|---|---|---|---|---|
-| #357 (merged as `8060f6b7`) | `dfdc56f2` | clean / clean | already in the pin: `1a154857` | none | 19: #357's 9 changed modules are downstream of Stage 1 (`Games/Relational`, the IBE files); Stage 1's `Games` facade is downstream of #357 |
-| #358 (O1) | `a616adca` | clean / clean | clean, `2ed36579`, order-independent | none | 3: `TCSlib`, `CircuitComplexity`, `ComputationalModels` |
-| #359 (6a statements, LE-g45) | `ad9c4fc7` | clean / clean | clean, `050fb901`, order-independent | none | 3: the same aggregates |
-| #360 (6a readers) | `cc05f76c` | clean / clean | clean, `adc4fa32`, order-independent | none | **308**: #360's Complexity owners lie upstream of Stage 1's `Trapdoor`, `Games` and `ZeroKnowledge` |
-| all: pin × #355 × #359 × #360 | | | clean, `212adbaf` | | |
+| #357 (merged as `8060f6b7`) | `dfdc56f2` | clean / clean | already in the pin: `20d1101a` | none | 19: #357's 9 changed modules are downstream of Stage 1 (`Games/Relational`, the IBE files); Stage 1's `Games` facade is downstream of #357 |
+| #358 (O1) | `a616adca` | clean / clean | clean, `0bef1875`, order-independent | none | 3: `TCSlib`, `CircuitComplexity`, `ComputationalModels` |
+| #359 (6a statements, LE-g45 + LE-g45b) | `d154c883` | clean / clean | clean, `2bce1c63`, order-independent | none | 3: the same aggregates |
+| #360 (6a readers) | `cc05f76c` | clean / clean | clean, `1f2d91ec`, order-independent | none | **308**: #360's Complexity owners lie upstream of Stage 1's `Trapdoor`, `Games` and `ZeroKnowledge` |
+| all: pin × #355 × #359 × #360 | | | clean, `17fdcf1f` | | |
 
 - Every merge keeps each side's paths blob-equal to its head (`checks/mergetrees.txt`: 23/23 and 4/4, 19/19, 6/6).
 - **Snapshot adoptions voided.** `olean-replay-cs1` is adoptable only for a merge commit whose Lean equals TS1; **#357's
-  merge has already voided it**: #347/#355 re-replay on snapshot #6 (≈561 modules: the 556 plus #357's 5 new modules,
-  all downstream of Stage 1). Conversely, merging #347/#355 voids the 6a replay outputs (#358 `olean-replay-6a-o1`, #359's
+  merge has already voided it, and snapshot #6 is now adopted at `8060f6b7`**: #347/#355 re-replay on #6 (≈561 modules:
+  the 556 plus #357's 5 new modules, all downstream of Stage 1) before merge. Conversely, merging #347/#355 voids the 6a replay outputs (#358 `olean-replay-6a-o1`, #359's
   candidate) through the three aggregates, and adds Stage 1 modules under #360's deferred downstream replay (566 modules,
   308 shared). #360 merging first voids TS1's evidence tree as a merge tree (its owners are upstream of 3 Stage 1 files),
   so #347/#355 re-replay then too.
 - **Order:** #347 first (or together), then #355 retargeted to `cryptography/pass-shelat-ch2-4`; never merged into #347's
-  branch. Merge conditions: Gate 47 closed (zero blockers, zero majors) and the re-replay on the then-current snapshot.
+  branch. Merge conditions: Gate 47 closed (zero blockers, zero majors) and the re-replay on snapshot #6 (or the then-current
+  snapshot) with the merge commit's Lean equal to the replayed tree.
 
 ## Evidence files
 
@@ -405,14 +426,14 @@ three-way steps) and `checks/downstream.txt` (import graph of each merged tree):
   `52d28eae54e85c73b35e85d46782c436096bab71fe43d336ffc1f2b9a762d62f`); **`pr355.diff.txt`**: `git diff daa6e173..d3c7cb00`
   (21 files, +1,079/−0; `478b15a91bfab88015abd39256e8852e9c8f19cd566d2ce2bf67a96f911af051`). Equal to GitHub's three-dot
   views.
-- **`pr347-description.md`, `pr355-description.md`**: the PR bodies read at staging, verbatim.
+- **`pr347-description.md`, `pr355-description.md`**: the PR bodies as edited and re-read at staging, verbatim.
 - **`source-head-r1.json`**: pins, both PRs' commits (Co-Authored-By values elided), REST fields, diff hashes, and for
   each of the 23 TS1 paths its blob, SHA-256, line count and width at TS1 and `e1d39836`.
 - **`sources-r1.zip`** (73 files; inner `MANIFEST.txt`, `SHA256SUMS`): `ts1/` the 23 Lean files at TS1; `base-e1d39836/`
   the 21 existing ones at the phase-2 tip; `head347-daa6e173/` #347's 3 files; `head355-d3c7cb00/` its `Games.lean`;
   `overlap-ts1/` 25 files the duplication sweep cites (`LazySampling`, `AdaptiveCPA/Hybrid`, `EncryptThenTag/Tools`,
   `Rejection`, `FormulaKit/Emit`, the ThreeColoring and ComposeSecurity machines, …).
-- **`verification-r1.zip`** (171 entries; inner `SHA256SUMS` over every other entry): `checks/` (this staging's git-object
+- **`verification-r1.zip`** (173 entries; inner `SHA256SUMS` over every other entry): `checks/` (this staging's git-object
   checks, merge trees, import overlap, the duplication sweep and every script), `phase1/`, `phase2/`, `dw5/` (summary
   subsets of the three recorded evidence zips, each with `SHA256SUMS.original` lines that verify the copies),
   `delivery/` (REPORT, reuse table, `repoint.tsv` at exchange `5451d3cd`), `records/` (at the pin), `pr/` (REST).
