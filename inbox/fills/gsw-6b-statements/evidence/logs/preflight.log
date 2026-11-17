@@ -1,0 +1,86 @@
+# preflight 2026-11-17T17:30:55Z
+nproc: 4
+== /sys/fs/cgroup/memory.max
+cat: /sys/fs/cgroup/memory.max: No such file or directory
+== /sys/fs/cgroup/memory.current
+cat: /sys/fs/cgroup/memory.current: No such file or directory
+== /sys/fs/cgroup/memory.events
+cat: /sys/fs/cgroup/memory.events: No such file or directory
+== /sys/fs/cgroup/memory.stat
+cat: /sys/fs/cgroup/memory.stat: No such file or directory
+== /proc/meminfo
+MemTotal:       16473764 kB
+MemFree:         1695276 kB
+MemAvailable:   15567396 kB
+Buffers:           80268 kB
+Cached:         13585576 kB
+== df
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 25407619072 15875915776  62% /
+/dev/vda       270553174016 25407619072 15875915776  62% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 24812128  15503824  62% /
+/dev/vda       ext4 264212084 24812128  15503824  62% /
+== cgroup v1 (/sys/fs/cgroup/memory/process_api/01a1ea8b-b133-7147-8850-5a00003bf9f1/claude-code-bash)
+-- memory.limit_in_bytes
+14338760704
+-- memory.usage_in_bytes
+6372397056
+-- memory.max_usage_in_bytes
+14338760704
+-- memory.failcnt
+10518
+-- memory.oom_control
+oom_kill_disable 0
+under_oom 0
+oom_kill 0
+-- memory.stat
+cache 6157451264
+rss 536576
+rss_huge 0
+shmem 0
+mapped_file 36864
+dirty 853483520
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 33
+swap 0
+swapcached 0
+pgpgin 3670598
+pgpgout 2729466
+pgfault 2195455
+pgmajfault 357
+inactive_anon 430080
+active_anon 16384
+inactive_file 5241556992
+active_file 915894272
+unevictable 0
+hierarchical_memory_limit 14338760704
+hierarchical_memsw_limit 9223372036854771712
+total_cache 6157451264
+total_rss 536576
+total_rss_huge 0
+total_shmem 0
+total_mapped_file 36864
+total_dirty 853483520
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 33
+total_swap 0
+total_swapcached 0
+total_pgpgin 3670598
+total_pgpgout 2729466
+total_pgfault 2195455
+total_pgmajfault 357
+total_inactive_anon 430080
+total_active_anon 16384
+total_inactive_file 5241556992
+total_active_file 915894272
+total_unevictable 0
+-- parent /sys/fs/cgroup/memory/process_api limit
+9223372036854771712
+== after sparse exchange worktree
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 17892839424 23390695424  44% /
+limit=14338760704 (13.35 GiB) usage=6372548608 cache=6157619200 shmem=0 in_use=214929408 headroom=13.15 GiB
+disk free: 23390679040 bytes

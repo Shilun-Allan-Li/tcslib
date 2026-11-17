@@ -1,0 +1,5 @@
+ADDED	TCSlib/Cryptography/LWE/BitEncoding.lean:130	TCSlib.Cryptography.LWE.BitEncoding.decodeHi	def	def decodeHi (P : Parameters) : ℕ
+ADDED	TCSlib/Cryptography/LWE/BitEncoding.lean:134	TCSlib.Cryptography.LWE.BitEncoding.decodeHi_eq	theorem	theorem decodeHi_eq (P : Parameters) : decodeHi P = (P.modulus + P.modulus / 2 + 1) / 2
+ADDED	TCSlib/Cryptography/LWE/BitEncoding.lean:121	TCSlib.Cryptography.LWE.BitEncoding.decodeLo	def	def decodeLo (P : Parameters) : ℕ
+ADDED	TCSlib/Cryptography/LWE/BitEncoding.lean:125	TCSlib.Cryptography.LWE.BitEncoding.decodeLo_eq	theorem	theorem decodeLo_eq (P : Parameters) : decodeLo P = P.modulus / 2 / 2 + 1
+ADDED	TCSlib/Cryptography/LWE/BitEncoding.lean:151	TCSlib.Cryptography.LWE.BitEncoding.decode_iff_mem_Ico	theorem	theorem decode_iff_mem_Ico (P : Parameters) (v : ZMod P.modulus) : decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P

@@ -1,0 +1,430 @@
+From 6e01df6c7d5a4f36e92000040d8c83322cb7fef7 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 17 Nov 2026 17:44:33 +0000
+Subject: [PATCH 1/2] GSW 6b statements: Branching (G1-G3) and DecryptFormula
+ (G5-G8)
+
+U12: select, homEvalPBP (host evalWith, H18), homEvalFormula (Barrington,
+coordinate sigma1 0), with readers; targets Encrypts.select,
+encrypts_homEvalPBP, encrypts_homEvalFormula.
+U13: keyBits, decConstants, decryptFormula (modSumInterval with O2's
+interval), nandFormula (one key block), decDepth, the NeZero P.columns
+instance; targets G5-G8 with decDepth_le's constants settled.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTmUioVMQEPr6Cj4D51
+---
+ .../Homomorphic/GSW/Branching.lean            | 179 +++++++++++++++
+ .../Homomorphic/GSW/DecryptFormula.lean       | 217 ++++++++++++++++++
+ 2 files changed, 396 insertions(+)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+new file mode 100644
+index 000000000..a5420c769
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+@@ -0,0 +1,179 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Noise
++import TCSlib.Complexity.BranchingPrograms.Eval
++import TCSlib.Complexity.BranchingPrograms.Barrington
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Homomorphic evaluation of permutation branching programs and formulas (GSW)
++
++## Main definitions
++
++* `select`: the homomorphic selector `select P C U V = (G − C) ⊡ U + C ⊡ V`, fresh selector
++  on the left.
++* `homEvalPBP`: a branching program run homomorphically, the shared host
++  `BranchingProgram.evalWith` (registry row H18) instantiated with `select P`.
++* `homEvalFormula`: a fan-in-2 formula through Barrington's program (output `sigma1`), read at
++  coordinate `sigma1 0`.
++
++## Main results
++
++* `Encrypts.select` (G1): one selector step costs an additive `2·N·β`.
++* `encrypts_homEvalPBP` (G2): a permutation program of length `L` gives noise `L·2·N·β`.
++* `encrypts_homEvalFormula` (G3): a formula of depth `d` gives noise `4^d·2·N·β`.
++
++All three are statement-phase targets (admitted); the definitions are total and computable.
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: §3.3 (Eq. (4), Eval with Eq. (5)–(6)), Thm 3.5, Lemma 3.6 with its
++  proof.
++* [AP14] J. Alperin-Sheriff, C. Peikert, *Faster Bootstrapping with Polynomial Error*,
++  CRYPTO 2014; IACR ePrint 2014/094: Eq. (4.1), Lemma 4.1.
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, §6.1.3 (bootstrapping).
++* [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
++  exactly those languages in NC¹*, J. Comput. System Sci. 38(1) (1989), 150–164: Thm 1.
++
++**Deviations.** The selector carries the fresh ciphertext on the left of both products
++(`(G − C) ⊡ U`, `C ⊡ V`), mirroring [BV14, Eq. (5)–(6)], which multiplies the state on the
++left; with the library's `⊡` (`GSW.mul`, right operand decomposed) this order makes the noise
++of a step additive in the state's noise. Noise bounds are worst case, not probabilistic
++([BV14, Lemma 3.6] holds with overwhelming probability). The formula's output is coordinate
++`σ 0` of the state started at `0` (Barrington's C16 reading), not [BV14]'s coordinate `1`:
++a five-cycle moves `0`, so coordinate `0` would encode the complement.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open BoolCircuit
++
++/-- **The homomorphic selector** `select P C U V = (G − C) ⊡ U + C ⊡ V`: if `C` encrypts the
++bit `b`, the result encrypts `(1 − b)·u + b·v`, selecting `U`'s message when `b = 0` and `V`'s
++when `b = 1` [BV14, §3.3, Eq. (5)–(6), p014-b002, mirrored; AP14, Eq. (4.1), p011-b001].
++The fresh selector ciphertext is on the left of both products (Gate 41's convention). -/
++def select (P : Parameters) (C U V : Ciphertext P) : Ciphertext P :=
++  mul P (gadget P - C) U + mul P C V
++
++/-- `select P C U V` is `mul P (gadget P - C) U + mul P C V`. -/
++theorem select_eq (P : Parameters) (C U V : Ciphertext P) :
++    select P C U V = mul P (gadget P - C) U + mul P C V := rfl
++
++/-- **Homomorphic evaluation of a branching program**: the host
++`BranchingProgram.evalWith` (H18) with values and selectors in `Ciphertext P` and selector
++`select P`, `homEvalPBP P B cts V = B.evalWith (select P) cts V`; instruction `ι` selects with
++the input ciphertext `cts ι.var` [BV14, §3.3, Eval, p014-b002; AP14, Eq. (4.1), p011-b001].
++For a permutation program each step is the pull form `V'_i = select (cts var) (V (σ₀⁻¹ i))
++(V (σ₁⁻¹ i))` (`Instr.stepWith_of_isPermutation`). Computable. -/
++def homEvalPBP (P : Parameters) {w k : ℕ} (B : BranchingProgram w k)
++    (cts : Fin k → Ciphertext P) (V : Fin w → Ciphertext P) : Fin w → Ciphertext P :=
++  B.evalWith (select P) cts V
++
++/-- `homEvalPBP P B cts V` is `B.evalWith (select P) cts V`. -/
++theorem homEvalPBP_eq (P : Parameters) {w k : ℕ} (B : BranchingProgram w k)
++    (cts : Fin k → Ciphertext P) (V : Fin w → Ciphertext P) :
++    homEvalPBP P B cts V = B.evalWith (select P) cts V := rfl
++
++/-- **Homomorphic evaluation of a formula** [BV14, §3.3, Eval, p014-b002, with Thm 3.5,
++p014-b001; Pei16, §6.1.3, p070-b001]: convert the formula `c` on `k ≥ 1` inputs to
++Barrington's width-5 permutation program with output five-cycle `sigma1`, run it
++homomorphically from the state `Pi.single 0 G` (an encryption of the one-hot state `0` with
++zero noise), and read coordinate `sigma1 0`:
++`homEvalFormula P c cts = homEvalPBP P (barrington c sigma1) cts (Pi.single 0 (gadget P))
++(sigma1 0)`. Deviation: [BV14] outputs the state's coordinate `1`; here the accepting
++coordinate is `σ 0` (`barrington_yield_zero`, r3 §H3.7). Computable (P6-Q13). -/
++def homEvalFormula (P : Parameters) {k : ℕ} [NeZero k] (c : TreeCircuit k)
++    (cts : Fin k → Ciphertext P) : Ciphertext P :=
++  homEvalPBP P (BranchingProgram.barrington c BranchingProgram.sigma1) cts
++    (Pi.single 0 (gadget P)) (BranchingProgram.sigma1 0)
++
++/-- `homEvalFormula P c cts` is `homEvalPBP P (barrington c sigma1) cts (Pi.single 0 (gadget P))`
++at coordinate `sigma1 0`. -/
++theorem homEvalFormula_eq (P : Parameters) {k : ℕ} [NeZero k] (c : TreeCircuit k)
++    (cts : Fin k → Ciphertext P) :
++    homEvalFormula P c cts =
++      homEvalPBP P (BranchingProgram.barrington c BranchingProgram.sigma1) cts
++        (Pi.single 0 (gadget P)) (BranchingProgram.sigma1 0) := rfl
++
++/-! ### Targets G1–G3 -/
++
++/-- **G1. The selector step.** If `C` encrypts a bit `b ∈ {0, 1}` with noise at most `β` and
++`U`, `V` encrypt `u`, `v` with noise at most `βV`, all under the key vector `t`, then
++`select P C U V` encrypts `(1 − b)·u + b·v` with noise at most `βV + 2·(N·β)`, `N = P.columns`:
++`Encrypts P t ((1 - b) * u + b * v) (βV + 2 * (P.columns * β)) (select P C U V)`
++[BV14, §3.3, Eq. (5)–(6), p014-b002; Lemma 3.6 proof, p015-b002, mirrored; AP14, Eq. (4.1),
++p011-b001; Lemma 4.1, p012-b001]. Deviation: worst case, and the selector sits on the left.
++
++**Proof sketch.** `encrypts_gadget` and `Encrypts.sub` give `G − C` encrypting `1 − b` with
++noise `0 + β`. `Encrypts.mul` gives `(G − C) ⊡ U` with noise `N·β + |1 − b|·βV` and `C ⊡ V` with
++noise `N·β + |b|·βV`, the two products that `select_eq` exposes. `Encrypts.add` sums the
++two; since `b ∈ {0, 1}`, `|1 − b| + |b| = 1`, so the noise is at most `βV + 2·(N·β)` by
++`Encrypts.mono`, and the message is `(1 − b)·u + b·v`. -/
++theorem Encrypts.select (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
++    {b u v : ℤ} {β βV : ℕ} {C U V : Ciphertext P} (hC : Encrypts P t b β C)
++    (hU : Encrypts P t u βV U) (hV : Encrypts P t v βV V) (hb : b = 0 ∨ b = 1) :
++    Encrypts P t ((1 - b) * u + b * v) (βV + 2 * (P.columns * β)) (select P C U V) := by
++  sorry
++
++/-- **G2. Homomorphic permutation-program evaluation.** For a permutation program `B` of
++width `w` on `k` inputs, input ciphertexts `cts j` encrypting the bits `x j` with noise at most
++`β` under `t`, and the start state `Pi.single s₀ G`, coordinate `i` of the evaluated state
++encrypts the indicator of `B.yield x s₀ = i` with noise at most `B.length·(2·(N·β))`:
++`Encrypts P t (decide (B.yield x s₀ = i)).toNat (B.length * (2 * (P.columns * β)))
++(homEvalPBP P B cts (Pi.single s₀ (gadget P)) i)`
++[BV14, Lemma 3.6, p015-b001, with its proof, p015-b002; AP14, Lemma 4.1, p012-b001].
++Deviation: worst case (BV14: with overwhelming probability), for every permutation program.
++
++**Proof sketch.** Apply the host lemma `BranchingProgram.evalWith_rel` (C7) to the
++homomorphic run and to the Boolean run `evalWith (fun b u v => if b then v else u) x
++(Pi.single s₀ 1)` (whose result is `Pi.single (B.yield x s₀) 1` by `evalWith_single`, C8),
++with the relation at step `τ`: every coordinate `i` of the ciphertext state encrypts the
++natural number at coordinate `i` of the Boolean state, with noise at most `τ·(2·(N·β))`. At
++step `0`: `Pi.single` coordinates are `G` (`encrypts_gadget`) and `0` (`encrypts_zero`). Step:
++the instruction is a permutation (`isPermutation_iff`), so both steps are pull forms
++(`Instr.stepWith_of_isPermutation`, C6); coordinate `i` is `select (cts var) U V` with `U`, `V`
++the predecessors' ciphertexts, and `Encrypts.select` (G1) with `βV = τ·(2·(N·β))` gives
++`(τ + 1)·(2·(N·β))`; the messages agree because the Boolean coordinates are `0`/`1` and the
++selector picks the branch of `x var`. At `τ = B.length` read `evalWith_single` and
++`Pi.single_apply`. Uses the `homEvalPBP_eq` reader. -/
++theorem encrypts_homEvalPBP (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
++    {w k : ℕ} (B : BranchingProgram w k) (hB : B.IsPermutation) (x : Fin k → Bool)
++    (cts : Fin k → Ciphertext P) (β : ℕ)
++    (hin : ∀ j, Encrypts P t ((x j).toNat : ℤ) β (cts j)) (s₀ i : Fin w) :
++    Encrypts P t ((decide (B.yield x s₀ = i)).toNat : ℤ) (B.length * (2 * (P.columns * β)))
++      (homEvalPBP P B cts (Pi.single s₀ (gadget P)) i) := by
++  sorry
++
++/-- **G3. Homomorphic formula evaluation.** For a formula `c` of fan-in at most two on
++`k ≥ 1` inputs and input ciphertexts `cts j` encrypting the bits `x j` with noise at most `β`
++under `t`, `homEvalFormula P c cts` encrypts `c.eval x` with noise at most
++`4^(c.depth)·(2·(N·β))`:
++`Encrypts P t (c.eval x).toNat (4 ^ c.depth * (2 * (P.columns * β))) (homEvalFormula P c cts)`
++[BV14, Thm 3.5, p014-b001, with Lemma 3.6, p015-b001; Pei16, §6.1.3, p070-b001; Bar89, Thm 1,
++p003-b002]. Deviation: the output coordinate is `σ 0` (BV14: coordinate `1`), worst case.
++
++**Proof sketch.** `homEvalFormula_eq`, then G2 (`encrypts_homEvalPBP`) for the program
++`barrington c sigma1`, which is a permutation program (`isPermutation_barrington`, C15), at
++`s₀ = 0` and `i = sigma1 0`. Its message is `decide (yield x 0 = sigma1 0)`; by
++`barrington_yield_zero` (C16, with `isFiveCycle_sigma1`) the yield at `0` is `sigma1 0` if
++`c.eval x` and `0` otherwise, and `sigma1 0 ≠ 0` (a five-cycle has no fixed point:
++`isFiveCycle_iff`, or by `decide` on `Fin 5`), so the message is `(c.eval x).toNat`. The noise
++`length·(2·(N·β))` is at most `4^(c.depth)·(2·(N·β))` by `barrington_length_le` (C14) and
++`Encrypts.mono`. -/
++theorem encrypts_homEvalFormula (P : Parameters)
++    {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {k : ℕ} [NeZero k]
++    (c : TreeCircuit k) (hc : c.maxFanin ≤ 2) (x : Fin k → Bool) (cts : Fin k → Ciphertext P)
++    (β : ℕ) (hin : ∀ j, Encrypts P t ((x j).toNat : ℤ) β (cts j)) :
++    Encrypts P t ((c.eval x).toNat : ℤ) (4 ^ c.depth * (2 * (P.columns * β)))
++      (homEvalFormula P c cts) := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+new file mode 100644
+index 000000000..c70669a11
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+@@ -0,0 +1,217 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
++import TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The GSW decryption formula and the augmented NAND formula
++
++## Main definitions
++
++* `keyBits`: the `N` key bits `G⁻¹(t)` of `t = (−s, 1)`, the bits the evaluation key encrypts.
++* `decConstants`: the public constants `Gᵀc` of a ciphertext, `c` its decryption column.
++* `decryptFormula`: decryption as a fan-in-2 formula in the key bits, the modular interval sum
++  `FormulaArith.modSumInterval` over the constants with the decoding interval of O2.
++* `nandFormula`: BV14's augmented decryption function `f_{C₁,C₂}`, `¬(Dec C₁ ∧ Dec C₂)`, one key
++  block.
++* `decDepth`: the depth bound `FormulaArith.modSumDepth N q` of the decryption formula.
++* The instance `Parameters.neZero_columns`: `N = (n+1)·ℓ ≥ 1`, since `2 ≤ q ≤ 2^ℓ`.
++
++## Main results
++
++* `vecMul_secretVector_eq_sum` (G5): `⟨t, c⟩ = ∑ᵢ xᵢ·(Gᵀc)ᵢ` with `x = keyBits`.
++* `decryptFormula_eval` (G6), `nandFormula_eval` (G7): the formulas compute decryption and its
++  NAND on the key bits.
++* `depth_nandFormula_le`, `maxFanin_nandFormula_le`, `decDepth_le` (G8): depth `decDepth + 1`,
++  fan-in two, and the closed form `9⌈log₂ N⌉ + 2⌈log₂(ℓ + ⌈log₂ N⌉ + 3)⌉ + 21`, with no term
++  linear in `ℓ`.
++
++All are statement-phase targets (admitted); the definitions and the instance are proved.
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: Prop 3.4, Def 2.13, Lemma 4.4.
++* [BV11] Z. Brakerski, V. Vaikuntanathan, *Efficient Fully Homomorphic Encryption from
++  (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Def 3.7, Lemma 4.5 with its
++  proof. [BV14] cites this lemma as "[BV11, Lemma 4.1]"; it is Lemma 4.5 in the version held.
++* [AP14] J. Alperin-Sheriff, C. Peikert, *Faster Bootstrapping with Polynomial Error*,
++  CRYPTO 2014; IACR ePrint 2014/094: §5.1.
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, §5.4.3 (the gadget `G` and `G⁻¹`).
++
++**Deviations.** Decryption is the library's: the decryption column `c = C·G⁻¹(⌊q/2⌋·e_{n+1})`
++decoded by `LWE.BitEncoding.decode`, which is the interval test `decode_iff_mem_Ico` (O2). The
++formula is the carry-save modular interval sum of the formula layer (r3 §H3.4; BV11 computes
++the bit by subtracting the multiples of `q` and a selection tree), with depth stated by an
++explicit constant rather than `O(log N + log log q)`. The augmented formula reads one block of
++`N` key bits: the two decryptions share the key, BV14's `f_{c₁,c₂}` literally.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open BoolCircuit
++open Encryption.PublicKey
++
++/-- The ciphertext width `N = (n+1)·ℓ` is positive: `2 ≤ q ≤ 2^ℓ` forces `ℓ ≥ 1`. The
++decryption formula has `N` inputs, and Barrington's construction needs at least one. -/
++instance Parameters.neZero_columns (P : Parameters) : NeZero P.columns :=
++  ⟨Nat.mul_ne_zero (Nat.succ_ne_zero _) fun h => by
++    have hle := P.modulus_le
++    have hq := P.lwe.modulus_ge_two
++    rw [h, pow_zero] at hle
++    omega⟩
++
++/-- The **key bits** of a secret `s`: the `N = (n+1)·ℓ` bits `G⁻¹(t)` of the key vector
++`t = (−s, 1)`, `keyBits P s = decomposeVec P (secretVector P s)`. They are what the
++evaluation key encrypts (P6-Q8) [BV11, Def 3.8, p015-b001: encryptions of the bits of the
++secret key; AP14, §5.1, p014-b001]. -/
++def keyBits (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) :
++    Fin P.columns → Bool :=
++  decomposeVec P (secretVector P s)
++
++/-- `keyBits P s` is `decomposeVec P (secretVector P s)`. -/
++theorem keyBits_eq (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) :
++    keyBits P s = decomposeVec P (secretVector P s) := rfl
++
++/-- The **public decryption constants** of a ciphertext `C`: `Gᵀc`, where
++`c = decryptColumn P C`, that is `decConstants P C = Matrix.vecMul (decryptColumn P C)
++(gadget P)`. Decryption is a binary subset sum of these constants weighted by the key bits
++[AP14, §5.1, p014-b001; Pei16, §5.4.3, p052-b001]. -/
++def decConstants (P : Parameters) (C : Ciphertext P) : Fin P.columns → ZMod P.lwe.modulus :=
++  Matrix.vecMul (decryptColumn P C) (gadget P)
++
++/-- `decConstants P C` is `Matrix.vecMul (decryptColumn P C) (gadget P)`. -/
++theorem decConstants_eq (P : Parameters) (C : Ciphertext P) :
++    decConstants P C = Matrix.vecMul (decryptColumn P C) (gadget P) := rfl
++
++/-- **The decryption formula** of `C`, on the `N` key bits: the modular interval sum of the
++formula layer over the representatives of the public constants, modulo `q`, with the decoding
++interval of O2,
++`decryptFormula P C = modSumInterval (fun i => (decConstants P C i).val) q (decodeLo P.lwe)
++(decodeHi P.lwe)` [BV14, Prop 3.4, p011-b001; BV11, Lemma 4.5, p029-b001]. It tests
++`decodeLo ≤ (∑ᵢ xᵢ·aᵢ) mod q < decodeHi`. -/
++def decryptFormula (P : Parameters) (C : Ciphertext P) : TreeCircuit P.columns :=
++  FormulaArith.modSumInterval (fun i => (decConstants P C i).val) P.lwe.modulus
++    (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
++
++/-- `decryptFormula P C` is `modSumInterval (fun i => (decConstants P C i).val) q (decodeLo P.lwe)
++(decodeHi P.lwe)`. -/
++theorem decryptFormula_eq (P : Parameters) (C : Ciphertext P) :
++    decryptFormula P C =
++      FormulaArith.modSumInterval (fun i => (decConstants P C i).val) P.lwe.modulus
++        (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe) := rfl
++
++/-- **The augmented NAND formula** `f_{C₁,C₂}` [BV14, Def 2.13, p008-b002; BV11, Def 3.7,
++p014-b002]: the De Morgan negation of the conjunction of the two decryption formulas, on one
++block of `N` key bits, `nandFormula P C₁ C₂ = (and2 (decryptFormula P C₁)
++(decryptFormula P C₂)).neg`. -/
++def nandFormula (P : Parameters) (C₁ C₂ : Ciphertext P) : TreeCircuit P.columns :=
++  (TreeCircuit.and2 (decryptFormula P C₁) (decryptFormula P C₂)).neg
++
++/-- `nandFormula P C₁ C₂` is `(and2 (decryptFormula P C₁) (decryptFormula P C₂)).neg`. -/
++theorem nandFormula_eq (P : Parameters) (C₁ C₂ : Ciphertext P) :
++    nandFormula P C₁ C₂ =
++      (TreeCircuit.and2 (decryptFormula P C₁) (decryptFormula P C₂)).neg := rfl
++
++/-- The depth bound of the decryption formula, `decDepth P = modSumDepth N q`, the formula
++layer's bound for `N` summands modulo `q` [BV14, Lemma 4.4, p019-b001: the augmented
++decryption circuit has depth `c_dec·log(k log(q(k))) + 1`]. -/
++def decDepth (P : Parameters) : ℕ :=
++  FormulaArith.modSumDepth P.columns P.lwe.modulus
++
++/-- `decDepth P` is `FormulaArith.modSumDepth P.columns P.lwe.modulus`. -/
++theorem decDepth_eq (P : Parameters) :
++    decDepth P = FormulaArith.modSumDepth P.columns P.lwe.modulus := rfl
++
++/-! ### Targets G5–G8 -/
++
++/-- **G5. Decryption is a binary subset sum of public constants.** For every secret `s` and
++ciphertext `C`, the inner product of the key vector `t = (−s, 1)` with the decryption column
++`c` is the sum of the public constants `Gᵀc` selected by the key bits:
++`secretVector P s ⬝ᵥ decryptColumn P C = ∑ i, ((keyBits P s i).toNat : ZMod q) *
++decConstants P C i` [AP14, §5.1, p014-b001; Pei16, §5.4.3, p052-b001, p053-b001].
++
++**Proof sketch.** `keyBits_eq` and `gadget_mulVec_decomposeVec` give `t = G·x` with `x` the
++lifted key bits, so `⟨t, c⟩ = ⟨G x, c⟩`. By `Matrix.dotProduct_mulVec` this is
++`⟨x, cᵀG⟩ = ⟨x, decConstants P C⟩` (`decConstants_eq`), and `dotProduct` unfolds to the stated
++sum (`dotProduct_comm` for the factor order). -/
++theorem vecMul_secretVector_eq_sum (P : Parameters)
++    (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (C : Ciphertext P) :
++    secretVector P s ⬝ᵥ decryptColumn P C =
++      ∑ i, ((keyBits P s i).toNat : ZMod P.lwe.modulus) * decConstants P C i := by
++  sorry
++
++/-- **G6. The decryption formula computes decryption.** On the key bits of `s`, the
++decryption formula of `C` evaluates to GSW decryption of `C` under `s`:
++`(decryptFormula P C).eval (keyBits P s) = decrypt P s C` [BV14, Prop 3.4, p011-b001; BV11,
++Lemma 4.5, p029-b001, with its proof, p029-b002]. Deviation: the interval-sum construction of
++the formula layer (module docstring).
++
++**Proof sketch.** `decrypt_eq` and `Regev.decrypt_eq` read decryption as `decode` of
++`c_last − ⟨s, c_init⟩`, which is `⟨t, c⟩` for `t = (−s, 1)` (`secretVector_eq`,
++`Fin.sum_univ_castSucc`, `Fin.snoc_castSucc`, `Fin.snoc_last`); by G5 it is
++`∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(∑ᵢ xᵢ·aᵢ.val) mod q` (`ZMod.val_natCast`,
++`Nat.cast_sum`, `ZMod.natCast_zmod_val`). `LWE.BitEncoding.decode_iff_mem_Ico` (O2) turns
++`decode` into the interval test, and `FormulaArith.modSumInterval_eval` (F9) evaluates the
++formula to the same test, with `aᵢ.val < q` (`ZMod.val_lt`) and `decodeLo ≤ decodeHi ≤ q`
++(`decodeLo_eq`, `decodeHi_eq`, `omega`). Both sides are Booleans equal as propositions. -/
++theorem decryptFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
++    (C : Ciphertext P) : (decryptFormula P C).eval (keyBits P s) = decrypt P s C := by
++  sorry
++
++/-- **G7. The augmented NAND formula** computes the NAND of the two decryptions under the
++same key: `(nandFormula P C₁ C₂).eval (keyBits P s) = !(decrypt P s C₁ && decrypt P s C₂)`
++[BV14, Def 2.13, p008-b002; BV11, Def 3.7, p014-b002]. One key block: both decryptions read
++the bits of the same `s` (r3 G7).
++
++**Proof sketch.** `nandFormula_eq`, `TreeCircuit.neg_eval` (F1), `TreeCircuit.and2_eval`
++(F3), then G6 for each operand. -/
++theorem nandFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
++    (C₁ C₂ : Ciphertext P) :
++    (nandFormula P C₁ C₂).eval (keyBits P s) = !(decrypt P s C₁ && decrypt P s C₂) := by
++  sorry
++
++/-- **G8, depth.** The augmented NAND formula has depth at most `decDepth P + 1`:
++`(nandFormula P C₁ C₂).depth ≤ decDepth P + 1` [BV14, Lemma 4.4, p019-b001: depth
++`c_dec·log(k log(q(k))) + 1`].
++
++**Proof sketch.** `nandFormula_eq`, `TreeCircuit.depth_neg` (F1),
++`TreeCircuit.depth_and2_le` (F3), and `FormulaArith.depth_modSumInterval_le` (F10) for both
++operands, read through `decryptFormula_eq` and `decDepth_eq`; `max_le` and `omega`. -/
++theorem depth_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
++    (nandFormula P C₁ C₂).depth ≤ decDepth P + 1 := by
++  sorry
++
++/-- **G8, fan-in.** The augmented NAND formula has fan-in at most two:
++`(nandFormula P C₁ C₂).maxFanin ≤ 2` [BV11, Lemma 4.5, p029-b001: "fan-in 2 gates"].
++
++**Proof sketch.** `nandFormula_eq`, `TreeCircuit.maxFanin_neg` (F1),
++`TreeCircuit.maxFanin_and2_le` (F3) and `FormulaArith.maxFanin_modSumInterval_le` (F10) for
++both operands (`decryptFormula_eq`); `omega`. -/
++theorem maxFanin_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
++    (nandFormula P C₁ C₂).maxFanin ≤ 2 := by
++  sorry
++
++/-- **G8, closed form.** The decryption depth is `O(log N + log log q)` with no term linear in
++`ℓ`: `decDepth P ≤ 9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns
+++ 3) + 21` [BV14, Lemma 4.4, p019-b001; BV11, Lemma 4.5, p029-b001]. Deviation: an explicit
++constant (the *(fix)* of r3 G8, settled here) for BV14's `c_dec`, with `ℓ` for `⌈log₂ q⌉`.
++
++**Proof sketch.** `decDepth_eq`, then `FormulaArith.modSumDepth_le` (F10) for `M = N`; its
++inner term `⌈log₂ q⌉ ≤ ℓ` because `q ≤ 2^ℓ` (`P.modulus_le`, `Nat.clog_le_iff_le_pow`), so
++`Nat.clog_mono_right` bounds `⌈log₂(⌈log₂ q⌉ + ⌈log₂ N⌉ + 3)⌉` by
++`⌈log₂(ℓ + ⌈log₂ N⌉ + 3)⌉`; `omega`. -/
++theorem decDepth_le (P : Parameters) :
++    decDepth P ≤
++      9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns + 3) + 21 := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
