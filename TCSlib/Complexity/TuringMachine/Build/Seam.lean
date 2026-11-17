@@ -97,6 +97,8 @@ to its exit without a dispatch.
   `Turing.seamReleaseTM_runFrom_pos` — the release adapter's steps and its pointwise
   lockstep at every positive time (promoted from the private `seamRelease_*` lemmas at
   MIG-0b, design §16a item 5).
+* `Turing.seamCompTM_spaceUsed_le_add_ofCfg` — the general-configuration sum bound on total
+  space, with phase two's endpoint unconstrained.
 * `Turing.seamCompTM_spaceUsedByTape_le_add`,
   `Turing.seamCompTM_spaceUsed_le_add`,
   `Turing.seamCompTM_spaceUsedByTape_le_max` — the sum and
@@ -454,6 +456,54 @@ theorem seamCompTM_visitedByTapeHead [DecidableEq S₁]
   simpa only [Cfg.ofWords_mapState] using
     seamComp_visited_general (T₂ := T₂) M₁ exit M₂ entry h₁ (Cfg.ofWords_state exit w₁) hcut i
 
+/-- **R2′ space, the general per-tape headline**
+(round-1 repair R2): under the hypotheses of `Turing.seamCompTM_run_ofCfg`,
+on every work tape the composite's visited set over the composed run is
+contained in the union of the two phases' visited sets — the
+general-configuration form of `Turing.seamCompTM_visitedByTapeHead`, from
+which the canonical corollaries project.
+
+**Proof sketch.** As the canonical headline: the two lockstep segments
+reproduce the phases' trajectories, and the dispatch step is stationary at
+a point both phases' endpoint/start configurations already visit. -/
+theorem seamCompTM_visitedByTapeHead_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Symbol S₁ x} {T₁ T₂ : ℕ}
+    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
+    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (i : Fin k) :
+    (seamCompTM M₁ exit M₂ entry).visitedByTapeHead (c₀.mapState Sum.inl)
+        (T₁ + 1 + T₂) i ⊆
+      M₁.visitedByTapeHead c₀ T₁ i ∪
+        M₂.visitedByTapeHead (c₁.mapState fun _ => entry) T₂ i := by
+  exact seamComp_visited_general M₁ exit M₂ entry h₁ hexit hcut i
+
+/-- **R2′ space, the general sum bound**: under the hypotheses of
+`Turing.seamCompTM_visitedByTapeHead_ofCfg` (phase one carries `c₀` to `c₁` in `T₁` steps,
+first reaching the live anchor `exit` there), the composite's total space usage over `T₁ + 1 + T₂`
+steps is at most phase one's up to `T₁` plus phase two's over `T₂` steps from `c₁` with its
+control state replaced by `entry`. Phase two's endpoint is unconstrained (it may halt, or be no
+seam), which the canonical `Turing.seamCompTM_spaceUsed_le_add` cannot express.
+
+**Proof sketch.** On every tape, `Finset.card_le_card` on
+`Turing.seamCompTM_visitedByTapeHead_ofCfg`, then `Finset.card_union_le`; sum over the tapes
+(`Turing.MultiTapeTM.spaceUsed_eq_sum`, `Turing.MultiTapeTM.spaceUsedByTape_eq_card`). -/
+theorem seamCompTM_spaceUsed_le_add_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Symbol S₁ x} {T₁ T₂ : ℕ}
+    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
+    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) :
+    (seamCompTM M₁ exit M₂ entry).spaceUsed (c₀.mapState Sum.inl) (T₁ + 1 + T₂) ≤
+      M₁.spaceUsed c₀ T₁ + M₂.spaceUsed (c₁.mapState fun _ => entry) T₂ := by
+  rw [MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum,
+    ← Finset.sum_add_distrib]
+  refine Finset.sum_le_sum fun i _ => ?_
+  rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card,
+    MultiTapeTM.spaceUsedByTape_eq_card]
+  exact (Finset.card_le_card (seamCompTM_visitedByTapeHead_ofCfg M₁ exit M₂ entry
+    (T₂ := T₂) h₁ hexit hcut i)).trans (Finset.card_union_le _ _)
+
 /-- **R2 space, the per-tape sum corollary** (design
 §12, decision 12.1). On every work tape, the composite's space usage is
 at most the sum of the phases' space usages on that tape.
@@ -482,8 +532,8 @@ theorem seamCompTM_spaceUsedByTape_le_add [DecidableEq S₁]
 §12). The composite's total space usage is at most the sum of the
 phases' total space usages.
 
-**Proof sketch.** Sum `seamCompTM_spaceUsedByTape_le_add` over all tapes
-(`Finset.sum_le_sum`), then distribute the sum over the addition. -/
+**Proof sketch.** The `Cfg.ofWords` instance of `seamCompTM_spaceUsed_le_add_ofCfg`: renaming a
+seam's state gives the seam at the renamed state (`Turing.Cfg.ofWords_mapState`). -/
 theorem seamCompTM_spaceUsed_le_add [DecidableEq S₁]
     (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
     (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
@@ -498,11 +548,8 @@ theorem seamCompTM_spaceUsed_le_add [DecidableEq S₁]
         (Cfg.ofWords (input := x) (Sum.inl start) w₀) (T₁ + 1 + T₂) ≤
       M₁.spaceUsed (Cfg.ofWords (input := x) start w₀) T₁ +
         M₂.spaceUsed (Cfg.ofWords (input := x) entry w₁) T₂ := by
-  unfold MultiTapeTM.spaceUsed
-  rw [← Finset.sum_add_distrib]
-  exact Finset.sum_le_sum fun i _ =>
-    seamCompTM_spaceUsedByTape_le_add M₁ exit M₂ entry start q₂ w₀ w₁ w₂
-      T₁ T₂ h₁ hcut h₂ i
+  simpa only [Cfg.ofWords_mapState] using seamCompTM_spaceUsed_le_add_ofCfg (T₂ := T₂)
+    M₁ exit M₂ entry h₁ (Cfg.ofWords_state exit w₁) hcut
 
 /-- **R2 space, the max corollary for disjointly-owned tapes** (spec, fill
 pending — design §12, frozen decision 12.1: the sharpest available form).
@@ -609,28 +656,6 @@ theorem seamCompTM_firstReturn_ofCfg {Symbol : Type*} {x : List Symbol} [Decidab
       ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
         some (Sum.inr q₂) := by
   exact seamComp_firstReturn_general M₁ exit M₂ entry q₂ h₁ hexit hcut hcut₂
-
-/-- **R2′ space, the general per-tape headline**
-(round-1 repair R2): under the hypotheses of `Turing.seamCompTM_run_ofCfg`,
-on every work tape the composite's visited set over the composed run is
-contained in the union of the two phases' visited sets — the
-general-configuration form of `Turing.seamCompTM_visitedByTapeHead`, from
-which the canonical corollaries project.
-
-**Proof sketch.** As the canonical headline: the two lockstep segments
-reproduce the phases' trajectories, and the dispatch step is stationary at
-a point both phases' endpoint/start configurations already visit. -/
-theorem seamCompTM_visitedByTapeHead_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
-    {c₀ c₁ : Cfg k Symbol S₁ x} {T₁ T₂ : ℕ}
-    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
-    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (i : Fin k) :
-    (seamCompTM M₁ exit M₂ entry).visitedByTapeHead (c₀.mapState Sum.inl)
-        (T₁ + 1 + T₂) i ⊆
-      M₁.visitedByTapeHead c₀ T₁ i ∪
-        M₂.visitedByTapeHead (c₁.mapState fun _ => entry) T₂ i := by
-  exact seamComp_visited_general M₁ exit M₂ entry h₁ hexit hcut i
 
 /-- **R8.8, the two-exit seam** (design §12.8a). Attach a continuation to each
 of two exit anchors of a host: `M₁` after `e₁` and `M₂` after `e₂`, by nesting

@@ -71,6 +71,7 @@ module is admitted.
 * `Turing.cfgRecord_length` — a record has `k + 3` fields.
 * `Turing.Cfg.inWindow_init` — the initial configuration is in every window.
 * `Turing.scanTM_run_preserves` — a word-preserving scan changes only its control.
+* `Turing.Cfg.inWindow_iff` — the window predicate as an equation.
 * `Turing.Cfg.InWindow.mono`, `Turing.Cfg.InWindow.apply_iff` — windows grow with the
   radius; one action keeps a window configuration in its window exactly when no head
   crosses a boundary.
@@ -113,6 +114,15 @@ def Cfg.InWindow {k : ℕ} {Symbol State : Type} {x : List Symbol} (s : ℕ)
     (c : Cfg k Symbol State x) : Prop :=
   (∀ i, |c.workTapePos i| ≤ (s : ℤ)) ∧
   ∀ (i : Fin k) (z : ℤ), (s : ℤ) < |z| → c.workTapes i z = none
+
+/-- **The window predicate as an equation**: `c` lies in the radius-`s` window exactly when every
+work head is within `s` of the origin and every work cell farther than `s` is blank (the
+definition of `Turing.Cfg.InWindow`). [AB09, §4.1.1] -/
+theorem Cfg.inWindow_iff {k : ℕ} {Symbol State : Type} {x : List Symbol} {s : ℕ}
+    {c : Cfg k Symbol State x} :
+    c.InWindow s ↔ (∀ i, |c.workTapePos i| ≤ (s : ℤ)) ∧
+      ∀ (i : Fin k) (z : ℤ), (s : ℤ) < |z| → c.workTapes i z = none :=
+  Iff.rfl
 
 /-- **Windows grow with the radius**: a configuration in the radius-`s` window is in the
 radius-`s'` window whenever `s ≤ s'`. -/
@@ -160,7 +170,7 @@ theorem Cfg.InWindow.apply_iff {k : ℕ} {Symbol State : Type} {x : List Symbol}
       subst z
       have := hc.1 i
       omega
-    rw [Action.apply_workTapes, Function.update_of_ne hne]
+    rw [Action.apply_workTapes_of_ne a c i hne]
     exact hc.2 i z hz
 
 /-! ### The record alphabet -/

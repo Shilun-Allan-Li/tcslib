@@ -811,15 +811,8 @@ private theorem ss_bufferSeek_run {n : ℕ} (i : Fin n) (α : List Bool) (p : �
     exact congrFun hbuf q
   obtain ⟨ha, hacut⟩ := ss_bufferAdvance_run i α p hp b hbstate hbbuf hbpos
   have hm : b.mapState (Sum.inl : Bool → Bool ⊕ SeekPhase) =
-      a.mapState (fun _ => Sum.inl false) := by
-    apply Cfg.ext
-    · simp only [b, Cfg.mapState_state, a, Option.map_some]
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
-    · funext j q
-      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-    · funext j
-      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+      a.mapState (fun _ => Sum.inl false) :=
+    Cfg.mapState_mapState a _ _
   rw [hm] at ha hacut
   have hs := seamCompTM_run_ofCfg (skipTM n i) .done (ss_bufferAdvance n i)
     (Sum.inl false) hr rfl hc ha
@@ -1019,15 +1012,8 @@ private theorem ss_bufferFinish_run {n : ℕ} (i : Fin n) (emptyPos : ℕ)
     exact congrFun hbuf q
   obtain ⟨ha, hacut⟩ := ss_bufferClear_run i emptyPos he α p hp b hbstate hbbuf hbpos
   have hm : b.mapState (Sum.inl : Bool → Bool ⊕ SweepPhase) =
-      a.mapState (fun _ => Sum.inl false) := by
-    apply Cfg.ext
-    · simp only [b, Cfg.mapState_state, a, Option.map_some]
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
-    · funext j q
-      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-    · funext j
-      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+      a.mapState (fun _ => Sum.inl false) :=
+    Cfg.mapState_mapState a _ _
   rw [hm] at ha hacut
   have hs := seamCompTM_run_ofCfg (skipBackTM n i) .done (ss_bufferClear n i emptyPos)
     (Sum.inl false) hr rfl hc ha
@@ -1106,15 +1092,8 @@ private theorem ss_bufferCleanup_run {n : ℕ} (i : Fin n) (emptyPos : ℕ)
     exact congrFun hbuf q
   obtain ⟨ha, hacut⟩ := ss_bufferFinish_run i emptyPos he α p hpe b hbstate hbbuf hbpos
   have hm : b.mapState (Sum.inl : SeekPhase → SeekPhase ⊕ (Bool ⊕ SweepPhase)) =
-      a.mapState (fun _ => Sum.inl .run) := by
-    apply Cfg.ext
-    · simp only [b, Cfg.mapState_state, a, Option.map_some]
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
-    · funext j q
-      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-    · funext j
-      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+      a.mapState (fun _ => Sum.inl .run) :=
+    Cfg.mapState_mapState a _ _
   rw [hm] at ha hacut
   have hs := seamCompTM_run_ofCfg (ss_bufferSeek n i) (Sum.inr (Sum.inr .done))
     (ss_bufferFinish n i emptyPos) (Sum.inl .run) hr rfl hc ha
@@ -1145,122 +1124,6 @@ private theorem ss_bufferCleanup_run {n : ℕ} (i : Fin n) (emptyPos : ℕ)
     rw [hbheads]
     simp only [a, Function.update_idem]
   · rw [Cfg.mapState_output, Cfg.mapState_output]
-
-/-- The native rewind has a separate pre-exit anchor so that the final exit is fresh. -/
-private inductive ss_RewindState where
-  | enter | scan | stop | done
-  deriving DecidableEq, Fintype
-
-/-- A native input-only leaf; its scan is handled by the published rewind contracts. -/
-private def ss_inputRewind (n : ℕ) : MultiTapeTM n Bool ss_RewindState where
-  q₀ := .enter
-  tr := fun q inp _ => match q with
-    | .enter => FinTM.controlAction .neg (some .scan)
-    | .scan => match inp with
-      | some _ => FinTM.controlAction .neg (some .scan)
-      | none => FinTM.controlAction .pos (some .stop)
-    | .stop => FinTM.controlAction 0 (some .done)
-    | .done => FinTM.controlAction 0 (some .done)
-
-/-- The final rewind anchor is stationary for every further time.
-
-**Proof sketch.** Its own transition is a zero control action. Induction through the public
-successor equation preserves the configuration; the control-action equation fixes its fields. -/
-private theorem ss_inputRewind_done {n : ℕ} {z : List Bool}
-    (d : Cfg n Bool ss_RewindState z) (hd : d.state = some .done) (t : ℕ) :
-    (ss_inputRewind n).runFrom d t = d := by
-  have hs : (ss_inputRewind n).step d = d := by
-    rw [MultiTapeTM.step_of_some hd]
-    change (FinTM.controlAction 0 (some ss_RewindState.done)).apply d = d
-    rw [FinTM.controlAction_apply, moveInputPos_zero]
-    apply Cfg.ext
-    · exact hd.symm
-    · rfl
-    · rfl
-    · rfl
-    · rfl
-  induction t with
-  | zero => exact MultiTapeTM.runFrom_zero
-  | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, hs]
-
-/-- The native input rewind returns at an exact position-dependent time, with a first exit
-and fixed work heads throughout. Its time is independent of the input's suffix.
-
-**Proof sketch.** One left step puts the input head within the word. The public scan equation
-then reaches the pre-exit anchor after exactly the old position plus one steps. An earlier
-final exit would be stationary and contradict that anchor. The public rewind-head theorem
-has the same pre-exit time, since leaving that anchor enters the stationary final exit.
-One final stationary step completes the run. -/
-private theorem ss_inputRewind_run {n : ℕ} {z : List Bool}
-    (d : Cfg n Bool ss_RewindState z) (hd : d.state = some .enter)
-    (hp : 0 < d.inputPos.val) :
-    (ss_inputRewind n).runFrom d (d.inputPos.val + 2) =
-      { d with state := some .done, inputPos := 1 } ∧
-      (∀ u < d.inputPos.val + 2,
-        ((ss_inputRewind n).runFrom d u).state ≠ some .done) ∧
-      ∀ u ≤ d.inputPos.val + 2,
-        ((ss_inputRewind n).runFrom d u).workTapePos = d.workTapePos := by
-  let M := ss_inputRewind n
-  let c : Cfg n Bool ss_RewindState z :=
-    { d with state := some .scan, inputPos := moveInputPos d.inputPos .neg }
-  have hstep : M.step d = c := by
-    rw [MultiTapeTM.step_of_some hd]
-    change (FinTM.controlAction .neg (some ss_RewindState.scan)).apply d = c
-    rw [FinTM.controlAction_apply]
-  have hcp : c.inputPos.val ≤ z.length := by
-    dsimp only [c]
-    rw [FinTM.moveInputPos_neg_val]
-    have := d.inputPos.isLt
-    omega
-  have hscan := FinTM.rewind_scan M .scan (some .stop)
-    (fun inp _ => by cases inp <;> rfl) c rfl hcp
-  have ht : 1 + (c.inputPos.val + 1) = d.inputPos.val + 1 := by
-    dsimp only [c]
-    rw [FinTM.moveInputPos_neg_val]
-    omega
-  have hstop : M.runFrom d (d.inputPos.val + 1) =
-      { d with state := some .stop, inputPos := 1 } := by
-    rw [← ht, MultiTapeTM.runFrom_add,
-      MultiTapeTM.runFrom_one, hstep, hscan]
-  have hlast : ∀ (a : Cfg n Bool ss_RewindState z), a.state = some .stop →
-      M.step a = { a with state := some .done } := by
-    intro a ha
-    rw [MultiTapeTM.step_of_some ha]
-    change (FinTM.controlAction 0 (some ss_RewindState.done)).apply a = _
-    rw [FinTM.controlAction_apply, moveInputPos_zero]
-  have hcut : ∀ u ≤ d.inputPos.val + 1, (M.runFrom d u).state ≠ some .done := by
-    intro u hu hdone
-    have hf := ss_inputRewind_done (M.runFrom d u) hdone (d.inputPos.val + 1 - u)
-    have hsum : u + (d.inputPos.val + 1 - u) = d.inputPos.val + 1 := by omega
-    rw [← MultiTapeTM.runFrom_add, hsum, hstop] at hf
-    have heq := congrArg Cfg.state hf
-    rw [hdone] at heq
-    cases heq
-  have hret : M.runFrom d (d.inputPos.val + 2) =
-      { d with state := some .done, inputPos := 1 } := by
-    rw [show d.inputPos.val + 2 = (d.inputPos.val + 1) + 1 by omega,
-      MultiTapeTM.runFrom_succ_eq_step', hstop, hlast _ rfl]
-  obtain ⟨r, hr, hrun, hheads⟩ := FinTM.rewind_heads M .enter .scan (some .stop)
-    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) d hd
-  have htime : r = d.inputPos.val + 1 := by
-    by_contra hne
-    rcases lt_or_gt_of_ne hne with hlt | hgt
-    · have hx : (M.runFrom d (r + 1)).state = some .done := by
-        rw [MultiTapeTM.runFrom_succ_eq_step', hrun, hlast _ rfl]
-      exact hcut (r + 1) (by omega) hx
-    · have hf := ss_inputRewind_done
-        ({ d with state := some .done, inputPos := 1 } : Cfg n Bool ss_RewindState z)
-        rfl (r - (d.inputPos.val + 2))
-      have hsum : d.inputPos.val + 2 + (r - (d.inputPos.val + 2)) = r := by omega
-      rw [← hret, ← MultiTapeTM.runFrom_add, hsum, hrun, hret] at hf
-      have heq := congrArg Cfg.state hf
-      cases heq
-  refine ⟨hret, fun u hu => hcut u (by omega), ?_⟩
-  intro u hu
-  by_cases h : u ≤ d.inputPos.val + 1
-  · exact hheads u (by omega)
-  · have heq : u = d.inputPos.val + 2 := by omega
-    rw [heq, hret]
 
 /-- A live configuration's state map preserves its physical frame, read through the public
 field equations rather than through the definition of state renaming.
@@ -1380,7 +1243,7 @@ emissions captured on a scratch tape (the pattern of `Turing.universalCanonTM` a
 head at `2|α| + 3`. Skip the doubled state count and the separator of
 `serializeK = pairEncode n.bits (unaryFin q₀ ++ tableBitsK tr)`, copy the unary initial state to
 tape `k + 1` at offset `2` and the table to tape `k`; clear the scratch and the buffer. Rewind the
-input head to position `1` (`Turing.FinTM.timed_rewind`, `2|α| + 5` steps). Every phase depends
+input head to position `1` (`Turing.inputRewindTM`, `2|α| + 4` steps). Every phase depends
 on `α` only, so `T` and `B` do (`Turing.MultiTapeTM.spaceUsed_le_mul_succ` at the canonizer's
 halting time bounds its cells).
 
@@ -1390,8 +1253,8 @@ tapes and returns its heads, and the capture uses that machine's first halting t
 than at the bound `E.canonizerTime |α|`. The code buffer is cleared by the catalog skip, skip back
 and clear around a one-step move that acts only on a blank cell; on the empty code the buffer is
 all blank, so the canonizer's final head position on the empty code is a fixed parameter of the
-machine, chosen from `E`. The input head is rewound by `Turing.FinTM.rewind_scan` and
-`Turing.FinTM.rewind_heads`, in `2|α| + 5` steps. -/
+machine, chosen from `E`. The input head is rewound by the public input rewind
+(`Turing.inputRewindTM_run`), in `2|α| + 4` steps. -/
 theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
       (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P),
@@ -1445,13 +1308,13 @@ theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
     Sum.inl (Sum.inl .run)
   let jexit : (SeekPhase ⊕ (Bool ⊕ SeekPhase)) ⊕ (SeekPhase ⊕ (Bool ⊕ SweepPhase)) :=
     Sum.inr (Sum.inr (Sum.inr .done))
-  let B := seamCompTM J jexit (ss_inputRewind n) .enter
+  let B := seamCompTM J jexit (inputRewindTM n) .start
   let D := seamCompTM L done B (Sum.inl jentry)
   let W := seamCompTM A (Sum.inr ()) D (Sum.inl entry)
   let R := { W with q₀ := Sum.inl A.q₀ }
   let exit : (G.State ⊕ Unit) ⊕ Q ⊕
       (((SeekPhase ⊕ (Bool ⊕ SeekPhase)) ⊕ (SeekPhase ⊕ (Bool ⊕ SweepPhase))) ⊕
-        ss_RewindState) := Sum.inr (Sum.inr (Sum.inr .done))
+        InputRewindPhase) := Sum.inr (Sum.inr (Sum.inr .done))
   refine ⟨G.k + 1, _, inferInstance, inferInstance, R, exit, ?_⟩
   intro α
   obtain ⟨l, hl, hlayout⟩ := hL (E.machine α)
@@ -1459,7 +1322,7 @@ theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
   let v := if p α = 0 then [] else α.drop (p α - 1)
   let w₀ := if p α = 0 then α else []
   let b := v.length + w₀.length + 3 * α.length + 14
-  let r := 2 * α.length + 5
+  let r := 2 * α.length + 4
   let T := a + 1 + (l + 1 + (b + 1 + r))
   refine ⟨T, n * (T + 1), ?_⟩
   intro w
@@ -1520,22 +1383,22 @@ theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
       Function.update d₃.workTapePos code 0, d₃.output⟩
   change J.runFrom (d₃.mapState (fun _ => jentry)) b = d₄ at hj
   change ∀ u < b, (J.runFrom (d₃.mapState (fun _ => jentry)) u).state ≠ some jexit at hjcut
-  let d₅ := d₄.mapState (fun _ => ss_RewindState.enter)
-  have hd₅ : d₅.state = some .enter := by rw [Cfg.mapState_state]; rfl
+  let d₅ := d₄.mapState (fun _ => InputRewindPhase.start)
+  have hd₅ : d₅.state = some .start := by rw [Cfg.mapState_state]; rfl
   have hi₅ : d₅.inputPos.val = 2 * α.length + 3 := by
     rw [Cfg.mapState_inputPos]
     change d₃.inputPos.val = _
     rw [hi₃, Cfg.mapState_inputPos]
     exact hip
-  obtain ⟨hrew, hrewcut, _⟩ := ss_inputRewind_run d₅ hd₅ (by omega)
-  have htime : d₅.inputPos.val + 2 = r := by dsimp only [r]; omega
+  obtain ⟨hrew, hrewcut, _⟩ := inputRewindTM_run d₅ hd₅ (by omega)
+  have htime : d₅.inputPos.val + 1 = r := by dsimp only [r]; omega
   rw [htime] at hrew hrewcut
-  have hb := seamCompTM_run_ofCfg J jexit (ss_inputRewind n) .enter hj rfl hjcut hrew
-  have hbcut := seamCompTM_firstReturn_ofCfg J jexit (ss_inputRewind n) .enter .done
+  have hb := seamCompTM_run_ofCfg J jexit (inputRewindTM n) .start hj rfl hjcut hrew
+  have hbcut := seamCompTM_firstReturn_ofCfg J jexit (inputRewindTM n) .start .done
     hj rfl hjcut hrew rfl hrewcut
   have hbstart : (d₃.mapState (fun _ => jentry)).mapState
-      (Sum.inl : _ → _ ⊕ ss_RewindState) = d₃.mapState (fun _ => Sum.inl jentry) := by
-    rw [ss_live_map d₃ done hs₃, ss_live_map _ jentry rfl, ss_live_map d₃ done hs₃]
+      (Sum.inl : _ → _ ⊕ InputRewindPhase) = d₃.mapState (fun _ => Sum.inl jentry) :=
+    Cfg.mapState_mapState _ _ _
   rw [hbstart] at hb hbcut
   have hd := seamCompTM_run_ofCfg L done B (Sum.inl jentry) rfl hs₃ hcut₃ hb
   have hdcut := seamCompTM_firstReturn_ofCfg L done B (Sum.inl jentry) (Sum.inr .done)
@@ -1543,9 +1406,8 @@ theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
   have hdstart : (d₁.mapState (fun _ => entry)).mapState
       (Sum.inl : Q → Q ⊕
         (((SeekPhase ⊕ (Bool ⊕ SeekPhase)) ⊕ (SeekPhase ⊕ (Bool ⊕ SweepPhase))) ⊕
-          ss_RewindState)) = d₁.mapState (fun _ => Sum.inl entry) := by
-    rw [ss_live_map d₁ (Sum.inr ()) hs₁, ss_live_map _ entry rfl,
-      ss_live_map d₁ (Sum.inr ()) hs₁]
+          InputRewindPhase)) = d₁.mapState (fun _ => Sum.inl entry) :=
+    Cfg.mapState_mapState _ _ _
   rw [hdstart] at hd hdcut
   have hw := seamCompTM_run_ofCfg A (Sum.inr ()) D (Sum.inl entry) rfl hs₁ hcut hd
   have hwcut := seamCompTM_firstReturn_ofCfg A (Sum.inr ()) D (Sum.inl entry)

@@ -180,27 +180,15 @@ private lemma b3a_embed_space {m k : ℕ} {S : Type} {x : List Bool}
         omega
     _ = _ := by simp [MultiTapeTM.spaceUsed]
 
-/-- The additive space ledger for an arbitrary live-exit seam.
-**Proof sketch.** Apply the public visited-set inclusion on each tape, bound
-the cardinality of its union by the sum, and sum over the bank. -/
+/-- The additive space ledger for an arbitrary live-exit seam: the general seam space lemma
+`Turing.seamCompTM_spaceUsed_le_add_ofCfg`, with this file's argument names. -/
 private lemma b3a_seam_space {k : ℕ} {S T : Type} [DecidableEq S] {x : List Bool}
     (R : MultiTapeTM k Bool S) (exit : S) (Q : MultiTapeTM k Bool T) (entry : T)
     {d e : Cfg k Bool S x} {a b : ℕ} (run : R.runFrom d a = e)
     (live : e.state = some exit) (cut : ∀ u < a, (R.runFrom d u).state ≠ some exit) :
     (seamCompTM R exit Q entry).spaceUsed (d.mapState Sum.inl) (a + 1 + b) ≤
-      R.spaceUsed d a + Q.spaceUsed (e.mapState fun _ => entry) b := by
-  calc
-    _ ≤ ∑ i : Fin k, (R.spaceUsedByTape d a i +
-        Q.spaceUsedByTape (e.mapState fun _ => entry) b i) := by
-      apply Finset.sum_le_sum
-      intro i _
-      calc
-        _ ≤ (R.visitedByTapeHead d a i ∪
-            Q.visitedByTapeHead (e.mapState fun _ => entry) b i).card := by
-          apply Finset.card_le_card
-          exact seamCompTM_visitedByTapeHead_ofCfg R exit Q entry run live cut i
-        _ ≤ _ := Finset.card_union_le _ _
-    _ = _ := Finset.sum_add_distrib
+      R.spaceUsed d a + Q.spaceUsed (e.mapState fun _ => entry) b :=
+  seamCompTM_spaceUsed_le_add_ofCfg R exit Q entry run live cut
 
 /-- The public native counter, specialized to blank origin tapes with a cardinality ledger.
 **Proof sketch.** Instantiate R8.5c at its entry, identify the globally blank frame

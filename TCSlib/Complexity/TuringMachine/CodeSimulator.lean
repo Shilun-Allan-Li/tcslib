@@ -4666,20 +4666,16 @@ private lemma canonReturnAdapter {m : ℕ} {S : Type} [Fintype S] [DecidableEq S
         have avoid (b : Bool) : q ≠ exit b :=
           fun h => hcut u hu b (hq.trans (congrArg some h))
         simp only [redirect, if_neg (avoid true), if_neg (avoid false)])
-    have begin : d.mapState (Sigma.mk (some true)) = d.mapState (fun _ => port true) := by
-      apply Cfg.ext
-      · simp only [Cfg.mapState_state, hd, Option.map_some, port, if_true]
-      · simp only [Cfg.mapState_inputPos]
-      · funext j z; simp only [Cfg.mapState_workTapes]
-      · funext j; simp only [Cfg.mapState_workTapePos]
-      · simp only [Cfg.mapState_output]
-    have enter : d.mapState (fun _ => initial) = d.mapState (Sigma.mk (some false)) := by
-      apply Cfg.ext
-      · simp only [Cfg.mapState_state, hd, Option.map_some, initial]
-      · simp only [Cfg.mapState_inputPos]
-      · funext j z; simp only [Cfg.mapState_workTapes]
-      · funext j; simp only [Cfg.mapState_workTapePos]
-      · simp only [Cfg.mapState_output]
+    have begin : d.mapState (Sigma.mk (some true)) = d.mapState (fun _ => port true) :=
+      Cfg.mapState_eq_of_fields d _ _
+        (by simp only [Cfg.mapState_state, hd, Option.map_some, port, if_true])
+        (Cfg.mapState_inputPos _ _).symm (by funext j z; rw [Cfg.mapState_workTapes])
+        (by funext j; rw [Cfg.mapState_workTapePos]) (Cfg.mapState_output _ _).symm
+    have enter : d.mapState (fun _ => initial) = d.mapState (Sigma.mk (some false)) :=
+      Cfg.mapState_eq_of_fields d _ _
+        (by simp only [Cfg.mapState_state, hd, Option.map_some, initial])
+        (Cfg.mapState_inputPos _ _).symm (by funext j z; rw [Cfg.mapState_workTapes])
+        (by funext j; rw [Cfg.mapState_workTapePos]) (Cfg.mapState_output _ _).symm
     rw [begin, enter] at launch
     have middleRun (u : ℕ) (hu : u ≤ t) :
         host.runFrom (d.mapState (fun _ => port true)) (1 + u) =
@@ -4747,13 +4743,10 @@ private lemma exists_canonRecordRound (k : ℕ) :
       funext z
       simpa only [c, Cfg.mapState_workTapes] using congrFun (blank j hj).1 z)
   obtain ⟨elapsed, run, interior⟩ := adapt x c live t _ verdict cut
-  have restored : c.mapState (fun _ => anchor) = d := by
-    apply Cfg.ext
-    · simp only [c, Cfg.mapState_state, state, Option.map_some]
-    · simp only [c, Cfg.mapState_inputPos]
-    · funext j z; simp only [c, Cfg.mapState_workTapes]
-    · funext j; simp only [c, Cfg.mapState_workTapePos]
-    · simp only [c, Cfg.mapState_output]
+  have restored : c.mapState (fun _ => anchor) = d :=
+    Cfg.mapState_eq_of_fields c _ d (by rw [live, Option.map_some, state])
+      (Cfg.mapState_inputPos _ _) (by funext j z; exact Cfg.mapState_workTapes _ _ j z)
+      (by funext j; exact Cfg.mapState_workTapePos _ _ j) (Cfg.mapState_output _ _)
   rw [restored] at run interior
   refine ⟨t + 2, by nlinarith, elapsed, ?_, ?_, interior, ?_, ?_, ?_⟩
   · rw [run, Cfg.mapState_state, verdict, Option.map_some, Cfg.mapState_inputPos]
@@ -5068,14 +5061,11 @@ private lemma canonStageInnerSpec (k : ℕ) :
     obtain ⟨hwrun, hwcut, -⟩ := writeConstTM_run_ofCfg (Fin.last m) w₀
       (d.mapState fun _ => WritePhase.wr 0)
       (by rw [Cfg.mapState_state, hs, Option.map_some])
-    have hc₀d : (d.mapState fun _ => WritePhase.wr 0).mapState Sum.inl = d := by
-      refine Cfg.ext ?_ ((Cfg.mapState_inputPos _ _).trans (Cfg.mapState_inputPos _ _)) ?_ ?_ ?_
-      · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
-      · funext j q
-        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-      · funext j
-        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-      · rw [Cfg.mapState_output, Cfg.mapState_output]
+    have hc₀d : (d.mapState fun _ => WritePhase.wr 0).mapState Sum.inl = d :=
+      Cfg.mapState_eq_of_fields _ _ d
+        (by rw [Cfg.mapState_state, hs, Option.map_some, Option.map_some])
+        (Cfg.mapState_inputPos _ _) (by funext j q; rw [Cfg.mapState_workTapes])
+        (by funext j; rw [Cfg.mapState_workTapePos]) (Cfg.mapState_output _ _)
     have hctrpos : (d.mapState fun _ =>
         (WritePhase.wr 0 : WritePhase w₀.length)).workTapePos (Fin.last m) = 0 := by
       rw [Cfg.mapState_workTapePos]
@@ -5140,25 +5130,17 @@ private lemma canonStageInnerSpec (k : ℕ) :
             fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x)
           (Ew.workTapes (Fin.last m)) 0 := by
       rw [counter_cfg_eq]
-      refine Cfg.ext ?_ ?_ ?_ ?_ ?_
-      · rw [Cfg.mapState_state]
-        rfl
-      · exact (Cfg.mapState_inputPos _ _).trans hEwip
+      refine Cfg.mapState_eq_of_fields _ _ _ rfl hEwip ?_ ?_ hEwout
       · funext j
         dsimp only
         refine Fin.lastCases ?_ (fun j' => ?_) j
         · rw [Fin.lastCases_last]
-          funext q
-          rw [Cfg.mapState_workTapes]
         · rw [Fin.lastCases_castSucc]
-          funext q
-          rw [Cfg.mapState_workTapes]
       · funext j
         dsimp only
         refine Fin.lastCases ?_ (fun j' => ?_) j
-        · rw [Fin.lastCases_last, Cfg.mapState_workTapePos, hEwpos, hctrh]
-        · rw [Fin.lastCases_castSucc, Cfg.mapState_workTapePos]
-      · exact (Cfg.mapState_output _ _).trans hEwout
+        · rw [Fin.lastCases_last, hEwpos, hctrh]
+        · rw [Fin.lastCases_castSucc]
     have hbody : (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
         fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).output = [] ∧
         1 ≤ (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
@@ -5464,14 +5446,11 @@ private lemma canonStageInnerSpec (k : ℕ) :
         some (Sum.inl (WritePhase.wr 0)) := by
       rw [Cfg.mapState_state, hs, Option.map_some]
     have hrestored : (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
-        WritePhase w₀.length ⊕ CounterLoopState H₀)).mapState (fun _ => anchor) = d := by
-      refine Cfg.ext ?_ ((Cfg.mapState_inputPos _ _).trans (Cfg.mapState_inputPos _ _)) ?_ ?_ ?_
-      · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
-      · funext j q
-        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-      · funext j
-        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-      · rw [Cfg.mapState_output, Cfg.mapState_output]
+        WritePhase w₀.length ⊕ CounterLoopState H₀)).mapState (fun _ => anchor) = d :=
+      Cfg.mapState_eq_of_fields _ _ d
+        (by rw [Cfg.mapState_state, hs, Option.map_some, Option.map_some])
+        (Cfg.mapState_inputPos _ _) (by funext j q; rw [Cfg.mapState_workTapes])
+        (by funext j; rw [Cfg.mapState_workTapePos]) (Cfg.mapState_output _ _)
     have hip : (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
         WritePhase w₀.length ⊕ CounterLoopState H₀)).inputPos = d.inputPos :=
       Cfg.mapState_inputPos _ _
@@ -5956,14 +5935,11 @@ private lemma canonStageOuterSpec (k : ℕ) :
         CounterLoopState H₂)).state = some (CounterLoopState.dec FlagPhase.run) := by
       rw [Cfg.mapState_state, hs, Option.map_some]
     have hrestored : (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
-        CounterLoopState H₂)).mapState (fun _ => anchor) = d := by
-      refine Cfg.ext ?_ ((Cfg.mapState_inputPos _ _).trans (Cfg.mapState_inputPos _ _)) ?_ ?_ ?_
-      · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
-      · funext j q
-        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-      · funext j
-        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-      · rw [Cfg.mapState_output, Cfg.mapState_output]
+        CounterLoopState H₂)).mapState (fun _ => anchor) = d :=
+      Cfg.mapState_eq_of_fields _ _ d
+        (by rw [Cfg.mapState_state, hs, Option.map_some, Option.map_some])
+        (Cfg.mapState_inputPos _ _) (by funext j q; rw [Cfg.mapState_workTapes])
+        (by funext j; rw [Cfg.mapState_workTapePos]) (Cfg.mapState_output _ _)
     have hip : (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
         CounterLoopState H₂)).inputPos = d.inputPos :=
       Cfg.mapState_inputPos _ _
@@ -6268,7 +6244,8 @@ shape with outer counter `ct'` at head `cp'`, then the host replays the row for 
 one step later, enters phase `j` in state `s'` on that bank.
 
 **Proof sketch.** `phaseHostTM_run` gives the lockstep window and the dispatched configuration;
-the latter is the next bank, field by field from the row endpoint's fields. -/
+the latter is the next bank by `Turing.Cfg.mapState_const_eq_mapState_sigma`, from the row
+endpoint's fields. -/
 private lemma canonStageLeg_of {M mU : ℕ} {SU : Type} [DecidableEq SU]
     (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
     (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) {x : List Bool} (w : List Bool)
@@ -6296,17 +6273,8 @@ private lemma canonStageLeg_of {M mU : ℕ} {SU : Type} [DecidableEq SU]
   obtain ⟨hpre, hdisp⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
     ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux) i _ e B hrun sd hsd ⟨j, s'⟩ hred
     hguard
-  refine ⟨hpre, hdisp.trans (Cfg.ext ?_ ?_ ?_ ?_ ?_)⟩
-  · rw [Cfg.mapState_state, Cfg.mapState_state, hsd]
-    rfl
-  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, hin]
-    rfl
-  · funext k z
-    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, htape]
-  · funext k
-    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, hpos]
-  · rw [Cfg.mapState_output, Cfg.mapState_output, hout]
-    rfl
+  exact ⟨hpre, hdisp.trans (Cfg.mapState_const_eq_mapState_sigma e _ (by rw [hsd]; rfl) rfl hin
+    (funext htape) (funext hpos) hout)⟩
 
 /-- A row that reaches its dispatching state `sd` only at its end gives the host's guard, when
 phase `i` dispatches from no other state. -/
@@ -6839,13 +6807,8 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
   have hstart : ((canonStageBank M header ctrOuter (some SweepPhase.sweep) d.inputPos
       (FinTM.bufferTape []) 0 w)).mapState
       (Sigma.mk (⟨0, by omega⟩ : Fin 9)) = d := by
-    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
-    · rw [Cfg.mapState_state, hs]
-      rfl
-    · rw [Cfg.mapState_inputPos]
-      rfl
+    refine Cfg.mapState_eq_of_fields _ _ d (by rw [hs]; rfl) rfl ?_ ?_ (by rw [hout]; rfl)
     · funext j q
-      rw [Cfg.mapState_workTapes]
       by_cases hj1 : j = header
       · subst hj1
         rw [hB0h, hht]
@@ -6853,15 +6816,12 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
         · rw [hj2, hB0c, (hblank ctrOuter (fun h => hhc h.symm)).1]
         · rw [(hB0o j hj1 hj2).1, (hblank j hj1).1]
     · funext j
-      rw [Cfg.mapState_workTapePos]
       by_cases hj1 : j = header
       · subst hj1
         rw [hB0hp, hhp]
       · by_cases hj2 : j = ctrOuter
         · rw [hj2, hB0cp, (hblank ctrOuter (fun h => hhc h.symm)).2]
         · rw [(hB0o j hj1 hj2).2, (hblank j hj1).2]
-    · rw [Cfg.mapState_output, hout]
-      rfl
   obtain ⟨hpre0, hop0⟩ := canonStageLeg0 U ue ux header ctrOuter σ hhc x w d.inputPos
   obtain ⟨hpre1, hop1⟩ := canonStageLeg1 U ue ux header ctrOuter σ hhc x w d.inputPos
   obtain ⟨hpre2, hop2⟩ := canonStageLeg2 U ue ux header ctrOuter σ hhc x w d.inputPos
@@ -7418,14 +7378,8 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
   -- the front's leg, from the stub's entry bank
   set c₀ : Cfg ((m₃ + 2) + mU) Bool HF x :=
     ⟨some fentry, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ with hc₀def
-  have hc₀ : c₀.mapState (Sigma.mk (⟨0, by omega⟩ : Fin 4)) = d := by
-    refine Cfg.ext ?_ (Cfg.mapState_inputPos _ _) ?_ ?_ (Cfg.mapState_output _ _)
-    · rw [Cfg.mapState_state, hs]
-      rfl
-    · funext j z
-      rw [Cfg.mapState_workTapes]
-    · funext j
-      rw [Cfg.mapState_workTapePos]
+  have hc₀ : c₀.mapState (Sigma.mk (⟨0, by omega⟩ : Fin 4)) = d :=
+    Cfg.mapState_eq_of_fields c₀ _ d (by rw [hs]; rfl) rfl rfl rfl rfl
   have hc₀pos : c₀.inputPos.val = 2 * bits.length + 3 := hpos
   have hdrop0 : x.drop (c₀.inputPos.val - 1) = rest := by
     have h2 : x.length - rest.length = 2 * bits.length + 2 := by omega
