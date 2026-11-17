@@ -45,11 +45,21 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
 
 - **Never `lake build`.** Elaborate only through `devtools/seyoon/leanelab.sh <worktree> <olean
   dir> <file>` (plain) or `leanelab-o.sh <worktree> <olean dir> <file> <overlay>` (writes the
-  `.olean`). At most **5 elaborations at once machine-wide** (the user's 2026-11-06 update;
-  the maintainer currently uses `TCSLIB_LEAN_SLOTS=3`, reserving two for the other campaign;
-  slot locks under
-  `$TCSLIB_SCRATCH/locks/`), each `lean -j4` under `nice -n 10`. Replays use
+  `.olean`), each `lean -j4` under `nice -n 10`. Replays use
   `scripts/lean_check_tree.sh` through the generated replay scripts.
+- **Lean parallelism on the cloud machine** (Seyoon's ruling, 2026-11-17; `workflow.md` §4.1 on
+  main, PR #353). The pool is `min(nproc, MemAvailable / 4 GB)`, keeping at least
+  max(2 GB, 15%) of memory available, and it backs off under memory pressure. It is computed by
+  `$TCSLIB_SCRATCH/rd/leanpool.sh`, capped at the wrappers' five slots, and exported as
+  `TCSLIB_LEAN_SLOTS` by `env.sh`. On the current machine (4 cores, 16 GB) the pool is 3. The
+  slot locks under `$TCSLIB_SCRATCH/locks/` are the one counting semaphore that the maintainer
+  and sub-agents share.
+  - **Order.** Build in dependency order: start a module only when all of its imports have
+    oleans. No two processes may compile the same module or write the same file.
+  - **What runs in parallel.** Seals, control parts, sweep probes, axiom probes and statement
+    probes may run in parallel across owners, each with its own probe file and log.
+  - **Evidence.** The replay driver records the pool size and peak memory in `RESULT.json`.
+  - **Local hosts** keep their limit of at most 3 Lean processes per machine.
 - **Screens one at a time**, machine-wide: `scripts/copy-text-screen-v3.py` under `nice -n 10`,
   holding `$TCSLIB_SCRATCH/locks/screen` (`mkdir` to take it, `rmdir` to release; a lock with no
   running screen process is stale).
@@ -179,16 +189,15 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   Every brief attaches the fill-environment addendum.
 - **Fills may run in parallel** (the user, 2026-11-06: on cloud machines with Claude agents,
   there is no need to limit how many fills are out at once). Each fill still owns its files, and
-  two fills never share an owned file. The maintainer's limit
-  is five machine-wide on the current Mac, with three slots budgeted here while the other chat
-  uses two; this does not change an external worker's brief-specific limit.
+  two fills never share an owned file. The maintainer's Lean pool is
+  the §2 rule (Seyoon, 2026-11-17); this does not change an external worker's brief-specific limit.
 - **Agent choice, a soft suggestion per item:** Codex for a first (maybe second) attempt; Claude
   for an item making slow progress (one stalled Codex round counts); megafills go to Codex.
   Ask the agent as its own question, never inside an option.
 - **Sub-agents** review incoming fills and audits. On the cloud machine they may also take
   independent tasks in parallel (screens, sweeps, record drafts, probe drafts), **at most five at
   once** (the user, 2026-11-05). Give them the full standing rules: no `lake build`, Lean only
-  through the throttled tools and within the machine-wide limit of five (local budget three), `python3 -I` on untrusted
+  through the throttled tools and within the shared §2 pool, `python3 -I` on untrusted
   data, screens one at a time, no commits or pushes, outputs only in their own scratch folder.
   The maintainer integrates the result.
 
