@@ -1,8 +1,14 @@
-# Gate 158 · W6: the final audit of the chapters 3–4 scope (draft, prepared 2026-11-17)
+# Gate 158 · W6: the final audit of the chapters 3–4 scope
 
-**Status: prepared, not staged.** It is staged after #361 (W5, gate 157) merges, so the audited
-tree includes the blueprint. The probes below ran on campaign Lean `179c8c9c` (#356, W4). #361
-changes no Lean, so they stand for the merged tree; the dispatch prompt pins the final commit.
+**The final audit** (PLAN W6), over the campaign after W5. It includes no PR: the audited tree is
+the campaign branch at the commit in the dispatch prompt. Seyoon dispatches.
+
+- **Lean:** campaign Lean `179c8c9c` (the #356 merge, W4). #361 (W5, merged as `7149da27`)
+  changed no Lean, and every later commit is records only.
+- **Probes:** they ran on that Lean with snapshot `oleans-c179c8` on 2026-11-17, and stand for
+  the audited tree.
+- **Bundle:** the governing records, this gate's evidence, the 145 chapter-scope Lean files, and
+  the class and constructibility definitions they rest on.
 
 ## Scope (PLAN W6)
 
@@ -59,5 +65,26 @@ The closeout is done when all of the following hold (PLAN §4):
     register's "Standards-lint items" section.
 - **Register:** `campaign/closeout/CARRIED-REGISTER.md`, final at stage 3. Deferred items: W8
   (Exercise 3.3), W9 (relativized hierarchies) and the ch2-4 merge items.
-- **Blueprint:** W5 (#361, gate 157). Validation is clean, and no undocumented declaration remains
-  in scope.
+- **Blueprint:** W5 (#361, gate 157 CLEAR in round 2). Validation is clean, and no undocumented
+  declaration remains in scope. The 712 stale chapters 1–2 entries outside the scope are to be
+  deleted in a later small PR (Seyoon, 2026-11-17).
+
+## Brief for the auditor
+
+1. **Probes.** Check that the four probe sources do what the pack says. Check that their outputs
+   support the claims: the headline walks and axioms, the extra results' axioms, the scope
+   admission count, and the census totals by area.
+2. **Fidelity.** For each of the 27 rows of `FIDELITY.md`, check the Lean statement against the
+   bundled source and its stated AB09 counterpart. Report any divergence the table misses or
+   misstates. A Lean statement weaker than the book's is a finding.
+3. **Definitions.** Check that `DTIME`, `NTIME`, `SPACE`, `NSPACE`, `TimeConstructible` and
+   `SpaceConstructible` match AB09's definitions up to the documented conventions.
+4. **Done criteria** (PLAN §4). State whether each criterion holds: items 1–5, and item 6's W6
+   half.
+5. **Register.** Check that every carried item is disclosed with a reason, including the lint
+   items carried by ruling.
+
+Use the campaign finding table and give a CLEAR or HOLD verdict.
+**Deliver your findings as a downloadable file named `gate158-w6-final-findings.md`**
+(the findings table and the verdict line, no other wrapping), and also paste its content in your
+reply.

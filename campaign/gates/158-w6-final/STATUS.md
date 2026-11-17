@@ -1,1 +1,1 @@
-**Gate 158 (W6) prepared** (2026-11-17): probes (27 headlines clean, 19 extras standard, 0 admissions in scope), census (122 admissions, none in scope), fidelity table, lint (items carried by ruling). Staged after #361 merges.
+**Gate 158 (W6) staged** (2026-11-17): the final chapter-scope audit. Probes (27 headlines clean, 19 extras standard, 0 admissions in scope), census (122 admissions, none in scope), fidelity table, lint (carried by ruling). Awaiting dispatch.
