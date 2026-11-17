@@ -71,3 +71,8 @@ Seyoon asked for the cleanup to run in parallel with the GSW/IBE work "to the ex
 
 ## PS10 citation fixes go into Stage 2 (2026-11-17)
 The `ps10-cite-check` delivery (exchange `69add654`; `ingests/ps10-cite-check-final-r1/REPORT.md`) found 40 content mismatches at 40 sites under 15 locators (Tier A: 19 under Theorem 180.1, 17 of them one recurring "step 4" label) and 21 advisory notes (Tier B). All 67 locators exist with the cited kind and page. The Tier A corrections, docstring-only, are part of Stage 2; the Tier B notes are applied where they change what a reader is told.
+
+## Historical seal debt (DW-10; Seyoon, 2026-11-17)
+The plan had omitted the #248 historical seal ledger and the inherited-seal repairs deferred on 2026-11-10. Ruling: run a fresh canonical-seal inventory of all Pass–shelat-owned files at the tip now, reconcile it with the #248 ledger, and fold the fixes into **Stage 2**. Seal-B-only items (Yao and sc-garble `PolyExpr.eval`) and non-campaign files (`Complexity/TuringMachine/CodeSimulator.lean`) are listed, then handled by separate ruling.
+
+**Stage 2 handover, a seventh change for Seyoon to confirm:** removing the public `EnsembleLemmas.blocks` alias also needs the body of `ETTGame.dTape` (`EncryptThenTag/Handler.lean:178`) changed. It is of the same kind as the six approved under CS1-Q2.
