@@ -80,7 +80,7 @@ theorem safeRun_iff {H : MultiTapeTM k Bool B} {avoid : B} {c : Cfg k Bool B x} 
 /-- The empty run is safe. -/
 theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}
     {c : Cfg k Bool B x} : SafeRun H avoid c 0 c :=
-  safeRun_iff.mpr ⟨rfl, fun t' ht' => absurd ht' (by omega)⟩
+  safeRun_iff.mpr ⟨MultiTapeTM.runFrom_zero, fun t' ht' => absurd ht' (by omega)⟩
 
 /-- Safe runs are segments with one forbidden control state and a trivial head invariant. -/
 private theorem safeRun_iff_segment {H : MultiTapeTM k Bool B} {avoid : B}
