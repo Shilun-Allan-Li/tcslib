@@ -3425,7 +3425,11 @@ private lemma emCall_track_extent (M : FinTM Bool) (x : List Bool) :
       -(t : ℤ) ≤ emCallLo M x t i ∧ emCallHi M x t i ≤ t := by
   intro t
   induction t with
-  | zero => intro i; simp [emCallLo, emCallHi, MultiTapeTM.initCfg, Cfg.init]
+  | zero =>
+    intro i
+    simp only [emCallLo, emCallHi, MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq,
+      Cfg.init_workTapePos]
+    simp
   | succ t ih =>
     intro i
     have hp := M.tm.workTapePos_step_le (M.tm.runFrom (M.tm.initCfg x) t) i
@@ -3446,7 +3450,9 @@ private lemma emCall_track_support (M : FinTM Bool) (x : List Bool) :
         (M.tm.runFrom (M.tm.initCfg x) t).workTapes i z = none := by
   intro t
   induction t with
-  | zero => intro i z hz; rfl
+  | zero =>
+    intro i z hz
+    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
   | succ t ih =>
     intro i z hz
     have hb := emCall_track_extent M x t i
@@ -3455,17 +3461,11 @@ private lemma emCall_track_support (M : FinTM Bool) (x : List Bool) :
       omega
     have hne : z ≠ (M.tm.runFrom (M.tm.initCfg x) t).workTapePos i := by omega
     rw [MultiTapeTM.runFrom_succ_eq_step']
-    unfold MultiTapeTM.step
     cases hs : (M.tm.runFrom (M.tm.initCfg x) t).state with
-    | none => exact ih i z hz'
+    | none => rw [MultiTapeTM.step_of_halt hs]; exact ih i z hz'
     | some q =>
-      dsimp only [Action.apply]
-      cases hw : ((M.tm.tr q (M.tm.runFrom (M.tm.initCfg x) t).inputSymbol
-        (M.tm.runFrom (M.tm.initCfg x) t).workTapeSymbols).workTapes i).1
-      · exact ih i z hz'
-      · dsimp only
-        rw [Function.update_of_ne hne]
-        exact ih i z hz'
+      rw [MultiTapeTM.step_of_some hs, Action.apply_workTapes, Function.update_of_ne hne]
+      exact ih i z hz'
 
 /-- The singleton origin marker is the zero-width source trace's visited span. -/
 private lemma emCall_span_zero : emCallSpan 0 0 = bufferTape [true] := by

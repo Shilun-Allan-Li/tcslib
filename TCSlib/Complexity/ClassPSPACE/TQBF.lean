@@ -1175,15 +1175,14 @@ private theorem codec_step_blank (M : FinTM Bool) (s : ℕ) (x : List Bool)
     ∀ i z, (s : ℤ) < |z| → (M.tm.step c).workTapes i z = none := by
   intro i z hz
   cases hs : c.state with
-  | none => simpa only [MultiTapeTM.step, hs] using hc.2 i z hz
+  | none => rw [MultiTapeTM.step_of_halt hs]; exact hc.2 i z hz
   | some q =>
     have hzhead : z ≠ c.workTapePos i := by
       intro he
       rw [he] at hz
       exact (not_lt_of_ge (hc.1 i)) hz
-    simp only [MultiTapeTM.step, hs, Action.apply]
-    cases hw : ((M.tm.tr q c.inputSymbol c.workTapeSymbols).workTapes i).1 <;>
-      simp [Function.update, hzhead, hc.2 i z hz]
+    rw [MultiTapeTM.step_of_some hs, Action.apply_workTapes_of_ne _ c i hzhead]
+    exact hc.2 i z hz
 
 /-- Equality of exact successor observations with a valid target is adjacency.
 

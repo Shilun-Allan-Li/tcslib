@@ -12,8 +12,9 @@ set_option autoImplicit false
 /-!
 # Elementary facts about configurations
 
-Four small facts that machine constructions over several phases use repeatedly: the input read
-depends on the input head only; a live configuration redirected to a state of phase `i` is the
+Five small facts that machine constructions over several phases use repeatedly: the input read
+depends on the input head only; applying an action changes a work cell only under that tape's old
+head; a live configuration redirected to a state of phase `i` is the
 tagged configuration of phase `i`; a configuration tagged by one phase is never at a state of
 another; and a list of equal-length chunks has the expected length.
 
@@ -25,6 +26,8 @@ No new definitions.
 
 * `Turing.Cfg.inputSymbol_congr` — configurations whose input heads agree read the same input
   symbol, across machines.
+* `Turing.Action.apply_workTapes_of_ne` — applying an action leaves every work cell away from that
+  tape's old head unchanged.
 * `Turing.Cfg.mapState_eq_of_fields` — a renamed configuration is any configuration with its four
   data fields and the renamed state.
 * `Turing.Cfg.mapState_const_eq_mapState_sigma` — redirecting a live configuration to `⟨i, q⟩`
@@ -59,6 +62,17 @@ theorem Cfg.inputSymbol_congr {Symbol : Type*} {k k' : ℕ} {S S' : Type*} {inpu
     · have hlt := c.inputPos.isLt
       rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
         inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)]
+
+/-- **An action writes only under the old head.** Applying an action `a` to a configuration `c`
+leaves cell `z` of work tape `i` unchanged whenever `z` is not the position of that tape's head in
+`c`. [AB09, §1.2: in one step each work head writes only the cell it scans]
+
+**Proof sketch.** By `Turing.Action.apply_workTapes` tape `i` is updated at its old head only;
+`Function.update_of_ne` reads the unchanged cell. -/
+theorem Action.apply_workTapes_of_ne {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+    (a : Action k Symbol State) (c : Cfg k Symbol State input) (i : Fin k) {z : ℤ}
+    (hz : z ≠ c.workTapePos i) : (a.apply c).workTapes i z = c.workTapes i z := by
+  rw [Action.apply_workTapes, Function.update_of_ne hz]
 
 /-- **A renamed configuration, field by field.** Renaming the states of `c` by `f` gives any
 configuration `d` that has `c`'s input head, tapes, work heads and output and whose state is `c`'s
