@@ -161,3 +161,75 @@ encodings of $(x,i)$ for which the $i$th output bit of $f(x)$ is true (taking an
 out-of-range bit to be false), and the language of encodings of $(x,i)$ for which
 $i<|f(x)|$.
 \end{definition}
+
+\begin{theorem}[Computing in space, unfolded]
+\lean{Turing.FinTM.computesInSpace_iff}
+\label{Turing.FinTM.computesInSpace_iff}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.ComputesInSpace, Turing.FinTM.ComputesInTime, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.spaceUsed}
+\difficulty{1}
+Let $M$ be a finite deterministic Turing machine over the Boolean alphabet, $f$ a function from
+Boolean words to Boolean words, and $s:\mathbb N\to\mathbb N$. Then $M$ computes $f$ in space
+$s$ if and only if for every Boolean input $x$ there is a time $t$ at which $M$, started on
+$x$, has halted with output $f(x)$, having visited at most $s(|x|)$ work-tape cells (summed over
+its work tapes) during its first $t$ steps.
+\end{theorem}
+
+\begin{theorem}[Deciding in space, unfolded]
+\lean{Turing.FinTM.decidesInSpace_iff}
+\label{Turing.FinTM.decidesInSpace_iff}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.ComputesInSpace, Turing.FinTM.DecidesInSpace, Turing.MultiTapeTM.indicator}
+\difficulty{1}
+Let $M$ be a finite deterministic Turing machine over the Boolean alphabet, $L$ a language of
+Boolean words, and $s:\mathbb N\to\mathbb N$. Then $M$ decides $L$ in space $s$ if and only if
+$M$ computes in space $s$ the function sending each Boolean word $x$ to the one-letter word
+whose letter is $1$ if $x\in L$ and $0$ otherwise.
+\end{theorem}
+
+\begin{theorem}[Membership in a space class, unfolded]
+\lean{Complexity.mem_SPACE_iff}
+\label{Complexity.mem_SPACE_iff}
+\leanok
+\uses{Complexity.SPACE, Turing.FinTM, Turing.FinTM.DecidesInSpace}
+\difficulty{1}
+Let $s:\mathbb N\to\mathbb N$ and let $L$ be a language of Boolean words. Then
+$L\in\mathrm{SPACE}(s)$ if and only if there are a constant $c\in\mathbb N$ and a finite
+deterministic Turing machine over the Boolean alphabet that decides $L$ visiting at most
+$c\,s(n)$ work-tape cells on inputs of length $n$.
+\end{theorem}
+
+\begin{theorem}[Formula for the logarithmic bound]
+\lean{Complexity.logSpace_eq}
+\label{Complexity.logSpace_eq}
+\leanok
+\uses{Complexity.logSpace}
+\difficulty{1}
+For every natural number $n$, the logarithmic space bound of $n$ equals
+$\lfloor\log_2 n\rfloor+1$, where $\lfloor\log_2 0\rfloor$ is taken to be $0$.
+\end{theorem}
+
+\begin{lemma}[Logarithmic bound versus binary length]
+\lean{Complexity.logSpace_le_size_succ}
+\label{Complexity.logSpace_le_size_succ}
+\leanok
+\uses{Complexity.logSpace}
+\difficulty{4}
+For every natural number $n$, writing $\lfloor\log_2 n\rfloor$ for the integer part of the
+base-$2$ logarithm (with value $0$ at $n=0$) and $\mathrm{size}(n)$ for the number of binary
+digits of $n$ (with $\mathrm{size}(0)=0$), one has
+$\lfloor\log_2 n\rfloor+1\le\mathrm{size}(n)+1$.
+\end{lemma}
+
+\begin{theorem}[Logarithmic space as a space class]
+\lean{Complexity.LOGSPACE_eq}
+\label{Complexity.LOGSPACE_eq}
+\leanok
+\uses{Complexity.LOGSPACE, Complexity.SPACE, Complexity.logSpace}
+\difficulty{1}
+The class $\mathrm{L}$ of languages decidable in logarithmic space equals
+$\mathrm{SPACE}(\ell)$, where $\ell(n)=\lfloor\log_2 n\rfloor+1$ (with
+$\lfloor\log_2 0\rfloor=0$); that is, a Boolean language lies in $\mathrm{L}$ exactly when
+some finite deterministic Turing machine decides it visiting at most $c\,\ell(n)$ work-tape
+cells on inputs of length $n$, for some constant $c$.
+\end{theorem}
