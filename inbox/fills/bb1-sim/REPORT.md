@@ -305,6 +305,14 @@ Searches are in `evidence/overlap/searches.txt` (`git grep` over TCSlib at the c
 - **`sidImpl_allOutputs_some`, `sidImpl_none_of_ne`:** case facts about `IBEScheme.sidImpl` from its readers. They have no published equivalent (the readers state single cases).
 - **`prob_sidGame_coins`, `expect_bb1SimImpl_random`:** T2's and T3's chains. They have no relative.
 
+## Exchange commits (BS-F08, disclosed)
+
+The exchange commits `1ef26470` ("fill bb1-sim: checkpoint 1") and `e8b3388d` ("fill bb1-sim: final") carry an SSH signature (`gpgsig`).
+- **Cause:** I created them with `git -c commit.gpgsign=false`. The `git pull --rebase` before each push then re-created them, and this host's global `~/.gitconfig` sets `commit.gpgsign = true` (`gpg.format = ssh`), so the platform key signed them.
+- **Not fixed:** fixing them would need a force-push, which the brief forbids.
+- **Deliverable unaffected:** the four `fill/bb1-sim` commits in `patches/` are unsigned (`COMMITS.tsv`, signing `none`), and `git am` reproduces them.
+- **This note's commit** was made, and rebased, with `-c commit.gpgsign=false` throughout.
+
 ## Scope requests
 
 None. The route needed no other reader, import or frozen-file change.
