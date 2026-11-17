@@ -60,6 +60,9 @@ only by the results whose reductions compute in the group.
 * `BilinearGroup.exists_pow_eq` — every element of `G^*` generates `G`.
 * `BilinearGroup.pair_ne_one` — every element of `G^*` pairs non-trivially with itself.
 * `BilinearGroup.pow_val_bijective` — `a ↦ e(g, g)^a` is a bijection `Z_p → G_1` for `g ∈ G^*`.
+* `BilinearGroup.pow_val_add` — exponents add in `Z_p`: `x^{(a+b).val} = x^{a.val} x^{b.val}`.
+* `BilinearGroup.pow_val_neg` — negating an exponent inverts: `x^{(-a).val} = (x^{a.val})⁻¹`.
+* `BilinearGroup.pow_val_bijective_of_ne_one` — `a ↦ g^a` is a bijection `Z_p → G` for `g ∈ G^*`.
 
 ## References
 
@@ -227,6 +230,30 @@ theorem pow_val_bijective {x : B.G} (hx : x ≠ 1) :
     orderOf_eq_prime (B.pow_order_GT _) (B.pair_ne_one hx)
   rw [Fintype.bijective_iff_injective_and_card]
   refine ⟨fun a b hab => ZMod.val_injective _ ?_, by rw [ZMod.card, B.card_GT]⟩
+  have h := pow_eq_pow_iff_modEq.1 hab
+  rw [ho] at h
+  exact Nat.ModEq.eq_of_lt_of_lt h (ZMod.val_lt a) (ZMod.val_lt b)
+
+/-- **The additive exponent law in `G`**: exponents of `G` add in `Z_p`,
+`x ^ (a + b).val = x ^ a.val * x ^ b.val` for `a, b ∈ Z_p`. -/
+theorem pow_val_add (x : B.G) (a b : ZMod B.order) :
+    x ^ (a + b).val = x ^ a.val * x ^ b.val := by
+  rw [ZMod.val_add, ← pow_add, ← Nat.mod_add_div (a.val + b.val) B.order, pow_add, pow_mul,
+    B.pow_order, one_pow, mul_one, Nat.mod_add_div]
+
+/-- **The negation exponent law in `G`**: negating an exponent in `Z_p` inverts the power,
+`x ^ (-a).val = (x ^ a.val)⁻¹` for `a ∈ Z_p`. -/
+theorem pow_val_neg (x : B.G) (a : ZMod B.order) : x ^ (-a).val = (x ^ a.val)⁻¹ := by
+  rw [eq_inv_iff_mul_eq_one, ← B.pow_val_add, neg_add_cancel, ZMod.val_zero, pow_zero]
+
+/-- **`a ↦ g^a` is a bijection `Z_p → G`** for every `g ∈ G^*`: `g ≠ 1` generates `G`, so
+`Function.Bijective fun a : ZMod B.order => g ^ a.val` (the identification `Z_p ≃ G` of the
+proofs, as an `Equiv` by `Equiv.ofBijective`). -/
+theorem pow_val_bijective_of_ne_one {g : B.G} (hg : g ≠ 1) :
+    Function.Bijective fun a : ZMod B.order => g ^ a.val := by
+  have ho : orderOf g = B.order := orderOf_eq_prime (B.pow_order _) hg
+  rw [Fintype.bijective_iff_injective_and_card]
+  refine ⟨fun a b hab => ZMod.val_injective _ ?_, by rw [ZMod.card, B.card_G]⟩
   have h := pow_eq_pow_iff_modEq.1 hab
   rw [ho] at h
   exact Nat.ModEq.eq_of_lt_of_lt h (ZMod.val_lt a) (ZMod.val_lt b)
