@@ -26,6 +26,7 @@ must not delay the closeout's integration.
 **Base and fillers (Seyoon, 2026-11-17):**
 - **Base:** start **after W7, from `main`**, which by then has the campaign's machine library.
   Until then, only preparation: the statement re-check and the briefs.
+- **Tools:** merge the `seyoon-devtools` branch into the work branch first, for the wrappers and the gate kit (`devtools/seyoon/gatekit/`).
 - **Fillers:** Codex, as delegated fills. The maintainer writes briefs per tier and stages them
   on the exchange for Seyoon to dispatch, then reviews and lands each delivery with a gate.
 
