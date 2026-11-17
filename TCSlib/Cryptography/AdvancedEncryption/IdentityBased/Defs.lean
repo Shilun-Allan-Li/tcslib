@@ -386,6 +386,49 @@ theorem oracleImpl_two {σ : Type} (κ : ℕ)
     (x : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) (s : σ) :
     S.oracleImpl κ init key chal 2 x s = chal x s := rfl
 
+/-- **Oracle `0` of `oracleImpl` on the game's query type**: the handler `init` on the query read
+as an identity, its answer read back on the game's answer type. -/
+theorem oracleImpl_zero_onSpec {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 0) (s : σ) :
+    S.oracleImpl κ init key chal 0 x s =
+      (init (cast (show (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) from rfl) x) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+/-- **Oracle `1` of `oracleImpl` on the game's query type**: the handler `key` on the query read
+as an identity, its answer read back on the game's answer type. -/
+theorem oracleImpl_one_onSpec {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 1) (s : σ) :
+    S.oracleImpl κ init key chal 1 x s =
+      (key (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl) x) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+/-- **Oracle `2` of `oracleImpl` on the game's query type**: the handler `chal` on the query read
+as two messages, its answer read back on the game's answer type. -/
+theorem oracleImpl_two_onSpec {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 2) (s : σ) :
+    S.oracleImpl κ init key chal 2 x s =
+      (chal (cast (show (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
+        from rfl) x) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
 /-- The codec of the adversary: the three oracles and a one-bit guess. -/
 def sidCodec (κ : ℕ) : MachineCodec (S.sidSpec κ) (Fin 1 → Bool) :=
   bitCodec (S.inLens κ) (S.outLens κ) 1
