@@ -20,6 +20,7 @@ set_option autoImplicit false
 ## Main results
 
 `splitBits_fst`, `splitBits_snd` and `atParam_eq` expose the encoded values.
+`ofFn_splitBits_fst`, `ofFn_splitBits_snd` read the two halves as the prefix and suffix words.
 
 ## References
 
@@ -36,6 +37,24 @@ def splitBits {a b : ℕ} (w : Fin (a + b) → Bool) : (Fin a → Bool) × (Fin 
   (fun i => w (Fin.castAdd b i), fun j => w (Fin.natAdd a j))
 
 attribute [simps (config := { isSimp := false }) fst snd] splitBits
+
+/-- The word of the first component of `splitBits w` is the first `a` bits of the word of `w`:
+`List.ofFn (splitBits w).1 = (List.ofFn w).take a`. Framework glue, no textbook counterpart. -/
+protected theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
+    List.ofFn (splitBits w).1 = (List.ofFn w).take a := by
+  have hfst : (splitBits w).1 = fun i : Fin a => w (Fin.castAdd b i) :=
+    funext fun i => splitBits_fst w i
+  rw [hfst, List.ofFn_add (f := w), List.take_left' List.length_ofFn]
+  rfl
+
+/-- The word of the second component of `splitBits w` is the word of `w` after its first `a`
+bits: `List.ofFn (splitBits w).2 = (List.ofFn w).drop a`. Framework glue, no textbook
+counterpart. -/
+protected theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
+    List.ofFn (splitBits w).2 = (List.ofFn w).drop a := by
+  have hsnd : (splitBits w).2 = fun j : Fin b => w (Fin.natAdd a j) :=
+    funext fun j => splitBits_snd w j
+  rw [hsnd, List.ofFn_add (f := w), List.drop_left' List.length_ofFn]
 
 /-- The parameter-tagged input `⟨1^n, w⟩` of a deterministic polynomial-time algorithm. -/
 def atParam (n : ℕ) (w : List Bool) : List Bool := pairEncode (List.replicate n true) w

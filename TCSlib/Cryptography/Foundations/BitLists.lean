@@ -22,6 +22,7 @@ an association list. They depend on Mathlib only.
 ## Main definitions
 
 * `TCSlib.Cryptography.xorPerm v`: exclusive-or with the vector `v`, as a permutation.
+* `TCSlib.Cryptography.recordBits w o`: the `(w + 1)`-bit record of an optional `w`-bit vector.
 
 ## Main results
 
@@ -39,6 +40,9 @@ an association list. They depend on Mathlib only.
 * `TCSlib.Cryptography.length_flatten_map_const`, `length_flatten_map_range`: the length of a
   concatenation of equal-length blocks.
 * `TCSlib.Cryptography.flatMap_range_drop`: reading the successive suffixes of a list.
+* `TCSlib.Cryptography.getD_ofFn`, `zipWith_xor_cancel_right`, `recordBits_none`,
+  `recordBits_some`, `length_recordBits`: in-range entries of a tuple's list, `(m ⊕ p) ⊕ p = m`, and
+  the readers of the record of an optional bit vector.
 
 ## References
 
@@ -62,6 +66,14 @@ theorem headD_drop_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) (i : Fin n) (d
     ((List.ofFn f).drop i.val).headD d = f i := by
   simp only [headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos i.isLt,
     Option.getD_some]
+
+/-- The entry of a tuple's list at an in-range index is the tuple's entry there: for
+`f : Fin n → α`, `i < n` and any default `d`, `(List.ofFn f).getD i d = f ⟨i, hi⟩`.
+Framework glue, no textbook counterpart (`headD_drop_ofFn` read through `headD_drop`). -/
+theorem getD_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) {i : ℕ} (hi : i < n) (d : α) :
+    (List.ofFn f).getD i d = f ⟨i, hi⟩ := by
+  rw [← headD_drop]
+  exact headD_drop_ofFn f ⟨i, hi⟩ d
 
 /-- **Flattening one-element blocks:** concatenating the one-bit blocks `g j` gives their bits,
 `(List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j 0` when the blocks have
@@ -96,6 +108,19 @@ theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
   · intro i h₁ h₂
     simp only [List.getElem_zipWith]
     cases a[i] <;> cases c[i] <;> rfl
+
+/-- Exclusive-or with the same pad twice cancels on the right: `(m ⊕ p) ⊕ p = m` for every
+message `m` and every pad `p` at least as long, `|m| ≤ |p|` (`List.zipWith` stops at the shorter
+list). Framework glue, no textbook counterpart (the decryption step of the one-time-pad style
+encryptions). -/
+theorem zipWith_xor_cancel_right : ∀ (m p : List Bool), m.length ≤ p.length →
+    List.zipWith xor (List.zipWith xor m p) p = m
+  | [], _, _ => rfl
+  | _ :: _, [], h => absurd h (by rw [List.length_cons, List.length_nil]; omega)
+  | a :: m, b :: p, h => by
+    rw [List.zipWith_cons_cons, List.zipWith_cons_cons,
+      zipWith_xor_cancel_right m p (by rw [List.length_cons, List.length_cons] at h; omega)]
+    cases a <;> cases b <;> rfl
 
 section XorPerm
 
@@ -188,5 +213,32 @@ theorem flatMap_range_drop {β γ : Type*} (F : List β → List γ) (g : β →
     simp only [List.drop_succ_cons]
     exact ih (fun e' he' => hcons e' (List.mem_cons_of_mem _ he')) m'
       (by rw [List.length_cons] at hm; omega)
+
+/-! ### Records of an optional bit vector -/
+
+/-- The record of an optional `w`-bit vector, a word of `w + 1` bits: a flag bit followed by the
+vector, `recordBits w (some c) = 1 :: ⟦c⟧`, or all zeros when there is none,
+`recordBits w none = 0 :: 0^w`. Framework glue, no textbook counterpart (the challenge record of
+the encrypt-then-tag and PRF-oracle handlers). -/
+def recordBits (w : ℕ) : Option (Fin w → Bool) → List Bool
+  | none => false :: List.replicate w false
+  | some c => true :: List.ofFn c
+
+/-- The record of no vector is the zero word: `recordBits w none = 0 :: 0^w`.
+Framework glue, no textbook counterpart. -/
+theorem recordBits_none (w : ℕ) : recordBits w none = false :: List.replicate w false := rfl
+
+/-- The record of a vector is the flag `1` followed by the vector:
+`recordBits w (some c) = 1 :: ⟦c⟧`. Framework glue, no textbook counterpart. -/
+theorem recordBits_some (w : ℕ) (c : Fin w → Bool) : recordBits w (some c) = true :: List.ofFn c :=
+  rfl
+
+/-- Every record has `w + 1` bits: `|recordBits w o| = w + 1`.
+Framework glue, no textbook counterpart. -/
+theorem length_recordBits (w : ℕ) (o : Option (Fin w → Bool)) :
+    (recordBits w o).length = w + 1 := by
+  cases o with
+  | none => rw [recordBits_none, List.length_cons, List.length_replicate]
+  | some c => rw [recordBits_some, List.length_cons, List.length_ofFn]
 
 end TCSlib.Cryptography
