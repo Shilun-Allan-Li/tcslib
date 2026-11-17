@@ -26,7 +26,8 @@ The user is Seyoon Ragavan.
   - Check one file at a time with `scripts/lean_check_tree.sh`. This overrides the repository-wide
     `AGENTS.md`/`.claude/CLAUDE.md` advice not to run Lean from the shell; for this campaign,
     shell checks through that script are the method.
-  - Run one Lean process per olean tree, and kill only your own PIDs.
+  - Run one Lean process per olean tree on local hosts, and kill only your own PIDs. Cloud workers may run a
+    memory-sized pool of Lean processes in dependency order (Seyoon, 2026-11-17; `workflow.md` §4.1).
 - Take full commit hashes from `git rev-parse`. Run Python as `python3 -I`.
 - End every status report with a bold line of its own: **Ready to dispatch**, **Ready to run**,
   **Clear to merge**, or **Not yet clear to merge — <why>**.
