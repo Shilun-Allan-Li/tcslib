@@ -3766,14 +3766,52 @@ work tapes, so its space is `Mg`'s plus linear administration (unlike a captured
 capture tape grows with the payload's output). -/
 def pairMapSndTM (Mg : FinTM Bool) : FinTM Bool := fwdMapTM Mg true
 
+/-- **The threaded map on one pair.** If `Mg` sends `b` to `y` within `time` steps, the threaded
+map sends any string decoding to `(a, b)` to `pairEncode a y` within `5·(|x| + 1) + time` steps.
+
+**Proof sketch.** The launch of the payload takes at most `5·(|x| + 1)` steps (`fwdMap_launch`);
+the forwarded payload then runs `time` steps in lockstep (`fwdMapVirtual_run`), halting with
+exactly `y` after the encoded prefix `pairEncode a []`. -/
+private lemma pairMapSndTM_computesInTime_of {Mg : FinTM Bool} {x a b y : List Bool} {time : ℕ}
+    (hd : pairDecode x = some (a, b)) (hg : Mg.ComputesInTime b y time) :
+    (pairMapSndTM Mg).ComputesInTime x (pairEncode a y) (5 * (x.length + 1) + time) := by
+  let M := fwdMapTM Mg true
+  change M.ComputesInTime x _ _
+  -- Launch the payload after the validated prefix, then forward it in lockstep.
+  obtain ⟨u, hu, hinit, _⟩ := fwdMap_launch Mg x a b hd
+  have htag : VirtualTag (Mg.tm.initCfg b).inputPos true := by
+    refine (VirtualTag_iff _ _).mpr ⟨fun h => ?_, fun _ => rfl⟩
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one] at h
+    exact absurd h one_ne_zero
+  obtain ⟨tag, _, hr⟩ := fwdMapVirtual_run Mg (x := x) (Mg.tm.initCfg b) true htag
+    (⟨x.length + 1, by omega⟩) a (pairEncode a []) time
+  obtain ⟨hh, ho⟩ := (computesInTime_iff _ _ _ _).mp hg
+  have hrun : M.tm.runFrom (M.tm.initCfg x) (u + time) =
+      fwdMapVirtual Mg (Mg.tm.runFrom (Mg.tm.initCfg b) time) tag
+        ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
+    rw [MultiTapeTM.runFrom_add, hinit]
+    exact hr
+  have ht : M.ComputesInTime x (pairEncode a y) (u + time) := by
+    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+    · rw [hrun]
+      change Option.map (fun q => FwdMapState.run q tag)
+        (Mg.tm.runFrom (Mg.tm.initCfg b) time).state = none
+      rw [hh]
+      rfl
+    · rw [hrun]
+      change pairEncode a [] ++
+        (Mg.tm.runFrom (Mg.tm.initCfg b) time).output = pairEncode a y
+      rw [ho]
+      simp [pairEncode_eq, List.append_assoc]
+  exact ht.mono (show u + time ≤ 5 * (x.length + 1) + time by omega)
+
 /-- **The threaded map's time.** If `Mg` computes `g` within a monotone `Tg`, the threaded map
 computes `pairEncode a b ↦ pairEncode a (g b)` (and `[]` off the encodings) within
 `22·(n + 1 + Tg n)` steps.
 
-**Proof sketch.** Rejection and the launch of the payload each take at most `5·(n + 1)` steps
-(`fwdMap_reject`, `fwdMap_launch`); the forwarded payload then runs `Tg |b|` steps in lockstep
-(`fwdMapVirtual_run`), emitting exactly `g b` after the encoded prefix, and `|b| ≤ n` with
-monotonicity gives `Tg n`. -/
+**Proof sketch.** Rejection takes at most `5·(n + 1)` steps (`fwdMap_reject`). On a pair, the
+one-pair bound `pairMapSndTM_computesInTime_of` gives `5·(n + 1) + Tg |b|` steps, and `|b| ≤ n`
+with monotonicity gives `Tg n`. -/
 theorem pairMapSndTM_computes {Mg : FinTM Bool} {g : List Bool → List Bool} {Tg : ℕ → ℕ}
     (hg : Mg.ComputesFunInTime g Tg) (hTg : Monotone Tg) :
     (pairMapSndTM Mg).ComputesFunInTime
@@ -3781,49 +3819,38 @@ theorem pairMapSndTM_computes {Mg : FinTM Bool} {g : List Bool → List Bool} {T
         | some (a, b) => pairEncode a (g b)
         | none => [])
       (fun n => 22 * (n + 1 + Tg n)) := by
-  let M := fwdMapTM Mg true
   refine (computesFunInTime_iff _ _ _).mpr fun x => ?_
-  change M.ComputesInTime x _ _
   cases hd : pairDecode x with
   | none =>
     -- A malformed encoding halts silently during setup.
     obtain ⟨u, hu, hh, ho, _⟩ := fwdMap_reject Mg x hd
-    have ht : M.ComputesInTime x [] u := (computesInTime_iff _ _ _ _).mpr ⟨hh, ho⟩
+    have ht : (pairMapSndTM Mg).ComputesInTime x [] u :=
+      (computesInTime_iff _ _ _ _).mpr ⟨hh, ho⟩
     exact ht.mono (show u ≤ 22 * (x.length + 1 + Tg x.length) by omega)
   | some ab =>
     rcases ab with ⟨a, b⟩
-    -- Launch the payload after the validated prefix, then forward it in lockstep.
-    obtain ⟨u, hu, hinit, _⟩ := fwdMap_launch Mg x a b hd
     have hlen : b.length ≤ x.length := by
       have h := congrArg List.length (eq_pairEncode_of_pairDecode x a b hd)
       rw [length_pairEncode] at h
       omega
-    have htag : VirtualTag (Mg.tm.initCfg b).inputPos true := by
-      refine (VirtualTag_iff _ _).mpr ⟨fun h => ?_, fun _ => rfl⟩
-      rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one] at h
-      exact absurd h one_ne_zero
-    obtain ⟨tag, _, hr⟩ := fwdMapVirtual_run Mg (x := x) (Mg.tm.initCfg b) true htag
-      (⟨x.length + 1, by omega⟩) a (pairEncode a []) (Tg b.length)
-    obtain ⟨hh, ho⟩ := (computesInTime_iff _ _ _ _).mp ((computesFunInTime_iff _ _ _).mp hg b)
-    have hrun : M.tm.runFrom (M.tm.initCfg x) (u + Tg b.length) =
-        fwdMapVirtual Mg (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)) tag
-          ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
-      rw [MultiTapeTM.runFrom_add, hinit]
-      exact hr
-    have ht : M.ComputesInTime x (pairEncode a (g b)) (u + Tg b.length) := by
-      refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
-      · rw [hrun]
-        change Option.map (fun q => FwdMapState.run q tag)
-          (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).state = none
-        rw [hh]
-        rfl
-      · rw [hrun]
-        change pairEncode a [] ++
-          (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).output = pairEncode a (g b)
-        rw [ho]
-        simp [pairEncode_eq, List.append_assoc]
     have hT := hTg hlen
-    exact ht.mono (show u + Tg b.length ≤ 22 * (x.length + 1 + Tg x.length) by omega)
+    exact (pairMapSndTM_computesInTime_of hd ((computesFunInTime_iff _ _ _).mp hg b)).mono
+      (show 5 * (x.length + 1) + Tg b.length ≤ 22 * (x.length + 1 + Tg x.length) by omega)
+
+/-- **The threaded map at the payload's actual time.** For each machine `G` there is one machine
+that, whenever `G` computes `y` from `b` within `time` steps, computes `pairEncode a y` from
+`pairEncode a b` within `40·(time + |pairEncode a b| + 1)` steps. It charges the payload's
+actual running time on that input rather than a bound for its length.
+
+**Proof sketch.** Take the threaded map `pairMapSndTM G`; `pairEncode a b` decodes to `(a, b)`
+(`pairDecode_pairEncode`), so the one-pair bound gives `5·(|pairEncode a b| + 1) + time` steps,
+which is at most the stated bound. -/
+theorem exists_pairMapSnd_computesInTime (G : FinTM Bool) :
+    ∃ M : FinTM Bool, ∀ (a b y : List Bool) (time : ℕ), G.ComputesInTime b y time →
+      M.ComputesInTime (pairEncode a b) (pairEncode a y)
+        (40 * (time + (pairEncode a b).length + 1)) := by
+  refine ⟨pairMapSndTM G, fun a b y time hg => ?_⟩
+  exact (pairMapSndTM_computesInTime_of (pairDecode_pairEncode a b) hg).mono (by omega)
 
 /-- **The threaded map's space.** If `Mg` uses at most `Sg |y|` work cells on every input `y` at
 every time, with `Sg` monotone, then the threaded map uses at most `Sg |x| + 22·(|x| + 1)` cells:

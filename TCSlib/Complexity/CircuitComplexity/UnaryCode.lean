@@ -46,8 +46,10 @@ namespace BoolCircuit
 /-- The unary code `1ᵏ0` of a natural number: `k` `true`s terminated by a `false`. -/
 def encodeNat (k : ℕ) : List Bool := List.replicate k true ++ [false]
 
-/-- The unary code of `k` is `k` `true`s followed by one `false`. -/
-theorem encodeNat_eq (k : ℕ) : encodeNat k = List.replicate k true ++ [false] := rfl
+/-- The defining equation of `encodeNat`: `encodeNat k = List.replicate k true ++ [false]`. -/
+theorem encodeNat_def (k : ℕ) :
+    encodeNat k =
+      (List.replicate k true ++ [false]) := rfl
 
 /-- Read a unary number `1ᵏ0` (`BoolCircuit.encodeNat`) off the front of a string,
 returning it and the rest; `none` if the string ends before the terminating `0`. -/
@@ -66,5 +68,8 @@ theorem decodeNat_encodeNat (k : ℕ) (r : List Bool) :
       simp [encodeNat, List.replicate_succ]
     rw [h, decodeNat, ih]
     rfl
+
+/-- The unary code of `k` is `k` `true`s followed by one `false`. -/
+theorem encodeNat_eq (k : ℕ) : encodeNat k = List.replicate k true ++ [false] := rfl
 
 end BoolCircuit
