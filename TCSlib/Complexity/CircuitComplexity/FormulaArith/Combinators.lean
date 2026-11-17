@@ -14,7 +14,8 @@ and formula gadgets"): combinators on `BoolCircuit.TreeCircuit` formulas that th
 arithmetic of `FormulaArith/` is built from.  This file starts with the balanced binary tree of
 gates, `BoolCircuit.TreeCircuit.balanced`, which computes an unbounded `∧`/`∨` gate with fan-in
 two at logarithmic extra depth.  It was the private `combine` of `TreeNCAC.lean`, promoted
-unchanged; `BoolCircuit.TreeCircuit.toBinary` now calls it from there.
+with its computation unchanged; its proofs carry the five Q2-approved Rule 10 repairs.
+`BoolCircuit.TreeCircuit.toBinary` now calls it from there.
 
 ## Main definitions
 
@@ -407,6 +408,11 @@ theorem TreeCircuit.maxFanin_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n �
 
 /-! ### Constants and the fan-in-2 gadgets (F3) -/
 
+/-- An empty gate is a constant: the empty `AND` is `true`, the empty `OR` is `false`. -/
+theorem eval_node_nil (b : Bool) (x : Fin n → Bool) :
+    (TreeCircuit.node b ([] : List (TreeCircuit n))).eval x = b := by
+  cases b <;> simp [TreeCircuit.eval_node_true, TreeCircuit.eval_node_false]
+
 /-- The constant formula with value `b`: the empty gate, `TreeCircuit.const b = node b []`
 (an empty `∧` is `true`, an empty `∨` is `false`).  Depth `1`, fan-in `0`.  Glue. -/
 def TreeCircuit.const (b : Bool) : TreeCircuit n :=
@@ -418,13 +424,11 @@ theorem TreeCircuit.const_eq (b : Bool) :
     (TreeCircuit.const b : TreeCircuit n) = TreeCircuit.node b [] := rfl
 
 /-- **F3, constant: value.** The constant formula evaluates to its constant:
-`(TreeCircuit.const b).eval x = b`.  Glue.
-
-**Proof sketch.** `const_eq`, then `eval_node_true` (`[].all _ = true`) for `b = true` and
-`eval_node_false` (`[].any _ = false`) for `b = false`. -/
+`(TreeCircuit.const b).eval x = b`.  This is `BoolCircuit.eval_node_nil` read through
+`const_eq`. -/
 theorem TreeCircuit.const_eval (b : Bool) (x : Fin n → Bool) :
     (TreeCircuit.const b : TreeCircuit n).eval x = b := by
-  sorry
+  rw [TreeCircuit.const_eq]; exact eval_node_nil b x
 
 /-- **F3, constant: depth.** The constant formula has depth one:
 `(TreeCircuit.const b : TreeCircuit n).depth = 1`.  Glue.

@@ -101,11 +101,6 @@ variable {m n : ℕ}
 
 /-! ## Reindexing a circuit -/
 
-/-- An empty gate is a constant: the empty `AND` is `true`, the empty `OR` is `false`. -/
-theorem eval_node_nil (b : Bool) (x : Fin n → Bool) :
-    (TreeCircuit.node b ([] : List (TreeCircuit n))).eval x = b := by
-  cases b <;> simp [TreeCircuit.eval]
-
 /-- A circuit on `m` variables read as a circuit on `n ≥ m` variables, ignoring the rest. -/
 def widenCircuit (h : m ≤ n) : TreeCircuit m → TreeCircuit n
   | .lit l => .lit ⟨Fin.castLE h l.idx, l.sign⟩

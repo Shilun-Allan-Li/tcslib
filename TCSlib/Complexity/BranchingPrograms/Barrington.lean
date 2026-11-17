@@ -40,8 +40,9 @@ All are statements of the 6a statement phase (targets admitted with `sorry`), ex
 
 * **Orders.** Instructions follow BV14's order (`map0` on `0`) and programs compose in program
   order (`Defs.lean`).  Bar89's commutator `σ₁σ₂σ₁⁻¹σ₂⁻¹`, read left to right, is the Mathlib
-  product `sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1`, which is `(13254)` 0-based, i.e. the cycle
-  `0 ↦ 2 ↦ 1 ↦ 4 ↦ 3 ↦ 0`; the right-to-left reading gives `(14352)` instead (r3 §H3.6).
+  product `sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1`.  That is `(13254)` in Bar89's one-based cycle
+  notation, whose zero-based form `(0 2 1 4 3)`, the cycle `0 ↦ 2 ↦ 1 ↦ 4 ↦ 3 ↦ 0`, is what the
+  code implements; the right-to-left reading gives `(14352)` instead (r3 §H3.6).
 * **Cycle notation.** `sigma1`, `sigma2` are written `List.formPerm [0, 1, 2, 3, 4]` and
   `List.formPerm [0, 2, 4, 3, 1]`: Mathlib's `c[…]` notation lives in
   `Mathlib.GroupTheory.Perm.Cycle.Concrete`, which is not in the pinned Mathlib cache;
@@ -335,7 +336,8 @@ theorem isFiveCycle_sigma2 : IsFiveCycle sigma2 := by
   sorry
 
 /-- **C9.** Lemma 3 in program order: the commutator of the two five-cycles is a five-cycle,
-`IsFiveCycle (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1)`; the product is `(13254)` 0-based,
+`IsFiveCycle (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1)`; the product is `(13254)` in Bar89's
+one-based cycle notation, whose zero-based form `(0 2 1 4 3)` is what the code implements,
 `List.formPerm [0, 2, 1, 4, 3]` [Bar89, Lemma 3, p003-b005: "`(12345)(13542)(54321)(24531) =
 (13254)`"].
 Deviation: Bar89's product is read left to right; the Mathlib product applies its right factor
