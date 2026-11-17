@@ -38,3 +38,16 @@ items, including DL-50, are out of scope here.
 - Each stage is one external job, or two with disjoint file sets. Each is validated by one merged-tree replay on the
   snapshot (`workflow.md` §6.1).
 - **Out of scope:** DW-1/DW-2 (uniform simulators), which Seyoon ruled "probably after merging into `main`", and DW-3 (notes).
+
+## Parallel with the GSW/IBE work (Seyoon, 2026-11-17)
+Seyoon asked for the cleanup to run in parallel with the GSW/IBE work "to the extent possible". So:
+
+- **Stage 1 starts now** as an external job. It owns no file that the running GSW/IBE jobs edit: not
+  `Games/Probability.lean` or `Games/Relational.lean`, not `Pairing/Group.lean`, not `Complexity/CircuitComplexity/**` or
+  `Complexity/BranchingPrograms/**`, not `ComputationalModels.lean` or `machine-library-design.md`, and nothing under
+  `AdvancedEncryption/**`. Facade import lines may be edited, since they merge as unions. The averaging bound (part of
+  DL-40) is left to the bb1-sim promotion.
+- **Stage 1 is stacked on #347 (DW-5),** because DW-9's view versions live in the same host files. Gate 47 audits #347 and
+  Stage 1 together.
+- **The PS10 ch. 5–8 ingest runs now** as a separate external docs job. Stage 3 folds it in.
+- **Stage 2 starts after Stage 1 and the bb1-sim Games PR merge.**
