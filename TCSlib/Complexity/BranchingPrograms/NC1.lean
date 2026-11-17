@@ -102,7 +102,7 @@ from `n ≠ 0`) and `⟨[]⟩` for `n = 0`; `accept n = {sigma1}` for `n ≥ 1`,
 at `n = 0` according to `[] ∈ L` (classical).  Permutation: `isPermutation_barrington`
 (`BranchingProgramFamily.isPermutation_iff`).
 Length: `barrington_length_le` and `4 ^ (b·(log₂ n + 1)) ≤ 4 ^ b · (n + 1) ^ (2b)`
-(`Nat.pow_le_pow_right`, `Nat.pow_log_le_self`), so `BranchingProgramFamily.isPolyLength_iff`.
+(`Nat.pow_le_pow_right`, `Nat.pow_log_le_add_one`), so `BranchingProgramFamily.isPolyLength_iff`.
 Language: `BranchingProgramFamily.mem_language_iff`, `barrington_recognizes` with
 `isFiveCycle_sigma1`, `TreeCircuitFamily.mem_language_iff`, and `⇑sigma1 ≠ id` (a five-cycle
 has `cycleType {5}`: `isFiveCycle_iff`, `Equiv.Perm.cycleType_one`); at `n = 0`, `yield_nil`.
@@ -144,8 +144,7 @@ theorem Language.InNC.inPBP_five {L : Language Bool} (h : L.InNC 1) : L.InPBP 5 
       haveI : NeZero n := ⟨h0⟩
       have hd : (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) := by
         simpa only [pow_one] using hb n
-      have h2 : (2 : ℕ) ^ Nat.log 2 n ≤ n + 1 :=
-        (Nat.pow_log_le_self 2 h0).trans (Nat.le_succ n)
+      have h2 : (2 : ℕ) ^ Nat.log 2 n ≤ n + 1 := Nat.pow_log_le_add_one 2 n
       calc (barrington (C.circuit n) sigma1).length ≤ 4 ^ (C.circuit n).depth :=
             barrington_length_le (hF' n) sigma1
         _ ≤ 4 ^ (b * (Nat.log 2 n + 1)) := Nat.pow_le_pow_right (by norm_num) hd
@@ -189,7 +188,8 @@ Deviation: the circuits are fan-in-2 formulas (P6-Q18), compiled to `DAGCircuit`
 `≤ (⌈log₂ w⌉ + 2)·⌈log₂ (a(n+1)^k)⌉ + topDepth w ≤ b·(log₂ n + 1)` with
 `b = (⌈log₂ w⌉ + 2)(a + k) + topDepth w` (`depth_toFormula_le`, `Nat.clog_mono_right`,
 `BoolCircuit.clog_poly_le`); its size is
-`≤ 2 ^ (depth + 1)` (`TreeCircuit.size_succ_le_two_pow`), hence polynomial.  This gives
+`≤ 2 ^ (depth + 1)` (`TreeCircuit.size_succ_le_two_pow`), hence polynomial
+(`Nat.pow_log_le_add_one`).  This gives
 `L.InTreeNC 1` (through the readers `Language.inTreeNC_iff`, `TreeCircuitFamily.hasFaninTwo_iff`,
 `isPolySize_iff` and `hasPolylogDepth_iff`), and `Language.InTreeNC.inNC` gives `L.InNC 1`. -/
 theorem Language.InBWBP.inNC_one {L : Language Bool} (h : L.InBWBP) : L.InNC 1 := by
@@ -225,10 +225,7 @@ theorem Language.InBWBP.inNC_one {L : Language Bool} (h : L.InBWBP) : L.InNC 1 :
       ⟨2 ^ ((Nat.clog 2 w + 2) * (a + k) + topDepth w + 1),
         (Nat.clog 2 w + 2) * (a + k) + topDepth w, fun n => ?_⟩
     have hs := TreeCircuit.size_succ_le_two_pow _ (maxFanin_toFormula_le (P.program n) (P.accept n))
-    have h2 : (2 : ℕ) ^ Nat.log 2 n ≤ n + 1 := by
-      rcases Nat.eq_zero_or_pos n with rfl | hn
-      · simp only [Nat.log_zero_right, pow_zero, zero_add, le_refl]
-      · exact (Nat.pow_log_le_self 2 hn.ne').trans (Nat.le_succ n)
+    have h2 : (2 : ℕ) ^ Nat.log 2 n ≤ n + 1 := Nat.pow_log_le_add_one 2 n
     set B := (Nat.clog 2 w + 2) * (a + k) + topDepth w
     calc ((P.program n).toFormula (P.accept n)).size
         ≤ 2 ^ (((P.program n).toFormula (P.accept n)).depth + 1) := by omega
