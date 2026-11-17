@@ -236,16 +236,6 @@ theorem yield_append (B₁ B₂ : BranchingProgram w n) (x : Fin n → Bool) :
 theorem yield_nil (x : Fin n → Bool) : (⟨[]⟩ : BranchingProgram w n).yield x = id := by
   rw [yield_eq, List.foldl_nil]
 
-/-- A conjugated instruction produces the conjugated map:
-`⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩.eval x = θ ∘ ι.eval x ∘ θ.symm`.  Glue for C2
-(split on the bit `x ι.var`). -/
-private theorem eval_conjInstr (θ : Equiv.Perm (Fin w)) (ι : Instr w n) (x : Fin n → Bool) :
-    (⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩ : Instr w n).eval x =
-      θ ∘ ι.eval x ∘ θ.symm := by
-  rw [Instr.eval_eq, Instr.eval_eq]
-  dsimp only
-  cases x ι.var <;> rfl
-
 /-- **C2.** Conjugating every map by `θ` conjugates the yield:
 `(B.conj θ).yield x = θ ∘ B.yield x ∘ θ.symm` [Bar89, Lemma 1 proof, p003-b003].
 
@@ -256,14 +246,19 @@ inner `θ.symm ∘ θ` by `Equiv.symm_comp_self`. -/
 theorem yield_conj (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) (x : Fin n → Bool) :
     (B.conj θ).yield x = θ ∘ B.yield x ∘ θ.symm := by
   rw [conj_eq, yield_eq, yield_eq]
-  -- the induction of the sketch is core's `List.foldl_hom` for `g ↦ θ ∘ g ∘ θ.symm`; each step
-  -- is `eval_conjInstr` with the inner `θ.symm ∘ θ` cancelled
+  -- the induction of the sketch is core's `List.foldl_hom` for `g ↦ θ ∘ g ∘ θ.symm`; in each
+  -- step the conjugated instruction's map is `θ ∘ ι.eval x ∘ θ.symm` (`Instr.eval_eq` and core's
+  -- `apply_ite`), and the inner `θ.symm ∘ θ` cancels
   have h := List.foldl_hom (fun g : Fin w → Fin w => θ ∘ g ∘ θ.symm) (l := B.instrs) (init := id)
     (g₁ := fun f ι => ι.eval x ∘ f)
     (g₂ := fun f ι => (⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩ : Instr w n).eval x ∘ f)
     (fun g ι => by
+      have hc := apply_ite (fun f : Fin w → Fin w => θ ∘ f ∘ θ.symm) (x ι.var = true) ι.map1
+        ι.map0
+      dsimp only at hc ⊢
+      rw [Instr.eval_eq, Instr.eval_eq]
       dsimp only
-      rw [eval_conjInstr]
+      rw [← hc]
       funext y
       simp only [Function.comp_apply, Equiv.symm_apply_apply])
   dsimp only at h
@@ -379,17 +374,6 @@ theorem IsPermutation.complementLast {B : BranchingProgram w n} (h : B.IsPermuta
       have hι := h ι (List.mem_append_right _ (List.mem_singleton.2 rfl))
       exact ⟨σ.symm.bijective.comp hι.1, σ.symm.bijective.comp hι.2⟩
 
-/-- An instruction with bijective maps produces a bijection on every input:
-`Function.Bijective ι.map0 ∧ Function.Bijective ι.map1 → Function.Bijective (ι.eval x)`.  Glue
-for C4 (split on the bit `x ι.var`). -/
-private theorem Instr.bijective_eval {ι : Instr w n}
-    (hι : Function.Bijective ι.map0 ∧ Function.Bijective ι.map1) (x : Fin n → Bool) :
-    Function.Bijective (ι.eval x) := by
-  rw [Instr.eval_eq]
-  split
-  · exact hι.2
-  · exact hι.1
-
 /-- **C4.** A permutation program yields a bijection on every input:
 `B.IsPermutation → Function.Bijective (B.yield x)`.  Glue for [Bar89, §1, p002-b001].
 
@@ -401,8 +385,14 @@ theorem IsPermutation.bijective_yield {B : BranchingProgram w n} (h : B.IsPermut
   rw [isPermutation_iff] at h
   rw [yield_eq]
   -- the induction of the sketch is core's `List.foldlRecOn` with motive `Function.Bijective`
-  exact List.foldlRecOn (motive := Function.Bijective) B.instrs _ Function.bijective_id
-    fun g hg ι hι => (Instr.bijective_eval (h ι hι) x).comp hg
+  -- each step: `Instr.eval_eq` picks `map1` or `map0`, both bijective
+  refine List.foldlRecOn (motive := Function.Bijective) B.instrs _ Function.bijective_id
+    fun g hg ι hι => ?_
+  dsimp only
+  rw [Instr.eval_eq]
+  split
+  · exact (h ι hι).2.comp hg
+  · exact (h ι hι).1.comp hg
 
 end BranchingProgram
 

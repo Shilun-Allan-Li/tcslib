@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Logic.Equiv.Basic
 import TCSlib.Complexity.BranchingPrograms.Defs
 
@@ -178,22 +179,6 @@ theorem evalWith_rel [AddCommMonoid α] [AddCommMonoid α'] (sel : β → α →
   rw [evalWith_eq, evalWith_eq, length_eq]
   exact h
 
-/-- The push-form sum of a one-hot vector: summing `Pi.single s 1` over the `j` with `f j = i`
-gives the one-hot vector of `f s` at `i`,
-`∑ j ∈ univ.filter (f · = i), Pi.single s 1 j = Pi.single (f s) 1 i`.  Glue for C8. -/
-private theorem sum_filter_single (f : Fin w → Fin w) (s i : Fin w) :
-    ∑ j ∈ univ.filter (fun j => f j = i), (Pi.single s 1 : Fin w → ℕ) j =
-      (Pi.single (f s) 1 : Fin w → ℕ) i := by
-  by_cases h : f s = i
-  · subst h
-    rw [Finset.sum_eq_single_of_mem (s := univ.filter fun j => f j = f s) s
-      (Finset.mem_filter.2 ⟨Finset.mem_univ s, rfl⟩) (fun j _ hj => Pi.single_eq_of_ne hj 1),
-      Pi.single_eq_same, Pi.single_eq_same]
-  · rw [Pi.single_eq_of_ne' h 1]
-    refine Finset.sum_eq_zero fun j hj => Pi.single_eq_of_ne ?_ 1
-    rintro rfl
-    exact h (Finset.mem_filter.1 hj).2
-
 /-- One instruction of the Boolean host on a one-hot vector: with the selector
 `sel b u v = if b then v else u`, `ι.stepWith sel x (Pi.single s 1) = Pi.single (ι.eval x s) 1`.
 Glue for C8 [BV14, Eq. (4), p013-b002, generalized from permutations]; split on `x ι.var`. -/
@@ -201,8 +186,12 @@ private theorem stepWith_single (ι : Instr w n) (x : Fin n → Bool) (s : Fin w
     ι.stepWith (fun b (u v : ℕ) => if b then v else u) x (Pi.single s 1) =
       Pi.single (ι.eval x s) 1 := by
   funext i
-  rw [Instr.stepWith_apply, sum_filter_single, sum_filter_single, Instr.eval_eq]
-  cases x ι.var <;> rfl
+  -- each push-form sum of a one-hot vector is `Finset.sum_pi_single'`
+  rw [Instr.stepWith_apply, Finset.sum_pi_single', Finset.sum_pi_single', Pi.single_apply,
+    Instr.eval_eq]
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  cases x ι.var <;> simp only [Bool.false_eq_true, ↓reduceIte] <;>
+    exact if_congr eq_comm rfl rfl
 
 /-- **C8.** Boolean semantics for **general** maps: with values in `ℕ` and the selector
 `sel b u v = if b then v else u`, the host started at the one-hot vector of `s` ends at the
