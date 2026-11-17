@@ -420,7 +420,13 @@ theorem searchUp_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (r
     exact ih (c₀ + 1) (by omega) (fun c' h1 h2 => hmin c' (by omega) h2) (by omega)
 
 /-- **Searching downwards**: from `r = c₀`, the loop `dec: r--; test: if P r goto yes else
-dec` stops at the greatest `c < c₀` with `P c`. -/
+dec` stops at the greatest `c < c₀` with `P c`.
+
+**Proof sketch.** Induction on `c₀ - (c + 1)`. Each round is two steps: `dec` sets `r` to
+`c₀ - 1`, then `test` checks `P (c₀ - 1)`. At `c₀ = c + 1` the test succeeds (`hc`) and the
+loop stops at `yes`. Otherwise `P (c₀ - 1)` fails (`hmax`), the test returns to `dec`, and the
+induction hypothesis applies at `c₀ - 1`. The register stays at most `B` throughout
+(`register_update_le`). -/
 theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (r : Fin m)
     (P : ℕ → Prop) [DecidablePred P] (dec test yes : Λ) (B : ℕ) (v : Fin m → ℕ)
     (hv : ∀ s, v s ≤ B)

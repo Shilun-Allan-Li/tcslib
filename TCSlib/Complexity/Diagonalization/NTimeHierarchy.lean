@@ -28,8 +28,8 @@ set_option autoImplicit false
 `f(n+1) = o(g(n))`, `NTIME(f) ⊊ NTIME(g)` — by **lazy diagonalization**, since
 a nondeterministic machine cannot flip its own answer directly. The tools are
 the clocked universal NDTM of [AB09, Exercise 2.6] at **linear overhead**
-(decision CH34-Q8: the strongest form possible, and exactly what puts the
-theorem at book strength), the trivial exponential-time deterministic
+(the strongest form possible: a quadratic overhead would not separate classes as close as
+`NTIME(n)` and `NTIME(n²)`), the trivial exponential-time deterministic
 evaluation of nondeterministic acceptance (the flip at each stage top), and
 the linear-overhead coded normal form ([BGW70]-style guess-then-verify).
 Phase P3.3 of `AroraBarakChapters3-4Plan.md`, over the code layer of
@@ -41,7 +41,8 @@ interpreter core `Turing.exists_ndInterpreterCore`
 hierarchy `Complexity.ntime_hierarchy` is proved from the diagonalizer
 `Turing.NTimeDiag.exists_diagonalizer` and the linear coded normal form
 `Turing.FinNDTM.exists_codeNDTM_accepts_linear`, both proved, and the two corollaries are proved
-from the hierarchy: all of them rest on the standard axioms alone.
+from the hierarchy, as are the book-form corollaries for monotone `f`: all of them rest on the
+standard axioms alone.
 
 ## Design (declared deviations, each for the audit)
 
@@ -74,8 +75,12 @@ from the hierarchy: all of them rest on the standard axioms alone.
   book's `f(n+1) = o(g(n))`; the `f n` term covers the inclusion half
   `NTIME f ⊆ NTIME (g+1)` without assuming `f` monotone (the book reads it
   off `f(n+1) = o(g)` implicitly); the `n + 1` term covers linear
-  startup/virtual-input costs. For monotone `f` the extra addend is absorbed,
-  so no strength is lost against [AB09].
+  startup/virtual-input costs. For monotone `f` the extra addends are absorbed:
+  `f n ≤ f(n+1)` and `n + 1 ≤ f(n+1)` give `f(n+1) + f n + n + 1 ≤ 3·f(n+1)`, so the book's
+  hypothesis implies ours (`Complexity.ntime_hierarchy_book`). Without monotonicity ours is
+  strictly stronger: a time-constructible `f` that alternates between `(n+1)²` on even `n` and
+  `n + 1` on odd `n`, with `g` equal to `f` on even `n` and to `(n+1)³` on odd `n`, satisfies
+  `f(n+1) = o(g(n))` but not `f(n) = o(g(n))`.
 * **The larger class is `NTIME (g + 1)`**, as in the received deterministic
   `Complexity.time_hierarchy`; the positive-bound form recovers `NTIME g`.
 * **Guess first, then interpret (sketch routes; user decisions of
@@ -104,7 +109,9 @@ from the hierarchy: all of them rest on the standard axioms alone.
   normal form ([BGW70]-style), stated in
   `TCSlib.Complexity.ClassNP.NDNormalForm` (moved there, user 2026-10-17).
 * `Complexity.ntime_hierarchy`, `Complexity.ntime_hierarchy_of_pos` —
-  [AB09, Theorem 3.2].
+  [AB09, Theorem 3.2], under the strengthened domination hypothesis above.
+* `Complexity.ntime_hierarchy_book`, `Complexity.ntime_hierarchy_book_of_pos` —
+  [AB09, Theorem 3.2] in the book's form `f(n+1) = o(g(n))`, for monotone `f`.
 * `Complexity.NTIME_linear_ssubset_square` — the ℕ-rendered showcase
   instance (the book displays `NTIME(n) ⊊ NTIME(n^{1.5})`).
 
@@ -1893,6 +1900,54 @@ theorem ntime_hierarchy_of_pos {f g : ℕ → ℕ} (hf : TimeConstructible f)
   have heq : NTIME (fun n => g n + 1) = NTIME g :=
     Set.Subset.antisymm hback (NTIME.mono (fun n => Nat.le_succ (g n)))
   simpa only [heq] using ntime_hierarchy hf hg hfg
+
+/-- The book's domination hypothesis implies the strengthened one when `f` is monotone:
+`f n ≤ f (n + 1)` and `n + 1 ≤ f (n + 1)` (time constructibility) give
+`f (n + 1) + f n + n + 1 ≤ 3 · f (n + 1)`, so the book's hypothesis at `3A` gives ours at `A`. -/
+private lemma nh_book_dom {f g : ℕ → ℕ} (hf : TimeConstructible f) (hmono : Monotone f)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f (n + 1) ≤ g n) :
+    ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n := by
+  intro A
+  obtain ⟨N, hN⟩ := hfg (3 * A)
+  refine ⟨N, fun n hn => ?_⟩
+  have h1 : f n ≤ f (n + 1) := hmono (Nat.le_succ n)
+  have h2 : n + 1 ≤ f (n + 1) := hf.1 (n + 1)
+  calc A * (f (n + 1) + f n + n + 1) ≤ A * (3 * f (n + 1)) :=
+        Nat.mul_le_mul_left A (by omega)
+    _ = 3 * A * f (n + 1) := by ring
+    _ ≤ g n := hN n hn
+
+/-- **The nondeterministic time hierarchy theorem in the book's form**
+([AB09, Theorem 3.2]): if `f` and `g` are time constructible, `f` is monotone and
+`f(n+1) = o(g(n))` — i.e. for every constant `A`, eventually `A · f (n + 1) ≤ g n` — then
+`NTIME(f) ⊊ NTIME(g + 1)`.
+
+Deviations from the book: `f` is assumed monotone, which the book does not state, and
+under which `Complexity.ntime_hierarchy`'s extra addends are absorbed (see the module
+docstring, which also shows that some non-monotone `f` satisfies the book's hypothesis but not
+`Complexity.ntime_hierarchy`'s); and the larger class is `NTIME (g + 1)`, which differs from
+`NTIME g` only where `g` vanishes (`Complexity.ntime_hierarchy_book_of_pos`).
+
+**Proof sketch.** `f n ≤ f (n + 1)` and `n + 1 ≤ f (n + 1)` give
+`f (n + 1) + f n + n + 1 ≤ 3 · f (n + 1)`, so the hypothesis at `3A` gives
+`Complexity.ntime_hierarchy`'s at `A`; conclude by `Complexity.ntime_hierarchy`. -/
+theorem ntime_hierarchy_book {f g : ℕ → ℕ} (hf : TimeConstructible f)
+    (hg : TimeConstructible g) (hmono : Monotone f)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f (n + 1) ≤ g n) :
+    NTIME f ⊂ NTIME (fun n => g n + 1) :=
+  ntime_hierarchy hf hg (nh_book_dom hf hmono hfg)
+
+/-- **The nondeterministic time hierarchy theorem in the book's form, for a positive bound**
+([AB09, Theorem 3.2]): as `Complexity.ntime_hierarchy_book`, with the larger class exactly
+`NTIME g` when `g` never vanishes — the book's `NTIME(f) ⊊ NTIME(g)`.
+
+**Proof sketch.** As `Complexity.ntime_hierarchy_book`, through
+`Complexity.ntime_hierarchy_of_pos` in place of `Complexity.ntime_hierarchy`. -/
+theorem ntime_hierarchy_book_of_pos {f g : ℕ → ℕ} (hf : TimeConstructible f)
+    (hg : TimeConstructible g) (hmono : Monotone f) (hpos : ∀ n, 0 < g n)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f (n + 1) ≤ g n) :
+    NTIME f ⊂ NTIME g :=
+  ntime_hierarchy_of_pos hf hg hpos (nh_book_dom hf hmono hfg)
 
 /-- **The showcase separation**:
 `NTIME(n + 1) ⊊ NTIME((n + 1)²)`, the ℕ-rendering of the book's displayed

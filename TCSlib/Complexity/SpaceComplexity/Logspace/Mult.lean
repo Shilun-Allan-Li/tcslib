@@ -601,7 +601,14 @@ private lemma mult_scan (x w : List Bool) (inner : Bool) (v : Fin 13 → ℕ)
   simpa only [one_mul] using paths
 
 /-- A tested pair contributes its product exactly when its two indices name the current
-column. This path stops immediately after the possible increment, before the next loop step. -/
+column. This path stops immediately after the possible increment, before the next loop step.
+
+**Proof sketch.** One step through the column test `diagonal`. If the indices `v 10` and `v 7`
+differ, it goes to `nextB false` with the registers unchanged. Otherwise it reads the first
+operand's bit at `v 0`, and a `0` goes to `nextB false` with nothing added. A `1` reads the
+second operand's bit at `v 9`; a `0` there likewise adds nothing, and a `1` takes the `add`
+step, which increments register 11. Every step's precondition is `mult_preconditions` with
+the register bound. -/
 private lemma mult_contribution (x : List Bool) (v : Fin 13 → ℕ)
     (bound : ∀ r, v r ≤ 4 * (x.length + 1)) :
     MultReach x (some .diagonal, v, none)
@@ -922,7 +929,13 @@ private lemma mult_result_read (x : List Bool) (v : Fin 13 → ℕ)
         (a := (some .resultRead, v, none)) ⟨mult_preconditions x _ v none, bound⟩)
 
 /-- Carry halving and bounded cursor advancement prepare the next column. The result
-pointer saturates at the input end rather than requiring equal operand/product lengths. -/
+pointer saturates at the input end rather than requiring equal operand/product lengths.
+
+**Proof sketch.** Three straight-line steps: `carryHalf` halves register 11, `nextColumn`
+increments the column register 7, and `nextResultTest` compares the result pointer `v 12` with
+the length register `v 1`. If they are equal, the run stops with the pointer unchanged, which
+is `min (v 12 + 1) (v 1)`. Otherwise one more step, `nextResult`, increments it. The register
+bounds follow from `register_update_le`. -/
 private lemma mult_next_column (x : List Bool) (v : Fin 13 → ℕ)
     (bound : ∀ r, v r ≤ 4 * (x.length + 1)) (position : v 12 ≤ v 1)
     (columnBound : v 7 + 1 ≤ 4 * (x.length + 1)) :
@@ -1141,7 +1154,15 @@ private lemma mult_last_bit (x : List Bool) (f : Fin 3) (v : Fin 13 → ℕ)
 
 /-- Canonical-field validation in continuation form. The only changed register is the
 scratch pointer. Empty fields represent zero; nonempty fields are accepted exactly when
-the physical last bit is true. The caller supplies the field-specific address equations. -/
+the physical last bit is true. The caller supplies the field-specific address equations.
+
+**Proof sketch.** One step through `canonTest f` (`emptyStep`). An empty field is canonical,
+and the run goes to `multCanonNext f` with the registers unchanged, where `success` finishes.
+Otherwise the scratch pointer (register 0) is set to the field's last address, and
+`mult_last_bit` reads that bit, which `lastRead` identifies with `w`'s last bit. By
+`mult_canonical_last`, a nonempty `w` is canonical exactly when that bit is true. If it is,
+the read continues to `multCanonNext f` and `success` finishes. If not, the run halts with
+`false` (`mult_return`), which is `answer` by `failure`. -/
 private lemma mult_validate_field (x w : List Bool) (f : Fin 3) (v : Fin 13 → ℕ)
     (answer : Bool) (bound : ∀ r, v r ≤ 4 * (x.length + 1))
     (emptyStep : astep multARM multOracle x (some (.canonTest f), v, none) =

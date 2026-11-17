@@ -112,7 +112,12 @@ theorem mem_indexLang_compQ_iff (f : List Bool → List Bool) (p : List Bool →
     · exact absurd h.symm (pairEncode_ne_nil _ _)
 
 /-- `compQ f` is polynomially bounded when `f` is: `|compQ f w| ≤ (2C + 3)(|w| + 1)^{c+1}`
-from `|f x| ≤ C (|x| + 1)^c`. -/
+from `|f x| ≤ C (|x| + 1)^c`.
+
+**Proof sketch.** If `w` does not decode as a pair `⟨x, b⟩` kept by `compQ`, the output is
+empty. Otherwise `w = ⟨x, b⟩` and the output is `⟨f x, b⟩`, of length `2|f x| + 2 + |b|`.
+Since `|w| = 2|x| + 2 + |b|`, we have `|f x| ≤ C(|w| + 1)^c ≤ C(|w| + 1)^{c+1}` and
+`2 + |b| ≤ |w| + 1 ≤ (|w| + 1)^{c+1}`, which sum to the bound. -/
 theorem compQ_length_le {f : List Bool → List Bool} {C c : ℕ}
     (hf : ∀ x, (f x).length ≤ C * (x.length + 1) ^ c) (w : List Bool) :
     (compQ f w).length ≤ (2 * C + 3) * (w.length + 1) ^ (c + 1) := by
