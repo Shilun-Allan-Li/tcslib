@@ -3,7 +3,7 @@
 The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/d4cfd2f893fb9b448c5d997f037d6ba055cbc031/outbox/audits/dw10-seal-inventory)
 is staged on the exchange at `d4cfd2f893fb9b448c5d997f037d6ba055cbc031` (local branch `stage/dw10-exchange`, an
 SSH-signed commit on the exchange tip `d929cc21ec817b2518d57a7262e42744728f029a` that adds only
-`outbox/audits/dw10-seal-inventory/`; **not yet pushed**, so the link resolves only after the push). Brief SHA-256
+`outbox/audits/dw10-seal-inventory/`; pushed 2026-11-17). Brief SHA-256
 `a0413cd2d65ddee10951e9580d874e9a5b661fe0bbcb6041c5cd1c38c5d6a383`; pack `SHA256SUMS` SHA-256
 `c89967564fa3d1cf61d6f0dafe2fab39d148bd0af026144194c8b1be23e22e7a`. The worker is Claude (standing ruling: Claude for
 fills and all other external jobs), a lead with up to 2 sub-agents on disjoint owner sets. Seyoon dispatches.
@@ -22,12 +22,12 @@ notation, as `PolyExpr.eval` is (ruling of 2026-11-07): strict-only failures are
 files that hold no item stay excluded. The handoff for the Complexity-library chat (items, notes and its own prompt) is
 in the records at `briefs/pass-shelat-ch5-8/cleanup-dw10/handoff-complexity/`, outside the pack.
 
-**Records pin.** `<RECORDS-PIN>`: the records commit that carries this folder. The maintainer writes its full hash
+**Records pin.** `4367db3c9f3c0b4dd81117ab001e6707aa42c0c5`: the records commit that carries this folder. The maintainer writes its full hash
 here, and in the prompt below, after committing.
 
 **Before dispatch** (maintainer):
 1. Commit `briefs/pass-shelat-ch5-8/cleanup-dw10/issued-r1/` to the records branch; put that commit's full hash for
-   `<RECORDS-PIN>` in the **Records pin** line and in the prompt.
+   `4367db3c9f3c0b4dd81117ab001e6707aa42c0c5` in the **Records pin** line and in the prompt.
 2. Push the exchange commit. If it is replayed onto a newer exchange tip, put the pushed hash in the pack link, the
    staging line and the prompt.
 
@@ -44,7 +44,7 @@ Mathlib). You may use up to 2 sub-agents, on disjoint owner sets.
    outbox/audits/dw10-seal-inventory/README.md, brief.md and
    fill-environment-addendum.md. Verify the pack with SHA256SUMS
    (shasum -a 256 -c, from its directory). You are the lead the brief
-   describes. The records of this issue are at commit <RECORDS-PIN> of
+   describes. The records of this issue are at commit 4367db3c9f3c0b4dd81117ab001e6707aa42c0c5 of
    cryptography/pass-shelat-ch2-4
    (briefs/pass-shelat-ch5-8/cleanup-dw10/issued-r1/, equal to the
    pack); the #248 seal ledger, the 2026-11-10 provider rulings, the

@@ -1,5 +1,10 @@
 # Prompt for the Complexity-library chat (DW-10 handoff)
 
+> **HELD (Seyoon, 2026-11-17): wait for the campaign merge.** This handoff is released only after
+> `cryptography/pass-shelat-ch2-4` merges into `main`. At release the maintainer re-derives `items.tsv`
+> at `main`'s tip, replaces the Lean base in step 2 with that tip, and fills `<RECORDS-PIN>`. Until then
+> the campaign's own DW-10 inventory and Stage 2 cover only cryptography content (Q1).
+
 Paste the text below into a new chat. The maintainer fills in `<RECORDS-PIN>` (the records commit that carries this folder).
 
 ```text

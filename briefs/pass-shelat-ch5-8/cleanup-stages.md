@@ -75,6 +75,13 @@ The `ps10-cite-check` delivery (exchange `69add654`; `ingests/ps10-cite-check-fi
 ## Historical seal debt (DW-10; Seyoon, 2026-11-17)
 The plan had omitted the #248 historical seal ledger and the inherited-seal repairs deferred on 2026-11-10. Ruling: run a fresh canonical-seal inventory of all Pass–shelat-owned files at the tip now, reconcile it with the #248 ledger, and fold the fixes into **Stage 2**. Seal-B-only items (Yao and sc-garble `PolyExpr.eval`) and non-campaign files (`Complexity/TuringMachine/CodeSimulator.lean`) are listed, then handled by separate ruling.
 
+**Inventory rulings (Seyoon, 2026-11-17; job `dw10-seal-inventory`, `cleanup-dw10/issued-r1/`):**
+- **Q1:** the campaign is responsible only for seals of cryptography content. The 21 Complexity/Arora–Barak files with recorded debt (incl. `Uniform`, `CodeSimulator`) are not sealed by the job; their 608 recorded items are `HANDED-OFF` to a separate Complexity-library chat (`cleanup-dw10/handoff-complexity/`). An owner failure whose fix needs a reader in a Complexity file stays ours, as `STAGE2-PROVIDER-READER`; Seyoon rules placement.
+- **Q2:** the 20 adopted Garg and InformationTheory files are owners (434 owners in all).
+- **Q3:** the `FinDist.instCoeFunForallReal` coercion is notation, like `PolyExpr.eval` (2026-11-07). Strict variants still run; strict-only failures are recorded, need no fix and no further ruling.
+- **Q4:** Arora–Barak files the campaign touched that hold no item are excluded.
+- **Handoff target:** wait for the campaign merge. The Complexity handoff is released only after `cryptography/pass-shelat-ch2-4` merges into `main`; it is then re-derived at `main`'s tip and fixed by PR into `main`.
+
 **Stage 2 handover, a seventh change for Seyoon to confirm:** removing the public `EnsembleLemmas.blocks` alias also needs the body of `ETTGame.dTape` (`EncryptThenTag/Handler.lean:178`) changed. It is of the same kind as the six approved under CS1-Q2.
 
 **Seventh change approved (Seyoon, 2026-11-17):** the body of `ETTGame.dTape` (`EncryptThenTag/Handler.lean:178`). Stage 2 makes all seven DL-35 changes, and its gate checks each one.
