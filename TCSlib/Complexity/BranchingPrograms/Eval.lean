@@ -98,7 +98,7 @@ theorem evalWith_eq [AddCommMonoid α] (sel : β → α → α → α) (inp : Fi
 **Proof sketch.** `evalWith_eq` and `List.foldl_nil`. -/
 theorem evalWith_nil [AddCommMonoid α] (sel : β → α → α → α) (inp : Fin n → β)
     (V : Fin w → α) : (⟨[]⟩ : BranchingProgram w n).evalWith sel inp V = V := by
-  sorry
+  rw [evalWith_eq, List.foldl_nil]
 
 /-- **C5.** The host runs a concatenation in program order:
 `(B₁ ++ B₂).evalWith sel inp V = B₂.evalWith sel inp (B₁.evalWith sel inp V)`.  Glue (reader of
@@ -108,7 +108,8 @@ the fold).
 theorem evalWith_append [AddCommMonoid α] (sel : β → α → α → α) (inp : Fin n → β)
     (B₁ B₂ : BranchingProgram w n) (V : Fin w → α) :
     (B₁ ++ B₂).evalWith sel inp V = B₂.evalWith sel inp (B₁.evalWith sel inp V) := by
-  sorry
+  rw [evalWith_eq, evalWith_eq sel inp B₂, evalWith_eq sel inp B₁, append_instrs,
+    List.foldl_append]
 
 /-- **C6.** For a permutation instruction each sum of the push form has exactly one term, and the
 step is BV14's pull form: `ι.stepWith sel inp V i = sel (inp ι.var) (V (σ₀⁻¹ i)) (V (σ₁⁻¹ i))`
@@ -126,7 +127,18 @@ theorem Instr.stepWith_of_isPermutation [AddCommMonoid α] (sel : β → α → 
     ι.stepWith sel inp V i =
       sel (inp ι.var) (V ((Equiv.ofBijective _ (ι.isPermutation_iff.1 hι).1).symm i))
         (V ((Equiv.ofBijective _ (ι.isPermutation_iff.1 hι).2).symm i)) := by
-  sorry
+  -- for a bijection `f`, the push-form sum at `i` has the single term `j = f⁻¹ i`
+  have key : ∀ (f : Fin w → Fin w) (hf : Function.Bijective f),
+      ∑ j ∈ univ.filter (fun j => f j = i), V j = V ((Equiv.ofBijective f hf).symm i) := by
+    intro f hf
+    have hs : univ.filter (fun j => f j = i) = {(Equiv.ofBijective f hf).symm i} := by
+      ext j
+      rw [Finset.mem_filter, Finset.mem_singleton, ← Equiv.ofBijective_apply f hf,
+        Equiv.apply_eq_iff_eq_symm_apply]
+      exact ⟨fun h => h.2, fun h => ⟨Finset.mem_univ j, h⟩⟩
+    rw [hs, Finset.sum_singleton]
+  rw [Instr.stepWith_apply, key _ (ι.isPermutation_iff.1 hι).1,
+    key _ (ι.isPermutation_iff.1 hι).2]
 
 /-- **C7.** **Step-indexed relational host lemma**: two runs of the host on the same program,
 possibly with different selectors, inputs and value types, that are related by `R 0` at the
@@ -148,7 +160,49 @@ theorem evalWith_rel [AddCommMonoid α] [AddCommMonoid α'] (sel : β → α →
       R (t + 1) ((B.instrs[t]'(ht.trans_eq B.length_eq)).stepWith sel inp U)
         ((B.instrs[t]'(ht.trans_eq B.length_eq)).stepWith sel' inp' U')) :
     R B.length (B.evalWith sel inp V) (B.evalWith sel' inp' V') := by
-  sorry
+  -- the folds over the first `k` instructions are related by `R k`
+  have hrun : ∀ k (hk : k ≤ B.instrs.length),
+      R k ((B.instrs.take k).foldl (fun U ι => ι.stepWith sel inp U) V)
+        ((B.instrs.take k).foldl (fun U ι => ι.stepWith sel' inp' U) V') := by
+    intro k
+    induction k with
+    | zero => intro _; rw [List.take_zero, List.foldl_nil, List.foldl_nil]; exact h0
+    | succ k ih =>
+      intro hk
+      have hlt : k < B.instrs.length := hk
+      rw [List.take_succ_eq_append_getElem hlt, List.foldl_append, List.foldl_append,
+        List.foldl_cons, List.foldl_nil, List.foldl_cons, List.foldl_nil]
+      exact hstep k (B.length_eq ▸ hlt) _ _ (ih hlt.le)
+  have h := hrun B.instrs.length le_rfl
+  rw [List.take_length] at h
+  rw [evalWith_eq, evalWith_eq, length_eq]
+  exact h
+
+/-- The push-form sum of a one-hot vector: summing `Pi.single s 1` over the `j` with `f j = i`
+gives the one-hot vector of `f s` at `i`,
+`∑ j ∈ univ.filter (f · = i), Pi.single s 1 j = Pi.single (f s) 1 i`.  Glue for C8. -/
+private theorem sum_filter_single (f : Fin w → Fin w) (s i : Fin w) :
+    ∑ j ∈ univ.filter (fun j => f j = i), (Pi.single s 1 : Fin w → ℕ) j =
+      (Pi.single (f s) 1 : Fin w → ℕ) i := by
+  by_cases h : f s = i
+  · subst h
+    rw [Finset.sum_eq_single_of_mem (s := univ.filter fun j => f j = f s) s
+      (Finset.mem_filter.2 ⟨Finset.mem_univ s, rfl⟩) (fun j _ hj => Pi.single_eq_of_ne hj 1),
+      Pi.single_eq_same, Pi.single_eq_same]
+  · rw [Pi.single_eq_of_ne' h 1]
+    refine Finset.sum_eq_zero fun j hj => Pi.single_eq_of_ne ?_ 1
+    rintro rfl
+    exact h (Finset.mem_filter.1 hj).2
+
+/-- One instruction of the Boolean host on a one-hot vector: with the selector
+`sel b u v = if b then v else u`, `ι.stepWith sel x (Pi.single s 1) = Pi.single (ι.eval x s) 1`.
+Glue for C8 [BV14, Eq. (4), p013-b002, generalized from permutations]; split on `x ι.var`. -/
+private theorem stepWith_single (ι : Instr w n) (x : Fin n → Bool) (s : Fin w) :
+    ι.stepWith (fun b (u v : ℕ) => if b then v else u) x (Pi.single s 1) =
+      Pi.single (ι.eval x s) 1 := by
+  funext i
+  rw [Instr.stepWith_apply, sum_filter_single, sum_filter_single, Instr.eval_eq]
+  cases x ι.var <;> rfl
 
 /-- **C8.** Boolean semantics for **general** maps: with values in `ℕ` and the selector
 `sel b u v = if b then v else u`, the host started at the one-hot vector of `s` ends at the
@@ -167,6 +221,19 @@ is `Pi.single (fold f s) 1`), using `evalWith_eq` and `yield_eq`. -/
 theorem evalWith_single (B : BranchingProgram w n) (x : Fin n → Bool) (s : Fin w) :
     B.evalWith (fun b (u v : ℕ) => if b then v else u) x (Pi.single s 1) =
       Pi.single (B.yield x s) 1 := by
-  sorry
+  -- the host fold from the one-hot vector of `f s` ends one-hot at the yield's fold from `f`
+  have hfold : ∀ (l : List (Instr w n)) (f : Fin w → Fin w),
+      l.foldl (fun U ι => ι.stepWith (fun b (u v : ℕ) => if b then v else u) x U)
+          (Pi.single (f s) 1) =
+        Pi.single (l.foldl (fun g ι => ι.eval x ∘ g) f s) 1 := by
+    intro l
+    induction l with
+    | nil => intro f; rfl
+    | cons ι l ih =>
+      intro f
+      rw [List.foldl_cons, List.foldl_cons, stepWith_single]
+      exact ih (ι.eval x ∘ f)
+  rw [evalWith_eq, yield_eq]
+  exact hfold B.instrs id
 
 end BranchingProgram
