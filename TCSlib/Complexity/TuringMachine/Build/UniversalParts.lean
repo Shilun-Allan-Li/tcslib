@@ -18,8 +18,7 @@ set_option autoImplicit false
 [AB09, §1.4.1 and the proof of Theorem 1.9]: the pieces that the `k`-generic universal machines
 of `TuringMachine/UniversalK.lean` (U2) are assembled from, published so that a second consumer
 (the space-universal machine `Complexity.space_universal`, [AB09, Exercise 4.1]) composes them
-instead of re-deriving them. Harvested from `UniversalK`'s privates (the U2 harvest API, user
-ruling of 2026-11-06: a new `Build/` module; plan `campaign/items/roadmap3/PLAN.md`, §F6(c)).
+instead of re-deriving them. They were formerly private to `UniversalK`.
 
 * **The forwarding loop at an initial configuration.** H2-F's encoding
   `Turing.StepBlock.forwardLoopCfg` of a machine's initial configuration (its tapes, fields and
@@ -74,7 +73,7 @@ namespace Turing
 
 /-- **The restart identity**: if a machine `B`'s initial state is the image `f A.q₀` of
 another machine `A`'s, then `B`'s initial configuration on any input is `A`'s with its state
-relabelled by `f`. Ledger RS-1's general form (`campaign/duplication-ledger.md`). [AB09, §1.4.1]
+relabelled by `f`. [AB09, §1.4.1]
 (glue for the universal machine's composed startups). -/
 theorem MultiTapeTM.initCfg_eq_mapState {m : ℕ} {P Q : Type}
     (A : MultiTapeTM m Bool P) (B : MultiTapeTM m Bool Q) (f : P → Q)
