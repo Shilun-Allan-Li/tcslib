@@ -86,11 +86,11 @@ disclosed to the final audit, not fixed.
     `Logspace/QueryReshape`; `searchDown_run` (21) in `Machines/NARMPSem`;
   - `Machines/Parse.lean`'s module docstring has no `## Main results` section.
 
-## Expected at `cryptography/pass-shelat-ch2-4`'s merge (not yet in the tree)
+## Overlap with `cryptography/pass-shelat-ch2-4`
 
-`CH2-4-OVERLAP.md` gives the details. Nothing below exists on this branch yet; these items arise
-when ch2-4 merges into `main` after this campaign. Their home and ownership are for both campaigns
-to decide.
+`CH2-4-OVERLAP.md` gives the details. The first row is prospective: it arises when ch2-4 merges
+into `main` after this campaign. The second row is already in the tree, adopted in #354 (corrected
+after gate 158 round 2, G158-R2-01). Home and ownership are for both campaigns to decide.
 
 | Item | Source | Note |
 |---|---|---|
