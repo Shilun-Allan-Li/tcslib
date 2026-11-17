@@ -1,0 +1,34 @@
+"""Gate 159: declarations on main that the integration head no longer has, and what on the head
+still names them (blueprint \\lean{} entries, \\uses, reference files, organization lists).
+Usage: removed.py <repo> <main> <head> <out.json>"""
+import json, re, subprocess, sys
+from pathlib import Path
+R, M, W, out = sys.argv[1:5]
+git = lambda *a: subprocess.check_output(['git', '-C', R, *a]).decode()
+decl = Path(R, 'devtools/seyoon/declfreeze.py').read_text()
+ns = {}; exec(compile(decl.split('a = chunks(open(sys.argv[1]).read())')[0], 'declfreeze', 'exec'), ns)
+files = [p for p in git('diff', '--name-only', M, W, '--', 'TCSlib').split() if p.endswith('.lean')]
+def names(rev, p):
+    r = subprocess.run(['git', '-C', R, 'show', f'{rev}:{p}'], capture_output=True)
+    return {n for n, _, _ in ns['chunks'](r.stdout.decode())} if r.returncode == 0 else set()
+before, after = set(), set()
+for p in files:
+    before |= {(n, p) for n in names(M, p)}; after |= {n for n in names(W, p)}
+# a declaration counts as removed only if no changed file at the head declares it (moves are not removals)
+removed = sorted({n for n, p in before if n not in after})
+home = {n: p for n, p in before}
+bp = git('grep', '-n', '-F', '-e', 'xx-never-xx', W, '--', 'blueprint') if False else None
+hits = {}
+lines = git('grep', '-n', '-E', r'\\lean\{|\\uses\{', W, '--', 'blueprint/src/chapter').splitlines()
+ref_files = git('ls-tree', '-r', '--name-only', W, 'blueprint/src/references').split()
+for n in removed:
+    pat = re.compile(r'(?<![\w.])' + re.escape(n) + r'(?![\w.])')
+    h = [l.split(':', 1)[1] for l in lines if pat.search(l)]
+    h += [f for f in ref_files if Path(f).stem.rsplit('.', 0)[0].startswith(n + '.') or Path(f).name.startswith(n + '.')]
+    if h: hits[n] = {'declared_on_main_in': home[n], 'named_on_head_in': sorted(set(x.split(':')[0] for x in h)), 'count': len(h)}
+res = {'main': M, 'head': W, 'changed_lean_files': len(files), 'removed_declarations': len(removed),
+       'removed_still_named_on_head': len(hits), 'by_main_file': {}, 'entries': hits}
+for n, v in hits.items(): res['by_main_file'][v['declared_on_main_in']] = res['by_main_file'].get(v['declared_on_main_in'], 0) + 1
+open(out, 'w').write(json.dumps(res, indent=1) + '\n')
+print(res['changed_lean_files'], 'files;', res['removed_declarations'], 'removed;', res['removed_still_named_on_head'], 'still named')
+for k, v in sorted(res['by_main_file'].items(), key=lambda x: -x[1]): print(v, k)

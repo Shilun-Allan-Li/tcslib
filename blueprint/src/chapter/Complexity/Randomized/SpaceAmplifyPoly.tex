@@ -128,8 +128,8 @@ For nonnegative integers $K,n,d$, if $32(n+1)^d\le K$, then $2(8/9)^{\left\lfloo
 \end{theorem}
 
 \begin{theorem}[Bound on the Binary Digit Length]
-\lean{Randomized.PolyAmp.two_pow_bits_le}
-\label{Randomized.PolyAmp.two_pow_bits_le}
+\lean{Complexity.LogProg.two_pow_bits_le_two_mul_add_one}
+\label{Complexity.LogProg.two_pow_bits_le_two_mul_add_one}
 \leanok
 \difficulty{5}
 For every nonnegative integer $n$, the number of binary strings of length equal to the
@@ -138,8 +138,8 @@ $\ell(n)$ is the length of the binary expansion of $n$ (with length zero when $n
 \end{theorem}
 
 \begin{theorem}[Binary bit-length bound]
-\lean{Randomized.PolyAmp.lt_two_pow_bits}
-\label{Randomized.PolyAmp.lt_two_pow_bits}
+\lean{Complexity.LogProg.lt_two_pow_bits}
+\label{Complexity.LogProg.lt_two_pow_bits}
 \leanok
 \difficulty{1}
 For every natural number $n$, one has $n < 2^{\lvert\operatorname{bits}(n)\rvert}$,
@@ -150,7 +150,7 @@ where $\operatorname{bits}(n)$ is the binary expansion of $n$.
 \lean{Randomized.PolyAmp.logSpace_le_ell}
 \label{Randomized.PolyAmp.logSpace_le_ell}
 \leanok
-\uses{Complexity.logSpace, Randomized.PolyAmp.ell, Randomized.PolyAmp.lt_two_pow_bits}
+\uses{Complexity.logSpace, Randomized.PolyAmp.ell, Complexity.LogProg.lt_two_pow_bits}
 \difficulty{4}
 For every natural number $n$, the quantity $\lfloor\log_2 n\rfloor+1$ is at most one
 more than the length of the binary representation of $n$.
@@ -160,7 +160,7 @@ more than the length of the binary representation of $n$.
 \lean{Randomized.PolyAmp.bigK_ge}
 \label{Randomized.PolyAmp.bigK_ge}
 \leanok
-\uses{Randomized.PolyAmp.bigK, Randomized.PolyAmp.ell, Randomized.PolyAmp.lt_two_pow_bits}
+\uses{Randomized.PolyAmp.bigK, Randomized.PolyAmp.ell, Complexity.LogProg.lt_two_pow_bits}
 \difficulty{5}
 For all natural numbers $F,n,d$, if $d+5\le F$, then $32(n+1)^d\le 2^{F\ell(n)}$, where
 $\ell(n)$ is one more than the length of the binary representation of $n$.
@@ -170,7 +170,7 @@ $\ell(n)$ is one more than the length of the binary representation of $n$.
 \lean{Randomized.PolyAmp.bigK_le}
 \label{Randomized.PolyAmp.bigK_le}
 \leanok
-\uses{Randomized.PolyAmp.bigK, Randomized.PolyAmp.ell, Randomized.PolyAmp.two_pow_bits_le}
+\uses{Randomized.PolyAmp.bigK, Randomized.PolyAmp.ell, Complexity.LogProg.two_pow_bits_le_two_mul_add_one}
 \difficulty{4}
 For all natural numbers $F,n$, $2^{F\ell(n)}\le 4^F(n+1)^F$, where $\ell(n)$ is one more
 than the length of the binary representation of $n$.
@@ -180,7 +180,7 @@ than the length of the binary representation of $n$.
 \lean{Randomized.PolyAmp.ell_le}
 \label{Randomized.PolyAmp.ell_le}
 \leanok
-\uses{Randomized.PolyAmp.ell, Randomized.PolyAmp.lt_two_pow_bits}
+\uses{Randomized.PolyAmp.ell, Complexity.LogProg.lt_two_pow_bits}
 \difficulty{3}
 For every natural number $n$, the length of its binary representation plus one is at
 most $n+1$.

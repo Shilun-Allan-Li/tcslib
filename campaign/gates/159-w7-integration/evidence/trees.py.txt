@@ -1,0 +1,51 @@
+"""Gate 159 (W7): compare main, the campaign and the integration head path by path.
+Usage: trees.py <repo> <main> <campaign> <integration head> <out.json>"""
+import json, subprocess, sys
+from collections import Counter
+R, M, C, W, out = sys.argv[1:6]
+git = lambda *a: subprocess.check_output(['git', '-C', R, *a]).decode()
+M, C, W = (git('rev-parse', x).strip() for x in (M, C, W))
+def tree(rev):
+    t = {}
+    for line in git('ls-tree', '-r', '--full-tree', rev).splitlines():
+        meta, path = line.split('\t', 1); mode, kind, sha = meta.split()
+        t[path] = (mode, sha)
+    return t
+tm, tc, tw = tree(M), tree(C), tree(W)
+excl = ('campaign/', 'devtools/')
+off_main = {p: v for p, v in tc.items() if p.startswith(excl)}
+cat = {'unchanged_everywhere': 0, 'carried_added': [], 'carried_modified': [], 'carried_deleted': [],
+       'kept_main_text': [], 'changed_in_integration_only': [], 'unexplained': []}
+for p in sorted(set(tm) | set(tc) | set(tw)):
+    if p.startswith(excl):
+        if p in tw: cat['unexplained'].append({'path': p, 'why': 'campaign-only path on the integration head'})
+        continue
+    m, c, w = tm.get(p), tc.get(p), tw.get(p)
+    if m == c == w: cat['unchanged_everywhere'] += 1
+    elif c == w and m is None: cat['carried_added'].append({'path': p, 'blob': c[1]})
+    elif c == w and c is None:
+        d = git('log', '--diff-filter=D', '-1', '--format=%H %s', f'{M}..{C}', '--', p).strip()
+        cat['carried_deleted'].append({'path': p, 'main_blob': m[1], 'deleted_by': d})
+    elif c == w: cat['carried_modified'].append({'path': p, 'main_blob': m[1], 'blob': c[1]})
+    elif w == m: cat['kept_main_text'].append({'path': p, 'main_blob': m[1], 'campaign_blob': c and c[1]})
+    else: cat['changed_in_integration_only'].append({'path': p, 'main_blob': m and m[1], 'campaign_blob': c and c[1], 'integration_blob': w and w[1]})
+lean = lambda xs: sum(1 for x in xs if x['path'].endswith('.lean'))
+res = {
+ 'commits': {'main': M, 'campaign': C, 'integration_head': W,
+             'integration_parent': git('rev-parse', W + '^').strip(),
+             'integration_parents_count': len(git('rev-list', '--parents', '-n', '1', W).split()) - 1,
+             'main_is_ancestor_of_campaign': subprocess.run(['git', '-C', R, 'merge-base', '--is-ancestor', M, C]).returncode == 0,
+             'merge_base_main_integration': git('merge-base', M, W).strip(),
+             'campaign_commits_not_on_main': int(git('rev-list', '--count', f'{M}..{C}')),
+             'main_commits_not_on_campaign': int(git('rev-list', '--count', f'{C}..{M}'))},
+ 'paths': {'main': len(tm), 'campaign': len(tc), 'integration_head': len(tw)},
+ 'left_off_main': {'files': len(off_main), 'by_top_folder': dict(Counter(p.split('/')[0] for p in off_main)),
+                   'present_on_main_already': sorted(p for p in off_main if p in tm),
+                   'campaign_tree': git('rev-parse', C + ':campaign').strip(), 'devtools_tree': git('rev-parse', C + ':devtools').strip()},
+ 'counts': {k: (v if isinstance(v, int) else len(v)) for k, v in cat.items()},
+ 'lean_counts': {k: lean(v) for k, v in cat.items() if not isinstance(v, int)},
+ 'lean_trees_equal_except_listed': sorted(p for p in set(tc) | set(tw) if p.startswith('TCSlib') and tc.get(p) != tw.get(p)),
+ 'categories': cat}
+open(out, 'w').write(json.dumps(res, indent=1) + '\n')
+print(json.dumps({k: res[k] for k in ('commits', 'paths', 'counts', 'lean_counts', 'lean_trees_equal_except_listed')}, indent=1))
+print('left off main', res['left_off_main']['files'], res['left_off_main']['by_top_folder'], 'already on main:', len(res['left_off_main']['present_on_main_already']))
