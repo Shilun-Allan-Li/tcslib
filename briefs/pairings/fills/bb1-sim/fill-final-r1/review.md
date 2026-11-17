@@ -217,6 +217,11 @@ My own searches covered:
 They found **no undisclosed duplicate of a public lemma**:
 - T2's inline `h01` (`|x − y| ≤ 1` on `[0, 1]`) has no public counterpart; the nearest is
   `abs_prob_sub_le_of_agree`, a different statement.
+
+  > **Correction (2026-11-17, after Gate 48 round 1, G48-01).** This is wrong: `h01` re-derives Mathlib's
+  > `abs_sub_le_of_nonneg_of_le` (pinned `Mathlib/Algebra/Order/Group/Abs.lean:119–124`), which the library already
+  > uses in `LWE/BitNoise.lean:110`. My search did not cover Mathlib's generic `abs` lemmas. Seyoon accepted the overlap
+  > as ledger row **DL-58**, repaid in cleanup Stage 2 (proof-only). The verdict above stands.
 - `pair_pow_val_eq`, `F_target_eq`, `key_eq` and `exists_equiv_mul_pow` are compositions of
   `Pairing/Group` facts, as REPORT says.
 - T4's `drawStep_*` rows are about a different handler.
