@@ -315,3 +315,27 @@ must be empty. Its checked state is `state/state-after-update-93ae671e.json` (in
 as snapshot #8 first, this tree still matches #8 + 6a (1455 equal to #8's map). At adoption: remove `Mathlib/`, make the map
 (must be `11d9fbfd…`), `basecheck` against that state, swap, verify 0/0/0. Any other Lean change landing first means another
 re-replay.
+
+## LE-g50 (Gate 50 pre-dispatch sweep; Seyoon: fix now) — 2026-11-17
+
+Filed by the maintainer from the job's returned report; evidence `le-g50-evidence.zip`
+(`51151f449278f1bd4921393c86d5c9190eb9b30b4a5c0c4e31eaa9f8d3740893`, inner SHA256SUMS).
+
+- **Commit** `597fb736e545706a058cc212243a13f6dadfeceb` (tree `df05652d512a702fa8e379fe3f16258f0e1d20d5`) on `93ae671e`,
+  signed, pushed fast-forward. Proof-only, 3 files, +24/−51 (diff `475e16b7…`).
+  - **U1** `Combinators.lean`: `depth_subst_le`, `maxFanin_subst_le` use `maxDepth_le_of_forall`/`maxFaninL_le_of_forall`
+    with `List.forall_mem_map` instead of inline list inductions; sketches updated.
+  - **U2** `TreeNCAC.lean`: private `maxDepth_map_le`/`maxFaninL_map_le` deleted; `toBinary_maxFanin_le` and
+    `toBinary_depth_le` use the public lemmas.
+  - **U3** `Barrington.lean`: private `IsFiveCycle.pow_apply_eq_iff` proved from Mathlib's
+    `Equiv.Perm.IsCycleOn.pow_apply_eq_pow_apply` via `IsCycle.isCycleOn` (kept: 4 uses); docstring cites them.
+  - `depth_neg`/`maxFanin_neg` unchanged (equalities, not instances).
+- **Replay** on `olean-replay-6a-land8` (`cp -al` of `-land7`): 16 modules rebuilt, 1429 reused, all rc 0, 0 errors/
+  sorry/warnings; state 1447 OK; link count 1; snapshot #8 and the parent rehash 0/0/0; output map
+  `963ddeb472f70afe9a5ae8d2a30574d3fde2348efdf20b9a9ab237b31273cf33` (vs parent: exactly the 3 edited modules changed).
+- **Checks:** 0 `sorry` in the 13 6a modules; admissions 192 per module; axioms: 98 targets and all checked constants
+  standard, no `sorryAx` (census −6 = the deleted privates' constants); coe-A on 22 owners: no new failures,
+  **TreeNCAC 2 → 0 errors (G6A-F05 cleared)**, five owners lose exactly the two deleted matchers from their requests;
+  root coe-A 14,105 requests, 0 errors; decls2 289/1/0 (unchanged); `touched.py` 5 CHANGED + 2 private REMOVED; lint no
+  new FAIL/WARN.
+- **Adoption:** at a #366 merge whose Lean equals `df05652d`; `merge-tree` with the tip is clean and Lean-equal.
