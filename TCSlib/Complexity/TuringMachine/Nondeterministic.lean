@@ -84,6 +84,8 @@ state embeddings, the slice lemma, state relabelling and input locality.
   algebra (proved; pure unfoldings, the nondeterministic counterparts of the vendored
   `runFrom` lemmas).
 * `Turing.NDTM.HaltsWithin.mono` — all-branch halting is monotone in the time bound.
+* `Turing.NDTM.exists_first_halt` — a halted branch halts first at a least prefix of its choice
+  word, live before it and already in its final configuration there.
 * `Turing.NDTM.not_haltsWithin_zero` — no machine halts within `0` steps along every branch: the
   initial configuration is live (the counterpart of `Turing.FinTM.not_computesInTime_zero`).
 * `Turing.MultiTapeTM.toNDTM_runWith` — the embedded deterministic machine ignores its
@@ -273,6 +275,29 @@ theorem not_haltsWithin_zero (tm : NDTM k Symbol State) (input : List Symbol) :
   have h0 := haltsWithin_iff.mp h [] rfl
   rw [runWith_nil, initCfg_eq, Cfg.init_state] at h0
   exact Option.some_ne_none _ h0
+
+/-- **First halt along a choice word**: if the run from `cfg` along the choice word `w` has
+halted, there is a least prefix length `u ≤ |w|` at which it has halted: the run along
+`w.take u` is halted, the run along every shorter prefix is live, and the run along `w` is the
+run along `w.take u`, halting being absorbing under every choice [AB09, §2.1.2]. The
+nondeterministic counterpart of `Turing.MultiTapeTM.exists_first_halt`.
+
+**Proof sketch.** Take `u` least with a halted run along `w.take u` (`Nat.find`; `u = |w|`
+qualifies, `List.take_length`). Minimality gives liveness below `u`. Splitting
+`w = w.take u ++ w.drop u`, `Turing.NDTM.runWith_append` and `Turing.NDTM.runWith_of_halt`
+identify the run along `w` with the run along `w.take u`. -/
+theorem exists_first_halt (tm : NDTM k Symbol State) (cfg : Cfg k Symbol State input)
+    {w : List Bool} (h : (tm.runWith w cfg).state = none) :
+    ∃ u ≤ w.length, (tm.runWith (w.take u) cfg).state = none ∧
+      (∀ v < u, (tm.runWith (w.take v) cfg).state ≠ none) ∧
+      tm.runWith w cfg = tm.runWith (w.take u) cfg := by
+  classical
+  have hex : ∃ u, (tm.runWith (w.take u) cfg).state = none :=
+    ⟨w.length, by rw [List.take_length]; exact h⟩
+  refine ⟨Nat.find hex, Nat.find_min' hex (by rw [List.take_length]; exact h),
+    Nat.find_spec hex, fun v hv => Nat.find_min hex hv, ?_⟩
+  conv_lhs => rw [← List.take_append_drop (Nat.find hex) w]
+  rw [runWith_append, runWith_of_halt _ (Nat.find_spec hex)]
 
 end NDTM
 

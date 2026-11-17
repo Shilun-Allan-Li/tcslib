@@ -3054,14 +3054,8 @@ private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
       ((nf_host N).runWith w ((nf_host N).initCfg x)).output = [true] := by
   obtain ⟨w, hw, hh, ho⟩ := FinNDTM.acceptsWithin_iff.mp hN
   -- the first halting time
-  have hex : ∃ r, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state = none :=
-    ⟨t, by rw [← hw, List.take_length]; exact hh⟩
-  classical
-  set t₀ := Nat.find hex with ht₀
-  have hspec : (N.tm.runWith (w.take t₀) (N.tm.initCfg x)).state = none := Nat.find_spec hex
-  have hmin : ∀ r < t₀, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state ≠ none :=
-    fun r hr => Nat.find_min hex hr
-  have hle : t₀ ≤ t := Nat.find_min' hex (by rw [← hw, List.take_length]; exact hh)
+  obtain ⟨t₀, hle, hspec, hmin, hfirst⟩ := N.tm.exists_first_halt (N.tm.initCfg x) hh
+  rw [hw] at hle
   have hpos : 0 < t₀ := by
     refine Nat.pos_of_ne_zero fun h00 => NDTM.not_haltsWithin_zero N.tm x
       (NDTM.haltsWithin_iff.mpr fun v hv => ?_)
@@ -3076,9 +3070,7 @@ private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
     rw [hw₀, List.take_take, Nat.min_eq_left hr.le]
     exact hmin r hr
   have hout : (N.tm.runWith w₀ (N.tm.initCfg x)).output = [true] := by
-    have hsplit := NDTM.runWith_append (tm := N.tm) w₀ (w.drop t₀) (N.tm.initCfg x)
-    rw [hw₀, List.take_append_drop, NDTM.runWith_of_halt _ hspec] at hsplit
-    rw [hw₀, ← hsplit]
+    rw [hw₀, ← hfirst]
     exact ho
   -- the verifier on the branch's display
   obtain ⟨TQ, hacc, hfirst, hnil, hTQ⟩ := nf_V_display N x w₀ hw₀ne hlive hspec hout
