@@ -2074,3 +2074,1279 @@ Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$. The locator's esca
 live locator states $(i, s)$ whose phase $i$ is one of the three escapes (interior, top or
 timeout).
 \end{definition}
+
+\begin{theorem}[Non-escape locator states avoid the stop set]
+\lean{Turing.NTimeDiag.qy_notStop}
+\label{Turing.NTimeDiag.qy_notStop}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyLK, Turing.NTimeDiag.QyLK.isEsc, Turing.NTimeDiag.QyLPh, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyLocE, Turing.not_mem_roundStop, Turing.roundStop}
+\difficulty{2}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$. Let $i$ be a phase of the locator's round other than the anchor and other than the
+three escapes (interior, top and timeout), and let $s$ be any state of phase $i$. Then the locator
+state $(i, s)$ does not belong to the round's stop set, which consists of the anchor state, every
+escape state and the halted state.
+\end{theorem}
+
+\begin{theorem}[Escape states are round endpoints]
+\lean{Turing.NTimeDiag.qy_esc_mem}
+\label{Turing.NTimeDiag.qy_esc_mem}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyLK, Turing.NTimeDiag.QyLK.isEsc, Turing.NTimeDiag.QyLPh, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyLocE}
+\difficulty{1}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$. For every escape phase $i$ of the locator's round (interior, top or timeout) and every
+state $s$ of phase $i$, the locator state $(i, s)$ lies in the set of round endpoints, namely the
+anchor state together with all escape states.
+\end{theorem}
+
+\begin{definition}[Scratch tapes of a locator round]
+\lean{Turing.NTimeDiag.qyScratch}
+\label{Turing.NTimeDiag.qyScratch}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.bClk, Turing.NTimeDiag.QyKit.tp}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$ and clock bank $\beta$ (the injection sending the tapes of $f$'s call $C_f$ to $\tau_7$
+and $C_f$'s block, and the clock's counter to $\tau_8$). A host tape $t$ is a scratch tape of the
+locator's round when $t$ lies in the range of $\beta$ or $t$ is one of $\tau_3, \tau_4, \tau_5,
+\tau_6$.
+\end{definition}
+
+\begin{definition}[Escape tapes of the locator]
+\lean{Turing.NTimeDiag.QyEscT}
+\label{Turing.NTimeDiag.QyEscT}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qyScratch}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $n, a, j, k \in \mathbb{N}$, let $T$ assign contents to the host tapes and $P$ head
+positions, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. The pair
+$(T, P)$ forms escape tapes for $(n, a, j, k)$ when every host tape $t$ outside the round's scratch
+(the range of the clock's bank, which carries $f$'s call $C_f$ with tape $0$ on $\tau_7$ and its
+counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$) satisfies $T(t) = \Lambda_{n,a,j,k}(t)$
+and $P(t) = 0$.
+\end{definition}
+
+\begin{theorem}[Call tape lies in the clock's bank]
+\lean{Turing.NTimeDiag.qy_tp7_mem}
+\label{Turing.NTimeDiag.qy_tp7_mem}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.bClk, Turing.NTimeDiag.QyKit.bClk_castSucc, Turing.NTimeDiag.QyKit.tp}
+\difficulty{1}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$. The named tape $\tau_7$ lies in the range of the clock's bank of $\kappa$, the
+injection that sends the tapes of $f$'s call $C_f$ to $\tau_7$ (tape $0$) and $C_f$'s block, and
+sends its last tape, the counter, to $\tau_8$.
+\end{theorem}
+
+\begin{theorem}[Counter tape lies in the clock's bank]
+\lean{Turing.NTimeDiag.qy_tp8_mem}
+\label{Turing.NTimeDiag.qy_tp8_mem}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.bClk, Turing.NTimeDiag.QyKit.bClk_last, Turing.NTimeDiag.QyKit.tp}
+\difficulty{1}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$. The named tape $\tau_8$ lies in the range of the clock's bank of $\kappa$, the
+injection that sends the tapes of $f$'s call $C_f$ to $\tau_7$ (tape $0$) and $C_f$'s block, and
+sends its last tape, the counter, to $\tau_8$.
+\end{theorem}
+
+\begin{theorem}[Non-scratch tapes avoid named tapes 3 to 8]
+\lean{Turing.NTimeDiag.qy_not_scratch}
+\label{Turing.NTimeDiag.qy_not_scratch}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.qyScratch, Turing.NTimeDiag.qy_tp7_mem, Turing.NTimeDiag.qy_tp8_mem}
+\difficulty{1}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$. If a host tape $t$ is not a scratch tape of the locator's round (it is outside the
+range of the clock's bank and differs from $\tau_3, \dots, \tau_6$), then $t$ differs from each of
+$\tau_3, \tau_4, \tau_5, \tau_6, \tau_7, \tau_8$.
+\end{theorem}
+
+\begin{theorem}[A round from a first step and a segment]
+\lean{Turing.NTimeDiag.qy_round_of_seg}
+\label{Turing.NTimeDiag.qy_round_of_seg}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.Round, Turing.Segment, Turing.roundStop, Turing.round_iff, Turing.segment_iff}
+\difficulty{4}
+Let $M$ be a multi-tape machine with state set $S$, let $a \in S$, let $E$ be a set of states
+(possibly including the halted state), let $c, c_1, c'$ be configurations of $M$ on a common input
+and let $t \in \mathbb{N}$. Suppose $c$ is in state $a$, one step of $M$ from $c$ yields $c_1$, $M$
+runs from $c_1$ to $c'$ in exactly $t$ steps without being in $a$, in $E$ or halted strictly before
+time $t$, and the state of $c'$ is $a$ or lies in $E$. Then the run of $M$ from $c$ is a round at
+$a$ with escapes $E$ of length $1 + t$ ending at $c'$, with no constraint on head positions.
+\end{theorem}
+
+\begin{theorem}[The clocked call of a locator round]
+\lean{Turing.NTimeDiag.qy_rnd_call}
+\label{Turing.NTimeDiag.qy_rnd_call}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.bCf, Turing.NTimeDiag.QyKit.bCf_ne, Turing.NTimeDiag.QyKit.bClk, Turing.NTimeDiag.QyKit.bClk_castSucc, Turing.NTimeDiag.QyKit.bClk_last, Turing.NTimeDiag.QyKit.m, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.QyKit.tp_ne, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qyLayT, Turing.NTimeDiag.qyLoc, Turing.NTimeDiag.qyLocE, Turing.NTimeDiag.qyLocM, Turing.NTimeDiag.qyLocRed, Turing.NTimeDiag.qy_arg_bank, Turing.NTimeDiag.qy_call_bound, Turing.NTimeDiag.qy_clockHost_finish, Turing.NTimeDiag.qy_clockHost_timeout, Turing.NTimeDiag.qy_copy, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_notStop, Turing.NTimeDiag.qy_not_scratch, Turing.NTimeDiag.qy_timeout_cert, Turing.Segment, Turing.Segment.trans, Turing.roundStop, Turing.stateWord}
+\difficulty{5}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $A_f,
+c_f$ be the time constants of $f$'s call, let $a, j, k \in \mathbb{N}$ with $a \le n$, and write $m
+= m(n)$. Then one of the following holds. (i) There are a binary word $w'$ of length $m$ and a time
+$t$ with $t \le 2a + 3 + 5(2^m - 1) + 2m + 3$ and $t \le 2a + 3 + 5A_f(c_f(f(a) + 1) + a +
+|\mathrm{bits}(f(a))| + 1) + 2m + 3$ such that the locator runs in exactly $t$ steps from $\langle
+(r_1, \mathrm{sweep}), 1, \Lambda_{n,a,j,k}, 0, \varepsilon\rangle$ to the length test $\langle
+(r_3, \mathrm{scan}), 1, T', 0, \varepsilon \rangle$, where $T'$ is $\Lambda_{n,a,j,k}$ with
+$\tau_7$ replaced by $\mathrm{buf}(\mathrm{bits}(f(a)))$ and $\tau_8$ by $\mathrm{buf}(w')$, never
+in the locator's anchor, an escape state or the halted state strictly before time $t$. (ii) Or $n <
+f(a)$ and there are $t \le 2a + 3 + 5(2^m - 1) + 2m + 3$, an input-head position $q$, tapes $T$ and
+heads $P$ such that the locator runs in exactly $t$ steps from $\langle (r_1, \mathrm{sweep}), 1,
+\Lambda_{n,a,j,k}, 0, \varepsilon\rangle$ to the timeout escape $\langle (\mathrm{timeout},
+\mathrm{sweep}), q, T, P, \varepsilon\rangle$, never in the locator's anchor, an escape state or
+the halted state strictly before time $t$, and every host tape outside the round's scratch (the
+range of the clock's bank, which carries $f$'s call $C_f$ with tape $0$ on $\tau_7$ and its counter
+on $\tau_8$, together with $\tau_3, \dots, \tau_6$) agrees with $\Lambda_{n,a,j,k}$ in $T$ and has
+its head at $0$ in $P$.
+\end{theorem}
+
+\begin{definition}[Tapes after the round's call]
+\lean{Turing.NTimeDiag.qyTA}
+\label{Turing.NTimeDiag.qyTA}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.qyLayT}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $n, a, j, k, F \in \mathbb{N}$ and let $w'$ be a binary word. Write
+$\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, and
+write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of $1^{n+1}$ on
+$\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on $\tau_{10}$,
+of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$ (with $m(n)
+= |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$ and $c_f$
+being the time constants of $f$'s call) and are blank on every other host tape. The tapes after the
+round's call are $\Lambda_{n,a,j,k}$ with $\tau_7$ replaced by $\mathrm{buf}(\mathrm{bits}(F))$ and
+$\tau_8$ replaced by $\mathrm{buf}(w')$.
+\end{definition}
+
+\begin{definition}[Tapes after a passed round's tests]
+\lean{Turing.NTimeDiag.qyTB}
+\label{Turing.NTimeDiag.qyTB}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $T$ assign contents to the host tapes, let $F, a, X_4, \ell' \in \mathbb{N}$, and
+write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere.
+The tapes after a passed round's tests are $T$ with $\tau_4$ replaced by $\mathrm{buf}(1^{F + a})$,
+$\tau_7$ by $\mathrm{buf}(1^{|\mathrm{bits}(F)|})$, $\tau_5$ by $\mathrm{buf}(1^{X_4})$, $\tau_6$
+by $\mathrm{buf}(1^{X_4 + 1})$ and $\tau_3$ by $\mathrm{buf}(1^{\ell' + 1})$.
+\end{definition}
+
+\begin{definition}[Time bound of stopping tests]
+\lean{Turing.NTimeDiag.qyTestS}
+\label{Turing.NTimeDiag.qyTestS}
+\leanok
+\uses{Turing.NTimeDiag.QyKit}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_u$ of its
+fourth-power call and $A_a$ of its increment call. For $n, a \in \mathbb{N}$, with $L =
+|\mathrm{bits}(n)|$, the time bound of a round's tests when the round stops is $40(n + 1) + 4a +
+16L + A_u L^5 + A_a(L + 1) + 60$.
+\end{definition}
+
+\begin{definition}[Time bound of passed tests]
+\lean{Turing.NTimeDiag.qyTestP}
+\label{Turing.NTimeDiag.qyTestP}
+\leanok
+\uses{Turing.NTimeDiag.QyKit}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_u$ of its
+fourth-power call and $A_a$ of its increment call. For $n, \ell' \in \mathbb{N}$, with $L =
+|\mathrm{bits}(n)|$, the time bound of a round's tests when the round passes is $9\ell' + 25L + A_u
+L^5 + A_a(L + 1) + 50$.
+\end{definition}
+
+\begin{theorem}[The tests of a locator round]
+\lean{Turing.NTimeDiag.qy_rnd_tests}
+\label{Turing.NTimeDiag.qy_rnd_tests}
+\leanok
+\uses{Complexity.LogProg.length_bits_eq_log, Complexity.LogProg.length_bits_mono, Complexity.LogProg.lt_two_pow_bits, Complexity.LogProg.two_pow_bits_le_two_mul_add_one, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.bAb0, Turing.NTimeDiag.QyKit.bAb0_ne, Turing.NTimeDiag.QyKit.bPu, Turing.NTimeDiag.QyKit.bPu_ne, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.QyKit.tp_ne, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyEmb2, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qyLayT, Turing.NTimeDiag.qyLoc, Turing.NTimeDiag.qyLocE, Turing.NTimeDiag.qyLocM, Turing.NTimeDiag.qyLocRed, Turing.NTimeDiag.qyTA, Turing.NTimeDiag.qyTB, Turing.NTimeDiag.qyTestP, Turing.NTimeDiag.qyTestS, Turing.NTimeDiag.qy_arg_bank, Turing.NTimeDiag.qy_bits_val, Turing.NTimeDiag.qy_callHost, Turing.NTimeDiag.qy_cmp_run, Turing.NTimeDiag.qy_copy, Turing.NTimeDiag.qy_expandHost, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_notStop, Turing.NTimeDiag.qy_not_scratch, Turing.NTimeDiag.qy_rewind, Turing.NTimeDiag.qy_rung_val, Turing.NTimeDiag.qy_writeConst, Turing.Segment, Turing.Segment.trans, Turing.counterOverhead, Turing.counterOverhead_le, Turing.length_bits_le_self, Turing.roundStop}
+\difficulty{6}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $A_u$
+and $A_a$ be the time constants of the fourth-power call and the increment call, let $a, j, k \in
+\mathbb{N}$, let $w'$ be a binary word, put $L = |\mathrm{bits}(n)|$, $X = f(a) + a + 1$ and $\ell'
+= 2^{X^4}$, let $T_A$ be $\Lambda_{n,a,j,k}$ with $\tau_7$ replaced by
+$\mathrm{buf}(\mathrm{bits}(f(a)))$ and $\tau_8$ by $\mathrm{buf}(w')$, let $c_0 = \langle (r_3,
+\mathrm{scan}), 1, T_A, 0, \varepsilon \rangle$, and let $B_S = 40(n + 1) + 4a + 16L + A_u L^5 +
+A_a(L + 1) + 60$. In each case below the run lasts exactly $t$ steps and is never in the locator's
+anchor, an escape state or the halted state strictly before time $t$. One of the following holds.
+(i) $n < \ell'$, and for some $t \le B_S$ and $(T, P)$ the locator runs from $c_0$ to $\langle
+(\mathrm{interior}, \mathrm{sweep}), 1, T, P, \varepsilon\rangle$ with every tape outside the
+round's scratch (the range of the clock's bank, which carries $f$'s call $C_f$ with tape $0$ on
+$\tau_7$ and its counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$) agreeing with
+$\Lambda_{n,a,j,k}$ and heads there at $0$. (ii) $\ell' = n$, and for some $t \le B_S$ and $(T, P)$
+of that kind the locator runs from $c_0$ to $\langle (\mathrm{top}, \mathrm{sweep}), 1, T, P,
+\varepsilon\rangle$ with additionally $T(\tau_4) = \mathrm{buf}(1^{f(a) + a})$ and $P(\tau_4) = 0$.
+(iii) $\ell' < n$, $X \le L$, $X^4 < L$, and for some $t \le 9\ell' + 25L + A_u L^5 + A_a(L + 1) +
+50$ the locator runs from $c_0$ to $\langle (c_1, \mathrm{sweep}), 1, T_B, 0, \varepsilon\rangle$,
+where $T_B$ is $T_A$ with $\tau_4, \tau_7, \tau_5, \tau_6, \tau_3$ replaced by $\mathrm{buf}$ of
+$1^{f(a) + a}$, $1^{|\mathrm{bits}(f(a))|}$, $1^{X^4}$, $1^{X^4 + 1}$, $1^{\ell' + 1}$
+respectively.
+\end{theorem}
+
+\begin{theorem}[Cleanup after a passed round]
+\lean{Turing.NTimeDiag.qy_rnd_clean}
+\label{Turing.NTimeDiag.qy_rnd_clean}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.m, Turing.NTimeDiag.QyKit.tape_cases, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.QyKit.tp_ne, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qyLayT, Turing.NTimeDiag.qyLoc, Turing.NTimeDiag.qyLocE, Turing.NTimeDiag.qyLocM, Turing.NTimeDiag.qyLocRed, Turing.NTimeDiag.qyTA, Turing.NTimeDiag.qyTB, Turing.NTimeDiag.qy_clear, Turing.NTimeDiag.qy_copy_over, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_notStop, Turing.NTimeDiag.qy_transfer, Turing.Segment, Turing.Segment.trans, Turing.roundStop}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $a,
+j, k, F, X_4, \ell' \in \mathbb{N}$ and let $w'$ be a binary word of length $m(n)$. Let $T_B$ be
+$\Lambda_{n,a,j,k}$ with $\tau_7$ replaced by $\mathrm{buf}(1^{|\mathrm{bits}(F)|})$, $\tau_8$ by
+$\mathrm{buf}(w')$, $\tau_4$ by $\mathrm{buf}(1^{F + a})$, $\tau_5$ by $\mathrm{buf}(1^{X_4})$,
+$\tau_6$ by $\mathrm{buf}(1^{X_4 + 1})$ and $\tau_3$ by $\mathrm{buf}(1^{\ell' + 1})$. Then for
+some $t \le 2a + 2(\ell' + 1) + 2|\mathrm{bits}(F)| + 2(F + a) + 2X_4 + 2(X_4 + 1) + 2m(n) + 21$
+the locator runs in exactly $t$ steps from $\langle (c_1, \mathrm{sweep}), 1, T_B, 0, \varepsilon
+\rangle$ to $\langle (u_1, \mathrm{scan}), 1, \Lambda_{n,\ell' + 1,j,k}, 0, \varepsilon\rangle$,
+never in the locator's anchor, an escape state or the halted state strictly before time $t$.
+\end{theorem}
+
+\begin{theorem}[Changing the pair in the anchor layout]
+\lean{Turing.NTimeDiag.qy_layT_pair}
+\label{Turing.NTimeDiag.qy_layT_pair}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qyLayT}
+\difficulty{3}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $n, a, j, k, j', k' \in \mathbb{N}$, write $\mathrm{buf}(w)$ for the tape holding
+$w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, and write $\Lambda_{n,a,j,k}$ for the
+anchor-layout tapes, which hold $\mathrm{buf}$ of $1^{n+1}$ on $\tau_0$, of
+$1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on $\tau_{10}$, of $1^k$ on
+$\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$ (with $m(n) =
+|\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$ and $c_f$ being
+the time constants of $f$'s call) and are blank on every other host tape. If host tape contents $T$
+satisfy $T(\tau_{10}) = \mathrm{buf}(1^{j'})$, $T(\tau_{11}) = \mathrm{buf}(1^{k'})$ and $T(t) =
+\Lambda_{n,a,j,k}(t)$ for every other host tape $t$, then $T = \Lambda_{n,a,j',k'}$.
+\end{theorem}
+
+\begin{theorem}[Pair update of a passed round]
+\lean{Turing.NTimeDiag.qy_rnd_pair}
+\label{Turing.NTimeDiag.qy_rnd_pair}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.bAbJ, Turing.NTimeDiag.QyKit.bAbJ_ne, Turing.NTimeDiag.QyKit.bAbK, Turing.NTimeDiag.QyKit.bAbK_ne, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.QyKit.tp_ne, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qyLayT, Turing.NTimeDiag.qyLoc, Turing.NTimeDiag.qyLocE, Turing.NTimeDiag.qyLocM, Turing.NTimeDiag.qyLocRed, Turing.NTimeDiag.qy_arg_bank, Turing.NTimeDiag.qy_callHost, Turing.NTimeDiag.qy_clear, Turing.NTimeDiag.qy_cmp_run, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_layT_pair, Turing.NTimeDiag.qy_notStop, Turing.NTimeDiag.qy_unpair_succ_diag, Turing.NTimeDiag.qy_unpair_succ_gt, Turing.NTimeDiag.qy_unpair_succ_last, Turing.NTimeDiag.qy_unpair_succ_lt, Turing.Segment, Turing.Segment.trans, Turing.roundStop}
+\difficulty{5}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $A_a$
+be the time constant of the increment call, and let $a, h, j, k \in \mathbb{N}$ with
+$\mathrm{unpair}(h) = (j, k)$ for the standard unpairing of $\mathbb{N}$, and let $(j', k') =
+\mathrm{unpair}(h + 1)$. Then for some $t \le A_a(j + k + 2) + 6(j + k) + 30$ the locator runs in
+exactly $t$ steps from $\langle (u_1, \mathrm{scan}), 1, \Lambda_{n,a,j,k}, 0, \varepsilon\rangle$
+to its anchor $\langle \mathrm{anchor}, 1, \Lambda_{n,a,j',k'}, 0, \varepsilon\rangle$, never in
+the locator's anchor, an escape state or the halted state strictly before time $t$.
+\end{theorem}
+
+\begin{definition}[Time bound of a passed round]
+\lean{Turing.NTimeDiag.qyRndP}
+\label{Turing.NTimeDiag.qyRndP}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.m}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_f, c_f$ of
+$f$'s call, $A_u$ of the fourth-power call and $A_a$ of the increment call, and let $m(n) =
+|\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$. For $n, \ell', j, k \in \mathbb{N}$, with $L =
+|\mathrm{bits}(n)|$, the time bound of a passed round is \[ 11\ell' + 50L + 4m(n) + 5A_f(c_f + 3)(L
++ 1) + A_u L^5 + A_a(L + 1) + A_a(j + k + 2) + 6(j + k) + 150. \]
+\end{definition}
+
+\begin{definition}[Time bound of a stopping round]
+\lean{Turing.NTimeDiag.qyRndS}
+\label{Turing.NTimeDiag.qyRndS}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.m}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_f, c_f$ of
+$f$'s call, $A_u$ of the fourth-power call and $A_a$ of the increment call, and let $m(n) =
+|\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$. For $n, a \in \mathbb{N}$, with $L =
+|\mathrm{bits}(n)|$, the time bound of a stopping round is \[ 6a + 5 \cdot 2^{m(n)} + 2m(n) + 40(n
++ 1) + 16L + A_u L^5 + A_a(L + 1) + 70. \]
+\end{definition}
+
+\begin{theorem}[One round of the locator]
+\lean{Turing.NTimeDiag.qy_round}
+\label{Turing.NTimeDiag.qy_round}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_zero, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyLPh, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyLayT, Turing.NTimeDiag.qyLoc, Turing.NTimeDiag.qyLocE, Turing.NTimeDiag.qyLocM, Turing.NTimeDiag.qyLocRed, Turing.NTimeDiag.qyRndP, Turing.NTimeDiag.qyRndS, Turing.NTimeDiag.qyTestP, Turing.NTimeDiag.qyTestS, Turing.NTimeDiag.qy_esc_mem, Turing.NTimeDiag.qy_hosted_run, Turing.NTimeDiag.qy_rnd_call, Turing.NTimeDiag.qy_rnd_clean, Turing.NTimeDiag.qy_rnd_pair, Turing.NTimeDiag.qy_rnd_tests, Turing.NTimeDiag.qy_round_of_seg, Turing.Round, Turing.Segment.trans, Turing.length_bits_le_self}
+\difficulty{5}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $A_f,
+c_f$ be the time constants of $f$'s call and $A_u, A_a$ those of the fourth-power and increment
+calls; put $L = |\mathrm{bits}(n)|$, $R_P(\ell', j, k) = 11\ell' + 50L + 4m(n) + 5A_f(c_f + 3)(L +
+1) + A_u L^5 + A_a(L + 1) + A_a(j + k + 2) + 6(j + k) + 150$ and $R_S(a) = 6a + 5 \cdot 2^{m(n)} +
+2m(n) + 40(n + 1) + 16L + A_u L^5 + A_a(L + 1) + 70$. Let $a, h, j, k \in \mathbb{N}$ with $a \le
+n$ and $\mathrm{unpair}(h) = (j, k)$, and put $X = f(a) + a + 1$, $\ell' = 2^{X^4}$. Then there are
+a configuration $c'$ and $t \in \mathbb{N}$ such that the locator's run from $\langle
+\mathrm{anchor}, 1, \Lambda_{n,a,j,k}, 0, \varepsilon\rangle$ is a round of length $t$ at the
+anchor with the three escapes, ending at $c'$, and one of the following holds: (i) $\ell' < n$, $t
+\le R_P(\ell', j, k)$ and $c' = \langle \mathrm{anchor}, 1, \Lambda_{n,\ell' + 1,j',k'}, 0,
+\varepsilon\rangle$ with $(j', k') = \mathrm{unpair}(h + 1)$; (ii) $n < \ell'$, $t \le R_S(a)$ and
+$c'$ is the interior or the timeout escape in its sweep state, with some input head, tapes $T$ and
+heads $P$ such that every host tape outside the round's scratch (the range of the clock's bank,
+which carries $f$'s call $C_f$ with tape $0$ on $\tau_7$ and its counter on $\tau_8$, together with
+$\tau_3, \dots, \tau_6$) agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$; (iii) $\ell' =
+n$, $t \le R_S(a)$ and $c' = \langle (\mathrm{top}, \mathrm{sweep}), 1, T, P, \varepsilon\rangle$
+with $(T, P)$ of that kind and moreover $T(\tau_4) = \mathrm{buf}(1^{f(a) + a})$ and $P(\tau_4) =
+0$.
+\end{theorem}
+
+\begin{theorem}[Sixth power below an exponential]
+\lean{Turing.NTimeDiag.qy_pow6_le}
+\label{Turing.NTimeDiag.qy_pow6_le}
+\leanok
+\difficulty{4}
+For every natural number $x$, \[ x^6 \le 6^6 \cdot 2^x. \]
+\end{theorem}
+
+\begin{theorem}[Sum of an affine family]
+\lean{Turing.NTimeDiag.qy_sum_affine}
+\label{Turing.NTimeDiag.qy_sum_affine}
+\leanok
+\difficulty{3}
+For every function $u : \mathbb{N} \to \mathbb{N}$ and all $c, s \in \mathbb{N}$, \[ \sum_{r < s}
+\bigl(11\,u(r) + c\bigr) = 11 \sum_{r < s} u(r) + s\,c. \]
+\end{theorem}
+
+\begin{definition}[Polylogarithmic constant of a kit]
+\lean{Turing.NTimeDiag.qyCk}
+\label{Turing.NTimeDiag.qyCk}
+\leanok
+\uses{Turing.NTimeDiag.QyKit}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_f, c_f$ of
+$f$'s call, $A_u$ of the fourth-power call and $A_a$ of the increment call. Its polylogarithmic
+constant is $C_\kappa = 210 + 4|\mathrm{bits}(A_f(c_f + 2))| + 5A_f(c_f + 3) + A_u + 3A_a$.
+\end{definition}
+
+\begin{definition}[Linear constant of a kit]
+\lean{Turing.NTimeDiag.qyDk}
+\label{Turing.NTimeDiag.qyDk}
+\leanok
+\uses{Turing.NTimeDiag.QyKit}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_f, c_f$ of
+$f$'s call, and let $D_0 = |\mathrm{bits}(A_f(c_f + 2))|$. Its linear constant is $D_\kappa = 134 +
+10 \cdot 2^{D_0} + 2D_0$.
+\end{definition}
+
+\begin{definition}[The locator's constant]
+\lean{Turing.NTimeDiag.qyLoopA}
+\label{Turing.NTimeDiag.qyLoopA}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.qyCk, Turing.NTimeDiag.qyDk}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_f, c_f$ of
+$f$'s call, $A_u$ of the fourth-power call and $A_a$ of the increment call; let $D_0 =
+|\mathrm{bits}(A_f(c_f + 2))|$, $C_\kappa = 210 + 4D_0 + 5A_f(c_f + 3) + A_u + 3A_a$ and $D_\kappa
+= 134 + 10 \cdot 2^{D_0} + 2D_0$. The locator's constant is $22 + D_\kappa + 8 \cdot 6^6 \cdot
+C_\kappa$.
+\end{definition}
+
+\begin{theorem}[Simplified bound of a passed round]
+\lean{Turing.NTimeDiag.qy_rndP_le}
+\label{Turing.NTimeDiag.qy_rndP_le}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.m, Turing.NTimeDiag.qyCk, Turing.NTimeDiag.qyRndP}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_f, c_f$ of
+$f$'s call, $A_u$ of the fourth-power call and $A_a$ of the increment call; let $D_0 =
+|\mathrm{bits}(A_f(c_f + 2))|$ and $C_\kappa = 210 + 4D_0 + 5A_f(c_f + 3) + A_u + 3A_a$. Let $n,
+\ell', j, k \in \mathbb{N}$ with $j + k \le L$, where $L = |\mathrm{bits}(n)|$ and $m(n) = D_0 +
+L$. Then \[ 11\ell' + 50L + 4m(n) + 5A_f(c_f + 3)(L + 1) + A_u L^5 + A_a(L + 1) + A_a(j + k + 2) +
+6(j + k) + 150 \le 11\ell' + C_\kappa (L + 1)^5. \]
+\end{theorem}
+
+\begin{theorem}[Simplified bound of a stopping round]
+\lean{Turing.NTimeDiag.qy_rndS_le}
+\label{Turing.NTimeDiag.qy_rndS_le}
+\leanok
+\uses{Complexity.LogProg.two_pow_bits_le_two_mul_add_one, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.m, Turing.NTimeDiag.qyCk, Turing.NTimeDiag.qyDk, Turing.NTimeDiag.qyRndS, Turing.length_bits_le_self}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_f, c_f$ of
+$f$'s call, $A_u$ of the fourth-power call and $A_a$ of the increment call; let $D_0 =
+|\mathrm{bits}(A_f(c_f + 2))|$, $C_\kappa = 210 + 4D_0 + 5A_f(c_f + 3) + A_u + 3A_a$ and $D_\kappa
+= 134 + 10 \cdot 2^{D_0} + 2D_0$. Let $n, a \in \mathbb{N}$ with $a \le n$, $L =
+|\mathrm{bits}(n)|$ and $m(n) = D_0 + L$. Then \[ 6a + 5 \cdot 2^{m(n)} + 2m(n) + 40(n + 1) + 16L +
+A_u L^5 + A_a(L + 1) + 70 \le D_\kappa (n + 1) + C_\kappa (L + 1)^5. \]
+\end{theorem}
+
+\begin{definition}[Locator anchor configuration at a stage]
+\lean{Turing.NTimeDiag.qyAt}
+\label{Turing.NTimeDiag.qyAt}
+\leanok
+\uses{Turing.Cfg, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyLPh, Turing.NTimeDiag.ladder, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyLayT}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $f$ have ladder $(\ell_i)$, let $x$ be a binary input of length $n$, and write
+$\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of $1^{n+1}$ on
+$\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on $\tau_{10}$,
+of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$ (with $m(n)
+= |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$ and $c_f$
+being the time constants of $f$'s call) and are blank on every other host tape. For $i \in
+\mathbb{N}$ with $\mathrm{unpair}(i) = (j, k)$, the locator's anchor configuration at stage $i$ is
+the live configuration on $x$ in the anchor state with input head $1$, tapes $\Lambda_{n,\ell_i +
+1,j,k}$, every work head at $0$ and empty output.
+\end{definition}
+
+\begin{theorem}[The locator's loop]
+\lean{Turing.NTimeDiag.qy_loop}
+\label{Turing.NTimeDiag.qy_loop}
+\leanok
+\uses{Complexity.LogProg.length_bits_eq_log, Complexity.LogProg.two_pow_bits_le_two_mul_add_one, Turing.Cfg, Turing.FinTM.bufferTape, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyLPh, Turing.NTimeDiag.ladder, Turing.NTimeDiag.ladder_strictMono, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyAt, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyCk, Turing.NTimeDiag.qyDk, Turing.NTimeDiag.qyLoc, Turing.NTimeDiag.qyLocE, Turing.NTimeDiag.qyLoopA, Turing.NTimeDiag.qy_ladder_succ_eq, Turing.NTimeDiag.qy_ledger, Turing.NTimeDiag.qy_pow6_le, Turing.NTimeDiag.qy_rndP_le, Turing.NTimeDiag.qy_rndS_le, Turing.NTimeDiag.qy_round, Turing.NTimeDiag.qy_stage_lt_log, Turing.NTimeDiag.qy_sum_affine, Turing.NTimeDiag.stage, Turing.NTimeDiag.stage_spec, Turing.Round, Turing.Round.iterate_seq, Turing.Round.segment, Turing.Segment, Turing.Segment.trans}
+\difficulty{6}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let
+$(\ell_i)$ be the ladder of $f$, suppose $n \ge 3$, and let $s$ be the stage of $n$ (the least $i$
+with $n \le \ell_{i+1}$), $(j, k) = \mathrm{unpair}(s)$ and $a = \ell_s + 1$. Let $A_\kappa$ be the
+locator's constant (a number determined by $\kappa$ alone). Then there are $t \le A_\kappa (n + 1)$
+and a configuration $c'$ such that the locator runs in exactly $t$ steps from $\langle
+\mathrm{anchor}, 1, \Lambda_{n,\ell_0 + 1,0,0}, 0, \varepsilon\rangle$ to $c'$ without being in an
+escape state strictly before time $t$, and either (i) $n < \ell_{s+1}$ and $c'$ is the interior or
+the timeout escape in its sweep state with some input head, tapes $T$ and heads $P$ such that every
+host tape outside the round's scratch (the range of the clock's bank, which carries $f$'s call
+$C_f$ with tape $0$ on $\tau_7$ and its counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$)
+agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$; or (ii) $\ell_{s+1} = n$ and $c' = \langle
+(\mathrm{top}, \mathrm{sweep}), 1, T, P, \varepsilon\rangle$ with $(T, P)$ of that kind, $T(\tau_4)
+= \mathrm{buf}(1^{f(a) + a})$ and $P(\tau_4) = 0$.
+\end{theorem}
+
+\begin{theorem}[High host tapes are not scratch]
+\lean{Turing.NTimeDiag.qy_not_scratch_ge}
+\label{Turing.NTimeDiag.qy_not_scratch_ge}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.bCf, Turing.NTimeDiag.QyKit.bClk, Turing.NTimeDiag.QyKit.tp_val, Turing.NTimeDiag.qyBank_val, Turing.NTimeDiag.qyBank_zero, Turing.NTimeDiag.qyScratch}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, whose input call $C_b$ and $f$'s call $C_f$ have $k_b$ and $k_f$ tapes. Every host tape
+$t$ with index $t \ge 16 + k_b + k_f$ lies outside the round's scratch (the range of the clock's
+bank, which carries $f$'s call $C_f$ with tape $0$ on $\tau_7$ and its counter on $\tau_8$,
+together with $\tau_3, \dots, \tau_6$).
+\end{theorem}
+
+\begin{theorem}[Named tapes off 3 to 8 are not scratch]
+\lean{Turing.NTimeDiag.qy_not_scratch_tp}
+\label{Turing.NTimeDiag.qy_not_scratch_tp}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.bCf_ne, Turing.NTimeDiag.QyKit.bClk, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.qyScratch}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$. For every $c < 16$ with $c < 3$ or $c > 8$, the named tape $\tau_c$ lies outside the
+round's scratch (the range of the clock's bank, which carries $f$'s call $C_f$ with tape $0$ on
+$\tau_7$ and its counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$).
+\end{theorem}
+
+\begin{theorem}[Late bank tapes are not scratch]
+\lean{Turing.NTimeDiag.qy_bank_not_scratch}
+\label{Turing.NTimeDiag.qy_bank_not_scratch}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.qyBank, Turing.NTimeDiag.qyBank_val, Turing.NTimeDiag.qyScratch, Turing.NTimeDiag.qy_not_scratch_ge}
+\difficulty{1}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, whose input call $C_b$ and $f$'s call $C_f$ have $k_b$ and $k_f$ tapes, and let
+$K_\kappa$ be its number of host tapes. Let $\mathit{off}, k \in \mathbb{N}$ with $\mathit{off} + k
+\le K_\kappa$ and $\mathit{off} \ge 16 + k_b + k_f$, and let $t_0$ be a host tape with index below
+$\mathit{off}$. For the bank sending tape $0$ to $t_0$ and each tape $i \ne 0$ (of $k$ tapes) to
+host tape $\mathit{off} + i$, every image of a tape $i \ne 0$ lies outside the round's scratch (the
+range of the clock's bank, which carries $f$'s call $C_f$ with tape $0$ on $\tau_7$ and its counter
+on $\tau_8$, together with $\tau_3, \dots, \tau_6$).
+\end{theorem}
+
+\begin{theorem}[Escape tapes on named tapes]
+\lean{Turing.NTimeDiag.QyEscT.tp}
+\label{Turing.NTimeDiag.QyEscT.tp}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qy_not_scratch_tp}
+\difficulty{1}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $n, a, j, k \in \mathbb{N}$, write $\mathrm{buf}(w)$ for the tape holding $w$ in
+cells $0, \dots, |w| - 1$ and blank elsewhere, write $\Lambda_{n,a,j,k}$ for the anchor-layout
+tapes, which hold $\mathrm{buf}$ of $1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$,
+of $1^a$ on $\tau_2$, of $1^j$ on $\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of
+$1^{m(n)}$ on $\tau_8$ and $\tau_9$ (with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| +
+|\mathrm{bits}(n)|$ the clock counter width, $A_f$ and $c_f$ being the time constants of $f$'s
+call) and are blank on every other host tape, and say that $(T, P)$ are escape tapes for $(n, a, j,
+k)$ when every host tape outside the round's scratch (the range of the clock's bank, which carries
+$f$'s call $C_f$ with tape $0$ on $\tau_7$ and its counter on $\tau_8$, together with $\tau_3,
+\dots, \tau_6$) agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$. If $(T, P)$ are escape
+tapes for $(n, a, j, k)$, then for every $c < 16$ with $c < 3$ or $c > 8$ we have $T(\tau_c) =
+\Lambda_{n,a,j,k}(\tau_c)$ and $P(\tau_c) = 0$.
+\end{theorem}
+
+\begin{theorem}[Escape tapes on late bank tapes]
+\lean{Turing.NTimeDiag.QyEscT.bank}
+\label{Turing.NTimeDiag.QyEscT.bank}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.qyBank, Turing.NTimeDiag.qyBank_ne_tp, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qy_bank_not_scratch}
+\difficulty{3}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, whose input call $C_b$ and $f$'s call $C_f$ have $k_b$ and $k_f$ tapes, let $K_\kappa$
+be its number of host tapes, let $n, a, j, k \in \mathbb{N}$, write $\mathrm{buf}(w)$ for the tape
+holding $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, write $\Lambda_{n,a,j,k}$ for the
+anchor-layout tapes, which hold $\mathrm{buf}$ of $1^{n+1}$ on $\tau_0$, of
+$1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on $\tau_{10}$, of $1^k$ on
+$\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$ (with $m(n) =
+|\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$ and $c_f$ being
+the time constants of $f$'s call) and are blank on every other host tape, and say that $(T, P)$ are
+escape tapes for $(n, a, j, k)$ when every host tape outside the round's scratch (the range of the
+clock's bank, which carries $f$'s call $C_f$ with tape $0$ on $\tau_7$ and its counter on $\tau_8$,
+together with $\tau_3, \dots, \tau_6$) agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$. Let
+$\mathit{off}, k' \in \mathbb{N}$ with $\mathit{off} + k' \le K_\kappa$ and $\mathit{off} \ge 16 +
+k_b + k_f$, let $t_0$ be a host tape with index below $\mathit{off}$, and let $\beta$ be the bank
+sending tape $0$ to $t_0$ and each tape $i \ne 0$ of $k'$ tapes to $\mathit{off} + i$. If $(T, P)$
+are escape tapes for $(n, a, j, k)$, then for every $i \ne 0$ the tape $\beta(i)$ is blank in $T$
+and has its head at $0$ in $P$.
+\end{theorem}
+
+\begin{theorem}[Bank of the length call avoids named tapes]
+\lean{Turing.NTimeDiag.QyKit.bCl_ne}
+\label{Turing.NTimeDiag.QyKit.bCl_ne}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.bCl, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.qyBank_ne_tp}
+\difficulty{1}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, and consider the bank of its call $C_l$ (computing $y \mapsto \mathrm{bits}(|y|)$),
+which sends tape $0$ to $\tau_{10}$ and the other tapes into its block. For every tape $i \ne 0$ of
+$C_l$ and every $c < 16$, the bank's image of $i$ differs from $\tau_c$.
+\end{theorem}
+
+\begin{theorem}[Stage-code calls after an escape]
+\lean{Turing.NTimeDiag.qy_code_calls}
+\label{Turing.NTimeDiag.qy_code_calls}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyEscT.bank, Turing.NTimeDiag.QyEscT.tp, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.bAbJ, Turing.NTimeDiag.QyKit.bCl, Turing.NTimeDiag.QyKit.bCl_ne, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qy_arg_bank, Turing.NTimeDiag.qy_callHost, Turing.embedEmitTM, Turing.seamReleaseTM}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $a,
+j, k \in \mathbb{N}$, and say that $(T, P)$ are escape tapes for $(n, a, j, k)$ when every host
+tape outside the round's scratch (the range of the clock's bank, which carries $f$'s call $C_f$
+with tape $0$ on $\tau_7$ and its counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$)
+agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$. Let $A_a$ and $A_l$ be the time constants
+of the increment call $C_a$ ($y \mapsto y\,1$) and the length call $C_l$ ($y \mapsto
+\mathrm{bits}(|y|)$), and suppose $(T, P)$ are escape tapes for $(n, a, j, k)$. Consider the
+release adapter of $C_a$ embedded along its bank with tape $0$ on $\tau_{10}$ and the release
+adapter of $C_l$ embedded along its bank (tape $0$ also on $\tau_{10}$), each started in its fresh
+start state. Then (i) for some $t_1 \le A_a(j + 1)$ the first runs from $\langle \mathrm{start}, 1,
+T, P, \varepsilon\rangle$ to the tagged exit state of $C_a$ with input head $1$, tapes $T$ with
+$\tau_{10}$ replaced by $\mathrm{buf}(1^{j+1})$, heads $P$ and empty output at time $t_1$, and is
+not in that exit state earlier; and (ii) for some $t_2 \le A_l(j + 2)$ the second runs from the
+start state on those tapes to the tagged exit state of $C_l$ with input head $1$, tapes $T$ with
+$\tau_{10}$ replaced by $\mathrm{buf}(\mathrm{bits}(j + 1))$, heads $P$ and empty output at time
+$t_2$, and is not in that exit state earlier.
+\end{theorem}
+
+\begin{theorem}[Input seek after an escape]
+\lean{Turing.NTimeDiag.qy_seek_run}
+\label{Turing.NTimeDiag.qy_seek_run}
+\leanok
+\uses{Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyEscT.tp, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.QyKit.tp_ne, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyEmb2, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qy_seekHost, Turing.embedEmitTM}
+\difficulty{3}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $a,
+j, k \in \mathbb{N}$, and say that $(T, P)$ are escape tapes for $(n, a, j, k)$ when every host
+tape outside the round's scratch (the range of the clock's bank, which carries $f$'s call $C_f$
+with tape $0$ on $\tau_7$ and its counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$)
+agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$. Let $R$ be the kit's input seek, a
+two-tape machine with entry state $r_E$, exit state $r_X$ and constant $r_C$, embedded on the host
+tapes $\tau_{12}$ and $\tau_{13}$. If $(T, P)$ are escape tapes for $(n, a, j, k)$, then for every
+input-head position $q \le n + 1$ there is $t \le r_C(n + 4)$ such that the embedded seek runs from
+$\langle r_E, q, T, P, \varepsilon \rangle$ to $\langle r_X, 1, T, P, \varepsilon\rangle$ in
+exactly $t$ steps and is not in $r_X$ at any earlier time.
+\end{theorem}
+
+\begin{theorem}[Head of the middle writer]
+\lean{Turing.NTimeDiag.qy_mid_code}
+\label{Turing.NTimeDiag.qy_mid_code}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyMid, Turing.NTimeDiag.qyMidM, Turing.NTimeDiag.qyMidRed, Turing.NTimeDiag.qy_code_calls, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_seek_run, Turing.Segment, Turing.Segment.trans}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $a,
+j, k \in \mathbb{N}$, and say that $(T, P)$ are escape tapes for $(n, a, j, k)$ when every host
+tape outside the round's scratch (the range of the clock's bank, which carries $f$'s call $C_f$
+with tape $0$ on $\tau_7$ and its counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$)
+agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$. Let $r_E$ and $r_C$ be the entry state and
+constant of the kit's input seek, and $A_a$, $A_l$ the time constants of its increment and length
+calls. Let $(T, P)$ be escape tapes for $(n, a, j, k)$ and $q \le n + 1$ an input-head position.
+Then for some $t \le r_C(n + 4) + A_a(j + 1) + A_l(j + 2) + 3$ the middle's writer runs in exactly
+$t$ steps from $\langle (m_0, r_E), q, T, P, \varepsilon\rangle$ to $\langle (m_3, \mathrm{start}),
+1, T', P, \varepsilon\rangle$, the fresh start of the call of $g$'s witness, where $T'$ is $T$ with
+$\tau_{10}$ replaced by $\mathrm{buf}(\mathrm{bits}(j + 1))$.
+\end{theorem}
+
+\begin{theorem}[Head of the top writer]
+\lean{Turing.NTimeDiag.qy_top_code}
+\label{Turing.NTimeDiag.qy_top_code}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyTop, Turing.NTimeDiag.qyTopM, Turing.NTimeDiag.qyTopRed, Turing.NTimeDiag.qy_code_calls, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.Segment, Turing.Segment.trans}
+\difficulty{3}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $a,
+j, k \in \mathbb{N}$, and say that $(T, P)$ are escape tapes for $(n, a, j, k)$ when every host
+tape outside the round's scratch (the range of the clock's bank, which carries $f$'s call $C_f$
+with tape $0$ on $\tau_7$ and its counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$)
+agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$. Let $A_a$ and $A_l$ be the time constants
+of the kit's increment and length calls and let $(T, P)$ be escape tapes for $(n, a, j, k)$. Then
+for some $t \le A_a(j + 1) + A_l(j + 2) + 2$ the top's writer runs in exactly $t$ steps from
+$\langle (t_1, \mathrm{start}), 1, T, P, \varepsilon\rangle$ to $\langle (t_3, \mathrm{start}), 1,
+T', P, \varepsilon\rangle$, where $T'$ is $T$ with $\tau_{10}$ replaced by
+$\mathrm{buf}(\mathrm{bits}(j + 1))$.
+\end{theorem}
+
+\begin{theorem}[Doubling twice is quadrupling]
+\lean{Turing.NTimeDiag.qy_flatMap_dbl_dbl}
+\label{Turing.NTimeDiag.qy_flatMap_dbl_dbl}
+\leanok
+\difficulty{3}
+For every binary word $B = b_1 \cdots b_r$, doubling every symbol of $B$ and then doubling every
+symbol of the result gives the word $b_1^4 b_2^4 \cdots b_r^4$ in which each symbol of $B$ is
+repeated four times.
+\end{theorem}
+
+\begin{theorem}[The writer's output word]
+\lean{Turing.NTimeDiag.qy_writer_word}
+\label{Turing.NTimeDiag.qy_writer_word}
+\leanok
+\uses{Turing.NTimeDiag.qyBody, Turing.NTimeDiag.qy_flatMap_dbl_dbl, Turing.pairEncode, Turing.pairEncode_eq}
+\difficulty{4}
+For a binary word $w$, a bit $\delta$ and $r \in \mathbb{N}$, let $\mathrm{body}_{\delta,r}(w)$ be
+the word obtained from $w$ (with its last symbol removed if $\delta = 1$) by repeating every symbol
+$r + 1$ times, and write $\langle u, v\rangle$ for the pairing encoding of binary words. For every
+bit $b$ and binary words $B, W, N$, \[
+b\;\mathrm{body}_{0,3}(B)\;0011\;\mathrm{body}_{1,1}(W)\;01\;\mathrm{body}_{0,0}(N) =
+b\,\langle\langle B, W'\rangle, N\rangle, \] where $W'$ is $W$ with its last symbol removed.
+\end{theorem}
+
+\begin{theorem}[A hosted phase that halts]
+\lean{Turing.NTimeDiag.qy_hosted_halt}
+\label{Turing.NTimeDiag.qy_hosted_halt}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyC_mapState, Turing.phaseHostTM, Turing.phaseHostTM_run_le}
+\difficulty{3}
+Let $(M_i)_{i \in I}$ be a family of $K$-tape machines over bits with state sets $\Phi_i$, let $H$
+be the phase host with start state $q_0$ and redirect table $r$ (a redirected state takes one
+stationary silent step to its target; any other tagged state $(i, s)$ follows $M_i$), and write
+$\langle s, p, T, P, o\rangle$ for the live configuration on input $x$ with state $s$, input head
+$p$, work tapes $T$, heads $P$ and output $o$. Let $k \in I$, $e \in \Phi_k$, and suppose that
+$M_k$, run from $\langle e, p, T, P, o\rangle$ for $t$ steps, reaches a halted configuration $c'$,
+while $r_k$ is undefined on every state that this run occupies at times before $t$. Then $H$, run
+from $\langle (k, e), p, T, P, o\rangle$ for $t$ steps, is halted and its output equals the output
+of $c'$.
+\end{theorem}
+
+\begin{theorem}[An emitter runs to its halt]
+\lean{Turing.NTimeDiag.qy_emit_stop}
+\label{Turing.NTimeDiag.qy_emit_stop}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.NTimeDiag.qyBody, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyEmitTM, Turing.NTimeDiag.qy_emit_halt, Turing.NTimeDiag.qy_emit_run}
+\difficulty{3}
+Let $i$ be one of $K$ work tapes, let $\mathit{pre}, \mathit{suf}, w$ be binary words, $r \in
+\mathbb{N}$ and $\delta$ a bit, and let $\mathrm{body}_{\delta,r}(w)$ be $w$ (with its last symbol
+removed if $\delta = 1$) with every symbol repeated $r + 1$ times. Consider the emitter that emits
+$\mathit{pre}$, then the word under head $i$ processed in this way, then $\mathit{suf}$, and write
+$\langle s, p, T, P, o\rangle$ for the live configuration on input $x$ with state $s$, input head
+$p$, work tapes $T$, heads $P$ and output $o$. If tape $i$ of $T$ holds exactly $w$ from cell $0$
+and $P(i) = 0$, then there is $t \le |\mathit{pre}| + |\mathit{suf}| + 4 + |w|(r + 3)$ such that
+the emitter, run for $t$ steps from $\langle \text{first prefix state}, p, T, P, o\rangle$, is
+halted with output $o\,\mathit{pre}\,\mathrm{body}_{\delta,r}(w)\,\mathit{suf}$.
+\end{theorem}
+
+\begin{theorem}[Bank of the call of g avoids named tapes]
+\lean{Turing.NTimeDiag.QyKit.bCg_ne}
+\label{Turing.NTimeDiag.QyKit.bCg_ne}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.bCg, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.qyBank_ne_tp}
+\difficulty{1}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, and consider the bank of its input call $C_g$ (computing $\mathrm{bits}(g(|x|))$),
+which sends tape $0$ to $\tau_{14}$ and the other tapes into its block. For every tape $i \ne 0$ of
+$C_g$ and every $c < 16$, the bank's image of $i$ differs from $\tau_c$.
+\end{theorem}
+
+\begin{theorem}[Bank of the square call avoids named tapes]
+\lean{Turing.NTimeDiag.QyKit.bPb_ne}
+\label{Turing.NTimeDiag.QyKit.bPb_ne}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.bPb, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.qyBank_ne_tp}
+\difficulty{1}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, and consider the bank of its call $C_q$ (computing $y \mapsto \mathrm{bits}((|y| +
+1)^2)$), which sends tape $0$ to $\tau_4$ and the other tapes into its block. For every tape $i \ne
+0$ of $C_q$ and every $c < 16$, the bank's image of $i$ differs from $\tau_c$.
+\end{theorem}
+
+\begin{definition}[Time bound of the middle writer]
+\lean{Turing.NTimeDiag.qyMidB}
+\label{Turing.NTimeDiag.qyMidB}
+\leanok
+\uses{Turing.NTimeDiag.QyKit}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with input-seek constant $r_C$ and
+time constants $A_a$, $A_l$, $A_g$ of its increment call, length call and call of $g$'s witness.
+For $n, j \in \mathbb{N}$ the middle writer's time bound is \[ r_C(n + 4) + A_a(j + 1) + A_l(j + 2)
++ A_g(g(n) + 1) + 6g(n) + 4(j + 1) + 3(n + 1) + 30. \]
+\end{definition}
+
+\begin{definition}[Time bound of the top writer]
+\lean{Turing.NTimeDiag.qyTopB}
+\label{Turing.NTimeDiag.qyTopB}
+\leanok
+\uses{Turing.NTimeDiag.QyKit}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_a$, $A_l$,
+$A_q$ of its increment call, length call and squaring call ($y \mapsto \mathrm{bits}((|y| +
+1)^2)$). For $X, a, j \in \mathbb{N}$ the top writer's time bound is \[ A_a(j + 1) + A_l(j + 2) +
+A_q X^3 + 6X^2 + 4(j + 1) + 3a + 30. \]
+\end{definition}
+
+\begin{theorem}[The middle writer's run]
+\lean{Turing.NTimeDiag.qy_mid_run}
+\label{Turing.NTimeDiag.qy_mid_run}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyEscT.bank, Turing.NTimeDiag.QyEscT.tp, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.bCg, Turing.NTimeDiag.QyKit.bCg_ne, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.QyKit.tp_ne, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qyMid, Turing.NTimeDiag.qyMidB, Turing.NTimeDiag.qyMidM, Turing.NTimeDiag.qyMidRed, Turing.NTimeDiag.qy_blank_bank, Turing.NTimeDiag.qy_callHost, Turing.NTimeDiag.qy_emit_run, Turing.NTimeDiag.qy_emit_stop, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_hosted_halt, Turing.NTimeDiag.qy_mid_code, Turing.NTimeDiag.qy_writer_word, Turing.Segment.trans, Turing.length_bits_le_self, Turing.pairEncode, Turing.segment_iff}
+\difficulty{5}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $a,
+j, k \in \mathbb{N}$, and say that $(T, P)$ are escape tapes for $(n, a, j, k)$ when every host
+tape outside the round's scratch (the range of the clock's bank, which carries $f$'s call $C_f$
+with tape $0$ on $\tau_7$ and its counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$)
+agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$. Let $r_E, r_C$ be the entry state and
+constant of the kit's input seek, $A_a, A_l, A_g$ the time constants of its increment call, length
+call and call of $g$'s witness, and $B = r_C(n + 4) + A_a(j + 1) + A_l(j + 2) + A_g(g(n) + 1) +
+6g(n) + 4(j + 1) + 3(n + 1) + 30$. Write $\langle u, v\rangle$ for the pairing encoding of binary
+words. If $(T, P)$ are escape tapes for $(n, a, j, k)$ and $q \le n + 1$, then for some $t \le B$
+the middle's writer, run for $t$ steps from $\langle (m_0, r_E), q, T, P, \varepsilon\rangle$, is
+halted with output $0\,\langle\langle \mathrm{bits}(g(n)), \alpha\rangle, 1^{n+1}\rangle$, where
+$\alpha$ is $\mathrm{bits}(j + 1)$ with its last symbol removed.
+\end{theorem}
+
+\begin{theorem}[The top writer's run]
+\lean{Turing.NTimeDiag.qy_top_run}
+\label{Turing.NTimeDiag.qy_top_run}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.NTimeDiag.QyEscT, Turing.NTimeDiag.QyEscT.bank, Turing.NTimeDiag.QyEscT.tp, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.K, Turing.NTimeDiag.QyKit.bPb, Turing.NTimeDiag.QyKit.bPb_ne, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.QyKit.tp_ne, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qyTop, Turing.NTimeDiag.qyTopB, Turing.NTimeDiag.qyTopM, Turing.NTimeDiag.qyTopRed, Turing.NTimeDiag.qy_arg_bank, Turing.NTimeDiag.qy_callHost, Turing.NTimeDiag.qy_emit_run, Turing.NTimeDiag.qy_emit_stop, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_hosted_halt, Turing.NTimeDiag.qy_top_code, Turing.NTimeDiag.qy_writer_word, Turing.Segment.trans, Turing.length_bits_le_self, Turing.pairEncode, Turing.segment_iff}
+\difficulty{5}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, with named tapes $\tau_0, \dots,
+\tau_{15}$, let $x$ be a binary input of length $n$, write $\langle s, p, T, P, o\rangle$ for the
+live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and
+output $o$, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere, and write $\Lambda_{n,a,j,k}$ for the anchor-layout tapes, which hold $\mathrm{buf}$ of
+$1^{n+1}$ on $\tau_0$, of $1^{|\mathrm{bits}(n)|}$ on $\tau_1$, of $1^a$ on $\tau_2$, of $1^j$ on
+$\tau_{10}$, of $1^k$ on $\tau_{11}$, of $1$ on $\tau_{12}$, of $1^{m(n)}$ on $\tau_8$ and $\tau_9$
+(with $m(n) = |\mathrm{bits}(A_f(c_f + 2))| + |\mathrm{bits}(n)|$ the clock counter width, $A_f$
+and $c_f$ being the time constants of $f$'s call) and are blank on every other host tape. Let $a,
+j, k \in \mathbb{N}$, and say that $(T, P)$ are escape tapes for $(n, a, j, k)$ when every host
+tape outside the round's scratch (the range of the clock's bank, which carries $f$'s call $C_f$
+with tape $0$ on $\tau_7$ and its counter on $\tau_8$, together with $\tau_3, \dots, \tau_6$)
+agrees with $\Lambda_{n,a,j,k}$ and has its head at $0$. Let $A_a, A_l, A_q$ be the time constants
+of the kit's increment, length and squaring calls, put $X = f(a) + a + 1$ and $B = A_a(j + 1) +
+A_l(j + 2) + A_q X^3 + 6X^2 + 4(j + 1) + 3a + 30$, and write $\langle u, v\rangle$ for the pairing
+encoding of binary words. If $(T, P)$ are escape tapes for $(n, a, j, k)$, $T(\tau_4) =
+\mathrm{buf}(1^{f(a) + a})$ and $P(\tau_4) = 0$, then for some $t \le B$ the top's writer, run for
+$t$ steps from $\langle (t_1, \mathrm{start}), 1, T, P, \varepsilon\rangle$, is halted with output
+$1\,\langle\langle \mathrm{bits}(X^2), \alpha\rangle, 1^a\rangle$, where $\alpha$ is
+$\mathrm{bits}(j + 1)$ with its last symbol removed.
+\end{theorem}
+
+\begin{theorem}[Initial configuration of the main machine]
+\lean{Turing.NTimeDiag.qy_initCfg}
+\label{Turing.NTimeDiag.qy_initCfg}
+\leanok
+\uses{Turing.Cfg.ofWords, Turing.Cfg.ofWords_inputPos, Turing.Cfg.ofWords_output, Turing.Cfg.ofWords_state, Turing.Cfg.ofWords_workTapePos, Turing.Cfg.ofWords_workTapes, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyMainM, Turing.NTimeDiag.qyMainRed, Turing.NTimeDiag.qyM₁, Turing.initCfg_ofWords, Turing.phaseHostTM, Turing.phaseHostTM_q₀}
+\difficulty{3}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$, let $M_1$ be its main machine (the
+phase host of the setup, the locator, the two writers and the empty-output emitter), let $x$ be a
+binary input, and write $\langle s, p, T, P, o\rangle$ for the live configuration on input $x$ with
+state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$. The initial configuration of
+$M_1$ on $x$ is $\langle (\mathrm{setup}, (s_1, \mathrm{start})), 1, \text{all tapes blank}, 0,
+\varepsilon \rangle$.
+\end{theorem}
+
+\begin{theorem}[Main dispatch from the setup]
+\lean{Turing.NTimeDiag.qy_mainRed_setup}
+\label{Turing.NTimeDiag.qy_mainRed_setup}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QySPh, Turing.NTimeDiag.qyMainRed, Turing.NTimeDiag.qySetF}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$. For every state $s$ of the setup that
+is not a setup exit (the done state of phase $s_{10}$, or phase $s_6$ with verdict $<$ or $=$), the
+main machine's dispatch table is undefined on the setup state $s$.
+\end{theorem}
+
+\begin{theorem}[Main dispatch from the locator]
+\lean{Turing.NTimeDiag.qy_mainRed_loc}
+\label{Turing.NTimeDiag.qy_mainRed_loc}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyLK.isEsc, Turing.NTimeDiag.QyLPh, Turing.NTimeDiag.qyLocE, Turing.NTimeDiag.qyMainRed}
+\difficulty{3}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$. For every locator state $s$ that is
+not an escape state (its phase is not the interior, top or timeout escape), the main machine's
+dispatch table is undefined on the locator state $s$.
+\end{theorem}
+
+\begin{definition}[The writers' constant]
+\lean{Turing.NTimeDiag.qyWk}
+\label{Turing.NTimeDiag.qyWk}
+\leanok
+\uses{Turing.NTimeDiag.QyKit}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with input-seek constant $r_C$ and
+time constants $A_a, A_l, A_g, A_q$ of its increment call, length call, call of $g$'s witness and
+squaring call. The writers' constant is $W_\kappa = 4r_C + A_a + 2A_l + A_g + A_q + 60$.
+\end{definition}
+
+\begin{definition}[The main machine's constant]
+\lean{Turing.NTimeDiag.qyMainA}
+\label{Turing.NTimeDiag.qyMainA}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.qyLoopA, Turing.NTimeDiag.qyWk}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with time constants $A_b$ of its input
+call for $\mathrm{bits}(|x|)$, $A_p$ of its prefix call and $A_f, c_f$ of $f$'s call. Its main
+constant is $(A_b + A_p + 2|\mathrm{bits}(A_f(c_f + 2))| + 60) + A^{\mathrm{loop}}_\kappa +
+W_\kappa + 8$, where $A^{\mathrm{loop}}_\kappa$ is the locator's constant and $W_\kappa$ the
+writers' constant.
+\end{definition}
+
+\begin{theorem}[Middle writer's bound is linear]
+\lean{Turing.NTimeDiag.qy_midB_le}
+\label{Turing.NTimeDiag.qy_midB_le}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.qyMidB, Turing.NTimeDiag.qyWk}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with input-seek constant $r_C$ and
+time constants $A_a, A_l, A_g, A_q$ of its increment, length, $g$ and squaring calls, and let
+$W_\kappa = 4r_C + A_a + 2A_l + A_g + A_q + 60$. For all $n, j \in \mathbb{N}$ with $j \le n \le
+g(n)$, \[ r_C(n + 4) + A_a(j + 1) + A_l(j + 2) + A_g(g(n) + 1) + 6g(n) + 4(j + 1) + 3(n + 1) + 30
+\le W_\kappa (g(n) + 1). \]
+\end{theorem}
+
+\begin{theorem}[Top writer's bound is linear]
+\lean{Turing.NTimeDiag.qy_topB_le}
+\label{Turing.NTimeDiag.qy_topB_le}
+\leanok
+\uses{Turing.NTimeDiag.QyKit, Turing.NTimeDiag.qyTopB, Turing.NTimeDiag.qyWk}
+\difficulty{4}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with input-seek constant $r_C$ and
+time constants $A_a, A_l, A_g, A_q$ of its increment, length, $g$ and squaring calls, and let
+$W_\kappa = 4r_C + A_a + 2A_l + A_g + A_q + 60$. For all $n, X, a, j \in \mathbb{N}$ with $X^3 \le
+n$, $X^2 \le n$, $a \le n$ and $j \le n$, \[ A_a(j + 1) + A_l(j + 2) + A_q X^3 + 6X^2 + 4(j + 1) +
+3a + 30 \le W_\kappa (n + 1). \]
+\end{theorem}
+
+\begin{theorem}[Main machine on inputs of length at least 3]
+\lean{Turing.NTimeDiag.qy_main_long}
+\label{Turing.NTimeDiag.qy_main_long}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.budget_eq, Turing.NTimeDiag.ladder, Turing.NTimeDiag.ladder_zero, Turing.NTimeDiag.query, Turing.NTimeDiag.query_eq, Turing.NTimeDiag.qyAnc, Turing.NTimeDiag.qyAt, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyLay, Turing.NTimeDiag.qyLayT, Turing.NTimeDiag.qyLoopA, Turing.NTimeDiag.qyMainA, Turing.NTimeDiag.qyMainM, Turing.NTimeDiag.qyMainRed, Turing.NTimeDiag.qyM₁, Turing.NTimeDiag.qySetB, Turing.NTimeDiag.qyWk, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_hosted_halt, Turing.NTimeDiag.qy_initCfg, Turing.NTimeDiag.qy_ladder_succ_eq, Turing.NTimeDiag.qy_loop, Turing.NTimeDiag.qy_mainRed_loc, Turing.NTimeDiag.qy_mainRed_setup, Turing.NTimeDiag.qy_midB_le, Turing.NTimeDiag.qy_mid_run, Turing.NTimeDiag.qy_setup_long, Turing.NTimeDiag.qy_stage_lt_log, Turing.NTimeDiag.qy_topB_le, Turing.NTimeDiag.qy_top_run, Turing.NTimeDiag.stage, Turing.NTimeDiag.stageCode_eq, Turing.NTimeDiag.stage_spec, Turing.Segment, Turing.Segment.trans, Turing.phaseHostTM, Turing.segment_iff}
+\difficulty{6}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with $n \le g(n)$ for every $n$, let
+$M_1$ be its main machine and $A_\kappa$ its main constant (a number determined by $\kappa$ alone),
+and let $q_{f,g}$ be the stage query of the lazy diagonalizer. For every binary input $x$ of length
+$n \ge 3$ there is $t \le A_\kappa (g(n) + 1)$ such that $M_1$, run on $x$ from its initial
+configuration for $t$ steps, is halted with output $q_{f,g}(1^n)$.
+\end{theorem}
+
+\begin{theorem}[Main machine on inputs of length at most 2]
+\lean{Turing.NTimeDiag.qy_main_short}
+\label{Turing.NTimeDiag.qy_main_short}
+\leanok
+\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QyKit.tp, Turing.NTimeDiag.QyKit.tp_inj, Turing.NTimeDiag.query, Turing.NTimeDiag.query_of_not_guard, Turing.NTimeDiag.qyBody, Turing.NTimeDiag.qyLoopA, Turing.NTimeDiag.qyMainA, Turing.NTimeDiag.qyMainM, Turing.NTimeDiag.qyMainRed, Turing.NTimeDiag.qyM₁, Turing.NTimeDiag.qySetB, Turing.NTimeDiag.qySetT5, Turing.NTimeDiag.qyWk, Turing.NTimeDiag.qy_emit_stop, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_hosted_halt, Turing.NTimeDiag.qy_initCfg, Turing.NTimeDiag.qy_mainRed_setup, Turing.NTimeDiag.qy_setup_short, Turing.phaseHostTM, Turing.segment_iff}
+\difficulty{5}
+Let $\kappa$ be a kit for $f, g : \mathbb{N} \to \mathbb{N}$ with $n \le g(n)$ for every $n$, let
+$M_1$ be its main machine and $A_\kappa$ its main constant (a number determined by $\kappa$ alone),
+and let $q_{f,g}$ be the stage query of the lazy diagonalizer. For every binary input $x$ of length
+$n \le 2$ there is $t \le A_\kappa (g(n) + 1)$ such that $M_1$, run on $x$ from its initial
+configuration for $t$ steps, is halted with output $q_{f,g}(1^n)$ (the empty word).
+\end{theorem}
+
+\begin{theorem}[A machine computing the query on unary words]
+\lean{Turing.NTimeDiag.qy_main}
+\label{Turing.NTimeDiag.qy_main}
+\leanok
+\uses{Complexity.TimeConstructible, Complexity.timeConstructible_iff, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_iff, Turing.FinTM.computesInTime_iff, Turing.NTimeDiag.query, Turing.NTimeDiag.qyMainA, Turing.NTimeDiag.qyM₁, Turing.NTimeDiag.qy_kit_exists, Turing.NTimeDiag.qy_main_long, Turing.NTimeDiag.qy_main_short}
+\difficulty{3}
+Let $f, g : \mathbb{N} \to \mathbb{N}$ be time-constructible and let $q_{f,g}$ be the stage query
+of the lazy diagonalizer. Then there are a finite deterministic Turing machine $M$ over bits and a
+constant $A$ such that $M$ computes the map $x \mapsto q_{f,g}(1^{|x|})$ within $A(g(n) + 1)$ steps
+on inputs of length $n$.
+\end{theorem}
+
+\begin{theorem}[The stage query in linear time]
+\lean{Turing.NTimeDiag.exists_queryTM}
+\label{Turing.NTimeDiag.exists_queryTM}
+\leanok
+\uses{Complexity.TimeConstructible, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.NTimeDiag.query, Turing.NTimeDiag.qy_main, Turing.NTimeDiag.qy_query_of_main}
+\difficulty{2}
+Let $f, g : \mathbb{N} \to \mathbb{N}$ be time-constructible and let $q_{f,g}$ be the stage query
+of the lazy diagonalizer. Then there are a finite deterministic Turing machine $G$ over bits and a
+constant $C$ such that $G$ computes $q_{f,g}$ within $C(g(n) + 1)$ steps on inputs of length $n$.
+\end{theorem}
+
+\begin{definition}[The one-cell take]
+\lean{Turing.NTimeDiag.dzTakeTM}
+\label{Turing.NTimeDiag.dzTakeTM}
+\leanok
+\uses{Turing.MultiTapeTM}
+For $K \in \mathbb{N}$ and a work tape $i < K$, the one-cell take is the $K$-tape machine over bits
+whose states are the optional values of an optional bit, with start state $\mathrm{none}$. From
+$\mathrm{none}$, in one step it reads the cell under head $i$ (a bit or blank, call it $o$), writes
+a blank there, moves head $i$ one cell to the right and enters state $\mathrm{some}(o)$; it leaves
+the input head and all other tapes and heads in place and emits nothing. In a state
+$\mathrm{some}(o)$ it stays in that state without writing, moving or emitting.
+\end{definition}
+
+\begin{theorem}[One step of the take]
+\lean{Turing.NTimeDiag.dz_take_run}
+\label{Turing.NTimeDiag.dz_take_run}
+\leanok
+\uses{Turing.Action.apply_workTapes, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.Cfg.workTapeSymbols_eq, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_one, Turing.MultiTapeTM.step_of_some, Turing.NTimeDiag.dzTakeTM, Turing.NTimeDiag.qyC, Turing.moveInputPos_zero}
+\difficulty{4}
+Let $i$ be one of $K$ work tapes, let $x$ be a binary input, and write $\langle s, p, T, P,
+o\rangle$ for the live configuration on input $x$ with state $s$, input head $p$, work tapes $T$,
+heads $P$ and output $o$. For every input-head position $p$, tapes $T$, heads $P$ and output $o$,
+one step of the one-cell take on tape $i$ from $\langle \mathrm{none}, p, T, P, o \rangle$ gives
+$\langle \mathrm{some}(T_i(P_i)), p, T', P', o\rangle$, where $T'$ is $T$ with cell $P_i$ of tape
+$i$ made blank and $P'$ is $P$ with $P'_i = P_i + 1$.
+\end{theorem}
+
+\begin{theorem}[Recognising a silent transport]
+\lean{Turing.NTimeDiag.dz_silentCfg_eq}
+\label{Turing.NTimeDiag.dz_silentCfg_eq}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.embedSilentCfg, Turing.embedSilentCfg_cap, Turing.embedSilentCfg_selected_pos, Turing.embedSilentCfg_selected_tape, Turing.embedSilentCfg_unselected}
+\difficulty{4}
+Let $\iota$ inject $m$ tapes into $K$ tapes, let $\mathit{cap}$ be a host tape outside the range of
+$\iota$, let $T$ and $P$ be host tape contents and heads, let $\mathit{pre}, o$ be binary words,
+and write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank
+elsewhere. Let $c$ be an $m$-tape configuration and $d$ a $K$-tape configuration on a common input
+with the same state and input head, such that $d$ has output $o$; each tape $i$ of $c$ and its head
+equal tape $\iota(i)$ of $d$ and its head; tape $\mathit{cap}$ of $d$ is
+$\mathrm{buf}(\mathit{pre}\,o_c)$, with $o_c$ the output of $c$, and its head is at
+$|\mathit{pre}\,o_c|$; and every other host tape $j$ of $d$ equals $T_j$ with head $P_j$. Then $d$
+is the silent transport of $c$ with frame $(T, P)$, recorded prefix $\mathit{pre}$ and output $o$.
+\end{theorem}
+
+\begin{theorem}[A captured run in normal form]
+\lean{Turing.NTimeDiag.dz_silent}
+\label{Turing.NTimeDiag.dz_silent}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.dz_silentCfg_eq, Turing.NTimeDiag.qyC, Turing.embedSilentCfg, Turing.embedSilentTM, Turing.embedSilentTM_runFrom}
+\difficulty{3}
+Let $\iota$ inject $m$ tapes into $K$ tapes, let $\mathit{cap}$ be a host tape outside the range of
+$\iota$, let $M$ be an $m$-tape machine over bits with states $s, s'$, let $x$ be a binary input,
+write $\langle s, p, T, P, o\rangle$ for the live configuration on input $x$ with state $s$, input
+head $p$, work tapes $T$, heads $P$ and output $o$, and write $\mathrm{buf}(w)$ for the tape
+holding $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere. Let $T, T'$ be host tapes, $P, P'$
+host heads, $o, \mathit{pre}, o'$ binary words, $T_0, P_0$ tapes and heads for $M$, $q$ an
+input-head position and $t \in \mathbb{N}$. Suppose $T(\mathit{cap}) = \mathrm{buf}(\mathit{pre})$
+and $P(\mathit{cap}) = |\mathit{pre}|$; that $M$ runs in $t$ steps from $\langle s, q, T \circ
+\iota, P \circ \iota, \varepsilon\rangle$ to $\langle s', q, T_0, P_0, o'\rangle$; that
+$T'(\iota(i)) = T_0(i)$ and $P'(\iota(i)) = P_0(i)$ for every $i$; that $T'(\mathit{cap}) =
+\mathrm{buf}(\mathit{pre}\,o')$ with $P'(\mathit{cap}) = |\mathit{pre}\,o'|$; and that $T'$, $P'$
+agree with $T$, $P$ on every other tape. Then the capture wrapper of $M$ along $\iota$ with capture
+tape $\mathit{cap}$ runs in $t$ steps from $\langle s, q, T, P, o\rangle$ to $\langle s', q, T',
+P', o\rangle$, and at every time $u$ its state equals the state of $M$ at time $u$ from $\langle s,
+q, T \circ \iota, P \circ \iota, \varepsilon\rangle$.
+\end{theorem}
+
+\begin{definition}[Tape map of the hosted clock]
+\lean{Turing.NTimeDiag.dzClkEmb}
+\label{Turing.NTimeDiag.dzClkEmb}
+\leanok
+Let $K, m \in \mathbb{N}$, let $\mathit{buf}, \mathit{cap}, \mathit{ctr}$ be three pairwise
+distinct host tapes among $K$, and let $\beta$ inject $m$ tapes into the $K$ host tapes with none
+of $\mathit{buf}, \mathit{cap}, \mathit{ctr}$ in its range. The hosted clock's tape map is the
+injection of the $(1 + m) + 1 + 1$ tapes of a step clock over a virtually hosted $m$-tape machine
+into the host tapes that sends the virtual-input buffer (the first tape) to $\mathit{buf}$, the
+hosted tape $i$ to $\beta(i)$, the capture tape to $\mathit{cap}$ and the counter (the last tape)
+to $\mathit{ctr}$.
+\end{definition}
+
+\begin{theorem}[The hosted clock's tape map, tape by tape]
+\lean{Turing.NTimeDiag.dzClkEmb_eqs}
+\label{Turing.NTimeDiag.dzClkEmb_eqs}
+\leanok
+\uses{Turing.NTimeDiag.dzClkEmb}
+\difficulty{1}
+Let $K, m \in \mathbb{N}$, let $\mathit{buf}, \mathit{cap}, \mathit{ctr}$ be pairwise distinct host
+tapes among $K$, and let $\beta$ inject $m$ tapes into the host tapes avoiding all three. Consider
+the hosted clock's tape map for these data, an injection of the $(1 + m) + 1 + 1$ tapes (indexed
+$0, \dots, m + 2$) of a step clock over a virtually hosted $m$-tape machine into the host tapes. It
+sends the last tape (index $m + 2$) to $\mathit{ctr}$, the tape of index $m + 1$ to $\mathit{cap}$,
+the tape of index $0$ to $\mathit{buf}$, and the tape of index $1 + i$ to $\beta(i)$ for every $i <
+m$.
+\end{theorem}
+
+\begin{definition}[The hosted clock's clause]
+\lean{Turing.NTimeDiag.DzClockSpec}
+\label{Turing.NTimeDiag.DzClockSpec}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.Stopped, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.dzClkEmb, Turing.NTimeDiag.qyC, Turing.embedEmitTM}
+Let $M$ be an $m$-tape machine over bits with state set $S$, let $\mathrm{stop} : S \to \{0, 1\}$,
+and call a configuration of $M$ stopped when it is halted or its state satisfies $\mathrm{stop}$.
+Let $H$ be a machine with $(1 + m) + 1 + 1$ tapes and state set $Q$, with maps $\mathrm{inj} : S
+\times \{0, 1\} \to Q$ and $\mathrm{fin}, \mathrm{tmo}$ from optional elements of $S \times \{0,
+1\}$ to $Q$. Write $\langle s, p, T, P, o\rangle$ for the live configuration on input $x$ with
+state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and write $\mathrm{buf}(w)$
+for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere. The hosted clock's
+clause holds when the following is true for every number $K$ of host tapes, binary words $x, y$,
+pairwise distinct host tapes $\mathit{buf}, \mathit{cap}, \mathit{ctr}$, injection $\beta$ of $M$'s
+tapes into the host tapes avoiding all three, host tapes $T$, heads $P$ and output $o$, live
+configuration $c$ of $M$ on input $y$ in a state $q$ with input head $1$ and empty output, and
+binary word $w$ whose value as a binary numeral (least significant bit first) is $d$. Let $\sigma$
+send $H$'s first tape to $\mathit{buf}$, its hosted tapes along $\beta$, its capture tape to
+$\mathit{cap}$ and its last tape to $\mathit{ctr}$, and run $H$ embedded along $\sigma$ on input
+$x$ from $\langle \mathrm{inj}(q, 1), 1, T, P, o\rangle$, assuming that $\mathit{buf}$ holds
+$\mathrm{buf}(y)$, each $\beta(i)$ holds tape $i$ of $c$ with $c$'s head, $\mathit{cap}$ is blank,
+$\mathit{ctr}$ holds $\mathrm{buf}(w)$, and the heads of $\mathit{buf}$, $\mathit{cap}$,
+$\mathit{ctr}$ are at $0$. (a) If $M$ from $c$ is first stopped at time $\tau \le d$, then at some
+time $t \le 5\tau + 2|w| + 2$ the run is at $\langle \mathrm{fin}(r), 1, T', P', o\rangle$, where
+$r$ is $M$'s state at time $\tau$ paired with some bit (or none if $M$ has halted), with
+$\mathit{cap}$ holding $\mathrm{buf}$ of $M$'s output at time $\tau$ and its head just after it.
+(b) If $M$ from $c$ is stopped at no time $u \le d$, then at some time $t \le 5d + 2|w| + 2$ the
+run is at $\langle \mathrm{tmo}(r), 1, T', P', o\rangle$ for some $r$, $T'$, $P'$. In both cases no
+state $\mathrm{fin}(r')$ or $\mathrm{tmo}(r')$ occurs before time $t$.
+\end{definition}
+
+\begin{theorem}[Existence of a hosted clock]
+\lean{Turing.NTimeDiag.dz_clock_exists}
+\label{Turing.NTimeDiag.dz_clock_exists}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.Stopped, Turing.Cfg.stopped_iff, Turing.FinTM.VirtualTag, Turing.FinTM.VirtualTag_iff, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.DzClockSpec, Turing.NTimeDiag.dzClkEmb, Turing.NTimeDiag.dzClkEmb_eqs, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_embed_gen, Turing.NTimeDiag.qy_embed_state, Turing.clockCfg, Turing.embedEmitCfg, Turing.embedEmitCfg_selected_pos, Turing.embedEmitCfg_selected_tape, Turing.embedEmitTM, Turing.embedSilentCfg_cap, Turing.embedSilentCfg_selected_pos, Turing.embedSilentCfg_selected_tape, Turing.exists_stepClockTMVia, Turing.vhostCap, Turing.vhostCap_eq, Turing.vhostCfg, Turing.vhostSilentCfg, Turing.vhostSilentCfg_eq, Turing.vhostSilentTM, Turing.vhostSilentTM_runFrom, Turing.wordPatch}
+\difficulty{6}
+Let $M$ be an $m$-tape machine over bits with a finite state set $S$ (with decidable equality) and
+let $\mathrm{stop} : S \to \{0, 1\}$. Then there are a finite state set $Q$ with decidable
+equality, a machine $H$ over bits with $(1 + m) + 1 + 1$ tapes and state set $Q$, and maps
+$\mathrm{inj} : S \times \{0, 1\} \to Q$ and $\mathrm{fin}, \mathrm{tmo}$ from optional elements of
+$S \times \{0, 1\}$ to $Q$, such that $\mathrm{fin}$ is injective, $\mathrm{fin}(a) \ne
+\mathrm{tmo}(b)$ for all $a, b$, and $(H, \mathrm{inj}, \mathrm{fin}, \mathrm{tmo})$ satisfies the
+hosted clock's clause for $M$ and $\mathrm{stop}$: run with $M$'s configuration on its hosted tapes
+and a counter of value $d$, it reaches $\mathrm{fin}$ of $M$'s stopped state within $5\tau + 2|w| +
+2$ steps when $M$ first stops at a time $\tau \le d$ (capturing $M$'s output), and reaches a
+timeout state within $5d + 2|w| + 2$ steps otherwise, with $w$ the counter's word.
+\end{theorem}
+
+\begin{definition}[Inner second component of a pair]
+\lean{Turing.NTimeDiag.dzAlpha}
+\label{Turing.NTimeDiag.dzAlpha}
+\leanok
+\uses{Turing.pairDecode}
+Write $\langle u, v\rangle$ for the pairing encoding of binary words. For a binary word $z$, decode
+$z$ as a pair $\langle u, v\rangle$ (taking $u$ to be empty if decoding fails) and decode $u$ as a
+pair $\langle u_1, u_2\rangle$ (taking $u_2$ to be empty if decoding fails); the inner second
+component of $z$ is $u_2$.
+\end{definition}
+
+\begin{theorem}[Inner second component of a nested pair]
+\lean{Turing.NTimeDiag.dz_alpha_eq}
+\label{Turing.NTimeDiag.dz_alpha_eq}
+\leanok
+\uses{Turing.NTimeDiag.dzAlpha, Turing.pairDecode_pairEncode, Turing.pairEncode}
+\difficulty{1}
+Write $\langle u, v\rangle$ for the pairing encoding of binary words. For all binary words $B,
+\alpha, N$, the inner second component of $\langle\langle B, \alpha\rangle, N\rangle$ (the second
+component of the first component of its decoding) equals $\alpha$.
+\end{theorem}
+
+\begin{theorem}[Output length bounded by running time]
+\lean{Turing.NTimeDiag.dz_out_le}
+\label{Turing.NTimeDiag.dz_out_le}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesFunInTime_iff, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.output_length_le}
+\difficulty{2}
+Let $M$ be a finite deterministic Turing machine over bits, let $F$ map binary words to binary
+words, and let $T : \mathbb{N} \to \mathbb{N}$. If $M$ computes $F$ within time $T$, then for every
+binary word $y$ we have $|F(y)| \le T(|y|)$.
+\end{theorem}
+
+\begin{definition}[The diagonalizer's kit]
+\lean{Turing.NTimeDiag.DzKit}
+\label{Turing.NTimeDiag.DzKit}
+\leanok
+\uses{Turing.CodeNDTM.toFinNDTM, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NTimeDiag.DzClockSpec, Turing.NTimeDiag.QyInSpec, Turing.NTimeDiag.QySpec, Turing.NTimeDiag.dzAlpha, Turing.NTimeDiag.query, Turing.pairEncode, Turing.streamStartCfg}
+Let $f, g : \mathbb{N} \to \mathbb{N}$, let $c$ be an effective coding scheme for nondeterministic
+machines, let $B_F$ be a finite deterministic machine over bits, let $q_{f,g}$ be the stage query,
+write $\langle u, v\rangle$ for the pairing encoding of binary words, and write $\mathrm{seam}_x(e,
+w)$ for the configuration on input $x$ in state $e$ with input head $1$, tape $0$ holding $w$,
+other tapes blank, heads at $0$ and empty output. A kit for $f, g, c, B_F$ consists of: the fact $n
+\le g(n)$ for all $n$; input calls (each a finite deterministic machine with at least one tape and
+entry and exit states that reaches $\mathrm{seam}_x(\mathit{exit}, F(x))$ from
+$\mathrm{seam}_x(\mathit{entry}, \varepsilon)$ for the first time within the given bound on $|x|$)
+for $q_{f,g}$, for $x \mapsto \mathrm{bits}(g(|x|))$ and for $x \mapsto 1x$, each within $A(g(n) +
+1)$ for its own constant $A$, the first with $|q_{f,g}(x)| \le A(g(|x|) + 1)$; install calls
+(reaching $\mathrm{seam}_x(\mathit{exit}, F(y))$ from $\mathrm{seam}_x(\mathit{entry}, y)$ for the
+first time within the bound on $y$) for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second
+component $y \mapsto \alpha$ of $y = \langle\langle B, \alpha\rangle, N\rangle$, each within $A(|y|
++ 1)$, the latter with output length at most $A(|y| + 1)$; an interpreter core, a $k_R$-tape
+deterministic machine $R$ with finitely many states, a stream tape $j_R$ and states
+$\mathit{entry}$, $\mathit{acc} \ne \mathit{rej}$ such that for each code $\alpha$ there is $C$
+with: for all $x$, $t$ and choice words $s$ with $t \le |s|$, $R$ started in $\mathit{entry}$ on
+input $\langle\langle \mathrm{bits}(t), \alpha\rangle, x\rangle$ with $s$ on tape $j_R$ and other
+tapes blank is, at some time $T \le C(t + 1)$, in $\mathit{acc}$ if the machine decoded from
+$\alpha$, run on $x$ with the first $t$ choices of $s$, has halted with output $1$, and in
+$\mathit{rej}$ otherwise, and in neither state earlier; a hosted clock over $R$ with stop predicate
+``the state is $\mathit{acc}$ or $\mathit{rej}$'' whose finish map is injective and never equals
+its timeout map, satisfying the hosted clock's clause; and a hosted clock over $B_F$ with the stop
+predicate that never holds, whose finish and timeout maps never agree, satisfying the hosted
+clock's clause.
+\end{definition}
+
+\begin{theorem}[Existence of the diagonalizer's kit]
+\lean{Turing.NTimeDiag.dz_kit_exists}
+\label{Turing.NTimeDiag.dz_kit_exists}
+\leanok
+\uses{Complexity.TimeConstructible, Complexity.timeConstructible_iff, Turing.Cfg, Turing.CodeNDTM.toFinNDTM, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.bufferTape, Turing.FinTM.computesFunInTime_comp, Turing.FinTM.computesFunInTime_iff, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.computesFunInTime_prepend, Turing.FinTM.pairExtractTM_fst, Turing.FinTM.pairExtractTM_snd, Turing.MultiTapeTM.runFrom, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.QyInSpec, Turing.NTimeDiag.QySpec, Turing.NTimeDiag.QySpec.mono, Turing.NTimeDiag.dzAlpha, Turing.NTimeDiag.dz_clock_exists, Turing.NTimeDiag.dz_out_le, Turing.NTimeDiag.exists_queryTM, Turing.NTimeDiag.query, Turing.NTimeDiag.qy_inputSpec, Turing.NTimeDiag.qy_installSpec, Turing.exists_ndInterpreterCore, Turing.length_bits_le_self, Turing.pairDecode, Turing.pairEncode, Turing.streamStartCfg}
+\difficulty{5}
+Let $f, g : \mathbb{N} \to \mathbb{N}$ be time-constructible, let $c$ be an effective coding scheme
+for nondeterministic machines and let $B_F$ be a finite deterministic machine over bits. Then a
+diagonalizer's kit for $f, g, c, B_F$ exists: linear-time input calls for the stage query, for
+$\mathrm{bits}(g(|x|))$ and for prepending $1$; linear-time install calls for $\mathrm{bits}(|y|)$
+and for the inner second component of a nested pair; an interpreter core for the codes of $c$; and
+hosted clocks over the core and over $B_F$.
+\end{theorem}
+
+\begin{definition}[Tape count of the diagonalizer]
+\lean{Turing.NTimeDiag.DzKit.K}
+\label{Turing.NTimeDiag.DzKit.K}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, a coding scheme and a
+decider $B_F$, whose calls for the stage query, $g$'s witness, the prefix, the length and the inner
+second component have $k_q, k_g, k_p, k_l, k_a$ tapes and whose interpreter core has $k_R$ tapes.
+The diagonalizer's tape count is $K_\kappa = 14 + k_q + k_g + k_p + k_l + k_a + k_R + k_{B_F}$,
+where $k_{B_F}$ is the number of tapes of $B_F$.
+\end{definition}
+
+\begin{theorem}[At least fourteen tapes]
+\lean{Turing.NTimeDiag.DzKit.le_K}
+\label{Turing.NTimeDiag.DzKit.le_K}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K}
+\difficulty{2}
+For every diagonalizer's kit $\kappa$ for $f, g : \mathbb{N} \to \mathbb{N}$, a coding scheme and a
+decider, its tape count $K_\kappa$ satisfies $14 \le K_\kappa$.
+\end{theorem}
+
+\begin{definition}[Named tapes of the diagonalizer]
+\lean{Turing.NTimeDiag.DzKit.tp}
+\label{Turing.NTimeDiag.DzKit.tp}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.le_K}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, a coding scheme and a
+decider, with tape count $K_\kappa \ge 14$. For $i < 14$ the named tape $\tau_i$ is the host tape
+of index $i$; the roles are: $\tau_0$ the query, $\tau_1$ the bits of $g(n)$, $\tau_2$ the word
+$1^{n+1}$, $\tau_3$ the clock's counter, $\tau_4, \tau_5$ the block's expansion counters, $\tau_6$
+the block, $\tau_7$ the ruler, $\tau_8$ the query's tail, $\tau_9$ the budget word, $\tau_{10}$ its
+expansion and bits, $\tau_{11}$ the core's input, $\tau_{12}$ the hosted capture and $\tau_{13}$
+the decider's first tape.
+\end{definition}
+
+\begin{theorem}[Index of a named tape]
+\lean{Turing.NTimeDiag.DzKit.tp_val}
+\label{Turing.NTimeDiag.DzKit.tp_val}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.tp}
+\difficulty{1}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, a coding scheme and a
+decider. For every $i < 14$ the named tape $\tau_i$ of $\kappa$ has index $i$.
+\end{theorem}
+
+\begin{theorem}[Named tapes are distinct]
+\lean{Turing.NTimeDiag.DzKit.tp_ne}
+\label{Turing.NTimeDiag.DzKit.tp_ne}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.le_K, Turing.NTimeDiag.DzKit.tp}
+\difficulty{1}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, a coding scheme and a
+decider. For all $a, b < 14$ with $a \ne b$, the named tapes satisfy $\tau_a \ne \tau_b$.
+\end{theorem}
+
+\begin{definition}[A tape layout]
+\lean{Turing.NTimeDiag.dzLay}
+\label{Turing.NTimeDiag.dzLay}
+\leanok
+Let $K \in \mathbb{N}$, let $L$ assign a value of some type to each of the indices $0, \dots, 13$,
+and let $d$ be a value of that type. The layout of $L$ with default $d$ assigns to each host tape
+$t < K$ the value $L(t)$ if $t < 14$ and $d$ otherwise.
+\end{definition}
+
+\begin{theorem}[A layout on a named tape]
+\lean{Turing.NTimeDiag.dzLay_tp}
+\label{Turing.NTimeDiag.dzLay_tp}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.dzLay}
+\difficulty{2}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, a coding scheme and a
+decider, let $L$ assign a value to each index $i < 14$ and let $d$ be a default value. For every $i
+< 14$, the layout of $L$ with default $d$ takes the value $L(i)$ at the named tape $\tau_i$.
+\end{theorem}
