@@ -101,8 +101,8 @@ structure RealReads (d : List Bool) (g : (G.group κ d).G) (α : ZMod (G.group �
 /-- **The setup's output, read** [BB04, §4.1, *Setup*]: there is a map `o` from the setup's
 coins to parameters and master key of `bb1Scheme G ℓ` such that `Setup` draws `r`, `g ∈ G^*`,
 `α`, `h`, `g_2` and returns `o r g α h g_2`:
-`(Setup κ).bind F = 𝔼-free form (sample r).bind … (sample g_2).bind fun g_2 => F (o r g α h g_2)`
-for every continuation `F`, and the game's oracles read `o r g α h g_2` as the parameters
+`(Setup κ).bind F = (sample r).bind … (sample g_2).bind fun g_2 => F (o r g α h g_2)` for every
+continuation `F`, and the game's oracles read `o r g α h g_2` as the parameters
 `(g, g^α, g_2, h)` and the master key `g_2^α` of the group `desc(κ, r)` (`RealReads`).
 
 **Proof sketch.** `o` is the setup's output map, found by unification after reading `Setup`
@@ -122,7 +122,26 @@ theorem setup_out :
           (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun h =>
           (ProbComp.sample (G.group κ (G.desc κ r)).G).bind fun g2 => F (o r g α h g2)) ∧
       ∀ r g α h g2, RealReads G ℓ κ (G.desc κ r) g.1 α g2 h (o r g α h g2) := by
-  sorry
+  refine ⟨?o, fun F => ?hF, ?hR⟩
+  case hF =>
+    rw [bb1Scheme_setup_eq]
+    simp only [OracleComp.bind_assoc, BB1.setup_eq, OracleComp.pure_bind]
+    rfl
+  case hR =>
+    intro r g α h g2
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · exact List.ofFn_injective (ofFn_bb1Scheme_encPP G ℓ κ _ _)
+    · exact fun m => bb1Scheme_msgSpace_iff G ℓ κ _ _ m
+    · intro id β f
+      rw [bb1Scheme_keyGen_bind, BB1.keyGen_eq, OracleComp.bind_assoc]
+      simp only [OracleComp.pure_bind]
+      refine congrArg _ (funext fun r => ?_)
+      rw [List.ofFn_injective (ofFn_bb1Scheme_encSK G ℓ κ _ _)]
+    · intro t m β f
+      rw [bb1Scheme_enc_bind, BB1.encrypt_eq, OracleComp.bind_assoc]
+      simp only [OracleComp.pure_bind]
+      refine congrArg _ (funext fun s => ?_)
+      rw [List.ofFn_injective (ofFn_bb1Scheme_encCT G ℓ κ _ _)]
 
 end Setup
 
@@ -222,12 +241,40 @@ theorem bb1RealLazy_some (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
   rfl
 
 /-- **The game's oracles keep the committed identity**: for every scheme `S`, every outcome of
-`S.sidImpl b κ pp msk i x (some t, c)` has the committed identity `t`. -/
+`S.sidImpl b κ pp msk i x (some t, c)` has the committed identity `t`.
+
+**Proof sketch.** By cases on the oracle, read through `IBEScheme.sidImpl_zero_onSpec`,
+`sidImpl_one_onQuery`, `sidImpl_two_onQuery`, `sidImpl_keyGen_ne_onSpec` and
+`sidImpl_challenge_fresh_onSpec`: `Init` keeps the state (`sidImpl_init_some`), `KeyGen` keeps it
+(`sidImpl_keyGen_target`, `sidImpl_keyGen_ne`), and `Challenge` keeps `ID*` and records the
+challenge at most (`sidImpl_challenge_fresh`, `_invalid`, `_repeat`). -/
 theorem sidImpl_allOutputs_some (S : IBEScheme) (pp : S.PP κ) (msk : S.MSK κ) (i : Fin 3)
     (x : (S.sidSpec κ).dom i) (t : Fin (S.idLen.eval κ) → Bool)
     (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
     (S.sidImpl b κ pp msk i x (some t, c)).AllOutputs fun p => p.2.1 = some t := by
-  sorry
+  have h012 : ∀ i : Fin 3, i = 0 ∨ i = 1 ∨ i = 2 := by decide
+  rcases h012 i with rfl | rfl | rfl
+  · rw [IBEScheme.sidImpl_zero_onSpec, IBEScheme.sidImpl_init_some, OracleComp.pure_bind]
+    exact OracleComp.allOutputs_pure.2 rfl
+  · by_cases ht : cast (sidSpec_dom_one S κ) x = t
+    · rw [IBEScheme.sidImpl_one_onQuery, ht, IBEScheme.sidImpl_keyGen_target]
+      exact OracleComp.allOutputs_pure.2 rfl
+    · rw [IBEScheme.sidImpl_keyGen_ne_onSpec S b κ pp msk x t c ht]
+      apply OracleComp.AllOutputs.bind (P := fun _ => True) (OracleComp.allOutputs_true _)
+      intro _ _
+      exact OracleComp.allOutputs_pure.2 rfl
+  · rcases c with _ | w
+    · by_cases hv : S.MsgSpace κ pp
+          (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two S κ) x)).1 ∧
+        S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two S κ) x)).2
+      · rw [IBEScheme.sidImpl_challenge_fresh_onSpec S b κ pp msk x t hv]
+        apply OracleComp.AllOutputs.bind (P := fun _ => True) (OracleComp.allOutputs_true _)
+        intro _ _
+        exact OracleComp.allOutputs_pure.2 rfl
+      · rw [IBEScheme.sidImpl_two_onQuery, IBEScheme.sidImpl_challenge_invalid (h := hv)]
+        exact OracleComp.allOutputs_pure.2 rfl
+    · rw [IBEScheme.sidImpl_two_onQuery, IBEScheme.sidImpl_challenge_repeat]
+      exact OracleComp.allOutputs_pure.2 rfl
 
 /-- **Before `Init`, `KeyGen` and `Challenge` do not read the parameters**: for every scheme `S`
 and `i ≠ 0`, `S.sidImpl b κ pp msk i x (none, c) = S.sidImpl b κ pp' msk' i x (none, c)`, and
@@ -236,7 +283,16 @@ theorem sidImpl_none_of_ne (S : IBEScheme) (pp pp' : S.PP κ) (msk msk' : S.MSK 
     (hi : i ≠ 0) (x : (S.sidSpec κ).dom i) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
     S.sidImpl b κ pp msk i x (none, c) = S.sidImpl b κ pp' msk' i x (none, c) ∧
       (S.sidImpl b κ pp msk i x (none, c)).AllOutputs fun p => p.2 = (none, c) := by
-  sorry
+  have h12 : ∀ i : Fin 3, i ≠ 0 → i = 1 ∨ i = 2 := by decide
+  rcases h12 i hi with rfl | rfl
+  · rw [IBEScheme.sidImpl_one_onQuery S b κ pp msk x,
+      IBEScheme.sidImpl_one_onQuery S b κ pp' msk' x, IBEScheme.sidImpl_keyGen_none,
+      IBEScheme.sidImpl_keyGen_none]
+    exact ⟨rfl, OracleComp.allOutputs_pure.2 rfl⟩
+  · rw [IBEScheme.sidImpl_two_onQuery S b κ pp msk x,
+      IBEScheme.sidImpl_two_onQuery S b κ pp' msk' x, IBEScheme.sidImpl_challenge_none,
+      IBEScheme.sidImpl_challenge_none]
+    exact ⟨rfl, OracleComp.allOutputs_pure.2 rfl⟩
 
 /-- **Step R1** (design r1 §3.1): from the empty state, the game's oracles on `o h` simulate like
 `bb1RealAt o h`, for functions `F` of the output:
@@ -253,7 +309,27 @@ theorem expect_simulate_sidImpl_bb1RealAt (h : (G.group κ d).G) {α : Type}
     ProbComp.expect (simulate ((bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2) c (none, none))
         (fun p => F p.1) =
       ProbComp.expect (simulate (bb1RealAt G ℓ b κ d o h) c (none, none)) (fun p => F p.1) := by
-  sorry
+  refine ProbComp.expect_simulate_rel _ _
+    (fun s u => s = (u.1.map Prod.fst, u.2) ∧ ∀ p ∈ u.1, p.2 = h) (fun i x s u hsu g₀ g₁ hg => ?_)
+    c _ _ (fun _ _ _ _ => rfl) ⟨rfl, fun p hp => by cases hp⟩
+  obtain ⟨rfl, hh⟩ := hsu
+  -- from related states, `bb1RealAt h` reads the recorded `h`
+  have hget : (u.1.map Prod.snd).getD h = h := by
+    rcases u with ⟨_ | ⟨t, h'⟩, c⟩
+    · rfl
+    · exact hh _ rfl
+  rw [show bb1RealAt G ℓ b κ d o h i x u =
+      ((bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2 i x (u.1.map Prod.fst, u.2)).bind
+        fun p => .pure (p.1, (p.2.1.map fun t => (t, h), p.2.2)) by rw [bb1RealAt, hget],
+    ProbComp.expect_bind]
+  refine congrArg _ (funext fun p => ?_)
+  rw [ProbComp.expect_pure]
+  refine hg p.1 p.2 _ ⟨?_, fun q hq => ?_⟩ <;> rcases p with ⟨a, _ | t, c⟩
+  · rfl
+  · rfl
+  · cases hq
+  · cases hq
+    rfl
 
 /-- **Step E-h** (design r1 §3.1): `h` drawn in advance or at the first `Init` simulate alike:
 `𝔼_{h ← G} 𝔼[F] (simulate (bb1RealAt … o h) c (none, none)) =
@@ -271,7 +347,41 @@ theorem expect_sample_bb1RealAt {α : Type} (c : OracleComp ((bb1Scheme G ℓ).s
     ProbComp.expect (ProbComp.sample (G.group κ d).G)
         (fun h => ProbComp.expect (simulate (bb1RealAt G ℓ b κ d o h) c (none, none)) F) =
       ProbComp.expect (simulate (bb1RealLazy G ℓ b κ d o) c (none, none)) F := by
-  sorry
+  refine (Games.expect_simulate_eager (T := (G.group κ d).G) (bb1RealLazy G ℓ b κ d o)
+    (bb1RealAt G ℓ b κ d o) (fun u => u.1.isSome = true) (fun h i x u hu => ?_)
+    (fun i x u hu => ?_) (fun i x u hu => ?_) c F
+    (by show ¬ ((none : Option _).isSome = true); exact Bool.false_ne_true)).symm
+  -- after `Init`, both read the recorded `h`
+  · rcases u with ⟨_ | ⟨t, h'⟩, c⟩
+    · exact absurd hu Bool.false_ne_true
+    · rw [bb1RealAt_some, bb1RealLazy_some]
+  -- the committed identity stays committed
+  · rcases u with ⟨_ | ⟨t, h'⟩, c⟩
+    · exact absurd hu Bool.false_ne_true
+    · rw [bb1RealLazy_some]
+      exact (sidImpl_allOutputs_some b κ _ _ _ i x t c).bind fun p hp =>
+        OracleComp.allOutputs_pure.2 (by show (p.2.1.map _).isSome = true; rw [hp]; rfl)
+  -- before `Init`: the first `Init` draws `h`; `KeyGen` and `Challenge` read no parameter
+  · rcases u with ⟨_ | ⟨t, h'⟩, c⟩
+    swap
+    · exact absurd rfl hu
+    by_cases hi : i = 0
+    · subst hi
+      refine Or.inr ⟨?_, fun h => ?_⟩
+      · rw [bb1RealLazy_zero_none]
+        exact congrArg _ (funext fun h => (bb1RealAt_none G ℓ b κ d o h 0 x c).symm)
+      · rw [bb1RealAt_none, IBEScheme.sidImpl_zero_onSpec, IBEScheme.sidImpl_init_none,
+          OracleComp.pure_bind, OracleComp.pure_bind]
+        exact OracleComp.allOutputs_pure.2 rfl
+    · have hn := fun h => sidImpl_none_of_ne b κ (bb1Scheme G ℓ) (o h).1 (o 1).1 (o h).2 (o 1).2
+        i hi x c
+      refine Or.inl fun h => ⟨?_, ?_⟩
+      · rw [bb1RealAt_none, bb1RealLazy_none_of_ne G ℓ b κ d o i hi x c, (hn h).1]
+        exact OracleComp.bind_congr_of_allOutputs (hn 1).2 fun p hp => by rw [hp]; rfl
+      · rw [bb1RealLazy_none_of_ne G ℓ b κ d o i hi x c]
+        exact (sidImpl_none_of_ne b κ _ (o 1).1 (o 1).1 (o 1).2 (o 1).2 i hi x c).2.bind
+          fun p hp => OracleComp.allOutputs_pure.2 (by
+            show ¬ ((p.2.1.map _).isSome = true); rw [hp]; exact Bool.false_ne_true)
 
 /-- **The real game with `h` drawn at the first `Init`** (steps R1 and E-h of design r1 §3.1):
 `𝔼_{h ← G} 𝔼[F ∘ fst] (simulate (sidImpl b κ (o h).1 (o h).2) c (none, none)) =

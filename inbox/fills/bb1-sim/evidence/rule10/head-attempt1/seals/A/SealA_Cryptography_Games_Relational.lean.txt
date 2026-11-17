@@ -1,0 +1,324 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import Lean
+import TCSlib.Cryptography.Games.Simulate
+import TCSlib.Cryptography.Games.Probability
+/- G06-HARNESS INSTALL SealA_Cryptography_Games_Relational -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealA_Cryptography_Games_Relational"
+  let payload : String := "TCSlib.Cryptography.Games.OracleComp.AllOutputs\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.AllOutputs._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.AllOutputs._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy.match_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp._sizeOf_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp._sizeOf_inst\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.bind\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.bind._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.bind._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.bind.match_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.call\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.instMonad\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftLeft\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftLeft._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftLeft._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftLeft.match_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftRight\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftRight._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftRight._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleSpec._sizeOf_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleSpec._sizeOf_inst\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleSpec.mk._flat_ctor\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.ProbComp.dist\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.expect\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.expect._sunfold\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.expect.match_1\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.prob\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.sample\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.sampleFin\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.QueryImpl.comp\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.ofComp\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.passthrough\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.sum\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.sum.match_1\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.withLog\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.simulate\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.simulate._sunfold\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.simulate._unsafe_rec\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.simulate.match_1\tTCSlib.Cryptography.Games.Simulate\nTCSlib.InformationTheory.FinDist.HasMinEntropy\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist._sizeOf_1\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist._sizeOf_inst\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.collision\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.instCoeFunForallReal\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.map\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.mk._flat_ctor\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.probTrue\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.prod\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.uniform\tTCSlib.InformationTheory.FinDist\n_private.TCSlib.Cryptography.Games.OracleComp.0.TCSlib.Cryptography.Games.OracleComp.liftLeft.match_1.splitter\tTCSlib.Cryptography.Games.OracleComp"
+  let expectedRequests : Nat := 53
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := "TCSlib.Cryptography.Games.OracleComp.AllOutputs\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"AllOutputs\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.AllOutputs._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"AllOutputs\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.AllOutputs._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"AllOutputs\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"CostBoundedBy\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"CostBoundedBy\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"CostBoundedBy\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"CostBoundedBy\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.OracleComp._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.Games.OracleComp._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\ttrue\tfalse\ttrue\nTCSlib.Cryptography.Games.OracleComp.bind\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"bind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.bind._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"bind\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.bind._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"bind\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.bind.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"bind\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.OracleComp.call\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"call\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.instMonad\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"instMonad\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\ttrue\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftLeft\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftLeft._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftLeft._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftLeft.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.OracleComp.liftRight\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftRight\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftRight._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftRight\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftRight._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftRight\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleSpec._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleSpec\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.Games.OracleSpec._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleSpec\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\ttrue\tfalse\ttrue\nTCSlib.Cryptography.Games.OracleSpec.mk._flat_ctor\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleSpec\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.Games.ProbComp.dist\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"dist\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.expect\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"expect\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.expect._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"expect\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.expect.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"expect\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.ProbComp.prob\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"prob\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.sample\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"sample\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.sampleFin\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"sampleFin\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.comp\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"comp\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.ofComp\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"ofComp\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.passthrough\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"passthrough\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.sum\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"sum\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.sum.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"sum\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.QueryImpl.withLog\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"withLog\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.simulate\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"simulate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.simulate._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"simulate\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.simulate._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"simulate\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.simulate.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"simulate\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\ttrue\ttrue\nTCSlib.InformationTheory.FinDist.HasMinEntropy\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"HasMinEntropy\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\ttrue\nTCSlib.InformationTheory.FinDist._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\ttrue\tfalse\ttrue\nTCSlib.InformationTheory.FinDist.collision\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"collision\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.instCoeFunForallReal\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"instCoeFunForallReal\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\ttrue\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.map\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"map\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.mk._flat_ctor\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\ttrue\nTCSlib.InformationTheory.FinDist.probTrue\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"probTrue\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.prod\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"prod\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.uniform\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"uniform\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\n_private.TCSlib.Cryptography.Games.OracleComp.0.TCSlib.Cryptography.Games.OracleComp.liftLeft.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"num\",\"0\"],[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\ttrue"
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut resolved : Array Lean.Name := #[]
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  let mut active : Nat := 0
+  let mut already : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=install spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let before ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    if before == .irreducible then
+      already := already + 1
+    else
+      let id := Lean.mkIdent n
+      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+      active := active + 1
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed for {spelling}"
+    resolved := resolved.push n
+    verified := verified + 1
+    Lean.logInfo m!"G06-NAME label={label} spelling={spelling} actual={n.toString} home={home} before={repr before} installed={repr installed}"
+  unless active + already == requests.size do throwError "G06-HARNESS {label}: installation count mismatch"
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  let maskExt := Lean.Meta.globalInstanceExtension
+  let maskEnv ← Lean.getEnv
+  let scopes := maskExt.ext.getState maskEnv
+  unless scopes.stateStack.length == 1 do
+    throwError "G06-HARNESS {label}: unfolding mask requires base scope"
+  let mut scopedNames : Std.HashSet Lean.Name := {}
+  for (_, payloads) in scopes.scopedEntries.map.toList do
+    for n in payloads do
+      scopedNames := scopedNames.insert n
+  let mut removed : Nat := 0
+  for n in resolved do
+    if scopedNames.contains n then
+      throwError "G06-HARNESS {label}: scoped unfolding payload intersects request {n}"
+    if Lean.Meta.isGlobalInstance maskEnv n then
+      removed := removed + 1
+  -- InstanceEntry's BEq checks only val, so compare every field explicitly.
+  let entryFields (e : Lean.Meta.InstanceEntry) :=
+    (e.keys, Lean.ExprStructEq.mk e.val, e.priority, e.globalName?, e.synthOrder, e.attrKind)
+  let lookupSnapshot (e : Lean.Environment) :=
+    let s := Lean.Meta.instanceExtension.getState e
+    (s.discrTree.toArray.map (fun (ks, entry) => (ks, entryFields entry)),
+      s.instanceNames.toArray.map (fun (n, entry) => (n, entryFields entry)), s.erased.toList)
+  let beforeLookup := lookupSnapshot env
+  Lean.modifyEnv fun current =>
+    maskExt.modifyState current fun membership =>
+      resolved.foldl (fun s n => s.erase n) membership
+  let maskedEnv ← Lean.getEnv
+  unless beforeLookup == lookupSnapshot maskedEnv do
+    throwError "G06-HARNESS {label}: typeclass lookup state changed"
+  for n in resolved do
+    if Lean.Meta.isGlobalInstance maskedEnv n then
+      throwError "G06-HARNESS {label}: unfolding membership after mask for {n}"
+  Lean.logInfo m!"G06-MASK label={label} phase=install requested={requests.size} verified={resolved.size} removed={removed} scope_depth=1 scoped_names={scopedNames.size} tc_state=preserved"
+  Lean.logInfo m!"G06-SEAL label={label} requested={requests.size} active={active} already_irreducible={already} verified={verified}"
+
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Simulations on related states
+
+Two implementations of the same oracles may keep states of different types: in a security proof
+the real game and its simulation often record different data for the same history (for BB1, the
+committed identity with a group element `h`, or with an exponent `α_1`). If a relation `R`
+between the two kinds of state holds at the start, and every call from related states answers
+alike and leads to related states, then the two simulations of any computation answer alike and
+end in related states (`ProbComp.expect_simulate_rel`). "Alike" is measured by expectations: a
+call, or a run, from related states gives the same expectation to any two functions of the
+answer and the state that agree at equal answers and related states.
+
+With one state type and `R` the equality this is `ProbComp.expect_simulate_congr`
+(`Games.Hopping`); with `R s t ↔ s = f t` it is the law form of `simulate_eq_of_abs`
+(`Games.Simulate`), without a query budget.
+
+## Main definitions
+
+None.
+
+## Main results
+
+* `ProbComp.expect_simulate_rel`: implementations on related states simulate alike.
+* `ProbComp.prob_simulate_rel`: events on the output have the same probability, so games that
+  return a bit computed from the output have the same acceptance probability.
+* `ProbComp.expect_sample_rel`: a call that draws one uniform sample meets the hypothesis of
+  `expect_simulate_rel` when a bijection of the samples matches the answers and relates the new
+  states.
+
+## References
+
+* [BGZ09] G. Barthe, B. Grégoire, S. Zanella Béguelin, *Formal Certification of Code-Based
+  Cryptographic Proofs*, POPL 2009.
+* [Sho04] V. Shoup, *Sequences of Games: A Tool for Taming Complexity in Security Proofs*,
+  Cryptology ePrint Archive 2004/332, revision of 18 January 2006.
+-/
+
+namespace TCSlib.Cryptography.Games
+
+namespace ProbComp
+
+variable {ι : Type} {spec : OracleSpec ι} {σ τ α : Type}
+
+/-- **Implementations on related states simulate alike.** Let `impl₀` keep states in `σ` and
+`impl₁` in `τ`, related by `R : σ → τ → Prop`. Suppose that every call from related states
+`R s t` gives the same expectation to any function `g₀` of the answer and the new `σ`-state and
+any function `g₁` of the answer and the new `τ`-state that agree at equal answers and related
+states:
+`(∀ y s' t', R s' t' → g₀ (y, s') = g₁ (y, t')) → 𝔼[g₀] (impl₀ i x s) = 𝔼[g₁] (impl₁ i x t)`.
+Then from related states the simulations of every computation `c` do the same for functions of
+the output and the final state: if `R s t`, and `G₀ (a, s') = G₁ (a, t')` whenever `R s' t'`,
+then `𝔼[G₀] (simulate impl₀ c s) = 𝔼[G₁] (simulate impl₁ c t)`.
+
+The conclusion has the form of [BGZ09, §4.1, lemma (=⟦⟧)]: runs from related states give equal
+expectations to test functions that agree along the relation. The relation is carried as pre-
+and postcondition of every call, as the invariant `φ` of [BGZ09, §4.2, ⊨_φ] (judgments in the
+sense of [BGZ09, §4.1, Def. 5]). The computation `c` is an arbitrary context that reaches the
+two implementations only through its oracle calls, like a well-formed adversary, which is free
+to call oracles [BGZ09, §3.4]; [BGZ09, §5.2, Lemma 1] proves an equivalence inside an arbitrary
+context, and §5.2 applies it to replace one oracle by another. A run of `c` against `impl₁` in
+place of `impl₀` is a bridging step, `Pr[S_i] = Pr[S_{i+1}]` [Sho04, §1.1, bridging steps], as
+in the replacement of a random function by a lazily tabulating oracle [Sho04, §4.2, Game 2].
+
+**Deviation:** [BGZ09] states no rule for adversary calls with a relational invariant. This lemma
+generalizes its `(=⟦⟧)` and `⊨_φ` (§4.1–§4.2) to oracle simulations whose states are related by
+an invariant, in the arbitrary-context style of §5.2. The per-call hypothesis (equal
+expectations of test functions that agree along `R`) is the library's formulation.
+
+**Proof sketch.** Induction on `c`, generalizing the two states. At a return `a`, `R s t` gives
+`G₀ (a, s) = G₁ (a, t)`. At a query, both sides are the expectation over the call of the
+continuation's expectation (`simulate_query`, `expect_bind`); by the induction hypothesis the two
+continuation values agree at equal answers and related new states, so the hypothesis on the call
+equates them. -/
+theorem expect_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
+    (impl₁ : QueryImpl spec τ unifSpec) (R : σ → τ → Prop)
+    (h : ∀ i x s t, R s t → ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+      (∀ y s' t', R s' t' → g₀ (y, s') = g₁ (y, t')) →
+        expect (impl₀ i x s) g₀ = expect (impl₁ i x t) g₁)
+    (c : OracleComp spec α) (G₀ : α × σ → ℝ) (G₁ : α × τ → ℝ)
+    (hG : ∀ a s' t', R s' t' → G₀ (a, s') = G₁ (a, t')) {s : σ} {t : τ} (hst : R s t) :
+    expect (simulate impl₀ c s) G₀ = expect (simulate impl₁ c t) G₁ := by
+  induction c generalizing s t with
+  | pure a =>
+    rw [simulate_pure, simulate_pure, expect_pure, expect_pure]
+    exact hG a s t hst
+  | query i x k ih =>
+    rw [simulate_query, simulate_query, expect_bind, expect_bind]
+    exact h i x s t hst _ _ fun y s' t' hR => ih y hR
+
+/-- **Events on the output, from related states:** under the hypothesis of
+`expect_simulate_rel`, from related states `R s t` every event `P` on the output of `c` has the
+same probability under the two simulations:
+`Pr[P (simulate impl₀ c s).1] = Pr[P (simulate impl₁ c t).1]`. For a game that returns a bit
+computed from the output this equates the acceptance probabilities (`accept_eq`): a bridging
+step [Sho04, §1.1, bridging steps].
+
+**Proof sketch.** Both probabilities are expectations of the indicator of `P` on the output
+(`prob_eq_expect`); the two indicators agree at equal outputs whatever the final states, so
+`expect_simulate_rel` equates them. -/
+theorem prob_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
+    (impl₁ : QueryImpl spec τ unifSpec) (R : σ → τ → Prop)
+    (h : ∀ i x s t, R s t → ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+      (∀ y s' t', R s' t' → g₀ (y, s') = g₁ (y, t')) →
+        expect (impl₀ i x s) g₀ = expect (impl₁ i x t) g₁)
+    (c : OracleComp spec α) (P : α → Prop) {s : σ} {t : τ} (hst : R s t) :
+    prob (simulate impl₀ c s) (fun p => P p.1) = prob (simulate impl₁ c t) (fun p => P p.1) := by
+  classical
+  rw [prob_eq_expect, prob_eq_expect]
+  exact expect_simulate_rel impl₀ impl₁ R h c _ _ (fun _ _ _ _ => rfl) hst
+
+/-- **A sampling call, coupled by a bijection:** let `c₀` draw `u ∈ U` and return `f₀ u`, and
+`c₁` draw `v ∈ V` and return `f₁ v`. If a bijection `e : U ≃ V` gives equal answers and related
+states, `(f₀ u).1 = (f₁ (e u)).1` and `R (f₀ u).2 (f₁ (e u)).2`, then `c₀` and `c₁` give the same
+expectation to any `g₀`, `g₁` that agree at equal answers and related states,
+`𝔼[g₀] c₀ = 𝔼[g₁] c₁`: the hypothesis of `expect_simulate_rel` for such a call.
+
+**Proof sketch.** Both sides are uniform averages (`expect_bind`, `expect_pure`); reindex the
+average over `V` along `e` (`expect_sample_equiv`) and compare the two averages pointwise. -/
+theorem expect_sample_rel {U V β : Type} [Fintype U] [Nonempty U] [Fintype V] [Nonempty V]
+    (R : σ → τ → Prop) (e : U ≃ V) (f₀ : U → β × σ) (f₁ : V → β × τ)
+    (hf : ∀ u, (f₀ u).1 = (f₁ (e u)).1 ∧ R (f₀ u).2 (f₁ (e u)).2)
+    (g₀ : β × σ → ℝ) (g₁ : β × τ → ℝ) (hg : ∀ y s' t', R s' t' → g₀ (y, s') = g₁ (y, t')) :
+    expect ((sample U).bind fun u => .pure (f₀ u)) g₀ =
+      expect ((sample V).bind fun v => .pure (f₁ v)) g₁ := by
+  rw [expect_bind, expect_bind, ← expect_sample_equiv e]
+  refine congrArg _ (funext fun u => ?_)
+  dsimp only
+  rw [expect_pure, expect_pure]
+  calc g₀ (f₀ u) = g₀ ((f₀ u).1, (f₀ u).2) := rfl
+    _ = g₁ ((f₀ u).1, (f₁ (e u)).2) := hg _ _ _ (hf u).2
+    _ = g₁ (f₁ (e u)) := by rw [(hf u).1]
+
+end ProbComp
+
+end TCSlib.Cryptography.Games
+/- G06-HARNESS EOF-VERIFY SealA_Cryptography_Games_Relational -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealA_Cryptography_Games_Relational"
+  let payload : String := "TCSlib.Cryptography.Games.OracleComp.AllOutputs\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.AllOutputs._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.AllOutputs._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy.match_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp._sizeOf_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp._sizeOf_inst\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.bind\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.bind._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.bind._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.bind.match_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.call\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.instMonad\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftLeft\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftLeft._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftLeft._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftLeft.match_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftRight\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftRight._sunfold\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleComp.liftRight._unsafe_rec\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleSpec._sizeOf_1\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleSpec._sizeOf_inst\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.OracleSpec.mk._flat_ctor\tTCSlib.Cryptography.Games.OracleComp\nTCSlib.Cryptography.Games.ProbComp.dist\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.expect\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.expect._sunfold\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.expect.match_1\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.prob\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.sample\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.ProbComp.sampleFin\tTCSlib.Cryptography.Games.Probability\nTCSlib.Cryptography.Games.QueryImpl.comp\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.ofComp\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.passthrough\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.sum\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.sum.match_1\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.QueryImpl.withLog\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.simulate\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.simulate._sunfold\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.simulate._unsafe_rec\tTCSlib.Cryptography.Games.Simulate\nTCSlib.Cryptography.Games.simulate.match_1\tTCSlib.Cryptography.Games.Simulate\nTCSlib.InformationTheory.FinDist.HasMinEntropy\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist._sizeOf_1\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist._sizeOf_inst\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.collision\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.instCoeFunForallReal\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.map\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.mk._flat_ctor\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.probTrue\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.prod\tTCSlib.InformationTheory.FinDist\nTCSlib.InformationTheory.FinDist.uniform\tTCSlib.InformationTheory.FinDist\n_private.TCSlib.Cryptography.Games.OracleComp.0.TCSlib.Cryptography.Games.OracleComp.liftLeft.match_1.splitter\tTCSlib.Cryptography.Games.OracleComp"
+  let expectedRequests : Nat := 53
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := "TCSlib.Cryptography.Games.OracleComp.AllOutputs\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"AllOutputs\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.AllOutputs._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"AllOutputs\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.AllOutputs._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"AllOutputs\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"CostBoundedBy\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"CostBoundedBy\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"CostBoundedBy\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.CostBoundedBy.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"CostBoundedBy\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.OracleComp._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.Games.OracleComp._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\ttrue\tfalse\ttrue\nTCSlib.Cryptography.Games.OracleComp.bind\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"bind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.bind._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"bind\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.bind._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"bind\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.bind.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"bind\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.OracleComp.call\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"call\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.instMonad\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"instMonad\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\ttrue\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftLeft\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftLeft._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftLeft._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftLeft.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.OracleComp.liftRight\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftRight\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftRight._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftRight\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleComp.liftRight._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftRight\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.OracleSpec._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleSpec\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.Games.OracleSpec._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleSpec\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\ttrue\tfalse\ttrue\nTCSlib.Cryptography.Games.OracleSpec.mk._flat_ctor\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleSpec\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.Games.ProbComp.dist\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"dist\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.expect\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"expect\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.expect._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"expect\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.expect.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"expect\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.ProbComp.prob\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"prob\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.sample\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"sample\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.ProbComp.sampleFin\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"ProbComp\"],[\"str\",\"sampleFin\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Probability\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.comp\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"comp\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.ofComp\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"ofComp\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.passthrough\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"passthrough\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.sum\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"sum\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.QueryImpl.sum.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"sum\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\ttrue\ttrue\nTCSlib.Cryptography.Games.QueryImpl.withLog\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"QueryImpl\"],[\"str\",\"withLog\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.simulate\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"simulate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.simulate._sunfold\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"simulate\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.simulate._unsafe_rec\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"simulate\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.Games.simulate.match_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"simulate\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"Simulate\"]]\tfalse\ttrue\ttrue\nTCSlib.InformationTheory.FinDist.HasMinEntropy\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"HasMinEntropy\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\ttrue\nTCSlib.InformationTheory.FinDist._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\ttrue\tfalse\ttrue\nTCSlib.InformationTheory.FinDist.collision\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"collision\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.instCoeFunForallReal\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"instCoeFunForallReal\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\ttrue\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.map\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"map\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.mk._flat_ctor\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\ttrue\nTCSlib.InformationTheory.FinDist.probTrue\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"probTrue\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.prod\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"prod\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\nTCSlib.InformationTheory.FinDist.uniform\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"],[\"str\",\"uniform\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"InformationTheory\"],[\"str\",\"FinDist\"]]\tfalse\tfalse\tfalse\n_private.TCSlib.Cryptography.Games.OracleComp.0.TCSlib.Cryptography.Games.OracleComp.liftLeft.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"num\",\"0\"],[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"],[\"str\",\"liftLeft\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"Games\"],[\"str\",\"OracleComp\"]]\tfalse\tfalse\ttrue"
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=eof spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed at EOF for {spelling}"
+    if Lean.Meta.isGlobalInstance env n then
+      throwError "G06-HARNESS {label}: unfolding membership at EOF for {spelling}"
+    verified := verified + 1
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  Lean.logInfo m!"G06-MASK label={label} phase=eof requested={requests.size} verified={verified}"
+  Lean.logInfo m!"G06-SEAL-END label={label} requested={requests.size} verified={verified}"
+

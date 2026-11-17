@@ -95,7 +95,35 @@ theorem prob_sidGame_coins (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ)
             else t))
         (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ) (none, none)).bind
         fun res => .pure (res.1 0)) (· = true) := by
-  sorry
+  have hp : 2 ^ (bb1Scheme G ℓ).idLen.eval κ ≤ (G.group κ (G.desc κ r)).order := by
+    rw [bb1Scheme_idLen]
+    rw [BilinearGen.inst_eq, not_lt] at hr
+    exact hr
+  simp only [ProbComp.prob_bind]
+  refine congrArg _ (funext fun g => ?_)
+  -- the simulation side: split `(a, b', c)` into three draws; the unused `T` drops out
+  rw [← Bridge.expect_sample_pair]
+  simp only [ProbComp.expect_bind, ProbComp.expect_pure]
+  refine congrArg _ (funext fun α => ?_)
+  rw [← Bridge.expect_sample_pair]
+  simp only [ProbComp.expect_bind, ProbComp.expect_pure, ↓reduceIte, ProbComp.expect_const]
+  -- the real side: move `h` past `g_2` and `A`'s coins, then draw it at the first `Init`
+  conv_lhs => rw [ProbComp.expect_sample_comm]
+  conv_lhs => enter [2, g2]; rw [ProbComp.expect_sample_comm]
+  conv_lhs => enter [2, g2, 2, ρ]; rw [expect_sample_sidImpl G ℓ b κ _ (fun h => o r g α h g2)
+    (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ) (fun a => ProbComp.prob (.pure (a 0)) (· = true))]
+  -- read `g_2` as `g^{b'}`
+  rw [← ProbComp.expect_sample_equiv (Equiv.ofBijective _
+    (BilinearGroup.pow_val_bijective_of_ne_one _ g.2))]
+  simp only [Equiv.ofBijective_apply]
+  refine congrArg _ (funext fun b' => ?_)
+  -- draw the challenge coin before `A`'s coins, then step M and E-c for each `ρ`
+  conv_rhs => rw [ProbComp.expect_sample_comm]
+  refine congrArg _ (funext fun ρ => ?_)
+  exact (expect_simulate_bb1RealLazy G ℓ b κ _ (fun h => o r g α h (g.1 ^ b'.val)) g.1 α b' g.2 hp
+    (fun h => hR r g α h _) (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ)
+    (fun a => ProbComp.prob (.pure (a 0)) (· = true))).trans
+      (expect_simulate_bb1SimLazy G ℓ b κ _ g.1 _ _ _ _ _ rfl)
 
 end BB1Sim
 

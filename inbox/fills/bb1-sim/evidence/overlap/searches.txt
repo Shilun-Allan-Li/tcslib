@@ -1,0 +1,77 @@
+# reuse and overlap searches (bb1-sim, lead) at the check head 408c8195c36007195b0f96a991814b98b5a53aab, over TCSlib/ (git grep -E), excluding the new BonehBoyenSecurity/ helpers
+
+## git grep -n -E 'sidSpec_dom|sidSpec_rng|dom_zero|rng_two' -- 'TCSlib/*.lean'
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Oracles.lean:77:private theorem sidSpec_rng_one' (S : IBEScheme) (κ : ℕ) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Oracles.lean:84:private theorem sidSpec_rng_two' (S : IBEScheme) (κ : ℕ) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Oracles.lean:167:        cast (sidSpec_rng_one' (bb1Scheme G ℓ) κ).symm (zeroBits _) := by
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Oracles.lean:224:        cast (sidSpec_rng_two' (bb1Scheme G ℓ) κ).symm (zeroBits _) := by
+
+## git grep -n -E 'zeroBits_eq_cast|zeroBits.*= cast' -- 'TCSlib/*.lean'
+
+## git grep -n -E 'theorem (expect_simulate_eager|expect_simulate_congr|expect_simulate_rel|expect_sample_rel|expect_sample_equiv|abs_expect_sub_le_expect)' -- 'TCSlib/*.lean'
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:515:private theorem abs_expect_sub_le_expect {β : Type} (c : ProbComp β) {f g h : β → ℝ}
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:148:theorem expect_simulate_eager {ins outs : Fin 2 → ℕ} {d : ℕ} (hd : outs 1 = d)
+TCSlib/Cryptography/Games/Hopping.lean:384:theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
+TCSlib/Cryptography/Games/Hopping.lean:494:theorem expect_simulate_eager (O : QueryImpl spec σ unifSpec) (OE : T → QueryImpl spec σ unifSpec)
+TCSlib/Cryptography/Games/Probability.lean:304:theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
+TCSlib/Cryptography/Games/Probability.lean:409:theorem abs_expect_sub_le_expect (c : ProbComp α) {f g h : α → ℝ}
+TCSlib/Cryptography/Games/Relational.lean:85:theorem expect_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
+TCSlib/Cryptography/Games/Relational.lean:130:theorem expect_sample_rel {U V β : Type} [Fintype U] [Nonempty U] [Fintype V] [Nonempty V]
+
+## git grep -n -E 'theorem (expect_lazyImpl|expect_ettImpl_lazy|expect_simulate_abs|expect_simulate_abs_inv|simulate_eq_of_abs|expect_simulate_sample_once|planted_coupling)' -- 'TCSlib/*.lean'
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling.lean:47:theorem expect_simulate_sample_once {ι α R : Type} {spec : OracleSpec ι}
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:403:theorem planted_coupling {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:499:theorem expect_ettImpl_lazy (hd : d = 6 * n + 4) (hi0 : ins 0 = n) (hi2 : ins 2 = n + n)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:65:theorem expect_simulate_abs (impl₁ : QueryImpl spec σ₁ unifSpec)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:88:theorem expect_simulate_abs_inv (impl₁ : QueryImpl spec σ₁ unifSpec)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:351:theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (G : α → ℝ)
+TCSlib/Cryptography/Games/Simulate.lean:334:theorem simulate_eq_of_abs {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+TCSlib/Cryptography/Games/Simulate.lean:357:theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+
+## git grep -n -E 'expect_simulate_eager (_|impl|O)' -- 'TCSlib/*.lean'
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:275:  refine expect_simulate_eager _ _ (fun s => s.isSome = true) (fun re i x s hs => ?_)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:219:    rw [Games.expect_simulate_eager impl OE (fun s => s.isSome = true)
+
+## git grep -n -E 'natCast_injOn_Iio|bitsToNat_injective' -- 'TCSlib/*.lean'
+TCSlib/Complexity/CircuitComplexity/HardFunctions.lean:111:private theorem bitsToNat_injective : Function.Injective bitsToNat := by
+TCSlib/Complexity/CircuitComplexity/HardFunctions.lean:218:      have hg : g f₁ = g f₂ := encodeCircuit_injective (bitsToNat_injective heq)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:110:  (`bitsToNat_lt`, `bitsToNat_injective`, `CharP.natCast_injOn_Iio`), the simulated key with
+TCSlib/Cryptography/Asymptotic/Sampling.lean:417:theorem bitsToNat_injective {k : ℕ} : Function.Injective (bitsToNat (k := k)) := fun b b' h =>
+TCSlib/Cryptography/Asymptotic/Sampling.lean:425:      ⟨fun b b' h => bitsToNat_injective (by simpa using congrArg Fin.val h), by simp⟩)
+TCSlib/Cryptography/Candidates/Arithmetic.lean:153:  bitsToNat_injective (bitsToNat_natToBits (bitsToNat_lt b))
+
+## git grep -n -E 'theorem pow_val_(bijective|add|neg|mul)' -- 'TCSlib/*.lean'
+TCSlib/Cryptography/KeyExchange/Joux.lean:90:theorem pow_val_mul_mul (u : B.GT) (a b c : ZMod B.order) :
+TCSlib/Cryptography/Pairing/Group.lean:195:theorem pow_val_mul (x : B.G) (a b : ZMod B.order) : x ^ (a * b).val = x ^ (a.val * b.val) := by
+TCSlib/Cryptography/Pairing/Group.lean:200:theorem pow_val_mul_GT (y : B.GT) (a b : ZMod B.order) :
+TCSlib/Cryptography/Pairing/Group.lean:227:theorem pow_val_bijective {x : B.G} (hx : x ≠ 1) :
+TCSlib/Cryptography/Pairing/Group.lean:239:theorem pow_val_add (x : B.G) (a b : ZMod B.order) :
+TCSlib/Cryptography/Pairing/Group.lean:246:theorem pow_val_neg (x : B.G) (a : ZMod B.order) : x ^ (-a).val = (x ^ a.val)⁻¹ := by
+TCSlib/Cryptography/Pairing/Group.lean:252:theorem pow_val_bijective_of_ne_one {g : B.G} (hg : g ≠ 1) :
+
+## git grep -n -E 'def [a-zA-Z]*[Ll]azy|abbrev [a-zA-Z]*State' -- 'TCSlib/*.lean'
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:65:abbrev DState := List (List ℕ) × ℕ × ℕ × ℕ
+TCSlib/Complexity/CookLevin/Hardness.lean:2335:private abbrev clRecState (M : FinTM Bool) : Type :=
+TCSlib/Complexity/CookLevin/Hardness.lean:4252:private abbrev clMatchState (l : ℕ) := Unit ⊕ ((clLoadTM l).State ⊕ (clCmpTM.State ⊕ Unit))
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:536:private abbrev LoopHostState (body F : FinTM Bool) :=
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4060:private abbrev emCallState (M : FinTM Bool) :=
+TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:439:abbrev State (C : Type) {n : ℕ} (M : Fin n → FinTM Bool) : Type :=
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:211:abbrev RecordState (k : ℕ) :=
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:157:private abbrev ArState (Γ S : Type) (k N : ℕ) :=
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1048:private abbrev DGState (Γ Q : Type) (k : ℕ) :=
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:240:abbrev SidState (κ : ℕ) : Type :=
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:123:def lazyDec (s : LSt n d) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:374:def lazyStep (r : Fin n → Bool) (t : Fin (2 * n) → Bool) :
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:430:noncomputable def ettLazyK (i : Fin 3) (x : Fin (ins i) → Bool) (s : LSt n d)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:441:noncomputable def ettLazy : QueryImpl (bitSpec ins outs) (LSt n d) unifSpec :=
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:449:noncomputable def ettLazyTape (T : ℕ → Fin (2 * n) → Bool) :
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:54:abbrev LState (n d : ℕ) :=
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:149:noncomputable def lazyImpl : QueryImpl (bitSpec ins outs) (LState n d) unifSpec
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:205:abbrev SnmState (M : MsgSampler) (n : ℕ) : Type :=
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean:75:abbrev PureState (n : ℕ) (P : Type) : Type := List ((Fin n → Bool) × (Fin n → Bool)) × List P
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:151:def evalLazy (a : ℕ → O) : QueryTree I O α → List I → α
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:411:def lazyDist (A : OracleAdversary ρ P V) : (ℕ → V) → ρ → Bool :=
+
+## git grep -n -E 'setup_out|RealReads|Option.Rel' -- 'TCSlib/*.lean'
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:97:**Proof sketch.** Read `Setup` through `BB1Sim.setup_out` and condition both games on the
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:119:  obtain ⟨o, hset, hR⟩ := BB1Sim.setup_out G ℓ κ

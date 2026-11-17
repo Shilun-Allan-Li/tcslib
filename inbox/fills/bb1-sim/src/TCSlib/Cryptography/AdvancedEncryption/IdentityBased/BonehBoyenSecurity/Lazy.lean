@@ -231,9 +231,10 @@ theorem bb1SimLazy_two_of_not (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB
   rw [bb1SimLazy_eq, bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec,
     IBEScheme.oracleImpl_two_onSpec, bb1SimLazyChal_of_not _ _ _ _ _ _ _ _ _ _ _ h]
 
-/-- **Away from the first valid `Challenge`, `bb1SimImpl` does not read its coins**, and keeps the
-recorded challenge: unless `s.1` is some, `s.2 = none` and both messages are encodings of `G_T`,
-`bb1SimImpl … Z T 2 x s = bb1SimImpl … 1 1 2 x s`, and every outcome has the challenge `s.2`.
+/-- **Away from the first valid `Challenge`, `bb1SimImpl` reads neither its coins nor its
+challenge bit**, and keeps the recorded challenge: unless `s.1` is some, `s.2 = none` and both
+messages are encodings of `G_T`, `bb1SimImpl b … Z T 2 x s = bb1SimImpl false … 1 1 2 x s`, and
+every outcome has the challenge `s.2`.
 
 **Proof sketch.** Read both calls by `oracleImpl_two_onSpec`. Before `Init` both answer `⊥`
 (`bb1SimChal_none`); after a recorded challenge both repeat it (`bb1SimChal_repeat`); at a first
@@ -246,13 +247,40 @@ theorem bb1SimImpl_two_of_not (Z : (G.group κ d).G) (T : (G.group κ d).GT)
           List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
         ∃ u, List.ofFn ((G.group κ d).encT u) =
           List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2))) :
-    bb1SimImpl G ℓ b κ d g X Y Z T 2 x s = bb1SimImpl G ℓ b κ d g X Y 1 1 2 x s ∧
+    bb1SimImpl G ℓ b κ d g X Y Z T 2 x s = bb1SimImpl G ℓ false κ d g X Y 1 1 2 x s ∧
       (bb1SimImpl G ℓ b κ d g X Y Z T 2 x s).AllOutputs fun p => p.2.2 = s.2 := by
-  sorry
+  obtain ⟨s₁, s₂⟩ := s
+  rw [bb1SimImpl_eq, bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec,
+    IBEScheme.oracleImpl_two_onSpec]
+  rcases s₁ with _ | ⟨t, α₁⟩
+  -- before `Init`: `⊥`
+  · rw [bb1SimChal_none, bb1SimChal_none, OracleComp.pure_bind]
+    exact ⟨rfl, OracleComp.allOutputs_pure.2 rfl⟩
+  rcases s₂ with _ | w
+  -- a first `Challenge` with a message outside the message space: `⊥`
+  · have hv : ¬ ((∃ u, List.ofFn ((G.group κ d).encT u) =
+              List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
+            ∃ u, List.ofFn ((G.group κ d).encT u) =
+              List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2) :=
+      fun hv => h ⟨rfl, rfl, hv⟩
+    have hm : ∀ (b' : Bool) (Z' : (G.group κ d).G) (T' : (G.group κ d).GT),
+        bb1SimChal G ℓ b' κ d g X Y Z' T' (cast (sidSpec_dom_two _ κ) x) (some (t, α₁), none) =
+          .pure (zeroBits _, (some (t, α₁), none)) := fun b' Z' T' =>
+      bb1SimChal_invalid G ℓ b' κ d g X Y Z' T' _ t α₁ fun hm' =>
+        hv ⟨(bb1Scheme_msgSpace_iff G ℓ κ d _ _).1 hm'.1,
+          (bb1Scheme_msgSpace_iff G ℓ κ d _ _).1 hm'.2⟩
+    rw [hm, hm, OracleComp.pure_bind]
+    exact ⟨rfl, OracleComp.allOutputs_pure.2 rfl⟩
+  -- after a recorded challenge: repeat it
+  · rw [bb1SimChal_repeat, bb1SimChal_repeat, OracleComp.pure_bind]
+    exact ⟨rfl, OracleComp.allOutputs_pure.2 rfl⟩
 
 /-- **The first valid `Challenge` records a challenge**: for `s.1` some and `s.2 = none`, and
 both messages encodings of `G_T`, every outcome of `bb1SimImpl … Z T 2 x s` has a recorded
-challenge. -/
+challenge.
+
+**Proof sketch.** Read the call by `oracleImpl_two_onSpec`; at the first valid `Challenge` it is
+`bb1SimChal_fresh` (validity through `bb1Scheme_msgSpace_iff`), which records the challenge. -/
 theorem bb1SimImpl_two_fresh_allOutputs (Z : (G.group κ d).G) (T : (G.group κ d).GT)
     (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB1SimState G ℓ κ d)
     (h : s.1.isSome ∧ s.2 = none ∧
@@ -261,14 +289,52 @@ theorem bb1SimImpl_two_fresh_allOutputs (Z : (G.group κ d).G) (T : (G.group κ 
         ∃ u, List.ofFn ((G.group κ d).encT u) =
           List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2)) :
     (bb1SimImpl G ℓ b κ d g X Y Z T 2 x s).AllOutputs fun p => p.2.2.isSome := by
-  sorry
+  obtain ⟨s₁, s₂⟩ := s
+  obtain ⟨h₁, h₂, hv⟩ := h
+  rcases s₁ with _ | ⟨t, α₁⟩
+  · exact absurd h₁ Bool.false_ne_true
+  subst h₂
+  rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec, bb1SimChal_fresh G ℓ b κ d g X Y Z T _ t α₁
+    ⟨(bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.1, (bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.2⟩,
+    OracleComp.pure_bind]
+  exact OracleComp.allOutputs_pure.2 rfl
 
 /-- **`Init` and `KeyGen` keep the recorded challenge**: for `i ≠ 2`, every outcome of
-`bb1SimImpl … Z T i x s` has the challenge `s.2`. -/
+`bb1SimImpl … Z T i x s` has the challenge `s.2`.
+
+**Proof sketch.** Read the call by `oracleImpl_zero_onSpec` or `oracleImpl_one_onSpec`. `Init`
+records `(ID, α_1)` or keeps the state (`bb1SimInit_none`, `bb1SimInit_some`); `KeyGen` keeps the
+state (`bb1SimKeyQ_none`, `bb1SimKeyQ_target`, `bb1SimKeyQ_ne`). Neither touches `s.2`. -/
 theorem bb1SimImpl_allOutputs_of_ne_two (Z : (G.group κ d).G) (T : (G.group κ d).GT)
     (i : Fin 3) (hi : i ≠ 2) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i) (s : BB1SimState G ℓ κ d) :
     (bb1SimImpl G ℓ b κ d g X Y Z T i x s).AllOutputs fun p => p.2.2 = s.2 := by
-  sorry
+  obtain ⟨s₁, s₂⟩ := s
+  revert x
+  match i, hi with
+  | 0, _ =>
+    intro x
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_zero_onSpec]
+    rcases s₁ with _ | ⟨t, α₁⟩
+    · rw [bb1SimInit_none]
+      refine OracleComp.AllOutputs.bind (P := fun p => p.2.2 = s₂) ?_
+        fun p hp => OracleComp.allOutputs_pure.2 hp
+      exact (OracleComp.allOutputs_true _).bind fun _ _ => OracleComp.allOutputs_pure.2 rfl
+    · rw [bb1SimInit_some, OracleComp.pure_bind]
+      exact OracleComp.allOutputs_pure.2 rfl
+  | 1, _ =>
+    intro x
+    rw [bb1SimImpl_eq, IBEScheme.oracleImpl_one_onSpec]
+    rcases s₁ with _ | ⟨t, α₁⟩
+    · rw [bb1SimKeyQ_none, OracleComp.pure_bind]
+      exact OracleComp.allOutputs_pure.2 rfl
+    by_cases ht : cast (sidSpec_dom_one _ κ) x = t
+    · rw [ht, bb1SimKeyQ_target, OracleComp.pure_bind]
+      exact OracleComp.allOutputs_pure.2 rfl
+    · rw [bb1SimKeyQ_ne (h := ht)]
+      refine OracleComp.AllOutputs.bind (P := fun p => p.2.2 = s₂) ?_
+        fun p hp => OracleComp.allOutputs_pure.2 hp
+      exact (OracleComp.allOutputs_true _).bind fun _ _ => OracleComp.allOutputs_pure.2 rfl
+  | 2, hi => exact absurd rfl hi
 
 /-- **The lazy simulator simulates like `bb1SimImpl` with its coins drawn in advance**: from a
 state with no recorded challenge (`s.2 = none`), for every computation `c` and every `F`,
@@ -288,7 +354,82 @@ theorem expect_simulate_bb1SimLazy {α : Type} (c : OracleComp ((bb1Scheme G ℓ
     ProbComp.expect (simulate (bb1SimLazy G ℓ b κ d g X Y zt) c s) F =
       ProbComp.expect (ProbComp.sample U) fun u =>
         ProbComp.expect (simulate (bb1SimImpl G ℓ b κ d g X Y (zt u).1 (zt u).2) c s) F := by
-  sorry
+  have h01 : ∀ i : Fin 3, i ≠ 2 → i = 0 ∨ i = 1 := by decide
+  refine Games.expect_simulate_eager (T := U) (bb1SimLazy G ℓ b κ d g X Y zt)
+    (fun u => bb1SimImpl G ℓ b κ d g X Y (zt u).1 (zt u).2) (fun v => v.2.isSome = true)
+    (fun u i => ?_) (fun i => ?_) (fun i => ?_) c F
+    (by show ¬ (s.2.isSome = true); rw [hs]; exact Bool.false_ne_true)
+  -- from a used state, the coins are not read
+  · by_cases h2 : i = 2
+    · subst h2
+      intro x s hu
+      have hn : ¬ (s.1.isSome ∧ s.2 = none ∧
+        ((∃ u, List.ofFn ((G.group κ d).encT u) =
+            List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
+          ∃ u, List.ofFn ((G.group κ d).encT u) =
+            List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2)) :=
+        fun hf => by
+          have hu' : s.2.isSome = true := hu
+          rw [hf.2.1] at hu'
+          exact Bool.false_ne_true hu'
+      rw [bb1SimLazy_two_of_not G ℓ b κ d g X Y zt x s hn]
+      exact (bb1SimImpl_two_of_not G ℓ b κ d g X Y _ _ x s hn).1.trans
+        (bb1SimImpl_two_of_not G ℓ b κ d g X Y 1 1 x s hn).1.symm
+    · intro x s _
+      rcases h01 i h2 with rfl | rfl
+      · rw [bb1SimLazy_zero]
+        exact bb1SimImpl_zero_coins G ℓ b κ d g X Y _ _ _ _ x s
+      · rw [bb1SimLazy_one]
+        exact bb1SimImpl_one_coins G ℓ b κ d g X Y _ _ _ _ x s
+  -- a used state stays used
+  · intro x s hu
+    by_cases h2 : i = 2
+    · subst h2
+      have hn : ¬ (s.1.isSome ∧ s.2 = none ∧
+        ((∃ u, List.ofFn ((G.group κ d).encT u) =
+            List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
+          ∃ u, List.ofFn ((G.group κ d).encT u) =
+            List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2)) :=
+        fun hf => by
+          have hu' : s.2.isSome = true := hu
+          rw [hf.2.1] at hu'
+          exact Bool.false_ne_true hu'
+      rw [bb1SimLazy_two_of_not G ℓ b κ d g X Y zt x s hn]
+      exact (bb1SimImpl_two_of_not G ℓ b κ d g X Y 1 1 x s hn).2.mono fun p hp => by
+        show p.2.2.isSome = true; rw [hp]; exact hu
+    · rcases h01 i h2 with rfl | rfl
+      · rw [bb1SimLazy_zero]
+        exact (bb1SimImpl_allOutputs_of_ne_two G ℓ b κ d g X Y 1 1 0 (by decide) x s).mono
+          fun p hp => by show p.2.2.isSome = true; rw [hp]; exact hu
+      · rw [bb1SimLazy_one]
+        exact (bb1SimImpl_allOutputs_of_ne_two G ℓ b κ d g X Y 1 1 1 (by decide) x s).mono
+          fun p hp => by show p.2.2.isSome = true; rw [hp]; exact hu
+  -- from an unused state, only the first valid `Challenge` spends the coins
+  · intro x s hu
+    by_cases h2 : i = 2
+    · subst h2
+      by_cases hf : (s.1.isSome ∧ s.2 = none ∧
+        ((∃ u, List.ofFn ((G.group κ d).encT u) =
+            List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
+          ∃ u, List.ofFn ((G.group κ d).encT u) =
+            List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2))
+      · exact Or.inr ⟨bb1SimLazy_two_fresh G ℓ b κ d g X Y zt x s hf,
+          fun u => bb1SimImpl_two_fresh_allOutputs G ℓ b κ d g X Y _ _ x s hf⟩
+      · refine Or.inl fun u => ⟨?_, ?_⟩ <;> rw [bb1SimLazy_two_of_not G ℓ b κ d g X Y zt x s hf]
+        · exact (bb1SimImpl_two_of_not G ℓ b κ d g X Y _ _ x s hf).1.trans
+            (bb1SimImpl_two_of_not G ℓ b κ d g X Y 1 1 x s hf).1.symm
+        · exact (bb1SimImpl_two_of_not G ℓ b κ d g X Y 1 1 x s hf).2.mono fun p hp => by
+            show ¬ (p.2.2.isSome = true); rw [hp]; exact hu
+    · refine Or.inl fun u => ?_
+      rcases h01 i h2 with rfl | rfl
+      · rw [bb1SimLazy_zero]
+        exact ⟨bb1SimImpl_zero_coins G ℓ b κ d g X Y _ _ _ _ x s,
+          (bb1SimImpl_allOutputs_of_ne_two G ℓ b κ d g X Y 1 1 0 (by decide) x s).mono
+            fun p hp => by show ¬ (p.2.2.isSome = true); rw [hp]; exact hu⟩
+      · rw [bb1SimLazy_one]
+        exact ⟨bb1SimImpl_one_coins G ℓ b κ d g X Y _ _ _ _ x s,
+          (bb1SimImpl_allOutputs_of_ne_two G ℓ b κ d g X Y 1 1 1 (by decide) x s).mono
+            fun p hp => by show ¬ (p.2.2.isSome = true); rw [hp]; exact hu⟩
 
 end Lazy
 

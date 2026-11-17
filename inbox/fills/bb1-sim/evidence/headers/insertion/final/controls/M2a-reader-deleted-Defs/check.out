@@ -1,0 +1,45 @@
+[PASS] C0 source: /home/user/exch/s/inbox/fills/bb1-sim/evidence/headers/insertion/readers-combined.lean.txt sha256 7836f034f717062fe8713434e9f1a97d3bfee125621ea3a94a54c0d44343773a
+[PASS] C0 base Defs: 476 lines sha256 4e220eadd4bf71ea62372bc371a3e2062b9f213acc696dbb66994c1f64069dfd
+[PASS] C0 base anchor D1: anchor '  (OracleComp.bind_pure _).symm' at base line 430: True
+[PASS] C0 base BonehBoyen: 714 lines sha256 da875140806706f26c4cdbb5cf765f522144f3a5a885c5156a58b8c611cd25f4
+[PASS] C0 base anchor B1: anchor '  exists_congr fun _ => List.ofFn_inj.symm' at base line 412: True
+      approved readers: 10 ['bb1Scheme_enc_bind', 'bb1Scheme_keyGen_bind', 'bb1Scheme_setup_eq', 'ofFn_bb1Scheme_encCT', 'sidImpl_challenge_fresh_onSpec', 'sidImpl_keyGen_ne_onSpec', 'sidImpl_one_onQuery', 'sidImpl_two_onQuery', 'sidImpl_two_onSpec', 'sidImpl_zero_onSpec']
+[FAIL] C1 block D1 (Defs): 47 of 87 lines differ positionally in the window after anchor line 430
+        line 471: want "/-- **Oracle `2` of the game, its query read as two messages**: the call on the game's query"
+        line 471: have "/-- **`KeyGen` for another identity, on the game's types**: with `ID*` recorded and the query"
+        line 472: want 'type is the call on the query read as two `msgLen(κ)`-bit messages, with the answer kept on the'
+        line 472: have '`x`, read as an identity, different from it, the answer is `⟨1, d_ID⟩` with'
+        line 473: want "game's answer type (the form for the `⊥` answers):"
+        line 473: have "`d_ID ← KeyGen(msk, ID)`, read back on the game's answer type: for `cast x ≠ t`,"
+        line 474: want '`S.sidImpl b κ pp msk 2 x s = S.sidImpl b κ pp msk 2 (cast x) s`. -/'
+        line 474: have '`S.sidImpl b κ pp msk 1 x (some t, c) ='
+[PASS] C1 block B1 (BonehBoyen): verbatim at head lines 413-458 (blank + approved 87-131), after anchor line 412
+[PASS] C2 reader bb1Scheme_setup_eq: once, verbatim, BonehBoyen.lean lines 414-424 (block B1, offset 0)
+[PASS] C2 reader bb1Scheme_keyGen_bind: once, verbatim, BonehBoyen.lean lines 426-435 (block B1, offset 12)
+[PASS] C2 reader bb1Scheme_enc_bind: once, verbatim, BonehBoyen.lean lines 437-450 (block B1, offset 23)
+[PASS] C2 reader ofFn_bb1Scheme_encCT: once, verbatim, BonehBoyen.lean lines 452-458 (block B1, offset 38)
+[PASS] C2 reader sidImpl_zero_onSpec: once, verbatim, Defs.lean lines 432-444 (block D1, offset 0)
+[PASS] C2 reader sidImpl_two_onSpec: once, verbatim, Defs.lean lines 446-458 (block D1, offset 14)
+[PASS] C2 reader sidImpl_one_onQuery: once, verbatim, Defs.lean lines 460-469 (block D1, offset 28)
+[FAIL] C2 reader sidImpl_two_onQuery: MISSING (0 declarations in the head files)
+[PASS] C2 reader sidImpl_keyGen_ne_onSpec: once, verbatim, Defs.lean lines 471-486 (block D1, offset 50)
+[PASS] C2 reader sidImpl_challenge_fresh_onSpec: once, verbatim, Defs.lean lines 488-506 (block D1, offset 67)
+READERS ok=9 missing=['sidImpl_two_onQuery'] duplicate=[] moved=[] textdiff=[]
+[FAIL] C3 removal Defs: blocks ['D1'] not located verbatim; removal not applicable
+[FAIL] C4 hash Defs: 552 lines sha256 2c323723ae4d7512008a020bc76edd900d069db2ab46653cf2e9ceaefcd88c59 (expected 563 97ecb6e02413d18fce255949ed4b3e777c8f653a59f0792b575be3ff24a6a9a0)
+[FAIL] C5 diff-vs-base Defs: ADDED 76 REMOVED 0 CHANGED 0 in 1 hunk(s) (expected ADDED 87 REMOVED 0 CHANGED 0); inserted hunks are NOT exactly the approved blocks
+      insert after base line 431: head lines 432-507
+DIFF_VS_EXPECTED Defs added=0 removed=11 changed=0
+[FAIL] C6 diff-vs-expected Defs: head vs base+verbatim blocks: ADDED 0 REMOVED 11 CHANGED 0
+      delete base/exp 471-481 head 471-470
+        - 471: "/-- **Oracle `2` of the game, its query read as two messages**: the call on the game's query"
+        - 472: 'type is the call on the query read as two `msgLen(κ)`-bit messages, with the answer kept on the'
+        - 473: "game's answer type (the form for the `⊥` answers):"
+[PASS] C3 removal BonehBoyen: blocks ['B1'] removed: equals base byte for byte (sha256 da875140806706f26c4cdbb5cf765f522144f3a5a885c5156a58b8c611cd25f4)
+[PASS] C4 hash BonehBoyen: 760 lines sha256 88454d6fb0fa2c81419b189dbc633609357ee39b35ccbe90c810a0ad10891c26 (expected 760 88454d6fb0fa2c81419b189dbc633609357ee39b35ccbe90c810a0ad10891c26)
+[PASS] C5 diff-vs-base BonehBoyen: ADDED 46 REMOVED 0 CHANGED 0 in 1 hunk(s) (expected ADDED 46 REMOVED 0 CHANGED 0); inserted hunks are exactly the approved blocks
+      insert after base line 413: head lines 414-459
+DIFF_VS_EXPECTED BonehBoyen added=0 removed=0 changed=0
+[PASS] C6 diff-vs-expected BonehBoyen: head vs base+verbatim blocks: ADDED 0 REMOVED 0 CHANGED 0
+CHECKS 19/25 PASS
+RESULT FAIL

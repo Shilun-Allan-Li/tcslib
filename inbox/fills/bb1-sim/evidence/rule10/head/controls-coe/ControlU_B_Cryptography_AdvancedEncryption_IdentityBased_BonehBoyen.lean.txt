@@ -1,0 +1,310 @@
+import Lean
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace PairingControls
+
+theorem ctlEval (n : ℕ) : (Complexity.PolyExpr.const 2).eval n = 2 := rfl
+
+theorem ctlEvalReader (n : ℕ) : (Complexity.PolyExpr.const 2).eval n = 2 :=
+  Complexity.PolyExpr.eval_const 2 n
+
+open TCSlib.Cryptography in
+theorem ctlPadFin (ℓ : ℕ) (w : List Bool) :
+    padFin ℓ w = (fun i => w.getD i false : Fin ℓ → Bool) := rfl
+
+open TCSlib.Cryptography in
+theorem ctlPadFinReader (ℓ : ℕ) (w : List Bool) :
+    padFin ℓ w = (fun i => w.getD i false : Fin ℓ → Bool) :=
+  padFin_def ℓ w
+
+open TCSlib.Cryptography.Games in
+theorem ctlAllOutputs {α : Type} (P : α → Prop) (a : α) :
+    (OracleComp.pure (spec := unifSpec) a).AllOutputs P ↔ P a := Iff.rfl
+
+open TCSlib.Cryptography.Games in
+theorem ctlAllOutputsReader {α : Type} (P : α → Prop) (a : α) :
+    (OracleComp.pure (spec := unifSpec) a).AllOutputs P ↔ P a :=
+  OracleComp.allOutputs_pure
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlDesc (G : BilinearGen) (κ : ℕ) (r : G.gen.Coins κ) :
+    G.desc κ r = G.gen.runAt κ [] r := rfl
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlDescReader (G : BilinearGen) (κ : ℕ) (r : G.gen.Coins κ) :
+    G.desc κ r = G.gen.runAt κ [] r :=
+  G.desc_eq κ r
+
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlCorrect (S : IBEScheme) :
+    S.Correct ↔ ∀ κ (id : Fin (S.idLen.eval κ) → Bool) (m : Fin (S.msgLen.eval κ) → Bool),
+      (S.honestRun κ id m).AllOutputs fun x =>
+        S.MsgSpace κ x.1 m → S.dec κ x.2.1 x.2.2 = some m := Iff.rfl
+
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlCorrectReader (S : IBEScheme) :
+    S.Correct ↔ ∀ κ (id : Fin (S.idLen.eval κ) → Bool) (m : Fin (S.msgLen.eval κ) → Bool),
+      (S.honestRun κ id m).AllOutputs fun x =>
+        S.MsgSpace κ x.1 m → S.dec κ x.2.1 x.2.2 = some m :=
+  S.correct_iff
+
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidImpl (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (id : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    type_of% (S.sidImpl_init_none b κ pp msk id c) := rfl
+
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidImplReader (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (id : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    type_of% (S.sidImpl_init_none b κ pp msk id c) :=
+  S.sidImpl_init_none b κ pp msk id c
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidZeroSpec (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (s : S.SidState κ) :
+    type_of% (S.sidImpl_zero_onSpec b κ pp msk x s) :=
+  (OracleComp.bind_pure _).symm
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidZeroSpecReader (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 0) (s : S.SidState κ) :
+    type_of% (S.sidImpl_zero_onSpec b κ pp msk x s) :=
+  S.sidImpl_zero_onSpec b κ pp msk x s
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidTwoSpec (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (s : S.SidState κ) :
+    type_of% (S.sidImpl_two_onSpec b κ pp msk x s) :=
+  (OracleComp.bind_pure _).symm
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidTwoSpecReader (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (s : S.SidState κ) :
+    type_of% (S.sidImpl_two_onSpec b κ pp msk x s) :=
+  S.sidImpl_two_onSpec b κ pp msk x s
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidOneQuery (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 1) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 1 x (none, c) = .pure (zeroBits _, (none, c)) :=
+  S.sidImpl_keyGen_none b κ pp msk x c
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidOneQueryReader (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 1) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 1 x (none, c) = .pure (zeroBits _, (none, c)) := by
+  rw [S.sidImpl_one_onQuery]
+  exact S.sidImpl_keyGen_none b κ pp msk _ c
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidTwoQuery (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 2 x (none, c) = .pure (zeroBits _, (none, c)) :=
+  S.sidImpl_challenge_none b κ pp msk x c
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidTwoQueryReader (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
+    S.sidImpl b κ pp msk 2 x (none, c) = .pure (zeroBits _, (none, c)) := by
+  rw [S.sidImpl_two_onQuery]
+  exact S.sidImpl_challenge_none b κ pp msk _ c
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidKeyNe (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool))
+    (e : (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool)) (h : cast e x ≠ t) :
+    type_of% (S.sidImpl_keyGen_ne_onSpec b κ pp msk x t c h) :=
+  S.sidImpl_keyGen_ne b κ pp msk _ t c h
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidKeyNeReader (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool)
+    (c : Option (Fin (S.ctLen.eval κ) → Bool))
+    (e : (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool)) (h : cast e x ≠ t) :
+    type_of% (S.sidImpl_keyGen_ne_onSpec b κ pp msk x t c h) :=
+  S.sidImpl_keyGen_ne_onSpec b κ pp msk x t c h
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidFresh (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (e : (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool))
+    (h : S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast e x)).1 ∧
+      S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast e x)).2) :
+    type_of% (S.sidImpl_challenge_fresh_onSpec b κ pp msk x t h) :=
+  S.sidImpl_challenge_fresh b κ pp msk _ t h
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.Composability TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlSidFreshReader (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+    (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool)
+    (e : (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool))
+    (h : S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast e x)).1 ∧
+      S.MsgSpace κ pp (FixedLengthScheme.splitHalf (cast e x)).2) :
+    type_of% (S.sidImpl_challenge_fresh_onSpec b κ pp msk x t h) :=
+  S.sidImpl_challenge_fresh_onSpec b κ pp msk x t h
+
+open Complexity in
+theorem ctlDistL (A : NUPPT) (n : ℕ) (w : List Bool) (r : A.Coins n) :
+    A.distinguisherL n w r = decide (A.runAt n w r = [true]) := rfl
+
+open Complexity in
+theorem ctlDistLReader (A : NUPPT) (n : ℕ) (w : List Bool) (r : A.Coins n) :
+    A.distinguisherL n w r = decide (A.runAt n w r = [true]) :=
+  A.distinguisherL_eq n w r
+
+open Complexity Turing in
+theorem ctlRunAtL (A : NUPPT) (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r = A.output (pairEncode (pairEncode (NUPPT.advInput n y) (A.advice n)) r) := rfl
+
+open Complexity Turing in
+theorem ctlRunAtLReader (A : NUPPT) (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r = A.output (pairEncode (pairEncode (NUPPT.advInput n y) (A.advice n)) r) :=
+  A.runAtL_eq n y r
+
+open Complexity in
+theorem ctlOfPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+    (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
+    (NUPPT.ofPolyTime hf coins adv advice hα).coins = coins := rfl
+
+open Complexity in
+theorem ctlOfPolyTimeReader {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+    (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
+    (NUPPT.ofPolyTime hf coins adv advice hα).coins = coins :=
+  NUPPT.coins_ofPolyTime hf coins adv advice hα
+
+open Complexity Turing in
+theorem ctlAdvInput (n : ℕ) (y : List Bool) :
+    NUPPT.advInput n y = pairEncode (List.replicate n true) y := rfl
+
+open Complexity Turing in
+theorem ctlAdvInputReader (n : ℕ) (y : List Bool) :
+    NUPPT.advInput n y = pairEncode (List.replicate n true) y :=
+  NUPPT.advInput_eq n y
+
+open TCSlib.Cryptography.Games in
+theorem ctlAccept (c : ProbComp Bool) :
+    accept c = ProbComp.prob c (· = true) := rfl
+
+open TCSlib.Cryptography.Games in
+theorem ctlAcceptReader (c : ProbComp Bool) :
+    accept c = ProbComp.prob c (· = true) :=
+  accept_eq c
+
+open TCSlib.Cryptography in
+theorem ctlUprob {α : Type} [Fintype α] (p : α → Prop) :
+    uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α := rfl
+
+open TCSlib.Cryptography in
+theorem ctlUprobReader {α : Type} [Fintype α] (p : α → Prop) :
+    uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α :=
+  uprob_def p
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlOrderAtLeast (G : BilinearGen) (N : ℕ → ℕ) (δ : ℕ → ℝ) :
+    G.OrderAtLeastExcept N δ ↔
+      ∀ κ, uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < N κ) ≤ δ κ := Iff.rfl
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlOrderAtLeastReader (G : BilinearGen) (N : ℕ → ℕ) (δ : ℕ → ℝ) :
+    G.OrderAtLeastExcept N δ ↔
+      ∀ κ, uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < N κ) ≤ δ κ :=
+  G.orderAtLeastExcept_iff N δ
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlInst (G : BilinearGen) (κ : ℕ) (r : G.gen.Coins κ) :
+    G.inst κ r = G.group κ (G.desc κ r) := rfl
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlInstReader (G : BilinearGen) (κ : ℕ) (r : G.gen.Coins κ) :
+    G.inst κ r = G.group κ (G.desc κ r) :=
+  G.inst_eq κ r
+
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlInLens (S : IBEScheme) (κ : ℕ) : S.inLens κ 0 = S.idLen.eval κ := rfl
+
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlInLensReader (S : IBEScheme) (κ : ℕ) : S.inLens κ 0 = S.idLen.eval κ :=
+  S.inLens_zero κ
+
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlOutLens (S : IBEScheme) (κ : ℕ) : S.outLens κ 2 = S.ctLen.eval κ := rfl
+
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlOutLensReader (S : IBEScheme) (κ : ℕ) : S.outLens κ 2 = S.ctLen.eval κ :=
+  S.outLens_two κ
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlOracleZero (S : IBEScheme) {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 0) (s : σ) :
+    type_of% (S.oracleImpl_zero_onSpec κ init key chal x s) :=
+  (OracleComp.bind_pure _).symm
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlOracleZeroReader (S : IBEScheme) {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 0) (s : σ) :
+    type_of% (S.oracleImpl_zero_onSpec κ init key chal x s) :=
+  S.oracleImpl_zero_onSpec κ init key chal x s
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlOracleOne (S : IBEScheme) {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 1) (s : σ) :
+    type_of% (S.oracleImpl_one_onSpec κ init key chal x s) :=
+  (OracleComp.bind_pure _).symm
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlOracleOneReader (S : IBEScheme) {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 1) (s : σ) :
+    type_of% (S.oracleImpl_one_onSpec κ init key chal x s) :=
+  S.oracleImpl_one_onSpec κ init key chal x s
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlOracleTwo (S : IBEScheme) {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 2) (s : σ) :
+    type_of% (S.oracleImpl_two_onSpec κ init key chal x s) :=
+  (OracleComp.bind_pure _).symm
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing TCSlib.Cryptography.AdvancedEncryption.IdentityBased in
+theorem ctlOracleTwoReader (S : IBEScheme) {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 2) (s : σ) :
+    type_of% (S.oracleImpl_two_onSpec κ init key chal x s) :=
+  S.oracleImpl_two_onSpec κ init key chal x s
+
+open TCSlib.Cryptography.Games in
+theorem ctlExpect {α : Type} (a : α) (g : α → ℝ) :
+    ProbComp.expect (OracleComp.pure (spec := unifSpec) a) g = g a := rfl
+
+open TCSlib.Cryptography.Games in
+theorem ctlExpectReader {α : Type} (a : α) (g : α → ℝ) :
+    ProbComp.expect (OracleComp.pure (spec := unifSpec) a) g = g a :=
+  ProbComp.expect_pure a g
+
+end PairingControls
+

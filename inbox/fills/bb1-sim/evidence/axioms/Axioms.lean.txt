@@ -1,0 +1,69 @@
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity
+import Lean
+
+/-! Axioms probe (bb1-sim, lead). Not for landing. (1) The axioms of every new constant (decls2 ADDED),
+the four targets, `prob_simulate_rel`, `bb1_sidSecure` and `exists_bb1_distinguisher`. (2) A census of every
+stored constant of the changed owners and the helpers. (3) The staging probe's `#sorry_trace`: the constants
+of the closure whose own value uses `sorryAx`. -/
+
+open Lean Elab Command
+
+elab "#sorry_trace " n:ident : command => do
+  let env ← getEnv
+  let root := n.getId
+  let mut seen : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut hits : Array Name := #[]
+  let mut fuel := 1000000
+  while fuel > 0 && stack.size > 0 do
+    fuel := fuel - 1
+    let c := stack.back!
+    stack := stack.pop
+    if seen.contains c then continue
+    seen := seen.insert c
+    match env.find? c with
+    | none => pure ()
+    | some ci =>
+      let refs := ci.getUsedConstantsAsSet
+      if refs.contains ``sorryAx then hits := hits.push c
+      for r in refs do
+        unless seen.contains r do stack := stack.push r
+  logInfo m!"TRACE {root}: closure {seen.size}; direct sorryAx users: {hits.qsort Name.lt}"
+
+def stdAx : List Name := [``propext, ``Classical.choice, ``Quot.sound]
+
+run_cmd do
+  let names : List Name := [`TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.F_target_eq, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RelM, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt_none, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt_some, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy_none_of_ne, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy_some, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy_zero_none, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_allOutputs_of_ne_two, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_one_coins, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_two_fresh_allOutputs, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_two_of_not, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_zero_coins, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazyChal, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazyChal_fresh, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazyChal_of_not, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_eq, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_one, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_random_call, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_two_fresh, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_two_of_not, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_zero, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.exists_equiv_mul_pow, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_bb1SimImpl_random, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_sample_bb1RealAt, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_sample_sidImpl, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_simulate_bb1RealLazy, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_simulate_bb1SimLazy, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_simulate_sidImpl_bb1RealAt, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.key_eq, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.natCast_bitsToNat_injective, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.pair_pow_val_eq, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.prob_sidGame_coins, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.relM_iff, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.setup_out, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidImpl_allOutputs_some, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidImpl_none_of_ne, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_dom_one, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_dom_two, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_dom_zero, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_rng_one, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_rng_two, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_rng_zero, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_call, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_challenge_fresh, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_challenge_invalid, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_challenge_none, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_challenge_repeat, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_init_none, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_init_some, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_keyGen_ne, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_keyGen_none, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_keyGen_target, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.zeroBits_eq_cast, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_challenge_fresh_onSpec, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_keyGen_ne_onSpec, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_one_onQuery, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_two_onQuery, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_two_onSpec, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_zero_onSpec, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_enc_bind, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_keyGen_bind, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_setup_eq, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_bb1Scheme_encCT,
+    `TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel, `TCSlib.Cryptography.Games.ProbComp.expect_sample_rel,
+    `TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_real, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_random, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sidSecure,
+    `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.exists_bb1_distinguisher]
+  let mut bad : Nat := 0
+  for n in names do
+    let axs ← Lean.collectAxioms n
+    let std := axs.all (stdAx.contains ·)
+    unless std do bad := bad + 1
+    logInfo m!"AXIOMS {if std then "STANDARD" else "NONSTANDARD"} {n}: {axs.qsort Name.lt}"
+  logInfo m!"AXIOMS-LIST {names.length} constants, {bad} non-standard"
+
+run_cmd do
+  let env ← getEnv
+  let mods : List Name := [`TCSlib.Cryptography.Games.Relational, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.Defs, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity,
+    `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Lazy, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Real, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Coupling,
+    `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Random, `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity.Chain]
+  for m in mods do
+    let some idx := env.getModuleIdx? m | logInfo m!"CENSUS MISSING MODULE {m}"
+    let mut total := 0
+    let mut bad : Array Name := #[]
+    for (n, _) in env.constants.map₁.toList do
+      if env.getModuleIdxFor? n == some idx then
+        total := total + 1
+        let axs ← Lean.collectAxioms n
+        unless axs.all (stdAx.contains ·) do bad := bad.push n
+    logInfo m!"CENSUS {m}: {total} stored constants, {bad.size} non-standard {bad}"
+
+#sorry_trace TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sidSecure
+#sorry_trace TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_real
+#sorry_trace TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_random
+#sorry_trace TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel
+#sorry_trace TCSlib.Cryptography.Games.ProbComp.expect_sample_rel
+#sorry_trace TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel

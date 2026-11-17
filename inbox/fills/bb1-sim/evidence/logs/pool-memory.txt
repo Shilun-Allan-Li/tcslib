@@ -1,0 +1,19 @@
+# Lean pool record (bb1-sim, lead): runs through poolrun.py, pool 3 (min(nproc 4, MemAvailable 15 GiB / 4 GiB)),
+# host-wide slot locks; MemAvailable sampled every 2 s by each run; peak RSS per probe from wait4 (ru_maxrss).
+probes run through the pool: 197
+lowest MemAvailable seen: 13.89 GiB (in clash/shadow/runs-attempt1/memory.log); MemTotal 15.71 GiB
+  clash/shadow/runs-attempt1/memory.log: min MemAvailable 13.89 GiB over 1862 samples
+  rule10/head/control-runs/memory.log: min MemAvailable 13.89 GiB over 465 samples
+  rule10/head/seal-runs/memory.log: min MemAvailable 13.90 GiB over 1183 samples
+  rule10/base/seal-runs/memory.log: min MemAvailable 13.90 GiB over 672 samples
+  axioms/runs/memory.log: min MemAvailable 14.06 GiB over 154 samples
+  axioms/runs-attempt1/memory.log: min MemAvailable 14.11 GiB over 19 samples
+  rule10/base/probe-runs/memory.log: min MemAvailable 14.20 GiB over 6 samples
+  rule10/head/probe-runs/memory.log: min MemAvailable 14.20 GiB over 5 samples
+  rule10/head/pretest/runs/memory.log: min MemAvailable 14.29 GiB over 6 samples
+  stmtdump/final/memory.log: min MemAvailable 14.30 GiB over 2 samples
+  scan/head/runs/memory.log: min MemAvailable 14.38 GiB over 2 samples
+  clash/shadow/runs/memory.log: min MemAvailable 14.88 GiB over 2 samples
+  clash/shadow/runs-control/memory.log: min MemAvailable 14.88 GiB over 2 samples
+peak RSS of one probe: 2.93 GiB (Bb1sScratch/Shadow, clash/shadow/runs-attempt1/results.jsonl)
+sum of the three largest peaks (upper bound for 3 concurrent probes): 8.51 GiB

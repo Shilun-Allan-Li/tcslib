@@ -1,0 +1,21 @@
+# The Lean-parallelism ruling (user, 2026-11-17), workflow.md on main at b986b8620fc6117034462212df7070c80a79ff65 (PR #353), §4.1 lines 226-245, quoted; applied by the lead from the seal phase of the final (the final sweep was already running on the single lock and was not interrupted).
+**Lean parallelism** (user ruling, 2026-11-17). **Local hosts** (the maintainer's
+container, or a local checkout on the user's machine) share their CPU and memory with
+other work. There, at most **3 Lean processes run at once on the machine, across all
+jobs**; never run two in the same olean tree. Workers and the maintainer may message each
+other to coordinate these slots. **Cloud workers** (Claude or Codex in the cloud) may run
+as many Lean processes in parallel as is sensible for their machine:
+* size the pool from the machine: at most `nproc` processes, and few enough that at least
+  about 2 GB (or 15%) of memory stays available; start from
+  `min(nproc, MemAvailable / 4 GB)` and back off under memory pressure, giving heavy
+  modules (for example `Complexity/ClassP/BinaryArith/DetMod`) room of their own;
+* build in dependency order: start a module only when every module it imports has its
+  olean, and never let two processes compile the same module or write the same file;
+* seals, controls, axiom probes and statement probes may run in parallel across owners,
+  each in its own probe file and output directory;
+* sub-agents share one pool (a counting semaphore) instead of a single host lock, and
+  record the pool size and peak memory in their evidence.
+
+Everything else is unchanged: never `lake build` the library, never run an unfiltered
+`lake exe cache get`, only the lead fetches the cache, and each module is still compiled
+through `scripts/lean_check_tree.sh`.

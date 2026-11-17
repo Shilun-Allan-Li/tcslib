@@ -1,0 +1,1020 @@
+STMT def TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState : TCSlib.Cryptography.Pairing.BilinearGen →
+  Complexity.PolyExpr → ℕ → List Bool → Type
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.F_target_eq : ∀ {wG wT : ℕ}
+  (B : TCSlib.Cryptography.Pairing.BilinearGroup wG wT) (g X : B.G) (z a₁ : ZMod B.order),
+  X ^ z.val * (X ^ (-z).val * g ^ a₁.val) = g ^ a₁.val
+STMT inductive TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads : (G :
+    TCSlib.Cryptography.Pairing.BilinearGen) →
+  (ℓ : Complexity.PolyExpr) →
+    (κ : ℕ) →
+      (d : List Bool) →
+        (G.group κ d).G →
+          ZMod (G.group κ d).order →
+            (G.group κ d).G →
+              (G.group κ d).G →
+                (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+                    (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ →
+                  Prop
+STMT def TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RelM : (G :
+    TCSlib.Cryptography.Pairing.BilinearGen) →
+  (ℓ : Complexity.PolyExpr) →
+    (κ : ℕ) →
+      (d : List Bool) →
+        (G.group κ d).G →
+          (G.group κ d).G →
+            TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState G ℓ κ d →
+              TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d → Prop
+STMT def TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt : (G :
+    TCSlib.Cryptography.Pairing.BilinearGen) →
+  (ℓ : Complexity.PolyExpr) →
+    Bool →
+      (κ : ℕ) →
+        (d : List Bool) →
+          ((G.group κ d).G →
+              (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+                (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ) →
+            (G.group κ d).G →
+              TCSlib.Cryptography.Games.QueryImpl
+                ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ)
+                (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState G ℓ κ d)
+                TCSlib.Cryptography.Games.unifSpec
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt_none : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (h : (G.group κ d).G) (i : Fin 3)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom i)
+  (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt G ℓ b κ d o h i x (Option.none, c) =
+    ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2 i x
+          (Option.none, c)).bind
+      fun p => TCSlib.Cryptography.Games.OracleComp.pure (p.1, Option.map (fun t => (t, h)) p.2.1, p.2.2)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt_some : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (h : (G.group κ d).G) (i : Fin 3)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom i)
+  (t : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool)
+  (h' : (G.group κ d).G)
+  (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt G ℓ b κ d o h i x (Option.some (t, h'), c) =
+    ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidImpl b κ (o h').1 (o h').2 i x
+          (Option.some t, c)).bind
+      fun p => TCSlib.Cryptography.Games.OracleComp.pure (p.1, Option.map (fun t => (t, h')) p.2.1, p.2.2)
+STMT def TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy : (G :
+    TCSlib.Cryptography.Pairing.BilinearGen) →
+  (ℓ : Complexity.PolyExpr) →
+    Bool →
+      (κ : ℕ) →
+        (d : List Bool) →
+          ((G.group κ d).G →
+              (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+                (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ) →
+            TCSlib.Cryptography.Games.QueryImpl
+              ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ)
+              (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState G ℓ κ d)
+              TCSlib.Cryptography.Games.unifSpec
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy_none_of_ne : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (i : Fin 3),
+  i ≠ 0 →
+    ∀ (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom i)
+      (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o i x (Option.none, c) =
+        ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidImpl b κ (o 1).1 (o 1).2 i x
+              (Option.none, c)).bind
+          fun p => TCSlib.Cryptography.Games.OracleComp.pure (p.1, Option.map (fun t => (t, 1)) p.2.1, p.2.2)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy_some : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (i : Fin 3) (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom i)
+  (t : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool)
+  (h : (G.group κ d).G)
+  (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o i x (Option.some (t, h), c) =
+    ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2 i x
+          (Option.some t, c)).bind
+      fun p => TCSlib.Cryptography.Games.OracleComp.pure (p.1, Option.map (fun t => (t, h)) p.2.1, p.2.2)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy_zero_none : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 0)
+  (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 0 x (Option.none, c) =
+    TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample (G.group κ d).G) fun h =>
+      ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2 0 x
+            (Option.none, c)).bind
+        fun p => TCSlib.Cryptography.Games.OracleComp.pure (p.1, Option.map (fun t => (t, h)) p.2.1, p.2.2)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_allOutputs_of_ne_two : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y Z : (G.group κ d).G) (T : (G.group κ d).GT) (i : Fin 3),
+  i ≠ 2 →
+    ∀ (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom i)
+      (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+      TCSlib.Cryptography.Games.OracleComp.AllOutputs (fun p => p.2.2 = s.2)
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y Z T i x s)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_one_coins : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y Z Z' : (G.group κ d).G) (T T' : (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 1)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y Z T 1 x s =
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y Z' T' 1 x s
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_two_fresh_allOutputs : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y Z : (G.group κ d).G) (T : (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 2)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  (s.1.isSome = Bool.true ∧
+      s.2 = Option.none ∧
+        (∃ u,
+            List.ofFn ((G.group κ d).encT u) =
+              List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+          ∃ u,
+            List.ofFn ((G.group κ d).encT u) =
+              List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2) →
+    TCSlib.Cryptography.Games.OracleComp.AllOutputs (fun p => p.2.2.isSome = Bool.true)
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y Z T 2 x s)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_two_of_not : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y Z : (G.group κ d).G) (T : (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 2)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  ¬(s.1.isSome = Bool.true ∧
+        s.2 = Option.none ∧
+          (∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+            ∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2) →
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y Z T 2 x s =
+        TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ Bool.false κ d g X Y 1 1 2 x s ∧
+      TCSlib.Cryptography.Games.OracleComp.AllOutputs (fun p => p.2.2 = s.2)
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y Z T 2 x s)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimImpl_zero_coins : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y Z Z' : (G.group κ d).G) (T T' : (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 0)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y Z T 0 x s =
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y Z' T' 0 x s
+STMT def TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy : (G :
+    TCSlib.Cryptography.Pairing.BilinearGen) →
+  (ℓ : Complexity.PolyExpr) →
+    Bool →
+      (κ : ℕ) →
+        (d : List Bool) →
+          (G.group κ d).G →
+            (G.group κ d).G →
+              (G.group κ d).G →
+                {U : Type} →
+                  [Fintype U] →
+                    [Nonempty U] →
+                      (U → (G.group κ d).G × (G.group κ d).GT) →
+                        TCSlib.Cryptography.Games.QueryImpl
+                          ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ)
+                          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d)
+                          TCSlib.Cryptography.Games.unifSpec
+STMT def TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazyChal : (G :
+    TCSlib.Cryptography.Pairing.BilinearGen) →
+  (ℓ : Complexity.PolyExpr) →
+    Bool →
+      (κ : ℕ) →
+        (d : List Bool) →
+          (G.group κ d).G →
+            (G.group κ d).G →
+              (G.group κ d).G →
+                {U : Type} →
+                  [Fintype U] →
+                    [Nonempty U] →
+                      (U → (G.group κ d).G × (G.group κ d).GT) →
+                        (Fin
+                              ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).msgLen.eval κ +
+                                (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).msgLen.eval κ) →
+                            Bool) →
+                          TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d →
+                            TCSlib.Cryptography.Games.ProbComp
+                              ((Fin
+                                    ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval
+                                      κ) →
+                                  Bool) ×
+                                TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazyChal_fresh : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y : (G.group κ d).G) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (mm :
+    Fin
+        ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).msgLen.eval κ +
+          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).msgLen.eval κ) →
+      Bool)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  (s.1.isSome = Bool.true ∧
+      s.2 = Option.none ∧
+        (∃ u,
+            List.ofFn ((G.group κ d).encT u) =
+              List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf mm).1) ∧
+          ∃ u,
+            List.ofFn ((G.group κ d).encT u) =
+              List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf mm).2) →
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazyChal G ℓ b κ d g X Y zt mm s =
+      TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample U) fun u =>
+        TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimChal G ℓ b κ d g X Y (zt u).1 (zt u).2 mm s
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazyChal_of_not : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y : (G.group κ d).G) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (mm :
+    Fin
+        ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).msgLen.eval κ +
+          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).msgLen.eval κ) →
+      Bool)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  ¬(s.1.isSome = Bool.true ∧
+        s.2 = Option.none ∧
+          (∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf mm).1) ∧
+            ∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf mm).2) →
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazyChal G ℓ b κ d g X Y zt mm s =
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimChal G ℓ b κ d g X Y 1 1 mm s
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_eq : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y : (G.group κ d).G) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g X Y zt =
+    (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).oracleImpl κ
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimInit G ℓ κ d g X Y)
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimKeyQ G ℓ κ d g X Y)
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazyChal G ℓ b κ d g X Y zt)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_one : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y : (G.group κ d).G) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 1)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g X Y zt 1 x s =
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y 1 1 1 x s
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_random_call : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ) (d : List Bool)
+  (g X Y Z : (G.group κ d).G) (i : Fin 3)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom i)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d)
+  (F :
+    ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).rng i ×
+        TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d →
+      ℝ),
+  TCSlib.Cryptography.Games.ProbComp.expect
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ Bool.false κ d g X Y (fun T => (Z, T))
+        i x s)
+      F =
+    TCSlib.Cryptography.Games.ProbComp.expect
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ Bool.true κ d g X Y (fun T => (Z, T))
+        i x s)
+      F
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_two_fresh : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y : (G.group κ d).G) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 2)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  (s.1.isSome = Bool.true ∧
+      s.2 = Option.none ∧
+        (∃ u,
+            List.ofFn ((G.group κ d).encT u) =
+              List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+          ∃ u,
+            List.ofFn ((G.group κ d).encT u) =
+              List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2) →
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g X Y zt 2 x s =
+      TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample U) fun u =>
+        TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y (zt u).1 (zt u).2 2 x s
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_two_of_not : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y : (G.group κ d).G) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 2)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  ¬(s.1.isSome = Bool.true ∧
+        s.2 = Option.none ∧
+          (∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+            ∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2) →
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g X Y zt 2 x s =
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y 1 1 2 x s
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy_zero : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y : (G.group κ d).G) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 0)
+  (s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g X Y zt 0 x s =
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y 1 1 0 x s
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.exists_equiv_mul_pow : ∀ {wG wT : ℕ}
+  (B : TCSlib.Cryptography.Pairing.BilinearGroup wG wT) {g : B.G},
+  g ≠ 1 → ∀ (X : B.G), ∃ e, ∀ (z : ZMod B.order) (h : B.G), h = X ^ (-z).val * g ^ ((e z) h).val
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_bb1SimImpl_random : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ) (d : List Bool)
+  (g X Y Z : (G.group κ d).G) {β : Type}
+  (c :
+    TCSlib.Cryptography.Games.OracleComp
+      ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ) β)
+  (F : β → ℝ),
+  ((TCSlib.Cryptography.Games.ProbComp.sample (G.group κ d).GT).expect fun T =>
+      TCSlib.Cryptography.Games.ProbComp.expect
+        (TCSlib.Cryptography.Games.simulate
+          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ Bool.false κ d g X Y Z T) c
+          (Option.none, Option.none))
+        fun p => F p.1) =
+    (TCSlib.Cryptography.Games.ProbComp.sample (G.group κ d).GT).expect fun T =>
+      TCSlib.Cryptography.Games.ProbComp.expect
+        (TCSlib.Cryptography.Games.simulate
+          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ Bool.true κ d g X Y Z T) c
+          (Option.none, Option.none))
+        fun p => F p.1
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_sample_bb1RealAt : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  {α : Type}
+  (c :
+    TCSlib.Cryptography.Games.OracleComp
+      ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ) α)
+  (F : α × TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState G ℓ κ d → ℝ),
+  ((TCSlib.Cryptography.Games.ProbComp.sample (G.group κ d).G).expect fun h =>
+      TCSlib.Cryptography.Games.ProbComp.expect
+        (TCSlib.Cryptography.Games.simulate
+          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt G ℓ b κ d o h) c
+          (Option.none, Option.none))
+        F) =
+    TCSlib.Cryptography.Games.ProbComp.expect
+      (TCSlib.Cryptography.Games.simulate
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o) c
+        (Option.none, Option.none))
+      F
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_sample_sidImpl : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  {α : Type}
+  (c :
+    TCSlib.Cryptography.Games.OracleComp
+      ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ) α)
+  (F : α → ℝ),
+  ((TCSlib.Cryptography.Games.ProbComp.sample (G.group κ d).G).expect fun h =>
+      TCSlib.Cryptography.Games.ProbComp.expect
+        (TCSlib.Cryptography.Games.simulate
+          ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2) c
+          (Option.none, Option.none))
+        fun p => F p.1) =
+    TCSlib.Cryptography.Games.ProbComp.expect
+      (TCSlib.Cryptography.Games.simulate
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o) c
+        (Option.none, Option.none))
+      fun p => F p.1
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_simulate_bb1RealLazy : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order),
+  g ≠ 1 →
+    2 ^ (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ ≤ (G.group κ d).order →
+      (∀ (h : (G.group κ d).G),
+          TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) →
+        ∀ {β : Type}
+          (c :
+            TCSlib.Cryptography.Games.OracleComp
+              ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ) β)
+          (F : β → ℝ),
+          (TCSlib.Cryptography.Games.ProbComp.expect
+              (TCSlib.Cryptography.Games.simulate
+                (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o) c
+                (Option.none, Option.none))
+              fun p => F p.1) =
+            TCSlib.Cryptography.Games.ProbComp.expect
+              (TCSlib.Cryptography.Games.simulate
+                (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val)
+                  (g ^ b'.val) fun c => (g ^ c.val, ((G.group κ d).pair g) g ^ (α * b' * c).val))
+                c (Option.none, Option.none))
+              fun p => F p.1
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_simulate_bb1SimLazy : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (g X Y : (G.group κ d).G) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT) {α : Type}
+  (c :
+    TCSlib.Cryptography.Games.OracleComp
+      ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ) α)
+  (F : α × TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d → ℝ)
+  {s : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d},
+  s.2 = Option.none →
+    TCSlib.Cryptography.Games.ProbComp.expect
+        (TCSlib.Cryptography.Games.simulate
+          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g X Y zt) c s)
+        F =
+      (TCSlib.Cryptography.Games.ProbComp.sample U).expect fun u =>
+        TCSlib.Cryptography.Games.ProbComp.expect
+          (TCSlib.Cryptography.Games.simulate
+            (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ d g X Y (zt u).1 (zt u).2) c s)
+          F
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.expect_simulate_sidImpl_bb1RealAt : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (h : (G.group κ d).G) {α : Type}
+  (c :
+    TCSlib.Cryptography.Games.OracleComp
+      ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ) α)
+  (F : α → ℝ),
+  (TCSlib.Cryptography.Games.ProbComp.expect
+      (TCSlib.Cryptography.Games.simulate
+        ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidImpl b κ (o h).1 (o h).2) c
+        (Option.none, Option.none))
+      fun p => F p.1) =
+    TCSlib.Cryptography.Games.ProbComp.expect
+      (TCSlib.Cryptography.Games.simulate
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealAt G ℓ b κ d o h) c
+        (Option.none, Option.none))
+      fun p => F p.1
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.key_eq : ∀ {wG wT : ℕ}
+  (B : TCSlib.Cryptography.Pairing.BilinearGroup wG wT) (g : B.G) (α b' z z' a₁ r : ZMod B.order),
+  z ≠ z' →
+    (g ^ b'.val) ^ α.val * ((g ^ α.val) ^ z.val * ((g ^ α.val) ^ (-z').val * g ^ a₁.val)) ^ r.val =
+        (g ^ b'.val) ^ (-a₁ / (z - z')).val *
+          ((g ^ α.val) ^ z.val * ((g ^ α.val) ^ (-z').val * g ^ a₁.val)) ^ (r + b' / (z - z')).val ∧
+      g ^ r.val = (g ^ b'.val) ^ (-1 / (z - z')).val * g ^ (r + b' / (z - z')).val
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.natCast_bitsToNat_injective : ∀ {n p : ℕ},
+  2 ^ n ≤ p → Function.Injective fun u => ↑(TCSlib.Cryptography.bitsToNat u)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.pair_pow_val_eq : ∀ {wG wT : ℕ}
+  (B : TCSlib.Cryptography.Pairing.BilinearGroup wG wT) (g : B.G) (α b' s : ZMod B.order),
+  (B.pair (g ^ α.val)) (g ^ b'.val) ^ s.val = (B.pair g) g ^ (α * b' * s).val
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.prob_sidGame_coins : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (A : Complexity.NUPPT) (q : ℕ) (b : Bool)
+  (κ : ℕ)
+  (o :
+    (r : G.gen.Coins κ) →
+      { x // x ≠ 1 } →
+        ZMod (G.group κ (G.desc κ r)).order →
+          (G.group κ (G.desc κ r)).G →
+            (G.group κ (G.desc κ r)).G →
+              (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+                (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ),
+  (∀ (r : G.gen.Coins κ) (g : { x // x ≠ 1 }) (α : ZMod (G.group κ (G.desc κ r)).order)
+      (h g2 : (G.group κ (G.desc κ r)).G),
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads G ℓ κ (G.desc κ r) (↑g) α g2 h
+        (o r g α h g2)) →
+    ∀ (r : G.gen.Coins κ),
+      ¬(G.inst κ r).order < 2 ^ ℓ.eval κ →
+        (TCSlib.Cryptography.Games.ProbComp.prob
+            (TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample { x // x ≠ 1 })
+              fun g =>
+              TCSlib.Cryptography.Games.OracleComp.bind
+                (TCSlib.Cryptography.Games.ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun α =>
+                TCSlib.Cryptography.Games.OracleComp.bind
+                  (TCSlib.Cryptography.Games.ProbComp.sample (G.group κ (G.desc κ r)).G) fun h =>
+                  TCSlib.Cryptography.Games.OracleComp.bind
+                    (TCSlib.Cryptography.Games.ProbComp.sample (G.group κ (G.desc κ r)).G) fun g2 =>
+                    TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample (A.Coins κ))
+                      fun ρ =>
+                      (TCSlib.Cryptography.Games.simulate
+                            ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidImpl b κ
+                              (o r g α h g2).1 (o r g α h g2).2)
+                            (A.toComp ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidCodec κ)
+                              κ q ρ)
+                            (Option.none, Option.none)).bind
+                        fun res => TCSlib.Cryptography.Games.OracleComp.pure (res.1 0))
+            fun x => x = Bool.true) =
+          TCSlib.Cryptography.Games.ProbComp.prob
+            (TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample { x // x ≠ 1 })
+              fun g =>
+              TCSlib.Cryptography.Games.OracleComp.bind
+                (TCSlib.Cryptography.Games.ProbComp.sample
+                  (ZMod (G.group κ (G.desc κ r)).order ×
+                    ZMod (G.group κ (G.desc κ r)).order × ZMod (G.group κ (G.desc κ r)).order))
+                fun abc =>
+                TCSlib.Cryptography.Games.OracleComp.bind
+                  (TCSlib.Cryptography.Games.ProbComp.sample (G.group κ (G.desc κ r)).GT) fun t =>
+                  TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample (A.Coins κ))
+                    fun ρ =>
+                    (TCSlib.Cryptography.Games.simulate
+                          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimImpl G ℓ b κ (G.desc κ r) (↑g)
+                            (↑g ^ abc.1.val) (↑g ^ abc.2.1.val) (↑g ^ abc.2.2.val)
+                            (if Bool.true = Bool.true then
+                              ((G.group κ (G.desc κ r)).pair ↑g) ↑g ^ (abc.1 * abc.2.1 * abc.2.2).val
+                            else t))
+                          (A.toComp ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidCodec κ) κ
+                            q ρ)
+                          (Option.none, Option.none)).bind
+                      fun res => TCSlib.Cryptography.Games.OracleComp.pure (res.1 0))
+            fun x => x = Bool.true
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.relM_iff : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ) (d : List Bool)
+  (g X : (G.group κ d).G) (u : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState G ℓ κ d)
+  (v : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RelM G ℓ κ d g X u v ↔
+    u.2 = v.2 ∧
+      Option.Rel
+        (fun p q =>
+          p.1 = q.1 ∧
+            p.2 =
+              X ^ (-TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) p.1).val * g ^ q.2.val)
+        u.1 v.1
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.setup_out : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ),
+  ∃ o,
+    (∀ {β : Type}
+        (F :
+          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+              (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ →
+            TCSlib.Cryptography.Games.ProbComp β),
+        TCSlib.Cryptography.Games.OracleComp.bind
+            ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).setup κ) F =
+          TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample (G.gen.Coins κ)) fun r =>
+            TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample { x // x ≠ 1 })
+              fun g =>
+              TCSlib.Cryptography.Games.OracleComp.bind
+                (TCSlib.Cryptography.Games.ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order)) fun α =>
+                TCSlib.Cryptography.Games.OracleComp.bind
+                  (TCSlib.Cryptography.Games.ProbComp.sample (G.group κ (G.desc κ r)).G) fun h =>
+                  TCSlib.Cryptography.Games.OracleComp.bind
+                    (TCSlib.Cryptography.Games.ProbComp.sample (G.group κ (G.desc κ r)).G) fun g2 => F (o r g α h g2)) ∧
+      ∀ (r : G.gen.Coins κ) (g : { x // x ≠ 1 }) (α : ZMod (G.group κ (G.desc κ r)).order)
+        (h g2 : (G.group κ (G.desc κ r)).G),
+        TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads G ℓ κ (G.desc κ r) (↑g) α g2 h
+          (o r g α h g2)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidImpl_allOutputs_some : ∀ (b : Bool) (κ : ℕ)
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (pp : S.PP κ) (msk : S.MSK κ) (i : Fin 3)
+  (x : (S.sidSpec κ).dom i) (t : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)),
+  TCSlib.Cryptography.Games.OracleComp.AllOutputs (fun p => p.2.1 = Option.some t)
+    (S.sidImpl b κ pp msk i x (Option.some t, c))
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidImpl_none_of_ne : ∀ (b : Bool) (κ : ℕ)
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (pp pp' : S.PP κ) (msk msk' : S.MSK κ)
+  (i : Fin 3),
+  i ≠ 0 →
+    ∀ (x : (S.sidSpec κ).dom i) (c : Option (Fin (S.ctLen.eval κ) → Bool)),
+      S.sidImpl b κ pp msk i x (Option.none, c) = S.sidImpl b κ pp' msk' i x (Option.none, c) ∧
+        TCSlib.Cryptography.Games.OracleComp.AllOutputs (fun p => p.2 = (Option.none, c))
+          (S.sidImpl b κ pp msk i x (Option.none, c))
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_dom_one : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (κ : ℕ),
+  (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_dom_two : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (κ : ℕ),
+  (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_dom_zero : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (κ : ℕ),
+  (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_rng_one : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (κ : ℕ),
+  (S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_rng_two : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (κ : ℕ),
+  (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.sidSpec_rng_zero : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (κ : ℕ),
+  (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_call : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order),
+  g ≠ 1 →
+    2 ^ (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ ≤ (G.group κ d).order →
+      (∀ (h : (G.group κ d).G),
+          TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) →
+        ∀ (i : Fin 3) (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom i)
+          (u : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState G ℓ κ d)
+          (v : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+          TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RelM G ℓ κ d g (g ^ α.val) u v →
+            ∀
+              (g₀ :
+                ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).rng i ×
+                    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState G ℓ κ d →
+                  ℝ)
+              (g₁ :
+                ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).rng i ×
+                    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d →
+                  ℝ),
+              (∀ (y : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).rng i)
+                  (u' : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.BB1RealState G ℓ κ d)
+                  (v' : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1SimState G ℓ κ d),
+                  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RelM G ℓ κ d g (g ^ α.val) u' v' →
+                    g₀ (y, u') = g₁ (y, v')) →
+                TCSlib.Cryptography.Games.ProbComp.expect
+                    (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o i x u) g₀ =
+                  TCSlib.Cryptography.Games.ProbComp.expect
+                    (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val)
+                      (g ^ b'.val) (fun c => (g ^ c.val, ((G.group κ d).pair g) g ^ (α * b' * c).val)) i x v)
+                    g₁
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_challenge_fresh : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order),
+  (∀ (h : (G.group κ d).G),
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) →
+    ∀ (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 2)
+      (t : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool)
+      (h : (G.group κ d).G) (α₁ : ZMod (G.group κ d).order),
+      h =
+          (g ^ α.val) ^ (-TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) t).val *
+            g ^ α₁.val →
+        ((∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+            ∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2) →
+          ∃ f₀ f₁,
+            (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 2 x
+                  (Option.some (t, h), Option.none) =
+                TCSlib.Cryptography.Games.OracleComp.bind
+                  (TCSlib.Cryptography.Games.ProbComp.sample (ZMod (G.group κ d).order)) fun s =>
+                  TCSlib.Cryptography.Games.OracleComp.pure (f₀ s)) ∧
+              (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val)
+                    (g ^ b'.val) (fun c => (g ^ c.val, ((G.group κ d).pair g) g ^ (α * b' * c).val)) 2 x
+                    (Option.some (t, α₁), Option.none) =
+                  TCSlib.Cryptography.Games.OracleComp.bind
+                    (TCSlib.Cryptography.Games.ProbComp.sample (ZMod (G.group κ d).order)) fun c =>
+                    TCSlib.Cryptography.Games.OracleComp.pure (f₁ c)) ∧
+                ∀ (s : ZMod (G.group κ d).order),
+                  (f₀ s).1 = (f₁ ((Equiv.refl (ZMod (G.group κ d).order)) s)).1 ∧
+                    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RelM G ℓ κ d g (g ^ α.val) (f₀ s).2
+                      (f₁ ((Equiv.refl (ZMod (G.group κ d).order)) s)).2
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_challenge_invalid : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT),
+  (∀ (h : (G.group κ d).G),
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) →
+    ∀ (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 2)
+      (t : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool)
+      (h : (G.group κ d).G) (α₁ : ZMod (G.group κ d).order),
+      ¬((∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1) ∧
+            ∃ u,
+              List.ofFn ((G.group κ d).encT u) =
+                List.ofFn (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2) →
+        ∃ a,
+          TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 2 x
+                (Option.some (t, h), Option.none) =
+              TCSlib.Cryptography.Games.OracleComp.pure (a, Option.some (t, h), Option.none) ∧
+            TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val) (g ^ b'.val)
+                zt 2 x (Option.some (t, α₁), Option.none) =
+              TCSlib.Cryptography.Games.OracleComp.pure (a, Option.some (t, α₁), Option.none)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_challenge_none : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 2)
+  (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+  ∃ a,
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 2 x (Option.none, c) =
+        TCSlib.Cryptography.Games.OracleComp.pure (a, Option.none, c) ∧
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val) (g ^ b'.val) zt 2 x
+          (Option.none, c) =
+        TCSlib.Cryptography.Games.OracleComp.pure (a, Option.none, c)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_challenge_repeat : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 2)
+  (t : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool)
+  (h : (G.group κ d).G) (α₁ : ZMod (G.group κ d).order)
+  (w : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool),
+  ∃ a,
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 2 x
+          (Option.some (t, h), Option.some w) =
+        TCSlib.Cryptography.Games.OracleComp.pure (a, Option.some (t, h), Option.some w) ∧
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val) (g ^ b'.val) zt 2 x
+          (Option.some (t, α₁), Option.some w) =
+        TCSlib.Cryptography.Games.OracleComp.pure (a, Option.some (t, α₁), Option.some w)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_init_none : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT),
+  (∀ (h : (G.group κ d).G),
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) →
+    ∀ (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 0)
+      (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool))
+      (e : ZMod (G.group κ d).order → (G.group κ d).G ≃ ZMod (G.group κ d).order),
+      (∀ (z : ZMod (G.group κ d).order) (h : (G.group κ d).G), h = (g ^ α.val) ^ (-z).val * g ^ ((e z) h).val) →
+        ∃ f₀ f₁,
+          (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 0 x (Option.none, c) =
+              TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample (G.group κ d).G)
+                fun h => TCSlib.Cryptography.Games.OracleComp.pure (f₀ h)) ∧
+            (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val) (g ^ b'.val)
+                  zt 0 x (Option.none, c) =
+                TCSlib.Cryptography.Games.OracleComp.bind
+                  (TCSlib.Cryptography.Games.ProbComp.sample (ZMod (G.group κ d).order)) fun α₁ =>
+                  TCSlib.Cryptography.Games.OracleComp.pure (f₁ α₁)) ∧
+              ∀ (h : (G.group κ d).G),
+                (f₀ h).1 =
+                    (f₁
+                        ((e (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) (cast ⋯ x)))
+                          h)).1 ∧
+                  TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RelM G ℓ κ d g (g ^ α.val) (f₀ h).2
+                    (f₁
+                        ((e (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) (cast ⋯ x)))
+                          h)).2
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_init_some : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT),
+  (∀ (h : (G.group κ d).G),
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) →
+    ∀ (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 0)
+      (t : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool)
+      (h : (G.group κ d).G) (α₁ : ZMod (G.group κ d).order)
+      (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+      h =
+          (g ^ α.val) ^ (-TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) t).val *
+            g ^ α₁.val →
+        ∃ a,
+          TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 0 x
+                (Option.some (t, h), c) =
+              TCSlib.Cryptography.Games.OracleComp.pure (a, Option.some (t, h), c) ∧
+            TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val) (g ^ b'.val)
+                zt 0 x (Option.some (t, α₁), c) =
+              TCSlib.Cryptography.Games.OracleComp.pure (a, Option.some (t, α₁), c)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_keyGen_ne : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT),
+  2 ^ (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ ≤ (G.group κ d).order →
+    (∀ (h : (G.group κ d).G),
+        TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RealReads G ℓ κ d g α (g ^ b'.val) h (o h)) →
+      ∀ (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 1)
+        (t : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool)
+        (h : (G.group κ d).G) (α₁ : ZMod (G.group κ d).order)
+        (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+        h =
+            (g ^ α.val) ^ (-TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) t).val *
+              g ^ α₁.val →
+          cast ⋯ x ≠ t →
+            ∃ f₀ f₁,
+              (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 1 x
+                    (Option.some (t, h), c) =
+                  TCSlib.Cryptography.Games.OracleComp.bind
+                    (TCSlib.Cryptography.Games.ProbComp.sample (ZMod (G.group κ d).order)) fun r =>
+                    TCSlib.Cryptography.Games.OracleComp.pure (f₀ r)) ∧
+                (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val)
+                      (g ^ b'.val) zt 1 x (Option.some (t, α₁), c) =
+                    TCSlib.Cryptography.Games.OracleComp.bind
+                      (TCSlib.Cryptography.Games.ProbComp.sample (ZMod (G.group κ d).order)) fun r =>
+                      TCSlib.Cryptography.Games.OracleComp.pure (f₁ r)) ∧
+                  ∀ (r : ZMod (G.group κ d).order),
+                    (f₀ r).1 =
+                        (f₁
+                            ((Equiv.addRight
+                                (b' /
+                                  (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d)
+                                      (cast ⋯ x) -
+                                    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) t)))
+                              r)).1 ∧
+                      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.RelM G ℓ κ d g (g ^ α.val) (f₀ r).2
+                        (f₁
+                            ((Equiv.addRight
+                                (b' /
+                                  (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d)
+                                      (cast ⋯ x) -
+                                    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) t)))
+                              r)).2
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_keyGen_none : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 1)
+  (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+  ∃ a,
+    TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 1 x (Option.none, c) =
+        TCSlib.Cryptography.Games.OracleComp.pure (a, Option.none, c) ∧
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val) (g ^ b'.val) zt 1 x
+          (Option.none, c) =
+        TCSlib.Cryptography.Games.OracleComp.pure (a, Option.none, c)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.stepM_keyGen_target : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (b : Bool) (κ : ℕ) (d : List Bool)
+  (o :
+    (G.group κ d).G →
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).PP κ ×
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).MSK κ)
+  (g : (G.group κ d).G) (α b' : ZMod (G.group κ d).order) {U : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  (zt : U → (G.group κ d).G × (G.group κ d).GT)
+  (x : ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidSpec κ).dom 1)
+  (t : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool)
+  (h : (G.group κ d).G) (α₁ : ZMod (G.group κ d).order)
+  (c : Option (Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ) → Bool)),
+  cast ⋯ x = t →
+    ∃ a,
+      TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1RealLazy G ℓ b κ d o 1 x (Option.some (t, h), c) =
+          TCSlib.Cryptography.Games.OracleComp.pure (a, Option.some (t, h), c) ∧
+        TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.bb1SimLazy G ℓ b κ d g (g ^ α.val) (g ^ b'.val) zt 1
+            x (Option.some (t, α₁), c) =
+          TCSlib.Cryptography.Games.OracleComp.pure (a, Option.some (t, α₁), c)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Sim.zeroBits_eq_cast : ∀ {n m : ℕ},
+  n = m →
+    ∀ (e : (Fin m → Bool) = (Fin n → Bool)),
+      TCSlib.Cryptography.Games.zeroBits n = cast e (TCSlib.Cryptography.Games.zeroBits m)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_challenge_fresh_onSpec : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool),
+  S.MsgSpace κ pp (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1 ∧
+      S.MsgSpace κ pp (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2 →
+    S.sidImpl b κ pp msk 2 x (Option.some t, Option.none) =
+      TCSlib.Cryptography.Games.OracleComp.bind
+        (S.enc κ pp t
+          (if b = Bool.true then (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2
+          else (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1))
+        fun c =>
+        TCSlib.Cryptography.Games.OracleComp.pure (cast ⋯ (S.encCT κ c), Option.some t, Option.some (S.encCT κ c))
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_keyGen_ne_onSpec : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)),
+  cast ⋯ x ≠ t →
+    S.sidImpl b κ pp msk 1 x (Option.some t, c) =
+      TCSlib.Cryptography.Games.OracleComp.bind (S.keyGen κ msk (cast ⋯ x)) fun sk =>
+        TCSlib.Cryptography.Games.OracleComp.pure
+          (cast ⋯ (TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer (Option.some (S.encSK κ sk))),
+            Option.some t, c)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_one_onQuery : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 1) (s : S.SidState κ), S.sidImpl b κ pp msk 1 x s = S.sidImpl b κ pp msk 1 (cast ⋯ x) s
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_two_onQuery : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 2) (s : S.SidState κ), S.sidImpl b κ pp msk 2 x s = S.sidImpl b κ pp msk 2 (cast ⋯ x) s
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_two_onSpec : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 2) (s : S.SidState κ),
+  S.sidImpl b κ pp msk 2 x s =
+    (S.sidImpl b κ pp msk 2 (cast ⋯ x) s).bind fun p => TCSlib.Cryptography.Games.OracleComp.pure (cast ⋯ p.1, p.2)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_zero_onSpec : ∀
+  (S : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 0) (s : S.SidState κ),
+  S.sidImpl b κ pp msk 0 x s =
+    (S.sidImpl b κ pp msk 0 (cast ⋯ x) s).bind fun p => TCSlib.Cryptography.Games.OracleComp.pure (cast ⋯ p.1, p.2)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_enc_bind : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ) (d : List Bool)
+  (pp : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.Params (G.group κ d))
+  (id : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool)
+  (m : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).msgLen.eval κ) → Bool) {β : Type}
+  (f :
+    (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).CT κ → TCSlib.Cryptography.Games.ProbComp β),
+  TCSlib.Cryptography.Games.OracleComp.bind
+      ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).enc κ ⟨d, pp⟩ id m) f =
+    TCSlib.Cryptography.Games.OracleComp.bind
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.encrypt pp
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) id)
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.decodeT (G.group κ d)
+          (TCSlib.Cryptography.padFin (G.wT.eval κ) (List.ofFn m))))
+      fun c => f ⟨d, c⟩
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_keyGen_bind : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ) (d : List Bool)
+  (pp : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.Params (G.group κ d)) (mk : (G.group κ d).G)
+  (id : Fin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).idLen.eval κ) → Bool) {β : Type}
+  (f :
+    (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).SK κ → TCSlib.Cryptography.Games.ProbComp β),
+  TCSlib.Cryptography.Games.OracleComp.bind
+      ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).keyGen κ ⟨d, (pp, mk)⟩ id) f =
+    TCSlib.Cryptography.Games.OracleComp.bind
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.keyGen pp mk
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.idToZ (G.group κ d) id))
+      fun k => f ⟨d, k⟩
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_setup_eq : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ),
+  (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).setup κ =
+    TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample (G.gen.Coins κ)) fun r =>
+      TCSlib.Cryptography.Games.OracleComp.bind
+        (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.setup (G.group κ (G.desc κ r))) fun k =>
+        TCSlib.Cryptography.Games.OracleComp.pure (⟨G.desc κ r, k.1⟩, ⟨G.desc κ r, k⟩)
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_bb1Scheme_encCT : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ) (d : List Bool)
+  (c : TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1.Ciphertext (G.group κ d)),
+  List.ofFn ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).encCT κ ⟨d, c⟩) =
+    List.ofFn
+      (TCSlib.Cryptography.padFin ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn ((G.group κ d).encT c.a) ++ List.ofFn ((G.group κ d).encG c.b) ++
+          List.ofFn ((G.group κ d).encG c.c)))
+STMT theorem TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel : ∀ {ι : Type}
+  {spec : TCSlib.Cryptography.Games.OracleSpec ι} {σ τ α : Type}
+  (impl₀ : TCSlib.Cryptography.Games.QueryImpl spec σ TCSlib.Cryptography.Games.unifSpec)
+  (impl₁ : TCSlib.Cryptography.Games.QueryImpl spec τ TCSlib.Cryptography.Games.unifSpec) (R : σ → τ → Prop),
+  (∀ (i : ι) (x : spec.dom i) (s : σ) (t : τ),
+      R s t →
+        ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+          (∀ (y : spec.rng i) (s' : σ) (t' : τ), R s' t' → g₀ (y, s') = g₁ (y, t')) →
+            TCSlib.Cryptography.Games.ProbComp.expect (impl₀ i x s) g₀ =
+              TCSlib.Cryptography.Games.ProbComp.expect (impl₁ i x t) g₁) →
+    ∀ (c : TCSlib.Cryptography.Games.OracleComp spec α) (G₀ : α × σ → ℝ) (G₁ : α × τ → ℝ),
+      (∀ (a : α) (s' : σ) (t' : τ), R s' t' → G₀ (a, s') = G₁ (a, t')) →
+        ∀ {s : σ} {t : τ},
+          R s t →
+            TCSlib.Cryptography.Games.ProbComp.expect (TCSlib.Cryptography.Games.simulate impl₀ c s) G₀ =
+              TCSlib.Cryptography.Games.ProbComp.expect (TCSlib.Cryptography.Games.simulate impl₁ c t) G₁
+STMT theorem TCSlib.Cryptography.Games.ProbComp.expect_sample_rel : ∀ {σ τ U V β : Type} [inst : Fintype U]
+  [inst_1 : Nonempty U] [inst_2 : Fintype V] [inst_3 : Nonempty V] (R : σ → τ → Prop) (e : U ≃ V) (f₀ : U → β × σ)
+  (f₁ : V → β × τ),
+  (∀ (u : U), (f₀ u).1 = (f₁ (e u)).1 ∧ R (f₀ u).2 (f₁ (e u)).2) →
+    ∀ (g₀ : β × σ → ℝ) (g₁ : β × τ → ℝ),
+      (∀ (y : β) (s' : σ) (t' : τ), R s' t' → g₀ (y, s') = g₁ (y, t')) →
+        TCSlib.Cryptography.Games.ProbComp.expect
+            (TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample U) fun u =>
+              TCSlib.Cryptography.Games.OracleComp.pure (f₀ u))
+            g₀ =
+          TCSlib.Cryptography.Games.ProbComp.expect
+            (TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample V) fun v =>
+              TCSlib.Cryptography.Games.OracleComp.pure (f₁ v))
+            g₁
+STMT theorem TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel : ∀ {ι : Type}
+  {spec : TCSlib.Cryptography.Games.OracleSpec ι} {σ τ α : Type}
+  (impl₀ : TCSlib.Cryptography.Games.QueryImpl spec σ TCSlib.Cryptography.Games.unifSpec)
+  (impl₁ : TCSlib.Cryptography.Games.QueryImpl spec τ TCSlib.Cryptography.Games.unifSpec) (R : σ → τ → Prop),
+  (∀ (i : ι) (x : spec.dom i) (s : σ) (t : τ),
+      R s t →
+        ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+          (∀ (y : spec.rng i) (s' : σ) (t' : τ), R s' t' → g₀ (y, s') = g₁ (y, t')) →
+            TCSlib.Cryptography.Games.ProbComp.expect (impl₀ i x s) g₀ =
+              TCSlib.Cryptography.Games.ProbComp.expect (impl₁ i x t) g₁) →
+    ∀ (c : TCSlib.Cryptography.Games.OracleComp spec α) (P : α → Prop) {s : σ} {t : τ},
+      R s t →
+        (TCSlib.Cryptography.Games.ProbComp.prob (TCSlib.Cryptography.Games.simulate impl₀ c s) fun p => P p.1) =
+          TCSlib.Cryptography.Games.ProbComp.prob (TCSlib.Cryptography.Games.simulate impl₁ c t) fun p => P p.1
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_real : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (A : Complexity.NUPPT) (q : ℕ) (b : Bool)
+  (κ : ℕ),
+  TCSlib.Cryptography.Games.advantage
+      ((TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).sidGame A q b κ)
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimGame G ℓ A q b Bool.true κ) ≤
+    TCSlib.Cryptography.uprob fun r => (G.inst κ r).order < 2 ^ ℓ.eval κ
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_random : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (A : Complexity.NUPPT) (q κ : ℕ),
+  TCSlib.Cryptography.Games.advantage
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimGame G ℓ A q Bool.false Bool.false κ)
+      (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1SimGame G ℓ A q Bool.true Bool.false κ) =
+    0
+STMT theorem TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sidSecure : ∀
+  (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr),
+  TCSlib.Cryptography.Candidates.ArithmeticFP →
+    ∀ (O : G.Ops),
+      (∃ δ, TCSlib.Cryptography.Negligible δ ∧ G.OrderAtLeastExcept (fun κ => 2 ^ ℓ.eval κ) δ) →
+        G.DBDHAssumption → (TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme G ℓ).SIDSecure

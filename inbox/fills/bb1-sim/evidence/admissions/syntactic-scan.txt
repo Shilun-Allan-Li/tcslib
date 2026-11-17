@@ -1,0 +1,13 @@
+# syntactic admission scan (bb1-sim, lead) at the fill head c35595aef7636c2ba9a25e1ffdac141b08d2fea5 against the patch base 72c0498a: tokens sorry /
+# admit / native_decide / axiom, `@[simp`, and `attribute` commands, outside comments and strings, per file.
+# A file passes when the head has, of each token, no more than the base (new files: none).
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean: base {'attribute': 1} head {'attribute': 1} OK
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean: base {'sorry': 2} head {} OK
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean: base {} head {} OK
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean: base {} head {} OK
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Lazy.lean: base {} head {} OK
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Random.lean: base {} head {} OK
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Real.lean: base {} head {} OK
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean: base {} head {} OK
+TCSlib/Cryptography/Games/Relational.lean: base {'sorry': 2} head {} OK
+RESULT PASS

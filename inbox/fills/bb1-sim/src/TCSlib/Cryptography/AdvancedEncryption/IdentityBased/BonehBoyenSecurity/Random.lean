@@ -66,7 +66,52 @@ theorem bb1SimLazy_random_call (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).d
     ProbComp.expect (bb1SimLazy G ℓ false κ d g X Y (fun T : (G.group κ d).GT => (Z, T)) i x s) F =
       ProbComp.expect
         (bb1SimLazy G ℓ true κ d g X Y (fun T : (G.group κ d).GT => (Z, T)) i x s) F := by
-  sorry
+  have h012 : ∀ i : Fin 3, i = 0 ∨ i = 1 ∨ i = 2 := by decide
+  rcases h012 i with rfl | rfl | rfl
+  -- `Init` and `KeyGen` do not depend on the bit
+  · rw [bb1SimLazy_zero, bb1SimLazy_zero, bb1SimImpl_eq, bb1SimImpl_eq,
+      IBEScheme.oracleImpl_zero_onSpec, IBEScheme.oracleImpl_zero_onSpec]
+  · rw [bb1SimLazy_one, bb1SimLazy_one, bb1SimImpl_eq, bb1SimImpl_eq,
+      IBEScheme.oracleImpl_one_onSpec, IBEScheme.oracleImpl_one_onSpec]
+  by_cases hf : (s.1.isSome ∧ s.2 = none ∧
+        ((∃ u, List.ofFn ((G.group κ d).encT u) =
+            List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).1) ∧
+          ∃ u, List.ofFn ((G.group κ d).encT u) =
+            List.ofFn (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)).2))
+  -- the first valid `Challenge`: reindex `T` by `T ↦ M₁⁻¹ M₀ T`
+  · rw [bb1SimLazy_two_fresh G ℓ false κ d g X Y _ x s hf,
+      bb1SimLazy_two_fresh G ℓ true κ d g X Y _ x s hf]
+    obtain ⟨s₁, s₂⟩ := s
+    obtain ⟨h₁, h₂, hv⟩ := hf
+    rcases s₁ with _ | ⟨t, α₁⟩
+    · exact absurd h₁ Bool.false_ne_true
+    subst h₂
+    set m := (FixedLengthScheme.splitHalf (cast (sidSpec_dom_two _ κ) x)) with hm
+    have key : ∀ (b : Bool) (T : (G.group κ d).GT),
+        bb1SimImpl G ℓ b κ d g X Y Z T 2 x (some (t, α₁), none) =
+          .pure (cast (sidSpec_rng_two _ κ).symm
+              (bb1SimCt G ℓ κ d Z T α₁ (if b then m.2 else m.1)),
+            (some (t, α₁), some (bb1SimCt G ℓ κ d Z T α₁ (if b then m.2 else m.1)))) :=
+      fun b T => by
+        rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec, bb1SimChal_fresh G ℓ b κ d g X Y Z T _
+          t α₁ ⟨(bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.1,
+            (bb1Scheme_msgSpace_iff G ℓ κ d _ _).2 hv.2⟩, OracleComp.pure_bind]
+    simp only [key]
+    have hct : ∀ T, bb1SimCt G ℓ κ d Z T α₁ m.1 =
+        bb1SimCt G ℓ κ d Z (Equiv.mulLeft ((BB1.decodeT (G.group κ d)
+          (padFin _ (List.ofFn m.2)))⁻¹ * BB1.decodeT (G.group κ d)
+            (padFin _ (List.ofFn m.1))) T) α₁ m.2 := fun T => by
+      simp only [Equiv.coe_mulLeft]
+      rw [List.ofFn_injective (ofFn_bb1SimCt G ℓ κ d _ _ _ _),
+        List.ofFn_injective (ofFn_bb1SimCt G ℓ κ d _ _ _ _), mul_assoc, mul_inv_cancel_left]
+    refine ProbComp.expect_sample_rel Eq (Equiv.mulLeft ((BB1.decodeT (G.group κ d)
+      (padFin _ (List.ofFn m.2)))⁻¹ * BB1.decodeT (G.group κ d) (padFin _ (List.ofFn m.1)))) _ _
+      (fun T => ⟨?_, ?_⟩) F F (fun y s' t' h => by rw [h]) <;>
+    simp only [Bool.false_eq_true, ↓reduceIte, hct]
+  -- every other `Challenge` does not depend on the bit
+  · rw [bb1SimLazy_two_of_not G ℓ false κ d g X Y _ x s hf,
+      bb1SimLazy_two_of_not G ℓ true κ d g X Y _ x s hf,
+      (bb1SimImpl_two_of_not G ℓ true κ d g X Y 1 1 x s hf).1]
 
 /-- **On a random `T`, the simulator does not depend on the challenge bit** [BB04, proof of
 Theorem 4.1, *Challenge*, "when `T` is uniform and independent in `G_1` … `C` is independent of

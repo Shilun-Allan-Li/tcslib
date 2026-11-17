@@ -1,0 +1,26 @@
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity
+import Lean
+
+/-! Control of the shadow scan (b) (bb1-sim, lead): the same code on two short names that exist elsewhere. Not for landing. For each new constant, every other constant
+of the whole import environment (TCSlib, Mathlib, core) whose last name component is the same string.
+Attempt 1 (`runs-attempt1/`) printed its results and then kept running for an hour; this version matches the
+last component directly and folds over the constant maps. -/
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let news : List Name := [`TCSlib.Cryptography.Games.ProbComp.expect_pure, `Fake.bind_assoc]
+  let shorts : Std.HashSet String := news.foldl (fun s n => match n with
+    | .str _ x => s.insert x | _ => s) {}
+  let newSet : Std.HashSet Name := news.foldl (fun s n => s.insert n) {}
+  let step := fun (acc : Std.HashMap String (Array Name)) (c : Name) (_ : ConstantInfo) =>
+    match c with
+    | .str _ x => if shorts.contains x && !newSet.contains c then acc.insert x ((acc.getD x #[]).push c)
+      else acc
+    | _ => acc
+  let hits := env.constants.map₂.foldl step (env.constants.map₁.fold step {})
+  for n in news do
+    match n with
+    | .str _ x => logInfo m!"SHADOW {n}: {hits.getD x #[]}"
+    | _ => pure ()
+  logInfo m!"SHADOW-SUMMARY {news.length} new constants; {hits.size} of their short names exist elsewhere"

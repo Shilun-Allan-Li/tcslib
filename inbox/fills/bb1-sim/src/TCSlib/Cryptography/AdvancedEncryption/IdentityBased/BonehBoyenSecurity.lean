@@ -94,17 +94,25 @@ the input 5-tuple is sampled from `P_BDH` … `A`'s view is identical to its vie
 game"], except on the generator's coins where `p < 2^ℓ`, where distinct identities may collide
 in `Z_p`.
 
-**Proof sketch.** Fix coins with `2^ℓ ≤ p`, so `idToZ` is injective on `ℓ`-bit strings
-(`bitsToNat_lt`, `bitsToNat_injective`). Couple the two games: the real `Setup` draws
-`(g, α, h, g_2)`, the simulation `(g, a, b', c)` and, at `Init`, `α_1`. Map `α ↦ a`,
-`g_2 ↦ g^{b'}` and `h ↦ g_1^{−ID*} g^{α_1}` (a bijection in `α_1` for each `ID*`, so `h` is uniform
-and independent; `expect_sample_equiv`). Answers to `Init` agree. For `ID ≠ ID*` the simulated
-key with exponent `r` is the real key with exponent `r̃ = r − b'/(ID − ID*)`, a bijection of
-`Z_p` (the paper's computation, `pow_val_mul`, `bilinear_pow`). The challenge is `Encrypt` with
-`s = c`, since `F(ID*) = g^{α_1}` and `e(g, g)^{ab'c} = e(g_1, g_2)^c`. The state machines agree
-step by step (`simulate` with matched implementations, `Games.expect_simulate_congr`), so the
-acceptance probabilities differ only on the excluded coins, of probability
-`Pr_r[p < 2^ℓ]`. -/
+**Proof sketch.** Read `Setup` through `BB1Sim.setup_out` and condition both games on the
+generator's coins `r` (`prob_bind`). On coins with `p < 2^ℓ` the two conditional acceptances are
+probabilities, so they differ by at most `1`; averaging this pointwise bound
+(`ProbComp.abs_expect_sub_le_expect`) gives `Pr_r[p < 2^ℓ]` (`Bridge.prob_sample_eq_uprob`). On
+coins with `2^ℓ ≤ p` they are equal (`BB1Sim.prob_sidGame_coins`), by coupling the two games:
+* the real `Setup` draws `h` before `ID*` exists; move it past `g_2` and the adversary's coins and
+  draw it at the first `Init` (`ProbComp.expect_simulate_rel` with `h` recorded beside `ID*`, then
+  `Games.expect_simulate_eager`);
+* map `α ↦ a` and read `g_2` as `g^{b'}` (`pow_val_bijective_of_ne_one`, `expect_sample_equiv`);
+* the real game and the simulator then agree call by call on states related by
+  `h = g_1^{−ID*} g^{α_1}` (`ProbComp.expect_simulate_rel`, `ProbComp.expect_sample_rel`): at
+  `Init`, `h ↦ α_1` is a bijection for each `ID*`, so `h` is uniform and the answers agree; for
+  `ID ≠ ID*`, which stay distinct in `Z_p` because `idToZ` is injective on `ℓ`-bit strings
+  (`bitsToNat_lt`, `bitsToNat_injective`, `CharP.natCast_injOn_Iio`), the simulated key with
+  exponent `r` is the real key with exponent `r̃ = r − b'/(ID − ID*)`, a bijection of `Z_p` (the
+  paper's computation, `pow_val_add`, `pow_val_neg`, `pow_val_mul`); the challenge is `Encrypt`
+  with `s = c`, since `F(ID*) = g^{α_1}` and `e(g, g)^{ab'c} = e(g_1, g_2)^c` (`bilinear_pow`);
+* finally the challenge coin `c` is drawn in advance (`Games.expect_simulate_eager`) and
+  `(a, b', c)` merges into one draw (`Bridge.expect_sample_pair`); the unused `T` drops out. -/
 theorem bb1_sim_real (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ) :
     advantage ((bb1Scheme G ℓ).sidGame A q b κ) (bb1SimGame G ℓ A q b true κ) ≤
       uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < 2 ^ ℓ.eval κ) := by
@@ -132,12 +140,15 @@ theorem bb1_sim_real (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ) :
 Theorem 4.1, "when `T` is uniform and independent in `G_1` … `C` is independent of `b` in the
 adversary's view"].
 
-**Proof sketch.** In the `R_BDH` game, `T` is uniform in `G_T` and is used only in the first
-component `M_b · T` of the challenge. For each fixed run up to the challenge, `T ↦ M_b · T` is a
-bijection of `G_T`, so exchanging the sample of `T` with the rest of the game
-(`expect_expect_sample`) and reindexing it by `T ↦ M_b^{−1} M_{1−b} · T`
-(`expect_sample_equiv`) turns the game with `b = 0` into the game with `b = 1`. Challenges
-outside the message space are refused in both games. -/
+**Proof sketch.** In the `R_BDH` game, `T` is uniform in `G_T` and is used only at the first
+valid `Challenge`, in the first component `M_b · T` of the challenge. Exchange the sample of `T`
+with the adversary's coins (`expect_sample_comm`) and draw it at that call
+(`BB1Sim.expect_simulate_bb1SimLazy`, an instance of `expect_simulate_eager`). The simulators
+with `b = 0` and `b = 1` then agree call by call (`ProbComp.expect_simulate_congr`): every other
+call is the same for both bits, and at the first valid `Challenge` the bijection
+`T ↦ M_1^{−1} M_0 · T` of `G_T` turns the answer `M_0 · T` into `M_1 · T'`
+(`ProbComp.expect_sample_rel`). Challenges outside the message space are refused in both games.
+So the acceptance probabilities are equal (`advantage_eq`). -/
 theorem bb1_sim_random (A : NUPPT) (q : ℕ) (κ : ℕ) :
     advantage (bb1SimGame G ℓ A q false false κ) (bb1SimGame G ℓ A q true false κ) = 0 := by
   rw [advantage_eq, abs_eq_zero, sub_eq_zero, accept_eq, accept_eq, bb1SimGame_eq, bb1SimGame_eq]

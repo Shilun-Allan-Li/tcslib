@@ -1,0 +1,20 @@
+# shadow scan (c) (bb1-sim, lead): occurrences of the 68 new short names, as whole identifiers (a following
+# letter, digit, `_`, `'` or `.` continues an identifier), in the 13 DOWN modules (comments stripped) at the
+# check base 7cfe2b1b and at the check head. An unqualified use in a module that existed at the check base can
+# change its resolution only if the name occurs there. Attempt 1 of this scan did not treat `'` as part of an
+# identifier and matched T4's private `BB1Machine.sidSpec_rng_one'`/`_two'` (Oracles.lean:77, :84), which are
+# other names.
+TCSlib/Cryptography/Games/Relational: at the check base []; at the head []
+TCSlib/Cryptography/Games: at the check base []; at the head []
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs: at the check base []; at the head ['sidImpl_challenge_fresh_onSpec', 'sidImpl_keyGen_ne_onSpec', 'sidImpl_one_onQuery', 'sidImpl_two_onQuery', 'sidImpl_two_onSpec', 'sidImpl_zero_onSpec']
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen: at the check base []; at the head ['bb1Scheme_enc_bind', 'bb1Scheme_keyGen_bind', 'bb1Scheme_setup_eq', 'ofFn_bb1Scheme_encCT']
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws: at the check base []; at the head []
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Words: at the check base []; at the head []
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Handler: at the check base []; at the head []
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction: at the check base []; at the head []
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Oracles: at the check base []; at the head []
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine: at the check base []; at the head []
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity: at the check base []; at the head []
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased: at the check base []; at the head []
+TCSlib/Cryptography/AdvancedEncryption: at the check base []; at the head []
+RESULT: 0 new short names occur in DOWN modules at the check base: no unqualified use can change its resolution
