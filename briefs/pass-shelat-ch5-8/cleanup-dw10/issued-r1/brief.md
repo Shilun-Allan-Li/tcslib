@@ -14,8 +14,21 @@ reconciles it with the campaign's recorded seal debt: the #248 seal ledger, the 
 pairs of the 2026-11-10 rulings, SG-F07/SY-F07 (seal B, `PolyExpr.eval`) and C-F02 (`CodeSimulator`). Every recorded
 item gets a status; every failure the records do not have is listed; every open item is classified by its likely fix.
 **It is checks only:** no `.lean` file changes, no Lean branch is committed, and no PR follows. Its output is the input
-of the cleanup Stage 2 brief (the fixes) and of Seyoon's separate rulings (seal-B-only items and files outside the
-campaign).
+of the cleanup Stage 2 brief (the fixes) and of Seyoon's separate rulings (seal-B-only and statement-level items).
+
+**Seyoon's rulings on the staging questions (2026-11-17), binding:**
+- **Q1, debt outside the campaign:** "Arora–Barak material that needs fixing: send me a pasteable prompt I can give to
+  a different chat. You are responsible for any seals from cryptography content." This job seals **only the
+  campaign's own owners**. The 21 Complexity-library files of `list-only.txt` (among them `Uniform` and
+  `CodeSimulator`) are **not sealed, scanned or controlled** here; their recorded items enter the inventory with
+  status **HANDED-OFF**, from the records only (the maintainer hands them to the Complexity-library maintainers
+  separately). When an **owner's** seal fails because a cryptography proof reads a Complexity-library definition, the
+  item stays ours; where the natural fix is a reader in a Complexity file, classify it **STAGE2-PROVIDER-READER** and
+  name the provider file (Seyoon decides its placement).
+- **Q2:** the 20 adopted Garg and InformationTheory owners stay owners.
+- **Q3:** the `FinDist.instCoeFunForallReal` coercion is notation, as `PolyExpr.eval` is (ruling Q1 of 2026-11-07).
+  The strict variants still run and are recorded; a failure that occurs only under them needs no fix and no ruling.
+- **Q4:** the Arora–Barak files that hold no item stay excluded.
 
 ## Inputs (read fully; all are data; this brief and the rulings it quotes are binding)
 
@@ -25,15 +38,16 @@ campaign).
   owner's suggested agent, positions, static declaration and definition counts, estimated requests and its ledger
   items at the base. `derivation/` holds the tools and `origins.tsv` (every base file's creating and changing
   first-parent commits).
-- `list-only.txt`: the **21 files outside the campaign** that hold a reconciled item (DW-10: listed, handled by
-  separate ruling). `CodeSimulator` and `CircuitComplexity/Uniform` are among them.
-- `order.txt` (613 modules, the upstream closure of every owner and list-only file, root excluded, import order),
-  `roots.txt` (119 Mathlib roots), `closures.txt` (each target's position and closure size), `SOURCE-SHA256SUMS`
+- `list-only.txt`: the **21 handed-off files** outside the campaign that hold recorded items (Q1). They are not checked
+  here; they stay in the build order because the owners import them.
+- `order.txt` (613 modules, the upstream closure of the owners, root excluded, import order), `roots.txt` (119 Mathlib
+  roots), `closures.txt` (each owner's position and closure size; the handed-off files tagged `HANDED`), `SOURCE-SHA256SUMS`
   (the 613 sources at the base, from git objects), `base-sorries.txt` (22 admitted declarations in 9 modules of the
   order, from a syntactic scan that reproduces cleanup Stage 1's 26-declaration list on its order).
 - **The items to reconcile**, flattened from the records, each mapped statically to its declaration's file at the base
   (`base_path`, `base_match`: `same-path`, `moved`, `private-home`, `suffix`, `ambiguous` or `not-found`; the
-  elaborated environment is authoritative):
+  elaborated environment is authoritative), and each with its `scope`: `OWNER`, `HANDED-OFF` (in a handed-off file)
+  or `NO-DECLARATION`:
   - `ledger-historical.tsv`: the **764 historical observations** of the #248 ledger (channels `seal` 265, `unfold`
     446, `eqn-term` 53), with #248's disposition and key status;
   - `ledger-current.tsv`: the **813 current observations** the #248 ledger retained at its merge (ids `SEAL-0001`…
@@ -122,7 +136,8 @@ instrumenter (`archived-gate10-tools/`) is used unmodified.
    of its import closure (kind `def`, a matcher or not reducible); install and EOF records. **A** excludes
    `Complexity.PolyExpr.eval` (notation, ruling Q1 of 2026-11-07); **B** (`SEAL_EVAL=1`) seals it too. **Strict**
    (`mkseals_ab.py`) seals every request; **coe** (`mkseals_coe.py`) treats the projection-coercion instance
-   `FinDist.instCoeFunForallReal` as notation. **Coe-A is canonical.** Reducible abbreviations are never sealed
+   `FinDist.instCoeFunForallReal` as notation (Q3, Seyoon 2026-11-17: the `FinDist.instCoeFunForallReal` coercion is
+   notation). **Coe-A is canonical.** All four variants run and are recorded. Reducible abbreviations are never sealed
    (policy §1). Use `SEAL_CHUNK` (for example 2000) for any request set above about 2,500 rows (one harness command
    overflows Lean's stack at 2,921 rows); record it. **Variant deduplication:** where two variants of one owner
    generate byte-identical probe files (strict = coe when no `COEINST` instance is in the closure; A = B when
@@ -133,9 +148,8 @@ instrumenter (`archived-gate10-tools/`) is used unmodified.
    published reader (`_eq`, `_apply`, `_iff`, `_def`, a `simps` projection or a contract lemma; it must pass sealed).
    Where the owner has no definition with a reader, run the negative only and record "no reader" (it is check 8 debt,
    not a seal failure). Batch the pairs into harnesses of about 25 owners each, strict and coe; pretest unsealed first;
-   `ctlcheck2.py` per harness must give `ALL_OK True`. Owners that define nothing get no pair; say so. List-only files
-   get no controls.
-4. **The explicit-unfold scan** (my choice for this job: **run it on every owner and every list-only file**, since it
+   `ctlcheck2.py` per harness must give `ALL_OK True`. Owners that define nothing get no pair; say so.
+4. **The explicit-unfold scan** (my choice for this job: **run it on every owner**, since it
    is a static pass plus one kinds probe per batch, far cheaper than the seals): `scan1_g40.py` with the archived
    `scan_explicit.py`, a kinds probe through `runner_full.py`, then `scan2.py`, with every declaration of the file
    treated as touched (`touched.py` over the whole file). Result: every foreign-definition item (a TCSlib definition
@@ -144,9 +158,10 @@ instrumenter (`archived-gate10-tools/`) is used unmodified.
 5. **Generated-equation reads**: from the collector's `ROOT` value references, every owner declaration whose stored
    value references a foreign TCSlib definition's `eq_N`, `eq_def` or `eq_unfold` (the #248 channel C3 and the
    historical `eqn-term` rows).
-6. **Notation, never sealed and never an item:** reducible abbreviations (`ModuleHost.hostTMView`, `ModuleHost.State`,
-   `QueryImpl`, `ProbComp`, `NUPPT.Coins`, `Turing.Cfg.Halted`, `IBEScheme.sidSpec`, …), projection coercions in the coe
-   variant, and `PolyExpr.eval` in variant A.
+6. **Notation, never an item to fix:** reducible abbreviations (`ModuleHost.hostTMView`, `ModuleHost.State`,
+   `QueryImpl`, `ProbComp`, `NUPPT.Coins`, `Turing.Cfg.Halted`, `IBEScheme.sidSpec`, …), the `FinDist` projection coercion
+   (Q3, Seyoon 2026-11-17), and `PolyExpr.eval` (ruling Q1 of 2026-11-07). The strict and B variants seal the last two
+   anyway; their failures are recorded, classed, and not fixed (B: separate ruling; strict: no fix).
 
 ## The owner set (`owners.txt`, `list-only.txt`)
 
@@ -155,21 +170,21 @@ instrumenter (`archived-gate10-tools/`) is used unmodified.
 | T1, created by the campaign | 414 | yes | yes | yes | yes |
 | T2, adopted (Garg concrete layer, InformationTheory) | 20 | yes | yes | yes | yes |
 | Facades (no declaration) | 24 | no | no | no | — |
-| List-only (outside the campaign) | 21 | yes | no | yes | no: separate ruling |
+| Handed off (outside the campaign, Q1) | 21 | no | no | no | no: their items are HANDED-OFF |
 | Considered and excluded | 18 | no | no | no | — |
 
 The derivation is in `owners.txt`'s header: origin by the base's first-parent history (`derivation/origins.py`), the
 campaign's PRs and its 2026-10-28 layer commit for T1, P0's #183 for the two P0 files, Garg/InformationTheory files
 changed by a campaign PR for T2, and cross-checks against the ch. 2–4 plan's module table, cleanup Stage 1's homes and
-the #248 ledger's owners. GSW, pairings and IBE, the lattice LWE/SIS layer, Arora–Barak and Ladner files are excluded,
-except the list-only files, which are outside the campaign but hold a reconciled item. **Check it:** if the collector
+the #248 ledger's owners. GSW, pairings and IBE, the lattice LWE/SIS layer, Arora–Barak and Ladner files are excluded;
+the 21 handed-off files are outside the campaign but hold recorded items, which this job carries as HANDED-OFF. **Check it:** if the collector
 shows an owner with a different declaration count from `owners.txt` by more than the static scanner's known blind spots
 (anonymous instances, `deriving`, `mutual` blocks), or you find a campaign file that the derivation missed (a file
 created by a Pass–shelat PR that is not listed), report it as `DW10-W…`; do not change the set yourself.
 
 **Where the items sit** (static mapping at the base; confirm with the collector):
 
-| Source | Items | In owners | In list-only | No declaration at the base |
+| Source | Items | In owners | HANDED-OFF | No declaration at the base |
 |---|---|---|---|---|
 | #248 historical rows | 764 (seal 265, unfold 446, eqn-term 53) | 748 | 9 | 7 |
 | #248 current observations | 813 (SEAL 465, C1 344, C3 4) | 374 | 437 | 2 |
@@ -179,7 +194,11 @@ created by a Pass–shelat PR that is not listed), report it as `DW10-W…`; do 
 ## Reconciliation: statuses
 
 Each item of the four input tables gets exactly one **status**:
-- **FIXED_SINCE**: the recorded failure is gone at the base in its channel (no seal error in the declaration in the
+- **HANDED-OFF** (Q1): the item's declaration is in a handed-off file (`scope` = `HANDED-OFF`: 9 historical rows, 437
+  current observations, 102 provider pairs, SY-F07's 2 `Uniform` rows and C-F02's 58 rows; 608 rows). It is not
+  checked: copy the record into the row (`record`), leave the seal and scan columns `-`, and give it no class. If the
+  collector shows the declaration elsewhere than `base_path`, say so in `change`.
+- **FIXED_SINCE** (every other item, after the checks): the recorded failure is gone at the base in its channel (no seal error in the declaration in the
   item's variant and in coe-A; no matching scan item; no matching generated-equation reference). For a historical row
   #248 already marked repaired, FIXED_SINCE confirms it stayed fixed.
 - **STILL_OPEN**: the same failure is present: same declaration, same channel, same provider (the definition read) and,
@@ -191,10 +210,10 @@ Each item of the four input tables gets exactly one **status**:
 Matching by channel: `seal` rows and `SEAL` ids by the seals (all four variants recorded; #248's whole-file seals predate the
 coe variant, so compare with strict A first, then give all four); `unfold` rows and `C1` ids by
 the scan; `eqn-term` rows and `C3` ids by check 5; provider pairs take their `SEAL` id's status (one row per pair, so
-124 rows); named findings by the per-declaration counts of `named-findings.tsv` in the stated variant.
+124 rows; those of `HANDED-OFF` scope stay HANDED-OFF); named findings by the per-declaration counts of `named-findings.tsv` in the stated variant.
 
-**New failures:** every seal failure (any variant), foreign scan item or generated-equation read at the base, in an owner
-or list-only file, that no input item matches, gets its own row with status **NEW**. Cascades (an error caused by an
+**New failures:** every seal failure (any variant), foreign scan item or generated-equation read at the base, in an owner,
+that no input item matches, gets its own row with status **NEW**. Cascades (an error caused by an
 earlier error in the same declaration) are attributed to the first error and marked `cascade`.
 
 **Known later records (attribution aids, not inputs).** Some debt was recorded after #248; attribute NEW rows to these
@@ -206,7 +225,7 @@ where they match, and say so in the row:
 - F-01: `IterateFind`'s 20 failures (`computesFunInTime_find` 9, `polyTimeComputable_find` 11). **Cleared by #347
   (DW-5), open and not in the base:** record them as found at the base with `pending` = `#347`.
 - BS-F06 (bb1-sim review): the strict seals of `Games/Probability` fail once at `ProbComp.dist_apply` (the `FinDist`
-  coercion request); coe passes.
+  coercion request); coe passes. Under Q3 it is STRICT-ONLY (notation, no fix).
 - Gate 35: `Asymptotic/Universal` 10 (A) / 12 (B) pre-existing failures, identical at that gate's base and head.
 - Gate 11: 311 untouched failures in the Levin owners, each identical at that gate's base; its explicit-reader scan
   put the inherited items in the excluded Arora–Barak files `TuringMachine/Build/Primitives`, `EmitIterBody` and
@@ -217,29 +236,33 @@ where they match, and say so in the row:
 Every STILL_OPEN, CHANGED-and-failing and NEW item gets one **class**:
 - **STAGE2**: fixable in cleanup Stage 2 by a reader or a proof-only re-derivation, in an owner file, without a
   statement change. Give the fix: the published reader to use (full name), or the reader to add and its home file
-  (which must be an owner, or the item is OUTSIDE).
+  (an owner).
+- **STAGE2-PROVIDER-READER** (Q1): an owner's seal fails, or its scan finds a read, because a cryptography proof
+  unfolds a definition of a file outside the campaign (a Complexity-library definition, for example in
+  `ClassNP/PolyTime` or `TuringMachine/Build/Wrappers`), and the natural fix is a reader next to that definition.
+  The item stays ours; name the **provider file** and the reader needed (its statement in one line), and say whether
+  a published reader already exists there (then the item is STAGE2 instead). Seyoon decides where the reader lands.
 - **SEAL-B-ONLY**: fails only under seal B (a `PolyExpr.eval` conversion or a cascade from one). Listed; separate
   ruling (DW-10).
-- **STRICT-ONLY**: fails only under the strict variants (the `FinDist` coercion). Listed; separate ruling.
+- **STRICT-ONLY (notation, no fix)**: fails only under the strict variants, at the `FinDist.instCoeFunForallReal`
+  coercion or a cascade from it. Q3, Seyoon 2026-11-17: the `FinDist.instCoeFunForallReal` coercion is notation, as
+  `PolyExpr.eval` is under the ruling of 2026-11-07. No fix and no further ruling: recorded diagnostics only.
 - **STATEMENT**: the canonical failure sits in a declaration's statement (its header reads a foreign definition, as
   DW-9's `host_*` statements do), so no proof-only fix exists under the statement freeze. Listed; separate ruling.
-- **OUTSIDE**: the item is in a list-only file, or its fix needs a reader in a file outside the campaign. Listed;
-  separate ruling. (`Uniform`'s 4: OUTSIDE, with the note "named for Stage 2 by `cleanup-stages.md`".)
 The class is the worker's assessment of the likely fix from the evidence (the read, the reader search, the statement);
-it decides nothing. Where two classes apply, take STAGE2 if a Stage 2 fix exists, otherwise the first that applies in this order, and
-note the other.
+it decides nothing. Where two classes apply, take STAGE2 if a Stage 2 fix exists, then STAGE2-PROVIDER-READER, then
+the first that applies in this order, and note the other. HANDED-OFF items get no class.
 
 ## Feasibility and size (maintainer's assessment)
 
-One job, long and mechanical, in one session with checkpoints. **434 owners and 21 list-only files: 1,820 seal probes
-before deduplication** (4 variants each), plus about 18 control harnesses in each of strict and coe with their pretests,
-one collector and one scan kinds probe per batch, and the 613-module bootstrap. Requests: the static lower bound is
-**317,051 per variant for the owners** (4,414 for list-only); recorded seals ran 1.65–2.0 times the static count, so
-expect about 520,000–630,000 per variant, about 2.1–2.5 million over the four before deduplication. The owners have
-160,044 lines and the list-only files 18,849. Lean time is serial: the DW-5 replay averaged about 9 s per module, so
-expect roughly 1.5–2 h for the bootstrap and 8–14 h for the seals (each seal re-elaborates its owner), 1–2 h for
-controls, collectors and scans. Heaviest single probes: `CodeSimulator` (1,232 requests, a 9,311-line probe) and the
-`Yao` hub (about 3,046 requests); use `SEAL_CHUNK`. If the job cannot finish in one session, deliver what is complete as
+One job, long and mechanical, in one session with checkpoints. **434 owners: 1,736 seal probes before deduplication**
+(4 variants each), plus about 18 control harnesses in each of strict and coe with their pretests, one collector and one
+scan kinds probe per batch, and the 613-module bootstrap (the handed-off files are built, since the owners import
+them, but not sealed). Requests: the static lower bound is **317,051 per variant**; recorded seals ran 1.65–2.0 times
+the static count, so expect about 520,000–630,000 per variant, about 2.1–2.5 million over the four before
+deduplication. The owners have 160,044 lines. Lean time is serial: the DW-5 replay averaged about 9 s per module, so
+expect roughly 1.5–2 h for the bootstrap, 7–12 h for the seals (each seal re-elaborates its owner) and 1–2 h for
+controls, collectors and scans. The heaviest single probe is the `Yao` hub (about 3,046 requests); use `SEAL_CHUNK`. If the job cannot finish in one session, deliver what is complete as
 a checkpoint (with the remaining owners listed) and stop: a continuation brief follows.
 
 ## Branches, trees and delivery
@@ -262,9 +285,9 @@ a checkpoint (with the remaining owners listed) and stop: a continuation brief f
   rebase before pushing; push only your path; never force-push; never touch another path (other jobs, `outbox/`,
   `archive/`, `arora-barak-ch3-4/`, `lwe-sis-constructions/`). Never push a campaign branch. If a push is refused, keep
   the commit and say so.
-- **Checkpoint 1** as soon as the bootstrap, all collectors, and the seals and scan of every file that holds an input
-  item (the owners with `ledger_items_at_base` above 0, the owners of `named-findings.tsv`, and the 21 list-only files)
-  are done: `inventory.tsv` with a status for every input item (classes may still be blank), the seal and scan tables
+- **Checkpoint 1** as soon as the bootstrap, all collectors, and the seals and scan of every owner that holds an input
+  item (the owners with `ledger_items_at_base` above 0 and the owners of `named-findings.tsv`) are done:
+  `inventory.tsv` with a status for every input item (HANDED-OFF ones included; classes may still be blank), the seal and scan tables
   so far, and the bootstrap records. The final has everything.
 
 ## Multi-agent work (up to 2 sub-agents)
@@ -273,10 +296,9 @@ a checkpoint (with the remaining owners listed) and stop: a continuation brief f
   agents' tables, the reconciliation, the classification review, the delivery and `REPORT.md`. Only the lead runs
   `lake`, fetches the cache, commits and pushes.
 - **Suggested split** (`owners.txt`, column `agent`; disjoint; record any other split):
-  - lead: the 85 owners in `Complexity/`, `InformationTheory/`, `LearningTheory/` and `Cryptography/{Asymptotic,
-    Candidates, Foundations, HardcoreBit, NumberTheory, OneWayFunctions}` (44,159 lines) and the 21 list-only files
-    (18,849 lines);
-  - sub-agent A: the 187 owners in `Cryptography/{SecureComputation, ZeroKnowledge, Composability}` (59,021 lines);
+  - lead: the 126 owners in `Complexity/`, `InformationTheory/`, `LearningTheory/` and `Cryptography/{Asymptotic,
+    Candidates, Composability, Foundations, HardcoreBit, NumberTheory, OneWayFunctions}` (51,434 lines);
+  - sub-agent A: the 146 owners in `Cryptography/{SecureComputation, ZeroKnowledge}` (51,746 lines);
   - sub-agent B: the 162 owners in `Cryptography/{Encryption, Authentication, Games, Hashing, Randomness,
     Implications, Pseudorandom}` (56,864 lines).
 - Each sub-agent works in its own worktree and probe and evidence directories, reads the lead's olean tree read-only,
@@ -293,7 +315,7 @@ a checkpoint (with the remaining owners listed) and stop: a continuation brief f
 2. **Collectors** (suite item 1), per batch: rc and the record counts; then **the owner check**: each owner's stored
    declarations against `owners.txt` (report differences), and each input item's declaration located (the `base_path`
    of the input tables confirmed or corrected).
-3. **Seals** (suite item 2) of the 434 owners and 21 list-only files: `evidence/seals.tsv`, one row per owner and
+3. **Seals** (suite item 2) of the 434 owners (not the handed-off files): `evidence/seals.tsv`, one row per owner and
    variant: path, tier, agent, variant, requests, rc, errors (both forms), install, EOF, failing declarations,
    deduplicated-with (or `-`), probe SHA-256; and `evidence/seal-decls.tsv`, one row per failing declaration and
    variant: path, declaration, variant, errors, first error line (source line), message class, providers read (from
@@ -316,25 +338,30 @@ a checkpoint (with the remaining owners listed) and stop: a continuation brief f
 **`inventory.tsv`** (tab-separated, UTF-8, one header line), one row per item: the 764 historical rows, the 813
 current observations, the 124 provider pairs, the 78 named-finding rows, then the NEW rows. Columns:
 `item_id` (`H:<row>`, the `SEAL`/`C1`/`C3` id, `EFF72:<id>`, `LEV52:<id>`, `SG-F07:<n>`, `SY-F07:<n>`, `C-F02:<n>`,
-`NEW:<n>`), `source`, `channel` (`seal`, `unfold`, `eqn`), `base_path`, `tier` (`T1`, `T2`, `LIST`), `declaration`
+`NEW:<n>`), `source`, `channel` (`seal`, `unfold`, `eqn`), `base_path`, `tier` (`T1`, `T2`, `HANDED`), `declaration`
 (full name at the base, from the collector), `record` (what the record says, one phrase), `strict_A`, `strict_B`,
 `coe_A`, `coe_B` (error counts in that declaration, or `-`), `scan` (matching foreign items, or `-`), `status`,
-`change`, `class`, `statement_level` (`yes`/`no`), `fix` (reader to use, or reader to add with its home, or the ruling
-needed), `pending` (`#347` or `-`), `known_record` (DW-9, F-01, BS-F06, Gate 35, Gate 11, or `-`), `evidence`
+`change`, `class` (one of the six classes, with `STRICT-ONLY (notation, no fix)` written out, or `-`),
+`statement_level` (`yes`/`no`), `fix` (reader to use, reader to add with its home, the provider file and reader for
+STAGE2-PROVIDER-READER, `none (notation)` for STRICT-ONLY, or the ruling needed), `pending` (`#347` or `-`), `known_record` (DW-9, F-01, BS-F06, Gate 35, Gate 11, or `-`), `evidence`
 (log path and line).
 
 **`REPORT.md`**:
 - the base, the records tip and exchange tip used, the Lean equality check, the toolchain and Mathlib pins, the
   preflight figures, the olean tree map SHA-256 and its restore check;
 - who did what; the batches; the tool changes;
-- **totals**: owners and list-only files sealed; probes run and deduplicated; requests per variant (sum, maximum);
+- **totals**: owners sealed; probes run and deduplicated; requests per variant (sum, maximum);
   failing declarations and errors per variant and per tier; controls (pairs, `no reader` count, `ALL_OK`); scan items
-  (foreign, per tier); a table of status by source (the four inputs, NEW), a table of class by tier, and the counts
+  (foreign, per tier); a table of status by source (the four inputs, NEW; HANDED-OFF counts per source), a table of class by tier, and the counts
   for each of SG-F07, SY-F07, C-F02 against their records;
 - **the Stage 2 fix list grouped by file**: for each owner file with STAGE2 items, its items (`item_id`, declaration,
   the read), the fix (reader to use, or reader to add with its home) and whether Stage 1 (dispatched, additive) or #347
-  already supplies it; then the totals per file;
-- the lists for separate ruling: SEAL-B-ONLY, STRICT-ONLY, STATEMENT, and OUTSIDE (by file, list-only first);
+  already supplies it; then the totals per file. STRICT-ONLY items are never in it;
+- **the provider-reader list** (STAGE2-PROVIDER-READER), grouped by provider file: the reader needed, its one-line
+  statement, and the owner items that need it (Seyoon decides placement);
+- the lists for separate ruling: SEAL-B-ONLY and STATEMENT, by file;
+- **STRICT-ONLY (notation, no fix)**: recorded diagnostics only (Q3), by file, with counts; no fix proposed;
+- the HANDED-OFF items: counts per source and per file (the rows are in `inventory.tsv`);
 - the NEW failures, by file, with their attribution;
 - the owner check (step 2) and any owner-set question;
 - questions for Seyoon, if any (`DW10-W1`, …, recommended option first);

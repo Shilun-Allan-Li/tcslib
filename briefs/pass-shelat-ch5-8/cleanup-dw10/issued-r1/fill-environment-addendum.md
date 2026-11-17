@@ -17,13 +17,14 @@ not counted. Everything in your brief stays binding.
 
 This job runs checks only: it changes no Lean source and writes no Lean branch. Part 1 applies to it unchanged, read
 as follows.
-- **"Fill" means this job**, and "your owned file" means the owners of your agent's set in `owners.txt` (and, for the
-  lead, the files of `list-only.txt`). You own them for checking only: none is edited.
+- **"Fill" means this job**, and "your owned file" means the owners of your agent's set in `owners.txt`. You own them
+  for checking only: none is edited. The handed-off files of `list-only.txt` are built (the owners import them) but
+  not checked.
 - **One revision, one tree.** Everything runs at the issue base `f472accd5e000a53d0fbe02b5414435429ce4a70`. Its Lean
   (`TCSlib/`, `TCSlib.lean`, `audits/`, `lakefile.lean`, `lake-manifest.json`, `lean-toolchain`) equals
   `a6d01b1bd1a92e2ac0be9999689467fea7e4e77b`, the merge of #341. One `.lake/packages` serves the job.
 - **One TCSlib olean tree, shared read-only.** The lead bootstraps `order.txt` (613 modules: the upstream closure of
-  every owner and list-only file, the root excluded) into one olean tree. Item 5's "build first only what your owned
+  every owner, the root excluded) into one olean tree. Item 5's "build first only what your owned
   files import" does not apply: the whole list is built before the first seal. Since no source changes, every agent
   reads that one tree; no sub-agent builds or copies oleans. After the bootstrap, record the tree's object map
   (module path → SHA-256 of the `.olean`) and make the tree read-only (`chmod -R a-w`). Every probe (collector, seal,
@@ -39,8 +40,8 @@ as follows.
   at the base (sparse checkouts are fine, with `TCSlib/`, `scripts/` and the evidence paths), its own probe directory
   and evidence directory, reads the lead's olean tree read-only, and links `.lake/packages` to the lead's. The
   one-Lean-process rule covers all agents through one lock.
-- **Disk.** Seal logs and probe sources are large (about 1.5 MB of log per CodeSimulator seal; one probe source per
-  owner and variant). Keep them on the clone's filesystem, never on a memory-backed one, and compress finished batches
+- **Disk.** Seal logs and probe sources are large (several MB of log for the largest owners, such as the `Yao` hub; one
+  probe source per owner and variant). Keep them on the clone's filesystem, never on a memory-backed one, and compress finished batches
   into the evidence ZIP parts as you go. If free disk falls below 2 GiB after the cache step, pause between batches,
   compress, and report the figures; never delete a raw log that the evidence has not yet captured.
 

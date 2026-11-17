@@ -1,19 +1,26 @@
 # Dispatch · dw10-seal-inventory, issued-r1 (Claude, lead plus up to 2 sub-agents)
 
-The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/aae6bc0654354e4e75e22b3ab6cbf7198921d89c/outbox/audits/dw10-seal-inventory)
-is staged on the exchange at `aae6bc0654354e4e75e22b3ab6cbf7198921d89c` (local branch `stage/dw10-exchange`, an
+The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/d4cfd2f893fb9b448c5d997f037d6ba055cbc031/outbox/audits/dw10-seal-inventory)
+is staged on the exchange at `d4cfd2f893fb9b448c5d997f037d6ba055cbc031` (local branch `stage/dw10-exchange`, an
 SSH-signed commit on the exchange tip `d929cc21ec817b2518d57a7262e42744728f029a` that adds only
 `outbox/audits/dw10-seal-inventory/`; **not yet pushed**, so the link resolves only after the push). Brief SHA-256
-`24efc89b969d1427660839ef9e1fad26dd64fd7c12986dcc506ff9f9bb0ea6fb`; pack `SHA256SUMS` SHA-256
-`c59293d9baecb4513fafcc3fa6abb20de7fc03269e1d28efd02191697f93ce13`. The worker is Claude (standing ruling: Claude for
+`a0413cd2d65ddee10951e9580d874e9a5b661fe0bbcb6041c5cd1c38c5d6a383`; pack `SHA256SUMS` SHA-256
+`c89967564fa3d1cf61d6f0dafe2fab39d148bd0af026144194c8b1be23e22e7a`. The worker is Claude (standing ruling: Claude for
 fills and all other external jobs), a lead with up to 2 sub-agents on disjoint owner sets. Seyoon dispatches.
 
 **Base.** Issue base `f472accd5e000a53d0fbe02b5414435429ce4a70`, the records tip at staging; its Lean equals
 `a6d01b1bd1a92e2ac0be9999689467fea7e4e77b` (the merge of #341; `TCSlib` tree
 `06b51ea90a9a0ef49e1dc3e7034ba32ec9b75fe6`). Checks only: no Lean branch, no PR.
 
-**Ruling.** DW-10 (Seyoon, 2026-11-17): "inventory now, fix in Stage 2"; seal-B-only items and files outside the
-campaign are listed and handled by separate ruling (`cleanup-stages.md` § *Historical seal debt*).
+**Rulings.** DW-10 (Seyoon, 2026-11-17): "inventory now, fix in Stage 2" (`cleanup-stages.md` § *Historical seal
+debt*). On the staging questions (Seyoon, 2026-11-17): **Q1** "Arora–Barak material that needs fixing: send me a
+pasteable prompt I can give to a different chat. You are responsible for any seals from cryptography content": the job
+seals only the 434 campaign owners; the 21 Complexity-library files of `list-only.txt` are handed off (their 608
+recorded items are carried as HANDED-OFF); owner failures needing a Complexity-file reader are classed
+STAGE2-PROVIDER-READER. **Q2** the 20 adopted owners stay. **Q3** the `FinDist.instCoeFunForallReal` coercion is
+notation, as `PolyExpr.eval` is (ruling of 2026-11-07): strict-only failures are recorded, no fix. **Q4** the Arora–Barak
+files that hold no item stay excluded. The handoff for the Complexity-library chat (items, notes and its own prompt) is
+in the records at `briefs/pass-shelat-ch5-8/cleanup-dw10/handoff-complexity/`, outside the pack.
 
 **Records pin.** `<RECORDS-PIN>`: the records commit that carries this folder. The maintainer writes its full hash
 here, and in the prompt below, after committing.
@@ -33,7 +40,7 @@ https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0 and pinned
 Mathlib). You may use up to 2 sub-agents, on disjoint owner sets.
 
 1. Read exchange/pass-shelat-ch5-8 at
-   aae6bc0654354e4e75e22b3ab6cbf7198921d89c. Read README.md and
+   d4cfd2f893fb9b448c5d997f037d6ba055cbc031. Read README.md and
    outbox/audits/dw10-seal-inventory/README.md, brief.md and
    fill-environment-addendum.md. Verify the pack with SHA256SUMS
    (shasum -a 256 -c, from its directory). You are the lead the brief
@@ -59,13 +66,17 @@ Mathlib). You may use up to 2 sub-agents, on disjoint owner sets.
    canonical), whole-file over the full TCSlib import closure, with
    -DmaxErrors=0 and the install and EOF records, reporting requests
    and errors per declaration; paired controls; the explicit-unfold
-   scan; the generated-equation reads. On the 21 files of
-   list-only.txt run the seals and the scan only. Then reconcile every
-   row of ledger-historical.tsv, ledger-current.tsv, provider-pairs.tsv
-   and named-findings.tsv (FIXED_SINCE, STILL_OPEN or CHANGED), list
-   every failure they do not have as NEW, and classify each open item
-   (STAGE2, SEAL-B-ONLY, STRICT-ONLY, STATEMENT or OUTSIDE) with its
-   likely fix. Do not change the owner set or decide an open question
+   scan; the generated-equation reads. Do not seal, scan or control
+   the 21 handed-off files of list-only.txt: their items take the
+   status HANDED-OFF from the records (scope column). Then reconcile
+   every other row of ledger-historical.tsv, ledger-current.tsv,
+   provider-pairs.tsv and named-findings.tsv (FIXED_SINCE, STILL_OPEN or
+   CHANGED), list every owner failure they do not have as NEW, and
+   classify each open item (STAGE2, STAGE2-PROVIDER-READER naming the
+   provider file, SEAL-B-ONLY, STRICT-ONLY (notation, no fix) or
+   STATEMENT) with its likely fix. Seyoon's rulings Q1 to Q4 in the
+   brief are binding; the FinDist coercion is notation (Q3, Seyoon
+   2026-11-17), as PolyExpr.eval is (2026-11-07). Do not change the owner set or decide an open question
    yourself: report it as DW10-W1, ... with the recommended option
    first. Follow policy.md and the standing rules.
 4. Sub-agents (at most 2): each owns an owner set disjoint from yours
@@ -77,11 +88,12 @@ Mathlib). You may use up to 2 sub-agents, on disjoint owner sets.
    tables, reconcile and deliver. Sub-agent logs go under
    evidence/subagents/<name>/; REPORT.md records who did what.
 5. Deliver checkpoint 1 (bootstrap, collectors, and the seals and scan
-   of every file that holds an input item, with a status for every
+   of every owner that holds an input item, with a status for every
    input item in inventory.tsv) as soon as it is ready, and the final,
    only under inbox/audits/dw10-seal-inventory/ on
    exchange/pass-shelat-ch5-8: REPORT.md with the totals, the Stage 2
-   fix list grouped by file and the lists for separate ruling;
+   fix list grouped by file, the provider-reader list, the lists for
+   separate ruling and the strict-only diagnostics;
    inventory.tsv; evidence/ with its manifest; and the top-level
    SHA256SUMS (paths equal to the delivered files). Commit as
    "audit dw10-seal-inventory: checkpoint N" and "... final". Pull

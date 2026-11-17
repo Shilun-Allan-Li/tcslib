@@ -2,14 +2,14 @@
 # Base f472accd5e000a53d0fbe02b5414435429ce4a70 (records tip at staging; its Lean equals a6d01b1bd1a92e2ac0be9999689467fea7e4e77b, the merge of #341).
 # COUNTS: 434 owners to seal (414 T1 created by the campaign, 20 T2 adopted by it); 24 facades
 #   (no declaration: listed, not sealed); 18 files considered and excluded (end of this file).
-#   The 21 files outside the campaign are in list-only.txt. Of the 1,453 TCSlib .lean files at the base, 1,419 are
-#   reachable from TCSlib.lean; every owner and list-only file is reachable except where pos_full_order is '-'.
-#   Suggested split (owners): lead 85 (44159 lines) plus the 21 list-only files
-#   (18849 lines); sub-A 187 (59021 lines); sub-B 162
-#   (56864 lines). Lean runs one process at a time for all agents, so the split divides probe generation,
+#   The 21 files outside the campaign that hold recorded items are in list-only.txt: they are HANDED OFF to the
+#   Complexity-library maintainers (Seyoon, DW-10 Q1, 2026-11-17) and not sealed or scanned by this job. Of the 1,453
+#   TCSlib .lean files at the base, 1,419 are reachable from TCSlib.lean; every owner is reachable.
+#   Suggested split (owners): lead 126 (51434 lines); sub-A 146
+#   (51746 lines); sub-B 162 (56864 lines). Lean runs one process at a time for all agents, so the split divides probe generation,
 #   attribution and reconciliation, not Lean time.
 #   Estimated seal requests (variant A, static lower bound: the `def`s in each file's TCSlib import closure):
-#   owners 317,051, list-only 4,414. The recorded seals run 1.65-2.0 times the static count (matchers and generated
+#   owners 317,051 (the handed-off files would add 4,414; not run here). The recorded seals run 1.65-2.0 times the static count (matchers and generated
 #   definitions): IterateFind 595 vs 300, ModuleHost 241 vs 146, IterateFindHost 251 vs 150, Yao 3,046 vs 1,847,
 #   Uniform 135 vs 79, CodeSimulator 1,232 vs 657. Use the collector's counts, not these.
 # DERIVATION (static, from git objects at the base and the campaign records; the tools are in derivation/):
@@ -30,11 +30,13 @@
 #   5. Cross-checks. The ch. 2–4 plan's *Architecture* table names 49 TCSlib paths: 41 are T1, 7 no longer exist (moved
 #      by #256-#269 into T1 files under Encryption/ and Pseudorandom/), 1 is excluded (ComputationalModels.lean, the
 #      model registry, below). Cleanup Stage 1's 19 CHANGED homes (its closures.txt) are all T1 or T2 (two are T1
-#      facades). The #248 ledger's owners: every ledger row and provider pair maps to an owner or a list-only file, or
+#      facades). The #248 ledger's owners: every ledger row and provider pair maps to an owner or a handed-off file, or
 #      to no declaration at the base (ledger-*.tsv, base_match); #248's primary-owner list (101 paths) gives 73 T1,
-#      10 T2, 4 list-only, 3 excluded below, 11 no longer existing.
+#      10 T2, 4 handed off, 3 excluded below, 11 no longer existing.
 #   6. Excluded: GSW (#333, #338, #339), pairings and IBE (#331), the lattice LWE/SIS layer (#280), Arora–Barak
-#      (#3, #186 and their predecessors), Ladner and every other library file, except the list-only files.
+#      (#3, #186 and their predecessors), Ladner and every other library file. The 21 files outside the campaign that
+#      hold recorded items are handed off (list-only.txt): their items enter the inventory as HANDED-OFF, from the
+#      records only.
 # The static declaration counts and positions are approximate; the elaborated environment (the job's collector) is
 # authoritative, and the job records any difference.
 path	tier	agent	pos_order	pos_full_order	decls	defs	est_seal_requests_A	ledger_items_at_base	derivation
@@ -134,47 +136,47 @@ TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	T1	lead	292	985	262	105	
 TCSlib/Cryptography/Candidates/Factoring.lean	T1	lead	287	980	101	24	667	0	created by direct: Pass-shelat ch. 2-4: asymptotic cryptography layer (statements audited, fills partial)
 TCSlib/Cryptography/Candidates/RSA.lean	T1	lead	288	981	187	68	767	1	created by direct: Pass-shelat ch. 2-4: asymptotic cryptography layer (statements audited, fills partial)
 TCSlib/Cryptography/Candidates/Rabin.lean	T1	lead	290	983	273	98	870	2	created by direct: Pass-shelat ch. 2-4: asymptotic cryptography layer (statements audited, fills partial)
-TCSlib/Cryptography/Composability/SequentialZK.lean	T1	sub-A	591	1333	39	7	1300	0	created by #232 cryptography/pass-shelat-ch5-8-integration
-TCSlib/Cryptography/Composability/SequentialZK/Advice.lean	T1	sub-A	552	1294	1	0	0	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean	T1	sub-A	560	1302	9	1	1139	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean	T1	sub-A	561	1303	1	0	2	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean	T1	sub-A	575	1317	4	0	1148	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean	T1	sub-A	577	1319	1	0	1287	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean	T1	sub-A	559	1301	11	2	1138	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ComputationalTransfer.lean	T1	sub-A	580	1322	1	0	1290	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/Congruence.lean	T1	sub-A	581	1323	1	0	319	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean	T1	sub-A	572	1314	11	2	1145	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean	T1	sub-A	582	1324	6	0	1120	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean	T1	sub-A	574	1316	16	3	1142	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean	T1	sub-A	583	1325	3	0	395	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean	T1	sub-A	565	1307	3	0	381	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean	T1	sub-A	573	1315	1	0	20	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean	T1	sub-A	553	1295	7	1	381	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean	T1	sub-A	554	1296	3	0	1072	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/NormalizedStep.lean	T1	sub-A	567	1309	2	0	1082	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean	T1	sub-A	571	1313	3	0	1117	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean	T1	sub-A	555	1297	13	2	1074	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/Phases.lean	T1	sub-A	569	1311	3	1	331	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean	T1	sub-A	562	1304	8	4	1130	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean	T1	sub-A	563	1305	7	0	1138	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers.lean	T1	sub-A	578	1320	2	0	1117	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/RealPhases.lean	T1	sub-A	570	1312	3	0	1117	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean	T1	sub-A	579	1321	1	0	1142	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean	T1	sub-A	576	1318	1	0	1138	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean	T1	sub-A	586	1328	9	3	410	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean	T1	sub-A	585	1327	3	0	344	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean	T1	sub-A	557	1299	11	1	1134	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean	T1	sub-A	568	1310	4	0	330	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean	T1	sub-A	587	1329	2	0	20	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/StatisticalPostprocess.lean	T1	sub-A	566	1308	1	0	20	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/StatisticalPrefix.lean	T1	sub-A	589	1331	2	0	1139	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/StatisticalRecursion.lean	T1	sub-A	588	1330	1	0	20	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/StatisticalTransfer.lean	T1	sub-A	590	1332	1	0	1142	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean	T1	sub-A	564	1306	4	0	1140	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean	T1	sub-A	558	1300	12	2	1136	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/VerifierPrefix.lean	T1	sub-A	584	1326	1	0	343	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean	T1	sub-A	556	1298	17	2	1116	0	created by #327 land/pass-shelat-seq-zk
-TCSlib/Cryptography/Composability/ThreeColoring.lean	T1	sub-A	592	1334	2	0	1353	0	created by #232 cryptography/pass-shelat-ch5-8-integration
+TCSlib/Cryptography/Composability/SequentialZK.lean	T1	lead	591	1333	39	7	1300	0	created by #232 cryptography/pass-shelat-ch5-8-integration
+TCSlib/Cryptography/Composability/SequentialZK/Advice.lean	T1	lead	552	1294	1	0	0	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean	T1	lead	560	1302	9	1	1139	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean	T1	lead	561	1303	1	0	2	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean	T1	lead	575	1317	4	0	1148	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean	T1	lead	577	1319	1	0	1287	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean	T1	lead	559	1301	11	2	1138	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalTransfer.lean	T1	lead	580	1322	1	0	1290	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/Congruence.lean	T1	lead	581	1323	1	0	319	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean	T1	lead	572	1314	11	2	1145	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean	T1	lead	582	1324	6	0	1120	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean	T1	lead	574	1316	16	3	1142	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean	T1	lead	583	1325	3	0	395	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean	T1	lead	565	1307	3	0	381	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean	T1	lead	573	1315	1	0	20	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean	T1	lead	553	1295	7	1	381	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean	T1	lead	554	1296	3	0	1072	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/NormalizedStep.lean	T1	lead	567	1309	2	0	1082	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean	T1	lead	571	1313	3	0	1117	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean	T1	lead	555	1297	13	2	1074	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean	T1	lead	569	1311	3	1	331	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean	T1	lead	562	1304	8	4	1130	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean	T1	lead	563	1305	7	0	1138	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers.lean	T1	lead	578	1320	2	0	1117	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/RealPhases.lean	T1	lead	570	1312	3	0	1117	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean	T1	lead	579	1321	1	0	1142	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean	T1	lead	576	1318	1	0	1138	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean	T1	lead	586	1328	9	3	410	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean	T1	lead	585	1327	3	0	344	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean	T1	lead	557	1299	11	1	1134	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean	T1	lead	568	1310	4	0	330	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean	T1	lead	587	1329	2	0	20	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalPostprocess.lean	T1	lead	566	1308	1	0	20	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalPrefix.lean	T1	lead	589	1331	2	0	1139	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalRecursion.lean	T1	lead	588	1330	1	0	20	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalTransfer.lean	T1	lead	590	1332	1	0	1142	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean	T1	lead	564	1306	4	0	1140	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean	T1	lead	558	1300	12	2	1136	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/VerifierPrefix.lean	T1	lead	584	1326	1	0	343	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean	T1	lead	556	1298	17	2	1116	0	created by #327 land/pass-shelat-seq-zk
+TCSlib/Cryptography/Composability/ThreeColoring.lean	T1	lead	592	1334	2	0	1353	0	created by #232 cryptography/pass-shelat-ch5-8-integration
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean	T1	sub-B	334	1042	41	8	1424	0	created by #276 codex/pass-shelat-private-key-encrypt-then-tag
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean	T1	sub-B	332	1040	68	31	1389	0	created by #306 land/pass-shelat-cca2-ett
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean	T1	sub-B	333	1041	14	4	1407	0	created by #306 land/pass-shelat-cca2-ett
@@ -479,7 +481,7 @@ TCSlib/Cryptography/Asymptotic/HardCore.lean	T1	lead	268	960	0	0	0	0	created by 
 TCSlib/Cryptography/Authentication.lean	T1	sub-B	-	1173	0	0	0	0	created by #232 cryptography/pass-shelat-ch5-8-integration
 TCSlib/Cryptography/Authentication/Defs.lean	T1	sub-B	-	1133	0	0	0	0	created by #232 cryptography/pass-shelat-ch5-8-integration
 TCSlib/Cryptography/Candidates.lean	T1	lead	-	988	0	0	0	0	created by direct: Pass-shelat ch. 2-4: asymptotic cryptography layer (statements audited, fills partial)
-TCSlib/Cryptography/Composability.lean	T1	sub-A	-	1335	0	0	0	0	created by #232 cryptography/pass-shelat-ch5-8-integration
+TCSlib/Cryptography/Composability.lean	T1	lead	-	1335	0	0	0	0	created by #232 cryptography/pass-shelat-ch5-8-integration
 TCSlib/Cryptography/Encryption/PrivateKey.lean	T1	sub-B	-	1043	0	0	0	0	created by #270 codex/pass-shelat-private-key-facade
 TCSlib/Cryptography/Encryption/PublicKey.lean	T1	sub-B	-	1077	0	0	0	0	created by #256 codex/pass-shelat-pke-facade
 TCSlib/Cryptography/Foundations.lean	T2	lead	-	870	0	0	0	0	adopted: Garg concrete layer; changed by #298

@@ -206,7 +206,10 @@ def up(m, acc):
     return acc
 
 
-targets = [path2mod(r[0]).replace('/', '.') for r in owners + listonly]
+# Seyoon, 2026-11-17 (DW-10 Q1): the list-only files are handed off, not sealed here, so the order is the
+# upstream closure of the owners only; list-only estimates are still computed for the handoff.
+targets = [path2mod(r[0]).replace('/', '.') for r in owners]
+handed = [path2mod(r[0]).replace('/', '.') for r in listonly]
 need = set(targets)
 for t in targets:
     up(t, need)
@@ -218,7 +221,7 @@ roots = sorted({i for m in order for i in imps[m.replace('/', '.')] if not i.sta
 open(f'{out}/roots.txt', 'w').write('\n'.join(r for r in roots if r.startswith('Mathlib')) + '\n')
 nonml = [r for r in roots if not r.startswith('Mathlib')]
 est = {}
-for t in targets:
+for t in targets + handed:
     clo = up(t, set()) | {t}
     est[t] = sum(defs_in[mod2path(c)] for c in clo)
 
@@ -253,7 +256,7 @@ json.dump({'owners': len(owners), 'T1': sum(1 for r in owners if r[1] == 'T1'),
            'order': len(order), 'mathlib_roots': sum(1 for r in roots if r.startswith('Mathlib')),
            'non_mathlib_roots': nonml,
            'est_requests_owners_A': sum(est[path2mod(r[0]).replace('/', '.')] for r in owners),
-           'est_requests_listonly_A': sum(est[path2mod(r[0]).replace('/', '.')] for r in listonly),
+           'est_requests_handed_off_A': sum(est[path2mod(r[0]).replace('/', '.')] for r in listonly),
            'base_sorries': sum(len(v) for v in sorries.values()), 'base_sorry_modules': len(sorries)},
           open(f'{out}/estimate.json', 'w'), indent=1)
 emit('owners.body.tsv', owners, '', cols)
