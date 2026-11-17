@@ -1,0 +1,106 @@
+[
+ {
+  "owner": "TCSlib.Cryptography.LWE.Ratio",
+  "ns": "TCSlib.Cryptography.LWE",
+  "open": [
+   "Complexity"
+  ],
+  "def": "TCSlib.Cryptography.LWE.Family.RatioBounded",
+  "stmt": "(F : Family) (B : ℕ → ℕ) (p : PolyExpr) :\n    F.RatioBounded B p ↔ ∀ κ, (F.noise κ).Bounded (B κ) ∧ (F.parameters κ).modulus ≤ p.eval κ * B κ",
+  "neg": "Iff.rfl",
+  "pos": "Family.ratioBounded_iff F B p"
+ },
+ {
+  "owner": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Branching",
+  "ns": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW",
+  "open": [
+   "BoolCircuit"
+  ],
+  "def": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.select",
+  "stmt": "(P : Parameters) (C U V : Ciphertext P) : select P C U V = mul P (gadget P - C) U + mul P C V",
+  "neg": "rfl",
+  "pos": "select_eq P C U V"
+ },
+ {
+  "owner": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.DecryptFormula",
+  "ns": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW",
+  "open": [
+   "BoolCircuit",
+   "Encryption.PublicKey"
+  ],
+  "def": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decDepth",
+  "stmt": "(P : Parameters) : decDepth P = FormulaArith.modSumDepth P.columns P.lwe.modulus",
+  "neg": "rfl",
+  "pos": "decDepth_eq P"
+ },
+ {
+  "owner": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap",
+  "ns": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW",
+  "open": [
+   "BoolCircuit",
+   "Encryption.PublicKey"
+  ],
+  "def": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise",
+  "stmt": "(P : Parameters) (β : ℕ) : bootNoise P β = 4 ^ (decDepth P + 1) * (2 * (P.columns * β))",
+  "neg": "rfl",
+  "pos": "bootNoise_eq P β"
+ },
+ {
+  "owner": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Circular",
+  "ns": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW",
+  "open": [
+   "Encryption.PublicKey"
+  ],
+  "def": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.WeakCircularSecure",
+  "stmt": "(P : Parameters) (χ : LWE.Noise) {ρ : Type} [Fintype ρ] [Nonempty ρ] (D : FheView P → ρ → Bool) (ε : ℝ) :\n    WeakCircularSecure P χ D ε ↔ distAdv (fheView P χ false) (fheView P χ true) D ≤ ε",
+  "neg": "Iff.rfl",
+  "pos": "weakCircularSecure_iff P χ D ε"
+ },
+ {
+  "owner": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Leveled",
+  "ns": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW",
+  "open": [
+   "BoolCircuit",
+   "Encryption.PublicKey"
+  ],
+  "def": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelKey",
+  "stmt": "(P : Parameters) {L : ℕ} (pks : Fin (L + 1) → PublicKey P)\n    (ss : Fin (L + 1) → Secret P) (R : LevelCoins P L) (d : Fin L) :\n    levelKey P pks ss R d = evalKey P (pks d.succ) (ss d.castSucc) (R d)",
+  "neg": "rfl",
+  "pos": "levelKey_eq P pks ss R d"
+ },
+ {
+  "owner": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledSecurity",
+  "ns": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW",
+  "open": [
+   "Encryption.PublicKey"
+  ],
+  "def": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.challengeDist",
+  "stmt": "(P : Parameters) (χ : LWE.Noise) (L : ℕ) {ρ : Type}\n    (D : LeveledView P L → ρ → Bool) (v : PublicKey P × Ciphertext P)\n    (c : LeveledSeeds P χ L × ρ) :\n    challengeDist P χ L D v c =\n      D (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) 0 v.1,\n        fun e j => encrypt P (Regev.keygen P.lwe χ (c.1.1 e.succ)).1 false (c.1.2.1 e j), v.2)\n        c.2",
+  "neg": "rfl",
+  "pos": "challengeDist_eq P χ L D v c"
+ },
+ {
+  "owner": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PolyRatio",
+  "ns": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW",
+  "open": [
+   "Complexity",
+   "Encryption.PublicKey"
+  ],
+  "def": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.pBoot",
+  "stmt": "(F : LWE.Family) :\n    pBoot F =\n      .mul (.mul (.mul (.mul (.const (2 ^ 70)) F.residueBits)\n          (.pow (.mul (.add F.dimensionBound (.const 1)) F.residueBits) 19))\n        (.pow (.add (.add F.residueBits (.mul (.add F.dimensionBound (.const 1)) F.residueBits))\n          (.const 3)) 4))\n        F.samplesBound",
+  "neg": "rfl",
+  "pos": "pBoot_eq F"
+ },
+ {
+  "owner": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Asymptotic",
+  "ns": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW",
+  "open": [
+   "Complexity",
+   "Encryption.PublicKey"
+  ],
+  "def": "TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encodeCiphertext",
+  "stmt": "(P : Parameters) (C : Ciphertext P) : encodeCiphertext P C = Encoding.Modular.encodeMatrix P.width C",
+  "neg": "rfl",
+  "pos": "encodeCiphertext_eq P C"
+ }
+]

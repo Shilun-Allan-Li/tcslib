@@ -1,0 +1,6 @@
+bootNAND C1=false C2=false: equals (!(dec C1 && dec C2))•G: true, decrypt = true
+bootNAND C1=false C2=true: equals (!(dec C1 && dec C2))•G: true, decrypt = true
+bootNAND C1=true C2=false: equals (!(dec C1 && dec C2))•G: true, decrypt = true
+bootNAND C1=true C2=true: equals (!(dec C1 && dec C2))•G: true, decrypt = false
+'P5.bootNANDA_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'P5.fheEvalA_eq' depends on axioms: [propext, Classical.choice, Quot.sound]

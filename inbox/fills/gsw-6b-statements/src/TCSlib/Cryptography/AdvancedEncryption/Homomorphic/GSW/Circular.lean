@@ -128,12 +128,12 @@ regrouping.
 
 **Proof sketch.** Through `fheView_fst`, `fheView_snd` (or `fheView_eq`), `Regev.keygen_fst`
 and `realView_eq`, `view_eq`, the projected view at a seed `(rg, R, R₀)` is
-`realView P χ μ (rg, R₀)`: it does not read the evaluation-key coins `R`. Regroup the seed
-space `Seeds P χ ≃ (Fin N → Coins P) × (KeySeed P χ × Coins P)` (`Equiv.prodComm`,
-`Equiv.prodAssoc`; `acceptProb_comp_equiv`); a sampler that ignores an independent uniform
-coordinate has the same acceptance probability (`acceptProb_def`, `uprob` over a product with a
-constant factor), so each `acceptProb` equals that of `realView P χ μ`. Then
-`distAdv_def` and phase 5's `distAdv_encrypt_le`. -/
+`realView P χ μ (rg, R₀)`: it does not read the evaluation-key coins `R`. Through
+`acceptProb_def` and `acceptProb_comp_equiv`, regroup the seed-and-coin space so that the
+unused coins `R` form the second factor, `((KeySeed P χ × Coins P) × ρ) × (Fin N → Coins P)`
+(`Equiv.prodComm`, `Equiv.prodAssoc`); the marginalization lemma `uprob_fst`
+(`Foundations/Probability.lean`) then drops that factor, so each `acceptProb` equals that of
+`realView P χ μ`. Then `distAdv_def` and phase 5's `distAdv_encrypt_le`. -/
 theorem distAdv_fheView_noEvk_le (P : Parameters) (χ : LWE.Noise) {ρ : Type*} [Fintype ρ]
     [Nonempty ρ] (μ₀ μ₁ : Bool) (D : PublicKey P × Ciphertext P → ρ → Bool) :
     distAdv (fun r : Seeds P χ => ((fheView P χ μ₀ r).1, (fheView P χ μ₀ r).2.2))

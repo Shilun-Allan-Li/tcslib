@@ -1,0 +1,571 @@
+@evalWith : {w n : ℕ} →
+  {α : Type u_1} →
+    {β : Type u_2} → [AddCommMonoid α] → (β → α → α → α) → (Fin n → β) → BranchingProgram w n → (Fin w → α) → Fin w → α
+@evalWith_rel : ∀ {w n : ℕ} {α : Type u_1} {α' : Type u_2} {β : Type u_3} {β' : Type u_4} [inst : AddCommMonoid α]
+  [inst_1 : AddCommMonoid α'] (sel : β → α → α → α) (sel' : β' → α' → α' → α') (inp : Fin n → β) (inp' : Fin n → β')
+  (B : BranchingProgram w n) (R : ℕ → (Fin w → α) → (Fin w → α') → Prop) (V : Fin w → α) (V' : Fin w → α'),
+  R 0 V V' →
+    (∀ (t : ℕ) (ht : t < B.length) (U : Fin w → α) (U' : Fin w → α'),
+        R t U U' → R (t + 1) (Instr.stepWith sel inp B.instrs[t] U) (Instr.stepWith sel' inp' B.instrs[t] U')) →
+      R B.length (evalWith sel inp B V) (evalWith sel' inp' B V')
+/home/user/ev/citations/names/NameCheck.lean:22:8: error(lean.unknownIdentifier): Unknown identifier `Cc.args_lt`
+/home/user/ev/citations/names/NameCheck.lean:23:8: error(lean.unknownIdentifier): Unknown identifier `Cc.depth`
+/home/user/ev/citations/names/NameCheck.lean:24:8: error(lean.unknownIdentifier): Unknown identifier `Cc.eval`
+/home/user/ev/citations/names/NameCheck.lean:25:8: error(lean.unknownIdentifier): Unknown identifier `Cc.output_lt`
+@DAGCircuit.eval_eq : ∀ {n : ℕ} (C : DAGCircuit n) (x : Fin n → Bool), C.eval x = (C.values x).getD C.output false
+@DAGCircuit.toNANDForm : {n : ℕ} → (C : DAGCircuit n) → (∀ g ∈ C.gates, g.args.length ≤ 2) → DAGCircuit n
+@DAGCircuit.toNANDForm_eval : ∀ {n : ℕ} (C : DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2) (x : Fin n → Bool),
+  (C.toNANDForm hC).eval x = C.eval x
+@DAGCircuit.toNANDForm_isNANDForm : ∀ {n : ℕ} (C : DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2),
+  (C.toNANDForm hC).IsNANDForm
+DAGGate.IsNAND : DAGGate → Prop
+DAGGate.depth_eq : ∀ (g : DAGGate) (ds : List ℕ),
+  g.depth ds = 1 + List.foldr max 0 (List.map (fun a => ds.getD a 0) g.args)
+DAGGate.eval : DAGGate → List Bool → Bool
+@DAGGate.eval_of_isNAND : ∀ {g : DAGGate},
+  g.IsNAND → ∀ (vals : List Bool), g.eval vals = !g.args.all fun a => vals.getD a false
+DAGGate.isNAND_iff : ∀ (g : DAGGate), g.IsNAND ↔ g.kind = GateKind.not ∧ g.args.length ≤ 2
+Encrypts.add : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {x₁ x₂ : ℤ} {β₁ β₂ : ℕ}
+  {C₁ C₂ : Ciphertext P}, Encrypts P t x₁ β₁ C₁ → Encrypts P t x₂ β₂ C₂ → Encrypts P t (x₁ + x₂) (β₁ + β₂) (C₁ + C₂)
+Encrypts.mono : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {x : ℤ} {β β' : ℕ}
+  {C : Ciphertext P}, Encrypts P t x β C → β ≤ β' → Encrypts P t x β' C
+Encrypts.mul : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {x₁ x₂ : ℤ} {β₁ β₂ : ℕ}
+  {C₁ C₂ : Ciphertext P},
+  Encrypts P t x₁ β₁ C₁ → Encrypts P t x₂ β₂ C₂ → Encrypts P t (x₁ * x₂) (P.columns * β₁ + x₁.natAbs * β₂) (mul P C₁ C₂)
+Encrypts.select : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {b u v : ℤ} {β βV : ℕ}
+  {C U V : Ciphertext P},
+  Encrypts P t b β C →
+    Encrypts P t u βV U →
+      Encrypts P t v βV V →
+        b = 0 ∨ b = 1 → Encrypts P t ((1 - b) * u + b * v) (βV + 2 * (P.columns * β)) (select P C U V)
+Encrypts.sub : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {x₁ x₂ : ℤ} {β₁ β₂ : ℕ}
+  {C₁ C₂ : Ciphertext P}, Encrypts P t x₁ β₁ C₁ → Encrypts P t x₂ β₂ C₂ → Encrypts P t (x₁ - x₂) (β₁ + β₂) (C₁ - C₂)
+/home/user/ev/citations/names/NameCheck.lean:40:8: error(lean.unknownIdentifier): Unknown identifier `EnsembleSecurity.lean`
+Equiv.prodAssoc : (α : Type u_3) → (β : Type u_1) → (γ : Type u_2) → (α × β) × γ ≃ α × β × γ
+Equiv.prodComm : (α : Type u_2) → (β : Type u_1) → α × β ≃ β × α
+@Fin.addCases : {m n : ℕ} →
+  {motive : Fin (m + n) → Sort u_1} →
+    ((i : Fin m) → motive (Fin.castAdd n i)) → ((i : Fin n) → motive (Fin.natAdd m i)) → (i : Fin (m + n)) → motive i
+@Fin.sum_univ_eq_sum_range : ∀ {α : Type u_1} [inst : AddCommMonoid α] (f : ℕ → α) (n : ℕ),
+  ∑ i, f ↑i = ∑ i ∈ Finset.range n, f i
+@depth_modSumInterval_le : ∀ {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ), (modSumInterval a q lo hi).depth ≤ modSumDepth M q
+@maxFanin_modSumInterval_le : ∀ {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ), (modSumInterval a q lo hi).maxFanin ≤ 2
+modSumDepth_le : ∀ (M q : ℕ), modSumDepth M q ≤ 9 * Nat.clog 2 M + 2 * Nat.clog 2 (Nat.clog 2 q + Nat.clog 2 M + 3) + 21
+@modSumInterval_eval : ∀ {M : ℕ} {a : Fin M → ℕ} {q lo hi : ℕ},
+  (∀ (i : Fin M), a i < q) →
+    lo ≤ hi →
+      hi ≤ q →
+        ∀ (x : Fin M → Bool),
+          (modSumInterval a q lo hi).eval x =
+            decide (lo ≤ (∑ i, (x i).toNat * a i) % q ∧ (∑ i, (x i).toNat * a i) % q < hi)
+/home/user/ev/citations/names/NameCheck.lean:49:8: error(lean.unknownIdentifier): Unknown identifier `G_0`
+/home/user/ev/citations/names/NameCheck.lean:50:8: error(lean.unknownIdentifier): Unknown identifier `G_N`
+/home/user/ev/citations/names/NameCheck.lean:51:8: error(lean.unknownIdentifier): Unknown identifier `G_i`
+/home/user/ev/citations/names/NameCheck.lean:52:8: error(lean.unknownIdentifier): Unknown identifier `H_0`
+/home/user/ev/citations/names/NameCheck.lean:53:8: error(lean.unknownIdentifier): Unknown identifier `H_L`
+/home/user/ev/citations/names/NameCheck.lean:54:8: error(lean.unknownIdentifier): Unknown identifier `H_e`
+/home/user/ev/citations/names/NameCheck.lean:55:8: error(lean.unknownIdentifier): Unknown identifier `H_h`
+@Instr.stepWith_of_isPermutation : ∀ {w n : ℕ} {α : Type u_1} {β : Type u_2} [inst : AddCommMonoid α]
+  (sel : β → α → α → α) (inp : Fin n → β) {ι : Instr w n} (hι : ι.IsPermutation) (V : Fin w → α) (i : Fin w),
+  Instr.stepWith sel inp ι V i =
+    sel (inp ι.var) (V ((Equiv.ofBijective ι.map0 ⋯).symm i)) (V ((Equiv.ofBijective ι.map1 ⋯).symm i))
+decode_iff_mem_Ico : ∀ (P : LWE.Parameters) (v : ZMod P.modulus),
+  decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P
+Noise.bounded_iff : ∀ (χ : Noise) (B : ℕ), χ.Bounded B ↔ ∀ (r : χ.Coins), (χ.sample r).natAbs ≤ B
+@decisionAdvantage_eq : ∀ {ρ : Type u_1} [inst : Fintype ρ] [inst_1 : Nonempty ρ] (P : LWE.Parameters) (χ : Noise)
+  (D : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus) → ρ → Bool),
+  decisionAdvantage P χ D = distAdv (sample P χ) id D
+encodeChallenge : (P : LWE.Parameters) →
+  ℕ → Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus) → List Bool
+sample_fst : ∀ (P : LWE.Parameters) (χ : Noise)
+  (r :
+    Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins)),
+  (sample P χ r).1 = r.1
+sample_snd : ∀ (P : LWE.Parameters) (χ : Noise)
+  (r :
+    Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins)),
+  (sample P χ r).2 = noisyValues P r.1 r.2.1 fun i => χ.sample (r.2.2 i)
+@Matrix.dotProduct_mulVec : ∀ {m : Type u_1} {n : Type u_2} {R : Type u_3} [inst : Fintype n] [inst_1 : Fintype m]
+  [inst_2 : NonUnitalSemiring R] (v : m → R) (A : Matrix m n R) (w : n → R), v ⬝ᵥ A.mulVec w = Matrix.vecMul v A ⬝ᵥ w
+@Nat.cast_sum : ∀ {R : Type u_1} {ι : Type u_2} [inst : AddCommMonoidWithOne R] (s : Finset ι) (f : ι → ℕ),
+  ↑(∑ x ∈ s, f x) = ∑ x ∈ s, ↑(f x)
+@Nat.clog_le_iff_le_pow : ∀ {b : ℕ}, 1 < b → ∀ {x y : ℕ}, Nat.clog b x ≤ y ↔ x ≤ b ^ y
+Nat.clog_mono_right : ∀ (b : ℕ) {n m : ℕ}, n ≤ m → Nat.clog b n ≤ Nat.clog b m
+Nat.clog_one_right : ∀ (b : ℕ), Nat.clog b 1 = 0
+@Nat.lt_two_pow_self : ∀ {n : ℕ}, n < 2 ^ n
+@Nat.mul_le_mul : ∀ {n₁ m₁ n₂ m₂ : ℕ}, n₁ ≤ n₂ → m₁ ≤ m₂ → n₁ * m₁ ≤ n₂ * m₂
+@Nat.mul_le_mul_right : ∀ {n m : ℕ} (k : ℕ), n ≤ m → n * k ≤ m * k
+@Nat.pow_le_pow_left : ∀ {n m : ℕ}, n ≤ m → ∀ (i : ℕ), n ^ i ≤ m ^ i
+@Nat.pow_le_pow_right : ∀ {n : ℕ}, n > 0 → ∀ {i j : ℕ}, i ≤ j → n ^ i ≤ n ^ j
+@Nat.pow_pred_clog_lt_self : ∀ {b : ℕ}, 1 < b → ∀ {x : ℕ}, 1 < x → b ^ (Nat.clog b x).pred < x
+@Negligible.add : ∀ {μ ν : ℕ → ℝ}, Negligible μ → Negligible ν → Negligible fun n => μ n + ν n
+@Negligible.mono : ∀ {μ ν : ℕ → ℝ}, Negligible μ → (∃ n₀, ∀ n ≥ n₀, |ν n| ≤ |μ n|) → Negligible ν
+@OneWay.uprob_update : ∀ {α : Type u_1} {ρ : Type u_2} [inst : Fintype α] [inst_1 : Fintype ρ] {ι : Type u_3}
+  [inst_2 : Fintype ι] [inst_3 : DecidableEq ι] [Nonempty α] (i : ι) (P : (ι → α) → ρ → Prop),
+  (uprob fun z => P (Function.update z.2.1 i z.1) z.2.2) = uprob fun w => P w.1 w.2
+/home/user/ev/citations/names/NameCheck.lean:77:8: error(lean.unknownIdentifier): Unknown constant `Complexity.P.modulus_le`
+Parameters.columns_eq : ∀ (P : Parameters), P.columns = (P.lwe.dimension + 1) * P.width
+Parameters.neZero_columns : ∀ (P : Parameters), NeZero P.columns
+Parameters.ofFamily_lwe : ∀ (F : Family) (κ : ℕ), (Parameters.ofFamily F κ).lwe = F.parameters κ
+Parameters.ofFamily_width : ∀ (F : Family) (κ : ℕ), (Parameters.ofFamily F κ).width = F.residueBits.eval κ
+@Pi.single : {ι : Type u_1} →
+  {M : ι → Type u_2} → [(i : ι) → Zero (M i)] → [DecidableEq ι] → (i : ι) → M i → (j : ι) → M j
+@Pi.single_apply : ∀ {ι : Type u_1} [inst : DecidableEq ι] {M : Type u_2} [inst_1 : Zero M] (i : ι) (x : M) (i' : ι),
+  Pi.single i x i' = if i' = i then x else 0
+PolyExpr.eval : PolyExpr → ℕ → ℕ
+Regev.keygen : (P : LWE.Parameters) →
+  (χ : Noise) →
+    Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+        (Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins) →
+      (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)) ×
+        (Fin P.dimension → ZMod P.modulus)
+Regev.keygen_fst : ∀ (P : LWE.Parameters) (χ : Noise)
+  (r :
+    Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins)),
+  (Regev.keygen P χ r).1 = sample P χ r
+Regev.keygen_snd : ∀ (P : LWE.Parameters) (χ : Noise)
+  (r :
+    Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins)),
+  (Regev.keygen P χ r).2 = r.2.1
+Regev.two_extractionError_le : ∀ (P : LWE.Parameters) (width κ : ℕ),
+  P.modulus ≤ 2 ^ width → (P.dimension + 1) * width + 2 * κ ≤ P.samples → 2 * Regev.extractionError P ≤ 2⁻¹ ^ κ
+@TreeCircuit.and2_eval : ∀ {n : ℕ} (a b : TreeCircuit n) (x : Fin n → Bool), (a.and2 b).eval x = (a.eval x && b.eval x)
+@TreeCircuit.depth_and2_le : ∀ {n : ℕ} (a b : TreeCircuit n), (a.and2 b).depth ≤ max a.depth b.depth + 1
+@TreeCircuit.depth_neg : ∀ {n : ℕ} (c : TreeCircuit n), c.neg.depth = c.depth
+@TreeCircuit.maxFanin_and2_le : ∀ {n : ℕ} (a b : TreeCircuit n), (a.and2 b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin)
+@TreeCircuit.maxFanin_neg : ∀ {n : ℕ} (c : TreeCircuit n), c.neg.maxFanin = c.maxFanin
+@TreeCircuit.neg_eval : ∀ {n : ℕ} (c : TreeCircuit n) (x : Fin n → Bool), c.neg.eval x = !c.eval x
+@ZMod.coe_valMinAbs : ∀ {n : ℕ} (x : ZMod n), ↑x.valMinAbs = x
+ZMod.natAbs_min_of_le_div_two : ∀ (n : ℕ) (x y : ℤ), ↑x = ↑y → x.natAbs ≤ n / 2 → x.natAbs ≤ y.natAbs
+@ZMod.natAbs_valMinAbs_add_le : ∀ {n : ℕ} (a b : ZMod n), (a + b).valMinAbs.natAbs ≤ (a.valMinAbs + b.valMinAbs).natAbs
+@ZMod.natAbs_valMinAbs_le : ∀ {n : ℕ} [NeZero n] (x : ZMod n), x.valMinAbs.natAbs ≤ n / 2
+@ZMod.natAbs_valMinAbs_neg : ∀ {n : ℕ} (a : ZMod n), (-a).valMinAbs.natAbs = a.valMinAbs.natAbs
+ZMod.natCast_self : ∀ (n : ℕ), ↑n = 0
+@ZMod.natCast_zmod_val : ∀ {n : ℕ} [NeZero n] (a : ZMod n), ↑a.val = a
+@ZMod.valMinAbs_natAbs_eq_min : ∀ {n : ℕ} [hpos : NeZero n] (a : ZMod n), a.valMinAbs.natAbs = min a.val (n - a.val)
+@ZMod.valMinAbs_natCast_of_le_half : ∀ {n a : ℕ}, a ≤ n / 2 → (↑a).valMinAbs = ↑a
+@ZMod.val_lt : ∀ {n : ℕ} [NeZero n] (a : ZMod n), a.val < n
+ZMod.val_natCast : ∀ (n a : ℕ), (↑a).val = a % n
+@ZMod.val_sub : ∀ {n : ℕ} [NeZero n] {a b : ZMod n}, b.val ≤ a.val → (a - b).val = a.val - b.val
+/home/user/ev/citations/names/NameCheck.lean:107:8: error(lean.unknownIdentifier): Unknown identifier `_cons_cons`
+/home/user/ev/citations/names/NameCheck.lean:108:8: error(lean.unknownIdentifier): Unknown identifier `_singleton`
+@abs_sub_le : ∀ {G : Type u_1} [inst : AddCommGroup G] [inst_1 : LinearOrder G] [IsOrderedAddMonoid G] (a b c : G),
+  |a - c| ≤ |a - b| + |b - c|
+abs_sub_le_sum_hybrids : ∀ (P : ℕ → ℝ) (t : ℕ), |P 0 - P t| ≤ ∑ i ∈ Finset.range t, |P i - P (i + 1)|
+@acceptProb_comp_equiv : ∀ {ρ : Type u_1} {σ : Type u_2} {τ : Type u_3} {γ : Type u_4} [inst : Fintype ρ]
+  [inst_1 : Fintype σ] [inst_2 : Fintype τ] (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool),
+  acceptProb (fun s => X (e s)) D = acceptProb X D
+@acceptProb_def : ∀ {ρ : Type u_1} {σ : Type u_2} {γ : Type u_3} [inst : Fintype ρ] [inst_1 : Fintype σ] (X : σ → γ)
+  (D : γ → ρ → Bool), acceptProb X D = uprob fun z => D (X z.1) z.2 = true
+@barrington_length_le : ∀ {n : ℕ} [inst : NeZero n] {c : TreeCircuit n},
+  c.maxFanin ≤ 2 → ∀ (σ : Equiv.Perm (Fin 5)), (barrington c σ).length ≤ 4 ^ c.depth
+@barrington_yield_zero : ∀ {n : ℕ} [inst : NeZero n] {c : TreeCircuit n},
+  c.maxFanin ≤ 2 →
+    ∀ {σ : Equiv.Perm (Fin 5)},
+      IsFiveCycle σ → ∀ (x : Fin n → Bool), (barrington c σ).yield x 0 = if c.eval x = true then σ 0 else 0
+bootGate_of_args_eq_nil : ∀ (P : Parameters) (evk : Fin P.columns → Ciphertext P) (g : DAGGate)
+  (cts : List (Ciphertext P)), g.args = [] → bootGate P evk g cts = bootNAND P evk (gadget P) (gadget P)
+bootNAND_eq : ∀ (P : Parameters) (evk : Fin P.columns → Ciphertext P) (C₁ C₂ : Ciphertext P),
+  bootNAND P evk C₁ C₂ = homEvalFormula P (nandFormula P C₁ C₂) evk
+bootNoise_eq : ∀ (P : Parameters) (β : ℕ), bootNoise P β = 4 ^ (decDepth P + 1) * (2 * (P.columns * β))
+bootNoise_le : ∀ (P : Parameters) (β : ℕ),
+  bootNoise P β ≤ 4 ^ 33 * P.columns ^ 19 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 * (2 * β)
+bootRatio_le_poly : ∀ (F : Family) (B : ℕ → ℕ) (κ : ℕ),
+  8 *
+      ((Parameters.ofFamily F κ).width *
+        bootNoise (Parameters.ofFamily F κ) ((Parameters.ofFamily F κ).lwe.samples * B κ)) ≤
+    (pBoot F).eval κ * B κ
+/home/user/ev/citations/names/NameCheck.lean:120:8: error(lean.unknownIdentifier): Unknown identifier `c`
+/home/user/ev/citations/names/NameCheck.lean:121:8: error(lean.unknownIdentifier): Unknown identifier `c`
+/home/user/ev/citations/names/NameCheck.lean:122:8: error(lean.unknownIdentifier): Unknown identifier `c_dec`
+challengeDist_eq : ∀ (P : Parameters) (χ : Noise) (L : ℕ) {ρ : Type u_1} (D : LeveledView P L → ρ → Bool)
+  (v : PublicKey P × Ciphertext P) (c : LeveledSeeds P χ L × ρ),
+  challengeDist P χ L D v c =
+    D
+      (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) 0 v.1, fun e j =>
+        encrypt P (Regev.keygen P.lwe χ (c.1.1 e.succ)).1 false (c.1.2.1 e j), v.2)
+      c.2
+challengeTerm_eq : ∀ (P : Parameters) (χ : Noise) (L : ℕ) (μ₀ μ₁ : Bool) {ρ : Type u_1} [inst : Fintype ρ]
+  [inst_1 : Nonempty ρ] (D : LeveledView P L → ρ → Bool),
+  challengeTerm P χ L μ₀ μ₁ D =
+    decisionAdvantage P.lwe χ (reduction P μ₀ (challengeDist P χ L D)) +
+        decisionAdvantage P.lwe χ (reduction P μ₁ (challengeDist P χ L D)) +
+      2 * (↑P.columns * Regev.extractionError P.lwe)
+codepoint_eq : ∀ (P : LWE.Parameters) (b : Bool), codepoint P b = if b = true then ↑(P.modulus / 2) else 0
+decConstants_eq : ∀ (P : Parameters) (C : Ciphertext P), decConstants P C = Matrix.vecMul (decryptColumn P C) (gadget P)
+decDepth_eq : ∀ (P : Parameters), decDepth P = modSumDepth P.columns P.lwe.modulus
+decDepth_le : ∀ (P : Parameters),
+  decDepth P ≤ 9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns + 3) + 21
+decodeHi_eq : ∀ (P : LWE.Parameters), decodeHi P = (P.modulus + P.modulus / 2 + 1) / 2
+decodeLo_eq : ∀ (P : LWE.Parameters), decodeLo P = P.modulus / 2 / 2 + 1
+decode_eq : ∀ (P : LWE.Parameters) (x : ZMod P.modulus),
+  decode P x = decide (distance P x (codepoint P true) < distance P x (codepoint P false))
+decryptFormula_eq : ∀ (P : Parameters) (C : Ciphertext P),
+  decryptFormula P C =
+    modSumInterval (fun i => (decConstants P C i).val) P.lwe.modulus (decodeLo P.lwe) (decodeHi P.lwe)
+/home/user/ev/citations/names/NameCheck.lean:133:8: error(lean.unknownIdentifier): Unknown identifier `decrypt_eq_decode_errorSum`
+decrypt_fheEval : ∀ (P : Parameters) {k : ℕ} (Cc : DAGCircuit k),
+  Cc.IsNANDForm →
+    ∀ (s : Secret P) (evk : Fin P.columns → Ciphertext P) (βk βin : ℕ),
+      (∀ (i : Fin P.columns), Encrypts P (secretVector P s) (↑(keyBits P s i).toNat) βk (evk i)) →
+        ∀ (x : Fin k → Bool) (cts : Fin k → Ciphertext P),
+          (∀ (j : Fin k), Encrypts P (secretVector P s) (↑(x j).toNat) βin (cts j)) →
+            2 * (P.width * βin) < P.lwe.modulus / 2 →
+              2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2 → decrypt P s (fheEval P evk Cc cts) = Cc.eval x
+decrypt_fheEvalCircuit : ∀ (P : Parameters) {k : ℕ} (Cc : DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2)
+  (s : Secret P) (evk : Fin P.columns → Ciphertext P) (βk βin : ℕ),
+  (∀ (i : Fin P.columns), Encrypts P (secretVector P s) (↑(keyBits P s i).toNat) βk (evk i)) →
+    ∀ (x : Fin k → Bool) (cts : Fin k → Ciphertext P),
+      (∀ (j : Fin k), Encrypts P (secretVector P s) (↑(x j).toNat) βin (cts j)) →
+        2 * (P.width * βin) < P.lwe.modulus / 2 →
+          2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2 → decrypt P s (fheEvalCircuit P evk Cc hC cts) = Cc.eval x
+decrypt_fheEval_of_ratio : ∀ (F : Family) (B : ℕ → ℕ) (κ : ℕ),
+  (F.noise κ).Bounded (B κ) →
+    (pBoot F).eval κ * B κ < (F.parameters κ).modulus →
+      ∀ (rg : KeySeed (Parameters.ofFamily F κ) (F.noise κ))
+        (R : Fin (Parameters.ofFamily F κ).columns → Coins (Parameters.ofFamily F κ)) {k : ℕ} (Cc : DAGCircuit k)
+        (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (x : Fin k → Bool) (R' : Fin k → Coins (Parameters.ofFamily F κ)),
+        decrypt (Parameters.ofFamily F κ) (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) rg).2
+            (fheEvalCircuit (Parameters.ofFamily F κ)
+              (evalKey (Parameters.ofFamily F κ) (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) rg).1
+                (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) rg).2 R)
+              Cc hC fun j =>
+              encrypt (Parameters.ofFamily F κ) (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) rg).1 (x j)
+                (R' j)) =
+          Cc.eval x
+decrypt_keygen_fheEvalCircuit : ∀ (P : Parameters) (χ : Noise) (rg : KeySeed P χ) (B : ℕ),
+  χ.Bounded B →
+    ∀ (R : Fin P.columns → Coins P) {k : ℕ} (Cc : DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2)
+      (x : Fin k → Bool) (R' : Fin k → Coins P),
+      2 * (P.width * bootNoise P (P.lwe.samples * B)) < P.lwe.modulus / 2 →
+        decrypt P (Regev.keygen P.lwe χ rg).2
+            (fheEvalCircuit P (evalKey P (Regev.keygen P.lwe χ rg).1 (Regev.keygen P.lwe χ rg).2 R) Cc hC fun j =>
+              encrypt P (Regev.keygen P.lwe χ rg).1 (x j) (R' j)) =
+          Cc.eval x
+decrypt_keygen_leveledEvalCircuit : ∀ (P : Parameters) (χ : Noise) (B : ℕ),
+  χ.Bounded B →
+    ∀ {L k : ℕ} [inst : NeZero k] (rgs : Fin (L + 1) → KeySeed P χ) (R : LevelCoins P L) (Cc : DAGCircuit k)
+      (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (hdepth : (Cc.toNANDForm hC).depth ≤ L) (x : Fin k → Bool)
+      (R' : Fin k → Coins P),
+      2 * (P.width * bootNoise P (P.lwe.samples * B)) < P.lwe.modulus / 2 →
+        2 * (P.width * (P.lwe.samples * B)) < P.lwe.modulus / 2 →
+          decrypt P (Regev.keygen P.lwe χ (rgs ⟨(Cc.toNANDForm hC).depth, ⋯⟩)).2
+              (leveledEvalCircuit P
+                (levelKey P (fun e => (Regev.keygen P.lwe χ (rgs e)).1) (fun e => (Regev.keygen P.lwe χ (rgs e)).2) R)
+                Cc hC fun j => encrypt P (Regev.keygen P.lwe χ (rgs 0)).1 (x j) (R' j)) =
+            Cc.eval x
+decrypt_of_encrypts : ∀ (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (b : Bool) (β : ℕ)
+  (C : Ciphertext P),
+  Encrypts P (secretVector P s) (↑b.toNat) β C → 2 * (P.width * β) < P.lwe.modulus / 2 → decrypt P s C = b
+/home/user/ev/citations/names/NameCheck.lean:140:8: error(lean.unknownIdentifier): Unknown identifier `depthAt_gate`
+/home/user/ev/citations/names/NameCheck.lean:141:8: error(lean.unknownIdentifier): Unknown identifier `depthAt_input`
+/home/user/ev/citations/names/NameCheck.lean:142:8: error(lean.unknownIdentifier): Unknown identifier `depth_eq`
+depth_nandFormula_le : ∀ (P : Parameters) (C₁ C₂ : Ciphertext P), (nandFormula P C₁ C₂).depth ≤ decDepth P + 1
+/home/user/ev/citations/names/NameCheck.lean:144:8: error(lean.unknownIdentifier): Unknown identifier `dimension_le`
+@distAdv_def : ∀ {ρ : Type u_1} {σ : Type u_2} {τ : Type u_3} {γ : Type u_4} [inst : Fintype ρ] [inst_1 : Fintype σ]
+  [inst_2 : Fintype τ] (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool), distAdv X Y D = |acceptProb X D - acceptProb Y D|
+@distAdv_encrypt_le : ∀ {ρ : Type u_1} [inst : Fintype ρ] [inst_1 : Nonempty ρ] (P : Parameters) (χ : Noise)
+  (μ₀ μ₁ : Bool)
+  (D :
+    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) × (Fin P.lwe.samples → ZMod P.lwe.modulus)) ×
+        Ciphertext P →
+      ρ → Bool),
+  distAdv (realView P χ μ₀) (realView P χ μ₁) D ≤
+    decisionAdvantage P.lwe χ (reduction P μ₀ D) + decisionAdvantage P.lwe χ (reduction P μ₁ D) +
+      2 * (↑P.columns * Regev.extractionError P.lwe)
+@distAdv_encrypt_le_of_width : ∀ {ρ : Type u_1} [inst : Fintype ρ] [inst_1 : Nonempty ρ] (P : Parameters) (χ : Noise)
+  (μ₀ μ₁ : Bool) (w κ : ℕ),
+  P.lwe.modulus ≤ 2 ^ w →
+    (P.lwe.dimension + 1) * w + 2 * κ ≤ P.lwe.samples →
+      ∀
+        (D :
+          (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+                (Fin P.lwe.samples → ZMod P.lwe.modulus)) ×
+              Ciphertext P →
+            ρ → Bool),
+        distAdv (realView P χ μ₀) (realView P χ μ₁) D ≤
+          decisionAdvantage P.lwe χ (reduction P μ₀ D) + decisionAdvantage P.lwe χ (reduction P μ₁ D) +
+            ↑P.columns * 2⁻¹ ^ κ
+distAdv_levelHybrid_le : ∀ (P : Parameters) (χ : Noise) (L : ℕ) (μ : Bool) (e : Fin L) {ρ : Type u_1} [inst : Fintype ρ]
+  [inst_1 : Nonempty ρ] (D : LeveledView P L → ρ → Bool),
+  distAdv (levelHybrid P χ L μ (↑e + 1)) (levelHybrid P χ L μ ↑e) D ≤ ∑ j, levelTerm P χ L μ e j D
+distAdv_leveledView_le : ∀ (P : Parameters) (χ : Noise) (L : ℕ) (μ₀ μ₁ : Bool) {ρ : Type u_1} [inst : Fintype ρ]
+  [inst_1 : Nonempty ρ] (D : LeveledView P L → ρ → Bool),
+  distAdv (leveledView P χ L μ₀) (leveledView P χ L μ₁) D ≤
+    ∑ e, ∑ j, (levelTerm P χ L μ₀ e j D + levelTerm P χ L μ₁ e j D) + challengeTerm P χ L μ₀ μ₁ D
+@distAdv_multi_le_sum : ∀ {κ : Type u_1} {π : Type u_2} {μ : Type u_3} {γ : Type u_4} {ρ : Type u_5} {ρ' : Type u_6}
+  [inst : Fintype κ] [inst_1 : Fintype ρ] [inst_2 : Fintype ρ'] [Nonempty ρ] {q : ℕ} (P : κ → π) (E : π → μ → ρ → γ)
+  (m m' : Fin (q + 1) → μ) (D : π × (Fin (q + 1) → γ) → ρ' → Bool),
+  distAdv (fun z => (P z.1, fun i => E (P z.1) (m i) (z.2 i))) (fun z => (P z.1, fun i => E (P z.1) (m' i) (z.2 i))) D ≤
+    ∑ j,
+      distAdv (fun z => (P z.1, E (P z.1) (m j) z.2)) (fun z => (P z.1, E (P z.1) (m' j) z.2)) (hybridPlant E m m' j D)
+distance_eq : ∀ (P : LWE.Parameters) (x y : ZMod P.modulus), distance P x y = (x - y).valMinAbs.natAbs
+dlweAssumption_iff : ∀ (F : Family), DLWEAssumption F ↔ ∀ (D : NUPPT), Negligible fun κ => F.advantageAt D κ
+@dotProduct_comm : ∀ {m : Type u_2} {α : Type u_1} [inst : Fintype m] [inst_1 : AddCommMonoid α] [inst_2 : CommMagma α]
+  (v w : m → α), v ⬝ᵥ w = w ⬝ᵥ v
+encrypts_bootNAND : ∀ (P : Parameters) {t' : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} (s : Secret P) (βk : ℕ)
+  (evk : Fin P.columns → Ciphertext P),
+  (∀ (i : Fin P.columns), Encrypts P t' (↑(keyBits P s i).toNat) βk (evk i)) →
+    ∀ (C₁ C₂ : Ciphertext P),
+      Encrypts P t' (↑(!(decrypt P s C₁ && decrypt P s C₂)).toNat) (bootNoise P βk) (bootNAND P evk C₁ C₂)
+encrypts_encrypt : ∀ (P : Parameters) (A : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus))
+  (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (e : Fin P.lwe.samples → ℤ) (B : ℕ),
+  (∀ (i : Fin P.lwe.samples), (e i).natAbs ≤ B) →
+    ∀ (μ : Bool) (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool),
+      Encrypts P (secretVector P s) (↑μ.toNat) (P.lwe.samples * B) (encrypt P (A, noisyValues P.lwe A s e) μ R)
+encrypts_evalKey : ∀ (P : Parameters) (A : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus))
+  (s : Secret P) (e : Fin P.lwe.samples → ℤ) (B : ℕ),
+  (∀ (i : Fin P.lwe.samples), (e i).natAbs ≤ B) →
+    ∀ (R : Fin P.columns → Coins P) (i : Fin P.columns),
+      Encrypts P (secretVector P s) (↑(keyBits P s i).toNat) (P.lwe.samples * B)
+        (evalKey P (A, noisyValues P.lwe A s e) s R i)
+encrypts_gadget : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}, Encrypts P t 1 0 (gadget P)
+encrypts_homEvalFormula : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {k : ℕ}
+  [inst : NeZero k] (c : TreeCircuit k),
+  c.maxFanin ≤ 2 →
+    ∀ (x : Fin k → Bool) (cts : Fin k → Ciphertext P) (β : ℕ),
+      (∀ (j : Fin k), Encrypts P t (↑(x j).toNat) β (cts j)) →
+        Encrypts P t (↑(c.eval x).toNat) (4 ^ c.depth * (2 * (P.columns * β))) (homEvalFormula P c cts)
+encrypts_homEvalPBP : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {w k : ℕ}
+  (B : BranchingProgram w k),
+  B.IsPermutation →
+    ∀ (x : Fin k → Bool) (cts : Fin k → Ciphertext P) (β : ℕ),
+      (∀ (j : Fin k), Encrypts P t (↑(x j).toNat) β (cts j)) →
+        ∀ (s₀ i : Fin w),
+          Encrypts P t (↑(decide (B.yield x s₀ = i)).toNat) (B.length * (2 * (P.columns * β)))
+            (homEvalPBP P B cts (Pi.single s₀ (gadget P)) i)
+encrypts_keygen_encrypt : ∀ (P : Parameters) (χ : Noise)
+  (rg :
+    Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+      (Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins))
+  (B : ℕ),
+  χ.Bounded B →
+    ∀ (μ : Bool) (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool),
+      Encrypts P (secretVector P (Regev.keygen P.lwe χ rg).2) (↑μ.toNat) (P.lwe.samples * B)
+        (encrypt P (Regev.keygen P.lwe χ rg).1 μ R)
+encrypts_levelKey : ∀ (P : Parameters) (χ : Noise) (B : ℕ),
+  χ.Bounded B →
+    ∀ {L : ℕ} (rgs : Fin (L + 1) → KeySeed P χ) (R : LevelCoins P L) (d : Fin L) (j : Fin P.columns),
+      Encrypts P (secretVector P (Regev.keygen P.lwe χ (rgs d.succ)).2)
+        (↑(keyBits P (Regev.keygen P.lwe χ (rgs d.castSucc)).2 j).toNat) (P.lwe.samples * B)
+        (levelKey P (fun e => (Regev.keygen P.lwe χ (rgs e)).1) (fun e => (Regev.keygen P.lwe χ (rgs e)).2) R d j)
+encrypts_zero : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}, Encrypts P t 0 0 0
+evalKey_eq : ∀ (P : Parameters) (pk : PublicKey P) (s : Secret P) (R : Fin P.columns → Coins P) (i : Fin P.columns),
+  evalKey P pk s R i = encrypt P pk (keyBits P s i) (R i)
+@evalWith_single : ∀ {w n : ℕ} (B : BranchingProgram w n) (x : Fin n → Bool) (s : Fin w),
+  evalWith (fun b u v => if b = true then v else u) x B (Pi.single s 1) = Pi.single (B.yield x s) 1
+eval_encrypts : ∀ (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {k : ℕ} (Cc : DAGCircuit k),
+  (∀ g ∈ Cc.gates, g.args.length ≤ 2) →
+    ∀ (x : Fin k → Bool) (cts : Fin k → Ciphertext P) (β : ℕ),
+      (∀ (i : Fin k), Encrypts P t (↑(x i).toNat) β (cts i)) →
+        Encrypts P t (↑(Cc.eval x).toNat) ((P.columns + 1) ^ Cc.depth * β) (eval P Cc cts)
+fheEvalCircuit_eq : ∀ (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ} (Cc : DAGCircuit k)
+  (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P),
+  fheEvalCircuit P evk Cc hC cts = fheEval P evk (Cc.toNANDForm hC) cts
+fheEval_eq : ∀ (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ} (Cc : DAGCircuit k)
+  (cts : Fin k → Ciphertext P),
+  fheEval P evk Cc cts = (runWith (bootGate P evk) Cc.gates (List.ofFn cts)).getD Cc.output 0
+fheView_eq : ∀ (P : Parameters) (χ : Noise) (μ : Bool) (r : Seeds P χ),
+  fheView P χ μ r =
+    ((Regev.keygen P.lwe χ r.1).1, evalKey P (Regev.keygen P.lwe χ r.1).1 (Regev.keygen P.lwe χ r.1).2 r.2.1,
+      encrypt P (Regev.keygen P.lwe χ r.1).1 μ r.2.2)
+fheView_fst : ∀ (P : Parameters) (χ : Noise) (μ : Bool) (r : Seeds P χ),
+  (fheView P χ μ r).1 = (Regev.keygen P.lwe χ r.1).1
+fheView_snd : ∀ (P : Parameters) (χ : Noise) (μ : Bool) (r : Seeds P χ),
+  (fheView P χ μ r).2 =
+    (evalKey P (Regev.keygen P.lwe χ r.1).1 (Regev.keygen P.lwe χ r.1).2 r.2.1,
+      encrypt P (Regev.keygen P.lwe χ r.1).1 μ r.2.2)
+gadget_mulVec_decomposeVec : ∀ (P : Parameters) (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus),
+  (Matrix.mulVec (gadget P) fun i => ↑(decomposeVec P u i).toNat) = u
+homAnd_singleton : ∀ (P : Parameters) (C : Ciphertext P), homAnd P [C] = C
+homEvalFormula_eq : ∀ (P : Parameters) {k : ℕ} [inst : NeZero k] (c : TreeCircuit k) (cts : Fin k → Ciphertext P),
+  homEvalFormula P c cts = homEvalPBP P (barrington c sigma1) cts (Pi.single 0 (gadget P)) (sigma1 0)
+homEvalPBP_eq : ∀ (P : Parameters) {w k : ℕ} (B : BranchingProgram w k) (cts : Fin k → Ciphertext P)
+  (V : Fin w → Ciphertext P), homEvalPBP P B cts V = evalWith (select P) cts B V
+homNot_eq : ∀ (P : Parameters) (Cs : List (Ciphertext P)), homNot P Cs = gadget P - homAnd P Cs
+isFiveCycle_iff : ∀ (σ : Equiv.Perm (Fin 5)), IsFiveCycle σ ↔ σ.cycleType = {5}
+isFiveCycle_sigma1 : IsFiveCycle sigma1
+/home/user/ev/citations/names/NameCheck.lean:178:8: error(lean.unknownIdentifier): Unknown identifier `isLayered_iff`
+/home/user/ev/citations/names/NameCheck.lean:179:8: error(lean.unknownIdentifier): Unknown identifier `isNANDForm_iff`
+@isPermutation_barrington : ∀ {n : ℕ} [inst : NeZero n] (c : TreeCircuit n) (σ : Equiv.Perm (Fin 5)),
+  (barrington c σ).IsPermutation
+@isPermutation_iff : ∀ {w n : ℕ} (B : BranchingProgram w n),
+  B.IsPermutation ↔ ∀ ι ∈ B.instrs, Function.Bijective ι.map0 ∧ Function.Bijective ι.map1
+keyBits_eq : ∀ (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus),
+  keyBits P s = decomposeVec P (secretVector P s)
+/home/user/ev/citations/names/NameCheck.lean:183:8: error(lean.unknownIdentifier): Unknown identifier `layerNAND_depth`
+/home/user/ev/citations/names/NameCheck.lean:184:8: error(lean.unknownIdentifier): Unknown identifier `layerNAND_eval`
+/home/user/ev/citations/names/NameCheck.lean:185:8: error(lean.unknownIdentifier): Unknown identifier `layerNAND_isLayered`
+/home/user/ev/citations/names/NameCheck.lean:186:8: error(lean.unknownIdentifier): Unknown identifier `layerNAND_isNANDForm`
+@length_runWith : ∀ {β : Type} (f : DAGGate → List β → β) (gs : List DAGGate) (init : List β),
+  (runWith f gs init).length = init.length + gs.length
+levelAssemble_eq : ∀ (P : Parameters) (χ : Noise) (L : ℕ) (μ : Bool) (e : Fin L) {ρ : Type u_1}
+  (D : LeveledView P L → ρ → Bool) (v : PublicKey P × (Fin (P.columns - 1 + 1) → Ciphertext P))
+  (c : LeveledSeeds P χ L × ρ),
+  levelAssemble P χ L μ e D v c =
+    D
+      (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) e.succ v.1, fun e' j =>
+        if e' = e then v.2 (Fin.cast ⋯ j)
+        else
+          if ↑e < ↑e' then encrypt P (Regev.keygen P.lwe χ (c.1.1 e'.succ)).1 false (c.1.2.1 e' j)
+          else
+            levelKey P (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).2)
+              c.1.2.1 e' j,
+        encrypt P (Regev.keygen P.lwe χ (c.1.1 0)).1 μ c.1.2.2)
+      c.2
+levelGate_of_lt : ∀ (P : Parameters) {L : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P) (δ : ℕ) (g : DAGGate)
+  (cts : List (Ciphertext P)) (h : δ - 1 < L), levelGate P lk δ g cts = bootGate P (lk ⟨δ - 1, h⟩) g cts
+levelHybrid_eq : ∀ (P : Parameters) (χ : Noise) (L : ℕ) (μ : Bool) (h : ℕ) (r : LeveledSeeds P χ L),
+  levelHybrid P χ L μ h r =
+    (fun d => (Regev.keygen P.lwe χ (r.1 d)).1, fun e j =>
+      if h ≤ ↑e then encrypt P (Regev.keygen P.lwe χ (r.1 e.succ)).1 false (r.2.1 e j)
+      else levelKey P (fun d => (Regev.keygen P.lwe χ (r.1 d)).1) (fun d => (Regev.keygen P.lwe χ (r.1 d)).2) r.2.1 e j,
+      encrypt P (Regev.keygen P.lwe χ (r.1 0)).1 μ r.2.2)
+levelKey_eq : ∀ (P : Parameters) {L : ℕ} (pks : Fin (L + 1) → PublicKey P) (ss : Fin (L + 1) → Secret P)
+  (R : LevelCoins P L) (d : Fin L), levelKey P pks ss R d = evalKey P (pks d.succ) (ss d.castSucc) (R d)
+levelReduction_eq : ∀ (P : Parameters) (χ : Noise) (L : ℕ) (μ : Bool) (e : Fin L) (j : Fin P.columns) (b : Bool)
+  {ρ : Type u_1} (D : LeveledView P L → ρ → Bool) (pk : PublicKey P)
+  (c : Coins P × (Fin (P.columns - 1 + 1) → Coins P) × LeveledSeeds P χ L × ρ),
+  levelReduction P χ L μ e j b D pk c =
+    reduction P (if b = true then levelMsgs P χ L e c.2.2.1 (Fin.cast ⋯ j) else false)
+      (hybridPlant (encrypt P) (levelMsgs P χ L e c.2.2.1) (fun x => false) (Fin.cast ⋯ j) (levelAssemble P χ L μ e D))
+      pk c
+levelTerm_eq : ∀ (P : Parameters) (χ : Noise) (L : ℕ) (μ : Bool) (e : Fin L) (j : Fin P.columns) {ρ : Type u_1}
+  [inst : Fintype ρ] [inst_1 : Nonempty ρ] (D : LeveledView P L → ρ → Bool),
+  levelTerm P χ L μ e j D =
+    decisionAdvantage P.lwe χ (levelReduction P χ L μ e j true D) +
+        decisionAdvantage P.lwe χ (levelReduction P χ L μ e j false D) +
+      2 * (↑P.columns * Regev.extractionError P.lwe)
+leveledEvalCircuit_eq : ∀ (P : Parameters) {L k : ℕ} [inst : NeZero k] (lk : Fin L → Fin P.columns → Ciphertext P)
+  (Cc : DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P),
+  leveledEvalCircuit P lk Cc hC cts = leveledEval P lk (Cc.toNANDForm hC).layerNAND (literalCts P cts)
+leveledEval_eq : ∀ (P : Parameters) {L k : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P) (Cc : DAGCircuit (k + k))
+  (cts : Fin (k + k) → Ciphertext P),
+  leveledEval P lk Cc cts =
+    (runWith (fun g vs => levelGate P lk (Cc.depthAt vs.length) g vs) Cc.gates (List.ofFn cts)).getD Cc.output 0
+leveledReductionEfficient_iff : ∀ (F : Family) (L : PolyExpr),
+  LeveledReductionEfficient F L ↔
+    ∀ (D : NUPPT) (μ : Bool),
+      ∃ D',
+        ∀ (κ : ℕ),
+          (∀ (e : Fin (L.eval κ)) (j : Fin (Parameters.ofFamily F κ).columns) (b : Bool),
+              decisionAdvantage (Parameters.ofFamily F κ).lwe (F.noise κ)
+                  (levelReduction (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) μ e j b fun v r =>
+                    D.distinguisherL κ (encodeLeveledView (Parameters.ofFamily F κ) (L.eval κ) v) r) ≤
+                F.advantageAt D' κ) ∧
+            ∀ (μ' : Bool),
+              decisionAdvantage (Parameters.ofFamily F κ).lwe (F.noise κ)
+                  (reduction (Parameters.ofFamily F κ) μ'
+                    (challengeDist (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) fun v r =>
+                      D.distinguisherL κ (encodeLeveledView (Parameters.ofFamily F κ) (L.eval κ) v) r)) ≤
+                F.advantageAt D' κ
+leveledView_eq : ∀ (P : Parameters) (χ : Noise) (L : ℕ) (μ : Bool) (r : LeveledSeeds P χ L),
+  leveledView P χ L μ r =
+    (fun d => (Regev.keygen P.lwe χ (r.1 d)).1,
+      levelKey P (fun d => (Regev.keygen P.lwe χ (r.1 d)).1) (fun d => (Regev.keygen P.lwe χ (r.1 d)).2) r.2.1,
+      encrypt P (Regev.keygen P.lwe χ (r.1 0)).1 μ r.2.2)
+@litInput_castAdd : ∀ {n : ℕ} (x : Fin n → Bool) (i : Fin n), litInput x (Fin.castAdd n i) = x i
+@litInput_natAdd : ∀ {n : ℕ} (x : Fin n → Bool) (i : Fin n), litInput x (Fin.natAdd n i) = !x i
+literalCts_castAdd : ∀ (P : Parameters) {k : ℕ} (cts : Fin k → Ciphertext P) (j : Fin k),
+  literalCts P cts (Fin.castAdd k j) = cts j
+literalCts_natAdd : ∀ (P : Parameters) {k : ℕ} (cts : Fin k → Ciphertext P) (j : Fin k),
+  literalCts P cts (Fin.natAdd k j) = homNot P [cts j]
+maxFanin_nandFormula_le : ∀ (P : Parameters) (C₁ C₂ : Ciphertext P), (nandFormula P C₁ C₂).maxFanin ≤ 2
+@max_le : ∀ {α : Type u_1} [inst : LinearOrder α] {a b c : α}, a ≤ c → b ≤ c → max a b ≤ c
+/home/user/ev/citations/names/NameCheck.lean:204:8: error(lean.unknownIdentifier): Unknown identifier `modulus_le_pow`
+nandFormula_eq : ∀ (P : Parameters) (C₁ C₂ : Ciphertext P),
+  nandFormula P C₁ C₂ = ((decryptFormula P C₁).and2 (decryptFormula P C₂)).neg
+nandFormula_eval : ∀ (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (C₁ C₂ : Ciphertext P),
+  (nandFormula P C₁ C₂).eval (keyBits P s) = !(decrypt P s C₁ && decrypt P s C₂)
+@nandGadget_correct : ∀ {n : ℕ}, GadgetCorrect n 2 (fun x l => l ≤ 2) DAGGate.IsNAND (nandGadget n)
+/home/user/ev/citations/names/NameCheck.lean:208:8: error(lean.unknownIdentifier): Unknown identifier `negligible_polyExpr_mul`
+negligible_two_pow_neg : Negligible fun n => 2⁻¹ ^ n
+norm_num : Lean.ParserDescr
+pBoot_eq : ∀ (F : Family),
+  pBoot F =
+    ((((PolyExpr.const (2 ^ 70)).mul F.residueBits).mul
+              (((F.dimensionBound.add (PolyExpr.const 1)).mul F.residueBits).pow 19)).mul
+          (((F.residueBits.add ((F.dimensionBound.add (PolyExpr.const 1)).mul F.residueBits)).add
+                (PolyExpr.const 3)).pow
+            4)).mul
+      F.samplesBound
+/home/user/ev/citations/names/NameCheck.lean:212:8: error(lean.unknownIdentifier): Unknown identifier `pk_0`
+@pow_mul : ∀ {M : Type u_1} [inst : Monoid M] (a : M) (m n : ℕ), a ^ (m * n) = (a ^ m) ^ n
+/home/user/ev/citations/names/NameCheck.lean:214:8: error(lean.unknownIdentifier): Unknown identifier `ratioBounded_iff`
+realView_eq : ∀ (P : Parameters) (χ : Noise) (μ : Bool)
+  (r :
+    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+        (Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins)) ×
+      Matrix (Fin P.lwe.samples) (Fin P.columns) Bool),
+  realView P χ μ r = view P μ (sample P.lwe χ r.1) r.2
+@real_uniformKey_advantage : ∀ {ρ : Type u_1} [inst : Fintype ρ] [inst_1 : Nonempty ρ] (P : Parameters) (χ : Noise)
+  (μ : Bool)
+  (D :
+    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) × (Fin P.lwe.samples → ZMod P.lwe.modulus)) ×
+        Ciphertext P →
+      ρ → Bool),
+  distAdv (realView P χ μ) (uniformKeyView P μ) D = decisionAdvantage P.lwe χ (reduction P μ D)
+reductionEfficient_iff : ∀ (F : Family),
+  ReductionEfficient F ↔
+    ∀ (D : NUPPT) (μ : Bool),
+      ∃ D',
+        ∀ (κ : ℕ),
+          decisionAdvantage (Parameters.ofFamily F κ).lwe (F.noise κ)
+              (reduction (Parameters.ofFamily F κ) μ fun v r =>
+                D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r) ≤
+            F.advantageAt D' κ
+@reduction_eq : ∀ {ρ : Type u_1} (P : Parameters) (μ : Bool)
+  (D :
+    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) × (Fin P.lwe.samples → ZMod P.lwe.modulus)) ×
+        Ciphertext P →
+      ρ → Bool)
+  (pk :
+    Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) × (Fin P.lwe.samples → ZMod P.lwe.modulus))
+  (r : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool × ρ), reduction P μ D pk r = D (view P μ pk r.1) r.2
+/home/user/ev/citations/names/NameCheck.lean:219:8: error(lean.unknownIdentifier): Unknown identifier `ring_nf`
+@runWith_rel : ∀ {α β : Type} (fA : DAGGate → List α → α) (fB : DAGGate → List β → β) (R : ℕ → α → β → Prop) (dA : α)
+  (dB : β) (gs : List DAGGate) (initA : List α) (initB : List β),
+  initB.length = initA.length →
+    (∀ v < initA.length, R v (initA.getD v dA) (initB.getD v dB)) →
+      (∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ gs[i].args, a < initA.length + i) →
+        (∀ (i : ℕ) (h : i < gs.length) (vA : List α) (vB : List β),
+            vA.length = initA.length + i →
+              vB.length = initA.length + i →
+                (∀ a ∈ gs[i].args, R a (vA.getD a dA) (vB.getD a dB)) →
+                  R (initA.length + i) (fA gs[i] vA) (fB gs[i] vB)) →
+          ∀ v < initA.length + gs.length, R v ((runWith fA gs initA).getD v dA) ((runWith fB gs initB).getD v dB)
+/home/user/ev/citations/names/NameCheck.lean:221:8: error(lean.unknownIdentifier): Unknown identifier `s_0`
+/home/user/ev/citations/names/NameCheck.lean:222:8: error(lean.unknownIdentifier): Unknown identifier `s_d`
+/home/user/ev/citations/names/NameCheck.lean:223:8: error(lean.unknownIdentifier): Unknown identifier `s_e`
+/home/user/ev/citations/names/NameCheck.lean:224:8: error(lean.unknownIdentifier): Unknown identifier `samples_le`
+select_eq : ∀ (P : Parameters) (C U V : Ciphertext P), select P C U V = mul P (gadget P - C) U + mul P C V
+/home/user/ev/citations/names/NameCheck.lean:226:8: error(lean.unknownIdentifier): Unknown identifier `toNANDForm_eval`
+/home/user/ev/citations/names/NameCheck.lean:227:8: error(lean.unknownIdentifier): Unknown identifier `toNANDForm_isNANDForm`
+@uniformKey_uniform_advantage_le : ∀ {ρ : Type u_1} [inst : Fintype ρ] [Nonempty ρ] (P : Parameters) (μ : Bool)
+  (D :
+    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) × (Fin P.lwe.samples → ZMod P.lwe.modulus)) ×
+        Ciphertext P →
+      ρ → Bool),
+  distAdv (uniformKeyView P μ) id D ≤ ↑P.columns * Regev.extractionError P.lwe
+@uprob_fst : ∀ {α : Type u_1} {β : Type u_2} [inst : Fintype α] [inst_1 : Fintype β] [Nonempty β] (p : α → Prop),
+  (uprob fun z => p z.1) = uprob p
+/home/user/ev/citations/names/NameCheck.lean:230:8: error(lean.unknownIdentifier): Unknown identifier `v`
+/home/user/ev/citations/names/NameCheck.lean:231:8: error(lean.unknownIdentifier): Unknown identifier `v`
+/home/user/ev/citations/names/NameCheck.lean:232:8: error(lean.unknownIdentifier): Unknown identifier `values_eq`
+view_eq : ∀ (P : Parameters) (μ : Bool)
+  (pk :
+    Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) × (Fin P.lwe.samples → ZMod P.lwe.modulus))
+  (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool), view P μ pk R = (pk, encrypt P pk μ R)
+weakCircularSecureFamily_iff : ∀ (F : Family),
+  WeakCircularSecureFamily F ↔
+    ∀ (D : NUPPT),
+      Negligible fun κ =>
+        distAdv (fheView (Parameters.ofFamily F κ) (F.noise κ) false)
+          (fheView (Parameters.ofFamily F κ) (F.noise κ) true) fun v r =>
+          D.distinguisherL κ (encodeFheView (Parameters.ofFamily F κ) v) r
+weakCircularSecure_iff : ∀ (P : Parameters) (χ : Noise) {ρ : Type u_1} [inst : Fintype ρ] [inst_1 : Nonempty ρ]
+  (D : FheView P → ρ → Bool) (ε : ℝ), WeakCircularSecure P χ D ε ↔ distAdv (fheView P χ false) (fheView P χ true) D ≤ ε

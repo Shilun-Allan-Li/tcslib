@@ -1,0 +1,33 @@
+@DAGCircuit.depthAt_gate : ∀ {n : ℕ} (C : DAGCircuit n) {i : ℕ} (hi : i < C.gates.length),
+  C.depthAt (n + i) = C.gates[i].depth C.depths
+@DAGCircuit.depthAt_input : ∀ {n : ℕ} (C : DAGCircuit n) {i : ℕ}, i < n → C.depthAt i = 0
+@DAGCircuit.depth_eq : ∀ {n : ℕ} (C : DAGCircuit n), C.depth = C.depthAt C.output
+@DAGCircuit.values_eq : ∀ {n : ℕ} (C : DAGCircuit n) (x : Fin n → Bool),
+  C.values x = runWith DAGGate.eval C.gates (List.ofFn x)
+@DAGCircuit.eval_eq : ∀ {n : ℕ} (C : DAGCircuit n) (x : Fin n → Bool), C.eval x = (C.values x).getD C.output false
+@DAGCircuit.isLayered_iff : ∀ {n : ℕ} (C : DAGCircuit n),
+  C.IsLayered ↔ ∀ (i : ℕ) (hi : i < C.gates.length), ∀ a ∈ C.gates[i].args, C.depthAt a + 1 = C.depthAt (n + i)
+@DAGCircuit.isNANDForm_iff : ∀ {n : ℕ} (C : DAGCircuit n), C.IsNANDForm ↔ ∀ g ∈ C.gates, g.IsNAND
+@DAGCircuit.layerNAND_depth : ∀ {n : ℕ} [inst : NeZero n] (C : DAGCircuit n), C.layerNAND.depth = C.depth
+@DAGCircuit.layerNAND_eval : ∀ {n : ℕ} [inst : NeZero n] (C : DAGCircuit n),
+  C.IsNANDForm → ∀ (x : Fin n → Bool), C.layerNAND.eval (litInput x) = C.eval x
+@DAGCircuit.layerNAND_isLayered : ∀ {n : ℕ} [inst : NeZero n] (C : DAGCircuit n), C.layerNAND.IsLayered
+@DAGCircuit.layerNAND_isNANDForm : ∀ {n : ℕ} [inst : NeZero n] (C : DAGCircuit n), C.IsNANDForm → C.layerNAND.IsNANDForm
+@DAGCircuit.toNANDForm_eval : ∀ {n : ℕ} (C : DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2) (x : Fin n → Bool),
+  (C.toNANDForm hC).eval x = C.eval x
+@DAGCircuit.toNANDForm_isNANDForm : ∀ {n : ℕ} (C : DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2),
+  (C.toNANDForm hC).IsNANDForm
+@DAGCircuit.output_lt : ∀ {n : ℕ} (self : DAGCircuit n), self.output < n + self.gates.length
+@DAGCircuit.args_lt : ∀ {n : ℕ} (self : DAGCircuit n) (i : ℕ) (h : i < self.gates.length),
+  ∀ a ∈ self.gates[i].args, a < n + i
+TCSlib.Cryptography.LWE.Family.dimension_le : ∀ (self : TCSlib.Cryptography.LWE.Family) (κ : ℕ),
+  (self.parameters κ).dimension ≤ self.dimensionBound.eval κ
+TCSlib.Cryptography.LWE.Family.samples_le : ∀ (self : TCSlib.Cryptography.LWE.Family) (κ : ℕ),
+  (self.parameters κ).samples ≤ self.samplesBound.eval κ
+TCSlib.Cryptography.LWE.Family.modulus_le_pow : ∀ (self : TCSlib.Cryptography.LWE.Family) (κ : ℕ),
+  (self.parameters κ).modulus ≤ 2 ^ self.residueBits.eval κ
+TCSlib.Cryptography.LWE.Family.ratioBounded_iff : ∀ (F : TCSlib.Cryptography.LWE.Family) (B : ℕ → ℕ)
+  (p : Complexity.PolyExpr),
+  F.RatioBounded B p ↔ ∀ (κ : ℕ), (F.noise κ).Bounded (B κ) ∧ (F.parameters κ).modulus ≤ p.eval κ * B κ
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.modulus_le : ∀
+  (self : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters), self.lwe.modulus ≤ 2 ^ self.width

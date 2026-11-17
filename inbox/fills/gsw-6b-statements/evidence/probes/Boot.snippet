@@ -1,0 +1,36 @@
+/-! #### Strict bootstrapping evaluators (probe-local; proved equal to the library definitions) -/
+
+/-- `bootNAND` through `formulaA`. -/
+def bootNANDA (P : Parameters) (evk : Fin P.columns → Ciphertext P) (C₁ C₂ : Ciphertext P) :
+    Ciphertext P :=
+  formulaA P (nandFormula P C₁ C₂) evk
+
+theorem bootNANDA_eq (P : Parameters) (evk : Fin P.columns → Ciphertext P) (C₁ C₂ : Ciphertext P) :
+    bootNANDA P evk C₁ C₂ = bootNAND P evk C₁ C₂ := by
+  rw [bootNANDA, formulaA_eq, bootNAND_eq]
+
+/-- `bootGate` with `bootNANDA`. -/
+def bootGateA (P : Parameters) (evk : Fin P.columns → Ciphertext P) (g : DAGGate)
+    (cts : List (Ciphertext P)) : Ciphertext P :=
+  match g.args with
+  | [] => bootNANDA P evk (gadget P) (gadget P)
+  | [a] => bootNANDA P evk (cts.getD a 0) (cts.getD a 0)
+  | a :: b :: _ => bootNANDA P evk (cts.getD a 0) (cts.getD b 0)
+
+theorem bootGateA_eq (P : Parameters) (evk : Fin P.columns → Ciphertext P) :
+    bootGateA P evk = bootGate P evk := by
+  funext g cts
+  rcases hg : g.args with _ | ⟨a, _ | ⟨b, l⟩⟩
+  · rw [bootGate_of_args_eq_nil P evk g cts hg, ← bootNANDA_eq]; simp only [bootGateA, hg]
+  · rw [bootGate_of_args_eq_singleton P evk g cts a hg, ← bootNANDA_eq]; simp only [bootGateA, hg]
+  · rw [bootGate_of_args_eq_cons_cons P evk g cts a b l hg, ← bootNANDA_eq]
+    simp only [bootGateA, hg]
+
+/-- `fheEval` with `bootGateA`. -/
+def fheEvalA (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ} (Cc : DAGCircuit k)
+    (cts : Fin k → Ciphertext P) : Ciphertext P :=
+  (runWith (bootGateA P evk) Cc.gates (List.ofFn cts)).getD Cc.output 0
+
+theorem fheEvalA_eq (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ}
+    (Cc : DAGCircuit k) (cts : Fin k → Ciphertext P) : fheEvalA P evk Cc cts = fheEval P evk Cc cts := by
+  rw [fheEvalA, bootGateA_eq, fheEval_eq]

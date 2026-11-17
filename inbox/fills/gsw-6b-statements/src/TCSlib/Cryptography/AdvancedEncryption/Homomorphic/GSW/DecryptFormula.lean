@@ -155,14 +155,17 @@ decryption formula of `C` evaluates to GSW decryption of `C` under `s`:
 Lemma 4.5, p029-b001, with its proof, p029-b002]. Deviation: the interval-sum construction of
 the formula layer (module docstring).
 
-**Proof sketch.** `decrypt_eq` and `Regev.decrypt_eq` read decryption as `decode` of
-`c_last − ⟨s, c_init⟩`, which is `⟨t, c⟩` for `t = (−s, 1)` (`secretVector_eq`,
-`Fin.sum_univ_castSucc`, `Fin.snoc_castSucc`, `Fin.snoc_last`); by G5 it is
-`∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(∑ᵢ xᵢ·aᵢ.val) mod q` (`ZMod.val_natCast`,
-`Nat.cast_sum`, `ZMod.natCast_zmod_val`). `LWE.BitEncoding.decode_iff_mem_Ico` (O2) turns
-`decode` into the interval test, and `FormulaArith.modSumInterval_eval` (F9) evaluates the
-formula to the same test, with `aᵢ.val < q` (`ZMod.val_lt`) and `decodeLo ≤ decodeHi ≤ q`
-(`decodeLo_eq`, `decodeHi_eq`, `omega`). Both sides are Booleans equal as propositions. -/
+**Proof sketch.** Decryption is `decode` of `⟨t, c⟩` with `t = (−s, 1)`, by the owner-side
+reader `decrypt_eq_decode_dotProduct : decrypt P s C = LWE.BitEncoding.decode P.lwe
+(secretVector P s ⬝ᵥ decryptColumn P C)` in `GSW/Scheme.lean`. It is **MISSING** at the base
+(the step exists only inside the private `decrypt_eq_decode_errorSum`), listed in the reader
+census, and lands owner-side before this fill (ruling Q-C1); the fill does not re-derive it.
+By G5, `⟨t, c⟩` is `∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(∑ᵢ xᵢ·aᵢ.val) mod q`
+(`ZMod.val_natCast`, `Nat.cast_sum`, `ZMod.natCast_zmod_val`).
+`LWE.BitEncoding.decode_iff_mem_Ico` (O2) turns `decode` into the interval test, and
+`FormulaArith.modSumInterval_eval` (F9) evaluates the formula to the same test, with
+`aᵢ.val < q` (`ZMod.val_lt`) and `decodeLo ≤ decodeHi ≤ q` (`decodeLo_eq`, `decodeHi_eq`,
+`omega`). Both sides are Booleans equal as propositions. -/
 theorem decryptFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
     (C : Ciphertext P) : (decryptFormula P C).eval (keyBits P s) = decrypt P s C := by
   sorry

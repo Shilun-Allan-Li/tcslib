@@ -1,0 +1,343 @@
+## select
+  pattern 'mul P \\(gadget P - ': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'gadget P - C\\)': TCSlib 3, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:87:  gadget P - homAnd P (Cs.map fun C => gadget P - C)
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:91:    homOr P Cs = gadget P - homAnd P (Cs.map fun C => gadget P - C) := rfl
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:207:        ((args.map fun a => cts.getD a 0).map fun C => gadget P - C) := by
+  pattern 'def (sel|select|mux|cmux)\\b': TCSlib 1, Mathlib/Batteries/core 4
+    T TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:185:def select (D : α → Bool) : (t : ℕ) → (Fin (t + 1) → α) → α
+    X Mathlib/Tactic/MkIffOfInductiveProp.lean:34: private def select (m n : Nat) (goal : MVarId) : MetaM MVarId :=
+    X Mathlib/RingTheory/WittVector/InitTail.lean:55: def select (P : ℕ → Prop) (x : 𝕎 R) : 𝕎 R :=
+    X lean/Lean/PremiseSelection/Basic.lean:202: def select (m : MVarId) (c : Config := {}) : MetaM (Array Suggestion) := do
+    X lean/Lean/Meta/MkIffOfInductiveProp.lean:55: private def select (m n : Nat) (goal : MVarId) : MetaM MVarId :=
+## homEvalPBP
+  pattern 'evalWith \\(': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/BranchingPrograms/Eval.lean:156:`B.evalWith (fun b u v => if b then v else u) x (Pi.single s 1) = Pi.single (B.yield x s) 1`
+    T TCSlib/Complexity/BranchingPrograms/Eval.lean:168:    B.evalWith (fun b (u v : ℕ) => if b then v else u) x (Pi.single s 1) =
+  pattern 'def homEval': TCSlib 0, Mathlib/Batteries/core 0
+## homEvalFormula
+  pattern 'barrington [^ ]+ sigma1': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'barrington c ': TCSlib 14, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/BranchingPrograms/Barrington.lean:252:  (C12).  Hence `N c μ := (barrington c μ⁻¹).complementLast μ⁻¹` recognizes `¬c` with output `μ`.
+    T TCSlib/Complexity/BranchingPrograms/Barrington.lean:264:  | .node _ [c], σ => barrington c σ
+    T TCSlib/Complexity/BranchingPrograms/Barrington.lean:300:/-- Reader of `barrington`, fan-in 1: `barrington (.node b [c]) σ = barrington c σ`. -/
+    T TCSlib/Complexity/BranchingPrograms/Barrington.lean:302:    barrington (.node b [c]) σ = barrington c σ := by
+    T TCSlib/Complexity/BranchingPrograms/Barrington.lean:398:`σ`, `barrington c σ` five-cycle recognizes `{x | c.eval x = true}` with output `σ`
+    T TCSlib/Complexity/BranchingPrograms/Barrington.lean:419:    FiveCycleRecognizes (barrington c σ) (fun x => c.eval x = true) σ := by
+## keyBits
+  pattern 'decomposeVec P \\(secretVector': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def (keyBits|secretBits|bitsOfSecret)': TCSlib 0, Mathlib/Batteries/core 0
+## decConstants
+  pattern 'vecMul \\(decryptColumn': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'decryptColumn P C\\) \\(gadget': TCSlib 0, Mathlib/Batteries/core 0
+## decryptFormula
+  pattern 'modSumInterval \\(': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def decrypt(Formula|Circuit)': TCSlib 0, Mathlib/Batteries/core 0
+## nandFormula
+  pattern 'and2 .*\\)\\.neg': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:87:    TreeCircuit.and2 (geConst U W (j * q + lo)) (geConst U W (j * q + hi)).neg)
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:93:and2 (geConst U W (j * q + lo)) (geConst U W (j * q + hi)).neg)`. -/
+  pattern 'def nand(Formula|Circuit)': TCSlib 0, Mathlib/Batteries/core 0
+## decDepth
+  pattern 'modSumDepth (P|N|M)': TCSlib 8, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:138:`modSumDepth M q = 4 * csaLevels M + Nat.clog 2 M + 2 * Nat.clog 2 (Nat.clog 2 M + Nat.clog 2 q + 1)
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:145:/-- The depth bound written out: `modSumDepth M q = 4 * csaLevels M + Nat.clog 2 M +
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:148:    modSumDepth M q =
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:152:/-- **F10, depth.** The modular interval-sum formula has depth at most `modSumDepth M q`, for
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:153:all constants and bounds: `(modSumInterval a q lo hi).depth ≤ modSumDepth M q`.
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:166:    (modSumInterval a q lo hi).depth ≤ modSumDepth M q := by
+## bootNoise
+  pattern '4 \\^ \\(.*\\+ 1\\) \\* \\(2 \\* ': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def bootNoise': TCSlib 0, Mathlib/Batteries/core 0
+## bootNAND
+  pattern 'homEvalFormula P \\(': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def boot': TCSlib 1, Mathlib/Batteries/core 2
+    T TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:311:def bootCfg (c : Cfg S.k Bool S.State x) :
+    X lean/lake/Lake/Config/Package.lean:129: @[inline] public def bootstrap (self : Package) : Bool  :=
+    X lean/lake/Lake/Config/Workspace.lean:56: @[inline] def bootstrap (ws : Workspace) : Bool :=
+## bootGate / homGate
+  pattern 'match g\\.args with': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def homGate': TCSlib 1, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:96:def homGate (P : Parameters) (g : DAGGate) (cts : List (Ciphertext P)) : Ciphertext P :=
+## fheEval / GSW.eval
+  pattern 'runWith \\((homGate|bootGate|fun g)': TCSlib 11, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:113:  runWith (homGate P) Cc.gates (List.ofFn cts)
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:118:    evalValues P Cc cts = runWith (homGate P) Cc.gates (List.ofFn cts) := rfl
+    T TCSlib/Cryptography/SecureComputation/Garbling.lean:113:      (runWith (fun g vs => fB vs.length g vs) gs initB).getD v dB =
+    T TCSlib/Cryptography/SecureComputation/Garbling.lean:330:  runWith (fun g vs => evalGate M (tableAt M Cc s) vs.length g vs) Cc.gates init
+    T TCSlib/Cryptography/SecureComputation/Garbling.lean:336:      runWith (fun g vs => evalGate M (tableAt M Cc s) vs.length g vs) Cc.gates init := rfl
+    T TCSlib/Cryptography/SecureComputation/Yao.lean:455:  runWith (fun g vs => evalGate (nestedSpecial E₁ E₂ n) (yaoBobTables Y n msg) vs.length g vs)
+  pattern '\\(runWith .*\\)\\.getD': TCSlib 72, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity/Adder.lean:225:    (runWith DAGGate.eval (bitBlock a b c cin acc L) vs).getD (L + 8) false =
+    T TCSlib/Complexity/CircuitComplexity/Adder.lean:228:    (runWith DAGGate.eval (bitBlock a b c cin acc L) vs).getD (L + 14) false =
+    T TCSlib/Complexity/CircuitComplexity/Adder.lean:488:    (runWith DAGGate.eval (adderGatesUpTo n k i) (List.ofFn x)).getD (cinIdx n i) false =
+    T TCSlib/Complexity/CircuitComplexity/Adder.lean:490:    (runWith DAGGate.eval (adderGatesUpTo n k i) (List.ofFn x)).getD (accIdx n i) false =
+    T TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect.lean:401:        o < vals.length + gs.length ∧ (runWith DAGGate.eval gs vals).getD o false = true := by
+    T TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect.lean:416:          (runWith DAGGate.eval gs vals).getD o false = true) by
+## evalKey
+  pattern 'encrypt P pk \\(': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def (evalKey|evk|bootKey)': TCSlib 0, Mathlib/Batteries/core 0
+## PublicKey/Secret/Coins/KeySeed
+  pattern 'abbrev (PublicKey|Secret|Coins|KeySeed|Seed)\\b': TCSlib 3, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/Randomized/PPT.lean:222:abbrev Coins (n : ℕ) : Type := Fin (A.coinLen n) → Bool
+    T TCSlib/Cryptography/SecureComputation/Hybrid.lean:146:abbrev Coins (n : ℕ) : Type := H.main.ExecCoins H.main.P (List.replicate n true)
+    T TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:129:abbrev Coins (S : Strategy) (n : ℕ) : Type := Fin (S.coinLen n) → Bool
+  pattern 'Matrix \\(Fin P\\.lwe\\.samples\\) \\(Fin P\\.columns\\) Bool': TCSlib 15, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:304:    (x : Fin k → Bool) (R : Fin k → Matrix (Fin P.lwe.samples) (Fin P.columns) Bool)
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:105:    (μ : Bool) (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) : Ciphertext P :=
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:112:    (μ : Bool) (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:165:    (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:190:    (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool) :
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:358:    (R : Matrix (Fin P.lwe.samples) (Fin P.columns) Bool)
+## FheView/Seeds/fheView
+  pattern 'abbrev (FheView|View|Seeds)\\b': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'Regev\\.keygen P\\.lwe χ r\\.1': TCSlib 0, Mathlib/Batteries/core 0
+## WeakCircularSecure(Family)
+  pattern '(?i)def \\S*circular': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def \\S*Secure\\S* .*: Prop': TCSlib 18, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean:550:def SIDSecure : Prop :=
+    T TCSlib/Cryptography/Authentication/MAC/Defs.lean:165:def Secure : Prop :=
+    T TCSlib/Cryptography/Authentication/Signatures/Defs.lean:186:def Secure : Prop :=
+    T TCSlib/Cryptography/Authentication/Signatures/Defs.lean:198:def OneTimeSecure : Prop :=
+    T TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:88:def SingleMessageSecure (S : PrivateKeyScheme) : Prop :=
+    T TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:120:def MultiMessageSecure (S : PrivateKeyScheme) : Prop :=
+## levelKey / LevelCoins
+  pattern 'd\\.succ\\) \\(ss d\\.castSucc': TCSlib 0, Mathlib/Batteries/core 0
+  pattern '(?i)def \\S*levelkey': TCSlib 0, Mathlib/Batteries/core 0
+## literalCts
+  pattern 'Fin\\.append cts': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'homNot P \\[cts': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'Fin\\.append x fun': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:124:def litInput (x : Fin n → Bool) : Fin (n + n) → Bool := Fin.append x fun i => !x i
+    T TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:127:theorem litInput_eq (x : Fin n → Bool) : litInput x = Fin.append x fun i => !x i := rfl
+## levelGate / leveledEval
+  pattern 'depthAt vs\\.length': TCSlib 0, Mathlib/Batteries/core 0
+  pattern '(?i)def \\S*leveled': TCSlib 0, Mathlib/Batteries/core 0
+## leveledView / levelHybrid
+  pattern '(?i)def \\S*hybrid\\b': TCSlib 6, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/Pseudorandom/Generators.lean:130:def prgHybrid (G : S → Bool × S) (l k : ℕ) : (Fin l → Bool) × S → (Fin l → Bool) × S :=
+    T TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:198:def multicopyHybrid (X : σ → γ) (Y : τ → γ) (t k : ℕ) :
+    T TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:108:def nextBitHybrid {σ : Type*} {ℓ : ℕ} (X : σ → Fin ℓ → Bool) (i : ℕ) :
+    T TCSlib/Cryptography/SecureComputation/Yao.lean:588:noncomputable def yaoHybrid : HybridProtocol otFunctionality where
+    T TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:82:def columnHybrid (P : Parameters) (χ : Noise) (w k : ℕ)
+    T TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:148:def pairHybrid (X : Fin t → σ → γ) (Y : Fin t → τ → γ) (k : ℕ) :
+  pattern 'if h ≤ e\\.val then': TCSlib 0, Mathlib/Batteries/core 0
+## levelReduction / hybridPlant
+  pattern 'hybridPlant \\(': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'reduction P \\(': TCSlib 0, Mathlib/Batteries/core 0
+## levelTerm / challengeTerm
+  pattern 'decisionAdvantage P\\.lwe χ \\(.*\\) \\+': TCSlib 5, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:253:      LWE.decisionAdvantage P.lwe χ (reduction P μ₀ D) +
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:254:      LWE.decisionAdvantage P.lwe χ (reduction P μ₁ D) +
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:294:      LWE.decisionAdvantage P.lwe χ (reduction P μ₀ D) +
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:295:      LWE.decisionAdvantage P.lwe χ (reduction P μ₁ D) +
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean:159:      LWE.decisionAdvantage P.lwe χ (fun c r => D (symEncrypt P hN c μ₀) r) +
+  pattern 'extractionError P\\.lwe\\)': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:255:      2 * (P.columns * Regev.extractionError P.lwe) := by
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:299:  have hN : 2 * ((P.columns : ℝ) * Regev.extractionError P.lwe) ≤
+## RatioBounded
+  pattern '(?i)ratio': TCSlib 3906, Mathlib/Batteries/core 10958
+    T TCSlib/BooleanAnalysis/BLR/BoolBLR.lean:35:-- problem: testing closeness to a linear function = testing concentration of
+    T TCSlib/BooleanAnalysis/BLR/BoolFourier.lean:73:/-- Defines pointwise XOR, the group operation on the Boolean cube.
+    T TCSlib/BooleanAnalysis/BLR/ZkFourier.lean:174:-- the sum is a geometric series with ratio ω_k^j ≠ 1, so it telescopes to 0.
+    T TCSlib/BooleanAnalysis/BLR/ZkFourier.lean:180:      · -- When j ≠ 0, the sum is a geometric series with ratio ω_k^j ≠ 1.
+    T TCSlib/BooleanAnalysis/BLR/ZkFourier.lean:201:-- This section defines the basic function space and analytic operations for
+    T TCSlib/BooleanAnalysis/BLR/ZkFourier.lean:210:-- These are the direct analogues of the corresponding operations in
+    X Mathlib/Init.lean:23: import Mathlib.Tactic.TacticAnalysis.Declarations
+    X Mathlib/Tactic.lean:69: import Mathlib.Tactic.DeclarationNames
+    X Mathlib/Tactic.lean:201: import Mathlib.Tactic.NormNum.Irrational
+    X Mathlib/Tactic.lean:281: import Mathlib.Tactic.TacticAnalysis.Declarations
+  pattern 'Bounded \\(B κ\\)': TCSlib 0, Mathlib/Batteries/core 0
+## Parameters.ofFamily
+  pattern 'residueBits\\.eval κ': TCSlib 12, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:51:        (F.residueBits.eval κ) A) r))
+    T TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:58:          (F.residueBits.eval κ) A) r)) := rfl
+    T TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:83:      TCSlib.Cryptography.SIS.encodeChallenge P (F.residueBits.eval κ) A
+    T TCSlib/Cryptography/LWE/Assumption.lean:81:  modulus_le_pow : ∀ κ, (parameters κ).modulus ≤ 2 ^ (residueBits.eval κ)
+    T TCSlib/Cryptography/LWE/Assumption.lean:106:    (encodeChallenge (F.parameters κ) (F.residueBits.eval κ) x).length ≤
+    T TCSlib/Cryptography/LWE/Assumption.lean:120:      (encodeChallenge (F.parameters κ) (F.residueBits.eval κ) x) r)
+  pattern 'modulus_le_pow κ': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def \\S*ofFamily': TCSlib 0, Mathlib/Batteries/core 1
+    X lean/lake/Lake/Util/Family.lean:173: @[macro_inline, expose] public def ofFamily [FamilyOut F a β] (b : F a) : β :=
+## pBoot
+  pattern '\\.const \\(2 \\^': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def pBoot': TCSlib 0, Mathlib/Batteries/core 0
+## encodeCiphertext/View/FheView/LeveledView
+  pattern 'encodeMatrix P\\.width': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'encodeMatrix .* C\\b': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'def encode\\S*View': TCSlib 0, Mathlib/Batteries/core 0
+## ReductionEfficient / LeveledReductionEfficient
+  pattern "∃ D\\' : NUPPT": TCSlib 1, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:389:    ∃ D' : NUPPT, D'.coins = D.coins ∧
+  pattern '(?i)def \\S*efficient': TCSlib 4, Mathlib/Batteries/core 4
+    T TCSlib/Complexity/ClassPSPACE/TQBF.lean:491:private def codecCoefficient (M : FinTM Bool) : ℕ :=
+    T TCSlib/Complexity/ClassPSPACE/TQBF.lean:1070:private def codecValidityCoefficient (M : FinTM Bool) : ℕ :=
+    T TCSlib/Complexity/ClassPSPACE/TQBF.lean:1947:private def codecTransitionCoefficient (M : FinTM Bool) : ℕ :=
+    T TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:177:def Efficient (S : Strategy) : Prop :=
+    X Mathlib/Tactic/Module.lean:472: partial def reduceCoefficientwise {R : Q(Type u)} {_ : Q(AddCommMonoid $M)} {_ : Q(Semiring $R)}
+    X lean/Lean/Elab/Tactic/BVDecide/Frontend/Normalize/AC.lean:166: def VarStateM.computeCoefficients (op : Op) (e : Expr) : VarStateM CoefficientsMap :=
+    X lean/Lean/Elab/Tactic/BVDecide/Frontend/Normalize/AC.lean:198: def SharedCoefficients.compute (x y : CoefficientsMap) : VarStateM SharedCoefficients := do
+    X lean/Lean/Elab/Tactic/BVDecide/Frontend/Normalize/AC.lean:219: def CoefficientsMap.toExpr (coeff : CoefficientsMap) (op : Op) : VarStateM (Option Expr) := do
+## decodeLo/decodeHi/decode_iff_mem_Ico
+  pattern '/ 2 / 2': TCSlib 9, Mathlib/Batteries/core 10
+    T TCSlib/Complexity/Randomized/Coins.lean:206:  have hg : Summable fun i : ℕ => (1 / 2 : ℝ) ^ K * (1 / 2 / 2 ^ i) :=
+    T TCSlib/Complexity/Randomized/Coins.lean:209:      ≤ ∑' i : ℕ, (1 / 2 : ℝ) ^ K * (1 / 2 / 2 ^ i) := by
+    T TCSlib/Complexity/Randomized/Coins.lean:211:        have hr : (1 / 2 : ℝ) ^ K * (1 / 2 / 2 ^ i) = 1 / 2 ^ (i + K + 1) := by
+    T TCSlib/Complexity/Randomized/Coins.lean:232:  calc binVal (fun _ => true) = ∑' i : ℕ, (1 : ℝ) / 2 / 2 ^ i :=
+    T TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:219:      (if mode then true else @decide (Edge N x st.s (st.i / 2 / 2 ^ st.e)
+    T TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:296:    @decide (Edge N x s ((i - (2 * 2 ^ E + 2)) / 2 / 2 ^ E) ((i - (2 * 2 ^ E + 2)) / 2 % 2 ^ E))
+    X Mathlib/Topology/ContinuousMap/Bounded/ArzelaAscoli.lean:32: let ε₂ := ε₁ / 2 / 2
+    X Mathlib/Analysis/BoxIntegral/Basic.lean:768: For `x ∈ s`, we choose `εs` such that `∑' x : s, εs x < ε / 2 / 2 ^ #ι`, then choose `r x` so
+    X Mathlib/Analysis/BoxIntegral/DivergenceTheorem.lean:188: _ ≤ ε / 2 / 2 + ε / 2 / 2 := add_le_add (hδ₁ _ <| this hy₁) (hδ₁ _ <| this hy₂)
+    X Mathlib/Analysis/SpecificLimits/Basic.lean:370: theorem hasSum_geometric_two' (a : ℝ) : HasSum (fun n : ℕ ↦ a / 2 / 2 ^ n) a := by
+  pattern 'decode P .* = true ↔': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/LWE/BitEncoding.lean:138:`decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P`. With `h = ⌊q/2⌋` the interval
+    T TCSlib/Cryptography/LWE/BitEncoding.lean:152:    decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P := by
+  pattern '(?i)valMinAbs_natAbs_eq_min': TCSlib 3, Mathlib/Batteries/core 1
+    T TCSlib/Cryptography/LWE/BitEncoding.lean:143:Mathlib's `ZMod.valMinAbs_natAbs_eq_min`, the natural absolute value of the minimal lift of a
+    T TCSlib/Cryptography/LWE/BitEncoding.lean:168:  -- (`ZMod.valMinAbs_natAbs_eq_min`); linear arithmetic in every case.
+    T TCSlib/Cryptography/LWE/BitEncoding.lean:171:  rw [ZMod.valMinAbs_natAbs_eq_min, ZMod.valMinAbs_natAbs_eq_min, hsub, decodeLo_eq, decodeHi_eq]
+    X Mathlib/Data/ZMod/ValMinAbs.lean:160: lemma valMinAbs_natAbs_eq_min [hpos : NeZero n] (a : ZMod n) :
+  pattern 'mem_Ico': TCSlib 38, Mathlib/Batteries/core 280
+    T TCSlib/BooleanAnalysis/ThresholdFunctions/GaussianPolar.lean:236:    simp only [Set.mem_inter_iff, Set.mem_Ioo, Set.mem_Ioc, Set.mem_Ico, Set.mem_union]
+    T TCSlib/BooleanAnalysis/ThresholdFunctions/GaussianTail.lean:505:  filter_upwards [Ioo_mem_nhdsGT_of_mem (Set.mem_Ico.2 ⟨le_refl (0 : ℝ), hc⟩)] with α hα
+    T TCSlib/BooleanAnalysis/ThresholdFunctions/GaussianTail.lean:524:    filter_upwards [Ioo_mem_nhdsGT_of_mem (Set.mem_Ico.2 ⟨le_refl (0 : ℝ), one_pos⟩)] with α hα
+    T TCSlib/BooleanAnalysis/ThresholdFunctions/GaussianTail.lean:532:  filter_upwards [Ioo_mem_nhdsGT_of_mem (Set.mem_Ico.2 ⟨le_refl (0 : ℝ), one_pos⟩)] with α hα
+    T TCSlib/Complexity/CircuitComplexity/FormulaFanOut.lean:432:  simp only [rootSet, Finset.mem_filter, Finset.mem_Ico, Finset.mem_insert, htake,
+    T TCSlib/Complexity/CircuitComplexity/FormulaFanOut.lean:467:      simp only [rootSet, Finset.mem_filter, Finset.mem_Ico, List.mem_toFinset]
+    X Mathlib/Probability/Martingale/Centering.lean:115: refine (eventuallyEq_sum fun k hk => h_ge k (Finset.mem_Ico.mp hk).1).trans ?_
+    X Mathlib/Probability/Martingale/Upcrossing.lean:575: simp only [Set.mem_Ico, Finset.mem_filter, Finset.mem_range, Finset.mem_Ico,
+    X Mathlib/Probability/Martingale/Upcrossing.lean:726: rw [Finset.mem_Ico] at hk
+    X Mathlib/Probability/Martingale/Upcrossing.lean:734: rw [Finset.mem_Ico, Nat.succ_le_iff] at hk
+## neZero_columns
+  pattern 'NeZero .*columns': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'NeZero .*width': TCSlib 36, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/Encoding/DyadicUniform.lean:46:def bitsToResidue {q : ℕ} [NeZero q] (width : ℕ)
+    T TCSlib/Cryptography/Encoding/DyadicUniform.lean:51:theorem bitsToResidue_eq {q : ℕ} [NeZero q] (width : ℕ)
+    T TCSlib/Cryptography/Encoding/DyadicUniform.lean:60:theorem bitsToResidue_bijective {q : ℕ} [NeZero q] (width : ℕ)
+    T TCSlib/Cryptography/Encoding/DyadicUniform.lean:83:theorem bitsToResidue_uniform {q : ℕ} [NeZero q] (width : ℕ)
+    T TCSlib/Cryptography/Encoding/DyadicUniform.lean:104:theorem encode_bitsToResidue {q : ℕ} [NeZero q] (width : ℕ)
+    T TCSlib/Cryptography/Encoding/DyadicUniform.lean:115:def bitsToVector {q length : ℕ} [NeZero q] (width : ℕ)
+## G1 Encrypts.select
+  pattern 'theorem Encrypts\\.': TCSlib 9, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:138:theorem Encrypts.mono {x : ℤ} {β β' : ℕ} {C : Ciphertext P} (h : Encrypts P t x β C)
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:149:theorem Encrypts.add {x₁ x₂ : ℤ} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:165:theorem Encrypts.neg {x : ℤ} {β : ℕ} {C : Ciphertext P} (h : Encrypts P t x β C) :
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:177:theorem Encrypts.sub {x₁ x₂ : ℤ} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:188:theorem Encrypts.sum {ι : Type*} (s : Finset ι) (x : ι → ℤ) (β : ι → ℕ)
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:216:theorem Encrypts.mul {x₁ x₂ : ℤ} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
+  pattern 'Encrypts P t \\(\\(1 - b\\)': TCSlib 0, Mathlib/Batteries/core 0
+## G2/G3 encrypts_homEval*
+  pattern 'evalWith_rel': TCSlib 3, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/BranchingPrograms.lean:25:- `BranchingPrograms.Eval`: the push-form host `evalWith`, `evalWith_rel`, the Boolean semantics.
+    T TCSlib/Complexity/BranchingPrograms/Eval.lean:39:* `BranchingProgram.evalWith_rel` — the step-indexed relational host lemma (C7).
+    T TCSlib/Complexity/BranchingPrograms/Eval.lean:143:theorem evalWith_rel [AddCommMonoid α] [AddCommMonoid α'] (sel : β → α → α → α)
+  pattern 'Encrypts P t .*homEval': TCSlib 0, Mathlib/Batteries/core 0
+## G5 vecMul_secretVector_eq_sum
+  pattern 'secretVector P s ⬝ᵥ': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'dotProduct \\(secretVector': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:224:      dotProduct (secretVector P s) (C.mulVec
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:233:  have hw : dotProduct (secretVector P s) (halfVector P) =
+  pattern 'vecMul \\(secretVector': TCSlib 1, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:85:    Matrix.vecMul (secretVector P s) (Regev.augmented P.lwe (A, LWE.noisyValues P.lwe A s e)) =
+  pattern 'gadget_mulVec_decomposeVec': TCSlib 6, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:29:* `gadget_mulVec_decomposeVec`, `gadget_mul_decompose`: `G · G⁻¹(M) = M` [Pei16, (5.4.1)].
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:164:theorem gadget_mulVec_decomposeVec (P : Parameters)
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:184:which is `M i c` by `gadget_mulVec_decomposeVec`. -/
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:189:  have h := congrFun (gadget_mulVec_decomposeVec P (fun j => M j c)) i
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:256:    ← Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:267:`b·⟨t, G x⟩ + ⟨e, x⟩ = b·⟨t, w⟩ + ⟨e, x⟩` by `gadget_mulVec_decomposeVec`, and `⟨t, w⟩ = ⌊q/2⌋`
+  pattern 'dotProduct_mulVec': TCSlib 4, Mathlib/Batteries/core 32
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:255:  rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct,
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:256:    ← Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:265:(`Fin.sum_univ_castSucc`, `secretVector_eq`). `Matrix.dotProduct_mulVec` turns `⟨t, C x⟩` into
+    T TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:115:    rw [Matrix.dotProduct_mulVec, Matrix.vecMul_transpose]
+    X Mathlib/Combinatorics/SimpleGraph/AdjMatrix.lean:253: theorem dotProduct_mulVec_adjMatrix [NonAssocSemiring α] (x y : V → α) :
+    X Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:69: theorem dotProduct_mulVec_degMatrix [CommSemiring R] (x : V → R) :
+    X Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:81: simp_rw [toLinearMap₂'_apply', lapMatrix, sub_mulVec, dotProduct_sub, dotProduct_mulVec_degMatrix,
+    X Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:82: dotProduct_mulVec_adjMatrix, ← sum_sub_distrib, degree_eq_sum_if_adj, sum_mul, ite_mul, one_mul,
+## G6/G7 *Formula_eval
+  pattern '\\.eval \\(keyBits': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'modSumInterval_eval': TCSlib 4, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:35:* `BoolCircuit.FormulaArith.modSumInterval_eval` — F9: the formula tests
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:80:`lo ≤ (∑ i, x_i a_i) % q < hi` (`modSumInterval_eval`).  [BV11, Lemma 4.5, p029-b001;
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:81:BV14, Prop 3.4, p011-b001]; deviations in `modSumInterval_eval`. -/
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:131:theorem modSumInterval_eval {M : ℕ} {a : Fin M → ℕ} {q lo hi : ℕ} (ha : ∀ i, a i < q)
+## G8 depth/fan-in/decDepth_le
+  pattern 'modSumDepth_le': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:37:* `BoolCircuit.FormulaArith.depth_modSumInterval_le`, `modSumDepth_le`,
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:179:theorem modSumDepth_le (M q : ℕ) :
+  pattern 'depth_modSumInterval_le': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:37:* `BoolCircuit.FormulaArith.depth_modSumInterval_le`, `modSumDepth_le`,
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:165:theorem depth_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ) :
+  pattern 'maxFanin_modSumInterval_le': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:38:  `maxFanin_modSumInterval_le` — F10: depth at most
+    T TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:190:theorem maxFanin_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ) :
+## G9/G10/G18/G12 bootstrapping correctness
+  pattern 'theorem (eval_encrypts|decrypt_keygen_eval)': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:250:theorem eval_encrypts {k : ℕ} (Cc : DAGCircuit k) (hfan : ∀ g ∈ Cc.gates, g.args.length ≤ 2)
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:300:theorem decrypt_keygen_eval (χ : LWE.Noise)
+  pattern 'decrypt P .* \\(eval P': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'Encrypts\\.nand': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:31:* `Encrypts.nand`: NAND of two bit encryptions with noise `N·β₁ + β₂ ≤ (N+1)·max`.
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:274:theorem Encrypts.nand {b₁ b₂ : Bool} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
+## G11/L1 citations
+  pattern 'theorem encrypts_(keygen_)?encrypt\\b': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:161:theorem encrypts_encrypt (P : Parameters)
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:186:theorem encrypts_keygen_encrypt (P : Parameters) (χ : LWE.Noise)
+## G13 bootNoise_le
+  pattern 'pow_pred_clog_lt_self': TCSlib 2, Mathlib/Batteries/core 4
+    T TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:76:  have hpred := Nat.pow_pred_clog_lt_self one_lt_two h1
+    T TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:122:  have hpred := Nat.pow_pred_clog_lt_self one_lt_two (by omega : 1 < 2 * n)
+    X Mathlib/Data/Nat/Log.lean:332: theorem pow_pred_clog_lt_self {b : ℕ} (hb : 1 < b) {x : ℕ} (hx : 1 < x) :
+    X Mathlib/Data/Int/Log.lean:44: * `Int.zpow_pred_clog_lt_self`, `Int.self_le_zpow_clog`: the bounds formed by `Int.clog`,
+    X Mathlib/Data/Int/Log.lean:116: exact Nat.pow_pred_clog_lt_self hb <| Nat.one_lt_cast.1 <| hcri.trans_le <| Nat.le_ceil _
+    X Mathlib/Data/Int/Log.lean:241: theorem zpow_pred_clog_lt_self {b : ℕ} {r : R} (hb : 1 < b) (hr : 0 < r) :
+  pattern '4 \\^ 33': TCSlib 0, Mathlib/Batteries/core 0
+## G15 distAdv_fheView_noEvk_le
+  pattern 'theorem distAdv_encrypt_le': TCSlib 4, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:248:theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    T TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:287:theorem distAdv_encrypt_le_of_width {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    T TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:301:theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    T TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:116:theorem distAdv_encrypt_le (P : Parameters) (χ : Noise)
+  pattern 'uprob_fst': TCSlib 84, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/Asymptotic/CollectionShift.lean:255:  exact (uprob_fst _).symm
+    T TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:96:    (uprob_fst fun w : σ × ρ => D (X w.1) w.2 = true)
+    T TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:152:independent unused component (`uprob_fst`, `uprob_comp_equiv`). -/
+    T TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:169:        (uprob_fst (fun z : α × GuessCoins m k ρ => guessRecover A k (f z.1) z.2 = enc z.1)).symm
+    T TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:218:`glCoinsEquiv` (the unread coins dropped by `uprob_fst`); pointwise, `glCollMachine_runAt`,
+    T TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:256:  refine le_of_eq_of_le (uprob_fst (β := Fin ((glCoins mP K (A.precomp collPre_poly)).eval n - glNeed (A.precomp co
+## L2/L3 leveled correctness
+  pattern 'layerNAND_eval': TCSlib 2, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:78:* `BoolCircuit.DAGCircuit.layerNAND_eval` (N7) — semantics on the literal input.
+    T TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:336:theorem DAGCircuit.layerNAND_eval (hC : C.IsNANDForm) (x : Fin n → Bool) :
+  pattern 'litInput': TCSlib 19, Mathlib/Batteries/core 0
+    T TCSlib/Complexity/CircuitComplexity.lean:167:  `litInput`, and the layering `DAGCircuit.layerNAND` of NAND-form circuits onto the `2n`
+    T TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:18:to a layered NAND-form circuit on the `2n` **literals** `x, ¬x` (`BoolCircuit.litInput`), of the
+    T TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:50:`litInput x` the value of `u` on `x`; the column of `u` has at most `2 (D - C.depthAt u) + 1`
+    T TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:67:* `BoolCircuit.litInput` — the `2n` literals of an input.
+    T TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:122:`litInput x = Fin.append x (fun i => !x i)` (Bar89's "inputs and negated inputs"
+    T TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:124:def litInput (x : Fin n → Bool) : Fin (n + n) → Bool := Fin.append x fun i => !x i
+## L4/L5 hybrids
+  pattern 'theorem distAdv_multi_le_sum': TCSlib 1, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:134:theorem distAdv_multi_le_sum {κ π μ γ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fintype ρ']
+  pattern 'theorem abs_sub_le_sum_hybrids': TCSlib 1, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/Foundations/Probability.lean:218:theorem abs_sub_le_sum_hybrids (P : ℕ → ℝ) (t : ℕ) :
+## G16/G17 ratio
+  pattern 'bootNoise .* ≤ .*eval': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'RatioBounded': TCSlib 0, Mathlib/Batteries/core 0
+## A1/A3 asymptotic IND-CPA
+  pattern 'Negligible fun κ =>\\s*$': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'Negligible \\(fun κ => distAdv': TCSlib 0, Mathlib/Batteries/core 0
+  pattern 'negligible_polyExpr_mul': TCSlib 29, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean:90:Take `σ(κ) = (q(κ) + 1) · 2^{−κ}`, negligible (`EnsembleLemmas.negligible_polyExpr_mul`,
+    T TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean:114:    EnsembleLemmas.negligible_polyExpr_mul _ negligible_two_pow_neg, fun b real κ => ?_⟩
+    T TCSlib/Cryptography/Asymptotic/Ensembles.lean:502:(`EnsembleLemmas.negligible_polyExpr_mul`, from `Negligible.mul_pow` and
+    T TCSlib/Cryptography/Asymptotic/Ensembles.lean:592:  refine (EnsembleLemmas.negligible_polyExpr_mul t (h B)).mono ⟨0, fun n _ => ?_⟩
+    T TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:60:* `TCSlib.Cryptography.EnsembleLemmas.negligible_polyExpr_mul` — a syntactic polynomial
+    T TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:377:theorem negligible_polyExpr_mul (p : PolyExpr) {μ : ℕ → ℝ} (hμ : Negligible μ) :
+  pattern 'Negligible\\.polyExpr_mul': TCSlib 4, Mathlib/Batteries/core 0
+    T TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:34:* `TCSlib.Cryptography.Negligible.polyExpr_mul` bounds multiplication by a
+    T TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:267:theorem Negligible.polyExpr_mul {μ : ℕ → ℝ} (hμ : Negligible μ) (p : PolyExpr) :
+    T TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean:84:   by `Negligible.polyExpr_mul` (`Asymptotic/ReductionSupport`) with the polynomial `cap`. -/
+    T TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:480:   the product is negligible by `Negligible.polyExpr_mul` with `PolyExpr.var`. -/

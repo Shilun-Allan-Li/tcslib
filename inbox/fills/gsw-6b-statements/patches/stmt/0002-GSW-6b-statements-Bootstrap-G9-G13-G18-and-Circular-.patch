@@ -1,7 +1,7 @@
-From 57815173072bf8c145a4bb774797989061fe96f4 Mon Sep 17 00:00:00 2001
+From dd9f00f484a7e89390ce8a68b19cac773fb6f9b1 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Tue, 17 Nov 2026 17:44:33 +0000
-Subject: [PATCH 2/2] GSW 6b statements: Bootstrap (G9-G13, G18) and Circular
+Subject: [PATCH 2/5] GSW 6b statements: Bootstrap (G9-G13, G18) and Circular
  (G14-G15)
 
 U14: key and coin type names, bootNoise, bootNAND, bootGate (padding
@@ -380,7 +380,7 @@ index 000000000..fb8a0c9b3
 +end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
 diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean
 new file mode 100644
-index 000000000..faf0294a1
+index 000000000..e72596abe
 --- /dev/null
 +++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean
 @@ -0,0 +1,146 @@
@@ -514,12 +514,12 @@ index 000000000..faf0294a1
 +
 +**Proof sketch.** Through `fheView_fst`, `fheView_snd` (or `fheView_eq`), `Regev.keygen_fst`
 +and `realView_eq`, `view_eq`, the projected view at a seed `(rg, R, R₀)` is
-+`realView P χ μ (rg, R₀)`: it does not read the evaluation-key coins `R`. Regroup the seed
-+space `Seeds P χ ≃ (Fin N → Coins P) × (KeySeed P χ × Coins P)` (`Equiv.prodComm`,
-+`Equiv.prodAssoc`; `acceptProb_comp_equiv`); a sampler that ignores an independent uniform
-+coordinate has the same acceptance probability (`acceptProb_def`, `uprob` over a product with a
-+constant factor), so each `acceptProb` equals that of `realView P χ μ`. Then
-+`distAdv_def` and phase 5's `distAdv_encrypt_le`. -/
++`realView P χ μ (rg, R₀)`: it does not read the evaluation-key coins `R`. Through
++`acceptProb_def` and `acceptProb_comp_equiv`, regroup the seed-and-coin space so that the
++unused coins `R` form the second factor, `((KeySeed P χ × Coins P) × ρ) × (Fin N → Coins P)`
++(`Equiv.prodComm`, `Equiv.prodAssoc`); the marginalization lemma `uprob_fst`
++(`Foundations/Probability.lean`) then drops that factor, so each `acceptProb` equals that of
++`realView P χ μ`. Then `distAdv_def` and phase 5's `distAdv_encrypt_le`. -/
 +theorem distAdv_fheView_noEvk_le (P : Parameters) (χ : LWE.Noise) {ρ : Type*} [Fintype ρ]
 +    [Nonempty ρ] (μ₀ μ₁ : Bool) (D : PublicKey P × Ciphertext P → ρ → Bool) :
 +    distAdv (fun r : Seeds P χ => ((fheView P χ μ₀ r).1, (fheView P χ μ₀ r).2.2))

@@ -1,0 +1,120 @@
+# foreign TCSlib definitions read (A body, B target statement, C target sketch)
+READ	BoolCircuit.DAGCircuit.IsLayered	B:statement:encrypts_leveledEval C2:sketch-reader:encrypts_leveledEval:isLayered_iff
+READ	BoolCircuit.DAGCircuit.IsNANDForm	B:statement:decrypt_fheEval B:statement:encrypts_leveledEval C2:sketch-reader:decrypt_fheEval:isNANDForm_iff C2:sketch-reader:encrypts_leveledEval:isNANDForm_iff
+READ	BoolCircuit.DAGCircuit.depth	B:statement:decrypt_keygen_leveledEvalCircuit B:statement:decrypt_leveledEval_of_ratio B:statement:encrypts_leveledEval
+READ	BoolCircuit.DAGCircuit.depthAt	A:body:leveledEval C2:sketch-reader:encrypts_leveledEval:depthAt_gate C2:sketch-reader:encrypts_leveledEval:depthAt_input
+READ	BoolCircuit.DAGCircuit.eval	B:statement:decrypt_fheEval B:statement:decrypt_fheEvalCircuit B:statement:decrypt_fheEval_of_ratio B:statement:decrypt_keygen_fheEvalCircuit B:statement:decrypt_keygen_leveledEvalCircuit B:statement:decrypt_leveledEval_of_ratio B:statement:encrypts_leveledEval C2:sketch-reader:decrypt_fheEval:eval_eq C2:sketch-reader:encrypts_leveledEval:eval_eq
+READ	BoolCircuit.DAGCircuit.layerNAND	A:body:leveledEvalCircuit C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:layerNAND_depth C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:layerNAND_eval C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:layerNAND_isLayered C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:layerNAND_isNANDForm
+READ	BoolCircuit.DAGCircuit.toNANDForm	A:body:fheEvalCircuit A:body:leveledEvalCircuit B:statement:decrypt_keygen_leveledEvalCircuit B:statement:decrypt_leveledEval_of_ratio C2:sketch-reader:decrypt_fheEvalCircuit:toNANDForm_eval C2:sketch-reader:decrypt_fheEvalCircuit:toNANDForm_isNANDForm C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:toNANDForm_eval C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:toNANDForm_isNANDForm
+READ	BoolCircuit.DAGCircuit.values	C2:sketch-reader:decrypt_fheEval:values_eq C2:sketch-reader:encrypts_leveledEval:values_eq
+READ	BoolCircuit.DAGGate.IsNAND	C2:sketch-reader:decrypt_fheEval:isNAND_iff
+READ	BoolCircuit.DAGGate.depth	C2:sketch-reader:encrypts_leveledEval:depth_eq
+READ	BoolCircuit.DAGGate.eval	C:sketch:decrypt_fheEval C:sketch:encrypts_leveledEval
+READ	BoolCircuit.FormulaArith.modSumDepth	A:body:decDepth C2:sketch-reader:decDepth_le:modSumDepth_le
+READ	BoolCircuit.FormulaArith.modSumInterval	A:body:decryptFormula C2:sketch-reader:decryptFormula_eval:modSumInterval_eval
+READ	BoolCircuit.TreeCircuit.and2	A:body:nandFormula C2:sketch-reader:nandFormula_eval:and2_eval
+READ	BoolCircuit.TreeCircuit.depth	B:statement:depth_nandFormula_le B:statement:encrypts_homEvalFormula
+READ	BoolCircuit.TreeCircuit.eval	B:statement:decryptFormula_eval B:statement:encrypts_homEvalFormula B:statement:nandFormula_eval
+READ	BoolCircuit.TreeCircuit.maxFanin	B:statement:encrypts_homEvalFormula B:statement:maxFanin_nandFormula_le
+READ	BoolCircuit.TreeCircuit.neg	A:body:nandFormula C2:sketch-reader:nandFormula_eval:neg_eval
+READ	BoolCircuit.litInput	C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:litInput_castAdd C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:litInput_natAdd
+READ	BoolCircuit.runWith	A:body:fheEval A:body:leveledEval C2:sketch-reader:decrypt_fheEval:runWith_rel C2:sketch-reader:encrypts_leveledEval:runWith_rel C:sketch:encrypts_leveledEval
+READ	BranchingProgram.Instr.stepWith	C2:sketch-reader:encrypts_homEvalPBP:stepWith_of_isPermutation
+READ	BranchingProgram.IsFiveCycle	C2:sketch-reader:encrypts_homEvalFormula:isFiveCycle_iff C2:sketch-reader:encrypts_homEvalFormula:isFiveCycle_sigma1
+READ	BranchingProgram.IsPermutation	B:statement:encrypts_homEvalPBP C2:sketch-reader:encrypts_homEvalPBP:isPermutation_iff
+READ	BranchingProgram.barrington	A:body:homEvalFormula C2:sketch-reader:encrypts_homEvalFormula:barrington_length_le C2:sketch-reader:encrypts_homEvalFormula:barrington_yield_zero
+READ	BranchingProgram.evalWith	A:body:homEvalPBP C2:sketch-reader:encrypts_homEvalPBP:evalWith_rel C2:sketch-reader:encrypts_homEvalPBP:evalWith_single
+READ	BranchingProgram.length	B:statement:encrypts_homEvalPBP
+READ	BranchingProgram.sigma1	A:body:homEvalFormula
+READ	BranchingProgram.yield	B:statement:encrypts_homEvalPBP
+READ	Complexity.NUPPT.coinLen	A:body:LeveledReductionEfficient A:body:ReductionEfficient A:body:WeakCircularSecureFamily B:statement:indCPA_of_dlweAssumption B:statement:leveledINDCPA_of_dlweAssumption
+READ	Complexity.NUPPT.distinguisherL	A:body:LeveledReductionEfficient A:body:ReductionEfficient A:body:WeakCircularSecureFamily B:statement:indCPA_of_dlweAssumption B:statement:leveledINDCPA_of_dlweAssumption
+READ	Complexity.P	C:sketch:bootRatio_le_poly C:sketch:decrypt_fheEval_of_ratio C:sketch:decrypt_leveledEval_of_ratio
+READ	Complexity.PolyExpr.eval	A:body:LeveledReductionEfficient A:body:RatioBounded A:body:ofFamily B:statement:bootRatio_le_poly B:statement:decrypt_fheEval_of_ratio B:statement:decrypt_leveledEval_of_ratio B:statement:indCPA_of_dlweAssumption B:statement:leveledINDCPA_of_dlweAssumption C:sketch:bootRatio_le_poly C:sketch:indCPA_of_dlweAssumption C:sketch:leveledINDCPA_of_dlweAssumption
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts	B:statement:decrypt_fheEval B:statement:decrypt_fheEvalCircuit B:statement:encrypts_bootNAND B:statement:encrypts_homEvalFormula B:statement:encrypts_homEvalPBP B:statement:encrypts_leveledEval B:statement:select C2:sketch-reader:Encrypts.select:encrypts_gadget C2:sketch-reader:decrypt_fheEval:encrypts_gadget C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:encrypts_gadget C2:sketch-reader:encrypts_homEvalPBP:encrypts_gadget C2:sketch-reader:encrypts_homEvalPBP:encrypts_zero C2:sketch-reader:encrypts_leveledEval:encrypts_gadget
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.columns	C2:sketch-reader:bootRatio_le_poly:columns_eq
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily	A:body:LeveledReductionEfficient A:body:ReductionEfficient A:body:WeakCircularSecureFamily B:statement:indCPA_of_dlweAssumption B:statement:leveledINDCPA_of_dlweAssumption C2:sketch-reader:indCPA_of_dlweAssumption:ofFamily_lwe C2:sketch-reader:indCPA_of_dlweAssumption:ofFamily_width
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate	A:body:levelGate C:sketch:encrypts_leveledEval
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise	B:statement:bootRatio_le_poly B:statement:decrypt_keygen_leveledEvalCircuit B:statement:encrypts_leveledEval C2:sketch-reader:bootRatio_le_poly:bootNoise_le C2:sketch-reader:decrypt_leveledEval_of_ratio:bootNoise_eq
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.challengeDist	A:body:LeveledReductionEfficient
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.challengeTerm	C2:sketch-reader:leveledINDCPA_of_dlweAssumption:challengeTerm_eq
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decDepth	A:body:bootNoise C2:sketch-reader:bootNoise_le:decDepth_le
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decomposeVec	A:body:keyBits
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt	B:statement:decryptFormula_eval B:statement:decrypt_fheEval B:statement:decrypt_fheEvalCircuit B:statement:decrypt_fheEval_of_ratio B:statement:decrypt_keygen_fheEvalCircuit B:statement:decrypt_keygen_leveledEvalCircuit B:statement:decrypt_leveledEval_of_ratio B:statement:encrypts_bootNAND B:statement:nandFormula_eval C2:sketch-reader:decrypt_fheEval:decrypt_of_encrypts C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:decrypt_of_encrypts C2:sketch-reader:encrypts_leveledEval:decrypt_of_encrypts
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptColumn	A:body:decConstants B:statement:vecMul_secretVector_eq_sum
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypt	A:body:challengeDist A:body:evalKey A:body:fheView A:body:levelAssemble A:body:levelHybrid A:body:levelReduction A:body:leveledView B:statement:decrypt_fheEval_of_ratio B:statement:decrypt_keygen_fheEvalCircuit B:statement:decrypt_keygen_leveledEvalCircuit B:statement:decrypt_leveledEval_of_ratio
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.eval	C2:sketch-reader:decrypt_fheEval:eval_encrypts
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.evalKey	A:body:fheView A:body:levelKey B:statement:decrypt_fheEval_of_ratio
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEvalCircuit	B:statement:decrypt_fheEval_of_ratio
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheView	A:body:WeakCircularSecureFamily
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.gadget	A:body:bootGate A:body:decConstants A:body:homEvalFormula A:body:select B:statement:encrypts_homEvalPBP C2:sketch-reader:vecMul_secretVector_eq_sum:gadget_mulVec_decomposeVec
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homAnd	C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:homAnd_singleton
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homEvalFormula	A:body:bootNAND
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homNot	A:body:literalCts C2:sketch-reader:decrypt_keygen_leveledEvalCircuit:homNot_eq
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits	A:body:evalKey A:body:levelMsgs B:statement:decrypt_fheEval B:statement:decrypt_fheEvalCircuit B:statement:encrypts_bootNAND B:statement:encrypts_leveledEval
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelKey	A:body:levelAssemble A:body:levelHybrid A:body:leveledView B:statement:decrypt_leveledEval_of_ratio
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelReduction	A:body:LeveledReductionEfficient
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelTerm	C2:sketch-reader:leveledINDCPA_of_dlweAssumption:levelTerm_eq
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.leveledEvalCircuit	B:statement:decrypt_leveledEval_of_ratio
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.leveledView	B:statement:leveledINDCPA_of_dlweAssumption
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.mul	A:body:select
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.nandFormula	A:body:bootNAND C2:sketch-reader:encrypts_bootNAND:nandFormula_eval
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.realView	B:statement:indCPA_of_dlweAssumption C2:sketch-reader:distAdv_fheView_noEvk_le:realView_eq C2:sketch-reader:distAdv_leveledView_le:realView_eq
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.reduction	A:body:LeveledReductionEfficient A:body:ReductionEfficient A:body:challengeTerm A:body:levelReduction B:statement:distAdv_fheView_noEvk_le C2:sketch-reader:distAdv_levelHybrid_le:reduction_eq C:sketch:indCPA_of_dlweAssumption
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.secretVector	A:body:keyBits B:statement:decrypt_fheEval B:statement:decrypt_fheEvalCircuit B:statement:encrypts_leveledEval B:statement:vecMul_secretVector_eq_sum
+READ	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.view	C2:sketch-reader:distAdv_fheView_noEvk_le:view_eq C2:sketch-reader:distAdv_leveledView_le:view_eq
+READ	TCSlib.Cryptography.Encoding.Modular.encodeMatrix	A:body:encodeCiphertext
+READ	TCSlib.Cryptography.Encryption.PublicKey.Regev.extractionError	A:body:challengeTerm A:body:levelTerm B:statement:distAdv_fheView_noEvk_le
+READ	TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen	A:body:challengeDist A:body:fheView A:body:levelAssemble A:body:levelHybrid A:body:levelMsgs A:body:leveledView B:statement:decrypt_fheEval_of_ratio B:statement:decrypt_keygen_fheEvalCircuit B:statement:decrypt_keygen_leveledEvalCircuit B:statement:decrypt_leveledEval_of_ratio C2:sketch-reader:decrypt_keygen_fheEvalCircuit:keygen_fst C2:sketch-reader:decrypt_keygen_fheEvalCircuit:keygen_snd C2:sketch-reader:distAdv_fheView_noEvk_le:keygen_fst C2:sketch-reader:distAdv_levelHybrid_le:keygen_fst C2:sketch-reader:distAdv_leveledView_le:keygen_fst
+READ	TCSlib.Cryptography.LWE.BitEncoding.decode	C2:sketch-reader:decryptFormula_eval:decode_iff_mem_Ico
+READ	TCSlib.Cryptography.LWE.BitEncoding.decodeHi	A:body:decryptFormula C2:sketch-reader:decryptFormula_eval:decodeHi_eq
+READ	TCSlib.Cryptography.LWE.BitEncoding.decodeLo	A:body:decryptFormula C2:sketch-reader:decryptFormula_eval:decodeLo_eq
+READ	TCSlib.Cryptography.LWE.DLWEAssumption	B:statement:indCPA_of_dlweAssumption B:statement:leveledINDCPA_of_dlweAssumption
+READ	TCSlib.Cryptography.LWE.Family.advantageAt	A:body:LeveledReductionEfficient A:body:ReductionEfficient
+READ	TCSlib.Cryptography.LWE.Noise.Bounded	A:body:RatioBounded B:statement:decrypt_fheEval_of_ratio B:statement:decrypt_keygen_fheEvalCircuit B:statement:decrypt_keygen_leveledEvalCircuit B:statement:decrypt_leveledEval_of_ratio C2:sketch-reader:decrypt_keygen_fheEvalCircuit:bounded_iff
+READ	TCSlib.Cryptography.LWE.decisionAdvantage	A:body:LeveledReductionEfficient A:body:ReductionEfficient A:body:challengeTerm A:body:levelTerm B:statement:distAdv_fheView_noEvk_le C2:sketch-reader:distAdv_levelHybrid_le:decisionAdvantage_eq
+READ	TCSlib.Cryptography.LWE.encodeChallenge	A:body:encodeFheView A:body:encodeLeveledView A:body:encodeView
+READ	TCSlib.Cryptography.LWE.sample	C2:sketch-reader:decrypt_keygen_fheEvalCircuit:sample_fst C2:sketch-reader:decrypt_keygen_fheEvalCircuit:sample_snd
+READ	TCSlib.Cryptography.Negligible	A:body:WeakCircularSecureFamily B:statement:indCPA_of_dlweAssumption B:statement:leveledINDCPA_of_dlweAssumption C2:sketch-reader:indCPA_of_dlweAssumption:negligible_two_pow_neg C2:sketch-reader:leveledINDCPA_of_dlweAssumption:negligible_two_pow_neg
+READ	TCSlib.Cryptography.acceptProb	C2:sketch-reader:distAdv_fheView_noEvk_le:acceptProb_comp_equiv C2:sketch-reader:distAdv_fheView_noEvk_le:acceptProb_def C2:sketch-reader:distAdv_levelHybrid_le:acceptProb_comp_equiv C2:sketch-reader:distAdv_leveledView_le:acceptProb_comp_equiv C:sketch:distAdv_fheView_noEvk_le
+READ	TCSlib.Cryptography.distAdv	A:body:WeakCircularSecure A:body:WeakCircularSecureFamily B:statement:distAdv_fheView_noEvk_le B:statement:distAdv_levelHybrid_le B:statement:distAdv_leveledView_le B:statement:indCPA_of_dlweAssumption B:statement:leveledINDCPA_of_dlweAssumption C2:sketch-reader:distAdv_fheView_noEvk_le:distAdv_def C:sketch:indCPA_of_dlweAssumption
+READ	TCSlib.Cryptography.hybridPlant	A:body:levelReduction C:sketch:distAdv_levelHybrid_le
+READ	TCSlib.Cryptography.uprob	C2:sketch-reader:distAdv_fheView_noEvk_le:uprob_fst
+# notation (reducible abbreviations, projections, structure/inductive types): never sealed, no reader needed
+NOTATION	BoolCircuit.DAGCircuit	11 uses
+NOTATION	BoolCircuit.DAGCircuit.gates	9 uses
+NOTATION	BoolCircuit.DAGCircuit.output	2 uses
+NOTATION	BoolCircuit.DAGGate	10 uses
+NOTATION	BoolCircuit.DAGGate.args	8 uses
+NOTATION	BoolCircuit.TreeCircuit	2 uses
+NOTATION	BranchingProgram	2 uses
+NOTATION	Complexity.NUPPT	5 uses
+NOTATION	Complexity.NUPPT.Coins	5 uses
+NOTATION	Complexity.PolyExpr	3 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext	41 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins	22 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.FheView	2 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.KeySeed	20 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LevelCoins	13 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledSeeds	2 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledView	3 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters	61 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.lwe	52 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.width	12 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PublicKey	13 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret	2 uses
+NOTATION	TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Seeds	1 uses
+NOTATION	TCSlib.Cryptography.LWE.Family	11 uses
+NOTATION	TCSlib.Cryptography.LWE.Family.dimensionBound	1 uses
+NOTATION	TCSlib.Cryptography.LWE.Family.noise	8 uses
+NOTATION	TCSlib.Cryptography.LWE.Family.parameters	6 uses
+NOTATION	TCSlib.Cryptography.LWE.Family.residueBits	4 uses
+NOTATION	TCSlib.Cryptography.LWE.Family.samplesBound	1 uses
+NOTATION	TCSlib.Cryptography.LWE.Noise	18 uses
+NOTATION	TCSlib.Cryptography.LWE.Noise.Coins	11 uses
+NOTATION	TCSlib.Cryptography.LWE.Noise.fintype	10 uses
+NOTATION	TCSlib.Cryptography.LWE.Parameters	2 uses
+NOTATION	TCSlib.Cryptography.LWE.Parameters.dimension	42 uses
+NOTATION	TCSlib.Cryptography.LWE.Parameters.modulus	50 uses
+NOTATION	TCSlib.Cryptography.LWE.Parameters.samples	26 uses
+RESULT defs_read=81 notation=36

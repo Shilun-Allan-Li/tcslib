@@ -1,0 +1,13 @@
+evidence-scratch/rule10/ctl-o2-controls/Ctl_Cryptography_LWE_BitEncoding_neg_unsealed	rc=0	errors=0	seconds=1.57	maxrss_kb=1849728
+evidence-scratch/rule10/ctl-o2-controls/CtlA_Cryptography_LWE_BitEncoding_neg_sealed	rc=1	errors=1	seconds=18.53	maxrss_kb=1919024
+evidence-scratch/rule10/ctl-o2-controls/CtlcoeA_Cryptography_LWE_BitEncoding_pos_sealed	rc=0	errors=0	seconds=19.57	maxrss_kb=1914124
+evidence-scratch/rule10/ctl-o2-controls/CtlA_Cryptography_LWE_BitEncoding_pos_sealed	rc=0	errors=0	seconds=19.12	maxrss_kb=1917784
+evidence-scratch/rule10/ctl-o2-controls/CtlcoeA_Cryptography_LWE_BitEncoding_neg_sealed	rc=1	errors=1	seconds=19.25	maxrss_kb=1920204
+control	owner	definition	harness	rc	errors	expected_errors	error_in_example	install	eof	verdict	error_lines
+Ctl_Cryptography_LWE_BitEncoding_neg_unsealed	TCSlib.Cryptography.LWE.BitEncoding	TCSlib.Cryptography.LWE.BitEncoding.decodeLo	none	0	0	0	1	-	-	OK	
+CtlA_Cryptography_LWE_BitEncoding_neg_sealed	TCSlib.Cryptography.LWE.BitEncoding	TCSlib.Cryptography.LWE.BitEncoding.decodeLo	strict(A)	1	1	1	1	14/14	14/14	OK	evidence-scratch/rule10/ctl-o2-controls/CtlA_Cryptography_LWE_BitEncoding_neg_sealed.lean:117:2: error: Type mismatch
+CtlA_Cryptography_LWE_BitEncoding_pos_sealed	TCSlib.Cryptography.LWE.BitEncoding	TCSlib.Cryptography.LWE.BitEncoding.decodeLo	strict(A)	0	0	0	1	14/14	14/14	OK	
+CtlcoeA_Cryptography_LWE_BitEncoding_neg_sealed	TCSlib.Cryptography.LWE.BitEncoding	TCSlib.Cryptography.LWE.BitEncoding.decodeLo	coe(coe-A)	1	1	1	1	14/14	14/14	OK	evidence-scratch/rule10/ctl-o2-controls/CtlcoeA_Cryptography_LWE_BitEncoding_neg_sealed.lean:117:2: error: Type mismatch
+CtlcoeA_Cryptography_LWE_BitEncoding_pos_sealed	TCSlib.Cryptography.LWE.BitEncoding	TCSlib.Cryptography.LWE.BitEncoding.decodeLo	coe(coe-A)	0	0	0	1	14/14	14/14	OK	
+# pretest_unsealed_ok=True ALL_OK=True
+

@@ -1,0 +1,84 @@
+From 8f92fe7d53967bc488a4075fb38210e7d40b9031 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 17 Nov 2026 18:08:08 +0000
+Subject: [PATCH 5/5] GSW 6b statements: facades GSW.lean and LWE.lean
+
+The eight new GSW children and LWE/Ratio imported, with their Contents
+entries; the GSW facade's title says the folder now also covers
+bootstrapping and pure and leveled FHE.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTmUioVMQEPr6Cj4D51
+---
+ .../AdvancedEncryption/Homomorphic/GSW.lean   | 24 ++++++++++++++++++-
+ TCSlib/Cryptography/LWE.lean                  |  2 ++
+ 2 files changed, 25 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean
+index 6b149d886..5984d64b7 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean
+@@ -9,13 +9,24 @@ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
+ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval
+ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Security
+ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Symmetric
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Branching
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.DecryptFormula
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Circular
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Leveled
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledSecurity
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PolyRatio
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Asymptotic
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Leveled GSW homomorphic encryption from LWE
++# GSW homomorphic encryption from LWE: leveled, bootstrapped, and pure and leveled FHE
++
++The folder also covers NAND bootstrapping, pure and leveled fully homomorphic encryption,
++their security statements and the polynomial modulus-to-noise ratio (phase 6b).
+ 
+ ## Contents
+ 
+@@ -26,6 +37,17 @@ set_option autoImplicit false
+ * `Eval`: homomorphic evaluation of `BoolCircuit.DAGCircuit` and leveled correctness.
+ * `Security`: concrete IND-CPA hybrids from DLWE and column leftover hashing.
+ * `Symmetric`: batched secret-key GSW and its direct DLWE bound (optional unit).
++* `Branching`: the homomorphic selector and the evaluation of permutation branching programs
++  and of formulas through Barrington's construction.
++* `DecryptFormula`: the key bits, decryption as a formula in them, and the augmented NAND
++  formula with its depth.
++* `Bootstrap`: NAND bootstrapping, pure FHE evaluation of NAND-form and fan-in-2 circuits, and
++  the evaluation key.
++* `Circular`: the FHE view and concrete, per-distinguisher weak circular security.
++* `Leveled`: the leveled scheme, a consecutive key chain over layered NAND circuits.
++* `LeveledSecurity`: IND-CPA of the leveled scheme from DLWE by a top-down key hybrid.
++* `PolyRatio`: GSW parameters of an LWE family and correctness at a polynomial ratio.
++* `Asymptotic`: encodings, the asymptotic hypotheses and asymptotic IND-CPA statements.
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/LWE.lean b/TCSlib/Cryptography/LWE.lean
+index 9bb1db092..f41508218 100644
+--- a/TCSlib/Cryptography/LWE.lean
++++ b/TCSlib/Cryptography/LWE.lean
+@@ -11,6 +11,7 @@ import TCSlib.Cryptography.LWE.SampleSchedules
+ import TCSlib.Cryptography.LWE.BitEncoding
+ import TCSlib.Cryptography.LWE.BitNoise
+ import TCSlib.Cryptography.LWE.Sampling
++import TCSlib.Cryptography.LWE.Ratio
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -30,6 +31,7 @@ set_option autoImplicit false
+ * `BitEncoding`: bit codepoints, exact tie conventions and bounded-error decoding statements.
+ * `BitNoise`: explicit bit-seed laws and centered finite-noise profile statements.
+ * `Sampling`: actual-law fair-bit implementations of the real and uniform experiments.
++* `Ratio`: a polynomially bounded modulus-to-noise ratio for a family.
+ 
+ ## References
+ 

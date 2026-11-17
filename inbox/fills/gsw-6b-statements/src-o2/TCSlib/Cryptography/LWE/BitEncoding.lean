@@ -140,26 +140,19 @@ is `[⌊h/2⌋ + 1, ⌊(q + h + 1)/2⌋)`. Glue for the file's `decode`, consume
 decryption formula as an interval of the modular subset sum.
 
 **Proof sketch.** Write `v` for the representative `v.val < q` and `h = ⌊q/2⌋ < q`. By
-Mathlib's `ZMod.valMinAbs_def_pos`, the natural absolute value of the minimal lift of a
-residue `y` is `y.val` when `y.val ≤ ⌊q/2⌋` and `q − y.val` otherwise; this gives both
-distances through `distance_eq`. The distance to the false codepoint (`codepoint_eq`) reads
-`v`. For the true codepoint `h`, the representative of `v − h` is `v − h` when `h ≤ v`
-(`ZMod.val_sub`) and `v + q − h` otherwise (the difference is the cast of `v + q − h`, by
-`ZMod.natCast_self` and `ZMod.natCast_zmod_val`, below `q`). `decode_eq` compares the two
-distances strictly; after the case splits every case is linear arithmetic with divisions
-by `2`, which `omega` closes against `decodeLo_eq` and `decodeHi_eq`. -/
+Mathlib's `ZMod.valMinAbs_natAbs_eq_min`, the natural absolute value of the minimal lift of a
+residue `y` is `min y.val (q − y.val)`; this gives both distances through `distance_eq`.
+The distance to the false codepoint (`codepoint_eq`) reads `v`. For the true codepoint `h`,
+the representative of `v − h` is `v − h` when `h ≤ v` (`ZMod.val_sub`) and `v + q − h`
+otherwise (the difference is the cast of `v + q − h`, by `ZMod.natCast_self` and
+`ZMod.natCast_zmod_val`, below `q`). `decode_eq` compares the two distances strictly; after
+the case split every case is linear arithmetic with `min` and divisions by `2`, which `omega`
+closes against `decodeLo_eq` and `decodeHi_eq`. -/
 theorem decode_iff_mem_Ico (P : Parameters) (v : ZMod P.modulus) :
     decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P := by
   have hq := P.modulus_ge_two
   have hv := ZMod.val_lt v
-  -- Step 1: the natural absolute value of the minimal lift, by cases on the representative.
-  have habs : ∀ y : ZMod P.modulus, y.valMinAbs.natAbs =
-      if y.val ≤ P.modulus / 2 then y.val else P.modulus - y.val := by
-    intro y
-    have hy := ZMod.val_lt y
-    rw [ZMod.valMinAbs_def_pos]
-    split_ifs <;> omega
-  -- Step 2: the representative of `v − ⌊q/2⌋`.
+  -- Step 1: the representative of `v − ⌊q/2⌋`.
   have hh : P.modulus / 2 < P.modulus := by omega
   have hsub : (v - ((P.modulus / 2 : ℕ) : ZMod P.modulus)).val =
       if P.modulus / 2 ≤ v.val then v.val - P.modulus / 2
@@ -171,10 +164,11 @@ theorem decode_iff_mem_Ico (P : Parameters) (v : ZMod P.modulus) :
         rw [Nat.cast_sub (by omega), Nat.cast_add, ZMod.natCast_self, ZMod.natCast_zmod_val,
           add_zero]
       rw [hcast, ZMod.val_natCast_of_lt (by omega)]
-  -- Step 3: compare the two distances; linear arithmetic in every case.
+  -- Step 2: both distances as `min` of a representative and its complement
+  -- (`ZMod.valMinAbs_natAbs_eq_min`); linear arithmetic in every case.
   rw [decode_eq, decide_eq_true_iff, distance_eq, distance_eq, codepoint_eq, codepoint_eq]
   simp only [if_true, Bool.false_eq_true, if_false, sub_zero]
-  rw [habs, habs, hsub, decodeLo_eq, decodeHi_eq]
+  rw [ZMod.valMinAbs_natAbs_eq_min, ZMod.valMinAbs_natAbs_eq_min, hsub, decodeLo_eq, decodeHi_eq]
   split_ifs <;> omega
 
 /-- An error of absolute value at most `B` preserves the encoded bit whenever

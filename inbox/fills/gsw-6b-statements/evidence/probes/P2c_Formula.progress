@@ -1,0 +1,36 @@
+P2c start
+xor = (x0 ∨ x1) ∧ (¬x0 ∨ ¬x1): depth 2, length 16
+  x=(false,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(true,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(false,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(true,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+xor = (x0 ∧ ¬x1) ∨ (¬x0 ∧ x1): depth 2, length 16
+  x=(false,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(true,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(false,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(true,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+x0 ∧ x1: depth 1, length 4
+  x=(false,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(true,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(false,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(true,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+x0 ∨ ¬x1: depth 1, length 4
+  x=(false,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(true,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(false,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(true,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+fan-in 1: ∧[¬x1]: depth 1, length 1
+  x=(false,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(true,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(false,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(true,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+true: depth 1, length 1
+  x=(false,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(true,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(false,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+  x=(true,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (true, (true, (true, (true, true))))
+false: depth 1, length 1
+  x=(false,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(true,false): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(false,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))
+  x=(true,true): (eval, out=(eval)•G, coord 0=(!eval)•G, others 0, decrypt=eval) = (false, (true, (true, (true, true))))

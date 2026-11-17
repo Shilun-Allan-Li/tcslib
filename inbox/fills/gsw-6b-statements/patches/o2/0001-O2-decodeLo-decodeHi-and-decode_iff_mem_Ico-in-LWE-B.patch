@@ -1,4 +1,4 @@
-From dd84941f747bca798c2a5a792616f5ead21cfa0b Mon Sep 17 00:00:00 2001
+From 5bd5ada5f42c5e1228ea84ad70f4d8c52a3644fd Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Tue, 17 Nov 2026 17:37:47 +0000
 Subject: [PATCH] O2: decodeLo, decodeHi and decode_iff_mem_Ico in
@@ -15,11 +15,11 @@ only; module docstring entries added.
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01PqpVTmUioVMQEPr6Cj4D51
 ---
- TCSlib/Cryptography/LWE/BitEncoding.lean | 64 ++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+ TCSlib/Cryptography/LWE/BitEncoding.lean | 58 ++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
 diff --git a/TCSlib/Cryptography/LWE/BitEncoding.lean b/TCSlib/Cryptography/LWE/BitEncoding.lean
-index 50927a0a4..42b90ffc5 100644
+index 50927a0a4..fd564ef81 100644
 --- a/TCSlib/Cryptography/LWE/BitEncoding.lean
 +++ b/TCSlib/Cryptography/LWE/BitEncoding.lean
 @@ -17,10 +17,13 @@ set_option autoImplicit false
@@ -36,7 +36,7 @@ index 50927a0a4..42b90ffc5 100644
  The last theorem gives perfect decoding under the strict separation condition
  `2 * B < q / 2`, with natural-number division.
  
-@@ -113,6 +116,67 @@ theorem decode_eq (P : Parameters) (x : ZMod P.modulus) :
+@@ -113,6 +116,61 @@ theorem decode_eq (P : Parameters) (x : ZMod P.modulus) :
      decode P x =
        decide (distance P x (codepoint P true) < distance P x (codepoint P false)) := rfl
  
@@ -64,26 +64,19 @@ index 50927a0a4..42b90ffc5 100644
 +decryption formula as an interval of the modular subset sum.
 +
 +**Proof sketch.** Write `v` for the representative `v.val < q` and `h = ⌊q/2⌋ < q`. By
-+Mathlib's `ZMod.valMinAbs_def_pos`, the natural absolute value of the minimal lift of a
-+residue `y` is `y.val` when `y.val ≤ ⌊q/2⌋` and `q − y.val` otherwise; this gives both
-+distances through `distance_eq`. The distance to the false codepoint (`codepoint_eq`) reads
-+`v`. For the true codepoint `h`, the representative of `v − h` is `v − h` when `h ≤ v`
-+(`ZMod.val_sub`) and `v + q − h` otherwise (the difference is the cast of `v + q − h`, by
-+`ZMod.natCast_self` and `ZMod.natCast_zmod_val`, below `q`). `decode_eq` compares the two
-+distances strictly; after the case splits every case is linear arithmetic with divisions
-+by `2`, which `omega` closes against `decodeLo_eq` and `decodeHi_eq`. -/
++Mathlib's `ZMod.valMinAbs_natAbs_eq_min`, the natural absolute value of the minimal lift of a
++residue `y` is `min y.val (q − y.val)`; this gives both distances through `distance_eq`.
++The distance to the false codepoint (`codepoint_eq`) reads `v`. For the true codepoint `h`,
++the representative of `v − h` is `v − h` when `h ≤ v` (`ZMod.val_sub`) and `v + q − h`
++otherwise (the difference is the cast of `v + q − h`, by `ZMod.natCast_self` and
++`ZMod.natCast_zmod_val`, below `q`). `decode_eq` compares the two distances strictly; after
++the case split every case is linear arithmetic with `min` and divisions by `2`, which `omega`
++closes against `decodeLo_eq` and `decodeHi_eq`. -/
 +theorem decode_iff_mem_Ico (P : Parameters) (v : ZMod P.modulus) :
 +    decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P := by
 +  have hq := P.modulus_ge_two
 +  have hv := ZMod.val_lt v
-+  -- Step 1: the natural absolute value of the minimal lift, by cases on the representative.
-+  have habs : ∀ y : ZMod P.modulus, y.valMinAbs.natAbs =
-+      if y.val ≤ P.modulus / 2 then y.val else P.modulus - y.val := by
-+    intro y
-+    have hy := ZMod.val_lt y
-+    rw [ZMod.valMinAbs_def_pos]
-+    split_ifs <;> omega
-+  -- Step 2: the representative of `v − ⌊q/2⌋`.
++  -- Step 1: the representative of `v − ⌊q/2⌋`.
 +  have hh : P.modulus / 2 < P.modulus := by omega
 +  have hsub : (v - ((P.modulus / 2 : ℕ) : ZMod P.modulus)).val =
 +      if P.modulus / 2 ≤ v.val then v.val - P.modulus / 2
@@ -95,10 +88,11 @@ index 50927a0a4..42b90ffc5 100644
 +        rw [Nat.cast_sub (by omega), Nat.cast_add, ZMod.natCast_self, ZMod.natCast_zmod_val,
 +          add_zero]
 +      rw [hcast, ZMod.val_natCast_of_lt (by omega)]
-+  -- Step 3: compare the two distances; linear arithmetic in every case.
++  -- Step 2: both distances as `min` of a representative and its complement
++  -- (`ZMod.valMinAbs_natAbs_eq_min`); linear arithmetic in every case.
 +  rw [decode_eq, decide_eq_true_iff, distance_eq, distance_eq, codepoint_eq, codepoint_eq]
 +  simp only [if_true, Bool.false_eq_true, if_false, sub_zero]
-+  rw [habs, habs, hsub, decodeLo_eq, decodeHi_eq]
++  rw [ZMod.valMinAbs_natAbs_eq_min, ZMod.valMinAbs_natAbs_eq_min, hsub, decodeLo_eq, decodeHi_eq]
 +  split_ifs <;> omega
 +
  /-- An error of absolute value at most `B` preserves the encoded bit whenever

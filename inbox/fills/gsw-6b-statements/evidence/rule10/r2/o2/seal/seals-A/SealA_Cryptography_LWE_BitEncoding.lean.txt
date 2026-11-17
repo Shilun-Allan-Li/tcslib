@@ -1,0 +1,378 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import Lean
+import TCSlib.Cryptography.LWE.Basic
+import Mathlib.Data.ZMod.ValMinAbs
+/- G06-HARNESS INSTALL SealA_Cryptography_LWE_BitEncoding -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealA_Cryptography_LWE_BitEncoding"
+  let payload : String := "TCSlib.Cryptography.LWE.Noise.Bounded\tTCSlib.Cryptography.LWE.Noise\nTCSlib.Cryptography.LWE.Noise._sizeOf_1\tTCSlib.Cryptography.LWE.Noise\nTCSlib.Cryptography.LWE.Noise._sizeOf_inst\tTCSlib.Cryptography.LWE.Noise\nTCSlib.Cryptography.LWE.Noise.mk._flat_ctor\tTCSlib.Cryptography.LWE.Noise\nTCSlib.Cryptography.LWE.Parameters._sizeOf_1\tTCSlib.Cryptography.LWE.Basic\nTCSlib.Cryptography.LWE.Parameters._sizeOf_inst\tTCSlib.Cryptography.LWE.Basic\nTCSlib.Cryptography.LWE.Parameters.mk._flat_ctor\tTCSlib.Cryptography.LWE.Basic\nTCSlib.Cryptography.LWE.noisyValues\tTCSlib.Cryptography.LWE.Basic\nTCSlib.Cryptography.LWE.sample\tTCSlib.Cryptography.LWE.Basic"
+  let expectedRequests : Nat := 9
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := "TCSlib.Cryptography.LWE.Noise.Bounded\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"],[\"str\",\"Bounded\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.LWE.Noise._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.LWE.Noise._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"]]\ttrue\tfalse\ttrue\nTCSlib.Cryptography.LWE.Noise.mk._flat_ctor\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.LWE.Parameters._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Parameters\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.LWE.Parameters._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Parameters\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nTCSlib.Cryptography.LWE.Parameters.mk._flat_ctor\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Parameters\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.LWE.noisyValues\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"noisyValues\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.LWE.sample\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"sample\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse"
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut resolved : Array Lean.Name := #[]
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  let mut active : Nat := 0
+  let mut already : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=install spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let before ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    if before == .irreducible then
+      already := already + 1
+    else
+      let id := Lean.mkIdent n
+      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+      active := active + 1
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed for {spelling}"
+    resolved := resolved.push n
+    verified := verified + 1
+    Lean.logInfo m!"G06-NAME label={label} spelling={spelling} actual={n.toString} home={home} before={repr before} installed={repr installed}"
+  unless active + already == requests.size do throwError "G06-HARNESS {label}: installation count mismatch"
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  let maskExt := Lean.Meta.globalInstanceExtension
+  let maskEnv ← Lean.getEnv
+  let scopes := maskExt.ext.getState maskEnv
+  unless scopes.stateStack.length == 1 do
+    throwError "G06-HARNESS {label}: unfolding mask requires base scope"
+  let mut scopedNames : Std.HashSet Lean.Name := {}
+  for (_, payloads) in scopes.scopedEntries.map.toList do
+    for n in payloads do
+      scopedNames := scopedNames.insert n
+  let mut removed : Nat := 0
+  for n in resolved do
+    if scopedNames.contains n then
+      throwError "G06-HARNESS {label}: scoped unfolding payload intersects request {n}"
+    if Lean.Meta.isGlobalInstance maskEnv n then
+      removed := removed + 1
+  -- InstanceEntry's BEq checks only val, so compare every field explicitly.
+  let entryFields (e : Lean.Meta.InstanceEntry) :=
+    (e.keys, Lean.ExprStructEq.mk e.val, e.priority, e.globalName?, e.synthOrder, e.attrKind)
+  let lookupSnapshot (e : Lean.Environment) :=
+    let s := Lean.Meta.instanceExtension.getState e
+    (s.discrTree.toArray.map (fun (ks, entry) => (ks, entryFields entry)),
+      s.instanceNames.toArray.map (fun (n, entry) => (n, entryFields entry)), s.erased.toList)
+  let beforeLookup := lookupSnapshot env
+  Lean.modifyEnv fun current =>
+    maskExt.modifyState current fun membership =>
+      resolved.foldl (fun s n => s.erase n) membership
+  let maskedEnv ← Lean.getEnv
+  unless beforeLookup == lookupSnapshot maskedEnv do
+    throwError "G06-HARNESS {label}: typeclass lookup state changed"
+  for n in resolved do
+    if Lean.Meta.isGlobalInstance maskedEnv n then
+      throwError "G06-HARNESS {label}: unfolding membership after mask for {n}"
+  Lean.logInfo m!"G06-MASK label={label} phase=install requested={requests.size} verified={resolved.size} removed={removed} scope_depth=1 scoped_names={scopedNames.size} tc_state=preserved"
+  Lean.logInfo m!"G06-SEAL label={label} requested={requests.size} active={active} already_irreducible={already} verified={verified}"
+
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Bit codepoints and bounded-error decoding for Regev encryption
+
+## Main definitions
+
+* `BitEncoding.codepoint`: zero for false and `floor(q/2)` for true.
+* `BitEncoding.distance`: circular distance using Mathlib's minimal integer lift.
+* `BitEncoding.decode`: choose the nearer codepoint, breaking ties toward false.
+* `BitEncoding.decodeLo`, `BitEncoding.decodeHi`: the ends of the decoding interval.
+
+## Main results
+
+The distance lemmas and `decode_codepoint_add` are proved below.
+`decode_iff_mem_Ico` reads decoding as the interval test
+`decodeLo P ≤ v.val < decodeHi P`.
+The last theorem gives perfect decoding under the strict separation condition
+`2 * B < q / 2`, with natural-number division.
+
+## References
+
+* [Wu24] D. Wu, CS395T *Topics in Cryptography*, Spring 2024 lecture notes,
+  compilation last updated 30 April 2024, Definition 20.5 and Lecture 21.
+
+**Deviation.** Nearest-codepoint decoding replaces the notes' informal rounding
+notation. The strict separation condition covers arbitrary moduli, both error signs
+and all finite parameters. The decoder is total, with an explicit tie rule. No exact
+Gaussian sampling, tail bound or machine implementation is asserted.
+-/
+
+namespace TCSlib.Cryptography.LWE.BitEncoding
+
+/-- The codepoint for a bit is zero or `floor(q/2)` modulo `q`
+[Wu24, Definition 20.5]. -/
+def codepoint (P : Parameters) (b : Bool) : ZMod P.modulus :=
+  if b then ((P.modulus / 2 : ℕ) : ZMod P.modulus) else 0
+
+/-- `codepoint P b` is `q/2` cast to residues when `b` is true and zero otherwise. -/
+theorem codepoint_eq (P : Parameters) (b : Bool) :
+    codepoint P b = if b then ((P.modulus / 2 : ℕ) : ZMod P.modulus) else 0 := rfl
+
+/-- Circular distance is the natural absolute value of Mathlib's minimal integer
+representative of `x - y`. This is technical decoding infrastructure. -/
+def distance (P : Parameters) (x y : ZMod P.modulus) : ℕ :=
+  (x - y).valMinAbs.natAbs
+
+/-- The circular distance is `(x - y).valMinAbs.natAbs`. -/
+theorem distance_eq (P : Parameters) (x y : ZMod P.modulus) :
+    distance P x y = (x - y).valMinAbs.natAbs := rfl
+
+/-- Circular distance is symmetric.
+
+**Proof sketch.** Rewrite `y - x` as the negative of `x - y` and use the public
+`ZMod.natAbs_valMinAbs_neg` lemma. -/
+theorem distance_symm (P : Parameters) (x y : ZMod P.modulus) :
+    distance P x y = distance P y x := by
+  rw [distance_eq, distance_eq, ← neg_sub x y, ZMod.natAbs_valMinAbs_neg]
+
+/-- Circular distance satisfies the triangle inequality.
+
+**Proof sketch.** Write `x - z = (x - y) + (y - z)`. Apply
+`ZMod.natAbs_valMinAbs_add_le`, then the integer absolute-value triangle inequality. -/
+theorem distance_triangle (P : Parameters) (x y z : ZMod P.modulus) :
+    distance P x z ≤ distance P x y + distance P y z := by
+  rw [distance_eq, distance_eq, distance_eq, ← sub_add_sub_cancel x y z]
+  exact (ZMod.natAbs_valMinAbs_add_le (x - y) (y - z)).trans
+    (Int.natAbs_add_le _ _)
+
+/-- Adding the same residue to both arguments preserves circular distance.
+
+**Proof sketch.** Cancel the common translation in the difference and read `distance_eq`. -/
+theorem distance_add_right (P : Parameters) (x y a : ZMod P.modulus) :
+    distance P (x + a) (y + a) = distance P x y := by
+  rw [distance_eq, distance_eq, add_sub_add_right_eq_sub]
+
+/-- The two bit codepoints have circular distance `floor(q/2)`
+[Wu24, Definition 20.5, exact separation].
+
+**Proof sketch.** Use `ZMod.valMinAbs_natCast_of_le_half` for `q/2` and
+`ZMod.natAbs_valMinAbs_neg` if the subtraction has the opposite sign. -/
+theorem distance_codepoints (P : Parameters) :
+    distance P (codepoint P false) (codepoint P true) = P.modulus / 2 := by
+  rw [codepoint_eq, codepoint_eq]
+  simp only [Bool.false_eq_true, if_false, if_true]
+  rw [distance_eq, zero_sub, ZMod.natAbs_valMinAbs_neg,
+    ZMod.valMinAbs_natCast_of_le_half (le_refl _), Int.natAbs_natCast]
+
+/-- Reducing an integer error modulo the modulus cannot increase its distance
+from zero beyond its original natural absolute value.
+
+**Proof sketch.** Use `ZMod.coe_valMinAbs`, `ZMod.natAbs_valMinAbs_le` and
+`ZMod.natAbs_min_of_le_div_two` to compare the minimal lift with the given integer. -/
+theorem distance_intCast_zero_le (P : Parameters) (e : ℤ) :
+    distance P (e : ZMod P.modulus) 0 ≤ e.natAbs := by
+  rw [distance_eq, sub_zero]
+  exact ZMod.natAbs_min_of_le_div_two P.modulus _ e
+    (ZMod.coe_valMinAbs _) (ZMod.natAbs_valMinAbs_le _)
+
+/-- Decode to true precisely when the true codepoint is strictly nearer;
+equidistant inputs decode to false [Wu24, Definition 20.5, specified tie convention]. -/
+def decode (P : Parameters) (x : ZMod P.modulus) : Bool :=
+  decide (distance P x (codepoint P true) < distance P x (codepoint P false))
+
+/-- Decoding compares the two circular distances, with a strict inequality for true. -/
+theorem decode_eq (P : Parameters) (x : ZMod P.modulus) :
+    decode P x =
+      decide (distance P x (codepoint P true) < distance P x (codepoint P false)) := rfl
+
+/-- The lower end of the decoding interval: `decodeLo P = ⌊⌊q/2⌋/2⌋ + 1`, the least
+representative that decodes to true. Glue for the file's `decode`. -/
+def decodeLo (P : Parameters) : ℕ :=
+  P.modulus / 2 / 2 + 1
+
+/-- `decodeLo P` is `P.modulus / 2 / 2 + 1`. -/
+theorem decodeLo_eq (P : Parameters) : decodeLo P = P.modulus / 2 / 2 + 1 := rfl
+
+/-- The upper end, exclusive, of the decoding interval: `decodeHi P = ⌊(q + ⌊q/2⌋ + 1)/2⌋`,
+one more than the greatest representative that decodes to true. Glue for the file's
+`decode`. -/
+def decodeHi (P : Parameters) : ℕ :=
+  (P.modulus + P.modulus / 2 + 1) / 2
+
+/-- `decodeHi P` is `(P.modulus + P.modulus / 2 + 1) / 2`. -/
+theorem decodeHi_eq (P : Parameters) : decodeHi P = (P.modulus + P.modulus / 2 + 1) / 2 := rfl
+
+/-- **Decoding is an interval test**: a residue decodes to true exactly when its canonical
+representative lies in `[decodeLo P, decodeHi P)`,
+`decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P`. With `h = ⌊q/2⌋` the interval
+is `[⌊h/2⌋ + 1, ⌊(q + h + 1)/2⌋)`. Glue for the file's `decode`, consumed by the GSW
+decryption formula as an interval of the modular subset sum.
+
+**Proof sketch.** Write `v` for the representative `v.val < q` and `h = ⌊q/2⌋ < q`. By
+Mathlib's `ZMod.valMinAbs_natAbs_eq_min`, the natural absolute value of the minimal lift of a
+residue `y` is `min y.val (q − y.val)`; this gives both distances through `distance_eq`.
+The distance to the false codepoint (`codepoint_eq`) reads `v`. For the true codepoint `h`,
+the representative of `v − h` is `v − h` when `h ≤ v` (`ZMod.val_sub`) and `v + q − h`
+otherwise (the difference is the cast of `v + q − h`, by `ZMod.natCast_self` and
+`ZMod.natCast_zmod_val`, below `q`). `decode_eq` compares the two distances strictly; after
+the case split every case is linear arithmetic with `min` and divisions by `2`, which `omega`
+closes against `decodeLo_eq` and `decodeHi_eq`. -/
+theorem decode_iff_mem_Ico (P : Parameters) (v : ZMod P.modulus) :
+    decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P := by
+  have hq := P.modulus_ge_two
+  have hv := ZMod.val_lt v
+  -- Step 1: the representative of `v − ⌊q/2⌋`.
+  have hh : P.modulus / 2 < P.modulus := by omega
+  have hsub : (v - ((P.modulus / 2 : ℕ) : ZMod P.modulus)).val =
+      if P.modulus / 2 ≤ v.val then v.val - P.modulus / 2
+      else v.val + P.modulus - P.modulus / 2 := by
+    split_ifs with hle
+    · rw [ZMod.val_sub (by rwa [ZMod.val_natCast_of_lt hh]), ZMod.val_natCast_of_lt hh]
+    · have hcast : v - ((P.modulus / 2 : ℕ) : ZMod P.modulus) =
+          ((v.val + P.modulus - P.modulus / 2 : ℕ) : ZMod P.modulus) := by
+        rw [Nat.cast_sub (by omega), Nat.cast_add, ZMod.natCast_self, ZMod.natCast_zmod_val,
+          add_zero]
+      rw [hcast, ZMod.val_natCast_of_lt (by omega)]
+  -- Step 2: both distances as `min` of a representative and its complement
+  -- (`ZMod.valMinAbs_natAbs_eq_min`); linear arithmetic in every case.
+  rw [decode_eq, decide_eq_true_iff, distance_eq, distance_eq, codepoint_eq, codepoint_eq]
+  simp only [if_true, Bool.false_eq_true, if_false, sub_zero]
+  rw [ZMod.valMinAbs_natAbs_eq_min, ZMod.valMinAbs_natAbs_eq_min, hsub, decodeLo_eq, decodeHi_eq]
+  split_ifs <;> omega
+
+/-- An error of absolute value at most `B` preserves the encoded bit whenever
+`2 * B < floor(q/2)` [Wu24, Definition 20.5 and Lecture 21, bounded-error refinement].
+
+**Proof sketch.** Translation invariance and the integer-error bound put the received
+residue within `B` of its intended codepoint. The triangle inequality and exact
+codepoint separation put its distance to the other codepoint above `B`. The intended
+codepoint is uniquely nearer, so the tie rule is immaterial for valid encryptions. -/
+theorem decode_codepoint_add (P : Parameters) (B : ℕ) (b : Bool) (e : ℤ)
+    (he : e.natAbs ≤ B) (hsep : 2 * B < P.modulus / 2) :
+    decode P (codepoint P b + (e : ZMod P.modulus)) = b := by
+  have herr : distance P (codepoint P b + (e : ZMod P.modulus)) (codepoint P b) ≤ B := by
+    calc
+      _ = distance P (e : ZMod P.modulus) 0 := by
+        simpa only [zero_add, add_comm] using
+          distance_add_right P (e : ZMod P.modulus) 0 (codepoint P b)
+      _ ≤ e.natAbs := distance_intCast_zero_le P e
+      _ ≤ B := he
+  have htri := distance_triangle P (codepoint P false)
+    (codepoint P b + (e : ZMod P.modulus)) (codepoint P true)
+  rw [distance_codepoints, distance_symm P (codepoint P false)] at htri
+  cases b
+  · rw [decode_eq]
+    exact decide_eq_false (by omega)
+  · rw [decode_eq]
+    exact decide_eq_true (by omega)
+
+end TCSlib.Cryptography.LWE.BitEncoding
+/- G06-HARNESS EOF-VERIFY SealA_Cryptography_LWE_BitEncoding -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealA_Cryptography_LWE_BitEncoding"
+  let payload : String := "TCSlib.Cryptography.LWE.Noise.Bounded\tTCSlib.Cryptography.LWE.Noise\nTCSlib.Cryptography.LWE.Noise._sizeOf_1\tTCSlib.Cryptography.LWE.Noise\nTCSlib.Cryptography.LWE.Noise._sizeOf_inst\tTCSlib.Cryptography.LWE.Noise\nTCSlib.Cryptography.LWE.Noise.mk._flat_ctor\tTCSlib.Cryptography.LWE.Noise\nTCSlib.Cryptography.LWE.Parameters._sizeOf_1\tTCSlib.Cryptography.LWE.Basic\nTCSlib.Cryptography.LWE.Parameters._sizeOf_inst\tTCSlib.Cryptography.LWE.Basic\nTCSlib.Cryptography.LWE.Parameters.mk._flat_ctor\tTCSlib.Cryptography.LWE.Basic\nTCSlib.Cryptography.LWE.noisyValues\tTCSlib.Cryptography.LWE.Basic\nTCSlib.Cryptography.LWE.sample\tTCSlib.Cryptography.LWE.Basic"
+  let expectedRequests : Nat := 9
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := "TCSlib.Cryptography.LWE.Noise.Bounded\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"],[\"str\",\"Bounded\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.LWE.Noise._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.LWE.Noise._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"]]\ttrue\tfalse\ttrue\nTCSlib.Cryptography.LWE.Noise.mk._flat_ctor\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Noise\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.LWE.Parameters._sizeOf_1\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Parameters\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.LWE.Parameters._sizeOf_inst\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Parameters\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nTCSlib.Cryptography.LWE.Parameters.mk._flat_ctor\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Parameters\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nTCSlib.Cryptography.LWE.noisyValues\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"noisyValues\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nTCSlib.Cryptography.LWE.sample\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"sample\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Cryptography\"],[\"str\",\"LWE\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse"
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=eof spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed at EOF for {spelling}"
+    if Lean.Meta.isGlobalInstance env n then
+      throwError "G06-HARNESS {label}: unfolding membership at EOF for {spelling}"
+    verified := verified + 1
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  Lean.logInfo m!"G06-MASK label={label} phase=eof requested={requests.size} verified={verified}"
+  Lean.logInfo m!"G06-SEAL-END label={label} requested={requests.size} verified={verified}"
+

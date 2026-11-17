@@ -1,0 +1,23 @@
+/-! #### Tabulated program maps (probe-local; proved equal) -/
+/-- A map `Fin w → Fin w` read from a precomputed array (the array is an argument, evaluated
+before the call). -/
+@[noinline] def tabOf {w : ℕ} (a : Array (Fin w)) (h : a.size = w) : Fin w → Fin w :=
+  fun i => a[i.val]'(by rw [h]; exact i.isLt)
+
+/-- `f` tabulated once. -/
+def tabF {w : ℕ} (f : Fin w → Fin w) : Fin w → Fin w :=
+  tabOf (Array.ofFn f) (Array.size_ofFn)
+
+theorem tabF_eq {w : ℕ} (f : Fin w → Fin w) : tabF f = f := by
+  funext i; simp only [tabF, tabOf, Array.getElem_ofFn]
+
+/-- A branching program with every map tabulated. -/
+def tabB {w k : ℕ} (B : BranchingProgram w k) : BranchingProgram w k :=
+  ⟨B.instrs.map fun ι => ⟨ι.var, tabF ι.map0, tabF ι.map1⟩⟩
+
+theorem tabB_eq {w k : ℕ} (B : BranchingProgram w k) : tabB B = B := by
+  obtain ⟨l⟩ := B
+  have h : (fun ι : BranchingProgram.Instr w k => (⟨ι.var, tabF ι.map0, tabF ι.map1⟩ :
+      BranchingProgram.Instr w k)) = id := by
+    funext ι; simp only [tabF_eq, id]
+  simp only [tabB, h, List.map_id]

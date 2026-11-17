@@ -1,7 +1,7 @@
-From 6e01df6c7d5a4f36e92000040d8c83322cb7fef7 Mon Sep 17 00:00:00 2001
+From 7a8145468202f908f6a1e41638fc793c2313b850 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Tue, 17 Nov 2026 17:44:33 +0000
-Subject: [PATCH 1/2] GSW 6b statements: Branching (G1-G3) and DecryptFormula
+Subject: [PATCH 1/5] GSW 6b statements: Branching (G1-G3) and DecryptFormula
  (G5-G8)
 
 U12: select, homEvalPBP (host evalWith, H18), homEvalFormula (Barrington,
@@ -14,9 +14,9 @@ instance; targets G5-G8 with decDepth_le's constants settled.
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01PqpVTmUioVMQEPr6Cj4D51
 ---
- .../Homomorphic/GSW/Branching.lean            | 179 +++++++++++++++
- .../Homomorphic/GSW/DecryptFormula.lean       | 217 ++++++++++++++++++
- 2 files changed, 396 insertions(+)
+ .../Homomorphic/GSW/Branching.lean            | 179 ++++++++++++++
+ .../Homomorphic/GSW/DecryptFormula.lean       | 220 ++++++++++++++++++
+ 2 files changed, 399 insertions(+)
  create mode 100644 TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
  create mode 100644 TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
 
@@ -207,10 +207,10 @@ index 000000000..a5420c769
 +end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
 diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
 new file mode 100644
-index 000000000..c70669a11
+index 000000000..0f2ee7ab5
 --- /dev/null
 +++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
-@@ -0,0 +1,217 @@
+@@ -0,0 +1,220 @@
 +/-
 +Copyright (c) 2026 TCSlib contributors. All rights reserved.
 +Released under Apache 2.0 license as described in the file LICENSE.
@@ -368,14 +368,17 @@ index 000000000..c70669a11
 +Lemma 4.5, p029-b001, with its proof, p029-b002]. Deviation: the interval-sum construction of
 +the formula layer (module docstring).
 +
-+**Proof sketch.** `decrypt_eq` and `Regev.decrypt_eq` read decryption as `decode` of
-+`c_last − ⟨s, c_init⟩`, which is `⟨t, c⟩` for `t = (−s, 1)` (`secretVector_eq`,
-+`Fin.sum_univ_castSucc`, `Fin.snoc_castSucc`, `Fin.snoc_last`); by G5 it is
-+`∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(∑ᵢ xᵢ·aᵢ.val) mod q` (`ZMod.val_natCast`,
-+`Nat.cast_sum`, `ZMod.natCast_zmod_val`). `LWE.BitEncoding.decode_iff_mem_Ico` (O2) turns
-+`decode` into the interval test, and `FormulaArith.modSumInterval_eval` (F9) evaluates the
-+formula to the same test, with `aᵢ.val < q` (`ZMod.val_lt`) and `decodeLo ≤ decodeHi ≤ q`
-+(`decodeLo_eq`, `decodeHi_eq`, `omega`). Both sides are Booleans equal as propositions. -/
++**Proof sketch.** Decryption is `decode` of `⟨t, c⟩` with `t = (−s, 1)`, by the owner-side
++reader `decrypt_eq_decode_dotProduct : decrypt P s C = LWE.BitEncoding.decode P.lwe
++(secretVector P s ⬝ᵥ decryptColumn P C)` in `GSW/Scheme.lean`. It is **MISSING** at the base
++(the step exists only inside the private `decrypt_eq_decode_errorSum`), listed in the reader
++census, and lands owner-side before this fill (ruling Q-C1); the fill does not re-derive it.
++By G5, `⟨t, c⟩` is `∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(∑ᵢ xᵢ·aᵢ.val) mod q`
++(`ZMod.val_natCast`, `Nat.cast_sum`, `ZMod.natCast_zmod_val`).
++`LWE.BitEncoding.decode_iff_mem_Ico` (O2) turns `decode` into the interval test, and
++`FormulaArith.modSumInterval_eval` (F9) evaluates the formula to the same test, with
++`aᵢ.val < q` (`ZMod.val_lt`) and `decodeLo ≤ decodeHi ≤ q` (`decodeLo_eq`, `decodeHi_eq`,
++`omega`). Both sides are Booleans equal as propositions. -/
 +theorem decryptFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
 +    (C : Ciphertext P) : (decryptFormula P C).eval (keyBits P s) = decrypt P s C := by
 +  sorry

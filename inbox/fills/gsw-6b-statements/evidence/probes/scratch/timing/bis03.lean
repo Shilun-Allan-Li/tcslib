@@ -1,0 +1,27 @@
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Branching
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
+open TCSlib.Cryptography TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW BoolCircuit BranchingProgram
+abbrev TP (q ℓ : ℕ) (hq : 2 ≤ q) (hℓ : q ≤ 2 ^ ℓ) : Parameters := ⟨⟨1, 2, q, hq⟩, ℓ, hℓ⟩
+abbrev P5 : Parameters := TP 5 3 (by decide) (by decide)
+def enc0 (P : Parameters) (b : ℤ) : Ciphertext P := (b : ZMod P.lwe.modulus) • gadget P
+/-! #### Materializing evaluator (probe-local; proved equal to the library definitions)
+The library's `homEvalPBP` folds closures, so `#eval` recomputes every earlier state on each
+access (exponential in the program length). `evalM` is the same fold with every state
+materialized into arrays after each step; `evalM_eq` proves it equal to `homEvalPBP` through the
+readers `homEvalPBP_eq` and `BranchingProgram.evalWith_eq`, so `#eval` of `evalM` evaluates
+`homEvalPBP` itself, and `formulaM_eq` does the same for `homEvalFormula`. -/
+
+/-- A matrix with its entries computed once into an array. -/
+def mat (P : Parameters) (M : Ciphertext P) : Ciphertext P :=
+  let a := Array.ofFn fun i => Array.ofFn fun j => M i j
+  fun i j => (a[i.val]'(by simp only [a, Array.size_ofFn]; exact i.isLt))[j.val]'(by
+    simp only [a, Array.getElem_ofFn, Array.size_ofFn]; exact j.isLt)
+
+theorem mat_eq (P : Parameters) (M : Ciphertext P) : mat P M = M := by
+  funext i j; simp only [mat, Array.getElem_ofFn]
+
+/-- A state vector with every coordinate materialized. -/
+def matV (P : Parameters) {w : ℕ} (V : Fin w → Ciphertext P) : Fin w → Ciphertext P :=
+  let a := Array.ofFn fun k => mat P (V k)
+  fun k => a[k.val]'(by simp only [a, Array.size_ofFn]; exact k.isLt)
+

@@ -1,0 +1,36 @@
+/-! #### Strict leveled evaluators (probe-local; proved equal to the library definitions) -/
+
+/-- `levelGate` with `bootGateA`. -/
+def levelGateA (P : Parameters) {L : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P) (δ : ℕ)
+    (g : DAGGate) (cts : List (Ciphertext P)) : Ciphertext P :=
+  if h : δ - 1 < L then bootGateA P (lk ⟨δ - 1, h⟩) g cts else 0
+
+theorem levelGateA_eq (P : Parameters) {L : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P) :
+    levelGateA P lk = levelGate P lk := by
+  funext δ g cts
+  by_cases h : δ - 1 < L
+  · rw [levelGate_of_lt P lk δ g cts h, levelGateA, dif_pos h, bootGateA_eq]
+  · rw [levelGate_of_le P lk δ g cts (Nat.le_of_not_lt h), levelGateA, dif_neg h]
+
+/-- `leveledEval` with `levelGateA`. -/
+def leveledEvalA (P : Parameters) {L k : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P)
+    (Cc : DAGCircuit (k + k)) (cts : Fin (k + k) → Ciphertext P) : Ciphertext P :=
+  (runWith (fun g vs => levelGateA P lk (Cc.depthAt vs.length) g vs) Cc.gates
+    (List.ofFn cts)).getD Cc.output 0
+
+theorem leveledEvalA_eq (P : Parameters) {L k : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P)
+    (Cc : DAGCircuit (k + k)) (cts : Fin (k + k) → Ciphertext P) :
+    leveledEvalA P lk Cc cts = leveledEval P lk Cc cts := by
+  rw [leveledEvalA, levelGateA_eq, leveledEval_eq]
+
+/-- `leveledEvalCircuit` with `leveledEvalA`. -/
+def leveledEvalCircuitA (P : Parameters) {L k : ℕ} [NeZero k]
+    (lk : Fin L → Fin P.columns → Ciphertext P) (Cc : DAGCircuit k)
+    (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) : Ciphertext P :=
+  leveledEvalA P lk (Cc.toNANDForm hC).layerNAND (literalCts P cts)
+
+theorem leveledEvalCircuitA_eq (P : Parameters) {L k : ℕ} [NeZero k]
+    (lk : Fin L → Fin P.columns → Ciphertext P) (Cc : DAGCircuit k)
+    (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) :
+    leveledEvalCircuitA P lk Cc hC cts = leveledEvalCircuit P lk Cc hC cts := by
+  rw [leveledEvalCircuitA, leveledEvalA_eq, leveledEvalCircuit_eq]

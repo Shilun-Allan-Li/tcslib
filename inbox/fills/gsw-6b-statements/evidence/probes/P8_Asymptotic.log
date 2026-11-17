@@ -1,0 +1,77 @@
+indCPA_of_dlweAssumption
+  Fc : LWE.DLWEAssumption Fc →
+  ReductionEfficient Fc →
+    (∀ (κ : ℕ), ((Fc.parameters κ).dimension + 1) * Fc.residueBits.eval κ + 2 * κ ≤ (Fc.parameters κ).samples) →
+      ∀ (D : NUPPT),
+        Negligible fun κ =>
+          distAdv (realView (Parameters.ofFamily Fc κ) (Fc.noise κ) false)
+            (realView (Parameters.ofFamily Fc κ) (Fc.noise κ) true) fun v r =>
+            D.distinguisherL κ (encodeView (Parameters.ofFamily Fc κ) v) r
+indCPA_of_dlweAssumption
+  F1 : LWE.DLWEAssumption F1 →
+  ReductionEfficient F1 →
+    (∀ (κ : ℕ), ((F1.parameters κ).dimension + 1) * F1.residueBits.eval κ + 2 * κ ≤ (F1.parameters κ).samples) →
+      ∀ (D : NUPPT),
+        Negligible fun κ =>
+          distAdv (realView (Parameters.ofFamily F1 κ) (F1.noise κ) false)
+            (realView (Parameters.ofFamily F1 κ) (F1.noise κ) true) fun v r =>
+            D.distinguisherL κ (encodeView (Parameters.ofFamily F1 κ) v) r
+leveledINDCPA_of_dlweAssumption F1
+  (PolyExpr.var.add
+    (PolyExpr.const
+      1)) : LWE.DLWEAssumption F1 →
+  LeveledReductionEfficient F1 (PolyExpr.var.add (PolyExpr.const 1)) →
+    (∀ (κ : ℕ), ((F1.parameters κ).dimension + 1) * F1.residueBits.eval κ + 2 * κ ≤ (F1.parameters κ).samples) →
+      ∀ (D : NUPPT),
+        Negligible fun κ =>
+          distAdv
+            (leveledView (Parameters.ofFamily F1 κ) (F1.noise κ) ((PolyExpr.var.add (PolyExpr.const 1)).eval κ) false)
+            (leveledView (Parameters.ofFamily F1 κ) (F1.noise κ) ((PolyExpr.var.add (PolyExpr.const 1)).eval κ) true)
+            fun v r =>
+            D.distinguisherL κ
+              (encodeLeveledView (Parameters.ofFamily F1 κ) ((PolyExpr.var.add (PolyExpr.const 1)).eval κ) v) r
+bootRatio_le_poly F1 (fun x => 1)
+  3 : 8 *
+    ((Parameters.ofFamily F1 3).width *
+      bootNoise (Parameters.ofFamily F1 3) ((Parameters.ofFamily F1 3).lwe.samples * 1)) ≤
+  (pBoot F1).eval 3 * 1
+decrypt_fheEval_of_ratio Fc (fun x => 1) 0
+  χ1_bounded : (pBoot Fc).eval 0 * 1 < (Fc.parameters 0).modulus →
+  ∀ (rg : KeySeed (Parameters.ofFamily Fc 0) (Fc.noise 0))
+    (R : Fin (Parameters.ofFamily Fc 0).columns → Coins (Parameters.ofFamily Fc 0)) {k : ℕ}
+    (Cc : BoolCircuit.DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (x : Fin k → Bool)
+    (R' : Fin k → Coins (Parameters.ofFamily Fc 0)),
+    decrypt (Parameters.ofFamily Fc 0)
+        (Encryption.PublicKey.Regev.keygen (Parameters.ofFamily Fc 0).lwe (Fc.noise 0) rg).2
+        (fheEvalCircuit (Parameters.ofFamily Fc 0)
+          (evalKey (Parameters.ofFamily Fc 0)
+            (Encryption.PublicKey.Regev.keygen (Parameters.ofFamily Fc 0).lwe (Fc.noise 0) rg).1
+            (Encryption.PublicKey.Regev.keygen (Parameters.ofFamily Fc 0).lwe (Fc.noise 0) rg).2 R)
+          Cc hC fun j =>
+          encrypt (Parameters.ofFamily Fc 0)
+            (Encryption.PublicKey.Regev.keygen (Parameters.ofFamily Fc 0).lwe (Fc.noise 0) rg).1 (x j) (R' j)) =
+      Cc.eval x
+decrypt_leveledEval_of_ratio F1 (fun x => 1) 2
+  χ1_bounded : (pBoot F1).eval 2 * 1 < (F1.parameters 2).modulus →
+  ∀ {L k : ℕ} [inst : NeZero k] (rgs : Fin (L + 1) → KeySeed (Parameters.ofFamily F1 2) (F1.noise 2))
+    (R : LevelCoins (Parameters.ofFamily F1 2) L) (Cc : BoolCircuit.DAGCircuit k)
+    (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (hdepth : (Cc.toNANDForm hC).depth ≤ L) (x : Fin k → Bool)
+    (R' : Fin k → Coins (Parameters.ofFamily F1 2)),
+    decrypt (Parameters.ofFamily F1 2)
+        (Encryption.PublicKey.Regev.keygen (Parameters.ofFamily F1 2).lwe (F1.noise 2)
+            (rgs ⟨(Cc.toNANDForm hC).depth, ⋯⟩)).2
+        (leveledEvalCircuit (Parameters.ofFamily F1 2)
+          (levelKey (Parameters.ofFamily F1 2)
+            (fun e => (Encryption.PublicKey.Regev.keygen (Parameters.ofFamily F1 2).lwe (F1.noise 2) (rgs e)).1)
+            (fun e => (Encryption.PublicKey.Regev.keygen (Parameters.ofFamily F1 2).lwe (F1.noise 2) (rgs e)).2) R)
+          Cc hC fun j =>
+          encrypt (Parameters.ofFamily F1 2)
+            (Encryption.PublicKey.Regev.keygen (Parameters.ofFamily F1 2).lwe (F1.noise 2) (rgs 0)).1 (x j) (R' j)) =
+      Cc.eval x
+encodeFheView (Parameters.ofFamily Fc 0) : FheView (Parameters.ofFamily Fc 0) → List Bool
+encodeLeveledView (Parameters.ofFamily F1 1) 2 : LeveledView (Parameters.ofFamily F1 1) 2 → List Bool
+(6, 4, 49, 128)
+[68133319377694008141577172832026099712, 9204013847267350453478437496615196048752640000,
+  6789841166766984824278940667604174863828231366115328, 269955071263899648000000000000000000000000000000000000000]
+(89505492860580065669012483485992656830464, true)
+'P8.Fc_ratio' depends on axioms: [propext, Classical.choice, Quot.sound]
