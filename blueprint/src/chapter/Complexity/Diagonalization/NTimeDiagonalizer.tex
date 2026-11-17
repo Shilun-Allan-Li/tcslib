@@ -3350,3 +3350,669 @@ Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, a c
 decider, let $L$ assign a value to each index $i < 14$ and let $d$ be a default value. For every $i
 < 14$, the layout of $L$ with default $d$ takes the value $L(i)$ at the named tape $\tau_i$.
 \end{theorem}
+
+\begin{theorem}[A layout off the named tapes]
+\lean{Turing.NTimeDiag.dzLay_off}
+\label{Turing.NTimeDiag.dzLay_off}
+\leanok
+\uses{Turing.NTimeDiag.dzLay}
+\difficulty{2}
+Let $K \in \mathbb{N}$, let $L$ assign a value of some type to each index $i < 14$ and let $d$ be a value of that type. For every host tape $t < K$ with $14 \le t$, the layout of $L$ with default $d$ (which gives tape $t$ the value $L(t)$ if $t < 14$ and $d$ otherwise) takes the value $d$ at $t$.
+\end{theorem}
+
+\begin{theorem}[Updating a layout on a named tape]
+\lean{Turing.NTimeDiag.dzLay_update}
+\label{Turing.NTimeDiag.dzLay_update}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_off, Turing.NTimeDiag.dzLay_tp}
+\difficulty{4}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). Let $L$ assign a value to each index $i < 14$, let $d$ be a default value, and write $\mathrm{lay}(L, d)$ for the layout giving each host tape $\tau_i$ the value $L(i)$ and every other host tape the value $d$. For every $i < 14$ and every value $v$, updating $\mathrm{lay}(L, d)$ at $\tau_i$ to $v$ gives $\mathrm{lay}(L', d)$, where $L'$ is $L$ updated at $i$ to $v$.
+\end{theorem}
+
+\begin{theorem}[Constant tapes form a layout]
+\lean{Turing.NTimeDiag.dzLay_const}
+\label{Turing.NTimeDiag.dzLay_const}
+\leanok
+\uses{Turing.NTimeDiag.dzLay}
+\difficulty{2}
+Let $K \in \mathbb{N}$ and let $d$ be a value. The constant assignment of $d$ to all $K$ host tapes equals the layout of the constant assignment $i \mapsto d$ on the indices $i < 14$ with default $d$.
+\end{theorem}
+
+\begin{theorem}[Bank tapes lie off the named tapes]
+\lean{Turing.NTimeDiag.dz_bank_off}
+\label{Turing.NTimeDiag.dz_bank_off}
+\leanok
+\uses{Turing.NTimeDiag.qyBank, Turing.NTimeDiag.qyBank_val}
+\difficulty{2}
+Let $K, \mathit{off}, k \in \mathbb{N}$ with $\mathit{off} + k \le K$ and $14 \le \mathit{off}$, and let $t_0$ be one of $K$ tapes with $t_0 < \mathit{off}$. Consider the bank sending $0$ to $t_0$ and each $i \ne 0$ with $i < k$ to tape $\mathit{off} + i$. For every $i < k$ with $i \ne 0$, the tape it assigns to $i$ has index at least $14$.
+\end{theorem}
+
+\begin{definition}[Bank of the stage-query call]
+\lean{Turing.NTimeDiag.DzKit.bQ}
+\label{Turing.NTimeDiag.DzKit.bQ}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.qyBank}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). The bank of the stage-query call is the injection of the $k_q$ tapes of the kit's input call for the stage query into the $K_\kappa$ host tapes that sends tape $0$ to $\tau_0$ and each tape $i \ne 0$ to host tape $14 + i$.
+\end{definition}
+
+\begin{definition}[Bank of the call for g]
+\lean{Turing.NTimeDiag.DzKit.bG}
+\label{Turing.NTimeDiag.DzKit.bG}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.qyBank}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). With $k_q, k_g, k_p, k_l, k_a$ the numbers of tapes of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and $k_R$ the number of tapes of its interpreter core, the bank of $g$'s call is the injection of the $k_g$ tapes of the call computing $\mathrm{bits}(g(|x|))$ into the host tapes that sends tape $0$ to $\tau_1$ and each tape $i \ne 0$ to host tape $14 + k_q + i$.
+\end{definition}
+
+\begin{definition}[Bank of the prepend call]
+\lean{Turing.NTimeDiag.DzKit.bP}
+\label{Turing.NTimeDiag.DzKit.bP}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.qyBank}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). With $k_q, k_g, k_p, k_l, k_a$ the numbers of tapes of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and $k_R$ the number of tapes of its interpreter core, the bank of the prepend call is the injection of the $k_p$ tapes of the call computing $x \mapsto 1x$ into the host tapes that sends tape $0$ to $\tau_2$ and each tape $i \ne 0$ to host tape $14 + k_q + k_g + i$.
+\end{definition}
+
+\begin{definition}[Bank of the length call]
+\lean{Turing.NTimeDiag.DzKit.bL}
+\label{Turing.NTimeDiag.DzKit.bL}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.qyBank}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). With $k_q, k_g, k_p, k_l, k_a$ the numbers of tapes of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and $k_R$ the number of tapes of its interpreter core, the bank of the length call is the injection of the $k_l$ tapes of the call computing $y \mapsto \mathrm{bits}(|y|)$ into the host tapes that sends tape $0$ to $\tau_{10}$ and each tape $i \ne 0$ to host tape $14 + k_q + k_g + k_p + i$.
+\end{definition}
+
+\begin{definition}[Bank of the extractor call]
+\lean{Turing.NTimeDiag.DzKit.bA}
+\label{Turing.NTimeDiag.DzKit.bA}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.qyBank}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). With $k_q, k_g, k_p, k_l, k_a$ the numbers of tapes of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and $k_R$ the number of tapes of its interpreter core, the bank of the extractor call is the injection of the $k_a$ tapes of the call computing the inner second component into the host tapes that sends tape $0$ to $\tau_8$ and each tape $i \ne 0$ to host tape $14 + k_q + k_g + k_p + k_l + i$.
+\end{definition}
+
+\begin{definition}[Tape map of the interpreter core]
+\lean{Turing.NTimeDiag.DzKit.bR}
+\label{Turing.NTimeDiag.DzKit.bR}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.qyBank}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). With $k_q, k_g, k_p, k_l, k_a$ the numbers of tapes of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and $k_R$ the number of tapes of its interpreter core and $j_R$ its stream tape, let $\mathit{off} = 14 + k_q + k_g + k_p + k_l + k_a$. The core's tape map is the injection of the $k_R$ core tapes into the host tapes obtained by first exchanging tapes $0$ and $j_R$ and then applying the bank that sends $0$ to $\tau_6$ and each $i \ne 0$ to host tape $\mathit{off} + i$; so the stream tape $j_R$ lands on the block tape $\tau_6$.
+\end{definition}
+
+\begin{definition}[Tape map of the decider]
+\lean{Turing.NTimeDiag.DzKit.bB}
+\label{Turing.NTimeDiag.DzKit.bB}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.qyBank}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). With $k_q, k_g, k_p, k_l, k_a$ the numbers of tapes of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and $k_R$ the number of tapes of its interpreter core and $k_{B_F}$ the number of tapes of $B_F$, let $\mathit{off} = 14 + k_q + k_g + k_p + k_l + k_a + k_R$. The decider's tape map is the injection of the $k_{B_F}$ tapes of $B_F$ into the host tapes that sends tape $0$ to $\tau_{13}$ and each tape $i \ne 0$ to host tape $\mathit{off} + i$.
+\end{definition}
+
+\begin{theorem}[Core's stream tape is the block tape]
+\lean{Turing.NTimeDiag.DzKit.bR_j}
+\label{Turing.NTimeDiag.DzKit.bR_j}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.bR, Turing.NTimeDiag.DzKit.tp}
+\difficulty{2}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $j_R$ be the stream tape of the kit's interpreter core. The core's tape map (exchange tapes $0$ and $j_R$, then send $0$ to $\tau_6$ and the other core tapes into their own block of host tapes) sends $j_R$ to the block tape $\tau_6$.
+\end{theorem}
+
+\begin{theorem}[Core's other tapes avoid the named tapes]
+\lean{Turing.NTimeDiag.DzKit.bR_off}
+\label{Turing.NTimeDiag.DzKit.bR_off}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.bR, Turing.NTimeDiag.dz_bank_off}
+\difficulty{3}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $j_R$ be the stream tape of the kit's interpreter core. Under the core's tape map (exchange tapes $0$ and $j_R$, then send $0$ to $\tau_6$ and each $i \ne 0$ to host tape $14 + k_q + k_g + k_p + k_l + k_a + i$, the $k$'s being the tape counts of the kit's calls), every core tape $i \ne j_R$ is sent to a host tape of index at least $14$.
+\end{theorem}
+
+\begin{definition}[Phases of the setup]
+\lean{Turing.NTimeDiag.DzPK}
+\label{Turing.NTimeDiag.DzPK}
+\leanok
+The phases of the diagonalizer's setup are twelve labels: the three input calls (the stage query, the bits of $g(n)$ and the word $1^{n+1}$); two copies of $\mathrm{bits}(g(n))$; the expansion writing the block's stream cells; the write of the separator's counter and the separator's expansion; the copy of the budget word into the block and the block's rewind; and the ruler's expansion and the ruler's rewind.
+\end{definition}
+
+\begin{definition}[State sets of the setup's phases]
+\lean{Turing.NTimeDiag.DzPPh}
+\label{Turing.NTimeDiag.DzPPh}
+\leanok
+\uses{Turing.CounterLoopState, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzPK, Turing.RewindPhase, Turing.SweepPhase, Turing.WritePhase}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The state sets of the setup's phases are: for each of the three input-call phases, a fresh start state together with the states of the corresponding call of $\kappa$ (for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$); for the two copy phases and the budget-word copy, the states of a sweep; for the three expansion phases, the counter-loop states of an expansion of the one-symbol word $1$; for the separator's counter, the states of writing a one-symbol constant; and for the two rewind phases, the rewind states.
+\end{definition}
+
+\begin{definition}[Phase machines of the setup]
+\lean{Turing.NTimeDiag.dzSetM}
+\label{Turing.NTimeDiag.dzSetM}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.MultiTapeTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.bG, Turing.NTimeDiag.DzKit.bP, Turing.NTimeDiag.DzKit.bQ, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.DzPK, Turing.NTimeDiag.DzPPh, Turing.NTimeDiag.qyEmb2, Turing.copyMapTM, Turing.embedEmitTM, Turing.expandTM, Turing.rewindTM, Turing.seamReleaseTM, Turing.writeConstTM}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). The setup's phase machines, all over the $K_\kappa$ host tapes, are: the release adapters (at their entry states) of the kit's input calls for the stage query, for $\mathrm{bits}(g(|x|))$ and for prepending $1$, embedded along the banks with tape $0$ on $\tau_0$, $\tau_1$, $\tau_2$ respectively; the identity copies from $\tau_1$ to $\tau_3$ and from $\tau_1$ to $\tau_4$; the expansion of the word $1$ by the binary counter on $\tau_4$ onto $\tau_6$; the write of the constant word $1$ on $\tau_5$; the expansion by the counter on $\tau_5$ onto $\tau_6$; the identity copy from $\tau_1$ to $\tau_6$; the rewind of $\tau_6$; the expansion by the counter on $\tau_1$ onto $\tau_7$; and the rewind of $\tau_7$.
+\end{definition}
+
+\begin{definition}[Dispatch table of the setup]
+\lean{Turing.NTimeDiag.dzSetRed}
+\label{Turing.NTimeDiag.dzSetRed}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzPK, Turing.NTimeDiag.DzPPh}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The setup's dispatch table takes the phases in the order: stage-query call, $g$'s call, prepend call, first copy, second copy, stream expansion, separator write, separator expansion, budget copy, block rewind, ruler expansion, ruler rewind. It redirects the exit state of each phase except the last to the entry state of the next (a call phase exits at its call's exit state, every other phase at its done state; a call phase is entered at its fresh start, a sweep at its sweeping state, an expansion at its first decrement, the write at its first cell and a rewind at its start), and leaves every other state, including every state of the ruler's rewind, without redirect.
+\end{definition}
+
+\begin{definition}[The diagonalizer's setup machine]
+\lean{Turing.NTimeDiag.dzSet}
+\label{Turing.NTimeDiag.dzSet}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.MultiTapeTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzPPh, Turing.NTimeDiag.dzSetM, Turing.NTimeDiag.dzSetRed, Turing.phaseHostTM}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The setup machine is the phase host over the setup's twelve phases and their phase machines (three released input calls, copies, expansions, a constant write and rewinds), started at the fresh start state of the stage-query call phase and switching phases according to the setup's dispatch table.
+\end{definition}
+
+\begin{definition}[Exit state of the setup]
+\lean{Turing.NTimeDiag.dzPexit}
+\label{Turing.NTimeDiag.dzPexit}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzPPh}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The setup's exit state is the done state of its last phase, the ruler's rewind.
+\end{definition}
+
+\begin{definition}[The block]
+\lean{Turing.NTimeDiag.dzBlk}
+\label{Turing.NTimeDiag.dzBlk}
+\leanok
+For $G \in \mathbb{N}$, the block is the binary word $1^G\,1\,\mathrm{bits}(G)$: $G$ stream cells, a separator and the budget word, where $\mathrm{bits}(G)$ is the binary expansion of $G$.
+\end{definition}
+
+\begin{theorem}[Width of the block]
+\lean{Turing.NTimeDiag.dzBlk_length}
+\label{Turing.NTimeDiag.dzBlk_length}
+\leanok
+\uses{Turing.NTimeDiag.dzBlk}
+\difficulty{2}
+For every $G \in \mathbb{N}$, the block $1^G\,1\,\mathrm{bits}(G)$ has length $G + 1 + |\mathrm{bits}(G)|$.
+\end{theorem}
+
+\begin{definition}[Named tapes at the setup's exit]
+\lean{Turing.NTimeDiag.dzSetL}
+\label{Turing.NTimeDiag.dzSetL}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.dzBlk, Turing.NTimeDiag.query}
+Let $f, g : \mathbb{N} \to \mathbb{N}$, let $q_{f,g}$ be the stage query, let $z$ be a binary word, write $\mathrm{buf}(w)$ for the tape holding $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, and let $m = |\mathrm{bits}(g(|z|))|$. The named-tape contents at the setup's exit assign $\mathrm{buf}(q_{f,g}(z))$ to index $0$, $\mathrm{buf}(1^m)$ to $1$, $\mathrm{buf}(1z)$ to $2$, $\mathrm{buf}(\mathrm{bits}(g(|z|)))$ to $3$, $\mathrm{buf}(1^m)$ to $4$, $\mathrm{buf}(1)$ to $5$, the block $\mathrm{buf}(1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|)))$ to $6$, $\mathrm{buf}(1^{g(|z|)})$ to $7$, and the blank tape to the indices $8, \dots, 13$.
+\end{definition}
+
+\begin{theorem}[A bank holding an argument]
+\lean{Turing.NTimeDiag.dz_arg_bank}
+\label{Turing.NTimeDiag.dz_arg_bank}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_off, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dz_bank_off, Turing.NTimeDiag.qyBank, Turing.NTimeDiag.qyBank_zero, Turing.NTimeDiag.qy_arg_bank, Turing.stateWord}
+\difficulty{2}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). Let $L$ assign a tape to each index $i < 14$, let $i_0 < 14$, let $\mathit{off}, k \in \mathbb{N}$ with $\mathit{off} + k \le K_\kappa$, $\tau_{i_0} < \mathit{off}$, $14 \le \mathit{off}$ and $0 < k$, and let $a$ be a binary word with $L(i_0) = \mathrm{buf}(a)$, where $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere. Let $\hat L$ give $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and let $\sigma$ be the bank sending $0$ to $\tau_{i_0}$ and each $i \ne 0$ to host tape $\mathit{off} + i$. Then for every $i < k$, $\hat L(\sigma(i)) = \mathrm{buf}(w_i)$, where $w_0 = a$ and $w_i = \varepsilon$ for $i \ne 0$.
+\end{theorem}
+
+\begin{theorem}[A bank with all heads at zero]
+\lean{Turing.NTimeDiag.dz_zero_bank}
+\label{Turing.NTimeDiag.dz_zero_bank}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_off, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dz_bank_off, Turing.NTimeDiag.qyBank, Turing.NTimeDiag.qyBank_zero}
+\difficulty{3}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). Let $P$ assign a head position to each index $i < 14$, let $i_0 < 14$ with $P(i_0) = 0$, and let $\mathit{off}, k \in \mathbb{N}$ with $\mathit{off} + k \le K_\kappa$, $\tau_{i_0} < \mathit{off}$ and $14 \le \mathit{off}$. Let $\hat P$ give $\tau_i$ the position $P(i)$ and every other head the position $0$, and let $\sigma$ be the bank sending $0$ to $\tau_{i_0}$ and each $i \ne 0$ to host tape $\mathit{off} + i$. Then $\hat P(\sigma(i)) = 0$ for every $i < k$.
+\end{theorem}
+
+\begin{definition}[Time bound of the setup]
+\lean{Turing.NTimeDiag.dzSetB}
+\label{Turing.NTimeDiag.dzSetB}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, and let $A_q, A_g, A_p$ be the constants of the kit's input calls for the stage query, for $\mathrm{bits}(g(|x|))$ and for prepending $1$. For $G \in \mathbb{N}$ (standing for $g(n)$), the setup's time bound is $(A_q + A_g + A_p + 40)(G + 1)$.
+\end{definition}
+
+\begin{theorem}[Run of the setup]
+\lean{Turing.NTimeDiag.dz_setup}
+\label{Turing.NTimeDiag.dz_setup}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.bG, Turing.NTimeDiag.DzKit.bP, Turing.NTimeDiag.DzKit.bQ, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.DzPK, Turing.NTimeDiag.DzPPh, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_const, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzLay_update, Turing.NTimeDiag.dzPexit, Turing.NTimeDiag.dzSet, Turing.NTimeDiag.dzSetB, Turing.NTimeDiag.dzSetL, Turing.NTimeDiag.dzSetM, Turing.NTimeDiag.dzSetRed, Turing.NTimeDiag.dz_arg_bank, Turing.NTimeDiag.dz_zero_bank, Turing.NTimeDiag.query, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyEmb2, Turing.NTimeDiag.qy_bits_val, Turing.NTimeDiag.qy_callHost, Turing.NTimeDiag.qy_copy, Turing.NTimeDiag.qy_expandHost, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_hosted_last, Turing.NTimeDiag.qy_rewind, Turing.NTimeDiag.qy_writeConst, Turing.Segment, Turing.Segment.trans, Turing.counterOverhead_le, Turing.length_bits_le_self}
+\difficulty{5}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $A_q, A_g, A_p$ be the constants of its input calls for the stage query, for $\mathrm{bits}(g(|x|))$ and for prepending $1$, and let $z$ be a binary input. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $\Lambda_z$ for the named-tape contents at the setup's exit: $\mathrm{buf}(q_{f,g}(z))$ on $\tau_0$, where $q_{f,g}$ is the stage query; $\mathrm{buf}(1^m)$ on $\tau_1$ and $\tau_4$, where $m = |\mathrm{bits}(g(|z|))|$; $\mathrm{buf}(1z)$ on $\tau_2$; $\mathrm{buf}(\mathrm{bits}(g(|z|)))$ on $\tau_3$; $\mathrm{buf}(1)$ on $\tau_5$; the block $\mathrm{buf}(1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|)))$ on $\tau_6$; $\mathrm{buf}(1^{g(|z|)})$ on $\tau_7$; and the blank tape on $\tau_8, \dots, \tau_{13}$, extended blank to the other host tapes. Then there is $t \le (A_q + A_g + A_p + 40)(g(|z|) + 1)$ such that the setup machine runs in exactly $t$ steps from $\langle (\text{query call}, \text{start}), 1, \text{all blank}, 0, \varepsilon\rangle$ to $\langle \mathit{exit}, 1, \Lambda_z, 0, \varepsilon\rangle$, where $\mathit{exit}$ is the done state of the ruler's rewind, and is not in $\mathit{exit}$ at any earlier time.
+\end{theorem}
+
+\begin{definition}[A single tape as a bank]
+\lean{Turing.NTimeDiag.dzOne}
+\label{Turing.NTimeDiag.dzOne}
+\leanok
+For $K \in \mathbb{N}$ and a tape $t$ among $K$ tapes, the one-tape bank is the injection of the single index $0$ into the $K$ tapes sending $0$ to $t$.
+\end{definition}
+
+\begin{theorem}[Core's tapes avoid other named tapes]
+\lean{Turing.NTimeDiag.DzKit.bR_ne}
+\label{Turing.NTimeDiag.DzKit.bR_ne}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.bR, Turing.NTimeDiag.DzKit.bR_j, Turing.NTimeDiag.DzKit.bR_off, Turing.NTimeDiag.DzKit.le_K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val}
+\difficulty{4}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). For every tape $i$ of the kit's interpreter core and every $j < 14$ with $j \ne 6$, the core's tape map (which sends the stream tape to $\tau_6$ and every other core tape to a host tape of index at least $14$) does not send $i$ to $\tau_j$.
+\end{theorem}
+
+\begin{theorem}[Decider's tapes avoid other named tapes]
+\lean{Turing.NTimeDiag.DzKit.bB_ne}
+\label{Turing.NTimeDiag.DzKit.bB_ne}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.bB, Turing.NTimeDiag.DzKit.le_K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_val, Turing.NTimeDiag.dz_bank_off}
+\difficulty{4}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). For every tape $i$ of $B_F$ and every $j < 14$ with $j \ne 13$, the decider's tape map (which sends tape $0$ to $\tau_{13}$ and every other tape of $B_F$ to a host tape of index at least $14$) does not send $i$ to $\tau_j$.
+\end{theorem}
+
+\begin{definition}[Tape map of the hosted core's clock]
+\lean{Turing.NTimeDiag.DzKit.sR}
+\label{Turing.NTimeDiag.DzKit.sR}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.bR, Turing.NTimeDiag.DzKit.bR_ne, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.dzClkEmb}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $k_R$ be the number of tapes of its interpreter core. The hosted core's tape map is the hosted clock's tape map for the buffer tape $\tau_{11}$, the capture tape $\tau_{12}$, the counter tape $\tau_3$ and the core's tape map: the injection of the $(1 + k_R) + 1 + 1$ tapes of the clock over the hosted core into the host tapes sending the virtual-input buffer to $\tau_{11}$, each core tape $i$ to its image under the core's tape map (stream tape on $\tau_6$, the others at index at least $14$), the capture tape to $\tau_{12}$ and the counter to $\tau_3$.
+\end{definition}
+
+\begin{definition}[Tape map of the hosted decider's clock]
+\lean{Turing.NTimeDiag.DzKit.sB}
+\label{Turing.NTimeDiag.DzKit.sB}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.bB, Turing.NTimeDiag.DzKit.bB_ne, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.dzClkEmb}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $k_{B_F}$ be the number of tapes of $B_F$. The hosted decider's tape map is the hosted clock's tape map for the buffer tape $\tau_8$, the capture tape $\tau_{12}$, the counter tape $\tau_3$ and the decider's tape map: the injection of the $(1 + k_{B_F}) + 1 + 1$ tapes of the clock over the hosted decider into the host tapes sending the virtual-input buffer to $\tau_8$, each tape $i$ of $B_F$ to its image under the decider's tape map (tape $0$ on $\tau_{13}$, the others at index at least $14$), the capture tape to $\tau_{12}$ and the counter to $\tau_3$.
+\end{definition}
+
+\begin{definition}[Phases of the run]
+\lean{Turing.NTimeDiag.DzQK}
+\label{Turing.NTimeDiag.DzQK}
+\leanok
+The phases of the diagonalizer's run are twenty-three labels: the flag; in the middle, the tail's copy, the split (a skip back, a lockstep walk, the take of the separator, the move of the budget word, a second skip back), the budget's test (an expansion, a rewind, a comparison), the normalization, the extraction of the code $\alpha$, three emissions, the rewind of the capture and the hosted interpreter core; at the top, the tail's copy, the hosted decider, the rewind of the capture and its read; and the two verdicts, accept and reject.
+\end{definition}
+
+\begin{definition}[State sets of the run's phases]
+\lean{Turing.NTimeDiag.DzQPh}
+\label{Turing.NTimeDiag.DzQPh}
+\leanok
+\uses{Turing.CounterLoopState, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzQK, Turing.NTimeDiag.QyCmp, Turing.NTimeDiag.QyEm, Turing.RewindPhase, Turing.SeekPhase, Turing.SweepPhase}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The state sets of the run's phases are: for the flag, the separator's take and the read, the states of a one-cell take (optional values of an optional bit); for the two tail copies, the budget word's move and the two verdicts, sweep states; for the two skip backs and the walk, seek states; for the expansion, counter-loop states of an expansion of the word $1$; for the three rewinds, rewind states; for the comparison, the comparison's states; for the normalization and the extraction, a fresh start state together with the states of the kit's call for $y \mapsto \mathrm{bits}(|y|)$, respectively for the inner second component; for the three emissions, the emitter states with empty prefix, suffix lengths $4$, $2$, $0$ and repetition parameters $3$, $1$, $0$; for the hosted core, the states of the kit's clock over the core; and for the hosted decider, the states of the kit's clock over $B_F$.
+\end{definition}
+
+\begin{definition}[Phase machines of the run]
+\lean{Turing.NTimeDiag.dzQM}
+\label{Turing.NTimeDiag.dzQM}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.MultiTapeTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.bA, Turing.NTimeDiag.DzKit.bL, Turing.NTimeDiag.DzKit.sB, Turing.NTimeDiag.DzKit.sR, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.DzQK, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzOne, Turing.NTimeDiag.dzTakeTM, Turing.NTimeDiag.qyCmpTM, Turing.NTimeDiag.qyEmb2, Turing.NTimeDiag.qyEmitTM, Turing.clearTM, Turing.copyMapTM, Turing.embedEmitTM, Turing.embedSilentTM, Turing.expandTM, Turing.rewindTM, Turing.seamReleaseTM, Turing.skipBackTM, Turing.transferMapTM, Turing.walkTM}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$). The run's phase machines, all over the $K_\kappa$ host tapes, are: for the flag, the one-cell take on $\tau_0$; for the middle's tail copy, the identity copy from $\tau_0$ to $\tau_8$; the skip back on $\tau_6$; the walk led by $\tau_7$ moving the heads of $\tau_7$ and $\tau_6$ rightwards in lockstep; the one-cell take on $\tau_6$; the identity move from $\tau_6$ to $\tau_9$, blanking the source; the skip back on $\tau_6$; the expansion of the word $1$ onto $\tau_{10}$ by the counter on $\tau_9$; the rewind of $\tau_{10}$; the length comparison of $\tau_{10}$ with $\tau_6$; the released calls for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, embedded along the banks with tape $0$ on $\tau_{10}$ and on $\tau_8$; three emitters under the capture wrapper with capture tape $\tau_{11}$, reading the single tape $\tau_{10}$ (each symbol $4$ times, then $0011$), $\tau_8$ (each symbol twice, then $01$) and $\tau_2$ (each symbol once); the rewind of $\tau_{11}$; the kit's clock over the core embedded along the hosted core's tape map; for the top's tail copy, the identity copy from $\tau_0$ to $\tau_8$; the kit's clock over $B_F$ embedded along the hosted decider's tape map; the rewind of $\tau_{12}$; the one-cell take on $\tau_{12}$; and, for both verdicts, the clearing of $\tau_{13}$.
+\end{definition}
+
+\begin{definition}[Accepting verdict of the run]
+\lean{Turing.NTimeDiag.dzAcc}
+\label{Turing.NTimeDiag.dzAcc}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzQPh}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The run's accepting verdict is the sweeping state of the accept phase.
+\end{definition}
+
+\begin{definition}[Rejecting verdict of the run]
+\lean{Turing.NTimeDiag.dzRej}
+\label{Turing.NTimeDiag.dzRej}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzQPh}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The run's rejecting verdict is the sweeping state of the reject phase.
+\end{definition}
+
+\begin{definition}[Dispatch table of the run]
+\lean{Turing.NTimeDiag.dzQRed}
+\label{Turing.NTimeDiag.dzQRed}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzQK, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzRej}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with interpreter core $R$ (entry state $r_E$, accepting state $r_A$), clock over $R$ with injection, finish and timeout maps $\iota_R, \phi_R, \theta_R$, and clock over $B_F$ with maps $\iota_B, \phi_B, \theta_B$. The run's dispatch table redirects: the flag, after reading a blank, to reject, after reading $1$ to the top's tail copy and after reading $0$ to the middle's tail copy; in the middle, the done state of each of the tail copy, skip back, walk, move, second skip back, expansion and rewind to the entry of the next phase, the separator's take after its step to the move, the comparison's verdict $>$ to reject and any other verdict to the normalization, the exit of the length call to the extraction, the exit of the extraction call to the first emission, each emission's done state to the next emission and the last to the capture's rewind, whose done state goes to the hosted core at $\iota_R(r_E, 1)$; the hosted core's state $\phi_R(r_A, b)$ to accept, any other finish state $\phi_R(r)$ or timeout state $\theta_R(r)$ to reject; at the top, the tail copy's done state to the hosted decider at $\iota_B(q_0, 1)$, $q_0$ the start state of $B_F$, any finish state $\phi_B(r)$ to the capture's rewind and any timeout state $\theta_B(r)$ to reject, the rewind's done state to the read, and the read, after reading $0$, to accept and, after reading $1$ or a blank, to reject. All other states, including the verdicts, have no redirect.
+\end{definition}
+
+\begin{definition}[The diagonalizer's run machine]
+\lean{Turing.NTimeDiag.dzQ}
+\label{Turing.NTimeDiag.dzQ}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.MultiTapeTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.phaseHostTM}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The run machine is the phase host over the run's twenty-three phases and their phase machines, started at the flag's start state and switching phases according to the run's dispatch table.
+\end{definition}
+
+\begin{definition}[Verdicts of the run]
+\lean{Turing.NTimeDiag.dzQF}
+\label{Turing.NTimeDiag.dzQF}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzRej}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The run's verdict set is the set of host states consisting of the accepting verdict and the rejecting verdict.
+\end{definition}
+
+\begin{theorem}[Only the verdict phases are verdicts]
+\lean{Turing.NTimeDiag.dz_notF}
+\label{Turing.NTimeDiag.dz_notF}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzQK, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzQF}
+\difficulty{3}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. For every phase $i$ of the run other than the accept and reject phases, and every state $s$ of phase $i$, the tagged state $(i, s)$ is not in the run's verdict set $\{\mathit{acc}, \mathit{rej}\}$.
+\end{theorem}
+
+\begin{theorem}[Accepting and rejecting verdicts differ]
+\lean{Turing.NTimeDiag.dz_acc_ne_rej}
+\label{Turing.NTimeDiag.dz_acc_ne_rej}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzRej}
+\difficulty{2}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The run's accepting verdict and its rejecting verdict are different states.
+\end{theorem}
+
+\begin{theorem}[Handoff from the setup to the run]
+\lean{Turing.NTimeDiag.dz_handoff}
+\label{Turing.NTimeDiag.dz_handoff}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzBlk, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzLay_update, Turing.NTimeDiag.dzPexit, Turing.NTimeDiag.dzSetL, Turing.NTimeDiag.qyC, Turing.guessRunCfg}
+\difficulty{4}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $z$ be a binary input and let $s$ be a binary word of length $|1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|))|$. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $\Lambda_z$ for the named-tape contents at the setup's exit: $\mathrm{buf}(q_{f,g}(z))$ on $\tau_0$, where $q_{f,g}$ is the stage query; $\mathrm{buf}(1^m)$ on $\tau_1$ and $\tau_4$, where $m = |\mathrm{bits}(g(|z|))|$; $\mathrm{buf}(1z)$ on $\tau_2$; $\mathrm{buf}(\mathrm{bits}(g(|z|)))$ on $\tau_3$; $\mathrm{buf}(1)$ on $\tau_5$; the block $\mathrm{buf}(1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|)))$ on $\tau_6$; $\mathrm{buf}(1^{g(|z|)})$ on $\tau_7$; and the blank tape on $\tau_8, \dots, \tau_{13}$, extended blank to the other host tapes. Writing $s$ on $\tau_6$ from its head onwards in the setup's exit configuration $\langle \mathit{exit}, 1, \Lambda_z, 0, \varepsilon\rangle$ and switching to the flag's start state gives the configuration $\langle (\text{flag}, \text{start}), 1, \Lambda_z', 0, \varepsilon\rangle$, where $\Lambda_z'$ agrees with $\Lambda_z$ except that $\tau_6$ holds $\mathrm{buf}(s)$.
+\end{theorem}
+
+\begin{theorem}[The run reads the query's flag]
+\lean{Turing.NTimeDiag.dz_flag}
+\label{Turing.NTimeDiag.dz_flag}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom_zero, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzLay_update, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.NTimeDiag.dz_notF, Turing.NTimeDiag.dz_take_run, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_hosted, Turing.Segment}
+\difficulty{3}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $z$ be a binary input, let $L$ assign a tape to each index $i < 14$ and $P$ a head position to each index. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Let $q$ be a binary word with $L(0) = \mathrm{buf}(q)$ and $P(0) = 0$, and let $q'$ be the state to which the run's dispatch table sends the flag after reading the cell $\mathrm{buf}(q)(0)$. Then there is a verdict-avoiding segment of length $2$ from $\langle (\text{flag}, \text{start}), 1, \hat L, \hat P, \varepsilon\rangle$ to $\langle q', 1, \hat{L'}, \hat{P'}, \varepsilon\rangle$, where $L' = L[0 \mapsto T_q]$ with $T_q$ the tape $\mathrm{buf}(q)$ with cell $0$ blanked, and $P' = P[0 \mapsto 1]$.
+\end{theorem}
+
+\begin{theorem}[Copy of the query's tail]
+\lean{Turing.NTimeDiag.dz_tail_run}
+\label{Turing.NTimeDiag.dz_tail_run}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append_shift, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.FinTM.bufferTape_nil, Turing.FinTM.bufferTape_of_neg, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.copyMapTM, Turing.copyMapTM_run_ofCfg}
+\difficulty{4}
+Let $K \in \mathbb{N}$, let $\mathit{src} \ne \mathit{dst}$ be two of $K$ tapes, let $x$ be a binary input, and write $\langle s, p, T, P, o\rangle$ for the live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere. Let $p$ be an input-head position, $T$ tapes, $P$ heads, $o$ an output, $b$ a bit and $w$ a binary word, such that $T(\mathit{src})$ is $\mathrm{buf}(b\,w)$ with cell $0$ blanked, $P(\mathit{src}) = 1$, $T(\mathit{dst}) = \mathrm{buf}(\varepsilon)$ and $P(\mathit{dst}) = 0$. Then the identity copy machine from $\mathit{src}$ to $\mathit{dst}$ runs from $\langle \text{sweep}, p, T, P, o\rangle$ in $2|w| + 2$ steps to $\langle \text{done}, p, T[\mathit{dst} \mapsto \mathrm{buf}(w)], P, o\rangle$ and is not in its done state at any earlier time.
+\end{theorem}
+
+\begin{theorem}[The block after the split]
+\lean{Turing.NTimeDiag.dz_split_tape}
+\label{Turing.NTimeDiag.dz_split_tape}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.FinTM.bufferTape_take}
+\difficulty{4}
+Let $s_1, w$ be binary words, let $b$ be a bit, and write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere. Take the tape $\mathrm{buf}(s_1\,b\,w)$, blank its cell $|s_1|$ and blank its cells $|s_1| + 1, \dots, |s_1| + |w|$. The resulting tape equals $\mathrm{buf}(s_1)$.
+\end{theorem}
+
+\begin{theorem}[The split of the block]
+\lean{Turing.NTimeDiag.dz_split}
+\label{Turing.NTimeDiag.dz_split}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append_mid, Turing.FinTM.bufferTape_append_shift, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.FinTM.bufferTape_nil, Turing.FinTM.bufferTape_of_neg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_zero, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzLay_update, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.NTimeDiag.dz_notF, Turing.NTimeDiag.dz_split_tape, Turing.NTimeDiag.dz_take_run, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.Segment, Turing.Segment.trans, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.transferMapTM, Turing.transferMapTM_run_ofCfg, Turing.walkTM, Turing.walkTM_run_ofCfg}
+\difficulty{6}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $z$ be a binary input, let $L$ assign a tape to each index $i < 14$ and $P$ a head position to each index. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Let $s_1, w$ be binary words and $b$ a bit with $L(6) = \mathrm{buf}(s_1\,b\,w)$, $L(7) = \mathrm{buf}(1^{|s_1|})$, $L(9) = \mathrm{buf}(\varepsilon)$ and $P(6) = P(7) = P(9) = 0$. Then there is $t \le 2|s_1| + 2|w| + 15$ and a verdict-avoiding segment of length $t$ from the entry $\langle (\text{first skip back}, \text{run}), 1, \hat L, \hat P, \varepsilon\rangle$ to $\langle (\text{expansion}, \text{start}), 1, \hat{L'}, \hat{P'}, \varepsilon\rangle$, where $L' = L[6 \mapsto \mathrm{buf}(s_1)][9 \mapsto \mathrm{buf}(w)]$ and $P' = P[7 \mapsto |s_1| + 1]$.
+\end{theorem}
+
+\begin{theorem}[Test of the budget]
+\lean{Turing.NTimeDiag.dz_test}
+\label{Turing.NTimeDiag.dz_test}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzLay_update, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dz_notF, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyEmb2, Turing.NTimeDiag.qy_cmp_run, Turing.NTimeDiag.qy_expandHost, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_rewind, Turing.Segment, Turing.Segment.trans, Turing.counterOverhead_le}
+\difficulty{5}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $z$ be a binary input, let $L$ assign a tape to each index $i < 14$ and $P$ a head position to each index. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Let $s_1, w$ be binary words with $L(6) = \mathrm{buf}(s_1)$, $L(9) = \mathrm{buf}(w)$, $L(10) = \mathrm{buf}(\varepsilon)$ and $P(6) = P(9) = P(10) = 0$, and let $b = \sum_i w_i 2^i$ be the value of $w$ read least significant bit first. Then there is $t \le 9b + 2|w| + 12$ and a verdict-avoiding segment of length $t$ from $\langle (\text{expansion}, \text{start}), 1, \hat L, \hat P, \varepsilon\rangle$ to $\langle e, 1, \hat{L'}, \hat P, \varepsilon\rangle$, where $L' = L[10 \mapsto \mathrm{buf}(1^b)][9 \mapsto \mathrm{buf}(1^{|w|})]$, and $e$ is the normalization's start state if $b \le |s_1|$ and $\mathit{rej}$ otherwise.
+\end{theorem}
+
+\begin{theorem}[Normalization of the budget]
+\lean{Turing.NTimeDiag.dz_norm}
+\label{Turing.NTimeDiag.dz_norm}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.bL, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_update, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.NTimeDiag.dz_arg_bank, Turing.NTimeDiag.dz_notF, Turing.NTimeDiag.dz_zero_bank, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_callHost, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.Segment}
+\difficulty{4}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $A_l$ be the constant of its install call for $y \mapsto \mathrm{bits}(|y|)$, let $z$ be a binary input, let $L$ assign a tape to each index $i < 14$ and $P$ a head position to each index. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Let $b \in \mathbb{N}$ with $L(10) = \mathrm{buf}(1^b)$ and $P(10) = 0$. Then there is $t \le A_l(b + 1) + 1$ and a verdict-avoiding segment of length $t$ from $\langle (\text{normalization}, \text{start}), 1, \hat L, \hat P, \varepsilon\rangle$ to $\langle (\text{extraction}, \text{start}), 1, \widehat{L[10 \mapsto \mathrm{buf}(\mathrm{bits}(b))]}, \hat P, \varepsilon\rangle$.
+\end{theorem}
+
+\begin{theorem}[The core's input word from three emissions]
+\lean{Turing.NTimeDiag.dz_core_word}
+\label{Turing.NTimeDiag.dz_core_word}
+\leanok
+\uses{Turing.NTimeDiag.qyBody, Turing.NTimeDiag.qy_writer_word, Turing.pairEncode}
+\difficulty{4}
+For a binary word $w$ and $r \in \mathbb{N}$, let $\mathrm{rep}_r(w)$ be the word obtained from $w$ by repeating every symbol $r + 1$ times, and write $\langle u, v\rangle$ for the pairing encoding of binary words. For all binary words $B, \alpha, N$, \[ \mathrm{rep}_3(B)\;0011\;\mathrm{rep}_1(\alpha)\;01\;\mathrm{rep}_0(N) = \langle\langle B, \alpha\rangle, N\rangle. \]
+\end{theorem}
+
+\begin{theorem}[An emission under the capture wrapper]
+\lean{Turing.NTimeDiag.dz_emit_run}
+\label{Turing.NTimeDiag.dz_emit_run}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.dzOne, Turing.NTimeDiag.dz_silent, Turing.NTimeDiag.qyBody, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyEmitTM, Turing.NTimeDiag.qy_emit_run, Turing.embedSilentTM}
+\difficulty{3}
+Let $K \in \mathbb{N}$, let $\mathit{src} \ne \mathit{cap}$ be two of $K$ tapes, let $x$ be a binary input, and write $\langle s, p, T, P, o\rangle$ for the live configuration on input $x$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere. For a word $v$ and $r \in \mathbb{N}$ let $\mathrm{rep}_r(v)$ repeat every symbol of $v$ $r + 1$ times. Let $\mathit{suf}$, $\mathit{pre}$, $w$, $o$ be binary words, $r \in \mathbb{N}$, and $T, P$ tapes and heads with $T(\mathit{src}) = \mathrm{buf}(w)$, $P(\mathit{src}) = 0$, $T(\mathit{cap}) = \mathrm{buf}(\mathit{pre})$ and $P(\mathit{cap}) = |\mathit{pre}|$. Let $M$ be the emitter that reads the single tape $\mathit{src}$, emits $\mathrm{rep}_r$ of its word followed by $\mathit{suf}$ (with empty prefix), run under the capture wrapper with capture tape $\mathit{cap}$. Then there is $t \le |\mathit{suf}| + 3 + |w|(r + 3)$ such that $M$ runs from $\langle \text{prefix}_0, 1, T, P, o\rangle$ in $t$ steps to $\langle \text{done}, 1, T[\mathit{cap} \mapsto \mathrm{buf}(u)], P[\mathit{src} \mapsto |w|][\mathit{cap} \mapsto |u|], o\rangle$ with $u = \mathit{pre}\,\mathrm{rep}_r(w)\,\mathit{suf}$, and is not in its done state at any earlier time.
+\end{theorem}
+
+\begin{theorem}[Rewriting the core's input]
+\lean{Turing.NTimeDiag.dz_rewrite}
+\label{Turing.NTimeDiag.dz_rewrite}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.bA, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.dzAlpha, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzLay_update, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.NTimeDiag.dz_arg_bank, Turing.NTimeDiag.dz_core_word, Turing.NTimeDiag.dz_emit_run, Turing.NTimeDiag.dz_notF, Turing.NTimeDiag.dz_zero_bank, Turing.NTimeDiag.qyBody, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_callHost, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_rewind, Turing.Segment, Turing.Segment.trans, Turing.length_pairEncode, Turing.pairEncode}
+\difficulty{5}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $A_a$ be the constant of its install call for the inner second component, let $z$ be a binary input, let $L$ assign a tape to each index $i < 14$ and $P$ a head position to each index. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Write $\langle u, v\rangle$ for the pairing encoding and $\alpha$ for the inner second component of a binary word $y$ (the second component of the first component of its decoding). Let $y, B$ be binary words with $L(2) = \mathrm{buf}(1z)$, $L(8) = \mathrm{buf}(y)$, $L(10) = \mathrm{buf}(B)$, $L(11) = \mathrm{buf}(\varepsilon)$ and $P(2) = P(8) = P(10) = P(11) = 0$. Then there is $t \le A_a(|y| + 1) + 10|B| + 6|\alpha| + 4|z| + 40$ and a verdict-avoiding segment of length $t$ from $\langle (\text{extraction}, \text{start}), 1, \hat L, \hat P, \varepsilon\rangle$ to the hosted core's entry $\langle h, 1, \hat{L'}, \hat{P'}, \varepsilon\rangle$, where $h$ is the clock's injection of the core's entry state with flag $1$, $L' = L[8 \mapsto \mathrm{buf}(\alpha)][11 \mapsto \mathrm{buf}(\langle\langle B, \alpha\rangle, 1z\rangle)]$ and $P' = P[10 \mapsto |B|][8 \mapsto |\alpha|][2 \mapsto |z| + 1]$.
+\end{theorem}
+
+\begin{theorem}[The middle's hosted interpreter run]
+\lean{Turing.NTimeDiag.dz_runR}
+\label{Turing.NTimeDiag.dz_runR}
+\leanok
+\uses{Turing.Cfg.Stopped, Turing.Cfg.stopped_iff, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nil, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_state_ne_none_of_le, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.bR, Turing.NTimeDiag.DzKit.bR_j, Turing.NTimeDiag.DzKit.bR_ne, Turing.NTimeDiag.DzKit.bR_off, Turing.NTimeDiag.DzKit.sR, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_off, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dz_notF, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_bits_val, Turing.NTimeDiag.qy_hosted, Turing.Segment, Turing.embedEmitTM, Turing.streamStartCfg}
+\difficulty{6}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $z$ be a binary input, let $L$ assign a tape to each index $i < 14$ and $P$ a head position to each index. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Let $z', s_1$ be binary words and $G \in \mathbb{N}$ with $L(3) = \mathrm{buf}(\mathrm{bits}(G))$, $L(6) = \mathrm{buf}(s_1)$, $L(11) = \mathrm{buf}(z')$, $L(12) = \mathrm{buf}(\varepsilon)$ and $P(3) = P(6) = P(11) = P(12) = 0$. Let $R$ be the kit's interpreter core with entry state $r_E$, accepting state $r_A$ and rejecting state $r_J$, started in $r_E$ on input $z'$ with $s_1$ on its stream tape, other tapes blank, heads at $0$ and input head $1$; suppose that at time $T_R$ it is in a state $v \in \{r_A, r_J\}$ and at every earlier time in neither. Then there are $t \le 5G + 2|\mathrm{bits}(G)| + 3$, tapes $T'$ and heads $P'$ with a verdict-avoiding segment of length $t$ from $\langle h, 1, \hat L, \hat P, \varepsilon\rangle$, $h$ the clock's injection of $r_E$ with flag $1$ in the hosted core phase, to $\langle e, 1, T', P', \varepsilon\rangle$, where $e = \mathit{acc}$ if $T_R \le G$ and $v = r_A$, and $e = \mathit{rej}$ otherwise.
+\end{theorem}
+
+\begin{theorem}[The top's hosted decider run and read]
+\lean{Turing.NTimeDiag.dz_top_run}
+\label{Turing.NTimeDiag.dz_top_run}
+\leanok
+\uses{Turing.Cfg.Stopped, Turing.Cfg.stopped_iff, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.bufferTape_nil, Turing.MultiTapeTM.exists_first_halt, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.initCfg_eq, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_output_eq_of_halt, Turing.MultiTapeTM.runFrom_zero, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.bB, Turing.NTimeDiag.DzKit.bB_ne, Turing.NTimeDiag.DzKit.sB, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_off, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dz_acc_ne_rej, Turing.NTimeDiag.dz_bank_off, Turing.NTimeDiag.dz_notF, Turing.NTimeDiag.dz_take_run, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_bits_val, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.NTimeDiag.qy_rewind, Turing.Segment, Turing.Segment.trans, Turing.embedEmitTM}
+\difficulty{6}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $z$ be a binary input, let $L$ assign a tape to each index $i < 14$ and $P$ a head position to each index. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Let $y$ be a binary word and $G \in \mathbb{N}$ with $L(3) = \mathrm{buf}(\mathrm{bits}(G))$, $L(8) = \mathrm{buf}(y)$, $L(12) = L(13) = \mathrm{buf}(\varepsilon)$ and $P(3) = P(8) = P(12) = P(13) = 0$. Then there are $t \le 6G + 2|\mathrm{bits}(G)| + 10$, a verdict $e \in \{\mathit{acc}, \mathit{rej}\}$, tapes $T'$ and heads $P'$ with a verdict-avoiding segment of length $t$ from $\langle h, 1, \hat L, \hat P, \varepsilon\rangle$, $h$ the clock's injection of the start state of $B_F$ with flag $1$ in the hosted decider phase, to $\langle e, 1, T', P', \varepsilon\rangle$, such that for every $\tau \le G$ at which $B_F$, run from its initial configuration on $y$, has halted, $e = \mathit{acc}$ holds if and only if the output of $B_F$ at time $\tau$ begins with $0$.
+\end{theorem}
+
+\begin{theorem}[Bound on the value of a budget word]
+\lean{Turing.NTimeDiag.dz_budget_le}
+\label{Turing.NTimeDiag.dz_budget_le}
+\leanok
+\uses{Complexity.LogProg.ofDigits_lt_two_pow, Complexity.LogProg.two_pow_bits_le_two_mul_add_one}
+\difficulty{3}
+Let $G \in \mathbb{N}$ and let $w$ be a binary word with $|w| = |\mathrm{bits}(G)|$, where $\mathrm{bits}(G)$ is the binary expansion of $G$. Then the value $\sum_i w_i 2^i$ of $w$, read least significant bit first, is at most $2G$.
+\end{theorem}
+
+\begin{theorem}[Value of zero-padded binary digits]
+\lean{Turing.NTimeDiag.dz_padded_value}
+\label{Turing.NTimeDiag.dz_padded_value}
+\leanok
+\uses{Turing.NTimeDiag.qy_bits_val}
+\difficulty{2}
+For all $t, r \in \mathbb{N}$, the binary word $\mathrm{bits}(t)\,0^r$ (the binary expansion of $t$, least significant bit first, followed by $r$ zeros), read as a binary numeral least significant bit first, has value $t$.
+\end{theorem}
+
+\begin{definition}[Time bound of the run]
+\lean{Turing.NTimeDiag.dzQB}
+\label{Turing.NTimeDiag.dzQB}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, and let $A_q, A_a, A_l$ be the constants of the kit's calls for the stage query, for the inner second component and for $y \mapsto \mathrm{bits}(|y|)$. For $G \in \mathbb{N}$ (standing for $g(n)$), the run's time bound is $(A_q(7A_a + 8) + 2A_l + 140)(G + 1)$.
+\end{definition}
+
+\begin{theorem}[Named tapes at the run's entry]
+\lean{Turing.NTimeDiag.dz_entry_vals}
+\label{Turing.NTimeDiag.dz_entry_vals}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.NTimeDiag.dzSetL, Turing.NTimeDiag.query}
+\difficulty{2}
+Let $f, g : \mathbb{N} \to \mathbb{N}$, let $q_{f,g}$ be the stage query, let $z, s$ be binary words, write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, and let $L$ be the named-tape contents at the setup's exit for $z$ with index $6$ replaced by $\mathrm{buf}(s)$. Then $L(0) = \mathrm{buf}(q_{f,g}(z))$, $L(2) = \mathrm{buf}(1z)$, $L(3) = \mathrm{buf}(\mathrm{bits}(g(|z|)))$, $L(6) = \mathrm{buf}(s)$, $L(7) = \mathrm{buf}(1^{g(|z|)})$, and $L(i) = \mathrm{buf}(\varepsilon)$ for $i = 8, \dots, 13$.
+\end{theorem}
+
+\begin{theorem}[The run off the stages]
+\lean{Turing.NTimeDiag.dz_qoff}
+\label{Turing.NTimeDiag.dz_qoff}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nil, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_const, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQB, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dzSetL, Turing.NTimeDiag.dz_entry_vals, Turing.NTimeDiag.dz_flag, Turing.NTimeDiag.query, Turing.NTimeDiag.qyC, Turing.Segment}
+\difficulty{3}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $z, s$ be binary words. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Write $\Lambda_z$ for the named-tape contents at the setup's exit: $\mathrm{buf}(q_{f,g}(z))$ on $\tau_0$, where $q_{f,g}$ is the stage query; $\mathrm{buf}(1^m)$ on $\tau_1$ and $\tau_4$, where $m = |\mathrm{bits}(g(|z|))|$; $\mathrm{buf}(1z)$ on $\tau_2$; $\mathrm{buf}(\mathrm{bits}(g(|z|)))$ on $\tau_3$; $\mathrm{buf}(1)$ on $\tau_5$; the block $\mathrm{buf}(1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|)))$ on $\tau_6$; $\mathrm{buf}(1^{g(|z|)})$ on $\tau_7$; and the blank tape on $\tau_8, \dots, \tau_{13}$, and let $B_Q(G) = (A_q(7A_a + 8) + 2A_l + 140)(G + 1)$, where $A_q$, $A_a$, $A_l$ are the constants of the kit's calls for the stage query, for the inner second component and for $y \mapsto \mathrm{bits}(|y|)$. If $q_{f,g}(z) = \varepsilon$, then there are $t \le B_Q(g(|z|))$, tapes $T'$ and heads $P'$ with a verdict-avoiding segment of length $t$ from the run's entry configuration $E_s = \langle (\text{flag}, \text{start}), 1, \widehat{\Lambda_z[6 \mapsto \mathrm{buf}(s)]}, 0, \varepsilon\rangle$ to $\langle \mathit{rej}, 1, T', P', \varepsilon\rangle$.
+\end{theorem}
+
+\begin{theorem}[First cell of a buffered word]
+\lean{Turing.NTimeDiag.dz_cell0}
+\label{Turing.NTimeDiag.dz_cell0}
+\leanok
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat}
+\difficulty{1}
+For every bit $b$ and binary word $w$, the tape holding $b\,w$ in cells $0, \dots, |w|$ and blank elsewhere holds $b$ at cell $0$.
+\end{theorem}
+
+\begin{theorem}[The run at a stage's top]
+\lean{Turing.NTimeDiag.dz_qtop}
+\label{Turing.NTimeDiag.dz_qtop}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_const, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzLay_update, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQB, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dzSetL, Turing.NTimeDiag.dz_cell0, Turing.NTimeDiag.dz_entry_vals, Turing.NTimeDiag.dz_flag, Turing.NTimeDiag.dz_notF, Turing.NTimeDiag.dz_tail_run, Turing.NTimeDiag.dz_top_run, Turing.NTimeDiag.query, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.Segment, Turing.Segment.trans, Turing.length_bits_le_self}
+\difficulty{5}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $z, y, s$ be binary words. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Write $\Lambda_z$ for the named-tape contents at the setup's exit: $\mathrm{buf}(q_{f,g}(z))$ on $\tau_0$, where $q_{f,g}$ is the stage query; $\mathrm{buf}(1^m)$ on $\tau_1$ and $\tau_4$, where $m = |\mathrm{bits}(g(|z|))|$; $\mathrm{buf}(1z)$ on $\tau_2$; $\mathrm{buf}(\mathrm{bits}(g(|z|)))$ on $\tau_3$; $\mathrm{buf}(1)$ on $\tau_5$; the block $\mathrm{buf}(1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|)))$ on $\tau_6$; $\mathrm{buf}(1^{g(|z|)})$ on $\tau_7$; and the blank tape on $\tau_8, \dots, \tau_{13}$, and let $B_Q(G) = (A_q(7A_a + 8) + 2A_l + 140)(G + 1)$, where $A_q$, $A_a$, $A_l$ are the constants of the kit's calls for the stage query, for the inner second component and for $y \mapsto \mathrm{bits}(|y|)$. If $q_{f,g}(z) = 1\,y$, then there are $t \le B_Q(g(|z|))$, a verdict $e \in \{\mathit{acc}, \mathit{rej}\}$, tapes $T'$ and heads $P'$ with a verdict-avoiding segment of length $t$ from the run's entry configuration $E_s = \langle (\text{flag}, \text{start}), 1, \widehat{\Lambda_z[6 \mapsto \mathrm{buf}(s)]}, 0, \varepsilon\rangle$ to $\langle e, 1, T', P', \varepsilon\rangle$, such that for every $\tau \le g(|z|)$ at which $B_F$, run from its initial configuration on $y$, has halted, $e = \mathit{acc}$ holds if and only if the output of $B_F$ at time $\tau$ begins with $0$.
+\end{theorem}
+
+\begin{theorem}[The run in a stage's middle]
+\lean{Turing.NTimeDiag.dz_qmid}
+\label{Turing.NTimeDiag.dz_qmid}
+\leanok
+\uses{Turing.CodeNDTM.toFinNDTM, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzKit.tp_ne, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzAlpha, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_const, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzLay_update, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQB, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzQM, Turing.NTimeDiag.dzQRed, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dzSetL, Turing.NTimeDiag.dz_acc_ne_rej, Turing.NTimeDiag.dz_budget_le, Turing.NTimeDiag.dz_cell0, Turing.NTimeDiag.dz_entry_vals, Turing.NTimeDiag.dz_flag, Turing.NTimeDiag.dz_norm, Turing.NTimeDiag.dz_notF, Turing.NTimeDiag.dz_rewrite, Turing.NTimeDiag.dz_runR, Turing.NTimeDiag.dz_split, Turing.NTimeDiag.dz_tail_run, Turing.NTimeDiag.dz_test, Turing.NTimeDiag.query, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_guard_of_cut, Turing.NTimeDiag.qy_hosted, Turing.Segment, Turing.Segment.trans, Turing.length_bits_le_self, Turing.pairEncode, Turing.streamStartCfg}
+\difficulty{6}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $z, y$ be binary words with $q_{f,g}(z) = 0\,y$. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Write $\Lambda_z$ for the named-tape contents at the setup's exit: $\mathrm{buf}(q_{f,g}(z))$ on $\tau_0$, where $q_{f,g}$ is the stage query; $\mathrm{buf}(1^m)$ on $\tau_1$ and $\tau_4$, where $m = |\mathrm{bits}(g(|z|))|$; $\mathrm{buf}(1z)$ on $\tau_2$; $\mathrm{buf}(\mathrm{bits}(g(|z|)))$ on $\tau_3$; $\mathrm{buf}(1)$ on $\tau_5$; the block $\mathrm{buf}(1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|)))$ on $\tau_6$; $\mathrm{buf}(1^{g(|z|)})$ on $\tau_7$; and the blank tape on $\tau_8, \dots, \tau_{13}$, let $B_Q(G) = (A_q(7A_a + 8) + 2A_l + 140)(G + 1)$, where $A_q$, $A_a$, $A_l$ are the constants of the kit's calls for the stage query, for the inner second component and for $y \mapsto \mathrm{bits}(|y|)$, write $\langle u, v\rangle$ for the pairing encoding, let $\alpha$ be the inner second component of $y$ (the second component of the first component of its decoding), and let $M_\alpha$ be the nondeterministic machine decoded from $\alpha$ by $c$. Let $C \in \mathbb{N}$ be such that for all binary words $x, s$ and every $t \le |s|$ there is $T \le C(t + 1)$ at which the kit's interpreter core $R$, started in its entry state on input $\langle\langle \mathrm{bits}(t), \alpha\rangle, x\rangle$ with $s$ on its stream tape, other tapes blank and heads at $0$, is in its accepting state $r_A$ if $M_\alpha$ run on $x$ along the first $t$ symbols of $s$ has halted with output $1$, and in its rejecting state $r_J$ otherwise, and is in neither of these states before $T$. Let $s_1, w$ be binary words and $b'$ a bit with $|s_1| = g(|z|)$ and $|w| = |\mathrm{bits}(g(|z|))|$, let $b = \sum_i w_i 2^i$, and let $s = s_1\,b'\,w$. Then there are $t \le B_Q(g(|z|))$, a verdict $e \in \{\mathit{acc}, \mathit{rej}\}$, tapes $T'$ and heads $P'$ with a verdict-avoiding segment of length $t$ from the run's entry configuration $E_s = \langle (\text{flag}, \text{start}), 1, \widehat{\Lambda_z[6 \mapsto \mathrm{buf}(s)]}, 0, \varepsilon\rangle$ to $\langle e, 1, T', P', \varepsilon\rangle$, such that: if $e = \mathit{acc}$, then $b \le g(|z|)$ and $M_\alpha$, run on $1z$ along the choice word consisting of the first $b$ symbols of $s_1$, has halted with output $1$; and if $b \le g(|z|)$, $C(b + 1) \le g(|z|)$ and $M_\alpha$ run on $1z$ along the first $b$ symbols of $s_1$ has halted with output $1$, then $e = \mathit{acc}$.
+\end{theorem}
+
+\begin{definition}[The diagonalizer]
+\lean{Turing.NTimeDiag.dzD}
+\label{Turing.NTimeDiag.dzD}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinNDTM, Turing.FinTM, Turing.GuessRunPhase.State, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzPPh, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzPexit, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dzSet, Turing.guessRunTM}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits. The diagonalizer $D_\kappa$ is the finite nondeterministic machine over bits with the kit's $K_\kappa$ host tapes whose states are the phase-tagged states of the guess-then-run host, and whose transition is the guess-then-run host over the setup machine (with the done state of the ruler's rewind as its exit), the block tape $\tau_6$ as the guess tape, and the run machine entered at the flag's start state with the run's accepting and rejecting verdicts.
+\end{definition}
+
+\begin{definition}[The diagonalizer's uniform constant]
+\lean{Turing.NTimeDiag.dzK}
+\label{Turing.NTimeDiag.dzK}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, and let $A_q, A_g, A_p, A_l, A_a$ be the constants of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component. The diagonalizer's uniform constant is $K_D = (A_q + A_g + A_p + 40) + (A_q(7A_a + 8) + 2A_l + 140) + 15$.
+\end{definition}
+
+\begin{theorem}[Initial configuration of the setup]
+\lean{Turing.NTimeDiag.dz_initCfg}
+\label{Turing.NTimeDiag.dz_initCfg}
+\leanok
+\uses{Turing.Cfg.ofWords_inputPos, Turing.Cfg.ofWords_output, Turing.Cfg.ofWords_state, Turing.Cfg.ofWords_workTapePos, Turing.Cfg.ofWords_workTapes, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.dzSet, Turing.NTimeDiag.qyC, Turing.initCfg_ofWords, Turing.phaseHostTM_q₀}
+\difficulty{3}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, and let $z$ be a binary input. The initial configuration of the diagonalizer's setup machine on $z$ is the live configuration on input $z$ in the fresh start state of the stage-query call phase, with input head $1$, every work tape blank, every work head at $0$ and empty output.
+\end{theorem}
+
+\begin{theorem}[Splitting a word at a position]
+\lean{Turing.NTimeDiag.dz_split_stream}
+\label{Turing.NTimeDiag.dz_split_stream}
+\leanok
+\difficulty{2}
+Let $s$ be a binary word and $G \in \mathbb{N}$ with $G < |s|$. Then $s$ equals the concatenation of its first $G$ symbols, its symbol at position $G$, and its symbols from position $G + 1$ on.
+\end{theorem}
+
+\begin{theorem}[Reading a verdict off a segment]
+\lean{Turing.NTimeDiag.dz_seg_read}
+\label{Turing.NTimeDiag.dz_seg_read}
+\leanok
+\uses{Turing.Cfg, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.qyC, Turing.Segment, Turing.segment_iff}
+\difficulty{3}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $z$ be a binary input. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Let $a$ be a configuration of $Q_\kappa$ on $z$, $t \in \mathbb{N}$, $v$ a state of $Q_\kappa$, and $T', P'$ tapes and heads. If there is a verdict-avoiding segment of length $t$ from $a$ to $\langle v, 1, T', P', \varepsilon\rangle$, then $Q_\kappa$ run from $a$ is in state $v$ at time $t$, is in neither $\mathit{acc}$ nor $\mathit{rej}$ at any time before $t$, and has empty output at time $t$.
+\end{theorem}
+
+\begin{theorem}[Every guessed stream's run reaches a verdict]
+\lean{Turing.NTimeDiag.dz_hQ}
+\label{Turing.NTimeDiag.dz_hQ}
+\leanok
+\uses{Turing.Cfg, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzAlpha, Turing.NTimeDiag.dzBlk, Turing.NTimeDiag.dzBlk_length, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzPexit, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQB, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dzSetL, Turing.NTimeDiag.dz_handoff, Turing.NTimeDiag.dz_qmid, Turing.NTimeDiag.dz_qoff, Turing.NTimeDiag.dz_qtop, Turing.NTimeDiag.dz_seg_read, Turing.NTimeDiag.dz_split_stream, Turing.NTimeDiag.query, Turing.NTimeDiag.qyC, Turing.Segment, Turing.guessRunCfg}
+\difficulty{5}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $z, s$ be binary words with $|s| = |1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|))|$. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Write $\Lambda_z$ for the named-tape contents at the setup's exit: $\mathrm{buf}(q_{f,g}(z))$ on $\tau_0$, where $q_{f,g}$ is the stage query; $\mathrm{buf}(1^m)$ on $\tau_1$ and $\tau_4$, where $m = |\mathrm{bits}(g(|z|))|$; $\mathrm{buf}(1z)$ on $\tau_2$; $\mathrm{buf}(\mathrm{bits}(g(|z|)))$ on $\tau_3$; $\mathrm{buf}(1)$ on $\tau_5$; the block $\mathrm{buf}(1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|)))$ on $\tau_6$; $\mathrm{buf}(1^{g(|z|)})$ on $\tau_7$; and the blank tape on $\tau_8, \dots, \tau_{13}$, extended blank to the other host tapes, and let $B_Q(G) = (A_q(7A_a + 8) + 2A_l + 140)(G + 1)$, where $A_q$, $A_a$, $A_l$ are the constants of the kit's calls for the stage query, for the inner second component and for $y \mapsto \mathrm{bits}(|y|)$. Let $c_s$ be the configuration obtained from the setup's exit configuration $\langle \mathit{exit}, 1, \Lambda_z, 0, \varepsilon\rangle$ by writing $s$ on $\tau_6$ from its head onwards and switching to the flag's start state. Then there is $T \le B_Q(g(|z|))$ such that $Q_\kappa$ run from $c_s$ is in $\mathit{acc}$ or in $\mathit{rej}$ at time $T$ and in neither at any earlier time.
+\end{theorem}
+
+\begin{theorem}[Facts about the setup]
+\lean{Turing.NTimeDiag.dz_setup_facts}
+\label{Turing.NTimeDiag.dz_setup_facts}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.dzBlk, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzLay_tp, Turing.NTimeDiag.dzPexit, Turing.NTimeDiag.dzSet, Turing.NTimeDiag.dzSetB, Turing.NTimeDiag.dzSetL, Turing.NTimeDiag.dz_initCfg, Turing.NTimeDiag.dz_setup, Turing.NTimeDiag.qyC, Turing.segment_iff}
+\difficulty{4}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $A_q, A_g, A_p$ be the constants of its input calls for the stage query, for $\mathrm{bits}(g(|x|))$ and for prepending $1$, and let $z$ be a binary input. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, $\Lambda_z$ for the named-tape contents at the setup's exit: $\mathrm{buf}(q_{f,g}(z))$ on $\tau_0$, where $q_{f,g}$ is the stage query; $\mathrm{buf}(1^m)$ on $\tau_1$ and $\tau_4$, where $m = |\mathrm{bits}(g(|z|))|$; $\mathrm{buf}(1z)$ on $\tau_2$; $\mathrm{buf}(\mathrm{bits}(g(|z|)))$ on $\tau_3$; $\mathrm{buf}(1)$ on $\tau_5$; the block $\mathrm{buf}(1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|)))$ on $\tau_6$; $\mathrm{buf}(1^{g(|z|)})$ on $\tau_7$; and the blank tape on $\tau_8, \dots, \tau_{13}$, extended blank to the other host tapes, and let $\beta = 1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|))$. Then there is $t \le (A_q + A_g + A_p + 40)(g(|z|) + 1)$ such that the setup machine, run from its initial configuration on $z$, equals $\langle \mathit{exit}, 1, \Lambda_z, 0, \varepsilon\rangle$ at time $t$ (with $\mathit{exit}$ the done state of the ruler's rewind) and is not in $\mathit{exit}$ at any earlier time; and in this configuration the cells of $\tau_6$ at positions $h + p$ are nonblank for every $p < |\beta|$, where $h$ is the head position of $\tau_6$, while the cells at $h + |\beta|$ and $h - 1$ are blank.
+\end{theorem}
+
+\begin{theorem}[The budget covers every branch]
+\lean{Turing.NTimeDiag.dz_K_bound}
+\label{Turing.NTimeDiag.dz_K_bound}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.dzBlk, Turing.NTimeDiag.dzBlk_length, Turing.NTimeDiag.dzK, Turing.NTimeDiag.dzQB, Turing.NTimeDiag.dzSetB, Turing.length_bits_le_self}
+\difficulty{3}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $K_D = (A_q + A_g + A_p + 40) + (A_q(7A_a + 8) + 2A_l + 140) + 15$, where $A_q, A_g, A_p, A_l, A_a$ are the constants of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and write $B_P(G) = (A_q + A_g + A_p + 40)(G + 1)$ for the setup's time bound and $B_Q(G) = (A_q(7A_a + 8) + 2A_l + 140)(G + 1)$ for the run's. For all $G, t \in \mathbb{N}$ with $t \le B_P(G)$, \[ t + 2|1^G\,1\,\mathrm{bits}(G)| + B_Q(G) + 11 \le K_D (G + 1). \]
+\end{theorem}
+
+\begin{theorem}[All branches of the diagonalizer halt]
+\lean{Turing.NTimeDiag.dz_halts}
+\label{Turing.NTimeDiag.dz_halts}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.NDTM.HaltsWithin, Turing.NDTM.HaltsWithin.mono, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzD, Turing.NTimeDiag.dzK, Turing.NTimeDiag.dzPexit, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQB, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dzSet, Turing.NTimeDiag.dz_K_bound, Turing.NTimeDiag.dz_hQ, Turing.NTimeDiag.dz_setup_facts, Turing.guessRunTM_haltsWithin}
+\difficulty{3}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $D_\kappa$ be the diagonalizer built from $\kappa$, and let $K_D = (A_q + A_g + A_p + 40) + (A_q(7A_a + 8) + 2A_l + 140) + 15$, where $A_q, A_g, A_p, A_l, A_a$ are the constants of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component. For every binary input $z$, every branch of $D_\kappa$ on $z$ halts within $K_D(g(|z|) + 1)$ steps.
+\end{theorem}
+
+\begin{theorem}[Acceptance of the diagonalizer via streams]
+\lean{Turing.NTimeDiag.dz_accepts_iff}
+\label{Turing.NTimeDiag.dz_accepts_iff}
+\leanok
+\uses{Turing.EffectiveNDMachineCode, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.acceptsWithin_iff, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.tp, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzBlk, Turing.NTimeDiag.dzD, Turing.NTimeDiag.dzK, Turing.NTimeDiag.dzLay, Turing.NTimeDiag.dzPexit, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQB, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.dzSet, Turing.NTimeDiag.dzSetL, Turing.NTimeDiag.dz_K_bound, Turing.NTimeDiag.dz_hQ, Turing.NTimeDiag.dz_handoff, Turing.NTimeDiag.dz_setup_facts, Turing.NTimeDiag.qyC, Turing.guessRunTM_accepts_iff}
+\difficulty{4}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $D_\kappa$ be the diagonalizer built from $\kappa$, let $K_D = (A_q + A_g + A_p + 40) + (A_q(7A_a + 8) + 2A_l + 140) + 15$, where $A_q, A_g, A_p, A_l, A_a$ are the constants of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and let $z$ be a binary input. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Write $\Lambda_z$ for the named-tape contents at the setup's exit: $\mathrm{buf}(q_{f,g}(z))$ on $\tau_0$, where $q_{f,g}$ is the stage query; $\mathrm{buf}(1^m)$ on $\tau_1$ and $\tau_4$, where $m = |\mathrm{bits}(g(|z|))|$; $\mathrm{buf}(1z)$ on $\tau_2$; $\mathrm{buf}(\mathrm{bits}(g(|z|)))$ on $\tau_3$; $\mathrm{buf}(1)$ on $\tau_5$; the block $\mathrm{buf}(1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|)))$ on $\tau_6$; $\mathrm{buf}(1^{g(|z|)})$ on $\tau_7$; and the blank tape on $\tau_8, \dots, \tau_{13}$. Then $D_\kappa$ accepts $z$ within $K_D(g(|z|) + 1)$ steps if and only if there are a binary word $s$ with $|s| = |1^{g(|z|)}\,1\,\mathrm{bits}(g(|z|))|$ and $T \in \mathbb{N}$ such that $Q_\kappa$, run from the run's entry configuration $E_s = \langle (\text{flag}, \text{start}), 1, \widehat{\Lambda_z[6 \mapsto \mathrm{buf}(s)]}, 0, \varepsilon\rangle$, is in $\mathit{acc}$ at time $T$, is in neither $\mathit{acc}$ nor $\mathit{rej}$ at any earlier time, and has empty output at time $T$.
+\end{theorem}
+
+\begin{theorem}[The first verdict is unique]
+\lean{Turing.NTimeDiag.dz_first}
+\label{Turing.NTimeDiag.dz_first}
+\leanok
+\uses{Turing.Cfg, Turing.EffectiveNDMachineCode, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzKit.K, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzQ, Turing.NTimeDiag.dzQF, Turing.NTimeDiag.dzRej, Turing.NTimeDiag.qyC, Turing.Segment, Turing.Segment.time_eq, Turing.segment_iff}
+\difficulty{4}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), and let $z$ be a binary input. Write $\mathrm{buf}(w)$ for the tape holding the binary word $w$ in cells $0, \dots, |w| - 1$ and blank elsewhere, $L[i \mapsto v]$ for $L$ updated at $i$ to $v$, $\hat L$ for the tape layout giving $\tau_i$ the contents $L(i)$ and every other host tape the blank tape, and $\hat P$ for the head layout giving $\tau_i$ the position $P(i)$ and every other head the position $0$, $\langle s, p, T, P, o\rangle$ for the live configuration on input $z$ with state $s$, input head $p$, work tapes $T$, heads $P$ and output $o$, and $Q_\kappa$ for the diagonalizer's run machine (the phase host over the run's phases), with accepting verdict $\mathit{acc}$ and rejecting verdict $\mathit{rej}$; a verdict-avoiding segment of length $t$ from $a$ to $b$ means that $Q_\kappa$ reaches $b$ from $a$ in exactly $t$ steps and is in neither verdict at any earlier time. Let $a$ be a configuration of $Q_\kappa$ on $z$, let $T, t \in \mathbb{N}$, let $v \in \{\mathit{acc}, \mathit{rej}\}$ and let $T', P'$ be tapes and heads. If $Q_\kappa$ run from $a$ is in $\mathit{acc}$ at time $T$ and in neither verdict at any earlier time, and there is a verdict-avoiding segment of length $t$ from $a$ to $\langle v, 1, T', P', \varepsilon\rangle$, then $v = \mathit{acc}$.
+\end{theorem}
+
+\begin{theorem}[The stage query in a middle]
+\lean{Turing.NTimeDiag.dz_query_mid}
+\label{Turing.NTimeDiag.dz_query_mid}
+\leanok
+\uses{Turing.NTimeDiag.ladder, Turing.NTimeDiag.query, Turing.NTimeDiag.query_eq, Turing.NTimeDiag.stage, Turing.NTimeDiag.stageCode, Turing.pairEncode}
+\difficulty{1}
+Let $f, g : \mathbb{N} \to \mathbb{N}$, let $q_{f,g}$ be the stage query, write $\langle u, v\rangle$ for the pairing encoding of binary words, $\alpha_i$ for the code of stage $i$, $s_f(n)$ for the stage of a length $n$, $(\ell_i)$ for the ladder of $f$, and $M_\alpha$ for the nondeterministic machine decoded from a code $\alpha$ by $c$. For every $n \ge 3$ with $n \ne \ell_{s_f(n) + 1}$, \[ q_{f,g}(1^n) = 0\,\langle\langle \mathrm{bits}(g(n)), \alpha_{s_f(n)}\rangle, 1^{n+1}\rangle. \]
+\end{theorem}
+
+\begin{theorem}[Prepending a one to a block of ones]
+\lean{Turing.NTimeDiag.dz_ones_succ}
+\label{Turing.NTimeDiag.dz_ones_succ}
+\leanok
+\difficulty{1}
+For every $n \in \mathbb{N}$, the binary word $1$ followed by $1^n$ equals $1^{n+1}$.
+\end{theorem}
+
+\begin{theorem}[Soundness of the diagonalizer in a middle]
+\lean{Turing.NTimeDiag.dz_mid_sound}
+\label{Turing.NTimeDiag.dz_mid_sound}
+\leanok
+\uses{Turing.CodeNDTM.toFinNDTM, Turing.EffectiveNDMachineCode, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.AcceptsWithin.mono, Turing.FinNDTM.acceptsWithin_iff, Turing.FinTM, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.dzAlpha, Turing.NTimeDiag.dzBlk_length, Turing.NTimeDiag.dzD, Turing.NTimeDiag.dzK, Turing.NTimeDiag.dz_accepts_iff, Turing.NTimeDiag.dz_alpha_eq, Turing.NTimeDiag.dz_first, Turing.NTimeDiag.dz_ones_succ, Turing.NTimeDiag.dz_qmid, Turing.NTimeDiag.dz_query_mid, Turing.NTimeDiag.dz_split_stream, Turing.NTimeDiag.ladder, Turing.NTimeDiag.stage, Turing.NTimeDiag.stageCode, Turing.pairEncode}
+\difficulty{5}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $D_\kappa$ be the diagonalizer built from $\kappa$, let $K_D = (A_q + A_g + A_p + 40) + (A_q(7A_a + 8) + 2A_l + 140) + 15$, where $A_q, A_g, A_p, A_l, A_a$ are the constants of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and write $\langle u, v\rangle$ for the pairing encoding of binary words, $\alpha_i$ for the code of stage $i$, $s_f(n)$ for the stage of a length $n$, $(\ell_i)$ for the ladder of $f$, and $M_\alpha$ for the nondeterministic machine decoded from a code $\alpha$ by $c$. Let $n \ge 3$ with $n \ne \ell_{s_f(n) + 1}$. If $D_\kappa$ accepts $1^n$ within $K_D(g(n) + 1)$ steps, then $M_{\alpha_{s_f(n)}}$ accepts $1^{n+1}$ within $g(n)$ steps.
+\end{theorem}
+
+\begin{theorem}[Completeness of the diagonalizer in a middle]
+\lean{Turing.NTimeDiag.dz_mid_complete}
+\label{Turing.NTimeDiag.dz_mid_complete}
+\leanok
+\uses{Complexity.LogProg.length_bits_mono, Turing.CodeNDTM.toFinNDTM, Turing.EffectiveNDMachineCode, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.acceptsWithin_iff, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.dzAlpha, Turing.NTimeDiag.dzBlk_length, Turing.NTimeDiag.dzD, Turing.NTimeDiag.dzK, Turing.NTimeDiag.dz_accepts_iff, Turing.NTimeDiag.dz_alpha_eq, Turing.NTimeDiag.dz_ones_succ, Turing.NTimeDiag.dz_padded_value, Turing.NTimeDiag.dz_qmid, Turing.NTimeDiag.dz_query_mid, Turing.NTimeDiag.dz_seg_read, Turing.NTimeDiag.ladder, Turing.NTimeDiag.stage, Turing.NTimeDiag.stageCode, Turing.pairEncode, Turing.streamStartCfg}
+\difficulty{5}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $D_\kappa$ be the diagonalizer built from $\kappa$, let $K_D = (A_q + A_g + A_p + 40) + (A_q(7A_a + 8) + 2A_l + 140) + 15$, where $A_q, A_g, A_p, A_l, A_a$ are the constants of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and write $\langle u, v\rangle$ for the pairing encoding of binary words, $\alpha_i$ for the code of stage $i$, $s_f(n)$ for the stage of a length $n$, $(\ell_i)$ for the ladder of $f$, and $M_\alpha$ for the nondeterministic machine decoded from a code $\alpha$ by $c$. Let $n \ge 3$ with $n \ne \ell_{s_f(n) + 1}$, let $\alpha = \alpha_{s_f(n)}$, and let $C \in \mathbb{N}$ be such that for all binary words $x, s$ and every $t \le |s|$ there is $T \le C(t + 1)$ at which the kit's interpreter core $R$, started in its entry state on input $\langle\langle \mathrm{bits}(t), \alpha\rangle, x\rangle$ with $s$ on its stream tape, other tapes blank and heads at $0$, is in its accepting state $r_A$ if $M_\alpha$ run on $x$ along the first $t$ symbols of $s$ has halted with output $1$, and in its rejecting state $r_J$ otherwise, and is in neither of these states before $T$. If $M_\alpha$ accepts $1^{n+1}$ within $t'$ steps, $C(t' + 1) \le g(n)$ and $t' \le g(n)$, then $D_\kappa$ accepts $1^n$ within $K_D(g(n) + 1)$ steps.
+\end{theorem}
+
+\begin{theorem}[The diagonalizer at a stage's top]
+\lean{Turing.NTimeDiag.dz_top_iff}
+\label{Turing.NTimeDiag.dz_top_iff}
+\leanok
+\uses{Turing.CodeNDTM.toFinNDTM, Turing.EffectiveNDMachineCode, Turing.FinNDTM.AcceptsWithin, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.DzKit, Turing.NTimeDiag.DzQPh, Turing.NTimeDiag.budget, Turing.NTimeDiag.dzAcc, Turing.NTimeDiag.dzBlk, Turing.NTimeDiag.dzD, Turing.NTimeDiag.dzK, Turing.NTimeDiag.dz_accepts_iff, Turing.NTimeDiag.dz_first, Turing.NTimeDiag.dz_qtop, Turing.NTimeDiag.dz_seg_read, Turing.NTimeDiag.ladder, Turing.NTimeDiag.query, Turing.NTimeDiag.query_eq, Turing.NTimeDiag.stage, Turing.NTimeDiag.stageCode, Turing.pairEncode}
+\difficulty{5}
+Let $\kappa$ be a diagonalizer's kit for $f, g : \mathbb{N} \to \mathbb{N}$, an effective coding scheme $c$ and a finite deterministic decider $B_F$ over bits, with $K_\kappa$ host tapes and named tapes $\tau_0, \dots, \tau_{13}$ (the host tapes of indices $0, \dots, 13$), let $D_\kappa$ be the diagonalizer built from $\kappa$, let $K_D = (A_q + A_g + A_p + 40) + (A_q(7A_a + 8) + 2A_l + 140) + 15$, where $A_q, A_g, A_p, A_l, A_a$ are the constants of the kit's calls for the stage query, for $\mathrm{bits}(g(|x|))$, for prepending $1$, for $y \mapsto \mathrm{bits}(|y|)$ and for the inner second component, and write $\langle u, v\rangle$ for the pairing encoding of binary words, $\alpha_i$ for the code of stage $i$, $s_f(n)$ for the stage of a length $n$, $(\ell_i)$ for the ladder of $f$, and $M_\alpha$ for the nondeterministic machine decoded from a code $\alpha$ by $c$. Let $n \ge 3$ with $n = \ell_{i+1}$ where $i = s_f(n)$; let $\ell = \ell_i$, $\alpha = \alpha_i$, $T^* = (f(\ell + 1) + \ell + 2)^2$ the stage budget and $y = \langle\langle \mathrm{bits}(T^*), \alpha\rangle, 1^{\ell+1}\rangle$. Let $C_B \in \mathbb{N}$ be such that $B_F$ computes the output $1$ from $y$ within $C_B 2^{C_B(T^* + 1)}$ steps if $M_\alpha$ accepts $1^{\ell+1}$ within $T^*$ steps, and computes the output $0$ from $y$ within $C_B 2^{C_B(T^* + 1)}$ steps otherwise. If $C_B 2^{C_B(T^* + 1)} \le g(n)$, then $D_\kappa$ accepts $1^n$ within $K_D(g(n) + 1)$ steps if and only if $M_\alpha$ does not accept $1^{\ell+1}$ within $T^*$ steps.
+\end{theorem}
+
+\begin{theorem}[Existence of the lazy diagonalizer]
+\lean{Turing.NTimeDiag.exists_diagonalizer}
+\label{Turing.NTimeDiag.exists_diagonalizer}
+\leanok
+\uses{Complexity.TimeConstructible, Turing.CodeNDTM.toFinNDTM, Turing.EffectiveNDMachineCode, Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.NDTM.HaltsWithin, Turing.NTimeDiag.budget, Turing.NTimeDiag.dzD, Turing.NTimeDiag.dzK, Turing.NTimeDiag.dz_halts, Turing.NTimeDiag.dz_kit_exists, Turing.NTimeDiag.dz_mid_complete, Turing.NTimeDiag.dz_mid_sound, Turing.NTimeDiag.dz_top_iff, Turing.NTimeDiag.ladder, Turing.NTimeDiag.stage, Turing.NTimeDiag.stageCode, Turing.pairEncode}
+\difficulty{4}
+Let $f, g : \mathbb{N} \to \mathbb{N}$ be time-constructible and let $c$ be an effective coding scheme for nondeterministic machines; write $\langle u, v\rangle$ for the pairing encoding of binary words, $\alpha_i$ for the code of stage $i$, $s_f(n)$ for the stage of a length $n$, $(\ell_i)$ for the ladder of $f$, and $M_\alpha$ for the nondeterministic machine decoded from a code $\alpha$ by $c$, and $T^*_i = (f(\ell_i + 1) + \ell_i + 2)^2$ for the budget of stage $i$. Suppose there is a finite deterministic machine $B_F$ over bits such that for every code $\alpha$ there is $C$ with: for all binary words $x$ and all $t \in \mathbb{N}$, $B_F$ computes the output $1$ from $\langle\langle \mathrm{bits}(t), \alpha\rangle, x\rangle$ within $C 2^{C(t+1)}$ steps if $M_\alpha$ accepts $x$ within $t$ steps, and the output $0$ within the same time otherwise. Then there are a finite nondeterministic machine $D$ over bits and $K \in \mathbb{N}$ such that every branch of $D$ on every input $x$ halts within $K(g(|x|) + 1)$ steps, and for every code $\alpha$ there is $C$ such that for every $n \ge 3$ with $\alpha_{s_f(n)} = \alpha$: (i) if $n \ne \ell_{s_f(n)+1}$, then $D$ accepting $1^n$ within $K(g(n) + 1)$ steps implies that $M_\alpha$ accepts $1^{n+1}$ within $g(n)$ steps, and for every $t'$, if $M_\alpha$ accepts $1^{n+1}$ within $t'$ steps and $C(t' + 1) \le g(n)$, then $D$ accepts $1^n$ within $K(g(n) + 1)$ steps; (ii) if $n = \ell_{s_f(n)+1}$ and $C 2^{C(T^*_{s_f(n)} + 1)} \le n$, then $D$ accepts $1^n$ within $K(g(n) + 1)$ steps if and only if $M_\alpha$ does not accept $1^{\ell_{s_f(n)}+1}$ within $T^*_{s_f(n)}$ steps.
+\end{theorem}
