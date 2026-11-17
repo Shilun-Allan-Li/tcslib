@@ -438,12 +438,15 @@ theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
       AReach A oracle x (GuardLe A x B) (some dec, Function.update v r c₀, none)
         (some yes, Function.update v r c, none) := by
   intro c₀ hlt hB hmax
+  have hpd : ∀ w : Fin m → ℕ, PreS A x (some dec, w, none) := fun _ =>
+    preS_of_ins (by intros; simp_all) (by intros; simp_all) (by intros; simp_all)
+      (by intros; simp_all) (by intros; simp_all)
   generalize hk : c₀ - (c + 1) = k
   induction k generalizing c₀ with
   | zero =>
     have he : c₀ - 1 = c := by omega
     have hb : ∀ s, Function.update v r c₀ s ≤ B := register_update_le v r B _ hv hB
-    refine AReach.step ⟨by simp [PreS, hdec], hb⟩ ?_
+    refine AReach.step ⟨hpd _, hb⟩ ?_
     simp only [astep_dec hdec, Function.update_self, Function.update_idem, he]
     refine AReach.step ⟨hpre _, register_update_le v r B _ hv (by omega)⟩ ?_
     rw [htest, if_pos hc]
@@ -451,7 +454,7 @@ theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
   | succ k ih =>
     have hb : ∀ s, Function.update v r c₀ s ≤ B := register_update_le v r B _ hv hB
     have hn : ¬ P (c₀ - 1) := hmax _ (by omega) (by omega)
-    refine AReach.step ⟨by simp [PreS, hdec], hb⟩ ?_
+    refine AReach.step ⟨hpd _, hb⟩ ?_
     simp only [astep_dec hdec, Function.update_self, Function.update_idem]
     refine AReach.step ⟨hpre _, register_update_le v r B _ hv (by omega)⟩ ?_
     rw [htest, if_neg hn]
