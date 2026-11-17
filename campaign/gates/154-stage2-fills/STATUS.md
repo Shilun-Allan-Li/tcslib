@@ -1,0 +1,1 @@
+**Gate 154 staged** (2026-11-17) for the first Codex audit of draft PR #350 at `f2d1ead707d9ba12779dd0b377daba708bac8915` (merged-tree replay against #349's merge `5c153802`). Two earlier runs on the stacked base found rule-10 issues, fixed in `4045f9a9` and `f2d1ead7`.
