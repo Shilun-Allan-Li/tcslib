@@ -63,7 +63,6 @@ only by the results whose reductions compute in the group.
 * `BilinearGroup.pow_val_add` — exponents add in `Z_p`: `x^{(a+b).val} = x^{a.val} x^{b.val}`.
 * `BilinearGroup.pow_val_neg` — negating an exponent inverts: `x^{(-a).val} = (x^{a.val})⁻¹`.
 * `BilinearGroup.pow_val_bijective_of_ne_one` — `a ↦ g^a` is a bijection `Z_p → G` for `g ∈ G^*`.
-* `BilinearGroup.natCast_inj_of_lt` — naturals below `p` are distinct in `Z_p`.
 
 ## References
 
@@ -258,12 +257,6 @@ theorem pow_val_bijective_of_ne_one {g : B.G} (hg : g ≠ 1) :
   have h := pow_eq_pow_iff_modEq.1 hab
   rw [ho] at h
   exact Nat.ModEq.eq_of_lt_of_lt h (ZMod.val_lt a) (ZMod.val_lt b)
-
-/-- **Naturals below the order are distinct in `Z_p`**: for `m, n < p`,
-`(m : ZMod B.order) = n ↔ m = n` (distinct identities below `p` stay distinct as exponents). -/
-theorem natCast_inj_of_lt {m n : ℕ} (hm : m < B.order) (hn : n < B.order) :
-    (m : ZMod B.order) = n ↔ m = n := by
-  rw [ZMod.natCast_eq_natCast_iff', Nat.mod_eq_of_lt hm, Nat.mod_eq_of_lt hn]
 
 end BilinearGroup
 
