@@ -20,3 +20,20 @@ Next:
 - the probe that fixes the reader set (after T4's readers land);
 - the Games statement-phase PR (`Relational.lean` with the targets; the averaging bound in `Probability.lean`);
 - the bb1-sim fill.
+
+## Q7 follow-up: the reader set (Seyoon, 2026-11-17)
+
+The probe (`bb1-sim-statements` checkpoint 1, exchange `8899115b`, `probe/READERS-TO-INSERT.md`) showed that T2 needs
+**ten** readers, not the one Q7 anticipated:
+- six in `IdentityBased/Defs.lean`: `sidImpl_zero_onSpec`, `sidImpl_two_onSpec`, `sidImpl_one_onQuery`,
+  `sidImpl_two_onQuery`, `sidImpl_keyGen_ne_onSpec` and `sidImpl_challenge_fresh_onSpec`;
+- four in `BonehBoyen.lean`: `bb1Scheme_setup_eq`, `bb1Scheme_keyGen_bind`, `bb1Scheme_enc_bind` and
+  `ofFn_bb1Scheme_encCT`.
+
+**Ruling: all ten are approved, and they land in the bb1-sim fill PR**, inserted verbatim from `READERS-TO-INSERT.md`
+as pure insertions after the anchors it names. This is T4's pattern. The bb1-sim gate checks that they are insertions
+only, against the pinned post-insertion SHA-256s (`Defs.lean` `97ecb6e0…`, `BonehBoyen.lean` `88454d6f…`, both on top of
+T4's head). They are theorems proved by `rfl` or in one line; no definition changes.
+
+**Design point:** the fill uses the probe's `RealReads` interface and the existential `setup_out` for the real setup's
+outputs (design §3.3).
