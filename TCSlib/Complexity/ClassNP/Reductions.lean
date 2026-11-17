@@ -56,11 +56,12 @@ string `x`. -/
 def PolyTimeReducible (L L' : Language Bool) : Prop :=
   ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L'
 
-/-- `L` reduces to `L'` in polynomial time exactly when a polynomial-time computable `f` maps
-members of `L` to members of `L'` and non-members to non-members. -/
+/-- The defining property of `PolyTimeReducible`: some polynomial-time `f` has
+`x ∈ L ↔ f x ∈ L'` for every `x`. -/
 theorem polyTimeReducible_iff (L L' : Language Bool) :
     PolyTimeReducible L L' ↔
-      ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L' := Iff.rfl
+      ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L' :=
+  Iff.rfl
 
 @[inherit_doc] scoped infix:50 " ≤ₚ " => PolyTimeReducible
 

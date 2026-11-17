@@ -35,13 +35,13 @@ Generic machine-construction infrastructure shared by loop-body assemblies
 
 ## Main definitions
 
-* `Turing.SafeRun`, `Turing.padAction`, `Turing.embedCfg` (with its field equations
-  `embedCfg_state`, …, `embedCfg_output_eq`).
+* `Turing.SafeRun` (read through `Turing.safeRun_iff`), `Turing.padAction`, `Turing.embedCfg`.
 
 ## Main results
 
 * `Turing.runFrom_output_prefix`, `Turing.runFrom_output_extends`,
   `Turing.embed_run`.
+* The field equations of `Turing.embedCfg`: `embedCfg_state`, …, `embedCfg_output_eq`.
 
 ## References
 
@@ -69,16 +69,24 @@ def SafeRun (H : MultiTapeTM k Bool B) (avoid : B)
     (c : Cfg k Bool B x) (t : ℕ) (c' : Cfg k Bool B x) : Prop :=
   H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid
 
+/-- `SafeRun H avoid c t c' ↔ H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid`:
+the published reading of `Turing.SafeRun`. -/
+theorem safeRun_iff {H : MultiTapeTM k Bool B} {avoid : B} {c : Cfg k Bool B x} {t : ℕ}
+    {c' : Cfg k Bool B x} :
+    SafeRun H avoid c t c' ↔
+      H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid :=
+  Iff.rfl
+
+/-- The empty run is safe. -/
+theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}
+    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c :=
+  safeRun_iff.mpr ⟨rfl, fun t' ht' => absurd ht' (by omega)⟩
+
 /-- Safe runs are segments with one forbidden control state and a trivial head invariant. -/
 private theorem safeRun_iff_segment {H : MultiTapeTM k Bool B} {avoid : B}
     {c c' : Cfg k Bool B x} {t : ℕ} :
     SafeRun H avoid c t c' ↔ Segment H {some avoid} (fun _ => True) c c' t := by
   simp only [SafeRun, segment_iff, Set.mem_singleton_iff, implies_true, and_true]
-
-/-- The empty run is safe. -/
-theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}
-    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c := by
-  exact safeRun_iff_segment.mpr (Segment.zero True.intro)
 
 /-- Prepend one non-avoided step to a safe run. -/
 theorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}

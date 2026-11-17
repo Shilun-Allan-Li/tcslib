@@ -479,6 +479,19 @@ open Classical in
 noncomputable def indicator {α : Type*} (L : Set α) : α → Bool :=
   fun x => if x ∈ L then true else false
 
+open Classical in
+/-- The defining equation of `indicator`: `indicator L = fun x => if x ∈ L then true else false`
+(classical decidability, as in the definition). -/
+theorem indicator_def {α : Type*} (L : Set α) :
+    (indicator L : α → Bool) =
+      (fun x => if x ∈ L then true else false :
+        α → Bool) := rfl
+
+/-- A set is decidable within the given input-indexed bounds when its Boolean indicator is. -/
+def DecidableInTimeAndSpace {α : Type*} (L : Set α) (enc : α ↪ List Bool)
+    (t s : α → ℕ) : Prop :=
+  ComputableInTimeAndSpace (indicator L) enc ⟨fun b => [b], by intro a b h; simpa using h⟩ t s
+
 /-- The indicator of a set is `true` at its members. -/
 theorem indicator_of_mem {α : Type*} {L : Set α} {x : α} (hx : x ∈ L) : indicator L x = true := by
   classical
@@ -489,11 +502,6 @@ theorem indicator_of_not_mem {α : Type*} {L : Set α} {x : α} (hx : x ∉ L) :
     indicator L x = false := by
   classical
   exact if_neg hx
-
-/-- A set is decidable within the given input-indexed bounds when its Boolean indicator is. -/
-def DecidableInTimeAndSpace {α : Type*} (L : Set α) (enc : α ↪ List Bool)
-    (t s : α → ℕ) : Prop :=
-  ComputableInTimeAndSpace (indicator L) enc ⟨fun b => [b], by intro a b h; simpa using h⟩ t s
 
 /-- The Turing machine `tm` halts after exactly `t` steps on input `input`
 if its state is `none` at step `t` and non-none at step `t - 1`.

@@ -221,17 +221,11 @@ theorem length_pairEncode (x y : List Bool) :
   simp [pairEncode_eq_dbl]
   omega
 
-/-- **The payload after the header.** Dropping the header of length `2|u| + 2` from
-`pairEncode u x` leaves `x`.
-
-**Proof sketch.** The pairing is the header `pairEncode u []` followed by `x`, and that header
-has length `2|u| + 2` (`Turing.length_pairEncode`). -/
-theorem pairEncode_drop (u x : List Bool) : (pairEncode u x).drop (2 * u.length + 2) = x := by
-  have split : pairEncode u x = pairEncode u [] ++ x := by
-    rw [pairEncode_eq, pairEncode_eq, List.append_nil]
-  have width : (pairEncode u []).length = 2 * u.length + 2 := by
-    rw [length_pairEncode, List.length_nil, Nat.add_zero]
-  rw [split, ← width, List.drop_left]
+/-- No pair encoding is the empty word: `pairEncode x y` has length at least `2`. -/
+theorem pairEncode_ne_nil (x y : List Bool) : pairEncode x y ≠ [] := by
+  intro h
+  have := congrArg List.length h
+  simp [length_pairEncode] at this
 
 /-- A string that is not a pair is a doubled word followed by a malformed tail: the end
 of the string, a lone bit, or the aligned pair `10`.
@@ -262,6 +256,18 @@ theorem pairDecode_eq_none (z : List Bool) (h : pairDecode z = none) :
       · exact absurd rfl (h₃ r)
       · exact Or.inr (Or.inr ⟨r, rfl⟩)
       · exact absurd rfl (h₂ r)
+
+/-- **The payload after the header.** Dropping the header of length `2|u| + 2` from
+`pairEncode u x` leaves `x`.
+
+**Proof sketch.** The pairing is the header `pairEncode u []` followed by `x`, and that header
+has length `2|u| + 2` (`Turing.length_pairEncode`). -/
+theorem pairEncode_drop (u x : List Bool) : (pairEncode u x).drop (2 * u.length + 2) = x := by
+  have split : pairEncode u x = pairEncode u [] ++ x := by
+    rw [pairEncode_eq, pairEncode_eq, List.append_nil]
+  have width : (pairEncode u []).length = 2 * u.length + 2 := by
+    rw [length_pairEncode, List.length_nil, Nat.add_zero]
+  rw [split, ← width, List.drop_left]
 
 /-- A successfully decoded string is the pairing of its components.
 
