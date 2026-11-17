@@ -1,0 +1,270 @@
+diff --git a/TCSlib/Cryptography/Pairing/Assumptions.lean b/TCSlib/Cryptography/Pairing/Assumptions.lean
+index f1f8aaad9..f38ea5b4b 100644
+--- a/TCSlib/Cryptography/Pairing/Assumptions.lean
++++ b/TCSlib/Cryptography/Pairing/Assumptions.lean
+@@ -7,6 +7,10 @@ import TCSlib.Cryptography.Pairing.Group
+ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.Games.Advantage
+ import TCSlib.Cryptography.Foundations.Negligible
++import TCSlib.Complexity.Randomized.Closure
++import TCSlib.Complexity.Randomized.Repetition
++import TCSlib.Cryptography.Games.Bridges.Experiments
++import TCSlib.Cryptography.OneWayFunctions.Basic
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -98,6 +102,117 @@ theorem bdhStr_eq {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool) (g x y
+       pairEncode d (pairEncode (List.ofFn (B.encG g)) (pairEncode (List.ofFn (B.encG x))
+         (pairEncode (List.ofFn (B.encG y)) (List.ofFn (B.encG z))))) := rfl
+ 
++/-! ### The Decision BDH distinguisher of a BDH solver
++
++The machine behind `BilinearGen.bdhAssumption_of_dbdhAssumption`: on a Decision BDH string it
++re-pairs the first five components into a BDH string, runs the solver on it and compares the
++answer with the last component. These helpers are internal to that proof. -/
++
++/-- The BDH part of a Decision BDH string, by the pair projections:
++`⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩ ↦ ⟨d, ⟨g, ⟨X, ⟨Y, Z⟩⟩⟩⟩` (every string is mapped to some string). -/
++private def tupleBdh (w : List Bool) : List Bool :=
++  pairEncode (pairFstD w) (pairEncode (pairFstD (pairSndD w))
++    (pairEncode (pairFstD (pairSndD (pairSndD w)))
++      (pairEncode (pairFstD (pairSndD (pairSndD (pairSndD w))))
++        (pairFstD (pairSndD (pairSndD (pairSndD (pairSndD w))))))))
++
++/-- The last component of a Decision BDH string: `⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩ ↦ T`, the fifth
++iterate of the second projection. -/
++private def tupleTgt (w : List Bool) : List Bool :=
++  pairSndD (pairSndD (pairSndD (pairSndD (pairSndD w))))
++
++/-- The BDH part of a Decision BDH string is the BDH string of its first five components:
++`tupleBdh (tupleStr B d g x y z t) = bdhStr B d g x y z`. -/
++private theorem tupleBdh_tupleStr {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
++    (g x y z : B.G) (t : B.GT) : tupleBdh (tupleStr B d g x y z t) = bdhStr B d g x y z := by
++  rw [tupleStr_eq, bdhStr_eq, tupleBdh]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- The last component of a Decision BDH string is the encoding of its target element:
++`tupleTgt (tupleStr B d g x y z t) = List.ofFn (B.encT t)`. -/
++private theorem tupleTgt_tupleStr {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
++    (g x y z : B.G) (t : B.GT) : tupleTgt (tupleStr B d g x y z t) = List.ofFn (B.encT t) := by
++  rw [tupleStr_eq, tupleTgt]
++  simp only [pairSndD_pairEncode]
++
++/-- The re-pairing `tupleBdh` is polynomial-time (pair projections and `pairEncode`). -/
++private theorem polyTimeComputable_tupleBdh : PolyTimeComputable tupleBdh := by
++  have s₁ := polyTimeComputable_pairSndD
++  have s₂ := s₁.comp' s₁
++  have s₃ := s₁.comp' s₂
++  have s₄ := s₁.comp' s₃
++  have f := polyTimeComputable_pairFstD
++  unfold tupleBdh
++  exact f.pairEncode ((f.comp' s₁).pairEncode ((f.comp' s₂).pairEncode
++    ((f.comp' s₃).pairEncode (f.comp' s₄))))
++
++/-- The projection `tupleTgt` is polynomial-time (five second projections). -/
++private theorem polyTimeComputable_tupleTgt : PolyTimeComputable tupleTgt := by
++  have s := polyTimeComputable_pairSndD
++  unfold tupleTgt
++  exact s.comp' (s.comp' (s.comp' (s.comp' s)))
++
++/-- **The Decision BDH distinguisher of a BDH solver** (the machine of
++`BilinearGen.bdhAssumption_of_dbdhAssumption`): for every `NUPPT` `A` there is an `NUPPT` `D`
++with `A`'s coins that, at parameter `κ` on a string `w` with coins `r`, runs `A` on the BDH part
++of `w` with the same coins and outputs `[true]` iff the answer is the last component of `w`:
++`D(1^κ, w; r) = [A(1^κ, tupleBdh w; r) = tupleTgt w]`.
++
++**Proof sketch.** The raw function on the layout `⟨⟨⟨1^κ, w⟩, α⟩, r⟩` runs `A.output` on
++`⟨⟨⟨1^κ, tupleBdh w⟩, α⟩, r⟩` and compares the answer with `tupleTgt w`; it is polynomial-time by
++`polyTimeComputable_layout`, the layout projections and `polyTimeComputable_pairEq`.
++`D := NUPPT.ofPolyTime` of it with `A`'s coins and advice, and the identity is
++`runAtL_ofPolyTime`, `runAtL_eq_output_layout` and the projection identities of the layout. -/
++private theorem exists_bdhDistinguisher (A : NUPPT) :
++    ∃ D : NUPPT, D.coins = A.coins ∧ ∀ (κ : ℕ) (w r : List Bool),
++      D.runAtL κ w r = [decide (A.runAtL κ (tupleBdh w) r = tupleTgt w)] := by
++  have ha := A.polyTimeComputable_output.comp' (NUPPT.polyTimeComputable_layout
++    NUPPT.polyTimeComputable_inParam
++    (polyTimeComputable_tupleBdh.comp' NUPPT.polyTimeComputable_inArg)
++    NUPPT.polyTimeComputable_inAdvice NUPPT.polyTimeComputable_inCoins)
++  have ht := polyTimeComputable_tupleTgt.comp' NUPPT.polyTimeComputable_inArg
++  have hF : PolyTimeComputable fun z => [decide (A.output (NUPPT.layout (NUPPT.inParam z)
++      (tupleBdh (NUPPT.inArg z)) (NUPPT.inAdvice z) (NUPPT.inCoins z)) =
++        tupleTgt (NUPPT.inArg z))] :=
++    (polyTimeComputable_pairEq.comp' (ha.pairEncode ht)).congr fun z => by
++      simp only [pairFstD_pairEncode, pairSndD_pairEncode]
++  refine ⟨NUPPT.ofPolyTime hF A.coins A.adv A.advice A.advice_length,
++    NUPPT.coins_ofPolyTime _ _ _ _ _, fun κ w r => ?_⟩
++  rw [NUPPT.runAtL_ofPolyTime, NUPPT.runAtL_eq_output_layout, NUPPT.advInput_eq,
++    ← NUPPT.layout_eq]
++  simp only [NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inAdvice_layout,
++    NUPPT.inCoins_layout]
++
++/-- The verdict of the distinguisher of `exists_bdhDistinguisher` on a Decision BDH string is the
++BDH test of `A` with the same coins: `D(1^κ, tupleStr B d g x y z t; ρ) = 1` iff
++`A(1^κ, bdhStr B d g x y z; ρ)` is the encoding of `t` (coins carried over by `coinsCongr`). -/
++private theorem distinguisherL_tupleStr {A D : NUPPT} (hc : D.coins = A.coins)
++    (hD : ∀ (κ : ℕ) (w r : List Bool),
++      D.runAtL κ w r = [decide (A.runAtL κ (tupleBdh w) r = tupleTgt w)])
++    (κ : ℕ) {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool) (g x y z : B.G) (t : B.GT)
++    (ρ : D.Coins κ) :
++    D.distinguisherL κ (tupleStr B d g x y z t) ρ =
++      decide (A.runAt κ (bdhStr B d g x y z) (NUPPT.coinsCongr hc κ ρ) =
++        List.ofFn (B.encT t)) := by
++  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hD, NUPPT.runAt_coinsCongr, tupleBdh_tupleStr,
++    tupleTgt_tupleStr]
++  simp only [List.cons.injEq, and_true, decide_eq_true_eq]
++
++/-- A fixed string is the encoding of a uniform element of `G_T` with probability at most `1/p`:
++`Pr_{t ← G_T}[w = enc(t)] ≤ 1/p`, since `encT` is injective, so at most one `t` qualifies. -/
++private theorem prob_eq_encT_le {wG wT : ℕ} (B : BilinearGroup wG wT) (w : List Bool) :
++    ProbComp.prob (ProbComp.sample B.GT) (fun t => w = List.ofFn (B.encT t)) ≤
++      (B.order : ℝ)⁻¹ := by
++  rw [Bridge.prob_sample_eq_uprob]
++  by_cases hw : ∃ t₀, w = List.ofFn (B.encT t₀)
++  · obtain ⟨t₀, rfl⟩ := hw
++    rw [OneWay.uprob_congr (q := fun t => t = t₀) fun t =>
++        ⟨fun h => (B.encT_injective (List.ofFn_injective h)).symm, fun h => by rw [h]⟩,
++      OneWay.uprob_eq_one_div_card, B.card_GT, one_div]
++  · rw [OneWay.uprob_congr (q := fun _ => False) fun t => ⟨fun h => hw ⟨t, h⟩, False.elim⟩,
++      uprob_false]
++    positivity
++
+ namespace BilinearGen
+ 
+ variable (G : BilinearGen)
+@@ -196,6 +311,96 @@ PPT `A`. -/
+ theorem bdhAssumption_iff :
+     G.BDHAssumption ↔ ∀ A : NUPPT, Negligible fun κ => accept (G.bdhGame A κ) := Iff.rfl
+ 
++/-- **The reduction's bound** behind `bdhAssumption_of_dbdhAssumption`: if `D` is the
++distinguisher of the BDH solver `A` (`exists_bdhDistinguisher`) and the order is at least `2^κ`
++except with probability `δ(κ)`, then `Pr[A wins the BDH game] ≤ dbdhAdv D κ + 2^{-κ} + δ(κ)`.
++
++**Proof sketch.** On `P_BDH` the target is `e(g, g)^{abc}`, the sample of `T` is unused, and `D`
++accepts exactly when `A`, run with the same coins (`coinsCongr`), outputs its encoding; so
++`Pr[D(P_BDH) = 1] = Pr[A wins]` (`distinguisherL_tupleStr`, `expect_const`,
++`expect_sample_equiv`). On `R_BDH`, exchange the samples of `T` and of the coins
++(`expect_sample_comm`): for fixed coins, `A`'s answer is a fixed string, which is the encoding of
++the uniform `T` with probability at most `1/p` (`prob_eq_encT_le`); so `Pr[D(R_BDH) = 1]` is at
++most `E_r[1/p]`. Pointwise `1/p ≤ 2^{-κ} + [p < 2^κ]`, and the probability of `p < 2^κ` over the
++generator's coins is at most `δ(κ)`. Finally
++`Pr[D(P_BDH) = 1] ≤ Pr[D(R_BDH) = 1] + dbdhAdv D κ`. -/
++private theorem accept_bdhGame_le {A D : NUPPT} (hc : D.coins = A.coins)
++    (hD : ∀ (κ : ℕ) (w r : List Bool),
++      D.runAtL κ w r = [decide (A.runAtL κ (tupleBdh w) r = tupleTgt w)])
++    {δ : ℕ → ℝ} (hN : G.OrderAtLeastExcept (fun κ => 2 ^ κ) δ) (κ : ℕ) :
++    accept (G.bdhGame A κ) ≤ G.dbdhAdv D κ + ((2 : ℝ)⁻¹ ^ κ + δ κ) := by
++  -- `P_BDH`: `D` accepts exactly when `A` wins.
++  have hreal : accept (G.dbdhGame D true κ) = accept (G.bdhGame A κ) := by
++    rw [accept_eq, accept_eq, dbdhGame_eq, bdhGame_eq]
++    simp only [ProbComp.prob_bind, ProbComp.prob_pure, distinguisherL_tupleStr hc hD,
++      ↓reduceIte, decide_eq_true_eq, ProbComp.expect_const]
++    refine congrArg (ProbComp.expect _) (funext fun r => ?_)
++    refine congrArg (ProbComp.expect _) (funext fun g => ?_)
++    refine congrArg (ProbComp.expect _) (funext fun abc => ?_)
++    rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr hc κ)]
++  -- `R_BDH`: for fixed coins the answer hits the uniform target with probability `≤ 1/p`.
++  have hpt : ∀ (r : G.gen.Coins κ) (w : List Bool),
++      ProbComp.expect (ProbComp.sample (G.inst κ r).GT)
++        (fun t => if w = List.ofFn ((G.inst κ r).encT t) then (1 : ℝ) else 0) ≤
++          ((G.inst κ r).order : ℝ)⁻¹ := fun r w => by
++    have h := prob_eq_encT_le (G.inst κ r) w
++    rwa [ProbComp.prob_eq_expect] at h
++  have hrand : accept (G.dbdhGame D false κ) ≤
++      ProbComp.expect (ProbComp.sample (G.gen.Coins κ))
++        (fun r => ((G.inst κ r).order : ℝ)⁻¹) := by
++    rw [accept_eq, dbdhGame_eq]
++    simp only [ProbComp.prob_bind, ProbComp.prob_pure, distinguisherL_tupleStr hc hD,
++      Bool.false_eq_true, ↓reduceIte, decide_eq_true_eq]
++    refine ProbComp.expect_mono _ fun r => ?_
++    have hin : ∀ (g : {x : (G.inst κ r).G // x ≠ 1})
++        (abc : ZMod (G.inst κ r).order × ZMod (G.inst κ r).order × ZMod (G.inst κ r).order),
++        ProbComp.expect (ProbComp.sample (G.inst κ r).GT) (fun t =>
++          ProbComp.expect (ProbComp.sample (D.Coins κ)) (fun ρ =>
++            if A.runAt κ (bdhStr (G.inst κ r) (G.desc κ r) g.1 (g.1 ^ abc.1.val)
++                (g.1 ^ abc.2.1.val) (g.1 ^ abc.2.2.val)) (NUPPT.coinsCongr hc κ ρ) =
++              List.ofFn ((G.inst κ r).encT t) then (1 : ℝ) else 0)) ≤
++          ((G.inst κ r).order : ℝ)⁻¹ := fun g abc => by
++      rw [ProbComp.expect_sample_comm]
++      calc _ ≤ ProbComp.expect (ProbComp.sample (D.Coins κ))
++              (fun _ => ((G.inst κ r).order : ℝ)⁻¹) :=
++            ProbComp.expect_mono _ fun ρ => hpt r _
++        _ = _ := ProbComp.expect_const _ _
++    calc _ ≤ ProbComp.expect (ProbComp.sample {x : (G.inst κ r).G // x ≠ 1}) (fun _ =>
++            ProbComp.expect (ProbComp.sample (ZMod (G.inst κ r).order ×
++              ZMod (G.inst κ r).order × ZMod (G.inst κ r).order))
++                (fun _ => ((G.inst κ r).order : ℝ)⁻¹)) :=
++          ProbComp.expect_mono _ fun g => ProbComp.expect_mono _ fun abc => hin g abc
++      _ = _ := by rw [ProbComp.expect_const, ProbComp.expect_const]
++  -- The order: `1/p ≤ 2^{-κ} + [p < 2^κ]`, and `Pr_r[p < 2^κ] ≤ δ(κ)`.
++  have hord : ProbComp.expect (ProbComp.sample (G.gen.Coins κ))
++      (fun r => ((G.inst κ r).order : ℝ)⁻¹) ≤ (2 : ℝ)⁻¹ ^ κ + δ κ := by
++    have hu : uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < 2 ^ κ) ≤ δ κ :=
++      (G.orderAtLeastExcept_iff _ δ).1 hN κ
++    rw [← Bridge.prob_sample_eq_uprob, ProbComp.prob_eq_expect] at hu
++    have hp : ∀ r : G.gen.Coins κ, ((G.inst κ r).order : ℝ)⁻¹ ≤
++        (2 : ℝ)⁻¹ ^ κ + if (G.inst κ r).order < 2 ^ κ then 1 else 0 := fun r => by
++      have h2 : (0 : ℝ) ≤ (2 : ℝ)⁻¹ ^ κ := by positivity
++      split_ifs with hlt
++      · have h1 : (1 : ℝ) ≤ (G.inst κ r).order := by
++          exact_mod_cast (G.inst κ r).order_prime.one_lt.le
++        linarith [inv_le_one_of_one_le₀ h1]
++      · have hle : (2 : ℝ) ^ κ ≤ (G.inst κ r).order := by exact_mod_cast not_lt.1 hlt
++        rw [add_zero, inv_pow]
++        exact inv_anti₀ (by positivity) hle
++    calc _ ≤ ProbComp.expect (ProbComp.sample (G.gen.Coins κ)) (fun r =>
++          (2 : ℝ)⁻¹ ^ κ + if (G.inst κ r).order < 2 ^ κ then 1 else 0) :=
++          ProbComp.expect_mono _ hp
++      _ = (2 : ℝ)⁻¹ ^ κ + ProbComp.expect (ProbComp.sample (G.gen.Coins κ)) (fun r =>
++          if (G.inst κ r).order < 2 ^ κ then (1 : ℝ) else 0) := by
++          rw [ProbComp.expect_add, ProbComp.expect_const]
++      _ ≤ _ := by linarith
++  -- The advantage bounds the gap between the two experiments.
++  have hadv := G.dbdhAdv_eq D κ
++  rw [advantage_eq] at hadv
++  have hsym := abs_sub_comm (accept (G.dbdhGame D false κ)) (accept (G.dbdhGame D true κ))
++  have hle := le_abs_self (accept (G.dbdhGame D true κ) - accept (G.dbdhGame D false κ))
++  linarith
++
+ /-- **Decision BDH implies BDH** when the group order is at least `2^κ` except with negligible
+ probability: a BDH solver `A` gives the Decision BDH distinguisher "run `A` on `(g, g^a, g^b, g^c)`
+ and accept iff its answer is `T`".
+@@ -204,17 +409,31 @@ and accept iff its answer is `T`".
+ implication is independently derived here: the folklore fact that deciding is no harder than
+ computing.
+ 
+-**Proof sketch.** Given `A`, let `D(1^κ, ⟨s, T⟩)` run `A(1^κ, s)` with its own coins and accept
+-iff the answer equals the encoding of `T`, where `s` is re-paired from the first five components
+-(a polynomial-time string map, so `D` is a non-uniform PPT). On `P_BDH`, `D` accepts exactly when
+-`A` succeeds, so `Pr[D(P_BDH) = 1] = Pr[A wins]`. On `R_BDH`, `T` is uniform in `G_T` and
+-independent of `A`'s view, so `Pr[D(R_BDH) = 1] ≤ 1/p` by injectivity of the encoding. Hence
+-`Pr[A wins] ≤ dbdhAdv D κ + E_r[1/p] ≤ dbdhAdv D κ + 2^{-κ} + δ(κ)` (the coins where `p < 2^κ`
+-cost at most `δ(κ)`), a sum of negligible functions. -/
++**Proof sketch.** Given `A`, let `D` be the machine with `A`'s coins that, on `1^κ` and a string
++`w`, re-pairs the first five components of `w` into a BDH string `s` by the pair projections,
++runs `A(1^κ, s)` with its own coins and outputs `1` iff the answer equals the last component of
++`w` (a string-equality test). Its raw function is polynomial-time, so `D` is a non-uniform PPT
++(`exists_bdhDistinguisher`). On a Decision BDH string `⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩`, `s` is the
++BDH string `⟨d, ⟨g, ⟨X, ⟨Y, Z⟩⟩⟩⟩` and the last component is the encoding of `T`. On `P_BDH`
++(`T = e(g, g)^{abc}`, the sample of `T` unused), `D` accepts exactly when `A` wins, so
++`Pr[D(P_BDH) = 1] = Pr[A wins]`. On `R_BDH`, exchange the sample of `T` with that of the coins:
++for fixed coins `A`'s answer is a fixed string, which is the encoding of the uniform `T ∈ G_T`
++with probability at most `1/p` (the encoding is injective). So `Pr[D(R_BDH) = 1] ≤ E_r[1/p]`,
++and `1/p ≤ 2^{-κ} + [p < 2^κ]` pointwise, where `p < 2^κ` has probability at most `δ(κ)` over the
++generator's coins. Hence `Pr[A wins] ≤ dbdhAdv D κ + 2^{-κ} + δ(κ)` (`accept_bdhGame_le`), a sum
++of negligible functions (`h`, `negligible_two_pow_neg`, the hypothesis on `δ`). Neither the group
++operations nor decoding are needed (`Ops` is not assumed). -/
+ theorem bdhAssumption_of_dbdhAssumption
+     (hN : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.OrderAtLeastExcept (fun κ => 2 ^ κ) δ)
+     (h : G.DBDHAssumption) : G.BDHAssumption := by
+-  sorry
++  obtain ⟨δ, hδ, hN⟩ := hN
++  rw [bdhAssumption_iff]
++  intro A
++  obtain ⟨D, hc, hD⟩ := exists_bdhDistinguisher A
++  refine ((G.dbdhAssumption_iff.1 h D).add (negligible_two_pow_neg.add hδ)).mono
++    ⟨0, fun κ _ => ?_⟩
++  rw [abs_of_nonneg (accept_nonneg _)]
++  exact (G.accept_bdhGame_le hc hD hN κ).trans (le_abs_self _)
+ 
+ end BilinearGen
+ 
