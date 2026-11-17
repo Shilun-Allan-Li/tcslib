@@ -1,0 +1,671 @@
+diff --git a/TCSlib/Complexity/Randomized/Build/IterateFind.lean b/TCSlib/Complexity/Randomized/Build/IterateFind.lean
+index 27bf3615d..30edb6037 100644
+--- a/TCSlib/Complexity/Randomized/Build/IterateFind.lean
++++ b/TCSlib/Complexity/Randomized/Build/IterateFind.lean
+@@ -304,258 +304,6 @@ private lemma final_bound (c A D CP cP CR cR n Pn Rn : ℕ)
+     _ = c * (A * (CP + 7) ^ D + 1) * (CR + 2) * (n + 1) ^ ((cP + 1) * D + cR) := by
+         rw [Nat.pow_add]; ring
+ 
+-/-- **The loop-level repetition lemma.** Let `g` be a polynomial-time step, `acc` a
+-polynomial-time test, `out` a polynomial-time payload map, and `R, P` syntactic polynomials
+-with `|g^[i] x| ≤ P|x|` for `i ≤ R|x|`. Then the function returning `out` of the orbit point
+-of the first index `i ≤ R|x|` at which `acc` accepts the second component of the `i`-fold
+-guarded step `Complexity.IterateFind.step g P x` from `⟨x, x⟩` (`[]` if none) is
+-polynomial-time computable. This is the machine behind
+-`Complexity.polyTimeComputable_iterateFind` [PS10, Algorithm 38.5, Theorem 35.1]; the pure
+-identification of the guarded orbit with `g^[i] x` is done there.
+-
+-**Proof sketch.** Instance of `Turing.FinTM.exists_loopFindTM` for the host `hostTM` (the
+-clean-module host `Turing.ModuleHost.hostTM` with the control table `hostCtrl`) over the five
+-clean modules (the copier, and `Turing.ModuleHost.clean_install`/`clean_emit` of
+-`x ↦ ⟨x, x⟩`, `verdictWord acc`, `stepWord g P`, `outWord out`), with anchor `inl 0`,
+-invariant `Inv P`,
+-step `step g P`, acceptance `acc ∘ snd`, payload `out ∘ snd`, start word `⟨x, x⟩`. The fuel
+-machine computes `Nat.bits (R|x|)` (`polyTimeComputable_unaryPoly R` composed with
+-`computesFunInTime_lengthBits`). `hstart`: the copier (`copy_clean`, `ModuleHost.host_call`)
+-then the startup install (`ModuleHost.host_clean`) reach the anchor seam with `⟨x, x⟩` in
+-`2|x| + 2 + t_S` steps
+-with no earlier anchor visit. `hround`: from the anchor seam with an admissible word `⟨x, s⟩`,
+-the dispatch step, the verdict call, the branch step (`host_branch`), then either the payload
+-call and the halt step (`host_halt`) — state `none`, output `out s` — or the step call
+-returning to the anchor seam with `step g P x ⟨x, s⟩` (`stepWord_verdictWord`); the anchor
+-guard is `ModuleHost.guard_add` over the segments. All requests have length at most
+-`2|x| + 2 + P|x| + 4`, so every call fits the common budget `T n = A (2n + 2 + P n + 5)^D`
+-(`ModuleHost.request_budget`), and
+-`final_bound` puts the combinator's bound `c (T n + 1)(R n + 2)` in normal form. -/
+-theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComputable g)
+-    {acc : List Bool → Bool} (hacc : PolyTimeComputable fun s => [acc s])
+-    {out : List Bool → List Bool} (hout : PolyTimeComputable out)
+-    (R P : PolyExpr)
+-    (horbit : ∀ (x : List Bool) (i : ℕ), i ≤ R.eval x.length →
+-      (g^[i] x).length ≤ P.eval x.length) :
+-    PolyTimeComputable fun x =>
+-      match (List.range (R.eval x.length + 1)).find?
+-          (fun i => acc (pairSndD ((step g P x)^[i] (pairEncode x x)))) with
+-      | some i => out (pairSndD ((step g P x)^[i] (pairEncode x x)))
+-      | none => [] := by
+-  obtain ⟨S, aS, dS, hS⟩ := ModuleHost.clean_install dupWord_poly
+-  obtain ⟨V, aV, dV, hV⟩ := ModuleHost.clean_install (verdictWord_poly hacc)
+-  obtain ⟨I, aI, dI, hI⟩ := ModuleHost.clean_install (stepWord_poly hg P)
+-  obtain ⟨E, aE, dE, hE⟩ := ModuleHost.clean_emit (outWord_poly hout)
+-  have hbits : PolyTimeComputable fun x => Nat.bits (R.eval x.length) := by
+-    have h := (polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits).comp
+-      (polyTimeComputable_unaryPoly R)
+-    convert h using 1
+-    funext x
+-    simp
+-  obtain ⟨F, aF, dF, hF⟩ := (polyTimeComputable_iff _).1 hbits
+-  let M : Fin 5 → FinTM Bool := fun i => match i.val with
+-    | 0 => copyTM | 1 => S | 2 => V | 3 => I | _ => E
+-  let K := S.k + V.k + I.k + E.k
+-  have hk : ∀ i, (M i).k ≤ K + 1 := by
+-    intro i; fin_cases i <;> simp [M, K, copyTM_k] <;> omega
+-  let H := hostTM M K hk
+-  let anchor : H.State := .inl 0
+-  have hclean := ModuleHost.host_clean M (K + 1) hk (hostCtrl M K) (hostRet M)
+-    (ModuleHost.entry M 0)
+-  let D := dS + dV + dI + dE + dF + 1
+-  let A := aS + aV + aI + aE + aF + 5
+-  let pow (n : ℕ) := (2 * n + 2 + P.eval n + 5) ^ D
+-  let T (n : ℕ) := A * pow n
+-  have hpow (n : ℕ) : n + 1 ≤ pow n := by
+-    have h := Nat.pow_le_pow_right (show 0 < 2 * n + 2 + P.eval n + 5 by omega)
+-      (show 1 ≤ D by dsimp [D]; omega)
+-    simp only [Nat.pow_one] at h
+-    exact (by omega : n + 1 ≤ 2 * n + 2 + P.eval n + 5).trans h
+-  have hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+-      (∀ v < t, (H.tm.runFrom (H.tm.initCfg x) v).state ≠ some anchor) ∧
+-      H.tm.runFrom (H.tm.initCfg x) t = Cfg.ofWords anchor (stateWord H.k (pairEncode x x)) := by
+-    intro x
+-    obtain ⟨hcg, hce⟩ := copy_clean x
+-    obtain ⟨hcGuard, hcEnd⟩ := ModuleHost.host_call M (K + 1) hk (hostCtrl M K) (hostRet M)
+-      (ModuleHost.entry M 0) 0 (by simp [M, copyTM_k]) x [] x [] [] (0 : Fin 2)
+-      (2 * x.length + 2) hcg (by simpa using hce)
+-    have hi : H.tm.initCfg x = Cfg.ofWords (ModuleHost.entry M 0) (stateWord (K + 1) []) := by
+-      refine Cfg.ext ?_ rfl ?_ rfl rfl
+-      · exact congrArg some (ModuleHost.hostTM_tm_q₀ M (K + 1) hk (hostCtrl M K) (hostRet M)
+-          (ModuleHost.entry M 0))
+-      funext i z
+-      simp [MultiTapeTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_workTapes,
+-          Cfg.init_workTapePos, Cfg.init_output, Cfg.ofWords_def, stateWord_eq]
+-    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 0) (stateWord (K + 1) []))
+-      (2 * x.length + 2) = Cfg.ofWords (hostRet M 0) (stateWord (K + 1) x) at hcEnd
+-    rw [hostRet_zero] at hcEnd
+-    obtain ⟨ts, hspos, hst, hsGuard, hsEnd⟩ := hclean 1
+-      (fun x => pairEncode x x) (fun _ => []) (fun n => aS * (n + 1) ^ dS)
+-      (by simpa [M] using hS) x x []
+-    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 1) (stateWord (K + 1) x))
+-      ts = Cfg.ofWords (hostRet M 1) (stateWord (K + 1) (pairEncode x x)) at hsEnd
+-    rw [hostRet_one] at hsEnd
+-    have hsB := ModuleHost.request_budget aS dS D (2 * x.length + 2 + P.eval x.length + 5) x.length
+-      (by dsimp [D]; omega) (by omega)
+-    have hp := hpow x.length
+-    refine ⟨2 * x.length + 2 + ts, ?_, ?_, ?_⟩
+-    · dsimp only [T, A, pow]
+-      simp only [Nat.add_mul]
+-      dsimp only [pow] at hp
+-      omega
+-    · rw [hi]
+-      exact ModuleHost.guard_add H.tm anchor _ _ _ ts (fun v hv => hcGuard v hv 0) hcEnd
+-        (fun v hv => hsGuard v hv 0)
+-    · rw [hi, MultiTapeTM.runFrom_add, hcEnd, hsEnd]
+-      rfl
+-  have hround : ∀ x w : List Bool, Inv P x w → ∃ t, 0 < t ∧ t ≤ T x.length ∧
+-      (∀ t', 0 < t' → t' < t →
+-        (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t').state
+-          ≠ some anchor) ∧
+-      if acc (pairSndD w) then
+-        (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t).state = none ∧
+-        (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t).output =
+-          out (pairSndD w)
+-      else
+-        H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t =
+-          Cfg.ofWords anchor (stateWord H.k (step g P x w)) := by
+-    intro x w hw
+-    obtain ⟨s, rfl, hs⟩ := hw
+-    have hwlen : (pairEncode x s).length ≤ 2 * x.length + 2 + P.eval x.length := by
+-      rw [length_pairEncode]; omega
+-    have hw'len : (verdictWord acc (pairEncode x s)).length =
+-        (pairEncode x s).length + 4 := verdictWord_length acc _
+-    have hpow' := hpow x.length
+-    -- the dispatch, the verdict call, the branch
+-    have hdisp := host_dispatch M K hk x (pairEncode x s)
+-    obtain ⟨tv, hvpos, hvt, hvGuard, hvEnd⟩ := hclean 2 (verdictWord acc)
+-      (fun _ => []) (fun n => aV * (n + 1) ^ dV) (by simpa [M] using hV) x (pairEncode x s) []
+-    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2) (stateWord (K + 1)
+-      (pairEncode x s))) tv = Cfg.ofWords (hostRet M 2) (stateWord (K + 1)
+-        (verdictWord acc (pairEncode x s))) at hvEnd
+-    rw [hostRet_two] at hvEnd
+-    have hbr := host_branch M K hk x (acc s) (verdictWord acc (pairEncode x s))
+-      (by rw [verdictWord_head, pairSndD_pairEncode])
+-    have hvB := ModuleHost.request_budget aV dV D (2 * x.length + 2 + P.eval x.length + 5)
+-      (pairEncode x s).length (by dsimp [D]; omega) (by omega)
+-    have hseg : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+-        (stateWord (K + 1) (pairEncode x s))) (tv + 1) =
+-        Cfg.ofWords (ModuleHost.entry M (if acc s then 4 else 3))
+-          (stateWord (K + 1) (verdictWord acc (pairEncode x s))) := by
+-      rw [MultiTapeTM.runFrom_succ_eq_step', hvEnd, hbr]
+-    have hsegGuard : ∀ v < tv + 1, (H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+-        (stateWord (K + 1) (pairEncode x s))) v).state ≠ some anchor := by
+-      refine ModuleHost.guard_add H.tm anchor _ _ tv 1 (fun v hv => hvGuard v hv 0) hvEnd ?_
+-      intro v hv
+-      have hv0 : v = 0 := by omega
+-      subst hv0
+-      simp [Cfg.ofWords_def, anchor]
+-    by_cases hb : acc s = true
+-    · -- accepting round: the payload call, then the halt
+-      rw [if_pos hb] at hseg
+-      obtain ⟨te, hepos, het, heGuard, heEnd⟩ := hclean 4 id (outWord out)
+-        (fun n => aE * (n + 1) ^ dE) (by simpa [M] using hE) x
+-        (verdictWord acc (pairEncode x s)) []
+-      change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 4) (stateWord (K + 1)
+-        (verdictWord acc (pairEncode x s)))) te = {Cfg.ofWords (hostRet M 4) (stateWord (K + 1)
+-          (verdictWord acc (pairEncode x s))) with
+-            output := [] ++ outWord out (verdictWord acc (pairEncode x s))} at heEnd
+-      rw [hostRet_four, List.nil_append, outWord_verdictWord] at heEnd
+-      have hhalt := host_halt M K hk x (verdictWord acc (pairEncode x s)) (out s)
+-      have heB := ModuleHost.request_budget aE dE D (2 * x.length + 2 + P.eval x.length + 5)
+-        (verdictWord acc (pairEncode x s)).length (by dsimp [D]; omega) (by omega)
+-      have hall : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+-          (stateWord (K + 1) (pairEncode x s))) (tv + 1 + te + 1) =
+-          {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1)
+-            (verdictWord acc (pairEncode x s))) with state := none, output := out s} := by
+-        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, hseg, heEnd, hhalt]
+-      have hallGuard : ∀ v < tv + 1 + te + 1, (H.tm.runFrom (Cfg.ofWords (input := x)
+-          (ModuleHost.entry M 2) (stateWord (K + 1) (pairEncode x s))) v).state ≠ some anchor := by
+-        refine ModuleHost.guard_add H.tm anchor _ {Cfg.ofWords (input := x)
+-          (.inl 2 : ModuleHost.State (Fin 3) M)
+-          (stateWord (K + 1) (verdictWord acc (pairEncode x s))) with output := out s}
+-          (tv + 1 + te) 1 ?_ ?_ ?_
+-        · exact ModuleHost.guard_add H.tm anchor _ _ (tv + 1) te hsegGuard hseg
+-            (fun v hv => heGuard v hv 0)
+-        · rw [MultiTapeTM.runFrom_add, hseg, heEnd]
+-        · intro v hv
+-          have hv0 : v = 0 := by omega
+-          subst hv0
+-          simp [Cfg.ofWords_def, anchor]
+-      refine ⟨tv + 1 + te + 1 + 1, by omega, ?_, ?_, ?_⟩
+-      · dsimp only [T, A, pow]
+-        simp only [Nat.add_mul]
+-        dsimp only [pow] at hpow'
+-        omega
+-      · intro v hv hvt
+-        have hvform : v = (v - 1) + 1 := by omega
+-        change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+-          (pairEncode x s))) v).state ≠ some anchor
+-        rw [hvform, MultiTapeTM.runFrom_succ_eq_step, hdisp]
+-        exact hallGuard (v - 1) (by omega)
+-      · rw [pairSndD_pairEncode, if_pos hb]
+-        change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+-            (pairEncode x s))) (tv + 1 + te + 1 + 1)).state = none ∧
+-          (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+-            (pairEncode x s))) (tv + 1 + te + 1 + 1)).output = out s
+-        rw [MultiTapeTM.runFrom_succ_eq_step, hdisp, hall]
+-        exact ⟨rfl, rfl⟩
+-    · -- advancing round: the step call returns to the anchor
+-      rw [if_neg hb] at hseg
+-      obtain ⟨ti, hipos, hit, hiGuard, hiEnd⟩ := hclean 3 (stepWord g P)
+-        (fun _ => []) (fun n => aI * (n + 1) ^ dI) (by simpa [M] using hI) x
+-        (verdictWord acc (pairEncode x s)) []
+-      change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 3) (stateWord (K + 1)
+-        (verdictWord acc (pairEncode x s)))) ti = Cfg.ofWords (hostRet M 3) (stateWord (K + 1)
+-          (stepWord g P (verdictWord acc (pairEncode x s)))) at hiEnd
+-      rw [hostRet_three, stepWord_verdictWord] at hiEnd
+-      have hiB := ModuleHost.request_budget aI dI D (2 * x.length + 2 + P.eval x.length + 5)
+-        (verdictWord acc (pairEncode x s)).length (by dsimp [D]; omega) (by omega)
+-      have hall : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+-          (stateWord (K + 1) (pairEncode x s))) (tv + 1 + ti) =
+-          Cfg.ofWords anchor (stateWord (K + 1) (step g P x (pairEncode x s))) := by
+-        rw [MultiTapeTM.runFrom_add, hseg, hiEnd]
+-      have hallGuard : ∀ v < tv + 1 + ti, (H.tm.runFrom (Cfg.ofWords (input := x)
+-          (ModuleHost.entry M 2) (stateWord (K + 1) (pairEncode x s))) v).state ≠ some anchor :=
+-        ModuleHost.guard_add H.tm anchor _ _ (tv + 1) ti hsegGuard hseg
+-          (fun v hv => hiGuard v hv 0)
+-      refine ⟨tv + 1 + ti + 1, by omega, ?_, ?_, ?_⟩
+-      · dsimp only [T, A, pow]
+-        simp only [Nat.add_mul]
+-        dsimp only [pow] at hpow'
+-        omega
+-      · intro v hv hvt
+-        have hvform : v = (v - 1) + 1 := by omega
+-        change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+-          (pairEncode x s))) v).state ≠ some anchor
+-        rw [hvform, MultiTapeTM.runFrom_succ_eq_step, hdisp]
+-        exact hallGuard (v - 1) (by omega)
+-      · rw [pairSndD_pairEncode, if_neg hb]
+-        change H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+-            (pairEncode x s))) (tv + 1 + ti + 1) =
+-          Cfg.ofWords anchor (stateWord (K + 1) (step g P x (pairEncode x s)))
+-        rw [MultiTapeTM.runFrom_succ_eq_step, hdisp, hall]
+-  have hFuel : F.ComputesFunInTime (fun x => Nat.bits (R.eval x.length)) T := by
+-    intro x
+-    apply (hF x).mono
+-    have h := ModuleHost.request_budget aF dF D (2 * x.length + 2 + P.eval x.length + 5) x.length
+-      (by dsimp [D]; omega) (by omega)
+-    have hp := hpow x.length
+-    dsimp only [T, A, pow]
+-    simp only [Nat.add_mul]
+-    dsimp only [pow] at hp
+-    omega
+-  obtain ⟨L, c, hL⟩ := FinTM.exists_loopFindTM H F anchor (Inv P) (step g P)
+-    (fun _ w => acc (pairSndD w)) (fun _ w => out (pairSndD w)) (fun x => pairEncode x x)
+-    (fun n => R.eval n) T hFuel
+-    (fun x => inv_init P x (by simpa using horbit x 0 (Nat.zero_le _)))
+-    (fun x w h => inv_step g P x w h) hstart hround
+-  obtain ⟨CP, cP, hCP⟩ := P.eval_le
+-  obtain ⟨CR, cR, hCR⟩ := R.eval_le
+-  refine ⟨L, c * (A * (CP + 7) ^ D + 1) * (CR + 2), (cP + 1) * D + cR, fun x => (hL x).mono ?_⟩
+-  exact final_bound c A D CP cP CR cR x.length (P.eval x.length) (R.eval x.length)
+-    (hCP _) (hCR _)
+-
+ /-- A guarded search with arbitrary numerical fuel `R` and initial state `init` has a
+ finite machine computing the first accepted payload (or `[]` on exhaustion) within
+ `c * (A * (2 * n + 2 + P.eval n + 5) ^ D + 1) * (R n + 2)` steps, for constants
+@@ -565,13 +313,27 @@ polynomial-time computable; `|init x| ≤ P.eval |x|`. A fuel machine computes
+ `T n = A * (2 * n + 2 + P.eval n + 5) ^ D` is polynomial; no polynomial bound on `R`
+ is assumed. [AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4]
+ 
+-**Proof sketch.** Reuse the invariant and guarded-step modules of
+-`polyTimeComputable_find`, installing `⟨x, init x⟩` at startup. The size guard preserves
+-the invariant under every step, including steps after the search terminates. Install the
+-verdict and step modules, emit the payload, and compose their clean calls through the
+-same five-module host. A common polynomial budget pays for startup, each round, and the
+-given binary fuel machine. The result-bearing loop combinator then supplies the stated
+-bound directly, without using the polynomial-fuel normal form `final_bound`. -/
++**Proof sketch.** Instance of `Turing.FinTM.exists_loopFindTM` for the repetition machine's
++host (the clean-module host with the control table `hostCtrl` and the return states
++`hostRet`), read through its typed view `Turing.ModuleHost.hostTMView`, over five clean
++modules: the copier, through its typed view `copyTMView`, and
++`Turing.ModuleHost.clean_install`/`clean_emit` of `x ↦ ⟨x, init x⟩`, `verdictWord acc`,
++`stepWord g P` and `outWord out`. The anchor is `inl 0`; the invariant is `Inv P`, which the
++size guard preserves under every step, including steps after the search terminates; the
++step is `step g P`, the acceptance `acc ∘ snd`, the payload `out ∘ snd` and the start word
++`⟨x, init x⟩`. `hstart`: the copier call (`copy_clean_view`,
++`Turing.ModuleHost.host_call_view`) and the startup install
++(`Turing.ModuleHost.host_clean_view`) reach the anchor seam holding `⟨x, init x⟩` in
++`2|x| + 2 + t_S` steps, with no earlier anchor visit. `hround`: from the anchor seam with an
++admissible word `⟨x, s⟩`, the dispatch step, the verdict call, the branch step on the verdict
++cell, then either the payload call and the halt step (state `none`, output `out s`) or the
++step call back to the anchor seam with `step g P x ⟨x, s⟩`; the three control steps are read
++off `hostCtrl` through `Turing.ModuleHost.hostTMView_step_inl`, and the anchor guard is
++`Turing.ModuleHost.guard_add` over the segments. Every request has length at most
++`2|x| + 2 + P|x| + 4`, so every call and the given binary fuel machine fit the common budget
++`T n = A (2n + 2 + P n + 5)^D` (`Turing.ModuleHost.request_budget`). The result-bearing loop
++combinator then supplies the stated bound `c (T n + 1)(R n + 2)` directly, without the
++polynomial-fuel normal form `final_bound`; its search result is matched by cases. -/
+ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeComputable g)
+     {acc : List Bool → Bool} (hacc : PolyTimeComputable fun s => [acc s])
+     {out : List Bool → List Bool} (hout : PolyTimeComputable out)
+@@ -588,20 +350,53 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
+           | some i => out (pairSndD ((step g P x)^[i] (pairEncode x (init x))))
+           | none => [])
+         (fun n => c * (A * (2 * n + 2 + P.eval n + 5) ^ D + 1) * (R n + 2)) := by
+-  -- Build the four clean calls and their shared host.
++  -- Build the four clean calls and their shared host, read through the typed views.
+   obtain ⟨S, aS, dS, hS⟩ := ModuleHost.clean_install (polyTimeComputable_id.pairEncode hinit)
+   obtain ⟨V, aV, dV, hV⟩ := ModuleHost.clean_install (verdictWord_poly hacc)
+   obtain ⟨I, aI, dI, hI⟩ := ModuleHost.clean_install (stepWord_poly hg P)
+   obtain ⟨E, aE, dE, hE⟩ := ModuleHost.clean_emit (outWord_poly hout)
+   let M : Fin 5 → FinTM Bool := fun i => match i.val with
+-    | 0 => copyTM | 1 => S | 2 => V | 3 => I | _ => E
++    | 0 => copyTMView | 1 => S | 2 => V | 3 => I | _ => E
+   let K := S.k + V.k + I.k + E.k
+   have hk : ∀ i, (M i).k ≤ K + 1 := by
+-    intro i; fin_cases i <;> simp [M, K, copyTM_k] <;> omega
+-  let H := hostTM M K hk
++    intro i; fin_cases i <;> simp [M, K] <;> omega
++  let H := ModuleHost.hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (ModuleHost.entry M 0)
+   let anchor : H.State := .inl 0
+-  have hclean := ModuleHost.host_clean M (K + 1) hk (hostCtrl M K) (hostRet M)
++  have hclean := ModuleHost.host_clean_view M (K + 1) hk (hostCtrl M K) (hostRet M)
+     (ModuleHost.entry M 0)
++  -- A seam with an empty output prefix is the seam.
++  have hseam (x : List Bool) (q : ModuleHost.State (Fin 3) M) (w : List Bool) :
++      ({Cfg.ofWords (input := x) q (stateWord (K + 1) w) with output := []} :
++        Cfg (K + 1) Bool (ModuleHost.State (Fin 3) M) x) = Cfg.ofWords q (stateWord (K + 1) w) :=
++    Cfg.ext rfl rfl rfl rfl (Cfg.ofWords_output q _).symm
++  -- The three control steps (the table `hostCtrl`), read through the typed view.
++  have hdisp (x w : List Bool) :
++      H.tm.step (Cfg.ofWords (input := x) anchor (stateWord (K + 1) w)) =
++        Cfg.ofWords (ModuleHost.entry M 2) (stateWord (K + 1) w) := by
++    rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _ _ 0 (Cfg.ofWords_state _ _), hostCtrl_eq,
++      if_pos rfl, FinTM.controlAction_apply, moveInputPos_zero, Cfg.ofWords_def, Cfg.ofWords_def]
++  have hbranch (x : List Bool) (b : Bool) (w : List Bool) (hw : w[0]? = some b) :
++      H.tm.step (Cfg.ofWords (input := x) (.inl 1) (stateWord (K + 1) w)) =
++        Cfg.ofWords (ModuleHost.entry M (if b then 4 else 3)) (stateWord (K + 1) w) := by
++    have hread : (Cfg.ofWords (input := x) (.inl 1 : ModuleHost.State (Fin 3) M)
++        (stateWord (K + 1) w)).workTapeSymbols 0 = some b := by
++      simp only [Cfg.workTapeSymbols_eq, Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos,
++        stateWord_eq, FinTM.bufferTape_eq]
++      simpa using hw
++    rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _ _ 1 (Cfg.ofWords_state _ _), hostCtrl_eq,
++      if_neg (by decide), if_pos rfl, hread, FinTM.controlAction_apply, moveInputPos_zero,
++      Cfg.ofWords_def, Cfg.ofWords_def]
++    cases b <;> rfl
++  have hhalt (x w o : List Bool) :
++      H.tm.step {Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} =
++        {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)
++          with state := none, output := o} := by
++    rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _
++      ({Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} :
++        Cfg (K + 1) Bool (ModuleHost.State (Fin 3) M) x) 2
++      (Cfg.ofWords_state (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)),
++      hostCtrl_eq, if_neg (by decide), if_neg (by decide),
++      FinTM.controlAction_apply, moveInputPos_zero]
+   let D := dS + dV + dI + dE + dF + 1
+   let A := aS + aV + aI + aE + aF + 5
+   let pow (n : ℕ) := (2 * n + 2 + P.eval n + 5) ^ D
+@@ -617,25 +412,22 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
+       H.tm.runFrom (H.tm.initCfg x) t =
+         Cfg.ofWords anchor (stateWord H.k (pairEncode x (init x))) := by
+     intro x
+-    obtain ⟨hcg, hce⟩ := copy_clean x
+-    obtain ⟨hcGuard, hcEnd⟩ := ModuleHost.host_call M (K + 1) hk (hostCtrl M K) (hostRet M)
+-      (ModuleHost.entry M 0) 0 (by simp [M, copyTM_k]) x [] x [] [] (0 : Fin 2)
+-      (2 * x.length + 2) hcg (by simpa using hce)
++    obtain ⟨hcg, hce⟩ := copy_clean_view x
++    obtain ⟨hcGuard, hcEnd⟩ := ModuleHost.host_call_view M (K + 1) hk (hostCtrl M K) (hostRet M)
++      (ModuleHost.entry M 0) 0 Nat.one_pos x [] x [] [] (0 : Fin 2) (2 * x.length + 2) hcg
++      (hce.trans (Cfg.ext rfl rfl rfl rfl
++        (Cfg.ofWords_output (input := x) (0 : Fin 2) (stateWord 1 x))))
+     have hi : H.tm.initCfg x = Cfg.ofWords (ModuleHost.entry M 0) (stateWord (K + 1) []) := by
+-      refine Cfg.ext ?_ rfl ?_ rfl rfl
+-      · exact congrArg some (ModuleHost.hostTM_tm_q₀ M (K + 1) hk (hostCtrl M K) (hostRet M)
+-          (ModuleHost.entry M 0))
+-      funext i z
+-      simp [MultiTapeTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_workTapes,
+-          Cfg.init_workTapePos, Cfg.init_output, Cfg.ofWords_def, stateWord_eq]
+-    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 0) (stateWord (K + 1) []))
+-      (2 * x.length + 2) = Cfg.ofWords (hostRet M 0) (stateWord (K + 1) x) at hcEnd
++      rw [initCfg_ofWords, ModuleHost.hostTMView_q₀]
++      congr 1
++      funext i
++      rw [stateWord_eq, ite_self]
++    simp only [List.nil_append, hseam] at hcGuard hcEnd
+     rw [hostRet_zero] at hcEnd
+     obtain ⟨ts, hspos, hst, hsGuard, hsEnd⟩ := hclean 1
+       (fun x => pairEncode x (init x)) (fun _ => []) (fun n => aS * (n + 1) ^ dS)
+       (by simpa [M] using hS) x x []
+-    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 1) (stateWord (K + 1) x))
+-      ts = Cfg.ofWords (hostRet M 1) (stateWord (K + 1) (pairEncode x (init x))) at hsEnd
++    simp only [List.nil_append, hseam] at hsGuard hsEnd
+     rw [hostRet_one] at hsEnd
+     have hsB := ModuleHost.request_budget aS dS D (2 * x.length + 2 + P.eval x.length + 5) x.length
+       (by dsimp [D]; omega) (by omega)
+@@ -649,7 +441,6 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
+       exact ModuleHost.guard_add H.tm anchor _ _ _ ts (fun v hv => hcGuard v hv 0) hcEnd
+         (fun v hv => hsGuard v hv 0)
+     · rw [hi, MultiTapeTM.runFrom_add, hcEnd, hsEnd]
+-      rfl
+   -- A positive round either emits its payload or advances the guarded state.
+   have hround : ∀ x w : List Bool, Inv P x w → ∃ t, 0 < t ∧ t ≤ T x.length ∧
+       (∀ t', 0 < t' → t' < t →
+@@ -670,14 +461,12 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
+         (pairEncode x s).length + 4 := verdictWord_length acc _
+     have hpow' := hpow x.length
+     -- the dispatch, the verdict call, the branch
+-    have hdisp := host_dispatch M K hk x (pairEncode x s)
++    have hdisp := hdisp x (pairEncode x s)
+     obtain ⟨tv, hvpos, hvt, hvGuard, hvEnd⟩ := hclean 2 (verdictWord acc)
+       (fun _ => []) (fun n => aV * (n + 1) ^ dV) (by simpa [M] using hV) x (pairEncode x s) []
+-    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2) (stateWord (K + 1)
+-      (pairEncode x s))) tv = Cfg.ofWords (hostRet M 2) (stateWord (K + 1)
+-        (verdictWord acc (pairEncode x s))) at hvEnd
++    simp only [List.nil_append, hseam] at hvGuard hvEnd
+     rw [hostRet_two] at hvEnd
+-    have hbr := host_branch M K hk x (acc s) (verdictWord acc (pairEncode x s))
++    have hbr := hbranch x (acc s) (verdictWord acc (pairEncode x s))
+       (by rw [verdictWord_head, pairSndD_pairEncode])
+     have hvB := ModuleHost.request_budget aV dV D (2 * x.length + 2 + P.eval x.length + 5)
+       (pairEncode x s).length (by dsimp [D]; omega) (by omega)
+@@ -699,12 +488,10 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
+       obtain ⟨te, hepos, het, heGuard, heEnd⟩ := hclean 4 id (outWord out)
+         (fun n => aE * (n + 1) ^ dE) (by simpa [M] using hE) x
+         (verdictWord acc (pairEncode x s)) []
+-      change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 4) (stateWord (K + 1)
+-        (verdictWord acc (pairEncode x s)))) te = {Cfg.ofWords (hostRet M 4) (stateWord (K + 1)
+-          (verdictWord acc (pairEncode x s))) with
+-            output := [] ++ outWord out (verdictWord acc (pairEncode x s))} at heEnd
+-      rw [hostRet_four, List.nil_append, outWord_verdictWord] at heEnd
+-      have hhalt := host_halt M K hk x (verdictWord acc (pairEncode x s)) (out s)
++      simp only [List.nil_append, hseam, id_eq] at heGuard heEnd
++      rw [hostRet_four, outWord_verdictWord] at heEnd
++      have hhalt := hhalt x (verdictWord acc (pairEncode x s)) (out s)
++      simp only at hhalt
+       have heB := ModuleHost.request_budget aE dE D (2 * x.length + 2 + P.eval x.length + 5)
+         (verdictWord acc (pairEncode x s)).length (by dsimp [D]; omega) (by omega)
+       have hall : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+@@ -748,9 +535,7 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
+       obtain ⟨ti, hipos, hit, hiGuard, hiEnd⟩ := hclean 3 (stepWord g P)
+         (fun _ => []) (fun n => aI * (n + 1) ^ dI) (by simpa [M] using hI) x
+         (verdictWord acc (pairEncode x s)) []
+-      change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 3) (stateWord (K + 1)
+-        (verdictWord acc (pairEncode x s)))) ti = Cfg.ofWords (hostRet M 3) (stateWord (K + 1)
+-          (stepWord g P (verdictWord acc (pairEncode x s)))) at hiEnd
++      simp only [List.nil_append, hseam] at hiGuard hiEnd
+       rw [hostRet_three, stepWord_verdictWord] at hiEnd
+       have hiB := ModuleHost.request_budget aI dI D (2 * x.length + 2 + P.eval x.length + 5)
+         (verdictWord acc (pairEncode x s)).length (by dsimp [D]; omega) (by omega)
+@@ -796,6 +581,53 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
+     (fun x w h => inv_step g P x w h) hstart hround
+   refine ⟨L, c, A, D, (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_⟩
+   have hx := (FinTM.computesFunInTime_iff _ _ _).mp hL x
+-  simpa only [T, pow] using hx
++  simp only [T, pow] at hx
++  -- The combinator states its result with its own `match`; read both by cases on the search.
++  revert hx
++  cases (List.range (R x.length + 1)).find?
++    (fun i => acc (pairSndD ((step g P x)^[i] (pairEncode x (init x))))) <;> exact id
++
++/-- **The loop-level repetition lemma.** Let `g` be a polynomial-time step, `acc` a
++polynomial-time test, `out` a polynomial-time payload map, and `R, P` syntactic polynomials
++with `|g^[i] x| ≤ P|x|` for `i ≤ R|x|`. Then the function returning `out` of the orbit point
++of the first index `i ≤ R|x|` at which `acc` accepts the second component of the `i`-fold
++guarded step `Complexity.IterateFind.step g P x` from `⟨x, x⟩` (`[]` if none) is
++polynomial-time computable. This is the machine behind
++`Complexity.polyTimeComputable_iterateFind` [PS10, Algorithm 38.5, Theorem 35.1]; the pure
++identification of the guarded orbit with `g^[i] x` is done there.
++
++**Proof sketch.** The instance of `computesFunInTime_find` with the initial state `init = id`
++(admissible, since `|x| ≤ P|x|` is the orbit bound at `i = 0`) and the fuel `R|x|`, whose
++fuel machine computes `Nat.bits (R|x|)` (`polyTimeComputable_unaryPoly R` composed with
++`computesFunInTime_lengthBits`, so that the `find?` range is exactly `R|x| + 1`).
++`final_bound` puts its bound `c (T n + 1)(R n + 2)`, with `T n = A (2n + 2 + P n + 5)^D`, in
++the normal form `C (n + 1)^e` of `Complexity.PolyTimeComputable`, once `P` and `R` are
++majorised by `CP (n+1)^cP` and `CR (n+1)^cR` (`Complexity.PolyExpr.eval_le`). -/
++theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComputable g)
++    {acc : List Bool → Bool} (hacc : PolyTimeComputable fun s => [acc s])
++    {out : List Bool → List Bool} (hout : PolyTimeComputable out)
++    (R P : PolyExpr)
++    (horbit : ∀ (x : List Bool) (i : ℕ), i ≤ R.eval x.length →
++      (g^[i] x).length ≤ P.eval x.length) :
++    PolyTimeComputable fun x =>
++      match (List.range (R.eval x.length + 1)).find?
++          (fun i => acc (pairSndD ((step g P x)^[i] (pairEncode x x)))) with
++      | some i => out (pairSndD ((step g P x)^[i] (pairEncode x x)))
++      | none => [] := by
++  have hbits : PolyTimeComputable fun x => Nat.bits (R.eval x.length) := by
++    have h := (polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits).comp
++      (polyTimeComputable_unaryPoly R)
++    convert h using 1
++    funext x
++    simp
++  obtain ⟨F, aF, dF, hF⟩ := (polyTimeComputable_iff _).1 hbits
++  obtain ⟨L, c, A, D, hL⟩ := computesFunInTime_find hg hacc hout polyTimeComputable_id
++    (fun n => R.eval n) P (fun x => by simpa using horbit x 0 (Nat.zero_le _)) F aF dF hF
++  obtain ⟨CP, cP, hCP⟩ := P.eval_le
++  obtain ⟨CR, cR, hCR⟩ := R.eval_le
++  refine (polyTimeComputable_iff _).2 ⟨L, c * (A * (CP + 7) ^ D + 1) * (CR + 2),
++    (cP + 1) * D + cR, (FinTM.computesFunInTime_iff _ _ _).2 fun x => ?_⟩
++  exact ((FinTM.computesFunInTime_iff _ _ _).1 hL x).mono
++    (final_bound c A D CP cP CR cR x.length (P.eval x.length) (R.eval x.length) (hCP _) (hCR _))
+ 
+ end Complexity.IterateFind
+diff --git a/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean b/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
+index 582b9da89..cf4597f4d 100644
+--- a/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
++++ b/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
+@@ -36,13 +36,15 @@ load-bearing lemma of the Pass–shelat campaign, foundation decision D11 of
+ 
+ ## Main definitions
+ 
+-* `Complexity.IterateFind.copyTM` — the input copier.
++* `Complexity.IterateFind.copyTM` — the input copier; `copyTMView`, the copier with its tape
++  count, state type and start state explicit (`copyTMView_eq`).
+ * `Complexity.IterateFind.hostCtrl`, `hostRet`, `hostTM` — the host's control table over its
+   three control states, the return states of the five modules, and the host.
+ 
+ ## Main results
+ 
+-* `Complexity.IterateFind.copy_clean` — the copier's contract.
++* `Complexity.IterateFind.copy_clean` — the copier's contract; `copy_clean_view`, the same for
++  `copyTMView`.
+ * `Complexity.IterateFind.host_dispatch`, `host_branch`, `host_halt` — the host's control steps.
+ 
+ ## References
+@@ -249,6 +251,32 @@ lemma copy_clean (x : List Bool) :
+     · funext i
+       simp [copyCfg, Cfg.ofWords]
+ 
++/-- **The typed view of the input copier**: the finite machine with one work tape, state type
++`Fin 2`, start state `0` and the copier's transition function,
++`copyTMView = ⟨1, Fin 2, ⟨0, copyTM.tm.tr⟩⟩`. It is the copier itself (`copyTMView_eq`), with its
++tape count, state type and start state explicit, so that a consumer can type the copier's
++configurations without unfolding `copyTM`. -/
++abbrev copyTMView : FinTM Bool where
++  k := 1
++  State := Fin 2
++  tm := { q₀ := 0, tr := copyTM.tm.tr }
++
++/-- The typed view of the copier is the copier: `copyTMView = copyTM`. -/
++theorem copyTMView_eq : copyTMView = copyTM :=
++  rfl
++
++/-- **The typed copier's contract** (`copy_clean` for `copyTMView`): from the empty seam over
++native input `x`, the typed copier is live before time `2|x| + 2` and
++`copyTMView.tm.runFrom (Cfg.ofWords 0 (stateWord 1 [])) (2|x| + 2) =
++{Cfg.ofWords 0 (stateWord 1 x) with state := none}`. -/
++theorem copy_clean_view (x : List Bool) :
++    (∀ v < 2 * x.length + 2,
++      ¬(copyTMView.tm.runFrom (Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 [])) v).Halted) ∧
++    copyTMView.tm.runFrom (Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 []))
++        (2 * x.length + 2) =
++      {Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 x) with state := none} :=
++  copy_clean x
++
+ 
+ /-! ### The host -/
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean b/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean
+index acd1b28ad..4670e2e5d 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean
+@@ -60,6 +60,8 @@ machines, the control states and their table, the return map and the start state
+ * `Turing.ModuleHost.State`, `Turing.ModuleHost.entry` — the host's state type and the entry
+   state of a module (`state_eq`, `entry_eq`).
+ * `Turing.ModuleHost.hostTM` — the host (`hostTM_k`, `hostTM_tm_q₀`, `hostTM_step_inl`).
++* `Turing.ModuleHost.hostTMView` — the host with its tape count and state type explicit
++  (`hostTMView_eq`, `hostTMView_q₀`, `hostTMView_step_inl`, `host_call_view`, `host_clean_view`).
+ 
+ ## Main results
+ 
+@@ -669,4 +671,99 @@ theorem host_clean_envelope {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
+   have hB : (t : ℤ) ≤ B arg.length := by exact_mod_cast ht
+   exact (host_call_envelope M K hk ctrl ret q₀ i x arg pre t v hv j).trans hB
+ 
++/-! ### The typed view of the host
++
++A consumer that does not unfold `hostTM` cannot see that its tape count is `K` and its state
++type is `State C M`, so it cannot type the host's seam configurations. The typed view
++`hostTMView` names both fields explicitly and keeps the host's machine; the readers below
++restate the host's contracts for it, each proved by the original contract. -/
++
++/-- **The typed view of the host**: the finite machine with `K` work tapes, state type
++`State C M` and the underlying machine of `hostTM M K hk ctrl ret q₀`,
++`hostTMView M K hk ctrl ret q₀ = ⟨K, State C M, (hostTM M K hk ctrl ret q₀).tm⟩`. It is the host
++itself (`hostTMView_eq`), with its tape count and state type explicit. -/
++abbrev hostTMView {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M) : FinTM Bool where
++  k := K
++  State := State C M
++  tm := (hostTM M K hk ctrl ret q₀).tm
++
++/-- The typed view is the host: `hostTMView M K hk ctrl ret q₀ = hostTM M K hk ctrl ret q₀`. -/
++theorem hostTMView_eq {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M) :
++    hostTMView M K hk ctrl ret q₀ = hostTM M K hk ctrl ret q₀ :=
++  rfl
++
++/-- The typed view starts in the supplied start state:
++`(hostTMView M K hk ctrl ret q₀).tm.q₀ = q₀`. -/
++theorem hostTMView_q₀ {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M) :
++    (hostTMView M K hk ctrl ret q₀).tm.q₀ = q₀ :=
++  rfl
++
++/-- **A control step of the typed view** (`hostTM_step_inl` for `hostTMView`): at a
++configuration in the control state `inl c`, one step applies the consumer's action,
++`(hostTMView M K hk ctrl ret q₀).tm.step cfg = (ctrl c cfg.inputSymbol cfg.workTapeSymbols).apply
++cfg`. -/
++theorem hostTMView_step_inl {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M) {x : List Bool}
++    (cfg : Cfg K Bool (State C M) x) (c : C) (hc : cfg.state = some (.inl c)) :
++    (hostTMView M K hk ctrl ret q₀).tm.step cfg =
++      (ctrl c cfg.inputSymbol cfg.workTapeSymbols).apply cfg :=
++  hostTM_step_inl M K hk ctrl ret q₀ cfg c hc
++
++/-- **A module call inside the typed view** (`host_call` for `hostTMView`): if module `i` (with
++`0 < (M i).k`), run from the seam at its start state with argument `arg`, is live before time
++`t` and at time `t` is halted at the seam holding `result` with output `out`, then the typed
++view, run from its seam at the entry state of module `i` holding `arg` with output prefix `pre`,
++visits no control state before `t`, and
++`(hostTMView M K hk ctrl ret q₀).tm.runFrom {Cfg.ofWords (entry M i) (stateWord K arg) with
++output := pre} t = {Cfg.ofWords (ret i) (stateWord K result) with output := pre ++ out}`. -/
++theorem host_call_view {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n → FinTM Bool)
++    (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M)
++    (i : Fin n) (hp : 0 < (M i).k) (x arg result out pre : List Bool)
++    (q : (M i).State) (t : ℕ)
++    (hg : ∀ v < t, ¬((M i).tm.runFrom
++      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) v).Halted)
++    (he : (M i).tm.runFrom
++      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) t =
++      {Cfg.ofWords q (stateWord (M i).k result) with state := none, output := out}) :
++    (∀ v < t, ∀ c : C, ((hostTMView M K hk ctrl ret q₀).tm.runFrom
++      {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).state
++        ≠ some (.inl c)) ∧
++    (hostTMView M K hk ctrl ret q₀).tm.runFrom
++      {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} t =
++      {Cfg.ofWords (ret i) (stateWord K result) with output := pre ++ out} :=
++  host_call M K hk ctrl ret q₀ i hp x arg result out pre q t hg he
++
++/-- **A clean module call inside the typed view** (`host_clean` for `hostTMView`): if module `i`
++is `Clean` with result map `f`, emitted chunk `g` and budget `B`, then the typed view, run from
++its seam at the entry state of module `i` holding `arg` with output `pre`, reaches at some time
++`t` with `0 < t ≤ B |arg|` the seam in the return state `ret i` holding `f arg`, with output
++`pre ++ g arg`, and visits no control state before `t`. -/
++theorem host_clean_view {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M)
++    (i : Fin n) (f g : List Bool → List Bool) (B : ℕ → ℕ)
++    (h : Clean (M i) f g B) (x arg pre : List Bool) :
++    ∃ t, 0 < t ∧ t ≤ B arg.length ∧
++      (∀ v < t, ∀ c : C, ((hostTMView M K hk ctrl ret q₀).tm.runFrom
++        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).state
++          ≠ some (.inl c)) ∧
++      (hostTMView M K hk ctrl ret q₀).tm.runFrom
++        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} t =
++        {Cfg.ofWords (ret i) (stateWord K (f arg)) with output := pre ++ g arg} :=
++  host_clean M K hk ctrl ret q₀ i f g B h x arg pre
++
+ end Turing.ModuleHost
