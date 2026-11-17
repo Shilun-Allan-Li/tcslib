@@ -201,41 +201,15 @@ theorem nandGadget_of_three_le {k : GateKind} (hk : k ≠ .not) (a b c : ℕ) (l
 
 /-! ## Correctness of the NAND gadget -/
 
-/-- Glue: the depth of an existing vertex `v < n + gs.length` of a gate list is its entry in
-the depth run, `vertexDepth n gs v = (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0`.
-Derived from the published readers `vertexDepth_input`, `vertexDepth_append`,
-`vertexDepth_last` (`TreeDAG.lean`) and `runWith_getD_of_lt`, `runWith_getD_gate`
-(`DAGCircuit.lean`), without unfolding `vertexDepth`, which has no `_eq` reader (an owner-side
-`vertexDepth_eq` would replace this lemma).
-
-**Proof sketch.** An input vertex `v < n` has depth `0` on both sides.  A gate vertex `n + j`
-keeps its depth when the gates after it are dropped, so both sides are the depth of gate `j`
-over the depth run of the first `j` gates. -/
-private theorem vertexDepth_eq_getD (gs : List DAGGate) {v : ℕ} (hv : v < n + gs.length) :
-    vertexDepth n gs v = (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0 := by
-  by_cases hvn : v < n
-  · rw [vertexDepth_input gs hvn,
-      runWith_getD_of_lt _ _ _ (by rwa [List.length_replicate]), List.getD_replicate _ hvn]
-  · obtain ⟨j, rfl⟩ : ∃ j, v = n + j := ⟨v - n, by omega⟩
-    have hj : j < gs.length := by omega
-    have hgate := runWith_getD_gate DAGGate.depth gs (List.replicate n 0) hj 0
-    have hlast := vertexDepth_last (n := n) (gs.take j) gs[j]
-    rw [List.length_replicate] at hgate
-    rw [List.length_take_of_le hj.le, List.take_concat_get' gs j hj] at hlast
-    rw [hgate, ← hlast]
-    conv_lhs => rw [← List.take_append_drop (j + 1) gs]
-    exact vertexDepth_append _ _ (by rw [List.length_take_of_le hj]; omega)
-
-/-- Glue: a gate reading only existing vertices of `gs` has, over the depth run of `gs`, one
-level more than its deepest argument:
+/-- Glue: over the depth run of `gs`, a gate has one level more than its deepest argument,
+measured by `vertexDepth`:
 `g.depth (runWith DAGGate.depth gs (List.replicate n 0)) =
-1 + (g.args.map (vertexDepth n gs)).foldr max 0`, by `DAGGate.depth_eq` and
-`vertexDepth_eq_getD` on each argument. -/
-private theorem depth_runWith_eq {g : DAGGate} {gs : List DAGGate}
-    (hg : ∀ a ∈ g.args, a < n + gs.length) :
+1 + (g.args.map (vertexDepth n gs)).foldr max 0`, by `DAGGate.depth_eq` and the reader
+`vertexDepth_eq` (`TreeDAG.lean`) on each argument. -/
+private theorem depth_runWith_eq {g : DAGGate} {gs : List DAGGate} :
     g.depth (runWith DAGGate.depth gs (List.replicate n 0)) =
       1 + (g.args.map (vertexDepth n gs)).foldr max 0 := by
-  rw [DAGGate.depth_eq, List.map_congr_left fun a ha => (vertexDepth_eq_getD gs (hg a ha)).symm]
+  rw [DAGGate.depth_eq, funext (vertexDepth_eq n gs)]
 
 /-- Glue: a one-gate gadget.  Emitting a single NAND gate `g₁` that reads the arguments of `g`
 and computes `g` meets `GadgetSpec` with depth factor `2`:
@@ -255,7 +229,7 @@ private theorem gadgetSpec_single {g g₁ : DAGGate} {gs : List DAGGate} (hgs : 
   · exact (vertexValue_last gs g₁ x).trans (hval _)
   · simp only [List.length_append, List.length_singleton]; omega
   · show vertexDepth n (gs ++ [g₁]) (n + gs.length) ≤ _
-    rw [vertexDepth_last, depth_runWith_eq hargs₁, hga]
+    rw [vertexDepth_last, depth_runWith_eq, hga]
     omega
   · intro h hh
     simp only [List.drop_left, List.mem_singleton] at hh
@@ -299,7 +273,7 @@ private theorem gadgetSpec_double {g g₁ : DAGGate} {gs : List DAGGate} (hgs : 
   · simp only [List.length_append, List.length_cons, List.length_nil]; omega
   · -- depth: one level over `g₁`, which is one level over the deepest argument
     have hlast := runWith_getD_last DAGGate.depth gs g₁ (List.replicate n 0) 0
-    rw [List.length_replicate, depth_runWith_eq hargs₁, hga] at hlast
+    rw [List.length_replicate, depth_runWith_eq, hga] at hlast
     show vertexDepth n (gs ++ [g₁, ⟨.not, [n + gs.length]⟩]) (n + gs.length + 1) ≤ _
     rw [e, hm, vertexDepth_last, DAGGate.depth_eq, List.map_cons, List.map_nil, List.foldr_cons,
       List.foldr_nil, hlast]
@@ -378,15 +352,13 @@ private theorem gadgetSpec_orPair {a b : ℕ} {gs : List DAGGate} (hgs : GatesAc
     have hd₁ : (runWith DAGGate.depth (gs ++ [g₁]) (List.replicate n 0)).getD (n + gs.length) 0
         = 1 + max (vertexDepth n gs a) 0 := by
       have := runWith_getD_last DAGGate.depth gs g₁ (List.replicate n 0) 0
-      rw [List.length_replicate, depth_runWith_eq (by simpa [hg₁] using ha)] at this
+      rw [List.length_replicate, depth_runWith_eq] at this
       rw [this, hg₁, List.map_cons, List.map_nil, List.foldr_cons, List.foldr_nil]
     have hd₂ : (runWith DAGGate.depth (gs ++ [g₁] ++ [g₂]) (List.replicate n 0)).getD
         (n + gs.length + 1) 0 = 1 + max (vertexDepth n gs b) 0 := by
       have := runWith_getD_last DAGGate.depth (gs ++ [g₁]) g₂ (List.replicate n 0) 0
-      rw [List.length_replicate, hl₁, ← Nat.add_assoc,
-        depth_runWith_eq (by simp only [hg₂, List.mem_singleton]; rintro v rfl; rw [hl₁]; omega),
-        hg₂, List.map_cons, List.map_nil, List.foldr_cons, List.foldr_nil,
-        vertexDepth_append gs [g₁] hb] at this
+      rw [List.length_replicate, hl₁, ← Nat.add_assoc, depth_runWith_eq, hg₂, List.map_cons,
+        List.map_nil, List.foldr_cons, List.foldr_nil, vertexDepth_append gs [g₁] hb] at this
       exact this
     have hd₁₂ : (runWith DAGGate.depth (gs ++ [g₁] ++ [g₂]) (List.replicate n 0)).getD
         (n + gs.length) 0 =
