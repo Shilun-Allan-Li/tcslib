@@ -1,0 +1,46 @@
+# Closures at the synthetic base 3e51b5f28900db6190f1eb2e6d207d27ee15d541 (tree b69a66a385ca3439d56af1d6b9791b5847984fde; tools/mkbase.sh): tag<TAB>position in order.txt<TAB>module.
+# CHANGED: the 3 existing Lean files the job may edit (O2: LWE/BitEncoding; the facades LWE and GSW). DOWN: every module downstream of a CHANGED module, the CHANGED ones included, the root TCSlib excluded (18): the sweep, to which the 9 new modules are added. Neither audits/*/Checks is downstream of a CHANGED module.
+# IMPORTS: the 22 existing modules that the r3 6b sketches cite and the new files are expected to import (6a modules, phase-5 GSW, LWE, asymptotics, hybrids). prefix.txt is the upstream closure of DOWN and IMPORTS (288 modules, 105 Mathlib roots in prefix-roots.txt): the first bootstrap. order.txt (1,443) is the root build.
+CHANGED	1011	TCSlib/Cryptography/LWE/BitEncoding
+CHANGED	1012	TCSlib/Cryptography/LWE
+CHANGED	1385	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW
+DOWN	1011	TCSlib/Cryptography/LWE/BitEncoding
+DOWN	1012	TCSlib/Cryptography/LWE
+DOWN	1057	TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic
+DOWN	1058	TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments
+DOWN	1059	TCSlib/Cryptography/Encryption/Symmetric/Regev
+DOWN	1060	TCSlib/Cryptography/Encryption/Symmetric
+DOWN	1068	TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic
+DOWN	1071	TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments
+DOWN	1072	TCSlib/Cryptography/Encryption/PublicKey/Regev
+DOWN	1090	TCSlib/Cryptography/Encryption/PublicKey
+DOWN	1091	TCSlib/Cryptography/Encryption
+DOWN	1381	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme
+DOWN	1382	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval
+DOWN	1383	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security
+DOWN	1384	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric
+DOWN	1385	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW
+DOWN	1386	TCSlib/Cryptography/AdvancedEncryption/Homomorphic
+DOWN	1402	TCSlib/Cryptography/AdvancedEncryption
+IMPORTS	385	TCSlib/Complexity/CircuitComplexity/DAGCircuit
+IMPORTS	390	TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators
+IMPORTS	393	TCSlib/Complexity/CircuitComplexity/NANDForm
+IMPORTS	394	TCSlib/Complexity/CircuitComplexity/NANDLayering
+IMPORTS	408	TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum
+IMPORTS	564	TCSlib/Complexity/BranchingPrograms/Eval
+IMPORTS	565	TCSlib/Complexity/BranchingPrograms/Barrington
+IMPORTS	877	TCSlib/Cryptography/Foundations/Negligible
+IMPORTS	878	TCSlib/Cryptography/Foundations/Probability
+IMPORTS	881	TCSlib/Cryptography/Foundations/Experiments
+IMPORTS	901	TCSlib/Cryptography/Asymptotic/Adversary
+IMPORTS	905	TCSlib/Cryptography/Encoding/Modular
+IMPORTS	908	TCSlib/Cryptography/LWE/Encoding
+IMPORTS	910	TCSlib/Cryptography/LWE/Assumption
+IMPORTS	919	TCSlib/Cryptography/Asymptotic/EnsemblesLemmas
+IMPORTS	988	TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity
+IMPORTS	1071	TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments
+IMPORTS	1379	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget
+IMPORTS	1380	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise
+IMPORTS	1381	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme
+IMPORTS	1382	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval
+IMPORTS	1383	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security
