@@ -20,7 +20,8 @@ by a width-5 permutation branching program of length at most `4^d`.  The constru
 
 * `BranchingProgram.IsFiveCycle`, `BranchingProgram.FiveCycleRecognizes` — five-cycles and
   five-cycle recognition [Bar89, §3].
-* `BranchingProgram.sigma1`, `sigma2` — Lemma 3's five-cycles `(12345)`, `(13542)`, 0-based.
+* `BranchingProgram.sigma1`, `sigma2` — Lemma 3's five-cycles `(12345)`, `(13542)` in Bar89's
+  one-based cycle notation, implemented in zero-based form as `(0 1 2 3 4)`, `(0 2 4 3 1)`.
 * `BranchingProgram.conjugator` — Lemma 1's explicit conjugator (with `conjugatorIndex`,
   `conjugatorFun`, `conjugatorTable`).
 * `BranchingProgram.commutatorProgram` — the AND step `B₁ B₂ B₁' B₂'` of Thm 1's proof.
@@ -106,16 +107,18 @@ theorem fiveCycleRecognizes_iff (B : BranchingProgram 5 n) (A : (Fin n → Bool)
 
 /-! ### Lemma 3's five-cycles -/
 
-/-- Bar89's `(12345)`, 0-based: the five-cycle `0 ↦ 1 ↦ 2 ↦ 3 ↦ 4 ↦ 0`, Mathlib's `c[0,1,2,3,4]`,
-written `sigma1 = List.formPerm [0, 1, 2, 3, 4]` [Bar89, Lemma 3, p003-b005]. -/
+/-- Bar89's `(12345)` in its one-based cycle notation, whose zero-based form `(0 1 2 3 4)` is what
+the code implements: the five-cycle `0 ↦ 1 ↦ 2 ↦ 3 ↦ 4 ↦ 0`, Mathlib's `c[0,1,2,3,4]`, written
+`sigma1 = List.formPerm [0, 1, 2, 3, 4]` [Bar89, Lemma 3, p003-b005]. -/
 def sigma1 : Perm (Fin 5) :=
   List.formPerm [0, 1, 2, 3, 4]
 
 /-- Reader of `sigma1`: `sigma1 = List.formPerm [0, 1, 2, 3, 4]`. -/
 theorem sigma1_eq : sigma1 = List.formPerm [0, 1, 2, 3, 4] := rfl
 
-/-- Bar89's `(13542)`, 0-based: the five-cycle `0 ↦ 2 ↦ 4 ↦ 3 ↦ 1 ↦ 0`, Mathlib's `c[0,2,4,3,1]`,
-written `sigma2 = List.formPerm [0, 2, 4, 3, 1]` [Bar89, Lemma 3, p003-b005]. -/
+/-- Bar89's `(13542)` in its one-based cycle notation, whose zero-based form `(0 2 4 3 1)` is what
+the code implements: the five-cycle `0 ↦ 2 ↦ 4 ↦ 3 ↦ 1 ↦ 0`, Mathlib's `c[0,2,4,3,1]`, written
+`sigma2 = List.formPerm [0, 2, 4, 3, 1]` [Bar89, Lemma 3, p003-b005]. -/
 def sigma2 : Perm (Fin 5) :=
   List.formPerm [0, 2, 4, 3, 1]
 

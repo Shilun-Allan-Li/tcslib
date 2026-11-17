@@ -35,11 +35,14 @@ with its computation unchanged; its proofs carry the five Q2-approved Rule 10 re
 * `BoolCircuit.TreeCircuit.maxFanin_balanced_le`, `depth_balanced_le`, `size_balanced_le` —
   fan-in two, `⌈log₂ |cs|⌉ + 1` extra depth, `|cs| + 1` extra size.
 * `BoolCircuit.TreeCircuit.balanced_nil`, `balanced_singleton` — the readers on short lists.
+* `BoolCircuit.TreeCircuit.const_eval` — the constant formula evaluates to its constant (F3);
+  proved from `BoolCircuit.eval_node_nil` (an empty gate is a constant), which moved here from
+  `Hierarchy.lean`.
 * `BoolCircuit.TreeCircuit.neg_eval`, `depth_neg`, `maxFanin_neg` — negation (F1; targets).
 * `BoolCircuit.TreeCircuit.subst_eval`, `depth_subst_le`, `maxFanin_subst_le` — substitution
   (F2; targets).
-* `BoolCircuit.TreeCircuit.const_eval`, `xor3_eval`, `maj3_eval`, and the value, depth and
-  fan-in lemmas of every gadget (F3; targets).
+* `BoolCircuit.TreeCircuit.xor3_eval`, `maj3_eval`, the other value lemmas of the fan-in-2
+  gadgets, and the depth and fan-in lemmas of every gadget (F3; targets).
 
 ## References
 
