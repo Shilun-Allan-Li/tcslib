@@ -235,3 +235,83 @@ read-only against snapshot #6. Its first run lacked `lean-toolchain` in the expo
 - `rule10/`: the seal records and runs, the controls (both attempts), `sealcmp` and the worker comparison;
 - `probes/`, `probe-src/`, `scan/`, `lint/`, `dup/`;
 - `pr-body.md`.
+
+## Re-replay on snapshot #7
+
+**Verdict: PASS.** The branch was merged up to the records tip twice and re-replayed on olean snapshot #7. All checks equal
+the #6 run's, so the merges are pushed and #366's body is updated.
+
+Maintainer sub-agent, 2026-11-17, 19:21–20:35Z. Work directory: `$SP/g6aland7`. Replay tree: `$SP/olean-replay-6a-land7`.
+Evidence: `gsw-6a-fills-final-r1-phase2-s7-evidence.zip` (SHA256SUMS inside), listed in `evidence-SHA256SUMS`.
+
+### Merges
+The worktree `$SP/wt-6a-land` (sparse) was on `land/gsw-6a-fills` = remote head `ccca6f80`.
+
+| # | Commit | Tree | Content |
+|---|---|---|---|
+| 20 | `e4d77a5e675f260b8e0be6851e352efa414d5a6a` | `9a1e8d98e7bced09388d17bcb6188c2362b2f116` | signed `--no-ff` merge of the tip `55f553715f280be36827ad86a94c93db39ec56c3`, whose Lean equals snapshot #7's T `a1fa7b65` (#347 + #355). Conflict-free; equal to `git merge-tree` |
+| 21 | `93ae671e8f638e86def66dd5ac0a312c8bec4f5c` | `c8ba8961434710a5fda05ff34c8b318226e44cec` | signed `--no-ff` merge of the tip `555f0fe1b10a20d1be72386a97c6fe7a2f39c204`, after #365 (`Pairing/Group.lean` dedup), on the coordinator's update during the build. Conflict-free; equal to `git merge-tree` |
+
+- Both merges have `gpgsig` and end with the two required trailers (`log/merge-msg*.txt`).
+- **The branch's own change is unchanged.** `git diff <tip> <head>` is byte-equal to phase 2's `git diff 036d8239 ccca6f80`
+  at both steps (SHA-256 of the diff `364f447e…`, 24 files).
+  - The Lean diff `a1fa7b65 → e4d77a5e` is byte-equal to phase 2's Lean diff (`58407ffb…`). So `e4d77a5e`'s Lean is
+    snapshot #7's Lean plus exactly the 6a changes (#358/#359/#360, the addendum, the fills, LE-gf1..4).
+  - The Lean diff `e4d77a5e → 93ae671e` equals `a1fa7b65 → 555f0fe1` (`f666c34f…`): `Group.lean` only.
+- `git push origin HEAD:land/gsw-6a-fills`: `ccca6f804..93ae671e8`, fast-forward; `ls-remote` confirms.
+
+### Replay
+| Check | Result |
+|---|---|
+| Snapshot #7 (`5105c514…`; map and files manifest byte-equal to the adoption record's copies) | rehash **0/0/0** at the start, after stage 1, after stage 2, after the probes and at the end |
+| Copy | `cp -al $SP/olean-snapshot $SP/olean-replay-6a-land7`; `mloverlay.sh` (3346 symlinks); `mathlibextra.sh` NthRootLemmas `c0a9cff0…` (lean rc 0) |
+| Exports | `wtx` = `git archive e4d77a5e`, `wtx2` = `git archive 93ae671e`: 1599 files each, `exportcheck.py` 0/0/0 |
+| Plan, stage 1 | `stateplan init` at `a1fa7b65` (1434 modules); `downorder` against the tip: 23 changed, 579 downstream; `fullorder` 1447; **build 564** (551 existing + 13 new), reuse 883. The queue and `down` sets equal phase 2's |
+| Build, stage 1 | `tools/run-build-land7.sh` (phase 2's `run-build-land.sh` re-pointed; recipe `runner.py` unmodified, one module per call, slot gate before each, disk gate 1.5 GB). 19:25–20:11Z, 2742 s; no slot waits (at most 1 other `lean` seen); max RSS 4.57 GB |
+| Result, stage 1 | `permod`: **564 modules, rc≠0 0, `error:` 0, `error(` 0**, 0 log/record mismatches. Sorry warnings 103, warnings 205 (phase 2: 103, 205). `stateplan update` (564 taken), `check` at `e4d77a5e` over 1447: RESULT OK |
+| Plan, stage 2 | `downorder 93ae671e` against `e4d77a5e`: 1 changed (`Group`), 22 downstream; `stateplan plan` at `93ae671e`: **build 22** (= down), reuse 1425 |
+| Build, stage 2 | `tools/run-build-land7-s2.sh` (same, with `wtx2`): Pairing/*, KeyExchange/Joux and KeyExchange, IdentityBased/* (BonehBoyen, BonehBoyenMachine/*, BonehBoyenSecurity/*), AdvancedEncryption, root. 20:12–20:14Z, 75 s. **22 modules, rc 0, 0 errors, 0 warnings** |
+| State | `stateplan update` (22 taken), then `check` at `93ae671e` over 1447: **RESULT OK** (after the build and again at the end) |
+| Links | rebuilt 576 (564 ∪ 22): link count 1; reused 871: snapshot #7's inodes; no `.ilean`, no symlink outside `Mathlib/` |
+| Determinism vs the #6 run | 256 of the 564 have the same closure key as in phase 2: **256/256 byte-equal oleans and logs**. Of the 308 whose key changed through Stage 1, 305 have byte-equal oleans; the other 3 are Stage 1's own changed modules (`Cryptography/Games`, `ZeroKnowledge`, `Encryption/PublicKey/Trapdoor`, as phase 2 predicted). All 564 logs are byte-equal, and no warning or sorry count differs (`cmp/build-vs-s6.tsv`) |
+| Stage-2 vs #365's replay | the 12 stage-2 modules outside 6a's downstream have oleans byte-equal to `olean-replay-grpfix`'s map (`28677767…`; read only) |
+| Output map | Mathlib excluded (`mapnoml.py`): **1478 entries, `11d9fbfd0692b6332e917e84ea318147187d443c34c22a73d40827a913484dc6`**, stable at the end. Against #7: 1454 equal, 11 changed (the 10 of phase 2 plus `Pairing/Group`), 13 added. Against #365's replay: 1455 equal, 10 changed (the 6a-touched owners, the facades, the root), 13 added. The intermediate map at `e4d77a5e` was `4884c248…` |
+
+### Checks at `93ae671e`
+- **Admissions** (`sorryscan.py`): 0 in the 13 6a modules. Library: **192 in 44 modules**, identical line by line to snapshot #7's
+  scan at `a1fa7b65` (and at `e4d77a5e`). The 22 stage-2 modules have 0 sorry warnings.
+- **Axioms:** `AxiomsLand.lean` unchanged; **its log is byte-equal to phase 2's** (rc 0). `axcheck.py` output is byte-equal: 98
+  targets OK, 859 census constants, 0 non-standard, 0 TRACE lines, no `sorryAx`; `layerNAND*`, `toNANDForm`, `const_eval`,
+  `eval_node_nil` and the six public lemmas standard (`prefixVal_eq_of_false`: `propext` only).
+- **Canonical coe-A seals,** 22 owners (`tools/rule10_land7.sh land probes collect coeA`, phase 2's driver re-pointed; same
+  prefixes, tools and gating). `touched.json` regenerated against `555f0fe1`; its `files` part and TSV equal phase 2's.
+  - `tools/sealcmp7.py`: **22/22 identical to phase 2 in every respect but `rev`** — request sets, all other record fields,
+    probe sources, rc, error lines, sealsum rows and whole probe logs. Failures are only the pre-existing Adder 3,
+    DAGTransform 11, TreeNCAC 2, Hierarchy 2, TreeDAG 25 (same declarations). 0 new failing declarations.
+  - **One difference, explained:** the shared collector's log has one more catalogue line than phase 2's (`CAT-COUNT`
+    5965 vs 5964): Stage 1's abbrev `Turing.ModuleHost.hostTMView` (`Complexity/TuringMachine/Build/ModuleHost`). It is
+    outside every owner's closure, so no seal changed. The Stage 1 owners are not 6a owners and were not re-sealed here.
+- **decls2** (pinned `fa81981a…`) against `555f0fe1`: 289 ADDED, 1 REMOVED, 0 CHANGED; **byte-equal to phase 2's output**
+  (and likewise at `e4d77a5e` against `55f55371`).
+- **Lint:** `campaign_style_lint --check8b` (Complexity) 25 FAIL / 390 WARN at the tip and the head; the FAIL/WARN delta is
+  byte-equal to phase 2's (the 4 shorter check-8 lists). The only lines that differ from phase 2's outputs are INFO size lines
+  of Stage 1's files, the same at tip and head. `--check8b TCSlib/Cryptography`: byte-equal tip vs head (92/103). `style_lint`
+  on the 23 files: byte-equal to phase 2's at tip and head. No new FAIL or WARN.
+- **Not re-run:** paired controls, the explicit-unfold scan, root coe-A, the duplication sweep. Their inputs are unchanged: the 6a
+  sources are blob-equal, and the owners' seals and probe logs are byte-equal.
+
+### Housekeeping
+- Slots: one Lean process at a time; gate before every module and probe (wait while ≥ 3 host-wide); no wait was needed. Disk:
+  free 8.6 GB at the start, at least 7.9 GB throughout.
+- `$SP/olean-replay-6a-land` (#6, superseded) was deleted at 20:30Z after a `/proc` scan found no user
+  (`log/procscan-6a-land.txt`, `log/deleted-trees.txt`); free disk 7894 → 8406 MB. `olean-replay-grpfix` and
+  `$SP/olean-snapshot` were only read.
+- The exports `wtx`, `wtx2`, `exp-tip`, `exp-tip2` are not in the zip; they regenerate from their commits.
+
+### Adoption
+`$SP/olean-replay-6a-land7` is the snapshot candidate **only at a merge of #366 whose Lean equals `c8ba8961`**:
+`git diff --name-only <merge> c8ba8961434710a5fda05ff34c8b318226e44cec -- '*.lean' lean-toolchain lake-manifest.json lakefile.lean`
+must be empty. Its checked state is `state/state-after-update-93ae671e.json` (in the zip, gzipped). If #365's replay is adopted
+as snapshot #8 first, this tree still matches #8 + 6a (1455 equal to #8's map). At adoption: remove `Mathlib/`, make the map
+(must be `11d9fbfd…`), `basecheck` against that state, swap, verify 0/0/0. Any other Lean change landing first means another
+re-replay.
