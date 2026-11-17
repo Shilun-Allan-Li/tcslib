@@ -1,0 +1,32 @@
+Staging probe for the bb1-sim fill package issued-fill-r1 (maintainer side; not for landing). 2026-11-17 UTC.
+
+Tree: the check tree 02b2d44a1ebafbfb26baf84ba84a07e4ba62a19d, exported by git archive (TCSlib, TCSlib.lean, audits,
+scripts, lakefile.lean, lean-toolchain, lake-manifest.json; .lake/packages symlinked to the repository's), with the ten
+approved readers inserted: Defs.lean and BonehBoyen.lean replaced by readers/*-block.lean.txt inserted after lines 430
+and 412 (one blank line before each block). Post-insertion SHA-256: Defs 97ecb6e02413d18fce255949ed4b3e777c8f653a59f0792b575be3ff24a6a9a0
+(563 lines), BonehBoyen 88454d6fb0fa2c81419b189dbc633609357ee39b35ccbe90c810a0ad10891c26 (760 lines): the pins of
+rulings.md (Q7 follow-up). The insertions were made at #346's head 89a18a82, whose Defs/BonehBoyen equal T4's delivered
+head c90273fa (4e220ead..., da875140...), the probe's base.
+
+Olean tree: $SP/olean-stage-t23, a cp -al copy of olean snapshot #4 ($SP/olean-snapshot, T = 463f2244, map
+olean-snapshot.map-463f2244.tsv, SHA-256 6607620d725049c90b34a51a2ab891f1520fd0f576aaf3f9d51301222cee41e7). No Mathlib
+overlay was needed (no module of the queue imports NthRootLemmas). Deleted after the run.
+
+Queue (queue.txt): the 15 modules downstream of the 9 sources that differ between the records tip and the check tree
+(#346's 8 files, #340's Assumptions) plus the reader insertions, root TCSlib excluded, in import order; then the
+statement probe T23Probe/Stmt (Stmt.lean.txt). One Lean process at a time, through scripts/lean_check_tree.sh with
+TCSLIB_OLEANS=$SP/olean-stage-t23 (runner.py of the snapshot recipe, unmodified).
+
+Results (results.jsonl, SHA-256 45f591cece570d48cb527ddd00da4fc57c4c3ffef99bdc8cd83f8e0f3054f545): 16/16 rc 0; 0 'error:' and 0 'error(' in every log (logs/); 80 s
+of module time. BonehBoyenSecurity: exactly 2 sorry warnings (lines 89 and 104: bb1_sim_real, bb1_sim_random);
+Assumptions (T1 proved by #340): 0. Every rebuilt olean had link count 1.
+Stmt probe (logs/T23Probe_Stmt.log): the four targets, prob_simulate_rel, bb1_sidSecure, exists_bb1_distinguisher and the
+ten readers elaborate and print their types. #print axioms: the ten readers, exists_bb1_distinguisher (T4) and
+bdhAssumption_of_dbdhAssumption (T1) use [propext, Classical.choice, Quot.sound]; bb1_sidSecure those plus sorryAx.
+Sorry trace (constants whose own value uses sorryAx, over the constant closure): bb1_sidSecure reaches exactly
+bb1_sim_real and bb1_sim_random; prob_simulate_rel reaches exactly expect_simulate_rel.
+
+Snapshot #4 rehash (snapmap.py verify against the map above), before the copy and after the run:
+before: on disk 1453; extra 0; changed 0; missing 0; symlinks 0; other files 0; empty dirs 0; RESULT OK
+after:  on disk 1453; extra 0; changed 0; missing 0; symlinks 0; other files 0; empty dirs 0; RESULT OK
+The snapshot, $SP/p346 and $SP/olean-replay-346* were not touched; another job's Lean process ran on its own tree.
