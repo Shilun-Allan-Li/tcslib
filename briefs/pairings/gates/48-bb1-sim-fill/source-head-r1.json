@@ -1,0 +1,185 @@
+{
+ "base": "e1d39836ed4a69a34914c35f4c73c71de853dcc6",
+ "base_branch": "cryptography/pass-shelat-ch2-4",
+ "base_lean_equal_to": "3f540c22360c869069a0fba684e23ce6f3cb20db",
+ "commits": [
+  {
+   "author": "Claude <noreply@anthropic.com> 2026-11-17T04:04:20+00:00",
+   "commit": "69fa787fc52a9c7dff34c8f448ed78b68fcbfbd1",
+   "committer_date": "2026-11-17T07:44:32+00:00",
+   "files": [
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean",
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean"
+   ],
+   "gpgsig": 1,
+   "parent": "e1d39836ed4a69a34914c35f4c73c71de853dcc6",
+   "subject": "fill bb1-sim: the ten approved readers in Defs and BonehBoyen (Q7 follow-up)"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com> 2026-11-17T04:30:22+00:00",
+   "commit": "2845f1002f63f5ede2eed45e218e42c6b2e8e8e0",
+   "committer_date": "2026-11-17T07:44:32+00:00",
+   "files": [
+    "TCSlib/Cryptography/Games/Relational.lean"
+   ],
+   "gpgsig": 1,
+   "parent": "69fa787fc52a9c7dff34c8f448ed78b68fcbfbd1",
+   "subject": "fill bb1-sim: prove expect_simulate_rel and expect_sample_rel"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com> 2026-11-17T05:13:59+00:00",
+   "commit": "469375fa2d96ae6088c4c7a16b96724559084301",
+   "committer_date": "2026-11-17T07:44:32+00:00",
+   "files": [
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean",
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean",
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Lazy.lean",
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Random.lean",
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Real.lean"
+   ],
+   "gpgsig": 1,
+   "parent": "2845f1002f63f5ede2eed45e218e42c6b2e8e8e0",
+   "subject": "fill bb1-sim: helper modules (lazy handlers, real side, step M, T3 comparison, chain)"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com> 2026-11-17T05:01:37+00:00",
+   "commit": "40f7da54d280a1e2bb48fc17c2555f089617a2c9",
+   "committer_date": "2026-11-17T07:44:33+00:00",
+   "files": [
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean"
+   ],
+   "gpgsig": 1,
+   "parent": "469375fa2d96ae6088c4c7a16b96724559084301",
+   "subject": "fill bb1-sim: prove bb1_sim_real and bb1_sim_random (T2, T3)"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com> 2026-11-17T07:44:48+00:00",
+   "commit": "7a98ba0140ce6334bef1f2a8d39c6dfceb6ccaff",
+   "committer_date": "2026-11-17T07:44:48+00:00",
+   "files": [
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean",
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Lazy.lean",
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Real.lean"
+   ],
+   "gpgsig": 1,
+   "parent": "40f7da54d280a1e2bb48fc17c2555f089617a2c9",
+   "subject": "bb1-sim landing edit LE-bsf1: helper docstrings and the BB1RealState reader"
+  }
+ ],
+ "diff_stat": "9 files changed, 1925 insertions(+), 21 deletions(-)",
+ "files": {
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean": {
+   "blob": "c70c661f36416e71c3b3dee7e847d3a88f1bfe60",
+   "lines": 760,
+   "lines_at_base": 714,
+   "max_width": 99,
+   "over_100": 0,
+   "sha256": "88454d6fb0fa2c81419b189dbc633609357ee39b35ccbe90c810a0ad10891c26",
+   "sha256_at_base": "da875140806706f26c4cdbb5cf765f522144f3a5a885c5156a58b8c611cd25f4",
+   "status": "M",
+   "tabs": 0,
+   "trailing_space": 0
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean": {
+   "blob": "1e3f07ea64b514c00170300ff42f562644a1e356",
+   "lines": 225,
+   "lines_at_base": 170,
+   "max_width": 100,
+   "over_100": 0,
+   "sha256": "b84262de50d73aa5babe34e4e534e193e176120c649d7bab59599c0e9934d68c",
+   "sha256_at_base": "30f906581b0ec205fb3566bfb89405864d616b4982d06ac8ac3fd96919630571",
+   "status": "M",
+   "tabs": 0,
+   "trailing_space": 0
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean": {
+   "blob": "2b9c5d6aa89c71f53d8c2e7299dfbd96aad0c4f3",
+   "lines": 130,
+   "lines_at_base": null,
+   "max_width": 100,
+   "over_100": 0,
+   "sha256": "3bc99236758a31d602425123cb5fd730bca4e3c400276a5c43948876513e238e",
+   "sha256_at_base": null,
+   "status": "A",
+   "tabs": 0,
+   "trailing_space": 0
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean": {
+   "blob": "da37cf2c998b7b79cce45c1e41768d019779b33e",
+   "lines": 565,
+   "lines_at_base": null,
+   "max_width": 100,
+   "over_100": 0,
+   "sha256": "9516779ff19961745aea656a1be89b70b9f762fe41331d63999112624f0bb06c",
+   "sha256_at_base": null,
+   "status": "A",
+   "tabs": 0,
+   "trailing_space": 0
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Lazy.lean": {
+   "blob": "39dd73cda5f57a7c0d94ae60823ef0f1149327f8",
+   "lines": 447,
+   "lines_at_base": null,
+   "max_width": 100,
+   "over_100": 0,
+   "sha256": "e83c8091e36ec9f7f0e13c274af6f9b98b6a16711d692469e01ee8e956b5b7fa",
+   "sha256_at_base": null,
+   "status": "A",
+   "tabs": 0,
+   "trailing_space": 0
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Random.lean": {
+   "blob": "0e49a31ab9342c6a4c503854aae39dae3722d30c",
+   "lines": 139,
+   "lines_at_base": null,
+   "max_width": 99,
+   "over_100": 0,
+   "sha256": "e8a0c932742627b270969812b65f8f14b28019a2145f04a4e81cf30542c81083",
+   "sha256_at_base": null,
+   "status": "A",
+   "tabs": 0,
+   "trailing_space": 0
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Real.lean": {
+   "blob": "71f472d32da430e47c6d5657d3925d506ed4b15b",
+   "lines": 423,
+   "lines_at_base": null,
+   "max_width": 98,
+   "over_100": 0,
+   "sha256": "2c87dbd73ea2ff02c5d9048695588e0d14b83f58a8140cf121e908f404a9c22d",
+   "sha256_at_base": null,
+   "status": "A",
+   "tabs": 0,
+   "trailing_space": 0
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean": {
+   "blob": "da69b0f568317fdfecc8922b66b8f8a0bc53a638",
+   "lines": 563,
+   "lines_at_base": 476,
+   "max_width": 100,
+   "over_100": 0,
+   "sha256": "97ecb6e02413d18fce255949ed4b3e777c8f653a59f0792b575be3ff24a6a9a0",
+   "sha256_at_base": "4e220eadd4bf71ea62372bc371a3e2062b9f213acc696dbb66994c1f64069dfd",
+   "status": "M",
+   "tabs": 0,
+   "trailing_space": 0
+  },
+  "TCSlib/Cryptography/Games/Relational.lean": {
+   "blob": "15015555b353be37a8f0889453d8ad10e74e4051",
+   "lines": 146,
+   "lines_at_base": 134,
+   "max_width": 97,
+   "over_100": 0,
+   "sha256": "aec82c1ce5c060482f43ac056ed5041c521ed7d3866a29c01346551a13ec22da",
+   "sha256_at_base": "804a4c875318f9173da80d3e3275f309258c50ed72e0aaf9928b65849fa05ae8",
+   "status": "M",
+   "tabs": 0,
+   "trailing_space": 0
+  }
+ },
+ "head": "7a98ba0140ce6334bef1f2a8d39c6dfceb6ccaff",
+ "pin_tree_x_head": "b5c1eda7cb5acba4f64383a2da27866187dc64fc",
+ "pr": 357,
+ "pr357_diff_sha256": "d494afbfefd8e6336d6b050fd3a7907ba9b2b2d81c6e8f481e440c7325bf82bc",
+ "records_pin": "e6cdf4d4eed898acd71d48bd60082140eb076cfe"
+}
