@@ -7,6 +7,7 @@ import TCSlib.Cryptography.Games.Probability
 import TCSlib.Cryptography.Games.Simulate
 import TCSlib.Cryptography.Games.Advantage
 import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Games.Relational
 import TCSlib.Cryptography.Games.Protocols
 import TCSlib.Cryptography.Games.Forwarding
 
@@ -40,6 +41,8 @@ the interaction model `Strategy`.
   advantages, the hybrid argument.
 * `TCSlib.Cryptography.Games.Hopping`: the difference lemma, identical until bad, the collision
   bound.
+* `TCSlib.Cryptography.Games.Relational`: simulations of two implementations on related states
+  (the relational form of simulation congruence).
 * `TCSlib.Cryptography.Games.Protocols`: parties, the message exchange, executions in a
   coroutine model that contains D8's (bridge B4), and traced executions recording received
   messages and coin draws.

@@ -46,6 +46,7 @@ information-theory layer, so statistical distance and closeness (`EpsClose`) app
 * `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,
   `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
   samples; `expect_sub`, `abs_expect_sub_le`: subtraction and pointwise closeness.
+* `ProbComp.abs_expect_sub_le_expect`: averaging a pointwise bound.
 * `ProbComp.expect_expect_sample`: exchanging an expectation with a uniform sample (Fubini).
 
 ## References
@@ -401,6 +402,19 @@ theorem abs_expect_sub_le (c : ProbComp α) {f g : α → ℝ} {ε : ℝ}
       _ = expect c f + ε := by rw [expect_add c f (fun _ => ε), expect_const]
   rw [abs_le]
   constructor <;> linarith
+
+/-- **Averaging a pointwise bound:** expectations of functions within a pointwise bound of each
+other are within the expectation of the bound:
+`(∀ x, |f x - g x| ≤ h x) → |𝔼_c f - 𝔼_c g| ≤ 𝔼_c h`. -/
+theorem abs_expect_sub_le_expect (c : ProbComp α) {f g h : α → ℝ}
+    (hb : ∀ x, |f x - g x| ≤ h x) : |expect c f - expect c g| ≤ expect c h := by
+  rw [← expect_sub, abs_le]
+  constructor
+  · have := expect_mono c fun x => (neg_le_of_abs_le (hb x))
+    rw [show (fun x => -h x) = fun x => (-1) * h x from funext fun x => by ring,
+      expect_const_mul] at this
+    linarith
+  · exact expect_mono c fun x => le_of_abs_le (hb x)
 
 end Sampling
 
