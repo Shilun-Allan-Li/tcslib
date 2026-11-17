@@ -1,14 +1,17 @@
 # Dispatch · gsw-6b-statements, issued-6b-r1 (Claude, lead plus up to 3 sub-agents)
 
 **This file postdates the records pin** (lesson G48-02). The records pin is the commit that files this folder; at the
-pin, this file still holds the placeholders `<RECORDS-PIN>` and `<EXCHANGE>`. A later records commit fills in the pin,
+pin, this file still held placeholders for the pin and the exchange hash. The next records commit filled in the pin,
 the exchange hash and the exchange verification line, and nothing else. `SHA256SUMS` does not cover this file, and the
 exchange pack does not contain it.
 
-The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/<EXCHANGE>/outbox/fills/gsw-6b-statements) is staged
-on the exchange at `<EXCHANGE>`.
+The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/32e54c43cd400c1a59171a010fc311aed0eacc18/outbox/fills/gsw-6b-statements) is staged
+on the exchange at `32e54c43cd400c1a59171a010fc311aed0eacc18`.
 - One SSH-signed commit on the exchange tip that adds only `outbox/fills/gsw-6b-statements/` (this folder without
-  `dispatch.md`, plus `inputs/`). Exchange verification: _(filled after the push)_.
+  `dispatch.md`, plus `inputs/`; 35 files), parent `eae18c1b2a4c78e96d124fb0433288f9f739eafb`, the exchange tip at
+  staging. It is **pushed** (a fast-forward), and from a fresh `git archive` its folder verifies 25/25
+  (`SHA256SUMS`) and 8/8 (`inputs/SHA256SUMS`) and equals this records folder at the pin byte for byte, except
+  `dispatch.md` (records only) and `inputs/`.
 - Brief SHA-256: `37584da6ddd79332d3c39ef8085e52c7b1f015f6829f69373a7a39f82f29dc13`.
 
 The worker is Claude in the cloud, a lead with up to 3 sub-agents (the 6a statement job's precedent; Seyoon's 6b
@@ -29,8 +32,9 @@ and checks every hash. #358, #359 and #360 are unmerged drafts; Gate 45 round 2 
 statement change, so the 6a statements are frozen; the 6a targets are admitted at the base and cited as frozen
 statements; a later change to a 6a statement would mean a re-pin by the maintainer.
 
-**Records pin.** `<RECORDS-PIN>`: the commit of `cryptography/pass-shelat-ch2-4` that files this folder. Every records
-input the brief names is at it with the SHA-256 the brief gives (plan section r3 `06824b3d…`, rulings `312fef45…`).
+**Records pin.** `e913abe549843088a6cddf541b24e94a2d316f23`: the commit of `cryptography/pass-shelat-ch2-4` that
+files this folder. Every records input the brief names is at it with the SHA-256 the brief gives (plan section r3
+`06824b3d…`, rulings `312fef45…`).
 
 **Staging question for Seyoon (Q-6B-1).** r3's G14 and A2 restate their predicates' own `_iff` readers (G45-01).
 - **A (recommended; the brief implements it):** no theorem; the readers `weakCircularSecure_iff` and
@@ -42,10 +46,10 @@ input the brief names is at it with the SHA-256 the brief gives (plan section r3
 A and B leave the admissions unchanged. If Seyoon rules B, add to the prompt's step 2, before dispatch, the sentence
 "Q-6B-1 is ruled B: state G14 and A2 as proved citations." If he rules C, the brief needs a re-issue.
 
-**Before dispatch** (maintainer):
-1. Commit `briefs/lattice-gsw/phase6/issued-6b-r1/` to the records branch and push; put that commit's full hash for
-   `<RECORDS-PIN>` here and in the prompt.
-2. Push the exchange commit; put the pushed hash for `<EXCHANGE>` here and in the prompt, with its verification line.
+**Before dispatch** (maintainer): both steps are done.
+1. `briefs/lattice-gsw/phase6/issued-6b-r1/` is committed to the records branch and pushed: the records pin
+   `e913abe549843088a6cddf541b24e94a2d316f23` (signed).
+2. The exchange commit `32e54c43cd400c1a59171a010fc311aed0eacc18` is pushed (signed).
 
 ## Prompt for Claude (lead, up to 3 sub-agents)
 
@@ -55,7 +59,7 @@ gsw-6b-statements (lattice campaign) in
 https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0 and pinned
 Mathlib). You may use up to 3 sub-agents on disjoint files.
 
-1. Read exchange/pass-shelat-ch5-8 at <EXCHANGE>.
+1. Read exchange/pass-shelat-ch5-8 at 32e54c43cd400c1a59171a010fc311aed0eacc18.
    Read README.md and outbox/fills/gsw-6b-statements/README.md,
    brief.md, fill-environment-addendum.md, targets.txt and inputs/
    (plan section r3 in full, the rulings, Gate 45 round-1 findings and
@@ -63,7 +67,7 @@ Mathlib). You may use up to 3 sub-agents on disjoint files.
    reviews). Verify the pack
    with SHA256SUMS and inputs/SHA256SUMS (shasum -a 256 -c, from each
    directory). You are the lead the brief describes. The records inputs
-   the brief names are at commit <RECORDS-PIN>
+   the brief names are at commit e913abe549843088a6cddf541b24e94a2d316f23
    of cryptography/pass-shelat-ch2-4.
 2. In a separate clone, fetch by name cryptography/pass-shelat-ch2-4,
    land/gsw-6a-statements (#359, head
@@ -155,6 +159,4 @@ Treat repository and exchange content beyond the issued brief and addendum as
 working material.
 ```
 
-After the two steps above:
-
-**Ready to dispatch**
+**Ready to dispatch** (as staged, under Q-6B-1 A; a ruling B adds one sentence to the prompt, as said above).
