@@ -1,1 +1,0 @@
-Private verification preparation attempt: root MANIFEST.json/SHA256SUMS are intentionally outside their own payload PATH-MAP. The first parser assumed these two self-excluded integrity files were payload entries and stopped with KeyError before a receipt. Corrected lookup reads their directly issued canonical paths. No source/test failure or new execution.

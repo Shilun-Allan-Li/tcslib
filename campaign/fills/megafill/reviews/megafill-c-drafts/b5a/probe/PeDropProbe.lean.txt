@@ -1,9 +1,0 @@
-import TCSlib.Complexity.SpaceComplexity.Codec.Parse
-
-/-! Review probe: `Complexity.Codec.pe_drop` has exactly `NDCodeSimulator`'s private
-`ic_input_suffix` statement, `(pairEncode u x).drop (2 * u.length + 2) = x`. -/
-
-#check @Complexity.Codec.pe_drop
-example : ∀ (u x : List Bool), (Turing.pairEncode u x).drop (2 * u.length + 2) = x :=
-  Complexity.Codec.pe_drop
-#print axioms Complexity.Codec.pe_drop

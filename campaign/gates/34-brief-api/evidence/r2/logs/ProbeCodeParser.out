@@ -1,6 +1,0 @@
-Turing.codeSkipRepeat_zero : ∀ (r : List Bool → Option (List Bool)) (xs : List Bool),
-  Turing.codeSkipRepeat r 0 xs = some xs
-'Turing.codeSkipRepeat_zero' does not depend on any axioms
-Turing.codeSkipRepeat_succ : ∀ (r : List Bool → Option (List Bool)) (n : ℕ) (xs : List Bool),
-  Turing.codeSkipRepeat r (n + 1) xs = (r xs).bind (Turing.codeSkipRepeat r n)
-'Turing.codeSkipRepeat_succ' does not depend on any axioms

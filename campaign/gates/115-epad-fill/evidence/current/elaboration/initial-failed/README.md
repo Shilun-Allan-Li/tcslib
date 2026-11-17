@@ -1,1 +1,0 @@
-The first landing preflight failed at the now-unimported Mathlib List.getD_eq_default and at the maintainer probe empty-language notation. The failed theorem elaboration introduced sorryAx through error recovery; this output is not a successful axiom check. Both issues are repaired in the subsequent attempt.

@@ -1,5 +1,0 @@
-/-- A fixed two-cell move of the head of tape `i`. (`h1TwoMoveTM`.) -/
-def twoMoveTM {m : ℕ} (i : Fin m) (move : SignType) : MultiTapeTM m Bool (Fin 3) where
-  q₀ := 0
-  tr := fun q _ _ => if h : q.val < 2 then
-    tapeAction i 0 none move ⟨q.val + 1, by omega⟩ else inputMoveAction 0 q

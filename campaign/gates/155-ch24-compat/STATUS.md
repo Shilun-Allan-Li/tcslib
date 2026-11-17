@@ -1,1 +1,0 @@
-**Gate 155 closed.** #354 merged (`fe5fba6e`, 2026-11-17) at the audited head `718dddc66d5d4dad7ea25f299a01931be6c42658`; round 1 CLEAR (0/0/0). Snapshot `oleans-cfe5fb` adopted (campaign/status/2026-11-17-merge-354/).

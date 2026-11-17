@@ -1,1 +1,0 @@
-**Gate 150 closed.** #343 merged (`f81872e2`, 2026-11-16) at the audited head `0b12a1b30ad0fb8b800b67beb806766e6f266b86`; round 1 CLEAR (0/0/0). Snapshot `oleans-cf8187` adopted (campaign/status/2026-11-16-merge-343/).

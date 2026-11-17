@@ -1,1 +1,0 @@
-**Gate 152 closed.** #345 merged (`b913bbc9`, 2026-11-16) at the audited head `1dcbbe3171dd685600525d4f7cf71548889ecceb`; round 1 CLEAR (0/0/2, records errata fixed). Snapshot `oleans-cb913b` adopted (campaign/status/2026-11-16-merge-345/).

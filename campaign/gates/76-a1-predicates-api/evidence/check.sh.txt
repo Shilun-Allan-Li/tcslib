@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-S=/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad; D=$S/a1; W=$S/wt-a1; O=$S/oleans-lu2api; cd $W || exit 1
-run() { f=$1; shift; n=$(basename $f .lean); { cat $f; echo; for x in "$@"; do echo "#print axioms $x"; done; } > $D/$n-ax.lean
-  bash $S/tools/leanelab.sh $W $O $D/$n-ax.lean > $D/$n-ax.out 2>&1; echo "$n: exit $? errors $(grep -c ': error' $D/$n-ax.out) warnings $(grep -c ': warning' $D/$n-ax.out) axioms $(grep -c 'depends on axioms' $D/$n-ax.out)"; }
-run TCSlib/Complexity/ClassP/TimeConstructible.lean Complexity.timeConstructible_iff
-run TCSlib/Complexity/SpaceComplexity/Constructible.lean Complexity.spaceConstructible_iff
-run TCSlib/Complexity/SpaceComplexity/Basic.lean Turing.FinTM.computesInSpace_iff Turing.FinTM.decidesInSpace_iff Complexity.mem_SPACE_iff Complexity.logSpace_eq Complexity.LOGSPACE_eq
-run TCSlib/Complexity/ClassNP/Transducer.lean Complexity.transduce_nil Complexity.transduce_cons Complexity.transduce_of_copy
-grep -h 'depends on axioms' $D/*-ax.out

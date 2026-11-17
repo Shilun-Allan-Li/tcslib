@@ -1,1 +1,0 @@
-The first bounded kernel-comparison probe failed during parsing at one raw Lean repr hygiene name containing _@. No type-equivalence result or owner-source failure is claimed. v2 reconstructs every quoted Name using explicit Name.mkStr constructors, and checks reprStr against the original baseline fixture before any equality check. Entire failed source/receipt/raw retained.

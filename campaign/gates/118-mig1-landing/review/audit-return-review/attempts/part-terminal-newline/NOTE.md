@@ -1,1 +1,0 @@
-Only the last physical section of each part remained a false rendered-section hash mismatch: the final section has no extra separator newline. Raw payload, Git binding and whole-part hashes already matched. Final parser keeps the terminal newline in the last section hash.

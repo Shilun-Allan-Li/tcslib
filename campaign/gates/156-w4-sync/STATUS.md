@@ -1,1 +1,0 @@
-**Gate 156 closed.** #356 (W4) merged (`179c8c9c`, 2026-11-17) at `85b45d24ad149fe45772a9e456271f75eb45ee04`; records-only, no audit (Seyoon). Snapshot `oleans-c179c8` adopted (campaign/status/2026-11-17-merge-356/).

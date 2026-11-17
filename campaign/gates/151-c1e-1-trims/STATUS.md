@@ -1,1 +1,0 @@
-**Gate 151 closed.** #344 merged (`fb6f2e31`, 2026-11-16) at the audited head `974599a43484632ba38ab4dec4196790a6d0cb46`; round 1 CLEAR (0/0/0). Snapshot `oleans-cfb6f2` adopted (campaign/status/2026-11-16-merge-344/).

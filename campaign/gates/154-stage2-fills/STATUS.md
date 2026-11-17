@@ -1,1 +1,0 @@
-**Gate 154 closed.** #350 merged (`0ac28d18`, 2026-11-17) at the audited head `375531b6055178ec846435b7670be5d0e2a526fe`; round 1 HOLD (1 major, 1 minor, both resolved), round 2 CLEAR (0/0/0). Snapshot `oleans-c0ac28` adopted (campaign/status/2026-11-17-merge-350/).

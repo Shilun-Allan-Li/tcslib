@@ -1,5 +1,0 @@
-∀ (M : Turing.FinTM Bool) (clock : Fin M.k) (x : List Bool) (T : ℕ),
-  (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) T).state = none →
-    ∃ t ≤ T + 1,
-      Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) t =
-        Turing.timedCapturedCfg M clock (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) T)

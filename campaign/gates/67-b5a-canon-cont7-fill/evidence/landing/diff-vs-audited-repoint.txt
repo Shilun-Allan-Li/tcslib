@@ -1,7 +1,0 @@
--The record validator's entry and success states coincide, so every record round is wrapped by
--a fresh-anchor return adapter (`canonReturnAdapter`) before it becomes a public counter loop's
--body. -/
-+The record validator has an entry and two distinct verdict ports, while a public counter loop's
-+body must return to its own anchor on success; so every record round is wrapped by a fresh-anchor
-+return adapter (`canonReturnAdapter`), which makes it a positive first-return-or-escape round,
-+before it becomes the loop's body. -/

@@ -1,1 +1,0 @@
-The first review parser assumed each rendered section had exactly one separator newline and stopped on JSON parsing when that offset drifted. Replaced sequential offsets with independently matched ordered section boundaries. No packet defect inferred from parser failure.

@@ -1,13 +1,5 @@
 # Lean 4 Proof Assistant System
 
-> **Continuing the Arora–Barak ch. 3–4 campaign's maintainer work** (branch
-> `complexity/arora-barak-ch3-4`)? Start at
-> [`campaign/maintainer/START-HERE.md`](campaign/maintainer/START-HERE.md). It and
-> `campaign/maintainer/WORKFLOW.md` take precedence over the generic workflow below. In
-> particular, elaborate only with `devtools/seyoon/leanelab.sh`, never `lake build`. Lean
-> processes may run in parallel within the pool of `WORKFLOW.md` §2 (Seyoon, 2026-11-17): on a
-> cloud machine min(nproc, MemAvailable / 4 GB), shared through the wrappers' slot locks; at most 3
-> on a local host. The latest state is in `campaign/maintainer/HANDOFF.md` §0.
 > **Campaign builds:** verification runs through `scripts/lean_check_tree.sh` against an olean
 > snapshot kept at the branch tip, with merged-tree replays per PR — see
 > [`workflow.md`](workflow.md) §6 and §6.1. Never `lake build` on campaign branches.

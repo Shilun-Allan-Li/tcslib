@@ -1,13 +1,5 @@
 # Lean 4 Proof Assistant System
 
-> **Continuing the Arora–Barak ch. 3–4 campaign's maintainer work** (branch
-> `complexity/arora-barak-ch3-4`)? Start at
-> [`campaign/maintainer/START-HERE.md`](../campaign/maintainer/START-HERE.md). It and
-> `campaign/maintainer/WORKFLOW.md` take precedence over the generic workflow below. In
-> particular, elaborate only with `devtools/seyoon/leanelab.sh`, never `lake build`. Lean processes may run
-> in parallel within the pool of `WORKFLOW.md` §2 (Seyoon, 2026-11-17): on a cloud machine
-> min(nproc, MemAvailable / 4 GB), shared through the wrappers' slot locks; at most 3 on a local host. The latest state is in `campaign/maintainer/HANDOFF.md` §0.
-
 This directory contains a coordinated multi-agent system for writing Lean 4 proofs incrementally, using **sorry-driven development** to avoid token-limit failures.
 
 **All Lean contributions must follow the repository standards in [`policy.md`](policy.md)** — modularity (file layout, size, namespaces, exports), attribution (every result traced to a textbook/paper reference via docstring tags and blueprint sources), and human-readable proof sketches accompanying every nontrivial proof. Read it before writing or landing any Lean code.
