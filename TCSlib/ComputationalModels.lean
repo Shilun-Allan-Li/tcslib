@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.BooleanAnalysis.DecisionTree
+import TCSlib.Complexity.BranchingPrograms.Defs
 import TCSlib.Complexity.CircuitComplexity.Basic
 import TCSlib.Complexity.CircuitComplexity.DAGCircuit
 import TCSlib.Complexity.CircuitComplexity.PPoly
@@ -55,6 +56,13 @@ under `Complexity/`.
 * `BoolCircuit.TreeCircuitFamily` — non-uniform families of tree circuits;
   the carrier of the formula classes `TreeNC` and `TreeAC`
   (`Complexity/CircuitComplexity/TreeNCAC.lean`).
+* `BranchingProgram w n` — width-`w` branching programs on `n` inputs [Bar89, §1]: a list of
+  instructions `⟨var, map0, map1⟩` with maps `Fin w → Fin w` (`map0` when the bit is `0`),
+  yielding their composition in program order; `IsPermutation` when every map is a
+  bijection (`Complexity/BranchingPrograms/Defs.lean`).
+* `BranchingProgramFamily w` — non-uniform families of width-`w` branching programs with
+  accepting sets `F_n` (`x ∈ L ↔ B(x) ∈ F_n`); the carrier of `Language.InBWBP` and
+  `Language.InPBP` (`Complexity/BranchingPrograms/Defs.lean`).
 * `CNF n` / `DNF n` — the two readings (AND of clauses / OR of terms) of a
   reading-neutral `Depth2 n` shape of `LitList n`s over `Literal n`; flat
   width-measured formulas for the switching-lemma development [OD14]
@@ -115,6 +123,11 @@ Model-to-model maps (pointers only — their files are not imported here):
   (`Complexity/CircuitComplexity/LayeredDAG.lean`).
 * `BoolCircuit.DAGCircuit.binarize` / `BoolCircuit.DAGCircuit.deMorgan` — fan-in reduction
   and `∨`-elimination on DAGs (`Complexity/CircuitComplexity/DAGFanin.lean`).
+* `BoolCircuit.DAGCircuit.layerNAND` — NAND-form DAGs → layered NAND-form DAGs on the `2n`
+  literal inputs, depth preserved exactly (`Complexity/CircuitComplexity/NANDLayering.lean`).
+* `BoolCircuit.DAGCircuit.toNANDForm` — fan-in-≤ 2 DAGs → NAND form (`¬` gates of fan-in `≤ 2`),
+  depth at most doubled; an instance of `DAGCircuit.rewrite`
+  (`Complexity/CircuitComplexity/NANDForm.lean`).
 * `BoolCircuit.TreeCircuit.toLayeredWrapper` — a semantic wrapper, not an embedding:
   the tree's evaluation becomes a single unrestricted first-layer gate, so only
   evaluation is preserved, with no general gate-basis guarantee
@@ -124,6 +137,12 @@ Model-to-model maps (pointers only — their files are not imported here):
   (`Complexity/CircuitComplexity/CircuitSat.lean`).
 * `BoolCircuit.LayeredCircuit.toTreeCircuit` — DAG → tree unrolling, exponential
   in depth (`Complexity/CircuitComplexity/LayeredCircuit.lean`).
+* `BranchingProgram.barrington` — fan-in-2 formulas (`BoolCircuit.TreeCircuit`) → width-5
+  permutation branching programs of length `≤ 4^depth`, computable [Bar89, Thm 1]
+  (`Complexity/BranchingPrograms/Barrington.lean`).
+* `BranchingProgram.toFormula` — width-`w` branching programs with an accepting set → fan-in-2
+  formulas of depth `O(log length)` [Bar89, Thm 2]
+  (`Complexity/BranchingPrograms/BarringtonConverse.lean`).
 * `FinTM.toFinNDTM` — deterministic machines as nondeterministic ones, in
   lockstep (`Complexity/TuringMachine/Nondeterministic.lean`).
 * `LMN.NormalFormConversion` — normal-form tree circuits ↔ `CNF`/`DNF`
@@ -137,6 +156,8 @@ Model-to-model maps (pointers only — their files are not imported here):
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009.
+* [Bar89] D. A. Barrington, *Bounded-width polynomial-size branching programs recognize exactly
+  those languages in NC¹*, J. Comput. Syst. Sci. 38(1):150–164, 1989.
 * [OD14] R. O'Donnell, *Analysis of Boolean Functions*, Cambridge University
   Press, 2014.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
