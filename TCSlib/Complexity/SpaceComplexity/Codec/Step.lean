@@ -205,7 +205,7 @@ theorem boundary_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s
     rw [funext_iff]
     refine forall_congr' fun i => ?_
     simp only [Prod.mk.injEq, true_and]
-    cases (a.workTapes i).2 <;> simp [cellOf]
+    cases (a.workTapes i).2 <;> simp [cellOf_head]
   have right : stepCell a h' (cellOf s C (2 * s)) (cellE N) (cellE N) = cellE N ↔
       ∀ i, (a.workTapes i).2 = .pos → C.workTapePos i ≠ s := by
     simp only [stepCell, cellE, Option.map_none, Bool.false_eq_true, ↓reduceIte, Prod.mk.injEq,
@@ -213,7 +213,7 @@ theorem boundary_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s
     rw [funext_iff]
     refine forall_congr' fun i => ?_
     simp only [Prod.mk.injEq, true_and]
-    cases (a.workTapes i).2 <;> simp [cellOf]
+    cases (a.workTapes i).2 <;> simp [cellOf_head]
     omega
   rw [left, right, hC.apply_iff a]
   exact ⟨fun ⟨hl, hr⟩ i => ⟨fun h => hl i h.2 h.1, fun h => hr i h.2 h.1⟩,
