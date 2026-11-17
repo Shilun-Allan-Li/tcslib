@@ -86,3 +86,47 @@ time proportional to the input length plus one is decidable nondeterministically
 time proportional to the square of the input length plus one; moreover, some language in
 the latter class is not in the former.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Diagonalization --- NTime Hierarchy: further results}
+
+Throughout, for binary strings $a$ and $b$, $\langle a,b\rangle$ denotes the self-delimiting
+pairing consisting of $a$ with every bit doubled, then the separator $01$, then $b$ verbatim;
+$\mathrm{bits}(t)$ denotes the binary expansion of a natural number $t$; and a nondeterministic
+machine accepts $x$ within $t$ steps when some choice word of length exactly $t$ leaves it halted
+with output exactly $[1]$.
+
+\begin{theorem}[Universal nondeterministic machine from a setup machine]
+\lean{Turing.un_universal_of_setup}
+\label{Turing.un_universal_of_setup}
+\leanok
+\uses{Turing.CodeNDTM.toFinNDTM, Turing.EffectiveNDMachineCode, Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.acceptsWithin_iff, Turing.FinTM.bufferTape, Turing.GuessRunPhase.State, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NDTM.HaltsWithin, Turing.NDTM.HaltsWithin.mono, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.embedSilentTM, Turing.exists_ndInterpreterCore, Turing.guessRunTM, Turing.guessRunTM_silent_spec, Turing.pairEncode, Turing.streamStartCfg}
+\difficulty{5}
+Let $c$ be an effective code for finite-state nondeterministic binary machines with two work
+tapes. Assume the following setup property: for every $K\in\mathbb{N}$ and every tape index
+$j_R<K$ there are $k\in\mathbb{N}$, an injection $\iota$ of $\{0,\dots,K-1\}$ into
+$\{0,\dots,k-1\}$, a tape index outside the image of $\iota$, a deterministic $k$-work-tape
+binary machine $P$ with finitely many states and a state $p_{\mathrm{exit}}$, such that for
+every code $\alpha$ there is a constant $C_P$ for which, for all binary $x$ and all
+$t\in\mathbb{N}$, the run of $P$ on $\langle\langle\mathrm{bits}(t),\alpha\rangle,x\rangle$
+first enters $p_{\mathrm{exit}}$ after some $T_P\le C_P(t+1)$ steps, at which moment the input
+head is at position $1$, all work heads are at cell $0$, the output is empty, every work tape
+other than $\iota(j_R)$ is blank, and tape $\iota(j_R)$ is nonblank exactly on cells
+$0,\dots,t-1$. Then there is a finite nondeterministic binary machine $U$ such that for every
+code $\alpha$ some constant $C$ satisfies, for all binary $x$ and all $t$: every branch of $U$ on
+$\langle\langle\mathrm{bits}(t),\alpha\rangle,x\rangle$ halts within $C(t+1)$ steps, and $U$
+accepts that input within $C(t+1)$ steps if and only if the machine decoded from $\alpha$ by $c$
+accepts $x$ within $t$ steps.
+\end{theorem}
+
+\begin{lemma}[Flattening copies of a one-bit list]
+\lean{Turing.un_flatten}
+\label{Turing.un_flatten}
+\leanok
+\difficulty{3}
+For every $t\in\mathbb{N}$, concatenating $t$ copies of the one-element list $[1]$ yields the
+list consisting of $t$ ones.
+\end{lemma}
+
+\begin{lemma]{Buffered word is blank beyond its length}
+\end{lemma}
