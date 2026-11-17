@@ -59,7 +59,10 @@ run is the run of `drawStep` with exponents read from a tape, through the encodi
   (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): the algorithm
   `B` in the proof of Theorem 4.1.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
-  (Algorithm 43.2, the extended Euclidean algorithm; Theorem 52.3, sampling `Z_q`.)
+  (Algorithm 43.2, the extended Euclidean algorithm. Context only: §2.8, Theorem 52.3, the
+  discrete-log collection, whose proof remarks that its domain `Z_q` is easy to sample; it does
+  not give the bounded sampler or its bound, which are the library's `Candidates.sampleBelowL`
+  and `Candidates.statClose_sampleBelowL`, `Cryptography/Candidates/DiscreteLog.lean`.)
 -/
 
 namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
