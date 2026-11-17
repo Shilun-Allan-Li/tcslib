@@ -1,0 +1,85 @@
+diff --git a/TCSlib/Complexity/BranchingPrograms/Barrington.lean b/TCSlib/Complexity/BranchingPrograms/Barrington.lean
+index 3dd230abb..9418f003a 100644
+--- a/TCSlib/Complexity/BranchingPrograms/Barrington.lean
++++ b/TCSlib/Complexity/BranchingPrograms/Barrington.lean
+@@ -40,8 +40,9 @@ All are statements of the 6a statement phase (targets admitted with `sorry`), ex
+ 
+ * **Orders.** Instructions follow BV14's order (`map0` on `0`) and programs compose in program
+   order (`Defs.lean`).  Bar89's commutator `σ₁σ₂σ₁⁻¹σ₂⁻¹`, read left to right, is the Mathlib
+-  product `sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1`, which is `(13254)` 0-based, i.e. the cycle
+-  `0 ↦ 2 ↦ 1 ↦ 4 ↦ 3 ↦ 0`; the right-to-left reading gives `(14352)` instead (r3 §H3.6).
++  product `sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1`.  That is `(13254)` in Bar89's one-based cycle
++  notation, whose zero-based form `(0 2 1 4 3)`, the cycle `0 ↦ 2 ↦ 1 ↦ 4 ↦ 3 ↦ 0`, is what the
++  code implements; the right-to-left reading gives `(14352)` instead (r3 §H3.6).
+ * **Cycle notation.** `sigma1`, `sigma2` are written `List.formPerm [0, 1, 2, 3, 4]` and
+   `List.formPerm [0, 2, 4, 3, 1]`: Mathlib's `c[…]` notation lives in
+   `Mathlib.GroupTheory.Perm.Cycle.Concrete`, which is not in the pinned Mathlib cache;
+@@ -335,7 +336,8 @@ theorem isFiveCycle_sigma2 : IsFiveCycle sigma2 := by
+   sorry
+ 
+ /-- **C9.** Lemma 3 in program order: the commutator of the two five-cycles is a five-cycle,
+-`IsFiveCycle (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1)`; the product is `(13254)` 0-based,
++`IsFiveCycle (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1)`; the product is `(13254)` in Bar89's
++one-based cycle notation, whose zero-based form `(0 2 1 4 3)` is what the code implements,
+ `List.formPerm [0, 2, 1, 4, 3]` [Bar89, Lemma 3, p003-b005: "`(12345)(13542)(54321)(24531) =
+ (13254)`"].
+ Deviation: Bar89's product is read left to right; the Mathlib product applies its right factor
+diff --git a/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean b/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
+index 1bdeb53d7..676a51b76 100644
+--- a/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
++++ b/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
+@@ -14,7 +14,8 @@ and formula gadgets"): combinators on `BoolCircuit.TreeCircuit` formulas that th
+ arithmetic of `FormulaArith/` is built from.  This file starts with the balanced binary tree of
+ gates, `BoolCircuit.TreeCircuit.balanced`, which computes an unbounded `∧`/`∨` gate with fan-in
+ two at logarithmic extra depth.  It was the private `combine` of `TreeNCAC.lean`, promoted
+-unchanged; `BoolCircuit.TreeCircuit.toBinary` now calls it from there.
++with its computation unchanged; its proofs carry the five Q2-approved Rule 10 repairs.
++`BoolCircuit.TreeCircuit.toBinary` now calls it from there.
+ 
+ ## Main definitions
+ 
+@@ -407,6 +408,11 @@ theorem TreeCircuit.maxFanin_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n 
+ 
+ /-! ### Constants and the fan-in-2 gadgets (F3) -/
+ 
++/-- An empty gate is a constant: the empty `AND` is `true`, the empty `OR` is `false`. -/
++theorem eval_node_nil (b : Bool) (x : Fin n → Bool) :
++    (TreeCircuit.node b ([] : List (TreeCircuit n))).eval x = b := by
++  cases b <;> simp [TreeCircuit.eval_node_true, TreeCircuit.eval_node_false]
++
+ /-- The constant formula with value `b`: the empty gate, `TreeCircuit.const b = node b []`
+ (an empty `∧` is `true`, an empty `∨` is `false`).  Depth `1`, fan-in `0`.  Glue. -/
+ def TreeCircuit.const (b : Bool) : TreeCircuit n :=
+@@ -418,13 +424,11 @@ theorem TreeCircuit.const_eq (b : Bool) :
+     (TreeCircuit.const b : TreeCircuit n) = TreeCircuit.node b [] := rfl
+ 
+ /-- **F3, constant: value.** The constant formula evaluates to its constant:
+-`(TreeCircuit.const b).eval x = b`.  Glue.
+-
+-**Proof sketch.** `const_eq`, then `eval_node_true` (`[].all _ = true`) for `b = true` and
+-`eval_node_false` (`[].any _ = false`) for `b = false`. -/
++`(TreeCircuit.const b).eval x = b`.  This is `BoolCircuit.eval_node_nil` read through
++`const_eq`. -/
+ theorem TreeCircuit.const_eval (b : Bool) (x : Fin n → Bool) :
+     (TreeCircuit.const b : TreeCircuit n).eval x = b := by
+-  sorry
++  rw [TreeCircuit.const_eq]; exact eval_node_nil b x
+ 
+ /-- **F3, constant: depth.** The constant formula has depth one:
+ `(TreeCircuit.const b : TreeCircuit n).depth = 1`.  Glue.
+diff --git a/TCSlib/Complexity/CircuitComplexity/Hierarchy.lean b/TCSlib/Complexity/CircuitComplexity/Hierarchy.lean
+index 39c78b5b0..9be5c41fb 100644
+--- a/TCSlib/Complexity/CircuitComplexity/Hierarchy.lean
++++ b/TCSlib/Complexity/CircuitComplexity/Hierarchy.lean
+@@ -101,11 +101,6 @@ variable {m n : ℕ}
+ 
+ /-! ## Reindexing a circuit -/
+ 
+-/-- An empty gate is a constant: the empty `AND` is `true`, the empty `OR` is `false`. -/
+-theorem eval_node_nil (b : Bool) (x : Fin n → Bool) :
+-    (TreeCircuit.node b ([] : List (TreeCircuit n))).eval x = b := by
+-  cases b <;> simp [TreeCircuit.eval]
+-
+ /-- A circuit on `m` variables read as a circuit on `n ≥ m` variables, ignoring the rest. -/
+ def widenCircuit (h : m ≤ n) : TreeCircuit m → TreeCircuit n
+   | .lit l => .lit ⟨Fin.castLE h l.idx, l.sign⟩

@@ -1,0 +1,58 @@
+diff --git a/TCSlib/Complexity/BranchingPrograms/Barrington.lean b/TCSlib/Complexity/BranchingPrograms/Barrington.lean
+index 9418f003a..3c3c6ffe4 100644
+--- a/TCSlib/Complexity/BranchingPrograms/Barrington.lean
++++ b/TCSlib/Complexity/BranchingPrograms/Barrington.lean
+@@ -20,7 +20,8 @@ by a width-5 permutation branching program of length at most `4^d`.  The constru
+ 
+ * `BranchingProgram.IsFiveCycle`, `BranchingProgram.FiveCycleRecognizes` — five-cycles and
+   five-cycle recognition [Bar89, §3].
+-* `BranchingProgram.sigma1`, `sigma2` — Lemma 3's five-cycles `(12345)`, `(13542)`, 0-based.
++* `BranchingProgram.sigma1`, `sigma2` — Lemma 3's five-cycles `(12345)`, `(13542)` in Bar89's
++  one-based cycle notation, implemented in zero-based form as `(0 1 2 3 4)`, `(0 2 4 3 1)`.
+ * `BranchingProgram.conjugator` — Lemma 1's explicit conjugator (with `conjugatorIndex`,
+   `conjugatorFun`, `conjugatorTable`).
+ * `BranchingProgram.commutatorProgram` — the AND step `B₁ B₂ B₁' B₂'` of Thm 1's proof.
+@@ -106,16 +107,18 @@ theorem fiveCycleRecognizes_iff (B : BranchingProgram 5 n) (A : (Fin n → Bool)
+ 
+ /-! ### Lemma 3's five-cycles -/
+ 
+-/-- Bar89's `(12345)`, 0-based: the five-cycle `0 ↦ 1 ↦ 2 ↦ 3 ↦ 4 ↦ 0`, Mathlib's `c[0,1,2,3,4]`,
+-written `sigma1 = List.formPerm [0, 1, 2, 3, 4]` [Bar89, Lemma 3, p003-b005]. -/
++/-- Bar89's `(12345)` in its one-based cycle notation, whose zero-based form `(0 1 2 3 4)` is what
++the code implements: the five-cycle `0 ↦ 1 ↦ 2 ↦ 3 ↦ 4 ↦ 0`, Mathlib's `c[0,1,2,3,4]`, written
++`sigma1 = List.formPerm [0, 1, 2, 3, 4]` [Bar89, Lemma 3, p003-b005]. -/
+ def sigma1 : Perm (Fin 5) :=
+   List.formPerm [0, 1, 2, 3, 4]
+ 
+ /-- Reader of `sigma1`: `sigma1 = List.formPerm [0, 1, 2, 3, 4]`. -/
+ theorem sigma1_eq : sigma1 = List.formPerm [0, 1, 2, 3, 4] := rfl
+ 
+-/-- Bar89's `(13542)`, 0-based: the five-cycle `0 ↦ 2 ↦ 4 ↦ 3 ↦ 1 ↦ 0`, Mathlib's `c[0,2,4,3,1]`,
+-written `sigma2 = List.formPerm [0, 2, 4, 3, 1]` [Bar89, Lemma 3, p003-b005]. -/
++/-- Bar89's `(13542)` in its one-based cycle notation, whose zero-based form `(0 2 4 3 1)` is what
++the code implements: the five-cycle `0 ↦ 2 ↦ 4 ↦ 3 ↦ 1 ↦ 0`, Mathlib's `c[0,2,4,3,1]`, written
++`sigma2 = List.formPerm [0, 2, 4, 3, 1]` [Bar89, Lemma 3, p003-b005]. -/
+ def sigma2 : Perm (Fin 5) :=
+   List.formPerm [0, 2, 4, 3, 1]
+ 
+diff --git a/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean b/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
+index 676a51b76..34108210f 100644
+--- a/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
++++ b/TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
+@@ -35,11 +35,14 @@ with its computation unchanged; its proofs carry the five Q2-approved Rule 10 re
+ * `BoolCircuit.TreeCircuit.maxFanin_balanced_le`, `depth_balanced_le`, `size_balanced_le` —
+   fan-in two, `⌈log₂ |cs|⌉ + 1` extra depth, `|cs| + 1` extra size.
+ * `BoolCircuit.TreeCircuit.balanced_nil`, `balanced_singleton` — the readers on short lists.
++* `BoolCircuit.TreeCircuit.const_eval` — the constant formula evaluates to its constant (F3);
++  proved from `BoolCircuit.eval_node_nil` (an empty gate is a constant), which moved here from
++  `Hierarchy.lean`.
+ * `BoolCircuit.TreeCircuit.neg_eval`, `depth_neg`, `maxFanin_neg` — negation (F1; targets).
+ * `BoolCircuit.TreeCircuit.subst_eval`, `depth_subst_le`, `maxFanin_subst_le` — substitution
+   (F2; targets).
+-* `BoolCircuit.TreeCircuit.const_eval`, `xor3_eval`, `maj3_eval`, and the value, depth and
+-  fan-in lemmas of every gadget (F3; targets).
++* `BoolCircuit.TreeCircuit.xor3_eval`, `maj3_eval`, the other value lemmas of the fan-in-2
++  gadgets, and the depth and fan-in lemmas of every gadget (F3; targets).
+ 
+ ## References
+ 
