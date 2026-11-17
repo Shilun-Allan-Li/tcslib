@@ -1,8 +1,31 @@
-# RAM machines on a single-tape TM with quadratic overhead: planning note (draft, 2026-11-17)
+# RAM machines on Turing machines: planning note (2026-11-17)
 
-This item is for a future branch into `main`. It is not part of the chapters 3–4 closeout and
-must not delay the closeout's integration (Seyoon, 2026-11-17). **No Lean is written yet:** the
-statement shapes below are drafts, and four decisions (§4) are Seyoon's.
+**Ruling (Seyoon, 2026-11-17):** "all I wanted was to prove the 14 pending admissions for now".
+The scope is **route C** below: prove stage 2's 14 admitted declarations, whose statements were
+gated on 2026-10-14. Routes A, B and D (the book's RAM TM, a single-tape target) are not pursued
+for now; §2–§5 keep the analysis for later. This work goes on a future branch into `main` and
+must not delay the closeout's integration.
+
+## 0. The work: 14 admitted declarations in three tiers
+
+| Tier | File | Declarations | Nature | Size estimate |
+|---|---|---|---|---|
+| 1 | `RAMSimulation/WordSize` (3) | `WordSizeComputable.mono`, `wordSizeComputable_logSpace`, `wordSizeComputable_of_spaceConstructible` | small: monotonicity; machines for `bits(c·logSpace n)` and `bits(c·S n)` from existing length and constructibility rows | 100–300 lines |
+| 2 | `RAMSimulation/Simulation` (2) | `exists_simulation`, `exists_ndSimulation` | **the main work**: a phase host over `P`'s positions with one framed contract per instruction kind (find-by-key in the (address, word) table, two-tape add and subtract mod `2^W`, shift-and-add multiply, sign test, `half`, overwrite or append an entry, input seek, output append, and `coin` as a choice step), a start-up (word size, ruler, length copy, `initMem`), and the simulation induction over `XStepsIn` | several thousand lines; several fills |
+| 3 | `RAMSimulation/Classes` (9) | `mem_DTIME_of_decides`, `mem_P_of_decides`, `mem_P_of_decides_logWord`, `mem_SPACE_of_decides`, `mem_LOGSPACE_of_decides`, `computesInSpace_of_computes`, `mem_SPACE_mul_of_decides`, `mem_NSPACE_of_accepts`, `mem_NL_of_accepts` | corollaries of tier 2 and tier 1 plus bound arithmetic; can be proved first against tier 2's statements | 300–800 lines |
+
+**Order.**
+1. **Re-check the statements** against today's library. They were gated before MIG-1, R4 and the
+   closeout. Check that every name cited in the proof sketches still exists with the cited
+   contract; `phaseHostTM`, `exists_inputSeekTM`, `exists_inputLengthTM`, `embedSilentTM` and
+   `Contract` do.
+2. **Tiers 1 and 3**, while tier 2 is still admitted. Tier 3 only cites tier 2's statements.
+3. **Tier 2**, in fills: the start-up, the instruction rows (grouped), the table invariant and
+   the simulation induction, then the nondeterministic variant.
+
+**Base.** The proofs should use the campaign's machine library (`Build/*`, the contracts, the
+seams), which reaches `main` with W7. Two options: branch from the campaign tip now and rebase
+onto `main` after W7, or start after W7 from `main`.
 
 ## 1. What was deferred, and what exists
 
@@ -68,7 +91,7 @@ gated, and D is a short corollary of C and the proved single-tape theorem. It gi
 machine whose overhead is quadratic in the multi-tape simulation's time. If the goal is the
 book's exercise itself, A and B need §2's question settled first.
 
-## 4. Decisions for Seyoon (paused here)
+## 4. Decisions for Seyoon (answered for now: route C, the 14 admissions)
 
 1. **The model:** the book's RAM TM (A, B), [AFM26]'s word RAM (C, D), or both.
 2. **The target:** multi-tape (`DTIME`, as in the book), a single work tape, or both.

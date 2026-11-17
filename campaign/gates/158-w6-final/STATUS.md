@@ -1,1 +1,1 @@
-**Gate 158 (W6) staged** (2026-11-17): the final chapter-scope audit. Probes (27 headlines clean, 19 extras standard, 0 admissions in scope), census (122 admissions, none in scope), fidelity table, lint (carried by ruling). Awaiting dispatch.
+**Gate 158 (W6) dispatched** (Seyoon, 2026-11-17; bundle `393ad25c`); (2026-11-17): the final chapter-scope audit. Probes (27 headlines clean, 19 extras standard, 0 admissions in scope), census (122 admissions, none in scope), fidelity table, lint (carried by ruling). Awaiting dispatch.
