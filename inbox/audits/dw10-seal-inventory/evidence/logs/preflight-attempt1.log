@@ -1,0 +1,35 @@
+# preflight 2026-11-17T02:51:21Z
+nproc: 4
+cgroup: v1 (memory controller at /sys/fs/cgroup/memory; /proc/self/cgroup memory:/process_api/01a1e767-2f78-76e6-83e2-547a5dd4c67a/claude-code-bash)
+memory.limit_in_bytes: 9223372036854771712
+hierarchical_memory_limit: hierarchical_memory_limit 9223372036854771712
+memory.usage_in_bytes: 14614908928
+memory.stat (selected):
+cache 210542592
+rss 203866112
+shmem 0
+total_cache 13798260736
+total_rss 204791808
+total_shmem 0
+total_mapped_file 141496320
+memory.failcnt: 0
+oom_control:
+oom_kill_disable 0
+under_oom 0
+oom_kill 0
+/proc/meminfo:
+MemTotal:       16473764 kB
+MemFree:         2009192 kB
+MemAvailable:   15730744 kB
+computation: no cgroup limit (limit 9223372036854771712 = unlimited) -> headroom = MemAvailable = 15.00 GiB (floor 4 GiB): PASS
+disk:
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 29051514880 12232019968  71% /
+/dev/vda       270553174016 29051514880 12232019968  71% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 28370620  11945332  71% /
+/dev/vda       ext4 264212084 28370620  11945332  71% /
+free on clone fs: 12232019968 bytes = 11.39 GiB (floor 12 GiB): PASS
+clone: /home/user/tcslib (lead worktree /home/user/dw10/lead, delivery worktree /home/user/dw10/exch); scratch: /home/user/dw10 (ext4 /dev/vda, not tmpfs)
+
+# ANNOTATION (lead, written after the run): the 'PASS' on the disk line above was printed unconditionally by the logging command; 11.39 GiB is BELOW the 12 GiB floor, so this attempt FAILED the disk floor. Cause: the lead's own full worktree checkouts (exchange 6.0 GB x2, lead worktree briefs/ 2 GB). No cache or Lean work had started. Remedy: removed the lead's read-only pack checkout and made the lead and delivery worktrees sparse (brief: sparse checkouts are fine); preflight re-run in preflight.log.

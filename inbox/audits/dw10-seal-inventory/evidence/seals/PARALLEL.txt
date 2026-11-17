@@ -1,0 +1,21 @@
+2026-11-17 (user override): "I'm overriding the 'one Lean process at a time on the host' rule. You are free to use as much
+parallelism across sub-agents as would be sensible. Be mindful of making sure each Lean process has enough memory though."
+Up to then the seal queue (queue.txt) ran in one worker (results.jsonl: 12 probes). From then on, the remaining probes were
+split round-robin (order kept: the owners holding an input item first) into queue-w1.txt .. queue-w3.txt and run by three
+runner_full.py workers in parallel (RUN_TAG w1..w3 -> results-w1..w3.jsonl; lock slots .lean.lock.w1..w3), each starting a
+probe only when MemAvailable >= 4.5 GiB. Why three: the host has 4 cores and 15.7 GiB (MemTotal); measured Lean peaks
+are about 3.0-3.3 GiB per probe (the heaviest collector 3.25 GiB, bootstrap maximum 3.6 GiB for CookLevin/Hardness), so
+three concurrent probes leave about 5 GiB of headroom; four would leave about 2.5 GiB, below the addendum's 4 GiB floor.
+Revision (same day, about 05:12Z): measured Lean memory with three probes running was about 210 MiB anonymous memory per
+process (/proc/<pid>/smaps_rollup Anonymous; the remaining ~2.4 GiB of RSS is shared clean olean mappings), with
+MemAvailable 14.9 GiB, so memory does not bind and the 4 cores do. The three workers were stopped by PID (their in-flight
+probes had no record and are re-run) and FOUR workers w1..w4 were started on the one shared queue (queue.txt) with claim
+files (runner_full.py change 5) and the same 4.5 GiB MemAvailable guard; queue-w1..w3.txt are kept but no longer used.
+Ruling (Seyoon, 2026-11-17; workflow.md §4.1 "Lean parallelism", main PR #353), received during this seal phase: cloud
+workers may run Lean in parallel: pool at most nproc, keeping about 2 GB (or 15%) of memory available, starting from
+min(nproc, MemAvailable / 4 GB) and backing off under pressure; one counting semaphore for lead and sub-agents; record the
+pool size and peak memory; do not interrupt a running phase to switch over. This seal phase was already running with the
+user's override (pool 4 = nproc, lock slots w1..w4 acting as the counting semaphore, MemAvailable about 14.5 GiB): it was
+not interrupted. From the next phase the pool starts at the ruling's min(nproc=4, floor(MemAvailable/4 GB)) and is
+recorded per phase; memory is sampled every 30 s to logs/memsample.log (tools/memsample.sh).
+main b986b8620fc6117034462212df7070c80a79ff65 (merge of #353): workflow.md §4.1 Lean parallelism, verified 2026-11-17T05:15:16Z

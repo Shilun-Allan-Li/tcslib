@@ -1,0 +1,5 @@
+Olean tree /home/user/dw10/tree: 613 .olean files, map olean-tree-map.txt (SHA-256 in olean-tree-map.sha256), made read-only
+with `chmod -R a-w` at 2026-11-17T03:40Z. This host runs every process as uid 0, which bypasses the mode bits: the lead's
+write test (`touch tree/x`) created an empty file, removed at once (the tree held 613 files again). The read-only guard is
+therefore: every later probe runs through seal/runner_full.py (lean -DmaxErrors=0, no -o, nothing written to the tree),
+and the tree is rehashed against the map at the end (0 extra / 0 changed / 0 missing).
