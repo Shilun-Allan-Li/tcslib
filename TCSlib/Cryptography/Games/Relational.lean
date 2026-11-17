@@ -90,7 +90,13 @@ theorem expect_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
     (c : OracleComp spec α) (G₀ : α × σ → ℝ) (G₁ : α × τ → ℝ)
     (hG : ∀ a s' t', R s' t' → G₀ (a, s') = G₁ (a, t')) {s : σ} {t : τ} (hst : R s t) :
     expect (simulate impl₀ c s) G₀ = expect (simulate impl₁ c t) G₁ := by
-  sorry
+  induction c generalizing s t with
+  | pure a =>
+    rw [simulate_pure, simulate_pure, expect_pure, expect_pure]
+    exact hG a s t hst
+  | query i x k ih =>
+    rw [simulate_query, simulate_query, expect_bind, expect_bind]
+    exact h i x s t hst _ _ fun y s' t' hR => ih y hR
 
 /-- **Events on the output, from related states:** under the hypothesis of
 `expect_simulate_rel`, from related states `R s t` every event `P` on the output of `c` has the
@@ -127,7 +133,13 @@ theorem expect_sample_rel {U V β : Type} [Fintype U] [Nonempty U] [Fintype V] [
     (g₀ : β × σ → ℝ) (g₁ : β × τ → ℝ) (hg : ∀ y s' t', R s' t' → g₀ (y, s') = g₁ (y, t')) :
     expect ((sample U).bind fun u => .pure (f₀ u)) g₀ =
       expect ((sample V).bind fun v => .pure (f₁ v)) g₁ := by
-  sorry
+  rw [expect_bind, expect_bind, ← expect_sample_equiv e]
+  refine congrArg _ (funext fun u => ?_)
+  dsimp only
+  rw [expect_pure, expect_pure]
+  calc g₀ (f₀ u) = g₀ ((f₀ u).1, (f₀ u).2) := rfl
+    _ = g₁ ((f₀ u).1, (f₁ (e u)).2) := hg _ _ _ (hf u).2
+    _ = g₁ (f₁ (e u)) := by rw [(hf u).1]
 
 end ProbComp
 
