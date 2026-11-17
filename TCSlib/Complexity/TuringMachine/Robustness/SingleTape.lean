@@ -1439,14 +1439,17 @@ private lemma dgWindow_step {Γ : Type} (M : FinTM Γ) (x : List Γ)
     cases hm : (act.workTapes i).2 with
     | neg =>
       have h : c.workTapePos i = a → left.toNat = 1 := fun he => by rw [hL i he hm]; rfl
-      simp only [Action.apply_workTapePos, hm, SignType.cast]
+      simp only [Action.apply_workTapePos, hm, SignType.neg_eq_neg_one, SignType.zero_eq_zero,
+        SignType.pos_eq_one, SignType.coe_neg, SignType.coe_one, SignType.coe_zero]
       constructor <;> omega
     | zero =>
-      simp only [Action.apply_workTapePos, hm, SignType.cast]
+      simp only [Action.apply_workTapePos, hm, SignType.neg_eq_neg_one, SignType.zero_eq_zero,
+        SignType.pos_eq_one, SignType.coe_neg, SignType.coe_one, SignType.coe_zero]
       constructor <;> omega
     | pos =>
       have h : c.workTapePos i = a + n - 1 → right.toNat = 1 := fun he => by rw [hR i he hm]; rfl
-      simp only [Action.apply_workTapePos, hm, SignType.cast]
+      simp only [Action.apply_workTapePos, hm, SignType.neg_eq_neg_one, SignType.zero_eq_zero,
+        SignType.pos_eq_one, SignType.coe_neg, SignType.coe_one, SignType.coe_zero]
       constructor <;> omega
   refine ⟨by have := w.positive; omega, hheads, ?_, ?_, by have := w.size; omega, ?_⟩
   · intro i j hj
@@ -1473,7 +1476,8 @@ private lemma dgWindow_step {Γ : Type} (M : FinTM Γ) (x : List Γ)
         refine ⟨i, t + 1, le_refl _, ?_⟩
         rw [hstep]
         change (act.apply c).workTapePos i = j
-        simp only [Action.apply_workTapePos, hd, SignType.cast]
+        simp only [Action.apply_workTapePos, hd, SignType.neg_eq_neg_one, SignType.zero_eq_zero,
+          SignType.pos_eq_one, SignType.coe_neg, SignType.coe_one, SignType.coe_zero]
         omega
     · have he : j = a - 1 := by omega
       have ht : left = true := by cases left <;> simp_all only [Bool.toNat_false, Bool.toNat_true] <;> omega
@@ -1484,7 +1488,8 @@ private lemma dgWindow_step {Γ : Type} (M : FinTM Γ) (x : List Γ)
       refine ⟨i, t + 1, le_refl _, ?_⟩
       rw [hstep]
       change (act.apply c).workTapePos i = j
-      simp only [Action.apply_workTapePos, hd, SignType.cast]
+      simp only [Action.apply_workTapePos, hd, SignType.neg_eq_neg_one, SignType.zero_eq_zero,
+        SignType.pos_eq_one, SignType.coe_neg, SignType.coe_one, SignType.coe_zero]
       omega
   · intro i u hu
     by_cases hu' : u ≤ t
