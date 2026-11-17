@@ -51,3 +51,20 @@ Seyoon asked for the cleanup to run in parallel with the GSW/IBE work "to the ex
   Stage 1 together.
 - **The PS10 ch. 5–8 ingest runs now** as a separate external docs job. Stage 3 folds it in.
 - **Stage 2 starts after Stage 1 and the bb1-sim Games PR merge.**
+
+## Stage 1 rulings CS1-Q1 to CS1-Q12 (Seyoon, 2026-11-17)
+
+| # | Ruling |
+|---|---|
+| CS1-Q1 | **Include DL-39** in Stage 1: the 14 `FinDist` facts, protected, in `InformationTheory/{FinDist,Samples,Entropy}.lean`. |
+| CS1-Q2 | **The six statement/body changes are approved now.** Stage 2 removes both DL-35 aliases of `blocks`, the private one and the public one in `EnsemblesLemmas.lean`. The gate checks the six changes explicitly. *(changed: was private only)* |
+| CS1-Q3 | Stage 2 moves `MachineCodec.ext_of_fields` verbatim to its shared home. |
+| CS1-Q4 | The `fwdHandler` generalization is taken out of the cleanup. Hosts change only by their own gated design. |
+| CS1-Q5 | DL-41: the `splitBits` word readers `Authentication.ofFn_splitBits_fst/_snd` in `Authentication/Encoding.lean`. |
+| CS1-Q6 | DL-48: `NUPPT.length_ofFn_coins` in `Complexity/Randomized/PPT.lean`, beside `Coins`. |
+| CS1-Q7 | DL-51: `StatClose.of_uprob_ne` in `Asymptotic/Sampling.lean`. |
+| CS1-Q8 | **DL-49's ThreeColoring helpers move to a shared machine layer.** Stage 1 adds them additively to a shared machine-layer module that both `ThreeColoring/Machines` and `ComposeSecurity/Machines` can import; Stage 2 re-points both. The helpers include `encodeMsgs_eq_flatMap`, `msgAt_encodeMsgs`, the `padTo` family, `polyTimeComputable_flatMap_range`, `flatMap_range_ite` and `iterSnd_poly`. *(changed: was importing ThreeColoring/Machines)* |
+| CS1-Q9 | **DL-43's `mul_prob_le_expect` goes to `Games/Probability.lean` in Stage 2**, after the bb1-sim Games PR merges and frees that file. It is a small additive exception to Stage 2. Lamport is then re-pointed. It is not in Stage 1. |
+| CS1-Q10 | Near relatives that are not instances get no target; they stay as notes. |
+| CS1-Q11 | Promotion requests with no ledgered copy are declined for now. |
+| CS1-Q12 | DL-47: the Complexity-side inline chains stay as they are; only the Cryptography-side copies are re-pointed. |
