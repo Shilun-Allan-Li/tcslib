@@ -1,6 +1,6 @@
 # Dispatch · Gate 44 round 1
 
-The [Codex pack](https://github.com/Shilun-Allan-Li/tcslib/tree/c92247e1482464ab698fc262cd972b0df622c59f/outbox/gates/44-pairing-fills-gate)
+The [Codex pack](https://github.com/Shilun-Allan-Li/tcslib/tree/30ef1257a56873489b599007782046b7dedeb7fc/outbox/gates/44-pairing-fills-gate)
 is staged on the exchange. The commit is local and signed, and is not pushed yet; the maintainer pushes it. Seyoon
 dispatches.
 
@@ -10,12 +10,12 @@ dispatches.
 You are an external Codex auditor for Gate 44 of the pairing campaign (the
 fills of T1 and T4), round 1, in https://github.com/Shilun-Allan-Li/tcslib.
 
-1. Read exchange/pass-shelat-ch5-8 at c92247e1482464ab698fc262cd972b0df622c59f.
+1. Read exchange/pass-shelat-ch5-8 at 30ef1257a56873489b599007782046b7dedeb7fc.
    Read outbox/gates/44-pairing-fills-gate/README.md, pack-r1.md and bundle.md.
    Verify the pack using SHA256SUMS, and verification-r1.zip using the
    SHA256SUMS inside it.
 2. Audit two draft PRs together, using the pack, with campaign records
-   <RECORDS-PIN>:
+   8f888790b7e40f9e0529967e29a05a72c5ee8ba3:
    - PR #340 at Lean head 916afc25c21f5e52b4b01958186ad55d2f615fd1 (merge base
      9e7a96481785d6cac4dea3b2e990c49ac278b060): the proof of T1
      BilinearGen.bdhAssumption_of_dbdhAssumption (Decision BDH implies BDH
@@ -40,9 +40,11 @@ fills of T1 and T4), round 1, in https://github.com/Shilun-Allan-Li/tcslib.
      doc-only;
    - Rule 10: the seals on Pairing/Assumptions and the five #346 owners
      downstream of it (strict and coe, A and B), the paired controls on
-     Assumptions, the explicit-unfold scan, and whether request-set identity
-     justifies not re-sealing Defs, BonehBoyen, Draws and the unchanged
-     Gate 40 owners;
+     Assumptions, the explicit-unfold scan, whether request-set identity
+     justifies not re-sealing Defs, BonehBoyen and Draws, and the
+     supplement: the re-seal of the unchanged Gate 40 owners downstream of
+     the changed files (Joux, BonehBoyenSecurity, the IdentityBased and
+     AdvancedEncryption facades; 16/16, controls ALL_OK);
    - sources and citations: BB04 tags, T1's folklore attribution (ruling
      Q10), the PS10 Theorem 52.3 locator on Draws.draw, BB04 page locators;
    - duplication (an undisclosed re-proof of a public lemma is a major),
@@ -64,25 +66,25 @@ The user dispatches and merges.
 
 ## State at staging
 
-- **Records:** the replay was staged at the records tip `1d1a9bb3aa4d5d28c7c9a2343cb322a39da07821`; three records-only
-  commits (the bb1-sim T2/T3 fill, up to `8f888790b7e40f9e0529967e29a05a72c5ee8ba3`) landed meanwhile and change no code
-  path. This gate directory's files are committed on `8f888790` as one local signed commit (not pushed).
-  `<RECORDS-PIN>` is left for Seyoon (or the maintainer) to set. Under Gate 42 r2's convention the pin is the records tip
-  just before this gate's commit (the pack's own files are filed after the pin), which avoids a cycle between the pin, the
-  exchange commit and this file: `8f888790b7e40f9e0529967e29a05a72c5ee8ba3` if the records are pushed as they stand, or the
-  commit that carries the decision rows if they go in first.
-- **Exchange:** the commit is `c92247e1482464ab698fc262cd972b0df622c59f`, on the exchange tip `c797f6f2c4c69e261277cd033bf2441fe4811df8` ("Stage the
-  bb1-sim fill job bb1-sim (Claude)"), fetched at staging.
+- **Records pin:** `8f888790b7e40f9e0529967e29a05a72c5ee8ba3` (Seyoon's ruling: the records tip just before this gate's
+  first commit, as in Gate 42 r2; the pack's own files are filed after the pin). The replay was staged at
+  `1d1a9bb3aa4d5d28c7c9a2343cb322a39da07821`; the three records-only commits to `8f888790` (the bb1-sim T2/T3 fill) change no
+  code path.
+- **Records commits:** `997aac33ab63f3c58e2a40f324c864b4dbdca626` (the first staging, on `8f888790`; pushed by the
+  coordinator) and the finalization commit on top of it that carries this file (the pin filled, the seal supplement, the
+  refreshed PR descriptions, regenerated sums). Both add only `briefs/pairings/gates/44-pairing-fills/`.
+- **Exchange:** the commit is `30ef1257a56873489b599007782046b7dedeb7fc`, one SSH-signed commit on the exchange tip
+  `4cbe7980fc9716618a0ae5a3a3255d8464dd317a` ("Outbox: gate 154 round 2 bundle (PR #350, head 375531b6)"). The tip moved
+  from `c797f6f2` after the first staging (`bc2bf64a` cleanup-stage1 checkpoint 1, `1ef26470` bb1-sim checkpoint 1,
+  `4cbe7980` the Arora–Barak gate 154 outbox; no shared path), so the staging commit `c92247e1` (never pushed) was replayed
+  onto it.
   - The local branch is `stage/gate44-exchange`, in the sparse worktree `$SP/wt-exch-g44`.
-  - The commit adds only `outbox/gates/44-pairing-fills-gate/` and is SSH-signed.
+  - The commit adds only `outbox/gates/44-pairing-fills-gate/`.
   - It is **not pushed**.
-  - 15 files; `SHA256SUMS` (`238ab9cb…`) verifies 14/14 from a fresh `git archive` of the commit; `bundle.md` is
-    `50f668de2203f87edaa99309141ce3ad68e42db8f7eff0c65e528e5bf2f9f293`, 41 sections (not committed to the records, per
-    workflow §3); `verification-r1.zip` has 409 entries and verifies against its own `SHA256SUMS` from a fresh extract.
-- **Pins to fill.** `<RECORDS-PIN>` appears in `pack-r1.md`, `README.md`, `RECORDS.txt`, `bundle.md`, `source-head-r1.json`
-  and this file. Filling it changes those files' hashes, so `SHA256SUMS` (exchange) and `SHA256SUMS-r1` (records) must be
-  regenerated and both commits amended.
-- **PR descriptions** are stale in places (pack § Known dispositions and slips); updating them is not a condition of the
-  dispatch.
+  - 15 files; `SHA256SUMS` (`14af9a59…`) verifies 14/14 from a fresh `git archive` of the commit; `bundle.md` is
+    `e15009856b528f3be9cb6d4efd77dd23f34ef94b9f929bc4e4fdf7f398310f79`, 43 sections (not committed to the records, per
+    workflow §3); `verification-r1.zip` (`ebb59398…`) has 550 entries and verifies against its own `SHA256SUMS` from a fresh
+    extract.
+- **PR descriptions:** Seyoon updated both bodies on 2026-11-17 (04:34 UTC); the pack carries them as fetched afterwards.
 
-**Ready to dispatch** once the records pin is filled and both commits are pushed.
+**Ready to dispatch** once the exchange commit and the records finalization commit are pushed.

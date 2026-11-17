@@ -12,7 +12,7 @@ replayed.
   `89a18a8225be1b76166af12a15179da291747783` (branch `land/pairings-bb1-machine`). Seven SSH-signed commits on the merge
   base `7291f6b237fec75add1549c0992c174442180488`: three in-house checkpoints, the external worker's three commits
   (re-signed cherry-picks, authors kept), and the landing edit LE-bb1m. It changes 8 files (+2741/−17).
-- **Records pin:** `<RECORDS-PIN>`. It descends from the records tip at which the replay was staged,
+- **Records pin:** `8f888790b7e40f9e0529967e29a05a72c5ee8ba3`. It descends from the records tip at which the replay was staged,
   `1d1a9bb3aa4d5d28c7c9a2343cb322a39da07821` ("Records: #346 (T4) phase 2 accept; replay on snapshot #4"), which holds both
   maintainer reviews. Every record this pack cites is read at `1d1a9bb3` unless it says otherwise; this pack's own files are
   filed after it. During staging three records-only commits landed (`fc0aa4e1`, `fa8a0529`,
@@ -248,10 +248,11 @@ no statement change? Phase 2 found the request sets unchanged by it.
   re-sealed: a collector run over all eight #346 owners at T44 gives request sets **row-identical** to phase 2's snapshot-#4
   records (`2ec72515`), whose seals passed. Is request-set identity (with the owner sources and probes byte-identical) a
   sufficient ground?
-- **The Gate 40 owners that neither PR changes** (`Pairing/Group`, `Pairing/Operations`, `KeyExchange/Joux`,
-  `IB/BonehBoyenSecurity`, the two facades) were not re-sealed. Their sources are unchanged; their closures gain #340's two
-  private definitions and, for `BonehBoyenSecurity` and the facades, #346's helper modules. Is that acceptable, or is a seal
-  re-run of `BonehBoyenSecurity` (which imports the T4 machine) necessary evidence?
+- **The unchanged Gate 40 owners downstream of the changed files** (`KeyExchange/Joux`, `IB/BonehBoyenSecurity` and the
+  facades `AdvancedEncryption/IdentityBased` and `AdvancedEncryption`) were **re-sealed** on T44 (the supplement, by the
+  coordinator's ruling): their request sets grew since Gate 40's merged-tree seals, so identity could not be shown. Strict and
+  coe, A and B, with Gate 40's paired controls (`supplement/`, § 9). `Pairing/Group` and `Pairing/Operations` are not
+  downstream of the changed files. Are these seals canonical and bound to T44?
 - **Paired controls on `Assumptions`** (pair-bdh's `mkctl_pbdh.py`: LE-gate40's rows plus nine rows for `distinguisherL`,
   `runAtL`, `layout`, `ofPolyTime`, `advInput`, `accept`, `uprob`, `OrderAtLeastExcept`, `inst`), strict and coe.
 - **The explicit-unfold scan** over the 9 changed files. Does any proof read a foreign definition other than through a
@@ -352,6 +353,16 @@ seal harness is phase 2's `tools-used/seal` unmodified, plus pair-bdh's `mkctl_p
   - **Explicit-unfold scan** over the 9 changed files: 1016 items (750 THEOREM, 166 LOCAL_OR_UNRESOLVED, 98
     OWNED_DEFINITION, 2 SIMPROC), **0 foreign**; it is exactly the union of pair-bdh's 69 items and 346c's 947. The kinds
     probe had rc 0.
+  - **Supplement: the unchanged Gate 40 owners downstream of the changed files** (`supplement/README.md`; run 04:35–05:01
+    UTC; collector over the four, then `rule10_b.sh` unmodified with LE-gate40's `mkctl_g40.py`): `KeyExchange/Joux`
+    904/905/903/904, `IB/BonehBoyenSecurity` 2312/2313/2311/2312, `AdvancedEncryption/IdentityBased` 2312/2313/2311/2312,
+    `AdvancedEncryption` 2409/2410/2408/2409 (strict A / strict B / coe A / coe B). **16/16 rc 0, 0 `error:`, 0 `error(`**,
+    install and EOF records, no failing declaration. Against Gate 40's merged-tree seals (`9e7a9648`) every record gains rows
+    (Joux +253, `BonehBoyenSecurity` and the `IdentityBased` facade +1208, the `AdvancedEncryption` facade +1161) and loses
+    none, with the owner sources byte-identical. Paired controls (covering subset: the `IdentityBased` facade and `Joux`):
+    24 sealed negatives per variant each fail exactly once, every reader passes, every unsealed probe has 0 errors: **ALL_OK
+    True** in strict and in coe. `BonehBoyenSecurity` declares no definition; its request sets equal the facade's row for
+    row. Snapshot #4 rehashed 0/0/0 before and after; the output still matches its map `ded2f64d…`.
   - **Name clash** (`checks/nameclash-T44.txt`, phase 1's `nameclash.py` over every declaration of the 9 files, private
     included, against every other TCSlib file at T44): **0 exact full-name clashes**.
 - **Lint** (`campaign_style_lint.py TCSlib/Cryptography --check8b`, tip and T44 exports): 92 FAIL / 104 WARN on both sides,
@@ -365,14 +376,14 @@ seal harness is phase 2's `tools-used/seal` unmodified, plus pair-bdh's `mkctl_p
   BM-F03 closed by phase 2's `Oracles`-owned controls (ALL_OK); BM-F04 superseded; BM-F05 evidence nits; BM-F06
   (`bb1SimChal_fresh`'s 15-line proof without a sketch, pre-existing, cleanup ledger); BM-F07 sizes; BM-F08 (promotion
   request for `sidSpec_rng_one/_two`, carried to the bb1-sim reader probe); BM-F09 (the public glue lemma). Grade them.
-- **#340's "Not yet done"** (REPORT § *Limits*, PR description): the downstream owners' seals after `Assumptions`' closure
-  grew. Phase 2's cross-build X sealed the five #346 owners downstream of `Assumptions` (20/20, 0 errors, each request set
-  +2 rows: `tupleBdh`, `tupleTgt`), and this gate's replay seals them on T44.
-- **The PR descriptions are stale** (`pr340-description.md`, `pr346-description.md`, fetched at staging with the REST API):
-  #340's title says "[stacked on #331]" and its body "Stacked on #331 (base `stmt/pairings`) … Retarget … once #331 merges",
-  although the base has been `cryptography/pass-shelat-ch2-4` since #331 merged; its "Not yet done" item is now answered.
-  #346's body says "Phase 2 (Lean, on the maintainer's tree): pending", although phase 2 passed. The REST `base.sha` fields
-  (`b6d977ea…`, `7291f6b2…`) are the tips at retarget and at opening; records commits only have landed since.
+- **#340's in-house "Not yet done"** (REPORT § *Limits*): the downstream owners' seals after `Assumptions`' closure grew.
+  Phase 2's cross-build X sealed the five #346 owners downstream of `Assumptions` (20/20, 0 errors, each request set +2
+  rows: `tupleBdh`, `tupleTgt`), and this gate's replay seals them on T44.
+- **The PR descriptions** were updated by Seyoon on 2026-11-17 (#340 at 04:34:27Z, retitled "Pairing fill pair-bdh: T1
+  bdhAssumption_of_dbdhAssumption", base, joint check and seal status corrected; #346 at 04:34:39Z, with phase 2 and the
+  joint check). `pr340-description.md` and `pr346-description.md` are those bodies, read with the GitHub MCP tool and the
+  REST API (the same text). The REST `base.sha` fields (`b6d977ea…`, `7291f6b2…`) are the tips at retarget and at opening;
+  records commits only have landed since.
 - **Authorship.** T1 and #346's three checkpoints were written in-house by the maintainer; #346's middle three commits by an
   external Claude worker; LE-bb1m by the maintainer. The signing key is shared by the account's Claude sessions (BS-F08).
 - **The 346c replay** (#346 alone on snapshot #4, `$SP/olean-replay-346c`, map `5e63b3cc1a0efd40c3b5875d701b99a7457cc5f2a3b2831d4a7ab8cc7cf35404`,
@@ -394,7 +405,7 @@ seal harness is phase 2's `tools-used/seal` unmodified, plus pair-bdh's `mkctl_p
 - **`pr340.diff.txt`** (`git diff 9e7a9648..916afc25`, equal to the three-dot `git diff 1d1a9bb3...916afc25` byte for byte;
   1 file, +227/−8), **`pr346.diff.txt`** (`git diff 7291f6b2..89a18a82`, equal to the three-dot view; 8 files, +2741/−17),
   **`T44.diff.txt`** (`git diff 1d1a9bb3 33681cb8` over the code paths; the 9 files).
-- **`pr340-description.md`**, **`pr346-description.md`**: the PR bodies as they stand (REST `.body`, raw).
+- **`pr340-description.md`**, **`pr346-description.md`**: the PR bodies as updated on 2026-11-17 (REST `.body`, raw).
 - **`source-head-r1.json`**: the pins and, for each of the 9 files at T44, status, SHA-256, line count and over-width count.
 - **`sources-r1.zip`**: `T44-33681cb8/` the source closure at T44 (168 modules: the import closure of the `IdentityBased`,
   `KeyExchange` and `Pairing` facades); `pr340-head-916afc25/` and `pr346-head-89a18a82/` the changed files at each head;
@@ -414,7 +425,8 @@ seal harness is phase 2's `tools-used/seal` unmodified, plus pair-bdh's `mkctl_p
   - `records/`: the pairing plan and its decision-log extract (rows of 2026-11-16 and 2026-11-17 from Gate 40's findings
     to #346's phase 2), Gate 40's round-1 and round-2 findings and round-2 resolutions, the approved reader text, #346's
     issue brief, and `policy.md`;
-  - `pr/pr-rest-fields.json`: the REST fields read at staging.
+  - `pr/pr-rest-fields.json`: the REST fields read after the description updates;
+  - `supplement/`: the seals and controls of the unchanged Gate 40 owners downstream of the changed files (§ 9).
 - **`SHA256SUMS-r1`**: the files of this gate directory.
 
 ## Findings delivery
