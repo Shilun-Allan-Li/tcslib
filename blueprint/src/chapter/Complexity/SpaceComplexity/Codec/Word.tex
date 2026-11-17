@@ -451,21 +451,11 @@ $(2W+2)(s+\	ext{logSpace}(|x|)+1)$, where $W$ is the number of bits used to enco
 tape cell and $\text{logSpace}(n)=\lfloor\log_2 n\rfloor+1$.
 \end{theorem}
 
-\begin{lemma}[Value bounded by the corresponding power of two]
-\lean{Complexity.Codec.bitsVal_lt_two_pow}
-\label{Complexity.Codec.bitsVal_lt_two_pow}
-\leanok
-\uses{Complexity.LogProg.bitsVal}
-\difficulty{4}
-For every finite Boolean list $w$, its binary value is strictly less than $2^{|w|}$,
-where $|w|$ is the length of the list.
-\end{lemma}
-
 \begin{theorem}[Configuration code size bound]
 \lean{Complexity.Codec.cfgCode_lt}
 \label{Complexity.Codec.cfgCode_lt}
 \leanok
-\uses{Complexity.Codec.bitsVal_lt_two_pow, Complexity.Codec.cfgCode, Complexity.Codec.codeK, Complexity.Codec.length_cfgWord_le, Complexity.logSpace, Turing.Cfg}
+\uses{Complexity.LogProg.bitsVal_lt_two_pow, Complexity.Codec.cfgCode, Complexity.Codec.codeK, Complexity.Codec.length_cfgWord_le, Complexity.logSpace, Turing.Cfg}
 \difficulty{1}
 Let $N$ be a finite nondeterministic Turing machine with Boolean symbols, let $x$ be a
 finite Boolean string, let $s$ be a natural number, and let $C$ be a configuration of

@@ -192,8 +192,8 @@ belonging to $B$, is in nondeterministic polynomial time with oracle $B$.
 \end{theorem}
 
 \begin{definition}[Relabeling an oracle machine's states]
-\lean{Complexity.oracleRelabel}
-\label{Complexity.oracleRelabel}
+\lean{Turing.OracleTM.relabel}
+\label{Turing.OracleTM.relabel}
 \leanok
 \uses{Turing.Action.mapState, Turing.OracleTM}
 Given an oracle Turing machine with state set $S$ and an equivalence $e:S\simeq S'$,
@@ -204,10 +204,10 @@ each successor state relabeled by $e$.
 \end{definition}
 
 \begin{theorem}[Relabeling preserves well-formedness]
-\lean{Complexity.oracleRelabel_wellFormed}
-\label{Complexity.oracleRelabel_wellFormed}
+\lean{Turing.OracleTM.relabel_wellFormed}
+\label{Turing.OracleTM.relabel_wellFormed}
 \leanok
-\uses{Complexity.oracleRelabel, Turing.OracleTM, Turing.OracleTM.WellFormed}
+\uses{Turing.OracleTM.relabel, Turing.OracleTM, Turing.OracleTM.WellFormed}
 \difficulty{1}
 Let $M$ be an oracle Turing machine with state set $S$, and let $e:S\to S'$ be a
 bijection. If the query, positive-answer, and negative-answer states of $M$ are pairwise
@@ -217,10 +217,10 @@ negative-answer states.
 \end{theorem}
 
 \begin{theorem}[State relabeling commutes with one oracle step]
-\lean{Complexity.oracleRelabel_step}
-\label{Complexity.oracleRelabel_step}
+\lean{Turing.OracleTM.relabel_step}
+\label{Turing.OracleTM.relabel_step}
 \leanok
-\uses{Complexity.oracleRelabel, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.mapState, Turing.Cfg.mapState_apply, Turing.Cfg.workTapeSymbols, Turing.OracleTM, Turing.OracleTM.queryString, Turing.OracleTM.step}
+\uses{Turing.OracleTM.relabel, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.mapState, Turing.Cfg.mapState_apply, Turing.Cfg.workTapeSymbols, Turing.OracleTM, Turing.OracleTM.queryString, Turing.OracleTM.step}
 \difficulty{5}
 Let $k\in\mathbb{N}$, let $\Sigma$ be an alphabet, let $S,S'$ be state sets, let $x$ be
 a word over $\Sigma$, let $M$ be an oracle Turing machine with $k$ ordinary work tapes
@@ -231,10 +231,10 @@ step of $M$ from $c$.
 \end{theorem}
 
 \begin{theorem}[State relabeling commutes with oracle runs]
-\lean{Complexity.oracleRelabel_runFrom}
-\label{Complexity.oracleRelabel_runFrom}
+\lean{Turing.OracleTM.relabel_runFrom}
+\label{Turing.OracleTM.relabel_runFrom}
 \leanok
-\uses{Complexity.oracleRelabel, Complexity.oracleRelabel_step, Turing.Cfg, Turing.Cfg.mapState, Turing.OracleTM, Turing.OracleTM.runFrom, Turing.OracleTM.step}
+\uses{Turing.OracleTM.relabel, Turing.OracleTM.relabel_step, Turing.Cfg, Turing.Cfg.mapState, Turing.OracleTM, Turing.OracleTM.runFrom, Turing.OracleTM.step}
 \difficulty{3}
 Let $k\in\mathbb{N}$, let $\Sigma$ be an alphabet, let $S,S'$ be state sets, let $x$ be
 a word over $\Sigma$, let $M$ be an oracle Turing machine with $k$ ordinary work tapes
@@ -246,10 +246,10 @@ steps.
 \end{theorem}
 
 \begin{theorem}[State relabeling preserves timed computation]
-\lean{Complexity.oracleRelabel_computesInTime}
-\label{Complexity.oracleRelabel_computesInTime}
+\lean{Turing.OracleTM.relabel_computesInTime}
+\label{Turing.OracleTM.relabel_computesInTime}
 \leanok
-\uses{Complexity.oracleRelabel, Complexity.oracleRelabel_runFrom, Turing.Cfg.mapState, Turing.OracleTM, Turing.OracleTM.ComputesInTime, Turing.OracleTM.initCfg}
+\uses{Turing.OracleTM.relabel, Turing.OracleTM.relabel_runFrom, Turing.Cfg.mapState, Turing.OracleTM, Turing.OracleTM.ComputesInTime, Turing.OracleTM.initCfg}
 \difficulty{3}
 Let $k$ be a natural number, let $\Sigma$ be an alphabet, let $S$ and $S'$ be state
 sets, let $M$ be an oracle Turing machine with $k$ ordinary work tapes, and let $e\colon
@@ -355,7 +355,7 @@ $j$ and $r$ is the machine decoded from $j$.
 \lean{Complexity.exists_finOracleTM_enumeration}
 \label{Complexity.exists_finOracleTM_enumeration}
 \leanok
-\uses{Complexity.CanonTab, Complexity.canonTabFintype, Complexity.decodeOracleTable, Complexity.decodeOracleTable_rank, Complexity.oracleEnumeration, Complexity.oracleEnumeration_pair, Complexity.oracleRelabel, Complexity.oracleRelabel_computesInTime, Complexity.oracleRelabel_wellFormed, Turing.FinOracleTM, Turing.FinOracleTM.ComputesInTime}
+\uses{Complexity.CanonTab, Complexity.canonTabFintype, Complexity.decodeOracleTable, Complexity.decodeOracleTable_rank, Complexity.oracleEnumeration, Complexity.oracleEnumeration_pair, Turing.OracleTM.relabel, Turing.OracleTM.relabel_computesInTime, Turing.OracleTM.relabel_wellFormed, Turing.FinOracleTM, Turing.FinOracleTM.ComputesInTime}
 \difficulty{5}
 There is a sequence $(N_i)_{i\in\mathbb N}$ of finite oracle Turing machines over the
 binary alphabet such that, for every finite binary oracle machine $M$ and every natural

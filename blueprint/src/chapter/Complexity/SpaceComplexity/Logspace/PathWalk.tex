@@ -146,16 +146,6 @@ $x$ if, for every $i<|u|$, the entry of $x$ at position $r+i$ equals the entry o
 position $i$, and $|x|=r+|u|$. Any out-of-range list lookup is interpreted as false.
 \end{definition}
 
-\begin{lemma}[Suffix after pair encoding]
-\lean{Complexity.drop_pairEncode}
-\label{Complexity.drop_pairEncode}
-\leanok
-\uses{Turing.pairEncode, Turing.pairEncode_eq_dbl}
-\difficulty{3}
-For any two finite bit strings $u$ and $w$, deleting the first $2|u|+2$ bits from their
-pair encoding leaves exactly $w$.
-\end{lemma}
-
 \begin{lemma}[Characterization by the Doubled Pair Encoding]
 \lean{Complexity.dblAt_iff}
 \label{Complexity.dblAt_iff}
@@ -227,7 +217,7 @@ to $t$.
 \lean{Complexity.eq_pathRaw_iff}
 \label{Complexity.eq_pathRaw_iff}
 \leanok
-\uses{Complexity.DblAt, Complexity.PlainAt, Complexity.dblAt_iff, Complexity.drop_pairEncode, Complexity.pathRaw, Complexity.plainAt_iff, Turing.length_pairEncode, Turing.pairEncode}
+\uses{Complexity.DblAt, Complexity.PlainAt, Complexity.dblAt_iff, Complexity.pathRaw, Complexity.plainAt_iff, Turing.length_pairEncode, Turing.pairEncode}
 \difficulty{5}
 Let $x$ and $M$ be finite Boolean words and let $n,s,t$ be natural numbers. Then $x$ is
 the encoding of the pair consisting of $n$ true bits and the nested pair of $M$ with the

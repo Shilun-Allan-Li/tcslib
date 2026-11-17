@@ -10,7 +10,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.SpaceComplexity.Logspa
 \lean{Complexity.LogProg.ISGen.code_le_gKv}
 \label{Complexity.LogProg.ISGen.code_le_gKv}
 \leanok
-\uses{Complexity.Codec.codeK, Complexity.LogProg.ISCount.lgv, Complexity.LogProg.ISCount.logSpace_le_size_succ, Complexity.LogProg.ISGen.gKv, Complexity.LogProg.ISGen.gev, Complexity.logSpace}
+\uses{Complexity.Codec.codeK, Complexity.LogProg.ISCount.lgv, Complexity.logSpace_le_size_succ, Complexity.LogProg.ISGen.gKv, Complexity.LogProg.ISGen.gev, Complexity.logSpace}
 \difficulty{4}
 Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $x$
 be a finite Boolean word, and let $E,s\in\mathbb N$. Write $\kappa(N)$ for the code
@@ -76,15 +76,6 @@ every register stays at most $B$ before halting, and some branch accepts if and 
 $x\notin L$.
 \end{theorem}
 
-\begin{lemma}[Binary expansion length bound]
-\lean{Complexity.bits_succ_le}
-\label{Complexity.bits_succ_le}
-\leanok
-\difficulty{3}
-Let $m,e$ be natural numbers with $m\le 2^e+1$. Then the binary expansion of $m+1$,
-written from least significant bit to most significant bit, has length at most $e+2$.
-\end{lemma}
-
 \begin{lemma}[Binary Size Bound]
 \lean{Complexity.size_le_logSpace}
 \label{Complexity.size_le_logSpace}
@@ -99,7 +90,7 @@ For every natural number $n$, its binary size satisfies $\operatorname{size}(n)\
 \lean{Complexity.compl_mem_NSPACE}
 \label{Complexity.compl_mem_NSPACE}
 \leanok
-\uses{Complexity.Codec.acceptLang_mem, Complexity.Codec.codeK, Complexity.Codec.initLang_mem, Complexity.Codec.stepLang_mem, Complexity.LogProg.ISCount.St.toV_zero, Complexity.LogProg.ISCount.lgv, Complexity.LogProg.ISGen.gKv, Complexity.LogProg.ISGen.gen_start, Complexity.LogProg.ISGen.gev, Complexity.LogProg.ISGen.igA, Complexity.LogProg.ISGen.igA_npreS, Complexity.LogProg.NHalts.mono, Complexity.LogProg.NSem.decides, Complexity.LogProg.SavitchARM.decs, Complexity.LogProg.narm_decides_space, Complexity.NSPACE, Complexity.bits_succ_le, Complexity.inputLenLang_mem, Complexity.logSpace, Complexity.logSpace_le_of_le_mul_two_pow, Complexity.size_le_logSpace, Turing.FinTM, Turing.FinTM.DecidesInSpace}
+\uses{Complexity.Codec.acceptLang_mem, Complexity.Codec.codeK, Complexity.Codec.initLang_mem, Complexity.Codec.stepLang_mem, Complexity.LogProg.ISCount.St.toV_zero, Complexity.LogProg.ISCount.lgv, Complexity.LogProg.ISGen.gKv, Complexity.LogProg.ISGen.gen_start, Complexity.LogProg.ISGen.gev, Complexity.LogProg.ISGen.igA, Complexity.LogProg.ISGen.igA_npreS, Complexity.LogProg.NHalts.mono, Complexity.LogProg.NSem.decides, Complexity.LogProg.SavitchARM.decs, Complexity.LogProg.narm_decides_space, Complexity.NSPACE, Complexity.inputLenLang_mem, Complexity.logSpace, Complexity.logSpace_le_of_le_mul_two_pow, Complexity.size_le_logSpace, Turing.FinTM, Turing.FinTM.DecidesInSpace}
 \difficulty{6}
 Let $S:\mathbb{N}\to\mathbb{N}$ satisfy $\log_2(n)+1 \le S(n)$ for every
 $n\in\mathbb{N}$. For every binary language $L$ decidable by a finite nondeterministic
