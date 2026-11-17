@@ -201,3 +201,116 @@ its negative-answer successor otherwise, with the original input head, register 
 decider tapes, decider-head positions, and output, and with each argument register head
 reset according to the return-position rule for the full argument list.
 \end{lemma}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Machines --- Call Return: further results}
+
+\begin{lemma}[Input head of the constructed configuration]
+\lean{Complexity.LogProg.mkCfg_inputPos}
+\label{Complexity.LogProg.mkCfg_inputPos}
+\leanok
+\uses{Complexity.LogProg.CSt, Complexity.LogProg.mkCfg}
+\difficulty{1}
+Let $x$ be a Boolean input, let $m$ be the number of registers and $k_D$ the number of
+decider tapes. For any optional compiled-machine state, input-head position
+$i_p\in\{0,\dots,|x|+1\}$, register-tape contents and head positions, decider-tape
+contents and head positions, and output word, the configuration on $m+k_D$ work tapes
+assembled from these data has input-head position $i_p$.
+\end{lemma}
+
+\begin{lemma}[Work tapes of the constructed configuration]
+\lean{Complexity.LogProg.mkCfg_workTapes}
+\label{Complexity.LogProg.mkCfg_workTapes}
+\leanok
+\uses{Complexity.LogProg.CSt, Complexity.LogProg.mkCfg}
+\difficulty{1}
+Let $x$ be a Boolean input, let $m$ be the number of registers and $k_D$ the number of
+decider tapes. For any optional compiled-machine state, input-head position, register
+tapes $r_t$ with head positions, decider tapes $d_t$ with head positions, and output
+word, the $m+k_D$ work tapes of the configuration assembled from these data are the
+register tapes followed by the decider tapes: tape $j<m$ is $r_t(j)$ and tape $m+j$ is
+$d_t(j)$.
+\end{lemma}
+
+\begin{lemma}[Work-head positions of the constructed configuration]
+\lean{Complexity.LogProg.mkCfg_workTapePos}
+\label{Complexity.LogProg.mkCfg_workTapePos}
+\leanok
+\uses{Complexity.LogProg.CSt, Complexity.LogProg.mkCfg}
+\difficulty{1}
+Let $x$ be a Boolean input, let $m$ be the number of registers and $k_D$ the number of
+decider tapes. For any optional compiled-machine state, input-head position, register
+tapes with head positions $r_p$, decider tapes with head positions $d_p$, and output
+word, the $m+k_D$ work-head positions of the configuration assembled from these data are
+the register heads followed by the decider heads: head $j<m$ is at $r_p(j)$ and head
+$m+j$ is at $d_p(j)$.
+\end{lemma}
+
+\begin{lemma}[Output of the constructed configuration]
+\lean{Complexity.LogProg.mkCfg_output}
+\label{Complexity.LogProg.mkCfg_output}
+\leanok
+\uses{Complexity.LogProg.CSt, Complexity.LogProg.mkCfg}
+\difficulty{1}
+Let $x$ be a Boolean input, let $m$ be the number of registers and $k_D$ the number of
+decider tapes. For any optional compiled-machine state, input-head position,
+register-tape contents and head positions, decider-tape contents and head positions, and
+output word $o$, the configuration on $m+k_D$ work tapes assembled from these data has
+output $o$.
+\end{lemma}
+
+\begin{lemma}[Restored arguments return to the origin]
+\lean{Complexity.LogProg.retPos_of_lt}
+\label{Complexity.LogProg.retPos_of_lt}
+\leanok
+\uses{Complexity.LogProg.CallSpec, Complexity.LogProg.retPos}
+\difficulty{1}
+Let a call specification over $m$ registers have an ordered list of argument registers,
+let $p_0$ assign an integer position to each register, and let $a\in\mathbb{N}$. The
+restored position after the first $a$ arguments sends a register to $0$ if it occurs in
+the argument list at first-occurrence index below $a$, and to $p_0(r)$ otherwise. If a
+register $r$ occurs in the argument list and its first-occurrence index is less than
+$a$, then its restored position is $0$.
+\end{lemma}
+
+\begin{lemma}[Non-argument registers keep their position]
+\lean{Complexity.LogProg.retPos_of_not_mem}
+\label{Complexity.LogProg.retPos_of_not_mem}
+\leanok
+\uses{Complexity.LogProg.CallSpec, Complexity.LogProg.retPos}
+\difficulty{1}
+Let a call specification over $m$ registers have an ordered list of argument registers,
+let $p_0$ assign an integer position to each register, and let $a\in\mathbb{N}$. The
+restored position after the first $a$ arguments sends a register to $0$ if it occurs in
+the argument list at first-occurrence index below $a$, and to $p_0(r)$ otherwise. If a
+register $r$ does not occur in the argument list, then its restored position is
+$p_0(r)$.
+\end{lemma}
+
+\begin{lemma}[Arguments not yet restored keep their position]
+\lean{Complexity.LogProg.retPos_of_le}
+\label{Complexity.LogProg.retPos_of_le}
+\leanok
+\uses{Complexity.LogProg.CallSpec, Complexity.LogProg.retPos}
+\difficulty{2}
+Let a call specification over $m$ registers have an ordered list of argument registers,
+let $p_0$ assign an integer position to each register, and let $a\in\mathbb{N}$. The
+restored position after the first $a$ arguments sends a register to $0$ if it occurs in
+the argument list at first-occurrence index below $a$, and to $p_0(r)$ otherwise. If $a$
+is at most the first-occurrence index of a register $r$ in the argument list (taken to
+be the length of the list when $r$ does not occur), then the restored position of $r$
+is $p_0(r)$.
+\end{lemma}
+
+\begin{lemma}[Register box, unfolded]
+\lean{Complexity.LogProg.regBox_iff}
+\label{Complexity.LogProg.regBox_iff}
+\leanok
+\uses{Complexity.LogProg.CallSpec, Complexity.LogProg.RegBox}
+\difficulty{1}
+Let a call specification over $m$ registers have a list of argument registers, let
+$c_0$ and $p$ assign an integer position to each register, and let $W$ assign a Boolean
+word to each register. Then $p$ satisfies the register-box condition relative to $c_0$
+and $W$ if and only if, for every register $r$, $p(r)=c_0(r)$ whenever $r$ is not an
+argument, and $-1\le p(r)\le |W(r)|$ whenever $r$ is an argument.
+\end{lemma}

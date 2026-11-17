@@ -124,3 +124,125 @@ configurations $C,C'$ on input $x$ such that $C$ lies within window $s$ and has 
 $c$, $C'$ is obtained from $C$ by one step of $N$ and lies within window $s$, and $C'$
 has code $c'$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\subsection*{Space Complexity --- Codec --- Langs: further results}
+
+\begin{definition}[Boundary configuration encoding language]
+\lean{Complexity.Codec.edgeLang}
+\label{Complexity.Codec.edgeLang}
+\leanok
+\uses{Complexity.Codec.cfgCode, Turing.Cfg, Turing.Cfg.InWindow, Turing.pairEncode}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols. The
+boundary-configuration language consists of Boolean strings $y$ for which there exist a
+Boolean string $x$ and natural numbers $c,s$ such that $y$ is the pair encoding of $x$
+and the pair encoding of the binary representations of $c$ and $s$, and there is a
+configuration $C$ of $N$ on input $x$ that lies in the window of size $s$, has
+configuration code $c$ at window size $s$, and has some work-tape head at position $-s$
+or $s$.
+\end{definition}
+
+\begin{lemma}[Defining condition of the valid-configuration language]
+\lean{Complexity.Codec.mem_validLang_iff}
+\label{Complexity.Codec.mem_validLang_iff}
+\leanok
+\uses{Complexity.Codec.cfgCode, Complexity.Codec.validLang, Turing.Cfg, Turing.Cfg.InWindow, Turing.pairEncode}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, and let
+$y$ be a Boolean string. Then $y$ belongs to the valid-configuration language of $N$ if
+and only if there exist a Boolean string $x$ and natural numbers $c,s$ such that $y$ is
+the pair encoding of $x$ with the pair encoding of the binary representations of $c$ and
+$s$, and some configuration of $N$ on input $x$ lies in the window of radius $s$ and has
+configuration code $c$ at radius $s$.
+\end{lemma}
+
+\begin{lemma}[Defining condition of the initial-configuration language]
+\lean{Complexity.Codec.mem_initLang_iff}
+\label{Complexity.Codec.mem_initLang_iff}
+\leanok
+\uses{Complexity.Codec.cfgCode, Complexity.Codec.initLang, Turing.NDTM.initCfg, Turing.pairEncode}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, and let
+$y$ be a Boolean string. Then $y$ belongs to the initial-configuration language of $N$
+if and only if there exist a Boolean string $x$ and natural numbers $c,s$ such that $y$
+is the pair encoding of $x$ with the pair encoding of the binary representations of $c$
+and $s$, and the initial configuration of $N$ on input $x$ has configuration code $c$ at
+radius $s$.
+\end{lemma}
+
+\begin{lemma}[Defining condition of the accepting-configuration language]
+\lean{Complexity.Codec.mem_acceptLang_iff}
+\label{Complexity.Codec.mem_acceptLang_iff}
+\leanok
+\uses{Complexity.Codec.acceptLang, Complexity.Codec.cfgCode, Turing.Cfg, Turing.Cfg.InWindow, Turing.pairEncode}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, and let
+$y$ be a Boolean string. Then $y$ belongs to the accepting-configuration language of
+$N$ if and only if there exist a Boolean string $x$ and natural numbers $c,s$ such that
+$y$ is the pair encoding of $x$ with the pair encoding of the binary representations of
+$c$ and $s$, and some configuration $C$ of $N$ on input $x$ lies in the window of radius
+$s$, has configuration code $c$ at radius $s$, is halted, and has output exactly the
+one-bit string consisting of true.
+\end{lemma}
+
+\begin{lemma}[Defining condition of the one-step language]
+\lean{Complexity.Codec.mem_stepLang_iff}
+\label{Complexity.Codec.mem_stepLang_iff}
+\leanok
+\uses{Complexity.Codec.cfgCode, Complexity.Codec.stepLang, Turing.Cfg, Turing.Cfg.InWindow, Turing.NDTM.CfgStep, Turing.pairEncode}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, and let
+$y$ be a Boolean string. Then $y$ belongs to the one-step configuration language of $N$
+if and only if there exist a Boolean string $x$ and natural numbers $c,c',s$ such that
+$y$ is the nested pair encoding of $x$ and the binary representations of $c$, $c'$ and
+$s$, and there are configurations $C,C'$ of $N$ on input $x$ such that $C$ lies in the
+window of radius $s$ with code $c$ at radius $s$, $C'$ is reachable from $C$ in one step
+of $N$, and $C'$ lies in the window of radius $s$ with code $c'$ at radius $s$.
+\end{lemma}
+
+\begin{lemma}[Defining condition of the boundary-configuration language]
+\lean{Complexity.Codec.mem_edgeLang_iff}
+\label{Complexity.Codec.mem_edgeLang_iff}
+\leanok
+\uses{Complexity.Codec.cfgCode, Complexity.Codec.edgeLang, Turing.Cfg, Turing.Cfg.InWindow, Turing.pairEncode}
+\difficulty{1}
+Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, and let
+$y$ be a Boolean string. Then $y$ belongs to the boundary-configuration language of $N$
+if and only if there exist a Boolean string $x$ and natural numbers $c,s$ such that $y$
+is the pair encoding of $x$ with the pair encoding of the binary representations of $c$
+and $s$, and some configuration $C$ of $N$ on input $x$ lies in the window of radius
+$s$, has configuration code $c$ at radius $s$, and has some work-tape head at position
+$-s$ or $s$.
+\end{lemma}
+
+\begin{theorem}[Membership in a language of encoded triples]
+\lean{Complexity.Codec.mem_codeLang_iff}
+\label{Complexity.Codec.mem_codeLang_iff}
+\leanok
+\uses{Complexity.Codec.pairEncode_inj, Turing.pairEncode}
+\difficulty{4}
+Write $\langle u,v\rangle$ for the pair encoding of Boolean strings $u,v$ and
+$\mathrm{bin}(c)$ for the binary representation of a natural number $c$. Let $T$ be a
+set with an injective encoding $e:T\to\{0,1\}^*$, let $P(x,c,t)$ be a predicate on
+Boolean strings $x$, natural numbers $c$ and $t\in T$, and let $L$ be a language of
+Boolean strings whose members are exactly the strings
+$\langle x,\langle\mathrm{bin}(c),e(t)\rangle\rangle$ with $P(x,c,t)$. Then for all
+Boolean strings $x,w$ and every $t\in T$, the string $\langle x,\langle
+w,e(t)\rangle\rangle$ lies in $L$ if and only if there is a natural number $c$ with
+$\mathrm{bin}(c)=w$ and $P(x,c,t)$.
+\end{theorem}
+
+\begin{theorem}[Membership in the boundary-configuration language]
+\lean{Complexity.Codec.mem_edgeLang}
+\label{Complexity.Codec.mem_edgeLang}
+\leanok
+\uses{Complexity.Codec.cfgCode, Complexity.Codec.edgeLang, Complexity.Codec.mem_codeLang_iff, Complexity.Codec.mem_edgeLang_iff, Complexity.LogProg.bits_injective, Turing.Cfg, Turing.Cfg.InWindow, Turing.pairEncode}
+\difficulty{3}
+Let $N$ be a finite nondeterministic Turing machine with Boolean input, let $x$ be a
+Boolean string, and let $c,s$ be natural numbers. The paired encoding of $x$ with the
+paired encodings of the binary expansions of $c$ and $s$ belongs to the
+boundary-configuration language of $N$ if and only if there is a configuration $C$ of
+$N$ on input $x$ whose work-tape heads and nonblank cells lie within distance $s$ of the
+origin, whose configuration code at window size $s$ is $c$, and some work-tape head of
+which is at position $-s$ or $s$.
+\end{theorem}
