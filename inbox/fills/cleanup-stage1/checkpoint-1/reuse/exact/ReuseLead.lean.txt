@@ -1,0 +1,52 @@
+import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Games.Efficiency.Strings
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.Games.Machines
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
+
+/-! cleanup-stage1 reuse probe (check 12), lead targets whose statements need no new definition:
+`exact?` on each statement at the check base, in the home's import closure. -/
+
+set_option maxHeartbeats 400000
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp Complexity
+
+-- S1-04 expect_simulate_abs
+example {ι : Type} {spec : OracleSpec ι} {σ₁ σ₂ α : Type} (impl₁ : QueryImpl spec σ₁ unifSpec)
+    (impl₂ : QueryImpl spec σ₂ unifSpec) (f : σ₂ → σ₁) (cnt : σ₂ → ℕ) (κ : ℕ)
+    (h : ∀ i x s, cnt s < κ → ∀ g : spec.rng i × σ₁ → ℝ,
+      expect (impl₁ i x (f s)) g = expect (impl₂ i x s) fun p => g (p.1, f p.2))
+    (hcnt : ∀ i x s, cnt s < κ → (impl₂ i x s).AllOutputs fun p => cnt p.2 ≤ cnt s + 1)
+    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂)
+    (hs : cnt s + m ≤ κ) (G : α × σ₁ → ℝ) :
+    expect (simulate impl₁ c (f s)) G = expect (simulate impl₂ c s) fun p => G (p.1, f p.2) := by
+  exact?
+
+-- S1-05 length_le_length_encodeLog
+example {ι α : Type} {spec : OracleSpec ι}
+    (codec : MachineCodec spec α) (h : QueryLog spec) : h.length ≤ (codec.encodeLog h).length := by
+  exact?
+
+-- S1-10 expect_sample_eq_uexp
+example {α : Type} [Fintype α] [Nonempty α] (f : α → ℝ) : expect (sample α) f = uexp f := by
+  exact?
+
+-- S1-12 exists_eq_pure_of_costBoundedBy_zero
+example {ι α : Type} {spec : OracleSpec ι}
+    (c : OracleComp spec α) (h : c.CostBoundedBy (fun _ => 1) 0) : ∃ a, c = .pure a := by
+  exact?
+
+-- S1-08 eval_toOracleAdversary_padFin
+example (D : NUPPT) (n q : ℕ)
+    (c : D.Coins n) {a b a' b' : ℕ} (ha : a' = a) (hb : b' = b)
+    (f : (Fin a → Bool) → (Fin b → Bool)) :
+    (D.toOracleAdversary n a b q c).eval f =
+      (D.toOracleAdversary n a' b' q c).eval
+        (fun x => padFin b' (List.ofFn (f (padFin a (List.ofFn x))))) := by
+  exact?
+
+-- S1-04 ovr_append, generic shape over a fold of Function.update (Mathlib/core search)
+example {κ β : Type} [DecidableEq κ] (A B : List (κ × β)) (R : κ → β) :
+    (A ++ B).foldr (fun e F => Function.update F e.1 e.2) R =
+      A.foldr (fun e F => Function.update F e.1 e.2) (B.foldr (fun e F => Function.update F e.1 e.2) R) := by
+  exact?

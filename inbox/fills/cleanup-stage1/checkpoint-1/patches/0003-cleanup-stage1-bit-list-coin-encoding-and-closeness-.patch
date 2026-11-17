@@ -1,0 +1,372 @@
+From 7b8a4d975794ab56d8d934ceccdcfd77268d047b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 17 Nov 2026 03:20:38 +0000
+Subject: [PATCH 3/5] cleanup stage1: bit-list, coin, encoding and closeness
+ readers (DL-35, DL-40, DL-41, DL-46, DL-47, DL-48, DL-51)
+
+S1-06, S1-07, S1-15 (BitLists), S1-09 (Adversary), S1-11 (Authentication/Encoding), S1-22 (Sampling):
+sub-agent A; S1-14 (EnsembleSecurity), S1-16 (PPT), S1-17 (Trapdoor): sub-agent B; S1-08 (PRF
+Asymptotic/Defs): the lead. Additive only.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiMTR17aD6p7XuRrcc
+---
+ TCSlib/Complexity/Randomized/PPT.lean         |  8 +++
+ TCSlib/Cryptography/Asymptotic/Adversary.lean | 30 +++++++++++
+ TCSlib/Cryptography/Asymptotic/Sampling.lean  | 29 +++++++++++
+ .../Cryptography/Authentication/Encoding.lean | 19 +++++++
+ .../PrivateKey/EnsembleSecurity.lean          | 14 +++++
+ .../Encryption/PublicKey/Trapdoor.lean        | 10 ++++
+ TCSlib/Cryptography/Foundations/BitLists.lean | 52 +++++++++++++++++++
+ .../Functions/Asymptotic/Defs.lean            | 21 ++++++++
+ 8 files changed, 183 insertions(+)
+
+diff --git a/TCSlib/Complexity/Randomized/PPT.lean b/TCSlib/Complexity/Randomized/PPT.lean
+index dd437f164..36b6d77cb 100644
+--- a/TCSlib/Complexity/Randomized/PPT.lean
++++ b/TCSlib/Complexity/Randomized/PPT.lean
+@@ -109,6 +109,7 @@ one (Definitions 26.1 and 69.4) and are related by explicit lemmas, never unifie
+ * `Complexity.NUPPT.exists_uniform_computes` — every polynomial-time computable function is
+   computed with probability one by a PPT [PS10, Definition 24.6, non-vacuity].
+ * `Complexity.NUPPT.nonempty` — the class is inhabited.
++* `Complexity.NUPPT.length_ofFn_coins` — a coin string `r : A.Coins n` has `coins.eval n` entries.
+ 
+ ## References
+ 
+@@ -221,6 +222,13 @@ theorem length_advInput (n : ℕ) (y : List Bool) : (advInput n y).length = 2 *
+ [PS10, Definition 23.4, "each bit of the random tape is uniformly and independently chosen"]. -/
+ abbrev Coins (n : ℕ) : Type := Fin (A.coinLen n) → Bool
+ 
++/-- **The length of a coin string**: the list of the coins `r : A.Coins n` has length
++`coins.eval n`, `(List.ofFn r).length = A.coins.eval n`.
++Framework glue, no textbook counterpart. -/
++protected theorem length_ofFn_coins (n : ℕ) (r : A.Coins n) :
++    (List.ofFn r).length = A.coins.eval n := by
++  rw [List.length_ofFn, coinLen_eq]
++
+ /-- Activation at parameter `n` on argument `y` with coins `r`: machine input
+ `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. The sampler `r ↦ runAt n y r` on the uniform coin type
+ `Coins n` is the distribution `A(1^n, y)` of the text. -/
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index e2018d8af..38029707b 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -70,6 +70,8 @@ by `ifEq`).
+ * `TCSlib.Cryptography.ofFn_cast`, `TCSlib.Cryptography.ofFn_arrowCongr_finCongr` — a bit vector
+   read across an equality of widths keeps its string.
+ * `TCSlib.Cryptography.FunFamily.ofFn_blocks` — block `j` of a string is its `j`-th window.
++* `TCSlib.Cryptography.FunFamily.ofFn_blocks_symm_eq_flatMap` — the string of a tuple of blocks is
++  the concatenation of the block strings.
+ * `TCSlib.Cryptography.invProbOpt_le_invProb`, `TCSlib.Cryptography.invProbOpt_some` — the
+   bridges to the concrete `invProb`.
+ * `TCSlib.Cryptography.invProbOpt_nonneg`, `TCSlib.Cryptography.invProbOpt_le_one` — bounds.
+@@ -292,6 +294,34 @@ theorem FunFamily.ofFn_blocks (q ℓ : ℕ) (ω : Fin (q * ℓ) → Bool) (j : F
+     rw [Nat.mul_comm]
+     omega
+ 
++/-- **The string of a tuple of blocks is the concatenation of the block strings:** for
++`V : Fin q → Fin ℓ → Bool` and any `F : ℕ → List Bool` with `F i = ⟦V i⟧` for every `i < q`,
++`⟦(FunFamily.blocks q ℓ).symm V⟧ = (List.range q).flatMap F`. Framework glue (the block encoding
++of [PS10, Theorem 35.1] is cited at `FunFamily.blocks`).
++
++**Proof sketch.** Cut the string into `q` windows of `ℓ` bits (`List.ofFn_mul`). Position `j` of
++window `i` is position `i·ℓ + j`, which the inverse bijection reads as bit `j` of block `i`
++(`FunFamily.blocks_symm_apply`: quotient `i` and remainder `j` by `ℓ`), so window `i` is
++`⟦V i⟧ = F i`, and the windows over `Fin q` are the chunks over `List.range q`. -/
++theorem FunFamily.ofFn_blocks_symm_eq_flatMap {q ℓ : ℕ} (V : Fin q → Fin ℓ → Bool)
++    (F : ℕ → List Bool) (hF : ∀ i (h : i < q), F i = List.ofFn (V ⟨i, h⟩)) :
++    List.ofFn ((FunFamily.blocks q ℓ).symm V) = (List.range q).flatMap F := by
++  rw [List.ofFn_mul, List.flatMap_def, ← List.map_coe_finRange, List.map_map, List.ofFn_eq_map]
++  congr 1
++  refine List.map_congr_left fun i _ => ?_
++  rw [Function.comp_apply, hF i i.isLt]
++  congr 1
++  funext j
++  rw [FunFamily.blocks_symm_apply]
++  have hℓ : 0 < ℓ := Nat.pos_of_ne_zero (by rintro rfl; exact j.elim0)
++  congr 1
++  · refine Fin.ext ?_
++    simp only [Fin.coe_divNat]
++    rw [Nat.add_comm, Nat.add_mul_div_right _ _ hℓ, Nat.div_eq_of_lt j.2, Nat.zero_add]
++  · refine Fin.ext ?_
++    simp only [Fin.coe_modNat]
++    rw [Nat.add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt j.2]
++
+ /-- **Block `i` of a string of `r` blocks of `k` bits and a tail** is segment `i`:
+ `⟦j ↦ w (castAdd sl (finProdFinEquiv (i, j)))⟧ = coinBlock k i ⟦w⟧`.
+ 
+diff --git a/TCSlib/Cryptography/Asymptotic/Sampling.lean b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+index ff030e9f4..dc37bf470 100644
+--- a/TCSlib/Cryptography/Asymptotic/Sampling.lean
++++ b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+@@ -75,6 +75,8 @@ added for the permutation sampler, whose section moved to `Asymptotic/Permutatio
+ * `TCSlib.Cryptography.StatClose.map`, `TCSlib.Cryptography.StatClose.prod`,
+   `TCSlib.Cryptography.StatClose.trans`, `TCSlib.Cryptography.StatClose.comp_pushesUniform`
+   — closure properties.
++* `TCSlib.Cryptography.StatClose.of_uprob_ne` — two samplers on the same seeds are close within
++  the probability that they differ (the coupling bound).
+ * `TCSlib.Cryptography.pushesUniform_of_card_fiber` — equal fibres push uniform to uniform (C5).
+ * `TCSlib.Cryptography.firstHit_uniform_of_some`, `TCSlib.Cryptography.uprob_firstHit_none`,
+   `TCSlib.Cryptography.statClose_firstHit` — the first hit is uniform (C4).
+@@ -163,6 +165,33 @@ theorem StatClose.symm {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose
+ theorem StatClose.mono {X : σ → γ} {Y : τ → γ} {δ δ' : ℝ} (h : StatClose X Y δ) (hδ : δ ≤ δ') :
+     StatClose X Y δ' := fun T => (h T).trans hδ
+ 
++/-- **Two samplers on the same seeds are statistically close within the probability that they
++differ** (the coupling bound): `StatClose X Y Pr_s[X s ≠ Y s]`, i.e.
++`|Pr_s[T (X s)] − Pr_s[T (Y s)]| ≤ Pr_s[X s ≠ Y s]` for every test set `T`. Framework glue (its
++uses are [PS10, Theorem 107.3] in DDH and [PS10, Theorem 163.7] in Yao).
++
++**Proof sketch.** On a seed where `T (X s)` holds, either `X s = Y s` and `T (Y s)` holds, or the
++samplers differ there; so `Pr[T (X)] ≤ Pr[T (Y)] + Pr[X ≠ Y]` (`uprob_mono`, `uprob_or_le`), and
++symmetrically with `Pr[Y ≠ X] = Pr[X ≠ Y]` (`OneWay.uprob_congr`). -/
++theorem StatClose.of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
++    StatClose X Y (uprob fun s => X s ≠ Y s) := by
++  rw [statClose_iff]
++  intro T
++  have key : ∀ (X Y : σ → γ), uprob (fun s => T (X s)) ≤
++      uprob (fun s => T (Y s)) + uprob (fun s => X s ≠ Y s) := by
++    intro X Y
++    refine (uprob_mono fun s h => ?_).trans (uprob_or_le (fun s => T (Y s)) (fun s => X s ≠ Y s))
++    by_cases hxy : X s = Y s
++    · exact Or.inl (hxy ▸ h)
++    · exact Or.inr hxy
++  have h1 := key X Y
++  have h2 := key Y X
++  have hsymm : uprob (fun s => Y s ≠ X s) = uprob (fun s => X s ≠ Y s) :=
++    OneWay.uprob_congr fun s => ne_comm
++  rw [hsymm] at h2
++  rw [abs_sub_le_iff]
++  constructor <;> linarith
++
+ /-- Closeness bounds add along a chain (triangle inequality). -/
+ theorem StatClose.trans {X : σ → γ} {Y : τ → γ} {Z : υ → γ} {δ δ' : ℝ}
+     (h : StatClose X Y δ) (h' : StatClose Y Z δ') : StatClose X Z (δ + δ') := fun T =>
+diff --git a/TCSlib/Cryptography/Authentication/Encoding.lean b/TCSlib/Cryptography/Authentication/Encoding.lean
+index ddbe8e405..e9c982c67 100644
+--- a/TCSlib/Cryptography/Authentication/Encoding.lean
++++ b/TCSlib/Cryptography/Authentication/Encoding.lean
+@@ -20,6 +20,7 @@ set_option autoImplicit false
+ ## Main results
+ 
+ `splitBits_fst`, `splitBits_snd` and `atParam_eq` expose the encoded values.
++`ofFn_splitBits_fst`, `ofFn_splitBits_snd` read the two halves as the prefix and suffix words.
+ 
+ ## References
+ 
+@@ -37,6 +38,24 @@ def splitBits {a b : ℕ} (w : Fin (a + b) → Bool) : (Fin a → Bool) × (Fin
+ 
+ attribute [simps (config := { isSimp := false }) fst snd] splitBits
+ 
++/-- The word of the first component of `splitBits w` is the first `a` bits of the word of `w`:
++`List.ofFn (splitBits w).1 = (List.ofFn w).take a`. Framework glue, no textbook counterpart. -/
++protected theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
++    List.ofFn (splitBits w).1 = (List.ofFn w).take a := by
++  have hfst : (splitBits w).1 = fun i : Fin a => w (Fin.castAdd b i) :=
++    funext fun i => splitBits_fst w i
++  rw [hfst, List.ofFn_add (f := w), List.take_left' List.length_ofFn]
++  rfl
++
++/-- The word of the second component of `splitBits w` is the word of `w` after its first `a`
++bits: `List.ofFn (splitBits w).2 = (List.ofFn w).drop a`. Framework glue, no textbook
++counterpart. -/
++protected theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
++    List.ofFn (splitBits w).2 = (List.ofFn w).drop a := by
++  have hsnd : (splitBits w).2 = fun j : Fin b => w (Fin.natAdd a j) :=
++    funext fun j => splitBits_snd w j
++  rw [hsnd, List.ofFn_add (f := w), List.drop_left' List.length_ofFn]
++
+ /-- The parameter-tagged input `⟨1^n, w⟩` of a deterministic polynomial-time algorithm. -/
+ def atParam (n : ℕ) (w : List Bool) : List Bool := pairEncode (List.replicate n true) w
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean
+index 38ad023c9..471d15aea 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean
+@@ -33,6 +33,8 @@ polynomially many ciphertexts are encoded as nested pairs.
+ * `PrivateKeyScheme.not_multiMessageSecure_of_deterministic` uses a two-message
+   distinguisher to rule out security for stateless deterministic schemes
+   [PS10, Theorem 94.2].
++* `PrivateKeyScheme.encodeList_eq_flatMap` writes the tuple encoding as the concatenation of
++  the blocks `⟨c, []⟩`.
+ 
+ ## References
+ 
+@@ -140,6 +142,18 @@ theorem encodeList_cons (m : List Bool) (ms : List (List Bool)) :
+ /-- Unfolding of the list encoding on the empty list: `encodeList [] = []`. -/
+ theorem encodeList_nil : encodeList [] = [] := rfl
+ 
++/-- **The tuple encoding is a concatenation of blocks**: the nested-pair encoding of a list of
++words is the concatenation of the self-delimiting blocks `⟨c, []⟩`,
++`encodeList l = l.flatMap fun c => pairEncode c []`.
++Framework glue, no textbook counterpart. -/
++protected theorem encodeList_eq_flatMap (l : List (List Bool)) :
++    encodeList l = l.flatMap fun c => pairEncode c [] := by
++  induction l with
++  | nil => rw [encodeList_nil, List.flatMap_nil]
++  | cons c cs ih =>
++    rw [encodeList_cons, List.flatMap_cons, ih]
++    simp only [pairEncode_eq, List.append_nil, List.append_assoc]
++
+ /-- Unfolding of the multi-message ciphertext sampler: the `encodeList` of the `q + 1`
+ encryptions `Enc(1^n, ⟨k, m_i⟩; s_i)` under the key `k = Gen(1^n; r.1)`, `s_i = r.2 i`. -/
+ theorem multiEncDist_apply (S : PrivateKeyScheme) (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool)
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean b/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean
+index 51f7a1e7e..7b54ccf42 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean
+@@ -41,6 +41,7 @@ Honest sampling is the field `Collection.sample_spec`.
+   security from one-wayness and a hard-core predicate.
+ * `TCSlib.Cryptography.TrapdoorCollection.OneWay.exists_glPad_singleBitSecure` supplies
+   the predicate and its evaluator through Goldreich–Levin under the width premise `henc`.
++* `TCSlib.Cryptography.pkPredictor_apply` reads the predictor's output on a guessed bit and coins.
+ 
+ ## References
+ 
+@@ -282,6 +283,15 @@ end TrapdoorCollection
+ def pkPredictor {α ρ : Type*} (D : α × Bool → ρ → Bool) (flip : Bool) : α → Bool × ρ → Bool :=
+   fun y c => xor (if D (y, c.1) c.2 then c.1 else !c.1) flip
+ 
++/-- **The predictor's output**: on `y` with coins `c = (c₁, c₂)` (the guessed bit and the
++distinguisher's coins), `pkPredictor D flip` outputs `c₁` if `D` accepts `(y, c₁)` with coins `c₂`
++and `¬c₁` otherwise, negated when `flip`,
++`pkPredictor D flip y c = xor (if D (y, c.1) c.2 then c.1 else !c.1) flip`
++[PS10, Theorem 104.4, proof]. -/
++theorem pkPredictor_apply {α ρ : Type*} (D : α × Bool → ρ → Bool) (flip : Bool) (y : α)
++    (c : Bool × ρ) : pkPredictor D flip y c = xor (if D (y, c.1) c.2 then c.1 else !c.1) flip :=
++  rfl
++
+ /-- The predictor is `owpPredictor` on `α × Unit`. -/
+ private theorem predProb_pkPredictor_eq {α ρ : Type*} [Fintype α] [Fintype ρ] (f : α ≃ α)
+     (B : α → Bool) (D : α × Bool → ρ → Bool) (flip : Bool) :
+diff --git a/TCSlib/Cryptography/Foundations/BitLists.lean b/TCSlib/Cryptography/Foundations/BitLists.lean
+index 758ca630c..19da91091 100644
+--- a/TCSlib/Cryptography/Foundations/BitLists.lean
++++ b/TCSlib/Cryptography/Foundations/BitLists.lean
+@@ -22,6 +22,7 @@ an association list. They depend on Mathlib only.
+ ## Main definitions
+ 
+ * `TCSlib.Cryptography.xorPerm v`: exclusive-or with the vector `v`, as a permutation.
++* `TCSlib.Cryptography.recordBits w o`: the `(w + 1)`-bit record of an optional `w`-bit vector.
+ 
+ ## Main results
+ 
+@@ -39,6 +40,9 @@ an association list. They depend on Mathlib only.
+ * `TCSlib.Cryptography.length_flatten_map_const`, `length_flatten_map_range`: the length of a
+   concatenation of equal-length blocks.
+ * `TCSlib.Cryptography.flatMap_range_drop`: reading the successive suffixes of a list.
++* `TCSlib.Cryptography.getD_ofFn`, `zipWith_xor_cancel_right`, `recordBits_none`,
++  `recordBits_some`, `length_recordBits`: in-range entries of a tuple's list, `(m ⊕ p) ⊕ p = m`, and
++  the readers of the record of an optional bit vector.
+ 
+ ## References
+ 
+@@ -63,6 +67,14 @@ theorem headD_drop_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) (i : Fin n) (d
+   simp only [headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos i.isLt,
+     Option.getD_some]
+ 
++/-- The entry of a tuple's list at an in-range index is the tuple's entry there: for
++`f : Fin n → α`, `i < n` and any default `d`, `(List.ofFn f).getD i d = f ⟨i, hi⟩`.
++Framework glue, no textbook counterpart (`headD_drop_ofFn` read through `headD_drop`). -/
++theorem getD_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) {i : ℕ} (hi : i < n) (d : α) :
++    (List.ofFn f).getD i d = f ⟨i, hi⟩ := by
++  rw [← headD_drop]
++  exact headD_drop_ofFn f ⟨i, hi⟩ d
++
+ /-- **Flattening one-element blocks:** concatenating the one-bit blocks `g j` gives their bits,
+ `(List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j 0` when the blocks have
+ length `l = 1`.
+@@ -97,6 +109,19 @@ theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
+     simp only [List.getElem_zipWith]
+     cases a[i] <;> cases c[i] <;> rfl
+ 
++/-- Exclusive-or with the same pad twice cancels on the right: `(m ⊕ p) ⊕ p = m` for every
++message `m` and every pad `p` at least as long, `|m| ≤ |p|` (`List.zipWith` stops at the shorter
++list). Framework glue, no textbook counterpart (the decryption step of the one-time-pad style
++encryptions). -/
++theorem zipWith_xor_cancel_right : ∀ (m p : List Bool), m.length ≤ p.length →
++    List.zipWith xor (List.zipWith xor m p) p = m
++  | [], _, _ => rfl
++  | _ :: _, [], h => absurd h (by rw [List.length_cons, List.length_nil]; omega)
++  | a :: m, b :: p, h => by
++    rw [List.zipWith_cons_cons, List.zipWith_cons_cons,
++      zipWith_xor_cancel_right m p (by rw [List.length_cons, List.length_cons] at h; omega)]
++    cases a <;> cases b <;> rfl
++
+ section XorPerm
+ 
+ variable {n : ℕ}
+@@ -189,4 +214,31 @@ theorem flatMap_range_drop {β γ : Type*} (F : List β → List γ) (g : β →
+     exact ih (fun e' he' => hcons e' (List.mem_cons_of_mem _ he')) m'
+       (by rw [List.length_cons] at hm; omega)
+ 
++/-! ### Records of an optional bit vector -/
++
++/-- The record of an optional `w`-bit vector, a word of `w + 1` bits: a flag bit followed by the
++vector, `recordBits w (some c) = 1 :: ⟦c⟧`, or all zeros when there is none,
++`recordBits w none = 0 :: 0^w`. Framework glue, no textbook counterpart (the challenge record of
++the encrypt-then-tag and PRF-oracle handlers). -/
++def recordBits (w : ℕ) : Option (Fin w → Bool) → List Bool
++  | none => false :: List.replicate w false
++  | some c => true :: List.ofFn c
++
++/-- The record of no vector is the zero word: `recordBits w none = 0 :: 0^w`.
++Framework glue, no textbook counterpart. -/
++theorem recordBits_none (w : ℕ) : recordBits w none = false :: List.replicate w false := rfl
++
++/-- The record of a vector is the flag `1` followed by the vector:
++`recordBits w (some c) = 1 :: ⟦c⟧`. Framework glue, no textbook counterpart. -/
++theorem recordBits_some (w : ℕ) (c : Fin w → Bool) : recordBits w (some c) = true :: List.ofFn c :=
++  rfl
++
++/-- Every record has `w + 1` bits: `|recordBits w o| = w + 1`.
++Framework glue, no textbook counterpart. -/
++theorem length_recordBits (w : ℕ) (o : Option (Fin w → Bool)) :
++    (recordBits w o).length = w + 1 := by
++  cases o with
++  | none => rw [recordBits_none, List.length_cons, List.length_replicate]
++  | some c => rw [recordBits_some, List.length_cons, List.length_ofFn]
++
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
+index 5a6bd3120..826ad37fd 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
+@@ -40,6 +40,7 @@ also gives verdict `false` (foundation decision D7 of `PassShelatChapter2-4Plan.
+ * `TCSlib.Cryptography.acceptProb_random_eq_lazy` equates the two descriptions of a
+   random function, by its table and by lazy sampling [PS10, §3.8.1].
+ * `Complexity.NUPPT.toOracleAdversary_boundedBy` gives the query bound.
++* `Complexity.NUPPT.eval_toOracleAdversary_padFin`: an oracle adversary read at equal widths.
+ * `TCSlib.Cryptography.OracleEnsemble.indist_iff` expresses the contract through
+   negligible advantage. `TCSlib.Cryptography.oracle_hybrid_lemma` gives the
+   finite hybrid bound for oracle ensembles.
+@@ -338,6 +339,26 @@ theorem _root_.Complexity.NUPPT.toOracleAdversary_boundedBy (D : NUPPT) (n ℓ
+     rw [NUPPT.toOracleAdversary_eq]
+     exact buildTree_boundedBy _ q []
+ 
++/-- **An oracle adversary read at equal widths:** for `a' = a` and `b' = b`, running
++`D.toOracleAdversary n a b q c` against `f` is running `D.toOracleAdversary n a' b' q c` against
++`f` with its inputs and outputs read at the widths `a'`, `b'`:
++`(D^{a,b} c).eval f = (D^{a',b'} c).eval (fun x => padFin b' ⟦f (padFin a ⟦x⟧)⟧)`, where `⟦·⟧` is
++`List.ofFn`. Framework glue, no textbook counterpart.
++
++**Proof sketch.** Substitute `a' = a` and `b' = b`; the readings are identities
++(`padFin_ofFn`). -/
++theorem _root_.Complexity.NUPPT.eval_toOracleAdversary_padFin (D : NUPPT) (n q : ℕ)
++    (c : D.Coins n) {a b a' b' : ℕ} (ha : a' = a) (hb : b' = b)
++    (f : (Fin a → Bool) → (Fin b → Bool)) :
++    (D.toOracleAdversary n a b q c).eval f =
++      (D.toOracleAdversary n a' b' q c).eval
++        (fun x => padFin b' (List.ofFn (f (padFin a (List.ofFn x))))) := by
++  subst ha hb
++  have e : (fun x => padFin b' (List.ofFn (f (padFin a' (List.ofFn x))))) = f := by
++    funext x
++    rw [padFin_ofFn, padFin_ofFn]
++  rw [e]
++
+ /-! ### Oracle indistinguishability [PS10, Definition 96.1] -/
+ 
+ /-- **Oracle indistinguishability** [PS10, Definition 96.1]: `{O_n} ≈ {O'_n}` iff for every
+-- 
+2.43.0
+

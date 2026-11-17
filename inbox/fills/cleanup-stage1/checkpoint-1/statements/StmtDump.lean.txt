@@ -1,0 +1,107 @@
+import Lean
+import TCSlib.Complexity.Randomized.Build.IterateFindHost
+import TCSlib.Complexity.Randomized.PPT
+import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.Sampling
+import TCSlib.Cryptography.Authentication.Encoding
+import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
+import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
+import TCSlib.Cryptography.Foundations.BitLists
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.Games.Efficiency.Strings
+import TCSlib.Cryptography.Games.Machines
+import TCSlib.Cryptography.Games.Tapes
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
+import TCSlib.Cryptography.ZeroKnowledge.EncodingMachines
+import TCSlib.Cryptography.ZeroKnowledge.Interaction
+import TCSlib.Cryptography.ZeroKnowledge.InteractionWords
+import TCSlib.InformationTheory.Entropy
+import TCSlib.InformationTheory.FinDist
+import TCSlib.InformationTheory.Samples
+
+/-! cleanup-stage1 StmtDump: every new constant with its full name, kind and type. -/
+
+open Lean Elab Command Meta
+
+set_option pp.fullNames true
+set_option pp.universes false
+
+run_cmd do
+  let env ← getEnv
+  let names : List Name := [
+    `Complexity.IterateFind.host_dispatch_view,
+    `Complexity.IterateFind.host_branch_view,
+    `Complexity.IterateFind.host_halt_view,
+    `TCSlib.Cryptography.Games.expect_simulate_abs,
+    `TCSlib.Cryptography.Games.expect_simulate_abs_inv,
+    `TCSlib.Cryptography.Games.freshImpl,
+    `TCSlib.Cryptography.Games.freshImpl_apply,
+    `TCSlib.Cryptography.Games.extTape,
+    `TCSlib.Cryptography.Games.extTape_of_lt,
+    `TCSlib.Cryptography.Games.extTape_of_not_lt,
+    `TCSlib.Cryptography.Games.extTape_update,
+    `TCSlib.Cryptography.Games.tapeImpl,
+    `TCSlib.Cryptography.Games.tapeImpl_apply,
+    `TCSlib.Cryptography.Games.simulate_tapeImpl_congr,
+    `TCSlib.Cryptography.Games.expect_simulate_tapeImpl,
+    `TCSlib.Cryptography.Games.ovr,
+    `TCSlib.Cryptography.Games.ovr_nil,
+    `TCSlib.Cryptography.Games.ovr_cons,
+    `TCSlib.Cryptography.Games.ovr_of_not_mem,
+    `TCSlib.Cryptography.Games.ovr_of_mem,
+    `TCSlib.Cryptography.Games.ovr_update,
+    `TCSlib.Cryptography.Games.ovr_append,
+    `TCSlib.Cryptography.Games.expect_sample_ovr,
+    `TCSlib.Cryptography.Games.EffFill.length_le_length_encodeLog,
+    `TCSlib.Cryptography.zipWith_xor_cancel_right,
+    `TCSlib.Cryptography.recordBits,
+    `TCSlib.Cryptography.recordBits_none,
+    `TCSlib.Cryptography.recordBits_some,
+    `TCSlib.Cryptography.length_recordBits,
+    `Complexity.NUPPT.eval_toOracleAdversary_padFin,
+    `TCSlib.Cryptography.FunFamily.ofFn_blocks_symm_eq_flatMap,
+    `TCSlib.Cryptography.Games.Bridge.expect_sample_eq_uexp,
+    `TCSlib.Cryptography.Authentication.ofFn_splitBits_fst,
+    `TCSlib.Cryptography.Authentication.ofFn_splitBits_snd,
+    `TCSlib.Cryptography.Games.OracleComp.exists_eq_pure_of_costBoundedBy_zero,
+    `TCSlib.Cryptography.PrivateKeyScheme.encodeList_eq_flatMap,
+    `TCSlib.Cryptography.getD_ofFn,
+    `Complexity.NUPPT.length_ofFn_coins,
+    `TCSlib.Cryptography.pkPredictor_apply,
+    `TCSlib.Cryptography.Strategy.encodeMsgs_eq,
+    `TCSlib.Cryptography.Strategy.encodeMsgs_eq_flatMap,
+    `TCSlib.Cryptography.Strategy.iterate_pairSndD_encodeMsgs,
+    `TCSlib.Cryptography.Strategy.msgAt_encodeMsgs,
+    `TCSlib.Cryptography.Strategy.encodeMsgs_eq_encWords,
+    `TCSlib.Cryptography.StatClose.of_uprob_ne,
+    `TCSlib.InformationTheory.FinDist.map_uniform_equiv,
+    `TCSlib.InformationTheory.FinDist.sum_map,
+    `TCSlib.InformationTheory.FinDist.probTrue_nonneg,
+    `TCSlib.InformationTheory.FinDist.probTrue_le_one,
+    `TCSlib.InformationTheory.FinDist.uniform_prod,
+    `TCSlib.InformationTheory.FinDist.uniform_probTrue,
+    `TCSlib.InformationTheory.FinDist.expect_map,
+    `TCSlib.InformationTheory.FinDist.probTrue_map,
+    `TCSlib.InformationTheory.FinDist.map_apply_expect,
+    `TCSlib.InformationTheory.FinDist.map_map,
+    `TCSlib.InformationTheory.FinDist.map_prod_snd,
+    `TCSlib.InformationTheory.FinDist.mixture,
+    `TCSlib.InformationTheory.FinDist.mixture_apply,
+    `TCSlib.InformationTheory.FinDist.mixture_isSource,
+    `TCSlib.Cryptography.EncodingMachines.flatMap_range_ite,
+    `TCSlib.Cryptography.EncodingMachines.polyTimeComputable_flatMap_range,
+    `TCSlib.Cryptography.EncodingMachines.iterSnd_poly,
+    `TCSlib.Cryptography.EncodingMachines.zeros_poly,
+    `TCSlib.Cryptography.EncodingMachines.padTo,
+    `TCSlib.Cryptography.EncodingMachines.padTo_eq,
+    `TCSlib.Cryptography.EncodingMachines.padTo_poly,
+    `TCSlib.Cryptography.EncodingMachines.length_padTo,
+    `TCSlib.Cryptography.EncodingMachines.getD_padTo,
+    `TCSlib.Cryptography.EncodingMachines.padTo_of_length]
+  for n in names do
+    let some c := env.find? n | throwError "missing constant {n}"
+    let kind := match c with
+      | .defnInfo _ => "def" | .thmInfo _ => "theorem" | _ => "other"
+    let fmt ← liftTermElabM <| withOptions (fun o => o.setNat `format.width 1000) <| ppExpr c.type
+    IO.println s!"STMT {n} | {kind} | {isProtected env n} | {fmt.pretty 1000}"
+  IO.println s!"STMT-COUNT {names.length}"

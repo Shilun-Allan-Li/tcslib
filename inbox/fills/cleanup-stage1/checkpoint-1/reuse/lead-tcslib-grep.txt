@@ -1,0 +1,52 @@
+### TCSlib: expect_simulate_abs
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:65:theorem expect_simulate_abs (impl₁ : QueryImpl spec σ₁ unifSpec)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:88:theorem expect_simulate_abs_inv (impl₁ : QueryImpl spec σ₁ unifSpec)
+### TCSlib: freshImpl
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:116:noncomputable def freshImpl [Fintype τ] [Nonempty τ]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:122:theorem freshImpl_apply [Fintype τ] [Nonempty τ]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean:356:theorem ettImpl_eq_freshImpl :
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:445:theorem ettLazy_eq : ettLazy ins outs d n f b = freshImpl (ettLazyK ins outs d n f b) := rfl
+### TCSlib: tapeImpl
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:116:noncomputable def tapeImpl (T : ℕ → C) (kst : ℕ) :
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:133:theorem tapeImpl_zero (x : Fin (ins 0) → Bool) (h : List (Fin L → Bool)) :
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:140:theorem tapeImpl_lazy (mm : Fin (ins 1) → Bool) (h : List (Fin L → Bool)) (hh : h.length < κ)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:151:theorem tapeImpl_eager (mm : Fin (ins 1) → Bool) (h : List (Fin L → Bool)) (hh : h.length < κ)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:160:theorem tapeImpl_full (mm : Fin (ins 1) → Bool) (h : List (Fin L → Bool)) (hh : κ ≤ h.length) :
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:170:theorem simulate_tapeImpl_congr {α : Type} (T' : ℕ → C) (c : OracleComp (bitSpec ins outs) α)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:244:theorem expect_tapeImpl (κ : ℕ) (E : Bool → (Fin (ins 1) → Bool) → C → (Fin L → Bool))
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:130:def tapeImpl (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ)) (T : ℕ → τ) :
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:135:theorem tapeImpl_apply (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ)) (T : ℕ → τ)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:145:theorem simulate_tapeImpl_congr (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ))
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:167:theorem expect_simulate_tapeImpl [Fintype τ] [Nonempty τ]
+### TCSlib: extTape
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:211:noncomputable def extTape {κ : ℕ} (T : Fin κ → C) (m : ℕ) : C :=
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:215:theorem extTape_of_lt {κ : ℕ} (T : Fin κ → C) {m : ℕ} (hm : m < κ) :
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:221:theorem extTape_update {κ : ℕ} (T : Fin κ → C) (j : Fin κ) (r : C) {m : ℕ} (hm : m ≠ j) :
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:93:theorem dTapes_eq : dTapes q n W = AdaptiveCPA.extTape (EnsembleLemmas.blocks (q.eval n) n W) :=
+### TCSlib: simulate_tapeImpl_congr
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:170:theorem simulate_tapeImpl_congr {α : Type} (T' : ℕ → C) (c : OracleComp (bitSpec ins outs) α)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:145:theorem simulate_tapeImpl_congr (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ))
+### TCSlib: expect_simulate_tapeImpl
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:167:theorem expect_simulate_tapeImpl [Fintype τ] [Nonempty τ]
+### TCSlib: \bovr\b
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:102:def ovr (b : Bool) (st : LState n d) (R : (Fin n → Bool) → (Fin n → Bool)) :
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:219:def ovr : List (κ × β) → (κ → β) → κ → β
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:224:theorem ovr_nil (R : κ → β) : ovr ([] : List (κ × β)) R = R :=
+### TCSlib: ovr_append
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:175:theorem ovr_append (A B : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool)))
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:271:private theorem ovr_append_of_mem {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:283:private theorem ovr_append_of_not_mem {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
+### TCSlib: expect_sample_ovr
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:281:theorem expect_sample_ovr (M : List (κ × β)) {p : κ} (hp : p ∉ M.map Prod.fst)
+### TCSlib: length_le_length_encodeLog
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:108:private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) :
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:95:private theorem length_le_length_encodeLog {ι α : Type} {spec : OracleSpec ι}
+### TCSlib: expect_sample_eq_uexp
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean:40:theorem expect_sample_eq_uexp {α : Type} [Fintype α] [Nonempty α] (f : α → ℝ) :
+### TCSlib: eq_pure_of_cost_zero\|exists_pure_of_cost_zero\|CostBoundedBy (fun _ => 1) 0
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:226:theorem exists_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuery.lean:36:theorem eq_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}
+### TCSlib: eval_toOracleAdversary
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean:48:theorem eval_toOracleAdversary_width₂ (D : NUPPT) (n q : ℕ) (c : D.Coins n) {m₁ m₂ : ℕ}
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:228:theorem eval_toOracleAdversary_width (D : NUPPT) (n q : ℕ) (c : D.Coins n) {m : ℕ} (hm : m = n)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:348:theorem eval_toOracleAdversary_len (D : NUPPT) (n K : ℕ) (c : D.Coins n) {ℓ ℓ' : ℕ}

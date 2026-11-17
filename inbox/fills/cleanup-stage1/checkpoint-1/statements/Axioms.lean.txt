@@ -1,0 +1,92 @@
+import Lean
+import TCSlib.Complexity.Randomized.Build.IterateFindHost
+import TCSlib.Complexity.Randomized.PPT
+import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.Sampling
+import TCSlib.Cryptography.Authentication.Encoding
+import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
+import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
+import TCSlib.Cryptography.Foundations.BitLists
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.Games.Efficiency.Strings
+import TCSlib.Cryptography.Games.Machines
+import TCSlib.Cryptography.Games.Tapes
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
+import TCSlib.Cryptography.ZeroKnowledge.EncodingMachines
+import TCSlib.Cryptography.ZeroKnowledge.Interaction
+import TCSlib.Cryptography.ZeroKnowledge.InteractionWords
+import TCSlib.InformationTheory.Entropy
+import TCSlib.InformationTheory.FinDist
+import TCSlib.InformationTheory.Samples
+
+/-! cleanup-stage1 axioms of every new constant. -/
+
+#print axioms Complexity.IterateFind.host_dispatch_view
+#print axioms Complexity.IterateFind.host_branch_view
+#print axioms Complexity.IterateFind.host_halt_view
+#print axioms TCSlib.Cryptography.Games.expect_simulate_abs
+#print axioms TCSlib.Cryptography.Games.expect_simulate_abs_inv
+#print axioms TCSlib.Cryptography.Games.freshImpl
+#print axioms TCSlib.Cryptography.Games.freshImpl_apply
+#print axioms TCSlib.Cryptography.Games.extTape
+#print axioms TCSlib.Cryptography.Games.extTape_of_lt
+#print axioms TCSlib.Cryptography.Games.extTape_of_not_lt
+#print axioms TCSlib.Cryptography.Games.extTape_update
+#print axioms TCSlib.Cryptography.Games.tapeImpl
+#print axioms TCSlib.Cryptography.Games.tapeImpl_apply
+#print axioms TCSlib.Cryptography.Games.simulate_tapeImpl_congr
+#print axioms TCSlib.Cryptography.Games.expect_simulate_tapeImpl
+#print axioms TCSlib.Cryptography.Games.ovr
+#print axioms TCSlib.Cryptography.Games.ovr_nil
+#print axioms TCSlib.Cryptography.Games.ovr_cons
+#print axioms TCSlib.Cryptography.Games.ovr_of_not_mem
+#print axioms TCSlib.Cryptography.Games.ovr_of_mem
+#print axioms TCSlib.Cryptography.Games.ovr_update
+#print axioms TCSlib.Cryptography.Games.ovr_append
+#print axioms TCSlib.Cryptography.Games.expect_sample_ovr
+#print axioms TCSlib.Cryptography.Games.EffFill.length_le_length_encodeLog
+#print axioms TCSlib.Cryptography.zipWith_xor_cancel_right
+#print axioms TCSlib.Cryptography.recordBits
+#print axioms TCSlib.Cryptography.recordBits_none
+#print axioms TCSlib.Cryptography.recordBits_some
+#print axioms TCSlib.Cryptography.length_recordBits
+#print axioms Complexity.NUPPT.eval_toOracleAdversary_padFin
+#print axioms TCSlib.Cryptography.FunFamily.ofFn_blocks_symm_eq_flatMap
+#print axioms TCSlib.Cryptography.Games.Bridge.expect_sample_eq_uexp
+#print axioms TCSlib.Cryptography.Authentication.ofFn_splitBits_fst
+#print axioms TCSlib.Cryptography.Authentication.ofFn_splitBits_snd
+#print axioms TCSlib.Cryptography.Games.OracleComp.exists_eq_pure_of_costBoundedBy_zero
+#print axioms TCSlib.Cryptography.PrivateKeyScheme.encodeList_eq_flatMap
+#print axioms TCSlib.Cryptography.getD_ofFn
+#print axioms Complexity.NUPPT.length_ofFn_coins
+#print axioms TCSlib.Cryptography.pkPredictor_apply
+#print axioms TCSlib.Cryptography.Strategy.encodeMsgs_eq
+#print axioms TCSlib.Cryptography.Strategy.encodeMsgs_eq_flatMap
+#print axioms TCSlib.Cryptography.Strategy.iterate_pairSndD_encodeMsgs
+#print axioms TCSlib.Cryptography.Strategy.msgAt_encodeMsgs
+#print axioms TCSlib.Cryptography.Strategy.encodeMsgs_eq_encWords
+#print axioms TCSlib.Cryptography.StatClose.of_uprob_ne
+#print axioms TCSlib.InformationTheory.FinDist.map_uniform_equiv
+#print axioms TCSlib.InformationTheory.FinDist.sum_map
+#print axioms TCSlib.InformationTheory.FinDist.probTrue_nonneg
+#print axioms TCSlib.InformationTheory.FinDist.probTrue_le_one
+#print axioms TCSlib.InformationTheory.FinDist.uniform_prod
+#print axioms TCSlib.InformationTheory.FinDist.uniform_probTrue
+#print axioms TCSlib.InformationTheory.FinDist.expect_map
+#print axioms TCSlib.InformationTheory.FinDist.probTrue_map
+#print axioms TCSlib.InformationTheory.FinDist.map_apply_expect
+#print axioms TCSlib.InformationTheory.FinDist.map_map
+#print axioms TCSlib.InformationTheory.FinDist.map_prod_snd
+#print axioms TCSlib.InformationTheory.FinDist.mixture
+#print axioms TCSlib.InformationTheory.FinDist.mixture_apply
+#print axioms TCSlib.InformationTheory.FinDist.mixture_isSource
+#print axioms TCSlib.Cryptography.EncodingMachines.flatMap_range_ite
+#print axioms TCSlib.Cryptography.EncodingMachines.polyTimeComputable_flatMap_range
+#print axioms TCSlib.Cryptography.EncodingMachines.iterSnd_poly
+#print axioms TCSlib.Cryptography.EncodingMachines.zeros_poly
+#print axioms TCSlib.Cryptography.EncodingMachines.padTo
+#print axioms TCSlib.Cryptography.EncodingMachines.padTo_eq
+#print axioms TCSlib.Cryptography.EncodingMachines.padTo_poly
+#print axioms TCSlib.Cryptography.EncodingMachines.length_padTo
+#print axioms TCSlib.Cryptography.EncodingMachines.getD_padTo
+#print axioms TCSlib.Cryptography.EncodingMachines.padTo_of_length

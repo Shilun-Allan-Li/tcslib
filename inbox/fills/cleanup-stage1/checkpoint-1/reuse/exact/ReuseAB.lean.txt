@@ -1,0 +1,68 @@
+import TCSlib.Complexity.Randomized.PPT
+import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.Sampling
+import TCSlib.Cryptography.Authentication.Encoding
+import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
+import TCSlib.Cryptography.Foundations.BitLists
+import TCSlib.Cryptography.ZeroKnowledge.EncodingMachines
+import TCSlib.Cryptography.ZeroKnowledge.Interaction
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.InformationTheory.Entropy
+import TCSlib.InformationTheory.Samples
+
+/-! cleanup-stage1 reuse probe (check 12), sub-agents' targets whose statements need no new
+definition: `exact?` on each statement at the check base, importing the homes. -/
+
+set_option maxHeartbeats 400000
+
+open Complexity Turing TCSlib.Cryptography TCSlib.InformationTheory
+
+-- S1-06
+example : ∀ (m p : List Bool), m.length ≤ p.length →
+    List.zipWith xor (List.zipWith xor m p) p = m := by exact?
+-- S1-15
+example {α : Type} {n : ℕ} (f : Fin n → α) {i : ℕ} (hi : i < n) (d : α) :
+    (List.ofFn f).getD i d = f ⟨i, hi⟩ := by exact?
+-- S1-09
+example {q ℓ : ℕ} (V : Fin q → Fin ℓ → Bool) (F : ℕ → List Bool)
+    (hF : ∀ i (h : i < q), F i = List.ofFn (V ⟨i, h⟩)) :
+    List.ofFn ((FunFamily.blocks q ℓ).symm V) = (List.range q).flatMap F := by exact?
+-- S1-22
+example {σ γ : Type} [Fintype σ] (X Y : σ → γ) :
+    StatClose X Y (uprob fun s => X s ≠ Y s) := by exact?
+-- S1-11
+example {a b : ℕ} (w : Fin (a + b) → Bool) :
+    List.ofFn (Authentication.splitBits w).1 = (List.ofFn w).take a := by exact?
+example {a b : ℕ} (w : Fin (a + b) → Bool) :
+    List.ofFn (Authentication.splitBits w).2 = (List.ofFn w).drop a := by exact?
+-- S1-14
+example (l : List (List Bool)) :
+    PrivateKeyScheme.encodeList l = l.flatMap fun c => pairEncode c [] := by exact?
+-- S1-16
+example (A : NUPPT) (n : ℕ) (r : A.Coins n) : (List.ofFn r).length = A.coins.eval n := by exact?
+-- S1-19
+example (l : List (List Bool)) : Strategy.encodeMsgs l = l.flatMap fun m => pairEncode m [] := by
+  exact?
+-- S1-20
+example (hist : List (List Bool)) (i : ℕ) :
+    pairSndD^[i] (Strategy.encodeMsgs hist) = Strategy.encodeMsgs (hist.drop i) := by exact?
+-- S1-26
+example (hist : List (List Bool)) (i : ℕ) :
+    pairFstD (pairSndD^[i] (Strategy.encodeMsgs hist)) = hist.getD i [] := by exact?
+-- S1-21
+example (L : List (List Bool)) : Strategy.encodeMsgs L = Complexity.BinArith.encWords L := by exact?
+-- S1-27
+example (E : ℕ → List Bool) (L : ℕ) :
+    ∀ N, (List.range N).flatMap (fun i => if i < L then E i else []) =
+      (List.range (min N L)).flatMap E := by exact?
+example {L : List Bool → ℕ} (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
+    PolyTimeComputable fun x => List.replicate (L x) false := by exact?
+example {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+    {i : List Bool → ℕ} (hi : PolyTimeComputable fun z => List.replicate (i z) true) :
+    PolyTimeComputable fun z => pairSndD^[i z] (s z) := by exact?
+-- S1-23 / S1-24 (two representatives with no new definition)
+example {α β : Type} [Fintype α] [Fintype β] [DecidableEq β] [Nonempty α] [Nonempty β]
+    (e : α ≃ β) : (FinDist.uniform α).map e = FinDist.uniform β := by exact?
+example {α β γ : Type} [Fintype α] [Fintype β] [Fintype γ] [DecidableEq β] [DecidableEq γ]
+    (p : FinDist α) (f : α → β) (g : β → γ) : (p.map f).map g = p.map (fun a => g (f a)) := by
+  exact?

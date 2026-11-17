@@ -1,0 +1,32 @@
+### TCSlib: expectation of sample = uexp shapes
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:59:theorem uexp_add (f g : α → ℝ) : uexp (fun a => f a + g a) = uexp f + uexp g := by
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:396:    G.dlProb A n = uexp fun r : G.gen.Coins n =>
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2843:  have hq : dlb_succ H G A n = uexp fun r' : G.gen.Coins n => Sf (G.gen.runAt n [] r') := by
+TCSlib/Cryptography/Asymptotic/Collections.lean:226:    F.invProbAt A n = uexp fun r : F.gen.Coins n => uprob fun z : F.D (F.index n r) × A.Coins n =>
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:277:    (F.glPad m henc).invProbAt A n = uexp fun r : F.gen.Coins n =>
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:156:    acceptProb X (mixDist D) = uexp fun k => acceptProb X (D k) := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:59:theorem uexp_add (f g : Ω → ℝ) : uexp (fun ω => f ω + g ω) = uexp f + uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:63:theorem uexp_sub (f g : Ω → ℝ) : uexp (fun ω => f ω - g ω) = uexp f - uexp g := by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:74:`acceptProb X D = uexp fun a => acceptProb (fun t => X (a, t)) D`. -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:76:    acceptProb X D = uexp fun a => acceptProb (fun t => X (a, t)) D := by
+### TCSlib: encodeLog length lower bounds
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:109:    h.length ≤ (codec.encodeLog h).length := by
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:96:    (codec : MachineCodec spec α) (h : QueryLog spec) : h.length ≤ (codec.encodeLog h).length := by
+TCSlib/Cryptography/Games/Efficiency/Strings.lean:88:      (codec.encodeLog O).length ≤ (codec.encodeLog (P ++ O)).length
+### TCSlib: padFin-reading of toOracleAdversary
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean:50:    (D.toOracleAdversary n n n q c).eval f =
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean:51:      (D.toOracleAdversary n m₁ m₂ q c).eval
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:230:    (D.toOracleAdversary n n n q c).eval f =
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:231:      (D.toOracleAdversary n m m q c).eval
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:319:          (fun c => if (B.toOracleAdversary n ℓ₁ ℓ₂ K c).eval h = true then (1 : ℝ) else 0) := by
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:350:    (D.toOracleAdversary n ℓ ℓ K c).eval f =
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:351:      (D.toOracleAdversary n ℓ' ℓ' K c).eval
+### TCSlib: update over a list (foldr Function.update)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:221:  | e :: M, R => Function.update (ovr M R) e.1 e.2
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:229:    ovr ((p, y) :: M) R = Function.update (ovr M R) p y :=
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:263:    ovr M (Function.update R p y) = Function.update (ovr M R) p y := by
+### Mathlib/core: names
+.lake/packages/mathlib/Mathlib/Topology/UniformSpace/Cauchy.lean:446:theorem eq_pure_of_cauchy {f : Filter α} (hf : Cauchy f) : ∃ x : α, f = pure x := by
+.lake/packages/mathlib/Mathlib/Order/Filter/Ultrafilter/Basic.lean:48:theorem eq_pure_of_finite_mem (h : s.Finite) (h' : s ∈ f) : ∃ x ∈ s, f = pure x := by
+.lake/packages/mathlib/Mathlib/Order/Filter/Ultrafilter/Basic.lean:53:theorem eq_pure_of_finite [Finite α] (f : Ultrafilter α) : ∃ a, f = pure a :=
+### Mathlib: Function.update folds
