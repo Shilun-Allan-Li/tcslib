@@ -325,14 +325,14 @@ end Readers
 
 **Proof sketch.** Kernel `decide` (`isFiveCycle_iff`, `sigma1_eq`; no `native_decide`). -/
 theorem isFiveCycle_sigma1 : IsFiveCycle sigma1 := by
-  sorry
+  decide
 
 /-- **C9.** Lemma 3, second five-cycle: `IsFiveCycle sigma2` (Bar89's `(13542)`)
 [Bar89, Lemma 3, p003-b005].
 
 **Proof sketch.** Kernel `decide` (`isFiveCycle_iff`, `sigma2_eq`; no `native_decide`). -/
 theorem isFiveCycle_sigma2 : IsFiveCycle sigma2 := by
-  sorry
+  decide
 
 /-- **C9.** Lemma 3 in program order: the commutator of the two five-cycles is a five-cycle,
 `IsFiveCycle (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1)`; the product is `(13254)` 0-based,
@@ -345,7 +345,76 @@ first, so Bar89's `σ₁σ₂σ₁⁻¹σ₂⁻¹` is `sigma2⁻¹ * sigma1⁻¹
 `decide +kernel`: the elaborator's pre-evaluation of plain `decide` hits `maxRecDepth` here
 (probe P2). -/
 theorem isFiveCycle_commutator : IsFiveCycle (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) := by
-  sorry
+  decide +kernel
+
+/-- The inverse of a five-cycle is a five-cycle: `IsFiveCycle σ → IsFiveCycle σ⁻¹`
+(`Equiv.Perm.cycleType_inv`).  Glue for Lemma 2 [Bar89, Lemma 2 proof, p003-b004]. -/
+private theorem isFiveCycle_inv {σ : Perm (Fin 5)} (h : IsFiveCycle σ) : IsFiveCycle σ⁻¹ := by
+  rw [isFiveCycle_iff, Perm.cycleType_inv]
+  exact h
+
+/-- A conjugate of a five-cycle is a five-cycle: `IsFiveCycle σ → IsFiveCycle (θ * σ * θ⁻¹)`
+(`Equiv.Perm.cycleType_conj`).  Glue for [Bar89, Thm 1 proof, p004-b002]. -/
+private theorem isFiveCycle_conj {σ : Perm (Fin 5)} (h : IsFiveCycle σ) (θ : Perm (Fin 5)) :
+    IsFiveCycle (θ * σ * θ⁻¹) := by
+  rw [isFiveCycle_iff, Perm.cycleType_conj]
+  exact h
+
+/-- A five-cycle is a cycle: `IsFiveCycle σ → σ.IsCycle` (`Equiv.Perm.card_cycleType_eq_one`).
+Glue for C10. -/
+private theorem IsFiveCycle.isCycle {σ : Perm (Fin 5)} (h : IsFiveCycle σ) : σ.IsCycle := by
+  rw [isFiveCycle_iff] at h
+  rw [← Perm.card_cycleType_eq_one, h, Multiset.card_singleton]
+
+/-- A five-cycle has order five: `IsFiveCycle σ → orderOf σ = 5` (`Equiv.Perm.lcm_cycleType`).
+Glue for C10. -/
+private theorem IsFiveCycle.orderOf_eq {σ : Perm (Fin 5)} (h : IsFiveCycle σ) :
+    orderOf σ = 5 := by
+  rw [isFiveCycle_iff] at h
+  rw [← Perm.lcm_cycleType, h, Multiset.lcm_singleton, normalize_eq]
+
+/-- A five-cycle on `Fin 5` moves every point: `IsFiveCycle σ → σ i ≠ i` (its support has
+`5 = Fintype.card (Fin 5)` elements, `Equiv.Perm.sum_cycleType`).  Glue for C10. -/
+private theorem IsFiveCycle.apply_ne {σ : Perm (Fin 5)} (h : IsFiveCycle σ) (i : Fin 5) :
+    σ i ≠ i := by
+  rw [isFiveCycle_iff] at h
+  have hs : σ.support = Finset.univ := by
+    apply Finset.eq_univ_of_card
+    rw [← Perm.sum_cycleType, h, Multiset.sum_singleton, Fintype.card_fin]
+  rw [← Perm.mem_support, hs]
+  exact Finset.mem_univ i
+
+/-- On the orbit of `0` under a five-cycle, powers agree exactly modulo `5`:
+`IsFiveCycle σ → ((σ ^ a) 0 = (σ ^ b) 0 ↔ a ≡ b [MOD 5])` (`Equiv.Perm.IsCycle.pow_eq_pow_iff`,
+`pow_eq_pow_iff_modEq`).  Glue for C10 [Bar89, Lemma 1 proof, p003-b003]. -/
+private theorem IsFiveCycle.pow_apply_eq_iff {σ : Perm (Fin 5)} (h : IsFiveCycle σ) {a b : ℕ} :
+    (σ ^ a) 0 = (σ ^ b) 0 ↔ a ≡ b [MOD 5] := by
+  have h5 := h.orderOf_eq
+  constructor
+  · intro hab
+    have hmod := pow_eq_pow_iff_modEq.1 (h.isCycle.pow_eq_pow_iff.2 ⟨0, h.apply_ne 0, hab⟩)
+    rwa [h5] at hmod
+  · intro hab
+    rw [← h5] at hab
+    rw [pow_eq_pow_iff_modEq.2 hab]
+
+/-- For a five-cycle `σ`, `conjugatorIndex σ i` is an exponent reaching `i` from `0`:
+`IsFiveCycle σ → (σ ^ conjugatorIndex σ i) 0 = i`.  Some `k < orderOf σ = 5` reaches `i`
+(`Equiv.Perm.SameCycle.exists_pow_eq'`), so `List.find?` succeeds on `List.range 5`.  Glue for
+C10 [Bar89, Lemma 1 proof, p003-b003]. -/
+private theorem pow_conjugatorIndex {σ : Perm (Fin 5)} (h : IsFiveCycle σ) (i : Fin 5) :
+    (σ ^ conjugatorIndex σ i) 0 = i := by
+  obtain ⟨k, hk, hki⟩ := (h.isCycle.sameCycle (h.apply_ne 0) (h.apply_ne i)).exists_pow_eq'
+  rw [h.orderOf_eq] at hk
+  rw [conjugatorIndex_eq]
+  cases hf : (List.range 5).find? (fun k => (σ ^ k) 0 = i) with
+  | none =>
+    rw [List.find?_eq_none] at hf
+    exact absurd (decide_eq_true hki) (hf k (List.mem_range.2 hk))
+  | some m =>
+    rw [Option.getD_some]
+    have hm := List.find?_some (p := fun k => decide ((σ ^ k) 0 = i)) hf
+    exact of_decide_eq_true hm
 
 /-- **C10.** The explicit conjugator conjugates one five-cycle to the other:
 `IsFiveCycle σ → IsFiveCycle τ → conjugator σ τ * σ * (conjugator σ τ)⁻¹ = τ`
@@ -362,7 +431,24 @@ and it is a bijection; by `conjugator_apply_of_bijective`, `θ (σ (σ^k 0)) = �
 τ (θ (σ^k 0))`, i.e. `θ * σ = τ * θ` on the orbit of `0`, which is everything. -/
 theorem conjugator_conj {σ τ : Perm (Fin 5)} (hσ : IsFiveCycle σ) (hτ : IsFiveCycle τ) :
     conjugator σ τ * σ * (conjugator σ τ)⁻¹ = τ := by
-  sorry
+  -- the sketch's "alternatively" route: `θ (σ^k 0) = τ^k 0` intertwines `σ` and `τ`
+  have hcomm : ∀ i, conjugatorFun σ τ (σ i) = τ (conjugatorFun σ τ i) := by
+    intro i
+    have hstep : τ ((τ ^ conjugatorIndex σ i) 0) = (τ ^ (conjugatorIndex σ i + 1)) 0 := by
+      rw [pow_succ', Perm.mul_apply]
+    rw [conjugatorFun_eq, conjugatorFun_eq, hstep, hτ.pow_apply_eq_iff, ← hσ.pow_apply_eq_iff,
+      pow_conjugatorIndex hσ, pow_succ', Perm.mul_apply, pow_conjugatorIndex hσ]
+  -- it is injective, hence a bijection of `Fin 5`
+  have hinj : Function.Injective (conjugatorFun σ τ) := by
+    intro i j hij
+    rw [conjugatorFun_eq, conjugatorFun_eq, hτ.pow_apply_eq_iff, ← hσ.pow_apply_eq_iff,
+      pow_conjugatorIndex hσ, pow_conjugatorIndex hσ] at hij
+    exact hij
+  have hbij : Function.Bijective (conjugatorFun σ τ) := Finite.injective_iff_bijective.1 hinj
+  rw [mul_inv_eq_iff_eq_mul]
+  ext i
+  rw [Perm.mul_apply, Perm.mul_apply, conjugator_apply_of_bijective hbij,
+    conjugator_apply_of_bijective hbij, hcomm]
 
 /-- **C11.** **Lemma 1**: change the output to any five-cycle at the same length: if `B` five-cycle
 recognizes `A` with output `σ` and `τ` is a five-cycle, then `B.conj (conjugator σ τ)` five-cycle
@@ -374,7 +460,13 @@ recognizes `A` with output `τ` [Bar89, Lemma 1, p003-b003].
 theorem FiveCycleRecognizes.conj {B : BranchingProgram 5 n} {A : (Fin n → Bool) → Prop}
     {σ τ : Perm (Fin 5)} (h : FiveCycleRecognizes B A σ) (hτ : IsFiveCycle τ) :
     FiveCycleRecognizes (B.conj (conjugator σ τ)) A τ := by
-  sorry
+  rw [fiveCycleRecognizes_iff] at h ⊢
+  refine ⟨hτ, fun x => ⟨fun hA => ?_, fun hA => ?_⟩⟩
+  · rw [yield_conj, (h.2 x).1 hA]
+    conv_rhs => rw [← conjugator_conj h.1 hτ]
+    rw [Perm.coe_mul, Perm.coe_mul, Perm.inv_def]
+    rfl
+  · rw [yield_conj, (h.2 x).2 hA, Function.id_comp, Equiv.self_comp_symm]
 
 /-- **C12.** **Lemma 2**: the complement, at the same length, with output `σ⁻¹`: if `B` (nonempty)
 five-cycle recognizes `A` with output `σ`, then `B.complementLast σ` five-cycle recognizes
@@ -387,7 +479,10 @@ theorem FiveCycleRecognizes.complementLast {B : BranchingProgram 5 n}
     {A : (Fin n → Bool) → Prop} {σ : Perm (Fin 5)} (h : FiveCycleRecognizes B A σ)
     (hB : 0 < B.length) :
     FiveCycleRecognizes (B.complementLast σ) (fun x => ¬ A x) σ⁻¹ := by
-  sorry
+  rw [fiveCycleRecognizes_iff] at h ⊢
+  refine ⟨isFiveCycle_inv h.1, fun x => ⟨fun hA => ?_, fun hA => ?_⟩⟩
+  · rw [yield_complementLast B σ hB, (h.2 x).2 hA, Function.comp_id, Perm.inv_def]
+  · rw [yield_complementLast B σ hB, (h.2 x).1 (not_not.1 hA), Equiv.symm_comp_self]
 
 /-- **C13.** **Barrington's Theorem 1**, recognition: for a fan-in-2 formula `c` and a five-cycle
 `σ`, `barrington c σ` five-cycle recognizes `{x | c.eval x = true}` with output `σ`
