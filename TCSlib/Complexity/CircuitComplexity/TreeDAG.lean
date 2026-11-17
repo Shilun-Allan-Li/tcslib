@@ -53,9 +53,19 @@ variable {n : ℕ}
 def vertexValue (gs : List DAGGate) (x : Fin n → Bool) (v : ℕ) : Bool :=
   (runWith DAGGate.eval gs (List.ofFn x)).getD v false
 
+/-- Reader of `vertexValue`:
+`vertexValue gs x v = (runWith DAGGate.eval gs (List.ofFn x)).getD v false`.  Glue. -/
+theorem vertexValue_eq (gs : List DAGGate) (x : Fin n → Bool) (v : ℕ) :
+    vertexValue gs x v = (runWith DAGGate.eval gs (List.ofFn x)).getD v false := rfl
+
 /-- The depth of vertex `v` after running `gs` over `n` inputs. -/
 def vertexDepth (n : ℕ) (gs : List DAGGate) (v : ℕ) : ℕ :=
   (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0
+
+/-- Reader of `vertexDepth`:
+`vertexDepth n gs v = (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0`.  Glue. -/
+theorem vertexDepth_eq (n : ℕ) (gs : List DAGGate) (v : ℕ) :
+    vertexDepth n gs v = (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0 := rfl
 
 /-- Appending gates does not change the value of an existing vertex: if `v` is below
 `n + gs.length` (an input or a gate of `gs`), its value under `gs ++ ext` equals its value
