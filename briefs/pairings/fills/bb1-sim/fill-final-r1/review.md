@@ -413,3 +413,31 @@ merge with Lean T44′.
   (`commit-tree`, `merge-tree`). The fetches updated remote-tracking refs only.
 - Nothing was staged, committed or pushed.
 - Free disk stayed at or above 3.9 GB.
+
+## Final verdict (phase 2)
+
+**ACCEPT WITH LANDING EDITS (LE-bsf1 applied).** Phase 2 passes (`phase2.md`; zip
+`bb1-sim-fill-final-r1-phase2-evidence.zip`, SHA-256 in `evidence-SHA256SUMS`). There is no blocker, no major and no
+new finding.
+
+- **Rulings applied** (Seyoon, 2026-11-17): Q1 DL-57 accepted (cleanup Stage 2); Q2 LE-bsf1 as drafted; Q3 the PR opens
+  on the records tip now that #340 and #346 are merged, so no merge base B′ and no stacking.
+- **Landing head** `land/pairings-bb1-sim` `7a98ba0140ce6334bef1f2a8d39c6dfceb6ccaff`: the records tip `e1d39836` plus
+  signed cherry-picks of the worker's 4 commits (`range-diff` 4/4 `=`) plus LE-bsf1 (byte-identical to
+  `le-bsf1-proposed.diff`). All 5 commits are signed by the records key.
+- **Static:** decls2 against the tip 69 ADDED (10 readers, 58 helpers, `bb1RealState_eq`), 0 CHANGED, 0 REMOVED; reader
+  pins `97ecb6e0…`/`88454d6f…` unchanged (insertion check against the tip PASS, 12 controls); frozen check 12/12 with 8
+  controls; hygiene clean for every helper docstring.
+- **Replay on snapshot #5** (`$SP/olean-replay-bb1sim`): 19/19 rc 0 with 0 errors and 0 `sorry`; state 1432/1432 OK;
+  link count 1; snapshot #5 0/0/0; output map 1463 entries `b43812d0…`.
+- **Admissions:** 196 → 192, exactly the four targets. **Axioms:** 76 constants standard, census 325 with `Real` at
+  29; **`bb1_sidSecure` is standard and its `sorryAx` trace is empty**, as are the other five roots' (sorry control
+  caught).
+- **Rule 10:** 36 seals with 0 errors and the delivered request counts; controls ALL_OK strict and coe (485 negatives
+  each failing once); `bb1RealState_eq`'s entries pass under the seals (the abbrev is never requested); unfold scan
+  0 foreign; lint unchanged.
+- BSF-F01 stays a process note for the dispatch template; BSF-F02/F03 are closed by LE-bsf1; BSF-F04 by DL-57; BSF-F05
+  is stated in the PR description.
+
+**Next:** the draft PR into `cryptography/pass-shelat-ch2-4`; the bb1-sim gate (Q8) audits it. On merge, if the merge's
+Lean equals `7a98ba01`, adopt `$SP/olean-replay-bb1sim` as snapshot #6, and record DL-57 in the ledger.
