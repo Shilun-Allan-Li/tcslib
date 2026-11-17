@@ -9,6 +9,7 @@ import TCSlib.Cryptography.Games.Advantage
 import TCSlib.Cryptography.Games.Hopping
 import TCSlib.Cryptography.Games.Protocols
 import TCSlib.Cryptography.Games.Forwarding
+import TCSlib.Cryptography.Games.Tapes
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -45,6 +46,8 @@ the interaction model `Strategy`.
   messages and coin draws.
 * `TCSlib.Cryptography.Games.Forwarding`: the forwarding handler, the call lemmas of interactive
   handlers read on lists, and hard-wiring a second input component (S2b layer).
+* `TCSlib.Cryptography.Games.Tapes`: simulation through a state abstraction in law, coins drawn in
+  advance on tapes, and functions overridden by a table.
 
 ## References
 

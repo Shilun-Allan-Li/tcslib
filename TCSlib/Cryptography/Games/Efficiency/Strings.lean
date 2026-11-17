@@ -38,6 +38,7 @@ on strings. This file collects the string-level pieces they share (route note
 ## Main results
 
 * `EffFill.encodeLog_append_single`, `EffFill.ofFn_getD_decodeFin`.
+* `EffFill.length_le_length_encodeLog`: an encoded log has at least as many bits as entries.
 * `EffFill.canonWord_eq`: the canonical decoder is `encodeBitMove ∘ decodeBitMove`.
 * `EffFill.canonFun_poly`, `EffFill.fixLen_poly`, `EffFill.selLen_poly`, `EffFill.actLoop_poly`.
 * `EffFill.runsTo_stop`: a run that stops evaluates the loop.
@@ -79,6 +80,16 @@ theorem length_encodeLog_le {ι α : Type} {spec : OracleSpec ι} (codec : Machi
     rw [MachineCodec.encodeLog_cons, length_pairEncode, List.length_cons, Nat.add_mul, Nat.one_mul]
     have h1 := hE e List.mem_cons_self
     have h2 := length_encodeLog_le codec E h fun e' he' => hE e' (List.mem_cons_of_mem e he')
+    omega
+
+/-- **An encoded log has at least as many bits as entries:**
+`h.length ≤ (codec.encodeLog h).length`. Framework glue, no textbook counterpart. -/
+protected theorem length_le_length_encodeLog {ι α : Type} {spec : OracleSpec ι}
+    (codec : MachineCodec spec α) (h : QueryLog spec) : h.length ≤ (codec.encodeLog h).length := by
+  induction h with
+  | nil => rw [MachineCodec.encodeLog_nil, List.length_nil, List.length_nil]
+  | cons e h ih =>
+    rw [MachineCodec.encodeLog_cons, length_pairEncode, List.length_cons]
     omega
 
 /-- The encoding of a log ends with the encoding of each of its suffixes, so it is at least as
