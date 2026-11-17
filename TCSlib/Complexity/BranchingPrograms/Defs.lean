@@ -211,17 +211,6 @@ theorem complementLast_concat (l : List (Instr w n)) (ι : Instr w n) (σ : Equi
 
 /-! ### Targets C1–C4 -/
 
-/-- The yield's fold started at a map `g` is the fold started at `id`, composed after `g`:
-`l.foldl (fun f ι => ι.eval x ∘ f) g = l.foldl (fun f ι => ι.eval x ∘ f) id ∘ g`.  Glue for C1
-(composition is associative); proved by induction on `l` with `g` generalized. -/
-private theorem foldl_eval_comp (x : Fin n → Bool) (l : List (Instr w n)) (g : Fin w → Fin w) :
-    l.foldl (fun f ι => ι.eval x ∘ f) g = l.foldl (fun f ι => ι.eval x ∘ f) id ∘ g := by
-  induction l generalizing g with
-  | nil => rfl
-  | cons ι l ih =>
-    rw [List.foldl_cons, List.foldl_cons, ih (ι.eval x ∘ g), ih (ι.eval x ∘ id)]
-    rfl
-
 /-- **C1.** The yield of a concatenation composes in program order:
 `(B₁ ++ B₂).yield x = B₂.yield x ∘ B₁.yield x` [Bar89, §1, p001-b002: "the composition of the
 functions produced by each of the instructions"].
@@ -235,7 +224,10 @@ shows `l.foldl (fun f ι => ι.eval x ∘ f) g = l.foldl (fun f ι => ι.eval x 
 theorem yield_append (B₁ B₂ : BranchingProgram w n) (x : Fin n → Bool) :
     (B₁ ++ B₂).yield x = B₂.yield x ∘ B₁.yield x := by
   rw [yield_eq, yield_eq B₂, yield_eq B₁, append_instrs, List.foldl_append]
-  exact foldl_eval_comp x B₂.instrs _
+  -- the auxiliary induction of the sketch is core's `List.foldl_hom` for `f ↦ f ∘ B₁.yield x`
+  exact List.foldl_hom (fun f => f ∘ B₁.instrs.foldl (fun f ι => ι.eval x ∘ f) id) (init := id)
+    (g₁ := fun f (ι : Instr w n) => ι.eval x ∘ f) (g₂ := fun f (ι : Instr w n) => ι.eval x ∘ f)
+    (fun _ _ => rfl)
 
 /-- **C1.** The empty program yields the identity: `(⟨[]⟩ : BranchingProgram w n).yield x = id`
 [Bar89, §1, p001-b002].
@@ -254,25 +246,6 @@ private theorem eval_conjInstr (θ : Equiv.Perm (Fin w)) (ι : Instr w n) (x : F
   dsimp only
   cases x ι.var <;> rfl
 
-/-- The yield's fold over the conjugated instructions, started at `θ ∘ g ∘ θ⁻¹`, is the conjugate
-of the fold started at `g`: with `c ι = ⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩`,
-`(l.map c).foldl (fun f ι => ι.eval x ∘ f) (θ ∘ g ∘ θ.symm) =
-θ ∘ l.foldl (fun f ι => ι.eval x ∘ f) g ∘ θ.symm`.  Glue for C2 [Bar89, Lemma 1 proof,
-p003-b003]; induction on `l` with `g` generalized, cancelling `θ.symm ∘ θ` at each step. -/
-private theorem foldl_conj (θ : Equiv.Perm (Fin w)) (x : Fin n → Bool) (l : List (Instr w n))
-    (g : Fin w → Fin w) :
-    (l.map fun ι => (⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩ : Instr w n)).foldl
-        (fun f ι => ι.eval x ∘ f) (θ ∘ g ∘ θ.symm) =
-      θ ∘ l.foldl (fun f ι => ι.eval x ∘ f) g ∘ θ.symm := by
-  induction l generalizing g with
-  | nil => rfl
-  | cons ι l ih =>
-    simp only [List.map_cons, List.foldl_cons]
-    rw [eval_conjInstr, ← ih (ι.eval x ∘ g)]
-    congr 1
-    funext y
-    simp only [Function.comp_apply, Equiv.symm_apply_apply]
-
 /-- **C2.** Conjugating every map by `θ` conjugates the yield:
 `(B.conj θ).yield x = θ ∘ B.yield x ∘ θ.symm` [Bar89, Lemma 1 proof, p003-b003].
 
@@ -283,9 +256,20 @@ inner `θ.symm ∘ θ` by `Equiv.symm_comp_self`. -/
 theorem yield_conj (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) (x : Fin n → Bool) :
     (B.conj θ).yield x = θ ∘ B.yield x ∘ θ.symm := by
   rw [conj_eq, yield_eq, yield_eq]
-  have h := foldl_conj θ x B.instrs id
+  -- the induction of the sketch is core's `List.foldl_hom` for `g ↦ θ ∘ g ∘ θ.symm`; each step
+  -- is `eval_conjInstr` with the inner `θ.symm ∘ θ` cancelled
+  have h := List.foldl_hom (fun g : Fin w → Fin w => θ ∘ g ∘ θ.symm) (l := B.instrs) (init := id)
+    (g₁ := fun f ι => ι.eval x ∘ f)
+    (g₂ := fun f ι => (⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩ : Instr w n).eval x ∘ f)
+    (fun g ι => by
+      dsimp only
+      rw [eval_conjInstr]
+      funext y
+      simp only [Function.comp_apply, Equiv.symm_apply_apply])
+  dsimp only at h
   rw [Function.id_comp, Equiv.self_comp_symm] at h
-  exact h
+  rw [← h]
+  exact List.foldl_map
 
 /-- **C2.** Conjugation keeps the length: `(B.conj θ).length = B.length`
 [Bar89, Lemma 1, p003-b003: "of the same length as `B`"].
@@ -406,21 +390,6 @@ private theorem Instr.bijective_eval {ι : Instr w n}
   · exact hι.2
   · exact hι.1
 
-/-- The yield's fold over instructions with bijective maps, started at a bijection `g`, is a
-bijection: `(∀ ι ∈ l, Function.Bijective ι.map0 ∧ Function.Bijective ι.map1) →
-Function.Bijective g → Function.Bijective (l.foldl (fun f ι => ι.eval x ∘ f) g)`.  Glue for C4;
-induction on `l` with `g` generalized (`Function.Bijective.comp`). -/
-private theorem foldl_bijective (x : Fin n → Bool) (l : List (Instr w n))
-    (hl : ∀ ι ∈ l, Function.Bijective ι.map0 ∧ Function.Bijective ι.map1) (g : Fin w → Fin w)
-    (hg : Function.Bijective g) :
-    Function.Bijective (l.foldl (fun f ι => ι.eval x ∘ f) g) := by
-  induction l generalizing g with
-  | nil => exact hg
-  | cons ι l ih =>
-    rw [List.foldl_cons]
-    exact ih (fun ι' h => hl ι' (List.mem_cons_of_mem _ h)) _
-      ((Instr.bijective_eval (hl ι (List.mem_cons.2 (Or.inl rfl))) x).comp hg)
-
 /-- **C4.** A permutation program yields a bijection on every input:
 `B.IsPermutation → Function.Bijective (B.yield x)`.  Glue for [Bar89, §1, p002-b001].
 
@@ -431,7 +400,9 @@ theorem IsPermutation.bijective_yield {B : BranchingProgram w n} (h : B.IsPermut
     (x : Fin n → Bool) : Function.Bijective (B.yield x) := by
   rw [isPermutation_iff] at h
   rw [yield_eq]
-  exact foldl_bijective x B.instrs h id Function.bijective_id
+  -- the induction of the sketch is core's `List.foldlRecOn` with motive `Function.Bijective`
+  exact List.foldlRecOn (motive := Function.Bijective) B.instrs _ Function.bijective_id
+    fun g hg ι hι => (Instr.bijective_eval (h ι hι) x).comp hg
 
 end BranchingProgram
 

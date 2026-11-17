@@ -221,19 +221,12 @@ is `Pi.single (fold f s) 1`), using `evalWith_eq` and `yield_eq`. -/
 theorem evalWith_single (B : BranchingProgram w n) (x : Fin n → Bool) (s : Fin w) :
     B.evalWith (fun b (u v : ℕ) => if b then v else u) x (Pi.single s 1) =
       Pi.single (B.yield x s) 1 := by
-  -- the host fold from the one-hot vector of `f s` ends one-hot at the yield's fold from `f`
-  have hfold : ∀ (l : List (Instr w n)) (f : Fin w → Fin w),
-      l.foldl (fun U ι => ι.stepWith (fun b (u v : ℕ) => if b then v else u) x U)
-          (Pi.single (f s) 1) =
-        Pi.single (l.foldl (fun g ι => ι.eval x ∘ g) f s) 1 := by
-    intro l
-    induction l with
-    | nil => intro f; rfl
-    | cons ι l ih =>
-      intro f
-      rw [List.foldl_cons, List.foldl_cons, stepWith_single]
-      exact ih (ι.eval x ∘ f)
   rw [evalWith_eq, yield_eq]
-  exact hfold B.instrs id
+  -- the induction of the sketch is core's `List.foldl_hom` for `f ↦ Pi.single (f s) 1`, whose
+  -- step is `stepWith_single`
+  exact List.foldl_hom (fun f : Fin w → Fin w => (Pi.single (f s) 1 : Fin w → ℕ)) (init := id)
+    (g₁ := fun f (ι : Instr w n) => ι.eval x ∘ f)
+    (g₂ := fun U ι => ι.stepWith (fun b (u v : ℕ) => if b then v else u) x U)
+    (fun f ι => stepWith_single ι x (f s))
 
 end BranchingProgram
