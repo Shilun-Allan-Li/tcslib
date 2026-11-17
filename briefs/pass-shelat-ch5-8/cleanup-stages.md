@@ -88,3 +88,9 @@ The plan had omitted the #248 historical seal ledger and the inherited-seal repa
 **Stage 2 handover, a seventh change for Seyoon to confirm:** removing the public `EnsembleLemmas.blocks` alias also needs the body of `ETTGame.dTape` (`EncryptThenTag/Handler.lean:178`) changed. It is of the same kind as the six approved under CS1-Q2.
 
 **Seventh change approved (Seyoon, 2026-11-17):** the body of `ETTGame.dTape` (`EncryptThenTag/Handler.lean:178`). Stage 2 makes all seven DL-35 changes, and its gate checks each one.
+
+**Stage 1 final rulings (Seyoon, 2026-11-17; review `cleanup-stage1/final-r1/review.md`):**
+- **Q1:** accept the delivery; the report layer is completed by the maintainer's Stage 2 addendum (`cleanup-stage1/final-r1/stage2-addendum.tsv`), DL-49 extended for `msgAt_encodeMsgs`, DL-53 standing. No round trip.
+- **Q2:** removing the public `EnsembleLemmas.blocks` alias needs seven more changes, approved as the same kind as the seven of CS1-Q2: the bodies of `bTapeOf`, `bTapes`, `dTapes` and the statements of `bTapeOf_eq`, `bTapes_eq`, `dTapes_eq`, `dTape_eq` (with their proof uses). Stage 2 makes all fourteen; its gate checks each one.
+- **Q3:** CS1-W1 is answered by CS1-C1-Q1 and CS1-W2 by DW-10 Q3 (the `FinDist` coercion is notation).
+- **Q4:** the Stage 1 PR is stacked on #347's branch `cleanup/dw5-derand-readers` for Gate 47, then retargeted to the records branch after #347 merges (never merged into #347's branch).
