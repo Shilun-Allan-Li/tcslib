@@ -1,4 +1,5 @@
-"""widths.py <root> <file>... (fill bb1-machine, Claude lead): line widths (Python len) and line counts;
+"""(bb1-sim-statements, lead: copied unchanged from the bb1-machine delivery.)
+widths.py <root> <file>... (fill bb1-machine, Claude lead): line widths (Python len) and line counts;
 prints every line over 100 characters and every file over 1000 lines, then a summary."""
 import sys
 root, files = sys.argv[1], sys.argv[2:]; bad = 0

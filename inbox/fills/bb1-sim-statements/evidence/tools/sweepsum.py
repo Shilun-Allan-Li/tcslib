@@ -1,4 +1,5 @@
-"""sweepsum.py <repo> <results.jsonl> <base-sorries.txt> (fill bb1-machine, Claude lead): summary of a
+"""(bb1-sim-statements, lead: copied unchanged from the bb1-machine delivery.)
+sweepsum.py <repo> <results.jsonl> <base-sorries.txt> (fill bb1-machine, Claude lead): summary of a
 runner.py sweep: rc, both error forms (`error:` and `error(`, G26-N1), sources bound to `git show HEAD`,
 and the `sorry` warnings per module (from each module log) against the brief's base-sorries.txt."""
 import sys, json, re, os, subprocess, hashlib

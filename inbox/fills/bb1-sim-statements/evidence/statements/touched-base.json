@@ -1,0 +1,652 @@
+{
+ "base": "bdcadd858cbe043e8c41e465a96e81feb1eecda1",
+ "head": "bdcadd858cbe043e8c41e465a96e81feb1eecda1",
+ "files": {
+  "TCSlib/Cryptography/Games/Probability.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Games.unifSpec",
+     "kind": "abbrev",
+     "private": false,
+     "start": 71,
+     "decl_line": 73,
+     "end": 74,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp",
+     "kind": "abbrev",
+     "private": false,
+     "start": 75,
+     "decl_line": 77,
+     "end": 78,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.sampleFin",
+     "kind": "def",
+     "private": false,
+     "start": 83,
+     "decl_line": 84,
+     "end": 85,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.sampleFin_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 86,
+     "decl_line": 88,
+     "end": 89,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.sample",
+     "kind": "def",
+     "private": false,
+     "start": 90,
+     "decl_line": 92,
+     "end": 96,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.sample_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 97,
+     "decl_line": 99,
+     "end": 103,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect",
+     "kind": "def",
+     "private": false,
+     "start": 104,
+     "decl_line": 106,
+     "end": 109,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob",
+     "kind": "def",
+     "private": false,
+     "start": 110,
+     "decl_line": 112,
+     "end": 114,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_pure",
+     "kind": "theorem",
+     "private": false,
+     "start": 115,
+     "decl_line": 116,
+     "end": 117,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_query",
+     "kind": "theorem",
+     "private": false,
+     "start": 118,
+     "decl_line": 119,
+     "end": 121,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_bind",
+     "kind": "theorem",
+     "private": false,
+     "start": 122,
+     "decl_line": 127,
+     "end": 132,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_map",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 134,
+     "end": 137,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_sampleFin",
+     "kind": "theorem",
+     "private": false,
+     "start": 138,
+     "decl_line": 139,
+     "end": 141,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_sample",
+     "kind": "theorem",
+     "private": false,
+     "start": 142,
+     "decl_line": 146,
+     "end": 155,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_add",
+     "kind": "theorem",
+     "private": false,
+     "start": 156,
+     "decl_line": 157,
+     "end": 162,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_const_mul",
+     "kind": "theorem",
+     "private": false,
+     "start": 163,
+     "decl_line": 164,
+     "end": 171,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_const",
+     "kind": "theorem",
+     "private": false,
+     "start": 172,
+     "decl_line": 173,
+     "end": 181,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_sum",
+     "kind": "theorem",
+     "private": false,
+     "start": 182,
+     "decl_line": 183,
+     "end": 190,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_mono",
+     "kind": "theorem",
+     "private": false,
+     "start": 191,
+     "decl_line": 192,
+     "end": 199,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_nonneg",
+     "kind": "theorem",
+     "private": false,
+     "start": 200,
+     "decl_line": 201,
+     "end": 203,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob_eq_expect",
+     "kind": "theorem",
+     "private": false,
+     "start": 206,
+     "decl_line": 207,
+     "end": 213,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob_pure",
+     "kind": "theorem",
+     "private": false,
+     "start": 214,
+     "decl_line": 215,
+     "end": 220,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob_bind",
+     "kind": "theorem",
+     "private": false,
+     "start": 221,
+     "decl_line": 223,
+     "end": 227,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob_nonneg",
+     "kind": "theorem",
+     "private": false,
+     "start": 228,
+     "decl_line": 229,
+     "end": 233,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob_le_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 234,
+     "decl_line": 235,
+     "end": 241,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob_mono",
+     "kind": "theorem",
+     "private": false,
+     "start": 242,
+     "decl_line": 243,
+     "end": 251,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob_congr",
+     "kind": "theorem",
+     "private": false,
+     "start": 252,
+     "decl_line": 253,
+     "end": 256,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob_or_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 257,
+     "decl_line": 258,
+     "end": 264,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.prob_not",
+     "kind": "theorem",
+     "private": false,
+     "start": 265,
+     "decl_line": 266,
+     "end": 274,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.dist",
+     "kind": "def",
+     "private": false,
+     "start": 277,
+     "decl_line": 279,
+     "end": 288,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.dist_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 289,
+     "decl_line": 290,
+     "end": 292,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_sample_equiv",
+     "kind": "theorem",
+     "private": false,
+     "start": 299,
+     "decl_line": 303,
+     "end": 306,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_sample_comm",
+     "kind": "theorem",
+     "private": false,
+     "start": 307,
+     "decl_line": 312,
+     "end": 320,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_expect_sample",
+     "kind": "theorem",
+     "private": false,
+     "start": 321,
+     "decl_line": 325,
+     "end": 331,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_sample_unique",
+     "kind": "theorem",
+     "private": false,
+     "start": 332,
+     "decl_line": 333,
+     "end": 337,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_sub",
+     "kind": "theorem",
+     "private": false,
+     "start": 338,
+     "decl_line": 339,
+     "end": 345,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_sample_update",
+     "kind": "theorem",
+     "private": false,
+     "start": 346,
+     "decl_line": 354,
+     "end": 375,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.expect_sample_coord",
+     "kind": "theorem",
+     "private": false,
+     "start": 376,
+     "decl_line": 382,
+     "end": 389,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Games.ProbComp.abs_expect_sub_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 390,
+     "decl_line": 392,
+     "end": 404,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 39,
+   "head_count": 39
+  },
+  "TCSlib/Cryptography/Pairing/Group.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup",
+     "kind": "structure",
+     "private": false,
+     "start": 79,
+     "decl_line": 91,
+     "end": 132,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.factPrime",
+     "kind": "instance",
+     "private": false,
+     "start": 140,
+     "decl_line": 141,
+     "end": 142,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.neZeroOrder",
+     "kind": "instance",
+     "private": false,
+     "start": 143,
+     "decl_line": 144,
+     "end": 145,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.nonempty_ne_one",
+     "kind": "instance",
+     "private": false,
+     "start": 146,
+     "decl_line": 147,
+     "end": 148,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.bilinear_pow",
+     "kind": "theorem",
+     "private": false,
+     "start": 149,
+     "decl_line": 152,
+     "end": 155,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pair_pow_left",
+     "kind": "theorem",
+     "private": false,
+     "start": 156,
+     "decl_line": 157,
+     "end": 159,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pair_pow_right",
+     "kind": "theorem",
+     "private": false,
+     "start": 160,
+     "decl_line": 161,
+     "end": 163,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.natCard_G",
+     "kind": "theorem",
+     "private": false,
+     "start": 164,
+     "decl_line": 165,
+     "end": 167,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.exists_pow_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 168,
+     "decl_line": 170,
+     "end": 172,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pair_comm",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 175,
+     "end": 179,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pow_order",
+     "kind": "theorem",
+     "private": false,
+     "start": 180,
+     "decl_line": 181,
+     "end": 184,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pow_order_GT",
+     "kind": "theorem",
+     "private": false,
+     "start": 185,
+     "decl_line": 186,
+     "end": 189,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_mul",
+     "kind": "theorem",
+     "private": false,
+     "start": 190,
+     "decl_line": 192,
+     "end": 195,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_mul_GT",
+     "kind": "theorem",
+     "private": false,
+     "start": 196,
+     "decl_line": 197,
+     "end": 201,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pair_ne_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 202,
+     "decl_line": 208,
+     "end": 217,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_bijective",
+     "kind": "theorem",
+     "private": false,
+     "start": 218,
+     "decl_line": 224,
+     "end": 233,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGen",
+     "kind": "structure",
+     "private": false,
+     "start": 236,
+     "decl_line": 247,
+     "end": 262,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGen.desc",
+     "kind": "def",
+     "private": false,
+     "start": 267,
+     "decl_line": 268,
+     "end": 269,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGen.desc_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 270,
+     "decl_line": 271,
+     "end": 272,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGen.length_desc",
+     "kind": "theorem",
+     "private": false,
+     "start": 273,
+     "decl_line": 274,
+     "end": 276,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGen.inst",
+     "kind": "def",
+     "private": false,
+     "start": 277,
+     "decl_line": 278,
+     "end": 280,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGen.inst_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 281,
+     "decl_line": 282,
+     "end": 283,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGen.OrderAtLeastExcept",
+     "kind": "def",
+     "private": false,
+     "start": 284,
+     "decl_line": 292,
+     "end": 294,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Pairing.BilinearGen.orderAtLeastExcept_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 295,
+     "decl_line": 297,
+     "end": 301,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 24,
+   "head_count": 24
+  }
+ }
+}

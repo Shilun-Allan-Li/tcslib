@@ -1,3 +1,4 @@
+# bb1-sim-statements (lead): copied unchanged from the bb1-machine delivery.
 """mkcollect.py <nm-review NmCollect.lean> <modules file> <title> <out.lean>: the nm-cca2 review collector
 (PkCollect lineage) with its owner list and imports replaced by <modules> (verbatim otherwise)."""
 import sys, re

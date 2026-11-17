@@ -1,0 +1,4 @@
+ADDED	TCSlib/Cryptography/Pairing/Group.lean:264	TCSlib.Cryptography.Pairing.BilinearGroup.natCast_inj_of_lt	theorem	theorem natCast_inj_of_lt {m n : ℕ} (hm : m < B.order) (hn : n < B.order) : (m : ZMod B.order) = n ↔ m = n
+ADDED	TCSlib/Cryptography/Pairing/Group.lean:240	TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_add	theorem	theorem pow_val_add (x : B.G) (a b : ZMod B.order) : x ^ (a + b).val = x ^ a.val * x ^ b.val
+ADDED	TCSlib/Cryptography/Pairing/Group.lean:253	TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_bijective_of_ne_one	theorem	theorem pow_val_bijective_of_ne_one {g : B.G} (hg : g ≠ 1) : Function.Bijective fun a : ZMod B.order => g ^ a.val
+ADDED	TCSlib/Cryptography/Pairing/Group.lean:247	TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_neg	theorem	theorem pow_val_neg (x : B.G) (a : ZMod B.order) : x ^ (-a).val = (x ^ a.val)⁻¹

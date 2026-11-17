@@ -1,3 +1,4 @@
+# bb1-sim-statements (lead): copied unchanged from the bb1-machine delivery.
 """ctlcheck.py <plan.json> <rundir> <out.json>: verify control outcomes (unsealed rc 0; sealed: exactly one
 error inside each negative control, none in positives, no harness error, seal install+EOF records)."""
 import sys, json, re

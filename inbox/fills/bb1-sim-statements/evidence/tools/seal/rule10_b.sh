@@ -3,9 +3,11 @@
 # After the collector run (<evidence>/rule10/probe-runs): strict (mkseals_ab) and coe (mkseals_coe) seals A and B
 # (B with SEAL_EVAL=1), paired controls on the strict and coe records, one NOSTOP runner pass over all probes,
 # sealsum per variant, ctlcheck2 per harness. Tree: $TCSLIB_OLEANS_TREE.
+# bb1-sim-statements (lead, 2026-11-17): two changes, recorded here: the rule10 directory and the touched.json
+# are read from $R10DIR and $TOUCHED when set (one directory per series); defaults unchanged.
 set -eu
 T=$1; W=$2; E=$3; P=$4; H=$5; CTL=$6; shift 6
-G=$T/review/archived-gate10-tools; R=$E/rule10; LOG=$R/probe-runs/mods/${P}_CollectHead.log
+G=$T/review/archived-gate10-tools; R=${R10DIR:-$E/rule10}; LOG=$R/probe-runs/mods/${P}_CollectHead.log
 cd "$(dirname "$0")"
 python3 -I $T/review/mkseals_ab.py $G $LOG $W $H $R/seals/A $P/S SealA_ "$@" > $R/mkseals-A.log
 SEAL_EVAL=1 python3 -I $T/review/mkseals_ab.py $G $LOG $W $H $R/seals/B $P/S SealB_ "$@" > $R/mkseals-B.log
@@ -20,7 +22,7 @@ python3 -I $CTL $G $R/seals-flat $W $P/KS $R/controls-strict > $R/mkctl-strict.l
 python3 -I $CTL $G $R/seals-coe-flat $W $P/K $R/controls-coe > $R/mkctl-coe.log
 (cd $W && ls $P/C/*.lean $P/K/*.lean $P/KS/*.lean $P/S/*.lean 2>/dev/null | sed 's/\.lean$//' | LC_ALL=C sort) > $R/order/seal-control-queue.txt
 python3 -I $T/runner_full.py $W $R/order/seal-control-queue.txt $TCSLIB_OLEANS_TREE $R/seal-runs > $R/seal-runner.out 2>&1 || true
-TJ=$E/statements/touched-after.json
+TJ=${TOUCHED:-$E/statements/touched-after.json}
 python3 -I $T/review/sealsum.py $R/seals/A $R/seal-runs $TJ $R/seals-A.tsv
 python3 -I $T/review/sealsum.py $R/seals/B $R/seal-runs $TJ $R/seals-B.tsv
 python3 -I $T/review/sealsum.py $R/seals-coe/A $R/seal-runs $TJ $R/seals-coe-A.tsv

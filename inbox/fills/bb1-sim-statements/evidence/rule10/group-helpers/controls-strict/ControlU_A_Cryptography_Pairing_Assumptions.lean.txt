@@ -1,0 +1,123 @@
+import Lean
+import TCSlib.Cryptography.Pairing.Assumptions
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace PairingControls
+
+open TCSlib.Cryptography in
+theorem ctlPadFin (ℓ : ℕ) (w : List Bool) :
+    padFin ℓ w = (fun i => w.getD i false : Fin ℓ → Bool) := rfl
+
+open TCSlib.Cryptography in
+theorem ctlPadFinReader (ℓ : ℕ) (w : List Bool) :
+    padFin ℓ w = (fun i => w.getD i false : Fin ℓ → Bool) :=
+  padFin_def ℓ w
+
+open TCSlib.Cryptography.Games in
+theorem ctlAllOutputs {α : Type} (P : α → Prop) (a : α) :
+    (OracleComp.pure (spec := unifSpec) a).AllOutputs P ↔ P a := Iff.rfl
+
+open TCSlib.Cryptography.Games in
+theorem ctlAllOutputsReader {α : Type} (P : α → Prop) (a : α) :
+    (OracleComp.pure (spec := unifSpec) a).AllOutputs P ↔ P a :=
+  OracleComp.allOutputs_pure
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlDesc (G : BilinearGen) (κ : ℕ) (r : G.gen.Coins κ) :
+    G.desc κ r = G.gen.runAt κ [] r := rfl
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlDescReader (G : BilinearGen) (κ : ℕ) (r : G.gen.Coins κ) :
+    G.desc κ r = G.gen.runAt κ [] r :=
+  G.desc_eq κ r
+
+open Complexity in
+theorem ctlDistL (A : NUPPT) (n : ℕ) (w : List Bool) (r : A.Coins n) :
+    A.distinguisherL n w r = decide (A.runAt n w r = [true]) := rfl
+
+open Complexity in
+theorem ctlDistLReader (A : NUPPT) (n : ℕ) (w : List Bool) (r : A.Coins n) :
+    A.distinguisherL n w r = decide (A.runAt n w r = [true]) :=
+  A.distinguisherL_eq n w r
+
+open Complexity Turing in
+theorem ctlRunAtL (A : NUPPT) (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r = A.output (pairEncode (pairEncode (NUPPT.advInput n y) (A.advice n)) r) := rfl
+
+open Complexity Turing in
+theorem ctlRunAtLReader (A : NUPPT) (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r = A.output (pairEncode (pairEncode (NUPPT.advInput n y) (A.advice n)) r) :=
+  A.runAtL_eq n y r
+
+open Complexity in
+theorem ctlOfPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+    (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
+    (NUPPT.ofPolyTime hf coins adv advice hα).coins = coins := rfl
+
+open Complexity in
+theorem ctlOfPolyTimeReader {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+    (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
+    (NUPPT.ofPolyTime hf coins adv advice hα).coins = coins :=
+  NUPPT.coins_ofPolyTime hf coins adv advice hα
+
+open Complexity Turing in
+theorem ctlAdvInput (n : ℕ) (y : List Bool) :
+    NUPPT.advInput n y = pairEncode (List.replicate n true) y := rfl
+
+open Complexity Turing in
+theorem ctlAdvInputReader (n : ℕ) (y : List Bool) :
+    NUPPT.advInput n y = pairEncode (List.replicate n true) y :=
+  NUPPT.advInput_eq n y
+
+open TCSlib.Cryptography.Games in
+theorem ctlAccept (c : ProbComp Bool) :
+    accept c = ProbComp.prob c (· = true) := rfl
+
+open TCSlib.Cryptography.Games in
+theorem ctlAcceptReader (c : ProbComp Bool) :
+    accept c = ProbComp.prob c (· = true) :=
+  accept_eq c
+
+open TCSlib.Cryptography in
+theorem ctlUprob {α : Type} [Fintype α] (p : α → Prop) :
+    uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α := rfl
+
+open TCSlib.Cryptography in
+theorem ctlUprobReader {α : Type} [Fintype α] (p : α → Prop) :
+    uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α :=
+  uprob_def p
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlOrderAtLeast (G : BilinearGen) (N : ℕ → ℕ) (δ : ℕ → ℝ) :
+    G.OrderAtLeastExcept N δ ↔
+      ∀ κ, uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < N κ) ≤ δ κ := Iff.rfl
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlOrderAtLeastReader (G : BilinearGen) (N : ℕ → ℕ) (δ : ℕ → ℝ) :
+    G.OrderAtLeastExcept N δ ↔
+      ∀ κ, uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < N κ) ≤ δ κ :=
+  G.orderAtLeastExcept_iff N δ
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlInst (G : BilinearGen) (κ : ℕ) (r : G.gen.Coins κ) :
+    G.inst κ r = G.group κ (G.desc κ r) := rfl
+
+open Complexity TCSlib.Cryptography TCSlib.Cryptography.Pairing in
+theorem ctlInstReader (G : BilinearGen) (κ : ℕ) (r : G.gen.Coins κ) :
+    G.inst κ r = G.group κ (G.desc κ r) :=
+  G.inst_eq κ r
+
+open TCSlib.Cryptography.Games in
+theorem ctlExpect {α : Type} (a : α) (g : α → ℝ) :
+    ProbComp.expect (OracleComp.pure (spec := unifSpec) a) g = g a := rfl
+
+open TCSlib.Cryptography.Games in
+theorem ctlExpectReader {α : Type} (a : α) (g : α → ℝ) :
+    ProbComp.expect (OracleComp.pure (spec := unifSpec) a) g = g a :=
+  ProbComp.expect_pure a g
+
+end PairingControls
+

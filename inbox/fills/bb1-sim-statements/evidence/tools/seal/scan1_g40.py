@@ -1,3 +1,4 @@
+# bb1-sim-statements (lead): copied unchanged from the bb1-machine delivery (host paths already this job's).
 """scan1_g40.py (LE-gate40): scan1.py with one change: the kinds probe imports the scanned
 modules (environment variable SCAN_IMPORTS, space-separated) instead of the root `TCSlib`, which
 this job does not build. Original header:

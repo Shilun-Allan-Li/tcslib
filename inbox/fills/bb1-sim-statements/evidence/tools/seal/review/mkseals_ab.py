@@ -1,3 +1,4 @@
+# bb1-sim-statements (lead): copied unchanged from the bb1-machine delivery.
 """mkseals_ab.py (nm-cca2 review: levin mkseals.py with one change, SEAL_EVAL=1 empties the notation exclusion)
 mkseals.py <tools-dir> <collector-log> <worktree> <rev> <outdir> <probe-subdir> <label-prefix> <module>...
 Builds whole-file conservative seals with the archived Gate06/Gate10 instrumenter

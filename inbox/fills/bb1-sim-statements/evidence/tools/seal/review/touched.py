@@ -1,3 +1,4 @@
+# bb1-sim-statements (lead): copied unchanged from the bb1-machine delivery.
 """touched.py <repo> <base-rev> <head-rev> <out.json> <file>...
 Declaration-level text comparison (private declarations included). Each top-level declaration
 command is cut from its doc comment/attributes to the next top-level command; it is keyed by its

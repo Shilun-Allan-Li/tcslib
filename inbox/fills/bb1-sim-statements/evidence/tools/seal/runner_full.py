@@ -1,3 +1,4 @@
+# bb1-sim-statements (lead): copied unchanged from the bb1-machine delivery (host paths already this job's).
 # ADAPTED (fill bb1-machine, Claude lead, 2026-11-16): (1) the lake packages are read from
 #   $LAKE_PACKAGES (default /home/user/fill/tcslib/.lake/packages, the lead clone's), not
 #   /home/user/tcslib/.lake/packages; (2) every probe runs under `flock $LEAN_LOCK` (default

@@ -1,4 +1,5 @@
-"""sk15.py <files>: proofs of >= 15 lines (style_lint's measure: from the declaration line to the next
+"""(bb1-sim-statements, lead: copied unchanged from the bb1-machine delivery.)
+sk15.py <files>: proofs of >= 15 lines (style_lint's measure: from the declaration line to the next
 declaration, excluding blanks and the docstring) whose docstring lacks **Proof sketch.**"""
 import re,sys
 DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?(private |protected |noncomputable |nonrec )*"

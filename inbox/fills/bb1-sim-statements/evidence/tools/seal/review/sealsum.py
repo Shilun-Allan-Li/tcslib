@@ -1,3 +1,4 @@
+# bb1-sim-statements (lead): copied unchanged from the bb1-machine delivery.
 """sealsum.py <records-dir> <rundir> <touched.json> <out.tsv>: per seal probe: requests, rc, error count,
 install/EOF records, and the failing declarations (error lines mapped back to source lines through the
 record's source_to_probe_lines, then to declaration spans of touched.json for the source path)."""

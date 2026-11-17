@@ -1,0 +1,61 @@
+import Lean
+import TCSlib.Cryptography.Games.Relational
+import TCSlib.Cryptography.Games.Probability
+
+/-! bb1-sim-statements series 1 statements probe: (1) StmtDump: the full name and type of every new constant;
+(2) the census of every stored constant of the changed owners (axioms outside `propext`,
+`Classical.choice`, `Quot.sound` listed); (3) `#print axioms` of every new constant; (4) the
+dependency trace: for each new constant, the constants reached (through types and values) whose own
+type or value uses `sorryAx`. Adapted from the bb1-machine delivery's axioms probe. -/
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  for c in [`TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel, `TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel, `TCSlib.Cryptography.Games.ProbComp.expect_sample_rel, `TCSlib.Cryptography.Games.ProbComp.abs_expect_sub_le_expect] do
+    let some ci := env.find? c | throwError "missing {c}"
+    logInfo m!"STMTDUMP {c} : {ci.type}"
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let mods : List Name := [`TCSlib.Cryptography.Games.Relational, `TCSlib.Cryptography.Games.Probability]
+  let mut n : Nat := 0
+  let mut bad : Array (Name × Array Name) := #[]
+  for (c, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? c | continue
+    unless mods.contains env.header.moduleNames[mi.toNat]! do continue
+    let axs ← Lean.collectAxioms c
+    n := n + 1
+    let ns := axs.filter fun a => !([``propext, ``Classical.choice, ``Quot.sound].contains a)
+    unless ns.isEmpty do bad := bad.push (c, ns)
+  logInfo m!"AXCENSUS owners {mods.length} constants {n} nonstandard {bad.size}: {bad.toList}"
+
+open Lean Elab Command in
+/-- The sorried constants reached from `root`. -/
+def sorriedReached (env : Environment) (root : Name) : Nat × Array Name := Id.run do
+  let mut seen : NameSet := {}
+  let mut todo : Array Name := #[root]
+  let mut hits : Array Name := #[]
+  while todo.size > 0 do
+    let c := todo.back!
+    todo := todo.pop
+    if seen.contains c then continue
+    seen := seen.insert c
+    let some ci := env.find? c | continue
+    let used := ci.getUsedConstantsAsSet
+    if used.contains ``sorryAx then hits := hits.push c
+    for d in used.toList do
+      unless seen.contains d do todo := todo.push d
+  return (seen.size, hits.qsort (·.toString < ·.toString))
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  for r in [`TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel, `TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel, `TCSlib.Cryptography.Games.ProbComp.expect_sample_rel, `TCSlib.Cryptography.Games.ProbComp.abs_expect_sub_le_expect] do
+    let (k, hits) := sorriedReached env r
+    logInfo m!"DEPTRACE {r}: closure {k} constants; sorried constants reached {hits.size}: {hits.toList}"
+
+#print axioms TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel
+#print axioms TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel
+#print axioms TCSlib.Cryptography.Games.ProbComp.expect_sample_rel
+#print axioms TCSlib.Cryptography.Games.ProbComp.abs_expect_sub_le_expect

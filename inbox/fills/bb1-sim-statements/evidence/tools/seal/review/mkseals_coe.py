@@ -1,3 +1,4 @@
+# bb1-sim-statements (lead): copied unchanged from the bb1-machine delivery.
 """mkseals_coe.py (ext-nosrc review diagnostic): mkseals_ab.py with FinDist.instCoeFunForallReal also excluded as notation.
 mkseals_ab.py (nm-cca2 review: levin mkseals.py with one change, SEAL_EVAL=1 empties the notation exclusion)
 mkseals.py <tools-dir> <collector-log> <worktree> <rev> <outdir> <probe-subdir> <label-prefix> <module>...

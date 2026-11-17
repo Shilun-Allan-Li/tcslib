@@ -1,0 +1,67 @@
+STMTDUMP TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel : ∀ {ι : Type}
+  {spec : TCSlib.Cryptography.Games.OracleSpec ι} {σ τ α : Type}
+  (impl₀ : TCSlib.Cryptography.Games.QueryImpl spec σ TCSlib.Cryptography.Games.unifSpec)
+  (impl₁ : TCSlib.Cryptography.Games.QueryImpl spec τ TCSlib.Cryptography.Games.unifSpec) (R : σ → τ → Prop),
+  (∀ (i : ι) (x : spec.dom i) (s : σ) (t : τ),
+      R s t →
+        ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+          (∀ (y : spec.rng i) (s' : σ) (t' : τ), R s' t' → g₀ (y, s') = g₁ (y, t')) →
+            TCSlib.Cryptography.Games.ProbComp.expect (impl₀ i x s) g₀ =
+              TCSlib.Cryptography.Games.ProbComp.expect (impl₁ i x t) g₁) →
+    ∀ (c : TCSlib.Cryptography.Games.OracleComp spec α) (G₀ : α × σ → ℝ) (G₁ : α × τ → ℝ),
+      (∀ (a : α) (s' : σ) (t' : τ), R s' t' → G₀ (a, s') = G₁ (a, t')) →
+        ∀ {s : σ} {t : τ},
+          R s t →
+            TCSlib.Cryptography.Games.ProbComp.expect (TCSlib.Cryptography.Games.simulate impl₀ c s) G₀ =
+              TCSlib.Cryptography.Games.ProbComp.expect (TCSlib.Cryptography.Games.simulate impl₁ c t) G₁
+STMTDUMP TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel : ∀ {ι : Type}
+  {spec : TCSlib.Cryptography.Games.OracleSpec ι} {σ τ α : Type}
+  (impl₀ : TCSlib.Cryptography.Games.QueryImpl spec σ TCSlib.Cryptography.Games.unifSpec)
+  (impl₁ : TCSlib.Cryptography.Games.QueryImpl spec τ TCSlib.Cryptography.Games.unifSpec) (R : σ → τ → Prop),
+  (∀ (i : ι) (x : spec.dom i) (s : σ) (t : τ),
+      R s t →
+        ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+          (∀ (y : spec.rng i) (s' : σ) (t' : τ), R s' t' → g₀ (y, s') = g₁ (y, t')) →
+            TCSlib.Cryptography.Games.ProbComp.expect (impl₀ i x s) g₀ =
+              TCSlib.Cryptography.Games.ProbComp.expect (impl₁ i x t) g₁) →
+    ∀ (c : TCSlib.Cryptography.Games.OracleComp spec α) (P : α → Prop) {s : σ} {t : τ},
+      R s t →
+        (TCSlib.Cryptography.Games.ProbComp.prob (TCSlib.Cryptography.Games.simulate impl₀ c s) fun p => P p.1) =
+          TCSlib.Cryptography.Games.ProbComp.prob (TCSlib.Cryptography.Games.simulate impl₁ c t) fun p => P p.1
+STMTDUMP TCSlib.Cryptography.Games.ProbComp.expect_sample_rel : ∀ {σ τ U V β : Type} [inst : Fintype U]
+  [inst_1 : Nonempty U] [inst_2 : Fintype V] [inst_3 : Nonempty V] (R : σ → τ → Prop) (e : U ≃ V) (f₀ : U → β × σ)
+  (f₁ : V → β × τ),
+  (∀ (u : U), (f₀ u).1 = (f₁ (e u)).1 ∧ R (f₀ u).2 (f₁ (e u)).2) →
+    ∀ (g₀ : β × σ → ℝ) (g₁ : β × τ → ℝ),
+      (∀ (y : β) (s' : σ) (t' : τ), R s' t' → g₀ (y, s') = g₁ (y, t')) →
+        TCSlib.Cryptography.Games.ProbComp.expect
+            (TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample U) fun u =>
+              TCSlib.Cryptography.Games.OracleComp.pure (f₀ u))
+            g₀ =
+          TCSlib.Cryptography.Games.ProbComp.expect
+            (TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample V) fun v =>
+              TCSlib.Cryptography.Games.OracleComp.pure (f₁ v))
+            g₁
+STMTDUMP TCSlib.Cryptography.Games.ProbComp.abs_expect_sub_le_expect : ∀ {α : Type}
+  (c : TCSlib.Cryptography.Games.ProbComp α) {f g h : α → ℝ},
+  (∀ (x : α), |f x - g x| ≤ h x) → |c.expect f - c.expect g| ≤ c.expect h
+AXCENSUS owners 2 constants 60 nonstandard 3: [(TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel, [sorryAx]),
+ (TCSlib.Cryptography.Games.ProbComp.expect_sample_rel, [sorryAx]),
+ (TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel, [sorryAx])]
+DEPTRACE TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel: closure 5009 constants; sorried constants reached 1: [TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel]
+DEPTRACE TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel: closure 5012 constants; sorried constants reached 1: [TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel]
+DEPTRACE TCSlib.Cryptography.Games.ProbComp.expect_sample_rel: closure 5364 constants; sorried constants reached 1: [TCSlib.Cryptography.Games.ProbComp.expect_sample_rel]
+DEPTRACE TCSlib.Cryptography.Games.ProbComp.abs_expect_sub_le_expect: closure 10759 constants; sorried constants reached 0: []
+'TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Games.ProbComp.expect_sample_rel' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Games.ProbComp.abs_expect_sub_le_expect' depends on axioms: [propext, Classical.choice, Quot.sound]

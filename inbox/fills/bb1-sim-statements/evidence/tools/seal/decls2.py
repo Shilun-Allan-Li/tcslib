@@ -1,3 +1,4 @@
+# bb1-sim-statements (lead): copied unchanged from the bb1-machine delivery (host paths already this job's).
 """decls2.py <root> <base-rev> <file>...: public declarations (full name -> (kind, line, normalized
 statement)) at <base-rev> and in the working tree; prints added / removed / changed as TSV.
 decls2 (gate 07 R2-03): a line starting with `|` that follows a `match … with` opened in the statement

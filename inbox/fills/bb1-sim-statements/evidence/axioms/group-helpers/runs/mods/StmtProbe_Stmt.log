@@ -1,0 +1,20 @@
+STMTDUMP TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_add : ∀ {wG wT : ℕ}
+  (B : TCSlib.Cryptography.Pairing.BilinearGroup wG wT) (x : B.G) (a b : ZMod B.order),
+  x ^ (a + b).val = x ^ a.val * x ^ b.val
+STMTDUMP TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_neg : ∀ {wG wT : ℕ}
+  (B : TCSlib.Cryptography.Pairing.BilinearGroup wG wT) (x : B.G) (a : ZMod B.order), x ^ (-a).val = (x ^ a.val)⁻¹
+STMTDUMP TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_bijective_of_ne_one : ∀ {wG wT : ℕ}
+  (B : TCSlib.Cryptography.Pairing.BilinearGroup wG wT) {g : B.G}, g ≠ 1 → Function.Bijective fun a => g ^ a.val
+STMTDUMP TCSlib.Cryptography.Pairing.BilinearGroup.natCast_inj_of_lt : ∀ {wG wT : ℕ}
+  (B : TCSlib.Cryptography.Pairing.BilinearGroup wG wT) {m n : ℕ}, m < B.order → n < B.order → (↑m = ↑n ↔ m = n)
+AXCENSUS owners 1 constants 83 nonstandard 0: []
+DEPTRACE TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_add: closure 6841 constants; sorried constants reached 0: []
+DEPTRACE TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_neg: closure 6850 constants; sorried constants reached 0: []
+DEPTRACE TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_bijective_of_ne_one: closure 7546 constants; sorried constants reached 0: []
+DEPTRACE TCSlib.Cryptography.Pairing.BilinearGroup.natCast_inj_of_lt: closure 2680 constants; sorried constants reached 0: []
+'TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_neg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Pairing.BilinearGroup.pow_val_bijective_of_ne_one' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Pairing.BilinearGroup.natCast_inj_of_lt' depends on axioms: [propext, Classical.choice, Quot.sound]

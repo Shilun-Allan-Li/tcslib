@@ -1,0 +1,49 @@
+import Lean
+import TCSlib.Cryptography.Pairing.Group
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace PairingControls
+
+open Complexity Turing in
+theorem ctlRunAtL (A : NUPPT) (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r = A.output (pairEncode (pairEncode (NUPPT.advInput n y) (A.advice n)) r) := rfl
+
+open Complexity Turing in
+theorem ctlRunAtLReader (A : NUPPT) (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r = A.output (pairEncode (pairEncode (NUPPT.advInput n y) (A.advice n)) r) :=
+  A.runAtL_eq n y r
+
+open Complexity in
+theorem ctlOfPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+    (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
+    (NUPPT.ofPolyTime hf coins adv advice hα).coins = coins := rfl
+
+open Complexity in
+theorem ctlOfPolyTimeReader {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+    (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
+    (NUPPT.ofPolyTime hf coins adv advice hα).coins = coins :=
+  NUPPT.coins_ofPolyTime hf coins adv advice hα
+
+open Complexity Turing in
+theorem ctlAdvInput (n : ℕ) (y : List Bool) :
+    NUPPT.advInput n y = pairEncode (List.replicate n true) y := rfl
+
+open Complexity Turing in
+theorem ctlAdvInputReader (n : ℕ) (y : List Bool) :
+    NUPPT.advInput n y = pairEncode (List.replicate n true) y :=
+  NUPPT.advInput_eq n y
+
+open TCSlib.Cryptography in
+theorem ctlUprob {α : Type} [Fintype α] (p : α → Prop) :
+    uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α := rfl
+
+open TCSlib.Cryptography in
+theorem ctlUprobReader {α : Type} [Fintype α] (p : α → Prop) :
+    uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α :=
+  uprob_def p
+
+end PairingControls
+

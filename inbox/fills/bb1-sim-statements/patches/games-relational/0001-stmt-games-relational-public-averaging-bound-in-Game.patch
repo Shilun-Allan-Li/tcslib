@@ -1,0 +1,52 @@
+From 912a343e538f9b5d9306561a35100f5490a6a11b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 17 Nov 2026 00:17:13 +0000
+Subject: [PATCH 1/2] stmt games-relational: public averaging bound in
+ Games/Probability (Q6)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+`ProbComp.abs_expect_sub_le_expect`: `(∀ x, |f x - g x| ≤ h x) → |𝔼_c f - 𝔼_c g| ≤ 𝔼_c h`, the
+statement and proof of the private ETT copy (`EncryptThenTag/Forgery.lean:515`), which the DL-40
+cleanup re-points to it. Pure insertions: the lemma after `abs_expect_sub_le` and its
+`## Main results` bullet.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjgrzZvrwGghDJP61L
+---
+ TCSlib/Cryptography/Games/Probability.lean | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Games/Probability.lean b/TCSlib/Cryptography/Games/Probability.lean
+index c27939a16..b7e8d3d10 100644
+--- a/TCSlib/Cryptography/Games/Probability.lean
++++ b/TCSlib/Cryptography/Games/Probability.lean
+@@ -46,6 +46,7 @@ information-theory layer, so statistical distance and closeness (`EpsClose`) app
+ * `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,
+   `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
+   samples; `expect_sub`, `abs_expect_sub_le`: subtraction and pointwise closeness.
++* `ProbComp.abs_expect_sub_le_expect`: averaging a pointwise bound.
+ * `ProbComp.expect_expect_sample`: exchanging an expectation with a uniform sample (Fubini).
+ 
+ ## References
+@@ -402,6 +403,19 @@ theorem abs_expect_sub_le (c : ProbComp α) {f g : α → ℝ} {ε : ℝ}
+   rw [abs_le]
+   constructor <;> linarith
+ 
++/-- **Averaging a pointwise bound:** expectations of functions within a pointwise bound of each
++other are within the expectation of the bound:
++`(∀ x, |f x - g x| ≤ h x) → |𝔼_c f - 𝔼_c g| ≤ 𝔼_c h`. -/
++theorem abs_expect_sub_le_expect (c : ProbComp α) {f g h : α → ℝ}
++    (hb : ∀ x, |f x - g x| ≤ h x) : |expect c f - expect c g| ≤ expect c h := by
++  rw [← expect_sub, abs_le]
++  constructor
++  · have := expect_mono c fun x => (neg_le_of_abs_le (hb x))
++    rw [show (fun x => -h x) = fun x => (-1) * h x from funext fun x => by ring,
++      expect_const_mul] at this
++    linarith
++  · exact expect_mono c fun x => le_of_abs_le (hb x)
++
+ end Sampling
+ 
+ end ProbComp

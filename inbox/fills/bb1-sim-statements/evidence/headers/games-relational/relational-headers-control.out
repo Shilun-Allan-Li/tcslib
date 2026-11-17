@@ -1,0 +1,41 @@
+# control: the module with `(hst : R s t)` mutated to `(hst : R t s)` in every header (expected FAIL)
+expect_simulate_rel: DIFFERENT (8 lines)
+--- design
+theorem expect_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
+    (impl₁ : QueryImpl spec τ unifSpec) (R : σ → τ → Prop)
+    (h : ∀ i x s t, R s t → ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+      (∀ y s' t', R s' t' → g₀ (y, s') = g₁ (y, t')) →
+        expect (impl₀ i x s) g₀ = expect (impl₁ i x t) g₁)
+    (c : OracleComp spec α) (G₀ : α × σ → ℝ) (G₁ : α × τ → ℝ)
+    (hG : ∀ a s' t', R s' t' → G₀ (a, s') = G₁ (a, t')) {s : σ} {t : τ} (hst : R s t) :
+    expect (simulate impl₀ c s) G₀ = expect (simulate impl₁ c t) G₁ := by
+--- module
+theorem expect_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
+    (impl₁ : QueryImpl spec τ unifSpec) (R : σ → τ → Prop)
+    (h : ∀ i x s t, R s t → ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+      (∀ y s' t', R s' t' → g₀ (y, s') = g₁ (y, t')) →
+        expect (impl₀ i x s) g₀ = expect (impl₁ i x t) g₁)
+    (c : OracleComp spec α) (G₀ : α × σ → ℝ) (G₁ : α × τ → ℝ)
+    (hG : ∀ a s' t', R s' t' → G₀ (a, s') = G₁ (a, t')) {s : σ} {t : τ} (hst : R t s) :
+    expect (simulate impl₀ c s) G₀ = expect (simulate impl₁ c t) G₁ := by
+prob_simulate_rel: DIFFERENT (7 lines)
+--- design
+theorem prob_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
+    (impl₁ : QueryImpl spec τ unifSpec) (R : σ → τ → Prop)
+    (h : ∀ i x s t, R s t → ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+      (∀ y s' t', R s' t' → g₀ (y, s') = g₁ (y, t')) →
+        expect (impl₀ i x s) g₀ = expect (impl₁ i x t) g₁)
+    (c : OracleComp spec α) (P : α → Prop) {s : σ} {t : τ} (hst : R s t) :
+    prob (simulate impl₀ c s) (fun p => P p.1) = prob (simulate impl₁ c t) (fun p => P p.1) := by
+--- module
+theorem prob_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
+    (impl₁ : QueryImpl spec τ unifSpec) (R : σ → τ → Prop)
+    (h : ∀ i x s t, R s t → ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+      (∀ y s' t', R s' t' → g₀ (y, s') = g₁ (y, t')) →
+        expect (impl₀ i x s) g₀ = expect (impl₁ i x t) g₁)
+    (c : OracleComp spec α) (P : α → Prop) {s : σ} {t : τ} (hst : R t s) :
+    prob (simulate impl₀ c s) (fun p => P p.1) = prob (simulate impl₁ c t) (fun p => P p.1) := by
+expect_sample_rel: IDENTICAL (6 lines)
+imports: IDENTICAL ['import TCSlib.Cryptography.Games.Simulate', 'import TCSlib.Cryptography.Games.Probability']
+FAIL
+rc=1
