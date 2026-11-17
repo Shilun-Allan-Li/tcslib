@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.apply_clAct",
+ "key": "d0879e34e4239626",
+ "kind": "lemma",
+ "title": "Effect of a paired-tape cleaning action",
+ "statement": "Let the two tape banks each have $k$ tapes, and let a configuration have input $x$, state $st$, input-head position $ip$, tape contents $D_t,M_t$, head positions $D_p,M_p$, and output $out$. For a tape index $i$, write instructions $w_D,w_M$, movement sign $mv$, and successor state $st'$, applying the cleaning action gives state $st'$, the same input-head position and output, and updates only tape $i$ in each bank: its contents become the result of applying the respective write instruction at its current head position, and its head position increases by $mv$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number and $S$ is a state type",
+  "$x$ is a finite bit string",
+  "$i$ is a tape index among the $k$ tapes",
+  "$w_D,w_M$ are optional write instructions, each optionally specifying a bit or blank",
+  "$mv$ is a movement sign",
+  "$st,st'$ are optional cleaning-machine states",
+  "$ip$ is a valid input-head position",
+  "$D_t,M_t$ are tape-content functions and $D_p,M_p$ are head-position functions",
+  "$out$ is an output bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

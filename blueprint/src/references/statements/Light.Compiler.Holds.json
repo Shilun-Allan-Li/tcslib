@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.Compiler.Holds",
+ "key": "0d11b019806da3e0",
+ "kind": "structure",
+ "title": "Bounded memory representation",
+ "statement": "Let $W$ be a natural-number word width, let $L$ consist of an integer word bound and natural-number space and depth bounds, let $\\mu$ assign an integer to each natural-numbered address, and let $m$ assign a $W$-bit word to each integer address. The representation is valid if, for every natural-numbered address $a$, $m(a)$ is the $W$-bit encoding of $\\mu(a)$, and $|\\mu(a)|$ is at most the integer word bound in $L$.",
+ "hypotheses_covered": [
+  "The word width $W$ is a natural number",
+  "The limits $L$ contain an integer word bound and natural-number space and depth bounds",
+  "$\\mu$ maps natural-numbered addresses to integers",
+  "$m$ maps integer addresses to $W$-bit words",
+  "At each natural-numbered address, the stored word is the encoding of its assigned integer",
+  "Each assigned integer has absolute value at most the word bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

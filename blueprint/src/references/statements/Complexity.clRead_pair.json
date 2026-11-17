@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clRead_pair",
+ "key": "3d93e8855524219c",
+ "kind": "lemma",
+ "title": "Decoding a doubled bit",
+ "statement": "Let $x$ be a Boolean input word and $p$ a valid input-head position. For arbitrary Boolean words $u,r,v,o$ and a bit $b$, initialize the reader in its scanning control with stream $u ++ [b,b] ++ r$, target $v ++ o$, and stream and target heads at positions $|u|$ and $|v|$, respectively. After two steps, the reader is again in its scanning control; the stream is unchanged, its head is at $|u|+2$, the target is $v ++ b :: o.tail$, and its head is at $|v|+1$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Valid input-head position $p$",
+  "Arbitrary Boolean words $u,r,v,o$",
+  "Boolean bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For every input word, input position, stream consisting of a prefix $u$ followed by a doubled bit and a remainder, and target split as a written prefix and an old suffix, two reader steps from the scanning control consume the two equal stream bits, overwrite the first old target cell with the decoded bit, and advance the stream cursor by two and the target cursor by one, using real adjacent head moves."
+}

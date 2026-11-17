@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter05/GaussianIsoperimetric.lean :: FABL.tendsto_standardGaussianUpperTail_atTop -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Upper tail vanishes at infinity
+
+**Claim.** The standard Gaussian upper tail $T(t)=1-F(t)$ tends to $0$ as $t$ tends to $+\infty$.
+
+**Proof.** As $t\to+\infty$, the cumulative distribution function $F(t)$ tends to $1$. Hence $1-F(t)$ tends to $1-1=0$, as required.

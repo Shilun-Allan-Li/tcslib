@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Ends.setToThen",
+ "key": "c1e0594099b3b371",
+ "kind": "theorem",
+ "title": "Set followed by a program",
+ "statement": "Let a limit record, program, execution depth, list of integer values $l$, local-memory function $\\mu$, budget $T$, postcondition $Q$, index $x$, expression $e$, statement $s$, and integer $z$ be given. If $s$ can execute from the state whose local values are obtained by setting position $x$ of the frame of $l$ to $z$, using cost at most $T-(\\mathrm{cost}(e)+1)$, and its final state satisfies $Q$, and if $e$ is safe in the state with local values given by the frame of $l$ and memory $\\mu$ and evaluates there to $z$, with $\\mathrm{cost}(e)+1\\le T$, then the sequence that first assigns $e$ to position $x$ and then executes $s$ can execute from that initial state with cost at most $T$ and final state satisfying $Q$.",
+ "hypotheses_covered": [
+  "The continuation s has an execution from the state with local values set at x to z and memory μ, of cost at most T − (cost(e)+1), ending in a state satisfying Q.",
+  "Expression e is safe in the initial state with locals frame(l) and memory μ, and evaluates there to z.",
+  "cost(e)+1 ≤ T."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

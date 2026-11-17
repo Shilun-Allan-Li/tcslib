@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_duality",
+ "key": "6d3a7f677b0c5523",
+ "kind": "theorem",
+ "title": "Duality for weighted finite-noise bounds",
+ "statement": "Let $I$ be finite, let $w_i\nearrow0$ with $\u0005sum_iw_i=1$, and let $q>2$ and $\u0005rho\ne\u0005in\bbr$. Suppose every $g:I\to\bbr$ satisfies $\\rho^2\\sum_iw_ig_i^2+(1-\\rho^2)(\\sum_iw_ig_i)^2\\le(\\sum_iw_i|g_i|^{q/(q-1)})^{2/(q/(q-1))}$. Then every $f:I\to\bbr$ satisfies $\\bigl(\\sum_iw_i|\\rho f_i+(1-\\rho)\\sum_jw_jf_j|^q\\bigr)^{2/q}\\le\\sum_iw_if_i^2$.",
+ "hypotheses_covered": [
+  "finite index set",
+  "weights are nonnegative",
+  "weights sum to one",
+  "q>2",
+  "ρ is real",
+  "the stated bound holds for every real-valued vector g"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite, $w_i\\ge0$, $\\sum_iw_i=1$, $q>2$, and $\\rho\\in\\bbr$. Put $p=q/(q-1)$ and $(T_\\rho h)_i=\\rho h_i+(1-\\rho)\\sum_jw_jh_j$. If $\\rho^2\\sum_iw_ig_i^2+(1-\\rho^2)(\\sum_iw_ig_i)^2\\le(\\sum_iw_i|g_i|^p)^{2/p}$ for every $g$, then $(\\sum_iw_i|(T_\\rho f)_i|^q)^{2/q}\\le\\sum_iw_if_i^2$ for every $f$."
+}

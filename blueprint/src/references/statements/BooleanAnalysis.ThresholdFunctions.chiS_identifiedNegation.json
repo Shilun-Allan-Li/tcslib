@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.chiS_identifiedNegation",
+ "key": "b0c47edfa01df269",
+ "kind": "lemma",
+ "title": "Walsh character under negated identification",
+ "statement": "Let $n,m\\ge0$, let $z$ and $w$ be Boolean vectors of lengths $n$ and $m$, respectively, let $\\pi$ map the $n$ coordinates to the $m$ coordinates, and let $S$ be a subset of the $n$ coordinates. Define $O_\\pi(S)$ to consist of those target coordinates that have an odd number of preimages in $S$. Form the vector whose $i$th coordinate is $w_{\\pi(i)}$ when $z_i=0$ and its complement when $z_i=1$. Its Walsh character on $S$ equals $\\chi_S(z)\\chi_{O_\\pi(S)}(w)$.",
+ "hypotheses_covered": [
+  "$n,m$ are natural numbers",
+  "$z$ is a Boolean vector of length $n$",
+  "$\\pi$ maps the $n$ coordinates to the $m$ coordinates",
+  "$w$ is a Boolean vector of length $m$",
+  "$S$ is a subset of the $n$ coordinates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $n,m\\in\\mathbb N$, $z\\in\\{0,1\\}^{n}$, $w\\in\\{0,1\\}^{m}$, a map $\\pi:\\{1,\\ldots,n\\}\\to\\{1,\\ldots,m\\}$ and $S\\subseteq\\{1,\\ldots,n\\}$, define $\\chi_A(x)=\\prod_{i\\in A}(-1)^{x_i}$ for subsets of the coordinate set of $x$, and set $O_{\\pi}(S)=\\{j\\in\\{1,\\ldots,m\\}:|\\{i\\in S:\\pi(i)=j\\}|\\text{ is odd}\\}$; then\n\\[\n\\chi_S\\bigl((z_i+w_{\\pi(i)}\\pmod2)_{i=1}^{n}\\bigr)=\\chi_S(z)\\chi_{O_{\\pi}(S)}(w).\n\\]"
+}

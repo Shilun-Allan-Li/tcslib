@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.CallOK",
+ "key": "cc5b08b6a8f125ea",
+ "kind": "def",
+ "title": "Validity of oracle-call configurations",
+ "statement": "Let $P$ be a register program, $D$ a decider with $k_D$ work tapes and state type $S_D$, $q_0$ a choice of initial decider state for each of the $d$ deciders, and $O$ an oracle. Let $\\ell,r\\colon\\mathrm{Fin}(m)\\to\\mathbb{Z}$ be register bounds, let $B\\in\\mathbb{N}$, and let $c$ be a configuration on input $x$. The configuration satisfies the call conditions if, whenever its state is $\\lambda$ and the program specifies a call at $\\lambda$, the call's argument list has no repetitions, the input head is at position $1$, and each argument register contains exactly the tape encoding of its register word, has its head at position $0$, and has word length between the bounds $\\ell$ and $r$ (that is, $\\ell$ is at most $-1$ and the word length is at most $r$). In addition, the decider $D$, started in state $q_0$ for the specified decider on the call's virtual word, satisfies the clean-run condition with bound $B$ and answer given by $O$ on that word.",
+ "hypotheses_covered": [
+  "A register program with $m$ registers, $d$ deciders, and state type $\\Lambda$",
+  "A decider with $k_D$ work tapes and state type $S_D$",
+  "A starting-state choice $q_0\\colon\\mathrm{Fin}(d)\\to S_D$",
+  "An oracle $O\\colon\\mathrm{Fin}(d)\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{Bool}$",
+  "Lower and upper register-bound functions $\\ell,r\\colon\\mathrm{Fin}(m)\\to\\mathbb{Z}$",
+  "A natural-number bound $B$",
+  "A configuration $c$ on input $x$",
+  "For every active state and specified call: distinct argument registers, input-head position $1$, encoded contents and head position $0$ for each argument register, lower bound $\\ell(r)\\le -1$, word-length upper bound by $r(r)$, and the specified clean-run condition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

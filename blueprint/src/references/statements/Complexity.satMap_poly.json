@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.satMap_poly",
+ "key": "7faccd3f77a3e1ce",
+ "kind": "lemma",
+ "title": "Polynomial-time transducer semantics",
+ "statement": "Let $S$ be a finite state set with decidable equality, let $\\delta:S\\times\\{0,1\\}\\to S$ be a transition function, let $\\varepsilon:S\\times\\{0,1\\}\\to\\{0,1\\}\\cup\\{\\text{no output}\\}$ be a per-bit emission rule, let $\\phi:S\\to\\{0,1\\}\\cup\\{\\text{no output}\\}$ be a final emission rule, and choose a start state $q_0\\in S$. The word function that emits according to $\\varepsilon$ on each input bit, updates its state by $\\delta$, and emits according to $\\phi$ at the end is polynomial-time computable.",
+ "hypotheses_covered": [
+  "The state set is finite",
+  "The state set has decidable equality",
+  "A transition function on states and bits",
+  "A per-bit optional emission rule",
+  "An optional final emission rule",
+  "A start state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every finite state set with transition, per-bit emission, final emission, and\nstart state, the associated word-transducer function on binary strings is\npolynomial-time computable, with the exact time bound $n + 1$."
+}

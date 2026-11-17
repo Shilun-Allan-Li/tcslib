@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_banks_run",
+ "key": "eb454ec85628cc60",
+ "kind": "lemma",
+ "title": "Sequential cleanup of the tape banks",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $\\mathit{emit}\\in\\{\\mathrm{false},\\mathrm{true}\\}$, and let $x,\\mathit{arg},\\mathit{cap}$ be Boolean words. For every time $T$ and every $j\\le k$, where $k$ is the number of work tapes of $M$, there exists $t\\le j(6T+8)$ such that the clean-call machine, started in the frame with no banks cleared and the cleaner-entry state for bank $0$, reaches the frame with the first $j$ banks cleared and the cleaner-entry state for bank $j$.",
+ "hypotheses_covered": [
+  "finite-state Boolean machine $M$ with $k$ work tapes",
+  "Boolean mode $\\mathit{emit}$",
+  "Boolean input, argument, and capture words $x,\\mathit{arg},\\mathit{cap}$",
+  "time $T\\in\\mathbb N$",
+  "integer bank count $j$ satisfying $j\\le k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every mode, input, argument and capture words, time $T$, and count $j \\le k$ (the\nnumber of source tapes), there is a time $t \\le j (6T + 8)$ such that the clean-call\ncontroller, run for $t$ steps from the cleanup frame with no cleaned banks, reaches the\ncleanup frame with $j$ cleaned banks, both administrative words preserved. The claim is\na full configuration equality."
+}

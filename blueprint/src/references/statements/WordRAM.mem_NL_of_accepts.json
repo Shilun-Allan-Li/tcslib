@@ -1,0 +1,19 @@
+{
+ "lean_name": "WordRAM.mem_NL_of_accepts",
+ "key": "0abeaeff24133a63",
+ "kind": "theorem",
+ "title": "Word RAM acceptance implies nondeterministic log space",
+ "statement": "Let $P$ be an extended Word RAM program, let $L$ be a language of Boolean strings, and let $c,F_0\\in\\mathbb{N}$. Suppose that for every input $x$ there is a time bound $t$ such that, for every coin string $\\rho$, the program halts within $t$ steps using words of width $c(\\lfloor\\log_2 |x|\\rfloor+1)$ and at most $F_0$ touched memory addresses, with some output. Suppose also that $x\\in L$ exactly when there are coin and output strings for which it halts within that time and space bound with acceptance. Then $L$ is decidable in nondeterministic space $\\lfloor\\log_2 n\\rfloor+1$.",
+ "hypotheses_covered": [
+  "An extended Word RAM program $P$",
+  "A Boolean language $L$",
+  "Natural numbers $c$ and $F_0$",
+  "For each input, a time bound $t$",
+  "For every coin string, halting within $t$ steps at word width $c(\\lfloor\\log_2 |x|\\rfloor+1)$ and with at most $F_0$ touched addresses",
+  "Membership in $L$ is equivalent to existence of coin and output strings yielding acceptance within the same bounds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

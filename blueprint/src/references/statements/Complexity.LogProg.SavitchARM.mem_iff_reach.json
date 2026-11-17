@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.mem_iff_reach",
+ "key": "a6ddf9db8dc167b2",
+ "kind": "theorem",
+ "title": "Language membership and bounded configuration reachability",
+ "statement": "Let $N$ be a nondeterministic Turing machine with $k$ work tapes and a finite state set, and suppose $N$ decides a language $L$ within space bound $\\mathrm{sp}$. Let $x$ be a Boolean string, and let $s,w\\in\\mathbb{N}$. Write $q$ for the number of states of $N$, set $d=2\\bigl(3(q+1)+3k+1\\bigr)+2$, and define $B=3(q+1)(|x|+2)3^{k(2s+1)}(2s+1)^k$. If $\\mathrm{sp}(|x|)\\le s$, $d\\bigl(s+\\lfloor\\log_2|x|\\rfloor+2\\bigr)\\le w$, and $B\\le 2^w$, then $x\\in L$ if and only if there are natural numbers $u,v<2^w$ whose encodings with $x$ and $s$ represent, respectively, the initial configuration and an accepting configuration of $N$, and $v$ is reachable from $u$ through the encoded one-step configuration relation at recursive depth $w$, with intermediate codes less than $2^w$.",
+ "hypotheses_covered": [
+  "$N$ is a finite-state nondeterministic Turing machine deciding $L$ within space bound $\\mathrm{sp}$",
+  "$x$ is a Boolean string",
+  "$s,w\\in\\mathbb{N}$",
+  "$\\mathrm{sp}(|x|)\\le s$",
+  "$d(s+\\lfloor\\log_2|x|\\rfloor+2)\\le w$, where $d=2(3(q+1)+3k+1)+2$ and $q,k$ are the state count and number of work tapes",
+  "$3(q+1)(|x|+2)3^{k(2s+1)}(2s+1)^k\\le 2^w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

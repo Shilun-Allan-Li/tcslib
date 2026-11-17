@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.rt_repeat_run",
+ "key": "20f2e0eb383f5e41",
+ "kind": "theorem",
+ "title": "Repeated word generation by a counter loop",
+ "statement": "Let $\\mathrm{pat}$ and $\\mathrm{ws}$ be finite Boolean words, let $s\\in\\mathbb{N}$, and suppose the binary value of $\\mathrm{ws}$, read least significant bit first, is $s$. Let $d$ be a configuration of a three-work-tape machine on a fixed Boolean input. Assume its state is the initial sweep phase; tape $0$, at every offset $p$ from its head with $-1\\le p\\le |\\mathrm{ws}|$, agrees with the buffer containing $\\mathrm{ws}$ from cell $0$ onward; and tape $2$ is blank at all those offsets. Put $t=4|\\mathrm{ws}|+s(|\\mathrm{pat}|+1)+H(\\mathrm{ws},s+1)+6$, where $H(\\mathrm{ws},r)=\\sum_{j=0}^{r-1}(2a_j+2)$ and $a_j$ is the number of initial false entries in the word obtained from $\\mathrm{ws}$ by applying $j$ times the operation that subtracts one from its fixed-width binary value, with underflow wrapping to the all-true word. After $t$ steps of the repeat machine for $\\mathrm{pat}$, its state is the final phase and tape $1$ contains $s$ consecutive copies of $\\mathrm{pat}$ on the cells from its initial head position up to, but not including, the cell $s|\\mathrm{pat}|$ positions to its right; its head has advanced by exactly $s|\\mathrm{pat}|$. Every other cell and every other component of the configuration is unchanged. The final phase is not reached at any earlier time, and at every time $u\\le t$, the displacement of each work-tape head from its initial position is at most $s|\\mathrm{pat}|+|\\mathrm{ws}|+1$.",
+ "hypotheses_covered": [
+  "Finite Boolean words $\\mathrm{pat}$ and $\\mathrm{ws}$",
+  "Natural number $s$",
+  "The least-significant-bit-first binary value of $\\mathrm{ws}$ equals $s$",
+  "Configuration $d$ on three work tapes with a fixed Boolean input",
+  "Initial state is the repeat machine's initial sweep phase",
+  "Tape $0$ agrees with the buffer for $\\mathrm{ws}$ at offsets $-1$ through $|\\mathrm{ws}|$",
+  "Tape $2$ is blank at offsets $-1$ through $|\\mathrm{ws}|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

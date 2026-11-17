@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.comp_outer_prepare",
+ "key": "659d734dd2c5389f",
+ "kind": "lemma",
+ "title": "Outer preparation run",
+ "statement": "Let $C,e$ be natural numbers, let $m$ be a Boolean, let $f$ map Boolean words to Boolean words, and let $z,t$ be Boolean words. Set $h=\\langle z,t\\rangle$, $a=2|z|+2$, $c=(2C+3)(|h|+1)^{e+1}$, and $B=8(2C+3)(|h|+1)^{e+1}$. Starting with register $0$ equal to $a$, all other registers zero, no result, and state “copy” at stage $0$ with no increment pending, there is a finite run to state “tail test” with its flag true and no result. At the endpoint, registers $0,2,3,7,8$ equal $a,a,2|z|,c,|h|+1$, respectively, register $1$ equals $|h|$, and all other registers are zero; every configuration before the endpoint satisfies the program’s state precondition and has every register at most $B$.",
+ "hypotheses_covered": [
+  "$C,e\\in\\mathbb N$",
+  "$m$ is Boolean",
+  "$f$ maps Boolean words to Boolean words",
+  "$z,t$ are Boolean words",
+  "The input is $h=\\langle z,t\\rangle$",
+  "The initial register values are register $0=a$ and all others zero",
+  "The initial state is copy, stage $0$, with no increment pending and no result",
+  "The run’s intermediate configurations satisfy the program precondition and register bound $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e$ be natural numbers, let $m$ be a Boolean parameter, let $f$ map bit strings to\nbit strings, and let $z,t$ be bit strings. For input $h=\\langle z,t\\rangle$, start with\nregisters $0$ and all other registers zero, in state “copy” with stage $0$ and no\nincrement pending. The program has a bounded safe run to state “tail test” with its\nregister vector set as follows: registers $0$ and $2$ equal $2|z|+2$, register $1$\nequals $|h|$, register $3$ equals $2|z|$, register $7$ equals $(2C+3)(|h|+1)^{e+1}$,\nregister $8$ equals $|h|+1$, and all other registers are zero. The register bound\nthroughout the run is $8(2C+3)(|h|+1)^{e+1}$."
+}

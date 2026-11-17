@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_undo_run",
+ "key": "682aefcc066bd5a7",
+ "kind": "lemma",
+ "title": "Reversal of a live machine run",
+ "statement": "Let $M$ be a finite Turing machine with Boolean work-tape symbols, let $x$ be a finite Boolean input, let $c_0$ be a configuration of $M$ on input $x$, let $p$ be a valid input-head position among the $|x|+2$ positions, and let $t$ be a natural number. Suppose the configuration reached by $M$ after each time $j<t$ from $c_0$ is not halted. Then the restoration machine, started at the checkpoint for the configuration reached after $t$ steps with the history of those $t$ steps and input-head position $p$, reaches the completed restoration configuration for $c_0$ and $p$ after exactly $2t+1$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine with Boolean work-tape symbols",
+  "$x$ is a finite Boolean input",
+  "$c_0$ is a configuration of $M$ on input $x$",
+  "$p$ is a valid input-head position among the $|x|+2$ positions",
+  "$t$ is a natural number",
+  "For every $j<t$, the configuration reached from $c_0$ after $j$ steps is not halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite machine that is live (not halted) at every time before $t$\nwhen run from $c_0$. Then the restoration machine, started at the checkpoint for\n$M$'s time-$t$ configuration with the $t$-step history, reaches the completed\nrestoration configuration of $c_0$ --- original work tapes and head positions,\nblank history --- in exactly $2t + 1$ steps, preserving any supplied input-head\nposition."
+}

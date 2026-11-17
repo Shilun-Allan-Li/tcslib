@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.Ends.whileBlock",
+ "key": "873f8ce8db991349",
+ "kind": "theorem",
+ "title": "Bounded execution of a while loop",
+ "statement": "Let $L$ be a resource limit with word bound $w\\in\\mathbb Z$, space bound $s\\in\\mathbb N$, and depth bound $h\\in\\mathbb N$; let $P$ be a finite program, $d,n,T\\in\\mathbb N$, and let $\\sigma$ be an initial state, $c$ a loop condition, $b$ a body statement, $Q$ a predicate on states, and $I_j$ a state predicate for each $j\\in\\mathbb N$. Suppose $I_0(\\sigma)$ holds, and for every $j<n$ and state $\\tau$ with $I_j(\\tau)$, the condition $c$ is safe at $\\tau$ and true there, while $b$ is block-safe at $\\tau$ and its resulting state satisfies $I_{j+1}$. Suppose also that for every state $\\tau$ satisfying $I_n(\\tau)$, $c$ is safe at $\\tau$ and false there, and $Q(\\tau)$ holds. If $n\\bigl(\\operatorname{cost}(c)+1+\\operatorname{blockCost}(b)\\bigr)+\\operatorname{cost}(c)+1\\le T$, then executing the loop with condition $c$ and body $b$ from $\\sigma$, under limits $L$, program $P$, and depth parameter $d$, ends in some state satisfying $Q$ with execution cost at most $T$.",
+ "hypotheses_covered": [
+  "Resource limits with word bound in ℤ and space and depth bounds in ℕ",
+  "Finite program P and depth parameter d",
+  "Initial state σ, condition c, body b, bound T, postcondition Q, invariant predicates I, and iteration count n",
+  "I₀ holds at σ",
+  "For each j<n and state satisfying Iⱼ: c is safe and true; b is block-safe and its resulting state satisfies Iⱼ₊₁",
+  "For every state satisfying Iₙ: c is safe and false, and Q holds",
+  "n(cost(c)+1+blockCost(b))+(cost(c)+1)≤T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

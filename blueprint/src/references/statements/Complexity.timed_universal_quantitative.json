@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.timed_universal_quantitative",
+ "key": "34a7b3d05501b65c",
+ "kind": "theorem",
+ "title": "Quantitative Timed Universal Simulation",
+ "statement": "Let $c$ be an effective machine code with canonizer, and let $\\alpha,x$ be binary words and $t\\in\\mathbb{N}$. There exists a finite-state binary Turing machine $U$ such that, for every output word $y$, if the machine decoded from $\\alpha$ halts on $x$ at exactly time $t$ with output $y$, then $U$ halts on input $\\langle\\langle\\mathrm{bin}(t),\\alpha\\rangle,x\\rangle$ at exactly time $(3|\\alpha|+14T_c(|\\alpha|)+50)(t+1)^2$ with output $1y$; and if it does not halt on $x$ with any output at exactly time $t$, then $U$ halts on that same input at exactly that time with output $0$. Here $T_c(n)$ is the canonizer's time bound at input length $n$, $\\mathrm{bin}(t)$ is the little-endian binary representation, and $\\langle\\cdot,\\cdot\\rangle$ is the specified pairing of binary words.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code with canonizer",
+  "$\\alpha,x$ are binary words",
+  "$t$ is a natural number",
+  "For each output word, the decoded machine's computation at exactly time $t$ is considered",
+  "Either the decoded machine halts at exactly time $t$ with that output, or it has no output at exactly time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-representation scheme with a canonizer, and let $U$ be\nthe finite binary Turing machine whose existence is asserted. For every binary strings\n$\\alpha,x$ and every $t\\in\\mathbb{N}$, set $S=(3|\\alpha|+14T_c(|\\alpha|)+50)(t+1)^2$ and\ngive $U$ the input $\\langle\\langle\\mathrm{bin}(t),\\alpha\\rangle,x\\rangle$, where\n$\\mathrm{bin}(t)$ is the little-endian binary representation of $t$ and\n$\\langle\\cdot,\\cdot\\rangle$ is the specified pairing. If the machine decoded from\n$\\alpha$ computes an output $w$ from $x$ within $t$ steps, then $U$ computes $1w$ on\nthat paired input within $S$ steps; if it computes no output from $x$ within $t$ steps,\nthen $U$ computes the one-bit output $0$ within $S$ steps."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.universal_prepare_next",
+ "key": "b1faab93a405dc22",
+ "kind": "lemma",
+ "title": "Successor state preparation",
+ "statement": "Let $x$ be a finite bit string, let the base configuration be a four-tape configuration on input $x$, and let $T$ be a table of the form $l\\,1^u\\,0\\,r$, where $u$ is the unary size of an optional successor state: it is $0$ if there is no successor, and $q+1$ if the successor has index $q$. For any eight-bit action register and any such optional successor, starting in the successor-decoding phase with table cursor $|l|$, the unary tape encoding of state $0$, and state cursor $1$, after exactly $1$ steps if the successor is absent or $2q+4$ steps if its index is $q$, the interpreter is in the record-application phase with the same action register, a flag indicating whether the successor is absent, table cursor $|l|+u$, the unary encoding of state $0$ if absent or state $q$ otherwise, and state cursor $1$; all other configuration data are inherited from the base configuration.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "The base configuration is a four-tape configuration on input $x$",
+  "$T=l\\,1^u\\,0\\,r$ for finite bit strings $l,r$",
+  "The successor is absent or is an index $q$ in the specified finite range",
+  "The table’s unary field length is $u=0$ when absent and $u=q+1$ when present",
+  "The action register is a function from the eight field indices to bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table is $l \\cdot 1^u \\cdot 0 \\cdot r$, where $u$ is the unary\nsize of an optional successor state ($0$ when the successor is absent and\n$q + 1$ when it has index $q$).  From the interpreter's successor-decoding\nphase carrying eight buffered action bits, with table cursor $|l|$, state\ntape the intact unary encoding of the index $0$, and state cursor $1$,\nexactly the successor-preparation cost ($1$ when the successor is absent\nand $2q + 4$ otherwise) in interpreter steps reaches the record-application\nphase carrying the same bits and a flag recording whether the successor is\nabsent, with table cursor $|l| + u$, state tape the intact unary encoding\nof the successor index ($0$ when absent), and state cursor $1$."
+}

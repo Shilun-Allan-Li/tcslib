@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.CsShifted",
+ "key": "7eeb0346ef02bca4",
+ "kind": "structure",
+ "title": "Shifted counting-sort state",
+ "statement": "Let $A$ specify a number $n$ of items, a destination address $\text{dst}$, and a counting-array address $\text{cnt}$, together with key parameters and an upper bound $\text{nb}$. Let $it$ and $kf$ be functions on the natural numbers, let $s$ be a natural number, and let $\u0000mu'$ be a memory map from natural numbers to integers. The state satisfies three conditions: for every $j<n$, the value at address $\text{dst}+\text{sortPos}(kf,n,j)$ is $it(j)$; for every $t\u0000le \text{nb}$ with $s<t$, the value at address $\text{cnt}+t$ is $\text{cntLt}(kf,t,n)$; and for every $t<s$, the value at address $\text{cnt}+t$ is $\text{cntLt}(kf,t+1,n)$.",
+ "hypotheses_covered": [
+  "For every j < A.n, μ′(A.dst + sortPos kf A.n j) = it j",
+  "For every t ≤ A.nb with s < t, μ′(A.cnt + t) = cntLt kf t A.n",
+  "For every t < s, μ′(A.cnt + t) = cntLt kf (t + 1) A.n"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define sortPos or cntLt, so their roles can only be described by their placement and counting notation.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

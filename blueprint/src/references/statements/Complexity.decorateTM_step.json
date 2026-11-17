@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.decorateTM_step",
+ "key": "8ecbaab610dfa646",
+ "kind": "lemma",
+ "title": "Projection commutes with one step",
+ "statement": "Let $P$ be a finite Turing machine over an alphabet $A$, let $l$ be a natural number, choose a work-tape index $h$ of $P$, a finite data-state set $D$ with initial state $d_0$, and any visit function of the specified type. Suppose every transition of $P$ emits no output symbol. For every input word $x$ and every configuration $c$ of the decorated machine on $x$, projecting the result of one decorated-machine step from $c$ onto the schedule equals the result of one step of $P$ from the schedule projection of $c$.",
+ "hypotheses_covered": [
+  "$D$ is finite and has decidable equality",
+  "$P$ is a finite Turing machine over $A$",
+  "$l$ is a natural number",
+  "$h$ is a work-tape index of $P$",
+  "$d_0$ is an element of $D$",
+  "The visit function has the stated type",
+  "Every transition of $P$ emits no output symbol",
+  "$x$ is an input word over $A$",
+  "$c$ is a configuration of the decorated machine on $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a machine over an alphabet $A$ whose transition table never emits an\noutput symbol, and consider its decoration by any data transducer with $l$ extra\ntapes, designated head, initial data state, and visit function. For every\nconfiguration $c$ of the decorated machine, the schedule projection of one step of\nthe decorated machine at $c$ equals one step of $P$ at the schedule projection of\n$c$. This is an equality of entire configurations, not merely a correspondence at\nmacrostep boundaries."
+}

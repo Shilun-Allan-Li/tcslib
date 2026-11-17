@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.effects_compileExpr_of_width",
+ "key": "4165422d575f7234",
+ "kind": "theorem",
+ "title": "Compiled expression effects from width",
+ "statement": "Let a word size, compiler size parameters, state, stack position, and memory satisfy the framed-state conditions. For an expression $e$ and temporary index $k$, suppose $e.\\mathrm{width} \\le F$, $e$ is safe under the state and limits, and $k \\le F+1$. Executing the compiled expression writes its value into temporary cell $k$ and leaves memory unchanged outside the set consisting of the address scratch cell and temporary cells indexed from $k$ through $2F$.",
+ "hypotheses_covered": [
+  "A framed initial memory and state, including its relation and stack bounds",
+  "Expression width bound $e.\\mathrm{width} \\le F$",
+  "Expression safety under the limits and state",
+  "Index bound $k \\le F+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

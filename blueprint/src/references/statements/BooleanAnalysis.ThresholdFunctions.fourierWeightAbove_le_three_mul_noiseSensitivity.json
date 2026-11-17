@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.fourierWeightAbove_le_three_mul_noiseSensitivity",
+ "key": "c84676184c3c9baa",
+ "kind": "lemma",
+ "title": "Fourier tail bound by noise sensitivity",
+ "statement": "Let $n\\in\\mathbb N$ and let $f:\\{0,1\\}^n\\to\\mathbb R$ take values in $\\{-1,1\\}$. If $0<\\delta\\le\\tfrac12$, then the Fourier weight on levels strictly greater than $\\lfloor\\delta^{-1}\\rfloor$ is at most three times the noise sensitivity at parameter $\\delta$; here the Fourier weight is computed with uniform measure, and noise sensitivity is defined by $\\operatorname{NS}_\\delta(f)=\\bigl(1-\\operatorname{Stab}_{1-2\\delta}(f)\\bigr)/2$ using the Fourier noise operator.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$f$ is $\\pm1$-valued",
+  "$0<\\delta$",
+  "$\\delta\\le\\tfrac12$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\in\\mathbb N$, $f:\\{0,1\\}^n\\to\\{-1,1\\}$, and $0<\\delta\\le\\tfrac12$, and define $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat f(S)=\\mathbb E_x[f(x)\\chi_S(x)]$ for uniform $x$ and $S\\subseteq\\{1,\\ldots,n\\}$.\nIf $y$ is obtained from $x$ by flipping each bit independently with probability $\\delta$, write $\\operatorname{NS}_\\delta(f)=\\Pr[f(x)\\ne f(y)]$; then\n\\[\n \\sum_{|S|>\\lfloor1/\\delta\\rfloor}\\widehat f(S)^2\n \\le3\\operatorname{NS}_\\delta(f).\n\\]"
+}

@@ -1,0 +1,20 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean :: Randomized.RL_error_reduction -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: low -->
+
+# Error Reduction for Randomized Logspace
+
+**Claim.** Let $L$ be a language of Boolean strings in randomized logspace, and let $d$ be a nonnegative integer. There are a constant $c$ and a finite-state randomized Turing machine using at most $c(\lfloor\log_2|x|\rfloor+1)$ space such that, on every input, all computation branches halt within a finite bound. On members, it outputs $[\mathrm{true}]$ with probability at least $1-(1/2)^{(|x|+1)^d}$; on nonmembers, every choice word of the prescribed length makes it output $[\mathrm{false}]$.
+
+**Proof.** Choose a machine $N$ and a space constant witnessing that $L$ is in randomized logspace. The proof fixes an amplification parameter $F$ large enough in terms of that space constant and $d$. Its four auxiliary languages are in logspace (`Randomized.PolyAmp.ampAs_mem`), so the theorem converting the relevant alternating computation into a finite-state randomized machine applies. That conversion supplies a machine $M$ with a constant-factor logarithmic space bound and a finite halting time for each of the computations it simulates (`Complexity.LogProg.narm_logspace_ptm`).
+
+Now fix an input $x$. The original machine has some halting bound $T_0$. The amplification construction, applied with this bound, gives a common padded time $K=\mathrm{bigK}(F,|x|)$, preserves the original output probabilities, and produces the amplified computation (`Randomized.PolyAmp.polyAmp_setting`). The chosen parameter ensures $32(|x|+1)^d\le K$ (`Randomized.PolyAmp.bigK_ge`). The conversion theorem gives a time $T$ for $M$, together with the stated relationship between its output probabilities and the amplified run value.
+
+If $x\in L$, the original acceptance probability is at least $2/3$. The amplified acceptance formula expresses the run value as $1-(1-p)^{K+1}$, where $p$ is that probability (`Randomized.PolyAmp.runVal_one`). Since $p\ge2/3$, we have $(1-p)^{K+1}\le(1/2)^{K+1}$. The size bound gives $(1/2)^{K+1}\le(1/2)^{(|x|+1)^d}$, so the resulting acceptance probability meets the required lower bound.
+
+If $x\notin L$, every original length-$T_0$ computation outputs false. Consider any choice word of length $K$. When $T_0\le K$, the halting property identifies its run with the run on its first $T_0$ choices (`Turing.FinNDTM.runWith_eq_runWith_take`); when $K<T_0$, extend the word to length $T_0$, and use that a halted configuration remains unchanged under further choices (`Turing.NDTM.runWith_append`, `Turing.NDTM.runWith_of_halt`). Thus no length-$K$ choice word accepts. The probability of acceptance is consequently zero, by agreement with the constantly false event and the zero probability of that event (`Randomized.randProb_congr`, `Randomized.randProb_false`). The amplified rejecting run value is therefore one, using the run-value formula for the rejecting case supplied by the construction. Hence $M$ outputs false with probability one: every length-$T$ choice word does so, since a probability-one event on this finite uniform space holds at every point (`Randomized.forall_of_randProb_eq_one`).
+
+**Key facts.** `Complexity.LogProg.narm_logspace_ptm`, `Randomized.PolyAmp.ampAs_mem`, `Randomized.PolyAmp.polyAmp_setting`, `Randomized.PolyAmp.bigK_ge`, `Randomized.PolyAmp.runVal_one`, `Randomized.randProb_le_one`, `Turing.FinNDTM.runWith_eq_runWith_take`, `Turing.NDTM.runWith_append`, `Turing.NDTM.runWith_of_halt`, `Randomized.randProb_congr`, `Randomized.randProb_false`, `Randomized.forall_of_randProb_eq_one`.
+
+**Caveat.** The supplied upstream statement for `polyAmp_setting` is truncated, and the proof source uses additional consequences of it (including the rejecting run-value identity and the conversion machine's output-probability identities). Those consequences determine the two final output claims, but their full statements are not included in the payload.

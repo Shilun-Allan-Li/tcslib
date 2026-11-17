@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.a3_shift_timed",
+ "key": "e25120ef0750ca92",
+ "kind": "lemma",
+ "title": "Time bound for the Boolean shift function",
+ "statement": "For every Boolean word $w$, the machine with no work tapes that emits one false bit for each input bit and then emits $w$ computes the function $x \\mapsto 0^{|x|} \\mathbin{+\\!\\!+} w$ on every Boolean word $x$ in time $(|w|+2)(|x|+1)$.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "the computation claim holds for every Boolean input word $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every word $w$, the shift machine for $w$ computes the function mapping each\ninput $x$ to $0^{|x|} \\mathbin{+\\!\\!+} w$ within time $(|w| + 2)(n + 1)$ on inputs\nof length $n$; this time bound is monotone and linear in $n$."
+}

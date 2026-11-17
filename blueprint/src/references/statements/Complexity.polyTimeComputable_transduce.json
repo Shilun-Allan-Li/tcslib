@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_transduce",
+ "key": "db9e54f3417b4e3e",
+ "kind": "theorem",
+ "title": "Polynomial-time transducer computation",
+ "statement": "Let $\\sigma$ be a finite set, let $\\delta : \\sigma \\times \\{0,1\\} \\to \\sigma$ be a transition function, let $o : \\sigma \\times \\{0,1\\} \\to \\{0,1\\} \\cup \\{\\bot\\}$ be an emission function, and choose a starting state $q_0 \\in \\sigma$. The string function that processes each input bit from left to right, emits $o(q,b)$ when this value is a bit and emits nothing when it is $\\bot$, then changes state to $\\delta(q,b)$, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "The state set $\\sigma$ is finite.",
+  "The state set has decidable equality.",
+  "A transition function $\\delta : \\sigma \\times \\{0,1\\} \\to \\sigma$.",
+  "An emission function $o : \\sigma \\times \\{0,1\\} \\to \\{0,1\\} \\cup \\{\\bot\\}$.",
+  "A starting state $q_0 \\in \\sigma$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\sigma$ be a finite set of states, $\\delta : \\sigma \\times \\{0,1\\} \\to \\sigma$ a\ntransition function, $o : \\sigma \\times \\{0,1\\} \\to \\{0,1\\} \\cup \\{\\bot\\}$ an emission\nfunction ($\\bot$ meaning no output) and $q_0 \\in \\sigma$, and let $\\tau_{\\delta,o}(q_0, x)$\nbe the word emitted by the one-pass transducer reading $x \\in \\{0,1\\}^*$ from left to right\nstarting in $q_0$, where each bit $b$ read in state $p$ emits $o(p,b)$ (or nothing) and\nmoves to $\\delta(p,b)$. Then the map $x \\mapsto \\tau_{\\delta,o}(q_0, x)$ is\npolynomial-time computable: some finite binary Turing machine computes it within\n$C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \\in \\mathbb{N}$."
+}

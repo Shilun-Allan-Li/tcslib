@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.tautDual_read",
+ "key": "83076dc7f32eb811",
+ "kind": "lemma",
+ "title": "Input symbol at an interior position",
+ "statement": "Let $x$ be a binary string, let $q$ be a control state of the dual transducer, let $i\\in\\mathbb{N}$ satisfy $i\\le |x|$, and let $o$ be an output word. In the configuration on input $x$ with state $q$, input head at position $i+1$, and output $o$, the symbol read is the $i$th bit of $x$ when $i<|x|$, and no symbol when $i=|x|$.",
+ "hypotheses_covered": [
+  "A binary input string $x$",
+  "A dual-transducer control state $q$",
+  "A natural number $i$ with $i\\le |x|$",
+  "An output word $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input and $i \\le |x|$. In every configuration of the dual transducer on\n$x$ with input head at position $i + 1$, the symbol read is the $i$-th bit of $x$ when\n$i < |x|$ and the right boundary blank when $i = |x|$."
+}

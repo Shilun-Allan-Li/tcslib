@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.counterLoopTMVia",
+ "key": "2562f38d8a36d230",
+ "kind": "def",
+ "title": "Counter loop over an embedded alphabet",
+ "statement": "Given a symbol type $\\Gamma$, a state set $S$, a Boolean-symbol machine $M$ with $k$ work tapes and state set $S$, an embedding of Boolean symbols into $\\Gamma$, a distinguished state $a\\in S$, and an optional designated exit state, form a machine over $\\Gamma$ with $k+1$ work tapes and the counter-loop states. It starts in the decrement phase in run mode; body states follow $M$ on the first $k$ tapes, while decrement states run the one-tape decrement routine with its Boolean symbols embedded into $\\Gamma$ on the added tape, with both phases routing successor states according to the counter-loop rules; done and escape states stay fixed without moving or writing.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A symbol type $\\Gamma$ with decidable equality",
+  "A state set $S$ with decidable equality",
+  "An embedding of Boolean symbols into $\\Gamma$",
+  "A machine over $\\Gamma$ with $k$ work tapes and state set $S$",
+  "A distinguished state $a\\in S$",
+  "An optional designated exit state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

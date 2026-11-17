@@ -1,0 +1,20 @@
+{
+ "lean_name": "Randomized.Amplify.emb",
+ "key": "ce4b918866eebc0c",
+ "kind": "def",
+ "title": "Embedding a machine configuration",
+ "statement": "Given an amplified configuration $D$, a run index $j\\in\\text{Fin}(r+1)$, a counter $c\\in\\text{Fin}(r+2)$, and a configuration $u$ of $N$ on input $x$, the resulting amplified configuration has the same input-head position as $u$ and empty output. On work tapes belonging to run $j$, it copies the tape contents and head positions from $u$; on all other work tapes, it preserves those of $D$. Its phase state records the state of $u$ and the summary of its output when $u$ has not halted, and records a rewind phase with the counter adjusted according to whether that summary is true when $u$ has halted.",
+ "hypotheses_covered": [
+  "finite nondeterministic Boolean machine $N$",
+  "natural number $r$",
+  "Boolean input list $x$",
+  "amplified configuration $D$",
+  "run index $j\\in\\text{Fin}(r+1)$",
+  "counter $c\\in\\text{Fin}(r+2)$",
+  "configuration $u$ of $N$ on input $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not include definitions of the output-summary, counter-adjustment, or tape-block indexing operations, so their meanings cannot be stated more explicitly from the given material.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

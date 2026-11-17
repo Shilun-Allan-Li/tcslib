@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinNDTM.ZDecidesInTime.abort",
+ "key": "12533a59a95ea1ba",
+ "kind": "theorem",
+ "title": "Halting and correct output probability",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean symbols, let $L$ be a language of Boolean words, and let $T\\colon\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every input $x$, the sum over all time horizons of the probabilities that the run of $N$ has not halted is at most $T(|x|)$, and every run that halts outputs the one-symbol word indicating whether $x\\in L$. Then, for every input $x$, every halting run outputs that correct one-symbol word, and a uniformly chosen Boolean choice word of length $2T(|x|)$ yields a halting run with that output with probability at least $1/2$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$L$ is a language of Boolean words",
+  "$T\\colon\\mathbb{N}\\to\\mathbb{N}$",
+  "For every input, the sum of nonhalting probabilities over every finite range of time horizons is at most $T(|x|)$",
+  "Every choice word yielding a halted run produces the one-symbol indicator of membership in $L$",
+  "$x$ is an arbitrary Boolean input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

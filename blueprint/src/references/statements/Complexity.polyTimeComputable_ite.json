@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_ite",
+ "key": "1285781ed53ef6de",
+ "kind": "theorem",
+ "title": "Polynomial-time computable branching",
+ "statement": "Let $p:\n\\{0,1\\}^*\\to\\{0,1\\}$ and $f,g:\n\\{0,1\\}^*\\to\\{0,1\\}^*$ be polynomial-time computable, where $p$ is computed as a one-bit output word. Then the function sending $x$ to $f(x)$ when $p(x)$ is true and to $g(x)$ otherwise is polynomial-time computable.",
+ "hypotheses_covered": [
+  "The one-bit-valued function $p$ is polynomial-time computable",
+  "$f$ is polynomial-time computable",
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a Boolean-valued predicate on bit strings and let $f, g$ be functions from bit strings to bit strings. Suppose that the map sending $x$ to the one-bit word $p(x)$ is polynomial-time computable, and that $f$ and $g$ are polynomial-time computable (each computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the map sending $x$ to $f(x)$ if $p(x)$ is true and to $g(x)$ otherwise is polynomial-time computable."
+}

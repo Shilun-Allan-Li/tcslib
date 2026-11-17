@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/BLR/ZkBLR.lean :: ZkBLR.weighted_sum_unit_bound -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Weighted bound for unit twists
+
+**Claim.** For a normalized function that is $\epsilon$-far from linear, the weighted Fourier sum of its lift by any unit $j$ is at most $1-(1-\cos(2\pi/k))\varepsilon$.
+
+**Proof.** Fix a frequency. The real part of the Fourier coefficient at that frequency is bounded above by $1-(1-\cos(2\pi/k))\varepsilon$, using the estimate for unit twists (`ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound`). Multiply by the nonnegative squared modulus and sum over frequencies. The constant bound factors out, while Parseval for the twisted lift (`ZkBLR.parseval_lift_omega_j`) says the remaining sum of squared moduli is $1$. This yields the stated inequality.
+
+**Key facts.** `ZkBLR.re_fourier_coeff_lift_omega_j_unit_bound`, `ZkBLR.parseval_lift_omega_j`.

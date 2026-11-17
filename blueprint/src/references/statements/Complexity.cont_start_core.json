@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.cont_start_core",
+ "key": "906353d76549760b",
+ "kind": "lemma",
+ "title": "Entering the Simulation Core",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, and let $y,x,u$ be binary words. Starting in loader state $3$ with input head at position $|y|+1$, input buffer holding $x$ with its head at $|x|$, and empty choice buffer with its head at $|u|$, after exactly $1+(|x|+1)+(|u|+1)$ steps the configuration is the state-renamed simulation-core configuration of $N$ initialized on $x$, with choice word $u$, choice head at $0$, boundary tag true, and physical input head at position $|y|+1$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic machine over the binary alphabet",
+  "$y,x,u$ are binary words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine and let $x$ and $u$ be the buffer words held by a loader configuration at the right boundary of the physical input $y$. Exactly $1 + (|x|+1) + (|u|+1)$ further steps of the pair-loader machine (one dispatch and the two buffer rewinds) reach the renamed embedding of the initial configuration of $N$ on $x$ prepared with choice word $u$; no bits of the choice word are consumed by these administrative steps."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clLoad_field",
+ "key": "9dc1906a64db229f",
+ "kind": "lemma",
+ "title": "Loading one row field",
+ "statement": "Let $l$ be a natural number, let $x$ be a binary input word, and let $p$ be an input-head position for $x$. Choose a field index $i<l$, old words for all $l$ fields, and binary words $pre$, $word$, and $tail$. The row loader, started at field $i$ with the old fields and stream $pre$ followed by the encoding of $word$ and $tail$, reaches in a time $t$ satisfying $0<t\\le 2|old_i|+3|word|+7$ a configuration in which field $i$ contains $word$, the field index is $i+1$, and the stream cursor is at position $|pre|+2|word|+2$, with the other fields and the stream contents as specified by the target configuration.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb N$",
+  "$x$ is a binary word",
+  "$p$ is an input-head position for $x$",
+  "$i<l$",
+  "old assigns a binary word to each of the $l$ fields",
+  "$pre$, $word$, and $tail$ are binary words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, target field $i$, old field words, stream prefix $u$, field word $w$, and stream tail, there is a strictly positive time $t$, at most twice the old field's length plus $3|w| + 7$, after which the row loader has replaced field $i$ by $w$, advanced its field index to $i + 1$, and moved the stream cursor exactly past the consumed field, from $|u|$ to $|u| + 2|w| + 2$; the cost includes target reset, native parsing, target rewind, and one dispatch."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_stableInfluence_eq_sq_norm_noise_laplacian",
+ "key": "e40a1b9a2565b920",
+ "kind": "theorem",
+ "title": "Stable influence as a noisy norm",
+ "statement": "Let $n\\in\\mathbb{N}$, let $P$ be a finite product probability space with $n$ coordinates, and let $\\rho\\ge 0$. For every real-valued function $f$ on its outcome space and every coordinate $i$, $\\rho I_i^{(\\rho)}(f)=\\|T_{\\sqrt{\\rho}}L_i f\\|_{2,P}^{2}$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb{N}$ and a finite product probability space $P$ with $n$ coordinates",
+  "$\\rho\\ge 0$",
+  "A real-valued function $f$ on the outcome space",
+  "A coordinate $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $\\rho\\ge0$, a coordinate $i$, and $f:\\Omega\\to\\mathbb R$. Then $\\rho I_i^{(\\rho)}(f)=\\|T_{\\sqrt\\rho}L_if\\|_{2,P}^2$, where $I_i^{(\\rho)}$ is stable influence and $L_i$ is the coordinate Laplacian. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $L_i h=h-E_{[n]\\setminus\\{i\\}}h$; $I_i^{(a)}(h)=\\sum_{S\\ni i}a^{|S|-1}\\mathbb E_Ph_S^2$ for $a\\in\\mathbb R$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

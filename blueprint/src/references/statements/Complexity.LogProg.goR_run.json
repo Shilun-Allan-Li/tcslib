@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.goR_run",
+ "key": "a8c91ffec1eee7e4",
+ "kind": "lemma",
+ "title": "Rightward cleanup run",
+ "statement": "Let $M$ be a $k$-work-tape Turing machine, let $q_0$ be an initial state, and fix an input, an index $i<k$, an input-head position, output word, and integer bound $B$. Let $a,b$ be integers, and let $D_t,M_t$ be tape contents and $D_p,M_p$ be head positions for the two banks of work tapes. Suppose $M_t(i)$ is the tape marking the origin and the interval from $a$ through $b$, $0\\le b$, and $b+1\\le B$. For every $n$ and head-position function $D_p$ such that $b+1-D_p(i)=n$, $a\\le D_p(i)$, and $|D_p(j)|\\le B$ for every tape index $j$, the cleanup machine started in its rightward-walk phase at index $i$ has all work-head positions bounded in absolute value by $B$ at every time $t\\le n+1$. At time $n+1$ it is in the erasing phase at index $i$, with both banks' head positions updated at $i$ to $b$ and all other configuration data unchanged.",
+ "hypotheses_covered": [
+  "A $k$-work-tape machine $M$ and initial state $q_0$.",
+  "A fixed Boolean input, input-head position, output word, and bound $B$.",
+  "A tape index $i<k$.",
+  "Integer endpoints $a,b$, tape contents $D_t,M_t$, and head positions $D_p,M_p$.",
+  "The second-bank tape at $i$ is marked on the origin and the interval from $a$ to $b$.",
+  "$0\\le b$.",
+  "$b+1\\le B$.",
+  "For every $n$ and $D_p$, $b+1-D_p(i)=n$.",
+  "$a\\le D_p(i)$.",
+  "For every $j$, $|D_p(j)|\\le B$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

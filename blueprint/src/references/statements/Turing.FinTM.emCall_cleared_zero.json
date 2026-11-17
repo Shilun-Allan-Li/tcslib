@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.emCall_cleared_zero",
+ "key": "e843ee67208f6570",
+ "kind": "lemma",
+ "title": "Zero erasures change nothing",
+ "statement": "For every data tape $d : \\mathbb{Z} \\to \\mathrm{Option}(\\mathrm{Bool})$ and integer $\\ell$, erasing the cells in the interval $[\\ell,\\ell)$ leaves $d$ unchanged.",
+ "hypotheses_covered": [
+  "$d$ assigns an optional Boolean value to each integer cell",
+  "$\\ell$ is an integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every data tape $d$ and integer $\\ell$, erasing the first zero cells of the interval\nstarting at $\\ell$ yields $d$ unchanged."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.clMatch_load",
+ "key": "03d189352b65cf42",
+ "kind": "lemma",
+ "title": "Loading a candidate row",
+ "statement": "Let $l$ be a positive natural number, let $pos,neg$ be coordinates in the range of length $l$, and choose a Boolean input word, old and new rows of Boolean words, two target words, Boolean prefix and trailer, natural numbers $N,j,W$, and a Boolean flag word. Suppose every word in the old and new rows has length at most $W$. Then there is a natural number $t\\le l(5W+7)+1$ such that after $t$ steps the matcher holds the new row, its stream cursor has advanced from the prefix length by exactly the length of the packed new row, its clock and flags are unchanged, the old row contents have been replaced, and the matcher is in the initial comparison control.",
+ "hypotheses_covered": [
+  "Positive natural number $l$",
+  "Coordinates $pos$ and $neg$ in the range of length $l$",
+  "Boolean input word",
+  "Arbitrary old and new rows of Boolean words",
+  "Two target words",
+  "Boolean prefix and trailer",
+  "Natural numbers $N,j,W$",
+  "Arbitrary Boolean flag word",
+  "Every word in the old row has length at most $W$",
+  "Every word in the new row has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a positive field count, distinct coordinates, old and new candidate rows of field length at most $W$, target words, and a stream exposing the packed new row after a prefix, there is a time $t \\le l(5W+7) + 1$ after which the matcher has loaded the new row, cleared all old field targets, advanced the stream cursor exactly past the packed row, and dispatched to the signed comparison with fresh comparator registers."
+}

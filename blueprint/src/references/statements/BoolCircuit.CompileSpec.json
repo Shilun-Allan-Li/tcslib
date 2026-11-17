@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.CompileSpec",
+ "key": "38ab29f2aab55484",
+ "kind": "structure",
+ "title": "Tree circuit compilation specification",
+ "statement": "Let $n$ be a natural number, let $c$ be a Boolean circuit tree on $n$ variables, let $g$ be a finite list of gates, and let $(g',v)$ consist of a finite list of gates and a natural-number vertex. The specification requires that $g'$ be obtained by appending a list of gates to $g$, that $g'$ be acyclic, and that $v<n+|g'|$; for every input $x$, the value at vertex $v$ in $g'$ must equal the evaluation of $c$ at $x$. It further requires $|g'|\\le |g|+\\mathrm{size}(c)$, that the depth at $v$ be at most $\\mathrm{depth}(c)+1$, and that every gate in the appended portion be well formed and have at most $\\max(1,\\mathrm{maxFanin}(c))$ arguments.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A Boolean circuit tree $c$ on $n$ variables",
+  "An initial finite gate list $g$",
+  "A result pair consisting of a finite gate list $g'$ and a natural-number vertex $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

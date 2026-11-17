@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timed_clock_start",
+ "key": "f4ae20a0f124703e",
+ "kind": "lemma",
+ "title": "Entering the clock rewind phase",
+ "statement": "Let $x$ be a finite Boolean input word, let $cfg$ be a four-tape configuration over $x$, let $bs$ be a finite Boolean clock word, let $bits$ assign a Boolean to each index below $8$, and let $halt$ be a Boolean flag. If $cfg$ has the pending-action control carrying $bits$ and $halt$, then one step of the timed interpreter from its six-tape lift with clock word $bs$ reaches the clock-rewind phase carrying the same $bits$ and $halt$, with the clock word unchanged and its head at $|bs|-1$.",
+ "hypotheses_covered": [
+  "A finite Boolean input word $x$",
+  "A four-tape configuration over $x$ whose control is the specified pending-action state",
+  "A finite Boolean clock word $bs$",
+  "A Boolean action-bit function indexed below 8",
+  "A Boolean halt flag"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the six-tape lift of a four-tape configuration whose control is a\npending-action state, one step of the timed interpreter enters the\nclock-rewind phase --- retaining the action's decoded bits and halting flag\n--- with the clock head moved to the last clock bit, and without applying any\nsource transition."
+}

@@ -1,16 +1,17 @@
 {
  "lean_name": "BoolCircuit.NAndCircuit.node_eval_eq_toCNF_eval",
- "key": "c3ee91fdb662eb0f",
+ "key": "87a60decc39f8514",
  "kind": "theorem",
- "title": "Evaluation of a depth-2 AND circuit matches its CNF",
- "statement": "Let $cs$ be a list of normal-form OR circuits on $n$ variables, and suppose that every entry of $cs$ is an OR-clause — that is, a base clause given by a list of literals, rather than an internal OR node. Then for every assignment $x : \\mathrm{Fin}\\,n \\to \\bbf_2$, evaluating the normal-form AND circuit that conjoins the circuits in $cs$ agrees with evaluating the CNF formula built from it: the value at $x$ of the AND-node over $cs$ equals the value at $x$ of the CNF whose clauses are obtained by converting each OR-clause of $cs$ into a disjunction of literals.",
+ "title": "Evaluation of an AND-node and its CNF",
+ "statement": "Let $n$ be a natural number, let $cs$ be a list of normal-form OR circuits on $n$ variables, and let $x$ be an assignment of Boolean values to those variables. Suppose every member of $cs$ is a base OR-clause, given by a list of circuit literals and a witness that their variable indices are pairwise distinct. The AND-node over $cs$ and the CNF obtained from that node have the same value on $x$.",
  "hypotheses_covered": [
-  "cs is a list of normal-form OR circuits on n variables",
-  "every entry of cs is an OR-clause (of clause form, not a node)",
-  "x is an assignment of the n variables"
+  "$n$ is a natural number",
+  "$cs$ is a list of normal-form OR circuits on $n$ variables",
+  "$x$ assigns a Boolean value to each of the $n$ variables",
+  "Every member of $cs$ is a base OR-clause"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If every child $c$ of an $\\texttt{NAndCircuit}.\\mathrm{node}\\,cs$ is an OR-clause, then for\nall $x$ the circuit evaluation $(\\texttt{NAndCircuit}.\\mathrm{node}\\,cs).\\mathrm{eval}\\,x$\nequals the CNF evaluation $\\texttt{CNF.eval}\\,((\\texttt{NAndCircuit}.\\mathrm{node}\\,cs).\\mathrm{toCNF})\\,x$."
+ "replaced": "Let $cs$ be a list of normal-form OR circuits on $n$ variables, and suppose that every\nentry of $cs$ is an OR-clause — that is, a base clause given by a list of literals,\nrather than an internal OR node. Then for every assignment $x : \\mathrm{Fin}\\,n \\to\n\\bbf_2$, evaluating the normal-form AND circuit that conjoins the circuits in $cs$\nagrees with evaluating the CNF formula built from it: the value at $x$ of the AND-node\nover $cs$ equals the value at $x$ of the CNF whose clauses are obtained by converting\neach OR-clause of $cs$ into a disjunction of literals."
 }

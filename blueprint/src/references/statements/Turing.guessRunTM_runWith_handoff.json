@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.guessRunTM_runWith_handoff",
+ "key": "5d3e0f8de394c20d",
+ "kind": "theorem",
+ "title": "Handoff to the verifier phase",
+ "statement": "Let $P$ and $Q$ be deterministic machines with $k$ Boolean work tapes, let $j$ be a work tape index, and choose states $p_{\\mathrm{exit}}$ of $P$ and $q_{\\mathrm{entry}},q_{\\mathrm{acc}},q_{\\mathrm{rej}}$ of $Q$. Suppose $P$ reaches configuration $c_P$ in state $p_{\\mathrm{exit}}$ for the first time after $T_P$ steps on Boolean input $z$. Assume tape $j$ in $c_P$ has a block of $m$ nonblank cells starting at its head position, followed by a blank, and the cell immediately to the left of the head is blank. For any Boolean word $w$ of length $T_P+2m+9$, after the guess-and-run machine processes $w$ from its initial configuration, its configuration is the one obtained from $c_P$ by replacing that block on tape $j$ with the length-$m$ word formed by the $m$ bits of $w$ immediately following its first $T_P$ bits, preserving all other tape contents and positions, and entering state $q_{\\mathrm{entry}}$ in the run phase.",
+ "hypotheses_covered": [
+  "$P,Q$ are deterministic machines with $k$ Boolean work tapes",
+  "$j$ is a work tape index",
+  "States $p_{\\mathrm{exit}},q_{\\mathrm{entry}},q_{\\mathrm{acc}},q_{\\mathrm{rej}}$",
+  "$T_P$ is a natural number and $c_P$ is a configuration of $P$ on Boolean input $z$",
+  "$P$ run for $T_P$ steps from its initial configuration equals $c_P$",
+  "$c_P$ has state $p_{\\mathrm{exit}}$",
+  "No earlier time $u<T_P$ has state $p_{\\mathrm{exit}}$",
+  "For a natural number $m$, tape $j$ has nonblank cells at offsets $p<m$ from its head",
+  "The cell at offset $m$ is blank",
+  "The cell one position left of the tape head is blank",
+  "$w$ is a Boolean word of length exactly $T_P+2m+9"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

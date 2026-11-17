@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clA5Host_clean",
+ "key": "0bc16011f481b342",
+ "kind": "lemma",
+ "title": "Clean Contracts at a Host Call",
+ "statement": "Let $M_0,\\ldots,M_4$ be five finite Boolean Turing machines, and suppose their tape counts are all at most $K$. Fix an index $i$, maps $f,g$ from Boolean words to Boolean words, and a time-bound function $B$. If $M_i$ has positive tape count and, for every input word $x$ and argument word $\\mathrm{arg}$, halts for the first time at some positive time $t\\le B(|\\mathrm{arg}|)$ with canonical seam containing $f(\\mathrm{arg})$ and output $g(\\mathrm{arg})$, then for every output prefix $\\mathrm{pre}$ the host started at module $i$'s entry with argument $\\mathrm{arg}$ avoids the loop anchor before such a time and reaches its resolved return with tape word $f(\\mathrm{arg})$ and output $\\mathrm{pre}$ followed by $g(\\mathrm{arg})$.",
+ "hypotheses_covered": [
+  "Five Boolean finite Turing machines indexed by $\\mathrm{Fin}(5)$",
+  "A shared tape bound $K$ with $(M_j).k\\le K$ for every $j$",
+  "An index $i\\in\\mathrm{Fin}(5)$",
+  "Maps $f,g:\\{0,1\\}^*\\to\\{0,1\\}^*$",
+  "A function $B:\\mathbb N\\to\\mathbb N$",
+  "The clean-module contract holds for $M_i,f,g,B$",
+  "Input word $x$ and argument word $\\mathrm{arg}$",
+  "Output prefix $\\mathrm{pre}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the module at index $i$ of the host satisfies the uniform clean contract for result map $f$, emission map $g$, and budget $B$, then from the host entry of $i$ over any argument and output prefix, the host reaches, within $B$ of the argument length and without touching the loop anchor, the resolved return over $f$ of the argument with the output extended by exactly $g$ of the argument."
+}

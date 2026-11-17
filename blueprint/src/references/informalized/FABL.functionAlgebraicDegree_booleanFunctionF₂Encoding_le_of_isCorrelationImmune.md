@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/F₂Polynomials/Siegenthaler.lean :: FABL.functionAlgebraicDegree_booleanFunctionF₂Encoding_le_of_isCorrelationImmune -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Degree Bound from Correlation Immunity
+
+**Claim.** If a Boolean function is $k$th-order correlation immune and $k<n$, then the algebraic degree of its \mathbb F_2-encoding is at most $n-k$.
+
+**Proof.** Suppose, toward a contradiction, that some nonzero algebraic-normal-form coefficient is indexed by a set $S$ with $|S|>n-k$. Since $S$ is nonempty, choose a coordinate in $S$ and let $A$ consist of that coordinate. The odd-restriction-coefficient result (`exists_odd_restrictionFourierCoeff`) gives a restricted Fourier coefficient, with the other coordinates fixed at zero, equal to an odd integer divided by $2^{|S|}$. It is therefore nonzero.
+
+We now express the same restricted coefficient as a sum over frequencies $T$ on the fixed coordinates (`restrictionFourierCoeff_eq_sum`). Each summand uses the original frequency $U$, formed as the union of the lifted free frequency $A$ and lifted fixed frequency $T$. These lifts are disjoint (`disjoint_liftFreeFrequency_liftFixedFrequency`), so $|U|=1+|T|$, while $|T|\le n-|S|$. The assumption $|S|>n-k$ implies $|U|\le k$, and the chosen free coordinate ensures $U$ is nonempty. Correlation immunity therefore forces every such Fourier coefficient of the original function to vanish. The identity for the Fourier coefficient of $(1-f)/2$ (`fourierCoeff_one_sub_div_two`) then makes every summand zero, so the restricted coefficient is zero, contradicting its nonvanishing. Thus every nonzero algebraic coefficient has index size at most $n-k$, which gives the claimed degree bound by the characterization `algebraicDegree_le_iff`.
+
+**Key facts.** `FABL.algebraicDegree_le_iff`, `FABL.exists_odd_restrictionFourierCoeff`, `FABL.disjoint_liftFreeFrequency_liftFixedFrequency`, `FABL.binaryFunctionOnSignCube_booleanRealEmbedding_booleanFunctionF₂Encoding`, `FABL.restrictionFourierCoeff_eq_sum`, `FABL.fourierCoeff_one_sub_div_two`.

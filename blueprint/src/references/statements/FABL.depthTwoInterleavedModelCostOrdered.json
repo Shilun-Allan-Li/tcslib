@@ -1,0 +1,16 @@
+{
+ "lean_name": "FABL.depthTwoInterleavedModelCostOrdered",
+ "key": "b73c646e2acaaa23",
+ "kind": "def",
+ "title": "Ordered interleaved model cost",
+ "statement": "Let $x$ assign a sign to each of nine coordinates. Choose three block indices $b_1,b_2,b_3\\in\\{0,1,2\\}$ and three seed indices $s_1,s_2,s_3\\in\\{0,1,2\\}$. Write $x_i$ for the input sign selected by $(b_i,s_i)$, $y_i$ for the block value of block $b_i$, $C_i$ for the completion cost at $(b_i,s_i)$, and $E_3$ for the evaluation cost at $(b_3,s_3)$. The cost is $2$ plus the following quantity: if $x_1=x_2$, it is $C_1+C_2$ when $y_1=x_1$ and $y_2=y_1$, is $C_1+E_3$ when $y_1=x_1$ and $y_2\\ne y_1$, is $C_1+E_3$ when $y_1\\ne x_1$ and $y_3=y_1$, and is $E_3+C_2$ otherwise; if $x_1\\ne x_2$, it is $E_3+C_1$ when $y_3=x_1$ and $y_1=y_3$, is $E_3+C_2$ when $y_3=x_1$ and $y_1\\ne y_3$, is $C_2$ when $y_3\\ne x_1$ and $y_2=y_3$, and is $C_2+C_1$ otherwise.",
+ "hypotheses_covered": [
+  "A sign assignment on nine coordinates",
+  "Three block indices in {0,1,2}",
+  "Three seed indices in {0,1,2}"
+ ],
+ "confidence": "low",
+ "caveat": "The recursive input, block-value, completion-cost, and evaluation-cost definitions are not supplied, so the auxiliary quantities can only be described by their roles.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

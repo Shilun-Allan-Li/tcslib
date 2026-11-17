@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.counter_debit",
+ "key": "5b7adcb6f921dd2d",
+ "kind": "lemma",
+ "title": "Counter decrement and tape preservation",
+ "statement": "Let $k$ be a natural number, let $S$ and $\\Gamma$ be types with decidable equality, let $e$ be an embedding of the Boolean alphabet into $\\Gamma$, and let $M$ be a $k$-work-tape machine over $\\Gamma$ with state set $S$. Choose a designated state $a\\in S$, an optional exit state, a configuration $c$ on input $x$, a Boolean word $w$, and a counter tape $ct:\\mathbb{Z}\\to\\operatorname{Option}(\\Gamma)$ whose head is at $cp\\in\\mathbb{Z}$. Assume that for every integer $p$ with $-1\\le p\\le |w|$, the content of $ct$ at $cp+p$ equals the content at $p$ of the buffer storing the word obtained by applying $e$ to each symbol of $w$. Let $r$ be the number of initial false symbols of $w$, and let $v$ be the fixed-length decrement of $w$, with the all-true word of length $|w|$ used if that decrement is undefined. After $2r+2$ steps of the counter-loop machine, started from the decrement phase with configuration $c$ and counter tape $ct$, the configuration is the one with state equal to the body state at $a$ if the decrement is defined and the finished state otherwise; its first $k$ work tapes and head positions are those of $c$, and its counter tape is $ct$ patched on the interval from $cp$ through $cp+|w|-1$ with the buffer storing the image of $v$ under $e$. At every earlier time, the machine is neither finished nor escaped; through time $2r+2$, the counter head stays in $[cp-1,cp+|w|]$, and the first $k$ work-head positions remain those of $c$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$; $S$ and $\\Gamma$ have decidable equality",
+  "$e$ embeds the Boolean alphabet into $\\Gamma$",
+  "$M$ is a $k$-work-tape machine over $\\Gamma$ with state set $S$",
+  "$a\\in S$ and the exit state is an element of $\\operatorname{Option}(S)$",
+  "$c$ is a configuration on input $x$; $w$ is a Boolean word",
+  "$ct:\\mathbb{Z}\\to\\operatorname{Option}(\\Gamma)$ and $cp\\in\\mathbb{Z}$",
+  "For every integer $p$ with $-1\\le p\\le |w|$, $ct(cp+p)$ equals the buffered content of the image of $w$ under $e$ at $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

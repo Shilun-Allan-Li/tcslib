@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.universal_apply_record",
+ "key": "a9a704e7c3753cce",
+ "kind": "lemma",
+ "title": "Applying a decoded transition record",
+ "statement": "Let $M$ be a coded machine, let $\\alpha$ and $x$ be bit strings, let $s$ be a configuration of $M$ on input $x$, and let $a$ be a one-step action for $M$. For any natural numbers $\\mathit{oldp}$ and $p$, one step of the universal interpreter from the evaluation configuration based on the simulation checkpoint of $s$ at cursor $\\mathit{oldp}$, in the record-application control state carrying the eight bits of $a$ and the flag indicating whether $a$ halts, with table $M$’s canonical serialization at cursor $p$ and the successor state’s unary tape (using state index $0$ if $a$ halts) at cursor $1$, equals the simulation checkpoint of the configuration obtained by applying $a$ to $s$, at table cursor $p$.",
+ "hypotheses_covered": [
+  "$M$ is a coded machine",
+  "$\\alpha$ and $x$ are bit strings",
+  "$s$ is a configuration of $M$ on input $x$",
+  "$\\mathit{oldp},p\\in\\mathbb{N}$",
+  "$a$ is an action for $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a coded machine, $\\alpha$ a code string, $s$ a configuration of\n$M$'s one-work-tape form on an input $x$, and $a$ a transition action of\n$M$.  One step of the table interpreter from the evaluation configuration\nover the interpreter checkpoint of $s$ (at an arbitrary table cursor) whose\ncontrol is the record-application phase carrying the eight fixed bits of\n$a$ and the flag recording whether $a$ halts, whose table is the canonical\nserialization of $M$ at a cursor $p$, and whose state tape is the intact\nunary encoding of $a$'s successor index ($0$ when $a$ halts) with state\ncursor $1$, is exactly the interpreter checkpoint of the configuration\nobtained by applying $a$ to $s$, with table cursor $p$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.BinArith.searchInv_step",
+ "key": "9b911c6ca0ce6474",
+ "kind": "theorem",
+ "title": "Preservation and Progress of the Search Invariant",
+ "statement": "Let $n$ be a natural number and $S$ a bit string. Suppose there are natural numbers $c,d$ and a bit $b$ such that $S=\\langle\\operatorname{bits}(c),\\langle\\operatorname{bits}(d),[b]\\rangle\\rangle$, where $2^{\\lceil\\log_2(2n)\\rceil}<c\\leq q$, $2\\leq d\\leq c$, no integer $m$ with $2\\leq m<d$ divides $c$, and $b$ can be true only when $c=q$; here $q$ is the least prime greater than $2^{\\lceil\\log_2(2n)\\rceil}$. Then one search step preserves these conditions. It strictly decreases the specified search measure whenever that measure is positive, and leaves $S$ unchanged whenever that measure is zero.",
+ "hypotheses_covered": [
+  "n is a natural number",
+  "S is a bit string satisfying the full stated search invariant",
+  "The strict-decrease conclusion assumes the search measure is positive",
+  "The unchanged-state conclusion assumes the search measure is zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

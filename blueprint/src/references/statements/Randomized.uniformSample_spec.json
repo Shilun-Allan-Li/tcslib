@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.uniformSample_spec",
+ "key": "3a36605d590623c5",
+ "kind": "theorem",
+ "title": "Uniform sampling by repeated rejection",
+ "statement": "Let $N\\ge 1$ and let $\\delta>0$. Set $k=\\lceil\\log_2\\lceil\\delta^{-1}\\rceil\\rceil$ and $m=k\\,\\mathrm{size}(N-1)$. The algorithm defining uniform sampling is computable in polynomial time; on input the pair encoding of the pair consisting of the binary representation of $N$ followed by $k$ ones, and an arbitrary bit string $r$, it returns the encoding of the result of sampling from $r$ with parameters $N,k$. Every returned value is less than $N$. Under the uniform distribution on bit strings of length $m$, for each $i<N$, the probability of returning $i$, multiplied by $N$, equals one minus the probability of returning no value; moreover, the probability of returning no value is at most $\\delta$.",
+ "hypotheses_covered": [
+  "$N$ is a natural number with $1\\le N$",
+  "$\\delta$ is a positive real number",
+  "For the algorithm identity, $r$ is any bit string",
+  "For the range claim, $r$ is any bit string and $i$ is a natural number, with the claim conditional on the sample returning $i$",
+  "For the probability identity, $i<N$",
+  "The sampling probabilities use $m=k\\,\\mathrm{size}(N-1)$ random bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

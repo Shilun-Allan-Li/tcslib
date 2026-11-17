@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satStreamRound_literal",
+ "key": "551ce8ba1d9435dd",
+ "kind": "lemma",
+ "title": "Round at a Complete Literal",
+ "statement": "Let $x,p,r$ be bit strings, $j$ a natural number, $q$ a streaming phase other than $0$ or $4$, and $\\ell$ a literal over natural-number variables. Suppose $x$ is the concatenation of $p$, the binary encoding of $\\ell$, and $r$. If $q=3$ and $r$ begins with $1$, the round emits the encoding of $(j,1)$, then $0,1$, then the encoding of $(j,0)$, followed by the encoding of $\\ell$; it advances the cursor to $j+1$ and the consumed length by the encoded length of $\\ell$, leaving the phase at $3$. Otherwise it emits just the encoding of $\\ell$, leaves the cursor at $j$, advances the consumed length by that encoded length, and sets the phase to $2$ when $q=1$ and to $3$ otherwise.",
+ "hypotheses_covered": [
+  "$x,p,r$ are bit strings",
+  "$j$ is a natural number",
+  "$q$ is a phase in the five-element phase set",
+  "$q \\ne 0$",
+  "$q \\ne 4$",
+  "$\\ell$ is a literal over natural-number variables",
+  "$x=p$ followed by the encoding of $\\ell$ and then $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input be $p$ followed by a serialized literal $\\ell$ and a remainder $r$,\nand let the seam state have consumed $|p|$ bits in a literal phase (neither\nformula nor finished). If the phase is the tail phase and $r$ starts with a clause\nbit $1$, the round allocates the fresh cursor $j$: it emits the positive link\n$(j,\\mathrm{true})$, two markers, the negative literal $(j,\\mathrm{false})$, and\n$\\ell$, incrementing the cursor; otherwise it emits $\\ell$ verbatim and advances\nthe phase. In both cases the consumed length advances by the serialized literal\nlength, so no literal buffer survives a round boundary."
+}

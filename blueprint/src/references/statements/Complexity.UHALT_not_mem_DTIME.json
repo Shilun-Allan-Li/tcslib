@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.UHALT_not_mem_DTIME",
+ "key": "097537e4d599dd40",
+ "kind": "theorem",
+ "title": "Universal halting exceeds every time bound",
+ "statement": "For every effective machine code scheme $c$ and every function $T\\colon\\mathbb{N}\\to\\mathbb{N}$, the unary language consisting of all-one words of length $n$ such that the most-significant-first binary expansion of $n$ is $1$ followed by a string $s$ for which some advice string $\\alpha$ and input $x$ satisfy $s=\\langle\\alpha,x\\rangle$ and the machine decoded from $\\alpha$ halts on $x$ with some output is not decidable by any finite-state binary Turing machine within time $C T(n)$ for any constant $C\\in\\mathbb{N}$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code scheme",
+  "$T\\colon\\mathbb{N}\\to\\mathbb{N}$ is a function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine representation scheme, and let\n$T\\colon\\mathbb{N}\\to\\mathbb{N}$ be any function. The unary language of numbers whose\nbinary expansions begin with $1s$, where $s$ encodes an advice string and an input on\nwhich the machine decoded from that advice halts, is not decidable by a finite binary\nTuring machine in time bounded by any constant multiple of $T$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.prepInvariant_run",
+ "key": "6221459b67d0d07f",
+ "kind": "lemma",
+ "title": "Preparation invariant along the run",
+ "statement": "Let $W$ and $M$ be finite Turing machines over the binary alphabet, let $a$ be a natural number, and let $x$ be a binary word. At every time $t\\in\\mathbb{N}$, there exist a data register, data tapes, and an output list such that the logical simulator's configuration after $t$ steps on the embedded input is the decorated configuration formed from the schedule controller's configuration after $t$ steps and these components, and the preparation invariant holds for that schedule configuration with those components.",
+ "hypotheses_covered": [
+  "$W,M$ are finite Turing machines over the binary alphabet",
+  "$a$ is a natural number",
+  "$x$ is a binary word",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all binary machines $W$ and $M$, padding constant $a$, word $x$, and time\n$t$, there exist a data register, data tapes, and an output list such that the\n$t$-step run of the logical simulator from its initial configuration on the\nembedded input equals the decorated form of the schedule controller's $t$-step\nrun with these components, and the preparation invariant holds for that schedule\nconfiguration with these components."
+}

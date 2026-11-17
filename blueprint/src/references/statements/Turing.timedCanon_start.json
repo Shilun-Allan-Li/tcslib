@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.timedCanon_start",
+ "key": "16d088c2b91d9b20",
+ "kind": "lemma",
+ "title": "Timed canonizer startup",
+ "statement": "Let $c$ be an effective machine code and let $b$, $\\alpha$, and $x$ be finite Boolean strings. After exactly $4|b|+3|\\alpha|+8$ steps, the timed canonizer started on $\\langle\\langle b,\\alpha\\rangle,x\\rangle$ is in the buffered second-phase configuration formed from the canonizer's initial configuration on $\\alpha$, with tag true, input-head position $4|b|+2|\\alpha|+7$, buffer tapes containing $b$, and their heads at position $|b|$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code",
+  "$b$, $\\alpha$, and $x$ are finite Boolean strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine code, and let $b$, $\\alpha$, and $x$ be finite Boolean\nstrings. After exactly $4|b|+3|\\alpha|+8$ steps on $\\langle\\langle\nb,\\alpha\\rangle,x\\rangle$, the timed canonizer's configuration equals the buffered\nsecond-phase configuration formed from the canonizer's initial configuration on\n$\\alpha$, with tag true, input-head position $4|b|+2|\\alpha|+7$, copies of the buffer\ntape holding $b$, and corresponding heads at $|b|$."
+}

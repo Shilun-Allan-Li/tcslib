@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.a2_loop_halted_run",
+ "key": "af76ebc010de26e0",
+ "kind": "lemma",
+ "title": "Bounded-time loop evaluation",
+ "statement": "Let $M$ be a Boolean Turing machine with $k$ work tapes, let $C_j$ be configurations on a fixed input indexed by natural numbers, and let $P(j)$ be a Boolean predicate. Suppose that at index $N$, $C_N$ is halted with output the one-element word $[\\mathrm{false}]$. Also suppose that for every $j<N$ there is a time $t\\le B$ such that, if $P(j)$ holds, the run from $C_j$ halts with output $[\\mathrm{true}]$ after $t$ steps; if $P(j)$ does not hold, that run reaches $C_{j+1}$ after $t$ steps. Then the run from $C_0$ halts within $N B$ steps with output the one-element word whose bit is true exactly when $P(j)$ holds for some $j<N$.",
+ "hypotheses_covered": [
+  "Boolean Turing machine with $k$ work tapes",
+  "configuration sequence $C_j$ on a fixed input",
+  "Boolean predicate $P$ on natural numbers",
+  "natural numbers $B,N$",
+  "$C_N$ is halted with output $[\\mathrm{false}]$",
+  "for every $j<N$, there is a time $t\\le B$ satisfying the stated conditional run outcome"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

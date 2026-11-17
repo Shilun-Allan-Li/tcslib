@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_accept",
+ "key": "972c24702e3a7dea",
+ "kind": "lemma",
+ "title": "Output of a halted body call",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, and let $x$ be a Boolean input word. For any halted configuration $c$ of $B$ on $x$, any Boolean word $w$, any configuration $u$ of $F$ on $x$, and either choice of mode, there is a time $t \\le 2|o|+3$, where $o$ is the output word of $c$, at which the loop host started from the call on $c$ halts; its output is $o$ in find mode and the one-bit word $[\\mathrm{true}]$ otherwise.",
+ "hypotheses_covered": [
+  "$B$ and $F$ are finite Boolean Turing machines",
+  "$a$ is a state of $B$",
+  "$x$ is a Boolean input word",
+  "$c$ is a configuration of $B$ on $x$",
+  "$c$ is halted",
+  "$w$ is a Boolean word",
+  "$u$ is a configuration of $F$ on $x$",
+  "The mode is either find mode or decision mode"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a halted body configuration, $w$ a counter word, and $f$ a fuel\nconfiguration. Then there is a time $t \\le 2\\,|o| + 3$, where $o$ is the output of $c$,\nsuch that from the stopped call on $c$ with stop flag $\\mathrm{true}$ the loop host at\ntime $t$ has halted with output $o$ in find mode and output the single bit\n$\\mathrm{true}$ in decision mode."
+}

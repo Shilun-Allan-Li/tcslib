@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.tmsat_take_double",
+ "key": "d6bac2db2d23e9a8",
+ "kind": "lemma",
+ "title": "Counting a doubled data block",
+ "statement": "Let $x$ be a bit string, let $i,m\\in\\mathbb N$, and let $b\\in\\{0,1\\}$. Suppose $i+2\\le |x|$ and the bits of $x$ at positions $i$ and $i+1$ are both $b$. After two steps of the prefix extractor from state $0$, with its input head at position $i$, its unary work tape containing $1^m$, its work head at position $m$, and empty output, the machine is in state $0$ with its input head at $i+2$, its work tape containing $1^{m+1}$, its work head at $m+1$, and empty output.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$i,m\\in\\mathbb N$",
+  "$b$ is a bit",
+  "$i+2\\le |x|$",
+  "$x_i=b$",
+  "$x_{i+1}=b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $i, m \\in \\mathbb{N}$ with $i + 2 \\le |x|$, and $b$ a bit with $x_i = x_{i+1} = b$ (positions counted from $0$). Then running $E$ for $2$ steps from $\\Delta_x(0, i, m, m, \\varepsilon)$ yields $\\Delta_x(0, i+2, m+1, m+1, \\varepsilon)$; here $E$ is the prefix-extraction machine (one work tape, states $\\{0,1,2,3\\}$) that counts the aligned data blocks $00$ and $11$ of a pair encoding $\\langle a,b\\rangle$ in unary on its work tape and then copies bits of $b$ to its output while moving its work head back along the counter, and $\\Delta_x(q,i,m,h,o)$ denotes the configuration of $E$ on input $x$ in state $q$, with the input head on input position $i$ (counting from $0$), the work tape holding $1^m$ in cells $0,\\dots,m-1$ and blanks elsewhere, the work head at $h$, and output $o$."
+}

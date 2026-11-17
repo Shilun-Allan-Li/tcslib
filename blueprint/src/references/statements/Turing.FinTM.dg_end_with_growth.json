@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.dg_end_with_growth",
+ "key": "6ebf9a634757746f",
+ "kind": "lemma",
+ "title": "Backward sweep with leftward growth",
+ "statement": "Let $\\Gamma$ be a finite alphabet and let $M$ be a finite Turing machine over $\\Gamma$ with $k>0$ work tapes. Choose $a_0\\in\\Gamma$, a state $q$, an input symbol (possibly blank), a read-symbol assignment for the work tapes, and a Boolean right-head flag for each tape. Suppose the action prescribed by $M$ has at least one tape whose right-head flag is true and whose head movement is left. For any input-head position, output word, integer frontier $z$, and left stack $l$, the augmented simulator, starting in the backward-writing phase with the boundary marker on its right, reaches after $k+2$ steps the configuration in the left-growth phase whose state is the action's successor state (if any). Its frontier is $z-k$, its left stack is the new leftward row—marked exactly on tapes with a right-head flag and a leftward move—followed by $l$, and its right stack remains the boundary marker; the work-tape head stays in $[z-k,z]$ throughout.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$0<k$",
+  "A chosen symbol $a_0\\in\\Gamma$",
+  "A state $q$",
+  "An optional input symbol",
+  "A work-tape read assignment",
+  "A Boolean right-head flag for each tape",
+  "The transition action has a tape flagged on the right that moves left",
+  "An input-head position, output word, integer $z$, and left stack $l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

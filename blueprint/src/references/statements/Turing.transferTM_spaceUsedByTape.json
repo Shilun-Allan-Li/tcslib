@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.transferTM_spaceUsedByTape",
+ "key": "9b82dbd6d7f53f5c",
+ "kind": "theorem",
+ "title": "Space used by the transfer machine",
+ "statement": "Let $k$ be a natural number, let $x$ be a Boolean input word, and let $w$ assign a Boolean word to each of the $k$ work tapes. Choose distinct tape indices $\\mathrm{src}$ and $\\mathrm{dst}$, and suppose the destination tape's word is empty. Starting from the configuration in the sweep phase with these words stored from cell zero, for every time $t$, the number of cells visited by the source head through step $t$ is at most $|w(\\mathrm{src})|+2$, and the same bound holds for the destination head. Every other work-tape head visits exactly one distinct cell through step $t$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$\\mathrm{src}$ and $\\mathrm{dst}$ are indices among the $k$ tapes",
+  "$\\mathrm{src}\\ne\\mathrm{dst}$",
+  "$w$ is a family of Boolean words indexed by the tapes",
+  "the destination tape's word is empty",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

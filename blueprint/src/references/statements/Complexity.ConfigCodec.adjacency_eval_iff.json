@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.ConfigCodec.adjacency_eval_iff",
+ "key": "160525f0a3308941",
+ "kind": "theorem",
+ "title": "Adjacency formula characterizes a machine step",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape symbols, and let $n,s$ be natural numbers. Let $x$ be a Boolean input of length $n$, and let $c,d$ be configurations of $M$ on input $x$, each with every work-tape head at distance at most $s$ from the origin and every work tape blank at positions whose distance from the origin is greater than $s$. The adjacency formula evaluated on the concatenation of the Boolean codes of $c$ and $d$ is true if and only if the core configuration and output summary of the one-step successor of $c$ agree with those of $d$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine with Boolean tape symbols",
+  "$n,s$ are natural numbers",
+  "$x$ is a Boolean input with length $n$",
+  "$c,d$ are configurations of $M$ on input $x$",
+  "Each work-tape head of $c$ and $d$ is at distance at most $s$ from the origin",
+  "Each work tape of $c$ and $d$ is blank outside distance $s$ of the origin"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite Turing machine with Boolean tape symbols, and let\n$n,s\\in\\mathbb{N}$. Let $x$ be a Boolean input of length $n$, and let $c,d$ be\nconfigurations of $M$ on input $x$, each with every work-tape head within distance $s$\nof the origin and every work tape blank outside that range. The adjacency formula\nevaluated on the concatenation of their Boolean codes is true if and only if the core\nconfiguration and output summary of the one-step successor of $c$ under $M$ agree with\nthose of $d$."
+}

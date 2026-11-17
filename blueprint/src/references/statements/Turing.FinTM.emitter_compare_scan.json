@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emitter_compare_scan",
+ "key": "48514f3b0e592e33",
+ "kind": "lemma",
+ "title": "Forward scan of the comparator",
+ "statement": "Let $w,u,v$ be Boolean words and let $p$ be a valid input-head position for $w$. For every $j\\le\\max(|u|,|v|)$, after $j$ steps from the comparator's scan phase with register true and both word-tape heads at zero, it remains in the scan phase, its register records whether the length-$j$ prefixes of $u$ and $v$ are equal, and both heads are at displacement $j$.",
+ "hypotheses_covered": [
+  "Boolean words $w,u,v$",
+  "valid input-head position $p$ for $w",
+  "integer $j\\le\\max(|u|,|v|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\le \\max(\\abs{u}, \\abs{v})$, after $j$ forward steps of the\ncomparator the equality register records exactly whether the length-$j$\nprefixes of $u$ and $v$ agree, with both heads at $j$; this includes\nmismatches caused by unequal lengths."
+}

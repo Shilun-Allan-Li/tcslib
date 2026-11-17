@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emit_halts",
+ "key": "74c5acc37a970138",
+ "kind": "lemma",
+ "title": "Halting after an emission chain",
+ "statement": "Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean alphabet on input $x$, let $w$ be a Boolean word, and let $e$ map the indices $0,\\ldots,|w|$ to states of $M$. Suppose that from every state $e(i)$, for every scanned input symbol and tuple of work-tape symbols, the transition is the emission action for $w$ at index $i$. If a configuration $c$ is in state $e(0)$, then after exactly $|w|+1$ steps the machine has halted and its output is the output of $c$ followed by $w$.",
+ "hypotheses_covered": [
+  "Machine with $k$ work tapes over the Boolean alphabet and input $x$",
+  "Boolean word $w$",
+  "State map $e$ on indices $0,\\ldots,|w|$",
+  "Transition agrees with the specified emission action for all scanned symbols and tape symbols",
+  "Starting configuration has state $e(0)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean\nalphabet running on some input $x$, let $w$ be a Boolean word, and let $e$ be\na map from $\\{0,\\dots,\\abs{w}\\}$ into the states of $M$ such that from each\nstate $e(i)$, regardless of the symbols read, the transition of $M$ is the\nemission action for $w$ at index $i$ (append the $i$-th symbol of $w$ and\npass to $e(i+1)$ while $i < \\abs{w}$, halt at $i = \\abs{w}$, never moving the\ninput head or touching a work tape).  If a configuration $c$ is in state\n$e(0)$, then after exactly $\\abs{w} + 1$ steps from $c$ the machine has\nhalted and its output is the output of $c$ followed by all of $w$."
+}

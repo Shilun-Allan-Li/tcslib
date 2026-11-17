@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.lenParse_block",
+ "key": "1d15a76d4bd98f34",
+ "kind": "lemma",
+ "title": "One aligned checker block",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $x$ be a Boolean word, and let $c$ be a configuration of $M$ on $x$. Suppose $x=pbd s$ for Boolean words $p,s$ and bits $b,d$, and let $r$ be a natural number. Starting from the length checker’s parse configuration at position $|p|$ with counter $r$, after two steps the checker is in the parse state at position $|p|+2$ with counter $r$ if $b=d$; if $b=1$ and $d=0$, it halts at position $|p|+1$ with output $[0]$ and counter $r$; and if $b=0$ and $d=1$, it enters the suffix comparison state at position $|p|+2$ with counter $r$.",
+ "hypotheses_covered": [
+  "M is a finite Boolean Turing machine",
+  "x is a Boolean word",
+  "c is a configuration of M on x",
+  "x splits as p followed by b, d, and s",
+  "b and d are Boolean bits",
+  "r is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input splits as $x = p\\, b\\, d\\, s$ with bits $b, d$, two checker\nsteps from the block-start parse state at position $\\abs{p}$ continue\nsilently at position $\\abs{p}+2$ when $b = d$; halt with verdict $0$ when\n$(b,d) = (1,0)$; and enter the suffix length comparison when $(b,d) = (0,1)$.\nThe countdown counter is unchanged in every case."
+}

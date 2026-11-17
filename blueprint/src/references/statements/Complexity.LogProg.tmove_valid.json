@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.tmove_valid",
+ "key": "c08c49150af6cbe6",
+ "kind": "lemma",
+ "title": "Validity is preserved by a tape move",
+ "statement": "Let a finite sequence of segments be given, each consisting of a Boolean word and a Boolean flag. For a segment index $s$ within this sequence, suppose a tape position is valid: positions at the left or right boundary are always valid, and a position at a cell is valid when its cell index is less than that segment's word length. For any move direction, the resulting segment index remains within the sequence, and the resulting position is valid for that segment.",
+ "hypotheses_covered": [
+  "A finite sequence of segments, each a Boolean word and a Boolean flag",
+  "The segment index $s$ is in range",
+  "The starting position is valid for segment $s$",
+  "A move direction is specified"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement defines a particular transition rule, but the supplied informal descriptions do not state its cases; the conclusion is clear, while the specific move semantics are not rendered.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

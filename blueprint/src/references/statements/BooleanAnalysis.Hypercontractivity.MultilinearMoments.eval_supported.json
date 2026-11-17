@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_supported",
+ "key": "98824679f34c85e4",
+ "kind": "theorem",
+ "title": "Evaluation on a Supported Coordinate Set",
+ "statement": "Let $n$ be a natural number, let $F$ assign a real coefficient to every subset of $\\{0,\\ldots,n-1\\}$, and let $X_j:\\Omega\\to\\bbr$ be real-valued functions. For a subset $s$ of the coordinate set, suppose $F(T)=0$ whenever $T$ is not contained in $s$. Then, for every $\\omega\\in\\Omega$, the multilinear evaluation $\\sum_{T\\subseteq\\{0,\\ldots,n-1\\}}F(T)\\prod_{j\\in T}X_j(\\omega)$ equals $\\sum_{T\\subseteq s}F(T)\\prod_{j\\in T}X_j(\\omega)$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$F$ is a real coefficient family on subsets of the $n$-coordinate set",
+  "$X_j$ are real-valued functions on $\\Omega$",
+  "$s$ is a subset of the coordinate set",
+  "$F(T)=0$ whenever $T\\nsubseteq s$",
+  "$\\omega\\in\\Omega$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a real coefficient family indexed by subsets of $[n]$, let $X_i:\\Omega\\to\\bbr$, and let $s\\subseteq[n]$. If $F(T)=0$ whenever $T\\nsubseteq s$, then for every $\\omega$, $\\sum_{T\\subseteq[n]}F(T)\\prod_{j\\in T}X_j(\\omega)=\\sum_{T\\subseteq s}F(T)\\prod_{j\\in T}X_j(\\omega)$."
+}

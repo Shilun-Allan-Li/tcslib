@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.guloop",
+ "key": "be05e95447c92d23",
+ "kind": "theorem",
+ "title": "Inner enumeration counting invariant",
+ "statement": "Let $E,B$ be natural numbers, let $\\mathcal O:\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{0,1\\}$ be an oracle, let $x$ be a finite binary word, let $Q$ be a proposition, and let $\\sigma$ be a counting state. For $u,v\\in\\mathbb N$, write $R(u,v)$ for the assertion that the type-$3$ query encoding $(x,u,v,\\sigma.s)$ returns true, and write $I(u)$ for the assertion that the type-$1$ query encoding $(x,u,\\sigma.s)$ returns true. Define $\\operatorname{Mem}_i(t)$ to mean that some $u<\\sigma.K$ with $I(u)$ reaches $t$ in at most $\\sigma.i$ steps of $R$. Let $\\operatorname{GS}(A,B_0,C;r,t,c)$ be the recursive predicate that at depth zero requires $C(c)$, and at each positive depth either requires $A(t)$ and recurses with $t+1,c+1$, or requires $B_0(t)$ and recurses with $t+1,c$. Suppose every register of $\\sigma$ is at most $B$, $\\sigma.K+1\\le B$, $\\sigma.u\\le\\sigma.K$, $\\sigma.cnt\\le\\sigma.u$, and $\\sigma.g=\\sigma.cur=\\sigma.stp=0$. If, whenever $\\operatorname{GS}$ holds at depth $\\sigma.K-\\sigma.u$, position $\\sigma.u$, count $\\sigma.cnt$, with first predicate $\\operatorname{Mem}_i(t)\\land t\\ne\\sigma.v\\land\\neg R(t,\\sigma.v)$, second predicate always true, and terminal condition $c=\\sigma.cp$, the machine at state $\\mathrm{vn}$ with $u=cnt=0$ terminates within register bound $B$ and accepts exactly when $Q$ holds, then the machine at state $\\mathrm{uh}$ with registers $\\sigma$ terminates within register bound $B$ and accepts exactly when that recursive condition holds together with $Q$.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb N$",
+  "$\\mathcal O$ is an oracle on four query types and binary words",
+  "$x$ is a finite binary word",
+  "$Q$ is a proposition",
+  "$\\sigma$ is a counting state",
+  "Every register of $\\sigma$ is at most $B$",
+  "$\\sigma.K+1\\le B$",
+  "$\\sigma.u\\le\\sigma.K$",
+  "$\\sigma.cnt\\le\\sigma.u$",
+  "$\\sigma.g=\\sigma.cur=\\sigma.stp=0$",
+  "For all configurations satisfying the stated recursive condition, the $\\mathrm{vn}$ machine with $u=cnt=0$ terminates within register bound $B$ and accepts exactly when $Q$ holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $x$ be a finite binary word, let $\\mathcal O$ be an oracle,\nlet $Q$ be a proposition, and let $\\sigma$ be a register state with every register at\nmost $B$. Write $R(u,v)$ for the truth of the oracle's type-$3$ query on\n$(x,u,v,\\sigma.s)$ and $I(u)$ for the truth of its type-$1$ query on $(x,u,\\sigma.s)$.\nLet $\\operatorname{Mem}_i(t)$ mean that some $I$-code below $\\sigma.K$ reaches $t$ in at\nmost $\\sigma.i$ steps of $R$, and define $\\operatorname{GS}(A,B_0,C;r,t,c)$ recursively\nby $C(c)$ when $r=0$, and, when $r>0$, by either $A(t)$ and\n$\\operatorname{GS}(A,B_0,C;r-1,t+1,c+1)$, or $B_0(t)$ and\n$\\operatorname{GS}(A,B_0,C;r-1,t+1,c)$. Suppose $\\sigma.K+1\\le B$,\n$\\sigma.u\\le\\sigma.K$, $\\sigma.cnt\\le\\sigma.u$, and $\\sigma.g=\\sigma.cur=\\sigma.stp=0$.\nIf the stated $\\operatorname{GS}$ condition with $r=\\sigma.K-\\sigma.u$, start\n$t=\\sigma.u$, count $c=\\sigma.cnt$, first predicate $\\operatorname{Mem}_i(t)\\land\nt\\ne\\sigma.v\\land\\neg R(t,\\sigma.v)$, second predicate always true, and terminal\ncondition $c=\\sigma.cp$ implies that the machine initialized at the next-outer-vertex\nstage with $u=cnt=0$ terminates within register bound $B$ and accepts exactly when $Q$\nholds, then the machine initialized at the inner-enumeration test with state $\\sigma$\nterminates within that bound and accepts exactly when the same recursive condition holds\nwith terminal condition $c=\\sigma.cp$ and $Q$."
+}

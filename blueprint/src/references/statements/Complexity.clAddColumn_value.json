@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clAddColumn_value",
+ "key": "919bced9331f18bb",
+ "kind": "lemma",
+ "title": "Binary addition column identity",
+ "statement": "For Boolean bits $c,u,v$, let the low result bit be their exclusive-or and let the outgoing carry be their majority bit. Their numeric values satisfy $\\operatorname{val}(u)+\\operatorname{val}(v)+\\operatorname{val}(c)=2\\operatorname{val}(\\text{outgoing carry})+\\operatorname{val}(\\text{low result bit})$, where a true bit has value $1$ and a false bit has value $0$.",
+ "hypotheses_covered": [
+  "Boolean carry bit $c$",
+  "Boolean addend bits $u$ and $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every carry bit $c$ and addend bits $u$ and $v$, the sum of the three digit values equals twice the outgoing carry's value plus the low result bit's value."
+}

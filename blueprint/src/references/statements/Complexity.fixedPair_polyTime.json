@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.fixedPair_polyTime",
+ "key": "2da3c64c24135c94",
+ "kind": "lemma",
+ "title": "Polynomial-time fixed-string pairing",
+ "statement": "Let $\\alpha$ be a finite binary string. The function that maps each binary string $x$ to the string formed by doubling each bit of $x$, then appending $01$ and $\\alpha$, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "Finite binary string $\\alpha$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha$ be a fixed binary string, and for binary strings $x$ let\n$\\langle \\alpha, x \\rangle$ be the pairing encoding: $\\alpha$ with every bit\ndoubled, followed by $01$, followed by $x$. Then the map\n$x \\mapsto \\langle \\alpha, x \\rangle$ is polynomial-time computable: some\nfinite-state binary-alphabet Turing machine computes it within\n$C \\cdot (n+1)^c$ steps on inputs of length $n$, for constants\n$C, c \\in \\mathbb{N}$."
+}

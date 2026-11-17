@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Programs/Light/Lib/CountSort.lean :: Light.Ends.csFor -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Counting-Sort Loop Invariant
+
+**Claim.** Under the stated initial condition, round-step, bound, word-limit, and cost hypotheses, the for-loop terminates within cost $T$ in a counting-sort state at index $m$ satisfying $R(m).
+
+**Proof.** Unpack the initial counting-sort state to obtain counters $c,p$, a memory $\mu'$, and the facts that the initial state is $A.state$ at the entry index, that its memory agrees with the original memory outside the designated intervals, and that $R(0)$ holds. Apply the shaped-loop theorem (`Light.Ends.forShape`) with shape parameter $(c,p)$ and invariant consisting of memory agreement together with $R(j)$. The initial data provide its base case. For each $j<m$, the assumed round execution gives the next invariant; the postcondition is converted back to the required shaped state by packaging its two counters and memory witness. The assumed bound supplies the safe upper bound with value $m$, and the stated word and cost hypotheses supply the theorem's remaining bounds. At termination, the invariant yields the desired counting-sort state at index $m$ with $R(m)$ and memory agreement.
+
+**Key facts.** `Light.Ends.forShape`, `Light.Ends.mono`.

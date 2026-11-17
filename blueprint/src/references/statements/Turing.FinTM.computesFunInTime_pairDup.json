@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_pairDup",
+ "key": "9d92de6fe72a9df6",
+ "kind": "theorem",
+ "title": "Duplicating a Word in Pair Encoding",
+ "statement": "There exist a finite Turing machine $M$ over the Boolean alphabet and a constant $c\\in\\mathbb{N}$ such that, on every Boolean word $x$, $M$ halts within $c(|x|+1)$ steps and outputs the pair encoding of $(x,x)$: each bit of $x$ doubled, followed by the separator $01$, followed by $x$.",
+ "hypotheses_covered": [
+  "Existence of a finite Turing machine over Booleans",
+  "Existence of a natural-number constant c",
+  "Computes the pair encoding of (x,x) within c(|x|+1) steps on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite Turing machine $M$ and a constant $c$ such that $M$\ncomputes, within $c\\,(n+1)$ steps on inputs of length $n$, the function\nsending $x$ to the self-delimiting pair encoding of $(x,x)$: each bit of $x$\ndoubled, the separator bits $0,1$, then $x$."
+}

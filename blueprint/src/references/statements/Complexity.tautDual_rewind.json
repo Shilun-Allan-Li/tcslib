@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.tautDual_rewind",
+ "key": "46cfc27e06a768ba",
+ "kind": "lemma",
+ "title": "Silent rewind to the selected state",
+ "statement": "Let $x$ and $o$ be binary strings, let $f\\in\\{\\mathrm{false},\\mathrm{true}\\}$, and let $p\\in\\mathbb{N}$ satisfy $p\\le |x|$. Starting from the dual transducer configuration on $x$ in rewind state $f$, with input head at position $p$ and output $o$, after $p+1$ steps it is at position $1$ with output still $o$, in the anchor state if $f$ is true and in the formula-level copying state if $f$ is false. At every earlier time in these $p+1$ steps, its state is not the anchor state.",
+ "hypotheses_covered": [
+  "Binary strings $x$ and $o$",
+  "A Boolean rewind flag $f$",
+  "A natural number $p$ with $p\\le |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input, $o$ an output word, $f$ a flag, and $p \\le |x|$. Started in the\nrewind state with flag $f$ at head position $p$ and output $o$, the dual transducer\nreaches head position $1$ with output $o$, in the anchor state if $f$ is true and in\nthe formula-level copying state otherwise, in exactly $p + 1$ steps and without\nvisiting the anchor before then."
+}

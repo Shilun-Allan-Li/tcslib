@@ -1,0 +1,26 @@
+{
+ "lean_name": "Light.CountSort.Pre",
+ "key": "ab5054fc35813deb",
+ "kind": "structure",
+ "title": "Counting Sort Preconditions",
+ "statement": "Let the machine limits be a word bound, a space bound, and a depth bound, let $\u0000$ be a memory map from natural-number addresses to integers, and let $A$ specify a number $n$ of items, source and destination addresses, key-address parameters, a key bound $nb$, and a counter region. For every $i<n$, the source address contains item $it(i)$; the key of that item is stored at an address within memory, outside the destination and counter regions, and that address contains $kf(i)$, where $kf(i)<nb$. The space bound is at most the word bound; the source, destination, and counter regions (of length $nb+1$) fit in memory and are pairwise disjoint; and the key address of each item lies outside both the destination and counter regions.",
+ "hypotheses_covered": [
+  "space bound is at most word bound",
+  "source region fits in memory",
+  "destination region fits in memory",
+  "counter region of length nb+1 fits in memory",
+  "source memory contains it(i) for every i<n",
+  "each item's key address is within memory",
+  "memory at each key address contains kf(i)",
+  "each key is less than nb",
+  "source and destination regions are disjoint",
+  "source and counter regions are disjoint",
+  "destination and counter regions are disjoint",
+  "each key address lies outside the destination region",
+  "each key address lies outside the counter region"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on the omitted definitions of the key-address calculation and of region disjointness/outside. The memory map is denoted by μ; it was accidentally rendered as an empty symbol above.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

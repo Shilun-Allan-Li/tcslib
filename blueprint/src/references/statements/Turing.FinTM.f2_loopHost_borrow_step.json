@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost_borrow_step",
+ "key": "02e4fe35aa6ca1b7",
+ "kind": "lemma",
+ "title": "Single step of the borrow operation",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, choose find mode, and let $x$ be an input word. For any base host configuration, input-head position, and words $v$ and $u$, one step from control phase 8 with the counter tape storing $vu$, its head at $|v|$, and the other designated tapes blank has the following effect: if $u$ is empty, the machine enters phase 10, the counter tape stores $v$, and its head moves to $|v|-1$; if $u$ begins with true, it enters phase 9, changes that first bit to false, and moves the head to $|v|-1$; if $u$ begins with false, it stays in phase 8, changes that first bit to true, and moves the head to $|v|+1$. In each case the input position and output are preserved.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B$ and $F$",
+  "Anchor state of $B$",
+  "Find-mode bit",
+  "Input word $x$",
+  "Base host configuration",
+  "Input-head position",
+  "Words $v$ and $u"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.BinArith.divInv_init",
+ "key": "1effd3491bcd1ea4",
+ "kind": "theorem",
+ "title": "Initial division invariant",
+ "statement": "For every bit string $z$, the initial state formed by pairing the second projection of $z$ with the pairing of the reverse of its first projection and two empty strings satisfies the following invariant: there exist bit strings $R,r,q$ such that the state is the nested pairing of the second projection of $z$, $R$, and the pair $(r,q)$; $|r|+|R|$ and $|q|+|R|$ are each at most the length of the first projection of $z$; and, if the value of the second projection is positive, then $(\\operatorname{val}(q)\\operatorname{val}(\\pi_2 z)+\\operatorname{val}(r))2^{|R|}+\\operatorname{val}(R^{\\mathrm{rev}})=\\operatorname{val}(\\pi_1 z)$ and $\\operatorname{val}(r)<\\operatorname{val}(\\pi_2 z)$. Here bit strings are valued in little-endian binary, and $\\pi_1,\\pi_2$ denote the total first and second projections of the self-delimiting pair encoding, with empty string returned when decoding fails.",
+ "hypotheses_covered": [
+  "An arbitrary bit string $z$",
+  "The positivity condition on the second projection, as the antecedent of the invariant's conditional clause"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

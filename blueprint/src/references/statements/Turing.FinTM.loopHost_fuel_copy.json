@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_fuel_copy",
+ "key": "ab9b7670c4f552a8",
+ "kind": "lemma",
+ "title": "Fuel Copying Phase",
+ "statement": "Let $B,F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose Boolean parameters `forward` and `findMode`, an input word $x$, a base loop-host configuration, an input-head position $p$, a Boolean flag tape, an output word $o$, and Boolean words $r$ and $u$. For every Boolean word $v$, start the host in controller phase $2$ with counter tape storing $v$, payload tape blank on the first $|v|$ cells and otherwise equal to the buffer tape of $vr$, both heads at $|v|$, and output $o$. After exactly $|r|+1$ steps it is in phase $3$, with counter tape storing $vr$, payload tape blank, and both heads at $|vr|-1$; the remaining frame data, including the output, are unchanged.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$",
+  "anchor state $a$ of $B$",
+  "Boolean parameters `forward` and `findMode`",
+  "input word $x$",
+  "base loop-host configuration",
+  "input-head position $p$",
+  "flag tape function",
+  "output word $o$",
+  "Boolean words $r,u$ (the quantified prefix is $v$)",
+  "initial state is controller phase 2",
+  "counter tape is the buffer tape of $v$",
+  "payload is blank before $|v|$ and agrees with the buffer tape of $vr$ elsewhere",
+  "both heads are at $|v|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be the already-copied prefix and $r$ the remaining fuel suffix. Starting the\nloop host in its counter-copy phase on a controller frame whose counter track is the\nbuffer tape of $p$ and whose payload track is the partially cleared copying tape, with\nboth heads at cell $|p|$, after exactly $|r| + 1$ steps the host is in the synchronized-\nrewind phase with the counter track holding the full fuel word, the payload track blank,\nand both heads one cell left of the word's right end."
+}

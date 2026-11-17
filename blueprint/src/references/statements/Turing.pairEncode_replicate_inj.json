@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.pairEncode_replicate_inj",
+ "key": "dcfb24ed0bfeba6b",
+ "kind": "lemma",
+ "title": "Injectivity for unary first components",
+ "statement": "Let $n,n'\\in\\mathbb{N}$ and let $u,u'$ be bit strings. If the encodings of $(1^n,u)$ and $(1^{n'},u')$ are equal, where $1^m$ is the string of $m$ ones, then $n=n'$ and $u=u'$.",
+ "hypotheses_covered": [
+  "$n,n'\\in\\mathbb{N}$",
+  "$u,u'$ are bit strings",
+  "The encodings of $(1^n,u)$ and $(1^{n'},u')$ are equal"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n, n' \\in \\mathbb{N}$ and let $u, u'$ be bit strings.  Write\n$\\langle x, y\\rangle$ for the pair encoding of bit strings $x$ and $y$\n(each bit of $x$ written twice, then the separator bits $0$ then $1$, then\n$y$ verbatim).  If $\\langle 1^n, u\\rangle = \\langle 1^{n'}, u'\\rangle$, where\n$1^n$ denotes the string of $n$ ones, then $n = n'$ and $u = u'$."
+}

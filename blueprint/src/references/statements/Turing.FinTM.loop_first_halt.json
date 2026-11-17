@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.loop_first_halt",
+ "key": "030b85abbabc3fd2",
+ "kind": "lemma",
+ "title": "First halting time",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, and let $c$ be a configuration with a nonhalting state. If the configuration reached after $t$ steps is halted, then there is an integer $u$ with $0<u\\le t$ such that every configuration reached at a time $v<u$ is nonhalting, the configuration at time $u$ is halted, and it equals the configuration at time $t$.",
+ "hypotheses_covered": [
+  "A multi-tape machine over the Boolean alphabet",
+  "The starting configuration has a nonhalting state",
+  "The configuration after t steps is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet and $c$ a configuration\nwhose control state is live. If $M$ has halted $t$ steps after $c$, then there is a time\n$u$ with $0 < u \\le t$ such that $M$ is not halted at any time strictly before $u$, is\nhalted at time $u$, and the configuration at time $u$ equals the configuration at time\n$t$."
+}

@@ -52,7 +52,7 @@ lemma gaussianNoiseStability_indicator_measure {ρ : ℝ}
     (hρ : ρ ∈ Set.Icc (-1 : ℝ) 1) {A : Set (Fin n → ℝ)} (hA : MeasurableSet A) :
     gaussianNoiseStability ρ (A.indicator (fun _ => (1 : ℝ))) =
       (correlatedGaussianMeasure ρ).real (A ×ˢ A) := by
-  rw [gaussianNoiseStability,
+  rw [gaussianNoiseStability_eq,
     ← integral_correlatedGaussianMeasure hρ (MemLp.indicator hA (memLp_const (1 : ℝ)))
       (MemLp.indicator hA (memLp_const (1 : ℝ)))]
   convert integral_indicator_one (hA.prod hA) using 1
@@ -89,7 +89,7 @@ lemma rotationSensitivity_eq_stability {A : Set (Fin n → ℝ)}
   have hstab : gaussianNoiseStability (Real.cos θ) (A.indicator (fun _ => (1 : ℝ))) =
       μ.real (E ∩ F) := by
     rw [gaussianNoiseStability_indicator_measure ⟨Real.neg_one_le_cos θ, Real.cos_le_one θ⟩ hA]
-    unfold correlatedGaussianMeasure
+    rw [correlatedGaussianMeasure_eq]
     rw [Measure.real, Measure.map_apply (by fun_prop) (hA.prod hA)]
     rw [← Real.sin_eq_sqrt_one_sub_cos_sq hθ.1 hθ.2]
     rfl

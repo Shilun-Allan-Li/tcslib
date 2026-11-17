@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.bridgeCfg_pop_any",
+ "key": "af56846f6a7ae1c1",
+ "kind": "lemma",
+ "title": "Pop a possibly empty bridge stack",
+ "statement": "Let $c$ be a compiled program, let $x$ be a bridge input word, and choose optional bridge states $q,q'$, a valid input-head position $p$, an assignment $st$ of stacks to the four stack names, and an output word. For any stack name $k$, applying the action that blanks the current cell of the work tape for $k$ and moves its head one cell to the right if the stack at $k$ is nonempty, and otherwise leaves that head in place, with successor state $q'$, gives the bridge configuration with state $q'$ and the stack at $k$ replaced by its tail; all other stacks, the input-head position, and the output are unchanged.",
+ "hypotheses_covered": [
+  "A compiled program $c$",
+  "A bridge input word $x$",
+  "Optional bridge states $q,q'$",
+  "A valid input-head position $p$",
+  "An assignment $st$ of stacks to the four stack names",
+  "An output word",
+  "A stack name $k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The one-tape action on the tape of a stack name $k$ that blanks the current cell and\nmoves the head right precisely when the stack at $k$ is nonempty transforms a bridge\nconfiguration into the bridge configuration whose stack at $k$ is replaced by its\ntail (an empty stack remaining empty), with the input position and output unchanged."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.cert_seq",
+ "key": "64f06c31f34bd4bd",
+ "kind": "theorem",
+ "title": "Sequential Composition of Machine Runs",
+ "statement": "Let $M$ and $N$ be Boolean machines with the same number $k$ of work tapes and state sets $S$ and $U$, respectively, with decidable equality on $S$. Suppose the run of $M$ from state $\\mathrm{en}$ and tape assignment $w_0$ reaches state $\\mathrm{ex}$ with assignment $w_1$ after $t_0$ steps, without visiting $\\mathrm{ex}$ at any earlier time; and the run of $N$ from state $\\mathrm{start}$ and assignment $w_1$ reaches state $\\mathrm{finish}$ with assignment $w_2$ after $t_1$ steps, without visiting $\\mathrm{finish}$ at any earlier time. Then the machine that runs $M$ until its exit state and then switches to $N$ reaches the right-hand copy of $\\mathrm{finish}$ with assignment $w_2$ after $t_0+1+t_1$ steps, and does not visit that state at any earlier time.",
+ "hypotheses_covered": [
+  "A natural-number tape count $k$",
+  "State types $S,U$ with decidable equality on $S$",
+  "Boolean machines $M,N$ with $k$ work tapes",
+  "Entry and exit states $\\mathrm{en},\\mathrm{ex}$ for $M$",
+  "Start and finish states for $N$",
+  "Three tape-word assignments $w_0,w_1,w_2$",
+  "A time $t_0$ and the specified run of $M$, with no earlier visit to $\\mathrm{ex}$",
+  "A time $t_1$ and the specified run of $N$, with no earlier visit to $\\mathrm{finish}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

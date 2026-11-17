@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensity",
+ "key": "9e768ccd10c7503b",
+ "kind": "lemma",
+ "title": "Derivative of a Gaussian product average",
+ "statement": "Let $I$ be a finite set, let $v>0$, and let $f\\colon\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\le1$ for every $z$. The function $m\\mapsto\\int_{\\mathbb R^I} f(z)G_v(m,z)\\,dz$, where $G_v$ is the product Gaussian density of variance $v$, is Fréchet differentiable at every $c\\in\\mathbb R^I$, with derivative $h\\mapsto\\int_{\\mathbb R^I} f(z)A_v(c,z)[h]\\,dz$, where $A_v$ is the mean derivative of the product density.",
+ "hypotheses_covered": [
+  "Finite index set $I$",
+  "Measurable $f\\colon\\mathbb R^I\\to\\mathbb R$",
+  "Pointwise bound $|f(z)|\\le1$",
+  "Variance parameter $v\\ge0$ with $v\\ne0$",
+  "Evaluation point $c\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$, the function $m\\mapsto\\int_{\\mathbb R^I}G_v(m,z)f(z)\\,dz$ is differentiable at every $c$, with derivative $\\int_{\\mathbb R^I}f(z)A_v(c,z)\\,dz$."
+}

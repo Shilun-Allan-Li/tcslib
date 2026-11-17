@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.obliviousSourceAction_correct",
+ "key": "67f36407175a04aa",
+ "kind": "lemma",
+ "title": "Correctness of the selected source action",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean input, and let $c$ be a configuration of $M$ on $x$. The action selected from the state of $c$ and the payload vector centered at offset $0$ equals the totalized action of $M$ at $c$.",
+ "hypotheses_covered": [
+  "M is a finite machine over Booleans",
+  "x is a Boolean input",
+  "c is a configuration of M on x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary machine $M$ and every configuration $c$ of $M$ on an input $x$, the\naction selected by the data controller from the control state of $c$ and the\nhead-centered payloads at offset $0$ equals the totalized action of $M$ at $c$."
+}

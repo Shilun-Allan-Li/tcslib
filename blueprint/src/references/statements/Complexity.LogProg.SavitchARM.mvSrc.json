@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.mvSrc",
+ "key": "1cfbd4cd49dc6db8",
+ "kind": "def",
+ "title": "Source register of each move",
+ "statement": "For a move site, define its source-register index in a register file indexed from $0$ to $17$ as follows: the source indices for copying $n$ to $a$, $T$ to $P$, $P$ to $w$, the selected endpoint to $SE$, $T$ to $SP$, $M$ to $V$, $V$ to $U$, $E$ to $V$, $SE$ to $E$, $T$ to $SE$, $V$ to $M$, $E$ to $V$, $E$ to $U$, $U$ to $M$, and $E$ to $U$ are, respectively, $0,4,3,10$ or $11$ (according to the Boolean choice), $4,12,11,16,14,4,11,16,16,10,16$.",
+ "hypotheses_covered": [
+  "Input is a move site",
+  "Register indices lie in the range 0 through 17",
+  "The Boolean parameter selects source index 10 when true and 11 when false for endpoint-stack push"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

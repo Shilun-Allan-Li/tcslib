@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_rotation_variation_le",
+ "key": "234e356bb3eb6a34",
+ "kind": "lemma",
+ "title": "Averaging contracts rotation variation",
+ "statement": "Let $n\\ge0$, let $A\\subseteq\\mathbb R^n$ be measurable, and let $u,v\\in\\mathbb R$. For independent standard Gaussian vectors $G,G'\\in\\mathbb R^n$, define $u_u(x)=\\int 1_A(\\cos u\\,x+\\sin u\\,y)\\,d\\gamma_n(y)$ and let $R_A(v)=\\Pr(1_A(G)\\ne1_A(\\cos v\\,G+\\sin v\\,G'))$. Then\n\\[\n\\mathbb E\\left[|u_u(G)-u_u(\\cos v\\,G+\\sin v\\,G')|\\right]\\le R_A(v).\n\\]",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A$ is measurable",
+  "$u,v\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For $A\\subseteq\\mathbb R^n$ and $\\theta\\in\\mathbb R$, put $u_\\theta(x)=\\int1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$. For independent $X,Y\\sim\\gamma_n$, put $R_A(\\theta)=\\Pr(1_A(X)\\ne1_A(\\cos\\theta\\,X+\\sin\\theta\\,Y))$. If $A$ is measurable, then for every $u,v\\in\\mathbb R$, $\\mathbb E_{X,Y}|u_u(X)-u_u(\\cos v\\,X+\\sin v\\,Y)|\\le R_A(v)$."
+}

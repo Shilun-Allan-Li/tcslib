@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.seg_wrote",
+ "key": "b94b5dc8b31d6a14",
+ "kind": "theorem",
+ "title": "A Written Segment Matches Its List",
+ "statement": "Let $\\mu,f:\\mathbb{N}\\to\\mathbb{Z}$, let $d,n\\in\\mathbb{N}$, and let $L$ be a finite list of integers with length $n$. Suppose that $L_i=f(i)$ for every valid index $i$. After writing the first $n$ values of $f$ into $\\mu$ starting at $d$, the resulting sequence represents $L$ starting at $d$.",
+ "hypotheses_covered": [
+  "The list has length n",
+  "At every valid list index i, the list entry equals f(i)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu,f:\\mathbb{N}\\to\\mathbb{Z}$, and let $d,n\\in\\mathbb{N}$ and $l$ be a finite list\nof integers of length $n$. Suppose that the entry of $l$ at every valid index $i$ is\n$f(i)$. Define a new sequence to equal $f(a-d)$ for $d\\le a<d+n$ and to equal $\\mu(a)$\nelsewhere. Its values starting at index $d$ agree with $l$."
+}

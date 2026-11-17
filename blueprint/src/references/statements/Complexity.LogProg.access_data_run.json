@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.access_data_run",
+ "key": "f11dfdaca892c286",
+ "kind": "lemma",
+ "title": "Reading a Data Bit",
+ "statement": "Let $m,e\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $z,w$ be Boolean words, and let $k\\le |z|$. On input the self-delimiting pair encoding of $z$ and $w$, there is a finite sequence of access-machine steps from the configuration in state “read data with parameter $e$,” whose four tapes contain the binary words for $0,0,k,2k$ and whose third work-tape head is at $2k$, to a configuration whose state and tapes are determined as follows: if $k<|z|$ and $e$ is true, the state is “answer” with value $m\\lor z_k$; if $k<|z|$ and $e$ is false, the state is “bump false”; and if $k=|z|$, the state is “answer false.” The final configuration has tape contents encoding $0,0,k,2k+1$, with the third work-tape head at $2k+1$; the other work-tape heads are at $0$.",
+ "hypotheses_covered": [
+  "Boolean mode m",
+  "Boolean parameter e",
+  "Boolean words z and w",
+  "k ≤ |z|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

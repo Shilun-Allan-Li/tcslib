@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.arm_decides_space",
+ "key": "438e7c1f9c7fe389",
+ "kind": "theorem",
+ "title": "Space simulation by an arithmetic register program",
+ "statement": "Let $L$ be a language of Boolean strings, let $A$ be an arithmetic register program with a finite state set, and choose an initial state $l_0$. For each of the finitely many oracle languages $A_j$, let $s_j$ be a space bound, and suppose each $A_j$ is decidable in space $s_j$. Let $S,W:\\mathbb{N}\\to\\mathbb{N}$ and $C\\in\\mathbb{N}$ satisfy $1\\le S(n)$ and $W(n)\\le C S(n)$ for every $n$, and suppose $s_j(v)\\le C S(n)$ whenever $v\\le 2n+2+m(2W(n)+2)$. If, on every input $x$, the program started in state $l_0$ with all registers zero halts with the answer deciding membership in $L$, and throughout the run every register has a canonical binary representation of length at most $W(|x|)$ while the stated step preconditions hold, then $L$ is decidable in space $O(S(n))$ (equivalently, $L\\in\\mathrm{SPACE}(S)$).",
+ "hypotheses_covered": [
+  "Finite state set and decidable equality",
+  "Register program and initial state",
+  "Oracle languages indexed by $j\\in\\mathrm{Fin}(d)$",
+  "Each oracle language has a decider using space at most $s_j$",
+  "Functions $S,W$ and constant $C$ are natural-number valued",
+  "$1\\le S(n)$ for every $n$",
+  "$W(n)\\le C S(n)$ for every $n$",
+  "$s_j(v)\\le C S(n)$ under the stated bound on $v$",
+  "On every input, the specified initial run halts with the indicator of membership in $L$",
+  "At every time before halting, the precondition holds and each encoded register value plus one has bit-length at most $W(|x|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

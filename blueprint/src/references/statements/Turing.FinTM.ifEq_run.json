@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.ifEq_run",
+ "key": "5ee499e9894a8b01",
+ "kind": "lemma",
+ "title": "Bounded completion of the comparison",
+ "statement": "Let $w_0,u,v,x$ be Boolean words, and let $r,i$ be natural numbers such that $|w_0|=i+r$, $i\\le |x|$, and the first $i$ symbols of $x$ and $w_0$ agree. For any configuration of the comparator machine for $w_0,u,v$ on input $x$ whose state is comparison state $i$, whose input head is at position $i+1$, and whose output is empty, there is a natural number $t\\le r+\\max(|u|,|v|)+2$ such that after $t$ steps the machine is halted and its output is $u$ if $x=w_0$ and $v$ otherwise.",
+ "hypotheses_covered": [
+  "Boolean words $w_0,u,v,x$",
+  "Natural numbers $r,i$",
+  "$|w_0|=i+r$",
+  "$i\\le |x|$",
+  "The first $i$ symbols of $x$ and $w_0$ agree",
+  "Configuration is on input $x$",
+  "State is comparison state $i$",
+  "Input-head position is $i+1$",
+  "Output is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix Boolean words $w_0$, $u$, $v$ and an input word $x$, and let $i$ and $r$ be\nnatural numbers with $\\abs{w_0} = i + r$, $i \\le \\abs{x}$, and the first $i$\nsymbols of $x$ equal to the first $i$ symbols of $w_0$.  From any configuration\nof the fixed-word comparator machine for $w_0$, $u$, $v$ on input $x$ that is\nin comparison state $i$ with its input head at position $i + 1$ (position $0$\nbeing the left boundary blank) and with empty output, there is a\n$t \\le r + \\max(\\abs{u}, \\abs{v}) + 2$ such that after $t$ steps the machine\nhas halted, with output $u$ if $x = w_0$ and output $v$ otherwise."
+}

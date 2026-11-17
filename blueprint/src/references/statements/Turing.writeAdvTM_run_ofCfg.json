@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.writeAdvTM_run_ofCfg",
+ "key": "feb41e0506220c7a",
+ "kind": "theorem",
+ "title": "Writing a word by advancing",
+ "statement": "Let $k$ be a positive integer, let $i$ be one of the $k$ work tapes, let $w_0$ be a finite word, and let $d$ be a configuration on an arbitrary fixed input whose state is the initial state $0$. After $|w_0|+1$ steps, the machine that writes $w_0$ while advancing on tape $i$ is in state $0$; on tape $i$, it has written $w_0$ starting at its initial head position and has advanced the head by $|w_0|$, while all other cells and tapes retain their previous contents. At every intermediate time $t$ with $0<t<|w_0|+1$, its state is not $0$. For every time $t\\le |w_0|+1$, the head on tape $i$ lies between its initial position and that position plus $|w_0|$, inclusive, and every other tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$i$ is an index among the $k$ work tapes",
+  "$w_0$ is a finite word",
+  "$d$ is a configuration on a fixed input",
+  "The initial state of $d$ is $0$",
+  "Intermediate-time bound $0<t<|w_0|+1$",
+  "Head-position bound $t\\le |w_0|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

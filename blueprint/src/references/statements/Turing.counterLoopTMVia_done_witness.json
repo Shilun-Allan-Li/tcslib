@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.counterLoopTMVia_done_witness",
+ "key": "1ed7f20d5f7a3322",
+ "kind": "theorem",
+ "title": "Counter loop completion witness",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes and state $a$, and let $e:\\\\{0,1\\\\}\\\\hookrightarrow\\\\Gamma$ encode Boolean symbols. Let $w$ be a Boolean word with binary value $d$, and suppose the extra tape initially agrees with the encoded word buffer at every cell $cp+p$ for integers $p$ satisfying $-1\\\\le p\\\\le |w|$. For an initial configuration $c$, a run-length function $\\\\tau$, and a property $P$ of the first $k$ work-head positions, suppose that every round $r<d$ satisfies the round conditions for exit set $\\\\{exit\\\\}$ and property $P$, and that its next round configuration is in state $a$. Then the counter-loop machine reaches its done configuration after $\\\\sum_{r<d}\\\\tau(c_r)+\\\\operatorname{overhead}(w,d+1)$ steps, where $c_r$ is the $r$th round configuration and the extra tape contains encoded true symbols on cells $cp$ through $cp+|w|-1$. Before that time the machine's state is never halting, done, or escape. At every time through the endpoint, the extra head lies in $[cp-1,cp+|w|]$, and there are round index $r$ and within-round time $u$ such that either $r<d$ and $u\\\\le\\\\tau(c_r)$, or $r=d$ and $u=0$, with the first $k$ head positions equal to those in the corresponding run of $M$.",
+ "hypotheses_covered": [
+  "Boolean encoding $e$ into $\\\\Gamma$",
+  "Machine $M$, state $a$, and exit value",
+  "Run-length function $\\\\tau$ and initial configuration $c$",
+  "Counter word $w$ and binary value $d$",
+  "Initial extra-tape buffer agreement for all $-1\\\\le p\\\\le |w|$",
+  "For every $r<d$, the round satisfies its conditions and the next round configuration has state $a$"
+ ],
+ "confidence": "low",
+ "caveat": "The round and counter-loop constructions are only stub-described in the supplied context; the prose states the theorem's explicit witness and trajectory conditions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Codec.vScan_cfgWord",
+ "key": "2bf87576e7b41202",
+ "kind": "theorem",
+ "title": "Scanning a windowed configuration encoding",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine, let $x$ be a Boolean input, let $s$ be a natural number, and let $C$ be a configuration of $N$ on input $x$. Suppose every work-tape head of $C$ lies within distance $s$ of the origin and every work-tape cell outside that window is blank. Scan the initial $W(2s+1)$ bits of the encoded configuration word by the virtual scanner. Its recorded head and output summary is exactly the configuration's state and output summary; the scanner's acceptance condition holds, its recorded work-tape symbols at each tape head agree with $C$, and its blankness flag is true exactly when every window cell has the specified joint-blank property.",
+ "hypotheses_covered": [
+  "N is a finite nondeterministic Turing machine",
+  "x is a Boolean list",
+  "s is natural",
+  "C is a configuration of N on input x",
+  "Every work-tape head position has absolute value at most s",
+  "Every work-tape cell outside the window has no symbol"
+ ],
+ "confidence": "low",
+ "caveat": "Several scanner-state fields and the cell blankness predicate are specified only through tuple projections and definitions, so their full encoding-level meaning cannot be expanded from the supplied informal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

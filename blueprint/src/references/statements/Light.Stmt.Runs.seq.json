@@ -1,0 +1,14 @@
+{
+ "lean_name": "Light.Stmt.Runs.seq",
+ "key": "541594e18b6d795c",
+ "kind": "theorem",
+ "title": "Sequential composition preserves runs",
+ "statement": "Let $L$ be resource limits, let $s,t$ be statements, let $\\sigma$ be a state, and let $R$ be a predicate on states. If $s$ is block-safe from $\\sigma$ and its resulting state is one from which $t$ is block-safe and reaches a state satisfying $R$, then the sequential composition of $s$ followed by $t$ is block-safe from $\\sigma$ and its resulting state satisfies $R$.",
+ "hypotheses_covered": [
+  "$s$ runs safely from $\\sigma$ to the postcondition that $t$ runs safely to $R$ under $L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L$ be a set of limits, $s$ and $t$ statements, $\u001b[?]$ a state, and $R$ a property\nof states. If executing $s$ from $\u001b[?]$ is safe and the resulting state satisfies the\nproperty that executing $t$ from it is safe and ends in a state satisfying $R$, then\nexecuting $s$ followed by $t$ from $\u001b[?]$ is safe and ends in a state satisfying $R$."
+}

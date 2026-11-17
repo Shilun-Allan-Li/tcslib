@@ -1,0 +1,29 @@
+{
+ "lean_name": "Turing.recordStep_position_run",
+ "key": "2682a08e17322eb0",
+ "kind": "theorem",
+ "title": "Recorded Input Position Update",
+ "statement": "Let $k$ be a natural number, let $Q,T,S$ be types with decidable equality, let $M$ be a $k$-work-tape Turing machine over Boolean symbols with states $Q$, let $u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$, and let $N$ be a two-work-tape Turing machine over Boolean symbols with states $S$. Fix states $s_0,s_1\\in S$, a Boolean input word $x$, a configuration $c$ of $M$ on $x$, record data $d_0$, and a four-tape configuration $d$ for the record machine on the input obtained by encoding each symbol of $x$ as a digit. Suppose $d_0$ records the input symbol scanned by $c$ and whether $c$'s input-head position is zero, and suppose tape 0 of $d$ stores, relative to its head, the buffered binary digits of the input-head position of $c$ at every integer offset $z$ with $-1\\le z\\le w$, where $w$ is the bit width of $|x|+1$. Let $a$ be the action of $M$ determined by $d_0$, and let $e$ be the initial control selected by the input-head movement in $a$, the recorded zero flag, and the recorded input symbol: it is the buffer-clearing stage for a zero movement, a left movement at position zero, or a right movement with absent input symbol away from position zero; otherwise it is the decrement or increment stage corresponding to the movement. Then the record machine, starting with control $e$ and tape 1 containing the buffered digits of the input-head position of $c$, reaches in some $t\\le 6w+9$ steps a configuration whose control is the skip-new-position stage and whose tape 0 contains the buffered binary digits of the input-head position after applying $a$ to $c$, with all other tapes as specified by the snapshot construction. At every earlier time before $t$ its control is neither verdict state, and at every time up to and including $t$, every work-tape head remains within distance $w+1$ of its initial position.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$Q,T,S$ are types with decidable equality",
+  "$M$ is a $k$-work-tape Boolean Turing machine with states $Q$",
+  "$u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$N$ is a two-work-tape Boolean Turing machine with states $S$",
+  "Fixed states $s_0,s_1\\in S$",
+  "Boolean input word $x$",
+  "Configuration $c$ of $M$ on $x$",
+  "Record data $d_0$",
+  "$d_0$'s recorded input equals the symbol scanned by $c$",
+  "$d_0$'s zero flag equals whether $c$'s input-head position is zero",
+  "Four-tape configuration $d$ on the digit-encoded input",
+  "Tape 0 of $d$ agrees with the specified buffered binary digits for all $-1\\le z\\le w$",
+  "Run length $t\\le 6w+9$",
+  "Neither verdict state occurs at times $u<t$",
+  "Every work-tape head stays within distance $w+1$ of its initial position at all times $u\\le t$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion depends on private record-machine and snapshot constructions; the prose describes their encoded run and tape updates in words.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

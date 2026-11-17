@@ -1,0 +1,22 @@
+{
+ "lean_name": "FABL.goldreichLevinQueryRunUpTo_costProjection_le",
+ "key": "2862089286484c6e",
+ "kind": "theorem",
+ "title": "Projected cost bound for partial runs",
+ "statement": "Let $n$ be a nonnegative integer, let $f:\\{\\pm1\\}^n\\to\\{\\pm1\\}$ be a Boolean function, and let $0<\\tau\\le1$ be a rational threshold. Suppose $P$ maps learning costs to natural numbers, satisfies $P(0)=0$ and $P(c+d)=P(c)+P(d)$ for all costs $c,d$, and let $B$ be a natural number such that, for every $k<n$, every active family of subsets of $\\{1,\\ldots,n\\}$, and every supported outcome of the corresponding stage-estimation program, the projected cost is at most $B$ times the number of candidates in that stage. Then for every $k\\le n$, every supported outcome of the algorithm run through $k$ stages has projected cost at most $k\\bigl(P(16(n+1)^2(\\lceil4/\\tau^2\\rceil+1)^2)+2\\lceil4/\\tau^2\\rceil B\\bigr)$.",
+ "hypotheses_covered": [
+  "A nonnegative integer dimension $n$",
+  "A Boolean function on the $n$-dimensional sign cube",
+  "A rational threshold $0<\\tau\\le1$",
+  "A cost projection $P$ with $P(0)=0$",
+  "The projection $P$ is additive on pairs of learning costs",
+  "A natural-number candidate bound $B$",
+  "The stage-cost bound holds for every $k<n$, every active family, and every supported stage outcome",
+  "The run length satisfies $k\\le n$",
+  "The outcome is supported by the run distribution through $k$ stages"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

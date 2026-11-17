@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.clr_run",
+ "key": "dc9508851377f6f7",
+ "kind": "lemma",
+ "title": "Register clearing run",
+ "statement": "Let $P$ be a register program with $m$ registers, $d$ deciders, and state set $\\Lambda$, let $\\mathcal O$ be an oracle, let $r$ be a register, and let $c_R,c_E,\\mathit{next}\\in\\Lambda$. Suppose the transition function in state $c_R$ agrees on every input symbol and tuple of scanned register symbols with the specified action that begins the clearing run on register $r$, and in state $c_E$ agrees on every such input and tuple with the specified clearing action leading to $\\mathit{next}$. Suppose also that neither $c_R$ nor $c_E$ is an oracle-call state. For every configuration $c$ and $n\\in\\mathbb{N}$, there is a time $T$ such that execution from the configuration obtained from $c$ by setting register $r$ to the tape encoding of the binary digits of $n$, with its head at $0$ and state $c_R$, reaches the configuration obtained from $c$ by setting that register to the tape encoding of the binary digits of $0$, with its head at $0$ and state $\\mathit{next}$. At each time $t<T$, the configuration has some state $s$ that is not an oracle-call state, and the head position $q$ of register $r$ satisfies $-1\\le q\\le$ the length of the binary digit list of $n$.",
+ "hypotheses_covered": [
+  "$P$ is a register program with $m$ registers, $d$ deciders, and state set $\\Lambda$",
+  "$\\mathcal O$ is an oracle",
+  "$r$ is a register",
+  "$c_R,c_E,\\mathit{next}$ are states",
+  "the transition in state $c_R$ agrees for every input and scanned-symbol tuple with the specified initial clearing action",
+  "the transition in state $c_E$ agrees for every input and scanned-symbol tuple with the specified clearing action leading to $\\mathit{next}$",
+  "neither $c_R$ nor $c_E$ is an oracle-call state",
+  "$c$ is a configuration",
+  "$n$ is a natural number"
+ ],
+ "confidence": "low",
+ "caveat": "The referenced actions to begin and carry out the clearing run are not defined in the supplied formal statement, so their exact operational meaning cannot be rendered more specifically.",
+ "rubric": [],
+ "replaced": "Let $P$ be a register program with $m$ registers, $d$ deciders, and state set $\\Lambda$;\nlet $\\mathcal O$ be an oracle, let $r$ be a register, and let $c_R,c_E,next$ be states.\nSuppose that in state $c_R$ every transition on every input and tuple of scanned work\nsymbols is the action that begins the designated clearing run on register $r$, and in\nstate $c_E$ every such transition is the designated clearing action leading to $next$.\nSuppose also that neither $c_R$ nor $c_E$ is an oracle-call state. Then for every\nconfiguration $c$ and natural number $n$, there is a time $T$ such that execution from\nthe configuration obtained by setting register $r$ to the binary word for $n$ with its\nhead at $0$ and state $c_R$ reaches the configuration obtained by setting that register\nto the binary word for $0$, with head at $0$ and state $next$. At every earlier time\n$t<T$, the configuration has some state with no associated oracle call, and register\n$r$'s head position $q$ satisfies $-1\\leq q\\leq$ the length of the binary word for $n$."
+}

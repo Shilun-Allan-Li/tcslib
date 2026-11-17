@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.mem_DTIME_of_decidesInTimeVia",
+ "key": "99e59f46a0ff17c3",
+ "kind": "theorem",
+ "title": "Binary time classes under alphabet encoding",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an injective map, let $L$ be a language of finite binary words, and let $T:\\mathbb N\\to\\mathbb N$. If a finite Turing machine over $\\Gamma$, on each input obtained by applying $e$ symbolwise to a binary word $x$, halts within $T(|x|)$ steps and outputs the one-symbol encoding under $e$ of the indicator of whether $x\\in L$, then $L$ belongs to $\\mathrm{DTIME}(n\\mapsto T(n)+1)$.",
+ "hypotheses_covered": [
+  "Γ is a finite alphabet",
+  "e is an injective embedding of the binary alphabet into Γ",
+  "L is a language of binary words",
+  "T is a natural-number-valued time bound",
+  "A finite Turing machine over Γ decides L via e within T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Gamma$ be a finite alphabet, let\n$e : \\{0,1\\} \\hookrightarrow \\Gamma$ be an injective embedding of the binary\nsymbols, let $L \\subseteq \\{0,1\\}^{*}$ be a language over the binary alphabet,\nand let $T : \\mathbb{N} \\to \\mathbb{N}$ be a time bound. If some deterministic\nfinite Turing machine over $\\Gamma$ decides $L$ via $e$ within time $T$, then\n$L \\in \\mathrm{DTIME}(n \\mapsto T(n) + 1)$; that is, some deterministic finite\nTuring machine over the binary alphabet decides $L$ within\n$a \\cdot (T(n) + 1)$ steps on every input of length $n$, for some constant $a$."
+}

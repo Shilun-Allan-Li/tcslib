@@ -1,18 +1,17 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xBeforeSpecial_eq_of_same_zVariable",
- "key": "1b21ad5b9b171bdd",
+ "key": "eb9c1ce41af77656",
  "kind": "theorem",
- "title": "Agreement of the pre-special bits on a Z-fibre",
- "statement": "Fix an integer $n \\ge 1$ and a deterministic communication protocol $p$ for disjointness on $n$ coordinates, and consider the coarse variable $Z = (M, T, X_{<T}, Y_{>T})$ — the transcript $M$ produced by running $p$ on the input pair, the special coordinate $T$, the vector $X_{<T}$ of Alice's bits strictly below $T$ (padded with $\\mathrm{false}$ elsewhere), and the vector $Y_{>T}$ of Bob's bits strictly above $T$ (padded with $\\mathrm{false}$ elsewhere). If two hard-distribution samples $\\omega$ and $\\omega'$ yield the same value $z$ of $Z$, then they determine the same pre-special vector: $X_{<T}(\\omega) = X_{<T}(\\omega')$.",
+ "title": "Agreement of Pre-Special Bits on a Fiber",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic communication protocol for length-$n$ set disjointness, and let $z$ be an achievable value of the record consisting of the protocol transcript, the special coordinate, Alice’s bits before that coordinate, and Bob’s bits after it. If two hard samples $\u0000\\omega$ and $\u0000\\omega'$ both yield the value $z$, then their vectors of Alice’s bits before the special coordinate, padded by false elsewhere, are equal.",
  "hypotheses_covered": [
-  "n is a positive natural number",
-  "p is a disjointness protocol on n coordinates",
-  "z is an achievable value of the Z-variable for p",
-  "sample ω has Z-value equal to z",
-  "sample ω' has Z-value equal to z"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol for length-$n$ disjointness",
+  "$z$ is an achievable record",
+  "Both hard samples yield $z$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Two samples in the same $Z$ fiber have the same $X_{<T}$ conditioning data."
+ "replaced": "Fix an integer $n \\ge 1$ and a deterministic communication protocol $p$ for disjointness\non $n$ coordinates, and consider the coarse variable $Z = (M, T, X_{<T}, Y_{>T})$ — the\ntranscript $M$ produced by running $p$ on the input pair, the special coordinate $T$,\nthe vector $X_{<T}$ of Alice's bits strictly below $T$ (padded with $\\mathrm{false}$\nelsewhere), and the vector $Y_{>T}$ of Bob's bits strictly above $T$ (padded with\n$\\mathrm{false}$ elsewhere). If two hard-distribution samples $\\omega$ and $\\omega'$\nyield the same value $z$ of $Z$, then they determine the same pre-special vector:\n$X_{<T}(\\omega) = X_{<T}(\\omega')$."
 }

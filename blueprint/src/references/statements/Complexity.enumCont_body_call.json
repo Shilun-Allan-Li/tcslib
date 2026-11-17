@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_body_call",
+ "key": "4f7b811e4f4afc57",
+ "kind": "lemma",
+ "title": "Simulation of a clean call",
+ "statement": "Let $B$ be a finite Boolean machine with at least one work tape, and let $q_v,q_i$ be designated states and $stop$ a Boolean parameter. Suppose that on input $x$, the run of $B$ from state $q$ with $s$ on tape zero and all other work tapes empty halts after $T$ steps with output $y$. Then, for some $t\\le 3T+|x|+|y|+8$, the body machine starting in the clean-call state corresponding to $q$ and mode $mode$, with candidate $s$ on tape zero, blank capture tape, all other tapes blank, endpoint heads at $0$, and empty output, reaches the administrative continuation state specified by $mode$. At that time the candidate $s$ is preserved, the capture tape contains $y$, all other tapes are blank, both endpoint heads are at $0$, and the output is empty.",
+ "hypotheses_covered": [
+  "A finite Boolean machine $B$ with $0<B.k$",
+  "Designated states $q_v,q_i$ and Boolean parameter $stop$",
+  "A mode in $Fin\\,3$",
+  "Boolean words $x,s,y$ and natural number $T$",
+  "The source run from state $q$ with $s$ on tape zero halts after $T$ steps",
+  "The source run's output is $y$",
+  "There exists $t\\le 3T+|x|+|y|+8$ satisfying the stated final configuration equality"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $B$ be a source machine with at least one work tape that, started in state\n$q$ at the seam carrying candidate $s$ on input $x$, halts within $T$ steps with\noutput $y$. Then the enumerator body, from the two-ended configuration embedding\nthe clean call of $q$ in a given mode, reaches within $3T + |x| + |y| + 8$ steps\nthe two-ended configuration in that mode's administrative continuation state,\nwith candidate $s$ preserved, $y$ on the capture tape, all scratch blank, both\nendpoint heads at zero, and empty physical output."
+}

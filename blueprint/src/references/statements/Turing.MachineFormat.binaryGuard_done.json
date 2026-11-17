@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.MachineFormat.binaryGuard_done",
+ "key": "2cbdf2a014bb247a",
+ "kind": "lemma",
+ "title": "Halting of the binary guard machine",
+ "statement": "Let $b,j\\in\\mathbb{N}$, let $x,w,out$ be finite binary words, and suppose $j\\leq |x|$ and $j+(b+1)\\operatorname{val}_2(w)\\leq |x|$, where $\\operatorname{val}_2(w)$ is the natural number represented by $w$ (with its bits interpreted as $0$ and $1$). Starting the binary guard machine with parameter $b$ on input $x$, at input position $j$, with output $out$ and its counter tape initialized with $w$, there is a time $T\\leq 5|x|+2|w|+2$ at which the machine is in its done state, its output is still $out$, and its input-head position is $j+(b+1)\\operatorname{val}_2(w)+1$. At every time strictly before $T$, its state is neither done nor escape.",
+ "hypotheses_covered": [
+  "Natural parameter $b$ and starting position $j$",
+  "Binary input word $x$ and words $w,out$",
+  "Starting position satisfies $j\\leq |x|$",
+  "Fit condition $j+(b+1)\\operatorname{val}_2(w)\\leq |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

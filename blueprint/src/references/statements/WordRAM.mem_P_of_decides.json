@@ -1,0 +1,20 @@
+{
+ "lean_name": "WordRAM.mem_P_of_decides",
+ "key": "c94aef7877fe570a",
+ "kind": "theorem",
+ "title": "Polynomial time for Word RAM decision",
+ "statement": "Let $P$ be an extended Word RAM program and $L$ a language of Boolean strings. Suppose functions $W,T_W,S_W:\\mathbb{N}\\to\\mathbb{N}$ are such that a finite Turing machine computes $W(n)$ in at most $T_W(n)$ steps and uses at most $S_W(n)$ space. Let $C,d\\in\\mathbb{N}$, and suppose $T_W(n)+W(n)\\le C(n+1)^d$ for every $n$. Suppose also that for every input $x$ there are natural numbers $t,f$ and an output string $o$ with $t\\le C(|x|+1)^d$, such that $P$ halts within $t$ steps at word width $W(|x|)$, outputs the Boolean indicator of membership of $x$ in $L$, and uses at most $f$ touched addresses. Then $L$ belongs to polynomial time, that is, $L\\in\\bigcup_{r\\in\\mathbb{N}}\\mathrm{DTIME}(n^r+1)$.",
+ "hypotheses_covered": [
+  "An extended Word RAM program $P$ and Boolean language $L$",
+  "Functions $W,T_W,S_W:\\mathbb{N}\\to\\mathbb{N}$",
+  "A finite Turing machine computes $W(n)$ within time $T_W(n)$ and space $S_W(n)$",
+  "Natural numbers $C,d$",
+  "For every $n$, $T_W(n)+W(n)\\le C(n+1)^d$",
+  "For each input, witnesses $t,f,o$ with $t\\le C(|x|+1)^d$",
+  "The program halts at width $W(|x|)$, outputs the membership indicator, and touches at most $f$ addresses"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

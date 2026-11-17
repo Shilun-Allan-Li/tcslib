@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.Reaches.step",
+ "key": "63e0bc1907c9dbfb",
+ "kind": "lemma",
+ "title": "One-step extension of reaching",
+ "statement": "Let $P$ be a register program with oracle, and let $c_0,c_1,c_2,c$ be configurations on the same input, with register $r$, integer position $p$, state $s$, and input-head position $ip$. Suppose $c_0$ is the configuration obtained from $c$ by setting its state to $s$, its input-head position to $ip$, and register $r$'s head position to $p$; suppose also that $P$ has no oracle call at $s$, that one step from $c_0$ yields $c_1$, and that $c_1$ reaches $c_2$ relative to $c,r,p$. Then $c_0$ reaches $c_2$ relative to $c,r,p$.",
+ "hypotheses_covered": [
+  "A register program $P$ and oracle",
+  "Configurations $c_0,c_1,c_2,c$ on the same input",
+  "A register $r$ and integer position $p$",
+  "A state $s$ and valid input-head position $ip$",
+  "$c_0$ is the specified configuration based on $c,s,ip,r,p$",
+  "There is no oracle call at state $s$",
+  "One step from $c_0$ yields $c_1$",
+  "$c_1$ reaches $c_2$ relative to $c,r,p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

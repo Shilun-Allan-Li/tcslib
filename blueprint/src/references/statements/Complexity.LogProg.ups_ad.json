@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ups_ad",
+ "key": "634730366820b765",
+ "kind": "lemma",
+ "title": "Arithmetic-site semantics preservation",
+ "statement": "Let $x$ be a Boolean word, $B$ a natural-number register bound, $k$ an arithmetic site, $q$ a rational number, and $\\sigma$ a register state. Suppose every register of $\\sigma$ is at most $B$, its inner counter $b$ is at most the value of the register selected by $k$, and the value of the register selected as the scratch destination plus twice the difference between that selected comparison value and $b$ is at most $B$. If the program has probabilistic semantics $q$ from the site’s associated entry label, with the scratch destination first set to that scratch value plus twice the difference and register $3$ then set to the comparison value, then it has probabilistic semantics $q$ from the arithmetic instruction for $k$ with the original register state.",
+ "hypotheses_covered": [
+  "Boolean input $x$",
+  "Natural-number bound $B$",
+  "Arithmetic site $k$",
+  "Rational value $q$",
+  "Register state $\\sigma$",
+  "Every register of $\\sigma$ is at most $B$",
+  "The inner counter is at most the site-selected comparison register",
+  "The specified scratch update is at most $B$",
+  "Probabilistic semantics $q$ from the associated entry state with the stated register updates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix an arithmetic site $k$, a rational number $q$, a register state $\\sigma$, and a\nbound $B$. Suppose every register of $\\sigma$ is at most $B$, its inner counter is at\nmost the value in the site’s designated comparison register, and its designated\nscratch-register value plus twice the difference between that comparison value and the\ninner counter is at most $B$. If the program starting at the site’s designated entry\nstate with those two register updates has probabilistic semantics $q$ under the register\nbound $B$, then the program starting at the corresponding arithmetic instruction with\nthe original register state also has probabilistic semantics $q$ under that bound."
+}

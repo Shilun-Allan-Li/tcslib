@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.taut_read",
+ "key": "64a4130705ab3ff3",
+ "kind": "lemma",
+ "title": "Input symbol at an indexed configuration",
+ "statement": "Let $x$ be a finite word over any symbol alphabet, let $q$ be an optional state, and let $i\\le |x|$. For any work word $u$, integer work-head position $h$, and output word $o$, the symbol read by the input head in the corresponding configuration is the $i$-th symbol of $x$, or no symbol if $i=|x|$.",
+ "hypotheses_covered": [
+  "finite input word $x$",
+  "optional state $q$",
+  "index $i\\le |x|$",
+  "work word $u$",
+  "integer work-head position $h$",
+  "output word $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input and $i \\le |x|$. In every configuration of the non-tautology\nverifier on $x$ whose input head has consumed $i$ bits, the symbol under the input\nhead is the $i$-th bit of $x$ when $i < |x|$ and the blank when $i = |x|$,\nregardless of state, work tape, and output."
+}

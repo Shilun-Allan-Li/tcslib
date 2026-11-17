@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.satEval_rewind",
+ "key": "74d9ab18b67bd084",
+ "kind": "lemma",
+ "title": "Certificate Tape Rewind",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $w$ be a Boolean input word, and fix a saved configuration of $M$ on $w$, a certificate word $u$, semantic control states $q$ and $d$, and an input position $i\\le |w|$. Suppose that, for every input symbol and every tuple of work-tape symbols, the evaluator's transition from state $q$ moves the certificate head left when its scanned cell is occupied and moves it right into state $d$ when that cell is blank. For every $n\\in\\mathbb N$ with $n\\le |u|$, running the evaluator for $n+1$ steps from its canonical configuration in state $q$, at input position $i$ and with certificate head at $n-1$, yields the canonical configuration in state $d$, at the same input position and with certificate head at $0$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$w$ is a Boolean word",
+  "a saved configuration of $M$ on $w$",
+  "certificate word $u$",
+  "semantic control states $q,d$",
+  "$i\\in\\mathbb N$ and $i\\le |w|$",
+  "the stated transition behavior holds for every input and work-tape reading",
+  "$n\\in\\mathbb N$ and $n\\le |u|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q$ be an evaluator control state whose transition moves the certificate head\nleft while its cell is occupied and otherwise steps right into a destination state.\nFor every $n \\le |u|$, starting from the canonical configuration with certificate\nhead at offset $n - 1$, exactly $n + 1$ steps return the head to offset $0$ in the\ndestination state, preserving all native input and output fields."
+}

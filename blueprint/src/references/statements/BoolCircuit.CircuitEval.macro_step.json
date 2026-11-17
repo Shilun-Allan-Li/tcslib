@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.macro_step",
+ "key": "b32b37c12b2e9ebb",
+ "kind": "theorem",
+ "title": "Bounded simulation of one abstract update",
+ "statement": "Let $z$ be a Boolean word, let $s$ satisfy the invariant that its work-head index is at most the length of its computed-value list, every marked index is smaller than that length, its phase is a main phase, and a phase outside the walking phases has work-head index zero. Suppose $i+2\\le |z|$, the entries of $z$ at $i,i+1$ are $b,b'$, and their pair symbol is $\\sigma$. Apply the abstract one-symbol update to $s$ using $\\sigma$. If it yields a new abstract state $s'$, then $s'$ satisfies the invariant, its value list grows by at most one, and the circuit-evaluation machine reaches the configuration encoding $s'$ at input position $i+3$ within $2|s.\\mathrm{vals}|+4$ steps; if it yields a Boolean value $v$, then within that many steps the machine halts with output $[v]$.",
+ "hypotheses_covered": [
+  "$z$ is a Boolean word",
+  "$s$ satisfies all four conjuncts of the invariant",
+  "$i+2\\le |z|$",
+  "$z_i=b$",
+  "$z_{i+1}=b'$",
+  "the pair symbol determined by $b,b'$ equals $\\sigma$",
+  "the exactness parameter is Boolean"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement uses an abstract update operation whose defining rule is not included among the supplied informal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.noiseOp_snoc_slice",
+ "key": "146a2461f7cf825d",
+ "kind": "lemma",
+ "title": "Factoring noise across the last coordinate",
+ "statement": "Let $n$ be a nonnegative integer, let $f\\colon\\{0,1\\}^{n+1}\\to\\mathbb R$, let $\\rho\\in\\mathbb R$, and let $x\\in\\{0,1\\}^n$ and $y\\in\\{0,1\\}^1$. Then $T_\\rho f(x,y_0)=T_\\rho\\bigl(t\\mapsto T_\\rho(f_t)(x)\\bigr)(y)$, where $f_t(z)=f(z,t_0)$ for $t\\in\\{0,1\\}^1$ and $z\\in\\{0,1\\}^n$; the outer noise operator acts on the one-dimensional cube.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f\\colon\\{0,1\\}^{n+1}\\to\\mathbb R$",
+  "$\\rho\\in\\mathbb R$",
+  "$x\\in\\{0,1\\}^n$",
+  "$y\\in\\{0,1\\}^1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f:\\{0,1\\}^{n+1}\\to\\bbr$, $\\rho\\in\\bbr$, and $f_b(z)=f(z,b)$. For $x\\in\\{0,1\\}^n$ and $b\\in\\{0,1\\}$, $T_\\rho f(x,b)=T_\\rho\\bigl(t\\mapsto T_\\rho f_t(x)\\bigr)(b)$; the outer operator acts on one bit and the inner operator on $n$ bits. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure."
+}

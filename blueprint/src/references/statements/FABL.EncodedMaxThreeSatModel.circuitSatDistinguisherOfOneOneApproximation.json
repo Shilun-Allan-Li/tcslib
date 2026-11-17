@@ -1,0 +1,23 @@
+{
+ "lean_name": "FABL.EncodedMaxThreeSatModel.circuitSatDistinguisherOfOneOneApproximation",
+ "key": "54f29ab02d8c2ea2",
+ "kind": "theorem",
+ "title": "Circuit Satisfiability Distinguisher",
+ "statement": "Let binary encodings of Boolean circuits and three-CNF formulas be given, together with a polynomial-time map that sends each canonical circuit encoding to the encoding of its associated formula and sends malformed circuit encodings to malformed formula encodings. Let an encoded maximization problem for these formulas have every canonical formula encoding as a valid instance, optimum at most $1$, and optimum equal to $1$ exactly when the formula is satisfiable. Suppose a polynomial-time algorithm always returns a feasible solution on valid instances and returns value at least $1$ whenever the optimum is at least $1$, and a polynomial-time test outputs the one-bit string indicating whether that algorithm's value is at least $1$. Then there exists a polynomial-time map that outputs true on every promised yes-instance of circuit satisfiability and false on every promised no-instance.",
+ "hypotheses_covered": [
+  "A binary encoding of Boolean circuits",
+  "A binary encoding of three-CNF formulas",
+  "A polynomial-time reduction with the stated canonical-encoding and malformed-input behavior",
+  "Every canonical formula encoding is a valid maximization instance",
+  "The optimum of each encoded formula is at most $1$",
+  "The optimum is $1$ exactly when the formula is satisfiable",
+  "The algorithm is a polynomial-time map and returns a feasible solution on every valid instance",
+  "The algorithm returns value at least $1$ whenever the optimum is at least $1$",
+  "The threshold test is a polynomial-time map",
+  "The threshold test's output is exactly the one-bit indicator of whether the algorithm's value is at least $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let binary encodings of Boolean circuits and exact-three-literal CNF formulas be given,\ntogether with a polynomial-time reduction that maps every canonical circuit encoding to\nthe encoding of its associated formula and maps malformed circuit encodings to malformed\nformula encodings. Let an encoded maximization model for these formulas have every\ncanonical formula encoding as a valid instance, optimum at most $1$, and optimum equal\nto $1$ exactly when the formula is satisfiable. If a polynomial-time algorithm always\nreturns a feasible solution on valid instances and returns value at least $1$ whenever\nthe optimum is at least $1$, and a polynomial-time test outputs the single bit\nindicating whether that algorithm's value is at least $1$, then there is a\npolynomial-time distinguisher for circuit satisfiability: it outputs true on every valid\nencoding of a satisfiable circuit and false on every valid encoding of an unsatisfiable\ncircuit."
+}

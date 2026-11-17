@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.macroCfg_forward_run",
+ "key": "970ab2d4435e59ac",
+ "kind": "lemma",
+ "title": "Prefix of the forward scan",
+ "statement": "Let $W$ be a finite binary Turing machine, let $a,R,n\\in\\mathbb{N}$ with $n\\le 2R+1$, let $x$ be an input word over the schedule alphabet, and let $u\\in\\mathbb{Z}$. For a base configuration of the schedule machine on $x$, suppose its guide tape is the fixed guide of radius $R$. Starting in the forward phase with guide head at $-R$, after $n$ steps the machine remains in the forward phase and its guide head is at $-R+n$.",
+ "hypotheses_covered": [
+  "$W$ is a finite binary Turing machine",
+  "$a,R,n$ are natural numbers",
+  "$n\\le 2R+1$",
+  "$x$ is an input word over the schedule alphabet",
+  "$u$ is an integer",
+  "$\\mathrm{base}$ is a schedule-machine configuration on $x$",
+  "the base guide tape is the fixed guide of radius $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$ and let\n$n \\le 2R + 1$.  Running the schedule controller for $n$ steps from the forward phase\nwith guide head at $-R$ stays in the forward phase and moves the guide head to\n$-R + n$."
+}

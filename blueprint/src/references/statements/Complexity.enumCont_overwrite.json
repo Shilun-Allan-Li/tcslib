@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.enumCont_overwrite",
+ "key": "c6215b24d4d983e1",
+ "kind": "lemma",
+ "title": "Overwriting the next buffer cell",
+ "statement": "For Boolean lists $\\mathrm{pre}$ and $\\mathrm{old}$ and a Boolean $b$, let the buffer tape store their concatenation. Replacing the tape content at the integer cell $|\\mathrm{pre}|$ by $b$ gives the buffer tape storing $\\mathrm{pre}$ followed by $b$ and then by $\\mathrm{old}$ with its first symbol dropped.",
+ "hypotheses_covered": [
+  "Boolean lists pre and old",
+  "Boolean b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Writing a bit at position $|\\mathit{pre}|$ of the buffer tape holding\n$\\mathit{pre} \\mathbin{+\\!\\!+} \\mathit{old}$ yields the buffer tape holding\n$\\mathit{pre}$, then that bit, then the tail of $\\mathit{old}$ with its first\ncell dropped; this includes the case of an empty $\\mathit{old}$."
+}

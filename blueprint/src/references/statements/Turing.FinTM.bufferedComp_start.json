@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.bufferedComp_start",
+ "key": "0636ee0b37c6436a",
+ "kind": "lemma",
+ "title": "Reaching the second phase from the start",
+ "statement": "Let $M_1$ and $M_2$ be finite Turing machines over the Boolean alphabet, let $x,y$ be Boolean words, and let $t_1\\in\\mathbb{N}$. Suppose $M_1$ computes $y$ from $x$ in exactly $t_1$ steps. Then there are a time $a\\le t_1+|y|+2$, a position of the physical input head on $x$, and contents and head positions for the left tape block such that the buffered composition, run from its initial configuration on $x$ for $a$ steps, is the second-phase configuration embedding of $M_2$'s initial configuration on input $y$, with boundary tag true and those chosen physical head position and left-block data.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$x,y$ are Boolean words",
+  "$t_1\\in\\mathbb{N}$",
+  "$M_1$ computes $y$ from $x$ in exactly $t_1$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many\nstates, and suppose that $M_1$, on input $x$, halts within $t_1$ steps with\noutput $y$.  Then there exist a step count $a \\le t_1 + \\abs{y} + 2$, a\nposition $p$ of the physical input head over $x$, and contents and head\npositions for the left tape block, such that running the buffered sequential\ncomposition of $M_1$ and $M_2$ for $a$ steps from its initial configuration\non $x$ yields the second-phase embedding of the initial configuration of\n$M_2$ on virtual input $y$, with arrival tag true, physical position $p$, and\nthat inactive left-block data."
+}

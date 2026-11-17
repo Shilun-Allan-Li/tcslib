@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.binarizeGadget_andor",
+ "key": "44ff27381d987dbd",
+ "kind": "theorem",
+ "title": "Correctness of an AND or OR gadget",
+ "statement": "Let $n,K$ be natural numbers, let $k$ be an AND or OR gate kind, and let $g$ be the gate with kind $k$ and argument list $args$. Suppose the existing gate list $gs$ is acyclic, every argument index is less than $n+|gs|$, and $|args|\\le K$. Applying the binarization construction to $g$ and $gs$ yields a gate list and output vertex that extend $gs$ and form an acyclic circuit; the output vertex is less than $n$ plus the resulting list length and computes $g$ on the values produced by $gs$ for every Boolean input assignment. The resulting list has length at most $|gs|+|args|+2$, the output depth is at most $\\lceil\\log_2 K\\rceil+1$ plus the maximum depth among the argument vertices in $gs$ (with empty maximum $0$), and every added gate is well formed with at most two arguments.",
+ "hypotheses_covered": [
+  "Natural numbers $n$ and $K$",
+  "Gate kind $k$ is not NOT",
+  "Argument list $args$ and existing gate list $gs$",
+  "$gs$ is acyclic relative to $n$",
+  "Every argument index is less than $n+|gs|$",
+  "$|args|\\le K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clRec_tick",
+ "key": "6ec4e2163b16c93c",
+ "kind": "lemma",
+ "title": "Clock-Test Transition",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $x,y$ be Boolean words, and let $c$ be a configuration of $M$ on input $y$. Choose a Boolean tag $b$, a family of natural-number movement counts $n$, a record word, and natural numbers $T,t$ with $t<T$. One step of the recorder machine from the clock-test phase of the corresponding recorder configuration advances the clock head from position $t$ to $t+1$ and enters the source-release phase, leaving the other configuration data unchanged.",
+ "hypotheses_covered": [
+  "A finite-state Boolean Turing machine M",
+  "Boolean words x and y",
+  "A source configuration c on input y",
+  "A Boolean tag b",
+  "A movement-count family n",
+  "A record word",
+  "Natural numbers T and t with t < T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source configuration, tag, movement counts, record, clock budget $T$, and logical time $t < T$, one recorder step from the clock-test phase reads the live unary clock cell, advances only the clock head from $t$ to $t+1$, and enters the source-release phase; no source head moves and no record bit is appended."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clTrack_frame",
+ "key": "7b7157bfb970937a",
+ "kind": "lemma",
+ "title": "Equality of the bank and reference configurations",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x,y$ be Boolean words, let $c$ be a configuration of $M$ on input $y$, and let $b$ be a Boolean tag. For each of the $2(1+k)$ indices, where $k$ is the number of work tapes of $M$, choose a state from the four counter states and a natural number. The configuration formed by adjoining the bank of counter configurations storing the binary representations of those numbers to the source tapes and virtual-input buffer is exactly the embedded reference configuration whose administrative tapes store those same binary representations.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,y$ are Boolean words",
+  "$c$ is a configuration of $M$ on $y$",
+  "$b$ is a Boolean tag",
+  "each of the $2(1+k)$ indices is assigned a four-state counter state and a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source configuration, tag bit, component controls, and counter values, the left-bank lift of the counter-bank product configuration over the retained source tapes coincides literally with the embedded reference configuration whose administrative tapes hold the counters in binary, including the virtual input buffer, every source tape, and all heads."
+}

@@ -1,0 +1,25 @@
+{
+ "lean_name": "BoolCircuit.CktSatReduction.Emitter.back_walk",
+ "key": "2926e9524a0239d7",
+ "kind": "theorem",
+ "title": "Backward scan on a unary tape",
+ "statement": "Let $w$ be a finite Boolean input, let $p$ be an input-head position, and let $k$ be an AND, OR, or NOT gate kind. Choose $c,t\\in\\{0,1,2\\}$, a program counter $pc\\in\\{0,\\ldots,63\\}$, three work tapes with head positions, a natural number $m$, and an output word. Suppose tape $t$ contains $m$ consecutive ones starting at cell $0$. For every natural number $d\\le m$, the machine started in state $\\mathrm{prB}(k,c,pc,t)$ with the head of tape $t$ at cell $m-d$ reaches state $\\mathrm{em}(k,c,pc+1)$ after $d+1$ steps, with the input-head position, all tape contents, all other head positions, and the output word unchanged, and the head of tape $t$ at cell $m$.",
+ "hypotheses_covered": [
+  "Finite Boolean input word w",
+  "Input-head position p among the positions for w",
+  "Gate kind k is AND, OR, or NOT",
+  "Indices c and t lie in {0,1,2}",
+  "Program counter pc lies in {0,...,63}",
+  "Three work-tape contents and head positions",
+  "Natural number m",
+  "Tape t is the unary tape of m",
+  "Output word out",
+  "Natural number d satisfies d≤m"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

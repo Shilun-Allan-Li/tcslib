@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Catalog.lean :: Turing.FinTM.a2_map_sum -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Splitting a finite sum
+
+**Claim.** The sum of a function over $\text{Fin}(a+b)$ is the sum over the first $a$ indices plus the sum over the last $b$ indices, with each part evaluated at its corresponding index in the full range.
+
+**Proof.** Use the equivalence that identifies the disjoint union of $\text{Fin}(a)$ and $\text{Fin}(b)$ with $\text{Fin}(a+b)$: the first summand maps to the first $a$ positions, and the second to the remaining $b$. Reindexing the sum over $\text{Fin}(a+b)$ by this equivalence gives a sum over the disjoint union. The sum over that union is the sum over its two parts, yielding the asserted decomposition.

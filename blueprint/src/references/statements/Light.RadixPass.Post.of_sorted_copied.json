@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.RadixPass.Post.of_sorted_copied",
+ "key": "68b30fdace669026",
+ "kind": "theorem",
+ "title": "Radix pass after copying sorted indices",
+ "statement": "Let $A$ be radix-pass arguments, let $\\mu$ be the initial memory, let $\\pi$ be a list of natural-number indices, and let $kd$ assign a natural-number key to each index. Suppose the radix-pass precondition holds, and the associated counting-sort postcondition holds in memory $\\mu_1$, with the item at position $j$ taken to be the $j$th entry of $\\pi$ (or zero when $j$ is out of range) and its key taken to be the key of that item (using zero for an out-of-range entry). Suppose also that $\\mu_2(A.perm+i)=\\mu_1(A.perm+A.w+i)$ for every $i<A.w$, and that $\\mu_1$ and $\\mu_2$ agree outside the interval starting at $A.perm$ of length $A.w$. Then the radix-pass postcondition holds for $\\mu_2$.",
+ "hypotheses_covered": [
+  "The radix-pass precondition holds for $\\mu,A,\\pi,kd$",
+  "The associated counting-sort postcondition holds in $\\mu_1$ with the specified item and key functions",
+  "For every $i<A.w$, $\\mu_2(A.perm+i)=\\mu_1(A.perm+A.w+i)$",
+  "$\\mu_1$ and $\\mu_2$ agree outside the interval starting at $A.perm$ of length $A.w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $A$ be radix-pass arguments, let $\u001b[0m\\pi$ be a list of indices, let $kd$ be a key\nfunction, and let $\u001b[0m\\mu,\\mu_1,\\mu_2:\\mathbb{N}\\to\\mathbb{Z}$ be memory states.\nSuppose the radix-pass precondition holds for $\u001b[0m\\mu,A,\\pi,kd$, and the count-sort\npostcondition holds for the associated count-sort arguments, with item $j$ given by the\n$j$th entry of $\u001b[0m\\pi$ (taking $0$ when $j$ is out of range) and key function\n$i\\mapsto kd(\\pi_i)$ (also taking $0$ out of range), in memory state $\u001b[0m\\mu_1$. If\n$\u001b[0m\\mu_2(A.\\mathrm{perm}+i)=\\mu_1(A.\\mathrm{perm}+A.\\mathrm{w}+i)$ for every\n$i<A.\\mathrm{w}$, and $\u001b[0m\\mu_1$ and $\u001b[0m\\mu_2$ agree at every position outside the\ninterval from $A.\\mathrm{perm}$ through $A.\\mathrm{perm}+A.\\mathrm{w}-1$, then the\nradix-pass postcondition holds for $\u001b[0m\\mu,A,\\pi,kd,\\mu_2$."
+}

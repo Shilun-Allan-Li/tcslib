@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.codeReadSymbols_append",
+ "key": "11ccfc343b949bb3",
+ "kind": "lemma",
+ "title": "Symbol row reader is a prefix inverse",
+ "statement": "Let $A$ be a type, and let a reader and writer for values in $A$ satisfy: for every $a\\in A$ and bit string $x$, reading the encoding of $a$ followed by $x$ returns $(a,x)$. For every function $f$ assigning an element of $A$ to each of blank, $0$, and $1$, and every bit string $x$, the reader for a three-entry symbol row applied to the encodings of $f(\\text{blank})$, $f(0)$, and $f(1)$ in that order, followed by $x$, returns $(f,x)$.",
+ "hypotheses_covered": [
+  "A type A",
+  "A field reader and writer",
+  "Reading each written value followed by any suffix returns that value and suffix",
+  "A function from the three symbols blank, 0, and 1 to A",
+  "An arbitrary bit string x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a field reader and a field writer for values in a type $A$ be given such\nthat reading from any written value followed by any suffix returns exactly that\nvalue and suffix.  Then for every function $f$ from the three tape symbols\n(blank, $0$, $1$) to $A$ and every bit string $x$, the three-symbol row reader\napplied to the concatenation of the written values $f(\\mathrm{blank})$, $f(0)$,\n$f(1)$ in that order, followed by $x$, succeeds and returns $(f, x)$."
+}

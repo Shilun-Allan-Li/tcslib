@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.track_read",
+ "key": "daaf83cc1acf9ea4",
+ "kind": "lemma",
+ "title": "Reading the Simulated Track",
+ "statement": "Let $c_0$ be a configuration, let a call specification select a list of argument registers, and let $W$ assign a Boolean word to each register. Assume each selected register in $c_0$ stores its assigned word and the selected registers are distinct. Suppose a configuration $g$ of the combined machine and a decider configuration $d$ are related as follows: the current segment index is within the list of call segments, the track position is valid and consistent with the parity and direction, the two input-head positions represent the same virtual position, the original work tapes and their head positions are preserved or positioned according to the track representation, the decider tapes and head positions agree with $d$, and the output is unchanged. Define $r$ to be the symbol read from $g$'s input head when the segment index is zero, and otherwise the symbol under the corresponding argument-register head when such a register exists (taking $r$ to be blank if there is no register). Then the machine reads a character exactly when the track position is a cell, and the virtual symbol determined by the read symbol, mode, segment, and direction equals the symbol represented by that track position.",
+ "hypotheses_covered": [
+  "Every selected argument register stores its assigned word in $c_0$",
+  "The list of selected argument registers has no repetitions",
+  "$g$ and $d$ are configurations of the stated machines",
+  "The segment index, parity, direction, and track position satisfy all clauses of the stated tracking relation"
+ ],
+ "confidence": "low",
+ "caveat": "The tracking relation contains several detailed equalities; the prose summarizes them structurally, and the given informal descriptions do not define all the virtual-position and symbol functions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

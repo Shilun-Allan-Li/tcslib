@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emCall_finish_rewind",
+ "key": "6114d655ee07665a",
+ "kind": "lemma",
+ "title": "Capture rewind phase",
+ "statement": "Fix a mode, a Boolean input word $x$, an allowed input-head position $p$, an arbitrary argument tape content $A$, and Boolean words $c$, $u$, and $v$ such that $c=uv$. Start the finalizer in state $2$, with capture tape storing $c$ from cell $0$ and its head at $|u|-1$, argument head at the origin, and empty output. After exactly $|u|+1$ steps it is in state $3$, with the capture tape unchanged and its head at the origin, argument head still at the origin, and output empty.",
+ "hypotheses_covered": [
+  "mode bit emit",
+  "Boolean input word x",
+  "input-head position p in Fin (|x|+2)",
+  "arbitrary argument tape content A",
+  "capture word c",
+  "prefix u and suffix v",
+  "decomposition c = u ++ v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the finalizer run in a fixed mode with capture word $c$, and let $p$ be a prefix of\n$c$. Starting from its capture-rewind state with the capture head at cell $|p| - 1$,\nafter exactly $|p| + 1$ steps it is in the transfer state with the capture head at the\norigin, the capture word intact, and the argument head still at the origin."
+}

@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean :: Complexity.Meyer.ret_sweep -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Return-State Sweep
+
+**Claim.** For every $j\in\mathbb N$, starting with $j$ consecutive ones followed by $L$ on the first auxiliary tape and its head at $j-1$, after $j+1$ steps the machine is in the corresponding decision state with that head at zero; the tape contents and all other specified data are unchanged.
+
+**Proof.** Proceed by induction on $j$, allowing the trailing word $L$ to vary in the induction hypothesis. For $j=0$, the head is at $-1$, where the represented buffer tape is blank. The blank-cell return transition (`Complexity.Meyer.ret_none`) moves the head right to $0$ and enters the decision state. The zero-step run is the starting configuration (`Turing.MultiTapeTM.runFrom_zero`), so the one-step run has the required form.
+
+For the successor case, suppose the tape begins with $j+1$ ones and the head is at $j$. Since $j<|[1^{j+1}]\mathbin{++}L|$, the buffer-tape lookup theorem (`Complexity.Meyer.bufferTape_at`) says the scanned symbol is the next one. The nonblank-cell transition (`Complexity.Meyer.ret_some`) therefore keeps the machine in the return state and moves the head left, from $j$ to $j-1$, without changing the tape. The run-successor law (`Turing.MultiTapeTM.runFrom_succ_eq_step`) reduces the first step of this run to that transition followed by the remaining run. Rewrite $1^{j+1}L$ as $1^j(1L)$; the induction hypothesis applied with trailing word $1L$ now gives the claimed decision state and head position zero after the remaining $j+1$ steps. The two parts total $(j+1)+1$ steps.
+
+**Key facts.** `Turing.MultiTapeTM.runFrom_succ_eq_step`, `Turing.MultiTapeTM.runFrom_zero`, `Complexity.Meyer.ret_none`, `Complexity.Meyer.bufferTape_at`, `Complexity.Meyer.ret_some`.

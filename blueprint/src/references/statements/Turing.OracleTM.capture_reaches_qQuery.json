@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.OracleTM.capture_reaches_qQuery",
+ "key": "2179b5aa026e85c5",
+ "kind": "theorem",
+ "title": "Captured computation reaches the query state",
+ "statement": "Let $S$ and $H$ be state sets, let $x$ be a Boolean word, and let $T$ be a natural number. Let $tm$ be a deterministic Turing machine with $k$ work tapes and state set $S$, and let $M$ be an oracle Turing machine with $k$ ordinary work tapes and state set $H$. Suppose there is a state map $e:S\\to H$ whose image avoids the query state of $M$, and suppose that on every state in the image of $e$, $M$'s transition agrees with the capture transform of $tm$'s transition. For any oracle language $O$, Boolean words $pre,out_0$, and initial configuration $c_0$ of $tm$, if $tm$ is halted after $T$ steps from $c_0$, then there is a time $u\\le T$ at which running $M$ with oracle $O$ from the capture image of $c_0$ reaches the capture image of $tm$'s configuration after $T$ steps.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "State sets $S$ and $H$",
+  "A Boolean input word $x$",
+  "A deterministic machine $tm$ with $k$ work tapes and states $S$",
+  "An oracle machine $M$ with $k$ ordinary work tapes and states $H$",
+  "An oracle language $O$ over Boolean words",
+  "A map $e:S\\to H$ whose values are not $M$'s query state",
+  "Agreement of $M$'s transition on embedded states with the capture transform of $tm$'s transition",
+  "Boolean words $pre$ and $out_0$",
+  "An initial configuration $c_0$ for $tm$ on $x$",
+  "A natural number $T$",
+  "The run of $tm$ from $c_0$ is halted at time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

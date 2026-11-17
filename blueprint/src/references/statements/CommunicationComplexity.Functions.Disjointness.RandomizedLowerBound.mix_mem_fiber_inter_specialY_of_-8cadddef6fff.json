@@ -1,16 +1,19 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mix_mem_fiber_inter_specialY_of_mem_fiber_specialPair",
- "key": "633cfff2e604c358",
+ "key": "511d86b2e0363793",
  "kind": "theorem",
- "title": "Mixing two fiber samples preserves the fiber and Bob's special bit",
- "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the length-$n$ disjointness problem, and consider the hard-distribution samples together with the derived variable $Z = (M, T, X_{<T}, Y_{>T})$ recording the transcript, the special coordinate, Alice's bits before it, and Bob's bits after it. Let $z$ be an achievable value of $Z$, let $\\omega$ and $\\omega'$ be two samples, and let $b = (b_1, b_2)$ be a pair of Booleans. Suppose that both $\\omega$ and $\\omega'$ produce the value $z$ (that is, each lies in the fiber $Z^{-1}(z)$), and that the special-coordinate bit-pair of $\\omega'$ equals $b$, so that Alice's and Bob's bits at the special coordinate of $\\omega'$ are $b_1$ and $b_2$ respectively. Then the mixed sample formed by taking Alice's data from $\\omega$ and Bob's data from $\\omega'$ again produces the value $z$, and its bit for Bob at the special coordinate equals $b_2$.",
+ "title": "Mixing Preserves a Fiber and Special Bit",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic protocol for disjointness on length-$n$ inputs. For an achievable value $z$ of the statistic recording the transcript, special coordinate, Alice’s bits before it, and Bob’s bits after it, take samples $\\omega,\\omega'$ and a bit-pair $b$ such that $\\omega$ lies in the fiber over $z$ and $\\omega'$ lies both in that fiber and in the event that its special-coordinate bit-pair is $b$. Then the sample formed from Alice’s data in $\\omega$ and Bob’s data in $\\omega'$ lies in the fiber over $z$, and its Bob bit at the special coordinate equals the second component of $b$.",
  "hypotheses_covered": [
-  "ω lies in the fiber Z^{-1}(z)",
-  "ω' lies in the fiber Z^{-1}(z)",
-  "the special-coordinate bit-pair of ω' equals b = (b_1, b_2)"
+  "$n$ is a positive integer",
+  "$p$ is a length-$n$ disjointness protocol",
+  "$z$ is an achievable statistic value",
+  "$\\omega$ lies in the fiber over $z$",
+  "$\\omega'$ lies in the fiber over $z$",
+  "$\\omega'$ has special-coordinate bit-pair $b$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If one sample in a fiber has special pair $b$ and the other is just in the fiber, mixing with the special-pair sample on Bob's side lands in the fiber with Bob special bit \\texttt{b.2}."
+ "replaced": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the\nlength-$n$ disjointness problem, and consider the hard-distribution samples together\nwith the derived variable $Z = (M, T, X_{<T}, Y_{>T})$ recording the transcript, the\nspecial coordinate, Alice's bits before it, and Bob's bits after it. Let $z$ be an\nachievable value of $Z$, let $\\omega$ and $\\omega'$ be two samples, and let $b = (b_1,\nb_2)$ be a pair of Booleans. Suppose that both $\\omega$ and $\\omega'$ produce the value\n$z$ (that is, each lies in the fiber $Z^{-1}(z)$), and that the special-coordinate\nbit-pair of $\\omega'$ equals $b$, so that Alice's and Bob's bits at the special\ncoordinate of $\\omega'$ are $b_1$ and $b_2$ respectively. Then the mixed sample formed\nby taking Alice's data from $\\omega$ and Bob's data from $\\omega'$ again produces the\nvalue $z$, and its bit for Bob at the special coordinate equals $b_2$."
 }

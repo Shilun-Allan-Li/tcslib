@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.TMSAT_NPHard",
+ "key": "537f28d6fa6afe90",
+ "kind": "theorem",
+ "title": "TMSAT is NP-hard",
+ "statement": "For every machine-code scheme with a total decoder and the property that encoding any machine followed by any number of $1$-bits decodes to that machine, the associated language of encoded machine descriptions, inputs, unary witness-length bounds, and unary time bounds for which some witness causes the decoded machine to halt with output $1$ is NP-hard under polynomial-time many-one reductions.",
+ "hypotheses_covered": [
+  "$c$ is a machine-code scheme with a total decoder",
+  "Appending any number of $1$-bits to an encoded machine preserves its decoding"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a machine-representation scheme, assigning to every bit string $\\alpha$ a one-work-tape binary Turing machine $M_\\alpha$ so that the code of every such machine decodes back to it. Then $\\mathrm{TMSAT}_c$ is $\\mathrm{NP}$-hard: every language in $\\mathrm{NP}$ reduces to it by a polynomial-time many-one reduction, where $\\mathrm{TMSAT}_c$ is the set of strings $\\langle\\alpha,\\langle x,\\langle 1^n,1^t\\rangle\\rangle\\rangle$, where $\\langle a,b\\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones, such that some $u$ with $|u| = n$ makes $M_\\alpha$ halt on $\\langle x,u\\rangle$ within $t$ steps with output exactly $1$."
+}

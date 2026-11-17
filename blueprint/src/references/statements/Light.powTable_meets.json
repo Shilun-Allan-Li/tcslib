@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.powTable_meets",
+ "key": "cd6daf96d6ea45b4",
+ "kind": "theorem",
+ "title": "Power table procedure specification",
+ "statement": "Let a program $P$ contain the power-table procedure at position $p$, and let the machine limits have memory size $S$, word bound $W$, and depth bound. For an initial memory $\\mu$ and natural numbers $\\mathrm{dst},L,b$, suppose $S\\le W$, the segment of length $L$ starting at $\\mathrm{dst}$ fits in memory, and $b^j\\le W$ for every $j\\le L$. Then calling the procedure at depth $d$ with inputs $(\\mathrm{dst},L,b)$ can finish within time $17L+8$, producing the powers $1,b,\\ldots,b^{L-1}$ in that segment and preserving all memory locations outside it.",
+ "hypotheses_covered": [
+  "The program has the power-table procedure at index $p$",
+  "The machine limits $\\mathrm{lim}$ and depth $d$ are fixed",
+  "$\\mu$ is an initial memory",
+  "$\\mathrm{dst},L,b$ are natural numbers",
+  "$S\\le W$",
+  "$\\mathrm{dst}+L\\le S$",
+  "For every $j\\le L$, $b^j\\le W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

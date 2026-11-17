@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.absRun_u",
+ "key": "30d89b17ec0d729b",
+ "kind": "theorem",
+ "title": "Acceptance while reading a gate argument",
+ "statement": "Fix a gate kind $k$, counter $c\\in\\{0,1,2\\}$, Boolean accumulator $b$, Boolean value list $v$, and marked-index list $M$. For every Boolean string $\\ell$ and position $j$, the evaluator started in its argument-reading phase with these data accepts exactly when there are a natural number $r$ and a Boolean string $t$ such that $\\ell$ consists of $r$ true bits followed by a false bit and then $t$, $j+r<|v|$, and $j+r$ is not marked in $M$. In that case, running from the argument-accumulation phase with counter increased by one, accumulator combined with the value of $v$ at index $j+r$ (using OR for an OR gate and AND otherwise), the updated marked list with $j+r$ added at its front, and position zero, on $t$ also accepts.",
+ "hypotheses_covered": [
+  "Gate kind $k$",
+  "Counter $c\\in\\{0,1,2\\}$",
+  "Boolean accumulator $b$",
+  "Boolean value list $v$",
+  "Marked-index list $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

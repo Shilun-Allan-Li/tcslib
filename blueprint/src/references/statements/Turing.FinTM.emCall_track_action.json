@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_track_action",
+ "key": "c5b51dd90d490e9e",
+ "kind": "lemma",
+ "title": "The tracked machine's source step",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean input word, and let $c$ be a configuration of $M$ on $x$ whose state is present. For any integer lower and upper bounds $\\ell_i,h_i$ on each work tape $i$, one step of the tracked machine from the completed tracked configuration of $c$ with those bounds equals the intermediate stamping configuration associated with the one-step successor of $c$, using the same bounds.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x$ is a Boolean list",
+  "$c$ is a configuration of $M$ on $x$",
+  "$c$ has a present, nonhalting state",
+  "$\\ell$ and $h$ assign integer bounds to every work tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a live configuration of the source machine with visited bounds $\\ell$ and\n$h$. One step of the tracked evaluator from the completed tracked configuration of $c$\nequals the intermediate stamp configuration of the one-step successor of $c$ with the\nsame bounds: the data bank performs the source write and emission, and all three per-\ntape heads move by the same source action."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.TreeCircuit.toDAG_fanoutSpec",
+ "key": "0a055622cbbe6053",
+ "kind": "theorem",
+ "title": "Fanout conditions for the circuit DAG translation",
+ "statement": "For every Boolean circuit $c$ on $n$ variables, let $G$ be the list of gates in its directed acyclic graph translation, let $r$ be its output index, and let $F(v)$ count the gates in $G$ whose argument list contains the index $v$. Every index $v$ with $n\\le v<n+|G|$ has $F(v)=0$, every $v\\ge n$ has $F(v)\\le1$, and if $r\\ge n$ then $F(r)=0$. Also, either $r<n$ or $n+|G|\\le r$, and every index $v$ with $n+|G|\\le v<n+|G|+|G|$ and $v\\ne r$ has $F(v)=1$.",
+ "hypotheses_covered": [
+  "$c$ is a Boolean circuit on $n$ variables",
+  "The initial gate list in the fanout specification is empty",
+  "For each $v$ with $n\\le v<n+|G|$, its fanout in $G$ is $0$",
+  "For each $v\\ge n$, its fanout in $G$ is at most $1$",
+  "If $r\\ge n$, the output index has fanout $0$",
+  "Either $r<n$ or $n+|G|\\le r$",
+  "For each $v$ with $n+|G|\\le v<n+|G|+|G|$ and $v\\ne r$, its fanout in $G$ is $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

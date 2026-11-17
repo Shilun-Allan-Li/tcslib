@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect.lean :: BoolCircuit.CircuitEval.absRun_g -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Acceptance in gate parsing
+
+**Claim.** A gate-parsing run accepts exactly when its input encodes a list of gates followed by an output index, all gates satisfy the stated argument and reference conditions, and the selected output value after evaluating those gates is true.
+
+**Proof.** The proof uses induction on an upper bound for the input length, so that after parsing the first gate the induction hypothesis applies to the remaining suffix. The gate-kind code has three valid two-bit forms: AND, OR, and NOT; each has a representative pair of bits whose conjunction is false, and decoding that pair returns the given kind. If the input begins with false, the evaluator enters output-index parsing. The output-index characterization (`absRun_o`) says that the remaining string is a unary code for an index into the current values, whose value must be true. This is exactly the claimed result for an empty gate list.
+
+If the input begins with true, the next two bits specify the gate kind. Missing bits or a pair of true bits reject, and no valid gate encoding can have either form. For a pair whose conjunction is false, the evaluator enters argument parsing. The argument-parsing characterization (`absRun_a`), instantiated with an empty prefix and the current values, gives the encoded arguments, their length and distinctness bounds, the NOT arity condition, and a subsequent gate-parsing run on the remainder. Applying the induction hypothesis to that remainder yields the remaining gates and output index. The first decoded gate satisfies the required gate conditions, while the induction hypothesis supplies them for all later gates. The gate-list encoding is reconstructed by adjoining this first gate. The output bound and truth of the selected value follow from the corresponding bounds and value for the recursively parsed suffix, since evaluating the first gate appends one value to the list. Conversely, given a valid encoded gate list and output index, split off its first gate. Its kind code must be one of the three valid pairs, so the evaluator reaches argument parsing; the characterization of that phase recovers the first gate’s arguments and the suffix run. The induction hypothesis then parses the remaining gates and certifies the output. The empty input and the short malformed prefixes reject, matching the absence of any valid encoding in those cases.
+
+**Key facts.** `BoolCircuit.CircuitEval.absRun_o`, `BoolCircuit.CircuitEval.absRun_a`, `BoolCircuit.runWith_cons`.

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.satStreamRound_false",
+ "key": "e44d922732a188b4",
+ "kind": "lemma",
+ "title": "Round at a Terminator",
+ "statement": "Let $x,p,r$ be bit strings, let $j$ be a natural number, and let $q$ be one of the five streaming phases with $q \\ne 4$. If $x$ is the concatenation of $p$, the bit $0$, and $r$, then one round from the state with fresh cursor $j$, consumed length $|p|$, and phase $q$ consumes the terminator and emits $[0]$. Its new cursor is $j$, its consumed length is $|p|+1$, and its phase is $4$ if $q=0$ and $0$ otherwise.",
+ "hypotheses_covered": [
+  "$x,p,r$ are bit strings",
+  "$j$ is a natural number",
+  "$q$ is a phase in the five-element phase set",
+  "$q \\ne 4$",
+  "$x=p$ followed by $0$ and then $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input be $p \\mathbin{+\\!\\!+} 0 :: r$ and the seam state have consumed\n$|p|$ bits in a non-finished phase $q$. The round emits $[0]$, consumes one bit,\nand moves to the finished phase when $q$ was the formula phase and back to the\nformula phase otherwise."
+}

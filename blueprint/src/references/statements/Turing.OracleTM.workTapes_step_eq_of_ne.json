@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.OracleTM.workTapes_step_eq_of_ne",
+ "key": "41ee41b8fe48f210",
+ "kind": "lemma",
+ "title": "Unscanned work cells are unchanged",
+ "statement": "Let $M$ be an oracle Turing machine with $k$ ordinary work tapes, let $O$ be an oracle language, and let $c$ be a configuration with $k+1$ work tapes. For any tape index $i$ and integer cell position $z$ different from the head position on tape $i$ in $c$, the content of cell $z$ on that tape is unchanged after one step of $M$ relative to $O$.",
+ "hypotheses_covered": [
+  "An oracle machine with $k$ ordinary work tapes",
+  "An oracle language $O$",
+  "A configuration with $k+1$ work tapes",
+  "A tape index $i$ among the $k+1$ tapes",
+  "An integer cell position $z$",
+  "The cell position $z$ differs from the head position on tape $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be an oracle machine with $k$ ordinary work tapes, $O$ an oracle\nlanguage, $c$ a configuration, $i$ one of the $k+1$ work-tape indices, and $z$\nan integer cell position different from the position of the $i$-th work head\nin $c$.  Then after one step of $M$ relative to $O$, the content of cell $z$\nof the $i$-th work tape is unchanged."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.reverse_holder",
+ "key": "58057b6cdf102515",
+ "kind": "lemma",
+ "title": "Reverse Hölder inequality",
+ "statement": "Let $p\\in\\mathbb R$ satisfy $p<1$ and $p\\ne0$. For all nonnegative real-valued functions $f,g$ on the Boolean cube, $\\langle f,g\\rangle\\ge M_p(f)M_{p/(p-1)}(g)$, where the inner product and extended power means use uniform expectation.",
+ "hypotheses_covered": [
+  "p is real",
+  "p < 1",
+  "p ≠ 0",
+  "f and g are real-valued functions on the Boolean cube",
+  "f is nonnegative at every cube point",
+  "g is nonnegative at every cube point"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p<1$, $p\\ne0$, and $f,g:\\{0,1\\}^n\\to[0,\\infty)$. Then $\\E[fg]\\ge M_p(f)M_{p/(p-1)}(g)$. For nonnegative functions $u$, the extended mean is $M_r(u)=(\\E u^r)^{1/r}$ when $r>0$; the same formula applies for $r<0$ when $u$ is positive everywhere. For positive $u$, $M_0(u)=\\exp(\\E\\log u)$; if $r\\le0$ and $u$ has a zero, $M_r(u)=0$. All expectations are uniform."
+}

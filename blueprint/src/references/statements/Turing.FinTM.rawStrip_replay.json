@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.rawStrip_replay",
+ "key": "60a46d805bf65c0a",
+ "kind": "lemma",
+ "title": "Replay of the retained word",
+ "statement": "Let $x,a$ be Boolean words and let $i\\in\\mathbb{N}$ satisfy $i\\le |x|$. For every natural number $j\\le |a|$, after $j$ steps from state $3$ with $a$ stored on the work tape, the work-tape head at position $0$, and empty output, the machine remains in state $3$, has its work-tape head at position $j$, and has emitted the first $j$ bits of $a$; the input-head position and stored word are unchanged.",
+ "hypotheses_covered": [
+  "$x,a$ are Boolean words",
+  "$i\\in\\mathbb{N}$",
+  "$i\\le |x|$",
+  "$j\\in\\mathbb{N}$",
+  "$j\\le |a|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the stripping machine's replay state with buffer $a$ and work head at\ndisplacement $0$, for any $j \\le \\abs{a}$, exactly $j$ steps move the work\nhead to displacement $j$ and emit the first $j$ bits of $a$, preserving the\nbuffer."
+}

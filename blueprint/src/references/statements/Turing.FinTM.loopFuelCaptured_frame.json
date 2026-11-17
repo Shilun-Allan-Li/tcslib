@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.loopFuelCaptured_frame",
+ "key": "364c3abd71b1f0f5",
+ "kind": "lemma",
+ "title": "Captured fuel endpoint as a controller frame",
+ "statement": "Let $c$ be a configuration of a Boolean fuel machine on input $x$, and suppose $c$ is halted. Its captured, relocated configuration equals the loop-host frame built over that captured configuration, in controller phase zero, with input-head position inherited from $c$, blank flag and counter tapes, a payload tape containing the output of $c$ from cell zero onward, the flag head at zero, the counter head at the output length, and empty output.",
+ "hypotheses_covered": [
+  "Boolean body and fuel machines",
+  "Input word $x$",
+  "Fuel-machine configuration $c$ on $x$",
+  "The state of $c$ is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a halted configuration of the fuel machine. The captured fuel endpoint of the\nloop host equals the controller frame over itself in phase zero whose flag and counter\ntracks are blank, whose payload track is the buffer tape of the output of $c$ with\npayload head at its length, with the input head of $c$ and empty output."
+}

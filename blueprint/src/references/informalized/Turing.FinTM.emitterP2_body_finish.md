@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Primitives.lean :: Turing.FinTM.emitterP2_body_finish -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Finishing the width-split round
+
+**Claim.** Starting in the left-erasure phase, the controller completes the round within the stated bound, avoiding the anchor before the endpoint; according to the verdict, it either halts with the encoded input split or returns to the anchor with the advanced candidate and empty banks.
+
+**Proof.** Let $a$ be the time supplied by left-bank erasure. Its endpoint is the left-erasure state $2$ with the left bank empty, and the run is anchor-free (`emitterP2_body_erase_left`). One silent control transition moves to right-erasure state $0$, preserving the words and safety (`emitterP2_after`). Erasing the right bank then takes some time $b$ within its bound and preserves the endpoint safety (`emitterP2_body_erase_right`); concatenate these runs using run and safety concatenation (`splitSafe_join`). Now split on the verdict. If it is false, one more silent control transition enters advance state $0$ (`emitterP2_after`), and the candidate-advancement result reaches advance state $(4,\mathrm{false})$ with the candidate updated and both banks empty (`emitterP2_body_advance`). A final silent control transition enters the anchor, so the endpoint is exactly the required anchor configuration. The accumulated bounds yield the stated total. If the verdict is true, the hypothesis ensures $|s|\le |w|$. One silent transition enters emission state $0$ (`emitterP2_after`), after which the emission result halts with the required pair encoding (`emitterP2_body_emit`). Safety concatenation combines the erasure and emission intervals, and the same component bounds give the claimed total time. The endpoint is excluded from the pre-endpoint safety condition in both cases, allowing the false branch to finish at the anchor.
+
+**Key facts.** `Turing.FinTM.emitterP2_body_erase_left`, `Turing.FinTM.emitterP2_after`, `Turing.FinTM.emitterP2_body_erase_right`, `Turing.FinTM.splitSafe_join`, `Turing.FinTM.emitterP2_body_advance`, `Turing.FinTM.emitterP2_body_emit`, `Turing.FinTM.splitSafe_add`, `Turing.MultiTapeTM.runFrom_add`, `Turing.MultiTapeTM.runFrom_succ_eq_step'`.

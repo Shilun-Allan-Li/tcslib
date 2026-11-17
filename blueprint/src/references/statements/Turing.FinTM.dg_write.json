@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.dg_write",
+ "key": "e6d574792d28125f",
+ "kind": "lemma",
+ "title": "Backward sweep writes a tape zone",
+ "statement": "Let $M$ be a finite-state machine over $\\Gamma$, let $a_0\\in\\Gamma$, and let $c$ be a configuration on an input word $y$. Choose a state $q$, an optional input symbol $\\mathit{inp}$, a table $\\mathit{reads}$ of optional symbols, integers $a,z$, a natural number $n$, an enlarged-alphabet input $x$ with head position $p$, an output word $\\mathit{out}$, and finite stacks $l,r$. Starting from the backward-sweep configuration at frontier $z$ whose right stack is the reversed list of the $n$ consecutive tape blocks of $c$ beginning at $a$, each encoded as a sweep symbol, followed by $r$, after $nk$ steps the simulator is at frontier $z-nk$. Its left stack is the list of the corresponding $n$ blocks of the configuration obtained by applying $M$'s transition at $(q,\\mathit{inp},\\mathit{reads})$, encoded as sweep symbols and prepended to $l$; its right stack remains $r$, and its state, input position, and output are unchanged.",
+ "hypotheses_covered": [
+  "finite alphabet $\\Gamma$ with decidable equality",
+  "machine $M$ over $\\Gamma$",
+  "chosen symbol $a_0\\in\\Gamma$",
+  "configuration $c$ on input $y$",
+  "state $q$",
+  "optional input symbol $\\mathit{inp}$",
+  "table $\\mathit{reads}$ of optional symbols",
+  "integers $a,z$",
+  "natural number $n$",
+  "enlarged-alphabet input $x$ and valid input-head position $p$",
+  "output word $\\mathit{out}$",
+  "finite stacks $l,r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.rotationSensitivity_halfspace_eq_scalar",
+ "key": "a924d832428f73c4",
+ "kind": "lemma",
+ "title": "Scalar reduction for halfspace sensitivity",
+ "statement": "Let $n\\ge 0$, let $a\\in\\mathbb R^n$ satisfy $\\sum_{i=1}^n a_i^2=1$, and let $t,\\theta\\in\\mathbb R$. The rotation sensitivity of the halfspace $\\{z\\in\\mathbb R^n:\\sum_{i=1}^n a_i z_i\\le t\\}$ at angle $\\theta$ equals the probability that independent standard Gaussian scalars $U,V$ disagree on whether they are at most $t$ after the rotation: $\\Pr\\bigl(\\neg(U\\le t\\;\\Longleftrightarrow\\;\\cos\\theta\\,U+\\sin\\theta\\,V\\le t)\\bigr)$.",
+ "hypotheses_covered": [
+  "$n\\ge 0$",
+  "$\\sum_{i=1}^n a_i^2=1$",
+  "$t,\\theta\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a measurable $A\\subseteq\\mathbb R^n$ and independent standard Gaussian vectors $X,Y$, put $R_A(\\theta)=\\Pr(1_A(X)\\ne1_A(\\cos\\theta\\,X+\\sin\\theta\\,Y))$. If $a\\in\\mathbb R^n$ satisfies $\\sum_i a_i^2=1$ and $H=\\{z:\\sum_i a_i z_i\\le t\\}$, then $R_H(\\theta)=\\Pr(1_{(-\\infty,t]}(U)\\ne1_{(-\\infty,t]}(\\cos\\theta\\,U+\\sin\\theta\\,V))$ for every real $t,\\theta$, where $U,V$ are independent standard Gaussian scalars."
+}

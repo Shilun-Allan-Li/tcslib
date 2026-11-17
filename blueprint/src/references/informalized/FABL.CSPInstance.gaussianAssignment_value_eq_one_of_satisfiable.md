@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter07/LinearCSPAlgorithms.lean :: FABL.CSPInstance.gaussianAssignment_value_eq_one_of_satisfiable -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Value of the Gaussian Assignment
+
+**Claim.** For a satisfiable Max-\mathbb{F}_2-r-Lin instance, the Gaussian assignment has value one.
+
+**Proof.** The Gaussian assignment fully satisfies every constraint, by `gaussianAssignment_fullySatisfied_of_satisfiable`. The value-one characterization says that an assignment has value one exactly when it fully satisfies the instance (`value_eq_one_iff_fullySatisfied`). Applying its forward implication in reverse gives the result.
+
+**Key facts.** `FABL.CSPInstance.gaussianAssignment_fullySatisfied_of_satisfiable`, `FABL.CSPInstance.value_eq_one_iff_fullySatisfied`.

@@ -1,0 +1,28 @@
+{
+ "lean_name": "Turing.exists_recordInitTM",
+ "key": "bd88bbd913ec3696",
+ "kind": "theorem",
+ "title": "Machine for Initializing Records",
+ "statement": "For every natural number $k$, finite types $Q$ and $T$ with decidable equality, initial state $q_0\\in Q$, and tag $\\tau_0\\in T$, there are a natural number $K$, a finite state type $P$ with decidable equality, a deterministic Turing machine $R$ with $K+2$ work tapes over the record alphabet, entry and exit states, and a natural number $C$ such that the following holds. For every binary input word $x$, natural number $s$, and binary word $w$ with $\\operatorname{ofDigits}_2(w)=s$, if a configuration $d$ on the input obtained by embedding the digits of $x$ has entry state and input-head position $1$, tape $1$ agrees with the word $w$ stored from position zero on all cells from one position left of its head through $|w|$ positions right, tape $0$ is blank from one position left of its head through the record length $L=k(2s+1)+\\mathrm{posWidth}(|x|)+k+4$ positions right, and every tape of index at least $2$ is blank everywhere, then for some time $t\\le C(L+|w|+s+|x|+1)$ the machine reaches the configuration obtained by changing $d$ only to enter the exit state and to write on tape $0$ the joined fields of the initial configuration with state $q_0$, input $x$, blank work tapes, and tag $\\tau_0$, placed over the $L$ cells starting at tape $0$'s initial head position. The machine is not in the exit state at any earlier time, and at every time through $t$ each work-tape head is at distance at most $C(L+|w|+s+1)$ from its starting position.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Finite types $Q$ and $T$ with decidable equality",
+  "Initial state $q_0$ and tag $\\tau_0$",
+  "Binary input word $x$",
+  "Natural number $s$ and binary word $w$ satisfying $\\operatorname{ofDigits}_2(w)=s$",
+  "Initial configuration has entry state and input-head position $1$",
+  "Tape $1$ agrees with the stored word on cells from one position left of its head through $|w|$ positions right",
+  "Tape $0$ is blank on cells from one position left of its head through the record length positions right",
+  "Every tape with index at least $2$ is blank everywhere",
+  "Time bound $t\\le C(L+|w|+s+|x|+1)$",
+  "Exit state is avoided at every time before $t$",
+  "All work-tape heads stay within distance $C(L+|w|+s+1)$ of their initial positions",
+  "Final configuration equals the specified update of $d$, including its unchanged input, tape contents outside the target interval, head positions, and output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

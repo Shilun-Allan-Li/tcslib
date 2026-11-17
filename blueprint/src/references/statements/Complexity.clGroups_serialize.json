@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clGroups_serialize",
+ "key": "fffd0ea89f0fbc09",
+ "kind": "lemma",
+ "title": "Serialization of the clause-group list",
+ "statement": "For all natural numbers $n$, $k$, and $T$, and any choices of the pinning, initial, state, input, work, and acceptance clause-group generators, concatenate the round chunks for indices $0$ through $R$, where $R=n+(k+3)T+k+1$ and each chunk consists of that group's fragment with a formula terminator appended exactly at $R$. The result is the serialization of the flattened list of clause groups.",
+ "hypotheses_covered": [
+  "Natural numbers $n$, $k$, and $T$",
+  "Pinning group generator",
+  "Initial clause group",
+  "State group generator",
+  "Input group generator",
+  "Work group generator",
+  "Acceptance group generator",
+  "Round indices range from $0$ through $R=n+(k+3)T+k+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all parameters $n$, $k$, $T$ and all six clause-family generators, concatenating the round chunks of the six-family group list over rounds $0,\\dots,R$, where $R = n+(k+3)T+k+1$ is its computed last round, equals the serialization of the flattened six-family formula, without rearranging any clause."
+}

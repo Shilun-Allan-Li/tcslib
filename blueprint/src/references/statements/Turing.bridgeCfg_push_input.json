@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.bridgeCfg_push_input",
+ "key": "bb0bdf86c4867772",
+ "kind": "lemma",
+ "title": "Push with an Input Head Move",
+ "statement": "Let $c$ be a partial recursive program, let $x$ be a finite input string over the bridge alphabet, and let $q,q_m,q'$ be optional control states of its bridging machine. Given a valid input-head position $p$, an assignment $st$ of compiled-machine stacks, an output string, a stack name $k$, a compiled-stack symbol $a$, and a direction $d$, perform two actions on the work tape corresponding to $k$: first move its head one cell left without writing, then write $a$ without moving that work-tape head while moving the input head by $d$. The resulting configuration has state $q'$, input position given by the clamped move of $p$ by $d$, unchanged output, and stack assignment obtained by replacing $st(k)$ with $a$ prepended to it; the intermediate state is $q_m$.",
+ "hypotheses_covered": [
+  "A partial recursive program $c$",
+  "A finite input string over the bridge alphabet",
+  "Optional control states $q,q_m,q'$",
+  "A valid input-head position $p$",
+  "An assignment of compiled-machine stacks",
+  "An output string",
+  "A compiled-machine stack name $k$",
+  "A compiled-stack symbol $a$",
+  "An input-head movement direction $d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Performing the two-action push of a symbol $a$ onto the stack named $k$, where the\nsecond action additionally moves the input head in a direction $d$, transforms a\nbridge configuration into the bridge configuration with $a$ prepended to the stack\nat $k$ and the input head moved by $d$, the output unchanged."
+}

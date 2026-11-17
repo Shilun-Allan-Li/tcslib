@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.NDTM.replayTM_runFrom",
+ "key": "adf930f512040931",
+ "kind": "theorem",
+ "title": "Replaying a choice word",
+ "statement": "Let $N$ be a nondeterministic multi-tape Turing machine with Boolean alphabet and state set $S$, let $x$ be a Boolean input word, and let $c$ be a configuration of $N$ on $x$. Given a Boolean word $s$ and a natural number $t\\le |s|$, there is a position $p\\le t$ such that, if the run of $N$ from $c$ under the first $t$ bits of $s$ has not halted, then $p=t$; and after $t$ steps the replay machine for $N$, started from $c$ with a choice tape containing $s$ and its head at position zero, has the same configuration as the run of $N$ under those first $t$ bits, with the choice tape unchanged and its head at position $p$.",
+ "hypotheses_covered": [
+  "A nondeterministic machine $N$ with $k$ work tapes, Boolean alphabet, and state set $S$.",
+  "A Boolean input word $x$.",
+  "A configuration $c$ of $N$ on $x$.",
+  "A Boolean word $s$.",
+  "A natural number $t$ with $t\\le |s|$."
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement refers to the replay machine for $N$, but its construction is not included in the supplied definitions; the description follows the stated choice-tape behavior.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

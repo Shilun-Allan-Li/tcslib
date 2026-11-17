@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.choiceCore_step",
+ "key": "7fba0d9fe9a898b8",
+ "kind": "lemma",
+ "title": "One-step simulation of a choice bit",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $x,y,u$ be finite binary words, and let $c$ be a configuration of $N$ on input $x$. Suppose a Boolean tag $b$ satisfies the virtual boundary-tag condition for the input-head position of $c$. For every natural number $j<|u|$ and every physical input position for $y$, there is a Boolean tag $b'$ such that the configuration reached from $c$ by one step under the $j$th bit of $u$ has valid boundary tag $b'$, and one step of the simulation core from the encoding of $c,b,u$, choice-head position $j$, and the given physical position equals the encoding of that successor configuration, $b'$, $u$, choice-head position $j+1$, and the same physical position.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine $N$ over the binary alphabet",
+  "Finite binary words $x,y,u$",
+  "A configuration $c$ of $N$ on input $x$",
+  "A Boolean tag satisfying the boundary condition for $c$'s input-head position",
+  "A natural number $j<|u|$",
+  "A physical input position among the positions for $y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine over the binary alphabet, let a configuration of $N$ on input $x$ carry a valid virtual boundary tag, and let $u$ be a choice word with next unread index $j < |u|$. Then one physical step of the simulation core of $N$ transforms the embedded configuration into the embedding of the configuration obtained by one step of $N$ under the choice bit at position $j$, with choice index $j+1$ and some valid updated boundary tag."
+}

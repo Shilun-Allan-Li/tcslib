@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Compiler.decides_compileCond",
+ "key": "f0453225cfbb286a",
+ "kind": "theorem",
+ "title": "Correctness of compiled conditions",
+ "statement": "Let $W$ be a word width, let $Z$ be a compiler size record with local-variable bound $F$ and stack bound $Q$, and let $\u001b[1m\\sigma\u001b[0m$ be a program state represented by a word-RAM memory $m$ in a frame at stack position $q$. Suppose the frame representation stores the designated words $1$, $0$, and $-1$ at their respective addresses, stores each pool index $n$ up to the dispatcher position at its pool address, stores the frame pointer at the stack address for $q$, and stores each local value and memory value at the corresponding stack address and memory address within their specified bounds; also suppose $1\\le q$, $q+F\\le Q$, and every value of the state has absolute value at most the word bound. If a condition $c$ has width at most $F$, is safe for the resource limits and state, and its compiled code occurs at position $pos$ in a program, then there are a memory $m'$ and a number $n\\le\\mathrm{size}(c)$ such that $m'$ agrees with $m$ outside the scratch and temporary addresses for $F$ local variables. Execution from $pos$ reaches $pos+\\mathrm{size}(c)$ in $n$ steps when $c$ holds, and reaches the specified target position $l$ in $n$ steps when $c$ does not hold, with the same resulting memory $m'$.",
+ "hypotheses_covered": [
+  "A size record with word width W, local-variable bound F, and stack bound Q",
+  "A state and memory satisfying the framed representation",
+  "Frame bounds 1 ≤ q and q + F ≤ Q",
+  "All state location and memory values have absolute value at most the word bound",
+  "Compiled condition code occurs at position pos",
+  "Condition width is at most F",
+  "Condition is safe for the limits and state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a word width, let $Z$ be a size record with local-variable bound $F$,\nresource limits, and stack bound $Q$, and let $\u001b[1m\\sigma\u001b[0m$ be a program state.\nSuppose a machine memory $m$ represents $\u001b[1m\\sigma\u001b[0m$ in a frame at stack position\n$q$, with $1\\le q$ and $q+F\\le Q$, and suppose $\u001b[1m\\sigma\u001b[0m$ is bounded by the word\nlimit. For any condition $c$ whose compiled code occurs in a program at position\n$\\mathrm{pos}$, whose width is at most $F$, and which is safe for the resource limits\nand state, there are a memory $m'$ and a number $n\\le\\mathrm{size}(c)$ of steps such\nthat $m'$ agrees with $m$ outside the scratch addresses and temporary addresses used for\n$F$ local variables. If $c$ holds in $\u001b[1m\\sigma\u001b[0m$, execution from $\\mathrm{pos}$\nreaches $\\mathrm{pos}+\\mathrm{size}(c)$ in $n$ steps with memory $m'$; if $c$ does not\nhold, execution instead reaches the specified target position $l$ in $n$ steps with that\nsame memory."
+}

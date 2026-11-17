@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clA5Clean_stop",
+ "key": "9e32b4effe3588d0",
+ "kind": "lemma",
+ "title": "Release wrapper for clean computations",
+ "statement": "Let $C$ be a finite Turing machine, let $entry,exit$ be states of $C$, and let $result$ and $emit$ map binary words to binary words. Let $B:\\mathbb{N}\\to\\mathbb{N}$ and suppose $C$ has a positive number of work tapes. Assume that for every binary input $x$ and argument word $arg$, there is a time $t\\le B(|arg|)$ with $t>0$ such that at every time $v$ with $0<v<t$ the machine has not reached $exit$, and at time $t$ its configuration is the seam configuration with state $exit$, tape words encoding $result(arg)$, and output $emit(arg)$. Then the release wrapper of $C$ satisfies the clean contract for $result$ and $emit$ with budget $n\\mapsto B(n)+1$.",
+ "hypotheses_covered": [
+  "$C$ is a finite binary Turing machine",
+  "$entry,exit$ are states of $C$",
+  "$result,emit$ map binary words to binary words",
+  "$B$ maps natural numbers to natural numbers",
+  "$C$ has a positive number of work tapes",
+  "For every binary input and argument, a time $t\\le B(|arg|)$ exists with $t>0$",
+  "At each $v$ with $0<v<t$, the run has not reached $exit$",
+  "At time $t$, the configuration has state $exit$, tape words encoding $result(arg)$, and output $emit(arg)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a machine has, for every input and argument, a positive first exit within a budget $B$ at the canonical seam with a result word and emitted chunk, then its release wrapper satisfies the uniform clean contract with budget $B + 1$; the minimal-halt cut retains the entire clean configuration."
+}

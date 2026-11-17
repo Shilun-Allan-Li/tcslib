@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.timedCaptured_frame",
+ "key": "6123d4046eb77dbd",
+ "kind": "lemma",
+ "title": "The captured entry is a frame",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be one of its work tapes, let $x$ be a Boolean input word, let $C$ be a configuration of $M$ on $x$, and let $b$ be a Boolean word. Suppose the contents of tape $c$ in $C$ are the buffer tape holding $b$, and its head is at position $|b|$. Then the interpreter-entry capture configuration associated with $C$ equals the frame, over $C$'s tapes and heads, of the six-tape lift of the stopped interpreter's entry configuration for the table given by $C$'s output, using clock word $b$ and the same input-head position.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$c$ is a work-tape index of $M$",
+  "$x$ is a Boolean word",
+  "$C$ is a configuration of $M$ on $x$",
+  "$b$ is a Boolean word",
+  "tape $c$ in $C$ stores $b$ as a buffer tape",
+  "the head on tape $c$ is at position $|b|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a halted configuration of the base machine hold, on the designated clock\ntape, the buffer of a clock word with head at the word's length.  Then its\ninterpreter-entry capture configuration equals the frame --- over the base\nconfiguration's tapes and heads --- of the six-tape lift, with that clock\nword, of the stopped interpreter's entry configuration on the captured table\n(the base configuration's accumulated output) with the same parked input head."
+}

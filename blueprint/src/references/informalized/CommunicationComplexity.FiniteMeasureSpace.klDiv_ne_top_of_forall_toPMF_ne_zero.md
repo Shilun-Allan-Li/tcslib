@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/KLDivergence.lean :: CommunicationComplexity.FiniteMeasureSpace.klDiv_ne_top_of_forall_toPMF_ne_zero -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Finiteness under full support
+
+**Claim.** If $ν$ is a probability measure on a finite discrete space and gives every point nonzero mass, then the KL divergence of any probability measure $μ$ relative to $ν$ is not infinite.
+
+**Proof.** Apply the finite-space formula for KL divergence as a sum of logarithmic terms. Its only infinite branch requires a point $ω$ with $ν(\{ω\})=0$ and $μ(\{ω\})≠0$. The hypothesis that every value of the probability mass function of $ν$ is nonzero rules out that branch, since the mass function at $ω$ equals $ν(\{ω\})$. The divergence is therefore the real embedding of the displayed finite sum, which cannot equal infinity.
+
+**Key facts.** `CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log`.

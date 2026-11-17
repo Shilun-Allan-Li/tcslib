@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.AdjWalk.inLoop",
+ "key": "6bc3e1550830e6b6",
+ "kind": "lemma",
+ "title": "Bounded Input Scan Loop",
+ "statement": "Let $C$ be a family of Boolean circuits, and fix Boolean $\\ell_m$ and natural numbers $n,i,B$. Suppose $n+1\\le B$. For all natural numbers $d,V,k,U,W$ with $V+d=n$, $k\\le i$, $U,W\\le B$, and $k+d+1\\le B$, the walk initialized in state $nI$ with registers $(k,V,U,W)$ and no result has the following behavior on the input encoding $n$ and $i$: if $k\\le i<k+d+1$, it halts with answer $\\ell_m$ or the $(i-k)$-th bit of the word consisting of $d$ ones followed by zero; if $k+d+1\\le i$, it reaches a configuration satisfying the specified postcondition, with all registers bounded by $B$ throughout the run before reaching it.",
+ "hypotheses_covered": [
+  "$n+1\\le B$",
+  "$V+d=n$",
+  "$k\\le i$",
+  "$U\\le B$",
+  "$W\\le B$",
+  "$k+d+1\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

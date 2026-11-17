@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.workCell_succ",
+ "key": "4cd1271e9ec65816",
+ "kind": "lemma",
+ "title": "One-step update of a work cell",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean work-tape symbols, let $x$ be a finite Boolean input, let $t\\in\\mathbb{N}$, let $\\tau$ be a work-tape index, and let $p\\in\\mathbb{Z}$. After $t+1$ steps, the contents of cell $p$ on tape $\\tau$ equal the symbol left in the cell by the step if $p$ is the tape head's position after $t$ steps; otherwise they equal the contents of that cell after $t$ steps. The symbol left by the step is the current scanned symbol if the machine is halted, and otherwise is the symbol prescribed by the transition (or the current scanned symbol if no write is prescribed).",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over Boolean symbols",
+  "$x$ is a finite Boolean input",
+  "$t$ is a natural number",
+  "$\\tau$ is a work-tape index",
+  "$p$ is an integer tape-cell position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary multi-tape Turing machine with finite state set $Q$, transition function\n$\\delta$ and $k$ work tapes whose cells are indexed by $\\mathbb{Z}$; let $x \\in \\{0,1\\}^*$,\n$t \\in \\mathbb{N}$, $\\tau \\in \\{0, \\dots, k-1\\}$ and $p \\in \\mathbb{Z}$. Let $q \\in Q \\cup\n\\{\\bot\\}$ (with $\\bot$ meaning halted), $a$ and $b = (b_0, \\dots, b_{k-1})$ be the state, the\ninput-head symbol and the work-head symbols after $t$ steps of $M$ on $x$, and let $h$ be the\nposition of the head of work tape $\\tau$ at that time. Then after $t + 1$ steps, cell $p$ of\nwork tape $\\tau$ has the same content as after $t$ steps if $p \\ne h$; if $p = h$, its\ncontent is $b_\\tau$ when $q = \\bot$, and otherwise is the symbol that $\\delta(q, a, b)$ writes\non tape $\\tau$, or $b_\\tau$ when that transition writes nothing on tape $\\tau$."
+}

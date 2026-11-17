@@ -57,14 +57,17 @@ Usage:
 """
 
 import argparse
-import gzip
 import importlib.util
 import json
 import re
-import shutil
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
+import sys
+sys.path.insert(0, str(BASE))
+from scripts import dataset_projects as dp
+from scripts.dataset_shards import refresh_mirrors
+
 DEP_GRAPH = BASE / "dep_graph.json"
 CHAPTER_DIR = BASE / "blueprint" / "src" / "chapter"
 DEFAULT_OUT = BASE / "dataset" / "tcslib_theorems.jsonl"
@@ -73,11 +76,11 @@ DEF_KINDS = {"def", "abbrev", "structure", "inductive", "class", "instance", "ax
 PROOF_KINDS = {"theorem", "lemma"}
 ALL_KINDS = DEF_KINDS | PROOF_KINDS
 
-_MODIFIERS = r"(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+|@\[[^\]]*\]\s*)*"
+_MODIFIERS = r"(?:public\s+|private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+|@\[[^\]]*\]\s*)*"
 KIND_RE = re.compile(r"^\s*" + _MODIFIERS + r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example|axiom|opaque)\b")
 DECL_COL0_RE = re.compile(r"^" + _MODIFIERS + r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example|axiom|opaque)\b")
 NS_RE = re.compile(r"^\s*namespace\s+([A-Za-z_][A-Za-z0-9_'.]*)")
-SECTION_RE = re.compile(r"^\s*section\b")
+SECTION_RE = re.compile(r"^\s*(?:@\[[^\]]*\]\s*)?(?:public\s+|private\s+)?section\b")
 END_RE = re.compile(r"^\s*end\b")
 VAR_RE = re.compile(r"^\s*variable\b")
 PREAMBLE_RE = re.compile(r"^\s*(open|notation|local\s+notation|scoped\s+notation|infix|infixl|infixr|prefix|postfix|set_option|universe)\b")
@@ -196,14 +199,7 @@ def consume_macro_args(text: str, pending: int, depth: int) -> tuple[int, int]:
 def module_matches(module: str, wanted) -> bool:
     """`TCSlib.A.B` matches `TCSlib.A.B`, `A.B`, `B` (dotted suffix) or `A` (a prefix: every
     module under that area)."""
-    for w in wanted:
-        w = w.strip()
-        if not w:
-            continue
-        full = w if w.startswith("TCSlib.") else "TCSlib." + w
-        if module == full or module.endswith("." + w) or module.startswith(full + "."):
-            return True
-    return False
+    return dp.module_matches(module, wanted)
 
 
 def normalize_name(name: str) -> str:
@@ -232,8 +228,7 @@ def is_name_title(title: str, lean_name: str) -> bool:
 
 
 def module_to_lean_path(module: str) -> Path:
-    rel = module[len("TCSlib."):] if module.startswith("TCSlib.") else module
-    return BASE / "TCSlib" / (rel.replace(".", "/") + ".lean")
+    return dp.source_path(module)
 
 
 def display_output_path(path: Path, base: Path = BASE) -> str:
@@ -375,8 +370,8 @@ def parse_file_context(lines: list[str]):
             continue
         m_imp = IMPORT_LINE_RE.match(line)
         if m_imp:
-            if not m_imp.group(1).startswith("TCSlib"):
-                ext_imports.append(line.strip())
+            if not dp.is_internal(m_imp.group(1)):
+                ext_imports.append("import " + m_imp.group(1))
             i += 1
             continue
         if PREFIX_LINE_RE.match(line):
@@ -407,9 +402,15 @@ def parse_file_context(lines: list[str]):
             continue
         if PREAMBLE_RE.match(line):
             ns = ".".join(s["name"] for s in scopes if s["kind"] == "ns" and s["name"])
-            preamble.append((ns, line.rstrip()))
+            j = i + 1
+            if stripped.startswith("open "):
+                balance = line.count("(") - line.count(")")
+                while balance > 0 and j < n:
+                    balance += lines[j].count("(") - lines[j].count(")")
+                    j += 1
+            preamble.append((ns, "\n".join(l.rstrip() for l in lines[i:j])))
             pending = []
-            i += 1
+            i = j
             continue
         if DECL_COL0_RE.match(line):
             ns = ".".join(s["name"] for s in scopes if s["kind"] == "ns" and s["name"])
@@ -432,7 +433,7 @@ def variable_span_end(lines: list[str], i: int) -> int:
 
 
 _BOUNDARY_KW_RE = re.compile(
-    r"^(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+)*"
+    r"^(?:public\s+|private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+)*"
     r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example|axiom|opaque|namespace|"
     r"section|end|open|variable|universe|set_option|notation|infix|infixl|"
     r"infixr|prefix|postfix|attribute|omit|include|mutual|macro|macro_rules|"
@@ -606,6 +607,9 @@ def build_index(graph: dict):
             if kind not in ALL_KINDS:
                 continue
             nname = normalize_name(name)
+            if nname in raw and dp.project_name(raw[nname]["module"]) != dp.project_name(module):
+                raise ValueError(f"Declaration name collision across dataset projects: {nname} "
+                                 f"({raw[nname]['module']} and {module})")
             if not is_real_decl_name(nname) or nname in raw:
                 continue  # skip elaborator-generated helpers; first name wins
             # Verify the located keyword actually declares this name. Two mismatch cases:
@@ -613,12 +617,12 @@ def build_index(graph: dict):
             # belongs to another member — scan forward for the keyword that declares this
             # name. `where`/`let rec` helpers (e.g. `foo.go`) have no keyword of their own
             # and no such line exists — those stay inside their parent's slice, so drop.
-            dshort = declared_short_name(lines[kidx])
+            dshort = declared_short_name("\n".join(lines[kidx:kidx + 5]))
             if kind != "instance" and dshort != nname.split(".")[-1]:
                 found = None
                 for j in range(kidx + 1, min(kidx + 300, len(lines))):
                     mj = KIND_RE.match(lines[j])
-                    if mj and declared_short_name(lines[j]) == nname.split(".")[-1]:
+                    if mj and declared_short_name("\n".join(lines[j:j + 5])) == nname.split(".")[-1]:
                         found = (j, mj.group(1))
                         break
                 if found is None:
@@ -655,7 +659,7 @@ def build_index(graph: dict):
         alldeps = set()
         lost = set()
         for dep in rec["raw_deps"]:
-            if not dep.get("module", "").startswith("TCSlib"):
+            if not dp.is_internal(dep.get("module", "")):
                 continue
             dn = normalize_name(dep["name"])
             if dn == rec["name"]:
@@ -1163,7 +1167,7 @@ def build_formal(target, index, all_def_deps: bool, target_body: bool = False, e
 #     section context, and namespace stubs up front make hoisted `open`s legal even
 #     when the first declaration of that namespace comes later.
 
-IMPORT_LINE_RE = re.compile(r"^import\s+([A-Za-z_][A-Za-z0-9_'.«»]*)")
+IMPORT_LINE_RE = re.compile(r"^(?:public\s+|private\s+)?import\s+([A-Za-z_][A-Za-z0-9_'.«»]*)")
 PREFIX_IN_RE = re.compile(r"^\s*(?:open|set_option|omit|include)\b.*\bin\s*$")
 ATTR_ONLY_RE = re.compile(r"^\s*@\[[^\]]*\]\s*$")
 MUTUAL_START_RE = re.compile(r"^\s*mutual\b")
@@ -1220,8 +1224,8 @@ def parse_module_items(lines: list[str]):
             continue
         m_imp = IMPORT_LINE_RE.match(line)
         if m_imp:
-            if not m_imp.group(1).startswith("TCSlib"):
-                ext_imports.append(line.strip())
+            if not dp.is_internal(m_imp.group(1)):
+                ext_imports.append("import " + m_imp.group(1))
             i += 1
             continue
         if NS_RE.match(line):
@@ -1299,7 +1303,7 @@ def build_module_imports(modules) -> dict[str, list[str]]:
         if p.exists():
             for line in p.read_text(encoding="utf-8", errors="ignore").splitlines():
                 mm = IMPORT_LINE_RE.match(line)
-                if mm and mm.group(1).startswith("TCSlib"):
+                if mm and dp.is_internal(mm.group(1)):
                     deps.append(mm.group(1))
         imp[m] = deps
     return imp
@@ -1606,7 +1610,7 @@ def make_proof_builder(graph, index):
                 mk = KIND_RE.match(lines[k])
                 if k in known or not mk:
                     continue
-                short = declared_short_name(lines[k])
+                short = declared_short_name("\n".join(lines[k:k + 5]))
                 if not short:
                     continue
                 full = f"{it['ns']}.{short}" if it["ns"] else short
@@ -1738,7 +1742,7 @@ def make_proof_builder(graph, index):
             for k in range(it["start"], it["end"]):
                 if k in kn or not KIND_RE.match(lines[k]):
                     continue
-                short = declared_short_name(lines[k])
+                short = declared_short_name("\n".join(lines[k:k + 5]))
                 if short:
                     full = f"{it['ns']}.{short}" if it["ns"] else short
                     alias.setdefault(full, reps[0])
@@ -1789,7 +1793,8 @@ def main():
         print(f"ERROR: {DEP_GRAPH} not found.")
         return 1
 
-    graph = json.load(open(DEP_GRAPH))["modules"]
+    graph_data = json.load(open(DEP_GRAPH))
+    graph = graph_data["modules"]
     print("Indexing declarations ...")
     index = build_index(graph)
     print(f"  {len(index)} declarations indexed "
@@ -1973,6 +1978,8 @@ def main():
                 unresolved_citations.append((name, document, block))
 
             record = {
+                "provenance": {**graph_data.get("projects", {}).get(dp.project_name(rec["module"]), {}),
+                               **dp.source_provenance(rec["module"])},
                 "id": name,
                 "informal_statement": columns.statement,
                 "statement_source": columns.statement_source,
@@ -2003,15 +2010,8 @@ def main():
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
             n_written += 1
 
-    # The theorems web viewer (webpage/theorems/index.html) fetches the gzipped
-    # copy in preference to the .jsonl, so the .gz must be refreshed in the same
-    # run or the viewer silently serves a stale dataset. Written via a temp file
-    # so an interrupted run can't leave a truncated .gz behind.
-    gz_path = out_path.with_suffix(out_path.suffix + ".gz")
-    gz_tmp = gz_path.with_suffix(gz_path.suffix + ".tmp")
-    with open(out_path, "rb") as src, gzip.open(gz_tmp, "wb", compresslevel=9) as dst:
-        shutil.copyfileobj(src, dst)
-    gz_tmp.replace(gz_path)
+    # Keep published shards in sync, including when run outside the pipeline.
+    gz_path = refresh_mirrors(out_path)
 
     print()
     print(f"Wrote {n_written} records -> {display_output_path(out_path)}")

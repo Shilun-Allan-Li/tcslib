@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clCounts_positions",
+ "key": "9f2b7c7a4a668d34",
+ "kind": "lemma",
+ "title": "Signed counts equal reference positions",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape symbols, let $y$ be a finite Boolean word, let $t$ be a natural number, and let $i$ be a position coordinate. The signed value of the count pair at coordinate $i$ at time $t$ equals the reference position at coordinate $i$ of the configuration reached after $t$ steps on input $y$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$y$ is a finite Boolean word",
+  "$t$ is a natural number",
+  "$i$ is a position coordinate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, virtual input $y$, time $t$, and coordinate, the signed value of the stored count pair equals the reference position of the configuration reached at time $t$: the shifted clamped input position on the first coordinate and the signed work-head positions on the rest."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.mread_of",
+ "key": "33d11871bbeab52b",
+ "kind": "lemma",
+ "title": "Preservation Across a Memory Read",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}:\\{0,1,2,3\\}\\to\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be an oracle, and let $x$ be a Boolean word. Let $st$ be a machine state whose 17 register values are all at most $B$, let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory, let $p\\in\\mathbb Z$ satisfy $0\\le p\\le P$, and let $l,l_1,l_0$ be control states. If the instruction at $l$ reads the memory bit at position $p$, continuing at $l_1$ when $M(p)$ is true and at $l_0$ when it is false, then every guarded finite run from the selected successor configuration—with state $st$, memory $M$, and head position $p$—to a configuration $c$ can be prefixed by this read: there is a guarded finite run from the configuration at $l$ with the same state, memory, and head position to $c$.",
+ "hypotheses_covered": [
+  "$K_0,B,P\\in\\mathbb N$",
+  "an oracle on four indices and Boolean words",
+  "a Boolean input word $x$",
+  "a state $st$ with all 17 register values at most $B$",
+  "Boolean memory $M$ indexed by integers",
+  "$p\\in\\mathbb Z$ with $0\\le p\\le P$",
+  "control states $l,l_1,l_0$",
+  "the instruction at $l$ reads the memory bit and branches to $l_1$ or $l_0$ according to its value",
+  "guarded reachability from the selected successor configuration to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P$ be natural numbers, let\n$\\mathrm{orc}:\\mathrm{Fin}(4)\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{Bool}$ be an\noracle, and let $x$ be a Boolean word. Suppose a machine instruction at control state\n$l$ reads the memory bit at the head and branches to $l_1$ when it is true and to $l_0$\nwhen it is false. Let $st$ be a register state whose 17 counters are all at most $B$,\nlet the memory head position $p$ satisfy $0\\le p\\le P$, and let $c$ be reachable from\nthe configuration at state $l_1$ or $l_0$ selected by the memory bit at $p$, with the\nguard maintained at every earlier step. Then $c$ is also reachable from the\nconfiguration at state $l$ with the same register values, memory, and head position,\nwith that guard maintained at every earlier step."
+}

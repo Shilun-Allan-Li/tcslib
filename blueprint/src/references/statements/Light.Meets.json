@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.Meets",
+ "key": "268499fea4d85213",
+ "kind": "def",
+ "title": "Program meets a relation",
+ "statement": "Let $\\mathrm{lim}$ be a set of execution limits, let $P$ be a program, and let $p,d,T\\in\\mathbb N$, $\\mathrm{vals}\\in\\mathbb Z^{*}$, and $\\mu:\\mathbb N\\to\\mathbb Z$. Let $R$ be a predicate on pairs consisting of an integer and a memory function $\\mathbb N\\to\\mathbb Z$. The program meets $R$ at position $p$ and depth parameter $d$ if there is a statement body at position $p$ in $P$ and, starting from the state with local frame initialized by $\\mathrm{vals}$ and memory $\\mu$, execution under limits $\\mathrm{lim}$ can end after $T$ steps in a state whose location-zero value and memory satisfy $R$.",
+ "hypotheses_covered": [
+  "A limits value $\\mathrm{lim}$",
+  "A program $P$",
+  "Natural numbers $p,d,T$",
+  "An integer list $\\mathrm{vals}$",
+  "A memory function $\\mu:\\mathbb N\\to\\mathbb Z$",
+  "A predicate $R$ on an integer and a memory function",
+  "There is a body at position $p$ in $P$",
+  "Execution from the specified initial state ends after $T$ steps in a state satisfying $R$"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet leaves the definitions of execution, the initial frame, and state locations such as $\\mathrm{Ends}$, $\\mathrm{frame}$, and $\\mathrm{loc}$ unspecified, so their exact meaning cannot be recovered here.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

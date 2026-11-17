@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter07/UniqueGamesReduction.lean :: FABL.RegularUniqueGame.globallyFilteredLongCodeCSP_optimum_le_of_boundedSoundness -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Filtered Instance Soundness Bound
+
+**Claim.** If every table whose averaged tester acceptance is at least $\alpha+\operatorname{error}(\epsilon)+\tau$ forces the CSP optimum to be at least a specified decoded lower bound, and the actual CSP optimum is below that bound, then the globally filtered long-code instance has optimum at most $\alpha+\operatorname{error}(\epsilon)+\tau+r^2/M$.
+
+**Proof.** Form the raw globally filtered instance and take an assignment attaining its optimum. Removing isolated variables preserves the optimum (FABL.WeightedConstraintExperiment.UniformRefinement.globallyFilteredCloneCSP_optimum). If the raw optimum were larger than the claimed bound, the estimate that the raw value differs from the padded-clone value by at most $r^2/M$ (FABL.WeightedConstraintExperiment.UniformRefinement.abs_paddedCloneValue_sub_globallyFilteredCloneRawCSP_value_le) would make the padded-clone value at least $\alpha+\operatorname{error}(\epsilon)+\tau$. The padded-clone value equals the value of the cloned weighted experiment (FABL.WeightedConstraintExperiment.UniformRefinement.paddedCloneValue_eq_clone_value); the allowed-predicate clone has the same value as the unrestricted long-code clone (FABL.RegularUniqueGame.longCodeAllowedWeightedExperiment_clone_value), which equals the bounded long-code value of the mean table associated to the assignment (FABL.RegularUniqueGame.clonedLongCode_value_eq_boundedLongCodeValue). The assumed soundness implication would then put the CSP optimum at least at the decoded lower bound, contradicting its strict upper bound. Therefore the filtered optimum cannot exceed the asserted quantity.
+
+**Key facts.** `FABL.WeightedConstraintExperiment.UniformRefinement.globallyFilteredCloneCSP_optimum`, `FABL.WeightedConstraintExperiment.UniformRefinement.abs_paddedCloneValue_sub_globallyFilteredCloneRawCSP_value_le`, `FABL.WeightedConstraintExperiment.UniformRefinement.paddedCloneValue_eq_clone_value`, `FABL.RegularUniqueGame.longCodeAllowedWeightedExperiment_clone_value`, `FABL.RegularUniqueGame.clonedLongCode_value_eq_boundedLongCodeValue`.

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a2_load_rewind",
+ "key": "b66bc9379a5e95dd",
+ "kind": "lemma",
+ "title": "Rewind to the borrow phase",
+ "statement": "Let $x$ be a binary input, let $p$ be any input-head position, let $u$ be a binary word, and let $j$ be a natural number with $j \\le |u|$. Starting with the countdown machine in its startup state, with work tape containing $u$, work-head position $j-1$, input-head position $p$, and empty output, after exactly $j+1$ steps it is in the borrow phase with work-head position $0$, tape still containing $u$, input-head position still $p$, and empty output.",
+ "hypotheses_covered": [
+  "Binary input $x",
+  "Input-head position $p$ among the valid positions for $x$",
+  "Binary word $u$",
+  "Natural number $j$ with $j \\le |u|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input position, every counter word $u$ and every $j \\le |u|$: from the startup-rewind configuration with work head at cell $j-1$, exactly $j+1$ steps of the countdown emitter reach the borrow state at cell zero with counter $u$ and empty output."
+}

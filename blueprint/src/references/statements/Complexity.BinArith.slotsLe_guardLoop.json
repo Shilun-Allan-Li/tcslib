@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.BinArith.slotsLe_guardLoop",
+ "key": "0a53db397d0c1845",
+ "kind": "theorem",
+ "title": "Preservation of slot length bounds",
+ "statement": "Let $g$ be any function from finite bit strings to finite bit strings. For a finite bit string $W$ and natural number $L$, suppose the four decoded slots of $W$ have lengths at most $L$: the first component of $W$, the first component of its second component, the first component of the second component of its second component, and the second component of the second component of its second component. After one guarded loop step—using $g$ only when its output length is at most the current first-slot length—the four slots still have lengths at most $L$.",
+ "hypotheses_covered": [
+  "$g$ is a function from finite bit strings to finite bit strings",
+  "$L$ is a natural number",
+  "$W$ is a finite bit string",
+  "Each of the four specified decoded slots of $W$ has length at most $L$"
+ ],
+ "confidence": "low",
+ "caveat": "The slot and loop operations are only given by Lean definitions in the supplied context; the prose summarizes their decoded-slot behavior.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.cube_lowDegree_projection",
+ "key": "83fee9d2f89cc94d",
+ "kind": "theorem",
+ "title": "Low degree projection moment bounds",
+ "statement": "Let $g:\\{0,1\\}^n\\to\\mathbb R$, let $k\\in\\mathbb N$, and let $q>1$. The Fourier truncation $g^{\\leq k}=\\sum_{|S|\\leq k}\\widehat g(S)\\chi_S$ satisfies both conditional bounds: if $q\\geq2$, then $\\|g^{\\leq k}\\|_q\\leq(\\sqrt{q-1})^k\\|g\\|_q$; if $q\\leq2$, then $\\|g^{\\leq k}\\|_q\\leq(1/\\sqrt{q-1})^k\\|g\\|_q$, with norms taken under the uniform measure on the Boolean cube.",
+ "hypotheses_covered": [
+  "$g:\\{0,1\\}^n\\to\\mathbb R$",
+  "$k\\in\\mathbb N$",
+  "$q>1$",
+  "The first bound is asserted under $q\\geq2$",
+  "The second bound is asserted under $q\\leq2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube, $k\\in\\mathbb N$, and $q>1$. The Fourier projection $f^{\\le k}$ satisfies $\\|f^{\\le k}\\|_q\\le(\\sqrt{q-1})^k\\|f\\|_q$ when $q\\ge2$, and $\\|f^{\\le k}\\|_q\\le(1/\\sqrt{q-1})^k\\|f\\|_q$ when $q\\le2$. For a real function $h$ on the cube, use $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$, $\\widehat h(S)=\\mathbb E_x[h(x)\\chi_S(x)]$, $h^{\\le k}=\\sum_{|S|\\le k}\\widehat h(S)\\chi_S$, $\\|h\\|_p=(\\mathbb E_x|h(x)|^p)^{1/p}$, with uniform expectation $\\mathbb E_x$ and natural powers $0^0=1$."
+}

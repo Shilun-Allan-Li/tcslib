@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.enumCont_body_round_raw",
+ "key": "1b26b94353b216c8",
+ "kind": "lemma",
+ "title": "Raw body round",
+ "statement": "Let $B$ be a finite Boolean Turing machine with at least one work tape, let $q_v,q_i$ be states of $B$, let $stop$ be a Boolean flag, and let $x,s$ be Boolean words. Suppose that from the seam configuration on input $x$ with state $q_v$ and word assignment placing $s$ on tape zero, $B$ halts within $T_v$ steps with output $[b]$, and from the corresponding configuration with state $q_i$, it halts within $T_i$ steps with output equal to the fixed-width increment of $s$, using the empty word if that increment overflows. Then for some $t\\le 3T_v+3T_i+2|x|+3|s|+21$, the body machine with parameters $B,q_v,q_i,stop$, started just after departure in mode $1$ with $s$ on tape zero and the other tapes blank, either halts with output $[\\mathrm{true}]$ when $b$ is true, or reaches the anchor on the seam carrying the increment of $s$, using $s$ itself when the increment overflows, when $b$ is false.",
+ "hypotheses_covered": [
+  "$B$ is a finite Boolean Turing machine",
+  "$B$ has at least one work tape",
+  "$q_v,q_i$ are states of $B$",
+  "$stop$ is a Boolean flag",
+  "$x,s$ are Boolean words",
+  "$b$ is a Boolean",
+  "$T_v,T_i$ are natural-number time bounds",
+  "the verification run from the seam with state $q_v$ halts at time $T_v$ and outputs $[b]$",
+  "the increment run from the seam with state $q_i$ halts at time $T_i$ and outputs the fixed-width increment of $s$, or the empty word on overflow"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $B$ be a source machine with at least one work tape whose verification call\non candidate $s$ (from the verifier entry state at the seam) halts within $T_v$\nsteps with single-bit output $b$, and whose increment call halts within $T_i$\nsteps emitting the fixed-width increment output. Then from the configuration\njust after departure, within $3T_v + 3T_i + 2|x| + 3|s| + 21$ steps the\nenumerator body either halts with output true (when $b$ is true) or reaches the\nanchor over the seam carrying the stalled increment of $s$ (when $b$ is false)."
+}

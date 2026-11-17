@@ -7,7 +7,7 @@ file states the intent and the "Known gaps" section says where the code still de
 
 ## Purpose
 
-`dataset/tcslib_theorems.jsonl.gz` pairs every theorem of the library with an informal
+`dataset/tcslib_theorems.manifest.json` and its gzip shards pair every theorem of the library with an informal
 statement (the passage of the text it was formalized from, when that text cites it;
 otherwise prose written from the Lean, with an account of the Lean proof), a standalone
 formal statement, a self-contained compiling proof, and a difficulty rating.  The pipeline keeps that file in step

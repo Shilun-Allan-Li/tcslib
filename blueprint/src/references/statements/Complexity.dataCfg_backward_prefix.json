@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.dataCfg_backward_prefix",
+ "key": "53b865dc7919edde",
+ "kind": "lemma",
+ "title": "Invariant during the backward sweep",
+ "statement": "Let $W$ and $M$ be finite binary Turing machines, let $a$ be a natural number, and let $x$ be a finite word over the schedule alphabet. Let $c$ be a configuration of the schedule machine, $u\\in\\mathbb{Z}$, $R,n\\in\\mathbb{N}$ with $n\\le 2R+1$, an optional state $q$ of $M$, a bit $b$, payload vectors $\\mathrm{read}$ and $f(z)$ for each $z\\in\\mathbb{Z}$, tape contents $T$, and output word $o$. Assume the guide tape of $c$ is the fixed guide of radius $R$, every decoded current payload of $T$ at coordinate $z$ and lane $i$ equals $f(z)_i$, and for $-R\\le z\\le R$ every decoded cached left-neighbor payload equals $f(z-1)_i$. Then there exist tape contents $T'$ such that after $n$ steps from the backward-phase configuration at guide position $R$, with neighbor registers $f(R+1)$, the configuration is in the backward phase at position $R-n$, with registers $f(R-n+1)$ and the same base configuration and output. For every lane $i$ and coordinate $z$, the decoded current payload in $T'$ is $f(z+m_i)_i$ when $R-n<z\\le R$, and is $f(z)_i$ otherwise, where $m_i$ is the virtual-head movement selected from $q$ and $\\mathrm{read}$. Moreover, for $-R\\le z\\le R-n$, the decoded cached left-neighbor payload in $T'$ is $f(z-1)_i$.",
+ "hypotheses_covered": [
+  "Finite binary machines $W,M$",
+  "Natural number parameter $a$",
+  "Finite schedule-alphabet word $x$",
+  "Base schedule configuration $c$",
+  "Integer $u$ and natural radius $R$",
+  "Optional state $q$ of $M$ and bit $b$",
+  "Payload vectors $\\mathrm{read}$ and $f$",
+  "Data-tape contents $T$ and output word $o$",
+  "Guide tape of $c$ equals the radius-$R$ guide",
+  "Decoded current payloads of $T$ equal $f(z)$ at every coordinate and lane",
+  "Decoded cached left-neighbor payloads equal $f(z-1)$ for coordinates in $[-R,R]$",
+  "Natural number $n$ with $n\\le 2R+1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$, let $f$ assign a\npayload vector to every coordinate, and suppose the current payloads of the data\ntapes decode to $f$ while the cached left neighbors equal $f(z-1)$ throughout\n$[-R, R]$.  For every $n \\le 2R + 1$, running the simulator $n$ steps from the\nbackward phase at $R$ with neighbor registers $f(R+1)$ stays in the backward\nphase, reaching position $R - n$ with neighbor registers $f(R-n+1)$, on tapes\nwhose current payload on lane $i$ at coordinate $z$ is the shifted value\n$f(z + m_i)$ for visited coordinates $R - n < z \\le R$ — where $m_i$ is the\nvirtual head direction of lane $i$ selected from the saved state and reads —\nand the unshifted value $f(z)$ elsewhere, while the cached left neighbors remain\n$f(z-1)$ for $-R \\le z \\le R - n$."
+}

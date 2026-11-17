@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Certificate",
+ "key": "c01daae98224fc1b",
+ "kind": "lemma",
+ "title": "Exact-length certificate from an assignment",
+ "statement": "Let $C,e\\in\\mathbb{N}$, let $x$ be a binary word, and let $a:\\mathbb{N}\\to\\{0,1\\\\}$ agree with $x$ on every index $j<|x|$, using false as the default bit beyond the indexed word. Then there is a binary word $u$ of length $C(|x|+1)^e$ such that the first $|x|+C(|x|+1)^e$ bits assigned by $a$ form the concatenation $xu$.",
+ "hypotheses_covered": [
+  "$C,e\\in\\mathbb{N}$",
+  "$x$ is a binary word",
+  "$a$ is a Boolean assignment on natural-number indices",
+  "For every $j<|x|$, $a(j)$ equals the $j$th bit of $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all parameters $C$ and $e$, every instance $x$, and every assignment agreeing with $x$ on the first $|x|$ variables, there is a certificate $u$ of length exactly $C(|x|+1)^e$ such that the recovered input word of the first $|x| + C(|x|+1)^e$ variables is the concatenation of $x$ and $u$; the certificate polynomial is not enlarged and no bounded-length witness is substituted."
+}

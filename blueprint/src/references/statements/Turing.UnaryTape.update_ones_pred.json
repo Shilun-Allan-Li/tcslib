@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.UnaryTape.update_ones_pred",
+ "key": "ad929b2e34a0bc9b",
+ "kind": "theorem",
+ "title": "Erasing the last unary cell",
+ "statement": "For every $j\\in\\mathbb{N}$, changing cell $j$ of the unary tape for $j+1$ to blank and leaving all other cells unchanged gives the unary tape for $j$.",
+ "hypotheses_covered": [
+  "$j\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $m \\in \\mathbb{N}$, let $\\mathrm{ones}_m : \\mathbb{Z} \\to \\{0, 1, \\sqcup\\}$ be the unary\ntape of $m$, which holds $1$ on cells $0, \\dots, m-1$ and the blank $\\sqcup$ elsewhere. For every\n$j \\in \\mathbb{N}$, the tape obtained from $\\mathrm{ones}_{j+1}$ by setting cell $j$ to the blank\n$\\sqcup$ and leaving every other cell unchanged is $\\mathrm{ones}_j$."
+}

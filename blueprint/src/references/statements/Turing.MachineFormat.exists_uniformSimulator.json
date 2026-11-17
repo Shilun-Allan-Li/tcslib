@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_uniformSimulator",
+ "key": "7e3c889164551abf",
+ "kind": "theorem",
+ "title": "Uniform simulation of coded machines",
+ "statement": "For every machine format $F$, there are a finite Turing machine $S$ over the Boolean alphabet and a natural number $d$ such that, for every pair of Boolean words $\\alpha,x$ and every $t\\in\\mathbb N$, on input encoding the pair consisting of the binary representation of $t$ and $\\alpha$, paired with $x$, the machine $S$ halts within $d(|\\alpha|+|x|+t+1)^d$ steps and outputs the single bit $1$ exactly when the machine denoted by the code decoded from $\\alpha$ halts on $x$ within $t$ steps with output $[1]$; otherwise it outputs the single bit $0$.",
+ "hypotheses_covered": [
+  "machine format $F$",
+  "finite Boolean-alphabet simulator $S$",
+  "natural number $d$",
+  "all Boolean words $\\alpha$ and $x$",
+  "$t\\in\\mathbb N$",
+  "true case: decoded machine computes $[1]$ from $x$ within $t$ steps",
+  "false case: decoded machine does not compute $[1]$ from $x$ within $t$ steps",
+  "simulator input is the nested pair encoding of the binary representation of $t$, $\\alpha$, and $x$",
+  "time bound $d(|\\alpha|+|x|+t+1)^d$",
+  "outputs are respectively $[1]$ and $[0]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

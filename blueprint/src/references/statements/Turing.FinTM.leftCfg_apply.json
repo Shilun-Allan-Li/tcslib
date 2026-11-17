@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.leftCfg_apply",
+ "key": "85155b37cd74bfb2",
+ "kind": "lemma",
+ "title": "Action application commutes with left-block embedding",
+ "statement": "Let $k,l$ be nonnegative integers, let $S,S'$ be state sets, and let $x$ be a finite Boolean input. Given a map $f:S\\to S'$, a $k$-tape action $a$ with Boolean work-tape symbols and states in $S$, a configuration $c$ on input $x$ with $k$ work tapes and states in $S$, and arbitrary contents and head positions for $l$ additional tapes, applying the action extended to the first $k$ tapes with states renamed by $f$ to the left-block embedding of $c$ gives exactly the left-block embedding of the result of applying $a$ to $c$, with the same additional tape contents and head positions.",
+ "hypotheses_covered": [
+  "$k,l$ are nonnegative integers",
+  "$f:S\\to S'$ is a state map",
+  "$a$ is an action with $k$ Boolean work tapes and states in $S$",
+  "$c$ is a configuration with $k$ Boolean work tapes and states in $S$ on Boolean input $x$",
+  "the contents of the additional $l$ tapes are arbitrary functions from $\\mathbb Z$ to optional Boolean symbols",
+  "the head positions of the additional $l$ tapes are arbitrary integers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : S \\to S'$ be a state renaming, $a$ a one-step action of a machine\nwith $k$ work tapes over the Boolean alphabet, $c$ a configuration of such a\nmachine on input $x$, and fix contents and head positions for $l$ inactive\nextra tapes.  Applying the left-block extension of $a$ along $f$ to the\nleft-block embedding of $c$ with the given inactive data yields the\nleft-block embedding, with the same inactive data, of the result of applying\n$a$ to $c$."
+}

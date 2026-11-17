@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_certificate_equiv",
+ "key": "5b09004b933ef47a",
+ "kind": "lemma",
+ "title": "TMSAT certificate characterization",
+ "statement": "Let $c$ be a machine representation scheme and let $y$ be a bit string. Then $y\\\\in\\\\mathrm{TMSAT}_c$ if and only if there is a bit string $w$ of length $|y|+1$ such that $yw$ belongs to the verifier language $V_c$.",
+ "hypotheses_covered": [
+  "A machine representation scheme $c$",
+  "A bit string $y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a machine-representation scheme, which assigns to every bit string $\\alpha$ a one-work-tape binary Turing machine $M_\\alpha$ (decoding is total). For every bit string $y$, $y \\in \\mathrm{TMSAT}_c$ if and only if there is a bit string $w$ with $|w| = |y| + 1$ and $yw \\in V_c$. Here, with $\\langle\\alpha,\\langle x,\\langle 1^n,1^t\\rangle\\rangle\\rangle$, where $\\langle a,b\\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones, $\\mathrm{TMSAT}_c$ is the set of strings $\\langle\\alpha,\\langle x,\\langle 1^n,1^t\\rangle\\rangle\\rangle$, over all bit strings $\\alpha, x$ and $n, t \\in \\mathbb{N}$, such that $M_\\alpha$ halts on $\\langle x,u\\rangle$ within $t$ steps with output exactly $1$ for some $u$ with $|u| = n$, and $V_c$ is the set of strings $y'w'$ with $|w'| = |y'|+1$ and $y' = \\langle\\alpha,\\langle x,\\langle 1^n,1^t\\rangle\\rangle\\rangle$ for some $\\alpha, x, n, t$ such that $M_\\alpha$ halts on $\\langle x, w'_{[:n]}\\rangle$ within $t$ steps with output exactly $1$, where $w'_{[:n]}$ is the first $n$ bits of $w'$."
+}

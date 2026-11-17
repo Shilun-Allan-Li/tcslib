@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clWipe_run",
+ "key": "5f7564f5d97937e9",
+ "kind": "lemma",
+ "title": "Exact scratch reset duration",
+ "statement": "For every Boolean input word $x$, input-head position $p$, stream word, target word $w$, and stream-head position $s$, after exactly $2|w|+2$ steps from control state $0$ with target head at cell $0$, the reset machine is in control state $2$, with the stream unchanged, the target erased, and the target head at cell $0$.",
+ "hypotheses_covered": [
+  "Boolean input word x",
+  "input-head position p",
+  "stream word",
+  "target word w",
+  "stream-head position s",
+  "initial control state 0 and target-head position 0",
+  "run duration 2|w| + 2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stream, target word $w$, and stream head, running the reset machine for $2|w| + 2$ steps from the scanning control at target cell zero leaves an empty target with its head at zero, in the completed control; both blank transitions are included and no bound on any later field is required."
+}

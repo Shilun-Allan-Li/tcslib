@@ -1,0 +1,14 @@
+{
+ "lean_name": "Std.Sat.DNF.dual_dual",
+ "key": "b6f8b233ad6f25ed",
+ "kind": "theorem",
+ "title": "Involutivity of DNF dualization",
+ "statement": "For every DNF formula $\\psi$ over variables indexed by $\\mathbb{N}$, take its De Morgan dual CNF by negating each literal and reading its terms as clauses, then take the De Morgan dual again. The resulting DNF formula is $\\psi$.",
+ "hypotheses_covered": [
+  "$\\psi$ is a DNF formula over $\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\psi$ be a DNF formula over variables indexed by $\\mathbb{N}$, a finite list of\nterms each a finite list of literals $(v,b)$ with $v \\in \\mathbb{N}$ and\n$b \\in \\{0,1\\}$. Forming its De Morgan dual CNF formula, by replacing every literal\n$(v,b)$ with $(v,\\neg b)$ and reading the terms as clauses, and then forming the De Morgan\ndual DNF formula of that CNF formula, by again replacing every literal $(v,b)$ with\n$(v,\\neg b)$ and reading the clauses as terms, returns $\\psi$."
+}

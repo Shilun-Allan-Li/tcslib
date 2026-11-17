@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emCall_clear_left",
+ "key": "68a962234a07bb65",
+ "kind": "lemma",
+ "title": "Initial leftward scan",
+ "statement": "Let $w$ be a Boolean word, let $p$ be an input-head position for $w$, let $d$ be any data tape, let $\\ell$ be an integer, and let $m$ be a nonnegative integer. For every integer $j$ with $0\\le j<m$, start the cleaner in state $0$ with its data tape $d$, its marker tape true exactly on $[\\ell,\\ell+m)$, its origin marker at $0$, and all heads at $\\ell+j$. After exactly $j+2$ steps, it is in state $1$ with the same data, interval marker, and origin marker, and all heads at $\\ell$.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "$p$ is an input-head position for $w$",
+  "$d$ is an arbitrary tape of optional Boolean symbols",
+  "$\\ell$ is an integer",
+  "$m$ is a natural number",
+  "$j$ ranges over natural numbers with $j<m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $d$ be a data tape and let an interval of width $m$ start at $\\ell$. For every $j <\nm$, running the interval cleaner for exactly $j + 2$ steps from its initial state with\nall heads at $\\ell + j$ reaches its rightward-erasure state with all heads at $\\ell$,\nindependently of blank holes in $d$."
+}

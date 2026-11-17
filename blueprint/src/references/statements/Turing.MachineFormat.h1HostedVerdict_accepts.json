@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.MachineFormat.h1HostedVerdict_accepts",
+ "key": "3be8aa4a1d4d597c",
+ "kind": "theorem",
+ "title": "Hosted machine verdict",
+ "statement": "Let $F$ be a machine format, let $\\alpha,x,z$ be finite bit strings, and let $d$ be a configuration of the step-block machine for the machine denoted by decoding $\\alpha$, on input $x$. Suppose $d$ is at the live entry state and correctly represents that decoded machine's initial configuration together with its transition table and summary tapes. For every $t\\in\\mathbb N$ and every input-head position $p$ among the $|z|+2$ positions, the hosted verdict machine, started with $d$, a counter encoding $t$, and input-head position $p$, halts after some $T$ steps with $T\\le t\\bigl(50(|L|+1)+4\\bigr)+2\\ell(t)+3$, where $L$ is the serialized transition table and $\\ell(t)$ is the length of the binary expansion of $t$. Its output is $d$'s output followed by a bit $a$, and $a=1$ if and only if the decoded machine halts on $x$ within $t$ steps with output exactly $[1]$.",
+ "hypotheses_covered": [
+  "$F$ is a machine format",
+  "$\\alpha,x,z$ are finite bit strings",
+  "$d$ is a configuration on input $x$",
+  "$d$ is at the live entry state",
+  "$d$ correctly represents the decoded machine's initial configuration and associated tapes",
+  "$t$ is a natural number",
+  "$p$ is one of the $|z|+2$ input-head positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

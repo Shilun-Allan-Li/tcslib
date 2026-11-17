@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.setupCfg_layout_return",
+ "key": "c072b89844fc0043",
+ "kind": "lemma",
+ "title": "Completion of the guide return pass",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B\\in\\mathbb{N}$, and choose a schedule-symbol input, a base configuration on it, a valid input-head position $p$, an integer budget-head position $b$, and budget and guide tapes $\\beta,\\gamma$. Starting in return phase of allocation index $0$ with unary head at $B$ over the unary tape with $B$ markers and guide head at $3B$, after exactly $3B+1$ steps the machine enters the first leftward layout phase with unary head at $1$ and guide head at $0$; the guide tape and all other configuration data are unchanged.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over Booleans",
+  "a and B are natural numbers",
+  "base is a configuration on the chosen input",
+  "p is a valid input-head position",
+  "b is an integer budget-head position",
+  "bt and gt are tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From layout-return phase $0$ with unary head at cell $B$ over the unary tape with $B$\nmarkers and guide head at cell $3B$ (over an arbitrary guide tape), exactly $3B+1$\nsteps reach the origin and enter the first leftward layout phase with unary head at\ncell $1$ and guide head at cell $0$; no tape is written."
+}

@@ -1,0 +1,25 @@
+{
+ "lean_name": "BoolCircuit.CktSatReduction.Emitter.print_walk",
+ "key": "6f5d905df5ce7578",
+ "kind": "theorem",
+ "title": "Work-tape printing walk",
+ "statement": "Let $w$ be a Boolean input, let $k$ be a gate kind, $c$ a gate code, $pc$ a program counter, and $t$ one of the three work tapes. Suppose the input-head position is $p$, the work tapes are given by $tp$, their head positions by $hd$, and tape $t$ contains the unary encoding of $m$. For every $j\\le m$ and every output list $out$, the emitter machine started in its printing state for tape $t$, with that tape's head at $j-1$ and the other heads as in $hd$, reaches after $j+1$ steps its printing state for the same tape and program counter, with that tape's head at zero, the same input-head position and tape contents, and output $out$ followed by $j$ true bits.",
+ "hypotheses_covered": [
+  "Boolean input list $w$",
+  "gate kind $k$",
+  "gate code $c$",
+  "program counter $pc\\in\\{0,\\ldots,63\\}$",
+  "tape index $t\\in\\{0,1,2\\}$",
+  "input-head position $p\\in\\{0,\\ldots,|w|+1\\}$",
+  "tape contents $tp$",
+  "head-position function $hd$",
+  "natural number $m$",
+  "tape $t$ in $tp$ equals the unary tape of $m$",
+  "natural number $j\\le m$",
+  "output list $out$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

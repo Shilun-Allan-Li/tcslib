@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/FoolingF₂Polynomials/DirectionalDerivatives.lean :: FABL.functionAlgebraicDegree_domainTranslate -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Degree Under Domain Translation
+
+**Claim.** For any Boolean function $f:\mathbb{F}_2^n\to\mathbb{F}_2$ and $z\in\mathbb{F}_2^n$, the translate $x\mapsto f(x+z)$ has the same algebraic degree as $f$.
+
+**Proof.** Translation by $z$ is an affine bijection of the cube, with inverse translation by $-z$ (which equals translation by $z$ over $\mathbb F_2$). Apply affine invariance of algebraic degree (`functionAlgebraicDegree_comp_affineEquiv`) to this bijection. Its composition with $f$ is precisely $x\mapsto f(x+z)$, giving the asserted equality.
+
+**Key facts.** `FABL.functionAlgebraicDegree_comp_affineEquiv`.

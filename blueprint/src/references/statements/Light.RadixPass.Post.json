@@ -1,0 +1,12 @@
+{
+ "lean_name": "Light.RadixPass.Post",
+ "key": "ed490da4cde35251",
+ "kind": "structure",
+ "title": "Radix pass postconditions",
+ "statement": "Let $\\mu:\\mathbb{N}\\to\\mathbb{Z}$ be memory before the pass, $\\mu':\\mathbb{N}\\to\\mathbb{Z}$ memory after it, $A$ be radix-pass arguments, $\\pi$ a list of indices, and $kd:\\mathbb{N}\\to\\mathbb{N}$ their keys. The memories agree outside the region of $A.R$ cells starting at $A.\\mathrm{perm}$; for every $t\\le A.\\mathrm{nb}$, the counter cell $A.\\mathrm{cnt}+t$ contains the number of entries in the key sequence of $\\pi$ that are less than $t$. In addition, there is a list $\\pi'$ that is a stable ordering of $\\pi$ by $kd$ and whose entries are stored consecutively in memory starting at $A.\\mathrm{perm}$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "The referenced predicates SameOutside, cntLt, keyAt, IsStablePass, and SegN are not defined in the supplied snippet, so their exact conventions are not recoverable here.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.comp_factor_run",
+ "key": "9794a2b7a07d3d8b",
+ "kind": "lemma",
+ "title": "Factor multiplication run",
+ "statement": "Let $C,e,B$ be natural numbers, let $m$ and $o$ be Boolean flags, let $f$ map finite Boolean words to finite Boolean words, and let $h$ be a finite Boolean word. Suppose $v$ assigns a natural number to each of fourteen registers, every register value is at most $B$, register $11$ is zero, and $Fv_7\\le B$, where $F=C$ if $o$ is false and $F=2C+3$ if $o$ is true. Starting in the factor-copy state with flag $o$ and no result, the computation reaches the length-bound state if $o$ is false and the tail-test state with flag true if $o$ is true, with register $7$ equal to $Fv_7$ and every other register unchanged. Every configuration before the final one satisfies the prescribed invariant: the instruction is admissible at that configuration and all register values are at most $B$.",
+ "hypotheses_covered": [
+  "$C,e,B\\in\\mathbb N$",
+  "mode and outer flag are Boolean",
+  "$f$ is a function from finite Boolean words to finite Boolean words",
+  "$h$ is a finite Boolean word",
+  "$v$ assigns natural numbers to fourteen registers, each at most $B$",
+  "register $11$ is zero",
+  "the factor times register $7$ is at most $B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B$ be natural numbers, let the mode and outer flag be Boolean, let $f$ be a\nfunction on bit strings, let $h$ be a bit string, and let $v$ be a fourteen-register\nassignment whose values are all at most $B$. If register $11$ is zero and multiplying\nregister $7$ by the factor $C$ when the outer flag is false, or by $2C+3$ when it is\ntrue, yields a value at most $B$, then the machine reaches the length-bound state when\nthe outer flag is false and the tail-test state when it is true. It starts in the\nfactor-copy state with its first flag and no answer recorded, and finishes with register\n$7$ replaced by that product and all other registers unchanged, satisfying the\nprescribed configuration invariant throughout."
+}

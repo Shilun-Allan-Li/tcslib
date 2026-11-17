@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.enumCont_orbit",
+ "key": "5fee98205313e9f2",
+ "kind": "lemma",
+ "title": "Orbit of fixed-width binary increment",
+ "statement": "For every width $w$ and every natural number $i<2^w$, iterating the operation that increments a little-endian Boolean word when possible and leaves it unchanged on overflow, $i$ times from the all-false word of length $w$ gives the length-$w$ little-endian binary representation of $i$, with leading zeros retained.",
+ "hypotheses_covered": [
+  "width w ∈ ℕ",
+  "natural number i with i < 2^w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every width $w$ and every $i < 2^w$, iterating the stalled fixed-width\nincrement (increment, keeping the word unchanged on overflow) $i$ times from the\nall-false word of length $w$ yields the width-$w$ little-endian binary word of\n$i$. Nothing is asserted at the terminal rank $2^w$."
+}

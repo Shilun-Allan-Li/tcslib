@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.emitterSplit_result",
+ "key": "7ef7573dbe8ddccf",
+ "kind": "lemma",
+ "title": "Equality of split search outputs",
+ "statement": "For a function $f:\\mathbb{N}\\to\\mathbb{N}$ and a Boolean word $w$, splitting $w$ at the length of the first accepted iterate of the split step and encoding the two pieces gives the same word as splitting at the index returned by the least-index search for $i+f(i)=|w|$. If that search returns none, both expressions give the empty word.",
+ "hypotheses_covered": [
+  "$f$ is a function from natural numbers to natural numbers",
+  "$w$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Splitting $w$ at the length of the first orbit candidate accepted by the\nwidth-parametric test and pair encoding the two halves gives the same word\nas splitting $w$ at the index returned by the width-parametric split search\nfor $f$; when both searches fail, both sides are the empty word."
+}

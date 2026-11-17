@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.multilinear_sum_insert",
+ "key": "0338dba13910699c",
+ "kind": "theorem",
+ "title": "Splitting a multilinear sum",
+ "statement": "Let $\\Omega$ be a set, let $\\iota$ be an index set, let $s\\subseteq\\iota$ be finite, and choose $i\\in\\iota\\setminus s$. Let $F$ assign a real coefficient to each finite subset of $\\iota$, and let $X_j:\\Omega\\to\\mathbb{R}$ for each $j\\in\\iota$. For every $\\omega\\in\\Omega$, the sum over subsets of $s\\cup\\{i\\}$ satisfies\n\\[\\sum_{T\\subseteq s\\cup\\{i\\}}F(T)\\prod_{j\\in T}X_j(\\omega)=\\sum_{T\\subseteq s}F(T)\\prod_{j\\in T}X_j(\\omega)+X_i(\\omega)\\sum_{T\\subseteq s}F(T\\cup\\{i\\})\\prod_{j\\in T}X_j(\\omega).\\]",
+ "hypotheses_covered": [
+  "$\\Omega$ is a measurable space",
+  "$\\iota$ is an index set with decidable equality",
+  "$s$ is a finite subset of $\\iota$",
+  "$i\\notin s$",
+  "$F$ assigns real values to finite subsets of $\\iota$",
+  "$X_j$ is a real-valued function on $\\Omega$ for each $j\\in\\iota$",
+  "$\\omega\\in\\Omega$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s$ be a finite subset of an index set $I$, let $i\\notin s$, let $F$ assign real coefficients to finite subsets of $I$, and let $X_j:\\Omega\\to\\bbr$. For every $\\omega\\in\\Omega$, $\\sum_{T\\subseteq s\\cup\\{i\\}}F(T)\\prod_{j\\in T}X_j(\\omega)=\\sum_{T\\subseteq s}F(T)\\prod_{j\\in T}X_j(\\omega)+X_i(\\omega)\\sum_{T\\subseteq s}F(T\\cup\\{i\\})\\prod_{j\\in T}X_j(\\omega)$."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.recordStep_save_transport",
+ "key": "898dec57bf974fa3",
+ "kind": "theorem",
+ "title": "Transporting a counter-saving run",
+ "statement": "Let $Q$ and $T$ be types with decidable equality, let $x$ be a Boolean word, and let $d$ be a four-tape configuration on the input obtained by embedding each bit of $x$ as a digit. Suppose $d$ is in the counter-decrement phase, its input-head position $p$ satisfies $p\\le |x|$, and a Boolean word $w$ has binary value $2^{|w|}-1$ with $p$ strictly less than that value. Suppose tape 3 stores the digit-embedded word $w$, with the symbol at word index $i$ stored at tape coordinate $i$ minus the position of the tape-3 head. Then for some $t\\le 5(p+1)+2|w|$, the embedded counter-saving machine reaches the escape state with input-head position zero and tape 3 storing the digit-embedded word obtained by applying the fixed-width decrement operation $p+1$ times to $w$; all other configuration components are unchanged. Before time $t$ it reaches neither the done state nor the escape state, and at every time through $t$ each work-tape head remains within distance $|w|+1$ of its initial position. The bitwise complements of the resulting counter word have binary value $p+1$.",
+ "hypotheses_covered": [
+  "$Q$ and $T$ have decidable equality",
+  "$x$ is a Boolean word",
+  "$d$ is a four-tape configuration on the digit-embedded input",
+  "$d$ is in the counter-decrement phase",
+  "the input-head position $p$ is at most $|x|$",
+  "$w$ is a Boolean word",
+  "the binary value of $w$ is $2^{|w|}-1$",
+  "$p$ is strictly less than the binary value of $w$",
+  "tape 3 stores the digit-embedded word $w$ aligned to its head position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

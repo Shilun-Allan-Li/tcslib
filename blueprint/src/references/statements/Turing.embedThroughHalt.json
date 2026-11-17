@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.embedThroughHalt",
+ "key": "876504594f52e259",
+ "kind": "lemma",
+ "title": "Simulation Through the Halting Step",
+ "statement": "Let $M$ be an $m$-tape machine and $R$ a $k$-tape machine whose states are in $S\\oplus\\mathrm{Unit}$. Suppose $E$ maps configurations of $M$ to configurations with state set $S$ and preserves their optional state components. Assume that whenever a configuration $d$ of $M$ is not halted, one step of $R$ from the state-renamed image of $d$ is the return encoding of $E$ applied to the result of one step of $M$. Let $c$ be a nonhalted initial configuration and let $T$ be a natural number such that every configuration of $M$ at times $t<T$ is nonhalted, while its configuration at time $T$ is halted. Then for every $t<T$, the run of $R$ from the state-renamed image of $E(c)$ equals the state-renamed image of $E$ of the configuration of $M$ at time $t$; at time $T$ it equals the configuration obtained from $E$ of $M$'s time-$T$ configuration by setting its state to the right-hand summand; and at every time $t<T$, its state is not that right-hand summand.",
+ "hypotheses_covered": [
+  "machines M and R with the stated tape counts and state types",
+  "configuration map E preserves optional states",
+  "one-step simulation condition for every nonhalted configuration",
+  "initial configuration c is nonhalted",
+  "T is a natural number",
+  "all M configurations at times t<T are nonhalted",
+  "M is halted at time T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

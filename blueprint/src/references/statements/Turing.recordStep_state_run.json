@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.recordStep_state_run",
+ "key": "634407cc1be42eb2",
+ "kind": "theorem",
+ "title": "State scan in five steps",
+ "statement": "Let $Q,T,S$ be types with decidable equality. Let $M$ be a Boolean multi-tape machine with $k$ work tapes, let $\\operatorname{upd}:T\\times\\operatorname{Option}(\\mathrm{Bool})\\to T$, and let $\\mathrm{seek}$ be a two-work-tape Boolean machine with designated states $\\mathrm{start},\\mathrm{finish}$. For any input list $x$ of record symbols, four-tape configuration $d$, and optional state $q:Q$, suppose $d$ is in the record-step entry control state and tape 0, at offsets $-1,0,1$ from its head, contains the one-symbol word consisting of the state symbol encoding $q$. After five steps of the record-step machine, the configuration is $d$ with its control state changed to the running phase that skips the state symbol and carries record data whose stored state is $q$; neither verdict state has been reached before those five steps, and every work-tape head remains within distance one of its initial position through that time.",
+ "hypotheses_covered": [
+  "Types Q, T, and S have decidable equality",
+  "Boolean machine M with k work tapes",
+  "Tag update function upd",
+  "Two-tape seek machine and designated start and finish states",
+  "Input list x of record symbols and four-tape configuration d",
+  "Initial control state is the record-step entry state",
+  "Tape 0 stores the one-symbol list encoding optional state q at offsets −1 through 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

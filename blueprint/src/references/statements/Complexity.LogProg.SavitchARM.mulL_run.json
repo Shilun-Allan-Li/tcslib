@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.mulL_run",
+ "key": "b9aad4e9826af4ce",
+ "kind": "theorem",
+ "title": "Bounded multiplication loop",
+ "statement": "Fix a natural number $E$, an oracle on four indices and Boolean words, an input Boolean word $x$, and a register bound $B$. For every Boolean flag $f$, natural number $c$, and register state $st$ with $st.C=c$, $st.Z=0$, all eighteen register values at most $B$, and $st.T+c\\,st.P\\le B$, the machine has a finite run from the multiplication-loop state with registers $st$ to the multiplication-finish state with $C=0$ and $T=st.T+c\\,st.P$. At every configuration strictly before the endpoint, the machine's validity conditions hold and all register values are at most $B$.",
+ "hypotheses_covered": [
+  "$E$ is a natural number",
+  "the oracle has four indices and takes Boolean words",
+  "$x$ is a Boolean word",
+  "$B$ is a natural-number register bound",
+  "$f$ is a Boolean flag",
+  "$c$ is a natural number",
+  "$st$ is a register state",
+  "$st.C=c$",
+  "$st.Z=0$",
+  "every register of $st$ is at most $B$",
+  "$st.T+c\\,st.P\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the Savitch register machine parameters $E$, oracle $\\mathrm{orc}$, input $x$, and\nregister bound $B$. For any Boolean flag $f$, natural number $c$, and register state\n$st$, suppose $st.C=c$, $st.Z=0$, every register of $st$ is at most $B$, and\n$st.T+c\\,st.P\\le B$. Then the machine can run from the multiplication-loop state with\nregisters $st$ to the multiplication-finish state with $C=0$ and $T=st.T+c\\,st.P$, while\nevery configuration before termination satisfies the guard requiring valid preconditions\nand all registers at most $B$."
+}

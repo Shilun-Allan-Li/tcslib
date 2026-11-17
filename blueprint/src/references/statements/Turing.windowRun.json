@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.windowRun",
+ "key": "22b1a63294d595a1",
+ "kind": "def",
+ "title": "Window-limited machine run",
+ "statement": "Let $M$ be a deterministic Turing machine with $k$ work tapes and Boolean symbols, let $s$ be a window radius, and let $\\mathrm{upd}:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$ update a tag. Define the run for a clock value $N$ and configuration $c$ with tag $\\tau$ as follows: at $N=0$, return the exhausted exit together with $c$ and $\\tau$. At positive clock, if $c$ is halted, return the halted exit with $c$ and $\\tau$; otherwise, if one step from $c$ lies within the window of radius $s$, continue for one fewer clock step from that successor configuration, updating the tag using the symbol emitted by the step from $c$. If the successor lies outside the window, return the left exit with the current configuration $c$ and tag $\\tau$.",
+ "hypotheses_covered": [
+  "A machine $M$ with $k$ work tapes, Boolean symbols, and state set $Q$",
+  "A window radius $s\\in\\mathbb{N}$",
+  "A tag type $T$ and update function $\\mathrm{upd}:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "A finite Boolean input word $x$, configuration over $x$, tag $\\tau\\in T$, and clock value $N\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_init",
+ "key": "b25ff3aa5f2c9be6",
+ "kind": "lemma",
+ "title": "Initial loop host configuration",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose the forward and find-mode settings, and let $x$ be a Boolean input word. The loop host's initial configuration on $x$ equals the capture configuration of the relocated fuel machine's initial configuration, with the fuel state embedded into the host control states and empty capture buffers.",
+ "hypotheses_covered": [
+  "Boolean finite machines B and F",
+  "anchor state a of B",
+  "forward setting",
+  "find-mode setting",
+  "Boolean input word x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word $x$, the initial configuration of the loop host on $x$ equals the\ncapture embedding (with empty capture buffers and return phase zero) of the initial\nconfiguration of the relocated fuel source on $x$."
+}

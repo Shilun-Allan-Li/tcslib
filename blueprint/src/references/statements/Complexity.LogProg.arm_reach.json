@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.arm_reach",
+ "key": "3b8d6c0f61872428",
+ "kind": "theorem",
+ "title": "Reachability simulation by the tape machine",
+ "statement": "Fix a Boolean input $x$, an arithmetic register program $A$, its initial state $l_0$, an oracle, a multi-tape machine $D$, a choice of initial state for $D$ for each oracle index, and bounds $B,W\\in\\mathbb{N}$. Suppose an $N$-step register computation from state $l$ and valuation $v$, with no answer yet, ends in state $l'$, valuation $v'$, and no answer. Assume that at every earlier step its configuration satisfies the register-program precondition for $D$ and the chosen oracle, and each register value plus one has binary length at most $W$. Then the tape machine compiled from $A$ can run from the initial tape configuration encoding $x,l,v$ and the given output word to the corresponding configuration encoding $x,l',v'$ with that output word unchanged, while its invariant holds at every earlier step.",
+ "hypotheses_covered": [
+  "Fixed Boolean input $x$",
+  "Register program $A$ and initial state $l_0$",
+  "Oracle, multi-tape machine $D$, and oracle-indexed initial states for $D$",
+  "Natural-number bounds $B,W$",
+  "Register computation has $N$ steps and exact stated endpoint",
+  "At each time less than $N$, the precondition for the program, machine, and oracle holds",
+  "At each time less than $N$, every register value plus one has binary length at most $W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

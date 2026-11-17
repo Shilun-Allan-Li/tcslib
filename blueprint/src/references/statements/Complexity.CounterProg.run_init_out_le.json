@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.run_init_out_le",
+ "key": "862eb65f991cf4df",
+ "kind": "theorem",
+ "title": "Output-Length Bound from the Initial State",
+ "statement": "Let $R\\in\\mathbb{N}$, let $\\Lambda$ be a set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, and fix an input bit string $x$. For every starting label $\\ell_0\\in\\Lambda$ and every $t\\in\\mathbb{N}$, the output produced after $t$ steps from the initial state at $\\ell_0$ has length at most $t(t+1)$.",
+ "hypotheses_covered": [
+  "$R\\in\\mathbb{N}$ and $\\Lambda$ is a set of labels.",
+  "$P$ is a counter program over $R$ registers and labels in $\\Lambda$.",
+  "An input bit string $x$ is fixed.",
+  "A starting label $\\ell_0\\in\\Lambda$ is specified.",
+  "$t\\in\\mathbb{N}$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, $\\ell_0$ a label and\n$t \\in \\mathbb{N}$.  Starting from the initial state at $\\ell_0$ (all registers\n$0$, nothing read, empty output), the output after $t$ steps of $P$ on $x$ has\nlength at most $t(t+1)$."
+}

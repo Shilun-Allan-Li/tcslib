@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/LearningAndTesting/LowDegreeJuntaLearning.lean :: FABL.idealLowDegreeJuntaNodeBatchBadProbability_le -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Low degree junta node failure bound
+
+**Claim.** Under the stated junta-size and dependence hypotheses, the probability that the batch-based low-degree junta node decision is incorrect is at most half the failure parameter.
+
+**Proof.** Write $\delta$ for the given failure parameter and use the induced law of the labeled batch. Split into two cases according to whether some nonempty frequency in the prescribed low-degree family has a nonzero true Fourier coefficient.
+
+1. If such a frequency exists, a batch on which all Fourier estimates are accurate cannot yield an incorrect decision. Indeed, if the detector returned no frequency, the theorem that an accurate batch with no detected low-degree frequency forces every such true coefficient to vanish (`fourierCoeff_eq_zero_of_no_lowDegreeJuntaDetection`) would contradict the chosen nonzero coefficient. Thus a detected frequency is returned, and the correctness theorem for that branch ensures the decision is correct (`lowDegreeJuntaNodeDecisionFromBatch_isCorrect_of_firstDetected_eq_some`). The bad batches are consequently contained in the Fourier-inaccuracy event. Its probability is at most $\delta/4$ (`idealLowDegreeJuntaFourierInaccuracyProbability_le`), which is no greater than $\delta/2$.
+
+2. If no such frequency exists, every nonempty Fourier coefficient through the cutoff vanishes. The membership characterization of the low-degree family identifies its elements exactly with sets whose size is at most that cutoff (`mem_lowDegreeJuntaFourierFamily`), so the restricted function is correlation immune to that order. It is also a $k$-junta, by the restriction theorem (`reindexedJuntaRestriction_isKJunta`). The junta and correlation-immunity degree bound therefore gives algebraic degree at most $k$ minus the cutoff (`functionAlgebraicDegree_encoding_le_sub_of_isKJunta_of_isCorrelationImmune`), which is the prescribed polynomial degree. If both the Fourier estimates are accurate and the polynomial learner recovers the restricted function exactly, the node decision is correct (`lowDegreeJuntaNodeDecisionFromBatch_isCorrect`). Hence every bad batch lies in the union of the Fourier-inaccuracy and polynomial-failure events. Each has probability at most $\delta/4`, respectively by `idealLowDegreeJuntaFourierInaccuracyProbability_le` and `idealLowDegreeJuntaPolynomialFailureProbability_le`. The union bound gives at most $\delta/2$, as claimed.
+
+**Key facts.** `FABL.fourierCoeff_eq_zero_of_no_lowDegreeJuntaDetection`, `FABL.lowDegreeJuntaNodeDecisionFromBatch_isCorrect_of_firstDetected_eq_some`, `FABL.idealLowDegreeJuntaFourierInaccuracyProbability_le`, `FABL.mem_lowDegreeJuntaFourierFamily`, `FABL.reindexedJuntaRestriction_isKJunta`, `FABL.functionAlgebraicDegree_encoding_le_sub_of_isKJunta_of_isCorrelationImmune`, `FABL.idealLowDegreeJuntaPolynomialFailureProbability_le`, `FABL.lowDegreeJuntaNodeDecisionFromBatch_isCorrect`, `FABL.lowDegreeJuntaQuarterFailure_value`, `FABL.lowDegreeJuntaHalfFailure_value`.

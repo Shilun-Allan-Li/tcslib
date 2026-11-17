@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/OracleSim.lean :: Turing.oracleHost_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Oracle Host Runtime Bound
+
+**Claim.** If the answer machine computes each oracle verdict within the assumed time bound, then for every $t$ the host reaches a stable encoding of the oracle machine’s configuration after $t$ steps, with total time bounded by the stated quadratic term plus the accumulated query costs.
+
+**Proof.** Let $c_0$ be the oracle machine’s initial configuration, and charge time $\tau(|z_r|)$ at step $r$ when the machine is in its query state, and zero otherwise. The proof establishes by induction on $n$ a ledger: there is a side tag and a per-step host cost such that the host reaches the stable encoding of the oracle configuration after $n$ steps at time $2+\sum_{r<n}\mathrm{cost}(r)$, while each cost is at most $(2a+13)(r+1)+(2a+13)\mathrm{charge}(r)$. At $n=0$, the host’s initial encoding becomes stable in two steps (`Turing.oracleHost_initial`). For the induction step, first bound the query-head distance by $n$ using the radius bound for the oracle run: the query tape starts blank and the head starts at zero, so after $n$ steps its head cannot be farther than $n$ (`Turing.OracleTM.runFrom_radius`). The query string length is at most $n` (`Turing.OracleTM.queryString_runFrom_length_le_of_blank`). The one-step host simulation theorem, applied with these bounds and the assumed answer-machine computation, supplies the next host segment and its cost (`Turing.oracleHost_step`). The oracle run after one more step is its current configuration followed by one oracle transition (`Turing.OracleTM.runFrom_succ_eq_step'`); concatenating the host segments uses the run-addition law (`Turing.MultiTapeTM.runFrom_add`). Updating the cost ledger at index $n$ preserves earlier entries and records this new segment. Finally, summing the per-step cost estimates gives the claimed global bound (`Turing.oracleCost_sum`), and the induction’s endpoint is the required stable encoding.
+
+**Key facts.** `Turing.oracleHost_initial`, `Turing.OracleTM.runFrom_radius`, `Turing.OracleTM.queryString_runFrom_length_le_of_blank`, `Turing.oracleHost_step`, `Turing.OracleTM.runFrom_succ_eq_step'`, `Turing.MultiTapeTM.runFrom_add`, `Turing.oracleCost_sum`.

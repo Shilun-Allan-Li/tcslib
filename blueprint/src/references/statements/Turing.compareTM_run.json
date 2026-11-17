@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.compareTM_run",
+ "key": "c0e10b5d759f8546",
+ "kind": "theorem",
+ "title": "Runtime and outcome of the comparison machine",
+ "statement": "Let $k$ be a natural number, let $x$ be a Boolean input string, let $fst,snd\fin k$ be work-tape indices, and let $w$ assign a Boolean string to each work tape. There exists a natural number $T\\le 2\root{\text{min}(|w(fst)|,|w(snd)|)}+2$ such that at every time $t<T$ the machine has not entered either completed state, and at time $T$ its configuration is the initial word configuration with state set to completed with the truth value of whether $w(fst)=w(snd)$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$x$ is a Boolean input string",
+  "$fst,snd$ are indices among the $k$ work tapes",
+  "$w$ assigns a Boolean string to each of the $k$ work tapes"
+ ],
+ "confidence": "low",
+ "caveat": "The displayed bound is rendered with a typographical notation error in the statement; it means $T\\le 2\\min(|w(fst)|,|w(snd)|)+2$. ",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

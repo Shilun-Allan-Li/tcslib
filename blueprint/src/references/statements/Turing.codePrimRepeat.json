@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.codePrimRepeat",
+ "key": "2edf95a50bc61fb0",
+ "kind": "lemma",
+ "title": "Primitive Recursiveness of Counted Iteration",
+ "statement": "Let $A$ be a type with a primitive recursive coding. Suppose $r$ assigns to each $a\\in A$ a partial reader on finite Boolean strings, jointly primitive recursive in $a$ and the string, and let $\\mathrm{count}:A\\to\\mathbb{N}$ be primitive recursive. Then the function that applies $r(a)$ to a string successively $\\mathrm{count}(a)$ times, passing each resulting suffix to the next application and failing if any application fails, is jointly primitive recursive in $a$ and the string.",
+ "hypotheses_covered": [
+  "$A$ has a primitive recursive coding",
+  "$r:A\\to\\text{List Bool}\\to\\text{Option (List Bool)}$ is jointly primitive recursive",
+  "$\\mathrm{count}:A\\to\\mathbb{N}$ is primitive recursive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A$ be a type with a primitive recursive coding, let $r$ assign to each\n$a \\in A$ a partial reader on Boolean strings, primitive recursively jointly in $a$\nand the string, and let $\\mathrm{count} \\colon A \\to \\bbn$ be primitive recursive.\nThen the function taking $a$ and a string to the result of applying the reader\n$r(a)$ sequentially $\\mathrm{count}(a)$ times is primitive recursive jointly in $a$\nand the string."
+}

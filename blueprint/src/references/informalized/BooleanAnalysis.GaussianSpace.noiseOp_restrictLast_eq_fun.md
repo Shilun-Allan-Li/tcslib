@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Noise.lean :: BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq_fun -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Noise and last-coordinate restriction
+
+**Claim.** For a Boolean function on the $n+1$-dimensional cube, the noise operator applied to its restriction at a bit equals the noise of its last-coordinate average plus the sign of that bit times the noise of its half-difference.
+
+**Proof.** Fix a point $x$ in the $n$-dimensional cube. The pointwise restriction identity says that the noise of the restriction at the chosen bit is the noise of the average plus the bit's sign times the noise of the half-difference (`noiseOp_restrictLast_eq`). Thus the two sides agree at every $x$, so they are equal as functions.
+
+**Key facts.** `BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq`.

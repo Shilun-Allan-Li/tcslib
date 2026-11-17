@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_rd_false",
+ "key": "575fecf030f4321b",
+ "kind": "theorem",
+ "title": "Reading a zero from the input",
+ "statement": "Let $P$ be a counter program on a binary input $x$, with registers $\u0005rho$ and labels $\u0005Lambda$. If the instruction at label $\u0005ell$ reads the next input bit and the bit at position $p$ is $0$, then from any output string $o$, the program reaches label $\u0005ell_f$ within one step, leaves the registers unchanged, advances the input position to $p+1$, and leaves the output unchanged.",
+ "hypotheses_covered": [
+  "The instruction at $\u0005ell$ is a read instruction with false-branch label $\u0005ell_f$",
+  "The input bit at position $p$ is $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$ and $\\ell$ a label whose\ninstruction is $\\mathsf{rd}(\\ell_e, \\ell_0, \\ell_1)$, ``read the next input\nsymbol and go to $\\ell_e$, $\\ell_0$ or $\\ell_1$ according as the input has ended,\nthe symbol is $0$, or it is $1$''.  If the symbol of $x$ at (zero-based) position\n$p$ is $0$, then for all registers $\\rho$, from label $\\ell$ with registers\n$\\rho$ and $p$ symbols read the program reaches label $\\ell_0$ with registers\n$\\rho$ and $p + 1$ symbols read within one step, printing nothing."
+}

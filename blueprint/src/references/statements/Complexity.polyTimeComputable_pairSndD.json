@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_pairSndD",
+ "key": "83f48c0d570c9522",
+ "kind": "theorem",
+ "title": "Second projection is polynomial-time computable",
+ "statement": "The total second projection on bit strings, which returns the suffix following the first aligned separator $01$ after a sequence of doubled-bit blocks and returns the empty word if parsing fails, is polynomial-time computable.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The total second projection $\\pi_2$, which sends a bit string of the form $\\langle a,b\\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $b$ and any other bit string to the empty word, is polynomial-time computable, i.e.\\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \\in \\mathbb{N}$."
+}

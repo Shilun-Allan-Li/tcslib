@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.div_ten_lt_publicCoinOneWay_communicationComplexity_of_distributionalLowerBound",
+ "key": "723f74edcb1b3440",
+ "kind": "theorem",
+ "title": "Public-coin lower bound from a distributional hypothesis",
+ "statement": "Let $n$ be a positive integer. Suppose every deterministic one-way protocol for the Index function on $n$-bit strings and indices in $[n]$, with Boolean output and cost at most $\\lfloor n/10\\rfloor$, has error strictly greater than $1/8$ under the uniform distribution on input pairs. Then the one-way public-coin communication complexity of the Index function at error $1/8$ is strictly greater than $\\lfloor n/10\\rfloor$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "Every deterministic one-way protocol for Index with cost at most $\\lfloor n/10\\rfloor$ has uniform-distributional error strictly greater than $1/8$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every deterministic one-way protocol for $\\mathrm{IND}_n$ of cost at most\n$\\lfloor n/10 \\rfloor$ has uniform-distributional error greater than $1/8$, then the\npublic-coin one-way communication complexity of $\\mathrm{IND}_n$ at error $1/8$ is strictly\ngreater than $\\lfloor n/10 \\rfloor$.  This is the previous theorem specialised to the source's\nconstants $\\varepsilon = 1/8$, $c = \\lfloor n/10 \\rfloor$."
+}

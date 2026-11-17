@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.stages_run",
+ "key": "53b71aba257ba319",
+ "kind": "lemma",
+ "title": "Bounded cleaning stages",
+ "statement": "Let $M$ be a deterministic machine with $k$ Boolean work tapes, let $q_1$ be a state, and fix an input, input-head position, tape contents $D_t,M_t$, head positions $D_p$, output word, and integer $B\\ge 0$. Assume that for each tape $j$ there are integers $a,b$ with $a\\le0\\le b$, $-B\\le a-1$, $b+1\\le B$, $a\\le D_p(j)\\le b$, and such that changing the marked-tape contents at $D_p(j)$ according to the prescribed write rule produces the tape that marks the origin and every cell from $a$ through $b$; also assume every nonblank cell of $D_t(j)$ lies between $a$ and $b$. Then, for every $n,i\\in\\mathbb N$ with $i+n=k$, there is a finite time $T$ such that throughout the cleaning-machine run from stage $i$, all work-tape head positions have absolute value at most $B$, and at time $T$ the configuration is stage $k$ with the same input-head position, tape data, head positions, and output.",
+ "hypotheses_covered": [
+  "Deterministic machine $M$ with $k$ Boolean work tapes",
+  "State $q_1$",
+  "Input and input-head position",
+  "Tape contents $D_t,M_t$",
+  "Head positions $D_p$",
+  "Output word",
+  "Integer $B\\ge0$",
+  "For each tape, integers $a,b$ satisfy $a\\le0\\le b$, $-B\\le a-1$, and $b+1\\le B$",
+  "For each tape, $a\\le D_p(j)\\le b$",
+  "Prescribed write at $D_p(j)$ yields the origin-and-interval marking",
+  "Every nonblank cell of $D_t(j)$ lies in $[a,b]$",
+  "Natural numbers $n,i$ with $i+n=k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

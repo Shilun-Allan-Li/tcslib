@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.cont_rewind_input",
+ "key": "d09ac24d886f82b0",
+ "kind": "lemma",
+ "title": "Rewinding the Input Buffer",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $y,x,u$ be binary words, let $p$ be an input-head position among the $|y|+2$ positions, and let $j\\le |x|$. Starting in loader state $4$ with input-buffer head at $j-1$ and choice-buffer head at $|u|$, after exactly $j+1$ steps the pair-loader machine is in loader state $5$, with the same physical input position and tape contents, input-buffer head at $0$, and choice-buffer head at $|u|-1$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic machine over the binary alphabet",
+  "$y,x,u$ are binary words",
+  "$p$ is a valid input-head position for $y$",
+  "$j\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine, let $x$ and $u$ be buffer words, and let $j \\le |x|$. From the loader configuration in the input-rewind state with input-buffer head at position $j-1$ and choice head at the right end of $u$, exactly $j+1$ steps of the pair-loader machine reach the choice-rewind state with input-buffer head reset to zero and choice head at position $|u| - 1$, with all tape contents preserved."
+}

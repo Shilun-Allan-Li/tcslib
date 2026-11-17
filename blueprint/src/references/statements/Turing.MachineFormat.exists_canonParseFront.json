@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonParseFront",
+ "key": "4f305f39817362e1",
+ "kind": "lemma",
+ "title": "Canonical parser front end",
+ "statement": "For every machine format $F$, there exist a finite Turing machine $C$ over the Boolean alphabet, an entry state $e$ of $C$, an injective map $q$ from Boolean verdicts to states of $C$, and a natural number $a$, with at least four work tapes. For every Boolean word $x$, the run from state $e$ on input $x$, with all work tapes blank, all work-tape heads at cell zero, and empty output, reaches state $q(v)$ after some time $t\\le a(|x|+1)$, for a verdict $v$; no state $q(u)$ is reached at any time $u<t$. The output remains empty at time $t$. If $v$ is false, decoding $x$ in format $F$ gives its fallback code. If $v$ is true, there are bit strings $b,r$ such that pair decoding of $x$ yields $(b,r)$, $b$ is the canonical binary representation of the natural number it encodes, and $r$ has length at least $\\max\\{F.\\mathrm{guard},(4C.k+5)3^{C.k+1}\\}$ times one more than that number. At time $t$ the input head is at position $2|b|+3$, and on every work tape other than tape $1$, the tape contents store the canonical ready word determined by $b$ and the tape head is at cell zero.",
+ "hypotheses_covered": [
+  "A machine format $F$",
+  "A finite Turing machine $C$ over the Boolean alphabet",
+  "An entry state $e$ and an injective map from Boolean verdicts to states",
+  "A natural number $a$",
+  "At least four work tapes: $4\\le C.k$",
+  "Every Boolean input word $x$",
+  "A time $t\\le a(|x|+1)$",
+  "No verdict state is reached at any earlier time",
+  "The output at time $t$ is empty",
+  "False verdict implies decoding gives the fallback code",
+  "True verdict implies a pair decode $(b,r)$, canonical binary header, sufficient suffix length, input-head position, and the specified contents and head positions on all work tapes except tape $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

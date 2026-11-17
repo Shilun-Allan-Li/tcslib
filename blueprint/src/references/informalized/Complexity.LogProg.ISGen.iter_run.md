@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean :: Complexity.LogProg.ISGen.iter_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Iterated Ball Nonacceptance
+
+**Claim.** Starting from round $E$ with false phase, the program establishes that no vertex in any ball of positive radius at most $K$ is accepting, and it establishes $Q$.
+
+**Proof.** 1. Put $K=2^{2E\sigma.\mathrm{lg}+2E\sigma.s}$. The exponent defining $K$ is strictly smaller than $K$ itself, and its two summands bound the contributions from the $\mathrm{lg}$ and $s$ rounds. The assumed register bound gives $K+1\le B$.
+
+2. Apply the round-iteration result (`grounds_run`) for the false phase, adding $2E\sigma.\mathrm{lg}$ to the exponent. Apply it again for the true phase, adding $2E\sigma.s$. The initialization instructions then set the code bound to one, and the doubling-loop result (`gdouble_run`) builds it up to $K$, keeping the needed registers within the bound.
+
+3. The setup instructions clear the stage registers, initialize the first two stage indices to $0$ and $1$, and set the known ball cardinality to one. The radius-zero cardinality assumption identifies this initial count. The stage theorem (`gstage`) now iterates through the radii up to $K$, using the supplied comparison-stage semantics for the terminal stage. It yields nonacceptance for every positive radius at most $K$, together with $Q$. The initial state clearing facts and register bounds justify the semantic guard throughout; harmless record updates are reconciled by equality.
+
+**Key facts.** `Complexity.LogProg.ISGen.St.greg`, `Complexity.LogProg.ISGen.grounds_run`, `Complexity.LogProg.NSem.clr`, `Complexity.LogProg.NSem.inc`, `Complexity.LogProg.ISGen.gdouble_run`, `Complexity.LogProg.ISGen.gstage`, `Complexity.LogProg.ISGen.IG.of_eq`.

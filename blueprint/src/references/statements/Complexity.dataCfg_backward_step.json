@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.dataCfg_backward_step",
+ "key": "6e72cef717edca3b",
+ "kind": "lemma",
+ "title": "One backward sweep step",
+ "statement": "Let $W$ and $M$ be finite binary Turing machines, let $a$ be a natural number, and let $x$ be a finite word over the schedule alphabet. Let $c$ be a schedule configuration, $u,g\\in\\mathbb{Z}$, $R\\in\\mathbb{N}$, an optional state $q$ of $M$, a bit $b$, payload vectors $\\mathrm{read}$ and $\\mathrm{carry}$, data-tape contents $T$, and output word $o$. Assume the guide tape of $c$ is the fixed guide of radius $R$ and $g\\ne -R-1$. One step from the backward phase at guide position $g$, with registers $\\mathrm{carry}$, leaves the base configuration, $u$, $q$, $b$, and output unchanged; it moves the guide head to $g-1$, replaces each register by the current payload decoded from $T$ at $g$, and updates cell $g$ on each lane to a data cell with blank cached neighbor. Its current payload is the decoded cached left neighbor when that lane's virtual-head movement selected from $q$ and $\\mathrm{read}$ is left, the decoded current payload when the movement is stationary, and the prior carried register when the movement is right.",
+ "hypotheses_covered": [
+  "Finite binary machines $W,M$",
+  "Natural number parameter $a$",
+  "Finite schedule-alphabet word $x$",
+  "Base schedule configuration $c$",
+  "Integers $u,g$ and natural radius $R$",
+  "Optional state $q$ of $M$ and bit $b$",
+  "Payload vectors $\\mathrm{read}$ and $\\mathrm{carry}$",
+  "Data-tape contents $T$ and output word $o$",
+  "Guide tape of $c$ equals the radius-$R$ guide",
+  "$g\\ne -R-1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$ and the simulator\nis in the backward phase with guide head at $g \\neq -R - 1$.  One step moves the\nguide head to $g - 1$, replaces each neighbor register by the current payload\ndecoded at $g$, and rewrites cell $g$ of each data lane to a data cell with\nblank cached neighbor whose current payload is chosen by that lane's virtual\nhead direction: the cached left neighbor for a leftward move, the unchanged\ncurrent payload for a stationary move, and the carried register for a rightward\nmove."
+}

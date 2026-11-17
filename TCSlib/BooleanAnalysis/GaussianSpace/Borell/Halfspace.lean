@@ -139,7 +139,7 @@ lemma correlatedGaussianMeasure_projection {n : ℕ}
         (fun z => (z.1, ρ * z.1 + Real.sqrt (1 - ρ ^ 2) * z.2)) := by
   have hP := (measurePreserving_gaussianProjection a ha).prod
     (measurePreserving_gaussianProjection a ha)
-  unfold correlatedGaussianMeasure
+  rw [correlatedGaussianMeasure_eq]
   rw [Measure.map_map (by fun_prop) (by fun_prop),
     ← hP.map_eq, Measure.map_map (by fun_prop) hP.measurable]
   congr 1
@@ -167,7 +167,7 @@ theorem gaussianNoiseStability_homogeneous_halfspace {n : ℕ}
   let f := fun x : Fin n → ℝ => thresholdSign (L x)
   letI : IsProbabilityMeasure μ := by
     dsimp [μ]
-    unfold correlatedGaussianMeasure
+    rw [correlatedGaussianMeasure_eq]
     exact Measure.isProbabilityMeasure_map (by fun_prop)
   have hL := measurePreserving_gaussianProjection a ha
   have hX : MeasurePreserving (fun z => L z.1) μ standardGaussianMeasure :=

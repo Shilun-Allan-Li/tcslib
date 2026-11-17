@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Merge.takeLeft",
+ "key": "e0b617d2bb63e225",
+ "kind": "theorem",
+ "title": "Merge step taking the left entry",
+ "statement": "Let $L$ and $R$ be integer lists, let $\\mu$ be an initial memory map, and let $a,b,d$ be natural-number source and destination addresses. Suppose the merge preconditions hold: the space bound is at most the word bound, each list is represented in memory at its source address, the source and destination regions fit within the space bound, and each source region is apart from the destination region. If a state satisfies the merge invariant at indices $i,j$, where $i<|L|$, and the merge of the remaining tails begins with $L_i$ followed by the merge after advancing the left index, then the left-taking merge step is block-safe and its resulting state satisfies the merge invariant for some indices whose sum is $i+j+1$.",
+ "hypotheses_covered": [
+  "Merge preconditions, including the word and space bounds",
+  "Both input lists are represented in memory at their source addresses",
+  "Source and destination regions fit within the space bound",
+  "Each source region is apart from the destination region",
+  "The initial state satisfies the invariant at indices $i,j$",
+  "$i<|L|$",
+  "The tail-merge decomposition begins with $L_i$ and the tails after advancing the left index"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not include the definition of the left-taking merge step; its meaning is inferred from the declaration name and surrounding merge definitions.",
+ "rubric": [],
+ "replaced": "Let the limits, initial memory, source locations, destination, and two integer lists\nsatisfy the merge preconditions: the space limit is at most the word limit; the initial\nmemory agrees with each list on its source segment; the two source segments and the\ndestination region fit within the space limit; and each source segment is disjoint from\nthe destination region. Let the current state satisfy the merge invariant at indices\n$i,j$, with $i<|l|$, and suppose merging the remaining tails produces $l_i$ followed by\nthe merge after advancing the left index to $i+1$. Then executing the merge step that\ntakes the left entry is safe and results in a state satisfying the invariant with total\nprogress $i+j+1$."
+}

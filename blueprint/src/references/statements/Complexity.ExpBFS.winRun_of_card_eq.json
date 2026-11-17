@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.ExpBFS.winRun_of_card_eq",
+ "key": "a37cd9078d87c5dc",
+ "kind": "theorem",
+ "title": "Equal Reachable-State Counts Preserve All Runs",
+ "statement": "Let $N$ be a nondeterministic Turing machine with a finite state set, a fixed finite number $k$ of work tapes, and binary input $x$. For each space bound $s$, encode configurations using the state, output summary, work-tape contents and head positions in the window $[-s,s]$, together with the input-head position. Let $R_s$ be the set of codes below $2^{(2W+2)(s+\nu(|x|)+1)}$ reachable from the initial configuration by a finite sequence of valid one-step transitions whose source and target configurations use only work-tape cells in $[-s,s]$, where $W=3|\text{states}|+3k+4$ and $\nu(n)=\floor{\nlog_2 n}+1$. If $|R_s|=|R_{s+1}|$, then every finite sequence of nondeterministic choices, when run on $x$, has every prefix configuration using only work-tape cells in $[-s,s]$.",
+ "hypotheses_covered": [
+  "A binary-input nondeterministic Turing machine with a finite state set and a fixed number of work tapes",
+  "A natural-number space bound $s$",
+  "The reachable-code sets at bounds $s$ and $s+1$ have equal cardinality"
+ ],
+ "confidence": "low",
+ "caveat": "The informal statement relies on unpacking the supplied configuration-code and transition-language definitions; the displayed code bound uses their derived parameters.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

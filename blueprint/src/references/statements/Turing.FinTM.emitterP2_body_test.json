@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_test",
+ "key": "44bd1098154dff86",
+ "kind": "lemma",
+ "title": "Testing segment of the round",
+ "statement": "Let $C,D$ be finite Turing machines over the Boolean alphabet with positive numbers of work tapes, choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$, and let $w,s,u,v$ be Boolean words. Suppose $a,b>0$; from its seam on input $w$ with $s$ on its first tape, $C$ avoids $c_x$ at all times strictly between $0$ and $a$ and reaches $c_x$ at time $a$ with $u$ on its first tape. From its seam on input $w$ with the suffix of $w$ after its first $|s|$ bits on its first tape, $D$ avoids $d_x$ strictly between $0$ and $b$ and reaches $d_x$ at time $b$ with $v$ on its first tape. Then, starting from the completed-preparation configuration with $s$ on the candidate and width tapes and that suffix on the length tape, the controller reaches, at some time $t\\le a+b+2(\\max(|u|,|v|)+1)+4$, the first erasure phase with verdict equal to whether $u=v$, preserving those words on their respective tapes; no configuration from time $0$ through time $t$ has the anchor state.",
+ "hypotheses_covered": [
+  "C and D are finite Boolean-alphabet Turing machines",
+  "C and D each have a positive number of work tapes",
+  "ce and cx are states of C",
+  "de and dx are states of D",
+  "w, s, u, and v are Boolean words",
+  "a and b are positive natural numbers",
+  "C avoids cx at all times strictly between 0 and a from its stated seam configuration",
+  "C is at cx with first tape containing u at time a",
+  "D avoids dx at all times strictly between 0 and b from its stated seam configuration",
+  "D is at dx with first tape containing v at time b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the width call completes in $a > 0$ steps with result $u$ and the\nsuffix-length call completes in $b > 0$ steps with result $v$, each with no\ninterior exit-state visit. Then there is a time\n$t \\le a + b + 2(\\max(\\abs{u},\\abs{v}) + 1) + 4$ after which the\ncontroller, from its completed-preparation seam, has run both calls and the\nwhole-word comparison and sits at the first erasure seam carrying the\nverdict of $u = v$; both calls are charged before any relation between\ntheir results is assumed, and the trace avoids the anchor."
+}

@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_fuel_return",
+ "key": "251dfbe3b8868838",
+ "kind": "lemma",
+ "title": "Synchronized Counter Rewind",
+ "statement": "Let $B,F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose Boolean parameters `forward` and `findMode`, an input word $x$, a base loop-host configuration, an input-head position $p$, a Boolean flag tape, Boolean words $w,o$, and a natural number $j\\le |w|$. Starting in controller phase $3$ with counter tape storing $w$, blank payload tape, both heads at $j-1$, and output $o$, after exactly $j+1$ steps the host is in phase $4$ with the same counter tape and output, blank payload tape, and both heads at $0$.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$",
+  "anchor state $a$ of $B$",
+  "Boolean parameters `forward` and `findMode`",
+  "input word $x$",
+  "base loop-host configuration",
+  "input-head position $p$",
+  "Boolean flag tape function",
+  "Boolean words $w,o$",
+  "natural number $j$ with $j\\le |w|$",
+  "initial state is controller phase 3",
+  "counter tape stores $w$",
+  "payload tape is blank",
+  "both heads are at $j-1$",
+  "initial output is $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be the copied counter word and $j \\le |w|$. Starting the loop host in its\nsynchronized-rewind phase on a controller frame whose counter track is the buffer tape\nof $w$ and whose payload track is blank, with both heads at cell $j - 1$, after exactly\n$j + 1$ steps the host is in the input-rewind phase with both heads at cell zero and\nevery other frame component unchanged."
+}

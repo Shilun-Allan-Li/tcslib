@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.Codec.StepChk",
+ "key": "ce1f9c2db5b39da5",
+ "kind": "def",
+ "title": "Encoded computation step check",
+ "statement": "Let $N$ be a nondeterministic Turing machine with Boolean input alphabet; let $x$ be a Boolean input, $s$ a natural number, and $w,w'$ Boolean lists. The predicate requires that $w$ is a valid check for input length $|x|$ and parameter $s$, that $|w'|=W(N)(2s+1)+w_P(|x|)+1$, and that the entry of $w'$ at index $W(N)(2s+1)+w_P(|x|)$ is true. It also requires a Boolean choice $b$ such that the encoded input-head position in the indicated segment of $w'$ equals the position obtained by moving the position encoded in the corresponding segment of $w$ according to the input-head movement determined from the scan of $w$, the input symbol at that position, and $b$; finally, the indicated scan of the two transition results on the prefixes of $w$ and $w'$ must report true completion.",
+ "hypotheses_covered": [
+  "A nondeterministic Turing machine $N$ with Boolean input alphabet",
+  "A Boolean input list $x$",
+  "A natural number $s$",
+  "Boolean lists $w$ and $w'$",
+  "A Boolean choice $b$ witnessing the required conditions"
+ ],
+ "confidence": "low",
+ "caveat": "Several predicates and encoding functions in the statement are not defined in the supplied material, so the validity and completion conditions cannot be given a more explicit mathematical interpretation.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loopBody_run",
+ "key": "0c5b506456f140ac",
+ "kind": "lemma",
+ "title": "Exact Simulation Before Stopping",
+ "statement": "Let $B$ be a Boolean finite Turing machine, let $a$ be one of its states, and fix an input word $x$. Let $c$ be a configuration of $B$ on $x$ whose state is present, let $r$ be a release bit, and let $t\\in\\mathbb{N}$. Suppose that the configuration reached by running $B$ from $c$ is live at every time $u<t$, and that at each such time either $u=0$ and $r$ is true, or the state is not $a$. Then the stop wrapper, started from the embedding of $c$ with release bit $r$ and an empty flag cell, reaches at time $t$ the embedding of the body configuration at time $t$, with release bit $r$ if $t=0$ and false otherwise, and with flag true exactly when that body configuration is halted (the flag is empty when it is live).",
+ "hypotheses_covered": [
+  "$B$ is a Boolean finite Turing machine",
+  "$a$ is a state of $B$",
+  "$x$ is an input word",
+  "$c$ is a configuration of $B$ on $x$ with present state",
+  "$r$ is a release bit",
+  "$t\\in\\mathbb{N}$",
+  "the body configuration is live at every time $u<t$",
+  "for every $u<t$, either $u=0$ and $r$ is true, or the body state at time $u$ is not $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a live configuration of the loop body, let $r$ be a release bit, and let $t$\nbe a time such that the body stays live before $t$ and, except possibly for a released\nstep at time zero, does not visit the anchor before $t$. Then the stop wrapper run for\n$t$ steps from the embedding of $c$ with release bit $r$ equals the embedding of the\nbody run at time $t$, with the release bit consumed after the first action and the flag\nset to $\\mathrm{true}$ exactly when the body has halted at time $t$."
+}

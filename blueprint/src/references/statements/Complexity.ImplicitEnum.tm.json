@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.ImplicitEnum.tm",
+ "key": "170ff8b34e20bfc5",
+ "kind": "def",
+ "title": "Implicit enumeration machine",
+ "statement": "The machine has one Boolean work tape and states `ask`, `bit`, `emitT`, `emitF`, `incC`, `incB`, and `done`, and starts in `ask`. In states `emitT` and `emitF` it outputs true and false, respectively, and moves to `incC`; in states `incC` and `incB` its transitions are given by the increment actions used in its definition, and in every other case it halts without output.",
+ "hypotheses_covered": [
+  "One work tape",
+  "Boolean symbol alphabet",
+  "Specified seven-state set",
+  "Initial state is ask",
+  "Transitions from emitT and emitF output the corresponding Boolean and move to incC",
+  "Transitions from incC and incB use the referenced increment actions",
+  "All remaining transitions halt without output"
+ ],
+ "confidence": "low",
+ "caveat": "The definitions of the increment actions are absent from the supplied statement, so their behavior cannot be described precisely.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

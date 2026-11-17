@@ -1,0 +1,29 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_payload_scan",
+ "key": "4bf1c6dfd676c414",
+ "kind": "lemma",
+ "title": "Payload tape scan",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose the forward and find-mode settings, and let $s,d$ be controller phases. Suppose that in phase $s$, for every input symbol and scanned-work-tape tuple, the host moves the payload head left and stays in phase $s$ when the scanned payload cell is nonblank, and moves it right and enters phase $d$ when that cell is blank. For any Boolean input $x$, base configuration $b$, input-head position $p$, flag and counter tapes, counter-head position $h$, Boolean word $w$, output word $o$, and natural number $j\\le |w|$, starting with the payload tape storing $w$ and its head at position $j-1$, the host reaches after $j+1$ steps the frame with phase $d$, unchanged other specified data, and payload head at position $0$.",
+ "hypotheses_covered": [
+  "Boolean finite machines B and F",
+  "anchor state a of B",
+  "forward setting",
+  "find-mode setting",
+  "controller phases s and d",
+  "transition condition htr for every input and work tuple",
+  "Boolean input x",
+  "base configuration b",
+  "input-head position p",
+  "flag tape",
+  "counter tape",
+  "counter-head position h",
+  "Boolean word w",
+  "output word o",
+  "natural number j",
+  "j ≤ length of w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

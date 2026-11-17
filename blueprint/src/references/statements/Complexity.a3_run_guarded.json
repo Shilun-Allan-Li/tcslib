@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.a3_run_guarded",
+ "key": "e7dc5d43cca032b2",
+ "kind": "lemma",
+ "title": "Wrapper follows a run before exit",
+ "statement": "Let $C$ be a finite Turing machine over the Boolean alphabet with at least one work tape, and let $\\mathrm{entry}$ and $\\mathrm{exit}$ be states of $C$. For any Boolean input $x$, any configuration $c$ of $C$ on input $x$, and any natural number $t$, suppose that for every $j<t$ the configuration reached from $c$ after $j$ steps is not in state $\\mathrm{exit}$. Then the wrapper run for $t$ steps from the state-renamed copy of $c$ equals the state-renamed configuration reached by $C$ after $t$ steps from $c$.",
+ "hypotheses_covered": [
+  "$C$ is a finite Turing machine over the Boolean alphabet",
+  "$C$ has at least one work tape",
+  "entry and exit are states of $C$",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $C$ on input $x$",
+  "$t$ is a natural number",
+  "For every $j<t$, the run from $c$ at time $j$ is not in state exit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "As long as the inner machine's run from a configuration has not reached the\ndesignated exit state, the decider wrapper's run from the state-renamed copy of\nthat configuration coincides, under the renaming, with the inner machine's run."
+}

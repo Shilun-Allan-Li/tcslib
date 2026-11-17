@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clCopy_write",
+ "key": "03a09f4dc21b4c0f",
+ "kind": "lemma",
+ "title": "Appending one record bit",
+ "statement": "For every Boolean input word $x$, states $q,q'$, valid input-head position $p$, integer source-head position $z$, and Boolean words $w,r$, applying the action that leaves the source tape unchanged while moving its head by $d$, writes the bit $b$ at the record head and moves that head one cell right, emits no output, leaves the input head fixed, and enters state $q'$, yields the configuration with state $q'$, source head at $z+d$, source word $w$, record $r$ followed by $b$, and all other listed configuration data unchanged.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "States $q,q'$ in the five-state set",
+  "Valid input-head position $p$",
+  "Integer source-head position $z$",
+  "Boolean words $w,r$",
+  "Bit $b$",
+  "Head movement $d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every copier configuration and every action that writes a bit $b$ at the record head while moving the source head by $d$, applying the action yields the configuration with exactly $b$ appended to the record and the source head moved by $d$; nothing else changes."
+}

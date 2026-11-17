@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.sb_run",
+ "key": "99b31bfe421b1464",
+ "kind": "theorem",
+ "title": "Bounded register subtraction run",
+ "statement": "Let $x$ be a finite bit string, let $B$ be a natural number, let $b$ be a Boolean value, and let $st$ be a seven-register state whose registers $K,S,P,T,Z,C,V$ are all at most $B$. The program has a finite run from label $\text{sb}(b,0)$ with registers initialized from $st$ to label $\text{jzC}(b)$, with the same registers as $st$ except that $V$ is set to $0$ and $C$ is set to the truncated difference $\text{max}(C-V,0)$; every configuration before the endpoint satisfies the program guard and has all registers at most $B$.",
+ "hypotheses_covered": [
+  "A Boolean value $b$",
+  "All seven registers of $st$ are at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, let $B$ be a natural number, let $b$ be a Boolean value, and\nlet $st$ be a state whose seven register values $K,S,P,T,Z,C,V$ are each at most $B$.\nStarting from the configuration with control label $\\mathrm{sb}(b,0)$ and register\nvalues given by $st$, the program reaches the label that tests whether $C=K-V$ with\nregister values given by $st$, except that $V$ is set to $0$ and $C$ to the truncated\ndifference of its original value and the original value of $V$; every configuration\nbefore the endpoint satisfies the program precondition and has all register values at\nmost $B$."
+}

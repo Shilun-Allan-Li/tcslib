@@ -1,0 +1,18 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter04/CircuitInfluence.lean :: FABL.CircuitTail.totalInfluence_evalFunction_le_of_quarterSwitching -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Influence Bound by Layer Count
+
+**Claim.** Under the quarter-switching hypothesis, if the inputs have gate-appropriate normal forms of width at most $w$ and the tail has at most $s-1$ internal gates, then its computed function has total influence at most $2w\,\mathrm{circuitInfluenceStep}(s)^{\mathrm{depth}(T)-1}$, where the depth here is the layer count.
+
+**Proof.** Induct on the circuit tail, allowing the gate, width bound, and size bound to vary. For an output tail, its output is a single gate applied to the input functions. The gate preserves the width bound, and the total-influence bound for a function with a width-$w$ normal form gives at most $2w$. This is the desired bound because the output tail has one layer, so the exponent is zero.
+
+For a layered tail, first handle $w=0$: the zero-width result makes the output constant, hence its total influence is zero and the asserted bound follows. Now suppose $w>0$. Form the functions computed by each gate in the first layer. They retain the gate-appropriate width bound. Set $\delta=1/(20w)$; positivity of $w$ gives $0<\delta\le1$. The assumed quarter-switching estimate applies to each of these functions, since each has either a DNF or a CNF of width at most $w$. The expected-maximum decision-tree-depth estimate then bounds the expected maximum restricted depth of these functions by $\mathrm{circuitInfluenceLog}(s)$: the first layer has at most $s$ gates, and this logarithmic bound is monotone in the gate count.
+
+Fix a random restriction. Restriction commutes with circuit evaluation, so the restricted output is computed by the remaining tail from the restricted first-layer functions. The gate-appropriate restricted-width bound places each of these inputs within the maximum restricted decision-tree depth. Apply the induction hypothesis to the remaining tail, whose internal-node count still satisfies the size bound. Its restricted output's total influence is at most twice that maximum depth times $\mathrm{circuitInfluenceStep}(s)^{L-2}$, where $L$ is the original tail's layer count. Averaging over restrictions preserves this inequality. Factoring out the constant and using the expected-depth estimate bounds the expected restricted total influence by $2\,\mathrm{circuitInfluenceLog}(s)\,\mathrm{circuitInfluenceStep}(s)^{L-2}$.
+
+The expected total influence under these restrictions equals $\delta$ times the original total influence. Divide by the positive $\delta$. Since $\mathrm{circuitInfluenceStep}(s)=20\,\mathrm{circuitInfluenceLog}(s)$ and $1/\delta=20w$, the resulting bound is $2w\,\mathrm{circuitInfluenceStep}(s)^{L-1}$. The remaining tail has at least one layer, so its exponent $L-2$ used above is consistent with the natural-number power calculation.
+
+**Key facts.** `FABL.CircuitTail.evalFunction_output`, `FABL.CircuitGate.hasWidthLE_evalFinsetFunction`, `FABL.CircuitGate.hasDNFWidthLE_or_hasCNFWidthLE`, `FABL.expect_maxRestrictedDecisionTreeDepth_le_clog_add_two_of_failure_le_quarter`, `FABL.CircuitTail.extendedSignRestriction_evalFunction`, `FABL.CircuitGate.hasWidthLE_extendedSignRestriction_max`, `FABL.CircuitTail.one_le_layerCount`, `FABL.expectRandomRestriction_mono`, `FABL.expectRandomRestriction_const_mul`, `FABL.expect_totalInfluence_extended_randomRestriction`, `FABL.CircuitTail.totalInfluence_evalFunction_eq_zero_of_width_zero`.

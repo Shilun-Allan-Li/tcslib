@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.Contract.Traj.embed",
+ "key": "4249f532f2a09987",
+ "kind": "theorem",
+ "title": "Embedding a trajectory property",
+ "statement": "Let $C$ be a contract for a machine with $m$ work tapes, and embed those tapes into a machine with $k$ work tapes by an injection of tape indices. If a predicate $R$ holds throughout every eligible trajectory of $C$, then throughout every eligible trajectory of the induced embedded contract, $R$ holds for the selected configuration and the selected head positions; moreover, each unselected head position equals its value in the starting configuration.",
+ "hypotheses_covered": [
+  "σ is an injection from the m tape indices into the k tape indices",
+  "C satisfies trajectory property R"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $m,k$ be nonnegative integers, let $\\sigma$ embed the $m$ work tapes into the $k$\nwork tapes, and let $C$ be a contract for a machine with $m$ work tapes. Suppose that\nalong every run covered by $C$, a property $R$ holds of the original configuration and\nall work-head positions up to the contract time. Then, along every run of the embedded\ncontract, $R$ holds for the selected configuration and the corresponding selected head\npositions; moreover, every unselected work-head position remains equal to its initial\nvalue."
+}

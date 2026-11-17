@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/BLR/ZkBLR.lean :: ZkBLR.re_epsilon_far_bounds_fourier -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Fourier Bound from Linear Farness
+
+**Claim.** If $f$ is normalized and $\varepsilon$-far from every linear map, then every Fourier coefficient of its lift has real part at most $1-(1-\cos(2\pi/k))\varepsilon$.
+
+**Proof.** Apply the pointwise Fourier bound with the linear character $x\mapsto s\cdot x$. This gives an upper bound of $1-(1-\cos(2\pi/k))\,\mathrm{dist}(f,\chi_s)$. The coefficient $1-\cos(2\pi/k)$ is nonnegative, since cosine is at most $1$. The character is linear because the dot product is additive in its input; therefore the assumed farness gives $\mathrm{dist}(f,\chi_s)\ge\varepsilon$. Substituting this lower bound proves the claim.
+
+**Key facts.** `ZkBLR.re_fourier_coeff_upper_bound`, `ZkFourier.zkDot_add_right`.

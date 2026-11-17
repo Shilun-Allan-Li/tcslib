@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.dgStart",
+ "key": "6c945ba5c1e07f03",
+ "kind": "def",
+ "title": "Initial simulator configuration",
+ "statement": "Let $M$ be a finite Turing machine over a finite alphabet $\\Gamma$ with decidable equality, choose $a_0\\in\\Gamma$, and let $x$ be a string over the enlarged sweep alphabet. Let $c$ be a configuration of $M$ on the input obtained by replacing each symbol of $x$ by itself when it lies in $\\Gamma$, and by $a_0$ otherwise; also choose integers $a,z$ and a natural number $n$. The defined configuration is a configuration of a one-work-tape simulator on $x$, initialized with the encoded state, input-head position, tape zone, boundary markers, and output derived from $c,a,n,z$.",
+ "hypotheses_covered": [
+  "A finite source alphabet with decidable equality",
+  "A finite Turing machine over that alphabet",
+  "A chosen source-alphabet symbol",
+  "An input string over the enlarged sweep alphabet",
+  "A source-machine configuration on the retracted input",
+  "Integers $a,z$",
+  "A natural number $n$"
+ ],
+ "confidence": "low",
+ "caveat": "The exact encoded tape contents and head-position transformations are specified by auxiliary constructions not included in the provided informal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

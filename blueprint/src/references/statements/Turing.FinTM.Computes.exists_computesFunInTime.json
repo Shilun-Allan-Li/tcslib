@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.Computes.exists_computesFunInTime",
+ "key": "5ef159468b6528b2",
+ "kind": "theorem",
+ "title": "A time bound for computed functions",
+ "statement": "Let $\\Sigma$ be a finite alphabet, let $M$ be a finite Turing machine over $\\Sigma$, and let $f$ map words over $\\Sigma$ to words over $\\Sigma$. If $M$ computes $f$, meaning that on every input it eventually halts with output $f(x)$, then there is a function $T:\\mathbb{N}\\to\\mathbb{N}$ such that on every input $x$, $M$ halts with output $f(x)$ within $T(|x|)$ steps.",
+ "hypotheses_covered": [
+  "The alphabet $\\Sigma$ is finite",
+  "$M$ is a finite Turing machine over $\\Sigma$",
+  "$f$ maps words over $\\Sigma$ to words over $\\Sigma$",
+  "$M$ computes $f$ on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Sigma$ be a finite alphabet, let $M$ be a finite Turing machine over\n$\\Sigma$, and let $f$ be a total function from strings over $\\Sigma$ to strings\nover $\\Sigma$. If $M$ computes $f$ --- on every input $x$ it halts, after some\nfinite number of steps, with $f(x)$ on its output tape, with no stated time\nbound --- then there exists a function $T : \\mathbb{N} \\to \\mathbb{N}$ such that\n$M$ computes $f$ within time $T$, i.e.\\ on every input $x$ the machine $M$\nhalts with output $f(x)$ within $T(\\abs{x})$ steps, where $\\abs{x}$ is the\nlength of $x$. No monotonicity, positivity, or constructibility of $T$ is\nclaimed."
+}

@@ -1,18 +1,17 @@
 {
  "lean_name": "BoolCircuit.NAndCircuit.clauseToTerm_var_inj",
- "key": "a991bf5762ed61f1",
+ "key": "f979b9de2779b942",
  "kind": "theorem",
- "title": "Variable-injectivity of a converted AND-clause",
- "statement": "Let $lits$ be a list of circuit literals on $n$ variables whose variable indices are pairwise distinct, and let $C$ be the AND-clause built from $lits$. If $\\ell_1$ and $\\ell_2$ are any two literals occurring in the term obtained by converting $C$, and $\\ell_1$ and $\\ell_2$ have the same variable, then $\\ell_1 = \\ell_2$.",
+ "title": "Variable injectivity of a converted clause",
+ "statement": "Let $n$ be a natural number, and let $lits$ be a list of Boolean-circuit literals on $n$ variables whose variable indices are pairwise distinct. Convert the AND-clause built from $lits$ into a term by replacing each circuit literal with its corresponding switching-lemma literal. Any two literals in that term with the same variable are equal.",
  "hypotheses_covered": [
-  "lits is a list of circuit literals on n variables",
-  "the variable indices of lits are pairwise distinct",
-  "l₁ occurs in the converted term of the clause",
-  "l₂ occurs in the converted term of the clause",
-  "l₁ and l₂ share the same variable"
+  "$n$ is a natural number",
+  "The variable indices in $lits$ are pairwise distinct",
+  "Both literals occur in the converted term",
+  "The two literals have the same variable"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If the literal indices of an AND-clause are distinct, then within the converted term any\ntwo literals sharing the same variable are equal."
+ "replaced": "Let $lits$ be a list of circuit literals on $n$ variables whose variable indices are\npairwise distinct, and let $C$ be the AND-clause built from $lits$. If $\\ell_1$ and\n$\\ell_2$ are any two literals occurring in the term obtained by converting $C$, and\n$\\ell_1$ and $\\ell_2$ have the same variable, then $\\ell_1 = \\ell_2$."
 }

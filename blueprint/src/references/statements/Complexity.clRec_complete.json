@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clRec_complete",
+ "key": "4cad9aee0f802c88",
+ "kind": "lemma",
+ "title": "Completion of trajectory recording",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean work-tape alphabet, let $x$ and $y$ be Boolean words, and let $T$ be a nonnegative integer. Write $F=2(1+M.k)$ for the number of movement-count fields. Starting with the recorder on physical input $x$, its source machine in the initial state with input $y$, all counts zero, an empty record, clock budget $T$, and logical time zero, there is a number of steps $s$ with $s\\le (T+1)(F(3T+4)+2T+7)$ after which the recorder is in its completed control. Its source configuration is the configuration of $M$ after $T$ steps on $y$, its counts are the recursively advanced counts at time $T$, and its record is the concatenation of the encoded rows for times $0$ through $T$; its clock budget and logical time are both $T$, and its physical output is empty.",
+ "hypotheses_covered": [
+  "Finite-state Boolean-alphabet Turing machine $M$",
+  "Boolean words $x$ and $y$",
+  "Natural-number horizon $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For every source machine, physical input, virtual input $y$, and horizon $T$, there is a time $s \\le (T+1)(F(3T+4) + 2T + 7)$, where $F$ is the field count, after which the recorder, started from the prepared blank seam, is in its completed live control with the stored rows of all times $0,\\dots,T$ on the record tape, the movement counts and the exact horizon configuration of the source, and an empty physical output."
+}

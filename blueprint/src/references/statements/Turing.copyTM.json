@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.copyTM",
+ "key": "6c82d22d525221cc",
+ "kind": "def",
+ "title": "Tape Copying Machine",
+ "statement": "Given a natural number $k$ and two work-tape indices $\\mathrm{src},\\mathrm{dst}\\in\\{0,\\ldots,k-1\\}$, define a machine over any symbol alphabet with sweep, rewind, and done states. In the sweep state, if the source head scans a symbol, the machine writes it at the destination head and moves both heads right; if the source scans blank, it moves both heads left and enters rewind. In rewind, it moves both heads left while the source scans a symbol, and when the source scans blank it moves both heads right and enters done. In done, it stays in that state without moving or writing.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$\\mathrm{src}$ and $\\mathrm{dst}$ are work-tape indices less than $k$",
+  "The machine uses an arbitrary symbol alphabet"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

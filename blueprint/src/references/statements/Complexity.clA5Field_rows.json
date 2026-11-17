@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clA5Field_rows",
+ "key": "6605726a265eb0e5",
+ "kind": "lemma",
+ "title": "Lookup in a packed row stream",
+ "statement": "Let each row contain $l$ bit-string fields, and let $N$ be a natural number. For any time $t<N$ and coordinate $i<l$, the field at index $tl+i$ in the packed stream of the first $N$ rows is exactly the $i$th field of row $t$.",
+ "hypotheses_covered": [
+  "natural number of fields l",
+  "row family indexed by natural numbers and coordinates in Fin l",
+  "natural row bound N",
+  "natural time t",
+  "t<N",
+  "coordinate i in Fin l"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every row family with $l$ fields per row, bound $N$, time $t < N$, and coordinate $i$, the header field at index $t \\cdot l + i$ of the stream of $N$ rows is exactly the field $i$ of row $t$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.enc_inputSymbol",
+ "key": "729ff9d7846cab40",
+ "kind": "theorem",
+ "title": "Input symbol in an encoded state",
+ "statement": "Let $R$ be a number of registers, let $\\Lambda$ be a label set, let $P$ be a counter program, let $x$ be an input bit string, and let $s$ be an abstract program state with read position $p$. If $p\\le |x|$, then the symbol under the input head in the machine configuration encoding $s$ is the possibly absent bit $x[p]$ (with zero-based indexing).",
+ "hypotheses_covered": [
+  "Counter program register count $R$ and label set $\\Lambda$",
+  "Counter program $P$",
+  "Input bit string $x$",
+  "Abstract state $s$",
+  "Read position of $s$ satisfies $p\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input bit string of length $n$ and $s$ an abstract state of a counter program over\n$R$ registers whose read position $p$ satisfies $p \\le n$. Then the symbol under the input head\nin the machine configuration encoding $s$ on input $x$ is the bit $x_p$ (indexing from $0$) when\n$p < n$, and no symbol (a blank) when $p = n$."
+}

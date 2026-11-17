@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.universal_record_shape",
+ "key": "8235b5404ad4c30a",
+ "kind": "lemma",
+ "title": "Shape of a serialized transition record",
+ "statement": "For every one-work-tape binary machine action with successor state either absent or an index $q$, its serialized record is the list of its eight fixed action bits, followed by $u$ copies of $1$ and a terminating $0$, where $u=0$ if the successor is absent and $u=q+1$ if it is present.",
+ "hypotheses_covered": [
+  "The action is for a one-work-tape binary machine",
+  "The state set has size $n+1$ for some natural number $n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The serialized record of any one-work-tape machine action decomposes as its\neight fixed action bits, followed by a block of $1$s whose length is the\nunary size of the optional successor field (zero when the action halts, one\nmore than the successor index otherwise), followed by a single terminating\n$0$."
+}

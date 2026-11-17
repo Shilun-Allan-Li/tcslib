@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.setupCfg_reset_scan",
+ "key": "b0f537e166f7dc22",
+ "kind": "lemma",
+ "title": "Reset scan to the left boundary",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\\in\\mathbb{N}$, and fix a schedule-alphabet input $x$, a base configuration, integer controller-head positions, and controller tapes. For any $j\\in\\mathbb{N}$ with $j\\le |x|$, starting in reset-scan phase with input head at position $j$, after exactly $j$ steps the input head is at position $0$ and the configuration is otherwise unchanged.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Booleans",
+  "$a\\in\\mathbb{N}$",
+  "schedule-alphabet input $x$ and base configuration",
+  "integer controller-head positions",
+  "arbitrary controller tapes",
+  "$j\\in\\mathbb{N}$",
+  "$j\\le |x|$",
+  "initial phase is reset-scan and input head is at $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the oblivious schedule machine is in a setup configuration in the reset-scan\nphase with input head at an interior position $j \\le |x|$; the controller tapes and\nheads are arbitrary.  Then after exactly $j$ steps the machine is in the same setup\nconfiguration except that the input head is at the left boundary (position $0$): the\nphase, all tapes, and all work heads are unchanged."
+}

@@ -1,15 +1,16 @@
 {
  "lean_name": "ThreeSATToClique.ThreeSAT_to_Clique_soundness",
- "key": "9431f277642fb6f2",
+ "key": "3b91cef2c8e0f590",
  "kind": "theorem",
  "title": "Soundness of the 3-SAT to clique reduction",
- "statement": "Let $f$ be a 3-CNF formula consisting of $m$ clauses. If the conflict graph of $f$ has an $m$-clique, then $f$ is satisfiable.",
+ "statement": "Let $V$ be a set of variables and let $f$ be a finite list of 3-clauses over $V$. If the conflict graph of $f$ has a clique of size equal to the number of clauses in $f$, then there is a truth assignment on $V$ that satisfies every clause of $f$.",
  "hypotheses_covered": [
-  "f is a 3-CNF formula (list of m 3-clauses)",
-  "its conflict graph has a clique of size m (the number of clauses)"
+  "$V$ is a type of variables",
+  "$f$ is a list of 3-clauses over $V$",
+  "The conflict graph of $f$ has a clique of size $f$'s number of clauses"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If the conflict graph of a 3-CNF formula $f$ with $m$ clauses contains an\n$m$-clique, then $f$ is satisfiable:\n$\\mathtt{hasClique}\\,(\\mathtt{toCliqueGraph}\\,f)\\,f.\\mathtt{length} \\to\n\\mathtt{is3Satisfiable}\\,f$."
+ "replaced": "Let $f$ be a 3-CNF formula consisting of $m$ clauses. If the conflict graph of $f$ has\nan $m$-clique, then $f$ is satisfiable."
 }

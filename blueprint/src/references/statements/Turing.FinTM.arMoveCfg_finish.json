@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.arMoveCfg_finish",
+ "key": "7a2e695e8f90d029",
+ "kind": "lemma",
+ "title": "Completion of the move sweep",
+ "statement": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $N\\in\\mathbb{N}$, let $E$ inject optional $\\Gamma$-symbols into blocks of $N+1$ optional bits, and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an injection. For a finite Turing machine $M$ over $\\Gamma$, a binary word $x$, a configuration $c$ on the input obtained by applying $e$ letterwise to $x$, and an action $a$ of $M$, one step of the binary simulator from the move-sweep configuration at counter zero equals the encoded configuration of the result of applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite and has decidable equality",
+  "$N\\in\\mathbb{N}$",
+  "$E$ is an injection from optional symbols to blocks",
+  "$e$ is an injection from bits to $\\Gamma$",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a binary word",
+  "$c$ is a configuration on the letterwise $e$-image of $x$",
+  "$a$ is an action for $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "One transition of the binary block-code simulator applied to the move-sweep\nconfiguration (source configuration $c$, source action $a$) at counter $0$ yields the\nencoded configuration of the result of applying $a$ to $c$; in particular the\nsimulator halts exactly when the next state of $a$ is absent."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.enumInc_spec",
+ "key": "47b12a0a8be773c5",
+ "kind": "lemma",
+ "title": "Specification of fixed-width increment",
+ "statement": "For every Boolean word $u$, if its fixed-width increment is a word $v$, then $v$ has the same length as $u$ and its little-endian value is the value of $u$ plus one. If the increment has no result, then the value of $u$ plus one equals $2^{|u|}$.",
+ "hypotheses_covered": [
+  "An arbitrary Boolean word $u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every boolean word $u$: if the fixed-width increment of $u$ succeeds with\nresult $v$, then $|v| = |u|$ and the little-endian value of $v$ is one more than\nthat of $u$; if it overflows, then the value of $u$ plus one equals $2^{|u|}$."
+}

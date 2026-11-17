@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.Invariance.lipschitz_expectation_bound_of_fourth_derivative",
+ "key": "ae76c8eddb9279e7",
+ "kind": "theorem",
+ "title": "Lipschitz comparison from fourth derivative bounds",
+ "statement": "Let $(\\Omega,\\mu)$ and $(\\Xi,\\nu)$ be probability spaces, and let $U\\in L^4(\\mu)$ and $V\\in L^4(\\nu)$. Suppose $B\\ge0$ and, for every $C^4$ function $\\phi:\\mathbb R\\to\\mathbb R$ and every $C\\ge0$ such that $|\\phi^{(4)}(t)|\\le C$ for all $t\\in\\mathbb R$, assume\n\\[\n\\left|\\int \\phi(U)\\,d\\mu-\\int \\phi(V)\\,d\\nu\\right|\\le CB.\n\\]\nThen for every $c\\ge0$ and every $c$-Lipschitz function $\\psi:\\mathbb R\\to\\mathbb R$,\n\\[\n\\left|\\int \\psi(U)\\,d\\mu-\\int \\psi(V)\\,d\\nu\\right|\\le16cB^{1/4}.\n\\]",
+ "hypotheses_covered": [
+  "Probability spaces $(\\Omega,\\mu)$ and $(\\Xi,\\nu)$",
+  "$U\\in L^4(\\mu)$ and $V\\in L^4(\\nu)$",
+  "$B\\ge0$",
+  "For every $C^4$ function $\\phi$ and every $C\\ge0$ bounding $|\\phi^{(4)}|$ everywhere, the stated integral difference is at most $CB$",
+  "$c\\ge0$",
+  "$\\psi$ is $c$-Lipschitz"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $U\\in L^4(\\mu)$ and $V\\in L^4(\\nu)$ be real inputs on probability spaces, and let $B\\ge0$. Suppose that for every $\\phi\\in C^4(\\mathbb R)$ and $C\\ge0$ bounding $|\\phi^{(4)}|$ everywhere, $|\\mathbb E_\\mu\\phi(U)-\\mathbb E_\\nu\\phi(V)|\\le CB$. For every $c\\ge0$ and $c$-Lipschitz function $\\psi\\colon\\mathbb R\\to\\mathbb R$, $|\\mathbb E_\\mu\\psi(U)-\\mathbb E_\\nu\\psi(V)|\\le16cB^{1/4}$, including $B=0$."
+}

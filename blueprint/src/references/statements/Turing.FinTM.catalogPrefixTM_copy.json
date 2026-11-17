@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.catalogPrefixTM_copy",
+ "key": "10cf4010b9dda5f2",
+ "kind": "lemma",
+ "title": "Copy phase of the prefix emitter",
+ "statement": "Let $w,x$ be Boolean words. For every natural number $i\\le |x|$, after $i$ steps from the configuration in control state $|w|$, with input head at position $1$ and output $w$, the machine remains in control state $|w|$, has input head at position $i+1$, and has output $w$ followed by the first $i$ symbols of $x$.",
+ "hypotheses_covered": [
+  "$w,x$ are Boolean words",
+  "$i\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $i \\le \\abs{x}$, after $i$ steps from the configuration in which the\nwhole fixed word $w$ has been emitted and the input head sits at the start of\n$x$, the prefix emitter has advanced the input head by $i$ cells and its\noutput is $w$ followed by the first $i$ bits of $x$."
+}

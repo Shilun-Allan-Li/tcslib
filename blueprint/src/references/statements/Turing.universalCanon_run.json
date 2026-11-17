@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.universalCanon_run",
+ "key": "fe57fd265982eb33",
+ "kind": "lemma",
+ "title": "Canonizer run in the buffered composition",
+ "statement": "Let $c$ be an effective machine-coding scheme, let $\\alpha$ and $x$ be finite Boolean words, and let $t$ be a natural number. After exactly $3|\\alpha|+4+t$ steps of the prefix-parser–canonizer composition on $\\langle\\alpha,x\\rangle$, there is a Boolean flag $b$ such that the resulting configuration has the canonizer’s state, output, and work tapes from its run on $\\alpha$ after $t$ steps, with its input head at position $2|\\alpha|+3$. The composition’s buffer stores $\\alpha$ on its tape, places its buffer head at the canonizer’s input-head position minus one, and leaves the prefix parser’s work tapes blank with their heads at zero.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-coding scheme",
+  "$\\alpha$ and $x$ are finite Boolean words",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-coding scheme, let $\\alpha,x$ be Boolean words, and let\n$t$ be a natural number. There is a Boolean flag $b$ such that after exactly\n$3|\\alpha|+4+t$ steps, the buffered composition of the doubled-bit prefix parser with\nthe canonizer of $c$, started on $\\langle\\alpha,x\\rangle$, is in a configuration with a\nbuffered second-machine state equal to the canonizer's configuration after $t$ steps on\n$\\alpha$. The Boolean flag is $b$, and the physical input head is at position\n$2|\\alpha|+3$."
+}

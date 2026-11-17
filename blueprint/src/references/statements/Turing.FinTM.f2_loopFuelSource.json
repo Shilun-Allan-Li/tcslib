@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopFuelSource",
+ "key": "2f17c6009d7ec3f0",
+ "kind": "def",
+ "title": "Loop fuel source machine",
+ "statement": "Given finite Turing machines $B$ and $F$ over the Boolean alphabet, there is a multi-tape machine with $B.k+1+(1+F.k)$ work tapes and the state set of $F$. Its initial state is that of $F$, and its transition uses the transition of $F$ on the same state and input symbol, with the symbols on the final $F.k$ work tapes as its work-tape input; the action is extended to account for the additional work tapes.",
+ "hypotheses_covered": [
+  "A finite Boolean Turing machine $B$",
+  "A finite Boolean Turing machine $F$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement uses an undefined helper for extending the action, so the behavior of the added tapes cannot be specified more precisely from the given material.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

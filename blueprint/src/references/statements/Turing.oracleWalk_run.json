@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.oracleWalk_run",
+ "key": "db0cfde9921420c7",
+ "kind": "theorem",
+ "title": "Oracle Walk Run",
+ "statement": "Let $d$ be a four-tape configuration on a Boolean input word, let $q$ be a dispatch state, let $p$ be an integer, let $m\\in\\{-1,0,1\\}$, and let $t\\in\\mathbb{N}$. Suppose that at every integer $u<t$, the dispatch machine, when in state $q$ with the input symbol read from $d$ and with the work-tape heads at the positions determined by $p+mu$, prescribes no writes, moves the first two work-tape heads by $m$, leaves the other two stationary, and remains in state $q$. Then, for every $u\\le t$, its configuration after $u$ steps from the configuration with those first two head positions set to $p$ is the configuration obtained by setting both positions to $p+mu$.",
+ "hypotheses_covered": [
+  "Four-tape configuration $d$ on a Boolean input word",
+  "Dispatch state $q$",
+  "Integer starting position $p$",
+  "Movement $m\\in\\{-1,0,1\\}$",
+  "Natural number $t$",
+  "For each $u<t$, the stated transition action holds at the walk configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

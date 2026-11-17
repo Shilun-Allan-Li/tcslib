@@ -1,17 +1,18 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialCoordinate_eq_of_zVariable_eq",
- "key": "339ec68bd66396b5",
+ "key": "911e508db7e1cb4b",
  "kind": "theorem",
- "title": "Reading the special coordinate off the Z value",
- "statement": "Fix a disjointness protocol $p$ on inputs of length $n$, and recall that the special coordinate of a hard-distribution sample $\\omega$ is the index $T$ selected by that sample. Let $z$ be an achievable value of the variable $Z = (M, T, X_{<T}, Y_{>T})$, whose special-coordinate component records the index $T$. If the $Z$ value produced by $\\omega$ under $p$ equals $z$, then the special coordinate of $\\omega$ coincides with the special-coordinate component of $z$.",
+ "title": "Special coordinate determined by the statistic",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on inputs of length $n$, let $z$ be an achievable value of the statistic recording the transcript, the special coordinate, Alice’s bits before it, and Bob’s bits after it, and let $\\omega$ be a hard sample. If the statistic of $\\omega$ under $p$ equals $z$, then the special coordinate of $\\omega$ equals the special-coordinate component of $z$.",
  "hypotheses_covered": [
-  "a disjointness protocol $p$ on inputs of length $n$",
-  "a hard-distribution sample $\\omega$",
-  "an achievable value $z$ of the $Z$ variable",
-  "the $Z$ value of $\\omega$ under $p$ equals $z$"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol on length-$n$ disjointness inputs",
+  "$z$ is an achievable statistic value",
+  "$\\omega$ is a hard sample",
+  "The statistic of $\\omega$ under $p$ equals $z$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Equal $Z$ value fixes the special coordinate."
+ "replaced": "Fix a disjointness protocol $p$ on inputs of length $n$, and recall that the special\ncoordinate of a hard-distribution sample $\\omega$ is the index $T$ selected by that\nsample. Let $z$ be an achievable value of the variable $Z = (M, T, X_{<T}, Y_{>T})$,\nwhose special-coordinate component records the index $T$. If the $Z$ value produced by\n$\\omega$ under $p$ equals $z$, then the special coordinate of $\\omega$ coincides with\nthe special-coordinate component of $z$."
 }

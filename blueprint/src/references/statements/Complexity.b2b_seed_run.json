@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2b_seed_run",
+ "key": "0edae73b5c4909df",
+ "kind": "theorem",
+ "title": "Seeded counter run",
+ "statement": "Let $M_V,M_I,M_P$ be finite-state Boolean Turing machines, let $x$ be a Boolean word, let $p$ be one of the $|x|+2$ input-head positions, and let $Q\\in\\mathbb N$. Start the specified host machine in its counter phase with the input head at $p$, a word of $Q$ true bits on the designated word tape, and all other work-tape cells blank. After $(2Q+3)+(2Q+3)$ steps, its configuration is exactly the configuration with the input head still at $p$, a word of $Q$ false bits on that tape, a word of $Q$ true bits on the designated buffer tape, and all other work-tape cells blank, with the host in its rewind-start state. At every time up to and including that time, every work-tape head is at distance at most $Q+1$ from the origin.",
+ "hypotheses_covered": [
+  "$M_V,M_I,M_P$ are finite-state Boolean Turing machines",
+  "$x$ is a Boolean word",
+  "$p$ is a valid input-head position among the $|x|+2$ positions",
+  "$Q\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

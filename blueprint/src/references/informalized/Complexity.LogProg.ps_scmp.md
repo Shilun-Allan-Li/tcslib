@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean :: Complexity.LogProg.ps_scmp -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Doubled-word scan
+
+**Claim.** At the scan stage, the program terminates within the register bound and accepts exactly when the bits of the binary word for the scratch value occur doubled at the pointer, followed by $01$, and the continuation condition $K$ holds.
+
+**Proof.** Use strong induction on the scratch value, keeping the register configuration and continuation hypothesis general. If the value is zero, its binary word is empty. The program checks that the next two input bits are $01$; any other pair rejects, and when they are $01$ the pointer advances by two and the scratch register is zero, so the assumed continuation gives exactly $K$. This is exactly the empty-word case of the doubled-block condition. For a positive value $w$, its binary word begins with the bit $b$ indicating whether $w$ is odd, followed by the binary word of $w/2$ (`bits_eq_cons`). The program checks that the first input bit equals $b$, advances, and checks the second copy against the same bit. A failed check rejects, as required by the doubled-block condition. Once both copies match, it halves the scratch register and applies the induction hypothesis to $w/2$ at the pointer advanced by two. The decomposition of the doubled-block condition into its first equal pair and the remaining block (`dblAt_cons`) identifies the recursive condition with the original one; the final separator is checked in the base case. The parity branches merely select which bit must be duplicated, and the program's bit and length queries have the stated meanings (`pathOr_bit`).
+
+**Key facts.** `Complexity.LogProg.NSem.jz_pos`, `Complexity.LogProg.NSem.jz_neg`, `Complexity.LogProg.NSem.jodd_pos`, `Complexity.LogProg.NSem.jodd_neg`, `Complexity.LogProg.NSem.call_neg`, `Complexity.LogProg.NSem.call_pos`, `Complexity.LogProg.NSem.inc`, `Complexity.LogProg.NSem.half`, `Complexity.LogProg.NSem.ret`, `Complexity.LogProg.NSem.congr`, `Complexity.LogProg.PS.of_eq`, `Complexity.LogProg.PReg.reg`, `Complexity.LogProg.PReg.v_0`, `Complexity.LogProg.PReg.v_6`, `Complexity.LogProg.pathOr_bit`, `Complexity.bits_eq_cons`, `Complexity.dblAt_cons`.

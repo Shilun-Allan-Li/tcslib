@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.embedSilentCfg",
+ "key": "83ec0b1c069f6ee1",
+ "kind": "def",
+ "title": "Embedding a Silent Configuration",
+ "statement": "Let $m,k$ be nonnegative integers, let $\\iota$ be an injective map from the $m$ work-tape indices into the $k$ work-tape indices, and choose a distinguished tape index $c$ among the $k$ tapes. Given tape contents $T_j:\\mathbb Z\\to\\mathrm{Option}(\\mathrm{Symbol})$, head positions $h_j\\in\\mathbb Z$, lists $p,o_0$ of symbols, and an $m$-tape configuration $C$ on input $x$, form a $k$-tape configuration on the same input. It keeps $C$’s state and input-head position, places each of its work tapes and heads at the index specified by $\\iota$, and at every unused index other than $c$ uses $T_j$ and $h_j$. At index $c$, its tape contains the concatenation of $p$ and $C$’s output, its head is at the length of that concatenation, and its output is $o_0$.",
+ "hypotheses_covered": [
+  "Natural numbers $m,k$ of work tapes",
+  "An injection from the $m$ tape indices into the $k$ tape indices",
+  "A distinguished index among the $k$ tapes",
+  "Supplied tape contents and head positions for the $k$ tapes",
+  "A prefix list and an output list",
+  "An $m$-tape configuration on the fixed input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

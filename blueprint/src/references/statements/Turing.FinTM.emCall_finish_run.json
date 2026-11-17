@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_finish_run",
+ "key": "d79057d1e2f29ff3",
+ "kind": "lemma",
+ "title": "Exact-time finalization",
+ "statement": "Fix a mode, a Boolean input word $x$, an allowed input-head position $p$, and Boolean words $a$ and $c$. Starting with the finalizer in state $0$, with the argument and capture tapes storing $a$ and $c$ from cell $0$, their heads at $|a|$ and $|c|$, and empty output, after exactly $|a|+3|c|+5$ steps it is in state $5$, with both heads at the origin, capture tape blank, argument tape storing $a$ in emit mode and $c$ in install mode, and output equal to $c$ in emit mode and empty in install mode.",
+ "hypotheses_covered": [
+  "mode bit emit",
+  "Boolean input word x",
+  "input-head position p in Fin (|x|+2)",
+  "argument word a",
+  "capture word c"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the finalizer run in a fixed mode on an argument word $a$ and a capture word $c$,\nentering at its start state with the argument head at $|a|$ and the capture head at\n$|c|$ and empty output. After exactly $|a| + 3|c| + 5$ steps it is in its final silent\nstate with both heads at the origin and the capture tape blank; the argument tape holds\n$c$ in install mode and $a$ in emit mode, and the output is $c$ in emit mode and empty\nin install mode. Empty words are included."
+}

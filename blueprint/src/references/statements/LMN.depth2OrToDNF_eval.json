@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.depth2OrToDNF_eval",
- "key": "d772ce06b54a10c1",
+ "key": "474a44329be8f91f",
  "kind": "lemma",
  "title": "DNF conversion preserves the value of a shallow OR gate",
  "statement": "Let $cs$ be a finite list of Boolean circuits on $n$ variables, regarded as the children of a top-level OR gate $\\varphi$, and suppose $\\varphi$ has depth at most $2$. Form a DNF $D$ from $cs$ by turning each literal child into a singleton term, each AND child into the single term consisting of all its literals, and each OR child into the collection of singleton terms of its literals (in each case reading a circuit literal as the corresponding DNF literal, keeping the same variable and polarity). Then $D$ and $\\varphi$ compute the same Boolean function: $D(x) = \\varphi(x)$ for every assignment $x \\colon \\{0,\\dots,n-1\\} \\to \\{\\mathrm{true},\\mathrm{false}\\}$.",

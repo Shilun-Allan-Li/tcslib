@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_weight_strictAnti",
+ "key": "b54797ac8cfc0555",
+ "kind": "theorem",
+ "title": "Strict decrease of odd level weights",
+ "statement": "For natural numbers $m$ and $k$, if $k$ is odd and $k\\le 2m+1$, then the Fourier weight at level $k$ of majority on the Boolean hypercube of dimension $2m+3$ is strictly less than that of majority on the Boolean hypercube of dimension $2m+1$.",
+ "hypotheses_covered": [
+  "$m,k$ are natural numbers",
+  "$k$ is odd",
+  "$k\\le 2m+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor each $q\\in\\mathbb N$, define $M_q:\\{\\pm1\\}^{2q+1}\\to\\mathbb R$ to equal $1$ when\nmore than $q$ coordinates equal $1$, and $-1$ otherwise; for\n$S\\subseteq\\{1,\\ldots,2q+1\\}$ define\n$\\widehat M_q(S)=2^{-(2q+1)}\\sum_{x\\in\\{\\pm1\\}^{2q+1}}M_q(x)\\prod_{i\\in S}x_i$, and for\n$k\\in\\mathbb N$ define $W_k(M_q)=\\sum_{|S|=k}\\widehat M_q(S)^2$.\nFor every $m,k\\in\\mathbb N$ with $k$ odd and $k\\le2m+1$, one has\n$W_k(M_{m+1})<W_k(M_m)$."
+}

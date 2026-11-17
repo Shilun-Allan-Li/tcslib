@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.InBPP",
+ "key": "cd44b0b3a6c8bc74",
+ "kind": "def",
+ "title": "Bounded-error probabilistic languages",
+ "statement": "Fix a verifier model $E$ and a language $L$ of finite Boolean strings. The language $L$ is in bounded-error probabilistic polynomial time relative to $E$ if there are a Boolean-valued verifier $M$ and natural numbers $a,k$ such that the verifier associated to $M$ is efficient according to $E$, and for every input string $x$, membership in $L$ implies that $M$ outputs true with probability at least $2/3$, while nonmembership implies that it outputs false with probability at least $2/3$. In both cases the probability is taken over uniformly random Boolean strings of length $\frac{a|x|^k+a}{1}$ as specified by the polynomial-length function in the definition.",
+ "hypotheses_covered": [
+  "A verifier model $E$",
+  "A language $L$ of Boolean lists",
+  "There exist a verifier $M$ and natural numbers $a,k$",
+  "The verifier associated to $M$ is efficient according to $E$",
+  "For every input $x$, if $x\\in L$, acceptance probability is at least $2/3$",
+  "For every input $x$, if $x\\notin L$, rejection probability is at least $2/3$"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not include the definitions of `polyLen` or `randProb`, so the precise random-string length and sampling convention cannot be stated confidently.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

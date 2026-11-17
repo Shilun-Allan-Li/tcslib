@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clVisitRow_exact",
+ "key": "9917486c852cdd81",
+ "kind": "lemma",
+ "title": "Visit row on a canonical request",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $C,e$ be natural numbers, let $x$ be a Boolean word, and let $t$ be a natural number. The visit row obtained from the pairing of $x$ with a unary word of length $t$ equals the packed list, in work-tape order, of the codes for the last strictly earlier visits at time $t$, computed on the all-false input of length $|x|+C(|x|+1)^e$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$C,e$ are natural numbers",
+  "$x$ is a Boolean word",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters $C$ and $e$, instance $x$, and time $t$, the visit row of the encoded pair of $x$ with $t$ unary tokens is exactly the packed list, in source tape order, of the optional-time codes of the greatest strictly earlier visits at time $t$ over the reference length $|x| + C(|x|+1)^e$."
+}

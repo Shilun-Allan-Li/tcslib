@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clRepeat_complete",
+ "key": "7283b6cf8763d47d",
+ "kind": "lemma",
+ "title": "Bounded repetition of clean calls",
+ "statement": "Let $C$ be a finite Turing machine with states entry and exit, let $f$ be a function on Boolean words, let $x,s$ be Boolean words, and let $N,B$ be natural numbers. Suppose that for every $j<N$, the run of $C$ from the seam configuration in state entry with state word $f^j(s)$ reaches, in some time $t\\le B$ with $t>0$, the seam configuration in state exit with state word $f(f^j(s))$, and is not in state exit at any time $r$ with $0<r<t$. Then the repetition controller has a run from its start state with word $s$ and a unary clock of length $N$ at cursor zero to its completed state with word $f^N(s)$ and clock cursor $N$, in some number of steps at most $N(B+2)+1$.",
+ "hypotheses_covered": [
+  "A finite Turing machine $C$ and states entry and exit",
+  "A function $f$ on Boolean words",
+  "Boolean words $x,s$",
+  "Natural numbers $N,B$",
+  "For every $j<N$, a call duration $t\\le B$ exists",
+  "Each such duration is positive",
+  "The source run avoids exit at every intermediate time $0<r<t$",
+  "The source run ends at the specified exit seam configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose every iterate $j < N$ of a word function $f$ has a clean call of positive duration at most $B$ from the controller's bank. Then within $N(B+2) + 1$ steps the controller, started at its test phase over the initial word with an $N$-token clock, reaches its completed control holding exactly the $N$-fold iterate of $f$; every call starts from the fully restored seam and the final blank clock executes one silent completion."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.RandomizationAux.weighted_negative_moment_le",
+ "key": "6a936701406adf2e",
+ "kind": "theorem",
+ "title": "Weighted negative moment inequality",
+ "statement": "Let $\\alpha$ be a type, let $s$ be a finite subset of $\\alpha$, and let $w,F:s\\to\\mathbb R$ be given, with $w_i\\ge0$ for every $i\\in s$ and $\\sum_{i\\in s}w_i=1$. Suppose $q>0$, $0\\le c\\le1$, and for every $z\\in\\mathbb R$, $|1-cz|^q\\le |1+z|^q-q(1+c)z$. Set $a=\\sum_{i\\in s}w_iF_i$. Then $\\sum_{i\\in s}w_i|a-c(F_i-a)|^q\\le\\sum_{i\\in s}w_i|F_i|^q$.",
+ "hypotheses_covered": [
+  "$s$ is a finite subset of $\\alpha$",
+  "$w,F:s\\to\\mathbb R$",
+  "$q>0$",
+  "$0\\le c\\le1$",
+  "Scalar inequality holds for every real $z$",
+  "$w_i\\ge0$ for each $i\\in s$",
+  "$\\sum_{i\\in s}w_i=1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s$ be finite with weights $w_i\\ge0$ summing to $1$, values $F_i\\in\\mathbb R$, $q>0$, and $0\\le c\\le1$. If $|1-cz|^q\\le|1+z|^q-q(1+c)z$ for every real $z$, then with $a=\\sum_{i\\in s}w_iF_i$, $\\sum_{i\\in s}w_i|a-c(F_i-a)|^q\\le\\sum_{i\\in s}w_i|F_i|^q$."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.cmpDbl_run",
+ "key": "4e28c157c246438a",
+ "kind": "lemma",
+ "title": "Doubled-word comparison run",
+ "statement": "Let $P$ be a register program with oracle, let $r$ be a register, and let $j_{D1},j_{D2F},j_{D2T}$ and $j_{RB}(b)$ be states. Suppose the ordinary transitions at these states are respectively the specified first comparison action, the second comparison action for a false or true comparison bit, and the corresponding return action; suppose none of these states is a call state. Let $c$ be a configuration whose register $r$ stores the word $w_r$ from cell $0$, and let $w_i,q_0$ be a bit word and a natural number such that $q_0+2|w_i|+2\\le |x|+1$ and the input symbols at positions $q_0+k$ agree, for every $k<2|w_i|+2$, with the $k$th symbol of the doubled word $\\operatorname{dbl}(w_i)$ followed by $01$. For every decomposition $w_i=p u_1$, $w_r=p u_2$ and input-head position $ip$ with $ip=q_0+|p|$, there are natural numbers $T,k$ and an input-head position $ip_k$ such that $|p|\\le k\\le |w_r|$, and the run from state $j_{D1}$, head position $ip$, and register head at $|p|$ ends after $T$ steps in state $j_{RB}(\\mathbf 1_{w_i=w_r})$, at input position $ip_k$ and register-head position $k-1$. At each earlier time $t<T$, it is in some state $s$ that is not a call state, with register-head position $q$ satisfying $0\\le q\\le |w_r|$.",
+ "hypotheses_covered": [
+  "The transition rule at $j_{D1}$ for every input and work-tape reading",
+  "The transition rules at $j_{D2F}$ and $j_{D2T}$ for every input and work-tape reading",
+  "The transition rule at each $j_{RB}(b)$ for every input and work-tape reading",
+  "These five states are not call states",
+  "Register $r$ stores $w_r$ from cell $0$ in $c$",
+  "The words $w_i$ and $w_r$, and the position $q_0$",
+  "The bound $q_0+2|w_i|+2\\le |x|+1$",
+  "Agreement of the input with $\\operatorname{dbl}(w_i)01$ on the stated positions",
+  "The decompositions $w_i=p u_1$ and $w_r=p u_2$",
+  "The input-head position satisfies $ip=q_0+|p|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

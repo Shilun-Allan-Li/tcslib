@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.splitRestore_run",
+ "key": "9e8043fa4d9157f1",
+ "kind": "lemma",
+ "title": "Complete cleanup run",
+ "statement": "Let $k$ be a nonnegative integer and let $w$ and $s$ be Boolean words. There is a time $t\\le 2|s|+|w|+5$ at which the cleanup machine, started in its scan configuration at count $0$, is in state $(4,\\mathrm{false})$, with input head at position $1$, all work heads at position $0$, the word obtained by appending one $1$ to $s$ if $|s|\\le |w|$ and otherwise leaving $s$ unchanged on the first work tape, all other work tapes blank, and empty output.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w$ and $s$ are Boolean words",
+  "There exists $t$",
+  "$t\\le 2|s|+|w|+5$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any input $w$ and candidate $s$, there is a time\n$t \\le 2\\abs{s} + \\abs{w} + 5$ after which the cleanup machine, started at\nthe beginning of its scan phase, reaches the canonical anchored\nconfiguration, in its return state, whose stored words carry one\nsplit-search step applied to $s$; every transition on the way is silent."
+}

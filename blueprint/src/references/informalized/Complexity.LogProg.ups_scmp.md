@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/UPathSearch.lean :: Complexity.LogProg.ups_scmp -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Scratch Word Comparison Loop
+
+**Claim.** If the scratch register stores $w$, the register and pointer bounds hold, and the comparison scan fits within the bound, then the scratch-word comparison loop has acceptance probability $q$: matching doubled bits lead to the specified comparison-exit semantics, while any mismatch leads to the assumed fallback semantics.
+
+**Proof.** Use strong induction on the scratch value $w$. First consider $w=0$. The zero test takes its positive branch, so the machine checks the two delimiter bits following the pointer. If they are false then true, the input has the required doubled-word pattern for the empty word, and the two pointer increments lead to the comparison-exit configuration covered by the hypothesis. If either delimiter bit disagrees, the pattern fails and the fallback hypothesis applies at the resulting pointer and scratch values. The oracle-call rules (`PSem.call_pos` and `PSem.call_neg`), together with the increment and zero-test rules, combine these cases.
+
+Now suppose $w>0$. The binary expansion begins with the low bit followed by the bits of $w/2$ (`bits_eq_cons`), and the zero test takes its negative branch. The parity test determines the expected first bit, while the two oracle queries inspect the input bits at the current pointer and the next position. If both bits equal the expected bit, the program advances past this doubled bit and replaces the scratch value by $w/2$. The remaining scan is covered by the strong induction hypothesis, since $w/2<w$. The decomposition of the doubled-word predicate into its first pair and its remaining suffix (`dblAt_cons`) transfers both the matching-pattern exit hypothesis and the mismatch fallback hypothesis to this smaller scan. If either inspected bit is wrong, that same decomposition shows the full pattern cannot hold, so the fallback hypothesis applies. In every branch, the parity, oracle-call, increment, and halving rules (`PSem.jodd_pos`, `PSem.jodd_neg`, `PSem.call_pos`, `PSem.call_neg`, `PSem.inc`, and `PSem.half`) preserve the claimed acceptance probability. The register-bound facts and configuration equalities ensure these rules apply to the indicated states.
+
+**Key facts.** `Complexity.LogProg.PSem.jz_pos`, `Complexity.LogProg.PSem.call_neg`, `Complexity.LogProg.PSem.inc`, `Complexity.LogProg.PSem.call_pos`, `Complexity.LogProg.PSem.jodd_pos`, `Complexity.LogProg.PSem.jodd_neg`, `Complexity.LogProg.PSem.half`, `Complexity.bits_eq_cons`, `Complexity.dblAt_cons`, `Complexity.LogProg.UPS.of_eq`, `Complexity.LogProg.UReg.reg`, `Complexity.LogProg.UReg.v_0`, `Complexity.LogProg.UReg.v_6`, `Complexity.LogProg.pathOr_bit`.

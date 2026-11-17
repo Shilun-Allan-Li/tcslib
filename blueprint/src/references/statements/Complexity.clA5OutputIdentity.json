@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clA5OutputIdentity",
+ "key": "f10f0a350ed73a1c",
+ "kind": "lemma",
+ "title": "Polynomial-time tableau serialization",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let its state set have a fixed binary code with a decoding map that is a left inverse of the encoding, and let $C,e,c,A,d$ be natural-number parameters. The function mapping each bit string $x$ to the binary serialization of the Cook--Levin tableau for $M$, using the stated code and the horizon $c\\bigl(A(|x|+C(|x|+1)^e+1)^d+1\\bigr)^2$, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "Finite binary-alphabet Turing machine $M$",
+  "Binary code for optional states with decoding left-inverse to encoding",
+  "Natural-number parameters $C,e,c,A,d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, state code, and parameters, the function sending an instance $x$ to the serialization of the pure Cook--Levin tableau of $x$ at the producer horizon is computable by one finite machine in polynomial time from genuine native input. No certificate or satisfiability assumption is involved."
+}

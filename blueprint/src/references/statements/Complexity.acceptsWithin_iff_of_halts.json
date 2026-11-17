@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.acceptsWithin_iff_of_halts",
+ "key": "d5e6184ba3c71084",
+ "kind": "lemma",
+ "title": "Acceptance under larger halting budgets",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $x$ be a binary string, and let $t,t'\\in\\mathbb{N}$ with $t\\le t'$. Suppose every choice string of length exactly $t$ leaves the machine halted on input $x$. Then $N$ accepts $x$ within $t'$ steps if and only if it accepts $x$ within $t$ steps, where acceptance within a budget means that some choice string of exactly that length leaves the machine halted with output exactly the one-bit string $1$.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine over the binary alphabet",
+  "A binary input string $x$",
+  "Natural-number budgets $t,t'$",
+  "$t\\le t'$",
+  "Every choice string of length exactly $t$ leaves the run halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine over the binary alphabet, let $x$ be an input string, and let $t \\le t'$ be step budgets such that every choice word of length $t$ drives $N$ on $x$ into a halted configuration. Then $N$ accepts $x$ within $t'$ steps if and only if $N$ accepts $x$ within $t$ steps, where acceptance within a budget means that some choice word of exactly that length yields a halted run with output the one-bit string $1$."
+}

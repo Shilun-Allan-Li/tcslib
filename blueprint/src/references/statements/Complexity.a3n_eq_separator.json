@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.a3n_eq_separator",
+ "key": "ceb149f5cb74d744",
+ "kind": "lemma",
+ "title": "Recognizing the Pair Separator",
+ "statement": "Let $y,pre,v,u$ be binary words and suppose $y=pre\\,0\\,1\\,v$. Starting from the comparator configuration in parser state at input position $|pre|+1$, with decoded work word $u$ and work head at position $|u|$, after two steps it is in rewind state at input position $|pre|+3$, with decoded work word $u$ and work head at position $|u|-1$.",
+ "hypotheses_covered": [
+  "$y,pre,v,u$ are binary words",
+  "$y=pre\\,0\\,1\\,v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the comparator input has the form $y = p\\,0\\,1\\,v$ for words $p, v$. From the parser state at position $|p|+1$ with decoded word $u$, exactly two steps of the pair comparator enter the rewind state at position $|p|+3$, with the work tape and output untouched and the work head moved one cell left."
+}

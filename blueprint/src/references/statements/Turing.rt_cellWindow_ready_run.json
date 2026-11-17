@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.rt_cellWindow_ready_run",
+ "key": "8e37cec8ff4204e2",
+ "kind": "theorem",
+ "title": "Ready-state cell-window computation",
+ "statement": "Let $Q,T$ have decidable equality, let $k\\in\\mathbb{N}$, and let $\\iota:\\mathrm{Fin}(3)\\hookrightarrow\\mathrm{Fin}(k)$ be an embedding. Let $ws$ be a Boolean word and $s\\in\\mathbb{N}$ whose binary value is $s$. Suppose a $k$-tape configuration $d$ on the input obtained by embedding each Boolean symbol into the digit-symbol alphabet starts in the specified initial sweep state. On the three embedded tapes, tape 0 stores the digit encoding of $ws$ as a buffer relative to its head, while tapes 1 and 2 are blank everywhere. Then there is a time $t\\le18(s+|ws|)+32$ such that the designated done state is not reached before time $t$, every head stays within distance $2s+|ws|+3$ of its initial position through time $t$, and at time $t$ the designated state is reached. At that time, the configuration is unchanged except that tape $\\iota(1)$ contains, from its initial head position through the next $2s$ cells, a buffer of $s$ false cell symbols, one true cell symbol, and $s$ false cell symbols.",
+ "hypotheses_covered": [
+  "$Q,T$ have decidable equality",
+  "$k\\in\\mathbb{N}$ and embedding $\\iota:\\mathrm{Fin}(3)\\hookrightarrow\\mathrm{Fin}(k)$",
+  "input word $x$, Boolean word $ws$, and $s\\in\\mathbb{N}$",
+  "binary value of $ws$ equals $s$",
+  "configuration $d$ has the specified initial sweep state",
+  "for each three-tape index $i$ and integer position $p$, its embedded tape has the digit-buffer contents if $i=0$, and is blank otherwise"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

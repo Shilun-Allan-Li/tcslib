@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.unusedTape_computes",
+ "key": "77d9778a55f6022f",
+ "kind": "lemma",
+ "title": "Adding an unused tape preserves computation",
+ "statement": "Let $M$ be a finite Turing machine over an alphabet $\\Gamma$ with no work tapes, and let $f\\colon\\Gamma^*\\to\\Gamma^*$ and $T\\colon\\mathbb{N}\\to\\mathbb{N}$. If $M$ computes $f$ in time $T$, then the machine obtained by adding one unused work tape also computes $f$ in time $T$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$M$ has zero work tapes",
+  "$f\\colon\\Gamma^*\\to\\Gamma^*$",
+  "$T\\colon\\mathbb{N}\\to\\mathbb{N}$",
+  "$M$ computes $f$ in time $T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a Turing machine over an alphabet $\\Gamma$ with no work tapes that computes a\nfunction $f$ on words over $\\Gamma$ within time $T$, i.e.\\ on every input $x$ the run of\n$M$ has halted after $T(\\abs{x})$ steps with output $f(x)$. Then the machine obtained\nfrom $M$ by adding one unused work tape also computes $f$ within time $T$."
+}

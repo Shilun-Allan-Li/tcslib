@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/KLDivergence.lean :: CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_llr -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# KL divergence for probability mass functions
+
+**Claim.** For probability mass functions $p$ and $q$ on a finite discrete space, the KL divergence between their associated measures is infinite if $q$ vanishes where $p$ does not; otherwise it equals the real embedding of the sum of $p-mass$ times the log-likelihood ratio.
+
+**Proof.** Apply the finite-space KL formula in terms of singleton masses and log-likelihood ratios (FiniteMeasureSpace.klDiv_eq_sum_llr) to the measures associated to $p$ and $q$. Each singleton's measure under the associated measure is its probability mass, and its real mass is the real value of that probability. Also, each associated measure has total mass one. Substituting these identities into the formula cancels the total-mass correction and identifies the exceptional zero-mass condition with the corresponding condition on $p$ and $q$. The result is the stated two-branch formula.
+
+**Key facts.** `CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr`.

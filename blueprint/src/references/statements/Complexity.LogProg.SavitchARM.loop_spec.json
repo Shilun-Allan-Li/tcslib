@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.loop_spec",
+ "key": "fd0a52459c70891c",
+ "kind": "theorem",
+ "title": "Recursive midpoint search loop",
+ "statement": "Let $E,s,w,i\\in\\mathbb{N}$, let $\\mathcal{O}$ be an oracle on four indices and bit strings, and let $x$ be a bit string. Suppose $s\\le w$, $i+1\\le w$, and the recursive-call property holds at level $i$. For every $k\\in\\mathbb{N}$ and register state $\\mathrm{st}$ satisfying the level-$(i+1)$ invariant and $\\mathrm{st}.M+k=2^w$, there is an $M'\\le 2^w$ and a finite run, guarded by bound $2^{w^2}$ before its final configuration, from label $\\mathrm{loop}$ with registers $\\mathrm{st}$ and no answer to label $\\mathrm{rt}(b)$ with registers equal to $\\mathrm{st}$ except that $M=M'$, and no answer, where $b$ is true exactly when there exists $m$ with $\\mathrm{st}.M\\le m<2^w$ such that the level-$i$ reachability relation holds from $\\mathrm{st}.U$ to $m$ and from $m$ to $\\mathrm{st}.V$.",
+ "hypotheses_covered": [
+  "$s\\le w$",
+  "$i+1\\le w$",
+  "The recursive-call property holds at level $i$",
+  "The state satisfies the level-$(i+1)$ invariant",
+  "$\\mathrm{st}.M+k=2^w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

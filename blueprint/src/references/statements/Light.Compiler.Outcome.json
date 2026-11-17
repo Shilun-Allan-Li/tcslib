@@ -1,0 +1,24 @@
+{
+ "lean_name": "Light.Compiler.Outcome",
+ "key": "a89eb78b281f33e1",
+ "kind": "structure",
+ "title": "Program execution outcome",
+ "statement": "Let $W$ be a word size, let $\\text{lim}$ be resource limits, let $P$ be a program, let $d$ be a Boolean flag, and let $m,m'$ be memories of $W$-bit words indexed by integers. For initial and final program states $\\sigma,\\sigma'$, an outcome means that $m'$ represents the final memory of $\\sigma'$ with all values within the word bound; the reserved result cell encodes $\\sigma'.loc(0)$; both reserved argument cells are unchanged from $m$ to $m'$; and every cell strictly below minus the low-cell bound or at or above the space limit is unchanged.",
+ "hypotheses_covered": [
+  "A word size $W$",
+  "Resource limits $\\text{lim}$",
+  "A program $P$",
+  "A Boolean flag $d$",
+  "Initial and final memories $m$ and $m'$",
+  "An initial state $\\sigma$ and final state $\\sigma'$",
+  "The final memory represents $\\sigma'.mem$ with values bounded by the word limit",
+  "The result cell encodes $\\sigma'.loc(0)$",
+  "The first argument cell is unchanged",
+  "The second argument cell is unchanged",
+  "Cells below minus the low-cell bound and cells at or above the space limit are unchanged"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied text does not define the reserved result and argument-cell addresses, nor the low-cell bound's component functions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

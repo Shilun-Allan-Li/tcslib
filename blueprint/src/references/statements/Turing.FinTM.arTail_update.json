@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.arTail_update",
+ "key": "121644d95f6a960b",
+ "kind": "lemma",
+ "title": "Single-cell update during write sweep",
+ "statement": "Let $N\u0005in\u0005mathbb{N}$, let $E$ inject the symbols of an alphabet $\u0005Gamma$ together with blank into blocks of $N+1$ optional bits, let $t:\u0005bb{Z}\u0005to\u0005mathrm{Option}\u0005Gamma$ be a tape, and let $p\u0005in\u0005bb{Z}$ and $w\u0005in\u0005mathrm{Option}\u0005Gamma$. For any offset $j\u0005in\u0005{0,\u0005dots,N}$, replacing the binary tape induced by the counter-$(j+1)$ write-sweep family at position $(N+1)p+j$ with the $j$th bit-or-blank entry of $E(w)$ gives exactly the binary tape induced by the counter-$j$ family.",
+ "hypotheses_covered": [
+  "Natural number $N$",
+  "Block-code injection $E$",
+  "Tape $t$",
+  "Write position $p$",
+  "Symbol or blank $w$",
+  "Offset $j$ in $\u0005{0,\u0005dots,N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $j \\in \\{0,\\dots,N\\}$, overwriting the binary tape induced by the counter-$(j+1)$\npartially rewritten block family (tape $t$, write position $p$, new symbol $w$) at\ntape position $(N+1)p + j$ with entry $j$ of the code of $w$ yields the binary tape\ninduced by the counter-$j$ family: blocks other than $p$ are unchanged, and within\nblock $p$ the only new entry is the one at offset $j$."
+}

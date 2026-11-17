@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satRed_maxFormula",
+ "key": "8fefdd4affd5620a",
+ "kind": "lemma",
+ "title": "Maximum scan of a formula",
+ "statement": "Let $x$ be a Boolean word and let $\\varphi$ be a CNF formula over natural-number-indexed variables. If $x$ is a concatenation of a prefix, the serialization of $\\varphi$, and a suffix, then for every counter length $n$, second-tape content, second-tape head position $b$, and output word $o$, there is a number of steps $t\\le 2|\\mathrm{enc}(\\varphi)|$ after which the machine is in state $7$ at input position $|\\mathrm{pre}|+|\\mathrm{enc}(\\varphi)|-1$. Its counter length is $\\max(n,N(\\varphi))$, where $N(\\varphi)$ is one more than the largest variable index occurring in the formula, or $0$ if none occurs; the counter head remains at $0$, and the second tape, its head, and the output are unchanged.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "CNF formula $\\varphi$ over natural-number-indexed variables",
+  "decomposition of $x$ as prefix, serialized formula, and suffix",
+  "arbitrary counter length $n$",
+  "arbitrary second-tape content",
+  "second-tape head position $b$",
+  "arbitrary output word $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a CNF formula with serialization $\\mathrm{ser}(\\varphi)$ and\nits variable bound $N(\\varphi)$ (one more than the largest variable index occurring in $\\varphi$, or $0$ if no variable occurs). Suppose the input is\n$x = p \\mathbin{+\\!\\!+} \\mathrm{ser}(\\varphi) \\mathbin{+\\!\\!+} r$, and the\ntransducer is in formula-level maximum control at input position $|p|$, with\ncounter length $n$, counter head at $0$, and arbitrary buffer, buffer head, and\noutput. Then there is a number $t \\le 2\\,|\\mathrm{ser}(\\varphi)|$ of silent steps\nafter which the transducer is at its rewind seam at input position\n$|p| + |\\mathrm{ser}(\\varphi)| - 1$, with counter length $\\max(n, N(\\varphi))$,\ncounter head at $0$, and buffer, buffer head, and output unchanged."
+}

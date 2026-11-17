@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.ntime_hierarchy_of_pos",
+ "key": "238fd540c4e5c1ae",
+ "kind": "theorem",
+ "title": "Positive-Bound Nondeterministic Time Hierarchy",
+ "statement": "Let $f,g:\\mathbb{N}\\to\\mathbb{N}$ be time-constructible functions: each $T\\in\\{f,g\\}$ satisfies $n\\le T(n)$ for every $n$, and some positive constant $c$ and finite deterministic Turing machine compute the binary expansion of $T(|x|)$ on every input $x$ within $c(T(|x|)+1)$ steps. Suppose $g(n)>0$ for every $n$, and for every natural number $A$ there is an $N$ such that, for all $n\\ge N$, $A\\bigl(f(n+1)+f(n)+n+1\\bigr)\\le g(n)$. Then $\\mathrm{NTIME}(f)$ is a proper subset of $\\mathrm{NTIME}(g)$.",
+ "hypotheses_covered": [
+  "Functions $f,g:\\mathbb{N}\\to\\mathbb{N}$",
+  "$f$ is time-constructible",
+  "$g$ is time-constructible",
+  "$g(n)>0$ for every $n$",
+  "For every $A\\in\\mathbb{N}$, eventually $A(f(n+1)+f(n)+n+1)\\le g(n)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

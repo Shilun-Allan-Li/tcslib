@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.Stmt.Runs.mono",
+ "key": "e192a1a5b46fa1fa",
+ "kind": "theorem",
+ "title": "Monotonicity of the postcondition",
+ "statement": "Let $L$ be resource limits, $s$ a statement, $\\sigma$ a state, and $R,R'$ predicates on states. If $s$ is block-safe from $\\sigma$ and its resulting state satisfies $R$, and every state satisfying $R$ also satisfies $R'$, then $s$ is block-safe from $\\sigma$ and its resulting state satisfies $R'$.",
+ "hypotheses_covered": [
+  "$s$ runs safely from $\\sigma$ to $R$ under $L$",
+  "Every state satisfying $R$ satisfies $R'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{lim}$ be a set of word, space, and depth bounds, let $s$ be a statement,\nand let $\\sigma$ be a program state. If $s$ runs safely from $\\sigma$ to a postcondition\n$R$, and every state satisfying $R$ also satisfies a postcondition $R'$, then $s$ runs\nsafely from $\\sigma$ to $R'$."
+}

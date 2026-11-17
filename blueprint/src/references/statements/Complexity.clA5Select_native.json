@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Select_native",
+ "key": "9c0e9c9dda8da55d",
+ "kind": "lemma",
+ "title": "Finite selection of polynomial-time word functions",
+ "statement": "Let $f_0,\\ldots,f_{r-1}$ be a finite list of polynomial-time computable functions from Boolean words to Boolean words. Suppose each function in the list is polynomial-time computable, and let $v$ be a function from Boolean words to $\\mathbb{N}$ such that $z\\mapsto 1^{v(z)}$ is polynomial-time computable. Then the function that, on input $z$, applies $f_{v(z)}$ to $z$ when $v(z)<r$, and returns the empty word when $v(z)\\ge r$, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$fs$ is a finite list of Boolean-word functions",
+  "Every function in $fs$ is polynomial-time computable",
+  "$v$ maps Boolean words to natural numbers",
+  "The unary word $1^{v(z)}$ is polynomial-time computable as a function of $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a finite list of polynomial-time computable word functions and a polynomial-time unary selector, the function applying the selected list entry to the input, with the empty-word constant as out-of-range default, is polynomial-time computable; no unbounded transition table is consulted."
+}

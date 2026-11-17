@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.prepInvariant_action",
+ "key": "2f3d35d41cd03e06",
+ "kind": "lemma",
+ "title": "Preparation invariant under a schedule action",
+ "statement": "Let $W$ and $M$ be finite Turing machines over the binary alphabet, let $a$ be a natural number, and let $x$ be a binary word. For any schedule configuration $c$ on the bitwise embedded input, optional target phase $q$, input-head move, and write-and-move instructions $b,u,g$ for the budget, unary, and guide tapes, respectively, the preparation invariant of the configuration obtained by applying this schedule action to $c$ equals the preparation condition at phase $q$, at the clamped moved input position, at unary and guide head positions shifted by the moves in $u$ and $g$, and with the unary tape optionally updated at its scanned cell according to $u$; the data register, data tapes, and output are the specified unchanged arguments.",
+ "hypotheses_covered": [
+  "$W,M$ are finite Turing machines over the binary alphabet",
+  "$a$ is a natural number",
+  "$x$ is a binary word",
+  "$c$ is a schedule configuration on the embedded input",
+  "$q$ is an optional target phase",
+  "an input-head move is specified",
+  "budget, unary, and guide write-and-move instructions $b,u,g$ are specified",
+  "a data register, data tapes, and output list are specified"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying to a schedule configuration a non-clock action of the schedule\ncontroller — with a target phase, an input move, and optional writes and moves\non the three distinguished tapes — the preparation invariant of the resulting\nconfiguration equals the preparation condition at the target phase, the moved\ninput position, the unary and guide head positions shifted by the action's\nmoves, and the unary tape after the action's optional write, with the data\nregister, data tapes, and output unchanged."
+}

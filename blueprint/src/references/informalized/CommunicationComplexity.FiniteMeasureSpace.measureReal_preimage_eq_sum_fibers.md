@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/FiniteProbabilitySpace.lean :: CommunicationComplexity.FiniteMeasureSpace.measureReal_preimage_eq_sum_fibers -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Preimage measure by fibers
+
+**Claim.** For a predicate $P$ on a finite type and a map $Z$, the real measure of the points whose image satisfies $P$ equals the sum of the fiber masses for values satisfying $P$.
+
+**Proof.** First decompose the measure of $\{ω | P(Z(ω))\}$ into singleton masses (FiniteMeasureSpace.measureReal_eq_sum_singletons). For each value $z$, decompose its fiber mass in the same way, so its contribution is the sum of the singleton masses at points with $Z(ω)=z$, provided $P(z)$ holds. Combine the condition into the conjunction $P(z)$ and $Z(ω)=z$, then interchange the two finite sums. For a fixed $ω$, only the value $z=Z(ω)$ can contribute. Its contribution is exactly the singleton mass when $P(Z(ω))$ holds, and zero otherwise. Summing over $ω$ recovers the initial singleton decomposition.
+
+**Key facts.** `CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons`.

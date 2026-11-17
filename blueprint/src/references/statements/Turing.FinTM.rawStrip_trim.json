@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.rawStrip_trim",
+ "key": "d6358690848d5f68",
+ "kind": "lemma",
+ "title": "Reverse scan removes the final marker",
+ "statement": "Let $x$ and $w$ be Boolean words, and let $i$ be a natural number with $i \\le |x|$. Starting from the stripping machine's configuration with input $x$, reverse-scan state $1$, input head past the first $i$ symbols, work tape containing $w$, work head at $|w|-1$, and empty output, there is a time $t \\le 3(|w|+1)$ at which the machine has halted and its output is the prefix strictly before the last $1$ in $w$, or the empty word if $w$ has no $1$.",
+ "hypotheses_covered": [
+  "Boolean words x and w",
+  "natural number i",
+  "i ≤ |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the stripping machine's reverse state with buffer $w$ and work head on\nthe final cell, there is a time $t \\le 3(\\abs{w}+1)$ after which the machine\nhas halted; its output is the prefix of $w$ strictly before the last $1$ bit\nof $w$, and is empty when $w$ contains no $1$."
+}

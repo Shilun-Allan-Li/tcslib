@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clA5Template_native",
+ "key": "65c8ac8c0c8f659e",
+ "kind": "lemma",
+ "title": "Polynomial-time serialization of a wired formula",
+ "statement": "Let $\\varphi$ be a CNF formula over natural-number variables, and let $wire$ assign a natural-number variable index to each input word and each local index. Suppose that, for every natural number $j$, the unary word of length $wire(x,j)$ is polynomial-time computable as a function of the input word $x$. Then the function that relabels every variable of $\\varphi$ using $wire(x,\\cdot)$ and serializes the resulting clauses with a leading marker for each clause is polynomial-time computable.",
+ "hypotheses_covered": [
+  "A CNF formula over natural-number variables",
+  "A wiring function from an input word and a natural-number index to a natural-number variable index",
+  "For every index $j$, the unary encoding of $wire(x,j)$ is polynomial-time computable in $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every fixed CNF table and every wiring whose unary index is polynomial-time computable at each of the finitely many template variables, the function emitting the serialized fragment of the relabeled table is polynomial-time computable; every literal occurrence pays its variable-index cost, and the formula terminator is deliberately absent from the fragment."
+}

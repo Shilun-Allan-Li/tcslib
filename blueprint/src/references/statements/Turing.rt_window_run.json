@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.rt_window_run",
+ "key": "a050ce86bf57bbde",
+ "kind": "theorem",
+ "title": "Bounded run constructing a window",
+ "statement": "Let $ws$ be a Boolean word and $s\\in\\mathbb N$ such that its binary value is $s$, and let $d$ be a configuration in the specified entry state. Suppose tape $0$ stores $ws$ at every offset $p$ with $-1\\le p\\le |ws|$, tape $2$ is blank at those offsets, and tape $1$ is blank at every offset $p$ with $-1\\le p\\le 2s+1$. The constructed machine reaches its specified exit state at some time $t\\le14(s+|ws|)+27$, never visits that exit state earlier, and up to time $t$ every work-tape head moves by at most $2s+|ws|+3$ from its initial position; at time $t$, tape $1$ contains the word of $s$ false bits, one true bit, and $s$ false bits on the interval of length $2s+1$ starting at its initial head position, and all other configuration components agree with $d$.",
+ "hypotheses_covered": [
+  "Boolean word $ws$",
+  "Natural number $s$",
+  "Binary value of $ws$ equals $s$",
+  "Initial configuration $d$ has the specified entry state",
+  "Tape $0$ stores $ws$ at offsets $-1\\le p\\le |ws|$",
+  "Tape $2$ is blank at offsets $-1\\le p\\le |ws|$",
+  "Tape $1$ is blank at offsets $-1\\le p\\le 2s+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

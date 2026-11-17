@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.pairSndD_pairEncode",
+ "key": "e56edd32e0b5e696",
+ "kind": "theorem",
+ "title": "Second projection of an encoded pair",
+ "statement": "For any finite bit strings $a$ and $b$, the total second projection of their self-delimiting pair encoding is $b$.",
+ "hypotheses_covered": [
+  "$a$ and $b$ are finite bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\langle a,b\\rangle$ denote the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$), and let $\\pi_2$ be the total second projection, which returns the second component of a pair encoding and the empty word on any other bit string. Then $\\pi_2(\\langle a,b\\rangle) = b$ for all bit strings $a, b$."
+}

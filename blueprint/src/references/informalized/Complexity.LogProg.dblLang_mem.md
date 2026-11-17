@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean :: Complexity.LogProg.dblLang_mem -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Logarithmic-Space Membership
+
+**Claim.** The language of encodings of pairs consisting of a unary word of length $n$ and the canonical binary expansion of $2n$ belongs to logarithmic space.
+
+**Proof.** Let $y$ be the input and let $W$ be the length of the binary expansion of $|y|$. The proof first establishes that the register program halts with the correct membership bit and keeps its sole work-tape head between positions $-1$ and $W$. It treats valid pair encodings and all other inputs separately. If $y$ is valid, write it as the encoding of $(1^n,w)$, where $w$ is canonical. The program's validation run reaches the comparison stage for $w$ and the binary expansion of $2n$; the binary expansion has length at most $W$. One final return step emits the comparison result and restores the head to position zero. This result is the membership indicator: injectivity of the pair encoding shows that any representation of $y$ in the language has the same $n$ and the same second component, so membership is equivalent to $w=\operatorname{bits}(2n)$. The head stays in the claimed interval during validation, comparison, and the final step. If $y$ is invalid, the validation run halts with output false; its head bound follows from the invalid-input run invariant, and the language indicator is false because every member has a valid encoding. The compiler space theorem now transfers this halting computation and head-position bound to the compiled finite-state machine. With one register, the visited cells lie in an interval of length at most $W+2$. Finally, the binary-length bound gives $W\le \lfloor\log_2 |y|\rfloor+1$, so this space is at most a constant multiple of the stated logarithmic-space bound.
+
+**Key facts.** `Complexity.LogProg.Dbl.init_eq`, `Complexity.LogProg.Dbl.length_eq`, `Complexity.LogProg.Dbl.run_valid`, `Complexity.LogProg.Dbl.ret_step`, `Complexity.LogProg.Dbl.xCfg_K`, `Complexity.LogProg.canon_bits`, `Complexity.LogProg.indicator_eq_decide`, `Turing.pairEncode_injective`, `Complexity.LogProg.valPlain_run`, `Complexity.LogProg.compile_space`, `Complexity.LogProg.length_bits_mono`, `Complexity.LogProg.length_bits_le_log`.

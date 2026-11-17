@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.oracleHost_query",
+ "key": "32e47d86e01dcd53",
+ "kind": "theorem",
+ "title": "Simulation of an oracle query",
+ "statement": "Let $M$ be a Boolean oracle Turing machine and $C$ a Boolean multitape Turing machine with $c>0$ work tapes, and choose states $en,ex$ of $C$ and an oracle language $O$. Let $c_0$ be a configuration of $M$ on input $x$ whose state is the query state. Choose a side tag $b\\in\\{\\mathrm{false},\\mathrm{true}\\}$ such that the query-tape head position $p$ satisfies $p\\ge 0$ when $b=\\mathrm{true}$ and $p\\le 0$ when $b=\\mathrm{false}$, and suppose the query tape is blank at some cell $r\\ge0$. Write $z$ for the query string on that tape. Suppose that from the standard configuration of $C$ in state $en$ with $z$ on its first work tape and all other tapes blank, the machine reaches the standard configuration in state $ex$ with the one-symbol word recording whether $z\\in O$ after $t$ steps, and does not visit state $ex$ earlier. Then the host machine built from $M$ and $C$, started in the stable encoding of $c_0$ with tag $b$, reaches after some $u\\le 2|p|+2|z|+t+13$ steps the stable encoding of the oracle-step successor of $c_0$ for some tag $b'$; the successor query-tape head position satisfies the corresponding side condition for $b'$.",
+ "hypotheses_covered": [
+  "Boolean oracle machine M and Boolean multitape machine C",
+  "C has c>0 work tapes",
+  "chosen entry and exit states en, ex",
+  "oracle language O",
+  "configuration c₀ on input x",
+  "c₀ is in the query state",
+  "side tag and orientation condition on query-tape head position",
+  "query tape is blank at a nonnegative cell r",
+  "C's computation on the query string reaches the specified one-symbol answer configuration after t steps",
+  "C avoids the exit state at every earlier step",
+  "natural-number bound on host simulation time u"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.ctr",
+ "key": "af8684976c470692",
+ "kind": "def",
+ "title": "Compiled transition function",
+ "statement": "Let $P$ be a register program with $m$ registers and $d$ deciders, let $D$ be a Turing machine with $k_D$ work tapes, and choose an initial state for each decider. Define a transition function for control states consisting of ordinary program states, call-simulation states, and return states, with $m+k_D$ work tapes. At an ordinary state without a call, it performs the program’s transition on the first $m$ tapes and leaves the remaining tapes idle; at a call, it initializes the selected decider simulation and moves each listed argument-register head left. During simulation it runs the selected decider on the encoded virtual input, applies the segment and head-movement update, records the first emitted Boolean answer, and either continues simulation or begins the return procedure if the decider halts. The return states rewind the input head and restore the argument-register heads in order before continuing at the positive- or negative-answer program state; transitions at states whose program location no longer specifies a call halt.",
+ "hypotheses_covered": [
+  "Natural numbers $m,d,k_D$",
+  "A register program with $m$ registers and $d$ deciders",
+  "A decider Turing machine with $k_D$ work tapes",
+  "An initial-state choice for each decider",
+  "A control state, input symbol or blank, and contents under the $m+k_D$ work-tape heads"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

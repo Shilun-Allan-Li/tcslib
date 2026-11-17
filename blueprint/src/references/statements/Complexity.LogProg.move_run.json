@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.move_run",
+ "key": "a00ca3f6d6f935a6",
+ "kind": "theorem",
+ "title": "Register Transfer Loop",
+ "statement": "Let $A$ be a register program with $m$ registers and $d$ oracle deciders, let $x$ be an input, and let $B$ be a natural-number bound. Suppose distinct registers $r,t$ and states $l,l_x,l_1,l_2$ satisfy: at $l$ the program branches to $l_x$ when register $r$ is zero and to $l_1$ otherwise; at $l_1$ it decrements $r$ and proceeds to $l_2$; and at $l_2$ it increments $t$ and returns to $l$. For every $k$ and register assignment $v$ with $v(r)=k$, with every register value at most $B$, and with $v(t)+v(r)\\le B$, the configuration at $l$ reaches the configuration at $l_x$ with $r$ set to zero and $t$ set to its original value $v(t)+v(r)$, all other registers unchanged, and no answer recorded; every configuration before the final one satisfies the program's precondition and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$A$ is an $m$-register program with $d$ deciders; oracle and input $x$ are fixed",
+  "$B$ is a natural-number bound",
+  "$r,t$ are registers and $r\\ne t$",
+  "The instructions at $l,l_1,l_2$ are respectively the stated zero-test, decrement, and increment",
+  "$k$ is a natural number and $v(r)=k$",
+  "Every register value under $v$ is at most $B$",
+  "$v(t)+v(r)\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

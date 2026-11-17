@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.SeqCircuit.state",
+ "key": "92a681055f6c42bc",
+ "kind": "def",
+ "title": "Sequential circuit state",
+ "statement": "For a sequential Boolean circuit $M$ with $n$ inputs and $r$ registers, and an input assignment $x\\colon\\{0,\\ldots,n-1\\}\\to\\{\\mathrm{false},\\mathrm{true}\\}$, define its state $s_t\\colon\\{0,\\ldots,r-1\\}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ at each time $t\\in\\mathbb{N}$ recursively: $s_0$ is the initial register state, and $s_{t+1}(j)$ is the value at the next-value index specified for register $j$ when the combinational circuit is evaluated on the input assignment followed by $s_t$, with any index outside the resulting value list assigned value false.",
+ "hypotheses_covered": [
+  "$M$ is a sequential circuit with $n,r\\in\\mathbb{N}$",
+  "$x$ is a Boolean assignment to the $n$ inputs",
+  "$t$ ranges over natural numbers",
+  "$j$ ranges over the $r$ registers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

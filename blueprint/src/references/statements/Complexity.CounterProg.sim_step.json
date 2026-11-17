@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.CounterProg.sim_step",
+ "key": "3de19155e8e769bc",
+ "kind": "theorem",
+ "title": "Simulation of one counter-program step",
+ "statement": "Let $R\\in\\mathbb{N}$, let $\\Lambda$ be a finite set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, choose a start label $\\ell_0\\in\\Lambda$, and let $x$ be an input bit string. Suppose an abstract state $s$ has current label $\\ell\\in\\Lambda$, read position at most $|x|$, and every register value at most $B$, where $B\\in\\mathbb{N}$. Then there exists $t\\le 2B+3$ such that the compiled machine started at $\\ell_0$, run on input $x$ from the encoding of $s$, reaches the encoding of the state obtained from $s$ by one step of $P$ on $x$.",
+ "hypotheses_covered": [
+  "A natural-number register count $R$",
+  "A finite label set $\\Lambda$",
+  "A counter program $P$ over $R$ registers and $\\Lambda$",
+  "A chosen start label $\\ell_0\\in\\Lambda$",
+  "An input bit string $x$",
+  "An abstract state $s$ with current label equal to some $\\ell\\in\\Lambda$",
+  "The read position of $s$ is at most $|x|$",
+  "A natural number $B$ bounds every register value in $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Lambda$ be a finite set of labels, $P$ a counter program over $R$ registers with labels in\n$\\Lambda$, $\\ell_0 \\in \\Lambda$, $x$ an input bit string, and $B \\in \\mathbb{N}$. Let $s$ be an\nabstract state that is running at some label $\\ell \\in \\Lambda$, whose read position is at most\n$|x|$, and all of whose registers are at most $B$. Then there is $t \\le 2B + 3$ such that running\nthe Turing machine of $P$ started at $\\ell_0$ for $t$ steps from the configuration encoding $s$\non input $x$ yields the configuration encoding the state reached from $s$ by one step of $P$ on\n$x$. Here a state with registers $\\rho$, read position $p$ and output $w$ is encoded by the\nconfiguration in control state $\\mathsf{main}(\\ell)$ (or halted if the state is halted) whose\ninput head is at position $\\min(p + 1, |x| + 1)$, whose work tape $r$ holds $1$ exactly on cells\n$0, \\dots, \\rho(r) - 1$ with its head on cell $\\rho(r)$, and whose output is $w$."
+}

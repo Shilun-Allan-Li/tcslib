@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter09/HypercontractiveNecessity.lean :: FABL.affineMoment_hasDerivAt -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Derivative of the affine moment
+
+**Claim.** At any $t$ where every base $1+ctX(x)$ is positive, the affine moment is differentiable with derivative equal to the average of $rcX(x)(1+ctX(x))^{r-1}$.
+
+**Proof.** Write the finite average as the sum of its summands divided by $|\Omega|$. For each $x$, the inner function $s\mapsto 1+csX(x)$ has derivative $cX(x)$ at $t$. Since its value there is positive, the real-power chain rule gives derivative $r\,cX(x)(1+ctX(x))^{r-1}$ for its $r$th power. Differentiability of a finite sum and division by the constant cardinality then give the stated derivative; the resulting sum divided by $|\Omega|$ is precisely the defined average.

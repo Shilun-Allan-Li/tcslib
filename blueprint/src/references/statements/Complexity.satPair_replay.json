@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satPair_replay",
+ "key": "56101be29fe64727",
+ "kind": "lemma",
+ "title": "Replaying a captured suffix",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $x$ be a Boolean input word, let $s$ be a configuration of $M$ on $x$, and let $u,r$ be Boolean words. For every Boolean word $p$ and output word $o$ such that $u=pr$, running the pairing machine for $2|r|+2$ steps from the canonical pairing configuration in replay state, with input head at the left boundary, capture head at $|p|$, and output $o$, yields the canonical pairing configuration in native-copy state with capture head at $|u|$, unchanged input head and saved configuration, and output $o$ followed by the doubled bits of $r$ and the separator $01$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x$ is a Boolean input word",
+  "$s$ is a configuration of $M$ on $x$",
+  "$u,r$ are Boolean words",
+  "$p$ is a Boolean word",
+  "$o$ is a Boolean output word",
+  "$u=pr$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the captured word decompose as $u = p \\mathbin{+\\!\\!+} r$ with the capture\nhead at offset $|p|$ in the replay state. Then exactly $2\\,|r| + 2$ steps emit\nthe doubling of $r$ followed by the separator $01$, move the capture head to\n$|u|$, and enter the native-copy state; the source bank and the native input\nhead remain fixed."
+}

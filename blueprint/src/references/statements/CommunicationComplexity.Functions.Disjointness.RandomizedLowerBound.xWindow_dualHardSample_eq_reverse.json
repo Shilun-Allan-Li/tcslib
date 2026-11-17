@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xWindow_dualHardSample_eq_reverse",
+ "key": "c32484902b3bdf22",
+ "kind": "theorem",
+ "title": "Reversal of a Windowed Bit Vector",
+ "statement": "Let $n$ be a positive integer, let $\\omega$ be a hard sample on $n$ coordinates with special coordinate $T$, and let $P,Q$ be decidable relations on pairs of coordinates such that, for every $i$, $P(i,\\operatorname{rev}(T))$ holds exactly when $Q(T,\\operatorname{rev}(i))$ holds, where $\\operatorname{rev}$ reverses coordinate order. The vector that retains Alice’s bit at coordinate $i$ in the dual sample exactly when $P(i,\\operatorname{rev}(T))$ holds, and is false otherwise, equals the coordinate reversal of the vector that retains Bob’s bit at coordinate $i$ in $\u0000\\omega$ exactly when $Q(T,i)$ holds, and is false otherwise.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$\\omega$ is a hard sample on $n$ coordinates",
+  "$P$ and $Q$ are decidable relations on pairs of coordinates",
+  "For every $i$, $P(i,\\operatorname{rev}(T))$ is equivalent to $Q(T,\\operatorname{rev}(i))$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\omega$ be a hard sample on $n$ coordinates with special coordinate $T$, and let\n$P, Q$ be decidable binary relations on $\\mathrm{Fin}\\,n$ such that for every $i$,\n$P(i, \\mathrm{rev}(T)) \\iff Q(T, \\mathrm{rev}(i))$, where $\\mathrm{rev}$ is the\norder-reversing bijection $i \\mapsto n-1-i$ on $\\mathrm{Fin}\\,n$.  Then the Boolean vector\nobtained from Alice's bits of the dual sample \\texttt{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualHardSample}\nby keeping $x_i$ exactly when $P(i, \\mathrm{rev}(T))$ holds (and setting the remaining\ncoordinates to $\\mathtt{false}$) equals the coordinate reversal of the vector obtained from\nBob's bits of the original sample $\\omega$ by keeping $y_i$ exactly when $Q(T, i)$ holds:\n\\[\n  \\Bigl(i \\mapsto [P(i,\\mathrm{rev}\\,T)]\\cdot x_i(\\omega^{\\mathrm{dual}})\\Bigr)\n  \\;=\\;\n  \\mathrm{reverse}\\Bigl(i \\mapsto [Q(T,i)]\\cdot y_i(\\omega)\\Bigr).\n\\]"
+}

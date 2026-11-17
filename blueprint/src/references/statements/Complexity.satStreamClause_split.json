@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satStreamClause_split",
+ "key": "6b512a3b81dd0163",
+ "kind": "lemma",
+ "title": "Clause split and emitted serialization",
+ "statement": "For every clause $C$ over natural-number-indexed variables and every cursor $j\\in\\mathbb{N}$, concatenating a clause marker with the serialization of each clause in the split of $C$ at cursor $j$ gives a clause marker followed by the emitted body of $C$ at cursor $j$. The cursor returned by the split equals the final cursor returned with that emitted body.",
+ "hypotheses_covered": [
+  "A clause $C$ over natural-number-indexed variables",
+  "A cursor $j\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every clause $C$ and cursor $j$: concatenating a clause marker with the\nserialization of each clause of the split of $C$ at $j$ yields exactly one marker\nfollowed by the emitted clause body of $C$ at $j$, and the split's returned cursor\nequals the body's final cursor. This includes the empty clause and all clauses of\nwidth at most three."
+}

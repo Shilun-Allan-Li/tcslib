@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.comp_pair_run",
+ "key": "accc5960a3302153",
+ "kind": "lemma",
+ "title": "Pair Parsing Run",
+ "statement": "Let $C,e$ be natural numbers, let $m$ and $i$ be Boolean parameters, let $f$ map Boolean words to Boolean words, and let $h,w$ be Boolean words. Let $B$ be a natural number and let $v$ assign a natural number to each of fourteen registers, with every register value at most $B$. Suppose the register indexed by $1$ has value $v(0)+s|w|$, where $s=2$ if $i$ is true and $s=1$ otherwise, and suppose that for every $j<|w|$, the bit of $h$ at position $v(0)+sj$ equals the bit of $w$ at position $j$, interpreting out-of-range bits as false. If the aligned pair parser does not parse $w$, then for some $t\\le |w|$ there is a bounded safe run from the configuration with state “scan” parameterized by $i$, register values $v$, and no result, to one with state “answer false,” register $0$ increased by $st$, all other register values unchanged, and no result. If the parser returns a pair $(a,b')$, there is a bounded safe run from that same initial configuration to one with the copy state at stage $4$ when $i$ is true and stage $0$ otherwise, register $0$ increased by $s(2|a|+2)$, all other register values unchanged, and no result.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$m,i$ are Boolean parameters",
+  "$f$ maps Boolean words to Boolean words",
+  "$h,w$ are Boolean words",
+  "$B$ is a natural number",
+  "$v$ assigns natural numbers to fourteen registers",
+  "Every register value of $v$ is at most $B$",
+  "$v(1)=v(0)+s|w|$, where $s=2$ if $i$ is true and $s=1$ otherwise",
+  "For every $j<|w|$, the bit of $h$ at position $v(0)+sj$ equals the bit of $w$ at position $j$, with out-of-range bits read as false",
+  "The conclusion splits according to whether the aligned pair parser returns none or a pair"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e$ be natural numbers, let $m,i$ be Boolean parameters, let $f$ map bit strings\nto bit strings, and let $h,w$ be bit strings. Let $B$ be a natural number and let $v$ be\nan initial assignment of natural numbers to fourteen registers. Suppose every register\nvalue is at most $B$, register $i$ has value $v_0+ s_i|w|$, and, for each $j<|w|$, the\nbit of $h$ at position $v_0+s_i j$ equals the bit of $w$ at position $j$ (with\nout-of-range bits read as false), where $s_i=2$ if $i$ is true and $s_i=1$ otherwise. If\nparsing $w$ by the aligned pair parser fails, then for some $t\\le |w|$ the program has a\nbounded safe run from state “scan” with parameter $i$ to state “answer false,” with\nregister $0$ increased by $s_i t$ and all other register values unchanged. If parsing\nsucceeds with first component $u$, it has a bounded safe run from that same initial\nstate to “copy” (stage $4$ when $i$ is true, stage $0$ otherwise), with register $0$\nincreased by $s_i(2|u|+2)$ and all other register values unchanged."
+}

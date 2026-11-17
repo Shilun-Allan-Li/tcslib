@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clRecords_native",
+ "key": "d9bef1d257edc348",
+ "kind": "lemma",
+ "title": "Polynomial-time trajectory output",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, and let $C,e,c,A,d$ be natural numbers. The function that sends each Boolean word $x$ to the serialized trajectory prefix for $M$ on the all-false word of length $m=|x|+C(|x|+1)^e$, through horizon $T=c(A(m+1)^d+1)^2$ and with $T+1$ rows, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $M$",
+  "natural numbers $C,e,c,A,d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine and parameters $C, e, c, A, d$, the function sending an instance $x$ to the inclusive serialized trajectory over the all-false reference input of length $m = |x| + C(|x|+1)^e$ at horizon $T = c(A(m+1)^d+1)^2$, with $T+1$ rows, is polynomial-time computable; the output is produced by the actual recorder, not read off a prepared configuration."
+}

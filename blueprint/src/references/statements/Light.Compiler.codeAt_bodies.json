@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.Compiler.codeAt_bodies",
+ "key": "f27493851cfea05f",
+ "kind": "theorem",
+ "title": "Code Locations for Statement Bodies",
+ "statement": "Let $F$ be a natural number of local variables per frame, let $bs$ be a finite list of statements, and let $pos$ be a natural-number position. Suppose the concatenation, starting at $pos$, of the compiled code for each statement in $bs$ followed by its epilogue is a prefix of the instruction sequence beginning at $pos$. For every index $p$ and statement $b$ occurring at index $p$ in $bs$, there is an entry position $e$ at index $p$ in the sequence of body entry positions, such that the compiled code for $b$ followed by its epilogue is a prefix of the instruction sequence beginning at $e$, and $e$ plus the size of $b$ (for frame size $F$) plus $5$ is at most the end position of the bodies.",
+ "hypotheses_covered": [
+  "The concatenated compiled body code with epilogues, starting at $pos$, is a prefix of the instruction sequence beginning at $pos$",
+  "The statement $b$ occurs at index $p$ in $bs$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

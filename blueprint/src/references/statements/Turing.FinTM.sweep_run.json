@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.sweep_run",
+ "key": "595a6b0c22c12014",
+ "kind": "lemma",
+ "title": "A local rule realizes a forward sweep",
+ "statement": "Let $T$ be a one-work-tape machine over alphabet $A$ with states $S$, and let $R$ and $C$ be sets with maps encoding controller states in $S$ and controller cells in $A$. Suppose that for every $s\\in R$, $a\\in C$, and input symbol, the transition from encoded state $s$ while reading encoded cell $a$ is the action that writes the encoding of the cell produced by a local rule $v:R\\times C\\to R\\times C$, moves right, and enters the encoding of the new controller state. For any input-head position, output word, integer frontier $z$, left stack $l$, right stack $r$, and word $w$ over $C$, running $T$ for $|w|$ steps from the forward-facing zipper configuration with encoded state $s$ and right stack consisting of the encoded $w$ followed by $r$ yields the encoded final control state obtained by applying $v$ successively across $w$, frontier $z+|w|$, left stack equal to the reverse of the encoded rewritten word followed by $l$, and right stack $r$; the input-head position and output word are unchanged.",
+ "hypotheses_covered": [
+  "$T$ is a one-work-tape machine over alphabet $A$ with state set $S$",
+  "There are sets $R,C$ and encoding maps into $S,A$",
+  "For every controller state, cell, and input symbol, the transition is the prescribed right-moving local-rule action",
+  "The input-head position is valid",
+  "The output word and stacks are finite",
+  "$w$ is a finite word over $C$",
+  "$s$ is an initial controller state",
+  "$z$ is an integer frontier"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a one-work-tape Turing machine over alphabet $A$ with states $S$,\nand let controller states $R$ and controller cells $C$ be encoded into $S$ and\n$A$ by maps $\\mathit{state}$ and $\\mathit{symbol}$. Suppose a local rule\n$\\mathit{visit} \\colon R \\times C \\to R \\times C$ is implemented by $M$'s\ntransition table: whenever $M$ is in state $\\mathit{state}(s)$ and its work\nhead reads $\\mathit{symbol}(a)$ (for any input symbol), its transition is the\nlocal sweep action that writes the encoding of the rewritten cell, moves\nright, and enters the encoding of the new controller state. Then, starting\nfrom the forward-sweep configuration with state $\\mathit{state}(s)$, frontier\n$z$, left stack $l$, and right stack consisting of the encoded word\n$\\mathit{as}$ followed by $r$, running $M$ for exactly $|\\mathit{as}|$ steps\nreaches the forward-sweep configuration whose state encodes the final\ncontroller state of the transduction of $\\mathit{as}$, whose frontier is\n$z + |\\mathit{as}|$, and whose left stack is the encoded rewritten word,\nreversed, prepended to $l$, with right stack $r$; the input-head position and\nthe output word are unchanged."
+}

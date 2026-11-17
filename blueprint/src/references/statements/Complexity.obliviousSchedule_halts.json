@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.obliviousSchedule_halts",
+ "key": "599687df1bb816f4",
+ "kind": "lemma",
+ "title": "Quadratic halting bound for the schedule",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,b\\in\\mathbb{N}$, and let $T\\colon\\mathbb{N}\\to\\mathbb{N}$ satisfy $n\\le T(n)$ for every $n$. Suppose that for every Boolean input $y$, the machine $W$ halts after exactly $b(T(|y|)+1)$ steps and outputs the little-endian binary expansion of $T(|y|)$. Then for every Boolean input $x$, the schedule machine determined by $W$ and $a$, started on the input obtained by tagging each bit of $x$, reaches a halting state at some time $t$ satisfying $t\\le \\bigl(18(a+1)^2+23(a+1)+3b+25\\bigr)(T(|x|)+1)^2$.",
+ "hypotheses_covered": [
+  "W is a finite machine over Booleans",
+  "a and b are natural numbers",
+  "T is a natural-valued function",
+  "n ≤ T(n) for every natural n",
+  "For every Boolean input y, W halts and outputs the binary digits of T(|y|) after exactly b(T(|y|)+1) steps",
+  "x is a Boolean input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a machine over the Boolean alphabet, let $a, b \\in \\bbn$, and let\n$T \\colon \\bbn \\to \\bbn$ satisfy $n \\le T(n)$ for every $n$.  Suppose that on every\nBoolean input $x$ the machine $W$ halts within $b\\,(T(\\abs{x})+1)$ steps with output\nexactly the list of (little-endian) binary digits of $T(\\abs{x})$.  Then for every\nBoolean input $x$, the length-only schedule machine built from $W$ and the padding\nparameter $a$, started on the embedding of $x$ into the schedule alphabet (each bit\nsent to its tagged bit symbol), halts --- through its clock capture, input reset,\ncopy, fixed-width budget conversion, guide allocation, all macrosteps, and the final\ncounter test --- within a uniform quadratic budget: there exists a time\n\\[\n  t \\;\\le\\; \\bigl(18\\,(a+1)^2 + 23\\,(a+1) + 3b + 25\\bigr)\\,\\bigl(T(\\abs{x})+1\\bigr)^2\n\\]\nafter which its control state is the halting state."
+}

@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.Round",
+ "key": "e8568e2e87b9401d",
+ "kind": "def",
+ "title": "Turing machine round",
+ "statement": "Let $M$ be a $k$-work-tape Turing machine, let $a$ be a state, let $E$ be a set of optional states, and let $P$ be a predicate on work-tape head positions. For configurations $c$ and $c'$ on a fixed input and a natural number $t$, require that $c$ starts in state $a$, that $t>0$, and that after exactly $t$ steps the machine reaches $c'$ with state in $\bigl\\{a\\bigr\\}\\cup E$. At every intermediate time $u$ with $0<u<t$, the state must lie outside the union of $E$, the state $a$, and the halting state; throughout times $0$ through $t$, the work-tape head positions must satisfy $P$.",
+ "hypotheses_covered": [
+  "A natural number of work tapes",
+  "A symbol alphabet and state type",
+  "A machine M",
+  "A state a",
+  "A set E of optional states",
+  "A predicate on work-tape head positions",
+  "Configurations c and c' on a fixed input",
+  "A natural-number duration t",
+  "The starting state is a",
+  "The duration is positive",
+  "The endpoint state is a or belongs to E",
+  "At positive intermediate times before t, the state is outside E, a, and the halting state",
+  "P holds on head positions at every time through t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

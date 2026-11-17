@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/ThresholdFunctions/GaussianPolar.lean :: BooleanAnalysis.ThresholdFunctions.cos_nonpos_iff_of_neg_pi_div_two_le -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Cosine sign with a closed left endpoint
+
+**Claim.** If $-\pi/2\le u<\pi$, then $\cos u\le0$ if and only if $\pi/2\le u$ or $u=-\pi/2$.
+
+**Proof.** If $u=-\pi/2$, the cosine is zero. Otherwise, the lower bound is strict: $u>-\pi/2$. If also $u<\pi/2$, then $u$ lies in $(-\pi/2,\pi/2)$, where cosine is positive. Thus nonpositivity forces $u\ge\pi/2$. Conversely, on $[\pi/2,\pi)$ cosine is nonpositive, and at $u=-\pi/2$ it is zero. These cases prove both directions.

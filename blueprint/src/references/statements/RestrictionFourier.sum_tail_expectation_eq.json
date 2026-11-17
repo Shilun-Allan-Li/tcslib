@@ -1,0 +1,17 @@
+{
+ "lean_name": "RestrictionFourier.sum_tail_expectation_eq",
+ "key": "95f21e5517128ce2",
+ "kind": "lemma",
+ "title": "Tail identity for restricted Fourier spectra",
+ "statement": "Let $n$ be a natural number, let $p\\in\\mathbb{R}$, let $F:\\{0,1\\}^n\\to\\mathbb{R}$, and let $k\\in\\mathbb{N}$. The sum over all frequencies $S$ with $|S|\\ge k$ of the Bernoulli-weighted squared Fourier coefficients of the restrictions $F_\\rho$ equals $\\sum_{U\\subseteq\\{0,\\ldots,n-1\\}}\\widehat F(U)^2$ times the Bernoulli restriction probability that $|U\\cap J|\\ge k$, where $J$ denotes the free-variable set of the restriction. Explicitly, this identity is\n\\[\\sum_{S\\subseteq\\{0,\\ldots,n-1\\},\\ |S|\\ge k}\\ \\sum_\\rho w_p(\\rho)\\widehat{F_\\rho}(S)^2=\\sum_{U\\subseteq\\{0,\\ldots,n-1\\}}\\widehat F(U)^2\\Pr_\\rho[|U\\cap J|\\ge k],\\]\nwith $w_p(\\rho)=p^{|J|}((1-p)/2)^{n-|J|}$.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A real parameter $p$",
+  "A real-valued function $F$ on the Boolean cube of dimension $n$",
+  "A natural number threshold $k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFix $n$, a real parameter $p$, a function $F : \\{0,1\\}^n \\to \\bbr$, and $k \\in \\bbn$.\nFor a restriction $\\rho$ on $n$ variables with free-variable set $J$, write $w_p(\\rho)\n= p^{\\abs{J}}\\bigl(\\tfrac{1-p}{2}\\bigr)^{\\,n-\\abs{J}}$ for its Bernoulli weight,\n$F_\\rho$ for the restriction of $F$ by $\\rho$ (free coordinates read from the input,\nfixed coordinates from $\\rho$), $\\hat g(T)$ for the Fourier--Walsh coefficient of a\nfunction $g$ at a set $T$, and $\\Pr_\\rho[\\cdot]$ for the $w_p$-weighted sum of an\nevent's indicator over all restrictions. Then\n\\[\n  \\sum_{\\substack{S \\subseteq [n] \\\\ \\abs{S} \\ge k}}\n    \\sum_{\\rho} w_p(\\rho)\\, \\widehat{F_\\rho}(S)^2\n  \\;=\\;\n  \\sum_{U \\subseteq [n]} \\hat F(U)^2 \\;\n    \\Pr_\\rho\\bigl[\\,\\abs{U \\cap J} \\ge k\\,\\bigr].\n\\]\nWhen $0 \\le p \\le 1$ the left-hand side is\n$\\sum_{\\abs{S} \\ge k} \\E_\\rho\\bigl[\\widehat{F_\\rho}(S)^2\\bigr]$, so this is O'Donnell's\nProposition 4.17 summed over the high-degree frequency sets."
+}

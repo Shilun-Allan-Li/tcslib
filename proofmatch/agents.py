@@ -24,9 +24,11 @@ import json
 import os
 import re
 import shutil
+import signal
 import subprocess
 import time
 import tempfile
+import math
 from collections.abc import Mapping, Sequence
 from decimal import Decimal
 from pathlib import Path
@@ -36,6 +38,34 @@ from proofmatch.model_policy import BACKENDS, DEFAULT_MODEL, backend as resolve_
 
 
 Runner = Callable[..., subprocess.CompletedProcess[str]]
+
+
+def run_isolated(command, *, input=None, check=False, capture_output=False,
+                 timeout=None, **kwargs):
+    """Bound a CLI call and clean up its MCP children, including on interruption."""
+    with subprocess.Popen(command, stdin=subprocess.PIPE,
+                          stdout=subprocess.PIPE if capture_output else None,
+                          stderr=subprocess.PIPE if capture_output else None,
+                          start_new_session=True, **kwargs) as process:
+        try:
+            stdout, stderr = process.communicate(input, timeout=timeout)
+        except BaseException:
+            # Killing only the CLI leaves child processes holding its pipe open.
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            process.communicate()
+            raise
+        finally:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        result = subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+        if check:
+            result.check_returncode()
+        return result
 
 #: Transient-failure retry policy for a CLI invocation. Three attempts total,
 #: doubling from this delay. Kept small: a stuck stage should surface, not spin.
@@ -104,6 +134,22 @@ class AgentOutputError(RuntimeError):
 class AgentInvocationError(AgentOutputError):
     """The CLI itself failed (outage, usage limit, auth) — distinct from a
     successful invocation returning malformed output."""
+
+
+def bounded_batches(items, size: int, measure, max_chars: int = 120_000):
+    """Keep each model batch bounded by both task count and payload size."""
+    if size < 1:
+        raise ValueError("batch size must be positive")
+    batch, chars = [], 0
+    for item in items:
+        n = measure(item)
+        if batch and (len(batch) >= size or chars + n > max_chars):
+            yield batch
+            batch, chars = [], 0
+        batch.append(item)
+        chars += n
+    if batch:
+        yield batch
 
 
 def validate_output_schema(value: object, location: str = "$") -> None:
@@ -358,6 +404,11 @@ def parse_codex_events(text: str) -> tuple[dict[str, int], str | None, str | Non
         if node.get("type") == "agent_message" and isinstance(node.get("text"), str):
             message = node["text"]
         kind = str(node.get("type") or "")
+        if kind == "turn.completed":
+            # Startup errors can be recoverable (e.g. a managed approval-policy
+            # fallback). An authoritative successful turn supersedes them; a
+            # terminal turn.failed below must still fail the call.
+            error = None
         if kind in ("error", "turn.failed") or kind.endswith(".failed"):
             detail = node.get("message") or node.get("error") or node
             error = detail if isinstance(detail, str) else json.dumps(detail)[:300]
@@ -409,7 +460,7 @@ class Agent:
     def __init__(
         self,
         resource_root: Path | None = None,
-        runner: Runner = subprocess.run,
+        runner: Runner = run_isolated,
         model: str = DEFAULT_MODEL,
         backend: str | None = None,
     ):
@@ -420,6 +471,57 @@ class Agent:
         if self.backend not in BACKENDS:
             raise ValueError(f"unknown backend {self.backend!r}")
         self.spent_usd = Decimal("0")
+        self.timeout_seconds = float(os.environ.get("PROOFMATCH_AGENT_TIMEOUT_SECONDS", "900"))
+        if not math.isfinite(self.timeout_seconds) or self.timeout_seconds <= 0:
+            raise ValueError("PROOFMATCH_AGENT_TIMEOUT_SECONDS must be finite and positive")
+
+    def run_many(self, prompt_name: str, payloads: Sequence[Mapping[str, object]]) -> list[dict]:
+        """Batch independent tasks, validating each answer against its original schema.
+
+        Indices are transport identifiers, never Lean names inferred by the model.
+        Missing, repeated or out-of-range answers fail the batch rather than being
+        silently attached to the wrong declaration.
+        """
+        if not payloads:
+            return []
+        if len(payloads) == 1:
+            return [self.run(prompt_name, payloads[0])]
+        schema = json.loads((self.resource_root / "schemas" / f"{prompt_name}.json").read_text())
+        prompt = (self.resource_root / "prompts" / f"{prompt_name}.md").read_text()
+        batch_schema = {
+            "type": "object", "additionalProperties": False, "required": ["results"],
+            "properties": {"results": {"type": "array", "items": {
+                "type": "object", "additionalProperties": False, "required": ["index", "result"],
+                "properties": {"index": {"type": "integer"}, "result": schema},
+            }}},
+        }
+        batch_prompt = (
+            "Process a batch of independent mathematical tasks. Apply the task instructions below "
+            "separately to each request's payload. Do not transfer hypotheses, definitions, "
+            "or conclusions between requests. Return exactly one result for every input index. "
+            "Each result must satisfy the original task's output schema.\n\n"
+            "Task instructions for EACH request:\n\n" + prompt
+        )
+        with tempfile.TemporaryDirectory(prefix="proofmatch-batch-") as tmp:
+            root = Path(tmp)
+            (root / "prompts").mkdir()
+            (root / "schemas").mkdir()
+            (root / "prompts/batch.md").write_text(batch_prompt)
+            (root / "schemas/batch.json").write_text(json.dumps(batch_schema))
+            batch_agent = Agent(root, runner=self.runner, model=self.model, backend=self.backend)
+            answer = batch_agent.run("batch", {"requests": [
+                {"index": i, "payload": payload} for i, payload in enumerate(payloads)]})
+            self.spent_usd += batch_agent.spent_usd
+        results = {}
+        for row in answer["results"]:
+            i = row["index"]
+            if i in results or not 0 <= i < len(payloads):
+                raise AgentOutputError(f"Batch returned repeated or invalid index {i}")
+            validate_against_schema(row["result"], schema)
+            results[i] = row["result"]
+        if set(results) != set(range(len(payloads))):
+            raise AgentOutputError("Batch omitted one or more task results")
+        return [results[i] for i in range(len(payloads))]
 
     # -- prompt assembly ---------------------------------------------------- #
     def _envelope(self, prompt: str, payload: Mapping[str, object], images: Sequence[Path]) -> str:
@@ -461,9 +563,18 @@ class Agent:
                     text=True,
                     encoding="utf-8",
                     cwd=cwd,
+                    timeout=self.timeout_seconds,
                 )
-            except (OSError, subprocess.CalledProcessError) as error:
+            except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
                 last_error = error
+                if isinstance(error, subprocess.TimeoutExpired):
+                    detail = f"request timed out after {self.timeout_seconds:g}s"
+                    if attempt == _INVOCATION_ATTEMPTS - 1:
+                        raise AgentInvocationError(f"{self.backend} {detail}; retries exhausted") from error
+                    delay = _INVOCATION_BACKOFF_SECONDS * (2 ** attempt)
+                    print(f"  {self.backend} {detail}; retry {attempt + 1}/{_INVOCATION_ATTEMPTS - 1} in {delay}s", flush=True)
+                    time.sleep(delay)
+                    continue
                 stderr = getattr(error, "stderr", "") or ""
                 stdout = getattr(error, "stdout", "") or ""
                 detail = ""

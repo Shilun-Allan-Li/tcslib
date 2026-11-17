@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.PolyTimeComputable.append",
+ "key": "67eede29da65e3e7",
+ "kind": "theorem",
+ "title": "Closure under concatenation",
+ "statement": "Let $f,g$ be polynomial-time computable functions from bit strings to bit strings. Then the function mapping each bit string $x$ to the concatenation $f(x)g(x)$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ and $g$ be polynomial-time computable functions on bit strings (each computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the map $x \\mapsto f(x)\\,g(x)$, sending $x$ to the concatenation of $f(x)$ and $g(x)$, is polynomial-time computable."
+}

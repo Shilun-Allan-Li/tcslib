@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.tmsat_take_parse",
+ "key": "3174c9e37e7a8861",
+ "kind": "lemma",
+ "title": "Parsing the encoded first component",
+ "statement": "Let $a,b,x$, and $p$ be bit strings, let $m\\in\\mathbb N$, and suppose $x=p\\langle a,b\\rangle$, where the encoding doubles every bit of $a$, appends $01$, and then appends $b$. Starting from state $0$ with the input head at position $|p|$, unary work tape content $1^m$, work head at $m$, and empty output, after $2|a|+2$ steps the extractor is in state $3$, with its input head at $|p|+2|a|+2$, work tape content $1^{m+|a|}$, work head at $m+|a|-1$, and empty output.",
+ "hypotheses_covered": [
+  "$a,b,x,p$ are bit strings",
+  "$m\\in\\mathbb N$",
+  "$x=p\\langle a,b\\rangle$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a, b, p$ be bit strings, $x = p\\,\\langle a,b\\rangle$ with $\\langle a,b\\rangle$ the self-delimiting pair encoding, and $m \\in \\mathbb{N}$. Then running $E$ for $2|a| + 2$ steps from $\\Delta_x(0, |p|, m, m, \\varepsilon)$ yields $\\Delta_x(3, |p| + 2|a| + 2, m + |a|, m + |a| - 1, \\varepsilon)$; here $E$ is the prefix-extraction machine (one work tape, states $\\{0,1,2,3\\}$) that counts the aligned data blocks $00$ and $11$ of a pair encoding $\\langle a,b\\rangle$ in unary on its work tape and then copies bits of $b$ to its output while moving its work head back along the counter, and $\\Delta_x(q,i,m,h,o)$ denotes the configuration of $E$ on input $x$ in state $q$, with the input head on input position $i$ (counting from $0$), the work tape holding $1^m$ in cells $0,\\dots,m-1$ and blanks elsewhere, the work head at $h$, and output $o$."
+}

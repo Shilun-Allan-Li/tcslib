@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.wk_run",
+ "key": "4a05e59a13324554",
+ "kind": "theorem",
+ "title": "Bounded width setup run",
+ "statement": "For a natural parameter $K_0$, the designated machine, oracle $\\mathrm{orc}:\\{0,\\ldots,3\\}\\times\\{0,1\\}^*\\to\\{0,1\\}$, input $x$, and natural bounds $B,P$, let $q$ be one of the first-search, second-search, or final-scan phases, let $S$ be a machine state, and let $M:\\mathbb Z\\to\\{0,1\\}$ be a memory marking. Suppose $X=w=K=B_s=C=Z=0$ in $S$, $K_0>0$, every register of $S$ is at most $B$, and $3\\cdot 2^{K_0(r+S.L_g+1)}\\le B$, where $r$ is the radius register selected by phase $q$. Then the machine has a finite run from the copy-loop configuration for the radius of phase $q$, with state $S$, marking $M$, and memory head at zero, to the phase exit with the same marking and head position zero, and with state obtained by setting $w=K_0(r+S.L_g+1)$, $K=2^{K_0(r+S.L_g+1)}$, and $B_s=(1\\text{ if }q\\text{ is the second-search phase, and }2\\text{ otherwise})\\cdot 2^{K_0(r+S.L_g+1)}$, leaving every other state component unchanged. Every configuration strictly before the endpoint satisfies the register-instruction precondition, has all registers at most $B$, and has memory head between $0$ and $P$.",
+ "hypotheses_covered": [
+  "Natural parameter $K_0$",
+  "Designated machine, oracle, input $x$, and natural bounds $B,P$",
+  "Phase $q$ among first search, second search, and final scan",
+  "Machine state $S$ and memory marking $M$",
+  "$S.X=S.w=S.K=S.B_s=S.C=S.Z=0$",
+  "$K_0>0$",
+  "Every register of $S$ is at most $B$",
+  "$3\\cdot 2^{K_0(r+S.L_g+1)}\\le B$, with $r$ the phase-selected radius"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the designated machine $A(K_0)$, oracle, input, and natural bounds $B,P$. For each\nphase $q$ among the first search, second search, and final scan, let $r$ be the register\nselected by that phase. Suppose the registers $X,w,K,Bs,C,Z$ of a state $S$ are all\nzero, $K_0>0$, every register of $S$ is at most $B$, and $3\\cdot 2^{K_0(r+S.Lg+1)}\\le\nB$. Then the machine can run from the copy-loop configuration for that phase, with state\n$S$, arbitrary memory marking, and head at zero, to the phase's exit configuration. The\nfinal state replaces $w,K,Bs$ by $K_0(r+S.Lg+1)$, $2^{K_0(r+S.Lg+1)}$, and\n$2^q2^{K_0(r+S.Lg+1)}$, respectively, where the coefficient $2^q$ is $1$ for the second\nsearch and $2$ for either other phase; all other state components and the memory marking\nand head are unchanged. Every intermediate configuration satisfies the register and head\nguard: the register-instruction precondition holds, all registers are at most $B$, and\nthe head lies between $0$ and $P$."
+}

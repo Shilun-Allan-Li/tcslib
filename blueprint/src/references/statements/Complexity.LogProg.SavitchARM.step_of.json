@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.step_of",
+ "key": "23b132644bcbf764",
+ "kind": "lemma",
+ "title": "Reachability from a predecessor configuration",
+ "statement": "Let $E,B\\in\\mathbb N$, let $\\mathcal O$ assign a Boolean answer to each of four indices and each Boolean word, and let $x$ be a Boolean word. Let $\\mathrm{st}$ be an 18-register machine state, $\\ell$ a machine label, and $c$ an abstract configuration. If every register of $\\mathrm{st}$ is at most $B$, and there is a finite run from the configuration obtained by taking one machine step from label $\\ell$ with register values given by $\\mathrm{st}$ to $c$, with every configuration strictly before its endpoint satisfying the guard with bound $B$, then there is also a finite run from the original configuration at label $\\ell$ with those register values to $c$, with every configuration strictly before its endpoint satisfying the same guard.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb N$",
+  "Oracle on four indices and Boolean words",
+  "Boolean input $x$",
+  "Machine state $\\mathrm{st}$",
+  "Machine label $\\ell$",
+  "Abstract configuration $c$",
+  "Every register of $\\mathrm{st}$ is at most $B$",
+  "One-step successor configuration reaches $c$ with the guard at every time strictly before the endpoint"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb N$, let $\\mathcal O$ be an oracle on four indices and Boolean words,\nlet $x$ be a Boolean word, and let $\\mathrm{st}$ be a machine state and $\\ell$ a machine\nlabel. If every register of $\\mathrm{st}$ is at most $B$, and the configuration obtained\nby taking one machine step from label $\\ell$ with register values given by $\\mathrm{st}$\nis reachable from $c$ while satisfying the guard at every time before its endpoint, then\nthe original configuration at label $\\ell$ with those register values is also reachable\nfrom $c$ with the same guard condition."
+}

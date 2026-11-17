@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.exists_comp_on_image",
+ "key": "2755f7c740cc9750",
+ "kind": "theorem",
+ "title": "Composition on the Image",
+ "statement": "Let $M,U$ be finite Turing machines over the Boolean alphabet, let $f,g$ map Boolean words to Boolean words, and let $T_1,T_2:\\mathbb{N}\\to\\mathbb{N}$. Suppose $M$ computes $f$ on every input $x$ within $T_1(|x|)$ steps, and for every $x$, $U$ computes $g(x)$ from input $f(x)$ within $T_2(|x|)$ steps. Then there is a finite Boolean Turing machine $N$ that computes $g$ on every input within $2T_1(n)+T_2(n)+2$ steps for inputs of length $n$.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $M,U$",
+  "Functions $f,g$ from Boolean words to Boolean words",
+  "Time bounds $T_1,T_2:\\mathbb{N}\\to\\mathbb{N}$",
+  "$M$ computes $f(x)$ within $T_1(|x|)$ steps for every $x$",
+  "$U$ computes $g(x)$ from $f(x)$ within $T_2(|x|)$ steps for every $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ and $U$ be multi-tape Turing machines over the Boolean alphabet, let\n$f$ and $g$ be functions on Boolean words, and let\n$T_1, T_2 : \\mathbb{N} \\to \\mathbb{N}$ be arbitrary.  Suppose $M$ computes $f$\nin time $T_1$, meaning that on every input $x$ it halts within $T_1(\\abs{x})$\nsteps with output $f(x)$, and suppose that for every Boolean word $x$ the\nmachine $U$ on input $f(x)$ halts within $T_2(\\abs{x})$ steps with output\n$g(x)$, the budget being measured at the length of the original word $x$.\nThen there is a machine $N$ over the Boolean alphabet that computes $g$ in\ntime $n \\mapsto 2\\,T_1(n) + T_2(n) + 2$; no monotonicity of $T_2$ is required,\nand $U$ need not halt on words outside the image of $f$."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.loopCall_reframe",
+ "key": "8f97d2be6e231874",
+ "kind": "lemma",
+ "title": "Reframing a Body Call",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be an anchor state of $B$, and fix an input word $x$. Given a configuration $c$ of $B$ on $x$, startup bits, release bits, optional flag bits, counter words, a configuration of $F$ on $x$, and an optional state $q$ of $B$, form a frame over the call with the first startup bit and original parameters. Give this frame the control state of the call formed with the second startup bit, the configuration obtained from $c$ by replacing its state with $q$, and the second release bit, flag, and counter word; use $c$'s input-head position, the second flag and counter data, the buffer tape of $c$'s output as payload with head at its length, and empty output. This frame equals the call formed with those second parameters and the state-replaced configuration.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines $B$ and $F$",
+  "anchor state of $B$",
+  "fixed Boolean input word $x$",
+  "configuration $c$ of $B$ on $x$",
+  "two startup bits",
+  "two release bits",
+  "two optional flag bits",
+  "two counter words",
+  "configuration of $F$ on $x$",
+  "optional state $q$ of $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a body configuration with counter word $w$ and fuel residue, and let new\nstartup, release, flag, counter-word, and control-state parameters be given. The\ncontroller frame built over the original call with the new call's control state, the new\nflag at the origin, and the buffer tape of the new counter word equals the call built on\n$c$ with the replaced control state and the new parameters."
+}

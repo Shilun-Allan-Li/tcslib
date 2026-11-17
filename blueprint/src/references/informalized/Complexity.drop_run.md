@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean :: Complexity.drop_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Drop Computation Correctness
+
+**Claim.** For every mode and input bit string, the specified computation started in its length-test state with all nine registers zero halts with the membership indicator of the mode's drop language, and every preceding configuration satisfies the computation invariant.
+
+**Proof.** The length-test loop first counts the input length into register $1$. Its oracle answers whether each queried index is still inside the input, so the input-length loop theorem (`Complexity.LogProg.inputLength_loop`), using `drop_len`, carries the machine to the initial scan state with the length stored. The register bound for the resulting vector follows from `dropValues_bound`. The layer-0 scan then parses the input itself as a pair (`Complexity.drop_pair_run`). If parsing fails, the computation reaches a false-answer state; the malformed-shape result (`Complexity.drop_bad_shape`) identifies the language indicator as false, and the answer-state theorem (`Complexity.drop_ret`) completes the run.
+
+If parsing succeeds, reconstruction of the pair encoding identifies the input as $\langle z,\mathrm{tail}\rangle$. From the scan endpoint, the machine starts its tail-decoding procedure (`Complexity.drop_tail_decode`). If the tail is canonical and its length fits the binary width of the input length, write it as $\mathrm{bits}(q)$ using `canon_eq_bits`; the query bound follows from `query_index_bound`. The tail-decoding procedure has then reached the nested-query setup, where `bitsVal_bits` identifies the query value, and `drop_nested_run` computes the requested transformed-word length or bit. The encoded-query characterization (`drop_lang_pair`) identifies this answer with the language indicator. If the tail condition fails, the decoding procedure halts with false, and `drop_rejected_tail` says the language indicator is false as well. In both branches, reachability is concatenated with the relevant halting result (`AReach.trans` and `AReach.halt`), preserving the invariant throughout.
+
+**Key facts.** `Complexity.LogProg.inputLength_loop`, `Complexity.drop_len`, `Complexity.dropValues_bound`, `Complexity.drop_pair_run`, `Complexity.drop_bad_shape`, `Complexity.drop_ret`, `Complexity.drop_tail_decode`, `Complexity.LogProg.canon_eq_bits`, `Complexity.query_index_bound`, `Complexity.LogProg.bitsVal_bits`, `Complexity.drop_nested_run`, `Complexity.drop_lang_pair`, `Complexity.drop_rejected_tail`, `Complexity.LogProg.AReach.trans`, `Complexity.LogProg.AReach.halt`, `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairDecode_pairEncode`.

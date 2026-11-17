@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.sat_first_halt",
+ "key": "d07d658653859472",
+ "kind": "lemma",
+ "title": "First halting time",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $x,y$ be binary strings, and let $T\\in\\mathbb{N}$. If $M$ computes $y$ from $x$ within $T$ steps, then there is a time $t\\le T$ such that $M$ has not halted at any time $r<t$, is halted at time $t$, and has output $y$ at time $t$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$x,y$ are binary strings",
+  "$T\\in\\mathbb{N}$",
+  "$M$ computes $y$ from $x$ within $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a finite multi-tape machine $M$ compute output $y$ on input $x$ within $T$\nsteps. Then there is a time $t \\le T$ such that $M$ is still live at every time\nbefore $t$, halts exactly at time $t$, and its output at time $t$ is $y$: the first\nhalting transition can be selected while retaining the final emission."
+}

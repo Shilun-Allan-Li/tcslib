@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.seamCompTM_firstReturn",
+ "key": "abe3f4d407012945",
+ "kind": "theorem",
+ "title": "First return in sequential machine composition",
+ "statement": "Let $k\\in\\mathbb N$, let $x$ be a Boolean input word, and let $M_1,M_2$ be deterministic $k$-work-tape machines over Boolean symbols, with state sets $S_1,S_2$ and a decidable equality on $S_1$. Choose an exit state $e\\in S_1$, an entry state $u\\in S_2$, initial state $s\\in S_1$, final state $q\\in S_2$, three families of $k$ Boolean work-tape words $w_0,w_1,w_2$, and times $T_1,T_2\\in\\mathbb N$. Suppose $M_1$, started in state $s$ with tape words $w_0$, reaches the configuration with state $e$ and words $w_1$ at time $T_1$, and does not have state $e$ at any earlier time. Suppose also that $M_2$, started in state $u$ with words $w_1$, reaches state $q$ and words $w_2$ at time $T_2$, and does not have state $q$ at any earlier time. Then the machine formed by switching from $M_1$ at state $e$ to $M_2$ at state $u$ does not reach state $q$ in its $S_2$ component at any time $t<T_1+1+T_2$ when started from state $s$ with words $w_0$.",
+ "hypotheses_covered": [
+  "natural number of work tapes $k$",
+  "Boolean input word $x$",
+  "machines $M_1$ and $M_2$ with state sets $S_1,S_2$",
+  "decidable equality on $S_1$",
+  "exit state $e$ and entry state $u$",
+  "initial state $s$ and target state $q$",
+  "families of work-tape words $w_0,w_1,w_2$",
+  "times $T_1,T_2\\in\\mathbb N$",
+  "$M_1$ reaches the configuration with state $e$ and words $w_1$ at time $T_1$",
+  "$M_1$ has not reached state $e$ at any time before $T_1$",
+  "$M_2$ reaches the configuration with state $q$ and words $w_2$ at time $T_2$",
+  "$M_2$ has not reached state $q$ at any time before $T_2$",
+  "time bound $t<T_1+1+T_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

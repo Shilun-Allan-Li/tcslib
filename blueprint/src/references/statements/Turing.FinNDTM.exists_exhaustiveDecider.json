@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinNDTM.exists_exhaustiveDecider",
+ "key": "f7cd79166521cc70",
+ "kind": "theorem",
+ "title": "Exhaustive Decider for Bounded Runs",
+ "statement": "For every finite-state nondeterministic Turing machine $N$ over the binary alphabet, there are a finite deterministic Turing machine $E$ over that alphabet and a natural number $C$ such that the following holds for every binary input $z$ and $T\\in\\mathbb{N}$. If every branch of $N$ on $z$ has halted within $T$ steps, then $E$ computes the output $[1]$ within exactly $C2^{C(T+1)}$ steps when $N$ accepts $z$ within $T$ steps, and computes $[0]$ within exactly that many steps when $N$ does not accept $z$ within $T$ steps.",
+ "hypotheses_covered": [
+  "N is a finite-state nondeterministic Turing machine over Bool",
+  "z is a Bool list",
+  "T is a natural number",
+  "Every choice word of length T leads N on z to a halted configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

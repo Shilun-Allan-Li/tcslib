@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost_halt_return",
+ "key": "9a6ba45af1563d06",
+ "kind": "lemma",
+ "title": "Return after a body halts",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, and let $m$ be either Boolean mode. Let $c$ be a configuration of $B$ on input $x$, let $t$ be a positive integer, and choose a word $w$ and a fuel-machine configuration. Suppose the run of $B$ from $c$ does not halt at any time $u<t$, does not visit state $a$ at any strictly intermediate positive time, and is halted at time $t$. Then the loop host, started in the call configuration corresponding to $c$ with release flag set and no flag bit, reaches after $t$ steps the call configuration corresponding to the run of $B$ at time $t$, with release flag unset and the flag bit set; the word, fuel configuration, input, and other call data are retained.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines B and F",
+  "anchor state of B",
+  "Boolean mode",
+  "input word x",
+  "body configuration c",
+  "natural-number time t is positive",
+  "body run is unhalted at every time u<t",
+  "body run avoids the anchor at strictly intermediate positive times",
+  "body run is halted at time t",
+  "word w",
+  "fuel-machine configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

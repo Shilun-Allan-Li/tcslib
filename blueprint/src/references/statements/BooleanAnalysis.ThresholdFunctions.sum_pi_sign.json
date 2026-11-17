@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.sum_pi_sign",
+ "key": "81078d0e27153281",
+ "kind": "lemma",
+ "title": "Parity sum over coordinate colorings",
+ "statement": "Let $n\\ge 0$ and $m>0$ be integers, let $j_0\\in\\{0,\\ldots,m-1\\}$, and let $T\\subseteq\\{0,\\ldots,n-1\\}$. For each coloring $\\pi:\\{0,\\ldots,n-1\\}\\to\\{0,\\ldots,m-1\\}$, let $F_{j_0}(\\pi)=\\{i:\\pi(i)=j_0\\}$. Then $\\sum_{\\pi}(-1)^{|T\\cap F_{j_0}(\\pi)|}=m^n(1-2/m)^{|T|}$, where the sum is over all such colorings.",
+ "hypotheses_covered": [
+  "The number of coordinates $n$ is a natural number",
+  "The number of colors $m$ is positive",
+  "$j_0$ is one of the $m$ colors",
+  "$T$ is a subset of the coordinates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$, $m>0$ be integers, $j_0\\in[m]$, and $T\\subseteq[n]$. For $F_{j_0}(\\pi)=\\{i\\in[n]:\\pi(i)=j_0\\}$, the sum over all colorings satisfies $\\sum_{\\pi:[n]\\to[m]}(-1)^{|T\\cap F_{j_0}(\\pi)|}=m^n(1-2/m)^{|T|}$."
+}

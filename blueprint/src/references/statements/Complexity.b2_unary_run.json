@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2_unary_run",
+ "key": "b0582f5828b41545",
+ "kind": "lemma",
+ "title": "Unary Normalization Preserves Runs",
+ "statement": "Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a binary input, let $c$ be a configuration of $M$ on $x$, and let $t\\in\\mathbb{N}$. Reinterpreting the configuration reached after $t$ steps of the input-normalized machine from $c$ on the all-ones input of length $|x|$ gives exactly the configuration reached after $t$ steps of $M$ from the unary reinterpretation of $c$.",
+ "hypotheses_covered": [
+  "A finite deterministic machine over the binary alphabet",
+  "A binary input $x$",
+  "A configuration of the machine on $x$",
+  "A step count $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic machine over the binary alphabet, $d$ a configuration on an input $x$, and $t$ a step count. The unary reinterpretation of the $t$-step run of the input-normalized variant of $M$ from $d$ equals the $t$-step run of $M$ from the reinterpretation of $d$."
+}

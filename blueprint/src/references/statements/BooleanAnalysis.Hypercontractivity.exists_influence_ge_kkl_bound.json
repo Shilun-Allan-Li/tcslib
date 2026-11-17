@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.exists_influence_ge_kkl_bound",
+ "key": "69ad3cdff18a329a",
+ "kind": "lemma",
+ "title": "Variance-scaled coordinate influence bound",
+ "statement": "Let $n\\ge2$ and let $f:\\{0,1\\}^n\\to\\mathbb R$ take values only in $\\{-1,1\\}$. Under the uniform measure on the Boolean cube, some coordinate $i$ satisfies $\\operatorname{Var}(f)\\frac{\\log n}{30n}\\le\\operatorname{Inf}_i(f)$, where variance and coordinate influence are computed under that measure.",
+ "hypotheses_covered": [
+  "$n\\ge2$",
+  "$f$ is a real-valued function on the Boolean cube",
+  "$f$ takes only the values $-1$ and $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f:\\{0,1\\}^n\\to\\{-1,1\\}$ be a function on the uniform Boolean cube in dimension $n\\ge2$. Some coordinate $i$ satisfies $\\operatorname{Var}(f)\\log n/(30n)\\le I_i(f)$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation."
+}

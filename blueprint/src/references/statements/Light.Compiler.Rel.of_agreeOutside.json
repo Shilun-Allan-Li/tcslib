@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.Compiler.Rel.of_agreeOutside",
+ "key": "28360254619afd61",
+ "kind": "theorem",
+ "title": "Constructing a relation from memory agreement",
+ "statement": "Let $W$ be a word size, let $Z$ specify a layout with $F$ local variables, dispatcher position $D=Z.\\mathrm{disp}$, and space limit, and let $\\sigma,\\sigma'$ be states with frame pointers $q,q'$. Suppose $m$ satisfies the storage relation for $Z,\\sigma,q$, and $m'$ agrees with $m$ outside a set $s$ of addresses disjoint from the addresses of the encoded constants $1,0,-1$ and pool addresses indexed by $n\\le D$. Suppose also that $m'$ stores the stack address for frame pointer $q'$ at the frame-pointer address, stores $\\sigma'_{\\mathrm{loc}}(x)$ at stack address $q'+x$ for every $x<F$, and stores $\\sigma'_{\\mathrm{mem}}(a)$ at address $a$ for every $a<Z.\\mathrm{lim}.\\mathrm{space}$. Then $m'$ satisfies the storage relation for $Z,\\sigma',q'$.",
+ "hypotheses_covered": [
+  "The relation between $m$, $Z$, $\\sigma$, and $q$",
+  "Agreement outside a set $s$",
+  "The set $s$ is disjoint from the encoded constant and pool addresses through $Z.\\mathrm{disp}$",
+  "Frame-pointer storage condition for $m'$ and $q'$",
+  "Local-variable storage condition for $m'$ and $\\sigma'$",
+  "Memory storage condition for $m'$ and $\\sigma'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

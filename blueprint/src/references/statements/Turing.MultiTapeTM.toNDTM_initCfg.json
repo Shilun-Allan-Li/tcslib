@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.MultiTapeTM.toNDTM_initCfg",
+ "key": "b19ca470a71fd7ab",
+ "kind": "lemma",
+ "title": "Initial configuration is preserved",
+ "statement": "Let $M$ be a deterministic multi-tape Turing machine and let $N$ be its associated nondeterministic machine, with the same initial state and both choice transitions equal to the transition of $M$. For every input word $x$, the initial configuration of $N$ on $x$ equals the initial configuration of $M$ on $x$.",
+ "hypotheses_covered": [
+  "A deterministic multi-tape Turing machine",
+  "Its associated nondeterministic machine has the same initial state and both transitions equal to the deterministic transition",
+  "An input word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic multi-tape Turing machine with transition function $\\delta$,\nlet $N$ be the nondeterministic machine with the same initial state whose two transition\nfunctions both equal $\\delta$, and let $x$ be an input word.  Then the initial configuration\nof $N$ on $x$ coincides with the initial configuration of $M$ on $x$."
+}

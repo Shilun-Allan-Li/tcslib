@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clCopy_separator",
+ "key": "b9d8f2659d598847",
+ "kind": "lemma",
+ "title": "Writing the separator",
+ "statement": "For every Boolean input word $x$, every valid input-head position $p$, and all Boolean words $w$ and $r$, running the copier for two steps from state $0$, with the source head at cell $|w|$ and record $r$, yields state $3$ with the same input-head position, source head at cell $|w|-1$ (using truncated subtraction), source word $w$, and record $r$ followed by the bits $0,1$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Valid input-head position $p$",
+  "Boolean source word $w$",
+  "Boolean record $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, source word $w$, and record, two steps of the copier from the reading control at the source's right blank yield the rewinding control, with the aligned separator bits false, true appended to the record and the source head moved one cell left."
+}

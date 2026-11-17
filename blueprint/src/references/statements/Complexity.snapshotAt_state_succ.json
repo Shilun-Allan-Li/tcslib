@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.snapshotAt_state_succ",
+ "key": "6963b13f4323fe37",
+ "kind": "theorem",
+ "title": "Successor state of a run",
+ "statement": "Let $M$ be a finite binary Turing machine, $x$ a finite binary word, and $t\\in\\mathbb{N}$. The state component of the snapshot of $M$ on $x$ after $t+1$ steps is the successor state determined by the snapshot after $t$ steps: it remains halted if that snapshot is halted, and otherwise is the state prescribed by the transition on its current state and scanned symbols.",
+ "hypotheses_covered": [
+  "$M$ is a finite binary Turing machine",
+  "$x$ is a finite binary word",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary multi-tape Turing machine with finite state set $Q$, $k$ work tapes and\ntransition function $\\delta$, let $x \\in \\{0,1\\}^*$ and $t \\in \\mathbb{N}$, and let\n$q \\in Q \\cup \\{\\bot\\}$ (with $\\bot$ meaning halted), $a$ and $b = (b_0, \\dots, b_{k-1})$ be\nthe state, the symbol under the input head, and the symbols under the work heads after $t$\nsteps of $M$ on $x$. Then the state of $M$ on $x$ after $t + 1$ steps is $\\bot$ if\n$q = \\bot$, and otherwise is the successor state prescribed by the transition\n$\\delta(q, a, b)$."
+}

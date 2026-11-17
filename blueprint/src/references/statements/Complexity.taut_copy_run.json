@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.taut_copy_run",
+ "key": "a173b404533a0faf",
+ "kind": "lemma",
+ "title": "Certificate copy run",
+ "statement": "Let $x$, $p$, and $u$ be binary words with $x=p\\mathbin{+\\!\\!+}u$. Starting in the certificate-copy state with $|p|$ input bits consumed, empty work tape, work head at $0$, and empty output, after every $j\\le |u|$ steps the verifier is still in the certificate-copy state, has consumed $|p|+j$ input bits, holds the prefix of $u$ of length $j$ on its work tape, and has its work head at $j$.",
+ "hypotheses_covered": [
+  "$x,p,u$ are lists of Boolean bits",
+  "$x=p$ concatenated with $u$",
+  "$j$ is a natural number with $j\\le |u|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input be $x = p \\mathbin{+\\!\\!+} u$. Started in the certificate-copy state with\n$|p|$ input bits consumed, empty work tape, work head $0$, and empty output, for every\n$j \\le |u|$ the non-tautology verifier after exactly $j$ steps is still in the copy\nstate with $|p| + j$ bits consumed, the first $j$ bits of $u$ on the work tape, the\nwork head at cell $j$, and empty output."
+}

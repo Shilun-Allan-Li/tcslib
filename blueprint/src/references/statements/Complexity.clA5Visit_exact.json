@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clA5Visit_exact",
+ "key": "abc3479e00ca300d",
+ "kind": "lemma",
+ "title": "Exact Stored Visit Code",
+ "statement": "Let $M$ be a finite-state binary Turing machine, let $C,e,c,A,d$ be natural numbers, let $x$ be a bit string, and let $j,t$ be natural numbers. If $t$ is at most the producer horizon for these parameters and $|x|$, then for every work tape $\tau$ of $M$, the stored visit code at time $t$ in the packed records with cursor $j$ equals the optional-time code for the greatest time $s<t$ at which that tape's head, on the all-zero input of length $|x|+C(|x|+1)^e$, occupies its position at time $t$; it is the absent-visit code if no such time exists.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state binary Turing machine",
+  "$C,e,c,A,d$ are natural numbers",
+  "$x$ is a bit string",
+  "$j,t$ are natural numbers",
+  "$t$ is at most the producer horizon at input length $|x|$",
+  "$\tau$ is a work tape of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters, instance $x$, cursor $j$, time $t$ at most the producer horizon, and tape $\\tau$, the stored visit code equals the optional-time code of the public greatest strictly earlier visit; the reference machine is never rerun and the protected table is never replaced."
+}

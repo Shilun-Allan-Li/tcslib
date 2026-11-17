@@ -1,0 +1,23 @@
+{
+ "lean_name": "BoolCircuit.AdjWalk.gLoop",
+ "key": "1894b9f76b3d2ca7",
+ "kind": "lemma",
+ "title": "Circuit gate-processing loop",
+ "statement": "Let $C$ be a family of directed acyclic circuits, and let $n,i,B$ be natural numbers and $\u001b[?]$ be a Boolean parameter $\text{lm}$. Assume the circuit $C_n$ has its gate argument lists sorted in strictly increasing order and satisfies $\text{output}(C_n)+1=\text{size}(C_n)$, with $\text{size}(C_n)+1\\le B$. For natural numbers $d,V,k,U,W,K$ such that $V+d=\\text{size}(C_n)$, $n\\le V$, $k\\le i$, $U,W\\le B$, and $K=k+|S|\\le B$, where $S$ is the encoding of the gates of $C_n$ from index $V-n$ onward, start the gate-processing machine in state $gS$, with registers $(k,V,U,W)$, no recorded answer, and input encoding $1^n$ paired with the binary representation of $i$. If $k\\le i<k+|S|$, the machine halts with answer $\\text{lm}\\lor S_{i-k}$; if $k+|S|\\le i$, it reaches a configuration of the form $(oS,K,\\text{size}(C_n),U',W',\\text{no answer})$ for some $U',W'\\le B$. At every earlier step in either case, all four register values are at most $B$.",
+ "hypotheses_covered": [
+  "The circuit family and natural numbers $n,i,B$ are fixed; $\u001b[?]$ is a Boolean parameter $\text{lm$.",
+  "The gate argument lists of $C_n$ are sorted in strictly increasing order.",
+  "$\\text{output}(C_n)+1=\\text{size}(C_n)$.",
+  "$\\text{size}(C_n)+1\\le B$.",
+  "$V+d=\\text{size}(C_n)$.",
+  "$n\\le V$.",
+  "$k\\le i$.",
+  "$U\\le B$ and $W\\le B$.",
+  "$K$ is $k$ plus the length of the encoding of the gates of $C_n$ from index $V-n$ onward.",
+  "$K\\le B$."
+ ],
+ "confidence": "low",
+ "caveat": "The statement’s progress predicate specifies bounded-register reachability and halting only through the provided auxiliary definitions; the displayed configuration description summarizes those predicates.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

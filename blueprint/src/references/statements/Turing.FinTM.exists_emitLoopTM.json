@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.exists_emitLoopTM",
+ "key": "18cf762f1ece69ef",
+ "kind": "theorem",
+ "title": "Emitting loop machine",
+ "statement": "Let $B$ and $F$ be finite Turing machines on Boolean words, let $q$ be a state of $B$, and let $I$ be a predicate on pairs of Boolean words. Let $u$ and $v$ be functions on pairs of Boolean words, let $s_0$ be a function on Boolean words, and let $R,T : \\\\mathbb{N} \\\\to \\\\mathbb{N}$. Suppose $F$ computes the little-endian binary digits of $R(|x|)$ within $T(|x|)$ steps on every input $x$; $I(x,s_0(x))$ holds and $I(x,s)$ implies $I(x,u(x,s))$; and, for every $x$, the computation of $B$ from its initial configuration reaches the clean seam with state $q$ and tape word $s_0(x)$ at some time at most $T(|x|)$, without visiting $q$ earlier. Suppose also that for every $x,s$ with $I(x,s)$, the computation from the clean seam with word $s$ takes a positive number of steps at most $T(|x|)$ without an intermediate return to $q$, and ends at the clean seam with word $u(x,s)$ and output appended as $v(x,s)$. Then there are a finite Turing machine $E$ and a natural number $c$ such that $E$ computes the concatenation of $v(x,s_0(x)),v(x,u(x,s_0(x))),\\\\ldots,v(x,u^ {R(|x|)}(s_0(x)))$ within $c(T(n)+1)(R(n)+2)$ steps on inputs of length $n$.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Turing machines over Boolean words",
+  "$q$ is a state of $B$",
+  "$I$ is a predicate on pairs of Boolean words",
+  "$u,v$ are functions on pairs of Boolean words; $s_0$ is a function on Boolean words",
+  "$R,T$ map natural numbers to natural numbers",
+  "$F$ computes the binary digits of $R(|x|)$ within $T(|x|)$ steps for every $x$",
+  "$I(x,s_0(x))$ holds for every $x$",
+  "$I(x,s)$ implies $I(x,u(x,s))$ for every $x,s$",
+  "For every $x$, startup reaches the clean seam with word $s_0(x)$ within $T(|x|)$ steps and does not visit $q$ earlier",
+  "For every invariant pair $(x,s)$, a round takes positive time at most $T(|x|)$, does not revisit $q$ at intermediate positive times, reaches the clean seam with word $u(x,s)$, and appends $v(x,s)$ to the output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a loop body with anchor be given, a fuel machine computing the binary digits of\n$R(|x|)$ in time $T$, an invariant that holds at the initial word and is preserved by\nthe step function, a startup reaching the initial seam within $T(|x|)$ without visiting\nthe anchor earlier, and a per-round contract: on every admissible word $s$, in positive\ntime at most $T(|x|)$ with no early anchor revisit, the body moves from the clean seam\nof $s$ to the clean seam of the stepped word while appending exactly the chunk word\nassigned to $(x, s)$ to its output. Then there are a finite machine $E$ and a constant\n$c$ such that $E$ computes, within $c (T(n) + 1)(R(n) + 2)$ steps on inputs of length\n$n$, the concatenation of the chunks of the first $R(|x|) + 1$ orbit points of the\ninitial word, in order."
+}

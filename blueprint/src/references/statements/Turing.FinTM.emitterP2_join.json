@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_join",
+ "key": "efb7caa6766662c5",
+ "kind": "lemma",
+ "title": "Joining computation runs",
+ "statement": "Let $k$ be a natural number, let $S$ be a state set, let $w$ be a Boolean input word, and let $M$ be a $k$-tape machine. For natural numbers $a,b$ and configurations $c,d,e$, if running $M$ from $c$ for $a$ steps reaches $d$ and running it from $d$ for $b$ steps reaches $e$, then running it from $c$ for $a+b$ steps reaches $e$.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "State set $S$ and Boolean input word $w$",
+  "A $k$-tape machine $M$",
+  "Natural numbers $a,b$",
+  "Configurations $c,d,e$",
+  "Run from $c$ for $a$ steps reaches $d$",
+  "Run from $d$ for $b$ steps reaches $e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the run from $c$ reaches $d$ in exactly $a$ steps and the run from $d$\nreaches $e$ in exactly $b$ steps, then the run from $c$ reaches $e$ in\nexactly $a + b$ steps."
+}

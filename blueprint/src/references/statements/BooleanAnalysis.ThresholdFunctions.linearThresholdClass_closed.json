@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.linearThresholdClass_closed",
+ "key": "fea6e2c1fcd0e4a9",
+ "kind": "lemma",
+ "title": "Closure under negation and identification",
+ "statement": "For all natural numbers $n,m$, if $f$ is a $\\pm 1$-valued linear threshold function on $\\{0,1\\}^n$, then for every $z\\in\\{0,1\\}^n$ and every map $\\pi:\\{0,\\ldots,n-1\\}\\to\\{0,\\ldots,m-1\\}$, the function $g:\\{0,1\\}^m\\to\\mathbb R$ defined by $g(w)=f((z_i+w_{\\pi(i)}\\bmod 2)_{i=0}^{n-1})$ is a $\\pm 1$-valued linear threshold function.",
+ "hypotheses_covered": [
+  "natural dimensions $n,m$",
+  "$f$ belongs to the linear threshold class on dimension $n$",
+  "input negation vector $z\\in\\{0,1\\}^n$",
+  "coordinate map $\\pi$ from the $n$ input coordinates to the $m$ coordinates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $n,m\\in\\mathbb N$, real coefficients $c,a_1,\\ldots,a_n$, $z\\in\\{0,1\\}^{n}$ and maps $\\pi:\\{1,\\ldots,n\\}\\to\\{1,\\ldots,m\\}$, if $f(x)=\\operatorname{sgn}_{+}(c+\\sum_{i=1}^{n}a_i(-1)^{x_i})$, then $g(w)=f((z_i+w_{\\pi(i)}\\pmod2)_{i=1}^{n})$ is a $\\{-1,1\\}$-valued linear threshold function on $\\{0,1\\}^{m}$, meaning that $g(w)=\\operatorname{sgn}_{+}(b+\\sum_{j=1}^{m}u_j(-1)^{w_j})$ for some real $b,u_1,\\ldots,u_m$.\nHere $\\operatorname{sgn}_{+}(t)=1$ for $t\\geq0$ and $-1$ for $t<0$."
+}

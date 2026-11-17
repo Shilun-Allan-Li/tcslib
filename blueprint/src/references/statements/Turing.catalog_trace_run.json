@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.catalog_trace_run",
+ "key": "8b1e1c0a081c221d",
+ "kind": "theorem",
+ "title": "Run Follows a Prescribed Trace",
+ "statement": "Let $M$ be a $k$-tape machine, let $F$ and $R$ be sequences of configurations, let $D$ be a configuration, and let $L$ be a natural number. Suppose each step from $F(r)$ gives $F(r+1)$ for $r<L$, the step from $F(L)$ gives $R(L)$, each step from $R(r+1)$ gives $R(r)$ for $r<L$, the step from $R(0)$ gives $D$, and $D$ is fixed by a step. Then at every time $t$, the run from $F(0)$ is $F(t)$ if $t\\le L$, is $R(2L+1-t)$ if $L<t\\le 2L+1$, and is $D$ if $t>2L+1$.",
+ "hypotheses_covered": [
+  "Machine M, sequences F and R, configuration D, and natural number L",
+  "For every r<L, stepping F(r) gives F(r+1)",
+  "Stepping F(L) gives R(L)",
+  "For every r<L, stepping R(r+1) gives R(r)",
+  "Stepping R(0) gives D",
+  "D is fixed by a step",
+  "Natural number t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

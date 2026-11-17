@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.ndet_live",
+ "key": "14f9f171762378c3",
+ "kind": "theorem",
+ "title": "Live step of a compiled nondeterministic program",
+ "statement": "Let $A$ be a nondeterministic register program, $l_0$ an initial label, $D$ a deterministic machine with $k_D$ work tapes, $q_0$ a choice of initial decider states, and $B,W$ natural-number bounds. Suppose the deterministic interpretation of $A$ with choices replaced by $0$, started at label $l$ with register values $v$ and no recorded answer, takes one step to label $l'$ and register values $v'$, still with no recorded answer; suppose the associated precondition holds and $|\\mathrm{bits}(v(r)+1)|\\le W$ for every register $r$. Then there is a natural number $S$ such that every run of the compiled nondeterministic machine from the corresponding initial configuration using a choice word of length at most $S$ has register-head positions between $-1$ and $W$ and decider-tape head positions of absolute value at most $B$, and every choice word of length exactly $S$ reaches the initial configuration associated with $(l',v')$, preserving the input and output.",
+ "hypotheses_covered": [
+  "A, l₀, D, q₀, B, and W are given",
+  "l and l′ are program labels; v and v′ give register values; out is the initial output word",
+  "The deterministic interpretation from (l,v,no answer) takes one step to (l′,v′,no answer)",
+  "The precondition NPre holds at (l,v,no answer)",
+  "For every register r, the bit-word for v(r)+1 has length at most W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

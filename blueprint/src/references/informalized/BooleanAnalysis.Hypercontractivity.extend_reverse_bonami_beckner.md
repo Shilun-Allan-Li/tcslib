@@ -1,0 +1,22 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Extension.lean :: BooleanAnalysis.Hypercontractivity.extend_reverse_bonami_beckner -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Reverse Bonami–Beckner Inequality
+
+**Claim.** Under the stated parameter conditions, the extended power mean of order $q$ of the noise transform of a nonnegative function is at least its extended power mean of order $p$.
+
+**Proof.** The proof separates the parameter range into cases, first establishing auxiliary comparisons.
+
+1. When $0<Q<P<1$, set $S=\sqrt{(1-P)/(1-Q)}$. The hypotheses imply $0\le R\le S\le1$. The sharp reverse Bonami–Beckner inequality at the boundary radius $S$ gives the comparison from order $P$ to order $Q$ (\texttt{reverse\_bonami\_beckner\_positive\_sharp}); decreasing the noise parameter from $S$ to $R$ can only increase the order-$Q$ mean (\texttt{lpMean\_noise\_antitone}). Combining these gives the positive-order comparison.
+
+2. The proof extends this comparison to an endpoint order equal to zero by continuity. For a strictly positive function, its extended mean is continuous in the order at zero: differentiating the moment at zero gives the expected logarithm, and exponentiating its difference quotient recovers the order-zero definition. If the function has a zero, the endpoint comparison follows directly from nonnegativity of the left-hand mean. Thus the positive-order comparison passes to $P=0$ when $Q>0$.
+
+3. For $Q<P<0$, if the input has a zero then its order-$P$ mean is zero, so nonnegativity suffices. Otherwise the input is strictly positive, and so is its noisy transform: the kernel representation of the noise operator has strictly positive weights when $0\le R<1$, and at least one input value is positive. Let $H=T_Ru$ and $A=(\mathbb E H^Q)^{1/Q}>0$, and define $g=(H/A)^{Q-1}$. The normalized-moment identity gives $\mathbb E(H/A)^Q=1$, hence the order-$Q'=Q/(Q-1)$ mean of $g$ is $1$; direct calculation also gives $\langle H,g\rangle=A$. The conjugate exponents satisfy $0<P'<Q'<1$, where $P'=P/(P-1)$, and the radius condition transforms into the positive-order radius condition for $Q',P'$. Apply the already proved positive-order comparison to $g$. Reverse Hölder gives $\langle u,T_Rg\rangle\ge \|u\|_P\|T_Rg\|_{P'}$, while self-adjointness identifies this inner product with $\langle T_Ru,g\rangle=A$. Together these inequalities yield the desired bound. The normalized-moment identity used here is \texttt{ReverseMoments.expect\_normalized\_rpow\_eq\_one}; positivity of the moment is supplied by \texttt{ReverseMoments.expect\_rpow\_pos}, and the inner-product estimate is reverse Hölder (\texttt{reverse\_holder}).
+
+4. If $Q<0<P<1$, choose $A=\sqrt{1/(1-Q)}$ and $T=R/A$. The radius hypothesis gives $R\le A$ and $T^2\le1-P$. The noise operators compose, so $T_A(T_Tu)=T_Ru$ (\texttt{noiseOp\_compose}). Apply the order-zero endpoint comparison to $T_Tu$ at noise level $A$, and then the zero-to-positive comparison to $u$ at level $T$. Nonnegativity is preserved by the noise operator (\texttt{noiseOp\_nonneg}), so both applications meet their hypotheses.
+
+5. It remains to handle boundary cases and assemble the comparisons. At order $p=1$, the radius condition forces $\rho=0$, whose noise transform is the constant mean; the order-one mean is that same mean. The noise operator fixes a function at parameter $1$ by its Fourier expansion (\texttt{walsh\_expansion}), so if $q=p<1$, noise antitonicity compares parameters $\rho$ and $1$. For $p<1$ and $q<p$, trichotomy places $p$ below, at, or above zero. A negative $p$ uses the negative-order comparison; $p=0$ uses the zero-target endpoint; and positive $p$ is paired with the negative, zero, or positive case for $q$, using respectively the cross-zero, zero-source, or positive-order comparison. These cases exhaust the hypotheses.
+
+**Key facts.** `BooleanAnalysis.Hypercontractivity.reverse_bonami_beckner_positive_sharp`, `BooleanAnalysis.Hypercontractivity.lpMean_noise_antitone`, `BooleanAnalysis.Hypercontractivity.ReverseMoments.expect_rpow_pos`, `BooleanAnalysis.Hypercontractivity.ReverseMoments.expect_normalized_rpow_eq_one`, `BooleanAnalysis.Hypercontractivity.reverse_holder`, `BooleanAnalysis.noiseOp_self_adjoint`, `BooleanAnalysis.Hypercontractivity.noiseOp_compose`, `BooleanAnalysis.Hypercontractivity.noiseOp_nonneg`, `BooleanAnalysis.walsh_expansion`.

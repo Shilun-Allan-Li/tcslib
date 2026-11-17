@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.lpMean_noise_antitone",
+ "key": "e78573dab4d4b882",
+ "kind": "lemma",
+ "title": "Monotonicity under increased noise",
+ "statement": "Let $n$ be a natural number, let $q,\\rho,\\sigma\\in\\mathbb{R}$ satisfy $q<1$ and $0\\le\\rho\\le\\sigma\\le1$, and let $f:\\{0,1\\}^n\\to\\mathbb{R}$ be nonnegative. Then $M_q(T_\\rho f)\\ge M_q(T_\\sigma f)$, where $T_\\tau$ is the Fourier noise operator and $M_q$ is the extended power mean under the uniform measure.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$q<1$",
+  "$0\\le\\rho$",
+  "$\\rho\\le\\sigma$",
+  "$\\sigma\\le1$",
+  "$f(x)\\ge0$ for every cube point $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q<1$, $0\\le\\rho\\le\\sigma\\le1$, and $f:\\{0,1\\}^n\\to[0,\\infty)$. Then $M_q(T_\\rho f)\\ge M_q(T_\\sigma f)$. For nonnegative functions $u$, the extended mean is $M_r(u)=(\\E u^r)^{1/r}$ when $r>0$; the same formula applies for $r<0$ when $u$ is positive everywhere. For positive $u$, $M_0(u)=\\exp(\\E\\log u)$; if $r\\le0$ and $u$ has a zero, $M_r(u)=0$. All expectations are uniform. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure."
+}

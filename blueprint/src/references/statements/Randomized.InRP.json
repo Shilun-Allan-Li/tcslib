@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.InRP",
+ "key": "241571589b0f6053",
+ "kind": "def",
+ "title": "One-sided randomized language recognition",
+ "statement": "Fix a verifier model $E$ and a language $L$ of finite Boolean lists. The language $L$ has an efficient verifier relative to $E$ if there exist a Boolean-valued verifier $M$ and natural numbers $a,k$ such that the optional-output verifier associated with $M$ is efficient according to $E$, and for every Boolean list $x$, membership in $L$ implies that $M$ accepts with probability at least $2/3$ when given a uniformly random string of length $\bigl(\text{polyLen}(a,k,|x|)\bigr)$, while nonmembership implies that $M$ rejects for every random string of that length.",
+ "hypotheses_covered": [
+  "A verifier model $E$",
+  "A language $L$ of finite Boolean lists",
+  "There exist a Boolean-valued verifier $M$ and natural numbers $a,k$",
+  "The optional-output verifier associated with $M$ is efficient according to $E$",
+  "For every Boolean list $x$, if $x\\in L$, acceptance probability at the specified random-bit length is at least $2/3$",
+  "For every Boolean list $x$, if $x\\notin L$, every random string of the specified length is rejected"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

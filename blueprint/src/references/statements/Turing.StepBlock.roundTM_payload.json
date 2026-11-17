@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.StepBlock.roundTM_payload",
+ "key": "3a0b9c819cb92b14",
+ "kind": "lemma",
+ "title": "Processing one action payload",
+ "statement": "Let $k,n\\in\\mathbb{N}$, let $x$ be a finite binary input, let $c$ be a configuration of a $k$-tape machine with states indexed by $\\{0,\\ldots,n\\}$, and let $a$ be an action for that machine. For any binary words $\\mathrm{table},\\mathrm{before},\\mathrm{after},\\mathrm{pre}$ with $\\mathrm{table}=\\mathrm{before}$ followed by the serialization of $a$ followed by $\\mathrm{after}$, the round machine runs from the record configuration with this table, the summary of $c$'s output, and the heads at positions $|\\mathrm{before}|$ and $0$, to the table-tail configuration after the action. The state tape then contains the unary encoding of the successor state (or is empty if there is none), the table head is at $|\\mathrm{before}|+|a|_{\\mathrm{code}}$, and the run takes $|a|_{\\mathrm{code}}+6$ steps, satisfying the round-window property throughout the run as specified.",
+ "hypotheses_covered": [
+  "Natural numbers $k,n$",
+  "Finite binary input $x$",
+  "Configuration $c$ and action $a$ for states in $\\mathrm{Fin}(n+1)$",
+  "Binary words table, before, after, and output prefix",
+  "Table is the concatenation of before, the serialization of $a$, and after"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

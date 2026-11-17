@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.windowRun_spec",
+ "key": "4fcdaa7244c284c7",
+ "kind": "theorem",
+ "title": "Windowed run characterization",
+ "statement": "Let $M$ be a multi-tape Turing machine with Boolean symbols, let $s,N\\in\\mathbb{N}$, let $\\mathrm{upd}$ update an auxiliary value from an optional Boolean symbol, and let $c$ be a configuration and $\\tau$ an auxiliary value, with $c$ in the window of radius $s$. Then there is an $r\\le N$ such that the configuration returned by the windowed run is exactly the configuration reached by $M$ after $r$ steps; every configuration up to and including step $r$ is in the window, and every configuration before step $r$ is nonhalting. If the run reports halting, then $r<N$ and the configuration at step $r$ is halted; if it reports leaving the window, then $r<N$, the configuration at step $r$ is nonhalting, and its next configuration is outside the window; if it reports exhaustion, then $r=N$.",
+ "hypotheses_covered": [
+  "A multi-tape Turing machine over Boolean symbols",
+  "A window radius $s\\in\\mathbb{N}$",
+  "An update function on auxiliary values and optional Boolean symbols",
+  "A clock bound $N\\in\\mathbb{N}$",
+  "An initial configuration $c$ in the window of radius $s$",
+  "An initial auxiliary value $\\tau$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

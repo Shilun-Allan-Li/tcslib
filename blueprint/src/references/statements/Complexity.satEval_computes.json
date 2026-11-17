@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satEval_computes",
+ "key": "e7be65761b973fc0",
+ "kind": "lemma",
+ "title": "Uniform Linear-Time CNF Evaluator",
+ "statement": "There exist a finite Boolean Turing machine $E$ and a natural number $A$ such that, for every CNF formula $\\varphi$ over natural-number variable indices and every Boolean word $u$ for which each variable index in $\\varphi$ is less than $|u|$, the machine $E$ computes the single-bit output $[\\varphi(u)]$ on the paired encoding of the serialization of $\\varphi$ and $u$, in exactly $A\\bigl(|\\langle\\mathrm{enc}(\\varphi),u\\rangle|+1\\bigr)$ steps. Here $\\varphi(u)$ is the truth value under the assignment given by the bits of $u$, with variables beyond its length assigned false.",
+ "hypotheses_covered": [
+  "existence of one finite Boolean machine $E$",
+  "existence of a natural number $A$",
+  "arbitrary CNF formula over natural-number variable indices",
+  "arbitrary Boolean word $u$",
+  "every variable index in the formula is less than $|u|$",
+  "input is the pair encoding of the formula serialization and $u$",
+  "computation halts with the specified output and uses some space amount"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a single finite machine $E$ and a constant $A$ such that for every CNF\nformula $\\varphi$ and every certificate word $u$ covering all variables of\n$\\varphi$ (each literal index below $|u|$), the machine $E$, run on the pair\nencoding of the serialization of $\\varphi$ with $u$, halts within\n$A \\cdot (\\ell + 1)$ steps — $\\ell$ the length of that paired input — and outputs\nthe single bit giving the truth value of $\\varphi$ under the assignment read off\n$u$."
+}

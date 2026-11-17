@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.drop_pair_run",
+ "key": "e3ebf68037b2e474",
+ "kind": "lemma",
+ "title": "Pair-Scan Run",
+ "statement": "Let $m\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $h$ and $w$ be bit strings, let $\\ell\\in\\{0,1,2\\}$, and let $v$ assign a natural number to each of nine registers. Suppose every register value is at most $4|h|+4$, the limit register equals the pointer register plus $s_\\ell|w|$, where $s_0=1$, $s_1=2$, and $s_2=4$, and, for every $i<|w|$, the bit of $h$ at position $v(0)+s_\\ell i$ (taken as $0$ when out of range) equals the bit of $w$ at position $i$ (also taken as $0$ when out of range). If parsing $w$ as an aligned pair fails, the computation from the scan state reaches a false-answer state after advancing the pointer by $s_\\ell t$ for some $t\\le |w|$. If the parse succeeds with first component $a$, it reaches the scan-complete state with the pointer advanced by $s_\\ell(2|a|+2)$. In either case, the computation invariant holds at every step before the reached state.",
+ "hypotheses_covered": [
+  "mode is a Boolean",
+  "$h$ and $w$ are bit strings",
+  "$\\ell\\in\\{0,1,2\\}$",
+  "$v$ assigns natural numbers to nine registers",
+  "every register value is at most $4|h|+4$",
+  "the limit register equals the pointer register plus $s_\\ell|w|$",
+  "each sampled input bit agrees with the corresponding bit of $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

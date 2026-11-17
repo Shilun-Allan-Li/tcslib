@@ -1,0 +1,16 @@
+{
+ "lean_name": "radMatrix_row_proj_eq_sum",
+ "key": "be07e2f3b420e3d2",
+ "kind": "lemma",
+ "title": "Coordinate of a scaled row projection",
+ "statement": "Let $k,d$ be natural numbers, let $x\\in\\mathbb{R}^d$, and let $i$ be a row index in $\\{0,\\ldots,k-1\\}$. For every real array $\\omega=(\\omega_{ij})$, the $i$th coordinate of the image of $x$ under the matrix with entries $\\omega_{ij}/\\sqrt{k}$ is\n\\[\n\\sum_{j=0}^{d-1}\\frac{x_j}{\\sqrt{k}}\\,\\omega_{ij}.\n\\]",
+ "hypotheses_covered": [
+  "$k,d$ are natural numbers",
+  "$x\\in\\mathbb{R}^d$",
+  "$i$ is a row index among the $k$ rows"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix natural numbers $k, d$, a vector $x \\in \\bbr^d$, and a row index $i \\in\n\\{1,\\dots,k\\}$. For a sample $\\omega$ in the Rademacher sample space\n$\\mathrm{Rad\\Omega}(k,d)$, let $A(\\omega)$ be the Rademacher matrix with entries\n$\\omega_{ij}/\\sqrt{k}$. Then, as functions of $\\omega$, the $i$-th coordinate of the\nimage $A(\\omega)x$ equals the sum of the scaled entries:\n\\[\n\\bigl(A(\\omega)\\,x\\bigr)_i = \\sum_{j} \\frac{x_j}{\\sqrt{k}}\\,\\omega_{ij}.\n\\]"
+}

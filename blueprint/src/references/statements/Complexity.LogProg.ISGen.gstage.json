@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.gstage",
+ "key": "b28a6eef63bba003",
+ "kind": "theorem",
+ "title": "Stage enumeration invariant",
+ "statement": "Let $E,B$ be natural numbers, let $\\mathcal O:\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{0,1\\}$ be an oracle, let $x$ be a finite binary word, let $Q$ be a proposition, and let $\\sigma$ be a counting state. For $u,v\\in\\mathbb N$, write $R(u,v)$ for the assertion that the oracle returns true on the type-$3$ query encoding $(x,u,v,\\sigma.s)$; write $I(u)$ for the assertion that it returns true on the type-$1$ query encoding $(x,u,\\sigma.s)$; and let $\\operatorname{Ball}_j$ be the set of numbers below $\\sigma.K$ reachable from some $I$-witness by at most $j$ steps of $R$. Suppose every register of $\\sigma$ is at most $B$, $\\sigma.K+1\\le B$, $\\sigma.i\\le\\sigma.K$, $\\sigma.i1=\\sigma.i+1$, $\\sigma.cp=|\\operatorname{Ball}_{\\sigma.i}|$, and $\\sigma.g=\\sigma.cur=\\sigma.stp=\\sigma.u=\\sigma.cnt=0$. If, for all $v',c'\\le B$, the comparison-stage machine initialized with $i=K$, $i1=K+1$, $v=v'$, $c=c'$, and $cp=|\\operatorname{Ball}_K|$ terminates with all registers bounded by $B$ and accepts exactly when $Q$ holds, then the stage-head machine initialized in state $\\sigma$ terminates with all registers bounded by $B$ and accepts exactly when $Q$ holds and no member of $\\operatorname{Ball}_j$ is accepted by the type-$2$ oracle query for any $j$ with $\\sigma.i<j\\le\\sigma.K$.",
+ "hypotheses_covered": [
+  "$E\\in\\mathbb N$",
+  "$B\\in\\mathbb N$",
+  "$x$ is a finite binary word",
+  "$\\mathcal O$ is an oracle on four query types and binary words",
+  "$Q$ is a proposition",
+  "$\\sigma$ is a counting state",
+  "Every register of $\\sigma$ is at most $B$",
+  "$\\sigma.K+1\\le B$",
+  "$\\sigma.i\\le\\sigma.K$",
+  "$\\sigma.i1=\\sigma.i+1$",
+  "$\\sigma.cp$ equals the cardinality of the ball at stage $\\sigma.i$",
+  "$\\sigma.g=\\sigma.cur=\\sigma.stp=\\sigma.u=\\sigma.cnt=0$",
+  "For every $v',c'\\le B$, the specified comparison-stage computation satisfies $Q$ exactly and terminates within register bound $B$"
+ ],
+ "confidence": "high",
+ "caveat": "The formal statement uses the definitions of the balls and machine semantics; the prose spells out the oracle queries and consequence.",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $x$ be a finite binary word, let $\\mathcal O$ be an oracle,\nlet $Q$ be a proposition, and let $\\sigma$ be a register state with every register at\nmost $B$. Write $R(u,v)$ for the assertion that the oracle's type-$3$ query on\n$(x,u,v,\\sigma.s)$ is true, and $I(u)$ for the assertion that its type-$1$ query on\n$(x,u,\\sigma.s)$ is true; let $\\operatorname{Ball}_j$ be the set of codes below\n$\\sigma.K$ that are reachable from some $I$-code by at most $j$ steps of $R$. Suppose\n$\\sigma.K+1\\le B$, $\\sigma.i\\le\\sigma.K$, $\\sigma.i1=\\sigma.i+1$,\n$\\sigma.cp=|\\operatorname{Ball}_{\\sigma.i}|$, and\n$\\sigma.g=\\sigma.cur=\\sigma.stp=\\sigma.u=\\sigma.cnt=0$. If, for every $v',c'\\le B$, the\nmachine initialized at the comparison stage with $i=K$, $i1=K+1$, outer registers\n$v',c'$, and $cp=|\\operatorname{Ball}_K|$ terminates within register bound $B$ and\naccepts exactly when $Q$ holds, then the machine initialized at the stage head with\nstate $\\sigma$ terminates within that bound and accepts exactly when both $Q$ holds and\nno code in $\\operatorname{Ball}_j$ is accepted by the oracle for any\n$\\sigma.i<j\\le\\sigma.K$."
+}

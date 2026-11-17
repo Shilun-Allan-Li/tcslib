@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.igA_npreS",
+ "key": "4874f7d912a9336f",
+ "kind": "lemma",
+ "title": "Instruction Safety of the Generated Program",
+ "statement": "For every natural number $E$, every finite Boolean word $x$, and every configuration of the generated register program, the instruction safety conditions hold: an active register-equality test compares distinct registers; a test comparing a register with the input payload occurs only when $x$ is a valid plain encoding; tests comparing a register with either inner payload occur only when $x$ is a valid paired encoding; and every decider call has a list of pairwise distinct argument registers. A halted configuration or a configuration whose active instruction is a nondeterministic choice satisfies the condition without further restrictions.",
+ "hypotheses_covered": [
+  "$E$ is a natural number",
+  "$x$ is a finite Boolean word",
+  "$a$ is an arbitrary abstract configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every natural number $E$, every input bit string $x$, and every configuration of the\nregister program specified by the control flow in the definitions above, the active\ndeterministic instruction satisfies the following safety conditions: an equality test\nbetween registers compares distinct registers; an equality test between a register and\nthe input payload is used only when $x$ is a valid plain encoding; either equality test\nagainst an inner payload is used only when $x$ is a valid paired encoding; and every\ndecider call uses pairwise distinct registers as arguments. Configurations with no\nactive label, and labels at which the program makes a nondeterministic choice, impose no\nfurther condition."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clBlockDecode_encode",
+ "key": "51d3c4e2b1b1c6fb",
+ "kind": "lemma",
+ "title": "Decoding inverts snapshot encoding",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let a binary code for its optional states have encoding and decoding maps with decoding a left inverse of encoding, and let $s$ be a snapshot of $M$. Decoding the encoded block of $s$ returns $s$.",
+ "hypotheses_covered": [
+  "finite Turing machine $M$ over the Boolean alphabet",
+  "binary code for optional states of $M$ with decoding a left inverse of encoding",
+  "snapshot $s$ of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every snapshot $s$ of a machine with a fixed optional-state binary code, decoding the encoded block of $s$ returns $s$; the junk fallback is never reached on genuine encodings."
+}

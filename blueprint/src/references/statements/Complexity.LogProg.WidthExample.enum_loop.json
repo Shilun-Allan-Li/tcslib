@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.WidthExample.enum_loop",
+ "key": "13906318e6484807",
+ "kind": "lemma",
+ "title": "Enumeration Loop Halting",
+ "statement": "For any language $P$, input word $x$, and natural number $n$ with $2^n\\le B$, let $k,u$ satisfy $u+k=2^n$. For either Boolean value $b$ such that $b$ is true exactly when there exists $w$ with $u\\le w<2^n$ and the encoded pair of $x$ and the binary representation of $w$ belongs to $P$, the search program with oracle determined by $P$ halts with answer $b$, while satisfying the program precondition and keeping every register at most $B$ at every earlier step.",
+ "hypotheses_covered": [
+  "$2^n\\le B$",
+  "$u+k=2^n$",
+  "$b$ is true iff some $w$ in $[u,2^n)$ has the encoded pair of $x$ and its binary representation in $P$",
+  "The input is $x$ and the oracle is determined by $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

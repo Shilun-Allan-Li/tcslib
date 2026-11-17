@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/Median.lean :: Randomized.four_mul_sum_max_le -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Sum of Maxima Bound
+
+**Claim.** For every natural number $n$, the sum of the maxima $4\sum_{j=0}^{n-1}\max(j,n-1-j)$ is at most $3n^2$.
+
+**Proof.** We use strong induction on $n$. The cases $n=0$ and $n=1$ follow by directly evaluating the empty sum and the single summand. For $n+2$, split off the two endpoint terms of the sum and reindex the remaining terms by $j+1$, with $0\le j<n$. For these interior terms, the two entries in the maximum are both one larger than the corresponding entries in the sum for $n$; hence their maximum is also one larger. The endpoint terms together with these added ones contribute $3n+2$, so
+\[\sum_{j=0}^{n+1}\max(j,n+1-j)=\sum_{j=0}^{n-1}\max(j,n-1-j)+3n+2.\]
+Apply the induction hypothesis to the smaller sum. Substitution into this recurrence gives the desired inequality for $n+2$ by elementary algebra.

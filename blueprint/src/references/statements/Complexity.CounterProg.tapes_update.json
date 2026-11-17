@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.CounterProg.tapes_update",
+ "key": "af2dc9d2f3b3af10",
+ "kind": "theorem",
+ "title": "Updating a unary tape vector",
+ "statement": "Let $R$ be a number of registers, let $\\rho : \\{0,\\ldots,R-1\\} \\to \\mathbb{N}$ be a register assignment, let $t$ be a register, and let $m \\in \\mathbb{N}$. Replacing tape $t$ in the vector of unary tapes encoding $\\rho$ by the unary tape encoding $m$ gives the vector of unary tapes encoding the assignment obtained by replacing $\\rho(t)$ by $m$.",
+ "hypotheses_covered": [
+  "A register assignment $\\rho$",
+  "A register $t$",
+  "A natural number $m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $v \\in \\mathbb{N}$ let $1^v$ be the unary tape whose cells $0, \\dots, v-1$ hold $1$ and whose\nother cells are blank. Let $\\rho : \\{0, \\dots, R-1\\} \\to \\mathbb{N}$, let $t$ be an index and\n$m \\in \\mathbb{N}$, and let $\\rho'$ agree with $\\rho$ except that $\\rho'(t) = m$. Then replacing\nthe $t$-th entry of the tape vector $(1^{\\rho(r)})_r$ by $1^m$ gives the tape vector\n$(1^{\\rho'(r)})_r$."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinNDTM.count_windowed_vertices",
+ "key": "bca730ed108dc780",
+ "kind": "theorem",
+ "title": "Bound on Windowed Configurations",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine over the binary alphabet, let $x$ be a binary input, and let $s,t\\in\\mathbb{N}$. Suppose $(c_j)_{j\\in\\mathbb{N}}$ is a sequence of configurations on input $x$, each of the first $t+1$ configurations has every work-tape head within distance $s$ of the origin and has blank contents outside that window, and the configurations have distinct cores together with output summaries for indices $0,\\ldots,t$. Then $t+1\\le 3(|Q|+1)(|x|+2)3^{k(2s+1)}(2s+1)^k$, where $Q$ is the state set and $k$ is the number of work tapes.",
+ "hypotheses_covered": [
+  "N is a finite-state nondeterministic machine over Bool",
+  "x is a Bool list",
+  "s,t are natural numbers",
+  "cs is a sequence of configurations on x",
+  "For every j ≤ t, every work-head position has absolute value at most s and every tape cell outside that window is blank",
+  "The map from indices in 0,...,t to the configuration core paired with its output summary is injective"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

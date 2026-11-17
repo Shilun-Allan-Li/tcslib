@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_take_computes",
+ "key": "33989ac756155864",
+ "kind": "lemma",
+ "title": "Prefix extraction from a pair encoding",
+ "statement": "For any bit strings $a$ and $b$, the prefix extractor, started on the encoding that doubles each bit of $a$, appends the separator $01$, and then appends $b$, halts within $|\\langle a,b\\rangle|+1$ steps and outputs the first $|a|$ bits of $b$, or all of $b$ if $|b|<|a|$.",
+ "hypotheses_covered": [
+  "$a$ is a bit string",
+  "$b$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $a$ and $b$, the prefix-extraction machine $E$ (one work tape, four states; it counts the data blocks of a pair encoding in unary and then copies that many payload bits), started on the self-delimiting pair encoding $\\langle a,b\\rangle$, halts within $|\\langle a,b\\rangle| + 1$ steps with output exactly the first $|a|$ bits of $b$ (all of $b$ if $|b| < |a|$)."
+}

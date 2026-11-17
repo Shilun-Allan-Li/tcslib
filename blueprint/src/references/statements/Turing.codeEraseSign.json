@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.codeEraseSign",
+ "key": "e766d3e0c8e1c9df",
+ "kind": "lemma",
+ "title": "Erasure law for movement fields",
+ "statement": "For every bit string $x$, discarding the decoded head movement and retaining only the remaining suffix from the head-movement reader gives exactly the result of the two-bit skipper that accepts a pair $(a,b)$ precisely when $a=1$ or $b=0$.",
+ "hypotheses_covered": [
+  "A bit string x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit string $x$: discarding the parsed movement from the head-movement\nreader yields exactly the two-bit skipper whose validity predicate accepts a\npair $(a, b)$ precisely when $a$ is $1$ or $b$ is $0$ (that is, it rejects only\nthe pair $01$)."
+}

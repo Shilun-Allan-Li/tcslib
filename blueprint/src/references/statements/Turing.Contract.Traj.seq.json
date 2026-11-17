@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.Contract.Traj.seq",
+ "key": "9c23f1e58a118926",
+ "kind": "theorem",
+ "title": "Trajectory property for sequential contracts",
+ "statement": "Let $C_1$ be a contract for a machine $M_1$ from entry state $e_1$ to the sole exit state $f_1$, and let $C_2$ be a contract for a machine $M_2$ from entry state $e_2$ to an exit set $X_2$, on the same input and with the same number of work tapes. Suppose a map links the data for $C_1$ to the data for $C_2$ and every eligible endpoint of $C_1$, with its state replaced by $e_2$, satisfies the corresponding $C_2$ precondition. If $R_1$ and $R_2$ hold throughout the trajectories of $C_1$ and $C_2$, respectively, then the sequentially composed contract satisfies, at every time, the disjunction of $R_1$ on the initial phase and $R_2$ on the linked datum and the intermediate endpoint with its state replaced by $e_2$.",
+ "hypotheses_covered": [
+  "C₁ exits at the sole state f₁",
+  "C₂ starts at e₂ and exits in X₂",
+  "Both machines use the same input and number of work tapes",
+  "A data map links C₁ data to C₂ data",
+  "Every eligible C₁ endpoint, with state replaced by e₂, satisfies C₂'s precondition",
+  "C₁ satisfies trajectory property R₁",
+  "C₂ satisfies trajectory property R₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C_1$ and $C_2$ be contracts for machines $M_1$ and $M_2$ with the same $k$ work\ntapes and input alphabet, where $C_1$ exits at a designated state and $C_2$ begins at\nits designated entry state. Suppose a link maps each datum for $C_1$ to a datum for\n$C_2$, and the endpoint of every admissible $C_1$ run, with its state replaced by the\nentry state of $M_2$, satisfies the corresponding $C_2$ precondition. If $C_1$ and $C_2$\nsatisfy trajectory properties $R_1$ and $R_2$, respectively, then their sequentially\ncomposed contract satisfies, at every time, the disjunction of $R_1$ for the initial\nphase and $R_2$ for the linked datum and the intermediate endpoint."
+}

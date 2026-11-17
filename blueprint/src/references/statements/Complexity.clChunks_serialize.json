@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clChunks_serialize",
+ "key": "b184140ca536c294",
+ "kind": "lemma",
+ "title": "Chunks serialize the concatenated formula",
+ "statement": "Let $R$ be a natural number and let $G$ assign a CNF formula over natural-number variables to each natural-number index. Concatenating the chunks at indices $0,\\ldots,R$ gives the full serialization of the concatenation of the formulas $G(0),\\ldots,G(R)$.",
+ "hypotheses_covered": [
+  "A natural number $R$",
+  "A family $G$ of CNF formulas indexed by natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $R$ be the last round index and let a family assign a clause group to each round. The concatenation of the chunks of rounds $0,\\dots,R$ equals the full serialization of the concatenation of all $R+1$ groups, formula terminator included. The identity concerns output words only and makes no satisfiability claim."
+}

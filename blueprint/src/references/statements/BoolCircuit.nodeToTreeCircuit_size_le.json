@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.nodeToTreeCircuit_size_le",
+ "key": "1dba7d9d412569c9",
+ "kind": "theorem",
+ "title": "Size bound for tree unrolling",
+ "statement": "Let $F$ be a Boolean layered circuit with input type $\text{Fin }n$, and assign an AND-or-OR flag to each non-input node. Suppose every gate has finite arity, and for some natural number $k$ every gate's arity is at most $k$. For every $m<\text{depth}(F)+1$ and every node $v$ at layer $m$, the tree obtained by recursively unrolling $v$ has size at most $(k+1)^m$.",
+ "hypotheses_covered": [
+  "$F$ is a Boolean layered circuit with input type $\text{Fin }n$",
+  "An AND-or-OR flag is specified for each gate's output node",
+  "Each gate has finite arity",
+  "There is a natural number $k$ bounding every gate's arity",
+  "$m<\text{depth}(F)+1$",
+  "$v$ is a node at layer $m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a Boolean feedforward circuit from the inputs $\\mathrm{Fin}\\,n$ to an output\ntype, in which every gate has finitely many input wires, and suppose $k \\in \\bbn$ bounds\nthese arities, so that each gate has at most $k$ input wires. Then for every layer $m\n\\le \\mathrm{depth}(F)$ and every node $v$ of layer $m$, the tree-unrolling of $v$ is a\nBoolean circuit of size at most $(k+1)^m$."
+}

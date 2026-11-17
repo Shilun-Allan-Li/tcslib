@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satWidth_formula",
+ "key": "fd6a3b1c94f33cd6",
+ "kind": "lemma",
+ "title": "Formula width fold",
+ "statement": "Let $\\varphi$ be a finite CNF formula over variables indexed by $\\mathbb{N}$, and let $g$ be a Boolean flag. Folding the width-pass transition over the binary encoding of $\\varphi$, starting in state $0$ with counter $0$ and flag $g$, ends in state $4$ with counter $0$ and flag $g\\wedge W(\\varphi)$, where $W(\\varphi)$ is true exactly when every clause of $\\varphi$ has at most three literal occurrences. In particular, the empty formula passes this test.",
+ "hypotheses_covered": [
+  "$\\varphi$ is a CNF formula over natural-number-indexed variables",
+  "$g$ is a Boolean flag"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Folding the width-pass transition over the serialization of a CNF formula\n$\\varphi$ from the initial state ends at the exact-end position with counter zero\nand the goodness flag conjoined with the Boolean width-three test of $\\varphi$;\nevery clause is checked and the empty formula passes vacuously."
+}

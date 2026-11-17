@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.cleanTM_run",
+ "key": "e9380080a794de1f",
+ "kind": "theorem",
+ "title": "Clean Simulation with Tape Erasure",
+ "statement": "Let $M$ be a multi-tape Turing machine with $k$ Boolean work tapes and state set $S$, and choose states $q_1,q\\in S$, a Boolean input word $V$, a time $T$, and a natural number $s$. Assume that $M$, started in state $q$ on $V$, has halted at time $T$, and that by time $T$ the set of cells visited by the head of each work tape has cardinality at most $s$. Then the cleaning machine started in its initialization state carrying $q$ on input $V$ eventually halts with the same output as $M$ at time $T$, with all its work-tape cells blank and all its work-tape heads at the origin; throughout this run, every work-tape head has absolute position at most $s$.",
+ "hypotheses_covered": [
+  "machine M with k Boolean work tapes and state set S",
+  "states q₁ and q",
+  "Boolean input word V",
+  "natural time T and bound s",
+  "M started from its initial configuration in state q halts at T",
+  "each original work-tape head visits at most s distinct cells through time T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.scan_write_step",
+ "key": "70542421a3e1e52d",
+ "kind": "theorem",
+ "title": "One writing step on a scanned tape",
+ "statement": "Let $k\\in\\mathbb N$, let $x,w$ be finite words over a symbol type, choose a tape index $i<k$, a machine $M$, a configuration $d$, states $q,q'$, an input-head position $p$, an input movement $m\\in\\{-1,0,1\\}$, and a natural number $r<|w|$. Form the configuration that has state $q$, input-head position $p$, and the first $r$ symbols of $w$ written consecutively on tape $i$ from its original head position, with the head advanced by $r$. If $M$'s transition on that configuration is to move the input head by $m$, write the $r$th symbol of $w$ at the scanned work-tape cell, move tape $i$ right, and enter state $q'$, then one step of $M$ yields the corresponding configuration with state $q'$, input-head position moved from $p$ by $m$, and the written prefix extended to length $r+1$ with its head advanced by $r+1$.",
+ "hypotheses_covered": [
+  "natural number of work tapes $k$",
+  "symbol type and input word $x$",
+  "word $w$",
+  "machine $M$",
+  "tape index $i<k$",
+  "base configuration $d$",
+  "states $q$ and $q'$",
+  "input-head position $p$",
+  "input movement sign $m$",
+  "natural number $r<|w|$",
+  "transition of $M$ on the specified configuration equals the stated write-and-move action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

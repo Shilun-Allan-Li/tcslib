@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.one_work_tape_binary",
+ "key": "bb7861e271faedf6",
+ "kind": "theorem",
+ "title": "Binary one-tape simulation",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $f$ map binary words to binary words, and let $T\\colon\\mathbb N\\to\\mathbb N$. If $M$ computes $f$ in time $T$, then there are a finite Turing machine $M'$ over the binary alphabet and a constant $c\\in\\mathbb N$ such that $M'$ has exactly one work tape and computes $f$ in time $n\\mapsto c(T(n)+1)^2$.",
+ "hypotheses_covered": [
+  "finite Turing machine $M$ over the binary alphabet",
+  "binary-word function $f$",
+  "time bound $T\\colon\\mathbb N\\to\\mathbb N$",
+  "$M$ computes $f$ in time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a Turing machine over the binary alphabet (read-only input tape, write-only\noutput tape, any number of work tapes) that computes a function $f$ on binary words\nwithin time $T : \\mathbb{N} \\to \\mathbb{N}$, i.e.\\ on every input $x$ the run of $M$ has\nhalted after $T(\\abs{x})$ steps with output $f(x)$. Then there exist a machine $M'$ over\nthe binary alphabet with exactly one work tape and a constant $c \\in \\mathbb{N}$ such\nthat $M'$ computes $f$ within time $n \\mapsto c \\cdot (T(n) + 1)^2$. This combines the\none-work-tape simulation ([AB09, Claim 1.6]) with alphabet reduction\n([AB09, Claim 1.5])."
+}

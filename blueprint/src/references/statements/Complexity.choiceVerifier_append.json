@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.choiceVerifier_append",
+ "key": "84cfc33a9c448a3e",
+ "kind": "lemma",
+ "title": "Membership for a prescribed input-certificate split",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$ be natural numbers, and let $x,u$ be finite binary words satisfying $|u|=C(|x|+1)^c$. Then the concatenation $xu$ belongs to the choice-word verifier language of $N$ with parameters $C,c$ if and only if the run of $N$ on input $x$ under $u$ is halted with output exactly the one-bit word $[1]$.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine $N$ over the binary alphabet",
+  "Natural numbers $C,c$",
+  "Finite binary words $x,u$",
+  "The length condition $|u|=C(|x|+1)^c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine over the binary alphabet, let $C, c$ be natural numbers, and let $x$ and $u$ be binary strings with $|u| = C\\,(|x|+1)^c$. Then the concatenation $x\\,u$ belongs to the choice-word verifier language of $N$ with parameters $C, c$ if and only if the run of $N$ on input $x$ under choice word $u$ has halted with output exactly the one-bit string $1$."
+}

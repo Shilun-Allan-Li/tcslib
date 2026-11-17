@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinNDTM.RDecidesInSpace.bpDecidesInSpace",
+ "key": "324a6c44dc458c11",
+ "kind": "theorem",
+ "title": "Bounded error from one-sided error",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $L$ be a language of binary strings, and let $s:\\mathbb{N}\\to\\mathbb{N}$. Suppose every run of $N$ on every binary input uses space at most $s$ of the input length. For each input $x$, suppose there is a time $T$ by which every branch halts, the probability of outputting the one-bit string $1$ is at least $2/3$ when $x\\in L$, and every branch outputs the one-bit string $0$ when $x\\notin L$. Then for each input there is such a halting time at which the probability of outputting the correct membership indicator is at least $2/3$, while the space bound remains $s$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$L$ is a language of binary strings",
+  "$s$ maps natural numbers to natural numbers",
+  "Every run on every binary input uses space at most $s$ of its input length",
+  "For each input, some time $T$ makes every branch halt",
+  "On members, output $1$ has probability at least $2/3$ at time $T$",
+  "On nonmembers, every length-$T$ choice word produces output $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

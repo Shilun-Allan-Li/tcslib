@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.taut_verifier_mem_P",
+ "key": "6bbd9d797d8d2fe1",
+ "kind": "lemma",
+ "title": "Polynomial-time non-tautology verification",
+ "statement": "Let $L$ be the language of binary strings $z$ for which there exists $i \\in \\mathbb{N}$ with $|z|=i+(i+1)$ such that the DNF formula decoded from the first $i$ bits of $z$ evaluates to false under the assignment given by the remaining $i+1$ bits, with variables beyond those bits assigned false. Then $L$ belongs to $\\mathrm{P}$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The set of binary strings $z$ such that $|z| = i + (i + 1)$ for some $i$ and the DNF\ndecoded from the first $i$ bits of $z$ evaluates to false under the assignment reading\nvariable $v$ off the $v$-th of the remaining $i + 1$ bits (false beyond them) belongs\nto $\\mathrm{P}$."
+}

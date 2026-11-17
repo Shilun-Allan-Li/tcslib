@@ -1,0 +1,28 @@
+{
+ "lean_name": "Light.Compiler.Start",
+ "key": "aa41293ba5f341b9",
+ "kind": "structure",
+ "title": "Starting configuration for a statement",
+ "statement": "Let $W$ be a word size and let $S$ be a compiler setting with frame size $F$, dispatcher position $D$, stack capacity $Q$, limits $\text{lim}$, code, and code layout. For a statement $s$, state $σ$, code position $p$, stack-frame index $q$, and machine memory map $m:\\mathbb{Z}\\to\\mathrm{BitVec}(W)$, suppose the distinguished memory locations encode $1$, $0$, and $-1$ at addresses $-5$, $-7$, and $-9$, respectively; for every $n\\le D$, address $-(25+4n)$ encodes $n$; address $-11$ encodes the stack pointer $-2q$; each frame-local address $-2(q+x)$ encodes $σ.loc(x)$ for $x<F$; and each address $a$ encodes $σ.mem(a)$ for $a<\\text{lim.space}$, with all integers represented as $W$-bit words. Assume also that $1\\le q$, $q+F\\le Q$, the compiled code for $s$ in the setting's code layout is located at $p$ and its size fits before $D$, the width of $s$ is at most $F$, and $σ$ is bounded by the limits. Then the stack has room for the current frame and for $F+1$ additional cells at each of the remaining $\\text{lim.depth}-d$ call levels: $q+F+(F+1)(\\text{lim.depth}-d)\\le Q$.",
+ "hypotheses_covered": [
+  "Word size $W$ and compiler setting $S$",
+  "Statement $s$, depth parameter $d$, state $σ$, code position $p$, stack index $q$, and memory map $m$",
+  "Memory encodings for the constants $1$, $0$, and $-1$",
+  "Pool encodings for every $n\\le D$",
+  "Stack-pointer and frame-local encodings",
+  "Memory encodings for every address below the space limit",
+  "$1\\le q$",
+  "$q+F\\le Q$",
+  "Compiled code for $s$ is at $p$",
+  "The code size fits at or before the dispatcher",
+  "Statement width is at most $F$",
+  "The state is bounded by the limits",
+  "Stack-room inequality $q+F+(F+1)(\\text{lim.depth}-d)\\le Q$"
+ ],
+ "confidence": "low",
+ "caveat": "The payload does not define the compiler setting, code-placement predicate, statement size and width, or bounded-state predicate, so those parts can only be described by their stated roles.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

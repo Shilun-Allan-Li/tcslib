@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.runWith_xorGates",
+ "key": "e3ad38800461a0fb",
+ "kind": "theorem",
+ "title": "Running the XOR gate sequence",
+ "statement": "Let $vs$ be a list of Boolean values, and let $x,y,L\\in\\mathbb{N}$. Suppose $|vs|=L$, $x<L$, and $y<L$. Running the four-gate sequence that computes the OR of the values at $x,y$, their AND, the negation of the value at index $L+1$, and the AND of the values at indices $L,L+2$, starting from $vs$, appends, in order, $vs_x\\lor vs_y$, $vs_x\\land vs_y$, $\\neg(vs_x\\land vs_y)$, and $vs_x\\mathbin{\\mathrm{xor}}vs_y$, where an out-of-range list index has value false.",
+ "hypotheses_covered": [
+  "A Boolean list $vs$",
+  "Natural numbers $x,y,L$",
+  "The list length satisfies $|vs|=L$",
+  "$x<L$",
+  "$y<L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

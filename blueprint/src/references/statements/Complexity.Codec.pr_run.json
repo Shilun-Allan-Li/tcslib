@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Codec.pr_run",
+ "key": "b2acc31e9483ed8a",
+ "kind": "theorem",
+ "title": "Prefix scan of a paired word",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean symbols, let $mode$ be one of the four codec modes, let $y$ be a Boolean word, and let $B$ be a natural-number register bound. Let $p$ be one of three scan indices and let $v$ be a register assignment such that every register is at most $B$, the length register equals $|y|$, and the position register is at most $|y|$. If decoding the suffix of $y$ beginning at the position register fails, then for some $t$ no greater than the length of that suffix, the scan reaches rejection after increasing the position register by $t$, with all other registers unchanged. If decoding succeeds with first component $u$, the scan reaches its prescribed continuation after increasing the position register by $2|u|+2$, leaving all other registers unchanged.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$mode$ is a codec mode",
+  "$y$ is a Boolean word",
+  "$B$ is a natural-number bound",
+  "$p$ is in the three-element scan-index set",
+  "$v$ is a register assignment",
+  "Every register of $v$ is at most $B$",
+  "The length register of $v$ equals $|y|$",
+  "The position register of $v$ is at most $|y|$"
+ ],
+ "confidence": "low",
+ "caveat": "The Lean statement’s conclusion is expressed using a custom reachability predicate, whose exact operational guard is not readily captured in ordinary prose.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

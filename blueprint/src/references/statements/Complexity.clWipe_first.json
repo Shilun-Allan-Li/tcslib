@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clWipe_first",
+ "key": "c743a700bf263352",
+ "kind": "lemma",
+ "title": "First completion of a scratch reset",
+ "statement": "For every Boolean input word $x$, input-head position $p$, stream word, target word $w$, and stream-head position $s$, there is an integer time $t$ with $0<t\\le 2|w|+2$ such that the reset machine, started in control state $0$ with the target head at cell $0$, is never in control state $2$ at any time $j<t$. At time $t$ it is in control state $2$, with the stream unchanged, the target erased, and the target head at cell $0$.",
+ "hypotheses_covered": [
+  "Boolean input word x",
+  "input-head position p",
+  "stream word",
+  "target word w",
+  "stream-head position s",
+  "time bound 0 < t ≤ 2|w| + 2",
+  "control state is not 2 at every j < t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stream, target word $w$, and stream head, there is a time $t$ with $0 < t \\le 2|w| + 2$ such that the reset machine first reaches its completed control exactly at $t$, with the target erased, the target head at zero, and the stream untouched."
+}

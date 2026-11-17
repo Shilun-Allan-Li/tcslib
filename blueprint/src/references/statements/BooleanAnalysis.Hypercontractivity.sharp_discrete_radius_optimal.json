@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.sharp_discrete_radius_optimal",
+ "key": "1d446d0d876a776f",
+ "kind": "theorem",
+ "title": "Optimal radius for a two-point law",
+ "statement": "Let $(\\\\Omega,\\\\mu)$ be a probability space, let $X:\\\\Omega\\\\to\\\\mathbb R$ be measurable, and suppose $q>2$, $0<\\\\lambda<1/2$, and $0\\\\le\\\\rho<1$. Assume $\\\\mu(X=1-\\\\lambda)=\\\\lambda$ and $\\\\mu(X=-\\\\lambda)=1-\\\\lambda$. Set $u=\\\\log((1-\\\\lambda)/\\\\lambda)$ and $\\\\rho_*=\\\\sqrt{\\\\sinh(u/q)/\\\\sinh(u/(q/(q-1)))}$. Then the inequality $\\\\|a+\\\\rho bX\\\\|_q\\\\le\\\\|a+bX\\\\|_2$ holds for all real $a,b$ if and only if $\\\\rho\\\\le\\\\rho_*$; likewise, $\\\\|a+\\\\rho bX\\\\|_2\\\\le\\\\|a+bX\\\\|_{q/(q-1)}$ holds for all real $a,b$ if and only if $\\\\rho\\\\le\\\\rho_*$.",
+ "hypotheses_covered": [
+  "Probability space $(\\\\Omega,\\\\mu)$",
+  "Measurability of $X$",
+  "$q>2$",
+  "$0<\\\\lambda<1/2$",
+  "$0\\\\le\\\\rho<1$",
+  "$\\\\mu(X=1-\\\\lambda)=\\\\lambda$",
+  "$\\\\mu(X=-\\\\lambda)=1-\\\\lambda$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q>2$, $0<\\lambda<1/2$, and $0\\le\\rho<1$. Let measurable $X$ on a probability space satisfy $\\Pr[X=1-\\lambda]=\\lambda$ and $\\Pr[X=-\\lambda]=1-\\lambda$. Then $H_{2,q,\\rho}(X)$ holds if and only if $\\rho\\le\\rho_*(q,\\lambda)$, and the same equivalence holds for $H_{q/(q-1),2,\\rho}(X)$. Here $\\rho_*(q,\\lambda)=\\sqrt{\\sinh(\\ell/q)/\\sinh(\\ell/(q/(q-1)))}$ with $\\ell=\\log((1-\\lambda)/\\lambda)$. Write $H_{p,q,\\rho}(X)$ for $1\\le p\\le q\\le\\infty$, $0\\le\\rho<1$, $X\\in L^q(\\mu)$, and $\\|a+\\rho bX\\|_q\\le\\|a+bX\\|_p$ for all $a,b\\in\\bbr$."
+}

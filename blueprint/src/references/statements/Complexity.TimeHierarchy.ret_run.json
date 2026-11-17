@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.ret_run",
+ "key": "1f848fc0f8ffd46a",
+ "kind": "lemma",
+ "title": "Returning from the clock scan",
+ "statement": "Let $K$ and $W$ be finite Boolean-alphabet Turing machines, and let $c$ be a configuration of $W$ on Boolean input $x$, with state $q$ and output register $r$. Choose work-tape contents $kt$ and head positions $kh$ for the tapes corresponding to $K$, and let $\\tau:\\mathbb Z\\to\\mathrm{Option}(\\mathrm{Bool})$ describe the clock tape. Suppose $\\tau(-1)$ is blank. For every natural number $j$ such that $\\tau(i)$ is nonblank for every natural number $i<j$, running the clock machine for $j+1$ steps from the configuration with state $\\mathrm{ret}(q,r)$, underlying configuration $c$, clock tape $\\tau$, clock-head position $j-1$, tapes $kt,kh$, and empty output yields the configuration with state $\\mathrm{dec}(q,r)$, the same underlying configuration and tapes, clock tape $\\tau$, clock-head position $0$, and empty output.",
+ "hypotheses_covered": [
+  "$K$ and $W$ are finite Turing machines over Boolean symbols",
+  "$c$ is a configuration of $W$ on Boolean input $x$",
+  "$q$ is a state of $W$ and $r$ is an output-register value",
+  "$kt$ gives the contents of the $K$ work tapes",
+  "$kh$ gives the head positions of the $K$ work tapes",
+  "$\\tau$ maps integer positions to optional Boolean symbols",
+  "$\\tau(-1)$ is blank",
+  "For every natural $i<j$, $\\tau(i)$ is nonblank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

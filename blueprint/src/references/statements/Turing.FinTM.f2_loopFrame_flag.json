@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopFrame_flag",
+ "key": "3adbcb2193ea4d36",
+ "kind": "lemma",
+ "title": "Flag tape in a loop frame",
+ "statement": "Let $B$ and $F$ be finite Turing machines over the Boolean alphabet, and let $x$ be a finite Boolean input. In a configuration with $B.k+1+(1+F.k)+1$ work tapes, form a new configuration by placing the flag tape on tape $B.k$ with head at position $0$, the counter tape on tape $B.k+1$ with head at position $ch$, and the payload tape on tape $B.k+1+(1+F.k)$ with head at position $ph$, while retaining the base configuration's other tapes; use the specified state, input-head position, and output word. The symbol scanned by tape $B.k$ in this new configuration is the flag tape's content at position $0$.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $B$ and $F$",
+  "A finite Boolean input $x$",
+  "A base configuration with $B.k+1+(1+F.k)+1$ work tapes and host states for $B,F$",
+  "An optional host state",
+  "An input-head position valid for $x$",
+  "Flag, counter, and payload tape contents",
+  "Counter and payload head positions",
+  "An output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

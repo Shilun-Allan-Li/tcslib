@@ -1,0 +1,17 @@
+{
+ "lean_name": "FABL.InnerProductLinearCheckHolds",
+ "key": "04b5e158aabacaed",
+ "kind": "def",
+ "title": "Linear proof check conditions",
+ "statement": "Let $m$ be a natural number, let $w$ be a Boolean word of length $2m$, let $p$ be a Boolean word of length $2m+1$, and choose a seed from the linear check seed space. If the seed is a Boolean value $b$, the designated final-prefix position for $b$ must contain $b$. If the seed is $(i,\text{false})$, the designated product position must contain the product of the two input bits at index $i$. If the seed is $(i,\text{true})$, the values at the designated consecutive prefix and product positions, interpreted in the field with two elements, must satisfy $p_i+q_i=p_{i+1}$, where $p_i$ and $p_{i+1}$ denote the designated prefix values and $q_i$ the designated product value.",
+ "hypotheses_covered": [
+  "$m$ is a natural number",
+  "Input word $w$ has length $2m$",
+  "Proof word has length $2m+1$",
+  "Seed is either a Boolean or an index and Boolean tag"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement refers to designated index functions whose definitions were not supplied, so their exact positions and the intended meanings of the pair and prefix bits cannot be stated more specifically.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

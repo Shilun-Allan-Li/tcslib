@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.iter_run",
+ "key": "74524af152c94ac6",
+ "kind": "theorem",
+ "title": "Iterated Ball Nonacceptance",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}:\\mathrm{Fin}(4)\\to\\{0,1\\}^*\\to\\{0,1\\}$ be an oracle, let $x$ be a Boolean word, let $Q$ be a proposition, and let $\\sigma$ be a state of the counting procedure. Set $K=2^{2E\\sigma.lg+2E\\sigma.s}$, and form the balls using the relation and initial predicate determined by $\\mathrm{orc}$, $x$, and $\\sigma.s$. Suppose every register of $\\sigma$ is at most $B$, its exponent register is zero, its designated scratch registers are clear, $K+1\\le B$, and the ball of radius zero has cardinality one. Suppose that for every $k',T',v',c'\\le B$, the counting procedure at its comparison stage, with exponent zero, code bound and stage index $K$, next stage index $K+1$, those four register values, and the ball of radius $K$'s cardinality in its known-ball-size register, terminates and has accepting computation exactly when $Q$ holds. Then the procedure started at $\\sigma$ in the false-phase round state with $E$ rounds remaining terminates, and has an accepting computation exactly when both $Q$ holds and no vertex in any ball of radius $j$, for $0<j\\le K$, is accepting.",
+ "hypotheses_covered": [
+  "$E,B$ are natural numbers",
+  "Oracle from four indices and Boolean words to Boolean answers",
+  "Boolean word $x$ and proposition $Q$",
+  "State $\\sigma$ of the counting procedure",
+  "Every register of $\\sigma$ is at most $B$",
+  "Exponent register is zero",
+  "Designated scratch registers are clear",
+  "$K+1\\le B$, where $K=2^{2E\\sigma.lg+2E\\sigma.s}$",
+  "Ball of radius zero has cardinality one",
+  "For all $k',T',v',c'\\le B$, the specified comparison-stage computation has semantic property $Q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}:\\mathrm{Fin}(4)\\to\\{0,1\\}^*\\to\\{0,1\\}$ be an\noracle, let $x$ be a Boolean word, let $Q$ be a proposition, and let $\\sigma$ be a\nmachine state. Write $K=2^{2E\\sigma.\\mathrm{lg}+2E\\sigma.s}$, and form the balls using\nthe relation and initial predicate determined by $\\mathrm{orc}$, $x$, and $\\sigma.s$.\nSuppose every register of $\\sigma$ is at most $B$, its exponent register $e$ is zero,\nits designated scratch registers are clear, $K+1\\le B$, and the ball at radius zero has\ncardinality one. Suppose also that for every $k',T',v',c'\\le B$, the machine started at\nthe comparison stage with $e=0$, $K$ as its code bound, $k',T',v',c'$ in the\ncorresponding registers, stage index $K$, next stage index $K+1$, and the cardinality of\nthe ball at radius $K$ in the count register, has semantic property $Q$. Then the\nmachine started at round $E$ with the false phase and state $\\sigma$ has the semantic\nproperty that no vertex in any ball of radius $j$ is accepting for every $0<j\\le K$, and\nthat $Q$ holds."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative_joint",
+ "key": "0fd098aeb425d18e",
+ "kind": "lemma",
+ "title": "Joint continuity of the product density derivative",
+ "statement": "Let $I$ be a finite set and let $v\\ge 0$. The product Gaussian density derivative, viewed as a continuous linear functional on $\\mathbb R^I$, is jointly continuous as a function of its mean vector $c\\in\\mathbb R^I$ and input vector $z\\in\\mathbb R^I$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$v\\ge 0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. For each fixed $v\\ge0$, $(c,z)\\mapsto A_v(c,z)$ is continuous in operator norm."
+}

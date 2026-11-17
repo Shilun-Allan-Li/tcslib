@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.BinArith.length_guardLoop_le",
+ "key": "375aafcc4d8256f6",
+ "kind": "theorem",
+ "title": "Length bound for one guarded update",
+ "statement": "Let $g$ be a function from finite bit strings to finite bit strings, and let $L$ be a natural number. Given a bit string $W$, repeatedly decode its first and second components, treating an unsuccessful parse as having empty components. Suppose the first component of $W$, the first component of its second component, the first component of its iterated second component, and the iterated second component three times each have length at most $L$. Apply the guarded update that returns the encoding of two empty words if the first component of $W$ or the first component of its second component is empty; otherwise, it encodes the unchanged first component together with a nested encoding whose first component is the first component of the second component with its initial bit removed, and whose second component is the encoding of that first component paired with the result of applying $g$ to the second component of the iterated second component, provided the result has length at most the first component's length, and otherwise to that second component itself. The resulting bit string has length at most $7L+6$.",
+ "hypotheses_covered": [
+  "$g$ maps finite bit strings to finite bit strings",
+  "$L$ is a natural number",
+  "The first decoded component of $W$ has length at most $L$",
+  "The first decoded component of the second decoded component of $W$ has length at most $L$",
+  "The first decoded component after taking the second decoded component twice has length at most $L$",
+  "The second decoded component after taking the second decoded component three times has length at most $L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

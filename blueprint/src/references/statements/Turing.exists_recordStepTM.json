@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.exists_recordStepTM",
+ "key": "5b800ba6517c7078",
+ "kind": "theorem",
+ "title": "Machine for Updating a Configuration Record",
+ "statement": "Let $k$ be a natural number, let $Q,T$ be finite decidable types, let $M$ be a deterministic $k$-work-tape machine over the binary alphabet with state type $Q$, and let $u:T\\to\\operatorname{Option}(\\{0,1\\})\\to T$ satisfy $u(\\tau,\\mathrm{blank})=\\tau$ for every $\\tau\\in T$. There are a natural number $K$, a finite decidable state type $P$, a deterministic machine $R$ with $K+1$ work tapes over the record alphabet, entry and distinct yes/no states, and a constant $C$ such that the following holds. If a configuration $c$ has all work-tape heads and all nonblank cells within distance $s$ of the origin, and a configuration $d$ starts in the entry state with tape $0$ encoding the joined record of $c$ and tag $\\tau$, while its other work tapes are blank, then $R$ reaches a configuration after at most $C(|\\langle\\operatorname{record}(c,\\tau)\\rangle|+|x|+1)$ steps without visiting either decision state earlier; through that time every work-tape head moves by at most $C(|\\langle\\operatorname{record}(c,\\tau)\\rangle|+1)$. If the one-step successor of $c$ remains within distance $s$ on all tapes, the final state is yes and tape $0$ contains its joined record, with tag updated by applying $u$ to $\\tau$ and the output symbol emitted by $M$ (a blank output leaves the tag unchanged); otherwise the final configuration is the original one with state changed to no.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Finite decidable types $Q,T$",
+  "Machine $M$ over binary symbols with state type $Q$",
+  "Update function $u$ preserves tags when given a blank output",
+  "Configuration $c$ lies within the distance-$s$ work-tape window",
+  "Entry-state configuration $d$ has the record of $c$ and tag $\\tau$ on tape $0$",
+  "All other work tapes of $d$ are blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

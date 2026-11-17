@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satMax_computes",
+ "key": "7187219a45285f83",
+ "kind": "lemma",
+ "title": "Maximum-pass machine computation",
+ "statement": "For every CNF formula $\\varphi$ over variables indexed by natural numbers, the intercepted maximum-pass machine, started on the binary serialization of $\\varphi$, halts after exactly $4|\\mathrm{enc}(\\varphi)|+6$ steps and outputs the word consisting of $N(\\varphi)$ true bits, where $N(\\varphi)$ is the variable count.",
+ "hypotheses_covered": [
+  "A CNF formula over natural-number-indexed variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a CNF formula with serialization $\\mathrm{ser}(\\varphi)$ and\nits variable bound $N(\\varphi)$ (one more than the largest variable index occurring in $\\varphi$, or $0$ if no variable occurs). The intercepted maximum-pass machine, run on\n$\\mathrm{ser}(\\varphi)$, halts within $4\\,|\\mathrm{ser}(\\varphi)| + 6$ steps, and\nits output is the unary word $1^{N(\\varphi)}$."
+}

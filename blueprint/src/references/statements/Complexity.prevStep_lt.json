@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.prevStep_lt",
+ "key": "20cb3eda88fb8942",
+ "kind": "theorem",
+ "title": "Previous Configuration Index Bound",
+ "statement": "Let $M$ be a finite-state Turing machine, let $\\ell$ be a finite list of bit sources, and let $T,t,a,i\\in\\mathbb N$. If $t\\ne0$, $a<t\\,s$, and $t\\,s\\leq i$, where $s=k(2T+1)+|\\ell|+3$ and $k$ is the number of work tapes of $M$, then $a<i$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine",
+  "$\\ell$ is a finite list of bit sources",
+  "$T,t,a,i\\in\\mathbb N$",
+  "$t\\ne0$",
+  "$a<t\\,s$",
+  "$t\\,s\\leq i$",
+  "$s=k(2T+1)+|\\ell|+3$, with $k$ the number of work tapes of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state Turing machine, let $\\ell$ be a list of bit sources, and let\n$T,t,a,i\\in\\mathbb N$. If $t\\ne0$, $a<(t-1+1)\\,s$, and $t\\,s\\leq i$, where\n$s=k(2T+1)+|\\ell|+3$ and $k$ is the work-tape parameter of $M$, then $a<i$."
+}

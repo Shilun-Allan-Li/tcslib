@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loopFrame_counter",
+ "key": "ec09984497d03504",
+ "kind": "lemma",
+ "title": "Counter track reads its specified cell",
+ "statement": "Let $k$ be a natural number, let $\\mathrm{body}$ and $F$ be finite Turing machines over the Boolean alphabet, and let $x$ be a Boolean input word. For any base configuration of the loop host on input $x$, any control state, input position, flag, counter, and payload tapes, head positions $c$ and $p$, and output word, the symbol scanned on the counter track of the resulting controller frame is the value of the counter tape at $c$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$\\mathrm{body}$ and $F$ are finite Turing machines over Booleans",
+  "$x$ is a Boolean input word",
+  "A base configuration of the loop host on input $x$",
+  "A control state and valid input position",
+  "Flag, counter, and payload tape functions",
+  "Integer head positions $c$ and $p$",
+  "An output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every controller frame of the loop host with counter tape $f$ and counter head $h$,\nthe symbol scanned on the counter track of the frame is exactly $f(h)$."
+}

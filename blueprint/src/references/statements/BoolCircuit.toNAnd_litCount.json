@@ -1,14 +1,15 @@
 {
  "lean_name": "BoolCircuit.toNAnd_litCount",
- "key": "9c80b0cada871e72",
+ "key": "3bf4eb6d6e47bb12",
  "kind": "theorem",
- "title": "AND-normalization preserves the literal count",
- "statement": "Let $c$ be a Boolean circuit on $n$ variables, and let $c'$ be the normal-form AND circuit obtained by normalizing it (a literal becomes a singleton clause, an AND gate normalizes each child to OR-normal form, and an OR gate is wrapped as a single OR node over the AND-normalizations of its children). Then $c'$ contains exactly as many literal occurrences as $c$: the number of literals in $c'$ equals the number of literals in $c$.",
+ "title": "AND-normalization preserves literal count",
+ "statement": "Let $n$ be a natural number and let $c$ be a Boolean circuit on $n$ variables. The literal count of the AND-normal form obtained from $c$ equals the literal count of $c$.",
  "hypotheses_covered": [
-  "c is a Boolean circuit on n variables (no additional constraint)"
+  "$n$ is a natural number",
+  "$c$ is a Boolean circuit on $n$ variables"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "For every circuit $c$,\n$(c.\\mathrm{toNAnd}).\\mathrm{litCount} = c.\\mathrm{litCount}$."
+ "replaced": "Let $c$ be a Boolean circuit on $n$ variables, and let $c'$ be the normal-form AND\ncircuit obtained by normalizing it (a literal becomes a singleton clause, an AND gate\nnormalizes each child to OR-normal form, and an OR gate is wrapped as a single OR node\nover the AND-normalizations of its children). Then $c'$ contains exactly as many literal\noccurrences as $c$: the number of literals in $c'$ equals the number of literals in $c$."
 }

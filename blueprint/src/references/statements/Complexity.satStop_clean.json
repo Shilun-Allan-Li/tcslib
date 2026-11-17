@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.satStop_clean",
+ "key": "c04cfb7ba0dd91d1",
+ "kind": "lemma",
+ "title": "Halting After a Clean Call",
+ "statement": "Let $C$ be a finite Turing machine over the Boolean alphabet, with designated entry and exit states, and let $x$, $\\mathrm{arg}$, $\\mathrm{result}$, and $\\mathrm{out}$ be Boolean words. Starting from the configuration on input $x$ with entry state and tape contents given by the state word of $\\mathrm{arg}$, suppose $t>0$, the machine's state is not the exit state at any time $v$ with $0<v<t$, and at time $t$ it is in the configuration with exit state, tape contents given by the state word of $\\mathrm{result}$, and output $\\mathrm{out}$. Then the call-stopping wrapper, started on input $x$ with release flag down, entry state, and tape contents given by the state word of $\\mathrm{arg}$, reaches after $t+1$ steps a halted configuration with release flag raised, exit state, tape contents given by the state word of $\\mathrm{result}$, and output $\\mathrm{out}$.",
+ "hypotheses_covered": [
+  "Finite Boolean-alphabet machine $C$",
+  "Entry and exit states of $C$",
+  "Boolean words $x$, $\\mathrm{arg}$, $\\mathrm{result}$, and $\\mathrm{out}$",
+  "Time $t$ is positive",
+  "The machine avoids the exit state at every time $v$ with $0<v<t$",
+  "At time $t$, the machine is in the specified exit configuration with output $\\mathrm{out}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine $C$, started at its entry over the state word of an argument,\navoid its designated exit at all intermediate positive times before $t > 0$ and\nreach at time $t$ the exit over the state word of a result with a given output.\nThen the call-stopping wrapper, started with the flag down, runs for $t + 1$\nsteps and halts in that same physical configuration (flag raised, state halted),\nretaining every emitted bit."
+}

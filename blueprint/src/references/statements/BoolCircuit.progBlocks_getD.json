@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.progBlocks_getD",
+ "key": "e62ba3f322b68dd5",
+ "kind": "theorem",
+ "title": "Computed block at a program position",
+ "statement": "Let $F$ map an instruction kind and a Boolean list to a Boolean list, let $x$ be a finite Boolean list, and let $\\mathrm{prog}$ be a finite list of instructions. Suppose the program is well formed for input bound $n$ and block width $w$: each source used at position $i$ is an input position below $n$, a constant, or a bit below $w$ in an earlier block. At every valid instruction position $i$, the block computed there is $F$ applied to that instruction's kind and the list obtained by evaluating its sources using $x$ and the program's computed blocks.",
+ "hypotheses_covered": [
+  "$F$ maps an instruction kind and Boolean list to a Boolean list",
+  "$x$ is a finite Boolean list",
+  "$\\mathrm{prog}$ is a finite instruction list",
+  "The program is well formed for bounds $n,w$",
+  "$i<|\\mathrm{prog}|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

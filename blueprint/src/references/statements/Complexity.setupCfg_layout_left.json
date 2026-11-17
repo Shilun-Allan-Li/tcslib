@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_layout_left",
+ "key": "8d3998c44537231c",
+ "kind": "lemma",
+ "title": "Completion of the leftward allocation pass",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\\in\\mathbb{N}$, and let $B>0$. Choose a schedule-symbol input, a base configuration on it, a valid input-head position, an integer budget-head position, and a budget tape. Starting in the first leftward layout phase with unary head at $1$ over the unary tape with $B$ markers and guide head at $0$ over the right guide of radius $3B$, after exactly $3B+2$ steps the machine is in the unary-reset phase, with unary head at $B$ and guide head at $-3B-1$ over the completed guide of radius $3B$.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over Booleans",
+  "a is a natural number",
+  "B is a positive natural number",
+  "base is a configuration on the chosen input",
+  "p is a valid input-head position",
+  "b is an integer budget-head position",
+  "bt is a budget tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $B > 0$.  From the first leftward layout phase with unary head at cell $1$ over the\nunary tape with $B$ markers and guide head at cell $0$ over the right guide of radius\n$3B$, exactly $3B + 2$ steps complete the fixed guide and enter the unary-reset phase\nwith unary head at $B$, guide head at the left outer boundary $-3B - 1$, and guide tape\nthe completed guide of radius $3B$."
+}

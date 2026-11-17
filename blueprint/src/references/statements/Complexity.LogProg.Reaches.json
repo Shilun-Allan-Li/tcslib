@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.Reaches",
+ "key": "34ef4a2b3d57551f",
+ "kind": "def",
+ "title": "Reachable computation with register-position constraints",
+ "statement": "Let $P$ be a register program, let an oracle assign Boolean answers to each decider and Boolean-list input, and let $c_0,c_1,c$ be configurations on input $x$. For a register $r$ and integer position $p$, there must be a time $T$ such that the run from $c_0$ at time $T$ equals $c_1$. At every earlier time $t<T$, the run must be in a configuration of the specified form determined by $c$, some state and input-head position, $r$, and $p$, and that state must not be a call node.",
+ "hypotheses_covered": [
+  "A register program P",
+  "An oracle from Fin d to Boolean lists",
+  "Configurations c₀, c₁, and c on input x",
+  "A register r",
+  "An integer position p",
+  "Existence of a time T at which the run from c₀ equals c₁",
+  "At every time t<T, existence of a state and input-head position yielding the specified run configuration, with that state not a call node"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define rrun or xCfg, so the exact meaning of the specified intermediate configuration form is unavailable.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

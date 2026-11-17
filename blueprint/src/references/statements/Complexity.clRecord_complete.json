@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clRecord_complete",
+ "key": "a069e8c401e8e029",
+ "kind": "lemma",
+ "title": "Completion of trajectory recording",
+ "statement": "Let $M$ be a finite-state Boolean machine, let $y$ be a Boolean word, let $T$ be a natural number, let $(k_i)_{i<4}$ be four Boolean words, and let $W$ be a natural number. Suppose every word among the recorder's initial tape contents for $M$, $y$, and $T$, together with the four words $k_i$, has length at most $W$. Let $x$ be the self-delimiting packing of those words. Then there is a time $t$ satisfying $t\\le 2|x|+4+((\\mathrm{recorder\\ tape\\ count})+4)(3W+7)+(4(\\mathrm{field\\ count})+7)(T+1)^2$ at which the recording machine's configuration is exactly the completed recorder configuration: the source machine is in its configuration after $T$ steps, its movement counts through time $T$ and all recorded rows through time $T$ are stored, and the prescribed input and retained fields are in their designated tape locations.",
+ "hypotheses_covered": [
+  "A finite-state Boolean machine $M$",
+  "A Boolean word $y$",
+  "A natural number $T$",
+  "A family of four Boolean words",
+  "A natural number $W$",
+  "Every initial recorder-layout word has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a source machine, virtual input $y$, horizon $T$, and four retained fields be given, with every laid-out field of length at most $W$, and let the native input be the packed encoding of the layout. Then within $2|x| + 4 + (k'+4)(3W+7) + (4F+7)(T+1)^2$ steps, where $x$ is that input, $k'$ is the recorder tape count, and $F$ the field count, the host reaches the completed recorder configuration holding all stored rows of times $0,\\dots,T$, the horizon source configuration, and the protected header fields and input buffer."
+}

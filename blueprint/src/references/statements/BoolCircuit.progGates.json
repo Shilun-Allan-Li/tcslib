@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.progGates",
+ "key": "291fc61b07b790c6",
+ "kind": "def",
+ "title": "Gate list for a program prefix",
+ "statement": "Let $n,m,w$ be natural numbers, let $\\kappa$ be a type with a chosen element, let $F$ assign a finite Boolean list to each pair consisting of an element of $\\kappa$ and a finite Boolean list, and let $\\mathrm{prog}$ be a finite list of instructions, each carrying an element of $\\kappa$. Define a gate list $G_i$ for every natural number $i$ by taking $G_0$ to consist of the constant-false and constant-true gates, and, for each $i$, forming $G_{i+1}$ by appending to $G_i$ the embedded gadgets for the kind carried by instruction $i$ (using the chosen element when that instruction is absent), with source vertices determined by that instruction and base offset $n+2$ plus the total widths of the preceding instructions.",
+ "hypotheses_covered": [
+  "Natural numbers $n,m,w$",
+  "A type $\\kappa$ with a chosen element",
+  "A function $F : \\kappa \\to \\mathrm{List}(\\mathrm{Bool}) \\to \\mathrm{List}(\\mathrm{Bool})$",
+  "A finite list of instructions carrying elements of $\\kappa$",
+  "The gate list is defined for every natural-number index by the stated zero and successor clauses"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

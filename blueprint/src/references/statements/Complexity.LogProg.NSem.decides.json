@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.NSem.decides",
+ "key": "bdd2b7fe005020e0",
+ "kind": "theorem",
+ "title": "Finite-Time Characterisation of Acceptance",
+ "statement": "Let $A$ be a nondeterministic register machine with oracle, input $x$, configuration guard $G$, initial configuration $a$, and proposition $P$. Suppose every computation from $a$ terminates and every live configuration reached before termination satisfies $G$, and suppose $P$ holds exactly when some finite computation from $a$ halts with answer true. Then there is a number $N$ such that every sequence of $N$ choice bits leads to a halted configuration, every live configuration along each such computation before step $N$ satisfies $G$, and $P$ holds exactly when some sequence of $N$ choice bits leads to answer true.",
+ "hypotheses_covered": [
+  "A nondeterministic register machine A",
+  "An oracle and input x",
+  "A guard G on configurations",
+  "An initial configuration a",
+  "A proposition P",
+  "The initial configuration is terminating under G",
+  "Acceptance from a is equivalent to P"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

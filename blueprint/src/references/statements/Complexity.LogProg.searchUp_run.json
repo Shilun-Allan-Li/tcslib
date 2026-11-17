@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.searchUp_run",
+ "key": "3c5a616851c27e68",
+ "kind": "theorem",
+ "title": "Ascending search reaches the first positive test",
+ "statement": "Let a register machine have $m$ registers, states in a type $\\Lambda$, and an oracle on $d$ Boolean-string inputs. Fix a register $r$, a decidable predicate $P$ on the natural numbers, states $\\mathrm{test},\\mathrm{inc},\\mathrm{yes}\\in\\Lambda$, a bound $B$, and a register valuation $v$ with every register at most $B$. Assume that from state $\\mathrm{test}$, with register $r$ set to any $c'$, one step leaves the registers unchanged and goes to $\\mathrm{yes}$ if $P(c')$ holds and to $\\mathrm{inc}$ otherwise; also assume every configuration at state $\\mathrm{test}$ with no result satisfies the machine's precondition, and that state $\\mathrm{inc}$ increments register $r$ and returns to $\\mathrm{test}$. Let $c$ satisfy $P(c)$ and $c\\le B$. For every $c_0\\le c$ such that no $c'$ with $c_0\\le c'<c$ satisfies $P(c')$, the machine can reach the configuration at state $\\mathrm{yes}$ with register valuation $v$ updated to $c$ at $r$ and no result, starting from state $\\mathrm{test}$ with that register set to $c_0$ and no result; throughout this run, every visited configuration before the final one satisfies the guard requiring the precondition and all registers to be at most $B$.",
+ "hypotheses_covered": [
+  "A register machine $A$ and oracle on $d$ Boolean strings",
+  "A register $r$ among $m$ registers",
+  "A decidable predicate $P:\\mathbb N\\to\\mathrm{Prop}$",
+  "States $\\mathrm{test},\\mathrm{inc},\\mathrm{yes}\\in\\Lambda$",
+  "A natural-number bound $B$ and register valuation $v$",
+  "Every register value in $v$ is at most $B$",
+  "The specified one-step behavior from $\\mathrm{test}$ for every $c'$",
+  "Every no-result configuration at $\\mathrm{test}$ satisfies the precondition",
+  "State $\\mathrm{inc}$ increments register $r$ and returns to $\\mathrm{test}$",
+  "A natural number $c$ satisfying $P(c)$ and $c\\le B$",
+  "For every $c_0\\le c$, no $c'$ with $c_0\\le c'<c$ satisfies $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

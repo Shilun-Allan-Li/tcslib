@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clVisitState_size",
+ "key": "4ee5201bc4b456d5",
+ "kind": "lemma",
+ "title": "Bound on retained-state length",
+ "statement": "Let $M$ be a finite-state binary Turing machine with $k$ work tapes, let $C,e$ be natural numbers, and let $x$ be a Boolean word. Suppose $N,L$ are natural numbers with $|x|\\le L$ and $N\\le L$. For every $j\\le N$, the retained state obtained after $j$ iterations of the producer step from the state encoding $x$, time zero, and an empty table has length at most $(8+8k)(L+1)^2$.",
+ "hypotheses_covered": [
+  "Finite-state binary Turing machine M with k work tapes",
+  "Natural numbers C and e",
+  "Boolean word x",
+  "Natural numbers N and L",
+  "|x| ≤ L",
+  "N ≤ L",
+  "Natural number j with j ≤ N"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters, instance $x$ of length at most $L$, and horizon $N \\le L$, every iterate up to $N$ of the producer step from the empty retained state has length at most $(8 + 8k)(L+1)^2$, where $k$ is the number of work tapes."
+}

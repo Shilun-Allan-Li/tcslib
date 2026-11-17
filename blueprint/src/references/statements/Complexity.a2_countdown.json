@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.a2_countdown",
+ "key": "a4e125f620f7778a",
+ "kind": "lemma",
+ "title": "Countdown Halting and Output Bound",
+ "statement": "For every Boolean word $x$, every valid input-head position $p$ on $x$, and every natural number $n$, if a counter word $u$ has little-endian value $n$, then for every initial output word there is a time $t\\le (n+1)(2|u|+3)$ at which the countdown emitter, started in its borrow phase with work head at position zero and counter $u$, has halted and its output is the initial word followed by exactly $n$ ones.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "valid input-head position $p$",
+  "natural number $n$",
+  "counter word $u$ with little-endian value $n$",
+  "arbitrary initial output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input, head position and counter word $u$ of value $n$, and every already-emitted word: within $(n+1)(2|u|+3)$ steps from the borrow state at cell zero, the countdown emitter halts with output equal to the already-emitted word followed by exactly $n$ ones."
+}

@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, replace
 from pathlib import Path
+from threading import Event
+from concurrent.futures import CancelledError
 
 from proofmatch.agents import (
     COMPARE_MODEL,
@@ -21,6 +23,7 @@ from proofmatch.blueprint import (
     plan_blueprint_mutations,
 )
 from proofmatch.budget import Budget, BudgetExceeded
+from proofmatch.parallel import bounded_map
 from proofmatch.catalog import (
     BlueprintBinding,
     load_blueprint_bindings,
@@ -51,6 +54,7 @@ from proofmatch.upstream import (
     load_upstream_declarations,
     map_upstream_batches,
     validate_manifest,
+    UpstreamDeclarationLoader,
 )
 
 
@@ -60,6 +64,9 @@ def compare_relevant_candidates(
     index: DocumentIndex,
     agent_factory: Callable[[], object],
     budget: Budget,
+    *,
+    jobs: int = 1,
+    cache_dir: Path | None = None,
 ) -> tuple[ComparisonVerdict, ...]:
     candidates_by_name = {item.lean_name: item for item in candidates}
     block_order = {
@@ -74,45 +81,30 @@ def compare_relevant_candidates(
             decision.lean_name,
         )
     )
-    verdicts = []
-    for position, decision in enumerate(selected):
+    stop = Event()
+    def compare_one(decision):
         candidate = candidates_by_name.get(decision.lean_name)
         if candidate is None:
-            raise ValueError(
-                f"relevance decision has no candidate: {decision.lean_name}"
-            )
+            raise ValueError(f"relevance decision has no candidate: {decision.lean_name}")
         scoped = replace(candidate, document_blocks=decision.document_blocks)
-        try:
-            verdicts.append(
-                compare_candidate(scoped, index, agent_factory(), budget)
-            )
-        except (BudgetExceeded, AgentInvocationError) as error:
-            # Cap gracefully (budget spent, or the CLI itself is down): record
-            # every not-yet-compared candidate as uncertain so the run still
-            # writes an auditable review, and stop making calls.
-            for remaining in selected[position:]:
-                verdicts.append(
-                    ComparisonVerdict(
-                        remaining.lean_name,
-                        remaining.document_blocks,
-                        "uncertain",
-                        0,
-                        (f"Comparison skipped: {error}",),
-                        (),
-                    )
-                )
-            break
-        except (AgentOutputError, ValueError) as error:
-            verdicts.append(
-                ComparisonVerdict(
-                    candidate.lean_name,
-                    scoped.document_blocks,
-                    "uncertain",
-                    0,
-                    (f"Comparison output was invalid: {error}",),
-                    (),
-                )
-            )
+        options = {"cache_dir": cache_dir, "stop_event": stop} if cache_dir is not None else {}
+        return compare_candidate(scoped, index, agent_factory(), budget, **options)
+    results = bounded_map(compare_one, selected, jobs, stop_event=stop, return_exceptions=True,
+                          stop_on=(BudgetExceeded, AgentInvocationError))
+    halt = next((result for result in results if isinstance(result, (BudgetExceeded, AgentInvocationError))),
+                "dispatch cancelled")
+    verdicts = []
+    for decision, result in zip(selected, results):
+        if isinstance(result, (BudgetExceeded, AgentInvocationError, CancelledError)):
+            verdicts.append(ComparisonVerdict(decision.lean_name, decision.document_blocks,
+                            "uncertain", 0, (f"Comparison skipped: {halt}",), ()))
+        elif isinstance(result, (AgentOutputError, ValueError)):
+            verdicts.append(ComparisonVerdict(decision.lean_name, decision.document_blocks,
+                            "uncertain", 0, (f"Comparison output was invalid: {result}",), ()))
+        elif isinstance(result, Exception):
+            raise result
+        else:
+            verdicts.append(result)
     return tuple(verdicts)
 
 
@@ -161,9 +153,11 @@ def _upstream_inputs(
     index: DocumentIndex,
     dataset: Path,
     dependency_graph: Path,
+    *,
+    loader=None,
 ):
     try:
-        declarations = load_upstream_declarations(
+        declarations = loader.load(candidate.lean_name) if loader is not None else load_upstream_declarations(
             dataset, dependency_graph, candidate.lean_name
         )
     except ValueError as error:
@@ -176,6 +170,27 @@ def _upstream_inputs(
     batches = batch_declarations(declarations)
     estimates = estimate_upstream_batches(batches, blocks)
     return declarations, blocks, estimates
+
+
+def map_upstream_candidates(candidates, inputs, document, index, budget, *, jobs=1,
+                            cache_dir=None, agent_factory=None):
+    """Map independent targets concurrently; mutation stays in the caller."""
+    factory = agent_factory or (lambda: ClaudeAgent(model=DEFAULT_MODEL))
+    stop = Event()
+
+    def map_candidate(candidate):
+        declarations, blocks, _ = inputs[candidate.lean_name]
+        assignments = map_upstream_batches(
+            declarations, blocks, factory(), budget, cache_dir=cache_dir,
+            stop_event=stop, label=candidate.lean_name)
+        manifest = build_manifest(candidate.lean_name, document, index,
+                                  candidate.proof, declarations, assignments)
+        validate_manifest(manifest, index, candidate.proof, declarations,
+                          {block.block_id for block in index.blocks})
+        return manifest
+
+    return bounded_map(map_candidate, candidates, jobs, stop_event=stop,
+                       return_exceptions=True, stop_on=(BudgetExceeded, AgentInvocationError))
 
 
 def preflight_chapter(
@@ -288,6 +303,7 @@ def routed_candidates(
     budget: Budget,
     *,
     max_chapters: int | None = None,
+    jobs: int = 1,
 ) -> tuple[
     tuple[Candidate, ...],
     tuple[RelevanceDecision, ...],
@@ -314,20 +330,22 @@ def routed_candidates(
         budget,
         model=DEFAULT_MODEL,
         max_chapters=max_chapters,
+        jobs=jobs,
+        cache_dir=blueprint_root.resolve().parents[2] / ".proofmatch-work" / "routing",
     )
     candidates: list[Candidate] = []
     decisions: list[RelevanceDecision] = []
     statement_only: list[RoutedDeclaration] = []
     chapter_report = []
-    for node in chapters:
-        routed, rejected = route_declarations(
-            index,
-            node,
-            by_name,
-            lambda: ClaudeAgent(model=DEFAULT_MODEL),
-            budget,
+    stop = Event()
+    def route_node(node):
+        return route_declarations(
+            index, node, by_name, lambda: ClaudeAgent(model=DEFAULT_MODEL), budget,
             model=DEFAULT_MODEL,
-        )
+            cache_dir=blueprint_root.resolve().parents[2] / ".proofmatch-work" / "routing",
+            stop_event=stop)
+    routed_nodes = bounded_map(route_node, chapters, jobs, stop_event=stop)
+    for node, (routed, rejected) in zip(chapters, routed_nodes):
         # A chapter whose module is absent from the dataset contributes no
         # comparable declarations; record it so the gap is visible rather
         # than looking like a routing miss.
@@ -390,13 +408,16 @@ def run_chapter_match(
     *,
     dry_run: bool = False,
     use_routing: bool = True,
+    jobs: int = 1,
 ) -> dict[str, object]:
+    if not dry_run:
+        print(f"Citation matching: up to {jobs} concurrent model requests per phase", flush=True)
     bindings = load_blueprint_bindings(blueprint_root)
     catalog = load_blueprint_candidates(dataset, bindings)
     routing_report: dict = {}
     if use_routing and not dry_run:
         candidates, decisions, statement_only, routing_report = routed_candidates(
-            index, catalog, blueprint_root, budget
+            index, catalog, blueprint_root, budget, jobs=jobs
         )
         if not candidates and not statement_only:
             raise ValueError("routing selected no citable declarations")
@@ -411,6 +432,8 @@ def run_chapter_match(
             budget,
             routing_report=routing_report,
             direct_statements=statement_only,
+            jobs=jobs,
+            comparison_cache=blueprint_root.resolve().parents[2] / ".proofmatch-work" / "comparisons",
         )
     seeds = discover_candidates(index, catalog)
     if not seeds:
@@ -452,6 +475,8 @@ def run_chapter_match(
         dependency_graph,
         budget,
         routing_report=routing_report,
+        jobs=jobs,
+        comparison_cache=blueprint_root.resolve().parents[2] / ".proofmatch-work" / "comparisons",
     )
 
 
@@ -467,6 +492,8 @@ def _compare_and_propagate(
     *,
     routing_report: Mapping[str, object] | None = None,
     direct_statements: Sequence[RoutedDeclaration] = (),
+    jobs: int = 1,
+    comparison_cache: Path | None = None,
 ) -> dict[str, object]:
     """Compare the selected candidates and write approved citations back."""
     selected_names = {
@@ -489,6 +516,8 @@ def _compare_and_propagate(
         index,
         lambda: ClaudeAgent(model=COMPARE_MODEL),
         budget,
+        jobs=jobs,
+        cache_dir=comparison_cache,
     )
     by_candidate = {item.lean_name: item for item in candidates}
     document = source.name.removesuffix(".md")
@@ -540,11 +569,14 @@ def _compare_and_propagate(
         if verdict.verdict == "not_in_text"
     ]
     upstream_inputs = {}
+    print(f'Upstream preflight: loading dependency metadata for {len(same_candidates)} targets once', flush=True)
+    upstream_loader = UpstreamDeclarationLoader(dataset, dependency_graph,
+                        (candidate.lean_name for candidate in same_candidates)) if same_candidates else None
     upstream_shadow = Budget(budget.cap_usd, budget.spent_usd)
     for candidate in same_candidates:
         try:
             inputs = _upstream_inputs(
-                candidate, index, dataset, dependency_graph
+                candidate, index, dataset, dependency_graph, loader=upstream_loader
             )
         except ValueError as error:
             propagation_failures.append(
@@ -563,93 +595,40 @@ def _compare_and_propagate(
             # Advisory only: upstream mapping is optional enrichment and is
             # capped per-candidate below; the source proposals are free.
             print(f"Upstream mapping may exceed remaining budget: {error}")
-    upstream_budget_exhausted = False
+    mapping_candidates = []
     for candidate in same_candidates:
         binding = bindings[candidate.lean_name]
-        theorem_proposals = proposal_groups.setdefault(
-            candidate.lean_name, []
-        )
+        theorem_proposals = proposal_groups.setdefault(candidate.lean_name, [])
         try:
-            theorem_proposals.append(
-                SourceProposal(
-                    binding.tex_path,
-                    candidate.lean_name,
-                    ProofSource(document, candidate.document_blocks),
-                )
-            )
+            theorem_proposals.append(SourceProposal(
+                binding.tex_path, candidate.lean_name,
+                ProofSource(document, candidate.document_blocks)))
         except ValueError as error:
-            propagation_failures.append(
-                {
-                    "lean_name": candidate.lean_name,
-                    "stage": "source-link",
-                    "error": str(error),
-                }
-            )
+            propagation_failures.append({"lean_name": candidate.lean_name,
+                                         "stage": "source-link", "error": str(error)})
             proposal_groups.pop(candidate.lean_name, None)
             continue
-        declarations, blocks, _ = upstream_inputs[candidate.lean_name]
-        if declarations and not upstream_budget_exhausted:
-            try:
-                assignments = map_upstream_batches(
-                    declarations,
-                    blocks,
-                    ClaudeAgent(model=DEFAULT_MODEL),
-                    budget,
-                )
-                manifest = build_manifest(
-                    candidate.lean_name,
-                    document,
-                    index,
-                    candidate.proof,
-                    declarations,
-                    assignments,
-                )
-                validate_manifest(
-                    manifest,
-                    index,
-                    candidate.proof,
-                    declarations,
-                    {block.block_id for block in index.blocks},
-                )
-            except (BudgetExceeded, AgentInvocationError) as error:
-                upstream_budget_exhausted = True
-                propagation_failures.append(
-                    {
-                        "lean_name": candidate.lean_name,
-                        "stage": (
-                            "upstream-agent-unavailable"
-                            if isinstance(error, AgentInvocationError)
-                            else "upstream-budget"
-                        ),
-                        "error": str(error),
-                    }
-                )
-                continue
-            except (AgentOutputError, ValueError) as error:
-                propagation_failures.append(
-                    {
-                        "lean_name": candidate.lean_name,
-                        "stage": "upstream",
-                        "error": str(error),
-                    }
-                )
-                continue
-            manifests.append(manifest)
-            theorem_proposals.append(
-                StepProposal(
-                    binding.tex_path,
-                    candidate.lean_name,
-                    tuple(
-                        ProofStep(
-                            assignment.lean_name,
-                            assignment.relation,
-                            document,
-                            assignment.document_blocks,
-                        )
-                        for assignment in manifest.assignments
-                    ),
-                )
-            )
+        if upstream_inputs[candidate.lean_name][0]:
+            mapping_candidates.append(candidate)
+    upstream_cache = comparison_cache.parent / "upstream" if comparison_cache is not None else None
+    print(f'Upstream mapping: {len(mapping_candidates)} targets, up to {jobs} workers', flush=True)
+    mapped = map_upstream_candidates(mapping_candidates, upstream_inputs, document,
+                                     index, budget, jobs=jobs, cache_dir=upstream_cache)
+    for candidate, result in zip(mapping_candidates, mapped, strict=True):
+        if isinstance(result, Exception):
+            stage = ("upstream-agent-unavailable" if isinstance(result, AgentInvocationError)
+                     else "upstream-budget" if isinstance(result, BudgetExceeded)
+                     else "upstream-not-dispatched" if isinstance(result, CancelledError)
+                     else "upstream")
+            propagation_failures.append({"lean_name": candidate.lean_name,
+                                         "stage": stage, "error": str(result)})
+            continue
+        manifests.append(result)
+        proposal_groups[candidate.lean_name].append(StepProposal(
+            bindings[candidate.lean_name].tex_path, candidate.lean_name,
+            tuple(ProofStep(assignment.lean_name, assignment.relation, document,
+                            assignment.document_blocks)
+                  for assignment in result.assignments)))
     # Router-decided statement citations for entries with no comparable proof
     # (definitions, and declarations of modules absent from the dataset).
     for statement in direct_statements:

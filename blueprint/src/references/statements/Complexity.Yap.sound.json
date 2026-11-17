@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Yap.sound",
+ "key": "af1fd75f21a54484",
+ "kind": "theorem",
+ "title": "Soundness of the inner-language condition",
+ "statement": "Let $d$ be a refutation data package and let $L_2,K$ be languages of Boolean strings. Suppose that for every string $y$, membership in $L_2$ is equivalent to the existence of a string $v$ with $|v|=M_2(y)$ and $\\langle y,v\\rangle\\in K$. Suppose that for every string $z$, nonmembership in $K$ is equivalent to the existence of a string $r$ with $|r|\\le C_3(|z|+1)^{c_3}$ and $\\langle z,r\\rangle\\in R$. Assume that for all Boolean strings $x,U,u,v,w,r$ with $|u|=M_1(x)$, $|v|\\le M_2(\\langle x,u\\rangle)$, $|w|\\le|U|$, and $|r|\\le C_3(nLen(x)+1)^{c_3}$, one has $|\\langle\\langle u,v\\rangle,\\langle w,r\\rangle\\rangle|\\le B(|\\langle x,U\\rangle|+1)^b$. If $\\langle x,U\\rangle$ belongs to the inner language and $|u|=M_1(x)$, then $\\langle x,u\\rangle\\in L_2$.",
+ "hypotheses_covered": [
+  "$d$ is a refutation data package",
+  "$L_2,K$ are languages of Boolean strings",
+  "For every $y$, $y\\in L_2$ iff there exists $v$ with $|v|=M_2(y)$ and $\\langle y,v\\rangle\\in K$",
+  "For every $z$, $z\\notin K$ iff there exists $r$ with $|r|\\le C_3(|z|+1)^{c_3}$ and $\\langle z,r\\rangle\\in R$",
+  "The stated length bound holds for all $x,U,u,v,w,r$ satisfying the four listed length constraints",
+  "$\\langle x,U\\rangle$ belongs to the inner language",
+  "$|u|=M_1(x)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $d$ be data, and let $L_2,K,R$ be languages of bit strings. Suppose that for every\nbit string $y$, membership in $L_2$ is equivalent to the existence of a bit string $v$\nof length $M_2(y)$ for which the encoding of $(y,v)$ belongs to $K$. Suppose also that\nfor every $z$, nonmembership of $z$ in $K$ is equivalent to the existence of a bit\nstring $r$ with $|r|\\le C_3(|z|+1)^{c_3}$ whose pairing with $z$ belongs to $R$. Assume\nthat for all bit strings $x,U,u,v,w,r$ with $|u|=M_1(x)$, $|v|\\le M_2(\\langle\nx,u\\rangle)$, $|w|\\le |U|$, and $|r|\\le C_3(nLen(x)+1)^{c_3}$, the length of\n$\\langle\\langle u,v\\rangle,\\langle w,r\\rangle\\rangle$ is at most $B(|\\langle\nx,U\\rangle|+1)^b$. If $\\langle x,U\\rangle$ belongs to the inner language and\n$|u|=M_1(x)$, then $\\langle x,u\\rangle\\in L_2$."
+}

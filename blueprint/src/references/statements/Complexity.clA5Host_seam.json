@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clA5Host_seam",
+ "key": "7266346baff011bc",
+ "kind": "lemma",
+ "title": "Forwarding a Padded Module Seam",
+ "statement": "Let five Boolean finite Turing machines be given, fix a shared bank of $K$ tapes and a module index $i$ whose machine has positive tape count. For any input word $x$, stored word $w$, output prefix $\\mathrm{pre}$, output word $\\mathrm{out}$, state $q$ of module $i$, and optional state $s$, forwarding the padded configuration with state $s$ and output $\\mathrm{out}$ yields the canonical shared-bank configuration whose tape-zero word is $w$, output is $\\mathrm{pre}$ followed by $\\mathrm{out}$, and state is the tagged state $s$ when present or the module's resolved return state when absent.",
+ "hypotheses_covered": [
+  "Five Boolean finite Turing machines indexed by $\\mathrm{Fin}(5)$",
+  "A tape-bank size $K\\in\\mathbb N$",
+  "An index $i\\in\\mathrm{Fin}(5)$",
+  "$(M_i).k>0$",
+  "Words $x,w,\\mathrm{pre},\\mathrm{out}$",
+  "A state $q$ of $M_i$",
+  "An optional state $s\\in\\mathrm{Option}((M_i).\\mathrm{State})$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every module with a positive tape count, control, stored word, output prefix, and optional state, forwarding the padded clean configuration yields the host's canonical seam over the shared bank's state word, with output exactly the prefix followed by the module's output."
+}

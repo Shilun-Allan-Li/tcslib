@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clRecordOutput_compute",
+ "key": "d35b0335428e0b61",
+ "kind": "lemma",
+ "title": "Recorder Trajectory Output",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $y$ be a Boolean word, let $T,W$ be natural numbers, and let $keep$ assign four Boolean words. Suppose every word in the layout consisting of the canonical recorder words followed by the four words assigned by $keep$ has length at most $W$. Let $x$ be the packed encoding of this layout. The recorder output machine computes the complete sequence of recorder rows through time $T$, namely the serialized record through horizon $T$, on input $x$ in exactly $2|x|+8+(k'+4)(3W+7)+(8F+7)(T+1)^2$ steps, where $k'$ is the number of work tapes of the recorder machine and $F$ is its recorder-field count.",
+ "hypotheses_covered": [
+  "A finite-state Boolean Turing machine M",
+  "A Boolean word y",
+  "Natural numbers T and W",
+  "A function keep assigning four Boolean words",
+  "Every word in the specified layout has length at most W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, virtual input $y$, horizon $T$, retained fields, and width bound $W$ covering all laid-out words, the trajectory-output machine computes, from the packed encoding of the layout, the complete serialized inclusive trajectory of rows $0,\\dots,T$, within $2|x| + 8 + (k'+4)(3W+7) + (8F+7)(T+1)^2$ steps, where $x$ is the input, $k'$ the recorder tape count, and $F$ the field count; preparation, recording, rewind, replay, and the terminal transition are all charged."
+}

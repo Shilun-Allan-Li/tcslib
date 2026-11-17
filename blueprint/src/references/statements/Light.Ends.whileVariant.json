@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Ends.whileVariant",
+ "key": "6adac757f77132f5",
+ "kind": "theorem",
+ "title": "Termination of a while loop by a variant",
+ "statement": "Let a program execute under limits and at recursion depth $d$, and consider a while loop with guard $c$ and body $s$, starting in state $\\sigma$. Suppose an invariant $I$ holds initially, and whenever $I$ holds the guard is safe. Whenever $I$ holds and the guard is true, the body terminates within cost $b$, preserves $I$, and strictly decreases a natural-valued measure $m$. Whenever $I$ holds and the guard is false, a postcondition $Q$ holds. If $m(\\sigma)(\\operatorname{cost}(c)+1+b)+\\operatorname{cost}(c)+1\\le T$, then the loop terminates within cost $T$ and its final state satisfies $Q$.",
+ "hypotheses_covered": [
+  "Initial invariant holds at the starting state",
+  "The guard is safe at every state satisfying the invariant",
+  "When the invariant and guard hold, the body terminates within cost b, preserves the invariant, and strictly decreases m",
+  "When the invariant holds and the guard is false, Q holds",
+  "Initial measure times (guard cost plus 1 plus b), plus guard cost plus 1, is at most T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

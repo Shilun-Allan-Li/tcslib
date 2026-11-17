@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_clean_capture",
+ "key": "8813942b05b3e460",
+ "kind": "lemma",
+ "title": "Captured simulation phase",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $x$ be a Boolean input word, let $c_0$ be a configuration of $M$ on input $x$, and let $t$ be a natural number. Suppose that $M$ is not halted at any time $j<t$ when run from $c_0$. Then the clean wrapper, run for $t$ steps from the captured logged version of $c_0$ with empty captured prefix and output, is in the captured logged configuration corresponding to the time-$t$ configuration of $M$ and the history of its first $t$ steps, with empty captured prefix and output.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x$ is a Boolean word",
+  "$c_0$ is a configuration of $M$ on input $x$",
+  "$t$ is a natural number",
+  "the run of $M$ from $c_0$ is not halted at every time $j<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a source machine $M$ is live for $t$ steps from a configuration $c_0$, then the\nclean wrapper of $M$, run for $t$ steps from the captured logged start of $c_0$,\nreaches the captured logged configuration of $M$'s time-$t$ configuration with the\n$t$-step history; any halting emission of $M$ is retained on the capture tape."
+}

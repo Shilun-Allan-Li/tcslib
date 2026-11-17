@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.timedCut_prepare_next",
+ "key": "4e1ee7aa48da1664",
+ "kind": "lemma",
+ "title": "Preparing a Successor State",
+ "statement": "Let $x$ be a Boolean word, $b$ a four-tape interpreter configuration on input $x$, $T$ a Boolean table, $a$ a function assigning a Boolean bit to each of the eight fixed action-bit positions, and $v$ either no successor state or a state index in $\\\\{0,\\\\ldots,n\\\\}$. If $T=l\\\\,1^m\\\\,0\\\\,r$, where $m$ is the unary length associated with $v$, then after the successor-preparation duration (one step when $v$ is absent and $2q+4$ steps when $v=q$ is present), the stopped interpreter is in the pending-action phase carrying $a$ and the flag indicating that $v$ is absent. Its table cursor is $|l|+m$, its state tape is the unary representation of the successor index (or zero if absent), and its state cursor is $1$; the remaining fields are those of the specified evaluation configuration.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "base four-tape configuration $b$",
+  "Boolean table $T$",
+  "eight-bit function $a$",
+  "natural number $n$",
+  "optional state index $v$ in $\\\\{0,\\\\ldots,n\\\\}$",
+  "Boolean words $l,r$",
+  "table decomposition $T=l\\\\,1^{m}\\\\,0\\\\,r$ with $m$ the unary size associated with $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table holds, at the cursor, the unary successor field of a record\n(its number of ones encoding the optional successor state) followed by its\nterminator, and the state tape is the unary tape for $0$ with cursor $1$.\nThen within exactly the successor-preparation cost, the stopped table\ninterpreter installs the unary representation of the successor index (or of\n$0$ in the halting case) on the state tape with cursor $1$ and enters the\npending-action phase carrying the eight decoded bits and the halting flag,\nwith the table cursor stopped on the field's terminator."
+}

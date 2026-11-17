@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.PolyTimeComputable.comp",
+ "key": "dd4f191c53a55fe0",
+ "kind": "theorem",
+ "title": "Closure under composition",
+ "statement": "Let $f,g$ be polynomial-time computable functions from bit strings to bit strings. Then the composition $g\\circ f$, which maps $x$ to $g(f(x))$, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$g$ is polynomial-time computable",
+  "$f$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f, g : \\{0,1\\}^* \\to \\{0,1\\}^*$ be polynomial-time computable, where a function is\npolynomial-time computable if some finite binary Turing machine computes it within $C(n+1)^c$\nsteps on every input of length $n$, for some constants $C, c \\in \\mathbb{N}$. Then the\ncomposition $g \\circ f$, mapping $x$ to $g(f(x))$, is also polynomial-time computable\n[AB09, proof of Theorem~2.8]."
+}

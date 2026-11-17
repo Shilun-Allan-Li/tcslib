@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.isoperimetric_of_averaged_profile_bound",
+ "key": "75cad11e1a329bb2",
+ "kind": "lemma",
+ "title": "Gaussian isoperimetric bound from averaged profiles",
+ "statement": "Let $n$ be a nonnegative integer, let $A\\subseteq\\mathbb R^n$ be measurable, and let $0<\\alpha<1$. If, for every $u\\in(0,\\pi/2)$, the extended nonnegative value of the closed Gaussian profile at $\\alpha$ is at most the extended nonnegative value of its integral over the averaged Gaussian indicator of $A$ at angle $u$, plus the Gaussian surface area of $A$, then the extended nonnegative value of the Gaussian isoperimetric profile at $\\alpha$ is at most the Gaussian surface area of $A$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$A\\subseteq\\mathbb R^n$ is measurable",
+  "$0<\\alpha<1$",
+  "For every $u\\in(0,\\pi/2)$, the extended nonnegative profile bound holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$, let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$, and let $G,G\\prime$ be independent vectors with law $\\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\\gamma_n\\otimes\\gamma_n)\\{(g,h):\\mathbf1_A(g)\\ne\\mathbf1_A(\\cos t\\,g+\\sin t\\,h)\\}$. Write $P_\\gamma(A)=\\liminf_{t\\to0^+}\\bigl[\\sqrt{\\pi/2}\\,s_A(t)/t\\bigr]_+$ in $[0,\\infty]$, where $[x]_+=\\max(x,0)$. Let $A\\subseteq\\mathbb R^n$ be measurable, $0<\\alpha<1$, and let $U$ be the standard Gaussian isoperimetric profile extended by zero outside $(0,1)$. Set $f_u(x)=\\mathbb E[\\mathbf1_A(\\cos u\\,x+\\sin u\\,G)]$. If $U(\\alpha)\\le[\\int U(f_u)\\,d\\gamma_n]_++P_\\gamma(A)$ for every $0<u<\\pi/2$, then $U(\\alpha)\\le P_\\gamma(A)$."
+}

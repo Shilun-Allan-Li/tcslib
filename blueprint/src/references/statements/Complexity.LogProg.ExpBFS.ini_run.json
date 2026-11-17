@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.ini_run",
+ "key": "defd5b56263b8ee0",
+ "kind": "theorem",
+ "title": "Initial marking search",
+ "statement": "Let $K_0,B,P\\in\\mathbb N$, let $\\mathrm{orc}:\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be an oracle, let $x\\in\\{0,1\\}^*$, and choose $\\varphi\\in\\{\\mathrm{false},\\mathrm{true}\\}$. Let $j\\in\\mathbb N$, let $S=(N,L_g,s,s_1,X,w,K,B_s,U,V,T,T_2,Z,C,ch,c,c_1)$ be a state, and let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Suppose $K-U=j$, $U\\le K$, $T=T_2=Z=0$, every coordinate of $S$ is at most $B$, $B_s+K\\le B$, $B_s+K\\le P$, and $K+1\\le B$. Then there are a memory $M':\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ and a finite run of the specified machine from label $iU(\\varphi)$, state $S$, memory $M$, and memory-head position $0$ to label $rl0(\\varphi)$, state obtained from $S$ by replacing $U$ with $K$, memory $M'$, and head position $0$, such that every configuration before the endpoint has all register values at most $B$, has memory-head position between $0$ and $P$ inclusive, and satisfies the machine's instruction preconditions. The memory $M'$ extends the marked positions of $M$, agrees with $M$ outside the cells $c(B_s,v)$ for $v<K$, and, for every $v$ with $U\\le v<K$, marks $c(B_s,v)$ whenever the oracle accepts the encoded input at radius $s_1$ if $\\varphi$ is true and at radius $s$ otherwise. Conversely, for every $v<K$, if $M'$ marks $c(B_s,v)$, then either $M$ already marked that cell or the oracle accepts that encoded input at the chosen radius.",
+ "hypotheses_covered": [
+  "$K_0,B,P$ are natural numbers; the oracle has four indices and Boolean-string inputs; $x$ is a Boolean string; $\\varphi$ is Boolean",
+  "$j$ is a natural number; $S$ is a state; $M$ is a Boolean-valued function on the integers",
+  "$K-U=j$",
+  "$U\\le K$",
+  "$T=T_2=Z=0$",
+  "every coordinate of $S$ is at most $B$",
+  "$B_s+K\\le B$",
+  "$B_s+K\\le P$",
+  "$K+1\\le B$"
+ ],
+ "confidence": "low",
+ "caveat": "The path invariant includes the formal instruction precondition predicate; its full expansion depends on the machine's input-validity and instruction definitions.",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P\\in\\mathbb N$, let $\\mathrm{orc}$ be an oracle assigning a Boolean answer to\neach of four indices and bit strings, and let $x$ be a bit string. For either choice of\n$\\varphi$, suppose $j\\in\\mathbb N$, $S$ is a register state, and $M:\\mathbb\nZ\\to\\{\\mathrm{false},\\mathrm{true}\\}$ satisfy $S.K-S.U=j$, $S.U\\le S.K$,\n$S.T=S.T2=S.Z=0$, and $S$'s register values are at most $B$, with additionally\n$S.Bs+S.K\\le B$, $S.Bs+S.K\\le P$, and $S.K+1\\le B$. Then there is a memory $M'$ such\nthat the program can run from label $iU(\\varphi)$ and state $S$ to label $rl0(\\varphi)$\nwith $U=S.K$, empty answer, memory $M'$, and head at $0$, while satisfying $G(x,B,P)$\nthroughout. Moreover, $M$ is pointwise monotone below $M'$; outside the cells $S.Bs+v$\nfor $v<S.K$, the two memories agree; every initially marked code $v$ with $S.U\\le v<S.K$\nis marked in $M'$; and every cell in this range marked by $M'$ was either already marked\nby $M$ or has an initially marked code."
+}

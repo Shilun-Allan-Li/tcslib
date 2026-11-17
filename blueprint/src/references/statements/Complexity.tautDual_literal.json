@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tautDual_literal",
+ "key": "56b42121f96708fd",
+ "kind": "lemma",
+ "title": "Polarity flip of a literal encoding",
+ "statement": "For every literal $\\ell=(v,b)$ over variables indexed by $\\mathbb{N}$ and every binary string $r$, scanning the encoding of $(v,b)$ followed by $r$ from the clause-level state produces the encoding of $(v,\\neg b)$ followed by the scan of $r$ from the clause-level state.",
+ "hypotheses_covered": [
+  "A literal with natural-number variable index and Boolean polarity",
+  "An arbitrary binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every literal $(v, b)$ and binary string $r$, the polarity-flipping scan from the\nclause-level state of the formula syntax scanner maps the serialization of $(v, b)$\nfollowed by $r$ to the serialization of $(v, \\neg b)$ followed by the\npolarity-flipping scan of $r$ from the clause-level state."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.cont_parse_run",
+ "key": "707ef80d6f442d54",
+ "kind": "lemma",
+ "title": "Parsing the encoded input prefix",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let $y$, $x$, and $u$ be Boolean words. For every pair of Boolean words $pre$ and $a$ such that $y=pre\\,\\langle x,u\\rangle$, the pair-loader machine, started in parser state $0$ with input head at position $|pre|+1$, input buffer $a$, empty choice buffer, and the other loader tapes and output as prescribed by its loader configuration, reaches after exactly $2|x|+2$ steps parser state $3$, input head position $|pre|+2|x|+3$, input buffer $ax$, and empty choice buffer, with the other loader tapes and output as prescribed by that configuration.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the Boolean alphabet",
+  "$y$, $x$, and $u$ are Boolean words",
+  "$pre$ and $a$ are Boolean words",
+  "$y=pre\\,\\langle x,u\\rangle$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine and suppose the physical input has the form $y = p\\,e$ where $e$ is the self-delimiting encoding of a pair $(x, u)$. From the initial parser state at position $|p|+1$ with input buffer $a$, exactly $2|x| + 2$ steps of the pair-loader machine decode the doubled prefix and the separator, reaching the suffix-copy state at position $|p| + 2|x| + 3$ with input buffer $a\\,x$ and the choice buffer still empty."
+}

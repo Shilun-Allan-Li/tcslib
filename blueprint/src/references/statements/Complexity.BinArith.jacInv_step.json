@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.BinArith.jacInv_step",
+ "key": "560429de34235df0",
+ "kind": "theorem",
+ "title": "Preservation of the Jacobi invariant",
+ "statement": "Let $z$ and $S$ be bit strings satisfying the following condition: there are bit strings $A,N,s$ with $S=\\langle A,\\langle N,s\\rangle\\rangle$, $|A|\\le |z|$, $|N|\\le |z|$, and $|s|\\le 1$, such that if the integer represented by the second projection of $z$ is odd, then the integer represented by $N$ is odd and the product of the sign encoded by $s$ with the Jacobi symbol of the integers represented by $A,N$ equals the Jacobi symbol of the integers represented by the first and second projections of $z$. After one Jacobi step on $S$, the resulting state still satisfies this condition for the same $z$.",
+ "hypotheses_covered": [
+  "Bit strings $z,S$",
+  "Existence of bit strings $A,N,s$ encoding $S$ as a nested pair",
+  "$|A|\\le |z|$",
+  "$|N|\\le |z|$",
+  "$|s|\\le 1$",
+  "If the value of the second projection of $z$ is odd, then the value of $N$ is odd and the signed Jacobi-symbol identity holds"
+ ],
+ "confidence": "low",
+ "caveat": "The statement's invariant is rendered explicitly, but the Jacobi step is defined by a detailed bit-level update whose full case distinction is not expanded here.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.recordStep_native_frame",
+ "key": "e9a46451bcf8ec68",
+ "kind": "theorem",
+ "title": "Preservation of the work-tape frame",
+ "statement": "Let $R$ be a $K$-tape machine over an alphabet $\\Gamma$ with state set $S$, and suppose its transition on every state, input symbol, and tuple of scanned work-tape symbols is the action that moves only the input head and changes the state according to functions $\\mathrm{move}:S\\to\\mathrm{SignType}$ and $\\mathrm{next}:S\\to\\mathrm{Option}(\\Gamma)\\to S$. Then, from any configuration $d$ and after any number $t$ of steps, the work-tape contents, work-head positions, and output are unchanged.",
+ "hypotheses_covered": [
+  "$K$ is a natural number and $\\Gamma,S$ are types",
+  "$R$ is a $K$-tape machine over $\\Gamma$ with states $S$",
+  "$\\mathrm{move}:S\\to\\mathrm{SignType}$",
+  "$\\mathrm{next}:S\\to\\mathrm{Option}(\\Gamma)\\to S$",
+  "for every state, input symbol, and work-symbol tuple, the transition equals the corresponding input-move action",
+  "$d$ is a configuration",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

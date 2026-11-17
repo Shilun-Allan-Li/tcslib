@@ -1,0 +1,15 @@
+{
+ "lean_name": "WordRAM.steps_straight",
+ "key": "fb8db54d377e81ce",
+ "kind": "theorem",
+ "title": "Execution of a straight code segment",
+ "statement": "Let $W$ be a word width, $P$ a program, $l$ a list of instructions, $pc$ a program counter, and $m$ a memory. If $l$ is a prefix of the program beginning at $pc$ and every instruction in $l$ is straight (one, addition, subtraction, multiplication, load, or store), then executing $|l|$ steps from $(pc,m)$ reaches program counter $pc+|l|$ with memory obtained by applying the effects of the instructions in $l$ successively to $m$.",
+ "hypotheses_covered": [
+  "l is a prefix of P.drop pc",
+  "Every instruction in l is straight"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

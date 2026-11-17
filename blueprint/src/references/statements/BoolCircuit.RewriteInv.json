@@ -1,0 +1,24 @@
+{
+ "lean_name": "BoolCircuit.RewriteInv",
+ "key": "40a8cbaaaea48814",
+ "kind": "structure",
+ "title": "Invariants of a rewritten circuit",
+ "statement": "For natural numbers $n,c$, a gate predicate $P$, an original gate list $G$, and a state $(H,m)$ consisting of rewritten gates and a vertex-index list, the rewrite invariant requires all of the following: $m$ has length $n+|G|$; each entry of $m$ at an index below $n+|G|$ is a valid vertex of $H$; $H$ is acyclic on $n$ inputs; and, for every Boolean assignment to those inputs, the value at each such mapped vertex equals the value at the corresponding vertex after evaluating $G$. It also requires that each mapped vertex's depth in $H$ is at most $c$ times the corresponding original depth, that $|H|$ is at most the sum over gates of their arities plus two, and that every gate in $H$ satisfies $P$.",
+ "hypotheses_covered": [
+  "Natural numbers $n,c$",
+  "A predicate $P$ on gates",
+  "An original gate list $G$",
+  "A rewrite state consisting of a gate list $H$ and natural-number list $m$",
+  "Index list length equals $n+|G|$",
+  "Mapped vertices are below $n+|H|$",
+  "Rewritten gates are acyclic on $n$ inputs",
+  "Value preservation for every Boolean input assignment and every original vertex index below $n+|G|$",
+  "Depth bound by $c$ times the original vertex depth at every such index",
+  "Rewritten gate count is at most the sum of original arities plus two per gate",
+  "Every rewritten gate satisfies $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

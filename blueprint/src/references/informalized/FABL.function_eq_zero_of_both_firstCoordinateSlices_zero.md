@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/F₂Polynomials/ExtremalBounds.lean :: FABL.function_eq_zero_of_both_firstCoordinateSlices_zero -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Vanishing from coordinate slices
+
+**Claim.** If both first-coordinate slices of a function on the n-dimensional Boolean cube are identically zero, then the function itself is identically zero.
+
+**Proof.** To show the two functions are equal, evaluate them at an arbitrary point $x$. Write $x$ as the concatenation of its first coordinate and its tail. If the first coordinate is $0$, the value of the original function is the value of its zero slice at the tail, hence is zero. Otherwise, since the coordinates lie in $\mathbb{F}_2$, the first coordinate is $1$; the value is then the value of the other zero slice, again zero. Thus the original function vanishes at every point.

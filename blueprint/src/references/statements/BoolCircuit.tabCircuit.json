@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.tabCircuit",
+ "key": "7017a179a85998ea",
+ "kind": "def",
+ "title": "Tabulated program circuit",
+ "statement": "Let $\\kappa$ be a finite type, let $m,w,n$ be natural numbers, let $F$ assign a Boolean-list function to each element of $\\kappa$, let $z$ be a Boolean list, and let $\\mathrm{prog}$ be a finite list of instructions, each labelled by an element of $\\kappa$ and carrying an ordered list of source bits. For natural numbers $o$ and $j$, form the directed acyclic circuit whose gates are the preamble for $z$ and the tabulation gates for $\\mathrm{prog}$, in that order. Its output vertex is the vertex at the base of instruction block $o$, shifted by $m$, the tabulation width, and $j$, if $o$ is a valid instruction index and $j<w$; otherwise its output vertex is $n$.",
+ "hypotheses_covered": [
+  "$\\kappa$ is finite",
+  "$m,w,n$ are natural numbers",
+  "$F$ maps each element of $\\kappa$ to a function from Boolean lists to Boolean lists",
+  "$z$ is a Boolean list",
+  "$\\mathrm{prog}$ is a finite list of instructions over $\\kappa$",
+  "$o,j$ are natural numbers"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet omits the definitions of the preamble, tabulation gates, tabulation width, and block base, so their construction cannot be stated more explicitly from the given ground truth.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

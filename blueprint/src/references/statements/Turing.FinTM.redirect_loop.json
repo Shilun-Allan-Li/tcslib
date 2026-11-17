@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.redirect_loop",
+ "key": "957ce4dec12eb03d",
+ "kind": "lemma",
+ "title": "Fixed point in the redirect loop",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit, and form the machine that redirects halting computations whose last output bit is not $b$ to a loop state. For any input $x$, any configuration $c$ of this redirected machine whose state is the loop state, and any $t \\in \\mathbb{N}$, running the machine for $t$ steps from $c$ returns $c$.",
+ "hypotheses_covered": [
+  "A finite-state Turing machine $M$ over the Boolean alphabet",
+  "A bit $b$",
+  "An input $x$",
+  "A configuration $c$ of the redirected machine",
+  "The state of $c$ is the loop state",
+  "A natural number $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state Turing machine over the Boolean alphabet and $b$ a bit, and\nconsider the halt-redirected machine of $M$ and $b$, which simulates $M$ silently while\nrecording the last bit $M$ has emitted, halts when $M$ halts with that bit equal to $b$,\nand otherwise enters a loop state $\\ell$. For every configuration $c$ of the\nhalt-redirected machine on an input $x$ whose control state is $\\ell$, and every\n$t \\in \\mathbb{N}$, running the halt-redirected machine for $t$ steps from $c$ returns\nexactly $c$."
+}

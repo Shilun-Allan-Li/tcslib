@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.wl_round",
+ "key": "639c1f87fe257f10",
+ "kind": "theorem",
+ "title": "One round of the window loop",
+ "statement": "Let $k,K$ be nonnegative integers, let $Q,T,P_t,P_s$ be types, let $M$ be a $k$-tape Turing machine on Boolean symbols, and let $R_t$ and $R_s$ be Turing machines on record symbols with respectively one and $K+1$ work tapes and state types $P_t$ and $P_s$. Choose states $t_e,t_y,t_n\\in P_t$ and $s_e,s_y,s_n\\in P_s$ with $t_y\\ne t_n$ and $s_y\\ne s_n$, and natural numbers $C_t,C_s$. Given a Boolean input word $x$, a window radius $s$, a configuration $c$ of $M$ on $x$, a tag $\\tau\\in T$, and a configuration $d$ of the loop machine on the encoded input whose state is the anchor state, suppose the test machine, started at state $t_e$ on the record tape selected from $d$, has a run of length at most $C_t(L+1)$ that avoids states $t_y,t_n$ at every earlier time, moves its head by at most $C_t(L+1)$ from the initial tape-$0$ head position, and ends in state $t_y$ if $c$ is halted and in state $t_n$ otherwise. Here $L$ is the length of the joined fields of the record of $(s,c,\\tau)$. Suppose also that the step machine, started from $d$ at state $s_e$, has a run of length at most $C_s(L+|x|+1)$ that avoids states $s_y,s_n$ at every earlier time and moves each work head by at most $C_s(L+1)$ from its initial position. If the next configuration $M(c)$ lies within radius $s$, this run ends in state $s_y$ with tape $0$ replaced on the record interval by the record of $M(c)$ and the updated tag; if it does not, the run ends in state $s_n$ with the configuration otherwise unchanged. Then the loop machine has a segment of length $t$ with $1\\le t\\le(C_t+C_s+3)(\\operatorname{recordLength}(k,|x|,s)+|x|+1)$, avoiding its stop states at all earlier times and keeping every work-head position within $(C_t+C_s+3)(\\operatorname{recordLength}(k,|x|,s)+1)$ of its initial position through time $t$. Its endpoint is the halted stop state if $c$ is halted; otherwise it is the anchor state with the updated record when $M(c)$ lies within the window, and the left-exit stop state when it does not.",
+ "hypotheses_covered": [
+  "$k,K$ are natural numbers and $Q,T,P_t,P_s$ are types",
+  "$M$ is a $k$-tape Boolean-symbol machine; $R_t,R_s$ have respectively one and $K+1$ record-symbol work tapes",
+  "$t_e,t_y,t_n$ and $s_e,s_y,s_n$ are states of the respective machines",
+  "$t_y\\ne t_n$ and $s_y\\ne s_n$",
+  "$C_t,C_s$ are natural numbers",
+  "$x$ is a Boolean input, $s$ is a natural window radius, $c$ is an $M$-configuration on $x$, and $\\tau\\in T$",
+  "$d$ is a loop-machine configuration on the encoded input in the anchor state",
+  "The test run exists with its stated length, earlier-state avoidance, head-displacement bound, and terminal verdict",
+  "The step run exists with its stated length, earlier-state avoidance, and displacement bound for every work head",
+  "The step endpoint is the patched next record and updated tag if the next configuration is in the window",
+  "The step endpoint is the failure state with the configuration unchanged if the next configuration is outside the window"
+ ],
+ "confidence": "low",
+ "caveat": "The formal hypotheses bound the step machine's work-head displacement from the positions in $d$, but do not explicitly require that its work tapes other than tape 0 are blank. The statement therefore describes only the specified endpoint behavior and does not add that extra condition.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timedCapture_run",
+ "key": "0280cfffb950a309",
+ "kind": "lemma",
+ "title": "Lockstep capture of a machine run",
+ "statement": "Let $M$ be a finite Boolean-alphabet Turing machine with $k$ work tapes, let $i$ be one of its work-tape indices, let $x$ be a finite Boolean input, and let $c$ be a configuration of $M$ on $x$. If $M$'s run from $c$ is not halted at any time $s<t$, then after $t$ steps the capture machine started from the embedding of $c$ has exactly the configuration obtained by embedding the configuration of $M$ after $t$ steps from $c$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$i$ is a work-tape index of $M$",
+  "$x$ is a finite Boolean string",
+  "$c$ is a configuration of $M$ on $x$",
+  "For every natural number $s<t$, the run from $c$ is not halted at time $s$",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the base machine remains live at every time strictly below $t$, then $t$\nsteps of the capture wrapper from an embedded configuration equal the\nembedding of $t$ steps of the base machine."
+}

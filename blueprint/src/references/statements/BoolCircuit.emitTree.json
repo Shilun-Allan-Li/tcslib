@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.emitTree",
+ "key": "cf19af3bf3e33cf4",
+ "kind": "def",
+ "title": "Recursive gate tree emission",
+ "statement": "For a natural number $n$, a gate kind $k$, a list $v$ of natural-number vertex indices, and a list $g$ of gates, define the emitted gate list and output vertex recursively. If $v$ is empty, append a gate of kind $k$ with no arguments to $g$ and return vertex $n+|g|$; if $v$ is a singleton, return $g$ and its sole vertex. Otherwise split $v$ into its first $\\lceil |v|/2\\rceil$ entries and the remaining entries, recursively emit each part in sequence, then append a gate of kind $k$ whose arguments are the two returned vertices with duplicates removed, and return vertex $n$ plus the length of the resulting gate list.",
+ "hypotheses_covered": [
+  "Input count $n$ is a natural number.",
+  "Gate kind $k$ is specified.",
+  "Input is a list of natural-number vertex indices.",
+  "Initial gates form a list of gates."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

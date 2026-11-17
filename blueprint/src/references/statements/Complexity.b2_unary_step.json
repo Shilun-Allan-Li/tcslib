@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.b2_unary_step",
+ "key": "17313e92990e64d7",
+ "kind": "lemma",
+ "title": "One-Step Unary Normalization",
+ "statement": "Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a binary input, and let $c$ be a configuration of $M$ on $x$. Reinterpreting the successor configuration after one step of the input-normalized machine from $c$ on the all-ones input of length $|x|$ gives the successor after one step of $M$ from the unary reinterpretation of $c$.",
+ "hypotheses_covered": [
+  "A finite deterministic machine over the binary alphabet",
+  "A binary input $x$",
+  "A configuration of the machine on $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic machine over the binary alphabet and $d$ a configuration on an input $x$. The unary reinterpretation of one step of the input-normalized variant of $M$ at $d$ equals one native step of $M$ at the unary reinterpretation of $d$, including the absorbing halted case."
+}

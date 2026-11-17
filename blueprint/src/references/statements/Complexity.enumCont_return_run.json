@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_return_run",
+ "key": "97263860670161e7",
+ "kind": "lemma",
+ "title": "Simulation Through Halt Redirection",
+ "statement": "Let $M$ and $H$ be deterministic machines with $k$ work tapes over Boolean symbols, let $e$ map states of $M$ into states of $H$, and choose a return state $r$ of $H$. Suppose that, on every state, input reading, and work-tape reading, the transition of $H$ from the embedded state is the action of $M$ with its successor state embedded when present and redirected to $r$ when absent, leaving all other action components unchanged. If $M$ is live at every time $j<t$ when run from a configuration $c_0$ on input $x$, then the run of $H$ for $t$ steps from the configuration obtained by embedding the state of $c_0$ (or using $r$ if it is halted) and preserving its other fields equals the configuration obtained by applying the same state correspondence to the time-$t$ configuration of $M$.",
+ "hypotheses_covered": [
+  "Machines $M$ and $H$ with $k$ work tapes over Boolean symbols",
+  "A state map $e$ and a return state $r$ of $H$",
+  "The stated transition correspondence for every source state and every input and work-tape reading",
+  "A configuration $c_0$ of $M$ on a Boolean input $x$",
+  "A natural number $t$",
+  "The source run is not halted at every time $j<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a host machine's transitions on embedded states are the halt-redirected\ntransitions of a source machine, and the source is live at every time before $t$\nwhen run from $c_0$. Then the host's $t$-step run from the redirected\nconfiguration of $c_0$ equals the redirected configuration of the source's\ntime-$t$ configuration; in particular at the first halt the host lands in the\nreturn state with the source's final writes and output."
+}

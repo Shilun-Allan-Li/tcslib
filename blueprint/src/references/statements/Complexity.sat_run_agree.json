@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.sat_run_agree",
+ "key": "49e3a9bb5019c9fe",
+ "kind": "lemma",
+ "title": "Agreement of Runs",
+ "statement": "Let $k$ be a natural number, $S$ a state type, $x$ a binary string, and $A$ and $B$ multi-tape Turing machines with $k$ work tapes, binary tape symbols, and states in $S$. For a configuration $c$ on input $x$ and a natural number $t$, suppose that for every $i<t$, machine $B$ takes the same one-step transition as $A$ from the configuration reached by $A$ after $i$ steps from $c$. Then the two machines reach the same configuration after $t$ steps from $c$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$S$ is a state type",
+  "$x$ is a binary string",
+  "$A$ and $B$ are multi-tape machines with $k$ work tapes, binary symbols, and states in $S$",
+  "$c$ is a configuration for input $x$",
+  "$t$ is a natural number",
+  "For every $i<t$, $B$ and $A$ take the same one-step transition from $A$'s configuration after $i$ steps from $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A$ and $B$ be multi-tape machines with the same tape count and state type,\n$c$ a configuration, and $t$ a time such that at every time $i < t$ the one-step\ntransitions of $B$ and $A$ agree on the configuration reached by $A$ after $i$\nsteps. Then the $t$-step runs of $B$ and $A$ from $c$ coincide. No eventual halt\nis assumed."
+}

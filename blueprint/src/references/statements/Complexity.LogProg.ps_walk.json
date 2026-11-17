@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.ps_walk",
+ "key": "b2b530dccd8a341a",
+ "kind": "theorem",
+ "title": "Bounded walk computation",
+ "statement": "Let $x$ be a finite bit string, let $B$ be a natural number, and let $\\sigma=(p,n,a,b,s,t,tmp,st,nx)$ be a nine-register state. Suppose $2|x|+2\\le B$, every register of $\\sigma$ is at most $B$, $s<n$, $t<n$, $st\\le n$, and $2n+2+2n^2\\le |x|$. Define a directed edge relation on the natural numbers by declaring $u$ adjacent to $v$ when the bit of $x$ at position $2n+2+2(un+v)$ is true, with out-of-range entries treated as false. Then the program started at label $w0$ in state $\\sigma$ terminates on every branch with all registers at most $B$, and has an accepting branch exactly when there is a walk from $s$ to $t$ of length at most $n-st$.",
+ "hypotheses_covered": [
+  "$2|x|+2\\le B$",
+  "$\\sigma$ is a nine-register state",
+  "Every register of $\\sigma$ is at most $B$",
+  "$s<n$",
+  "$t<n$",
+  "$st\\le n$",
+  "$2n+2+2n^2\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a finite bit string and let $B$ be a natural number with $2|x|+2\\le B$. Let\n$\\sigma$ be a nine-register configuration whose register values are all at most $B$.\nSuppose its source $s$ and target $t$ are both less than its vertex count $n$, its step\ncount $st$ is at most $n$, and $|x|\\ge 2n+2+2n^2$. Regard $x$ as encoding a directed\ngraph on vertices $0,\\ldots,n-1$, with an edge from $u$ to $v$ when the bit at position\n$2n+2+2(un+v)$ is $1$. Then the program started at label $w0$ with configuration\n$\\sigma$ terminates on every branch with all register values bounded by $B$, and has an\naccepting branch exactly when there is a walk from $s$ to $t$ of length at most $n-st$\nin this graph."
+}

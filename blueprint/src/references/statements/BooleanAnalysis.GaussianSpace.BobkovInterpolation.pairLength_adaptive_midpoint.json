@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_adaptive_midpoint",
+ "key": "0a1822c1e2f56e84",
+ "kind": "lemma",
+ "title": "Adaptive midpoint bound for average length",
+ "statement": "Let $m$ be a nonnegative integer, let $P:\\mathbb R\\to\\mathbb R$ be nonnegative on $[0,1]$, and suppose that whenever $a+b,a-b\\in[0,1]$, $P(a)\\le\\frac12\\bigl(\\sqrt{P(a+b)^2+b^2}+\\sqrt{P(a-b)^2+b^2}\\bigr)$. For real $a,b,t,c$ with $a+b,a-b\\in[0,1]$, $t\\in[0,1]$, and $c\\ge0$, and vectors $u,v\\in\\mathbb R^m$, the symmetric average length at $(t,c)$ is at most the average of its values at $(1,c+((1-t)b)^2)$ and $(2t-1,c+((1-t)b)^2)$.",
+ "hypotheses_covered": [
+  "m is a natural number",
+  "P is a real-valued profile nonnegative on [0,1]",
+  "P satisfies the stated two-point inequality whenever a+b and a-b lie in [0,1]",
+  "a,b,t,c are real numbers",
+  "u,v are vectors in ℝ^m",
+  "a+b and a-b lie in [0,1]",
+  "t lies in [0,1]",
+  "c is nonnegative"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a profile $P:\\mathbb R\\to\\mathbb R$, $a,b,t,c\\in\\mathbb R$, and $u,v\\in\\mathbb R^m$, define $L(t,c)=\\frac12\\bigl(\\sqrt{P(a+tb)^2+c+\\|u+tv\\|_2^2}+\\sqrt{P(a-tb)^2+c+\\|u-tv\\|_2^2}\\bigr)$. Assume $P\\ge0$ on $[0,1]$ and, whenever $z\\pm d\\in[0,1]$, $P(z)\\le\\bigl(\\sqrt{P(z+d)^2+d^2}+\\sqrt{P(z-d)^2+d^2}\\bigr)/2$. If $a\\pm b\\in[0,1]$, $0\\le t\\le1$, and $c\\ge0$, then $L(t,c)\\le\\bigl(L(1,c+((1-t)b)^2)+L(2t-1,c+((1-t)b)^2)\\bigr)/2$."
+}

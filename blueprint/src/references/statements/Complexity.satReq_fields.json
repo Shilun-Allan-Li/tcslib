@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satReq_fields",
+ "key": "011af1d136b65089",
+ "kind": "lemma",
+ "title": "Recovery of request fields",
+ "statement": "For every Boolean word $x$ and streaming seam state $s$ with fresh cursor $f$, consumed length $c$, and phase $q$, form the round request by pairing the encoded seam word of $s$ with $x$. Its fresh, consumed, and phase fields are respectively $1^f$, $1^c$, and $1^q$, and its unread input is $x$ with its first $c$ bits dropped.",
+ "hypotheses_covered": [
+  "A Boolean word $x$",
+  "A streaming seam state $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word and $s$ a seam state with fresh cursor $f$, consumed\nlength $c$, and phase $q$, and let $w_s$ be the encoded seam word of $s$. On the\ncanonical round request $\\mathrm{pair}(w_s, x)$, the fresh, consumed, phase, and\nunread-input projections return exactly $1^f$, $1^c$, $1^q$, and the word $x$ with\nits first $c$ bits dropped."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.ndAcceptsWithin_decider_of_universal",
+ "key": "d5b975702a253449",
+ "kind": "theorem",
+ "title": "Deterministic decision from a universal simulator",
+ "statement": "Let $c$ be an effective code for nondeterministic Boolean machines, and suppose there is a finite-state nondeterministic Boolean machine $U_N$ such that for every Boolean string $\\alpha$ there is a natural number $C$ for which, on every Boolean input $x$ and time bound $t$, every choice sequence of length exactly $C(t+1)$ makes $U_N$ halt on $\\langle\\langle\\mathrm{bits}(t),\\alpha\\rangle,x\\rangle$. Suppose also that $U_N$ has an accepting computation of exactly that length if and only if the machine decoded from $\\alpha$ has an accepting computation on $x$ using exactly $t$ choices. Then there is a finite-state deterministic Boolean machine $B_F$ such that, for each $\\alpha$, some natural number $C$ works for every $x$ and $t$: if the decoded machine accepts $x$ using exactly $t$ choices, $B_F$ computes output $[1]$ on the paired input at exactly $C2^{C(t+1)}$ steps; if it does not, $B_F$ computes output $[0]$ on that input at exactly the same time.",
+ "hypotheses_covered": [
+  "$c$ is an effective code for nondeterministic Boolean machines with two work tapes",
+  "There exists a finite-state nondeterministic Boolean machine $U_N$",
+  "For each $\\alpha$, a natural number $C$ works uniformly for all $x$ and $t$",
+  "Every choice sequence of length exactly $C(t+1)$ causes $U_N$ to halt on the nested paired input",
+  "$U_N$ accepts within exactly $C(t+1)$ choices if and only if the decoded machine accepts within exactly $t$ choices",
+  "There exists a finite-state deterministic Boolean machine $B_F$",
+  "For each $\\alpha$, a natural number $C$ works uniformly for all $x$ and $t$ in the conclusion",
+  "The deterministic machine computes $[1]$ when the decoded machine accepts and $[0]$ when it does not, each at exactly $C2^{C(t+1)}$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective code for a nondeterministic machine, and suppose there is a\nfinite nondeterministic Turing machine $U_N$ such that for every code word $\\alpha$\nthere is a natural number $C$ with the following property. For every binary input $x$\nand time bound $t$, $U_N$ halts on the encoding of $(t,\\alpha,x)$ within $C(t+1)$ steps,\nand it accepts that input within that many steps if and only if the machine decoded from\n$\\alpha$ accepts $x$ within $t$ steps. Then there is a finite deterministic Turing\nmachine $B_F$ such that for every $\\alpha$ there is a natural number $C$ for which, for\nevery $x$ and $t$, if the decoded machine accepts $x$ within $t$ steps, then $B_F$\ncomputes the one-symbol output $[1]$ on the encoding of $(t,\\alpha,x)$ within\n$C\\,2^{C(t+1)}$ steps; if it does not accept within $t$ steps, then $B_F$ computes $[0]$\non that encoded input within the same bound."
+}

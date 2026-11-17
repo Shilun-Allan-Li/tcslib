@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.level_k_inequality",
+ "key": "a400266020fb80ce",
+ "kind": "theorem",
+ "title": "Fourier weight bound for indicators",
+ "statement": "Let $n,k$ be natural numbers and let $f:\\{0,1\\}^n\\to\\mathbb R$ take only the values $0$ and $1$. Write $\\alpha=\\mathbb E[f]$, and assume $\\alpha>0$, $k>0$, and $k\\le2\\log(1/\\alpha)$. Then the Fourier weight on levels at most $k$ satisfies $\\sum_{|S|\\le k}\\widehat f(S)^2\\le\\left(\\frac{2e}{k}\\log(1/\\alpha)\\right)^k\\alpha^2$, with Fourier coefficients and expectation under the uniform measure.",
+ "hypotheses_covered": [
+  "$n$ and $k$ are natural numbers",
+  "$f$ is a real-valued function on the $n$-dimensional Boolean cube",
+  "$f(x)\\in\\{0,1\\}$ for every cube point $x$",
+  "$\\mathbb E[f]>0$",
+  "$k>0$",
+  "$k\\le2\\log(1/\\mathbb E[f])$ when written as $2\\log(1/\\alpha)$ with $\\alpha=\\mathbb E[f]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f:\\{0,1\\}^n\\to\\{0,1\\}$ have uniform mean $\\alpha>0$, and let $k$ be a positive integer with $k\\le2\\log(1/\\alpha)$. Then $\\sum_{|S|\\le k}\\widehat f(S)^2\\le((2e/k)\\log(1/\\alpha))^k\\alpha^2$."
+}

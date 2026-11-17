@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satDrop_parse",
+ "key": "e9a491dc4a999f07",
+ "kind": "lemma",
+ "title": "Parsing the Doubled Prefix",
+ "statement": "Let $u,v$ be Boolean words. For every pair of words $r,p$ such that $u=p\\mathbin{++}r$, start the suffix-extraction machine on the pair encoding of $u$ and $v$ in state $0$ at the clamped input offset $2|p|$, with a unary counter of length $|p|$ whose head is at $|p|$ and empty output. After $2|r|$ steps it is in state $0$ at the clamped offset $2|u|$, with a unary counter of length $|u|$ whose head is at $|u|$ and empty output.",
+ "hypotheses_covered": [
+  "Boolean words $u,v$",
+  "arbitrary words $r,p$",
+  "decomposition $u=p\\mathbin{++}r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $u$ and $v$ be binary words, with $u = p \\mathbin{+\\!\\!+} r$ split into a\nprefix $p$ and a suffix $r$, and consider the input\nthe pair encoding $\\mathrm{pair}(u,v)$ (every bit of $u$ doubled, then the separator $01$, then $v$). Started in its counting state at input offset $2|p|$, with a\nunary counter of length $|p|$ and counter head at $|p|$ and empty output, the\nsuffix extractor after exactly $2|r|$ steps is again in its counting state, at\ninput offset $2|u|$, with a unary counter of length $|u|$ and counter head at\n$|u|$; nothing is emitted."
+}

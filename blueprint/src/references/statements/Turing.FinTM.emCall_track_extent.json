@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emCall_track_extent",
+ "key": "30dbc12ded138f93",
+ "kind": "lemma",
+ "title": "Bounds on the visited interval",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $x$ be a Boolean input word, let $t\\in\\mathbb{N}$, and let $i$ be a work tape of $M$. The leftmost head position visited through time $t$ is at most zero, zero is at most the rightmost visited position, the head position at time $t$ lies between these bounds, and the bounds satisfy $-t\\le \\mathrm{leftmost}\\le 0\\le \\mathrm{rightmost}\\le t$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x$ is a Boolean list",
+  "$t$ is a natural number",
+  "$i$ is a work tape of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine $M$, input $x$, time $t$, and work tape $i$: the leftmost visited\nposition is at most zero, the rightmost is at least zero, the current head at time $t$\nlies between them, and they lie within $[-t, t]$, so the visited interval has width at\nmost $2t + 1$."
+}

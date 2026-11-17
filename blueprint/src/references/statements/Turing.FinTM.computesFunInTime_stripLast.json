@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_stripLast",
+ "key": "029449207f9c330b",
+ "kind": "theorem",
+ "title": "Quadratic-time last-marker stripping",
+ "statement": "There exist a finite Turing machine $M$ over the Boolean alphabet and a natural number $c$ such that, on every Boolean input $x$ of length $n$, $M$ halts within $c(n+1)^2$ steps. If $x$ parses into a pair $(a,v)$ by reading aligned pairs $00$ and $11$ as bits of $a$ until the first aligned $01$, with the remaining suffix as $v$, and $v$ has a last occurrence of $1$, then $M$ outputs the pair encoding of $a$ and the prefix of $v$ strictly before that last $1$. In all other cases, it outputs the empty word.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite Turing machine $M$ and a constant $c$ such that $M$\ncomputes, within $c\\,(n+1)^{2}$ steps on inputs of length $n$, the following\nfunction: a word encoding the pair $(a,v)$ under the self-delimiting pair\ncode, where $v$ contains a $1$ and $u$ is the prefix of $v$ strictly before\nits last $1$, is sent to the pair encoding of $(a,u)$; a word whose second\ncomponent contains no $1$, or any malformed word, is sent to the empty word."
+}

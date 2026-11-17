@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.Meyer.rewC_run",
+ "key": "df67ccd35da564b8",
+ "kind": "theorem",
+ "title": "Rewinding the word tape",
+ "statement": "Let $M$ be a finite Turing machine with Boolean symbols, let $y$ and $w$ be Boolean words, let $P$ be an input-head position among the $|y|+2$ positions, and let $b$ be a Boolean vector with one coordinate for each selector bit of $M$. Let $\tau_0,\tau_2:\bbr\to\text{Option}(\text{Bool})$ be tape contents and let $z_0,z_2\\\\in\\bbr$. For every natural number $j\\le |w|$, after $j+1$ steps from the configuration in state $\\mathrm{rewC}$ with auxiliary tapes containing $\\tau_0$, the word $w$ stored from cell zero, and $\\tau_2$, and head positions $z_0,j-1,z_2$, the machine is in state $\\mathrm{rewO}$ with the same tape contents, input-head position $P$, first and third auxiliary head positions $z_0$ and $z_2-1$, and middle auxiliary head position $0$; the output remains empty.",
+ "hypotheses_covered": [
+  "A finite Turing machine M over Boolean symbols",
+  "A Boolean input word y",
+  "An input-head position P among the |y|+2 positions",
+  "A Boolean vector b with one coordinate for each selector bit of M",
+  "A Boolean word w",
+  "Integer-indexed tape contents τ₀ and τ₂",
+  "Integer head positions z₀ and z₂",
+  "A natural number j satisfying j ≤ |w|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.Contract.Traj.trans",
+ "key": "d114ea1080887fa4",
+ "kind": "theorem",
+ "title": "Trajectory under contract composition",
+ "statement": "Let $M$ be a machine, let $C_1$ be a contract from entry state $e_1$ to the sole exit state $e_2$, and let $C_2$ be a contract from $e_2$ to an exit set $X$. Suppose a map sends each datum $i$ for $C_1$ to a datum for $C_2$, every admissible endpoint of $C_1$ satisfies the corresponding precondition of $C_2$, and the run of $M$ from any admissible $C_1$ start has state outside $X$ at every time strictly before $C_1$'s assigned time. If $R_1$ holds along every admissible $C_1$ trajectory and $R_2$ holds along every admissible $C_2$ trajectory, then at every time up to and including the composed contract's assigned time, the work-tape head-position vector satisfies either $R_1(i,d,p)$ or $R_2$ for the linked datum and the endpoint of $C_1$, at that same vector $p$.",
+ "hypotheses_covered": [
+  "$C_1$ is a contract from $e_1$ to the singleton exit $e_2$",
+  "$C_2$ is a contract from $e_2$ to $X$",
+  "A link maps $C_1$ data to $C_2$ data",
+  "Every admissible $C_1$ endpoint satisfies the linked $C_2$ precondition",
+  "Before the assigned $C_1$ time, the run's state is outside $X$",
+  "$R_1$ holds along admissible $C_1$ trajectories",
+  "$R_2$ holds along admissible $C_2$ trajectories"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C_1$ and $C_2$ be contracts for the same machine $M$, with $C_1$ running from entry\nstate $e_1$ to the sole exit state $e_2$, and $C_2$ running from $e_2$ to an exit set\n$X$. Suppose a link maps each datum for $C_1$ to a datum for $C_2$, the linked $C_2$\nprecondition holds at the endpoint of every admissible $C_1$ run, and no run of $C_1$\nreaches a state in $X$ before its contract time. If $C_1$ and $C_2$ satisfy trajectory\nproperties $R_1$ and $R_2$, respectively, then the composed contract satisfies the\ndisjunction of $R_1$ along the first phase and $R_2$ along the second phase, evaluated\nat the linked datum and the first contract's endpoint."
+}

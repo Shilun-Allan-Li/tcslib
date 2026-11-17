@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.rt_find_skip_phase",
+ "key": "48f8693abeb5373b",
+ "kind": "theorem",
+ "title": "Host behavior during a skip phase",
+ "statement": "Let $m>0$, let $\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$, choose $a_0\\in A$ and an acceptance predicate $\\mathrm{acc}:A\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and let $j<m$ and $a\\in A$. Suppose $w$ is a word over $\\Gamma$ and a two-work-tape configuration $d$ is in the skip machine's run state, with tape 0 containing the encoding of $w$ at every offset from $0$ through $|w|$. Let $q$ be a combined phase and control state such that the host's redirect from skip phase $j$ in its completed state leads to $q$. For every $u\\le |w|+1$, the host started with $d$ in skip phase $j$ agrees with the standalone skip machine for $u$ steps, with its control state tagged by phase $j$. After one further step, its state is $q$ and its tape 0 head is at its initial position plus $|w|+1$; all other configuration data agree with $d$.",
+ "hypotheses_covered": [
+  "$m>0$",
+  "$\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$",
+  "$a_0\\in A$",
+  "$\\mathrm{acc}:A\\to\\mathrm{Bool}$",
+  "$j<m$",
+  "$a\\in A$",
+  "$w$ is a word over $\\Gamma$",
+  "$d$ is a two-work-tape configuration on input $x$",
+  "$d$ is in the skip machine's run state",
+  "Tape 0 matches the word encoding at offsets from $0$ through $|w|$",
+  "The redirect from the completed skip state in phase $j$ yields $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

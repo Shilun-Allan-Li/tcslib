@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integral_indicator_gaussian_affine",
+ "key": "47f1f11fff15e85a",
+ "kind": "lemma",
+ "title": "Affine Gaussian Indicator Density Formula",
+ "statement": "Let $A\\subseteq\\mathbb R$ be measurable, and let $c,s\\in\\mathbb R$ with $s\\ne0$. Then\n\\[\n\\int_{\\mathbb R}\\mathbf 1_A(c+sy)\\,d\\gamma(y)=\\int_{\\mathbb R} q_{c,s^2}(z)\\mathbf 1_A(z)\\,dz,\n\\]\nwhere $q_{c,s^2}(z)$ is the Gaussian density with mean $c$ and variance $s^2$, and $\\gamma$ is the standard Gaussian probability measure.",
+ "hypotheses_covered": [
+  "$A$ is measurable",
+  "$c,s\\in\\mathbb R$",
+  "$s\\ne0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A\\subseteq\\mathbb R$ be measurable, $c,s\\in\\mathbb R$, and $s\\ne0$. For $Z\\sim N(0,1)$ and the Gaussian density $p_{s^2}(c,z)$ with mean $c$ and variance $s^2$, $\\mathbb E1_A(c+sZ)=\\int_{\\mathbb R}p_{s^2}(c,z)1_A(z)\\,dz$."
+}

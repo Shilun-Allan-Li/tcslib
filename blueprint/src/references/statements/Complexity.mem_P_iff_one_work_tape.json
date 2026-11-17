@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.mem_P_iff_one_work_tape",
+ "key": "bd96d3fb7b7a1405",
+ "kind": "theorem",
+ "title": "Polynomial time with one work tape",
+ "statement": "A language $L$ over the binary alphabet belongs to $\\mathsf{P}$ if and only if there are a finite Turing machine $M$ with exactly one work tape and natural numbers $C,d$ such that $M$ decides $L$ on every input of length $n$ within $C(n+1)^d$ steps.",
+ "hypotheses_covered": [
+  "$L$ is a language over the binary alphabet"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A language $L$ over the binary alphabet belongs to $\\mathsf{P}$ if and only if\nthere exist a deterministic finite Turing machine $M$ over $\\{0,1\\}$ and\nnatural numbers $C$ and $d$ such that $M$ has exactly one work tape and $M$\ndecides $L$ within $C \\cdot (n+1)^d$ steps on every input of length $n$. Thus\nrestricting to a single work tape does not change the class $\\mathsf{P}$: the\nquadratic overhead of tape reduction preserves polynomial time bounds."
+}

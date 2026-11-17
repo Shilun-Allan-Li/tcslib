@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Loop.lean :: Turing.FinTM.loopHost_contracts -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Loop Host Configuration Contracts
+
+**Claim.** Under the fuel-machine, invariant, initial-seam, and round-execution assumptions, there is a uniform constant bounding startup and round times such that the loop host reaches a family of configurations with empty output through the prescribed number of iterations, terminates with the required final output, and each iteration either produces the specified accepting output or advances to the next configuration.
+
+**Proof.** Fix an input $x$. The fuel preparation lemma runs $F$ to obtain the binary representation of $R(|x|)$ and a ready host configuration, within its stated time bound. Choose a time at which $B$ first reaches the initial seam; the startup lemma then converts that run and the prepared fuel into the first candidate configuration. Define the orbit by iterating the update $s\mapsto g(x,s)$, and define the counter words by iterating the decrement operation on the binary fuel. The invariant holds along this orbit by induction. The decrement iteration preserves word length, so every counter word has length at most $T(|x|)$; its value after $i$ decrements is $R(|x|)-i$. Consequently, the decrement succeeds exactly for $i<R(|x|)$.
+
+For each index up to $R(|x|)$, apply the round hypothesis to the corresponding orbit state, then use the host-round lemma to realize that computation in the loop host. Its bound, together with the counter-width estimate, gives a uniform per-segment time bound. Choose one such time for each index. The resulting local contract says that an accepting candidate halts with the required output; a rejecting candidate before the last index reaches the next candidate; and a rejecting final candidate halts with the required terminal output. Define the configuration family to equal the candidate configurations through index $R(|x|)$ and the chosen terminal configuration afterward. Concatenate the fuel-preparation and startup runs using the run-addition law. The candidates have empty output by construction, the terminal contract gives the required final state and output, and the chosen local times establish every claimed iteration behavior. The explicit bounds on preparation, startup, and each segment are absorbed into the constant supplied by the proof.
+
+**Key facts.** `Turing.FinTM.loopDebit_iterate_length`, `Turing.FinTM.loopDebit_iterate_value`, `Turing.FinTM.loopDebit_success`, `Turing.FinTM.loopHost_prepare`, `Turing.FinTM.loopHost_round`, `Turing.FinTM.loop_fuel_width`, `Turing.FinTM.loop_orbit_inv`, `Turing.FinTM.loopHost_start`, `Turing.MultiTapeTM.runFrom_add`.

@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integral_averagedGaussianIndicator",
+ "key": "fd69948c7d805a14",
+ "kind": "lemma",
+ "title": "Gaussian mean preservation",
+ "statement": "Let $n\\ge0$, let $A\\subseteq\\mathbb R^n$ be measurable, and let $\\theta\\in\\mathbb R$. For $x\\in\\mathbb R^n$, define\n\\[\nu_\\theta(x)=\\int_{\\mathbb R^n}1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y),\n\\]\nwhere $\\gamma_n$ is standard Gaussian measure. Then\n\\[\n\\int_{\\mathbb R^n}u_\\theta(x)\\,d\\gamma_n(x)=\\gamma_n(A).\n\\]",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A\\subseteq\\mathbb R^n$ is measurable",
+  "$\\theta\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For $A\\subseteq\\mathbb R^n$ and $\\theta\\in\\mathbb R$, put $u_\\theta(x)=\\int1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$. For measurable $A$ and every real $\\theta$, $\\int u_\\theta\\,d\\gamma_n=\\gamma_n(A)$."
+}

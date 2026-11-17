@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.influence_eq_expect_derivative_sq",
+ "key": "c232e03f2b69d4d6",
+ "kind": "lemma",
+ "title": "Influence is the derivative second moment",
+ "statement": "For every dimension $n\\ge0$, real-valued function $f$ on $\\{0,1\\}^n$, and coordinate $i\\in[n]$, the influence of $i$ on $f$ equals the uniform expectation of the squared discrete derivative: $\\mathrm{Inf}_i[f]=\\mathbb E[(D_i f)^2]$, where $D_i f(x)=\\tfrac12(f(x_{i\\leftarrow0})-f(x_{i\\leftarrow1}))$.",
+ "hypotheses_covered": [
+  "A natural dimension $n$",
+  "A real-valued function on the $n$-cube",
+  "A coordinate $i\\in[n]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. For a real cube function $h$, write $D_i h(x)=\\tfrac12(h(x_{i\\leftarrow0})-h(x_{i\\leftarrow1}))$, where $x_{i\\leftarrow b}$ replaces bit $i$ by $b$. Set $I_i(h)=\\tfrac14\\mathbb E[(h(x)-h(x^{\\{i\\}}))^2]$ and $I(h)=\\sum_i I_i(h)$, where $x^{\\{i\\}}$ flips bit $i$. For every real cube function $h$ and $i\\in[n]$, $I_i(h)=\\mathbb E[(D_i h)^2]$."
+}

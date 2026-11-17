@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.setupCfg_budget_back",
+ "key": "9f9144478cb0f655",
+ "kind": "lemma",
+ "title": "Rewind to the budget origin",
+ "statement": "Let $W$ be a finite Turing machine over Boolean symbols, let $a,j\\in\\mathbb{N}$, and let $x$ be a finite word over the schedule alphabet determined by $W$ and $a$. For any base configuration on $x$, input-head position, integers $u,g$, Boolean word $w$, and unary-counter and guide tapes, running the length-only schedule for $j+1$ steps from the configuration in budget-back phase with budget head at cell $j$ and captured clock tape for $w$ yields the configuration in append phase with counter $0$, budget head at cell $1$, the same base data, input head, unary tape and head, guide tape and head, and captured clock tape.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine W",
+  "natural parameter a",
+  "schedule input x and base configuration",
+  "input-head position p",
+  "integers u and g",
+  "Boolean word w",
+  "unary and guide tapes",
+  "natural budget-head coordinate j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\in \\bbn$: from a setup configuration in the budget-back phase with budget\nhead at cell $j$ over the captured clock tape of a bit word $w$, exactly $j+1$ steps\nreach the sentinel at the origin and move right once, entering the first append phase\nwith budget head at cell $1$; all tapes and all other heads are unchanged."
+}

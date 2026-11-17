@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.rt_richWindow_run",
+ "key": "e75d87a4c2a5ab5f",
+ "kind": "theorem",
+ "title": "Constructing a rich window",
+ "statement": "Let $Q,T$ be types with decidable equality, let $k$ be a natural number, and choose work-tape indices $\\mathrm{src},\\mathrm{dst}$ and an embedding $\\iota:\\{0,1,2\\}\\hookrightarrow\\{0,\\ldots,k-1\\}$, with neither chosen index in the image of $\\iota$. Let $\\mathrm{ws}$ be a Boolean word and $s$ a natural number whose value is the binary value of $\\mathrm{ws}$ read least-significant bit first. Suppose a configuration $d$ starts in the copy phase, tape $\\mathrm{src}$ contains the buffered word $\\mathrm{ws}$ at offsets $-1$ through $|\\mathrm{ws}|$ (encoded as digit symbols), and all tapes indexed by $\\iota$ are blank. Then there is a time $t\\le 26(s+|\\mathrm{ws}|)+48$ at which the machine reaches its final phase for the first time. At that time, tape $\\mathrm{dst}$ contains $s$ zeros, then a one, then $s$ zeros, each encoded as a cell symbol with blank content, on the $2s+1$ cells beginning at its original head position; all other cells and configuration data are unchanged. Up to time $t$, every work-tape head stays within distance $2s+|\\mathrm{ws}|+3$ of its initial position.",
+ "hypotheses_covered": [
+  "types $Q,T$ have decidable equality",
+  "natural number $k$",
+  "indices $\\mathrm{src},\\mathrm{dst}$ and embedding of three work tapes into $k$ tapes",
+  "$\\mathrm{src}$ is outside the embedding's image",
+  "$\\mathrm{dst}$ is outside the embedding's image",
+  "Boolean word $\\mathrm{ws}$ and natural number $s$",
+  "binary value of $\\mathrm{ws}$ equals $s$",
+  "initial configuration has the stated machine state and symbol alphabet",
+  "source tape agrees with the encoded buffered word at offsets $-1$ through $|\\mathrm{ws}|$",
+  "all three embedded tapes are blank at every cell"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

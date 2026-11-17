@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.child_depth_le1_has_signed_dnf",
- "key": "12d31ea4e681bb12",
+ "key": "8309bbc576d3b2b8",
  "kind": "lemma",
  "title": "Signed width-$l$ DNF for a depth-$\\le 1$ gate over subcircuits",
  "statement": "Fix natural numbers $m,n,l$. Let $c_j$ be a Boolean circuit whose $m$ inputs are indexed by $\\mathrm{Fin}\\,m$ and whose depth is at most $1$, and let $\\mathrm{gates}$ assign to each index $i \\in \\mathrm{Fin}\\,m$ a Boolean function $\\mathrm{gates}_i \\colon (\\mathrm{Fin}\\,n \\to \\bbf_2) \\to \\bbf_2$. Suppose that every $\\mathrm{gates}_i$ is computed by some DNF over $n$ variables of width at most $l$, and also by some CNF over $n$ variables of width at most $l$. Then there exist a DNF $\\varphi$ over $n$ variables of width at most $l$ and a sign bit $s \\in \\mathrm{Bool}$ such that, for every assignment $x \\colon \\mathrm{Fin}\\,n \\to \\bbf_2$, the value $\\varphi$ takes at $x$ when $s = \\mathrm{true}$, and its negation when $s = \\mathrm{false}$, equals the value of $c_j$ under the assignment $i \\mapsto \\mathrm{gates}_i(x)$; moreover, each term of $\\varphi$ contains no repeated literal, and no two of its literals share a variable.",

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.cont_core_run",
+ "key": "d570c422059c72d0",
+ "kind": "lemma",
+ "title": "Embedded Core Run Correspondence",
+ "statement": "Let $N$ be a nondeterministic Turing machine over the binary alphabet, let $y$ be a finite Boolean input word, let $c$ be a configuration of the deterministic simulation core for $N$ on $y$, and let $t$ be a natural number. Running the pair-loader machine for $t$ steps from the configuration obtained by embedding the core state into the pair-loader state space gives exactly the embedded configuration reached by running the core for $t$ steps from $c$.",
+ "hypotheses_covered": [
+  "$N$ is a nondeterministic Turing machine over the binary alphabet",
+  "$y$ is a finite Boolean word",
+  "$c$ is a core configuration on input $y$",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine over the binary alphabet and let $d$ be any configuration of the simulation core of $N$. For every step count $t$, running the pair-loader machine of $N$ for $t$ steps from the state-renamed copy of $d$ yields exactly the state-renamed copy of the $t$-step run of the simulation core from $d$."
+}

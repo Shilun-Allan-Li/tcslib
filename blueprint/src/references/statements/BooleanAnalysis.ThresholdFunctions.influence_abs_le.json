@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.influence_abs_le",
+ "key": "2f9f4c5100e214fd",
+ "kind": "lemma",
+ "title": "Absolute values decrease coordinate influence",
+ "statement": "For every dimension $n\\ge0$, real-valued function $h$ on $\\{0,1\\}^n$, and coordinate $i\\in[n]$, the influence of $i$ on the pointwise absolute value $|h|$ is at most its influence on $h$: $\\mathrm{Inf}_i[|h|]\\le \\mathrm{Inf}_i[h]$.",
+ "hypotheses_covered": [
+  "A natural dimension $n$",
+  "A real-valued function on the $n$-cube",
+  "A coordinate $i\\in[n]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. Write $x^{\\{i\\}}$ for $x$ with bit $i$ flipped, $I_i(h)=\\mathbb E[(h(x)-h(x^{\\{i\\}}))^2]/4$, and $I(h)=\\sum_i I_i(h)$. For every real function $h$ on the cube and coordinate $i\\in[n]$, $I_i(|h|)\\le I_i(h)$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_log_apply",
+ "key": "8c2460a475d808b9",
+ "kind": "lemma",
+ "title": "Appending a logged step to the history",
+ "statement": "Let $c$ be a configuration of a $k$-work-tape Boolean machine on input $x$, let $h$ be a finite list of history entries, and let $a$ be an action for that machine. Applying the corresponding logged action to the configuration encoding $c$ and $h$ gives the encoding of the configuration obtained by applying $a$ to $c$, with the history extended by one entry consisting of the symbols scanned before the step and the work-head movements prescribed by $a$.",
+ "hypotheses_covered": [
+  "Natural number $k$ and state set $S$",
+  "Boolean input word $x$",
+  "Configuration $c$ of a $k$-work-tape Boolean machine",
+  "Finite history list $h$ of entries for $k$ work tapes",
+  "Action $a$ of that machine"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any configuration $c$ with history $h$ and any action $a$ of the source\nmachine: applying the logged version of $a$ to the logged configuration of $c$\nwith history $h$ yields the logged configuration of $a$ applied to $c$, with\nhistory $h$ extended by the single entry recording the overwritten symbols and\nhead moves of $a$. This includes halting and output-emitting actions."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensityDerivative",
+ "key": "c9640058eacb2ea7",
+ "kind": "lemma",
+ "title": "Derivative of the integrated density derivative",
+ "statement": "Let $I$ be a finite set, let $v>0$, and let $f\\colon\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\le1$ for every $z$. The function $m\\mapsto\\int_{\\mathbb R^I}f(z)A_v(m,z)\\,dz$, where $A_v$ is the mean derivative of the product Gaussian density of variance $v$, is Fréchet differentiable at every $c\\in\\mathbb R^I$, with derivative $h\\mapsto\\int_{\\mathbb R^I}f(z)T_v(c,z)[h,\\cdot]$; here $T_v$ is the Hessian of the product density, and the displayed derivative is the linear map obtained by integrating the bilinear form in its second argument.",
+ "hypotheses_covered": [
+  "Finite index set $I$",
+  "Measurable $f\\colon\\mathbb R^I\\to\\mathbb R$",
+  "Pointwise bound $|f(z)|\\le1$",
+  "Variance parameter $v\\ge0$ with $v\\ne0$",
+  "Evaluation point $c\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Put $G_v(c,z)=\\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\\sum_i h_i k_i/v)$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$, then $m\\mapsto\\int f(z)A_v(m,z)\\,dz$ is differentiable at every $c$, with derivative $\\int f(z)T_v(c,z)\\,dz$."
+}

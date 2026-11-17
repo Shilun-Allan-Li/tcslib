@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.prefixTM_copy",
+ "key": "f2da6216f42e3d7a",
+ "kind": "lemma",
+ "title": "Emission phase of the prefixing machine",
+ "statement": "Let $w$ and $x$ be binary strings. For every $i\\in\\mathbb{N}$ with $i\\le |w|$, after $i$ steps of the prefixing machine on input $x$, it is in state $i$, its input head remains at position $1$, and its output is the prefix of $w$ of length $i$.",
+ "hypotheses_covered": [
+  "$w$ is a binary string",
+  "$x$ is a binary string",
+  "$i\\in\\mathbb{N}$",
+  "$i\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w = w_0 \\cdots w_{m-1}$ and $x = x_1 \\cdots x_n$ be binary strings, and let\n$P_w$ be the machine with no work tapes and states $\\{0, \\ldots, m\\}$ which emits\n$w_i$ and advances to state $i+1$ in each state $i < m$, and in state $m$ emits\nthe scanned input bit and moves its input head right, halting at a blank. For\nevery $i \\le n$, running $P_w$ on input $x$ for $i$ steps from the configuration\nin state $m$ with the input head on the first input cell and output $w$ yields\nthe configuration in state $m$ with the input head on cell $i+1$ and output\n$w\\,x_1 \\cdots x_i$."
+}

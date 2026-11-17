@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.snap_block",
+ "key": "e5d403414a13f24b",
+ "kind": "theorem",
+ "title": "Correctness of a snapshot block",
+ "statement": "Let $M$ be a finite binary Turing machine with $k$ work tapes, let $\\ell$ be a finite list of bit sources, and let $T,t\\in\\mathbb{N}$ with $t\\le T$. For every input word $x$ and list of Boolean blocks such that, at each index $i$ below the snapshot-block index for time $t$, block $i$ equals the configuration expansion specified by $\\ell$ on the source values from $x$, evaluating the padded snapshot sources for time $t$ on $x$ and those blocks and applying the configuration update for a snapshot gives exactly the snapshot expansion of $M$ on the source values from $x$ at time $t$.",
+ "hypotheses_covered": [
+  "$M$ is a finite binary Turing machine",
+  "$\\ell$ is a list of bit sources",
+  "$T,t\\in\\mathbb{N}$ and $t\\le T$",
+  "For every $i$ below the snapshot-block index at time $t$, block $i$ equals the specified configuration expansion",
+  "$x$ is an input word",
+  "blocks is a list of Boolean blocks"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on several upstream encodings whose informal descriptions are stubs; the prose describes their roles without reproducing their detailed bit layouts.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

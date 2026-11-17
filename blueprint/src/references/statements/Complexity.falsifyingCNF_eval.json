@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.falsifyingCNF_eval",
+ "key": "5d1ec9898ece6ce6",
+ "kind": "theorem",
+ "title": "Truth-table CNF evaluation",
+ "statement": "Let $\\ell\\in\\mathbb{N}$, let $f:\\{0,1\\}^{\\ell}\\to\\{0,1\\}$, and let $a:\\mathbb{N}\\to\\{0,1\\}$ be an assignment. The truth-table CNF of $f$ evaluates under $a$ to $f(a(0),\\ldots,a(\\ell-1))$.",
+ "hypotheses_covered": [
+  "Natural number $\\ell$",
+  "Boolean function $f:\\{0,1\\}^{\\ell}\\to\\{0,1\\}$",
+  "Assignment $a:\\mathbb{N}\\to\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\ell \\in \\mathbb{N}$, let $f : \\{0,1\\}^\\ell \\to \\{0,1\\}$, and let $\\varphi_f$ be\nthe CNF formula that is the conjunction, over all $v \\in \\{0,1\\}^\\ell$ with\n$f(v) = 0$, of the clause $\\bigvee_{i<\\ell} x_i^{\\neg v_i}$ whose $i$-th literal is\nsatisfied by an assignment $a$ exactly when $a(i) \\ne v_i$. Then for every assignment\n$a : \\mathbb{N} \\to \\{0,1\\}$, the formula $\\varphi_f$ evaluates under $a$ to\n$f(a(0), a(1), \\dots, a(\\ell-1))$."
+}

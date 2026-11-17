@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.decD_run",
+ "key": "888630bbc5fd251e",
+ "kind": "lemma",
+ "title": "Unary decrementing run invariant",
+ "statement": "Let $P$ be a register program with oracle $\text{oracle} : \text{decider indices}\times\text{Boolean words}\to\text{Boolean answers}$, let $r$ be a register, and let $dD,dL,dE,dB,\text{next}$ be states. Assume that for every input symbol and tuple of work-tape symbols, the transition from $dD$ is the decrement action determined by the symbol read on register $r$, the transition from $dL$ is the leftward-decrement action determined by that symbol, the transition from $dE$ is the clearing action, and the transition from $dB$ is the increment action determined by that symbol. Assume there are no oracle calls at $dD,dL,dE,$ or $dB$. For every initial configuration $c$, Boolean words $w,\text{pre}$ with $w$ canonical (every nonempty canonical word ends in $1$), there are a time $T$ and a head position $p$ such that $-1\\\\le p < |\\text{pre} \\mathbin{+\u0010} \\mathrm{decW}(w)|$ and the run from state $dD$, with register $r$ storing the word $\text{pre}\\mathbin{+\u0010}w$ and its head at $|\text{pre}|$, reaches state $dB$ with register $r$ storing $\text{pre}\\mathbin{+\u0010}\\mathrm{decW}(w)$ and its head at $p$. At every time $t<T$, the run is in one of the states $dD,dL,dE$, and the head position $q$ satisfies $|\text{pre}|\\le q\\le|\text{pre}\\mathbin{+\u0010}w|$.",
+ "hypotheses_covered": [
+  "The transition from $dD$ equals the specified decrement action for every input and work-symbol tuple.",
+  "The transition from $dL$ equals the specified action for every input and work-symbol tuple.",
+  "The transition from $dE$ equals the specified clearing action for every input and work-symbol tuple.",
+  "The transition from $dB$ equals the specified increment action for every input and work-symbol tuple.",
+  "There are no calls at $dD,dL,dE,dB$.",
+  "The initial configuration $c$ is arbitrary.",
+  "The words $w$ and $\\text{pre}$ are arbitrary Boolean words.",
+  "$w$ is canonical."
+ ],
+ "confidence": "low",
+ "caveat": "The payload omits the definitions of the four action constructions, so their operational details cannot be stated more precisely from the supplied ground truth.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

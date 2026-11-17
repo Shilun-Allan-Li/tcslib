@@ -1,16 +1,16 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_cond_zVariable_eq_cond_inter",
- "key": "24cd7b84463f7b99",
+ "key": "13ef1e6866b0c8ff",
  "kind": "theorem",
- "title": "Iterated conditioning collapses to the joint event",
- "statement": "Fix an input length $n \\ge 1$, a deterministic disjointness protocol $p$ on inputs of length $n$, and an achievable value $z$ of the summary variable $Z = (M, T, X_{<T}, Y_{>T})$. Let $D$ denote the hard distribution conditioned on the event that the two generated input sets are disjoint, and write $Y_T$ for Bob's bit at the special coordinate. Then conditioning $D$ first on the event $\\{Y_T = \\mathrm{false}\\}$ and then on the fiber $\\{Z = z\\}$ produces exactly the same measure as conditioning $D$ in a single step on the intersection $\\{Y_T = \\mathrm{false}\\} \\cap \\{Z = z\\}$.",
+ "title": "Iterated conditioning on the special-bit event and fiber",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on inputs of length $n$, and let $z$ be an achievable value of its summary $Z=(M,T,X_{<T},Y_{>T})$. The disjoint-conditioned hard-distribution measure, first further conditioned on Bob's special bit being false and then conditioned on $Z=z$, equals the disjoint-conditioned hard-distribution measure conditioned in one step on the intersection of those two events.",
  "hypotheses_covered": [
-  "input length n ≥ 1 (n : ℕ+)",
-  "a deterministic disjointness protocol p",
-  "z an achievable value of the Z variable"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic length-$n$ disjointness protocol",
+  "$z$ is an achievable summary value"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Conditioning first on $Y_{T}=false$ under $D$, then on a $Z$ value, is the same as conditioning under $D$ on the intersection of those events."
+ "replaced": "Fix an input length $n \\ge 1$, a deterministic disjointness protocol $p$ on inputs of\nlength $n$, and an achievable value $z$ of the summary variable $Z = (M, T, X_{<T},\nY_{>T})$. Let $D$ denote the hard distribution conditioned on the event that the two\ngenerated input sets are disjoint, and write $Y_T$ for Bob's bit at the special\ncoordinate. Then conditioning $D$ first on the event $\\{Y_T = \\mathrm{false}\\}$ and then\non the fiber $\\{Z = z\\}$ produces exactly the same measure as conditioning $D$ in a\nsingle step on the intersection $\\{Y_T = \\mathrm{false}\\} \\cap \\{Z = z\\}$."
 }

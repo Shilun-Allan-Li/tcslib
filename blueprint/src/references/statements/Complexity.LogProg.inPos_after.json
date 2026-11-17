@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.inPos_after",
+ "key": "9ec44a25d4006cdb",
+ "kind": "lemma",
+ "title": "Input head position after a segment move",
+ "statement": "Let $x$ be an input word, let a call specification and register words determine a list of segments, and let $s$ be a segment index. A track position is valid at an index when it is a boundary or a cell within that segment. Suppose $tp$ is valid at $s$, $T_2$ is valid at $G_1$, and either $G_1=s$ with the track coordinate of $T_2$ equal to that of $tp$ plus the movement $mv$, or $mv=0$ and the positions cross between the right boundary of segment $s$ and the left boundary of segment $s+1$, or between the left boundary of segment $s$ and the right boundary of segment $s-1$. If the input head position $p$ encodes track position $tp$ at segment $s$, then after moving the input head by $mv$ when $s=0$ (and by zero otherwise), its position encodes $T_2$ at segment $G_1$.",
+ "hypotheses_covered": [
+  "Input word $x$, call specification, and register words determining segments",
+  "Segment indices $s$ and $G_1$",
+  "Valid track position $tp$ at $s$ and valid track position $T_2$ at $G_1$",
+  "Either same-segment coordinate movement by $mv$, or a zero-movement crossing between adjacent segment boundaries in either direction",
+  "Input position $p$ equals the encoding of $tp$ at $s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

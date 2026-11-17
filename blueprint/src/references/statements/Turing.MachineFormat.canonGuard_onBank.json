@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.MachineFormat.canonGuard_onBank",
+ "key": "a19039a9b2d0784a",
+ "kind": "lemma",
+ "title": "Bounded guard computation on one tape",
+ "statement": "Let $k\\in\\mathbb N$, let $i$ be one of the $k$ work tapes, and let $F$ be a machine format. Let $x$, $bits$, and $rest$ be Boolean words such that paired decoding of $x$ yields $(bits,rest)$. Set $B=\\max\\{F.guard,(4F.k+5)3^{F.k+1}\\}$, and let $d$ be a configuration on input $x$ whose state is the running decrement phase, whose input head is at $2|bits|+3$, whose tape $i$ stores the word obtained by applying fixed-width increment to $bits$ with a zero appended (using the empty word if increment overflows), whose head on tape $i$ is at $0$, and whose output is empty. When the guard counter machine with block size $B$ is embedded on tape $i$ and run from $d$, there is a time $t\\le (B+6)(|x|+1)$ at which its state is done if $B(\\operatorname{value}(bits)+1)\\le |rest|$, and escape otherwise; its output is empty and its input head is respectively at $2|bits|+3+B(\\operatorname{value}(bits)+1)$ or $|x|+1$. At every earlier time $u<t$ its state is neither done nor escape, and every tape other than $i$ and its head position are unchanged from $d$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$ and $i$ is a work-tape index among the $k$ tapes",
+  "$F$ is a machine format",
+  "$x$, $bits$, and $rest$ are Boolean words whose paired decoding satisfies $\\operatorname{decode}(x)=(bits,rest)$",
+  "$d$ is a configuration on input $x$",
+  "$d$ is in the running decrement phase",
+  "The input head of $d$ is at $2|bits|+3$",
+  "Tape $i$ of $d$ stores the buffered fixed-width increment of $bits$ with a zero appended, using the empty word on overflow",
+  "The head on tape $i$ is at $0$",
+  "The output of $d$ is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

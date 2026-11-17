@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.liftAct",
+ "key": "262a36f7ea8a613d",
+ "kind": "def",
+ "title": "Action extended with a simulation phase",
+ "statement": "Given a machine action $A$ and Boolean values $lb,rb$, form an action for one additional work tape and a state paired with a phase. The input head stays still, the original work-tape actions and output are preserved, and the new tape is left blank with its head stationary; if $A$ has a successor state $s'$, the new successor is $(s',\u0000nextPh(d,lb,rb))$, where $d$ is the input-head movement in $A$, and if $A$ halts, the extended action also halts.",
+ "hypotheses_covered": [
+  "A single-step action $A$ of $M$",
+  "Boolean values $lb$ and $rb",
+  "The input-head movement recorded by $A$ determines the next phase"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.bank_cleanRun",
+ "key": "0f0c2db3b8110954",
+ "kind": "theorem",
+ "title": "Space-bounded clean simulation of a machine bank",
+ "statement": "Let $d$ be a natural number and let $(M_j)_{j<d}$ be finite-state Boolean Turing machines. For each $j<d$, let $A_j$ be a language of Boolean words and $s_j$ a space bound, and suppose $M_j$ decides $A_j$ using at most $s_j(n)$ visited work-tape cells on inputs of length $n$. Then, for every $j<d$ and Boolean input $V$, the bank machine started in the state corresponding to $M_j$'s initial state halts with output consisting of the single bit indicating whether $V\\in A_j$, has all work tapes blank and all work-tape heads at the origin, and throughout the run every head position has absolute value at most $\\max(s_j(|V|),1)$.",
+ "hypotheses_covered": [
+  "Natural number $d$ and family of finite-state Boolean machines $(M_j)_{j<d}$",
+  "Family of languages $(A_j)_{j<d}$",
+  "Family of space bounds $(s_j)_{j<d}$",
+  "Each $M_j$ decides $A_j$ within space $s_j$",
+  "Index $j<d$",
+  "Boolean input $V$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

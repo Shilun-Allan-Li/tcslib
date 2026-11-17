@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.UTab.inpS_toBitSrc",
+ "key": "fe3afa00547f23ef",
+ "kind": "theorem",
+ "title": "Translation of input-position sources",
+ "statement": "Let $M$ be a finite Turing machine with $k$ work tapes, and let $N,T,t,p\\in\\mathbb N$. Let $\\ell$ be a list of bit-source descriptors with $|\\ell|=N$, and assume $p<N+2$. For a valuation $\\rho$ of the eleven registers, assume its $I$ register equals the encoded index of input position $p$ at time $t$, its $Q$ register equals the encoded index of position $p$ at time $t-1$ whenever $t\\ne0$, and its $LB$ register equals $t$ times the configuration stride. Choose a layout value among $0,1,2$, and assume its associated source translates to the source from $\\ell$ at position $p$ when $1\\le p\\le N$, and to the false constant otherwise. Then translating each descriptor in the input-position source list (formed using the snapshot width, $t$, $p$, and this layout value) gives exactly the canonical source list for input position $p$ at time $t$, including its neighboring input and previous-snapshot sources.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$N,T,t,p\\in\\mathbb N$",
+  "$\\ell$ is a list of bit-source descriptors",
+  "$|\\ell|=N$",
+  "$p<N+2$",
+  "$\\rho$ is a valuation of the eleven registers",
+  "$\\rho(I)$ is the encoded index of input position $p$ at time $t$",
+  "if $t\\ne0$, $\\rho(Q)$ is the encoded index of input position $p$ at time $t-1$",
+  "$\\rho(LB)=t$ times the configuration stride",
+  "the layout value lies in $\\{0,1,2\\}$",
+  "the translated layout source equals the indicated hard-wired source or false constant"
+ ],
+ "confidence": "low",
+ "caveat": "The claim is an exact equality of two specifically constructed lists, and the supplied descriptions do not define the source-translation and list-construction notation. The prose summarizes the equality and its hypotheses, but cannot spell out every list entry without effectively reproducing those definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

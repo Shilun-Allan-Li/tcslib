@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.taut_syntax_clause",
+ "key": "2829a4d5160f89cd",
+ "kind": "lemma",
+ "title": "Syntax scan and clause parsing",
+ "statement": "Let $f$ be a natural-number fuel bound and let $x$ be a finite binary word with $|x|\\le f$. The syntax scanner started at clause level accepts $x$ exactly when parsing one clause from $x$ with fuel $f$ succeeds, leaving a remainder $r$ that the scanner started at formula level accepts; if the parser fails, the clause-level scan rejects.",
+ "hypotheses_covered": [
+  "natural-number fuel bound $f$",
+  "finite binary word $x$",
+  "length bound $|x|\\le f$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ be a fuel value and $x$ a binary string with $|x| \\le f$. The six-state formula\nsyntax scan from the clause-level state accepts $x$ if and only if the clause parser\nwith fuel $f$ succeeds on $x$ with some remainder $r$ and the scan from the\nformula-level state accepts $r$; when the clause parser fails, the scan rejects."
+}

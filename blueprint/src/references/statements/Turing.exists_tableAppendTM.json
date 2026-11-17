@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.exists_tableAppendTM",
+ "key": "ccf8216c50b1918a",
+ "kind": "theorem",
+ "title": "Appending a row to a table",
+ "statement": "For every natural number $m$ and fixed suffix of fields, there exist a finite-state two-work-tape machine $R$, entry and exit states, and a constant $C$. Suppose a table consists of a nonempty header $h$ and rows $es$, every field in the table is nonempty, the appended row $e$ has exactly $m$ fields, tape 0 at offset $o$ contains the table encoding with blank cells beyond its end, and tape 1 contains the encoding of $e$ at its head. Then $R$ reaches, in at most $C(L+E+1)$ steps, the configuration obtained by appending $e$ followed by the fixed suffix to the table, where $L$ is the encoded length of the original table and $E$ is the encoded length of $e$. It does not enter the exit state earlier, and throughout the run each work-tape head moves by at most $C(L+E+1)$ from its initial position.",
+ "hypotheses_covered": [
+  "$m$ is a natural number",
+  "fixed suffix of fields",
+  "all fields in the existing table are nonempty",
+  "$e$ has length $m$",
+  "initial state is entry",
+  "tape 0 head is at $o$",
+  "tape 0 encodes the existing table in the specified range",
+  "tape 0 is blank at and beyond the table end",
+  "tape 1 records $e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

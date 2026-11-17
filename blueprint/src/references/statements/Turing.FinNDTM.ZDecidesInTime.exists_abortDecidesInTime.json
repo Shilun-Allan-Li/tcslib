@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinNDTM.ZDecidesInTime.exists_abortDecidesInTime",
+ "key": "81daa5f0cb29bc98",
+ "kind": "theorem",
+ "title": "Polynomial-time aborting decision procedure",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean symbols, let $L$ be a language of Boolean words, and let $c,e\\in\\mathbb{N}$. Suppose that on every input $x$, the sum of the probabilities that the run has not halted, over every finite range of time horizons, is at most $c(|x|^e+1)$, and every halted run outputs the one-symbol indicator of whether $x\\in L$. Then there exist $K,E\\in\\mathbb{N}$ and a finite nondeterministic Turing machine $N'$ over Boolean symbols such that, on every input $x$, $N'$ halts on every branch after $K(|x|^E+1)$ steps, its output on every branch of that length differs from the one-symbol indicator of membership in $L$, and the probability that its output equals that indicator is at least $1/2$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$L$ is a language of Boolean words",
+  "$c,e\\in\\mathbb{N}$",
+  "$N$ satisfies the stated nonhalting-probability bound with time function $c(n^e+1)$",
+  "Every halted run of $N$ outputs the one-symbol indicator of membership in $L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

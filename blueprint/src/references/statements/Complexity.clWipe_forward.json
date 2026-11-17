@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clWipe_forward",
+ "key": "f6f6fcec51faf768",
+ "kind": "lemma",
+ "title": "Forward scan of the scratch tape",
+ "statement": "For every Boolean input word $x$, input-head position $p$, stream word, target word $w$, stream-head position $s$, and integer start position $j$ with $j\\le |w|$, after $|w|-j+1$ steps from control state $0$ with target head at $j$, the reset machine is in control state $1$, with the target still equal to $w$ and its head at $|w|-1$.",
+ "hypotheses_covered": [
+  "Boolean input word x",
+  "input-head position p",
+  "stream word",
+  "target word w",
+  "stream-head position s",
+  "integer start position j",
+  "j ≤ |w|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stream, target word $w$, stream head, and start cell $j \\le |w|$, running the reset machine for $|w| - j + 1$ steps from its scanning control moves the target head right across each occupied cell, turns at the right blank, and enters the erasing control at cell $|w| - 1$; the target is still unchanged."
+}

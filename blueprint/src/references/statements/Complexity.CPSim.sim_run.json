@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.CPSim.sim_run",
+ "key": "6af77fb16c6eedf3",
+ "kind": "lemma",
+ "title": "Counter Program Simulation Run",
+ "statement": "Let $R$ be a number of registers, let $\\Lambda$ be a set of labels, and let $P$ be a counter program on these registers and labels. Fix a starting label $l_0$, a Boolean mode $lm$, natural numbers $n,p,B$, an input word $u$, and two Boolean oracles $o_0,o_1$ on bit strings. Suppose that for every $h\\in\\mathbb N$, the oracle answers on the encoding of $(1^n,\\mathrm{bits}(h))$ are $o_0=1$ exactly when $h<|u|$ and $o_1=u_h$, with out-of-range bits interpreted as $0$. If a counter-program state $s$ is at label $l$, its output has length at most $p$, its time register $tm$ is at most $B$, and after $k$ steps on input $u$ it is halted, assume also that at every time $j\\le k$ all its registers, its input position, and its output length are at most $B$. Then the auxiliary program started in its simulation state for $l$, with register values encoding those of $s$, its input position, output length, and $tm$, halts while satisfying its prescribed invariant at every earlier step, and returns the bit determined from the final output by the rule that when $lm$ is true it tests whether position $p$ is within the output, and otherwise reads output position $p$ with default $0$.",
+ "hypotheses_covered": [
+  "A counter program $P$ with $R$ registers and labels in $\\Lambda$",
+  "Starting label $l_0$ and Boolean mode $lm$",
+  "Natural numbers $n,p,B$ and input word $u$",
+  "Oracle $o_0$ returns the test $h<|u|$ on each encoded input $(1^n,\\mathrm{bits}(h))$",
+  "Oracle $o_1$ returns the $h$th bit of $u$, defaulting to $0$ out of range",
+  "Initial state label is $l$",
+  "Initial output length is at most $p$",
+  "Initial time register $tm$ is at most $B$",
+  "The counter program is halted after $k$ steps on input $u$",
+  "At every time $j\\le k$, all registers, input position, and output length are at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

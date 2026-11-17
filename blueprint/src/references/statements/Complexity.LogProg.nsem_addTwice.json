@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.nsem_addTwice",
+ "key": "3b6c9f0e4d897af3",
+ "kind": "theorem",
+ "title": "Semantics of a two-step register addition",
+ "statement": "Let $A$ be a nondeterministic register program with $m$ registers, oracle family $O$, input $x$, and space bound $B$. Let $k,y,p$ be registers with $k\\ne y$, $k\\ne p$, and $p\\ne y$, and suppose the instruction at state $\\mathrm{test}$ compares registers $k$ and $y$, branching to $\\mathrm{ex}$ on equality and to $i_1$ otherwise; the instructions at $i_1$ and $i_2$ each increment $p$ and proceed respectively to $i_2$ and $i_3$, and the instruction at $i_3$ increments $k$ and returns to $\\mathrm{test}$. If the current register values $v(r)$ are all at most $B$, $v(k)\\le v(y)$, and $v(p)+2(v(y)-v(k))\\le B$, then for any proposition $P$, if the configuration at $\\mathrm{ex}$ with $p$ replaced by $v(p)+2(v(y)-v(k))$ and $k$ replaced by $v(y)$ has terminating nondeterministic semantics with space guard $B$ and acceptance equivalent to $P$, the configuration at $\\mathrm{test}$ with the original register values has the same semantics.",
+ "hypotheses_covered": [
+  "$k,y,p$ are registers and are pairwise distinct",
+  "The instruction at $\\mathrm{test}$ compares $k$ and $y$, with equality branch $\\mathrm{ex}$ and inequality branch $i_1$",
+  "The instruction at $i_1$ increments $p$ and proceeds to $i_2$",
+  "The instruction at $i_2$ increments $p$ and proceeds to $i_3$",
+  "The instruction at $i_3$ increments $k$ and returns to $\\mathrm{test}$",
+  "Every current register value is at most $B$",
+  "$v(k)\\le v(y)$",
+  "$v(p)+2(v(y)-v(k))\\le B$",
+  "The stated terminal configuration has terminating semantics under the register bound $B$ and acceptance equivalent to $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

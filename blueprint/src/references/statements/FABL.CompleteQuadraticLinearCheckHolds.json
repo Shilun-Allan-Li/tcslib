@@ -1,0 +1,16 @@
+{
+ "lean_name": "FABL.CompleteQuadraticLinearCheckHolds",
+ "key": "832d7f8418896314",
+ "kind": "def",
+ "title": "Validity of a linear-check seed",
+ "statement": "Let $w$ be a Boolean word of length $n$, let $P$ be a Boolean proof word of length $n+2(n+1)$, and let a seed be either an endpoint check or a position $i<n$ paired with a transition check. The seed holds of $P$ and $w$ precisely under the corresponding condition: the false endpoint check requires the linear-prefix proof bit at index $0$ to be false; the true endpoint check requires the quadratic-prefix proof bit at index $0$ to be false; the other endpoint check requires the quadratic-prefix proof bit at index $n$ to be true. At a position $i$, the false transition check requires the linear-prefix proof bits at $i$ and $i+1$ to sum with $w_i$ to zero in $\\mathbb F_2$; the true transition check requires the product proof bit to equal the conjunction of the linear-prefix proof bit at $i$ and $w_i$; and the remaining transition check requires the quadratic-prefix proof bits at $i$ and $i+1$ to sum with the product proof bit at $i$ to zero in $\\mathbb F_2$.",
+ "hypotheses_covered": [
+  "A Boolean word $w$ of length $n$",
+  "A Boolean proof word of length $n+2(n+1)$",
+  "A seed of the specified endpoint-or-position form"
+ ],
+ "confidence": "low",
+ "caveat": "The auxiliary prefix-bit functions, product-proof indices, and Boolean-to-$\\mathbb F_2$ encoding are not defined in the supplied material.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

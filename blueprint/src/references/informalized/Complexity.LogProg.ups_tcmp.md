@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/UPathSearch.lean :: Complexity.LogProg.ups_tcmp -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Recursive Target Comparison
+
+**Claim.** If the scratch value’s binary expansion is exactly the suffix of the input beginning at the current pointer, the target-test continuation has probability $q$; otherwise every allowed continuation from the next search stage has probability $q$. Under these hypotheses, the target-comparison stage has probability $q$ and satisfies the stated termination and register bounds.
+
+**Proof.** Use strong induction on the scratch value $w$, so that after reading one binary digit the quotient $w/2$ is covered by the induction hypothesis. First, if $w=0$, the zero test takes its zero branch. The binary expansion is empty. If the pointer is before the end of the input, the length oracle says there is another input bit, so the empty expansion cannot be an exact suffix; the program follows the mismatch continuation. If the pointer is at or beyond the end, the empty expansion is exactly the suffix, and the assumed matching continuation applies. These branches use the length oracle’s characterization (`pathOr_len`) and the zero-test rules (`PSem.jz_pos`).
+
+Now suppose $w>0$. Its binary expansion consists of its parity bit followed by the expansion of $w/2$ (`bits_eq_cons`). The zero test therefore takes its nonzero branch. If the pointer is not before the input’s end, the encoded word has a first bit and cannot match a suffix starting there, so the mismatch continuation applies. Otherwise, the program queries the current input bit and compares it with the parity bit. When they agree, it advances the pointer by one and halves the scratch value; this yields the smaller induction problem. The exact-match hypothesis is transferred using the decomposition of a plain encoding into its first bit and remaining suffix (`plainAt_cons`). If they disagree, the encoding cannot match, again by `plainAt_cons`, and the mismatch continuation applies. The parity test selects the appropriate one of these two cases. The deterministic branching and updates preserve the required semantics by `PSem.jz_neg`, `PSem.jodd_pos`, `PSem.jodd_neg`, `PSem.inc`, and `PSem.half`; oracle answers for length and bit queries are given by `pathOr_len` and `pathOr_bit`.
+
+**Key facts.** `Complexity.LogProg.PSem.jz_pos`, `Complexity.LogProg.pathOr_len`, `Complexity.LogProg.bits_eq_cons`, `Complexity.LogProg.PSem.jz_neg`, `Complexity.LogProg.PSem.jodd_pos`, `Complexity.LogProg.pathOr_bit`, `Complexity.LogProg.PSem.jodd_neg`, `Complexity.plainAt_cons`, `Complexity.LogProg.PSem.inc`, `Complexity.LogProg.PSem.half`.

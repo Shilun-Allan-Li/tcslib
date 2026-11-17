@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.rt_find_scan",
+ "key": "93bb45359204a1b6",
+ "kind": "theorem",
+ "title": "Two-way scan of a word",
+ "statement": "Let $\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$, let $a\\in A$, and let $w$ be a word over $\\Gamma$. Suppose a two-work-tape configuration $d$ has forward scan state $a$, and tape 0, at each offset $p$ from $-1$ through $|w|$ relative to its head, contains the corresponding symbol of $w$ when $0\\le p<|w|$ and is blank otherwise. After $2|w|+2$ steps of the scanning machine, its state is the completed state whose accumulator is the result of folding $\\delta$ over $w$ from $a$, with all other configuration data unchanged; at every earlier time its state is not a completed state. At every time up to and including $2|w|+2$, the head of tape 0 lies between its initial position minus one and its initial position plus $|w|$, inclusive, and every other work-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$",
+  "$a\\in A$",
+  "$w$ is a word over $\\Gamma$",
+  "$d$ is a two-work-tape configuration on input $x$",
+  "$d$ has forward scan state $a$",
+  "Tape 0 matches the word encoding at every offset from $-1$ through $|w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

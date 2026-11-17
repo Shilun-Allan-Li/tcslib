@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.record_tag_ne",
+ "key": "60a821957f75f047",
+ "kind": "theorem",
+ "title": "State tag excludes a differently tagged state",
+ "statement": "Let $K$ be a natural number, let $\\Gamma$ and $I$ be types, and let $\\mathrm{Ph}$ assign a type to each element of $I$. Choose $i\\in I$, an element $v$ of the dependent sum of the types $\\mathrm{Ph}(j)$ over $j\\in I$, and a configuration $c$ on an input word $x$ whose states lie in $\\mathrm{Ph}(i)$. If $i$ differs from the first component of $v$, then after replacing each state $q$ by the pair $(i,q)$, the configuration's state is not $v$.",
+ "hypotheses_covered": [
+  "$i\\in I$",
+  "$v\\in\\sum_{j\\in I}\\mathrm{Ph}(j)$",
+  "$i\\ne v.1$",
+  "$c$ is a configuration with $K$ work tapes, symbols $\\Gamma$, states $\\mathrm{Ph}(i)$, and input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

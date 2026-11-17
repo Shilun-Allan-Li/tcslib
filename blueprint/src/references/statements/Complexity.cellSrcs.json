@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.cellSrcs",
+ "key": "711b3321123857ca",
+ "kind": "def",
+ "title": "Sources for a tableau cell",
+ "statement": "Let $M$ be a Turing machine with Boolean tape alphabet, let $\\ell$ be a list of bit sources, let $T,t,r\\in\\mathbb{N}$, and let $\\tau$ be a track index of $M$. The cell-source list at $(t,\\tau,r)$ is formed, in order, from the constants indicating whether $t=0$ and whether $r=T$; the three neighbor sources at coordinate $r-1$ with boundary flag $1\\le r$; the three at coordinate $r$ with flag true; the three at coordinate $r+1$ with flag $r+1<2T+1$; two cell sources at coordinate $r$ indexed by $3$ and $4$; and the previous-snapshot sources for time $t$.",
+ "hypotheses_covered": [
+  "A Turing machine $M$ with Boolean tape alphabet",
+  "A list of bit sources $\\ell$",
+  "Natural numbers $T,t,r$",
+  "A track index $\\tau$ of $M$"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on source-selection functions for neighboring cells, indexed cell sources, and previous snapshots, whose meanings are not included in the provided definitions.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,30 @@
+{
+ "lean_name": "Turing.FinTM.f2_exists_loopFind_space",
+ "key": "5fe4f01a7e0bc5a4",
+ "kind": "lemma",
+ "title": "Space Bound for a Bounded Loop Search",
+ "statement": "Let $B$ and $F$ be finite Turing machines over the Boolean alphabet, let $a$ be a state of $B$, and let $I$ be a predicate on pairs of Boolean words. Let $g$ be a state-update function, $A$ an acceptance test, $o$ an output function, $s_0$ an initial-state function, and $R,T:\\mathbb{N}\\to\\mathbb{N}$. Assume that $F$ computes the function sending an input $x$ to the binary expansion of $R(|x|)$ within time $T(|x|)$; that $I(x,s_0(x))$ holds and is preserved by $g$; and that, from the initial configuration of $B$ on $x$, some time $t\\le T(|x|)$ reaches the seam configuration with state $a$ and tape contents given by $s_0(x)$, with no earlier time having state $a$. Assume also that for every $x,s$ with $I(x,s)$, there is a time $t$ with $0<t\\le T(|x|)$ such that no time strictly between $0$ and $t$ has state $a$ when started from the seam configuration for $(x,s)$; at time $t$, if $A(x,s)$ holds, the machine halts with output $o(x,s)$, and otherwise it reaches the seam configuration for $(x,g(x,s))$. Then there is a finite Turing machine $E$ and a natural number $c$ such that, on every input $x$, $E$ computes the result of searching the iterates $g^i(x,s_0(x))$ for the least $i\\le R(|x|)$ satisfying $A(x,g^i(x,s_0(x)))$, returning $o(x,g^i(x,s_0(x)))$ if one is found and the empty word otherwise, within time $c(T(|x|)+1)(R(|x|)+2)$. Moreover, for every input $x$ and every time $t$, the space used by $E$ by time $t$ is at most $c(T(|x|)+1)$.",
+ "hypotheses_covered": [
+  "B and F are finite Turing machines over Bool",
+  "anchor state a of B",
+  "invariant predicate I",
+  "state-update function g",
+  "acceptance test A",
+  "output function o",
+  "initial-state function s₀",
+  "natural-valued functions R and T",
+  "F computes Nat.bits (R |x|) within T(|x|)",
+  "I(x,s₀(x)) for every x",
+  "I is preserved by g",
+  "B reaches the initial seam configuration by some t≤T(|x|)",
+  "no earlier time in that initial run has state a",
+  "from every invariant seam, there is a round time t with 0<t≤T(|x|)",
+  "no intermediate positive time before t has state a",
+  "at the round time, acceptance implies halting with output o(x,s)",
+  "at the round time, nonacceptance implies the next seam configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

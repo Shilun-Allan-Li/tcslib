@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.readIn_run",
+ "key": "7b1ca6593502e69b",
+ "kind": "theorem",
+ "title": "Execution of the input-reading routine",
+ "statement": "Let $x$ be a finite Boolean input, let $P$ be a register program with $m$ work tapes and $d$ oracle choices, and let its oracle be a function assigning a Boolean answer to each oracle choice and Boolean word. Let $r,s$ be distinct tape indices, let $st$ assign a program state to each reading phase, and let $ex$ assign a program state to each optional Boolean value. Suppose every transition of the ordinary machine from state $st(ph)$ is the specified reading transition with register states mapped by $st$ and terminal states mapped by $ex$, and suppose there are no oracle-call states at any $st(ph)$. If a configuration $c$ has tape $r$ containing the binary representation of $i$, tape $s$ empty, both corresponding heads at position $0$, and input-head position $1$, then some number $T$ of program steps carries the configuration with state $st(eC)$ to the configuration with state $ex$ equal to the $i$th input symbol of $x$ (or no symbol if that index is out of range). At every time $t<T$, the configuration is in the read frame of $c$: only tape $s$'s content may change, the output and other tape contents are preserved, and the heads on tapes $r,s$ lie between $-1$ and the length of the binary representation of $|x|+1$, inclusive.",
+ "hypotheses_covered": [
+  "A finite Boolean input $x$",
+  "A register program $P$ with $m$ tapes and $d$ oracle choices",
+  "An oracle function from choices and Boolean words to Boolean answers",
+  "Distinct tape indices $r,s$",
+  "State maps $st$ and $ex$",
+  "Every transition at a state $st(ph)$ agrees with the specified reading transition under $st$ and $ex$",
+  "No oracle call is specified at any state $st(ph)$",
+  "Tape $r$ of $c$ stores the binary representation of $i$",
+  "Tape $s$ of $c$ is empty",
+  "The heads on tapes $r,s$ in $c$ are at position $0$",
+  "The input-head position in $c$ is $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

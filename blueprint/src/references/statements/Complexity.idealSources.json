@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.idealSources",
+ "key": "2d9f27d2ec3f4d21",
+ "kind": "def",
+ "title": "Ideal source bits",
+ "statement": "Let $M$ be a Turing machine with Boolean-valued symbols, let $x$ be a finite Boolean string, and let $t$ be a natural number. Define the source list by concatenating: if $t=0$, a list of $\text{snapWidth}(M)$ false bits, and otherwise the encoding of the configuration of $M$ on $x$ at time $t-1$; the three bits indicating respectively that $t=0$, that the input head position at time $t$ on input $x$ contains an input bit, and the value of that bit (taken to be false if there is no such bit); the ideal tape-bit lists at time $t$ for each of the $M.k$ work tapes; and finally false if $t=0$, or the indicator that $M$ has accepted $x$ by time $t-1$ otherwise.",
+ "hypotheses_covered": [
+  "A Turing machine $M$ with Boolean-valued symbols",
+  "A finite Boolean string $x$",
+  "A natural number $t$"
+ ],
+ "confidence": "low",
+ "caveat": "The statement uses several upstream constructions that are not defined in the supplied payload; in particular, the exact meaning of the snapshot encoding, ideal tape-bit lists, and acceptance indicator is unavailable.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

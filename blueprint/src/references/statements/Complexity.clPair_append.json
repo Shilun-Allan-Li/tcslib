@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clPair_append",
+ "key": "e78e19ae6e260f26",
+ "kind": "lemma",
+ "title": "Appending to a paired word",
+ "statement": "For all Boolean words $a,b,c$, appending $c$ to the encoding of the pair $(a,b)$ gives the encoding of $(a,b\text{ followed by }c)$; that is, $\\langle a,b\\rangle c=\\langle a,bc\\rangle$.",
+ "hypotheses_covered": [
+  "Boolean words $a,b,c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all words $a$, $b$, and $c$, the self-delimiting encoding of $a$ with payload $b$, followed by $c$, equals the encoding of $a$ with payload $b$ followed by $c$; the boundary of the first field is preserved."
+}

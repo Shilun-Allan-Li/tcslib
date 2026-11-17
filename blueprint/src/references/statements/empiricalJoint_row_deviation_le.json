@@ -1,0 +1,19 @@
+{
+ "lean_name": "empiricalJoint_row_deviation_le",
+ "key": "309fc71b3722a762",
+ "kind": "lemma",
+ "title": "Row deviation bound from cumulative regret",
+ "statement": "Let $G$ be a two-player game with $M$ row actions and $N$ column actions, and let $T>0$. In each of $T$ rounds, let $p_t$ and $q_t$ be mixed strategies for the row and column players, respectively. For any $\\varepsilon\\in\\mathbb{R}$ and row action $i'$, if the cumulative utility from always choosing $i'$ against the column strategies, minus the cumulative expected row utility under the round-by-round strategy pairs, is at most $\\varepsilon T$, then under the empirical joint distribution of those pairs, the row player's expected utility from choosing $i'$ against the column marginal is at most the expected row utility plus $\\varepsilon$.",
+ "hypotheses_covered": [
+  "$M,N,T$ are natural numbers and $T>0$",
+  "$G$ is a game with $M$ row actions and $N$ column actions",
+  "Each round's row and column strategies are probability distributions on their respective action sets",
+  "$\\varepsilon\\in\\mathbb{R}$",
+  "$i'$ is a row action",
+  "The stated cumulative row deviation utility difference is at most $\\varepsilon T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $G$ be a finite two-player game with row utility $u_r$ over $M$ row actions and $N$\ncolumn actions, and consider $T > 0$ rounds of play in which the row player uses the\nmixed strategy $p_t$ and the column player the mixed strategy $q_t$ at round $t$. Fix\n$\\varepsilon \\in \\bbr$ and a pure row action $i'$, and suppose the row player's\ncumulative external regret against always playing $i'$ is at most $\\varepsilon T$:\n\\[\n  \\sum_{t=1}^{T}\\sum_{j}(q_t)_j\\, u_r(i',j)\n  \\;-\\; \\sum_{t=1}^{T}\\sum_{i,j}(p_t)_i (q_t)_j\\, u_r(i,j)\n  \\;\\le\\; \\varepsilon T.\n\\]\nThen in the empirical joint distribution $\\sigma$ of the play, deviating to $i'$ gains\nat most $\\varepsilon$ over the expected utility:\n$\\mathrm{rowDevUtil}(\\sigma, G, i') \\le \\mathrm{rowExpUtil}(\\sigma, G) + \\varepsilon$.\nThis is the row half of \\texttt{empiricalJoint\\_isApproxCCE}."
+}

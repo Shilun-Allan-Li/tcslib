@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.UniformMachineCode",
+ "key": "ff0203b7ad19c113",
+ "kind": "structure",
+ "title": "Uniform machine code",
+ "statement": "A uniform machine code consists of an effective machine code, a Boolean finite-tape machine, and a natural number $d$. For every pair of Boolean strings $\\alpha,x$ and every $t\\in\\mathbb N$, if the machine decoded from $\\alpha$ outputs $[\\mathrm{true}]$ on $x$ in exactly $t$ steps, the simulator outputs $[\\mathrm{true}]$ on the encoding of the three inputs $\\operatorname{bits}(t),\\alpha,x$ in at most the specified time $d\\,(|\\alpha|+|x|+t+1)^d$; if it does not output $[\\mathrm{true}]$ on $x$ in exactly $t$ steps, the simulator outputs $[\\mathrm{false}]$ on that encoding within the same time bound.",
+ "hypotheses_covered": [
+  "An effective machine code",
+  "A Boolean finite-tape simulator",
+  "A natural-number degree and coefficient d",
+  "For all Boolean strings α and x and all natural numbers t, correct bounded-acceptance output within the stated bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

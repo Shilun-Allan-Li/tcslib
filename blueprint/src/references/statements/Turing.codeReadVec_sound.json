@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.codeReadVec_sound",
+ "key": "ce600e3735bc9f01",
+ "kind": "lemma",
+ "title": "Soundness of vector decoding",
+ "statement": "Suppose a reader and writer for values in a type $A$ have the property that every successful read of a bit string as a value $a$ with suffix $r$ implies that the string is the encoding of $a$ followed by $r$. Then, for every natural number $n$, if the reader for vectors of length $n$ succeeds on a bit string $x$, returning a vector $f$ and suffix $r$, then $x$ is the concatenation, in order, of the encodings of $f(0),\\ldots,f(n-1)$ followed by $r$.",
+ "hypotheses_covered": [
+  "Every successful field read implies the input is the encoding of the returned value followed by the returned suffix",
+  "The length-n vector reader succeeds on x and returns f and r"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a field reader and a field writer for values in a type $A$ be such that\nevery successful read on a string exhibits that string as the written value\nfollowed by the returned suffix.  Then whenever the length-$n$ vector reader\nsucceeds on a bit string $x$, returning a vector $f$ and a suffix $r$, the\nstring $x$ is exactly the in-order concatenation of the written entries\n$f(0), \\dots, f(n-1)$ followed by $r$."
+}

@@ -6,8 +6,10 @@ from collections import Counter
 from collections.abc import Iterable
 from dataclasses import asdict
 from pathlib import Path
+from concurrent.futures import CancelledError
 
 from proofmatch.agents import DEFAULT_MODEL
+from proofmatch.artifacts import atomic_json
 from proofmatch.budget import StageEstimate, token_cost
 from proofmatch.dataset_io import open_dataset
 from proofmatch.models import (
@@ -67,6 +69,40 @@ def load_upstream_declarations(
     if not isinstance(modules, dict):
         raise ValueError(f"{dependency_graph} has no modules object")
     index = build_index(modules)
+    return _declarations_from_target(target, index, lean_name)
+
+
+class UpstreamDeclarationLoader:
+    """Read selected dependency lists and the compiler index once per document."""
+
+    def __init__(self, dataset: Path, dependency_graph: Path, targets):
+        from scripts.build_dataset import build_index
+
+        wanted = set(targets)
+        self.targets = {}
+        with open_dataset(dataset) as source:
+            for line_number, line in enumerate(source, start=1):
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError as error:
+                    raise ValueError(f"invalid JSONL record at line {line_number}") from error
+                for name in {record.get('lean_name'), record.get('id')} & wanted:
+                    self.targets.setdefault(name, {'proof_upstream_decls': record.get('proof_upstream_decls')})
+        modules = json.loads(dependency_graph.read_text(encoding='utf-8')).get('modules')
+        if not isinstance(modules, dict):
+            raise ValueError(f"{dependency_graph} has no modules object")
+        self.index = build_index(modules)
+
+    def load(self, lean_name):
+        if lean_name not in self.targets:
+            raise ValueError(f"{lean_name} is absent from dataset")
+        return _declarations_from_target(self.targets[lean_name], self.index, lean_name)
+
+
+def _declarations_from_target(target, index, lean_name):
+    names = target.get('proof_upstream_decls')
+    if not isinstance(names, list) or not names:
+        raise ValueError(f"{lean_name} has no proof_upstream_decls")
     declarations = []
     for position, name_value in enumerate(names):
         name = str(name_value)
@@ -210,6 +246,9 @@ def map_upstream_batches(
     max_characters: int = 48_000,
     load_batch=None,
     save_batch=None,
+    cache_dir: Path | None = None,
+    stop_event=None,
+    label: str = '',
 ) -> tuple[ProofStepAssignment, ...]:
     ordered = tuple(declarations)
     blocks = tuple(proof_blocks)
@@ -241,23 +280,48 @@ def map_upstream_batches(
                 separators=(",", ":"),
             )
         )
+        cache = None
+        if cache_dir is not None:
+            resources = getattr(agent, 'resource_root', Path(__file__).parent)
+            material = {
+                'payload': fingerprint,
+                'model': getattr(agent, 'model', DEFAULT_MODEL),
+                'backend': getattr(agent, 'backend', ''),
+                'prompt': (resources / 'prompts/map_upstream.md').read_text(),
+                'schema': (resources / 'schemas/map_upstream.json').read_text(),
+            }
+            cache = cache_dir / (_sha256_text(json.dumps(material, sort_keys=True)) + '.json')
+        def checked(value):
+            if not isinstance(value, dict) or not isinstance(value.get('assignments'), list):
+                raise ValueError('agent output must contain an assignments array')
+            return validate_assignments(batch, tuple(_assignment_from_json(row)
+                                        for row in value['assignments']), allowed_blocks)
         output = (
             load_batch(position, fingerprint)
             if load_batch is not None
             else None
         )
+        if output is None and cache is not None and cache.is_file():
+            try:
+                output = json.loads(cache.read_text())
+                checked(output)
+            except (ValueError, TypeError, KeyError):
+                output = None
+        hit = output is not None
         if output is None:
+            if stop_event is not None and stop_event.is_set():
+                raise CancelledError('Upstream dispatch stopped after an earlier failure')
             budget.require(estimate)
+            print(f'  upstream: {label} batch {position}/{len(batches)} (requesting)', flush=True)
             output = agent.run("map_upstream", payload)
+        batch_assignments = checked(output)
+        if not hit:
+            if cache is not None:
+                atomic_json(cache, output)
             if save_batch is not None:
                 save_batch(position, fingerprint, output)
-        rows = output.get("assignments")
-        if not isinstance(rows, list):
-            raise ValueError("agent output must contain an assignments array")
-        batch_assignments = tuple(_assignment_from_json(row) for row in rows)
-        assignments.extend(
-            validate_assignments(batch, batch_assignments, allowed_blocks)
-        )
+        print(f'  upstream: {label} batch {position}/{len(batches)} ({"cached" if hit else "saved"})', flush=True)
+        assignments.extend(batch_assignments)
     return validate_assignments(ordered, assignments, allowed_blocks)
 
 

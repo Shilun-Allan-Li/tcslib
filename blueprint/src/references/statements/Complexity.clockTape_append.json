@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clockTape_append",
+ "key": "f2e6049aa25384e0",
+ "kind": "lemma",
+ "title": "Appending a captured bit",
+ "statement": "For every Boolean word $w$ and bit $b$, the captured clock tape of $w$ followed by $b$ is obtained from the captured clock tape of $w$ by updating the cell at integer coordinate $|w|+1$ to the tagged bit $b$.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "$b$ is a Boolean bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit word $w$ and every bit $b$, the captured clock tape of $w$ extended by\n$b$ differs from the captured tape of $w$ in exactly one cell: the cell at coordinate\n$|w| + 1$, which becomes the bit symbol of $b$."
+}

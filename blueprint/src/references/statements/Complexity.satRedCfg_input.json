@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satRedCfg_input",
+ "key": "a1228e01b7281fe0",
+ "kind": "lemma",
+ "title": "Input Symbol in a Reduction Frame",
+ "statement": "Let $x$ be a Boolean word, let $q$ be an optional state in the 35-state control set, and let $i\\in\\mathbb{N}$ satisfy $i\\le |x|$. In the canonical reduction frame at input position $i$, the symbol read by the input head is the $i$-th entry of $x$ when that entry exists, and is blank otherwise.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$q$ is an optional state in the 35-state control set",
+  "$i\\in\\mathbb{N}$",
+  "$i\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input and $i \\le |x|$. In every canonical reduction frame on input\n$x$ at input position $i$, the symbol read by the input head is the $i$-th bit of\n$x$ when $i < |x|$, and the blank when $i = |x|$."
+}

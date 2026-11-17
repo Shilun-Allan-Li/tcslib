@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.universalCapture_interpreter_run",
+ "key": "6ca8f5c0544ab45e",
+ "kind": "lemma",
+ "title": "Interpreter runs in the capture wrapper",
+ "statement": "Let $M$ be a finite-state machine over the Boolean alphabet, let $x$ be a finite Boolean string, and let $c$ be a configuration of the four-tape interpreter on input $x$. For any assignment of contents and head positions to the $M$ work tapes and any $t\\in\\mathbb{N}$, running the capture wrapper of $M$ with the fixed universal interpreter for $t$ steps from the right-block embedding of $c$ yields the right-block embedding of the interpreter’s $t$-step run, with those assigned tape contents and head positions retained.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state machine over the Boolean alphabet",
+  "$x$ is a finite Boolean string",
+  "$c$ is a four-tape interpreter configuration on $x$",
+  "Arbitrary contents and head positions are assigned to the $M$ work tapes",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-tape machine over $\\{0,1\\}$.  For every four-tape\nconfiguration of the table interpreter, every assignment of contents and head\npositions to $M$'s work tapes, and every number of steps $t$: running the\ncombined capture machine (which pairs $M$ with the fixed table interpreter)\nfor $t$ steps from the right-block embedding of the interpreter configuration\nequals the right-block embedding of the interpreter's own $t$-step run, with\nthe inactive tapes and heads unchanged."
+}

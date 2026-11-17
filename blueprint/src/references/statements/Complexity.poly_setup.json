@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.poly_setup",
+ "key": "cbd55da715495900",
+ "kind": "lemma",
+ "title": "The setup rewind",
+ "statement": "Let $c,C,q\\in\\mathbb{N}$ and let $x$ be a bit string. For every $j\\le q$, after exactly $j+1$ steps of the unary box-enumeration machine from the configuration on input $x$ in the setup state, with every work tape containing $1^q$, every work head at position $j-1$, and empty output, it reaches the loop state at level $c$, with every work head at position $0$, the same tape contents, and empty output.",
+ "hypotheses_covered": [
+  "$c,C,q$ are natural numbers",
+  "$x$ is a bit string",
+  "$j\\le q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c, C, q \\in \\mathbb{N}$ and let $x$ be a bit string. For every $j \\le q$, running $\\mathcal{P}_{c,C}$ for exactly $j+1$ steps from $\\Gamma_q(\\mathrm{setup}, h, \\varepsilon)$, where every work head is at position $h(k) = j-1$, yields $\\Gamma_q(\\mathrm{loop}_c, h_0, \\varepsilon)$, where every work head is at $h_0(k) = 0$; here $\\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\\mathrm{loop}_i$, $\\mathrm{rewind}_i$, $\\mathrm{advance}_i$, $\\mathrm{emit}_j$ are its control states, setup is its rewinding state, and $\\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$."
+}

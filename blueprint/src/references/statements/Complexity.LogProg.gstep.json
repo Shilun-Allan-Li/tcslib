@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.gstep",
+ "key": "99a94ebf7e7a1122",
+ "kind": "def",
+ "title": "Signed virtual-tape step",
+ "statement": "For Boolean flags $\\mathit{dbl},\\mathit{last},\\mathit{first},\\mathit{par},\\mathit{dir},\\mathit{isChar}$ and a natural-number counter $s$, define a transition on signs as follows. Zero leaves $(s,\\mathit{par},\\mathit{dir})$ unchanged and outputs zero. A positive sign, when reading a character, changes the parity to true and outputs zero if $\\mathit{dbl}$ is true and parity is false; otherwise it sets parity to false, direction to true, and outputs positive. For a positive sign not reading a character, if direction is true it leaves the triple unchanged and outputs zero when $\\mathit{last}$ is true, and otherwise increments $s$, sets parity to true and direction to false, and outputs zero; if direction is false it sets parity to false and direction to true and outputs positive. A negative sign, when reading a character, sets parity to false and outputs zero if $\\mathit{dbl}$ is true and parity is true; otherwise it sets parity to true, direction to false, and outputs negative. For a negative sign not reading a character, if direction is true it sets parity to true, direction to false, and outputs negative; if direction is false and $\\mathit{first}$ is true it leaves the triple unchanged and outputs zero; otherwise it decrements $s$, sets parity to false and direction to true, and outputs zero.",
+ "hypotheses_covered": [
+  "Three Boolean flags $\\mathit{dbl},\\mathit{last},\\mathit{first}$",
+  "A natural-number counter $s$",
+  "Three Boolean flags $\\mathit{par},\\mathit{dir},\\mathit{isChar}$",
+  "An input sign"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

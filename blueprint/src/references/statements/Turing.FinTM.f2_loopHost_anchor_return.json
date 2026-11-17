@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost_anchor_return",
+ "key": "0f4f1db17834063d",
+ "kind": "lemma",
+ "title": "Return from an anchor state",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, and choose find and startup modes. For an input word $x$, configuration $c$ of $B$ on $x$, release bit $r$, time $t$, word $w$, and configuration $f$ of $F$ on $x$, suppose the run of $B$ from $c$ is in state $a$ at time $t$, that $r$ is false if $t=0$, and that at every earlier time $u<t$ either $u=0$ and $r$ is true or the run is not in state $a$. Then after $t+1$ steps the host machine, started with the corresponding body-call configuration, is exactly in the call configuration formed from the time-$t$ body configuration with its state set to halted, release set to false, and flag set to false; the word, fuel configuration, and other supplied data are preserved.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B$ and $F$",
+  "Anchor state of $B$",
+  "Find and startup mode bits",
+  "Input word $x$",
+  "Configuration $c$ of $B$ on $x$",
+  "Release bit $r$",
+  "Natural time $t$",
+  "Word $w$",
+  "Configuration $f$ of $F$ on $x$",
+  "The body run is in state $a$ at time $t$",
+  "If $t=0$, then $r$ is false",
+  "For every $u<t$, either $u=0$ and $r$ is true, or the body run at $u$ is not in state $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

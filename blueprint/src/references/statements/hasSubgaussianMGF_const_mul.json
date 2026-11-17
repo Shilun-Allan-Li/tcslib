@@ -1,0 +1,15 @@
+{
+ "lean_name": "hasSubgaussianMGF_const_mul",
+ "key": "56268bb65d462199",
+ "kind": "lemma",
+ "title": "Scaling a sub-Gaussian variable",
+ "statement": "Let $X$ be a real-valued measurable function on a measurable space with measure $\u0005bbr\u0005$, and suppose its moment-generating function satisfies the sub-Gaussian bound with variance proxy $\u0005csigma\u0005$ for every real parameter. For every $c\\in\\bbr$, the function $cX$ satisfies the same bound with variance proxy $c^2\\sigma$.",
+ "hypotheses_covered": [
+  "$X$ has sub-Gaussian moment-generating function bound with proxy $\\sigma\\ge 0$",
+  "$c\\in\\bbr$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $X$ be a real random variable on a measure space $(\\Omega,\\mu)$ that is sub-Gaussian\nwith variance proxy $\\sigma \\ge 0$, i.e.\\ $e^{tX}$ is $\\mu$-integrable and\n$\\E_\\mu[e^{tX}] \\le \\exp(\\sigma t^2/2)$ for every $t \\in \\bbr$. Then for every constant\n$c \\in \\bbr$, the scaled variable $\\omega \\mapsto c\\,X(\\omega)$ is sub-Gaussian with\nvariance proxy $c^2\\sigma$:\n\\[\n\\E_\\mu\\!\\left[e^{t\\,cX}\\right] \\le \\exp\\!\\left(\\tfrac{1}{2}\\,c^2\\sigma\\,t^2\\right)\n\\qquad\\text{for all } t \\in \\bbr.\n\\]"
+}

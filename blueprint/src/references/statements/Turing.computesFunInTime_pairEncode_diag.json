@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.computesFunInTime_pairEncode_diag",
+ "key": "08686285d5a22047",
+ "kind": "theorem",
+ "title": "Linear-time diagonal pair encoding",
+ "statement": "There exist a finite-state Turing machine $M$ over the binary alphabet and a natural-number constant $c$ such that, for every Boolean string $\u0003alpha$, $M$ outputs the pair encoding of $\u0003alpha$ with itself within $c(|\u0003alpha|+1)$ steps.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite-state machine $M$ over the binary alphabet and a\nconstant $c$ such that on every input string $\\alpha$ of length $n$, the\nmachine $M$ halts within $c \\cdot (n + 1)$ steps with output the diagonal\npair encoding $\\langle \\alpha, \\alpha\\rangle$ (each bit of $\\alpha$ doubled,\nthen the separator $01$, then $\\alpha$ verbatim).  In particular the diagonal\npairing $\\alpha \\mapsto \\langle \\alpha, \\alpha\\rangle$ is computable in\nlinear time."
+}

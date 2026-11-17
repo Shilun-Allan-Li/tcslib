@@ -1,0 +1,18 @@
+{
+ "lean_name": "FABL.pmfExpectation_literalProductSelectorPairPMF",
+ "key": "3a6aedb44c2da058",
+ "kind": "theorem",
+ "title": "Expectation under product selector sampling",
+ "statement": "Let $\\Omega$ be a finite set with probability mass function $\\pi$, let $n\\geq 0$, and let $\\theta\\in[-1,1]$. Independently sample two vectors $U,V\\in\\Omega^n$ by drawing each coordinate from $\\pi$. Also sample a pair of sign vectors $(R,T)\\in\\{-1,1\\}^n\\times\\{-1,1\\}^n$ from the correlated sign-pair distribution with parameter $\\theta$. Form vectors $X,Y\\in\\Omega^n$ coordinatewise by setting $X_i=U_i$ when $R_i=1$ and $X_i=V_i$ otherwise, and setting $Y_i=U_i$ when $T_i=1$ and $Y_i=V_i$ otherwise. For every $H:\\Omega^n\\times\\Omega^n\\to\\mathbb{R}$, its expectation at the pair $(X,Y)$ equals the nested expectation obtained by first averaging over $U$, then over $V$, and then over $(R,T)$.",
+ "hypotheses_covered": [
+  "A finite sample set",
+  "A probability mass function on the sample set",
+  "A natural number of coordinates",
+  "The parameter $\\theta$ lies in $[-1,1]$",
+  "A real-valued function on pairs of coordinate vectors"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

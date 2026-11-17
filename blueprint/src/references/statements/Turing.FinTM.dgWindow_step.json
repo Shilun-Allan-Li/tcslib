@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.FinTM.dgWindow_step",
+ "key": "63839facc4f1cdf6",
+ "kind": "lemma",
+ "title": "One-step update of the work-tape window",
+ "statement": "Let $\\Gamma$ be a symbol alphabet, let $M$ be a Turing machine with finitely many states and $k$ work tapes, let $x$ be an input word, and let $t,n\\in\\mathbb{N}$ and $a\\in\\mathbb{Z}$. Suppose $n>0$. At time $t$, every work-tape head is at a coordinate in $[a,a+n)$, every tape cell outside this interval is blank, every coordinate in the interval has been visited by some work-tape head at some time at most $t$, and every work-tape head stayed in the interval throughout times $0$ through $t$. Suppose also that $n\\le 2t+1$. Let $\\alpha$ be an action such that the configuration at time $t+1$ is obtained by applying $\\alpha$ to the configuration at time $t$. Let $\\ell,r\\in\\{0,1\\}$, with $\\ell=1$ exactly when some work-tape head at coordinate $a$ is instructed by $\\alpha$ to move left, and $r=1$ exactly when some work-tape head at coordinate $a+n-1$ is instructed by $\\alpha$ to move right. Then at time $t+1$, every work-tape head lies in $[a-\\ell,a-\\ell+n+r+\\ell)$, every tape cell outside this interval is blank, every coordinate in it has been visited by some work-tape head by time $t+1$, and every work-tape head stayed in it throughout times $0$ through $t+1$. The new interval has positive integer width $n+r+\\ell\\le 2(t+1)+1$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is a symbol alphabet; $M$ has finitely many states and $k$ work tapes; $x$ is an input word.",
+  "$t,n$ are natural numbers and $a$ is an integer.",
+  "$n>0$.",
+  "At time $t$, all work-tape heads lie in $[a,a+n)$.",
+  "At time $t$, all tape cells outside $[a,a+n)$ are blank.",
+  "Every coordinate in $[a,a+n)$ was visited by a work-tape head at some time at most $t$.",
+  "$n\\le 2t+1$.",
+  "At every time from $0$ through $t$, all work-tape heads lie in $[a,a+n)$.",
+  "The configuration at time $t+1$ is the result of applying the given action to the time-$t$ configuration.",
+  "$\\ell$ is true exactly when an action-directed leftward move occurs from coordinate $a$.",
+  "$r$ is true exactly when an action-directed rightward move occurs from coordinate $a+n-1$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

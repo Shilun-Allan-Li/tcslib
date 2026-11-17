@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.twoTapeFormat",
+ "key": "8befcb71a268a0e5",
+ "kind": "def",
+ "title": "Two-tape machine code format",
+ "statement": "There is a code format for deterministic machines with two work tapes and binary tape symbols. A code records its number of states, a designated initial state, and a transition table; its serialization pairs the binary expansion of the state-count parameter with the unary initial-state index followed by the serialized table. The format has a table reader and an erased table skipper, a guard constant of $351$ bits per state, and the halting fallback machine described above; assembling a state count, initial state, and table recovers every code, and the reader and skipper satisfy the stated consistency and length properties.",
+ "hypotheses_covered": [
+  "Codes represent two-work-tape machines over Boolean symbols with states indexed by Fin (n + 1).",
+  "The state-count parameter of an assembled code is n.",
+  "Serialization uses the paired binary state-count encoding, unary initial-state encoding, and table bits.",
+  "Every code is obtained by assembling some state count, initial state, and table.",
+  "Reading serialized table bits followed by a suffix returns that table and suffix.",
+  "Every successful table read consumes exactly the corresponding table encoding.",
+  "The table reader and erased skipper agree on the remaining suffix.",
+  "Each table encoding has length at least 351 times the number of states.",
+  "Malformed strings denote the fixed fallback code."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clFields_size",
+ "key": "10e2127f66aa57d7",
+ "kind": "lemma",
+ "title": "Length Bound for Packed Fields",
+ "statement": "Let $ws$ be a finite list of Boolean words and let $W\\in\\mathbb N$. If every word in $ws$ has length at most $W$, then the packed encoding of $ws$ has length at most $|ws|(2W+2)$.",
+ "hypotheses_covered": [
+  "A finite list $ws$ of Boolean words",
+  "A natural number $W$",
+  "Every word in $ws$ has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every list of words with all payloads of length at most $W$, the packed encoding has length at most the list length times $2W + 2$; each field stores its doubled payload plus two separator bits."
+}

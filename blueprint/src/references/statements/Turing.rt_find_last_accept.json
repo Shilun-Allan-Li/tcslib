@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.rt_find_last_accept",
+ "key": "f83d3f15cb1b7d80",
+ "kind": "theorem",
+ "title": "Accepting final scan",
+ "statement": "Let $m>0$, let $\u0000\u0000\u0000\u0000$, $a_0$, and $\u0000\u0000\u0000\u0000$ be fixed, and let $j<m$ be the final field index, so $j+1=m$. Let $a$ be a state and $w$ a word such that the acceptance predicate holds on the state obtained by folding $w$ from $a$. Let $d$ be a configuration in the forward scan state with value $a$, whose tape $0$ agrees with the buffer for $w$ at every relative integer position from $-1$ through $|w|$. After $2|w|+3$ steps, the round machine is in the exit state, with all other configuration data unchanged. At every earlier time $u<2|w|+3$, its state is neither the read state with no stored Boolean value nor the exit state. Throughout every time $u\\le 2|w|+3$, the head on tape $0$ stays between its initial position minus one and its initial position plus $|w|$, inclusive; the head on tape $1$ remains fixed.",
+ "hypotheses_covered": [
+  "$m>0$",
+  "The transition function $\u0000\u0000\u0000\u0000$, initial state $a_0$, and acceptance predicate $\u0000\u0000\u0000\u0000$",
+  "$j<m$ and $j+1=m$",
+  "State $a$ and word $w$",
+  "The acceptance predicate is true after folding $w$ from $a$",
+  "Configuration $d$ is in forward scan state with value $a$",
+  "Tape $0$ agrees with the buffer for $w$ for $-1\\le p\\le |w|$",
+  "The asserted run time is $2|w|+3$",
+  "For every $u<2|w|+3$, neither excluded endpoint state occurs",
+  "For every $u\\le 2|w|+3$, tape $0$'s head lies in the stated inclusive interval and tape $1$'s head is fixed"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem's claims are interpretable, but generated notation for machine parameters is malformed.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.f2_lenParse_run",
+ "key": "ab2e53d6392ce06a",
+ "kind": "lemma",
+ "title": "Bounded parsing and length check",
+ "statement": "Let $M$ be a Boolean finite Turing machine, let $x$ be a Boolean input, and let $c$ be a configuration of $M$ on $x$. For every pair of Boolean words $\\mathrm{pre},\\mathrm{rest}$ with $x=\\mathrm{pre}\\,\\mathrm{rest}$ and every natural number $r\\le |c.output|$, the machine obtained by augmenting $M$ with the pair parser, started on the first symbol of $\\mathrm{rest}$ with the extra tape containing $\\mathrm{pre}\\,c.output$ and positioned at cell $r-1$, halts within at most $|\\mathrm{rest}|+1$ steps and outputs the single bit that is $1$ exactly when the pair parser decodes $\\mathrm{rest}$ as $(a,b)$ for some $a,b$ with $|b|\\le r$, and is $0$ otherwise.",
+ "hypotheses_covered": [
+  "$M$ is a Boolean finite Turing machine",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$\\mathrm{pre}$ and $\\mathrm{rest}$ are Boolean words",
+  "$x=\\mathrm{pre}\\,\\mathrm{rest}$",
+  "$r$ is a natural number with $r\\le |c.output|$"
+ ],
+ "confidence": "low",
+ "caveat": "The auxiliary machine and its starting configuration are specified by private constructions in the formal snippet; the prose describes their relevant setup and behavior.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

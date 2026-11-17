@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.extract_suffix",
+ "key": "bd38723f30c5809a",
+ "kind": "lemma",
+ "title": "Extractor suffix copying",
+ "statement": "Let $x$, $r$, and $a$ be Boolean words, write $x=p r$, and let $o$ be a Boolean output word. For either choice of the first flag, the pair extractor with its second flag true, started in suffix state with input head just past $p$, buffer $a$, work head at $|a|$, and output $o$, reaches after exactly $|r|+1$ steps the halted configuration with input head at the end of $x$, the same buffer and work head, and output $o$ followed by $r$.",
+ "hypotheses_covered": [
+  "Boolean first flag",
+  "Boolean words x, r, and a",
+  "Boolean output word o",
+  "A prefix p with x = p ++ r"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "With the second-component flag set and a split $x = p s$ of the input, from\nthe extractor's suffix state at position $\\abs{p}$ with buffer $a$ and prior\noutput $o$, exactly $\\abs{s}+1$ steps reach a halted configuration with output\n$o$ followed by $s$; the buffer and its head are untouched."
+}

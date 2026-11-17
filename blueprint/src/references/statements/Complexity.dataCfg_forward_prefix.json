@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.dataCfg_forward_prefix",
+ "key": "400b2607e7d4983a",
+ "kind": "lemma",
+ "title": "Forward Scan Invariant",
+ "statement": "Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural number, and let $x$ be a schedule-alphabet input. Suppose the base guide tape is the guide of radius $R$, and let $f$ assign a payload vector to each integer coordinate. Assume that at every coordinate $z$, the current payload decoded from each data tape $i$ is $f(z)(i)$. For every natural number $n\\le 2R+1$, running the simulator for $n$ steps from the forward phase with guide head at $-R$ and neighbor registers $f(-R-1)$ yields a forward-phase configuration with guide head $-R+n$ and neighbor registers $f(-R+n-1)$. The resulting tapes still decode to $f$ in their current payloads at every coordinate, and their cached left-neighbor payload at each $z$ with $-R\\le z<-R+n$ is $f(z-1)$.",
+ "hypotheses_covered": [
+  "$W,M$ are finite machines over Boolean symbols",
+  "$a\\in\\mathbb N$",
+  "$x$ is a schedule-alphabet input",
+  "the base guide tape equals the guide of radius $R$",
+  "$f$ assigns a payload vector to every integer coordinate",
+  "each current decoded payload equals $f(z)(i)$ for all $i,z$",
+  "$n\\in\\mathbb N$ and $n\\le 2R+1",
+  "the initial phase is forward with guide head at $-R$",
+  "the initial neighbor registers are $f(-R-1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$, let $f$ assign a\npayload vector to every integer coordinate, and suppose every current payload of\nthe data tapes decodes to $f$.  For every $n \\le 2R + 1$, running the simulator\n$n$ steps from the forward phase at $-R$ with neighbor registers $f(-R-1)$ stays\nin the forward phase, reaching position $-R+n$ with neighbor registers\n$f(-R+n-1)$, on tapes whose current payloads still decode to $f$ and whose\ncached left-neighbor payloads equal $f(z-1)$ at every visited coordinate\n$-R \\le z < -R + n$."
+}

@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.Codec.dc_run",
+ "key": "fc76ca84050576ba",
+ "kind": "theorem",
+ "title": "Decode loop execution",
+ "statement": "Fix a finite nondeterministic Turing machine $N$, a mode, a bit string $y$, a bound $B$, a decode identifier $c$, a bit string $w$, and a register assignment $v$ to the 21 registers. Suppose every suffix value of $w$ is at most $B$; every register value under $v$ is at most $B$; the pointer register equals the base register plus the stride for $c$ times $|w|$; the accumulator and temporary registers are zero; and, at each position $i<|w|$, the input bit at the base offset by the stride times $i$ equals the $i$th bit of $w$. Then the codec program in the given mode, starting at its decode-test instruction with assignment $v$, reaches its next instruction for $c$ with the pointer reset to its base value and the accumulator equal to the binary value of $w$, leaving all other registers unchanged. Every configuration before the endpoint satisfies the program's safety condition and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine N",
+  "A codec mode",
+  "An input bit string y",
+  "A natural-number bound B",
+  "A decode identifier c",
+  "A bit string w",
+  "Every suffix binary value of w is at most B",
+  "Every register value under v is at most B",
+  "Pointer value equals base value plus stride(c) times the length of w",
+  "Accumulator value is zero",
+  "Temporary register value is zero",
+  "Input bits at base plus stride(c) times each position i are the corresponding bits of w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

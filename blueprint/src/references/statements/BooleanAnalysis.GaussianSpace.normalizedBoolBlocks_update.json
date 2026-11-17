@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.normalizedBoolBlocks_update",
+ "key": "d1958e9a1b927a23",
+ "kind": "lemma",
+ "title": "Updating a normalized Boolean block",
+ "statement": "Let $n,m$ be nonnegative integers, let $x\\colon\\{1,\\ldots,n\\}\\to\\{1,\\ldots,m\\}\\to\\{\\mathrm{false},\\mathrm{true}\\}$, choose a row $i$, a column $j$, and a Boolean value $b$. Encode each Boolean by $\\sigma(\\mathrm{false})=1$ and $\\sigma(\\mathrm{true})=-1$, and define $S(x)_k=(\\sum_{l=1}^m\\sigma(x_{kl}))/\\sqrt m$, with real division interpreted in the usual way, including when $m=0$. If $x'$ is obtained by replacing the entry $x_{ij}$ by $b$, then $S(x')=S(x)+\\frac{\\sigma(b)-\\sigma(x_{ij})}{\\sqrt m}e_i$, where $e_i$ is the vector equal to $1$ in coordinate $i$ and $0$ elsewhere.",
+ "hypotheses_covered": [
+  "$n,m$ are nonnegative integers",
+  "$x$ is a Boolean array indexed by rows and columns",
+  "$i$ is a row index",
+  "$j$ is a column index",
+  "$b$ is a Boolean value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $n,m\\ge0$ and $x\\in\\{0,1\\}^{n\\times m}$, define $S_m(x)_k=m^{-1/2}\\sum_{l=1}^m(-1)^{x_{kl}}$, interpreting division by zero as zero. If $x^{ij\\leftarrow b}$ replaces bit $(i,j)$ by $b$, then $S_m(x^{ij\\leftarrow b})=S_m(x)+\\bigl((-1)^b-(-1)^{x_{ij}}\\bigr)m^{-1/2}e_i$, where $e_i$ is the $i$th coordinate vector."
+}

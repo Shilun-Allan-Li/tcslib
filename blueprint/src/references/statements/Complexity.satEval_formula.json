@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satEval_formula",
+ "key": "3679e8a8677598dd",
+ "kind": "lemma",
+ "title": "Formula Evaluation Pass",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $w,u$ be Boolean words, and let $\\varphi$ be a CNF formula over natural-number variable indices such that every variable index in $\\varphi$ is less than $|u|$. For every decomposition $w=p\\,\\mathrm{dbl}(\\mathrm{enc}(\\varphi))\\,r$, every saved configuration of $M$ on input $w$, and every Boolean value $a$, there exists $t\\le 3|\\mathrm{enc}(\\varphi)|$ such that the evaluator run for $t$ steps from the canonical configuration at input offset $|p|$, in formula phase with formula bit $a$, clause bit false, and certificate-head offset $0$, is halted and has output consisting of the single bit $a\\wedge\\varphi(u)$, where $\\varphi(u)$ is evaluated under the assignment given by the bits of $u$, with variables beyond its length assigned false.",
+ "hypotheses_covered": [
+  "finite Boolean machine $M$ with $k$ work tapes",
+  "Boolean words $w,u$",
+  "CNF formula over natural-number variable indices",
+  "every variable index in $\\varphi$ is less than $|u|$",
+  "decomposition $w=p\\,\\mathrm{dbl}(\\mathrm{enc}(\\varphi))\\,r$",
+  "saved configuration on input $w$",
+  "Boolean value $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $u$ be the certificate word on the evaluator's last tape and $\\varphi$ a CNF\nformula all of whose variable indices are below $|u|$, with serialization\n$\\mathrm{ser}(\\varphi)$. Suppose the evaluator's input is a word $p$, followed by\nthe doubling of $\\mathrm{ser}(\\varphi)$, followed by a word $r$. Started at input\nposition $|p|$ in the formula phase with formula bit $a$, clause bit false, and\ncertificate head at $0$, there is a number $t \\le 3\\,|\\mathrm{ser}(\\varphi)|$ of\nsteps after which the evaluator is halted and its output is the single bit\n$a \\wedge \\varphi(u)$, where $\\varphi(u)$ is the truth value of $\\varphi$ under the\nassignment read off $u$; only the final formula terminator emits."
+}

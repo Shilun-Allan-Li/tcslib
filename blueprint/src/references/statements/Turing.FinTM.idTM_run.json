@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.idTM_run",
+ "key": "fd0144175da8336a",
+ "kind": "lemma",
+ "title": "Copy machine run invariant",
+ "statement": "Let $x$ be a Boolean word. For every $t\\in\\mathbb{N}$ with $t\\le |x|$, after $t$ steps from the copy machine's initial configuration on $x$, the machine remains in its unique state, its input head is at position $t+1$, and its output is the prefix of $x$ of length $t$.",
+ "hypotheses_covered": [
+  "arbitrary Boolean word x",
+  "t ∈ ℕ with t ≤ |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a Boolean word and run the one-state copy machine from its initial\nconfiguration on input $x$.  For every $t \\le \\abs{x}$, after $t$ steps the\nmachine is still live in its unique state, its input head sits at position\n$t + 1$ (in the convention where position $0$ is the left boundary blank and\nposition $j$ with $1 \\le j \\le \\abs{x}$ scans the $j$-th input symbol), and its\noutput is exactly the first $t$ symbols of $x$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.pairFstD_pairEncode",
+ "key": "133e3bea680ce877",
+ "kind": "theorem",
+ "title": "First projection of an encoded pair",
+ "statement": "For any two finite bit strings $a$ and $b$, the total first projection of their self-delimiting pair encoding is $a$.",
+ "hypotheses_covered": [
+  "$a$ and $b$ are finite bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\langle a,b\\rangle$ denote the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$), and let $\\pi_1$ be the total first projection, which returns the first component of a pair encoding and the empty word on any other bit string. Then $\\pi_1(\\langle a,b\\rangle) = a$ for all bit strings $a, b$."
+}

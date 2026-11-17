@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.mem_LOGSPACE_preimage",
+ "key": "63ad568b3c763252",
+ "kind": "theorem",
+ "title": "Logspace preimages",
+ "statement": "Let $f$ map finite binary strings to finite binary strings, and suppose its output length is bounded by $C(|x|+1)^c$ for some natural numbers $C,c$. Suppose also that each of the following languages is in $\\mathsf{LOGSPACE}$: the language of pairs $(x,i)$ for which the $i$th bit of $f(x)$ is $1$, and the language of pairs $(x,i)$ for which $i<|f(x)|$, with pairs represented by the encoding that doubles the bits of the first string, appends the separator $01$, and then the second string. Then for every language $A\\in\\mathsf{LOGSPACE}$, the language $\\{x:f(x)\\in A\\}$ is in $\\mathsf{LOGSPACE}$.",
+ "hypotheses_covered": [
+  "$f$ has output length at most $C(|x|+1)^c$ for some $C,c\\in\\mathbb N$",
+  "The language of pairs $(x,i)$ whose $i$th output bit under $f$ is $1$ belongs to $\\mathsf{LOGSPACE}$",
+  "The language of pairs $(x,i)$ with $i<|f(x)|$ belongs to $\\mathsf{LOGSPACE}$",
+  "$A\\in\\mathsf{LOGSPACE}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

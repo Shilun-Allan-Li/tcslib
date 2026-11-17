@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emCall_layout_triple",
+ "key": "909e1632021071bf",
+ "kind": "lemma",
+ "title": "Values at tracked tape slots",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $\\alpha$ be a type, and assign argument and capture values in $\\alpha$ and data, visited-mark, and origin-mark values in $\\alpha$ to each source tape. For every source tape $i$ and every component $r$ among data, visited marks, and origin marks, the layout at the physical index for component $r$ of tape $i$ equals that tape's assigned value for the corresponding component.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$\\alpha$ is a type",
+  "argument and capture values lie in $\\alpha$",
+  "data, visited-mark, and origin-mark values in $\\alpha$ are assigned to every source tape",
+  "$i$ is a source tape of $M$",
+  "$r$ is one of the three tracked components"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every assignment of per-slot values and every source tape $i$, the clean-call layout\nevaluated at the physical index of component $r$ of bank $i$ gives the data value, the\nvisited value, or the origin value of tape $i$ according to $r$."
+}

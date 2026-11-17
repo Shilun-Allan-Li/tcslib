@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.Contract.inPhase",
+ "key": "b72a836450a9ef0d",
+ "kind": "def",
+ "title": "Contract for a phase transition",
+ "statement": "Let a family of machines have state spaces indexed by a type $I$, and let a reduction rule optionally send a state in phase $i$ to a state in another phase. Suppose a contract for the machine in phase $p$ starts at $s_0$ and exits in a set $X$, with no halted state in $X$; every state outside $X$ is unchanged by the reduction rule, and every state in $X$ is sent to some different phase. Then the phase-host machine, which applies that reduction rule when available and otherwise runs the machine for the current phase, has a contract starting at $(p,s_0)$: its time is the given contract's time plus one, its endpoint state is obtained by applying the reduction rule to the original endpoint state, and its exit set consists of those reduced states arising from states in $X$.",
+ "hypotheses_covered": [
+  "A family of machines indexed by $I$, a phase-host initial state, and a reduction rule",
+  "A phase $p$, entry state $s_0$, exit set $X$, and contract for the machine in phase $p$",
+  "The halted state does not belong to $X$",
+  "Every state outside $X$ is unchanged by the reduction rule in phase $p$",
+  "Every state in $X$ is sent by the reduction rule to a state in a different phase"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

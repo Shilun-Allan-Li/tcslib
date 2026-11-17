@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emCall_clear_scan",
+ "key": "fd28db8e2151f1ad",
+ "kind": "lemma",
+ "title": "Rightward erasure pass",
+ "statement": "Let $w$ be a Boolean word, let $p$ be an input-head position for $w$, let $d$ be any data tape, let $\\ell$ be an integer, and let $m$ be a nonnegative integer. For every $j$ with $0\\le j\\le m$, start the cleaner in state $1$ with data tape $d$, the marker true exactly on $[\\ell,\\ell+m)$, the origin marker at $0$, and all heads at $\\ell$. After exactly $j$ steps, it is in state $1$ with all heads at $\\ell+j$; its data and marker tapes are each blank on $[\\ell,\\ell+j)$ and agree with their initial contents elsewhere, while the origin marker is unchanged.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "$p$ is an input-head position for $w$",
+  "$d$ is an arbitrary tape of optional Boolean symbols",
+  "$\\ell$ is an integer",
+  "$m$ is a natural number",
+  "$j$ is a natural number with $j\\le m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $d$ be a data tape and let an interval of width $m$ start at $\\ell$. For every $j\n\\le m$, running the interval cleaner for exactly $j$ steps from its rightward-erasure\nstate with all heads at $\\ell$ erases the first $j$ cells of both the data and the\nmarker, moves all heads to $\\ell + j$, and leaves the origin marker intact."
+}

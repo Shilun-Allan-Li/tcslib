@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.cont_guess_normalize",
+ "key": "6a38314a72fd55c3",
+ "kind": "lemma",
+ "title": "Polynomial time bound implies polynomial nondeterministic time",
+ "statement": "Let $L$ be a language of binary strings and let $C,c\\in\\mathbb{N}$. Suppose there are natural numbers $K,r$ and a finite nondeterministic Turing machine that decides $L$ within time $K\\bigl(n+C(n+1)^c+1\\bigr)^r$. Then $L$ belongs to $\\bigcup_{e\\in\\mathbb{N}}\\mathrm{NTIME}(n^e+1)$.",
+ "hypotheses_covered": [
+  "$L$ is a language of binary strings",
+  "$C,c\\in\\mathbb{N}$",
+  "There exist $K,r\\in\\mathbb{N}$ and a finite nondeterministic machine deciding $L$ within the stated time bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L$ be a language over the binary alphabet and $C, c$ natural numbers. If some nondeterministic machine decides $L$ within time $K\\,(n + C(n+1)^c + 1)^r$ for some constants $K$ and $r$, then $L$ belongs to $\\bigcup_{e} \\mathrm{NTIME}(n^e + 1)$."
+}

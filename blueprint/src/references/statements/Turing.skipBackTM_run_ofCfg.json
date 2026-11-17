@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.skipBackTM_run_ofCfg",
+ "key": "61c93bd4b81e3538",
+ "kind": "theorem",
+ "title": "Skipping backward over a word",
+ "statement": "Let $k$ be a nonnegative integer, let $i<k$ index a work tape, let $x$ be an input word, and let $u$ be a finite word. Consider a configuration $d$ in the running phase such that, for every integer $p$ with $-1\\le p\\le |u|$, tape $i$ at position $d_i-|u|-1+p$ contains the symbol of $u$ at position $p$ (and is blank where that position has no symbol). After $|u|+3$ steps, the skipping machine is in the done phase with tape head $i$ at $d_i-|u|-1$; it is not in the done phase at any earlier time. At every time up to and including $|u|+3$, the head on tape $i$ lies between $d_i-|u|-2$ and its initial position, inclusive, and every other work-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$i$ indexes one of the $k$ work tapes",
+  "The initial configuration is in the running phase",
+  "Tape $i$ agrees with the word tape at every integer position parameter $p$ from $-1$ through $|u|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

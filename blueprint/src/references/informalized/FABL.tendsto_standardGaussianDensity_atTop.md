@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter05/GaussianIsoperimetricConcavity.lean :: FABL.tendsto_standardGaussianDensity_atTop -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Gaussian density decay
+
+**Claim.** As the real variable $x$ tends to $+\infty$, the standard Gaussian density at $x$ tends to $0$.
+
+**Proof.** The exponent $-x^2/2$ tends to $-\infty$ as $x\to+\infty$: the square tends to $+\infty$, and multiplication by the negative constant $-1/2$ reverses the direction. Since the exponential tends to $0$ at $-\infty$, $e^{-x^2/2}\to0$. The standard Gaussian density is this exponential multiplied by the fixed constant $(\sqrt{2\pi})^{-1}$, so it too tends to $0$. The formula for the standard Gaussian density justifies this identification (\texttt{FABL.standardGaussianDensity\_formula}).
+
+**Key facts.** `FABL.standardGaussianDensity_formula`.

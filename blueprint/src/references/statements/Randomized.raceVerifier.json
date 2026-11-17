@@ -1,0 +1,15 @@
+{
+ "lean_name": "Randomized.raceVerifier",
+ "key": "5456e4ce362c5e85",
+ "kind": "def",
+ "title": "Sequential race verifier",
+ "statement": "Given two Boolean-output verifiers $M_1,M_2$ and a function $p_1$ from natural numbers to natural numbers, define a verifier on input lists $x,r$ as follows: run $M_1$ on $x$ and the prefix of $r$ of length $p_1(|x|)$. If it returns true, output true; otherwise run $M_2$ on $x$ and the suffix of $r$ after that prefix, outputting false if it returns true and no answer otherwise.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ map pairs of Boolean lists to Booleans",
+  "$p_1$ maps natural numbers to natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

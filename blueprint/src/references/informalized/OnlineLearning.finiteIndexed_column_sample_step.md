@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean :: OnlineLearning.finiteIndexed_column_sample_step -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Finite column sample intersection
+
+**Claim.** For the given finite sample of rows and finite set of columns, there is a point in $X$ whose payoff at every sampled column is at most the sampled lower value plus $\varepsilon$.
+
+**Proof.** If the finite column set is empty, any point of the nonempty set $X$ satisfies the vacuous collection of constraints. Otherwise enumerate its $n>0$ columns as $y_1,\ldots,y_n$. Regard the sampled rows and these columns as a finite zero-sum game with payoff $1-f(x_i,y_j)$. The bounds $0\le f\le1$ ensure that these transformed payoffs lie in $[0,1]$, so finite minimax applies. Let $K=\sup_{y\in Y}\min_i f(x_i,y)$ and $c=K+\varepsilon$. We first show that the upper value of the transformed game is at least $1-K$. For any mixed column strategy $q$, its weighted average $\bar y=\sum_jq_jy_j$ lies in $Y$ by convexity. Concavity of $f(x_{i_0},\cdot)$, where $i_0$ minimizes $f(x_i,\bar y)$ among the sampled rows, implies that the average payoff $\sum_jq_j f(x_{i_0},y_j)$ is at most $f(x_{i_0},\bar y)$. The latter is at most $K$, since the minimum over sampled rows at $\bar y$ is at most its supremum over $Y$. Consequently row $i_0$ earns at least $1-K$ against $q$, so the upper value is at least $1-K$. Finite minimax equality transfers this lower bound to the lower value. Since $\varepsilon>0$, we have $1-c<1-K$, and therefore some mixed row strategy $p$ has transformed lower payoff strictly greater than $1-c$. Its weighted row average $\bar x=\sum_i p_i x_i$ belongs to $X$ by convexity. For each sampled column $y_j$, the mixed strategy's payoff against that pure column is at least its lower payoff, hence is strictly greater than $1-c$. Rewriting the transformed payoff $1-f$ shows $\sum_i p_i f(x_i,y_j)<c$. Convexity of $f(\cdot,y_j)$ gives $f(\bar x,y_j)\le\sum_i p_i f(x_i,y_j)<c$. Thus this single point $\bar x$ satisfies every required finite sublevel constraint.
+
+**Key facts.** `OnlineLearning.bddAbove_range_iInf_of_unitInterval`, `OnlineLearning.finite_minimax_value`, `OnlineLearning.bddBelow_of_nonneg`, `OnlineLearning.payoffVsPure_nonneg`, `OnlineLearning.pureVsPayoff_le_one`.

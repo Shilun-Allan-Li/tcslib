@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.bridgeStack_pop",
+ "key": "9e8c01afb58f58d7",
+ "kind": "lemma",
+ "title": "Popping a represented stack",
+ "statement": "For any stack tail $xs$ and symbol $a$, blanking the cell at position $-(|xs|+1)$ in the tape representation of the stack with top symbol $a$ and tail $xs$ yields the tape representation of $xs$.",
+ "hypotheses_covered": [
+  "The stack is formed from a symbol $a$ followed by a tail $xs$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Updating the work-tape representation of a nonempty stack, with top symbol $a$ above\na tail $xs$, by blanking its top cell (at position $-(\\abs{xs} + 1)$) yields exactly\nthe representation of the popped stack $xs$."
+}

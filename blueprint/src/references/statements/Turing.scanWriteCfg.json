@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.scanWriteCfg",
+ "key": "ded0623c9541d702",
+ "kind": "def",
+ "title": "Configuration with a written segment",
+ "statement": "Let a Turing machine configuration have $k$ work tapes, symbol alphabet $\\mathrm{Symbol}$, state set $S$, and fixed input $x$. Given a tape index $i\\in\\mathrm{Fin}(k)$, a finite word $w$ over $\\mathrm{Symbol}$, a configuration $d$, a state $q\\in S$, an input-head position $p\\in\\mathrm{Fin}(|x|+2)$, and a length $r\\in\\mathbb N$, define a new configuration with state $q$ and input-head position $p$. On tape $i$, replace the cells from the old head position $d_i$ through $d_i+r-1$ by the buffer contents of $w$ at offsets from $0$ through $r-1$, leave all other tape cells unchanged, and move that tape's head right by $r$; every other tape and the output are unchanged.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$ work tapes",
+  "symbol alphabet and state set",
+  "fixed input word $x$",
+  "tape index $i\\in\\mathrm{Fin}(k)$",
+  "finite word $w$ over the symbol alphabet",
+  "configuration $d$",
+  "state $q$",
+  "input position $p\\in\\mathrm{Fin}(|x|+2)$",
+  "length $r\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.cont_poly_guess_phase",
+ "key": "a5aa3d74142f41d9",
+ "kind": "lemma",
+ "title": "Polynomial-length choice scheduling",
+ "statement": "For all natural numbers $C$ and $c$, there exist a finite deterministic Turing machine $M$ over the Boolean alphabet and a natural number $A$ such that, for every $n\\in\\mathbb{N}$, if $x$ is the all-$1$ word of length $n$ and $T=A(n+1)^{c+1}$, then both of the following hold: every choice word of length $T$ drives the guessing-phase machine of $M$ from its initial configuration on $x$ to the configuration corresponding to the $T$-step run of $M$, with some captured word of length exactly $C(n+1)^c$; and every word of length exactly $C(n+1)^c$ is captured in such a configuration by some choice word of length $T$.",
+ "hypotheses_covered": [
+  "$C$ and $c$ are natural numbers",
+  "$n$ is a natural number",
+  "$x$ is the all-$1$ Boolean word of length $n$",
+  "$T=A(n+1)^{c+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all natural numbers $C$ and $c$ there exist a deterministic scheduler machine $M$ and a constant $A$ such that for every $n$, on the unary input of length $n$ and with $T = A(n+1)^{c+1}$: every choice word of length $T$ drives the guessing-phase machine of $M$ to the completed $T$-step configuration while capturing some word of length exactly $C(n+1)^c$, and every word of that length is captured by some choice word of length $T$."
+}

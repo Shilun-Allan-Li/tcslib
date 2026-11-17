@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.UTab.goes_instr",
+ "key": "03ea6592a3851e7f",
+ "kind": "theorem",
+ "title": "Execution of a template instruction",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean input and $k$ work tapes, let $x$ be a Boolean word, let $\\theta$ be a template for $M$, let $e$ be a record of eleven natural-number register values, and let $p\\in\\mathbb{N}$. Assume that the label assigned as the successor of $\\theta$ is the label that begins its per-template increment phase. From the label for $\\theta$, with registers initialized to those specified by $e$, input position $p$, and any output word $o$, the counter program reaches the label assigned after $\\theta$ in at most the length of $\\theta$'s operation sequence plus three steps, still at input position $p$. Its registers are those specified by $e$ with the instruction counter increased by one and, when the template's initial-step flag is false, the preceding-cell counter also increased by one; its output is $o$ followed by the bits obtained by executing the template's operations using the initial register values.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine with Boolean input",
+  "$x$ is a Boolean input word",
+  "$\\theta$ is a template for $M$",
+  "The successor label of $\\theta$ equals the label beginning its per-template increment phase",
+  "$e$ is a record of eleven natural-number register values",
+  "$p$ is a natural input position",
+  "The initial output word is arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.tautDual_action",
+ "key": "8ce8bc2a751b8aa4",
+ "kind": "lemma",
+ "title": "Effect of a transducer action",
+ "statement": "Let $x$ be a binary string, let $q,q'$ be control states of the dual transducer, let $p$ be an input-head position, let $w$ be an output word, let $d\\in\\{-1,0,1\\}$, and let $o$ be an optional output bit. Applying the action that moves the input head by $d$, enters $q'$, and emits $o$ to the configuration with state $q$, position $p$, and output $w$ gives the configuration with state $q'$, head position moved by $d$ with boundary clamping, and output $w$ followed by $o$ if present.",
+ "hypotheses_covered": [
+  "$x$ is a binary string",
+  "$q,q'$ are dual-transducer control states",
+  "$p$ is a valid input-head position for $x$",
+  "$w$ is an output word",
+  "$d$ is a sign displacement",
+  "$o$ is an optional bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$, applying the zero-work-tape action that moves the input head by\n$d$, enters $q'$, and optionally emits $o$ to the configuration with state $q$, head\nposition $p$, and output $w$ yields the configuration with state $q'$, head position\n$p$ moved by $d$ (clamped at the boundary blanks), and output $w$ followed by $o$."
+}

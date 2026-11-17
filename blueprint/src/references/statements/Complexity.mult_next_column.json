@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.mult_next_column",
+ "key": "0a1a6c3072332720",
+ "kind": "lemma",
+ "title": "Advance to the next column",
+ "statement": "Let $x$ be a bit string and $v$ a register assignment with every register at most $4(|x|+1)$. If $v(12)\\le v(1)$ and $v(7)+1\\le 4(|x|+1)$, then from the carry-halving state the fixed multiplication program reaches the column state with registers $11$, $7$, and $12$ replaced respectively by $\\lfloor v(11)/2\\rfloor$, $v(7)+1$, and $\\min(v(12)+1,v(1))$; all other registers are unchanged, and no answer is recorded. Every earlier configuration satisfies the program's instruction side conditions and register bound.",
+ "hypotheses_covered": [
+  "Bit string x",
+  "Register assignment v",
+  "All registers are bounded by 4(|x|+1)",
+  "v(12)≤v(1)",
+  "v(7)+1≤4(|x|+1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

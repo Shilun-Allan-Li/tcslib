@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_strict_join",
+ "key": "aefbafba135a4b5c",
+ "kind": "lemma",
+ "title": "Joining strict safety intervals",
+ "statement": "Let $M$ be a multi-tape machine over the Boolean alphabet with state set $S$, let $a,b$ be natural numbers, and let $r\\in S$ be an anchor state. Suppose the run from configuration $c$ reaches $d$ after $a$ steps, no configuration from time $0$ through time $a$ inclusive in the run from $c$ has state $r$, and no configuration at any time $j<b$ in the run from $d$ has state $r$. Then no configuration at any time $j<a+b$ in the run from $c$ has state $r$.",
+ "hypotheses_covered": [
+  "Machine $M$ over Boolean symbols with state set $S$",
+  "Anchor state $r\\in S$",
+  "Configurations $c,d$",
+  "Natural numbers $a,b$",
+  "The run from $c$ reaches $d$ after $a$ steps",
+  "The run from $c$ avoids state $r$ at every time $j\\leq a$",
+  "The run from $d$ avoids state $r$ at every time $j<b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the run from $c$ reaches $d$ in $a$ anchor-free steps and the run from\n$d$ avoids the anchor at all times strictly before $b$, then the run from\n$c$ avoids the anchor at all times strictly before $a + b$, even when time\n$a + b$ itself returns to the anchor."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.splitEmit_suffix",
+ "key": "2cb72d9323492c37",
+ "kind": "lemma",
+ "title": "Suffix copying by the split emitter",
+ "statement": "Let $k$ be a natural number, let $w,s,r$ be Boolean words, and let $q$ be any prefix and $o$ any output word. If $w=q r$, then starting the split emitter on input $w$ in state $3$ of its four states, with the first work tape containing $s$ and head position $h$, its scratch tape in the prescribed unary configuration, and output $o$, after $|r|+1$ steps it is in the configuration with no state, input head at position $|w|+1$, the same work tapes and head positions, and output $o r$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w,s,r$ are Boolean words",
+  "$q,o$ are arbitrary words",
+  "$h\\in\\mathbb N$",
+  "$w=q r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the native input splits as $w = p r$, then from the split emitter's copy\nstate at position $\\abs{p}$ with prior output $o$, exactly $\\abs{r}+1$ steps\ncopy $r$ to the output and halt, preserving all work tapes; this includes the\nempty suffix with its final blank-reading halt."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitBody_round",
+ "key": "03c0c3e34aae42ad",
+ "kind": "lemma",
+ "title": "One round of the split-body machine",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $start$ be one of its states, and let $w,s,out$ be Boolean words. Suppose that from the bank configuration storing $s$, the machine $M$ on empty input halts after $T$ steps with output $out$. Then the split-body machine started on input $w$ in the anchor state with $s$ on its first work tape and all other tapes blank has a time $t$ with $0<t\\le T+5|s|+3|w|+20$, and it is not in the anchor state at any intermediate time $j$ with $0<j<t$. If $|s|+|out|=|w|$, its configuration at time $t$ is halted and its output is the encoding of the first $|s|$ bits of $w$ paired with the remaining bits. Otherwise, its configuration at time $t$ is the anchor seam configuration with the first tape word obtained by appending one true bit to $s$ when $|s|\\le |w|$, and equal to $s$ otherwise; all other tape words are empty.",
+ "hypotheses_covered": [
+  "M is a finite Turing machine over Bool",
+  "start is a state of M",
+  "w, s, and out are Boolean words",
+  "the run of M from the bank configuration for s with state start and empty output reaches the bank configuration with no state and output out after T steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

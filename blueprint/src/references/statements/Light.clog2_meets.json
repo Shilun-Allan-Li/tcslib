@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.clog2_meets",
+ "key": "daaa15161d9c964f",
+ "kind": "theorem",
+ "title": "Logarithmic computation by a program",
+ "statement": "Let a program $P$ contain the specified logarithm-computation body at procedure index $p$, let $\u0000\\mu:\\mathbb{N}\\to\\mathbb{Z}$ be an initial memory, and let $x\\in\\mathbb{N}$. If $2x+1\\leq\\mathrm{word}(\\mathrm{lim})$, then calling procedure $p$ with input $x$ from the initial state whose location values are given by the one-element argument list $[x]$ and whose memory is $\\mu$ can finish within $12\\,\\mathrm{clog}(2,x)+10$ steps, returning $\\mathrm{clog}(2,x)$ in location $0$ and leaving memory equal to $\\mu$.",
+ "hypotheses_covered": [
+  "The program at index $p$ is the specified logarithm-computation body.",
+  "The initial memory is a function from natural numbers to integers.",
+  "The word limit satisfies $2x+1\\leq\\mathrm{word}(\\mathrm{lim})$.",
+  "The call is bounded by the stated time limit $12\\,\\mathrm{clog}(2,x)+10$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timedCut_table_rewind",
+ "key": "04dde43e82b52fb2",
+ "kind": "lemma",
+ "title": "Exact-Cost Table Rewind",
+ "statement": "Let $x$ be a Boolean input word, $B$ a four-tape configuration, $i\\in\\{0,\\ldots,8\\}$, and let $T$ be a Boolean table. For every natural number $j\\le |T|$, starting in the table-rewind control with table cursor $j-1$, after $j+1$ steps the interpreter is in the count-first control with the same initial flag and index and table cursor $0$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "base four-tape configuration $B$",
+  "initial flag",
+  "index $i\\in\\text{Fin}(9)$",
+  "Boolean table $T$",
+  "natural number $j$ with $j\\le |T|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the stopped table interpreter is in its table-rewind phase with the\ntable cursor at $j-1$, where $j$ is at most the table length.  Then exactly\n$j+1$ steps bring it to the count-parsing phase with the table cursor at $0$,\nleaving the state tape, the mirrored data, the input head, and the accumulated\noutput unchanged."
+}

@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.UTab.Tpl.srcs",
+ "key": "be51f90f362b744f",
+ "kind": "def",
+ "title": "Template source lists",
+ "statement": "For natural numbers $W,m$, associate a list of sources to each template as follows. A cell template uses the cell-source list with its phase determining the three neighbor flags, an input template uses the input-source list for its phase, and a snapshot template uses the snapshot-source list; append constant-false sources to each such list until its length is at least $m$ (adding exactly the difference when the list is shorter), and assign the empty list to every other template. Here the cell-source list consists of the time flag, the right-tape flag, three gated sources from each of the left, middle, and right neighbor tracks, two gated current sources, and the position sources; the snapshot-source list consists of the time flag, a position source at index $W$ when the time flag is false (otherwise constant false), current sources at indices 1 and 2, two end-marker sources for each of the $k$ tracks, and the position sources.",
+ "hypotheses_covered": [],
+ "confidence": "low",
+ "caveat": "Several source-list constructors are defined only in the supplied formal snippet, without informal descriptions; the prose summarizes their construction.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

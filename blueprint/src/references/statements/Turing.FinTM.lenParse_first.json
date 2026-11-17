@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.lenParse_first",
+ "key": "feb147fe59dbf245",
+ "kind": "lemma",
+ "title": "First step of the pair parser",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $x$ be a Boolean word, and let $c$ be a configuration of $M$ on $x$. If $x=pbs$ for Boolean words $p,s$ and a bit $b$, then one step from the length checker’s parse configuration at position $|p|$ enters the state recording $b$ at position $|p|+1$, with the counter unchanged.",
+ "hypotheses_covered": [
+  "M is a finite Boolean Turing machine",
+  "x is a Boolean word",
+  "c is a configuration of M on x",
+  "x splits as p followed by b and s",
+  "b is a Boolean bit",
+  "s is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input splits as $x = p\\, b\\, s$ with bit $b$, one checker step from\nthe block-start parse state at position $\\abs{p}$ records $b$ in the finite\ncontrol and advances the input head; the countdown cells and the output are\nuntouched."
+}

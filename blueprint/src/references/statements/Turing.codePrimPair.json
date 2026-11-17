@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.codePrimPair",
+ "key": "d82d54cc040395db",
+ "kind": "lemma",
+ "title": "Primitive Recursiveness of the Aligned Pair Parser",
+ "statement": "The partial parser on finite Boolean strings that reads aligned two-bit blocks from the left, appending $0$ to the first component for each block $00$ and $1$ for each block $11$, stops at the first block $01$, and returns the accumulated first component together with the untouched remaining suffix is primitive recursive. It is undefined if neither such separator nor a valid preceding sequence of blocks is found.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The aligned pair parser is primitive recursive.  This parser reads a Boolean string\nin aligned two-bit blocks: the blocks $00$ and $11$ contribute the data bits false\nand true, the first aligned block $01$ acts as separator, and any other block (or a\nmissing separator) is rejected; on success it returns the decoded first component\ntogether with the suffix following the separator."
+}

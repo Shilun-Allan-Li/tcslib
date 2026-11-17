@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.BinArith.searchStep",
+ "key": "f8ffff80a7edce26",
+ "kind": "def",
+ "title": "Binary arithmetic search step",
+ "statement": "For a Boolean list $S$, define a new list by the following cases. If the default-false head of the second component of the second default pair decomposition of $S$ is true, the new list is $S$. Otherwise, if the Boolean test on the pair encoding of the first component of the second default pair decomposition of $S$ and the first component of $S$ holds, the new list is the pair encoding of the first component of $S$ with the pair encoding of that former component and $[\\mathrm{true}]$. If neither condition holds and the bit value of the specified modular expression is zero, the new list is the pair encoding of the incremented pair encoding of the first component of $S$ with $[\\mathrm{true}]$, and the pair encoding of $[\\mathrm{false},\\mathrm{true}]$ with $[\\mathrm{false}]$. In the remaining case, it is the pair encoding of the first component of $S$ with the pair encoding of the incremented pair encoding of the first component of the second default pair decomposition of $S$ with $[\\mathrm{true}]$, and $[\\mathrm{false}]$.",
+ "hypotheses_covered": [
+  "$S$ is a Boolean list"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement omits the meanings of the pair decomposition and encoding operations, the Boolean test, and the modular, bit-value, and increment operations, so their roles cannot be made more explicit without adding unsupported definitions.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

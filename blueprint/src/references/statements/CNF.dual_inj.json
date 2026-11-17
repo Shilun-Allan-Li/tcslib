@@ -1,0 +1,16 @@
+{
+ "lean_name": "CNF.dual_inj",
+ "key": "85b123e74ddc405d",
+ "kind": "lemma",
+ "title": "Variable distinctness under CNF dualization",
+ "statement": "Let $n$ be a natural number and let $\\psi$ be a CNF formula on $n$ variables. Suppose that in every clause of $\\psi$, any two literals with the same variable are equal. Then in every term of the De Morgan dual DNF of $\\psi$, any two literals with the same variable are equal.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$\\psi$ is a CNF formula on $n$ variables",
+  "In each clause, literals with the same variable are equal"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\psi$ be a CNF formula on $n$ variables with the property that, within each of its\nclauses, any two literals having the same variable are in fact the same literal (so no\nvariable occurs in a clause with both polarities, nor is any literal repeated). Then the\nDe Morgan dual DNF obtained from $\\psi$ by negating every literal has the same property\nterm by term: within each of its terms, any two literals sharing a variable are equal."
+}

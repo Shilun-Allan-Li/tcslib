@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.enumCont_sparse_append",
+ "key": "461f2c165bac4708",
+ "kind": "lemma",
+ "title": "Appending a Sparse Tape Cell",
+ "statement": "Let $w$ be a finite list of possibly blank Boolean cells, and let $b$ be an optional Boolean symbol. The tape function represented by the list obtained by appending $b$ to $w$ equals the tape function represented by $w$ with its value at position $|w|$ replaced by $b$.",
+ "hypotheses_covered": [
+  "A finite list $w$ of optional Boolean symbols",
+  "An optional Boolean symbol $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Appending one possibly blank entry to a finite cell list changes the induced\nsparse tape at exactly the position just past the old list, where the new entry\nis written."
+}

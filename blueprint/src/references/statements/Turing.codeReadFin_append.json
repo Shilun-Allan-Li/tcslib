@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.codeReadFin_append",
+ "key": "7628a00fe4d3bc32",
+ "kind": "lemma",
+ "title": "Bounded-index decoding",
+ "statement": "For every natural number $n$, every index $i\\in\\{0,\\ldots,n-1\\}$, and every bit string $x$, reading the unary code of $i$—$i$ ones followed by a zero—then $x$, with the range-checked unary index reader of bound $n$, succeeds and returns $(i,x)$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$i$ is an index less than $n$",
+  "$x$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a bound $n$, an index $i < n$, and any bit string $x$: the range-checked\nunary reader with bound $n$, applied to the self-delimiting unary code of $i$\n($i$ ones followed by a zero) concatenated with $x$, succeeds and returns\n$(i, x)$."
+}

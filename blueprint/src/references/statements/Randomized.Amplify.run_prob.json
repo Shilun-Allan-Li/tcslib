@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.Amplify.run_prob",
+ "key": "f0c3281061096f09",
+ "kind": "theorem",
+ "title": "Output probability in the amplified run",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine on Boolean inputs, with input $x$, and let $r,T$ be natural numbers. Suppose every choice word of length $T$ makes $N$ halt on $x$. Choose $v\\in\\{0,1\\}$, a natural number $i$, a run index $j\\in\\{0,\\ldots,r\\}$ with $j+i=r$, a counter $c\\in\\{0,\\ldots,r+1\\}$ with $c\\le j$, and an amplified-machine configuration $D$ whose work-tape blocks with index greater than $j$ are blank with their heads at $0$. Let $\\mathrm{dec}:\\mathbb{N}\\to\\{0,1\\}$. Assume every choice word of length $i(T+|x|+2)+1$ halts the amplified machine from any rewind configuration for run $j$. Also assume that, for every such rewind configuration with counter $c'\\le j+1$, the probability that a uniformly random choice word of that length produces output $[v]$ equals the probability that $\\mathrm{dec}(c'+s)=v$, where $s$ counts the $T$-bit blocks among $i$ blocks accepted by $N$ on $x$ in a uniformly random $iT$-bit word. Then the probability that a uniformly random choice word of length $T+i(T+|x|+2)+1$, started from the embedding of $N$’s initial configuration at run $j$ and counter $c$, produces output $[v]$ equals the probability that $\\mathrm{dec}(c+s')=v$, where $s'$ counts the accepted $T$-bit blocks among $i+1$ blocks in a uniformly random $(i+1)T$-bit word.",
+ "hypotheses_covered": [
+  "Every choice word of length $T$ makes $N$ halt on $x$",
+  "$v$ is a Boolean value",
+  "$i$ is a natural number",
+  "$j\\in\\{0,\\ldots,r\\}$ and $j+i=r$",
+  "$c\\in\\{0,\\ldots,r+1\\}$ and $c\\le j$",
+  "Every work-tape block with index greater than $j$ is blank and has its head at $0$ in $D$",
+  "Every choice word of length $i(T+|x|+2)+1$ halts the amplified machine from any rewind configuration for run $j$",
+  "For each rewind configuration with counter $c'\\le j+1$, the stated output probability equals the probability that the decoder applied to the initial counter plus the number of accepted blocks equals $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

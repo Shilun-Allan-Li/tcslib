@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/PolyTimePrefix.lean :: Complexity.PrefixByLength.goes_pair -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Processing a Self-Delimited Pair
+
+**Claim.** For either program parameter and all bit strings $u,r$, on the input formed by doubling each bit of $u$, appending $01$, and then appending $r$, the program starting at scan with register $0$ and position $0$ halts with some register assignment and input position. It appends the first $|u|$ bits of $r$ when the parameter is true, and the suffix after those bits when false; the run takes at most $5$ times one more than the input length. This holds for any output already printed.
+
+**Proof.** First, scanning the doubled prefix returns to scan after consuming its $2|u|$ bits, with register $|u|$ and no output, in at most $3|u|$ steps (`Complexity.PrefixByLength.goes_doubled`). The next two input bits are the separator $01$: reading $0$ moves from scan to the second-false label, and reading $1$ moves from there to head, advancing the position by two without changing register or output (`Complexity.CounterProg.goes_rd_false`, `Complexity.CounterProg.goes_rd_true`). Prepending the separator to the payload computation shifts its initial position accordingly. From head, the payload computation on $r$ halts with the claimed output: it appends the first $|u|$ bits for the true parameter and the suffix after them for false (`Complexity.PrefixByLength.goes_payload`). Concatenating the prefix scan, separator reads, and payload run yields a halted run on the encoded input; the encoding identity `pairEncode u r = dbl u ++ [false,true] ++ r` identifies this input (`Turing.pairEncode_eq_dbl`). The claimed overall step bound follows by combining the component bounds and the length formula for the encoding (`Turing.length_pairEncode`), with the final bound enlargement justified by `Complexity.CounterProg.Goes.congr`.
+
+**Key facts.** `Complexity.CounterProg.goes_rd_false`, `Complexity.CounterProg.goes_rd_true`, `Complexity.PrefixByLength.goes_doubled`, `Complexity.PrefixByLength.goes_payload`, `Complexity.CounterProg.Goes.prepend_input`, `Complexity.CounterProg.Goes.trans`, `Turing.pairEncode_eq_dbl`, `Turing.length_pairEncode`, `Complexity.CounterProg.Goes.congr`.

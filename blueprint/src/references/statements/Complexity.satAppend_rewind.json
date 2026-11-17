@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satAppend_rewind",
+ "key": "618a853947f5cf23",
+ "kind": "lemma",
+ "title": "Rewinding the work tape",
+ "statement": "Let $x$ and $w$ be Boolean words and let $i$ be a valid input-head position for input $x$. For every integer $r$ with $r\\le |w|$, starting in the appender's work-rewind state with input head at $i$, work tape holding $w$, and work head at $r-1$, after exactly $r+1$ steps the machine is in its input-rewind state with input head still at $i$, work tape still holding $w$, and work head at zero.",
+ "hypotheses_covered": [
+  "Boolean words $x,w$",
+  "valid input-head position $i$ for input $x$",
+  "$r\\le |w|$",
+  "initial state is the work-rewind state",
+  "initial tape word is $w$",
+  "initial work-head position is $r-1$",
+  "number of steps is $r+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $r \\le |w|$: from the rewind state with the work head at offset\n$r - 1$ over a tape holding $w$, exactly $r + 1$ steps return the head to the\norigin and enter the input-rewind state; the blank at offset $-1$ is used only\nlocally and never written."
+}

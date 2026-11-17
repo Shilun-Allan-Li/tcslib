@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.UTab.SSrc.toLinE",
+ "key": "9e7198372334aa6c",
+ "kind": "def",
+ "title": "Linear expressions for tableau sources",
+ "statement": "Let $M$ be a finite-state Turing machine over the binary alphabet with $k$ work tapes. Write $A$ for its configuration arity, $w$ for its configuration width, $G$ for the maximum width of its transition-table gadgets, and $W=A+G+w$. Each tableau source is assigned a linear expression over eleven registers, given as a list of register indices followed by a natural-number constant. A constant source $b$ is assigned $([0],1)$ if $b$ is true and $([0],0)$ otherwise; the zero-input source is $([0,8],2)$, and the unit-input source is $([9],0)$. A previous-configuration source $(d,j)$ is assigned the list consisting of $0$, then $1$, then $W$ copies of $4$, with constant $2+Wd+A+G+j$; a current-configuration source $j$ and a position source $j$ are each assigned the list consisting of $0$, then $1$, then $W$ copies of $3$, with constant $2+A+G+j$. An end-of-tape source $(\\tau,j)$ is assigned the list consisting of $0$, then $1$, then $W$ copies of $5$, followed by $2W(\\tau+1)$ copies of $2$, with constant $2+W(\\tau+1)+A+G+j$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over the binary alphabet",
+  "$M$ has $k$ work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

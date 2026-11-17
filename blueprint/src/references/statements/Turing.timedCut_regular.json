@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.timedCut_regular",
+ "key": "ef48279a166b27ba",
+ "kind": "lemma",
+ "title": "Agreement outside record states",
+ "statement": "For any control state $q$ that is not of the form holding a fully decoded transition record, and for every input symbol and four-tape read tuple, the stopped interpreter and the original interpreter have the same transition action.",
+ "hypotheses_covered": [
+  "$q$ is not an apply-record control state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every control state that is not a pending-action state, the transition\nfunction of the stopped table interpreter agrees with that of the original\ntable interpreter on all reads."
+}

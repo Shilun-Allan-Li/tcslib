@@ -1,0 +1,14 @@
+{
+ "lean_name": "Std.Sat.CNF.syntaxOK_spec",
+ "key": "317635ba13df7353",
+ "kind": "theorem",
+ "title": "Syntax test characterizes parseability",
+ "statement": "For every finite bit string $x$, start a six-state machine in state $0$ and process the bits of $x$ in order, with states numbered $0$ through $5$. On input $1$, the transitions from states $0,1,2,3$ are respectively to $1,2,2,1$; on input $0$, they are respectively to $4,0,3,1$; either input from states $4$ or $5$ leads to state $5$. The syntax test returns true exactly when this process ends in state $4$, which holds exactly when exact-consumption parsing of $x$ succeeds.",
+ "hypotheses_covered": [
+  "$x$ is any finite bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.timedCut_unary_copy",
+ "key": "a4ae6508bf03bec3",
+ "kind": "lemma",
+ "title": "Copying a Unary Table Field",
+ "statement": "Let $x$ be a Boolean input word, $B$ a four-tape configuration, and $q,q'$ interpreter controls. Suppose that in control $q$, reading $1$ writes $1$ on the state tape and advances both the table and state heads by one; reading $0$ transfers to $q'$, moves the table head by $m$, and leaves the state head fixed. If the table is $l$ followed by $n$ copies of $1$, then $0$, then $r$, then after $n+1$ steps from table position $|l|$ and state tape encoding $j$ with state head at $j+1$, the table head is at $|l|+n+m$, the state tape encodes $j+n$, and its head is at $j+n+1$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "base four-tape configuration $B$",
+  "controls $q,q'$",
+  "designated final table movement $m$",
+  "transition condition on a read of $1$",
+  "transition condition on a read of $0$",
+  "natural numbers $n,j$",
+  "table factorization $T=l\\mathbin{+\u001er}1^n\\mathbin{+\u001er}0::r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the current control $q$ of the stopped table interpreter appends one\nunary symbol to the state tape and advances both cursors whenever the table\nreads $1$, and on reading $0$ transfers to a continuation control $q'$ with a\ndesignated final table move.  If the table holds $n$ ones followed by a zero\nat cursor position $|l|$, then $n+1$ steps transform the unary state tape for\n$j$ (state cursor $j+1$) into the unary state tape for $j+n$ (state cursor\n$j+n+1$), with the table cursor ending at $|l|+n$ plus the final move.  This\nsingle gadget serves both initial-state extraction and successor-state\nreplacement."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.BinArith.DivInv",
+ "key": "c0f7ffcfec617807",
+ "kind": "def",
+ "title": "Division invariant",
+ "statement": "For lists $z$ and $S$ of Boolean digits, an invariant holds if there are lists $R$, $r$, and $q$ such that $S$ is the nested pair encoding of the second decoded component of $z$, followed by $R$, $r$, and $q$; both $r$ and $q$ have length at most the length of the first decoded component of $z$ minus the length of $R$. In addition, if the natural number represented by the second decoded component is positive, then $(\\operatorname{val}(q)\\operatorname{val}(b)+\\operatorname{val}(r))2^{|R|}+\\operatorname{val}(\\operatorname{reverse}(R))=\\operatorname{val}(a)$ and $\\operatorname{val}(r)<\\operatorname{val}(b)$, where $a$ and $b$ are the natural numbers represented by the first and second decoded components of $z$.",
+ "hypotheses_covered": [
+  "$z,S$ are Boolean lists",
+  "existence of lists $R,r,q$ with the stated encoding",
+  "$|r|+|R|$ is at most the length of the first decoded component",
+  "$|q|+|R|$ is at most the length of the first decoded component",
+  "when the second decoded component has positive value, the stated reconstruction equality and remainder bound hold"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet's pair encoding, decoding, and binary-value functions are not defined in the supplied context.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

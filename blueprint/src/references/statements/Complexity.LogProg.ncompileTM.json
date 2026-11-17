@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.ncompileTM",
+ "key": "56b2a9a0faff5559",
+ "kind": "def",
+ "title": "Nondeterministic program compilation",
+ "statement": "Let $A$ be a nondeterministic register program with $m$ registers and $d$ deciders, let $l_0$ be an initial program label, and let $D$ be a deterministic Turing machine with $k_D$ work tapes. For each decider, choose a state of $D$ via a map $q_0$. The compiled nondeterministic Turing machine has $m+k_D$ work tapes and starts in the program state at $l_0$; whenever $A$ makes a binary choice, its two transitions proceed to the corresponding successor labels, and otherwise it uses the compiled deterministic instruction transition, including the simulation of $D$ when required.",
+ "hypotheses_covered": [
+  "A is a nondeterministic register program with $m$ registers and $d$ deciders",
+  "$l_0$ is an initial program label",
+  "$D$ is a deterministic Turing machine with $k_D$ work tapes",
+  "A starting state of $D$ is specified for each decider"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement delegates the non-choice transition behavior to auxiliary constructions whose definitions are not included.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

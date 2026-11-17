@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.StepBlock.actionBitsK_reads",
+ "key": "d0e7086c261b2353",
+ "kind": "lemma",
+ "title": "Action record and table reads",
+ "statement": "Let $k,n$ be natural numbers, let $S$ be a type, let $x$ be a finite input list of symbols, let $d$ be a configuration with $k+2$ work tapes, Boolean tape symbols, and state type $S$, and let $a$ be a $k$-tape action with Boolean work-tape symbols and successor states in $\text{Fin}(n+1)$. Suppose the extra work tape, starting at its head position, contains the serialized action $a$ with no blank among its bits. Then there is a Boolean record of length $4k+4$ such that the action serialization is this record followed by the successor-state serialization, the total length is $4k+4$ plus the length of that state serialization, the record bits are read from the corresponding consecutive cells of the extra tape, and the remaining cells read the corresponding successor-state bits.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb{N}$",
+  "$S$ is a type",
+  "$x$ is a finite input list",
+  "$d$ is a configuration with $k+2$ tapes, Boolean tape symbols, and state type $S$",
+  "$a$ is an action with $k$ Boolean work tapes and successor state in $\\mathrm{Fin}(n+1)$",
+  "Every serialized action bit is present in the extra tape at the corresponding cell from its head position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

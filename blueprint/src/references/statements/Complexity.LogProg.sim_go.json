@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.sim_go",
+ "key": "b1fa4dbb85408af9",
+ "kind": "lemma",
+ "title": "Simulation of a State Transition",
+ "statement": "Let a program have finitely many natural-number registers, labels in a set $\\Lambda$, and an oracle for its calls. Suppose that at label $l$ it has no pending oracle call, and that for every possible input symbol the machine transition from label $l$, when each work head scans cell $0$ containing the binary encoding of its register value, moves no heads, writes nothing, emits no output, and changes the label to a specified target label. For any Boolean input $x$, register values $v$, output word, and integer $W\\ge 0$, the compiled program can run from the configuration with label $l$, those register values, all work heads at cell $0$, and the given output to the configuration with the target label and the same registers and output. During this finite run, every earlier configuration has no pending oracle call, and every work head position lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "A program with finitely many registers and a label set Λ",
+  "An oracle indexed by the finite set of deciders",
+  "No pending oracle call at (l, start)",
+  "For every possible input symbol, the transition at (l, start) with the specified scanned register symbols equals the action that changes to target and otherwise does nothing",
+  "An arbitrary Boolean input x",
+  "An arbitrary vector v of natural-number register values",
+  "An arbitrary output word",
+  "0 ≤ W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitPrepareScan",
+ "key": "db83961357812748",
+ "kind": "def",
+ "title": "Split preparation scan configuration",
+ "statement": "For $k\\in\\mathbb N$, Boolean strings $w,s$, and $j\\in\\mathbb N$, let $p(w,j)$ denote the input-head position assigned to $w$ and $j$ by the split-position construction, let $B_s$ be the buffer tape formed from $s$, and let $P_j$ be the catalog polynomial tape associated with $j$. The split-preparation machine with $k+1$ work tapes has a configuration on input $w$ whose state is $(0,\\mathbf 1_{|w|>j\\,\\text{or}\\,|w|<j})=(0,\\mathbf 1_{|w|<j})$, whose input-head position is $p(w,j)$, whose first work tape is $B_s$ and whose remaining work tapes are each $P_j$, with every work-tape head at position $j$ and empty output.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "Boolean strings $w,s$",
+  "$j\\in\\mathbb N$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the split-position, buffer-tape, or catalog-polynomial-tape constructions, so their contents cannot be made self-contained from the provided material.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.satHost_clean",
+ "key": "c4a8189fbd26758f",
+ "kind": "lemma",
+ "title": "Clean Module at a Host Call Site",
+ "statement": "Let six finite Boolean Turing machines be given, padded to a common work-tape count $K$, and let $i\\in\\{0,1,2,3,4,5\\}$. Suppose module $i$ satisfies the clean-module contract with result function $f$, emission function $g$, and budget $B$. For every Boolean input $x$, argument word $\\mathrm{arg}$, and output prefix $\\mathrm{pre}$, there is a positive time $t\\le B(|\\mathrm{arg}|)$ such that the host, started at module $i$'s entry on $x$ with $\\mathrm{arg}$ on tape zero, all other tapes blank, and output prefix $\\mathrm{pre}$, does not reach the loop-anchor state at any time before $t$, and at time $t$ is in the module's return state with $f(\\mathrm{arg})$ on tape zero, all other tapes blank, and output $\\mathrm{pre}\\,g(\\mathrm{arg})$.",
+ "hypotheses_covered": [
+  "$M$ is a family of six finite Boolean Turing machines",
+  "$K\\in\\mathbb N$",
+  "each machine's work-tape count is at most $K$",
+  "$i\\in\\{0,1,2,3,4,5\\}$",
+  "functions $f,g$ from Boolean words to Boolean words",
+  "$B:\\mathbb N\\to\\mathbb N$",
+  "module $i$ satisfies the clean-module contract with $f,g,B$",
+  "$x,\\mathrm{arg},\\mathrm{pre}$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the $i$-th module of the host satisfy the clean-module contract with result\n$f$, emission $g$, and budget $B$. Then for every native input, argument, and\noutput prefix, there is a positive time within $B$ of the argument length during\nwhich the host, started at that module's entry, avoids the loop anchor and then\nreaches the module's return state over the state word of $f$ of the argument,\nwith $g$ of the argument appended to the output."
+}

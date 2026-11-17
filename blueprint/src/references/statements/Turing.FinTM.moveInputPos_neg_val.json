@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.moveInputPos_neg_val",
+ "key": "0dbf2394f2b89511",
+ "kind": "lemma",
+ "title": "Value after a clamped left move",
+ "statement": "For every $n\\in\\mathbb N$ and every input-head position $p\\in\\{0,\\ldots,n+1\\}$, a clamped move one step to the left has value $\\max(p-1,0)$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "input-head position $p$ among the $n+2$ valid positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p \\in \\{0,\\dots,n+1\\}$ be an input-head position for an input of length\n$n$.  The clamped left move sends $p$ to the position whose value is $p - 1$\nin truncated natural subtraction; in particular the left boundary position\n$0$ is fixed."
+}

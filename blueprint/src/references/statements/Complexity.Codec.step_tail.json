@@ -1,0 +1,28 @@
+{
+ "lean_name": "Complexity.Codec.step_tail",
+ "key": "3aa9242df4b3dabb",
+ "kind": "theorem",
+ "title": "Step-program simulation",
+ "statement": "Let $N$ be a nondeterministic Turing machine with Boolean input and $k$ work tapes, and let $y,x,w,w',r$ be Boolean lists such that $y$ is obtained by successively pair-encoding $x$, $w$, and the pair-encoding of $w'$ with $r$. Let $s$ be a natural number, $st$ a virtual configuration accumulator, and $R$ a register assignment. Suppose every register of $R$ is at most $(8W+8)(|y|+1)$, where $W$ is the chunk width determined by $N$; also suppose $R_{N1}=|x|+1$, $R_{Pos}\\le |x|+1$, $R_Z$ is the code of the input symbol at position $R_{Pos}$, $R_{Q3}=2|x|+2$, $R_{Q4}=2|x|+2|w|+4$, and $R_E=2|x|+2+4Ws+2W$. If $W(2s+1)\\le |w|$, $W(2s+1)\\le |w'|$, and $s\\le 2|y|$, then the step-mode register program, using its specified oracle, halts from the configuration with accumulator $st$ and register assignment $R$, keeps all registers within the stated bound, and returns the step predicate evaluated at $x$, $st$, positions $R_{Pos}$ and $R_{Pos2}$, and the prefixes of $w$ and $w'$ of length $W(2s+1)$.",
+ "hypotheses_covered": [
+  "$N$ is a nondeterministic Turing machine with Boolean input and $k$ work tapes",
+  "$y,x,w,w',r$ are Boolean lists with the stated nested pair encoding",
+  "$s$ is a natural number",
+  "$st$ is a virtual configuration accumulator",
+  "$R$ is a register assignment",
+  "Every register of $R$ is at most $(8W+8)(|y|+1)$",
+  "$R_{N1}=|x|+1$",
+  "$R_{Pos}\\le |x|+1$",
+  "$R_Z$ equals the code of the input symbol at position $R_{Pos}$",
+  "$R_{Q3}=2|x|+2$",
+  "$R_{Q4}=2|x|+2|w|+4$",
+  "$R_E=2|x|+2+4Ws+2W$",
+  "$W(2s+1)\\le |w|$",
+  "$W(2s+1)\\le |w'|$",
+  "$s\\le 2|y|$"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem's program and step predicate are defined by substantial constructions in the supplied context, so the conclusion is rendered by their roles rather than expanded into their full definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

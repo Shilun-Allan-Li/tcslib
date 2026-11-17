@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.rt_appendSymbol_run",
+ "key": "ff16f33e2830c048",
+ "kind": "theorem",
+ "title": "Bounded construction of an appended record",
+ "statement": "For every nonnegative integer $m$, there are a finite state set $P$, distinctness decidable on $P$, a two-work-tape machine $R$, entry and exit states, and a constant $C\\in\\mathbb{N}$ with the following property. Let $h$ be a header word, let $es$ be a list of lists of words, and let $e$ be a list of words of length $m$, with every word in the table formed by $h$ followed by the flattened entries of $es$ nonempty. If a configuration $d$ starts in the entry state, tape 0 has head position $o$ and contains that table in its joined-field encoding, tape 0 is blank at every position at or beyond the table's end, and tape 1 contains the joined-field encoding of $e$ at its head, then for some time $t\\le C(L+E+1)$, where $L$ and $E$ are the lengths of those two joined encodings, running $R$ for $t$ steps reaches the exit state and leaves every work-tape head within distance $C(L+E+1)$ of its starting position. The exit is not reached earlier; at time $t$, tape 0 contains the encoding of $e$ beginning at the table offset after all its fields, with the tape head at that offset, while every other tape cell agrees with its initial content.",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb{N}$",
+  "existence of a finite state set $P$ with decidable equality, a two-tape machine $R$, entry and exit states, and $C\\in\\mathbb{N}$",
+  "input word $x$ and words $h$, list of lists of words $es$, and list of words $e$",
+  "every word in the table formed from $h$ and the flattened $es$ is nonempty",
+  "$e$ has length $m$",
+  "initial configuration is in the entry state",
+  "tape 0 head is at $o$",
+  "tape 0 encodes the table at $o$ according to $TableAt$",
+  "tape 0 is blank at every position at least the end of the table encoding",
+  "tape 1 encodes $e$ at its head according to $RecordAt$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

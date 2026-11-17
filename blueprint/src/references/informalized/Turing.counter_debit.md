@@ -1,0 +1,20 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean :: Turing.counter_debit -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: low -->
+
+# Counter Decrement and Tape Preservation
+
+**Claim.** Under the stated assumptions, the counter-loop machine performs a fixed-width decrement on the added counter tape in the prescribed number of steps, reaching the body state when decrement is defined and the done state on underflow. It patches the counter tape with the decremented word (or the all-true word on underflow), preserves the original work tapes and heads, avoids done and escape at earlier times, and keeps the counter head within the stated interval.
+
+**Proof.** The proof analyzes the decrement on a Boolean shadow tape, then transfers that run to the counter-loop machine. Let $D$ be the one-tape configuration carrying the given counter tape and head, and decode its symbols through the Boolean embedding to obtain the shadow configuration $z$. The assumed agreement of the counter tape with the encoded buffer, together with the buffer-decoding identity, shows that each relevant cell of $z$ contains the corresponding bit of $w$.
+
+Split according to whether the fixed-width decrement of $w$ is defined. If it is undefined, the decrement-underflow theorem gives the shadow machine's final configuration: its state records failure and its tape has been replaced on the word's interval by the all-true word. It also supplies the absence of a completed state at all earlier times and bounds the head's movement. If the decrement is defined, the decrement-success theorem gives the analogous conclusions with the decremented word, together with the corresponding head bound; the word length bound ensures this lies within the required interval. These two cases establish the shadow run specification and its safety and position bounds.
+
+Next lift the shadow run back through the symbol embedding. The lifted-run theorem identifies every lifted configuration with the original configuration combined with the corresponding shadow configuration; its hypotheses hold because the decrement machine's transitions ignore the input and never attempt a blank write. Embed this one-tape simulation as the last tape of the counter-loop machine. The run-agreement theorem applies because, throughout the decrement computation, the transition rules in the counter-loop machine are exactly the embedded decrement rules after the state translation. The supplied state-translation injectivity ensures the translated states retain the required distinction. The embedding run theorem then gives the corresponding enlarged configuration at every time.
+
+At the final time, the shadow tape's patched buffer, when re-encoded, is exactly the counter tape patched with the image of the decremented word, or with the all-true word in the underflow case. The final state translation yields the body state or done state as asserted. The configuration layout shows that all original work tapes and heads remain those of $c$; the shadow run's head bound gives the counter-head interval, and its exclusion of completed states gives the stated earlier-time safety.
+
+**Key facts.** `Turing.Cfg.liftOver_decodeSymbols`, `Turing.FinTM.bufferTape_map`, `Turing.FinTM.bufferTape_map_decode`, `Turing.MultiTapeTM.liftSymbols_runFrom_over`, `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`, `Turing.MultiTapeTM.runFrom_zero`, `Turing.counter_dec_injective`, `Turing.counter_dec_spec`, `Turing.counter_layout`, `Turing.decodeBool_eq_some`, `Turing.decrementTM_run_succ_ofCfg`, `Turing.decrementTM_run_underflow_ofCfg`, `Turing.embedEmitCfg_selected_pos`, `Turing.embedEmitCfg_selected_tape`, `Turing.embedEmitTM_frame`, `Turing.embedEmitTM_runFrom`.
+
+**Caveat.** The proof's final tape-identification step uses pointwise decoding and re-encoding on the patched interval; the supplied upstream statements do not include the full decrement-run contracts, so those details are only partially visible here.

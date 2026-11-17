@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.counter_rewind",
+ "key": "c7884c05595450e4",
+ "kind": "lemma",
+ "title": "Rewinding the work-tape head",
+ "statement": "Let $x$ and $b$ be finite binary words, let $p$ be any input-head position among the $|x|+2$ positions, and let $j$ be a natural number with $j\\le |b|$. Starting in the rewind state with input head at $p$, work head at $j-1$, tape contents given by $b$, and empty output, after $j+1$ steps the machine is in the count state with input head still at $p$, work head at $0$, tape contents still given by $b$, and empty output.",
+ "hypotheses_covered": [
+  "Finite binary input word $x$",
+  "Input-head position $p$ among $|x|+2$ positions",
+  "Finite binary work-tape word $b$",
+  "Natural number $j$ with $j\\le |b|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the four-state binary-counter machine is in its rewind state with a\nbinary word $b$ on the nonnegative work-tape cells, empty output, and work head\nat cell $j - 1$ for some natural number $j \\le |b|$ (so possibly at the blank\ncell $-1$). Then after exactly $j + 1$ steps the machine is in the count state\nwith the work head at cell $0$, and the stored word, input-head position, and\noutput all unchanged."
+}

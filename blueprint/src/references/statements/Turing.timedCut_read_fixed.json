@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.timedCut_read_fixed",
+ "key": "135abd061d8a589b",
+ "kind": "lemma",
+ "title": "Reading the Eight Fixed Action Bits",
+ "statement": "Let $x$ be a Boolean input word, $b$ a four-tape interpreter configuration on input $x$, $T$ a Boolean table, $\\\\sigma$ an integer-indexed optional Boolean state tape with cursor $s$, and $a$ a function assigning a Boolean bit to each of the eight fixed action-bit positions. Suppose $T=l\\\\,a(0)a(1)\\\\cdots a(7)\\\\,r$. For every $n\\\\in\\\\mathbb{N}$, field index $i\\\\in\\\\{0,\\\\ldots,7\\\\}$, and accumulated register $a_0$ satisfying $i+n=7$ and $a_0(j)=a(j)$ for every index $j<i$, the stopped interpreter starting in the action-reading phase with register $a_0$ and table cursor $|l|+i$ reaches the successor-decoding phase carrying all of $a$ after exactly $n+1$ steps, with table cursor $|l|+8$; the other fields are those of the specified evaluation configuration.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "base four-tape configuration $b$",
+  "Boolean table $T$",
+  "state tape $\\\\sigma$ and integer cursor $s$",
+  "eight-bit function $a$",
+  "Boolean words $l,r$",
+  "table decomposition $T=l\\\\,\\\\mathrm{ofFn}(a)\\\\,r$",
+  "natural number $n$",
+  "field index $i$ in $\\\\{0,\\\\ldots,7\\\\}$",
+  "accumulated register $a_0$",
+  "equation $i+n=7$",
+  "register agrees with $a$ at all indices below $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table holds a word $b$ of eight bits starting at position $|l|$,\nthe action-reading phase of the stopped table interpreter is at field index\n$i$ with $n = 7-i$ fields left, and the accumulated eight-bit register agrees\nwith $b$ on all indices below $i$.  Then exactly $n+1$ steps fill the register\nwith all of $b$ and enter the successor-decoding phase, with the table cursor\nat $|l|+8$."
+}

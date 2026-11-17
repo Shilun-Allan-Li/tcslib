@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.oracleHost_service",
+ "key": "8db4d8bcc5792084",
+ "kind": "theorem",
+ "title": "Oracle service phase simulation",
+ "statement": "Let $M$ be a Boolean oracle Turing machine and $C$ a Boolean multitape Turing machine with $c>0$ work tapes, and choose states $en,ex$ of $C$. Let $c_0$ be a configuration of $M$ on input $x$, with side tag $b$, and let $v\\in\\{\\mathrm{false},\\mathrm{true}\\}$. Suppose the query tape of $c_0$ is blank at some cell $r\\ge0$. Write $z$ for its query string. Assume that $C$, started in state $en$ with $z$ on its first work tape and all other tapes blank, reaches after $t$ steps the standard configuration in state $ex$ with the one-symbol word $[v]$ on its first work tape, and does not visit $ex$ earlier. Then, starting the host from the service-phase encoding of the dispatch configuration whose ready data uses the query tape and head position of $c_0$, side tag $b$, and empty argument word, after exactly $2|z|+4+t$ steps it reaches the dispatch-phase encoding of the corresponding ready configuration with argument word $[v]$.",
+ "hypotheses_covered": [
+  "Boolean oracle machine M and Boolean multitape machine C",
+  "C has c>0 work tapes",
+  "chosen entry and exit states en, ex",
+  "configuration c₀ on input x",
+  "side tag b and Boolean verdict v",
+  "query tape is blank at a nonnegative cell r",
+  "C's computation on the query string reaches the specified answer configuration after t steps",
+  "C avoids the exit state at every earlier step"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

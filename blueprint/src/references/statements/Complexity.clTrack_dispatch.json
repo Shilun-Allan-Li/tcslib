@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clTrack_dispatch",
+ "key": "36e596f8cd413f9c",
+ "kind": "lemma",
+ "title": "Tracking-machine dispatch to its anchor configuration",
+ "statement": "Let $M$ be a finite Turing machine over Boolean symbols, let $x$ and $y$ be finite Boolean words, let $c$ be a configuration of $M$ on input $y$, let $b$ be a Boolean tag, and let $n$ assign natural-number counter values to the $2(1+k)$ administrative tapes, where $k$ is the number of work tapes of $M$. Starting the tracking machine from the reference configuration with state control set to the all-returned bank phase, input-head position $1$ on $x$, buffer tapes storing the binary expansions of the counter values, all administrative heads at $0$, and empty output, one step yields the anchor configuration: the source configuration, tag, counter tapes, their heads, and output have the values specified by that anchor.",
+ "hypotheses_covered": [
+  "A finite Turing machine $M$ over Boolean symbols",
+  "Finite Boolean words $x$ and $y$",
+  "A configuration $c$ of $M$ relative to input $y$",
+  "A Boolean tag $b$",
+  "Natural-number counts on the $2(1+k)$ administrative tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source configuration, tag bit, and counter values, one step of the tracking host from the all-returned bank phase yields the anchor control, with no change to the source time, any tape, any head, or the output."
+}

@@ -1,0 +1,27 @@
+{
+ "lean_name": "Complexity.LogProg.ps_mat",
+ "key": "324d67b972af5e02",
+ "kind": "lemma",
+ "title": "Matrix scan and suffix property",
+ "statement": "Let $x$ be a finite Boolean word, $B$ a natural number, $K$ a proposition, $i$ a natural number, and $\\sigma$ a program register state whose nine register values are all at most $B$. Suppose $2|x|+2\\le B$, the vertex-count register $n$ satisfies $n\\le |x|$, the input pointer is $2n+2+2i$, the row register is $\\lfloor i/n\\rfloor$, the column register is the remainder of $i$ upon division by $n$, and $i\\le n^2$. If the bit of $x$ at position $2n+2+2n^2+1$, using false for an out-of-range position, is true, and the path program started at label $sg$ with input pointer $2n+2+2n^2+2$, row register $n$, and column register $0$ satisfies $PS$ with proposition $K$, then the program started at label $m0$ with register state $\\sigma$ satisfies $PS$ with proposition that $K$ holds and, for every $j$ with $i\\le j<n^2$, the bits at positions $2n+2+2j$ and $2n+2+2j+1$ agree (out-of-range bits count as false), while the bits at positions $2n+2+2n^2$ and $2n+2+2n^2+1$ are false and true, respectively (again counting out-of-range bits as false).",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$B\\in\\mathbb N$",
+  "$K$ is a proposition",
+  "$i\\in\\mathbb N$",
+  "$\\sigma$ is a program register state",
+  "all nine register values of $\\sigma$ are at most $B$",
+  "$2|x|+2\\le B$",
+  "$n\\le |x|$",
+  "input pointer equals $2n+2+2i$",
+  "row register equals $\\lfloor i/n\\rfloor$",
+  "column register equals the remainder of $i$ upon division by $n$",
+  "$i\\le n^2$",
+  "the bit of $x$ at position $2n+2+2n^2+1$, defaulting to false out of range, is true",
+  "the specified $sg$-stage configuration satisfies $PS$ with proposition $K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $K$ a proposition, $i$ a natural number,\nand $σ$ a register configuration whose nine register values are all at most $B$. Suppose\n$2|x|+2\\le B$, $n\\le |x|$, the input pointer is $2n+2+2i$, the row and column registers\nare respectively $\\lfloor i/n\\rfloor$ and the remainder of $i$ upon division by $n$, and\n$i\\le n^2$. If the bit at position $2n+2+2n^2+1$ of $x$ is $1$, then starting the fixed\npath program at the matrix-scan stage with input pointer $2n+2+2n^2+2$, row register\n$n$, and column register $0$ terminates within the register bound and accepts exactly\nwhen $K$ holds. Consequently, starting at the earlier matrix-processing stage with\nconfiguration $σ$ terminates within the register bound and accepts exactly when both $K$\nholds and every matrix entry from index $i$ through $n^2-1$ is represented by equal bits\nin its aligned pair, with the following separator bits equal to $01$."
+}

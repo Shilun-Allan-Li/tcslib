@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.mapParse_block",
+ "key": "bb19cf76257bfa80",
+ "kind": "lemma",
+ "title": "Parsing one aligned bit pair",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x=\\mathrm{pre}\\,b\\,d\\,\\mathrm{rest}$ for Boolean words $\\mathrm{pre},\\mathrm{rest}$ and bits $b,d$, let $c$ be a configuration of $M$ on $x$, and let $\\mathrm{out}$ be a Boolean word. Starting in the threaded-map parser with its pair-reading state set by an emitting flag $e$, input head at position $|\\mathrm{pre}|+1$, capture head at displacement $0$, and output $\\mathrm{out}$, after two steps the input head is at position $|\\mathrm{pre}|+3$ and the output is $\\mathrm{out}$ followed by $[b,d]$ if $e$ is true, and is otherwise unchanged. The resulting state continues pair parsing if $b=d$, halts if $b=1,d=0$, and enters the post-separator phase if $b=0,d=1$.",
+ "hypotheses_covered": [
+  "M is a finite Boolean Turing machine",
+  "x equals pre followed by bits b,d and rest",
+  "pre and rest are Boolean words",
+  "b,d are Boolean bits",
+  "c is an M-configuration on x",
+  "out is a Boolean word",
+  "e is a Boolean emitting flag"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input splits as $x = p\\, b\\, d\\, s$ with bits $b, d$, two steps of the\nthreaded-map controller from its block-start parse state at position\n$\\abs{p}$ continue parsing when $b = d$, halt when $(b,d) = (1,0)$, and pass\nto the post-separator state when $(b,d) = (0,1)$; both bits are emitted\nexactly when the controller is in its emitting pass. The captured word and\nits head are preserved."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.seamCompTM_firstReturn_ofCfg",
+ "key": "679c1b26d645e168",
+ "kind": "theorem",
+ "title": "First return during machine composition",
+ "statement": "Let $M_1$ and $M_2$ be deterministic machines with $k$ work tapes and a common input alphabet, with states in sets $S_1$ and $S_2$. Form a machine with state set $S_1\\sqcup S_2$ that follows $M_1$ on left states, switches from the exit state of $M_1$ to the specified entry state of $M_2$ in one step without changing the tapes, and follows $M_2$ on right states. If $M_1$ reaches configuration $c_1$ from $c_0$ after $T_1$ steps, first visits the exit state at that time, and $M_2$, started from the tapes and head positions of $c_1$ with its state replaced by the entry state, reaches $c_3$ after $T_2$ steps with state $q_2$, and does not visit $q_2$ earlier, then the composed machine does not have state $q_2$ in its right component at any time $t<T_1+1+T_2$ when started from $c_0$ with its state placed in the left component.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ are machines with $k$ work tapes and common symbol alphabet",
+  "$exit\\in S_1$, $entry,q_2\\in S_2$",
+  "$M_1$ reaches $c_1$ from $c_0$ in exactly $T_1$ steps",
+  "$c_1$ has state $exit$",
+  "No state along the first $T_1$ steps before time $T_1$ is $exit$",
+  "$M_2$ reaches $c_3$ in $T_2$ steps from $c_1$ with its state replaced by $entry$",
+  "$c_3$ has state $q_2$",
+  "No state along the first $T_2$ steps before time $T_2$ is $q_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.lg_run",
+ "key": "f571c1cd92dcd82c",
+ "kind": "theorem",
+ "title": "Logarithm setup reaches its initialized state",
+ "statement": "Fix a natural number $K_0$, an oracle assigning a Boolean answer to each of four query types and each Boolean string, and a Boolean string $x$. For every natural number $k$, state $S$, and Boolean memory $M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$, if $S.N=k$, every register of $S$ is at most $B$, and $S.Lg+hv(k)\\le B$, then the program $A(K_0)$ reaches its initialized search state with input-length counter $0$ and logarithm counter $S.Lg+hv(k)$. Every configuration strictly before the endpoint satisfies the guard with register bound $B$ and memory-head position between $0$ and $P$, inclusive; the memory remains $M$ and the head is at $0$ at the endpoint.",
+ "hypotheses_covered": [
+  "$K_0\\in\\mathbb{N}$",
+  "oracle on four query types and Boolean strings",
+  "$x$ is a Boolean string",
+  "$k\\in\\mathbb{N}$",
+  "$S.N=k$",
+  "every register of $S$ is at most $B$",
+  "$S.Lg+hv(k)\\le B$",
+  "$M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a natural number $K_0$, an oracle $O$ assigning a Boolean answer to each of four\nquery types and each Boolean string, and a Boolean string $x$. For every\n$k\\in\\mathbb{N}$, register state $S$, and integer-indexed Boolean memory $M$, if\n$S.N=k$, every register of $S$ is at most $B$, and $S.Lg+hv(k)\\le B$, then the machine\n$A(K_0)$ reaches, from the setup state with logarithm counter $S.Lg+hv(k)$ and\ninput-length counter set to zero, while every intermediate configuration satisfies the\nguard with register bound $B$ and memory-head position between $0$ and $P$. The memory\ncontents remain $M$ and the head begins at $0$."
+}

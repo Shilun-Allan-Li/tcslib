@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopDebitTM",
+ "key": "035c2a94b69352a9",
+ "kind": "def",
+ "title": "Binary debit machine",
+ "statement": "There is a finite Turing machine with one work tape, Boolean tape symbols, and states consisting of either an optional Boolean or a Boolean. It starts in the state containing no pending Boolean; in that state, a scanned false is replaced by true while the head moves right, a scanned true is replaced by false while the head moves left and records true as pending, and a blank is left unchanged while the head moves left and records false as pending. With a pending Boolean, a scanned symbol is left unchanged while the head moves left; at a blank, the head moves right and the machine enters the state carrying that Boolean. In a state carrying a Boolean in the second component, the transition is the specified control action.",
+ "hypotheses_covered": [
+  "Boolean tape alphabet",
+  "One work tape",
+  "State set is the disjoint union of optional Booleans and Booleans"
+ ],
+ "confidence": "low",
+ "caveat": "The final transition refers to a control action whose definition is not included in the supplied statement, so its behavior cannot be specified more fully.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

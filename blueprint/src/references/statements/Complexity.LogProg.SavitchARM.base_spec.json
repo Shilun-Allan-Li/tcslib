@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.base_spec",
+ "key": "84671e2a127fa968",
+ "kind": "theorem",
+ "title": "Base-Level Reachability Simulation",
+ "statement": "Let $E,s,w$ be natural numbers, let $\u001b{orc}$ be a Boolean oracle with four indices and Boolean-word inputs, let $x$ be a finite Boolean word, and let $\u001b{st}$ be a machine register state. Suppose $s\\le w$ and $\u001b{st}$ satisfies the level-zero invariant for $s,w$. Then the program $A(E)$ has a finite execution from label $\u001b{cl}$, with register vector given by $\u001b{st}$ and no answer, to label $\u001b{rt}(b)$, where $b$ is the truth value of level-zero reachability from $\u001b{st}.U$ to $\u001b{st}.V$ with bound $2^w$ and relation determined by the step oracle, $x$, and $s$. Every configuration strictly before the final one satisfies the program guard and has every register at most $2^{w^2}$; the final register vector is unchanged from $\u001b{st}$.",
+ "hypotheses_covered": [
+  "$E,s,w$ are natural numbers",
+  "$\u001b{orc}$ is a Boolean oracle indexed by the four-element set and taking Boolean words as inputs",
+  "$x$ is a finite Boolean word",
+  "$\u001b{st}$ is a Savitch machine register state",
+  "$s\\le w$",
+  "$\u001b{st}$ satisfies $\\mathrm{Inv}(s,w,0)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,s,w\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean oracle on four families of\nbinary words, let $x$ be a binary word, and let $\\mathrm{st}$ be an eighteen-register\nstate. Suppose $s\\le w$ and the level-zero invariant holds: the input-length, base,\nexponent, power, scratch, loop-counter, popped-endpoint, and pop-scratch registers are\nzero; the radius and width registers equal $s$ and $w$; the code-bound register equals\n$2^w$; the source and target codes are less than $2^w$; the midpoint is at most $2^w$;\nthe level register is zero; the endpoint stack is less than $2^{w^2}$; and the phase\nstack is less than $2^w$. Then the program $A(E)$ has a finite execution from label\n$\\mathrm{cl}$ with register vector given by $\\mathrm{st}$ and no answer, to the return\nlabel whose Boolean value is the truth value of level-zero reachability from the source\ncode to the target code, using bound $2^w$ and the relation that the step oracle accepts\nthe encoding of $x$ and the binary words for the two codes and $s$. At every time\nstrictly before the final time, each register is at most $2^{w^2}$ and the configuration\nsatisfies the program's safety conditions."
+}

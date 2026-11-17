@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clNative_cleanCall",
+ "key": "ddb00714de9fe94d",
+ "kind": "lemma",
+ "title": "A machine for a polynomial-time function",
+ "statement": "Let $f$ be a polynomial-time computable function from binary words to binary words. There exist a finite Boolean Turing machine $W$, states $\\mathrm{entry}$ and $\\mathrm{exit}$ of $W$, and natural numbers $a,d$ with at least one work tape, such that for every physical input word $x$ and argument word $\\mathrm{arg}$, there is a time $t$ with $0<t\\le a(|\\mathrm{arg}|+1)^d$. At every integer time $j$ with $0<j<t$, the machine started on $x$ in state $\\mathrm{entry}$ with $\\mathrm{arg}$ on tape zero and all other work tapes empty is not in state $\\mathrm{exit}$; at time $t$ its configuration is exactly the one with state $\\mathrm{exit}$, $f(\\mathrm{arg})$ on tape zero, all other work tapes empty, and the input head, work-tape heads, and output tape in their standard initial positions and contents.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "$x$ is any physical Boolean input word",
+  "$\\mathrm{arg}$ is any Boolean argument word",
+  "the machine has at least one work tape",
+  "$0<t\\le a(|\\mathrm{arg}|+1)^d$",
+  "no intermediate time $j$ with $0<j<t$ has state $\\mathrm{exit}$",
+  "the time-$t$ configuration equals the specified exit configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every polynomial-time computable string function $f$, there are a machine with at least one work tape, entry and exit controls, and constants $a, d$ such that for every physical input and argument word, the machine started at the entry over the argument's state word reaches, at a strictly positive first exit within $a(|arg|+1)^d$ steps, exactly the state word of $f$ of the argument, with all scratch cells and heads restored after each request."
+}

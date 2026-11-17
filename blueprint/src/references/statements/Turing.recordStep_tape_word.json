@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.recordStep_tape_word",
+ "key": "390c1e51df8782e2",
+ "kind": "theorem",
+ "title": "Recorded tape word after an action",
+ "statement": "Let $c$ be a configuration of a machine with $k$ Boolean work tapes, let its work-tape heads lie within distance $s\\in\\mathbb{N}$ of the origin and its tape contents be blank outside that window, and let $a$ be an action and $i<k$. Form the word of $2s+1$ recorded cells indexed from $-s$ to $s$, storing each cell's content and a mark for whether the head of tape $i$ is there. First apply the action's prescribed write to the marked cell; then shift the mark one place left, leave it fixed, or shift it one place right according as the action moves that tape's head left, keeps it still, or moves it right. The resulting word is exactly the $2s+1$ recorded cells of tape $i$ in the configuration obtained by applying $a$ to $c$, with marks at the new head position.",
+ "hypotheses_covered": [
+  "$s\\in\\mathbb{N}$",
+  "$c$ is a configuration on a Boolean input and is in the radius-$s$ window",
+  "$a$ is a machine action",
+  "$i<k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

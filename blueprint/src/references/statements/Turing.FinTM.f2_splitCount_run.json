@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitCount_run",
+ "key": "9a2ac5e24485754d",
+ "kind": "lemma",
+ "title": "Simulation of a live counter run",
+ "statement": "Let $k$ be a natural number, let $S,H$ be types, and let $tm$ and $host$ be Boolean-alphabet machines with respectively $k$ and $k+1$ work tapes. Let $emb:S\\to H$ and $ret:\\mathrm{Bool}\\to H$, and suppose that for every state $q$, Boolean flag $over$, input symbol option $inp$, and tuple $work$ of work-tape symbols, the transition of $host$ from state $emb(q,over)$ agrees with the lifted action formed from the transition of $tm$ on blank input and the last $k$ work tapes. For Boolean words $w,s$, a configuration $c$ of $tm$ on empty input, and a natural number $t$, suppose that the run from $c$ is not halted at any time $j<t$. Then after $t$ steps, $host$ started from the counter configuration associated with $c$ is exactly the counter configuration associated with the configuration reached by $tm$ from $c$ after $t$ steps.",
+ "hypotheses_covered": [
+  "k is a natural number",
+  "S and H are types",
+  "tm has k work tapes and state type S",
+  "host has k+1 work tapes and state type H",
+  "emb maps S to H",
+  "ret maps Bool to H",
+  "the stated transition-agreement condition holds for all q, over, inp, and work",
+  "w and s are Boolean words",
+  "c is a configuration of tm over Bool on empty input",
+  "t is a natural number",
+  "for every j < t, the configuration reached by tm at time j is not halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

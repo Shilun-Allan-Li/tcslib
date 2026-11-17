@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.run_of_halted",
+ "key": "bb0a452f6e053cde",
+ "kind": "theorem",
+ "title": "Stationarity of Halted States",
+ "statement": "Let $R\\in\\mathbb{N}$, let $\\Lambda$ be a set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, and fix an input bit string $x$. If an abstract state $s$ is halted, then running the program from $s$ for any $t\\in\\mathbb{N}$ leaves the state unchanged.",
+ "hypotheses_covered": [
+  "$R\\in\\mathbb{N}$ and $\\Lambda$ is a set of labels.",
+  "$P$ is a counter program over $R$ registers and labels in $\\Lambda$.",
+  "An input bit string $x$ is fixed.",
+  "The abstract state $s$ has halted label.",
+  "$t\\in\\mathbb{N}$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, $x$ an input bit\nstring, and $s$ an abstract state whose label component marks it as halted. Then for every\n$t \\in \\mathbb{N}$, running $P$ on $x$ from $s$ for $t$ steps returns $s$ unchanged."
+}

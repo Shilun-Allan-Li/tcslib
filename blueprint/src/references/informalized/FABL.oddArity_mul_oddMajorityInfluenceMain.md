@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter02/TotalInfluence/MajorityInfluence.lean :: FABL.oddArity_mul_oddMajorityInfluenceMain -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Odd Arity Square Root Identity
+
+**Claim.** For every natural number $m$, multiplying $(2m+1)$ by the stated odd-majority influence gives $\sqrt{2/\pi}\sqrt{2m+1}$.
+
+**Proof.** Write $N=2m+1$, viewed as a real number. Both sides are nonnegative. It therefore suffices to compare their squares. Squaring and using $(\sqrt{x})^2=x$ for nonnegative $x$ reduces the equality to an elementary rational identity; clearing denominators proves it.

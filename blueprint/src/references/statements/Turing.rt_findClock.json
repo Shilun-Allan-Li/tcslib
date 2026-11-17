@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.rt_findClock",
+ "key": "c6dbc5ab1cfe21b1",
+ "kind": "def",
+ "title": "Round-finding clock",
+ "statement": "Let $m>0$, let $A$ and $\\Gamma$ be types, let $\\delta:A\\to\\mathrm{Option}(\\Gamma)\\to A$, let $a_0\\in A$, and let $\\mathrm{acc}:A\\to\\{\\mathrm{false},\\mathrm{true}\\}$. For an input list $x$ over $\\Gamma$ and a configuration $d$ of the round-finding machine, define its clock to be the least positive time $t$ at which the machine's state is either the read phase with control value none or the exit phase with its unit control value; if no such time exists, define the clock to be $1$.",
+ "hypotheses_covered": [
+  "$0<m$",
+  "A transition function $\\delta:A\\to\\mathrm{Option}(\\Gamma)\\to A$",
+  "An initial state $a_0\\in A$",
+  "A Boolean predicate on $A$",
+  "An input list $x$ over $\\Gamma$",
+  "A configuration $d$ for that input and machine"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

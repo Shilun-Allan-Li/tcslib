@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.CodeFormat.parseFull",
+ "key": "204fced687c40df7",
+ "kind": "def",
+ "title": "Full Code Parser",
+ "statement": "For a code format and a Boolean list $x$, first decode a pair consisting of a bit list and a remainder, and interpret the bit list as a natural number $n$. Continue only if the bit list is exactly the binary representation of $n$ and the remainder has length at least the format's guard times $n+1$; then read an initial state among $n+1$ states and a transition table for $n$. Return the assembled code and the final remainder if every bit of that remainder is true; otherwise return no result.",
+ "hypotheses_covered": [
+  "a code format",
+  "input is a Boolean list",
+  "pair decoding succeeds",
+  "decoded bits equal the binary representation of their interpreted natural number",
+  "remainder length is at least guard times $n+1$",
+  "state reading succeeds",
+  "table reading succeeds",
+  "every bit in the final remainder is true"
+ ],
+ "confidence": "low",
+ "caveat": "The pair decoder, natural-number interpretation, state reader, and table reader are not defined in the supplied context, so their precise encoding conventions cannot be specified.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

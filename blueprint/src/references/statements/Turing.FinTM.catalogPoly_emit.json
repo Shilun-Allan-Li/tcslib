@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.catalogPoly_emit",
+ "key": "084ef73d3c11161f",
+ "kind": "lemma",
+ "title": "Emission chain of the generator",
+ "statement": "For natural numbers $c,C,q$, a Boolean input word $x$, arbitrary work-head positions $h : \text{Fin}(c+1) \\to \\mathbb{Z}$, an output word $o$, and $j \\le C$, starting with the generator in emission state $j$, work-head positions $h$, and output $o$, after exactly $j+1$ steps it is in advance state $0$ with the same work-head positions and output $o$ followed by $j$ ones.",
+ "hypotheses_covered": [
+  "$c,C,q$ are natural numbers",
+  "$x$ is a Boolean word",
+  "$h$ assigns an integer position to each work-tape head",
+  "$j \\le C$",
+  "$o$ is an arbitrary output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the generator's emission state with counter $j \\le C$, exactly $j+1$\nsteps append $j$ ones to the output and enter the innermost advance state,\nleaving every head position unchanged."
+}

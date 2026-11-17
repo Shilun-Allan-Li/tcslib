@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.tr",
+ "key": "fecea26c1d8ee2d8",
+ "kind": "def",
+ "title": "Circuit evaluation transition function",
+ "statement": "For a Boolean flag $e$, define the transition function of a two-work-tape machine on each state, input symbol, and pair of scanned work-tape symbols as follows. It reads input symbols in pairs and rejects if a required input symbol is blank or the pair cannot be encoded by the pairwise Boolean symbol encoding; otherwise it parses the circuit description, checks gate arguments and gate arities, evaluates each gate, and eventually emits the computed Boolean. During parsing, malformed encodings are rejected; while copying, if $e$ is true, any additional input symbol after the copied description causes rejection, whereas if $e$ is false the machine may stop copying at that point.",
+ "hypotheses_covered": [
+  "The Boolean flag $e$",
+  "A machine state, an optional input Boolean, and the scanned symbols on two work tapes"
+ ],
+ "confidence": "low",
+ "caveat": "The transition is specified by a detailed state-by-state table in the formal statement; this summary describes its overall behavior but omits some intermediate tape-management transitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

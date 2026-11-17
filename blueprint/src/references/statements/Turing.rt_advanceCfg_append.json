@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.rt_advanceCfg_append",
+ "key": "663bce39d742dde5",
+ "kind": "theorem",
+ "title": "Appending consecutive tape words",
+ "statement": "Let $k$ be a nonnegative integer, let $\u001b[?m$ be a symbol alphabet, let $P,S$ be state sets, and fix an input word. For a configuration $d$, tape $i$, words $u,v$, states $q,r\\in P$, and a state map $f:P\\to S$, consider the operation that sets the state to the specified state, writes the word at the current head position and advances that head by its length. Advancing first by $u$ to state $q$, renaming states by $f$, and then advancing by $v$ to state $r$ gives the same configuration as first renaming the state of $d$ by $f$ and then advancing by the concatenation $u\\mathbin{+\u001b[?m}v$ to state $r$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$",
+  "a configuration $d$ on a fixed input over alphabet $\\Gamma$ with state set $P$",
+  "a tape index $i\\in\\mathrm{Fin}(k)$",
+  "words $u,v\\in\\mathrm{List}(\\Gamma)$",
+  "states $q\\in P$ and $r\\in P$",
+  "a state map $f:P\\to S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

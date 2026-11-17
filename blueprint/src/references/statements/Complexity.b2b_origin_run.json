@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2b_origin_run",
+ "key": "327266f5971c2a7e",
+ "kind": "theorem",
+ "title": "Embedded rewind computation",
+ "statement": "Let $k\\in\\mathbb{N}$, let $x,y$ be Boolean words, let $U$ be one of $k$ work tapes, and let $p$ be an input-head position among the $|x|+2$ positions for input $x$. Form the machine that simulates the virtual-input rewind machine on tape $U$, with its emitted symbols written to that tape, and embeds it among the $k$ work tapes. Start it in the configuration whose state is the start state paired with the true boundary tag, whose input-head position is $p$, whose tape $U$ stores $y$ and has its head at $|y|$, whose other work tapes are blank with heads at zero, and whose output is empty. There is a time $T$ at which it reaches the configuration with the halting-return state, the same input-head position and tape contents, and tape $U$'s head at $|y|$; before time $T$ it never has the halting-return state, and through time $T$ the head on tape $U$ stays in $[-1,|y|]$ while every other work-tape head stays at zero.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$x,y$ are Boolean words",
+  "$U$ is a work-tape index among $k$ tapes",
+  "$p$ is a valid input-head position for $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion is expressed using the supplied machine constructions, whose defining descriptions are not provided in full.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

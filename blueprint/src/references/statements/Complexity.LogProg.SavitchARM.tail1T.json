@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.tail1T",
+ "key": "aa4988acbbf89b6f",
+ "kind": "theorem",
+ "title": "Phase-One Success Return Path",
+ "statement": "Let $E,s,w,i$ be natural numbers with $s\\le w$ and $i+1\\le w$, let $\\mathrm{orc}:\\mathrm{Fin}(4)\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{Bool}$ be an oracle, let $x$ be a Boolean list, and let $\\mathrm{st}$ be a machine state satisfying the invariant $\\mathrm{Inv}(s,w,i+1,\\mathrm{st})$. For every $M_2\\le 2^w$, the machine $A(E)$ has a finite run from the configuration whose control state is the phase-one success state, whose registers agree with $\\mathrm{st}$ except that $U=M$, $M=M_2$, and $E$ equals the original value of $U$, and whose result is unset, to the configuration whose control state is the successful return state and whose registers agree with $\\mathrm{st}$ except that $M=M_2$, again with unset result; throughout the run, every configuration before the final one satisfies the input precondition and has all registers at most $2^{w^2}$.",
+ "hypotheses_covered": [
+  "$s\\le w$",
+  "$i+1\\le w$",
+  "$\\mathrm{st}$ is a state satisfying $\\mathrm{Inv}(s,w,i+1,\\mathrm{st})$",
+  "$M_2\\le 2^w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

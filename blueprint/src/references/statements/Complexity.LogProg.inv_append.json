@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.inv_append",
+ "key": "19d73362f200a829",
+ "kind": "lemma",
+ "title": "Preservation of the invariant through a halting run",
+ "statement": "Let a register program, its initial label, an oracle, a decider machine, and a starting-state assignment be fixed, together with natural numbers $B,W$, two configurations $c,c'$ on the same Boolean input, an output word $o$, and a bit $b$. Suppose the program simulates $c'$ from $c$ in finitely many steps, with no oracle-call state and all register heads between $-1$ and $W$ at every intermediate step. Also suppose that from $c'$ it reaches a halting configuration whose output is $o$ followed by $b$, whose register heads lie between $-1$ and $W$, and whose every earlier configuration satisfies the invariant. Then from $c$ it reaches a halting configuration with that same output and head bounds, and every earlier configuration satisfies the invariant.",
+ "hypotheses_covered": [
+  "Finite simulation from $c$ to $c'$",
+  "At each simulation step before the endpoint, no call state is active",
+  "At each such step, every register head position is between $-1$ and $W$",
+  "A run from $c'$ halts with output $o$ followed by $b$",
+  "Every register head position at that halting configuration is between $-1$ and $W$",
+  "Every earlier configuration in the run from $c'$ satisfies the invariant"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

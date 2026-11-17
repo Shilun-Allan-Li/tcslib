@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clA5Complete",
+ "key": "b1beaaf7d35aa049",
+ "kind": "lemma",
+ "title": "Satisfiability of the Cook–Levin tableau",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine that is oblivious, let $V$ be a language of Boolean words, and let $C,e,T$ be natural numbers. For a Boolean word $x$, suppose that on every word $y$ of length $|x|+C(|x|+1)^e$, the machine halts within $T$ steps and outputs the Boolean indicator of whether $y\\in V$. If some word $u$ has length $C(|x|+1)^e$ and satisfies $x\\mathbin{++}u\\in V$, then the Cook–Levin tableau constructed from $M,C,e,x,T$ is satisfiable.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$M$ is oblivious",
+  "$V$ is a language of Boolean words",
+  "$C,e,T$ are natural numbers",
+  "Every $y$ of length $|x|+C(|x|+1)^e$ is computed by $M$ within $T$ steps with output the membership indicator of $y$ in $V$",
+  "There exists $u$ of length $C(|x|+1)^e$ with $x\\mathbin{++}u\\in V$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let an oblivious machine decide, within time $T$ and for every word $y$ of length $|x| + C(|x|+1)^e$, the indicator of membership of $y$ in a verifier language $V$. If some certificate $u$ of length exactly $C(|x|+1)^e$ makes the concatenation of $x$ and $u$ belong to $V$, then the Cook--Levin tableau of $x$ at horizon $T$ is satisfiable: the literal input assignment together with the raw encodings of the genuine snapshots satisfies every family, and the singleton true output supplies the no-false clauses."
+}

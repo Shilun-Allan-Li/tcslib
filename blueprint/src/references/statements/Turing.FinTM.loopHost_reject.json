@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_reject",
+ "key": "5126724ad7d06e56",
+ "kind": "lemma",
+ "title": "Rejecting round debits or halts",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose the forward and find-mode settings, and let $x$ be a Boolean input word. Let $c$ be a halted configuration of $B$ on $x$ with empty output, let $w$ be a Boolean word, and let $f$ be a configuration of $F$ on $x$. There is a time $t\\le 2|w|+4$ such that the host run from the non-startup call on $c$ with release clear, stop flag false, counter word $w$, and fuel configuration $f$ has the following outcome: if the fixed-width decrement of $w$ succeeds, the resulting configuration is the released non-startup call on the configuration obtained from $c$ by setting its state to $a$, with the decremented word as counter and no stop flag; if the decrement fails, the resulting configuration is halted and its output is empty in find mode and the one-bit word false otherwise.",
+ "hypotheses_covered": [
+  "Boolean finite machines B and F",
+  "anchor state a of B",
+  "forward setting",
+  "find-mode setting",
+  "Boolean input x",
+  "body configuration c on x",
+  "c is halted",
+  "c has empty output",
+  "Boolean counter word w",
+  "fuel configuration f on x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a halted body configuration with empty output, $w$ a counter word, and $f$ a\nfuel configuration. Then there is a time $t \\le 2|w| + 4$ such that, from the stopped\ncall on $c$ with stop flag $\\mathrm{false}$: if the fixed-width decrement of $w$\nsucceeds, the loop host at time $t$ is at the released next-anchor call with the\ndecremented counter word; otherwise the host at time $t$ has halted with output empty in\nfind mode and the single bit $\\mathrm{false}$ in decision mode."
+}

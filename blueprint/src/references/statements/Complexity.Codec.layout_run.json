@@ -1,0 +1,30 @@
+{
+ "lean_name": "Complexity.Codec.layout_run",
+ "key": "1e068af0ab57f67c",
+ "kind": "theorem",
+ "title": "Layout run and rejection",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input, let the four bit strings $y,x,w,\\mathrm{rest}$ satisfy $y=\\langle x,\\langle w,\\mathrm{rest}\\rangle\\rangle$ under the self-delimiting pair encoding, and let $R$ be a vector of 21 natural-number registers. Suppose every register of $R$ is at most $(8W(N)+8)(|y|+1)$, and that its registers $L,A,S,N_1,W_p,E,F,T,U,\\mathrm{Pos}$ have values $|y|,2|x|+2,s,0,0,0,0,0,0,0$, respectively, for some $s\\le 2|y|$. Also suppose the value of register $B$ in step mode, or register $P$ otherwise, is $2|x|+2|w|+4$. Then either $w$ has length $W(N)(2s+1)+w_P(|x|)+1$ and its bit at position $W(N)(2s+1)+w_P(|x|)$ is $1$, in which case the constructed register machine reaches its comparison phase from the copy phase while all registers stay within the stated bound, with its final register values given by the specified layout; or that length-and-bit condition fails and the machine halts with answer $0$, again with all registers staying within the bound.",
+ "hypotheses_covered": [
+  "N is a finite nondeterministic Turing machine over Boolean symbols",
+  "y, x, w, and rest are Boolean lists",
+  "y is the pair encoding of x and the pair encoding of w and rest",
+  "R is a register vector",
+  "all 21 registers of R are bounded by (8W(N)+8)(|y|+1)",
+  "R.L = |y|",
+  "R.A = 2|x|+2",
+  "R.S = s",
+  "s ≤ 2|y|",
+  "R.N1 = 0",
+  "R.Wp = 0",
+  "R.E = 0",
+  "R.F = 0",
+  "R.T = 0",
+  "R.U = 0",
+  "R.Pos = 0",
+  "the step-mode register B, or otherwise register P, equals 2|x|+2|w|+4"
+ ],
+ "confidence": "low",
+ "caveat": "The statement involves a large constructed register machine and a detailed final register layout; the prose summarizes that layout rather than spelling out every register value.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

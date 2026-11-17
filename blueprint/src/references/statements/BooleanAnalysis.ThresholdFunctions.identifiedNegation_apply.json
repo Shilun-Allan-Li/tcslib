@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply",
+ "key": "81b639f407728ea8",
+ "kind": "lemma",
+ "title": "Exclusive-or form of negated identification",
+ "statement": "Let $n,m\\ge 0$, let $f:\\{0,1\\}^n\\to\\mathbb R$, let $z\\in\\{0,1\\}^n$, and let $\\pi:[n]\\to[m]$. For every $w\\in\\{0,1\\}^m$, the negated coordinate identification satisfies $g(w)=f(z\\oplus(w_{\\pi(i)})_{i=1}^n)$, where $\\oplus$ is coordinatewise addition modulo two.",
+ "hypotheses_covered": [
+  "Natural dimensions $n,m$",
+  "A real-valued function on the $n$-cube",
+  "A vector $z$ in the $n$-cube",
+  "A map from $[n]$ to $[m]",
+  "An arbitrary input $w$ in the $m$-cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n,m\\in\\mathbb N$, $f:\\{0,1\\}^{n}\\to\\mathbb R$, $z\\in\\{0,1\\}^{n}$, $w\\in\\{0,1\\}^{m}$ and map $\\pi:\\{1,\\ldots,n\\}\\to\\{1,\\ldots,m\\}$, define $g(v)=f((u_i(v))_{i=1}^{n})$, where $u_i(v)=1-v_{\\pi(i)}$ when $z_i=1$ and $u_i(v)=v_{\\pi(i)}$ when $z_i=0$; then\n\\[\ng(w)=f\\bigl(z\\oplus(w_{\\pi(i)})_{i=1}^{n}\\bigr),\n\\]\nwhere $\\oplus$ is coordinatewise addition modulo $2$."
+}

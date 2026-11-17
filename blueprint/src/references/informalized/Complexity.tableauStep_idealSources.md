@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.lean :: Complexity.tableauStep_idealSources -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# One-Step Tableau Update
+
+**Claim.** For an oblivious machine, applying the tableau update to the ideal sources at time $t$ gives the encoding of the snapshot at time $t$, followed by the acceptance value at that time.
+
+**Proof.** The ideal source list is laid out as a preceding snapshot, three input-related bits, one fixed-length block for each work tape, and a final acceptance bit. The fixed-length list calculation (`length_flatMap_const`) gives the total length of the work-tape section. The layout lemma (`decode_layout`) then identifies the preceding snapshot prefix, the three input fields, each work-tape section's starting location, and the final accumulator. Each work-tape section is exactly its corresponding ideal tape-bit list by the fixed-width block extraction fact (`take_drop_flatMap_append`). Substituting these layout facts into the update rule, the option-bit identity (`option_isSome_getD`) recovers the input symbol from its presence flag and value. For time zero, the initial snapshot description (`snapshotAt_zero`) gives the initial state, input symbol, and blank work tapes; there has been no earlier accepting output, so the acceptance bit is false. For a successor time, the previous encoded snapshot decodes to the actual previous snapshot (`snapDecode_snapEncode`). Its next state is the current state by `snapshotAt_state_succ`; the input symbol agrees with the input-head position by `snapshotAt_inputSymbol`; and each current work symbol is the symbol written or retained at the last visit, or blank if there was no visit, by `snapshotAt_workSymbol`. Finally, the new acceptance bit is the disjunction of the previous accumulator and whether the previous transition emits true. This is equivalent to existence of a true emission before the successor time: an earlier witness remains in the previous accumulator, while the only new possible witness is time $t$ itself.
+
+**Key facts.** `Complexity.CfgTableau.length_flatMap_const`, `Complexity.decode_layout`, `Complexity.CfgTableau.take_drop_flatMap_append`, `Complexity.option_isSome_getD`, `Complexity.snapDecode_snapEncode`, `Complexity.snapshotAt_zero`, `Complexity.snapshotAt_state_succ`, `Complexity.snapshotAt_inputSymbol`, `Complexity.snapshotAt_workSymbol`.

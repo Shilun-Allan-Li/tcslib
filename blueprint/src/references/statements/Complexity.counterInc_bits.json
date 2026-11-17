@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.counterInc_bits",
+ "key": "a83418212ac30e5a",
+ "kind": "lemma",
+ "title": "Increment of a binary representation",
+ "statement": "For every natural number $n$, incrementing its least-significant-bit-first binary representation produces the least-significant-bit-first binary representation of $n+1$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "For every natural number $n$, applying the word increment to the little-endian\nbinary representation of $n$ (with no redundant leading zeros; $0$ is the empty\nword) yields exactly the binary representation of $n + 1$, including the case\nwhere the word grows by one bit on overflow."
+}

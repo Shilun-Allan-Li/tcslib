@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.universalInput_tag",
+ "key": "4da4691fec4411b6",
+ "kind": "lemma",
+ "title": "Boundary tag from the marker tape",
+ "statement": "For every $n\\in\\mathbb{N}$ and every input-head position $p\\in\\{0,\\ldots,n+1\\}$, let $b$ be false if the one-cell marker tape has its $1$ at coordinate $p$, and true otherwise. If $p=0$, then $b$ is false; if $p=n+1$, then $b$ is true. No condition on $b$ is imposed at interior positions.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A head position $p$ among the $n+2$ positions",
+  "The tag $b$ determined by whether the marker tape has a $1$ at $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every head position $p \\in \\{0, 1, \\dots, n+1\\}$ on an input of length\n$n$ (with its two boundary blanks), the Boolean flag ``the marker tape\ncarrying a single mark at coordinate $0$ does not show its mark at coordinate\n$p$'' satisfies the boundary-tag contract of the clamped virtual-move\noperation: the flag is false at the left boundary $p = 0$ and true at the\nright blank $p = n+1$, including when the input is empty."
+}

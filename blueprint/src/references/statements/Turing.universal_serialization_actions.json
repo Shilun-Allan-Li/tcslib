@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.universal_serialization_actions",
+ "key": "2dc96544549fbed9",
+ "kind": "lemma",
+ "title": "Serialization by Header and Action Groups",
+ "statement": "For every machine $M$ in code normal form, its canonical serialization is its header followed by the concatenation, in increasing state order, of the serialized transition records of that state's nine actions, ordered with the input read varying slowest and the work read varying fastest.",
+ "hypotheses_covered": [
+  "$M$ is a machine in code normal form"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The canonical serialization of a coded machine $M$ equals its header\nfollowed by the concatenation, over every state of $M$ in increasing order,\nof the concatenated serialized transition records of that state's\nnine-action list (its actions on all read pairs, in the fixed input-major\nserialization order)."
+}

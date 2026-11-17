@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5Div_native",
+ "key": "a9e5e61cb9ae3308",
+ "kind": "lemma",
+ "title": "Unary division by a natural number",
+ "statement": "Let $f$ be a function from binary words to natural numbers whose unary representation is polynomial-time computable. For every natural number $k$, the function that maps $x$ to the unary representation of $\u0000f(x)/k\u0000$ is polynomial-time computable, where division is natural-number division and in particular $f(x)/0=0$.",
+ "hypotheses_covered": [
+  "The unary representation of $f(x)$ is polynomial-time computable",
+  "$k$ is a natural number, including $k=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a unary value is polynomial-time computable, then for every fixed constant $k$ the unary word of its quotient by $k$ is polynomial-time computable: a finite-control counter emits one bit per completed block, and division by zero yields the empty word."
+}

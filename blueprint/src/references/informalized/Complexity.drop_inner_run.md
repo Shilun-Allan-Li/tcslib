@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean :: Complexity.drop_inner_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Inner Lookup Run
+
+**Claim.** Under the stated length and query bounds, starting from the specified copy state and register values, the machine halts with the length test in true mode and otherwise with the queried bit of the transformed word, defaulting to false, while maintaining safety and the register bound.
+
+**Proof.** Let $h=\langle\langle u,b'\rangle,\mathrm{bits}(q)\rangle$ and $z=\langle u,b'\rangle$. The length formula for the pairing establishes the needed bounds on the sizes of these nested components (`Turing.length_pairEncode`). First, the machine prepares its registers for scanning the encoded first component (`Complexity.drop_u_prepare`). For each $i<|u|$, two applications of the first-component read property show that the machine's address $v(0)+4i$ reads bit $i$ of $u$ from $h$ (`Complexity.drop_first_read`). The scan lemma then describes the scan outcome: if $u$ cannot be decoded, it reaches a false answer; if decoding succeeds, it advances to the next copy stage with the appropriate registers (`Complexity.drop_pair_run`). The register bounds needed here and in the subsequent configurations follow from the register-vector bound lemma (`Complexity.dropValues_bound`).
+
+If decoding fails, the definition of $dropIdx$ makes the target word empty. Thus the desired answer is false in either mode, and the machine's false-answer state halts with the required safety and register bound (`Complexity.drop_ret`); the preparatory and scan runs are concatenated with that halting run (`Complexity.LogProg.AReach.trans`, `Complexity.LogProg.AReach.halt`). If decoding succeeds, the decoded first component has the form $\langle w,b\rangle$: the characterization of successful decoding identifies $u$ with this pairing (`Turing.eq_pairEncode_of_pairDecode`). The machine proceeds through the lookup preparation stage (`Complexity.drop_lookup_prepare`), and the lookup result gives the requested length test or bit answer for the decoded output. The register bounds are preserved for this stage as well (`Complexity.dropValues_bound`), and concatenating the scan, preparation, and lookup runs gives the claimed halt and safety property (`Complexity.LogProg.AReach.trans`, `Complexity.LogProg.AReach.halt`).
+
+**Key facts.** `Turing.length_pairEncode`, `Complexity.dropValues_bound`, `Complexity.drop_u_prepare`, `Complexity.drop_first_read`, `Complexity.drop_pair_run`, `Turing.eq_pairEncode_of_pairDecode`, `Complexity.drop_lookup_prepare`, `Complexity.drop_lookup`, `Complexity.drop_ret`, `Complexity.LogProg.AReach.trans`, `Complexity.LogProg.AReach.halt`.

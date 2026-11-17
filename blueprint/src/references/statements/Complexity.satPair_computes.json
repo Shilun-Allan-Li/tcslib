@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satPair_computes",
+ "key": "3268d1d9399e8d1f",
+ "kind": "lemma",
+ "title": "Time bound for the pairing machine",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $f$ map Boolean words to Boolean words, and let $T$ map natural numbers to natural numbers. If $M$ computes $f(x)$ within $T(|x|)$ steps for every Boolean input word $x$, then the pairing machine over $M$ computes the function $x\\mapsto\\langle f(x),x\\rangle$ within $4T(n)+2n+8$ steps on inputs of length $n$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$f$ maps Boolean words to Boolean words",
+  "$T$ maps natural numbers to natural numbers",
+  "$M$ computes $f$ within time bound $T$ on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the machine $M$ compute a function $f$ within time $T$. Then the pairing\nmachine over $M$ computes the function $x \\mapsto \\mathrm{pair}(f(x), x)$ within\ntime $n \\mapsto 4\\,T(n) + 2n + 8$: retaining a computed result next to its\noriginal input has a uniform overhead, the capture output length being paid by\nthe source time."
+}

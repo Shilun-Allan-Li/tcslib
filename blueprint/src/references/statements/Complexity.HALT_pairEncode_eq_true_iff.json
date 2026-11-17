@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.HALT_pairEncode_eq_true_iff",
+ "key": "82a38556cdecf340",
+ "kind": "theorem",
+ "title": "Halting on an encoded pair",
+ "statement": "Let $c$ be a machine representation scheme and let $\\alpha$ and $x$ be bit strings. The halting function of $c$ returns true on the pairing encoding of $\\alpha$ and $x$ if and only if the machine decoded from $\\alpha$ produces some output on input $x$ within some finite number of steps.",
+ "hypotheses_covered": [
+  "A machine representation scheme $c$",
+  "Bit strings $\\alpha$ and $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a coding scheme for Turing machines and let $\\alpha$ and $x$ be bit\nstrings. Then $\\mathrm{HALT}_c$, evaluated on the pairing encoding\n$\\langle \\alpha, x \\rangle$, is true if and only if the machine that $\\alpha$\ndenotes under $c$ halts on input $x$, completing some output within some finite\nnumber of steps."
+}

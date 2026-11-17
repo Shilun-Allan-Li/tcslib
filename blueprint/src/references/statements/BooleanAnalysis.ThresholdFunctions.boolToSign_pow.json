@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.boolToSign_pow",
+ "key": "2f93c4754df12108",
+ "kind": "lemma",
+ "title": "Parity of a sign power",
+ "statement": "For every Boolean value $b$ and natural number $c$, the $c$th power of its sign encoding is the sign encoding itself when $c$ is odd, and is $1$ when $c$ is even.",
+ "hypotheses_covered": [
+  "$b$ is a Boolean value",
+  "$c$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit $b\\in\\{0,1\\}$ and natural number $c$, setting $s(b)=(-1)^b$ gives\n\\[\ns(b)^c=\\begin{cases}s(b)&\\text{if }c\\text{ is odd},\\\\1&\\text{if }c\\text{ is even}.\\end{cases}\n\\]"
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.Contract.Traj.segment",
+ "key": "252fe3f1273c65e3",
+ "kind": "theorem",
+ "title": "Trajectory property gives a computation segment",
+ "statement": "Let $C$ be a contract for a machine $M$ with exit set $F$, and suppose $R$ holds throughout its trajectories. For any datum $i$ and starting configuration $d$ in the entry state satisfying the precondition, the run from $d$ for the prescribed duration reaches the prescribed endpoint, its state avoids $F$ at every strictly earlier time, and $R(i,d,p)$ holds for the work-head position vector $p$ at every time up to and including that duration.",
+ "hypotheses_covered": [
+  "C satisfies trajectory property R",
+  "The starting configuration is in C's entry state",
+  "The starting configuration satisfies C's precondition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a contract for a machine $M$, with entry state $e$, exit set $F$, and\ntrajectory predicate $R$. For any data value $i$ and starting configuration $d$ whose\nstate is $e$ and which satisfies the contract precondition, the run from $d$ for the\ncontract time reaches the contract endpoint, avoids $F$ at every earlier time, and\nsatisfies $R(i,d,\\cdot)$ of its work-head positions at every time up to and including\nthat endpoint."
+}

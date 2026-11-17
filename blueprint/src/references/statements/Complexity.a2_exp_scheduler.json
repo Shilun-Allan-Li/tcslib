@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.a2_exp_scheduler",
+ "key": "e3f847bb73c78d07",
+ "kind": "lemma",
+ "title": "Exponential Unary Scheduler",
+ "statement": "For all natural numbers $C,c$, there exist a finite deterministic Turing machine $S$ over the Boolean alphabet and a natural number $B$ such that, for every Boolean input word $x$, $S$ halts after exactly $B\\bigl(|x|+C\\cdot 2^{(|x|+1)^c}+1\\bigr)^{c+2}$ steps and outputs the word of $C\\cdot 2^{(|x|+1)^c}$ ones.",
+ "hypotheses_covered": [
+  "$C,c\\in\\mathbb{N}$",
+  "Boolean input word $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all natural numbers $C$ and $c$ there exist a deterministic machine $S$ and a constant $B$ such that on every input $x$, $S$ outputs the all-ones word of length $C \\cdot 2^{(|x|+1)^c}$ within $B\\,(|x| + C\\cdot 2^{(|x|+1)^c} + 1)^{c+2}$ steps."
+}

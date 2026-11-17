@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_pairMapSnd",
+ "key": "02fb0a4fa19c9a2f",
+ "kind": "theorem",
+ "title": "Mapping the second component in a pair",
+ "statement": "Let $g$ be a function from Boolean words to Boolean words, and let $T_g:\\mathbb{N}\\to\\mathbb{N}$ be monotone. Suppose a finite Turing machine computes $g$ within time $T_g$, meaning it halts on every input $y$ within $T_g(|y|)$ steps and outputs $g(y)$. Then there are a finite Turing machine $M$ and a constant $c\\in\\mathbb{N}$ such that, on every Boolean input $z$, $M$ halts within $c(|z|+1+T_g(|z|))$ steps and outputs the pairing of $a$ with $g(b)$ if the aligned pair parser returns $(a,b)$ on $z$, and outputs the empty word if parsing fails.",
+ "hypotheses_covered": [
+  "A Boolean-word function $g$",
+  "A natural-number time bound $T_g$",
+  "$T_g$ is monotone",
+  "A finite Turing machine computes $g$ within time $T_g$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine compute the total function $g$ within a monotone time bound\n$T_g$. Then there exist a finite Turing machine $M$ and a constant $c$ such\nthat $M$ computes, within $c\\,(n + 1 + T_g(n))$ steps on inputs of length\n$n$, the function sending a word that encodes the pair $(a,b)$ under the\nself-delimiting pair code to the pair encoding of $(a, g(b))$, and any\nmalformed word to the empty word."
+}

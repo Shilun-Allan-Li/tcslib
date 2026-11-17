@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/StepClock.lean :: Turing.sc_rounds -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Clocked simulation over successive rounds
+
+**Claim.** Starting from a configuration whose clock tape stores the encoded Boolean word, the clocked machine simulates the body machine for $n$ steps in exactly the counter overhead plus $n$ steps. It ends with the counter word for round $n$ patched onto the tape, while avoiding exit states before the endpoint and keeping the clock head in the stated interval. At every intermediate time, the body configuration is that of the original machine after some $v\le n$ steps, and the clock head remains in the interval.
+
+**Proof.** Proceed by induction on $n$. For $n=0$, the counter has not changed and the overhead is zero. The initial tape agrees with the word, so patching it with that same word changes nothing (`sc_wordPatch_self`). The run is the length-zero segment, and the sole intermediate configuration is the initial one.
+
+For the successor step, use the induction hypothesis to reach the body configuration after $n$ steps, with the counter word for round $n$. Since the body has not stopped before time $n$, it is live there: its state is some $s$ and $\mathrm{stopAt}(s)=\mathrm{false}$ (`sc_live`). Decrementing the counter then takes $2\,|\mathrm{takeWhile}(\mathrm{not},\mathrm{counterWord}(w,n))|+2$ steps, updates the clock tape to the next counter word, and gives a segment that avoids exits while preserving the clock-head bound (`sc_clockDebit`). The tape still has the required boundary agreement by the frame property for patches (`sc_wordPatch_frame`); applying the next equal-length patch twice is the same as applying it once (`sc_wordPatch_twice`).
+
+The decrement succeeds because $n$ is below the value represented by $w$; the counter-decrement identity therefore identifies the new word as $\mathrm{counterWord}(w,n+1)$ (`counter_word_decrement`). At the resulting body phase, one further clocked step performs exactly the next transition of $M$ (`sc_body_step`). This single step also preserves the head bound and avoids exits, so the segment for the successor round is obtained by concatenating the prior segment, the debit segment, and this body step (`Segment.trans`, using `Segment.one`). The overhead recurrence accounts for the debit steps, and the extra body step accounts for the increase from $n$ to $n+1$ (`counterOverhead_succ`). Finally, split any time in the new run according to whether it lies in the old run, during the debit, or at the final body step. The induction trace handles the first case, the debit trace handles the second, and the body-step identity handles the last; in each case the body time is at most $n+1$ and the clock head remains in range.
+
+**Key facts.** `Turing.sc_wordPatch_self`, `Turing.MultiTapeTM.runFrom_zero`, `Turing.Segment.zero`, `Turing.sc_live`, `Turing.sc_clockDebit`, `Turing.sc_wordPatch_frame`, `Turing.sc_wordPatch_twice`, `Turing.counter_word_decrement`, `Turing.sc_body_step`, `Turing.Segment.one`, `Turing.Segment.trans`, `Turing.counterOverhead_succ`, `Turing.MultiTapeTM.runFrom_add`.

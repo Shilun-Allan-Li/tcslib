@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.expect_abs_eval_eq_innerProduct",
+ "key": "e84d77b937595b44",
+ "kind": "lemma",
+ "title": "Threshold correlation and absolute mean",
+ "statement": "Let $n$ be a natural number, let $p$ be a real coefficient family indexed by subsets of $\\{0,\\ldots,n-1\\}$, and let $f$ be a real-valued function on the Boolean cube. If $f(x)$ equals $1$ when the polynomial represented by $p$ is nonnegative at $x$, and equals $-1$ otherwise, then the uniform expectation of the absolute value of that polynomial equals its uniform inner product with $f$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$p$ is a real coefficient family on subsets of the coordinate set",
+  "$f$ is a real-valued function on the Boolean cube",
+  "$f$ equals the threshold sign of the polynomial represented by $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. For $S\\subseteq[n]$, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for real cube functions $h$. Let $P(x)=\\sum_{S\\subseteq[n]}a_S\\chi_S(x)$ with real coefficients $a_S$. If $f(x)=1$ when $P(x)\\ge0$ and $f(x)=-1$ when $P(x)<0$, then $\\mathbb E|P|=\\mathbb E[Pf]$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.f2_catalogPolyUnaryTM",
+ "key": "44918af67c9ccb32",
+ "kind": "def",
+ "title": "Unary catalog machine",
+ "statement": "For natural numbers $c,C$, define a finite Turing machine over the Boolean alphabet with $c+1$ work tapes and control states indexed by $c,C$. It starts in the copy state; its transition function copies each input symbol onto every work tape while moving all work heads right, then enters setup at the end of input. In setup it moves the first work head right until it scans a blank, then starts a loop at index $c$; the loop and rewind states inspect the indexed tape cell and move that head to rewind or advance the indexed counter, while advance either resumes the loop at the corresponding index or halts. At the loop's zero index it enters an emission state indexed by $C$, which emits one true symbol per positive index before returning through advance; at index zero it emits nothing and resumes advance.",
+ "hypotheses_covered": [
+  "$c,C\\in\\mathbb{N}$"
+ ],
+ "confidence": "low",
+ "caveat": "The transition function is fully determined by the formal cases; the prose summarizes the indexed control flow but may not capture every detail of the state transitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

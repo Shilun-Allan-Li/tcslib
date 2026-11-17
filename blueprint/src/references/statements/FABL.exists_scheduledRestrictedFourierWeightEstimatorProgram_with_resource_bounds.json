@@ -1,0 +1,17 @@
+{
+ "lean_name": "FABL.exists_scheduledRestrictedFourierWeightEstimatorProgram_with_resource_bounds",
+ "key": "0c455f6f0cbaa7df",
+ "kind": "theorem",
+ "title": "Estimator accuracy and resource bounds",
+ "statement": "Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$, let $J\\subseteq\\{1,\\ldots,n\\}$ and $S\\subseteq J$, and write $W_f(J,S)$ for the sum of squared Fourier coefficients at frequencies formed by adjoining to $S$ any subset of coordinates outside $J$. For real $\\varepsilon,\\delta>0$, there are rationals $\\varepsilon',\\delta'\\in(0,\\tfrac12]$, each strictly between half of the minimum of its corresponding parameter and $\\tfrac12$, such that the scheduled estimator with parameters $\\varepsilon',\\delta'$ has probability at most $\\delta$ of error at least $\\varepsilon$. Moreover, writing $F=\\lceil\\log_2\\lceil4/\\min\\{\\delta,\\tfrac12\\}\\rceil\\rceil$, its failure-bit count is at most $F$, its sample count is at most $16F/\\min\\{\\varepsilon,\\tfrac12\\}^2$, and every outcome in the support has query cost at most $32F/\\min\\{\\varepsilon,\\tfrac12\\}^2$ and work cost at most $256F(n+1)/\\min\\{\\varepsilon,\\tfrac12\\}^2$.",
+ "hypotheses_covered": [
+  "The target is a Boolean function on the $n$-dimensional sign cube",
+  "$J$ is a subset of the coordinates and $S$ is a subset of $J$",
+  "$\\varepsilon>0$ and $\\delta>0",
+  "$\\varepsilon'$ and $\\delta'$ are positive rationals at most $1/2$, each greater than half the minimum of its corresponding real parameter and $1/2$, and each less than that minimum"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.StepBlock.seekTM_select",
+ "key": "69242fd7f5bc23a6",
+ "kind": "lemma",
+ "title": "Selection of a transition-table entry",
+ "statement": "Let $k,n$ be natural numbers, let $x$ be a finite Boolean input, let $tr$ be a transition function for $n+1$ states and $k$ work tapes, and let $q$ be one of those states. Let $summary$ be an optional bit and $d$ a configuration of the record machine. Suppose $d$ is in the record machine's initial state, its table tape stores the transition table encoding of $tr$ starting at cell zero, its table head is at zero, its summary tape stores $summary$ at cell zero followed by the unary encoding of $q$, and its summary head is at zero. For the action selected by $tr$ on state $q$, the symbol currently under the input head, and the symbols under the work-tape heads, there are bit strings $pre,tail$ and a positive integer $T$ such that the table encoding is $pre$ followed by that action's encoding and then $tail$, the unary state index is no larger than the length of $pre$, and $T$ is at most five times the table-encoding length plus three. After $T$ steps from the seek machine's observe configuration, the machine is in its done control state, with the table head advanced by $|pre|$ and the summary head advanced by $q+2$. Before step $T$ it is never in the terminal control state; through step $T$, the input-head position, tape contents, output, and all work-tape head positions other than the table and summary heads remain unchanged.",
+ "hypotheses_covered": [
+  "$k,n$ are natural numbers",
+  "$tr$ is a transition function for $n+1$ states and $k$ work tapes",
+  "$q$ is a state among the $n+1$ states",
+  "$summary$ is an optional bit",
+  "$d$ is a configuration on a Boolean input",
+  "$d$ has the record machine's initial state",
+  "the table tape stores the transition-table encoding starting at zero",
+  "the table head is at zero",
+  "the summary tape stores the summary followed by the unary encoding of $q$",
+  "the summary head is at zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter05/GaussianMillsRatio.lean :: FABL.tendsto_standardGaussianDensity_mills_atTop -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Gaussian density vanishes at infinity
+
+**Claim.** The density of the real Gaussian distribution with mean $0$ and variance $1$ tends to $0$ as its argument tends to $+\infty$.
+
+**Proof.** The exponent $-x^2/2$ tends to $-\infty$ as $x\to+\infty$. The exponential therefore tends to $0$, and multiplying it by the fixed normalization constant $(\sqrt{2\pi})^{-1}$ preserves that limit. The Gaussian density formula gives this expression for the density (\texttt{FABL.standardGaussianDensity\_formula\_mills}).
+
+**Key facts.** `FABL.standardGaussianDensity_formula_mills`.

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.a2_map_move",
+ "key": "74fb03665e7cea70",
+ "kind": "lemma",
+ "title": "Effect of a structured simulator action",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $x,a,b$ be Boolean words, let $q,q'$ be simulator states, let $p$ be an input-head position for $x$, let $h_a,h_b$ be integers, and let $o$ be an output word. For movements $m_i,m_a,m_b\\in\\{-1,0,1\\}$ and an optional output bit $e$, applying the action that moves the input head by $m_i$, makes no writes, moves the first two work heads by $m_a,m_b$, emits $e$, and enters $q'$ gives the configuration with state $q'$, input position moved by $m_i$, buffers $a,b$, head positions $h_a+m_a,h_b+m_b$, and output $o$ followed by $e$ when present.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,a,b$ are Boolean words",
+  "$q,q'$ are optional simulator states",
+  "$p$ is a valid input-head position for $x$",
+  "$h_a,h_b$ are integers",
+  "$o$ is a Boolean word",
+  "$m_i,m_a,m_b$ are sign-valued movements",
+  "$e$ is an optional Boolean output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

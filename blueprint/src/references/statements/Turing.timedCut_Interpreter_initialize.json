@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timedCut_Interpreter_initialize",
+ "key": "56169c6d53e757e9",
+ "kind": "lemma",
+ "title": "Exact interpreter initialization",
+ "statement": "Let $x$ be a Boolean input word, let $p$ be an input-head position, and let $T$, $b$, and $r$ be Boolean words with $T$ equal to the pair encoding of $b$ and the concatenation of $n$ ones, a zero terminator, and $r$. After exactly $|T|+2|b|+2n+7$ steps from the stopped interpreter's entry configuration with table $T$ and input head at $p$, the configuration is the evaluation configuration based on the inactive base data at $p$, in the main phase, with table cursor $2|b|+2+n+1$, state tape encoding state $n$, and state cursor $1$.",
+ "hypotheses_covered": [
+  "Boolean input word and valid input-head position p",
+  "Boolean table, count word b, and record word r",
+  "Natural number n",
+  "Table T equals the pair encoding of b and the concatenation of n ones, zero, and r"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the captured table $T$ is the pair encoding of a count string of $m$\nbits with a body consisting of $n$ ones, a terminator zero, and a record\nregion.  Then exactly $|T| + 2m + 2n + 7$ steps of the stopped table\ninterpreter bring the entry configuration to the main simulation phase, with\nthe table cursor at $2m + 2 + n + 1$ (just past the header) and the state tape\nholding the unary representation of $n$ with cursor $1$; every intermediate\nconfiguration keeps the input head fixed and the output empty, and no\ntransition-record lookup is involved."
+}

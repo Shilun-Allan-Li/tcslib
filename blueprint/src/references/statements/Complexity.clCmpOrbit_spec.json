@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clCmpOrbit_spec",
+ "key": "7a0640ca5331f2ee",
+ "kind": "lemma",
+ "title": "Comparator invariant after scanned columns",
+ "statement": "Let $w_0,w_1,w_2,w_3$ be finite little-endian binary words and let $j$ be a natural number. After $j$ columns have been scanned, the comparator invariant on the control registers and the words with their first $j$ bits dropped holds if and only if $\\operatorname{val}(w_0)+\\operatorname{val}(w_1)=\\operatorname{val}(w_2)+\\operatorname{val}(w_3)$, where $\\operatorname{val}$ denotes the little-endian binary value.",
+ "hypotheses_covered": [
+  "Four finite little-endian binary words",
+  "A natural number $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every four words and every column count $j$, the comparator invariant at the control after $j$ columns, applied to the words with their first $j$ bits dropped, holds exactly when the value of the first word plus the second equals the value of the third plus the fourth; columns beyond a short word read zeros, never uncharged random access."
+}

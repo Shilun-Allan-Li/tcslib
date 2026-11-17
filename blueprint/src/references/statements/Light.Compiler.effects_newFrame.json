@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.effects_newFrame",
+ "key": "e9f0e092fe55459c",
+ "kind": "theorem",
+ "title": "Effects of new-frame code",
+ "statement": "Let a word size and compiler size data specify a layout, limits, and stack capacity, and let a state, stack position $q$, and memory satisfy the framed-state conditions. Suppose $q+F+1+F\\le Q$. For a list of argument expressions, assume each compiled argument value is already in its corresponding temporary cell, and let the return position $r$ be at most the dispatcher position. After executing the new-frame code, the memory and state satisfy the relation for a new frame whose local variables are the argument values (with missing arguments interpreted as zero), whose ordinary memory is unchanged, and whose stack position is $q+F+1$. The stack cell at index $q+F$ contains $r$, and memory is unchanged outside the writable locations for the new frame.",
+ "hypotheses_covered": [
+  "A framed initial memory and state, including its relation and stack bounds",
+  "Bound $q+F+1+F\\le Q$",
+  "For each argument index within the list, its temporary cell contains the evaluated argument value with out-of-range arguments interpreted as zero",
+  "Return position $r\\le\\mathrm{disp}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

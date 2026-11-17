@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.MaxCut.goemans_williamson_threshold_polyTime",
+ "key": "74f771157b847063",
+ "kind": "theorem",
+ "title": "Thresholded polynomial-time approximation",
+ "statement": "For every real $\\\\eta>0$, there is a polynomial-time computable map $A$ from bit strings to bit strings and there are natural numbers $C,k$ with the following property. Whenever a bit string parses as a nonempty list $E$ of ordered pairs of natural numbers, form the weighted graph that assigns each ordered pair $(u,v)$ weight equal to the total number of occurrences of $(u,v)$ and $(v,u)$ in $E$, divided by twice the length of $E$. For every angle $\\\\theta$ between the Goemans–Williamson angle and $\\\\pi$, inclusive, such that $(1-\\\\cos\\\\theta)/2$ is at most this graph’s SDP optimum, the expected cut value of the graph under the Boolean assignment given by the $v$th output bit of $A$ on the encoding of the input paired with a uniformly random bit string of length $C(\\\\lvert\\\\text{bits}\\\\rvert+1)^k$ (using false if the output has no $v$th bit) is at least $\\\\theta/\\\\pi-\\\\eta$.",
+ "hypotheses_covered": [
+  "$\\\\eta$ is a positive real number",
+  "The bit string parses to the specified edge list",
+  "The edge list is nonempty",
+  "$\\\\theta$ lies in the closed interval from the Goemans–Williamson angle to $\\\\pi$",
+  "$(1-\\\\cos\\\\theta)/2$ is at most the graph’s SDP optimum",
+  "The random bit string has length $C(\\\\lvert\\\\text{bits}\\\\rvert+1)^k$ and is sampled uniformly"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

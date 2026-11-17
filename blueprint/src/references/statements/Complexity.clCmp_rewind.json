@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCmp_rewind",
+ "key": "8365de1cd5bdba9b",
+ "kind": "lemma",
+ "title": "Rewinding the Comparator Heads",
+ "statement": "For every Boolean input word $x$, every input-head position $p$ among its $|x|+2$ allowed positions, four Boolean words $w_0,w_1,w_2,w_3$, and Boolean verdict $b$, let $m$ be the maximum of their lengths. For each natural number $j\\le m$, starting the comparator in its rewinding control with all four work-head positions at $j-1$ and running it for $j+1$ steps yields the configuration with completed control carrying $b$, all four heads at zero, the same words on the tapes, the same input-head position, and empty output.",
+ "hypotheses_covered": [
+  "Boolean input word",
+  "valid input-head position",
+  "four Boolean work words",
+  "Boolean verdict",
+  "natural number j at most the maximum word length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, four words, stored verdict, and count $j$ at most the common width, running the comparator in its rewind control at aligned position $j-1$ for $j+1$ steps returns all four heads to zero and enters the completed control, preserving every word and the verdict."
+}

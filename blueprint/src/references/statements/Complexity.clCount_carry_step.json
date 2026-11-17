@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clCount_carry_step",
+ "key": "ea8b21f74a06be47",
+ "kind": "lemma",
+ "title": "One Carry Transition",
+ "statement": "For every bit-list input $x$, valid input-head position $p$, and bit lists $u$ and $v$, one step of the increment machine from carry control, with input head at $p$, work head at $|u|$, tape holding $u$ followed by $v$, and empty output, has the following result. If the first bit of $v$ is true, the machine remains in carry control, moves the work head to $|u|+1$, and changes the tape to $u$ followed by false and then the tail of $v$; otherwise it enters rewind control, moves the work head to the natural-number difference $|u|-1$ (truncated at zero), and changes the tape to $u$ followed by true and then the tail of $v$. In both cases the input-head position remains $p$ and the output stays empty.",
+ "hypotheses_covered": [
+  "$x$ is a bit list",
+  "$p$ is a valid input-head position for $x$",
+  "$u$ and $v$ are bit lists"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For an input word, an input position, and a stored word split as a prefix $u$ followed by a suffix $v$, one step of the increment machine in carry control at cell $|u|$ yields: when $v$ starts with a true bit, the cell rewritten to false with the head moved right, still in carry control; and otherwise the cell rewritten to true with the head moved left, in rewind control. Only the scanned cell changes."
+}

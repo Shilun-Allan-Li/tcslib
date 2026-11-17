@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clRecord_idle",
+ "key": "c33cfe51d21d5cf1",
+ "kind": "lemma",
+ "title": "Absorbing completed recorder state",
+ "statement": "Let $M$ be a finite-state Boolean machine, let $x$ be a Boolean word, and let $c$ be a configuration of the recording machine on input $x$. If $c$ is in the completed return state, then one machine step leaves the entire configuration unchanged.",
+ "hypotheses_covered": [
+  "A finite-state Boolean machine $M$",
+  "A Boolean word $x$",
+  "A configuration $c$ of the recording machine on input $x$",
+  "The control state of $c$ is the completed return state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every configuration of the recorder host whose control is the recorder's completed return is left entirely unchanged by one step, with the full retained input and header frame unchanged."
+}

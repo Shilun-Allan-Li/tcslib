@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.exists_eq_of_ushape",
+ "key": "10dc84c636cc35ea",
+ "kind": "lemma",
+ "title": "Decoding a Bit String of the Specified Shape",
+ "statement": "Let $x$ be a bit string and $n,s,t$ natural numbers. Suppose its first field consists of $n$ doubled true bits followed by the delimiter $01$; its next $n^2$ paired-bit positions have equal bits in each pair and are followed by $01$; its next field is the binary expansion of $s$ with each bit doubled and followed by $01$; and its final field is the binary expansion of $t$, with no trailing bits. Assume also $s<n$ and $t<n$. Then there is a Boolean adjacency matrix $A$ on the vertices $0,\\ldots,n-1$ such that $x$ is the prescribed nested pair encoding of the unary field, the row-major list of entries of $A$, and the binary expansions of $s,t$. Moreover, for every pair of vertices $u,v$, the bit of $x$ at position $2n+2+2(un+v)$ is true exactly when $A(u,v)$ is true.",
+ "hypotheses_covered": [
+  "$x$ is a bit string and $n,s,t$ are natural numbers",
+  "The unary field has $n$ doubled true bits and delimiter $01$",
+  "The matrix field has $n^2$ equal-bit pairs and delimiter $01$",
+  "The field for $s$ doubles its binary bits and has delimiter $01$",
+  "The final field is the binary expansion of $t$ and ends the string",
+  "$s<n$",
+  "$t<n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

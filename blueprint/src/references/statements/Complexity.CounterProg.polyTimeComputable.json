@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.polyTimeComputable",
+ "key": "7aa70d18254d22f9",
+ "kind": "theorem",
+ "title": "Polynomial-time simulation of a counter program",
+ "statement": "Let $P$ be a counter program with a finite label set $\u0005Lambda$ and decidable equality on labels, and fix a start label $l_0\\in\u0005Lambda$. Let $f$ map binary strings to binary strings, and let $C,c\\in\u0005mathbb{N}$. Suppose that for every binary input $x$, there is a time $t\\le C(|x|+1)^c$ at which the run of $P$ from its initial state at $l_0$ has halted and has output $f(x)$. Then $f$ is computable by a finite binary-alphabet Turing machine in time $C' (n+1)^{c'}$ on every input of length $n$, for some natural numbers $C',c'$.",
+ "hypotheses_covered": [
+  "The label set is finite and has decidable equality",
+  "A start label $l_0$",
+  "A function $f$ from binary strings to binary strings",
+  "Natural numbers $C,c$",
+  "For every input $x$, a time $t\\le C(|x|+1)^c$ with halted run and output $f(x)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ natural-number registers with a finite set of labels $\\Lambda$, i.e.\\ an assignment to each label of one instruction (halt, jump, print a bit, increment a register, decrement a register saturating at $0$, branch on a register being zero, print the value $v$ of a register as $1^v$, or read and consume the next input bit, branching on end-of-input, $0$ or $1$). Fix a start label $\\ell_0 \\in \\Lambda$, a function $f : \\{0,1\\}^* \\to \\{0,1\\}^*$ and constants $C, c \\in \\mathbb{N}$, and suppose that for every input $x \\in \\{0,1\\}^*$ there is some $t \\le C(|x|+1)^c$ such that running $P$ on $x$ for $t$ steps from the initial state (label $\\ell_0$, all registers $0$, no input read, empty output) reaches a halted state whose output is $f(x)$. Then $f$ is polynomial-time computable: some finite binary-alphabet Turing machine computes $f$ within $C'(n+1)^{c'}$ steps on every input of length $n$, for some constants $C', c' \\in \\mathbb{N}$."
+}

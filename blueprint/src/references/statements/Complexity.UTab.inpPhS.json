@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.UTab.inpPhS",
+ "key": "7510d80078402d1e",
+ "kind": "def",
+ "title": "Input source lists by phase",
+ "statement": "For a natural number $W$, a Boolean $t_0$, and each phase $\texttt{p0},\texttt{zA},\texttt{zB},\texttt{uA},\texttt{uB},\texttt{e1},\texttt{e2}$, assign the source list obtained by the following rule. Start with the 11 entries $(t_0,p_1,p_0,p_{-1},\neg p_0\\land\\neg p_{-1},\\ell,n_0,n_1,n_2,c_1,c_2)$, interpreting Boolean entries as constant sources, $\u0005ell$ as the source for layer $\u0005ell$, each enabled neighbor or current source as its indexed source and each disabled one as the constant false source; append $W$ sources indexed $0$ through $W-1$, each equal to the constant false source when $t_0$ is true and otherwise the corresponding position source. The phase parameters $(p_0,p_1,p_{-1},\\ell)$ are respectively $(1,0,0,0)$, $(0,1,0,1)$, $(0,0,0,1)$, $(0,1,0,2)$, $(0,0,0,2)$, $(0,1,1,0)$, and $(0,0,1,0)$.",
+ "hypotheses_covered": [],
+ "confidence": "low",
+ "caveat": "The statement depends on machine-source constructors and input-source conventions whose informal definitions were not supplied; the prose describes their indexing and Boolean gating from the formal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

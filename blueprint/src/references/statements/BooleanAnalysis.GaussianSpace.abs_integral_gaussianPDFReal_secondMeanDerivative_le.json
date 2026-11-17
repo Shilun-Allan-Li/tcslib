@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_secondMeanDerivative_le",
+ "key": "b5e126fff92849ca",
+ "kind": "lemma",
+ "title": "Gaussian second mean derivative bound",
+ "statement": "Let $f:\\mathbb R\\to\\mathbb R$ satisfy $|f(z)|\\le1$ for every $z$. For a nonzero nonnegative real number $v$ and any $c\\in\\mathbb R$, \\[\\left|\\int_{\\mathbb R}\\left(\\frac{(z-c)^2}{v^2}-\\frac1v\\right)p_{c,v}(z)f(z)\\,dz\\right|\\le\\frac2v,\\] where $p_{c,v}$ is the density of the Gaussian measure with mean $c$ and variance $v$.",
+ "hypotheses_covered": [
+  "$|f(z)|\\le1$ for every $z\\in\\mathbb R$",
+  "$v$ is a nonzero nonnegative real number",
+  "$c\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $v>0$ and $p_v(c,z)=(2\\pi v)^{-1/2}\\exp(-(z-c)^2/(2v))$. For any function $f:\\mathbb R\\to\\mathbb R$ with $|f|\\le1$ and any real $c$, $|\\int((z-c)^2/v^2-1/v)p_v(c,z)f(z)\\,dz|\\le2/v$, where nonintegrable integrals are assigned zero."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.arBit_embed",
+ "key": "d06517b154722e52",
+ "kind": "lemma",
+ "title": "Bit decoding on embedded bits",
+ "statement": "Let $\\Gamma$ be a type with decidable equality and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an embedding. For every bit $b$, the decoder that returns true exactly on $e(1)$ sends $e(b)$ to $b$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ has decidable equality",
+  "An embedding $e$ of the Boolean alphabet into $\\Gamma$",
+  "A Boolean bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $e : \\{0,1\\} \\hookrightarrow \\Gamma$ be an embedding of the bits into an alphabet\n$\\Gamma$. For every bit $b$, applying the total bit decoder (which sends $a \\in \\Gamma$\nto $1$ exactly when $a = e(1)$) to $e(b)$ returns $b$."
+}

@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean :: Complexity.Codec.initLang_mem -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Initial Language Is in Logarithmic Space
+
+**Claim.** For every finite nondeterministic Turing machine $N$ with Boolean input alphabet, the language encoding an input $x$ together with binary words for $c$ and $s$, where $c$ is the code of the initial configuration on $x$ with window parameter $s$, is decidable in logarithmic space.
+
+**Proof.** The proof constructs a logarithmic-space decider by composing the initialization-mode codec program with the input-length and input-bit deciders, whose languages are already in logarithmic space (`codecAs_mem`). The polynomial-space simulation theorem for this program model (`arm_decides_poly`) reduces the claim to showing that the program halts with the correct answer while keeping its registers polynomially bounded; the monotonicity lemma (`gd_mono`) supplies the required bound invariant. For an input with the prescribed paired shape and a successful preliminary scan, `one_run` gives the resulting scan state and registers. The two pairing encodings determine the input length, and the binary length bound gives $s\le 2|y|$ (`s_le_of_width`). The initial-language characterization (`initLang_iff`), together with the validity-to-precheck equivalence (`validChk_iff_pre`), shows that the target membership test is exactly the conjunction of the scan-state initialization checks, the position-register check, and the center-bit check. The program's final routine halts with that Boolean answer (`init_tail`), so the run reaches the correct indicator value (`AReach.halt`). If the preliminary scan fails, the input cannot belong to the language: a genuine code would have the required shape and satisfy the precheck, by `shape_of_code` and `initLang_iff`. The program therefore halts with false, as given by the failure branch of `one_run`. The two cases establish the correctness condition needed for the logarithmic-space simulation.
+
+**Key facts.** `Complexity.Codec.codecAs_mem`, `Complexity.LogProg.arm_decides_poly`, `Complexity.Codec.gd_mono`, `Complexity.Codec.one_run`, `Turing.length_pairEncode`, `Complexity.Codec.s_le_of_width`, `Complexity.Codec.initLang_iff`, `Complexity.Codec.validChk_iff_pre`, `Complexity.Codec.init_tail`, `Complexity.LogProg.AReach.halt`, `Complexity.Codec.shape_of_code`.

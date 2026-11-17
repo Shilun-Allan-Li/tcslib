@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/LearningTheory/Hedge/Hoeffding.lean :: eta_exp_bound -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Quadratic Exponential Bound
+
+**Claim.** For every $\eta\ge 0$, one has $\eta-1+e^{-\eta}\le \eta^2/2$.
+
+**Proof.** Define $f(x)=x^2/2-x+1-e^{-x}$. Its derivative is $f'(x)=x-1+e^{-x}$. For $x\ge0$, the inequality $e^x\ge1+x$ gives $e^{-x}\ge1-x$, and hence $f'(x)\ge0$. Thus $f$ is nondecreasing on the nonnegative real axis. Since $f(0)=0$, we have $f(\eta)\ge0$, which rearranges to the desired bound.

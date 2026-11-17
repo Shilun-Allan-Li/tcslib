@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.OracleTM.apply_workTapes_eq_of_ne",
+ "key": "53725c859c352b22",
+ "kind": "lemma",
+ "title": "Work tape cells away from the head",
+ "statement": "Let $k'$ be a natural number, let $\\mathrm{Symbol}$ and $\\mathrm{State}$ be types, and fix an input word. For an action $a$ on $k'$ work tapes and a configuration $c$ for that input, the content at position $z \\in \\mathbb{Z}$ on tape $i$ is unchanged by applying $a$ to $c$ whenever $i$ is a tape index and $z$ differs from the position of the $i$-th work-tape head in $c$.",
+ "hypotheses_covered": [
+  "A natural number $k'$ of work tapes",
+  "A symbol type and a state type",
+  "A fixed input word",
+  "An action on $k'$ work tapes",
+  "A configuration for that input and $k'$ tapes",
+  "A work-tape index $i$",
+  "An integer position $z$ different from the head position of tape $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a$ be a one-step action of a machine with $k'$ work tapes, let $c$ be a\nconfiguration of such a machine, let $i$ be a work-tape index, and let $z$ be\nan integer cell position different from the position of the $i$-th work head\nin $c$.  Then after applying $a$ to $c$, the content of cell $z$ of the $i$-th\nwork tape is unchanged."
+}

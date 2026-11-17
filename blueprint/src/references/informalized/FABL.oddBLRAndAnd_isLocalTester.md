@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter07/TestingAmplification.lean :: FABL.oddBLRAndAnd_isLocalTester -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Local Testing of Dictators
+
+**Claim.** For every natural number $n$, the odd BLR-and-AND tester locally tests the dictator property at rate equal to half the minimum rejection probability among non-dictator Boolean functions.
+
+**Proof.** The proposed rate is positive because the rejection gap is positive (`oddBLRAndAndRejectionGap_pos`). Every dictator is accepted with probability one, by the characterization of perfect acceptance (`oddBLRAndAndFunctionTester_acceptanceProbability_eq_one_iff`). Now let $f$ be $\varepsilon$-far from every dictator, with $0\leq\varepsilon\leq1$. Taking the dictator in this distance condition to be $f$ itself shows that $f$ cannot be a dictator: its distance from itself is zero, contradicting $\varepsilon<0$ if it were one. Thus $f$ is a non-dictator, and its rejection probability is at least the minimum gap (`oddBLRAndAndRejectionGap_le`). Since $\varepsilon\leq1$ and the gap is positive, half the gap times $\varepsilon$ is strictly less than the gap. Combining these inequalities gives the required strict rejection guarantee.
+
+**Key facts.** `FABL.oddBLRAndAndRejectionGap_pos`, `FABL.oddBLRAndAndFunctionTester_acceptanceProbability_eq_one_iff`, `FABL.oddBLRAndAndRejectionGap_le`.

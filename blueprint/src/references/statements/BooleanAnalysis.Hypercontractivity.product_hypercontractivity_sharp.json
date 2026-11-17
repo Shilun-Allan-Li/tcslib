@@ -1,0 +1,22 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_hypercontractivity_sharp",
+ "key": "6d7282eba3d1c66a",
+ "kind": "theorem",
+ "title": "Sharp hypercontractivity for product spaces",
+ "statement": "Let $P$ be a finite product probability space, and let $\\lambda,q,\\rho\\in\\mathbb R$ satisfy $0<\\lambda<1/2$ and $q>2$. Suppose every coordinate atom has weight at least $\\lambda$. Define $u=\\log((1-\\lambda)/\\lambda)$ and $r=\\sqrt{\\sinh(u/q)/\\sinh(u/(q/(q-1)))}$. If $0\\le\\rho\\le r$, then every real-valued function $f$ on the product outcome space satisfies $\\|T_\\rho f\\|_{q,P}\\le\\|f\\|_{2,P}$ and $\\|T_\\rho f\\|_{2,P}\\le\\|f\\|_{q/(q-1),P}$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space with strictly positive coordinate weights summing to one",
+  "$\\lambda,q,\\rho\\in\\mathbb R$",
+  "$0<\\lambda$",
+  "$\\lambda<1/2$",
+  "Every coordinate atom has weight at least $\\lambda$",
+  "$q>2$",
+  "$0\\le\\rho$",
+  "$\\rho$ is at most the stated sharp radius",
+  "$f$ is a real-valued function on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$ with every coordinate atom at least $\\lambda$, where $0<\\lambda<1/2$, and let $q>2$. Put $r=\\sqrt{\\sinh(\\log((1-\\lambda)/\\lambda)/q)/\\sinh(\\log((1-\\lambda)/\\lambda)/(q/(q-1)))}$. For $0\\le\\rho\\le r$ and every $f:\\Omega\\to\\mathbb R$, $\\|T_\\rho f\\|_{q,P}\\le\\|f\\|_{2,P}$ and $\\|T_\\rho f\\|_{2,P}\\le\\|f\\|_{q/(q-1),P}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

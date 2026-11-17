@@ -1,18 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_condKLDiv_zVariable",
- "key": "ac41093d2b06760e",
+ "key": "f925abb6894490e6",
  "kind": "theorem",
- "title": "Averaged fiberwise KL as a conditional KL divergence",
- "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the $n$-coordinate disjointness problem, and let $\\mu$ be the hard distribution on samples $\\omega$ conditioned on the two generated input sets being disjoint and on Bob's bit at the special coordinate $T$ being false. Write $X_T(\\omega)$ for Alice's bit at the special coordinate, and let $Z(\\omega)$ be the summary variable recording the transcript of $p$ on the generated input pair together with the special coordinate $T$, Alice's coordinates strictly before $T$, and Bob's coordinates strictly after $T$. For a value $z$ of $Z$, let $\\mathcal{L}(X_T \\mid Z = z)$ denote the law of $X_T$ under the hard distribution conditioned on the fiber $\\{Z = z\\}$, and let $U$ be the uniform law on a single bit. Then\n\\[\n\\int D_{\\mathrm{KL}}\\!\\big(\\mathcal{L}(X_T \\mid Z = Z(\\omega)) \\,\\big\\|\\, U\\big)\\, d\\mu(\\omega)\n  \\;=\\; D_{\\mathrm{KL}}\\big(X_T \\,\\big\\|\\, U \\,\\big|\\, Z\\big)_{\\mu},\n\\]\nso that the $\\mu$-average of the fiberwise Kullback–Leibler divergences from uniform equals the conditional Kullback–Leibler divergence of $X_T$ given $Z$, measured from uniform, under $\\mu$.",
+ "title": "Average fiber KL as conditional KL",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic protocol for length-$n$ disjointness. Under the hard distribution conditioned on disjoint inputs and Bob’s special bit being false, the expected Kullback–Leibler divergence from the uniform law on one bit of Alice’s special-bit law conditioned on the transcript, special coordinate, Alice’s bits strictly before it, and Bob’s bits strictly after it equals the conditional Kullback–Leibler divergence of Alice’s special bit given that full statistic, relative to the uniform law on one bit.",
  "hypotheses_covered": [
-  "n a positive integer",
-  "p a deterministic disjointness protocol on n coordinates",
-  "measure conditioned on the generated inputs being disjoint",
-  "measure further conditioned on Bob's special bit being false",
-  "reference law is uniform on one bit"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol for length-$n$ disjointness"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "The averaged Alice fiber KL under $D ∧ Y_{T}=false$, rewritten as the PFR real conditional KL used by the entropy API."
+ "replaced": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the\n$n$-coordinate disjointness problem, and let $\\mu$ be the hard distribution on samples\n$\\omega$ conditioned on the two generated input sets being disjoint and on Bob's bit at\nthe special coordinate $T$ being false. Write $X_T(\\omega)$ for Alice's bit at the\nspecial coordinate, and let $Z(\\omega)$ be the summary variable recording the transcript\nof $p$ on the generated input pair together with the special coordinate $T$, Alice's\ncoordinates strictly before $T$, and Bob's coordinates strictly after $T$. For a value\n$z$ of $Z$, let $\\mathcal{L}(X_T \\mid Z = z)$ denote the law of $X_T$ under the hard\ndistribution conditioned on the fiber $\\{Z = z\\}$, and let $U$ be the uniform law on a\nsingle bit. Then\n\\[\n\\int D_{\\mathrm{KL}}\\!\\big(\\mathcal{L}(X_T \\mid Z = Z(\\omega)) \\,\\big\\|\\, U\\big)\\,\nd\\mu(\\omega)\n  \\;=\\; D_{\\mathrm{KL}}\\big(X_T \\,\\big\\|\\, U \\,\\big|\\, Z\\big)_{\\mu},\n\\]\nso that the $\\mu$-average of the fiberwise Kullback–Leibler divergences from uniform\nequals the conditional Kullback–Leibler divergence of $X_T$ given $Z$, measured from\nuniform, under $\\mu$."
 }

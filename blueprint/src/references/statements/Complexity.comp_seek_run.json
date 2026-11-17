@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.comp_seek_run",
+ "key": "61b6c53372b99ac0",
+ "kind": "lemma",
+ "title": "Search Run Register Bounds",
+ "statement": "Let $C,e,B,\text{count}\u0000$ be natural numbers, let $\text{mode}$ and $\text{suffix}$ be Boolean flags, let $f$ map finite Boolean words to finite Boolean words, and let $h$ be a finite Boolean word. Let $v$ assign a natural number to each of $14$ registers. Suppose every register value is at most $B$, the value of register $3$ when $\text{suffix}$ is true (or register $11$ when it is false) is $v_0+\text{compStride}(\text{suffix})\text{count}$, register $13$ plus $\text{count}$ is at most $B$, and $v_{13}\u0000\text{le}v_5$. If $v_5<v_{13}+\text{count}$, there is a run from the search state with flag $\text{suffix}$ to the suffix-hit state when $\text{suffix}$ is true and the prefix-hit state otherwise; at its endpoint, registers $0$ and $13$ equal $v_0+\text{compStride}(\text{suffix})(v_5-v_{13})$ and $v_5$, respectively. If $v_5\u0000\text{ge}\u0000v_{13}+\text{count}$, there is a run to the false-answer state when $\text{suffix}$ is true and the separator state with flag false otherwise; registers $0$ and $13$ then equal $v_3$ (or $v_{11}$, respectively) and $v_{13}+\text{count}$. In either case, every configuration before the endpoint satisfies the program's step-validity condition and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$C,e,B,\\text{count}\\in\\mathbb N$",
+  "Boolean flags $\\text{mode},\\text{suffix}$",
+  "$f$ maps finite Boolean words to finite Boolean words",
+  "$h$ is a finite Boolean word",
+  "$v$ assigns natural values to the 14 registers",
+  "Every register value is at most $B$",
+  "$v_{3}=v_0+\\text{compStride}(\\text{suffix})\\text{count}$ when suffix is true; $v_{11}=v_0+\\text{compStride}(\\text{suffix})\\text{count}$ otherwise",
+  "$v_{13}+\\text{count}\\le B$",
+  "$v_{13}\\le v_5$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B$ and $N$ be natural numbers, let $m$ and $s$ be Boolean flags, let $f$ map\nbit strings to bit strings, and let $h$ be a bit string. Suppose $v$ assigns a natural\nnumber to each of $14$ registers, every value $v_r$ is at most $B$, $v_3=v_0+2N$ if $s$\nis true and $v_{11}=v_0+N$ if $s$ is false, $v_{13}+N\\le B$, and $v_{13}\\le v_5$. For\nthe counter program determined by these parameters, if $v_5<v_{13}+N$, there is a run\nfrom the search state to the suffix-hit state when $s$ is true and to the prefix-hit\nstate when $s$ is false; at its endpoint, registers $0$ and $13$ have values\n$v_0+k(v_5-v_{13})$ and $v_5$, respectively, where $k=2$ when $s$ is true and $k=1$\notherwise. If $v_5\\ge v_{13}+N$, there is a run to the false-answer state when $s$ is\ntrue and to the separator state when $s$ is false; registers $0$ and $13$ then have\nvalues $v_3$ and $v_{13}+N$ when $s$ is true, and $v_{11}$ and $v_{13}+N$ when $s$ is\nfalse. In either case, every configuration before the endpoint satisfies the program's\nstep-validity condition and has all register values at most $B$."
+}

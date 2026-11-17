@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.effects_argsCode",
+ "key": "a4f7f41109827b1e",
+ "kind": "theorem",
+ "title": "Compiled argument evaluation",
+ "statement": "Let $Z$ describe a word-RAM layout with limits, and let a light state $σ$ be represented in a frame at stack position $q$ by memory $m$, with the frame within the stack bounds. Let $es$ be a list of expressions and $k$ a starting temporary index. Suppose every expression in $es$ has width at most $Z.F$ and is safe in $σ$ under the limits, and $k+|es|\\le Z.F+1$. Then evaluating the compiled argument code yields, for each $i<|es|$, the $W$-bit encoding of the $i$th argument value in temporary cell $k+i$; throughout, memory is unchanged outside the temporary cells indexed from $k$ through $Z.F$.",
+ "hypotheses_covered": [
+  "The initial RAM memory and state form a framed representation, including lower and upper stack bounds",
+  "Every expression in es has width at most Z.F",
+  "Every expression in es is safe in the state under lim",
+  "k + length(es) ≤ Z.F + 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

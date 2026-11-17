@@ -1,0 +1,21 @@
+{
+ "lean_name": "WordRAM.mem_NSPACE_of_accepts",
+ "key": "c72df8717d26cc69",
+ "kind": "theorem",
+ "title": "Word RAM acceptance implies nondeterministic space membership",
+ "statement": "Let $P$ be an extended Word RAM program, let $L$ be a language of Boolean strings, and let $W,T_W,S_W,F:\\mathbb{N}\\to\\mathbb{N}$. Suppose a finite Turing machine computes the word width $W(n)$ in at most $T_W(n)$ steps and space $S_W(n)$. Suppose that for every input $x$ there is a time bound $t$ such that, for every coin string, $P$ halts within $t$ steps using words of width $W(|x|)$ and at most $F(|x|)$ touched addresses, and $x\\in L$ exactly when some coin string and output yield acceptance within those bounds. If, for every $n$, $S_W(n)+F(n)(W(n)+1)+W(n)+(\\lfloor\\log_2 n\\rfloor+1)+1\\le a s(n)$ for natural numbers $a$ and every $n$, then $L$ belongs to nondeterministic space $\\mathrm{NSPACE}(s)$.",
+ "hypotheses_covered": [
+  "An extended Word RAM program $P$ and Boolean language $L$",
+  "Functions $W,T_W,S_W,F$ from natural numbers to natural numbers",
+  "A Turing machine computes $W(n)$ within time $T_W(n)$ and space $S_W(n)$",
+  "For every input, a time bound $t$ works for all coin strings",
+  "Halting within $t$ steps at width $W(|x|)$ and with at most $F(|x|)$ touched addresses",
+  "Membership in $L$ is equivalent to existence of an accepting coin-string run within those bounds",
+  "Natural number $a$ and function $s$",
+  "For every $n$, $S_W(n)+F(n)(W(n)+1)+W(n)+(\\lfloor\\log_2 n\\rfloor+1)+1\\le a s(n)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

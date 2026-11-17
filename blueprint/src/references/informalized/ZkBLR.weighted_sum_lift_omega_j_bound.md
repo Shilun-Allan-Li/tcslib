@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/BLR/ZkBLR.lean :: ZkBLR.weighted_sum_lift_omega_j_bound -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Weighted Fourier bound for far functions
+
+**Claim.** For a normalized function that is $\epsilon$-far from linear and a nonzero twist $j$, the weighted Fourier sum of its twisted lift is at most $1-(1-\cos(2\pi/p))\epsilon$.
+
+**Proof.** At each frequency, the real part of the Fourier coefficient of the twisted lift is at most $1-(1-\cos(2\pi/p))\varepsilon$, by the per-coefficient estimate (`ZkBLR.re_fourier_coeff_lift_omega_j_bound`). Multiply this inequality by the nonnegative squared modulus of that coefficient and sum over frequencies. The common upper bound factors out of the sum, and Parseval for the twisted lift (`ZkBLR.parseval_lift_omega_j`) identifies the sum of squared moduli with $1$. The resulting bound is the claimed one.
+
+**Key facts.** `ZkBLR.re_fourier_coeff_lift_omega_j_bound`, `ZkBLR.parseval_lift_omega_j`.

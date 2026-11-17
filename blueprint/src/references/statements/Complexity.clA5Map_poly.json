@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clA5Map_poly",
+ "key": "d4aad0faae16acde",
+ "kind": "lemma",
+ "title": "Polynomial-time transduction of finite-state words",
+ "statement": "Let $S$ be a finite state set with decidable equality, let $\\mathrm{next}:S\\times\\{0,1\\}\\to S$ be a state update, let $\\mathrm{emit}:S\\times\\{0,1\\}\\to\\mathrm{Option}(\\{0,1\\})$ specify an optional output bit for each state and input bit, and let $\\mathrm{finish}:S\\to\\mathrm{Option}(\\{0,1\\})$ specify an optional final output bit. For every start state, the word function that processes the input bits in order using these rules and appends the final output is polynomial-time computable.",
+ "hypotheses_covered": [
+  "Finite state set",
+  "Decidable equality on states",
+  "State update function",
+  "Optional per-bit emission function",
+  "Optional final emission function",
+  "Start state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every finite one-way word transducer computes its recursive word semantics within time equal to the input length plus one, and is in particular polynomial-time computable."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.Contract.Traj.branch",
+ "key": "6b308024e1591edb",
+ "kind": "theorem",
+ "title": "Trajectory property for branching contracts",
+ "statement": "Let $M_0,M_1,M_2$ be machines, with distinct states $e_1,e_2$ of $M_0$, and let $C_0$ be a contract for $M_0$ whose exit set consists of $e_1$ and $e_2$. Let $C_1,C_2$ be contracts for $M_1,M_2$, respectively, with data maps from $C_0$'s data. Suppose that whenever the endpoint of an eligible $C_0$ run has state $e_1$ (respectively, $e_2$), the endpoint with its state replaced by the entry state of $C_1$ (respectively, $C_2$) satisfies that contract's precondition. If $R_0,R_1,R_2$ hold throughout the trajectories of their respective contracts, then the branching contract satisfies, at every time, the disjunction of $R_0$ on the initial phase and the property for the selected branch: $R_1$ if the $C_0$ endpoint has state $e_1$, and $R_2$ otherwise.",
+ "hypotheses_covered": [
+  "The exit states e₁ and e₂ of M₀ are distinct",
+  "C₀ exits in {e₁,e₂}",
+  "C₁ and C₂ are contracts for M₁ and M₂",
+  "Data maps l₁ and l₂ link C₀ data to branch data",
+  "The eligible e₁ endpoint, reset to C₁'s entry state, satisfies C₁'s precondition",
+  "The eligible e₂ endpoint, reset to C₂'s entry state, satisfies C₂'s precondition",
+  "C₀ satisfies trajectory property R₀",
+  "C₁ satisfies trajectory property R₁",
+  "C₂ satisfies trajectory property R₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_0,M_1,M_2$ be machines with state sets $S_0,S_1,S_2$, where $S_0$ and $S_1$ have\ndecidable equality, and let $e_1,e_2$ be distinct exit states of $M_0$. Let $C_0$ be a\ncontract for $M_0$ whose exits are precisely these two states, and let $C_1,C_2$ be\ncontracts for $M_1,M_2$. Suppose parameter maps $l_1,l_2$ make the renamed endpoint of\n$C_0$ satisfy the corresponding branch contract's precondition whenever that endpoint\nhas state $e_1$ or $e_2$, respectively. If trajectory properties $R_0,R_1,R_2$ hold for\nthe three contracts, then the composed branching contract satisfies, throughout its\ntrajectory, the disjunction of $R_0$ on the first phase and the applicable branch\nproperty: $R_1$ when the endpoint of $C_0$ has state $e_1$, and $R_2$ otherwise."
+}

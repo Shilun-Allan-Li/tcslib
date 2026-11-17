@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_restrictLast_noiseOp",
+ "key": "8c293220d13da2d6",
+ "kind": "lemma",
+ "title": "Restriction of a noised combined vector",
+ "statement": "Let $n,m$ be nonnegative integers, let $\\rho\\in\\mathbb R$, let $f$ be a real-valued function on $\\{0,1\\}^{n+1}$, let $g$ be an $m$-tuple of such functions, and let $b\\in\\{0,1\\}$ and $x\\in\\{0,1\\}^n$. The combined vector of the restrictions at $b$ of the noise-operator images of $f$ and $g$, evaluated at $x$, equals the combined vector of the noise-operator images of their last-coordinate averages at $x$, plus $\\sigma(b)\\rho$ times the combined vector of the noise-operator images of their last-coordinate half-differences at $x$.",
+ "hypotheses_covered": [
+  "n,m are natural numbers",
+  "ρ is real",
+  "f is a real-valued function on the (n+1)-dimensional Boolean cube",
+  "g is an m-tuple of real-valued functions on that cube",
+  "b is a Boolean bit",
+  "x is a point of the n-dimensional Boolean cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a profile $P:\\mathbb R\\to\\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\\mathbb E\\sqrt{P(h)^2+\\|V(h,k)\\|_2^2}$, where $D_i$ is the coordinate half-difference. Let $f$ be a real function and $g$ a vector of $m$ real functions on $\\{0,1\\}^{n+1}$. Put $f_b(x)=f(x,b)$, $g_b(x)=g(x,b)$, $a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, and define $a_g,d_g$ componentwise. Let $T_\\rho$ denote Boolean noise with real correlation $\\rho$, whose Fourier multiplier on a set of size $k$ is $\\rho^k$. For $s_0=1$, $s_1=-1$, $V((T_\\rho f)_b,(T_\\rho g)_b)(x)=V(T_\\rho a_f,T_\\rho a_g)(x)+s_b\\rho V(T_\\rho d_f,T_\\rho d_g)(x)$ for every $x,b$."
+}

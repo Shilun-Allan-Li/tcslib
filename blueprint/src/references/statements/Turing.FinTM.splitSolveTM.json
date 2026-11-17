@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitSolveTM",
+ "key": "5e304d6c1d33674b",
+ "kind": "def",
+ "title": "Split-search solver",
+ "statement": "For each natural number $C$, define a family of Boolean Turing machines indexed by $e\\in\\mathbb{N}$. At $e=0$, the loop host runs a split-search body built from the prefixed word of $C$ ones; at $e>0$, it runs a split-search body built from the catalog unary polynomial generator with parameters $e-1$ and $C$. In both cases the fuel machine is the bit-length machine, and the host is configured in find mode.",
+ "hypotheses_covered": [
+  "$C$ is a natural number",
+  "$e$ is a natural-number index"
+ ],
+ "confidence": "low",
+ "caveat": "The payload gives the machine construction but not the operational semantics of the loop host or split-search body, so the result of the search cannot be specified exactly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

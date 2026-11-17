@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_one_frame",
+ "key": "ec3a279c4637b0a0",
+ "kind": "lemma",
+ "title": "One-Tape Configuration Embedding",
+ "statement": "Let $l$ be a natural number, let $S$ and $H$ be types, choose a tape slot in $\text{Fin}(l)$, a state map $e:S\\to H$, a family of Boolean words on the $l$ host tapes, and Boolean words $w,u$ and a state $q\\in S$. Embedding the one-tape configuration with input $w$, state $q$, and tape contents $u$ into the chosen slot, using the given words on all other tapes and placing every head at the origin, then renaming the state by $e$, gives the canonical configuration with state $e(q)$ and tape words obtained by replacing the chosen slot's word by $u$.",
+ "hypotheses_covered": [
+  "Natural number $l$",
+  "Types $S$ and $H$",
+  "Chosen slot in $\\text{Fin}(l)$",
+  "State map $e:S\\to H$",
+  "Family of Boolean words on $l$ tapes",
+  "Boolean words $w,u$",
+  "State $q\\in S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a host slot, a host word layout, a physical input $w$, a word $u$, and a\nstate $q$, relocating the canonical one-word configuration of a single-tape\nphase (state $q$, word $u$) into that slot, with every other tape holding its\nlayout word at head position $0$, yields the canonical host configuration\nwhose layout equals the given layout with the slot's word replaced by $u$."
+}

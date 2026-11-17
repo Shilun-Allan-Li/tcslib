@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ups_mul",
+ "key": "b5ff719bff95aabe",
+ "kind": "lemma",
+ "title": "Multiplication subroutine semantics",
+ "statement": "Let $x$ be a finite bit string, $B$ a natural-number bound, $k$ one of the two multiplication sites, $q$ a rational number, and $\\sigma$ a register state. Suppose every register of $\\sigma$ is at most $B$, and the value in the result register plus the product of the two input-register values is at most $B$. Suppose also that for every natural number $z\\le B$, the universal probabilistic program started at the exit site associated with $k$, with its outer counter set to the first input value, its inner counter set to $z$, and its result register set to the original result value plus the product of the input values, has probabilistic semantics with acceptance probability $q$. Then the program started at the entry site associated with $k$ and register state $\\sigma$ has probabilistic semantics with acceptance probability $q$.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "$B$ is a natural-number bound",
+  "$k$ is one of the two multiplication sites",
+  "$q$ is rational",
+  "$\\sigma$ is a register state",
+  "Every register of $\\sigma$ is at most $B$",
+  "The original result-register value plus the product of the two input-register values is at most $B$",
+  "For every natural $z\\le B$, the specified exit-site configuration has probabilistic semantics with acceptance probability $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a bit-string input $x$, a register bound $B$, a site $k$ for multiplication, a\nrational number $q$, and a register state $\\sigma$. If every register of $\\sigma$ is at\nmost $B$, and the value in the result register plus the product of the two\ninput-register values is at most $B$, suppose that for every $z\\le B$ the universal\nprobabilistic program, started at the multiplication site's exit state with its outer\ncounter set to the first input, its inner counter set to $z$, and its result register\nset to that sum, has probabilistic semantics with acceptance probability $q$. Then the\nprogram started at the multiplication site's entry state with register state $\\sigma$\nhas probabilistic semantics with acceptance probability $q$."
+}

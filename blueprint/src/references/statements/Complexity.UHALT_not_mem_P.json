@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.UHALT_not_mem_P",
+ "key": "7330e89c871060aa",
+ "kind": "theorem",
+ "title": "Universal halting is not in polynomial time",
+ "statement": "For every effective machine code scheme $c$, the unary language consisting of all-one words of length $n$ such that the most-significant-first binary expansion of $n$ is $1$ followed by a string $s$ for which some advice string $\\alpha$ and input $x$ satisfy $s=\\langle\\alpha,x\\rangle$ and the machine decoded from $\\alpha$ halts on $x$ with some output is not in $\\mathrm{P}=\\bigcup_{C\\in\\mathbb{N}}\\mathrm{DTIME}(n\\mapsto n^C+1)$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code scheme"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective machine representation scheme $c$, the unary language of numbers\nwhose binary expansions begin with $1s$, where $s$ encodes an advice string and an input\non which the machine decoded from that advice halts, is not decidable in time $n^d+1$ up\nto a constant factor for any natural number $d$."
+}

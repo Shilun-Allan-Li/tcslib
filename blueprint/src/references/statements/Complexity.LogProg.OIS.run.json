@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.run",
+ "key": "df6c0dfd3fdd6acd",
+ "kind": "theorem",
+ "title": "Simulation with a bounded counter tape",
+ "statement": "Let $M$ be a Boolean multi-tape Turing machine, and let $x$ and $v$ be Boolean words. Suppose an oracle $o$ satisfies, for every $i\\le |v|$, $o_0(\\langle x,\\operatorname{bits}(i)\\rangle)$ is true exactly when $i<|v|$, and, for every $i<|v|$, $o_1(\\langle x,\\operatorname{bits}(i)\\rangle)$ equals the $i$th bit of $v$ (with false as the default). If $M$ halts on input $v$ after $t$ steps, then the compiled oracle program, started on input $x$, halts after some $N$ steps and produces the same output as $M$. At every time $n\\le N$, each ordinary work-tape head lies between $-S$ and $S$, where $S$ is the space used by $M$ through step $t$, while the additional tape head lies between $-1$ and $L$, where $L=|\\operatorname{bits}(|v|+1)|$; moreover, every oracle call made before step $N$ begins with input-head position $1$ and additional-tape head position $0$, and that tape stores $\\operatorname{bits}(i)$ from cell zero for some $i\\le |v|$.",
+ "hypotheses_covered": [
+  "Boolean multi-tape machine M",
+  "Boolean words x and v",
+  "Oracle index-0 answers correctly indicate i<|v| for every i≤|v|",
+  "Oracle index-1 answers return the corresponding bit of v for every i<|v|",
+  "M halts on input v after t steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

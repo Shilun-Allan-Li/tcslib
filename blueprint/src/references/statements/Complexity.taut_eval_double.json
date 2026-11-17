@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.taut_eval_double",
+ "key": "68a15dc89502dc73",
+ "kind": "lemma",
+ "title": "Two-step evaluation of a doubled bit",
+ "statement": "Let $x$ be a binary word, $q$ an evaluation state, $q'$ a verifier control state, $i$ a natural number with $i+2\\le |x|$, $u$ a binary word, $h$ an integer, $b$ a bit, and $e$ a head-movement sign. Suppose the bit at index $i$ of $x$ is $b$, and the evaluation action in state $q$ on bit $b$, reading the work-tape cell at $h$ when the tape stores $u$, is the silent move that advances the input head, moves the work head by $e$, and enters $q'$. Then, starting in evaluation state $q$ with $i$ input bits consumed, work word $u$, and work head at $h$, two machine steps reach control state $q'$, with $i+2$ bits consumed, work word $u$, and work head at $h+e$.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$q$ is an evaluation state and $q'$ is a verifier control state",
+  "$i+2\\le |x|$",
+  "$u$ is a binary word and $h$ is an integer",
+  "$b$ is a Boolean bit and $e$ is a head-movement sign",
+  "the bit at index $i$ of $x$ is $b$",
+  "the evaluation action for $q,b$ and the tape cell at $h$ storing $u$ equals the specified silent move by $e$ into $q'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input with $i + 2 \\le |x|$ and $i$-th bit $b$, let $u$ be a word, $h$ an\ninteger, and $q$ an evaluation state. Suppose the evaluation action for $q$ on bit $b$,\nwith the work cell at $h$ of the tape holding $u$, is the silent move advancing the\ninput head, moving the work head by $e$, and entering $q'$. Then from the\nnon-tautology verifier's evaluation configuration carrying $q$ with $i$ bits consumed,\nwork word $u$, and head $h$, two steps reach state $q'$ with $i+2$ bits consumed and\nhead $h + e$."
+}

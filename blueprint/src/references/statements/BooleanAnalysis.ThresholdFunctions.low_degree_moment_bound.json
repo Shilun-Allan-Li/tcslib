@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.low_degree_moment_bound",
+ "key": "d2f74cc77dd5e264",
+ "kind": "lemma",
+ "title": "Low degree moment bound",
+ "statement": "Let $n,k$ be natural numbers, let $p$ be a coefficient family on subsets of the $n$ coordinates, and suppose $p(S)=0$ whenever $|S|>k$. For every real $t$ with $1<t<2$, writing $P(x)=\\sum_{S\\subseteq\\{0,\\ldots,n-1\\}}p(S)\\chi_S(x)$, one has $\\displaystyle(t-1)^k\\sum_{S\\subseteq\\{0,\\ldots,n-1\\}}p(S)^2\\leq\\left(\\mathbb E_{x\\sim\\mathrm{Unif}(\\{0,1\\}^n)}|P(x)|^t\\right)^{2/t}$.",
+ "hypotheses_covered": [
+  "natural numbers $n,k$",
+  "coefficient family $p$ on subsets of the $n$ coordinates",
+  "degree bound $p(S)=0$ whenever $|S|>k$",
+  "real parameter $t$ satisfies $1<t<2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. Put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for $S\\subseteq[n]$ and real cube functions $h$. Let $P(x)=\\sum_{S\\subseteq[n]}a_S\\chi_S(x)$ with real coefficients; degree at most $k$ means $a_S=0$ for $|S|>k$. If $P$ has degree at most the integer $k\\ge0$ and $1<t<2$, then $(t-1)^k\\sum_Sa_S^2\\le(\\mathbb E|P|^t)^{2/t}$."
+}

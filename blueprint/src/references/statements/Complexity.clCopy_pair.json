@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCopy_pair",
+ "key": "4ec3e00298c6ef1c",
+ "kind": "lemma",
+ "title": "Two-step copying of one bit",
+ "statement": "Let $x$ be a Boolean input word, let $p$ be a valid input-head position, let the source word be $u b v$ for Boolean words $u,v$ and a bit $b$, and let $r$ be a record. After two steps of the copier from its reading control, with input-head position $p$, source-head position $|u|$, and record $r$, the configuration has the same input-head position and source word, source-head position $|u|+1$, and record $rbb$; it remains in the reading control.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "valid input-head position $p$",
+  "source prefix $u$",
+  "remaining source word beginning with bit $b$",
+  "record $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, source prefix $u$, remaining source bits starting with $b$, and record, two steps of the copier from its reading control at cell $|u|$ append the two bits $b, b$ to the record and advance the source head to cell $|u| + 1$; the source tape is unchanged."
+}

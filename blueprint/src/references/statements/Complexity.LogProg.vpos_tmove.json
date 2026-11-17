@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.vpos_tmove",
+ "key": "4122d743d4b8b735",
+ "kind": "lemma",
+ "title": "Virtual head movement agrees with tape movement",
+ "statement": "Let a finite list of segments, a segment index $s$, and a tape position $tp$ be given, with $s$ in range and $tp$ valid for that segment. For either head-movement direction, if the virtual position of $tp$ is less than the virtual-word length plus two, then the virtual position after applying the segment-tape movement equals the position obtained by moving the head by that direction in the bounded virtual input, with movement clamped to its boundary positions.",
+ "hypotheses_covered": [
+  "segs is a finite list of segments",
+  "s is a natural number with s < |segs|",
+  "tp is a tape position valid for segment s",
+  "m is a sign movement",
+  "vpos(segs, s, tp) < |vword(segs)| + 2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

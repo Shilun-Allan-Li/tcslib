@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satMax_finish",
+ "key": "ea0750fce10c4f29",
+ "kind": "lemma",
+ "title": "Completion of the counter replay",
+ "statement": "Let $x$ be a Boolean word, let $n\\in\\mathbb{N}$, and let $B:\\mathbb{Z}\\to\\{0,1\\}\\cup\\{\\text{blank}\\}$ be any buffer tape. Starting in the streaming entry state with input head at position zero, counter tape of unary length $n$ with head at zero, buffer tape $B$ with head at zero, and empty output, the intercepted maximum-pass machine reaches the halted configuration after exactly $n+1$ steps. At that point the input head remains at zero, the counter tape is unchanged with its head at $n$, the buffer tape is unchanged with its head at zero, and the output consists of $n$ true bits.",
+ "hypotheses_covered": [
+  "An input Boolean word $x$",
+  "A natural number $n$",
+  "An arbitrary buffer tape $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input, $n \\in \\mathbb{N}$, and $B$ any buffer tape. Started in the\nstreaming entry state with the input head at $0$, a unary counter of length $n$\nwith head at $0$, the buffer $B$ with head at $0$, and empty output, the\nintercepted maximum-pass machine after exactly $n + 1$ steps is halted with output\n$1^n$ and counter head at $n$, all other fields unchanged; in particular the first\nblank after the counter halts the machine without an extra output bit."
+}

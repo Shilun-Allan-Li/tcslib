@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.exists_recordValidTM",
+ "key": "b8d1d6100f5a5284",
+ "kind": "theorem",
+ "title": "Machine for Testing Record Validity",
+ "statement": "For every natural number $k$ and finite decidable types $Q,T$, there are a natural number $K$, a finite decidable state type $P$, a deterministic machine $R$ with $K+2$ work tapes over the record alphabet, entry and distinct yes/no states, and a constant $C$ with the following property. For any natural numbers $n,s$, list of fields $f$ of length $k+3$, and entry-state configuration $d$ whose tape $0$ encodes $f$, tape $1$ encodes the prescribed template for $n,s$, and all tapes with index at least $2$ are blank, the machine reaches in at most $C(|\\langle f\\rangle|+|\\langle H\\rangle|+n+1)$ steps the original configuration with state changed to yes if $f$ encodes a valid record for parameters $k,n,s,Q,T$, and to no otherwise. It visits neither decision state earlier, and through that time every work-tape head moves by at most $C(|\\langle f\\rangle|+|\\langle H\\rangle|+1)$ from its initial position, where $H$ is the prescribed template and validity means that $f$ is the record of a configuration on an input of length $n$ whose work-tape heads and nonblank cells lie within distance $s$ of the origin.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Finite decidable types $Q,T$",
+  "Natural numbers $n,s$",
+  "Field list $f$ has length $k+3$",
+  "Entry-state configuration $d$",
+  "Tape $0$ encodes $f$",
+  "Tape $1$ encodes the prescribed template for $n,s$",
+  "All tapes with index at least $2$ are blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

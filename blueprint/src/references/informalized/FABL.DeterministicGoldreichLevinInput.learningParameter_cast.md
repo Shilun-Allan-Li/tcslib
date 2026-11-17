@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/LearningAndTesting/DeterministicGoldreichLevin.lean :: FABL.DeterministicGoldreichLevinInput.learningParameter_cast -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Real accuracy identity
+
+**Claim.** The learning parameter, viewed as a real number, equals the real accuracy $a/b$.
+
+**Proof.** By definition, the learning parameter is the rational quotient of the accuracy numerator by its denominator. Casting this quotient from $\mathbb{Q}$ to $\mathbb{R}$ preserves division, and the definition of the real accuracy is precisely the quotient of those same integers cast to $\mathbb{R}$. The two expressions therefore agree.

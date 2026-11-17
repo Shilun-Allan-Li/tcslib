@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.exists_selfUniversal",
+ "key": "4129b518635c36da",
+ "kind": "theorem",
+ "title": "Self-Simulation with Linear Space Overhead",
+ "statement": "For every effective code system $c$ for one-work-tape binary machines, there is a finite-state deterministic binary machine $U_0$ such that for every code $\\alpha$ there is a positive integer $C$ with the following property. For every binary input $w$, output word $y$, and natural numbers $t,s$, if the machine decoded from $\\alpha$ halts on input $\\langle\\alpha,w\\rangle$ at time $t$ with output $y$ and uses exactly $s$ work-tape cells by time $t$, then $U_0$ halts on input $\\langle\\alpha,w\\rangle$ with output $y$ at some time $t'$ and uses at most $C(s+1)$ work-tape cells by time $t'$.",
+ "hypotheses_covered": [
+  "$c$ is an effective code system for one-work-tape binary machines",
+  "$U_0$ is a finite-state deterministic binary machine",
+  "$C$ is positive",
+  "$w$ and $y$ are binary words",
+  "$t$ and $s$ are natural numbers",
+  "the decoded machine computes output $y$ and halts at time $t$ on paired input $\\langle\\alpha,w\\rangle$",
+  "its space used by time $t$ is at most $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective code system for one-work-tape binary machines, there exist a\nfinite-state deterministic binary machine $U_0$ such that, for each code $\\alpha$, there\nis a positive integer $C$ with the following property. If the machine decoded from\n$\\alpha$ halts on the paired input $\\langle\\alpha,w\\rangle$ within $t$ steps, outputs a\nbinary string, and uses at most $s$ work-tape cells by time $t$, then $U_0$ halts on the\nsame paired input with the same output at some time $t'$ and uses at most $C(s+1)$\ncells."
+}

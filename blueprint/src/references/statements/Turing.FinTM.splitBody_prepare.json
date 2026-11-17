@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.splitBody_prepare",
+ "key": "744f80bcc946e5d6",
+ "kind": "lemma",
+ "title": "Preparation phase of the round",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $start$ be one of its states, and let $w,s$ be Boolean words. There is a natural number $t\\le 2(|s|+1)$ such that, after $t+1$ steps of the split-search round body on input $w$, started in its preparation state with the candidate $s$ on the first work tape and all other work tapes blank, the configuration is the counting-host embedding of the source configuration with state $start$, unary work tapes of length $|s|+1$, work-tape heads at $0$, and empty output. The run avoids the anchor state at every time from $0$ through $t+1$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$start$ is a state of $M$",
+  "$w,s$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any input $w$ and candidate $s$, there is a time $t \\le 2(\\abs{s}+1)$\nsuch that $t+1$ steps of the round body from its preparation seam reach the\ncounting-host embedding of the prepared source bank at the source's start\nstate, and the whole trace avoids the anchor."
+}

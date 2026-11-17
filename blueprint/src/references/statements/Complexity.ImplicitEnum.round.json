@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.ImplicitEnum.round",
+ "key": "e2a4c6928e3ca7be",
+ "kind": "lemma",
+ "title": "One output bit of the enumeration",
+ "statement": "Let $f$ map Boolean words to Boolean words, and let $o_0,o_1$ be Boolean-valued oracles on Boolean words such that, for every Boolean word $x$ and natural number $j$, $o_0(\\langle x,\\operatorname{bits}(j)\\rangle)$ is true exactly when $j<|f(x)|$, and $o_1(\\langle x,\\operatorname{bits}(j)\\rangle)$ equals the $j$-th bit of $f(x)$, defaulting to false when that bit is absent. If $i<|f(x)|$, $|f(x)|\\le F$, and $|\\operatorname{bits}(i+1)|\\le W$, then the enumerator has a finite run from the configuration with output $f(x)$'s first $i$ bits, state asking, and counter $i$ to the configuration with output its first $i+1$ bits, state asking, and counter $i+1$; every configuration strictly before the end of this run has shape bounded by $F$ and $W$.",
+ "hypotheses_covered": [
+  "The length oracle correctly tests whether an index is below the output length",
+  "The bit oracle returns the output bit, defaulting to false when absent",
+  "The index satisfies $i<|f(x)|$",
+  "The output length is at most $F$",
+  "The bit length of $i+1$ is at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

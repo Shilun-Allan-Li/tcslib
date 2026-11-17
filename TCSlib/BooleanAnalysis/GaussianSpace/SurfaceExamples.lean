@@ -5,6 +5,8 @@ Authors: Owen McGinty
 -/
 
 import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceRelaxation
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.Intervals
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.PolynomialSharpness
 import Mathlib.Algebra.MvPolynomial.Degrees
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 
@@ -13,7 +15,12 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Examples and upper bounds for Gaussian surface area: statement layer
+# Examples and upper bounds for Gaussian surface area
+
+## Contents
+
+* `SurfaceExamples.Intervals`: finite interval crossing estimates and their surface-area formula.
+* `SurfaceExamples.PolynomialSharpness`: polynomial constructions approaching the degree bound.
 
 ## Main definitions
 
@@ -23,7 +30,8 @@ Sets are expressed directly in the existing vector carrier, transporting to
 ## Main results
 
 The interval, ball, convex-set, polytope, convex-cone and polynomial-threshold
-claims in Example 11.50, with universal constants and placeholder proofs.
+claims in Example 11.50, with universal constants. The interval formula and
+polynomial-threshold sharpness are proved; the remaining claims retain placeholder proofs.
 
 ## References
 
@@ -57,7 +65,9 @@ theorem surfaceArea_disjoint_intervals {m : ℕ} (a b : Fin m → ℝ)
     (hab : ∀ j, a j < b j)
     (hdisjoint : Pairwise (fun i j => Disjoint (Set.Icc (a i) (b i)) (Set.Icc (a j) (b j)))) :
     gaussianSurfaceArea {x : Fin 1 → ℝ | ∃ j, a j ≤ x 0 ∧ x 0 ≤ b j} =
-      ENNReal.ofReal (∑ j, (standardGaussianPDF (a j) + standardGaussianPDF (b j))) := sorry
+      ENNReal.ofReal (∑ j, (standardGaussianPDF (a j) + standardGaussianPDF (b j))) := (by
+  exact surfaceArea_coordinate_disjoint_intervals (0 : Fin 1) a b hab hdisjoint
+)
 
 /-- An origin-centered Euclidean ball has surface area given by the radial
 Gaussian density. [OD14, Example 11.50; Ex. 11.17]
@@ -155,11 +165,14 @@ Sharpness means an arbitrarily close lower bound, not exact attainment by a
 polynomial with repeated roots.
 
 **Proof sketch.** Place `k` distinct real roots arbitrarily close to zero.
-The interval endpoint formula makes the perimeter the sum of their densities,
-which approaches `k` times the maximum Gaussian density. -/
+Their alternating sign intervals give the desired endpoint density sum. For odd
+degree, truncate the final ray, apply intersection subadditivity, and cancel the
+cutoff density. Continuity of the Gaussian density then gives the lower bound. -/
 theorem exists_polynomial_threshold_surfaceArea_ge (k : ℕ) (ε : ℝ) (hε : 0 < ε) :
     ∃ p : MvPolynomial (Fin 1) ℝ, p.totalDegree ≤ k ∧
       ENNReal.ofReal ((k : ℝ) / Real.sqrt (2 * Real.pi) - ε) ≤
-        gaussianSurfaceArea {x : Fin 1 → ℝ | 0 ≤ MvPolynomial.eval x p} := sorry
+        gaussianSurfaceArea {x : Fin 1 → ℝ | 0 ≤ MvPolynomial.eval x p} := (by
+  exact exists_coordinate_polynomial_threshold_surfaceArea_ge (0 : Fin 1) k ε hε
+)
 
 end BooleanAnalysis.GaussianSpace

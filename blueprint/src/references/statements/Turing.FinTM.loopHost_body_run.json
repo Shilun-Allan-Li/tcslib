@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_body_run",
+ "key": "c6cc165052666f43",
+ "kind": "lemma",
+ "title": "Simulation of a live body run",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, choose Boolean forwarding, find, and startup modes, and let $p$ be a Boolean word. For a Boolean input word $x$, let $c$ be a configuration of the stopped-body machine extended with the counter and fuel tapes. Suppose that this extended body run has not halted at any time $u<t$. Then the loop host run for $t$ steps, started from the image of $c$ with the chosen modes and prefix, is the image of the extended body run at time $t$ with those same parameters.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Boolean Turing machines",
+  "$a$ is a state of $B$",
+  "Forwarding, find, and startup parameters are Boolean",
+  "$p$ is a Boolean word",
+  "$x$ is a Boolean input word",
+  "$c$ is a configuration of the extended stopped-body machine on $x$",
+  "For every $u<t$, the extended body run from $c$ has not halted"
+ ],
+ "confidence": "low",
+ "caveat": "The image construction is private and its supplied informal description is only a stub, so its exact configuration contents cannot be rendered fully.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

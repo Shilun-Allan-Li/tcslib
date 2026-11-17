@@ -1,0 +1,24 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.invariance_lipschitz",
+ "key": "dc16ff5d0d6f6f37",
+ "kind": "theorem",
+ "title": "Lipschitz invariance estimate",
+ "statement": "There is a constant $K>0$ such that the following holds. Let $n,k\\in\\mathbb N$, let $(\\Omega,\\mu)$ and $(\\Xi,\\nu)$ be probability spaces, and let $F$ be a multilinear coefficient family of degree at most $k$ whose Boolean-cube evaluation has variance at most $1$. For $\\varepsilon\\ge0$, suppose every coordinate influence is at most $\\varepsilon$. Let $X$ and $Y$ be independent coordinate families on the respective spaces, each coordinate satisfying the fourth-order invariance moment conditions. For any $c\\ge0$ and any $c$-Lipschitz function $\\psi:\\mathbb R\\to\\mathbb R$,\n\\[\n\\left|\\mathbb E_\\mu\\psi(F(X))-\\mathbb E_\\nu\\psi(F(Y))\\right|\n\\le Kc\\,2^k\\varepsilon^{1/4}.\n\\]",
+ "hypotheses_covered": [
+  "there exists a real constant $K>0$",
+  "$n,k$ are natural numbers",
+  "$\\mu,\\nu$ are probability measures on measurable spaces",
+  "$F$ is a coefficient family of degree at most $k$",
+  "the Boolean-cube evaluation of $F$ has variance at most $1$",
+  "$\\varepsilon\\ge0$",
+  "every coordinate influence of the Boolean-cube evaluation is at most $\\varepsilon$",
+  "the coordinates of $X$ and $Y$ are independent under their respective measures",
+  "each coordinate of $X$ and $Y$ satisfies the fourth-order invariance moment conditions",
+  "$c\\ge0$",
+  "$\\psi$ is $c$-Lipschitz"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exists a universal real constant $K>0$ with the following property. Let $F(x)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}a_S\\prod_{i\\in S}x_i$ be a real multilinear polynomial of degree at most $k$; let $I_i(F)=\\sum_{S\\ni i}a_S^2$. Let $X=(X_i)$ and $Y=(Y_i)$ be families of independent real inputs on probability spaces $(\\Omega,\\mu)$ and $(\\Xi,\\nu)$, respectively. Each input is measurable up to a null set, has finite fourth absolute moment, and has first, second, and third moments $0,1,0$ and fourth moment at most $9$. If $\\sum_{S\\ne\\varnothing}a_S^2\\le1$, $\\varepsilon\\ge0$, $I_i(F)\\le\\varepsilon$ for every $i$, and $\\psi\\colon\\mathbb R\\to\\mathbb R$ is $c$-Lipschitz with $c\\ge0$, then $|\\mathbb E_\\mu\\psi(F(X))-\\mathbb E_\\nu\\psi(F(Y))|\\le Kc2^k\\varepsilon^{1/4}$."
+}

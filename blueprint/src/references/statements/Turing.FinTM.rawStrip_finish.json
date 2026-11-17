@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.rawStrip_finish",
+ "key": "c267677da73738d6",
+ "kind": "lemma",
+ "title": "Completion of rewind and replay",
+ "statement": "Let $x,a$ be Boolean words and let $i\\in\\mathbb{N}$ satisfy $i\\le |x|$. Starting in state $2$ with $a$ stored on the work tape, the work-tape head at position $|a|-1$, and empty output, after $2(|a|+1)$ steps the raw marker-stripping machine is halted and its output is exactly $a$.",
+ "hypotheses_covered": [
+  "$x,a$ are Boolean words",
+  "$i\\in\\mathbb{N}$",
+  "$i\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the stripping machine's rewind state with retained buffer $a$ and work\nhead at displacement $\\abs{a}-1$, exactly $2(\\abs{a}+1)$ steps reach a halted\nconfiguration whose output is exactly $a$."
+}

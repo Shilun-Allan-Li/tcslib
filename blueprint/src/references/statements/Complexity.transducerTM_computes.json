@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.transducerTM_computes",
+ "key": "a655e019ccf44e17",
+ "kind": "theorem",
+ "title": "Computing a one-pass transducer",
+ "statement": "Let $\\sigma$ be a finite set with decidable equality, let $\\delta:\\sigma\\times\\{0,1\\}\\to\\sigma$ be a transition function, let $o:\\sigma\\times\\{0,1\\}\\to\\{0,1\\}\\cup\\{\\bot\\}$ be an emission function, and choose an initial state $q_0\\in\\sigma$. The binary Turing machine with no work tapes that, on each input bit, emits $o(q,b)$ (or nothing when this is $\\bot$), moves right, and changes state to $\\delta(q,b)$, and that halts on the blank cell, computes the one-pass transducer's output from $q_0$ on every input in at most $n+1$ steps, where $n$ is the input length.",
+ "hypotheses_covered": [
+  "$\\sigma$ is finite",
+  "$\\sigma$ has decidable equality",
+  "$\\delta:\\sigma\\times\\{0,1\\}\\to\\sigma$",
+  "$o:\\sigma\\times\\{0,1\\}\\to\\{0,1\\}\\cup\\{\\bot\\}$",
+  "$q_0\\in\\sigma$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\sigma$ be a finite set of states, $\\delta : \\sigma \\times \\{0,1\\} \\to \\sigma$ a\ntransition function, $o : \\sigma \\times \\{0,1\\} \\to \\{0,1\\} \\cup \\{\\bot\\}$ an emission\nfunction ($\\bot$ meaning no output) and $q_0 \\in \\sigma$, and let $M$ be the binary Turing\nmachine with no work tapes, state set $\\sigma$ and start state $q_0$ that, in state $p$\nreading an input bit $b$, appends $o(p,b)$ to its output (nothing if $\\bot$), moves its\ninput head right and enters $\\delta(p,b)$, and halts on reading a blank. Then $M$ computes\nthe function $x \\mapsto \\tau_{\\delta,o}(q_0, x)$ in time $n + 1$: on every input\n$x \\in \\{0,1\\}^*$ it halts within $|x| + 1$ steps with $\\tau_{\\delta,o}(q_0, x)$ on its\noutput tape, where $\\tau_{\\delta,o}(q_0, x)$ is the word emitted by reading $x$ from left to\nright starting in $q_0$, each bit $b$ read in state $p$ emitting $o(p,b)$ (or nothing) and\nmoving to $\\delta(p,b)$."
+}

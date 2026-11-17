@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.oracleMarker_step",
+ "key": "4b6fb8e4427a8028",
+ "kind": "theorem",
+ "title": "Oracle marker update step",
+ "statement": "Let $x$ be a Boolean word, $f:\\bbz\\to\\mathrm{Option}(\\{0,1\\})$, $p\\in\\bbz$, and let $q,q'$ be dispatch states. Choose an input-head position and output word. Suppose the dispatch transition from state $q$, reading the symbols under the heads in the configuration whose first two heads are at $p$ and whose second tape has the bookmark marker at $p$, is exactly the action that leaves the input head stationary, writes the oracle-origin tape content at cell $p$ on tape $1$, leaves that tape's head stationary, makes no other tape changes, emits no output, and enters $q'$. Then one step from this configuration yields the local configuration with state $q'$, first two heads at $p$, and the given input-head position and output.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$f:\\bbz\\to\\mathrm{Option}(\\{0,1\\})$",
+  "$p\\in\\bbz$",
+  "$q,q'$ are dispatch states",
+  "An input-head position for $x$ is given",
+  "An output word is given",
+  "The specified transition action equality holds"
+ ],
+ "confidence": "low",
+ "caveat": "The statement concerns private configuration encodings; the transition hypothesis and the resulting configuration are rendered explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

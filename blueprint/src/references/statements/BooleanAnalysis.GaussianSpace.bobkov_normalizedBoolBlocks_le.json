@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.bobkov_normalizedBoolBlocks_le",
+ "key": "adcc65e6f562a842",
+ "kind": "lemma",
+ "title": "Bobkov bound for normalized Boolean blocks",
+ "statement": "Let $n,m$ be natural numbers with $m>0$. Let $f:\\mathbb R^n\\to\\mathbb R$ take values in $[0,1]$, and suppose it has a derivative $D(z)$ at every $z\\in\\mathbb R^n$, where $D(z)$ is a continuous linear functional on $\\mathbb R^n$; assume the map $z\\mapsto D(z)$ is globally $C$-Lipschitz for some $C\\ge0$. For independent uniform bits $X_{ij}$, set $S(X)_i=m^{-1/2}\\sum_{j=1}^m\\sigma(X_{ij})$, with $\\sigma(0)=1$ and $\\sigma(1)=-1$. Then $\\overline I(\\mathbb E f(S(X)))\\le\\mathbb E\\sqrt{\\overline I(f(S(X)))^2+\\sum_{i=1}^n D(S(X))(e_i)^2}+\\sqrt{nm}\\,2C/m$, where $e_i$ is the $i$th standard basis vector and the expectation is over the bits.",
+ "hypotheses_covered": [
+  "Natural numbers n and m",
+  "m is positive",
+  "A real-valued function on R^n with values in [0,1]",
+  "At every point, f has the specified Fréchet derivative D(z)",
+  "The derivative map D is globally C-Lipschitz",
+  "C is nonnegative"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ be the standard Gaussian distribution function and density, and let $\\overline I(p)=\\varphi(\\Phi^{-1}(p))$ for $0<p<1$, with $\\overline I(p)=0$ elsewhere. Let $f:\\mathbb R^n\\to[0,1]$ be differentiable with derivative family $D(z)$, globally $C$-Lipschitz in operator norm for the maximum norm, where $C\\ge0$. Write $|D(z)|_2=\\sqrt{\\sum_{i=1}^n(D(z)e_i)^2}$. For independent uniform bits $X_{ij}$, put $S_r(X)_i=r^{-1/2}\\sum_{j=1}^r(-1)^{X_{ij}}$. For every $m>0$, $\\overline I(\\mathbb E f(S_m(X)))\\le\\mathbb E\\sqrt{\\overline I(f(S_m(X)))^2+|D(S_m(X))|_2^2}+\\sqrt{nm}\\,2C/m$."
+}

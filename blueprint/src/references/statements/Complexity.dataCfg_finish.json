@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.dataCfg_finish",
+ "key": "0d511fd565f99249",
+ "kind": "lemma",
+ "title": "Halt on an Exhausted Counter",
+ "statement": "Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural number, and let $x$ be a schedule-alphabet input. If the base unary tape does not contain a unit marker at coordinate $u$, then one simulator step from the macrostep-check phase, with unary head at $u$, guide head at $0$, and empty output, halts and has output consisting of the single symbol carrying the saved answer bit.",
+ "hypotheses_covered": [
+  "$W,M$ are finite machines over Boolean symbols",
+  "$a\\in\\mathbb N$",
+  "$x$ is a schedule-alphabet input",
+  "the base unary tape does not contain a unit marker at $u$",
+  "the initial phase is macrostep-check",
+  "the unary head is at $u$ and guide head is at $0$",
+  "the initial output is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the base's unary tape does not hold a unit marker at $u$, then for every data\nregister and all data tapes, one simulator step from the counter-test phase with\nempty output halts, and its output is the single bit symbol carrying the saved\nanswer bit of the register."
+}

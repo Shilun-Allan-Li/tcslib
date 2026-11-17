@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.dataCfg_forward_step",
+ "key": "2b76b6e8cfec1178",
+ "kind": "lemma",
+ "title": "Forward Scan Step",
+ "statement": "Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural number, and let $x$ be a schedule-alphabet input. Suppose the base guide tape equals the guide of radius $R$ and the guide head is at $g\\ne R+1$. From the forward phase, one simulator step advances the guide head to $g+1$ and replaces each neighbor register by the current payload decoded at coordinate $g$. It updates each data tape only at $g$, writing a data cell whose current payload is the decoded current payload there and whose cached left-neighbor payload is the old neighbor register; the state, answer bit, saved reads, and output are unchanged.",
+ "hypotheses_covered": [
+  "$W,M$ are finite machines over Boolean symbols",
+  "$a\\in\\mathbb N$",
+  "$x$ is a schedule-alphabet input",
+  "the base guide tape equals the guide of radius $R$",
+  "the initial phase is forward",
+  "the guide head position $g$ satisfies $g\\ne R+1$",
+  "the initial state, answer bit, saved reads, neighbor registers, tapes, and output are arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$ and the simulator\nis in the forward phase with guide head at $g \\neq R + 1$.  One step keeps the\nsaved state, answer bit, and reads, moves the guide head to $g+1$, replaces each\nneighbor register by the current payload decoded at $g$, and rewrites cell $g$\nof each data tape to a data cell carrying its unchanged current payload with the\nold neighbor register cached; no output is emitted."
+}

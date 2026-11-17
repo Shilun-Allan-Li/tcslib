@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Meyer.dec_sweep",
+ "key": "d4eb247f45fd9edf",
+ "kind": "theorem",
+ "title": "A Sweep Across a Boolean Buffer",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $y,x$ be Boolean words, let $bits$ be a selector-bit assignment for $M$, let $P$ be a valid input-head position for $y$, let $c$ be a configuration of $M$ on input $x$, and let $\\tau_O$ be an integer-indexed Boolean buffer with head position $z_O$. For all $i,j\\in\\mathbb{N}$ and all Boolean words $rest$, starting the simulator in its decode state with $C$ buffer containing $i$ true bits followed by $j$ false bits and then $rest$, with its head at position $i$, after $j$ steps the $C$ buffer contains $i+j$ true bits followed by $rest$ and its head is at position $i+j$; all the other listed configuration data are unchanged.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machine $M$",
+  "Boolean words $y,x$",
+  "Selector-bit assignment $bits$",
+  "Valid input-head position $P$ for $y$",
+  "Configuration $c$ of $M$ on input $x$",
+  "Integer-indexed buffer $\\tau_O$ and head position $z_O$",
+  "Natural numbers $i,j$",
+  "Boolean word $rest$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion is stated using the simulator's decode state and configuration constructor, which are not fully described by the supplied informal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

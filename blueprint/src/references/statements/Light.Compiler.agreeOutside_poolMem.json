@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Compiler.agreeOutside_poolMem",
+ "key": "65dd8e0b668259e7",
+ "kind": "theorem",
+ "title": "Memory preserved outside the constants",
+ "statement": "Let $W$ be a word width, $N\\in\\bbn$, and let $m:\\bbr\\to\\text{BitVec}(W)$ be a memory. First initialize the cells at addresses $-5$, $-7$, and $-9$ to $1$, $0$, and $-1$, respectively, and then initialize the pool cells at addresses $-(25+4n)$ for $0\\le n\\le N$. The resulting memory agrees with $m$ at every integer address outside the union of those three constant addresses and the pool addresses.",
+ "hypotheses_covered": [
+  "word width $W$",
+  "$N\\in\\bbn$",
+  "arbitrary initial memory $m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

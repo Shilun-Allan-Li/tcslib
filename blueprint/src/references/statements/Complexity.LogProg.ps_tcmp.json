@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.ps_tcmp",
+ "key": "dfe0de76550b9770",
+ "kind": "lemma",
+ "title": "Plain block comparison",
+ "statement": "Let $x$ be a finite bit string, let $B$ be a natural number, let $K$ be a proposition, and let $\\sigma=(p,n,a,b,s,t,tmp,st,nx)$ be a nine-register state. Suppose $2|x|+2\\le B$, every register of $\\sigma$ is at most $B$, and $p\\le |x|$. Assume that whenever the suffix of $x$ beginning at position $p$ is exactly the binary word for $tmp$, in the sense that $\\operatorname{PlainAt}(x,p,\\operatorname{bits}(tmp))$ holds, the program started at label $w0$ with $p=|x|$ and $tmp=0$ terminates within the register bound and has an accepting branch exactly when $K$ holds. Then the program started at label $ttt$ in state $\\sigma$ terminates within the register bound and has an accepting branch exactly when both $\\operatorname{PlainAt}(x,p,\\operatorname{bits}(tmp))$ and $K$ hold.",
+ "hypotheses_covered": [
+  "$2|x|+2\\le B$",
+  "$K$ is a proposition",
+  "$\\sigma$ is a nine-register state",
+  "Every register of $\\sigma$ is at most $B$",
+  "$p\\le |x|$",
+  "If $\\operatorname{PlainAt}(x,p,\\operatorname{bits}(tmp))$, the program at $w0$ with $p=|x|$ and $tmp=0$ has property $K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $K$ a proposition, and $σ$ a register\nconfiguration whose nine register values are all at most $B$. Suppose the input pointer\n$p$ is at most $|x|$. If, whenever the segment of $x$ beginning at $p$ agrees with the\nbinary word for $\\mathrm{tmp}$ and ends exactly at the end of $x$, the fixed program\nstarted at its next stage with pointer $|x|$ and scratch register $0$ terminates within\nthe register bound and accepts exactly when $K$ holds, then starting at the plain-block\ncomparison stage with configuration $σ$ terminates within the register bound and accepts\nexactly when both that segment condition and $K$ hold."
+}

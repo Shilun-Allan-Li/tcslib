@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.FinTM.rewind_heads",
+ "key": "84d85cb55cd080cb",
+ "kind": "theorem",
+ "title": "Rewinding the input head",
+ "statement": "Let $k$ be a natural number, let $S$ be a state set, let $x$ be a finite Boolean input, and let $M$ be a Turing machine with $k$ work tapes over the Boolean alphabet and states in $S$. Let $a,b\\in S$ and let $d$ be an optional state. Suppose that, for every input symbol (including a blank) and every tuple of work-tape symbols, the transition from $a$ moves the input head left, leaves all work tapes and the output unchanged, and enters $b$. Suppose also that from $b$ the machine, on reading a Boolean symbol, moves the input head left and remains in $b$, while on reading a blank it moves right and enters $d$; in both cases it leaves all work tapes and the output unchanged. Then from every configuration $c$ on input $x$ whose state is $a$, there is a natural number $r\\leq p+2$, where $p$ is the input-head position of $c$, such that after $r$ steps the configuration has state $d$ and input-head position $1$, with every other component equal to that of $c$. At every step count $u\\leq r$, the work-tape head positions are the same as in $c$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A state set $S$",
+  "A finite Boolean input $x$",
+  "A machine with $k$ work tapes over the Boolean alphabet and states in $S$",
+  "Start state $a$, scan state $b$, and optional destination state $d$",
+  "For every input and work-tape symbols, the transition from $a$ is the leftward control action entering $b$",
+  "For every input and work-tape symbols, the transition from $b$ moves left and remains in $b$ on a Boolean symbol, and moves right and enters $d$ on a blank",
+  "A configuration $c$ on $x$ with state $a$",
+  "A natural step count $r$ bounded by the input-head position of $c$ plus $2$",
+  "After $r$ steps, the state is $d$, the input-head position is $1$, and every other configuration component is unchanged",
+  "At every step count $u\\leq r$, the work-tape head positions equal those in $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

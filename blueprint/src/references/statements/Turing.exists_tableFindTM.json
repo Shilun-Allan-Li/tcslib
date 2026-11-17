@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.exists_tableFindTM",
+ "key": "972f704c3eb68a98",
+ "kind": "theorem",
+ "title": "Linear-time table row search",
+ "statement": "Let $\\Gamma$ be a type with decidable equality, let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an injection, and let $m$ be a positive integer. For every finite type $A$ with decidable equality, transition map $\\delta:A\\times(\\Gamma\\cup\\{\\text{blank}\\\to A$, initial state $a_0\\in A$, and predicate $\\mathrm{acc}:A\\to\\{0,1\\}$, there are a natural number $K$, a finite state type $P$, a deterministic machine $R$ with $K+2$ work tapes and distinct states $\\mathrm{yes},\\mathrm{no}\\in P$, an entry state, and a constant $C\\in\\mathbb N$ with the following property. For any input word $y$, integer offset $o$, header $h$, list of rows $es$, and Boolean word $w$, suppose $h$ is nonempty, every row has exactly $m$ nonempty fields, and the number of rows is strictly less than the integer whose binary digits are the entries of $w$. If the machine starts in the entry state with tape 0's head at $o$, tape 0 contains the joined header and rows at offset $o$, tape 1 contains the encoding of $w$ starting at its head, and every tape numbered at least 2 is blank, then there is a time $t\\le C(L+|w|+1)$, where $L$ is the length of the joined table, at which the machine is in the yes state exactly when some row, in list order, yields an accepting state after its joined fields are processed from $a_0$ by repeatedly applying $\\delta$ to the current state and next symbol; if no row does, it is in the no state. At every earlier time it is in neither the yes nor the no state, and through time $t$ each work-tape head remains within distance $C(L+|w|+1)$ of its starting position. At time $t$, in the yes case tape 0's head is at $o$ plus the offset of the first accepting row; in the no case the final configuration equals the initial configuration except that its state is the no state.",
+ "hypotheses_covered": [
+  "$\\Gamma$ has decidable equality",
+  "$e$ is an injection from Boolean symbols into $\\Gamma$",
+  "$m>0$",
+  "$A$ is finite and has decidable equality",
+  "transition map $\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$",
+  "initial state $a_0$",
+  "acceptance predicate $\\mathrm{acc}:A\\to\\{0,1\\}$",
+  "header $h$ is nonempty",
+  "each row has length $m$ and all its fields are nonempty",
+  "number of rows is strictly less than the binary value represented by $w$",
+  "initial state is the entry state and tape 0 head is at $o$",
+  "tape 0 agrees with the joined table in the specified range",
+  "tape 1 agrees with the encoding of $w$ in the specified range",
+  "all tapes numbered at least 2 are blank"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement leaves the constructed machine and states existential, and its exact success and failure configurations are rendered explicitly. The binary value is the value of the digit list in the stated order.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

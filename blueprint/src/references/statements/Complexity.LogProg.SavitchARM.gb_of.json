@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.gb_of",
+ "key": "83290398854ce983",
+ "kind": "lemma",
+ "title": "Register bounds imply a valid guard",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $\\mathcal{O}$ be a Boolean-valued function on four indices and finite Boolean words, and let $x$ be a finite Boolean word. If all eighteen registers of a state $\\mathrm{st}$ are at most $B$, then for every label $\\ell$ the abstract configuration with label $\\ell$, register values given by $\\mathrm{st}$, and no answer satisfies the guard for the program $A_E$ and input $x$: its registers are bounded by $B$, and its instruction satisfies the guard precondition.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb{N}$",
+  "An oracle assigning a Boolean to each of four indices and finite Boolean words",
+  "A finite Boolean input word $x$",
+  "Every register of $\\mathrm{st}$ is at most $B$",
+  "An arbitrary label $\\ell$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $\\mathcal{O}$ be an oracle on four indices and bit strings,\nlet $x$ be a bit string, and let $\\mathrm{st}$ be a register state whose eighteen\nregisters are all at most $B$. For every program label $\\ell$, the configuration with\nlabel $\\ell$, register values given by $\\mathrm{st}$, and no answer satisfies the guard:\nits registers are bounded by $B$ and its instruction meets the guard's precondition."
+}

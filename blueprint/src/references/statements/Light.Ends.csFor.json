@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Ends.csFor",
+ "key": "1d4f7713a0ba3beb",
+ "kind": "theorem",
+ "title": "Counting-sort loop with an invariant",
+ "statement": "Let $L$ be resource limits, $P$ a program, and $d$ an execution depth. Let $A$ be counting-sort arguments, let $\\mu:\\mathbb{N}\\to\\mathbb{Z}$ be the original memory, let $\\sigma$ be an initial state, let $e\\in\\mathbb{Z}$ be an entry value, let $h$ be an upper-bound expression, let $s$ be a loop body, let $T,m\\in\\mathbb{N}$, and let $R$ be a predicate on indices and memories. Suppose $\\sigma$ satisfies the counting-sort state condition for $A$ at entry value $e$, with invariant $R(0)$. For every $j<m$, all integer counters $c,p$, and every memory $\\mu'$ that agrees with $\\mu$ outside both the destination interval and the scratch interval and satisfies $R(j)$, suppose the body executes from the state encoded by $A,j,c,p,\\mu'$ within the body's block cost and ends in a state satisfying the counting-sort state condition at entry value $j$ with invariant $R(j+1)$. Suppose also that, for every $j\\in\\mathbb{N}$, all integers $c,p$, and every memory $\\mu'$, the expression $h$ is safe in the state encoded by $A,j,c,p,\\mu'$ and has value $m$ there; that $m\\leq L.word$; and that $m(\\operatorname{cost}(h)+\\operatorname{blockCost}(s)+7)+\\operatorname{cost}(h)+5\\leq T$. Then the for-loop with counter variable $8$, upper bound $h$, and body $s$ executes from $\\sigma$ within cost $T$ and ends in a state satisfying the counting-sort state condition for $A$ at entry value $m$ with invariant $R(m)$.",
+ "hypotheses_covered": [
+  "The initial state satisfies the counting-sort state condition at entry value $e$ with invariant $R(0).",
+  "For every $j<m$, all integer counters and memories agreeing with the original memory outside both designated intervals and satisfying $R(j)$ give a body execution within block cost ending with the state condition at entry $j$ and invariant $R(j+1).",
+  "For every natural-number index, integer counters, and memory, the upper-bound expression is safe in the encoded state and has value $m$.",
+  "$m$ is at most the word limit.",
+  "$m(\\operatorname{cost}(h)+\\operatorname{blockCost}(s)+7)+\\operatorname{cost}(h)+5\\leq T$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $\text{lim}$ be execution limits, let $P$ be a program, let $A$ be counting-sort\narguments, let $m,T$ be natural numbers, and let $R$ be a predicate on a natural-number\nindex and memory. Suppose the initial state satisfies the counting-sort state condition\nat index $0$ with predicate $R(0)$. For each $j<m$, assume that whenever the current\nmemory agrees with the original memory outside the designated output and scratch\nintervals and satisfies $R(j)$, the loop body executes from the state encoded by $A$,\nindex $j$, and arbitrary counters $c,p$ within its block-cost bound, ending in a state\ncondition at index $j$ whose memory satisfies $R(j+1)$. Assume also that the upper-bound\nexpression is safe and has value $m$ at every such state for $j\ne m$ with $j\text{’s invariant}$ as specified by the bound premise; that $m$ is at most\nthe word limit; and that $m(\text{cost of the upper-bound expression}+\text{body block\ncost}+7)+\text{cost of the upper-bound expression}+5\text{ is at most }T$. Then the\nfor-loop from index $0$ terminates within cost $T$ in the counting-sort state condition\nat index $m$ with predicate $R(m)$."
+}

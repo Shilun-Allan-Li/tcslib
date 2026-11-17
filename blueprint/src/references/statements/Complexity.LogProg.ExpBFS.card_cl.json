@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.card_cl",
+ "key": "3fa2896caf205e6e",
+ "kind": "lemma",
+ "title": "Equality of bounded reachability counts",
+ "statement": "Let $N$ be a nondeterministic Turing machine with a finite state set $S$ and $k$ work tapes, using the Boolean alphabet, and let $x$ be a Boolean string. Put $\\ell=\\lfloor\\log_2 |x|\\rfloor+1$, $W=3(|S|+1)+3k+1$, and $q=2W+2$. For natural numbers $r$ and $K$ satisfying $2^{q(r+\\ell+1)}\\le K$, the number of integers $v<K$ reachable from some $u<K$ accepted by the initial oracle, by a finite chain of steps accepted by the step oracle whose successive targets are all less than $K$, equals the number of distinct configuration codes reachable from the initial configuration code of $N$ on $x$ by machine steps, with codes restricted to be less than $2^{q(r+\\ell+1)}$.",
+ "hypotheses_covered": [
+  "$N$ is a finite-state nondeterministic Turing machine over the Boolean alphabet, with $k$ work tapes",
+  "$x$ is a Boolean string",
+  "$r,K\\in\\mathbb{N}$",
+  "$2^{q(r+\\ell+1)}\\le K$, where $\\ell=\\lfloor\\log_2 |x|\\rfloor+1$ and $q=2(3(|S|+1)+3k+1)+2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.cbrtCeil_meets",
+ "key": "b0f74353e7166d81",
+ "kind": "theorem",
+ "title": "Execution of the ceiling cube-root program",
+ "statement": "Let $P$ be a finite program, let $p,n,d$ be natural numbers, let $\\mu:\\mathbb N\\to\\mathbb Z$, and let the limits have word bound $W$. Suppose the program at position $p$ is the specified loop program that starts a candidate at $0$, increments it while its cube is less than the input, and then writes the candidate to the argument location. If $8n+1\\le W$, then this program call, with input list $[n]$, memory $\\mu$, and depth parameter $d$, finishes within $12r+12$ steps, where $r$ is the least natural number satisfying $n\\le r^3$; it returns $r$ in location $0$ and leaves memory equal to $\\mu$.",
+ "hypotheses_covered": [
+  "$p,n,d$ are natural numbers",
+  "$P[p]$ is the specified ceiling cube-root program",
+  "$\\mu$ is a memory function from natural numbers to integers",
+  "$8n+1$ is at most the word bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

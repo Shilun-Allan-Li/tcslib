@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.RoundContract.returning",
+ "key": "c2f74bf3814bd2e3",
+ "kind": "def",
+ "title": "Returning contract from a round contract",
+ "statement": "Let $R$ be a round contract for a machine with anchor state $a$ and escape set $E$. Restrict its precondition to starting configurations whose specified endpoint has state $a$. With the same running times, endpoints, and head bounds, this gives a return contract: for every such start in state $a$, the duration is positive, the computation reaches the endpoint at that time, the endpoint is in state $a$, the computation does not revisit $a$ at any positive time strictly before then, and the head bounds hold throughout.",
+ "hypotheses_covered": [
+  "A natural number of work tapes",
+  "A symbol alphabet and state type",
+  "A machine M",
+  "An anchor state",
+  "An escape set of optional states",
+  "An index type",
+  "A fixed input list",
+  "A round contract R",
+  "The starting configuration satisfies R's precondition and starts in the anchor state",
+  "The specified endpoint state is the anchor"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timedCapture_step",
+ "key": "e9536ff3425e6815",
+ "kind": "lemma",
+ "title": "One captured step",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be one of its work tapes, let $x$ be a Boolean input word, and let $C$ be a configuration of $M$ on $x$ whose state is present. One step of the capture machine from the capture configuration associated with $C$ equals the capture configuration associated with the result of one step of $M$ from $C$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$c$ is a work-tape index of $M$",
+  "$x$ is a Boolean word",
+  "$C$ is a configuration of $M$ on $x$",
+  "$C$ has a present, nonhalting state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every live configuration of the base machine, one step of the capture\nwrapper from its first-phase embedding equals the embedding of one step of the\nbase machine: the input head and the original work tapes move in lockstep, any\nemission --- including one on the base machine's halting transition --- is\nappended to the captured table rather than the real output, and the later\nfresh lanes stay untouched; administrative states remain live."
+}

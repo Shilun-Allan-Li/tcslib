@@ -1,16 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.yVector_message_info_le_complexity_mul_log_two",
- "key": "ad5a4ef677bc7311",
+ "key": "dec15d13ef65d42a",
  "kind": "theorem",
- "title": "Conditional information between Bob's input and the transcript",
- "statement": "Let $n$ be a positive integer, and let $p$ be a deterministic two-party communication protocol for the length-$n$ set-disjointness problem, in which Alice holds a set $X \\subseteq \\{0,\\dots,n-1\\}$ and Bob holds a set $Y \\subseteq \\{0,\\dots,n-1\\}$. Draw an input pair from the hard distribution conditioned on the disjointness event $X \\cap Y = \\varnothing$; write $x, y \\in \\{0,1\\}^{n}$ for the indicator vectors of $X$ and $Y$ respectively, and write $M$ for the transcript produced by executing $p$ on the pair $(X, Y)$. The conditional mutual information, measured in nats, between $y$ and $M$ given $x$ then satisfies \\[ I(y \\,;\\, M \\mid x) \\;\\le\\; \\mathrm{complexity}(p)\\cdot\\log 2, \\] where $\\mathrm{complexity}(p)$ denotes the worst-case number of bits exchanged by $p$.",
+ "title": "Information bound from communication complexity",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic communication protocol for disjointness on inputs indexed by $\\{0,\\ldots,n-1\\}$. Under the hard distribution conditioned on the generated input sets being disjoint, the conditional mutual information, in nats, between Bob's input vector and the protocol transcript given Alice's input vector is at most $\\mathrm{complexity}(p)\\log 2$.",
  "hypotheses_covered": [
-  "n is a positive integer",
-  "p is a deterministic protocol for length-n disjointness inputs",
-  "the underlying measure is the hard distribution conditioned on the disjointness event"
+  "$n$ is positive",
+  "$p$ is a deterministic protocol for length-$n$ disjointness"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "The Bob full-vector information is bounded by the transcript entropy."
+ "replaced": "Let $n$ be a positive integer, and let $p$ be a deterministic two-party communication\nprotocol for the length-$n$ set-disjointness problem, in which Alice holds a set $X\n\\subseteq \\{0,\\dots,n-1\\}$ and Bob holds a set $Y \\subseteq \\{0,\\dots,n-1\\}$. Draw an\ninput pair from the hard distribution conditioned on the disjointness event $X \\cap Y =\n\\varnothing$; write $x, y \\in \\{0,1\\}^{n}$ for the indicator vectors of $X$ and $Y$\nrespectively, and write $M$ for the transcript produced by executing $p$ on the pair\n$(X, Y)$. The conditional mutual information, measured in nats, between $y$ and $M$\ngiven $x$ then satisfies \\[ I(y \\,;\\, M \\mid x) \\;\\le\\; \\mathrm{complexity}(p)\\cdot\\log\n2, \\] where $\\mathrm{complexity}(p)$ denotes the worst-case number of bits exchanged by\n$p$."
 }

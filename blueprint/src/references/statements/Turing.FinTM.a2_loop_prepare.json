@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.a2_loop_prepare",
+ "key": "7885ca761c23f4c9",
+ "kind": "lemma",
+ "title": "Preparation for bounded loop simulation",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, and let $R,T,S$ be functions from natural numbers to natural numbers. Suppose that $F$, on every input $x$, halts within $T(|x|)$ steps and outputs the binary expansion of $R(|x|)$, and that its space use at every time is at most $S(|x|)$. Then for every Boolean input $x$ there are a configuration $c$ of $F$ on $x$ and a time $t$ such that $c$ is halted with output the binary expansion of $R(|x|)$, $t\\le 5T(|x|)+7$, and the constructed loop host machine reaches its ready configuration for $c$ at time $t$. The work-tape heads of $c$ lie in $[-S(|x|),S(|x|)]$, and at every time up to $t$ the host machine's work-tape heads lie in the interval with radius $S(|x|)+4|\\operatorname{bits}(R(|x|))|+4$.",
+ "hypotheses_covered": [
+  "finite Boolean machines $B,F$ and anchor state of $B$",
+  "functions $R,T,S:\\mathbb N\\to\\mathbb N$",
+  "$F$ computes the binary expansion of $R(|x|)$ in time $T(|x|)$ on every input $x$",
+  "space use of $F$ on input $x$ is at most $S(|x|)$ at every time",
+  "arbitrary Boolean input $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The ready configuration and loop host are defined by lengthy private constructions; the statement summarizes their named roles rather than expanding their full configuration layout.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,33 @@
+{
+ "lean_name": "FABL.EncodedRegularUniqueGamesFamily.conditional_uniqueGames_hardness",
+ "key": "0657d590ae2c6ca4",
+ "kind": "theorem",
+ "title": "Conditional Unique Games Hardness",
+ "statement": "Let a family of encoded regular Unique Games, a source binary promise problem, and a finite allowed family of sign predicates be given. Suppose a tester uses only allowed predicates, has completeness at least $\\beta$ on every dictator, and accepts every function with no $(\\varepsilon,\\varepsilon)$-notable coordinate with probability at most $\\alpha+\\operatorname{error}(\\varepsilon)$; assume $0<\\alpha<\\beta\\le1$, the error takes values in $[0,1]$ on $[0,1]$ and tends to zero as $\\varepsilon$ tends to zero through positive values. Let $q>0$, and suppose the family has an optimization encoding and a Unique Games gap reduction from the source promise problem, with thresholds $s_{UG}<c_{UG}$. Suppose a finite long-code transformation for this tester has $M>0$ clones, $r\\le M$, and the required arity bounds; suppose also that its output has an encoding and a polynomial-time machine implementing that encoding on canonical inputs. For real target thresholds $s_T<c_T$ and parameters $\\delta_{UG},\\varepsilon,\\tau$ with $0<\\varepsilon\\le1$, assume $1-\\delta_{UG}\\le c_{UG}$, $s_{UG}<\\tau\\varepsilon^5/18$, $c_T\\le\\beta-r\\delta_{UG}-r^2/M$, and $\\alpha+\\operatorname{error}(\\varepsilon)+\\tau+r^2/M\\le s_T$. Then the source promise problem is polynomial-time Karp reducible to the target encoded maximization problem's gap promise with soundness threshold $s_T$ and completeness threshold $c_T$.",
+ "hypotheses_covered": [
+  "A family of encoded regular Unique Games and a source binary promise problem",
+  "A finite allowed predicate family used by the tester",
+  "$0<\\alpha<\\beta\\le1$",
+  "The error function maps $[0,1]$ into $[0,1]$ and tends to zero at $0$ through positive values",
+  "The tester uses only allowed predicates",
+  "Every dictator is accepted with probability at least $\\beta$",
+  "Functions with no $(\\varepsilon,\\varepsilon)$-notable coordinate are accepted with probability at most $\\alpha+\\operatorname{error}(\\varepsilon)$",
+  "$q>0$ and the alphabet is nonempty",
+  "An optimization encoding for the family",
+  "A source-to-Unique-Games gap reduction with $s_{UG}<c_{UG}$",
+  "A finite long-code transformation with positive clone count $M$ and $r\\le M$",
+  "The transformation's arity bounds",
+  "An output codec preserving the transformed instance optimum",
+  "A polynomial-time machine implementing the output codec on canonical inputs",
+  "$s_T<c_T$",
+  "$0<\\varepsilon\\le1$",
+  "$1-\\delta_{UG}\\le c_{UG}$",
+  "$s_{UG}<\\tau\\varepsilon^5/18$",
+  "$c_T\\le\\beta-r\\delta_{UG}-r^2/M$",
+  "$\\alpha+\\operatorname{error}(\\varepsilon)+\\tau+r^2/M\\le s_T$"
+ ],
+ "confidence": "low",
+ "caveat": "The family and transformation structures encode substantial definitions not fully described in the supplied informal-definition list; the statement summarizes their role and explicit constraints.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

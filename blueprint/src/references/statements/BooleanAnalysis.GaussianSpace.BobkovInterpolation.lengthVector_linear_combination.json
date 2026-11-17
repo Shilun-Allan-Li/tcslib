@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_linear_combination",
+ "key": "c275348d82e6572a",
+ "kind": "lemma",
+ "title": "Linearity of the combined vector",
+ "statement": "Let $n,m$ be nonnegative integers, let $f_1,f_2:\\{0,1\\}^n\\to\\mathbb R$, let $g_1,g_2$ be $m$-tuples of real-valued functions on $\\{0,1\\}^n$, let $c,d\\in\\mathbb R$, and let $x\\in\\{0,1\\}^n$. The combined vector of the linear combinations $cf_1+df_2$ and $cg_1+dg_2$ at $x$ is $c$ times the combined vector of $(f_1,g_1)$ at $x$ plus $d$ times the combined vector of $(f_2,g_2)$ at $x$.",
+ "hypotheses_covered": [
+  "n,m are natural numbers",
+  "f₁,f₂ are real-valued functions on the n-dimensional Boolean cube",
+  "g₁,g₂ are m-tuples of real-valued functions on that cube",
+  "c,d are real numbers",
+  "x is a point of the n-dimensional Boolean cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a profile $P:\\mathbb R\\to\\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\\mathbb E\\sqrt{P(h)^2+\\|V(h,k)\\|_2^2}$, where $D_i$ is the coordinate half-difference. For real $c,d$, functions $f_1,f_2$ on the cube, and vectors $g_1,g_2$ of $m$ cube functions, $V(cf_1+df_2,cg_1+dg_2)(x)=cV(f_1,g_1)(x)+dV(f_2,g_2)(x)$ for every $x$."
+}

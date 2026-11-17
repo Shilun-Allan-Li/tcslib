@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.prevVisit_some_last",
+ "key": "a7347fcadab20d68",
+ "kind": "lemma",
+ "title": "Characterisation of the Last Previous Visit",
+ "statement": "Let $M$ be a finite-state binary Turing machine with $k$ work tapes, and let $n,t,s\\in\\mathbb{N}$ and $\\tau$ be a work-tape index. If the last time before step $t$ at which tape $\\tau$'s head occupies its position at step $t$ is $s$, then $s<t$, the head positions at steps $s$ and $t$ agree, and at every step $r$ with $s<r<t$ the head position differs from its position at step $t$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state binary Turing machine",
+  "$n,t,s\\in\\mathbb{N}$",
+  "$\\tau$ is a work-tape index",
+  "The last previous visit at time $t$ is $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary multi-tape Turing machine with $k$ work tapes indexed by $\\mathbb{Z}$,\nlet $n, t \\in \\mathbb{N}$ and $\\tau \\in \\{0, \\dots, k-1\\}$, and for $s \\in \\mathbb{N}$ let\n$w(s)$ be the position of the head of work tape $\\tau$ after $s$ steps of $M$ on the\nall-zeros input $0^n$, and let $\\mathrm{prev}$ be the largest $s < t$ with $w(s) = w(t)$,\nundefined when there is no such $s$. If $\\mathrm{prev}$ is defined and equals $s$, then\n$s < t$, $w(s) = w(t)$, and $w(r) \\ne w(t)$ for every $r$ with $s < r < t$."
+}

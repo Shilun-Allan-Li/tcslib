@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clLoad_split",
+ "key": "8b168ba5f4e13899",
+ "kind": "lemma",
+ "title": "Decomposing the packed row at a field",
+ "statement": "Let $l$ be a natural number, let $w$ assign a binary word to each of the $l$ indices, choose an index $i<l$, and let $pre$ and $tail$ be binary words. The concatenation of $pre$, the encoding of the whole list of fields, and $tail$ equals the concatenation of $pre$, the encodings of the fields before $i$, the encoding of field $i$ whose second component is the encodings of the fields after $i$ followed by $tail$.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb N$",
+  "$w$ assigns a binary word to each of the $l$ indices",
+  "$i<l$",
+  "$pre$ and $tail$ are binary words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every row of field words, coordinate $i$, stream prefix, and trailer, the stream consisting of the prefix, the packed encoding of the whole row, and the trailer equals the prefix extended by the packed first $i$ fields, followed by the self-delimiting encoding of field $i$, whose payload is the packed remaining fields and the trailer. The suffix is preserved literally."
+}

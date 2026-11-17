@@ -1,0 +1,29 @@
+{
+ "lean_name": "Turing.recordStep_restore_native",
+ "key": "38ea0e3b8e8b57a2",
+ "kind": "theorem",
+ "title": "Restoration during a recorded transition",
+ "statement": "Let $k$ be a natural number, let $Q,T,S$ be types with decidable equality, let $M$ be a Boolean Turing machine with $k$ work tapes and state set $Q$, let $u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$, and let $N$ be a Boolean Turing machine with two work tapes and state set $S$. Fix states $s_0,s_1\\in S$ and a natural number $C$, and suppose that for every Boolean input $y$, natural number $p$, Boolean word $w$ with binary value $p$ and $p\\le |y|+1$, and configuration $a$ of $N$ on $y$ in state $s_0$, if tape 0 of $a$ stores $w$ at offsets $-1$ through $|w|$ from its head and tape 1 is blank everywhere, then $N$ reaches state $s_1$ at some time $v\\le C(|w|+a_{\\mathrm{in}}+p+1)$, avoids state $s_1$ before time $v$, keeps both work heads within distance $C(|w|+1)$ of their initial positions through time $v$, and at time $v$ has input-head position $p$, with its work tapes, work-head positions, and output unchanged. Now let $x$ be a Boolean word, let $d$ be a four-work-tape configuration on the input obtained by embedding each Boolean symbol of $x$ into the recording alphabet, let $r$ be an input-head position, let $b$ be a word over that alphabet, let $D$ be record data, and let $W,q$ be natural numbers. Suppose tape 2 of $d$ is blank everywhere, $q+1<2^W$, and the input-head position of $d$ is $q+1$ if the native input-head move recorded by $D$ is right, and $q$ otherwise. Define the transition selected by $D$ to be the transition of $M$ from its recorded state, using its recorded input symbol and work-tape symbols (or the stationary halting action if its state is absent); let the next controller stage be the clearing stage if this transition attempts to move a work head beyond a recorded tape edge, and the state-writing stage otherwise. There is a time $t\\le C(W+r+d_{\\mathrm{in}}+1)+6W+10$ at which the recording machine, started with input-head position $r$, in its forward complementing phase with data $D$, with the word $b$ on tape 1 and the width-$W$ word obtained by applying the fixed-width decrement operation $q+1$ times to $W$ ones on tape 3, reaches the configuration with data given by the selected transition, that next controller stage, the original input-head position of $d$, word $b$ on tape 1, and a blank tape 3. Before time $t$ it reaches neither designated verdict state, and at every time up to $t$ each work-head position stays within distance $(C+1)(W+1)$ of its position in $d$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$Q,T,S$ have decidable equality",
+  "$M$ is a $k$-work-tape Boolean machine with state set $Q",
+  "$u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$N$ is a two-work-tape Boolean machine with state set $S$",
+  "$s_0,s_1\\in S$ and $C$ is a natural number",
+  "The seek machine satisfies the stated specification for all Boolean inputs, encoded words, positions, and qualifying configurations",
+  "$x$ is a Boolean word",
+  "$d$ is a four-work-tape configuration on the embedded input",
+  "$r$ is an input-head position in the valid range for that input",
+  "$b$ is a word over the recording alphabet",
+  "$D$ is record data",
+  "$W,q$ are natural numbers",
+  "Tape 2 of $d$ is blank everywhere",
+  "$q+1<2^W$",
+  "The input-head position of $d$ is $q+1$ for a recorded right move and $q$ otherwise"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion refers to private controller stages and record-data fields; these are described by their constructions in the formal statement, so the prose names their operational meanings.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

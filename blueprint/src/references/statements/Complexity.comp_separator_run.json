@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.comp_separator_run",
+ "key": "7be0d010663c41f5",
+ "kind": "lemma",
+ "title": "Separator Search Halting Result",
+ "statement": "Let $C,e,B,p$ be natural numbers, let $\text{mode}$ be a Boolean flag, let $f$ map finite Boolean words to finite Boolean words, and let $x,b$ be finite Boolean words. Let $v$ assign a natural number to each of $14$ registers. Suppose every register value is at most $B$, register $3$ equals twice the length of the pairing of $x$ with $b$, register $4$ equals $4|x|+4$, register $13$ equals twice the length of $f(x)$, register $5$ equals $p$, twice the length of $f(x)$ is at most $p$, and the length of the pairing of $f(x)$ with $b$ is at most $B$. Starting in the separator state with flag false and with no answer recorded, the machine halts with answer $p<|\u0000\\langle f(x),b\\rangle|$ if $\text{mode}$ is true, and otherwise with the bit at position $p$ of $\u0000\\langle f(x),b\\rangle$, taking the bit to be false when $p$ is beyond its length. Every configuration before halting satisfies the program's step-validity condition and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$C,e,B,p\\in\\mathbb N$",
+  "Boolean flag $\\text{mode}$",
+  "$f$ maps finite Boolean words to finite Boolean words",
+  "$x,b$ are finite Boolean words",
+  "$v$ assigns natural values to the 14 registers",
+  "Every register value is at most $B$",
+  "$v_3=2|\\langle x,b\\rangle|$",
+  "$v_4=4|x|+4$",
+  "$v_{13}=2|f(x)|$",
+  "$v_5=p$",
+  "$2|f(x)|\\le p$",
+  "$|\\langle f(x),b\\rangle|\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B,p$ be natural numbers, let $\\mathrm{mode}$ be a Boolean flag, let $f$ map bit\nstrings to bit strings, and let $x,b$ be bit strings. Suppose $v$ assigns a natural\nnumber to each of the 14 registers, every register value is at most $B$, register $3$\nequals twice the length of the encoding of $x$ paired with $b$, register $4$ equals\n$4|x|+4$, register $13$ equals twice the length of $f(x)$, register $5$ equals $p$,\ntwice the length of $f(x)$ is at most $p$, and the length of the encoding of $f(x)$\npaired with $b$ is at most $B$. Starting in the separator-search state with its first\nphase flag false, the specified counter machine halts with the answer that is true\nexactly when $p$ is less than that encoded length if $\\mathrm{mode}$ is true; otherwise\nits answer is the bit at position $p$ of the encoding, using false when that position is\nbeyond the end. Throughout the run, the machine's step-validity condition holds and\nevery register remains at most $B$."
+}

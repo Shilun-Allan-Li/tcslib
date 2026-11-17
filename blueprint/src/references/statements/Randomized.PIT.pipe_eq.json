@@ -1,0 +1,15 @@
+{
+ "lean_name": "Randomized.PIT.pipe_eq",
+ "key": "a97b7df6c7e17751",
+ "kind": "theorem",
+ "title": "Pipeline test characterization",
+ "statement": "For all $n,m\\in\\mathbb{N}$ and bit strings $G_1,G_2,r$, the pipeline applied to the encoding of $n$, $m$, $G_1$, $G_2$, and $r$ returns true exactly when, for every integer $j$ with $0\\le j<8(m+12)$, the two gate evaluations modulo the modulus specified by the $j$th raw block of $r$ agree. In each evaluation, the context is formed from $n$, that raw block, and the list of input points specified by the corresponding blocks of $r$, and the gate lists are $G_1$ and $G_2$.",
+ "hypotheses_covered": [
+  "$n,m\\in\\mathbb{N}$",
+  "$G_1,G_2,r$ are bit strings"
+ ],
+ "confidence": "low",
+ "caveat": "The statement compares compound bit-string procedures whose definitions are not informally specified in the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

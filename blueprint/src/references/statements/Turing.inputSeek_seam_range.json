@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.inputSeek_seam_range",
+ "key": "b58ccb67ee0d4b57",
+ "kind": "theorem",
+ "title": "Work tape range across a seam",
+ "statement": "Let $M_1$ and $M_2$ be two-tape Turing machines over Boolean symbols, with state sets $S_1$ and $S_2$, respectively, and choose an exit state $e$ of $M_1$ and an entry state $a$ of $M_2$. Suppose configurations $c_0,c_1$ of $M_1$ satisfy that running $M_1$ from $c_0$ for $t_1$ steps gives $c_1$, whose state is $e$, and that no earlier time $u<t_1$ has state $e$. If integer bounds $\\ell_j,h_j$ are specified for each of the two work tapes, and the work-tape head positions of the run of $M_1$ from $c_0$ remain in $[\\ell_j,h_j]$ through time $t_1$, while those of $M_2$ started from $c_1$ with its state renamed to $a$ remain in those intervals through time $t_2$, then the work-tape head positions of the composite machine run from $c_0$ with its state renamed to the left component remain in the same intervals through time $t_1+1+t_2$.",
+ "hypotheses_covered": [
+  "$S_1,S_2$ are state types and $x$ is a finite Boolean input",
+  "$M_1,M_2$ are two-tape Boolean-symbol Turing machines",
+  "An exit state $e$ of $M_1$ and entry state $a$ of $M_2$ are specified",
+  "$c_0,c_1$ are configurations of $M_1$ and $t_1,t_2$ are natural numbers",
+  "Running $M_1$ from $c_0$ for $t_1$ steps yields $c_1$",
+  "The state of $c_1$ is $e$",
+  "No time $u<t_1$ in the first run has state $e$",
+  "For each tape, integer lower and upper bounds are specified",
+  "The first run's work-tape head positions stay within the bounds for all times through $t_1$",
+  "The second run, started from $c_1$ with state renamed to $a$, stays within the bounds for all times through $t_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

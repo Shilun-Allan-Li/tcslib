@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Meyer.workOK",
+ "key": "787c268bf599ae4a",
+ "kind": "def",
+ "title": "Work tape consistency condition",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean tape alphabet, let $v$ be a Boolean valuation of its atoms, and let $\rho$ consist of an optional input symbol and an optional Boolean read symbol for each work tape. For a state-or-empty value $\tau$, output register $r$, work-tape index $h$, and Boolean $s$, set $c_1=a_n$ and $c_2=a_c$ when $s$ is true, and reverse these choices when $s$ is false. The condition holds if $\tau$ is empty precisely when the two symbols represented by the $t_n$ and $t_c$ answer atoms at $(h,s,c_1)$ agree; if $\tau$ is a state $q$, use the transition from $q$ on $\rho$ and its move direction: for a positive move, the $t_n$ symbol at $(h,s,c_1)$ must equal the $t_c$ symbol at $(h,s,c_2)$, except that when $s$ and the zero-answer atom are true it is compared instead with the updated work-tape symbol (or the read symbol if no update is specified); for a negative move, the $t_n$ symbol at $(h,s,c_2)$ must equal the $t_c$ symbol at $(h,s,c_1)$, with that same substitution when $\neg s$ and the zero-answer atom are true; for a stationary move, the $t_n$ and $t_c$ symbols at $(h,s,c_1)$ must agree, with that substitution when $\neg s$ and the zero-answer atom are true.",
+ "hypotheses_covered": [
+  "Finite-tape Turing machine with Boolean tape alphabet",
+  "Boolean valuation of the machine atoms",
+  "State-or-empty value paired with an output register",
+  "Read data consisting of an optional input symbol and work-tape read symbols",
+  "Work-tape index",
+  "Boolean parameter"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

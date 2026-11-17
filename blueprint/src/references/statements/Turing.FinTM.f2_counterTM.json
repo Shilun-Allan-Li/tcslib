@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.FinTM.f2_counterTM",
+ "key": "008165bae5f638f5",
+ "kind": "def",
+ "title": "Counter Turing machine",
+ "statement": "Define a one-work-tape deterministic Turing machine over the Boolean alphabet with states $0,1,2,3$ and initial state $0$. In state $0$, on a blank input cell it stays put, does not write or move its work-tape head, emits nothing, and enters state $3$; on a nonblank input cell it uses the counter tape update action with input-head movement right. In state $1$ it uses that update action with input-head movement zero. In state $2$, it stays on the input and, if the work cell is blank, moves the work head right without writing and enters state $0$; otherwise it moves the work head left without writing and remains in state $2$. In state $3$, if the work cell is blank it halts without moving or writing; otherwise it moves the work head right, writes the scanned bit to the output, and remains in state $3$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

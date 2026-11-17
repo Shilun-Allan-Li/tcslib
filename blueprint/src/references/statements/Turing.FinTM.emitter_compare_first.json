@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.emitter_compare_first",
+ "key": "32ce93c158931861",
+ "kind": "lemma",
+ "title": "First return of the comparator",
+ "statement": "Let $w,u,v$ be Boolean words and let $p$ be a valid input-head position for input $w$. There is an integer $t$ with $0<t\\le 2(\\max(|u|,|v|)+1)$ such that, at every time $j<t$, the comparator is in neither of its return states, and after $t$ steps it is in its return phase with its register equal to the truth value of $u=v$, both word-tape heads at zero, and its other configuration data as initially specified.",
+ "hypotheses_covered": [
+  "Boolean words $w,u,v$",
+  "valid input-head position $p$ for $w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For words $u, v$, there is a time $t$ with\n$0 < t \\le 2(\\max(\\abs{u},\\abs{v}) + 1)$ such that the comparator never\nvisits either Boolean return state before time $t$ and at time $t$ sits in\nits return configuration with the register recording whether $u = v$ and\nboth heads at zero."
+}

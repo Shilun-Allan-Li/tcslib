@@ -1,6 +1,6 @@
 {
  "lean_name": "SwitchingLemma.canonicalDTree_alive_eq_termSubTree",
- "key": "a401e9d556b1dcca",
+ "key": "59ae44a1006aa438",
  "kind": "lemma",
  "title": "Alive step of the canonical decision-tree builder",
  "statement": "Fix $n$ Boolean variables, and let $f$ be a DNF formula (a list of terms) and $\\rho$ a restriction. Write $T(f, k, \\rho)$ for the fuel-bounded canonical decision tree of $f$ under $\\rho$ built with fuel budget $k$, and for a term $s$, a restriction $\\sigma$, and a continuation $c$ mapping restrictions to decision trees, write $S(s, \\sigma, c)$ for the term sub-tree of $s$ under $\\sigma$ with continuation $c$. Suppose that, under $\\rho$, not every term of $f$ is killed and no term of $f$ is fixed, and let $t$ be the first term of $f$, in list order, that is not killed by $\\rho$. Then\n\\[\nT(f,\\ \\mathit{fuel}+1,\\ \\rho) \\;=\\; S(t,\\ \\rho,\\ c),\n\\]\nwhere the continuation $c$ sends a restriction $\\rho'$ to the leaf that outputs true when $t$ is fixed by $\\rho'$, and to $T(f,\\ \\mathit{fuel},\\ \\rho')$ otherwise.",

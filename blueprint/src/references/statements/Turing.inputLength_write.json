@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.inputLength_write",
+ "key": "588befdc8d3d27cd",
+ "kind": "theorem",
+ "title": "Writing a Buffered Tape Symbol",
+ "statement": "Let $x,w$ be Boolean words, let $d$ be a one-work-tape configuration on input $x$, let $r$ be a natural number with $r<|w|$, and choose phases $s,s'$, an input-head position $ip$, and a sign $m\\in\\{-1,0,1\\}$. If the machine’s transition at phase $s$, when given the input and work-tape symbols in the configuration with $w$ buffered through its first $r$ symbols and the work head at offset $r$, is the action that writes the $r$-th symbol of $w$ on that tape, moves its head by $m$, leaves the input head still, produces no output, and enters phase $s'$, then one machine step yields the configuration with the first $r+1$ symbols of $w$ buffered, phase $s'$, unchanged input-head position, and work-head displacement $r+m$ from its original position.",
+ "hypotheses_covered": [
+  "Boolean words $x,w$ and one-work-tape configuration $d$",
+  "natural number $r<|w|$",
+  "phases $s,s'$",
+  "input-head position $ip$",
+  "sign $m\\in\\{-1,0,1\\}$",
+  "transition at the specified configuration equals the stated write-and-move action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_sharp_contraction",
+ "key": "516bbd56ef132749",
+ "kind": "theorem",
+ "title": "Sharp finite noise contraction",
+ "statement": "Let $I$ be a finite set with real weights satisfying $\\sum_iw_i=1$, and let $q>2$ and $0<\\lambda<1/2$, with $w_i\\ge\\lambda$ for every $i$. Put $p=q/(q-1)$ and let $\\rho$ be the sharp discrete radius at $(q,\\lambda)$. Then every $f:I\\to\\mathbb{R}$ satisfies\n\\[\n\\rho^2\\sum_iw_i f_i^2+(1-\\rho^2)\\left(\\sum_iw_i f_i\\right)^2\\le\\left(\\sum_iw_i|f_i|^p\\right)^{2/p}.\n\\]",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$w_i$ are real and sum to $1$",
+  "$q>2$",
+  "$0<\\lambda<1/2$",
+  "$w_i\\ge\\lambda$ for every $i$",
+  "$p=q/(q-1)$",
+  "$\\rho$ is the sharp discrete radius at $(q,\\lambda)$",
+  "$f:I\\to\\mathbb{R}$ is arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite, let $\\sum_iw_i=1$, let $q>2$, $0<\\lambda<1/2$, and assume $w_i\\ge\\lambda$ for all $i$. Put $p=q/(q-1)$ and $\\rho=\\rho_*(q,\\lambda)$. Every real vector $f$ satisfies $\\rho^2\\sum_iw_if_i^2+(1-\\rho^2)(\\sum_iw_if_i)^2\\le(\\sum_iw_i|f_i|^p)^{2/p}$. Here $\\rho_*(q,\\lambda)=\\sqrt{\\sinh(\\ell/q)/\\sinh(\\ell/(q/(q-1)))}$ with $\\ell=\\log((1-\\lambda)/\\lambda)$."
+}

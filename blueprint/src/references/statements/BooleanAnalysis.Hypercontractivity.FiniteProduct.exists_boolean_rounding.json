@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteProduct.exists_boolean_rounding",
+ "key": "a4a37a7fa4e69907",
+ "kind": "theorem",
+ "title": "Boolean Rounding on Fixed Coordinates",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate weights summing to $1$, and let $J$ be a subset of the coordinate indices. Suppose $f,h$ are real-valued functions on the product outcome space, $f$ takes values in $\\{-1,1\\}$, and $h$ depends only on the coordinates in $J$. Then there is a function $g$ taking values in $\\{-1,1\\}$ and depending only on the coordinates in $J$ such that $\\Pr_P(f\\ne g)\\leq\\mathbb E_P[(f-h)^2]$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space",
+  "All coordinate weights are strictly positive and sum to $1$",
+  "$J$ is a subset of the coordinate indices",
+  "$f,h$ are real-valued on the product outcome space",
+  "$f$ takes only the values $-1$ and $1$",
+  "$h$ depends only on coordinates in $J$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $J\\subseteq[n]$, and functions $f,h:\\Omega\\to\\mathbb R$. If $f$ takes values in $\\{-1,1\\}$ and $h$ depends only on $J$, there exists $g:\\Omega\\to\\{-1,1\\}$ depending only on $J$ such that $\\Pr_P(f\\ne g)\\le\\mathbb E_P(f-h)^2$."
+}

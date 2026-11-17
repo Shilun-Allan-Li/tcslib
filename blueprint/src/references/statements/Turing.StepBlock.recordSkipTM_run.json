@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.StepBlock.recordSkipTM_run",
+ "key": "93e8f7c826dd0b34",
+ "kind": "lemma",
+ "title": "Completed recording and skip run",
+ "statement": "Let $k,n\\in\\mathbb{N}$, let $x$ be a finite Boolean word, let $d$ be a configuration with $k+2$ work tapes, Boolean symbols, and record states, and let $a$ be an action whose successor state is in $\\{0,\\ldots,n\\}$ or absent. Suppose $d$ has the initial recording-machine state and its table tape contains, in order from its current head position, the bits encoding $a$. After one more step than the length of that encoding, the record-and-skip machine has the same input-head position, work-tape contents, output, and all work-tape head positions as $d$, except that the table-tape head has advanced by the encoding length. Its state is the successor phase marked done, with the Boolean value indicating whether $a$ has a successor state.",
+ "hypotheses_covered": [
+  "Natural numbers k and n",
+  "Finite Boolean word x",
+  "Configuration d with k+2 tapes and record states",
+  "Action a with state in Fin (n+1)",
+  "d has the initial recording-machine state",
+  "Every encoded action bit occurs in the corresponding table-tape cell"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

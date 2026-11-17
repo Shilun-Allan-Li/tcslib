@@ -1,0 +1,20 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.simulation_step",
+ "key": "5a8adbce36785b33",
+ "kind": "lemma",
+ "title": "Simulation by testing a subprotocol",
+ "statement": "Let $s$, $p$, $q_{\\mathrm{in}}$, and $q_{\\mathrm{out}}$ be deterministic two-party protocols with inputs in $X$ and $Y$ and outputs in $\\alpha$. Suppose $s$ is a subprotocol of $p$, with $\\mathrm{numLeaves}(s)<\\mathrm{numLeaves}(p)$; suppose also that $q_{\\mathrm{in}}$ has the same execution function as $s$, and $q_{\\mathrm{out}}$ has the same execution function as the protocol obtained by pruning $s$ from $p$. Then the protocol that has Alice test whether her input reaches $s$, has Bob test whether his input reaches $s$, and runs $q_{\\mathrm{in}}$ if both tests succeed and $q_{\\mathrm{out}}$ otherwise has the same execution function as $p$.",
+ "hypotheses_covered": [
+  "Protocols $s,p,q_{\\mathrm{in}},q_{\\mathrm{out}}$ with inputs in $X,Y$ and outputs in $\\alpha$",
+  "$s$ is a subprotocol of $p$",
+  "$\\mathrm{numLeaves}(s)<\\mathrm{numLeaves}(p)$",
+  "$q_{\\mathrm{in}}$ and $s$ have equal execution functions",
+  "$q_{\\mathrm{out}}$ and the protocol obtained by pruning $s$ from $p$ have equal execution functions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $s, p, q_{\\mathrm{in}}, q_{\\mathrm{out}}$ be deterministic two-party protocols over\ninput types $X$ and $Y$ with outputs in $\\alpha$, where $s$ is a subprotocol of $p$ with\nstrictly fewer leaves than $p$. Suppose $q_{\\mathrm{in}}$ computes the same function as\n$s$, and $q_{\\mathrm{out}}$ computes the same function as the protocol obtained from $p$\nby pruning $s$ away. Then the glued protocol\n\\texttt{CommunicationComplexity.Deterministic.Protocol.testSubprotocol}, which first\ntests whether the inputs reach $s$ and then runs $q_{\\mathrm{in}}$ or $q_{\\mathrm{out}}$\naccordingly, computes the same function as $p$ on every pair of inputs $(x,y)$."
+}

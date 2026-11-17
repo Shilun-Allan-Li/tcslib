@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.LayeredCircuit.toTreeCircuit_size_le",
+ "key": "c746c5d038d0c5c7",
+ "kind": "theorem",
+ "title": "Size bound for tree-unrolling",
+ "statement": "Let $F$ be a layered Boolean circuit with input nodes indexed by $\\mathrm{Fin}\\,n$ and output type $\\mathrm{out}$. Designate each non-input node as AND or OR, and suppose every gate has finite arity. If there is a natural number $k$ such that every gate has at most $k$ inputs, then for every output node $o$, the tree circuit obtained by unrolling $o$ has size at most $(k+1)^{\\mathrm{depth}(F)}$.",
+ "hypotheses_covered": [
+  "$F$ is a layered Boolean circuit from $\\mathrm{Fin}\\,n$ to $\\mathrm{out}$",
+  "Each non-input node has an AND-or-OR designation",
+  "Every gate has finite arity",
+  "$k$ is a natural number bounding every gate's arity",
+  "$o$ is an output node"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a layered feedforward circuit over the Boolean alphabet with input type\n$\\mathrm{Fin}\\,n$ and output type $\\mathrm{out}$, of depth $d$, in which each gate is\ndesignated an AND gate or an OR gate. Suppose every gate has finite input arity, and\nthat there is a bound $k \\in \\bbn$ such that every gate reads from at most $k$ input\nwires. Then for each output node $o$, the tree-unrolled Boolean circuit obtained from\n$o$ has size (its total number of AND/OR gates and literal leaves) at most $(k+1)^{d}$."
+}

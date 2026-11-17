@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.pairDiag_double",
+ "key": "dff21167ce680ae5",
+ "kind": "lemma",
+ "title": "The Doubling Pass",
+ "statement": "For every bit string $x$, every natural number $t$ with $t \\le |x|$, running the diagonal pairing machine from its initial configuration on $x$ for $2t$ steps yields the configuration in state $0$, with input head at position $t+1$ and output consisting of the first $t$ bits of $x$, each repeated twice.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$t$ is a natural number",
+  "$t \\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string and $t \\le |x|$.  Running the six-state diagonal\npairing machine from its initial configuration on input $x$ for exactly $2t$\nsteps yields the configuration in the initial control state with input head\nat position $t + 1$ whose output is the first $t$ bits of $x$ with each bit\ndoubled."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clCmp_finish_scan",
+ "key": "839b2a90657a3263",
+ "kind": "lemma",
+ "title": "The comparator begins rewinding at the boundary",
+ "statement": "For any Boolean input word, any valid input-head position, and any four finite Boolean words, one step from the scanning control after the common maximum width changes the control to the rewind state carrying the final verdict, moves every work-tape head to one position before that width, and leaves the stored words and other configuration data unchanged. This also holds when all four words are empty.",
+ "hypotheses_covered": [
+  "a Boolean input word $x$",
+  "a valid input-head position for $x$",
+  "four Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, and four words, one comparator step at the common right boundary reads the joint blank, stores the final carry verdict in finite control, and starts rewinding by moving all heads left; this includes the case where all four words are empty."
+}

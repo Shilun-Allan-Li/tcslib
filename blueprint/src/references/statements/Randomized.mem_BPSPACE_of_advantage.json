@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.mem_BPSPACE_of_advantage",
+ "key": "c51cc20f794c6d9d",
+ "kind": "theorem",
+ "title": "Positive Advantage Implies Bounded-Space Recognition",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine, let $L$ be a language of bit strings, and let $s:\\mathbb{N}\\to\\mathbb{N}$, $c\\in\\mathbb{N}$, and $\\delta\\in\\mathbb{Q}$ satisfy $0<\\delta$. Suppose that on every input $x$, every choice string of some length $T$ leads $N$ to halt, and the probability that its output equals the Boolean indicator of membership of $x$ in $L$ is at least $1/2+\\delta$. Suppose also that on every input and every choice string, the total number of distinct work-tape cells visited is at most $c s(|x|)$. Then $L$ belongs to $\\mathrm{BPSPACE}(s)$, meaning that some finite nondeterministic Turing machine uses at most a constant multiple of $s(|x|)$ space, halts on every branch within an input-dependent finite time, and outputs the correct membership indicator with probability at least $2/3$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine",
+  "$L$ is a language of bit strings",
+  "$s$ maps natural numbers to natural numbers",
+  "$c$ is a natural number",
+  "$\\delta$ is rational and positive",
+  "For each input there is a time bound $T$ by which all branches halt",
+  "Output equals the membership indicator with probability at least $1/2+\\delta$",
+  "Space on every input and choice string is at most $c s(|x|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

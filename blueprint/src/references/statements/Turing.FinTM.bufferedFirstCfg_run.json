@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.bufferedFirstCfg_run",
+ "key": "af40fb64192b1328",
+ "kind": "lemma",
+ "title": "Lockstep simulation during the first phase",
+ "statement": "Let $M_1,M_2$ be finite Turing machines over the Boolean alphabet, let $x$ be a Boolean word, let $c$ be a configuration of $M_1$ on $x$, and let $t\\in\\mathbb{N}$. Suppose that at every time $s<t$, the configuration reached by running $M_1$ from $c$ for $s$ steps is not halted. Then running the buffered composition from the first-phase embedding of $c$ for $t$ steps yields the first-phase embedding of the configuration reached by running $M_1$ from $c$ for $t$ steps.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M_1$ on $x$",
+  "$t\\in\\mathbb{N}$",
+  "for every $s<t$, the run of $M_1$ from $c$ at time $s$ is not halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many\nstates, let $c$ be a configuration of $M_1$ on input $x$, and let $t$ be a\nnumber of steps such that the run of $M_1$ from $c$ has not halted at any\ntime strictly before $t$.  Then running the buffered sequential composition\nof $M_1$ and $M_2$ for $t$ steps from the first-phase embedding of $c$ yields\nthe first-phase embedding of the run of $M_1$ for $t$ steps from $c$.  The\ntime $t$ itself may be the first halting time of $M_1$."
+}

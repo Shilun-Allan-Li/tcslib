@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.payloadBackward_row",
+ "key": "0a241bf3cc457e28",
+ "kind": "lemma",
+ "title": "One backward row",
+ "statement": "Let $I$ be an index type, let $f$ assign a payload to each integer coordinate and index, let $d$ assign a direction in $\\{-1,0,1\\}$ to each index, and let $z\\in\\mathbb Z$. Applying the backward row transducer with right register $f(z+1)$ to the cached row at $z$ gives register $f(z)$ and the uncached row whose payload at coordinate $z$ and index $i$ is $f(z+d(i),i)$.",
+ "hypotheses_covered": [
+  "A payload family $f:\\mathbb Z\\to I\\to\\mathrm{OblPayload}$",
+  "A direction assignment $d:I\\to\\{-1,0,1\\}$",
+  "An integer coordinate $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every payload family $f$, every vector of directions $d$, and every coordinate\n$z$, applying the backward transducer with directions $d$ and register the payloads at\n$z + 1$ to the cached row at $z$ produces the payloads at $z$ as the new register\ntogether with the uncached row at $z$ of the shifted family sending coordinate $z$ and\ntape $i$ to the value of $f$ at $z$ plus the direction of $i$."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.TableAt.recordAt_take",
+ "key": "2334a4419470fa6b",
+ "kind": "theorem",
+ "title": "A table entry contains a record prefix",
+ "statement": "Let a configuration of a machine with $K$ work tapes have tape $r$ storing a table with header field $h$ and entry fields $e_0,e_1,\\ldots$, and suppose this table is represented on the tape with separators between fields. Assume $h$ is nonempty, every entry has length $m$, and every field within each entry is nonempty. If the head of tape $r$ is at offset $o$ plus the starting offset of entry $e_j$, where $j$ is an entry index and $j$ is less than the number of entries, then for every positive integer $m_0\\le m$, the tape stores the first $m_0$ fields of $e_j$ as a record beginning at its head, with the record's prescribed separator layout.",
+ "hypotheses_covered": [
+  "Configuration $d$ with $K$ work tapes and input $x$",
+  "Tape index $r$",
+  "Offset $o$",
+  "Natural number $m$",
+  "Nonempty header field $h$",
+  "Entry list $es$ satisfying the table well-formedness conditions",
+  "Index $j<|es|$",
+  "Head position equals $o$ plus the starting offset of entry $j$",
+  "Positive natural number $m_0$ with $m_0\\le m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

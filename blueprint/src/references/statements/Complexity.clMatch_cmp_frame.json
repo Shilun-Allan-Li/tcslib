@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.clMatch_cmp_frame",
+ "key": "8325f3bb1e0d559e",
+ "kind": "lemma",
+ "title": "Comparator configuration in the search frame",
+ "statement": "Let $l\\in\\mathbb{N}$, let $pos,neg\\in\\{0,\\ldots,l-1\\}$ be distinct, let $x$ be a Boolean input word, and choose an arbitrary comparator control state $q$, row of Boolean words, two target words, Boolean stream, integer cursor, natural numbers $N,j$, and Boolean flag word. Placing the four comparator tapes, initialized with the row's positive word, the second target, the first target, and the row's negative word, into their designated search slots, while embedding the comparator state in the comparison phase, gives exactly the search configuration in that phase with all other tapes, head positions, stream, cursor, clock data, and flags unchanged.",
+ "hypotheses_covered": [
+  "Natural number $l$",
+  "Distinct coordinates $pos$ and $neg$ in the range of length $l$",
+  "Boolean input word $x$",
+  "Arbitrary comparator control state $q$",
+  "Arbitrary row of Boolean words",
+  "Arbitrary pair of target words",
+  "Arbitrary Boolean stream",
+  "Integer cursor",
+  "Natural numbers $N,j$",
+  "Arbitrary Boolean flag word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For distinct positive and negative coordinates, every comparator control, candidate row, target words, stream, cursor, clock data, and flags, relocating the four-word comparator configuration into the search's slots yields the search seam in the comparison phase; the remaining row fields, stream cursor, clock, and accumulated flags are restored literally from the frame."
+}

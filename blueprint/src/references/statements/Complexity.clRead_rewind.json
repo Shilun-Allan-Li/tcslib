@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clRead_rewind",
+ "key": "a5c98f8d3306913b",
+ "kind": "lemma",
+ "title": "Rewinding the target head",
+ "statement": "For any Boolean input word $x$, valid input-head position $p$, stream, target word $w$, integer stream cursor $s$, and natural number $j \\le |w|$, start the reader in its rewind control with target head at $j-1$. After $j+1$ steps it is in the completed control, with stream and target unchanged, stream cursor $s$, and target head at zero.",
+ "hypotheses_covered": [
+  "Boolean input word and valid input-head position",
+  "arbitrary stream and target words",
+  "arbitrary integer stream cursor",
+  "natural number $j$ satisfying $j \\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stream, decoded target $w$, stream cursor, and count $j \\le |w|$, running the reader in its rewind control at target cell $j-1$ for $j+1$ steps returns the target head to zero and enters the completed control; the stream cursor never moves during the rewind."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.timed_capture",
+ "key": "ecb1948a216e5c54",
+ "kind": "lemma",
+ "title": "Evolution during the decider phase",
+ "statement": "Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be a configuration of $D$ on $x$. Suppose that the computation of $D$ from $c$ is not halted at any time $s<t$, where $t\\in\\mathbb N$. Running the timed conditional controller for $t$ steps from the decider-phase configuration corresponding to $c$ yields the decider-phase configuration corresponding to the configuration reached by $D$ after $t$ steps from $c$.",
+ "hypotheses_covered": [
+  "$D,M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $D$ on $x$",
+  "$t$ is a natural number",
+  "$D$ is not halted at any time $s<t$ when run from $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet, and\nconsider the timed conditional controller for them, which first runs $D$ silently on a\ndecider block of tapes while copying $D$'s output onto a capture tape. Let $c$ be a\nconfiguration of $D$ on an input $x$ and $t \\in \\mathbb{N}$ such that $D$ run from $c$ is\nnot halted at any time $s < t$. Then running the controller for $t$ steps from the\ndecider-phase configuration of $c$ (state of $c$, or the back state if $c$ is halted;\n$c$'s input head, work tapes and heads on the decider block; a blank branch block; $c$'s\noutput stored from cell $0$ of the capture tape with that head just past it; empty\noutput) yields the decider-phase configuration of the configuration $D$ reaches after $t$\nsteps from $c$."
+}

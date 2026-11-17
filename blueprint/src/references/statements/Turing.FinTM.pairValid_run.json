@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.pairValid_run",
+ "key": "7baef8b16901546f",
+ "kind": "lemma",
+ "title": "Halting bound for the validity tester",
+ "statement": "Let $x$, $r$, and $p$ be Boolean words and suppose $x=p\\,r$. There is a time $t\\le |r|+1$ such that, starting in the block state at position $|p|$ with empty output, the validity tester has halted after $t$ steps and its output is the single bit indicating whether the aligned pair parser successfully decodes $r$.",
+ "hypotheses_covered": [
+  "$x,r,p$ are Boolean words",
+  "$x=p\\,r$",
+  "There exists $t\\le |r|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any split $x = p s$ of the input, there is a time $t \\le \\abs{s}+1$ such\nthat after $t$ steps from the block state at position $\\abs{p}$ with empty\noutput, the validity tester has halted and its output is the single bit\nrecording whether $s$ is a valid self-delimiting pair code."
+}

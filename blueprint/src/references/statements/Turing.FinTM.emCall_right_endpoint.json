@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emCall_right_endpoint",
+ "key": "c6913994b61268b3",
+ "kind": "lemma",
+ "title": "Endpoint of Right-Boundary Normalization",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, and suppose its run from the initial configuration is halted at time $T$. After exactly $T+|x|+2$ steps, the right-boundary wrapper is in the scan configuration built from that halted source configuration, with its administrative state halted and its input head at position $|x|+1$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$T$ is a natural number",
+  "The source machine is halted at time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine and $x$ an input such that the run of $M$ from its initial\nconfiguration is halted at time $T$. Then the right-boundary wrapper of $M$, run for $T\n+ |x| + 2$ steps from its initial configuration on $x$, equals the halted scan\nconfiguration built on the run of $M$ at time $T$, with input head at position $|x| +\n1$."
+}

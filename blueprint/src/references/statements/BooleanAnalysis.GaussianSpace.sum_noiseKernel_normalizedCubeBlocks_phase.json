@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.sum_noiseKernel_normalizedCubeBlocks_phase",
+ "key": "4e90ce3b32f578fd",
+ "kind": "lemma",
+ "title": "Block noise phase identity",
+ "statement": "Let $n,m\\in\\mathbb N$, $\\rho\\in\\mathbb R$, and $a,b\\colon\\{1,\\ldots,n\\}\\to\\mathbb R$. For a Boolean vector $x$ of length $nm$, divide its coordinates into $n$ blocks of length $m$ and let $z_i(x)$ be the sum of the signs in block $i$, divided by $\\sqrt m$. With $\\sigma(\\mathrm{false})=1$, $\\sigma(\\mathrm{true})=-1$, and $K_\\rho(x,y)=\\prod_{r=1}^{nm}\\frac{1+\\rho\\sigma(x_r)\\sigma(y_r)}2$, one has $2^{-nm}\\sum_{x,y}K_\\rho(x,y)\\exp\\!\\bigl(i\\sum_i(a_i z_i(x)+b_i z_i(y))\\bigr)=\\prod_{i=1}^n\\left(\\frac{1+\\rho}{2}\\cos\\!\\left(\\frac{a_i+b_i}{\\sqrt m}\\right)+\\frac{1-\\rho}{2}\\cos\\!\\left(\\frac{a_i-b_i}{\\sqrt m}\\right)\\right)^m$, where both sums range over Boolean vectors of length $nm$.",
+ "hypotheses_covered": [
+  "$n,m$ are natural numbers",
+  "$\\rho$ is real",
+  "$a,b$ are real-valued functions on the $n$ coordinates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

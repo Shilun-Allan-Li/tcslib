@@ -1,6 +1,6 @@
 {
  "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.prod_rrun",
- "key": "c1c06917df306d86",
+ "key": "8c13ea285a820666",
  "kind": "theorem",
  "title": "Product protocol runs component-wise",
  "statement": "Let $p_1$ be a public-coin finite-message protocol with shared-randomness space $\\Omega_1$ and output type $\\alpha_1$, and let $p_2$ be one with shared-randomness space $\\Omega_2$ and output type $\\alpha_2$, both over the same private input sets $X$ (Alice's) and $Y$ (Bob's). Then for every pair of inputs $x \\in X$, $y \\in Y$ and every joint random string $\\omega = (\\omega_1, \\omega_2) \\in \\Omega_1 \\times \\Omega_2$, the randomized execution of the product protocol $\\mathrm{prod}(p_1, p_2)$ decomposes into the executions of its factors:\n\\[\n\\mathrm{rrun}\\bigl(\\mathrm{prod}(p_1, p_2),\\, x,\\, y,\\, \\omega\\bigr) \\;=\\; \\bigl(\\mathrm{rrun}(p_1, x, y, \\omega_1),\\ \\mathrm{rrun}(p_2, x, y, \\omega_2)\\bigr),\n\\]\nthat is, each component is obtained by running the corresponding factor on the same inputs $x$, $y$ with the matching component of the shared randomness.",

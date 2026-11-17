@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.TabInv",
+ "key": "9ffe0268b1913c81",
+ "kind": "def",
+ "title": "Validity of a table configuration",
+ "statement": "Let $m,w,n$ be natural numbers, let $F$ assign a Boolean-list function to each element of a finite type of instruction kinds, let $z$ be a Boolean list, let $x:\text{Fin}(n)\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and let $P$ be a program. Write $B_r$ for the table base offset at step $r$, $g$ for the gate-layout offset, and $C_r$ for the block computed by the first $r$ instructions of $P$ on input $z$ followed by the bits of $x$. A list $V$ is a valid configuration at step $i$ if its length is the prescribed table length at that step; its first $n$ entries encode $x$, entries $n$ and $n+1$ are false and true, respectively, its next $|z|$ entries encode $z$, and for every $r<i$ and $j<w$, the entry at position $B_r+m+g+j$ equals bit $j$ of $C_r$, with out-of-range list accesses interpreted using the stated default values.",
+ "hypotheses_covered": [
+  "$m,w,n$ are natural numbers",
+  "$F$ is indexed by a finite type of instruction kinds",
+  "$z$ is a Boolean list",
+  "$x$ is a Boolean-valued function on $\\mathrm{Fin}(n)$",
+  "$P$ is a list of instructions",
+  "$i$ is a natural number",
+  "$V$ is a Boolean list"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not include the definitions of the table layout, prescribed table length, or computed program blocks; the statement names these quantities by their roles.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

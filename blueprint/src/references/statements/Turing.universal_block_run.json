@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.universal_block_run",
+ "key": "518c58b36c35530a",
+ "kind": "lemma",
+ "title": "Run bounds from block simulation",
+ "statement": "Let $M$ and $U$ be multi-tape machines over the binary alphabet, with inputs $x$ and $y$, respectively, and let $R$ be a relation between their configurations. Let $S,B\\in\\mathbb{N}$. Suppose that some time $t\\le S$ takes $U$ from its initial configuration to one related by $R$ to the initial configuration of $M$. Suppose also that every related pair of configurations can be advanced by some number $d$ of steps of $U$, where $1\\le d\\le B$, to a configuration related to the one-step successor under $M$. Then for every $n\\in\\mathbb{N}$ there is a time $t$ such that $n\\le t\\le S+Bn$ and the configuration of $U$ at time $t$ is related to the configuration of $M$ at time $n$.",
+ "hypotheses_covered": [
+  "$k,l\\in\\mathbb{N}$ are the numbers of work tapes",
+  "$Q,R$ are state types",
+  "$x,y$ are bit-string inputs",
+  "$M,U$ are multi-tape machines over the binary alphabet",
+  "a relation between their configurations",
+  "$S,B\\in\\mathbb{N}$",
+  "some startup time $t\\le S$ reaches related initial configurations",
+  "each related pair admits a related successor after $d$ target steps with $1\\le d\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ and $U$ be multi-tape machines over $\\{0,1\\}$ on inputs $x$ and $y$\nrespectively, let $R$ be a relation between their configurations, and let\n$S, B \\in \\mathbb{N}$.  Assume (startup) there is a $t \\le S$ such that the\nconfiguration of $U$ after $t$ steps from its initial configuration is\nrelated to $M$'s initial configuration, and (step) whenever a source\nconfiguration is related to a target configuration, there is a duration $d$\nwith $1 \\le d \\le B$ such that running $U$ for $d$ further steps yields a\nconfiguration related to the source's successor.  Then for every $n$ there is\na time $t$ with $n \\le t \\le S + Bn$ such that the configuration of $U$ after\n$t$ steps is related to the configuration of $M$ after $n$ steps.  The lower\nbound $n \\le t$ makes the run cofinal, without assuming that either machine\neventually halts."
+}

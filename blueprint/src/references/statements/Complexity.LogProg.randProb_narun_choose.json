@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.randProb_narun_choose",
+ "key": "6758b07bfc713797",
+ "kind": "lemma",
+ "title": "Probability at a binary choice",
+ "statement": "Let $A$ be a nondeterministic register program with state set $\\Lambda$, oracle, input $x$, and $m$ registers. Suppose state $l$ makes a binary choice, proceeding to $l_1$ on choice bit $1$ and to $l_0$ on choice bit $0$. For any register valuation $v$, result value $res$, natural number $N$, and decidable predicate $R$ on configurations, the fraction of length-$(N+1)$ choice strings for which running from state $l$ with valuation $v$ and result $res$ yields a configuration satisfying $R$ equals the average of the corresponding fractions of length-$N$ choice strings starting from $l_1$ and $l_0$.",
+ "hypotheses_covered": [
+  "The program $A$, oracle, input $x$, and register count $m$ are fixed",
+  "$l,l_1,l_0$ are states",
+  "The instruction at $l$ is the stated binary choice",
+  "$v$ is a register valuation",
+  "$res$ is an optional Boolean result",
+  "$N$ is a natural number",
+  "$R$ is a decidable predicate on configurations"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

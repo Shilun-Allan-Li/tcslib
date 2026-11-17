@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.counter_carry_step",
+ "key": "6714c01649f410cb",
+ "kind": "lemma",
+ "title": "Single step of the carry phase",
+ "statement": "Let $x$ be a finite binary input word, let $p$ be a valid input-head position for $x$, and let $a,b$ be finite binary words. Starting in state $1$ with input-head position $p$, work-head position $|a|$, the tape containing the concatenation of $a$ and $b$, and empty output, one step of the four-state binary-counter machine has the following effect: if $b$ begins with $1$, it enters state $1$, moves the work head right by one, and changes the tape word to $a$ followed by $0$ and the tail of $b$; otherwise it enters state $2$, moves the work head left by one, and changes the tape word to $a$ followed by $1$ and the tail of $b$. The input-head position remains $p$ and the output remains empty.",
+ "hypotheses_covered": [
+  "$x$ is a finite binary input word",
+  "$p$ is a valid input-head position for $x$",
+  "$a$ and $b$ are finite binary words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the four-state binary-counter machine is in its carry state with the\nconcatenation of binary words $p$ and $b$ on the nonnegative work-tape cells,\nwork head at cell $|p|$, and empty output. If $b$ begins with $1$, one step\nclears that bit to $0$ and moves the work head right, staying in the carry\nstate; otherwise one step writes $1$ at cell $|p|$ (replacing the first bit of\n$b$, or extending the word) and moves the work head left, entering the rewind\nstate. The input head does not move."
+}

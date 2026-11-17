@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter08/DecisionTreeExercises.lean :: FABL.FiniteDecisionTree.auxiliaryAverageCost_query -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Average Cost at a Query Node
+
+**Claim.** The auxiliary average cost of a tree that queries coordinate $i$ and then follows the child indexed by $x_i$ is $1$ plus the $\pi$-average auxiliary cost of its children.
+
+**Proof.** Fix a child indexed by $v$, and consider its query count after replacing the input's $i$th coordinate by $v$. The child only uses coordinates in the available set with $i$ removed. Changing the value at $i$ therefore leaves its query trace, and hence its query count, unchanged; this is the trace invariance under inputs agreeing on available coordinates (`FABL.FiniteDecisionTree.queryTrace_eq_of_agreeOn`). Consequently the query count of the full tree at input $x$ is $1$ plus the query count of the child indexed by $x_i$.
+
+The product-mean diagonal-section identity (`FABL.FiniteDecisionTree.productMean_diagonal_section`) converts the mean of this input-dependent child cost into the expectation over $v\sim\pi$ of the product mean of the corresponding child cost. For each fixed $v$, adding the initial query adds the constant $1$ to the child's cost, so additivity of expectation (`FABL.pmfExpectation_add_fun`) and the fact that a probability expectation of a constant is that constant (`FABL.pmfExpectation_const`) give $1$ plus the child's auxiliary average cost. Averaging these costs over $v$ proves the formula.
+
+**Key facts.** `FABL.FiniteDecisionTree.productMean_diagonal_section`, `FABL.FiniteDecisionTree.queryTrace_eq_of_agreeOn`, `FABL.pmfExpectation_add_fun`, `FABL.pmfExpectation_const`.

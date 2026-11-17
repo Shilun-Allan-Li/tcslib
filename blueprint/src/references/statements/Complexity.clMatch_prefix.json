@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clMatch_prefix",
+ "key": "1a973770db093c46",
+ "kind": "lemma",
+ "title": "Prefix Scan Records Comparison Flags",
+ "statement": "Let $l,N,W$ be natural numbers, let $pos,neg\\in\\text{Fin}(l)$ be distinct, let $x$ be a Boolean input word, let $row_s$ be a family of $l$ Boolean words indexed by $s\\in\\mathbb{N}$, and let $target_0,target_1$ be Boolean words, each of length at most $W$. Suppose every field of each row with $s<N$ has length at most $W$. For every $j\\le N$, there is a time $t\\le j\\bigl(l(5W+7)+2W+5\\bigr)$ at which the matcher, started with empty candidate fields, cursor zero, and no flags, has empty candidates if $j=0$ and otherwise holds row $j-1$; its stream cursor is the length of the packed first $j$ rows, its clock position is $j$, and its flags, in order, are the comparison flags of rows $0$ through $j-1$. The target words remain the supplied target words.",
+ "hypotheses_covered": [
+  "$l,N,W\\in\\mathbb{N}$",
+  "distinct coordinates $pos,neg\\in\\text{Fin}(l)$",
+  "Boolean input word $x$",
+  "row family indexed by natural numbers with $l$ Boolean fields per row",
+  "each field in rows $s<N$ has length at most $W$",
+  "two Boolean target words, each of length at most $W$",
+  "$j\\le N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For distinct coordinates, a row family with all fields of length at most $W$ among the first $N$ rows, target words of length at most $W$, a trailer, and every $j \\le N$, there is a time $t \\le j\\,(l(5W+7) + 2W + 5)$ after which the matcher, started with empty candidates, cursor zero, and no flags, holds exactly the comparison flags of rows $0,\\dots,j-1$ in order, with the stream cursor at the end of the first $j$ rows and the immutable target words framed throughout."
+}

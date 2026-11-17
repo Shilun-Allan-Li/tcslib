@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.pairEncode_append",
+ "key": "e02f3899c1baea29",
+ "kind": "lemma",
+ "title": "Appending to a Pair Encoding",
+ "statement": "For any binary strings $a,b,c$, concatenating $c$ to the encoding $\\langle a,b\\rangle$ gives the encoding $\\langle a,bc\\rangle$; that is, $\\langle a,b\\rangle c=\\langle a,bc\\rangle$.",
+ "hypotheses_covered": [
+  "$a,b,c$ are binary strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\langle a,b\\rangle$ denote the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$). For all bit strings $a, b, c$, appending $c$ to $\\langle a,b\\rangle$ appends it to the second component: $\\langle a,b\\rangle\\, c = \\langle a, b\\,c\\rangle$, where juxtaposition denotes concatenation."
+}

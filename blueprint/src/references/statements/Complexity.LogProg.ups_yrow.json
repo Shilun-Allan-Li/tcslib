@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.ups_yrow",
+ "key": "2f49f6b3e4cec662",
+ "kind": "lemma",
+ "title": "Row symmetry transfer",
+ "statement": "Let $x$ be a Boolean word, $B$ a natural number, and $q$ a rational number. Suppose $\\sigma$ is a register state and $dd$ is a natural number such that $\\sigma.n-\\sigma.u=dd$, each register of $\\sigma$ is at most $B$, $2\\sigma.n+2+2\\sigma.n^2\\le B$, and $\\sigma.u\\le\\sigma.n$. If every encoded edge from a row $u'$ with $\\sigma.u\\le u'<\\sigma.n$ to a column $w'<\\sigma.n$ is present exactly when the reverse edge is present, then for all $p,a,b,w\\le B$, the probabilistic semantics of the program from state $s0$, with $u$ set to $\\sigma.n$ and $w,p,a,b$ set to those values, has acceptance probability $q$. If this row-symmetry condition fails and $q=0$, then the program from state $y0$ and register state $\\sigma$ has probabilistic semantics with acceptance probability $q$.",
+ "hypotheses_covered": [
+  "Boolean word $x$",
+  "natural bound $B$",
+  "rational number $q$",
+  "natural number $dd$",
+  "$\\sigma.n-\\sigma.u=dd$",
+  "every register of $\\sigma$ is at most $B$",
+  "$2\\sigma.n+2+2\\sigma.n^2\\le B$",
+  "$\\sigma.u\\le\\sigma.n$",
+  "conditional symmetry of encoded edges over the specified rows and columns",
+  "all $p,a,b,w\\le B$ in the first implication",
+  "failure of the symmetry condition and $q=0$ in the second implication"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a Boolean word, $B$ a natural number, $q$ a rational number, and $dd$ a\nnatural number. Suppose $\\sigma.n-\\sigma.u=dd$, every register of $\\sigma$ is at most\n$B$, $2\\sigma.n+2+2\\sigma.n^2\\le B$, and $\\sigma.u\\le\\sigma.n$. If the encoded adjacency\nrelation is symmetric for every row $u'$ from $\\sigma.u$ up to but not including\n$\\sigma.n$ and every column $w'<\\sigma.n$, then for all $p,a,b,w\\le B$, the program at\nstate $s0$ with $u$ reset to $\\sigma.n$ and $w,p,a,b$ set to those values has\nprobabilistic semantics with acceptance probability $q$. If that row-symmetry condition\nfails, then $q=0$ implies the program at state $y0$ with record $\\sigma$ has\nprobabilistic semantics with acceptance probability $q$."
+}

@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.recordStep_restore_digits",
+ "key": "a7237cc8ec275d5e",
+ "kind": "theorem",
+ "title": "Digit restoration during a recorded step",
+ "statement": "Let $k$ be a natural number, let $Q,T,S$ be types with decidable equality, let $M$ be a $k$-work-tape Boolean Turing machine with states in $Q$, let $u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$, and let $N$ be a two-work-tape Boolean Turing machine with states in $S$, with designated states $s_0,s_1\\in S$. For a Boolean input word $x$, a configuration $d$ of the four-tape recording machine on the input obtained by embedding each bit of $x$ as a digit, a word $b$ over the recording alphabet, record data $D$, and natural numbers $W,q,p$, suppose $q+1<2^W$ and $p=q+1$ if the recorded native move is right, while $p=q$ otherwise. Then the recording machine has a run of some length $t\\le 4W+6$ from the snapshot with control in the forward complementing phase, tape 0 head offset zero, auxiliary words $b$ and the counter word obtained by applying the fixed-width decrement operation $q+1$ times to $W$ ones and embedding its bits as digits, to the snapshot with control in the restoration phase at state $s_0$, tape 0 head offset zero, and auxiliary words $b$ and the width-$W$ binary expansion of $p$ embedded as digits. Throughout this run, neither designated verdict state is reached before time $t$, and every work-tape head remains within distance $W+1$ of its initial position in $d$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$Q,T,S$ have decidable equality",
+  "$M$ is a $k$-tape Boolean machine with state type $Q$",
+  "$u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$N$ is a two-tape Boolean machine with state type $S$",
+  "designated states $s_0,s_1\\in S$",
+  "$x$ is a Boolean word",
+  "$d$ is a four-tape configuration on the digit-embedded input",
+  "$b$ is a word over the recording alphabet",
+  "$D$ is record data",
+  "$W,q,p\\in\\mathbb N$",
+  "$q+1<2^W$",
+  "$p=q+1$ when the native move is right, and $p=q$ otherwise"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem depends on private constructions (the recording machine, snapshots, record data, and counter word) whose detailed definitions are not supplied as informal vocabulary; the statement describes their roles and the asserted run.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

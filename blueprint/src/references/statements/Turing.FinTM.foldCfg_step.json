@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.foldCfg_step",
+ "key": "28150773af06407d",
+ "kind": "lemma",
+ "title": "One step of the folding simulation",
+ "statement": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing machine over $\\Gamma$, let $x$ be an input word over $\\Gamma$, and let $c$ be a configuration of $M$ on $x$. One step of the folding simulator of $M$ from the folded configuration of $c$ equals the folded configuration of the result of one step of $M$ from $c$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "Equality on $\\Gamma$ is decidable",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a word over $\\Gamma$",
+  "$c$ is a configuration of $M$ on $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape machine over a finite alphabet $\\Gamma$ with decidable\nequality and let $c$ be a configuration of $M$ on an input $x$ over $\\Gamma$.  One\nstep of the folding simulator of $M$ on the folded configuration of $c$ equals the\nfolded configuration of one step of $M$ on $c$."
+}

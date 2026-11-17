@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.not_decidesInTime_UHALT",
+ "key": "afba1c2d7a49f199",
+ "kind": "theorem",
+ "title": "Time-bounded undecidability of unary halting",
+ "statement": "For every effective machine code $c$, every finite-state Turing machine $M$ over the binary alphabet, and every function $T:\\mathbb{N}\\to\\mathbb{N}$, $M$ does not decide the unary language whose words have all bits equal to $1$ and whose length $n$ satisfies: the binary expansion of $n$ is $1$ followed by a suffix $s$, and the halting predicate for $c$ accepts $s$, within time bound $T$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code",
+  "$M$ is a finite-state Turing machine over the binary alphabet",
+  "$T$ is a function from natural numbers to natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective machine code $c$, every finite-state Turing machine $M$ over the\nbinary alphabet, and every function $T$ from the natural numbers to the natural numbers,\n$M$ does not decide within time bound $T$ the unary language whose accepted lengths are\nthose $n$ for which the binary expansion of $n$ begins with $1$ followed by a suffix $s$\nsuch that the halting predicate for $c$ accepts $s$."
+}

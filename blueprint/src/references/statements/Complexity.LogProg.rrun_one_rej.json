@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.rrun_one_rej",
+ "key": "cb68ca4a450797d5",
+ "kind": "lemma",
+ "title": "One-step rejection behavior",
+ "statement": "Let $P$ be a register program with oracle on Boolean input $x$. Choose a configuration $c$, a state $s$, an input-head position $ip$, a register $r$, and an integer $p$. Form a configuration with state $s$, input-head position $ip$, and register $r$'s head at $p$, leaving the other components as in $c$. Suppose there is no oracle call at $s$, and for every tuple of scanned work-tape symbols the transition at $s$, on the input symbol read at position $ip$ (with no symbol at position zero), is the rejection action, which emits false and halts without moving any work-tape head. Then after one step the state is halted, the output is $c$'s output followed by false, and the work-tape head positions are those of $c$ with register $r$'s position replaced by $p$.",
+ "hypotheses_covered": [
+  "The program $P$, oracle, Boolean input $x$, and configuration $c$ are given.",
+  "The state $s$, valid input-head position $ip$, register index $r$, and integer position $p$ are given.",
+  "There is no oracle call at state $s$.",
+  "For every tuple of scanned work-tape symbols, the transition at $s$ on the input symbol at $ip$ equals the specified rejection action."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

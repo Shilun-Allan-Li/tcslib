@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.satPad_run",
+ "key": "e3b2d5b0335c29e8",
+ "kind": "lemma",
+ "title": "Padding commutes with machine runs",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes, and let $K\\ge k$. For every Boolean input word, every configuration $c$ of $M$ on that input, and every $t\\in\\mathbb{N}$, running the machine padded to $K$ work tapes for $t$ steps from the padded configuration equals the padding to $K$ tapes of the $t$-step run of $M$ from $c$.",
+ "hypotheses_covered": [
+  "A finite Turing machine over the Boolean alphabet",
+  "A natural number $K$ with $M$'s tape count $k\\le K$",
+  "A Boolean input word",
+  "A configuration $c$ of $M$ on that input",
+  "A natural number $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine $M$, tape bound $K \\ge k$, configuration $c$, and time $t$:\nrunning the padded machine for $t$ steps from the padded configuration equals\npadding the $t$-step run of $M$ from $c$ — the padded source observes exactly\nits original work symbols."
+}

@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.SAT3_mem_NP",
+ "key": "a1918b3d8a3be8db",
+ "kind": "theorem",
+ "title": "Three-SAT belongs to NP",
+ "statement": "The language of binary strings whose decoded CNF formula has at most three literals per clause and is satisfiable belongs to NP: there are natural numbers $C,c$ and a language $V$ decidable in polynomial time such that, for every binary string $x$, membership is equivalent to the existence of a string $u$ with $|u|=C(|x|+1)^c$ and $xu\\in V$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The language $\\mathrm{3SAT}$ — binary strings whose decoded formula is a\nsatisfiable 3CNF — belongs to $\\mathrm{NP}$, with the same certificate parameters\nas $\\mathrm{SAT}$: a satisfying assignment of exactly $|x| + 1$ bits, verified in\npolynomial time after an additional width check. [AB09, Theorem~2.10, membership]"
+}

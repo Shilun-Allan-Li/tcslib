@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.setupCfg_layout_fill",
+ "key": "0dccd8e772852dbf",
+ "kind": "lemma",
+ "title": "Step of an outward allocation pass",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,j\\in\\mathbb{N}$, and choose a schedule-symbol input, a base configuration, a valid input-head position, integers $b,u$, and tapes $\\beta,\\mu,\\gamma$. Let $i\\in\\{0,1,2\\}$ be an allocation index and choose a direction. Assume the unary tape has a unit marker at $u$ and the guide tape carries the origin mark exactly at coordinate $0$. From allocation index $i$ with guide head at $j$ in the rightward direction or $-j$ in the leftward direction, and with the guide tape filled through $j$ cells in that direction, one step advances the allocation index cyclically, advances the unary head by one exactly when $i=2$, moves the guide head one cell in the chosen direction, and leaves the guide filled through $j+1$ cells.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over Booleans",
+  "a is a natural number",
+  "base is a configuration on the chosen input",
+  "p is a valid input-head position",
+  "b and u are integer head positions",
+  "bt, ut, and gt are controller tapes",
+  "right specifies either direction",
+  "i is an allocation index in {0,1,2}",
+  "j is a natural number",
+  "the unary tape has a unit marker at u",
+  "the guide tape has its origin mark exactly at 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma$ be a guide tape carrying the origin mark exactly at cell $0$, and suppose\nthe unary tape reads a unit marker at the unary head.  Then one step from layout phase\n$i$ (of either direction) with guide head at $\\pm j$ over the $j$-cell filled version\nof $\\gamma$ leads to layout phase $i+1 \\bmod 3$ with guide head at $\\pm(j+1)$ over the\n$(j+1)$-cell filled version, incrementing the unary head exactly when $i = 2$."
+}

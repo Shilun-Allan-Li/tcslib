@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.rotationSensitivity_quotient_le_surfaceArea",
+ "key": "0ead6f23d993f7b5",
+ "kind": "lemma",
+ "title": "Positive-angle quotient bounded by Gaussian surface area",
+ "statement": "Let $n\\ge 0$, let $A\\subseteq\\mathbb R^n$ be measurable, and let $\\delta>0$. Then $\\sqrt{\\pi/2}\\,s_A(\\delta)/\\delta\\le P_\\gamma(A)$, where $s_A(\\delta)$ is the rotation sensitivity of $A$ and $P_\\gamma(A)$ is its Gaussian surface area defined by the lower limit of the positive-angle quotients.",
+ "hypotheses_covered": [
+  "$n\\ge 0$",
+  "$A$ is measurable",
+  "$\\delta>0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$, let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$, and let $G,G\\prime$ be independent vectors with law $\\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\\gamma_n\\otimes\\gamma_n)\\{(g,h):\\mathbf1_A(g)\\ne\\mathbf1_A(\\cos t\\,g+\\sin t\\,h)\\}$. Write $P_\\gamma(A)=\\liminf_{t\\to0^+}\\bigl[\\sqrt{\\pi/2}\\,s_A(t)/t\\bigr]_+$ in $[0,\\infty]$, where $[x]_+=\\max(x,0)$. If $A\\subseteq\\mathbb R^n$ is measurable and $\\delta>0$, then $[\\sqrt{\\pi/2}\\,s_A(\\delta)/\\delta]_+\\le P_\\gamma(A)$."
+}

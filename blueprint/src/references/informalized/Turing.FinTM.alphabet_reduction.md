@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean :: Turing.FinTM.alphabet_reduction -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Reduction to the binary alphabet
+
+**Claim.** If a finite-alphabet machine computes the encoded image of a binary function within $T(|x|)$ steps, then a binary-alphabet machine with the same number of work tapes computes the function within a constant multiple of $T(n)+1$ steps.
+
+**Proof.** Encode each symbol of the finite alphabet by the block code supplied by `arCode`, and form the binary simulator `arTM` using that code and the embedding $e$. Its computation theorem `arTM_computes` says that on each binary input $x$, it computes $f(x)$ in $(3(N+1)+2)T(|x|)$ steps, where the block length is chosen as $N=|	ext{Option }\text{Γ}|$. The construction preserves the number of work tapes. Taking $c=3(|	ext{Option }\text{Γ}|+1)+2$ gives the required bound, since $T(n)\le T(n)+1$ and multiplication by $c$ preserves this inequality; the time monotonicity fact `ComputesInTime.mono` then yields the claimed runtime.
+
+**Key facts.** `Turing.FinTM.arTM_computes`, `Turing.FinTM.ComputesInTime.mono`.

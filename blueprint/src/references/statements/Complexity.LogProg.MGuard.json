@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.MGuard",
+ "key": "0ead1d35d0dd30d0",
+ "kind": "def",
+ "title": "Memory-machine configuration guard",
+ "statement": "Let $A$ be a memory-register program with $m$ registers and access to $d$ Boolean deciders, let $O$ be such an oracle, and let $D$ be a deterministic Turing machine with $k_D$ work tapes. Given a state map $q_0$ for the deciders, natural-number bounds $B,W,P$, an input bit string $x$, and a configuration $c$, the guard holds exactly when the deterministic program obtained from $A$ by replacing every nondeterministic choice with the answer $0$ satisfies the predicate $\\mathrm{Pre}$ at bound $B$, input $x$, and the control/register component of $c$; moreover, every register value $v$ satisfies $|\\mathrm{bits}(v+1)|\\le W$, and the absolute value of the memory-head position is at most $P$.",
+ "hypotheses_covered": [
+  "A is a memory-register program with m registers and d deciders",
+  "O is a Boolean oracle for d deciders",
+  "D is a deterministic Turing machine with k_D work tapes",
+  "q_0 assigns an initial state to each decider",
+  "B, W, and P are natural-number bounds",
+  "x is an input bit string",
+  "c is a memory-machine configuration"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not define the predicate Pre, so its precise mathematical meaning cannot be stated from the supplied material.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

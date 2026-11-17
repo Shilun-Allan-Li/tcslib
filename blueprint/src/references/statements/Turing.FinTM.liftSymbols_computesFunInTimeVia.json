@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.liftSymbols_computesFunInTimeVia",
+ "key": "dee22926a085aaee",
+ "kind": "theorem",
+ "title": "Lifting computation through an alphabet embedding",
+ "statement": "Let $\\Gamma$ be a type with decidable equality, let $M$ be a finite Boolean Turing machine, and let $e$ be an injection from the Boolean alphabet into $\\Gamma$. If $M$ computes a function $f$ on Boolean words in time $T$, then the machine obtained by lifting its symbols along $e$ computes $f$ via $e$ in time $T$: on every Boolean word $x$ encoded letterwise by $e$, it halts within $T(|x|)$ steps and outputs the letterwise $e$-image of $f(x)$.",
+ "hypotheses_covered": [
+  "Gamma has decidable equality",
+  "M is a finite Boolean Turing machine",
+  "e is an injection from Booleans to Gamma",
+  "f maps Boolean words to Boolean words",
+  "T maps natural numbers to natural numbers",
+  "M computes f in time T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

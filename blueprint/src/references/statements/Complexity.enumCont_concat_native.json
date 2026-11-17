@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.enumCont_concat_native",
+ "key": "d727e91ada8c419b",
+ "kind": "lemma",
+ "title": "Input phase of assembly",
+ "statement": "Let $x$, $s$, $\\mathit{pre}$, and $\\mathit{rest}$ be Boolean words, and suppose $x=\\mathit{pre}\\mathbin{+\u0000\u0000+}\\mathit{rest}$. After exactly $|\\mathit{rest}|+1$ steps from the assembly configuration in input phase, with input head at position $|\\mathit{pre}|+1$, candidate tape containing $s$ with its head at position $0$, and output $\\mathit{pre}$, the machine is in candidate phase with input head at the right boundary, candidate tape and head unchanged, and output $x$.",
+ "hypotheses_covered": [
+  "$x$, $s$, $\\mathit{pre}$, and $\\mathit{rest}$ are Boolean words",
+  "$x=\\mathit{pre}++\\mathit{rest}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the input $x$ decomposes as $\\mathit{pre} \\mathbin{+\\!\\!+} \\mathit{rest}$,\nand let $s$ be a candidate word. After exactly $|\\mathit{rest}| + 1$ steps from the\ninput-phase configuration of the assembly machine with the input head on the first\nsymbol of $\\mathit{rest}$, candidate $s$ with its head at zero, and output\n$\\mathit{pre}$, the machine is in the candidate phase with the input head at the\nright boundary, the candidate tape and its head at zero unchanged, and output $x$."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.PathHard.cont",
+ "key": "9a5dc4e525b10b3b",
+ "kind": "lemma",
+ "title": "Continuation from equal register records",
+ "statement": "Let $a,b,f,B\\in\\mathbb{N}$, let $m$ be a Boolean mode, let $o$ be an oracle on five indices and Boolean words, and let $y$ be a Boolean word. Let $st,st'$ be register records, $l$ a machine label, and $c$ an abstract machine configuration. If $st=st'$ and the machine $A(a,b,f,m)$ reaches $c$ from label $l$ with register values $st'$, no result recorded, and the guard satisfied at every earlier time, then it also reaches $c$ from label $l$ with register values $st$, no result recorded, and the same guard satisfied at every earlier time.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$o$ is an oracle on five indices and Boolean words",
+  "$y$ is a Boolean word",
+  "$st,st'$ are register records",
+  "$l$ is a machine label",
+  "$c$ is an abstract machine configuration",
+  "$st=st'$",
+  "The machine reaches $c$ from the specified initial configuration while the guard holds at every earlier time"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $\\mathrm{mode}$ be Boolean, let $o$ be an oracle\non five indices and Boolean words, let $y$ be a Boolean word, and let\n$\\mathrm{st},\\mathrm{st}'$ be register records, $l$ a machine label, and $c$ a machine\nconfiguration. If $\\mathrm{st}=\\mathrm{st}'$ and the machine reaches $c$ from label $l$\nwith registers $\\mathrm{st}'$, with no answer recorded and its guard satisfied\nthroughout, then it also reaches $c$ from label $l$ with registers $\\mathrm{st}$, under\nthe same guard."
+}

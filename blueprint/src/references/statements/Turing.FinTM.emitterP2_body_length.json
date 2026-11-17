@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_length",
+ "key": "f99e199e2398c93e",
+ "kind": "lemma",
+ "title": "Embedding the length-machine computation",
+ "statement": "Let $C$ and $D$ be finite Boolean Turing machines with positive numbers of work tapes, and choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$. Let $w,s,u,v,z$ be Boolean words and let $t>0$. Suppose that, when started on input $w$ in state $d_e$ with $v$ on its first work tape and all its other tapes blank, $D$ is not in state $d_x$ at any time $j$ with $0<j<t$, and at time $t$ it is in state $d_x$ with $z$ on its first work tape and all its other tapes blank. Then the controller started in its length-start state with candidate $s$ and bank words $u,v$ reaches length state $d_x$ with candidate $s$ and bank words $u,z$ at time $t$, and its state is not the anchor at any time $j\\le t$.",
+ "hypotheses_covered": [
+  "$C,D$ are finite Boolean Turing machines",
+  "$0<C.k$ and $0<D.k$",
+  "$c_e,c_x$ are states of $C$; $d_e,d_x$ are states of $D$",
+  "$w,s,u,v,z$ are Boolean words",
+  "$t$ is a natural number with $t>0$",
+  "The run of $D$ from the specified seam is not in state $d_x$ for $0<j<t$",
+  "At time $t$, that run equals the specified seam with state $d_x$ and result word $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the suffix-length machine, started on its canonical seam carrying the\nprepared suffix, reaches its exit seam with result word $z$ in $t > 0$\nsteps with no interior exit-state visit, then $t$ controller steps from the\nlength-start seam install $z$ in the length bank while preserving the\ncandidate and the already installed width word; the trace avoids the\nanchor."
+}

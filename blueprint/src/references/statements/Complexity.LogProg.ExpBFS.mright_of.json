@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.mright_of",
+ "key": "73d60a9188095146",
+ "kind": "lemma",
+ "title": "Prepending a Right Memory Move",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}:\\{0,1,2,3\\}\\to\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be an oracle, and let $x$ be a Boolean word. Let $st$ be a machine state whose 17 register values are all at most $B$, let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory, let $p\\in\\mathbb Z$ satisfy $0\\le p\\le P$, and let $l,l'$ be control states. If the instruction at $l$ moves the memory head one cell right and continues at $l'$, then every guarded finite run from the configuration at $l'$ with state $st$, memory $M$, and head position $p+1$ to a configuration $c$ can be prefixed by that instruction: there is a guarded finite run from the configuration at $l$ with the same state and memory and head position $p$ to $c$.",
+ "hypotheses_covered": [
+  "$K_0,B,P\\in\\mathbb N$",
+  "an oracle on four indices and Boolean words",
+  "a Boolean input word $x$",
+  "a state $st$ with all 17 register values at most $B$",
+  "Boolean memory $M$ indexed by integers",
+  "$p\\in\\mathbb Z$ with $0\\le p\\le P$",
+  "control states $l,l'$",
+  "the instruction at $l$ is a right memory move to $l'$",
+  "guarded reachability from the specified successor configuration to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P$ be natural numbers, let\n$\\mathrm{orc}:\\mathrm{Fin}(4)\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{Bool}$ be an\noracle, and let $x$ be a Boolean word. Suppose a machine instruction at control state\n$l$ moves the memory head one cell right and continues at $l'$. Let $st$ be a register\nstate whose 17 counters are all at most $B$, let the head position $p$ satisfy $0\\le\np\\le P$, and suppose $c$ is reachable from the configuration at $l'$ with the same\nregisters and memory and head position $p+1$, while maintaining the guard at every\nearlier step. Then $c$ is reachable from the configuration at $l$ with the same\nregisters and memory and head position $p$, while maintaining that guard at every\nearlier step."
+}

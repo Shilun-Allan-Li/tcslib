@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Codec.mem_of_codePath",
+ "key": "07a001111495c7c8",
+ "kind": "theorem",
+ "title": "A code path implies acceptance",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input, let $L$ be a language of Boolean strings, and let $sp:\\mathbb{N}\\to\\mathbb{N}$. Assume that $N$ decides $L$ in space $sp$. For a Boolean string $x$ and natural numbers $s,u,v$, suppose $u$ is the code of the initial configuration on $x$ within window $s$, there is a finite sequence of zero or more valid one-step transitions within that window from the configuration coded by $u$ to the one coded by $v$, and $v$ is the code of a halted configuration with output exactly $[1]$ within that window. Then $x\\in L$.",
+ "hypotheses_covered": [
+  "N decides L in space sp",
+  "A Boolean string x",
+  "Natural numbers s, u, and v",
+  "The initial-configuration encoding for x, u, and s belongs to the initial language",
+  "There is a reflexive-transitive sequence of valid coded steps from u to v at window size s",
+  "The acceptance encoding for x, v, and s belongs to the acceptance language"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

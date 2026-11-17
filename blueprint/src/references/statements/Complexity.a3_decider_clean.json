@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a3_decider_clean",
+ "key": "aa68bf7ce4e0c8db",
+ "kind": "lemma",
+ "title": "Cleaning a binary decider",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $L$ be a language of binary strings, and let $T:\\mathbb{N}\\to\\mathbb{N}$. If $M$ decides $L$ within time $T$, then there exist a finite binary Turing machine $R$ and a natural number $B$ such that $R$ decides $L$ within time $n\\mapsto B\\bigl(T(n)+n+2\\bigr)$.",
+ "hypotheses_covered": [
+  "Finite binary machine $M$",
+  "Language $L$ of binary strings",
+  "Time bound $T:\\mathbb{N}\\to\\mathbb{N}$",
+  "$M$ decides $L$ within time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a finite machine $M$ decides a language $L$ over the binary alphabet within\ntime $T$, then there exist a finite machine $R$ and a constant $B$ such that $R$\ndecides $L$ within time $B\\,(T(n) + n + 2)$."
+}

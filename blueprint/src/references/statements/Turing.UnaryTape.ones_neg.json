@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.UnaryTape.ones_neg",
+ "key": "0a3a470ea226c9f0",
+ "kind": "theorem",
+ "title": "Unary tape is blank at negative positions",
+ "statement": "For $m\\in\\mathbb{N}$ and a cell position $c\\in\\mathbb{Z}$ with $c<0$, the unary tape of $m$ is blank at $c$.",
+ "hypotheses_covered": [
+  "Natural number $m",
+  "Integer cell position $c<0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $m \\in \\mathbb{N}$, and let $\\mathrm{ones}_m : \\mathbb{Z} \\to \\{0, 1, \\sqcup\\}$ be its unary\ntape, which holds $1$ on cells $0, \\dots, m-1$ and the blank $\\sqcup$ elsewhere. If\n$c \\in \\mathbb{Z}$ satisfies $c < 0$, then $\\mathrm{ones}_m(c) = \\sqcup$."
+}

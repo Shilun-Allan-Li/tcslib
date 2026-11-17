@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.UTab.goes_layers",
+ "key": "b0420c96ce7eceeb",
+ "kind": "theorem",
+ "title": "Layered universal-tableau execution",
+ "statement": "Let $M$ be a Boolean multi-tape Turing machine, let $x$ be a finite Boolean input word, and let $n,z,T,p$ be natural numbers with $1\\le T$. The eleven-register counter program constructed from $M$, run on $x$, has a run of at most $(T+1)(\\mathrm{layerBound}(n,z,T)+7T+10)$ steps from its layer-start label with the register values specified by $\\mathrm{lstart}(0,0)$ and input position $p$ to the label for the final template, with register values specified by $\\mathrm{lstart}(T+1,0)$ and the same input position; the output appended during this run is the concatenation, over indices $i=0,\\ldots,(T+1)\\mathrm{Str}(n,z,T)-1$, of the instruction-bit strings for index $i$.",
+ "hypotheses_covered": [
+  "A Boolean multi-tape Turing machine $M$",
+  "A finite Boolean input word $x$",
+  "Natural parameters $n,z,T$",
+  "The bound $1\\le T$",
+  "A natural number $p$ representing the input position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

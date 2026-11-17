@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.pairDiag_step",
+ "key": "b8e480afa065c03b",
+ "kind": "lemma",
+ "title": "One Step of the Pairing Machine",
+ "statement": "Let $x$ be a bit string, $q$ one of the six control states, $p$ an input-head position, $w$ an output string, and $b$ either a bit or no symbol. If the configuration in state $q$, at position $p$, with output $w$ scans $b$, then one machine step yields the configuration whose state, input-head position, and output are prescribed by the transition table for state $q$ and scanned symbol $b$: the head moves according to the prescribed direction, with boundary clamping, and the emitted symbol, if any, is appended to $w$.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$q$ is one of the six control states",
+  "$p$ is a valid input-head position for $x$",
+  "$w$ is a bit string",
+  "$b$ is an optional bit",
+  "the configuration scans $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider the six-state diagonal pairing machine on an input string $x$, in a\nlive configuration with control state $q$, input-head position $p$, and\noutput string $w$, and suppose the symbol scanned by the input head is $b$\n(a bit or the blank).  Then one step of the machine yields exactly the\nconfiguration prescribed by the transition table entry at $(q, b)$: its\nsuccessor state (or halting), the head position $p$ moved by the prescribed\ndirection, and the output $w$ extended by the emitted bit, if any."
+}

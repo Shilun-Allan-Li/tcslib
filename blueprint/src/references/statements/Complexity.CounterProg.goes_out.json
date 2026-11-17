@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_out",
+ "key": "24932d774698aa1f",
+ "kind": "theorem",
+ "title": "Run rule for printing a bit",
+ "statement": "Let $P$ be a counter program on a binary input $x$, with label $\\ell$, destination label $\\ell'$, bit $b$, register assignment $\\rho$, and input position $p$. If the instruction at $\\ell$ prints $b$ and then goes to $\\ell'$, then for every output string $o$, within at most one step the program reaches $\\ell'$ with registers $\\rho$, input position $p$, and output $o$ followed by $b$.",
+ "hypotheses_covered": [
+  "The instruction at $\\ell$ prints bit $b$ and goes to $\\ell'$",
+  "Arbitrary register assignment $\\rho$",
+  "Arbitrary input position $p$",
+  "The claim holds for every initial output string $o$",
+  "The step bound is one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$ and $\\ell$ a label whose\ninstruction is $\\mathsf{out}(b, \\ell')$, ``print the bit $b$, then go to\n$\\ell'$''.  Then for all registers $\\rho$ and input positions $p$, from label\n$\\ell$ with registers $\\rho$ and $p$ symbols read the program reaches label\n$\\ell'$ with registers $\\rho$ and $p$ symbols read within one step, appending the\nsingle bit $b$ to its output."
+}

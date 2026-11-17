@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.compareTM_run_ofCfg",
+ "key": "e4358eab724ab38e",
+ "kind": "theorem",
+ "title": "Comparison from a general configuration",
+ "statement": "Let $\u0003Sigma$ be a type with decidable equality, let $k$ be a natural number, let $x$ be an input word over $\u0003Sigma$, choose distinct work-tape indices $fst,snd\fin k$, choose words $u,v$ over $\u0003Sigma$, and let $d$ be a configuration on input $x$ whose state is the running state. Suppose that, for every integer $p$ with $-1\\le p\\le |u|$, tape $fst$ at position $d$'s head position plus $p$ contains the symbol prescribed by storing $u$ contiguously from position zero; assume the analogous condition for tape $snd$ and word $v$. Then there exists a natural number $\u0003delta\\le\text{min}(|u|,|v|)$ such that after $2\u0003delta+2$ steps the machine is in configuration $d$ with only its state changed to completed with the truth value of $u=v$; before that time it has not entered either completed state. At every time up to and including $2\u0003delta+2$, the heads of tapes $fst$ and $snd$ remain between their respective initial positions minus one and initial positions plus $\u0003delta$, inclusive, and every other work-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$\u0003Sigma$ is a type with decidable equality",
+  "$k$ is a natural number",
+  "$x$ is a word over $\u0003Sigma$",
+  "$fst$ and $snd$ are distinct indices in $\\mathrm{Fin}(k)$",
+  "$u,v$ are words over $\u0003Sigma$",
+  "$d$ is a configuration on input $x$",
+  "$d$ is in the running state",
+  "tape $fst$ agrees with the buffered word $u$ at every offset $p$ with $-1\\le p\\le |u|$",
+  "tape $snd$ agrees with the buffered word $v$ at every offset $p$ with $-1\\le p\\le |v|$"
+ ],
+ "confidence": "low",
+ "caveat": "The source uses the precise buffered-tape convention, including blank cells outside the word; that convention is summarized in the hypothesis.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

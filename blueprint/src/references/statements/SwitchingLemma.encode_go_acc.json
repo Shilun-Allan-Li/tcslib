@@ -1,6 +1,6 @@
 {
  "lean_name": "SwitchingLemma.encode_go_acc",
- "key": "f81247573879465e",
+ "key": "b29a649eb98c0338",
  "kind": "lemma",
  "title": "Accumulator decomposition for the encoder loop",
  "statement": "Fix a DNF formula $f$ on $n$ variables — a list of terms, each a conjunction of literals — together with a width parameter $w \\in \\bbn$, a fuel bound $\\mathrm{fuel} \\in \\bbn$, a path $P$ recording the variable–value pairs already committed (a list of elements of $\\mathrm{Fin}\\,n \\times \\mathrm{Bool}$), two restrictions $\\rho_0, \\sigma : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$, and an accumulator $A$, a list of index–value pairs in $\\bbn \\times \\mathrm{Bool}$. The tail-recursive helper of Razborov's encoding procedure, run from the initial accumulator $A$ on these data, produces the same output as the corresponding run started from the empty accumulator, with the entries of $A$ carried through unchanged; that is, the accumulator contributes to the result only additively and does not affect the encoding computed by the procedure itself.",

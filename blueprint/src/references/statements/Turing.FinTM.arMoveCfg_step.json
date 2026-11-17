@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.arMoveCfg_step",
+ "key": "8095d52918fb768e",
+ "kind": "lemma",
+ "title": "One step of the move sweep",
+ "statement": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $N\\in\\mathbb{N}$, let $E$ inject optional $\\Gamma$-symbols into blocks of $N+1$ optional bits, and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an injection. For a finite Turing machine $M$ over $\\Gamma$, a binary word $x$, a configuration $c$ on its letterwise $e$-image, an action $a$ of $M$, and a move-sweep counter $r\\in\\{0,\\ldots,N+1\\}$ with $r\\ne0$, one step of the simulator from the move-sweep configuration at counter $r$ yields the move-sweep configuration at counter $r-1$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite and has decidable equality",
+  "$N\\in\\mathbb{N}$",
+  "$E$ is an injection from optional symbols to blocks",
+  "$e$ is an injection from bits to $\\Gamma$",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a binary word",
+  "$c$ is a configuration on the letterwise $e$-image of $x$",
+  "$a$ is an action for $M$",
+  "$r\\in\\{0,\\ldots,N+1\\}$ and $r\\ne0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a counter $r \\neq 0$, one transition of the binary block-code simulator applied to\nthe move-sweep configuration (source configuration $c$, source action $a$) at counter\n$r$ yields the move-sweep configuration at counter $r-1$: each work head advances one\ncell in its pending direction."
+}

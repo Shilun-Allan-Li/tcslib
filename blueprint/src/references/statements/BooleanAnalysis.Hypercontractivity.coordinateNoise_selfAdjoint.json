@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.coordinateNoise_selfAdjoint",
+ "key": "5d94ffd920874018",
+ "kind": "theorem",
+ "title": "Self-adjointness of coordinate noise",
+ "statement": "Let $P$ be a finite product of probability spaces whose coordinate atom weights are strictly positive and sum to $1$, let $i$ be a coordinate, let $\\rho\\in\\mathbb R$, and let $f,g$ be real-valued functions on the product outcome space. If $N_{i,\\rho}h=h-L_i h+\\rho L_i h$, where $L_i h=h-E_{[n]\\setminus\\{i\\}}h$ and the conditional expectation averages over coordinate $i$, then $\\mathbb E_P[(N_{i,\\rho}f)g]=\\mathbb E_P[f(N_{i,\\rho}g)]$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product of coordinate probability spaces",
+  "each coordinate atom weight is strictly positive",
+  "each coordinate's weights sum to $1$",
+  "$i$ is a coordinate",
+  "$\\rho\\in\\mathbb R$",
+  "$f,g$ are real-valued functions on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, a coordinate $i$, $\\rho\\in\\mathbb R$, and $f,g:\\Omega\\to\\mathbb R$. Then $\\mathbb E_P[(N_{i,\\rho}f)g]=\\mathbb E_P[fN_{i,\\rho}g]$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $N_{i,a}h=E_{[n]\\setminus\\{i\\}}h+a(h-E_{[n]\\setminus\\{i\\}}h)$."
+}

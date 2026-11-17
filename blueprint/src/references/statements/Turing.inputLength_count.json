@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.inputLength_count",
+ "key": "6e9b2a35d217baa8",
+ "kind": "theorem",
+ "title": "Input-Length Counting Run",
+ "statement": "Let $x$ be a Boolean word and let $d$ be a one-work-tape configuration on input $x$, in phase count and with its input head at position $1$. Suppose the work tape is blank at offsets from the work-head position in the range $-1$ through the number of binary digits of the length of $x$. For every natural number $n\\le |x|$, there is a time $t$ such that $t+2c(n)=5n$, where $c(n)$ is the number of ones in the binary expansion of $n$, and after $t$ steps the machine is in phase count with the input head at position $n+1$, the work tape containing the binary expansion of $n$ over a segment of its length, and the work head at its original position. At every time $u\\le t$, the work-head position lies between one cell left of its initial position and its initial position plus the number of binary digits of $n$.",
+ "hypotheses_covered": [
+  "Boolean word $x$ and one-work-tape configuration $d$",
+  "initial phase is count",
+  "initial input-head position is $1$",
+  "work tape blank at offsets $-1$ through the binary length of $|x|$",
+  "natural number $n\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

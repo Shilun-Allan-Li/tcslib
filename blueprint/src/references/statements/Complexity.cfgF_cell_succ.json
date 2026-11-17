@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.cfgF_cell_succ",
+ "key": "a8189f8f8a8390b4",
+ "kind": "theorem",
+ "title": "Work-cell update rule",
+ "statement": "Let $M$ be a finite-state binary Turing machine with $k$ work tapes, and let $w$ be a binary input. Fix a time $t\\in\\mathbb N$, a work tape $\\tau$, a cell position $z\\in\\mathbb Z$, and a finite list of bits $l$. Suppose the first bit of $l$ is false, its snapshot field decodes to the machine's snapshot on $w$ at time $t$, and its designated neighboring-head bits record whether the tape head at time $t$ is at $z-1$, $z$, and $z+1$. Suppose also that the designated content bits record whether cell $z$ contains a bit and, if so, its value; and that the designated chain bits record whether the time-$t+1$ work-chain value at $z-1$ exists and, if so, its value. Then the local work-cell update rule applied to $l$ yields the encoding of the time-$t+1$ head indicator, cell content, and work-chain value at $z$.",
+ "hypotheses_covered": [
+  "first list bit is false",
+  "decoded prior snapshot equals the run snapshot at time t",
+  "neighboring-head bits encode head positions z−1, z, z+1",
+  "cell-content presence and value bits encode cell z at time t",
+  "chain presence and value bits encode the time-(t+1) chain at z−1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

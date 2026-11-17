@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.pairDecode_eq_none",
+ "key": "4b34fefe8caa67fe",
+ "kind": "theorem",
+ "title": "Shape of strings that fail to parse",
+ "statement": "If the aligned pair parser returns no result on a finite Boolean string $z$, then there are finite Boolean strings $w$ and $\\tau$ such that $z$ is the concatenation of the doubled string $\\mathrm{dbl}(w)$ and $\\tau$, and either $\\tau$ is empty, consists of one bit, or begins with $10$.",
+ "hypotheses_covered": [
+  "$z$ is a finite Boolean string",
+  "The aligned pair parser returns no result on $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider the aligned pair parser on bit strings, which reads aligned\ntwo-bit blocks from the left, treats the blocks $00$ and $11$ as data bits\n$0$ and $1$, and stops successfully at the first aligned block $01$.  If the\nparser fails on a bit string $z$, then $z = \\mathrm{dbl}(w)\\,\\tau$ for some\nbit string $w$ (with $\\mathrm{dbl}(w)$ denoting $w$ with every bit written\ntwice) and some tail $\\tau$ that is either empty, a single bit, or begins\nwith the bits $1$ then $0$."
+}

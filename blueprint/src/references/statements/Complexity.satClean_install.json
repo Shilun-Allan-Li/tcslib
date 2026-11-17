@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satClean_install",
+ "key": "2a022858d8e8fb65",
+ "kind": "lemma",
+ "title": "Polynomial-time clean installation",
+ "statement": "For every polynomial-time computable function $f$ from Boolean words to Boolean words, there exist a finite Turing machine $M$ and natural numbers $A,d$ such that $M$ has at least one work tape and, for every Boolean input word $x$ and argument word $z$, there is a positive time $t\\le A(|z|+1)^d$ at which the run from the initial state with $z$ on the first work tape and all other work tapes blank first halts. At that time its configuration has $f(z)$ on the first work tape, all other work tapes blank, and empty output; the input head and work-tape heads and contents are those of the canonical starting configuration, apart from the first tape now containing $f(z)$.",
+ "hypotheses_covered": [
+  "A polynomial-time computable Boolean-word function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every polynomial-time computable word function $f$ there exist a module $M$\nand constants $A, d$ such that $M$ satisfies the clean-module contract with\nresult function $f$, empty emission, and budget $n \\mapsto A\\,(n+1)^d$ on the\nargument length: every polynomial word computation has a clean first-halting\ninstall module."
+}

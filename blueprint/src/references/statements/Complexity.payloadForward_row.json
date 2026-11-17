@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.payloadForward_row",
+ "key": "84feee89d69fc1cf",
+ "kind": "lemma",
+ "title": "One forward row",
+ "statement": "Let $I$ be an index type, let $f:\\mathbb Z\\to I\\to\\mathrm{OblPayload}$ be a payload family, and let $z\\in\\mathbb Z$. Applying the forward row transducer with left register $f(z-1)$ to the uncached row at $z$ gives register $f(z)$ and the cached row at $z$.",
+ "hypotheses_covered": [
+  "A payload family $f:\\mathbb Z\\to I\\to\\mathrm{OblPayload}$",
+  "An integer coordinate $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every payload family and every coordinate $z$, applying the forward transducer\nwith register the payloads at $z - 1$ to the uncached row at $z$ produces the payloads\nat $z$ as the new register together with the cached row at $z$."
+}

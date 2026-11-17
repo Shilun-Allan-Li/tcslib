@@ -1,0 +1,22 @@
+{
+ "lean_name": "BoolCircuit.tabInv_succ",
+ "key": "41d6d101d99658c3",
+ "kind": "theorem",
+ "title": "Successor step for the tabulation invariant",
+ "statement": "Let $\\kappa$ be a finite set of instruction kinds, let $m,w,n$ be nonnegative integers, let $F$ assign to each kind a function from Boolean lists to Boolean lists, let $z$ be a Boolean list, and let $x$ be an assignment of $n$ Boolean inputs. Suppose every source in each program instruction is valid relative to the inputs formed by adjoining $z$ to the $n$ input bits, with output width $w$, and every instruction has exactly $m$ sources. If $i$ is a position in the program and a list of Boolean vertex values satisfies the tabulation invariant after the first $i$ instructions, then running the gates for instruction $i$ on that list produces vertex values satisfying the invariant after the first $i+1$ instructions.",
+ "hypotheses_covered": [
+  "$\\kappa$ is finite",
+  "$m,w,n$ are nonnegative integers",
+  "$F$ maps each instruction kind and Boolean list to a Boolean list",
+  "$z$ is a Boolean list",
+  "$x$ is an assignment of $n$ Boolean inputs",
+  "all program sources are valid relative to $z$ followed by the $n$ inputs, width $w$, and instruction positions",
+  "each instruction has exactly $m$ sources",
+  "$i$ is less than the program length",
+  "the vertex-value list satisfies the tabulation invariant at position $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

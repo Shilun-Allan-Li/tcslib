@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.timed_borrow_run",
+ "key": "d0e7998606b2bf28",
+ "kind": "lemma",
+ "title": "Borrow phase over a clock word",
+ "statement": "Let $x$ be a Boolean word, let $c$ be a base configuration of the timed interpreter on input $x$, let $u$ assign eight Boolean action bits, and let $h$ and $r$ be Boolean flags. For every Boolean word $b_s$, integer frontier $z$, and finite lists $l,r_s$ of possibly blank bits, running the interpreter for $|b_s|$ steps from the borrow phase with flag $r$ and zipper state $(z,l,b_s\\mathbin{+\u001b}r_s)$ yields the borrow phase with flag equal to the final borrow from subtracting $r$ from $b_s$, frontier $z+|b_s|$, processed stack the reversed resulting word followed by $l$, and unprocessed list $r_s$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Base timed-interpreter configuration $c$",
+  "Eight Boolean action bits",
+  "Boolean halting flag $h$ and incoming borrow $r$",
+  "Boolean word $b_s$",
+  "Integer frontier $z$",
+  "Finite possibly blank bit lists $l,r_s$"
+ ],
+ "confidence": "low",
+ "caveat": "The claim is expressed through the defined zipper and borrow transformations; the notation for their list concatenation is a concise description of those configurations.",
+ "rubric": [],
+ "replaced": "From the borrow phase with a given carry flag and the clock word laid out on\nthe clock lane's zipper, the timed interpreter processes the word in exactly\nits length: the final control carries the resulting underflow flag, the\nprocessed stack holds the borrowed word, and neither the four simulation lanes\nnor the buffered output is touched."
+}

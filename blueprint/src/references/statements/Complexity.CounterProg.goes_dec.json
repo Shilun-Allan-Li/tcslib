@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_dec",
+ "key": "6921c940b55d1406",
+ "kind": "theorem",
+ "title": "One-step decrement behavior",
+ "statement": "Let $P$ be a counter program on input $x$, let $\\ell,\\ell'$ be labels, let $\\rho$ be register values, and let $p$ be the input read position. If the instruction at $\\ell$ is to decrement register $r$ and continue at $\\ell'$, then for every current output string $o$ there is a run of at most one step from label $\\ell$, registers $\\rho$, read position $p$, and output $o$ to label $\\ell'$, with register $r$ decreased by one with zero truncated at zero, all other registers unchanged, the same read position, and output still $o$.",
+ "hypotheses_covered": [
+  "Counter program $P$ and input $x$",
+  "Labels $\\ell$ and $\\ell'$",
+  "Register values $\\rho$",
+  "Input read position $p$",
+  "Register $r$",
+  "Instruction at $\\ell$ is the decrement of $r$ followed by $\\ell'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, $r$ a register and $\\ell$ a\nlabel whose instruction is $\\mathsf{dec}(r, \\ell')$.  Then for all registers\n$\\rho$ and input positions $p$, from label $\\ell$ with registers $\\rho$ and $p$\nsymbols read the program reaches label $\\ell'$ within one step, printing\nnothing, with $p$ symbols read and registers $\\rho$ except that register $r$ now\nholds $\\max(\\rho(r) - 1, 0)$."
+}

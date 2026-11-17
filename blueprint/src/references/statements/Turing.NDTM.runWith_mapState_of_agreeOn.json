@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.NDTM.runWith_mapState_of_agreeOn",
+ "key": "760347febaf914b6",
+ "kind": "theorem",
+ "title": "State renaming preserves guarded runs",
+ "statement": "Let $S$ and $H$ be state sets, let $\\Gamma$ be an alphabet, and let $k$ be the number of work tapes. Suppose $M_{\\mathrm{src}}$ and $M_{\\mathrm{host}}$ are nondeterministic machines over $\\Gamma$, with state sets $S$ and $H$, respectively, and let $e:S\\hookrightarrow H$ be an embedding and $G\\subseteq S$. Assume that for every choice bit, every $q\\in G$, and every input and work-tape reading, the host transition at $e(q)$ is the source transition at $q$ with its successor state renamed by $e$. For a source configuration $c$ on input $x$ and a choice word $w$, suppose every state reached from $c$ under each prefix of $w$ of length strictly less than $|w|$ belongs to $G$ whenever the run has a state; then the host run from the state-renamed configuration $e(c)$ under $w$ equals the source run from $c$ under $w$ with its state renamed by $e$.",
+ "hypotheses_covered": [
+  "machines over the same alphabet with k work tapes",
+  "state sets S and H",
+  "embedding e:S→H",
+  "subset G of source states",
+  "transition agreement for every choice bit, good source state, input reading, and work-tape reading",
+  "source configuration c and choice word w",
+  "every nonhalting source state at prefixes of length u<|w| is in G"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

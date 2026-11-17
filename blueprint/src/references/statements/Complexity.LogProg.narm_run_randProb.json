@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.narm_run_randProb",
+ "key": "743fa04dd7276bbb",
+ "kind": "theorem",
+ "title": "Randomized simulation of a nondeterministic program",
+ "statement": "Let $A$ be a nondeterministic register program with initial label $l_0$, oracle, and decider machine $D$ with initial states $q_0$ and space bound $B$. Fix an input $x$, register values $v$, output prefix $out$, and natural numbers $W,N$. Suppose every sequence of $N$ choice bits makes the program halt, and each configuration before halting satisfies the guard: its applicable instruction preconditions hold, every decider call has distinct argument registers and a clean run using at most $B$ work-head cells, and each register value $z$ satisfies $|\text{the binary length of }z+1|\\le W$. Then there is a number $T$ such that the compiled nondeterministic Turing machine halts on every choice sequence of length $T$, and for each $b\\in\\{0,1\\}$ the fraction of length-$T$ choice sequences producing output $out$ followed by $b$ equals the fraction of length-$N$ sequences on which the register program's final answer is $b$.",
+ "hypotheses_covered": [
+  "Nondeterministic register program and initial label",
+  "Oracle, decider machine, initial-state map, and bounds B and W",
+  "Fixed input x, register values v, output prefix out, and choice length N",
+  "Every length-N choice sequence halts",
+  "Every active proper-prefix configuration satisfies NGuard, including instruction preconditions, clean bounded-space decider calls, and register binary-length bounds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

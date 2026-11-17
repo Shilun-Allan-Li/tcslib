@@ -1,0 +1,20 @@
+{
+ "lean_name": "FABL.cubicF₂LinearSolverExponentCertificate",
+ "key": "6534d717e6aff38f",
+ "kind": "def",
+ "title": "Cubic solver exponent certificate",
+ "statement": "The cubic linear solver backend has an exponent certificate with exponent $3$: its coefficient is $2(c_D+c_R+2)^3$, and for every finite encoded coordinate set, equation list, and natural numbers $b,d,c_D,c_R$ with $0<b$, coordinate count at most $c_D b^d$, and equation count at most $c_R b^d$, its work is at most $2(c_D+c_R+2)^3 b^{3d}$.",
+ "hypotheses_covered": [
+  "The cubic solver backend and its cubic exponent are fixed",
+  "The coordinate set is finite and encoded",
+  "The equation list is finite",
+  "$b,d,c_D,c_R$ are natural numbers",
+  "$0<b$",
+  "The coordinate count is at most $c_D b^d$",
+  "The equation count is at most $c_R b^d$"
+ ],
+ "confidence": "low",
+ "caveat": "The certificate is defined using an upstream work-bound result for the cubic backend that is not included in the payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

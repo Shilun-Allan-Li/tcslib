@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clMoves_tag",
+ "key": "9b243f1436a5b1de",
+ "kind": "lemma",
+ "title": "Agreement of valid position tags",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $y$ be a Boolean input word, and let $c$ be a configuration of $M$ on $y$. If $b$ is a Boolean tag that is false at the left boundary and true at the right boundary, then the displacement vector computed using $b$ equals the vector computed using the tag that is true exactly when the input-head position is nonzero.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$y$ is a Boolean word",
+  "$c$ is a configuration of $M$ on $y$",
+  "$b$ correctly tags the two boundary positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration and let $b$ be any valid position tag for its input position. The displacement vector computed from $b$ equals the displacement vector computed from the deterministic nonzero-position tag; at an interior cell either tag yields the same clamped movement."
+}

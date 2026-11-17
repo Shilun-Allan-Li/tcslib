@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_emit",
+ "key": "66f377ed7294374a",
+ "kind": "lemma",
+ "title": "Emission of the encoded input split",
+ "statement": "Let $C$ and $D$ be finite Boolean Turing machines with positive numbers of work tapes, and choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$. For Boolean words $w,s$ with $|s|\\le |w|$, after exactly $|s|+|w|+3$ steps from the controller's emission state $0$, the controller has halted and its output is the pair encoding of $w$ split after its first $|s|$ bits; at every time up to and including that step, its state is not the anchor.",
+ "hypotheses_covered": [
+  "$C,D$ are finite Boolean Turing machines",
+  "$0<C.k$ and $0<D.k$",
+  "$c_e,c_x$ are states of $C$; $d_e,d_x$ are states of $D$",
+  "$w,s$ are Boolean words",
+  "$|s|\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the candidate's length is at most $\\abs{w}$, then exactly\n$\\abs{s} + \\abs{w} + 3$ controller steps from the emission seam halt with\noutput the self-delimiting pair encoding of the split of the native input\n$w$ at position $\\abs{s}$; the emitted bits come from the native input, not\nthe candidate, unrelated banks stay blank, and the trace avoids the anchor."
+}

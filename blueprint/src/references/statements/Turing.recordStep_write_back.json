@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.recordStep_write_back",
+ "key": "1274f9f666079f0a",
+ "kind": "theorem",
+ "title": "Writing back a record field",
+ "statement": "Let $M$ be a deterministic machine with $k$ Boolean work tapes, let $\\mathrm{upd}:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$, and let $\\mathrm{seek}$ be a two-tape Boolean machine with state set $S$ and designated states $\\mathrm{start},\\mathrm{finish}$. Let $d$ be a four-tape configuration over the record alphabet, and let $f_s$ be a list of fields whose length is $k+3$ and which are stored on tape $0$ of $d$ in the sense that the record-tape contents agree with the joined fields at every specified offset. For any recording data, there is a time $t\\le 4(k+2)(L+1)$, where $L$ is the length of the joined fields, such that the recording machine runs from the snapshot at the beginning of the backward write pass, with the designated field offset and empty auxiliary buffers, to the snapshot in its true-verdict state. Before the final step it visits neither the true nor false verdict state, and all work-tape heads remain within distance $L+1$ of their initial positions.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$ and $Q,T,S$ are types with decidable equality",
+  "$M$ is a deterministic machine with $k$ Boolean work tapes",
+  "$\\mathrm{upd}:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$\\mathrm{seek}$ is a two-tape Boolean machine with state set $S$",
+  "Designated states $\\mathrm{start},\\mathrm{finish}:S$",
+  "$d$ is a four-tape configuration over the record alphabet",
+  "$f_s$ is a list of record-symbol fields",
+  "The number of fields is $k+3$",
+  "The fields are represented on tape $0$ of $d$ by the stated record relation",
+  "$data$ is recording data"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion uses the formal snapshot construction and record relation; the prose summarizes their tape contents and positions while preserving the stated time and head-distance bounds.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

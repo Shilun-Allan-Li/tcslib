@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.oracleSourceCfg",
+ "key": "0b9abf12372e77f0",
+ "kind": "def",
+ "title": "Oracle source configuration",
+ "statement": "Given a finite Boolean oracle Turing machine $M$ with $k$ ordinary work tapes and a finite Boolean Turing machine $C$ with $c$ work tapes, let $x$ be a finite Boolean input, let $u$ be a configuration of $M$ on $x$ (including its query tape), and let $s\\in\\{\\mathrm{false},\\mathrm{true}\\}$. The oracle source configuration associated to $M,C,u,s$ is a configuration on input $x$ for a machine with $(k+2)+(c+1)+1$ work tapes and state set $M.\\mathrm{State}\\times\\{\\mathrm{false},\\mathrm{true}\\}$, obtained by embedding the shadow of $u$ on side $s$, with all auxiliary tapes blank, their heads at position $0$, and the output empty.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean oracle Turing machine",
+  "$C$ is a finite Boolean Turing machine",
+  "$x$ is a finite Boolean input",
+  "$u$ is a configuration of $M$ on $x",
+  "$s$ is a Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

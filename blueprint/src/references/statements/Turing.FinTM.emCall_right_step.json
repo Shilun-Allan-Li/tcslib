@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emCall_right_step",
+ "key": "b81102b4e359c083",
+ "kind": "lemma",
+ "title": "One-Step Simulation of the Wrapper",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be a live configuration of $M$ on input $x$. One step of the right-boundary wrapper from the embedding of $c$ equals the embedding of the source machine's one-step successor of $c$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$c$ is live"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a live configuration of the source machine. One step of the right-boundary\nwrapper from the embedding of $c$ equals the embedding of the one-step successor of $c$,\nincluding any halting emission; only the successor control encoding differs."
+}

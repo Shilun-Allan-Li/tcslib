@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.noiseSensitivity_mono",
+ "key": "982ce33aba49c844",
+ "kind": "lemma",
+ "title": "Monotonicity of noise sensitivity",
+ "statement": "Let $n$ be a nonnegative integer, let $f\\colon\\{0,1\\}^n\\to\\mathbb R$, and let $\\delta,\\delta'\\in\\mathbb R$ satisfy $\\delta\\leq\\delta'\\leq\\tfrac12$. Then $$\\operatorname{NS}_{\\delta}(f)\\leq\\operatorname{NS}_{\\delta'}(f),$$ where $\\operatorname{NS}_{u}(f)=\\bigl(1-\\operatorname{Stab}_{1-2u}(f)\\bigr)/2$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$f\\colon\\{0,1\\}^n\\to\\mathbb R$",
+  "$\\delta,\\delta'\\in\\mathbb R$",
+  "$\\delta\\leq\\delta'$",
+  "$\\delta'\\leq\\tfrac12$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n\\in\\mathbb N$, $f:\\{0,1\\}^{n}\\to\\mathbb R$ and real $\\delta\\leq\\delta'\\leq1/2$, with no lower bound on either rate, one has $\\operatorname{NS}_{\\delta}(f)\\leq\\operatorname{NS}_{\\delta'}(f)$, where the total real-valued extension is\n\\[\n\\operatorname{NS}_{t}(f)=\\frac{1-\\sum_{S\\subseteq\\{1,\\ldots,n\\}}(1-2t)^{|S|}\\widehat f(S)^2}{2},\n\\qquad\n\\widehat f(S)=2^{-n}\\sum_{x\\in\\{0,1\\}^{n}}f(x)\\prod_{i\\in S}(-1)^{x_i}.\n\\]"
+}

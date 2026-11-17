@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.setupCfg_layout_prefix",
+ "key": "2794a05bc267ecea",
+ "kind": "lemma",
+ "title": "Prefix of an outward allocation pass",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B,j\\in\\mathbb{N}$, and choose a schedule-symbol input, a base configuration, a valid input-head position, an integer budget-head position, and tapes $\\beta,\\gamma$. Assume $j\\le 3B$ and that $\\gamma$ carries the origin mark exactly at coordinate $0$. After $j$ steps from allocation index $0$, with unary head at $1$ over the unary tape with $B$ markers and guide head at $0$, the allocation index is $j$ modulo $3$, the unary head is at $\\lfloor j/3\\rfloor+1$, and the guide head is at $j$ in the rightward direction or $-j$ in the leftward direction; the guide tape is the result of filling $j$ cells of $\\gamma$ in that direction.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over Booleans",
+  "a, B, and j are natural numbers",
+  "base is a configuration on the chosen input",
+  "p is a valid input-head position",
+  "b is an integer budget-head position",
+  "bt and gt are guide-related tapes",
+  "j ≤ 3B",
+  "gt has the origin mark exactly at coordinate 0",
+  "right specifies either direction"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma$ be a guide tape carrying the origin mark exactly at cell $0$, and let\n$j \\le 3B$.  From layout phase $0$ (of either direction) with unary head at cell $1$\nover the unary tape with $B$ markers and guide head at cell $0$ over $\\gamma$, exactly\n$j$ steps lead to layout phase $j \\bmod 3$ with unary head at\n$\\lfloor j/3 \\rfloor + 1$, guide head at $\\pm j$, and guide tape the $j$-cell filled\nversion of $\\gamma$: the elapsed time equals the number of written guide cells, and the\nunary head moves once every three cells."
+}

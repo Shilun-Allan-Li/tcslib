@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satSplitClause_vars",
+ "key": "220b399fa45899b1",
+ "kind": "lemma",
+ "title": "Variable Bound After Clause Splitting",
+ "statement": "Let $C$ be a clause over natural-number variables and let $n\\in\\mathbb{N}$. If every variable index occurring in $C$ is less than $n$, then every variable index in every clause of the formula obtained by splitting $C$ at $n$ is less than the cursor returned by that split.",
+ "hypotheses_covered": [
+  "Clause $C$ over natural-number variables",
+  "Cursor $n\\in\\mathbb{N}$",
+  "Every variable index in $C$ is less than $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every variable index of a clause $C$ is below the cursor $n$, then every\nvariable index occurring in the formula obtained by splitting $C$ at $n$ is below\nthe returned cursor."
+}

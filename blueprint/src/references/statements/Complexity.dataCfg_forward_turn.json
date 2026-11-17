@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.dataCfg_forward_turn",
+ "key": "cbd49d7798577b38",
+ "kind": "lemma",
+ "title": "Forward Scan Boundary Turn",
+ "statement": "Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural number, and let $x$ be a schedule-alphabet input. Suppose the base guide tape equals the guide of radius $R$. From the forward phase with guide head at $R+1$, one simulator step enters the backward phase with guide head at $R$ and resets every neighbor register to the blank payload; the state, answer bit, saved reads, data tapes, and output are unchanged.",
+ "hypotheses_covered": [
+  "$W,M$ are finite machines over Boolean symbols",
+  "$a\\in\\mathbb N$",
+  "$x$ is a schedule-alphabet input",
+  "the base guide tape equals the guide of radius $R$",
+  "the initial phase is forward with guide head at $R+1",
+  "the initial state, answer bit, saved reads, neighbor registers, tapes, and output are arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$.  From the\nforward phase with guide head at $R + 1$, one simulator step enters the backward\nphase at position $R$, resets every neighbor register to the blank payload, and\nleaves the saved state, answer bit, reads, data tapes, and output unchanged."
+}

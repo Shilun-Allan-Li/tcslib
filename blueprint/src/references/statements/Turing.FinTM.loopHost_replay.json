@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_replay",
+ "key": "6a76fb18229a83ed",
+ "kind": "lemma",
+ "title": "Replay of a captured word",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, let $m$ be a Boolean mode, and let $x,w,o$ be Boolean words. Fix an input-head position $p$ among the $|x|+2$ positions, and arbitrary contents and head positions for the body, flag, and fuel tapes. Starting the loop host in phase thirteen with its payload tape holding $w$ and its head at cell zero, its input head at $p$, and output $o$, after exactly $|w|+1$ steps it is halted, has output $o w$, and has payload tape holding $w$ with its head at cell $|w|$; the input head and all the other tapes and their heads are unchanged.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines B and F",
+  "anchor state of B",
+  "Boolean mode",
+  "Boolean input, payload word, and output prefix",
+  "input-head position among |x|+2 positions",
+  "arbitrary contents and head positions of body, flag, and fuel tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a captured word, let an output prefix and arbitrary completed body and fuel\ntapes with their head positions be given, and consider the loop host in its replay phase\nwith the payload head at cell zero of the buffer tape of $w$. After running the host for\nexactly $|w| + 1$ steps, the host is halted, its output is extended by exactly $w$, and\nthe stored word, all inactive tapes, and all inactive heads are unchanged."
+}

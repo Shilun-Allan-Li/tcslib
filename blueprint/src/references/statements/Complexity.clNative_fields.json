@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clNative_fields",
+ "key": "ed0729d3d79834e6",
+ "kind": "lemma",
+ "title": "Polynomial-time packing of function values",
+ "statement": "Let $\\mathrm{fs}$ be a finite list of functions from binary words to binary words, and suppose every function in the list is polynomial-time computable. Then the function sending an input $x$ to the packed encoding of the list of values of those functions at $x$, in list order, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$\\mathrm{fs}$ is a finite list of functions from binary words to binary words",
+  "every function in $\\mathrm{fs}$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every function in a finite list of string functions is polynomial-time computable, then so is the function sending an input $x$ to the packed self-delimiting encoding of the list of their values at $x$; all repeated input scans are charged by composition."
+}

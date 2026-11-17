@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.transducer_run",
+ "key": "61971eea1ead7399",
+ "kind": "theorem",
+ "title": "Run of a transducer on a suffix",
+ "statement": "Let $\\sigma$ be a finite set, let $\\delta : \\sigma \\times \\{0,1\\} \\to \\sigma$ and $o : \\sigma \\times \\{0,1\\} \\to \\{0,1\\} \\cup \\{\\bot\\}$ be transition and emission functions, and let $q_0 \\in \\sigma$. For every input word $x$, suffix $l$, state $q$, configuration $C$ on input $x$, and integer $i$ such that $l$ is the suffix of $x$ obtained by dropping its first $i$ symbols, $i \\le |x|$, $C$ is in state $q$, and its input head is at position $i+1$, running the machine determined by $\\delta,o,q_0$ from $C$ for $|l|+1$ steps reaches the halting state. Its output is the initial output of $C$ followed by the word emitted by reading $l$ from state $q$.",
+ "hypotheses_covered": [
+  "Finite state set $\\sigma$",
+  "Transition function $\\delta$",
+  "Emission function $o$",
+  "Start state $q_0$",
+  "Input word $x$",
+  "Suffix $l=x.drop(i)$",
+  "State $q$",
+  "Configuration $C$ on input $x$",
+  "Bound $i\\le |x|$",
+  "Configuration state is $q$",
+  "Input head position is $i+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\sigma$ be a finite set of states, $\\delta : \\sigma \\times \\{0,1\\} \\to \\sigma$,\n$o : \\sigma \\times \\{0,1\\} \\to \\{0,1\\} \\cup \\{\\bot\\}$ and $q_0 \\in \\sigma$, and let $M$ be\nthe binary Turing machine with no work tapes, state set $\\sigma$ and start state $q_0$ that,\nin state $p$ reading an input bit $b$, appends $o(p,b)$ to its output (nothing if\n$o(p,b) = \\bot$), moves its input head one cell right and enters $\\delta(p,b)$, and that\nhalts on reading a blank. Let $x = x_0 x_1 \\cdots x_{n-1} \\in \\{0,1\\}^*$, let\n$0 \\le i \\le n$, let $w = x_i x_{i+1} \\cdots x_{n-1}$ be the suffix of $x$ starting at\nposition $i$, and let $C$ be any configuration of $M$ on input $x$ that is in state\n$q \\in \\sigma$ with its input head on the cell holding $x_i$ (on the blank just right of\nthe input when $i = n$). Then running $M$ for $|w| + 1$ steps from $C$ reaches the halting\nstate, and the output tape then holds the output of $C$ followed by\n$\\tau_{\\delta,o}(q, w)$, where $\\tau_{\\delta,o}(q, w)$ denotes the word emitted by reading\n$w$ from left to right starting in state $q$, each bit $b$ read in state $p$ emitting\n$o(p,b)$ (or nothing) and moving to $\\delta(p,b)$."
+}

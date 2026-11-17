@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.OracleTM.runFrom_workTapes_invariant",
+ "key": "8778e96bed08c3b4",
+ "kind": "lemma",
+ "title": "Locality bounds for initialized oracle runs",
+ "statement": "Let $M$ be an oracle machine with $k$ ordinary work tapes, let $O$ be a language over its symbol alphabet, and let $x$ be an input word. For every $t\\in\\mathbb{N}$, in the configuration reached after $t$ steps from the initial configuration on $x$, every work-tape head has position of absolute value at most $t$, and every cell $z$ of every one of the $k+1$ work tapes is blank whenever $t\\le |z|$.",
+ "hypotheses_covered": [
+  "An oracle machine $M$ with $k$ ordinary work tapes",
+  "An oracle language $O$ over the symbol alphabet",
+  "An input word $x",
+  "For every natural number $t$",
+  "Every work-tape head has absolute position at most $t$",
+  "Every cell $z$ with $t\\le |z|$ is blank on every work tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be an oracle machine with $k$ ordinary work tapes, $O$ an oracle\nlanguage, and $x$ an input word.  Then for every $t \\in \\mathbb{N}$, in the\nconfiguration reached by running $M$ with oracle $O$ for $t$ steps from its\ninitial configuration on $x$: every one of the $k+1$ work heads is at a\nposition of absolute value at most $t$, and every work-tape cell at an integer\nposition $z$ with $t \\le \\abs{z}$ is blank."
+}

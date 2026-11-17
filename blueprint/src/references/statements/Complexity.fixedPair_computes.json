@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.fixedPair_computes",
+ "key": "fb80f730703d3fbc",
+ "kind": "lemma",
+ "title": "Running time of fixed-string pairing",
+ "statement": "Let $\\alpha$ be a finite binary string. There is a finite binary-alphabet Turing machine that, on every binary input $x$, outputs the string formed by doubling each bit of $x$, then appending $01$ and $\\alpha$, and halts within $2|\\alpha|+|x|+3$ steps.",
+ "hypotheses_covered": [
+  "Finite binary string $\\alpha$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha = \\alpha_1 \\cdots \\alpha_m$ be a binary string, and for a binary\nstring $x$ let $\\langle \\alpha, x \\rangle = \\alpha_1\\alpha_1 \\cdots\n\\alpha_m\\alpha_m\\,0\\,1\\,x$ be the pairing encoding ($\\alpha$ with every bit\ndoubled, then the separator $01$, then $x$). The machine with no work tapes that\nfirst emits the fixed word $\\alpha_1\\alpha_1 \\cdots \\alpha_m\\alpha_m\\,01$ one bit\nper step and then copies its input bit by bit, halting at the first blank,\nhalts on every input $x$ within $2|\\alpha| + |x| + 3$ steps with output\n$\\langle \\alpha, x \\rangle$."
+}

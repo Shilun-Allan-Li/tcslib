@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.pairDup_computes",
+ "key": "c7bf399c6b868ddb",
+ "kind": "lemma",
+ "title": "Time bound for pair duplication",
+ "statement": "For every finite bit string $x$, the duplicator machine halts after exactly $4(|x|+1)$ steps and outputs the encoding consisting of each bit of $x$ repeated twice, followed by $01$ and then $x$.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On every input $x$ the duplicator halts within $4(\\abs{x}+1)$ steps with\noutput the self-delimiting pair code of $(x,x)$: each bit of $x$ doubled, then\nthe separator bits $0,1$, then $x$."
+}

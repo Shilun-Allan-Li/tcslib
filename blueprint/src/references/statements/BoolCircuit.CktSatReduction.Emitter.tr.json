@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.CktSatReduction.Emitter.tr",
+ "key": "f5617e95150595bb",
+ "kind": "def",
+ "title": "Emitter transition function",
+ "statement": "Define the machine’s one-step transition as follows. In a reading state, it uses the current phase and input symbol to decide whether to halt, advance the phase, mark a work tape, or begin emitting the gate’s Tseitin clauses. In an emission state, it processes the next instruction in the gate’s clause program: output instructions emit their Boolean value, while print instructions move the indicated work-tape head through the write and boundary-check states; when the program ends, the machine clears the designated work-tape cells and advances to the gate-reading phase. The cleanup and increment states perform those respective tape actions and return to reading the gate phase.",
+ "hypotheses_covered": [
+  "current state is one of the defined emitter states",
+  "input symbol is optional Boolean",
+  "work-tape symbols are given for each of the three tapes"
+ ],
+ "confidence": "low",
+ "caveat": "This summary describes the transition’s phases, but does not enumerate every branch condition and state update in the definition.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

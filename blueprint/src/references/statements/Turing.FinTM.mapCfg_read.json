@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.mapCfg_read",
+ "key": "4f91594bb4f40eb9",
+ "kind": "lemma",
+ "title": "Input symbol at an interior position",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be a configuration of $M$ on $x$. For any natural number $i\\leq |x|$, any controller state, any integer capture-head displacement, and any output word, the threaded-map configuration with input head at position $i+1$ reads the $i$-th bit of $x$, or no symbol if $i=|x|$.",
+ "hypotheses_covered": [
+  "M is a finite Boolean Turing machine",
+  "x is a Boolean word",
+  "c is an M-configuration on x",
+  "i is a natural number at most the length of x",
+  "the controller state is arbitrary",
+  "the capture-head displacement is an arbitrary integer",
+  "the output word is arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In a threaded-map configuration whose input head has passed $i \\le \\abs{x}$\ncells, the symbol read is the $i$-th bit of $x$ (the blank when\n$i = \\abs{x}$), independently of the preserved bank."
+}

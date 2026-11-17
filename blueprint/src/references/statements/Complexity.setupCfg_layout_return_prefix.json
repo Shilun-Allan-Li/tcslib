@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.setupCfg_layout_return_prefix",
+ "key": "faaf19601695a188",
+ "kind": "lemma",
+ "title": "Prefix of the return sweep",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\\in\\mathbb{N}$, and let $x$ be a word over the schedule alphabet. Fix a base configuration on $x$, an input-head position $p$, an integer budget-head position $b$, arbitrary budget and guide tapes, and natural numbers $B,j$ with $j\\le 3B$. Starting in layout-return phase $0$ with unary head at $B$, unary tape containing $B$ markers, and guide head at $3B$, after $j$ steps the machine is in layout-return phase $j\\bmod 3$, with unary head at $B-\\lfloor j/3\\rfloor$ and guide head at $3B-j$; the other configuration data, including all tape contents, are unchanged.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Booleans",
+  "$a\\in\\mathbb{N}$",
+  "$x$ is a schedule-alphabet word",
+  "a base configuration on $x$",
+  "an input-head position $p$",
+  "an integer budget-head position $b$",
+  "arbitrary budget and guide tapes",
+  "$B,j\\in\\mathbb{N}$",
+  "$j\\le 3B$",
+  "initial layout-return phase is $0$",
+  "initial unary head is at $B$ on the unary tape with $B$ markers",
+  "initial guide head is at $3B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $j \\le 3B$.  From layout-return phase $0$ with unary head at cell $B$ over the\nunary tape with $B$ markers and guide head at cell $3B$ (over an arbitrary guide tape),\nexactly $j$ steps lead to layout-return phase $j \\bmod 3$ with unary head at\n$B - \\lfloor j/3 \\rfloor$ and guide head at $3B - j$; no tape is written and all guide\nmarks are unchanged."
+}

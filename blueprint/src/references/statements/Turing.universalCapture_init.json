@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalCapture_init",
+ "key": "39e6ac55fad0a634",
+ "kind": "lemma",
+ "title": "Initialization of the capture wrapper",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $D$ be a four-work-tape Turing machine over the Boolean alphabet with a finite state set, and let $x$ be a finite Boolean word. The initial configuration of the output-capture wrapper built from $M$ and $D$ on input $x$ is equal to the first-phase configuration associated with the initial configuration of $M$ on $x$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over the Boolean alphabet",
+  "$D$ is a four-work-tape Turing machine over the Boolean alphabet",
+  "$D$ has a finite state set",
+  "$x$ is a finite Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine $M$, four-tape interpreter $D$, and input $x$, the initial\nconfiguration of the output-capture wrapper of $M$ and $D$ on $x$ coincides\nwith the first-phase embedding of the initial configuration of $M$ on $x$:\nblank table tape, blank interpreter tapes, and empty output."
+}

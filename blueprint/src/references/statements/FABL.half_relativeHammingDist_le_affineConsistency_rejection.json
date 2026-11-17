@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.half_relativeHammingDist_le_affineConsistency_rejection",
+ "key": "ef1d29fa8a1002ce",
+ "kind": "theorem",
+ "title": "Affine-Consistency Rejection Bound",
+ "statement": "Let $n$ be a positive natural number, let $f:\\mathbb F_2^n\\to\\{\\pm1\\}$, and let $p:\\{0,1\\}^n\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a proof table whose induced sign-valued function on $\\mathbb F_2^n$ equals $f$. Let $w,w_0$ be Boolean strings of length $n$, and suppose that for every coordinate $i$, the local correction of $f$ in direction $e_i$ equals the sign encoded by $w_0(i)$ with probability at least $1/2$ under a uniform choice of the cube point. The affine-consistency tester samples a uniform coordinate and cube point, queries the corresponding input bit and the proof at that point and its translate by $e_i$, and accepts when the three encoded signs satisfy the affine consistency equation. Its rejection probability on the input formed from $w$ and $p$ is at least one half the relative Hamming distance between $w$ and $w_0$.",
+ "hypotheses_covered": [
+  "$n$ is positive",
+  "$f$ is a sign-valued function on $\\mathbb F_2^n$",
+  "The proof table is Boolean and has length $2^n$",
+  "The proof table induces the function $f$",
+  "$w$ and $w_0$ are Boolean strings of length $n$",
+  "Every coordinate's correction probability for $w_0(i)$ is at least $1/2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

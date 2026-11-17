@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Codec.foldl_adStep_partial",
+ "key": "23a07048839948e3",
+ "kind": "lemma",
+ "title": "Processing a partial buffer segment",
+ "statement": "Let $\\sigma$ and $\\alpha$ be types, let $w,j$ be natural numbers, let $\\delta : \\sigma \\to \\mathrm{List}(\\alpha) \\to \\sigma$, and let $l$ be a list over $\\alpha$. Suppose $j+|l|\\le w$. Starting from state $s$, position $j$, and any buffer of $w+1$ entries, folding the update operation over $l$ leaves the state equal to $s$ and advances the position to $j+|l|$. There is a resulting buffer whose entry at each position $t$ with $j\\le t<j+|l|$ is the entry of $l$ at index $t-j$.",
+ "hypotheses_covered": [
+  "$\\sigma,\\alpha$ are types",
+  "$w,j$ are natural numbers",
+  "$\\delta : \\sigma \\to \\mathrm{List}(\\alpha) \\to \\sigma$",
+  "$s$ is an element of $\\sigma$",
+  "$l$ is a list over $\\alpha$",
+  "$j+|l|\\le w$",
+  "the initial buffer maps the $w+1$ positions to elements of $\\alpha$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

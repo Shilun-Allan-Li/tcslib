@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_swap_samples",
+ "key": "d0cc98228589cb0d",
+ "kind": "theorem",
+ "title": "Exchange of product samples",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate weights summing to $1$, and let $S\\subseteq\\{0,\\ldots,n-1\\}$. For any function $F$ of two product outcomes, the expectation over independent $x,y$ drawn from $P$ of $F$ evaluated on the pair that uses $x_i,y_i$ on $S$ and $y_i,x_i$ off $S$ equals the expectation of $F(x,y)$ over independent $x,y$ drawn from $P$.",
+ "hypotheses_covered": [
+  "A finite product of n coordinate probability spaces",
+  "Strictly positive coordinate weights",
+  "Each coordinate's weights sum to 1",
+  "S is a subset of the coordinate indices",
+  "F is a real-valued function of two product outcomes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $S\\subseteq[n]$, and $F:\\Omega\\times\\Omega\\to\\mathbb R$, where $\\Omega=\\prod_i\\Omega_i$. For independent $X,Y\\sim P$, let $X\\mathbin{\\star_S}Y$ keep $X_i$ on $S$ and $Y_i$ elsewhere; then $\\mathbb E F(X\\mathbin{\\star_S}Y,Y\\mathbin{\\star_S}X)=\\mathbb EF(X,Y)$."
+}

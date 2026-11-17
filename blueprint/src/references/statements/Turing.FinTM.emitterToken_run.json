@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterToken_run",
+ "key": "d829444da62d7599",
+ "kind": "lemma",
+ "title": "Token encoder run",
+ "statement": "Let $x,r$ be Boolean words. For every prefix $p$ and prior output $o$ such that $x=pr$, starting the token encoder in its token-scanning state just after $p$, with output $o$, it halts after exactly $2|a|+|b|+3$ steps with output $o$ followed by the self-delimiting encoding of $(a,b)$, where $(a,b)$ is the leading unary token and remainder obtained by splitting $r$.",
+ "hypotheses_covered": [
+  "$x,r$ are Boolean words",
+  "$p$ is a Boolean word",
+  "$o$ is a Boolean word",
+  "$x$ is the concatenation of $p$ and $r$",
+  "The initial scan position is $|p|$ and is within the input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the unconsumed input $r$ split at its leading unary token into the\ntoken $a$ (the maximal leading run of ones with its terminating zero, if\npresent) and the remainder $b$. Then, after any consumed prefix and prior\noutput $o$, exactly $2\\abs{a} + \\abs{b} + 3$ steps of the token encoder\nhalt with output $o$ followed by the self-delimiting pair encoding of\n$(a, b)$, the final step being the blank-reading halt."
+}

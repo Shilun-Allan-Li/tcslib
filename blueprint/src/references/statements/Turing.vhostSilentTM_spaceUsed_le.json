@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.vhostSilentTM_spaceUsed_le",
+ "key": "1cec076d5dca38fc",
+ "kind": "theorem",
+ "title": "Space bound for the silent simulation",
+ "statement": "Let $M$ be a Boolean-symbol Turing machine with $m$ work tapes, and let $c$ be a configuration of $M$ on input $y$. Let $b$ be a Boolean tag such that the input-head position of $c$ is $0$ only if $b$ is false, and is $|y|+1$ only if $b$ is true. For any Boolean word $x$, any input-head position $p$ among the $|x|+2$ positions, any Boolean lists $u$ and $v$, and any $t\\in\\mathbb{N}$, the total number of distinct cells visited by the work-tape heads of the silent simulation of $M$ from the configuration built from $c,b,p,u,v$, through time $t$, is at most the number visited by $M$ from $c$ through time $t$, plus $|y|+2+|u\\mathbin{++}(M\\text{'s output after }t\\text{ steps from }c)|+1$.",
+ "hypotheses_covered": [
+  "Boolean-symbol machine $M$ with $m$ work tapes",
+  "Configuration $c$ of $M$ on input $y$",
+  "Boolean tag $b$ satisfying the two boundary implications for $c$'s input-head position",
+  "Boolean word $x$ and input-head position $p$ among its $|x|+2$ positions",
+  "Boolean lists $u$ and $v$",
+  "Time $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

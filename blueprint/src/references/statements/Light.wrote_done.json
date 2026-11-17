@@ -1,0 +1,14 @@
+{
+ "lean_name": "Light.wrote_done",
+ "key": "c42f953587b04445",
+ "kind": "theorem",
+ "title": "Values at Written Indices",
+ "statement": "Let $\\mu,f:\\mathbb{N}\\to\\mathbb{Z}$ and $d,j,i\\in\\mathbb{N}$, with $i<j$. After writing the first $j$ values of $f$ into $\\mu$ starting at $d$, the value at index $d+i$ is $f(i)$.",
+ "hypotheses_covered": [
+  "i < j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu,f:\\mathbb{N}\\to\\mathbb{Z}$ and let $d,j,i\\in\\mathbb{N}$ with $i<j$. Define a\nfunction by replacing $\\mu(a)$ with $f(a-d)$ for indices $a$ in the interval $d\\le\na<d+j$. Its value at $d+i$ is $f(i)$."
+}

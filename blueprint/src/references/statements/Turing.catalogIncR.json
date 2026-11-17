@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.catalogIncR",
+ "key": "596c2ed6791787eb",
+ "kind": "def",
+ "title": "Rewind Increment Configuration",
+ "statement": "Given a positive number $k$ of work tapes, a designated work tape, a configuration in the run, rewind, or done phase, natural numbers $p$ and $r$, and an optional finite Boolean word $t$, the resulting configuration has state rewind carrying true exactly when $t$ is present. On the designated tape it applies the catalog tape operation at the current head position to the word consisting of $p$ zeros, followed by a one and $t$ if $t$ is present (and no further symbols otherwise); its head position is increased by $r-1$. The other tapes and configuration fields are unchanged.",
+ "hypotheses_covered": [
+  "A natural number of work tapes",
+  "A designated work tape",
+  "A configuration in one of the three flag phases",
+  "Natural numbers $p$ and $r$",
+  "An optional finite Boolean word"
+ ],
+ "confidence": "low",
+ "caveat": "The definition of the catalog tape operation is not included, so the resulting tape contents cannot be stated more concretely.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

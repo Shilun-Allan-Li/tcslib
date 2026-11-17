@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.P_subset_NP",
+ "key": "9974456c8f7446d4",
+ "kind": "theorem",
+ "title": "Polynomial time is contained in nondeterministic polynomial time",
+ "statement": "Every language in $\\mathsf{P}$ belongs to $\\mathsf{NP}$, where membership in $\\mathsf{NP}$ means that there are natural numbers $C,c$ and a verifier language $V\\in\\mathsf{P}$ such that, for each binary string $x$, membership of $x$ is equivalent to the existence of a binary certificate $u$ of length exactly $C(|x|+1)^c$ for which the concatenation $xu$ belongs to $V$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every language $L \\subseteq \\{0,1\\}^{*}$ decidable in polynomial time belongs to\n$\\mathsf{NP}$; that is, for every $L \\in \\mathsf{P}$ there exist\n$C, c \\in \\mathbb{N}$ and a language $V \\in \\mathsf{P}$ such that for every binary\nstring $x$, $x \\in L$ if and only if some $u \\in \\{0,1\\}^{*}$ with\n$|u| = C \\cdot (|x|+1)^c$ has $xu \\in V$."
+}

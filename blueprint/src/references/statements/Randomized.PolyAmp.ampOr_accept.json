@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.PolyAmp.ampOr_accept",
+ "key": "d2807b976c946285",
+ "kind": "theorem",
+ "title": "Acceptance test for reachable configurations",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine over Booleans, let $x$ be a Boolean input, and let $S\\in\\mathbb{N}$. Suppose there is a function $sp:\\mathbb{N}\\to\\mathbb{N}$ such that every run of $N$ on every Boolean input $y$ under every choice word uses at most $sp(|y|)$ work-tape cells, and suppose $sp(|x|)\\le S$. If $C$ is a configuration whose core data and output summary agree with those of some configuration reached by running $N$ from its initial configuration on $x$ under a choice word, then the Boolean indicator of the acceptance-configuration language, evaluated on the encoding of $x$, the code of $C$ at space bound $S$, and $S$, is true exactly when $C$ is halted with output exactly $[\\mathrm{true}]$.",
+ "hypotheses_covered": [
+  "N is a finite-state nondeterministic Turing machine over Booleans",
+  "x is a Boolean input",
+  "S is a natural number",
+  "There is a function sp bounding space used on every input and choice word by input length",
+  "sp(|x|) is at most S",
+  "C is reachable up to equality of core data and output summary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.rt_position_run",
+ "key": "73545f5d5c791ec9",
+ "kind": "theorem",
+ "title": "Writing a marked word on a tape",
+ "statement": "Let $m$ be a natural number, let $\\Gamma$ be an alphabet, and let $x$ be an input word. Choose distinct work tapes $\\mathrm{src},\\mathrm{dst}$, symbols $\\mathrm{zero},\\mathrm{one}\\in\\Gamma$, and a nonempty word $w\\in\\Gamma^*$. Suppose a configuration $d$ starts in the copy phase, tape $\\mathrm{src}$ agrees with the buffered word $w$ at every offset from $-1$ through $|w|$, and tape $\\mathrm{dst}$ is blank at those offsets. After $4|w|+10$ steps, the machine is in its final phase and tape $\\mathrm{dst}$ contains $\\mathrm{one}$ followed by $|w|-1$ copies of $\\mathrm{zero}$ on the $|w|$ cells beginning at its original head position; all other cells and configuration data are unchanged. This phase is not reached earlier, and every work-tape head stays within distance $|w|+1$ of its initial position at all times up to and including that time.",
+ "hypotheses_covered": [
+  "$m$ work tapes and alphabet $\\Gamma$",
+  "distinct source and destination tape indices",
+  "symbols $\\mathrm{zero}$ and $\\mathrm{one}$",
+  "word $w$ has positive length",
+  "initial state is the copy machine's sweep phase",
+  "source tape agrees with the buffered word at offsets $-1$ through $|w|$",
+  "destination tape is blank at offsets $-1$ through $|w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

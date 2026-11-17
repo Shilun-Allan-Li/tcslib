@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2_copy_run",
+ "key": "a65940442519cdc8",
+ "kind": "lemma",
+ "title": "Copying a prefix under a choice word",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let $x$ and $w$ be Boolean words, and let $i$ be a natural number with $i+|w|\\le |x|$. Starting in copy state at input position $i+1$, with the first $i$ symbols of $x$ on the assembly buffer, running the host under choice word $w$ ends in copy state at input position $i+|w|+1$, with the first $i+|w|$ symbols of $x$ on the assembly buffer.",
+ "hypotheses_covered": [
+  "$S$ and $V$ are finite deterministic machines over Booleans",
+  "$x$ and $w$ are Boolean words",
+  "$i$ is a natural number",
+  "$i+|w|\\le |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $x$ an input, and $w$ any word of choice bits with $i + |w| \\le |x|$. Running the reverse host under $w$ from the copy-state loader configuration holding the first $i$ bits of $x$ yields the copy-state configuration holding the first $i + |w|$ bits, one bit copied per step regardless of the choices."
+}

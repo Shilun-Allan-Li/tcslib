@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.randomizationNorm_le_of_norm_le",
+ "key": "9ddec15b8d8dd204",
+ "kind": "theorem",
+ "title": "Averaging randomized norm bounds",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses, let $f,g$ be real-valued functions on its outcome space, and let $q>0$. If, for every $r\\in\\{0,1\\}^n$, the $q$-moment norm of the randomized expansion $R_rf$ is at most the $q$-moment norm of $g$, then the norm obtained by averaging $|R_rf(x)|^q$ over both $x$ under $P$ and uniform $r$ is at most the $q$-moment norm of $g$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space with strictly positive atom masses",
+  "$f,g$ are real-valued functions on the outcome space",
+  "$q>0$",
+  "For every Boolean sign vector $r$, $\\|R_rf\\|_{q,P}\\le\\|g\\|_{q,P}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $f,g:\\Omega\\to\\mathbb R$, and $q>0$. If $\\|R_rf\\|_{q,P}\\le\\|g\\|_{q,P}$ for every sign vector $r$, then $(\\mathbb E_{x\\sim P}\\mathbb E_r|R_rf(x)|^q)^{1/q}\\le\\|g\\|_{q,P}$, with uniform signs $r$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $\\chi_S(r)=\\prod_{i\\in S}(-1)^{r_i}$ for $r\\in\\{0,1\\}^n$; $R_rh=\\sum_{S\\subseteq[n]}\\chi_S(r)h_S$."
+}

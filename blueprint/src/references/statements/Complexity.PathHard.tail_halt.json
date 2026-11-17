@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.PathHard.tail_halt",
+ "key": "398e5b888297fa6f",
+ "kind": "theorem",
+ "title": "Halting in the tail phase",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean value, let $o$ be a function assigning a Boolean value to each index in ${0,1,2,3,4}$ and each finite Boolean word, and let $y$ be a finite Boolean word. For any fifteen-register configuration $st$ whose register values are all at most $B$, the abstract program started in its tail phase with register values given by $st$ and no result halts with answer $tailAns(m,st.i)$; every configuration strictly before halting satisfies the program guard.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean value",
+  "$o$ assigns Boolean values to indices in ${0,1,2,3,4}$ and finite Boolean words",
+  "$y$ is a finite Boolean word",
+  "$st$ is a fifteen-register configuration",
+  "every register value of $st$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean value, let $o$ assign a Boolean\nanswer to each of five possible indices and each Boolean string, and let $y$ be a\nBoolean string. For every fifteen-register configuration $st$ whose register values are\nall at most $B$, the abstract program started at its tail instruction with register\nvalues given by $st$ and no result halts with answer determined by $st.i$: the answer is\ntrue when $st.i=1$ or $st.i\\ge 3$, and is $m$ otherwise; every configuration before\nhalting satisfies the program guard."
+}

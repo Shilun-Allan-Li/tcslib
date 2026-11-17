@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.bridge_sub",
+ "key": "84ba61270069f85f",
+ "kind": "lemma",
+ "title": "Closure of Statement Support Under Substatements",
+ "statement": "Let $c$ be a partial-recursive program and let $q$ and $tail$ be compiled stack-machine statements. If the optional statement $some\\ q$ belongs to the finite statement support of the compilation of $c$, and $tail$ is an immediate substatement of $q$, then the optional statement $some\\ tail$ also belongs to that support.",
+ "hypotheses_covered": [
+  "A partial-recursive program $c$",
+  "Statements $q$ and $tail$",
+  "Membership of $some\\ q$ in the finite statement support",
+  "Membership of $tail$ among the immediate substatements of $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The finite statement support of a compiled program is closed under immediate\nsubstatements: if a statement belongs to the support and another statement occurs as\nan immediate constituent of it, the latter also belongs to the support."
+}

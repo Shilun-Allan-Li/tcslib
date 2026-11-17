@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.rwTape_none",
+ "key": "544f8b515ac5fb6f",
+ "kind": "theorem",
+ "title": "Rewinding a work tape at its blank cell",
+ "statement": "Let $E$ and $G$ be finite Turing machines over the Boolean alphabet, with $E$ having $r>0$ work tapes. Choose states $e_0,e_f$ of $E$ and $g_0,g_f$ of $G$, and let $x$ be a Boolean word. In the combined machine, if the state is the tape-rewinding state, the input head is at the right boundary blank cell, the first work-tape head is at position $-1$, every other work-tape head is at position $0$, the first work tape stores $x$ starting at cell $0$, and all other work tapes are blank, then one step leaves the input head and all work-tape contents and head positions unchanged, changes the state to the initial input-rewinding state, and leaves the output empty.",
+ "hypotheses_covered": [
+  "Finite Boolean-alphabet machines $E$ and $G$",
+  "$E$ has a positive number of work tapes",
+  "Chosen states $e_0,e_f$ of $E$ and $g_0,g_f$ of $G$",
+  "A Boolean input word $x$",
+  "The specified configuration: rewinding state, input head at $|x|+1$, first work-tape head at $-1$, other work-tape heads at $0$, first tape containing $x$ from cell $0$, remaining tapes blank, and output empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

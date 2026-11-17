@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.acceptTM_run",
+ "key": "3acefdc163928132",
+ "kind": "lemma",
+ "title": "Run correspondence for the halting recognizer",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $x$ be a finite binary string, and let $t\\in\\mathbb{N}$. After $t$ steps from its initial configuration on $x$, the halting recognizer has the configuration corresponding to the configuration reached by $M$ after $t$ steps on $x$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$x$ is a finite binary string",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state binary-alphabet Turing machine with state set $Q$, and\nlet $M^{\\mathrm{acc}}$ be its halting recognizer: same work tapes, states\n$(q,b) \\in Q \\times \\{0,1\\}$ plus a stationary loop state $\\ell$, start state\n$(q_0, 0)$, simulating $M$ with output suppressed and the last emitted bit\nrecorded, halting where $M$ halts with recorded bit $1$ and entering $\\ell$ where\nit halts with bit $0$. For every input $x$ and every $t \\in \\mathbb{N}$, the\nconfiguration of $M^{\\mathrm{acc}}$ after $t$ steps on $x$ has the same head\npositions and work-tape contents as the configuration $C_t$ of $M$ after $t$\nsteps on $x$, an empty output tape, and state $(q,b)$, halted, or $\\ell$\naccording as $C_t$ is in state $q$, halted with last output bit $1$, or halted\nwith last output bit $0$, where $b$ is the last output bit of $C_t$ ($0$ if\nnone)."
+}

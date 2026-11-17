@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Ends.iteLast",
+ "key": "774489be516184d4",
+ "kind": "theorem",
+ "title": "Bounded execution of a conditional",
+ "statement": "Fix a program environment, resource limits, and execution depth. Let $c$ be a condition safe in an initial state $\\sigma$, and let $s_1,s_2$ be statements. Suppose that if $c$ holds in $\\sigma$, then $s_1$ can execute from $\\sigma$ with cost at most $T-(\\mathrm{cost}(c)+1)$ to a state satisfying $Q$; suppose likewise that if $c$ does not hold, then $s_2$ can execute with that cost bound to a state satisfying $Q$. If $\\mathrm{cost}(c)+1\\le T$, the conditional with branches $s_1,s_2$ can execute from $\\sigma$ with cost at most $T$ to a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "If $c$ holds in $\\sigma$, branch $s_1$ has an execution of cost at most $T-(\\mathrm{cost}(c)+1)$ ending in a state satisfying $Q$",
+  "If $c$ does not hold in $\\sigma$, branch $s_2$ has an execution of cost at most $T-(\\mathrm{cost}(c)+1)$ ending in a state satisfying $Q$",
+  "The condition $c$ is safe in $\\sigma$",
+  "$\\mathrm{cost}(c)+1\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

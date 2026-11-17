@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.oracleDispatchCfg",
+ "key": "2d8d22500e210d2e",
+ "kind": "def",
+ "title": "Oracle dispatch configuration",
+ "statement": "Let $M$ be a finite Boolean oracle Turing machine and $C$ a finite Boolean Turing machine with $C$ having at least one work tape. For any Boolean input $x$, any configuration $c$ of $M$ on $x$, any side in $\\\\{\\\\mathrm{false},\\\\mathrm{true}\\\\}$, and any configuration $d$ with four work tapes and an oracle-dispatch state on $x$, the construction returns a configuration of $M.k+ C.k+3$ work tapes on $x$, with the oracle-dispatch state type, obtained by embedding the work-tape contents and head positions of the source configuration into the host tapes and taking the input-head position and state from $d$, with empty output.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean oracle Turing machine",
+  "$C$ is a finite Boolean Turing machine",
+  "$0<C.k$",
+  "$x$ is a list of Boolean symbols",
+  "$c$ is a configuration with $M.k+1$ work tapes and state type $M$'s",
+  "the side is a Boolean",
+  "$d$ is a configuration with four work tapes and oracle-dispatch states"
+ ],
+ "confidence": "low",
+ "caveat": "The statement relies on omitted definitions of the source configuration and embedding; their precise tape placement and which fields are inherited cannot be determined from the supplied snippet.",
+ "rubric": [
+  "anaphora",
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

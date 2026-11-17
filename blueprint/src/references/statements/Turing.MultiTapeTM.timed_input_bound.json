@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.MultiTapeTM.timed_input_bound",
+ "key": "4841fe2e24f11e9d",
+ "kind": "lemma",
+ "title": "Input-head position bound",
+ "statement": "Let $M$ be a deterministic multi-tape Turing machine, let $x$ be a fixed input word, and let $c$ be a configuration of $M$ on $x$ with input-head position $p$. For every $t\\in\\mathbb{N}$, the input-head position after running $M$ from $c$ for $t$ steps is at most $p+t$.",
+ "hypotheses_covered": [
+  "A deterministic multi-tape Turing machine",
+  "A configuration on a fixed input word",
+  "A natural number of steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine on an input word $x$, whose input-head\nposition ranges over $\\{0, 1, \\dots, |x| + 1\\}$, and let $c$ be a\nconfiguration of $M$ with input-head position $p$.  Then for every\n$t \\in \\mathbb{N}$, the input-head position in the configuration reached by\nrunning $M$ for $t$ steps from $c$ is at most $p + t$."
+}

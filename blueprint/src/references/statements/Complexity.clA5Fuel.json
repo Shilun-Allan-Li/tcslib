@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5Fuel",
+ "key": "fb9b40dcadc24f03",
+ "kind": "lemma",
+ "title": "Polynomially bounded emission fuel",
+ "statement": "For every finite Turing machine $M$ over the binary alphabet and all natural-number parameters $C,e,c,A,d$, the function $n\\mapsto n+(k+3)T(n)+k+1$ is polynomially bounded, where $k$ is the number of work tapes of $M$ and $T(n)=c\\bigl(A(n+C(n+1)^e+1)^d+1\\bigr)^2$. Moreover, the function sending a bit string $x$ to the little-endian binary representation of this quantity at $n=|x|$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "A finite Turing machine $M$ over the binary alphabet",
+  "Natural-number parameters $C,e,c,A,d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine and parameters, the last-round function of the input length is polynomially bounded, and the function sending an input to the binary representation of its last-round value is polynomial-time computable; the fuel is the last round index, read from an actual unary producer followed by the native binary length machine."
+}

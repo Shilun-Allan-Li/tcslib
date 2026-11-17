@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.argsEx",
+ "key": "f359858bef883957",
+ "kind": "lemma",
+ "title": "Halting during edge-list membership check",
+ "statement": "Let $n$ be a natural number, let $w,E$ be bit strings, and let $o$ be an oracle on bit strings. Suppose that on every encoding of a natural number $p$, the oracle returns the $p$th bit of $E$, defaulting to false beyond the end of $E$; suppose also that the input formed from $n$ and $w$ has edge target $(iv,tv)$. If $E$ has length at most $B$, then for every register state $p,c,a$ and suffix $r$ such that $E$ after position $p$ consists of the encoded list $as$ followed by $r$, and $c,a\\le B$, the edge-scanning machine started at its argument-list scan state halts with answer true exactly when $iv$ occurs in $as$.",
+ "hypotheses_covered": [
+  "Oracle answers on encoded natural numbers equal the corresponding E bit, defaulting to false",
+  "The input has edge target (iv,tv)",
+  "E.length ≤ B",
+  "E.drop p equals the encoding of as followed by rest",
+  "c ≤ B",
+  "a ≤ B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

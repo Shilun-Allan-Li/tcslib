@@ -1,0 +1,22 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_hypercontractivity",
+ "key": "7af84cde5775b2b8",
+ "kind": "theorem",
+ "title": "Hypercontractivity on Finite Product Spaces",
+ "statement": "Let $P$ be a finite product probability space with strictly positive coordinate weights, and let $\\lambda,q,\\rho\\in\\mathbb R$. Assume $0<\\lambda\\le1$, every coordinate atom has weight at least $\\lambda$, $q>2$, and $\\rho\\ge0$ with $\\rho\\le \\lambda^{1/2-1/q}/\\sqrt{q-1}$. Then every real-valued function $f$ on the product space satisfies both $\\|T_\\rho f\\|_{q,P}\\le\\|f\\|_{2,P}$ and $\\|T_\\rho f\\|_{2,P}\\le\\|f\\|_{q/(q-1),P}$.",
+ "hypotheses_covered": [
+  "Finite product probability space with strictly positive coordinate weights",
+  "Real parameters $\\lambda,q,\\rho$",
+  "$0<\\lambda$",
+  "$\\lambda\\le1$",
+  "Every coordinate atom has weight at least $\\lambda$",
+  "$q>2$",
+  "$\\rho\\ge0$",
+  "$\\rho\\le (q-1)^{-1/2}\\lambda^{1/2-1/q}$",
+  "Real-valued function $f$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$ with every coordinate atom at least $\\lambda$, where $0<\\lambda\\le1$, and let $q>2$. For $0\\le\\rho\\le\\lambda^{1/2-1/q}/\\sqrt{q-1}$ and every $f:\\Omega\\to\\mathbb R$, $\\|T_\\rho f\\|_{q,P}\\le\\|f\\|_{2,P}$ and $\\|T_\\rho f\\|_{2,P}\\le\\|f\\|_{q/(q-1),P}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

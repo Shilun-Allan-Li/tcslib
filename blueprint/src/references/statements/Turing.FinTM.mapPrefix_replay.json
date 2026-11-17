@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.mapPrefix_replay",
+ "key": "01213ab337357eb7",
+ "kind": "lemma",
+ "title": "Replay of the encoded prefix",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x,a,b$ be Boolean words, let $c$ be a configuration of $M$ on $x$, and suppose $x=\\mathrm{pre}\\,\\langle a,b\\rangle$, where $\\mathrm{pre}$ is a Boolean word and $\\langle a,b\\rangle$ is the self-delimiting pair encoding. For every prior output word $\\mathrm{out}$, there is a valid input-head position $p$ such that, from the emitting pair-reading state at position $|\\mathrm{pre}|+1$, with capture head at displacement $0$ and output $\\mathrm{out}$, after $2|a|+2$ steps the controller is in the payload-replay state with capture head at displacement $0$ and output $\\mathrm{out}$ followed by the encoding of $a$ paired with the empty word.",
+ "hypotheses_covered": [
+  "M is a finite Boolean Turing machine",
+  "x, a, and b are Boolean words",
+  "c is an M-configuration on x",
+  "x is pre followed by the pair encoding of a and b",
+  "pre is a Boolean word",
+  "out is an arbitrary Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input splits as $x = p$ followed by the pair encoding of $(a,b)$, then\nfrom the controller's emitting parse state at position $\\abs{p}$ with prior\noutput $o$, exactly $2\\abs{a} + 2$ steps emit the doubled word $a$ and the\nseparator bits $0,1$, and enter the captured-payload replay state with the\ncapture head still at displacement $0$."
+}

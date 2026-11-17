@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.seekTM_rank",
+ "key": "fe1b309246b2e55e",
+ "kind": "lemma",
+ "title": "Search past a ranked list of records",
+ "statement": "Let $k,n$ be nonnegative integers, let $x$ be a finite binary input, let $A$ be a list of transition actions, and let $d$ be a configuration. Let $r$ be a control rank such that $|A|=r$, and suppose $d$ is in the recording machine's initial state, the summary-tape head scans a blank, and the table tape stores the bit encoding of $A$ consecutively from its head. Starting the search machine in the state carrying rank $r$, after $1+\\operatorname{cost}(A)$ steps it is in the done control state, with its table head advanced by the encoding length of $A$. It does not reach the done control state earlier, and throughout this run its input-head position, tape contents, and output remain unchanged, while every other work-tape head stays fixed.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb{N}$ and finite binary input $x$",
+  "action list $A$",
+  "configuration $d$",
+  "control rank $r$",
+  "$|A|=r$",
+  "$d$ is in the recording machine's initial state",
+  "summary-tape head scans blank",
+  "table tape stores the encoding of $A$ consecutively from the head"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

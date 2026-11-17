@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.Contract.not_mem_of_positive",
+ "key": "a2218ff02ac5edb0",
+ "kind": "theorem",
+ "title": "Positive Duration Excludes the Entry State",
+ "statement": "Let $C$ be a contract with entry state $e$ and exit set $X$. If every admissible start configuration in state $e$ has strictly positive assigned running time, then the optional state $\\\\mathrm{some}(e)$ does not belong to $X$.",
+ "hypotheses_covered": [
+  "$C$ is a contract with entry state $e$ and exit set $X$",
+  "For every data value and configuration in state $e$ satisfying the precondition, the assigned running time is strictly positive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a contract with entry state $\\mathrm{entry}$. If every admissible start\nconfiguration in that state has strictly positive contract time, then\n$\\mathrm{some}(\\mathrm{entry})$ does not belong to the contract’s exit set."
+}

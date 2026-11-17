@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.Rel",
+ "key": "cd8a07423f5921e0",
+ "kind": "structure",
+ "title": "Machine representation relation",
+ "statement": "Let $Z$ be a size specification of word width $W$, let $\\sigma$ be a state with local values $\\sigma_{\\mathrm{loc}}(x)$ and memory values $\\sigma_{\\mathrm{mem}}(a)$, let $q$ be a natural number, and let $m$ assign a $W$-bit word to each integer address. The relation holds when $m$ maps the distinguished codes for $1$, $0$, and $-1$ to those respective words; maps each pool code for $n\\le d$ to the word for $n$; maps the frame-pointer code to the word for stack position $c_{\\mathrm{Stack}}(q)$; maps each local stack position $c_{\\mathrm{Stack}}(q+x)$, for $x<F$, to the word for $\\sigma_{\\mathrm{loc}}(x)$; and maps every address $a<S$ to the word for $\\sigma_{\\mathrm{mem}}(a)$.",
+ "hypotheses_covered": [
+  "$Z$ is a size specification of word width $W$",
+  "$\\sigma$ is a state",
+  "$q$ is a natural number",
+  "$m$ maps integer addresses to $W$-bit words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

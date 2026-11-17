@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.copyTM_run_ofCfg",
+ "key": "f28630ae172b6998",
+ "kind": "theorem",
+ "title": "Copying from a general configuration",
+ "statement": "Let $k\\in\\mathbb{N}$, let $x$ be an input word over an alphabet $\\Sigma$, and let $\\mathrm{src},\\mathrm{dst}$ be distinct indices among the $k$ work tapes. Let $w$ be a word over $\\Sigma$ and $d$ a configuration of the copying machine on input $x$. Suppose that $d$ is in the sweep state and that, at every integer offset $p$ from $-1$ through $|w|$ relative to the source tape's head, the source tape contains the symbol specified by the word-buffer representation of $w$ at offset $p$. After $2|w|+2$ steps, the machine is in the done state; its destination tape contains the word-buffer representation of $w$ beginning at its original head position, and every other tape cell retains its original content. At all earlier times it is not in the done state. Throughout these steps, the source and destination head positions lie between their respective initial positions minus one and their initial positions plus $|w|$, inclusive, while every other tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "k is a natural number",
+  "x is a word over Symbol",
+  "src and dst are work-tape indices in Fin k",
+  "src ≠ dst",
+  "w is a word over Symbol",
+  "d is a configuration on input x",
+  "d is in the sweep state",
+  "For every integer p with -1 ≤ p ≤ |w|, the source tape at its head position plus p equals the buffer representation of w at p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

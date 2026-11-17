@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_prepare_candidate",
+ "key": "79576b2ef429bbec",
+ "kind": "lemma",
+ "title": "Candidate Copying Prefix",
+ "statement": "For Boolean words $w$ and $s$, and every natural number $j\\le |s|$, running the preparation machine for $j$ steps from its initial frame yields the frame in phase $0$ if $j=0$ and phase $1$ after the first input-symbol check otherwise, with candidate $s$ unchanged, its first $j$ symbols copied onto the second tape, the third tape empty, and the two candidate-tape heads at displacement $j$. The input head is at position $\\min(j,|w|)+1$, and the overflow flag is true exactly when $|w|<j$.",
+ "hypotheses_covered": [
+  "Boolean words $w,s$",
+  "Natural number $j$ with $j\\le |s|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\le \\abs{s}$, $j$ steps of the preparation machine from its\nstart copy the first $j$ bits of the candidate $s$ onto the second tape,\nadvance the native head to its saturated position for $j$, and set the\noverflow flag exactly when $\\abs{w} < j$; the candidate itself never\nchanges."
+}

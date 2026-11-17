@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.zoneSide_cascadeRight",
+ "key": "f19f476b5d0b1773",
+ "kind": "theorem",
+ "title": "Rightward cascade preserves side words",
+ "statement": "For a natural number $\\ell$, let $C_i=2\\cdot 2^i$ be the capacity of zone $i$, and let $z$ be a configuration of a home value and left and right lists at each index $i<\\ell$, with each list having length at most $C_i$. Let $j<\\ell$. Suppose the right lists at all indices $k<j$ are empty, the left list at each such index has length $C_k$, the right list at index $j$ is nonempty, and the left list at index $j$ has length at most $C_j-2^{j-1}$. After the rightward cascade through zone $j$, the concatenation of the left lists is the home value prepended to its original concatenation, and the concatenation of the right lists is the tail of its original concatenation.",
+ "hypotheses_covered": [
+  "$\\ell$ is a natural number",
+  "$j<\\ell$",
+  "Each left and right list in $z$ has length at most its zone capacity",
+  "Right lists at indices $k<j$ are empty",
+  "Left lists at indices $k<j$ have length equal to their zone capacities",
+  "The right list at index $j$ is nonempty",
+  "The left list at index $j$ has length plus $2^{j-1}$ at most its capacity"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

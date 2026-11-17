@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.Lockstep.runFrom",
+ "key": "076e95160a518799",
+ "kind": "theorem",
+ "title": "Simulation of a Run by Total Cost",
+ "statement": "Let $M$ and $N$ be multi-tape Turing machines, let $e$ map configurations of $M$ to configurations of $N$, let $q$ assign a natural-number cost to each configuration of $M$, and let $X$ and $X'$ be sets of optional states of $M$ and $N$, respectively. Suppose that whenever a configuration $c$ of $M$ has state outside $X$, running $N$ from $e(c)$ for $q(c)$ steps yields $e$ of the one-step successor of $c$ under $M$; configurations with state in $X$ encode to configurations whose state lies in $X'$, and every run of $N$ from $e(c)$ stays outside $X'$ at all times strictly less than $q(c)$ when $c$ has state outside $X$. If a configuration $d$ of $M$ has state outside $X$ at each time $u<t$ in its run, then running $N$ from $e(d)$ for the sum of the costs of the first $t$ configurations in that run yields the encoding of the configuration reached by $M$ after $t$ steps.",
+ "hypotheses_covered": [
+  "Multi-tape machines M and N",
+  "Configuration encoding e",
+  "Natural-number cost function q",
+  "Sets X and X' of optional states",
+  "Outside X, N simulates one step of M in q(c) steps",
+  "States in X encode to states in X'",
+  "Before q(c) steps, N's run from e(c) stays outside X' when c is outside X",
+  "Initial configuration d and natural number t",
+  "M's run from d has state outside X at every time u<t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

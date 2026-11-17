@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.sim_jz",
+ "key": "8e1b1de9b46bd716",
+ "kind": "lemma",
+ "title": "Simulation of a zero test",
+ "statement": "Let $m$ be the number of registers, let $\\Lambda$ be a set of program states, and let $A$ assign an instruction to each state. Fix an initial state $l_*$, an oracle on Boolean words, an input word $x$, register values $v\\colon\\{0,\\ldots,m-1\\}\\to\\mathbb{N}$, an output word, and an integer $W\\ge 0$. Suppose the instruction at $l$ tests whether register $r$ is zero, with successor states $l_1$ and $l_0'$. Then the compiled program, starting in state $l$ with those register values and output, reaches the configuration with state $l_1$ if $v(r)=0$ and state $l_0'$ otherwise; throughout the run before that configuration, no call state is visited and every register head position lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "The instruction assignment $A$ and initial state $l_*$",
+  "The oracle on words and its index set",
+  "The tested state $l$, successor states $l_1,l_0'$, and register $r$",
+  "The instruction at $l$ is the zero test on register $r$",
+  "Register values $v$ and output word",
+  "Integer bound $W$ satisfies $0\\le W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

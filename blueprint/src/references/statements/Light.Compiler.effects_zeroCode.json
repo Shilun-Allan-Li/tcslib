@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.effects_zeroCode",
+ "key": "53b0dd9408afe6f1",
+ "kind": "theorem",
+ "title": "Zeroing the Stack Cells",
+ "statement": "Let $W$ and $F$ be natural numbers, and let $m$ be a memory state assigning a $W$-bit word to each integer address. If the word at address $-5$ is the $W$-bit representation of $1$, then for every natural number $x<F$, executing the program that subtracts the word at address $-5$ from itself and stores the result at address $-2(4+x)$, once for each index from $0$ through $F-1$, leaves the word at address $-2(4+x)$ equal to the $W$-bit representation of $0$.",
+ "hypotheses_covered": [
+  "Natural numbers $W$ and $F$",
+  "Memory state assigning a $W$-bit word to each integer address",
+  "The memory word at address $-5$ equals the $W$-bit representation of $1$",
+  "Natural number $x$ satisfies $x<F$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

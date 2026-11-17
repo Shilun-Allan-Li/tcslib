@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.setupCfg_borrow_end",
+ "key": "e238366613c29e19",
+ "kind": "lemma",
+ "title": "Branch at the end of a borrow pass",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes, let $a \\in \\bbn$, and let $x$ be an input word over the schedule alphabet. Take a base configuration on $x$, a position $p$ for its input head, integers $u,g$, a bit word $w$, schedule-tape contents $\\mu,\\gamma$, and a Boolean carry flag. In the configuration built from these data with controller state the borrow phase, budget head at $|w|+1$, and budget tape equal to the captured clock tape of $w$, one step leaves every tape, head position, and other configuration component unchanged, and changes the controller state to unary-start if the carry flag is true and budget-start otherwise.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over the Boolean alphabet",
+  "a is a natural number",
+  "x is an input word over the schedule alphabet",
+  "base is a configuration on x",
+  "p is a valid input-head position",
+  "u and g are integers",
+  "w is a Boolean word",
+  "μ and γ are schedule-tape contents indexed by integers",
+  "carry is a Boolean flag",
+  "controller begins in the borrow phase",
+  "budget head is at |w|+1",
+  "budget tape is the captured clock tape of w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From a setup configuration in the borrow phase with flag $c$ and budget head at cell\n$|w|+1$ (the blank cell after the captured clock tape of the bit word $w$), one step\nkeeps every tape and head fixed and moves to the unary-start phase when $c$ is true\n(the budget underflowed, i.e.\\ is exhausted) and back to the budget-start phase\notherwise."
+}

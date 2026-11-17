@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.a3_run_singleton",
+ "key": "0f91738bc6cd192d",
+ "kind": "lemma",
+ "title": "Time bound for a singleton output",
+ "statement": "Let $C$ be a finite Turing machine over the Boolean alphabet with at least one work tape, and let $\\mathrm{entry}$ and $\\mathrm{exit}$ be states of $C$. Let $x$ be a Boolean word, $b$ a Boolean value, and $t>0$. Suppose that the run of $C$ from the canonical entry configuration carrying $x$ on tape zero is not in state $\\mathrm{exit}$ at any time $j$ with $0<j<t$, and at time $t$ reaches the canonical exit configuration carrying the singleton word $[b]$ on tape zero. Then the wrapper computes $[b]$ from input $x$ within $2\\operatorname{length}(x)+2+t+1$ steps.",
+ "hypotheses_covered": [
+  "$C$ is a finite Turing machine over the Boolean alphabet",
+  "$C$ has at least one work tape",
+  "entry and exit are states of $C$",
+  "$x$ is a Boolean word",
+  "$b$ is a Boolean value",
+  "$t>0$",
+  "At each integer time $j$ with $0<j<t$, the run from the canonical entry configuration is not in state exit",
+  "At time $t$, the run from the canonical entry configuration equals the canonical exit configuration carrying $[b]$ on tape zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the inner machine, started in its entry state at the seam carrying $x$,\nfirst returns to the exit state at a positive time $t$ with the singleton word\n$[b]$ on tape zero. Then the decider wrapper computes the output $[b]$ from\ninput $x$ within $2|x| + 2 + t + 1$ steps, with no earlier emission."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.Contract.Traj.inPhase",
+ "key": "5a5bbffd1437f469",
+ "kind": "theorem",
+ "title": "Trajectory property within a phase",
+ "statement": "Let $I$ index a family of machines with state sets $\\mathrm{Ph}(i)$, and let a reduction rule optionally send a state in phase $i$ to a state in one of the phases. Fix a phase $p$, a contract $C$ for its machine, and a trajectory predicate $R$. Suppose the halted state is not in the exit set of $C$, every state outside that exit set is left unchanged by the reduction rule in phase $p$, and every state in the exit set is sent to a state in a phase different from $p$. If $R$ holds throughout the trajectories of $C$, then it holds throughout the trajectories of the phase-hosted contract for the configuration formed by replacing the starting configuration's state with the entry state of $C$, with the same head-position vector.",
+ "hypotheses_covered": [
+  "C satisfies trajectory property R",
+  "The halted state is not in X",
+  "Every state outside X has no reduction in phase p",
+  "Every state in X is reduced to a state in a phase other than p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be an index type, let each $i\\in I$ have a state set $\\mathrm{Ph}(i)$ and a\nmachine $M_i$, and let a phase-host machine use a reduction rule $\\mathrm{red}$ to move\nbetween these phase state sets. Fix a phase $p$, an entry state $s_0\\in\\mathrm{Ph}(p)$,\na set $X\\subseteq\\mathrm{Option}(\\mathrm{Ph}(p))$, and a contract $C$ for $M_p$ with\nexits in $X$. Assume that the halted state is not in $X$, that $\\mathrm{red}(p,s)$ is\nundefined whenever $\\mathrm{some}(s)\\notin X$, and that whenever $\\mathrm{some}(s)\\in\nX$, the reduction rule returns a state in a phase other than $p$. If $C$ satisfies the\ntrajectory property $R$, then the contract obtained by hosting $C$ in phase $p$\nsatisfies the property that, throughout its run, $R$ holds for the configuration whose\nstate is replaced by $s_0$ and for the same work-head positions."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.prepInvariant_step",
+ "key": "6a14a9a93abbb692",
+ "kind": "lemma",
+ "title": "Preservation of the preparation invariant",
+ "statement": "Let $W$ and $M$ be finite Turing machines over the binary alphabet, let $a$ be a natural number, and let $x$ be a binary word. Suppose a schedule configuration $c$ is in a live phase $q$ and satisfies the preparation invariant with data register $d$, data tapes, and output list. Apply one step of the schedule controller to $c$, and at the current configuration let the data transducer's visit produce a new register, write instructions for the data tapes, and an optional output symbol. Then the preparation invariant holds for the resulting schedule configuration with the new register, the data tapes after those writes at the guide head's current position, and the output list extended by the optional symbol.",
+ "hypotheses_covered": [
+  "$W,M$ are finite Turing machines over the binary alphabet",
+  "$a$ is a natural number",
+  "$x$ is a binary word",
+  "$c$ has state equal to the live phase $q$",
+  "the preparation invariant holds for $c$ with the given register, data tapes, and output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a schedule configuration $c$ on the embedded input be in a live phase and\nsatisfy the preparation invariant with a given data register, data tapes, and\noutput.  Then the preparation invariant holds for the configuration after one\nstep of the schedule controller, taken with the register, guide-position tape\nwrites, and appended emission produced by the data transducer's visit at $c$."
+}

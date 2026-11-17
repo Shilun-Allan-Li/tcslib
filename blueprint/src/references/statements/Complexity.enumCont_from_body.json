@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_from_body",
+ "key": "cd679b6827965d77",
+ "kind": "lemma",
+ "title": "Enumerator from body contracts",
+ "statement": "Let $C,c$ be natural numbers, let $G$ be a natural-number-valued function, let $V$ be a language of Boolean words, and let $B$ be a finite Boolean-input Turing machine with designated state $q_a$. Suppose that for every Boolean input $x$, the run of $B$ from its initial configuration reaches, at some time at most $G(|x|)$, state $q_a$ with the all-false word of width $w=C(|x|+1)^c$ on tape zero and all other tapes blank, and has not visited $q_a$ earlier. Suppose also that for every $x$ and every word $s$ of length $w$, the run from state $q_a$ with $s$ on tape zero and other tapes blank reaches, in positive time at most $G(|x|)$ and without an intervening positive-time visit to $q_a$, either a halted configuration with output true if $x$ followed by $s$ belongs to $V$, or the configuration at state $q_a$ with the fixed-width increment of $s$ on tape zero and all other tapes blank if it does not. Then there are a natural number $b$ and a finite Boolean-input Turing machine $E$ such that for every Boolean input $x$ there is a sequence of configurations indexed by the natural numbers and a startup time at most $b\\bigl(G(|x|)+(|x|+1)^{c+1}+1\\bigr)$. The run of $E$ reaches the sequence's initial configuration at that startup time; its configuration at index $2^w$ is halted with output false; and for every index $i<2^w$, some run time at most the same bound takes the configuration at index $i$ either to a halted configuration with output true when $x$ followed by the width-$w$ binary representation of $i$ belongs to $V$, or to the configuration at index $i+1$ otherwise.",
+ "hypotheses_covered": [
+  "Natural numbers $C,c$",
+  "Natural-number-valued function $G$",
+  "Language $V$ of Boolean words",
+  "Finite Boolean-input machine $B$ and designated anchor state",
+  "For every $x$, a bounded first arrival at the anchor with the all-false word of width $C(|x|+1)^c$",
+  "For every $x,s$ of that width, a positive bounded return or halt, with no interior positive-time anchor visit",
+  "Acceptance when $x$ followed by $s$ belongs to $V$; otherwise return with the fixed-width increment"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix constants $C, c$, a budget function $G$, a language $V$ over the binary\nalphabet, and a finite machine (the body) with a designated anchor state\nsatisfying: (i) from its initial configuration on any input $x$ it reaches,\nwithin $G(|x|)$ steps and with no earlier anchor visit, the anchor over the seam\ncarrying the all-false candidate of width $w = C(|x|+1)^c$; and (ii) from the\nanchor over any candidate $s$ of width $w$, within some positive time at most\n$G(|x|)$ and with no interior anchor visit, it halts with output true when\n$x \\mathbin{+\\!\\!+} s \\in V$ and otherwise returns to the anchor over the stalled\nfixed-width increment of $s$. Then there exist a constant $b$ and a machine $E$\nsuch that for every input $x$ there is a rank-indexed family of configurations\nwith: $E$ reaches the rank-$0$ configuration from its initial configuration\nwithin $b(G(|x|) + (|x|+1)^{c+1} + 1)$ steps; the rank-$2^w$ configuration is\nhalted with single-bit output false; and from each rank $i < 2^w$, within the\nsame budget, $E$ either halts with output true (when $x$ concatenated with the\nwidth-$w$ binary word of $i$ lies in $V$) or reaches rank $i + 1$."
+}

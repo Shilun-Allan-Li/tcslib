@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.Amplify.rewind_halts",
+ "key": "c94aefaaea119fa3",
+ "kind": "theorem",
+ "title": "Halting during rewind",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean inputs, let $x$ be an input, and let $r,T$ be natural numbers. Suppose every choice word of length exactly $T$, run on $N$ from its initial configuration on $x$, ends in a halted configuration. For every $i\\in\\mathbb N$ and $j$ with $0\\le j\\le r$ such that $j+i=r$, every counter $c$ with $0\\le c\\le r+1$, and every augmented configuration $C$ in rewind phase at $(j,c)$ with empty output and all later blocks blank with their heads at $0$, every choice word of length exactly $i(T+|x|+2)+1$ causes the amplified machine started from $C$ to halt.",
+ "hypotheses_covered": [
+  "Every length-$T$ choice word makes $N$ halt on $x$ from its initial configuration",
+  "$j+i=r$",
+  "$j$ ranges from $0$ to $r$",
+  "$c$ ranges from $0$ to $r+1$",
+  "$C$ is in rewind phase at $(j,c)$, has empty output, and all later blocks are blank with head position $0$",
+  "The choice word has length exactly $i(T+|x|+2)+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

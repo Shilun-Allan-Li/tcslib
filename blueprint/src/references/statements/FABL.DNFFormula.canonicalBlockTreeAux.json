@@ -1,0 +1,16 @@
+{
+ "lean_name": "FABL.DNFFormula.canonicalBlockTreeAux",
+ "key": "89c88c483a376f9b",
+ "kind": "def",
+ "title": "Recursive canonical block tree",
+ "statement": "Let $\\varphi$ be a disjunctive normal form on $n$ sign variables, and let $\\rho$ assign each coordinate one of three states: free, fixed to $1$, or fixed to $-1$. With fuel $m$, define a coordinate decision tree recursively. At fuel zero, its leaf is the value of $\\varphi$ on the completion of $\\rho$ by the zero vector. At positive fuel, if no term is compatible with $\\rho$, return the leaf $1$; otherwise select the compatible term of least index. If it has no free literal positions, return the leaf $-1$. If it has free literal positions, query their coordinates in order, beginning from the zero vector; after those queries, fix the queried coordinates according to the resulting vector, return the leaf $-1$ if the selected term is compatible with the updated restriction, and otherwise continue recursively with one less unit of fuel and that updated restriction.",
+ "hypotheses_covered": [
+  "A disjunctive normal form on $n$ sign variables",
+  "A coordinate restriction assigning each coordinate a state",
+  "A natural-number fuel parameter"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

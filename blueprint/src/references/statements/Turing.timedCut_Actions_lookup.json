@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timedCut_Actions_lookup",
+ "key": "4a4ac87d769cb2a3",
+ "kind": "lemma",
+ "title": "Selecting an action by read offset",
+ "statement": "Let $M$ be a machine in code normal form, let $q$ be one of its states, and let $u$ and $v$ each be either blank, $0$, or $1$. The list of the nine transition actions for $q$ has length $9$, and its entry at the index determined by the ordered pair $(u,v)$ is the transition action of $M$ at state $q$ when the input read is $u$ and the work-tape read is $v$.",
+ "hypotheses_covered": [
+  "$M$ is a machine in code normal form",
+  "$q$ is a state of $M$",
+  "$u$ is an optional Boolean input read",
+  "$v$ is an optional Boolean work-tape read"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every coded machine, state $q$, and pair of optional input and work reads,\nthe nine-action list of $q$ has length $9$, and its entry at the record index\ndetermined by the two reads (a number in $\\{0,\\dots,8\\}$) is exactly the\nmachine's transition action for $q$ on those reads."
+}

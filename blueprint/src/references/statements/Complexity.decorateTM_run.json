@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.decorateTM_run",
+ "key": "5dbbbe12dbb6e29a",
+ "kind": "lemma",
+ "title": "Exact projection of decorated runs",
+ "statement": "Let $P$ be a finite Turing machine over an alphabet $A$, let $l$ be a natural number, choose a work-tape index $h$ of $P$, a finite data-state set $D$ with initial state $d_0$, and any visit function of the specified type. Suppose every transition of $P$ emits no output symbol. For every input word $x$ and time $t\\in\\mathbb N$, projecting the decorated machine's configuration after $t$ steps from its initial configuration on $x$ onto the schedule yields exactly the configuration of $P$ after $t$ steps from its initial configuration on $x$.",
+ "hypotheses_covered": [
+  "$D$ is finite and has decidable equality",
+  "$P$ is a finite Turing machine over $A$",
+  "$l$ is a natural number",
+  "$h$ is a work-tape index of $P$",
+  "$d_0$ is an element of $D$",
+  "The visit function has the stated type",
+  "Every transition of $P$ emits no output symbol",
+  "$x$ is an input word over $A$",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a machine over an alphabet $A$ whose transition table never emits an\noutput symbol, decorated by any data transducer. For every input word $x$ and every\ntime $t \\in \\mathbb{N}$, the schedule projection of the decorated machine's\nconfiguration after $t$ steps from its initial configuration on $x$ equals the\nconfiguration of $P$ after $t$ steps from its initial configuration on $x$."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.gaussian_bobkov_smooth_le_sum",
+ "key": "2648619faae96bfb",
+ "kind": "lemma",
+ "title": "Separated smooth Gaussian Bobkov bound",
+ "statement": "Let $n$ be a nonnegative integer, let $f:\\mathbb R^n\\to\\mathbb R$ take values in $[0,1]$, and let $D(x):\\mathbb R^n\\to\\mathbb R$ be a continuous linear functional at each $x$. Suppose $D(x)$ is the derivative of $f$ at $x$, the map $x\\mapsto D(x)$ is globally Lipschitz with some constant $C\\ge0$ in operator norm, and $\\|D(x)\\|\\le M$ for every $x$, for some real $M$. Then\n\\[\nU\\!\\left(\\int f\\,d\\gamma_n\\right)\\le \\int U(f(x))\\,d\\gamma_n(x)+\\int\\sqrt{\\sum_{i=1}^n(D(x)e_i)^2}\\,d\\gamma_n(x),\n\\]\nwhere $e_i$ are the coordinate unit vectors, $\\gamma_n$ is standard Gaussian measure, and $U$ is the Gaussian profile that equals the Gaussian density at the Gaussian quantile on $(0,1)$ and zero elsewhere.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$f(x)\\in[0,1]$ for every $x$",
+  "$D(x)$ is a continuous linear functional for each $x$",
+  "$D(x)$ is the derivative of $f$ at $x$ for every $x$",
+  "The map $x\\mapsto D(x)$ is globally Lipschitz with constant $C\\ge0$",
+  "There is a real $M$ with $\\|D(x)\\|\\le M$ for every $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ be the standard Gaussian distribution function and density, and let $\\overline I(p)=\\varphi(\\Phi^{-1}(p))$ for $0<p<1$, with $\\overline I(p)=0$ elsewhere. Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. Let $f:\\mathbb R^n\\to[0,1]$ be differentiable with derivative family $D(z)$, globally $C$-Lipschitz in operator norm for the maximum norm, where $C\\ge0$. Write $|D(z)|_2=\\sqrt{\\sum_{i=1}^n(D(z)e_i)^2}$. If also $\\|D(z)\\|\\le M$ for every $z$, for some $M\\in\\mathbb R$, then $\\overline I(\\int f\\,d\\gamma_n)\\le\\int\\overline I(f)\\,d\\gamma_n+\\int|D(z)|_2\\,d\\gamma_n(z)$."
+}

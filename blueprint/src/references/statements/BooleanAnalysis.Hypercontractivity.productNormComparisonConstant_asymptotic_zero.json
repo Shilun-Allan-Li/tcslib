@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.productNormComparisonConstant_asymptotic_zero",
+ "key": "94e8dd53bd4c1bc0",
+ "kind": "theorem",
+ "title": "Comparison Constant Limit at Zero",
+ "statement": "For each real number $\\lambda$, define $C(\\lambda)=e$ when $\\lambda=1/2$ and $C(\\lambda)=((1-\\lambda)/\\lambda)^{1/(2(1-2\\lambda))}$ otherwise, with real powers interpreted using the usual real-power convention. As $\\lambda$ tends to $0$ through positive values, $C(\\lambda)\\sqrt{\\lambda}$ tends to $1$.",
+ "hypotheses_covered": [
+  "$\\lambda$ is real",
+  "$\\lambda$ approaches $0$ through positive values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every real $\\lambda$, define $C_\\lambda=\\begin{cases}e,&\\lambda=1/2,\\\\((1-\\lambda)/\\lambda)^{1/(2(1-2\\lambda))},&\\lambda\\ne1/2.\\end{cases}$. Then $\\lim_{\\lambda\\to0^+}C_\\lambda\\sqrt\\lambda=1$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.aux_disjoint_bob_of_ne",
+ "key": "1efc9d7873671d66",
+ "kind": "lemma",
+ "title": "Disjoint rectangles from opposite Bob branches",
+ "statement": "Let $p$ and $q$ be deterministic two-party protocols, let $A\\subseteq X$ and $B\\subseteq Y$, and let $f:Y\\to\\{\\mathrm{false},\\mathrm{true}\\}$. For distinct bits $b,b'$, any rectangle in the collection of leaf rectangles of $p$ relative to $A$ and the inputs in $B$ where $f(y)=b$ is disjoint from any rectangle in the corresponding collection for $q$ where $f(y)=b'$.",
+ "hypotheses_covered": [
+  "$b\\ne b'$",
+  "$R$ is a leaf rectangle of $p$ relative to $A$ and $B\\cap\\{y:f(y)=b\\}$",
+  "$S$ is a leaf rectangle of $q$ relative to $A$ and $B\\cap\\{y:f(y)=b'\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p, q$ be protocols on $X \\times Y$, let $A \\subseteq X$, $B \\subseteq Y$, let\n$f : Y \\to \\{0,1\\}$, and let $b \\neq b'$ be distinct bits. If $R$ is a leaf rectangle of\n$p$ on $A \\times (B \\cap \\{y \\mid f(y) = b\\})$ and $S$ is a leaf rectangle of $q$ on\n$A \\times (B \\cap \\{y \\mid f(y) = b'\\})$, then $R$ and $S$ are disjoint. This is the\nmirror image of \\texttt{CommunicationComplexity.Deterministic.Protocol.aux\\_disjoint\\_alice\\_of\\_ne}."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.one_coordinate_hypercontractivity",
+ "key": "e7770d75228141ee",
+ "kind": "theorem",
+ "title": "One-coordinate hypercontractivity",
+ "statement": "Let $P$ be a product of one finite probability space with strictly positive atom weights summing to one, and let $\\lambda,q,\\rho\\in\\mathbb R$ satisfy $0<\\lambda\\le1$, $q>2$, and $0\\le\\rho\\le\\lambda^{1/2-1/q}/\\sqrt{q-1}$. Assume every atom of $P$ has weight at least $\\lambda$. For every real-valued function $f$ on the outcome space, both $\\|T_\\rho f\\|_{q,P}\\le\\|f\\|_{2,P}$ and $\\|T_\\rho f\\|_{2,P}\\le\\|f\\|_{q/(q-1),P}$ hold, where $T_\\rho$ is the product spectral noise operator and the norms are the corresponding product moment norms.",
+ "hypotheses_covered": [
+  "$P$ is a product of one finite probability space with positive atom weights summing to one",
+  "$\\lambda,q,\\rho\\in\\mathbb R$",
+  "$0<\\lambda$",
+  "$\\lambda\\le1$",
+  "$q>2$",
+  "$0\\le\\rho$",
+  "$\\rho\\le(1/\\sqrt{q-1})\\lambda^{1/2-1/q}$",
+  "Every atom weight is at least $\\lambda$",
+  "$f$ is a real-valued function on the outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a probability law on a finite outcome space $\\Omega$, with every atom of mass at least $\\lambda>0$, where $0<\\lambda\\le1$, and let $q>2$. For $0\\le\\rho\\le\\lambda^{1/2-1/q}/\\sqrt{q-1}$, the operator $T_\\rho f=\\rho f+(1-\\rho)\\mathbb E_Pf$ satisfies $\\|T_\\rho f\\|_{q,P}\\le\\|f\\|_{2,P}$ and $\\|T_\\rho f\\|_{2,P}\\le\\|f\\|_{q/(q-1),P}$ for every real $f$. For a real function $h$ on $\\Omega$, use $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$."
+}

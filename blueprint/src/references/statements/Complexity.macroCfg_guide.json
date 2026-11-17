@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.macroCfg_guide",
+ "key": "fab52309a2b1c471",
+ "kind": "lemma",
+ "title": "Guide symbol in a macrostep configuration",
+ "statement": "Let $W$ be a finite binary Turing machine, let $a\\in\\mathbb{N}$, let $x$ be an input word over the schedule alphabet, and let $\\mathrm{base}$ be a schedule-machine configuration on $x$. For any optional control phase $q$ and integers $u,g$, the symbol read on the guide tape in the macrostep configuration with phase $q$, unary head at $u$, and guide head at $g$ is the content of the base guide tape at coordinate $g$.",
+ "hypotheses_covered": [
+  "$W$ is a finite binary Turing machine",
+  "$a$ is a natural number",
+  "$x$ is an input word over the schedule alphabet",
+  "$\\mathrm{base}$ is a schedule-machine configuration on $x$",
+  "$q$ is an optional control phase",
+  "$u,g$ are integers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In every macrostep configuration with guide head at $g$, the symbol read on the guide\ntape is the base configuration's guide tape content at coordinate $g$."
+}

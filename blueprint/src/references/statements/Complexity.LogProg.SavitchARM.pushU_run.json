@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.pushU_run",
+ "key": "43238b8cccd08ec1",
+ "kind": "theorem",
+ "title": "Upper endpoint push execution",
+ "statement": "Fix a natural number $E$, an oracle that assigns a Boolean answer to each of four deciders and each Boolean word, an input Boolean word $x$, and a natural number bound $B$. Let $st$ be a state of the eighteen-register machine, with loop counter $C$, scratch registers $T,Z$, saved-endpoint stack $SE$, source endpoint $U$, phase stack $SP$, and code width $w$. If $C=T=Z=0$, every register is at most $B$, $SE\\,2^w+U\\le B$, and $2SP\\le B$, then the machine starting at the phase-true endpoint-push routine, with register values given by $st$ and no answer recorded, reaches the push-increment instruction with $SE=SE_{st}2^{w_{st}}+U_{st}$, $U=0$, $SP=2SP_{st}$, the other registers unchanged, and no answer recorded. Every configuration strictly before that endpoint satisfies the guard that the machine’s instruction precondition holds and every register is at most $B$.",
+ "hypotheses_covered": [
+  "natural number E",
+  "oracle on four deciders and Boolean words",
+  "input Boolean word x",
+  "natural number bound B",
+  "initial eighteen-register state st",
+  "initial C=0",
+  "initial T=0",
+  "initial Z=0",
+  "all initial registers at most B",
+  "SE·2^w+U≤B",
+  "2·SP≤B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a natural number $E$, an oracle on four deciders and Boolean-string inputs, an input\nstring $x$, and a natural-number register bound $B$. Suppose a machine state has\n$C=T=Z=0$, all registers at most $B$, the updated endpoint stack satisfies $SE\\,2^w+U\\le\nB$, and $2SP\\le B$. Then the machine starting at the phase-true push routine, with this\nstate and no answer recorded, reaches the push-increment instruction with the endpoint\nstack set to $SE\\,2^w+U$, register $U$ set to zero, and phase stack set to $2SP$, with\nno answer recorded; every visited configuration satisfies the guard requiring the\nprogram’s precondition and all registers to be at most $B$."
+}

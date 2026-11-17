@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_quad_bounds",
+ "key": "21704f113d76cacb",
+ "kind": "lemma",
+ "title": "Bounds on encoded component lengths",
+ "statement": "For all bit strings $\\alpha,x$ and all natural numbers $n,t$, each of $|\\alpha|$, $|x|$, $n$, and $t$ is at most the length of the nested encoding $\\langle\\alpha,\\langle x,\\langle 1^n,1^t\\rangle\\rangle\\rangle$, where $1^j$ denotes the word of $j$ ones.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are bit strings",
+  "$n,t$ are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $\\alpha, x$ and all $n, t \\in \\mathbb{N}$, each of $|\\alpha|$, $|x|$, $n$ and $t$ is at most the length of the quadruple encoding $\\langle\\alpha,\\langle x,\\langle 1^n,1^t\\rangle\\rangle\\rangle$, where $\\langle a,b\\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones."
+}

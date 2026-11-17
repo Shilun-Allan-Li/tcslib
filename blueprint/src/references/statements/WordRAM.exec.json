@@ -1,0 +1,18 @@
+{
+ "lean_name": "WordRAM.exec",
+ "key": "4a254d4132ca9c0d",
+ "kind": "def",
+ "title": "Word RAM execution",
+ "statement": "For a word width $W$, a program $P$ consisting of word RAM instructions, a fuel amount $t$, a program counter $pc$, and a memory assigning a $W$-bit word to each integer address, execution returns either no result or a Boolean outcome together with the resulting memory. With zero fuel it returns no result. With positive fuel it executes the instruction at $pc$, treating a position beyond the program as a rejection: arithmetic and memory operations update the designated cell and continue at the next position, a conditional jump changes the next position according to whether the tested word represents a negative integer, and acceptance or rejection returns the corresponding outcome with memory unchanged.",
+ "hypotheses_covered": [
+  "$W$ is a natural-number word width",
+  "$P$ is a list of instructions",
+  "$t$ is the execution fuel",
+  "$pc$ is the program counter",
+  "memory maps integer addresses to $W$-bit words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

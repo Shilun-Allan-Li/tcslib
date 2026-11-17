@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.rademacher_abs_expectation",
+ "key": "7477f9c83e1b3d00",
+ "kind": "theorem",
+ "title": "Absolute moment of a regular sign sum",
+ "statement": "There is a real constant $C\\geq0$ such that for every $n\\in\\mathbb N$, every family of real coefficients $(a_i)_{i\\in\\mathrm{Fin}\\,n}$, and every $\\varepsilon\\in\\mathbb R$, if $\\sum_i a_i^2=1$ and $|a_i|\\leq\\varepsilon$ for every $i$, then\n\\[\\left|\\mathbb E\\left|\\sum_i a_i\\sigma(X_i)\\right|-\\sqrt{2/\\pi}\\right|\\leq C\\varepsilon,\\]\nwhere $X$ is uniform on the Boolean cube and $\\sigma$ is the sign encoding.",
+ "hypotheses_covered": [
+  "There exists a real constant $C\\geq0$",
+  "$n\\in\\mathbb N$",
+  "Real coefficients $a_i$ indexed by $\\mathrm{Fin}\\,n$",
+  "A real parameter $\\varepsilon$",
+  "The sum of squared coefficients equals $1$",
+  "Every coefficient satisfies $|a_i|\\leq\\varepsilon$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThere exists a universal real constant $C\\ge0$ such that for every $n\\ge0$, real coefficients $a_1,\\ldots,a_n$, and real $\\varepsilon$, if $\\sum_i a_i^2=1$ and $|a_i|\\le\\varepsilon$ for all $i$, then $|\\mathbb E|\\sum_i a_i\\xi_i|-\\sqrt{2/\\pi}|\\le C\\varepsilon$, where the $\\xi_i$ are independent uniform signs."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_log_words",
+ "key": "7c3ce8dabd788c22",
+ "kind": "lemma",
+ "title": "Logging preserves an empty-history seam",
+ "statement": "Let $B$ be a finite Turing machine over the Boolean alphabet with at least one work tape, let $x$ and $s$ be Boolean words, and let $q$ be a state of $B$. Padding the seam configuration that has state $q$ and word $s$ on tape zero, with all other tapes empty, by the logging construction with empty history gives exactly the seam configuration of the logging machine with state $q$ and word $s$ on tape zero.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine B",
+  "B has at least one work tape",
+  "input word x",
+  "word s",
+  "state q of B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a machine $B$ with at least one work tape: the logged configuration, with\nempty history, of the canonical seam carrying a word $s$ on tape zero equals the\ncanonical seam of the logging machine's larger tape bank, the added tapes being\nblank and stationary."
+}

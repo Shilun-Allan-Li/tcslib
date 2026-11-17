@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalInput_move",
+ "key": "66395cc036a73d94",
+ "kind": "lemma",
+ "title": "Virtual input-head motion under the suffix embedding",
+ "statement": "Let $\\alpha,x$ be bit strings, let $c$ be a configuration with $k$ work tapes on input $x$, and choose a direction $d\\in\\{-1,0,1\\}$. At the head position $p$ of $c$, let $b$ be false when the one-cell marker tape has a $1$ at $p$ and true otherwise, and let $m$ be the virtual move determined by $b$, the symbol read by $c$, and $d$. Moving the head on the paired input $\\langle\\alpha,x\\rangle$ from the embedded position of $p$ by $m$ gives the embedding of the position reached by moving $c$'s input head by $d$ with clamping; moreover, as integers, $p+m$ equals that reached position.",
+ "hypotheses_covered": [
+  "Bit strings $\\alpha,x$",
+  "A configuration $c$ with $k$ work tapes on input $x$",
+  "A direction $d\\in\\{-1,0,1\\}$",
+  "The marker-derived Boolean $b$ and the virtual move $m$ specified by the statement"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha$ be a bit string, let $c$ be a configuration of a machine with\n$k$ work tapes on input $x$ whose input head is at position $p$, and let\n$d \\in \\{-1, 0, +1\\}$ be a direction.  Let $b$ be the marker-derived boundary\nflag at $p$ (false exactly at $p = 0$) and let $m$ be the clamped virtual\nmove determined by $b$, the symbol under $c$'s input head, and $d$, which\nsuppresses stepping outward from a boundary blank.  Then moving the physical\nhead from the embedded position $2\\abs{\\alpha}+2+p$ on the self-delimiting\npairing $\\langle \\alpha, x\\rangle$ by $m$ lands exactly on the embedding of\nthe position reached from $p$ by the clamped move in direction $d$, and, as\nintegers, $p + m$ equals that new virtual position."
+}

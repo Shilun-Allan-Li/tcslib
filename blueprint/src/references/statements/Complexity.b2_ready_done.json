@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.b2_ready_done",
+ "key": "79f4542b79dcef98",
+ "kind": "lemma",
+ "title": "Verifier Startup from the Assembly Blank",
+ "statement": "Let $S,V$ be finite deterministic machines over the Boolean alphabet, let $x$ be a Boolean word, let $c$ be a configuration of $S$ on $x$, let $y$ be a Boolean word, and let $b$ be a Boolean choice bit. One host step under $b$ from the assembly-rewind configuration built from $c,y$ with assembly head at cell $-1$ equals the verifier-phase configuration for the initial configuration of $V$ on $y$, with boundary tag true, input head at the position of $c$, and the scheduler tapes and heads inherited from $c$.",
+ "hypotheses_covered": [
+  "Finite deterministic Boolean machines $S,V$",
+  "Boolean input word $x$",
+  "Configuration $c$ of $S$ on $x$",
+  "Boolean word $y$",
+  "Boolean choice bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $d$ a scheduler configuration and $y$ an assembled word. For any choice bit, one host step from the assembly-rewind configuration with head at cell $-1$ yields the verifier-phase configuration for the initial configuration of $V$ on $y$, with interior boundary tag, blank verifier tapes and empty captured output."
+}

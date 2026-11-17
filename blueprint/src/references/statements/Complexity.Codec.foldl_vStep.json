@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Codec.foldl_vStep",
+ "key": "d98621f012f97f30",
+ "kind": "theorem",
+ "title": "Summary of a finite sequence of cell updates",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean tape symbols, and let $f:\\mathbb{N}\\to\\mathrm{CellV}(N)$ and $J\\in\\mathbb{N}$. Starting from the initial validation state and successively applying the cell update to $f(0),\\ldots,f(J-1)$, the first state flag is true exactly when $J=0$, and the stored head data is absent when $J=0$ and otherwise equals the head data of $f(0)$. For each work tape $i$, its visited flag is true exactly when some processed cell marks that tape; its stored symbol is absent if no processed cell marks it, and otherwise is the symbol at the last processed cell that marks it. The first validity flag is true exactly when among the processed cells the head data is present precisely at index $0$, and each tape is marked at most once; the second validity flag is true exactly when every processed cell satisfies the blank-together condition.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean symbols",
+  "$f:\\mathbb{N}\\to\\mathrm{CellV}(N)$",
+  "$J\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

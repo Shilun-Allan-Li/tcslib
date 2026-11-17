@@ -1,0 +1,13 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean :: Turing.FinTM.alphabet_reduction_spaceUsed -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Alphabet reduction with a space bound
+
+**Claim.** Under the stated time and space assumptions, there is a binary-alphabet machine with the same number of work tapes that computes $f$ within $c(T(n)+1)$ steps and uses at most $c(S(|x|)+1)$ space at every time.
+
+**Proof.** Use the same block encoding and binary simulator as in the time-only reduction, with $N=|	ext{Option }\text{Γ}|$. The simulation theorem `arTM_computes`, followed by time monotonicity, gives the required time bound with $c=3(|	ext{Option }\text{Γ}|+1)+2$. For space, the initial-configuration identity `arCfg_init` puts the simulator in the encoded configuration corresponding to the original machine on $x$ mapped letterwise by $e$. The simulation space estimate `arTM_spaceUsed` bounds its space at time $t$ by $(N+1)$ times the original machine’s space at time $t+1$, plus $M.k$. The hypothesis on space bounds the original term by $S(|x|)$. Also $M.k
+oindent	ext{le }S(|x|)$: apply the space hypothesis at time zero, when each of the $M.k$ tapes has its initial head cell among its visited cells. Therefore the simulator’s space is at most $(N+2)S(|x|)$. The chosen $c$ is at least $N+2$, and $S(|x|)\le S(|x|)+1$, so this is at most $c(S(|x|)+1)$. The construction preserves the number of work tapes.
+
+**Key facts.** `Turing.FinTM.arTM_computes`, `Turing.FinTM.ComputesInTime.mono`, `Turing.FinTM.arCfg_init`, `Turing.FinTM.arTM_spaceUsed`.

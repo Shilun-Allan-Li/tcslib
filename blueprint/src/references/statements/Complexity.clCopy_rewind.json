@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCopy_rewind",
+ "key": "4f2051b83e3ac91d",
+ "kind": "lemma",
+ "title": "Rewinding the Copier Source Head",
+ "statement": "For every Boolean input word $x$, every valid input-head position $p$, source word $w$, and record $r$, and every natural number $j\\le |w|$, starting the copier in its rewinding control with source head at $j-1$ and running it for $j+1$ steps yields the completed control with source head at zero, preserving the source word and record. The input-head position remains $p$ and the output remains empty.",
+ "hypotheses_covered": [
+  "Boolean input word",
+  "valid input-head position",
+  "source word",
+  "record",
+  "natural number j at most the source-word length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, source word $w$, record, and count $j \\le |w|$, running the copier in rewinding control at source cell $j - 1$ for $j + 1$ steps returns the source head to cell zero and enters the completed control, preserving the entire accumulated record; each crossed bit costs one transition and leaving the left blank costs one more."
+}

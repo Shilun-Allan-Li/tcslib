@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.sweep_grow_left_block",
+ "key": "49ef1a0ab6725068",
+ "kind": "lemma",
+ "title": "Left extension of an encoded block",
+ "statement": "Let $M$ be a finite Turing machine over a finite alphabet $\\Gamma$, let $q$ be one of its states, and let $x$ be a word over the simulator alphabet. For any valid input-head position $p$, output word, integer frontier $z$, and finite zipper stacks $l,r$, running the simulator for exactly $k$ steps from the backward-facing configuration in the left-extension phase with counter $0$ yields the backward-facing configuration in that phase with counter $k$, frontier $z-k$, left stack equal to the encoded unmarked blank block prepended to $l$, and right stack obtained by dropping the first $k$ entries of $r$; the input-head position and output word are unchanged.",
+ "hypotheses_covered": [
+  "Finite alphabet $\\Gamma$ with decidable equality",
+  "Finite machine $M$ with finite state set and decidable equality",
+  "State $q$ of $M$",
+  "Simulator input word $x$",
+  "Valid input-head position $p$",
+  "Output word",
+  "Integer frontier $z$",
+  "Finite zipper stacks $l,r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For the single-tape simulator of a machine $M$ with $k$ work tapes and any source state\n$q$: from any backward-facing zipper configuration whose control is in the\nleft-extension phase carrying $q$ with counter $0$, running exactly $k$ transitions\nwrites the encoded unmarked blank block in reversed cell order while moving left, ending\nin the left-extension phase with counter $k$ and the work head moved left by $k$ cells;\nthe input head and output are unchanged."
+}

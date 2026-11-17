@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.catalogPoly_rewind",
+ "key": "d770903d1811a803",
+ "kind": "lemma",
+ "title": "Rewind of one loop head",
+ "statement": "Let $c,C,q$ be natural numbers, let $x$ be a Boolean input word, let $h$ assign integer positions to the $c+1$ work heads, let $o$ be an output word, and choose a head index $i<c+1$. For any natural number $j\\le q$, starting in rewind state $i$ with head $i$ at position $j-1$ and the other heads at their positions in $h$, after exactly $j+1$ steps the machine is in advance state $i+1$, with head $i$ at position $0$, the other heads unchanged, and output still $o$.",
+ "hypotheses_covered": [
+  "$c,C,q$ are natural numbers",
+  "$x$ is a Boolean input word",
+  "$h$ assigns integer positions to all work heads",
+  "$o$ is an arbitrary output word",
+  "$i<c+1$",
+  "$j\\le q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the rewind state of loop level $i$ with head $i$ at displacement $j-1$,\nfor any $j \\le q$, exactly $j+1$ steps reset head $i$ to displacement $0$ and\nenter the advance state of level $i+1$; the other loop heads and the\naccumulated output are unchanged."
+}

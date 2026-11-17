@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.clEmitter_of_body",
+ "key": "3e515e80ef11c51f",
+ "kind": "lemma",
+ "title": "Polynomial-Time Emission of a CNF Sequence",
+ "statement": "Let $\\mathrm{body}$ and $F$ be finite Turing machines over Boolean words, let $a$ be a state of $\\mathrm{body}$, and let $\\mathrm{pack}$, $\\mathrm{stepF}$, and $\\mathrm{emitF}$ be functions assigning words as in the hypotheses below. Let $G$ assign a CNF formula over natural-number variables to each input word and round index, and let $R,P:\\mathbb{N}\\to\\mathbb{N}$ be polynomially bounded. Suppose that $F$ computes the binary representation of $R(|x|)$ within $P(|x|)$ steps for every input $x$; for every $i\\le R(|x|)+1$, stepping the packed word advances its index to $\\min(i+1,R(|x|)+1)$, while emission gives the serialized fragment for round $i$ followed by the formula terminator exactly when $i=R(|x|)$, and gives the empty word when $i>R(|x|)$. Suppose also that from each input $x$, $\\mathrm{body}$ reaches within $P(|x|)$ steps a configuration in state $a$ whose first work tape contains $\\mathrm{pack}(x,0)$ and whose other work tapes are blank, with no earlier visit to state $a$; and from each such packed configuration at index $i\\le R(|x|)+1$, it returns in positive time at most $P(|x|)$ to state $a$ with the advanced packed word, appending exactly the prescribed emission and visiting no intermediate configuration in state $a$. Then the function that maps each input $x$ to the serialization of the concatenation of the formulas $G(x,i)$ for $0\\le i\\le R(|x|)$ is computable in polynomial time.",
+ "hypotheses_covered": [
+  "$\\mathrm{body}$ and $F$ are finite Turing machines over Boolean words",
+  "$a$ is a state of $\\mathrm{body}$",
+  "Functions $\\mathrm{pack}$, $\\mathrm{stepF}$, and $\\mathrm{emitF}$ have the stated input and output types",
+  "$G$ assigns CNF formulas over natural-number variables to input words and indices",
+  "$R$ and $P$ are polynomially bounded",
+  "$F$ computes the binary representation of $R(|x|)$ within $P(|x|)$ steps on every input",
+  "For all $x,i$ with $i\\le R(|x|)+1$, the packed word advances to index $\\min(i+1,R(|x|)+1)$",
+  "For all $x,i$ with $i\\le R(|x|)+1$, emission is the round fragment, with a terminator exactly at $i=R(|x|)$, and empty for $i>R(|x|)$",
+  "For every input, $\\mathrm{body}$ reaches the initial packed configuration in at most $P(|x|)$ steps with no earlier visit to state $a$",
+  "For every input and allowed index, $\\mathrm{body}$ returns in positive time at most $P(|x|)$ to the advanced packed configuration, appends the prescribed emission, and does not visit state $a$ in between"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Suppose a native machine with a distinguished anchor state, a packing of cursor values into words, abstract step and emission functions, a round bound $R$, and a budget $P$ are given, where $R$ and $P$ are polynomially bounded and some helper machine computes the binary representation of $R$ within time $P$. Assume: stepping a packed cursor advances it saturatingly up to one past the last round; emission at cursor $i \\le R$ produces exactly the chunk of round $i$, and nothing beyond the last round; from any input the machine reaches the packed start word, first returning to the anchor, within time $P$; and from each packed cursor the machine returns to the anchor in positive time at most $P$, having appended exactly the prescribed chunk to its output. Then the function sending an input to the serialization of the concatenation of all clause groups over all rounds is computable in polynomial time. No preparation producer or native body is constructed here."
+}

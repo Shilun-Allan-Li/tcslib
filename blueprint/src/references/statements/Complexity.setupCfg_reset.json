@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_reset",
+ "key": "ce2b502d98842caa",
+ "kind": "lemma",
+ "title": "Resetting the input head",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\\in\\mathbb{N}$, and fix a schedule-alphabet input, a base configuration, an input-head position $p$, integer controller-head positions, and controller tapes. Starting in reset-start phase, after $\\max(p,1)+1$ steps the machine is in copy-left phase with input head at position $1$; all controller tapes and their head positions, as well as the other configuration data, are unchanged.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Booleans",
+  "$a\\in\\mathbb{N}$",
+  "a schedule-alphabet input and base configuration",
+  "input-head position $p\\in\\{0,\\ldots,|x|+1\\}$",
+  "integer controller-head positions",
+  "arbitrary controller tapes",
+  "initial phase is reset-start"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From a setup configuration in the reset-start phase with input head at an arbitrary\nposition $p \\in \\{0,\\dots,|x|+1\\}$, running exactly $\\max(p,1)+1$ steps of the\noblivious schedule machine leads to the setup configuration in the copy-left phase with\ninput head at position $1$; all controller tapes and heads are unchanged.  (The reset\nbegins with a mandatory left move, so even the right blank boundary and the empty input\nreach the left boundary before the final right move.)"
+}

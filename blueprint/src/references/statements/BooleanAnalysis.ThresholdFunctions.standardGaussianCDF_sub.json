@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_sub",
+ "key": "30b972d0ac9b34ec",
+ "kind": "lemma",
+ "title": "Gaussian distribution increments",
+ "statement": "For all real numbers $a$ and $b$, the increment of the standard Gaussian distribution function satisfies $\\Phi(b)-\\Phi(a)=\\int_a^b\\varphi(x)\\,dx$, where the interval integral is signed.",
+ "hypotheses_covered": [
+  "$a\\in\\mathbb R$",
+  "$b\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi(x)=e^{-x^2/2}/\\sqrt{2\\pi}$ and $\\Phi(t)=\\int_{-\\infty}^{t}\\varphi(x)\\,dx$. For any real $a,b$, with no ordering assumption, one has\n\\[\n\\Phi(b)-\\Phi(a)=\\int_a^b\\varphi(x)\\,dx,\n\\]\nwhere the interval integral is signed, so that $\\int_a^b=-\\int_b^a$ when $b<a$."
+}

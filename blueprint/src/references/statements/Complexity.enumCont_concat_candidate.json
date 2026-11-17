@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_concat_candidate",
+ "key": "5c7ae5c7631b3607",
+ "kind": "lemma",
+ "title": "Candidate phase of assembly",
+ "statement": "Let $x$, $s$, $\\mathit{pre}$, and $\\mathit{rest}$ be Boolean words, let $p$ be an input-head position for input $x$, and let $\\mathit{out}$ be a Boolean word. If $s=\\mathit{pre}\\mathbin{+\u0000\u0000+}\\mathit{rest}$, then after exactly $|\\mathit{rest}|+1$ steps from the assembly configuration in candidate phase, with input head at $p$, candidate tape containing $s$ with its head at position $|\\mathit{pre}|$, and output $\\mathit{out}\\mathbin{+\u0000\u0000+}\\mathit{pre}$, the machine is halted with the candidate tape unchanged, its head at position $|s|$, input head still at $p$, and output $\\mathit{out}\\mathbin{+\u0000\u0000+}s$.",
+ "hypotheses_covered": [
+  "$x$, $s$, $\\mathit{pre}$, and $\\mathit{rest}$ are Boolean words",
+  "$p$ is an input-head position for input $x$",
+  "$\\mathit{out}$ is a Boolean word",
+  "$s=\\mathit{pre}++\\mathit{rest}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the candidate word $s$ decomposes as\n$\\mathit{pre} \\mathbin{+\\!\\!+} \\mathit{rest}$, and let $\\mathit{out}$ be a word and\n$p$ an input-head position. After exactly $|\\mathit{rest}| + 1$ steps from the\ncandidate-phase configuration of the assembly machine with input head at $p$,\ncandidate head at position $|\\mathit{pre}|$, and output\n$\\mathit{out} \\mathbin{+\\!\\!+} \\mathit{pre}$, the machine is halted with the\ncandidate tape unchanged, its head at position $|s|$, the input head still at $p$,\nand output $\\mathit{out} \\mathbin{+\\!\\!+} s$; an empty remainder takes the single\nfinal step."
+}

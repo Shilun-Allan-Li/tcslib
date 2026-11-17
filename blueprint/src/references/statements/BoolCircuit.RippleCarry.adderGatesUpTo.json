@@ -1,0 +1,14 @@
+{
+ "lean_name": "BoolCircuit.RippleCarry.adderGatesUpTo",
+ "key": "11f3baabada9b618",
+ "kind": "def",
+ "title": "Recursive list of ripple-carry adder gates",
+ "statement": "For natural numbers $n$ and $k$, define a list of gates $A_i$ for each natural number $i$ by $A_0=(\text{false constant gate},\text{ true constant gate})$. For each $i$, let $A_{i+1}$ be the concatenation of $A_i$ with the bit block whose three data inputs are $i$, $k+i$, and $2k+i$, whose carry input is $n$ when $i=0$ and $n+2+15j+8$ when $i=j+1$, whose accumulator input is $n+1$ when $i=0$ and $n+2+15j+14$ when $i=j+1$, and whose base index is $n+2+15i$.",
+ "hypotheses_covered": [
+  "Natural numbers $n$ and $k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.splitSolve_source",
+ "key": "74ffbbf15d687d30",
+ "kind": "lemma",
+ "title": "Split solver from an exact unary source",
+ "statement": "Let $C,e$ be natural numbers, let $M$ be a finite Turing machine over the Boolean alphabet, let $a$ be a state of $M$, and let $B:\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every Boolean word $s$, starting from the configuration with state $a$, empty output, and every work tape holding the unary word of length $|s|+1$, the machine reaches after exactly $B(|s|)$ steps the halted configuration with output consisting of $C(|s|+1)^e$ ones and the same tape contents. Suppose also that $B(l)\\le (C+1+5e)(l+1)^e+1$ for every natural number $l$. Then some finite Turing machine computes, on every Boolean word $w$, the encoded pair of the prefix and suffix at the least $i\\in\\{0,\\ldots,|w|\\}$ satisfying $i+C(i+1)^e=|w|$, or the empty word if no such $i$ exists, in at most $c(|w|+1)^{e+2}$ steps for some natural number $c$.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$a$ is a state of $M$",
+  "$B$ maps natural numbers to natural numbers",
+  "For every Boolean word $s$, the specified unary-bank computation reaches the stated halted configuration after exactly $B(|s|)$ steps",
+  "For every natural number $l$, $B(l)\\le (C+1+5e)(l+1)^e+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a source machine, started on the prepared bank for any candidate $s$,\nhalt within $B(\\abs{s})$ steps with captured output a run of\n$C\\,(\\abs{s}+1)^{e}$ ones, where $B(l) \\le (C+1+5e)(l+1)^{e} + 1$. Then there\nexist a machine $N$ and a constant $c$ computing, within $c\\,(n+1)^{e+2}$\nsteps, the function sending $w$ to the pair encoding of the split of $w$ at\nthe least $i$ with $i + C\\,(i+1)^{e} = \\abs{w}$, and to the empty word when\nno such $i$ exists."
+}

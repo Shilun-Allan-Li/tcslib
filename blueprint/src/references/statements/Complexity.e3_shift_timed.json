@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.e3_shift_timed",
+ "key": "8877791744cba399",
+ "kind": "lemma",
+ "title": "Running time of the zero-prefixing machine",
+ "statement": "For every fixed binary word $w$, the machine with no work tapes computes, on every binary input $x$, the word formed by $|x|$ zero bits followed by $w$ in exactly $(|w|+2)(|x|+1)$ steps.",
+ "hypotheses_covered": [
+  "A fixed binary word $w$",
+  "Every binary input word $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "For every fixed word $w$, the zero-prefixing emitter computes, on each input $x$, the word of $|x|$ zero bits followed by $w$; its running time is at most the monotone linear budget $(|w|+2)(n+1)$ on inputs of length $n$."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_branch",
+ "key": "851b056f5c95faec",
+ "kind": "lemma",
+ "title": "Run preservation outside a deleted branch",
+ "statement": "Let $s$ have a subprotocol path into $r$, and fix inputs $x\\in X$ and $y\\in Y$. Let $P$ be a family of protocols indexed by bits, with $P(b)=r$, and let $N$ be a constructor on such families. Fix a bit $c$ such that, for every family $Q$, running $N(Q)$ on $(x,y)$ gives the same output as running $Q(c)$ on $(x,y)$. Let $Q$ assign a family to each protocol, with $Q(q_c)(b)=q_c$ and $Q(q_c)(\\neg b)=P(\\neg b)$ for every $q_c$. Suppose $q$ is given by the deletion case distinction: $q=P(\\neg b)$ if deleting the path from $r$ to $s$ returns nothing, and $q=N(Q(q_c))$ if it returns $q_c$. Assume that if $(x,y)$ follows the path to $s$, then $c\\ne b$, and that whenever deletion returns $q'$, if $(x,y)$ does not follow that path then $q'$ and $r$ give the same output on $(x,y)$. Then $q$ and $N(P)$ give the same output on $(x,y)$.",
+ "hypotheses_covered": [
+  "A subprotocol path from $s$ to $r$",
+  "Fixed inputs $x\\in X$ and $y\\in Y$",
+  "$P(b)=r$",
+  "For every family $Q$, $N(Q)$ and $Q(c)$ give the same output on $(x,y)$",
+  "For every $q_c$, $Q(q_c)(b)=q_c$",
+  "For every $q_c$, $Q(q_c)(\\neg b)=P(\\neg b)$",
+  "The deletion case distinction yields $q$ as stated",
+  "If $(x,y)$ follows the path to $s$, then $c\\ne b$",
+  "Whenever deletion returns $q'$, if $(x,y)$ does not follow the path to $s$, $q'$ and $r$ give the same output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s$ be a subprotocol of $r$ via a subprotocol path $h_s$, let $(x,y)$ be an input\npair, let $P$ be a family of children with $P(b) = r$, and let $N$ be a node constructor\nsuch that running $N(Q)$ on $(x,y)$ is the same as running $Q(c)$ on $(x,y)$ for a fixed\nbit $c$ and every family $Q$. Let $Q$ be a rebuilding map with $Q(q_c)(b) = q_c$ and\n$Q(q_c)(\\neg b) = P(\\neg b)$, and suppose $q$ is the result of deleting along the path\ninside branch $b$: $q = P(\\neg b)$ if the deletion of $h_s$ returns nothing, and\n$q = N(Q(q_c))$ if it returns $q_c$. Assume that if $(x,y)$ reaches $s$ along the path\nthen $c \\ne b$, and (inductively) that whenever the deletion of $h_s$ returns some $q'$\nand $(x,y)$ does not reach $s$ along the path, $q'$ runs like $r$ on $(x,y)$. Then $q$\nand $N(P)$ produce the same output on $(x,y)$."
+}

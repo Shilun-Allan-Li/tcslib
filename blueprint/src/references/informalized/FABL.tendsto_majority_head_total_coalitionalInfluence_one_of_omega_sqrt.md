@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter09/CoalitionalInfluenceAsymptotics.lean :: FABL.tendsto_majority_head_total_coalitionalInfluence_one_of_omega_sqrt -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Total influence under head domination
+
+**Claim.** If the outside dimension tends to infinity and the head size divided by the square root of the total dimension tends to infinity, then the total coalitional influence of the majority head tends to $1$.
+
+**Proof.** The hypothesis forces the head size divided by the square root of the outside dimension to tend to infinity as well (`tendsto_majority_outside_ratio_atTop_of_total_ratio_atTop`). Since $m(q)\to\infty$, its reciprocal square root tends to zero. Combining these limits shows that the threshold for the head to force $+1$ tends to $-\infty$, while the threshold for it to force $-1$ tends to $+\infty$. The Gaussian upper tail consequently tends to $1$ at the first threshold and to $0$ at the second (`tendsto_standardGaussianUpperTail_atBot`, `tendsto_standardGaussianUpperTail_atTop`). The expected Hamming upper-tail indicators at those thresholds converge to the same respective limits (`tendsto_expect_hammingUpperTailIndicator_of_tail_tendsto`). The baseline threshold, $-1/\sqrt{k(q)+m(q)}$, tends to zero (`tendsto_majorityBaselineThreshold`), so its expected indicator tends to the Gaussian upper tail at zero (`tendsto_expect_hammingUpperTailIndicator_of_tendsto`), which is $1/2$ (`standardGaussianUpperTail_zero`). The exact formulas for the directed influences of the majority head (`coalitionalInfluenceToward_majority_head_one`, `coalitionalInfluenceToward_majority_head_neg_one`) therefore show that each tends to $1/2$. Adding the two directed limits and using the decomposition of total influence into directed influences (`coalitionalInfluence_eq_toward_add_toward`) gives the limit $1$.
+
+**Key facts.** `FABL.tendsto_majority_outside_ratio_atTop_of_total_ratio_atTop`, `FABL.tendsto_standardGaussianUpperTail_atBot`, `FABL.tendsto_standardGaussianUpperTail_atTop`, `FABL.tendsto_expect_hammingUpperTailIndicator_of_tail_tendsto`, `FABL.tendsto_majorityBaselineThreshold`, `FABL.tendsto_expect_hammingUpperTailIndicator_of_tendsto`, `FABL.standardGaussianUpperTail_zero`, `FABL.coalitionalInfluenceToward_majority_head_one`, `FABL.coalitionalInfluenceToward_majority_head_neg_one`, `FABL.coalitionalInfluence_eq_toward_add_toward`.

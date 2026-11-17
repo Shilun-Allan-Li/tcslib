@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Loop.lean :: Turing.FinTM.loopHost_replay -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Replay of a captured word
+
+**Claim.** Starting in phase thirteen with payload word $w$ and head at zero, the host halts after $|w|+1$ steps, appends $w$ to the output, and leaves the payload word with its head at $|w|$, preserving the input position and all other tapes and heads.
+
+**Proof.** In phase thirteen the host's transition is exactly the one-tape replay transition, with the other tapes carried along unchanged. The transition correspondence is established by the payload-control identity (`loopControl_payload`): when the payload head reads a bit, that bit is emitted and the payload head advances; when it reaches the end of the word, the host halts. The replay lemma (`loopReplay_run`) gives the resulting one-tape configuration after exactly $|w|+1$ steps: the replay state is halted, the payload head is at the word's length, and the output has grown from $o$ to $o\mathbin{++}w$ (list concatenation). The right-extension run correspondence (`rightCfg_run`) lifts this behavior to the full host while leaving the other tapes and their head positions unchanged, giving the claimed result.
+
+**Key facts.** `Turing.FinTM.loopControl_payload`, `Turing.FinTM.loopReplay_run`, `Turing.FinTM.rightCfg_run`.

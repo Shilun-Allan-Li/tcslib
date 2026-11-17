@@ -1,0 +1,18 @@
+{
+ "lean_name": "FABL.SmallBiasFourierInput.sample",
+ "key": "cff719d3faa5cc19",
+ "kind": "def",
+ "title": "Generated sample map",
+ "statement": "For a small-bias Fourier input, the sample is a map from the indices $0,\\ldots,N-1$ to binary vectors of length $n$, where $N$ is its sample count and $n$ is the associated generator input's output dimension. At each index, the map enumerates the corresponding ordered pair of binary seeds of length $k$, where $k$ is the generator input's field degree, and applies the executable small-bias generator using the irreducible-polynomial field implementation selected by the deterministic algorithm.",
+ "hypotheses_covered": [
+  "The underlying bias input has output dimension $n>0$.",
+  "The bias numerator is positive.",
+  "Twice the bias numerator is at most the bias denominator.",
+  "The Fourier bound is a natural number at least one.",
+  "The associated generator input has positive field degree."
+ ],
+ "confidence": "low",
+ "caveat": "The seed enumeration and executable generator are not defined in the supplied statement, so their precise ordering and computation cannot be stated.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

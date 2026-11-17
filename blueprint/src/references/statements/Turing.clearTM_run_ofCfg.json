@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.clearTM_run_ofCfg",
+ "key": "3bbab7e61776951e",
+ "kind": "theorem",
+ "title": "Clearing a tape from a configuration",
+ "statement": "Let $i<k$, let $w$ be a word over an alphabet, and let $d$ be a configuration in the sweep state. Suppose that for every integer $p$ with $-1\\le p\\le |w|$, tape $i$ at position $d_i+p$ contains the symbol of $w$ at position $p$ when that position is in the word, and is blank otherwise. After $2|w|+2$ steps, the clearing machine is in the done state, with tape $i$ blank on $[d_i,d_i+|w|)$ and all other tape cells unchanged; it was not in the done state at any earlier time. Throughout those steps, the head on tape $i$ stays in $[d_i-1,d_i+|w|]$, while every other tape head stays at its initial position.",
+ "hypotheses_covered": [
+  "tape index $i<k$",
+  "word $w$ over alphabet",
+  "starting configuration $d$ is in sweep state",
+  "tape contents on tape $i$ match the buffered word for all $-1\\le p\\le |w|$",
+  "endpoint time is $2|w|+2$",
+  "time before endpoint",
+  "all tape indices and times through endpoint"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

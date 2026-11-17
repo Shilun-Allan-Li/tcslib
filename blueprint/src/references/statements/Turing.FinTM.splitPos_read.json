@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.splitPos_read",
+ "key": "7b022088db575bd0",
+ "kind": "lemma",
+ "title": "Reading at a saturated input position",
+ "statement": "Let $w$ be a Boolean word, let $k$ be a natural number, let $S$ be a state type, and let $c$ be a configuration on input $w$ with $k$ work tapes. For any $j\\in\\mathbb N$, if the input head of $c$ is at the saturated position $\\min(j,|w|)+1$, then the scanned symbol is the $j$-th bit of $w$ when $j<|w|$, and no symbol is read when $j\\ge |w|$.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "$k\\in\\mathbb N$",
+  "$S$ is a type",
+  "$c$ is a configuration on input $w$",
+  "$j\\in\\mathbb N$",
+  "the input-head position of $c$ equals the saturated position for $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In any configuration whose input head is at the saturated position for $j$\non input $w$, the symbol read is the $j$-th bit of $w$ when $j < \\abs{w}$ and\nthe blank otherwise."
+}

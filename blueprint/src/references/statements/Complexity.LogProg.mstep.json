@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.mstep",
+ "key": "61d7f778900e044d",
+ "kind": "def",
+ "title": "One-step machine transition",
+ "statement": "Let $A$ assign an instruction to each control state, let an oracle assign a Boolean answer to each of $d$ deciders and each bit string, and let $x$ be the input. One machine step leaves a halted configuration unchanged; otherwise, it executes the instruction at the current state: a deterministic register instruction updates the control state, registers, and result according to its register-machine transition, while a memory read branches according to the bit at the head, a memory write sets that bit to $1$, and a left or right move shifts the head position by $-1$ or $+1$, respectively.",
+ "hypotheses_covered": [
+  "$m$ and $d$ are natural numbers",
+  "$\\Lambda$ is a type",
+  "$A$ maps control states to memory-machine instructions",
+  "the oracle maps a decider index and bit string to a Boolean",
+  "$x$ is a bit string",
+  "the input configuration is a machine configuration with memory"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/F₂Polynomials/Affine.lean :: FABL.functionAlgebraicDegree_comp_affineMap_le -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Degree Does Not Increase Under Affine Composition
+
+**Claim.** For any affine map from the $n$-dimensional Boolean cube over $\mathbb F_2$ to itself, composing a Boolean function with that map does not increase its algebraic degree.
+
+**Proof.** Write the function in its algebraic normal form as a sum of squarefree monomials, with coefficient at each set $S$ given by its algebraic-normal-form coefficient. Substituting the affine map into this expansion expresses the composite as a sum of terms, one for each $S$: the coefficient at $S$ times the monomial indexed by $S$ evaluated at the affine image. This expansion follows from the evaluation identity `anfEval_anfCoeff`.
+
+If the coefficient at $S$ is zero, its term vanishes and has degree zero (`functionAlgebraicDegree_zero`). If it is nonzero, it equals one in $\mathbb F_2$, so the term is just the substituted monomial. Such a monomial has degree at most $|S|$ (`functionAlgebraicDegree_anfMonomial_comp_affineMap_le_card`), and every $S$ with nonzero coefficient has size at most the original function's degree, by `algebraicDegree_le_iff`. Thus every term has degree at most that degree. The degree bound for finite sums (`functionAlgebraicDegree_finset_sum_le`) gives the desired inequality.
+
+**Key facts.** `FABL.anfEval_anfCoeff`, `FABL.functionAlgebraicDegree_zero`, `FABL.functionAlgebraicDegree_anfMonomial_comp_affineMap_le_card`, `FABL.algebraicDegree_le_iff`, `FABL.functionAlgebraicDegree_finset_sum_le`.

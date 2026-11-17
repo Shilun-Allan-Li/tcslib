@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.expect_expectationOperator",
+ "key": "7b99434c186af195",
+ "kind": "lemma",
+ "title": "Coordinate averaging preserves expectation",
+ "statement": "Let $n\\in\\mathbb N$, $i\\in\\{1,\\ldots,n\\}$, and let $g:\\{0,1\\}^n\\to\\mathbb R$. Define $E_i g(x)=\\frac{g(x_{i\\leftarrow 0})+g(x_{i\\leftarrow 1})}{2}$, where $x_{i\\leftarrow b}$ is obtained by setting coordinate $i$ to $b$. Then $\\mathbb E_x[E_i g(x)]=\\mathbb E_x[g(x)]$ under the uniform measure.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$i$ is a coordinate in dimension $n$",
+  "$g:\\{0,1\\}^n\\to\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. Let $g$ be a real cube function and $i\\in[n]$, and define $E_i g(x)=\\tfrac12(g(x_{i\\leftarrow0})+g(x_{i\\leftarrow1}))$, where the indicated update replaces bit $i$. Then $\\mathbb E[E_i g]=\\mathbb E g$."
+}

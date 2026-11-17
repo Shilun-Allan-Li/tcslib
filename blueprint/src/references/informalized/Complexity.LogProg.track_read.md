@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean :: Complexity.LogProg.track_read -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Reading the Simulated Track
+
+**Claim.** Under the stated relations between the configurations and the stored words, the machine reads a character exactly at cell positions, and the virtual symbol represented by its read symbol, mode, segment, and direction is the symbol at the track position.
+
+**Proof.** Write $L_s$ for the length of segment $s$. We split according to whether $s=0$, treating the initial segment separately from the argument-register segments.
+
+1. If $s=0$, the machine reads from its input head. The relation for input positions identifies that head with the virtual position associated to the track position; the input-symbol characterization (`inputSymbol_eq`) then expresses the read symbol as the corresponding entry of $x$. The segment at index zero is the mode-dependent initial segment (`seg_callSegs_zero`). If the track position is the left boundary, consistency forces the direction to be left, and the read is not a character; the represented virtual symbol is the left separator or the absent endpoint, as appropriate. If it is a cell, validity places its index within the initial segment. In whole mode, that segment is $x$ with doubled encoding, and in unary-first mode it is the initial run of true bits; each cell therefore reads precisely the bit represented there. The latter uses the facts that every entry in the initial run is true (`takeWhile_true_getElem?`) and that the first position past that run is not true (`takeWhile_true_end`). If the track position is the right boundary, the read is at the segment endpoint: it is not a character, and the virtual symbol is the separator when another segment follows, otherwise the absent endpoint. The segment-list length fact (`length_callSegs`) determines that boundary case.
+
+2. If $s>0$, write $s=a+1$. The segment index lies within the argument list by the relation’s segment bound. Its corresponding register is the $a$th argument (`segReg_eq`), and the segment there is the word assigned to that register (`seg_callSegs_succ`). Distinctness of the argument list makes the register’s index in the list exactly $a$, so the register-preservation and register-position clauses of the relation, together with the hypothesis on the stored words, show that the symbol read from that register is the tape symbol at the track position. A left boundary is consistent only with leftward direction and reads no character; a valid cell reads the corresponding word bit; and a right boundary reads beyond the word, hence blank. In all three cases, the definitions of character-read status and virtual-symbol interpretation give exactly the asserted cell test and represented symbol.
+
+**Key facts.** `Complexity.LogProg.seg_callSegs_zero`, `Complexity.LogProg.inputSymbol_eq`, `Complexity.LogProg.Mode.seg0_whole`, `Complexity.LogProg.Mode.seg0_unaryFst`, `Complexity.LogProg.takeWhile_true_getElem?`, `Complexity.LogProg.takeWhile_true_end`, `Complexity.LogProg.length_callSegs`, `Complexity.LogProg.segReg_eq`, `Complexity.LogProg.seg_callSegs_succ`.

@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.LearningProgram.runWithCost",
+ "key": "9b6330b37a38e941",
+ "kind": "def",
+ "title": "Run a program with cost",
+ "statement": "Fix a dimension, an access mode, an output type, and a Boolean target function on the $n$-dimensional sign cube. Running a learning program with cost produces a probability distribution on pairs of outputs and learning costs: a pure return has zero cost; a random bit costs one unit of local work; each random labeled example costs one example call and one unit of work; a batch of $m$ labeled examples costs $m$ example calls and $m$ units of work; a batch of $m$ uniform cube inputs costs $mn$ units of work; and a matrix indexed by a finite set $I$ with $m$ examples per index costs $|I|m$ example calls and $|I|m$ units of work. A matrix-output operation uses that same matrix cost plus its specified work charge, a membership query costs one query and one unit of work, and an explicitly charged computation costs its specified number of work units.",
+ "hypotheses_covered": [
+  "a dimension $n\\in\\mathbb{N}$",
+  "an access mode is fixed",
+  "an output type is specified",
+  "a Boolean target function on the $n$-dimensional sign cube is given",
+  "matrix operations use a finite index set",
+  "batch sizes and work charges are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Meyer.ruleW",
+ "key": "647287761c042bc7",
+ "kind": "def",
+ "title": "Work-tape cell update rule",
+ "statement": "For a finite-tape Turing machine $M$ with Boolean input symbols, an optional state $q$, read data $\\rho$, a work tape $h$, an integer cell offset $d$, and tape contents $f:\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$, define the updated cell symbol as follows. If $q$ is absent, use $f(d)$. If $q$ is present, let the transition's movement on tape $h$ be $m$ and its write instruction be $w$: when $d+m=0$, use the write instruction applied to the symbol read on tape $h$; otherwise use $f(d+m)$.",
+ "hypotheses_covered": [
+  "A finite-tape Turing machine M with Boolean input symbols",
+  "An optional state q",
+  "Read data ρ",
+  "A work tape h",
+  "An integer offset d",
+  "Tape contents f from integers to optional Booleans"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,6 +1,6 @@
 {
  "lean_name": "potential_ratio_le",
- "key": "d41e74ee14790aad",
+ "key": "425f141eb3ed6f4e",
  "kind": "lemma",
  "title": "Potential ratio bound for Hedge",
  "statement": "Fix $N \\ge 1$ experts, a horizon of $T$ rounds, a learning rate $\\eta > 0$, and a valid loss sequence $\\ell$. Then for every round $t$ with $t < T$, the consecutive potentials satisfy\n\\[\n  \\frac{W_{t+1}}{W_t} \\;\\le\\; 1 - \\bigl(1 - e^{-\\eta}\\bigr)\\,\\widehat{\\ell}_t,\n\\]\nwhere $\\widehat{\\ell}_t = \\sum_{i=1}^{N} p_t(i)\\,\\ell_t(i)$ is the expected loss of the learner under the Hedge distribution at round $t$.",

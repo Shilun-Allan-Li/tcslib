@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.MultiTapeTM.runFrom_comm_of_step",
+ "key": "58364dd3fb39a7bb",
+ "kind": "lemma",
+ "title": "A step-commuting map preserves runs",
+ "statement": "Let $M$ and $M'$ be multi-tape Turing machines, with respectively $k$ and $k'$ work tapes, state sets $S$ and $S'$, and fixed inputs $x$ and $x'$. Suppose a map $f$ sends configurations of $M$ on $x$ to configurations of $M'$ on $x'$ and satisfies $M'.\\operatorname{step}(f(c))=f(M.\\operatorname{step}(c))$ for every configuration $c$ of $M$. Then for every such configuration $c$ and every $n\\in\\mathbb{N}$, running $M'$ for $n$ steps from $f(c)$ yields the image under $f$ of the configuration reached by running $M$ for $n$ steps from $c$.",
+ "hypotheses_covered": [
+  "Two multi-tape Turing machines with $k$ and $k'$ work tapes",
+  "State sets and fixed inputs for the two machines",
+  "A map from configurations of the first machine to configurations of the second",
+  "The map commutes with one step on every configuration",
+  "A configuration of the first machine",
+  "A natural-number time $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ and $M'$ be multi-tape Turing machines over the same alphabet, with\n$k$ and $k'$ work tapes and running on inputs $x$ and $x'$ respectively, and\nlet $f$ map configurations of $M$ to configurations of $M'$ so that one step\nof $M'$ after $f$ agrees with $f$ after one step of $M$ on every\nconfiguration.  Then for every configuration $c$ of $M$ and every\n$n \\in \\mathbb{N}$, running $M'$ for $n$ steps from $f(c)$ yields the image\nunder $f$ of the configuration $M$ reaches in $n$ steps from $c$."
+}

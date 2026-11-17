@@ -1,0 +1,10 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/Discrepancy.lean :: CommunicationComplexity.discrepancy_integrand_eq -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Signed indicator decomposition
+
+**Claim.** For every $(x,y)\in X\times Y$, the indicator of $S$ multiplied by the sign determined by $g(x,y)$ equals the indicator of the part of $S$ where $g$ is false minus the indicator of the part where $g$ is true.
+
+**Proof.** Fix $(x,y)$. If it is outside $S$, all three indicators vanish, so both sides are zero. If it lies in $S$, then exactly one of the conditions $g(x,y)=\mathrm{false}$ and $g(x,y)=\mathrm{true}$ holds. In the false case the sign is $1$, and the right side is $1-0$; in the true case the sign is $-1$, and the right side is $0-1$. Thus the two sides agree in every case.

@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Catalog.lean :: Turing.FinTM.f2_splitPos_read -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Input symbol at a split position
+
+**Claim.** When the input head is at position $1+\min(j,|w|)$, it reads the $j$th bit if $j<|w|$, and reads no symbol otherwise.
+
+**Proof.** Split into the two possibilities. If $j<|w|$, then $\min(j,|w|)=j$, so the head position is $1+j$. The input-reading fact (`inputSymbolInner`) says that this position reads the $j$th input symbol. If $j\ge |w|$, then $\min(j,|w|)=|w|$, so the head is at the right boundary, where the configuration’s input-symbol convention returns no symbol. These give the two branches of the stated formula.
+
+**Key facts.** `Turing.inputSymbolInner`.

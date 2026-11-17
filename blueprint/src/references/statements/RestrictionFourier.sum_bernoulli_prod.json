@@ -1,6 +1,6 @@
 {
  "lean_name": "RestrictionFourier.sum_bernoulli_prod",
- "key": "da501fe9ece399f1",
+ "key": "0bb2c4086d0e8f91",
  "kind": "lemma",
  "title": "Bernoulli restriction weights factor over coordinates",
  "statement": "Fix $n \\in \\bbn$ and a real parameter $p$, and recall that a restriction on $n$ variables is a map $\\rho : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$ assigning each variable either a fixed Boolean value or the free marker $\\mathrm{none}$. Write $w_p(\\rho) = p^{\\,k}\\bigl(\\tfrac{1-p}{2}\\bigr)^{\\,n-k}$ for its Bernoulli weight, where $k$ is the number of free variables of $\\rho$, and let $\\omega_p$ be the per-variable weight given by $\\omega_p(\\mathrm{none}) = p$ and $\\omega_p(v) = \\tfrac{1-p}{2}$ for a fixed value $v$. Then for every family $h_i : \\mathrm{Option}\\,\\mathrm{Bool} \\to \\bbr$ indexed by $i \\in \\mathrm{Fin}\\,n$,\n\\[\n  \\sum_{\\rho}\\, w_p(\\rho) \\prod_{i} h_i(\\rho(i))\n  \\;=\\; \\prod_{i} \\sum_{v}\\, \\omega_p(v)\\, h_i(v),\n\\]\nwhere the outer sum ranges over all restrictions $\\rho$ on $n$ variables and each inner sum ranges over $v \\in \\mathrm{Option}\\,\\mathrm{Bool}$.",

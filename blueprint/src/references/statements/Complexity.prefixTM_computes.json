@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.prefixTM_computes",
+ "key": "d6c3b8cef86f5cb9",
+ "kind": "lemma",
+ "title": "Copy phase of the prefixing machine",
+ "statement": "Let $w$ and $x$ be binary strings. For every $i\\in\\mathbb{N}$ with $i\\le |x|$, after $i$ steps from the configuration in the final prefixing state, with the input head at position $1$ and output $w$, the machine is still in that state, its input head is at position $i+1$, and its output is $w$ followed by the first $i$ bits of $x$.",
+ "hypotheses_covered": [
+  "$w$ is a binary string",
+  "$x$ is a binary string",
+  "$i\\in\\mathbb{N}$",
+  "$i\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w = w_0 \\cdots w_{m-1}$ be a binary string and $P_w$ the machine with no\nwork tapes and states $\\{0, \\ldots, m\\}$ which first emits $w_0, \\ldots, w_{m-1}$\none per step without moving its input head, then copies the input bit by bit\nwhile moving right, halting at the first blank. Then for every binary input $x$,\n$P_w$ halts within $|w| + |x| + 1$ steps with output the concatenation $wx$."
+}

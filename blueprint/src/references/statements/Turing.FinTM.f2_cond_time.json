@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_cond_time",
+ "key": "a06f0cbdaca1e969",
+ "kind": "lemma",
+ "title": "Conditional computation time",
+ "statement": "Let $D,M_1,M_2$ be finite Turing machines over the Boolean alphabet, let $p$ map Boolean words to Booleans, and let $f_1,f_2$ map Boolean words to Boolean words. Suppose $D$ computes $[p(x)]$ on every input $x$ in exactly $T_0(|x|)$ steps, and $M_1,M_2$ compute $f_1(x),f_2(x)$ in exactly $T_1(|x|),T_2(|x|)$ steps, respectively. Then the conditional machine computes $f_1(x)$ when $p(x)$ is true and $f_2(x)$ when $p(x)$ is false, on every input $x$, in exactly $5\\bigl(T_0(|x|)+\\max(T_1(|x|),T_2(|x|))+1\\bigr)$ steps.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $D,M_1,M_2$",
+  "Boolean-word predicate $p$ and Boolean-word functions $f_1,f_2$",
+  "Natural-valued time bounds $T_0,T_1,T_2$",
+  "$D$ computes $[p(x)]$ in exactly $T_0(|x|)$ steps for every input",
+  "$M_1$ computes $f_1(x)$ in exactly $T_1(|x|)$ steps for every input",
+  "$M_2$ computes $f_2(x)$ in exactly $T_2(|x|)$ steps for every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

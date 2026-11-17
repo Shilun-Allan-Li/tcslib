@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.comp_prefix_hit",
+ "key": "185678f9d06cc055",
+ "kind": "lemma",
+ "title": "Prefix-match halt result",
+ "statement": "Let $C,e\\in\\mathbb{N}$, let $m$ be a Boolean value, let $f$ map finite bit strings to finite bit strings, let $x,b$ be finite bit strings, let $p,B\\in\\mathbb{N}$, and let $v$ be a vector of fourteen natural-number registers whose values are all at most $B$. On the input encoding $\\langle\\langle x,b\\rangle,\\mathrm{bits}(p)\\rangle$, the specified machine started in the prefix-hit state with register vector $v$ halts with answer true if $m$ is true, and otherwise with answer equal to the bit of $f(x)$ at index $\\lfloor v(0)/2\\rfloor$, taking an out-of-range index to have value false. Every configuration before halting satisfies the machine's admissibility condition and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$m$ is a Boolean value",
+  "$f$ maps finite bit strings to finite bit strings",
+  "$x,b$ are finite bit strings",
+  "$p,B$ are natural numbers",
+  "$v$ assigns natural-number values to fourteen registers",
+  "Every register value of $v$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e\\in\\mathbb N$, let $\\mathrm{mode}$ be Boolean, let $f$ map finite bit strings to\nfinite bit strings, and let $x,b$ be bit strings and $p,B$ natural numbers. If $v$ is a\nvector of fourteen natural-number registers whose entries are all at most $B$, then, on\ninput $\\langle\\langle x,b\\rangle,\\mathrm{bits}(p)\\rangle$, the specified machine started\nat its prefix-match state with register vector $v$ halts with answer true when\n$\\mathrm{mode}$ is true, and otherwise returns the bit of $f(x)$ at index $\\lfloor\nv(0)/2\\rfloor$, taking an out-of-range bit to be false. Every configuration before\nhalting satisfies the machine's precondition and register bound."
+}

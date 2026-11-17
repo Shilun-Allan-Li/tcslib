@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Meyer.in_edge",
+ "key": "85009d1bf29c62ed",
+ "kind": "theorem",
+ "title": "Input-cell consistency at a machine step",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $x$ be a Boolean input word, and let $Ans$ be a Boolean answer table for selectors and time and space parameters. Suppose every local checking condition in the finite tableau encoding is satisfied, and at time $t$ the answer table correctly represents the machine configuration and scanned symbols. If $t+1<2^W$ and $e$ is an integer with $-(|x|+1)\\le e\\le |x|$, write $c$ for the machine configuration at time $t$ and let $m$ be its prescribed input-head movement when $c$ is nonhalting. Then the encoded input symbols at times $t$ and $t+1$ agree at positions $e$ and $e+1$ when $c$ is halted or $m=0$; for a right move they agree at $e,e+1$ if the scanned input symbol is blank and the encoded symbol at the right boundary is blank, and otherwise the symbol at time $t+1$ and position $e$ equals that at time $t$ and position $e+1$; for a left move they agree at $e,e+1$ under the analogous blank-boundary condition, and otherwise the symbol at time $t+1$ and position $e+1$ equals that at time $t$ and position $e$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Boolean Turing machine",
+  "$x$ is a Boolean input word",
+  "$Ans$ is an answer table for selectors and time and space parameters",
+  "all local tableau checks hold",
+  "the answer table correctly represents the configuration and scanned symbols at time $t$",
+  "$t+1<2^W$",
+  "$e$ is an integer with $-(|x|+1)\\le e\\le |x|"
+ ],
+ "confidence": "low",
+ "caveat": "This renders the conditional conclusion in terms of the tableau's encoded symbols, but the formal statement's predicates AllGood, Correct, and cX have no provided informal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

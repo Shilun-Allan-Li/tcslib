@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.access_valid",
+ "key": "b58303f88593c45d",
+ "kind": "lemma",
+ "title": "Access computation returns the indexed bit",
+ "statement": "Let $z$ be a finite bit string, $r$ a natural number, and $\\mathrm{mode}$ a Boolean. For every natural number $k$ with $k\\le |z|$ and $k\\le r$, there are natural numbers $k'$ and $p'$ such that, from the configuration on input $\\langle z,\\mathrm{bits}(r)\\rangle$ with the access machine in its initial scan state, there is a finite safe computation to a halting configuration that outputs the bit $\\mathrm{mode}\\land(r<|z|)$ if $\\mathrm{mode}$ is true, and otherwise outputs the $r$-th bit of $z$, using false when that position is beyond the end of $z$.",
+ "hypotheses_covered": [
+  "$z$ is a finite bit string",
+  "$r$ is a natural number",
+  "$\\mathrm{mode}$ is Boolean",
+  "$k$ is natural with $k\\le |z|$",
+  "$k\\le r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

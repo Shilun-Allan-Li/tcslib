@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Codec.sc_run",
+ "key": "3ff4532853612782",
+ "kind": "theorem",
+ "title": "Scan execution and register update",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine, choose a simulator mode and scan identifier $c$, and let $y$ be a bit string with register bound $B$ and initial register valuation $v$. If every register in $v$ is at most $B$, and the destination register's initial value plus the scan factor for $c$ times the source register's initial value is at most $B$, then the coded simulator has a finite guarded execution from scan state $c$ to its designated next state. At the end, the source register is zero, the destination register has increased by the scan factor times the source register's initial value, and all other registers retain their initial values; throughout the execution all registers stay at most $B$ and the guard conditions hold.",
+ "hypotheses_covered": [
+  "Finite nondeterministic Turing machine N",
+  "Simulator mode",
+  "Scan identifier c",
+  "Bit string y",
+  "Natural register bound B",
+  "Initial register valuation v is bounded by B",
+  "Destination value plus scan factor times source value is at most B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

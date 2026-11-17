@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_and",
+ "key": "3cfe03d52bedf2a1",
+ "kind": "theorem",
+ "title": "Polynomial-Time Conjunction",
+ "statement": "Let $p$ and $q$ be Boolean-valued functions on finite bit strings. If the functions sending $x$ to the one-bit outputs $[p(x)]$ and $[q(x)]$ are polynomial-time computable, then the function sending $x$ to $[p(x)\\land q(x)]$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$p,q$ map finite bit strings to Boolean values",
+  "The one-bit output function $x\\mapsto[p(x)]$ is polynomial-time computable",
+  "The one-bit output function $x\\mapsto[q(x)]$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ and $q$ be Boolean-valued predicates on bit strings such that the maps sending $x$ to the one-bit words $p(x)$ and $q(x)$ are both polynomial-time computable (computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the map sending $x$ to the one-bit word $p(x) \\land q(x)$ is polynomial-time computable."
+}

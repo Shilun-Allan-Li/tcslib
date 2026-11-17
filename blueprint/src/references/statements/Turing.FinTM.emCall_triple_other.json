@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emCall_triple_other",
+ "key": "018d50e3d56205f9",
+ "kind": "lemma",
+ "title": "Triple selection isolates its tape",
+ "statement": "For every finite Boolean Turing machine $M$, source tapes $i,j$, and component $r\\in\\{0,1,2\\}$, selection for tape $i$ at the physical index assigned to component $r$ of tape $j$ returns $r$ if $j=i$, and is undefined otherwise.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$i,j$ are source work tapes of $M$",
+  "$r\\in\\mathrm{Fin}(3)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all source tapes $i$ and $j$ and every component $r$, the triple selection of bank\n$i$ evaluated at the physical index of component $r$ of bank $j$ returns $r$ when $j =\ni$ and selects nothing otherwise."
+}

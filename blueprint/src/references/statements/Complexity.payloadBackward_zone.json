@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.payloadBackward_zone",
+ "key": "82e14e2d2306e86d",
+ "kind": "lemma",
+ "title": "Full backward sweep",
+ "statement": "Let $I$ be an index type, let $f:\\mathbb Z\\to I\\to\\mathrm{OblPayload}$ be a payload family, let $d:I\\to\\{-1,0,1\\}$ assign directions, let $z\\in\\mathbb Z$, and let $n\\in\\mathbb N$. Folding the backward row transducer over the reversed cached zone of length $n$ starting at $z$, with initial register $f(z+n)$, yields register $f(z)$ and the reversed uncached zone of length $n$ whose payload at coordinate $t$ and index $i$ is $f(t+d(i),i)$.",
+ "hypotheses_covered": [
+  "A payload family $f:\\mathbb Z\\to I\\to\\mathrm{OblPayload}$",
+  "A direction assignment $d:I\\to\\{-1,0,1\\}$",
+  "An integer starting coordinate $z$",
+  "A natural-number length $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every payload family $f$, every vector of directions $d$, every coordinate $z$,\nand every length $n$, folding the backward transducer with directions $d$ and initial\nregister the payloads at $z + n$ over the reversed cached zone of $n$ rows starting at\n$z$ ends with register the payloads at $z$ and produces the reversed uncached zone of\nthe family shifted per tape by $d$; every row is shifted as prescribed."
+}

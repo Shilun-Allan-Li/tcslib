@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.mid_regCfg",
+ "key": "04b852eed98bc87f",
+ "kind": "lemma",
+ "title": "Register configuration satisfies the middle invariant",
+ "statement": "Let $m,d$ be nonnegative integers, let $\\Lambda$ be a state set, and fix a Boolean input $x$, an register machine $A$ with $m$ registers and $d$ deciders, an initial label $l_0$, a label $l$, register values $v$, an output word $out$, a register $r$, a phase-augmented state $s$, a tape content function $f:\\mathbb Z\\to\\mathrm{Option}(\\{0,1\\})$, and integers $q,W$. If the program associated to $A$ has no decider call at state $s$, $-1\\le q\\le W$, and $0\\le W$, then the configuration obtained from the initial register configuration by setting its state to $s$, replacing register $r$'s tape by $f$ with head at $q$, satisfies the middle invariant: it has no decider call at its current state, and every register head lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "A is a register machine with m registers and d deciders",
+  "l₀ is an initial label",
+  "l is a label",
+  "v assigns natural-number values to the registers",
+  "out is an output word",
+  "r is a register index",
+  "s is a state-label and phase pair",
+  "f assigns an optional Boolean symbol to each integer tape cell",
+  "q and W are integers",
+  "the program has no decider call at s",
+  "-1 ≤ q ≤ W",
+  "0 ≤ W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

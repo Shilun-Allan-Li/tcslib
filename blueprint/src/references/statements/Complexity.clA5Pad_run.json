@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Pad_run",
+ "key": "e391bdaaa87a47f8",
+ "kind": "lemma",
+ "title": "Padded runs match source runs",
+ "statement": "Let $M$ be a finite Boolean-alphabet Turing machine with $k$ work tapes, let $K\\in\\mathbb{N}$ satisfy $k\\le K$, and let $c$ be a configuration of $M$ on a Boolean input word $x$. For every $t\\in\\mathbb{N}$, the padded machine's configuration after $t$ steps from the padded $c$ is the padding of $M$'s configuration after $t$ steps from $c$.",
+ "hypotheses_covered": [
+  "A finite Boolean-alphabet Turing machine $M$ with $k$ work tapes",
+  "A natural number $K$ with $k\\le K$",
+  "A Boolean input word $x$",
+  "A configuration $c$ on input $x$",
+  "A natural run length $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine with $k \\le K$ tapes, source configuration, and duration $t$, running the padded machine for $t$ steps from the padded configuration equals padding the source's $t$-step run; the padded source observes exactly its original work symbols."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "RestrictionFourier.sum_prob_inter_eq_card_ge",
+ "key": "0f17799bf284460c",
+ "kind": "lemma",
+ "title": "Partitioning by intersection size",
+ "statement": "Let $n$ be a natural number, let $p\\in\\mathbb{R}$, let $U\\subseteq\\{0,\\ldots,n-1\\}$, and let $k\\in\\mathbb{N}$. Summing, over all subsets $S\\subseteq\\{0,\\ldots,n-1\\}$ with $|S|\\ge k$, the Bernoulli restriction probability that $U\\cap J=S$ gives the Bernoulli restriction probability that $|U\\cap J|\\ge k$, where $J$ is the free-variable set of the restriction. This identity holds for every real $p$.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A real parameter $p$",
+  "A subset $U$ of the $n$ variable indices",
+  "A natural number threshold $k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix $n$, a real parameter $p$, a subset $U \\subseteq [n]$, and a threshold $k \\in \\bbn$.\nFor a restriction $\\rho$ on $n$ variables write $J$ for its set of free variables, and\nwrite $\\Pr_\\rho[\\cdot]$ for the sum, over all restrictions, of the Bernoulli weight\n$p^{\\abs{J}}\\bigl(\\tfrac{1-p}{2}\\bigr)^{\\,n-\\abs{J}}$ times the indicator of the event\n(a genuine probability when $0 \\le p \\le 1$). Then\n\\[\n  \\sum_{\\substack{S \\subseteq [n] \\\\ \\abs{S} \\ge k}}\n    \\Pr_\\rho\\bigl[\\,U \\cap J = S\\,\\bigr]\n  \\;=\\;\n  \\Pr_\\rho\\bigl[\\,\\abs{U \\cap J} \\ge k\\,\\bigr].\n\\]\nThe identity holds for every real $p$; no bound on $p$ is assumed."
+}

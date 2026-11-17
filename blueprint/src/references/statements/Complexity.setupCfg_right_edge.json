@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_right_edge",
+ "key": "f6544dd1415cae0c",
+ "kind": "lemma",
+ "title": "The right-boundary transition",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B,R\\in\\mathbb{N}$, and fix a schedule-alphabet input, a base configuration, an input-head position, an integer budget-head position, and a budget tape. Starting in right-edge phase with unary head at $B+1$ on the unary tape with $B$ markers and guide head at $R+1$ on the partial guide with $R+1$ copied cells, one step enters layout-return phase $0$, moves the unary and guide heads left to $B$ and $R$, respectively, and changes the guide tape to the right guide of radius $R$; the other configuration data is unchanged.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Booleans",
+  "$a,B,R\\in\\mathbb{N}$",
+  "a schedule-alphabet input, base configuration, and input-head position",
+  "integer budget-head position and budget tape",
+  "initial phase is right-edge",
+  "unary head is at $B+1$ on the unary tape with $B$ markers",
+  "guide head is at $R+1$ on the partial guide with $R+1$ copied cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From a setup configuration in the right-edge phase with unary head at cell $B+1$ over\nthe unary tape with $B$ markers and guide head at cell $R+1$ over the partial guide\nwith $R+1$ copied cells, one step writes the right outer boundary marker at guide cell\n$R+1$, moves the unary and guide heads one cell left (to $B$ and $R$), and enters the\nfirst layout-return phase; the resulting guide tape is the right guide of radius $R$."
+}

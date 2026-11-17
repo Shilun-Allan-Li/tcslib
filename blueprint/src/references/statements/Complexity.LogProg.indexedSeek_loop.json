@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.indexedSeek_loop",
+ "key": "3563769b149955f7",
+ "kind": "theorem",
+ "title": "Indexed seek loop",
+ "statement": "Let $A$ be a register program with oracle, and let $\\mathrm{ptr},\\mathrm{limit},\\mathrm{idx},\\mathrm{query}$ be pairwise distinct registers. Suppose the program states implement the following loop: at `test`, compare $\\mathrm{ptr}$ with $\\mathrm{limit}$ and proceed to `miss` if equal, otherwise to `probe`; at `probe`, compare $\\mathrm{idx}$ with $\\mathrm{query}$ and proceed to `hit` if equal, otherwise to `bump`; at `bump`, increment $\\mathrm{idx}$ and enter $\\mathrm{advance}(0)$; each state $\\mathrm{advance}(i)$ for $i<\\mathrm{stride}$ increments $\\mathrm{ptr}$ and advances to $\\mathrm{advance}(i+1)$, with $\\mathrm{advance}(\\mathrm{stride})=\\mathrm{test}$. Assume $0<\\mathrm{stride}$, every register initially contains at most $B$, $\\mathrm{limit}=\\mathrm{ptr}+\\mathrm{stride}\\cdot\\mathrm{count}$, $\\mathrm{idx}+\\mathrm{count}\\le B$, and $\\mathrm{idx}\\le\\mathrm{query}$. If $\\mathrm{query}<\\mathrm{idx}+\\mathrm{count}$, the run reaches `hit` with $\\mathrm{ptr}$ increased by $\\mathrm{stride}(\\mathrm{query}-\\mathrm{idx})$ and $\\mathrm{idx}$ set to $\\mathrm{query}$; otherwise it reaches `miss` with $\\mathrm{ptr}$ set to its initial $\\mathrm{limit}$ and $\\mathrm{idx}$ increased by $\\mathrm{count}$. In either case, every configuration before the endpoint satisfies the program's precondition $\\mathrm{PreS}$ and keeps every register at most $B$.",
+ "hypotheses_covered": [
+  "$\\mathrm{ptr},\\mathrm{limit},\\mathrm{idx},\\mathrm{query}$ are pairwise distinct",
+  "Specified transition at `test`",
+  "Specified transition at `probe`",
+  "Specified transition at `bump`",
+  "Specified transitions at $\\mathrm{advance}(i)$ for every $i<\\mathrm{stride}$",
+  "$\\mathrm{advance}(\\mathrm{stride})=\\mathrm{test}$",
+  "$0<\\mathrm{stride}$",
+  "Every register initially is at most $B$",
+  "Initial $\\mathrm{limit}=\\mathrm{ptr}+\\mathrm{stride}\\cdot\\mathrm{count}$",
+  "Initial $\\mathrm{idx}+\\mathrm{count}\\le B$",
+  "Initial $\\mathrm{idx}\\le\\mathrm{query}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clBlock_ext",
+ "key": "fdb19b66b17d9a35",
+ "kind": "lemma",
+ "title": "Blocks are determined by their slices",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let a binary code for its optional states have width $B$, and let $a$ and $b$ be two bit blocks of length $B+2+2k$, where $k$ is the number of work tapes of $M$. If their state slices agree, their input-symbol slices agree, and their work-symbol slices agree for every tape, then $a=b$.",
+ "hypotheses_covered": [
+  "finite Turing machine $M$ over the Boolean alphabet",
+  "binary code for optional states of $M$",
+  "bit blocks $a,b$ of length $B+2+2k$",
+  "equal state slices",
+  "equal input-symbol slices",
+  "equal work-symbol slices for every work tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If two snapshot blocks of $B + 2 + 2k$ bits have equal state slices, equal input slices, and equal work slices on every tape, then the blocks are equal bit for bit. Equality of the decoded fields alone would not suffice; the claim pins every individual bit."
+}

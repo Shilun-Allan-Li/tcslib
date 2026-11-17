@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.push_run",
+ "key": "7f8ec2a0b6b14f09",
+ "kind": "theorem",
+ "title": "Pushing a bit onto the stack",
+ "statement": "Let $x$ be a finite bit string, let $B,k,S,p$ be natural numbers, and let $b$ be a Boolean. If $p\\le B$, $2S+1\\le B$, and $k+1\\le B$, then the seven-register program has a run, with its specified oracle, from the push state carrying $b$ and register values $(k,S,p,0,0,0,0)$ to the node state with register values $(k+1,2S+b,0,0,0,0,0)$. Every configuration strictly before the endpoint satisfies the program precondition and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$b$ is a Boolean",
+  "$k,S,p,B$ are natural numbers",
+  "$p\\le B$",
+  "$2S+1\\le B$",
+  "$k+1\\le B$",
+  "input bit string $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string and let $B,k,S,p$ be natural numbers. For either Boolean value\n$b$, if $p\\le B$, $2S+1\\le B$, and $k+1\\le B$, the fixed seven-register program, with\nits specified oracle, can run from the push state carrying $b$, at depth $k$, stack\nvalue $S$, and input pointer $p$, to the node state at depth $k+1$ and stack value\n$2S+b$. The input pointer and all scratch registers are zero at the endpoint; throughout\nthe run, every register remains at most $B$ and every configuration satisfies the\nprogram's precondition."
+}

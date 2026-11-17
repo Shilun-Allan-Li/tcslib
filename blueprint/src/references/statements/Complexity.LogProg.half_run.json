@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.half_run",
+ "key": "03d7c5f5a351f9d2",
+ "kind": "lemma",
+ "title": "Register halving computation",
+ "statement": "Let $P$ be a register program with designated register $r$ and states $h_R,h_0,h_F,h_T,next$. Suppose its transitions at these states implement the stated end-marker and leftward halving actions for each possible scanned symbol, and none of these four states is a call state. For every configuration $c$ and natural number $n$, there is a time $T$ at which the program, started in state $h_R$ with register $r$ containing the binary word for $n$ and its head at zero, reaches state $next$ with that register containing the binary word for $\\lfloor n/2\\rfloor$ and its head at zero. At every earlier time $t<T$, its configuration differs from $c$ only in the state, tape, and head position of register $r$; the state is not a call state and the head position lies between $-1$ and the length of the binary word for $n$, inclusive.",
+ "hypotheses_covered": [
+  "A register program $P$, oracle, input, register $r$, and states $h_R,h_0,h_F,h_T,next$.",
+  "At $h_R$, every transition is the specified end-marker action.",
+  "At $h_0,h_F,h_T$, every transition is the specified halving action for the scanned symbol.",
+  "None of $h_R,h_0,h_F,h_T$ is a call state.",
+  "A configuration $c$.",
+  "A natural number $n$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

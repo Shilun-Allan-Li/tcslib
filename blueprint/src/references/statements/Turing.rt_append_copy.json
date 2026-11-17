@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.rt_append_copy",
+ "key": "a91f94aae36a98f6",
+ "kind": "theorem",
+ "title": "Copying a record to the table",
+ "statement": "For every $m\\in\\mathbb{N}$, there are a finite state set $P$, a two-work-tape machine $R$, entry and exit states, and a constant $C\\in\\mathbb{N}$ such that the following holds. Given a header word $h$, a list $es$ of lists of words, and a list $e$ of words of length $m$, assume every field in the table formed from $h$ and the flattened $es$ is nonempty. If a configuration starts in the entry state, tape 0 has its head at $o$ and stores the table encoding with blank cells from its end onward, and tape 1 stores the joined encoding of $e$ at its head, then there is a time $t\\le C(L+E+1)$, where $L$ and $E$ are the lengths of the table and record encodings, at which the machine is in the exit state and tape 0 has appended the encoding of $e$ at the offset following all table fields. No earlier time below $t$ reaches the exit state, and up to time $t$ both heads remain within distance $C(L+E+1)$ of their initial positions; the final tape contents elsewhere, as well as the other configuration data, are unchanged.",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb{N}$",
+  "existence of a finite state set with decidable equality, a two-tape machine, entry and exit states, and a natural-number constant $C$",
+  "input word $x$ and words $h$, $es$, and $e$",
+  "every field in the table is nonempty",
+  "$e$ has length $m$",
+  "initial configuration has the entry state",
+  "tape 0 head position equals $o$",
+  "tape 0 satisfies the table-encoding condition",
+  "tape 0 is blank at or beyond the table encoding's end",
+  "tape 1 satisfies the record-encoding condition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

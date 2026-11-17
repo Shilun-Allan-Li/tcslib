@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2_copy_step",
+ "key": "a1d22613e364ebc0",
+ "kind": "lemma",
+ "title": "One input-copying step",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let $x$ be a Boolean word, and let $i<|x|$. For either choice bit, one host step from copy state at input position $i+1$, with the first $i$ symbols of $x$ on the assembly buffer, reaches copy state at input position $i+2$, with the first $i+1$ symbols of $x$ on the buffer.",
+ "hypotheses_covered": [
+  "$S$ and $V$ are finite deterministic machines over Booleans",
+  "$x$ is a Boolean word",
+  "$i<|x|$",
+  "$b$ is a Boolean choice bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines and $x$ an input with position index $i < |x|$. For every choice bit, one step of the reverse host from the copy-state loader configuration holding the first $i$ bits of $x$ appends the bit of $x$ at index $i$ to the assembly buffer and advances the input head by one."
+}

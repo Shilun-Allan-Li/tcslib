@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.Lockstep.locate",
+ "key": "17f0ffb09a7b87d6",
+ "kind": "theorem",
+ "title": "Locating a simulated configuration",
+ "statement": "Let $M$ and $N$ be multi-tape Turing machines, let $e$ map configurations of $M$ to configurations of $N$, let $q$ assign a natural-number cost to each configuration of $M$, and let $X$ and $X'$ be sets of states, including the possible halting state, for $M$ and $N$, respectively. Assume that whenever a configuration $c$ of $M$ has state outside $X$, running $N$ from $e(c)$ for $q(c)$ steps yields the encoding of the next configuration of $M$; that states in $X$ encode into states in $X'$; and that each such run of $N$ stays outside $X'$ at every time strictly less than $q(c)$. If the run of $M$ from a configuration $d$ has state outside $X$ at every time $u<t$, then for every natural number $v$ at most the sum of the costs of the configurations visited by $M$ at times $0,\\ldots,t-1$, there are natural numbers $u\\le t$ and $w$ such that either $w=0$, or the configuration reached by $M$ at time $u$ has state outside $X$ and $w\\le q(c_u)$, where $c_u$ is that configuration, and the configuration reached by $N$ from $e(d)$ after $v$ steps equals the configuration reached by $N$ from $e(c_u)$ after $w$ steps.",
+ "hypotheses_covered": [
+  "Machines $M$ and $N$ with their configuration spaces",
+  "Configuration encoding $e$",
+  "Natural-number cost function $q$",
+  "State sets $X$ and $X'$",
+  "A simulated run from $e(c)$ agrees with the encoded next $M$ configuration after $q(c)$ steps whenever $c$ is outside $X$",
+  "Configurations in $X$ encode to configurations in $X'$",
+  "Intermediate configurations of each such $N$ run remain outside $X'$ for all times strictly less than $q(c)$",
+  "Initial configuration $d$ and natural number $t$",
+  "The run of $M$ from $d$ stays outside $X$ at every time $u<t$",
+  "Natural number $v$ is at most the sum of costs along the run of $M$ at times $0$ through $t-1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

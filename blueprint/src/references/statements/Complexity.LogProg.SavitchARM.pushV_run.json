@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.pushV_run",
+ "key": "e1832c7a6fc31c29",
+ "kind": "theorem",
+ "title": "Lower endpoint push execution",
+ "statement": "Fix a natural number $E$, an oracle that assigns a Boolean answer to each of four deciders and each Boolean word, an input Boolean word $x$, and a natural number bound $B$. Let $st$ be a state of the eighteen-register machine, with loop counter $C$, scratch registers $T,Z$, saved-endpoint stack $SE$, target endpoint $V$, phase stack $SP$, and code width $w$. If $C=T=Z=0$, every register is at most $B$, $SE\\,2^w+V\\le B$, and $2SP\\le B$, then the machine starting at the phase-false endpoint-push routine, with register values given by $st$ and no answer recorded, reaches the move routine that transfers the midpoint into $V$, with $SE=SE_{st}2^{w_{st}}+V_{st}$, $V=0$, $SP=2SP_{st}$, the other registers unchanged, and no answer recorded. Every configuration strictly before that endpoint satisfies the guard that the machine’s instruction precondition holds and every register is at most $B$.",
+ "hypotheses_covered": [
+  "natural number E",
+  "oracle on four deciders and Boolean words",
+  "input Boolean word x",
+  "natural number bound B",
+  "initial eighteen-register state st",
+  "initial C=0",
+  "initial T=0",
+  "initial Z=0",
+  "all initial registers at most B",
+  "SE·2^w+V≤B",
+  "2·SP≤B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a natural number $E$, an oracle on four deciders and Boolean-string inputs, an input\nstring $x$, and a natural-number register bound $B$. Suppose a machine state has\n$C=T=Z=0$, all registers at most $B$, the updated endpoint stack satisfies $SE\\,2^w+V\\le\nB$, and $2SP\\le B$. Then the machine starting at the phase-false push routine, with this\nstate and no answer recorded, reaches the move routine that transfers the midpoint into\n$V$, with the endpoint stack set to $SE\\,2^w+V$, register $V$ set to zero, and phase\nstack set to $2SP$, with no answer recorded; every visited configuration satisfies the\nguard requiring the program’s precondition and all registers to be at most $B$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.zoneTape",
+ "key": "ea2f088e8a496172",
+ "kind": "def",
+ "title": "Tape encoded by zone contents",
+ "statement": "Given zone contents with $\\ell$ zones, define a tape on integer coordinates as follows. At coordinates $0$ and $1$, return respectively whether the home cell is present and its Boolean value, using false when it is absent. For $c\\ge2$, let $n=c-2$; read the right-zone slot selected by $\\lfloor n/2\\rfloor$, encoding its presence at even $n$ and its Boolean value at odd $n$. For $c<0$, let $n=-c-1$; read the left-zone slot selected by $\\lfloor n/2\\rfloor$, encoding its Boolean value at even $n$ and its presence at odd $n$. In either zone, an unavailable slot gives no tape value.",
+ "hypotheses_covered": [
+  "Natural number $\\ell$ and zone contents with $\\ell$ zones",
+  "Integer tape coordinate $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

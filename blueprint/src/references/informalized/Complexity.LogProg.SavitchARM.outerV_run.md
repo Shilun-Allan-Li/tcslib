@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.lean :: Complexity.LogProg.SavitchARM.outerV_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Outer Target Search
+
+**Claim.** Assume $s\le w$, $u<2^w$, and that every next-source-search run from the stated outer states halts with answer $b_0$. Then, from any outer target-search state with $v+k=2^w$ and $M\le2^w$, the machine halts with the asserted disjunction, respecting the register bound and precondition throughout.
+
+**Proof.** Induct on the number $k$ of target codes remaining. When $k=0$, we have $v=2^w$, so the target-bound comparison exits the inner search and the machine proceeds to the next-source search. There is no target $v'\ge v$ below $2^w$, so the target-existence assertion is false; the resulting answer is therefore $b_0$. For the successor case, $v<2^w$. The machine compares $v$ with the bound and, when the comparison does not exit, queries the accepting-code oracle at $v$. If that query rejects, no witness can use $v$ as its target. The induction hypothesis applies at $v+1$, and `exists_shift` identifies that search with the original existential search under this rejection assumption. If the query accepts, the machine initializes the recursion level to $w$. The recursive call is justified by `call_spec` together with the invariant `outerSt_inv`; the copy routine `cp_run` installs the level while preserving the guarded reachability guarantee. If there is already a path of depth $w$ from $u$ to $v$, the current $v$ is a witness and the machine returns true. Otherwise, the induction hypothesis handles targets at least $v+1$, again using `exists_shift` under the failure of the current candidate. All intervening configurations satisfy the guard by `outerSt_bd` and `gb_of`; `vword_whole₂` identifies the encoded oracle query, and the outer-state register identities supply the values used in the argument.
+
+**Key facts.** `Complexity.LogProg.AHalt.step`, `Complexity.LogProg.AHalt.ret`, `Complexity.LogProg.SavitchARM.outerSt_bd`, `Complexity.LogProg.SavitchARM.gb_of`, `Complexity.LogProg.SavitchARM.outerSt_V`, `Complexity.LogProg.SavitchARM.outerSt_K`, `Complexity.LogProg.vword_whole₂`, `Complexity.LogProg.SavitchARM.call_spec`, `Complexity.LogProg.SavitchARM.outerSt_inv`, `Complexity.LogProg.SavitchARM.cp_run`, `Complexity.LogProg.SavitchARM.exists_shift`.

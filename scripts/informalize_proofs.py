@@ -77,7 +77,7 @@ MAX_UPSTREAM = 30
 MAX_UPSTREAM_CHARS = 700
 
 LIMIT_RE = re.compile(
-    r"(?i)(session limit|usage limit|quota|credit balance|out of credits|"
+    r"(?i)(session limit|usage limit|quota|spend cap|credit balance|out of credits|"
     r"upgrade to increase)"
 )
 
@@ -140,7 +140,7 @@ def build_payload(record: dict, rec: dict, index: dict) -> dict:
 
 
 def render_note(record: dict, rec: dict, result: dict, model: str) -> str:
-    lean_file = bd.module_to_lean_path(rec["module"]).relative_to(BASE).as_posix()
+    lean_file = bd.dp.display_path(bd.module_to_lean_path(rec["module"]))
     lines = [
         "<!-- generated-by: proofmatch informalization (uncited) -->",
         f"<!-- lean-source: {lean_file} :: {record['id']} -->",
@@ -171,6 +171,7 @@ def main() -> int:
     ap.add_argument("--modules", nargs="+", metavar="MODULE",
                     help="only declarations of these modules (full name, dotted suffix or area)")
     ap.add_argument("--jobs", type=int, default=3)
+    ap.add_argument("--batch-size", type=int, default=1, help="independent proofs per model call")
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--allow-weak-models", action="store_true")
     ap.add_argument("--force", action="store_true", help="rewrite notes that already exist")
@@ -241,18 +242,20 @@ def main() -> int:
     halted = threading.Event()
     done = {"ok": 0, "low": 0, "failed": 0}
 
-    def work(item: tuple[dict, dict]) -> None:
+    def work(item: tuple[dict, dict], draft=None, failure=None) -> None:
         record, rec = item
         if halted.is_set():
             return
         try:
+            if failure is not None:
+                raise failure
             payload = build_payload(record, rec, index)
             # An unusable account -- a tactic transcript that restates the `proof`
             # column, a stub ("placeholder", "see the account field"), or an answer
             # the schema rejects -- gets one more attempt, then the theorem is given
             # up for the run; a re-run tries again.
             try:
-                result = agent.run("informalize_proof", payload)
+                result = draft if draft is not None else agent.run("informalize_proof", payload)
                 problem = unusable_account(result.get("proof", ""))
             except AgentOutputError as error:
                 problem = str(error)
@@ -285,8 +288,25 @@ def main() -> int:
             if n % 25 == 0:
                 print(f"  ... {n}/{len(todo)}")
 
+    from proofmatch.agents import bounded_batches
+    def work_batch(items):
+        if halted.is_set():
+            return
+        try:
+            drafts = agent.run_many("informalize_proof", [build_payload(r, rec, index) for r, rec in items])
+        except AgentInvocationError as error:
+            for item in items:
+                work(item, failure=error)
+        except AgentOutputError:
+            for item in items:
+                work(item)
+        else:
+            for item, draft in zip(items, drafts):
+                work(item, draft)
+    batches = bounded_batches(todo, args.batch_size,
+                              lambda item: len(item[0]["formal_statement"]) + sum(map(len, item[1]["slice"])))
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        list(pool.map(work, todo))
+        list(pool.map(work_batch, batches))
 
     print(f"\nwritten {done['ok']}   low-confidence {done['low']}   failed {done['failed']}")
     print(f"spend: ${agent.spent_usd:.2f} for {len(todo)} proofs "

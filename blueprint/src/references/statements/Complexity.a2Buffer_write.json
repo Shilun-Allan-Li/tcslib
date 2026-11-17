@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a2Buffer_write",
+ "key": "e6e15d44be0d0cbe",
+ "kind": "lemma",
+ "title": "Buffer write at a suffix boundary",
+ "statement": "For any Boolean words $\\mathrm{pre}$ and $\\mathrm{bs}$ and bits $\\mathrm{old}$ and $\\mathrm{new}$, overwriting cell $|\\mathrm{pre}|$ of the buffer tape containing $\\mathrm{pre}\\,\\mathrm{old}\\,\\mathrm{bs}$ with $\\mathrm{new}$ gives the buffer tape containing $\\mathrm{pre}\\,\\mathrm{new}\\,\\mathrm{bs}$.",
+ "hypotheses_covered": [
+  "Arbitrary Boolean prefix",
+  "Arbitrary Boolean suffix",
+  "Arbitrary old bit",
+  "Arbitrary new bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all binary words $p$ and $s$ and all bits $b, b'$, overwriting cell $|p|$ of the buffer tape holding $p\\,b\\,s$ with the bit $b'$ yields exactly the buffer tape holding $p\\,b'\\,s$."
+}

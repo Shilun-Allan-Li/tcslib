@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.KarpLipton.exists_witness_of_allGood",
+ "key": "0516cb7176001436",
+ "kind": "theorem",
+ "title": "Witness existence from good specifications",
+ "statement": "Let $C,c\text{ in }\backs lash\textbackslash N$, let $V$ be a language of bit strings, and let $x,U$ be bit strings. Suppose that for every triple of bit strings $u',j,p$, the length bounds $|u'|=C(|x|+1)^c$, $|j|\\le C(|x|+1)^c$, and $|p|\\le C(|x|+1)^c$ do not hold together with any of the three bad cases: the corresponding circuit query rejects the all-ones marker; or $|p|=C(|x|+1)^c$ and the query on $0p$ accepts while $\bg\bg x,p\bg$ is not in $V$; or $|j|+|p|+1=C(|x|+1)^c$, the query on $1 0 p$ preceded by $|j|$ ones accepts, and both queries on $0(p0)$ and $0(p1)$ preceded by $|j|$ ones reject. Then for every $u$ of length $C(|x|+1)^c$, there is a string $v$ of that length such that $\bg\bg x,u\bg,v\bg$ belongs to $V$.",
+ "hypotheses_covered": [
+  "$C,c$ are natural numbers",
+  "$V$ is a language of bit strings",
+  "$x,U$ are bit strings",
+  "No triple satisfies the length bounds and any bad-specification case",
+  "$u$ has length $C(|x|+1)^c$"
+ ],
+ "confidence": "low",
+ "caveat": "The bad-specification predicate is expanded descriptively because its circuit-query and encoding conventions are nested.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

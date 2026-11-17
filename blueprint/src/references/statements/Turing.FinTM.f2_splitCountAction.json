@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitCountAction",
+ "key": "0ed2d94e5fe68019",
+ "kind": "def",
+ "title": "Output-aware action transformation",
+ "statement": "Let $k$ be a nonnegative integer, let $S$ and $H$ be sets, and let $e:S\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to H$ and $r:\\{\\mathrm{false},\\mathrm{true}\\}\\to H$ be functions. Given a Boolean flag $o$, an optional input bit $i$, and a one-step action $a$ of a $k$-work-tape machine over the Boolean alphabet with states $S$, form an action with $k+1$ work tapes and states $H$ as follows: its input head moves right if $a$ emits a bit and stays otherwise; its first work tape is unchanged and its remaining work-tape actions are those of $a$; it emits no output; and its successor state is always present, equal to $e(q,o')$ if $a$ has successor state $q$, and to $r(o')$ otherwise, where $o'=o\\lor(a\\text{ emits a bit and }i\\text{ is absent})$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "sets $S$ and $H$",
+  "functions $e:S\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to H$ and $r:\\{\\mathrm{false},\\mathrm{true}\\}\\to H$",
+  "Boolean flag $o$",
+  "optional input bit $i$",
+  "action $a$ with $k$ work tapes over Boolean symbols and states $S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

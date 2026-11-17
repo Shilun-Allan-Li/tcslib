@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.taut_formula_run",
+ "key": "dbb098aa312501c1",
+ "kind": "lemma",
+ "title": "Verifier run on a serialized formula",
+ "statement": "Let $\\varphi$ be a CNF formula over natural-number variables and $u$ a binary word, and suppose every variable index in every literal of $\\varphi$ is less than $|u|$. For any binary words $x,p$ with $x=p\\mathbin{+\\!\\!+}\\langle \\mathrm{enc}(\\varphi),u\\rangle$, there are a number of steps $t\\le 3|\\mathrm{enc}(\\varphi)|+1$ and an index $i\\le |x|$ such that the verifier, started in the formula-level evaluation state with $|p|$ bits consumed, work tape storing $u$, work head at $0$, and empty output, reaches a halted configuration with $i$ input bits consumed, the same work tape and head position, and output the single bit negating the DNF value of $\\varphi$ under the assignment that reads the $v$th bit of $u$ and is false for indices beyond $|u|$.",
+ "hypotheses_covered": [
+  "$\\varphi$ is a CNF formula over natural-number variables",
+  "$u$ is a binary word",
+  "every literal variable index in every clause of $\\varphi$ is strictly less than $|u|$",
+  "$x,p$ are binary words",
+  "$x=p$ concatenated with the pairing of the serialization of $\\varphi$ and $u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a formula whose variable indices are all below $|u|$ for a word $u$,\nlet $\\sigma$ be its serialization, and let the input be\n$x = p \\mathbin{+\\!\\!+} \\mathrm{pair}(\\sigma, u)$. Started in the formula-level\nevaluation state with $|p|$ bits consumed, work word $u$, and head $0$, the\nnon-tautology verifier halts within some $t \\le 3|\\sigma| + 1$ steps, with work head\n$0$ and output the single bit that negates the truth value of $\\varphi$ read as a DNF\nunder the assignment $\\alpha_u$ reading variable $v$ off the $v$-th bit of $u$ (false\nbeyond $|u|$)."
+}

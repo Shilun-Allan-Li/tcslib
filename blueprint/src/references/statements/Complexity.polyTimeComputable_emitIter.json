@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_emitIter",
+ "key": "ec5bb80a945abd93",
+ "kind": "theorem",
+ "title": "Polynomial-time concatenation of iterated outputs",
+ "statement": "Let $g,e:\n\\{0,1\\}^*\\to\\{0,1\\}^*$ be polynomial-time computable. Suppose $a',k',b,l\\in\\mathbb{N}$ and that, for every bit string $w$ and every $i\\in\\mathbb{N}$, the $i$-fold iterate of $g$ satisfies $|(g^{i}(w))|\\le b(|w|+1)^l$. Then the function sending $w$ to the concatenation of $e(g^{i}(w))$ over all integers $i$ from $0$ through $a'(|w|+1)^{k'}$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$g$ is polynomial-time computable",
+  "$e$ is polynomial-time computable",
+  "$a',k',b,l$ are natural numbers",
+  "For every $w$ and $i$, $|(g^i(w))|\\le b(|w|+1)^l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

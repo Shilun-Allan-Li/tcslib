@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.randomization_norm_two",
+ "key": "fb6207f6c1f596ea",
+ "kind": "theorem",
+ "title": "Randomization preserves the second moment norm",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses, and let $f$ be real-valued on its outcome space. The second moment norm of the randomized expansion, averaging over outcomes under $P$ and uniform Boolean sign vectors, equals the second moment norm of $f$: $\\|Rf\\|_{2}=\\|f\\|_{2,P}$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space with strictly positive atom masses",
+  "$f$ is a real-valued function on the outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$ and $f:\\Omega\\to\\mathbb R$. Then $(\\mathbb E_{x\\sim P}\\mathbb E_r|\\sum_S\\chi_S(r)f_S(x)|^2)^{1/2}=\\|f\\|_{2,P}$, where $r$ is uniform on the Boolean cube. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $\\chi_S(r)=\\prod_{i\\in S}(-1)^{r_i}$ for $r\\in\\{0,1\\}^n$."
+}

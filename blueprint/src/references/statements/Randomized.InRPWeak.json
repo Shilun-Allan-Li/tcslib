@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.InRPWeak",
+ "key": "5ebe38d9e505215b",
+ "kind": "def",
+ "title": "Weak one-sided randomized recognition",
+ "statement": "Let $E$ be a verifier model, let $c$ be a natural number, and let $L$ be a language of Boolean lists. The property holds when there are a verifier $M$ from pairs of Boolean lists to Boolean values and natural numbers $a,k$ such that the verifier obtained from $M$ is efficient according to $E$, and for every Boolean list $x$, both conditions hold: if $x\\in L$, the probability that $M$ accepts a uniformly random Boolean list of length $\\operatorname{polyLen}(a,k,|x|)$ is at least $\\min\\!\\left(\\frac23,\\frac{1}{(|x|+1)^c}\\right)$; if $x\\notin L$, then $M$ rejects every Boolean list of that length.",
+ "hypotheses_covered": [
+  "$E$ is a verifier model",
+  "$c$ is a natural number",
+  "$L$ is a language of Boolean lists",
+  "the induced verifier is efficient according to $E$",
+  "acceptance probability lower bound for members of $L$",
+  "rejection on every random string for nonmembers of $L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

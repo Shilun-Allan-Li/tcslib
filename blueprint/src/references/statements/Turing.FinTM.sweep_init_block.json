@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.sweep_init_block",
+ "key": "d7a622b55c63acad",
+ "kind": "lemma",
+ "title": "Initialization writes the marked blank block",
+ "statement": "Let $M$ be a finite-state machine with $k$ work tapes over a finite alphabet. For any input word $x$, input-head position $p$, integer frontier $z$, output word $o$, and two lists $l,r$ of possibly blank symbols of the simulator alphabet, start the simulator in the initialization state with counter $0$ in the zipper configuration determined by these data. After exactly $k$ steps, it is in the initialization state with counter $k$, frontier $z+k$, left stack equal to the reverse of the encoded marked blank block followed by $l$, and right stack equal to $r$ with its first $k$ entries removed; the input-head position and output word are unchanged.",
+ "hypotheses_covered": [
+  "$M$ has a finite state set and decidable state equality",
+  "$x$ is an input word over the simulator alphabet",
+  "$p$ is a valid input-head position",
+  "$o$ is an output word",
+  "$z$ is an integer frontier",
+  "$l$ and $r$ are finite lists of possibly blank simulator symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For the single-tape simulator of a machine $M$ with $k$ work tapes: from any\nforward-facing zipper configuration whose control is in the initialization phase with\ncounter $0$, running exactly $k$ transitions writes, one cell per step while moving\nright, the encoded marked blank block over the next $k$ cells, ending in the\ninitialization phase with counter $k$ and with the work head advanced by $k$ cells; the\ninput head, output, and remaining tape contents are unchanged."
+}

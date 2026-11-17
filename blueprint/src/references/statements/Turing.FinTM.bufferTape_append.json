@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.bufferTape_append",
+ "key": "c27c5a770c7464b0",
+ "kind": "lemma",
+ "title": "Appending a symbol to a buffer tape",
+ "statement": "Let $w$ be a finite word over an alphabet and let $b$ be a symbol in that alphabet. The tape storing $w$ followed by $b$ is the tape storing $w$ updated at integer cell $|w|$ to contain $b$.",
+ "hypotheses_covered": [
+  "$w$ is a finite word over a symbol type",
+  "$b$ is a symbol of that type"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a Boolean word and $b$ a Boolean symbol.  The buffer tape storing\n$w$ followed by the single symbol $b$ equals the buffer tape storing $w$\nupdated at cell $\\abs{w}$ to hold $b$: exactly the cell that was the old\nright blank changes, and every other integer cell is unaffected."
+}

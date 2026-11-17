@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.ImplicitEnum.Shape",
+ "key": "0ed1fed9cf4c1c74",
+ "kind": "def",
+ "title": "Shape condition for configurations",
+ "statement": "Let $f$ map Boolean lists to Boolean lists, and let $o_0,o_1$ map a Boolean list and a natural number to a Boolean. Assume that for every Boolean list $x$ and natural number $i$, $o_0$ on the encoding of $x$ paired with the binary expansion of $i$ is true exactly when $i$ is less than the length of $f(x)$, and $o_1$ on that encoding equals the $i$th entry of $f(x)$, with false used when that entry is out of range. For Boolean list $x$, natural numbers $F,W$, and a machine configuration $c$ on input $x$, either $c$ is the configuration defined above for some output list, state `ask` or `bit`, and natural number $i\\le F$, or every active state of $c$ has no call and the head of its work tape lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "Function $f$ from Boolean lists to Boolean lists",
+  "Functions $o_0,o_1$ from Boolean lists and natural numbers to Booleans",
+  "For all $x,i$, $o_0$ on the specified paired encoding equals the decision that $i<|f(x)|$",
+  "For all $x,i$, $o_1$ on the specified paired encoding equals the $i$th entry of $f(x)$, defaulting to false out of range",
+  "Boolean input list $x$",
+  "Natural numbers $F,W$",
+  "Configuration $c$ of the specified one-tape Boolean machine on input $x"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the paired-input encoding or the meaning of an active state.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

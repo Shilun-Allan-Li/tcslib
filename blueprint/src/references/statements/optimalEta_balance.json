@@ -1,0 +1,18 @@
+{
+ "lean_name": "optimalEta_balance",
+ "key": "51a54a3f6b9a05a4",
+ "kind": "lemma",
+ "title": "Balance of two positive terms",
+ "statement": "For positive real numbers $a$, $T$, and $c$,\n\\[\n\\frac{a}{\\sqrt{ca/T}}+\\frac{T\\sqrt{ca/T}}{c}=\\sqrt{\\frac{4aT}{c}}.\n\\]",
+ "hypotheses_covered": [
+  "$a>0$",
+  "$T>0$",
+  "$c>0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "unbound-variable"
+ ],
+ "replaced": "For real numbers $a, T, c > 0$, at the learning rate $\\eta = \\sqrt{c a / T}$ the two\nterms $a/\\eta$ and $\\eta T / c$ sum to $\\sqrt{4 a T / c}$:\n\\[\n  \\frac{a}{\\sqrt{ca/T}} + \\frac{\\sqrt{ca/T}\\; T}{c} \\;=\\; \\sqrt{\\frac{4 a T}{c}} .\n\\]"
+}

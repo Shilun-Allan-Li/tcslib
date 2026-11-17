@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean :: BooleanAnalysis.Hypercontractivity.product_lowDegree_projection_ge_two -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Projection bound above the second moment
+
+**Claim.** For every real $q\ge2$, there is a constant $C\ge1$ such that the degree-at-most-$k$ projection on any finite product probability space satisfies $\|f^{\le k}\|_{q,P}\le C^k\|f\|_{q,P}$. If $q=4$, then $C=5\sqrt{3}$.
+
+**Proof.** Use the randomized noise contraction to choose a rate $c$ with $0<c\le1$ such that randomizing the function after applying product noise at rate $c$ has norm at most the original norm. Define $C=\sqrt{q-1}/(c/2)$. Since $c/2\le1\le\sqrt{q-1}$, this constant is at least one. At $q=4$, the contraction result gives $c=2/5$, hence $C=5\sqrt{3}$. For the projection estimate, first recover the projection by applying noise at rate $1/2$ to its noise at rate $2$, using the inverse-noise identity. The half-noise norm bound then controls the projection by the randomization norm of its noise-at-$2$ version. At each fixed randomization point, commute noise with the low-degree projection and identify the randomized projection with the cube low-degree projection. The cube projection noise bound, applied with rate $c/2$, gives the factor $(\sqrt{q-1}/(c/2))^k=C^k$ and bounds this randomized function by the randomized noise-at-$c$ version of $f$. Integrating that pointwise bound over the randomization preserves the factor $C^k$. Finally, randomized noise contraction bounds the resulting norm by $\|f\|_{q,P}$.
+
+**Key facts.** `BooleanAnalysis.Hypercontractivity.randomized_noise_contraction`, `BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.product_noise_inverse`, `BooleanAnalysis.Hypercontractivity.half_noise_norm_le_randomization`, `BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.product_noise_lowDegree_commute`, `BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.randomization_cube_lowDegree`, `BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.cube_lowDegree_projection_noise_ge_two`, `BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.randomization_cube_noise`, `BooleanAnalysis.Hypercontractivity.noiseOp_compose`, `BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.randomizationNorm_le_of_pointwise_cube_bound`.

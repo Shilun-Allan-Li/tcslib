@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.nans_run",
+ "key": "5530b9f0fec9f942",
+ "kind": "lemma",
+ "title": "Answer Across a Deterministic Run",
+ "statement": "Let $A$ be a nondeterministic register machine, let $\\beta$ be a Boolean value, and suppose the deterministic machine that follows $A$'s deterministic instructions and replaces each choice instruction by an immediate return of $\\beta$ takes $T$ steps from configuration $a$ to configuration $a'$. Assume that at every time $t<T$, whenever this run is still active, the instruction of $A$ at its current state is deterministic. For any natural number $N$ and Boolean value $b$, a choice sequence of length $T+N$ leaving answer $b$ from $a$ exists if and only if a choice sequence of length $N$ leaving answer $b$ from $a'$ exists.",
+ "hypotheses_covered": [
+  "machine A and Boolean value β",
+  "configurations a and a′ and natural number T",
+  "the deterministic run of length T from a ends at a′",
+  "at every time t < T, if the run is active, the current A instruction has no choice targets",
+  "natural number N",
+  "Boolean target answer b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

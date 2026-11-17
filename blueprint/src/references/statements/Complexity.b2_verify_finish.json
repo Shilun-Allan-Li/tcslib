@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.b2_verify_finish",
+ "key": "073171636819d9ee",
+ "kind": "lemma",
+ "title": "Verifier Halting Verdict",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the binary alphabet, let $x,y$ be binary inputs, and let $c$ be a configuration of $V$ on $y$ whose state is halted. Choose any Boolean boundary tag, any input-head position for $x$, any contents for the work tapes of $S$, any work-head positions for $S$, and any bit $b$. One step of the host machine from the corresponding verifier-phase configuration halts and has output the one-bit word whose bit is true exactly when $c$'s output is the one-bit word $[1]$.",
+ "hypotheses_covered": [
+  "Finite deterministic binary machines $S$ and $V$",
+  "Binary inputs $x$ and $y$",
+  "A configuration $c$ of $V$ on $y$ with halted state",
+  "An arbitrary Boolean tag",
+  "An input-head position for $x$",
+  "Arbitrary contents of the scheduler work tapes",
+  "Arbitrary scheduler work-head positions",
+  "An arbitrary choice bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines and $d$ a halted verifier configuration. For any choice bit, one host step from the verifier-phase configuration for $d$ halts the host and emits the single bit recording whether the complete output of $d$ is exactly the one-bit string $1$."
+}

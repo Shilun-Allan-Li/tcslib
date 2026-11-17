@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.StepBlock.roundTM_canonical",
+ "key": "35a9297dcb3256da",
+ "kind": "lemma",
+ "title": "Canonical Round Simulation",
+ "statement": "Let $k,n$ be natural numbers, let $x$ be a Boolean input word, let $c$ be a configuration with $k$ Boolean work tapes and $n+1$ possible states, and let $q$ be one of those states. Let $\\mathrm{tr}$ be a transition rule assigning an action to each state, optional input bit, and tuple of optional work-tape bits; write $a$ for the action selected by $\\mathrm{tr}$ from $q$ and the symbols scanned in $c$. For any output prefix $\\mathrm{pre}$, initialize the round machine with the encoded transition table, the output summary and unary encoding of $q$, both auxiliary heads at zero, and configuration data from $c$. There is a time $T$ with $0<T\\le 50(L+1)$, where $L$ is the length of the encoded transition table, at which the round machine reaches the configuration built from applying $a$ to $c$, the new output summary and the unary encoding of the successor state (empty if it halts), with output prefix $\\mathrm{pre}$ and auxiliary heads at zero. At every strictly intermediate positive time its state is neither the entry state nor the halt state, and at every time $u\\le T$ its input head and each original work head lie at either their starting or finishing positions.",
+ "hypotheses_covered": [
+  "natural numbers k and n",
+  "Boolean input word x",
+  "transition rule for n+1 states, optional input bits, and k work-tape reads",
+  "configuration c",
+  "state q among the n+1 states",
+  "output prefix pre"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

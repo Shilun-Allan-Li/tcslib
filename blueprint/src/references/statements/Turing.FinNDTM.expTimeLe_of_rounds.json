@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinNDTM.expTimeLe_of_rounds",
+ "key": "3d741126a7c54f69",
+ "kind": "theorem",
+ "title": "Expected Nonhalting Bound from Round Decay",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine over the binary alphabet, let $x$ be a binary input, and let $s_0,R\\in\\mathbb{N}$ with $R>0$. Suppose there is a configuration $c_0$ such that every choice word of length $s_0$ reaches $c_0$ from the initial configuration on $x$. Let $a\\in\\mathbb{Q}$ satisfy $0\\le a<1$, and suppose that for every $j\\in\\mathbb{N}$ the probability that a uniformly chosen length-$Rj$ choice word leaves the run from $c_0$ unhalted is at most $a^j$. Then, for every $K\\in\\mathbb{N}$, the sum over $t=0,\\ldots,K-1$ of the probability that a uniformly chosen length-$t$ choice word leaves the run from the initial configuration on $x$ unhalted is at most $s_0+R/(1-a)$.",
+ "hypotheses_covered": [
+  "N is a finite-state nondeterministic machine over Bool",
+  "x is a Bool list",
+  "s₀ and R are natural numbers, with R positive",
+  "c₀ is a configuration on x",
+  "Every choice word of length s₀ reaches c₀ from the initial configuration",
+  "a is rational with 0 ≤ a < 1",
+  "For every j, the probability of being unhalted after Rj choices from c₀ is at most aʲ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

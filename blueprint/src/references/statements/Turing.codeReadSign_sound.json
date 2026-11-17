@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.codeReadSign_sound",
+ "key": "05876d653c789324",
+ "kind": "lemma",
+ "title": "Soundness of the movement reader",
+ "statement": "For any bit string $x$, head movement $s\\in\\{-1,0,1\\}$, and suffix $r$, if the movement reader applied to $x$ returns $s$ and $r$, then $x$ is the two-bit code for $s$ followed by $r$.",
+ "hypotheses_covered": [
+  "A bit string x",
+  "A head movement s",
+  "A suffix r",
+  "The movement reader succeeds on x and returns (s,r)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the head-movement reader succeeds on a bit string $x$, returning a movement\n$s$ and a suffix $r$, then $x$ is exactly the two-bit dictionary code of $s$\nfollowed by $r$."
+}

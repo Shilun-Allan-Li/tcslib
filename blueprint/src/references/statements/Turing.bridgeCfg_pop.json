@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.bridgeCfg_pop",
+ "key": "263bddee1d6f7c94",
+ "kind": "lemma",
+ "title": "Pop a nonempty bridge stack",
+ "statement": "Let $c$ be a compiled program, let $x$ be a bridge input word, and choose optional bridge states $q,q'$, a valid input-head position $p$, an assignment $st$ of stacks to the four stack names, and an output word. If the stack at a chosen name $k$ is $a::xs$, then applying the action that blanks the current cell of the work tape for $k$ and moves that tape's head one cell to the right, with successor state $q'$, gives the bridge configuration with state $q'$, the stack at $k$ replaced by $xs$, and the input-head position and output unchanged.",
+ "hypotheses_covered": [
+  "A compiled program $c$",
+  "A bridge input word $x$",
+  "Optional bridge states $q,q'$",
+  "A valid input-head position $p$",
+  "An assignment $st$ of stacks to the four stack names",
+  "An output word",
+  "A stack name $k$",
+  "A symbol $a$ and stack tail $xs$ with $st(k)=a::xs$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose that in a bridge configuration the stack assigned to a name $k$ is nonempty,\nwith top symbol $a$ above a tail $xs$.  Then the one-tape action on the tape of $k$\nthat blanks the current cell and moves that head one cell to the right, passing to a\ncontrol state $q'$, transforms the configuration into the bridge configuration with\ncontrol state $q'$ whose assignment replaces the stack at $k$ by $xs$, the input\nposition and output unchanged."
+}

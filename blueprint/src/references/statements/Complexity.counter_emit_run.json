@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.counter_emit_run",
+ "key": "79e5bc9ddad078b9",
+ "kind": "lemma",
+ "title": "Prefix emission during the emit phase",
+ "statement": "Let $x$ and $b$ be finite binary words, let $p$ be any input-head position among the $|x|+2$ positions, and let $i$ be a natural number with $i\\le |b|$. Starting in the emit state with input head at $p$, work head at $0$, tape contents given by $b$, and empty output, after $i$ steps the machine is in the emit state, with input head still at $p$, work head at $i$, unchanged tape contents, and output equal to the prefix of $b$ of length $i$.",
+ "hypotheses_covered": [
+  "Finite binary input word $x$",
+  "Input-head position $p$ among $|x|+2$ positions",
+  "Finite binary work-tape word $b$",
+  "Natural number $i$ with $i\\le |b|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the four-state binary-counter machine is in its emit state with a\nbinary word $b$ on the nonnegative work-tape cells, work head at cell $0$, and\nempty output. Then for every $i \\le |b|$, after exactly $i$ steps it is still\nin the emit state with the work head at cell $i$, the tape contents and\ninput-head position unchanged, and the output equal to the first $i$ bits of\n$b$."
+}

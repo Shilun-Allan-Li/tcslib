@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clA5NoFalse",
+ "key": "dbda31ce22f624cd",
+ "kind": "lemma",
+ "title": "Absence of false output bits",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $y$ be a bit string, and let $T$ be a natural number. The output after $T$ steps contains no false bit if and only if, at every time $t<T$, the transition prescribed by the snapshot of the run at time $t$ does not emit a false bit.",
+ "hypotheses_covered": [
+  "Finite binary-alphabet Turing machine $M$",
+  "Input bit string $y$",
+  "Natural-number horizon $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every machine, input $y$, and horizon $T$, the append-only output after $T$ steps contains no false bit exactly when no snapshot before time $T$ emits the bit false; the equivalence is an exact word statement with no halting assumption."
+}

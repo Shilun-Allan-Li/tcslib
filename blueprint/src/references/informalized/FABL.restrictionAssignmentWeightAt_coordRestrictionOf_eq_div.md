@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter04/Switching.lean :: FABL.restrictionAssignmentWeightAt_coordRestrictionOf_eq_div -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Restriction and Random Subset Weights
+
+**Claim.** The weight of the restriction free on $J$ and fixed to a specified sign assignment outside $J$ is $\delta^{|J|}(1-\delta)^{n-|J|}$ divided by the number of sign assignments outside $J$.
+
+**Proof.** The restriction weight formula gives $\delta^{|J|}((1-\delta)/2)^{n-|J|}$. The number of assignments on the fixed-coordinate cube is $2^{n-|J|}$ (`card_fixedSignCube`). Substituting these formulas into the claimed quotient reduces it to the elementary identity $((1-\delta)/2)^k=(1-\delta)^k/2^k$ for $k=n-|J|$, with the remaining factor $\delta^{|J|}$ unchanged.
+
+**Key facts.** `FABL.restrictionAssignmentWeightAt_coordRestrictionOf`, `FABL.card_fixedSignCube`.

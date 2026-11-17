@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.clMatch_tick",
+ "key": "99df861c81bbc955",
+ "kind": "lemma",
+ "title": "Live Clock Starts a Row Query",
+ "statement": "For every $l,N,j\\in\\mathbb{N}$, every $pos,neg\\in\\text{Fin}(l)$, input word, row, target words, stream, cursor, and flag word, if $j<N$, one step of the matcher from its initial search control enters the row-loading control at counter zero with the fresh-loader state. The row, target words, stream, cursor, clock position, and flags are unchanged.",
+ "hypotheses_covered": [
+  "$l,N,j\\in\\mathbb{N}$",
+  "$pos,neg\\in\\text{Fin}(l)$",
+  "Boolean input word",
+  "row indexed by $\\text{Fin}(l)$",
+  "two target words",
+  "stream word",
+  "integer cursor",
+  "flag word",
+  "$j<N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every search seam with query-clock position $j < N$, one matcher step reads the live clock token and dispatches to the row-loading phase; no source-time bookkeeping, stream bit, or stored flag changes."
+}

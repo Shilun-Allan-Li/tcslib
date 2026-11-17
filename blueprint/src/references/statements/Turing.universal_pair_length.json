@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.universal_pair_length",
+ "key": "2f54b39d8e8c0325",
+ "kind": "lemma",
+ "title": "Length of a pair encoding",
+ "statement": "For Boolean strings $\\alpha$ and $x$, the pairing formed by doubling each bit of $\\alpha$, then appending the separator $01$ and $x$, has length $2|\\alpha|+2+|x|$.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are Boolean strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $\\alpha$ and $x$, the self-delimiting pairing\n$\\langle \\alpha, x\\rangle$ --- each bit of $\\alpha$ written twice, followed by\nthe separator pair $01$, followed by $x$ verbatim --- has length exactly\n$2\\abs{\\alpha} + 2 + \\abs{x}$.  In particular the extent of the code region is\nindependent of the suffix $x$."
+}

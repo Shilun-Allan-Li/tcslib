@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.Meyer.claims_of_correct",
+ "key": "2436dba301e94e5a",
+ "kind": "theorem",
+ "title": "Correctness implies true claims",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean symbols, let $x$ be a finite Boolean input, and let $A$ be a Boolean answer table for state and tape-symbol queries indexed by two natural numbers. Fix a width $W$, time $t$, indices $a,j$, and a Boolean $b$. Suppose that at time $t$, the table answers every state-and-output query exactly according to the machine's configuration, and answers every work-tape query at signed offset $d$ correctly whenever $|d|+t\\le 2^W-1$, as well as every input query whenever $|d|\\le |x|+1$; also suppose $t<2^W$. Then the numerical valuation determined by $A,W,|x|,t,a,j,b$ makes the state-and-read claims at time $t$ true for the machine's actual configuration.",
+ "hypotheses_covered": [
+  "A finite-tape Turing machine with Boolean symbols",
+  "A finite Boolean input",
+  "A Boolean answer table",
+  "A width $W$",
+  "Correct state-and-output answers at time $t$ for every state-output pair",
+  "Correct work-tape answers for all offsets with $|d|+t\\le 2^W-1$",
+  "Correct input answers for all offsets with $|d|\\le |x|+1$",
+  "The bound $t<2^W$",
+  "Natural-number indices $a,j$",
+  "A Boolean $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

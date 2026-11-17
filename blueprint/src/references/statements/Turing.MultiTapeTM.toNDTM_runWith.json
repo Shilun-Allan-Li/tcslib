@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.MultiTapeTM.toNDTM_runWith",
+ "key": "afc12725ed11a690",
+ "kind": "theorem",
+ "title": "Choice-independent run length",
+ "statement": "Let $M$ be a deterministic multi-tape Turing machine and let $N$ be its associated nondeterministic machine, whose two choice transitions both equal the transition of $M$. For every input word, configuration $c$ on that input, and finite choice word $w$, running $N$ from $c$ under $w$ gives the same configuration as running $M$ from $c$ for $|w|$ steps.",
+ "hypotheses_covered": [
+  "A deterministic multi-tape Turing machine",
+  "Its associated nondeterministic machine uses the deterministic transition for either choice",
+  "A finite input word and configuration on that input",
+  "A finite word of Boolean choices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic multi-tape Turing machine with transition function $\\delta$, and\nlet $N$ be the nondeterministic machine with the same initial state whose two transition\nfunctions both equal $\\delta$.  For every configuration $c$ on a fixed input and every\nchoice word $w \\in \\{0,1\\}^*$, the run of $N$ from $c$ under $w$ equals the configuration\nreached by running $M$ from $c$ for $|w|$ steps."
+}

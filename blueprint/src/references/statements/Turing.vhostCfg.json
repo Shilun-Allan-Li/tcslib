@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.vhostCfg",
+ "key": "c03533f9646b81db",
+ "kind": "def",
+ "title": "Virtual host configuration",
+ "statement": "Let $c$ be a configuration of an $m$-work-tape machine on input $y$, with Boolean symbols and states in $S$. Given a Boolean tag $b$, a new input-head position $p$ for input $x$, and a Boolean list $\\mathrm{pre}$, form a configuration with $m+1$ work tapes and states in $S\\times\\{\\mathrm{false},\\mathrm{true}\\}$: its state is $c$’s state paired with $b$, its input-head position is $p$, its first work tape is the buffer tape initialized from $y$, and its remaining work tapes and head positions are those of $c$. The head position on the first tape is $c$’s input-head index minus one, and the output is $\\mathrm{pre}$ followed by $c$’s output.",
+ "hypotheses_covered": [
+  "$m$ is a natural number",
+  "$c$ is a configuration on input $y$ with $m$ work tapes, Boolean symbols, and states in $S$",
+  "$b$ is a Boolean",
+  "$p$ is a valid input-head position for $x$",
+  "$\\mathrm{pre}$ is a Boolean list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

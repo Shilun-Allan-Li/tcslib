@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.enumCont_concat_run",
+ "key": "9849f26dea9389f2",
+ "kind": "lemma",
+ "title": "Concatenation machine run",
+ "statement": "For any Boolean words $x$ and $s$, running the assembly machine on input $x$ from its initial configuration with $s$ on its work tape for $|x|+|s|+2$ steps gives a halted configuration. Its input head is at the right boundary blank, its work tape stores $s$ with the head at position $|s|$, and its output is $x$ followed by $s$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$s$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all binary words $x$ and $s$, the assembly machine started in its input phase\non input $x$, with $s$ on its work tape and all heads at their starting positions,\nis halted after exactly $|x| + |s| + 2$ steps with output $x \\mathbin{+\\!\\!+} s$,\nits input head at the right boundary, the candidate tape unchanged, and the\ncandidate head at position $|s|$."
+}

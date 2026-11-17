@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Compiler.steps_pair",
+ "key": "56ca2e4c081e4fe2",
+ "kind": "theorem",
+ "title": "Evaluation of two expressions",
+ "statement": "Let $Z$ be admissible compiler size data of word size $W$, with state $\\sigma$ represented in a stack frame at depth $q$ by memory $m$, where $1\\le q$ and $q+F\\le Q$. Suppose the code at $\\mathrm{pos}$ begins with the compiled code for expressions $a$ and $b$ using temporary slots $0$ and $1$, respectively; both expressions have width at most $F$ and are safe under the limits and state $\\sigma$. Then some memory $m'$ is reached after $a$'s size plus $b$'s size machine steps, at program counter $\\mathrm{pos}+a.\\mathrm{size}+b.\\mathrm{size}$, with temporary slots $0$ and $1$ containing the words encoding the respective values of $a$ and $b$ in $\\sigma$. The memories agree outside the scratch-address set for $F$.",
+ "hypotheses_covered": [
+  "Admissible size data Z and word size W",
+  "Initial memory represents σ at stack depth q, with 1 ≤ q and q+F ≤ Q",
+  "Code at pos begins with compiled a at slot 0 followed by compiled b at slot 1",
+  "Width of a is at most F",
+  "Width of b is at most F",
+  "a is safe under Z's limits and σ",
+  "b is safe under Z's limits and σ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

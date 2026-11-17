@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ups_scmp",
+ "key": "7384547c25596830",
+ "kind": "lemma",
+ "title": "Scratch-Word Comparison Loop",
+ "statement": "Let $x$ be a Boolean string, $B$ a natural-number register bound, and $q$ a rational number. For every natural number $w$ and register state $\\sigma$, suppose the scratch register equals $w$, every register is at most $B$, and the input pointer plus twice the length of the binary expansion of the scratch value plus two is at most $B$. If the binary expansion of the scratch value is doubled at the input pointer, then the configuration at the comparison-exit state, with the pointer advanced by that amount and the scratch register cleared, has probabilistic semantics with acceptance probability $q$. If that doubled-word pattern does not occur, suppose that for every pointer and scratch-register value at most $B$, the configuration at the fallback state with those values has probabilistic semantics with acceptance probability $q$. Then the comparison-loop configuration with register state $\\sigma$ has probabilistic semantics with acceptance probability $q$.",
+ "hypotheses_covered": [
+  "Boolean-string input $x$",
+  "natural-number bound $B$",
+  "rational number $q$",
+  "natural number $w$",
+  "scratch register equals $w$",
+  "all registers are at most $B$",
+  "input pointer plus twice the length of the binary expansion of the scratch value plus two is at most $B$",
+  "if the doubled-word pattern holds, the specified comparison-exit configuration has probabilistic semantics with acceptance probability $q$",
+  "if the doubled-word pattern fails, every fallback configuration with pointer and scratch values at most $B$ has probabilistic semantics with acceptance probability $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a bit-string input $x$, a register bound $B$, and a rational number $q$. For every\nnatural number $w$ and register state $\\sigma$, suppose the scratch register equals $w$,\nevery register is at most $B$, and the input pointer plus twice the length of the binary\nexpansion of $w$, plus two, is at most $B$. If the input has the required doubled-word\npattern at the pointer, then the comparison-exit configuration—with pointer advanced by\nthat amount and the scratch register cleared—has probabilistic semantics with acceptance\nprobability $q$. If it does not have that pattern, suppose every configuration at the\nfallback state, for all pointer and scratch-register values at most $B$, has\nprobabilistic semantics with acceptance probability $q$. Then the comparison-loop\nconfiguration with register state $\\sigma$ has probabilistic semantics with acceptance\nprobability $q$."
+}

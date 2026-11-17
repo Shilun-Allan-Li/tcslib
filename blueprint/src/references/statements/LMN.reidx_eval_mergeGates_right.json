@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.reidx_eval_mergeGates_right",
- "key": "3e28b6c24f229e39",
+ "key": "9142064e803cb112",
  "kind": "lemma",
  "title": "Right embedding evaluates a circuit through the merged assignment",
  "statement": "Let $m_1, m_2$ be natural numbers, let $c$ be a Boolean circuit on $m_2$ variables, and let $g_1 : \\bbf_2^{m_1}$ and $g_2 : \\bbf_2^{m_2}$ be Boolean assignments. Form the merged assignment on $m_1 + m_2$ variables that takes the values of $g_1$ on indices $0,\\dots,m_1-1$ and the values of $g_2$ on indices $m_1,\\dots,m_1+m_2-1$, and re-index $c$ by the right embedding $i \\mapsto m_1 + i$ from $\\mathrm{Fin}\\,m_2$ into $\\mathrm{Fin}\\,(m_1+m_2)$. Then \\[ \\bigl(\\mathrm{reidx}(c,\\; i \\mapsto m_1 + i)\\bigr)(\\text{merged assignment}) = c(g_2), \\] where each side denotes circuit evaluation; that is, evaluating the re-indexed circuit under the merged assignment gives the same Boolean value as evaluating $c$ directly under $g_2$.",

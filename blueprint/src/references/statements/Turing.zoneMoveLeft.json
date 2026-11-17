@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.zoneMoveLeft",
+ "key": "54ca19f977b2c7f5",
+ "kind": "def",
+ "title": "Move the head left",
+ "statement": "Let $\\ell>0$, and let $z$ consist of a home cell containing an optional Boolean value and left and right lists of optional Boolean values indexed by $0,\\ldots,\\ell-1$, each of length at index $j$ at most $2\\cdot 2^j$. Suppose the right list at index $0$ has room for one more entry, so its length plus one is at most $2$. The new home cell is the head of the left list at index $0$, interpreted as an optional Boolean value; remove the head of the left list at index $0$ and prepend the old home cell to the right list at index $0$. All other lists remain unchanged.",
+ "hypotheses_covered": [
+  "Natural number $\\ell$ is positive",
+  "Zone contents with home cell and left and right lists indexed by $\\mathrm{Fin}(\\ell)$",
+  "Each list at index $j$ has length at most $2\\cdot 2^j$",
+  "The right list at index $0$ has length plus one at most the capacity $2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

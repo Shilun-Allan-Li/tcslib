@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Group_eval",
+ "key": "c39f2c7814c6eef2",
+ "kind": "lemma",
+ "title": "Evaluation of a wired tableau group",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $c$ be a binary code for its optional states, let $K$ be a template kind, let $m,s,t,p$ be natural numbers, and let $a$ be a Boolean assignment on natural numbers. The wired clause group evaluates to true under $a$ exactly when the corresponding bit-level template condition holds: its source block is read from time $s$, its target block from time $t$, and the selected input bit from index $p$, with the required equality or acceptance condition determined by $K$.",
+ "hypotheses_covered": [
+  "A finite Turing machine $M$ over the binary alphabet",
+  "A binary code for its optional states",
+  "A template kind $K$",
+  "Natural numbers $m,s,t,p$",
+  "A Boolean assignment on natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, state code, template kind, wiring data, and assignment $a$, the wired clause group evaluates to true under $a$ exactly when the bit-level meaning of the template holds: the wiring exposes the raw source and target blocks and the selected input bit exactly, so satisfaction means bitwise equations, never merely equality of decoded snapshots."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.UTab.ok_psnS",
+ "key": "fa8e52f64a20d10b",
+ "kind": "theorem",
+ "title": "Validity of Postponed Sources",
+ "statement": "Let $M$ be a finite-state Turing machine over the binary alphabet, let $\\rho$ assign a natural number to each of the eleven registers, let $W\\in\\mathbb N$, and let $t_0$ be Boolean. If $t_0$ is false, assume $1\\leq\\rho(r_{LB})$. Every source in the length-$W$ list whose entries are constant false when $t_0$ is true and postponed sources at positions $j=0,\\ldots,W-1$ otherwise is valid for $\\rho$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over the binary alphabet",
+  "$\\rho$ assigns a natural number to each of eleven registers",
+  "$W\\in\\mathbb N$",
+  "$t_0$ is Boolean",
+  "If $t_0$ is false, then $1\\leq\\rho(r_{LB})$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state Turing machine over the binary alphabet, let $k$ be its\nwork-tape parameter, let $W\\in\\mathbb N$, and let\n$t_0\\in\\{\\mathrm{true},\\mathrm{false}\\}$. Suppose that if $t_0=\\mathrm{false}$, then\n$1\\leq \\rho(r_{LB})$, where $\\rho$ assigns a natural number to each of the eleven\nregisters. Every source in the length-$W$ list whose entries are constant false when\n$t_0$ is true and postponed sources otherwise satisfies the source validity conditions\nfor $\\rho$."
+}

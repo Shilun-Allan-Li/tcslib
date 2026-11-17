@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.sat_pt_mapSnd",
+ "key": "14c62f44ad981efc",
+ "kind": "lemma",
+ "title": "Polynomial-Time Second-Component Mapping",
+ "statement": "Let $g$ be a polynomial-time computable function on bit strings. The function that, on input $z$, decodes $z$ as a pair $(a,b)$ and returns the encoding of $(a,g(b))$ when decoding succeeds, and the empty string when it fails, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a function $g$ on binary strings is polynomial-time computable, then so is the\nfunction that decodes its input as a pair $(a, b)$, returns the pair encoding of\n$a$ with $g(b)$, and returns the empty word when the input is not a valid pair\nencoding."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_fuel_capture",
+ "key": "db921e5db9a5e8ac",
+ "kind": "lemma",
+ "title": "Fuel Phase Captures the Fuel Run",
+ "statement": "Let $B,F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose Boolean parameters `forward` and `findMode`, an input word $x$, a configuration $c$ of the relocated fuel machine, and a time $t\\in\\mathbb N$. Suppose the relocated fuel machine is not halted at any time $u<t$ when run from $c$. Then, after $t$ steps of the loop host from the capture embedding of $c$ (with fuel states embedded into the host states, controller phase $0$, and empty capture prefix and output), the resulting configuration is exactly the capture embedding of the relocated fuel-machine configuration reached from $c$ after $t$ steps.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$",
+  "anchor state $a$ of $B$",
+  "Boolean parameters `forward` and `findMode`",
+  "input word $x$",
+  "configuration $c$ of the relocated fuel machine on $x$",
+  "time $t\\in\\mathbb N$",
+  "the relocated fuel machine is not halted at every time $u<t$ from $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of the relocated fuel source on the loop host's tape layout\nand $t$ a time before which that source does not halt. Then the loop host run for $t$\nsteps from the capture embedding of $c$ equals the capture embedding of the fuel source\nrun at time $t$."
+}

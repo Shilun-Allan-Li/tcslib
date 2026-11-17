@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.time_bound",
+ "key": "63f70b4845eae531",
+ "kind": "lemma",
+ "title": "Exponential time bound",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, with $k$ work tapes and state set $Q$, and let $C,c_0,n,S$ be natural numbers satisfying $\\lfloor\\log_2 n\\rfloor+1\\le S$. Set $H=3(|Q|+1)$ and $K=2(H+3k+1)+2$. For $m\\in\\mathbb N$, define $h(0)=0$, $h(m)=\\lfloor\\log_2 m\\rfloor+1$ when $m>0$, and $g(m)=1+h(m)$; set $b(m,s)=2^{K(s+g(m)+1)}$ and $B(m,t)=3b(m,t+1)+m+3$. Then\n\\[\n2^{C(\\lfloor\\log_2(B(n,c_0S)+1)\\rfloor+1+\\lfloor\\log_2 n\\rfloor+2)}\\bigl(3b(n,c_0S+1)+1\\bigr)^2\n\\le 2^{\\left((C(K(c_0+3)+4)+2K(c_0+3)+4)(S+1)\\right)}.\n\\]",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$C,c_0,n,S$ are natural numbers",
+  "$\\lfloor\\log_2 n\\rfloor+1\\le S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.ntc_bodd_T",
+ "key": "f8e5c2ca8e579e5a",
+ "kind": "theorem",
+ "title": "Parity of the modified time bound",
+ "statement": "For every natural number $n$, the parity of $n$ plus $1$ if the halting predicate for the fixed time-hierarchy code accepts the binary string associated to $n$, and plus $0$ otherwise, equals the exclusive-or of the parity of $n$ and the truth value of that predicate.",
+ "hypotheses_covered": [
+  "$n$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every natural number $n$, define $T(n)$ to be $n+1$ if the halting predicate for the\nfixed machine code accepts the string obtained by removing the final bit from the binary\nexpansion of $n+1$, and to be $n$ otherwise. The parity of $T(n)$ equals the parity of\n$n$ exclusive-or the truth value of that halting predicate."
+}

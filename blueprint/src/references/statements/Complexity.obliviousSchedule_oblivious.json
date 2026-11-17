@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.obliviousSchedule_oblivious",
+ "key": "a448d0a7756f0a5b",
+ "kind": "lemma",
+ "title": "Obliviousness of the schedule",
+ "statement": "For every finite Turing machine $W$ over the Boolean alphabet and every $a\\in\\mathbb{N}$, the schedule machine determined by $W$ and $a$ is oblivious: for any two inputs over its schedule alphabet of equal length and every time $t\\in\\mathbb{N}$, the input-head positions agree, and the entire tuples of work-tape head positions agree.",
+ "hypotheses_covered": [
+  "W is a finite machine over Booleans",
+  "a is a natural number",
+  "The two schedule-alphabet inputs have equal length",
+  "t is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every clock witness $W$ over the Boolean alphabet and every parameter\n$a \\in \\mathbb{N}$, the length-only schedule built from $W$ and $a$ is oblivious: on\narbitrary equal-length inputs over the schedule alphabet, its input head and every\nclock, budget, counter, and guide head occupy the same position at every time. No\ncomputation or halting hypothesis is needed."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.satScan_step",
+ "key": "6cddb16a6537fabe",
+ "kind": "lemma",
+ "title": "One Scanner Step",
+ "statement": "Let $S$ be a finite state set with decidable equality, let $\\delta:S\\times\\{0,1\\}\\to S$ be a transition function, and let $a:S\\to\\{0,1\\}$ be an accepting predicate. For a Boolean input word $x$, a state $q\\in S$, and an index $i<|x|$, one step of the scanner from the configuration with state $q$, head at position $i$, and empty output reaches the configuration with state $\\delta(q,x_i)$, head at position $i+1$, and empty output.",
+ "hypotheses_covered": [
+  "Finite state set with decidable equality",
+  "Transition function $S\\times\\{0,1\\}\\to S$",
+  "Accepting predicate $S\\to\\{0,1\\}$",
+  "Boolean input word $x$",
+  "State $q\\in S$",
+  "Index $i<|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a one-way scanner read input $x$ in state $q$ at position $i < |x|$. One machine\nstep moves silently to the state obtained by applying the transition to the $i$-th\ninput bit, with the head advanced to position $i+1$."
+}

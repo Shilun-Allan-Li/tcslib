@@ -1,0 +1,15 @@
+{
+ "lean_name": "Randomized.expectedComparisons_eq",
+ "key": "13e9b34030bb7d1e",
+ "kind": "theorem",
+ "title": "Expected comparison recurrence",
+ "statement": "Let $\\alpha$ be a linearly ordered type, let $k$ be a positive integer, and let $l$ be a nonempty finite list in $\\alpha$. For each position $i$ in $l$, let $a_i$ be the number of entries of $l$ strictly less than $l_i$, and let $b_i$ be the number of entries less than or equal to $l_i$. The expected number of comparisons made by the randomized selection procedure satisfies\n\\[\\mathbb{E}(k,l)=\\sum_i \\frac{1}{|l|}\\left(|l|+\\begin{cases}\\mathbb{E}(k,\\{x\\in l:x<l_i\\}),&k\\le a_i,\\\\\\mathbb{E}(k-b_i,\\{x\\in l:l_i<x\\}),&b_i<k,\\\\0,&\\text{otherwise.}\\end{cases}\\right),\\]\nwhere each filtered list retains the order and multiplicities of its entries.",
+ "hypotheses_covered": [
+  "$\\alpha$ has a linear order",
+  "$l$ is nonempty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

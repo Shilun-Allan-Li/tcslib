@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.inputPayload_outside",
+ "key": "4a718b67982c9183",
+ "kind": "lemma",
+ "title": "Blank Payloads Outside the Input",
+ "statement": "For every binary word $x$ and integer $z$ satisfying $z<-1$ or $|x|<z$, the virtual input payload at $z$ is the blank payload.",
+ "hypotheses_covered": [
+  "Binary word x",
+  "Integer coordinate z satisfies z < -1 or |x| < z"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary word $x$ and every integer coordinate $z$ with $z < -1$ or\n$z > |x|$, the virtual input payload of $x$ at $z$ is the blank payload; outside both\nvirtual boundaries the head-centered input tape is blank."
+}

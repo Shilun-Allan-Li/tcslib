@@ -1,0 +1,27 @@
+{
+ "lean_name": "BoolCircuit.NotsSpec",
+ "key": "33d74d4ee8d82961",
+ "kind": "structure",
+ "title": "Specification for emitted negations",
+ "statement": "Let $n$ be a natural number, let $a_1,\\ldots,a_k$ be a list of vertex indices, let $G$ be a list of gates, and let $(G',v_1,\\ldots,v_m)$ denote a pair consisting of a gate list and a list of vertex indices. The specification requires that $G'$ extend $G$ by appending gates, be acyclic, and have length $|G|+k$; the index list has length $k$, contains distinct vertices, and each of its entries is at least $n+|G|$ and less than $n+|G'|$. For every Boolean assignment to the $n$ input vertices, the values at these indices are the negations of the values at $a_1,\\ldots,a_k$, respectively; each such vertex has depth at most one plus the maximum depth among those listed vertices, and every appended gate is well formed and is a NOT gate.",
+ "hypotheses_covered": [
+  "Natural number $n$",
+  "Input vertex list",
+  "Initial gate list",
+  "Output pair of gate list and vertex list",
+  "Output gates extend the initial gates",
+  "Output gate list is acyclic",
+  "Output gate-list length is initial length plus input-list length",
+  "Output vertex-list length equals input-list length",
+  "Every output vertex index is less than $n$ plus output gate-list length",
+  "Every output vertex index is at least $n$ plus initial gate-list length",
+  "Output vertex indices are distinct",
+  "For every Boolean input assignment, output values are the negations of the corresponding input-vertex values",
+  "Each output vertex depth is at most one plus the maximum input-vertex depth",
+  "Every appended gate is well formed and a NOT gate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

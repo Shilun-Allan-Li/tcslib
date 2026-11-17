@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_left_frame",
+ "key": "fe3d6ac74e6af64f",
+ "kind": "lemma",
+ "title": "Left-bank configuration frame",
+ "statement": "Let $S,H$ be state sets, let $k,l$ be natural numbers, let $e:S\\to H$ be a state map, let $w,s,u,v$ be Boolean words, and let $q\\in S$. Embed the seam configuration on input $w$ with state $q$ and the standard $k$-tape word assignment for $u$ into the host layout: tape $0$ holds $s$, the next $k$ tapes form the width bank, and the final $l$ tapes form the suffix bank. Using the ambient layout with the width bank initially empty and the suffix bank holding $v$, with all ambient head positions at $0$ and empty output prefix, and then applying $e$ to the state, gives the seam configuration with state $e(q)$ and the full host word layout.",
+ "hypotheses_covered": [
+  "State sets $S,H$",
+  "Natural numbers $k,l$",
+  "State map $e:S\\to H$",
+  "Boolean words $w,s,u,v$",
+  "State $q\\in S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Relocating a canonical state-word configuration of the width-call machine\ninto the host layout --- with the candidate and suffix words preserved on\ntheir ambient tapes --- yields exactly the host's canonical configuration on\nthe full word layout with the width word installed."
+}

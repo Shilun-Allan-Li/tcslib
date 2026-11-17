@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Meyer.rewO_run",
+ "key": "978aa8efe75cfaf6",
+ "kind": "theorem",
+ "title": "Rewinding an auxiliary tape",
+ "statement": "Let $M$ be a finite Turing machine with Boolean symbols, let $y$ be a Boolean input word, let $P$ be an input-head position among the $|y|+2$ allowed positions, and let $b$ be a Boolean vector of length equal to the number of selector bits for $M$. Let $w$ be a Boolean word, let $\\tau_0,\\tau_1:\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$ be tape contents, and let $z_0,z_1\\in\\mathbb{Z}$. For every $j\\in\\mathbb{N}$ with $j\\le |w|$, running the tabulating machine for $j+1$ steps from the configuration whose state is the output-rewind state with vector $b$, whose input-head position is $P$, whose first two auxiliary tapes and head positions are $(\\tau_0,z_0)$ and $(\\tau_1,z_1)$, and whose third auxiliary tape stores $w$ from cell zero with head at $j-1$, yields the configuration with state the decode state carrying $b$, the initial state of $M$, an empty output register, and tag true. The input-head position, all tape contents, the first two auxiliary head positions, and the empty output are unchanged; the third auxiliary head is at cell zero.",
+ "hypotheses_covered": [
+  "A finite Turing machine $M$ with Boolean symbols",
+  "A Boolean input word $y$",
+  "An input-head position $P$ among the $|y|+2$ allowed positions",
+  "A Boolean vector $b$ of length equal to the number of selector bits for $M$",
+  "A Boolean word $w$",
+  "Integer-indexed optional Boolean tape contents $\\tau_0$ and $\\tau_1$",
+  "Integer head positions $z_0$ and $z_1$",
+  "A natural number $j$ with $j\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

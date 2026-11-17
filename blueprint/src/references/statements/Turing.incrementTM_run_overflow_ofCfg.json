@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.incrementTM_run_overflow_ofCfg",
+ "key": "fc61a57e9320ead0",
+ "kind": "theorem",
+ "title": "Overflow run from an arbitrary configuration",
+ "statement": "Let $k$ be a natural number, let $x$ and $w$ be Boolean words, choose a work tape $i\\in\\mathrm{Fin}(k)$, and let $d$ be a configuration on input $x$. Suppose incrementing $w$ overflows, the state of $d$ is the run phase, and on tape $i$ the cells from the head position minus one through the head position plus $|w|$ agree with the buffer tape storing $w$ at the corresponding relative positions. After exactly $2|w|+2$ steps, the state is the done phase with false verdict, and the tape contents are those of $d$ except that the chosen tape's cells from its head position up to but excluding the position $|w|$ cells to its right contain the all-false word; no earlier time is in either done phase. At every time up to and including that bound, the chosen tape's head lies between one cell left of its initial position and $|w|$ cells right of it, inclusive, while every other tape head stays fixed.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$x,w$ are Boolean words",
+  "$i\\in\\mathrm{Fin}(k)$",
+  "$d$ is a configuration on input $x$",
+  "Incrementing $w$ overflows",
+  "The state of $d$ is the run phase",
+  "For each integer offset $p$ with $-1\\le p\\le |w|$, tape $i$ at its head position plus $p$ agrees with the buffer tape storing $w$ at $p$",
+  "The exact run time is $2|w|+2$",
+  "No earlier time is in either done phase",
+  "For all tapes and times up to the bound, the selected head lies in the stated interval and the other heads remain fixed"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

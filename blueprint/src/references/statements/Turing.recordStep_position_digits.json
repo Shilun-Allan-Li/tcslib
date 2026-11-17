@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.recordStep_position_digits",
+ "key": "0a8c3eebd0558061",
+ "kind": "theorem",
+ "title": "Binary digits track input-head movement",
+ "statement": "Let $c$ be a configuration of a machine on a Boolean input $x$, and let $m$ be a left, stationary, or right move. Encode the input-head position using fixed-width, little-endian binary digits of width equal to the binary width of $|x|+1$. If $m$ is stationary, the digits are unchanged; if $m$ is left, they are unchanged at the left boundary and otherwise undergo fixed-width decrement; if $m$ is right, they are unchanged when the scanned input symbol is blank and the head is not at the left boundary, and otherwise undergo fixed-width increment. In every case, the resulting word exists and is exactly the fixed-width binary encoding of the input-head position after the clamped move.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean list",
+  "$c$ is a configuration on $x$",
+  "$m$ is a sign-valued input-head move"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

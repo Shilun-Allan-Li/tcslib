@@ -1,0 +1,18 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect.lean :: BoolCircuit.CircuitEval.verdict_pairEncode -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Verdict for an encoded circuit
+
+**Claim.** For any Boolean parameter exact and bit strings code and x, the verdict on their pairing is true exactly when there are a natural number n and a directed acyclic Boolean circuit C with n input vertices that is well formed with fan-in at most two, encodes to code, has n at most the length of x, has n equal to the length of x when exact is true, and evaluates to true on the first n bits of x, with out-of-range input lookup taken to be false.
+
+**Proof.** 1. Pair decoding first recovers exactly `(code, x)` from their pairing (`Turing.pairDecode_pairEncode`). Consequently, the verdict is true precisely when its format checks hold and the abstract evaluator accepts the remaining code, with `x` as its data.
+
+2. For the forward direction, suppose the verdict is true. Its format checks must hold: false occurs in `code`, the number of leading true bits is at most $|x|$, and either `exact` is false or that number equals $|x|$. Set $n$ equal to the number of leading true bits. Because false occurs in the code, the code splits as $n$ true bits followed by a false separator and a remainder (`eq_replicate_leadOnes`). The evaluator skips those $n$ true bits (`absRun_skipN`), then its gate-parsing characterization (`absRun_g`) supplies a gate list $gs$, output index $o$, and the facts that the remainder encodes those gates and output, the gates satisfy `GatesOK` for the $n$ inputs, the output index is valid, and the computed output is true.
+
+3. The characterization of `GatesOK` (`gatesOK_iff`) gives fan-in at most two, distinct arguments within each gate, the single-argument condition for NOT gates, and the requirement that each argument refers to an earlier vertex. Form the circuit with gates $gs$ and output $o$. These properties make it well formed with fan-in at most two. Combining the header, separator, and parsed remainder shows that this circuit encodes to `code`. The verdict’s length check gives $n\le |x|$, while its exactness check gives $n=|x|$ whenever `exact` is true. Finally, the evaluator’s true-output fact is exactly the circuit evaluation claim after identifying the first $n$ entries of $x$ with its list of input values.
+
+4. Conversely, suppose such $n$ and circuit $C$ exist. The circuit encoding begins with $n$ true bits followed by a false separator, so its leading-ones count is $n$ (`leadOnes_replicate`), and false occurs in the code. The assumed length bound and exactness condition therefore make all format checks hold. The evaluator skips the header, then parses the circuit encoding and accepts exactly when the circuit’s output is true (`absRun_skipN`, `absRun_g`). The circuit’s fan-in and well-formedness properties, together with its acyclicity condition, give the required `GatesOK` facts (`gatesOK_iff`); its output index is valid by the circuit structure. The input list used by the evaluator agrees with the first $n$ bits of $x$ (`ofFn_getD_eq_take`), so the assumed true circuit value makes the verdict true.
+
+**Key facts.** `Turing.pairDecode_pairEncode`, `BoolCircuit.CircuitEval.eq_replicate_leadOnes`, `BoolCircuit.CircuitEval.absRun_skipN`, `BoolCircuit.CircuitEval.absRun_g`, `BoolCircuit.CircuitEval.gatesOK_iff`, `BoolCircuit.CircuitEval.leadOnes_replicate`, `BoolCircuit.CircuitEval.ofFn_getD_eq_take`.

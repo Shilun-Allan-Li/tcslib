@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satPair_start",
+ "key": "f915cabdbd7cd29f",
+ "kind": "lemma",
+ "title": "Pairing Machine Startup Bound",
+ "statement": "Let $M$ be a finite Boolean Turing machine, and let $x,u$ be Boolean words and $T\\in\\mathbb{N}$. If $M$ computes output $u$ from input $x$ within $T$ steps, then there are a configuration $s$ of $M$ on $x$ and a time $t\\in\\mathbb{N}$ with $t\\le T+|x|+|u|+5$ such that the pairing machine over $M$, started on $x$, reaches the pairing configuration that preserves $s$, has control state $4$, has its input head at its initial position, has $u$ on its capture tape with the head at offset $0$, and has empty output after $t$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x,u$ are Boolean words",
+  "$T\\in\\mathbb{N}$",
+  "$M$ computes $u$ from $x$ within $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the source machine $M$ compute the word $u$ on input $x$ within $T$ steps.\nThen within $T + |x| + |u| + 5$ steps from its initial configuration, the pairing\nmachine over $M$ reaches the canonical pairing configuration at the replay entry:\nsome saved bank of $M$, the captured word $u$ with head at the origin, the input\nhead at the origin, and all startup output suppressed."
+}

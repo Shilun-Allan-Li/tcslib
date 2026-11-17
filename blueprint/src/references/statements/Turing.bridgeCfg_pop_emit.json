@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.bridgeCfg_pop_emit",
+ "key": "a00689c45770f901",
+ "kind": "lemma",
+ "title": "Pop a bridge stack and emit a symbol",
+ "statement": "Let $c$ be a compiled program, let $x$ be a bridge input word, and choose optional bridge states $q,q'$, a valid input-head position $p$, an assignment $st$ of stacks to the four stack names, and an output word. If the stack at a chosen name $k$ is $a::xs$ and $e$ is an optional bridge-alphabet symbol, then applying the action that blanks the current cell of the work tape for $k$, moves that tape's head one cell to the right, and emits $e$, with successor state $q'$, gives the bridge configuration with state $q'$, the stack at $k$ replaced by $xs$, and output extended by $e$; the input-head position is unchanged.",
+ "hypotheses_covered": [
+  "A compiled program $c$",
+  "A bridge input word $x$",
+  "Optional bridge states $q,q'$",
+  "A valid input-head position $p$",
+  "An assignment $st$ of stacks to the four stack names",
+  "An output word",
+  "A stack name $k$",
+  "A symbol $a$ and stack tail $xs$ with $st(k)=a::xs$",
+  "An optional bridge-alphabet symbol $e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose that in a bridge configuration the stack at a name $k$ is nonempty, with top\nsymbol $a$ above a tail $xs$.  The one-tape pop action on the tape of $k$ (blank the\ncurrent cell, move right), extended with the emission of an optional output symbol\n$e$, produces the bridge configuration whose stack at $k$ is $xs$ and whose output\nis extended by $e$, the input position unchanged."
+}

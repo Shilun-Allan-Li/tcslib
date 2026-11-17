@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.tmsat_take_separator",
+ "key": "a8746978a6910f6b",
+ "kind": "lemma",
+ "title": "Reading the pair separator",
+ "statement": "Let $x$ be a bit string and $i,m\\in\\mathbb N$. Suppose $i+2\\le |x|$, the bit at position $i$ is $0$, and the bit at position $i+1$ is $1$. Starting from state $0$ with the input head at $i$, unary work tape content $1^m$, work head at $m$, and empty output, after two steps the extractor is in state $3$, with the input head at $i+2$, work tape content $1^m$, work head at $m-1$, and empty output.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$i,m\\in\\mathbb N$",
+  "$i+2\\le |x|$",
+  "$x_i=0$",
+  "$x_{i+1}=1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string and $i, m \\in \\mathbb{N}$ with $i + 2 \\le |x|$, $x_i = 0$ and $x_{i+1} = 1$ (positions counted from $0$). Then running $E$ for $2$ steps from $\\Delta_x(0, i, m, m, \\varepsilon)$ yields $\\Delta_x(3, i+2, m, m-1, \\varepsilon)$; here $E$ is the prefix-extraction machine (one work tape, states $\\{0,1,2,3\\}$) that counts the aligned data blocks $00$ and $11$ of a pair encoding $\\langle a,b\\rangle$ in unary on its work tape and then copies bits of $b$ to its output while moving its work head back along the counter, and $\\Delta_x(q,i,m,h,o)$ denotes the configuration of $E$ on input $x$ in state $q$, with the input head on input position $i$ (counting from $0$), the work tape holding $1^m$ in cells $0,\\dots,m-1$ and blanks elsewhere, the work head at $h$, and output $o$."
+}

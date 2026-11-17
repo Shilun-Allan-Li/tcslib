@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.exists_unit_linear_form",
+ "key": "76176906aa9ac87f",
+ "kind": "lemma",
+ "title": "Unit linear form with prescribed correlation",
+ "statement": "Let $n\\in\\mathbb N$ and let $g:\\{0,1\\}^n\\to\\mathbb R$. If its Fourier weight at level one, $W_1[g]=\\sum_{|S|=1}\\widehat g(S)^2$, is positive, then there are real coefficients $a_1,\\ldots,a_n$ such that $\\sum_{i=1}^n a_i^2=1$ and $\\mathbb E_x[g(x)\\sum_{i=1}^n a_i(-1)^{x_i}]=\\sqrt{W_1[g]}$, where $x$ is uniform on the Boolean cube.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$g$ is a real-valued function on the $n$-dimensional Boolean cube",
+  "$W_1[g]>0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\in\\mathbb N$ and let $g:\\{0,1\\}^n\\to\\mathbb R$ be a real-valued cube function; write $\\mathbb E[h]=2^{-n}\\sum_{x\\in\\{0,1\\}^n}h(x)$, $\\widehat g(\\{i\\})=\\mathbb E[g(x)(-1)^{x_i}]$, and $W^1[g]=\\sum_{i<n}\\widehat g(\\{i\\})^2$ for its degree-one Fourier weight.\nIf $W^1[g]>0$, there exist real coefficients $(a_i)_{i<n}$ such that\n\\[\n\\sum_{i<n}a_i^2=1\n\\quad\\text{and}\\quad\n\\mathbb E\\!\\left[g(x)\\sum_{i<n}a_i(-1)^{x_i}\\right]=\\sqrt{W^1[g]}.\n\\]"
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.rewind_scan",
+ "key": "aff8a5f2098c16f7",
+ "kind": "lemma",
+ "title": "Leftward scan to the input start",
+ "statement": "Let $k \\in \\mathbb{N}$, let $S$ be a state set, let $x$ be a Boolean input, and let $M$ be a $k$-work-tape Turing machine over the Boolean alphabet with states in $S$. Suppose that for every input and work-tape symbols, in state $s$ the machine moves left and stays in $s$ when it scans an input symbol, and moves right and enters the optional destination state $d$ when it scans a blank; these transitions write nothing on the work tapes, move no work-tape heads, and emit no output. For every configuration $c$ on $x$ in state $s$ whose input-head position $p$ satisfies $p \\le |x|$, after exactly $p+1$ steps the machine has state $d$ and input-head position $1$, with all other configuration components unchanged.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A state set $S",
+  "A Boolean input $x$",
+  "A machine over the Boolean alphabet with states in $S$",
+  "A scan state $s$",
+  "An optional destination state $d$",
+  "For every input and work symbols, the transition from $s$ is leftward to $s$ on a symbol and rightward to $d$ on a blank",
+  "A configuration $c$ on $x$ with state $s$",
+  "Its input-head position $p$ is at most the length of $x$",
+  "The run length is exactly $p+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet on input\n$x$, let $s$ be a scanning state, and let $d$ be an optional dispatch state,\nsuch that regardless of the work symbols read: in state $s$ scanning an input\nsymbol, $M$ moves the input head left and stays in $s$; in state $s$ scanning\na blank, $M$ moves the input head right and passes to $d$; and neither\ntransition touches a work tape or the output.  Then from any configuration\n$c$ in state $s$ whose input-head position $p$ satisfies $p \\le \\abs{x}$,\nrunning $M$ for exactly $p + 1$ steps yields the configuration that agrees\nwith $c$ in every component except that its state is $d$ and its input head\nis at position $1$, the position scanning the first input symbol."
+}

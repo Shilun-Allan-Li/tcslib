@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.nonnegative_heads",
+ "key": "62a6ab38dc59b95f",
+ "kind": "theorem",
+ "title": "Machines with nonnegative work heads",
+ "statement": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing machine over $\\Gamma$, let $f$ map words over $\\Gamma$ to words over $\\Gamma$, and let $T\\colon\\mathbb N\\to\\mathbb N$. If $M$ computes $f$ in time $T$, then there are a finite alphabet $\\Gamma'$ with decidable equality, an injection $e\\colon\\Gamma\\hookrightarrow\\Gamma'$, a finite Turing machine $M'$ over $\\Gamma'$, and a constant $c\\in\\mathbb N$ such that every work head of $M'$ stays at a nonnegative cell throughout every initialized run, $M'$ has the same number of work tapes as $M$, and $M'$ computes $f$ on symbolwise encoded inputs via $e$ within $c(T(n)+1)$ steps on inputs of length $n$.",
+ "hypotheses_covered": [
+  "finite alphabet $\\Gamma$",
+  "decidable equality on $\\Gamma$",
+  "finite Turing machine $M$ over $\\Gamma$",
+  "word function $f$ over $\\Gamma$",
+  "time bound $T\\colon\\mathbb N\\to\\mathbb N$",
+  "$M$ computes $f$ in time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $M$ be a multi-tape\nTuring machine over $\\Gamma$, and suppose $M$ computes a function\n$f \\colon \\Gamma^* \\to \\Gamma^*$ within a time bound $T \\colon \\bbn \\to \\bbn$.\nThen there exist a finite alphabet $\\Gamma'$ with decidable equality, an injection\n$e \\colon \\Gamma \\hookrightarrow \\Gamma'$, a machine $M'$ over $\\Gamma'$, and a\nconstant $c \\in \\bbn$ such that: in every initialized run of $M'$ no work head ever\nvisits a negative cell, $M'$ has the same number of work tapes as $M$, and $M'$\ncomputes $f$ through the embedding $e$ within the time bound\n$n \\mapsto c \\cdot (T(n) + 1)$."
+}

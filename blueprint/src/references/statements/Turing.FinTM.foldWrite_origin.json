@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.foldWrite_origin",
+ "key": "aebdbd89dfe873d0",
+ "kind": "lemma",
+ "title": "Writes preserve the origin flag",
+ "statement": "For every alphabet $\\Gamma$, side $s\\in\\{\\mathrm{false},\\mathrm{true}\\}$, possibly blank folded cell content $w$, and possibly absent symbol $a\\in\\operatorname{Option}(\\Gamma)$, the origin flag of the unpacked result of writing $a$ into $w$ on side $s$ equals the origin flag of the unpacked $w$.",
+ "hypotheses_covered": [
+  "arbitrary alphabet Γ",
+  "Boolean side s",
+  "possibly blank folded cell content w",
+  "possibly absent symbol a"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every side $s$, every physical cell content $w$ over the folded alphabet, and\nevery possibly blank base symbol $a$, the origin flag obtained by unpacking the\nresult of the side-relative write of $a$ into $w$ equals the origin flag obtained\nby unpacking $w$."
+}

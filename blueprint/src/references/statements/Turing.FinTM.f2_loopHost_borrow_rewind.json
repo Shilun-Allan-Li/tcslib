@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost_borrow_rewind",
+ "key": "5495702a5f0362e8",
+ "kind": "lemma",
+ "title": "Rewind after borrowing",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, choose find mode, and let $x$ be an input word. For any base host configuration, input-head position, Boolean word $w$, and success bit $s$, for every natural number $j\\le |w|$, start in control phase 9 if $s$ is true and phase 10 otherwise, with the counter tape storing $w$ and its head at $j-1$, and with the other designated tapes blank. After $j+1$ steps the frame has the same counter contents, the counter head is reset to zero, the other designated heads, input position, and output are preserved, and the control state is the return call state with anchor and release flag true when $s$ is true, or control phase 11 otherwise.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B$ and $F$",
+  "Anchor state of $B$",
+  "Find-mode bit",
+  "Input word $x$",
+  "Base host configuration",
+  "Input-head position",
+  "Boolean word $w$",
+  "Success bit $s$",
+  "Natural number $j$ with $j\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

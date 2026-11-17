@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.measurePreserving_finiteCurry",
+ "key": "155bdd0feebbc08f",
+ "kind": "lemma",
+ "title": "Currying preserves finite product measures",
+ "statement": "Let $I,J$ be finite sets, and let $B$ be a measurable space with measurable singletons. For each $i\\in I$ and $j\\in J$, let $\\mu_{ij}$ be a sigma-finite measure on $B$. The currying bijection from arrays indexed by $I\\times J$ to $I$-indexed arrays of $J$-indexed arrays sends the product measure with coordinate measures $\\mu_{ij}$ to the iterated product measure that first groups coordinates by $i$ and then by $j$.",
+ "hypotheses_covered": [
+  "$I,J,B$ are finite types",
+  "$B$ has a measurable space structure",
+  "Singletons in $B$ are measurable",
+  "Each $\\mu_{ij}$ is sigma-finite"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I,J,B$ be finite sets, let $B$ carry a measurable structure with measurable singletons, and let $\\mu_{ij}$ be sigma-finite measures on $B$. The bijection $B^{I\\times J}\\to(B^J)^I$ sending $x$ to the array $i\\mapsto(j\\mapsto x(i,j))$ pushes $\\bigotimes_{(i,j)}\\mu_{ij}$ to $\\bigotimes_i\\bigotimes_j\\mu_{ij}$."
+}

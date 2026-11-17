@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.CounterProg.polyTimeComputable_of_goes",
+ "key": "ba45f33662498e20",
+ "kind": "theorem",
+ "title": "Polynomial-Time Computability from Bounded Runs",
+ "statement": "Let $R\\in\\mathbb{N}$ and let $\\Lambda$ be a finite set of labels. Let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, let $\\ell_0\\in\\Lambda$, and let $f$ map finite bit strings to finite bit strings. Suppose there are constants $C,c\\in\\mathbb{N}$ such that for every input $x$ there are register values $\\rho$ and a read position $p$ for which, from the state with label $\\ell_0$, all registers zero, read position zero, and any previously printed output $o$, the program reaches the halted state with registers $\\rho$, read position $p$, and output $o$ followed by $f(x)$ in at most $C(|x|+1)^c$ steps. Then a finite binary-alphabet Turing machine computes $f$ in time bounded by a polynomial of the form $C'(|x|+1)^{c'}$ for some $C',c'\\in\\mathbb{N}$ on every input.",
+ "hypotheses_covered": [
+  "The label set $\\Lambda$ is finite.",
+  "$P$ is a counter program over $R$ registers and labels in $\\Lambda$.",
+  "A starting label $\\ell_0\\in\\Lambda$ is specified.",
+  "$f$ maps finite bit strings to finite bit strings.",
+  "There are constants $C,c\\in\\mathbb{N}$.",
+  "For every input $x$, there exist register values $\\rho$ and a read position $p$.",
+  "For every previously printed output $o$, the run from label $\\ell_0$, zero registers, and read position zero reaches the halted state with registers $\\rho$, read position $p$, and output $o$ followed by $f(x)$ within $C(|x|+1)^c$ steps."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ natural-number registers with a finite set of labels $\\Lambda$ (each label carrying one instruction: halt, jump, print a bit, increment, saturating decrement, zero-test branch, print a register's value $v$ as $1^v$, or read and consume the next input bit), let $\\ell_0 \\in \\Lambda$, let $f : \\{0,1\\}^* \\to \\{0,1\\}^*$ and let $C, c \\in \\mathbb{N}$. Suppose that for every input $x \\in \\{0,1\\}^*$ there are register values $\\rho : \\{0,\\dots,R-1\\} \\to \\mathbb{N}$ and a position $p \\in \\mathbb{N}$ such that, for every previously printed output $o$, running $P$ on $x$ from label $\\ell_0$ with all registers $0$, no input read and output $o$ reaches, within at most $C(|x|+1)^c$ steps, the halted state with registers $\\rho$, $p$ input bits read and output $o$ followed by $f(x)$. Then $f$ is polynomial-time computable: some finite binary-alphabet Turing machine computes $f$ within $C'(n+1)^{c'}$ steps on every input of length $n$, for some constants $C', c' \\in \\mathbb{N}$."
+}

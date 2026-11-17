@@ -1,0 +1,14 @@
+{
+ "lean_name": "Light.wrote_rest",
+ "key": "241b308b7e112e44",
+ "kind": "theorem",
+ "title": "Values Outside a Written Interval",
+ "statement": "Let $\\mu,f:\\mathbb{N}\\to\\mathbb{Z}$ and $d,j,a\\in\\mathbb{N}$. If $a<d$ or $d+j\\le a$, then after writing the first $j$ values of $f$ into $\\mu$ starting at $d$, the value at $a$ remains $\\mu(a)$.",
+ "hypotheses_covered": [
+  "a is outside the interval: a < d or d + j ≤ a"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu,f:\\mathbb{N}\\to\\mathbb{Z}$ and $d,j,a\\in\\mathbb{N}$. Define a function by\nreplacing $\\mu(x)$ with $f(x-d)$ when $d\\le x<d+j$, and leaving it equal to $\\mu(x)$\notherwise. If $a<d$ or $d+j\\le a$, then its value at $a$ is $\\mu(a)$."
+}

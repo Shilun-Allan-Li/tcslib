@@ -1,16 +1,18 @@
 {
  "lean_name": "CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt",
- "key": "207d9809512aea00",
+ "key": "bd079681c77eaf57",
  "kind": "lemma",
- "title": "Pruned protocol agrees off the pruned path",
- "statement": "Let $p$ be a deterministic two-party communication protocol with Alice inputs in $X$ and Bob inputs in $Y$, and let $s$ be a rooted subprotocol of $p$, witnessed by a subprotocol path from the root of $p$ down to the root of $s$. Suppose $s$ has strictly fewer leaves than $p$, so that pruning this path yields a protocol $p'$. Then for every input pair $(x,y)$ that does not reach $s$ along this path — that is, $x$ is not among the Alice inputs consistent with all of Alice's branching choices on the path, or $y$ is not among the Bob inputs consistent with all of Bob's choices on it — the pruned protocol $p'$ and the original protocol $p$ return the same value on $(x,y)$.",
+ "title": "Pruning preserves execution outside a path",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, and let $s$ and $p$ be deterministic two-party communication protocols with inputs in $X$ and $Y$ and outputs in $\\alpha$. Suppose a specified subprotocol path witnesses that $s$ lies below $p$, and that $s$ has strictly fewer leaves than $p$. For any inputs $x\\in X$ and $y\\in Y$ such that either Alice's input or Bob's input is inconsistent with the corresponding branching choices along this path, pruning the path from $p$ returns the same output on $(x,y)$ as $p$.",
  "hypotheses_covered": [
-  "subprotocol path from s to p",
-  "s has strictly fewer leaves than p",
-  "(x,y) does not reach the subprotocol along the path"
+  "$X$, $Y$, and $\\alpha$ are types",
+  "$s$ and $p$ are protocols over inputs $X,Y$ and outputs in $\\alpha$",
+  "A specified subprotocol path from $s$ to $p$",
+  "$s$ has strictly fewer leaves than $p$",
+  "At least one of $x$ or $y$ is inconsistent with the corresponding choices along the path"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If $s.\\mathrm{numLeaves} < p.\\mathrm{numLeaves}$ and $(x, y)$ does not reach the path, then\n$(\\texttt{prunePath}\\;\\texttt{hsp}\\;\\texttt{hlt}).\\texttt{run}\\;x\\;y = p.\\texttt{run}\\;x\\;y$."
+ "replaced": "Let $p$ be a deterministic two-party communication protocol with Alice inputs in $X$ and\nBob inputs in $Y$, and let $s$ be a rooted subprotocol of $p$, witnessed by a\nsubprotocol path from the root of $p$ down to the root of $s$. Suppose $s$ has strictly\nfewer leaves than $p$, so that pruning this path yields a protocol $p'$. Then for every\ninput pair $(x,y)$ that does not reach $s$ along this path — that is, $x$ is not among\nthe Alice inputs consistent with all of Alice's branching choices on the path, or $y$ is\nnot among the Bob inputs consistent with all of Bob's choices on it — the pruned\nprotocol $p'$ and the original protocol $p$ return the same value on $(x,y)$."
 }

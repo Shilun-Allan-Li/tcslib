@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.clMatch_commit",
+ "key": "253b5e68e7d175e4",
+ "kind": "lemma",
+ "title": "Committing a comparison flag",
+ "statement": "Let $l\\in\\mathbb{N}$, let $pos,neg\\in\\{0,\\ldots,l-1\\}$, and choose a Boolean input word, verdict bit $b$, row of Boolean words, two target words, Boolean stream, integer cursor, natural numbers $N,j$, and Boolean flag word. From the search configuration in the comparison-finished control holding verdict $b$, one step of the matcher returns to the clock-test control, advances the clock from $j$ to $j+1$, and appends $b$ to the flags; the stream cursor and all other displayed data remain unchanged.",
+ "hypotheses_covered": [
+  "Natural number $l$",
+  "Coordinates $pos$ and $neg$ in the range of length $l$",
+  "Boolean input word",
+  "Verdict bit $b$",
+  "Arbitrary row of Boolean words",
+  "Arbitrary pair of target words",
+  "Arbitrary Boolean stream",
+  "Integer cursor",
+  "Natural numbers $N,j$",
+  "Arbitrary Boolean flag word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every verdict bit $b$ and search seam in the comparison-finished control, one matcher step appends $b$ to the flag tape by one real write, advances the query clock by one token, and returns to the clock-test phase; the physical output stays silent."
+}

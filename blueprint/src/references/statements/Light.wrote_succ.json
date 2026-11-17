@@ -1,0 +1,12 @@
+{
+ "lean_name": "Light.wrote_succ",
+ "key": "ed0a5780a72733af",
+ "kind": "theorem",
+ "title": "Extending a Written Interval",
+ "statement": "Let $\\mu,f:\\mathbb{N}\\to\\mathbb{Z}$ and $d,j\\in\\mathbb{N}$. Updating the sequence obtained by writing the first $j$ values of $f$ into $\\mu$ starting at $d$, at index $d+j$ to the value $f(j)$, gives exactly the sequence obtained by writing the first $j+1$ values of $f$ starting at $d$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu,f:\\mathbb{N}\\to\\mathbb{Z}$ and $d,j\\in\\mathbb{N}$. Define a function by\nreplacing $\\mu(x)$ with $f(x-d)$ when $d\\le x<d+j$, and leaving it equal to $\\mu(x)$\notherwise. Updating this function at the single index $d+j$ to have value $f(j)$ gives\nthe function obtained by extending the replacement interval to $d\\le x<d+j+1$."
+}

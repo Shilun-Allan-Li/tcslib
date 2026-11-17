@@ -84,7 +84,7 @@ Counting measure is used. Parseval gives `||f||_2 = ||f̂||_2`.
 
 <a id="pdf-20e15a3d3d5e-p004-b002"></a>
 <!-- pdf-source: page=4; block=2; confidence=0.95 -->
-**Definition 3.9.** `sparsity(f)=|supp(f̂)|=#{γ:f̂(γ)≠0}`.
+**Definition 3.9.** `sparsity(f)=|supp(f̂)|=#{γ:f̂(γ)≠0}`.
 
 **Definition 3.10.** `f` is `ε`-granular if every `f̂(γ)` is an integer multiple of `ε`.
 

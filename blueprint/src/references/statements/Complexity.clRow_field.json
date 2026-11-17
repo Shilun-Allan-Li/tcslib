@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clRow_field",
+ "key": "9421314042da0b6a",
+ "kind": "lemma",
+ "title": "Copying One Row Field",
+ "statement": "Let $l$ be a natural number, $x$ and $w(i)$ finite Boolean words, $p$ an input-head position for $x$, $i\\in\\mathrm{Fin}(l)$, and $record$ a finite Boolean word. There is a natural number $t$ with $0<t\\le 3|w(i)|+4$ such that, after $t$ steps of the row machine from field $i$ in copier start control, it is at field $i+1$ in copier start control; the input position and all counter words and their heads are unchanged, the record is extended by the self-delimiting encoding of $w(i)$, and the physical output is empty.",
+ "hypotheses_covered": [
+  "natural number $l$",
+  "Boolean input word $x$",
+  "input-head position $p$ for $x$",
+  "coordinate $i\\in\\mathrm{Fin}(l)$",
+  "family $w$ of Boolean words indexed by $\\mathrm{Fin}(l)$",
+  "Boolean record word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, selected counter $i$, counter words $w$, and record, there is a strictly positive time $t \\le 3|w(i)| + 4$ after which the row controller has appended the self-delimiting encoding of $w(i)$ to the record and advanced its field index from $i$ to $i+1$, with the entire counter bank, the input head, and the empty physical output restored."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.b2b_trial_run",
+ "key": "3364b7af24920400",
+ "kind": "theorem",
+ "title": "Bounded b2b trial run",
+ "statement": "Let $M_V$, $M_I$, and $M_P$ be finite-state Boolean-input Turing machines, let $x,u$ be Boolean words, let $b$ be a Boolean, and let $t_i,s_i,s_v$ be natural numbers. Suppose $M_I$ halts on input $x$ after $t_i$ steps with output $x$ and uses at most $s_i$ cells of space, and the cleaned simulation of $M_V$ on input $x\\mathbin{+\u001e+}u$ halts with output $b$, clears all work tapes, returns all work heads to the origin, and keeps every work head within distance $s_v$ of the origin. Starting the associated trial machine in its anchor phase with input head at position $1$, buffer $u$, and the other designated tapes blank, there is a positive time $T$ at which it is in the verdict state recording $b$, with the buffer still $u$ and the copied word $x\\mathbin{+\u001e+}u$ in the designated tape. At every earlier time $r$ with $0<r<T$ it is not in the anchor state, and at every $r<T$ it is not in any verdict state; through time $T$ it never halts or emits output, and every work-head position has absolute value at most $|x|+|u|+s_v+s_i+1$.",
+ "hypotheses_covered": [
+  "$M_V,M_I,M_P$ are finite-state Boolean-input machines",
+  "$x,u$ are Boolean words",
+  "$b$ is Boolean",
+  "$t_i,s_i,s_v$ are natural numbers",
+  "$M_I$ computes output $x$ on input $x$ in time $t_i$",
+  "$M_I$ uses at most $s_i$ space on input $x$ at time $t_i$",
+  "The cleaned simulation of $M_V$ on $x\\mathbin{+\u001e+}u$ halts with output $b$, clears its tapes, returns heads to the origin, and uses space at most $s_v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/SAT.lean :: Complexity.sat_verifier_equiv -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# SAT Certificate Equivalence
+
+**Claim.** A binary string $x$ belongs to $\mathrm{SAT}$ if and only if there is a binary string $u$ with $|u|=|x|+1$ such that $xu$ belongs to the plain-mode verifier language.
+
+**Proof.** Membership in $\mathrm{SAT}$ means precisely that the decoded formula $\mathrm{decode}(x)$ is satisfiable. By the SAT certificate characterization (`Complexity.sat_certificate`), this is equivalent to having a string $u$ of length $|x|+1$ whose induced assignment satisfies that decoded formula. Fix such a $u$. The verifier on the concatenation $xu$ splits at the prescribed boundary; the verifier decomposition (`Complexity.satVerdict_append`) says its verdict is the conjunction of the width condition (vacuous in plain mode) and satisfaction of $\mathrm{decode}(x)$ by the assignment induced by $u$. Thus the verifier accepts exactly when that certificate satisfies the formula, proving the equivalence for each admissible $u$ and hence existentially.
+
+**Key facts.** `Complexity.sat_certificate`, `Complexity.satVerdict_append`.

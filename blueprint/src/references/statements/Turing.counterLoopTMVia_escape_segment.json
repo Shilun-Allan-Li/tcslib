@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.counterLoopTMVia_escape_segment",
+ "key": "712f0a88d739a52d",
+ "kind": "theorem",
+ "title": "Counter loop escape segment",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes, distinct states $a$ and $ex$, and let $e:\\\\{0,1\\\\}\\\\hookrightarrow\\\\Gamma$ encode Boolean symbols. Let $w$ be a Boolean word, and suppose the extra tape initially agrees with the encoded word buffer at cells $cp+p$ for every integer $p$ with $-1\\\\le p\\\\le |w|$. For an initial configuration $c$, a run-length function $\\\\tau$, and a property $P$ of the first $k$ work-head positions, choose $r_0$ strictly below the binary value of $w$. Suppose each round $r\\\\le r_0$ satisfies the round conditions for exit set $\\\\{some\\\\ ex\\\\}$ and property $P$, and the configuration after round $r_0$ is in state $ex$. Then the counter-loop machine reaches its escape configuration after $\\\\sum_{r\\\\le r_0}\\\\tau(c_r)+\\\\operatorname{overhead}(w,r_0+1)$ steps, where $c_r$ is the $r$th round configuration; its extra tape on the word cells agrees with the encoded counter word after $r_0+1$ decrements. Before that time its state is neither done nor escape. Throughout the segment the extra head lies in $[cp-1,cp+|w|]$, and $P$ holds for the first $k$ head positions at every time through the endpoint.",
+ "hypotheses_covered": [
+  "Boolean encoding $e$ into $\\\\Gamma$",
+  "Machine $M$ and distinct states $a$ and $ex$",
+  "Run-length function $\\\\tau$ and initial configuration $c$",
+  "Counter word $w$ and index $r_0$ strictly below its binary value",
+  "Initial extra-tape buffer agreement for all $-1\\\\le p\\\\le |w|$",
+  "Every round $r\\\\le r_0$ satisfies the round conditions",
+  "The configuration after round $r_0$ has state $ex$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied definitions of the round and counter-loop machine are stubbed, so their complete constructions cannot be independently rendered from the payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

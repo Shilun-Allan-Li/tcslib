@@ -1,6 +1,6 @@
 {
  "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind_complexity_const",
- "key": "dcc39da19b0f1d4d",
+ "key": "05ba1dde19674e31",
  "kind": "theorem",
  "title": "Complexity of fresh-randomness bind with constant continuation",
  "statement": "Let $p$ be a public-coin finite-message protocol over shared randomness $\\Omega$, private inputs $X$ and $Y$, and outputs $\\alpha$, and let $q$ assign to each output value $a \\in \\alpha$ a public-coin finite-message protocol $q(a)$ over fresh, independent shared randomness $\\Omega'$, with the same private inputs $X$ and $Y$ and outputs in $\\beta$. If there is a constant $c \\in \\bbn$ such that every continuation $q(a)$ has communication complexity exactly $c$, then the protocol $\\mathrm{rbind}(p, q)$ — which runs $p$ on the $\\Omega$-component of the randomness and then runs the selected $q(a)$ on the independent $\\Omega'$-component — has communication complexity $\\mathrm{complexity}(p) + c$.",

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.Framed.same",
+ "key": "8b54d949893a17f6",
+ "kind": "theorem",
+ "title": "Framing is preserved outside scratch addresses",
+ "statement": "Let $W$ be a word size, let $Z$ specify a layout with $F$ local variables per frame and stack bound $Q$, and let $\\sigma$ be a state with local values $\\sigma_{\\mathrm{loc}}(x)$ and memory values $\\sigma_{\\mathrm{mem}}(a)$. Suppose a memory map $m$ stores the encoded constants $1,0,-1$ at their designated addresses, stores each pool index $n\\le Z.\\mathrm{disp}$ at its pool address, stores the stack address for frame pointer $q$ at the frame-pointer address, and stores $\\sigma_{\\mathrm{loc}}(x)$ at stack address $q+x$ for every $x<F$ and $\\sigma_{\\mathrm{mem}}(a)$ at address $a$ for every $a<Z.\\mathrm{lim}.\\mathrm{space}$; also suppose $1\\le q$ and $q+F\\le Q$. If $m'$ agrees with $m$ outside the scratch addresses (the addresses $-21,-15,-17,-19,-13$, and $-(23+4j)$ for $0\\le j\\le 2F$), then $m'$ satisfies the same storage and frame-bound conditions for $Z,\\sigma,q$.",
+ "hypotheses_covered": [
+  "The relation between $m$, $Z$, $\\sigma$, and $q$",
+  "Frame lower bound: $1\\le q$",
+  "Frame upper bound: $q+F\\le Q$",
+  "Agreement of $m'$ and $m$ outside the specified scratch-address set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

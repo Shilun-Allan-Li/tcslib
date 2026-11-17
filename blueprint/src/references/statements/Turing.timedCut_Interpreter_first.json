@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.timedCut_Interpreter_first",
+ "key": "c71edc95ba44a2e7",
+ "kind": "lemma",
+ "title": "First interpreter step",
+ "statement": "Let $x$ be a Boolean input word, let $p$ be one of its input-head positions, and let $T$ be a Boolean table word. One step of the stopped table interpreter from its entry configuration with input head at $p$ and table $T$ yields the evaluation configuration based on the inactive base data at $p$, in control phase “rewind table” with its initial flag set, table cursor $|T|-1$, state tape encoding state $0$, and state cursor $1$.",
+ "hypotheses_covered": [
+  "Boolean input word",
+  "Valid input-head position p",
+  "Boolean table word T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The first step of the stopped table interpreter from its entry configuration\ninstalls the two permanent markers (the state-tape origin marker and the\nvirtual-input boundary marker) and enters the unconditional table rewind with\nthe table cursor on the last table cell."
+}

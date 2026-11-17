@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Count_native",
+ "key": "0d920d6b1a3ca77c",
+ "kind": "lemma",
+ "title": "Polynomial-time computability of stored counts",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $i$ be a movement-count coordinate, and let $t$ be a natural-number-valued function on Boolean words. If the unary word of length $t(z)$ is polynomial-time computable as a function of $z$, then the unary word whose length is the stored movement count at time $t(z)$ is also polynomial-time computable as a function of $z$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$i$ is a valid movement-count coordinate",
+  "$t$ maps Boolean words to natural numbers",
+  "The function $z\\mapsto 1^{t(z)}$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every counter coordinate and polynomial-time unary time producer, the unary word of the stored movement count at the produced time is polynomial-time computable; projections, clock construction, repeated field scans, and decoding calls are all charged."
+}

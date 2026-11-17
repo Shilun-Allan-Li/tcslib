@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.halve_run",
+ "key": "428034099e044412",
+ "kind": "theorem",
+ "title": "Repeated halving after a countdown",
+ "statement": "Let $A$ be a register program, let $l,l_x,l_1,l_2$ be labels, and let $c,r$ be distinct registers. Suppose label $l$ tests whether register $c$ is zero, its positive branch decrements $c$ and goes to $l_2$, and $l_2$ halves register $r$ and returns to $l$. For every $k\\in\\mathbb N$ and register assignment $v$ with $v(c)=k$ and $v(s)\\le B$ for every register $s$, the program can reach the configuration at $l_x$ obtained by setting $c$ to zero and replacing $r$ by $v(r)/2^{v(c)}$, with no result bit, while every configuration before the final one satisfies the guard requiring the program's precondition and all registers to be at most $B$.",
+ "hypotheses_covered": [
+  "$c\\ne r$",
+  "The transition at $l$ is a zero test on $c$ with branches $l_x$ and $l_1$",
+  "The transition at $l_1$ decrements $c$ and goes to $l_2$",
+  "The transition at $l_2$ halves $r$ and returns to $l$",
+  "Arbitrary $k\\in\\mathbb N$ and assignment $v$ with $v(c)=k$",
+  "Every register value in $v$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

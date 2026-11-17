@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a3_run_start",
+ "key": "f04a23e8d1844c6c",
+ "kind": "lemma",
+ "title": "Arrival at the dispatch configuration",
+ "statement": "Let $C$ be a finite Turing machine over the Boolean alphabet with $k>0$ work tapes, let $e$ and $z$ be states of $C$, and let $x$ be a Boolean word. After exactly $2|x|+2$ steps, the wrapper machine started on $x$ is in state $2$ of its three setup states, with its input head at the first input cell, $x$ stored on work tape $0$, all other work tapes blank, all work-tape heads at cell $0$, and its output empty.",
+ "hypotheses_covered": [
+  "$C$ is a finite Turing machine over the Boolean alphabet",
+  "$C$ has a positive number of work tapes",
+  "$e$ and $z$ are states of $C$",
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a finite machine with at least one work tape and designated entry and\nexit states, and let $x$ be an input. After exactly $2|x| + 2$ steps from its\ninitial configuration on $x$, the decider wrapper of $C$ is in the dispatch seam\nconfiguration: the dispatch state, $x$ on tape zero, every other work tape blank,\nand all heads at their starting positions."
+}

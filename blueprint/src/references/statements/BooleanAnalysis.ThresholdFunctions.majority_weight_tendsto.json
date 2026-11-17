@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_weight_tendsto",
+ "key": "84c5193dc45cf896",
+ "kind": "theorem",
+ "title": "Majority Fourier weight limit",
+ "statement": "For every odd natural number $k$, let $L_k=\\frac{4}{\\pi k2^k}\\binom{k-1}{(k-1)/2}$. The level-$k$ Fourier weight of majority on the Boolean cube of dimension $2m+1$ converges to $L_k$ as $m$ tends to infinity. Moreover, for every natural number $m$ with $k\\le (2m+1)/2$, where the quotient is rounded down, its level-$k$ Fourier weight lies between $L_k$ and $\\left(1+\\frac{2k}{2m+1}\\right)L_k$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$k$ is odd",
+  "For the bounds, $m$ is a natural number",
+  "For the bounds, $k\\le (2m+1)/2$ using natural-number division"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor each $q\\in\\mathbb N$, define $M_q:\\{\\pm1\\}^{2q+1}\\to\\mathbb R$ to equal $1$ when\nmore than $q$ coordinates equal $1$, and $-1$ otherwise; for\n$S\\subseteq\\{1,\\ldots,2q+1\\}$ define\n$\\widehat M_q(S)=2^{-(2q+1)}\\sum_{x\\in\\{\\pm1\\}^{2q+1}}M_q(x)\\prod_{i\\in S}x_i$, and for\n$k\\in\\mathbb N$ define $W_k(M_q)=\\sum_{|S|=k}\\widehat M_q(S)^2$.\nFor each fixed odd integer $k\\ge1$, set\n$L_k=\\frac{4}{\\pi k2^k}\\binom{k-1}{(k-1)/2}$; then\n$\\lim_{m\\to\\infty}W_k(M_m)=L_k$, and for every $m\\in\\mathbb N$ satisfying\n$k\\le\\lfloor(2m+1)/2\\rfloor$ one has\n\\[\n L_k\\le W_k(M_m)\\le\\left(1+\\frac{2k}{2m+1}\\right)L_k.\n\\]"
+}

@@ -1,0 +1,27 @@
+{
+ "lean_name": "BoolCircuit.CompileListSpec",
+ "key": "971fa42aa5db220f",
+ "kind": "structure",
+ "title": "List compilation specification",
+ "statement": "Let $n$ be a natural number, let $C$ be a list of Boolean circuit trees on $n$ variables, let $G$ be an initial list of gates, and let $(G',V)$ be a pair consisting of a gate list and a list of output vertices. The specification requires that $G'$ be obtained by appending gates to $G$ and be acyclic; that $V$ have the same length as $C$, with every $v\\in V$ satisfying $v<n+|G'|$, and that for every input the values at the vertices of $V$, in order, equal the evaluations of the trees in $C$. It further requires $|G'|\\le |G|+\\operatorname{sumSize}(C)$, every output vertex to have depth at most $\\operatorname{maxDepth}(C)+1$, and every appended gate to be well formed and to have at most $\\max(1,\\operatorname{maxFanin}(C))$ arguments.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A list $C$ of Boolean circuit trees on $n$ variables",
+  "An initial gate list $G$",
+  "A proposed result $(G',V)$ consisting of a gate list and an output-vertex list",
+  "$G'$ extends $G$ by appending gates",
+  "$G'$ is acyclic",
+  "$|V|=|C|$",
+  "Each $v\\in V$ satisfies $v<n+|G'|$",
+  "For every input, output-vertex values agree in order with circuit evaluations",
+  "$|G'|\\le |G|+\\operatorname{sumSize}(C)$",
+  "Each output vertex has depth at most $\\operatorname{maxDepth}(C)+1$",
+  "Each appended gate is well formed and has at most $\\max(1,\\operatorname{maxFanin}(C))$ arguments"
+ ],
+ "confidence": "low",
+ "caveat": "The payload does not define gate well-formedness, acyclicity, vertex values or depths, or the tree size, maximum-depth, and maximum-fan-in quantities, so their precise meanings cannot be checked from the supplied definitions.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

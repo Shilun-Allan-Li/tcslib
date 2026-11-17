@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.sum_pow_mul_le_of_prefix_le",
+ "key": "9f34d0a60d4e1b93",
+ "kind": "lemma",
+ "title": "Prefix domination for geometric weights",
+ "statement": "Let $N\\ge 0$, let $0\\le\\rho\\le1$, and let $a,b:\\mathbb N\\to\\mathbb R$. Suppose that for every integer $j$ with $0\\le j\\le N$, $\\sum_{k=0}^{j-1}b(k)\\le\\sum_{k=0}^{j-1}a(k)$, and that $\\sum_{k=0}^{N-1}b(k)=\\sum_{k=0}^{N-1}a(k)$, with an empty sum interpreted as zero. Then $\\sum_{k=0}^{N-1}\\rho^k b(k)\\le\\sum_{k=0}^{N-1}\\rho^k a(k)$.",
+ "hypotheses_covered": [
+  "$N$ is a natural number",
+  "$\\rho$ lies between zero and one, inclusive",
+  "$a$ and $b$ are real-valued sequences",
+  "Every prefix sum of $b$ through length at most $N$ is at most the corresponding prefix sum of $a$",
+  "The sums of $a$ and $b$ over the first $N$ terms are equal"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N\\in\\mathbb N$, $\\rho\\in[0,1]$, and $a,b:\\mathbb N\\to\\mathbb R$ satisfy\n$\\sum_{k=0}^{j-1}b(k)\\le\\sum_{k=0}^{j-1}a(k)$ for every integer $0\\le j\\le N$ and\n$\\sum_{k=0}^{N-1}b(k)=\\sum_{k=0}^{N-1}a(k)$, with sums over no indices interpreted as zero.\nThen\n\\[\n \\sum_{k=0}^{N-1}\\rho^k b(k)\\le\\sum_{k=0}^{N-1}\\rho^k a(k).\n\\]"
+}

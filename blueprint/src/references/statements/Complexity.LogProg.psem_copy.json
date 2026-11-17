@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.psem_copy",
+ "key": "a56f2489f36ebbf6",
+ "kind": "theorem",
+ "title": "Copying a register in a probabilistic program",
+ "statement": "Let $A$ be a nondeterministic register program with $m$ natural-number registers, state set $\\Lambda$, and oracle, and fix an input $x$ and register bound $B$. Let $dst$ and $src$ be distinct register indices. Suppose state $test$ compares them, going to $ex$ if they are equal and to $bump$ otherwise, and state $bump$ increments $dst$ and returns to $test$. For any rational $p$ and register valuation $v$ bounded by $B$ with $v(dst)\\le v(src)$, if the configuration at $ex$ with $dst$ set to $v(src)$ has probabilistic semantics of acceptance probability $p$, then the configuration at $test$ with valuation $v$ has the same semantics and acceptance probability.",
+ "hypotheses_covered": [
+  "The program $A$, oracle, input $x$, and bound $B$ are fixed",
+  "$dst$ and $src$ are register indices",
+  "$dst\\ne src$",
+  "The specified instructions at $test,bump$",
+  "$p$ is rational",
+  "$v$ is a register valuation",
+  "Every register value of $v$ is at most $B$",
+  "$v(dst)\\le v(src)$",
+  "The specified configuration at $ex$ has probabilistic semantics with acceptance probability $p$ under bound $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

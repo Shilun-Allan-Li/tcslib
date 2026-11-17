@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.deMorganGadget",
+ "key": "5985234c2362852b",
+ "kind": "def",
+ "title": "De Morgan gate gadget",
+ "statement": "Given a natural number $n$, a gate $g$, and a gate list $G$, the gadget returns a gate list and a vertex index. If $g$ is an OR gate, it first appends NOT gates for the distinct vertices in the argument list, then an AND gate reading their new indices, then a NOT gate reading the AND gate's index; it returns the resulting list and the index of the final NOT gate. If $g$ is an AND gate, it appends an AND gate reading the distinct arguments of $g$ and returns its index. If $g$ is a NOT gate, it appends $g$ itself and returns its index.",
+ "hypotheses_covered": [
+  "Natural number $n$",
+  "Input gate $g$",
+  "Initial gate list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

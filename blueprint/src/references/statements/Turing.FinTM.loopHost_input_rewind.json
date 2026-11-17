@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_input_rewind",
+ "key": "62b1fc2b0e1588d7",
+ "kind": "lemma",
+ "title": "Rewind from controller phase four",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose the forward and find-mode settings, and let $x$ be a Boolean input word. For any loop host configuration $c$ whose control state is controller phase four, there is a natural number $t$ with $t\\le c$'s input-head position plus $2$ such that after $t$ steps the host has the same configuration data as $c$, except that its control is the startup body-call state with release clear and body state $B$'s initial state, and its input head is at position $1$.",
+ "hypotheses_covered": [
+  "Boolean finite machines B and F",
+  "anchor state a of B",
+  "forward setting",
+  "find-mode setting",
+  "Boolean input word x",
+  "loop host configuration c",
+  "c is in controller phase four"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of the loop host in controller phase four. Then there is a\ntime $t$ at most the input-head position of $c$ plus two after which the host sits in\nthe startup body-call state with input head at position one and every other component of\n$c$ unchanged."
+}

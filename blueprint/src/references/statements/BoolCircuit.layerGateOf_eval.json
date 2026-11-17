@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.layerGateOf_eval",
+ "key": "4fc1db4cdde6f1e6",
+ "kind": "theorem",
+ "title": "Evaluation of a layered Boolean gate",
+ "statement": "Let $g$ be a Boolean DAG gate whose argument list has no repetitions, with exactly one argument if it is a NOT gate, and suppose $g$ is not an OR gate. Let $D$ be a type, let $e$ assign an element of $D$ to each argument position in the list, let $v:D\\to\\mathrm{Fin}\\,2$, and let $w$ be a Boolean list. If, for every argument index $a$ of $g$, the value $v(e(a))$ is the $0$–$1$ encoding of the value of $w$ at index $a$ (taking that value to be false when the index is out of range), then the gate on $D$ constructed from $g$ and $e$, evaluated using $v$, equals the $0$–$1$ encoding of the evaluation of $g$ on $w$.",
+ "hypotheses_covered": [
+  "The argument list of $g$ has no repetitions",
+  "If $g$ is a NOT gate, its argument list has length one",
+  "$g$ is not an OR gate",
+  "$D$ is a type",
+  "The embedding assigns an element of $D$ to each argument occurrence",
+  "$v:D\\to\\mathrm{Fin}\\,2$",
+  "$w$ is a Boolean list",
+  "For every listed argument, its assigned value is the encoding of the list value at that index, with false for out-of-range indices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

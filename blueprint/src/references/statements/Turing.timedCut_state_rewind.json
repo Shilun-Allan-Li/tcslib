@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.timedCut_state_rewind",
+ "key": "df1b07ca855fbfc8",
+ "kind": "lemma",
+ "title": "Marker-Directed State Rewind",
+ "statement": "Let $x$ be a Boolean input word, $B$ a four-tape configuration, and $q,q'$ interpreter controls. Let the state tape $\u001csigma:\\mathbb{Z}\\to\\{0,1,\\mathrm{blank}\\}$ satisfy $\u001csigma(0)=0$ and $\u001csigma(j)\\ne0$ for every positive natural number $j$. Suppose that in control $q$, reading $0$ on work tape $1$ causes a transition to $q'$ with a one-cell right state-head move, while any other read causes the machine to remain in $q$ with a one-cell left move. Then, for every $j\\in\\mathbb{N}$, from the interpreter configuration with state head at $j$, after $j+1$ steps the control is $q'$ and the state head is at $1$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "base four-tape configuration $B$",
+  "controls $q,q'$",
+  "state tape has $0$ at cell $0$",
+  "no positive cell contains $0$",
+  "specified transition on marker read",
+  "specified transition on every non-marker read"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the state tape holds the marker symbol $0$ at cell $0$ and no cell at\na positive position holds $0$, and suppose the current control of the stopped\ntable interpreter moves the state head left on every non-marker read while, on\nreading the marker, it moves right once and transfers to a designated\ncontinuation control $q'$.  Then from state cursor $j \\in \\mathbb{N}$ the\ninterpreter reaches $q'$ with state cursor $1$ in exactly $j+1$ steps, without\nchanging any tape contents, the input head, or the output; the premise is\nindependent of whether the traversed cells are erased blanks or retained unary\nsymbols."
+}

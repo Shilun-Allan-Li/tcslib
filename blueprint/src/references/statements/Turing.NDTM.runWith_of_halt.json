@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.NDTM.runWith_of_halt",
+ "key": "16be2ad8f2fd780d",
+ "kind": "lemma",
+ "title": "Runs from halted configurations stay fixed",
+ "statement": "Let $M$ be a nondeterministic multi-tape Turing machine and let $c$ be a configuration on a fixed input whose state is empty. For every choice word $w$, the run of $M$ from $c$ under $w$ equals $c$.",
+ "hypotheses_covered": [
+  "nondeterministic machine M with k work tapes",
+  "configuration c on a fixed input",
+  "c has empty state",
+  "choice word w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a nondeterministic multi-tape Turing machine and $c$ a configuration of $M$ on\nsome input whose state component is empty (the machine has halted).  Then for every choice\nword $w$, running $M$ from $c$ under $w$ yields $c$ itself."
+}

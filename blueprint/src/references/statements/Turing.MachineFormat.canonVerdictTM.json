@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.MachineFormat.canonVerdictTM",
+ "key": "b1960e2f925677df",
+ "kind": "def",
+ "title": "Canonical verdict machine",
+ "statement": "For each $k\\in\\mathbb{N}$ and tape index $i\\in\\mathrm{Fin}(k)$, this is a $k$-work-tape Boolean machine with scan states recording a Boolean value, initially true in the forward phase. In a completed state carrying verdict $b\\in\\{\\mathrm{false},\\mathrm{true}\\}$, it stays in place, leaves every work tape unchanged, outputs $b$, and halts; in all other states it follows the canonical Boolean-scanning machine's transition function.",
+ "hypotheses_covered": [
+  "natural number parameter $k$",
+  "work-tape index $i\\in\\mathrm{Fin}(k)$"
+ ],
+ "confidence": "low",
+ "caveat": "The underlying scan-machine transition function is not defined in the supplied statement, so the nonterminal behavior cannot be expanded further.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

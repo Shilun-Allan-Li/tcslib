@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_budget_round",
+ "key": "fe3d04d58b8eb597",
+ "kind": "lemma",
+ "title": "Cost and outcome of a budget round",
+ "statement": "Let $W$ be a finite Turing machine over Boolean symbols, let $a,N\\in\\mathbb{N}$, and let $x$ be a finite schedule-alphabet word. Given any base configuration on $x$, input-head position, integer guide-head coordinate $g$, Boolean word $w$, and guide tape, start the length-only schedule in budget-start phase with the budget head at $|w|+1$ over the captured clock tape for $w$, and the unary head at $N+1$ over the unary tape with $N$ markers. After exactly $2|w|+(a+1)+4$ steps, the budget tape contains the result of a borrow pass with incoming borrow set on $w$, the unary tape has $N+a+1$ markers and its head is at $N+(a+1)+1$, the budget head is at $|w|+1$, and the phase is unary-start if the borrow pass ends with a borrow and budget-start otherwise; the input head, base data, guide tape and guide head are unchanged.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine W",
+  "natural parameters a and N",
+  "schedule input x and base configuration",
+  "input-head position p",
+  "integer guide-head coordinate g",
+  "Boolean word w",
+  "guide tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "One complete round of the budget controller --- full rewind, append block of $a+1$\nunary markers, fixed-width borrow pass, and end test --- costs exactly\n$2|w| + (a+1) + 4$ steps, independently of the bits of the budget word $w$.  Starting\nin the budget-start phase with budget head at $|w|+1$ over the captured clock tape of\n$w$ and unary head at $N+1$ over the unary tape with $N$ markers, the round ends with\nthe captured clock tape of the borrowed word (incoming borrow set), the unary tape with\n$N + a + 1$ markers, and phase unary-start or budget-start according to the borrow's\nunderflow flag."
+}

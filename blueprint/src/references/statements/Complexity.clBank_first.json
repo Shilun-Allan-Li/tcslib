@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clBank_first",
+ "key": "3d2c7e21a33c62f9",
+ "kind": "lemma",
+ "title": "First all-returned time of the counter bank",
+ "statement": "Let $l,W\\in\\mathbb{N}$, let $x$ be a finite Boolean word, and let $p$ be a valid input-head position for $x$. For each of the $l$ counters, choose a selection bit $a_i$ and a natural number $n_i$, and suppose the binary expansion of each $n_i$ has length at most $W$. Starting the bank with counter $i$ in carry control when $a_i$ is true and in return control otherwise, with its tape holding the binary expansion of $n_i$ and its head at zero, there is a time $t\\le 2W+2$ such that at every earlier time the bank is not in the configuration where every component has return control, and at time $t$ its configuration is exactly the bank configuration with every component in return control, each tape holding the binary expansion of $n_i+1$ if $a_i$ is true and of $n_i$ otherwise, and each head at zero.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb{N}$",
+  "finite Boolean word $x$",
+  "valid input-head position $p$ for $x$",
+  "selection bits $a_i$ for all $i<l$",
+  "natural counter values $n_i$ for all $i<l$",
+  "binary expansion of each $n_i$ has length at most $W$",
+  "$W\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, selection vector, counter values, and common width bound $W$, there is a time $t \\le 2W + 2$ such that the bank control is not all-returned at any earlier time, and at $t$ the bank holds exactly the requested incremented values with every head restored to zero. The duration may be zero when nothing is selected; positivity is supplied by the surrounding dispatch controller."
+}

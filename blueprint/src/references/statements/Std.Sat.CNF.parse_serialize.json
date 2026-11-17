@@ -1,0 +1,14 @@
+{
+ "lean_name": "Std.Sat.CNF.parse_serialize",
+ "key": "f78e9b53c4c1ab3a",
+ "kind": "theorem",
+ "title": "Formula encoding round trip",
+ "statement": "For every CNF formula $\\varphi$ over variables indexed by $\\mathbb N$, exact-consumption parsing of its binary encoding returns $\\varphi$. The encoding uses $1^{v+1}0b$ for a literal $(v,b)$, appends $0$ after each clause, and prefixes each clause by $1$ before ending the formula with $0$.",
+ "hypotheses_covered": [
+  "$\\varphi$ is a CNF formula over variables indexed by $\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every CNF formula $\\varphi$ over variables indexed by $\\mathbb{N}$, the exact-consumption\nparser applied to the binary encoding $\\mathrm{enc}(\\varphi)$ succeeds and returns\n$\\varphi$. Here a literal $(v,b)$ is encoded as $1^{v+1}0b$, a clause as the concatenation\nof its literal encodings followed by $0$, and a formula $(C_1,\\dots,C_k)$ as\n$1\\,\\mathrm{enc}(C_1)\\cdots1\\,\\mathrm{enc}(C_k)\\,0$; the parser on a bit string $x$ reads\n$x$, with recursion fuel $|x|$, according to the grammar\n$\\langle\\text{formula}\\rangle ::= 0 \\mid 1\\,\\langle\\text{clause}\\rangle\\,\\langle\\text{formula}\\rangle$,\n$\\langle\\text{clause}\\rangle ::= 0 \\mid \\langle\\text{literal}\\rangle\\,\\langle\\text{clause}\\rangle$,\n$\\langle\\text{literal}\\rangle ::= 1^{k+1}\\,0\\,b$ (the literal $(k,b)$), and succeeds only if\nit consumes all of $x$."
+}

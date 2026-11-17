@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satStreamRun_formula",
+ "key": "0dbf4c321940c7dc",
+ "kind": "lemma",
+ "title": "Formula schedule emits the transform",
+ "statement": "Let $\\varphi$ be a CNF formula over natural-numbered variables, let $x$ be a bit string, and let $\\mathrm{pre}$ and $\\mathrm{rest}$ be bit strings with $x=\\mathrm{pre}\\,\\mathrm{enc}(\\varphi)\\,\\mathrm{rest}$. For every fresh cursor $j\\in\\mathbb{N}$, running $1+\\sum_{C\\in\\varphi}(|C|+2)$ rounds from formula phase with cursor $j$ and consumed length $|\\mathrm{pre}|$ emits the encoding of the clause-splitting transform of $\\varphi$ starting at cursor $j$, and ends in finished phase with the final cursor of that transform and consumed length $|\\mathrm{pre}|+|\\mathrm{enc}(\\varphi)|$.",
+ "hypotheses_covered": [
+  "CNF formula $\\varphi$ over natural-numbered variables",
+  "Input bit string $x$",
+  "Prefix and suffix bit strings $\\mathrm{pre}$ and $\\mathrm{rest}$ satisfying $x=\\mathrm{pre}\\,\\mathrm{enc}(\\varphi)\\,\\mathrm{rest}$",
+  "Fresh cursor $j\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input contain the serialization of a formula $\\varphi$ at the consumed\nposition, with the seam in the formula phase at cursor $j$. Then exactly the\nround count of $\\varphi$ many rounds consume the serialized formula, emit exactly\nthe serialization of the threaded clause transform of $\\varphi$ at $j$, reach the\nfinished phase, and leave the cursor at the transform's final value."
+}

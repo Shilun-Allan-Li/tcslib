@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.compileTree_fanout",
+ "key": "d8b675ee72f5310e",
+ "kind": "theorem",
+ "title": "Fanout of a compiled circuit",
+ "statement": "Let $n$ be a natural number, let $c$ be a Boolean circuit tree on $n$ variables, and let $gs$ be a finite list of gates on natural-number-indexed vertices such that every input to its $i$th gate has index less than $n+i$. Compiling $c$ after $gs$ appends some list $ext$ of gates. Among the appended gates, each vertex of index at least $n$ is used as an input at most once; vertices corresponding to gates in $gs$ are not used, and the root vertex is not used when its index is at least $n$. The root index is either less than $n$ or at least $n+|gs|$. Every vertex whose index is at least $n+|gs|$ and less than $n+|gs|+|ext|$, except the root, is used exactly once as an input to the appended gates.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$c$ is a Boolean circuit tree on $n$ variables",
+  "$gs$ is a finite list of gates",
+  "Each input index of the $i$th gate in $gs$ is less than $n+i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

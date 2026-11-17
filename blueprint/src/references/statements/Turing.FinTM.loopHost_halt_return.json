@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_halt_return",
+ "key": "f78d0aae12b69f88",
+ "kind": "lemma",
+ "title": "Genuine halt return",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, and choose a mode for the loop host. For an input $x$, a configuration $c$ of $B$ on $x$, a natural number $t>0$, a Boolean word $w$, and a configuration $f$ of $F$ on $x$, suppose the run of $B$ from $c$ is live at every time $u<t$, does not enter state $a$ at any time $0<u<t$, and is halted at time $t$. Then the loop host run for $t$ steps from the non-startup call on $c$ with release set and no stop flag equals the non-startup call on the time-$t$ configuration of $B$, with release clear and stop flag true, retaining $w$ and $f$.",
+ "hypotheses_covered": [
+  "Boolean finite machines B and F",
+  "anchor state a of B",
+  "mode findMode",
+  "input x",
+  "body configuration c on x",
+  "natural number t",
+  "Boolean word w",
+  "fuel configuration f on x",
+  "0 < t",
+  "body run is live for every u < t",
+  "body run does not equal a at any 0 < u < t",
+  "body run is halted at time t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a body configuration and $t > 0$ a time such that the body stays live before\n$t$, does not visit the anchor strictly between times zero and $t$, and is halted at\ntime $t$. Then the loop host, run for $t$ steps from the active released call on $c$,\nreaches the stopped call on the body run at time $t$ with release clear and stop flag\n$\\mathrm{true}$, the complete body output captured, including any bit emitted by the\nhalting transition."
+}

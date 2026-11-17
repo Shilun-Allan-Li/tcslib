@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.EffectiveCodeK.ofSerialize",
+ "key": "2abdc3ba9c1f16e3",
+ "kind": "def",
+ "title": "Effective coding from serialization",
+ "statement": "Let $k$ be a natural number, let $\\mathrm{Code}$ be a type, and assign to each $M\\in\\mathrm{Code}$ a natural number of states minus one and a $k$-work-tape machine over Boolean symbols with that state set. Suppose a serialization of each code equals the fixed serialization of its assigned machine, and a decoder maps every Boolean word to a code. If a finite Boolean-alphabet Turing machine computes the serialization of the decoded code in time bounded by $T$, then these data determine an effective coding scheme for $k$-work-tape machines: each word decodes to its assigned machine, and the same machine computes that machine’s fixed serialization within time $T$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "a type $\\mathrm{Code}$",
+  "a state-count function on $\\mathrm{Code}$",
+  "a machine assignment with the specified state sets and $k$ work tapes",
+  "a serialization function",
+  "serialization agrees with the fixed machine serialization for every code",
+  "a decoder from Boolean words to codes",
+  "a finite Boolean-alphabet Turing machine",
+  "a time-bound function $T$",
+  "the machine computes the serialization of every decoded code within $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

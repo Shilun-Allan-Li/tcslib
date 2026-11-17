@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_finish",
+ "key": "c0d8fed2f4fb3834",
+ "kind": "lemma",
+ "title": "Completion of the macrostep schedule",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B\\in\\mathbb{N}$, and let $x$ be a word of schedule symbols. Choose a base configuration on $x$, an input-head position $p$, an integer $b$, and a binary-budget tape $\\beta$. Starting in the macrostep-check phase with unary head at $1$, unary tape containing $B$ markers, and guide head at $0$ over the guide of radius $3B$, after exactly $B(6(3B)+8)+1$ steps the machine is halted, with unary head at $B+1$; the input head, budget head and tape, unary tape, guide head and tape, and all clock tapes and output are otherwise as specified by the same setup configuration.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over Booleans",
+  "a and B are natural numbers",
+  "x is a schedule-symbol word",
+  "base is a configuration on x",
+  "p is a valid input-head position",
+  "b is the binary-budget head position",
+  "β is the binary-budget tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From a setup configuration in the macrostep-check phase with unary head at cell $1$\nover the unary tape with $B$ markers and guide head at cell $0$ over the completed\nguide of radius $3B$, exactly $B\\,\\bigl(6\\,(3B) + 8\\bigr) + 1$ steps execute one full\nsweep per unary marker and reach the halted configuration with unary head at cell\n$B+1$ and guide head at cell $0$; every tape, the budget head, and the input head are\nunchanged."
+}

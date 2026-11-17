@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost_contracts",
+ "key": "2007c01881d314ff",
+ "kind": "lemma",
+ "title": "Loop host contracts",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, and let $I$, $S$, $A$, and $O$ be predicates or functions on Boolean words, with $S(x)$ the initial auxiliary word. Suppose $F$ computes the binary representation of $R(|x|)$ within $T(|x|)$ steps on every input $x$; $I(x,S(x))$ holds, and $I(x,s)$ implies $I(x,S_1(x,s))$ for every $x,s$, where $S_1$ is the state update. Suppose also that each input has a run of $B$ from its initial configuration to the seam configuration in state $a$ with tape words given by $S(x)$, taking at most $T(|x|)$ steps and never visiting state $a$ earlier. For every $x,s$ with $I(x,s)$, suppose there is a positive time at most $T(|x|)$ at which a run from the seam configuration in state $a$ either halts with output $O(x,s)$ when $A(x,s)$ holds, or returns to the seam configuration with updated word $S_1(x,s)$ when $A(x,s)$ fails; in either case it does not visit state $a$ at any strictly intermediate positive time. Then there is a constant $c$ such that, for every input $x$, the loop host has a computation sequence $(C_i)_{i\\in\\mathbb N}$ and a startup time at most $c(T(|x|)+1)$ with the following properties: the host run from its initial configuration reaches $C_0$ at that startup time, and $C_i$ has empty output for every $i\\le R(|x|)$. The configuration $C_{R(|x|)+1}$ is halted and its output is empty in find mode and the one-bit word $[\\mathrm{false}]$ otherwise. For each $i\\le R(|x|)$ there is a time at most $c(T(|x|)+1)$ such that, if $A(x,S_1^{[i]}(x))$ holds, the host run from $C_i$ halts with output $O(x,S_1^{[i]}(x))$ in find mode and $[\\mathrm{true}]$ otherwise; if it fails, that run reaches exactly $C_{i+1}$. At each $C_i$ for $i\\le R(|x|)$, every work-tape head lies between $-T(|x|)$ and $T(|x|)$; at the final configuration, every work-tape head lies between $-(T(|x|)+c(T(|x|)+1))$ and $T(|x|)+c(T(|x|)+1)$. Here $S_1^{[i]}$ denotes $i$-fold iteration of the state update.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines B and F",
+  "anchor state of B",
+  "predicates and functions I, S₁, A, O, and initial-word function S",
+  "F computes the binary representation of R(|x|) within T(|x|) steps for every input",
+  "I(x,S(x)) for every x",
+  "I is preserved by S₁",
+  "bounded initial run reaches the anchor seam configuration and avoids the anchor earlier",
+  "for invariant states, a positive bounded round either halts with specified output or returns to the updated seam configuration",
+  "intermediate positive times in each round avoid the anchor"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

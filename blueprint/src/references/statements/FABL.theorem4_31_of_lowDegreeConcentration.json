@@ -1,0 +1,17 @@
+{
+ "lean_name": "FABL.theorem4_31_of_lowDegreeConcentration",
+ "key": "d5b1dfb060a0e292",
+ "kind": "theorem",
+ "title": "Learning circuits from low-degree concentration",
+ "statement": "Let $n,d,s,k,W$ be nonnegative integers, and let $\\varepsilon\\in\\mathbb Q$ satisfy $0<\\varepsilon\\le1/2$. Consider the Boolean functions on $\\{-1,1\\}^n$ computed by circuits of depth $d$ and size at most $s$, with no bound imposed on their width. Suppose every such function has total squared Fourier coefficient mass on sets of size greater than $k$ at most $\\varepsilon/2$, and suppose $W\\ge R+R(n+1)$, where $R=\\binom{n}{\\le k}\\,M$, $\\binom{n}{\\le k}$ is the number of subsets of $[n]$ of size at most $k$, and $M$ is the sample count prescribed by the Fourier estimator for accuracy $\\varepsilon/(2\\binom{n}{\\le k})$ and confidence parameter $1/(10\\binom{n}{\\le k})$. Then the learner that estimates the Fourier coefficients on all those subsets and returns the sign of the resulting polynomial has, for every function in the circuit class, probability at most $1/10$ of producing a hypothesis whose relative Hamming distance from the target exceeds $\\varepsilon$. Every possible run uses at most $W$ labeled random examples, makes no membership queries, and incurs at most $W$ units of work.",
+ "hypotheses_covered": [
+  "n, depth d, size s, degree k, and work bound W are nonnegative integers",
+  "ε is rational with 0 < ε ≤ 1/2",
+  "Every target in the depth-d, size-at-most-s circuit class has Fourier mass above degree k at most ε/2",
+  "The learner's prescribed work cost is at most W"
+ ],
+ "confidence": "low",
+ "caveat": "The circuit and estimator are supplied only through formal constructions; the precise circuit encoding and estimator output are difficult to capture fully in ordinary prose.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

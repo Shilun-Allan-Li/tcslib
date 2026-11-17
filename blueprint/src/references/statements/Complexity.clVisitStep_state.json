@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clVisitStep_state",
+ "key": "cb4962d00d87f2a7",
+ "kind": "lemma",
+ "title": "Producer-step state update",
+ "statement": "Let $M$ be a finite-state binary Turing machine, let $C,e$ be natural numbers, and let $x$ and $r$ be Boolean words. For every natural number $t$, applying the producer step to the retained state encoding $x$, time $t$, and stored rows $r$ gives the retained state encoding $x$, time $t+1$, and the rows $r$ followed by the visit row for $M,C,e,x$ at time $t$.",
+ "hypotheses_covered": [
+  "Finite-state binary Turing machine M",
+  "Natural numbers C and e",
+  "Boolean words x and r",
+  "Natural number t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters, instance $x$, stored rows, and time $t$, one producer step on the retained state at time $t$ yields the retained state at time $t+1$ whose rows are extended by the visit row of time $t$ in fixed work-tape order."
+}

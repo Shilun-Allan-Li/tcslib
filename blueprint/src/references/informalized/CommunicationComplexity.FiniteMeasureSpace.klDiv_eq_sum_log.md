@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/KLDivergence.lean :: CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Log-ratio formula for KL divergence
+
+**Claim.** For finite measures $μ$ and $ν$ on a finite discrete space, the KL divergence has the two-branch formula in the statement, with each log-likelihood-ratio term expressed as the logarithm of the ratio of singleton masses.
+
+**Proof.** First use the finite-space formula expressing KL divergence through the log-likelihood ratio $llr$ (FiniteMeasureSpace.klDiv_eq_sum_llr). In the branch with a point where $ν$ has zero singleton mass and $μ$ does not, both formulas give infinity. In the other branch, the absence of such a point implies $μ≪ν$ by the singleton criterion for absolute continuity (FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons). Under this condition, each singleton-mass-weighted log-likelihood ratio equals the singleton mass times the logarithm of the ratio of the two singleton masses (singleton_mass_mul_llr_eq_log_ratio). Replacing each summand yields the claimed formula.
+
+**Key facts.** `CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr`, `CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons`, `CommunicationComplexity.singleton_mass_mul_llr_eq_log_ratio`.

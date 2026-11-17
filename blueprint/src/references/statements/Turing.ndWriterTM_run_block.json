@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.ndWriterTM_run_block",
+ "key": "7059b2adc3c7d0e7",
+ "kind": "theorem",
+ "title": "Writing a finite tape block",
+ "statement": "Let $k\\in\\mathbb{N}$, let $j$ be one of the $k$ work tapes, and let $x$ be a binary input. Suppose a configuration $c$ has live writer state, tape $j$ contains a nonblank symbol at each cell from its head position through the next $m-1$ cells, and the cell $m$ positions ahead is blank. For every binary word $w$ of length $m+1$, running the specified writer machine from $c$ under $w$ ends in its done state; the tape contents are those of $c$ with the cells from the initial head position up to, but not including, the cell $m$ positions ahead replaced by the first $m$ bits of $w$, and the head is advanced by $m$. Moreover, no run from $c$ under a word of length less than $m+1$ is in the done state.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$j$ is a work-tape index among the $k$ tapes",
+  "$x$ is a binary input",
+  "$c$ has state equal to the live writer state",
+  "The next $m$ cells from the head position are all nonblank",
+  "The cell $m$ positions ahead is blank",
+  "$m$ is a natural number",
+  "$w$ has length $m+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

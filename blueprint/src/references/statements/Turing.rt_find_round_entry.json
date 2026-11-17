@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.rt_find_round_entry",
+ "key": "e25215572350d3bb",
+ "kind": "theorem",
+ "title": "Return to the round boundary",
+ "statement": "Let $m>0$, let $\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$, choose $a_0\\in A$ and an acceptance predicate $\\mathrm{acc}:A\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Let $f_1,\\ldots,f_m$ be nonempty words over $\\Gamma$, and form $J$ by joining them in order with one blank symbol between consecutive words. Suppose a two-work-tape configuration $c$ is at the round's read control and, on tape 0, its cells at offsets $p$ from the head agree with the tape encoding of $J$ for every integer $p$ from $-1$ through $|J|$. Let $t$ be the first positive time at which the machine's control is either the read control or the exit control. Then $0<t\\le 7(|J|+1)$; at every intermediate time $0<u<t$ its control is neither of these controls. At time $t$, the configuration agrees with $c$ except that its control is the exit control if $\\mathrm{acc}$ accepts the state obtained by folding $\\delta$ over $J$ from $a_0$, and otherwise is the read control; the head of tape 0 has moved by the sum of the lengths of the first $m-1$ words plus their separators in the accepted case, and by $|J|+1$ in the other case.",
+ "hypotheses_covered": [
+  "$m>0$",
+  "$\\delta:A\\times\\mathrm{Option}(\\Gamma)\\to A$",
+  "$a_0\\in A$",
+  "$\\mathrm{acc}:A\\to\\mathrm{Bool}$",
+  "$f_1,\\ldots,f_m$ are a list of words with exactly $m$ entries",
+  "Every word in the list is nonempty",
+  "$c$ is a two-work-tape configuration on input $x$",
+  "$c$ has control state $(\\mathrm{read},\\mathrm{none})$",
+  "Tape 0 agrees with the joined-field encoding at every offset from $-1$ through $|J|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.WidthExample.searchA",
+ "key": "33413cda90e98210",
+ "kind": "def",
+ "title": "Four-register search program",
+ "statement": "Consider a four-register program with two oracle deciders and the control states listed for the search machine. It starts at init, increments register 1 and enters scan; scan calls decider 0 on the whole-input virtual query formed from register 0, proceeding to incI on yes and dbl on no; incI increments register 0 and returns to scan. At dbl it proceeds to enum if register 0 is zero, and otherwise decrements register 0 and enters decI; decI decrements register 1 and enters d1. In d1, if register 1 is zero it enters d2, and otherwise it decrements register 1, increments register 2 twice through d1a, d1b, and d1c, and returns to d1. In d2, if register 2 is zero it returns to dbl, and otherwise it decrements register 2, increments register 1, and returns to d2. At enum it rejects if registers 3 and 1 are equal, and otherwise enters chk; chk calls decider 1 on the whole-input virtual query formed from register 3, accepting on yes and entering nxt on no; nxt increments register 3 and returns to enum. The accepting and rejecting states halt with answers true and false, respectively.",
+ "hypotheses_covered": [
+  "Four registers",
+  "Two oracle deciders",
+  "The listed finite control states"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

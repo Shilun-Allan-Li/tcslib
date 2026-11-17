@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.paddedVerifier_no_marker",
+ "key": "a5e92a0ca1889a8c",
+ "kind": "lemma",
+ "title": "All-zero padding is rejected",
+ "statement": "For every $C,c\\in\\mathbb{N}$, every language $V$ of binary strings, and every binary string $x$, the string formed by appending $(C+1)(|x|+1)^c$ zeros to $x$ does not belong to the padded verifier for $C,c,V$.",
+ "hypotheses_covered": [
+  "$C,c$ are natural numbers",
+  "$V$ is a language of binary strings",
+  "$x$ is a binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C, c \\in \\mathbb{N}$ and $V \\subseteq \\{0,1\\}^{*}$, and let\n$V^{\\mathrm{pad}}_{C,c}$ be the set of binary strings $y$ such that, for the least\n$n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist), the suffix $v$ of $y$ after\nits first $n$ bits contains a $1$, and the prefix $u$ of $v$ preceding its last\n$1$ satisfies $|u| \\le C(n+1)^c$ and $\\langle x, u\\rangle \\in V$, where $x$ is\nthe first $n$ bits of $y$ and $\\langle x, u\\rangle$ is the self-delimiting pair\nencoding ($x$ with every bit doubled, then $01$, then $u$). Then for every binary\nstring $x$ (even one containing $1$s), the string\n$x\\,0^{(C+1)(|x|+1)^c}$ does not lie in $V^{\\mathrm{pad}}_{C,c}$."
+}

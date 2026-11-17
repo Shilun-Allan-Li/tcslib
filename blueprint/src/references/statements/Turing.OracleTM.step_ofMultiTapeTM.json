@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.OracleTM.step_ofMultiTapeTM",
+ "key": "dcf0318e9add3ab0",
+ "kind": "lemma",
+ "title": "Step of an Embedded Multi-Tape Machine",
+ "statement": "Let $M$ be a multi-tape Turing machine with $k$ work tapes, let $O$ be an oracle language over its symbol alphabet, and let $c$ be a configuration of $M$. One step of the oracle machine obtained from $M$, with oracle $O$, starting from the embedding of $c$, equals the embedding of the configuration obtained by one step of $M$ from $c$.",
+ "hypotheses_covered": [
+  "A multi-tape Turing machine $M$ with $k$ work tapes",
+  "An oracle language $O$ over the symbol alphabet",
+  "A configuration $c$ of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_0$ be a plain multi-tape machine with $k$ work tapes, let $O$ be any\noracle language, and let $c$ be a configuration of $M_0$.  One step, relative\nto $O$, of the oracle machine obtained by embedding $M_0$, taken from the\nembedding of $c$ into the $(k+1)$-tape oracle model, equals the embedding of\nthe configuration obtained by one step of $M_0$ from $c$."
+}

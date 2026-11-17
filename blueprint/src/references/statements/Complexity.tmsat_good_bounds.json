@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_good_bounds",
+ "key": "3e40c16a7d4f7b48",
+ "kind": "lemma",
+ "title": "Bounds on valid code and clock fields",
+ "statement": "For a bit string $z$ satisfying the validity guard, the code field and clock field each have length at most the length of $z$.",
+ "hypotheses_covered": [
+  "$z$ is a bit string",
+  "The validity guard holds for $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\\langle z_{[:i]}, z_{[i:]}\\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\\pi_1, \\pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \\pi_1(s(z))$ and $W = \\pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\\pi_1(Y)$, $\\pi_1(\\pi_2(Y))$, $\\pi_1(\\pi_2(\\pi_2(Y)))$ and $\\pi_2(\\pi_2(\\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\\pi_2(Y)$ and $\\pi_2(\\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones. If $G(z)$ holds, then the code field and the clock field of $z$ each have length at most $|z|$."
+}

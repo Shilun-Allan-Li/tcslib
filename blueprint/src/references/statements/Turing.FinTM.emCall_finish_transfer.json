@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emCall_finish_transfer",
+ "key": "8c13c8819f215876",
+ "kind": "lemma",
+ "title": "Finalizer transfer phase",
+ "statement": "Fix a mode, a Boolean input word $x$, an allowed input-head position $p$, and Boolean words $a$, $c$, $r$, and $u$ such that $c=ur$. Start the finalizer in state $3$ with the capture tape storing $c$ from cell $0$ and its head at $|u|$, the argument head at $|u|$ in install mode and at $0$ in emit mode, and output $u$ in install mode and empty in emit mode; the argument tape stores $a$ in emit mode and $u$ in install mode. After exactly $|r|+1$ steps it is in state $4$, with the capture tape still storing $c$ and its head at $|c|-1$, the argument head at $|c|-1$ in install mode and at $0$ in emit mode, and output $c$ in emit mode and empty in install mode; the argument tape stores $c$ in install mode and $a$ in emit mode.",
+ "hypotheses_covered": [
+  "mode bit emit",
+  "Boolean input word x",
+  "input-head position p in Fin (|x|+2)",
+  "argument word a",
+  "capture word c",
+  "remainder r and prefix u",
+  "decomposition c = u ++ r"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the finalizer run on an argument word $a$ and capture word $c$, and write $c$ as a\nprocessed prefix $p$ followed by a remainder $r$. Starting from its transfer state with\nthe capture head at $|p|$ -- having already transferred $p$ to the argument tape\n(install mode) or the output (emit mode) -- after exactly $|r| + 1$ steps it is in the\nerasure state with the full capture transferred: the argument tape holds $c$ in install\nmode and $a$ in emit mode, the output holds $c$ exactly in emit mode, and the capture\nword itself is still intact."
+}

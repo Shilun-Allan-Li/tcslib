@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.setupCfg_layout_right",
+ "key": "ffe0531bf2ed5124",
+ "kind": "lemma",
+ "title": "The rightward allocation pass",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,n,B\\in\\mathbb{N}$ satisfy $n+1\\le B$, and fix a schedule-alphabet input, a base configuration, an input-head position, an integer budget-head position, a budget tape, and a natural unary tape with $B$ markers. Starting in layout-right phase $0$ with unary head at $1$ and guide head at $0$ on the partial guide with $n+1$ copied cells, after $3B+2$ steps the machine is in layout-return phase $0$ with unary head at $B$ and guide head at $3B$, and its guide tape is the right guide of radius $3B$; the other configuration data is unchanged.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Booleans",
+  "$a,n,B\\in\\mathbb{N}$",
+  "$n+1\\le B$",
+  "a schedule-alphabet input, base configuration, and input-head position",
+  "integer budget-head position and budget tape",
+  "unary tape with $B$ markers",
+  "initial layout-right phase is $0$",
+  "initial unary head is at $1$",
+  "initial guide head is at $0$ on the partial guide with $n+1$ copied cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n + 1 \\le B$.  From the first rightward layout phase with unary head at cell $1$\nover the unary tape with $B$ markers and guide head at cell $0$ over the partial guide\nwith $n+1$ copied cells, exactly $3B + 2$ steps reach radius $3B$, install the right\nouter boundary marker, and enter the first layout-return phase with unary head at $B$,\nguide head at $3B$, and guide tape the right guide of radius $3B$."
+}

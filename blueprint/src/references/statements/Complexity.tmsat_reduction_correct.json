@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.tmsat_reduction_correct",
+ "key": "dfea45a6510c35ff",
+ "kind": "lemma",
+ "title": "Correctness of the TMSAT reduction",
+ "statement": "Let $c$ be a machine representation scheme, let $L,V$ be languages of bit strings, let $C,e$ be natural numbers, let $\\alpha$ be a bit string, and let $T : \\mathbb{N}\\to\\mathbb{N}$. Suppose that for every bit string $x$, membership $x\\in L$ is equivalent to the existence of a bit string $u$ with $|u|=C(|x|+1)^e$ and $x u\\in V$. Suppose also that for every such $x,u$, the machine decoded from $\\alpha$ halts within $T(|x|)$ steps on input $\\langle x,u\\rangle$ and outputs the single bit indicating whether $x u\\in V$. Then for every bit string $x$, $x\\in L$ if and only if $\\langle\\alpha,\\langle x,\\langle1^{C(|x|+1)^e},1^{T(|x|)}\\rangle\\rangle\\rangle$ belongs to $\\mathrm{TMSAT}_c$.",
+ "hypotheses_covered": [
+  "$c$ is a machine representation scheme",
+  "$L,V$ are languages of bit strings",
+  "$C,e$ are natural numbers",
+  "$\\alpha$ is a bit string",
+  "$T : \\mathbb{N}\\to\\mathbb{N}$",
+  "For every $x$, $x\\in L$ iff some $u$ of length $C(|x|+1)^e$ has $xu\\in V$",
+  "For every $x,u$ of that length, the machine decoded from $\\alpha$ computes the indicator of $xu\\in V$ on input $\\langle x,u\\rangle$ within $T(|x|)$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a machine-representation scheme, which assigns to every bit string $\\alpha$ a one-work-tape binary Turing machine $M_\\alpha$ (decoding is total). Let $L$ and $V$ be languages of bit strings, $C, e \\in \\mathbb{N}$, $\\alpha$ a bit string and $T \\colon \\mathbb{N} \\to \\mathbb{N}$. Suppose that $x \\in L$ if and only if some $u$ with $|u| = C(|x|+1)^e$ satisfies $xu \\in V$, and that for all $x, u$ with $|u| = C(|x|+1)^e$, $M_\\alpha$ on input $\\langle x,u\\rangle$ halts within $T(|x|)$ steps with output the single bit $[xu \\in V]$. Then for every bit string $x$, $x \\in L$ if and only if $\\langle\\alpha,\\langle x,\\langle 1^{C(|x|+1)^e},1^{T(|x|)}\\rangle\\rangle\\rangle \\in \\mathrm{TMSAT}_c$, where $\\langle a,b\\rangle$ is the self-delimiting pair encoding, $1^k$ the word of $k$ ones, and $\\mathrm{TMSAT}_c$ the set of strings $\\langle\\beta,\\langle y,\\langle 1^n,1^t\\rangle\\rangle\\rangle$ such that $M_\\beta$ halts on $\\langle y,v\\rangle$ within $t$ steps with output exactly $1$ for some $v$ with $|v| = n$."
+}

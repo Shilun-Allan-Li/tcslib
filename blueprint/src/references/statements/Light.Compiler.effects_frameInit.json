@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.Compiler.effects_frameInit",
+ "key": "eef19eb557790b45",
+ "kind": "theorem",
+ "title": "Effects of frame initialization",
+ "statement": "Let $Z$ be compiler size data with word size $W$, stack capacity $Q$, and frame size $F$, and let $n,q',F'$ be natural numbers and $m$ an initial memory. Suppose the new-frame pointer contains the stack address for $q'$, each pool cell indexed by $2i$ contains the integer $2i$ for every $i<F'$, and $q'+F'\\le Q$. After executing the frame-initialization instructions, each stack cell indexed by $q'+i$, for $i<F'$, contains the initial value of temporary cell $i$ if $i<n$, and otherwise the initial value of the zero cell; moreover, memory agrees with its initial value outside the address scratch cell and the stack cells indexed from $q'$ through $Q-1$.",
+ "hypotheses_covered": [
+  "Compiler size data $Z$ with word size $W$ and stack capacity $Q$",
+  "Natural numbers $n$, $q'$, and $F'$",
+  "Initial memory $m$",
+  "New-frame pointer contains the encoded stack address for $q'$",
+  "For every $i<F'$, pool cell indexed by $2i$ contains the encoded integer $2i$",
+  "Bound $q'+F'\\le Q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

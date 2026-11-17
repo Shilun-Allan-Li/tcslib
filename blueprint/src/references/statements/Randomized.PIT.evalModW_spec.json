@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.PIT.evalModW_spec",
+ "key": "0592ddc392c01c18",
+ "kind": "theorem",
+ "title": "Correctness of modular circuit evaluation",
+ "statement": "Let $n$ be a natural number, let $R$ be a finite bit string, let $P$ be a finite list of finite bit strings, and let $C$ be an arithmetic circuit with $n$ inputs. Write $b(w)$ for the natural number represented by a bit string $w$, with its first bit least significant, and suppose $C$ has at least one gate and every gate that refers to earlier gates refers only to gates preceding it in the list. The bit string produced by the encoded evaluator on the encoding of the context and gate list has value less than $b(R)+1$, and its residue modulo $b(R)+1$ equals the value of $C$ over $\u001d\\mathbb{Z}/(b(R)+1)\\mathbb{Z}$ at the input whose $i$th coordinate is the residue of $b(P_i)+1$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$R$ is a finite bit string",
+  "$P$ is a finite list of finite bit strings",
+  "$C$ is an arithmetic circuit with $n$ inputs",
+  "$C$ has at least one gate",
+  "Each gate refers only to earlier gates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

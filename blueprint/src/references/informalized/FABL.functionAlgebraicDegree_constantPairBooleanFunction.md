@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/F₂Polynomials/SiegenthalerSharpness.lean :: FABL.functionAlgebraicDegree_constantPairBooleanFunction -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Degree of a Two-Point Indicator
+
+**Claim.** For $n\ge3$, the function equal to $1$ at the zero vector and the all-ones vector and $0$ elsewhere has algebraic degree $n-1$.
+
+**Proof.** The function is first shown to be first-order correlation immune (`constantPairBooleanFunction_isCorrelationImmune`). The correlation-immunity degree bound (`functionAlgebraicDegree_booleanFunctionF₂Encoding_le_of_isCorrelationImmune`), applicable since $1<n$, gives the upper bound $n-1$.
+
+For the lower bound, decode the indicator and then encode it again; the encoding-decoding identity (`booleanFunctionF₂Encoding_booleanFunctionF₂Decoding`) recovers the original \mathbb F_2-valued indicator. Choose one coordinate $i$ and let $T$ be all coordinates except $i$, so $|T|=n-1$. The coefficient indexed by $T$ is $1$ (`anfCoeff_constantPairF₂Indicator_erase`), hence nonzero. A nonzero coefficient at a set $T$ forces the degree to be at least $|T|$ (`card_le_functionAlgebraicDegree_of_anfCoeff_ne_zero`). This supplies the matching lower bound, and therefore the degree is exactly $n-1$.
+
+**Key facts.** `FABL.constantPairBooleanFunction_isCorrelationImmune`, `FABL.functionAlgebraicDegree_booleanFunctionF₂Encoding_le_of_isCorrelationImmune`, `FABL.booleanFunctionF₂Encoding_booleanFunctionF₂Decoding`, `FABL.anfCoeff_constantPairF₂Indicator_erase`, `FABL.card_le_functionAlgebraicDegree_of_anfCoeff_ne_zero`.

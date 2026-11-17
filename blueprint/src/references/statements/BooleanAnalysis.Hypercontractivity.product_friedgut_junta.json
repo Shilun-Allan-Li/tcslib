@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_friedgut_junta",
+ "key": "3414c03f8c83ec5a",
+ "kind": "theorem",
+ "title": "Friedgut Junta Theorem for Product Spaces",
+ "statement": "There is a universal constant $C>0$ such that the following holds. Let $P$ be a finite product of probability spaces with strictly positive coordinate weights, let $n\\in\\mathbb N$, and suppose every coordinate atom has weight at least $\\lambda$, where $0<\\lambda\\le 1/2$. For every function $f$ taking values in $\\{-1,1\\}$ and every $0<\\varepsilon\\le1$, there are a coordinate set $J\\subseteq[n]$ and a function $g$ taking values in $\\{-1,1\\}$ that depends only on $J$, such that $|J|\\le(1/\\lambda)^{C I(f)/\\varepsilon}$ and $\\Pr_P(f\\ne g)\\le\\varepsilon$, where $I(f)$ is the total influence of $f$.",
+ "hypotheses_covered": [
+  "Existence of a constant $C>0$ independent of the parameters and product space",
+  "Natural number $n$ and finite product probability space $P$",
+  "Real parameter $\\lambda$ with $0<\\lambda\\le1/2$",
+  "Every coordinate atom has weight at least $\\lambda$",
+  "Boolean-valued function $f$",
+  "Real parameter $\\varepsilon$ with $0<\\varepsilon\\le1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThere is an absolute $C>0$ such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, with every coordinate atom at least $0<\\lambda\\le1/2$, every $f:\\Omega\\to\\{-1,1\\}$, and every $0<\\varepsilon\\le1$, there exist $J\\subseteq[n]$ and $g:\\Omega\\to\\{-1,1\\}$ depending only on $J$ with $|J|\\le(1/\\lambda)^{CI(f)/\\varepsilon}$ and $\\Pr_P(f\\ne g)\\le\\varepsilon$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $I_i(h)=\\mathbb E_P(h-E_{[n]\\setminus\\{i\\}}h)^2$; $I(h)=\\sum_{i=0}^{n-1}I_i(h)=\\sum_{S\\subseteq[n]}|S|\\mathbb E_Ph_S^2$; $\\Pr_P(A)=\\mathbb E_P\\mathbf1_A$, where $\\mathbf1_A$ is $1$ on $A$ and $0$ elsewhere."
+}

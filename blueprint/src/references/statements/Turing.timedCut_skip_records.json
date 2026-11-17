@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timedCut_skip_records",
+ "key": "60d6a9289c190740",
+ "kind": "lemma",
+ "title": "Skipping a list of records",
+ "statement": "Let $x$ be a binary input, let $n$ be a nonnegative integer, and let a base configuration, destination, binary table $T$, state tape, state-tape cursor, and list $A$ of actions be given. Suppose $A$ has length one more than the bounded record counter, and $T$ is the concatenation of a prefix, the serialized records of all actions in $A$, and a suffix. Starting in the fixed-field-skipping phase with that counter and table cursor at the end of the prefix, after exactly the total serialized length of the records of $A$ steps the stopped interpreter reaches the continuation specified by the destination, with its table cursor just past those records and its state tape and cursor unchanged.",
+ "hypotheses_covered": [
+  "A binary input $x$ and nonnegative integer $n$",
+  "A base configuration, destination, binary table, state tape, and state-tape cursor",
+  "A list $A$ of actions",
+  "The length of $A$ is one more than the bounded counter",
+  "Binary strings forming the stated decomposition of $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the table holds, at the cursor, the concatenated serializations of a\nnonempty list of transition records whose length is one more than the bounded\nrecord counter, then the skipping phase of the stopped table interpreter\ntraverses all of them in exactly the total serialized length and finishes in\nthe requested continuation with the cursor past the last record; no extra\ntransition occurs between consecutive records."
+}

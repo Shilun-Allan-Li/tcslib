@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterMain.lean :: Complexity.UTab.goes_rZ -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Hard-Wired Input Scan
+
+**Claim.** If the input is a prefix, followed by the Boolean list $z$ and a remainder, then starting at $rZ$ after the prefix reaches $rZ$ after scanning $z$. The hard-wired-bit count increases by $|z|$, the input position advances by $|z|$, and the output gains, in order, the code for a constant gate for each bit of $z$. The run takes at most $|z|(L_{\max}(M)+3)$ steps.
+
+**Proof.** Use induction on the list $z$, generalizing the prefix. For the empty list, reflexivity gives the unchanged configuration and empty output. For a list with first bit $b$ and tail $z$, the input decomposition identifies $b$ as the next input symbol. Reading it at $rZ$ consumes that symbol and enters the template for the constant gate of value $b$, whether $b$ is false or true (the read rules, `goes_rd_false` and `goes_rd_true`). Executing this template reaches its successor label without changing the registers or position, emits exactly the template's encoded output, and costs its length plus one (the template-run fact, `goes_tp`). At that successor, incrementing the hard-wired-bit register returns to $rZ$ in one step (`goes_incR`). Apply the induction hypothesis to the tail with the prefix extended by $b$ and the hard-wired-bit count increased by one. Compose these runs using `Goes.trans`: the outputs concatenate to the encoding for $b$ followed by the encodings for the bits of $z$, and the register and position updates combine to the claimed totals. The template length is at most $L_{\max}(M)$ (`length_tmpl_le`), so the first-bit read, template, and register increment cost at most $1+(L_{\max}(M)+1)+1=L_{\max}(M)+3$. Adding the induction bound gives the stated total. The encoded template output agrees with the stated constant-gate code by the bit-operation execution fact (`flatMap_exec_bitsOps`); `Goes.congr` then aligns the final register record, position, output, and bound.
+
+**Key facts.** `Complexity.CounterProg.goes_refl`, `Complexity.CounterProg.goes_rd_false`, `Complexity.CounterProg.goes_rd_true`, `Complexity.UTab.goes_tp`, `Complexity.UTab.goes_incR`, `Complexity.CounterProg.Goes.trans`, `Complexity.CounterProg.flatMap_exec_bitsOps`, `Complexity.UTab.length_tmpl_le`, `Complexity.CounterProg.Goes.congr`.

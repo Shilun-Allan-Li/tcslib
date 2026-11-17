@@ -1,0 +1,27 @@
+{
+ "lean_name": "Complexity.UTab.goes_snap",
+ "key": "f07fc44b787ee836",
+ "kind": "theorem",
+ "title": "Counter-program transition from a snapshot",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean symbols, let $x$ be a finite Boolean string, and let $n,z,T,t$ be natural numbers with $z$ a finite Boolean string. Suppose $t\\le T$, and let $e$ be a record whose fields for the input length, hard-wired length, step budget, current instruction, preceding instruction cell, and first instruction of the current step satisfy respectively $e.nc=n$, $e.z=|z|$, $e.t=T$, $e.i=\\operatorname{snapIdx}(M,|z|+n,T,t)$, $e.q=0$ if $t=0$ and $e.q=e.i-\\operatorname{Str}(M,n,z,T)$ otherwise, and $e.lb=t\\operatorname{Str}(M,n,z,T)$; also suppose its scratch field is zero. For any natural number $p_s$, starting at the snapshot-template label selected by whether $t=0$, with register values from $e$ and input position $p_s$, the counter program reaches the copy-loop label at phase zero if $t=0$, and the layout-processing label otherwise. It leaves the input position unchanged, appends the bits encoding instruction $e.i$ to the prior output, and has register values from the record obtained by updating $e.i$ to $e.i+1$, $e.q$ to $0$ if $t=0$ and to $e.i+1-\\operatorname{Str}(M,n,z,T)$ otherwise, and $e.lb$ to $e.i+1$; this transition takes at most $\\operatorname{Ki}(M)+2e.lb+7(e.i+1)+3$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine with Boolean symbols",
+  "$x$ is a finite Boolean string",
+  "$n,T,t$ are natural numbers and $z$ is a finite Boolean string",
+  "$t\\le T$",
+  "$e.nc=n$",
+  "$e.z=|z|$",
+  "$e.t=T$",
+  "$e.i=\\operatorname{snapIdx}(M,|z|+n,T,t)$",
+  "$e.q=0$ when $t=0$, otherwise $e.q=e.i-\\operatorname{Str}(M,n,z,T)$",
+  "$e.lb=t\\operatorname{Str}(M,n,z,T)$",
+  "$e.tmp=0$",
+  "$p_s$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

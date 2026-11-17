@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.badInput_implies_hammingDist_ge",
+ "key": "02527cb1f2ab04f5",
+ "kind": "lemma",
+ "title": "Bad inputs are far from their message answer",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic one-way protocol for indexing on $n$-bit inputs, and let $x\\in\\{0,1\\}^n$ be bad for $p$. Then the Hamming distance from $x$ to the answer vector associated with the message sent on $x$ is at least $n/4$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$p$ is a deterministic one-way protocol for indexing on $n$-bit inputs",
+  "$x$ is a bad input for $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $x$ is a bad input for $p$, then the Hamming distance from $x$ to the answer vector of its\nown message satisfies $d_H\\bigl(x, a(\\mathrm{send}(x))\\bigr) \\ge n/4$ (as real numbers)."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emCall_first",
+ "key": "57f83ee08f3970e4",
+ "kind": "lemma",
+ "title": "First exit of the call machine",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $a$ and $c$ be Boolean words, and suppose $M$ halts on input $a$ with output $c$ after $T$ steps. For either mode and any Boolean input word $x$, there is a positive integer $t\\le (24+13k)(T+|a|+|c|+1)$, where $k$ is the number of work tapes of $M$, such that the call machine started on $x$ with $a$ on its first work tape and all other work tapes blank has not been in the exit state at any time $j<t$, and at time $t$ is in the exit state with first tape holding $a$ in emit mode and $c$ in install mode, all other tapes blank, all heads at the origin, and output $c$ in emit mode and empty in install mode.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machine M",
+  "mode bit emit",
+  "argument word a",
+  "capture/output word c",
+  "time T",
+  "M computes output c on a within time T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $k$ work tapes computing output $c$ on argument $a$ within\ntime $T$. For every mode and input word, there is a positive time $t \\le (24 + 13k)(T +\n|a| + |c| + 1)$ such that the clean-call controller, started at its canonical entry seam\non $a$, does not visit the exit state before $t$ and at time $t$ is exactly the\ncanonical exit seam carrying $c$ in install mode and $a$ in emit mode, with output $c$\nexactly in emit mode."
+}

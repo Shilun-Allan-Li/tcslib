@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.step_sim",
+ "key": "7475cad4c1509558",
+ "kind": "lemma",
+ "title": "Simulation Step with Cleanup Tracks",
+ "statement": "Let $M$ be a Boolean-alphabet Turing machine with $k$ work tapes, and let $c$ be a configuration whose state is $q'$. For any contents $M_t$ of an additional set of $k$ work tapes, one step of the cleaning machine started in simulation state $q'$ with the original tapes and head positions from $c$, and with the additional tapes having contents $M_t$ and head positions matching those of $c$, yields the configuration whose simulated state and original tapes and output are those of one step of $M$ from $c$. The additional tapes retain their head positions, and each is changed only at the old head position: there it is left unchanged if its content was $1$, and otherwise is set to $1$ when it was already $1$ or to $0$ when it was not; equivalently, the scanned cell is unchanged when it contains $1$ and is set to $0$ otherwise.",
+ "hypotheses_covered": [
+  "machine has $k$ work tapes and Boolean symbols",
+  "configuration state equals $q'$",
+  "additional tape contents are arbitrary",
+  "additional tape head positions equal the original head positions"
+ ],
+ "confidence": "low",
+ "caveat": "The equality specifies the additional-tape update using nested optional symbols; the prose describes its resulting cell content, while the formal statement also fixes all configuration components.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}
