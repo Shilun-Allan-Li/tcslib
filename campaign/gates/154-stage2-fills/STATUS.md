@@ -1,1 +1,1 @@
-**Gate 154 round 1 HOLD** (2026-11-17; 1 major G154-01 repaired at `375531b6`, 1 minor G154-02 accounted; `resolutions.md`). Round 2 (replay, checks, screen on the repaired head) in progress.
+**Gate 154 round 2 staged** (2026-11-17) at `375531b6055178ec846435b7670be5d0e2a526fe`: round 1 HOLD (1 major G154-01 repaired, 1 minor G154-02 accounted; `resolutions.md`); fresh replay 353/353, seals and controls (86 definitions, 172 identities) pass, every sweep flag dispositioned, screen 376 → 366 (`pack-r2.md`, `r2-evidence/`).
