@@ -1,7 +1,7 @@
 # Dispatch · Gate 50 round 1 (GSW 6a fills: #366 with LE-g50, and #368)
 
 The Codex pack is staged on the exchange at
-[`@@EXCH@@`](https://github.com/Shilun-Allan-Li/tcslib/tree/@@EXCH@@/outbox/gates/50-gsw-6a-fills-gate),
+[`b14712e545ce9a6e08d0070ef134358cc5c8d952`](https://github.com/Shilun-Allan-Li/tcslib/tree/b14712e545ce9a6e08d0070ef134358cc5c8d952/outbox/gates/50-gsw-6a-fills-gate),
 folder `outbox/gates/50-gsw-6a-fills-gate/`. Seyoon dispatches.
 
 ## Prompt for Codex
@@ -11,12 +11,12 @@ You are an external Codex auditor for Gate 50 of the GSW FHE campaign
 (phase 6a, the fills gate), round 1, in
 https://github.com/Shilun-Allan-Li/tcslib.
 
-1. Read exchange/pass-shelat-ch5-8 at @@EXCH@@.
+1. Read exchange/pass-shelat-ch5-8 at b14712e545ce9a6e08d0070ef134358cc5c8d952.
    Read outbox/gates/50-gsw-6a-fills-gate/README.md, pack-r1.md and
    bundle.md. Verify the pack using SHA256SUMS, and verification-r1.zip using
    the SHA256SUMS inside it.
 2. Audit two open draft PRs together, using the pack, with campaign records
-   @@PIN@@
+   b1392d065d0a8f496db8e01b6bdad746bc847ffe
    (cryptography/pass-shelat-ch2-4; the pin files the records copy of this
    pack):
    - #366 (head 597fb736e545706a058cc212243a13f6dadfeceb, tree
@@ -73,13 +73,13 @@ The user dispatches and merges.
 
 ## State at staging
 
-- **Records pin:** `@@PIN@@`. It is the signed commit that files this directory (`pack-r1.md`, the diffs, the PR
+- **Records pin:** `b1392d065d0a8f496db8e01b6bdad746bc847ffe`. It is the signed commit that files this directory (`pack-r1.md`, the diffs, the PR
   descriptions, `source-head-r1.json`, both ZIPs and `SHA256SUMS-r1`) on the records tip
   `f19b8056488fb01214d00915064669dda7e65cc2`, and it is pushed to `cryptography/pass-shelat-ch2-4`. This file was filled
   with the pin and the exchange hash in a later small commit; `SHA256SUMS-r1` does not cover it.
-- **Exchange:** `@@EXCH@@`. It is one SSH-signed commit on the exchange tip `@@EXBASE@@`, adding only
+- **Exchange:** `b14712e545ce9a6e08d0070ef134358cc5c8d952`. It is one SSH-signed commit on the exchange tip `f921560204530a9488f6ff955d884ae51d0bc6ba ("Deliver completed RAM word-size fill")`, adding only
   `outbox/gates/50-gsw-6a-fills-gate/`, and it is pushed to `exchange/pass-shelat-ch5-8` as a fast-forward.
-  - `SHA256SUMS` (`@@SUMS@@`) verifies @@NSUMS@@ from a fresh `git archive` of the commit.
+  - `SHA256SUMS` (`19034e6075ede7758a4185f0f5e68490fe589bc0d9c30038fce44ee01f37226f`) verifies 16/16 from a fresh `git archive` of the commit.
   - `verification-r1.zip` (`488dbc0997f5bf8ac4ea75716875e46f71ec643c9683b2bcfc953d41a6ad51e9`) verifies 89/89 against its
     own `SHA256SUMS` from a fresh extract.
   - Every section of `bundle.md` was checked equal to its source.
