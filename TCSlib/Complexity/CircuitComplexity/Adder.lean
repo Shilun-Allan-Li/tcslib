@@ -378,6 +378,14 @@ def carryBit (A B : ℕ → Bool) : ℕ → Bool
   | 0 => false
   | i + 1 => (A i && B i) || ((A i ^^ B i) && carryBit A B i)
 
+/-- Reader of `carryBit` at position `0`: `carryBit A B 0 = false`.  Glue. -/
+theorem carryBit_zero (A B : ℕ → Bool) : carryBit A B 0 = false := rfl
+
+/-- Reader of `carryBit` at position `i + 1`:
+`carryBit A B (i + 1) = ((A i && B i) || ((A i ^^ B i) && carryBit A B i))`.  Glue. -/
+theorem carryBit_succ (A B : ℕ → Bool) (i : ℕ) :
+    carryBit A B (i + 1) = ((A i && B i) || ((A i ^^ B i) && carryBit A B i)) := rfl
+
 /-- Bit `i` of the sum of `A` and `B`: `A_i ⊕ B_i ⊕ carry i`. -/
 def sumBit (A B : ℕ → Bool) (i : ℕ) : Bool :=
   (A i ^^ B i) ^^ carryBit A B i

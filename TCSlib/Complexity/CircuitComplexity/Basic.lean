@@ -110,6 +110,10 @@ deriving DecidableEq, Repr, Hashable
 def Lit.eval (l : Lit n) (x : Fin n → Bool) : Bool :=
   if l.sign then x l.idx else !x l.idx
 
+/-- Reader of `Lit.eval`: `l.eval x = if l.sign then x l.idx else !x l.idx`.  Glue. -/
+theorem Lit.eval_eq (l : Lit n) (x : Fin n → Bool) :
+    l.eval x = if l.sign then x l.idx else !x l.idx := rfl
+
 -- ----------------------------------------------------------------
 -- Section 2: General (unconstrained) circuit
 -- ----------------------------------------------------------------
@@ -208,6 +212,18 @@ theorem TreeCircuit.one_le_size (c : TreeCircuit n) : 1 ≤ c.size := by
 /-- Maximum fan-in over a list of circuits. -/
 def TreeCircuit.maxFaninL (cs : List (TreeCircuit n)) : ℕ :=
   cs.foldr (fun c acc => max c.maxFanin acc) 0
+
+/-- Reader of `TreeCircuit.depth` on a leaf: `(lit l).depth = 0`.  Glue. -/
+theorem TreeCircuit.depth_lit (l : Lit n) : (TreeCircuit.lit l).depth = 0 := by
+  simp [TreeCircuit.depth]
+
+/-- Reader of `TreeCircuit.size` on a leaf: `(lit l).size = 1`.  Glue. -/
+theorem TreeCircuit.size_lit (l : Lit n) : (TreeCircuit.lit l).size = 1 := by
+  simp [TreeCircuit.size]
+
+/-- Reader of `TreeCircuit.maxFanin` on a leaf: `(lit l).maxFanin = 0`.  Glue. -/
+theorem TreeCircuit.maxFanin_lit (l : Lit n) : (TreeCircuit.lit l).maxFanin = 0 := by
+  simp [TreeCircuit.maxFanin]
 
 /-- A gate's depth is one more than its children's. -/
 theorem TreeCircuit.depth_node (b : Bool) (cs : List (TreeCircuit n)) :

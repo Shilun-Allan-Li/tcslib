@@ -70,6 +70,16 @@ def GadgetCorrect (n c : ℕ) (Q : GateKind → ℕ → Prop) (P : DAGGate → P
   ∀ g gs, GatesAcyclic n gs → (∀ a ∈ g.args, a < n + gs.length) → Q g.kind g.args.length →
     GadgetSpec n c (g.args.length + 2) P g gs (emit g gs)
 
+/-- Reader of `GadgetCorrect`: `GadgetCorrect n c Q P emit ↔ ∀ g gs, GatesAcyclic n gs →
+(∀ a ∈ g.args, a < n + gs.length) → Q g.kind g.args.length →
+GadgetSpec n c (g.args.length + 2) P g gs (emit g gs)`.  Glue. -/
+theorem gadgetCorrect_iff {c : ℕ} {Q : GateKind → ℕ → Prop} {P : DAGGate → Prop}
+    {emit : DAGGate → List DAGGate → List DAGGate × ℕ} :
+    GadgetCorrect n c Q P emit ↔
+      ∀ g gs, GatesAcyclic n gs → (∀ a ∈ g.args, a < n + gs.length) → Q g.kind g.args.length →
+        GadgetSpec n c (g.args.length + 2) P g gs (emit g gs) :=
+  Iff.rfl
+
 /-! ## The rewriting pass -/
 
 /-- Rewrite one old gate: remap its inputs through `m`, then emit its gadget. -/
