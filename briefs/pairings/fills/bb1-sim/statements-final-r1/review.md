@@ -200,3 +200,6 @@ Two PRs, each cherry-picked onto the records tip. Authors are kept, the committe
 - `tools/`: `manifest_check.py`, `insertion_check.py`, `style_scan.py`, `citations_check.py`, `decl_scan.py`, `closures.py`, `recount.py`, `sweepbind.py`, `seal_recount.py`, `ctl_recount.py`, and an unmodified copy of `decls2.py`.
 
 **Not yet clear to merge — BS-F01 needs Seyoon's ruling (LE-grp1 recommended), and phase 2 (the Lean replays) is pending; no PR is opened yet**
+
+## Ruling (2026-11-17)
+- **BS-F01: drop the helper (Seyoon).** The group-helper PR lands `fc9cf2f5` plus **LE-grp1**, which removes `natCast_inj_of_lt` and its docstring bullet (−7 lines). `Group.lean` remains a pure insertion. Phase 2 builds and seals the LE-grp1 head.
