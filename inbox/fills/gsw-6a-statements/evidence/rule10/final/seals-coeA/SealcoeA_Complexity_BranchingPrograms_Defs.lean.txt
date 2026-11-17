@@ -1,0 +1,590 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import Lean
+import Mathlib.Computability.Language
+import Mathlib.Data.Finset.Basic
+import Mathlib.Logic.Equiv.Defs
+/- G06-HARNESS INSTALL SealcoeA_Complexity_BranchingPrograms_Defs -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealcoeA_Complexity_BranchingPrograms_Defs"
+  let payload : String := ""
+  let expectedRequests : Nat := 0
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := ""
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut resolved : Array Lean.Name := #[]
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  let mut active : Nat := 0
+  let mut already : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=install spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let before ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    if before == .irreducible then
+      already := already + 1
+    else
+      let id := Lean.mkIdent n
+      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+      active := active + 1
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed for {spelling}"
+    resolved := resolved.push n
+    verified := verified + 1
+    Lean.logInfo m!"G06-NAME label={label} spelling={spelling} actual={n.toString} home={home} before={repr before} installed={repr installed}"
+  unless active + already == requests.size do throwError "G06-HARNESS {label}: installation count mismatch"
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  let maskExt := Lean.Meta.globalInstanceExtension
+  let maskEnv ← Lean.getEnv
+  let scopes := maskExt.ext.getState maskEnv
+  unless scopes.stateStack.length == 1 do
+    throwError "G06-HARNESS {label}: unfolding mask requires base scope"
+  let mut scopedNames : Std.HashSet Lean.Name := {}
+  for (_, payloads) in scopes.scopedEntries.map.toList do
+    for n in payloads do
+      scopedNames := scopedNames.insert n
+  let mut removed : Nat := 0
+  for n in resolved do
+    if scopedNames.contains n then
+      throwError "G06-HARNESS {label}: scoped unfolding payload intersects request {n}"
+    if Lean.Meta.isGlobalInstance maskEnv n then
+      removed := removed + 1
+  -- InstanceEntry's BEq checks only val, so compare every field explicitly.
+  let entryFields (e : Lean.Meta.InstanceEntry) :=
+    (e.keys, Lean.ExprStructEq.mk e.val, e.priority, e.globalName?, e.synthOrder, e.attrKind)
+  let lookupSnapshot (e : Lean.Environment) :=
+    let s := Lean.Meta.instanceExtension.getState e
+    (s.discrTree.toArray.map (fun (ks, entry) => (ks, entryFields entry)),
+      s.instanceNames.toArray.map (fun (n, entry) => (n, entryFields entry)), s.erased.toList)
+  let beforeLookup := lookupSnapshot env
+  Lean.modifyEnv fun current =>
+    maskExt.modifyState current fun membership =>
+      resolved.foldl (fun s n => s.erase n) membership
+  let maskedEnv ← Lean.getEnv
+  unless beforeLookup == lookupSnapshot maskedEnv do
+    throwError "G06-HARNESS {label}: typeclass lookup state changed"
+  for n in resolved do
+    if Lean.Meta.isGlobalInstance maskedEnv n then
+      throwError "G06-HARNESS {label}: unfolding membership after mask for {n}"
+  Lean.logInfo m!"G06-MASK label={label} phase=install requested={requests.size} verified={resolved.size} removed={removed} scope_depth=1 scoped_names={scopedNames.size} tc_state=preserved"
+  Lean.logInfo m!"G06-SEAL label={label} requested={requests.size} active={active} already_irreducible={already} verified={verified}"
+
+
+/-!
+# Bounded-width branching programs
+
+The general branching-program model of [Bar89, §1]: an instruction reads one input bit and
+produces a map `[w] → [w]`; a width-`w` program is a finite sequence of instructions, and it
+*yields* on an input the composition of the maps its instructions produce.  A family of programs
+recognizes a language through accepting sets `F_n` of maps.  Permutation programs (every map a
+bijection) are the predicate `IsPermutation`.
+
+## Main definitions
+
+* `BranchingProgram.Instr` — an instruction `⟨var, map0, map1⟩` (BV14's order: `map0` when the
+  bit is `0`), with `Instr.eval`, `Instr.IsPermutation` and `Instr.ofPerm`.
+* `BranchingProgram` — a width-`w` program on `n` inputs (registered model); `length`, `append`
+  (the `++` notation), `yield`, `IsPermutation`, `conj` (Lemma 1's conjugation) and
+  `complementLast` (Lemma 2's change of the last instruction).
+* `BranchingProgramFamily` — a family with accepting sets (registered model); `language`,
+  `IsPolyLength`, `IsPermutation`.
+* `Language.InBWBP`, `Language.InPBP` — the classes BWBP and `PBP_w` (polynomial length).
+
+## Main results
+
+All are statements of the 6a statement phase (targets admitted with `sorry`), except the readers.
+
+* `BranchingProgram.yield_append`, `yield_nil` — the yield composes in program order (C1).
+* `BranchingProgram.yield_conj`, `length_conj`, `length_append` — conjugation (C2).
+* `BranchingProgram.yield_complementLast`, `length_complementLast` — Lemma 2's step (C3).
+* `BranchingProgram.isPermutation_iff` (proved) and the closure lemmas of permutation
+  programs, `IsPermutation.bijective_yield` (C4).
+
+## Conventions and deviations
+
+* **Instruction order.** [Bar89, §1] writes `⟨j, f, g⟩` with `f` used when `x_j = 1`; the fields
+  here follow [BV14, §3.3]'s `(var(t), σ_{t,0}, σ_{t,1})`: `map0` is used when the bit is `0`.
+* **Program order.** [Bar89] writes products left to right (the leftmost map acts first).  The
+  model composes in program order: `(B₁ ++ B₂).yield x = B₂.yield x ∘ B₁.yield x`.  In Mathlib's
+  `Equiv.Perm` product (right factor first) Bar89's word `σ₁σ₂σ₁⁻¹σ₂⁻¹` is
+  `σ₂⁻¹ * σ₁⁻¹ * σ₂ * σ₁`.
+* **Recognition** is by accepting sets, as in [Bar89, §1]: `x ∈ L ↔ B(x) ∈ F_n`.
+
+## References
+
+* [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
+  exactly those languages in NC¹*, J. Comput. System Sci. 38(1):150–164, 1989.
+* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-based FHE as secure as PKE*, ITCS 2014,
+  pp. 1–12; IACR ePrint 2013/541.
+-/
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-- An instruction `⟨var, map0, map1⟩` of width `w` over `n` inputs: read input `var`; apply
+`map0 : [w] → [w]` if it is `0` and `map1` if it is `1` [Bar89, §1, p001-b002].
+Deviation: Bar89 lists the `x_j = 1` map first; the fields follow BV14's
+`(var(t), σ_{t,0}, σ_{t,1})` [BV14, §3.3, p013-b002]. -/
+structure BranchingProgram.Instr (w n : ℕ) where
+  /-- The input bit the instruction reads. -/
+  var : Fin n
+  /-- The map produced when the bit is `0`. -/
+  map0 : Fin w → Fin w
+  /-- The map produced when the bit is `1`. -/
+  map1 : Fin w → Fin w
+
+/-- A width-`w` branching program on `n` inputs: a finite sequence of instructions
+`instrs = [ι₁, …, ι_l]` [Bar89, §1, p001-b002].  Registered model
+(`TCSlib/ComputationalModels.lean`). -/
+structure BranchingProgram (w n : ℕ) where
+  /-- The instructions, in program order. -/
+  instrs : List (BranchingProgram.Instr w n)
+
+namespace BranchingProgram
+
+variable {w n : ℕ}
+
+/-! ### Instructions -/
+
+/-- The map an instruction produces on input `x`: `ι.eval x = if x ι.var then ι.map1 else ι.map0`
+[Bar89, §1, p001-b002: "evaluate to `f` if `x_j = 1`, otherwise evaluate to `g`"; BV14 order]. -/
+def Instr.eval (ι : Instr w n) (x : Fin n → Bool) : Fin w → Fin w :=
+  if x ι.var then ι.map1 else ι.map0
+
+/-- Reader of `Instr.eval`: `ι.eval x = if x ι.var then ι.map1 else ι.map0`. -/
+theorem Instr.eval_eq (ι : Instr w n) (x : Fin n → Bool) :
+    ι.eval x = if x ι.var then ι.map1 else ι.map0 := rfl
+
+/-- `ι` is a permutation instruction: both of its maps are bijections,
+`Function.Bijective ι.map0 ∧ Function.Bijective ι.map1` [Bar89, §1, p002-b001]. -/
+def Instr.IsPermutation (ι : Instr w n) : Prop :=
+  Function.Bijective ι.map0 ∧ Function.Bijective ι.map1
+
+/-- Reader of `Instr.IsPermutation`:
+`ι.IsPermutation ↔ Function.Bijective ι.map0 ∧ Function.Bijective ι.map1`. -/
+theorem Instr.isPermutation_iff (ι : Instr w n) :
+    ι.IsPermutation ↔ Function.Bijective ι.map0 ∧ Function.Bijective ι.map1 := Iff.rfl
+
+/-- The instruction `⟨i, σ₀, σ₁⟩` with permutation maps: `Instr.ofPerm i σ₀ σ₁` reads input `i`
+and produces `σ₀` on `0` and `σ₁` on `1` [Bar89, §1, p002-b001; BV14, §3.3, p013-b002].  Its
+field readers are `Instr.ofPerm_var`, `Instr.ofPerm_map0`, `Instr.ofPerm_map1`. -/
+@[simps (config := { isSimp := false })]
+def Instr.ofPerm (i : Fin n) (σ₀ σ₁ : Equiv.Perm (Fin w)) : Instr w n where
+  var := i
+  map0 := σ₀
+  map1 := σ₁
+
+/-- An instruction built from permutations is a permutation instruction:
+`(Instr.ofPerm i σ₀ σ₁).IsPermutation`.  Glue. -/
+theorem Instr.isPermutation_ofPerm (i : Fin n) (σ₀ σ₁ : Equiv.Perm (Fin w)) :
+    (Instr.ofPerm i σ₀ σ₁ : Instr w n).IsPermutation :=
+  ⟨σ₀.bijective, σ₁.bijective⟩
+
+/-! ### Programs -/
+
+/-- The length of a program, its number of instructions: `B.length = B.instrs.length`
+[Bar89, §1, p001-b002]. -/
+def length (B : BranchingProgram w n) : ℕ :=
+  B.instrs.length
+
+/-- Reader of `length`: `B.length = B.instrs.length`. -/
+theorem length_eq (B : BranchingProgram w n) : B.length = B.instrs.length := rfl
+
+/-- Concatenation of programs, `B₁.append B₂ = ⟨B₁.instrs ++ B₂.instrs⟩`: run `B₁`, then `B₂`
+(Bar89's juxtaposition `B₁B₂`, [Bar89, Thm 1 proof, p004-b002]).  It is the `++` notation. -/
+def append (B₁ B₂ : BranchingProgram w n) : BranchingProgram w n :=
+  ⟨B₁.instrs ++ B₂.instrs⟩
+
+instance : Append (BranchingProgram w n) := ⟨append⟩
+
+/-- Reader of `append`: `B₁.append B₂ = ⟨B₁.instrs ++ B₂.instrs⟩`. -/
+theorem append_eq (B₁ B₂ : BranchingProgram w n) :
+    B₁.append B₂ = ⟨B₁.instrs ++ B₂.instrs⟩ := rfl
+
+/-- Reader of the `++` notation: `(B₁ ++ B₂).instrs = B₁.instrs ++ B₂.instrs`. -/
+theorem append_instrs (B₁ B₂ : BranchingProgram w n) :
+    (B₁ ++ B₂).instrs = B₁.instrs ++ B₂.instrs := rfl
+
+/-- The map `B` yields on `x`: the composition, in program order, of the maps its instructions
+produce, `B.yield x = ι_l.eval x ∘ ⋯ ∘ ι₁.eval x`, computed as the left fold
+`B.instrs.foldl (fun f ι => ι.eval x ∘ f) id`; `yield ⟨[]⟩ x = id` [Bar89, §1, p001-b002:
+"the composition of the functions produced by each of the instructions"].
+Deviation: Bar89's products read left to right; here the first instruction acts first. -/
+def yield (B : BranchingProgram w n) (x : Fin n → Bool) : Fin w → Fin w :=
+  B.instrs.foldl (fun f ι => ι.eval x ∘ f) id
+
+/-- Reader of `yield`: `B.yield x = B.instrs.foldl (fun f ι => ι.eval x ∘ f) id`. -/
+theorem yield_eq (B : BranchingProgram w n) (x : Fin n → Bool) :
+    B.yield x = B.instrs.foldl (fun f ι => ι.eval x ∘ f) id := rfl
+
+/-- `B` is a permutation branching program: every map of every instruction is a bijection,
+`∀ ι ∈ B.instrs, Function.Bijective ι.map0 ∧ Function.Bijective ι.map1`
+[Bar89, §1, p002-b001]. -/
+def IsPermutation (B : BranchingProgram w n) : Prop :=
+  ∀ ι ∈ B.instrs, Function.Bijective ι.map0 ∧ Function.Bijective ι.map1
+
+/-- Conjugation of a program by `θ`: every map `f` of every instruction becomes `θ ∘ f ∘ θ⁻¹`,
+`B.conj θ = ⟨B.instrs.map fun ι => ⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩⟩`
+[Bar89, Lemma 1 proof, p003-b003: "replacing each `σ_i` and `τ_i` by `θσ_iθ⁻¹` and
+`θτ_iθ⁻¹`"]. -/
+def conj (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) : BranchingProgram w n :=
+  ⟨B.instrs.map fun ι => ⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩⟩
+
+/-- Reader of `conj`:
+`B.conj θ = ⟨B.instrs.map fun ι => ⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩⟩`. -/
+theorem conj_eq (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) :
+    B.conj θ = ⟨B.instrs.map fun ι => ⟨ι.var, θ ∘ ι.map0 ∘ θ.symm, θ ∘ ι.map1 ∘ θ.symm⟩⟩ :=
+  rfl
+
+/-- Lemma 2's change of the last instruction: the last instruction `⟨i, μ, ν⟩` becomes
+`⟨i, σ⁻¹ ∘ μ, σ⁻¹ ∘ ν⟩`, every other instruction is kept, and the empty program is unchanged:
+`B.complementLast σ = ⟨B.instrs.dropLast ++ [⟨ι.var, σ.symm ∘ ι.map0, σ.symm ∘ ι.map1⟩]⟩` when
+`ι` is the last instruction [Bar89, Lemma 2 proof, p003-b004: "`⟨i, μσ⁻¹, νσ⁻¹⟩`"].
+Deviation: Bar89's `μσ⁻¹` is read left to right (first `μ`, then `σ⁻¹`), so it is the map
+`σ⁻¹ ∘ μ` here; the definition is total (Bar89 assumes a last instruction). -/
+def complementLast (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w)) :
+    BranchingProgram w n :=
+  match B.instrs.getLast? with
+  | none => B
+  | some ι => ⟨B.instrs.dropLast ++ [⟨ι.var, σ.symm ∘ ι.map0, σ.symm ∘ ι.map1⟩]⟩
+
+/-- Reader of `complementLast`, by cases on the last instruction:
+`B.complementLast σ = match B.instrs.getLast? with | none => B | some ι => ⟨B.instrs.dropLast ++
+[⟨ι.var, σ.symm ∘ ι.map0, σ.symm ∘ ι.map1⟩]⟩`. -/
+theorem complementLast_eq (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w)) :
+    B.complementLast σ = match B.instrs.getLast? with
+      | none => B
+      | some ι => ⟨B.instrs.dropLast ++ [⟨ι.var, σ.symm ∘ ι.map0, σ.symm ∘ ι.map1⟩]⟩ := rfl
+
+/-- `complementLast` on the empty program: `(⟨[]⟩ : BranchingProgram w n).complementLast σ =
+⟨[]⟩`. -/
+theorem complementLast_nil (σ : Equiv.Perm (Fin w)) :
+    (⟨[]⟩ : BranchingProgram w n).complementLast σ = ⟨[]⟩ := rfl
+
+/-- `complementLast` on a program with last instruction `ι`:
+`(⟨l ++ [ι]⟩ : BranchingProgram w n).complementLast σ =
+⟨l ++ [⟨ι.var, σ.symm ∘ ι.map0, σ.symm ∘ ι.map1⟩]⟩`.  With `complementLast_nil` it covers every
+program (`List.eq_nil_or_concat`). -/
+theorem complementLast_concat (l : List (Instr w n)) (ι : Instr w n) (σ : Equiv.Perm (Fin w)) :
+    (⟨l ++ [ι]⟩ : BranchingProgram w n).complementLast σ =
+      ⟨l ++ [⟨ι.var, σ.symm ∘ ι.map0, σ.symm ∘ ι.map1⟩]⟩ := by
+  rw [complementLast_eq]
+  simp only [List.getLast?_concat, List.dropLast_concat]
+
+/-! ### Targets C1–C4 -/
+
+/-- **C1.** The yield of a concatenation composes in program order:
+`(B₁ ++ B₂).yield x = B₂.yield x ∘ B₁.yield x` [Bar89, §1, p001-b002: "the composition of the
+functions produced by each of the instructions"].
+Deviation: Bar89 writes products left to right; in Mathlib's `Equiv.Perm` product (right factor
+first) the yield of `B₁B₂` on permutations is `B₂(x) * B₁(x)` (r3 §H3.6).
+
+**Proof sketch.** Rewrite with `append_instrs` and `yield_eq`; `List.foldl_append` turns the left
+side into a fold over `B₂.instrs` started at `B₁.yield x`.  An auxiliary induction on a list `l`
+shows `l.foldl (fun f ι => ι.eval x ∘ f) g = l.foldl (fun f ι => ι.eval x ∘ f) id ∘ g`
+(composition is associative, `Function.comp_assoc`), which with `g = B₁.yield x` closes the goal. -/
+theorem yield_append (B₁ B₂ : BranchingProgram w n) (x : Fin n → Bool) :
+    (B₁ ++ B₂).yield x = B₂.yield x ∘ B₁.yield x := by
+  sorry
+
+/-- **C1.** The empty program yields the identity: `(⟨[]⟩ : BranchingProgram w n).yield x = id`
+[Bar89, §1, p001-b002].
+
+**Proof sketch.** `yield_eq` and `List.foldl_nil`. -/
+theorem yield_nil (x : Fin n → Bool) : (⟨[]⟩ : BranchingProgram w n).yield x = id := by
+  sorry
+
+/-- **C2.** Conjugating every map by `θ` conjugates the yield:
+`(B.conj θ).yield x = θ ∘ B.yield x ∘ θ.symm` [Bar89, Lemma 1 proof, p003-b003].
+
+**Proof sketch.** Rewrite with `conj_eq` and `yield_eq` and induct on `B.instrs` with the fold
+generalized to an arbitrary start map `g` (the claim becomes `foldl … (θ ∘ g ∘ θ.symm) =
+θ ∘ foldl … g ∘ θ.symm`).  The step uses `Instr.eval_eq`, splits on `x ι.var`, and cancels the
+inner `θ.symm ∘ θ` by `Equiv.symm_comp_self`. -/
+theorem yield_conj (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) (x : Fin n → Bool) :
+    (B.conj θ).yield x = θ ∘ B.yield x ∘ θ.symm := by
+  sorry
+
+/-- **C2.** Conjugation keeps the length: `(B.conj θ).length = B.length`
+[Bar89, Lemma 1, p003-b003: "of the same length as `B`"].
+
+**Proof sketch.** `length_eq`, `conj_eq` and `List.length_map`. -/
+theorem length_conj (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) :
+    (B.conj θ).length = B.length := by
+  sorry
+
+/-- **C2.** Lengths add under concatenation: `(B₁ ++ B₂).length = B₁.length + B₂.length`
+[Bar89, Thm 1 proof, p004-b002].
+
+**Proof sketch.** `length_eq`, `append_instrs` and `List.length_append`. -/
+theorem length_append (B₁ B₂ : BranchingProgram w n) :
+    (B₁ ++ B₂).length = B₁.length + B₂.length := by
+  sorry
+
+/-- **C3.** Lemma 2's step post-composes the yield with `σ⁻¹`: for a nonempty program,
+`(B.complementLast σ).yield x = σ.symm ∘ B.yield x` [Bar89, Lemma 2 proof, p003-b004:
+"`B'(x) = e` if `x ∈ A` and `B'(x) = σ⁻¹` if `x ∉ A`"].
+Deviation: Bar89's `B(x)σ⁻¹` is read left to right; in program order it is `σ⁻¹ ∘ B(x)`.
+
+**Proof sketch.** Write `B.instrs = l ++ [ι]` (`List.eq_nil_or_concat`; the empty case contradicts
+`hB` through `length_eq`).  Then `complementLast_concat`, `yield_eq` and `List.foldl_append`
+reduce both sides to the last step: the new last map is `σ.symm ∘ ι.eval x` by `Instr.eval_eq`
+(split on `x ι.var`), and composition is associative. -/
+theorem yield_complementLast (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w))
+    (hB : 0 < B.length) (x : Fin n → Bool) :
+    (B.complementLast σ).yield x = σ.symm ∘ B.yield x := by
+  sorry
+
+/-- **C3.** Lemma 2's step keeps the length: `(B.complementLast σ).length = B.length`
+[Bar89, Lemma 2, p003-b004: "in length `l`"].
+
+**Proof sketch.** Cases by `List.eq_nil_or_concat` on `B.instrs`: `complementLast_nil` is the
+identity, and `complementLast_concat` replaces one instruction (`List.length_append`). -/
+theorem length_complementLast (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w)) :
+    (B.complementLast σ).length = B.length := by
+  sorry
+
+/-- **C4.** Reader of `IsPermutation` [Bar89, §1, p002-b001]:
+`B.IsPermutation ↔ ∀ ι ∈ B.instrs, Function.Bijective ι.map0 ∧ Function.Bijective ι.map1`.
+It is the definition's reader and is proved (`Iff.rfl`). -/
+theorem isPermutation_iff (B : BranchingProgram w n) :
+    B.IsPermutation ↔ ∀ ι ∈ B.instrs, Function.Bijective ι.map0 ∧ Function.Bijective ι.map1 :=
+  Iff.rfl
+
+/-- **C4.** Permutation programs are closed under concatenation: if `B₁` and `B₂` are permutation
+programs, so is `B₁ ++ B₂`.  Glue for [Bar89, Thm 1 proof, p004-b002].
+
+**Proof sketch.** `isPermutation_iff`, `append_instrs` and `List.mem_append`. -/
+theorem IsPermutation.append {B₁ B₂ : BranchingProgram w n} (h₁ : B₁.IsPermutation)
+    (h₂ : B₂.IsPermutation) : (B₁ ++ B₂).IsPermutation := by
+  sorry
+
+/-- **C4.** Conjugation keeps a permutation program a permutation program:
+`B.IsPermutation → (B.conj θ).IsPermutation`.  Glue for [Bar89, Lemma 1 proof, p003-b003].
+
+**Proof sketch.** `isPermutation_iff`, `conj_eq`, `List.mem_map`; each new map `θ ∘ f ∘ θ.symm` is
+a composition of bijections (`Function.Bijective.comp`, `Equiv.bijective`). -/
+theorem IsPermutation.conj {B : BranchingProgram w n} (h : B.IsPermutation)
+    (θ : Equiv.Perm (Fin w)) : (B.conj θ).IsPermutation := by
+  sorry
+
+/-- **C4.** Lemma 2's step keeps a permutation program a permutation program:
+`B.IsPermutation → (B.complementLast σ).IsPermutation`.  Glue for
+[Bar89, Lemma 2 proof, p003-b004].
+
+**Proof sketch.** Cases by `List.eq_nil_or_concat`; with `complementLast_concat` the instructions of
+`l` are unchanged and the new last maps `σ.symm ∘ f` are compositions of bijections
+(`Function.Bijective.comp`). -/
+theorem IsPermutation.complementLast {B : BranchingProgram w n} (h : B.IsPermutation)
+    (σ : Equiv.Perm (Fin w)) : (B.complementLast σ).IsPermutation := by
+  sorry
+
+/-- **C4.** A permutation program yields a bijection on every input:
+`B.IsPermutation → Function.Bijective (B.yield x)`.  Glue for [Bar89, §1, p002-b001].
+
+**Proof sketch.** Induction on `B.instrs` with the fold generalized to a bijective start map:
+`yield_eq`, and at each step `Instr.eval_eq` picks `map0` or `map1`, bijective by
+`isPermutation_iff`, so the composite stays bijective (`Function.Bijective.comp`). -/
+theorem IsPermutation.bijective_yield {B : BranchingProgram w n} (h : B.IsPermutation)
+    (x : Fin n → Bool) : Function.Bijective (B.yield x) := by
+  sorry
+
+end BranchingProgram
+
+/-! ### Families and classes -/
+
+/-- A family of width-`w` branching programs with accepting sets: `program n` takes `n` inputs and
+`accept n ⊆ ([w] → [w])` is its accepting set; the family recognizes
+`{u | (program |u|).yield u.get ∈ accept |u|}` [Bar89, §1, p001-b002: "`x ∈ L` iff
+`B(x) ∈ F_n`"].  Registered model (`TCSlib/ComputationalModels.lean`). -/
+structure BranchingProgramFamily (w : ℕ) where
+  /-- The program for inputs of length `n`. -/
+  program : (n : ℕ) → BranchingProgram w n
+  /-- The accepting set `F_n` for inputs of length `n`. -/
+  accept : (n : ℕ) → Finset (Fin w → Fin w)
+
+namespace BranchingProgramFamily
+
+variable {w : ℕ} (P : BranchingProgramFamily w)
+
+/-- The language a family recognizes:
+`P.language = {u | (P.program u.length).yield u.get ∈ P.accept u.length}`
+[Bar89, §1, p001-b002]. -/
+def language : Language Bool :=
+  {u | (P.program u.length).yield u.get ∈ P.accept u.length}
+
+/-- Reader of `language`:
+`u ∈ P.language ↔ (P.program u.length).yield u.get ∈ P.accept u.length`. -/
+theorem mem_language_iff (u : List Bool) :
+    u ∈ P.language ↔ (P.program u.length).yield u.get ∈ P.accept u.length :=
+  Iff.rfl
+
+/-- The language unfolded:
+`P.language = {u | (P.program u.length).yield u.get ∈ P.accept u.length}`. -/
+theorem language_eq :
+    P.language = {u | (P.program u.length).yield u.get ∈ P.accept u.length} := rfl
+
+/-- The family has polynomial length: `∃ a k, ∀ n, (P.program n).length ≤ a * (n + 1) ^ k`
+[Bar89, §1, p002-b001] (the `(n + 1)` form of `PPoly.lean`'s polynomial size). -/
+def IsPolyLength : Prop :=
+  ∃ a k : ℕ, ∀ n, (P.program n).length ≤ a * (n + 1) ^ k
+
+/-- Reader of `IsPolyLength`:
+`P.IsPolyLength ↔ ∃ a k, ∀ n, (P.program n).length ≤ a * (n + 1) ^ k`. -/
+theorem isPolyLength_iff :
+    P.IsPolyLength ↔ ∃ a k : ℕ, ∀ n, (P.program n).length ≤ a * (n + 1) ^ k :=
+  Iff.rfl
+
+/-- Every program of the family is a permutation program: `∀ n, (P.program n).IsPermutation`
+[Bar89, §1, p002-b001]. -/
+def IsPermutation : Prop :=
+  ∀ n, (P.program n).IsPermutation
+
+/-- Reader of `IsPermutation`: `P.IsPermutation ↔ ∀ n, (P.program n).IsPermutation`. -/
+theorem isPermutation_iff : P.IsPermutation ↔ ∀ n, (P.program n).IsPermutation :=
+  Iff.rfl
+
+end BranchingProgramFamily
+
+/-- `L ∈ BWBP`: for some width `w`, a family of width-`w` programs of polynomial length
+(`length ≤ a·(n+1)^k`) recognizes `L`,
+`∃ w (P : BranchingProgramFamily w), P.IsPolyLength ∧ P.language = L` [Bar89, §1, p002-b001]. -/
+def Language.InBWBP (L : Language Bool) : Prop :=
+  ∃ (w : ℕ) (P : BranchingProgramFamily w), P.IsPolyLength ∧ P.language = L
+
+/-- Reader of `Language.InBWBP`:
+`L.InBWBP ↔ ∃ w (P : BranchingProgramFamily w), P.IsPolyLength ∧ P.language = L`. -/
+theorem Language.inBWBP_iff (L : Language Bool) :
+    L.InBWBP ↔ ∃ (w : ℕ) (P : BranchingProgramFamily w), P.IsPolyLength ∧ P.language = L :=
+  Iff.rfl
+
+/-- `L ∈ PBP_w`: a family of width-`w` permutation programs of polynomial length
+(`length ≤ a·(n+1)^k`) recognizes `L`,
+`∃ P : BranchingProgramFamily w, P.IsPermutation ∧ P.IsPolyLength ∧ P.language = L`
+[Bar89, §1, p002-b001; Corollary, p004-b004: "polynomial-length 5-PBPs"]. -/
+def Language.InPBP (w : ℕ) (L : Language Bool) : Prop :=
+  ∃ P : BranchingProgramFamily w, P.IsPermutation ∧ P.IsPolyLength ∧ P.language = L
+
+/-- Reader of `Language.InPBP`:
+`L.InPBP w ↔ ∃ P : BranchingProgramFamily w, P.IsPermutation ∧ P.IsPolyLength ∧
+P.language = L`. -/
+theorem Language.inPBP_iff (w : ℕ) (L : Language Bool) :
+    L.InPBP w ↔
+      ∃ P : BranchingProgramFamily w, P.IsPermutation ∧ P.IsPolyLength ∧ P.language = L :=
+  Iff.rfl
+/- G06-HARNESS EOF-VERIFY SealcoeA_Complexity_BranchingPrograms_Defs -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealcoeA_Complexity_BranchingPrograms_Defs"
+  let payload : String := ""
+  let expectedRequests : Nat := 0
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := ""
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=eof spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed at EOF for {spelling}"
+    if Lean.Meta.isGlobalInstance env n then
+      throwError "G06-HARNESS {label}: unfolding membership at EOF for {spelling}"
+    verified := verified + 1
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  Lean.logInfo m!"G06-MASK label={label} phase=eof requested={requests.size} verified={verified}"
+  Lean.logInfo m!"G06-SEAL-END label={label} requested={requests.size} verified={verified}"
+

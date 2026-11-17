@@ -1,0 +1,703 @@
+From 4981a2a984a235659e4743d87bca48d562ee4fff Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 16 Nov 2026 21:43:45 +0000
+Subject: [PATCH 3/5] 6a statements: NANDForm and NANDLayering
+
+NAND form of DAGCircuit (IsNAND, IsNANDForm, nandGadget, toNANDForm as a DAGCircuit.rewrite
+instance) and the layering conversion layerNAND onto the 2n literal inputs (IsLayered,
+litInput, column fold). Targets N1-N13 admitted; sorryAx reaches toNANDForm only through N2
+and layerNAND only through N12-N13. Written by the lead.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjAYrSdr2naBsFrkNr
+---
+ .../CircuitComplexity/NANDForm.lean           | 284 +++++++++++++
+ .../CircuitComplexity/NANDLayering.lean       | 388 ++++++++++++++++++
+ 2 files changed, 672 insertions(+)
+ create mode 100644 TCSlib/Complexity/CircuitComplexity/NANDForm.lean
+ create mode 100644 TCSlib/Complexity/CircuitComplexity/NANDLayering.lean
+
+diff --git a/TCSlib/Complexity/CircuitComplexity/NANDForm.lean b/TCSlib/Complexity/CircuitComplexity/NANDForm.lean
+new file mode 100644
+index 000000000..04a932b7a
+--- /dev/null
++++ b/TCSlib/Complexity/CircuitComplexity/NANDForm.lean
+@@ -0,0 +1,284 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.CircuitComplexity.DAGTransform
++
++/-!
++# NAND form of `DAGCircuit`s
++
++A *NAND gate* of `BoolCircuit.DAGCircuit` is the model's own `¬` gate read with at most two
++arguments: `DAGGate.eval` evaluates a `¬` gate as the **negated conjunction** of its arguments
++(`DAGGate.eval_eq`), so `⟨.not, [a, b]⟩` is `NAND(a, b)`, `⟨.not, [a]⟩` is `¬a = NAND(a)` and
++`⟨.not, []⟩` is the constant `false`, the negation of the empty conjunction.  A circuit is in
++*NAND form* when every gate is a NAND gate (`BoolCircuit.DAGCircuit.IsNANDForm`).
++
++The conversion `BoolCircuit.DAGCircuit.toNANDForm` takes every circuit whose gates read at most
++two vertices to NAND form.  It is an instance of the gate-rewriting host
++`BoolCircuit.DAGCircuit.rewrite` (`DAGTransform.lean`), with the gadget
++`BoolCircuit.nandGadget`, built in the style of `BoolCircuit.deMorganGadget` (`DAGFanin.lean`):
++
++| old gate | NAND gadget | gates | depth added |
++|---|---|---|---|
++| `∧[a, b]` | `t := NAND[a, b]`, `NAND[t]` | 2 | 2 |
++| `∨[a, b]` | `NAND[a]`, `NAND[b]`, `NAND[¬a, ¬b]` | 3 | 2 |
++| `∧[a]`, `∨[a]` | `NAND[a]`, `NAND[that]` | 2 | 2 |
++| `∧[]` (true) | `f := NAND[]`, `NAND[f]` | 2 | 2 (absolute) |
++| `∨[]` (false) | `NAND[]` | 1 | 1 (absolute) |
++| `¬[…]` | copied | 1 | 1 |
++
++Every gadget costs at most `fan-in + 2` gates and at most two levels, so the pass gives the
++semantics, depth at most `2 · depth`, and at most `n + 4 · #gates` vertices.
++
++**Disclosures.**
++* NAND-form circuits are **not** `BoolCircuit.DAGCircuit.IsWellFormed`, which demands `¬` gates of
++  fan-in exactly one; lemmas assuming well-formedness (`toTree_eval`, `deMorgan_*`,
++  `binarize_*`) do not apply to them.
++* The names avoid `NAnd`: `BoolCircuit.NAndCircuit` and `BoolCircuit.TreeCircuit.toNAnd`
++  (`Basic.lean`) are the AND-rooted alternating normal form of the LMN development, not NAND
++  gates.
++* No ingested source states that `{NAND}` is a complete basis or gives a conversion; the
++  conversion is glue, motivated by [BV14, Def 2.13, p008-b002] and [BV14, Thm 3.5, p014-b001]
++  ("every Boolean NAND circuit").
++
++## Main definitions
++
++* `BoolCircuit.DAGGate.IsNAND` — a `¬` gate reading at most two vertices.
++* `BoolCircuit.DAGCircuit.IsNANDForm` — every gate is a NAND gate.
++* `BoolCircuit.nandGadget` — the NAND gadget of the table above.
++* `BoolCircuit.DAGCircuit.toNANDForm` — `C.rewrite (nandGadget n) nandGadget_correct hC`.
++
++## Main results
++
++All are statement-phase targets (glue):
++* `BoolCircuit.DAGGate.eval_of_isNAND` (N1) — a NAND gate is the negated conjunction.
++* `BoolCircuit.nandGadget_correct` (N2) — the gadget meets `GadgetCorrect` with depth factor 2.
++* `BoolCircuit.DAGCircuit.toNANDForm_eval`, `toNANDForm_isNANDForm`, `toNANDForm_depth_le`,
++  `toNANDForm_size_le` (N3–N6) — semantics, form, depth `≤ 2 · depth`, size `≤ n + 4 · #gates`.
++
++While N2 is admitted, `sorryAx` reaches `toNANDForm` (whose body passes `nandGadget_correct` to
++`rewrite`) and its consumers through N2 alone.
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-based FHE as secure as PKE*, ITCS 2014;
++  ePrint 2013/541.
++-/
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++namespace BoolCircuit
++
++variable {n : ℕ}
++
++/-! ## NAND gates and NAND form -/
++
++/-- A *NAND gate*: a `¬` gate (negated conjunction, `DAGGate.eval_eq`) reading at most two
++vertices, `g.IsNAND ↔ g.kind = .not ∧ g.args.length ≤ 2`.  Fan-in 1 is negation and fan-in 0
++the constant `false`.  Not `BoolCircuit.NAndCircuit` (`Basic.lean`, an AND-rooted normal form).
++Glue; motivated by [BV14, Def 2.13, p008-b002; Thm 3.5, p014-b001]. -/
++def DAGGate.IsNAND (g : DAGGate) : Prop := g.kind = .not ∧ g.args.length ≤ 2
++
++/-- The NAND-gate predicate unfolded: `g.IsNAND ↔ g.kind = .not ∧ g.args.length ≤ 2`. -/
++theorem DAGGate.isNAND_iff (g : DAGGate) : g.IsNAND ↔ g.kind = .not ∧ g.args.length ≤ 2 :=
++  Iff.rfl
++
++instance DAGGate.decidableIsNAND : DecidablePred DAGGate.IsNAND := fun g =>
++  inferInstanceAs (Decidable (g.kind = .not ∧ g.args.length ≤ 2))
++
++/-- A circuit is in *NAND form* when every gate is a NAND gate:
++`C.IsNANDForm ↔ ∀ g ∈ C.gates, g.IsNAND`.  Such circuits are not `IsWellFormed`, which demands
++fan-in-1 `¬` gates (disclosed).  Glue; motivated by [BV14, Def 2.13, p008-b002]. -/
++def DAGCircuit.IsNANDForm (C : DAGCircuit n) : Prop := ∀ g ∈ C.gates, g.IsNAND
++
++/-- NAND form unfolded: `C.IsNANDForm ↔ ∀ g ∈ C.gates, g.IsNAND`. -/
++theorem DAGCircuit.isNANDForm_iff (C : DAGCircuit n) :
++    C.IsNANDForm ↔ ∀ g ∈ C.gates, g.IsNAND :=
++  Iff.rfl
++
++instance DAGCircuit.decidableIsNANDForm (C : DAGCircuit n) : Decidable C.IsNANDForm :=
++  inferInstanceAs (Decidable (∀ g ∈ C.gates, g.IsNAND))
++
++/-- **N1. NAND semantics.** A NAND gate evaluates to the negated conjunction of the values it
++reads: `g.IsNAND → g.eval vals = !(g.args.all fun a => vals.getD a false)`.  Glue (a reader of
++`DAGGate.eval` on NAND gates).
++
++**Proof sketch.** Rewrite with `DAGGate.eval_eq` (`DAGCircuit.lean`); the kind is `.not` by the
++first component of `g.isNAND_iff`, so the match takes its `.not` branch. -/
++theorem DAGGate.eval_of_isNAND {g : DAGGate} (hg : g.IsNAND) (vals : List Bool) :
++    g.eval vals = !(g.args.all fun a => vals.getD a false) := by
++  sorry
++
++/-! ## The NAND gadget -/
++
++/-- The NAND gadget, compiling the gate `g` after the gates `gs` (vertex `n + gs.length` is the
++first new gate); it returns the new gate list and the vertex computing `g` (the table of the
++module docstring):
++* `¬[…]`: copied, `(gs ++ [g], n + |gs|)`;
++* `∧[]`: `f := NAND[]`, `NAND[f]`; `∨[]`: `NAND[]`;
++* `∧[a]`, `∨[a]`: `NAND[a]`, `NAND[that]`;
++* `∧[a, b]`: `t := NAND[a, b]`, `NAND[t]`; `∨[a, b]`: `NAND[a]`, `NAND[b]`, `NAND[¬a, ¬b]`;
++* an `∧`/`∨` gate of fan-in above two lies outside the gadget's domain (`nandGadget_correct`
++  assumes fan-in `≤ 2`) and is copied.
++Computable; glue, in the style of `deMorganGadget` (`DAGFanin.lean`). -/
++def nandGadget (n : ℕ) (g : DAGGate) (gs : List DAGGate) : List DAGGate × ℕ :=
++  match g.kind, g.args with
++  | .not, _ => (gs ++ [g], n + gs.length)
++  | .and, [] => (gs ++ [⟨.not, []⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1)
++  | .or, [] => (gs ++ [⟨.not, []⟩], n + gs.length)
++  | .and, [a] => (gs ++ [⟨.not, [a]⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1)
++  | .or, [a] => (gs ++ [⟨.not, [a]⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1)
++  | .and, [a, b] => (gs ++ [⟨.not, [a, b]⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1)
++  | .or, [a, b] =>
++    (gs ++ [⟨.not, [a]⟩, ⟨.not, [b]⟩, ⟨.not, [n + gs.length, n + gs.length + 1]⟩],
++      n + gs.length + 2)
++  | .and, _ :: _ :: _ :: _ => (gs ++ [g], n + gs.length)
++  | .or, _ :: _ :: _ :: _ => (gs ++ [g], n + gs.length)
++
++/-- The NAND gadget copies a `¬` gate:
++`nandGadget n ⟨.not, args⟩ gs = (gs ++ [⟨.not, args⟩], n + gs.length)`. -/
++theorem nandGadget_not (args : List ℕ) (gs : List DAGGate) :
++    nandGadget n ⟨.not, args⟩ gs = (gs ++ [⟨.not, args⟩], n + gs.length) := by
++  cases args with
++  | nil => rfl
++  | cons a l => rfl
++
++/-- The NAND gadget on the constant `∧[]` (true):
++`nandGadget n ⟨.and, []⟩ gs =
++(gs ++ [⟨.not, []⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1)`. -/
++theorem nandGadget_and_nil (gs : List DAGGate) :
++    nandGadget n ⟨.and, []⟩ gs =
++      (gs ++ [⟨.not, []⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1) := rfl
++
++/-- The NAND gadget on the constant `∨[]` (false):
++`nandGadget n ⟨.or, []⟩ gs = (gs ++ [⟨.not, []⟩], n + gs.length)`. -/
++theorem nandGadget_or_nil (gs : List DAGGate) :
++    nandGadget n ⟨.or, []⟩ gs = (gs ++ [⟨.not, []⟩], n + gs.length) := rfl
++
++/-- The NAND gadget on a fan-in-1 `∧` gate (double negation):
++`nandGadget n ⟨.and, [a]⟩ gs =
++(gs ++ [⟨.not, [a]⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1)`. -/
++theorem nandGadget_and_singleton (a : ℕ) (gs : List DAGGate) :
++    nandGadget n ⟨.and, [a]⟩ gs =
++      (gs ++ [⟨.not, [a]⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1) := rfl
++
++/-- The NAND gadget on a fan-in-1 `∨` gate (double negation):
++`nandGadget n ⟨.or, [a]⟩ gs =
++(gs ++ [⟨.not, [a]⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1)`. -/
++theorem nandGadget_or_singleton (a : ℕ) (gs : List DAGGate) :
++    nandGadget n ⟨.or, [a]⟩ gs =
++      (gs ++ [⟨.not, [a]⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1) := rfl
++
++/-- The NAND gadget on a fan-in-2 `∧` gate:
++`nandGadget n ⟨.and, [a, b]⟩ gs =
++(gs ++ [⟨.not, [a, b]⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1)`. -/
++theorem nandGadget_and_pair (a b : ℕ) (gs : List DAGGate) :
++    nandGadget n ⟨.and, [a, b]⟩ gs =
++      (gs ++ [⟨.not, [a, b]⟩, ⟨.not, [n + gs.length]⟩], n + gs.length + 1) := rfl
++
++/-- The NAND gadget on a fan-in-2 `∨` gate (De Morgan):
++`nandGadget n ⟨.or, [a, b]⟩ gs = (gs ++ [⟨.not, [a]⟩, ⟨.not, [b]⟩,
++⟨.not, [n + gs.length, n + gs.length + 1]⟩], n + gs.length + 2)`. -/
++theorem nandGadget_or_pair (a b : ℕ) (gs : List DAGGate) :
++    nandGadget n ⟨.or, [a, b]⟩ gs =
++      (gs ++ [⟨.not, [a]⟩, ⟨.not, [b]⟩, ⟨.not, [n + gs.length, n + gs.length + 1]⟩],
++        n + gs.length + 2) := rfl
++
++/-- Outside its domain the NAND gadget copies the gate: for an `∧` or `∨` gate with at least
++three arguments, `nandGadget n ⟨k, a :: b :: c :: l⟩ gs = (gs ++ [⟨k, a :: b :: c :: l⟩],
++n + gs.length)` (`k ≠ .not`). -/
++theorem nandGadget_of_three_le {k : GateKind} (hk : k ≠ .not) (a b c : ℕ) (l : List ℕ)
++    (gs : List DAGGate) :
++    nandGadget n ⟨k, a :: b :: c :: l⟩ gs = (gs ++ [⟨k, a :: b :: c :: l⟩], n + gs.length) := by
++  cases k with
++  | and => rfl
++  | or => rfl
++  | not => exact absurd rfl hk
++
++/-- **N2. The NAND gadget is correct.** In the sense of `GadgetCorrect` (`DAGTransform.lean`),
++with depth factor `2`, domain "fan-in at most two" and output predicate `DAGGate.IsNAND`:
++`GadgetCorrect n 2 (fun _ l => l ≤ 2) DAGGate.IsNAND (nandGadget n)`.  That is, for every gate
++`g` of fan-in at most two whose arguments are existing vertices of an acyclic gate list `gs`,
++`nandGadget n g gs` only appends to `gs`, stays acyclic, returns a vertex below the new length
++that computes `g`, adds at most `g.args.length + 2` gates and at most `2` levels over `g`'s
++deepest argument, and every appended gate is a NAND gate.  Glue (the table of the module
++docstring).
++
++**Proof sketch.** As `deMorganGadget_correct` (`DAGFanin.lean`): case on the kind and on the
++argument list (`nandGadget_not`, `nandGadget_and_nil`, …, the case readers above), and in each
++case check the seven fields of `GadgetSpec`.  Extension and length are immediate (`ext` is the
++emitted suffix; 1, 2 or 3 gates, at most `fan-in + 2`).  Acyclicity is `GatesAcyclic.snoc`
++once per emitted gate (each reads only `g`'s arguments, below `n + |gs|`, or the gates just
++emitted).  Values: `vertexValue_last` and `vertexValue_append` reduce each new vertex to a gate
++evaluation, `DAGGate.eval_of_isNAND` (N1) and `DAGGate.eval_eq` give `!(a && b)`, `!!a = a`,
++`!(!a && !b) = a || b`, `!true = false`, `!false = true` (`Bool` equation lemmas).  Depths:
++`vertexDepth_last`, `vertexDepth_append` and `DAGGate.depth_eq`: one level for a copied `¬` gate
++or `NAND[]`, two for the others.  New gates are `.not` gates of fan-in at most two by
++`DAGGate.isNAND_iff`.  The fill needs a reader for `GadgetCorrect`, which has none at the issue
++base (the owner-side `gadgetCorrect_iff`, plan section r3 §H2). -/
++theorem nandGadget_correct :
++    GadgetCorrect n 2 (fun _ l => l ≤ 2) DAGGate.IsNAND (nandGadget n) := by
++  sorry
++
++/-! ## The conversion -/
++
++/-- **The NAND form of a circuit** whose gates read at most two vertices: the gate-rewriting host
++applied to the NAND gadget, `C.toNANDForm hC = C.rewrite (nandGadget n) nandGadget_correct hC`.
++The domain is `∀ g ∈ C.gates, g.args.length ≤ 2` (not `IsFaninTwo`: a `¬` gate of fan-in two is
++already a NAND gate and is copied).  While N2 is admitted, `sorryAx` reaches this definition
++through `nandGadget_correct` only.  Glue; motivated by [BV14, Def 2.13, p008-b002;
++Thm 3.5, p014-b001]. -/
++def DAGCircuit.toNANDForm (C : DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2) :
++    DAGCircuit n :=
++  C.rewrite (nandGadget n) nandGadget_correct hC
++
++/-- The NAND form unfolded:
++`C.toNANDForm hC = C.rewrite (nandGadget n) nandGadget_correct hC`. -/
++theorem DAGCircuit.toNANDForm_eq (C : DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2) :
++    C.toNANDForm hC = C.rewrite (nandGadget n) nandGadget_correct hC := rfl
++
++section ToNANDForm
++
++variable (C : DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2)
++
++/-- **N3. Semantics.** The NAND form computes the same function:
++`(C.toNANDForm hC).eval x = C.eval x`.  Glue.
++
++**Proof sketch.** `toNANDForm_eq`, then `DAGCircuit.rewrite_eval` (`DAGTransform.lean`) with the
++gadget's correctness N2. -/
++theorem DAGCircuit.toNANDForm_eval (x : Fin n → Bool) : (C.toNANDForm hC).eval x = C.eval x := by
++  sorry
++
++/-- **N4. Form.** The conversion is in NAND form: `(C.toNANDForm hC).IsNANDForm`.  Glue.
++
++**Proof sketch.** `isNANDForm_iff` and `toNANDForm_eq`, then `DAGCircuit.rewrite_new_gates`
++(`DAGTransform.lean`): every gate of a rewritten circuit satisfies the gadget's output
++predicate, here `DAGGate.IsNAND`. -/
++theorem DAGCircuit.toNANDForm_isNANDForm : (C.toNANDForm hC).IsNANDForm := by
++  sorry
++
++/-- **N5. Depth.** The conversion at most doubles the depth:
++`(C.toNANDForm hC).depth ≤ 2 * C.depth`.  Glue.
++
++**Proof sketch.** `toNANDForm_eq`, then `DAGCircuit.rewrite_depth_le` (`DAGTransform.lean`)
++with the depth factor `c = 2` of N2. -/
++theorem DAGCircuit.toNANDForm_depth_le : (C.toNANDForm hC).depth ≤ 2 * C.depth := by
++  sorry
++
++/-- **N6. Size.** The conversion has at most `n + 4 · #gates` vertices:
++`(C.toNANDForm hC).size ≤ n + 4 * C.gates.length`.  This is the generic `rewrite` bound
++(`fan-in + 2 ≤ 4` gates per old gate), not the tight `3 · #gates` (disclosed).  Glue.
++
++**Proof sketch.** `DAGCircuit.size_eq` on both sides and `toNANDForm_eq`; then
++`DAGCircuit.rewrite_length_le` (`DAGTransform.lean`) bounds the new gate count by
++`∑_{g ∈ C.gates} (g.args.length + 2)`, and each summand is at most `4` by `hC`
++(`List.sum_le_card_nsmul` or an induction on the gate list). -/
++theorem DAGCircuit.toNANDForm_size_le : (C.toNANDForm hC).size ≤ n + 4 * C.gates.length := by
++  sorry
++
++end ToNANDForm
++
++end BoolCircuit
+diff --git a/TCSlib/Complexity/CircuitComplexity/NANDLayering.lean b/TCSlib/Complexity/CircuitComplexity/NANDLayering.lean
+new file mode 100644
+index 000000000..759617826
+--- /dev/null
++++ b/TCSlib/Complexity/CircuitComplexity/NANDLayering.lean
+@@ -0,0 +1,388 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import Mathlib.Data.Fin.Tuple.Basic
++import TCSlib.Complexity.CircuitComplexity.NANDForm
++
++/-!
++# Layering NAND-form `DAGCircuit`s
++
++A circuit is *layered* (`BoolCircuit.DAGCircuit.IsLayered`) when every gate sits exactly one level
++above each vertex it reads: `C.depthAt a + 1 = C.depthAt (n + i)` for every argument `a` of gate
++`i`.  Inputs are at level `0` and fan-in-0 gates at level `1`, so a layered circuit evaluates
++level by level.
++
++The conversion `BoolCircuit.DAGCircuit.layerNAND` takes a NAND-form circuit `C` on `n ≥ 1` inputs
++to a layered NAND-form circuit on the `2n` **literals** `x, ¬x` (`BoolCircuit.litInput`), of the
++same depth and function.
++
++**Why literals (the odd-gap finding).** Call a vertex's depth its level.  In a layered NAND
++circuit whose only level-0 vertices are the positive inputs, induction on the level shows that
++every vertex at an even level computes a monotone function and every vertex at an odd level an
++antimonotone one (constants are both; the NAND of antimonotone functions is monotone, and
++conversely).  XOR is neither, so over positive inputs no layering exists in general: an odd gap
++cannot always be padded.  With both literals at level `0` every vertex is available at both
++parities.  Literal inputs are Bar89's "inputs and negated inputs" [Bar89, Thm 1, p003-b002].
++
++**Construction** (computable, by columns in topological order; no NAND-form hypothesis).  Write
++`D := C.depth` and `δ := C.depthAt v`.  Each old vertex `v` with `δ ≤ D` gets a *column* of new
++vertices `v@k`, one for every level `δ ≤ k ≤ D`, with `v@k` at depth exactly `k`:
++* **base** `v@δ`: an input `xᵢ` is input vertex `i`; a gate is a NAND gate over its arguments'
++  copies `a@(δ - 1)`;
++* **parity twin** `v@(δ + 1)`: an input's twin is `NAND(¬xᵢ)`, reading input vertex `n + i`; a
++  gate's twin is the same NAND gate over `a@δ`; a fan-in-0 gate's twin is `NAND(NAND(x₀, ¬x₀))`,
++  which needs `n ≥ 1`;
++* **double-NAND chain** `v@k = NAND(NAND(v@(k - 2)))` for `k ≥ δ + 2`, the inner gate at level
++  `k - 1`.
++
++Every gate is emitted as a NAND gate `⟨.not, args⟩`.  Old vertices deeper than `D` are dead and
++get no column.  The output is `out@D`.  The gate list (`layerGates`) and output vertex
++(`layerOutput`) are definitions; the structure fields of `DAGCircuit` (acyclicity, output in
++range) are the targets N12–N13, as N2 is for `toNANDForm`, so while they are admitted `sorryAx`
++reaches `layerNAND` through them only.
++
++**Column invariant** (the plan of every target's fill): after the fold has processed the old
++vertices `0, …, v - 1`, for every processed `u` with `C.depthAt u ≤ D` and every level
++`C.depthAt u ≤ k ≤ D`, the recorded vertex `u@k` exists below the current vertex count, has depth
++exactly `k`, reads only vertices of depth `k - 1`, and, when `C.IsNANDForm`, has on
++`litInput x` the value of `u` on `x`; the column of `u` has at most `2 (D - C.depthAt u) + 1`
++gates.  It is proved by induction along the fold.
++
++**Not reused.** `DAGCircuit.toLayered` and `TreeCircuit.toLayered` (`LayeredDAG.lean`) map into
++the other model `LayeredCircuit` with one vertex per layer (depth = number of gates) and need
++`IsWellFormed` and no `∨`; the conversion here keeps the `DAGCircuit` model and its depth, and is
++named `layerNAND`, not `toLayered`.  It is not an instance of `DAGCircuit.rewrite`: the input
++count changes and the depth must be exact, not bounded.  The column fold is a construction, not
++a host: its contract does not vary by consumer.
++
++No ingested passage defines layered circuits or a layering conversion: the conversion is glue,
++motivated by the level-by-level evaluation of [BV11, Thm 3.1, p015-b001; Def 3.6, p014-b001]
++("depth-`L` binary arithmetic circuits", an evaluation key whose length depends on `L`).
++
++## Main definitions
++
++* `BoolCircuit.DAGCircuit.IsLayered` — every gate is one level above each vertex it reads.
++* `BoolCircuit.litInput` — the `2n` literals of an input.
++* `BoolCircuit.layerChain`, `BoolCircuit.DAGCircuit.layerAt`, `BoolCircuit.DAGCircuit.layerColumn`,
++  `BoolCircuit.DAGCircuit.layerFold` — the column builder.
++* `BoolCircuit.DAGCircuit.layerGates`, `BoolCircuit.DAGCircuit.layerOutput` — the gates and the
++  output vertex of the layering.
++* `BoolCircuit.DAGCircuit.layerNAND` — the layering conversion.
++
++## Main results
++
++All are statement-phase targets (glue):
++* `BoolCircuit.DAGCircuit.layerGates_acyclic`, `layerOutput_lt` (N12–N13) — the structure fields.
++* `BoolCircuit.DAGCircuit.layerNAND_eval` (N7) — semantics on the literal input.
++* `BoolCircuit.DAGCircuit.layerNAND_isLayered` (N8), `layerNAND_isNANDForm` (N9).
++* `BoolCircuit.DAGCircuit.layerNAND_depth` (N10) — depth preserved exactly.
++* `BoolCircuit.DAGCircuit.layerNAND_size_le` (N11) — size `≤ 2n + (2 · depth + 1) · size`.
++
++## References
++
++* [Bar89] D. A. Barrington, *Bounded-width polynomial-size branching programs recognize exactly
++  those languages in NC¹*, J. Comput. Syst. Sci. 38(1):150–164, 1989.
++* [BV11] Z. Brakerski, V. Vaikuntanathan, *Efficient fully homomorphic encryption from (standard)
++  LWE*, FOCS 2011 (full version).
++-/
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++namespace BoolCircuit
++
++variable {n : ℕ}
++
++/-! ## Layered circuits and literal inputs -/
++
++/-- `C` is *layered*: every gate sits exactly one level above each vertex it reads,
++`C.depthAt a + 1 = C.depthAt (n + i)` for every argument `a` of every gate `i` (inputs at level
++`0`).  Glue, motivated by the level-by-level evaluation of [BV11, Thm 3.1, p015-b001;
++Def 3.6, p014-b001]. -/
++def DAGCircuit.IsLayered (C : DAGCircuit n) : Prop :=
++  ∀ (i : ℕ) (hi : i < C.gates.length), ∀ a ∈ (C.gates[i]).args,
++    C.depthAt a + 1 = C.depthAt (n + i)
++
++/-- Layeredness unfolded: `C.IsLayered ↔ ∀ i (hi : i < C.gates.length), ∀ a ∈ (C.gates[i]).args,
++C.depthAt a + 1 = C.depthAt (n + i)`. -/
++theorem DAGCircuit.isLayered_iff (C : DAGCircuit n) :
++    C.IsLayered ↔ ∀ (i : ℕ) (hi : i < C.gates.length), ∀ a ∈ (C.gates[i]).args,
++      C.depthAt a + 1 = C.depthAt (n + i) :=
++  Iff.rfl
++
++instance DAGCircuit.decidableIsLayered (C : DAGCircuit n) : Decidable C.IsLayered :=
++  @Nat.decidableBallLT C.gates.length
++    (fun i hi => ∀ a ∈ (C.gates[i]).args, C.depthAt a + 1 = C.depthAt (n + i))
++    (fun i hi => List.decidableBAll _ _)
++
++/-- The *literal input* of `x`: the `2n` literals, positive ones first,
++`litInput x = Fin.append x (fun i => !x i)` (Bar89's "inputs and negated inputs"
++[Bar89, Thm 1, p003-b002]). -/
++def litInput (x : Fin n → Bool) : Fin (n + n) → Bool := Fin.append x fun i => !x i
++
++/-- The literal input unfolded: `litInput x = Fin.append x (fun i => !x i)`. -/
++theorem litInput_eq (x : Fin n → Bool) : litInput x = Fin.append x fun i => !x i := rfl
++
++/-- The positive half of the literal input: `litInput x (Fin.castAdd n i) = x i`. -/
++theorem litInput_castAdd (x : Fin n → Bool) (i : Fin n) : litInput x (Fin.castAdd n i) = x i := by
++  rw [litInput_eq, Fin.append_left]
++
++/-- The negative half of the literal input: `litInput x (Fin.natAdd n i) = !x i`. -/
++theorem litInput_natAdd (x : Fin n → Bool) (i : Fin n) : litInput x (Fin.natAdd n i) = !x i := by
++  rw [litInput_eq, Fin.append_right]
++
++/-! ## The column builder -/
++
++/-- The **double-NAND chain**: after the gates `gs` of a circuit with `N` inputs, with `a` and
++`b` the copies of a vertex at the two levels below the next one, append `s` links; link `t`
++appends the inner gate `NAND(a)` (vertex `N + |gs|`) and the outer gate `NAND(NAND(a))` (vertex
++`N + |gs| + 1`), which becomes the copy two levels above `a`.  Returns the new gate list and the
++outer vertices, in level order:
++`layerChain N gs a b 0 = (gs, [])` and `layerChain N gs a b (s + 1) =
++let r := layerChain N (gs ++ [⟨.not, [a]⟩, ⟨.not, [N + |gs|]⟩]) b (N + |gs| + 1) s;
++(r.1, (N + |gs| + 1) :: r.2)`.  Glue (plan section r3 §H3.13). -/
++def layerChain (N : ℕ) : List DAGGate → ℕ → ℕ → ℕ → List DAGGate × List ℕ
++  | gs, _, _, 0 => (gs, [])
++  | gs, a, b, s + 1 =>
++    let r := layerChain N (gs ++ [⟨.not, [a]⟩, ⟨.not, [N + gs.length]⟩]) b (N + gs.length + 1) s
++    (r.1, (N + gs.length + 1) :: r.2)
++
++/-- The empty chain: `layerChain N gs a b 0 = (gs, [])`. -/
++theorem layerChain_zero (N : ℕ) (gs : List DAGGate) (a b : ℕ) :
++    layerChain N gs a b 0 = (gs, []) := rfl
++
++/-- One more link: `layerChain N gs a b (s + 1) = ((layerChain N gs' b (N + |gs| + 1) s).1,
++(N + |gs| + 1) :: (layerChain N gs' b (N + |gs| + 1) s).2)` with
++`gs' = gs ++ [⟨.not, [a]⟩, ⟨.not, [N + |gs|]⟩]`. -/
++theorem layerChain_succ (N : ℕ) (gs : List DAGGate) (a b s : ℕ) :
++    layerChain N gs a b (s + 1) =
++      ((layerChain N (gs ++ [⟨.not, [a]⟩, ⟨.not, [N + gs.length]⟩]) b (N + gs.length + 1) s).1,
++        (N + gs.length + 1) ::
++          (layerChain N (gs ++ [⟨.not, [a]⟩, ⟨.not, [N + gs.length]⟩]) b
++            (N + gs.length + 1) s).2) := rfl
++
++/-- The copy `v@k` recorded in the columns `cols` (column `v` lists `v@δ, v@(δ + 1), …` with
++`δ = C.depthAt v`): `C.layerAt cols v k = (cols.getD v []).getD (k - C.depthAt v) 0`.  Glue. -/
++def DAGCircuit.layerAt (C : DAGCircuit n) (cols : List (List ℕ)) (v k : ℕ) : ℕ :=
++  (cols.getD v []).getD (k - C.depthAt v) 0
++
++/-- The recorded copy unfolded: `C.layerAt cols v k = (cols.getD v []).getD (k - C.depthAt v) 0`. -/
++theorem DAGCircuit.layerAt_eq (C : DAGCircuit n) (cols : List (List ℕ)) (v k : ℕ) :
++    C.layerAt cols v k = (cols.getD v []).getD (k - C.depthAt v) 0 := rfl
++
++/-- One step of the column fold: build the column of the old vertex `v` after the state
++`s = (new gates, columns of 0, …, v - 1)`, over the `n + n` literal inputs.  With `D = C.depth`,
++`δ = C.depthAt v` and `m = n + n + |s.1|` (the next new vertex):
++* `D < δ` (dead vertex): no gate, empty column;
++* `v < n` (input), `D = 0`: column `[v]`;
++* `v < n`, `D ≥ 1`: twin `NAND[n + v]` (vertex `m`), then `D - 1` chain links from `(v, m)`;
++  column `v :: m :: chain`;
++* gate `g = C.gates.getD (v - n) ⟨.not, []⟩`: base `NAND[a@(δ - 1) | a ∈ g.args]` (vertex `m`);
++  if `D = δ` the column is `[m]`; otherwise the twin is `NAND[a@δ | a ∈ g.args]` (vertex
++  `m + 1`), or, when `g.args = []`, `NAND[0, n]` then `NAND[m + 1]` (twin vertex `m + 2`); then
++  `D - δ - 1` chain links from `(m, twin)`; column `m :: twin :: chain`.
++Glue (plan section r3 §H3.13). -/
++def DAGCircuit.layerColumn (C : DAGCircuit n) (s : List DAGGate × List (List ℕ)) (v : ℕ) :
++    List DAGGate × List (List ℕ) :=
++  if C.depth < C.depthAt v then (s.1, s.2 ++ [[]])
++  else if v < n then
++    if C.depth = 0 then (s.1, s.2 ++ [[v]])
++    else
++      let r := layerChain (n + n) (s.1 ++ [⟨.not, [n + v]⟩]) v (n + n + s.1.length) (C.depth - 1)
++      (r.1, s.2 ++ [v :: (n + n + s.1.length) :: r.2])
++  else
++    let g := C.gates.getD (v - n) ⟨.not, []⟩
++    let m := n + n + s.1.length
++    let gs₁ := s.1 ++ [⟨.not, g.args.map fun a => C.layerAt s.2 a (C.depthAt v - 1)⟩]
++    if C.depth = C.depthAt v then (gs₁, s.2 ++ [[m]])
++    else
++      let tw : List DAGGate × ℕ :=
++        if g.args = [] then (gs₁ ++ [⟨.not, [0, n]⟩, ⟨.not, [m + 1]⟩], m + 2)
++        else (gs₁ ++ [⟨.not, g.args.map fun a => C.layerAt s.2 a (C.depthAt v)⟩], m + 1)
++      let r := layerChain (n + n) tw.1 m tw.2 (C.depth - C.depthAt v - 1)
++      (r.1, s.2 ++ [m :: tw.2 :: r.2])
++
++/-- The fold step unfolded (`C.layerColumn s v` is the case split of its docstring).
++
++**Proof sketch.** Definitional: `rfl`. -/
++theorem DAGCircuit.layerColumn_eq (C : DAGCircuit n) (s : List DAGGate × List (List ℕ)) (v : ℕ) :
++    C.layerColumn s v =
++      if C.depth < C.depthAt v then (s.1, s.2 ++ [[]])
++      else if v < n then
++        if C.depth = 0 then (s.1, s.2 ++ [[v]])
++        else
++          ((layerChain (n + n) (s.1 ++ [⟨.not, [n + v]⟩]) v (n + n + s.1.length)
++              (C.depth - 1)).1,
++            s.2 ++ [v :: (n + n + s.1.length) ::
++              (layerChain (n + n) (s.1 ++ [⟨.not, [n + v]⟩]) v (n + n + s.1.length)
++                (C.depth - 1)).2])
++      else
++        if C.depth = C.depthAt v then
++          (s.1 ++ [⟨.not, (C.gates.getD (v - n) ⟨.not, []⟩).args.map fun a =>
++              C.layerAt s.2 a (C.depthAt v - 1)⟩], s.2 ++ [[n + n + s.1.length]])
++        else
++          let gs₁ := s.1 ++ [⟨.not, (C.gates.getD (v - n) ⟨.not, []⟩).args.map fun a =>
++              C.layerAt s.2 a (C.depthAt v - 1)⟩]
++          let tw : List DAGGate × ℕ :=
++            if (C.gates.getD (v - n) ⟨.not, []⟩).args = [] then
++              (gs₁ ++ [⟨.not, [0, n]⟩, ⟨.not, [n + n + s.1.length + 1]⟩],
++                n + n + s.1.length + 2)
++            else
++              (gs₁ ++ [⟨.not, (C.gates.getD (v - n) ⟨.not, []⟩).args.map fun a =>
++                C.layerAt s.2 a (C.depthAt v)⟩], n + n + s.1.length + 1)
++          ((layerChain (n + n) tw.1 (n + n + s.1.length) tw.2
++              (C.depth - C.depthAt v - 1)).1,
++            s.2 ++ [(n + n + s.1.length) :: tw.2 ::
++              (layerChain (n + n) tw.1 (n + n + s.1.length) tw.2
++                (C.depth - C.depthAt v - 1)).2]) := rfl
++
++/-- The column fold over the old vertices `0, …, n + |C.gates| - 1` in topological order:
++`C.layerFold = (List.range (n + C.gates.length)).foldl C.layerColumn ([], [])`.  Glue. -/
++def DAGCircuit.layerFold (C : DAGCircuit n) : List DAGGate × List (List ℕ) :=
++  (List.range (n + C.gates.length)).foldl C.layerColumn ([], [])
++
++/-- The column fold unfolded:
++`C.layerFold = (List.range (n + C.gates.length)).foldl C.layerColumn ([], [])`. -/
++theorem DAGCircuit.layerFold_eq (C : DAGCircuit n) :
++    C.layerFold = (List.range (n + C.gates.length)).foldl C.layerColumn ([], []) := rfl
++
++/-- The gate list of the layering (plan section r3 §H3.13): `C.layerGates = C.layerFold.1`, every
++old vertex `v` realized at each level `C.depthAt v ≤ k ≤ C.depth` (base, parity twin, double-NAND
++chain), every gate emitted as a NAND gate, columns in topological order.  Computable; glue
++(no ingested source, r3 §H1 gap 4). -/
++def DAGCircuit.layerGates [NeZero n] (C : DAGCircuit n) : List DAGGate := C.layerFold.1
++
++/-- The layering's gates unfolded: `C.layerGates = C.layerFold.1`. -/
++theorem DAGCircuit.layerGates_eq [NeZero n] (C : DAGCircuit n) :
++    C.layerGates = C.layerFold.1 := rfl
++
++/-- The output vertex of the layering, `out@(C.depth)`:
++`C.layerOutput = C.layerAt C.layerFold.2 C.output C.depth`.  Computable; glue. -/
++def DAGCircuit.layerOutput [NeZero n] (C : DAGCircuit n) : ℕ :=
++  C.layerAt C.layerFold.2 C.output C.depth
++
++/-- The layering's output unfolded: `C.layerOutput = C.layerAt C.layerFold.2 C.output C.depth`. -/
++theorem DAGCircuit.layerOutput_eq [NeZero n] (C : DAGCircuit n) :
++    C.layerOutput = C.layerAt C.layerFold.2 C.output C.depth := rfl
++
++/-! ## The structure fields (targets) -/
++
++/-- **N12. Acyclicity of the layering.** Every gate of `C.layerGates` reads only earlier vertices
++of the circuit on `n + n` inputs: `∀ (i : ℕ) (h : i < C.layerGates.length),
++∀ a ∈ (C.layerGates[i]).args, a < n + n + i` (the `args_lt` field of `DAGCircuit (n + n)`, i.e.
++`GatesAcyclic (n + n) C.layerGates`).  Glue.
++
++Stated in the field's form rather than as `GatesAcyclic (n + n) C.layerGates` (plan section r3
++§H5.6b): `GatesAcyclic` (`DAGCircuit.lean`) has no published reader, and filling the field from a
++`GatesAcyclic` proof would unfold it (Rule 10).  The meaning is identical (the body of
++`GatesAcyclic`).
++
++**Proof sketch.** Induction along the fold (`layerFold_eq`, `List.foldl` over `List.range`) with
++the column invariant of the module docstring, part "every recorded copy lies below the current
++vertex count": each step (`layerColumn_eq`) appends gates that read `n + v` or `0, n` (inputs,
++below `n + n` by `NeZero n`), the recorded copies of earlier vertices (below the count by the
++invariant; the arguments `a` of gate `v - n` satisfy `a < v` by `C.args_lt`), or the gates just
++appended (`layerChain_succ`: the inner gate `N + |gs|` precedes the outer one).  Each appended
++gate's arguments are therefore below its own vertex `n + n + i`. -/
++theorem DAGCircuit.layerGates_acyclic [NeZero n] (C : DAGCircuit n) :
++    ∀ (i : ℕ) (h : i < C.layerGates.length), ∀ a ∈ (C.layerGates[i]).args, a < n + n + i := by
++  sorry
++
++/-- **N13. The output is a vertex.** `C.layerOutput < (n + n) + C.layerGates.length` (the
++`output_lt` field of `DAGCircuit (n + n)`).  Glue.
++
++**Proof sketch.** The output's column exists because `C.depthAt C.output = C.depth`
++(`DAGCircuit.depth_eq`) and `C.output < n + C.gates.length` (`C.output_lt`), so the fold visits
++it and does not take the dead branch; its first entry is `out@D` (`layerOutput_eq`,
++`layerAt_eq`, index `D - D = 0`), which by the column invariant is below the vertex count
++`n + n + |C.layerGates|`. -/
++theorem DAGCircuit.layerOutput_lt [NeZero n] (C : DAGCircuit n) :
++    C.layerOutput < (n + n) + C.layerGates.length := by
++  sorry
++
++/-! ## The conversion -/
++
++/-- **The layering conversion** (plan section r3 §H3.13): the circuit on the `n + n` literal
++inputs with gates `C.layerGates` and output `C.layerOutput`,
++`C.layerNAND = ⟨C.layerGates, C.layerOutput, N12, N13⟩` (field readers `layerNAND_gates`,
++`layerNAND_output`, generated by `simps`, not `@[simp]`).  While N12 and N13 are admitted,
++`sorryAx` reaches it through them only.  Glue (no ingested source, r3 §H1 gap 4); motivated by
++[BV11, Thm 3.1, p015-b001; Def 3.6, p014-b001]. -/
++@[simps (config := { isSimp := false }) gates output]
++def DAGCircuit.layerNAND [NeZero n] (C : DAGCircuit n) : DAGCircuit (n + n) where
++  gates := C.layerGates
++  output := C.layerOutput
++  args_lt := C.layerGates_acyclic
++  output_lt := C.layerOutput_lt
++
++section LayerNAND
++
++variable [NeZero n] (C : DAGCircuit n)
++
++/-- **N7. Semantics on the literal input.** For a NAND-form circuit the layering computes the same
++function on the literals: `C.IsNANDForm → C.layerNAND.eval (litInput x) = C.eval x`.  Glue.
++
++**Proof sketch.** The column invariant, value part, at the output: by induction along the fold,
++every recorded copy `v@k` has on `litInput x` the value of `v` on `x`.  Inputs: `v@0` is input
++vertex `v` (`DAGCircuit.values_getD_input`, `litInput_castAdd`); the twin `NAND(¬xᵥ)` reads
++vertex `n + v` (`litInput_natAdd`) and gives `!!xᵥ = xᵥ` (`DAGGate.eval_of_isNAND`, N1).
++Gates: the old gate is a NAND gate (`DAGCircuit.isNANDForm_iff`, `DAGGate.eval_of_isNAND`) and
++the base and twin read copies with the same values (`DAGCircuit.values_getD_gate`); a fan-in-0
++twin gives `!(!(x₀ && !x₀)) = false`.  A chain link gives `!!b = b`.  Read off at
++`out@D` with `DAGCircuit.eval_eq` and `layerNAND_output`. -/
++theorem DAGCircuit.layerNAND_eval (hC : C.IsNANDForm) (x : Fin n → Bool) :
++    C.layerNAND.eval (litInput x) = C.eval x := by
++  sorry
++
++/-- **N8. Layered.** `C.layerNAND.IsLayered`, with no hypothesis: every new gate reads only copies
++one level down.  Glue.
++
++**Proof sketch.** `isLayered_iff`, then the column invariant, depth part: every recorded copy
++`v@k` has depth exactly `k` (`DAGCircuit.depthAt_gate`, `DAGGate.depth_eq`; the depth of a gate
++does not depend on its kind, so no NAND-form hypothesis is needed), and every gate appended at
++level `k` reads only vertices of depth `k - 1`: the base reads `a@(δ - 1)`, the twin `a@δ` (or
++inputs `0, n` through the inner gate), a chain link `v@(k - 2)` through the inner gate at level
++`k - 1`. -/
++theorem DAGCircuit.layerNAND_isLayered : C.layerNAND.IsLayered := by
++  sorry
++
++/-- **N9. NAND form.** `C.IsNANDForm → C.layerNAND.IsNANDForm`: every gate is emitted as a `¬`
++gate, and the copies keep the old fan-in, so `hC` is needed for fan-in `≤ 2`.  Glue.
++
++**Proof sketch.** `isNANDForm_iff`, `DAGGate.isNAND_iff` and `layerNAND_gates`: induction along the
++fold (`layerFold_eq`, `layerColumn_eq`, `layerChain_succ`); every appended gate is
++`⟨.not, args⟩` with `args` of length `1` (chain, input twin), `2` (`NAND[0, n]`) or the old
++gate's fan-in (base and twin, `List.length_map`), which is at most `2` by `hC`. -/
++theorem DAGCircuit.layerNAND_isNANDForm (hC : C.IsNANDForm) : C.layerNAND.IsNANDForm := by
++  sorry
++
++/-- **N10. Depth is preserved exactly.** `C.layerNAND.depth = C.depth`.  Glue.
++
++**Proof sketch.** `DAGCircuit.depth_eq` and `layerNAND_output`: the output is `out@D` with
++`D = C.depth` (`layerOutput_eq`), and by the column invariant, depth part, it has depth exactly
++`D`. -/
++theorem DAGCircuit.layerNAND_depth : C.layerNAND.depth = C.depth := by
++  sorry
++
++/-- **N11. Size.** `C.layerNAND.size ≤ 2 * n + (2 * C.depth + 1) * C.size`.  Glue.
++
++Constant settled at the statement phase: with `D = C.depth` and `δ = C.depthAt v`, the column of
++an input has `0` gates (`D = 0`) or `1 + 2 (D - 1) = 2D - 1` (twin and chain); the column of a live
++gate has `1` (base) when `δ = D`, otherwise `1 + 1 + 2 (D - δ - 1) = 2 (D - δ)` gates, or
++`2 (D - δ) + 1` for a fan-in-0 gate (two-gate twin); a dead vertex has none.  Every column has at
++most `2D + 1` gates, so `|C.layerGates| ≤ (2D + 1) (n + |C.gates|)`, and the size is
++`(n + n) + |C.layerGates| ≤ 2n + (2D + 1) · C.size`.
++
++**Proof sketch.** `DAGCircuit.size_eq` (both circuits) and `layerNAND_gates`; induction along the
++fold with the column-length part of the invariant (each step appends at most `2D + 1` gates:
++`layerColumn_eq`, `layerChain` appends exactly two gates per link), summed over the
++`n + |C.gates|` old vertices. -/
++theorem DAGCircuit.layerNAND_size_le : C.layerNAND.size ≤ 2 * n + (2 * C.depth + 1) * C.size := by
++  sorry
++
++end LayerNAND
++
++end BoolCircuit

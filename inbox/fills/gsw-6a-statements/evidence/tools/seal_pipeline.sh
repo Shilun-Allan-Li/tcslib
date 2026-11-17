@@ -10,11 +10,13 @@ T=/home/user/work/tools/xr
 mkdir -p $OUT; cd $WT
 SUB=evidence/rule10/probes-$(basename $OUT)
 mkdir -p $SUB
+if [ -z "${SKIP_COLLECT:-}" ]; then  # SKIP_COLLECT=1 reuses <outdir>/collect-lines.log from an earlier run
 python3 -I $T/mkcollect.py $T/CollectTemplate.lean $MODS "$TITLE" $SUB/Collect.lean
 cp $SUB/Collect.lean $OUT/Collect.lean
 rm -f $OUT/collect.log $OUT/collect.log.summary
 python3 -I /home/user/work/tools/check.py $WT $SUB/Collect $OUT/collect.log >/dev/null
 grep -E '^(CAT|ROOT|CLOSURE|MODULE|CAT-COUNT)' $OUT/collect.log > $OUT/collect-lines.log
+fi
 for V in ${VARIANTS:-A B coeA coeB}; do
   case $V in A) S=mkseals_ab.py; E=0;; B) S=mkseals_ab.py; E=1;; coeA) S=mkseals_coe.py; E=0;; coeB) S=mkseals_coe.py; E=1;; esac
   P=Seal${V}_

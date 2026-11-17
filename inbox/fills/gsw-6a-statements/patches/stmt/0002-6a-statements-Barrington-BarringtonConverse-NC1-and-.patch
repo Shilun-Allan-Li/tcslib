@@ -1,0 +1,992 @@
+From 0c39a0649342b36204abb948d0b0bad953bbf62e Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 16 Nov 2026 21:43:45 +0000
+Subject: [PATCH 2/5] 6a statements: Barrington, BarringtonConverse, NC1 and
+ the BranchingPrograms facade
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Barrington's Theorem 1 with Lemmas 1-3 (computable barrington, explicit conjugator),
+Theorem 2 as a composition-tree formula (compTree, toFormula), and the class statements
+(DAG corollary, NC1 ⊆ PBP5, BWBP ⊆ NC1, the Corollary). Targets C9-C25 admitted.
+Written by sub-agent bp; one quotation of [Bar89, Thm 2 proof] made verbatim by the lead.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjAYrSdr2naBsFrkNr
+---
+ TCSlib/Complexity/BranchingPrograms.lean      |  39 ++
+ .../BranchingPrograms/Barrington.lean         | 463 ++++++++++++++++++
+ .../BranchingPrograms/BarringtonConverse.lean | 304 ++++++++++++
+ TCSlib/Complexity/BranchingPrograms/NC1.lean  | 135 +++++
+ 4 files changed, 941 insertions(+)
+ create mode 100644 TCSlib/Complexity/BranchingPrograms.lean
+ create mode 100644 TCSlib/Complexity/BranchingPrograms/Barrington.lean
+ create mode 100644 TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean
+ create mode 100644 TCSlib/Complexity/BranchingPrograms/NC1.lean
+
+diff --git a/TCSlib/Complexity/BranchingPrograms.lean b/TCSlib/Complexity/BranchingPrograms.lean
+new file mode 100644
+index 000000000..8fa0bd2aa
+--- /dev/null
++++ b/TCSlib/Complexity/BranchingPrograms.lean
+@@ -0,0 +1,39 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.BranchingPrograms.Defs
++import TCSlib.Complexity.BranchingPrograms.Eval
++import TCSlib.Complexity.BranchingPrograms.Barrington
++import TCSlib.Complexity.BranchingPrograms.BarringtonConverse
++import TCSlib.Complexity.BranchingPrograms.NC1
++
++/-!
++# Bounded-width branching programs
++
++Branching programs of bounded width in the general model of [Bar89, §1] (instructions produce
++maps `[w] → [w]`; permutation programs are a predicate), the host `BranchingProgram.evalWith`
++that runs a program on state vectors (registry row H18), and both directions of Barrington's
++results, namely formulas of depth `d` to width-5 permutation programs of length `≤ 4^d`, programs
++of length `l` to formulas of depth `O(log l)`, and BWBP = nonuniform NC¹ = PBP₅.
++
++## Contents
++
++- `BranchingPrograms.Defs`: instructions, programs, `yield` in program order, `IsPermutation`,
++  `conj`, `complementLast`, families with accepting sets, the classes `InBWBP` and `InPBP`.
++- `BranchingPrograms.Eval`: the push-form host `evalWith`, `evalWith_rel`, the Boolean semantics.
++- `BranchingPrograms.Barrington`: five-cycle recognition, Lemmas 1–3, the explicit conjugator and
++  the computable construction `barrington` (Thm 1).
++- `BranchingPrograms.BarringtonConverse`: the composition-tree formula `toFormula` (Thm 2).
++- `BranchingPrograms.NC1`: the `DAGCircuit` corollary, NC¹ ⊆ PBP₅, BWBP ⊆ NC¹ and the Corollary.
++
++## References
++
++* [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
++  exactly those languages in NC¹*, J. Comput. System Sci. 38(1):150–164, 1989.
++-/
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
+diff --git a/TCSlib/Complexity/BranchingPrograms/Barrington.lean b/TCSlib/Complexity/BranchingPrograms/Barrington.lean
+new file mode 100644
+index 000000000..3dd230abb
+--- /dev/null
++++ b/TCSlib/Complexity/BranchingPrograms/Barrington.lean
+@@ -0,0 +1,463 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import Mathlib.Data.Fintype.Inv
++import Mathlib.GroupTheory.Perm.Cycle.Type
++import TCSlib.Complexity.BranchingPrograms.Defs
++import TCSlib.Complexity.CircuitComplexity.Basic
++
++/-!
++# Barrington's Theorem 1: formulas to width-5 permutation programs
++
++[Bar89, Thm 1]: a fan-in-2 AND/OR formula of depth `d` over literals is *five-cycle recognized*
++by a width-5 permutation branching program of length at most `4^d`.  The construction
++`BranchingProgram.barrington` is computable (P6-Q13): Lemma 1's conjugator is the explicit
++`θ (σ^k 0) = τ^k 0`, and the OR case goes through Lemma 2 by De Morgan.
++
++## Main definitions
++
++* `BranchingProgram.IsFiveCycle`, `BranchingProgram.FiveCycleRecognizes` — five-cycles and
++  five-cycle recognition [Bar89, §3].
++* `BranchingProgram.sigma1`, `sigma2` — Lemma 3's five-cycles `(12345)`, `(13542)`, 0-based.
++* `BranchingProgram.conjugator` — Lemma 1's explicit conjugator (with `conjugatorIndex`,
++  `conjugatorFun`, `conjugatorTable`).
++* `BranchingProgram.commutatorProgram` — the AND step `B₁ B₂ B₁' B₂'` of Thm 1's proof.
++* `BranchingProgram.barrington` — Barrington's program for a formula and an output.
++
++## Main results
++
++All are statements of the 6a statement phase (targets admitted with `sorry`), except the readers.
++
++* `isFiveCycle_sigma1`, `isFiveCycle_sigma2`, `isFiveCycle_commutator` — Lemma 3 (C9).
++* `conjugator_conj` — the conjugator conjugates (C10).
++* `FiveCycleRecognizes.conj`, `FiveCycleRecognizes.complementLast` — Lemmas 1 and 2 (C11, C12).
++* `barrington_recognizes`, `barrington_length_le`, `barrington_length_pos`,
++  `isPermutation_barrington`, `barrington_yield_zero` — Thm 1 (C13–C16).
++
++## Conventions and deviations
++
++* **Orders.** Instructions follow BV14's order (`map0` on `0`) and programs compose in program
++  order (`Defs.lean`).  Bar89's commutator `σ₁σ₂σ₁⁻¹σ₂⁻¹`, read left to right, is the Mathlib
++  product `sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1`, which is `(13254)` 0-based, i.e. the cycle
++  `0 ↦ 2 ↦ 1 ↦ 4 ↦ 3 ↦ 0`; the right-to-left reading gives `(14352)` instead (r3 §H3.6).
++* **Cycle notation.** `sigma1`, `sigma2` are written `List.formPerm [0, 1, 2, 3, 4]` and
++  `List.formPerm [0, 2, 4, 3, 1]`: Mathlib's `c[…]` notation lives in
++  `Mathlib.GroupTheory.Perm.Cycle.Concrete`, which is not in the pinned Mathlib cache;
++  `c[l]` is `Cycle.formPerm (Cycle.ofList l)`, which is `List.formPerm l` (`Cycle.formPerm_coe`).
++* **Constants and literals.** [Bar89, Thm 1] allows "inputs and negated inputs"; `TreeCircuit`
++  also has constant nodes `node true []`, `node false []` and fan-in-1 nodes, which get their own
++  trivial cases (the ingest's transcription note).  A constant reads variable `0`, hence
++  `[NeZero n]`.
++* **OR gates.** "Appeal to Lemma 2" is De Morgan through `complementLast` (see `barrington`).
++* **Fan-in.** `barrington` is total; at a node of fan-in above 2 it uses the first two children
++  only.  The theorems assume `c.maxFanin ≤ 2`, where nothing is dropped.
++* **Reading.** BV14 reads the state reached from the start state; here the start state is `0`
++  and the accepting reading is `σ 0` (C16).
++
++## References
++
++* [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
++  exactly those languages in NC¹*, J. Comput. System Sci. 38(1):150–164, 1989.
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-based FHE as secure as PKE*, ITCS 2014,
++  pp. 1–12; IACR ePrint 2013/541.
++-/
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++namespace BranchingProgram
++
++open BoolCircuit Equiv
++
++variable {n : ℕ}
++
++/-! ### Five-cycles and five-cycle recognition -/
++
++/-- `σ` is a five-cycle: its cycle type is `{5}`, `σ.cycleType = {5}` (decidable)
++[Bar89, §3, p003-b001]. -/
++def IsFiveCycle (σ : Perm (Fin 5)) : Prop :=
++  σ.cycleType = {5}
++
++/-- Reader of `IsFiveCycle`: `IsFiveCycle σ ↔ σ.cycleType = {5}`. -/
++theorem isFiveCycle_iff (σ : Perm (Fin 5)) : IsFiveCycle σ ↔ σ.cycleType = {5} := Iff.rfl
++
++instance instDecidablePredIsFiveCycle : DecidablePred IsFiveCycle := fun σ =>
++  inferInstanceAs (Decidable (σ.cycleType = {5}))
++
++/-- `B` five-cycle recognizes `A` with output `σ`: `σ` is a five-cycle, and `B.yield x` is `σ` on
++`A` and the identity off `A`,
++`IsFiveCycle σ ∧ ∀ x, (A x → B.yield x = σ) ∧ (¬ A x → B.yield x = id)`
++[Bar89, §3, p003-b001]. -/
++def FiveCycleRecognizes (B : BranchingProgram 5 n) (A : (Fin n → Bool) → Prop)
++    (σ : Perm (Fin 5)) : Prop :=
++  IsFiveCycle σ ∧ ∀ x, (A x → B.yield x = σ) ∧ (¬ A x → B.yield x = id)
++
++/-- Reader of `FiveCycleRecognizes`: `FiveCycleRecognizes B A σ ↔
++IsFiveCycle σ ∧ ∀ x, (A x → B.yield x = σ) ∧ (¬ A x → B.yield x = id)`. -/
++theorem fiveCycleRecognizes_iff (B : BranchingProgram 5 n) (A : (Fin n → Bool) → Prop)
++    (σ : Perm (Fin 5)) :
++    FiveCycleRecognizes B A σ ↔
++      IsFiveCycle σ ∧ ∀ x, (A x → B.yield x = σ) ∧ (¬ A x → B.yield x = id) :=
++  Iff.rfl
++
++/-! ### Lemma 3's five-cycles -/
++
++/-- Bar89's `(12345)`, 0-based: the five-cycle `0 ↦ 1 ↦ 2 ↦ 3 ↦ 4 ↦ 0`, Mathlib's `c[0,1,2,3,4]`,
++written `sigma1 = List.formPerm [0, 1, 2, 3, 4]` [Bar89, Lemma 3, p003-b005]. -/
++def sigma1 : Perm (Fin 5) :=
++  List.formPerm [0, 1, 2, 3, 4]
++
++/-- Reader of `sigma1`: `sigma1 = List.formPerm [0, 1, 2, 3, 4]`. -/
++theorem sigma1_eq : sigma1 = List.formPerm [0, 1, 2, 3, 4] := rfl
++
++/-- Bar89's `(13542)`, 0-based: the five-cycle `0 ↦ 2 ↦ 4 ↦ 3 ↦ 1 ↦ 0`, Mathlib's `c[0,2,4,3,1]`,
++written `sigma2 = List.formPerm [0, 2, 4, 3, 1]` [Bar89, Lemma 3, p003-b005]. -/
++def sigma2 : Perm (Fin 5) :=
++  List.formPerm [0, 2, 4, 3, 1]
++
++/-- Reader of `sigma2`: `sigma2 = List.formPerm [0, 2, 4, 3, 1]`. -/
++theorem sigma2_eq : sigma2 = List.formPerm [0, 2, 4, 3, 1] := rfl
++
++/-! ### Lemma 1's explicit conjugator -/
++
++/-- The position of `i` on the orbit of `0` under `σ`: the first `k < 5` with `(σ ^ k) 0 = i`, or
++`0` if there is none,
++`conjugatorIndex σ i = ((List.range 5).find? fun k => (σ ^ k) 0 = i).getD 0`.  Glue for
++[Bar89, Lemma 1 proof, p003-b003]; for a five-cycle every `i` is found. -/
++def conjugatorIndex (σ : Perm (Fin 5)) (i : Fin 5) : ℕ :=
++  ((List.range 5).find? fun k => (σ ^ k) 0 = i).getD 0
++
++/-- Reader of `conjugatorIndex`:
++`conjugatorIndex σ i = ((List.range 5).find? fun k => (σ ^ k) 0 = i).getD 0`. -/
++theorem conjugatorIndex_eq (σ : Perm (Fin 5)) (i : Fin 5) :
++    conjugatorIndex σ i = ((List.range 5).find? fun k => (σ ^ k) 0 = i).getD 0 := rfl
++
++/-- The conjugating map `σ^k 0 ↦ τ^k 0`: `conjugatorFun σ τ i = (τ ^ conjugatorIndex σ i) 0`
++[Bar89, Lemma 1 proof, p003-b003]. -/
++def conjugatorFun (σ τ : Perm (Fin 5)) (i : Fin 5) : Fin 5 :=
++  (τ ^ conjugatorIndex σ i) 0
++
++/-- Reader of `conjugatorFun`: `conjugatorFun σ τ i = (τ ^ conjugatorIndex σ i) 0`. -/
++theorem conjugatorFun_eq (σ τ : Perm (Fin 5)) (i : Fin 5) :
++    conjugatorFun σ τ i = (τ ^ conjugatorIndex σ i) 0 := rfl
++
++/-- The values of `conjugatorFun σ τ` stored as a list:
++`conjugatorTable σ τ = List.ofFn (conjugatorFun σ τ) = [f 0, f 1, f 2, f 3, f 4]` with
++`f = conjugatorFun σ τ`.  `conjugator` reads its map from this list (`getD_conjugatorTable`), so
++that evaluating a conjugator computes the five values once and later applications are lookups;
++without it, Barrington's nested conjugates cost time exponential in the depth when evaluated.
++Glue for [Bar89, Lemma 1 proof, p003-b003]. -/
++def conjugatorTable (σ τ : Perm (Fin 5)) : List (Fin 5) :=
++  List.ofFn (conjugatorFun σ τ)
++
++/-- Reader of `conjugatorTable`: `conjugatorTable σ τ = List.ofFn (conjugatorFun σ τ)`. -/
++theorem conjugatorTable_eq (σ τ : Perm (Fin 5)) :
++    conjugatorTable σ τ = List.ofFn (conjugatorFun σ τ) := rfl
++
++/-- Looking up the table gives the map: `(conjugatorTable σ τ).getD i 0 = conjugatorFun σ τ i`. -/
++theorem getD_conjugatorTable (σ τ : Perm (Fin 5)) (i : Fin 5) :
++    (conjugatorTable σ τ).getD i 0 = conjugatorFun σ τ i := by
++  rw [conjugatorTable_eq, List.getD_eq_getElem?_getD, List.getElem?_ofFn]
++  simp
++
++/-- The explicit conjugator of two five-cycles: the permutation `θ` with `θ (σ^k 0) = τ^k 0`
++for `k < 5`, i.e. `conjugatorFun σ τ` (read from the list `conjugatorTable σ τ`) packaged with
++its computable inverse (`Fintype.bijInv`) when it is a bijection, and the identity otherwise
++[Bar89, Lemma 1 proof, p003-b003: "there exists some permutation `θ` with `τ = θσθ⁻¹`"].
++Computable (P6-Q13); it is not `Equiv.ofBijective`, whose inverse is noncomputable.  For
++five-cycles `σ`, `τ` the map is a bijection and `θ * σ * θ⁻¹ = τ` (C10). -/
++def conjugator (σ τ : Perm (Fin 5)) : Perm (Fin 5) :=
++  let t := conjugatorTable σ τ
++  if h : Function.Bijective (fun i : Fin 5 => t.getD i 0) then
++    { toFun := fun i => t.getD i 0
++      invFun := Fintype.bijInv h
++      left_inv := Fintype.leftInverse_bijInv h
++      right_inv := Fintype.rightInverse_bijInv h }
++  else 1
++
++/-- The looked-up map is `conjugatorFun σ τ`:
++`(fun i => (conjugatorTable σ τ).getD i 0) = conjugatorFun σ τ`.  Glue. -/
++private theorem getD_conjugatorTable_fun (σ τ : Perm (Fin 5)) :
++    (fun i : Fin 5 => (conjugatorTable σ τ).getD i 0) = conjugatorFun σ τ :=
++  funext (getD_conjugatorTable σ τ)
++
++/-- Reader of `conjugator`, bijective case: if `conjugatorFun σ τ` is a bijection then
++`conjugator σ τ i = conjugatorFun σ τ i`. -/
++theorem conjugator_apply_of_bijective {σ τ : Perm (Fin 5)}
++    (h : Function.Bijective (conjugatorFun σ τ)) (i : Fin 5) :
++    conjugator σ τ i = conjugatorFun σ τ i := by
++  have h' : Function.Bijective (fun i : Fin 5 => (conjugatorTable σ τ).getD i 0) := by
++    rw [getD_conjugatorTable_fun]; exact h
++  unfold conjugator
++  rw [dif_pos h']
++  exact getD_conjugatorTable σ τ i
++
++/-- Reader of `conjugator`, degenerate case: if `conjugatorFun σ τ` is not a bijection then
++`conjugator σ τ = 1`. -/
++theorem conjugator_of_not_bijective {σ τ : Perm (Fin 5)}
++    (h : ¬ Function.Bijective (conjugatorFun σ τ)) : conjugator σ τ = 1 := by
++  have h' : ¬ Function.Bijective (fun i : Fin 5 => (conjugatorTable σ τ).getD i 0) := by
++    rw [getD_conjugatorTable_fun]; exact h
++  unfold conjugator
++  rw [dif_neg h']
++
++/-! ### Barrington's construction -/
++
++/-- The AND step of [Bar89, Thm 1 proof, p004-b002] for output `σ`: with
++`θ = conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ` and `τᵢ = θ * sigmaᵢ * θ⁻¹`,
++`commutatorProgram P₁ P₂ σ = P₁ τ₁ ++ P₂ τ₂ ++ P₁ τ₁⁻¹ ++ P₂ τ₂⁻¹`, Bar89's `B₁B₂B₁'B₂'`.
++If `P₁ ρ`, `P₂ ρ` recognize `A₁`, `A₂` with output `ρ`, it yields `τ₂⁻¹ * τ₁⁻¹ * τ₂ * τ₁ =
++θ * (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) * θ⁻¹ = σ` on `A₁ ∩ A₂` and the identity elsewhere.
++Deviation: Bar89 takes `B₁, B₂` with outputs `σ₁, σ₂` and conjugates the result (Lemma 1); here
++the outputs `τᵢ` are conjugated in advance, which gives output `σ` directly. -/
++def commutatorProgram (P₁ P₂ : Perm (Fin 5) → BranchingProgram 5 n) (σ : Perm (Fin 5)) :
++    BranchingProgram 5 n :=
++  let θ := conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ
++  P₁ (θ * sigma1 * θ⁻¹) ++ P₂ (θ * sigma2 * θ⁻¹) ++ P₁ (θ * sigma1 * θ⁻¹)⁻¹ ++
++    P₂ (θ * sigma2 * θ⁻¹)⁻¹
++
++/-- Reader of `commutatorProgram`: with `θ = conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ`,
++`commutatorProgram P₁ P₂ σ = P₁ (θ * sigma1 * θ⁻¹) ++ P₂ (θ * sigma2 * θ⁻¹) ++
++P₁ (θ * sigma1 * θ⁻¹)⁻¹ ++ P₂ (θ * sigma2 * θ⁻¹)⁻¹`. -/
++theorem commutatorProgram_eq (P₁ P₂ : Perm (Fin 5) → BranchingProgram 5 n) (σ : Perm (Fin 5)) :
++    commutatorProgram P₁ P₂ σ =
++      P₁ (conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ * sigma1 *
++          (conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ)⁻¹) ++
++        P₂ (conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ * sigma2 *
++          (conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ)⁻¹) ++
++        P₁ (conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ * sigma1 *
++          (conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ)⁻¹)⁻¹ ++
++        P₂ (conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ * sigma2 *
++          (conjugator (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) σ)⁻¹)⁻¹ := rfl
++
++/-- Barrington's program for a formula `c` with output `σ` [Bar89, Thm 1 proof, p004-b002;
++BV14, Thm 3.5, p014-b001], by recursion on `c` with the output generalized:
++- the literal `x_i` gives `⟨i, 1, σ⟩` and `¬x_i` gives `⟨i, σ, 1⟩` (BV14's order: `map0` first);
++- the constant `node true []` (true) gives `⟨0, σ, σ⟩`, and `node false []` (false) gives
++  `⟨0, 1, 1⟩`; both read variable `0`, hence `[NeZero n]`;
++- a fan-in-1 node gives its child's program;
++- `node true (c₁ :: c₂ :: _)` (`∧`) gives `commutatorProgram (barrington c₁) (barrington c₂) σ`:
++  the children with outputs `τ₁, τ₂, τ₁⁻¹, τ₂⁻¹`, `τᵢ = θ * sigmaᵢ * θ⁻¹`, where `θ` conjugates the
++  commutator `sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1` to `σ`;
++- `node false (c₁ :: c₂ :: _)` (`∨`) is De Morgan through Lemma 2 (`complementLast`).
++  *Derivation.* If `B` recognizes `A` with output `ρ`, then `B.complementLast ρ` yields
++  `ρ⁻¹ ∘ B(x)`: the identity on `A` and `ρ⁻¹` off it, so it recognizes `¬A` with output `ρ⁻¹`
++  (C12).  Hence `N c μ := (barrington c μ⁻¹).complementLast μ⁻¹` recognizes `¬c` with output `μ`.
++  The AND step on `N c₁`, `N c₂` with output `σ⁻¹` recognizes `¬c₁ ∧ ¬c₂` with output `σ⁻¹`;
++  applying `complementLast σ⁻¹` gives `¬(¬c₁ ∧ ¬c₂) = c₁ ∨ c₂` with output `(σ⁻¹)⁻¹ = σ`.  Lemma 2
++  keeps lengths, so the length stays `4 · 4^(d−1) = 4^d`.
++Computable (P6-Q13); defined by well-founded recursion on `sizeOf c`, so it is evaluated by
++`#eval`, not by the kernel.  At a node of fan-in above 2 only the first two children are used:
++the theorems assume `c.maxFanin ≤ 2`, where nothing is dropped. -/
++def barrington [NeZero n] : TreeCircuit n → Perm (Fin 5) → BranchingProgram 5 n
++  | .lit ⟨i, true⟩, σ => ⟨[Instr.ofPerm i 1 σ]⟩
++  | .lit ⟨i, false⟩, σ => ⟨[Instr.ofPerm i σ 1]⟩
++  | .node true [], σ => ⟨[Instr.ofPerm 0 σ σ]⟩
++  | .node false [], _ => ⟨[Instr.ofPerm 0 1 1]⟩
++  | .node _ [c], σ => barrington c σ
++  | .node true (c₁ :: c₂ :: _), σ =>
++      commutatorProgram (fun ρ => barrington c₁ ρ) (fun ρ => barrington c₂ ρ) σ
++  | .node false (c₁ :: c₂ :: _), σ =>
++      (commutatorProgram (fun ρ => (barrington c₁ ρ⁻¹).complementLast ρ⁻¹)
++        (fun ρ => (barrington c₂ ρ⁻¹).complementLast ρ⁻¹) σ⁻¹).complementLast σ⁻¹
++termination_by c => sizeOf c
++
++section Readers
++
++variable [NeZero n]
++
++/-- Reader of `barrington`, positive literal: `barrington (.lit ⟨i, true⟩) σ =
++⟨[Instr.ofPerm i 1 σ]⟩`. -/
++theorem barrington_lit_true (i : Fin n) (σ : Perm (Fin 5)) :
++    barrington (.lit ⟨i, true⟩) σ = ⟨[Instr.ofPerm i 1 σ]⟩ := by
++  rw [barrington]
++
++/-- Reader of `barrington`, negative literal: `barrington (.lit ⟨i, false⟩) σ =
++⟨[Instr.ofPerm i σ 1]⟩`. -/
++theorem barrington_lit_false (i : Fin n) (σ : Perm (Fin 5)) :
++    barrington (.lit ⟨i, false⟩) σ = ⟨[Instr.ofPerm i σ 1]⟩ := by
++  rw [barrington]
++
++/-- Reader of `barrington`, the constant true: `barrington (.node true []) σ =
++⟨[Instr.ofPerm 0 σ σ]⟩`. -/
++theorem barrington_node_true_nil (σ : Perm (Fin 5)) :
++    barrington (.node true [] : TreeCircuit n) σ = ⟨[Instr.ofPerm 0 σ σ]⟩ := by
++  rw [barrington]
++
++/-- Reader of `barrington`, the constant false: `barrington (.node false []) σ =
++⟨[Instr.ofPerm 0 1 1]⟩`. -/
++theorem barrington_node_false_nil (σ : Perm (Fin 5)) :
++    barrington (.node false [] : TreeCircuit n) σ = ⟨[Instr.ofPerm 0 1 1]⟩ := by
++  rw [barrington]
++
++/-- Reader of `barrington`, fan-in 1: `barrington (.node b [c]) σ = barrington c σ`. -/
++theorem barrington_node_singleton (b : Bool) (c : TreeCircuit n) (σ : Perm (Fin 5)) :
++    barrington (.node b [c]) σ = barrington c σ := by
++  rw [barrington]
++
++/-- Reader of `barrington`, `∧` node: `barrington (.node true (c₁ :: c₂ :: cs)) σ =
++commutatorProgram (fun ρ => barrington c₁ ρ) (fun ρ => barrington c₂ ρ) σ`. -/
++theorem barrington_node_true_cons_cons (c₁ c₂ : TreeCircuit n) (cs : List (TreeCircuit n))
++    (σ : Perm (Fin 5)) :
++    barrington (.node true (c₁ :: c₂ :: cs)) σ =
++      commutatorProgram (fun ρ => barrington c₁ ρ) (fun ρ => barrington c₂ ρ) σ := by
++  rw [barrington]
++
++/-- Reader of `barrington`, `∨` node: `barrington (.node false (c₁ :: c₂ :: cs)) σ =
++(commutatorProgram (fun ρ => (barrington c₁ ρ⁻¹).complementLast ρ⁻¹)
++(fun ρ => (barrington c₂ ρ⁻¹).complementLast ρ⁻¹) σ⁻¹).complementLast σ⁻¹`. -/
++theorem barrington_node_false_cons_cons (c₁ c₂ : TreeCircuit n) (cs : List (TreeCircuit n))
++    (σ : Perm (Fin 5)) :
++    barrington (.node false (c₁ :: c₂ :: cs)) σ =
++      (commutatorProgram (fun ρ => (barrington c₁ ρ⁻¹).complementLast ρ⁻¹)
++        (fun ρ => (barrington c₂ ρ⁻¹).complementLast ρ⁻¹) σ⁻¹).complementLast σ⁻¹ := by
++  rw [barrington]
++
++end Readers
++
++/-! ### Targets C9–C16 -/
++
++/-- **C9.** Lemma 3, first five-cycle: `IsFiveCycle sigma1` (Bar89's `(12345)`)
++[Bar89, Lemma 3, p003-b005].
++
++**Proof sketch.** Kernel `decide` (`isFiveCycle_iff`, `sigma1_eq`; no `native_decide`). -/
++theorem isFiveCycle_sigma1 : IsFiveCycle sigma1 := by
++  sorry
++
++/-- **C9.** Lemma 3, second five-cycle: `IsFiveCycle sigma2` (Bar89's `(13542)`)
++[Bar89, Lemma 3, p003-b005].
++
++**Proof sketch.** Kernel `decide` (`isFiveCycle_iff`, `sigma2_eq`; no `native_decide`). -/
++theorem isFiveCycle_sigma2 : IsFiveCycle sigma2 := by
++  sorry
++
++/-- **C9.** Lemma 3 in program order: the commutator of the two five-cycles is a five-cycle,
++`IsFiveCycle (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1)`; the product is `(13254)` 0-based,
++`List.formPerm [0, 2, 1, 4, 3]` [Bar89, Lemma 3, p003-b005: "`(12345)(13542)(54321)(24531) =
++(13254)`"].
++Deviation: Bar89's product is read left to right; the Mathlib product applies its right factor
++first, so Bar89's `σ₁σ₂σ₁⁻¹σ₂⁻¹` is `sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1` (r3 §H3.6).
++
++**Proof sketch.** Kernel `decide` (`isFiveCycle_iff`, `sigma1_eq`, `sigma2_eq`), as
++`decide +kernel`: the elaborator's pre-evaluation of plain `decide` hits `maxRecDepth` here
++(probe P2). -/
++theorem isFiveCycle_commutator : IsFiveCycle (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) := by
++  sorry
++
++/-- **C10.** The explicit conjugator conjugates one five-cycle to the other:
++`IsFiveCycle σ → IsFiveCycle τ → conjugator σ τ * σ * (conjugator σ τ)⁻¹ = τ`
++[Bar89, Lemma 1 proof, p003-b003].  Checked by computation for all 24 × 24 pairs (r3 §H3.6).
++
++**Proof sketch.** Reduce to a finite check: every five-cycle is one of the 24 explicit
++`List.formPerm [0, a, b, c, d]` (`∀ σ, IsFiveCycle σ → σ ∈ l`, kernel `decide +kernel`, about
++15 s), and C10 holds on the 24 × 24 explicit pairs (kernel `decide +kernel`, about 40 s and
++5.5 GB; probes P3, P3b).  Alternatively argue: for a five-cycle `σ`, `k ↦ (σ ^ k) 0` is a
++bijection from `range 5` onto `Fin 5` (`Equiv.Perm.IsCycle`, `cycleType` `{5}`), so
++`conjugatorIndex σ (σ^k 0) = k`
++(`conjugatorIndex_eq`, `List.find?`), `conjugatorFun σ τ (σ^k 0) = τ^k 0` (`conjugatorFun_eq`)
++and it is a bijection; by `conjugator_apply_of_bijective`, `θ (σ (σ^k 0)) = τ^(k+1) 0 =
++τ (θ (σ^k 0))`, i.e. `θ * σ = τ * θ` on the orbit of `0`, which is everything. -/
++theorem conjugator_conj {σ τ : Perm (Fin 5)} (hσ : IsFiveCycle σ) (hτ : IsFiveCycle τ) :
++    conjugator σ τ * σ * (conjugator σ τ)⁻¹ = τ := by
++  sorry
++
++/-- **C11.** **Lemma 1**: change the output to any five-cycle at the same length: if `B` five-cycle
++recognizes `A` with output `σ` and `τ` is a five-cycle, then `B.conj (conjugator σ τ)` five-cycle
++recognizes `A` with output `τ` [Bar89, Lemma 1, p003-b003].
++
++**Proof sketch.** `fiveCycleRecognizes_iff`; the yield of the conjugate is `θ ∘ B.yield x ∘ θ⁻¹`
++(`yield_conj`), which is `θ * σ * θ⁻¹ = τ` on `A` (`conjugator_conj`) and `θ ∘ θ⁻¹ = id` off `A`
++(`Equiv.self_comp_symm`).  The length is kept by `length_conj`. -/
++theorem FiveCycleRecognizes.conj {B : BranchingProgram 5 n} {A : (Fin n → Bool) → Prop}
++    {σ τ : Perm (Fin 5)} (h : FiveCycleRecognizes B A σ) (hτ : IsFiveCycle τ) :
++    FiveCycleRecognizes (B.conj (conjugator σ τ)) A τ := by
++  sorry
++
++/-- **C12.** **Lemma 2**: the complement, at the same length, with output `σ⁻¹`: if `B` (nonempty)
++five-cycle recognizes `A` with output `σ`, then `B.complementLast σ` five-cycle recognizes
++`fun x => ¬ A x` with output `σ⁻¹` [Bar89, Lemma 2, p003-b004].
++
++**Proof sketch.** `fiveCycleRecognizes_iff` and `yield_complementLast` (using `hB`): the new
++yield is `σ⁻¹ ∘ B.yield x`, which is `σ⁻¹ ∘ σ = id` on `A` (`Equiv.symm_comp_self`) and `σ⁻¹` off
++`A`; `σ⁻¹` is a five-cycle (`Equiv.Perm.cycleType_inv`). -/
++theorem FiveCycleRecognizes.complementLast {B : BranchingProgram 5 n}
++    {A : (Fin n → Bool) → Prop} {σ : Perm (Fin 5)} (h : FiveCycleRecognizes B A σ)
++    (hB : 0 < B.length) :
++    FiveCycleRecognizes (B.complementLast σ) (fun x => ¬ A x) σ⁻¹ := by
++  sorry
++
++/-- **C13.** **Barrington's Theorem 1**, recognition: for a fan-in-2 formula `c` and a five-cycle
++`σ`, `barrington c σ` five-cycle recognizes `{x | c.eval x = true}` with output `σ`
++[Bar89, Thm 1, p003-b002, proof p004-b002; BV14, Thm 3.5, p014-b001].
++Deviations: formulas over literals with constant and fan-in-1 nodes (each handled directly); the
++OR case by De Morgan through Lemma 2; BV14 states the theorem for NAND circuits.
++
++**Proof sketch.** Induction on `c` (`TreeCircuit.ind`), generalizing `σ`; `maxFanin_node` and
++`maxFanin_le_maxFaninL` give each child fan-in `≤ 2` and the child list length `≤ 2`.
++* Literals and constants: one instruction (`barrington_lit_true`, …, `yield_eq`,
++  `Instr.eval_eq`, `Instr.ofPerm_map0`/`_map1`); the values by `TreeCircuit.eval_lit`
++  and `eval_node_true_iff`/`eval_node_false_iff`.
++* Fan-in 1: `barrington_node_singleton` and `eval_node_true`/`eval_node_false` on `[c]`.
++* `∧`: `barrington_node_true_cons_cons`, `commutatorProgram_eq`, `yield_append` (three times).
++  The outputs `τᵢ` are five-cycles (`Equiv.Perm.cycleType_conj`, `cycleType_inv`), so the
++  induction hypothesis applies to each block; on `c₁ ∧ c₂` the yield is
++  `θ * (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) * θ⁻¹ = σ` (`isFiveCycle_commutator`,
++  `conjugator_conj`), and off it two blocks cancel.
++* `∨`: `barrington_node_false_cons_cons`; C12 (with `barrington_length_pos`) turns each child
++  into a recognizer of its negation, the `∧` case gives `¬c₁ ∧ ¬c₂` with output `σ⁻¹`, and C12
++  again gives `c₁ ∨ c₂` with output `σ` (`inv_inv`). -/
++theorem barrington_recognizes [NeZero n] (c : TreeCircuit n) (hc : c.maxFanin ≤ 2)
++    {σ : Perm (Fin 5)} (hσ : IsFiveCycle σ) :
++    FiveCycleRecognizes (barrington c σ) (fun x => c.eval x = true) σ := by
++  sorry
++
++/-- **C14.** **Theorem 1**, length: `(barrington c σ).length ≤ 4 ^ c.depth` for a fan-in-2
++formula [Bar89, Thm 1, p003-b002: "of length at most `4^d`"].
++
++**Proof sketch.** Induction on `c` (`TreeCircuit.ind`) generalizing `σ`.  Leaves have length 1
++and depth 0 or 1 (`depth_node`, `maxDepth_nil`).  Fan-in 1 keeps the length and adds one level.
++`∧`: four blocks (`commutatorProgram_eq`, `length_append`) each of length `≤ 4 ^ maxDepth`
++(`depth_le_maxDepth`), so `≤ 4 · 4 ^ maxDepth = 4 ^ (1 + maxDepth) = 4 ^ depth` (`depth_node`).
++`∨`: the same, `complementLast` keeping lengths (`length_complementLast`). -/
++theorem barrington_length_le [NeZero n] {c : TreeCircuit n} (hc : c.maxFanin ≤ 2)
++    (σ : Perm (Fin 5)) : (barrington c σ).length ≤ 4 ^ c.depth := by
++  sorry
++
++/-- **C14.** Every Barrington program is nonempty: `0 < (barrington c σ).length`.  Glue for
++Lemma 2 (`yield_complementLast` needs a last instruction).
++
++**Proof sketch.** Induction on `c` (`TreeCircuit.ind`) generalizing `σ`, by the readers
++`barrington_lit_true`, …: leaves have one instruction; fan-in 1 is the child; the `∧` and `∨`
++programs contain a child's program (`commutatorProgram_eq`, `length_append`,
++`length_complementLast`). -/
++theorem barrington_length_pos [NeZero n] (c : TreeCircuit n) (σ : Perm (Fin 5)) :
++    0 < (barrington c σ).length := by
++  sorry
++
++/-- **C15.** Every Barrington program is a permutation program: `(barrington c σ).IsPermutation`.
++Glue; [Bar89, Thm 1, p003-b002]: "a 5-PBP".
++
++**Proof sketch.** Induction on `c` (`TreeCircuit.ind`) generalizing `σ`: leaves are
++`Instr.ofPerm` instructions (`Instr.isPermutation_ofPerm`, `isPermutation_iff`); the `∧` and `∨`
++programs are closed under `IsPermutation.append` and `IsPermutation.complementLast`
++(`commutatorProgram_eq`). -/
++theorem isPermutation_barrington [NeZero n] (c : TreeCircuit n) (σ : Perm (Fin 5)) :
++    (barrington c σ).IsPermutation := by
++  sorry
++
++/-- **C16.** BV14's reading from start state `0`: for a fan-in-2 formula and a five-cycle `σ`,
++`(barrington c σ).yield x 0 = if c.eval x then σ 0 else 0` [BV14, Thm 3.5, p014-b001; §3.3,
++p013-b002].
++Deviation: BV14 reads coordinate `1` of a 1-based state; here the start state is `0` and an
++accepted input ends at `σ 0 ≠ 0` (r3 §H3.7).
++
++**Proof sketch.** `barrington_recognizes` and `fiveCycleRecognizes_iff`; split on `c.eval x`. -/
++theorem barrington_yield_zero [NeZero n] {c : TreeCircuit n} (hc : c.maxFanin ≤ 2)
++    {σ : Perm (Fin 5)} (hσ : IsFiveCycle σ) (x : Fin n → Bool) :
++    (barrington c σ).yield x 0 = if c.eval x then σ 0 else 0 := by
++  sorry
++
++end BranchingProgram
+diff --git a/TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean b/TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean
+new file mode 100644
+index 000000000..af7b15bbb
+--- /dev/null
++++ b/TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean
+@@ -0,0 +1,304 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import Mathlib.Data.Finset.Dedup
++import Mathlib.Data.Fintype.Defs
++import Mathlib.Data.List.FinRange
++import TCSlib.Complexity.BranchingPrograms.Defs
++import TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
++
++/-!
++# Barrington's Theorem 2: branching programs to logarithmic-depth formulas
++
++[Bar89, Thm 2]: a width-`w` branching program of length `l` is recognized by a fan-in-2 circuit
++of depth `O(log l)`, the constant depending on `w`.  The circuit is built here as a fan-in-2
++formula (`BoolCircuit.TreeCircuit`, P6-Q18) that mirrors the three sections of Bar89's proof:
++
++1. *a constant-depth section per instruction* (`Instr.wire`): a map `f : [w] → [w]` is
++   represented by the `w²` wires "`f(i) = j`", and for one instruction each wire is `true`,
++   `false`, `x_var` or `¬x_var`;
++2. *a binary tree of composition circuits* (`wireComp`, `compTree`): the wire
++   `(g ∘ f)(i) = k` is `⋁_j (f(i) = j ∧ g(j) = k)`, a balanced fan-in-2 `∨`
++   (`BoolCircuit.TreeCircuit.balanced`); the instruction list is split at its midpoint;
++3. *a constant-depth acceptance section* (`toFormula`): `⋁_{f ∈ F} ⋀_i (B(x)(i) = f(i))`.
++
++## Main definitions
++
++* `BranchingProgram.Instr.wire`, `wireComp`, `compTree` — the sections 1 and 2.
++* `BranchingProgram.toFormula` — the whole formula (`noncomputable`: it enumerates `F`).
++* `BranchingProgram.topDepth` — the depth constant of the acceptance section.
++
++## Main results
++
++All are statements of the 6a statement phase (targets admitted with `sorry`), except the readers.
++
++* `Instr.wire_eval`, `Instr.depth_wire_le`, `Instr.maxFanin_wire_le` (C17).
++* `wireComp_eval`, `depth_wireComp_le` (C18).
++* `compTree_eval`, `depth_compTree_le`, `maxFanin_compTree_le` (C19).
++* `toFormula_eval` (C20), `depth_toFormula_le`, `maxFanin_toFormula_le` (C21).
++
++## Deviations
++
++* Bar89 builds a circuit; here it is a formula (fan-out one), of size `l^{O(log w)}`, polynomial
++  for fixed `w` (`TreeCircuit.size_succ_le_two_pow`), as ruled by P6-Q18.  It reaches the
++  `DAGCircuit` classes through `Language.InTreeNC.inNC` (`NC1.lean`).
++* The depth constants, left implicit by Bar89, are explicit: `(⌈log₂ w⌉ + 2)·⌈log₂ l⌉ + 1` for the
++  composition tree and `topDepth w = w·⌈log₂ w⌉ + ⌈log₂ w⌉ + 3` on top.
++
++## References
++
++* [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
++  exactly those languages in NC¹*, J. Comput. System Sci. 38(1):150–164, 1989.
++-/
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++namespace BranchingProgram
++
++open BoolCircuit
++
++variable {w n : ℕ}
++
++/-! ### The constant-depth section per instruction -/
++
++/-- The wire "`ι` sends `i` to `j`" as a formula of depth at most 1: `true` (`node true []`) if
++both maps send `i` to `j`, the literal `¬x_var` if only `map0` does, `x_var` if only `map1` does,
++and `false` (`node false []`) if neither,
++`ι.wire i j = if ι.map0 i = j then (if ι.map1 i = j then node true [] else lit ⟨ι.var, false⟩)
++else (if ι.map1 i = j then lit ⟨ι.var, true⟩ else node false [])`
++[Bar89, Thm 2 proof, p004-b003: "a constant-depth section to find the function yielded by a each
++instruction", sic]. -/
++def Instr.wire (ι : Instr w n) (i j : Fin w) : TreeCircuit n :=
++  if ι.map0 i = j then
++    if ι.map1 i = j then .node true [] else .lit ⟨ι.var, false⟩
++  else
++    if ι.map1 i = j then .lit ⟨ι.var, true⟩ else .node false []
++
++/-- Reader of `Instr.wire`: `ι.wire i j = if ι.map0 i = j then (if ι.map1 i = j then
++node true [] else lit ⟨ι.var, false⟩) else (if ι.map1 i = j then lit ⟨ι.var, true⟩ else
++node false [])`. -/
++theorem Instr.wire_eq (ι : Instr w n) (i j : Fin w) :
++    ι.wire i j =
++      if ι.map0 i = j then
++        (if ι.map1 i = j then .node true [] else .lit ⟨ι.var, false⟩)
++      else
++        (if ι.map1 i = j then .lit ⟨ι.var, true⟩ else .node false []) := rfl
++
++/-! ### Composition circuits and the composition tree -/
++
++/-- One composition circuit: from the wires `F i j` ("`f(i) = j`") and `G j k` ("`g(j) = k`"),
++the wire "`(g ∘ f)(i) = k`" is the balanced fan-in-2 disjunction
++`wireComp F G i k = balanced false [node true [F i j, G j k] | j ∈ finRange w]`
++[Bar89, Thm 2 proof, p004-b003: "may be computed by a fixed circuit whose size depends only on
++`w`"]. -/
++def wireComp (F G : Fin w → Fin w → TreeCircuit n) : Fin w → Fin w → TreeCircuit n :=
++  fun i k => TreeCircuit.balanced false ((List.finRange w).map fun j => .node true [F i j, G j k])
++
++/-- Reader of `wireComp`:
++`wireComp F G i k = balanced false ((finRange w).map fun j => node true [F i j, G j k])`. -/
++theorem wireComp_eq (F G : Fin w → Fin w → TreeCircuit n) (i k : Fin w) :
++    wireComp F G i k =
++      TreeCircuit.balanced false ((List.finRange w).map fun j => .node true [F i j, G j k]) :=
++  rfl
++
++/-- The binary tree of composition circuits over an instruction list, split at the midpoint: the
++empty list gives the identity wires (`node true []` on the diagonal, `node false []` off it), one
++instruction gives its wires, and a list `l` of length at least 2 gives
++`wireComp (compTree (l.take (|l| / 2))) (compTree (l.drop (|l| / 2)))` (the first half acts
++first) [Bar89, Thm 2 proof, p004-b003: "a binary tree of composition circuits"].  Defined by
++well-founded recursion on the length. -/
++def compTree : List (Instr w n) → Fin w → Fin w → TreeCircuit n
++  | [] => fun i j => if i = j then .node true [] else .node false []
++  | [ι] => ι.wire
++  | ι₁ :: ι₂ :: l =>
++      wireComp (compTree ((ι₁ :: ι₂ :: l).take ((ι₁ :: ι₂ :: l).length / 2)))
++        (compTree ((ι₁ :: ι₂ :: l).drop ((ι₁ :: ι₂ :: l).length / 2)))
++termination_by l => l.length
++decreasing_by
++  all_goals simp only [List.length_take, List.length_drop, List.length_cons]
++  all_goals omega
++
++/-- Reader of `compTree`, empty list: `compTree [] i j = if i = j then node true [] else
++node false []`. -/
++theorem compTree_nil (i j : Fin w) :
++    compTree ([] : List (Instr w n)) i j =
++      if i = j then .node true [] else .node false [] := by
++  rw [compTree]
++
++/-- Reader of `compTree`, one instruction: `compTree [ι] = ι.wire`. -/
++theorem compTree_singleton (ι : Instr w n) : compTree [ι] = ι.wire := by
++  rw [compTree]
++
++/-- Reader of `compTree`, at least two instructions: with `l' = ι₁ :: ι₂ :: l`,
++`compTree l' = wireComp (compTree (l'.take (l'.length / 2))) (compTree (l'.drop (l'.length / 2)))`.
++-/
++theorem compTree_cons_cons (ι₁ ι₂ : Instr w n) (l : List (Instr w n)) :
++    compTree (ι₁ :: ι₂ :: l) =
++      wireComp (compTree ((ι₁ :: ι₂ :: l).take ((ι₁ :: ι₂ :: l).length / 2)))
++        (compTree ((ι₁ :: ι₂ :: l).drop ((ι₁ :: ι₂ :: l).length / 2))) := by
++  rw [compTree]
++
++/-! ### The acceptance section -/
++
++/-- **Barrington's Theorem 2, one program** [Bar89, Thm 2, p004-b003]: the formula
++`⋁_{f ∈ F} ⋀_i compTree B.instrs i (f i)` (the constant-depth acceptance section on top of the
++composition tree), `B.toFormula F = balanced false [balanced true [compTree B.instrs i (f i) |
++i ∈ finRange w] | f ∈ F.toList]`; it decides `B.yield x ∈ F` (C20).
++Deviation: built as a formula (fan-out one), not a DAG (P6-Q18); `noncomputable`, because it
++enumerates the `Finset` `F` (`Finset.toList`). -/
++noncomputable def toFormula (B : BranchingProgram w n) (F : Finset (Fin w → Fin w)) :
++    TreeCircuit n :=
++  TreeCircuit.balanced false (F.toList.map fun f =>
++    TreeCircuit.balanced true ((List.finRange w).map fun i => compTree B.instrs i (f i)))
++
++/-- Reader of `toFormula`: `B.toFormula F = balanced false (F.toList.map fun f =>
++balanced true ((finRange w).map fun i => compTree B.instrs i (f i)))`. -/
++theorem toFormula_eq (B : BranchingProgram w n) (F : Finset (Fin w → Fin w)) :
++    B.toFormula F = TreeCircuit.balanced false (F.toList.map fun f =>
++      TreeCircuit.balanced true ((List.finRange w).map fun i => compTree B.instrs i (f i))) :=
++  rfl
++
++/-- The depth of the acceptance section for width `w`:
++`topDepth w = w * Nat.clog 2 w + Nat.clog 2 w + 3` (one level for the leaves of the composition
++tree, `⌈log₂ w⌉ + 1` for the `⋀_i`, `⌈log₂ |F|⌉ + 1 ≤ w·⌈log₂ w⌉ + 1` for the `⋁_f`, since
++`|F| ≤ w^w`) [Bar89, Thm 2 proof, p004-b003: "a constant-depth section at the top"]. -/
++def topDepth (w : ℕ) : ℕ :=
++  w * Nat.clog 2 w + Nat.clog 2 w + 3
++
++/-- Reader of `topDepth`: `topDepth w = w * Nat.clog 2 w + Nat.clog 2 w + 3`. -/
++theorem topDepth_eq (w : ℕ) : topDepth w = w * Nat.clog 2 w + Nat.clog 2 w + 3 := rfl
++
++/-! ### Targets C17–C21 -/
++
++/-- **C17.** The wire of one instruction is correct: `(ι.wire i j).eval x =
++decide (ι.eval x i = j)` [Bar89, Thm 2 proof, p004-b003].
++
++**Proof sketch.** `Instr.wire_eq` and `Instr.eval_eq`; split on `ι.map0 i = j`, `ι.map1 i = j` and
++`x ι.var`.  The constants evaluate by `TreeCircuit.eval_node_true_iff`/`eval_node_false_iff` on
++`[]`, the literals by `TreeCircuit.eval_lit` and a reader of `Lit.eval` (missing at the base;
++proposed `Lit.eval_eq : l.eval x = if l.sign then x l.idx else !x l.idx`). -/
++theorem Instr.wire_eval (ι : Instr w n) (i j : Fin w) (x : Fin n → Bool) :
++    (ι.wire i j).eval x = decide (ι.eval x i = j) := by
++  sorry
++
++/-- **C17.** The wire of one instruction has depth at most 1: `(ι.wire i j).depth ≤ 1`
++[Bar89, Thm 2 proof, p004-b003: "constant-depth section"].
++
++**Proof sketch.** `Instr.wire_eq`; an empty gate has depth 1 (`TreeCircuit.depth_node`,
++`maxDepth_nil`) and a literal depth 0 (reader `TreeCircuit.depth_lit`, missing at the base and
++proposed). -/
++theorem Instr.depth_wire_le (ι : Instr w n) (i j : Fin w) : (ι.wire i j).depth ≤ 1 := by
++  sorry
++
++/-- **C17.** The wire of one instruction has fan-in at most 2: `(ι.wire i j).maxFanin ≤ 2`.  Glue.
++
++**Proof sketch.** `Instr.wire_eq`; an empty gate has fan-in 0 (`TreeCircuit.maxFanin_node`,
++`maxFaninL_nil`) and a literal fan-in 0 (reader `TreeCircuit.maxFanin_lit`, missing at the base
++and proposed). -/
++theorem Instr.maxFanin_wire_le (ι : Instr w n) (i j : Fin w) : (ι.wire i j).maxFanin ≤ 2 := by
++  sorry
++
++/-- **C18.** One composition circuit composes: if the wires `F` represent `f x` and the wires `G`
++represent `g x`, then `(wireComp F G i k).eval x = decide (g x (f x i) = k)`
++[Bar89, Thm 2 proof, p004-b003].
++
++**Proof sketch.** `wireComp_eq`, `TreeCircuit.balanced_eval`, `eval_node_false` (an `any` over
++`finRange w`) and `eval_node_true` on the pairs; by `hF`, `hG` the pair `j` is true iff
++`f x i = j ∧ g x j = k`, and exactly `j = f x i` can be (`List.mem_finRange`). -/
++theorem wireComp_eval {F G : Fin w → Fin w → TreeCircuit n}
++    {f g : (Fin n → Bool) → Fin w → Fin w}
++    (hF : ∀ x i j, (F i j).eval x = decide (f x i = j))
++    (hG : ∀ x i j, (G i j).eval x = decide (g x i = j)) (i k : Fin w) (x : Fin n → Bool) :
++    (wireComp F G i k).eval x = decide (g x (f x i) = k) := by
++  sorry
++
++/-- **C18.** A composition circuit adds `⌈log₂ w⌉ + 2` levels: if all wires of `F` and `G` have
++depth `≤ d`, then `(wireComp F G i k).depth ≤ d + Nat.clog 2 w + 2` [Bar89, Thm 2 proof, p004-b003].
++
++**Proof sketch.** `wireComp_eq` and `TreeCircuit.depth_balanced_le`: each `node true [F i j, G j k]`
++has depth `≤ d + 1` (`depth_node`, `maxDepth_cons`), the list has length `w`
++(`List.length_map`, `List.length_finRange`), so the depth is `≤ (d + 1) + ⌈log₂ w⌉ + 1`. -/
++theorem depth_wireComp_le {F G : Fin w → Fin w → TreeCircuit n} {d : ℕ}
++    (hF : ∀ i j, (F i j).depth ≤ d) (hG : ∀ i j, (G i j).depth ≤ d) (i k : Fin w) :
++    (wireComp F G i k).depth ≤ d + Nat.clog 2 w + 2 := by
++  sorry
++
++/-- **C19.** The composition tree computes the yield: `(compTree B.instrs i j).eval x =
++decide (B.yield x i = j)` [Bar89, Thm 2 proof, p004-b003].
++
++**Proof sketch.** Strong induction on the length of an instruction list `l`, for the yield of
++`⟨l⟩`: the empty list by `compTree_nil` and `yield_nil`; one instruction by `compTree_singleton`,
++`Instr.wire_eval` and `yield_eq`; otherwise `compTree_cons_cons`, `wireComp_eval` with the
++induction hypothesis for both halves, and `yield_append` on `l = l.take m ++ l.drop m`
++(`List.take_append_drop`, `append_instrs`). -/
++theorem compTree_eval (B : BranchingProgram w n) (i j : Fin w) (x : Fin n → Bool) :
++    (compTree B.instrs i j).eval x = decide (B.yield x i = j) := by
++  sorry
++
++/-- **C19.** The composition tree has depth `O(log l)`:
++`(compTree B.instrs i j).depth ≤ (Nat.clog 2 w + 2) * Nat.clog 2 B.length + 1`
++[Bar89, Thm 2 proof, p004-b003].
++Constant (fixed at the statement phase): the leaves have depth `≤ 1` (identity wires and
++`Instr.wire`), and a list of length `l ≥ 2` splits into halves of lengths `⌊l/2⌋ ≤ ⌈l/2⌉` with
++`⌈log₂ ⌈l/2⌉⌉ = ⌈log₂ l⌉ − 1`, each split adding `⌈log₂ w⌉ + 2` levels (C18).
++
++**Proof sketch.** Strong induction on the length `l` of the instruction list (with `length_eq`):
++`compTree_nil`, `compTree_singleton` with `Instr.depth_wire_le` give depth `≤ 1`; for `l ≥ 2`,
++`compTree_cons_cons` and `depth_wireComp_le` with the induction hypothesis for both halves
++(`List.length_take`, `List.length_drop`), `Nat.clog_mono_right` and
++`Nat.clog_of_two_le` (`⌈log₂ l⌉ = ⌈log₂ ⌈l/2⌉⌉ + 1`). -/
++theorem depth_compTree_le (B : BranchingProgram w n) (i j : Fin w) :
++    (compTree B.instrs i j).depth ≤ (Nat.clog 2 w + 2) * Nat.clog 2 B.length + 1 := by
++  sorry
++
++/-- **C19.** The composition tree has fan-in at most 2: `(compTree B.instrs i j).maxFanin ≤ 2`.
++Glue.
++
++**Proof sketch.** Strong induction on the length as for `compTree_eval`: the leaves by
++`compTree_nil` (`maxFanin_node`) and `Instr.maxFanin_wire_le`; a composition circuit by
++`wireComp_eq`, `TreeCircuit.maxFanin_balanced_le` and `maxFanin_node` on the binary `∧` nodes. -/
++theorem maxFanin_compTree_le (B : BranchingProgram w n) (i j : Fin w) :
++    (compTree B.instrs i j).maxFanin ≤ 2 := by
++  sorry
++
++/-- **C20.** Barrington's Theorem 2 formula decides acceptance:
++`(B.toFormula F).eval x = decide (B.yield x ∈ F)` [Bar89, Thm 2, p004-b003].
++
++**Proof sketch.** `toFormula_eq`, `TreeCircuit.balanced_eval`, `eval_node_false` (an `any` over
++`F.toList`, `Finset.mem_toList`) and `eval_node_true` (an `all` over `finRange w`); by
++`compTree_eval` the conjunction for `f` holds iff `∀ i, B.yield x i = f i`, i.e.
++`B.yield x = f` (`funext`). -/
++theorem toFormula_eval (B : BranchingProgram w n) (F : Finset (Fin w → Fin w))
++    (x : Fin n → Bool) : (B.toFormula F).eval x = decide (B.yield x ∈ F) := by
++  sorry
++
++/-- **C21.** Depth `O(log l)` with a constant depending on `w`:
++`(B.toFormula F).depth ≤ (Nat.clog 2 w + 2) * Nat.clog 2 B.length + topDepth w`
++[Bar89, Thm 2, p004-b003: "depth `O(log l)`, where the constant depends on `w`"].
++Constant (fixed at the statement phase): `topDepth w = w·⌈log₂ w⌉ + ⌈log₂ w⌉ + 3`; r3's draft
++`+ 4` is one more than needed.
++
++**Proof sketch.** `toFormula_eq` and `TreeCircuit.depth_balanced_le` twice.  The inner `⋀_i` over
++`w` wires of depth `≤ T = (⌈log₂ w⌉ + 2)·⌈log₂ l⌉ + 1` (`depth_compTree_le`) has depth
++`≤ T + ⌈log₂ w⌉ + 1`; the outer `⋁_f` over `|F| ≤ w^w` terms (`Finset.length_toList`,
++`Finset.card_le_univ`, `Fintype.card_fun`) adds `⌈log₂ |F|⌉ + 1 ≤ w·⌈log₂ w⌉ + 1`
++(`Nat.clog_mono_right`, `Nat.clog_le_of_le_pow` with `w^w ≤ (2^⌈log₂ w⌉)^w`, `Nat.le_pow_clog`);
++`topDepth_eq` closes the arithmetic. -/
++theorem depth_toFormula_le (B : BranchingProgram w n) (F : Finset (Fin w → Fin w)) :
++    (B.toFormula F).depth ≤ (Nat.clog 2 w + 2) * Nat.clog 2 B.length + topDepth w := by
++  sorry
++
++/-- **C21.** Barrington's Theorem 2 formula has fan-in at most 2: `(B.toFormula F).maxFanin ≤ 2`
++[Bar89, Thm 2, p004-b003: "a fan-in 2 circuit"].
++
++**Proof sketch.** `toFormula_eq`, `TreeCircuit.maxFanin_balanced_le` twice, and
++`maxFanin_compTree_le` for the leaves (`maxFaninL` of a mapped list). -/
++theorem maxFanin_toFormula_le (B : BranchingProgram w n) (F : Finset (Fin w → Fin w)) :
++    (B.toFormula F).maxFanin ≤ 2 := by
++  sorry
++
++end BranchingProgram
+diff --git a/TCSlib/Complexity/BranchingPrograms/NC1.lean b/TCSlib/Complexity/BranchingPrograms/NC1.lean
+new file mode 100644
+index 000000000..b0140ad0f
+--- /dev/null
++++ b/TCSlib/Complexity/BranchingPrograms/NC1.lean
+@@ -0,0 +1,135 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.BranchingPrograms.Barrington
++import TCSlib.Complexity.BranchingPrograms.BarringtonConverse
++import TCSlib.Complexity.CircuitComplexity.NCAC
++import TCSlib.Complexity.CircuitComplexity.TreeDAG
++
++/-!
++# Bounded-width branching programs and NC¹
++
++The class-level consequences of Barrington's two theorems [Bar89, §3]: the `DAGCircuit` form of
++Theorem 1 (length `≤ 4^depth`), NC¹ ⊆ polynomial-length width-5 permutation programs, BWBP ⊆ NC¹
++(Theorem 2 for families), and Barrington's Corollary BWBP = nonuniform NC¹ = PBP₅.  The classes
++`Language.InBWBP`, `Language.InPBP` are defined in `Defs.lean`; `Language.InNC` is the book's
++`DAGCircuit` class (`NCAC.lean`).  Both directions go through the formula class
++`Language.InTreeNC 1` (`Language.inNC_one_iff`).
++
++## Main definitions
++
++None: the classes are defined in `Defs.lean`, the constructions in `Barrington.lean` and
++`BarringtonConverse.lean`.
++
++## Main results
++
++All are statements of the 6a statement phase (targets admitted with `sorry`).
++
++* `BranchingProgram.exists_fiveCycleRecognizes_of_dagCircuit` — Thm 1 for `DAGCircuit`s (C22).
++* `Language.InNC.inPBP_five` — NC¹ ⊆ PBP₅ (C23).
++* `Language.InBWBP.inNC_one` — BWBP ⊆ NC¹ (C24).
++* `Language.inNC_one_iff_inBWBP`, `Language.inNC_one_iff_inPBP_five` — the Corollary (C25).
++
++## Deviations
++
++* Inputs of length `0` have no variable for Barrington's constants to read (`[NeZero n]`); the
++  family statements handle `n = 0` through the accepting set (the empty program yields `id`, and
++  `F_0` is `{id}` or `∅` according to whether `[] ∈ L`).
++* The circuit of Theorem 2 is a formula (P6-Q18); it reaches `Language.InNC 1` through
++  `Language.InTreeNC.inNC`.
++
++## References
++
++* [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
++  exactly those languages in NC¹*, J. Comput. System Sci. 38(1):150–164, 1989.
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-based FHE as secure as PKE*, ITCS 2014,
++  pp. 1–12; IACR ePrint 2013/541.
++-/
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++namespace BranchingProgram
++
++open BoolCircuit Equiv
++
++/-- **C22.** **The `DAGCircuit` corollary of Theorem 1**: a fan-in-two circuit `C` on `n ≥ 1`
++inputs is five-cycle recognized, with any five-cycle output `σ`, by a width-5 permutation program
++of length at most `4 ^ C.depth`:
++`∃ B, B.IsPermutation ∧ B.length ≤ 4 ^ C.depth ∧ FiveCycleRecognizes B (fun x => C.eval x = true) σ`
++[BV14, Thm 3.5, p014-b001; Bar89, Thm 1, p003-b002].
++Deviation: Bar89 and BV14 start from a circuit of AND/OR (BV14: NAND) gates; here the circuit is
++unfolded to a formula first (`DAGCircuit.toTree`, depth-preserving), P6-Q2.
++
++**Proof sketch.** Take `B = barrington C.toTree σ`.  From `hC` (`DAGCircuit.isFaninTwo_iff`, and
++the reader `DAGCircuit.isWellFormed_iff`, missing at the base and proposed) get
++well-formedness and fan-in `≤ 2` of every gate; then `toTree_maxFanin_le` gives
++`C.toTree.maxFanin ≤ 2`, `toTree_depth_le` gives `C.toTree.depth ≤ C.depth`, and `toTree_eval`
++gives `C.toTree.eval x = C.eval x`.  Conclude by `isPermutation_barrington`,
++`barrington_length_le` with `Nat.pow_le_pow_right`, and `barrington_recognizes`. -/
++theorem exists_fiveCycleRecognizes_of_dagCircuit {n : ℕ} [NeZero n] (C : DAGCircuit n)
++    (hC : C.IsFaninTwo) {σ : Perm (Fin 5)} (hσ : IsFiveCycle σ) :
++    ∃ B : BranchingProgram 5 n, B.IsPermutation ∧ B.length ≤ 4 ^ C.depth ∧
++      FiveCycleRecognizes B (fun x => C.eval x = true) σ := by
++  sorry
++
++end BranchingProgram
++
++open BoolCircuit BranchingProgram
++
++/-- **C23.** **NC¹ ⊆ polynomial-length width-5 permutation programs**: `L.InNC 1 → L.InPBP 5`
++[Bar89, Corollary, p004-b004; abstract, p001-b001].
++Deviation: inputs of length `0` are handled by the accepting set (Thm 1 needs `n ≥ 1`).
++
++**Proof sketch.** `Language.InNC.inTreeNC_one` gives a fan-in-2 formula family `C` with depth
++`≤ b·(log₂ n + 1)`, deciding `L` (read through readers of `Language.InTreeNC`,
++`TreeCircuitFamily.HasFaninTwo` and `HasPolylogDepth`, missing at the base and proposed).
++Define the family with `program n = barrington (C.circuit n) sigma1` for `n ≥ 1` (`NeZero`
++from `n ≠ 0`) and `⟨[]⟩` for `n = 0`; `accept n = {sigma1}` for `n ≥ 1`, and `{id}` or `∅`
++at `n = 0` according to `[] ∈ L` (classical).  Permutation: `isPermutation_barrington`
++(`BranchingProgramFamily.isPermutation_iff`).
++Length: `barrington_length_le` and `4 ^ (b·(log₂ n + 1)) ≤ 4 ^ b · (n + 1) ^ (2b)`
++(`Nat.pow_le_pow_right`, `Nat.pow_log_le_self`), so `BranchingProgramFamily.isPolyLength_iff`.
++Language: `BranchingProgramFamily.mem_language_iff`, `barrington_recognizes` with
++`isFiveCycle_sigma1`, `TreeCircuitFamily.mem_language_iff`; at `n = 0`, `yield_nil`.
++Conclude with `Language.inPBP_iff`. -/
++theorem Language.InNC.inPBP_five {L : Language Bool} (h : L.InNC 1) : L.InPBP 5 := by
++  sorry
++
++/-- **C24.** **BWBP ⊆ NC¹**, Theorem 2 for families: `L.InBWBP → L.InNC 1`
++[Bar89, Thm 2, p004-b003; abstract, p001-b001: "any bounded-width polynomial-size branching
++program can be simulated by an `NC¹` circuit"].
++Deviation: the circuits are fan-in-2 formulas (P6-Q18), compiled to `DAGCircuit`s by
++`Language.InTreeNC.inNC`.
++
++**Proof sketch.** From `Language.inBWBP_iff` get `w`, `P` and a length bound `a·(n+1)^k`
++(`BranchingProgramFamily.isPolyLength_iff`).  The formula family `n ↦ (P.program n).toFormula
++(P.accept n)` decides `P.language` (`toFormula_eval`, `BranchingProgramFamily.mem_language_iff`,
++`TreeCircuitFamily.mem_language_iff`), has fan-in 2 (`maxFanin_toFormula_le`), and depth
++`≤ (⌈log₂ w⌉ + 2)·⌈log₂ (a(n+1)^k)⌉ + topDepth w ≤ b·(log₂ n + 1)` for a constant `b`
++(`depth_toFormula_le`, `Nat.clog_mono_right`, `BoolCircuit.clog_poly_le`); its size is
++`≤ 2 ^ (depth + 1)` (`TreeCircuit.size_succ_le_two_pow`), hence polynomial.  This gives
++`L.InTreeNC 1` (through the proposed readers of `Language.InTreeNC` and the `TreeCircuitFamily`
++predicates, missing at the base), and `Language.InTreeNC.inNC` gives `L.InNC 1`. -/
++theorem Language.InBWBP.inNC_one {L : Language Bool} (h : L.InBWBP) : L.InNC 1 := by
++  sorry
++
++/-- **C25.** **Barrington's Corollary**, first equality: nonuniform NC¹ is BWBP,
++`L.InNC 1 ↔ L.InBWBP` [Bar89, Corollary, p004-b004].
++
++**Proof sketch.** `→`: `Language.InNC.inPBP_five`, then forget permutation-ness and take `w = 5`
++(`Language.inPBP_iff`, `Language.inBWBP_iff`).  `←`: `Language.InBWBP.inNC_one`. -/
++theorem Language.inNC_one_iff_inBWBP (L : Language Bool) : L.InNC 1 ↔ L.InBWBP := by
++  sorry
++
++/-- **C25.** **Barrington's Corollary**, second equality: nonuniform NC¹ is the class of
++polynomial-length width-5 permutation programs, `L.InNC 1 ↔ L.InPBP 5`
++[Bar89, Corollary, p004-b004].
++
++**Proof sketch.** `→`: `Language.InNC.inPBP_five`.  `←`: a `PBP₅` family is a BWBP family
++(`Language.inPBP_iff`, `Language.inBWBP_iff`), then `Language.InBWBP.inNC_one`. -/
++theorem Language.inNC_one_iff_inPBP_five (L : Language Bool) : L.InNC 1 ↔ L.InPBP 5 := by
++  sorry

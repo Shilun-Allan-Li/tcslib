@@ -1,0 +1,56 @@
+# Definitions and their proved readers per file (from rowmap.txt; private helpers excluded by the scan of public docstring-carrying declarations)
+
+## TCSlib/Complexity/BranchingPrograms/Barrington.lean
+- definitions (10): IsFiveCycle, FiveCycleRecognizes, sigma1, sigma2, conjugatorIndex, conjugatorFun, conjugatorTable, conjugator, commutatorProgram, barrington
+- proved readers / glue (19): isFiveCycle_iff, fiveCycleRecognizes_iff, sigma1_eq, sigma2_eq, conjugatorIndex_eq, conjugatorFun_eq, conjugatorTable_eq, getD_conjugatorTable, getD_conjugatorTable_fun, conjugator_apply_of_bijective, conjugator_of_not_bijective, commutatorProgram_eq, barrington_lit_true, barrington_lit_false, barrington_node_true_nil, barrington_node_false_nil, barrington_node_singleton, barrington_node_true_cons_cons, barrington_node_false_cons_cons
+- admitted targets (11): isFiveCycle_sigma1 [C9], isFiveCycle_sigma2 [C9], isFiveCycle_commutator [C9], conjugator_conj [C10], FiveCycleRecognizes.conj [C11], FiveCycleRecognizes.complementLast [C12], barrington_recognizes [C13], barrington_length_le [C14], barrington_length_pos [C14], isPermutation_barrington [C15], barrington_yield_zero [C16]
+
+## TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean
+- definitions (5): Instr.wire, wireComp, compTree, toFormula, topDepth
+- proved readers / glue (7): Instr.wire_eq, wireComp_eq, compTree_nil, compTree_singleton, compTree_cons_cons, toFormula_eq, topDepth_eq
+- admitted targets (11): Instr.wire_eval [C17], Instr.depth_wire_le [C17], Instr.maxFanin_wire_le [C17], wireComp_eval [C18], depth_wireComp_le [C18], compTree_eval [C19], depth_compTree_le [C19], maxFanin_compTree_le [C19], toFormula_eval [C20], depth_toFormula_le [C21], maxFanin_toFormula_le [C21]
+
+## TCSlib/Complexity/BranchingPrograms/Defs.lean
+- definitions (17): BranchingProgram.Instr, BranchingProgram, Instr.eval, Instr.IsPermutation, Instr.ofPerm, length, append, yield, IsPermutation, conj, complementLast, BranchingProgramFamily, language, IsPolyLength, IsPermutation, Language.InBWBP, Language.InPBP
+- proved readers / glue (17): Instr.eval_eq, Instr.isPermutation_iff, Instr.isPermutation_ofPerm, length_eq, append_eq, append_instrs, yield_eq, conj_eq, complementLast_eq, complementLast_nil, complementLast_concat, isPermutation_iff, mem_language_iff, isPolyLength_iff, isPermutation_iff, Language.inBWBP_iff, Language.inPBP_iff
+- admitted targets (11): yield_append [C1], yield_nil [C1], yield_conj [C2], length_conj [C2], length_append [C2], yield_complementLast [C3], length_complementLast [C3], IsPermutation.append [C4], IsPermutation.conj [C4], IsPermutation.complementLast [C4], IsPermutation.bijective_yield [C4]
+
+## TCSlib/Complexity/BranchingPrograms/Eval.lean
+- definitions (2): Instr.stepWith, evalWith
+- proved readers / glue (2): Instr.stepWith_apply, evalWith_eq
+- admitted targets (5): evalWith_nil [C5], evalWith_append [C5], Instr.stepWith_of_isPermutation [C6], evalWith_rel [C7], evalWith_single [C8]
+
+## TCSlib/Complexity/BranchingPrograms/NC1.lean
+- definitions (0): 
+- proved readers / glue (0): 
+- admitted targets (5): exists_fiveCycleRecognizes_of_dagCircuit [C22], Language.InNC.inPBP_five [C23], Language.InBWBP.inNC_one [C24], Language.inNC_one_iff_inBWBP [C25], Language.inNC_one_iff_inPBP_five [C25]
+
+## TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean
+- definitions (6): val, csaStep, csaLayer, csaLevelsAux, csaLevels, csaReduce
+- proved readers / glue (8): val_eq, csaStep_eq, csaLayer_cons_cons_cons, csaLayer_of_length_le_two, csaLevelsAux_fuel, csaLevels_of_le_two, csaLevels_of_two_lt, csaReduce_eq
+- admitted targets (7): csaStep_val [F5], depth_csaStep_le [F5], maxFaninL_csaStep_le [F5], csaReduce_val [F6], depth_csaReduce_le [F6], maxFaninL_csaReduce_le [F6], csaLevels_le [F6]
+
+## TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean
+- definitions (14): pairUp, combineFuel, TreeCircuit.balanced, TreeCircuit.neg, negList, TreeCircuit.subst, substList, TreeCircuit.rename, TreeCircuit.const, TreeCircuit.and2, TreeCircuit.or2, TreeCircuit.xor2, TreeCircuit.xor3, TreeCircuit.maj3
+- proved readers / glue (28): length_pairUp, eval_node_pairUp, maxDepth_pairUp, sumSize_pairUp, maxFaninL_pairUp, combineFuel_eval, combineFuel_maxFanin, combineFuel_depth, combineFuel_size, TreeCircuit.balanced_eval, TreeCircuit.maxFanin_balanced_le, TreeCircuit.depth_balanced_le, TreeCircuit.size_balanced_le, TreeCircuit.balanced_nil, TreeCircuit.balanced_singleton, TreeCircuit.neg_lit, negList_eq_map, TreeCircuit.neg_node, TreeCircuit.subst_lit, substList_eq_map, TreeCircuit.subst_node, TreeCircuit.rename_eq, TreeCircuit.const_eq, TreeCircuit.and2_eq, TreeCircuit.or2_eq, TreeCircuit.xor2_eq, TreeCircuit.xor3_eq, TreeCircuit.maj3_eq
+- admitted targets (26): TreeCircuit.neg_eval [F1], TreeCircuit.depth_neg [F1], TreeCircuit.maxFanin_neg [F1], TreeCircuit.subst_eval [F2], TreeCircuit.depth_subst_le [F2], TreeCircuit.maxFanin_subst_le [F2], TreeCircuit.rename_eval [F2], TreeCircuit.depth_rename [F2], TreeCircuit.const_eval [F3], TreeCircuit.depth_const [F3], TreeCircuit.maxFanin_const [F3], TreeCircuit.and2_eval [F3], TreeCircuit.depth_and2_le [F3], TreeCircuit.maxFanin_and2_le [F3], TreeCircuit.or2_eval [F3], TreeCircuit.depth_or2_le [F3], TreeCircuit.maxFanin_or2_le [F3], TreeCircuit.xor2_eval [F3], TreeCircuit.depth_xor2_le [F3], TreeCircuit.maxFanin_xor2_le [F3], TreeCircuit.xor3_eval [F3], TreeCircuit.depth_xor3_le [F3], TreeCircuit.maxFanin_xor3_le [F3], TreeCircuit.maj3_eval [F3], TreeCircuit.depth_maj3_le [F3], TreeCircuit.maxFanin_maj3_le [F3]
+
+## TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean
+- definitions (4): bitAt, carryOut, constBits, geConst
+- proved readers / glue (4): bitAt_eq, carryOut_eq, constBits_eq, geConst_eq
+- admitted targets (7): carryOut_eval [F7], carryOut_eval_le [F7], depth_carryOut_le [F7], maxFanin_carryOut_le [F7], geConst_eval [F8], depth_geConst_le [F8], maxFanin_geConst_le [F8]
+
+## TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean
+- definitions (3): maskedConst, modSumInterval, modSumDepth
+- proved readers / glue (3): maskedConst_eq, modSumInterval_eq, modSumDepth_eq
+- admitted targets (4): modSumInterval_eval [F9], depth_modSumInterval_le [F10], modSumDepth_le [F10], maxFanin_modSumInterval_le [F10]
+
+## TCSlib/Complexity/CircuitComplexity/NANDForm.lean
+- definitions (4): DAGGate.IsNAND, DAGCircuit.IsNANDForm, nandGadget, DAGCircuit.toNANDForm
+- proved readers / glue (11): DAGGate.isNAND_iff, DAGCircuit.isNANDForm_iff, nandGadget_not, nandGadget_and_nil, nandGadget_or_nil, nandGadget_and_singleton, nandGadget_or_singleton, nandGadget_and_pair, nandGadget_or_pair, nandGadget_of_three_le, DAGCircuit.toNANDForm_eq
+- admitted targets (6): DAGGate.eval_of_isNAND [N1], nandGadget_correct [N2], DAGCircuit.toNANDForm_eval [N3], DAGCircuit.toNANDForm_isNANDForm [N4], DAGCircuit.toNANDForm_depth_le [N5], DAGCircuit.toNANDForm_size_le [N6]
+
+## TCSlib/Complexity/CircuitComplexity/NANDLayering.lean
+- definitions (9): DAGCircuit.IsLayered, litInput, layerChain, DAGCircuit.layerAt, DAGCircuit.layerColumn, DAGCircuit.layerFold, DAGCircuit.layerGates, DAGCircuit.layerOutput, DAGCircuit.layerNAND
+- proved readers / glue (11): DAGCircuit.isLayered_iff, litInput_eq, litInput_castAdd, litInput_natAdd, layerChain_zero, layerChain_succ, DAGCircuit.layerAt_eq, DAGCircuit.layerColumn_eq, DAGCircuit.layerFold_eq, DAGCircuit.layerGates_eq, DAGCircuit.layerOutput_eq
+- admitted targets (7): DAGCircuit.layerGates_acyclic [N12], DAGCircuit.layerOutput_lt [N13], DAGCircuit.layerNAND_eval [N7], DAGCircuit.layerNAND_isLayered [N8], DAGCircuit.layerNAND_isNANDForm [N9], DAGCircuit.layerNAND_depth [N10], DAGCircuit.layerNAND_size_le [N11]

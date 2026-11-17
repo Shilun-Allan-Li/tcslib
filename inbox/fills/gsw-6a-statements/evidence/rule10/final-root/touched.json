@@ -1,0 +1,3357 @@
+{
+ "base": "f6f295a6502b72bbf498bb8c64b63f847e910866",
+ "head": "HEAD",
+ "files": {
+  "TCSlib/Complexity/BranchingPrograms/Defs.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BranchingProgram.Instr",
+     "kind": "structure",
+     "private": false,
+     "start": 62,
+     "decl_line": 66,
+     "end": 73,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram",
+     "kind": "structure",
+     "private": false,
+     "start": 74,
+     "decl_line": 77,
+     "end": 80,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.eval",
+     "kind": "def",
+     "private": false,
+     "start": 87,
+     "decl_line": 89,
+     "end": 91,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.eval_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 92,
+     "decl_line": 93,
+     "end": 95,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.IsPermutation",
+     "kind": "def",
+     "private": false,
+     "start": 96,
+     "decl_line": 98,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.isPermutation_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 101,
+     "decl_line": 103,
+     "end": 105,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.ofPerm",
+     "kind": "def",
+     "private": false,
+     "start": 110,
+     "decl_line": 110,
+     "end": 114,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.isPermutation_ofPerm",
+     "kind": "theorem",
+     "private": false,
+     "start": 115,
+     "decl_line": 117,
+     "end": 120,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.length",
+     "kind": "def",
+     "private": false,
+     "start": 123,
+     "decl_line": 125,
+     "end": 127,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.length_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 128,
+     "decl_line": 129,
+     "end": 130,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.append",
+     "kind": "def",
+     "private": false,
+     "start": 131,
+     "decl_line": 133,
+     "end": 135,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.<anonymous instance #1>",
+     "kind": "instance",
+     "private": false,
+     "start": 136,
+     "decl_line": 136,
+     "end": 137,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.append_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 138,
+     "decl_line": 139,
+     "end": 141,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.append_instrs",
+     "kind": "theorem",
+     "private": false,
+     "start": 142,
+     "decl_line": 143,
+     "end": 145,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.yield",
+     "kind": "def",
+     "private": false,
+     "start": 146,
+     "decl_line": 151,
+     "end": 153,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.yield_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 154,
+     "decl_line": 155,
+     "end": 157,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.IsPermutation",
+     "kind": "def",
+     "private": false,
+     "start": 158,
+     "decl_line": 161,
+     "end": 163,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conj",
+     "kind": "def",
+     "private": false,
+     "start": 164,
+     "decl_line": 168,
+     "end": 170,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conj_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 171,
+     "decl_line": 173,
+     "end": 176,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.complementLast",
+     "kind": "def",
+     "private": false,
+     "start": 177,
+     "decl_line": 183,
+     "end": 188,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.complementLast_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 189,
+     "decl_line": 192,
+     "end": 196,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.complementLast_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 197,
+     "decl_line": 199,
+     "end": 201,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.complementLast_concat",
+     "kind": "theorem",
+     "private": false,
+     "start": 202,
+     "decl_line": 206,
+     "end": 211,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.yield_append",
+     "kind": "theorem",
+     "private": false,
+     "start": 214,
+     "decl_line": 224,
+     "end": 227,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.yield_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 228,
+     "decl_line": 232,
+     "end": 234,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.yield_conj",
+     "kind": "theorem",
+     "private": false,
+     "start": 235,
+     "decl_line": 242,
+     "end": 245,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.length_conj",
+     "kind": "theorem",
+     "private": false,
+     "start": 246,
+     "decl_line": 250,
+     "end": 253,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.length_append",
+     "kind": "theorem",
+     "private": false,
+     "start": 254,
+     "decl_line": 258,
+     "end": 261,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.yield_complementLast",
+     "kind": "theorem",
+     "private": false,
+     "start": 262,
+     "decl_line": 271,
+     "end": 275,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.length_complementLast",
+     "kind": "theorem",
+     "private": false,
+     "start": 276,
+     "decl_line": 281,
+     "end": 284,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.isPermutation_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 285,
+     "decl_line": 288,
+     "end": 291,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.IsPermutation.append",
+     "kind": "theorem",
+     "private": false,
+     "start": 292,
+     "decl_line": 296,
+     "end": 299,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.IsPermutation.conj",
+     "kind": "theorem",
+     "private": false,
+     "start": 300,
+     "decl_line": 305,
+     "end": 308,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.IsPermutation.complementLast",
+     "kind": "theorem",
+     "private": false,
+     "start": 309,
+     "decl_line": 316,
+     "end": 319,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.IsPermutation.bijective_yield",
+     "kind": "theorem",
+     "private": false,
+     "start": 320,
+     "decl_line": 326,
+     "end": 329,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgramFamily",
+     "kind": "structure",
+     "private": false,
+     "start": 334,
+     "decl_line": 338,
+     "end": 343,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgramFamily.language",
+     "kind": "def",
+     "private": false,
+     "start": 348,
+     "decl_line": 351,
+     "end": 353,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgramFamily.mem_language_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 354,
+     "decl_line": 356,
+     "end": 359,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgramFamily.language_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 360,
+     "decl_line": 362,
+     "end": 364,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgramFamily.IsPolyLength",
+     "kind": "def",
+     "private": false,
+     "start": 365,
+     "decl_line": 367,
+     "end": 369,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgramFamily.isPolyLength_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 370,
+     "decl_line": 372,
+     "end": 375,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgramFamily.IsPermutation",
+     "kind": "def",
+     "private": false,
+     "start": 376,
+     "decl_line": 378,
+     "end": 380,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgramFamily.isPermutation_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 381,
+     "decl_line": 382,
+     "end": 384,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "Language.InBWBP",
+     "kind": "def",
+     "private": false,
+     "start": 387,
+     "decl_line": 390,
+     "end": 392,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "Language.inBWBP_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 393,
+     "decl_line": 395,
+     "end": 398,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "Language.InPBP",
+     "kind": "def",
+     "private": false,
+     "start": 399,
+     "decl_line": 403,
+     "end": 405,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "Language.inPBP_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 406,
+     "decl_line": 409,
+     "end": 413,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 47
+  },
+  "TCSlib/Complexity/BranchingPrograms/Eval.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BranchingProgram.Instr.stepWith",
+     "kind": "def",
+     "private": false,
+     "start": 60,
+     "decl_line": 65,
+     "end": 69,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.stepWith_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 70,
+     "decl_line": 73,
+     "end": 77,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.evalWith",
+     "kind": "def",
+     "private": false,
+     "start": 78,
+     "decl_line": 83,
+     "end": 86,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.evalWith_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 87,
+     "decl_line": 89,
+     "end": 92,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.evalWith_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 95,
+     "decl_line": 99,
+     "end": 102,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.evalWith_append",
+     "kind": "theorem",
+     "private": false,
+     "start": 103,
+     "decl_line": 108,
+     "end": 112,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.stepWith_of_isPermutation",
+     "kind": "theorem",
+     "private": false,
+     "start": 113,
+     "decl_line": 124,
+     "end": 130,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.evalWith_rel",
+     "kind": "theorem",
+     "private": false,
+     "start": 131,
+     "decl_line": 143,
+     "end": 152,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.evalWith_single",
+     "kind": "theorem",
+     "private": false,
+     "start": 153,
+     "decl_line": 167,
+     "end": 171,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 9
+  },
+  "TCSlib/Complexity/BranchingPrograms/Barrington.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BranchingProgram.IsFiveCycle",
+     "kind": "def",
+     "private": false,
+     "start": 79,
+     "decl_line": 81,
+     "end": 83,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.isFiveCycle_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 84,
+     "decl_line": 85,
+     "end": 86,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.instDecidablePredIsFiveCycle",
+     "kind": "instance",
+     "private": false,
+     "start": 87,
+     "decl_line": 87,
+     "end": 89,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.FiveCycleRecognizes",
+     "kind": "def",
+     "private": false,
+     "start": 90,
+     "decl_line": 94,
+     "end": 97,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.fiveCycleRecognizes_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 98,
+     "decl_line": 100,
+     "end": 105,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.sigma1",
+     "kind": "def",
+     "private": false,
+     "start": 108,
+     "decl_line": 110,
+     "end": 112,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.sigma1_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 113,
+     "decl_line": 114,
+     "end": 115,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.sigma2",
+     "kind": "def",
+     "private": false,
+     "start": 116,
+     "decl_line": 118,
+     "end": 120,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.sigma2_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 121,
+     "decl_line": 122,
+     "end": 123,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugatorIndex",
+     "kind": "def",
+     "private": false,
+     "start": 126,
+     "decl_line": 130,
+     "end": 132,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugatorIndex_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 135,
+     "end": 137,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugatorFun",
+     "kind": "def",
+     "private": false,
+     "start": 138,
+     "decl_line": 140,
+     "end": 142,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugatorFun_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 143,
+     "decl_line": 144,
+     "end": 146,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugatorTable",
+     "kind": "def",
+     "private": false,
+     "start": 147,
+     "decl_line": 153,
+     "end": 155,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugatorTable_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 156,
+     "decl_line": 157,
+     "end": 159,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.getD_conjugatorTable",
+     "kind": "theorem",
+     "private": false,
+     "start": 160,
+     "decl_line": 161,
+     "end": 165,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugator",
+     "kind": "def",
+     "private": false,
+     "start": 166,
+     "decl_line": 172,
+     "end": 180,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.getD_conjugatorTable_fun",
+     "kind": "theorem",
+     "private": true,
+     "start": 181,
+     "decl_line": 183,
+     "end": 186,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugator_apply_of_bijective",
+     "kind": "theorem",
+     "private": false,
+     "start": 187,
+     "decl_line": 189,
+     "end": 197,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugator_of_not_bijective",
+     "kind": "theorem",
+     "private": false,
+     "start": 198,
+     "decl_line": 200,
+     "end": 206,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.commutatorProgram",
+     "kind": "def",
+     "private": false,
+     "start": 209,
+     "decl_line": 216,
+     "end": 221,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.commutatorProgram_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 222,
+     "decl_line": 225,
+     "end": 235,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington",
+     "kind": "def",
+     "private": false,
+     "start": 236,
+     "decl_line": 255,
+     "end": 265,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_lit_true",
+     "kind": "theorem",
+     "private": false,
+     "start": 272,
+     "decl_line": 274,
+     "end": 277,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_lit_false",
+     "kind": "theorem",
+     "private": false,
+     "start": 278,
+     "decl_line": 280,
+     "end": 283,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_node_true_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 284,
+     "decl_line": 286,
+     "end": 289,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_node_false_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 290,
+     "decl_line": 292,
+     "end": 295,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_node_singleton",
+     "kind": "theorem",
+     "private": false,
+     "start": 296,
+     "decl_line": 297,
+     "end": 300,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_node_true_cons_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 301,
+     "decl_line": 303,
+     "end": 308,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_node_false_cons_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 309,
+     "decl_line": 312,
+     "end": 318,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.isFiveCycle_sigma1",
+     "kind": "theorem",
+     "private": false,
+     "start": 323,
+     "decl_line": 327,
+     "end": 329,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.isFiveCycle_sigma2",
+     "kind": "theorem",
+     "private": false,
+     "start": 330,
+     "decl_line": 334,
+     "end": 336,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.isFiveCycle_commutator",
+     "kind": "theorem",
+     "private": false,
+     "start": 337,
+     "decl_line": 347,
+     "end": 349,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.conjugator_conj",
+     "kind": "theorem",
+     "private": false,
+     "start": 350,
+     "decl_line": 363,
+     "end": 366,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.FiveCycleRecognizes.conj",
+     "kind": "theorem",
+     "private": false,
+     "start": 367,
+     "decl_line": 374,
+     "end": 378,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.FiveCycleRecognizes.complementLast",
+     "kind": "theorem",
+     "private": false,
+     "start": 379,
+     "decl_line": 386,
+     "end": 391,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_recognizes",
+     "kind": "theorem",
+     "private": false,
+     "start": 392,
+     "decl_line": 412,
+     "end": 416,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_length_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 417,
+     "decl_line": 425,
+     "end": 428,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_length_pos",
+     "kind": "theorem",
+     "private": false,
+     "start": 429,
+     "decl_line": 436,
+     "end": 439,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.isPermutation_barrington",
+     "kind": "theorem",
+     "private": false,
+     "start": 440,
+     "decl_line": 447,
+     "end": 450,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.barrington_yield_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 451,
+     "decl_line": 458,
+     "end": 462,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 41
+  },
+  "TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BranchingProgram.Instr.wire",
+     "kind": "def",
+     "private": false,
+     "start": 68,
+     "decl_line": 75,
+     "end": 80,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.wire_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 81,
+     "decl_line": 84,
+     "end": 90,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.wireComp",
+     "kind": "def",
+     "private": false,
+     "start": 93,
+     "decl_line": 98,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.wireComp_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 101,
+     "decl_line": 103,
+     "end": 107,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.compTree",
+     "kind": "def",
+     "private": false,
+     "start": 108,
+     "decl_line": 114,
+     "end": 119,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.compTree_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 125,
+     "decl_line": 127,
+     "end": 131,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.compTree_singleton",
+     "kind": "theorem",
+     "private": false,
+     "start": 132,
+     "decl_line": 133,
+     "end": 135,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.compTree_cons_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 136,
+     "decl_line": 139,
+     "end": 144,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.toFormula",
+     "kind": "def",
+     "private": false,
+     "start": 147,
+     "decl_line": 153,
+     "end": 157,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.toFormula_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 158,
+     "decl_line": 160,
+     "end": 164,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.topDepth",
+     "kind": "def",
+     "private": false,
+     "start": 165,
+     "decl_line": 169,
+     "end": 171,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.topDepth_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 172,
+     "decl_line": 173,
+     "end": 174,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.wire_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 177,
+     "decl_line": 184,
+     "end": 187,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.depth_wire_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 188,
+     "decl_line": 194,
+     "end": 196,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.Instr.maxFanin_wire_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 197,
+     "decl_line": 202,
+     "end": 204,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.wireComp_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 205,
+     "decl_line": 212,
+     "end": 218,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_wireComp_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 219,
+     "decl_line": 225,
+     "end": 229,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.compTree_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 230,
+     "decl_line": 238,
+     "end": 241,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_compTree_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 242,
+     "decl_line": 254,
+     "end": 257,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_compTree_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 258,
+     "decl_line": 264,
+     "end": 267,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.toFormula_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 268,
+     "decl_line": 275,
+     "end": 278,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.depth_toFormula_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 279,
+     "decl_line": 291,
+     "end": 294,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BranchingProgram.maxFanin_toFormula_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 295,
+     "decl_line": 300,
+     "end": 303,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 23
+  },
+  "TCSlib/Complexity/BranchingPrograms/NC1.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BranchingProgram.exists_fiveCycleRecognizes_of_dagCircuit",
+     "kind": "theorem",
+     "private": false,
+     "start": 59,
+     "decl_line": 73,
+     "end": 78,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "Language.InNC.inPBP_five",
+     "kind": "theorem",
+     "private": false,
+     "start": 83,
+     "decl_line": 99,
+     "end": 101,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "Language.InBWBP.inNC_one",
+     "kind": "theorem",
+     "private": false,
+     "start": 102,
+     "decl_line": 117,
+     "end": 119,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "Language.inNC_one_iff_inBWBP",
+     "kind": "theorem",
+     "private": false,
+     "start": 120,
+     "decl_line": 125,
+     "end": 127,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "Language.inNC_one_iff_inPBP_five",
+     "kind": "theorem",
+     "private": false,
+     "start": 128,
+     "decl_line": 134,
+     "end": 136,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 5
+  },
+  "TCSlib/Complexity/BranchingPrograms.lean": {
+   "new_file": true,
+   "declarations": [],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 0
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BoolCircuit.pairUp",
+     "kind": "def",
+     "private": true,
+     "start": 58,
+     "decl_line": 59,
+     "end": 63,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.length_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 64,
+     "decl_line": 65,
+     "end": 73,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.eval_node_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 74,
+     "decl_line": 75,
+     "end": 86,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.maxDepth_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 87,
+     "decl_line": 88,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.sumSize_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 101,
+     "decl_line": 102,
+     "end": 115,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.maxFaninL_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 116,
+     "decl_line": 117,
+     "end": 131,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel",
+     "kind": "def",
+     "private": true,
+     "start": 132,
+     "decl_line": 133,
+     "end": 138,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.balanced",
+     "kind": "def",
+     "private": false,
+     "start": 139,
+     "decl_line": 145,
+     "end": 147,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel_eval",
+     "kind": "theorem",
+     "private": true,
+     "start": 148,
+     "decl_line": 149,
+     "end": 159,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel_maxFanin",
+     "kind": "theorem",
+     "private": true,
+     "start": 160,
+     "decl_line": 161,
+     "end": 179,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel_depth",
+     "kind": "theorem",
+     "private": true,
+     "start": 180,
+     "decl_line": 187,
+     "end": 211,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel_size",
+     "kind": "theorem",
+     "private": true,
+     "start": 212,
+     "decl_line": 213,
+     "end": 224,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.balanced_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 225,
+     "decl_line": 227,
+     "end": 230,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_balanced_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 231,
+     "decl_line": 233,
+     "end": 236,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_balanced_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 237,
+     "decl_line": 239,
+     "end": 242,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.size_balanced_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 243,
+     "decl_line": 245,
+     "end": 248,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.balanced_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 249,
+     "decl_line": 251,
+     "end": 253,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.balanced_singleton",
+     "kind": "theorem",
+     "private": false,
+     "start": 254,
+     "decl_line": 255,
+     "end": 257,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.neg",
+     "kind": "def",
+     "private": false,
+     "start": 262,
+     "decl_line": 267,
+     "end": 270,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.negList",
+     "kind": "def",
+     "private": true,
+     "start": 271,
+     "decl_line": 272,
+     "end": 275,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.neg_lit",
+     "kind": "theorem",
+     "private": false,
+     "start": 278,
+     "decl_line": 280,
+     "end": 282,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.negList_eq_map",
+     "kind": "theorem",
+     "private": true,
+     "start": 283,
+     "decl_line": 284,
+     "end": 287,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.neg_node",
+     "kind": "theorem",
+     "private": false,
+     "start": 288,
+     "decl_line": 290,
+     "end": 293,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.neg_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 294,
+     "decl_line": 303,
+     "end": 306,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_neg",
+     "kind": "theorem",
+     "private": false,
+     "start": 307,
+     "decl_line": 313,
+     "end": 315,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_neg",
+     "kind": "theorem",
+     "private": false,
+     "start": 316,
+     "decl_line": 322,
+     "end": 324,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.subst",
+     "kind": "def",
+     "private": false,
+     "start": 327,
+     "decl_line": 333,
+     "end": 336,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.substList",
+     "kind": "def",
+     "private": true,
+     "start": 337,
+     "decl_line": 339,
+     "end": 343,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.subst_lit",
+     "kind": "theorem",
+     "private": false,
+     "start": 346,
+     "decl_line": 349,
+     "end": 351,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.substList_eq_map",
+     "kind": "theorem",
+     "private": true,
+     "start": 352,
+     "decl_line": 353,
+     "end": 357,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.subst_node",
+     "kind": "theorem",
+     "private": false,
+     "start": 358,
+     "decl_line": 360,
+     "end": 364,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.rename",
+     "kind": "def",
+     "private": false,
+     "start": 365,
+     "decl_line": 368,
+     "end": 370,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.rename_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 371,
+     "decl_line": 373,
+     "end": 375,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.subst_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 376,
+     "decl_line": 384,
+     "end": 387,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_subst_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 388,
+     "decl_line": 401,
+     "end": 404,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_subst_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 405,
+     "decl_line": 414,
+     "end": 417,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.rename_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 418,
+     "decl_line": 424,
+     "end": 427,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_rename",
+     "kind": "theorem",
+     "private": false,
+     "start": 428,
+     "decl_line": 434,
+     "end": 437,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.const",
+     "kind": "def",
+     "private": false,
+     "start": 440,
+     "decl_line": 442,
+     "end": 444,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.const_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 445,
+     "decl_line": 447,
+     "end": 449,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.const_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 450,
+     "decl_line": 455,
+     "end": 458,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_const",
+     "kind": "theorem",
+     "private": false,
+     "start": 459,
+     "decl_line": 463,
+     "end": 465,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_const",
+     "kind": "theorem",
+     "private": false,
+     "start": 466,
+     "decl_line": 470,
+     "end": 473,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.and2",
+     "kind": "def",
+     "private": false,
+     "start": 474,
+     "decl_line": 475,
+     "end": 477,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.and2_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 478,
+     "decl_line": 480,
+     "end": 482,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.or2",
+     "kind": "def",
+     "private": false,
+     "start": 483,
+     "decl_line": 484,
+     "end": 486,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.or2_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 487,
+     "decl_line": 489,
+     "end": 491,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.xor2",
+     "kind": "def",
+     "private": false,
+     "start": 492,
+     "decl_line": 495,
+     "end": 497,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.xor2_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 498,
+     "decl_line": 501,
+     "end": 504,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.xor3",
+     "kind": "def",
+     "private": false,
+     "start": 505,
+     "decl_line": 507,
+     "end": 509,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.xor3_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 510,
+     "decl_line": 512,
+     "end": 514,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maj3",
+     "kind": "def",
+     "private": false,
+     "start": 515,
+     "decl_line": 518,
+     "end": 520,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maj3_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 521,
+     "decl_line": 523,
+     "end": 526,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.and2_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 527,
+     "decl_line": 530,
+     "end": 533,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_and2_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 534,
+     "decl_line": 539,
+     "end": 542,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_and2_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 543,
+     "decl_line": 548,
+     "end": 551,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.or2_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 552,
+     "decl_line": 555,
+     "end": 558,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_or2_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 559,
+     "decl_line": 563,
+     "end": 566,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_or2_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 567,
+     "decl_line": 571,
+     "end": 574,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.xor2_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 575,
+     "decl_line": 579,
+     "end": 582,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_xor2_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 583,
+     "decl_line": 589,
+     "end": 592,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_xor2_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 593,
+     "decl_line": 598,
+     "end": 601,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.xor3_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 602,
+     "decl_line": 606,
+     "end": 609,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_xor3_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 610,
+     "decl_line": 615,
+     "end": 618,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_xor3_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 619,
+     "decl_line": 624,
+     "end": 627,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maj3_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 628,
+     "decl_line": 635,
+     "end": 639,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_maj3_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 640,
+     "decl_line": 645,
+     "end": 648,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_maj3_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 649,
+     "decl_line": 655,
+     "end": 658,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 68
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BoolCircuit.FormulaArith.val",
+     "kind": "def",
+     "private": false,
+     "start": 57,
+     "decl_line": 60,
+     "end": 62,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.val_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 63,
+     "decl_line": 65,
+     "end": 67,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaStep",
+     "kind": "def",
+     "private": false,
+     "start": 70,
+     "decl_line": 76,
+     "end": 84,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaStep_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 85,
+     "decl_line": 88,
+     "end": 98,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaStep_val",
+     "kind": "theorem",
+     "private": false,
+     "start": 99,
+     "decl_line": 111,
+     "end": 114,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_csaStep_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 115,
+     "decl_line": 127,
+     "end": 131,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFaninL_csaStep_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 132,
+     "decl_line": 140,
+     "end": 144,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLayer",
+     "kind": "def",
+     "private": false,
+     "start": 147,
+     "decl_line": 151,
+     "end": 154,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLayer_cons_cons_cons",
+     "kind": "theorem",
+     "private": false,
+     "start": 155,
+     "decl_line": 157,
+     "end": 160,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLayer_of_length_le_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 161,
+     "decl_line": 163,
+     "end": 170,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevelsAux",
+     "kind": "def",
+     "private": true,
+     "start": 171,
+     "decl_line": 173,
+     "end": 176,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevelsAux_fuel",
+     "kind": "theorem",
+     "private": true,
+     "start": 177,
+     "decl_line": 178,
+     "end": 196,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevels",
+     "kind": "def",
+     "private": false,
+     "start": 197,
+     "decl_line": 200,
+     "end": 202,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevels_of_le_two",
+     "kind": "theorem",
+     "private": false,
+     "start": 203,
+     "decl_line": 204,
+     "end": 210,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevels_of_two_lt",
+     "kind": "theorem",
+     "private": false,
+     "start": 211,
+     "decl_line": 213,
+     "end": 220,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaReduce",
+     "kind": "def",
+     "private": false,
+     "start": 221,
+     "decl_line": 226,
+     "end": 229,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaReduce_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 230,
+     "decl_line": 233,
+     "end": 237,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaReduce_val",
+     "kind": "theorem",
+     "private": false,
+     "start": 238,
+     "decl_line": 250,
+     "end": 253,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_csaReduce_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 254,
+     "decl_line": 265,
+     "end": 269,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFaninL_csaReduce_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 270,
+     "decl_line": 276,
+     "end": 280,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.csaLevels_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 281,
+     "decl_line": 292,
+     "end": 294,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 21
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BoolCircuit.FormulaArith.bitAt",
+     "kind": "def",
+     "private": false,
+     "start": 54,
+     "decl_line": 57,
+     "end": 59,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.bitAt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 60,
+     "decl_line": 62,
+     "end": 64,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.carryOut",
+     "kind": "def",
+     "private": false,
+     "start": 65,
+     "decl_line": 71,
+     "end": 78,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.carryOut_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 79,
+     "decl_line": 83,
+     "end": 92,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.carryOut_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 93,
+     "decl_line": 105,
+     "end": 108,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.carryOut_eval_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 109,
+     "decl_line": 118,
+     "end": 122,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_carryOut_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 123,
+     "decl_line": 135,
+     "end": 138,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_carryOut_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 139,
+     "decl_line": 145,
+     "end": 148,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.constBits",
+     "kind": "def",
+     "private": false,
+     "start": 151,
+     "decl_line": 153,
+     "end": 155,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.constBits_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 156,
+     "decl_line": 158,
+     "end": 161,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.geConst",
+     "kind": "def",
+     "private": false,
+     "start": 162,
+     "decl_line": 168,
+     "end": 178,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.geConst_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 179,
+     "decl_line": 183,
+     "end": 194,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.geConst_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 195,
+     "decl_line": 208,
+     "end": 211,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_geConst_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 212,
+     "decl_line": 222,
+     "end": 226,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_geConst_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 227,
+     "decl_line": 232,
+     "end": 235,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 15
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BoolCircuit.FormulaArith.maskedConst",
+     "kind": "def",
+     "private": false,
+     "start": 60,
+     "decl_line": 64,
+     "end": 67,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maskedConst_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 68,
+     "decl_line": 70,
+     "end": 74,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumInterval",
+     "kind": "def",
+     "private": false,
+     "start": 75,
+     "decl_line": 82,
+     "end": 88,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumInterval_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 89,
+     "decl_line": 94,
+     "end": 110,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumInterval_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 111,
+     "decl_line": 131,
+     "end": 136,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumDepth",
+     "kind": "def",
+     "private": false,
+     "start": 137,
+     "decl_line": 142,
+     "end": 144,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumDepth_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 145,
+     "decl_line": 147,
+     "end": 151,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.depth_modSumInterval_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 152,
+     "decl_line": 165,
+     "end": 168,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.modSumDepth_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 169,
+     "decl_line": 179,
+     "end": 182,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.FormulaArith.maxFanin_modSumInterval_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 183,
+     "decl_line": 190,
+     "end": 193,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 10
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith.lean": {
+   "new_file": true,
+   "declarations": [],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 0
+  },
+  "TCSlib/Complexity/CircuitComplexity/NANDForm.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BoolCircuit.DAGGate.IsNAND",
+     "kind": "def",
+     "private": false,
+     "start": 79,
+     "decl_line": 83,
+     "end": 84,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGGate.isNAND_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 85,
+     "decl_line": 86,
+     "end": 88,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGGate.decidableIsNAND",
+     "kind": "instance",
+     "private": false,
+     "start": 89,
+     "decl_line": 89,
+     "end": 91,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.IsNANDForm",
+     "kind": "def",
+     "private": false,
+     "start": 92,
+     "decl_line": 95,
+     "end": 96,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.isNANDForm_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 97,
+     "decl_line": 98,
+     "end": 101,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.decidableIsNANDForm",
+     "kind": "instance",
+     "private": false,
+     "start": 102,
+     "decl_line": 102,
+     "end": 104,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGGate.eval_of_isNAND",
+     "kind": "theorem",
+     "private": false,
+     "start": 105,
+     "decl_line": 111,
+     "end": 114,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget",
+     "kind": "def",
+     "private": false,
+     "start": 117,
+     "decl_line": 127,
+     "end": 140,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget_not",
+     "kind": "theorem",
+     "private": false,
+     "start": 141,
+     "decl_line": 143,
+     "end": 148,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget_and_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 149,
+     "decl_line": 152,
+     "end": 155,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget_or_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 156,
+     "decl_line": 158,
+     "end": 160,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget_and_singleton",
+     "kind": "theorem",
+     "private": false,
+     "start": 161,
+     "decl_line": 164,
+     "end": 167,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget_or_singleton",
+     "kind": "theorem",
+     "private": false,
+     "start": 168,
+     "decl_line": 171,
+     "end": 174,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget_and_pair",
+     "kind": "theorem",
+     "private": false,
+     "start": 175,
+     "decl_line": 178,
+     "end": 181,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget_or_pair",
+     "kind": "theorem",
+     "private": false,
+     "start": 182,
+     "decl_line": 185,
+     "end": 189,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget_of_three_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 190,
+     "decl_line": 193,
+     "end": 200,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.nandGadget_correct",
+     "kind": "theorem",
+     "private": false,
+     "start": 201,
+     "decl_line": 222,
+     "end": 225,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.toNANDForm",
+     "kind": "def",
+     "private": false,
+     "start": 228,
+     "decl_line": 234,
+     "end": 237,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.toNANDForm_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 238,
+     "decl_line": 240,
+     "end": 242,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.toNANDForm_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 247,
+     "decl_line": 252,
+     "end": 254,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.toNANDForm_isNANDForm",
+     "kind": "theorem",
+     "private": false,
+     "start": 255,
+     "decl_line": 260,
+     "end": 262,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.toNANDForm_depth_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 263,
+     "decl_line": 268,
+     "end": 270,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.toNANDForm_size_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 271,
+     "decl_line": 279,
+     "end": 281,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 23
+  },
+  "TCSlib/Complexity/CircuitComplexity/NANDLayering.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BoolCircuit.DAGCircuit.IsLayered",
+     "kind": "def",
+     "private": false,
+     "start": 101,
+     "decl_line": 105,
+     "end": 108,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.isLayered_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 109,
+     "decl_line": 111,
+     "end": 115,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.decidableIsLayered",
+     "kind": "instance",
+     "private": false,
+     "start": 116,
+     "decl_line": 116,
+     "end": 120,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.litInput",
+     "kind": "def",
+     "private": false,
+     "start": 121,
+     "decl_line": 124,
+     "end": 125,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.litInput_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 126,
+     "decl_line": 127,
+     "end": 128,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.litInput_castAdd",
+     "kind": "theorem",
+     "private": false,
+     "start": 129,
+     "decl_line": 130,
+     "end": 132,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.litInput_natAdd",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 134,
+     "end": 136,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.layerChain",
+     "kind": "def",
+     "private": false,
+     "start": 139,
+     "decl_line": 147,
+     "end": 152,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.layerChain_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 153,
+     "decl_line": 154,
+     "end": 156,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.layerChain_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 157,
+     "decl_line": 160,
+     "end": 166,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerAt",
+     "kind": "def",
+     "private": false,
+     "start": 167,
+     "decl_line": 169,
+     "end": 171,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerAt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 172,
+     "decl_line": 173,
+     "end": 175,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerColumn",
+     "kind": "def",
+     "private": false,
+     "start": 176,
+     "decl_line": 188,
+     "end": 207,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerColumn_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 208,
+     "decl_line": 211,
+     "end": 241,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerFold",
+     "kind": "def",
+     "private": false,
+     "start": 242,
+     "decl_line": 244,
+     "end": 246,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerFold_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 247,
+     "decl_line": 249,
+     "end": 251,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerGates",
+     "kind": "def",
+     "private": false,
+     "start": 252,
+     "decl_line": 256,
+     "end": 257,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerGates_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 258,
+     "decl_line": 259,
+     "end": 261,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerOutput",
+     "kind": "def",
+     "private": false,
+     "start": 262,
+     "decl_line": 264,
+     "end": 266,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerOutput_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 267,
+     "decl_line": 268,
+     "end": 270,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerGates_acyclic",
+     "kind": "theorem",
+     "private": false,
+     "start": 273,
+     "decl_line": 290,
+     "end": 293,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerOutput_lt",
+     "kind": "theorem",
+     "private": false,
+     "start": 294,
+     "decl_line": 302,
+     "end": 305,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND",
+     "kind": "def",
+     "private": false,
+     "start": 315,
+     "decl_line": 315,
+     "end": 320,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 325,
+     "decl_line": 336,
+     "end": 339,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_isLayered",
+     "kind": "theorem",
+     "private": false,
+     "start": 340,
+     "decl_line": 349,
+     "end": 351,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_isNANDForm",
+     "kind": "theorem",
+     "private": false,
+     "start": 352,
+     "decl_line": 359,
+     "end": 361,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_depth",
+     "kind": "theorem",
+     "private": false,
+     "start": 362,
+     "decl_line": 367,
+     "end": 369,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.DAGCircuit.layerNAND_size_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 370,
+     "decl_line": 383,
+     "end": 385,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 28
+  },
+  "TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BoolCircuit.TreeCircuitFamily",
+     "kind": "structure",
+     "private": false,
+     "start": 90,
+     "decl_line": 91,
+     "end": 94,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.Accepts",
+     "kind": "def",
+     "private": false,
+     "start": 99,
+     "decl_line": 100,
+     "end": 102,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.language",
+     "kind": "def",
+     "private": false,
+     "start": 103,
+     "decl_line": 104,
+     "end": 106,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.mem_language_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 109,
+     "decl_line": 109,
+     "end": 112,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.IsPolySize",
+     "kind": "def",
+     "private": false,
+     "start": 113,
+     "decl_line": 114,
+     "end": 116,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.HasFaninTwo",
+     "kind": "def",
+     "private": false,
+     "start": 117,
+     "decl_line": 118,
+     "end": 120,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.HasPolylogDepth",
+     "kind": "def",
+     "private": false,
+     "start": 121,
+     "decl_line": 122,
+     "end": 124,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Language.InTreeNC",
+     "kind": "def",
+     "private": false,
+     "start": 129,
+     "decl_line": 131,
+     "end": 134,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Language.InTreeAC",
+     "kind": "def",
+     "private": false,
+     "start": 135,
+     "decl_line": 136,
+     "end": 139,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeNCLevel",
+     "kind": "def",
+     "private": false,
+     "start": 142,
+     "decl_line": 143,
+     "end": 144,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeACLevel",
+     "kind": "def",
+     "private": false,
+     "start": 145,
+     "decl_line": 146,
+     "end": 147,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeNC",
+     "kind": "def",
+     "private": false,
+     "start": 148,
+     "decl_line": 149,
+     "end": 150,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeAC",
+     "kind": "def",
+     "private": false,
+     "start": 151,
+     "decl_line": 152,
+     "end": 153,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.mem_TreeNC_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 154,
+     "decl_line": 155,
+     "end": 157,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.mem_TreeAC_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 158,
+     "decl_line": 159,
+     "end": 161,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Language.InTreeNC.inTreeAC",
+     "kind": "theorem",
+     "private": false,
+     "start": 164,
+     "decl_line": 165,
+     "end": 168,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.toBinary",
+     "kind": "def",
+     "private": false,
+     "start": 173,
+     "decl_line": 175,
+     "end": 178,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.eval_node_map",
+     "kind": "theorem",
+     "private": true,
+     "start": 179,
+     "decl_line": 180,
+     "end": 190,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.maxDepth_map_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 191,
+     "decl_line": 192,
+     "end": 201,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.maxFaninL_map_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 202,
+     "decl_line": 203,
+     "end": 212,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.toBinary_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 213,
+     "decl_line": 214,
+     "end": 223,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.toBinary_maxFanin_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 224,
+     "decl_line": 225,
+     "end": 234,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.sumSize_map_toBinary",
+     "kind": "theorem",
+     "private": true,
+     "start": 235,
+     "decl_line": 236,
+     "end": 245,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.toBinary_size_succ_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 246,
+     "decl_line": 247,
+     "end": 258,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.toBinary_size_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 259,
+     "decl_line": 260,
+     "end": 262,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.toBinary_depth_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 263,
+     "decl_line": 264,
+     "end": 284,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.clog_poly_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 285,
+     "decl_line": 286,
+     "end": 295,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Language.InTreeAC.inTreeNC_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 298,
+     "decl_line": 309,
+     "end": 336,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeNCLevel_subset_ACLevel",
+     "kind": "theorem",
+     "private": false,
+     "start": 339,
+     "decl_line": 340,
+     "end": 342,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeACLevel_subset_NCLevel_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 343,
+     "decl_line": 344,
+     "end": 346,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeNC_eq_TreeAC",
+     "kind": "theorem",
+     "private": false,
+     "start": 347,
+     "decl_line": 350,
+     "end": 358,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [
+    "BoolCircuit.combine",
+    "BoolCircuit.combineFuel",
+    "BoolCircuit.combineFuel_depth",
+    "BoolCircuit.combineFuel_eval",
+    "BoolCircuit.combineFuel_maxFanin",
+    "BoolCircuit.combineFuel_size",
+    "BoolCircuit.combine_depth",
+    "BoolCircuit.combine_eval",
+    "BoolCircuit.combine_maxFanin",
+    "BoolCircuit.combine_size",
+    "BoolCircuit.eval_node_pairUp",
+    "BoolCircuit.length_pairUp",
+    "BoolCircuit.maxDepth_pairUp",
+    "BoolCircuit.maxFaninL_pairUp",
+    "BoolCircuit.pairUp",
+    "BoolCircuit.sumSize_pairUp"
+   ],
+   "base_count": 47,
+   "head_count": 31
+  },
+  "TCSlib/Complexity/CircuitComplexity.lean": {
+   "new_file": false,
+   "declarations": [],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 0
+  },
+  "TCSlib/ComputationalModels.lean": {
+   "new_file": false,
+   "declarations": [],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 0
+  }
+ }
+}

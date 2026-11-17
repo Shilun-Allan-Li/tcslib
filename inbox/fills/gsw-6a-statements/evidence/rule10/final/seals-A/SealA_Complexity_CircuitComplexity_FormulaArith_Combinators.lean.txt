@@ -1,0 +1,837 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Hydroxyi, TCSlib contributors
+-/
+import Lean
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.CircuitComplexity.TreeDAG
+/- G06-HARNESS INSTALL SealA_Complexity_CircuitComplexity_FormulaArith_Combinators -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealA_Complexity_CircuitComplexity_FormulaArith_Combinators"
+  let payload : String := "BoolCircuit.CompileListSpec.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.CompileSpec.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.IsFaninTwo\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.IsWellFormed\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.depth\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.depthAt\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.depths\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.eval\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.size\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.toTree\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.unfoldVertex_depth_le.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.unfoldVertex_eval.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.unfoldVertex_maxFanin_le.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.unfoldVertex_size_le.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.values\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.Accepts\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.HasFaninTwo\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.HasPolylogDepth\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.IsPolySize\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.IsWellFormed\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.language\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.FaninTwo\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.WellFormed\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.depth\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.eval\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.remap\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GateKind._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GateKind._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GateKind.enumList\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GateKind.ofNat\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GatesAcyclic\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.Lit._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.Lit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.Lit.eval\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.Lit.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_2\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_3\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_4\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.constTrue\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.depth\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.depth._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.depth._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.eval\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.eval._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.eval._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.eval.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.litCount\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.litCount._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.litCount._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.litCount.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.ofVar\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.size\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.size._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.size._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.toTreeCircuit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.toTreeCircuit._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.toTreeCircuit._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.constFalse\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.depth\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.depth._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.eval\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.eval._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.eval.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.litCount\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.litCount._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.litCount.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.ofVar\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.size\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.size._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.toTreeCircuit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.toTreeCircuit._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit._sizeOf_2\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.depth\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.depth._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.depth_le_maxDepth.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.eval\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.eval._unary\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.eval._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.eval.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.ind.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.length_le_sumSize.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.litCount\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.litCount._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxDepth\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFanin\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFanin._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFaninL\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFaninL_le_sumSize.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFanin_le_maxFaninL.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.size\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.size._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.sumSize\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toDAG\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.TreeCircuit.toNAnd\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNAnd._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNAnd._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNAnd.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNOr\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNOr._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNOr.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.compileTree\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTree._sunfold\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTree._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTree.match_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees._sunfold\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees.match_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees_spec.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.constCircuit\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.constGate\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqDAGGate\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqDAGGate.decEq\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqDAGGate.decEq.match_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqGateKind\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqLit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instDecidableEqLit.decEq\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instDecidableEqLit.decEq.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instFintypeGateKind\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instHashableLit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instHashableLit.hash\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instHashableLit.hash.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprDAGGate\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprDAGGate.repr\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprGateKind\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprGateKind.repr\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprGateKind.repr.match_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprLit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprLit.repr\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprTreeCircuit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprTreeCircuit.repr._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprTreeCircuit.repr.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.nodeKind\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.runWith\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.unfoldGate\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate.match_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate_eval.match_1_10\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate_eval.match_1_12\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate_eval.match_1_4\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate_eval.match_1_6\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldVertex\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldVertex._sunfold\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldVertex._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldVertex.match_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.vertexDepth\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.vertexValue\tTCSlib.Complexity.CircuitComplexity.TreeDAG\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NAndCircuit.eval.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NAndCircuit.litCount.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NOrCircuit.eval.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NOrCircuit.litCount.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.eval.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.sumSize_add_length_le.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.toNAnd.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.toNOr.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.instReprTreeCircuit.repr.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.List.map_unattach.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.DAGCircuit.0.BoolCircuit.instReprGateKind.repr.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.compileTree.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.TreeDAG\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.compileTrees.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.TreeDAG\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.unfoldVertex.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.TreeDAG"
+  let expectedRequests : Nat := 174
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := "BoolCircuit.CompileListSpec.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"CompileListSpec\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue\nBoolCircuit.CompileSpec.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"CompileSpec\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGCircuit.IsFaninTwo\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"IsFaninTwo\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.IsWellFormed\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"IsWellFormed\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGCircuit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\ttrue\nBoolCircuit.DAGCircuit.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.depthAt\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"depthAt\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.depths\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"depths\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGCircuit.size\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"size\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.toTree\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"toTree\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.unfoldVertex_depth_le.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"unfoldVertex_depth_le\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.DAGCircuit.unfoldVertex_eval.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"unfoldVertex_eval\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.DAGCircuit.unfoldVertex_maxFanin_le.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"unfoldVertex_maxFanin_le\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.DAGCircuit.unfoldVertex_size_le.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"unfoldVertex_size_le\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.DAGCircuit.values\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"values\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.Accepts\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"Accepts\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.HasFaninTwo\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"HasFaninTwo\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.HasPolylogDepth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"HasPolylogDepth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.IsPolySize\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"IsPolySize\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.IsWellFormed\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"IsWellFormed\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGCircuitFamily._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\ttrue\nBoolCircuit.DAGCircuitFamily.language\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"language\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGGate.FaninTwo\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"FaninTwo\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGGate.WellFormed\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"WellFormed\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGGate._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGGate._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\ttrue\nBoolCircuit.DAGGate.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGGate.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGGate.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGGate.remap\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"remap\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.GateKind._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GateKind\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.GateKind._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GateKind\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\ttrue\nBoolCircuit.GateKind.enumList\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GateKind\"],[\"str\",\"enumList\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.GateKind.ofNat\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GateKind\"],[\"str\",\"ofNat\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.GatesAcyclic\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GatesAcyclic\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.Lit._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"Lit\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.Lit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"Lit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nBoolCircuit.Lit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"Lit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.Lit.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"Lit\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_2\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_2\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_3\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_3\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_4\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_4\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nBoolCircuit.NAndCircuit.constTrue\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"constTrue\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.depth._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"depth\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.depth._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"depth\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.eval._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.eval._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.eval.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.NAndCircuit.litCount\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.litCount._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.litCount._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.litCount.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.NAndCircuit.ofVar\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"ofVar\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.size\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"size\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.size._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"size\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.size._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"size\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.toTreeCircuit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"toTreeCircuit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.toTreeCircuit._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"toTreeCircuit\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.toTreeCircuit._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"toTreeCircuit\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nBoolCircuit.NOrCircuit.constFalse\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"constFalse\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.depth._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"depth\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.eval._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"eval\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.eval.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.NOrCircuit.litCount\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"litCount\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.litCount._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"litCount\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.litCount.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"litCount\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.NOrCircuit.ofVar\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"ofVar\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.size\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"size\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.size._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"size\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.toTreeCircuit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"toTreeCircuit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.toTreeCircuit._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"toTreeCircuit\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.TreeCircuit._sizeOf_2\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"_sizeOf_2\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.TreeCircuit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nBoolCircuit.TreeCircuit.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.depth._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"depth\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.depth_le_maxDepth.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"depth_le_maxDepth\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.eval._unary\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"],[\"str\",\"_unary\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.eval._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.eval.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.ind.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"ind\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.length_le_sumSize.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"length_le_sumSize\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.litCount\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"litCount\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.litCount._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"litCount\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxDepth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxDepth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxFanin\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFanin\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxFanin._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFanin\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxFaninL\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFaninL\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxFaninL_le_sumSize.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFaninL_le_sumSize\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.maxFanin_le_maxFaninL.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFanin_le_maxFaninL\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.size\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"size\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.size._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"size\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.sumSize\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"sumSize\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toDAG\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toDAG\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNAnd\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNAnd._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNAnd._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNAnd.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.toNOr\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNOr\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNOr._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNOr\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNOr.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNOr\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.compileTree\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTree._sunfold\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTree._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTree.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.compileTrees\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTrees._sunfold\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTrees._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTrees.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.compileTrees_spec.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees_spec\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.constCircuit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"constCircuit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.constGate\t[[\"str\",\"BoolCircuit\"],[\"str\",\"constGate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instDecidableEqDAGGate\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqDAGGate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instDecidableEqDAGGate.decEq\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqDAGGate\"],[\"str\",\"decEq\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instDecidableEqDAGGate.decEq.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqDAGGate\"],[\"str\",\"decEq\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\ttrue\ttrue\nBoolCircuit.instDecidableEqGateKind\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqGateKind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instDecidableEqLit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqLit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instDecidableEqLit.decEq\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqLit\"],[\"str\",\"decEq\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instDecidableEqLit.decEq.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqLit\"],[\"str\",\"decEq\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.instFintypeGateKind\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instFintypeGateKind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instHashableLit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instHashableLit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instHashableLit.hash\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instHashableLit\"],[\"str\",\"hash\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instHashableLit.hash.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instHashableLit\"],[\"str\",\"hash\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.instReprDAGGate\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprDAGGate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instReprDAGGate.repr\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprDAGGate\"],[\"str\",\"repr\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instReprGateKind\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprGateKind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instReprGateKind.repr\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprGateKind\"],[\"str\",\"repr\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instReprGateKind.repr.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprGateKind\"],[\"str\",\"repr\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\ttrue\ttrue\nBoolCircuit.instReprLit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprLit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instReprLit.repr\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprLit\"],[\"str\",\"repr\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instReprTreeCircuit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprTreeCircuit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instReprTreeCircuit.repr._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprTreeCircuit\"],[\"str\",\"repr\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instReprTreeCircuit.repr.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprTreeCircuit\"],[\"str\",\"repr\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.nodeKind\t[[\"str\",\"BoolCircuit\"],[\"str\",\"nodeKind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.runWith\t[[\"str\",\"BoolCircuit\"],[\"str\",\"runWith\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldGate\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldGate.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldGate_eval.match_1_10\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate_eval\"],[\"str\",\"match_1_10\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldGate_eval.match_1_12\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate_eval\"],[\"str\",\"match_1_12\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldGate_eval.match_1_4\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate_eval\"],[\"str\",\"match_1_4\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldGate_eval.match_1_6\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate_eval\"],[\"str\",\"match_1_6\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldVertex\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldVertex._sunfold\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldVertex._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldVertex.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.vertexDepth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"vertexDepth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.vertexValue\t[[\"str\",\"BoolCircuit\"],[\"str\",\"vertexValue\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NAndCircuit.eval.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NAndCircuit.litCount.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NOrCircuit.eval.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NOrCircuit.litCount.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"litCount\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.eval.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.sumSize_add_length_le.match_1_1\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"sumSize_add_length_le\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.toNAnd.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.toNOr.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNOr\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.instReprTreeCircuit.repr.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"instReprTreeCircuit\"],[\"str\",\"repr\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.List.map_unattach.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"List\"],[\"str\",\"map_unattach\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.DAGCircuit.0.BoolCircuit.instReprGateKind.repr.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"instReprGateKind\"],[\"str\",\"repr\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.compileTree.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.compileTrees.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.unfoldVertex.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue"
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut resolved : Array Lean.Name := #[]
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  let mut active : Nat := 0
+  let mut already : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=install spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let before ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    if before == .irreducible then
+      already := already + 1
+    else
+      let id := Lean.mkIdent n
+      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+      active := active + 1
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed for {spelling}"
+    resolved := resolved.push n
+    verified := verified + 1
+    Lean.logInfo m!"G06-NAME label={label} spelling={spelling} actual={n.toString} home={home} before={repr before} installed={repr installed}"
+  unless active + already == requests.size do throwError "G06-HARNESS {label}: installation count mismatch"
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  let maskExt := Lean.Meta.globalInstanceExtension
+  let maskEnv ← Lean.getEnv
+  let scopes := maskExt.ext.getState maskEnv
+  unless scopes.stateStack.length == 1 do
+    throwError "G06-HARNESS {label}: unfolding mask requires base scope"
+  let mut scopedNames : Std.HashSet Lean.Name := {}
+  for (_, payloads) in scopes.scopedEntries.map.toList do
+    for n in payloads do
+      scopedNames := scopedNames.insert n
+  let mut removed : Nat := 0
+  for n in resolved do
+    if scopedNames.contains n then
+      throwError "G06-HARNESS {label}: scoped unfolding payload intersects request {n}"
+    if Lean.Meta.isGlobalInstance maskEnv n then
+      removed := removed + 1
+  -- InstanceEntry's BEq checks only val, so compare every field explicitly.
+  let entryFields (e : Lean.Meta.InstanceEntry) :=
+    (e.keys, Lean.ExprStructEq.mk e.val, e.priority, e.globalName?, e.synthOrder, e.attrKind)
+  let lookupSnapshot (e : Lean.Environment) :=
+    let s := Lean.Meta.instanceExtension.getState e
+    (s.discrTree.toArray.map (fun (ks, entry) => (ks, entryFields entry)),
+      s.instanceNames.toArray.map (fun (n, entry) => (n, entryFields entry)), s.erased.toList)
+  let beforeLookup := lookupSnapshot env
+  Lean.modifyEnv fun current =>
+    maskExt.modifyState current fun membership =>
+      resolved.foldl (fun s n => s.erase n) membership
+  let maskedEnv ← Lean.getEnv
+  unless beforeLookup == lookupSnapshot maskedEnv do
+    throwError "G06-HARNESS {label}: typeclass lookup state changed"
+  for n in resolved do
+    if Lean.Meta.isGlobalInstance maskedEnv n then
+      throwError "G06-HARNESS {label}: unfolding membership after mask for {n}"
+  Lean.logInfo m!"G06-MASK label={label} phase=install requested={requests.size} verified={resolved.size} removed={removed} scope_depth=1 scoped_names={scopedNames.size} tc_state=preserved"
+  Lean.logInfo m!"G06-SEAL label={label} requested={requests.size} active={active} already_irreducible={already} verified={verified}"
+
+
+/-!
+# Formula combinators: the balanced binary gate
+
+The first rows of the circuit and formula gadget registry (`machine-library-design.md`, "Circuit
+and formula gadgets"): combinators on `BoolCircuit.TreeCircuit` formulas that the formula
+arithmetic of `FormulaArith/` is built from.  This file starts with the balanced binary tree of
+gates, `BoolCircuit.TreeCircuit.balanced`, which computes an unbounded `∧`/`∨` gate with fan-in
+two at logarithmic extra depth.  It was the private `combine` of `TreeNCAC.lean`, promoted
+unchanged; `BoolCircuit.TreeCircuit.toBinary` now calls it from there.
+
+## Main definitions
+
+* `BoolCircuit.TreeCircuit.balanced` — the balanced binary tree of `b`-gates over a child list.
+* `BoolCircuit.TreeCircuit.neg` — the De Morgan negation (literals flip sign, gates flip
+  kind), depth- and fan-in-preserving.
+* `BoolCircuit.TreeCircuit.subst`, `rename` — substitution of formulas for variables (a
+  negative literal becomes the negated formula), and its literal case.
+* `BoolCircuit.TreeCircuit.const` — the constant formula `node b []`.
+* `BoolCircuit.TreeCircuit.and2`, `or2`, `xor2`, `xor3`, `maj3` — the fan-in-2 gadgets, of
+  depth `+1`, `+1`, `+2`, `+4`, `+3` over their arguments.
+
+## Main results
+
+* `BoolCircuit.TreeCircuit.balanced_eval` — it computes the unbounded gate.
+* `BoolCircuit.TreeCircuit.maxFanin_balanced_le`, `depth_balanced_le`, `size_balanced_le` —
+  fan-in two, `⌈log₂ |cs|⌉ + 1` extra depth, `|cs| + 1` extra size.
+* `BoolCircuit.TreeCircuit.balanced_nil`, `balanced_singleton` — the readers on short lists.
+* `BoolCircuit.TreeCircuit.neg_eval`, `depth_neg`, `maxFanin_neg` — negation (F1; targets).
+* `BoolCircuit.TreeCircuit.subst_eval`, `depth_subst_le`, `maxFanin_subst_le`, `rename_eval`,
+  `depth_rename` — substitution and renaming (F2; targets).
+* `BoolCircuit.TreeCircuit.const_eval`, `xor3_eval`, `maj3_eval`, and the value, depth and
+  fan-in lemmas of every gadget (F3; targets).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009.
+-/
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace BoolCircuit
+
+variable {n : ℕ}
+
+/-! ### Simulating an unbounded gate by a balanced binary tree -/
+
+/-- Pair adjacent children under a gate of type `b`, halving the list. -/
+private def pairUp (b : Bool) : List (TreeCircuit n) → List (TreeCircuit n)
+  | [] => []
+  | [c] => [c]
+  | c₁ :: c₂ :: cs => TreeCircuit.node b [c₁, c₂] :: pairUp b cs
+
+/-- Pairing halves the list, rounding up. -/
+private theorem length_pairUp (b : Bool) :
+    ∀ cs : List (TreeCircuit n), (pairUp b cs).length = (cs.length + 1) / 2
+  | [] => by simp [pairUp]
+  | [_] => by simp [pairUp]
+  | _ :: _ :: cs => by
+      have := length_pairUp b cs
+      simp only [pairUp, List.length_cons] at *
+      omega
+
+/-- Pairing preserves the value of the surrounding gate. -/
+private theorem eval_node_pairUp (b : Bool) (x : Fin n → Bool) :
+    ∀ cs : List (TreeCircuit n),
+      (TreeCircuit.node b (pairUp b cs)).eval x = (TreeCircuit.node b cs).eval x
+  | [] => rfl
+  | [_] => by cases b <;> simp [pairUp, TreeCircuit.eval_node_true, TreeCircuit.eval_node_false]
+  | c₁ :: c₂ :: cs => by
+      have := eval_node_pairUp b x cs
+      cases b <;>
+        simp only [pairUp, TreeCircuit.eval_node_true, TreeCircuit.eval_node_false,
+          List.all_cons, List.all_nil, List.any_cons, List.any_nil] at * <;>
+        simp [this, Bool.and_assoc, Bool.or_assoc]
+
+/-- Pairing adds at most one to the depth. -/
+private theorem maxDepth_pairUp (b : Bool) :
+    ∀ cs : List (TreeCircuit n), TreeCircuit.maxDepth (pairUp b cs) ≤ 1 + TreeCircuit.maxDepth cs
+  | [] => by simp [pairUp, TreeCircuit.maxDepth_nil]
+  | [c] => by simp [pairUp]
+  | c₁ :: c₂ :: cs => by
+      have ih := maxDepth_pairUp b cs
+      have h1 : (TreeCircuit.node b [c₁, c₂]).depth
+          = 1 + max c₁.depth (max c₂.depth 0) := by
+        rw [TreeCircuit.depth_node, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_cons,
+          TreeCircuit.maxDepth_nil]
+      simp only [pairUp, TreeCircuit.maxDepth_cons, h1]
+      omega
+
+/-- Pairing does not increase the total size plus length. -/
+private theorem sumSize_pairUp (b : Bool) :
+    ∀ cs : List (TreeCircuit n),
+      TreeCircuit.sumSize (pairUp b cs) + (pairUp b cs).length ≤
+        TreeCircuit.sumSize cs + cs.length
+  | [] => by rw [pairUp, TreeCircuit.sumSize_nil, List.length_nil]
+  | [_] => le_refl _
+  | c₁ :: c₂ :: cs => by
+      have ih := sumSize_pairUp b cs
+      have h1 : (TreeCircuit.node b [c₁, c₂]).size = 1 + (c₁.size + (c₂.size + 0)) := by
+        rw [TreeCircuit.size_node, TreeCircuit.sumSize_cons, TreeCircuit.sumSize_cons,
+          TreeCircuit.sumSize_nil]
+      simp only [pairUp, TreeCircuit.sumSize_cons, h1, List.length_cons]
+      omega
+
+/-- Pairing introduces only fan-in-2 gates. -/
+private theorem maxFaninL_pairUp (b : Bool) :
+    ∀ cs : List (TreeCircuit n),
+      TreeCircuit.maxFaninL (pairUp b cs) ≤ max 2 (TreeCircuit.maxFaninL cs)
+  | [] => by rw [pairUp, TreeCircuit.maxFaninL_nil]; exact Nat.zero_le _
+  | [c] => by simp [pairUp, TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_nil]
+  | c₁ :: c₂ :: cs => by
+      have ih := maxFaninL_pairUp b cs
+      have h1 : (TreeCircuit.node b [c₁, c₂]).maxFanin
+          = max 2 (max c₁.maxFanin (max c₂.maxFanin 0)) := by
+        rw [TreeCircuit.maxFanin_node, TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_cons,
+          TreeCircuit.maxFaninL_nil]
+        norm_num
+      simp only [pairUp, TreeCircuit.maxFaninL_cons, h1]
+      omega
+
+/-- Repeatedly pair a child list, `k` rounds at most, into a single circuit. -/
+private def combineFuel (b : Bool) : ℕ → List (TreeCircuit n) → TreeCircuit n
+  | 0, cs => TreeCircuit.node b cs
+  | _ + 1, [] => TreeCircuit.node b []
+  | _ + 1, [c] => c
+  | k + 1, c₁ :: c₂ :: cs => combineFuel b k (pairUp b (c₁ :: c₂ :: cs))
+
+/-- The balanced binary tree of `b`-gates over the child list `cs`: the children are paired
+under fan-in-2 `b`-gates round by round (at most `|cs|` rounds) until one circuit is left,
+`balanced b cs = combineFuel b |cs| cs`.  It computes the unbounded gate
+`TreeCircuit.node b cs` (`TreeCircuit.balanced_eval`); `balanced b [] = node b []` and
+`balanced b [c] = c`.  The former private `TreeNCAC.combine`, promoted for the formula
+arithmetic layer; glue behind [AB09, p. 118]'s fan-in reduction (`TreeCircuit.toBinary`). -/
+def TreeCircuit.balanced (b : Bool) (cs : List (TreeCircuit n)) : TreeCircuit n :=
+  combineFuel b cs.length cs
+
+/-- Combining computes the same value as the unbounded gate. -/
+private theorem combineFuel_eval (b : Bool) (x : Fin n → Bool) :
+    ∀ (k : ℕ) (cs : List (TreeCircuit n)),
+      (combineFuel b k cs).eval x = (TreeCircuit.node b cs).eval x
+  | 0, _ => rfl
+  | _ + 1, [] => rfl
+  | _ + 1, [c] => by
+      cases b <;> simp [combineFuel, TreeCircuit.eval_node_true, TreeCircuit.eval_node_false]
+  | k + 1, c₁ :: c₂ :: cs => by
+      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).eval x = _
+      rw [combineFuel_eval b x k, eval_node_pairUp]
+
+/-- Combining produces only fan-in-2 gates, given enough rounds. -/
+private theorem combineFuel_maxFanin (b : Bool) :
+    ∀ (k : ℕ) (cs : List (TreeCircuit n)), cs.length ≤ k →
+      (combineFuel b k cs).maxFanin ≤ max 2 (TreeCircuit.maxFaninL cs)
+  | 0, [], _ => by simp [combineFuel, TreeCircuit.maxFanin_node, TreeCircuit.maxFaninL_nil]
+  | 0, _ :: _, h => by simp at h
+  | _ + 1, [], _ => by simp [combineFuel, TreeCircuit.maxFanin_node, TreeCircuit.maxFaninL_nil]
+  | _ + 1, [c], _ => by
+      show c.maxFanin ≤ _
+      rw [TreeCircuit.maxFaninL_cons, TreeCircuit.maxFaninL_nil]
+      omega
+  | k + 1, c₁ :: c₂ :: cs, h => by
+      have hp := length_pairUp b (c₁ :: c₂ :: cs)
+      have hlen : (pairUp b (c₁ :: c₂ :: cs)).length ≤ k := by
+        simp only [List.length_cons] at h hp ⊢; omega
+      have ih := combineFuel_maxFanin b k _ hlen
+      have h2 := maxFaninL_pairUp b (c₁ :: c₂ :: cs)
+      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).maxFanin ≤ _
+      omega
+
+/-- Combining `m` children costs `⌈log₂ m⌉` extra levels of depth.
+
+**Proof sketch.** Induction on the fuel.  With no children, or one child, the bound is
+immediate.  With at least two children, one round of pairing halves the list (to
+`⌈m / 2⌉` entries) and raises the maximum child depth by at most one, while
+`⌈log₂ m⌉ = ⌈log₂ ⌈m / 2⌉⌉ + 1` for `m ≥ 2`; the induction hypothesis on the paired list
+then gives the bound. -/
+private theorem combineFuel_depth (b : Bool) :
+    ∀ (k : ℕ) (cs : List (TreeCircuit n)), cs.length ≤ k →
+      (combineFuel b k cs).depth ≤ TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1
+  | 0, [], _ => by simp [combineFuel, TreeCircuit.depth_node, TreeCircuit.maxDepth_nil]
+  | 0, _ :: _, h => by simp at h
+  | _ + 1, [], _ => by simp [combineFuel, TreeCircuit.depth_node, TreeCircuit.maxDepth_nil]
+  | _ + 1, [c], _ => by
+      show c.depth ≤ _
+      rw [TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_nil]
+      simp
+  | k + 1, c₁ :: c₂ :: cs, h => by
+      have hp := length_pairUp b (c₁ :: c₂ :: cs)
+      have hlen : (pairUp b (c₁ :: c₂ :: cs)).length ≤ k := by
+        simp only [List.length_cons] at h hp ⊢; omega
+      have ih := combineFuel_depth b k _ hlen
+      have h2 := maxDepth_pairUp b (c₁ :: c₂ :: cs)
+      have hclog : Nat.clog 2 (c₁ :: c₂ :: cs).length
+          = Nat.clog 2 ((pairUp b (c₁ :: c₂ :: cs)).length) + 1 := by
+        rw [hp]
+        have := Nat.clog_of_two_le (b := 2) (n := (c₁ :: c₂ :: cs).length)
+          (by norm_num) (by simp)
+        simpa using this
+      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).depth ≤ _
+      omega
+
+/-- Combining `m` children costs at most `m` extra gates. -/
+private theorem combineFuel_size (b : Bool) :
+    ∀ (k : ℕ) (cs : List (TreeCircuit n)),
+      (combineFuel b k cs).size ≤ TreeCircuit.sumSize cs + cs.length + 1
+  | 0, cs => by show (TreeCircuit.node b cs).size ≤ _; rw [TreeCircuit.size_node]; omega
+  | _ + 1, [] => by simp [combineFuel, TreeCircuit.size_node, TreeCircuit.sumSize_nil]
+  | _ + 1, [c] => by show c.size ≤ _; rw [TreeCircuit.sumSize_cons, TreeCircuit.sumSize_nil]; omega
+  | k + 1, c₁ :: c₂ :: cs => by
+      have ih := combineFuel_size b k (pairUp b (c₁ :: c₂ :: cs))
+      have h2 := sumSize_pairUp b (c₁ :: c₂ :: cs)
+      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).size ≤ _
+      omega
+
+/-- The balanced tree computes the unbounded gate:
+`(TreeCircuit.balanced b cs).eval x = (TreeCircuit.node b cs).eval x`. -/
+theorem TreeCircuit.balanced_eval (b : Bool) (cs : List (TreeCircuit n)) (x : Fin n → Bool) :
+    (TreeCircuit.balanced b cs).eval x = (TreeCircuit.node b cs).eval x :=
+  combineFuel_eval b x _ cs
+
+/-- The balanced tree has fan-in 2, unless a child already had more:
+`(TreeCircuit.balanced b cs).maxFanin ≤ max 2 (TreeCircuit.maxFaninL cs)`. -/
+theorem TreeCircuit.maxFanin_balanced_le (b : Bool) (cs : List (TreeCircuit n)) :
+    (TreeCircuit.balanced b cs).maxFanin ≤ max 2 (TreeCircuit.maxFaninL cs) :=
+  combineFuel_maxFanin b _ cs (le_refl _)
+
+/-- The balanced tree adds at most `⌈log₂ |cs|⌉ + 1` to the children's depth:
+`(TreeCircuit.balanced b cs).depth ≤ TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1`. -/
+theorem TreeCircuit.depth_balanced_le (b : Bool) (cs : List (TreeCircuit n)) :
+    (TreeCircuit.balanced b cs).depth ≤ TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1 :=
+  combineFuel_depth b _ cs (le_refl _)
+
+/-- The balanced tree adds at most `|cs| + 1` to the children's total size:
+`(TreeCircuit.balanced b cs).size ≤ TreeCircuit.sumSize cs + cs.length + 1`. -/
+theorem TreeCircuit.size_balanced_le (b : Bool) (cs : List (TreeCircuit n)) :
+    (TreeCircuit.balanced b cs).size ≤ TreeCircuit.sumSize cs + cs.length + 1 :=
+  combineFuel_size b _ cs
+
+/-- The balanced tree over no children is the empty gate: `TreeCircuit.balanced b [] =
+TreeCircuit.node b []`. -/
+theorem TreeCircuit.balanced_nil (b : Bool) :
+    TreeCircuit.balanced b ([] : List (TreeCircuit n)) = TreeCircuit.node b [] := rfl
+
+/-- The balanced tree over one child is that child: `TreeCircuit.balanced b [c] = c`. -/
+theorem TreeCircuit.balanced_singleton (b : Bool) (c : TreeCircuit n) :
+    TreeCircuit.balanced b [c] = c := rfl
+
+/-! ### De Morgan negation and substitution (F1–F2) -/
+
+mutual
+
+/-- The De Morgan negation of a formula: every literal flips its sign and every gate flips its
+kind, `(lit ⟨i, s⟩).neg = lit ⟨i, !s⟩` and `(node b cs).neg = node (!b) (cs.map neg)`, so
+that `c.neg` computes `!c.eval x` with the same shape, depth and fan-in
+(`TreeCircuit.neg_eval`, `depth_neg`, `maxFanin_neg`).  Structural recursion over the nested
+child list, through the private list helper `negList`.  Glue. -/
+def TreeCircuit.neg : TreeCircuit n → TreeCircuit n
+  | .lit l => .lit ⟨l.idx, !l.sign⟩
+  | .node b cs => .node (!b) (negList cs)
+
+/-- `TreeCircuit.neg` on every member of a child list: `negList cs = cs.map neg`. -/
+private def negList : List (TreeCircuit n) → List (TreeCircuit n)
+  | [] => []
+  | c :: cs => c.neg :: negList cs
+
+end
+
+/-- The negation of a literal flips its sign:
+`(TreeCircuit.lit l).neg = TreeCircuit.lit ⟨l.idx, !l.sign⟩`. -/
+theorem TreeCircuit.neg_lit (l : Lit n) :
+    (TreeCircuit.lit l).neg = TreeCircuit.lit ⟨l.idx, !l.sign⟩ := rfl
+
+/-- The list helper of `neg` is `List.map`: `negList cs = cs.map TreeCircuit.neg`. -/
+private theorem negList_eq_map : ∀ cs : List (TreeCircuit n), negList cs = cs.map TreeCircuit.neg
+  | [] => rfl
+  | c :: cs => congrArg (c.neg :: ·) (negList_eq_map cs)
+
+/-- The negation of a gate flips its kind and negates every child:
+`(TreeCircuit.node b cs).neg = TreeCircuit.node (!b) (cs.map TreeCircuit.neg)`. -/
+theorem TreeCircuit.neg_node (b : Bool) (cs : List (TreeCircuit n)) :
+    (TreeCircuit.node b cs).neg = TreeCircuit.node (!b) (cs.map TreeCircuit.neg) :=
+  congrArg (TreeCircuit.node (!b)) (negList_eq_map cs)
+
+/-- **F1, value.** The De Morgan negation computes the negation:
+`c.neg.eval x = !c.eval x`.  Glue (r3 §H5.7, F1).
+
+**Proof sketch.** Induction on `c` (`TreeCircuit.ind`).  A literal: `neg_lit`, then
+`eval_lit` and the value of a literal (`Lit.eval`, whose reader is missing; see the census)
+with the sign flipped.  A gate `node b cs`: `neg_node`; for `b = true` the negated gate is an
+`∨`-gate, so `eval_node_false` gives `(cs.map neg).any (·.eval x)`, which by the induction
+hypothesis is `cs.any (! ·.eval x) = !(cs.all (·.eval x))`, that is `!` of `eval_node_true`;
+`b = false` is symmetric. -/
+theorem TreeCircuit.neg_eval (c : TreeCircuit n) (x : Fin n → Bool) :
+    c.neg.eval x = !c.eval x := by
+  sorry
+
+/-- **F1, depth.** De Morgan negation preserves the depth: `c.neg.depth = c.depth`.  Glue.
+
+**Proof sketch.** Induction on `c` (`TreeCircuit.ind`).  A literal stays a literal (depth `0`
+on both sides; the reader `depth_lit` is missing, see the census).  A gate: `neg_node` and
+`depth_node` reduce the claim to `maxDepth (cs.map neg) = maxDepth cs`, an induction on the
+list with `maxDepth_nil`/`maxDepth_cons` and the induction hypothesis on each child. -/
+theorem TreeCircuit.depth_neg (c : TreeCircuit n) : c.neg.depth = c.depth := by
+  sorry
+
+/-- **F1, fan-in.** De Morgan negation preserves the fan-in: `c.neg.maxFanin = c.maxFanin`.
+Glue.
+
+**Proof sketch.** As for `depth_neg`: induction on `c`; a gate keeps its arity
+(`List.length_map`), and `maxFanin_node` with `maxFaninL_nil`/`maxFaninL_cons` and the
+induction hypothesis gives `maxFaninL (cs.map neg) = maxFaninL cs`. -/
+theorem TreeCircuit.maxFanin_neg (c : TreeCircuit n) : c.neg.maxFanin = c.maxFanin := by
+  sorry
+
+mutual
+
+/-- Substitution of formulas for variables: `c.subst f` replaces every positive literal
+`x_i` of `c` by `f i` and every negative literal `¬x_i` by `(f i).neg`, keeping the gates,
+`(lit l).subst f = if l.sign then f l.idx else (f l.idx).neg` and
+`(node b cs).subst f = node b (cs.map (·.subst f))`.  It computes `c` on the values of the
+`f i` (`TreeCircuit.subst_eval`).  Structural recursion over the nested child list, through
+the private list helper `substList`.  Glue. -/
+def TreeCircuit.subst {m : ℕ} : TreeCircuit n → (Fin n → TreeCircuit m) → TreeCircuit m
+  | .lit l, f => if l.sign then f l.idx else (f l.idx).neg
+  | .node b cs, f => .node b (substList cs f)
+
+/-- `TreeCircuit.subst` on every member of a child list:
+`substList cs f = cs.map (·.subst f)`. -/
+private def substList {m : ℕ} :
+    List (TreeCircuit n) → (Fin n → TreeCircuit m) → List (TreeCircuit m)
+  | [], _ => []
+  | c :: cs, f => c.subst f :: substList cs f
+
+end
+
+/-- Substitution into a literal: the positive literal `x_i` becomes `f i` and the negative
+literal `¬x_i` becomes `(f i).neg`,
+`(TreeCircuit.lit l).subst f = if l.sign then f l.idx else (f l.idx).neg`. -/
+theorem TreeCircuit.subst_lit {m : ℕ} (l : Lit n) (f : Fin n → TreeCircuit m) :
+    (TreeCircuit.lit l).subst f = if l.sign then f l.idx else (f l.idx).neg := rfl
+
+/-- The list helper of `subst` is `List.map`: `substList cs f = cs.map (·.subst f)`. -/
+private theorem substList_eq_map {m : ℕ} (f : Fin n → TreeCircuit m) :
+    ∀ cs : List (TreeCircuit n), substList cs f = cs.map fun c => c.subst f
+  | [] => rfl
+  | c :: cs => congrArg (c.subst f :: ·) (substList_eq_map f cs)
+
+/-- Substitution into a gate substitutes into every child:
+`(TreeCircuit.node b cs).subst f = TreeCircuit.node b (cs.map fun c => c.subst f)`. -/
+theorem TreeCircuit.subst_node {m : ℕ} (b : Bool) (cs : List (TreeCircuit n))
+    (f : Fin n → TreeCircuit m) :
+    (TreeCircuit.node b cs).subst f = TreeCircuit.node b (cs.map fun c => c.subst f) :=
+  congrArg (TreeCircuit.node b) (substList_eq_map f cs)
+
+/-- Renaming the variables of a formula along `e : Fin n → Fin m`, the literal case of
+substitution: `c.rename e = c.subst fun i => lit ⟨e i, true⟩`, so `x_i` becomes `x_{e i}` and
+`¬x_i` becomes `¬x_{e i}`.  Glue. -/
+def TreeCircuit.rename {m : ℕ} (c : TreeCircuit n) (e : Fin n → Fin m) : TreeCircuit m :=
+  c.subst fun i => TreeCircuit.lit ⟨e i, true⟩
+
+/-- Renaming is substitution of positive literals:
+`c.rename e = c.subst fun i => TreeCircuit.lit ⟨e i, true⟩`. -/
+theorem TreeCircuit.rename_eq {m : ℕ} (c : TreeCircuit n) (e : Fin n → Fin m) :
+    c.rename e = c.subst fun i => TreeCircuit.lit ⟨e i, true⟩ := rfl
+
+/-- **F2, value.** Substitution computes the formula on the substituted values:
+`(c.subst f).eval x = c.eval fun i => (f i).eval x`.  Glue (r3 §H5.7, F2).
+
+**Proof sketch.** Induction on `c` (`TreeCircuit.ind`).  A positive literal: `subst_lit`, and
+both sides are `(f i).eval x` (`eval_lit` and the literal's value).  A negative literal: the
+left side is `(f i).neg.eval x = !(f i).eval x` by `neg_eval`, which is the value of `¬x_i`
+under `fun i => (f i).eval x`.  A gate: `subst_node`, then `eval_node_true`/`eval_node_false`
+on both sides, `List.all_map`/`List.any_map` and the induction hypothesis on each child. -/
+theorem TreeCircuit.subst_eval {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m)
+    (x : Fin m → Bool) : (c.subst f).eval x = c.eval fun i => (f i).eval x := by
+  sorry
+
+/-- **F2, depth.** Substitution adds at most the depth of the deepest substituted formula:
+`(c.subst f).depth ≤ c.depth + Finset.univ.sup fun i => (f i).depth`.  Glue (r3 §H5.7, F2).
+
+*Deviation from r3's sketch:* r3 writes `⨆ i, (f i).depth`; `SupSet ℕ` is not in this file's
+(frozen) import closure, so the supremum over the finite index type is the equal
+`Finset.univ.sup`.
+
+**Proof sketch.** Induction on `c`, with `D = Finset.univ.sup fun i => (f i).depth`.  A
+literal: the result is `f i` or `(f i).neg`, of depth `(f i).depth ≤ D`
+(`depth_neg`, `Finset.le_sup`), and `c.depth = 0`.  A gate: `subst_node` and `depth_node` give
+`1 + maxDepth (cs.map (·.subst f))`; each child is bounded by `child.depth + D` (induction
+hypothesis) `≤ maxDepth cs + D` (`depth_le_maxDepth`), so the list maximum is too
+(`maxDepth_nil`/`maxDepth_cons`), and `depth_node` on `c` closes it. -/
+theorem TreeCircuit.depth_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m) :
+    (c.subst f).depth ≤ c.depth + Finset.univ.sup fun i => (f i).depth := by
+  sorry
+
+/-- **F2, fan-in.** Substitution has the fan-in of the formula or of a substituted formula:
+`(c.subst f).maxFanin ≤ max c.maxFanin (Finset.univ.sup fun i => (f i).maxFanin)`.  Glue
+(r3 §H5.7, F2; r3 names the lemma without a formula, and `⨆` is written `Finset.univ.sup` as
+in `depth_subst_le`).
+
+**Proof sketch.** Induction on `c` as in `depth_subst_le`.  A literal becomes `f i` or
+`(f i).neg`, of fan-in `(f i).maxFanin` (`maxFanin_neg`, `Finset.le_sup`).  A gate keeps its
+arity (`subst_node`, `List.length_map`), and `maxFanin_node`, `maxFaninL_cons` and the
+induction hypothesis bound the children. -/
+theorem TreeCircuit.maxFanin_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m) :
+    (c.subst f).maxFanin ≤ max c.maxFanin (Finset.univ.sup fun i => (f i).maxFanin) := by
+  sorry
+
+/-- **F2, renaming: value.** A renamed formula reads the renamed variables:
+`(c.rename e).eval x = c.eval (x ∘ e)`.  Glue (r3 §H5.7, F2).
+
+**Proof sketch.** `rename_eq` and `subst_eval`: the substituted value of variable `i` is
+`(lit ⟨e i, true⟩).eval x = x (e i)` (`eval_lit` and the literal's value), which is
+`(x ∘ e) i`. -/
+theorem TreeCircuit.rename_eval {m : ℕ} (c : TreeCircuit n) (e : Fin n → Fin m)
+    (x : Fin m → Bool) : (c.rename e).eval x = c.eval (x ∘ e) := by
+  sorry
+
+/-- **F2, renaming: depth.** Renaming preserves the depth: `(c.rename e).depth = c.depth`.
+Glue (r3 §H5.7, F2).
+
+**Proof sketch.** Induction on `c` (`TreeCircuit.ind`) after `rename_eq`: a literal becomes a
+literal (`subst_lit`, `neg_lit`; depth `0`), and a gate keeps its children's depths
+(`subst_node`, `depth_node`, `maxDepth_cons`).  (`depth_subst_le` alone gives only `≤`.) -/
+theorem TreeCircuit.depth_rename {m : ℕ} (c : TreeCircuit n) (e : Fin n → Fin m) :
+    (c.rename e).depth = c.depth := by
+  sorry
+
+/-! ### Constants and the fan-in-2 gadgets (F3) -/
+
+/-- The constant formula with value `b`: the empty gate, `TreeCircuit.const b = node b []`
+(an empty `∧` is `true`, an empty `∨` is `false`).  Depth `1`, fan-in `0`.  Glue. -/
+def TreeCircuit.const (b : Bool) : TreeCircuit n :=
+  .node b []
+
+/-- The constant formula is the empty gate:
+`(TreeCircuit.const b : TreeCircuit n) = TreeCircuit.node b []`. -/
+theorem TreeCircuit.const_eq (b : Bool) :
+    (TreeCircuit.const b : TreeCircuit n) = TreeCircuit.node b [] := rfl
+
+/-- **F3, constant: value.** The constant formula evaluates to its constant:
+`(TreeCircuit.const b).eval x = b`.  Glue.
+
+**Proof sketch.** `const_eq`, then `eval_node_true` (`[].all _ = true`) for `b = true` and
+`eval_node_false` (`[].any _ = false`) for `b = false`. -/
+theorem TreeCircuit.const_eval (b : Bool) (x : Fin n → Bool) :
+    (TreeCircuit.const b : TreeCircuit n).eval x = b := by
+  sorry
+
+/-- **F3, constant: depth.** The constant formula has depth one:
+`(TreeCircuit.const b : TreeCircuit n).depth = 1`.  Glue.
+
+**Proof sketch.** `const_eq`, `depth_node` and `maxDepth_nil`. -/
+theorem TreeCircuit.depth_const (b : Bool) : (TreeCircuit.const b : TreeCircuit n).depth = 1 := by
+  sorry
+
+/-- **F3, constant: fan-in.** The constant formula has fan-in zero:
+`(TreeCircuit.const b : TreeCircuit n).maxFanin = 0`.  Glue.
+
+**Proof sketch.** `const_eq`, `maxFanin_node`, `List.length_nil` and `maxFaninL_nil`. -/
+theorem TreeCircuit.maxFanin_const (b : Bool) :
+    (TreeCircuit.const b : TreeCircuit n).maxFanin = 0 := by
+  sorry
+
+/-- The binary conjunction `TreeCircuit.and2 a b = node true [a, b]`.  Glue. -/
+def TreeCircuit.and2 (a b : TreeCircuit n) : TreeCircuit n :=
+  .node true [a, b]
+
+/-- The binary conjunction is a two-child `∧`-gate:
+`TreeCircuit.and2 a b = TreeCircuit.node true [a, b]`. -/
+theorem TreeCircuit.and2_eq (a b : TreeCircuit n) :
+    TreeCircuit.and2 a b = TreeCircuit.node true [a, b] := rfl
+
+/-- The binary disjunction `TreeCircuit.or2 a b = node false [a, b]`.  Glue. -/
+def TreeCircuit.or2 (a b : TreeCircuit n) : TreeCircuit n :=
+  .node false [a, b]
+
+/-- The binary disjunction is a two-child `∨`-gate:
+`TreeCircuit.or2 a b = TreeCircuit.node false [a, b]`. -/
+theorem TreeCircuit.or2_eq (a b : TreeCircuit n) :
+    TreeCircuit.or2 a b = TreeCircuit.node false [a, b] := rfl
+
+/-- The binary exclusive or `TreeCircuit.xor2 a b = or2 (and2 a b.neg) (and2 a.neg b)`, that
+is `(a ∧ ¬b) ∨ (¬a ∧ b)` with the negations by De Morgan (`neg`).  Two levels above its
+arguments.  Glue. -/
+def TreeCircuit.xor2 (a b : TreeCircuit n) : TreeCircuit n :=
+  TreeCircuit.or2 (TreeCircuit.and2 a b.neg) (TreeCircuit.and2 a.neg b)
+
+/-- The exclusive or as a formula:
+`TreeCircuit.xor2 a b = TreeCircuit.or2 (TreeCircuit.and2 a b.neg) (TreeCircuit.and2 a.neg b)`.
+-/
+theorem TreeCircuit.xor2_eq (a b : TreeCircuit n) :
+    TreeCircuit.xor2 a b = TreeCircuit.or2 (TreeCircuit.and2 a b.neg) (TreeCircuit.and2 a.neg b) :=
+  rfl
+
+/-- The three-input exclusive or (the full adder's sum bit)
+`TreeCircuit.xor3 a b c = xor2 (xor2 a b) c`.  Four levels above its arguments.  Glue. -/
+def TreeCircuit.xor3 (a b c : TreeCircuit n) : TreeCircuit n :=
+  TreeCircuit.xor2 (TreeCircuit.xor2 a b) c
+
+/-- The three-input exclusive or as nested binary ones:
+`TreeCircuit.xor3 a b c = TreeCircuit.xor2 (TreeCircuit.xor2 a b) c`. -/
+theorem TreeCircuit.xor3_eq (a b c : TreeCircuit n) :
+    TreeCircuit.xor3 a b c = TreeCircuit.xor2 (TreeCircuit.xor2 a b) c := rfl
+
+/-- The three-input majority (the full adder's carry bit)
+`TreeCircuit.maj3 a b c = or2 (and2 a b) (and2 c (or2 a b))`, that is
+`(a ∧ b) ∨ (c ∧ (a ∨ b))`.  Three levels above its arguments.  Glue. -/
+def TreeCircuit.maj3 (a b c : TreeCircuit n) : TreeCircuit n :=
+  TreeCircuit.or2 (TreeCircuit.and2 a b) (TreeCircuit.and2 c (TreeCircuit.or2 a b))
+
+/-- The majority as a formula: `TreeCircuit.maj3 a b c =
+TreeCircuit.or2 (TreeCircuit.and2 a b) (TreeCircuit.and2 c (TreeCircuit.or2 a b))`. -/
+theorem TreeCircuit.maj3_eq (a b c : TreeCircuit n) :
+    TreeCircuit.maj3 a b c =
+      TreeCircuit.or2 (TreeCircuit.and2 a b) (TreeCircuit.and2 c (TreeCircuit.or2 a b)) := rfl
+
+/-- **F3, `and2`: value.** `(TreeCircuit.and2 a b).eval x = (a.eval x && b.eval x)`.  Glue.
+
+**Proof sketch.** `and2_eq`, `eval_node_true`, and `List.all_cons`/`List.all_nil`. -/
+theorem TreeCircuit.and2_eval (a b : TreeCircuit n) (x : Fin n → Bool) :
+    (TreeCircuit.and2 a b).eval x = (a.eval x && b.eval x) := by
+  sorry
+
+/-- **F3, `and2`: depth `+1`.** `(TreeCircuit.and2 a b).depth ≤ max a.depth b.depth + 1`.
+Glue.
+
+**Proof sketch.** `and2_eq`, `depth_node`, `maxDepth_cons` twice and `maxDepth_nil`; then
+`omega` (it is an equality). -/
+theorem TreeCircuit.depth_and2_le (a b : TreeCircuit n) :
+    (TreeCircuit.and2 a b).depth ≤ max a.depth b.depth + 1 := by
+  sorry
+
+/-- **F3, `and2`: fan-in two.**
+`(TreeCircuit.and2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin)`.  Glue.
+
+**Proof sketch.** `and2_eq`, `maxFanin_node` (arity `2`), `maxFaninL_cons` twice and
+`maxFaninL_nil`; then `omega`. -/
+theorem TreeCircuit.maxFanin_and2_le (a b : TreeCircuit n) :
+    (TreeCircuit.and2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin) := by
+  sorry
+
+/-- **F3, `or2`: value.** `(TreeCircuit.or2 a b).eval x = (a.eval x || b.eval x)`.  Glue.
+
+**Proof sketch.** `or2_eq`, `eval_node_false`, and `List.any_cons`/`List.any_nil`. -/
+theorem TreeCircuit.or2_eval (a b : TreeCircuit n) (x : Fin n → Bool) :
+    (TreeCircuit.or2 a b).eval x = (a.eval x || b.eval x) := by
+  sorry
+
+/-- **F3, `or2`: depth `+1`.** `(TreeCircuit.or2 a b).depth ≤ max a.depth b.depth + 1`.
+Glue.
+
+**Proof sketch.** As `depth_and2_le`, through `or2_eq`. -/
+theorem TreeCircuit.depth_or2_le (a b : TreeCircuit n) :
+    (TreeCircuit.or2 a b).depth ≤ max a.depth b.depth + 1 := by
+  sorry
+
+/-- **F3, `or2`: fan-in two.**
+`(TreeCircuit.or2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin)`.  Glue.
+
+**Proof sketch.** As `maxFanin_and2_le`, through `or2_eq`. -/
+theorem TreeCircuit.maxFanin_or2_le (a b : TreeCircuit n) :
+    (TreeCircuit.or2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin) := by
+  sorry
+
+/-- **F3, `xor2`: value.** `(TreeCircuit.xor2 a b).eval x = (a.eval x ^^ b.eval x)`.  Glue.
+
+**Proof sketch.** `xor2_eq`, `or2_eval`, `and2_eval` and `neg_eval`; then a case split on the
+two Booleans. -/
+theorem TreeCircuit.xor2_eval (a b : TreeCircuit n) (x : Fin n → Bool) :
+    (TreeCircuit.xor2 a b).eval x = (a.eval x ^^ b.eval x) := by
+  sorry
+
+/-- **F3, `xor2`: depth `+2`.** `(TreeCircuit.xor2 a b).depth ≤ max a.depth b.depth + 2`.
+Glue; the constant `2` is settled by the construction (one `∧` level, one `∨` level, and the
+depth-preserving `neg`).
+
+**Proof sketch.** `xor2_eq`, `depth_or2_le`, `depth_and2_le` twice, and `depth_neg` for
+`a.neg`, `b.neg`; then `omega`. -/
+theorem TreeCircuit.depth_xor2_le (a b : TreeCircuit n) :
+    (TreeCircuit.xor2 a b).depth ≤ max a.depth b.depth + 2 := by
+  sorry
+
+/-- **F3, `xor2`: fan-in two.**
+`(TreeCircuit.xor2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin)`.  Glue.
+
+**Proof sketch.** `xor2_eq`, `maxFanin_or2_le`, `maxFanin_and2_le` and `maxFanin_neg`; then
+`omega`. -/
+theorem TreeCircuit.maxFanin_xor2_le (a b : TreeCircuit n) :
+    (TreeCircuit.xor2 a b).maxFanin ≤ max 2 (max a.maxFanin b.maxFanin) := by
+  sorry
+
+/-- **F3, `xor3`: value** (the full adder's sum bit).
+`(TreeCircuit.xor3 a b c).eval x = (a.eval x ^^ b.eval x ^^ c.eval x)`.  Glue (r3 §H5.7, F3).
+
+**Proof sketch.** `xor3_eq` and `xor2_eval` twice. -/
+theorem TreeCircuit.xor3_eval (a b c : TreeCircuit n) (x : Fin n → Bool) :
+    (TreeCircuit.xor3 a b c).eval x = (a.eval x ^^ b.eval x ^^ c.eval x) := by
+  sorry
+
+/-- **F3, `xor3`: depth `+4`.**
+`(TreeCircuit.xor3 a b c).depth ≤ max a.depth (max b.depth c.depth) + 4`.  Glue; r3's `+4`
+*(fix)*, settled by the construction: two nested `xor2`, each `+2`.
+
+**Proof sketch.** `xor3_eq`, `depth_xor2_le` twice; then `omega`. -/
+theorem TreeCircuit.depth_xor3_le (a b c : TreeCircuit n) :
+    (TreeCircuit.xor3 a b c).depth ≤ max a.depth (max b.depth c.depth) + 4 := by
+  sorry
+
+/-- **F3, `xor3`: fan-in two.**
+`(TreeCircuit.xor3 a b c).maxFanin ≤ max 2 (max a.maxFanin (max b.maxFanin c.maxFanin))`.
+Glue.
+
+**Proof sketch.** `xor3_eq` and `maxFanin_xor2_le` twice; then `omega`. -/
+theorem TreeCircuit.maxFanin_xor3_le (a b c : TreeCircuit n) :
+    (TreeCircuit.xor3 a b c).maxFanin ≤ max 2 (max a.maxFanin (max b.maxFanin c.maxFanin)) := by
+  sorry
+
+/-- **F3, `maj3`: value** (the full adder's carry bit, in the form of `carryBit`'s step).
+`(TreeCircuit.maj3 a b c).eval x = (a.eval x && b.eval x || c.eval x && (a.eval x ^^ b.eval x))`.
+Glue (r3 §H5.7, F3).  The formula computes `(a ∧ b) ∨ (c ∧ (a ∨ b))`, which is the same
+Boolean function.
+
+**Proof sketch.** `maj3_eq`, `or2_eval`, `and2_eval` twice and `or2_eval` again; then a case
+split on the three Booleans. -/
+theorem TreeCircuit.maj3_eval (a b c : TreeCircuit n) (x : Fin n → Bool) :
+    (TreeCircuit.maj3 a b c).eval x =
+      (a.eval x && b.eval x || c.eval x && (a.eval x ^^ b.eval x)) := by
+  sorry
+
+/-- **F3, `maj3`: depth `+3`.**
+`(TreeCircuit.maj3 a b c).depth ≤ max a.depth (max b.depth c.depth) + 3`.  Glue; r3's `+3`
+*(fix)*, settled by the construction `(a ∧ b) ∨ (c ∧ (a ∨ b))`.
+
+**Proof sketch.** `maj3_eq`, `depth_or2_le` twice and `depth_and2_le` twice; then `omega`. -/
+theorem TreeCircuit.depth_maj3_le (a b c : TreeCircuit n) :
+    (TreeCircuit.maj3 a b c).depth ≤ max a.depth (max b.depth c.depth) + 3 := by
+  sorry
+
+/-- **F3, `maj3`: fan-in two.**
+`(TreeCircuit.maj3 a b c).maxFanin ≤ max 2 (max a.maxFanin (max b.maxFanin c.maxFanin))`.
+Glue.
+
+**Proof sketch.** `maj3_eq`, `maxFanin_or2_le` twice and `maxFanin_and2_le` twice; then
+`omega`. -/
+theorem TreeCircuit.maxFanin_maj3_le (a b c : TreeCircuit n) :
+    (TreeCircuit.maj3 a b c).maxFanin ≤ max 2 (max a.maxFanin (max b.maxFanin c.maxFanin)) := by
+  sorry
+
+end BoolCircuit
+/- G06-HARNESS EOF-VERIFY SealA_Complexity_CircuitComplexity_FormulaArith_Combinators -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "SealA_Complexity_CircuitComplexity_FormulaArith_Combinators"
+  let payload : String := "BoolCircuit.CompileListSpec.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.CompileSpec.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.IsFaninTwo\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.IsWellFormed\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.depth\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.depthAt\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.depths\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.eval\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.size\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuit.toTree\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.unfoldVertex_depth_le.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.unfoldVertex_eval.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.unfoldVertex_maxFanin_le.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.unfoldVertex_size_le.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.values\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.Accepts\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.HasFaninTwo\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.HasPolylogDepth\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.IsPolySize\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.IsWellFormed\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.language\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGCircuitFamily.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.FaninTwo\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.WellFormed\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.depth\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.eval\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.DAGGate.remap\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GateKind._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GateKind._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GateKind.enumList\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GateKind.ofNat\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.GatesAcyclic\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.Lit._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.Lit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.Lit.eval\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.Lit.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_2\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_3\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_4\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.constTrue\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.depth\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.depth._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.depth._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.eval\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.eval._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.eval._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.eval.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.litCount\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.litCount._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.litCount._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.litCount.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.ofVar\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.size\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.size._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.size._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.toTreeCircuit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.toTreeCircuit._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NAndCircuit.toTreeCircuit._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.constFalse\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.depth\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.depth._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.eval\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.eval._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.eval.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.litCount\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.litCount._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.litCount.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.ofVar\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.size\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.size._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.toTreeCircuit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.NOrCircuit.toTreeCircuit._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit._sizeOf_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit._sizeOf_2\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit._sizeOf_inst\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.depth\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.depth._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.depth_le_maxDepth.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.eval\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.eval._unary\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.eval._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.eval.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.ind.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.length_le_sumSize.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.litCount\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.litCount._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxDepth\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFanin\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFanin._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFaninL\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFaninL_le_sumSize.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.maxFanin_le_maxFaninL.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.size\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.size._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.sumSize\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toDAG\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.TreeCircuit.toNAnd\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNAnd._mutual\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNAnd._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNAnd.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNOr\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNOr._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.TreeCircuit.toNOr.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.compileTree\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTree._sunfold\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTree._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTree.match_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees._sunfold\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees.match_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.compileTrees_spec.match_1_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.constCircuit\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.constGate\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqDAGGate\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqDAGGate.decEq\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqDAGGate.decEq.match_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqGateKind\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instDecidableEqLit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instDecidableEqLit.decEq\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instDecidableEqLit.decEq.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instFintypeGateKind\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instHashableLit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instHashableLit.hash\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instHashableLit.hash.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprDAGGate\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprDAGGate.repr\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprGateKind\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprGateKind.repr\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprGateKind.repr.match_1\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.instReprLit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprLit.repr\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprTreeCircuit\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprTreeCircuit.repr._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.instReprTreeCircuit.repr.match_1\tTCSlib.Complexity.CircuitComplexity.Basic\nBoolCircuit.nodeKind\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.runWith\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\nBoolCircuit.unfoldGate\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate.match_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate_eval.match_1_10\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate_eval.match_1_12\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate_eval.match_1_4\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldGate_eval.match_1_6\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldVertex\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldVertex._sunfold\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldVertex._unsafe_rec\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.unfoldVertex.match_1\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.vertexDepth\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.vertexValue\tTCSlib.Complexity.CircuitComplexity.TreeDAG\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NAndCircuit.eval.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NAndCircuit.litCount.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NOrCircuit.eval.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NOrCircuit.litCount.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.eval.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.sumSize_add_length_le.match_1_1\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.toNAnd.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.toNOr.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.instReprTreeCircuit.repr.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.List.map_unattach.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.Basic\n_private.TCSlib.Complexity.CircuitComplexity.DAGCircuit.0.BoolCircuit.instReprGateKind.repr.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.DAGCircuit\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.compileTree.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.TreeDAG\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.compileTrees.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.TreeDAG\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.unfoldVertex.match_1.splitter\tTCSlib.Complexity.CircuitComplexity.TreeDAG"
+  let expectedRequests : Nat := 174
+  let mut requests : Array (String × String) := #[]
+  let payloadLines := if payload.isEmpty then [] else payload.splitOn "\n"
+  for line in payloadLines do
+    match line.splitOn "\t" with
+    | [spelling, home] =>
+      unless !spelling.isEmpty && !home.isEmpty do throwError "G06-HARNESS {label}: empty request field"
+      requests := requests.push (spelling, home)
+    | _ => throwError "G06-HARNESS {label}: malformed serialized request row"
+  unless requests.size == expectedRequests do throwError "G06-HARNESS {label}: serialized request count differs: {requests.size} vs {expectedRequests}"
+  let rec nameParts : Lean.Name → List (String × String)
+    | .anonymous => []
+    | .str p s => nameParts p ++ [("str", s)]
+    | .num p n => nameParts p ++ [("num", toString n)]
+  let nameKey (n : Lean.Name) : String := (Lean.toJson (nameParts n)).compress
+  let componentPayload : String := "BoolCircuit.CompileListSpec.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"CompileListSpec\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue\nBoolCircuit.CompileSpec.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"CompileSpec\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGCircuit.IsFaninTwo\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"IsFaninTwo\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.IsWellFormed\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"IsWellFormed\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGCircuit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\ttrue\nBoolCircuit.DAGCircuit.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.depthAt\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"depthAt\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.depths\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"depths\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGCircuit.size\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"size\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.toTree\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"toTree\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuit.unfoldVertex_depth_le.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"unfoldVertex_depth_le\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.DAGCircuit.unfoldVertex_eval.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"unfoldVertex_eval\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.DAGCircuit.unfoldVertex_maxFanin_le.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"unfoldVertex_maxFanin_le\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.DAGCircuit.unfoldVertex_size_le.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"unfoldVertex_size_le\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.DAGCircuit.values\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuit\"],[\"str\",\"values\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.Accepts\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"Accepts\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.HasFaninTwo\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"HasFaninTwo\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.HasPolylogDepth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"HasPolylogDepth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.IsPolySize\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"IsPolySize\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.IsWellFormed\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"IsWellFormed\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGCircuitFamily._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\ttrue\nBoolCircuit.DAGCircuitFamily.language\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"language\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGCircuitFamily.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGCircuitFamily\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGGate.FaninTwo\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"FaninTwo\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGGate.WellFormed\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"WellFormed\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGGate._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGGate._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\ttrue\nBoolCircuit.DAGGate.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGGate.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.DAGGate.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.DAGGate.remap\t[[\"str\",\"BoolCircuit\"],[\"str\",\"DAGGate\"],[\"str\",\"remap\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.GateKind._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GateKind\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.GateKind._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GateKind\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\ttrue\nBoolCircuit.GateKind.enumList\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GateKind\"],[\"str\",\"enumList\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.GateKind.ofNat\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GateKind\"],[\"str\",\"ofNat\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\nBoolCircuit.GatesAcyclic\t[[\"str\",\"BoolCircuit\"],[\"str\",\"GatesAcyclic\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.Lit._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"Lit\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.Lit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"Lit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nBoolCircuit.Lit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"Lit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.Lit.mk._flat_ctor\t[[\"str\",\"BoolCircuit\"],[\"str\",\"Lit\"],[\"str\",\"mk\"],[\"str\",\"_flat_ctor\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_2\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_2\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_3\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_3\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_4\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_4\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.NAndCircuit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nBoolCircuit.NAndCircuit.constTrue\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"constTrue\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.depth._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"depth\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.depth._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"depth\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.eval._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.eval._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.eval.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.NAndCircuit.litCount\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.litCount._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.litCount._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.litCount.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.NAndCircuit.ofVar\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"ofVar\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.size\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"size\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.size._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"size\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.size._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"size\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.toTreeCircuit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"toTreeCircuit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.toTreeCircuit._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"toTreeCircuit\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NAndCircuit.toTreeCircuit._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"toTreeCircuit\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nBoolCircuit.NOrCircuit.constFalse\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"constFalse\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.depth._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"depth\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.eval._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"eval\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.eval.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.NOrCircuit.litCount\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"litCount\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.litCount._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"litCount\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.litCount.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"litCount\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.NOrCircuit.ofVar\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"ofVar\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.size\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"size\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.size._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"size\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.toTreeCircuit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"toTreeCircuit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.NOrCircuit.toTreeCircuit._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"toTreeCircuit\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit._sizeOf_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"_sizeOf_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.TreeCircuit._sizeOf_2\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"_sizeOf_2\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\nBoolCircuit.TreeCircuit._sizeOf_inst\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"_sizeOf_inst\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\ttrue\nBoolCircuit.TreeCircuit.depth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"depth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.depth._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"depth\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.depth_le_maxDepth.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"depth_le_maxDepth\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.eval\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.eval._unary\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"],[\"str\",\"_unary\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.eval._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.eval.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.ind.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"ind\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.length_le_sumSize.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"length_le_sumSize\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.litCount\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"litCount\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.litCount._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"litCount\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxDepth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxDepth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxFanin\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFanin\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxFanin._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFanin\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxFaninL\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFaninL\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.maxFaninL_le_sumSize.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFaninL_le_sumSize\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.maxFanin_le_maxFaninL.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"maxFanin_le_maxFaninL\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.size\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"size\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.size._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"size\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.sumSize\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"sumSize\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toDAG\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toDAG\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNAnd\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNAnd._mutual\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"],[\"str\",\"_mutual\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNAnd._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNAnd.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.TreeCircuit.toNOr\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNOr\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNOr._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNOr\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.TreeCircuit.toNOr.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNOr\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.compileTree\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTree._sunfold\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTree._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTree.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.compileTrees\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTrees._sunfold\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTrees._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.compileTrees.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.compileTrees_spec.match_1_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees_spec\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.constCircuit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"constCircuit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.constGate\t[[\"str\",\"BoolCircuit\"],[\"str\",\"constGate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instDecidableEqDAGGate\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqDAGGate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instDecidableEqDAGGate.decEq\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqDAGGate\"],[\"str\",\"decEq\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instDecidableEqDAGGate.decEq.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqDAGGate\"],[\"str\",\"decEq\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\ttrue\ttrue\nBoolCircuit.instDecidableEqGateKind\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqGateKind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instDecidableEqLit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqLit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instDecidableEqLit.decEq\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqLit\"],[\"str\",\"decEq\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instDecidableEqLit.decEq.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instDecidableEqLit\"],[\"str\",\"decEq\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.instFintypeGateKind\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instFintypeGateKind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instHashableLit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instHashableLit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instHashableLit.hash\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instHashableLit\"],[\"str\",\"hash\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instHashableLit.hash.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instHashableLit\"],[\"str\",\"hash\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.instReprDAGGate\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprDAGGate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instReprDAGGate.repr\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprDAGGate\"],[\"str\",\"repr\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instReprGateKind\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprGateKind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instReprGateKind.repr\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprGateKind\"],[\"str\",\"repr\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instReprGateKind.repr.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprGateKind\"],[\"str\",\"repr\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\ttrue\ttrue\nBoolCircuit.instReprLit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprLit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instReprLit.repr\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprLit\"],[\"str\",\"repr\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instReprTreeCircuit\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprTreeCircuit\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\ttrue\tfalse\tfalse\nBoolCircuit.instReprTreeCircuit.repr._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprTreeCircuit\"],[\"str\",\"repr\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\tfalse\nBoolCircuit.instReprTreeCircuit.repr.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"instReprTreeCircuit\"],[\"str\",\"repr\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\nBoolCircuit.nodeKind\t[[\"str\",\"BoolCircuit\"],[\"str\",\"nodeKind\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.runWith\t[[\"str\",\"BoolCircuit\"],[\"str\",\"runWith\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldGate\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldGate.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldGate_eval.match_1_10\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate_eval\"],[\"str\",\"match_1_10\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldGate_eval.match_1_12\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate_eval\"],[\"str\",\"match_1_12\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldGate_eval.match_1_4\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate_eval\"],[\"str\",\"match_1_4\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldGate_eval.match_1_6\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldGate_eval\"],[\"str\",\"match_1_6\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.unfoldVertex\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldVertex._sunfold\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"],[\"str\",\"_sunfold\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldVertex._unsafe_rec\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"],[\"str\",\"_unsafe_rec\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.unfoldVertex.match_1\t[[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"],[\"str\",\"match_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\ttrue\ttrue\nBoolCircuit.vertexDepth\t[[\"str\",\"BoolCircuit\"],[\"str\",\"vertexDepth\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\nBoolCircuit.vertexValue\t[[\"str\",\"BoolCircuit\"],[\"str\",\"vertexValue\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\tfalse\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NAndCircuit.eval.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NAndCircuit.litCount.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"NAndCircuit\"],[\"str\",\"litCount\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NOrCircuit.eval.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.NOrCircuit.litCount.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"NOrCircuit\"],[\"str\",\"litCount\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.eval.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"eval\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.sumSize_add_length_le.match_1_1\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"sumSize_add_length_le\"],[\"str\",\"match_1_1\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\ttrue\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.toNAnd.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNAnd\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.TreeCircuit.toNOr.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"TreeCircuit\"],[\"str\",\"toNOr\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.BoolCircuit.instReprTreeCircuit.repr.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"instReprTreeCircuit\"],[\"str\",\"repr\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.Basic.0.List.map_unattach.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"],[\"num\",\"0\"],[\"str\",\"List\"],[\"str\",\"map_unattach\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"Basic\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.DAGCircuit.0.BoolCircuit.instReprGateKind.repr.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"instReprGateKind\"],[\"str\",\"repr\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"DAGCircuit\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.compileTree.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"compileTree\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.compileTrees.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"compileTrees\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue\n_private.TCSlib.Complexity.CircuitComplexity.TreeDAG.0.BoolCircuit.unfoldVertex.match_1.splitter\t[[\"str\",\"_private\"],[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"],[\"num\",\"0\"],[\"str\",\"BoolCircuit\"],[\"str\",\"unfoldVertex\"],[\"str\",\"match_1\"],[\"str\",\"splitter\"]]\t[[\"str\",\"TCSlib\"],[\"str\",\"Complexity\"],[\"str\",\"CircuitComplexity\"],[\"str\",\"TreeDAG\"]]\tfalse\tfalse\ttrue"
+  let mut components : Std.HashMap String (String × String × String × String × String) := {}
+  for line in (if componentPayload.isEmpty then [] else componentPayload.splitOn "\n") do
+    match line.splitOn "\t" with
+    | [n, nk, hk, i, m, a] =>
+      if (components[n]?).isSome then throwError "G06-HARNESS {label}: duplicate component request"
+      components := components.insert n (nk, hk, i, m, a)
+    | _ => throwError "G06-HARNESS {label}: malformed component request"
+  unless components.size == requests.size do throwError "G06-HARNESS {label}: component count differs"
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  for (n, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let some (nk, hk, ei, em, ea) := components[spelling]?
+      | throwError "G06-HARNESS {label}: missing component request"
+    unless nameKey n == nk && nameKey home == hk do
+      throwError "G06-HARNESS {label}: actual Name components differ"
+    let instanceFlag := Lean.Meta.isInstanceCore env n
+    let matcherFlag := (Lean.Meta.Match.Extension.getMatcherInfo? env n).isSome
+    let abbrevFlag := match ci with
+      | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+      | _ => false
+    unless toString instanceFlag == ei && toString matcherFlag == em && toString abbrevFlag == ea do
+      throwError "G06-HARNESS {label}: definition/instance metadata differs"
+    Lean.logInfo m!"G06-COMPONENT label={label} phase=eof spelling={spelling} key={nk} home_key={hk} instance={instanceFlag}"
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed at EOF for {spelling}"
+    if Lean.Meta.isGlobalInstance env n then
+      throwError "G06-HARNESS {label}: unfolding membership at EOF for {spelling}"
+    verified := verified + 1
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  Lean.logInfo m!"G06-MASK label={label} phase=eof requested={requests.size} verified={verified}"
+  Lean.logInfo m!"G06-SEAL-END label={label} requested={requests.size} verified={verified}"
+

@@ -1,0 +1,107 @@
+=== evidence/probes/T0_Env start 2026-11-16T19:38:04Z
+evidence/probes/T0_Env.lean:5:39: error: failed to synthesize
+  SupSet ℕ
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+fun n f => sorry : (n : ℕ) → (f : Fin n → ℕ) → ?m.6 n f
+evidence/probes/T0_Env.lean:7:34: error: Tactic `decide` failed for proposition
+  Nat.clog 2 10 = 4
+because its `Decidable` instance
+  instDecidableEqNat (Nat.clog 2 10) 4
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : (Nat.clog 2 10).beq 4 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+evidence/probes/T0_Env.lean:10:55: error: Type mismatch
+  true
+has type
+  Bool
+but is expected to have type
+  List Bool
+@[irreducible] def BoolCircuit.TreeCircuit.eval : {n : ℕ} → TreeCircuit n → (Fin n → Bool) → Bool :=
+fun {n} a a_1 => TreeCircuit.eval._unary ⟨a, a_1⟩
+FAIL(evidence/probes/T0_Env): lean exited with status 1
+FAIL(evidence/probes/T0_Env): error diagnostics reported
+FAIL(evidence/probes/T0_Env): no fresh .olean produced
+=== evidence/probes/T0_Env end 2026-11-16T19:38:06Z rc=1 errors=3 sorry=0 maxrss_kib=1706804
+=== evidence/probes/T0_Env start 2026-11-16T19:38:19Z
+fun n f => Finset.univ.sup f : (n : ℕ) → (Fin n → ℕ) → ℕ
+evidence/probes/T0_Env.lean:7:34: error: Tactic `decide` failed for proposition
+  Nat.clog 2 10 = 4
+because its `Decidable` instance
+  instDecidableEqNat (Nat.clog 2 10) 4
+did not reduce to `isTrue` or `isFalse`.
+
+Reduction got stuck at the `Decidable` instance
+  match h : (Nat.clog 2 10).beq 4 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+evidence/probes/T0_Env.lean:11:69: error: Tactic `decide` failed for proposition
+  ((TreeCircuit.node true
+          [TreeCircuit.lit { idx := 0, sign := true }, TreeCircuit.lit { idx := 1, sign := false }]).eval
+      fun i => i == 0) =
+    true
+because its `Decidable` instance
+  instDecidableEqBool
+    ((TreeCircuit.node true
+          [TreeCircuit.lit { idx := 0, sign := true }, TreeCircuit.lit { idx := 1, sign := false }]).eval
+      fun i => i == 0)
+    true
+did not reduce to `isTrue` or `isFalse`.
+
+Reduction got stuck at the `Decidable` instance
+  match
+    (TreeCircuit.node true
+          [TreeCircuit.lit { idx := 0, sign := true }, TreeCircuit.lit { idx := 1, sign := false }]).eval
+      fun i => i == 0,
+    true with
+  | false, false => isTrue ⋯
+  | false, true => isFalse ⋯
+  | true, false => isFalse ⋯
+  | true, true => isTrue ⋯
+evidence/probes/T0_Env.lean:13:49: error: Tactic `decide` failed for proposition
+  (TreeCircuit.node true
+        [TreeCircuit.lit { idx := 0, sign := true }, TreeCircuit.lit { idx := 1, sign := false }]).depth =
+    1
+because its `Decidable` instance
+  instDecidableEqNat
+    (TreeCircuit.node true
+        [TreeCircuit.lit { idx := 0, sign := true }, TreeCircuit.lit { idx := 1, sign := false }]).depth
+    1
+did not reduce to `isTrue` or `isFalse`.
+
+Reduction got stuck at the `Decidable` instance
+  match h :
+    (TreeCircuit.node true
+            [TreeCircuit.lit { idx := 0, sign := true }, TreeCircuit.lit { idx := 1, sign := false }]).depth.beq
+      1 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+evidence/probes/T0_Env.lean:15:62: error: failed to synthesize
+  Decidable
+    (∀ (x : Fin 3 → Bool),
+      (TreeCircuit.node true
+              [TreeCircuit.lit { idx := 0, sign := true }, TreeCircuit.lit { idx := 1, sign := false }]).eval
+          x =
+        (x 0 && !x 1))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+def negT : {n : ℕ} → TreeCircuit n → TreeCircuit n :=
+fun {n} x =>
+  x.brecOn
+    (fun x f =>
+      (match (motive := (x : TreeCircuit n) → x.below → TreeCircuit n) x with
+        | TreeCircuit.lit l => fun x => TreeCircuit.lit { idx := l.idx, sign := !l.sign }
+        | TreeCircuit.node b cs => fun x => TreeCircuit.node (!b) x.1)
+        f)
+    fun x f =>
+    (match (motive := (x : List (TreeCircuit n)) → TreeCircuit.below_1 x → List (TreeCircuit n)) x with
+      | [] => fun x => []
+      | c :: cs => fun x => x.1.1 :: x.2.1)
+      f
+FAIL(evidence/probes/T0_Env): lean exited with status 1
+FAIL(evidence/probes/T0_Env): error diagnostics reported
+FAIL(evidence/probes/T0_Env): no fresh .olean produced
+=== evidence/probes/T0_Env end 2026-11-16T19:38:21Z rc=1 errors=4 sorry=0 maxrss_kib=1715204

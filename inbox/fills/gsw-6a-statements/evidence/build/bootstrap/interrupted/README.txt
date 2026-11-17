@@ -1,0 +1,1 @@
+container restart at about 2026-11-16T23:11:47Z: sweep killed while checking TCSlib/Complexity/CookLevin/Hardness (partial log kept under interrupted/); resumed with the modules already recorded skipped

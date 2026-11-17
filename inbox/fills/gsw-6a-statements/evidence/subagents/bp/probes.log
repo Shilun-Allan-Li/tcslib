@@ -1,0 +1,180 @@
+=== evidence/probes/P1_YieldOrder start 2026-11-16T19:47:42Z
+evidence/probes/P1_YieldOrder.lean:46:2: error: maximum recursion depth has been reached
+use `set_option maxRecDepth <num>` to increase limit
+use `set_option diagnostics true` to get diagnostic information
+FAIL(evidence/probes/P1_YieldOrder): lean exited with status 1
+FAIL(evidence/probes/P1_YieldOrder): error diagnostics reported
+FAIL(evidence/probes/P1_YieldOrder): no fresh .olean produced
+=== evidence/probes/P1_YieldOrder end 2026-11-16T19:47:44Z rc=1 errors=1 sorry=0 maxrss_kib=1923792
+=== evidence/probes/P1_YieldOrder start 2026-11-16T19:47:53Z
+=== evidence/probes/P1_YieldOrder end 2026-11-16T19:47:57Z rc=0 errors=0 sorry=0 maxrss_kib=2057412
+=== evidence/probes/P2_Commutator start 2026-11-16T19:48:30Z
+evidence/probes/P2_Commutator.lean:25:68: error: maximum recursion depth has been reached
+use `set_option maxRecDepth <num>` to increase limit
+use `set_option diagnostics true` to get diagnostic information
+[2, 4, 1, 0, 3]
+FAIL(evidence/probes/P2_Commutator): lean exited with status 1
+FAIL(evidence/probes/P2_Commutator): error diagnostics reported
+FAIL(evidence/probes/P2_Commutator): no fresh .olean produced
+=== evidence/probes/P2_Commutator end 2026-11-16T19:48:32Z rc=1 errors=1 sorry=0 maxrss_kib=1907844
+=== evidence/probes/P2_Commutator start 2026-11-16T19:48:52Z
+[2, 4, 1, 0, 3]
+=== evidence/probes/P2_Commutator end 2026-11-16T19:48:54Z rc=0 errors=0 sorry=0 maxrss_kib=1913052
+=== evidence/probes/P3_Conjugator start 2026-11-16T19:49:32Z
+evidence/probes/P3_Conjugator.lean:18:39: error: Tactic `decide` failed for proposition
+  fiveCycles.length = 24
+because its `Decidable` instance
+  instDecidableEqNat fiveCycles.length 24
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : fiveCycles.length.beq 24 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+evidence/probes/P3_Conjugator.lean:19:33: error: Tactic `decide` failed for proposition
+  fiveCycles.Nodup
+because its `Decidable` instance
+  fiveCycles.nodupDecidable
+did not reduce to `isTrue` or `isFalse`.
+
+Reduction got stuck at the `Decidable` instance
+  (List.map (fun p => (0 :: p).formPerm) ([1, 2, 3, 4].permutationsAux [])).instDecidablePairwise
+evidence/probes/P3_Conjugator.lean:20:48: error: Tactic `decide` failed for proposition
+  ∀ σ ∈ fiveCycles, IsFiveCycle σ
+because its `Decidable` instance
+  Fintype.decidableForallFintype
+did not reduce to `isTrue` or `isFalse`.
+
+Reduction got stuck at the `Decidable` instance
+  match
+    List.elem
+      (↑⟨{
+              toFun :=
+                ⇑((Equiv.refl (Fin 5)).equivCongr
+                    ((List.Nodup.getEquivOfForallMemList (List.finRange 5) ⋯ ⋯).symm.trans
+                      (Eq.recOn ⋯ (List.Nodup.getEquivOfForallMemList (List.finRange 5) ⋯ ⋯).symm.symm))),
+              inj' := ⋯ }
+            1,
+          ⋯⟩)
+      fiveCycles,
+    true with
+  | false, false => isTrue ⋯
+  | false, true => isFalse ⋯
+  | true, false => isFalse ⋯
+  | true, true => isTrue ⋯
+evidence/probes/P3_Conjugator.lean:21:67: error: Tactic `decide` failed for proposition
+  ∀ (σ : Perm (Fin 5)), IsFiveCycle σ → σ ∈ fiveCycles
+because its `Decidable` instance
+  Fintype.decidableForallFintype
+did not reduce to `isTrue` or `isFalse`.
+
+Reduction got stuck at the `Decidable` instance
+  match
+    List.elem
+      (↑⟨{
+              toFun :=
+                ⇑((Equiv.refl (Fin 5)).equivCongr
+                    ((List.Nodup.getEquivOfForallMemList (List.finRange 5) ⋯ ⋯).symm.trans
+                      (Eq.recOn ⋯ (List.Nodup.getEquivOfForallMemList (List.finRange 5) ⋯ ⋯).symm.symm))),
+              inj' := ⋯ }
+            ((fun f => swap ((fun i => i) ⟨0, ⋯⟩) ((fun i => i) ⟨1, ⋯⟩) * f)
+              ((fun f => swap ((fun i => i) ⟨1, ⋯⟩) ((fun i => i) ⟨2, ⋯⟩) * f)
+                ((fun f => swap ((fun i => i) ⟨2, ⋯⟩) ((fun i => i) ⟨4, ⋯⟩) * f)
+                  ((fun f => swap ((fun i => i) ⟨3, ⋯⟩) ((fun i => i) ⟨4, ⋯⟩) * f) 1)))),
+          ⋯⟩)
+      fiveCycles,
+    true with
+  | false, false => isTrue ⋯
+  | false, true => isFalse ⋯
+  | true, false => isFalse ⋯
+  | true, true => isTrue ⋯
+[0, 2, 4, 3, 1]
+[0, 2, 1, 4, 3]
+true
+true
+true
+FAIL(evidence/probes/P3_Conjugator): lean exited with status 1
+FAIL(evidence/probes/P3_Conjugator): error diagnostics reported
+FAIL(evidence/probes/P3_Conjugator): no fresh .olean produced
+=== evidence/probes/P3_Conjugator end 2026-11-16T19:49:37Z rc=1 errors=4 sorry=0 maxrss_kib=2112320
+=== evidence/probes/P3_Conjugator start 2026-11-16T19:50:07Z
+[0, 2, 4, 3, 1]
+[0, 2, 1, 4, 3]
+true
+true
+true
+=== evidence/probes/P3_Conjugator end 2026-11-16T19:50:25Z rc=0 errors=0 sorry=0 maxrss_kib=2742220
+=== evidence/probes/P3b_ConjugatorAll start 2026-11-16T19:50:48Z
+=== evidence/probes/P3b_ConjugatorAll end 2026-11-16T19:51:26Z rc=0 errors=0 sorry=0 maxrss_kib=5467568
+=== evidence/probes/P4_ComplementLast start 2026-11-16T19:51:58Z
+evidence/probes/P4_ComplementLast.lean:42:77: error: failed to synthesize
+  Decidable (({ instrs := [] }.complementLast ρ).instrs = [])
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+FAIL(evidence/probes/P4_ComplementLast): lean exited with status 1
+FAIL(evidence/probes/P4_ComplementLast): error diagnostics reported
+FAIL(evidence/probes/P4_ComplementLast): no fresh .olean produced
+=== evidence/probes/P4_ComplementLast end 2026-11-16T19:52:00Z rc=1 errors=1 sorry=0 maxrss_kib=1913900
+=== evidence/probes/P6_Host start 2026-11-16T19:52:22Z
+=== evidence/probes/P6_Host end 2026-11-16T19:52:25Z rc=0 errors=0 sorry=0 maxrss_kib=1907516
+=== evidence/probes/P4_ComplementLast start 2026-11-16T20:10:03Z
+=== evidence/probes/P4_ComplementLast end 2026-11-16T20:10:05Z rc=0 errors=0 sorry=0 maxrss_kib=1922012
+=== evidence/probes/P5_Barrington start 2026-11-16T20:10:33Z
+[("x0 ∧ x1", 1, 2, 4, true, true, true, true), ("x0 ∨ ¬x1", 1, 2, 4, true, true, true, true),
+  ("true", 1, 0, 1, true, true, true, true), ("false", 1, 0, 1, true, true, true, true),
+  ("fan-in 1: ∨[¬x1]", 1, 1, 1, true, true, true, true),
+  ("depth 2: (x0 ∨ x1) ∧ (¬x0 ∨ ¬x1)", 2, 2, 16, true, true, true, true),
+  ("depth 2: (x0 ∧ ¬x1) ∨ (¬x0 ∧ x1)", 2, 2, 16, true, true, true, true),
+  ("depth 3: ((x0 ∨ x1) ∧ ¬x1) ∨ (x0 ∧ (x1 ∨ false))", 4, 2, 40, true, true, true, true)]
+true
+false
+=== evidence/probes/P5_Barrington end 2026-11-16T20:23:57Z rc=0 errors=0 sorry=0 maxrss_kib=1901528
+=== evidence/probes/P7_Converse start 2026-11-16T20:24:43Z
+evidence/probes/P7_Converse.lean:23:19: error: failed to synthesize
+  OfNat (Perm (Fin 2)) 1
+numerals are polymorphic in Lean, but the numeral `1` cannot be used in a context where the expected type is
+  Perm (Fin 2)
+due to the absence of the instance above
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+evidence/probes/P7_Converse.lean:23:41: error: failed to synthesize
+  OfNat (Perm (Fin 2)) 1
+numerals are polymorphic in Lean, but the numeral `1` cannot be used in a context where the expected type is
+  Perm (Fin 2)
+due to the absence of the instance above
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+evidence/probes/P7_Converse.lean:23:59: error: failed to synthesize
+  OfNat (Perm (Fin 2)) 1
+numerals are polymorphic in Lean, but the numeral `1` cannot be used in a context where the expected type is
+  Perm (Fin 2)
+due to the absence of the instance above
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+evidence/probes/P7_Converse.lean:32:6: error: failed to synthesize
+  Decidable (∀ (x : Fin 8 → Bool) (i j : Fin 2), (compTree xorEx.instrs i j).eval x = decide (xorEx.yield x i = j))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+evidence/probes/P7_Converse.lean:38:28: error: failed to synthesize
+  Decidable (∀ (x : Fin 8 → Bool), (topFormula xorEx Fl).eval x = decide (xorEx.yield x ∈ Fl))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+evidence/probes/P7_Converse.lean:42:0: error: aborting evaluation since the expression depends on the 'sorry' axiom, which can lead to runtime instability and crashes.
+
+To attempt to evaluate anyway despite the risks, use the '#eval!' command.
+evidence/probes/P7_Converse.lean:45:0: error: aborting evaluation since the expression depends on the 'sorry' axiom, which can lead to runtime instability and crashes.
+
+To attempt to evaluate anyway despite the risks, use the '#eval!' command.
+evidence/probes/P7_Converse.lean:47:0: error: aborting evaluation since the expression depends on the 'sorry' axiom, which can lead to runtime instability and crashes.
+
+To attempt to evaluate anyway despite the risks, use the '#eval!' command.
+27
+[(0, 0, 0, 0), (0, 0, 0, 0), (1, 1, 1, 1), (2, 2, 2, 2), (2, 2, 2, 2), (3, 3, 3, 3), (3, 3, 3, 3), (3, 3, 3, 3),
+  (3, 3, 3, 3), (4, 4, 4, 4), (4, 4, 4, 4), (4, 4, 4, 4), (4, 4, 4, 4), (4, 4, 4, 4), (4, 4, 4, 4), (4, 4, 4, 4),
+  (4, 4, 4, 4), (5, 5, 5, 5)]
+[(2, 2, 3), (2, 2, 3), (3, 3, 4), (4, 4, 5), (4, 4, 5), (5, 5, 6), (5, 5, 6), (5, 5, 6), (5, 5, 6), (6, 6, 7)]
+[2, 2, 3, 4]
+FAIL(evidence/probes/P7_Converse): lean exited with status 1
+FAIL(evidence/probes/P7_Converse): error diagnostics reported
+FAIL(evidence/probes/P7_Converse): no fresh .olean produced
+=== evidence/probes/P7_Converse end 2026-11-16T20:24:49Z rc=1 errors=8 sorry=0 maxrss_kib=1741024

@@ -69,7 +69,7 @@ for module in modules:
     rows = [dict(spelling=r['name']['display'], home=r['home']['display'], name_components=r['name']['components'],
                  home_components=r['home']['components'], instance=r['instance'], matcher=r['matcher'],
                  abbrev=r['abbrev'], collector_reducibility=r['status']) for r in closure_rows]
-    label = prefix + module.split('.', 1)[1].replace('.', '_')
+    label = prefix + (module.split('.', 1) + ['Root'])[1].replace('.', '_')  # lead: a dotless root module gets 'Root'
     probe, ins, lmap = bs.instrument(raw, bs.header(raw), label, rows)
     pp = Path(wt) / sub / (label + '.lean'); pp.parent.mkdir(parents=True, exist_ok=True)
     pp.write_bytes(probe); (out / (label + '.lean.txt')).write_bytes(probe)

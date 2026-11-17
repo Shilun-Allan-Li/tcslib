@@ -1,0 +1,1796 @@
+=== evidence/stmt-final/StmtDump start 2026-11-16T22:02:41Z
+BoolCircuit.DAGCircuit.IsLayered	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : {n : ℕ} → BoolCircuit.DAGCircuit n → Prop
+  CONSTS [BoolCircuit.DAGCircuit]
+BoolCircuit.DAGCircuit.IsNANDForm	def	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : {n : ℕ} → BoolCircuit.DAGCircuit n → Prop
+  CONSTS [BoolCircuit.DAGCircuit]
+BoolCircuit.DAGCircuit.decidableIsLayered	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : {n : ℕ} → (C : BoolCircuit.DAGCircuit n) → Decidable C.IsLayered
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsLayered]
+BoolCircuit.DAGCircuit.decidableIsNANDForm	def	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : {n : ℕ} → (C : BoolCircuit.DAGCircuit n) → Decidable C.IsNANDForm
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsNANDForm]
+BoolCircuit.DAGCircuit.isLayered_iff	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n),
+  C.IsLayered ↔ ∀ (i : ℕ) (hi : i < C.gates.length), ∀ a ∈ C.gates[i].args, C.depthAt a + 1 = C.depthAt (n + i)
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsLayered, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.gates, BoolCircuit.DAGGate.args, BoolCircuit.DAGCircuit.depthAt]
+BoolCircuit.DAGCircuit.isNANDForm_iff	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n), C.IsNANDForm ↔ ∀ g ∈ C.gates, g.IsNAND
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsNANDForm, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.gates, BoolCircuit.DAGGate.IsNAND]
+BoolCircuit.DAGCircuit.layerAt	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : {n : ℕ} → BoolCircuit.DAGCircuit n → List (List ℕ) → ℕ → ℕ → ℕ
+  CONSTS [BoolCircuit.DAGCircuit]
+BoolCircuit.DAGCircuit.layerAt_eq	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (cols : List (List ℕ)) (v k : ℕ),
+  C.layerAt cols v k = (cols.getD v []).getD (k - C.depthAt v) 0
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.layerAt, BoolCircuit.DAGCircuit.depthAt]
+BoolCircuit.DAGCircuit.layerColumn	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : {n : ℕ} →
+  BoolCircuit.DAGCircuit n → List BoolCircuit.DAGGate × List (List ℕ) → ℕ → List BoolCircuit.DAGGate × List (List ℕ)
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate]
+BoolCircuit.DAGCircuit.layerColumn_eq	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (s : List BoolCircuit.DAGGate × List (List ℕ)) (v : ℕ),
+  C.layerColumn s v =
+    if C.depth < C.depthAt v then (s.1, s.2 ++ [[]])
+    else
+      if v < n then
+        if C.depth = 0 then (s.1, s.2 ++ [[v]])
+        else
+          ((BoolCircuit.layerChain (n + n) (s.1 ++ [{ kind := BoolCircuit.GateKind.not, args := [n + v] }]) v
+                (n + n + s.1.length) (C.depth - 1)).1,
+            s.2 ++
+              [v ::
+                  (n + n + s.1.length) ::
+                    (BoolCircuit.layerChain (n + n) (s.1 ++ [{ kind := BoolCircuit.GateKind.not, args := [n + v] }]) v
+                        (n + n + s.1.length) (C.depth - 1)).2])
+      else
+        if C.depth = C.depthAt v then
+          (s.1 ++
+              [{ kind := BoolCircuit.GateKind.not,
+                  args :=
+                    List.map (fun (a : ℕ) => C.layerAt s.2 a (C.depthAt v - 1))
+                      (C.gates.getD (v - n) { kind := BoolCircuit.GateKind.not, args := [] }).args }],
+            s.2 ++ [[n + n + s.1.length]])
+        else
+          have gs₁ :=
+            s.1 ++
+              [{ kind := BoolCircuit.GateKind.not,
+                  args :=
+                    List.map (fun (a : ℕ) => C.layerAt s.2 a (C.depthAt v - 1))
+                      (C.gates.getD (v - n) { kind := BoolCircuit.GateKind.not, args := [] }).args }];
+          have tw :=
+            if (C.gates.getD (v - n) { kind := BoolCircuit.GateKind.not, args := [] }).args = [] then
+              (gs₁ ++
+                  [{ kind := BoolCircuit.GateKind.not, args := [0, n] },
+                    { kind := BoolCircuit.GateKind.not, args := [n + n + s.1.length + 1] }],
+                n + n + s.1.length + 2)
+            else
+              (gs₁ ++
+                  [{ kind := BoolCircuit.GateKind.not,
+                      args :=
+                        List.map (fun (a : ℕ) => C.layerAt s.2 a (C.depthAt v))
+                          (C.gates.getD (v - n) { kind := BoolCircuit.GateKind.not, args := [] }).args }],
+                n + n + s.1.length + 1);
+          ((BoolCircuit.layerChain (n + n) tw.1 (n + n + s.1.length) tw.2 (C.depth - C.depthAt v - 1)).1,
+            s.2 ++
+              [(n + n + s.1.length) ::
+                  tw.2 ::
+                    (BoolCircuit.layerChain (n + n) tw.1 (n + n + s.1.length) tw.2 (C.depth - C.depthAt v - 1)).2])
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.layerColumn, BoolCircuit.DAGCircuit.depth, BoolCircuit.DAGCircuit.depthAt, BoolCircuit.layerChain, BoolCircuit.DAGGate.mk, BoolCircuit.GateKind.not, BoolCircuit.DAGCircuit.layerAt, BoolCircuit.DAGGate.args, BoolCircuit.DAGCircuit.gates]
+BoolCircuit.DAGCircuit.layerFold	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : {n : ℕ} → BoolCircuit.DAGCircuit n → List BoolCircuit.DAGGate × List (List ℕ)
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate]
+BoolCircuit.DAGCircuit.layerFold_eq	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n),
+  C.layerFold = List.foldl C.layerColumn ([], []) (List.range (n + C.gates.length))
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.layerFold, BoolCircuit.DAGCircuit.layerColumn, BoolCircuit.DAGCircuit.gates]
+BoolCircuit.DAGCircuit.layerGates	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : {n : ℕ} → [NeZero n] → BoolCircuit.DAGCircuit n → List BoolCircuit.DAGGate
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate]
+BoolCircuit.DAGCircuit.layerGates_acyclic	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n) (i : ℕ) (h : i < C.layerGates.length),
+  ∀ a ∈ C.layerGates[i].args, a < n + n + i
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.layerGates, BoolCircuit.DAGGate.args]
+BoolCircuit.DAGCircuit.layerGates_eq	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n), C.layerGates = C.layerFold.1
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.layerGates, BoolCircuit.DAGCircuit.layerFold]
+BoolCircuit.DAGCircuit.layerNAND	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : {n : ℕ} → [NeZero n] → BoolCircuit.DAGCircuit n → BoolCircuit.DAGCircuit (n + n)
+  CONSTS [BoolCircuit.DAGCircuit]
+BoolCircuit.DAGCircuit.layerNAND_depth	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n), C.layerNAND.depth = C.depth
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.depth, BoolCircuit.DAGCircuit.layerNAND]
+BoolCircuit.DAGCircuit.layerNAND_eval	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n),
+  C.IsNANDForm → ∀ (x : Fin n → Bool), C.layerNAND.eval (BoolCircuit.litInput x) = C.eval x
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsNANDForm, BoolCircuit.DAGCircuit.eval, BoolCircuit.DAGCircuit.layerNAND, BoolCircuit.litInput]
+BoolCircuit.DAGCircuit.layerNAND_gates	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n), C.layerNAND.gates = C.layerGates
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.gates, BoolCircuit.DAGCircuit.layerNAND, BoolCircuit.DAGCircuit.layerGates]
+BoolCircuit.DAGCircuit.layerNAND_isLayered	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n), C.layerNAND.IsLayered
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsLayered, BoolCircuit.DAGCircuit.layerNAND]
+BoolCircuit.DAGCircuit.layerNAND_isNANDForm	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n), C.IsNANDForm → C.layerNAND.IsNANDForm
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsNANDForm, BoolCircuit.DAGCircuit.layerNAND]
+BoolCircuit.DAGCircuit.layerNAND_output	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n), C.layerNAND.output = C.layerOutput
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.output, BoolCircuit.DAGCircuit.layerNAND, BoolCircuit.DAGCircuit.layerOutput]
+BoolCircuit.DAGCircuit.layerNAND_size_le	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n), C.layerNAND.size ≤ 2 * n + (2 * C.depth + 1) * C.size
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.size, BoolCircuit.DAGCircuit.layerNAND, BoolCircuit.DAGCircuit.depth]
+BoolCircuit.DAGCircuit.layerOutput	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : {n : ℕ} → [NeZero n] → BoolCircuit.DAGCircuit n → ℕ
+  CONSTS [BoolCircuit.DAGCircuit]
+BoolCircuit.DAGCircuit.layerOutput_eq	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n), C.layerOutput = C.layerAt C.layerFold.2 C.output C.depth
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.layerOutput, BoolCircuit.DAGCircuit.layerAt, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.layerFold, BoolCircuit.DAGCircuit.output, BoolCircuit.DAGCircuit.depth]
+BoolCircuit.DAGCircuit.layerOutput_lt	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} [inst : NeZero n] (C : BoolCircuit.DAGCircuit n), C.layerOutput < n + n + C.layerGates.length
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.layerOutput, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.layerGates]
+BoolCircuit.DAGCircuit.toNANDForm	def	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : {n : ℕ} → (C : BoolCircuit.DAGCircuit n) → (∀ g ∈ C.gates, g.args.length ≤ 2) → BoolCircuit.DAGCircuit n
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.gates, BoolCircuit.DAGGate.args]
+BoolCircuit.DAGCircuit.toNANDForm_depth_le	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2), (C.toNANDForm hC).depth ≤ 2 * C.depth
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.gates, BoolCircuit.DAGGate.args, BoolCircuit.DAGCircuit.depth, BoolCircuit.DAGCircuit.toNANDForm]
+BoolCircuit.DAGCircuit.toNANDForm_eq	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2),
+  C.toNANDForm hC = C.rewrite (BoolCircuit.nandGadget n) ⋯ hC
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.gates, BoolCircuit.DAGGate.args, BoolCircuit.DAGCircuit.toNANDForm, BoolCircuit.DAGCircuit.rewrite, BoolCircuit.GateKind, BoolCircuit.DAGGate.IsNAND, BoolCircuit.nandGadget, BoolCircuit.nandGadget_correct]
+BoolCircuit.DAGCircuit.toNANDForm_eval	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2) (x : Fin n → Bool),
+  (C.toNANDForm hC).eval x = C.eval x
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.gates, BoolCircuit.DAGGate.args, BoolCircuit.DAGCircuit.eval, BoolCircuit.DAGCircuit.toNANDForm]
+BoolCircuit.DAGCircuit.toNANDForm_isNANDForm	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2), (C.toNANDForm hC).IsNANDForm
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.gates, BoolCircuit.DAGGate.args, BoolCircuit.DAGCircuit.IsNANDForm, BoolCircuit.DAGCircuit.toNANDForm]
+BoolCircuit.DAGCircuit.toNANDForm_size_le	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2),
+  (C.toNANDForm hC).size ≤ n + 4 * C.gates.length
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGGate, BoolCircuit.DAGCircuit.gates, BoolCircuit.DAGGate.args, BoolCircuit.DAGCircuit.size, BoolCircuit.DAGCircuit.toNANDForm]
+BoolCircuit.DAGGate.IsNAND	def	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : BoolCircuit.DAGGate → Prop
+  CONSTS [BoolCircuit.DAGGate]
+BoolCircuit.DAGGate.decidableIsNAND	def	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : DecidablePred BoolCircuit.DAGGate.IsNAND
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.DAGGate.IsNAND]
+BoolCircuit.DAGGate.eval_of_isNAND	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {g : BoolCircuit.DAGGate},
+  g.IsNAND → ∀ (vals : List Bool), g.eval vals = !g.args.all fun (a : ℕ) => vals.getD a Bool.false
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.DAGGate.IsNAND, BoolCircuit.DAGGate.eval, BoolCircuit.DAGGate.args]
+BoolCircuit.DAGGate.isNAND_iff	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ (g : BoolCircuit.DAGGate), g.IsNAND ↔ g.kind = BoolCircuit.GateKind.not ∧ g.args.length ≤ 2
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.DAGGate.IsNAND, BoolCircuit.GateKind, BoolCircuit.DAGGate.kind, BoolCircuit.GateKind.not, BoolCircuit.DAGGate.args]
+BoolCircuit.FormulaArith.bitAt	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : {n : ℕ} → (Fin n → Bool) → List (BoolCircuit.TreeCircuit n) → ℕ → Bool
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.bitAt_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (x : Fin n → Bool) (U : List (BoolCircuit.TreeCircuit n)) (j : ℕ),
+  BoolCircuit.FormulaArith.bitAt x U j =
+    (List.map (fun (c : BoolCircuit.TreeCircuit n) => c.eval x) U).getD j Bool.false
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.bitAt, BoolCircuit.TreeCircuit.eval]
+BoolCircuit.FormulaArith.carryOut	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : {n : ℕ} → List (BoolCircuit.TreeCircuit n) → List (BoolCircuit.TreeCircuit n) → ℕ → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.carryOut_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (U W : List (BoolCircuit.TreeCircuit n)) (b : ℕ),
+  BoolCircuit.FormulaArith.carryOut U W b =
+    BoolCircuit.TreeCircuit.balanced Bool.false
+      (List.map
+        (fun (j : ℕ) =>
+          BoolCircuit.TreeCircuit.balanced Bool.true
+            ((U.getD j (BoolCircuit.TreeCircuit.const Bool.false)).and2
+                (W.getD j (BoolCircuit.TreeCircuit.const Bool.false)) ::
+              List.map
+                (fun (k : ℕ) =>
+                  (U.getD (j + 1 + k) (BoolCircuit.TreeCircuit.const Bool.false)).or2
+                    (W.getD (j + 1 + k) (BoolCircuit.TreeCircuit.const Bool.false)))
+                (List.range (b - 1 - j))))
+        (List.range b))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.carryOut, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.and2, BoolCircuit.TreeCircuit.const, BoolCircuit.TreeCircuit.or2]
+BoolCircuit.FormulaArith.carryOut_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (U W : List (BoolCircuit.TreeCircuit n)) (b : ℕ) (x : Fin n → Bool),
+  (BoolCircuit.FormulaArith.carryOut U W b).eval x =
+    BoolCircuit.carryBit (BoolCircuit.FormulaArith.bitAt x U) (BoolCircuit.FormulaArith.bitAt x W) b
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.FormulaArith.carryOut, BoolCircuit.carryBit, BoolCircuit.FormulaArith.bitAt]
+BoolCircuit.FormulaArith.carryOut_eval_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} {U W : List (BoolCircuit.TreeCircuit n)} {b : ℕ},
+  U.length ≤ b →
+    W.length ≤ b →
+      ∀ (x : Fin n → Bool),
+        (BoolCircuit.FormulaArith.carryOut U W b).eval x =
+          Decidable.decide (2 ^ b ≤ BoolCircuit.FormulaArith.val x U + BoolCircuit.FormulaArith.val x W)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.FormulaArith.carryOut, BoolCircuit.FormulaArith.val]
+BoolCircuit.FormulaArith.constBits	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : {n : ℕ} → ℕ → ℕ → List (BoolCircuit.TreeCircuit n)
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.constBits_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (p c : ℕ),
+  BoolCircuit.FormulaArith.constBits p c =
+    List.map (fun (j : ℕ) => BoolCircuit.TreeCircuit.const (c.testBit j)) (List.range p)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.constBits, BoolCircuit.TreeCircuit.const]
+BoolCircuit.FormulaArith.csaLayer	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : {n : ℕ} → List (List (BoolCircuit.TreeCircuit n)) → List (List (BoolCircuit.TreeCircuit n))
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.csaLayer.match_1	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : {n : ℕ} →
+  (motive : List (List (BoolCircuit.TreeCircuit n)) → Sort u_1) →
+    (x : List (List (BoolCircuit.TreeCircuit n))) →
+      ((A B C : List (BoolCircuit.TreeCircuit n)) →
+          (Us : List (List (BoolCircuit.TreeCircuit n))) → motive (A :: B :: C :: Us)) →
+        ((Us : List (List (BoolCircuit.TreeCircuit n))) → motive Us) → motive x
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.csaLayer_cons_cons_cons	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (A B C : List (BoolCircuit.TreeCircuit n)) (Us : List (List (BoolCircuit.TreeCircuit n))),
+  BoolCircuit.FormulaArith.csaLayer (A :: B :: C :: Us) =
+    (BoolCircuit.FormulaArith.csaStep A B C).1 ::
+      (BoolCircuit.FormulaArith.csaStep A B C).2 :: BoolCircuit.FormulaArith.csaLayer Us
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.csaLayer, BoolCircuit.FormulaArith.csaStep]
+BoolCircuit.FormulaArith.csaLayer_of_length_le_two	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} {Us : List (List (BoolCircuit.TreeCircuit n))}, Us.length ≤ 2 → BoolCircuit.FormulaArith.csaLayer Us = Us
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.csaLayer]
+BoolCircuit.FormulaArith.csaLayer_of_length_le_two.match_1_1	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (motive : (Us : List (List (BoolCircuit.TreeCircuit n))) → Us.length ≤ 2 → Prop)
+  (Us : List (List (BoolCircuit.TreeCircuit n))) (h : Us.length ≤ 2),
+  (∀ (x : [].length ≤ 2), motive [] x) →
+    (∀ (head : List (BoolCircuit.TreeCircuit n)) (x : [head].length ≤ 2), motive [head] x) →
+      (∀ (head head_1 : List (BoolCircuit.TreeCircuit n)) (x : [head, head_1].length ≤ 2), motive [head, head_1] x) →
+        (∀ (head head_1 head_2 : List (BoolCircuit.TreeCircuit n)) (tail : List (List (BoolCircuit.TreeCircuit n)))
+            (h : (head :: head_1 :: head_2 :: tail).length ≤ 2), motive (head :: head_1 :: head_2 :: tail) h) →
+          motive Us h
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.csaLevels	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ℕ → ℕ
+  CONSTS []
+BoolCircuit.FormulaArith.csaLevels_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ (k : ℕ), BoolCircuit.FormulaArith.csaLevels k ≤ 2 * Nat.clog 2 k
+  CONSTS [BoolCircuit.FormulaArith.csaLevels]
+BoolCircuit.FormulaArith.csaLevels_of_le_two	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {k : ℕ}, k ≤ 2 → BoolCircuit.FormulaArith.csaLevels k = 0
+  CONSTS [BoolCircuit.FormulaArith.csaLevels]
+BoolCircuit.FormulaArith.csaLevels_of_le_two.match_1_1	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ (motive : (k : ℕ) → k ≤ 2 → Prop) (k : ℕ) (h : k ≤ 2),
+  (∀ (x : 0 ≤ 2), motive 0 x) → (∀ (f : ℕ) (h : f + 1 ≤ 2), motive f.succ h) → motive k h
+  CONSTS []
+BoolCircuit.FormulaArith.csaLevels_of_two_lt	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {k : ℕ}, 2 < k → BoolCircuit.FormulaArith.csaLevels k = BoolCircuit.FormulaArith.csaLevels (2 * (k / 3) + k % 3) + 1
+  CONSTS [BoolCircuit.FormulaArith.csaLevels]
+BoolCircuit.FormulaArith.csaLevels_of_two_lt.match_1_1	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ (motive : (k : ℕ) → 2 < k → Prop) (k : ℕ) (h : 2 < k), (∀ (f : ℕ) (h : 2 < f + 1), motive f.succ h) → motive k h
+  CONSTS []
+BoolCircuit.FormulaArith.csaReduce	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : {n : ℕ} → List (List (BoolCircuit.TreeCircuit n)) → List (BoolCircuit.TreeCircuit n) × List (BoolCircuit.TreeCircuit n)
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.csaReduce_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (Us : List (List (BoolCircuit.TreeCircuit n))),
+  BoolCircuit.FormulaArith.csaReduce Us =
+    ((Nat.repeat BoolCircuit.FormulaArith.csaLayer (BoolCircuit.FormulaArith.csaLevels Us.length) Us).getD 0 [],
+      (Nat.repeat BoolCircuit.FormulaArith.csaLayer (BoolCircuit.FormulaArith.csaLevels Us.length) Us).getD 1 [])
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.csaReduce, BoolCircuit.FormulaArith.csaLayer, BoolCircuit.FormulaArith.csaLevels]
+BoolCircuit.FormulaArith.csaReduce_val	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (x : Fin n → Bool) (Us : List (List (BoolCircuit.TreeCircuit n))),
+  BoolCircuit.FormulaArith.val x (BoolCircuit.FormulaArith.csaReduce Us).1 +
+      BoolCircuit.FormulaArith.val x (BoolCircuit.FormulaArith.csaReduce Us).2 =
+    (List.map (BoolCircuit.FormulaArith.val x) Us).sum
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.val, BoolCircuit.FormulaArith.csaReduce]
+BoolCircuit.FormulaArith.csaStep	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : {n : ℕ} →
+  List (BoolCircuit.TreeCircuit n) →
+    List (BoolCircuit.TreeCircuit n) →
+      List (BoolCircuit.TreeCircuit n) → List (BoolCircuit.TreeCircuit n) × List (BoolCircuit.TreeCircuit n)
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.csaStep_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (A B C : List (BoolCircuit.TreeCircuit n)),
+  BoolCircuit.FormulaArith.csaStep A B C =
+    (List.map
+        (fun (i : ℕ) =>
+          (A.getD i (BoolCircuit.TreeCircuit.const Bool.false)).xor3
+            (B.getD i (BoolCircuit.TreeCircuit.const Bool.false)) (C.getD i (BoolCircuit.TreeCircuit.const Bool.false)))
+        (List.range (Max.max A.length (Max.max B.length C.length))),
+      BoolCircuit.TreeCircuit.const Bool.false ::
+        List.map
+          (fun (i : ℕ) =>
+            (A.getD i (BoolCircuit.TreeCircuit.const Bool.false)).maj3
+              (B.getD i (BoolCircuit.TreeCircuit.const Bool.false))
+              (C.getD i (BoolCircuit.TreeCircuit.const Bool.false)))
+          (List.range (Max.max A.length (Max.max B.length C.length))))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.csaStep, BoolCircuit.TreeCircuit.xor3, BoolCircuit.TreeCircuit.const, BoolCircuit.TreeCircuit.maj3]
+BoolCircuit.FormulaArith.csaStep_val	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (x : Fin n → Bool) (A B C : List (BoolCircuit.TreeCircuit n)),
+  BoolCircuit.FormulaArith.val x A + BoolCircuit.FormulaArith.val x B + BoolCircuit.FormulaArith.val x C =
+    BoolCircuit.FormulaArith.val x (BoolCircuit.FormulaArith.csaStep A B C).1 +
+      BoolCircuit.FormulaArith.val x (BoolCircuit.FormulaArith.csaStep A B C).2
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.val, BoolCircuit.FormulaArith.csaStep]
+BoolCircuit.FormulaArith.depth_carryOut_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (U W : List (BoolCircuit.TreeCircuit n)) (b : ℕ),
+  (BoolCircuit.FormulaArith.carryOut U W b).depth ≤
+    Max.max 1 (BoolCircuit.TreeCircuit.maxDepth (U ++ W)) + 2 * Nat.clog 2 b + 3
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.FormulaArith.carryOut, BoolCircuit.TreeCircuit.maxDepth]
+BoolCircuit.FormulaArith.depth_csaReduce_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (Us : List (List (BoolCircuit.TreeCircuit n))),
+  BoolCircuit.TreeCircuit.maxDepth
+      ((BoolCircuit.FormulaArith.csaReduce Us).1 ++ (BoolCircuit.FormulaArith.csaReduce Us).2) ≤
+    Max.max 1 (BoolCircuit.TreeCircuit.maxDepth Us.flatten) + 4 * BoolCircuit.FormulaArith.csaLevels Us.length
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxDepth, BoolCircuit.FormulaArith.csaReduce, BoolCircuit.FormulaArith.csaLevels]
+BoolCircuit.FormulaArith.depth_csaStep_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (A B C : List (BoolCircuit.TreeCircuit n)),
+  BoolCircuit.TreeCircuit.maxDepth
+      ((BoolCircuit.FormulaArith.csaStep A B C).1 ++ (BoolCircuit.FormulaArith.csaStep A B C).2) ≤
+    Max.max 1 (BoolCircuit.TreeCircuit.maxDepth (A ++ B ++ C)) + 4
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxDepth, BoolCircuit.FormulaArith.csaStep]
+BoolCircuit.FormulaArith.depth_geConst_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (U W : List (BoolCircuit.TreeCircuit n)) (c : ℕ),
+  (BoolCircuit.FormulaArith.geConst U W c).depth ≤
+    Max.max 1 (BoolCircuit.TreeCircuit.maxDepth (U ++ W)) + 2 * Nat.clog 2 (Max.max U.length W.length + 1) + 7
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.FormulaArith.geConst, BoolCircuit.TreeCircuit.maxDepth]
+BoolCircuit.FormulaArith.depth_modSumInterval_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : ∀ {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ),
+  (BoolCircuit.FormulaArith.modSumInterval a q lo hi).depth ≤ BoolCircuit.FormulaArith.modSumDepth M q
+  CONSTS [BoolCircuit.TreeCircuit.depth, BoolCircuit.FormulaArith.modSumInterval, BoolCircuit.FormulaArith.modSumDepth]
+BoolCircuit.FormulaArith.geConst	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : {n : ℕ} → List (BoolCircuit.TreeCircuit n) → List (BoolCircuit.TreeCircuit n) → ℕ → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.geConst_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (U W : List (BoolCircuit.TreeCircuit n)) (c : ℕ),
+  BoolCircuit.FormulaArith.geConst U W c =
+    if c = 0 then BoolCircuit.TreeCircuit.const Bool.true
+    else
+      if 2 ^ (Max.max U.length W.length + 1) < c then BoolCircuit.TreeCircuit.const Bool.false
+      else
+        BoolCircuit.FormulaArith.carryOut
+          (BoolCircuit.FormulaArith.csaStep U W
+              (BoolCircuit.FormulaArith.constBits (Max.max U.length W.length + 1)
+                (2 ^ (Max.max U.length W.length + 1) - c))).1
+          (BoolCircuit.FormulaArith.csaStep U W
+              (BoolCircuit.FormulaArith.constBits (Max.max U.length W.length + 1)
+                (2 ^ (Max.max U.length W.length + 1) - c))).2
+          (Max.max U.length W.length + 1)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.geConst, BoolCircuit.TreeCircuit.const, BoolCircuit.FormulaArith.carryOut, BoolCircuit.FormulaArith.csaStep, BoolCircuit.FormulaArith.constBits]
+BoolCircuit.FormulaArith.geConst_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (U W : List (BoolCircuit.TreeCircuit n)) (c : ℕ) (x : Fin n → Bool),
+  (BoolCircuit.FormulaArith.geConst U W c).eval x =
+    Decidable.decide (c ≤ BoolCircuit.FormulaArith.val x U + BoolCircuit.FormulaArith.val x W)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.FormulaArith.geConst, BoolCircuit.FormulaArith.val]
+BoolCircuit.FormulaArith.maskedConst	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : {n : ℕ} → Fin n → ℕ → ℕ → List (BoolCircuit.TreeCircuit n)
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.maskedConst_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : ∀ {n : ℕ} (i : Fin n) (a p : ℕ),
+  BoolCircuit.FormulaArith.maskedConst i a p =
+    List.map
+      (fun (j : ℕ) =>
+        if a.testBit j = Bool.true then BoolCircuit.TreeCircuit.lit { idx := i, sign := Bool.true }
+        else BoolCircuit.TreeCircuit.const Bool.false)
+      (List.range p)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.maskedConst, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.mk, BoolCircuit.TreeCircuit.const]
+BoolCircuit.FormulaArith.maxFaninL_csaReduce_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (Us : List (List (BoolCircuit.TreeCircuit n))),
+  BoolCircuit.TreeCircuit.maxFaninL
+      ((BoolCircuit.FormulaArith.csaReduce Us).1 ++ (BoolCircuit.FormulaArith.csaReduce Us).2) ≤
+    Max.max 2 (BoolCircuit.TreeCircuit.maxFaninL Us.flatten)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFaninL, BoolCircuit.FormulaArith.csaReduce]
+BoolCircuit.FormulaArith.maxFaninL_csaStep_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (A B C : List (BoolCircuit.TreeCircuit n)),
+  BoolCircuit.TreeCircuit.maxFaninL
+      ((BoolCircuit.FormulaArith.csaStep A B C).1 ++ (BoolCircuit.FormulaArith.csaStep A B C).2) ≤
+    Max.max 2 (BoolCircuit.TreeCircuit.maxFaninL (A ++ B ++ C))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFaninL, BoolCircuit.FormulaArith.csaStep]
+BoolCircuit.FormulaArith.maxFanin_carryOut_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (U W : List (BoolCircuit.TreeCircuit n)) (b : ℕ),
+  (BoolCircuit.FormulaArith.carryOut U W b).maxFanin ≤ Max.max 2 (BoolCircuit.TreeCircuit.maxFaninL (U ++ W))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.FormulaArith.carryOut, BoolCircuit.TreeCircuit.maxFaninL]
+BoolCircuit.FormulaArith.maxFanin_geConst_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Compare
+  : ∀ {n : ℕ} (U W : List (BoolCircuit.TreeCircuit n)) (c : ℕ),
+  (BoolCircuit.FormulaArith.geConst U W c).maxFanin ≤ Max.max 2 (BoolCircuit.TreeCircuit.maxFaninL (U ++ W))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.FormulaArith.geConst, BoolCircuit.TreeCircuit.maxFaninL]
+BoolCircuit.FormulaArith.maxFanin_modSumInterval_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : ∀ {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ), (BoolCircuit.FormulaArith.modSumInterval a q lo hi).maxFanin ≤ 2
+  CONSTS [BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.FormulaArith.modSumInterval]
+BoolCircuit.FormulaArith.modSumDepth	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : ℕ → ℕ → ℕ
+  CONSTS []
+BoolCircuit.FormulaArith.modSumDepth_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : ∀ (M q : ℕ),
+  BoolCircuit.FormulaArith.modSumDepth M q =
+    4 * BoolCircuit.FormulaArith.csaLevels M + Nat.clog 2 M + 2 * Nat.clog 2 (Nat.clog 2 M + Nat.clog 2 q + 1) + 10
+  CONSTS [BoolCircuit.FormulaArith.modSumDepth, BoolCircuit.FormulaArith.csaLevels]
+BoolCircuit.FormulaArith.modSumDepth_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : ∀ (M q : ℕ),
+  BoolCircuit.FormulaArith.modSumDepth M q ≤ 9 * Nat.clog 2 M + 2 * Nat.clog 2 (Nat.clog 2 q + Nat.clog 2 M + 3) + 21
+  CONSTS [BoolCircuit.FormulaArith.modSumDepth]
+BoolCircuit.FormulaArith.modSumInterval	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : {M : ℕ} → (Fin M → ℕ) → ℕ → ℕ → ℕ → BoolCircuit.TreeCircuit M
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.modSumInterval_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : ∀ {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ),
+  BoolCircuit.FormulaArith.modSumInterval a q lo hi =
+    BoolCircuit.TreeCircuit.balanced Bool.false
+      (List.map
+        (fun (j : ℕ) =>
+          (BoolCircuit.FormulaArith.geConst
+                (List.take (Nat.clog 2 M + Nat.clog 2 q)
+                  (BoolCircuit.FormulaArith.csaReduce
+                      (List.ofFn fun (i : Fin M) => BoolCircuit.FormulaArith.maskedConst i (a i) (Nat.clog 2 q))).1)
+                (List.take (Nat.clog 2 M + Nat.clog 2 q)
+                  (BoolCircuit.FormulaArith.csaReduce
+                      (List.ofFn fun (i : Fin M) => BoolCircuit.FormulaArith.maskedConst i (a i) (Nat.clog 2 q))).2)
+                (j * q + lo)).and2
+            (BoolCircuit.FormulaArith.geConst
+                (List.take (Nat.clog 2 M + Nat.clog 2 q)
+                  (BoolCircuit.FormulaArith.csaReduce
+                      (List.ofFn fun (i : Fin M) => BoolCircuit.FormulaArith.maskedConst i (a i) (Nat.clog 2 q))).1)
+                (List.take (Nat.clog 2 M + Nat.clog 2 q)
+                  (BoolCircuit.FormulaArith.csaReduce
+                      (List.ofFn fun (i : Fin M) => BoolCircuit.FormulaArith.maskedConst i (a i) (Nat.clog 2 q))).2)
+                (j * q + hi)).neg)
+        (List.range (Max.max M 1)))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.modSumInterval, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.and2, BoolCircuit.FormulaArith.geConst, BoolCircuit.FormulaArith.csaReduce, BoolCircuit.FormulaArith.maskedConst, BoolCircuit.TreeCircuit.neg]
+BoolCircuit.FormulaArith.modSumInterval_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
+  : ∀ {M : ℕ} {a : Fin M → ℕ} {q lo hi : ℕ},
+  (∀ (i : Fin M), a i < q) →
+    lo ≤ hi →
+      hi ≤ q →
+        ∀ (x : Fin M → Bool),
+          (BoolCircuit.FormulaArith.modSumInterval a q lo hi).eval x =
+            Decidable.decide (lo ≤ (∑ i : Fin M, (x i).toNat * a i) % q ∧ (∑ i : Fin M, (x i).toNat * a i) % q < hi)
+  CONSTS [BoolCircuit.TreeCircuit.eval, BoolCircuit.FormulaArith.modSumInterval]
+BoolCircuit.FormulaArith.val	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : {n : ℕ} → (Fin n → Bool) → List (BoolCircuit.TreeCircuit n) → ℕ
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.FormulaArith.val_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.CarrySave
+  : ∀ {n : ℕ} (x : Fin n → Bool) (U : List (BoolCircuit.TreeCircuit n)),
+  BoolCircuit.FormulaArith.val x U = BoolCircuit.bitsVal (List.map (fun (c : BoolCircuit.TreeCircuit n) => c.eval x) U)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.FormulaArith.val, BoolCircuit.bitsVal, BoolCircuit.TreeCircuit.eval]
+BoolCircuit.TreeAC	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : Set (Language Bool)
+  CONSTS [Language]
+BoolCircuit.TreeAC.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeAC = ⋃ (i : ℕ), BoolCircuit.TreeACLevel i
+  CONSTS [Language, BoolCircuit.TreeAC, BoolCircuit.TreeACLevel]
+BoolCircuit.TreeACLevel	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ℕ → Set (Language Bool)
+  CONSTS [Language]
+BoolCircuit.TreeACLevel.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (d : ℕ), BoolCircuit.TreeACLevel d = {L : Language Bool | Language.InTreeAC d L}
+  CONSTS [Language, BoolCircuit.TreeACLevel, Language.InTreeAC]
+BoolCircuit.TreeACLevel_subset_NCLevel_succ	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (i : ℕ), BoolCircuit.TreeACLevel i ⊆ BoolCircuit.TreeNCLevel (i + 1)
+  CONSTS [Language, BoolCircuit.TreeACLevel, BoolCircuit.TreeNCLevel]
+BoolCircuit.TreeCircuit.and2	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.and2_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n), a.and2 b = BoolCircuit.TreeCircuit.node Bool.true [a, b]
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.and2, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.and2_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n) (x : Fin n → Bool), (a.and2 b).eval x = (a.eval x && b.eval x)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.and2]
+BoolCircuit.TreeCircuit.balanced	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} → Bool → List (BoolCircuit.TreeCircuit n) → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.balanced_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)) (x : Fin n → Bool),
+  (BoolCircuit.TreeCircuit.balanced b cs).eval x = (BoolCircuit.TreeCircuit.node b cs).eval x
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.balanced_nil	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool), BoolCircuit.TreeCircuit.balanced b [] = BoolCircuit.TreeCircuit.node b []
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.balanced_singleton	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (c : BoolCircuit.TreeCircuit n), BoolCircuit.TreeCircuit.balanced b [c] = c
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.balanced]
+BoolCircuit.TreeCircuit.const	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} → Bool → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.const_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool), BoolCircuit.TreeCircuit.const b = BoolCircuit.TreeCircuit.node b []
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.const, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.const_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (x : Fin n → Bool), (BoolCircuit.TreeCircuit.const b).eval x = b
+  CONSTS [BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.const]
+BoolCircuit.TreeCircuit.depth_and2_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n), (a.and2 b).depth ≤ Max.max a.depth b.depth + 1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.and2]
+BoolCircuit.TreeCircuit.depth_balanced_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)),
+  (BoolCircuit.TreeCircuit.balanced b cs).depth ≤ BoolCircuit.TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.maxDepth]
+BoolCircuit.TreeCircuit.depth_const	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool), (BoolCircuit.TreeCircuit.const b).depth = 1
+  CONSTS [BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.const]
+BoolCircuit.TreeCircuit.depth_maj3_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b c : BoolCircuit.TreeCircuit n), (a.maj3 b c).depth ≤ Max.max a.depth (Max.max b.depth c.depth) + 3
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.maj3]
+BoolCircuit.TreeCircuit.depth_neg	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (c : BoolCircuit.TreeCircuit n), c.neg.depth = c.depth
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.neg]
+BoolCircuit.TreeCircuit.depth_or2_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n), (a.or2 b).depth ≤ Max.max a.depth b.depth + 1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.or2]
+BoolCircuit.TreeCircuit.depth_rename	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n m : ℕ} (c : BoolCircuit.TreeCircuit n) (e : Fin n → Fin m), (c.rename e).depth = c.depth
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.rename]
+BoolCircuit.TreeCircuit.depth_subst_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n m : ℕ} (c : BoolCircuit.TreeCircuit n) (f : Fin n → BoolCircuit.TreeCircuit m),
+  (c.subst f).depth ≤ c.depth + Finset.univ.sup fun (i : Fin n) => (f i).depth
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.subst]
+BoolCircuit.TreeCircuit.depth_xor2_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n), (a.xor2 b).depth ≤ Max.max a.depth b.depth + 2
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.xor2]
+BoolCircuit.TreeCircuit.depth_xor3_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b c : BoolCircuit.TreeCircuit n), (a.xor3 b c).depth ≤ Max.max a.depth (Max.max b.depth c.depth) + 4
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.xor3]
+BoolCircuit.TreeCircuit.maj3	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.maj3_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b c : BoolCircuit.TreeCircuit n), a.maj3 b c = (a.and2 b).or2 (c.and2 (a.or2 b))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maj3, BoolCircuit.TreeCircuit.or2, BoolCircuit.TreeCircuit.and2]
+BoolCircuit.TreeCircuit.maj3_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b c : BoolCircuit.TreeCircuit n) (x : Fin n → Bool),
+  (a.maj3 b c).eval x = (a.eval x && b.eval x || c.eval x && (a.eval x ^^ b.eval x))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.maj3]
+BoolCircuit.TreeCircuit.maxFanin_and2_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n), (a.and2 b).maxFanin ≤ Max.max 2 (Max.max a.maxFanin b.maxFanin)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.and2]
+BoolCircuit.TreeCircuit.maxFanin_balanced_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)),
+  (BoolCircuit.TreeCircuit.balanced b cs).maxFanin ≤ Max.max 2 (BoolCircuit.TreeCircuit.maxFaninL cs)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.maxFaninL]
+BoolCircuit.TreeCircuit.maxFanin_const	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool), (BoolCircuit.TreeCircuit.const b).maxFanin = 0
+  CONSTS [BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.const]
+BoolCircuit.TreeCircuit.maxFanin_maj3_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b c : BoolCircuit.TreeCircuit n),
+  (a.maj3 b c).maxFanin ≤ Max.max 2 (Max.max a.maxFanin (Max.max b.maxFanin c.maxFanin))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.maj3]
+BoolCircuit.TreeCircuit.maxFanin_neg	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (c : BoolCircuit.TreeCircuit n), c.neg.maxFanin = c.maxFanin
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.neg]
+BoolCircuit.TreeCircuit.maxFanin_or2_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n), (a.or2 b).maxFanin ≤ Max.max 2 (Max.max a.maxFanin b.maxFanin)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.or2]
+BoolCircuit.TreeCircuit.maxFanin_subst_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n m : ℕ} (c : BoolCircuit.TreeCircuit n) (f : Fin n → BoolCircuit.TreeCircuit m),
+  (c.subst f).maxFanin ≤ Max.max c.maxFanin (Finset.univ.sup fun (i : Fin n) => (f i).maxFanin)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.subst]
+BoolCircuit.TreeCircuit.maxFanin_xor2_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n), (a.xor2 b).maxFanin ≤ Max.max 2 (Max.max a.maxFanin b.maxFanin)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.xor2]
+BoolCircuit.TreeCircuit.maxFanin_xor3_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b c : BoolCircuit.TreeCircuit n),
+  (a.xor3 b c).maxFanin ≤ Max.max 2 (Max.max a.maxFanin (Max.max b.maxFanin c.maxFanin))
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.xor3]
+BoolCircuit.TreeCircuit.neg	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.neg.match_1	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} →
+  (motive : BoolCircuit.TreeCircuit n → Sort u_1) →
+    (x : BoolCircuit.TreeCircuit n) →
+      ((l : BoolCircuit.Lit n) → motive (BoolCircuit.TreeCircuit.lit l)) →
+        ((b : Bool) → (cs : List (BoolCircuit.TreeCircuit n)) → motive (BoolCircuit.TreeCircuit.node b cs)) → motive x
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.Lit, BoolCircuit.TreeCircuit.lit, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.neg_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (c : BoolCircuit.TreeCircuit n) (x : Fin n → Bool), c.neg.eval x = !c.eval x
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.neg]
+BoolCircuit.TreeCircuit.neg_lit	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (l : BoolCircuit.Lit n),
+  (BoolCircuit.TreeCircuit.lit l).neg = BoolCircuit.TreeCircuit.lit { idx := l.idx, sign := !l.sign }
+  CONSTS [BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.neg, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.mk, BoolCircuit.Lit.idx, BoolCircuit.Lit.sign]
+BoolCircuit.TreeCircuit.neg_node	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)),
+  (BoolCircuit.TreeCircuit.node b cs).neg = BoolCircuit.TreeCircuit.node (!b) (List.map BoolCircuit.TreeCircuit.neg cs)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.neg, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.or2	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.or2_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n), a.or2 b = BoolCircuit.TreeCircuit.node Bool.false [a, b]
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.or2, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.or2_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n) (x : Fin n → Bool), (a.or2 b).eval x = (a.eval x || b.eval x)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.or2]
+BoolCircuit.TreeCircuit.rename	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n m : ℕ} → BoolCircuit.TreeCircuit n → (Fin n → Fin m) → BoolCircuit.TreeCircuit m
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.rename_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n m : ℕ} (c : BoolCircuit.TreeCircuit n) (e : Fin n → Fin m),
+  c.rename e = c.subst fun (i : Fin n) => BoolCircuit.TreeCircuit.lit { idx := e i, sign := Bool.true }
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.rename, BoolCircuit.TreeCircuit.subst, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.mk]
+BoolCircuit.TreeCircuit.rename_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n m : ℕ} (c : BoolCircuit.TreeCircuit n) (e : Fin n → Fin m) (x : Fin m → Bool), (c.rename e).eval x = c.eval (x ∘ e)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.rename]
+BoolCircuit.TreeCircuit.size_balanced_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)),
+  (BoolCircuit.TreeCircuit.balanced b cs).size ≤ BoolCircuit.TreeCircuit.sumSize cs + cs.length + 1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.size, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.sumSize]
+BoolCircuit.TreeCircuit.subst	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n m : ℕ} → BoolCircuit.TreeCircuit n → (Fin n → BoolCircuit.TreeCircuit m) → BoolCircuit.TreeCircuit m
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.subst.match_1	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n m : ℕ} →
+  (motive : BoolCircuit.TreeCircuit n → (Fin n → BoolCircuit.TreeCircuit m) → Sort u_1) →
+    (x : BoolCircuit.TreeCircuit n) →
+      (x_1 : Fin n → BoolCircuit.TreeCircuit m) →
+        ((l : BoolCircuit.Lit n) → (f : Fin n → BoolCircuit.TreeCircuit m) → motive (BoolCircuit.TreeCircuit.lit l) f) →
+          ((b : Bool) →
+              (cs : List (BoolCircuit.TreeCircuit n)) →
+                (f : Fin n → BoolCircuit.TreeCircuit m) → motive (BoolCircuit.TreeCircuit.node b cs) f) →
+            motive x x_1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.Lit, BoolCircuit.TreeCircuit.lit, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.subst_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n m : ℕ} (c : BoolCircuit.TreeCircuit n) (f : Fin n → BoolCircuit.TreeCircuit m) (x : Fin m → Bool),
+  (c.subst f).eval x = c.eval fun (i : Fin n) => (f i).eval x
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.subst]
+BoolCircuit.TreeCircuit.subst_lit	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n m : ℕ} (l : BoolCircuit.Lit n) (f : Fin n → BoolCircuit.TreeCircuit m),
+  (BoolCircuit.TreeCircuit.lit l).subst f = if l.sign = Bool.true then f l.idx else (f l.idx).neg
+  CONSTS [BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.subst, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.sign, BoolCircuit.Lit.idx, BoolCircuit.TreeCircuit.neg]
+BoolCircuit.TreeCircuit.subst_node	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n m : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)) (f : Fin n → BoolCircuit.TreeCircuit m),
+  (BoolCircuit.TreeCircuit.node b cs).subst f =
+    BoolCircuit.TreeCircuit.node b (List.map (fun (c : BoolCircuit.TreeCircuit n) => c.subst f) cs)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.subst, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.toBinary	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {n : ℕ} → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.toBinary.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (l : BoolCircuit.Lit n), (BoolCircuit.TreeCircuit.lit l).toBinary = BoolCircuit.TreeCircuit.lit l
+  CONSTS [BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.toBinary, BoolCircuit.TreeCircuit.lit]
+BoolCircuit.TreeCircuit.toBinary.eq_2	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)),
+  (BoolCircuit.TreeCircuit.node b cs).toBinary =
+    BoolCircuit.TreeCircuit.balanced b (List.map BoolCircuit.TreeCircuit.toBinary cs)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.toBinary, BoolCircuit.TreeCircuit.node, BoolCircuit.TreeCircuit.balanced]
+BoolCircuit.TreeCircuit.toBinary.eq_def	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (x : BoolCircuit.TreeCircuit n),
+  x.toBinary =
+    match x with
+    | BoolCircuit.TreeCircuit.lit l => BoolCircuit.TreeCircuit.lit l
+    | BoolCircuit.TreeCircuit.node b cs =>
+      BoolCircuit.TreeCircuit.balanced b (List.map BoolCircuit.TreeCircuit.toBinary cs)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.toBinary, BoolCircuit.TreeCircuit.toBinary.match_1, BoolCircuit.Lit, BoolCircuit.TreeCircuit.lit, BoolCircuit.TreeCircuit.balanced]
+BoolCircuit.TreeCircuit.toBinary.match_1	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {n : ℕ} →
+  (motive : BoolCircuit.TreeCircuit n → Sort u_1) →
+    (x : BoolCircuit.TreeCircuit n) →
+      ((l : BoolCircuit.Lit n) → motive (BoolCircuit.TreeCircuit.lit l)) →
+        ((b : Bool) → (cs : List (BoolCircuit.TreeCircuit n)) → motive (BoolCircuit.TreeCircuit.node b cs)) → motive x
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.Lit, BoolCircuit.TreeCircuit.lit, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.xor2	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.xor2_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n), a.xor2 b = (a.and2 b.neg).or2 (a.neg.and2 b)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.xor2, BoolCircuit.TreeCircuit.or2, BoolCircuit.TreeCircuit.and2, BoolCircuit.TreeCircuit.neg]
+BoolCircuit.TreeCircuit.xor2_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b : BoolCircuit.TreeCircuit n) (x : Fin n → Bool), (a.xor2 b).eval x = (a.eval x ^^ b.eval x)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.xor2]
+BoolCircuit.TreeCircuit.xor3	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.xor3_eq	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b c : BoolCircuit.TreeCircuit n), a.xor3 b c = (a.xor2 b).xor2 c
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.xor3, BoolCircuit.TreeCircuit.xor2]
+BoolCircuit.TreeCircuit.xor3_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (a b c : BoolCircuit.TreeCircuit n) (x : Fin n → Bool),
+  (a.xor3 b c).eval x = (a.eval x ^^ b.eval x ^^ c.eval x)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.xor3]
+BoolCircuit.TreeCircuitFamily	inductive	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : Type
+  CONSTS []
+BoolCircuit.TreeCircuitFamily.Accepts	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → List Bool → Prop
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.HasFaninTwo	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → Prop
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.HasPolylogDepth	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → ℕ → Prop
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.IsPolySize	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → Prop
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.casesOn	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {motive : BoolCircuit.TreeCircuitFamily → Sort u} →
+  (t : BoolCircuit.TreeCircuitFamily) →
+    ((circuit : (n : ℕ) → BoolCircuit.TreeCircuit n) → motive { circuit := circuit }) → motive t
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.circuit	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → (n : ℕ) → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuitFamily.ctorIdx	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → ℕ
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.language	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → Language Bool
+  CONSTS [BoolCircuit.TreeCircuitFamily, Language]
+BoolCircuit.TreeCircuitFamily.mem_language_iff	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (C : BoolCircuit.TreeCircuitFamily) (w : List Bool), w ∈ C.language ↔ (C.circuit w.length).eval w.get = Bool.true
+  CONSTS [BoolCircuit.TreeCircuitFamily, Language, Language.instMembershipList, BoolCircuit.TreeCircuitFamily.language, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuitFamily.circuit]
+BoolCircuit.TreeCircuitFamily.mk	constructor	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ((n : ℕ) → BoolCircuit.TreeCircuit n) → BoolCircuit.TreeCircuitFamily
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.mk.inj	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {circuit circuit_1 : (n : ℕ) → BoolCircuit.TreeCircuit n},
+  { circuit := circuit } = { circuit := circuit_1 } → circuit = circuit_1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.mk.injEq	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (circuit circuit_1 : (n : ℕ) → BoolCircuit.TreeCircuit n),
+  ({ circuit := circuit } = { circuit := circuit_1 }) = (circuit = circuit_1)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.mk.noConfusion	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : (P : Sort u) →
+  (circuit circuit' : (n : ℕ) → BoolCircuit.TreeCircuit n) →
+    { circuit := circuit } = { circuit := circuit' } → (circuit = circuit' → P) → P
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.mk.sizeOf_spec	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (circuit : (n : ℕ) → BoolCircuit.TreeCircuit n), SizeOf.sizeOf { circuit := circuit } = 1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily._sizeOf_inst, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.noConfusion	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {P : Sort u} → {x1 x2 : BoolCircuit.TreeCircuitFamily} → x1 = x2 → BoolCircuit.TreeCircuitFamily.noConfusionType P x1 x2
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily.noConfusionType]
+BoolCircuit.TreeCircuitFamily.noConfusionType	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : Sort u → BoolCircuit.TreeCircuitFamily → BoolCircuit.TreeCircuitFamily → Sort u
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.rec	recursor	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {motive : BoolCircuit.TreeCircuitFamily → Sort u} →
+  ((circuit : (n : ℕ) → BoolCircuit.TreeCircuit n) → motive { circuit := circuit }) →
+    (t : BoolCircuit.TreeCircuitFamily) → motive t
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.recOn	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {motive : BoolCircuit.TreeCircuitFamily → Sort u} →
+  (t : BoolCircuit.TreeCircuitFamily) →
+    ((circuit : (n : ℕ) → BoolCircuit.TreeCircuit n) → motive { circuit := circuit }) → motive t
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeNC	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : Set (Language Bool)
+  CONSTS [Language]
+BoolCircuit.TreeNC.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeNC = ⋃ i ∈ Set.Ici 1, BoolCircuit.TreeNCLevel i
+  CONSTS [Language, BoolCircuit.TreeNC, BoolCircuit.TreeNCLevel]
+BoolCircuit.TreeNCLevel	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ℕ → Set (Language Bool)
+  CONSTS [Language]
+BoolCircuit.TreeNCLevel.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (d : ℕ), BoolCircuit.TreeNCLevel d = {L : Language Bool | Language.InTreeNC d L}
+  CONSTS [Language, BoolCircuit.TreeNCLevel, Language.InTreeNC]
+BoolCircuit.TreeNCLevel_subset_ACLevel	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (i : ℕ), BoolCircuit.TreeNCLevel i ⊆ BoolCircuit.TreeACLevel i
+  CONSTS [Language, BoolCircuit.TreeNCLevel, BoolCircuit.TreeACLevel]
+BoolCircuit.TreeNC_eq_TreeAC	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeNC = BoolCircuit.TreeAC
+  CONSTS [Language, BoolCircuit.TreeNC, BoolCircuit.TreeAC]
+BoolCircuit.clog_poly_le	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (a k m : ℕ), Nat.clog 2 (a * (m + 1) ^ k) ≤ a + k * (Nat.log 2 m + 1)
+  CONSTS []
+BoolCircuit.layerChain	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ℕ → List BoolCircuit.DAGGate → ℕ → ℕ → ℕ → List BoolCircuit.DAGGate × List ℕ
+  CONSTS [BoolCircuit.DAGGate]
+BoolCircuit.layerChain.match_1	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : (motive : List BoolCircuit.DAGGate → ℕ → ℕ → ℕ → Sort u_1) →
+  (x : List BoolCircuit.DAGGate) →
+    (x_1 x_2 x_3 : ℕ) →
+      ((gs : List BoolCircuit.DAGGate) → (x x_4 : ℕ) → motive gs x x_4 0) →
+        ((gs : List BoolCircuit.DAGGate) → (a b s : ℕ) → motive gs a b s.succ) → motive x x_1 x_2 x_3
+  CONSTS [BoolCircuit.DAGGate]
+BoolCircuit.layerChain_succ	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ (N : ℕ) (gs : List BoolCircuit.DAGGate) (a b s : ℕ),
+  BoolCircuit.layerChain N gs a b (s + 1) =
+    ((BoolCircuit.layerChain N
+          (gs ++
+            [{ kind := BoolCircuit.GateKind.not, args := [a] },
+              { kind := BoolCircuit.GateKind.not, args := [N + gs.length] }])
+          b (N + gs.length + 1) s).1,
+      (N + gs.length + 1) ::
+        (BoolCircuit.layerChain N
+            (gs ++
+              [{ kind := BoolCircuit.GateKind.not, args := [a] },
+                { kind := BoolCircuit.GateKind.not, args := [N + gs.length] }])
+            b (N + gs.length + 1) s).2)
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.layerChain, BoolCircuit.DAGGate.mk, BoolCircuit.GateKind.not]
+BoolCircuit.layerChain_zero	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ (N : ℕ) (gs : List BoolCircuit.DAGGate) (a b : ℕ), BoolCircuit.layerChain N gs a b 0 = (gs, [])
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.layerChain]
+BoolCircuit.litInput	def	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : {n : ℕ} → (Fin n → Bool) → Fin (n + n) → Bool
+  CONSTS []
+BoolCircuit.litInput_castAdd	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} (x : Fin n → Bool) (i : Fin n), BoolCircuit.litInput x (Fin.castAdd n i) = x i
+  CONSTS [BoolCircuit.litInput]
+BoolCircuit.litInput_eq	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} (x : Fin n → Bool), BoolCircuit.litInput x = Fin.append x fun (i : Fin n) => !x i
+  CONSTS [BoolCircuit.litInput]
+BoolCircuit.litInput_natAdd	theorem	TCSlib.Complexity.CircuitComplexity.NANDLayering
+  : ∀ {n : ℕ} (x : Fin n → Bool) (i : Fin n), BoolCircuit.litInput x (Fin.natAdd n i) = !x i
+  CONSTS [BoolCircuit.litInput]
+BoolCircuit.mem_TreeAC_iff	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (L : Language Bool), L ∈ BoolCircuit.TreeAC ↔ ∃ (i : ℕ), Language.InTreeAC i L
+  CONSTS [Language, BoolCircuit.TreeAC, Language.InTreeAC]
+BoolCircuit.mem_TreeNC_iff	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (L : Language Bool), L ∈ BoolCircuit.TreeNC ↔ ∃ (i : ℕ), 1 ≤ i ∧ Language.InTreeNC i L
+  CONSTS [Language, BoolCircuit.TreeNC, Language.InTreeNC]
+BoolCircuit.nandGadget	def	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ℕ → BoolCircuit.DAGGate → List BoolCircuit.DAGGate → List BoolCircuit.DAGGate × ℕ
+  CONSTS [BoolCircuit.DAGGate]
+BoolCircuit.nandGadget.match_1	def	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : (motive : BoolCircuit.GateKind → List ℕ → Sort u_1) →
+  (x : BoolCircuit.GateKind) →
+    (x_1 : List ℕ) →
+      ((x : List ℕ) → motive BoolCircuit.GateKind.not x) →
+        (Unit → motive BoolCircuit.GateKind.and []) →
+          (Unit → motive BoolCircuit.GateKind.or []) →
+            ((a : ℕ) → motive BoolCircuit.GateKind.and [a]) →
+              ((a : ℕ) → motive BoolCircuit.GateKind.or [a]) →
+                ((a b : ℕ) → motive BoolCircuit.GateKind.and [a, b]) →
+                  ((a b : ℕ) → motive BoolCircuit.GateKind.or [a, b]) →
+                    ((head head_1 head_2 : ℕ) →
+                        (tail : List ℕ) → motive BoolCircuit.GateKind.and (head :: head_1 :: head_2 :: tail)) →
+                      ((head head_1 head_2 : ℕ) →
+                          (tail : List ℕ) → motive BoolCircuit.GateKind.or (head :: head_1 :: head_2 :: tail)) →
+                        motive x x_1
+  CONSTS [BoolCircuit.GateKind, BoolCircuit.GateKind.not, BoolCircuit.GateKind.and, BoolCircuit.GateKind.or]
+BoolCircuit.nandGadget_and_nil	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (gs : List BoolCircuit.DAGGate),
+  BoolCircuit.nandGadget n { kind := BoolCircuit.GateKind.and, args := [] } gs =
+    (gs ++
+        [{ kind := BoolCircuit.GateKind.not, args := [] },
+          { kind := BoolCircuit.GateKind.not, args := [n + gs.length] }],
+      n + gs.length + 1)
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.nandGadget, BoolCircuit.DAGGate.mk, BoolCircuit.GateKind.and, BoolCircuit.GateKind.not]
+BoolCircuit.nandGadget_and_pair	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (a b : ℕ) (gs : List BoolCircuit.DAGGate),
+  BoolCircuit.nandGadget n { kind := BoolCircuit.GateKind.and, args := [a, b] } gs =
+    (gs ++
+        [{ kind := BoolCircuit.GateKind.not, args := [a, b] },
+          { kind := BoolCircuit.GateKind.not, args := [n + gs.length] }],
+      n + gs.length + 1)
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.nandGadget, BoolCircuit.DAGGate.mk, BoolCircuit.GateKind.and, BoolCircuit.GateKind.not]
+BoolCircuit.nandGadget_and_singleton	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (a : ℕ) (gs : List BoolCircuit.DAGGate),
+  BoolCircuit.nandGadget n { kind := BoolCircuit.GateKind.and, args := [a] } gs =
+    (gs ++
+        [{ kind := BoolCircuit.GateKind.not, args := [a] },
+          { kind := BoolCircuit.GateKind.not, args := [n + gs.length] }],
+      n + gs.length + 1)
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.nandGadget, BoolCircuit.DAGGate.mk, BoolCircuit.GateKind.and, BoolCircuit.GateKind.not]
+BoolCircuit.nandGadget_correct	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ},
+  BoolCircuit.GadgetCorrect n 2 (fun (x : BoolCircuit.GateKind) (l : ℕ) => l ≤ 2) BoolCircuit.DAGGate.IsNAND
+    (BoolCircuit.nandGadget n)
+  CONSTS [BoolCircuit.GadgetCorrect, BoolCircuit.GateKind, BoolCircuit.DAGGate.IsNAND, BoolCircuit.nandGadget]
+BoolCircuit.nandGadget_not	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (args : List ℕ) (gs : List BoolCircuit.DAGGate),
+  BoolCircuit.nandGadget n { kind := BoolCircuit.GateKind.not, args := args } gs =
+    (gs ++ [{ kind := BoolCircuit.GateKind.not, args := args }], n + gs.length)
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.nandGadget, BoolCircuit.DAGGate.mk, BoolCircuit.GateKind.not]
+BoolCircuit.nandGadget_of_three_le	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} {k : BoolCircuit.GateKind},
+  k ≠ BoolCircuit.GateKind.not →
+    ∀ (a b c : ℕ) (l : List ℕ) (gs : List BoolCircuit.DAGGate),
+      BoolCircuit.nandGadget n { kind := k, args := a :: b :: c :: l } gs =
+        (gs ++ [{ kind := k, args := a :: b :: c :: l }], n + gs.length)
+  CONSTS [BoolCircuit.GateKind, BoolCircuit.GateKind.not, BoolCircuit.DAGGate, BoolCircuit.nandGadget, BoolCircuit.DAGGate.mk]
+BoolCircuit.nandGadget_or_nil	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (gs : List BoolCircuit.DAGGate),
+  BoolCircuit.nandGadget n { kind := BoolCircuit.GateKind.or, args := [] } gs =
+    (gs ++ [{ kind := BoolCircuit.GateKind.not, args := [] }], n + gs.length)
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.nandGadget, BoolCircuit.DAGGate.mk, BoolCircuit.GateKind.or, BoolCircuit.GateKind.not]
+BoolCircuit.nandGadget_or_pair	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (a b : ℕ) (gs : List BoolCircuit.DAGGate),
+  BoolCircuit.nandGadget n { kind := BoolCircuit.GateKind.or, args := [a, b] } gs =
+    (gs ++
+        [{ kind := BoolCircuit.GateKind.not, args := [a] }, { kind := BoolCircuit.GateKind.not, args := [b] },
+          { kind := BoolCircuit.GateKind.not, args := [n + gs.length, n + gs.length + 1] }],
+      n + gs.length + 2)
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.nandGadget, BoolCircuit.DAGGate.mk, BoolCircuit.GateKind.or, BoolCircuit.GateKind.not]
+BoolCircuit.nandGadget_or_singleton	theorem	TCSlib.Complexity.CircuitComplexity.NANDForm
+  : ∀ {n : ℕ} (a : ℕ) (gs : List BoolCircuit.DAGGate),
+  BoolCircuit.nandGadget n { kind := BoolCircuit.GateKind.or, args := [a] } gs =
+    (gs ++
+        [{ kind := BoolCircuit.GateKind.not, args := [a] },
+          { kind := BoolCircuit.GateKind.not, args := [n + gs.length] }],
+      n + gs.length + 1)
+  CONSTS [BoolCircuit.DAGGate, BoolCircuit.nandGadget, BoolCircuit.DAGGate.mk, BoolCircuit.GateKind.or, BoolCircuit.GateKind.not]
+BoolCircuit.toBinary_depth_le	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n w : ℕ} (c : BoolCircuit.TreeCircuit n), c.maxFanin ≤ w → c.toBinary.depth ≤ c.depth * (Nat.clog 2 w + 1)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.toBinary]
+BoolCircuit.toBinary_eval	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (c : BoolCircuit.TreeCircuit n) (x : Fin n → Bool), c.toBinary.eval x = c.eval x
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.toBinary]
+BoolCircuit.toBinary_maxFanin_le	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (c : BoolCircuit.TreeCircuit n), c.toBinary.maxFanin ≤ 2
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.toBinary]
+BoolCircuit.toBinary_size_le	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (c : BoolCircuit.TreeCircuit n), c.toBinary.size ≤ 3 * c.size
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.size, BoolCircuit.TreeCircuit.toBinary]
+BranchingProgram	inductive	TCSlib.Complexity.BranchingPrograms.Defs
+  : ℕ → ℕ → Type
+  CONSTS []
+BranchingProgram.FiveCycleRecognizes	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : {n : ℕ} → BranchingProgram 5 n → ((Fin n → Bool) → Prop) → Equiv.Perm (Fin 5) → Prop
+  CONSTS [BranchingProgram]
+BranchingProgram.FiveCycleRecognizes.complementLast	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} {B : BranchingProgram 5 n} {A : (Fin n → Bool) → Prop} {σ : Equiv.Perm (Fin 5)},
+  B.FiveCycleRecognizes A σ →
+    0 < B.length → (B.complementLast σ).FiveCycleRecognizes (fun (x : Fin n → Bool) => ¬A x) σ⁻¹
+  CONSTS [BranchingProgram, BranchingProgram.FiveCycleRecognizes, BranchingProgram.length, BranchingProgram.complementLast]
+BranchingProgram.FiveCycleRecognizes.conj	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} {B : BranchingProgram 5 n} {A : (Fin n → Bool) → Prop} {σ τ : Equiv.Perm (Fin 5)},
+  B.FiveCycleRecognizes A σ →
+    BranchingProgram.IsFiveCycle τ → (B.conj (BranchingProgram.conjugator σ τ)).FiveCycleRecognizes A τ
+  CONSTS [BranchingProgram, BranchingProgram.FiveCycleRecognizes, BranchingProgram.IsFiveCycle, BranchingProgram.conj, BranchingProgram.conjugator]
+BranchingProgram.Instr	inductive	TCSlib.Complexity.BranchingPrograms.Defs
+  : ℕ → ℕ → Type
+  CONSTS []
+BranchingProgram.Instr.IsPermutation	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram.Instr w n → Prop
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.casesOn	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  {motive : BranchingProgram.Instr w n → Sort u} →
+    (t : BranchingProgram.Instr w n) →
+      ((var : Fin n) → (map0 map1 : Fin w → Fin w) → motive { var := var, map0 := map0, map1 := map1 }) → motive t
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.mk]
+BranchingProgram.Instr.ctorIdx	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram.Instr w n → ℕ
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.depth_wire_le	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (ι : BranchingProgram.Instr w n) (i j : Fin w), (ι.wire i j).depth ≤ 1
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit.depth, BranchingProgram.Instr.wire]
+BranchingProgram.Instr.eval	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram.Instr w n → (Fin n → Bool) → Fin w → Fin w
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.eval_eq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (ι : BranchingProgram.Instr w n) (x : Fin n → Bool),
+  ι.eval x = if x ι.var = Bool.true then ι.map1 else ι.map0
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.eval, BranchingProgram.Instr.var, BranchingProgram.Instr.map1, BranchingProgram.Instr.map0]
+BranchingProgram.Instr.isPermutation_iff	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (ι : BranchingProgram.Instr w n), ι.IsPermutation ↔ Function.Bijective ι.map0 ∧ Function.Bijective ι.map1
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.IsPermutation, BranchingProgram.Instr.map0, BranchingProgram.Instr.map1]
+BranchingProgram.Instr.isPermutation_ofPerm	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (i : Fin n) (σ₀ σ₁ : Equiv.Perm (Fin w)), (BranchingProgram.Instr.ofPerm i σ₀ σ₁).IsPermutation
+  CONSTS [BranchingProgram.Instr.IsPermutation, BranchingProgram.Instr.ofPerm]
+BranchingProgram.Instr.map0	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram.Instr w n → Fin w → Fin w
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.map1	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram.Instr w n → Fin w → Fin w
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.maxFanin_wire_le	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (ι : BranchingProgram.Instr w n) (i j : Fin w), (ι.wire i j).maxFanin ≤ 2
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit.maxFanin, BranchingProgram.Instr.wire]
+BranchingProgram.Instr.mk	constructor	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → Fin n → (Fin w → Fin w) → (Fin w → Fin w) → BranchingProgram.Instr w n
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.mk.inj	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} {var : Fin n} {map0 map1 : Fin w → Fin w} {var_1 : Fin n} {map0_1 map1_1 : Fin w → Fin w},
+  { var := var, map0 := map0, map1 := map1 } = { var := var_1, map0 := map0_1, map1 := map1_1 } →
+    var = var_1 ∧ map0 = map0_1 ∧ map1 = map1_1
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.mk]
+BranchingProgram.Instr.mk.injEq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (var : Fin n) (map0 map1 : Fin w → Fin w) (var_1 : Fin n) (map0_1 map1_1 : Fin w → Fin w),
+  ({ var := var, map0 := map0, map1 := map1 } = { var := var_1, map0 := map0_1, map1 := map1_1 }) =
+    (var = var_1 ∧ map0 = map0_1 ∧ map1 = map1_1)
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.mk]
+BranchingProgram.Instr.mk.noConfusion	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  (P : Sort u) →
+    (var : Fin n) →
+      (map0 map1 : Fin w → Fin w) →
+        (var' : Fin n) →
+          (map0' map1' : Fin w → Fin w) →
+            { var := var, map0 := map0, map1 := map1 } = { var := var', map0 := map0', map1 := map1' } →
+              (var = var' → map0 = map0' → map1 = map1' → P) → P
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.mk]
+BranchingProgram.Instr.mk.sizeOf_spec	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (var : Fin n) (map0 map1 : Fin w → Fin w),
+  SizeOf.sizeOf { var := var, map0 := map0, map1 := map1 } = 1 + SizeOf.sizeOf var
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr._sizeOf_inst, BranchingProgram.Instr.mk]
+BranchingProgram.Instr.noConfusion	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  {P : Sort u} → {x1 x2 : BranchingProgram.Instr w n} → x1 = x2 → BranchingProgram.Instr.noConfusionType P x1 x2
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.noConfusionType]
+BranchingProgram.Instr.noConfusionType	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → Sort u → BranchingProgram.Instr w n → BranchingProgram.Instr w n → Sort u
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.ofPerm	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → Fin n → Equiv.Perm (Fin w) → Equiv.Perm (Fin w) → BranchingProgram.Instr w n
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.ofPerm_map0	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (i : Fin n) (σ₀ σ₁ : Equiv.Perm (Fin w)) (a : Fin w), (BranchingProgram.Instr.ofPerm i σ₀ σ₁).map0 a = σ₀ a
+  CONSTS [BranchingProgram.Instr.map0, BranchingProgram.Instr.ofPerm]
+BranchingProgram.Instr.ofPerm_map1	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (i : Fin n) (σ₀ σ₁ : Equiv.Perm (Fin w)) (a : Fin w), (BranchingProgram.Instr.ofPerm i σ₀ σ₁).map1 a = σ₁ a
+  CONSTS [BranchingProgram.Instr.map1, BranchingProgram.Instr.ofPerm]
+BranchingProgram.Instr.ofPerm_var	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (i : Fin n) (σ₀ σ₁ : Equiv.Perm (Fin w)), (BranchingProgram.Instr.ofPerm i σ₀ σ₁).var = i
+  CONSTS [BranchingProgram.Instr.var, BranchingProgram.Instr.ofPerm]
+BranchingProgram.Instr.rec	recursor	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  {motive : BranchingProgram.Instr w n → Sort u} →
+    ((var : Fin n) → (map0 map1 : Fin w → Fin w) → motive { var := var, map0 := map0, map1 := map1 }) →
+      (t : BranchingProgram.Instr w n) → motive t
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.mk]
+BranchingProgram.Instr.recOn	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  {motive : BranchingProgram.Instr w n → Sort u} →
+    (t : BranchingProgram.Instr w n) →
+      ((var : Fin n) → (map0 map1 : Fin w → Fin w) → motive { var := var, map0 := map0, map1 := map1 }) → motive t
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.mk]
+BranchingProgram.Instr.stepWith	def	TCSlib.Complexity.BranchingPrograms.Eval
+  : {w n : ℕ} →
+  {α : Type u_1} →
+    {β : Type u_3} →
+      [AddCommMonoid α] → (β → α → α → α) → (Fin n → β) → BranchingProgram.Instr w n → (Fin w → α) → Fin w → α
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.stepWith_apply	theorem	TCSlib.Complexity.BranchingPrograms.Eval
+  : ∀ {w n : ℕ} {α : Type u_1} {β : Type u_3} [inst : AddCommMonoid α] (sel : β → α → α → α) (inp : Fin n → β)
+  (ι : BranchingProgram.Instr w n) (V : Fin w → α) (i : Fin w),
+  BranchingProgram.Instr.stepWith sel inp ι V i =
+    sel (inp ι.var) (∑ j : Fin w with ι.map0 j = i, V j) (∑ j : Fin w with ι.map1 j = i, V j)
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.stepWith, BranchingProgram.Instr.var, BranchingProgram.Instr.map0, BranchingProgram.Instr.map1]
+BranchingProgram.Instr.stepWith_of_isPermutation	theorem	TCSlib.Complexity.BranchingPrograms.Eval
+  : ∀ {w n : ℕ} {α : Type u_1} {β : Type u_3} [inst : AddCommMonoid α] (sel : β → α → α → α) (inp : Fin n → β)
+  {ι : BranchingProgram.Instr w n} (hι : ι.IsPermutation) (V : Fin w → α) (i : Fin w),
+  BranchingProgram.Instr.stepWith sel inp ι V i =
+    sel (inp ι.var) (V ((Equiv.ofBijective ι.map0 ⋯).symm i)) (V ((Equiv.ofBijective ι.map1 ⋯).symm i))
+  CONSTS [BranchingProgram.Instr, BranchingProgram.Instr.IsPermutation, BranchingProgram.Instr.stepWith, BranchingProgram.Instr.var, BranchingProgram.Instr.map0, BranchingProgram.Instr.map1, BranchingProgram.Instr.isPermutation_iff]
+BranchingProgram.Instr.var	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram.Instr w n → Fin n
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.Instr.wire	def	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : {w n : ℕ} → BranchingProgram.Instr w n → Fin w → Fin w → BoolCircuit.TreeCircuit n
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit]
+BranchingProgram.Instr.wire_eq	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (ι : BranchingProgram.Instr w n) (i j : Fin w),
+  ι.wire i j =
+    if ι.map0 i = j then
+      if ι.map1 i = j then BoolCircuit.TreeCircuit.node Bool.true []
+      else BoolCircuit.TreeCircuit.lit { idx := ι.var, sign := Bool.false }
+    else
+      if ι.map1 i = j then BoolCircuit.TreeCircuit.lit { idx := ι.var, sign := Bool.true }
+      else BoolCircuit.TreeCircuit.node Bool.false []
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit, BranchingProgram.Instr.wire, BranchingProgram.Instr.map0, BranchingProgram.Instr.map1, BoolCircuit.TreeCircuit.node, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.mk, BranchingProgram.Instr.var]
+BranchingProgram.Instr.wire_eval	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (ι : BranchingProgram.Instr w n) (i j : Fin w) (x : Fin n → Bool),
+  (ι.wire i j).eval x = Decidable.decide (ι.eval x i = j)
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit.eval, BranchingProgram.Instr.wire, BranchingProgram.Instr.eval]
+BranchingProgram.IsFiveCycle	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : Equiv.Perm (Fin 5) → Prop
+  CONSTS []
+BranchingProgram.IsPermutation	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram w n → Prop
+  CONSTS [BranchingProgram]
+BranchingProgram.IsPermutation.append	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} {B₁ B₂ : BranchingProgram w n}, B₁.IsPermutation → B₂.IsPermutation → (B₁ ++ B₂).IsPermutation
+  CONSTS [BranchingProgram, BranchingProgram.IsPermutation, BranchingProgram.instAppend]
+BranchingProgram.IsPermutation.bijective_yield	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} {B : BranchingProgram w n}, B.IsPermutation → ∀ (x : Fin n → Bool), Function.Bijective (B.yield x)
+  CONSTS [BranchingProgram, BranchingProgram.IsPermutation, BranchingProgram.yield]
+BranchingProgram.IsPermutation.complementLast	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} {B : BranchingProgram w n}, B.IsPermutation → ∀ (σ : Equiv.Perm (Fin w)), (B.complementLast σ).IsPermutation
+  CONSTS [BranchingProgram, BranchingProgram.IsPermutation, BranchingProgram.complementLast]
+BranchingProgram.IsPermutation.conj	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} {B : BranchingProgram w n}, B.IsPermutation → ∀ (θ : Equiv.Perm (Fin w)), (B.conj θ).IsPermutation
+  CONSTS [BranchingProgram, BranchingProgram.IsPermutation, BranchingProgram.conj]
+BranchingProgram.append	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram w n → BranchingProgram w n → BranchingProgram w n
+  CONSTS [BranchingProgram]
+BranchingProgram.append_eq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B₁ B₂ : BranchingProgram w n), B₁.append B₂ = { instrs := B₁.instrs ++ B₂.instrs }
+  CONSTS [BranchingProgram, BranchingProgram.append, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.instrs]
+BranchingProgram.append_instrs	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B₁ B₂ : BranchingProgram w n), (B₁ ++ B₂).instrs = B₁.instrs ++ B₂.instrs
+  CONSTS [BranchingProgram, BranchingProgram.Instr, BranchingProgram.instrs, BranchingProgram.instAppend]
+BranchingProgram.barrington	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : {n : ℕ} → [NeZero n] → BoolCircuit.TreeCircuit n → Equiv.Perm (Fin 5) → BranchingProgram 5 n
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram]
+BranchingProgram.barrington.congr_simp	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (a a_1 : BoolCircuit.TreeCircuit n),
+  a = a_1 →
+    ∀ (a_2 a_3 : Equiv.Perm (Fin 5)),
+      a_2 = a_3 → BranchingProgram.barrington a a_2 = BranchingProgram.barrington a_1 a_3
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram, BranchingProgram.barrington]
+BranchingProgram.barrington.eq_1	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (x : Equiv.Perm (Fin 5)) (i : Fin n),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.lit { idx := i, sign := Bool.true }) x =
+    { instrs := [BranchingProgram.Instr.ofPerm i 1 x] }
+  CONSTS [BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.mk, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.ofPerm]
+BranchingProgram.barrington.eq_2	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (x : Equiv.Perm (Fin 5)) (i : Fin n),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.lit { idx := i, sign := Bool.false }) x =
+    { instrs := [BranchingProgram.Instr.ofPerm i x 1] }
+  CONSTS [BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.mk, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.ofPerm]
+BranchingProgram.barrington.eq_3	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (x : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node Bool.true []) x =
+    { instrs := [BranchingProgram.Instr.ofPerm 0 x x] }
+  CONSTS [BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node, BoolCircuit.TreeCircuit, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.ofPerm]
+BranchingProgram.barrington.eq_4	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (x : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node Bool.false []) x =
+    { instrs := [BranchingProgram.Instr.ofPerm 0 1 1] }
+  CONSTS [BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node, BoolCircuit.TreeCircuit, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.ofPerm]
+BranchingProgram.barrington.eq_5	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (x : Equiv.Perm (Fin 5)) (isAnd : Bool) (c : BoolCircuit.TreeCircuit n),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node isAnd [c]) x = BranchingProgram.barrington c x
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node]
+BranchingProgram.barrington.eq_6	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (x : Equiv.Perm (Fin 5)) (c₁ c₂ : BoolCircuit.TreeCircuit n)
+  (tail : List (BoolCircuit.TreeCircuit n)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node Bool.true (c₁ :: c₂ :: tail)) x =
+    BranchingProgram.commutatorProgram (fun (ρ : Equiv.Perm (Fin 5)) => BranchingProgram.barrington c₁ ρ)
+      (fun (ρ : Equiv.Perm (Fin 5)) => BranchingProgram.barrington c₂ ρ) x
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node, BranchingProgram.commutatorProgram]
+BranchingProgram.barrington.eq_7	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (x : Equiv.Perm (Fin 5)) (c₁ c₂ : BoolCircuit.TreeCircuit n)
+  (tail : List (BoolCircuit.TreeCircuit n)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node Bool.false (c₁ :: c₂ :: tail)) x =
+    (BranchingProgram.commutatorProgram
+          (fun (ρ : Equiv.Perm (Fin 5)) => (BranchingProgram.barrington c₁ ρ⁻¹).complementLast ρ⁻¹)
+          (fun (ρ : Equiv.Perm (Fin 5)) => (BranchingProgram.barrington c₂ ρ⁻¹).complementLast ρ⁻¹) x⁻¹).complementLast
+      x⁻¹
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node, BranchingProgram.complementLast, BranchingProgram.commutatorProgram]
+BranchingProgram.barrington.eq_def	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (x : BoolCircuit.TreeCircuit n) (x_1 : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington x x_1 =
+    match x, x_1 with
+    | BoolCircuit.TreeCircuit.lit { idx := i, sign := Bool.true }, σ =>
+      { instrs := [BranchingProgram.Instr.ofPerm i 1 σ] }
+    | BoolCircuit.TreeCircuit.lit { idx := i, sign := Bool.false }, σ =>
+      { instrs := [BranchingProgram.Instr.ofPerm i σ 1] }
+    | BoolCircuit.TreeCircuit.node Bool.true [], σ => { instrs := [BranchingProgram.Instr.ofPerm 0 σ σ] }
+    | BoolCircuit.TreeCircuit.node Bool.false [], x => { instrs := [BranchingProgram.Instr.ofPerm 0 1 1] }
+    | BoolCircuit.TreeCircuit.node isAnd [c], σ => BranchingProgram.barrington c σ
+    | BoolCircuit.TreeCircuit.node Bool.true (c₁ :: c₂ :: tail), σ =>
+      BranchingProgram.commutatorProgram (fun (ρ : Equiv.Perm (Fin 5)) => BranchingProgram.barrington c₁ ρ)
+        (fun (ρ : Equiv.Perm (Fin 5)) => BranchingProgram.barrington c₂ ρ) σ
+    | BoolCircuit.TreeCircuit.node Bool.false (c₁ :: c₂ :: tail), σ =>
+      (BranchingProgram.commutatorProgram
+            (fun (ρ : Equiv.Perm (Fin 5)) => (BranchingProgram.barrington c₁ ρ⁻¹).complementLast ρ⁻¹)
+            (fun (ρ : Equiv.Perm (Fin 5)) => (BranchingProgram.barrington c₂ ρ⁻¹).complementLast ρ⁻¹)
+            σ⁻¹).complementLast
+        σ⁻¹
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram, BranchingProgram.barrington, BranchingProgram.barrington.match_1, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.ofPerm, BranchingProgram.commutatorProgram, BranchingProgram.complementLast]
+BranchingProgram.barrington.match_1	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : {n : ℕ} →
+  (motive : BoolCircuit.TreeCircuit n → Equiv.Perm (Fin 5) → Sort u_1) →
+    (x : BoolCircuit.TreeCircuit n) →
+      (x_1 : Equiv.Perm (Fin 5)) →
+        ((i : Fin n) →
+            (σ : Equiv.Perm (Fin 5)) → motive (BoolCircuit.TreeCircuit.lit { idx := i, sign := Bool.true }) σ) →
+          ((i : Fin n) →
+              (σ : Equiv.Perm (Fin 5)) → motive (BoolCircuit.TreeCircuit.lit { idx := i, sign := Bool.false }) σ) →
+            ((σ : Equiv.Perm (Fin 5)) → motive (BoolCircuit.TreeCircuit.node Bool.true []) σ) →
+              ((x : Equiv.Perm (Fin 5)) → motive (BoolCircuit.TreeCircuit.node Bool.false []) x) →
+                ((isAnd : Bool) →
+                    (c : BoolCircuit.TreeCircuit n) →
+                      (σ : Equiv.Perm (Fin 5)) → motive (BoolCircuit.TreeCircuit.node isAnd [c]) σ) →
+                  ((c₁ c₂ : BoolCircuit.TreeCircuit n) →
+                      (tail : List (BoolCircuit.TreeCircuit n)) →
+                        (σ : Equiv.Perm (Fin 5)) →
+                          motive (BoolCircuit.TreeCircuit.node Bool.true (c₁ :: c₂ :: tail)) σ) →
+                    ((c₁ c₂ : BoolCircuit.TreeCircuit n) →
+                        (tail : List (BoolCircuit.TreeCircuit n)) →
+                          (σ : Equiv.Perm (Fin 5)) →
+                            motive (BoolCircuit.TreeCircuit.node Bool.false (c₁ :: c₂ :: tail)) σ) →
+                      motive x x_1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.mk, BoolCircuit.TreeCircuit.node]
+BranchingProgram.barrington_length_le	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] {c : BoolCircuit.TreeCircuit n},
+  c.maxFanin ≤ 2 → ∀ (σ : Equiv.Perm (Fin 5)), (BranchingProgram.barrington c σ).length ≤ 4 ^ c.depth
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BranchingProgram.length, BranchingProgram.barrington, BoolCircuit.TreeCircuit.depth]
+BranchingProgram.barrington_length_pos	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (c : BoolCircuit.TreeCircuit n) (σ : Equiv.Perm (Fin 5)),
+  0 < (BranchingProgram.barrington c σ).length
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram.length, BranchingProgram.barrington]
+BranchingProgram.barrington_lit_false	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (i : Fin n) (σ : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.lit { idx := i, sign := Bool.false }) σ =
+    { instrs := [BranchingProgram.Instr.ofPerm i σ 1] }
+  CONSTS [BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.mk, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.ofPerm]
+BranchingProgram.barrington_lit_true	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (i : Fin n) (σ : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.lit { idx := i, sign := Bool.true }) σ =
+    { instrs := [BranchingProgram.Instr.ofPerm i 1 σ] }
+  CONSTS [BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.lit, BoolCircuit.Lit.mk, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.ofPerm]
+BranchingProgram.barrington_node_false_cons_cons	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (c₁ c₂ : BoolCircuit.TreeCircuit n) (cs : List (BoolCircuit.TreeCircuit n))
+  (σ : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node Bool.false (c₁ :: c₂ :: cs)) σ =
+    (BranchingProgram.commutatorProgram
+          (fun (ρ : Equiv.Perm (Fin 5)) => (BranchingProgram.barrington c₁ ρ⁻¹).complementLast ρ⁻¹)
+          (fun (ρ : Equiv.Perm (Fin 5)) => (BranchingProgram.barrington c₂ ρ⁻¹).complementLast ρ⁻¹) σ⁻¹).complementLast
+      σ⁻¹
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node, BranchingProgram.complementLast, BranchingProgram.commutatorProgram]
+BranchingProgram.barrington_node_false_nil	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (σ : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node Bool.false []) σ =
+    { instrs := [BranchingProgram.Instr.ofPerm 0 1 1] }
+  CONSTS [BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node, BoolCircuit.TreeCircuit, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.ofPerm]
+BranchingProgram.barrington_node_singleton	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (b : Bool) (c : BoolCircuit.TreeCircuit n) (σ : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node b [c]) σ = BranchingProgram.barrington c σ
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node]
+BranchingProgram.barrington_node_true_cons_cons	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (c₁ c₂ : BoolCircuit.TreeCircuit n) (cs : List (BoolCircuit.TreeCircuit n))
+  (σ : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node Bool.true (c₁ :: c₂ :: cs)) σ =
+    BranchingProgram.commutatorProgram (fun (ρ : Equiv.Perm (Fin 5)) => BranchingProgram.barrington c₁ ρ)
+      (fun (ρ : Equiv.Perm (Fin 5)) => BranchingProgram.barrington c₂ ρ) σ
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node, BranchingProgram.commutatorProgram]
+BranchingProgram.barrington_node_true_nil	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (σ : Equiv.Perm (Fin 5)),
+  BranchingProgram.barrington (BoolCircuit.TreeCircuit.node Bool.true []) σ =
+    { instrs := [BranchingProgram.Instr.ofPerm 0 σ σ] }
+  CONSTS [BranchingProgram, BranchingProgram.barrington, BoolCircuit.TreeCircuit.node, BoolCircuit.TreeCircuit, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.ofPerm]
+BranchingProgram.barrington_recognizes	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (c : BoolCircuit.TreeCircuit n),
+  c.maxFanin ≤ 2 →
+    ∀ {σ : Equiv.Perm (Fin 5)},
+      BranchingProgram.IsFiveCycle σ →
+        (BranchingProgram.barrington c σ).FiveCycleRecognizes (fun (x : Fin n → Bool) => c.eval x = Bool.true) σ
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BranchingProgram.IsFiveCycle, BranchingProgram.FiveCycleRecognizes, BranchingProgram.barrington, BoolCircuit.TreeCircuit.eval]
+BranchingProgram.barrington_yield_zero	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] {c : BoolCircuit.TreeCircuit n},
+  c.maxFanin ≤ 2 →
+    ∀ {σ : Equiv.Perm (Fin 5)},
+      BranchingProgram.IsFiveCycle σ →
+        ∀ (x : Fin n → Bool), (BranchingProgram.barrington c σ).yield x 0 = if c.eval x = Bool.true then σ 0 else 0
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BranchingProgram.IsFiveCycle, BranchingProgram.yield, BranchingProgram.barrington, BoolCircuit.TreeCircuit.eval]
+BranchingProgram.casesOn	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  {motive : BranchingProgram w n → Sort u} →
+    (t : BranchingProgram w n) → ((instrs : List (BranchingProgram.Instr w n)) → motive { instrs := instrs }) → motive t
+  CONSTS [BranchingProgram, BranchingProgram.Instr, BranchingProgram.mk]
+BranchingProgram.commutatorProgram	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : {n : ℕ} →
+  (Equiv.Perm (Fin 5) → BranchingProgram 5 n) →
+    (Equiv.Perm (Fin 5) → BranchingProgram 5 n) → Equiv.Perm (Fin 5) → BranchingProgram 5 n
+  CONSTS [BranchingProgram]
+BranchingProgram.commutatorProgram_eq	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} (P₁ P₂ : Equiv.Perm (Fin 5) → BranchingProgram 5 n) (σ : Equiv.Perm (Fin 5)),
+  BranchingProgram.commutatorProgram P₁ P₂ σ =
+    P₁
+            (BranchingProgram.conjugator
+                  (BranchingProgram.sigma2⁻¹ * BranchingProgram.sigma1⁻¹ * BranchingProgram.sigma2 *
+                    BranchingProgram.sigma1)
+                  σ *
+                BranchingProgram.sigma1 *
+              (BranchingProgram.conjugator
+                  (BranchingProgram.sigma2⁻¹ * BranchingProgram.sigma1⁻¹ * BranchingProgram.sigma2 *
+                    BranchingProgram.sigma1)
+                  σ)⁻¹) ++
+          P₂
+            (BranchingProgram.conjugator
+                  (BranchingProgram.sigma2⁻¹ * BranchingProgram.sigma1⁻¹ * BranchingProgram.sigma2 *
+                    BranchingProgram.sigma1)
+                  σ *
+                BranchingProgram.sigma2 *
+              (BranchingProgram.conjugator
+                  (BranchingProgram.sigma2⁻¹ * BranchingProgram.sigma1⁻¹ * BranchingProgram.sigma2 *
+                    BranchingProgram.sigma1)
+                  σ)⁻¹) ++
+        P₁
+          (BranchingProgram.conjugator
+                  (BranchingProgram.sigma2⁻¹ * BranchingProgram.sigma1⁻¹ * BranchingProgram.sigma2 *
+                    BranchingProgram.sigma1)
+                  σ *
+                BranchingProgram.sigma1 *
+              (BranchingProgram.conjugator
+                  (BranchingProgram.sigma2⁻¹ * BranchingProgram.sigma1⁻¹ * BranchingProgram.sigma2 *
+                    BranchingProgram.sigma1)
+                  σ)⁻¹)⁻¹ ++
+      P₂
+        (BranchingProgram.conjugator
+                (BranchingProgram.sigma2⁻¹ * BranchingProgram.sigma1⁻¹ * BranchingProgram.sigma2 *
+                  BranchingProgram.sigma1)
+                σ *
+              BranchingProgram.sigma2 *
+            (BranchingProgram.conjugator
+                (BranchingProgram.sigma2⁻¹ * BranchingProgram.sigma1⁻¹ * BranchingProgram.sigma2 *
+                  BranchingProgram.sigma1)
+                σ)⁻¹)⁻¹
+  CONSTS [BranchingProgram, BranchingProgram.commutatorProgram, BranchingProgram.instAppend, BranchingProgram.conjugator, BranchingProgram.sigma2, BranchingProgram.sigma1]
+BranchingProgram.compTree	def	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : {w n : ℕ} → List (BranchingProgram.Instr w n) → Fin w → Fin w → BoolCircuit.TreeCircuit n
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit]
+BranchingProgram.compTree.eq_1	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ},
+  BranchingProgram.compTree [] = fun (i j : Fin w) =>
+    if i = j then BoolCircuit.TreeCircuit.node Bool.true [] else BoolCircuit.TreeCircuit.node Bool.false []
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram.compTree, BranchingProgram.Instr, BoolCircuit.TreeCircuit.node]
+BranchingProgram.compTree.eq_2	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (ι : BranchingProgram.Instr w n), BranchingProgram.compTree [ι] = ι.wire
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit, BranchingProgram.compTree, BranchingProgram.Instr.wire]
+BranchingProgram.compTree.eq_3	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (ι₁ ι₂ : BranchingProgram.Instr w n) (l : List (BranchingProgram.Instr w n)),
+  BranchingProgram.compTree (ι₁ :: ι₂ :: l) =
+    BranchingProgram.wireComp (BranchingProgram.compTree (List.take ((ι₁ :: ι₂ :: l).length / 2) (ι₁ :: ι₂ :: l)))
+      (BranchingProgram.compTree (List.drop ((ι₁ :: ι₂ :: l).length / 2) (ι₁ :: ι₂ :: l)))
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit, BranchingProgram.compTree, BranchingProgram.wireComp]
+BranchingProgram.compTree.eq_def	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (x : List (BranchingProgram.Instr w n)),
+  BranchingProgram.compTree x =
+    match (motive := List (BranchingProgram.Instr w n) → Fin w → Fin w → BoolCircuit.TreeCircuit n) x with
+    | [] => fun (i j : Fin w) =>
+      if i = j then BoolCircuit.TreeCircuit.node Bool.true [] else BoolCircuit.TreeCircuit.node Bool.false []
+    | [ι] => ι.wire
+    | ι₁ :: ι₂ :: l =>
+      BranchingProgram.wireComp (BranchingProgram.compTree (List.take ((ι₁ :: ι₂ :: l).length / 2) (ι₁ :: ι₂ :: l)))
+        (BranchingProgram.compTree (List.drop ((ι₁ :: ι₂ :: l).length / 2) (ι₁ :: ι₂ :: l)))
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit, BranchingProgram.compTree, BranchingProgram.compTree.match_1, BoolCircuit.TreeCircuit.node, BranchingProgram.Instr.wire, BranchingProgram.wireComp]
+BranchingProgram.compTree.match_1	def	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : {w n : ℕ} →
+  (motive : List (BranchingProgram.Instr w n) → Sort u_1) →
+    (x : List (BranchingProgram.Instr w n)) →
+      (Unit → motive []) →
+        ((ι : BranchingProgram.Instr w n) → motive [ι]) →
+          ((ι₁ ι₂ : BranchingProgram.Instr w n) → (l : List (BranchingProgram.Instr w n)) → motive (ι₁ :: ι₂ :: l)) →
+            motive x
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.compTree_cons_cons	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (ι₁ ι₂ : BranchingProgram.Instr w n) (l : List (BranchingProgram.Instr w n)),
+  BranchingProgram.compTree (ι₁ :: ι₂ :: l) =
+    BranchingProgram.wireComp (BranchingProgram.compTree (List.take ((ι₁ :: ι₂ :: l).length / 2) (ι₁ :: ι₂ :: l)))
+      (BranchingProgram.compTree (List.drop ((ι₁ :: ι₂ :: l).length / 2) (ι₁ :: ι₂ :: l)))
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit, BranchingProgram.compTree, BranchingProgram.wireComp]
+BranchingProgram.compTree_eval	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (i j : Fin w) (x : Fin n → Bool),
+  (BranchingProgram.compTree B.instrs i j).eval x = Decidable.decide (B.yield x i = j)
+  CONSTS [BranchingProgram, BoolCircuit.TreeCircuit.eval, BranchingProgram.compTree, BranchingProgram.instrs, BranchingProgram.yield]
+BranchingProgram.compTree_nil	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (i j : Fin w),
+  BranchingProgram.compTree [] i j =
+    if i = j then BoolCircuit.TreeCircuit.node Bool.true [] else BoolCircuit.TreeCircuit.node Bool.false []
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram.compTree, BranchingProgram.Instr, BoolCircuit.TreeCircuit.node]
+BranchingProgram.compTree_singleton	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (ι : BranchingProgram.Instr w n), BranchingProgram.compTree [ι] = ι.wire
+  CONSTS [BranchingProgram.Instr, BoolCircuit.TreeCircuit, BranchingProgram.compTree, BranchingProgram.Instr.wire]
+BranchingProgram.complementLast	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram w n → Equiv.Perm (Fin w) → BranchingProgram w n
+  CONSTS [BranchingProgram]
+BranchingProgram.complementLast.match_1	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  (motive : Option (BranchingProgram.Instr w n) → Sort u_1) →
+    (x : Option (BranchingProgram.Instr w n)) →
+      (Unit → motive Option.none) → ((ι : BranchingProgram.Instr w n) → motive (Option.some ι)) → motive x
+  CONSTS [BranchingProgram.Instr]
+BranchingProgram.complementLast_concat	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (l : List (BranchingProgram.Instr w n)) (ι : BranchingProgram.Instr w n) (σ : Equiv.Perm (Fin w)),
+  { instrs := l ++ [ι] }.complementLast σ =
+    { instrs := l ++ [{ var := ι.var, map0 := ⇑(Equiv.symm σ) ∘ ι.map0, map1 := ⇑(Equiv.symm σ) ∘ ι.map1 }] }
+  CONSTS [BranchingProgram.Instr, BranchingProgram, BranchingProgram.complementLast, BranchingProgram.mk, BranchingProgram.Instr.mk, BranchingProgram.Instr.var, BranchingProgram.Instr.map0, BranchingProgram.Instr.map1]
+BranchingProgram.complementLast_eq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w)),
+  B.complementLast σ =
+    match B.instrs.getLast? with
+    | Option.none => B
+    | Option.some ι =>
+      {
+        instrs :=
+          B.instrs.dropLast ++ [{ var := ι.var, map0 := ⇑(Equiv.symm σ) ∘ ι.map0, map1 := ⇑(Equiv.symm σ) ∘ ι.map1 }] }
+  CONSTS [BranchingProgram, BranchingProgram.complementLast, BranchingProgram.complementLast.match_1, BranchingProgram.Instr, BranchingProgram.instrs, BranchingProgram.mk, BranchingProgram.Instr.mk, BranchingProgram.Instr.var, BranchingProgram.Instr.map0, BranchingProgram.Instr.map1]
+BranchingProgram.complementLast_nil	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (σ : Equiv.Perm (Fin w)), { instrs := [] }.complementLast σ = { instrs := [] }
+  CONSTS [BranchingProgram, BranchingProgram.complementLast, BranchingProgram.mk, BranchingProgram.Instr]
+BranchingProgram.conj	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram w n → Equiv.Perm (Fin w) → BranchingProgram w n
+  CONSTS [BranchingProgram]
+BranchingProgram.conj_eq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)),
+  B.conj θ =
+    {
+      instrs :=
+        List.map
+          (fun (ι : BranchingProgram.Instr w n) =>
+            { var := ι.var, map0 := ⇑θ ∘ ι.map0 ∘ ⇑(Equiv.symm θ), map1 := ⇑θ ∘ ι.map1 ∘ ⇑(Equiv.symm θ) })
+          B.instrs }
+  CONSTS [BranchingProgram, BranchingProgram.conj, BranchingProgram.mk, BranchingProgram.Instr, BranchingProgram.Instr.mk, BranchingProgram.Instr.var, BranchingProgram.Instr.map0, BranchingProgram.Instr.map1, BranchingProgram.instrs]
+BranchingProgram.conjugator	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : Equiv.Perm (Fin 5) → Equiv.Perm (Fin 5) → Equiv.Perm (Fin 5)
+  CONSTS []
+BranchingProgram.conjugatorFun	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : Equiv.Perm (Fin 5) → Equiv.Perm (Fin 5) → Fin 5 → Fin 5
+  CONSTS []
+BranchingProgram.conjugatorFun_eq	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ (σ τ : Equiv.Perm (Fin 5)) (i : Fin 5),
+  BranchingProgram.conjugatorFun σ τ i = (τ ^ BranchingProgram.conjugatorIndex σ i) 0
+  CONSTS [BranchingProgram.conjugatorFun, BranchingProgram.conjugatorIndex]
+BranchingProgram.conjugatorIndex	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : Equiv.Perm (Fin 5) → Fin 5 → ℕ
+  CONSTS []
+BranchingProgram.conjugatorIndex_eq	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ (σ : Equiv.Perm (Fin 5)) (i : Fin 5),
+  BranchingProgram.conjugatorIndex σ i =
+    (List.find? (fun (k : ℕ) => Decidable.decide ((σ ^ k) 0 = i)) (List.range 5)).getD 0
+  CONSTS [BranchingProgram.conjugatorIndex]
+BranchingProgram.conjugatorTable	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : Equiv.Perm (Fin 5) → Equiv.Perm (Fin 5) → List (Fin 5)
+  CONSTS []
+BranchingProgram.conjugatorTable_eq	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ (σ τ : Equiv.Perm (Fin 5)), BranchingProgram.conjugatorTable σ τ = List.ofFn (BranchingProgram.conjugatorFun σ τ)
+  CONSTS [BranchingProgram.conjugatorTable, BranchingProgram.conjugatorFun]
+BranchingProgram.conjugator_apply_of_bijective	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {σ τ : Equiv.Perm (Fin 5)},
+  Function.Bijective (BranchingProgram.conjugatorFun σ τ) →
+    ∀ (i : Fin 5), (BranchingProgram.conjugator σ τ) i = BranchingProgram.conjugatorFun σ τ i
+  CONSTS [BranchingProgram.conjugatorFun, BranchingProgram.conjugator]
+BranchingProgram.conjugator_conj	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {σ τ : Equiv.Perm (Fin 5)},
+  BranchingProgram.IsFiveCycle σ →
+    BranchingProgram.IsFiveCycle τ → BranchingProgram.conjugator σ τ * σ * (BranchingProgram.conjugator σ τ)⁻¹ = τ
+  CONSTS [BranchingProgram.IsFiveCycle, BranchingProgram.conjugator]
+BranchingProgram.conjugator_of_not_bijective	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {σ τ : Equiv.Perm (Fin 5)},
+  ¬Function.Bijective (BranchingProgram.conjugatorFun σ τ) → BranchingProgram.conjugator σ τ = 1
+  CONSTS [BranchingProgram.conjugatorFun, BranchingProgram.conjugator]
+BranchingProgram.ctorIdx	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram w n → ℕ
+  CONSTS [BranchingProgram]
+BranchingProgram.depth_compTree_le	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (i j : Fin w),
+  (BranchingProgram.compTree B.instrs i j).depth ≤ (Nat.clog 2 w + 2) * Nat.clog 2 B.length + 1
+  CONSTS [BranchingProgram, BoolCircuit.TreeCircuit.depth, BranchingProgram.compTree, BranchingProgram.instrs, BranchingProgram.length]
+BranchingProgram.depth_toFormula_le	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (F : Finset (Fin w → Fin w)),
+  (B.toFormula F).depth ≤ (Nat.clog 2 w + 2) * Nat.clog 2 B.length + BranchingProgram.topDepth w
+  CONSTS [BranchingProgram, BoolCircuit.TreeCircuit.depth, BranchingProgram.toFormula, BranchingProgram.length, BranchingProgram.topDepth]
+BranchingProgram.depth_wireComp_le	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} {F G : Fin w → Fin w → BoolCircuit.TreeCircuit n} {d : ℕ},
+  (∀ (i j : Fin w), (F i j).depth ≤ d) →
+    (∀ (i j : Fin w), (G i j).depth ≤ d) →
+      ∀ (i k : Fin w), (BranchingProgram.wireComp F G i k).depth ≤ d + Nat.clog 2 w + 2
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BranchingProgram.wireComp]
+BranchingProgram.evalWith	def	TCSlib.Complexity.BranchingPrograms.Eval
+  : {w n : ℕ} →
+  {α : Type u_1} →
+    {β : Type u_3} → [AddCommMonoid α] → (β → α → α → α) → (Fin n → β) → BranchingProgram w n → (Fin w → α) → Fin w → α
+  CONSTS [BranchingProgram]
+BranchingProgram.evalWith_append	theorem	TCSlib.Complexity.BranchingPrograms.Eval
+  : ∀ {w n : ℕ} {α : Type u_1} {β : Type u_3} [inst : AddCommMonoid α] (sel : β → α → α → α) (inp : Fin n → β)
+  (B₁ B₂ : BranchingProgram w n) (V : Fin w → α),
+  BranchingProgram.evalWith sel inp (B₁ ++ B₂) V =
+    BranchingProgram.evalWith sel inp B₂ (BranchingProgram.evalWith sel inp B₁ V)
+  CONSTS [BranchingProgram, BranchingProgram.evalWith, BranchingProgram.instAppend]
+BranchingProgram.evalWith_eq	theorem	TCSlib.Complexity.BranchingPrograms.Eval
+  : ∀ {w n : ℕ} {α : Type u_1} {β : Type u_3} [inst : AddCommMonoid α] (sel : β → α → α → α) (inp : Fin n → β)
+  (B : BranchingProgram w n) (V : Fin w → α),
+  BranchingProgram.evalWith sel inp B V =
+    List.foldl (fun (U : Fin w → α) (ι : BranchingProgram.Instr w n) => BranchingProgram.Instr.stepWith sel inp ι U) V
+      B.instrs
+  CONSTS [BranchingProgram, BranchingProgram.evalWith, BranchingProgram.Instr, BranchingProgram.Instr.stepWith, BranchingProgram.instrs]
+BranchingProgram.evalWith_nil	theorem	TCSlib.Complexity.BranchingPrograms.Eval
+  : ∀ {w n : ℕ} {α : Type u_1} {β : Type u_3} [inst : AddCommMonoid α] (sel : β → α → α → α) (inp : Fin n → β)
+  (V : Fin w → α), BranchingProgram.evalWith sel inp { instrs := [] } V = V
+  CONSTS [BranchingProgram.evalWith, BranchingProgram.mk, BranchingProgram.Instr]
+BranchingProgram.evalWith_rel	theorem	TCSlib.Complexity.BranchingPrograms.Eval
+  : ∀ {w n : ℕ} {α : Type u_1} {α' : Type u_2} {β : Type u_3} {β' : Type u_4} [inst : AddCommMonoid α]
+  [inst_1 : AddCommMonoid α'] (sel : β → α → α → α) (sel' : β' → α' → α' → α') (inp : Fin n → β) (inp' : Fin n → β')
+  (B : BranchingProgram w n) (R : ℕ → (Fin w → α) → (Fin w → α') → Prop) (V : Fin w → α) (V' : Fin w → α'),
+  R 0 V V' →
+    (∀ (t : ℕ) (ht : t < B.length) (U : Fin w → α) (U' : Fin w → α'),
+        R t U U' →
+          R (t + 1) (BranchingProgram.Instr.stepWith sel inp B.instrs[t] U)
+            (BranchingProgram.Instr.stepWith sel' inp' B.instrs[t] U')) →
+      R B.length (BranchingProgram.evalWith sel inp B V) (BranchingProgram.evalWith sel' inp' B V')
+  CONSTS [BranchingProgram, BranchingProgram.length, BranchingProgram.Instr.stepWith, BranchingProgram.Instr, BranchingProgram.instrs, BranchingProgram.length_eq, BranchingProgram.evalWith]
+BranchingProgram.evalWith_single	theorem	TCSlib.Complexity.BranchingPrograms.Eval
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (x : Fin n → Bool) (s : Fin w),
+  BranchingProgram.evalWith (fun (b : Bool) (u v : ℕ) => if b = Bool.true then v else u) x B (Pi.single s 1) =
+    Pi.single (B.yield x s) 1
+  CONSTS [BranchingProgram, BranchingProgram.evalWith, BranchingProgram.yield]
+BranchingProgram.exists_fiveCycleRecognizes_of_dagCircuit	theorem	TCSlib.Complexity.BranchingPrograms.NC1
+  : ∀ {n : ℕ} [NeZero n] (C : BoolCircuit.DAGCircuit n),
+  C.IsFaninTwo →
+    ∀ {σ : Equiv.Perm (Fin 5)},
+      BranchingProgram.IsFiveCycle σ →
+        ∃ (B : BranchingProgram 5 n),
+          B.IsPermutation ∧
+            B.length ≤ 4 ^ C.depth ∧ B.FiveCycleRecognizes (fun (x : Fin n → Bool) => C.eval x = Bool.true) σ
+  CONSTS [BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsFaninTwo, BranchingProgram.IsFiveCycle, BranchingProgram, BranchingProgram.IsPermutation, BranchingProgram.length, BoolCircuit.DAGCircuit.depth, BranchingProgram.FiveCycleRecognizes, BoolCircuit.DAGCircuit.eval]
+BranchingProgram.fiveCycleRecognizes_iff	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} (B : BranchingProgram 5 n) (A : (Fin n → Bool) → Prop) (σ : Equiv.Perm (Fin 5)),
+  B.FiveCycleRecognizes A σ ↔
+    BranchingProgram.IsFiveCycle σ ∧ ∀ (x : Fin n → Bool), (A x → B.yield x = ⇑σ) ∧ (¬A x → B.yield x = id)
+  CONSTS [BranchingProgram, BranchingProgram.FiveCycleRecognizes, BranchingProgram.IsFiveCycle, BranchingProgram.yield]
+BranchingProgram.getD_conjugatorTable	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ (σ τ : Equiv.Perm (Fin 5)) (i : Fin 5),
+  (BranchingProgram.conjugatorTable σ τ).getD (↑i) 0 = BranchingProgram.conjugatorFun σ τ i
+  CONSTS [BranchingProgram.conjugatorTable, BranchingProgram.conjugatorFun]
+BranchingProgram.instAppend	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → Append (BranchingProgram w n)
+  CONSTS [BranchingProgram]
+BranchingProgram.instDecidablePredIsFiveCycle	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : DecidablePred BranchingProgram.IsFiveCycle
+  CONSTS [BranchingProgram.IsFiveCycle]
+BranchingProgram.instrs	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram w n → List (BranchingProgram.Instr w n)
+  CONSTS [BranchingProgram, BranchingProgram.Instr]
+BranchingProgram.isFiveCycle_commutator	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : BranchingProgram.IsFiveCycle
+  (BranchingProgram.sigma2⁻¹ * BranchingProgram.sigma1⁻¹ * BranchingProgram.sigma2 * BranchingProgram.sigma1)
+  CONSTS [BranchingProgram.IsFiveCycle, BranchingProgram.sigma2, BranchingProgram.sigma1]
+BranchingProgram.isFiveCycle_iff	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ (σ : Equiv.Perm (Fin 5)), BranchingProgram.IsFiveCycle σ ↔ σ.cycleType = {5}
+  CONSTS [BranchingProgram.IsFiveCycle]
+BranchingProgram.isFiveCycle_sigma1	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : BranchingProgram.IsFiveCycle BranchingProgram.sigma1
+  CONSTS [BranchingProgram.IsFiveCycle, BranchingProgram.sigma1]
+BranchingProgram.isFiveCycle_sigma2	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : BranchingProgram.IsFiveCycle BranchingProgram.sigma2
+  CONSTS [BranchingProgram.IsFiveCycle, BranchingProgram.sigma2]
+BranchingProgram.isPermutation_barrington	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : ∀ {n : ℕ} [inst : NeZero n] (c : BoolCircuit.TreeCircuit n) (σ : Equiv.Perm (Fin 5)),
+  (BranchingProgram.barrington c σ).IsPermutation
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram.IsPermutation, BranchingProgram.barrington]
+BranchingProgram.isPermutation_iff	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B : BranchingProgram w n),
+  B.IsPermutation ↔ ∀ ι ∈ B.instrs, Function.Bijective ι.map0 ∧ Function.Bijective ι.map1
+  CONSTS [BranchingProgram, BranchingProgram.IsPermutation, BranchingProgram.Instr, BranchingProgram.instrs, BranchingProgram.Instr.map0, BranchingProgram.Instr.map1]
+BranchingProgram.length	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram w n → ℕ
+  CONSTS [BranchingProgram]
+BranchingProgram.length_append	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B₁ B₂ : BranchingProgram w n), (B₁ ++ B₂).length = B₁.length + B₂.length
+  CONSTS [BranchingProgram, BranchingProgram.length, BranchingProgram.instAppend]
+BranchingProgram.length_complementLast	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w)), (B.complementLast σ).length = B.length
+  CONSTS [BranchingProgram, BranchingProgram.length, BranchingProgram.complementLast]
+BranchingProgram.length_conj	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)), (B.conj θ).length = B.length
+  CONSTS [BranchingProgram, BranchingProgram.length, BranchingProgram.conj]
+BranchingProgram.length_eq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B : BranchingProgram w n), B.length = B.instrs.length
+  CONSTS [BranchingProgram, BranchingProgram.length, BranchingProgram.Instr, BranchingProgram.instrs]
+BranchingProgram.maxFanin_compTree_le	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (i j : Fin w), (BranchingProgram.compTree B.instrs i j).maxFanin ≤ 2
+  CONSTS [BranchingProgram, BoolCircuit.TreeCircuit.maxFanin, BranchingProgram.compTree, BranchingProgram.instrs]
+BranchingProgram.maxFanin_toFormula_le	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (F : Finset (Fin w → Fin w)), (B.toFormula F).maxFanin ≤ 2
+  CONSTS [BranchingProgram, BoolCircuit.TreeCircuit.maxFanin, BranchingProgram.toFormula]
+BranchingProgram.mk	constructor	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → List (BranchingProgram.Instr w n) → BranchingProgram w n
+  CONSTS [BranchingProgram.Instr, BranchingProgram]
+BranchingProgram.mk.inj	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} {instrs instrs_1 : List (BranchingProgram.Instr w n)},
+  { instrs := instrs } = { instrs := instrs_1 } → instrs = instrs_1
+  CONSTS [BranchingProgram.Instr, BranchingProgram, BranchingProgram.mk]
+BranchingProgram.mk.injEq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (instrs instrs_1 : List (BranchingProgram.Instr w n)),
+  ({ instrs := instrs } = { instrs := instrs_1 }) = (instrs = instrs_1)
+  CONSTS [BranchingProgram.Instr, BranchingProgram, BranchingProgram.mk]
+BranchingProgram.mk.noConfusion	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  (P : Sort u) →
+    (instrs instrs' : List (BranchingProgram.Instr w n)) →
+      { instrs := instrs } = { instrs := instrs' } → (instrs = instrs' → P) → P
+  CONSTS [BranchingProgram.Instr, BranchingProgram, BranchingProgram.mk]
+BranchingProgram.mk.sizeOf_spec	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (instrs : List (BranchingProgram.Instr w n)), SizeOf.sizeOf { instrs := instrs } = 1 + SizeOf.sizeOf instrs
+  CONSTS [BranchingProgram.Instr, BranchingProgram, BranchingProgram._sizeOf_inst, BranchingProgram.mk, BranchingProgram.Instr._sizeOf_inst]
+BranchingProgram.noConfusion	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → {P : Sort u} → {x1 x2 : BranchingProgram w n} → x1 = x2 → BranchingProgram.noConfusionType P x1 x2
+  CONSTS [BranchingProgram, BranchingProgram.noConfusionType]
+BranchingProgram.noConfusionType	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → Sort u → BranchingProgram w n → BranchingProgram w n → Sort u
+  CONSTS [BranchingProgram]
+BranchingProgram.rec	recursor	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  {motive : BranchingProgram w n → Sort u} →
+    ((instrs : List (BranchingProgram.Instr w n)) → motive { instrs := instrs }) → (t : BranchingProgram w n) → motive t
+  CONSTS [BranchingProgram, BranchingProgram.Instr, BranchingProgram.mk]
+BranchingProgram.recOn	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} →
+  {motive : BranchingProgram w n → Sort u} →
+    (t : BranchingProgram w n) → ((instrs : List (BranchingProgram.Instr w n)) → motive { instrs := instrs }) → motive t
+  CONSTS [BranchingProgram, BranchingProgram.Instr, BranchingProgram.mk]
+BranchingProgram.sigma1	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : Equiv.Perm (Fin 5)
+  CONSTS []
+BranchingProgram.sigma1_eq	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : BranchingProgram.sigma1 = [0, 1, 2, 3, 4].formPerm
+  CONSTS [BranchingProgram.sigma1]
+BranchingProgram.sigma2	def	TCSlib.Complexity.BranchingPrograms.Barrington
+  : Equiv.Perm (Fin 5)
+  CONSTS []
+BranchingProgram.sigma2_eq	theorem	TCSlib.Complexity.BranchingPrograms.Barrington
+  : BranchingProgram.sigma2 = [0, 2, 4, 3, 1].formPerm
+  CONSTS [BranchingProgram.sigma2]
+BranchingProgram.toFormula	def	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : {w n : ℕ} → BranchingProgram w n → Finset (Fin w → Fin w) → BoolCircuit.TreeCircuit n
+  CONSTS [BranchingProgram, BoolCircuit.TreeCircuit]
+BranchingProgram.toFormula_eq	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (F : Finset (Fin w → Fin w)),
+  B.toFormula F =
+    BoolCircuit.TreeCircuit.balanced Bool.false
+      (List.map
+        (fun (f : Fin w → Fin w) =>
+          BoolCircuit.TreeCircuit.balanced Bool.true
+            (List.map (fun (i : Fin w) => BranchingProgram.compTree B.instrs i (f i)) (List.finRange w)))
+        F.toList)
+  CONSTS [BranchingProgram, BoolCircuit.TreeCircuit, BranchingProgram.toFormula, BoolCircuit.TreeCircuit.balanced, BranchingProgram.compTree, BranchingProgram.instrs]
+BranchingProgram.toFormula_eval	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (F : Finset (Fin w → Fin w)) (x : Fin n → Bool),
+  (B.toFormula F).eval x = Decidable.decide (B.yield x ∈ F)
+  CONSTS [BranchingProgram, BoolCircuit.TreeCircuit.eval, BranchingProgram.toFormula, BranchingProgram.yield]
+BranchingProgram.topDepth	def	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ℕ → ℕ
+  CONSTS []
+BranchingProgram.topDepth_eq	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ (w : ℕ), BranchingProgram.topDepth w = w * Nat.clog 2 w + Nat.clog 2 w + 3
+  CONSTS [BranchingProgram.topDepth]
+BranchingProgram.wireComp	def	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : {w n : ℕ} →
+  (Fin w → Fin w → BoolCircuit.TreeCircuit n) →
+    (Fin w → Fin w → BoolCircuit.TreeCircuit n) → Fin w → Fin w → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BranchingProgram.wireComp_eq	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} (F G : Fin w → Fin w → BoolCircuit.TreeCircuit n) (i k : Fin w),
+  BranchingProgram.wireComp F G i k =
+    BoolCircuit.TreeCircuit.balanced Bool.false
+      (List.map (fun (j : Fin w) => BoolCircuit.TreeCircuit.node Bool.true [F i j, G j k]) (List.finRange w))
+  CONSTS [BoolCircuit.TreeCircuit, BranchingProgram.wireComp, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.node]
+BranchingProgram.wireComp_eval	theorem	TCSlib.Complexity.BranchingPrograms.BarringtonConverse
+  : ∀ {w n : ℕ} {F G : Fin w → Fin w → BoolCircuit.TreeCircuit n} {f g : (Fin n → Bool) → Fin w → Fin w},
+  (∀ (x : Fin n → Bool) (i j : Fin w), (F i j).eval x = Decidable.decide (f x i = j)) →
+    (∀ (x : Fin n → Bool) (i j : Fin w), (G i j).eval x = Decidable.decide (g x i = j)) →
+      ∀ (i k : Fin w) (x : Fin n → Bool),
+        (BranchingProgram.wireComp F G i k).eval x = Decidable.decide (g x (f x i) = k)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BranchingProgram.wireComp]
+BranchingProgram.yield	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w n : ℕ} → BranchingProgram w n → (Fin n → Bool) → Fin w → Fin w
+  CONSTS [BranchingProgram]
+BranchingProgram.yield_append	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B₁ B₂ : BranchingProgram w n) (x : Fin n → Bool), (B₁ ++ B₂).yield x = B₂.yield x ∘ B₁.yield x
+  CONSTS [BranchingProgram, BranchingProgram.yield, BranchingProgram.instAppend]
+BranchingProgram.yield_complementLast	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (σ : Equiv.Perm (Fin w)),
+  0 < B.length → ∀ (x : Fin n → Bool), (B.complementLast σ).yield x = ⇑(Equiv.symm σ) ∘ B.yield x
+  CONSTS [BranchingProgram, BranchingProgram.length, BranchingProgram.yield, BranchingProgram.complementLast]
+BranchingProgram.yield_conj	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (θ : Equiv.Perm (Fin w)) (x : Fin n → Bool),
+  (B.conj θ).yield x = ⇑θ ∘ B.yield x ∘ ⇑(Equiv.symm θ)
+  CONSTS [BranchingProgram, BranchingProgram.yield, BranchingProgram.conj]
+BranchingProgram.yield_eq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (B : BranchingProgram w n) (x : Fin n → Bool),
+  B.yield x = List.foldl (fun (f : Fin w → Fin w) (ι : BranchingProgram.Instr w n) => ι.eval x ∘ f) id B.instrs
+  CONSTS [BranchingProgram, BranchingProgram.yield, BranchingProgram.Instr, BranchingProgram.Instr.eval, BranchingProgram.instrs]
+BranchingProgram.yield_nil	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w n : ℕ} (x : Fin n → Bool), { instrs := [] }.yield x = id
+  CONSTS [BranchingProgram.yield, BranchingProgram.mk, BranchingProgram.Instr]
+BranchingProgramFamily	inductive	TCSlib.Complexity.BranchingPrograms.Defs
+  : ℕ → Type
+  CONSTS []
+BranchingProgramFamily.IsPermutation	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} → BranchingProgramFamily w → Prop
+  CONSTS [BranchingProgramFamily]
+BranchingProgramFamily.IsPolyLength	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} → BranchingProgramFamily w → Prop
+  CONSTS [BranchingProgramFamily]
+BranchingProgramFamily.accept	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} → BranchingProgramFamily w → ℕ → Finset (Fin w → Fin w)
+  CONSTS [BranchingProgramFamily]
+BranchingProgramFamily.casesOn	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} →
+  {motive : BranchingProgramFamily w → Sort u} →
+    (t : BranchingProgramFamily w) →
+      ((program : (n : ℕ) → BranchingProgram w n) →
+          (accept : ℕ → Finset (Fin w → Fin w)) → motive { program := program, accept := accept }) →
+        motive t
+  CONSTS [BranchingProgramFamily, BranchingProgram, BranchingProgramFamily.mk]
+BranchingProgramFamily.ctorIdx	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} → BranchingProgramFamily w → ℕ
+  CONSTS [BranchingProgramFamily]
+BranchingProgramFamily.isPermutation_iff	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w : ℕ} (P : BranchingProgramFamily w), P.IsPermutation ↔ ∀ (n : ℕ), (P.program n).IsPermutation
+  CONSTS [BranchingProgramFamily, BranchingProgramFamily.IsPermutation, BranchingProgram.IsPermutation, BranchingProgramFamily.program]
+BranchingProgramFamily.isPolyLength_iff	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w : ℕ} (P : BranchingProgramFamily w),
+  P.IsPolyLength ↔ ∃ (a : ℕ) (k : ℕ), ∀ (n : ℕ), (P.program n).length ≤ a * (n + 1) ^ k
+  CONSTS [BranchingProgramFamily, BranchingProgramFamily.IsPolyLength, BranchingProgram.length, BranchingProgramFamily.program]
+BranchingProgramFamily.language	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} → BranchingProgramFamily w → Language Bool
+  CONSTS [BranchingProgramFamily, Language]
+BranchingProgramFamily.language_eq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w : ℕ} (P : BranchingProgramFamily w),
+  P.language = {u : List Bool | (P.program u.length).yield u.get ∈ P.accept u.length}
+  CONSTS [BranchingProgramFamily, Language, BranchingProgramFamily.language, BranchingProgramFamily.accept, BranchingProgram.yield, BranchingProgramFamily.program]
+BranchingProgramFamily.mem_language_iff	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w : ℕ} (P : BranchingProgramFamily w) (u : List Bool),
+  u ∈ P.language ↔ (P.program u.length).yield u.get ∈ P.accept u.length
+  CONSTS [BranchingProgramFamily, Language, Language.instMembershipList, BranchingProgramFamily.language, BranchingProgramFamily.accept, BranchingProgram.yield, BranchingProgramFamily.program]
+BranchingProgramFamily.mk	constructor	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} → ((n : ℕ) → BranchingProgram w n) → (ℕ → Finset (Fin w → Fin w)) → BranchingProgramFamily w
+  CONSTS [BranchingProgram, BranchingProgramFamily]
+BranchingProgramFamily.mk.inj	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w : ℕ} {program : (n : ℕ) → BranchingProgram w n} {accept : ℕ → Finset (Fin w → Fin w)}
+  {program_1 : (n : ℕ) → BranchingProgram w n} {accept_1 : ℕ → Finset (Fin w → Fin w)},
+  { program := program, accept := accept } = { program := program_1, accept := accept_1 } →
+    program = program_1 ∧ accept = accept_1
+  CONSTS [BranchingProgram, BranchingProgramFamily, BranchingProgramFamily.mk]
+BranchingProgramFamily.mk.injEq	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w : ℕ} (program : (n : ℕ) → BranchingProgram w n) (accept : ℕ → Finset (Fin w → Fin w))
+  (program_1 : (n : ℕ) → BranchingProgram w n) (accept_1 : ℕ → Finset (Fin w → Fin w)),
+  ({ program := program, accept := accept } = { program := program_1, accept := accept_1 }) =
+    (program = program_1 ∧ accept = accept_1)
+  CONSTS [BranchingProgram, BranchingProgramFamily, BranchingProgramFamily.mk]
+BranchingProgramFamily.mk.noConfusion	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} →
+  (P : Sort u) →
+    (program : (n : ℕ) → BranchingProgram w n) →
+      (accept : ℕ → Finset (Fin w → Fin w)) →
+        (program' : (n : ℕ) → BranchingProgram w n) →
+          (accept' : ℕ → Finset (Fin w → Fin w)) →
+            { program := program, accept := accept } = { program := program', accept := accept' } →
+              (program = program' → accept = accept' → P) → P
+  CONSTS [BranchingProgram, BranchingProgramFamily, BranchingProgramFamily.mk]
+BranchingProgramFamily.mk.sizeOf_spec	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ {w : ℕ} (program : (n : ℕ) → BranchingProgram w n) (accept : ℕ → Finset (Fin w → Fin w)),
+  SizeOf.sizeOf { program := program, accept := accept } = 1
+  CONSTS [BranchingProgram, BranchingProgramFamily, BranchingProgramFamily._sizeOf_inst, BranchingProgramFamily.mk]
+BranchingProgramFamily.noConfusion	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} → {P : Sort u} → {x1 x2 : BranchingProgramFamily w} → x1 = x2 → BranchingProgramFamily.noConfusionType P x1 x2
+  CONSTS [BranchingProgramFamily, BranchingProgramFamily.noConfusionType]
+BranchingProgramFamily.noConfusionType	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} → Sort u → BranchingProgramFamily w → BranchingProgramFamily w → Sort u
+  CONSTS [BranchingProgramFamily]
+BranchingProgramFamily.program	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} → BranchingProgramFamily w → (n : ℕ) → BranchingProgram w n
+  CONSTS [BranchingProgramFamily, BranchingProgram]
+BranchingProgramFamily.rec	recursor	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} →
+  {motive : BranchingProgramFamily w → Sort u} →
+    ((program : (n : ℕ) → BranchingProgram w n) →
+        (accept : ℕ → Finset (Fin w → Fin w)) → motive { program := program, accept := accept }) →
+      (t : BranchingProgramFamily w) → motive t
+  CONSTS [BranchingProgramFamily, BranchingProgram, BranchingProgramFamily.mk]
+BranchingProgramFamily.recOn	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : {w : ℕ} →
+  {motive : BranchingProgramFamily w → Sort u} →
+    (t : BranchingProgramFamily w) →
+      ((program : (n : ℕ) → BranchingProgram w n) →
+          (accept : ℕ → Finset (Fin w → Fin w)) → motive { program := program, accept := accept }) →
+        motive t
+  CONSTS [BranchingProgramFamily, BranchingProgram, BranchingProgramFamily.mk]
+Language.InBWBP	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : Language Bool → Prop
+  CONSTS [Language]
+Language.InBWBP.inNC_one	theorem	TCSlib.Complexity.BranchingPrograms.NC1
+  : ∀ {L : Language Bool}, L.InBWBP → Language.InNC 1 L
+  CONSTS [Language, Language.InBWBP, Language.InNC]
+Language.InNC.inPBP_five	theorem	TCSlib.Complexity.BranchingPrograms.NC1
+  : ∀ {L : Language Bool}, Language.InNC 1 L → Language.InPBP 5 L
+  CONSTS [Language, Language.InNC, Language.InPBP]
+Language.InPBP	def	TCSlib.Complexity.BranchingPrograms.Defs
+  : ℕ → Language Bool → Prop
+  CONSTS [Language]
+Language.InTreeAC	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ℕ → Language Bool → Prop
+  CONSTS [Language]
+Language.InTreeAC.inTreeNC_succ	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {d : ℕ} {L : Language Bool}, Language.InTreeAC d L → Language.InTreeNC (d + 1) L
+  CONSTS [Language, Language.InTreeAC, Language.InTreeNC]
+Language.InTreeNC	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ℕ → Language Bool → Prop
+  CONSTS [Language]
+Language.InTreeNC.inTreeAC	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {d : ℕ} {L : Language Bool}, Language.InTreeNC d L → Language.InTreeAC d L
+  CONSTS [Language, Language.InTreeNC, Language.InTreeAC]
+Language.inBWBP_iff	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ (L : Language Bool), L.InBWBP ↔ ∃ (w : ℕ) (P : BranchingProgramFamily w), P.IsPolyLength ∧ P.language = L
+  CONSTS [Language, Language.InBWBP, BranchingProgramFamily, BranchingProgramFamily.IsPolyLength, BranchingProgramFamily.language]
+Language.inNC_one_iff_inBWBP	theorem	TCSlib.Complexity.BranchingPrograms.NC1
+  : ∀ (L : Language Bool), Language.InNC 1 L ↔ L.InBWBP
+  CONSTS [Language, Language.InNC, Language.InBWBP]
+Language.inNC_one_iff_inPBP_five	theorem	TCSlib.Complexity.BranchingPrograms.NC1
+  : ∀ (L : Language Bool), Language.InNC 1 L ↔ Language.InPBP 5 L
+  CONSTS [Language, Language.InNC, Language.InPBP]
+Language.inPBP_iff	theorem	TCSlib.Complexity.BranchingPrograms.Defs
+  : ∀ (w : ℕ) (L : Language Bool),
+  Language.InPBP w L ↔ ∃ (P : BranchingProgramFamily w), P.IsPermutation ∧ P.IsPolyLength ∧ P.language = L
+  CONSTS [Language, Language.InPBP, BranchingProgramFamily, BranchingProgramFamily.IsPermutation, BranchingProgramFamily.IsPolyLength, BranchingProgramFamily.language]
+=== evidence/stmt-final/StmtDump end 2026-11-16T22:02:44Z rc=0 errors=0 sorry=0 maxrss_kib=1938548

@@ -1,0 +1,47 @@
+== git diff --stat base..O1
+ TCSlib/Complexity/CircuitComplexity.lean           |   4 +
+ .../Complexity/CircuitComplexity/FormulaArith.lean |  23 ++
+ .../FormulaArith/Combinators.lean                  | 246 +++++++++++++++++++++
+ TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean  | 190 +---------------
+ 4 files changed, 279 insertions(+), 184 deletions(-)
+
+== git diff --stat O1..stmt
+ TCSlib.lean                                        |   1 +
+ TCSlib/Complexity/BranchingPrograms.lean           |  39 ++
+ .../Complexity/BranchingPrograms/Barrington.lean   | 463 +++++++++++++++++++++
+ .../BranchingPrograms/BarringtonConverse.lean      | 304 ++++++++++++++
+ TCSlib/Complexity/BranchingPrograms/Defs.lean      | 412 ++++++++++++++++++
+ TCSlib/Complexity/BranchingPrograms/Eval.lean      | 172 ++++++++
+ TCSlib/Complexity/BranchingPrograms/NC1.lean       | 135 ++++++
+ TCSlib/Complexity/CircuitComplexity.lean           |   8 +
+ .../Complexity/CircuitComplexity/FormulaArith.lean |  10 +-
+ .../CircuitComplexity/FormulaArith/CarrySave.lean  | 297 +++++++++++++
+ .../FormulaArith/Combinators.lean                  | 413 ++++++++++++++++++
+ .../CircuitComplexity/FormulaArith/Compare.lean    | 238 +++++++++++
+ .../CircuitComplexity/FormulaArith/ModSum.lean     | 196 +++++++++
+ TCSlib/Complexity/CircuitComplexity/NANDForm.lean  | 284 +++++++++++++
+ .../Complexity/CircuitComplexity/NANDLayering.lean | 388 +++++++++++++++++
+ TCSlib/ComputationalModels.lean                    |  21 +
+ machine-library-design.md                          |  34 +-
+ 17 files changed, 3413 insertions(+), 2 deletions(-)
+
+== git diff --stat base..stmt (every changed path)
+ TCSlib.lean                                                       |   1 +
+ TCSlib/Complexity/BranchingPrograms.lean                          |  39 ++++++++
+ TCSlib/Complexity/BranchingPrograms/Barrington.lean               | 463 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean       | 304 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/BranchingPrograms/Defs.lean                     | 412 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/BranchingPrograms/Eval.lean                     | 172 +++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/BranchingPrograms/NC1.lean                      | 135 ++++++++++++++++++++++++++
+ TCSlib/Complexity/CircuitComplexity.lean                          |  12 +++
+ TCSlib/Complexity/CircuitComplexity/FormulaArith.lean             |  31 ++++++
+ TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean   | 297 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean | 659 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean     | 238 ++++++++++++++++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean      | 196 ++++++++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/CircuitComplexity/NANDForm.lean                 | 284 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/CircuitComplexity/NANDLayering.lean             | 388 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean                 | 190 ++-----------------------------------
+ TCSlib/ComputationalModels.lean                                   |  21 ++++
+ machine-library-design.md                                         |  34 ++++++-
+ 18 files changed, 3691 insertions(+), 185 deletions(-)
