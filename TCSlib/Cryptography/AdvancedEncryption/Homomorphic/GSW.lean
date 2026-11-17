@@ -9,13 +9,24 @@ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
 import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval
 import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Security
 import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Symmetric
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Branching
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.DecryptFormula
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Circular
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Leveled
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledSecurity
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PolyRatio
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Asymptotic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Leveled GSW homomorphic encryption from LWE
+# GSW homomorphic encryption from LWE: leveled, bootstrapped, and pure and leveled FHE
+
+The folder also covers NAND bootstrapping, pure and leveled fully homomorphic encryption,
+their security statements and the polynomial modulus-to-noise ratio (phase 6b).
 
 ## Contents
 
@@ -26,6 +37,17 @@ set_option autoImplicit false
 * `Eval`: homomorphic evaluation of `BoolCircuit.DAGCircuit` and leveled correctness.
 * `Security`: concrete IND-CPA hybrids from DLWE and column leftover hashing.
 * `Symmetric`: batched secret-key GSW and its direct DLWE bound (optional unit).
+* `Branching`: the homomorphic selector and the evaluation of permutation branching programs
+  and of formulas through Barrington's construction.
+* `DecryptFormula`: the key bits, decryption as a formula in them, and the augmented NAND
+  formula with its depth.
+* `Bootstrap`: NAND bootstrapping, pure FHE evaluation of NAND-form and fan-in-2 circuits, and
+  the evaluation key.
+* `Circular`: the FHE view and concrete, per-distinguisher weak circular security.
+* `Leveled`: the leveled scheme, a consecutive key chain over layered NAND circuits.
+* `LeveledSecurity`: IND-CPA of the leveled scheme from DLWE by a top-down key hybrid.
+* `PolyRatio`: GSW parameters of an LWE family and correctness at a polynomial ratio.
+* `Asymptotic`: encodings, the asymptotic hypotheses and asymptotic IND-CPA statements.
 
 ## References
 

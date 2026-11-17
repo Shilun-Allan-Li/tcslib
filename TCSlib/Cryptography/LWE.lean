@@ -11,6 +11,7 @@ import TCSlib.Cryptography.LWE.SampleSchedules
 import TCSlib.Cryptography.LWE.BitEncoding
 import TCSlib.Cryptography.LWE.BitNoise
 import TCSlib.Cryptography.LWE.Sampling
+import TCSlib.Cryptography.LWE.Ratio
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -30,6 +31,7 @@ set_option autoImplicit false
 * `BitEncoding`: bit codepoints, exact tie conventions and bounded-error decoding statements.
 * `BitNoise`: explicit bit-seed laws and centered finite-noise profile statements.
 * `Sampling`: actual-law fair-bit implementations of the real and uniform experiments.
+* `Ratio`: a polynomially bounded modulus-to-noise ratio for a family.
 
 ## References
 
