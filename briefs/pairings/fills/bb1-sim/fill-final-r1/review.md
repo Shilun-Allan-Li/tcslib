@@ -222,6 +222,8 @@ They found **no undisclosed duplicate of a public lemma**:
   > `abs_sub_le_of_nonneg_of_le` (pinned `Mathlib/Algebra/Order/Group/Abs.lean:119–124`), which the library already
   > uses in `LWE/BitNoise.lean:110`. My search did not cover Mathlib's generic `abs` lemmas. Seyoon accepted the overlap
   > as ledger row **DL-58**, repaid in cleanup Stage 2 (proof-only). The verdict above stands.
+  > **Update (2026-11-17):** Seyoon then asked for the fix now. Landing edit LE-g48 (`dfdc56f2`, on #357) deletes `h01`
+  > and applies the Mathlib lemma, so DL-58 is repaid (`gates/48-bb1-sim-fill/le-g48.md`).
 - `pair_pow_val_eq`, `F_target_eq`, `key_eq` and `exists_equiv_mul_pow` are compositions of
   `Pairing/Group` facts, as REPORT says.
 - T4's `drawStep_*` rows are about a different handler.
