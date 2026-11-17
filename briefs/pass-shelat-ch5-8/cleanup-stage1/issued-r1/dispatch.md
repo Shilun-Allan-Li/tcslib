@@ -15,12 +15,12 @@ records tip at issue `f99901fdc98f4c7703cf9485329600311a1ea655` into it, tree
 **Rulings.** CS1-Q1 to CS1-Q12 are ruled (`cleanup-stages.md` § *Stage 1 rulings*, at `8adee3e6…`); the brief
 implements them (Q2, Q8, Q9 changed against the staging's recommendations).
 
-**Records pin.** `<RECORDS-PIN>`: the records commit that carries this folder. The maintainer writes its full hash
+**Records pin.** `f7308a62c3569c400051e8fe7e25663a94f8db8e`: the records commit that carries this folder. The maintainer writes its full hash
 here, and in the prompt below, after committing.
 
 **Before dispatch** (maintainer):
 1. Commit `briefs/pass-shelat-ch5-8/cleanup-stage1/issued-r1/` to the records branch; put that commit's full hash for
-   `<RECORDS-PIN>` in the **Records pin** line and in the prompt.
+   `f7308a62c3569c400051e8fe7e25663a94f8db8e` in the **Records pin** line and in the prompt.
 2. Push the exchange commit. If it is replayed onto a newer exchange tip, put the pushed hash in the pack link, the
    staging line and the prompt.
 
@@ -37,7 +37,7 @@ Mathlib). You may use up to 2 sub-agents, on disjoint files.
    outbox/fills/cleanup-stage1/README.md, brief.md and
    fill-environment-addendum.md. Verify the pack with SHA256SUMS
    (shasum -a 256 -c, from its directory). You are the lead the brief
-   describes. The records of this issue are at commit <RECORDS-PIN> of
+   describes. The records of this issue are at commit f7308a62c3569c400051e8fe7e25663a94f8db8e of
    cryptography/pass-shelat-ch2-4
    (briefs/pass-shelat-ch5-8/cleanup-stage1/issued-r1/, equal to the
    pack); the stage plan with Seyoon's Stage 1 rulings, the duplication
