@@ -5,6 +5,7 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.ZeroKnowledge.Encoding
 import TCSlib.Cryptography.ZeroKnowledge.Interaction
+import TCSlib.Cryptography.ZeroKnowledge.InteractionWords
 import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
 import TCSlib.Cryptography.ZeroKnowledge.Defs
 import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism
@@ -39,6 +40,7 @@ zero-knowledge theorems are statistical (D8, D10).
   statements of the honest parties' string operations (Inf-4.1, Inf-4.2).
 * `Interaction` — next-message strategies, executions, views, transcripts and outputs
   [PS10, §4.4] (Def-114.a – Def-116.b).
+* `InteractionWords` — the history encoding as a word list (`BinArith.encWords`).
 * `InteractiveProofs` — interactive proof systems, soundness error, witness relations and
   interactive proofs with efficient prover [PS10, Definitions 116.1, 119.5, 191.11]; the
   one-message witness protocol as the sanity theorem (Def-116.1, Def-117.a, Def-119.5,
