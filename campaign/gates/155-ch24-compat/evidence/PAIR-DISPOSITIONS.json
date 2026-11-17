@@ -1,0 +1,39 @@
+{
+ "base_summary": "declarations screened: 391; copy pairs (target reproduces >= half of source): 213; reproduced text: 56,404 chars",
+ "head_summary": "declarations screened: 395; copy pairs (target reproduces >= half of source): 214; reproduced text: 56,856 chars",
+ "population_base": [
+  "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+  "TCSlib/Complexity/ClassNP/PolyTime.lean",
+  "TCSlib/Complexity/ClassNP/Reductions.lean",
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+  "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+  "TCSlib/Complexity/TuringMachine/Encoding.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+  "TCSlib/Complexity/ClassNP/PolyTime.lean",
+  "TCSlib/Complexity/ClassNP/Reductions.lean",
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+  "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+  "TCSlib/Complexity/TuringMachine/Encoding.lean"
+ ],
+ "new": 1,
+ "gone": 0,
+ "net_directed_pairs": "213 -> 214",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "Primitives.lean::pairMapSndTM_spaceUsed",
+   "source": "Primitives.lean::pairMapSndTM_computesInTime_of",
+   "chars": 492,
+   "source_chars": 979,
+   "pct": 50,
+   "class": "threshold",
+   "note": "Pre-existing shared prelude: the payload launch and forwarded run (fwdMap_launch, the VirtualTag fact, fwdMapVirtual_run) that pairMapSndTM_spaceUsed shares with the threaded map's time proof. That prelude moved, unchanged, from pairMapSndTM_computes into the new private one-pair bound, which is shorter, so the same text now crosses half of it. The two prove different facts (a space bound and a time bound)."
+  }
+ ]
+}

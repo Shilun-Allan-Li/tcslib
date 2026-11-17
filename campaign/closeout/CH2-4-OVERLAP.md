@@ -59,6 +59,8 @@ indicator readers add small duplicate facts.
 
 ## Done ahead of the merge: closeout/ch24-compat (gate 155; Seyoon, 2026-11-17)
 
+PR #354, head `718dddc6`; the trial merge was rechecked at that head (4 Lean conflicts).
+
 Seyoon chose to put ch2-4's versions of the conflicting lemmas on this branch through a gated PR.
 The PR does not rename any of our lemmas or change our `decidesInTime_iff` statement.
 
