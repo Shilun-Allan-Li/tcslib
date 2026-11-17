@@ -203,3 +203,10 @@ Two PRs, each cherry-picked onto the records tip. Authors are kept, the committe
 
 ## Ruling (2026-11-17)
 - **BS-F01: drop the helper (Seyoon).** The group-helper PR lands `fc9cf2f5` plus **LE-grp1**, which removes `natCast_inj_of_lt` and its docstring bullet (−7 lines). `Group.lean` remains a pure insertion. Phase 2 builds and seals the LE-grp1 head.
+
+## Final verdict (phase 2, 2026-11-17): ACCEPT
+Phase 2 (`phase2.md`, evidence zip `411338e9…`) passes P2-0 to P2-7 on both landing heads; 0 blockers, 0 majors, 0 minors, 3 new infos (BS-F11–BS-F13). BS-F03, BS-F04 and BS-F05 are closed.
+- **`land/bb1-sim-games` `dfacac356ff1225aca4c900d81bbf2cabce7b499`:** 181/181 rebuilt rc 0 (root and both `audits/*/Checks` included), state 1422/1422, admissions +2 (the targets), axioms as planned, seals `Probability` 36/36/35/35 and `Relational` 53/53/52/52 with coe 0 errors (the strict `dist_apply` failure is pre-existing and, by DW-10 Q3, notation), controls ALL_OK, 0 foreign unfolds, lint line sets unchanged. Replay output kept as `$SP/olean-replay-bb1sim-games`.
+- **`land/bb1-sim-group` `92dea4f8126747ea7e816984349b9dbb789f0065` (LE-grp1):** 12/12 rc 0, state 1421/1421, admissions +0, standard axioms only, seals `Group` 567/568/567/568 and `Assumptions` 644/645/643/644 with 0 errors, controls ALL_OK, 0 foreign unfolds.
+- **Cross-build** tip × #346 × both heads (tree `66fdaf95…`): 18 modules rc 0, state 1427/1427; `bb1_sidSecure` reaches exactly T2 and T3.
+- **Order:** the Games PR merges first (adopt its replay as snapshot #3 when the merge commit's Lean equals tree `c6d3bed3`); then the group PR and #346 re-replay on the new tip (12 or 17 modules).
