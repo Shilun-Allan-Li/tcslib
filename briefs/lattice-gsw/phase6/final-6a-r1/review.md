@@ -308,3 +308,9 @@ Phase 2 (`phase2.md`, evidence zip `efbca567…7b33`) passes P2-0 to P2-7 on bot
   `34e41f15`; otherwise re-replay its 20 modules). Gate 45 (Codex) audits both. The Q3 reader PR is independent.
 
 **Not yet clear to merge — Gate 45 (Codex) must audit both PRs; the draft PRs can be opened now (O1 first, the statement PR stacked on it).**
+
+> **Note (2026-11-17, after the re-cut).** The heads and adoption trees named above (`a57dcf77`/`66036926`,
+> `ba964762`/`34e41f15`) are those of the snapshot-#4 run. After #340 and #346 merged, both branches were re-cut on the
+> tip `e1d39836` and re-replayed on snapshot #5: O1 is now **#358** at `a616adca` (tree `a461632b`), and the statements
+> are **#359** at `73aedcda` (tree `2c243bb1`). See `phase2.md` § "Re-replay on snapshot #5". The verdict is unchanged.
+> Snapshot numbers are assigned at adoption, so P2-8.1's "snapshot #5" now means the next free number.

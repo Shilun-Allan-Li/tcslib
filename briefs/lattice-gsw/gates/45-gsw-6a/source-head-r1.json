@@ -1,0 +1,412 @@
+{
+ "exchange_delivery": "d7a9adb5b70c70c1b6fb8dc3d0aa5a60d720c1ef",
+ "pr358": {
+  "base_branch": "cryptography/pass-shelat-ch2-4",
+  "commits": [
+   {
+    "author": "Claude <noreply@anthropic.com> 2026-11-16T19:27:02+00:00",
+    "commit": "a616adcac0760ab56b1b0a2a4869f4763843f9ab",
+    "committer": "Claude <noreply@anthropic.com> 2026-11-17T07:43:00+00:00",
+    "files": [
+     "TCSlib/Complexity/CircuitComplexity.lean",
+     "TCSlib/Complexity/CircuitComplexity/FormulaArith.lean",
+     "TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean",
+     "TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean"
+    ],
+    "gpgsig": 1,
+    "parent": "e1d39836ed4a69a34914c35f4c73c71de853dcc6",
+    "subject": "O1: promote TreeNCAC.combine as TreeCircuit.balanced in FormulaArith/Combinators",
+    "tree": "a461632bd8b41453418f473b671a596be097c86d"
+   }
+  ],
+  "diff_sha256": "f247ec4d09f171557c99e724871e3ca2dbbb1b8488faada234b95c0a243555fb",
+  "diff_stat": "4 files changed, 279 insertions(+), 184 deletions(-)",
+  "files": {
+   "TCSlib/Complexity/CircuitComplexity.lean": {
+    "blob": "bdcfe0defd103ffb18acbe88fbfac8f35912ca6f",
+    "lines": 326,
+    "lines_at_base": 322,
+    "max_width": 121,
+    "over_100": 1,
+    "sha256": "fc9721cd4a8f186300b73b29cb5b4f143b424b7207a456eaa99d9f9773732841",
+    "sha256_at_base": "9278c7fb9132dcf7d398762133bf81f192d219fe81019c85818cabb16d79fd98",
+    "status": "M",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith.lean": {
+    "blob": "19e16e1e29e0d6f8131941363fe77256b741b8b4",
+    "lines": 23,
+    "lines_at_base": null,
+    "max_width": 97,
+    "over_100": 0,
+    "sha256": "402ea58e8db7aec9e5290445fce1b2a7ce96e8cc8be456d8c29f4ed538122a5e",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean": {
+    "blob": "0a97823e5dedc97d22f16d436989cf59ceb05a6d",
+    "lines": 246,
+    "lines_at_base": null,
+    "max_width": 99,
+    "over_100": 0,
+    "sha256": "7884da47b2a95bb3073473313b7403218371d4e2ba01e613e85cfb7871fe4175",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean": {
+    "blob": "6877a419cc67d8356ab25ec32b25e102833f8d50",
+    "lines": 359,
+    "lines_at_base": 537,
+    "max_width": 106,
+    "over_100": 2,
+    "sha256": "41ebf40a5c9c40aed48698e304cb1974f234ba1d81e293e9d7c0f66d90ef9e72",
+    "sha256_at_base": "d162dd43c3d7fff48900a7882b49ed82bfee0337fc84cb131b88ab6b8e66e071",
+    "status": "M",
+    "tabs": 0,
+    "trailing_space": 0
+   }
+  },
+  "head": "a616adcac0760ab56b1b0a2a4869f4763843f9ab",
+  "head_branch": "land/gsw-6a-o1",
+  "merge_base": "e1d39836ed4a69a34914c35f4c73c71de853dcc6",
+  "tree": "a461632bd8b41453418f473b671a596be097c86d"
+ },
+ "pr359": {
+  "base": "a616adcac0760ab56b1b0a2a4869f4763843f9ab",
+  "base_branch": "land/gsw-6a-o1",
+  "commits": [
+   {
+    "author": "Claude <noreply@anthropic.com> 2026-11-16T21:43:45+00:00",
+    "commit": "453fb1ab2aa79c036cc6830a05e8b93014152f92",
+    "committer": "Claude <noreply@anthropic.com> 2026-11-17T07:43:00+00:00",
+    "files": [
+     "TCSlib/Complexity/BranchingPrograms/Defs.lean",
+     "TCSlib/Complexity/BranchingPrograms/Eval.lean"
+    ],
+    "gpgsig": 1,
+    "parent": "a616adcac0760ab56b1b0a2a4869f4763843f9ab",
+    "subject": "6a statements: BranchingPrograms/Defs and Eval",
+    "tree": "1dae35cddf3065b1fc22a9ca6a10945e725ad15e"
+   },
+   {
+    "author": "Claude <noreply@anthropic.com> 2026-11-16T21:43:45+00:00",
+    "commit": "c4870dd382ffacb7e04a86318afe994162427052",
+    "committer": "Claude <noreply@anthropic.com> 2026-11-17T07:43:00+00:00",
+    "files": [
+     "TCSlib/Complexity/BranchingPrograms.lean",
+     "TCSlib/Complexity/BranchingPrograms/Barrington.lean",
+     "TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean",
+     "TCSlib/Complexity/BranchingPrograms/NC1.lean"
+    ],
+    "gpgsig": 1,
+    "parent": "453fb1ab2aa79c036cc6830a05e8b93014152f92",
+    "subject": "6a statements: Barrington, BarringtonConverse, NC1 and the BranchingPrograms facade",
+    "tree": "902fc1891c1bccebbf74d705164ba164c35792f8"
+   },
+   {
+    "author": "Claude <noreply@anthropic.com> 2026-11-16T21:43:45+00:00",
+    "commit": "d8d0cf95118624c956ae001f8db3d11ed8016823",
+    "committer": "Claude <noreply@anthropic.com> 2026-11-17T07:43:00+00:00",
+    "files": [
+     "TCSlib/Complexity/CircuitComplexity/NANDForm.lean",
+     "TCSlib/Complexity/CircuitComplexity/NANDLayering.lean"
+    ],
+    "gpgsig": 1,
+    "parent": "c4870dd382ffacb7e04a86318afe994162427052",
+    "subject": "6a statements: NANDForm and NANDLayering",
+    "tree": "9d38b5b9d57912bc2fed6d854f34c129f286a908"
+   },
+   {
+    "author": "Claude <noreply@anthropic.com> 2026-11-16T21:43:45+00:00",
+    "commit": "06b7734aa3189e836794a4b70a6339274cafc363",
+    "committer": "Claude <noreply@anthropic.com> 2026-11-17T07:43:00+00:00",
+    "files": [
+     "TCSlib/Complexity/CircuitComplexity/FormulaArith.lean",
+     "TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean",
+     "TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean",
+     "TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean",
+     "TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean"
+    ],
+    "gpgsig": 1,
+    "parent": "d8d0cf95118624c956ae001f8db3d11ed8016823",
+    "subject": "6a statements: the formula-arithmetic layer (Combinators F1-F3, CarrySave, Compare, ModSum)",
+    "tree": "5dedc34488a59c41445c309cdc19b3ea265eb0de"
+   },
+   {
+    "author": "Claude <noreply@anthropic.com> 2026-11-16T21:43:45+00:00",
+    "commit": "d7a727804253bc32d0723d2c04bc0c4fa160142f",
+    "committer": "Claude <noreply@anthropic.com> 2026-11-17T07:43:01+00:00",
+    "files": [
+     "TCSlib.lean",
+     "TCSlib/Complexity/CircuitComplexity.lean",
+     "TCSlib/ComputationalModels.lean",
+     "machine-library-design.md"
+    ],
+    "gpgsig": 1,
+    "parent": "06b7734aa3189e836794a4b70a6339274cafc363",
+    "subject": "6a statements: registrations and registry rows H18-H20",
+    "tree": "541eb26b86dd3e083470826754ee48520b667a3e"
+   },
+   {
+    "author": "Claude <noreply@anthropic.com> 2026-11-17T05:39:25+00:00",
+    "commit": "73aedcdaaaffef7e69ab012d9b9195f150bae68d",
+    "committer": "Claude <noreply@anthropic.com> 2026-11-17T07:43:01+00:00",
+    "files": [
+     "TCSlib/Complexity/CircuitComplexity/FormulaArith.lean",
+     "TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean",
+     "machine-library-design.md"
+    ],
+    "gpgsig": 1,
+    "parent": "d7a727804253bc32d0723d2c04bc0c4fa160142f",
+    "subject": "LE-ren: drop TreeCircuit.rename and use the public reidx family",
+    "tree": "2c243bb1ba68fe868a5498d40f8c668356980da2"
+   }
+  ],
+  "diff_sha256": "ec8fd096289396075fa25ff90c176ae8ba7578e3bcc31a35aaeb4f8c9e9a8823",
+  "diff_stat": "17 files changed, 3383 insertions(+), 2 deletions(-)",
+  "files": {
+   "TCSlib.lean": {
+    "blob": "8db619ce45cb060d961d39ec86b4f1a9037d642e",
+    "lines": 90,
+    "lines_at_base": 89,
+    "max_width": 53,
+    "over_100": 0,
+    "sha256": "9e5aeeb7598b7af644836a58f29cc3382b02e00f839c4478f174ecd855676f3b",
+    "sha256_at_base": "ca8cbfc85cdc17731929d589adcc832d8deea9c48a41df5c5af127c0039f5bcf",
+    "status": "M",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/BranchingPrograms.lean": {
+    "blob": "8fa0bd2aa3b8dc1bc2eb43d187d5a328b0349174",
+    "lines": 39,
+    "lines_at_base": null,
+    "max_width": 97,
+    "over_100": 0,
+    "sha256": "eb3b2700e88e5d05b88c737fb34371187e8b3a100cba24a5cca80beb87d28709",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/BranchingPrograms/Barrington.lean": {
+    "blob": "3dd230abb0bdd81097b0082567e89f142c8d2d10",
+    "lines": 463,
+    "lines_at_base": null,
+    "max_width": 99,
+    "over_100": 0,
+    "sha256": "0b608b9336ac6a6a48227a097c8a79f0cd5619dded8bc22c6dd1c0b26e3dfba6",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean": {
+    "blob": "af7b15bbbf7d205b58f229cf0e2ee77154ae2f6d",
+    "lines": 304,
+    "lines_at_base": null,
+    "max_width": 100,
+    "over_100": 0,
+    "sha256": "16663708223833cf70b86518f5f254c3b7a5c2ecba66cd6bba32fc717ece63dd",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/BranchingPrograms/Defs.lean": {
+    "blob": "9b75523bcc8589e25d1d263460d79c31e1d2ed90",
+    "lines": 412,
+    "lines_at_base": null,
+    "max_width": 100,
+    "over_100": 0,
+    "sha256": "0067e3a13ad09c94ce7424094aa62c6971ba3a803d5ea8eefaef6f62c036a8f2",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/BranchingPrograms/Eval.lean": {
+    "blob": "8697666a9e104409244364888f2c5c345a96da5d",
+    "lines": 172,
+    "lines_at_base": null,
+    "max_width": 98,
+    "over_100": 0,
+    "sha256": "67cae626f0a43691cfe83c3e97760b305f6deb464ba46421837b372e2740b0e0",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/BranchingPrograms/NC1.lean": {
+    "blob": "b0140ad0fdb4a9a8cca673a6b532ece92703ee5d",
+    "lines": 135,
+    "lines_at_base": null,
+    "max_width": 100,
+    "over_100": 0,
+    "sha256": "63062599ab4bee887bba0afef19d2e5c7d1c6465d8808c39247cc77070b03f13",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity.lean": {
+    "blob": "3306c1f225fe7d4e9beac49f04a19fe50310bba6",
+    "lines": 334,
+    "lines_at_base": 326,
+    "max_width": 121,
+    "over_100": 1,
+    "sha256": "5356732e92a06d9e317dbecb9a10e3f322fcb4d01df90b6996a987f56f0d8251",
+    "sha256_at_base": "fc9721cd4a8f186300b73b29cb5b4f143b424b7207a456eaa99d9f9773732841",
+    "status": "M",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith.lean": {
+    "blob": "a18ae12588b5e8ef59feb2b7d8648461bd35fecf",
+    "lines": 31,
+    "lines_at_base": 23,
+    "max_width": 97,
+    "over_100": 0,
+    "sha256": "0cdc9004710fc0220762b59fdab54937d999cbe81ac7737c277f36561be6e7dd",
+    "sha256_at_base": "402ea58e8db7aec9e5290445fce1b2a7ce96e8cc8be456d8c29f4ed538122a5e",
+    "status": "M",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean": {
+    "blob": "e49dca78d752dd0c6063ffe644102200e935b37c",
+    "lines": 297,
+    "lines_at_base": null,
+    "max_width": 98,
+    "over_100": 0,
+    "sha256": "d541a3f699e4dcd980d48adec08f89c42ec777766b5ccb1505ae2a158636b03a",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean": {
+    "blob": "1bdeb53d7d29e13a706a9b1a5077175c852ae3c1",
+    "lines": 629,
+    "lines_at_base": 246,
+    "max_width": 99,
+    "over_100": 0,
+    "sha256": "acd5b7f21d7b9d98c331c6e50b616d81015f784aab8546fd555c3806213891a7",
+    "sha256_at_base": "7884da47b2a95bb3073473313b7403218371d4e2ba01e613e85cfb7871fe4175",
+    "status": "M",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean": {
+    "blob": "0cc16191bd7430addd9a9a2d6b9cf94d469cd2db",
+    "lines": 238,
+    "lines_at_base": null,
+    "max_width": 100,
+    "over_100": 0,
+    "sha256": "6e895de7d97ee9bee81cd52881e593d824c8231d45b6b3276c84198d17c9edb7",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean": {
+    "blob": "ba24bf30f1b6327602fcce2ddf3bab33a0975633",
+    "lines": 196,
+    "lines_at_base": null,
+    "max_width": 100,
+    "over_100": 0,
+    "sha256": "1b2ae77a9a8bdc78cdd247d2fb656040ed7ec39a9992248bfab9ec2971ca2c13",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/NANDForm.lean": {
+    "blob": "04a932b7a7103e2bfa28838361465efec7cb7be3",
+    "lines": 284,
+    "lines_at_base": null,
+    "max_width": 98,
+    "over_100": 0,
+    "sha256": "a9f4665587351d5470af45451e3444e55cd7d48558de6c56ad533588ba7f2359",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/Complexity/CircuitComplexity/NANDLayering.lean": {
+    "blob": "759617826a5851956c1c906972fd3d283fc388ae",
+    "lines": 388,
+    "lines_at_base": null,
+    "max_width": 100,
+    "over_100": 0,
+    "sha256": "06b50b373928bee06b0c8299b734b8863a180288e70dc5b4d21f468433c977b7",
+    "sha256_at_base": null,
+    "status": "A",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "TCSlib/ComputationalModels.lean": {
+    "blob": "5e0814c802fa75e99f846daaf345d0c80d2cbdc9",
+    "lines": 165,
+    "lines_at_base": 144,
+    "max_width": 148,
+    "over_100": 1,
+    "sha256": "28a5b64bbf9ffb2b0b93642deed791966f543df981e6468666cca18b2b310863",
+    "sha256_at_base": "768fa29e52a6cee6b91518d13d23b87c7d4dc05d79a78e063cdd573583e88a22",
+    "status": "M",
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "machine-library-design.md": {
+    "blob": "ead1aeaa9b3b28f8b04b0ac0a59eaeb3ecc2bdcd",
+    "lines": 4037,
+    "lines_at_base": 4005,
+    "max_width": 3457,
+    "over_100": 185,
+    "sha256": "9fa796429f8622789782c4b94af11634873ef2753abde7821caf1a6949e6a7ee",
+    "sha256_at_base": "80558dcb8633e3e006e3d6173e81dee76a82074112070742be5c304dcb187f29",
+    "status": "M",
+    "tabs": 0,
+    "trailing_space": 0
+   }
+  },
+  "head": "73aedcdaaaffef7e69ab012d9b9195f150bae68d",
+  "head_branch": "land/gsw-6a-statements",
+  "tree": "2c243bb1ba68fe868a5498d40f8c668356980da2"
+ },
+ "records_pin": "8c5875fa268a622e4e166da5f7a992715097c2c7",
+ "series_vs_tip": {
+  "diff_stat": "18 files changed, 3661 insertions(+), 185 deletions(-)",
+  "paths": [
+   "TCSlib.lean",
+   "TCSlib/Complexity/BranchingPrograms.lean",
+   "TCSlib/Complexity/BranchingPrograms/Barrington.lean",
+   "TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean",
+   "TCSlib/Complexity/BranchingPrograms/Defs.lean",
+   "TCSlib/Complexity/BranchingPrograms/Eval.lean",
+   "TCSlib/Complexity/BranchingPrograms/NC1.lean",
+   "TCSlib/Complexity/CircuitComplexity.lean",
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith.lean",
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith/CarrySave.lean",
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean",
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith/Compare.lean",
+   "TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean",
+   "TCSlib/Complexity/CircuitComplexity/NANDForm.lean",
+   "TCSlib/Complexity/CircuitComplexity/NANDLayering.lean",
+   "TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean",
+   "TCSlib/ComputationalModels.lean",
+   "machine-library-design.md"
+  ],
+  "pin_x_head_tree": "ab4aff1916827485777176c4489f9e186e1355c7"
+ },
+ "snapshot5_tree_commit": "3f540c22360c869069a0fba684e23ce6f3cb20db",
+ "worker_heads": {
+  "o1": "413e9aa42f6b96b4d65673c37c83819b2fb77579",
+  "stmt": "ec36703b56513d575036fa75ddb0b2b9d3f893b6"
+ }
+}
