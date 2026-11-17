@@ -59,8 +59,8 @@ closeout, listed in the register as optional"):
 ## Blueprint follow-up outside the chapter scope
 
 - **712 stale chapters 1–2 entries** (gate 157, G157-03; Seyoon, 2026-11-17: delete in a later
-  small PR). They are deleted by PR #362, which merges on its records without an audit (Seyoon,
-  2026-11-17).
+  small PR). They were deleted by PR #362 (merged `07c94b48`, 2026-11-17, without an audit by
+  Seyoon's ruling). Nothing remains carried here.
 
 ## Standards-lint items in the chapter scope (carried by ruling, Seyoon 2026-11-17)
 
