@@ -19,7 +19,7 @@ This table covers the 27 headline theorems of the closeout plan (PLAN §1), take
 |---|---|---|---|---|---|
 | 1 | `Complexity.time_hierarchy` (TimeHierarchy/Diagonal:550); book form `Complexity.time_hierarchy_book` (:786) and `time_hierarchy_book_of_pos` (:799); the parameterized core is `Complexity.TimeHierarchy.DiagSimulator.time_hierarchy` (:310) | Thm 3.1 | For time-constructible `f, g` with `f log f = o(g)`: `DTIME(f) ⊊ DTIME(g)` | The tracked headline `time_hierarchy`: time-constructible `g` and `(f(n) + n + 1)² = o(g(n))` give `DTIME f ⊂ DTIME (g + 1)` | **The tracked headline is weaker than the book: it has quadratic overhead.** The book's strength is supplied by the companions. `time_hierarchy_book` gives `DTIME f ⊂ DTIME (g + 1)` for time-constructible `g`, `n ≤ f(n)` and `f(n)·log f(n) = o(g(n))`; `time_hierarchy_book_of_pos` gives `DTIME g` for positive `g`. Both are covered by the extras probe, with standard axioms. (G158-02) |
 | 2 | `P_ssubset_EXP` (TimeHierarchy/Separation) | §3.1 (consequence of Thm 3.1; inclusion Claim 2.4) | `P ⊊ EXP` | `P ⊂ EXP` | None. |
-| 3 | `Complexity.ntime_hierarchy` (Diagonalization/NTimeHierarchy:1796); positive form `ntime_hierarchy_of_pos` (:1884) | Thm 3.2 | For time-constructible `f, g` with `f(n+1) = o(g(n))`: `NTIME(f) ⊊ NTIME(g)` | Time-constructible `f, g` with `f(n+1) + f(n) + n + 1 = o(g(n))`: `NTIME f ⊂ NTIME (g + 1)` | **A genuine restriction** (G158-01). The extra `f(n) = o(g(n))` follows from the book's hypothesis when `f` is monotone, since then `n ≤ f(n) ≤ f(n+1)`. Neither `TimeConstructible` nor the theorem assumes monotonicity, and the auditor's parity-selected counterexample satisfies the book's hypothesis but not ours. Disposition: §Major below. |
+| 3 | `Complexity.ntime_hierarchy` (Diagonalization/NTimeHierarchy:1796); positive form `ntime_hierarchy_of_pos` (:1884). Added after round 1, for monotone `f`: `ntime_hierarchy_book` and `ntime_hierarchy_book_of_pos` (:1934 and :1946 at the repair head) | Thm 3.2 | For time-constructible `f, g` with `f(n+1) = o(g(n))`: `NTIME(f) ⊊ NTIME(g)` | Time-constructible `f, g` with `f(n+1) + f(n) + n + 1 = o(g(n))`: `NTIME f ⊂ NTIME (g + 1)` | **A genuine restriction** (G158-01). The extra `f(n) = o(g(n))` follows from the book's hypothesis when `f` is monotone, since then `n ≤ f(n) ≤ f(n+1)`. Neither `TimeConstructible` nor the theorem assumes monotonicity, and the auditor's parity-selected counterexample satisfies the book's hypothesis but not ours. Disposition: §Major below. |
 | 4 | `Complexity.NTIME_linear_ssubset_square` (same, :1912) | §3.2, p. 70 (illustration after Thm 3.2) | `NTIME(n) ⊊ NTIME(n^{1.5})` | `NTIME (n+1) ⊂ NTIME ((n+1)²)` | **A weaker illustration** (G158-03): the larger class has exponent 2, not 1.5, as the Lean docstring discloses (no ℕ-valued constructible normal form of the fractional power was adopted). `n + 1` for `n` normalizes length 0. |
 | 5 | `Complexity.exists_not_timeConstructible` (Diagonalization/NotTimeConstructible) | Ex 3.5 | Some function `T : ℕ → ℕ` is not time-constructible | `∃ T, (∀ n, n ≤ T n) ∧ ¬TimeConstructible T` | **A strengthening** (G158-08): Lean also supplies `T(n) ≥ n`, so the failure is not explained by the `T(n) ≥ n` clause of the definition. |
 | 6 | `POracle_EXPCOM_eq_EXP` (Diagonalization/EXPCOM) | Ex 3.6(3) | `P^EXPCOM = EXP` | `POracle EXPCOM = EXP` | None. |
@@ -49,11 +49,27 @@ This table covers the 27 headline theorems of the closeout plan (PLAN §1), take
 under the standing conventions; the auditor checked them (G158-N6). Rows 11 and 18 match in
 substance; their earlier divergence notes were wrong. Row 5 is a strengthening. Row 4 is a
 weaker illustration, as its docstring discloses. Row 1's tracked headline has quadratic overhead,
-and the book's strength comes from `time_hierarchy_book`. **Row 3 is a genuine restriction** (§Major).
+and the book's strength comes from `time_hierarchy_book`. **Row 3 is a genuine restriction** for
+non-monotone `f`; for monotone `f` the book form is `ntime_hierarchy_book`, added after round 1
+(§Major).
 
 ## Major (G158-01): Theorem 3.2's hypothesis
 
 AB09 states Theorem 3.2 for time-constructible `f, g` with `f(n+1) = o(g(n))`. The campaign's
 `ntime_hierarchy` also needs `f(n) + n + 1 = o(g(n))`. That follows from the book's hypothesis
 for monotone `f`, where `n ≤ f(n) ≤ f(n+1)`, but not in general (the auditor's parity-selected
-counterexample). The disposition is Seyoon's (pending).
+counterexample).
+
+**Disposition (Seyoon, 2026-11-17): add the book form for monotone `f`.** The repair PR adds
+two theorems to `Diagonalization/NTimeHierarchy`, mirroring Theorem 3.1's
+`time_hierarchy_book` pair:
+- `Complexity.ntime_hierarchy_book`: time-constructible `f, g`, `f` monotone and
+  `f(n+1) = o(g(n))` give `NTIME f ⊊ NTIME (g + 1)`;
+- `Complexity.ntime_hierarchy_book_of_pos`: the same with `g` never 0, giving the book's
+  `NTIME f ⊊ NTIME g`.
+
+Both are corollaries of the existing pair through a private lemma: `f(n) ≤ f(n+1)` and
+`n + 1 ≤ f(n+1)` give `f(n+1) + f(n) + n + 1 ≤ 3·f(n+1)`. The book does not state
+monotonicity, so row 3 now matches the book for monotone `f` and stays a restriction for
+non-monotone `f`. The module docstring now records the counterexample. It no longer says that
+the linear overhead alone puts the theorem at book strength.

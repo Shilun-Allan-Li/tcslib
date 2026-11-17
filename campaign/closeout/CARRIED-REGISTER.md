@@ -79,11 +79,11 @@ disclosed to the final audit, not fixed.
   `NTimeHierarchy.lean:32`, "theorem at book strength").
 - **16 proof-sketch flags inflated by the signature.** The lint counts the signature as proof;
   each body is at most 20 lines.
-- **6 genuine items, not covered by the ruling above; disposition pending Seyoon:**
-  - proofs over 20 lines without a proof sketch: `mult_contribution` (28), `mult_next_column`
+- **6 genuine items, repaired after gate 158** (Seyoon, 2026-11-17), and so not carried:
+  - proofs over 20 lines, now with proof sketches: `mult_contribution` (28), `mult_next_column`
     (23), `mult_validate_field` (25) in `Logspace/Mult`; `compQ_length_le` (21) in
     `Logspace/QueryReshape`; `searchDown_run` (21) in `Machines/NARMPSem`;
-  - `Machines/Parse.lean`'s module docstring has no `## Main results` section.
+  - `Machines/Parse.lean`'s module docstring now has a `## Main results` section.
 
 ## Expected at `cryptography/pass-shelat-ch2-4`'s merge (not yet in the tree)
 
