@@ -19,7 +19,8 @@ This is the register for `olean-snapshot-procedure.md`, the procedure beside thi
 |---|---|---|---|---|---|
 | 0 | `eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9` (old base) | none: snapshot manifest `457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f` | 1199 (1230) | before 2026-11-16 | retired; manifest kept as `$SP/dl-oleans-2.snapshot-457ba704….txt` |
 | 1 | `cd6070091380f2270568af850e3dda1081ca802e` | `73fac35ee25818653bdee00cf1a4d3b521ec1bdf4be4682109091502b7b57f84` | 1353 (1384) | 2026-11-16 23:42 | superseded; oleans deleted at adoption of #2; map and manifest kept |
-| 2 | `a6d01b1bd1a92e2ac0be9999689467fea7e4e77b` (merge of #341) | `954934494925e1c32d2fca23fe3250e5ae838f63b57a71ff0ad54c7ff039c111` | 1421 (1452) | 2026-11-17 00:21 | **current** |
+| 2 | `a6d01b1bd1a92e2ac0be9999689467fea7e4e77b` (merge of #341) | `954934494925e1c32d2fca23fe3250e5ae838f63b57a71ff0ad54c7ff039c111` | 1421 (1452) | 2026-11-17 00:21 | superseded; oleans deleted at adoption of #3; map and manifest kept |
+| 3 | `cf7d28f7159b46033e8b8ae170954f9575e5d145` (merge of #351) | `e9dfbfddfd6ca253f9fd5ee6c3efe868f8614083794312c89d32032564fea53d` | 1422 (1453) | 2026-11-17 03:02 | **current**; evidence `olean-snapshot-3-adopt/` |
 
 - **#1** was built from #0 by closure keys (`dl-oleans-2`): 715 modules built, 638 reused.
   - Every module had rc 0, with 0 `error:` and 0 `error(`.
