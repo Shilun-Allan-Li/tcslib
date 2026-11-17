@@ -1,0 +1,28 @@
+import TCSlib.Complexity.RAMSimulation.Classes
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.SpaceComplexity.Constructible
+
+set_option pp.proofs false
+#print WordRAM.HaltsWithin
+#check @WordRAM.HaltsWithin.touches_le
+#check @WordRAM.HaltsWithin.mono
+#print Complexity.DTIME
+#print Turing.FinTM.DecidesInTime
+#check @Turing.FinTM.ComputesInTime.mono
+#check @Complexity.mem_P_iff
+#print Complexity.SPACE
+#print Turing.FinTM.DecidesInSpace
+#print Complexity.LOGSPACE
+#print Turing.FinTM.ComputesInSpace
+#print Complexity.NSPACE
+#print Turing.FinNDTM.DecidesInSpace
+#print Complexity.NL
+#print Complexity.SpaceConstructible
+#check @Complexity.spaceConstructible_logSpace
+#check @Turing.exists_inputLengthTM
+#check @Turing.FinTM.computesFunInTime_lengthBits_spaceUsed
+#check @Turing.embedSilentTM
+#print Turing.FinTM.ComputesInTime
+#print Complexity.logSpace

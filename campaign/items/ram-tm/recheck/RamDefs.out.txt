@@ -1,0 +1,72 @@
+def WordRAM.HaltsWithin : WordRAM.XProgram → List Bool → List Bool → ℕ → ℕ → Bool → List Bool → ℕ → Prop :=
+fun P x ρ W t v o f =>
+  ∃ n c K,
+    n < t ∧
+      K.card ≤ f ∧
+        WordRAM.XStepsIn P x ρ (↑K) n (WordRAM.XCfg.init W x.length) c ∧ WordRAM.xstep P x ρ c = Sum.inr v ∧ c.out = o
+@WordRAM.HaltsWithin.touches_le : ∀ {P : WordRAM.XProgram} {x ρ : List Bool} {W t f : ℕ} {v : Bool} {o : List Bool},
+  WordRAM.HaltsWithin P x ρ W t v o f → WordRAM.HaltsWithin P x ρ W t v o (3 * t)
+@WordRAM.HaltsWithin.mono : ∀ {P : WordRAM.XProgram} {x ρ : List Bool} {W t t' f f' : ℕ} {v : Bool} {o : List Bool},
+  WordRAM.HaltsWithin P x ρ W t v o f → t ≤ t' → f ≤ f' → WordRAM.HaltsWithin P x ρ W t' v o f'
+def Complexity.DTIME : (ℕ → ℕ) → Set (Language Bool) :=
+fun T => {L | ∃ c M, M.DecidesInTime L fun n => c * T n}
+def Turing.FinTM.DecidesInTime : Turing.FinTM Bool → Language Bool → (ℕ → ℕ) → Prop :=
+fun M L T => ∀ (x : List Bool), M.ComputesInTime x [Turing.MultiTapeTM.indicator L x] (T x.length)
+@Turing.FinTM.ComputesInTime.mono : ∀ {Symbol : Type} {M : Turing.FinTM Symbol} {input output : List Symbol} {t t' : ℕ},
+  M.ComputesInTime input output t → t ≤ t' → M.ComputesInTime input output t'
+@Complexity.mem_P_iff : ∀ {L : Language Bool}, L ∈ Complexity.P ↔ ∃ C d M, M.DecidesInTime L fun n => C * (n + 1) ^ d
+def Complexity.SPACE : (ℕ → ℕ) → Set (Language Bool) :=
+fun s => {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}
+def Turing.FinTM.DecidesInSpace : Turing.FinTM Bool → Language Bool → (ℕ → ℕ) → Prop :=
+fun M L s => M.ComputesInSpace (fun x => [Turing.MultiTapeTM.indicator L x]) s
+def Complexity.LOGSPACE : Set (Language Bool) :=
+Complexity.SPACE Complexity.logSpace
+def Turing.FinTM.ComputesInSpace : Turing.FinTM Bool → (List Bool → List Bool) → (ℕ → ℕ) → Prop :=
+fun M f s =>
+  ∀ (x : List Bool),
+    ∃ t, M.ComputesInTime x (f x) t ∧ Turing.MultiTapeTM.spaceUsed (Turing.MultiTapeTM.initCfg x) t ≤ s x.length
+def Complexity.NSPACE : (ℕ → ℕ) → Set (Language Bool) :=
+fun s => {L | ∃ c N, N.DecidesInSpace L fun n => c * s n}
+def Turing.FinNDTM.DecidesInSpace : Turing.FinNDTM Bool → Language Bool → (ℕ → ℕ) → Prop :=
+fun N L s =>
+  ∀ (x : List Bool),
+    ∃ T,
+      N.tm.HaltsWithin x T ∧
+        (∀ (w : List Bool), w.length = T → N.tm.spaceUsedWith w (Turing.NDTM.initCfg x) ≤ s x.length) ∧
+          (x ∈ L ↔ N.AcceptsWithin x T)
+def Complexity.NL : Set (Language Bool) :=
+Complexity.NSPACE Complexity.logSpace
+def Complexity.SpaceConstructible : (ℕ → ℕ) → Prop :=
+fun S =>
+  (∀ (n : ℕ), Complexity.logSpace n ≤ S n) ∧
+    ∃ c, 0 < c ∧ ∃ M, M.ComputesInSpace (fun x => (S x.length).bits) fun n => c * S n
+Complexity.spaceConstructible_logSpace : Complexity.SpaceConstructible Complexity.logSpace
+Turing.exists_inputLengthTM : ∃ K S x x R entry exit C,
+  ∀ {x : List Bool} (d : Turing.Cfg (K + 1) Bool S x),
+    d.state = some entry →
+      d.inputPos = 1 →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑x.length.bits.length → d.workTapes 0 (d.workTapePos 0 + p) = none) →
+          (∀ (j : Fin (K + 1)), j ≠ 0 → ∀ (p : ℤ), d.workTapes j p = none) →
+            ∃ t ≤ C * (x.length + 1),
+              (∀ u < t, (Turing.MultiTapeTM.runFrom d u).state ≠ some exit) ∧
+                (∀ u ≤ t,
+                    ∀ (j : Fin (K + 1)),
+                      |(Turing.MultiTapeTM.runFrom d u).workTapePos j - d.workTapePos j| ≤
+                        ↑(C * (x.length.bits.length + 1))) ∧
+                  Turing.MultiTapeTM.runFrom d t =
+                    { state := some exit, inputPos := d.inputPos,
+                      workTapes := fun j q =>
+                        if j = 0 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑x.length.bits.length then
+                          Turing.FinTM.bufferTape x.length.bits (q - d.workTapePos j)
+                        else d.workTapes j q,
+                      workTapePos := d.workTapePos, output := d.output }
+Turing.FinTM.computesFunInTime_lengthBits_spaceUsed : ∃ M c,
+  (M.ComputesFunInTime (fun x => x.length.bits) fun n => c * (n + 1)) ∧
+    ∀ (x : List Bool) (t : ℕ), Turing.MultiTapeTM.spaceUsed (Turing.MultiTapeTM.initCfg x) t ≤ c * (x.length.size + 1)
+@Turing.embedSilentTM : {m k : ℕ} →
+  {S : Type u_1} →
+    {Symbol : Type u_2} → (Fin m ↪ Fin k) → Fin k → Turing.MultiTapeTM m Symbol S → Turing.MultiTapeTM k Symbol S
+def Turing.FinTM.ComputesInTime : {Symbol : Type} → Turing.FinTM Symbol → List Symbol → List Symbol → ℕ → Prop :=
+fun {Symbol} M input output t => ∃ s, M.tm.ComputesInTimeAndSpace input output t s
+def Complexity.logSpace : ℕ → ℕ :=
+fun n => Nat.log 2 n + 1
