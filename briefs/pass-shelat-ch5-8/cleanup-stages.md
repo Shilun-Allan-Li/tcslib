@@ -121,3 +121,28 @@ The plan had omitted the #248 historical seal ledger and the inherited-seal repa
 - **Q11:** Stage 2 adds the two provider readers in `Complexity/TuringMachine/Encoding.lean`
   (`Turing.CodeTM.toFinTM_tm`, the `Turing.pairDecode` case equations) as pure insertions, as Q1 allows.
 - Maintainer corrections F02 (`FunFamily.ofString_inLen` in `Asymptotic/OneWay.lean`) and F03 stand in the derivative.
+
+## Stage 2 rulings (Seyoon, 2026-11-17; plan `cleanup-stage2/plan-r1.md`)
+- **Q1 (changed): four jobs.** **S2-A in-house** (the maintainer): plan jobs J0 foundations + J1 Complexity hosts +
+  J2 Asymptotic layer (~1,770 lines), merged first. Then **S2-B, S2-C, S2-D to Codex in a local checkout, in parallel**
+  (file-disjoint): S2-B = J3 Pseudorandom/secure computation + J4 Encryption/authentication (~1,680); S2-C = J5 ZK graph
+  isomorphism with the `GI`/`GIZK` shadow retirements (~1,500); S2-D = J6 ZK three-colouring with the
+  `ColProofs`/`ColSimMachine` shadow retirements + J7 closer (`blocks` alias removal, ledger closure) (~1,480). One Codex
+  gate per job; the Stage 2 gate (full seal sweep incl. seal B, combined statement-change list, ledger closure) rides
+  with S2-D. Local-host Lean rule applies to the Codex jobs (at most 3 Lean processes on the machine across all jobs).
+  Codex-local delivery per `workflow.md` worker routes: push the payload to `inbox/fills/<unit>/` on the exchange (or a
+  ZIP in chat). Supersedes the stage plan's "one or two jobs" and Q13 (J1 is inside S2-A).
+- **Q2:** the 51 statement-level seal-B-only fixes go in their owner jobs; each gate checks them one by one.
+- **Q7:** the 14 duplicate public definitions get the promoted forms as their bodies, each checked by its gate.
+- **Q8:** widen `Games.extTape` to `Type*`; keep `AdaptiveCPA.extTape` and `extendStream` as aliases (IBE uses the name);
+  LazySampling imports `Games.Tapes`.
+- **Q9:** shadow retirement by moving each canonical definition verbatim into a new lower module, restating the shadow
+  lemmas over it, and deleting the shadows.
+- **Q3–Q5, Q10–Q12, Q14, Q15 as recommended:** PS10 Tier A fixes in the owner jobs; apply all 21 Tier B advisories + the
+  6 related notes; DW-11 (#351/#352) is dispatched now (J0 is no longer its third member, being inside S2-A); the seal-B
+  ruling supersedes `lamport_oneTimeSecure`'s separate gate (DL-43); DL-38's six small folds, the five loops recorded as
+  notes; the closer reconciles DL-1–DL-29 statuses; base after snapshot #7 and the 6a merges; `padTo` gets a `takeD`
+  bridge reader (proof-only).
+- **Q6 (changed): the lattice campaign is ours** (Seyoon: "any issues on the lattice side are also our responsibility").
+  DL-54 (`reidx` move into `Combinators`) is done by us, after the 6a landing merges; it is tracked with the lattice
+  campaign, not handed off.
