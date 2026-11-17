@@ -46,7 +46,11 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
 - **Never `lake build`.** Elaborate only through `devtools/seyoon/leanelab.sh <worktree> <olean
   dir> <file>` (plain) or `leanelab-o.sh <worktree> <olean dir> <file> <overlay>` (writes the
   `.olean`), each `lean -j4` under `nice -n 10`. Replays use
-  `scripts/lean_check_tree.sh` through the generated replay scripts.
+  `scripts/lean_check_tree.sh` through the generated replay scripts. **Open, deferred by Seyoon
+  (2026-11-17):** the current replay driver compiles each module through `leanelab-o.sh`, holding
+  a slot lock and writing only to its overlay. It applies the same pass test itself: the stale
+  outputs are removed first, then it requires exit 0, no `error:` line and a fresh non-empty
+  olean. Keep using it until Seyoon rules on whether to switch.
 - **Lean parallelism on the cloud machine** (Seyoon's ruling, 2026-11-17; `workflow.md` §4.1 on
   main, PR #353). The pool is `min(nproc, MemAvailable / 4 GB)`, keeping at least
   max(2 GB, 15%) of memory available, and it backs off under memory pressure. It is computed by
