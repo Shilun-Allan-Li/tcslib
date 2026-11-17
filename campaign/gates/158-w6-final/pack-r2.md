@@ -1,11 +1,11 @@
-# Gate 158 round 2 · W6: the final audit, with the repair PR (PR #PRNUM)
+# Gate 158 round 2 · W6: the final audit, with the repair PR (PR #363)
 
 **Round 2 of the final audit.** Seyoon dispatches and merges.
 
 - **Round 1** audited campaign `506078d6` (Lean `179c8c9c`) and returned HOLD: 0 blockers,
   1 major and 8 minors (`findings.md`, verbatim). This round checks the resolutions in
   `resolutions.md`.
-- **The audited head** is PR #PRNUM's head (branch `closeout/g158-repairs`); the dispatch prompt
+- **The audited head** is PR #363's head (branch `closeout/g158-repairs`); the dispatch prompt
   gives the commit. It holds the round's records and its Lean:
   - **Records:** the round 1 corrections, already on the campaign branch at `12a3ce18`, and
     the later records on the PR branch.
@@ -37,7 +37,7 @@
   - the #354 readers marked apart from the prospective ch2-4 overlap;
   - the 69 lint flags classified (`evidence/lint/LINT-CLASSIFIED.json`).
 
-### Lean (PR #PRNUM; 6 files)
+### Lean (PR #363; 6 files)
 
 **New public declarations** (Seyoon, 2026-11-17), in `Diagonalization/NTimeHierarchy`:
 
