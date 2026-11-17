@@ -126,7 +126,7 @@ def RelM (g X : (G.group κ d).G) (u : BB1RealState G ℓ κ d) (v : BB1SimState
     p.2 = X ^ (-BB1.idToZ (G.group κ d) p.1).val * g ^ q.2.val) u.1 v.1
 
 /-- `RelM … g X u v` holds iff `u.2 = v.2` and `u.1`, `v.1` are both `none`, or `some (t, h)` and
-`some (t, α_1)` with `h = X^{(−idToZ t).val} · g^{α_1.val}`. -/
+`some (t, α_1)` with `h = X^{(−idToZ t).val} · g^{α_1.val}`. Glue: the reader of `RelM`. -/
 theorem relM_iff (g X : (G.group κ d).G) (u : BB1RealState G ℓ κ d) (v : BB1SimState G ℓ κ d) :
     RelM G ℓ κ d g X u v ↔ u.2 = v.2 ∧ Option.Rel (fun p q => p.1 = q.1 ∧
       p.2 = X ^ (-BB1.idToZ (G.group κ d) p.1).val * g ^ q.2.val) u.1 v.1 := Iff.rfl

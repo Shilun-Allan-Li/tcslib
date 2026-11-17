@@ -152,12 +152,23 @@ section Real
 variable (G : BilinearGen) (ℓ : PolyExpr)
 
 /-- The real game's state with the parameter `h` recorded beside the committed identity, and
-the recorded challenge. -/
+the recorded challenge: `Option ((Fin idLen → Bool) × G) × Option (Fin ctLen → Bool)`. Glue:
+the state of `bb1RealAt` and `bb1RealLazy`. -/
 abbrev BB1RealState (κ : ℕ) (d : List Bool) : Type :=
   Option ((Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) × (G.group κ d).G) ×
     Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)
 
-/-- **The game's oracles with `h` recorded** [BB04, §2.1]: with hidden bit `b`, on the
+/-- `BB1RealState G ℓ κ d` is the optional pair of the committed identity and the recorded `h`,
+with the optional recorded challenge: `BB1RealState G ℓ κ d =
+Option ((Fin idLen → Bool) × G) × Option (Fin ctLen → Bool)`. Glue: the reader of
+`BB1RealState` (policy §1). -/
+theorem bb1RealState_eq (κ : ℕ) (d : List Bool) :
+    BB1RealState G ℓ κ d =
+      (Option ((Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) × (G.group κ d).G) ×
+        Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) := rfl
+
+/-- **The game's oracles with `h` recorded** (a variant of the game of [BB04, §2.1], with `h`
+recorded beside the committed identity): with hidden bit `b`, on the
 parameters and master key `o h'` for the `h'` recorded with the committed identity (or `h`
 before `Init`), the call of `IBEScheme.sidImpl` on the state without `h'`; the first `Init`
 records `h` with the identity. -/
@@ -170,7 +181,8 @@ noncomputable def bb1RealAt (b : Bool) (κ : ℕ) (d : List Bool)
 
 /-- Before `Init`, `bb1RealAt o h` is the game's oracle on `o h`, recording `h` with the
 committed identity: `bb1RealAt … o h i x (none, c) = (sidImpl b κ (o h).1 (o h).2 i x
-(none, c)).bind fun p => pure (p.1, (p.2.1.map (·, h), p.2.2))`. -/
+(none, c)).bind fun p => pure (p.1, (p.2.1.map (·, h), p.2.2))`. Glue: a case reader of
+`bb1RealAt`. -/
 theorem bb1RealAt_none (b : Bool) (κ : ℕ) (d : List Bool)
     (o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) (h : (G.group κ d).G)
     (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
@@ -181,7 +193,8 @@ theorem bb1RealAt_none (b : Bool) (κ : ℕ) (d : List Bool)
 
 /-- After `Init`, `bb1RealAt o h` is the game's oracle on `o h'` for the recorded `h'`:
 `bb1RealAt … o h i x (some (t, h'), c) = (sidImpl b κ (o h').1 (o h').2 i x
-(some t, c)).bind fun p => pure (p.1, (p.2.1.map (·, h'), p.2.2))`. -/
+(some t, c)).bind fun p => pure (p.1, (p.2.1.map (·, h'), p.2.2))`. Glue: a case reader of
+`bb1RealAt`. -/
 theorem bb1RealAt_some (b : Bool) (κ : ℕ) (d : List Bool)
     (o : (G.group κ d).G → (bb1Scheme G ℓ).PP κ × (bb1Scheme G ℓ).MSK κ) (h : (G.group κ d).G)
     (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
@@ -192,7 +205,8 @@ theorem bb1RealAt_some (b : Bool) (κ : ℕ) (d : List Bool)
         fun p => .pure (p.1, (p.2.1.map fun t => (t, h'), p.2.2)) := rfl
 
 open Classical in
-/-- **The game's oracles with `h` drawn at the first `Init`** [BB04, §2.1]: the first `Init`
+/-- **The game's oracles with `h` drawn at the first `Init`** (a variant of the game of
+[BB04, §2.1], with `h` drawn late): the first `Init`
 draws `h ∈ G` and calls `bb1RealAt o h`; every other call is the call of `bb1RealAt o 1`, which
 reads the recorded `h'` after `Init` and no parameter before it. -/
 noncomputable def bb1RealLazy (b : Bool) (κ : ℕ) (d : List Bool)
@@ -207,7 +221,8 @@ variable (b : Bool) (κ : ℕ) (d : List Bool)
 
 /-- The first `Init` of `bb1RealLazy` draws `h` and calls the game's oracle on `o h`:
 `bb1RealLazy … o 0 x (none, c) = (sample G).bind fun h => (sidImpl b κ (o h).1 (o h).2 0 x
-(none, c)).bind fun p => pure (p.1, (p.2.1.map (·, h), p.2.2))`. -/
+(none, c)).bind fun p => pure (p.1, (p.2.1.map (·, h), p.2.2))`. Glue: a case reader of
+`bb1RealLazy`. -/
 theorem bb1RealLazy_zero_none (x : ((bb1Scheme G ℓ).sidSpec κ).dom 0)
     (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
     bb1RealLazy G ℓ b κ d o 0 x (none, c) =
@@ -219,7 +234,7 @@ theorem bb1RealLazy_zero_none (x : ((bb1Scheme G ℓ).sidSpec κ).dom 0)
 
 /-- Before `Init`, the other calls of `bb1RealLazy` are the game's oracles on `o 1`: for `i ≠ 0`,
 `bb1RealLazy … o i x (none, c) = (sidImpl b κ (o 1).1 (o 1).2 i x (none, c)).bind fun p =>
-pure (p.1, (p.2.1.map (·, 1), p.2.2))`. -/
+pure (p.1, (p.2.1.map (·, 1), p.2.2))`. Glue: a case reader of `bb1RealLazy`. -/
 theorem bb1RealLazy_none_of_ne (i : Fin 3) (hi : i ≠ 0) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
     (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
     bb1RealLazy G ℓ b κ d o i x (none, c) =
@@ -230,7 +245,7 @@ theorem bb1RealLazy_none_of_ne (i : Fin 3) (hi : i ≠ 0) (x : ((bb1Scheme G ℓ
 
 /-- After `Init`, `bb1RealLazy` is the game's oracle on `o h` for the recorded `h`:
 `bb1RealLazy … o i x (some (t, h), c) = (sidImpl b κ (o h).1 (o h).2 i x (some t, c)).bind
-fun p => pure (p.1, (p.2.1.map (·, h), p.2.2))`. -/
+fun p => pure (p.1, (p.2.1.map (·, h), p.2.2))`. Glue: a case reader of `bb1RealLazy`. -/
 theorem bb1RealLazy_some (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
     (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (h : (G.group κ d).G)
     (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
@@ -241,7 +256,8 @@ theorem bb1RealLazy_some (i : Fin 3) (x : ((bb1Scheme G ℓ).sidSpec κ).dom i)
   rfl
 
 /-- **The game's oracles keep the committed identity**: for every scheme `S`, every outcome of
-`S.sidImpl b κ pp msk i x (some t, c)` has the committed identity `t`.
+`S.sidImpl b κ pp msk i x (some t, c)` has the committed identity `t`. Glue: a case fact of
+`IBEScheme.sidImpl`, from its readers.
 
 **Proof sketch.** By cases on the oracle, read through `IBEScheme.sidImpl_zero_onSpec`,
 `sidImpl_one_onQuery`, `sidImpl_two_onQuery`, `sidImpl_keyGen_ne_onSpec` and
@@ -278,7 +294,8 @@ theorem sidImpl_allOutputs_some (S : IBEScheme) (pp : S.PP κ) (msk : S.MSK κ) 
 
 /-- **Before `Init`, `KeyGen` and `Challenge` do not read the parameters**: for every scheme `S`
 and `i ≠ 0`, `S.sidImpl b κ pp msk i x (none, c) = S.sidImpl b κ pp' msk' i x (none, c)`, and
-every outcome keeps the state `(none, c)`. -/
+every outcome keeps the state `(none, c)`. Glue: a case fact of `IBEScheme.sidImpl`, from its
+readers. -/
 theorem sidImpl_none_of_ne (S : IBEScheme) (pp pp' : S.PP κ) (msk msk' : S.MSK κ) (i : Fin 3)
     (hi : i ≠ 0) (x : (S.sidSpec κ).dom i) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
     S.sidImpl b κ pp msk i x (none, c) = S.sidImpl b κ pp' msk' i x (none, c) ∧

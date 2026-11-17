@@ -127,7 +127,8 @@ noncomputable def bb1SimLazyChal (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : 
 
 /-- At the first valid `Challenge`, `bb1SimLazyChal` draws `u` and answers as `bb1SimChal` on
 `zt u`: for `s.1` some, `s.2 = none` and both messages encodings of `G_T`,
-`bb1SimLazyChal … zt mm s = (sample U).bind fun u => bb1SimChal … (zt u).1 (zt u).2 mm s`. -/
+`bb1SimLazyChal … zt mm s = (sample U).bind fun u => bb1SimChal … (zt u).1 (zt u).2 mm s`. Glue: a
+case reader of `bb1SimLazyChal`. -/
 theorem bb1SimLazyChal_fresh (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
     {U : Type} [Fintype U] [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT)
     (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
@@ -140,7 +141,8 @@ theorem bb1SimLazyChal_fresh (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.g
   rw [bb1SimLazyChal, if_pos h]
 
 /-- Away from the first valid `Challenge`, `bb1SimLazyChal` answers as `bb1SimChal` on the
-coins `(1, 1)`: `bb1SimLazyChal … zt mm s = bb1SimChal … 1 1 mm s`. -/
+coins `(1, 1)`: `bb1SimLazyChal … zt mm s = bb1SimChal … 1 1 mm s`. Glue: a case reader of
+`bb1SimLazyChal`. -/
 theorem bb1SimLazyChal_of_not (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
     {U : Type} [Fintype U] [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT)
     (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
@@ -161,7 +163,9 @@ noncomputable def bb1SimLazy (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.g
   (bb1Scheme G ℓ).oracleImpl κ (bb1SimInit G ℓ κ d g X Y) (bb1SimKeyQ G ℓ κ d g X Y)
     (bb1SimLazyChal G ℓ b κ d g X Y zt)
 
-/-- `bb1SimLazy` is `oracleImpl` of `bb1SimInit`, `bb1SimKeyQ` and `bb1SimLazyChal`. -/
+/-- `bb1SimLazy` is `oracleImpl` of `bb1SimInit`, `bb1SimKeyQ` and `bb1SimLazyChal`:
+`bb1SimLazy … zt = oracleImpl κ (bb1SimInit …) (bb1SimKeyQ …) (bb1SimLazyChal … zt)`. Glue: the
+reader of `bb1SimLazy`. -/
 theorem bb1SimLazy_eq (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
     {U : Type} [Fintype U] [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT) :
     bb1SimLazy G ℓ b κ d g X Y zt =
@@ -172,7 +176,8 @@ variable (b : Bool) (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G) {U : T
   [Nonempty U] (zt : U → (G.group κ d).G × (G.group κ d).GT)
 
 /-- `Init` of `bb1SimImpl` does not read the challenge coins:
-`bb1SimImpl … Z T 0 x s = bb1SimImpl … Z' T' 0 x s`. -/
+`bb1SimImpl … Z T 0 x s = bb1SimImpl … Z' T' 0 x s`. Glue: a case fact of `bb1SimImpl` for the eager
+step. -/
 theorem bb1SimImpl_zero_coins (Z Z' : (G.group κ d).G) (T T' : (G.group κ d).GT)
     (x : ((bb1Scheme G ℓ).sidSpec κ).dom 0) (s : BB1SimState G ℓ κ d) :
     bb1SimImpl G ℓ b κ d g X Y Z T 0 x s = bb1SimImpl G ℓ b κ d g X Y Z' T' 0 x s := by
@@ -180,7 +185,8 @@ theorem bb1SimImpl_zero_coins (Z Z' : (G.group κ d).G) (T T' : (G.group κ d).G
     IBEScheme.oracleImpl_zero_onSpec]
 
 /-- `KeyGen` of `bb1SimImpl` does not read the challenge coins:
-`bb1SimImpl … Z T 1 x s = bb1SimImpl … Z' T' 1 x s`. -/
+`bb1SimImpl … Z T 1 x s = bb1SimImpl … Z' T' 1 x s`. Glue: a case fact of `bb1SimImpl` for the eager
+step. -/
 theorem bb1SimImpl_one_coins (Z Z' : (G.group κ d).G) (T T' : (G.group κ d).GT)
     (x : ((bb1Scheme G ℓ).sidSpec κ).dom 1) (s : BB1SimState G ℓ κ d) :
     bb1SimImpl G ℓ b κ d g X Y Z T 1 x s = bb1SimImpl G ℓ b κ d g X Y Z' T' 1 x s := by
@@ -188,14 +194,14 @@ theorem bb1SimImpl_one_coins (Z Z' : (G.group κ d).G) (T T' : (G.group κ d).GT
     IBEScheme.oracleImpl_one_onSpec]
 
 /-- `Init` of the lazy simulator is `Init` of `bb1SimImpl`:
-`bb1SimLazy … zt 0 x s = bb1SimImpl … 1 1 0 x s`. -/
+`bb1SimLazy … zt 0 x s = bb1SimImpl … 1 1 0 x s`. Glue: a case reader of `bb1SimLazy`. -/
 theorem bb1SimLazy_zero (x : ((bb1Scheme G ℓ).sidSpec κ).dom 0) (s : BB1SimState G ℓ κ d) :
     bb1SimLazy G ℓ b κ d g X Y zt 0 x s = bb1SimImpl G ℓ b κ d g X Y 1 1 0 x s := by
   rw [bb1SimLazy_eq, bb1SimImpl_eq, IBEScheme.oracleImpl_zero_onSpec,
     IBEScheme.oracleImpl_zero_onSpec]
 
 /-- `KeyGen` of the lazy simulator is `KeyGen` of `bb1SimImpl`:
-`bb1SimLazy … zt 1 x s = bb1SimImpl … 1 1 1 x s`. -/
+`bb1SimLazy … zt 1 x s = bb1SimImpl … 1 1 1 x s`. Glue: a case reader of `bb1SimLazy`. -/
 theorem bb1SimLazy_one (x : ((bb1Scheme G ℓ).sidSpec κ).dom 1) (s : BB1SimState G ℓ κ d) :
     bb1SimLazy G ℓ b κ d g X Y zt 1 x s = bb1SimImpl G ℓ b κ d g X Y 1 1 1 x s := by
   rw [bb1SimLazy_eq, bb1SimImpl_eq, IBEScheme.oracleImpl_one_onSpec,
@@ -204,7 +210,8 @@ theorem bb1SimLazy_one (x : ((bb1Scheme G ℓ).sidSpec κ).dom 1) (s : BB1SimSta
 /-- **The first valid `Challenge` of the lazy simulator** draws `u` and calls `bb1SimImpl` on the
 coins `zt u`: for `s.1` some, `s.2 = none`, and both messages of the query `x` (read as two
 messages) encodings of `G_T`,
-`bb1SimLazy … zt 2 x s = (sample U).bind fun u => bb1SimImpl … (zt u).1 (zt u).2 2 x s`. -/
+`bb1SimLazy … zt 2 x s = (sample U).bind fun u => bb1SimImpl … (zt u).1 (zt u).2 2 x s`. Glue: a
+case reader of `bb1SimLazy`. -/
 theorem bb1SimLazy_two_fresh (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB1SimState G ℓ κ d)
     (h : s.1.isSome ∧ s.2 = none ∧
       ((∃ u, List.ofFn ((G.group κ d).encT u) =
@@ -220,7 +227,8 @@ theorem bb1SimLazy_two_fresh (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB1
   rw [bb1SimImpl_eq, IBEScheme.oracleImpl_two_onSpec]
 
 /-- **`Challenge` of the lazy simulator away from the first valid one** is `Challenge` of
-`bb1SimImpl` on the coins `(1, 1)`: `bb1SimLazy … zt 2 x s = bb1SimImpl … 1 1 2 x s`. -/
+`bb1SimImpl` on the coins `(1, 1)`: `bb1SimLazy … zt 2 x s = bb1SimImpl … 1 1 2 x s`. Glue: a case
+reader of `bb1SimLazy`. -/
 theorem bb1SimLazy_two_of_not (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB1SimState G ℓ κ d)
     (h : ¬ (s.1.isSome ∧ s.2 = none ∧
       ((∃ u, List.ofFn ((G.group κ d).encT u) =
@@ -234,7 +242,7 @@ theorem bb1SimLazy_two_of_not (x : ((bb1Scheme G ℓ).sidSpec κ).dom 2) (s : BB
 /-- **Away from the first valid `Challenge`, `bb1SimImpl` reads neither its coins nor its
 challenge bit**, and keeps the recorded challenge: unless `s.1` is some, `s.2 = none` and both
 messages are encodings of `G_T`, `bb1SimImpl b … Z T 2 x s = bb1SimImpl false … 1 1 2 x s`, and
-every outcome has the challenge `s.2`.
+every outcome has the challenge `s.2`. Glue: a case fact of `bb1SimImpl` for the eager step.
 
 **Proof sketch.** Read both calls by `oracleImpl_two_onSpec`. Before `Init` both answer `⊥`
 (`bb1SimChal_none`); after a recorded challenge both repeat it (`bb1SimChal_repeat`); at a first
@@ -277,7 +285,7 @@ theorem bb1SimImpl_two_of_not (Z : (G.group κ d).G) (T : (G.group κ d).GT)
 
 /-- **The first valid `Challenge` records a challenge**: for `s.1` some and `s.2 = none`, and
 both messages encodings of `G_T`, every outcome of `bb1SimImpl … Z T 2 x s` has a recorded
-challenge.
+challenge. Glue: a case fact of `bb1SimImpl` for the eager step.
 
 **Proof sketch.** Read the call by `oracleImpl_two_onSpec`; at the first valid `Challenge` it is
 `bb1SimChal_fresh` (validity through `bb1Scheme_msgSpace_iff`), which records the challenge. -/
@@ -300,7 +308,8 @@ theorem bb1SimImpl_two_fresh_allOutputs (Z : (G.group κ d).G) (T : (G.group κ 
   exact OracleComp.allOutputs_pure.2 rfl
 
 /-- **`Init` and `KeyGen` keep the recorded challenge**: for `i ≠ 2`, every outcome of
-`bb1SimImpl … Z T i x s` has the challenge `s.2`.
+`bb1SimImpl … Z T i x s` has the challenge `s.2`. Glue: a case fact of `bb1SimImpl` for the eager
+step.
 
 **Proof sketch.** Read the call by `oracleImpl_zero_onSpec` or `oracleImpl_one_onSpec`. `Init`
 records `(ID, α_1)` or keeps the state (`bb1SimInit_none`, `bb1SimInit_some`); `KeyGen` keeps the
