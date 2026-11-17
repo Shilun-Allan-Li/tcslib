@@ -242,26 +242,6 @@ theorem wireComp_eval {F G : Fin w → Fin w → TreeCircuit n}
     rw [TreeCircuit.and2_eval, hF, hG, Bool.and_eq_true, decide_eq_true_iff, decide_eq_true_iff]
     exact ⟨rfl, h⟩
 
-/-- A uniform depth bound on the members bounds the maximum depth of a list: if
-`∀ c ∈ cs, c.depth ≤ d`, then `TreeCircuit.maxDepth cs ≤ d`.  Glue. -/
-private theorem maxDepth_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
-    (h : ∀ c ∈ cs, c.depth ≤ d) : TreeCircuit.maxDepth cs ≤ d := by
-  induction cs with
-  | nil => rw [TreeCircuit.maxDepth_nil]; exact Nat.zero_le d
-  | cons c cs ih =>
-    rw [TreeCircuit.maxDepth_cons]
-    exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
-
-/-- A uniform fan-in bound on the members bounds the maximum fan-in of a list: if
-`∀ c ∈ cs, c.maxFanin ≤ d`, then `TreeCircuit.maxFaninL cs ≤ d`.  Glue. -/
-private theorem maxFaninL_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
-    (h : ∀ c ∈ cs, c.maxFanin ≤ d) : TreeCircuit.maxFaninL cs ≤ d := by
-  induction cs with
-  | nil => rw [TreeCircuit.maxFaninL_nil]; exact Nat.zero_le d
-  | cons c cs ih =>
-    rw [TreeCircuit.maxFaninL_cons]
-    exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
-
 /-- **C18.** A composition circuit adds `⌈log₂ w⌉ + 2` levels: if all wires of `F` and `G` have
 depth `≤ d`, then `(wireComp F G i k).depth ≤ d + Nat.clog 2 w + 2` [Bar89, Thm 2 proof, p004-b003].
 
@@ -278,7 +258,7 @@ theorem depth_wireComp_le {F G : Fin w → Fin w → TreeCircuit n} {d : ℕ}
   rw [List.length_map, List.length_finRange]
   have hm : TreeCircuit.maxDepth ((List.finRange w).map fun j =>
       TreeCircuit.and2 (F i j) (G j k)) ≤ d + 1 := by
-    refine maxDepth_le_of_forall fun c hc => ?_
+    refine TreeCircuit.maxDepth_le_of_forall fun c hc => ?_
     obtain ⟨j, -, rfl⟩ := List.mem_map.1 hc
     have h2 := TreeCircuit.depth_and2_le (F i j) (G j k)
     have h3 := hF i j
@@ -294,7 +274,7 @@ private theorem maxFanin_wireComp_le {F G : Fin w → Fin w → TreeCircuit n}
   rw [wireComp_eq]
   simp only [← TreeCircuit.and2_eq]
   refine (TreeCircuit.maxFanin_balanced_le _ _).trans
-    (max_le le_rfl (maxFaninL_le_of_forall fun c hc => ?_))
+    (max_le le_rfl (TreeCircuit.maxFaninL_le_of_forall fun c hc => ?_))
   obtain ⟨j, -, rfl⟩ := List.mem_map.1 hc
   have h2 := TreeCircuit.maxFanin_and2_le (F i j) (G j k)
   have h3 := hF i j
@@ -512,13 +492,13 @@ theorem depth_toFormula_le (B : BranchingProgram w n) (F : Finset (Fin w → Fin
   have hin : TreeCircuit.maxDepth (F.toList.map fun f => TreeCircuit.balanced true
       ((List.finRange w).map fun i => compTree B.instrs i (f i))) ≤
       (Nat.clog 2 w + 2) * Nat.clog 2 B.length + 1 + Nat.clog 2 w + 1 := by
-    refine maxDepth_le_of_forall fun c hc => ?_
+    refine TreeCircuit.maxDepth_le_of_forall fun c hc => ?_
     obtain ⟨f, -, rfl⟩ := List.mem_map.1 hc
     refine (TreeCircuit.depth_balanced_le _ _).trans ?_
     rw [List.length_map, List.length_finRange]
     have hm : TreeCircuit.maxDepth ((List.finRange w).map fun i => compTree B.instrs i (f i)) ≤
         (Nat.clog 2 w + 2) * Nat.clog 2 B.length + 1 := by
-      refine maxDepth_le_of_forall fun c hc => ?_
+      refine TreeCircuit.maxDepth_le_of_forall fun c hc => ?_
       obtain ⟨i, -, rfl⟩ := List.mem_map.1 hc
       exact depth_compTree_le B i (f i)
     omega
@@ -543,10 +523,10 @@ theorem maxFanin_toFormula_le (B : BranchingProgram w n) (F : Finset (Fin w → 
     (B.toFormula F).maxFanin ≤ 2 := by
   rw [toFormula_eq]
   refine (TreeCircuit.maxFanin_balanced_le _ _).trans
-    (max_le le_rfl (maxFaninL_le_of_forall fun c hc => ?_))
+    (max_le le_rfl (TreeCircuit.maxFaninL_le_of_forall fun c hc => ?_))
   obtain ⟨f, -, rfl⟩ := List.mem_map.1 hc
   refine (TreeCircuit.maxFanin_balanced_le _ _).trans
-    (max_le le_rfl (maxFaninL_le_of_forall fun c hc => ?_))
+    (max_le le_rfl (TreeCircuit.maxFaninL_le_of_forall fun c hc => ?_))
   obtain ⟨i, -, rfl⟩ := List.mem_map.1 hc
   exact maxFanin_compTree_le B i (f i)
 

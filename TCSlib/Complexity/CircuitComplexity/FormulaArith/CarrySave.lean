@@ -65,35 +65,6 @@ def val (x : Fin n → Bool) (U : List (TreeCircuit n)) : ℕ :=
 theorem val_eq (x : Fin n → Bool) (U : List (TreeCircuit n)) :
     val x U = bitsVal (U.map fun c => c.eval x) := rfl
 
-/-- A common depth bound of the members bounds the maximum depth of a list:
-`(∀ c ∈ cs, c.depth ≤ d) → TreeCircuit.maxDepth cs ≤ d`.  Glue. -/
-private theorem maxDepth_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
-    (h : ∀ c ∈ cs, c.depth ≤ d) : TreeCircuit.maxDepth cs ≤ d := by
-  induction cs with
-  | nil => rw [TreeCircuit.maxDepth_nil]; exact Nat.zero_le d
-  | cons c cs ih =>
-      rw [TreeCircuit.maxDepth_cons]
-      exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
-
-/-- A common fan-in bound of the members bounds the maximum fan-in of a list:
-`(∀ c ∈ cs, c.maxFanin ≤ d) → TreeCircuit.maxFaninL cs ≤ d`.  Glue. -/
-private theorem maxFaninL_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
-    (h : ∀ c ∈ cs, c.maxFanin ≤ d) : TreeCircuit.maxFaninL cs ≤ d := by
-  induction cs with
-  | nil => rw [TreeCircuit.maxFaninL_nil]; exact Nat.zero_le d
-  | cons c cs ih =>
-      rw [TreeCircuit.maxFaninL_cons]
-      exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
-
-/-- Bits that are `false` from position `i` on add nothing: for `i ≤ m`,
-`(∀ j, i ≤ j → f j = false) → prefixVal f m = prefixVal f i`.  Glue. -/
-private theorem prefixVal_eq_of_false {f : ℕ → Bool} {i m : ℕ} (hle : i ≤ m)
-    (h : ∀ j, i ≤ j → f j = false) : prefixVal f m = prefixVal f i := by
-  induction m, hle using Nat.le_induction with
-  | base => rfl
-  | succ m him ih =>
-      rw [prefixVal_succ, ih, h m him, Bool.toNat_false, Nat.zero_mul, Nat.add_zero]
-
 /-- A formula number is the value of its bits padded by `const false`, over any `m ≥ |U|`
 bits: `U.length ≤ m →
 val x U = prefixVal (fun j => (U.getD j (TreeCircuit.const false)).eval x) m`.  Glue. -/
@@ -211,7 +182,7 @@ theorem csaStep_val (x : Fin n → Bool) (A B C : List (TreeCircuit n)) :
 
 /-- A padded bit is no deeper than a common bound `d ≥ 1` of the members:
 `(∀ c ∈ U, c.depth ≤ d) → 1 ≤ d → (U.getD i (TreeCircuit.const false)).depth ≤ d`.  Glue. -/
-private theorem depth_getD_le {U : List (TreeCircuit n)} {d : ℕ} (h : ∀ c ∈ U, c.depth ≤ d)
+theorem depth_getD_le {U : List (TreeCircuit n)} {d : ℕ} (h : ∀ c ∈ U, c.depth ≤ d)
     (hd : 1 ≤ d) (i : ℕ) : (U.getD i (TreeCircuit.const false)).depth ≤ d := by
   by_cases hi : i < U.length
   · rw [List.getD_eq_getElem U _ hi]
@@ -221,7 +192,7 @@ private theorem depth_getD_le {U : List (TreeCircuit n)} {d : ℕ} (h : ∀ c �
 
 /-- A padded bit has fan-in at most a common bound of the members:
 `(∀ c ∈ U, c.maxFanin ≤ d) → (U.getD i (TreeCircuit.const false)).maxFanin ≤ d`.  Glue. -/
-private theorem maxFanin_getD_le {U : List (TreeCircuit n)} {d : ℕ}
+theorem maxFanin_getD_le {U : List (TreeCircuit n)} {d : ℕ}
     (h : ∀ c ∈ U, c.maxFanin ≤ d) (i : ℕ) :
     (U.getD i (TreeCircuit.const false)).maxFanin ≤ d := by
   by_cases hi : i < U.length
@@ -257,7 +228,7 @@ theorem depth_csaStep_le (A B C : List (TreeCircuit n)) :
   have hC := hd C fun c hc => List.mem_append_right _ hc
   -- Step 2: every output bit (`xor3`, `const false`, `maj3`) lies within that plus `4`
   rw [csaStep_eq]
-  apply maxDepth_le_of_forall
+  apply TreeCircuit.maxDepth_le_of_forall
   intro c hc
   simp only [List.mem_append, List.mem_cons, List.mem_map, List.mem_range] at hc
   rcases hc with ⟨i, -, rfl⟩ | rfl | ⟨i, -, rfl⟩
@@ -293,7 +264,7 @@ theorem maxFaninL_csaStep_le (A B C : List (TreeCircuit n)) :
   have hC := hf C fun c hc => List.mem_append_right _ hc
   -- Step 2: every output bit has fan-in at most `max 2 (maxFaninL (A ++ B ++ C))`
   rw [csaStep_eq]
-  apply maxFaninL_le_of_forall
+  apply TreeCircuit.maxFaninL_le_of_forall
   intro c hc
   simp only [List.mem_append, List.mem_cons, List.mem_map, List.mem_range] at hc
   rcases hc with ⟨i, -, rfl⟩ | rfl | ⟨i, -, rfl⟩
@@ -470,11 +441,12 @@ private theorem depth_csaLayer_le {d : ℕ} (hd : 1 ≤ d) :
     ∀ Us : List (List (TreeCircuit n)), (∀ c ∈ Us.flatten, c.depth ≤ d) →
       ∀ c ∈ (csaLayer Us).flatten, c.depth ≤ d + 4
   | A :: B :: C :: Us, h => by
-      have hABC : TreeCircuit.maxDepth (A ++ B ++ C) ≤ d := maxDepth_le_of_forall fun c hc => by
-        refine h c ?_
-        rw [List.flatten_cons, List.flatten_cons, List.flatten_cons, ← List.append_assoc,
-          ← List.append_assoc]
-        exact List.mem_append_left _ hc
+      have hABC : TreeCircuit.maxDepth (A ++ B ++ C) ≤ d :=
+        TreeCircuit.maxDepth_le_of_forall fun c hc => by
+          refine h c ?_
+          rw [List.flatten_cons, List.flatten_cons, List.flatten_cons, ← List.append_assoc,
+            ← List.append_assoc]
+          exact List.mem_append_left _ hc
       have hSK := depth_csaStep_le A B C
       have hUs := depth_csaLayer_le hd Us fun c hc => by
         refine h c ?_
@@ -500,11 +472,12 @@ private theorem maxFanin_csaLayer_le {d : ℕ} (hd : 2 ≤ d) :
     ∀ Us : List (List (TreeCircuit n)), (∀ c ∈ Us.flatten, c.maxFanin ≤ d) →
       ∀ c ∈ (csaLayer Us).flatten, c.maxFanin ≤ d
   | A :: B :: C :: Us, h => by
-      have hABC : TreeCircuit.maxFaninL (A ++ B ++ C) ≤ d := maxFaninL_le_of_forall fun c hc => by
-        refine h c ?_
-        rw [List.flatten_cons, List.flatten_cons, List.flatten_cons, ← List.append_assoc,
-          ← List.append_assoc]
-        exact List.mem_append_left _ hc
+      have hABC : TreeCircuit.maxFaninL (A ++ B ++ C) ≤ d :=
+        TreeCircuit.maxFaninL_le_of_forall fun c hc => by
+          refine h c ?_
+          rw [List.flatten_cons, List.flatten_cons, List.flatten_cons, ← List.append_assoc,
+            ← List.append_assoc]
+          exact List.mem_append_left _ hc
       have hSK := maxFaninL_csaStep_le A B C
       have hUs := maxFanin_csaLayer_le hd Us fun c hc => by
         refine h c ?_
@@ -592,7 +565,7 @@ theorem depth_csaReduce_le (Us : List (List (TreeCircuit n))) :
         omega
   -- Step 2: the read-off numbers are members of the final list
   rw [csaReduce_eq]
-  refine maxDepth_le_of_forall fun c hc => hj (csaLevels Us.length) c ?_
+  refine TreeCircuit.maxDepth_le_of_forall fun c hc => hj (csaLevels Us.length) c ?_
   rcases List.mem_append.1 hc with hc | hc
   · exact mem_flatten_of_mem_getD hc
   · exact mem_flatten_of_mem_getD hc
@@ -622,7 +595,7 @@ theorem maxFaninL_csaReduce_le (Us : List (List (TreeCircuit n))) :
         exact maxFanin_csaLayer_le (le_max_left _ _) _ ih c hc
   -- Step 2: the read-off numbers are members of the final list
   rw [csaReduce_eq]
-  refine maxFaninL_le_of_forall fun c hc => hj (csaLevels Us.length) c ?_
+  refine TreeCircuit.maxFaninL_le_of_forall fun c hc => hj (csaLevels Us.length) c ?_
   rcases List.mem_append.1 hc with hc | hc
   · exact mem_flatten_of_mem_getD hc
   · exact mem_flatten_of_mem_getD hc

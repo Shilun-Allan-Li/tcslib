@@ -62,35 +62,6 @@ def bitAt (x : Fin n → Bool) (U : List (TreeCircuit n)) (j : ℕ) : Bool :=
 theorem bitAt_eq (x : Fin n → Bool) (U : List (TreeCircuit n)) (j : ℕ) :
     bitAt x U j = (U.map fun c => c.eval x).getD j false := rfl
 
-/-- A common depth bound of the members bounds the maximum depth of a list:
-`(∀ c ∈ cs, c.depth ≤ d) → TreeCircuit.maxDepth cs ≤ d`.  Glue. -/
-private theorem maxDepth_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
-    (h : ∀ c ∈ cs, c.depth ≤ d) : TreeCircuit.maxDepth cs ≤ d := by
-  induction cs with
-  | nil => rw [TreeCircuit.maxDepth_nil]; exact Nat.zero_le d
-  | cons c cs ih =>
-      rw [TreeCircuit.maxDepth_cons]
-      exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
-
-/-- A common fan-in bound of the members bounds the maximum fan-in of a list:
-`(∀ c ∈ cs, c.maxFanin ≤ d) → TreeCircuit.maxFaninL cs ≤ d`.  Glue. -/
-private theorem maxFaninL_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
-    (h : ∀ c ∈ cs, c.maxFanin ≤ d) : TreeCircuit.maxFaninL cs ≤ d := by
-  induction cs with
-  | nil => rw [TreeCircuit.maxFaninL_nil]; exact Nat.zero_le d
-  | cons c cs ih =>
-      rw [TreeCircuit.maxFaninL_cons]
-      exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
-
-/-- Bits that are `false` from position `i` on add nothing: for `i ≤ m`,
-`(∀ j, i ≤ j → f j = false) → prefixVal f m = prefixVal f i`.  Glue. -/
-private theorem prefixVal_eq_of_false {f : ℕ → Bool} {i m : ℕ} (hle : i ≤ m)
-    (h : ∀ j, i ≤ j → f j = false) : prefixVal f m = prefixVal f i := by
-  induction m, hle using Nat.le_induction with
-  | base => rfl
-  | succ m him ih =>
-      rw [prefixVal_succ, ih, h m him, Bool.toNat_false, Nat.zero_mul, Nat.add_zero]
-
 /-- A bit padded by `const false` evaluates to the bit sequence:
 `(U.getD j (TreeCircuit.const false)).eval x = bitAt x U j`.  Glue. -/
 private theorem eval_getD_const (x : Fin n → Bool) (U : List (TreeCircuit n)) (j : ℕ) :
@@ -109,27 +80,6 @@ private theorem val_eq_prefixVal_bitAt (x : Fin n → Bool) {U : List (TreeCircu
     _ = prefixVal (bitAt x U) m :=
         (prefixVal_eq_of_false hm fun j hj => by
           rw [bitAt_eq, List.getD_eq_default _ _ (by rw [List.length_map]; exact hj)]).symm
-
-/-- A padded bit is no deeper than a common bound `d ≥ 1` of the members:
-`(∀ c ∈ U, c.depth ≤ d) → 1 ≤ d → (U.getD i (TreeCircuit.const false)).depth ≤ d`.  Glue. -/
-private theorem depth_getD_le {U : List (TreeCircuit n)} {d : ℕ} (h : ∀ c ∈ U, c.depth ≤ d)
-    (hd : 1 ≤ d) (i : ℕ) : (U.getD i (TreeCircuit.const false)).depth ≤ d := by
-  by_cases hi : i < U.length
-  · rw [List.getD_eq_getElem U _ hi]
-    exact h _ (List.getElem_mem hi)
-  · rw [List.getD_eq_default U _ (Nat.le_of_not_lt hi), TreeCircuit.depth_const]
-    exact hd
-
-/-- A padded bit has fan-in at most a common bound of the members:
-`(∀ c ∈ U, c.maxFanin ≤ d) → (U.getD i (TreeCircuit.const false)).maxFanin ≤ d`.  Glue. -/
-private theorem maxFanin_getD_le {U : List (TreeCircuit n)} {d : ℕ}
-    (h : ∀ c ∈ U, c.maxFanin ≤ d) (i : ℕ) :
-    (U.getD i (TreeCircuit.const false)).maxFanin ≤ d := by
-  by_cases hi : i < U.length
-  · rw [List.getD_eq_getElem U _ hi]
-    exact h _ (List.getElem_mem hi)
-  · rw [List.getD_eq_default U _ (Nat.le_of_not_lt hi), TreeCircuit.maxFanin_const]
-    exact Nat.zero_le d
 
 /-- The carry into bit position `b` of `U + W`, by generate/propagate: with `U_j, W_j` the bits
 padded by `const false`, `carryOut U W b = ⋁_{j < b} ⋀ [U_j ∧ W_j, U_{j+1} ∨ W_{j+1}, …,
@@ -293,13 +243,13 @@ theorem depth_carryOut_le (U W : List (TreeCircuit n)) (b : ℕ) :
   rw [carryOut_eq]
   refine le_trans (TreeCircuit.depth_balanced_le false _) ?_
   rw [List.length_map, List.length_range]
-  refine le_trans (Nat.add_le_add_right (Nat.add_le_add_right (maxDepth_le_of_forall
+  refine le_trans (Nat.add_le_add_right (Nat.add_le_add_right (TreeCircuit.maxDepth_le_of_forall
     (d := max 1 (TreeCircuit.maxDepth (U ++ W)) + Nat.clog 2 b + 2) fun c hc => ?_) _) _) ?_
   · -- Step 3: each inner balanced tree over at most `b` gates `and2`/`or2`
     obtain ⟨j, hj, rfl⟩ := List.mem_map.1 hc
     rw [List.mem_range] at hj
     refine le_trans (TreeCircuit.depth_balanced_le true _) ?_
-    refine le_trans (Nat.add_le_add_right (Nat.add_le_add (maxDepth_le_of_forall
+    refine le_trans (Nat.add_le_add_right (Nat.add_le_add (TreeCircuit.maxDepth_le_of_forall
       (d := max 1 (TreeCircuit.maxDepth (U ++ W)) + 1) fun c hc => ?_)
       (Nat.clog_mono_right 2 (?_ : _ ≤ b))) _) ?_
     · rcases List.mem_cons.1 hc with rfl | hc
@@ -333,10 +283,10 @@ theorem maxFanin_carryOut_le (U W : List (TreeCircuit n)) (b : ℕ) :
   -- Step 2: both balanced trees, then the `and2`/`or2` items
   rw [carryOut_eq]
   refine le_trans (TreeCircuit.maxFanin_balanced_le false _)
-    (max_le (le_max_left _ _) (maxFaninL_le_of_forall fun c hc => ?_))
+    (max_le (le_max_left _ _) (TreeCircuit.maxFaninL_le_of_forall fun c hc => ?_))
   obtain ⟨j, -, rfl⟩ := List.mem_map.1 hc
   refine le_trans (TreeCircuit.maxFanin_balanced_le true _)
-    (max_le (le_max_left _ _) (maxFaninL_le_of_forall fun c hc => ?_))
+    (max_le (le_max_left _ _) (TreeCircuit.maxFaninL_le_of_forall fun c hc => ?_))
   rcases List.mem_cons.1 hc with rfl | hc
   · refine (TreeCircuit.maxFanin_and2_le _ _).trans ?_
     have := hU j; have := hW j
@@ -358,13 +308,6 @@ def constBits (p c : ℕ) : List (TreeCircuit n) :=
 theorem constBits_eq (p c : ℕ) :
     (constBits p c : List (TreeCircuit n)) =
       (List.range p).map fun j => TreeCircuit.const (c.testBit j) := rfl
-
-/-- The low `p` bits of `c` have the value `c mod 2 ^ p`: `prefixVal c.testBit p = c % 2 ^ p`.
-Glue. -/
-private theorem prefixVal_testBit (c p : ℕ) : prefixVal c.testBit p = c % 2 ^ p := by
-  induction p with
-  | zero => rw [prefixVal_zero, Nat.pow_zero, Nat.mod_one]
-  | succ p ih => rw [prefixVal_succ, ih, Nat.mod_pow_succ, Nat.toNat_testBit, Nat.mul_comm]
 
 /-- The comparison of `U + W` with the constant `c`: with `p = max |U| |W| + 1` (so that
 `val U + val W < 2 ^ p`), `geConst U W c` is `const true` for `c = 0`, `const false` for
@@ -512,7 +455,7 @@ theorem depth_geConst_le (U W : List (TreeCircuit n)) (c : ℕ) :
     omega
   -- Step 1: the inputs of the carry-save step, the constant bits included, lie within `D`
   have hin : TreeCircuit.maxDepth (U ++ W ++ constBits p (2 ^ p - c)) ≤
-      max 1 (TreeCircuit.maxDepth (U ++ W)) := maxDepth_le_of_forall fun d hd => by
+      max 1 (TreeCircuit.maxDepth (U ++ W)) := TreeCircuit.maxDepth_le_of_forall fun d hd => by
     rcases List.mem_append.1 hd with hd | hd
     · exact (TreeCircuit.depth_le_maxDepth hd).trans (le_max_right _ _)
     · rw [constBits_eq] at hd
@@ -540,7 +483,7 @@ theorem maxFanin_geConst_le (U W : List (TreeCircuit n)) (c : ℕ) :
   · rw [TreeCircuit.maxFanin_const]
     exact Nat.zero_le _
   have hin : TreeCircuit.maxFaninL (U ++ W ++ constBits p (2 ^ p - c)) ≤
-      TreeCircuit.maxFaninL (U ++ W) := maxFaninL_le_of_forall fun d hd => by
+      TreeCircuit.maxFaninL (U ++ W) := TreeCircuit.maxFaninL_le_of_forall fun d hd => by
     rcases List.mem_append.1 hd with hd | hd
     · exact TreeCircuit.maxFanin_le_maxFaninL hd
     · rw [constBits_eq] at hd

@@ -110,34 +110,6 @@ theorem modSumInterval_eq {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ) :
               (Nat.clog 2 M + Nat.clog 2 q))
             (j * q + hi)).neg) := rfl
 
-/-- A list of formulas has `maxDepth` at most `d` when every member has depth at most `d`:
-`(∀ c ∈ cs, c.depth ≤ d) → TreeCircuit.maxDepth cs ≤ d`.  Glue. -/
-private theorem maxDepth_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
-    (h : ∀ c ∈ cs, c.depth ≤ d) : TreeCircuit.maxDepth cs ≤ d := by
-  induction cs with
-  | nil => rw [TreeCircuit.maxDepth_nil]; exact Nat.zero_le d
-  | cons c cs ih =>
-      rw [TreeCircuit.maxDepth_cons]
-      exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
-
-/-- A list of formulas has `maxFaninL` at most `d` when every member has fan-in at most `d`:
-`(∀ c ∈ cs, c.maxFanin ≤ d) → TreeCircuit.maxFaninL cs ≤ d`.  Glue. -/
-private theorem maxFaninL_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
-    (h : ∀ c ∈ cs, c.maxFanin ≤ d) : TreeCircuit.maxFaninL cs ≤ d := by
-  induction cs with
-  | nil => rw [TreeCircuit.maxFaninL_nil]; exact Nat.zero_le d
-  | cons c cs ih =>
-      rw [TreeCircuit.maxFaninL_cons]
-      exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
-
-/-- The low `p` bits of `c` have value `c mod 2 ^ p`: `prefixVal c.testBit p = c % 2 ^ p`.
-Glue. -/
-private theorem prefixVal_testBit (c p : ℕ) : prefixVal c.testBit p = c % 2 ^ p := by
-  induction p with
-  | zero => rw [prefixVal_zero, pow_zero, Nat.mod_one]
-  | succ p ih =>
-      rw [prefixVal_succ, ih, Nat.mod_pow_succ, Nat.toNat_testBit, Nat.mul_comm]
-
 /-- A masked constant has the value `x_i · a` when `a < 2 ^ p`:
 `a < 2 ^ p → val x (maskedConst i a p) = (x i).toNat * a`.  Glue.
 
@@ -336,7 +308,7 @@ theorem depth_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ) :
   set W := (csaReduce Us).2.take w with hW
   -- Step 1: the masked bits have depth at most `1`, so the reduction is `≤ 1 + 4 csaLevels M`
   have hbits : TreeCircuit.maxDepth Us.flatten ≤ 1 := by
-    refine maxDepth_le_of_forall fun c hc => ?_
+    refine TreeCircuit.maxDepth_le_of_forall fun c hc => ?_
     obtain ⟨V, hV, hcV⟩ := List.mem_flatten.1 hc
     obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hV
     rw [maskedConst_eq] at hcV
@@ -347,7 +319,7 @@ theorem depth_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ) :
   have hred : TreeCircuit.maxDepth (U ++ W) ≤ 1 + 4 * csaLevels M := by
     have h := depth_csaReduce_le Us
     rw [hUs, List.length_ofFn, ← hUs, max_eq_left hbits] at h
-    refine maxDepth_le_of_forall fun c hc => ?_
+    refine TreeCircuit.maxDepth_le_of_forall fun c hc => ?_
     refine le_trans (TreeCircuit.depth_le_maxDepth ?_) h
     rcases List.mem_append.1 hc with hc | hc
     · exact List.mem_append_left _ (List.mem_of_mem_take hc)
@@ -368,7 +340,7 @@ theorem depth_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ) :
   have hterms : TreeCircuit.maxDepth ((List.range (max M 1)).map fun j =>
       TreeCircuit.and2 (geConst U W (j * q + lo)) (geConst U W (j * q + hi)).neg) ≤
       4 * csaLevels M + 2 * Nat.clog 2 (w + 1) + 9 := by
-    refine maxDepth_le_of_forall fun c hc => ?_
+    refine TreeCircuit.maxDepth_le_of_forall fun c hc => ?_
     obtain ⟨j, -, rfl⟩ := List.mem_map.1 hc
     refine (TreeCircuit.depth_and2_le _ _).trans ?_
     rw [TreeCircuit.depth_neg]
@@ -413,7 +385,7 @@ theorem maxFanin_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ)
   set W := (csaReduce Us).2.take w
   -- the masked bits have fan-in `0`, so the reduction and its trimming have fan-in `≤ 2`
   have hbits : TreeCircuit.maxFaninL Us.flatten ≤ 0 := by
-    refine maxFaninL_le_of_forall fun c hc => ?_
+    refine TreeCircuit.maxFaninL_le_of_forall fun c hc => ?_
     obtain ⟨V, hV, hcV⟩ := List.mem_flatten.1 hc
     obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hV
     rw [maskedConst_eq] at hcV
@@ -424,7 +396,7 @@ theorem maxFanin_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ)
   have hred : TreeCircuit.maxFaninL (U ++ W) ≤ 2 := by
     have h := maxFaninL_csaReduce_le Us
     rw [Nat.le_zero.1 hbits, max_eq_left (Nat.zero_le 2)] at h
-    refine maxFaninL_le_of_forall fun c hc => ?_
+    refine TreeCircuit.maxFaninL_le_of_forall fun c hc => ?_
     refine le_trans (TreeCircuit.maxFanin_le_maxFaninL ?_) h
     rcases List.mem_append.1 hc with hc | hc
     · exact List.mem_append_left _ (List.mem_of_mem_take hc)
@@ -433,7 +405,7 @@ theorem maxFanin_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ)
     (maxFanin_geConst_le U W c).trans (max_le le_rfl hred)
   rw [modSumInterval_eq, ← hUs, ← hw]
   refine (TreeCircuit.maxFanin_balanced_le false _).trans (max_le le_rfl ?_)
-  refine maxFaninL_le_of_forall fun c hc => ?_
+  refine TreeCircuit.maxFaninL_le_of_forall fun c hc => ?_
   obtain ⟨j, -, rfl⟩ := List.mem_map.1 hc
   refine (TreeCircuit.maxFanin_and2_le _ _).trans (max_le le_rfl (max_le (hcmp _) ?_))
   rw [TreeCircuit.maxFanin_neg]
