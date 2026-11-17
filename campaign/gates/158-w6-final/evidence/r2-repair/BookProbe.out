@@ -1,0 +1,12 @@
+@Complexity.ntime_hierarchy_book : ∀ {f g : ℕ → ℕ},
+  Complexity.TimeConstructible f →
+    Complexity.TimeConstructible g →
+      Monotone f →
+        (∀ (A : ℕ), ∃ N, ∀ n ≥ N, A * f (n + 1) ≤ g n) → Complexity.NTIME f ⊂ Complexity.NTIME fun n => g n + 1
+@Complexity.ntime_hierarchy_book_of_pos : ∀ {f g : ℕ → ℕ},
+  Complexity.TimeConstructible f →
+    Complexity.TimeConstructible g →
+      Monotone f →
+        (∀ (n : ℕ), 0 < g n) → (∀ (A : ℕ), ∃ N, ∀ n ≥ N, A * f (n + 1) ≤ g n) → Complexity.NTIME f ⊂ Complexity.NTIME g
+'Complexity.ntime_hierarchy_book' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.ntime_hierarchy_book_of_pos' depends on axioms: [propext, Classical.choice, Quot.sound]

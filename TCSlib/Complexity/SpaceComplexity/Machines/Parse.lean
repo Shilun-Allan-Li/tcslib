@@ -32,6 +32,15 @@ has the comparison of a register with the index of a plain input (`jeqPlain_run`
 * `Complexity.LogProg.xCfg` — a configuration with the input head and one register head
   moved.
 
+## Main results
+
+* `Complexity.LogProg.jeqPlain_run` — on the input `⟨1ⁿ, w⟩`, the fragment compares `w` with the
+  binary word on a register, ending in `yes` exactly when they are equal, with both heads back
+  home.
+* `Complexity.LogProg.cmpPlain_run` — the lockstep comparison walk it is built from.
+* `Complexity.LogProg.canon_eq_bits` — a word without trailing `0` is the binary word of its
+  value.
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,

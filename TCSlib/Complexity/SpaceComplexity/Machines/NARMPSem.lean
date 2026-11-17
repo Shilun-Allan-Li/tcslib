@@ -420,7 +420,13 @@ theorem searchUp_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (r
     exact ih (c₀ + 1) (by omega) (fun c' h1 h2 => hmin c' (by omega) h2) (by omega)
 
 /-- **Searching downwards**: from `r = c₀`, the loop `dec: r--; test: if P r goto yes else
-dec` stops at the greatest `c < c₀` with `P c`. -/
+dec` stops at the greatest `c < c₀` with `P c`.
+
+**Proof sketch.** Induction on `c₀ - (c + 1)`. Each round is two steps: `dec` sets `r` to
+`c₀ - 1`, then `test` checks `P (c₀ - 1)`. At `c₀ = c + 1` the test succeeds (`hc`) and the
+loop stops at `yes`. Otherwise `P (c₀ - 1)` fails (`hmax`), the test returns to `dec`, and the
+induction hypothesis applies at `c₀ - 1`. The register stays at most `B` throughout
+(`register_update_le`). -/
 theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (r : Fin m)
     (P : ℕ → Prop) [DecidablePred P] (dec test yes : Λ) (B : ℕ) (v : Fin m → ℕ)
     (hv : ∀ s, v s ≤ B)
@@ -432,12 +438,15 @@ theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
       AReach A oracle x (GuardLe A x B) (some dec, Function.update v r c₀, none)
         (some yes, Function.update v r c, none) := by
   intro c₀ hlt hB hmax
+  have hpd : ∀ w : Fin m → ℕ, PreS A x (some dec, w, none) := fun _ =>
+    preS_of_ins (by intros; simp_all) (by intros; simp_all) (by intros; simp_all)
+      (by intros; simp_all) (by intros; simp_all)
   generalize hk : c₀ - (c + 1) = k
   induction k generalizing c₀ with
   | zero =>
     have he : c₀ - 1 = c := by omega
     have hb : ∀ s, Function.update v r c₀ s ≤ B := register_update_le v r B _ hv hB
-    refine AReach.step ⟨by simp [PreS, hdec], hb⟩ ?_
+    refine AReach.step ⟨hpd _, hb⟩ ?_
     simp only [astep_dec hdec, Function.update_self, Function.update_idem, he]
     refine AReach.step ⟨hpre _, register_update_le v r B _ hv (by omega)⟩ ?_
     rw [htest, if_pos hc]
@@ -445,7 +454,7 @@ theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
   | succ k ih =>
     have hb : ∀ s, Function.update v r c₀ s ≤ B := register_update_le v r B _ hv hB
     have hn : ¬ P (c₀ - 1) := hmax _ (by omega) (by omega)
-    refine AReach.step ⟨by simp [PreS, hdec], hb⟩ ?_
+    refine AReach.step ⟨hpd _, hb⟩ ?_
     simp only [astep_dec hdec, Function.update_self, Function.update_idem]
     refine AReach.step ⟨hpre _, register_update_le v r B _ hv (by omega)⟩ ?_
     rw [htest, if_neg hn]
