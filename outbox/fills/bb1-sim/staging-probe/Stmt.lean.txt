@@ -1,0 +1,72 @@
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity
+import TCSlib.Cryptography.Games.Relational
+import Lean
+
+/-! Staging probe for the bb1-sim T2/T3 fill (issued-fill-r1). Not for landing.
+At the check tree with the ten approved readers inserted: the targets and readers elaborate,
+their types are printed, and the sorried constants reached by `bb1_sidSecure` are traced. -/
+
+open Lean Elab Command in
+elab "#sorry_trace " n:ident : command => do
+  let env ← getEnv
+  let root := n.getId
+  let mut seen : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut hits : Array Name := #[]
+  let mut fuel := 1000000
+  while fuel > 0 && stack.size > 0 do
+    fuel := fuel - 1
+    let c := stack.back!
+    stack := stack.pop
+    if seen.contains c then continue
+    seen := seen.insert c
+    match env.find? c with
+    | none => pure ()
+    | some ci =>
+      let refs := ci.getUsedConstantsAsSet
+      if refs.contains ``sorryAx then hits := hits.push c
+      for r in refs do
+        unless seen.contains r do stack := stack.push r
+  logInfo m!"TRACE {root}: closure {seen.size}; direct sorryAx users: {hits.qsort Name.lt}"
+
+namespace T23Probe
+open TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+#check @bb1_sim_real
+#check @bb1_sim_random
+#check @bb1_sidSecure
+#check @exists_bb1_distinguisher
+#check @TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel
+#check @TCSlib.Cryptography.Games.ProbComp.expect_sample_rel
+#check @TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel
+#check @IBEScheme.sidImpl_zero_onSpec
+#check @IBEScheme.sidImpl_two_onSpec
+#check @IBEScheme.sidImpl_one_onQuery
+#check @IBEScheme.sidImpl_two_onQuery
+#check @IBEScheme.sidImpl_keyGen_ne_onSpec
+#check @IBEScheme.sidImpl_challenge_fresh_onSpec
+#check @bb1Scheme_setup_eq
+#check @bb1Scheme_keyGen_bind
+#check @bb1Scheme_enc_bind
+#check @ofFn_bb1Scheme_encCT
+
+#print axioms bb1_sidSecure
+#print axioms exists_bb1_distinguisher
+#print axioms TCSlib.Cryptography.Pairing.BilinearGen.bdhAssumption_of_dbdhAssumption
+#print axioms IBEScheme.sidImpl_zero_onSpec
+#print axioms IBEScheme.sidImpl_two_onSpec
+#print axioms IBEScheme.sidImpl_one_onQuery
+#print axioms IBEScheme.sidImpl_two_onQuery
+#print axioms IBEScheme.sidImpl_keyGen_ne_onSpec
+#print axioms IBEScheme.sidImpl_challenge_fresh_onSpec
+#print axioms bb1Scheme_setup_eq
+#print axioms bb1Scheme_keyGen_bind
+#print axioms bb1Scheme_enc_bind
+#print axioms ofFn_bb1Scheme_encCT
+
+#sorry_trace TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sidSecure
+#sorry_trace TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_real
+#sorry_trace TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_random
+#sorry_trace TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel
+
+end T23Probe

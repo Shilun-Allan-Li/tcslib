@@ -1,0 +1,161 @@
+bb1_sim_real : ∀ (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (A : Complexity.NUPPT) (q : ℕ)
+  (b : Bool) (κ : ℕ),
+  TCSlib.Cryptography.Games.advantage ((bb1Scheme G ℓ).sidGame A q b κ) (bb1SimGame G ℓ A q b true κ) ≤
+    TCSlib.Cryptography.uprob fun r => (G.inst κ r).order < 2 ^ ℓ.eval κ
+bb1_sim_random : ∀ (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (A : Complexity.NUPPT)
+  (q κ : ℕ),
+  TCSlib.Cryptography.Games.advantage (bb1SimGame G ℓ A q false false κ) (bb1SimGame G ℓ A q true false κ) = 0
+bb1_sidSecure : ∀ (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr),
+  TCSlib.Cryptography.Candidates.ArithmeticFP →
+    ∀ (O : G.Ops),
+      (∃ δ, TCSlib.Cryptography.Negligible δ ∧ G.OrderAtLeastExcept (fun κ => 2 ^ ℓ.eval κ) δ) →
+        G.DBDHAssumption → (bb1Scheme G ℓ).SIDSecure
+exists_bb1_distinguisher : ∀ (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr),
+  TCSlib.Cryptography.Candidates.ArithmeticFP →
+    ∀ (O : G.Ops) (A : Complexity.NUPPT) (q : Complexity.PolyExpr),
+      ∃ D σ,
+        TCSlib.Cryptography.Negligible σ ∧
+          ∀ (b real : Bool) (κ : ℕ),
+            TCSlib.Cryptography.Games.advantage (bb1SimGame G ℓ A (q.eval κ) b real κ) (G.dbdhGame (D b) real κ) ≤ σ κ
+@TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel : ∀ {ι : Type} {spec : TCSlib.Cryptography.Games.OracleSpec ι}
+  {σ τ α : Type} (impl₀ : TCSlib.Cryptography.Games.QueryImpl spec σ TCSlib.Cryptography.Games.unifSpec)
+  (impl₁ : TCSlib.Cryptography.Games.QueryImpl spec τ TCSlib.Cryptography.Games.unifSpec) (R : σ → τ → Prop),
+  (∀ (i : ι) (x : spec.dom i) (s : σ) (t : τ),
+      R s t →
+        ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+          (∀ (y : spec.rng i) (s' : σ) (t' : τ), R s' t' → g₀ (y, s') = g₁ (y, t')) →
+            TCSlib.Cryptography.Games.ProbComp.expect (impl₀ i x s) g₀ =
+              TCSlib.Cryptography.Games.ProbComp.expect (impl₁ i x t) g₁) →
+    ∀ (c : TCSlib.Cryptography.Games.OracleComp spec α) (G₀ : α × σ → ℝ) (G₁ : α × τ → ℝ),
+      (∀ (a : α) (s' : σ) (t' : τ), R s' t' → G₀ (a, s') = G₁ (a, t')) →
+        ∀ {s : σ} {t : τ},
+          R s t →
+            TCSlib.Cryptography.Games.ProbComp.expect (TCSlib.Cryptography.Games.simulate impl₀ c s) G₀ =
+              TCSlib.Cryptography.Games.ProbComp.expect (TCSlib.Cryptography.Games.simulate impl₁ c t) G₁
+@TCSlib.Cryptography.Games.ProbComp.expect_sample_rel : ∀ {σ τ U V β : Type} [inst : Fintype U] [inst_1 : Nonempty U]
+  [inst_2 : Fintype V] [inst_3 : Nonempty V] (R : σ → τ → Prop) (e : U ≃ V) (f₀ : U → β × σ) (f₁ : V → β × τ),
+  (∀ (u : U), (f₀ u).1 = (f₁ (e u)).1 ∧ R (f₀ u).2 (f₁ (e u)).2) →
+    ∀ (g₀ : β × σ → ℝ) (g₁ : β × τ → ℝ),
+      (∀ (y : β) (s' : σ) (t' : τ), R s' t' → g₀ (y, s') = g₁ (y, t')) →
+        TCSlib.Cryptography.Games.ProbComp.expect
+            (TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample U) fun u =>
+              TCSlib.Cryptography.Games.OracleComp.pure (f₀ u))
+            g₀ =
+          TCSlib.Cryptography.Games.ProbComp.expect
+            (TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample V) fun v =>
+              TCSlib.Cryptography.Games.OracleComp.pure (f₁ v))
+            g₁
+@TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel : ∀ {ι : Type} {spec : TCSlib.Cryptography.Games.OracleSpec ι}
+  {σ τ α : Type} (impl₀ : TCSlib.Cryptography.Games.QueryImpl spec σ TCSlib.Cryptography.Games.unifSpec)
+  (impl₁ : TCSlib.Cryptography.Games.QueryImpl spec τ TCSlib.Cryptography.Games.unifSpec) (R : σ → τ → Prop),
+  (∀ (i : ι) (x : spec.dom i) (s : σ) (t : τ),
+      R s t →
+        ∀ (g₀ : spec.rng i × σ → ℝ) (g₁ : spec.rng i × τ → ℝ),
+          (∀ (y : spec.rng i) (s' : σ) (t' : τ), R s' t' → g₀ (y, s') = g₁ (y, t')) →
+            TCSlib.Cryptography.Games.ProbComp.expect (impl₀ i x s) g₀ =
+              TCSlib.Cryptography.Games.ProbComp.expect (impl₁ i x t) g₁) →
+    ∀ (c : TCSlib.Cryptography.Games.OracleComp spec α) (P : α → Prop) {s : σ} {t : τ},
+      R s t →
+        (TCSlib.Cryptography.Games.ProbComp.prob (TCSlib.Cryptography.Games.simulate impl₀ c s) fun p => P p.1) =
+          TCSlib.Cryptography.Games.ProbComp.prob (TCSlib.Cryptography.Games.simulate impl₁ c t) fun p => P p.1
+IBEScheme.sidImpl_zero_onSpec : ∀ (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 0) (s : S.SidState κ),
+  S.sidImpl b κ pp msk 0 x s =
+    (S.sidImpl b κ pp msk 0 (cast ⋯ x) s).bind fun p => TCSlib.Cryptography.Games.OracleComp.pure (cast ⋯ p.1, p.2)
+IBEScheme.sidImpl_two_onSpec : ∀ (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 2) (s : S.SidState κ),
+  S.sidImpl b κ pp msk 2 x s =
+    (S.sidImpl b κ pp msk 2 (cast ⋯ x) s).bind fun p => TCSlib.Cryptography.Games.OracleComp.pure (cast ⋯ p.1, p.2)
+IBEScheme.sidImpl_one_onQuery : ∀ (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 1) (s : S.SidState κ), S.sidImpl b κ pp msk 1 x s = S.sidImpl b κ pp msk 1 (cast ⋯ x) s
+IBEScheme.sidImpl_two_onQuery : ∀ (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 2) (s : S.SidState κ), S.sidImpl b κ pp msk 2 x s = S.sidImpl b κ pp msk 2 (cast ⋯ x) s
+IBEScheme.sidImpl_keyGen_ne_onSpec : ∀ (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 1) (t : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)),
+  cast ⋯ x ≠ t →
+    S.sidImpl b κ pp msk 1 x (some t, c) =
+      TCSlib.Cryptography.Games.OracleComp.bind (S.keyGen κ msk (cast ⋯ x)) fun sk =>
+        TCSlib.Cryptography.Games.OracleComp.pure
+          (cast ⋯ (TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer (some (S.encSK κ sk))), some t, c)
+IBEScheme.sidImpl_challenge_fresh_onSpec : ∀ (S : IBEScheme) (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
+  (x : (S.sidSpec κ).dom 2) (t : Fin (S.idLen.eval κ) → Bool),
+  S.MsgSpace κ pp (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1 ∧
+      S.MsgSpace κ pp (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2 →
+    S.sidImpl b κ pp msk 2 x (some t, none) =
+      TCSlib.Cryptography.Games.OracleComp.bind
+        (S.enc κ pp t
+          (if b = true then (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).2
+          else (TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf (cast ⋯ x)).1))
+        fun c => TCSlib.Cryptography.Games.OracleComp.pure (cast ⋯ (S.encCT κ c), some t, some (S.encCT κ c))
+bb1Scheme_setup_eq : ∀ (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ),
+  (bb1Scheme G ℓ).setup κ =
+    TCSlib.Cryptography.Games.OracleComp.bind (TCSlib.Cryptography.Games.ProbComp.sample (G.gen.Coins κ)) fun r =>
+      TCSlib.Cryptography.Games.OracleComp.bind (BB1.setup (G.group κ (G.desc κ r))) fun k =>
+        TCSlib.Cryptography.Games.OracleComp.pure (⟨G.desc κ r, k.1⟩, ⟨G.desc κ r, k⟩)
+bb1Scheme_keyGen_bind : ∀ (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ)
+  (d : List Bool) (pp : BB1.Params (G.group κ d)) (mk : (G.group κ d).G)
+  (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) {β : Type}
+  (f : (bb1Scheme G ℓ).SK κ → TCSlib.Cryptography.Games.ProbComp β),
+  TCSlib.Cryptography.Games.OracleComp.bind ((bb1Scheme G ℓ).keyGen κ ⟨d, (pp, mk)⟩ id) f =
+    TCSlib.Cryptography.Games.OracleComp.bind (BB1.keyGen pp mk (BB1.idToZ (G.group κ d) id)) fun k => f ⟨d, k⟩
+bb1Scheme_enc_bind : ∀ (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ) (d : List Bool)
+  (pp : BB1.Params (G.group κ d)) (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
+  (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) {β : Type}
+  (f : (bb1Scheme G ℓ).CT κ → TCSlib.Cryptography.Games.ProbComp β),
+  TCSlib.Cryptography.Games.OracleComp.bind ((bb1Scheme G ℓ).enc κ ⟨d, pp⟩ id m) f =
+    TCSlib.Cryptography.Games.OracleComp.bind
+      (BB1.encrypt pp (BB1.idToZ (G.group κ d) id)
+        (BB1.decodeT (G.group κ d) (TCSlib.Cryptography.padFin (G.wT.eval κ) (List.ofFn m))))
+      fun c => f ⟨d, c⟩
+ofFn_bb1Scheme_encCT : ∀ (G : TCSlib.Cryptography.Pairing.BilinearGen) (ℓ : Complexity.PolyExpr) (κ : ℕ) (d : List Bool)
+  (c : BB1.Ciphertext (G.group κ d)),
+  List.ofFn ((bb1Scheme G ℓ).encCT κ ⟨d, c⟩) =
+    List.ofFn
+      (TCSlib.Cryptography.padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn ((G.group κ d).encT c.a) ++ List.ofFn ((G.group κ d).encG c.b) ++
+          List.ofFn ((G.group κ d).encG c.c)))
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sidSecure' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.exists_bb1_distinguisher' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Pairing.BilinearGen.bdhAssumption_of_dbdhAssumption' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_zero_onSpec' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_two_onSpec' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_one_onQuery' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_two_onQuery' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_keyGen_ne_onSpec' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme.sidImpl_challenge_fresh_onSpec' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_setup_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_keyGen_bind' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1Scheme_enc_bind' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.AdvancedEncryption.IdentityBased.ofFn_bb1Scheme_encCT' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TRACE TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sidSecure: closure 19674; direct sorryAx users: [TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_random,
+ TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_real]
+TRACE TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_real: closure 10319; direct sorryAx users: [TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_real]
+TRACE TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_random: closure 8427; direct sorryAx users: [TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sim_random]
+TRACE TCSlib.Cryptography.Games.ProbComp.prob_simulate_rel: closure 5012; direct sorryAx users: [TCSlib.Cryptography.Games.ProbComp.expect_simulate_rel]
